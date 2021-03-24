@@ -52,7 +52,6 @@ import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.Actions;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.Notifications;
-import io.jmix.ui.UiProperties;
 import io.jmix.ui.accesscontext.UiEntityAttributeContext;
 import io.jmix.ui.accesscontext.UiEntityContext;
 import io.jmix.ui.action.Action;
@@ -91,6 +90,7 @@ import io.jmix.ui.model.DataComponents;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.presentation.TablePresentations;
 import io.jmix.ui.presentation.model.TablePresentation;
+import io.jmix.ui.UiComponentProperties;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.InstallTargetHandler;
 import io.jmix.ui.screen.ScreenContext;
@@ -161,7 +161,7 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
 
     // Beans
 
-    protected UiProperties uiProperties;
+    protected UiComponentProperties componentProperties;
     protected IconResolver iconResolver;
     protected MetadataTools metadataTools;
     protected Metadata metadata;
@@ -243,8 +243,8 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
     }
 
     @Autowired
-    public void setUiProperties(UiProperties uiProperties) {
-        this.uiProperties = uiProperties;
+    public void setUiComponentProperties(UiComponentProperties componentProperties) {
+        this.componentProperties = componentProperties;
     }
 
     @Autowired
@@ -1304,10 +1304,10 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
     }
 
     protected void setClientCaching() {
-        double cacheRate = uiProperties.getTableCacheRate();
+        double cacheRate = componentProperties.getTableCacheRate();
         cacheRate = cacheRate >= 0 ? cacheRate : 2;
 
-        int pageLength = uiProperties.getTablePageLength();
+        int pageLength = componentProperties.getTablePageLength();
         pageLength = pageLength >= 0 ? pageLength : 15;
 
         componentComposition.setClientCaching(cacheRate, pageLength);

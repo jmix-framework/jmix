@@ -20,6 +20,7 @@ import com.vaadin.server.Sizeable;
 import com.vaadin.server.UserError;
 import com.vaadin.shared.Registration;
 import com.vaadin.ui.Layout;
+import io.jmix.ui.UiComponentProperties;
 import org.springframework.context.ApplicationContext;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
@@ -602,7 +603,7 @@ public abstract class AbstractComponent<T extends com.vaadin.ui.Component>
     public boolean isHtmlSanitizerEnabled() {
         return htmlSanitizerEnabled != null
                 ? htmlSanitizerEnabled
-                : getUiProperties().isHtmlSanitizerEnabled();
+                : getUiComponentProperties().isHtmlSanitizerEnabled();
     }
 
     @Override
@@ -625,6 +626,10 @@ public abstract class AbstractComponent<T extends com.vaadin.ui.Component>
 
     protected UiProperties getUiProperties() {
         return applicationContext.getBean(UiProperties.class);
+    }
+
+    protected UiComponentProperties getUiComponentProperties() {
+        return applicationContext.getBean(UiComponentProperties.class);
     }
 
     protected HtmlSanitizer getHtmlSanitizer() {

@@ -18,7 +18,6 @@ package io.jmix.ui.action.tagpicker;
 
 import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.ui.UiProperties;
 import io.jmix.ui.action.AbstractLookupAction;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.ActionType;
@@ -27,6 +26,7 @@ import io.jmix.ui.component.*;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.meta.StudioAction;
 import io.jmix.ui.meta.StudioPropertiesItem;
+import io.jmix.ui.UiComponentProperties;
 import io.jmix.ui.screen.MultiSelectLookupScreen;
 import io.jmix.ui.screen.Screen;
 import org.springframework.beans.factory.InitializingBean;
@@ -50,7 +50,7 @@ public class TagLookupAction<E> extends AbstractLookupAction<E>
 
     protected TagPicker tagPicker;
 
-    protected UiProperties uiProperties;
+    protected UiComponentProperties componentProperties;
 
     protected boolean multiSelect = true;
     protected boolean editable = true;
@@ -64,14 +64,14 @@ public class TagLookupAction<E> extends AbstractLookupAction<E>
     }
 
     @Autowired
-    public void setUiProperties(UiProperties uiProperties) {
-        this.uiProperties = uiProperties;
+    public void setUiComponentProperties(UiComponentProperties componentProperties) {
+        this.componentProperties = componentProperties;
     }
 
     @Override
     public void afterPropertiesSet() throws Exception {
         setIcon(icons.get(JmixIcon.ENTITYPICKER_LOOKUP));
-        setShortcut(uiProperties.getPickerLookupShortcut());
+        setShortcut(componentProperties.getPickerLookupShortcut());
 
         if (getShortcutCombination() != null) {
             setDescription(messages.getMessage("entityPicker.action.lookup.tooltip")

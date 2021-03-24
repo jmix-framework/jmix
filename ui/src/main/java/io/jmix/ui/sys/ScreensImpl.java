@@ -45,6 +45,7 @@ import io.jmix.ui.model.ScreenData;
 import io.jmix.ui.monitoring.ScreenLifeCycle;
 import io.jmix.ui.navigation.NavigationState;
 import io.jmix.ui.navigation.UrlTools;
+import io.jmix.ui.UiScreenProperties;
 import io.jmix.ui.screen.*;
 import io.jmix.ui.screen.Screen.*;
 import io.jmix.ui.theme.ThemeConstants;
@@ -109,7 +110,7 @@ public class ScreensImpl implements Screens {
     protected AccessManager accessManager;
 
     @Autowired
-    protected UiProperties uiProperties;
+    protected UiScreenProperties screenProperties;
 
     protected AppUI ui;
 
@@ -493,7 +494,7 @@ public class ScreensImpl implements Screens {
             AppWorkAreaImpl workArea = getConfiguredWorkArea();
 
             if (workArea.getMode() == Mode.TABBED) {
-                int maxTabCount = uiProperties.getMaxTabCount();
+                int maxTabCount = screenProperties.getMaxTabCount();
                 return maxTabCount > 0 && workArea.getOpenedTabCount() + 1 > maxTabCount;
             }
         }
@@ -504,7 +505,8 @@ public class ScreensImpl implements Screens {
     protected void showTooManyOpenTabsMessage() {
         ui.getNotifications()
                 .create(NotificationType.WARNING)
-                .withCaption(messages.formatMessage("", "tooManyOpenTabs.message", uiProperties.getMaxTabCount()))
+                .withCaption(messages.formatMessage("", "tooManyOpenTabs.message",
+                        screenProperties.getMaxTabCount()))
                 .show();
     }
 
@@ -1091,7 +1093,7 @@ public class ScreensImpl implements Screens {
         windowBreadCrumbs.setUI(ui);
         windowBreadCrumbs.setApplicationContext(applicationContext);
 
-        boolean showBreadCrumbs = uiProperties.isShowBreadCrumbs() || appWorkArea.getMode() == Mode.SINGLE;
+        boolean showBreadCrumbs = screenProperties.isShowBreadCrumbs() || appWorkArea.getMode() == Mode.SINGLE;
         windowBreadCrumbs.setVisible(showBreadCrumbs);
 
         return windowBreadCrumbs;

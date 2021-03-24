@@ -22,13 +22,13 @@ import io.jmix.core.validation.group.UiCrossFieldChecks;
 import io.jmix.ui.Dialogs;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.Notifications.NotificationType;
-import io.jmix.ui.UiProperties;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.action.DialogAction;
 import io.jmix.ui.component.*;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.icon.Icons;
+import io.jmix.ui.UiScreenProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -50,7 +50,7 @@ import static io.jmix.ui.screen.UiControllerUtils.getScreenContext;
 public class ScreenValidation {
 
     @Autowired
-    protected UiProperties properties;
+    protected UiScreenProperties screenProperties;
     @Autowired
     protected Messages messages;
     @Autowired
@@ -128,7 +128,7 @@ public class ScreenValidation {
             buffer.append(error.description).append("\n");
         }
 
-        String validationNotificationType = properties.getValidationNotificationType();
+        String validationNotificationType = screenProperties.getValidationNotificationType();
         if (validationNotificationType.endsWith("_HTML")) {
             // HTML validation notification types are not supported
             validationNotificationType = validationNotificationType.replace("_HTML", "");

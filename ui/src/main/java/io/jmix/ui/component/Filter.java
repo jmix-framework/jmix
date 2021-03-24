@@ -23,7 +23,7 @@ import io.jmix.ui.app.filter.condition.AddConditionScreen;
 import io.jmix.ui.component.filter.configuration.DesignTimeConfiguration;
 import io.jmix.ui.component.filter.configuration.RunTimeConfiguration;
 import io.jmix.ui.model.DataLoader;
-import io.jmix.ui.property.UiFilterProperties;
+import io.jmix.ui.UiComponentProperties;
 import io.jmix.ui.xml.layout.ComponentLoader;
 
 import javax.annotation.Nullable;
@@ -43,7 +43,7 @@ public interface Filter extends Component, Component.BelongToFrame, Component.Ha
 
     /**
      * Returns the number of columns to be displayed on one row.
-     * The default value is taken from {@link UiFilterProperties#getColumnsCount()}.
+     * The default value is taken from {@link UiComponentProperties#getFilterColumnsCount()}.
      *
      * @return the number of columns to be displayed on one row
      */
@@ -52,7 +52,7 @@ public interface Filter extends Component, Component.BelongToFrame, Component.Ha
 
     /**
      * Sets the number of columns to be displayed on one row.
-     * The default value is taken from {@link UiFilterProperties#getColumnsCount()}.
+     * The default value is taken from {@link UiComponentProperties#getFilterColumnsCount()}.
      *
      * @param columnsCount the number of columns to be displayed on one row
      */

@@ -25,7 +25,6 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.Screens;
-import io.jmix.ui.UiProperties;
 import io.jmix.ui.WindowConfig;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.data.DataUnit;
@@ -39,6 +38,7 @@ import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.DataContext;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.model.Nested;
+import io.jmix.ui.UiScreenProperties;
 import io.jmix.ui.screen.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -60,7 +60,7 @@ public class EditorBuilderProcessor {
     @Autowired
     protected WindowConfig windowConfig;
     @Autowired
-    protected UiProperties properties;
+    protected UiScreenProperties screenProperties;
     @Autowired
     protected List<EditedEntityTransformer> editedEntityTransformers;
 
@@ -107,7 +107,7 @@ public class EditorBuilderProcessor {
                         boolean addsFirst;
 
                         if (!(ct instanceof Nested)) {
-                            addsFirst = properties.isCreateActionAddsFirst();
+                            addsFirst = screenProperties.isCreateActionAddsFirst();
                             if (builder.getAddFirst() != null) {
                                 addsFirst = builder.getAddFirst();
                             }

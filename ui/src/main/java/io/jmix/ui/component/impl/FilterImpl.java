@@ -38,7 +38,7 @@ import io.jmix.ui.component.filter.configuration.DesignTimeConfiguration;
 import io.jmix.ui.component.filter.configuration.RunTimeConfiguration;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.model.DataLoader;
-import io.jmix.ui.property.UiFilterProperties;
+import io.jmix.ui.UiComponentProperties;
 import io.jmix.ui.theme.ThemeClassNames;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -132,9 +132,9 @@ public class FilterImpl extends CompositeComponent<GroupBoxLayout> implements Fi
     }
 
     @Autowired
-    public void setUiFilterProperties(UiFilterProperties uiFilterProperties) {
-        this.columnsCount = uiFilterProperties.getColumnsCount();
-        this.autoApply = uiFilterProperties.isAutoApply();
+    public void setUiComponentProperties(UiComponentProperties componentProperties) {
+        this.columnsCount = componentProperties.getFilterColumnsCount();
+        this.autoApply = componentProperties.isFilterAutoApply();
     }
 
     @Autowired

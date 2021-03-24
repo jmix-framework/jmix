@@ -19,7 +19,6 @@ package io.jmix.ui.action.list;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.ScreenBuilders;
-import io.jmix.ui.UiProperties;
 import io.jmix.ui.accesscontext.UiEntityContext;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.ActionType;
@@ -30,6 +29,7 @@ import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.meta.StudioAction;
 import io.jmix.ui.meta.StudioPropertiesItem;
+import io.jmix.ui.UiComponentProperties;
 import io.jmix.ui.screen.*;
 import io.jmix.ui.sys.ActionScreenInitializer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -225,8 +225,8 @@ public class EditAction<E> extends SecuredListAction
     }
 
     @Autowired
-    protected void setUiProperties(UiProperties properties) {
-        setShortcut(properties.getTableEditShortcut());
+    protected void setUiComponentProperties(UiComponentProperties componentProperties) {
+        setShortcut(componentProperties.getTableEditShortcut());
     }
 
     @Autowired

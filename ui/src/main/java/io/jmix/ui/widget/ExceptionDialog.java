@@ -33,6 +33,8 @@ import io.jmix.ui.component.KeyCombination;
 import io.jmix.ui.icon.IconResolver;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
+import io.jmix.ui.UiScreenProperties;
+import io.jmix.ui.sys.ControllerUtils;
 import io.jmix.ui.theme.ThemeClassNames;
 import io.jmix.ui.theme.ThemeConstants;
 import io.jmix.ui.xml.layout.ComponentLoader;
@@ -68,7 +70,7 @@ public class ExceptionDialog extends JmixWindow {
 
     protected WindowConfig windowConfig;
 
-    protected UiProperties properties;
+    protected UiScreenProperties screenProperties;
 
     protected CurrentAuthentication currentAuthentication;
 
@@ -85,7 +87,7 @@ public class ExceptionDialog extends JmixWindow {
     public ExceptionDialog(Throwable throwable, @Nullable String caption, @Nullable String message, ApplicationContext applicationContext) {
         messages = applicationContext.getBean(Messages.class);
         windowConfig = applicationContext.getBean(WindowConfig.class);
-        properties = applicationContext.getBean(UiProperties.class);
+        screenProperties = applicationContext.getBean(UiScreenProperties.class);
         currentAuthentication = applicationContext.getBean(CurrentAuthentication.class);
         timeSource = applicationContext.getBean(TimeSource.class);
         accessManager = applicationContext.getBean(AccessManager.class);
@@ -93,7 +95,7 @@ public class ExceptionDialog extends JmixWindow {
 
         AppUI ui = AppUI.getCurrent();
 
-        String closeShortcut = properties.getCloseShortcut();
+        String closeShortcut = screenProperties.getCloseShortcut();
         KeyCombination closeCombination = KeyCombination.create(closeShortcut);
 
         com.vaadin.event.ShortcutAction closeShortcutAction = new com.vaadin.event.ShortcutAction(

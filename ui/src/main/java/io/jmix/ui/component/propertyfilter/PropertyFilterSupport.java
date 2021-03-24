@@ -37,7 +37,7 @@ import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.ui.accesscontext.UiEntityAttributeContext;
 import io.jmix.ui.component.PropertyFilter;
 import io.jmix.ui.component.PropertyFilter.Operation;
-import io.jmix.ui.property.UiFilterProperties;
+import io.jmix.ui.UiComponentProperties;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -83,7 +83,7 @@ public class PropertyFilterSupport {
     protected MetadataTools metadataTools;
     protected DataManager dataManager;
     protected DatatypeRegistry datatypeRegistry;
-    protected UiFilterProperties uiFilterProperties;
+    protected UiComponentProperties componentProperties;
     protected AccessManager accessManager;
 
     @Autowired
@@ -92,14 +92,14 @@ public class PropertyFilterSupport {
                                  MetadataTools metadataTools,
                                  DataManager dataManager,
                                  DatatypeRegistry datatypeRegistry,
-                                 UiFilterProperties uiFilterProperties,
+                                 UiComponentProperties componentProperties,
                                  AccessManager accessManager) {
         this.messages = messages;
         this.messageTools = messageTools;
         this.metadataTools = metadataTools;
         this.dataManager = dataManager;
         this.datatypeRegistry = datatypeRegistry;
-        this.uiFilterProperties = uiFilterProperties;
+        this.componentProperties = componentProperties;
         this.accessManager = accessManager;
     }
 
@@ -405,7 +405,7 @@ public class PropertyFilterSupport {
             if (metaPropertyPath == null
                     || !isMetaPropertyPathAllowed(metaPropertyPath, query)
                     || (propertiesFilterPredicate != null && !propertiesFilterPredicate.test(metaPropertyPath))
-                    || currentDepth >= uiFilterProperties.getPropertiesHierarchyDepth()) {
+                    || currentDepth >= componentProperties.getFilterPropertiesHierarchyDepth()) {
                 continue;
             }
 

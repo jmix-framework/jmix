@@ -23,9 +23,9 @@ import io.jmix.data.DataConfiguration
 import io.jmix.eclipselink.EclipselinkConfiguration
 import io.jmix.ui.ScreenBuilders
 import io.jmix.ui.UiConfiguration
-import io.jmix.ui.UiProperties
 import io.jmix.ui.action.entitypicker.EntityClearAction
 import io.jmix.ui.action.entitypicker.EntityLookupAction
+import io.jmix.ui.UiComponentProperties
 import io.jmix.ui.screen.OpenMode
 import io.jmix.ui.testassist.spec.ScreenSpecification
 import org.springframework.beans.factory.annotation.Autowired
@@ -46,7 +46,7 @@ class EntityPickerAndComboBoxActionsTest extends ScreenSpecification {
     @Autowired
     Metadata metadata
     @Autowired
-    UiProperties properties
+    UiComponentProperties componentProperties
 
     private Customer customer1
     private Customer customer2
@@ -65,14 +65,14 @@ class EntityPickerAndComboBoxActionsTest extends ScreenSpecification {
     }
 
     void cleanup() {
-        properties.getEntityFieldType().remove('test_Customer')
-        properties.getEntityFieldActions().remove('test_Customer')
+        componentProperties.getEntityFieldType().remove('test_Customer')
+        componentProperties.getEntityFieldActions().remove('test_Customer')
 
         dataManager.remove(order, customer1, customer2)
     }
 
     def "entityPicker actions"() {
-        properties.getEntityFieldActions().remove('test_Customer')
+        componentProperties.getEntityFieldActions().remove('test_Customer')
 
         when:
         def editor = showOrderEdit()
@@ -82,7 +82,7 @@ class EntityPickerAndComboBoxActionsTest extends ScreenSpecification {
 
         when: "specify actions in properties"
         def actionIds = ['entity_lookup', 'entity_open', 'entity_clear']
-        properties.getEntityFieldActions().put('test_Customer', actionIds)
+        componentProperties.getEntityFieldActions().put('test_Customer', actionIds)
         editor = showOrderEdit()
 
         then:
@@ -90,7 +90,7 @@ class EntityPickerAndComboBoxActionsTest extends ScreenSpecification {
     }
 
     def "entityComboBox actions"() {
-        properties.getEntityFieldActions().remove('test_Customer')
+        componentProperties.getEntityFieldActions().remove('test_Customer')
 
         when:
         def editor = showOrderEdit()
@@ -100,7 +100,7 @@ class EntityPickerAndComboBoxActionsTest extends ScreenSpecification {
 
         when: "specify actions in properties"
         def actionIds = ['entity_lookup', 'entity_open', 'entity_clear']
-        properties.getEntityFieldActions().put('test_Customer', actionIds)
+        componentProperties.getEntityFieldActions().put('test_Customer', actionIds)
         editor = showOrderEdit()
 
         then:

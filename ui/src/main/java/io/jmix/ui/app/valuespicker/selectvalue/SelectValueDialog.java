@@ -10,7 +10,6 @@ import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.Actions;
 import io.jmix.ui.ScreenBuilders;
 import io.jmix.ui.UiComponents;
-import io.jmix.ui.UiProperties;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.action.entitypicker.EntityLookupAction;
@@ -27,6 +26,7 @@ import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.CollectionLoader;
 import io.jmix.ui.model.DataComponents;
+import io.jmix.ui.UiScreenProperties;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.Subscribe;
 import io.jmix.ui.screen.UiController;
@@ -64,6 +64,8 @@ public class SelectValueDialog<V> extends Screen implements SelectValueControlle
     protected DatatypeRegistry datatypeRegistry;
     @Autowired
     protected CurrentAuthentication currentAuthentication;
+    @Autowired
+    protected UiScreenProperties screenProperties;
 
     protected SelectValueContext<V> context;
     protected List<V> values = new ArrayList<>();
@@ -98,13 +100,12 @@ public class SelectValueDialog<V> extends Screen implements SelectValueControlle
 
     protected void initActions() {
         Icons icons = getApplicationContext().getBean(Icons.class);
-        UiProperties uiProperties = getApplicationContext().getBean(UiProperties.class);
 
         commitAction = new BaseAction("commit")
                 .withCaption(messages.getMessage("actions.Ok"))
                 .withIcon(icons.get(JmixIcon.OK))
                 .withPrimary(true)
-                .withShortcut(uiProperties.getCommitShortcut())
+                .withShortcut(screenProperties.getCommitShortcut())
                 .withHandler(this::commit);
 
         getWindow().addAction(commitAction);
@@ -112,7 +113,7 @@ public class SelectValueDialog<V> extends Screen implements SelectValueControlle
         Action cancelAction = new BaseAction("cancel")
                 .withCaption(messages.getMessage("actions.Cancel"))
                 .withIcon(icons.get(JmixIcon.CANCEL))
-                .withShortcut(uiProperties.getCloseShortcut())
+                .withShortcut(screenProperties.getCloseShortcut())
                 .withHandler(this::cancel);
 
         getWindow().addAction(cancelAction);

@@ -42,7 +42,7 @@ import io.jmix.ui.entity.LogicalFilterCondition;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.meta.StudioAction;
-import io.jmix.ui.property.UiFilterProperties;
+import io.jmix.ui.UiComponentProperties;
 import io.jmix.uidata.app.filter.configuration.UiDataFilterConfigurationModelFragment;
 import io.jmix.uidata.entity.FilterConfiguration;
 import io.jmix.uidata.filter.UiDataFilterSupport;
@@ -67,7 +67,7 @@ public class FilterSaveAsAction extends FilterAction {
     protected FilterSupport filterSupport;
     protected FilterComponents filterComponents;
     protected UiComponents uiComponents;
-    protected UiFilterProperties uiFilterProperties;
+    protected UiComponentProperties componentProperties;
 
     protected Consumer<InputDialog.InputDialogCloseEvent> inputDialogCloseListener;
 
@@ -113,8 +113,8 @@ public class FilterSaveAsAction extends FilterAction {
     }
 
     @Autowired
-    public void setUiFilterProperties(UiFilterProperties uiFilterProperties) {
-        this.uiFilterProperties = uiFilterProperties;
+    public void setUiComponentProperties(UiComponentProperties componentProperties) {
+        this.componentProperties = componentProperties;
     }
 
     public void setInputDialogCloseListener(Consumer<InputDialog.InputDialogCloseEvent> inputDialogCloseListener) {
@@ -212,8 +212,8 @@ public class FilterSaveAsAction extends FilterAction {
             }
         });
 
-        generatedIdField.setVisible(uiFilterProperties.isShowConfigurationIdField());
-        idField.setVisible(uiFilterProperties.isShowConfigurationIdField());
+        generatedIdField.setVisible(componentProperties.isFilterShowConfigurationIdField());
+        idField.setVisible(componentProperties.isFilterShowConfigurationIdField());
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})

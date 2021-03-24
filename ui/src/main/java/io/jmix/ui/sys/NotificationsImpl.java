@@ -21,9 +21,9 @@ import com.vaadin.ui.Notification;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.Notifications;
-import io.jmix.ui.UiProperties;
 import io.jmix.ui.component.ContentMode;
 import io.jmix.ui.executor.BackgroundWorker;
+import io.jmix.ui.UiComponentProperties;
 import io.jmix.ui.sanitizer.HtmlSanitizer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -41,7 +41,7 @@ public class NotificationsImpl implements Notifications {
     protected BackgroundWorker backgroundWorker;
 
     @Autowired
-    protected UiProperties uiProperties;
+    protected UiComponentProperties componentProperties;
     @Autowired
     protected HtmlSanitizer htmlSanitizer;
 
@@ -76,7 +76,7 @@ public class NotificationsImpl implements Notifications {
         protected String description;
         protected String styleName;
 
-        protected boolean htmlSanitizerEnabled = uiProperties.isHtmlSanitizerEnabled();
+        protected boolean htmlSanitizerEnabled = componentProperties.isHtmlSanitizerEnabled();
 
         protected Position position = Position.DEFAULT;
         protected int hideDelayMs = Integer.MIN_VALUE;

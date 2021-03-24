@@ -22,13 +22,13 @@ import com.vaadin.ui.UI;
 import io.jmix.core.AccessManager;
 import io.jmix.core.Messages;
 import io.jmix.ui.AppUI;
-import io.jmix.ui.UiProperties;
 import io.jmix.ui.component.impl.AbstractComponent;
 import io.jmix.ui.component.mainwindow.UserActionsButton;
 import io.jmix.ui.accesscontext.UiShowScreenContext;
 import io.jmix.ui.icon.IconResolver;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
+import io.jmix.ui.UiScreenProperties;
 import io.jmix.ui.screen.OpenMode;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.widget.JmixMenuBar;
@@ -152,7 +152,7 @@ public class UserActionsButtonImpl extends AbstractComponent<JmixMenuBar> implem
             throw new IllegalStateException("Logout button is not attached to UI");
         }
 
-        String loginScreenId = applicationContext.getBean(UiProperties.class).getLoginScreenId();
+        String loginScreenId = applicationContext.getBean(UiScreenProperties.class).getLoginScreenId();
 
         Screen loginScreen = ui.getScreens().create(loginScreenId, OpenMode.ROOT);
 

@@ -26,7 +26,7 @@ import io.jmix.ui.component.HasValue;
 import io.jmix.ui.component.TextField;
 import io.jmix.ui.component.data.value.ContainerValueSource;
 import io.jmix.ui.model.InstanceContainer;
-import io.jmix.ui.property.UiFilterProperties;
+import io.jmix.ui.UiComponentProperties;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.ScreenFragment;
 import io.jmix.ui.screen.StandardOutcome;
@@ -49,7 +49,7 @@ public class UiDataFilterConfigurationModelFragment extends ScreenFragment {
     @Autowired
     protected CurrentAuthentication currentAuthentication;
     @Autowired
-    protected UiFilterProperties uiFilterProperties;
+    protected UiComponentProperties componentProperties;
     @Autowired
     protected AccessManager accessManager;
     @Autowired
@@ -138,8 +138,8 @@ public class UiDataFilterConfigurationModelFragment extends ScreenFragment {
     protected void initThirdConfigurationFormRow() {
         generatedIdField.setValue(true);
         configurationIdField.setEnabled(StringUtils.isEmpty(configurationDc.getItem().getConfigurationId()));
-        configurationIdField.setVisible(uiFilterProperties.isShowConfigurationIdField());
-        generatedIdField.setVisible(uiFilterProperties.isShowConfigurationIdField());
+        configurationIdField.setVisible(componentProperties.isFilterShowConfigurationIdField());
+        generatedIdField.setVisible(componentProperties.isFilterShowConfigurationIdField());
     }
 
     @Subscribe("availableForAllField")

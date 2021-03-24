@@ -22,7 +22,6 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.Actions;
 import io.jmix.ui.UiComponents;
-import io.jmix.ui.UiProperties;
 import io.jmix.ui.action.entitypicker.EntityClearAction;
 import io.jmix.ui.action.entitypicker.EntityLookupAction;
 import io.jmix.ui.action.entitypicker.EntityOpenCompositionAction;
@@ -35,6 +34,7 @@ import io.jmix.ui.component.data.meta.EntityValueSource;
 import io.jmix.ui.component.data.options.ContainerOptions;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.DataComponents;
+import io.jmix.ui.UiComponentProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -44,14 +44,14 @@ import java.util.stream.Collectors;
 
 /**
  * Helps to create and configure {@link EntityPicker} and {@link EntityComboBox} components
- * considering {@code jmix.ui.entityFieldType} and {@code jmix.ui.entityFieldActions} properties.
+ * considering {@code jmix.ui.component.entityFieldType} and {@code jmix.ui.component.entityFieldActions} properties.
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
 @Component("ui_EntityFieldCreationSupport")
 public class EntityFieldCreationSupport {
 
     @Autowired
-    protected UiProperties uiProperties;
+    protected UiComponentProperties componentProperties;
     @Autowired
     protected DataComponents dataComponents;
     @Autowired
@@ -78,7 +78,7 @@ public class EntityFieldCreationSupport {
 
     @Nullable
     public ContainerOptions createDefaultContainerOptions(MetaClass metaClass) {
-        String componentName = uiProperties.getEntityFieldType().get(metaClass.getName());
+        String componentName = componentProperties.getEntityFieldType().get(metaClass.getName());
         if (EntityComboBox.NAME.equals(componentName)) {
             return new ContainerOptions(createCollectionContainer(metaClass));
         }
@@ -114,7 +114,7 @@ public class EntityFieldCreationSupport {
 
         MetaClass metaClass = mpp.getMetaProperty().getRange().asClass();
 
-        List<String> actionIds = uiProperties.getEntityFieldActions().get(metaClass.getName());
+        List<String> actionIds = componentProperties.getEntityFieldActions().get(metaClass.getName());
         if (actionIds == null || actionIds.isEmpty()) {
             return false;
         }
@@ -123,7 +123,7 @@ public class EntityFieldCreationSupport {
     }
 
     protected EntityPicker createFieldComponent(MetaClass metaClass, @Nullable Options options) {
-        String componentName = uiProperties.getEntityFieldType().get(metaClass.getName());
+        String componentName = componentProperties.getEntityFieldType().get(metaClass.getName());
 
         EntityPicker field;
 
@@ -151,7 +151,7 @@ public class EntityFieldCreationSupport {
     }
 
     protected void createFieldActions(MetaClass metaClass, MetaProperty.Type metaPropertyType, EntityPicker field) {
-        List<String> actionIds = uiProperties.getEntityFieldActions().get(metaClass.getName());
+        List<String> actionIds = componentProperties.getEntityFieldActions().get(metaClass.getName());
 
         if (actionIds == null || actionIds.isEmpty()) {
             if (!(field instanceof EntityComboBox)) {

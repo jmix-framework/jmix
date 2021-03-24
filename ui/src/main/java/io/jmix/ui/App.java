@@ -99,6 +99,8 @@ public abstract class App {
     protected ApplicationContext applicationContext;
     @Autowired
     protected UiProperties uiProperties;
+    @Autowired
+    protected UiScreenProperties screenProperties;
 
     protected AppCookies cookies;
 
@@ -443,7 +445,7 @@ public abstract class App {
         List<AppUI> authenticatedUIs = getAppUIs()
                 .stream()
                 .filter(ui ->
-                        uiProperties.isForceRefreshAuthenticatedTabs())
+                        screenProperties.isForceRefreshAuthenticatedTabs())
                 .collect(Collectors.toList());
 
         removeAllWindows(authenticatedUIs);

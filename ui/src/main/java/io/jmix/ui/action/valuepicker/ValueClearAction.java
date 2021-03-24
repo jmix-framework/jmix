@@ -17,7 +17,6 @@
 package io.jmix.ui.action.valuepicker;
 
 import io.jmix.core.Messages;
-import io.jmix.ui.UiProperties;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.ActionType;
 import io.jmix.ui.action.BaseAction;
@@ -26,6 +25,7 @@ import io.jmix.ui.component.ValuePicker;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.meta.StudioAction;
+import io.jmix.ui.UiComponentProperties;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -47,7 +47,7 @@ public class ValueClearAction extends BaseAction implements ValuePicker.ValuePic
 
     protected Icons icons;
     protected Messages messages;
-    protected UiProperties properties;
+    protected UiComponentProperties componentProperties;
 
     protected boolean editable = true;
 
@@ -60,8 +60,8 @@ public class ValueClearAction extends BaseAction implements ValuePicker.ValuePic
     }
 
     @Autowired
-    protected void setUiProperties(UiProperties properties) {
-        this.properties = properties;
+    protected void setUiComponentProperties(UiComponentProperties componentProperties) {
+        this.componentProperties = componentProperties;
     }
 
     @Autowired
@@ -71,7 +71,7 @@ public class ValueClearAction extends BaseAction implements ValuePicker.ValuePic
 
     @Override
     public void afterPropertiesSet() {
-        setShortcut(properties.getPickerClearShortcut());
+        setShortcut(componentProperties.getPickerClearShortcut());
 
         if (getShortcutCombination() != null) {
             setDescription(messages.getMessage("valuePicker.action.clear.tooltip")

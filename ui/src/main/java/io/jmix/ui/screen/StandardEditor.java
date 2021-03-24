@@ -25,7 +25,6 @@ import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.ui.Notifications.NotificationType;
-import io.jmix.ui.UiProperties;
 import io.jmix.ui.accesscontext.UiEntityContext;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.BaseAction;
@@ -35,6 +34,7 @@ import io.jmix.ui.component.ValidationErrors;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.model.*;
+import io.jmix.ui.UiScreenProperties;
 import io.jmix.ui.util.OperationResult;
 import io.jmix.ui.util.UnknownOperationResult;
 
@@ -101,7 +101,7 @@ public abstract class StandardEditor<T> extends Screen
     }
 
     protected Action addDefaultCommitAndCloseAction(Messages messages, Icons icons) {
-        String commitShortcut = getApplicationContext().getBean(UiProperties.class).getCommitShortcut();
+        String commitShortcut = getApplicationContext().getBean(UiScreenProperties.class).getCommitShortcut();
 
         Action action = new BaseAction(WINDOW_COMMIT_AND_CLOSE)
                 .withCaption(messages.getMessage("actions.Ok"))
@@ -188,7 +188,7 @@ public abstract class StandardEditor<T> extends Screen
 
             UnknownOperationResult result = new UnknownOperationResult();
 
-            if (getApplicationContext().getBean(UiProperties.class).isUseSaveConfirmation()) {
+            if (getApplicationContext().getBean(UiScreenProperties.class).isUseSaveConfirmation()) {
                 screenValidation.showSaveConfirmationDialog(this, action)
                         .onCommit(() -> result.resume(closeWithCommit()))
                         .onDiscard(() -> result.resume(closeWithDiscard()))

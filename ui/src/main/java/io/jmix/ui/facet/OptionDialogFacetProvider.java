@@ -18,13 +18,13 @@ package io.jmix.ui.facet;
 
 import io.jmix.core.MessageTools;
 import io.jmix.ui.GuiDevelopmentException;
-import io.jmix.ui.UiProperties;
 import io.jmix.ui.component.ActionsAwareDialogFacet;
 import io.jmix.ui.component.ContentMode;
 import io.jmix.ui.component.OptionDialogFacet;
 import io.jmix.ui.component.WindowMode;
 import io.jmix.ui.component.impl.OptionDialogFacetImpl;
 import io.jmix.ui.icon.Icons;
+import io.jmix.ui.UiComponentProperties;
 import io.jmix.ui.theme.ThemeConstants;
 import io.jmix.ui.theme.ThemeConstantsManager;
 import io.jmix.ui.xml.FacetProvider;
@@ -53,7 +53,7 @@ public class OptionDialogFacetProvider
     @Autowired
     protected ThemeConstantsManager themeConstantsManager;
     @Autowired
-    protected UiProperties uiProperties;
+    protected UiComponentProperties componentProperties;
     @Autowired
     protected LoaderSupport loaderSupport;
 
@@ -196,7 +196,7 @@ public class OptionDialogFacetProvider
         String htmlSanitizerEnabledString = element.attributeValue("htmlSanitizerEnabled");
         boolean htmlSanitizerEnabled = isNotEmpty(htmlSanitizerEnabledString)
                 ? Boolean.parseBoolean(htmlSanitizerEnabledString)
-                : uiProperties.isHtmlSanitizerEnabled();
+                : componentProperties.isHtmlSanitizerEnabled();
 
         facet.setHtmlSanitizerEnabled(htmlSanitizerEnabled);
     }

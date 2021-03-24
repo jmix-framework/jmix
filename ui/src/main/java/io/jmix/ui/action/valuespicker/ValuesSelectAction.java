@@ -19,7 +19,6 @@ package io.jmix.ui.action.valuespicker;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.Range;
 import io.jmix.ui.ScreenBuilders;
-import io.jmix.ui.UiProperties;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.ActionType;
 import io.jmix.ui.action.BaseAction;
@@ -40,6 +39,7 @@ import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.meta.PropertyType;
 import io.jmix.ui.meta.StudioAction;
 import io.jmix.ui.meta.StudioPropertiesItem;
+import io.jmix.ui.UiComponentProperties;
 import io.jmix.ui.screen.CloseAction;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.sys.ActionScreenInitializer;
@@ -72,7 +72,7 @@ public class ValuesSelectAction<V> extends BaseAction implements ValuePickerActi
 
     protected Icons icons;
     protected Messages messages;
-    protected UiProperties properties;
+    protected UiComponentProperties componentProperties;
     protected ScreenBuilders screenBuilders;
 
     protected boolean editable = true;
@@ -89,8 +89,8 @@ public class ValuesSelectAction<V> extends BaseAction implements ValuePickerActi
     }
 
     @Autowired
-    protected void setUiProperties(UiProperties properties) {
-        this.properties = properties;
+    protected void setUiComponentProperties(UiComponentProperties componentProperties) {
+        this.componentProperties = componentProperties;
     }
 
     @Autowired
@@ -112,7 +112,7 @@ public class ValuesSelectAction<V> extends BaseAction implements ValuePickerActi
 
     @Override
     public void afterPropertiesSet() {
-        setShortcut(properties.getPickerLookupShortcut());
+        setShortcut(componentProperties.getPickerLookupShortcut());
 
         if (getShortcutCombination() != null) {
             setDescription(messages.getMessage("valuesPicker.action.select.tooltip")

@@ -29,6 +29,7 @@ import io.jmix.ui.UiProperties;
 import io.jmix.ui.component.PaginationComponent;
 import io.jmix.ui.component.pagination.data.PaginationDataBinder;
 import io.jmix.ui.component.pagination.data.PaginationEmptyBinder;
+import io.jmix.ui.UiComponentProperties;
 import io.jmix.ui.theme.ThemeConstants;
 import io.jmix.ui.theme.ThemeConstantsManager;
 import io.jmix.ui.widget.JmixAbstractPagination;
@@ -60,6 +61,7 @@ public abstract class AbstractPagination<T extends JmixAbstractPagination>
 
     protected ThemeConstantsManager themeConstantsManager;
     protected Messages messages;
+    protected UiComponentProperties componentProperties;
     protected UiProperties uiProperties;
 
     protected PaginationDataBinder dataBinder;
@@ -79,6 +81,11 @@ public abstract class AbstractPagination<T extends JmixAbstractPagination>
     @Autowired
     public void setMessages(Messages messages) {
         this.messages = messages;
+    }
+
+    @Autowired
+    public void setUiComponentProperties(UiComponentProperties componentProperties) {
+        this.componentProperties = componentProperties;
     }
 
     @Autowired
@@ -258,7 +265,7 @@ public abstract class AbstractPagination<T extends JmixAbstractPagination>
         if (CollectionUtils.isNotEmpty(itemsPerPageOptions)) {
             processedOptions = processOptions(itemsPerPageOptions, dataBinder.getEntityMetaClass());
         } else {
-            processedOptions = processOptions(uiProperties.getPaginationItemsPerPageOptions(),
+            processedOptions = processOptions(componentProperties.getPaginationItemsPerPageOptions(),
                     dataBinder.getEntityMetaClass());
         }
 

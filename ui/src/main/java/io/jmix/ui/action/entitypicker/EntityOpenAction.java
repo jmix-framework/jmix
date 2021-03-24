@@ -23,7 +23,6 @@ import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.ScreenBuilders;
-import io.jmix.ui.UiProperties;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.ActionType;
 import io.jmix.ui.action.BaseAction;
@@ -35,6 +34,7 @@ import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.meta.StudioAction;
 import io.jmix.ui.meta.StudioPropertiesItem;
+import io.jmix.ui.UiComponentProperties;
 import io.jmix.ui.screen.*;
 import io.jmix.ui.sys.ActionScreenInitializer;
 import org.springframework.beans.factory.InitializingBean;
@@ -67,7 +67,7 @@ public class EntityOpenAction<E> extends BaseAction
     protected Icons icons;
 
     protected Messages messages;
-    protected UiProperties properties;
+    protected UiComponentProperties componentProperties;
 
     protected ScreenBuilders screenBuilders;
     @Autowired
@@ -227,13 +227,13 @@ public class EntityOpenAction<E> extends BaseAction
     }
 
     @Autowired
-    protected void setUiProperties(UiProperties properties) {
-        this.properties = properties;
+    protected void setUiComponentProperties(UiComponentProperties componentProperties) {
+        this.componentProperties = componentProperties;
     }
 
     @Override
     public void afterPropertiesSet() {
-        setShortcut(properties.getPickerOpenShortcut());
+        setShortcut(componentProperties.getPickerOpenShortcut());
 
         if (getShortcutCombination() != null) {
             setDescription(messages.getMessage("entityPicker.action.open.tooltip")

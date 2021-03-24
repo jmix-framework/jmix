@@ -19,7 +19,7 @@ package io.jmix.ui.app.filter.configuration;
 import io.jmix.ui.component.CheckBox;
 import io.jmix.ui.component.HasValue;
 import io.jmix.ui.component.TextField;
-import io.jmix.ui.property.UiFilterProperties;
+import io.jmix.ui.UiComponentProperties;
 import io.jmix.ui.screen.ScreenFragment;
 import io.jmix.ui.screen.Subscribe;
 import io.jmix.ui.screen.UiController;
@@ -34,7 +34,7 @@ import static io.jmix.ui.component.filter.FilterUtils.generateConfigurationId;
 public class FilterConfigurationModelFragment extends ScreenFragment {
 
     @Autowired
-    protected UiFilterProperties uiFilterProperties;
+    protected UiComponentProperties componentProperties;
 
     @Autowired
     protected TextField<String> idField;
@@ -73,8 +73,8 @@ public class FilterConfigurationModelFragment extends ScreenFragment {
             nameField.setValue(name);
         }
 
-        idField.setVisible(uiFilterProperties.isShowConfigurationIdField());
-        generatedIdField.setVisible(uiFilterProperties.isShowConfigurationIdField());
+        idField.setVisible(componentProperties.isFilterShowConfigurationIdField());
+        generatedIdField.setVisible(componentProperties.isFilterShowConfigurationIdField());
     }
 
     @Subscribe("idField")

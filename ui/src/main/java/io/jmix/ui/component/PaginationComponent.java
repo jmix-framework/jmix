@@ -17,8 +17,8 @@
 package io.jmix.ui.component;
 
 import io.jmix.core.common.event.Subscription;
-import io.jmix.ui.UiProperties;
 import io.jmix.ui.component.pagination.data.PaginationDataBinder;
+import io.jmix.ui.UiComponentProperties;
 
 import javax.annotation.Nullable;
 import java.util.EventObject;
@@ -85,7 +85,7 @@ public interface PaginationComponent extends Component.BelongToFrame {
     /**
      * Sets visibility of items per page ComboBox. This ComboBox contains options to limit the number
      * of items for one page. If custom options are not set component will use
-     * {@link UiProperties#getPaginationItemsPerPageOptions()}. The default value is {@code false}.
+     * {@link UiComponentProperties#getPaginationItemsPerPageOptions()}. The default value is {@code false}.
      */
     void setItemsPerPageVisible(boolean itemsPerPageVisible);
 

@@ -19,10 +19,10 @@ package io.jmix.ui.facet;
 import io.jmix.core.MessageTools;
 import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.Notifications;
-import io.jmix.ui.UiProperties;
 import io.jmix.ui.component.ContentMode;
 import io.jmix.ui.component.NotificationFacet;
 import io.jmix.ui.component.impl.NotificationFacetImpl;
+import io.jmix.ui.UiComponentProperties;
 import io.jmix.ui.xml.FacetProvider;
 import io.jmix.ui.xml.layout.ComponentLoader;
 import org.dom4j.Element;
@@ -39,7 +39,7 @@ public class NotificationFacetProvider implements FacetProvider<NotificationFace
     @Autowired
     protected MessageTools messageTools;
     @Autowired
-    protected UiProperties uiProperties;
+    protected UiComponentProperties componentProperties;
 
     @Override
     public Class<NotificationFacet> getFacetClass() {
@@ -151,7 +151,7 @@ public class NotificationFacetProvider implements FacetProvider<NotificationFace
         String htmlSanitizerEnabledString = element.attributeValue("htmlSanitizerEnabled");
         boolean htmlSanitizerEnabled = isNotEmpty(htmlSanitizerEnabledString)
                 ? Boolean.parseBoolean(htmlSanitizerEnabledString)
-                : uiProperties.isHtmlSanitizerEnabled();
+                : componentProperties.isHtmlSanitizerEnabled();
 
         facet.setHtmlSanitizerEnabled(htmlSanitizerEnabled);
     }

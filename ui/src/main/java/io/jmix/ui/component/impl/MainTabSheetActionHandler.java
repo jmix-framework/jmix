@@ -23,13 +23,13 @@ import io.jmix.core.Messages;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.Notifications.NotificationType;
 import io.jmix.ui.Screens;
-import io.jmix.ui.UiProperties;
 import io.jmix.ui.action.Action.MainTabSheetAction;
 import io.jmix.ui.action.MainTabSheetActionProvider;
 import io.jmix.ui.app.core.dev.LayoutAnalyzer;
 import io.jmix.ui.app.core.dev.LayoutAnalyzerScreen;
 import io.jmix.ui.app.core.dev.LayoutTip;
 import io.jmix.ui.component.Window;
+import io.jmix.ui.UiScreenProperties;
 import io.jmix.ui.screen.OpenMode;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.ScreenContext;
@@ -62,13 +62,13 @@ public class MainTabSheetActionHandler implements Action.Handler {
 
     protected ApplicationContext applicationContext;
     protected Messages messages;
-    protected UiProperties uiProperties;
+    protected UiScreenProperties screenProperties;
 
     public MainTabSheetActionHandler(HasTabSheetBehaviour tabSheet, ApplicationContext applicationContext) {
         this.tabSheet = tabSheet;
         this.applicationContext = applicationContext;
         this.messages = applicationContext.getBean(Messages.class);
-        this.uiProperties = applicationContext.getBean(UiProperties.class);
+        this.screenProperties = applicationContext.getBean(UiScreenProperties.class);
     }
 
     @Override
@@ -88,7 +88,7 @@ public class MainTabSheetActionHandler implements Action.Handler {
         actions.add(closeAllTabs);
 
         if (target != null) {
-            if (uiProperties.isLayoutAnalyzerEnabled()) {
+            if (screenProperties.isLayoutAnalyzerEnabled()) {
                 actions.add(analyzeLayout);
             }
 

@@ -28,7 +28,7 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.data.QueryParser;
 import io.jmix.data.QueryTransformerFactory;
 import io.jmix.ui.component.propertyfilter.PropertyFilterSupport;
-import io.jmix.ui.property.UiFilterProperties;
+import io.jmix.ui.UiComponentProperties;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,10 +47,10 @@ public class UiDataPropertyFilterSupport extends PropertyFilterSupport {
                                        MetadataTools metadataTools,
                                        DataManager dataManager,
                                        DatatypeRegistry datatypeRegistry,
-                                       UiFilterProperties uiFilterProperties,
+                                       UiComponentProperties componentProperties,
                                        AccessManager accessManager,
                                        QueryTransformerFactory queryTransformerFactory) {
-        super(messages, messageTools, metadataTools, dataManager, datatypeRegistry, uiFilterProperties, accessManager);
+        super(messages, messageTools, metadataTools, dataManager, datatypeRegistry, componentProperties, accessManager);
         this.queryTransformerFactory = queryTransformerFactory;
     }
 

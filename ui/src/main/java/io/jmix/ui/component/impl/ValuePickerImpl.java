@@ -23,11 +23,11 @@ import com.vaadin.shared.Registration;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.ui.AppUI;
-import io.jmix.ui.UiProperties;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.data.meta.EntityValueSource;
 import io.jmix.ui.component.formatter.Formatter;
+import io.jmix.ui.UiComponentProperties;
 import io.jmix.ui.screen.UiControllerUtils;
 import io.jmix.ui.sys.TestIdManager;
 import io.jmix.ui.theme.ThemeClassNames;
@@ -84,10 +84,11 @@ public class ValuePickerImpl<V>
     }
 
     @Autowired
-    protected void setUiProperties(UiProperties properties) {
-        actionHandler = new WebValuePickerActionHandler(properties);
+    protected void setUiComponentProperties(UiComponentProperties componentProperties) {
+        actionHandler = new WebValuePickerActionHandler(componentProperties);
         component.addActionHandler(actionHandler);
     }
+
 
     @Override
     public void afterPropertiesSet() {
@@ -481,7 +482,7 @@ public class ValuePickerImpl<V>
 
         protected List<Action> actionList = new ArrayList<>(4);
 
-        public WebValuePickerActionHandler(UiProperties properties) {
+        public WebValuePickerActionHandler(UiComponentProperties properties) {
             String[] strModifiers = StringUtils.split(properties.getPickerShortcutModifiers().toUpperCase(), "-");
             modifiers = new int[strModifiers.length];
 

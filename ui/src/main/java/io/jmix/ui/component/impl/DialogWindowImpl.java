@@ -25,11 +25,11 @@ import io.jmix.ui.Screens;
 import io.jmix.ui.app.core.dev.LayoutAnalyzer;
 import io.jmix.ui.app.core.dev.LayoutAnalyzerScreen;
 import io.jmix.ui.app.core.dev.LayoutTip;
+import io.jmix.ui.UiScreenProperties;
 import io.jmix.ui.screen.OpenMode;
 import org.springframework.context.ApplicationContext;
 import io.jmix.core.Messages;
 import io.jmix.ui.AppUI;
-import io.jmix.ui.UiProperties;
 import io.jmix.ui.component.*;
 import io.jmix.ui.icon.IconResolver;
 import io.jmix.ui.screen.StandardCloseAction;
@@ -54,6 +54,7 @@ public class DialogWindowImpl extends WindowImpl implements DialogWindow, Initia
     protected ApplicationContext applicationContext;
     protected Notifications notifications;
     protected Screens screens;
+    protected UiScreenProperties screenProperties;
 
     public DialogWindowImpl() {
         this.dialogWindow = createComponent();
@@ -88,7 +89,7 @@ public class DialogWindowImpl extends WindowImpl implements DialogWindow, Initia
     }
 
     protected void setupDialogShortcuts() {
-        String closeShortcut = getUiProperties().getCloseShortcut();
+        String closeShortcut = screenProperties.getCloseShortcut();
         KeyCombination closeCombination = KeyCombination.create(closeShortcut);
 
         ShortcutListenerDelegate exitAction = new ShortcutListenerDelegate(
@@ -112,10 +113,6 @@ public class DialogWindowImpl extends WindowImpl implements DialogWindow, Initia
                 }
             }
         });
-    }
-
-    protected UiProperties getUiProperties() {
-        return applicationContext.getBean(UiProperties.class);
     }
 
     protected void onCloseButtonClick(JmixWindow.PreCloseEvent preCloseEvent) {
@@ -171,6 +168,11 @@ public class DialogWindowImpl extends WindowImpl implements DialogWindow, Initia
     @Autowired
     public void setScreens(Screens screens) {
         this.screens = screens;
+    }
+
+    @Autowired
+    public void setScreenProperties(UiScreenProperties screenProperties) {
+        this.screenProperties = screenProperties;
     }
 
     @Override
@@ -360,8 +362,7 @@ public class DialogWindowImpl extends WindowImpl implements DialogWindow, Initia
 
             List<Action> actions = new ArrayList<>(3);
 
-            UiProperties properties = getUiProperties();
-            if (properties.isLayoutAnalyzerEnabled()) {
+            if (screenProperties.isLayoutAnalyzerEnabled()) {
                 actions.add(analyzeAction);
             }
 

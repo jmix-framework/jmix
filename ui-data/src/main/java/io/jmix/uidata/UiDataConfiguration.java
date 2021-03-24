@@ -32,7 +32,7 @@ import io.jmix.ui.component.Component;
 import io.jmix.ui.component.filter.FilterSupport;
 import io.jmix.ui.component.propertyfilter.PropertyFilterSupport;
 import io.jmix.ui.presentation.TablePresentations;
-import io.jmix.ui.property.UiFilterProperties;
+import io.jmix.ui.UiComponentProperties;
 import io.jmix.ui.settings.ScreenSettingsManager;
 import io.jmix.ui.settings.UiSettingsCache;
 import io.jmix.ui.settings.UserSettingService;
@@ -117,10 +117,10 @@ public class UiDataConfiguration {
                                                        MetadataTools metadataTools,
                                                        DataManager dataManager,
                                                        DatatypeRegistry datatypeRegistry,
-                                                       UiFilterProperties uiFilterProperties,
+                                                       UiComponentProperties componentProperties,
                                                        AccessManager accessManager,
                                                        QueryTransformerFactory queryTransformerFactory) {
         return new UiDataPropertyFilterSupport(messages, messageTools, metadataTools, dataManager, datatypeRegistry,
-                uiFilterProperties, accessManager, queryTransformerFactory);
+                componentProperties, accessManager, queryTransformerFactory);
     }
 }

@@ -19,7 +19,6 @@ package io.jmix.ui.component.impl;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.server.Resource;
 import io.jmix.core.common.event.Subscription;
-import io.jmix.ui.UiProperties;
 import io.jmix.ui.component.EntityComboBox;
 import io.jmix.ui.component.SecuredActionsHolder;
 import io.jmix.ui.component.data.Options;
@@ -89,7 +88,7 @@ public class EntityComboBoxImpl<V> extends EntityPickerImpl<V>
     public void afterPropertiesSet() {
         super.afterPropertiesSet();
 
-        setPageLength(applicationContext.getBean(UiProperties.class).getComboBoxPageLength());
+        setPageLength(getUiComponentProperties().getComboBoxPageLength());
     }
 
     @Override

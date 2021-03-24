@@ -21,10 +21,10 @@ import com.vaadin.ui.MenuBar;
 import io.jmix.core.Messages;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.Screens;
-import io.jmix.ui.UiProperties;
 import io.jmix.ui.app.core.dev.LayoutAnalyzer;
 import io.jmix.ui.app.core.dev.LayoutAnalyzerScreen;
 import io.jmix.ui.app.core.dev.LayoutTip;
+import io.jmix.ui.UiScreenProperties;
 import io.jmix.ui.screen.OpenMode;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.UiControllerUtils;
@@ -40,10 +40,10 @@ public class LayoutAnalyzerContextMenuProvider {
     @Autowired
     protected Messages messages;
     @Autowired
-    protected UiProperties properties;
+    protected UiScreenProperties screenProperties;
 
     public void initContextMenu(Screen screen, io.jmix.ui.component.Component contextMenuTarget) {
-        if (properties.isLayoutAnalyzerEnabled()) {
+        if (screenProperties.isLayoutAnalyzerEnabled()) {
             ContextMenu contextMenu = new ContextMenu(contextMenuTarget.unwrap(AbstractComponent.class), true);
             MenuBar.MenuItem menuItem = contextMenu.addItem(messages.getMessage("actions.analyzeLayout"), c -> {
                 LayoutAnalyzer analyzer = new LayoutAnalyzer();

@@ -20,7 +20,7 @@ import io.jmix.core.CoreConfiguration
 import io.jmix.data.DataConfiguration
 import io.jmix.eclipselink.EclipselinkConfiguration
 import io.jmix.ui.UiConfiguration
-import io.jmix.ui.UiProperties
+import io.jmix.ui.UiComponentProperties
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
@@ -31,13 +31,13 @@ import test_support.UiTestConfiguration
 class EntityFieldPropertiesTest extends Specification {
 
     @Autowired
-    UiProperties properties
+    UiComponentProperties componentProperties
 
     def "properties are parsed from file"() {
         expect:
-        properties.getEntityFieldType().get('test_SomeEntity') == 'entityComboBox'
+        componentProperties.getEntityFieldType().get('test_SomeEntity') == 'entityComboBox'
 
-        def actionIds = properties.getEntityFieldActions().get('test_SomeEntity')
+        def actionIds = componentProperties.getEntityFieldActions().get('test_SomeEntity')
         actionIds instanceof List
         actionIds.containsAll('entity_lookup', 'entity_open', 'entity_clear')
     }

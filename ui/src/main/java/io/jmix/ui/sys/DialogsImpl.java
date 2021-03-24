@@ -25,7 +25,6 @@ import io.jmix.core.Messages;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.Dialogs;
 import io.jmix.ui.ScreenBuilders;
-import io.jmix.ui.UiProperties;
 import io.jmix.ui.action.AbstractAction;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.DialogAction;
@@ -39,6 +38,8 @@ import io.jmix.ui.executor.BackgroundTask;
 import io.jmix.ui.executor.BackgroundWorker;
 import io.jmix.ui.icon.IconResolver;
 import io.jmix.ui.icon.Icons;
+import io.jmix.ui.UiComponentProperties;
+import io.jmix.ui.UiScreenProperties;
 import io.jmix.ui.sanitizer.HtmlSanitizer;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.OpenMode;
@@ -73,7 +74,9 @@ public class DialogsImpl implements Dialogs {
     @Autowired
     protected Icons icons;
     @Autowired
-    protected UiProperties properties;
+    protected UiComponentProperties componentProperties;
+    @Autowired
+    protected UiScreenProperties screenProperties;
     @Autowired
     protected HtmlSanitizer htmlSanitizer;
     @Autowired
@@ -156,7 +159,7 @@ public class DialogsImpl implements Dialogs {
         protected VerticalLayout layout;
         protected HorizontalLayout buttonsContainer;
 
-        protected boolean htmlSanitizerEnabled = properties.isHtmlSanitizerEnabled();
+        protected boolean htmlSanitizerEnabled = componentProperties.isHtmlSanitizerEnabled();
 
         protected Action[] actions;
 
@@ -360,9 +363,9 @@ public class DialogsImpl implements Dialogs {
                 }
 
                 if (action == firstCommitAction) {
-                    setClickShortcut(button, properties.getCommitShortcut());
+                    setClickShortcut(button, screenProperties.getCommitShortcut());
                 } else if (action == firstDeclineAction) {
-                    setClickShortcut(button, properties.getCloseShortcut());
+                    setClickShortcut(button, screenProperties.getCloseShortcut());
                 }
             }
 
@@ -408,7 +411,7 @@ public class DialogsImpl implements Dialogs {
         protected VerticalLayout layout;
         protected JmixButton okButton;
 
-        protected boolean htmlSanitizerEnabled = properties.isHtmlSanitizerEnabled();
+        protected boolean htmlSanitizerEnabled = componentProperties.isHtmlSanitizerEnabled();
 
         public MessageDialogBuilderImpl() {
             window = new JmixWindow();
@@ -633,7 +636,7 @@ public class DialogsImpl implements Dialogs {
         }
 
         protected void initShortcuts() {
-            String closeShortcut = properties.getCloseShortcut();
+            String closeShortcut = screenProperties.getCloseShortcut();
             KeyCombination closeCombination = KeyCombination.create(closeShortcut);
 
             window.addAction(

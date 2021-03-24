@@ -17,7 +17,6 @@
 package io.jmix.ui.xml.layout.loader;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableMap;
 import io.jmix.core.ClassManager;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Messages;
@@ -48,6 +47,7 @@ import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.UiControllerUtils;
 import io.jmix.ui.theme.ThemeConstants;
 import io.jmix.ui.theme.ThemeConstantsManager;
+import io.jmix.ui.xml.PropertyShortcutLoader;
 import io.jmix.ui.xml.layout.ComponentLoader;
 import io.jmix.ui.xml.layout.LayoutLoaderConfig;
 import io.jmix.ui.xml.layout.LoaderResolver;
@@ -65,10 +65,8 @@ import org.springframework.core.env.Environment;
 import javax.annotation.Nullable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 import static com.google.common.base.Preconditions.checkState;
 import static io.jmix.ui.icon.Icons.ICON_NAME_REGEX;
@@ -77,21 +75,6 @@ import static org.apache.commons.lang3.StringUtils.trimToNull;
 public abstract class AbstractComponentLoader<T extends Component> implements ComponentLoader<T> {
 
     private static final Logger log = LoggerFactory.getLogger(AbstractComponentLoader.class);
-
-    protected static final Map<String, Function<UiProperties, String>> SHORTCUT_ALIASES =
-            ImmutableMap.<String, Function<UiProperties, String>>builder()
-                    .put("TABLE_EDIT_SHORTCUT", UiProperties::getTableEditShortcut)
-                    .put("TABLE_INSERT_SHORTCUT", UiProperties::getTableInsertShortcut)
-                    .put("TABLE_ADD_SHORTCUT", UiProperties::getTableAddShortcut)
-                    .put("TABLE_REMOVE_SHORTCUT", UiProperties::getTableRemoveShortcut)
-                    .put("COMMIT_SHORTCUT", UiProperties::getCommitShortcut)
-                    .put("CLOSE_SHORTCUT", UiProperties::getCloseShortcut)
-                    .put("NEXT_TAB_SHORTCUT", UiProperties::getNextTabShortcut)
-                    .put("PREVIOUS_TAB_SHORTCUT", UiProperties::getPreviousTabShortcut)
-                    .put("PICKER_LOOKUP_SHORTCUT", UiProperties::getPickerLookupShortcut)
-                    .put("PICKER_OPEN_SHORTCUT", UiProperties::getPickerOpenShortcut)
-                    .put("PICKER_CLEAR_SHORTCUT", UiProperties::getPickerClearShortcut)
-                    .build();
 
     protected Context context;
 
@@ -760,9 +743,11 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
     @Nullable
     protected String loadShortcutFromAlias(String shortcut) {
         if (shortcut.endsWith("_SHORTCUT}")) {
+            PropertyShortcutLoader propertyShortcutLoader = applicationContext.getBean(PropertyShortcutLoader.class);
+
             String alias = shortcut.substring(2, shortcut.length() - 1);
-            if (SHORTCUT_ALIASES.containsKey(alias)) {
-                return SHORTCUT_ALIASES.get(alias).apply(getProperties());
+            if (propertyShortcutLoader.contains(alias)) {
+                return propertyShortcutLoader.getShortcut(alias);
             } else {
                 String message = String.format("An error occurred while loading shortcut. " +
                         "Can't find shortcut for alias \"%s\"", alias);

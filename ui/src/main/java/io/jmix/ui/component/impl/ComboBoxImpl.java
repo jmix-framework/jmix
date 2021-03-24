@@ -19,7 +19,6 @@ import com.vaadin.server.Resource;
 import com.vaadin.ui.IconGenerator;
 import com.vaadin.ui.StyleGenerator;
 import io.jmix.core.MetadataTools;
-import io.jmix.ui.UiProperties;
 import io.jmix.ui.component.ComboBox;
 import io.jmix.ui.component.data.DataAwareComponentsTools;
 import io.jmix.ui.component.data.Options;
@@ -102,7 +101,7 @@ public class ComboBoxImpl<V> extends AbstractField<JmixComboBox<V>, V, V>
     public void afterPropertiesSet() {
         initComponent(component);
 
-        setPageLength(applicationContext.getBean(UiProperties.class).getComboBoxPageLength());
+        setPageLength(getUiComponentProperties().getComboBoxPageLength());
     }
 
     protected void initComponent(JmixComboBox<V> component) {

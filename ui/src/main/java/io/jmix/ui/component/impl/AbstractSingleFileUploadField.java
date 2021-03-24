@@ -25,11 +25,11 @@ import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.Notifications;
-import io.jmix.ui.UiProperties;
 import io.jmix.ui.component.ComponentContainer;
 import io.jmix.ui.component.SingleFileUploadField;
 import io.jmix.ui.download.Downloader;
 import io.jmix.ui.icon.IconResolver;
+import io.jmix.ui.UiComponentProperties;
 import io.jmix.ui.widget.JmixFileUpload;
 import io.jmix.ui.widget.JmixFileUploadField;
 import org.apache.commons.lang3.StringUtils;
@@ -56,6 +56,7 @@ public abstract class AbstractSingleFileUploadField<R> extends AbstractField<Jmi
     protected Downloader downloader;
     protected Messages messages;
     protected Supplier<InputStream> contentProvider;
+    protected UiComponentProperties componentProperties;
 
     protected long fileSizeLimit = 0;
     protected Set<String> permittedExtensions;
@@ -82,6 +83,11 @@ public abstract class AbstractSingleFileUploadField<R> extends AbstractField<Jmi
     @Autowired
     public void setMessages(Messages messages) {
         this.messages = messages;
+    }
+
+    @Autowired
+    public void setComponentProperties(UiComponentProperties componentProperties) {
+        this.componentProperties = componentProperties;
     }
 
     @Override
@@ -225,7 +231,7 @@ public abstract class AbstractSingleFileUploadField<R> extends AbstractField<Jmi
         if (fileSizeLimit > 0) {
             return fileSizeLimit;
         } else {
-            int maxUploadSizeMb = applicationContext.getBean(UiProperties.class).getMaxUploadSizeMb();
+            int maxUploadSizeMb = componentProperties.getUploadFieldMaxUploadSizeMb();
 
             return (long) maxUploadSizeMb * BYTES_IN_MEGABYTE;
         }
@@ -251,7 +257,7 @@ public abstract class AbstractSingleFileUploadField<R> extends AbstractField<Jmi
                 fileSizeLimitString = doubleDatatype.format(fileSizeInMb, currentAuthentication.getLocale());
             }
         } else {
-            fileSizeLimitString = String.valueOf(applicationContext.getBean(UiProperties.class).getMaxUploadSizeMb());
+            fileSizeLimitString = String.valueOf(componentProperties.getUploadFieldMaxUploadSizeMb());
         }
         return fileSizeLimitString;
     }

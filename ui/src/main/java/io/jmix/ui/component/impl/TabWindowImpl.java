@@ -20,8 +20,9 @@ import com.google.common.base.Strings;
 import com.vaadin.ui.Layout;
 import com.vaadin.ui.TabSheet;
 import io.jmix.ui.MainTabSheetMode;
+import io.jmix.ui.UiComponentProperties;
+import io.jmix.ui.UiScreenProperties;
 import org.springframework.context.ApplicationContext;
-import io.jmix.ui.UiProperties;
 import io.jmix.ui.component.TabWindow;
 import io.jmix.ui.icon.IconResolver;
 import io.jmix.ui.widget.JmixSingleModeContainer;
@@ -171,7 +172,7 @@ public class TabWindowImpl extends WindowImpl implements TabWindow {
     public String formatTabCaption() {
         String s = formatTabDescription();
 
-        int maxLength = applicationContext.getBean(UiProperties.class).getMainTabCaptionLength();
+        int maxLength = applicationContext.getBean(UiScreenProperties.class).getMainTabCaptionLength();
         if (s.length() > maxLength) {
             return s.substring(0, maxLength) + "...";
         } else {
@@ -197,7 +198,7 @@ public class TabWindowImpl extends WindowImpl implements TabWindow {
     public void setContentSwitchMode(ContentSwitchMode mode) {
         checkNotNullArgument(mode, "Content switch mode can't be null. Use ContentSwitchMode.DEFAULT option instead");
 
-        MainTabSheetMode tabSheetMode = applicationContext.getBean(UiProperties.class)
+        MainTabSheetMode tabSheetMode = applicationContext.getBean(UiComponentProperties.class)
                 .getMainTabSheetMode();
         if (tabSheetMode != MainTabSheetMode.MANAGED) {
             log.debug("Content switch mode can be set only for the managed main TabSheet. Current invocation will be ignored.");

@@ -18,7 +18,6 @@ package io.jmix.ui.screen;
 
 import com.google.common.base.Strings;
 import io.jmix.core.Messages;
-import io.jmix.ui.UiProperties;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.component.*;
@@ -26,6 +25,7 @@ import io.jmix.ui.component.LookupComponent;
 import io.jmix.ui.component.LookupComponent.LookupSelectionChangeNotifier;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
+import io.jmix.ui.UiScreenProperties;
 import io.jmix.ui.util.OperationResult;
 
 import javax.annotation.Nullable;
@@ -69,7 +69,7 @@ public class StandardLookup<T> extends Screen implements LookupScreen<T>, MultiS
     }
 
     protected Action addDefaultSelectAction(Messages messages, Icons icons) {
-        String commitShortcut = getApplicationContext().getBean(UiProperties.class).getCommitShortcut();
+        String commitShortcut = getApplicationContext().getBean(UiScreenProperties.class).getCommitShortcut();
 
         Action action = new BaseAction(LOOKUP_SELECT_ACTION_ID)
                 .withCaption(messages.getMessage("actions.Select"))

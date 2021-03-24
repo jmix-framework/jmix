@@ -33,6 +33,7 @@ import io.jmix.ui.Screens.WindowStack;
 import io.jmix.ui.component.*;
 import io.jmix.ui.navigation.NavigationState;
 import io.jmix.ui.navigation.UrlRouting;
+import io.jmix.ui.UiScreenProperties;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.UiControllerUtils;
@@ -215,7 +216,7 @@ public class AppWorkAreaImpl extends AbstractComponent<CssLayout> implements App
     }
 
     protected HasTabSheetBehaviour createTabbedModeContainer() {
-        if (getUiProperties().getMainTabSheetMode() == MainTabSheetMode.DEFAULT) {
+        if (getUiComponentProperties().getMainTabSheetMode() == MainTabSheetMode.DEFAULT) {
             JmixMainTabSheet jmixTabSheet = new JmixMainTabSheet();
 
             tabbedContainer = jmixTabSheet;
@@ -234,7 +235,7 @@ public class AppWorkAreaImpl extends AbstractComponent<CssLayout> implements App
         } else {
             JmixManagedTabSheet jmixManagedTabSheet = new JmixManagedTabSheet();
 
-            ManagedMainTabSheetMode tabSheetMode = getUiProperties().getManagedMainTabSheetMode();
+            ManagedMainTabSheetMode tabSheetMode = getUiComponentProperties().getManagedMainTabSheetMode();
             jmixManagedTabSheet.setMode(JmixManagedTabSheet.Mode.valueOf(tabSheetMode.name()));
 
             tabbedContainer = jmixManagedTabSheet;
@@ -532,8 +533,7 @@ public class AppWorkAreaImpl extends AbstractComponent<CssLayout> implements App
     }
 
     protected ShortcutListener createCloseShortcut(RootWindow topLevelWindow) {
-        UiProperties properties = applicationContext.getBean(UiProperties.class);
-        String closeShortcut = properties.getCloseShortcut();
+        String closeShortcut = applicationContext.getBean(UiScreenProperties.class).getCloseShortcut();
         KeyCombination combination = KeyCombination.create(closeShortcut);
 
         return new ShortcutListenerDelegate("onClose", combination.getKey().getCode(),
@@ -544,7 +544,7 @@ public class AppWorkAreaImpl extends AbstractComponent<CssLayout> implements App
     }
 
     protected ShortcutListener createNextWindowTabShortcut(RootWindow topLevelWindow) {
-        String nextTabShortcut = applicationContext.getBean(UiProperties.class).getNextTabShortcut();
+        String nextTabShortcut = getUiComponentProperties().getMainTabSheetNextTabShortcut();
         KeyCombination combination = KeyCombination.create(nextTabShortcut);
 
         return new ShortcutListenerDelegate(
@@ -570,7 +570,7 @@ public class AppWorkAreaImpl extends AbstractComponent<CssLayout> implements App
     }
 
     protected ShortcutListener createPreviousWindowTabShortcut(RootWindow topLevelWindow) {
-        String previousTabShortcut = applicationContext.getBean(UiProperties.class).getPreviousTabShortcut();
+        String previousTabShortcut = getUiComponentProperties().getMainTabSheetPreviousTabShortcut();
         KeyCombination combination = KeyCombination.create(previousTabShortcut);
 
         return new ShortcutListenerDelegate("onPreviousTab", combination.getKey().getCode(),
@@ -706,7 +706,7 @@ public class AppWorkAreaImpl extends AbstractComponent<CssLayout> implements App
             return true;
         }
 
-        if (applicationContext.getBean(UiProperties.class).isDefaultScreenCanBeClosed()) {
+        if (applicationContext.getBean(UiScreenProperties.class).isDefaultScreenCanBeClosed()) {
             return false;
         }
 

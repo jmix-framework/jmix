@@ -23,10 +23,10 @@ import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Layout;
 import com.vaadin.ui.themes.ValoTheme;
+import io.jmix.ui.UiScreenProperties;
 import org.springframework.context.ApplicationContext;
 import io.jmix.core.Messages;
 import io.jmix.ui.AppUI;
-import io.jmix.ui.UiProperties;
 import io.jmix.ui.component.AppWorkArea.Mode;
 import io.jmix.ui.component.CloseOriginType;
 import io.jmix.ui.component.Window;
@@ -101,7 +101,7 @@ public class WindowBreadCrumbs extends CssLayout {
         addComponent(logoLayout);
         addComponent(enclosingLayout);
 
-        boolean controlsVisible = applicationContext.getBean(UiProperties.class).isShowBreadCrumbs();
+        boolean controlsVisible = applicationContext.getBean(UiScreenProperties.class).isShowBreadCrumbs();
 
         enclosingLayout.setVisible(controlsVisible);
 

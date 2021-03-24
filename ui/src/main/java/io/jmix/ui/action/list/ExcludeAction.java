@@ -20,7 +20,6 @@ import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.ui.RemoveOperation;
-import io.jmix.ui.UiProperties;
 import io.jmix.ui.accesscontext.UiEntityAttributeContext;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.ActionType;
@@ -32,6 +31,7 @@ import io.jmix.ui.meta.StudioAction;
 import io.jmix.ui.meta.StudioPropertiesItem;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.Nested;
+import io.jmix.ui.UiComponentProperties;
 import io.jmix.ui.screen.Install;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -164,8 +164,8 @@ public class ExcludeAction<E> extends SecuredListAction implements Action.Adjust
     }
 
     @Autowired
-    protected void setUiProperties(UiProperties properties) {
-        setShortcut(properties.getTableRemoveShortcut());
+    protected void setUiComponentProperties(UiComponentProperties componentProperties) {
+        setShortcut(componentProperties.getTableRemoveShortcut());
     }
 
     @Autowired

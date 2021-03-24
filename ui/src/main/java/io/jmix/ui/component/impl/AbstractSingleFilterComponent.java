@@ -24,7 +24,7 @@ import io.jmix.ui.UiComponents;
 import io.jmix.ui.component.*;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.model.DataLoader;
-import io.jmix.ui.property.UiFilterProperties;
+import io.jmix.ui.UiComponentProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
@@ -65,8 +65,8 @@ public abstract class AbstractSingleFilterComponent<V> extends CompositeComponen
     }
 
     @Autowired
-    public void setUiFilterProperties(UiFilterProperties uiFilterProperties) {
-        this.autoApply = uiFilterProperties.isAutoApply();
+    public void setUiComponentProperties(UiComponentProperties componentProperties) {
+        this.autoApply = componentProperties.isFilterAutoApply();
     }
 
     protected void onCreate(CreateEvent createEvent) {

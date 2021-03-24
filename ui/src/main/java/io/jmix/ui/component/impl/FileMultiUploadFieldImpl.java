@@ -25,9 +25,9 @@ import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.Notifications.NotificationType;
-import io.jmix.ui.UiProperties;
 import io.jmix.ui.component.ComponentContainer;
 import io.jmix.ui.component.FileMultiUploadField;
+import io.jmix.ui.UiComponentProperties;
 import io.jmix.ui.upload.TemporaryStorage;
 import io.jmix.ui.widget.JmixFileUpload;
 import org.apache.commons.lang3.StringUtils;
@@ -64,6 +64,7 @@ public class FileMultiUploadFieldImpl extends AbstractComponent<JmixFileUpload>
     protected ComponentContainer pasteZone;
     protected String dropZonePrompt;
 
+    protected UiComponentProperties componentProperties;
     protected Messages messages;
     protected TemporaryStorage temporaryStorage;
     protected UUID tempFileId;
@@ -81,6 +82,11 @@ public class FileMultiUploadFieldImpl extends AbstractComponent<JmixFileUpload>
     @Autowired
     public void setMessages(Messages messages) {
         this.messages = messages;
+    }
+
+    @Autowired
+    public void setComponentProperties(UiComponentProperties componentProperties) {
+        this.componentProperties = componentProperties;
     }
 
     @Override
@@ -102,7 +108,7 @@ public class FileMultiUploadFieldImpl extends AbstractComponent<JmixFileUpload>
         impl.setDropZonePrompt(messages.getMessage("upload.dropZonePrompt"));
         impl.setDescription(null);
 
-        int maxUploadSizeMb = applicationContext.getBean(UiProperties.class).getMaxUploadSizeMb();
+        int maxUploadSizeMb = componentProperties.getUploadFieldMaxUploadSizeMb();
         int maxSizeBytes = maxUploadSizeMb * BYTES_IN_MEGABYTE;
 
         impl.setFileSizeLimit(maxSizeBytes);
@@ -361,7 +367,7 @@ public class FileMultiUploadFieldImpl extends AbstractComponent<JmixFileUpload>
                 fileSizeLimitString = doubleDatatype.format(fileSizeInMb, currentAuthentication.getLocale());
             }
         } else {
-            fileSizeLimitString = String.valueOf(applicationContext.getBean(UiProperties.class).getMaxUploadSizeMb());
+            fileSizeLimitString = String.valueOf(componentProperties.getUploadFieldMaxUploadSizeMb());
         }
         return fileSizeLimitString;
     }

@@ -17,6 +17,7 @@
 package io.jmix.ui.component;
 
 import io.jmix.core.common.event.Subscription;
+import io.jmix.ui.UiProperties;
 import io.jmix.ui.component.pagination.data.PaginationDataBinder;
 import io.jmix.ui.UiComponentProperties;
 

@@ -18,14 +18,20 @@ package io.jmix.securityui.authentication;
 
 import com.vaadin.server.VaadinServletRequest;
 import com.vaadin.server.VaadinServletResponse;
+import io.jmix.core.AccessManager;
 import io.jmix.core.CoreProperties;
+import io.jmix.core.Messages;
 import io.jmix.core.security.ClientDetails;
+import io.jmix.securityui.accesscontext.UiLoginToUiContext;
 import io.jmix.ui.ScreenBuilders;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.OpenMode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -60,11 +66,15 @@ import static org.springframework.security.web.authentication.rememberme.Abstrac
 @Component("ui_LoginScreenAuthenticationSupport")
 public class LoginScreenAuthenticationSupport {
 
+    private static final Logger log = LoggerFactory.getLogger(LoginScreenAuthenticationSupport.class);
+
     protected AuthenticationManager authenticationManager;
 
     protected UiProperties uiProperties;
     protected CoreProperties coreProperties;
     protected ScreenBuilders screenBuilders;
+    protected AccessManager accessManager;
+    protected Messages messages;
 
     private SessionAuthenticationStrategy authenticationStrategy;
 
@@ -86,6 +96,16 @@ public class LoginScreenAuthenticationSupport {
     @Autowired
     public void setScreenBuilders(ScreenBuilders screenBuilders) {
         this.screenBuilders = screenBuilders;
+    }
+
+    @Autowired
+    public void setAccessManager(AccessManager accessManager) {
+        this.accessManager = accessManager;
+    }
+
+    @Autowired
+    public void setMessages(Messages messages) {
+        this.messages = messages;
     }
 
     @Autowired(required = false)
@@ -134,7 +154,20 @@ public class LoginScreenAuthenticationSupport {
             authenticationStrategy.onAuthentication(authentication, request, response);
         }
 
+        checkLoginToUi(authDetails);
+
         showMainScreen(frameOwner);
+    }
+
+    protected void checkLoginToUi(AuthDetails authDetails) {
+        UiLoginToUiContext loginToUiContext = new UiLoginToUiContext();
+        accessManager.applyRegisteredConstraints(loginToUiContext);
+        if (!loginToUiContext.isPermitted()) {
+            log.warn("Attempt of login to UI for user '{}' without '{}' permission", authDetails.getUsername(),
+                    loginToUiContext.getName());
+            throw new BadCredentialsException(messages.getMessage(LoginScreenAuthenticationSupport.class,
+                    "badCredentials"));
+        }
     }
 
     protected void showMainScreen(@Nullable FrameOwner frameOwner) {

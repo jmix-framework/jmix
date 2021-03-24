@@ -3,15 +3,11 @@ import io.jmix.audit.EntityLog
 import io.jmix.audit.entity.EntityLogItem
 import io.jmix.audit.entity.LoggedAttribute
 import io.jmix.audit.entity.LoggedEntity
-import io.jmix.core.CoreConfiguration
-import io.jmix.core.Entity
-import io.jmix.core.Metadata
-import io.jmix.core.MetadataTools
+import io.jmix.core.*
 import io.jmix.core.entity.EntityValues
 import io.jmix.data.DataConfiguration
-
-import io.jmix.eclipselink.EclipselinkConfiguration
 import io.jmix.dynattr.DynAttrConfiguration
+import io.jmix.eclipselink.EclipselinkConfiguration
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.ContextConfiguration

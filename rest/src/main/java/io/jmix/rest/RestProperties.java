@@ -30,7 +30,7 @@ public class RestProperties {
     private final String[] allowedOrigins;
     private final int maxUploadSize;
     private final boolean optimisticLockingEnabled;
-    private final boolean responseViewEnabled;
+    private final boolean responseFetchPlanEnabled;
     private final int defaultMaxFetchSize;
     private final Map<String, Integer> entityMaxFetchSize;
 
@@ -39,13 +39,13 @@ public class RestProperties {
             //todo DataSize type
             @DefaultValue("20971520") int maxUploadSize,
             @DefaultValue("false") boolean optimisticLockingEnabled,
-            @DefaultValue("true") boolean responseViewEnabled,
+            @DefaultValue("true") boolean responseFetchPlanEnabled,
             @DefaultValue("10000") int defaultMaxFetchSize,
             @Nullable Map<String, Integer> entityMaxFetchSize) {
         this.allowedOrigins = allowedOrigins;
         this.maxUploadSize = maxUploadSize;
         this.optimisticLockingEnabled = optimisticLockingEnabled;
-        this.responseViewEnabled = responseViewEnabled;
+        this.responseFetchPlanEnabled = responseFetchPlanEnabled;
         this.defaultMaxFetchSize = defaultMaxFetchSize;
         this.entityMaxFetchSize = entityMaxFetchSize == null ? Collections.emptyMap() : entityMaxFetchSize;
     }
@@ -60,8 +60,8 @@ public class RestProperties {
     /**
      * @return whether "responseView" param is required
      */
-    public boolean isResponseViewEnabled() {
-        return responseViewEnabled;
+    public boolean isResponseFetchPlanEnabled() {
+        return responseFetchPlanEnabled;
     }
 
     /**

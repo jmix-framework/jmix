@@ -46,6 +46,7 @@ import io.jmix.ui.component.*;
 import io.jmix.ui.download.ByteArrayDataProvider;
 import io.jmix.ui.download.Downloader;
 import io.jmix.ui.model.InstanceContainer;
+import io.jmix.ui.UiScreenProperties;
 import io.jmix.ui.screen.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -86,6 +87,8 @@ public class EmailTemplateSendScreen extends Screen {
     protected ReportParameterValidator reportParameterValidator;
     @Autowired
     protected UiProperties uiProperties;
+    @Autowired
+    protected UiScreenProperties screenProperties;
     @Autowired
     protected EmailTemplates emailTemplates;
 
@@ -247,7 +250,7 @@ public class EmailTemplateSendScreen extends Screen {
                                 reportWithParams.getParams());
                     } catch (ReportParametersValidationException e) {
                         Notifications.NotificationType notificationType = Notifications.NotificationType.valueOf(
-                                uiProperties.getValidationNotificationType()
+                                screenProperties.getValidationNotificationType()
                         );
                         notifications.create(notificationType)
                                 .withCaption(messages.getMessage("validationFail.caption"))

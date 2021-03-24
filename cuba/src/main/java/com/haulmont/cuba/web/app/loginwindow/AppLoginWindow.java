@@ -30,6 +30,7 @@ import io.jmix.securityui.authentication.LoginScreenAuthenticationSupport;
 import io.jmix.ui.security.UiLoginProperties;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.Authentication;
 
 import javax.inject.Inject;
@@ -204,7 +205,7 @@ public class AppLoginWindow extends AbstractWindow implements Window.TopLevelWin
                             .withRememberMe(rememberMeCheckBox.isChecked()), this);
 
             onSuccessfulAuthentication(authentication);
-        } catch (BadCredentialsException e) {
+        } catch (BadCredentialsException | DisabledException e) {
             showNotification(messages.getMainMessage("loginFailed"), e.getMessage(), NotificationType.ERROR);
         }
     }

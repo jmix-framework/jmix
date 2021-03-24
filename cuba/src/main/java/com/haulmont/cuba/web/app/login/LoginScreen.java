@@ -32,6 +32,7 @@ import io.jmix.ui.screen.*;
 import io.jmix.ui.security.UiLoginProperties;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.Authentication;
 
 import javax.inject.Inject;
@@ -200,7 +201,7 @@ public class LoginScreen extends Screen {
                             .withRememberMe(rememberMeCheckBox.isChecked()), this);
 
             onSuccessfulAuthentication(authentication);
-        } catch (BadCredentialsException e) {
+        } catch (BadCredentialsException | DisabledException e) {
             notifications.create(Notifications.NotificationType.ERROR)
                     .withCaption(messages.getMessage(getClass(), "loginFailed"))
                     .withDescription(e.getMessage())

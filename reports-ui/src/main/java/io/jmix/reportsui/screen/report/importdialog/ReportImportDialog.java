@@ -29,9 +29,12 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.EnumSet;
 import java.util.UUID;
 
@@ -39,6 +42,7 @@ import java.util.UUID;
 @UiDescriptor("report-import-dialog.xml")
 public class ReportImportDialog extends Screen {
 
+    private static final Logger log = org.slf4j.LoggerFactory.getLogger(ReportImportDialog.class);
     @Autowired
     protected FileStorageUploadField fileUploadField;
     @Autowired
@@ -60,6 +64,7 @@ public class ReportImportDialog extends Screen {
 
     @Subscribe
     protected void onInit(InitEvent event) {
+        fileUploadField.setMode(FileStorageUploadField.FileStoragePutMode.MANUAL);
         importRoles.setValue(Boolean.TRUE);
     }
 
@@ -78,31 +83,49 @@ public class ReportImportDialog extends Screen {
         ValidationErrors validationErrors = getValidationErrors();
 
         if (validationErrors.isEmpty()) {
-            importReport();
-            closeWithDefaultAction();
-        }
+            ReportImportResult result = importReport();
 
+            if (!result.hasErrors()) {
+                notifications.create(Notifications.NotificationType.HUMANIZED)
+                        .withCaption(messages.formatMessage(getClass(), "importResult",
+                                result.getCreatedReports().size(),
+                                result.getUpdatedReports().size()))
+                        .show();
+                close(StandardOutcome.COMMIT);
+            } else {
+                StringBuilder exceptionTraces = new StringBuilder();
+                result.getInnerExceptions().forEach(t -> exceptionTraces.append(t.toString()));
+
+                log.error(exceptionTraces.toString());
+
+                notifications.create(Notifications.NotificationType.ERROR)
+                        .withCaption(messages.getMessage(getClass(), "reportException.unableToImportReport"))
+                        .withDescription(exceptionTraces.toString())
+                .show();
+                close(StandardOutcome.CLOSE);
+            }
+        }
         screenValidation.showValidationErrors(getWindow().getFrameOwner(), validationErrors);
     }
 
-    protected void importReport() {
-        try {
-            UUID fileID = fileUploadField.getFileId();
-            File file = temporaryStorage.getFile(fileID);
-            byte[] bytes = FileUtils.readFileToByteArray(file);
-            temporaryStorage.deleteFile(fileID);
-            ReportImportResult result = reports.importReportsWithResult(bytes, getImportOptions());
+    protected ReportImportResult importReport() {
+        ReportImportResult reportImportResult = new ReportImportResult();
 
-            notifications.create(Notifications.NotificationType.HUMANIZED)
-                    .withCaption(messages.formatMessage(getClass(), "importResult", result.getCreatedReports().size(), result.getUpdatedReports().size()))
-                    .show();
-        } catch (Exception e) {
-            notifications.create(Notifications.NotificationType.ERROR)
-                    .withCaption(messages.getMessage(getClass(), "reportException.unableToImportReport"))
-                    .withDescription(e.toString())
-                    .show();
+        UUID fileId = fileUploadField.getFileId();
+        File file = temporaryStorage.getFile(fileId);
+
+        byte[] bytes;
+        try {
+            bytes = FileUtils.readFileToByteArray(file);
+        } catch (IOException e) {
+            reportImportResult.addException(e);
+            return reportImportResult;
         }
+
+        temporaryStorage.deleteFile(fileId);
+        return reports.importReportsWithResult(bytes, getImportOptions());
     }
+
 
     protected EnumSet<ReportImportOption> getImportOptions() {
         if (BooleanUtils.isNotTrue(importRoles.getValue())) {

@@ -31,6 +31,8 @@ public class ReportImportResult implements Serializable {
     protected Collection<Report> updatedReports;
     protected Collection<Report> createdReports;
 
+    protected Collection<Exception> innerExceptions;
+
     public Collection<Report> getImportedReports() {
         return importedReports == null ? Collections.emptySet() : importedReports;
     }
@@ -41,6 +43,18 @@ public class ReportImportResult implements Serializable {
 
     public Collection<Report> getCreatedReports() {
         return createdReports == null ? Collections.emptySet() : createdReports;
+    }
+
+    public Collection<Exception> getInnerExceptions() {
+        return innerExceptions == null ? Collections.emptyList() : innerExceptions;
+    }
+
+    public boolean hasErrors(){
+        return getInnerExceptions().size() != 0;
+    }
+
+    public void addException(Exception exception){
+        getInnerExceptions().add(exception);
     }
 
     public void addImportedReport(Report importedReport) {

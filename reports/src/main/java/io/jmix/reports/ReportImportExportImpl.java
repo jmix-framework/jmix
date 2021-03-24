@@ -34,10 +34,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.zip.CRC32;
@@ -97,28 +94,22 @@ public class ReportImportExportImpl implements ReportImportExport, ReportImportE
     public ReportImportResult importReportsWithResult(byte[] zipBytes, EnumSet<ReportImportOption> importOptions) {
         log.info("Import started...");
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(zipBytes);
-        ZipArchiveInputStream archiveReader = new ZipArchiveInputStream(byteArrayInputStream);
         ReportImportResult importResult = new ReportImportResult();
-        try {
-            try {
-                while (archiveReader.getNextZipEntry() != null) {
-                    final byte[] buffer = readBytesFromEntry(archiveReader);
-                    importReport(buffer, importOptions, importResult);
-                }
-            } catch (IOException e) {
-                throw new ReportingException("Exception occurred while importing report", e);
+
+        try (ZipArchiveInputStream archiveReader = new ZipArchiveInputStream(byteArrayInputStream)) {
+            while (archiveReader.getNextZipEntry() != null) {
+                final byte[] buffer = readBytesFromEntry(archiveReader);
+                importResult = importReport(buffer, importOptions);
             }
-        } finally {
-            IOUtils.closeQuietly(byteArrayInputStream);
+        } catch (IOException e) {
+            importResult.addException(e);
         }
 
-        if (importResult.getImportedReports().isEmpty()) {
-            throw new ReportingException("Unable to import reports because correct data not found in the archive");
-        }
         log.info("Import successfully completed. Created reports {}, updated {}.",
                 importResult.getCreatedReports().size(), importResult.getUpdatedReports().size());
         return importResult;
     }
+
 
     /**
      * Deploys report from folder
@@ -217,63 +208,92 @@ public class ReportImportExportImpl implements ReportImportExport, ReportImportE
     }
 
 
-    protected Report importReport(byte[] zipBytes, EnumSet<ReportImportOption> importOptions,
-                                  ReportImportResult importResult) throws IOException {
-        Report report = null;
-        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(zipBytes);
-        ZipArchiveInputStream archiveReader;
-        archiveReader = new ZipArchiveInputStream(byteArrayInputStream);
-        ZipArchiveEntry archiveEntry;
-        // importing report.xml to report object
-        while (((archiveEntry = archiveReader.getNextZipEntry()) != null) && (report == null)) {
-            if (isReportsStructureFile(archiveEntry.getName())) {
-                String xml = new String(readBytesFromEntry(archiveReader), StandardCharsets.UTF_8);
-                if (xml.startsWith("<")) {//previous xml structure version
-                    XStreamConverter xStreamConverter = new XStreamConverter();
-                    report = xStreamConverter.convertToReport(xml);
-                    report.setXml(xml);
-                } else {//current json structure
-                    report = reports.convertToReport(xml);
-                    report.setXml(xml);
-                }
-            }
-        }
-
-        byteArrayInputStream.close();
+    protected ReportImportResult importReport(byte[] zipBytes, EnumSet<ReportImportOption> importOptions) throws IOException {
+        ReportImportResult importResult = new ReportImportResult();
+        Report report = fromByteArray(zipBytes);
 
         if (report == null) {
-            throw new ReportingException("Unable to convert data from archive to report");
+            importResult.addException(new ReportingException("Unable to convert data from archive to report"));
+            return importResult;
         }
 
-        // importring template files
-        // not using zipInputStream.reset here because marks not supported.
-        byteArrayInputStream = new ByteArrayInputStream(zipBytes);
-        archiveReader = new ZipArchiveInputStream(byteArrayInputStream);
+        updateReportTemplate(report, zipBytes);
+        withReportOptions(report, importOptions);
 
-        if (report.getTemplates() != null) {
-            // unpack templates
-            int i = 0;
-            while ((archiveEntry = archiveReader.getNextZipEntry()) != null
-                    && (i < report.getTemplates().size())) {
+        Optional<Report> existingReport = dataManager
+                .load(Report.class)
+                .id(report.getId())
+                .fetchPlan(FetchPlan.INSTANCE_NAME)
+                .optional();
 
-                if (!isReportsStructureFile(archiveEntry.getName())
-                        && !archiveEntry.isDirectory()) {
-                    String[] namePaths = archiveEntry.getName().split("/");
-                    int index = Integer.parseInt(namePaths[1]);
+        report = saveReport(report);
+        importResult.addImportedReport(report);
+        if (existingReport.isPresent()) {
+            importResult.addUpdatedReport(report);
+            log.info("Existing report {} updated", report);
+        } else {
+            importResult.addCreatedReport(report);
+            log.info("New report {} imported", report);
+        }
+        return importResult;
+    }
 
-                    if (index >= 0) {
-                        ReportTemplate template = report.getTemplates().get(index);
-                        template.setContent(readBytesFromEntry(archiveReader));
-                        if (StringUtils.isBlank(template.getName())) {
-                            template.setName(namePaths[2]);
-                        }
+    protected Report fromByteArray(byte[] zipBytes) throws IOException {
+        Report report = null; // TODO Probably should be empty but not null
+
+        try (ZipArchiveInputStream archiveReader = new ZipArchiveInputStream(new ByteArrayInputStream(zipBytes))) {
+            ZipArchiveEntry archiveEntry;
+            // importing report.xml to report object
+            while (((archiveEntry = archiveReader.getNextZipEntry()) != null) && (report == null)) {
+                if (isReportsStructureFile(archiveEntry.getName())) {
+                    String xml = new String(readBytesFromEntry(archiveReader), StandardCharsets.UTF_8);
+
+                    if (xml.startsWith("<")) {//previous xml structure version
+                        XStreamConverter xStreamConverter = new XStreamConverter();
+                        report = xStreamConverter.convertToReport(xml);
+                    } else {//current json structure
+                        report = reports.convertToReport(xml);
                     }
-                    i++;
+                    report.setXml(xml);
                 }
             }
         }
-        byteArrayInputStream.close();
+        return report;
+    }
 
+
+    protected void updateReportTemplate(Report report, byte[] zipBytes) throws IOException {
+        // importring template files
+        // not using zipInputStream.reset here because marks not supported.
+
+        try (ZipArchiveInputStream archiveReader = new ZipArchiveInputStream(new ByteArrayInputStream(zipBytes))) {
+            ZipArchiveEntry archiveEntry;
+            if (report.getTemplates() != null) {
+                // unpack templates
+                int i = 0;
+                while ((archiveEntry = archiveReader.getNextZipEntry()) != null
+                        && (i < report.getTemplates().size())) {
+
+                    if (!isReportsStructureFile(archiveEntry.getName())
+                            && !archiveEntry.isDirectory()) {
+                        String[] namePaths = archiveEntry.getName().split("/");
+                        int index = Integer.parseInt(namePaths[1]);
+
+                        if (index >= 0) {
+                            ReportTemplate template = report.getTemplates().get(index);
+                            template.setContent(readBytesFromEntry(archiveReader));
+                            if (StringUtils.isBlank(template.getName())) {
+                                template.setName(namePaths[2]);
+                            }
+                        }
+                        i++;
+                    }
+                }
+            }
+        }
+    }
+
+    protected void withReportOptions(Report report, EnumSet<ReportImportOption> importOptions) {
         if (importOptions != null) {
             for (ReportImportOption option : importOptions) {
                 if (ReportImportOption.DO_NOT_IMPORT_ROLES == option) {
@@ -292,22 +312,6 @@ public class ReportImportExportImpl implements ReportImportExport, ReportImportE
                 }
             }
         }
-
-        Report existingReport = dataManager.load(Report.class)
-                .id(report.getId())
-                .fetchPlan(FetchPlan.INSTANCE_NAME)
-                .one();
-
-        report = saveReport(report);
-        importResult.addImportedReport(report);
-        if (existingReport != null) {
-            importResult.addUpdatedReport(report);
-            log.info("Existing report {} updated", report);
-        } else {
-            importResult.addCreatedReport(report);
-            log.info("New report {} imported", report);
-        }
-        return report;
     }
 
     protected Report saveReport(Report report) {

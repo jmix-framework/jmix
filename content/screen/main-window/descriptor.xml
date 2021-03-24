@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<%
+def mainPrefix = version.startsWith("7") ? "" : "main:"
+%>
+<window xmlns="http://jmix.io/schema/ui/window"
+        class="${packageName}.${controllerName}"
+        extends="/com/haulmont/cuba/web/app/mainwindow/mainwindow.xml">
+
+    <layout>
+        <split id="foldersSplit">
+            <workArea id="workArea">
+                <initialLayout>
+                    <label value="This is the work area - central part of the screen.
+                    Put your components here."/>
+                </initialLayout>
+            </workArea>
+        </split>
+    </layout>
+</window>

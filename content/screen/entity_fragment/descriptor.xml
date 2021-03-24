@@ -1,0 +1,40 @@
+<%
+dcId = "${entity.uncapitalizedClassName}Dc"
+def nestedDatasourceProperties = api.evaluateScript('screen/nestedDatasourceProperties.groovy', ['view': frameView, 'embeddable': false])
+def nestedCollectionDatasourceProperties = api.evaluateScript('screen/nestedCollectionDatasourceProperties.groovy', ['view': frameView])
+def optionsDatasourceAttrs = api.evaluateScript('screen/optionsDatasources.groovy', ['view': frameView])
+def createScrollBox = frameView.allProperties.size() > 10
+def collectionAttributesTable = []
+nestedCollectionDatasourceProperties.each { prop ->
+    def binding = [
+        'nestedCollectionDatasourceProperty': prop,
+        'view': frameView,
+        'createGroupBox': true]
+    def tableXml = api.processSnippet('screen/cuba_7_collectionAttributeTable.xml', binding)
+    if (!binding['isError']) {
+        collectionAttributesTable << tableXml
+    }
+}
+%>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<fragment xmlns="http://jmix.io/schema/ui/fragment">
+    <data>
+        <instance id="${dcId}"
+                  class="${entity.fqn}"<%if (!entity.isDeepInheritor('io.jmix.data.entity.AbstractNotPersistentEntity')) {%>
+        fetchPlan="${frameView.name}"<%}%>>
+        <loader/>
+        <%
+        nestedDatasourceProperties.each {%>
+        <instance id="${it}Dc" property="${it}"/>
+        <%}
+
+        nestedCollectionDatasourceProperties.each {%>
+        <collection id="${it}Dc" property="${it}"/>
+        <%}
+        %></instance>
+    </data>
+    <layout>
+
+    </layout>
+</fragment>
+

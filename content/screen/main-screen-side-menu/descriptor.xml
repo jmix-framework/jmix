@@ -1,0 +1,67 @@
+<%
+def horizontalBox = platform_7_2_plus ? "cssLayout" : "hbox"
+def verticalBox = platform_7_2_plus ? "cssLayout" : "vbox"
+%>
+<window xmlns="http://jmix.io/schema/ui/window"
+        caption="mainMsg://application.caption">
+
+    <layout>
+        <${horizontalBox} id="horizontalWrap"
+                   stylename="c-sidemenu-layout"
+                   height="100%"
+                   width="100%">
+            <${verticalBox} id="sideMenuContainer"
+                       height="100%"
+                       stylename="c-sidemenu-container">
+                <${horizontalBox} id="sideMenuPanel"
+                           stylename="c-sidemenu-panel">
+                    <${horizontalBox} id="appTitleBox"
+                               stylename="c-sidemenu-title"
+                               width="100%">
+                        <image id="logoImage"
+                               stylename="c-app-icon"
+                               scaleMode="SCALE_DOWN"/>
+                        <label id="appTitleLabel"
+                               stylename="c-app-title"
+                               value="mainMsg://application.logoLabel"/>
+                    </${horizontalBox}>
+                    <sideMenu id="sideMenu"
+                              width="100%"/>
+                    <ftsField id="ftsField"
+                              width="100%"/>
+                    <timeZoneIndicator id="timeZoneIndicator"
+                                       align="MIDDLE_CENTER"/>
+                    <${horizontalBox} id="controlBox"
+                               stylename="c-sidemenu-controls"
+                               width="100%">
+                        <button id="collapseMenuButton"
+                                caption="mainMsg://menuCollapseGlyph"
+                                description="mainMsg://sideMenuCollapse"
+                                stylename="c-sidemenu-collapse-button"/>
+                        <userIndicator id="userIndicator"
+                                       align="MIDDLE_CENTER"/>
+                        <button id="settingsButton"
+                                icon="GEAR"
+                                description="mainMsg://settings"
+                                stylename="c-settings-button"/>
+                        <logoutButton id="logoutButton"
+                                      icon="SIGN_OUT"
+                                      description="mainMsg://logoutBtnDescription"/>
+                        <button id="loginButton"
+                                icon="SIGN_IN"
+                                description="mainMsg://loginBtnDescription"
+                                stylename="c-login-button"/>
+                    </${horizontalBox}>
+                </${verticalBox}>
+            </${horizontalBox}>
+            <workArea id="workArea"
+                      stylename="c-workarea"
+                      height="100%">
+                <initialLayout spacing="true" margin="true">
+                    <label value="This is the work area - central part of the screen.
+                    Put your components here."/>
+                </initialLayout>
+            </workArea>
+        </cssLayout>
+    </layout>
+</window>

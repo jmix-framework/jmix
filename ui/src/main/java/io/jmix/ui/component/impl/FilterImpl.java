@@ -16,6 +16,7 @@
 
 package io.jmix.ui.component.impl;
 
+import io.jmix.core.AccessManager;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import io.jmix.core.common.event.Subscription;
@@ -26,6 +27,7 @@ import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.Actions;
 import io.jmix.ui.ScreenBuilders;
 import io.jmix.ui.UiComponents;
+import io.jmix.ui.accesscontext.UiFilterModifyConfigurationContext;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.action.filter.FilterAction;
@@ -88,6 +90,8 @@ public class FilterImpl extends CompositeComponent<GroupBoxLayout> implements Fi
 
     protected List<FilterComponent> conditions = new ArrayList<>();
 
+    protected boolean configurationModifyPermitted;
+
     public FilterImpl() {
         addCreateListener(this::onCreate);
     }
@@ -131,6 +135,13 @@ public class FilterImpl extends CompositeComponent<GroupBoxLayout> implements Fi
     public void setUiFilterProperties(UiFilterProperties uiFilterProperties) {
         this.columnsCount = uiFilterProperties.getColumnsCount();
         this.autoApply = uiFilterProperties.isAutoApply();
+    }
+
+    @Autowired
+    public void setAccessManager(AccessManager accessManager) {
+        UiFilterModifyConfigurationContext context = new UiFilterModifyConfigurationContext();
+        accessManager.applyRegisteredConstraints(context);
+        configurationModifyPermitted = context.isPermitted();
     }
 
     @Override
@@ -478,6 +489,7 @@ public class FilterImpl extends CompositeComponent<GroupBoxLayout> implements Fi
         addConditionAction.setFilter(this);
         addConditionButton.setAction(addConditionAction, false);
         addConditionButton.setIcon(null);
+        addConditionButton.setVisible(configurationModifyPermitted);
     }
 
     protected void initSearchButton() {
@@ -496,6 +508,8 @@ public class FilterImpl extends CompositeComponent<GroupBoxLayout> implements Fi
                 addAction(filterAction);
             }
         }
+
+        settingsButton.setVisible(configurationModifyPermitted);
     }
 
     protected LinkButton createConditionRemoveButton(SingleFilterComponent<?> singleFilter, String removeButtonId) {

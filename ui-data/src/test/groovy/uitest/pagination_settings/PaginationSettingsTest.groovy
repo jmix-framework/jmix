@@ -108,7 +108,7 @@ class PaginationSettingsTest extends UiDataTestSpecification {
                 .settings.getSettings("pagination", PaginationSettings)
 
         settingsOpt.get().itemsPerPageValue == null
-        settingsOpt.get().isItemsPerPageNullOption
+        settingsOpt.get().isItemsPerPageUnlimitedOption
     }
 
     def "Pagination apply null option"() {

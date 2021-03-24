@@ -2604,7 +2604,7 @@
         <xs:attribute name="itemsPerPageDefaultValue" type="xs:integer"/>
         <xs:attribute name="itemsPerPageOptions" type="resourceString"/>
         <xs:attribute name="itemsPerPageVisible" type="xs:boolean"/>
-        <xs:attribute name="nullItemsPerPageOptionVisible" type="xs:boolean"/>
+        <xs:attribute name="itemsPerPageUnlimitedOptionVisible" type="xs:boolean"/>
     </xs:attributeGroup>
 
     <xs:complexType name="basePaginationDataBinding">

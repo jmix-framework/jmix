@@ -90,16 +90,16 @@ public interface PaginationComponent extends Component.BelongToFrame {
     void setItemsPerPageVisible(boolean itemsPerPageVisible);
 
     /**
-     * @return {@code true} if null option should be visible in the items per page ComboBox.
+     * @return {@code true} if unlimited (null) option should be visible in the items per page ComboBox.
      */
-    boolean isNullItemsPerPageOptionVisible();
+    boolean isItemsPerPageUnlimitedOptionVisible();
 
     /**
-     * Sets visibility of null option value in the items per page ComboBox. If null option is selected
-     * component will try to load data with {@link UiProperties#getEntityMaxFetchSize(String)} limitation.
+     * Sets visibility of unlimited (null) option value in the items per page ComboBox. If unlimited (null) option
+     * is selected component will try to load data with {@link UiProperties#getEntityMaxFetchSize(String)} limitation.
      * The default value is {@code true}.
      */
-    void setNullItemsPerPageOptionVisible(boolean nullOptionVisible);
+    void setItemsPerPageUnlimitedOptionVisible(boolean unlimitedOptionVisible);
 
     /**
      * @return items per page options.

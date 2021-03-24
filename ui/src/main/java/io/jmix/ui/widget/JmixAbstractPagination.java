@@ -52,12 +52,12 @@ public class JmixAbstractPagination extends CssLayout {
         itemsPerPageLayout.setVisible(itemsPerPageVisible);
     }
 
-    public boolean isNullItemsPerPageOptionVisible() {
+    public boolean isItemsPerPageUnlimitedOptionVisible() {
         return getItemsPerPageComboBox().isEmptySelectionAllowed();
     }
 
-    public void setNullItemsPerPageOptionVisible(boolean nullOptionVisible) {
-        getItemsPerPageComboBox().setEmptySelectionAllowed(nullOptionVisible);
+    public void setItemsPerPageUnlimitedOptionVisible(boolean unlimitedOptionVisible) {
+        getItemsPerPageComboBox().setEmptySelectionAllowed(unlimitedOptionVisible);
     }
 
     public ComboBox<Integer> getItemsPerPageComboBox() {

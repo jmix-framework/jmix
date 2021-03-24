@@ -135,7 +135,7 @@ public abstract class AbstractPagination<T extends JmixAbstractPagination>
                 setSilentlyItemsPerPageValue(value);
                 //noinspection ConstantConditions
                 dataBinder.setMaxResults(value);
-            } else if (value == null && isNullItemsPerPageOptionVisible()) {
+            } else if (value == null && isItemsPerPageUnlimitedOptionVisible()) {
                 setSilentlyItemsPerPageValue(null);
                 dataBinder.setMaxResults(getEntityMaxFetchSize(dataBinder.getEntityMetaClass()));
             } else {
@@ -175,13 +175,13 @@ public abstract class AbstractPagination<T extends JmixAbstractPagination>
     }
 
     @Override
-    public boolean isNullItemsPerPageOptionVisible() {
-        return component.isNullItemsPerPageOptionVisible();
+    public boolean isItemsPerPageUnlimitedOptionVisible() {
+        return component.isItemsPerPageUnlimitedOptionVisible();
     }
 
     @Override
-    public void setNullItemsPerPageOptionVisible(boolean nullOptionVisible) {
-        component.setNullItemsPerPageOptionVisible(nullOptionVisible);
+    public void setItemsPerPageUnlimitedOptionVisible(boolean unlimitedOptionVisible) {
+        component.setItemsPerPageUnlimitedOptionVisible(unlimitedOptionVisible);
     }
 
     @Override

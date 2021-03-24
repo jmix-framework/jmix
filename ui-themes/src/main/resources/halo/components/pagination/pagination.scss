@@ -16,8 +16,15 @@
 
 /**
  * Sets border radius for first (left-top, left-bottom) and last (right-top, right-bottom) page buttons.
+ * @group pagination
  */
 $jmix-pagination-page-border-radius: $v-border-radius !default;
+
+/**
+ * Defines margin-right for elements in pagination like Items Per Page Label and Last navigation button.
+ * @group pagination
+ */
+$jmix-pagination-layout-margin-right: $v-layout-spacing-horizontal !default;
 
 @mixin halo-pagination($primary-stylename: jmix-pagination) {
 
@@ -40,7 +47,7 @@ $jmix-pagination-page-border-radius: $v-border-radius !default;
 
    .#{$primary-stylename}-itemsperpage-layout .#{$primary-stylename}-itemsperpage-label {
      line-height: $v-unit-size;
-     margin-right: $jmix-pagination-wrapper-margin-right;
+     margin-right: $jmix-pagination-layout-margin-right;
    }
  }
 
@@ -72,7 +79,7 @@ $jmix-pagination-page-border-radius: $v-border-radius !default;
  .v-button.#{$primary-stylename}-navigation-btn.last {
    border-top-right-radius: $jmix-pagination-page-border-radius;
    border-bottom-right-radius: $jmix-pagination-page-border-radius;
-   margin-right: $jmix-pagination-wrapper-margin-right;
+   margin-right: $jmix-pagination-layout-margin-right;
  }
 }
 

@@ -22,7 +22,7 @@ public abstract class AbstractPaginationSettings implements ComponentSettings {
 
     protected String id;
     protected Integer itemsPerPageValue;
-    protected Boolean isItemsPerPageNullOption;
+    protected Boolean isItemsPerPageUnlimitedOption;
 
     @Nullable
     @Override
@@ -45,19 +45,19 @@ public abstract class AbstractPaginationSettings implements ComponentSettings {
     }
 
     /**
-     * @return {@code true} if settings contain null option value or not
+     * @return {@code true} if settings contain unlimited (null) option value or not
      */
     @Nullable
-    public Boolean getIsItemsPerPageNullOption() {
-        return isItemsPerPageNullOption;
+    public Boolean getIsItemsPerPageUnlimitedOption() {
+        return isItemsPerPageUnlimitedOption;
     }
 
     /**
      * Sets whether settings contain null option value or not.
      *
-     * @param isItemsPerPageNullOption items per page null option
+     * @param isItemsPerPageUnlimitedOption items per page unlimited option
      */
-    public void setIsItemsPerPageNullOption(@Nullable Boolean isItemsPerPageNullOption) {
-        this.isItemsPerPageNullOption = isItemsPerPageNullOption;
+    public void setIsItemsPerPageUnlimitedOption(@Nullable Boolean isItemsPerPageUnlimitedOption) {
+        this.isItemsPerPageUnlimitedOption = isItemsPerPageUnlimitedOption;
     }
 }

@@ -48,8 +48,8 @@ public abstract class AbstractPaginationLoader<T extends PaginationComponent> ex
 
         loadBoolean(element, "itemsPerPageVisible",
                 resultComponent::setItemsPerPageVisible);
-        loadBoolean(element, "nullItemsPerPageOptionVisible",
-                resultComponent::setNullItemsPerPageOptionVisible);
+        loadBoolean(element, "itemsPerPageUnlimitedOptionVisible",
+                resultComponent::setItemsPerPageUnlimitedOptionVisible);
 
         loadString(element, "itemsPerPageOptions")
                 .ifPresent(options -> {

@@ -38,7 +38,7 @@ public abstract class AbstractPaginationSettingsBinder
         if (component.isItemsPerPageVisible()) {
             Integer value = settings.getItemsPerPageValue();
             if (value != null
-                    || Boolean.TRUE.equals(settings.getIsItemsPerPageNullOption())) {
+                    || Boolean.TRUE.equals(settings.getIsItemsPerPageUnlimitedOption())) {
                 component.setItemsPerPageValue(value);
             }
         }
@@ -51,8 +51,8 @@ public abstract class AbstractPaginationSettingsBinder
         if (component.isItemsPerPageVisible()) {
             Integer value = component.getItemsPerPageValue();
             if (value == null) {
-                if (component.isNullItemsPerPageOptionVisible()) {
-                    settings.setIsItemsPerPageNullOption(true);
+                if (component.isItemsPerPageUnlimitedOptionVisible()) {
+                    settings.setIsItemsPerPageUnlimitedOption(true);
                 }
             } else {
                 settings.setItemsPerPageValue(value);
@@ -66,8 +66,8 @@ public abstract class AbstractPaginationSettingsBinder
         S settings = wrapper.getSettings();
         if (isSettingsChanged(component, settings)) {
             Integer value = component.getItemsPerPageValue();
-            if (value == null && component.isNullItemsPerPageOptionVisible()) {
-                settings.setIsItemsPerPageNullOption(true);
+            if (value == null && component.isItemsPerPageUnlimitedOptionVisible()) {
+                settings.setIsItemsPerPageUnlimitedOption(true);
             }
             settings.setItemsPerPageValue(value);
             return true;
@@ -84,11 +84,11 @@ public abstract class AbstractPaginationSettingsBinder
         Integer settingsValue = settings.getItemsPerPageValue();
 
         if (compValue == null && settingsValue == null) {
-            boolean compNullOption = component.isNullItemsPerPageOptionVisible();
-            if (!compNullOption) {
+            boolean compUnlimitedOption = component.isItemsPerPageUnlimitedOptionVisible();
+            if (!compUnlimitedOption) {
                 return false;
             }
-            return !Boolean.TRUE.equals(settings.getIsItemsPerPageNullOption());
+            return !Boolean.TRUE.equals(settings.getIsItemsPerPageUnlimitedOption());
         }
         return !Objects.equals(compValue, settingsValue);
     }

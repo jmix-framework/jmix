@@ -83,15 +83,12 @@ public class EntityTrackingListener {
         String entityName = metaClass.getName();
         String primaryKeyPropertyName = propertyTools.getPrimaryKeyPropertyNameForIndex(metaClass);
 
-        Object entity = null;
-        if (isTrackedEntityReloadingRequired(event.getType(), entityName)) {
-            entity = dataManager.load(entityId)
-                    .fetchPlanProperties(primaryKeyPropertyName)
-                    .hint(PersistenceHints.SOFT_DELETION, false)
-                    .one();
-        }
+        Object entity = dataManager.load(entityId)
+                .fetchPlanProperties(primaryKeyPropertyName)
+                .hint(PersistenceHints.SOFT_DELETION, false)
+                .one();
 
-        if (entity != null && indexDefinitionsProvider.isDirectlyIndexed(entityName)) { //todo check dirty fields
+        if (indexDefinitionsProvider.isDirectlyIndexed(entityName)) { //todo check dirty fields
             log.debug("{} is directly indexed", entityId);
 
             queueService.enqueue(entity, entityOperation);
@@ -99,6 +96,7 @@ public class EntityTrackingListener {
 
         Map<MetaClass, Set<String>> dependentEntityPks;
         switch (entityOperation) {
+            case CREATE:
             case UPDATE:
                 AttributeChanges changes = event.getChanges();
                 dependentEntityPks = getDependentEntityPksForUpdate(entity, entityClass, changes);
@@ -214,9 +212,5 @@ public class EntityTrackingListener {
     protected Optional<String> getPrimaryKey(MetaClass metaClass, Object entity) {
         String primaryKeyPropertyName = propertyTools.getPrimaryKeyPropertyNameForIndex(metaClass);
         return Optional.ofNullable(EntityValues.getValue(entity, primaryKeyPropertyName)).map(Object::toString);
-    }
-
-    protected boolean isTrackedEntityReloadingRequired(EntityChangedEvent.Type eventType, String entityName) {
-        return indexDefinitionsProvider.isDirectlyIndexed(entityName) || !eventType.equals(EntityChangedEvent.Type.CREATED);
     }
 }

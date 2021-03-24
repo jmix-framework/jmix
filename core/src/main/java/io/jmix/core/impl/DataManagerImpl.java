@@ -161,27 +161,19 @@ public class DataManagerImpl implements DataManager {
         }
 
         if (!toRepeat.isEmpty()) {
-            // todo entity log
-//            boolean logging = entityLog.isLoggingForCurrentThread();
-//            entityLog.processLoggingForCurrentThread(false);
-            try {
-                SaveContext sc = new SaveContext();
-                sc.setJoinTransaction(context.isJoinTransaction());
-                for (Object entity : result) {
-                    if (toRepeat.contains(entity)) {
-                        sc.saving(entity, context.getFetchPlans().get(entity));
-                    }
+            SaveContext sc = new SaveContext();
+            sc.setJoinTransaction(context.isJoinTransaction());
+            for (Object entity : result) {
+                if (toRepeat.contains(entity)) {
+                    sc.saving(entity, context.getFetchPlans().get(entity));
                 }
-                Set committedEntities = save(sc);
-                for (Object committedEntity : committedEntities) {
-                    if (result.contains(committedEntity)) {
-                        result.remove(committedEntity);
-                        result.add(committedEntity);
-                    }
+            }
+            Set committedEntities = save(sc);
+            for (Object committedEntity : committedEntities) {
+                if (result.contains(committedEntity)) {
+                    result.remove(committedEntity);
+                    result.add(committedEntity);
                 }
-            } finally {
-                // todo entity log
-//                entityLog.processLoggingForCurrentThread(logging);
             }
         }
 

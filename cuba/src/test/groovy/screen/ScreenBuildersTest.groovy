@@ -19,6 +19,7 @@ package screen
 import com.haulmont.cuba.core.model.common.User
 import com.haulmont.cuba.gui.ScreenBuilders
 import com.haulmont.cuba.gui.WindowContext
+import com.haulmont.cuba.gui.components.AbstractEditor
 import com.haulmont.cuba.gui.screen.OpenMode
 import com.haulmont.cuba.web.screens.UserBrowser
 import com.haulmont.cuba.web.screens.UserEditor
@@ -28,7 +29,7 @@ import spec.haulmont.cuba.web.UiScreenSpec
 class ScreenBuildersTest extends UiScreenSpec {
 
     @Autowired
-    ScreenBuilders screenBuilders;
+    ScreenBuilders screenBuilders
 
     @Override
     void setup() {
@@ -94,5 +95,21 @@ class ScreenBuildersTest extends UiScreenSpec {
         then:
         context.getLaunchMode() == OpenMode.DIALOG
         context.getOpenMode() == io.jmix.ui.screen.OpenMode.DIALOG
+    }
+
+    def "build a legacy edit screen using legacy ScreenBuilders"() {
+        def mainScreen = showTestMainScreen()
+
+        when:
+        AbstractEditor screen = screenBuilders.editor(User, mainScreen)
+                .newEntity()
+                .withScreenId('test_LegacyUserEditor')
+                .show() as AbstractEditor
+
+        then:
+        screen != null
+
+        and:
+        screen.getEditedEntity() != null
     }
 }

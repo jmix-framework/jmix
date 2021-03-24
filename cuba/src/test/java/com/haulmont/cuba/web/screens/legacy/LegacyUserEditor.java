@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Haulmont.
+ * Copyright 2021 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,10 @@
  * limitations under the License.
  */
 
-package com.haulmont.cuba.web.screens;
+package com.haulmont.cuba.web.screens.legacy;
 
 import com.haulmont.cuba.core.model.common.User;
-import io.jmix.ui.screen.StandardLookup;
-import io.jmix.ui.screen.UiController;
-import io.jmix.ui.screen.UiDescriptor;
+import com.haulmont.cuba.gui.components.AbstractEditor;
 
-@UiController("test_UserBrowser")
-@UiDescriptor("/spec/haulmont/cuba/web/screens/user-browse.xml")
-public class UserBrowser extends StandardLookup<User> {
+public class LegacyUserEditor extends AbstractEditor<User> {
 }

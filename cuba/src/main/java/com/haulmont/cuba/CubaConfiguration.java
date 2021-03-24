@@ -55,6 +55,7 @@ import io.jmix.security.SecurityConfiguration;
 import io.jmix.securitydata.SecurityDataConfiguration;
 import io.jmix.securityui.SecurityUiConfiguration;
 import io.jmix.ui.*;
+import io.jmix.ui.builder.EditorBuilderProcessor;
 import io.jmix.ui.bulk.BulkEditors;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.Table;
@@ -301,6 +302,12 @@ public class CubaConfiguration {
     @Primary
     protected ScreenTools screenTools() {
         return new WebScreenTools();
+    }
+
+    @Bean("cuba_EditorBuilderProcessor")
+    @Primary
+    protected EditorBuilderProcessor editorBuilderProcessor() {
+        return new com.haulmont.cuba.gui.builders.EditorBuilderProcessor();
     }
 
     @EventListener

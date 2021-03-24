@@ -54,8 +54,6 @@ public class EntitySearcherImpl implements EntitySearcher {
     @Autowired
     protected RestHighLevelClient esClient;
     @Autowired
-    protected MetadataTools metadataTools;
-    @Autowired
     protected Metadata metadata;
     @Autowired
     @Qualifier("core_SecureDataManager")

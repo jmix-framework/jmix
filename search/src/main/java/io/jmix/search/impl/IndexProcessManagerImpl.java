@@ -23,7 +23,7 @@ import io.jmix.core.security.SystemAuthenticator;
 import io.jmix.search.IndexProcessManager;
 import io.jmix.search.SearchProperties;
 import io.jmix.search.index.IndexConfiguration;
-import io.jmix.search.index.impl.IndexManagementServiceImpl;
+import io.jmix.search.index.IndexManagementService;
 import io.jmix.search.index.mapping.IndexConfigurationProvider;
 import io.jmix.search.index.queue.QueueService;
 import org.slf4j.Logger;
@@ -39,13 +39,13 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
-@Component
+@Component(IndexProcessManager.NAME)
 public class IndexProcessManagerImpl implements IndexProcessManager {
 
     private static final Logger log = LoggerFactory.getLogger(IndexProcessManagerImpl.class);
 
     @Autowired
-    protected IndexManagementServiceImpl indexManagementServiceImpl;
+    protected IndexManagementService indexManagementService;
     @Autowired
     protected QueueService queueService;
     @Autowired
@@ -95,7 +95,7 @@ public class IndexProcessManagerImpl implements IndexProcessManager {
                 try {
                     authenticator.begin();
                     queueService.emptyQueue(entityName);
-                    boolean recreated = indexManagementServiceImpl.recreateIndex(indexConfiguration);
+                    boolean recreated = indexManagementService.recreateIndex(indexConfiguration);
                     if (!recreated) {
                         throw new RuntimeException("Failed to recreate index '" + indexConfiguration.getIndexName() + "'");
                     }

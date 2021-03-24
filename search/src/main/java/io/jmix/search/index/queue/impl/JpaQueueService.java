@@ -22,7 +22,7 @@ import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.EntityOp;
 import io.jmix.data.StoreAwareLocator;
-import io.jmix.search.index.EntityIndexerImpl;
+import io.jmix.search.index.EntityIndexer;
 import io.jmix.search.index.queue.QueueService;
 import io.jmix.search.index.queue.entity.QueueItem;
 import io.jmix.search.utils.PropertyTools;
@@ -50,7 +50,7 @@ public class JpaQueueService implements QueueService {
     @Autowired
     protected Metadata metadata;
     @Autowired
-    protected EntityIndexerImpl entityIndexerImpl;
+    protected EntityIndexer entityIndexer;
     @Autowired
     protected StoreAwareLocator storeAwareLocator;
     @Autowired
@@ -150,7 +150,7 @@ public class JpaQueueService implements QueueService {
             }
 
             count += queueItems.size(); //todo Return actual amount of indexed entities from 'entityIndexerImpl.indexEntities'
-            entityIndexerImpl.indexQueueItems(queueItems); //todo handle failed commands of bulk request
+            entityIndexer.indexQueueItems(queueItems); //todo handle failed commands of bulk request
 
             SaveContext saveContext = new SaveContext();
             saveContext.removing(queueItems);

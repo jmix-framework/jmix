@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.search.index;
+package io.jmix.search.index.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -24,6 +24,8 @@ import io.jmix.core.*;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.EntityOp;
+import io.jmix.search.index.EntityIndexer;
+import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.mapping.IndexConfigurationProvider;
 import io.jmix.search.index.mapping.MappingFieldDescriptor;
 import io.jmix.search.index.queue.entity.QueueItem;

@@ -311,19 +311,7 @@ public class EditorBuilderProcessor {
                 throw new IllegalArgumentException("Screen id is not set");
             }
 
-            // TODO VM legacy
-            // legacy screens support
-            // WindowInfo windowInfo = windowConfig.getWindowInfo(editorScreenId);
-            ScreenOptions options = builder.getOptions();
-
-
-//
-//            if (LegacyFrame.class.isAssignableFrom(windowInfo.getControllerClass())
-//                    && options == FrameOwner.NO_OPTIONS) {
-//                HashMap<String, Object> paramsMap = new HashMap<>();
-//                paramsMap.put(WindowParams.ITEM.name(), entity);
-//                options = new MapScreenOptions(paramsMap);
-//            }
+            ScreenOptions options = getOptionsForScreen(editorScreenId, entity, builder);
 
             screen = screens.create(editorScreenId, builder.getOpenMode(), options);
         }
@@ -334,6 +322,11 @@ public class EditorBuilderProcessor {
         }
 
         return screen;
+    }
+
+    @SuppressWarnings("unused")
+    protected  <E> ScreenOptions getOptionsForScreen(String editorScreenId, E entity, EditorBuilder<E> builder) {
+        return builder.getOptions();
     }
 
     protected <E> void initializeNestedEntity(E entity, Nested container) {

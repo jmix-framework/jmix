@@ -26,7 +26,6 @@ import io.jmix.datatoolsui.screen.entityinspector.assistant.InspectorFormBuilder
 import io.jmix.datatoolsui.screen.entityinspector.assistant.InspectorTableBuilder;
 import io.jmix.ui.Actions;
 import io.jmix.ui.UiComponents;
-import io.jmix.ui.UiProperties;
 import io.jmix.ui.accesscontext.UiEntityAttributeContext;
 import io.jmix.ui.accesscontext.UiEntityContext;
 import io.jmix.ui.action.Action;
@@ -36,6 +35,7 @@ import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.model.*;
 import io.jmix.ui.model.impl.NoopDataContext;
+import io.jmix.ui.UiComponentProperties;
 import io.jmix.ui.screen.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -72,7 +72,7 @@ public class EntityInspectorEditor extends StandardEditor {
     @Autowired
     protected AccessManager accessManager;
     @Autowired
-    protected UiProperties uiProperties;
+    protected UiComponentProperties componentProperties;
     @Autowired
     protected Actions actions;
     @Autowired
@@ -299,7 +299,7 @@ public class EntityInspectorEditor extends StandardEditor {
         addAction.setScreenClass(EntityInspectorBrowser.class);
 
         addAction.setScreenOptionsSupplier(() -> getPropertyLookupOptions(metaProperty));
-        addAction.setShortcut(uiProperties.getTableAddShortcut());
+        addAction.setShortcut(componentProperties.getTableAddShortcut());
         return addAction;
     }
 
@@ -339,7 +339,7 @@ public class EntityInspectorEditor extends StandardEditor {
             }
             return newItem;
         });
-        createAction.setShortcut(uiProperties.getTableInsertShortcut());
+        createAction.setShortcut(componentProperties.getTableInsertShortcut());
         return createAction;
     }
 
@@ -367,7 +367,7 @@ public class EntityInspectorEditor extends StandardEditor {
             return new MapScreenOptions(editorParams);
 
         });
-        editAction.setShortcut(uiProperties.getTableInsertShortcut());
+        editAction.setShortcut(componentProperties.getTableInsertShortcut());
         return editAction;
     }
 
@@ -396,7 +396,7 @@ public class EntityInspectorEditor extends StandardEditor {
             default:
                 throw new IllegalArgumentException("property must contain an entity");
         }
-        result.setShortcut(uiProperties.getTableRemoveShortcut());
+        result.setShortcut(componentProperties.getTableRemoveShortcut());
         return result;
     }
 

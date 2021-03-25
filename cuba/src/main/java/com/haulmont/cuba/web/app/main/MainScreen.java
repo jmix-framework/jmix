@@ -25,7 +25,6 @@ import io.jmix.ui.component.mainwindow.AppMenu;
 import io.jmix.ui.component.mainwindow.SideMenu;
 import io.jmix.ui.component.mainwindow.UserIndicator;
 import io.jmix.ui.navigation.Route;
-import io.jmix.ui.UiScreenProperties;
 import io.jmix.ui.screen.*;
 import io.jmix.ui.widget.JmixCollapsibleMenuLayoutExtension;
 import io.jmix.ui.widget.JmixCssActionsLayout;
@@ -215,7 +214,7 @@ public class MainScreen extends Screen implements Window.HasWorkArea, Window.Has
     }
 
     protected void openLoginScreen() {
-        String loginScreenId = getApplicationContext().getBean(UiScreenProperties.class).getLoginScreenId();
+        String loginScreenId = getApplicationContext().getBean(UiProperties.class).getLoginScreenId();
 
         UiControllerUtils.getScreenContext(this)
                 .getScreens()

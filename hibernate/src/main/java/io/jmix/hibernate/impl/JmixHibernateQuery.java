@@ -123,7 +123,6 @@ public class JmixHibernateQuery<E> extends AbstractProducedQuery<E> implements Q
         singleResultExpected = false;
 
         Query<E> query = getQuery();
-        preExecute(query);
 
         List<E> queryResultList = query.getResultList();
         List<E> resultList = new ArrayList<>(queryResultList.size());
@@ -184,7 +183,6 @@ public class JmixHibernateQuery<E> extends AbstractProducedQuery<E> implements Q
     @Override
     public int doExecuteUpdate() {
         Query<E> query = getQuery();
-        preExecute(query);
         return query.executeUpdate();
     }
 
@@ -579,15 +577,6 @@ public class JmixHibernateQuery<E> extends AbstractProducedQuery<E> implements Q
         super.beforeQuery();
         if (log.isDebugEnabled())
             log.debug(queryString.replaceAll("[\\t\\n\\x0B\\f\\r]", " "));
-    }
-
-    private void preExecute(Query<E> jpaQuery) {
-        // copying behaviour of org.eclipse.persistence.internal.jpa.QueryImpl.executeReadQuery()
-        if (jpaQuery.getFlushMode() == FlushModeType.AUTO && (!jpaQuery.isReadOnly())) {
-            // flush is expected
-            entityChangedEventManager.beforeFlush(getProducer(), support.getInstances(getProducer()));
-            support.processFlush(getProducer(), true);
-        }
     }
 
     private void checkState() {

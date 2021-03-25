@@ -23,6 +23,7 @@ import io.jmix.security.role.annotation.EntityPolicy;
 import io.jmix.security.role.annotation.ResourceRole;
 import io.jmix.security.role.annotation.SpecificPolicy;
 import io.jmix.securityui.role.annotation.ScreenPolicy;
+import io.jmix.ui.entity.FilterCondition;
 import io.jmix.ui.entity.GroupFilterCondition;
 import io.jmix.ui.entity.JpqlFilterCondition;
 import io.jmix.ui.entity.PropertyFilterCondition;
@@ -49,6 +50,8 @@ public interface UiFilterRole {
     @ScreenPolicy(screenIds = "ui_GroupFilterCondition.edit")
     @EntityPolicy(entityClass = GroupFilterCondition.class, actions = EntityPolicyAction.ALL)
     @EntityAttributePolicy(entityClass = GroupFilterCondition.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)
+    @EntityPolicy(entityClass = FilterCondition.class, actions = EntityPolicyAction.ALL)
+    @EntityAttributePolicy(entityClass = FilterCondition.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)
     void groupFilter();
 
     @ScreenPolicy(screenIds = "ui_PropertyFilterCondition.edit")

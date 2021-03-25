@@ -52,6 +52,7 @@
                     <button id="searchBtn"
                             caption="msg://report.reportFilterButton"
                             align="BOTTOM_LEFT"
+                            icon="SEARCH"
                             width="100px"/>
                 </row>
                 <row>
@@ -64,6 +65,7 @@
                     <button id="clearBtn"
                             caption="msg://report.reportClearButton"
                             align="BOTTOM_LEFT"
+                            icon="REMOVE"
                             width="100px"/>
                 </row>
             </rows>
@@ -77,7 +79,8 @@
                 <action id="runReport" type="itemTracking"/>
             </actions>
             <buttonsPanel>
-                <button id="runReport" action="reportsTable.runReport" caption="msg://runReport" icon="ANGLE_DOUBLE_RIGHT"/>
+                <button id="runReport" action="reportsTable.runReport" caption="msg://runReport"
+                        icon="ANGLE_DOUBLE_RIGHT"/>
             </buttonsPanel>
             <columns>
                 <column id="group"/>

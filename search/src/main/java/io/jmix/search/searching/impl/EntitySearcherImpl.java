@@ -46,7 +46,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@Component(EntitySearcher.NAME)
+@Component("search_EntitySearcher")
 public class EntitySearcherImpl implements EntitySearcher {
 
     private static final Logger log = LoggerFactory.getLogger(EntitySearcherImpl.class);

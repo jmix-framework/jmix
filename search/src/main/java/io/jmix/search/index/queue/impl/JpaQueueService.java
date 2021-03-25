@@ -38,10 +38,8 @@ import javax.persistence.Query;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Component(JpaQueueService.NAME)
+@Component("search_JpaQueueService")
 public class JpaQueueService implements QueueService {
-
-    public static final String NAME = "search_JpaQueueService";
 
     private static final Logger log = LoggerFactory.getLogger(JpaQueueService.class);
 

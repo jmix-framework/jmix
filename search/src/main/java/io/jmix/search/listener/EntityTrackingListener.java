@@ -43,12 +43,10 @@ import javax.persistence.OneToMany;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Component(EntityTrackingListener.NAME)
+@Component("search_EntityTrackingListener")
 public class EntityTrackingListener {
 
     private static final Logger log = LoggerFactory.getLogger(EntityTrackingListener.class);
-
-    public static final String NAME = "search_EntityTrackingListener";
 
     @Autowired
     protected Metadata metadata;

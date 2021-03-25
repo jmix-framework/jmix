@@ -27,8 +27,6 @@ import java.util.Collection;
  */
 public interface EntityIndexer {
 
-    String NAME = "search_EntityIndexer";
-
     /**
      * Stores documents defined in provided queue items to index.
      *

@@ -27,12 +27,10 @@ import javax.annotation.PostConstruct;
 /**
  * Prepares indices on application startup.
  */
-@Component(StartupIndexPreparer.NAME)
+@Component("search_StartupIndexPreparer")
 public class StartupIndexPreparer {
 
     private static final Logger log = LoggerFactory.getLogger(StartupIndexPreparer.class);
-
-    public static final String NAME = "search_StartupIndexPreparer";
 
     @Autowired
     protected IndexManagementService indexManagementService;

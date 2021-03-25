@@ -39,7 +39,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
-@Component(IndexProcessManager.NAME)
+@Component("search_IndexProcessManager")
 public class IndexProcessManagerImpl implements IndexProcessManager {
 
     private static final Logger log = LoggerFactory.getLogger(IndexProcessManagerImpl.class);

@@ -45,7 +45,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.*;
 
-@Component(EntityIndexer.NAME)
+@Component("search_EntityIndexer")
 public class EntityIndexerImpl implements EntityIndexer {
 
     private static final Logger log = LoggerFactory.getLogger(EntityIndexerImpl.class);

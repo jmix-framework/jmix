@@ -23,8 +23,6 @@ import javax.annotation.Nullable;
  */
 public interface IndexProcessManager {
 
-    String NAME = "search_IndexProcessManager";
-
     /**
      * Performs reindex of all entities synchronously.
      */

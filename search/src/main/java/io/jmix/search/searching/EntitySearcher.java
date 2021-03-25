@@ -23,8 +23,6 @@ import io.jmix.search.searching.impl.SearchResult;
  */
 public interface EntitySearcher {
 
-    String NAME = "search_EntitySearcher";
-
     /**
      * Performs search in all search indices with provided term.
      * @param searchTerm term to search in indices

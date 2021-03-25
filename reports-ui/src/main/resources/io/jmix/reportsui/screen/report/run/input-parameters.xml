@@ -24,9 +24,10 @@
         <fragment id="inputParametersFrame" screen="report_InputParameters.fragment"/>
 
         <hbox spacing="true">
-            <button id="printReportButton" caption="msg://input.printReport" icon="icons/run.png"
+            <button id="printReportButton" caption="msg://input.printReport" icon="ANGLE_DOUBLE_RIGHT"
                     shortcut="CTRL-ENTER"/>
-            <button id="cancelButton" caption="msg:///actions.Cancel" shortcut="ESCAPE"/>
+            <button id="cancelButton" caption="msg:///actions.Cancel" icon="CANCEL"
+                    shortcut="ESCAPE"/>
         </hbox>
     </layout>
 </window>

@@ -60,7 +60,7 @@ public abstract class AbstractValueMapper implements ValueMapper {
      * @param value value of single-value property
      * @return value as json
      */
-    protected abstract JsonNode processSingleValue(Object value);
+    protected abstract JsonNode transformSingleValue(Object value);
 
     /**
      * Transform extracted value of multi-value property into result json.
@@ -68,7 +68,7 @@ public abstract class AbstractValueMapper implements ValueMapper {
      * @param values values of multi-value property
      * @return value as json
      */
-    protected abstract JsonNode processMultipleValues(Iterable<?> values);
+    protected abstract JsonNode transformMultipleValues(Iterable<?> values);
 
     protected boolean isCollection(Object value) {
         return !(value instanceof Entity) && value instanceof Iterable;
@@ -76,10 +76,10 @@ public abstract class AbstractValueMapper implements ValueMapper {
 
     protected JsonNode processValue(Object value) {
         if (isCollection(value)) {
-            JsonNode result = processMultipleValues((Iterable<?>) value);
+            JsonNode result = transformMultipleValues((Iterable<?>) value);
             return result.isEmpty() ? NullNode.getInstance() : result;
         } else {
-            return processSingleValue(value);
+            return transformSingleValue(value);
         }
     }
 

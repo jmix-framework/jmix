@@ -37,7 +37,7 @@ public class ReferenceValueMapper extends AbstractValueMapper {
     }
 
     @Override
-    protected JsonNode processSingleValue(Object value) {
+    protected JsonNode transformSingleValue(Object value) {
         String instanceName = metadataTools.getInstanceName(value);
         ObjectNode result = JsonNodeFactory.instance.objectNode();
         result.put("_instance_name", instanceName);
@@ -45,7 +45,7 @@ public class ReferenceValueMapper extends AbstractValueMapper {
     }
 
     @Override
-    protected JsonNode processMultipleValues(Iterable<?> values) {
+    protected JsonNode transformMultipleValues(Iterable<?> values) {
         ArrayNode arrayNode = JsonNodeFactory.instance.arrayNode();
         for (Object value : values) {
             arrayNode.add(metadataTools.getInstanceName(value));

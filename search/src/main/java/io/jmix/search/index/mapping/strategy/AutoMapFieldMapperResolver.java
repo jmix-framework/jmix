@@ -16,6 +16,8 @@
 
 package io.jmix.search.index.mapping.strategy;
 
+import io.jmix.core.CoreProperties;
+import io.jmix.core.Messages;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.impl.FileRefDatatype;
@@ -40,6 +42,10 @@ public class AutoMapFieldMapperResolver { //todo move to automap strategy?
     protected SearchProperties searchProperties;
     @Autowired
     protected FileProcessor fileProcessor;
+    @Autowired
+    protected Messages messages;
+    @Autowired
+    protected CoreProperties coreProperties;
 
     /**
      * Gets {@link FieldMapper} for provided {@link MetaPropertyPath}.
@@ -55,15 +61,11 @@ public class AutoMapFieldMapperResolver { //todo move to automap strategy?
                 fieldMapper = new TextFieldMapper();
             } else if (datatype instanceof FileRefDatatype) {
                 fieldMapper = new FileFieldMapper();
-            } else {
-                //todo
             }
         } else if (propertyPath.getRange().isClass()) {
             fieldMapper = new ReferenceFieldMapper();
         } else if (propertyPath.getRange().isEnum()) {
-            // todo
-        } else {
-            // todo
+            fieldMapper = new EnumFieldMapper();
         }
 
         return Optional.ofNullable(fieldMapper);
@@ -96,6 +98,8 @@ public class AutoMapFieldMapperResolver { //todo move to automap strategy?
             }
         } else if (propertyPath.getRange().isClass()) {
             valueMapper = new ReferenceValueMapper(metadataTools);
+        } else if (propertyPath.getRange().isEnum()) {
+            valueMapper = new EnumValueMapper(messages, coreProperties);
         }
         return Optional.ofNullable(valueMapper);
     }

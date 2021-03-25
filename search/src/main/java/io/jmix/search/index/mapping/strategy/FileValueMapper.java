@@ -52,16 +52,15 @@ public class FileValueMapper extends AbstractValueMapper {
     }
 
     @Override
-    protected JsonNode processSingleValue(Object value) {
+    protected JsonNode transformSingleValue(Object value) {
         return processFileRef((FileRef) value);
     }
 
     @Override
-    protected JsonNode processMultipleValues(Iterable<?> values) {
+    protected JsonNode transformMultipleValues(Iterable<?> values) {
         ArrayNode result = JsonNodeFactory.instance.arrayNode();
         for (Object value : (values)) {
-            FileRef fileRef = (FileRef) value;
-            result.add(processFileRef(fileRef));
+            result.add(processFileRef((FileRef) value));
         }
         return result;
     }

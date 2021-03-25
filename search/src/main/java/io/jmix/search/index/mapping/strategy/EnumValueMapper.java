@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Haulmont.
+ * Copyright 2021 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,30 +17,46 @@
 package io.jmix.search.index.mapping.strategy;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import io.jmix.core.CoreProperties;
+import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 
-public class SimpleValueMapper extends AbstractValueMapper {
+import java.util.Locale;
+import java.util.Map;
 
-    protected static final ObjectMapper objectMapper = new ObjectMapper();
+public class EnumValueMapper extends AbstractValueMapper {
+
+    protected final Messages messages;
+    protected final CoreProperties coreProperties;
+
+    public EnumValueMapper(Messages messages, CoreProperties coreProperties) {
+        this.messages = messages;
+        this.coreProperties = coreProperties;
+    }
 
     @Override
     protected boolean isSupported(Object entity, MetaPropertyPath propertyPath) {
-        return propertyPath.getRange().isDatatype() || propertyPath.getRange().isEnum();
+        return propertyPath.getRange().isEnum();
     }
 
     @Override
     protected JsonNode transformSingleValue(Object value) {
-        return objectMapper.convertValue(value, JsonNode.class);
+        Map<String, Locale> availableLocales = coreProperties.getAvailableLocales();
+        ArrayNode arrayNode = JsonNodeFactory.instance.arrayNode();
+        for (Locale locale : availableLocales.values()) {
+            String message = messages.getMessage((Enum<?>) value, locale);
+            arrayNode.add(message);
+        }
+        return arrayNode;
     }
 
     @Override
     protected JsonNode transformMultipleValues(Iterable<?> values) {
         ArrayNode result = JsonNodeFactory.instance.arrayNode();
         for (Object value : values) {
-            result.add(objectMapper.convertValue(value, JsonNode.class));
+            result.addAll((ArrayNode) transformSingleValue(value));
         }
         return result;
     }

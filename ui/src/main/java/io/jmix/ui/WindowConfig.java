@@ -87,7 +87,7 @@ public class WindowConfig {
     @Autowired
     protected ScreenXmlLoader screenXmlLoader;
     @Autowired
-    protected UiScreenProperties screenProperties;
+    protected UiProperties uiProperties;
     @Autowired
     protected Environment environment;
     @Autowired
@@ -385,11 +385,11 @@ public class WindowConfig {
      */
     protected boolean routeOverrideAllowed(String newScreenId) {
         if (LOGIN_SCREEN_IDS.contains(newScreenId)) {
-            return StringUtils.equals(screenProperties.getLoginScreenId(), newScreenId);
+            return StringUtils.equals(uiProperties.getLoginScreenId(), newScreenId);
         }
 
         if (MAIN_SCREEN_IDS.contains(newScreenId)) {
-            return StringUtils.equals(screenProperties.getMainScreenId(), newScreenId);
+            return StringUtils.equals(uiProperties.getMainScreenId(), newScreenId);
         }
 
         return true;

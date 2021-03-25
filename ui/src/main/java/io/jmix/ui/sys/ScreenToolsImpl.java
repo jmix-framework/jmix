@@ -21,7 +21,6 @@ import io.jmix.ui.*;
 import io.jmix.ui.component.Window;
 import io.jmix.ui.component.impl.WindowImpl;
 import io.jmix.ui.navigation.EditorTypeExtractor;
-import io.jmix.ui.UiScreenProperties;
 import io.jmix.ui.screen.EditorScreen;
 import io.jmix.ui.screen.OpenMode;
 import io.jmix.ui.screen.Screen;
@@ -37,14 +36,14 @@ public class ScreenToolsImpl implements ScreenTools {
 
     private static final Logger log = LoggerFactory.getLogger(ScreenToolsImpl.class);
 
-    protected UiScreenProperties screenProperties;
+    protected UiProperties uiProperties;
     protected Metadata metadata;
     protected WindowConfig windowConfig;
     protected UserSettingService userSettingService;
 
     @Autowired
-    public void setScreenProperties(UiScreenProperties screenProperties) {
-        this.screenProperties = screenProperties;
+    public void setUiProperties(UiProperties uiProperties) {
+        this.uiProperties = uiProperties;
     }
 
     @Autowired
@@ -64,7 +63,7 @@ public class ScreenToolsImpl implements ScreenTools {
 
     @Override
     public void openDefaultScreen(Screens screens) {
-        String defaultScreenId = screenProperties.getDefaultScreenId();
+        String defaultScreenId = uiProperties.getDefaultScreenId();
         if (StringUtils.isEmpty(defaultScreenId)) {
             return;
         }
@@ -85,7 +84,7 @@ public class ScreenToolsImpl implements ScreenTools {
 
         setDefaultScreenWindow(window);
 
-        if (!screenProperties.isDefaultScreenCanBeClosed()) {
+        if (!uiProperties.isDefaultScreenCanBeClosed()) {
             window.setCloseable(false);
         }
     }

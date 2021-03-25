@@ -706,7 +706,7 @@ public class AppWorkAreaImpl extends AbstractComponent<CssLayout> implements App
             return true;
         }
 
-        if (applicationContext.getBean(UiScreenProperties.class).isDefaultScreenCanBeClosed()) {
+        if (applicationContext.getBean(UiProperties.class).isDefaultScreenCanBeClosed()) {
             return false;
         }
 

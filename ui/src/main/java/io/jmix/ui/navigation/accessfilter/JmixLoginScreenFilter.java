@@ -18,10 +18,10 @@ package io.jmix.ui.navigation.accessfilter;
 
 import io.jmix.core.JmixOrder;
 import io.jmix.ui.AppUI;
+import io.jmix.ui.UiProperties;
 import io.jmix.ui.WindowConfig;
 import io.jmix.ui.navigation.NavigationFilter;
 import io.jmix.ui.navigation.NavigationState;
-import io.jmix.ui.UiScreenProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -35,11 +35,11 @@ public class JmixLoginScreenFilter implements NavigationFilter {
     @Autowired
     protected WindowConfig windowConfig;
     @Autowired
-    protected UiScreenProperties screenProperties;
+    protected UiProperties uiProperties;
 
     @Override
     public AccessCheckResult allowed(NavigationState fromState, NavigationState toState) {
-        String loginWindowRoute = windowConfig.findRoute(screenProperties.getLoginScreenId());
+        String loginWindowRoute = windowConfig.findRoute(uiProperties.getLoginScreenId());
 
         if (!Objects.equals(loginWindowRoute, toState.getRoot())) {
             return AccessCheckResult.allowed();

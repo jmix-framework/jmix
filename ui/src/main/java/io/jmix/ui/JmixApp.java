@@ -39,13 +39,13 @@ public class JmixApp extends App {
     @Override
     protected String routeTopLevelWindowId() {
         if (isAnonymousAuthentication()) {
-            String screenId = screenProperties.getLoginScreenId();
+            String screenId = uiProperties.getLoginScreenId();
             if (!windowConfig.hasWindow(screenId)) {
-                screenId = screenProperties.getMainScreenId();
+                screenId = uiProperties.getMainScreenId();
             }
             return screenId;
         } else {
-            return screenProperties.getMainScreenId();
+            return uiProperties.getMainScreenId();
         }
     }
 

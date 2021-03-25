@@ -21,7 +21,7 @@ import com.vaadin.ui.Layout;
 import com.vaadin.ui.TabSheet;
 import io.jmix.ui.MainTabSheetMode;
 import io.jmix.ui.UiComponentProperties;
-import io.jmix.ui.UiScreenProperties;
+import io.jmix.ui.UiProperties;
 import org.springframework.context.ApplicationContext;
 import io.jmix.ui.component.TabWindow;
 import io.jmix.ui.icon.IconResolver;
@@ -172,7 +172,7 @@ public class TabWindowImpl extends WindowImpl implements TabWindow {
     public String formatTabCaption() {
         String s = formatTabDescription();
 
-        int maxLength = applicationContext.getBean(UiScreenProperties.class).getMainTabCaptionLength();
+        int maxLength = applicationContext.getBean(UiProperties.class).getMainTabCaptionLength();
         if (s.length() > maxLength) {
             return s.substring(0, maxLength) + "...";
         } else {

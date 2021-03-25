@@ -28,7 +28,6 @@ import io.jmix.ui.component.RootWindow;
 import io.jmix.ui.component.Window;
 import io.jmix.ui.component.impl.WindowImpl;
 import io.jmix.ui.navigation.NavigationFilter.AccessCheckResult;
-import io.jmix.ui.UiScreenProperties;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.OpenMode;
 import io.jmix.ui.screen.Screen;
@@ -67,8 +66,6 @@ public class UrlChangeHandler implements InitializingBean {
 
     @Autowired
     protected UiProperties uiProperties;
-    @Autowired
-    protected UiScreenProperties screenProperties;
     @Autowired
     protected WindowConfig windowConfig;
 
@@ -195,7 +192,7 @@ public class UrlChangeHandler implements InitializingBean {
     }
 
     public void redirect(NavigationState navigationState) {
-        String loginScreenId = screenProperties.getLoginScreenId();
+        String loginScreenId = uiProperties.getLoginScreenId();
 
         Screen loginScreen = ui.getScreens().create(loginScreenId, OpenMode.ROOT);
 
@@ -364,7 +361,7 @@ public class UrlChangeHandler implements InitializingBean {
             return true;
         }
 
-        if (screenProperties.isDefaultScreenCanBeClosed()) {
+        if (uiProperties.isDefaultScreenCanBeClosed()) {
             return false;
         }
 

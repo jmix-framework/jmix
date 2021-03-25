@@ -103,7 +103,7 @@
                             <comboBox id="defaultBooleanField" property="defaultBoolean"/>
                             <dateField id="defaultDateField" property="defaultDate"/>
                             <dateField id="defaultDateWithoutTimeField" property="defaultDateWithoutTime"/>
-                            <dateField id="defaultDateIsCurrentField" property="defaultDateIsCurrent"/>
+                            <checkBox id="defaultDateIsCurrentField" property="defaultDateIsCurrent"/>
 
                             <textField id="numberFormatPatternField" property="configuration.numberFormatPattern"/>
                             <textField id="minIntField" property="configuration.minInt"/>

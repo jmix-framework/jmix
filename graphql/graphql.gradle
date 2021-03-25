@@ -23,13 +23,14 @@ archivesBaseName = 'jmix-graphql'
 dependencies {
     api platform("io.jmix.bom:jmix-bom:$bomVersion")
 
-    api 'io.jmix.data:jmix-data'
+    api 'io.jmix.core:jmix-core'
 
     // todo move to bom
     implementation 'com.graphql-java-kickstart:graphql-java-servlet:9.1.0'
 
     testImplementation 'org.spockframework:spock-core'
     testImplementation 'org.spockframework:spock-spring'
+    testImplementation 'io.jmix.data:jmix-data'
     testImplementation 'io.jmix.data:jmix-eclipselink'
     testRuntimeOnly 'org.slf4j:slf4j-simple'
     testRuntimeOnly 'org.hsqldb:hsqldb'

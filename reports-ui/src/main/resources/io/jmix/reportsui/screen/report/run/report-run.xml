@@ -24,11 +24,19 @@
         <collection id="reportGroupsDc"
                     class="io.jmix.reports.entity.ReportGroup"
                     fetchPlan="_local">
-            <loader id="reportGroupDl"/>
+            <loader id="reportGroupDl">
+                <query>
+                    <![CDATA[select e from report_ReportGroup e]]>
+                </query>
+            </loader>
         </collection>
     </data>
 
     <dialogMode width="800" height="480" resizable="true"/>
+
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
 
     <layout expand="reportsTable" spacing="true">
         <gridLayout id="gridFilter" spacing="true">
@@ -41,7 +49,7 @@
                     <label value="msg://report.reportRunFilterCode" align="MIDDLE_RIGHT"/>
                     <textField id="codeFilter" width="150px"/>
 
-                    <button id="setFilterButton"
+                    <button id="searchBtn"
                             caption="msg://report.reportFilterButton"
                             align="BOTTOM_LEFT"
                             width="100px"/>
@@ -53,7 +61,7 @@
                     <label value="msg://report.reportRunFilterUpdatedDate" align="MIDDLE_RIGHT"/>
                     <dateField id="updatedDateFilter" resolution="DAY" width="150px"/>
 
-                    <button id="clearFilterButton"
+                    <button id="clearBtn"
                             caption="msg://report.reportClearButton"
                             align="BOTTOM_LEFT"
                             width="100px"/>

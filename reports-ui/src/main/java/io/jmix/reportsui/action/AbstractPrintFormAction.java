@@ -82,7 +82,7 @@ public abstract class AbstractPrintFormAction extends AbstractAction {
                         .withScreenClass(ReportRun.class)
                         .withOpenMode(OpenMode.DIALOG)
                         .build();
-                reportRunScreen.setReportsParameter(reports);
+                reportRunScreen.setReports(reports);
                 reportRunScreen.addAfterCloseListener(afterCloseEvent ->
                         reportGuiManager.runReport(reloadedReport, screen, parameter, selectedValue, null, outputFileName)
                 );

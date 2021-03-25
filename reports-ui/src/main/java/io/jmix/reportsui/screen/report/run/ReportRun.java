@@ -42,8 +42,6 @@ import java.util.stream.Collectors;
 @LookupComponent("reportsTable")
 public class ReportRun extends StandardLookup<Report> {
 
-    protected static final String RUN_ACTION_ID = "runReport";
-
     @Autowired
     protected Table<Report> reportsTable;
 
@@ -77,33 +75,33 @@ public class ReportRun extends StandardLookup<Report> {
     @Autowired
     protected DataManager dataManager;
 
-    protected List<Report> reportsParameter;
+    protected List<Report> reports;
 
     protected MetaClass metaClassParameter;
 
     protected String screenParameter;
 
-    public void setReportsParameter(List<Report> reportsParameter) {
-        this.reportsParameter = reportsParameter;
+    public void setReports(List<Report> reports) {
+        this.reports = reports;
     }
 
-    public void setMetaClassParameter(MetaClass metaClassParameter) {
+    public void setMetaClass(MetaClass metaClassParameter) {
         this.metaClassParameter = metaClassParameter;
     }
 
-    public void setScreenParameter(String screenParameter) {
+    public void setScreen(String screenParameter) {
         this.screenParameter = screenParameter;
     }
 
     @Subscribe
     protected void onInit(InitEvent event) {
-        List<Report> reports = reportsParameter;
+        List<Report> reports = this.reports;
         if (reports == null) {
             reports = reportGuiManager.getAvailableReports(screenParameter, currentAuthentication.getUser(),
                     metaClassParameter);
         }
 
-        if (reportsParameter != null) {
+        if (this.reports != null) {
             gridFilter.setVisible(false);
         }
 
@@ -131,7 +129,21 @@ public class ReportRun extends StandardLookup<Report> {
         }
     }
 
-    @Subscribe("setFilterButton")
+    @Subscribe("searchBtn")
+    protected void onFilterReports(Button.ClickEvent event) {
+        filterReports();
+    }
+
+    @Subscribe("clearBtn")
+    protected void onClearFilter(Button.ClickEvent event) {
+        nameFilter.setValue(null);
+        codeFilter.setValue(null);
+        updatedDateFilter.setValue(null);
+        groupFilter.setValue(null);
+
+        filterReports();
+    }
+
     protected void filterReports() {
         String nameFilterValue = StringUtils.lowerCase(nameFilter.getValue());
         String codeFilterValue = StringUtils.lowerCase(codeFilter.getValue());
@@ -171,6 +183,7 @@ public class ReportRun extends StandardLookup<Report> {
                         .collect(Collectors.toList());
 
         reportsDc.getMutableItems().clear();
+
         for (Report report : reports) {
             reportsDc.getMutableItems().add(report);
         }
@@ -180,14 +193,5 @@ public class ReportRun extends StandardLookup<Report> {
             Table.SortDirection direction = sortInfo.getAscending() ? Table.SortDirection.ASCENDING : Table.SortDirection.DESCENDING;
             reportsTable.sort(sortInfo.getPropertyId().toString(), direction);
         }
-    }
-
-    @Subscribe("clearFilterButton")
-    protected void clearFilter() {
-        nameFilter.setValue(null);
-        codeFilter.setValue(null);
-        updatedDateFilter.setValue(null);
-        groupFilter.setValue(null);
-        filterReports();
     }
 }

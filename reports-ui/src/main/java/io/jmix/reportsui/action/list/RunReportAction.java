@@ -129,8 +129,8 @@ public class RunReportAction extends ListAction {
                 .withOpenMode(OpenMode.DIALOG)
                 .withSelectHandler(reports -> runReports(reports, screen))
                 .build();
-        reportRunScreen.setMetaClassParameter(metaClass);
-        reportRunScreen.setScreenParameter(hostScreen.getId());
+        reportRunScreen.setMetaClass(metaClass);
+        reportRunScreen.setScreen(hostScreen.getId());
         reportRunScreen.show();
     }
 

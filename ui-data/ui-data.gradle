@@ -26,8 +26,6 @@ dependencies {
     api 'io.jmix.data:jmix-data'
     api project(':ui')
 
-    compileOnly 'io.jmix.security:jmix-security-ui'
-
     implementation 'com.google.code.gson:gson'
     implementation 'com.fasterxml.jackson.core:jackson-databind'
     implementation 'com.fasterxml.jackson.core:jackson-annotations'

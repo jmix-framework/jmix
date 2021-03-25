@@ -24,7 +24,7 @@ import io.jmix.core.Messages;
 import io.jmix.core.security.ClientDetails;
 import io.jmix.securityui.accesscontext.UiLoginToUiContext;
 import io.jmix.ui.ScreenBuilders;
-import io.jmix.ui.UiScreenProperties;
+import io.jmix.ui.UiProperties;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.OpenMode;
 import org.slf4j.Logger;
@@ -70,7 +70,7 @@ public class LoginScreenAuthenticationSupport {
 
     protected AuthenticationManager authenticationManager;
 
-    protected UiScreenProperties screenProperties;
+    protected UiProperties uiProperties;
     protected CoreProperties coreProperties;
     protected ScreenBuilders screenBuilders;
     protected AccessManager accessManager;
@@ -84,8 +84,8 @@ public class LoginScreenAuthenticationSupport {
     }
 
     @Autowired
-    public void setUiScreenProperties(UiScreenProperties screenProperties) {
-        this.screenProperties = screenProperties;
+    public void setUiProperties(UiProperties uiProperties) {
+        this.uiProperties = uiProperties;
     }
 
     @Autowired
@@ -121,7 +121,7 @@ public class LoginScreenAuthenticationSupport {
      * {@link CoreProperties#getAvailableLocales()} list.
      * <p>
      * After successful authentication, there will be an attempt to open the main screen using
-     * {@link UiScreenProperties#getMainScreenId()} from {@link FrameOwner}
+     * {@link UiProperties#getMainScreenId()} from {@link FrameOwner}
      * if it is not {@code null}.
      *
      * @param authDetails authentication details
@@ -172,7 +172,7 @@ public class LoginScreenAuthenticationSupport {
 
     protected void showMainScreen(@Nullable FrameOwner frameOwner) {
         if (frameOwner != null) {
-            String mainScreenId = screenProperties.getMainScreenId();
+            String mainScreenId = uiProperties.getMainScreenId();
             screenBuilders.screen(frameOwner)
                     .withScreenId(mainScreenId)
                     .withOpenMode(OpenMode.ROOT)

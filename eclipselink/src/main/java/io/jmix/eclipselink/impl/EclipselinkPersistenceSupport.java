@@ -450,6 +450,10 @@ public class EclipselinkPersistenceSupport implements ApplicationContextAware {
                 }
             }
 
+            for (Object instance : container.getNewDetachedInstances()) {
+                typeNames.add(metadata.getClass(instance).getName());
+            }
+
             if (!readOnly) {
                 Collection<Object> allInstances = container.getAllInstances();
                 for (BeforeCommitTransactionListener transactionListener : beforeCommitTxListeners) {

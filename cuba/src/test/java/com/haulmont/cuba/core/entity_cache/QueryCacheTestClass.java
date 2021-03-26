@@ -66,6 +66,8 @@ public class QueryCacheTestClass {
     private Metadata metadata;
     @Autowired
     private TestSupport testSupport;
+    @Autowired
+    private io.jmix.core.DataManager dataManager;
 
     private JpaCache cache;
     private QueryCache queryCache;
@@ -553,6 +555,27 @@ public class QueryCacheTestClass {
             persistence.getEntityManager().persist(newUser);
             tx.commit();
         }
+        appender.clearMessages();
+        assertEquals(0, queryCache.size());
+        u = getResultListUserByLoginNamed(user, true, null, null);
+        assertEquals(1, appender.filterMessages(m -> m.contains("> SELECT")).count());
+    }
+
+    @Test
+    public void testStaleData_DM_insert() throws Exception {
+        appender.clearMessages();
+
+        User u = getResultListUserByLoginNamed(user, true, null, null);
+        assertEquals(2, appender.filterMessages(m -> m.contains("> SELECT")).count()); // User, Group
+        appender.clearMessages();
+        assertEquals(1, queryCache.size());
+
+        newUser = metadata.create(User.class);
+        newUser.setLogin("new user");
+        newUser.setGroup(this.group);
+
+        dataManager.save(newUser);
+
         appender.clearMessages();
         assertEquals(0, queryCache.size());
         u = getResultListUserByLoginNamed(user, true, null, null);

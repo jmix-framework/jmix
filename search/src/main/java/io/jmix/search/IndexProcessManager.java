@@ -16,8 +16,6 @@
 
 package io.jmix.search;
 
-import javax.annotation.Nullable;
-
 /**
  * Provides functionality for requesting and processing entities reindex.
  */
@@ -33,7 +31,7 @@ public interface IndexProcessManager {
      *
      * @param entityName entity
      */
-    void reindexEntity(@Nullable String entityName);
+    void reindexEntity(String entityName);
 
     /**
      * Performs reindex of all entities asynchronously.
@@ -49,7 +47,7 @@ public interface IndexProcessManager {
      *
      * @param entityName entity
      */
-    void scheduleReindexEntity(@Nullable String entityName);
+    void scheduleReindexEntity(String entityName);
 
     /**
      * Adds all instances of next entity to queue.

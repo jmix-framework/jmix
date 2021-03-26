@@ -31,7 +31,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Queue;
@@ -68,7 +67,7 @@ public class IndexProcessManagerImpl implements IndexProcessManager {
     }
 
     @Override
-    public void reindexEntity(@Nullable String entityName) {
+    public void reindexEntity(String entityName) {
         Preconditions.checkNotNullArgument(entityName);
 
         log.info("Reindex entity '{}'", entityName);
@@ -126,7 +125,7 @@ public class IndexProcessManagerImpl implements IndexProcessManager {
     }
 
     @Override
-    public void scheduleReindexEntity(@Nullable String entityName) {
+    public void scheduleReindexEntity(String entityName) {
         Preconditions.checkNotNullArgument(entityName);
 
         MetaClass metaClass = metadata.getClass(entityName);

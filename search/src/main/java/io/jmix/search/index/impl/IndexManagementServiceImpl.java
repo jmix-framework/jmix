@@ -38,7 +38,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
@@ -56,7 +55,7 @@ public class IndexManagementServiceImpl implements IndexManagementService {
     protected ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public boolean createIndex(@Nullable IndexConfiguration indexConfiguration) throws IOException {
+    public boolean createIndex(IndexConfiguration indexConfiguration) throws IOException {
         Preconditions.checkNotNullArgument(indexConfiguration);
 
         CreateIndexRequest request = new CreateIndexRequest(indexConfiguration.getIndexName());
@@ -74,7 +73,7 @@ public class IndexManagementServiceImpl implements IndexManagementService {
     }
 
     @Override
-    public boolean dropIndex(@Nullable String indexName) throws IOException {
+    public boolean dropIndex(String indexName) throws IOException {
         Preconditions.checkNotNullArgument(indexName);
 
         DeleteIndexRequest request = new DeleteIndexRequest(indexName);
@@ -84,7 +83,7 @@ public class IndexManagementServiceImpl implements IndexManagementService {
     }
 
     @Override
-    public boolean recreateIndex(@Nullable IndexConfiguration indexConfiguration) throws IOException {
+    public boolean recreateIndex(IndexConfiguration indexConfiguration) throws IOException {
         Preconditions.checkNotNullArgument(indexConfiguration);
 
         String indexName = indexConfiguration.getIndexName();
@@ -95,7 +94,7 @@ public class IndexManagementServiceImpl implements IndexManagementService {
     }
 
     @Override
-    public boolean isIndexExist(@Nullable String indexName) throws IOException {
+    public boolean isIndexExist(String indexName) throws IOException {
         Preconditions.checkNotNullArgument(indexName);
 
         GetIndexRequest request = new GetIndexRequest(indexName);
@@ -103,7 +102,7 @@ public class IndexManagementServiceImpl implements IndexManagementService {
     }
 
     @Override
-    public boolean isIndexActual(@Nullable IndexConfiguration indexConfiguration) throws IOException {
+    public boolean isIndexActual(IndexConfiguration indexConfiguration) throws IOException {
         Preconditions.checkNotNullArgument(indexConfiguration);
 
         GetIndexResponse index = getIndex(indexConfiguration.getIndexName());
@@ -120,7 +119,7 @@ public class IndexManagementServiceImpl implements IndexManagementService {
     }
 
     @Override
-    public GetIndexResponse getIndex(@Nullable String indexName) throws IOException {
+    public GetIndexResponse getIndex(String indexName) throws IOException {
         Preconditions.checkNotNullArgument(indexName);
 
         GetIndexRequest request = new GetIndexRequest(indexName);
@@ -135,7 +134,7 @@ public class IndexManagementServiceImpl implements IndexManagementService {
     }
 
     @Override
-    public void prepareIndex(@Nullable IndexConfiguration indexConfiguration) {
+    public void prepareIndex(IndexConfiguration indexConfiguration) {
         Preconditions.checkNotNullArgument(indexConfiguration);
 
         log.info("Prepare search index '{}'", indexConfiguration.getIndexName());

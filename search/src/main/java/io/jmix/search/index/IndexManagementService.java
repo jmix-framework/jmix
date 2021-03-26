@@ -18,7 +18,6 @@ package io.jmix.search.index;
 
 import org.elasticsearch.client.indices.GetIndexResponse;
 
-import javax.annotation.Nullable;
 import java.io.IOException;
 
 /**
@@ -35,7 +34,7 @@ public interface IndexManagementService {
      * @return true if index was successfully created, false otherwise
      * @throws IOException if there is a problem with request/response processing
      */
-    boolean createIndex(@Nullable IndexConfiguration indexConfiguration) throws IOException;
+    boolean createIndex(IndexConfiguration indexConfiguration) throws IOException;
 
     /**
      * Drops index by name.
@@ -44,7 +43,7 @@ public interface IndexManagementService {
      * @return true if index was successfully dropped, false otherwise
      * @throws IOException if there is a problem with request/response processing
      */
-    boolean dropIndex(@Nullable String indexName) throws IOException;
+    boolean dropIndex(String indexName) throws IOException;
 
     /**
      * Drops (if exists) and creates index using provided {@link IndexConfiguration}.
@@ -53,7 +52,7 @@ public interface IndexManagementService {
      * @return true if index was successfully recreated, false otherwise
      * @throws IOException if there is a problem with request/response processing
      */
-    boolean recreateIndex(@Nullable IndexConfiguration indexConfiguration) throws IOException;
+    boolean recreateIndex(IndexConfiguration indexConfiguration) throws IOException;
 
     /**
      * Checks if index exists.
@@ -62,7 +61,7 @@ public interface IndexManagementService {
      * @return true if index exists, false otherwise
      * @throws IOException in case of request failure
      */
-    boolean isIndexExist(@Nullable String indexName) throws IOException;
+    boolean isIndexExist(String indexName) throws IOException;
 
     /**
      * Checks if index has actual configuration.
@@ -71,7 +70,7 @@ public interface IndexManagementService {
      * @return true if existing index has the same configuration as the provided one, false otherwise
      * @throws IOException in case of request failure
      */
-    boolean isIndexActual(@Nullable IndexConfiguration indexConfiguration) throws IOException;
+    boolean isIndexActual(IndexConfiguration indexConfiguration) throws IOException;
 
     /**
      * Requests info about index from ES cluster.
@@ -80,7 +79,7 @@ public interface IndexManagementService {
      * @return response
      * @throws IOException in case of request failure
      */
-    GetIndexResponse getIndex(@Nullable String indexName) throws IOException;
+    GetIndexResponse getIndex(String indexName) throws IOException;
 
     /**
      * Prepares all search indices defined in application.
@@ -94,5 +93,5 @@ public interface IndexManagementService {
      *
      * @param indexConfiguration actual index configuration
      */
-    void prepareIndex(@Nullable IndexConfiguration indexConfiguration);
+    void prepareIndex(IndexConfiguration indexConfiguration);
 }

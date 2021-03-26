@@ -34,6 +34,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import javax.persistence.Convert;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -98,6 +99,10 @@ public class InspectorTableBuilder {
             }
 
             if (isMany(metaProperty)) {
+                continue;
+            }
+
+            if (metadataTools.isAnnotationPresent(metaClass.getJavaClass(), metaProperty.getName(), Convert.class)) {
                 continue;
             }
 

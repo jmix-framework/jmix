@@ -40,6 +40,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import javax.persistence.Convert;
 import java.util.Arrays;
 import java.util.List;
 
@@ -148,6 +149,9 @@ public class InspectorFormBuilder {
                     }
                     if (metaProperty.getType() != MetaProperty.Type.ENUM
                             && (isByteArray(metaProperty) || isUuid(metaProperty))) {
+                        continue;
+                    }
+                    if (metadataTools.isAnnotationPresent(item, metaProperty.getName(), Convert.class)) {
                         continue;
                     }
 

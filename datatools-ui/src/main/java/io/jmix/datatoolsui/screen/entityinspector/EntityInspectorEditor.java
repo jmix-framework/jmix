@@ -21,6 +21,7 @@ import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.data.PersistenceHints;
 import io.jmix.datatoolsui.screen.entityinspector.assistant.InspectorFetchPlanBuilder;
 import io.jmix.datatoolsui.screen.entityinspector.assistant.InspectorFormBuilder;
 import io.jmix.datatoolsui.screen.entityinspector.assistant.InspectorTableBuilder;
@@ -62,8 +63,6 @@ public class EntityInspectorEditor extends StandardEditor {
     @Autowired
     protected Metadata metadata;
     @Autowired
-    protected Messages messages;
-    @Autowired
     protected MessageTools messageTools;
     @Autowired
     protected UiComponents uiComponents;
@@ -75,8 +74,6 @@ public class EntityInspectorEditor extends StandardEditor {
     protected UiComponentProperties componentProperties;
     @Autowired
     protected Actions actions;
-    @Autowired
-    protected Icons icons;
 
     @Autowired
     protected EntityStates entityStates;
@@ -149,6 +146,7 @@ public class EntityInspectorEditor extends StandardEditor {
                     .withSystemProperties(true)
                     .build());
             loader.setEntityId(EntityValues.getId(entity));
+            loader.setHint(PersistenceHints.SOFT_DELETION, false);
             loader.setContainer(container);
             loader.load();
         } else {

@@ -76,6 +76,7 @@ public class InspectorFormBuilder {
     private Integer captionWidth = 200;
     private String fieldWidth = "400px";
     private List<String> disabledProperties;
+    private io.jmix.ui.component.Component ownerComponent;
 
     public static InspectorFormBuilder from(ApplicationContext applicationContext, InstanceContainer container) {
         return applicationContext.getBean(InspectorFormBuilder.class, container);
@@ -110,11 +111,20 @@ public class InspectorFormBuilder {
         return this;
     }
 
+    public InspectorFormBuilder withOwnerComponent(io.jmix.ui.component.Component component) {
+        this.ownerComponent = component;
+        return this;
+    }
+
     public Form build() {
         MetaClass metaClass = container.getEntityMetaClass();
         Object item = getItem();
 
         Form form = uiComponents.create(Form.class);
+        if (ownerComponent != null) {
+            ((ComponentContainer) ownerComponent).add(form);
+        }
+
         if (captionWidth != null) {
             form.setChildrenCaptionWidth(captionWidth);
         }

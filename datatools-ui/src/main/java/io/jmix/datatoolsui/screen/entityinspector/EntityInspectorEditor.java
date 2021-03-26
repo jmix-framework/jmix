@@ -158,6 +158,7 @@ public class EntityInspectorEditor extends StandardEditor {
     private void createForm(InstanceContainer container) {
         Form form = InspectorFormBuilder.from(getApplicationContext(), container)
                 .withDisabledProperties(parentProperty)
+                .withOwnerComponent(contentPane)
                 .build();
 
         MetaClass metaClass = container.getEntityMetaClass();

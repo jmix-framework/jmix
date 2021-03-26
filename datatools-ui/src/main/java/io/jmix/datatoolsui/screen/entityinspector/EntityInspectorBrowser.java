@@ -155,10 +155,9 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
     @Subscribe
     public void onInit(InitEvent event) {
         showMode.setValue(ShowMode.NON_REMOVED);
-    }
+        ScreenOptions screenOptions = event.getOptions();
+        entityName = (String) ((MapScreenOptions) screenOptions).getParams().get("entity");
 
-    @Subscribe
-    public void onBeforeShow(BeforeShowEvent event) {
         getScreenData().setDataContext(dataComponents.createDataContext());
         if (entityName != null) {
             Session session = metadata.getSession();

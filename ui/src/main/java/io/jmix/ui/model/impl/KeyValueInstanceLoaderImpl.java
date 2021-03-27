@@ -178,7 +178,7 @@ public class KeyValueInstanceLoaderImpl implements KeyValueInstanceLoader {
     }
 
     @Override
-    public void setParameter(String name, Object value) {
+    public void setParameter(String name, @Nullable Object value) {
         parameters.put(name, value);
     }
 

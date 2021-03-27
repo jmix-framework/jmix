@@ -91,7 +91,7 @@ public interface DataLoader {
     /**
      * Sets a query parameter.
      */
-    void setParameter(String name, Object value);
+    void setParameter(String name, @Nullable Object value);
 
     /**
      * Removes a query parameter.

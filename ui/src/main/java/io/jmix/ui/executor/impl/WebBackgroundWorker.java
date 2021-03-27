@@ -179,9 +179,15 @@ public class WebBackgroundWorker implements BackgroundWorker {
             this.future = new FutureTask<V>(this) {
                 @Override
                 protected void done() {
-                    WebTaskExecutor.this.ui.access(() ->
-                            handleDone()
-                    );
+                    Authentication previousAuth = SecurityContextHelper.getAuthentication();
+                    SecurityContextHelper.setAuthentication(authentication);
+                    try {
+                        WebTaskExecutor.this.ui.access(() ->
+                                handleDone()
+                        );
+                    } finally {
+                        SecurityContextHelper.setAuthentication(previousAuth);
+                    }
                 }
             };
         }

@@ -172,6 +172,7 @@ $cuba-datagrid-aggregation-background-color: $cuba-aggregation-background-color-
     .jmix-simplepagination {
       padding-left: round($v-layout-spacing-horizontal/2);
       text-align: right;
+      flex-shrink: 0;
     }
 
     .v-ie11 &,
@@ -323,7 +324,7 @@ $cuba-datagrid-aggregation-background-color: $cuba-aggregation-background-color-
 
               border-top: 0;
               border-bottom: 0;
-              
+
               border-radius: 0;
             }
           }

@@ -122,8 +122,6 @@ public class InspectorTableBuilder {
 
         table.setSizeFull();
 
-        table.setItems(new ContainerTableItems(collectionContainer));
-
         if (buttonsPanelInitializer != null) {
             table.setButtonsPanel(uiComponents.create(ButtonsPanel.class));
             buttonsPanelInitializer.accept(table);
@@ -131,6 +129,8 @@ public class InspectorTableBuilder {
 
         SimplePagination simplePagination = uiComponents.create(SimplePagination.NAME);
         table.setPagination(simplePagination);
+
+        table.setItems(new ContainerTableItems(collectionContainer));
 
         if (table.getAction(EditAction.ID) != null) {
             table.setEnterPressAction(table.getAction(EditAction.ID));

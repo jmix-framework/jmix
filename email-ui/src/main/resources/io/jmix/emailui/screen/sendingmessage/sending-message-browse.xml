@@ -85,6 +85,8 @@
                         <column width="100%">
                             <field id="address" property="address"/>
                             <field id="from" property="from"/>
+                            <field id="cc" property="cc"/>
+                            <field id="bcc" property="bcc"/>
                             <field id="subject" property="subject"/>
                             <field id="bodyContentType" property="bodyContentType"/>
                             <field id="status" property="status"/>

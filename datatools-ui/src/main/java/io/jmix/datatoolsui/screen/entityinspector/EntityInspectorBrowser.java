@@ -135,8 +135,7 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
     @Autowired
     private Downloader downloader;
 
-    //TODO filter implementation component (Filter in Table/DataGrid #221)
-    protected Component filter;
+    protected Filter filter;
     protected Table entitiesTable;
 
     protected MetaClass selectedMeta;
@@ -290,9 +289,15 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
         return entitiesDc;
     }
 
-    //TODO create filter component (Filter in Table/DataGrid #221)
     protected void createFilter() {
+        filter = uiComponents.create(Filter.NAME);
+        filter.setId("filter");
+        filter.setFrame(getWindow().getFrame());
 
+        filterBox.add(filter);
+
+        filter.setDataLoader(entitiesDl);
+        filter.apply();
     }
 
     protected void createButtonsPanel(Table table) {

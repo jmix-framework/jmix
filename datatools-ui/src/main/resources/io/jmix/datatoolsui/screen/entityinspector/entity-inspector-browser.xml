@@ -30,7 +30,7 @@ messagesPack="io.jmix.datatoolsui.screen.entityinspector">
             <comboBox id="showMode" optionsEnum="io.jmix.datatoolsui.screen.entityinspector.ShowMode"
                       nullOptionVisible="false" align="MIDDLE_LEFT"/>
         </hbox>
-        <vbox id="filterBox" visible="false"/>
+        <vbox id="filterBox" spacing="true"/>
         <vbox id="tableBox"/>
         <hbox id="lookupActions" spacing="true" visible="false">
             <button action="lookupSelectAction"/>

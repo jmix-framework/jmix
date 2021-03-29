@@ -63,10 +63,10 @@ public class ReportSecurityManager {
                 String paramName = "role" + (i + 1);
                 roleCondition.append(" or r.rolesIdx like :").append(paramName).append(" escape '\\'");
                 lc.getQuery().setParameter(paramName, wrapCodeParameterForSearch(role.getCode()));
-                transformer.addWhereAsIs(roleCondition.toString());
             }
-            lc.getQuery().setQueryString(transformer.getResult());
+            transformer.addWhereAsIs(roleCondition.toString());
         }
+        lc.getQuery().setQueryString(transformer.getResult());
     }
 
     /**

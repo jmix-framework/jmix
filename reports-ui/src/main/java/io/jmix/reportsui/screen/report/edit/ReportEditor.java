@@ -34,14 +34,12 @@ import io.jmix.ui.*;
 import io.jmix.ui.component.*;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.CollectionLoader;
-import io.jmix.ui.model.DataContext;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.screen.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import javax.inject.Named;
 import java.util.Collection;
 import java.util.HashSet;
@@ -181,7 +179,7 @@ public class ReportEditor extends StandardEditor<Report> {
     }
 
     @Override
-    protected String getSaveNotificationCaption(){
+    protected String getSaveNotificationCaption() {
         return messages.formatMessage(getClass(), "notification.completeSuccessfully", getEditedEntity().getName());
     }
 
@@ -217,6 +215,7 @@ public class ReportEditor extends StandardEditor<Report> {
             screen.show();
         }
     }
+
 
     @Subscribe
     protected void onValidation(ValidationEvent event) {

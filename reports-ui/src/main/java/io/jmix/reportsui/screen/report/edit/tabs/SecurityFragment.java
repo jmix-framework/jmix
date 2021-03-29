@@ -126,7 +126,6 @@ public class SecurityFragment extends ScreenFragment {
 
             if (!exists) {
                 ReportRole reportRole = metadata.create(ReportRole.class);
-                reportRole.setReport(reportDc.getItem());
                 reportRole.setRoleName(role.getName());
                 reportRole.setRoleCode(role.getCode());
                 reportRolesDc.getMutableItems().add(reportRole);
@@ -149,7 +148,6 @@ public class SecurityFragment extends ScreenFragment {
 
             if (!exists) {
                 ReportScreen reportScreen = metadata.create(ReportScreen.class);
-                reportScreen.setReport(reportDc.getItem());
                 reportScreen.setScreenId(screenId);
                 reportScreensDc.getMutableItems().add(reportScreen);
             }

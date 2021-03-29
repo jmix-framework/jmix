@@ -24,6 +24,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Range;
 import io.jmix.core.metamodel.model.Session;
+import io.jmix.data.PersistenceHints;
 import io.jmix.datatools.EntityRestore;
 import io.jmix.datatoolsui.action.ShowEntityInfoAction;
 import io.jmix.datatoolsui.screen.entityinspector.assistant.InspectorFetchPlanBuilder;
@@ -49,7 +50,6 @@ import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.CollectionLoader;
 import io.jmix.ui.model.DataComponents;
 import io.jmix.ui.navigation.Route;
-import io.jmix.ui.UiComponentProperties;
 import io.jmix.ui.screen.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,6 +74,7 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
     private static final String BASE_SELECT_QUERY = "select e from %s e";
     private static final String DELETED_ONLY_SELECT_QUERY = "select e from %s e where e.%s is not null";
     private static final String RESTORE_ACTION_ID = "restore";
+    public static final String WIPE_OUT_ACTION_ID = "wipeOut";
 
     protected static final Logger log = LoggerFactory.getLogger(EntityInspectorBrowser.class);
 
@@ -136,6 +137,10 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
     private Downloader downloader;
 
     protected Filter filter;
+    @Autowired
+    private DataManager dataManager;
+
+
     protected Table entitiesTable;
 
     protected MetaClass selectedMeta;
@@ -261,16 +266,16 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
 
         switch (Objects.requireNonNull(showMode.getValue())) {
             case ALL:
-                entitiesDl.setHint("jmix.softDeletion", false);
+                entitiesDl.setHint(PersistenceHints.SOFT_DELETION, false);
                 entitiesDl.setQuery(String.format(BASE_SELECT_QUERY, meta.getName()));
                 break;
             case NON_REMOVED:
-                entitiesDl.setHint("jmix.softDeletion", true);
+                entitiesDl.setHint(PersistenceHints.SOFT_DELETION, true);
                 entitiesDl.setQuery(String.format(BASE_SELECT_QUERY, meta.getName()));
                 break;
             case REMOVED:
                 if (metadataTools.isSoftDeletable(meta.getJavaClass())) {
-                    entitiesDl.setHint("jmix.softDeletion", false);
+                    entitiesDl.setHint(PersistenceHints.SOFT_DELETION, false);
                     entitiesDl.setQuery(
                             String.format(
                                     DELETED_ONLY_SELECT_QUERY,
@@ -392,6 +397,14 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
         Action showEntityInfoAction = createShowEntityInfoAction(table);
         table.addAction(showEntityInfoAction);
 
+        Button wipeOutButton = null;
+        if (metadataTools.isSoftDeletable(selectedMeta.getJavaClass())) {
+            wipeOutButton = uiComponents.create(Button.class);
+            Action wipeOutAction = createWipeOutAction(table);
+            table.addAction(wipeOutAction);
+            wipeOutButton.setAction(wipeOutAction);
+        }
+
         buttonsPanel.add(createButton);
         buttonsPanel.add(editButton);
         buttonsPanel.add(removeButton);
@@ -400,6 +413,9 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
         buttonsPanel.add(exportPopupButton);
         buttonsPanel.add(importUpload);
         buttonsPanel.add(restoreButton);
+        if (wipeOutButton != null) {
+            buttonsPanel.add(wipeOutButton);
+        }
     }
 
     private ShowEntityInfoAction createShowEntityInfoAction(Table table) {
@@ -449,6 +465,16 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
         return action;
     }
 
+    private Action createWipeOutAction(Table table) {
+        ListAction action = new ItemTrackingAction(WIPE_OUT_ACTION_ID)
+                .withCaption(messages.getMessage(EntityInspectorBrowser.class, "wipeOut"))
+                .withHandler(event ->
+                        showWipeOutDialog()
+                );
+        action.setTarget(table);
+        return action;
+    }
+
     protected EntityImportPlan createEntityImportPlan(MetaClass metaClass) {
         EntityImportPlanBuilder planBuilder = entityImportPlans.builder(metaClass.getJavaClass());
 
@@ -484,6 +510,32 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
         return entityContext.isViewPermitted();
     }
 
+    protected void showWipeOutDialog() {
+        Set<Object> entityList = entitiesTable.getSelected();
+        if (!entityList.isEmpty()) {
+            dialogs.createOptionDialog()
+                    .withCaption(messages.getMessage("dialogs.Confirmation"))
+                    .withMessage(messages.getMessage(EntityInspectorBrowser.class, "wipeout.dialog.confirmation"))
+                    .withActions(
+                            new DialogAction(DialogAction.Type.OK).withHandler(event -> {
+                                dataManager.save(
+                                        new SaveContext()
+                                                .removing(entityList)
+                                                .setHint(PersistenceHints.SOFT_DELETION, false)
+                                );
+                                entitiesDl.load();
+                                entitiesTable.focus();
+                            }),
+                            new DialogAction(DialogAction.Type.CANCEL).withHandler(event -> {
+                                entitiesTable.focus();
+                            }))
+                    .show();
+        } else {
+            notifications.create(Notifications.NotificationType.HUMANIZED)
+                    .withDescription(messages.getMessage(EntityInspectorBrowser.class, "wipeout.dialog.empty")).show();
+        }
+    }
+
     protected void showRestoreDialog() {
         Set<Object> entityList = entitiesTable.getSelected();
         Object entity = entitiesDc.getItemOrNull();
@@ -497,8 +549,7 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
                                     int restored = entityRestore.restoreEntities(entityList);
                                     entitiesDl.load();
                                     entitiesTable.focus();
-                                    entitiesTable.setSelected(Collections.EMPTY_LIST);
-                                    entitiesTable.setSelected(entityList);
+                                    fireSelectionEventOnTable(entityList);
                                     notifications.create(Notifications.NotificationType.TRAY)
                                             .withDescription(
                                                     messages.formatMessage(
@@ -519,6 +570,11 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
             notifications.create(Notifications.NotificationType.HUMANIZED)
                     .withDescription(messages.getMessage(EntityInspectorBrowser.class, "restore.dialog.empty")).show();
         }
+    }
+
+    private void fireSelectionEventOnTable(Collection items) {
+        entitiesTable.setSelected(Collections.EMPTY_LIST);
+        entitiesTable.setSelected(items);
     }
 
     public class ExportAction extends ItemTrackingAction {

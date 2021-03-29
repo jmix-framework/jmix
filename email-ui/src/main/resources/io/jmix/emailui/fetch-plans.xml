@@ -25,7 +25,7 @@
         <property name="cc"/>
         <property name="bcc"/>
         <property name="attachmentsName"/>
-        <property name="attemptsCount"/>
+        <property name="attemptsLimit"/>
         <property name="attemptsMade"/>
         <property name="subject"/>
         <property name="dateSent"/>

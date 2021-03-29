@@ -66,7 +66,7 @@
                             <dateFormatter format="msg://dateTimeWithSeconds"/>
                         </column>
                         <column id="attachmentsName" sortable="false"/>
-                        <column id="attemptsCount"/>
+                        <column id="attemptsLimit"/>
                         <column id="deadline"/>
                         <column id="attemptsMade"/>
                     </columns>
@@ -95,7 +95,7 @@
                             <field id="dateSent" property="dateSent"/>
                             <field id="updateTs" property="updateTs"/>
                             <field id="deadline" property="deadline"/>
-                            <field id="attemptsCount" property="attemptsCount"/>
+                            <field id="attemptsCount" property="attemptsLimit"/>
                             <field id="attemptsMade" property="attemptsMade"/>
                         </column>
                     </form>

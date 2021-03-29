@@ -389,7 +389,7 @@ public class EmailerTest {
         emailer.processQueuedEmails();
         sendingMsg = reload(sendingMsg);
         assertEquals(SendingStatus.NOT_SENT, sendingMsg.getStatus());
-        assertEquals(2, sendingMsg.getAttemptsCount().intValue());
+        assertEquals(2, sendingMsg.getAttemptsLimit().intValue());
     }
 
     @Test
@@ -436,7 +436,7 @@ public class EmailerTest {
         emailer.processQueuedEmails();
         sendingMsg = reload(sendingMsg);
         assertEquals(SendingStatus.SENT, sendingMsg.getStatus());
-        assertEquals(2, sendingMsg.getAttemptsCount().intValue());
+        assertEquals(2, sendingMsg.getAttemptsLimit().intValue());
     }
 
     @Test

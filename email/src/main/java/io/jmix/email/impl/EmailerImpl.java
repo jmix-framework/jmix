@@ -126,7 +126,7 @@ public class EmailerImpl implements Emailer {
         sendingMessage.setFrom(info.getFrom());
         sendingMessage.setContentText(info.getBody());
         sendingMessage.setSubject(info.getSubject());
-        sendingMessage.setAttemptsCount(attemptsCount);
+        sendingMessage.setAttemptsLimit(attemptsCount);
         sendingMessage.setDeadline(deadline);
         sendingMessage.setAttemptsMade(0);
 

@@ -121,8 +121,8 @@ public class SendingMessage implements Serializable {
     @Column(name = "DEADLINE")
     protected Date deadline;
 
-    @Column(name = "ATTEMPTS_COUNT")
-    protected Integer attemptsCount;
+    @Column(name = "ATTEMPTS_LIMIT")
+    protected Integer attemptsLimit;
 
     @Column(name = "ATTEMPTS_MADE")
     protected Integer attemptsMade;
@@ -256,12 +256,12 @@ public class SendingMessage implements Serializable {
         this.dateSent = dateSent;
     }
 
-    public Integer getAttemptsCount() {
-        return attemptsCount;
+    public Integer getAttemptsLimit() {
+        return attemptsLimit;
     }
 
-    public void setAttemptsCount(Integer attemptsCount) {
-        this.attemptsCount = attemptsCount;
+    public void setAttemptsLimit(Integer attemptsLimit) {
+        this.attemptsLimit = attemptsLimit;
     }
 
     public String getAttachmentsName() {

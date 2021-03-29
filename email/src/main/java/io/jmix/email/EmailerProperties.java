@@ -29,7 +29,7 @@ public class EmailerProperties {
     String fromAddress;
     int scheduledSendingDelayCallCount;
     int messageQueueCapacity;
-    int defaultSendingAttemptsCount;
+    int defaultSendingAttemptsLimit;
     int sendingTimeoutSec;
     String adminAddress;
     boolean sendAllToAdmin;
@@ -39,7 +39,7 @@ public class EmailerProperties {
     public EmailerProperties(@DefaultValue("DoNotReply@localhost") String fromAddress,
                              @DefaultValue("2") int scheduledSendingDelayCallCount,
                              @DefaultValue("100") int messageQueueCapacity,
-                             @DefaultValue("10") int defaultSendingAttemptsCount,
+                             @DefaultValue("10") int defaultSendingAttemptsLimit,
                              @DefaultValue("240") int sendingTimeoutSec,
                              @DefaultValue("admin@localhost") String adminAddress,
                              @DefaultValue("false") boolean sendAllToAdmin,
@@ -48,7 +48,7 @@ public class EmailerProperties {
         this.fromAddress = fromAddress;
         this.scheduledSendingDelayCallCount = scheduledSendingDelayCallCount;
         this.messageQueueCapacity = messageQueueCapacity;
-        this.defaultSendingAttemptsCount = defaultSendingAttemptsCount;
+        this.defaultSendingAttemptsLimit = defaultSendingAttemptsLimit;
         this.sendingTimeoutSec = sendingTimeoutSec;
         this.adminAddress = adminAddress;
         this.sendAllToAdmin = sendAllToAdmin;
@@ -86,8 +86,8 @@ public class EmailerProperties {
     /**
      * @return Max number of attempts to send a message, after which the message's status is set to NOT_SENT.
      */
-    public int getDefaultSendingAttemptsCount() {
-        return defaultSendingAttemptsCount;
+    public int getDefaultSendingAttemptsLimit() {
+        return defaultSendingAttemptsLimit;
     }
 
     /**

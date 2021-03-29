@@ -216,8 +216,8 @@ public class EmailDataProviderImpl implements EmailDataProvider {
             return true;
         }
 
-        Integer messageAttemptsLimit = sendingMessage.getAttemptsCount();
-        int defaultLimit = emailerProperties.getDefaultSendingAttemptsCount();
+        Integer messageAttemptsLimit = sendingMessage.getAttemptsLimit();
+        int defaultLimit = emailerProperties.getDefaultSendingAttemptsLimit();
         int attemptsLimit = messageAttemptsLimit != null ? messageAttemptsLimit : defaultLimit;
         //noinspection UnnecessaryLocalVariable
         boolean res = sendingMessage.getAttemptsMade() != null && sendingMessage.getAttemptsMade() >= attemptsLimit;

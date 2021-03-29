@@ -79,4 +79,10 @@
             <column name="SYS_TENANT_ID" type="varchar(255)"/>
         </addColumn>
     </changeSet>
+
+    <changeSet author="email" id="3" context="!cuba">
+        <renameColumn tableName="EMAIL_SENDING_MESSAGE"
+                      oldColumnName="ATTEMPTS_COUNT"
+                      newColumnName="ATTEMPTS_LIMIT"/>
+    </changeSet>
 </databaseChangeLog>

@@ -58,7 +58,7 @@ public interface Emailer {
      *
      * @param info          email details
      * @param attemptsCount count of attempts to send (1 attempt per scheduler tick). If not specified,
-     *                      {@link EmailerProperties#getDefaultSendingAttemptsCount()} is used
+     *                      {@link EmailerProperties#getDefaultSendingAttemptsLimit()} is used
      * @param deadline      Emailer tries to send message till deadline.
      *                      If deadline has come and message has not been sent, status of this message is changed to
      *                      {@link SendingStatus#NOT_SENT}

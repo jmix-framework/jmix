@@ -20,6 +20,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
+import javax.annotation.Nullable;
+
 @ConfigurationProperties(prefix = "jmix.data")
 @ConstructorBinding
 public class DataProperties {
@@ -27,14 +29,17 @@ public class DataProperties {
     boolean useReadOnlyTransactionForLoad;
     int numberIdCacheSize;
     boolean useEntityDataStoreForIdSequence;
+    String uniqueConstraintViolationPattern;
 
     public DataProperties(
             @DefaultValue("true") boolean useReadOnlyTransactionForLoad,
             @DefaultValue("100") int numberIdCacheSize,
-            boolean useEntityDataStoreForIdSequence) {
+            boolean useEntityDataStoreForIdSequence,
+            @Nullable String uniqueConstraintViolationPattern) {
         this.useReadOnlyTransactionForLoad = useReadOnlyTransactionForLoad;
         this.numberIdCacheSize = numberIdCacheSize;
         this.useEntityDataStoreForIdSequence = useEntityDataStoreForIdSequence;
+        this.uniqueConstraintViolationPattern = uniqueConstraintViolationPattern;
     }
 
     public boolean isUseReadOnlyTransactionForLoad() {
@@ -47,5 +52,13 @@ public class DataProperties {
 
     public boolean isUseEntityDataStoreForIdSequence() {
         return useEntityDataStoreForIdSequence;
+    }
+
+    /**
+     * @return Overridden pattern to parse Unique Constraint Violation exception
+     */
+    @Nullable
+    public String getUniqueConstraintViolationPattern() {
+        return uniqueConstraintViolationPattern;
     }
 }

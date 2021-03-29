@@ -28,6 +28,7 @@ import io.jmix.data.PersistenceHints;
 import io.jmix.data.QueryTransformerFactory;
 import io.jmix.data.StoreAwareLocator;
 import io.jmix.data.accesscontext.ReadEntityQueryContext;
+import io.jmix.data.exception.UniqueConstraintViolationException;
 import io.jmix.data.impl.EntityChangedEventInfo;
 import io.jmix.data.impl.EntityEventManager;
 import io.jmix.data.impl.JpqlQueryBuilder;
@@ -35,8 +36,10 @@ import io.jmix.data.impl.QueryResultsManager;
 import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.hibernate.impl.topology.DirectedGraph;
 import io.jmix.hibernate.impl.topology.TopologicalSort;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.QueryException;
 import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
@@ -58,6 +61,9 @@ import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import static io.jmix.core.entity.EntityValues.getValue;
 
@@ -378,6 +384,20 @@ public class HibernateDataStore extends AbstractDataStore implements DataSorting
                 em.setProperty(PersistenceHints.SOFT_DELETION, context.getHints().get(PersistenceHints.SOFT_DELETION));
                 persistenceSupport.processFlush(em, false);
                 ((EntityManager) em.getDelegate()).flush();
+            } catch (PersistenceException e) {
+                Throwable t = e;
+                while (t.getCause() != null) {
+                    if (t instanceof ConstraintViolationException) {
+                        Pattern pattern = getUniqueConstraintViolationPattern();
+                        Matcher matcher = pattern.matcher(t.getCause().toString());
+                        if (matcher.find()) {
+                            throw new UniqueConstraintViolationException(e.getMessage(), resolveConstraintName(matcher), e);
+                        }
+                    } else {
+                        t = t.getCause();
+                    }
+                }
+                throw e;
             } finally {
                 em.setProperty(PersistenceHints.SOFT_DELETION, softDeletionBefore);
             }
@@ -582,5 +602,39 @@ public class HibernateDataStore extends AbstractDataStore implements DataSorting
     @Override
     public boolean supportsLobSortingAndFiltering() {
         return dbmsSpecifics.getDbmsFeatures(storeName).supportsLobSortingAndFiltering();
+    }
+
+    protected Pattern getUniqueConstraintViolationPattern() {
+        String defaultPatternExpression = dbmsSpecifics.getDbmsFeatures().getUniqueConstraintViolationPattern();
+        String patternExpression = properties.getUniqueConstraintViolationPattern();
+
+        Pattern pattern;
+        if (StringUtils.isBlank(patternExpression)) {
+            pattern = Pattern.compile(defaultPatternExpression);
+        } else {
+            try {
+                pattern = Pattern.compile(patternExpression);
+            } catch (PatternSyntaxException e) {
+                pattern = Pattern.compile(defaultPatternExpression);
+                log.warn("Incorrect regexp property {}: {}",
+                        "'jmix.data.uniqueConstraintViolationPattern'", patternExpression, e);
+            }
+        }
+        return pattern;
+    }
+
+    protected String resolveConstraintName(Matcher matcher) {
+        String constraintName = "";
+        if (matcher.groupCount() == 1) {
+            constraintName = matcher.group(1);
+        } else {
+            for (int i = 1; i < matcher.groupCount(); i++) {
+                if (StringUtils.isNotBlank(matcher.group(i))) {
+                    constraintName = matcher.group(i);
+                    break;
+                }
+            }
+        }
+        return constraintName.toUpperCase();
     }
 }

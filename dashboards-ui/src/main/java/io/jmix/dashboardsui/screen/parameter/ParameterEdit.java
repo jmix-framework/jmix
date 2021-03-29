@@ -29,6 +29,10 @@ import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.screen.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.Nullable;
+
+import java.util.Map;
+
 import static io.jmix.dashboards.model.parameter.ParameterType.*;
 
 
@@ -42,7 +46,7 @@ public class ParameterEdit extends StandardEditor<Parameter> {
     @Autowired
     protected InstanceContainer<Parameter> parameterDc;
     @Autowired
-    protected ComboBox<ParameterType> typeLookup;
+    protected ComboBox<ParameterType> typeComboBox;
     @Autowired
     protected VBoxLayout valueBox;
     @Autowired
@@ -59,7 +63,7 @@ public class ParameterEdit extends StandardEditor<Parameter> {
             parameterDc.setItem(parameter);
         }
         initParameter();
-        typeLookup.addValueChangeListener(e -> parameterTypeChanged(e.getValue()));
+        typeComboBox.addValueChangeListener(e -> parameterTypeChanged(e.getValue()));
     }
 
     @Subscribe(target = Target.DATA_CONTEXT)
@@ -72,51 +76,51 @@ public class ParameterEdit extends StandardEditor<Parameter> {
         ParameterValue parameterValue = parameterDc.getItem().getParameterValue();
         valueBox.removeAll();
         if (parameterValue instanceof EntityParameterValue) {
-            typeLookup.setValue(ENTITY);
+            typeComboBox.setValue(ENTITY);
             valueFragment = openEntityValueFragment((EntityParameterValue) parameterValue);
-        } else if (parameterValue instanceof ListEntitiesParameterValue) {
-            typeLookup.setValue(LIST_ENTITY);
-            valueFragment = openEntitiesListValueFragment((ListEntitiesParameterValue) parameterValue);
+        } else if (parameterValue instanceof EntityListParameterValue) {
+            typeComboBox.setValue(ENTITY_LIST);
+            valueFragment = openEntitiesListValueFragment((EntityListParameterValue) parameterValue);
         } else if (parameterValue instanceof EnumParameterValue) {
-            typeLookup.setValue(ENUM);
+            typeComboBox.setValue(ENUM);
             valueFragment = openEnumValueFragment((EnumParameterValue) parameterValue);
         } else if (parameterValue instanceof DateParameterValue) {
-            typeLookup.setValue(DATE);
+            typeComboBox.setValue(DATE);
             valueFragment = openSimpleValueFragment(DATE, parameterValue);
         } else if (parameterValue instanceof DateTimeParameterValue) {
-            typeLookup.setValue(DATETIME);
+            typeComboBox.setValue(DATETIME);
             valueFragment = openSimpleValueFragment(DATETIME, parameterValue);
         } else if (parameterValue instanceof TimeParameterValue) {
-            typeLookup.setValue(TIME);
+            typeComboBox.setValue(TIME);
             valueFragment = openSimpleValueFragment(TIME, parameterValue);
         } else if (parameterValue instanceof UuidParameterValue) {
-            typeLookup.setValue(UUID);
+            typeComboBox.setValue(UUID);
             valueFragment = openSimpleValueFragment(UUID, parameterValue);
         } else if (parameterValue instanceof IntegerParameterValue) {
-            typeLookup.setValue(INTEGER);
+            typeComboBox.setValue(INTEGER);
             valueFragment = openSimpleValueFragment(INTEGER, parameterValue);
         } else if (parameterValue instanceof LongParameterValue) {
-            typeLookup.setValue(LONG);
+            typeComboBox.setValue(LONG);
             valueFragment = openSimpleValueFragment(LONG, parameterValue);
         } else if (parameterValue instanceof StringParameterValue) {
-            typeLookup.setValue(STRING);
+            typeComboBox.setValue(STRING);
             valueFragment = openSimpleValueFragment(STRING, parameterValue);
         } else if (parameterValue instanceof DecimalParameterValue) {
-            typeLookup.setValue(DECIMAL);
+            typeComboBox.setValue(DECIMAL);
             valueFragment = openSimpleValueFragment(DECIMAL, parameterValue);
         } else if (parameterValue instanceof BooleanParameterValue) {
-            typeLookup.setValue(BOOLEAN);
+            typeComboBox.setValue(BOOLEAN);
             valueFragment = openSimpleValueFragment(BOOLEAN, parameterValue);
         } else {
-            typeLookup.setValue(null);
+            typeComboBox.setValue(null);
         }
     }
 
     protected void parameterTypeChanged(ParameterType type) {
         valueBox.removeAll();
         switch (type) {
-            case LIST_ENTITY:
-                valueFragment = openEntitiesListValueFragment(new ListEntitiesParameterValue());
+            case ENTITY_LIST:
+                valueFragment = openEntitiesListValueFragment(new EntityListParameterValue());
                 break;
             case ENTITY:
                 valueFragment = openEntityValueFragment(new EntityParameterValue());
@@ -142,11 +146,16 @@ public class ParameterEdit extends StandardEditor<Parameter> {
         }
     }
 
-    protected SimpleValueFragment openSimpleValueFragment(ParameterType type, ParameterValue parameterValue) {
+    protected SimpleValueFragment openSimpleValueFragment(ParameterType type, @Nullable ParameterValue parameterValue) {
+        Map<String, Object> params = ParamsMap.of()
+                .pair(ValueFragment.VALUE_TYPE, type)
+                .pair(ValueFragment.VALUE, parameterValue)
+                .create();
+
         SimpleValueFragment fragment = (SimpleValueFragment) fragments.create(
                 this,
                 SimpleValueFragment.class,
-                new MapScreenOptions(ParamsMap.of(ValueFragment.VALUE_TYPE, type, ValueFragment.VALUE, parameterValue))
+                new MapScreenOptions(params)
         ).init();
         valueBox.add(fragment.getFragment());
         return fragment;
@@ -172,7 +181,7 @@ public class ParameterEdit extends StandardEditor<Parameter> {
         return fragment;
     }
 
-    protected EntitiesListValueFragment openEntitiesListValueFragment(ListEntitiesParameterValue value) {
+    protected EntitiesListValueFragment openEntitiesListValueFragment(EntityListParameterValue value) {
         EntitiesListValueFragment fragment = (EntitiesListValueFragment) fragments.create(
                 this,
                 EntitiesListValueFragment.class,

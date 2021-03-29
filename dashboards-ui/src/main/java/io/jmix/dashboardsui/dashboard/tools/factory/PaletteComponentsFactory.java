@@ -18,21 +18,52 @@ package io.jmix.dashboardsui.dashboard.tools.factory;
 
 import io.jmix.dashboards.entity.WidgetTemplate;
 import io.jmix.dashboards.model.Widget;
+import io.jmix.dashboards.model.visualmodel.*;
 import io.jmix.dashboardsui.component.impl.PaletteButton;
 
+/**
+ * Contains the methods to create a {@link PaletteButton} related to {@link DashboardLayout}.
+ */
 public interface PaletteComponentsFactory {
 
+    /**
+     * @return palette button for {@link VerticalLayout}
+     */
     PaletteButton createVerticalLayoutButton();
 
+    /**
+     * @return palette button for {@link HorizontalLayout}
+     */
     PaletteButton createHorizontalLayoutButton();
 
+    /**
+     * @return palette button for {@link GridLayout}
+     */
     PaletteButton createGridLayoutButton();
 
+    /**
+     * @return palette button for {@link CssLayout}
+     */
     PaletteButton createCssLayoutButton();
 
+    /**
+     * Creates a palette button for specified widget.
+     *
+     * @param widget widget
+     * @return created palette button
+     */
     PaletteButton createWidgetButton(Widget widget);
 
+    /**
+     * Creates a palette button for specified widget template.
+     *
+     * @param widgetTemplate widget template.
+     * @return created palette button
+     */
     PaletteButton createWidgetTemplateButton(WidgetTemplate widgetTemplate);
 
+    /**
+     * @return palette button for {@link ResponsiveLayout}
+     */
     PaletteButton createResponsiveLayoutButton();
 }

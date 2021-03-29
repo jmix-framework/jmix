@@ -24,7 +24,7 @@ import javax.annotation.Nullable;
 public enum ParameterType implements EnumClass<String> {
 
     ENTITY("ENTITY"),
-    LIST_ENTITY("LIST_ENTITY"),
+    ENTITY_LIST("ENTITY_LIST"),
     ENUM("ENUM"),
     DATE("DATE"),
     DATETIME("DATETIME"),

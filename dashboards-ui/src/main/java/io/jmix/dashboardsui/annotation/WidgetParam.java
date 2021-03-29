@@ -23,5 +23,5 @@ import java.lang.annotation.*;
 @Documented
 public @interface WidgetParam {
 
-    String fetchPlan() default "";
+    String fetchPlanName() default "";
 }

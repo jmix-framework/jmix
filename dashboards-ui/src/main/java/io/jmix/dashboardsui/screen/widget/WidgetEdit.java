@@ -67,7 +67,7 @@ public class WidgetEdit extends StandardEditor<Widget> {
     protected TextField<String> widgetId;
 
     protected List<WidgetTypeInfo> typesInfo;
-    protected ScreenFragment widgetEditFrame;
+    protected ScreenFragment widgetEditFragment;
 
     @Autowired
     private Messages messages;
@@ -93,22 +93,22 @@ public class WidgetEdit extends StandardEditor<Widget> {
     }
 
     protected void setWidgetType() {
-        String browseFrameId = widgetDc.getItem().getFrameId();
+        String browseFragmentId = widgetDc.getItem().getFragmentId();
 
         WidgetTypeInfo widgetType = typesInfo.stream()
-                .filter(typeInfo -> browseFrameId.equals(typeInfo.getFrameId()))
+                .filter(typeInfo -> browseFragmentId.equals(typeInfo.getFragmentId()))
                 .findFirst().orElseThrow(() -> new RuntimeException("Unknown widget type"));
 
 
         Map<String, Object> params = new HashMap<>(ParamsMap.of(ITEM_DC, widgetDc));
         params.putAll(widgetRepository.getWidgetParams(widgetDc.getItem()));
-        if (StringUtils.isNotEmpty(widgetType.getEditFrameId())) {
-            widgetEditFrame = fragments.create(this,
-                    widgetType.getEditFrameId(),
+        if (StringUtils.isNotEmpty(widgetType.getEditFragmentId())) {
+            widgetEditFragment = fragments.create(this,
+                    widgetType.getEditFragmentId(),
                     new MapScreenOptions(params))
                     .init();
             widgetEditBox.removeAll();
-            widgetEditBox.add(widgetEditFrame.getFragment());
+            widgetEditBox.add(widgetEditFragment.getFragment());
         }
     }
 
@@ -124,8 +124,8 @@ public class WidgetEdit extends StandardEditor<Widget> {
     protected void preCommit(DataContext.PreCommitEvent event) {
         List<Parameter> parameters = paramsFragment.getParameters();
         getEditedEntity().setParameters(parameters);
-        if (widgetEditFrame != null) {
-            widgetRepository.serializeWidgetFields(widgetEditFrame, widgetDc.getItem());
+        if (widgetEditFragment != null) {
+            widgetRepository.serializeWidgetFields(widgetEditFragment, widgetDc.getItem());
         }
     }
 

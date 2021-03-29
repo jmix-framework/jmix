@@ -29,7 +29,7 @@ import org.springframework.stereotype.Component;
 import java.util.UUID;
 
 /**
- * Helper class to work with {@link DashboardLayout implementations}.
+ * Helper class to create/get info about {@link DashboardLayout} objects.
  */
 @Internal
 @Component("dshbrd_DashboardLayoutManager")
@@ -43,7 +43,7 @@ public class DashboardLayoutManager {
     protected Messages messages;
 
     /**
-     * Create a {@link GridLayout} with specified number of rows and columns.
+     * Creates a {@link GridLayout} with specified number of rows and columns.
      * Children {@link GridArea} are created as well.
      * @param cols number of columns
      * @param rows number of rows
@@ -66,7 +66,7 @@ public class DashboardLayoutManager {
     }
 
     /**
-     * Create a {@link GridArea} for a cell located in the specified column and row of specified {@link GridLayout}.
+     * Creates a {@link GridArea} for a cell located in the specified column and row of specified {@link GridLayout}.
      * Nested component {@link GridCellLayout} is created as well.
      * @param col column
      * @param row row
@@ -93,7 +93,7 @@ public class DashboardLayoutManager {
     }
 
     /**
-     * Create a {@link CssLayout} with specified parameters.
+     * Creates a {@link CssLayout} with specified parameters.
      * @param responsive specified whether layout should be responsive or not
      * @param styleName style name
      * @return created CSS layout
@@ -106,7 +106,7 @@ public class DashboardLayoutManager {
     }
 
     /**
-     * Create a {@link WidgetLayout} with specified widget.
+     * Creates a {@link WidgetLayout} with specified widget.
      * @param widget widget
      * @param fromTemplate specifies whether new layout is created from {@link WidgetTemplateLayout} or not
      * @return created widget layout
@@ -119,7 +119,7 @@ public class DashboardLayoutManager {
             newWidget.setId(UUID.randomUUID());
         } else {
             newWidget = metadata.create(widget.getClass());
-            newWidget.setFrameId(widget.getFrameId());
+            newWidget.setFragmentId(widget.getFragmentId());
             newWidget.setName(widget.getName());
         }
         newWidget.setDashboard(widget.getDashboard());
@@ -128,7 +128,7 @@ public class DashboardLayoutManager {
     }
 
     /**
-     * Create a {@link ResponsiveLayout} with specified parameters
+     * Creates a {@link ResponsiveLayout} with specified parameters
      * @param xs number of columns for extra small devices
      * @param sm number of columns for small devices
      * @param md number of columns for medium devices
@@ -145,7 +145,7 @@ public class DashboardLayoutManager {
     }
 
     /**
-     * Create a {@link ResponsiveArea} with specified component
+     * Creates a {@link ResponsiveArea} with specified component
      * @param component layout located in new responsive area
      * @return created responsive area
      */

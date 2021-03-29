@@ -16,7 +16,6 @@
 
 package io.jmix.dashboardsui.screen.parameter.fragment;
 
-import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.dashboards.model.parameter.ParameterType;
 import io.jmix.dashboards.model.parameter.type.*;
@@ -24,6 +23,7 @@ import io.jmix.ui.component.*;
 import io.jmix.ui.screen.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Map;
@@ -91,7 +91,7 @@ public class SimpleValueFragment extends ScreenFragment implements ValueFragment
         }
     }
 
-    protected void showField(ParameterValue parameterValue) {
+    protected void showField(@Nullable ParameterValue parameterValue) {
         switch (type) {
             case DATETIME:
                 setDateTime((DateTimeParameterValue) parameterValue);
@@ -120,15 +120,17 @@ public class SimpleValueFragment extends ScreenFragment implements ValueFragment
             case BOOLEAN:
                 setBoolean((BooleanParameterValue) parameterValue);
                 break;
+            default:
+                break;
         }
     }
 
-    protected void setDateTime(DateTimeParameterValue value) {
+    protected void setDateTime(@Nullable DateTimeParameterValue value) {
         dateField.setValue(value == null ? null : value.getValue());
         initDateField("dd/MM/yyyy HH:mm");
     }
 
-    protected void setDate(DateParameterValue value) {
+    protected void setDate(@Nullable DateParameterValue value) {
         dateField.setValue(value == null ? null : value.getValue());
         initDateField("dd/MM/yyyy");
     }
@@ -138,42 +140,37 @@ public class SimpleValueFragment extends ScreenFragment implements ValueFragment
         dateField.setVisible(true);
     }
 
-    protected void setTime(TimeParameterValue value) {
+    protected void setTime(@Nullable TimeParameterValue value) {
         timeField.setValue(value == null ? null : value.getValue());
         timeField.setVisible(true);
     }
 
-    protected void setDecimal(DecimalParameterValue value) {
+    protected void setDecimal(@Nullable DecimalParameterValue value) {
         decimalField.setValue(value == null ? null : value.getValue());
         decimalField.setVisible(true);
     }
 
-    protected void setInteger(IntegerParameterValue value) {
+    protected void setInteger(@Nullable IntegerParameterValue value) {
         intField.setValue(value == null ? null : value.getValue());
         intField.setVisible(true);
     }
 
-    protected void setLong(LongParameterValue value) {
+    protected void setLong(@Nullable LongParameterValue value) {
         longField.setValue(value == null ? null : value.getValue());
         longField.setVisible(true);
     }
 
-    protected void setString(StringParameterValue value) {
+    protected void setString(@Nullable StringParameterValue value) {
         textField.setValue(value == null ? null : value.getValue());
         textField.setVisible(true);
     }
 
-    protected void setUUID(UuidParameterValue value) {
+    protected void setUUID(@Nullable UuidParameterValue value) {
         uuidField.setValue(value == null ? null : value.getValue());
         uuidField.setVisible(true);
     }
 
-    protected void initTextField(String dataType) {
-        textField.setDatatype(dataType == null ? null : (Datatype<String>) datatypeRegistry.get(dataType));
-        textField.setVisible(true);
-    }
-
-    protected void setBoolean(BooleanParameterValue value) {
+    protected void setBoolean(@Nullable BooleanParameterValue value) {
         checkBox.setValue(value == null ? null : value.getValue());
         checkBox.setVisible(true);
     }

@@ -22,15 +22,15 @@ import java.util.Objects;
 public class EntityParameterValue implements ParameterValue {
     protected String metaClassName;
     protected String entityId;
-    protected String fetchPlan;
+    protected String fetchPlanName;
 
     public EntityParameterValue() {
     }
 
-    public EntityParameterValue(String metaClassName, String entityId, String fetchPlan) {
+    public EntityParameterValue(String metaClassName, String entityId, String fetchPlanName) {
         this.metaClassName = metaClassName;
         this.entityId = entityId;
-        this.fetchPlan = fetchPlan;
+        this.fetchPlanName = fetchPlanName;
     }
 
     @Override
@@ -39,7 +39,7 @@ public class EntityParameterValue implements ParameterValue {
             {
                 put("metaClassName", metaClassName);
                 put("entityId", entityId);
-                put("fetchPlan", fetchPlan);
+                put("fetchPlanName", fetchPlanName);
             }
         };
     }
@@ -60,17 +60,17 @@ public class EntityParameterValue implements ParameterValue {
         this.entityId = entityId;
     }
 
-    public String getFetchPlan() {
-        return fetchPlan;
+    public String getFetchPlanName() {
+        return fetchPlanName;
     }
 
-    public void setFetchPlan(String fetchPlan) {
-        this.fetchPlan = fetchPlan;
+    public void setFetchPlanName(String fetchPlanName) {
+        this.fetchPlanName = fetchPlanName;
     }
 
     @Override
     public String toString() {
-        return String.format("type: entity; metaClassName=%s, entityId=%s, fetchPlan=%s", metaClassName, entityId, fetchPlan);
+        return String.format("type: entity; metaClassName=%s, entityId=%s, fetchPlanName=%s", metaClassName, entityId, fetchPlanName);
     }
 
     @Override
@@ -80,11 +80,11 @@ public class EntityParameterValue implements ParameterValue {
         EntityParameterValue that = (EntityParameterValue) o;
         return Objects.equals(metaClassName, that.metaClassName) &&
                 Objects.equals(entityId, that.entityId) &&
-                Objects.equals(fetchPlan, that.fetchPlan);
+                Objects.equals(fetchPlanName, that.fetchPlanName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(metaClassName, entityId, fetchPlan);
+        return Objects.hash(metaClassName, entityId, fetchPlanName);
     }
 }

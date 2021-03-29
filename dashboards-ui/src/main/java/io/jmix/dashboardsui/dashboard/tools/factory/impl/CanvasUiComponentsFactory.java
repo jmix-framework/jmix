@@ -20,6 +20,8 @@ import io.jmix.core.Messages;
 import io.jmix.core.common.util.ParamsMap;
 import io.jmix.dashboards.model.Widget;
 import io.jmix.dashboards.model.visualmodel.*;
+import io.jmix.dashboardsui.component.CanvasLayout;
+import io.jmix.dashboardsui.component.Dashboard;
 import io.jmix.dashboardsui.component.impl.*;
 import io.jmix.dashboardsui.dashboard.tools.factory.CanvasComponentsFactory;
 import io.jmix.dashboardsui.repository.WidgetRepository;
@@ -34,6 +36,7 @@ import io.jmix.ui.component.VBoxLayout;
 import io.jmix.ui.screen.MapScreenOptions;
 import io.jmix.ui.screen.ScreenFragment;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +46,10 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-@org.springframework.stereotype.Component("dshbrd_uiComponentsFactory")
+/**
+ * Creates a non-editable {@link CanvasLayout} to be added to the {@link Dashboard} component.
+ */
+@org.springframework.stereotype.Component("dshbrd_CanvasUiComponentsFactory")
 public class CanvasUiComponentsFactory implements CanvasComponentsFactory {
 
     public static final String WIDGET = "widget";
@@ -97,7 +103,7 @@ public class CanvasUiComponentsFactory implements CanvasComponentsFactory {
     public CanvasWidgetLayout createCanvasWidgetLayout(CanvasFragment canvasFragment, WidgetLayout widgetLayout) {
         Widget widget = widgetLayout.getWidget();
         Optional<WidgetTypeInfo> widgetTypeOpt = widgetRepository.getWidgetTypesInfo().stream()
-                .filter(widgetType -> widget.getFrameId().equals(widgetType.getFrameId()))
+                .filter(widgetType -> StringUtils.equals(widget.getFragmentId(), widgetType.getFragmentId()))
                 .findFirst();
 
         if (!widgetTypeOpt.isPresent()) {
@@ -112,7 +118,7 @@ public class CanvasUiComponentsFactory implements CanvasComponentsFactory {
 
         widget.setDashboard(canvasFragment.getDashboardModel());
 
-        String frameId = widgetTypeOpt.get().getFrameId();
+        String fragmentId = widgetTypeOpt.get().getFragmentId();
         Map<String, Object> params = new HashMap<>(ParamsMap.of(
                 WIDGET, widget,
                 DASHBOARD_MODEL, canvasFragment.getDashboardModel(),
@@ -121,7 +127,7 @@ public class CanvasUiComponentsFactory implements CanvasComponentsFactory {
         params.putAll(widgetRepository.getWidgetParams(widget));
 
         ScreenFragment screenFragment = AppUI.getCurrent().getFragments()
-                .create(canvasFragment, frameId, new MapScreenOptions(params))
+                .create(canvasFragment, fragmentId, new MapScreenOptions(params))
                 .init();
         Fragment fragment = screenFragment
                 .getFragment();
@@ -163,7 +169,6 @@ public class CanvasUiComponentsFactory implements CanvasComponentsFactory {
     public CanvasRootLayout createCanvasRootLayout(RootLayout rootLayout) {
         CanvasRootLayout layout = components.create(CanvasRootLayout.class).init(rootLayout);
         layout.setUuid(UUID.randomUUID());
-//        layout.setSizeFull();
         return layout;
     }
 

@@ -20,15 +20,15 @@ package io.jmix.dashboardsui.screen.dashboard.editor.canvas;
 import io.jmix.dashboards.model.DashboardModel;
 import io.jmix.dashboards.model.visualmodel.RootLayout;
 import io.jmix.dashboardsui.DashboardStyleConstants;
+import io.jmix.dashboardsui.component.CanvasLayout;
 import io.jmix.dashboardsui.dashboard.event.CanvasLayoutElementClickedEvent;
 import io.jmix.dashboardsui.dashboard.event.DashboardRefreshEvent;
 import io.jmix.dashboardsui.dashboard.event.WidgetSelectedEvent;
-import io.jmix.dashboardsui.component.CanvasLayout;
 import io.jmix.dashboardsui.dashboard.tools.DashboardModelConverter;
 import io.jmix.dashboardsui.screen.dashboard.editor.DashboardLayoutHolderComponent;
 import io.jmix.ui.UiEventPublisher;
 import io.jmix.ui.component.Component;
-import io.jmix.ui.component.ComponentContainer;
+import io.jmix.ui.component.HasComponents;
 import io.jmix.ui.component.MouseEventDetails;
 import io.jmix.ui.screen.UiController;
 import io.jmix.ui.screen.UiDescriptor;
@@ -46,7 +46,7 @@ public class CanvasEditorFragment extends CanvasFragment implements DashboardLay
 
     @Autowired
     @Qualifier("dropModelConverter")
-    protected DashboardModelConverter converter;
+    protected DashboardModelConverter dropModelConverter;
 
     @Autowired
     protected UiEventPublisher uiEventPublisher;
@@ -59,10 +59,10 @@ public class CanvasEditorFragment extends CanvasFragment implements DashboardLay
 
     @Override
     protected DashboardModelConverter getConverter() {
-        return converter;
+        return dropModelConverter;
     }
 
-    protected void selectLayout(ComponentContainer layout, UUID layoutUuid, boolean needSelect) {
+    protected void selectLayout(Component layout, UUID layoutUuid, boolean needSelect) {
         if (layout instanceof CanvasLayout) {
             if (((CanvasLayout) layout).getUuid().equals(layoutUuid) && needSelect) {
                 layout.addStyleName(DashboardStyleConstants.DASHBOARD_TREE_SELECTED);
@@ -71,9 +71,11 @@ public class CanvasEditorFragment extends CanvasFragment implements DashboardLay
             }
         }
 
-        for (Component child : layout.getOwnComponents()) {
-            if (child instanceof ComponentContainer) {
-                selectLayout((ComponentContainer) child, layoutUuid, needSelect);
+        if (layout instanceof HasComponents) {
+            for (Component child : ((HasComponents) layout).getOwnComponents()) {
+                if (child instanceof HasComponents) {
+                    selectLayout(child, layoutUuid, needSelect);
+                }
             }
         }
     }
@@ -95,7 +97,7 @@ public class CanvasEditorFragment extends CanvasFragment implements DashboardLay
     public void canvasLayoutElementClickedEventListener(CanvasLayoutElementClickedEvent event) {
         UUID layoutUuid = event.getSource();
         MouseEventDetails md = event.getMouseEventDetails();
-        //TODO: refactor, problem with addLayoutClickListener in every layout prod a lot of events, in root can't get clicked comp
+
         if (mouseEventDetails == null) {
             mouseEventDetails = md;
         } else {

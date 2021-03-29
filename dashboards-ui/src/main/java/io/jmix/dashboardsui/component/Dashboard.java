@@ -21,13 +21,16 @@ import io.jmix.dashboards.model.parameter.Parameter;
 import io.jmix.ui.component.*;
 import io.jmix.ui.screen.ScreenFragment;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 
 /**
- * Represents a dashboard {@link DashboardModel} in UI.
- * Dashboard can be configured by {@link DashboardModel#setCode(String)} or by the classpath of dashboard.json
+ * UI representation of {@link DashboardModel}.
+ * <p>
+ * Dashboard can be configured by {@link DashboardModel#code} or by the classpath of dashboard.json
  * It is possible to add (or rewrite) primitive parameters in the dashboard.
+ * </p>
  */
 public interface Dashboard extends Component, Component.BelongToFrame, CompositeWithIcon, CompositeWithCaption,
         CompositeWithDescription {
@@ -45,7 +48,7 @@ public interface Dashboard extends Component, Component.BelongToFrame, Composite
      *
      * @return dashboard entity
      */
-    DashboardModel getDashboard();
+    DashboardModel getDashboardModel();
 
     /**
      * Returns widget by passed id.
@@ -53,6 +56,7 @@ public interface Dashboard extends Component, Component.BelongToFrame, Composite
      * @param widgetId widget identifier
      * @return widget fragment
      */
+    @Nullable
     ScreenFragment getWidget(String widgetId);
 
     /**

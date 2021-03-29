@@ -17,32 +17,72 @@
 package io.jmix.dashboardsui.component;
 
 import io.jmix.dashboards.model.visualmodel.DashboardLayout;
-import io.jmix.ui.component.Component;
-import io.jmix.ui.component.ComponentContainer;
-import io.jmix.ui.component.HBoxLayout;
-import io.jmix.ui.component.LayoutClickNotifier;
+import io.jmix.dashboardsui.dashboard.tools.factory.ActionProviderFactory;
+import io.jmix.ui.component.*;
 
 import java.util.Collection;
 import java.util.UUID;
 
+/**
+ * UI representation of {@link DashboardLayout} model on the {@link Dashboard} component.
+ */
 public interface CanvasLayout extends Component, ComponentContainer, LayoutClickNotifier, HasWeight {
 
+    /**
+     *
+     * @return UI component that contains child components. It can be {@link ComponentContainer} or {@link ResponsiveGridLayout}.
+     */
     Component getDelegate();
 
+    /**
+     * Add specified component to the layout.
+     *
+     * @param component component
+     */
     void addComponent(Component component);
 
+    /**
+     *
+     * @return layout components
+     */
     Collection<Component> getLayoutComponents();
 
+    /**
+     * Creates an empty panel for dashboard layout actions.
+     *
+     * @see ActionProviderFactory#getLayoutActions(DashboardLayout)
+     *
+     * @return empty buttons panel
+     */
     HBoxLayout createButtonsPanel();
 
+    /**
+     * @return buttons panel
+     */
     HBoxLayout getButtonsPanel();
 
+    /**
+     * Sets a buttons panel.
+     *
+     * @param buttonsPanel new buttons panel
+     */
     void setButtonsPanel(HBoxLayout buttonsPanel);
 
+    /**
+     * @return canvas layout id
+     */
     UUID getUuid();
 
+    /**
+     * Sets a canvas layout id.
+     *
+     * @param uuid id
+     */
     void setUuid(UUID uuid);
 
+    /**
+     * @return dashboard layout model
+     */
     DashboardLayout getModel();
 
 }

@@ -98,23 +98,23 @@ public class WidgetRepositoryImpl implements WidgetRepository {
                 Class clazz = windowInfo.getControllerClass();
                 if (clazz.isAnnotationPresent(DashboardWidget.class)) {
                     DashboardWidget widgetAnnotation = (DashboardWidget) clazz.getAnnotation(DashboardWidget.class);
-                    String editFrameId = widgetAnnotation.editFrameId();
-                    if (StringUtils.isNotBlank(editFrameId) && !windowConfig.hasWindow(editFrameId)) {
-                        log.error("Unable to find {} edit screen in screen config for widget {}", editFrameId, widgetAnnotation.name());
+                    String editFragmentId = widgetAnnotation.editFragmentId();
+                    if (StringUtils.isNotBlank(editFragmentId) && !windowConfig.hasWindow(editFragmentId)) {
+                        log.error("Unable to find {} edit screen in screen config for widget {}", editFragmentId, widgetAnnotation.name());
                         throw new IllegalArgumentException(
                                 String.format("Unable to find %s edit screen in screen config for widget %s",
-                                        editFrameId, widgetAnnotation.name()));
+                                        editFragmentId, widgetAnnotation.name()));
                     }
-                    widgetTypeInfos.add(new WidgetTypeInfo(widgetAnnotation.name(), windowInfo.getId(), editFrameId));
+                    widgetTypeInfos.add(new WidgetTypeInfo(widgetAnnotation.name(), windowInfo.getId(), editFragmentId));
                 }
             }
         }
     }
 
     @Override
-    public void initializeWidgetFields(ScreenFragment widgetFrame, Widget widget) {
+    public void initializeWidgetFields(ScreenFragment widgetFragment, Widget widget) {
         List<Parameter> widgetFieldValues = widget.getWidgetFields();
-        List<Field> parameterFields = FieldUtils.getFieldsListWithAnnotation(widgetFrame.getClass(), WidgetParam.class);
+        List<Field> parameterFields = FieldUtils.getFieldsListWithAnnotation(widgetFragment.getClass(), WidgetParam.class);
         for (Field parameterField : parameterFields) {
             Optional<Parameter> fieldValueOpt = widgetFieldValues.stream()
                     .filter(p -> p.getName().equals(parameterField.getName()))
@@ -123,7 +123,7 @@ public class WidgetRepositoryImpl implements WidgetRepository {
                 Parameter p = fieldValueOpt.get();
                 Object rawValue = parameterTransformer.transform(p.getParameterValue());
                 try {
-                    FieldUtils.writeField(parameterField, widgetFrame, rawValue, true);
+                    FieldUtils.writeField(parameterField, widgetFragment, rawValue, true);
                 } catch (IllegalAccessException e) {
                     throw new RuntimeException(String.format("Error on widget field %s initialization", p.getAlias()), e);
                 }
@@ -132,7 +132,7 @@ public class WidgetRepositoryImpl implements WidgetRepository {
     }
 
     @Override
-    public Map<String, Object> getWidgetParams(Widget widget) {//
+    public Map<String, Object> getWidgetParams(Widget widget) {
         Map<String, Object> widgetParams = new HashMap<>();
 
         for (Parameter p : widget.getWidgetFields()) {
@@ -159,14 +159,14 @@ public class WidgetRepositoryImpl implements WidgetRepository {
     }
 
     @Override
-    public void serializeWidgetFields(ScreenFragment widgetFrame, Widget widget) {
+    public void serializeWidgetFields(ScreenFragment widgetFragment, Widget widget) {
         widget.getWidgetFields().clear();
-        List<Field> parameterFields = FieldUtils.getFieldsListWithAnnotation(widgetFrame.getClass(), WidgetParam.class);
+        List<Field> parameterFields = FieldUtils.getFieldsListWithAnnotation(widgetFragment.getClass(), WidgetParam.class);
         for (Field parameterField : parameterFields) {
             Parameter parameter = metadata.create(Parameter.class);
             parameter.setName(parameterField.getName());
             parameter.setAlias(parameterField.getName());
-            ParameterValue parameterValue = parameterTransformer.createParameterValue(parameterField, widgetFrame);
+            ParameterValue parameterValue = parameterTransformer.createParameterValue(parameterField, widgetFragment);
             parameter.setParameterValue(parameterValue);
             widget.getWidgetFields().add(parameter);
         }

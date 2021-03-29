@@ -68,7 +68,6 @@ public abstract class DashboardLayout {
     protected String heightUnit = SizeUnit.PERCENTAGE.getId();
 
     @JmixProperty
-    @InstanceName
     @Exclude
     protected String caption;
 

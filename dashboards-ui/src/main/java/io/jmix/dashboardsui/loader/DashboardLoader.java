@@ -28,6 +28,7 @@ import org.dom4j.tree.DefaultElement;
 
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -42,6 +43,8 @@ public class DashboardLoader extends AbstractComponentLoader<DashboardImpl> {
     public void createComponent() {
         resultComponent = factory.create(Dashboard.NAME);
         loadId(resultComponent, element);
+
+        metadata = applicationContext.getBean(Metadata.class);
     }
 
     @Override
@@ -69,7 +72,7 @@ public class DashboardLoader extends AbstractComponentLoader<DashboardImpl> {
         loadTimerDelay(resultComponent, element);
         loadAssistanceBeanName(resultComponent, element);
 
-        resultComponent.refresh();
+        resultComponent.init(Collections.emptyMap());
     }
 
     protected void loadReferenceName(Dashboard resultComponent, Element element) {

@@ -20,17 +20,16 @@ import io.jmix.core.Metadata;
 import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.dashboards.model.parameter.type.EntityParameterValue;
-import io.jmix.dashboards.model.parameter.type.ListEntitiesParameterValue;
+import io.jmix.dashboards.model.parameter.type.EntityListParameterValue;
 import io.jmix.dashboards.model.parameter.type.ParameterValue;
 import io.jmix.ui.Screens;
 import io.jmix.ui.action.Action;
-import io.jmix.ui.component.Button;
 import io.jmix.ui.component.Window;
 import io.jmix.ui.model.KeyValueCollectionContainer;
 import io.jmix.ui.screen.*;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -60,14 +59,14 @@ public class EntitiesListValueFragment extends ScreenFragment implements ValueFr
 
     @Override
     public ParameterValue getValue() {
-        return new ListEntitiesParameterValue(new ArrayList<>(tableValues.values()));
+        return new EntityListParameterValue(new ArrayList<>(tableValues.values()));
     }
 
     protected void initDc(Map<String, Object> params) {
-        ListEntitiesParameterValue value = (ListEntitiesParameterValue) params.get(VALUE);
+        EntityListParameterValue value = (EntityListParameterValue) params.get(VALUE);
 
         if (value == null || value.getValue() == null) {
-            value = new ListEntitiesParameterValue();
+            value = new EntityListParameterValue();
         }
 
         for (EntityParameterValue entityValue : value.getValue()) {
@@ -85,7 +84,7 @@ public class EntitiesListValueFragment extends ScreenFragment implements ValueFr
 
     @Subscribe("entitiesTable.edit")
     public void editEntityValue(Action.ActionPerformedEvent event) {
-        KeyValueEntity item = entitiesDc.getItem();
+        KeyValueEntity item = entitiesDc.getItemOrNull();
         if (item != null) {
             oldValue = item;
             openEntityValueScreen(tableValues.get(item));
@@ -94,15 +93,18 @@ public class EntitiesListValueFragment extends ScreenFragment implements ValueFr
 
     @Subscribe("entitiesTable.remove")
     public void removeEntityValue(Action.ActionPerformedEvent event) {
-        KeyValueEntity item = entitiesDc.getItem();
+        KeyValueEntity item = entitiesDc.getItemOrNull();
         if (item != null) {
             entitiesDc.getMutableItems().remove(item);
             tableValues.remove(item);
         }
     }
 
-    protected void openEntityValueScreen(EntityParameterValue value) {
-        screens.create(EntityValueScreen.class, OpenMode.DIALOG, new MapScreenOptions(ParamsMap.of(VALUE, value)))
+    protected void openEntityValueScreen(@Nullable EntityParameterValue value) {
+        Map<String, Object> params = ParamsMap.of()
+                .pair(VALUE, value)
+                .create();
+        screens.create(EntityValueScreen.class, OpenMode.DIALOG, new MapScreenOptions(params))
                 .show()
                 .addAfterCloseListener(e -> {
                     StandardCloseAction closeAction = (StandardCloseAction) e.getCloseAction();
@@ -128,7 +130,7 @@ public class EntitiesListValueFragment extends ScreenFragment implements ValueFr
         KeyValueEntity keyValueEntity = metadata.create(KeyValueEntity.class);
         keyValueEntity.setValue("metaClassName", value.getMetaClassName());
         keyValueEntity.setValue("entityId", value.getEntityId());
-        keyValueEntity.setValue("fetchPlanName", value.getFetchPlan());
+        keyValueEntity.setValue("fetchPlanName", value.getFetchPlanName());
         return keyValueEntity;
     }
 }

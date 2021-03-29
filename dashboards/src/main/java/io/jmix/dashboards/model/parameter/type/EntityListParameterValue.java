@@ -21,14 +21,14 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-public class ListEntitiesParameterValue implements ParameterValue {
+public class EntityListParameterValue implements ParameterValue {
     protected List<EntityParameterValue> entityValues;
 
-    public ListEntitiesParameterValue() {
+    public EntityListParameterValue() {
         entityValues = new ArrayList<>();
     }
 
-    public ListEntitiesParameterValue(List<EntityParameterValue> entityValues) {
+    public EntityListParameterValue(List<EntityParameterValue> entityValues) {
         this.entityValues = entityValues;
     }
 
@@ -49,7 +49,7 @@ public class ListEntitiesParameterValue implements ParameterValue {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ListEntitiesParameterValue that = (ListEntitiesParameterValue) o;
+        EntityListParameterValue that = (EntityListParameterValue) o;
         if ((entityValues == null & that.entityValues != null) || (entityValues != null & that.entityValues == null)) {
             return false;
         }

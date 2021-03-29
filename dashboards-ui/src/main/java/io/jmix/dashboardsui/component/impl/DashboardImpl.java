@@ -22,13 +22,13 @@ import io.jmix.core.Metadata;
 import io.jmix.core.common.util.ParamsMap;
 import io.jmix.dashboards.entity.PersistentDashboard;
 import io.jmix.dashboards.model.DashboardModel;
-import io.jmix.dashboards.model.parameter.Parameter;
 import io.jmix.dashboards.model.Widget;
+import io.jmix.dashboards.model.parameter.Parameter;
 import io.jmix.dashboardsui.DashboardException;
+import io.jmix.dashboardsui.component.CanvasLayout;
 import io.jmix.dashboardsui.component.Dashboard;
 import io.jmix.dashboardsui.dashboard.assistant.DashboardViewAssistant;
 import io.jmix.dashboardsui.dashboard.converter.JsonConverter;
-import io.jmix.dashboardsui.component.CanvasLayout;
 import io.jmix.dashboardsui.dashboard.tools.AccessConstraintsHelper;
 import io.jmix.dashboardsui.event.DashboardEvent;
 import io.jmix.dashboardsui.event.DashboardUpdatedEvent;
@@ -40,7 +40,12 @@ import io.jmix.dashboardsui.widget.RefreshableWidget;
 import io.jmix.ui.*;
 import io.jmix.ui.component.Timer;
 import io.jmix.ui.component.*;
-import io.jmix.ui.screen.*;
+import io.jmix.ui.component.data.DataUnit;
+import io.jmix.ui.screen.MapScreenOptions;
+import io.jmix.ui.screen.ScreenFragment;
+import io.jmix.ui.sys.UiControllerReflectionInspector;
+import io.jmix.ui.sys.event.UiEventListenerMethodAdapter;
+import io.jmix.ui.sys.event.UiEventsMulticaster;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -48,12 +53,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.EventListener;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.util.ReflectionUtils;
 
+import javax.annotation.Nullable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -113,12 +120,14 @@ public class DashboardImpl extends CompositeComponent<VBoxLayout> implements Das
     @Autowired
     protected Messages messages;
 
+    private List<ApplicationListener> uiEventListeners;
+
     protected String code;
     protected String jsonPath;
     protected Integer timerDelay = 0;
     protected List<Parameter> xmlParameters = new ArrayList<>();
     protected String assistantBeanName;
-    protected DashboardModel dashboard;
+    protected DashboardModel dashboardModel;
 
     public DashboardImpl() {
         addCreateListener(this::onCreate);
@@ -126,13 +135,14 @@ public class DashboardImpl extends CompositeComponent<VBoxLayout> implements Das
 
     private void onCreate(CreateEvent createEvent) {
         canvasBox = getComposition();
+        initListeners();
     }
 
     @Override
     public void init(Map<String, Object> params) {
         setCode(StringUtils.isEmpty(code) ? (String) params.getOrDefault(CODE, "") : code);
         refresh(params);
-        if (dashboard != null) {
+        if (dashboardModel != null) {
             initAssistant(this);
             initTimer(getFrame());
             initLookupWidget();
@@ -159,9 +169,12 @@ public class DashboardImpl extends CompositeComponent<VBoxLayout> implements Das
 
     private void assignItemSelectedHandler(LookupWidget widget) {
         ListComponent lookupComponent = widget.getLookupComponent();
-        lookupComponent.getItems().addStateChangeListener(e -> {
-            uiEventPublisher.publishEvent(new ItemsSelectedEvent((Widget) widget, lookupComponent.getSelected()));
-        });
+        DataUnit items = lookupComponent.getItems();
+        if (items != null) {
+            items.addStateChangeListener(e -> {
+                uiEventPublisher.publishEvent(new ItemsSelectedEvent((Widget) widget, lookupComponent.getSelected()));
+            });
+        }
     }
 
     @Override
@@ -182,15 +195,15 @@ public class DashboardImpl extends CompositeComponent<VBoxLayout> implements Das
      */
     @Override
     public void refresh(Map<String, Object> params) {
-        DashboardModel dashboard = null;
+        DashboardModel dashboardModel = null;
 
         if (isNotBlank(jsonPath)) {
-            dashboard = loadDashboardByJson(jsonPath);
+            dashboardModel = loadDashboardByJson(jsonPath);
         } else if (isNotBlank(code)) {
-            dashboard = loadDashboardByCode(code);
+            dashboardModel = loadDashboardByCode(code);
         }
 
-        if (MapUtils.isNotEmpty(params) && Objects.nonNull(dashboard)) {
+        if (MapUtils.isNotEmpty(params) && Objects.nonNull(dashboardModel)) {
             Map<String, Parameter> newParams = params.keySet().stream()
                     .map(key -> {
                         Parameter parameter = metadata.create(Parameter.class);
@@ -201,16 +214,16 @@ public class DashboardImpl extends CompositeComponent<VBoxLayout> implements Das
                     })
                     .collect(Collectors.toMap(Parameter::getName, Function.identity()));
 
-            Map<String, Parameter> paramMap = dashboard.getParameters().stream().collect(Collectors.toMap(Parameter::getName, Function.identity()));
+            Map<String, Parameter> paramMap = dashboardModel.getParameters().stream().collect(Collectors.toMap(Parameter::getName, Function.identity()));
             paramMap.putAll(newParams);
-            dashboard.setParameters(new ArrayList<>(paramMap.values()));
+            dashboardModel.setParameters(new ArrayList<>(paramMap.values()));
         }
 
-        updateDashboard(dashboard);
+        updateDashboard(dashboardModel);
     }
 
-    private void initAssistant(DashboardImpl dashboard) {
-        String assistantBeanName = StringUtils.isEmpty(getAssistantBeanName()) ? this.dashboard.getAssistantBeanName() : getAssistantBeanName();
+    private void initAssistant(Dashboard dashboard) {
+        String assistantBeanName = StringUtils.isEmpty(getAssistantBeanName()) ? this.dashboardModel.getAssistantBeanName() : getAssistantBeanName();
         if (StringUtils.isNotEmpty(assistantBeanName)) {
             DashboardViewAssistant assistantBean = applicationContext.getBean(assistantBeanName, DashboardViewAssistant.class);
             BeanFactory bf = ((AbstractApplicationContext) applicationContext).getBeanFactory();
@@ -223,13 +236,13 @@ public class DashboardImpl extends CompositeComponent<VBoxLayout> implements Das
 
     private void initTimer(Component frame) {
         Window parentWindow = findWindow(frame);
-        int timerDelay = getTimerDelay() == 0 ? dashboard.getTimerDelay() : getTimerDelay();
+        int timerDelay = getTimerDelay() == 0 ? dashboardModel.getTimerDelay() : getTimerDelay();
         if (timerDelay > 0 && parentWindow != null) {
             Timer dashboardUpdatedTimer = facets.create(Timer.class);
             dashboardUpdatedTimer.setOwner(getFrame());
             dashboardUpdatedTimer.setDelay(timerDelay * 1000);
             dashboardUpdatedTimer.setRepeating(true);
-            dashboardUpdatedTimer.addTimerActionListener(timer -> uiEventPublisher.publishEvent(new DashboardUpdatedEvent(dashboard))
+            dashboardUpdatedTimer.addTimerActionListener(timer -> uiEventPublisher.publishEvent(new DashboardUpdatedEvent(dashboardModel))
             );
             dashboardUpdatedTimer.start();
         }
@@ -259,28 +272,26 @@ public class DashboardImpl extends CompositeComponent<VBoxLayout> implements Das
 
             }
         }
-
-
     }
 
-    protected void updateDashboard(DashboardModel dashboard) {
-        if (dashboard == null) {
+    protected void updateDashboard(@Nullable DashboardModel dashboardModel) {
+        if (dashboardModel == null) {
             notifications.create(Notifications.NotificationType.ERROR)
                     .withCaption(messages.getMessage(DashboardImpl.class, "notLoadedDashboard"))
                     .show();
             return;
         }
 
-        if (!accessHelper.isDashboardAllowedCurrentUser(dashboard)) {
+        if (!accessHelper.isDashboardAllowedCurrentUser(dashboardModel)) {
             notifications.create(Notifications.NotificationType.WARNING)
                     .withCaption(messages.getMessage(DashboardImpl.class, "notOpenBrowseDashboard"))
                     .show();
             return;
         }
 
-        addXmlParameters(dashboard);
-        updateCanvasFrame(dashboard);
-        this.dashboard = dashboard;
+        addXmlParameters(dashboardModel);
+        updateCanvasFragment(dashboardModel);
+        this.dashboardModel = dashboardModel;
     }
 
     protected DashboardModel loadDashboardByJson(String jsonPath) {
@@ -297,6 +308,7 @@ public class DashboardImpl extends CompositeComponent<VBoxLayout> implements Das
         }
     }
 
+    @Nullable
     protected DashboardModel loadDashboardByCode(String code) {
         PersistentDashboard entity = dataManager.load(PersistentDashboard.class)
                 .query("select d from dshbrd_PersistentDashboard d where d.code = :code")
@@ -309,20 +321,20 @@ public class DashboardImpl extends CompositeComponent<VBoxLayout> implements Das
         return jsonConverter.dashboardFromJson(entity.getDashboardModel());
     }
 
-    protected void addXmlParameters(DashboardModel dashboard) {
-        List<Parameter> parameters = dashboard.getParameters();
-        parameters.removeAll(getDuplicatesParams(dashboard));
+    protected void addXmlParameters(DashboardModel dashboardModel) {
+        List<Parameter> parameters = dashboardModel.getParameters();
+        parameters.removeAll(getDuplicatesParams(dashboardModel));
         parameters.addAll(xmlParameters);
     }
 
-    protected List<Parameter> getDuplicatesParams(DashboardModel dashboard) {
-        return dashboard.getParameters().stream()
+    protected List<Parameter> getDuplicatesParams(DashboardModel dashboardModel) {
+        return dashboardModel.getParameters().stream()
                 .filter(param -> xmlParameters.stream()
                         .anyMatch(xmlParameter -> param.getAlias().equals(xmlParameter.getAlias())))
                 .collect(Collectors.toList());
     }
 
-    protected void updateCanvasFrame(DashboardModel dashboardModel) {
+    protected void updateCanvasFragment(DashboardModel dashboardModel) {
         if (canvasFragment == null) {
             canvasFragment = fragments.create(getFrame().getFrameOwner(), CanvasFragment.class, new MapScreenOptions(ParamsMap.of(
                     CanvasFragment.DASHBOARD_MODEL, dashboardModel, DASHBOARD, this
@@ -342,6 +354,7 @@ public class DashboardImpl extends CompositeComponent<VBoxLayout> implements Das
         }
     }
 
+    @Nullable
     protected Window findWindow(Component frame) {
         Component parent = frame;
         while (parent != null) {
@@ -356,10 +369,11 @@ public class DashboardImpl extends CompositeComponent<VBoxLayout> implements Das
     }
 
     public ScreenFragment getWidget(String widgetId) {
-        return searchWidgetFrame(canvasFragment.getvLayout(), widgetId);
+        return searchWidgetFragment(canvasFragment.getvLayout(), widgetId);
     }
 
-    protected ScreenFragment searchWidgetFrame(Component layout, String widgetId) {
+    @Nullable
+    protected ScreenFragment searchWidgetFragment(Component layout, String widgetId) {
         if (CanvasWidgetLayout.class.isAssignableFrom(layout.getClass())) {
             CanvasWidgetLayout canvasWidgetLayout = (CanvasWidgetLayout) layout;
             if (widgetId.equals(canvasWidgetLayout.getWidget().getWidgetId())) {
@@ -376,7 +390,7 @@ public class DashboardImpl extends CompositeComponent<VBoxLayout> implements Das
         }
 
         for (Component child : components) {
-            ScreenFragment result = searchWidgetFrame(child, widgetId);
+            ScreenFragment result = searchWidgetFragment(child, widgetId);
             if (result != null) {
                 return result;
             }
@@ -410,8 +424,8 @@ public class DashboardImpl extends CompositeComponent<VBoxLayout> implements Das
     }
 
     @Override
-    public DashboardModel getDashboard() {
-        return dashboard;
+    public DashboardModel getDashboardModel() {
+        return dashboardModel;
     }
 
     @Override
@@ -422,5 +436,47 @@ public class DashboardImpl extends CompositeComponent<VBoxLayout> implements Das
     @Override
     public void setAssistantBeanName(String assistantBeanName) {
         this.assistantBeanName = assistantBeanName;
+    }
+
+    private void initListeners() {
+        UiControllerReflectionInspector reflectionInspector = applicationContext.getBean(UiControllerReflectionInspector.class);
+        UiControllerReflectionInspector.ScreenIntrospectionData screenIntrospectionData = reflectionInspector.getScreenIntrospectionData(getClass());
+
+        List<Method> eventListenerMethods = screenIntrospectionData.getEventListenerMethods();
+
+        if (!eventListenerMethods.isEmpty()) {
+            uiEventListeners = eventListenerMethods.stream()
+                    .map(m -> new UiEventListenerMethodAdapter(this, getClass(), m, applicationContext))
+                    .collect(Collectors.toList());
+
+            addAttachListener(event -> enableEventListeners());
+            addDetachListener(event -> disableEventListeners());
+        }
+    }
+
+    private void disableEventListeners() {
+        if (uiEventListeners != null) {
+            AppUI ui = AppUI.getCurrent();
+            if (ui != null) {
+                UiEventsMulticaster multicaster = ui.getUiEventsMulticaster();
+
+                for (ApplicationListener listener : uiEventListeners) {
+                    multicaster.removeApplicationListener(listener);
+                }
+            }
+        }
+    }
+
+    private void enableEventListeners() {
+        if (uiEventListeners != null) {
+            AppUI ui = AppUI.getCurrent();
+            if (ui != null) {
+                UiEventsMulticaster multicaster = ui.getUiEventsMulticaster();
+
+                for (ApplicationListener listener : uiEventListeners) {
+                    multicaster.addApplicationListener(listener);
+                }
+            }
+        }
     }
 }

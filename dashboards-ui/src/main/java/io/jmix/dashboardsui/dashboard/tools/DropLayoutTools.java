@@ -51,7 +51,7 @@ import static io.jmix.dashboards.utils.DashboardLayoutUtils.*;
 public class DropLayoutTools {
     protected PersistentDashboardEdit dashboardEdit;
 
-    protected InstanceContainer<DashboardModel> dashboardDs;
+    protected InstanceContainer<DashboardModel> dashboardDc;
     @Autowired
     private Metadata metadata;
     @Autowired
@@ -62,13 +62,13 @@ public class DropLayoutTools {
     @Autowired
     private DashboardLayoutManager layoutManager;
 
-    protected DropLayoutTools(PersistentDashboardEdit dashboardEditor, InstanceContainer<DashboardModel> dashboardDs) {
+    protected DropLayoutTools(PersistentDashboardEdit dashboardEditor, InstanceContainer<DashboardModel> dashboardDc) {
         this.dashboardEdit = dashboardEditor;
-        this.dashboardDs = dashboardDs;
+        this.dashboardDc = dashboardDc;
     }
 
     public DashboardModel getDashboard() {
-        return dashboardEdit.getDashboard();
+        return dashboardEdit.getDashboardModel();
     }
 
     public void addComponent(DashboardLayout layout, UUID targetLayoutUuid, WidgetDropLocation location) {
@@ -126,7 +126,6 @@ public class DropLayoutTools {
                 }
             });
         }
-
     }
 
     private Screen createScreen(Class<? extends Screen> screenClass) {
@@ -152,7 +151,7 @@ public class DropLayoutTools {
         DashboardLayout target = findLayout(dashboardModel, targetLayoutId);
         DashboardLayout parent = findParentLayout(dashboardModel, layout);
 
-        if (!applyMoveAction(layout, target, parent, dashboardModel)) {
+        if (!applyMoveAction(layout, target, dashboardModel)) {
             return;
         }
 
@@ -224,7 +223,7 @@ public class DropLayoutTools {
         return dashboardEdit.getWindow();
     }
 
-    private boolean applyMoveAction(DashboardLayout layout, DashboardLayout target, DashboardLayout parent, DashboardLayout dashboardModel) {
+    private boolean applyMoveAction(DashboardLayout layout, DashboardLayout target, DashboardLayout dashboardModel) {
         if (target.getId().equals(layout.getId())) {
             return false;
         }

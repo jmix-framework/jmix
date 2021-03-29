@@ -16,21 +16,13 @@
 package io.jmix.dashboardsui.screen.widgettemplategroup;
 
 import io.jmix.dashboards.entity.WidgetTemplateGroup;
-import io.jmix.ui.action.list.AddAction;
-import io.jmix.ui.screen.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import io.jmix.ui.screen.EditedEntityContainer;
+import io.jmix.ui.screen.StandardEditor;
+import io.jmix.ui.screen.UiController;
+import io.jmix.ui.screen.UiDescriptor;
 
 @UiController("dshbrd_WidgetTemplateGroup.edit")
 @UiDescriptor("widget-template-group-edit.xml")
 @EditedEntityContainer("widgetTemplateGroupDc")
 public class WidgetTemplateGroupEdit extends StandardEditor<WidgetTemplateGroup> {
-    @Autowired
-    @Qualifier("widgetTemplatesTable.add")
-    protected AddAction add;
-
-    @Subscribe
-    public void onBeforeShow(BeforeShowEvent event) {
-        add.setScreenId("dshbrd_WidgetTemplate.browse");//todo
-    }
 }

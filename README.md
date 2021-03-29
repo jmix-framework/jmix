@@ -92,7 +92,7 @@ dependencies {
 By default, the add-on does not have preset widgets. To create an additional widget type, you need to do the following:
 
 1. Create a fragment as described.
-2. Add the annotation `io.jmix.dashboardsui.annotation.DashboardWidget`. Fill in the fields: `name`, `editFrameId`(
+2. Add the annotation `io.jmix.dashboardsui.annotation.DashboardWidget`. Fill in the fields: `name`, `editFragmentId`(
    optional, leave empty if there is no parameter in the widget) in the annotation (see JavaDoc).
 3. `widget`, `dashboardModel`, `dashboard` can be included in the widget via `@WindowParam` annotation. Widget
    parameters in widget editor and widget fragments should have `@WidgetParam` and `@WindowParam` annotations. For
@@ -100,7 +100,7 @@ By default, the add-on does not have preset widgets. To create an additional wid
 
 ```java
 
-@DashboardWidget(name = CAPTION, editFrameId = "dshbrd_LookupWidget.edit")
+@DashboardWidget(name = CAPTION, editFragmentId = "dshbrd_LookupWidget.edit")
 @UiController("dshbrd_LookupWidget")
 @UiDescriptor("lookup-widget.xml")
 public class LookupWidget extends ScreenFragment implements RefreshableWidget {
@@ -380,7 +380,7 @@ elements:
 - the *Widget Id* field;
 - the *Description* field;
 - the *Show widget caption* checkbox;
-- the *Widget* group, that contains a fragment specified in the```editFrameId``` field in the ```@DashboardWidget``` annotation.
+- the *Widget* group, that contains a fragment specified in the```editFragmentId``` field in the ```@DashboardWidget``` annotation.
 - the fragment with widget parameters which allows adding, editing and removing widget parameters. These parameters are
   passed as input parameters for the fragment, based on which the widget was taken. For more information on adding and
   editing parameters, see [Parameter Editor](#parameter-editor).

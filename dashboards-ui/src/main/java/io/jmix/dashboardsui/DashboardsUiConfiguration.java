@@ -49,14 +49,14 @@ public class DashboardsUiConfiguration {
     @Bean("dropModelConverter")
     public DashboardModelConverter dropModelConverter(ApplicationContext applicationContext) {
         DashboardModelConverter dropModelConverter = new DashboardModelConverter();
-        dropModelConverter.setFactory((CanvasComponentsFactory) applicationContext.getBean("dshbrd_dropComponentsFactory"));
+        dropModelConverter.setFactory((CanvasComponentsFactory) applicationContext.getBean("dshbrd_CanvasDropComponentsFactory"));
         return dropModelConverter;
     }
 
     @Bean("uiModelConverter")
     public DashboardModelConverter uiModelConverter(ApplicationContext applicationContext) {
         DashboardModelConverter dropModelConverter = new DashboardModelConverter();
-        dropModelConverter.setFactory((CanvasComponentsFactory) applicationContext.getBean(("dshbrd_uiComponentsFactory")));
+        dropModelConverter.setFactory((CanvasComponentsFactory) applicationContext.getBean(("dshbrd_CanvasUiComponentsFactory")));
         return dropModelConverter;
     }
 
@@ -84,14 +84,6 @@ public class DashboardsUiConfiguration {
                 .withComponentClass(PaletteButton.class)
                 .withTag("paletteButton")
                 .withComponentLoaderClass(PaletteButtonLoader.class)
-                .build();
-    }
-
-    @Bean
-    ComponentRegistration responsiveLayout() {
-        return ComponentRegistrationBuilder.create(DashboardResponsiveLayout.NAME)
-                .withComponentClass(DashboardResponsiveLayout.class)
-                .withComponentLoaderClass(DashboardResponsiveLayoutLoader.class)
                 .build();
     }
 

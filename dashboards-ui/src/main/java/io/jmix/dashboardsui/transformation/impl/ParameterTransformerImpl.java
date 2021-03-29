@@ -53,8 +53,8 @@ public class ParameterTransformerImpl implements ParameterTransformer {
         if (parameterValue == null) {
             return null;
         }
-        if (parameterValue instanceof ListEntitiesParameterValue) {
-            return loadEntities((ListEntitiesParameterValue) parameterValue);
+        if (parameterValue instanceof EntityListParameterValue) {
+            return loadEntities((EntityListParameterValue) parameterValue);
         } else if (parameterValue instanceof EntityParameterValue) {
             return loadEntity((EntityParameterValue) parameterValue);
         } else {
@@ -62,7 +62,7 @@ public class ParameterTransformerImpl implements ParameterTransformer {
         }
     }
 
-    protected List<Entity> loadEntities(ListEntitiesParameterValue parameter) {
+    protected List<Entity> loadEntities(EntityListParameterValue parameter) {
         return parameter.getValue().stream()
                 .map(this::loadEntity)
                 .collect(Collectors.toList());
@@ -73,8 +73,8 @@ public class ParameterTransformerImpl implements ParameterTransformer {
 
         FluentLoader.ById loader = dataManager.load(entityClass)
                 .id(java.util.UUID.fromString(parameter.getEntityId()));
-        if (parameter.getFetchPlan() != null) {
-            loader.fetchPlan(parameter.getFetchPlan());
+        if (parameter.getFetchPlanName() != null) {
+            loader.fetchPlan(parameter.getFetchPlanName());
         }
         return (Entity) loader.optional().orElse(null);
     }
@@ -82,7 +82,7 @@ public class ParameterTransformerImpl implements ParameterTransformer {
     public boolean compareParameterTypes(ParameterType parameterType, Field field) {
         if (parameterType == ENTITY) {
             return Entity.class.isAssignableFrom(field.getType());
-        } else if (parameterType == LIST_ENTITY) {
+        } else if (parameterType == ENTITY_LIST) {
             return List.class.isAssignableFrom(field.getType());
         } else if (parameterType == ENUM) {
             return field.isEnumConstant();
@@ -112,7 +112,7 @@ public class ParameterTransformerImpl implements ParameterTransformer {
         if (Entity.class.isAssignableFrom(field.getType())) {
             return ENTITY;
         } else if (List.class.isAssignableFrom(field.getType())) {
-            return LIST_ENTITY;
+            return ENTITY_LIST;
         } else if (field.isEnumConstant()) {
             return ENUM;
         } else if (Date.class.isAssignableFrom(field.getType())) {
@@ -134,76 +134,76 @@ public class ParameterTransformerImpl implements ParameterTransformer {
     }
 
     @Override
-    public ParameterValue createParameterValue(Field field, ScreenFragment widgetFrame) {
+    public ParameterValue createParameterValue(Field field, ScreenFragment widgetFragment) {
         ParameterValue parameterValue = null;
         ParameterType parameterType = getParameterType(field);
         try {
             if (parameterType == ENTITY) {
-                Object entity = FieldUtils.readField(field, widgetFrame, true);
+                Object entity = FieldUtils.readField(field, widgetFragment, true);
                 if (entity != null) {
                     WidgetParam ann = field.getAnnotation(WidgetParam.class);
-                    String fetchPlan = StringUtils.isNoneBlank(ann.fetchPlan()) ? ann.fetchPlan() : null;
+                    String fetchPlan = StringUtils.isNoneBlank(ann.fetchPlanName()) ? ann.fetchPlanName() : null;
                     parameterValue = new EntityParameterValue(metadata.getClass(entity).getName(),
                             EntityValues.getId(entity).toString(), fetchPlan);
                 }
-            } else if (parameterType == LIST_ENTITY) {
-                List<Entity> listEntity = (List) FieldUtils.readField(field, widgetFrame, true);
+            } else if (parameterType == ENTITY_LIST) {
+                List<Entity> listEntity = (List) FieldUtils.readField(field, widgetFragment, true);
                 WidgetParam ann = field.getAnnotation(WidgetParam.class);
                 if (listEntity != null) {
-                    String fetchPlan = StringUtils.isNoneBlank(ann.fetchPlan()) ? ann.fetchPlan() : null;
+                    String fetchPlan = StringUtils.isNoneBlank(ann.fetchPlanName()) ? ann.fetchPlanName() : null;
                     List<EntityParameterValue> resultList = listEntity.stream()
                             .map(entity -> new EntityParameterValue(metadata.getClass(entity).getName(), EntityValues.getId(entity).toString(), fetchPlan))
                             .collect(Collectors.toList());
-                    parameterValue = new ListEntitiesParameterValue(resultList);
+                    parameterValue = new EntityListParameterValue(resultList);
                 }
             } else if (parameterType == ENUM) {
-                EnumClass<String> rawValue = (EnumClass) FieldUtils.readField(field, widgetFrame, true);
+                EnumClass<String> rawValue = (EnumClass) FieldUtils.readField(field, widgetFragment, true);
                 if (rawValue != null) {
                     String enumClassName = rawValue.getClass().toString();
                     parameterValue = new EnumParameterValue(enumClassName);
                 }
             } else if (parameterType == DATE) {
-                Date rawValue = (Date) FieldUtils.readField(field, widgetFrame, true);
+                Date rawValue = (Date) FieldUtils.readField(field, widgetFragment, true);
                 if (rawValue != null) {
                     parameterValue = new DateParameterValue(rawValue);
                 }
             } else if (parameterType == DATETIME) {
-                Date rawValue = (Date) FieldUtils.readField(field, widgetFrame, true);
+                Date rawValue = (Date) FieldUtils.readField(field, widgetFragment, true);
                 if (rawValue != null) {
                     parameterValue = new DateParameterValue(rawValue);
                 }
             } else if (parameterType == TIME) {
-                Date rawValue = (Date) FieldUtils.readField(field, widgetFrame, true);
+                Date rawValue = (Date) FieldUtils.readField(field, widgetFragment, true);
                 if (rawValue != null) {
                     parameterValue = new DateParameterValue(rawValue);
                 }
             } else if (parameterType == ParameterType.UUID) {
-                UUID rawValue = (UUID) FieldUtils.readField(field, widgetFrame, true);
+                UUID rawValue = (UUID) FieldUtils.readField(field, widgetFragment, true);
                 if (rawValue != null) {
                     parameterValue = new UuidParameterValue(rawValue);
                 }
             } else if (parameterType == INTEGER) {
-                Integer rawValue = (Integer) FieldUtils.readField(field, widgetFrame, true);
+                Integer rawValue = (Integer) FieldUtils.readField(field, widgetFragment, true);
                 if (rawValue != null) {
                     parameterValue = new IntegerParameterValue(rawValue);
                 }
             } else if (parameterType == STRING) {
-                String rawValue = (String) FieldUtils.readField(field, widgetFrame, true);
+                String rawValue = (String) FieldUtils.readField(field, widgetFragment, true);
                 if (rawValue != null) {
                     parameterValue = new StringParameterValue(rawValue);
                 }
             } else if (parameterType == DECIMAL) {
-                BigDecimal rawValue = (BigDecimal) FieldUtils.readField(field, widgetFrame, true);
+                BigDecimal rawValue = (BigDecimal) FieldUtils.readField(field, widgetFragment, true);
                 if (rawValue != null) {
                     parameterValue = new DecimalParameterValue(rawValue);
                 }
             } else if (parameterType == BOOLEAN) {
-                Boolean rawValue = (Boolean) FieldUtils.readField(field, widgetFrame, true);
+                Boolean rawValue = (Boolean) FieldUtils.readField(field, widgetFragment, true);
                 if (rawValue != null) {
                     parameterValue = new BooleanParameterValue(rawValue);
                 }
             } else if (parameterType == LONG) {
-                Long rawValue = (Long) FieldUtils.readField(field, widgetFrame, true);
+                Long rawValue = (Long) FieldUtils.readField(field, widgetFragment, true);
                 if (rawValue != null) {
                     parameterValue = new LongParameterValue(rawValue);
                 }
@@ -243,7 +243,7 @@ public class ParameterTransformerImpl implements ParameterTransformer {
                     .map(t -> (Entity) t)
                     .map(entity -> new EntityParameterValue(metadata.getClass(entity).getName(), EntityValues.getId(entity).toString(), null))
                     .collect(Collectors.toList());
-            return new ListEntitiesParameterValue(entityList);
+            return new EntityListParameterValue(entityList);
         }
         return null;
     }

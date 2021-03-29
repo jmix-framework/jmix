@@ -16,22 +16,18 @@
 
 package io.jmix.dashboardsui.dashboard.converter;
 
-import com.google.gson.ExclusionStrategy;
-import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import io.jmix.dashboards.model.DashboardModel;
-import io.jmix.dashboards.model.parameter.Parameter;
 import io.jmix.dashboards.model.Widget;
+import io.jmix.dashboards.model.parameter.Parameter;
 import io.jmix.dashboards.model.parameter.type.ParameterValue;
 import io.jmix.dashboards.model.visualmodel.*;
 import io.jmix.dashboards.utils.DashboardLayoutManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.persistence.Transient;
-import java.lang.reflect.Modifier;
 import java.util.Set;
 
 /**
@@ -48,21 +44,8 @@ public class JsonConverter {
 
     public JsonConverter() {
         GsonBuilder builder = new GsonBuilder();
-        builder.addSerializationExclusionStrategy(new ExclusionStrategy() {
-
-            @Override
-            public boolean shouldSkipField(FieldAttributes f) {
-                return f.getAnnotations().contains(Transient.class) || f.hasModifier(Modifier.TRANSIENT);
-            }
-
-            @Override
-            public boolean shouldSkipClass(Class<?> clazz) {
-                return false;
-            }
-        });
+        builder.setExclusionStrategies(new EntityEntryExclusionStrategy());
         builder.addSerializationExclusionStrategy(new AnnotationExclusionStrategy());
-        builder.addSerializationExclusionStrategy(new EntityEntryExclusionStrategy());
-        builder.addDeserializationExclusionStrategy(new EntityEntryExclusionStrategy());
         builder.serializeNulls();
         builder.setPrettyPrinting();
         builder.registerTypeAdapter(ParameterValue.class, new InheritanceAdapter());
@@ -75,16 +58,16 @@ public class JsonConverter {
         }.getType());
     }
 
-    public String dashboardToJson(DashboardModel dashboard) {
-        return gson.toJson(dashboard, new TypeToken<DashboardModel>() {
+    public String dashboardToJson(DashboardModel dashboardModel) {
+        return gson.toJson(dashboardModel, new TypeToken<DashboardModel>() {
         }.getType());
     }
 
     public DashboardModel dashboardFromJson(String json) {
-        DashboardModel dashboard = gson.fromJson(json, DashboardModel.class);
-        RootLayout rootLayout = dashboard.getVisualModel();
+        DashboardModel dashboardModel = gson.fromJson(json, DashboardModel.class);
+        RootLayout rootLayout = dashboardModel.getVisualModel();
         initLayoutParents(rootLayout);
-        return dashboard;
+        return dashboardModel;
     }
 
     private void initLayoutParents(DashboardLayout rootLayout) {

@@ -49,7 +49,7 @@
                 <textField property="name"/>
                 <entityComboBox optionsContainer="widgetTemplateGroupsDc"
                                 property="group"/>
-                <checkBox property="isAvailableForAllUsers"/>
+                <checkBox id="isAvailableForAllUsersChkBox" property="isAvailableForAllUsers"/>
             </column>
         </form>
         <hbox id="editActions" spacing="true">

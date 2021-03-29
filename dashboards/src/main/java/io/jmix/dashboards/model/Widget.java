@@ -50,7 +50,7 @@ public class Widget {
     @JmixProperty
     protected List<Parameter> widgetFields = new ArrayList<>();
     @JmixProperty
-    protected String frameId;
+    protected String fragmentId;
     @JmixProperty
     @Exclude
     protected DashboardModel dashboard;
@@ -109,12 +109,12 @@ public class Widget {
         this.widgetFields = widgetFields;
     }
 
-    public String getFrameId() {
-        return frameId;
+    public String getFragmentId() {
+        return fragmentId;
     }
 
-    public void setFrameId(String frameId) {
-        this.frameId = frameId;
+    public void setFragmentId(String fragmentId) {
+        this.fragmentId = fragmentId;
     }
 
     public DashboardModel getDashboard() {

@@ -31,9 +31,9 @@ public interface WidgetRepository {
 
     List<WidgetTypeInfo> getWidgetTypesInfo();
 
-    void initializeWidgetFields(ScreenFragment widgetFrame, Widget widget);
+    void initializeWidgetFields(ScreenFragment widgetFragment, Widget widget);
 
-    void serializeWidgetFields(ScreenFragment widgetFrame, Widget widget);
+    void serializeWidgetFields(ScreenFragment widgetFragment, Widget widget);
 
     Map<String, Object> getWidgetParams(Widget widget);
 

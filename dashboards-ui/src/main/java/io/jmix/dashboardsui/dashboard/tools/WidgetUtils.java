@@ -39,10 +39,10 @@ public class WidgetUtils {
     @Autowired
     protected Messages messages;
 
-    public String getWidgetType(String frameId) {
+    public String getWidgetType(String fragmentId) {
         String result = StringUtils.EMPTY;
         Optional<WidgetTypeInfo> widgetTypeOpt = widgetRepository.getWidgetTypesInfo().stream()
-                .filter(typeInfo -> frameId.equals(typeInfo.getFrameId()))
+                .filter(typeInfo -> fragmentId.equals(typeInfo.getFragmentId()))
                 .findFirst();
 
         if (widgetTypeOpt.isPresent()) {
@@ -55,13 +55,13 @@ public class WidgetUtils {
         Map<String, String> map = new HashMap<>();
         List<WidgetTypeInfo> typesInfo = widgetRepository.getWidgetTypesInfo();
         for (WidgetTypeInfo typeInfo : typesInfo) {
-            String browseFrameId = typeInfo.getFrameId();
+            String browseFragmentId = typeInfo.getFragmentId();
             String name = typeInfo.getName();
             String property = format("dashboard-widget.%s", name);
             String mainMessage = messages.getMessage(property);
             String caption = mainMessage.equals(property) ? name : mainMessage;
 
-            map.put(caption, browseFrameId);
+            map.put(caption, browseFragmentId);
         }
 
         return map;

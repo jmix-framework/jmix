@@ -18,16 +18,19 @@ package io.jmix.dashboards.utils;
 
 import io.jmix.dashboards.model.visualmodel.*;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 public class DashboardLayoutUtils {
 
+    @Nullable
     public static DashboardLayout findParentLayout(DashboardLayout root, DashboardLayout child) {
         return findParentLayout(root, child.getId());
     }
 
+    @Nullable
     public static DashboardLayout findParentLayout(DashboardLayout root, UUID childId) {
         if (root instanceof GridLayout) {
             GridLayout gridLayout = (GridLayout) root;
@@ -71,6 +74,7 @@ public class DashboardLayoutUtils {
         return null;
     }
 
+    @Nullable
     public static DashboardLayout findLayout(DashboardLayout root, UUID uuid) {
         try {
             if (root.getId().equals(uuid)) {

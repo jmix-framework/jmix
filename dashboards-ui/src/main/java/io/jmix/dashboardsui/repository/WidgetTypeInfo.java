@@ -26,16 +26,16 @@ import java.io.Serializable;
 public class WidgetTypeInfo implements Serializable {
 
     protected String name;
-    protected String frameId;
-    protected String editFrameId;
+    protected String fragmentId;
+    protected String editFragmentId;
 
     public WidgetTypeInfo() {
     }
 
-    public WidgetTypeInfo(String name, String frameId, String editFrameId) {
+    public WidgetTypeInfo(String name, String fragmentId, String editFragmentId) {
         this.name = name;
-        this.frameId = frameId;
-        this.editFrameId = editFrameId;
+        this.fragmentId = fragmentId;
+        this.editFragmentId = editFragmentId;
     }
 
     public String getName() {
@@ -46,19 +46,19 @@ public class WidgetTypeInfo implements Serializable {
         this.name = name;
     }
 
-    public String getFrameId() {
-        return frameId;
+    public String getFragmentId() {
+        return fragmentId;
     }
 
-    public void setFrameId(String frameId) {
-        this.frameId = frameId;
+    public void setFragmentId(String fragmentId) {
+        this.fragmentId = fragmentId;
     }
 
-    public String getEditFrameId() {
-        return editFrameId;
+    public String getEditFragmentId() {
+        return editFragmentId;
     }
 
-    public void setEditFrameId(String editFrameId) {
-        this.editFrameId = editFrameId;
+    public void setEditFragmentId(String editFragmentId) {
+        this.editFragmentId = editFragmentId;
     }
 }

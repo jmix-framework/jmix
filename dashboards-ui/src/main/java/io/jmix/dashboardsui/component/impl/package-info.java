@@ -14,22 +14,9 @@
  * limitations under the License.
  */
 
+@Internal
+@NonNullApi
 package io.jmix.dashboardsui.component.impl;
 
-import io.jmix.core.common.event.Subscription;
-import io.jmix.ui.component.LayoutClickNotifier;
-import io.jmix.ui.component.impl.ResponsiveGridLayoutImpl;
-
-import java.util.function.Consumer;
-
-public class DashboardResponsiveLayout extends ResponsiveGridLayoutImpl implements LayoutClickNotifier {
-
-    public static final String NAME = "dashboardResponsiveLayout";
-
-    @Override
-    public Subscription addLayoutClickListener(Consumer<LayoutClickEvent> listener) {
-        //current implementation of ResponsiveGridLayout does not support click listener
-        return () -> {
-        };
-    }
-}
+import io.jmix.core.annotation.Internal;
+import org.springframework.lang.NonNullApi;

@@ -55,6 +55,7 @@ import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.model.InstanceLoader;
 import io.jmix.ui.screen.*;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -115,7 +116,7 @@ public class PersistentDashboardEdit extends StandardEditor<PersistentDashboard>
     @Autowired
     protected ScreenBuilders screenBuilders;
 
-    protected CanvasEditorFragment canvasFrame;
+    protected CanvasEditorFragment canvasFragment;
 
     protected DropLayoutTools dropLayoutTools;
 
@@ -153,7 +154,6 @@ public class PersistentDashboardEdit extends StandardEditor<PersistentDashboard>
             availableCheckBox.setVisible(false);
         }
 
-        importJsonField.addFileUploadSucceedListener(e -> uploadJson());
         dropLayoutTools = applicationContext.getBean(DropLayoutTools.class, this, dashboardDc);
         initParametersFragment();
         initPaletteFragment();
@@ -173,15 +173,15 @@ public class PersistentDashboardEdit extends StandardEditor<PersistentDashboard>
         dashboardDc.setItem(model);
     }
 
-    public DashboardModel getDashboard() {
+    public DashboardModel getDashboardModel() {
         return dashboardDc.getItem();
     }
 
     protected void initParametersFragment() {
         paramsBox.removeAll();
         ScreenFragment parametersFragment = fragments.create(this, ParametersFragment.class,
-                new MapScreenOptions(ParamsMap.of(ParametersFragment.PARAMETERS, getDashboard().getParameters(),
-                        DASHBOARD_MODEL, getDashboard()))
+                new MapScreenOptions(ParamsMap.of(ParametersFragment.PARAMETERS, getDashboardModel().getParameters(),
+                        DASHBOARD_MODEL, getDashboardModel()))
         ).init();
         paramsBox.add(parametersFragment.getFragment());
     }
@@ -189,26 +189,31 @@ public class PersistentDashboardEdit extends StandardEditor<PersistentDashboard>
     protected void initPaletteFragment() {
         paletteBox.removeAll();
         ScreenFragment paletteFragment = fragments.create(this, PaletteFragment.class,
-                new MapScreenOptions(ParamsMap.of(DASHBOARD_MODEL, getDashboard()))
+                new MapScreenOptions(ParamsMap.of(DASHBOARD_MODEL, getDashboardModel()))
         ).init();
         paletteBox.add(paletteFragment.getFragment());
     }
 
     protected void initCanvasFragment() {
         canvasBox.removeAll();
-        canvasFrame = (CanvasEditorFragment) fragments.create(this, CanvasEditorFragment.class,
-                new MapScreenOptions(ParamsMap.of(DASHBOARD_MODEL, getDashboard()))
+        canvasFragment = (CanvasEditorFragment) fragments.create(this, CanvasEditorFragment.class,
+                new MapScreenOptions(ParamsMap.of(DASHBOARD_MODEL, getDashboardModel()))
         ).init();
-        canvasBox.add(canvasFrame.getFragment());
+        canvasBox.add(canvasFragment.getFragment());
+    }
+
+    @Subscribe("importJsonField")
+    public void onImportJsonFieldFileUploadSucceed(SingleFileUploadField.FileUploadSucceedEvent event) {
+        uploadJson();
     }
 
     @Subscribe("exportJsonBtn")
     public void onExportJsonBtnClick(Button.ClickEvent event) {
-        String jsonModel = converter.dashboardToJson(getDashboard());
+        String jsonModel = converter.dashboardToJson(getDashboardModel());
 
         if (isNotBlank(jsonModel)) {
             byte[] bytes = jsonModel.getBytes(UTF_8);
-            String fileName = isNotBlank(getDashboard().getTitle()) ? getDashboard().getTitle() : "dashboard";
+            String fileName = isNotBlank(getDashboardModel().getTitle()) ? getDashboardModel().getTitle() : "dashboard";
             downloader.download(new ByteArrayDataProvider(bytes, uiProperties.getSaveExportedByteArrayDataThresholdBytes(),
                     coreProperties.getTempDir()), format("%s.json", fileName));
         }
@@ -217,13 +222,13 @@ public class PersistentDashboardEdit extends StandardEditor<PersistentDashboard>
     protected void uploadJson() {
         try (InputStream fileContent = importJsonField.getFileContent()) {
             String json = IOUtils.toString(Objects.requireNonNull(fileContent), UTF_8);
-            DashboardModel newDashboard = metadata.create(DashboardModel.class);
-            BeanUtils.copyProperties(converter.dashboardFromJson(json), newDashboard);
+            DashboardModel newDashboardModel = metadata.create(DashboardModel.class);
+            BeanUtils.copyProperties(converter.dashboardFromJson(json), newDashboardModel);
 
-            dashboardDc.setItem(newDashboard);
+            dashboardDc.setItem(newDashboardModel);
             initParametersFragment();
             initPaletteFragment();
-            canvasFrame.updateLayout(newDashboard);
+            canvasFragment.updateLayout(newDashboardModel);
 
         } catch (Exception e) {
             throw new DashboardException("Cannot import data from a file", e);
@@ -232,25 +237,35 @@ public class PersistentDashboardEdit extends StandardEditor<PersistentDashboard>
 
     @Subscribe("propagateBtn")
     public void onPropagateBtnClick(Button.ClickEvent event) {
-        DashboardModel dashboard = getDashboard();
+        DashboardModel dashboard = getDashboardModel();
         uiEventPublisher.publishEvent(new DashboardUpdatedEvent(dashboard));
     }
 
     @Subscribe(target = Target.DATA_CONTEXT)
     protected void preCommit(DataContext.PreCommitEvent event) {
-        PersistentDashboard persDash = getEditedEntity();
-        DashboardModel dashboard = getDashboard();
+        DashboardModel dashboard = getDashboardModel();
         String jsonModel = converter.dashboardToJson(dashboard);
-        persDash.setDashboardModel(jsonModel);
-        persDash.setName(dashboard.getTitle());
-        persDash.setCode(dashboard.getCode());
-        persDash.setIsAvailableForAllUsers(dashboard.getIsAvailableForAllUsers());
-        event.getSource().merge(persDash);
+        getEditedEntity().setDashboardModel(jsonModel);
+    }
+
+    @Subscribe(id = "dashboardDc", target = Target.DATA_CONTAINER)
+    public void onDashboardDcItemPropertyChange(InstanceContainer.ItemPropertyChangeEvent<DashboardModel> event) {
+        DashboardModel dashboardModel = event.getItem();
+        if (StringUtils.equals(event.getProperty(), "title")) {
+            getEditedEntity().setName(dashboardModel.getTitle());
+        } else if(StringUtils.equals(event.getProperty(), "code")) {
+            getEditedEntity().setCode(dashboardModel.getCode());
+        } else if(StringUtils.equals(event.getProperty(), "isAvailableForAllUsers")) {
+            getEditedEntity().setIsAvailableForAllUsers(dashboardModel.getIsAvailableForAllUsers());
+        } else {
+            String jsonModel = converter.dashboardToJson(dashboardModel);
+            getEditedEntity().setDashboardModel(jsonModel);
+        }
     }
 
     @Subscribe(target = Target.DATA_CONTEXT)
     protected void onPostCommit(DataContext.PostCommitEvent event) {
-        uiEventPublisher.publishEvent(new DashboardUpdatedEvent(getDashboard()));
+        uiEventPublisher.publishEvent(new DashboardUpdatedEvent(getDashboardModel()));
     }
 
     public List<String> getAssistanceBeanNames() {
@@ -264,7 +279,7 @@ public class PersistentDashboardEdit extends StandardEditor<PersistentDashboard>
     @EventListener
     public void onWidgetMoved(WidgetMovedEvent event) {
         UUID targetLayoutId = event.getParentLayoutUuid();
-        DashboardModel dashboard = getDashboard();
+        DashboardModel dashboard = getDashboardModel();
 
         dropLayoutTools.moveComponent(event.getSource(), targetLayoutId, event.getLocation());
         uiEventPublisher.publishEvent(new DashboardRefreshEvent(dashboard.getVisualModel(), event.getSource().getId()));
@@ -275,7 +290,7 @@ public class PersistentDashboardEdit extends StandardEditor<PersistentDashboard>
         DashboardLayout source = event.getSource();
 
         if (isParentResponsiveLayout(source)) {
-            ResponsiveLayout parentLayout = (ResponsiveLayout) findParentLayout(getDashboard().getVisualModel(), source.getId());
+            ResponsiveLayout parentLayout = (ResponsiveLayout) findParentLayout(getDashboardModel().getVisualModel(), source.getId());
             ResponsiveArea responsiveArea = parentLayout.getAreas().stream().
                     filter(ra -> source.getId().equals(ra.getComponent().getId())).
                     findFirst().orElseThrow(() -> new RuntimeException("Can't find layout with uuid " + source.getId()));
@@ -286,16 +301,11 @@ public class PersistentDashboardEdit extends StandardEditor<PersistentDashboard>
                         StandardCloseAction closeAction = (StandardCloseAction) e.getCloseAction();
                         ResponsiveCreationDialog dialog = (ResponsiveCreationDialog) e.getSource();
                         if (Window.COMMIT_ACTION_ID.equals(closeAction.getActionId())) {
-                            int xs = dialog.getXs();
-                            int sm = dialog.getSm();
-                            int md = dialog.getMd();
-                            int lg = dialog.getLg();
-
-                            responsiveArea.setXs(xs);
-                            responsiveArea.setSm(sm);
-                            responsiveArea.setMd(md);
-                            responsiveArea.setLg(lg);
-                            uiEventPublisher.publishEvent(new DashboardRefreshEvent(getDashboard().getVisualModel(), source.getId()));
+                            responsiveArea.setXs(dialog.getXs());
+                            responsiveArea.setSm(dialog.getSm());
+                            responsiveArea.setMd(dialog.getMd());
+                            responsiveArea.setLg(dialog.getLg());
+                            uiEventPublisher.publishEvent(new DashboardRefreshEvent(getDashboardModel().getVisualModel(), source.getId()));
                         }
                     });
         } else {
@@ -306,7 +316,7 @@ public class PersistentDashboardEdit extends StandardEditor<PersistentDashboard>
                     .addAfterCloseListener(e -> {
                         StandardCloseAction closeAction = (StandardCloseAction) e.getCloseAction();
                         if (Window.COMMIT_ACTION_ID.equals(closeAction.getActionId())) {
-                            uiEventPublisher.publishEvent(new DashboardRefreshEvent(getDashboard().getVisualModel(), source.getId()));
+                            uiEventPublisher.publishEvent(new DashboardRefreshEvent(getDashboardModel().getVisualModel(), source.getId()));
                         }
                     });
         }
@@ -323,7 +333,7 @@ public class PersistentDashboardEdit extends StandardEditor<PersistentDashboard>
                 .addAfterCloseListener(e -> {
                     StandardCloseAction closeAction = (StandardCloseAction) e.getCloseAction();
                     if (Window.COMMIT_ACTION_ID.equals(closeAction.getActionId())) {
-                        uiEventPublisher.publishEvent(new DashboardRefreshEvent(getDashboard().getVisualModel(), source.getId()));
+                        uiEventPublisher.publishEvent(new DashboardRefreshEvent(getDashboardModel().getVisualModel(), source.getId()));
                     }
                 });
     }
@@ -345,7 +355,7 @@ public class PersistentDashboardEdit extends StandardEditor<PersistentDashboard>
                         } else {
                             source.setExpand(null);
                         }
-                        uiEventPublisher.publishEvent(new DashboardRefreshEvent(getDashboard().getVisualModel(), source.getId()));
+                        uiEventPublisher.publishEvent(new DashboardRefreshEvent(getDashboardModel().getVisualModel(), source.getId()));
                     }
                 });
     }
@@ -360,7 +370,7 @@ public class PersistentDashboardEdit extends StandardEditor<PersistentDashboard>
                 .addAfterCloseListener(e -> {
                     StandardCloseAction closeAction = (StandardCloseAction) e.getCloseAction();
                     if (Window.COMMIT_ACTION_ID.equals(closeAction.getActionId())) {
-                        DashboardModel dashboard = getDashboard();
+                        DashboardModel dashboard = getDashboardModel();
                         StyleDialog styleDialog = (StyleDialog) e.getScreen();
                         DashboardLayout layout = dashboard.getVisualModel().findLayout(source.getId());
                         layout.setStyleName(styleDialog.getLayoutStyleName());
@@ -375,7 +385,7 @@ public class PersistentDashboardEdit extends StandardEditor<PersistentDashboard>
 
     @EventListener
     public void onRemoveLayout(WidgetRemovedEvent event) {
-        DashboardLayout dashboardLayout = getDashboard().getVisualModel();
+        DashboardLayout dashboardLayout = getDashboardModel().getVisualModel();
         dashboardLayout.removeChild(event.getSource().getId());
         uiEventPublisher.publishEvent(new DashboardRefreshEvent(dashboardLayout));
     }
@@ -396,9 +406,9 @@ public class PersistentDashboardEdit extends StandardEditor<PersistentDashboard>
                 .addAfterCloseListener(e -> {
                     StandardCloseAction closeAction = (StandardCloseAction) e.getCloseAction();
                     if (Window.COMMIT_ACTION_ID.equals(closeAction.getActionId())) {
-                        WidgetLayout widgetLayout = getDashboard().getWidgetLayout(widget.getId());
+                        WidgetLayout widgetLayout = getDashboardModel().getWidgetLayout(widget.getId());
                         widgetLayout.setWidget(((WidgetEdit) e.getScreen()).getEditedEntity());
-                        uiEventPublisher.publishEvent(new DashboardRefreshEvent(getDashboard().getVisualModel(), widget.getId()));
+                        uiEventPublisher.publishEvent(new DashboardRefreshEvent(getDashboardModel().getVisualModel(), widget.getId()));
                     }
                 });
     }
@@ -408,7 +418,7 @@ public class PersistentDashboardEdit extends StandardEditor<PersistentDashboard>
     protected void validateAdditionalRules(ValidationErrors errors) {
         super.validateAdditionalRules(errors);
 
-        //remove errors from widget frames
+        //remove errors from widget fragments
         errors.getAll().removeIf(error -> !"dashboardEditForm1".equals(error.component.getParent().getId()));
 
         List<Widget> dashboardWidgets = dashboardDc.getItem().getWidgets();

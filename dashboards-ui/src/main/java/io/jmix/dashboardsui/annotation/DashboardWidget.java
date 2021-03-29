@@ -46,8 +46,8 @@ public @interface DashboardWidget {
     String value() default "";
 
     /**
-     * Contains frame ID for editing a widget. This frame is embedded in the "widget-edit" screen
-     * @return frame ID for editing a widget
+     * Contains fragment ID for editing a widget. This fragment is embedded in the "widget-edit" screen
+     * @return fragment ID for editing a widget
      */
-    String editFrameId() default "";
+    String editFragmentId() default "";
 }

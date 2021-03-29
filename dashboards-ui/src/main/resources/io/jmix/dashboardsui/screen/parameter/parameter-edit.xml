@@ -41,7 +41,7 @@
                 <label align="MIDDLE_LEFT"
                        value="msg://valueType"
                        width="85px"/>
-                <comboBox id="typeLookup"
+                <comboBox id="typeComboBox"
                              nullOptionVisible="false"
                              optionsEnum="io.jmix.dashboards.model.parameter.ParameterType"
                              required="true"

@@ -151,8 +151,8 @@ public class PaletteFragment extends ScreenFragment implements DashboardLayoutHo
             DashboardLayout dashboardLayout = widgetTree.getSingleSelected();
             if (dashboardLayout != null) {
                 uiEventPublisher.publishEvent(new WidgetSelectedEvent(dashboardLayout.getId(), WidgetSelectedEvent.Target.TREE));
+                createActions(widgetTree, dashboardLayout);
             }
-            createActions(widgetTree, dashboardLayout);
         });
         widgetTree.expandTree();
         widgetTree.setStyleName(DashboardStyleConstants.DASHBOARD_TREE);
@@ -173,7 +173,7 @@ public class PaletteFragment extends ScreenFragment implements DashboardLayoutHo
 
     private void onTreeGridDrop(TreeGridDropEvent<DashboardLayout> e) {
         if (e.getDropTargetRow().isPresent() && e.getDragData().isPresent()) {
-            DashboardLayout target = (DashboardLayout) e.getDropTargetRow().get();
+            DashboardLayout target = e.getDropTargetRow().get();
             DashboardLayout source = (DashboardLayout) e.getDragData().get();
             WidgetDropLocation dropLocation = getDropLocation(e.getDropLocation());
             if (source.getId() == null) {
@@ -230,7 +230,7 @@ public class PaletteFragment extends ScreenFragment implements DashboardLayoutHo
                 .map(type -> {
                     Widget widget = metadata.create(Widget.class);
                     widget.setName(type.getName());
-                    widget.setFrameId(type.getFrameId());
+                    widget.setFragmentId(type.getFragmentId());
                     widget.setDashboard(dashboardModel);
                     return widget;
                 })

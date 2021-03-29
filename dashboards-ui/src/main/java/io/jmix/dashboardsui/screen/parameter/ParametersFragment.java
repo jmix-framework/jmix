@@ -46,7 +46,7 @@ public class ParametersFragment extends ScreenFragment {
     @Autowired
     protected Table<Parameter> parametersTable;
     @WindowParam(name = DASHBOARD_MODEL)
-    protected DashboardModel dashboard;
+    protected DashboardModel dashboardModel;
 
     @Subscribe
     public void onInit(InitEvent event) {
@@ -82,8 +82,8 @@ public class ParametersFragment extends ScreenFragment {
 
         parametersDc.addCollectionChangeListener(event -> {
             if (REFRESH != event.getChangeType()) {
-                if (dashboard != null) {//if edit dashboard params
-                    dashboard.setParameters(new ArrayList<>(event.getSource().getItems()));
+                if (dashboardModel != null) {//if edit dashboard params
+                    dashboardModel.setParameters(new ArrayList<>(event.getSource().getItems()));
                 }
             }
         });

@@ -22,6 +22,8 @@ import com.vaadin.ui.dnd.DragSourceExtension;
 import com.vaadin.ui.dnd.DropTargetExtension;
 import io.jmix.core.Metadata;
 import io.jmix.dashboards.model.visualmodel.*;
+import io.jmix.dashboards.model.visualmodel.CssLayout;
+import io.jmix.dashboards.model.visualmodel.GridLayout;
 import io.jmix.dashboardsui.DashboardStyleConstants;
 import io.jmix.dashboardsui.component.impl.*;
 import io.jmix.dashboardsui.dashboard.event.CanvasLayoutElementClickedEvent;
@@ -34,8 +36,7 @@ import io.jmix.dashboardsui.screen.dashboard.editor.canvas.CanvasFragment;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.UiEventPublisher;
 import io.jmix.ui.action.Action;
-import io.jmix.ui.component.Button;
-import io.jmix.ui.component.HBoxLayout;
+import io.jmix.ui.component.*;
 import io.jmix.ui.widget.JmixCssActionsLayout;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -43,7 +44,16 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.UUID;
 
-@Component("dshbrd_dropComponentsFactory")
+/**
+ * Creates a layout to use in the dashboard editor. <br>
+ * Additional fields are set for the layout:
+ * <ul>
+ *     <li>Description;</li>
+ *     <li>Actions; </li>
+ *     <li>Click listener.</li>
+ * </ul>
+ */
+@Component("dshbrd_CanvasDropComponentsFactory")
 public class CanvasDropComponentsFactory extends CanvasUiComponentsFactory {
 
     @Autowired
@@ -61,7 +71,6 @@ public class CanvasDropComponentsFactory extends CanvasUiComponentsFactory {
     @Override
     public CanvasVerticalLayout createCanvasVerticalLayout(VerticalLayout verticalLayout) {
         CanvasVerticalLayout layout = super.createCanvasVerticalLayout(verticalLayout);
-//        layout.getDelegate().setSpacing(true);
         initLayout(verticalLayout, layout);
         return layout;
     }
@@ -72,7 +81,7 @@ public class CanvasDropComponentsFactory extends CanvasUiComponentsFactory {
         createBaseLayoutActions(layout, layoutModel);
         addLayoutClickListener(layout);
         initDragExtension(layoutModel, layout);
-        initDropExtension(layoutModel, layout);
+        initDropExtension(layout);
     }
 
     private void initDragExtension(DashboardLayout layoutModel, AbstractCanvasLayout layout) {
@@ -82,7 +91,7 @@ public class CanvasDropComponentsFactory extends CanvasUiComponentsFactory {
         dragSourceExtension.addDragEndListener(e -> dragSourceExtension.setDragData(null));
     }
 
-    private void initDropExtension(DashboardLayout layoutModel, AbstractCanvasLayout layout) {
+    private void initDropExtension(AbstractCanvasLayout layout) {
         DropTargetExtension<JmixCssActionsLayout> dropTarget = new DropTargetExtension(layout.unwrap(JmixCssActionsLayout.class));
         dropTarget.addDropListener(this::onDrop);
     }
@@ -114,7 +123,6 @@ public class CanvasDropComponentsFactory extends CanvasUiComponentsFactory {
     @Override
     public CanvasHorizontalLayout createCanvasHorizontalLayout(HorizontalLayout horizontalLayout) {
         CanvasHorizontalLayout layout = super.createCanvasHorizontalLayout(horizontalLayout);
-//        layout.getDelegate().setSpacing(true);
         initLayout(horizontalLayout, layout);
         return layout;
     }
@@ -129,7 +137,6 @@ public class CanvasDropComponentsFactory extends CanvasUiComponentsFactory {
     @Override
     public CanvasGridLayout createCanvasGridLayout(GridLayout gridLayout) {
         CanvasGridLayout layout = super.createCanvasGridLayout(gridLayout);
-//        layout.getDelegate().setSpacing(true);
         initLayout(gridLayout, layout);
         return layout;
     }
@@ -150,7 +157,6 @@ public class CanvasDropComponentsFactory extends CanvasUiComponentsFactory {
     @Override
     public CanvasWidgetLayout createCanvasWidgetLayout(CanvasFragment canvasFragment, WidgetLayout widgetLayout) {
         CanvasWidgetLayout layout = super.createCanvasWidgetLayout(canvasFragment, widgetLayout);
-//        layout.getDelegate().setSpacing(true);
         initLayout(widgetLayout, layout);
         return layout;
 
@@ -159,7 +165,6 @@ public class CanvasDropComponentsFactory extends CanvasUiComponentsFactory {
     @Override
     public CanvasRootLayout createCanvasRootLayout(RootLayout rootLayout) {
         CanvasRootLayout layout = super.createCanvasRootLayout(rootLayout);
-//        layout.getDelegate().setSpacing(true);
         initLayout(rootLayout, layout);
         return layout;
     }
@@ -173,9 +178,16 @@ public class CanvasDropComponentsFactory extends CanvasUiComponentsFactory {
 
     protected void addLayoutClickListener(CanvasLayout layout) {
         layout.addLayoutClickListener(e -> {
-            CanvasLayout selectedLayout = (CanvasLayout) e.getSource().getParent();
-            uiEventPublisher.publishEvent(new CanvasLayoutElementClickedEvent(selectedLayout.getUuid(), e.getMouseEventDetails()));
-
+            HasComponents source = e.getSource();
+            CanvasLayout selectedLayout = null;
+            if (source instanceof ComponentContainer) {
+                selectedLayout = (CanvasLayout) ((ComponentContainer) source).getParent();
+            } else if (source instanceof ResponsiveGridLayout) {
+                selectedLayout = (CanvasLayout) ((ResponsiveGridLayout) source).getParent();
+            }
+            if (selectedLayout != null) {
+                uiEventPublisher.publishEvent(new CanvasLayoutElementClickedEvent(selectedLayout.getUuid(), e.getMouseEventDetails()));
+            }
         });
     }
 

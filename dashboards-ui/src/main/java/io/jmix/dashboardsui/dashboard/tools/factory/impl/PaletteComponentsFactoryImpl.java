@@ -112,7 +112,7 @@ public class PaletteComponentsFactoryImpl implements PaletteComponentsFactory {
 
     public PaletteButton createWidgetTemplateButton(WidgetTemplate wt) {
         Widget widget = converter.widgetFromJson(wt.getWidgetModel());
-        widget.setName(widgetUtils.getWidgetType(widget.getFrameId()));
+        widget.setName(widgetUtils.getWidgetType(widget.getFragmentId()));
         WidgetTemplateLayout layout = metadata.create(WidgetTemplateLayout.class);
         layout.setWidget(widget);
 

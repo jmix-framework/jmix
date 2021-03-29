@@ -17,12 +17,33 @@
 package io.jmix.dashboardsui.dashboard.tools.factory;
 
 
-import io.jmix.dashboards.model.visualmodel.DashboardLayout;
+import io.jmix.dashboards.model.visualmodel.*;
 import io.jmix.ui.action.Action;
 
 import java.util.List;
 
+/**
+ * Provides a list of available actions for dashboard layout.
+ * <br>
+ * The following actions are available:
+ * <ul>
+ *     <li>Remove (not available for {@link RootLayout} and {@link GridCellLayout})</li>
+ *     <li>Style</li>
+ *     <li>Weight (not available for {@link RootLayout}, {@link GridCellLayout}, if parent layout is {@link CssLayout} or is expanded)</li>
+ *     <li>Expand (only for {@link VerticalLayout}, {@link HorizontalLayout}, {@link GridCellLayout})</li>
+ *     <li>Colspan (only for {@link GridCellLayout})</li>
+ *     <li>Edit (only for {@link WidgetLayout})</li>
+ *     <li>Template (only for {@link WidgetLayout})</li>
+ * </ul>
+ *
+ */
 public interface ActionProviderFactory {
 
+    /**
+     * Provides the actions for specified layout.
+     *
+     * @param layout dashboard layout
+     * @return list of available actions
+     */
     List<Action> getLayoutActions(DashboardLayout layout);
 }

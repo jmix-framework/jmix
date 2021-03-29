@@ -88,8 +88,7 @@
                   height="100%"
                   spacing="true"/>
         </hbox>
-        <buttonsPanel id="buttonsPanel"
-                      alwaysVisible="true">
+        <hbox id="editActions" spacing="true">
             <button id="okBtn"
                     caption="msg:///ok"
                     icon="EDITOR_OK" action="windowCommitAndClose"/>
@@ -107,6 +106,6 @@
             <fileUpload id="importJsonField"
                         uploadButtonCaption="msg://importJson"
                         uploadButtonIcon="UPLOAD"/>
-        </buttonsPanel>
+        </hbox>
     </layout>
 </window>

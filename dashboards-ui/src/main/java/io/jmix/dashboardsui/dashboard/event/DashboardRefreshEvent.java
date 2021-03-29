@@ -18,6 +18,7 @@ package io.jmix.dashboardsui.dashboard.event;
 
 import io.jmix.dashboards.model.visualmodel.DashboardLayout;
 
+import javax.annotation.Nullable;
 import java.util.UUID;
 
 public class DashboardRefreshEvent extends AbstractDashboardEditEvent {
@@ -38,6 +39,7 @@ public class DashboardRefreshEvent extends AbstractDashboardEditEvent {
         return (DashboardLayout) super.getSource();
     }
 
+    @Nullable
     public UUID getSelectId() {
         return selectId;
     }

@@ -16,9 +16,16 @@
 
 package io.jmix.dashboardsui.dashboard.assistant;
 
-import io.jmix.dashboardsui.component.impl.DashboardImpl;
+import io.jmix.dashboardsui.component.Dashboard;
+import io.jmix.dashboardsui.event.DashboardEvent;
 
+/**
+ * Implementation of this interface can be linked to the dashboard and invoked on every {@link DashboardEvent}.
+ */
 public interface DashboardViewAssistant {
 
-    void init(DashboardImpl dashboardFrame);
+    /**
+     * @param dashboard dashboard component which assistant is related to
+     */
+    void init(Dashboard dashboard);
 }

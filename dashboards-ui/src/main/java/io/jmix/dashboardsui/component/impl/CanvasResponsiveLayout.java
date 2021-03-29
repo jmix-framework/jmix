@@ -22,20 +22,19 @@ import io.jmix.dashboardsui.DashboardStyleConstants;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.ResponsiveGridLayout;
 import io.jmix.ui.widget.JmixCssActionsLayout;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.*;
 
+import static io.jmix.ui.component.ResponsiveGridLayout.Breakpoint.*;
+import static io.jmix.ui.component.ResponsiveGridLayout.ColumnsValue.columns;
+
 public class CanvasResponsiveLayout extends AbstractCanvasLayout {
-    private static Logger log = LoggerFactory.getLogger(DashboardImpl.class);
 
     public static final String NAME = "canvasResponsiveLayout";
 
-    protected DashboardResponsiveLayout responsiveLayout;
+    protected ResponsiveGridLayout responsiveLayout;
 
     public CanvasResponsiveLayout init(ResponsiveLayout model) {
-        responsiveLayout = components.create(DashboardResponsiveLayout.class);
+        responsiveLayout = components.create(ResponsiveGridLayout.class);
         responsiveLayout.setStyleName("dashboard-layout");
         responsiveLayout.setHeightFull();
         ResponsiveGridLayout.Row wrr = responsiveLayout.addRow();
@@ -51,7 +50,7 @@ public class CanvasResponsiveLayout extends AbstractCanvasLayout {
     }
 
     @Override
-    public DashboardResponsiveLayout getDelegate() {
+    public ResponsiveGridLayout getDelegate() {
         return responsiveLayout;
     }
 
@@ -70,18 +69,14 @@ public class CanvasResponsiveLayout extends AbstractCanvasLayout {
         ResponsiveGridLayout.Column wrc = wrr.addColumn();
 
         Map<ResponsiveGridLayout.Breakpoint, ResponsiveGridLayout.ColumnsValue> map = new HashMap<>();
-        map.put(ResponsiveGridLayout.Breakpoint.XS, createColValue(responsiveArea.getXs() == null ? rl.getXs() : responsiveArea.getXs()));
-        map.put(ResponsiveGridLayout.Breakpoint.SM, createColValue(responsiveArea.getSm() == null ? rl.getSm() : responsiveArea.getSm()));
-        map.put(ResponsiveGridLayout.Breakpoint.MD, createColValue(responsiveArea.getMd() == null ? rl.getMd() : responsiveArea.getMd()));
-        map.put(ResponsiveGridLayout.Breakpoint.LG, createColValue(responsiveArea.getLg() == null ? rl.getLg() : responsiveArea.getLg()));
+        map.put(XS, columns(responsiveArea.getXs() == null ? rl.getXs() : responsiveArea.getXs()));
+        map.put(SM, columns(responsiveArea.getSm() == null ? rl.getSm() : responsiveArea.getSm()));
+        map.put(MD, columns(responsiveArea.getMd() == null ? rl.getMd() : responsiveArea.getMd()));
+        map.put(LG, columns(responsiveArea.getLg() == null ? rl.getLg() : responsiveArea.getLg()));
 
         wrc.setColumns(map);
 
         wrc.setComponent(component);
-    }
-
-    private ResponsiveGridLayout.ColumnsValue createColValue(Integer cols) {
-        return ResponsiveGridLayout.ColumnsValue.columns(cols);
     }
 
     @Override

@@ -35,6 +35,7 @@ import io.jmix.ui.screen.UiDescriptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -74,7 +75,7 @@ public class CanvasFragment extends ScreenFragment {
         return converter;
     }
 
-    public void updateLayout(DashboardModel dashboard) {
+    public void updateLayout(@Nullable DashboardModel dashboard) {
         if (dashboard == null) {
             throw new DashboardException("DASHBOARD parameter can not be null");
         }
@@ -98,7 +99,7 @@ public class CanvasFragment extends ScreenFragment {
 
     protected <T> void searchWidgets(ComponentContainer layout, Class<T> widgetClass, List<T> wbList) {
         if (layout instanceof CanvasWidgetLayout) {
-            ScreenFragment wb = getWidgetFrame((CanvasWidgetLayout) layout);
+            ScreenFragment wb = getWidgetFragment((CanvasWidgetLayout) layout);
             if (wb != null && widgetClass.isAssignableFrom(wb.getClass())) {
                 wbList.add((T) wb);
             }
@@ -111,7 +112,7 @@ public class CanvasFragment extends ScreenFragment {
         }
     }
 
-    private ScreenFragment getWidgetFrame(CanvasWidgetLayout layout) {
+    private ScreenFragment getWidgetFragment(CanvasWidgetLayout layout) {
         return layout.getWidgetComponent();
     }
 

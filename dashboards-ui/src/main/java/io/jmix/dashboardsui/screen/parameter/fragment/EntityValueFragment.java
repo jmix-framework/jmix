@@ -36,13 +36,13 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 public class EntityValueFragment extends ScreenFragment implements ValueFragment {
 
     @Autowired
-    protected ComboBox<MetaClass> metaClassLookup;
+    protected ComboBox<MetaClass> metaClassComboBox;
 
     @Autowired
-    protected ComboBox<Object> entitiesLookup;
+    protected ComboBox<Object> entitiesComboBox;
 
     @Autowired
-    protected ComboBox<String> viewLookup;
+    protected ComboBox<String> fetchPlanComboBox;
 
     @Autowired
     protected Metadata metadata;
@@ -67,22 +67,22 @@ public class EntityValueFragment extends ScreenFragment implements ValueFragment
     public void init(Map<String, Object> params) {
         loadAllPersistentClasses();
         selectIfExist((EntityParameterValue) params.get(VALUE));
-        metaClassLookup.addValueChangeListener(e -> metaClassValueChanged(e.getValue()));
+        metaClassComboBox.addValueChangeListener(e -> metaClassValueChanged(e.getValue()));
     }
 
     @Override
     public ParameterValue getValue() {
         EntityParameterValue value = new EntityParameterValue();
-        MetaClass metaClass = metaClassLookup.getValue();
+        MetaClass metaClass = metaClassComboBox.getValue();
 
         if (metaClass != null) {
             value.setMetaClassName(metaClass.getName());
 
-            Object entity = entitiesLookup.getValue();
+            Object entity = entitiesComboBox.getValue();
             value.setEntityId(entity == null ? null : EntityValues.getId(entity).toString());
 
-            String fetchPlan = viewLookup.getValue();
-            value.setFetchPlan(fetchPlan);
+            String fetchPlan = fetchPlanComboBox.getValue();
+            value.setFetchPlanName(fetchPlan);
         }
 
         return value;
@@ -90,36 +90,36 @@ public class EntityValueFragment extends ScreenFragment implements ValueFragment
 
     protected void loadAllPersistentClasses() {
         List<MetaClass> metaClasses = new ArrayList<>(metadataTools.getAllJpaEntityMetaClasses());
-        metaClassLookup.setOptionsList(metaClasses);
+        metaClassComboBox.setOptionsList(metaClasses);
     }
 
     public void selectIfExist(EntityParameterValue value) {
         if (value != null && isNotBlank(value.getMetaClassName())) {
             String metaClassName = value.getMetaClassName();
 
-            Optional<MetaClass> classOpt = metaClassLookup.getOptions().getOptions().collect(Collectors.toList())
+            Optional<MetaClass> classOpt = metaClassComboBox.getOptions().getOptions().collect(Collectors.toList())
                     .stream()
                     .filter(clazz -> metaClassName.equals(clazz.getName()))
                     .findFirst();
 
             if (classOpt.isPresent()) {
                 MetaClass metaClass = classOpt.get();
-                metaClassLookup.setValue(metaClass);
+                metaClassComboBox.setValue(metaClass);
                 loadEntities(metaClass);
                 loadFetchPlans(metaClass);
 
                 String entityId = value.getEntityId();
                 if (isNotBlank(entityId)) {
-                    entitiesLookup.getOptions().getOptions().collect(Collectors.toList())
+                    entitiesComboBox.getOptions().getOptions().collect(Collectors.toList())
                             .stream()
                             .filter(entity -> entityId.equals(EntityValues.getId(entity).toString()))
                             .findFirst()
-                            .ifPresent(entity -> entitiesLookup.setValue(entity));
+                            .ifPresent(entity -> entitiesComboBox.setValue(entity));
                 }
 
-                String fetchPlan = value.getFetchPlan();
-                if (isNotBlank(fetchPlan) && viewLookup.getOptions().getOptions().anyMatch(e -> e.equals(fetchPlan))) {
-                    viewLookup.setValue(fetchPlan);
+                String fetchPlan = value.getFetchPlanName();
+                if (isNotBlank(fetchPlan) && fetchPlanComboBox.getOptions().getOptions().anyMatch(e -> e.equals(fetchPlan))) {
+                    fetchPlanComboBox.setValue(fetchPlan);
                 }
             }
         }
@@ -127,10 +127,10 @@ public class EntityValueFragment extends ScreenFragment implements ValueFragment
 
     protected void metaClassValueChanged(MetaClass metaClass) {
         if (metaClass == null) {
-            entitiesLookup.setValue(null);
-            entitiesLookup.setOptionsList(Collections.emptyList());
-            viewLookup.setValue(null);
-            viewLookup.setOptionsList(Collections.emptyList());
+            entitiesComboBox.setValue(null);
+            entitiesComboBox.setOptionsList(Collections.emptyList());
+            fetchPlanComboBox.setValue(null);
+            fetchPlanComboBox.setOptionsList(Collections.emptyList());
         } else {
             loadEntities(metaClass);
             loadFetchPlans(metaClass);
@@ -141,7 +141,7 @@ public class EntityValueFragment extends ScreenFragment implements ValueFragment
         LoadContext loadContext = new LoadContext(metaClass)
                 .setQuery(new LoadContext.Query(format("select e from %s e", metaClass.getName())));
         List entities = dataManager.loadList(loadContext);
-        entitiesLookup.setOptionsList(entities);
+        entitiesComboBox.setOptionsList(entities);
     }
 
     protected void loadFetchPlans(MetaClass metaClass) {
@@ -149,6 +149,6 @@ public class EntityValueFragment extends ScreenFragment implements ValueFragment
         fetchPlans.add(0, FetchPlan.LOCAL);
         fetchPlans.add(1, FetchPlan.INSTANCE_NAME);
         fetchPlans.add(2, FetchPlan.BASE);
-        viewLookup.setOptionsList(fetchPlans);
+        fetchPlanComboBox.setOptionsList(fetchPlans);
     }
 }

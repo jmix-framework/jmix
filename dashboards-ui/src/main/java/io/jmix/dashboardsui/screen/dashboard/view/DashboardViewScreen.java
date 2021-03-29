@@ -45,11 +45,11 @@ public class DashboardViewScreen extends Screen {
         if (params.containsKey(DISPLAY_NAME)) {
             getWindow().setCaption((String) params.get(DISPLAY_NAME));
         }
-        DashboardImpl dashboardСomponent = uiComponents.create(DashboardImpl.class);
-        dashboardСomponent.setFrame(getWindow().getFrame());
-        dashboardСomponent.init(params);
-        getWindow().add(dashboardСomponent);
-        this.dashboard = dashboardСomponent;
+        Dashboard dashboardComponent = uiComponents.create(Dashboard.NAME);
+        dashboardComponent.setFrame(getWindow().getFrame());
+        dashboardComponent.init(params);
+        getWindow().add(dashboardComponent);
+        this.dashboard = dashboardComponent;
     }
 
     public Dashboard getDashboard() {

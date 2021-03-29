@@ -18,9 +18,12 @@ package io.jmix.dashboardsui.screen.parameter.fragment;
 
 import io.jmix.dashboards.model.parameter.type.ParameterValue;
 
+import javax.annotation.Nullable;
+
 public interface ValueFragment {
     String VALUE_TYPE = "VALUE_TYPE";
     String VALUE = "VALUE";
 
+    @Nullable
     ParameterValue getValue();
 }

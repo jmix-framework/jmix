@@ -36,6 +36,7 @@ import io.jmix.ui.screen.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.Nullable;
 import java.util.Optional;
 
 import static io.jmix.ui.component.Window.COMMIT_ACTION_ID;
@@ -48,6 +49,9 @@ public class WidgetTemplateEdit extends StandardEditor<WidgetTemplate> {
 
     @Autowired
     protected Form form;
+
+    @Autowired
+    private CheckBox isAvailableForAllUsersChkBox;
 
     @Autowired
     protected WidgetRepository widgetRepository;
@@ -73,7 +77,7 @@ public class WidgetTemplateEdit extends StandardEditor<WidgetTemplate> {
     @Autowired
     protected ScreenBuilders screenBuilders;
 
-    protected ComboBox widgetTypeComboBox;
+    protected ComboBox<String> widgetTypeComboBox;
     protected Button editWidgetButton;
 
     protected boolean openWidgetEditor = false;
@@ -106,7 +110,7 @@ public class WidgetTemplateEdit extends StandardEditor<WidgetTemplate> {
         }
 
         if (!accessHelper.getCurrentUsername().equals(getEditedEntity().getCreatedBy())) {
-            form.getComponent("isAvailableForAllUsers").setVisible(false);
+            isAvailableForAllUsersChkBox.setVisible(false);
         }
         openWidgetEditor = true;
     }
@@ -126,14 +130,14 @@ public class WidgetTemplateEdit extends StandardEditor<WidgetTemplate> {
     }
 
     private ComboBox<String> createWidgetTypeComboBox() {
-        ComboBox<String> widgetTypeComboBox = components.create(ComboBox.class);
+        ComboBox<String> widgetTypeComboBox = components.create(ComboBox.TYPE_STRING);
         widgetTypeComboBox.setWidth("100%");
         widgetTypeComboBox.setOptionsMap(widgetUtils.getWidgetCaptions());
         widgetTypeComboBox.addValueChangeListener(e -> {
-            String browserFrameId = e.getValue();
-            if (browserFrameId != null) {
+            String browserFragmentId = e.getValue();
+            if (browserFragmentId != null) {
                 Widget widget = dataContext.create(Widget.class);
-                widget.setFrameId(browserFrameId);
+                widget.setFragmentId(browserFragmentId);
                 widget.setName(widgetUtils.getWidgetType(e.getValue()));
                 widget.setCreatedBy(accessHelper.getCurrentUsername());
                 openWidgetEditor(widget);
@@ -183,19 +187,19 @@ public class WidgetTemplateEdit extends StandardEditor<WidgetTemplate> {
         }
     }
 
-    protected void setWidgetTypeComboBoxValue(Widget widget, ComboBox<String> comboBox) {
+    protected void setWidgetTypeComboBoxValue(@Nullable Widget widget, ComboBox<String> comboBox) {
         if (widget == null) {
             comboBox.setValue(null);
             return;
         }
-        String browseFrameId = widget.getFrameId();
+        String browseFragmentId = widget.getFragmentId();
 
         Optional<WidgetTypeInfo> widgetTypeOpt = widgetRepository.getWidgetTypesInfo().stream()
-                .filter(typeInfo -> browseFrameId.equals(typeInfo.getFrameId()))
+                .filter(typeInfo -> browseFragmentId.equals(typeInfo.getFragmentId()))
                 .findFirst();
 
         if (widgetTypeOpt.isPresent()) {
-            String itemCaption = widgetTypeOpt.get().getFrameId();
+            String itemCaption = widgetTypeOpt.get().getFragmentId();
 
             if (isNotBlank(itemCaption)) {
                 comboBox.setValue(itemCaption);

@@ -23,7 +23,7 @@
                    width="85px"
                    value="msg://metaClass"
                    align="MIDDLE_LEFT"/>
-            <comboBox id="metaClassLookup"
+            <comboBox id="metaClassComboBox"
                          required="true"
                          width="300px"/>
         </hbox>
@@ -33,17 +33,17 @@
                    width="85px"
                    value="msg://entity"
                    align="MIDDLE_LEFT"/>
-            <comboBox id="entitiesLookup"
+            <comboBox id="entitiesComboBox"
                          required="true"
                          width="300px"/>
         </hbox>
-        <hbox id="hBoxView"
+        <hbox id="hBoxFetchPlan"
               spacing="true">
-            <label id="viewLabel"
+            <label id="fetchPlanLabel"
                    width="85px"
-                   value="msg://fetchPlan"
+                   value="msg://fetchPlanName"
                    align="MIDDLE_LEFT"/>
-            <comboBox id="viewLookup"
+            <comboBox id="fetchPlanComboBox"
                          required="true"
                          width="300px"/>
         </hbox>

@@ -25,17 +25,19 @@ import java.lang.reflect.Field;
 
 public interface ParameterTransformer {
 
+    @Nullable
     Object transform(ParameterValue parameterValue);
 
     boolean compareParameterTypes(ParameterType parameterType, Field field);
 
-    ParameterValue createParameterValue(Field field, ScreenFragment widgetFrame);
+    @Nullable
+    ParameterValue createParameterValue(Field field, ScreenFragment widgetFragment);
 
     /**
-     * Returns ParameterValue object according passed parameter class
+     * Returns ParameterValue object according to passed parameter class
      *
      * @param obj parameter
-     * @return wrapped object which implements ParameterValue interface
+     * @return wrapped object which implements {@link ParameterValue} interface
      */
     @Nullable
     ParameterValue createParameterValue(Object obj);

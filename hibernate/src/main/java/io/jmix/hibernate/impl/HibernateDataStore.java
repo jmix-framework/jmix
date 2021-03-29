@@ -284,18 +284,24 @@ public class HibernateDataStore extends AbstractDataStore implements DataSorting
         return result;
     }
 
-    //    @Override
+    @Override
     protected List<Object> loadAllValues(ValueLoadContext context) {
         EntityManager em = storeAwareLocator.getEntityManager(storeName);
         em.setProperty(PersistenceHints.SOFT_DELETION, context.getHints().get(PersistenceHints.SOFT_DELETION));
 
-        Query query = createLoadQuery(em, context);
+        Query query = createLoadQuery(em, context, false);
         return executeQuery(query, false);
     }
 
     @Override
     protected long countAllValues(ValueLoadContext context) {
-        return 0;
+        EntityManager em = storeAwareLocator.getEntityManager(storeName);
+        em.setProperty(PersistenceHints.SOFT_DELETION, context.getHints().get(PersistenceHints.SOFT_DELETION));
+
+        Query query = createLoadQuery(em, context, true);
+        Number result = (Number) query.getSingleResult();
+
+        return result.longValue();
     }
 
     @Override
@@ -449,7 +455,7 @@ public class HibernateDataStore extends AbstractDataStore implements DataSorting
         return query;
     }
 
-    protected Query createLoadQuery(EntityManager em, ValueLoadContext context) {
+    protected Query createLoadQuery(EntityManager em, ValueLoadContext context, boolean count) {
         JpqlQueryBuilder queryBuilder = jpqlQueryBuilderProvider.getObject();
 
         ValueLoadContext.Query contextQuery = context.getQuery();
@@ -457,8 +463,13 @@ public class HibernateDataStore extends AbstractDataStore implements DataSorting
         queryBuilder.setValueProperties(context.getProperties())
                 .setQueryString(contextQuery.getQueryString())
                 .setCondition(contextQuery.getCondition())
-                .setSort(contextQuery.getSort())
                 .setQueryParameters(contextQuery.getParameters());
+
+        if (!count) {
+            queryBuilder.setSort(contextQuery.getSort());
+        } else {
+            queryBuilder.setCountQuery();
+        }
 
         Query query = queryBuilder.getQuery(em);
 

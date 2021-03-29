@@ -29,10 +29,6 @@ import org.hibernate.proxy.LazyInitializer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.io.Serializable;
-import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -63,7 +59,6 @@ public class HibernateDatastoreListener implements DataStoreEventListener {
                     if (reference == null) {
                         reference = dataManager.getReference(initializer.getPersistentClass(), initializer.getIdentifier());
                     }
-                    EntityValues.setValue(e, propertyName, reference);
                 }
                 return reference;
             });
@@ -78,7 +73,6 @@ public class HibernateDatastoreListener implements DataStoreEventListener {
             traverseEntities(entity, visited, (e, reference, propertyName) -> {
                 if (reference instanceof HibernateProxy) {
                     reference = HibernateUtils.initializeAndUnproxy(reference);
-                    EntityValues.setValue(e, propertyName, reference);
                 }
                 return reference;
             });
@@ -95,19 +89,12 @@ public class HibernateDatastoreListener implements DataStoreEventListener {
         for (MetaProperty property : metadata.getClass(entity.getClass()).getProperties()) {
             if (isPersistentEntityProperty(property) && entityStates.isLoaded(entity, property.getName())) {
                 Object value = EntityValues.getValue(entity, property.getName());
-                if (value instanceof Collection<?>) {
-                    //noinspection unchecked
-                    for (Object item : (Collection<Object>) value) {
-                        item = visitor.visit(entity, item, property.getName());
-                        if (item != null) {
-                            traverseEntities(item, visited, visitor);
-                        }
-                    }
-                } else if (value instanceof Entity) {
+                if (value instanceof Entity) {
                     value = visitor.visit(entity, value, property.getName());
                     if (value != null) {
                         traverseEntities(value, visited, visitor);
                     }
+                    EntityValues.setValue(entity, property.getName(), value);
                 }
             }
         }

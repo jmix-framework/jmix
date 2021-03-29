@@ -368,7 +368,7 @@ public class JmixHibernateQuery<E> extends AbstractProducedQuery<E> implements Q
                         fetchGraphProvider.fillGraph(entityGraph, plan);
                     }
                     //Resolve issue with many to many soft deletable collections
-                    query = query.applyLoadGraph(entityGraph);
+                    query = query.applyFetchGraph(entityGraph);
                 }
             }
         }

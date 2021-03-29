@@ -310,6 +310,12 @@ public class EmailerImpl implements Emailer {
             String adminAddress = emailerProperties.getAdminAddress();
             log.warn("Replacing actual email recipient '{}' by admin address '{}'", msg.getAddress(), adminAddress);
             msg.setAddress(adminAddress);
+            if (msg.getCc() != null) {
+                msg.setCc(adminAddress);
+            }
+            if (msg.getBcc() != null) {
+                msg.setBcc(adminAddress);
+            }
         }
     }
 

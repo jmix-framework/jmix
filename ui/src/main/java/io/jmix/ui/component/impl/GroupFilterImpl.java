@@ -229,6 +229,10 @@ public class GroupFilterImpl extends CompositeComponent<GroupBoxLayout> implemen
         ownFilterComponentsOrder.add(filterComponent);
         updateConditionsLayout();
 
+        if (filterComponent instanceof PropertyFilter) {
+            ((PropertyFilter<?>) filterComponent).addOperationChangeListener(operationChangeEvent -> apply());
+        }
+
         if (!isConditionModificationDelegated()) {
             updateDataLoaderCondition();
         }
@@ -273,6 +277,13 @@ public class GroupFilterImpl extends CompositeComponent<GroupBoxLayout> implemen
     @Override
     public LogicalCondition getQueryCondition() {
         return queryCondition;
+    }
+
+    @Override
+    public void apply() {
+        if (dataLoader != null && autoApply) {
+            dataLoader.load();
+        }
     }
 
     @Override

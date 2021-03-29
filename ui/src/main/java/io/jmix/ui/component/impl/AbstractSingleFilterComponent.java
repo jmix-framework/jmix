@@ -296,7 +296,14 @@ public abstract class AbstractSingleFilterComponent<V> extends CompositeComponen
     protected void onValueChanged(ValueChangeEvent<V> valueChangeEvent) {
         updateQueryCondition(valueChangeEvent.getValue());
 
-        if (valueChangeEvent.isUserOriginated() && autoApply) {
+        if (valueChangeEvent.isUserOriginated()) {
+            apply();
+        }
+    }
+
+    @Override
+    public void apply() {
+        if (dataLoader != null && autoApply) {
             dataLoader.load();
         }
     }

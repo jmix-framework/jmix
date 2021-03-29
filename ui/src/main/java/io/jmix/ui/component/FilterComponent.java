@@ -81,4 +81,9 @@ public interface FilterComponent extends Component {
      * @return a {@link Condition} related to the current filter component
      */
     Condition getQueryCondition();
+
+    /**
+     * Applies the current filter component condition.
+     */
+    void apply();
 }

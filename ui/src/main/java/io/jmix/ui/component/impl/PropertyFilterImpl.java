@@ -161,6 +161,10 @@ public class PropertyFilterImpl<V> extends AbstractSingleFilterComponent<V> impl
 
         if (this.valueComponent != null) {
             this.valueComponent.setValue(null);
+
+            if (!isConditionModificationDelegated()) {
+                apply();
+            }
         }
 
         if (this.operation == null

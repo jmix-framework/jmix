@@ -24,7 +24,7 @@
                 fetchPlan="sendingMessage.browse">
             <loader id="sendingMessagesDl">
                 <query>
-                    <![CDATA[select sm from email_SendingMessage sm]]>
+                    <![CDATA[select sm from email_SendingMessage sm order by sm.createTs desc]]>
                 </query>
             </loader>
         </collection>

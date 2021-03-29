@@ -23,7 +23,7 @@ import io.jmix.reportsui.wizard.template.generators.*;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-@Component(TemplateGenerator.NAME)
+@Component("report_TemplateGenerator")
 @Scope("prototype")
 public class TemplateGeneratorImpl implements TemplateGenerator {
 

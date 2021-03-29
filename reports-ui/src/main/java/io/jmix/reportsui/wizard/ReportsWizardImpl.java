@@ -36,7 +36,7 @@ import javax.annotation.Nullable;
 import javax.inject.Provider;
 import java.util.List;
 
-@Component(ReportsWizard.NAME)
+@Component("report_ReportWizardService")
 public class ReportsWizardImpl implements ReportsWizard {
     @Autowired
     private ReportingWizard reportingWizard;

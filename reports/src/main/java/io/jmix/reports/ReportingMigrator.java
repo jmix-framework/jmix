@@ -25,10 +25,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Component(ReportingMigrator.NAME)
+@Component("reporting_ReportingMigrator")
 public class ReportingMigrator implements io.jmix.reports.ReportingMigratorMBean {
-
-    public static final String NAME = "reporting_ReportingMigrator";
 
     @Autowired
     protected Metadata metadata;

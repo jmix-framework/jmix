@@ -30,9 +30,6 @@ import java.util.*;
  * API for reporting
  */
 public interface Reports {
-
-    String NAME = "report_Reports";
-
     String DEFAULT_TEMPLATE_CODE = "DEFAULT";
 
     /**

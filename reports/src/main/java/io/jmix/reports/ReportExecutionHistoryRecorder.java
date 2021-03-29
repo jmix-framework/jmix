@@ -23,7 +23,6 @@ import io.jmix.reports.entity.ReportExecution;
 import java.util.Map;
 
 public interface ReportExecutionHistoryRecorder {
-    String NAME = "reporting_ExecutionHistoryRecorder";
 
     ReportExecution startExecution(Report report, Map<String, Object> params);
 

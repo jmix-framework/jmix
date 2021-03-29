@@ -37,7 +37,7 @@ import java.io.ByteArrayInputStream;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Component(ReportExecutionHistoryRecorder.NAME)
+@Component("reporting_ExecutionHistoryRecorder")
 public class ReportExecutionHistoryRecorderImpl implements ReportExecutionHistoryRecorder {
     private static Logger log = LoggerFactory.getLogger(ReportExecutionHistoryRecorderImpl.class);
 

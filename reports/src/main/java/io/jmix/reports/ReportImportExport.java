@@ -24,7 +24,6 @@ import java.util.Collection;
 import java.util.EnumSet;
 
 public interface ReportImportExport {
-    String NAME = "reporting_ReportImportExport";
 
     byte[] exportReports(Collection<Report> reports);
 

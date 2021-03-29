@@ -30,8 +30,6 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public interface ReportsWizard {
-    String NAME = "report_ReportWizardService";
-
     Report toReport(ReportData reportData, boolean temporary);
 
     FetchPlan createViewByReportRegions(EntityTreeNode entityTreeRootNode, List<ReportRegion> reportRegions);

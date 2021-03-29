@@ -34,10 +34,8 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.Map;
 
-@Component(ReportParameterValidator.NAME)
+@Component("report_ReportParameterValidator")
 public class ReportParameterValidator {
-    public static final String NAME = "report_ReportParameterValidator";
-
     @Autowired
     protected Metadata metadata;
     @Autowired

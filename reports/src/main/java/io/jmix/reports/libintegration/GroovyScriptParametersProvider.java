@@ -27,9 +27,6 @@ import java.util.Map;
  */
 
 public interface GroovyScriptParametersProvider {
-
-    String NAME = "report_GroovyParametersProvider";
-
     /**
      * Prepares and return the map of objects
      * @param reportParameters - parameters to include into the map of parameters

@@ -32,7 +32,7 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.Map;
 
-@Component(GroovyScriptParametersProvider.NAME)
+@Component("report_GroovyParametersProvider")
 public class JmixGroovyScriptParametersProvider implements GroovyScriptParametersProvider {
 
     @Autowired

@@ -39,7 +39,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.zip.CRC32;
 
-@Component(ReportImportExport.NAME)
+@Component("reporting_ReportImportExport")
 public class ReportImportExportImpl implements ReportImportExport, ReportImportExportMBean {
     public static final String ENCODING = "CP866";
 

@@ -60,7 +60,7 @@ import java.util.zip.CRC32;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
-@Component(Reports.NAME)
+@Component("report_Reports")
 public class ReportsImpl implements Reports {
 
     public static final String REPORT_EDIT_VIEW_NAME = "report.edit";

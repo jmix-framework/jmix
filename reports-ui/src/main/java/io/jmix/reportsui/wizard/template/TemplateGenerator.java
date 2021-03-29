@@ -19,7 +19,6 @@ package io.jmix.reportsui.wizard.template;
 import io.jmix.reports.exception.TemplateGenerationException;
 
 public interface TemplateGenerator {
-    String NAME = "report_TemplateGenerator";
 
     byte[] generateTemplate() throws TemplateGenerationException;
 }

@@ -34,11 +34,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
 
-@Component(ParameterClassResolver.NAME)
+@Component("report_ParameterClassResolver")
 public class ParameterClassResolver {
-
-    public static final String NAME = "report_ParameterClassResolver";
-
     protected Map<ParameterType, Class> primitiveParameterTypeMapping = new ImmutableMap.Builder<ParameterType, Class>()
             .put(ParameterType.BOOLEAN, Boolean.class)
             .put(ParameterType.DATE, Date.class)

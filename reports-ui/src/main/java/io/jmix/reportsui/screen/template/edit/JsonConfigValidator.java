@@ -30,10 +30,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-@Component(JsonConfigValidator.NAME)
+@Component("report_JsonConfigValidator")
 public class JsonConfigValidator extends AbstractValidator<String> {
-
-    public static final String NAME = "report_JsonConfigValidator";
 
     protected static final Gson gson;
 

@@ -25,6 +25,7 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Range;
 import io.jmix.core.metamodel.model.Session;
 import io.jmix.datatools.EntityRestore;
+import io.jmix.datatoolsui.action.ShowEntityInfoAction;
 import io.jmix.datatoolsui.screen.entityinspector.assistant.InspectorFetchPlanBuilder;
 import io.jmix.datatoolsui.screen.entityinspector.assistant.InspectorTableBuilder;
 import io.jmix.ui.*;
@@ -383,6 +384,9 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
         table.addAction(restoreAction);
         restoreButton.setAction(restoreAction);
 
+        Action showEntityInfoAction = createShowEntityInfoAction(table);
+        table.addAction(showEntityInfoAction);
+
         buttonsPanel.add(createButton);
         buttonsPanel.add(editButton);
         buttonsPanel.add(removeButton);
@@ -391,6 +395,12 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
         buttonsPanel.add(exportPopupButton);
         buttonsPanel.add(importUpload);
         buttonsPanel.add(restoreButton);
+    }
+
+    private ShowEntityInfoAction createShowEntityInfoAction(Table table) {
+        ShowEntityInfoAction showEntityInfoAction = actions.create(ShowEntityInfoAction.class);
+        showEntityInfoAction.setTarget(table);
+        return showEntityInfoAction;
     }
 
     private RefreshAction createRefreshAction(Table table) {

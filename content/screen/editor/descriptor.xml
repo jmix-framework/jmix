@@ -73,7 +73,7 @@ def optionsDatasourceXml = api.processSnippet('screen/optionsDsSource.xml',
     <%} else {%>
     <dialogMode height="600"
                 width="800"/><%}%>
-<layout spacing="true" expand="editActions">
+<layout spacing="true" expand=<%if (editorActionBottom) {%>"scrollBox"<%} else {%>"editActions"<%}%>>
     <%if (createScrollBox) {
         print('<scrollBox id="scrollBox" spacing="true">')}%>
         ${formXml}

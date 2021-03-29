@@ -18,9 +18,8 @@ package io.jmix.uidata.exception;
 
 import io.jmix.core.JmixOrder;
 import io.jmix.core.Messages;
-import io.jmix.data.persistence.DbmsSpecifics;
+import io.jmix.data.exception.UniqueConstraintViolationException;
 import io.jmix.ui.Notifications;
-import io.jmix.ui.UiProperties;
 import io.jmix.ui.exception.UiExceptionHandler;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -30,9 +29,6 @@ import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 
 /**
  * Handles database unique constraint violations. Determines the exception type by searching a special marker string
@@ -49,19 +45,13 @@ public class UniqueConstraintViolationHandler implements UiExceptionHandler, Ord
     @Autowired
     protected Messages messages;
 
-    @Autowired
-    protected UiProperties uiProperties;
-
-    @Autowired
-    protected DbmsSpecifics dbmsSpecifics;
-
     @Override
     public boolean handle(Throwable exception, UiContext context) {
         Throwable throwable = exception;
         try {
             while (throwable != null) {
-                if (throwable.toString().contains("org.eclipse.persistence.exceptions.DatabaseException")) {
-                    return doHandle(throwable, context);
+                if (throwable instanceof UniqueConstraintViolationException) {
+                    return doHandle((UniqueConstraintViolationException) throwable, context);
                 }
                 throwable = throwable.getCause();
             }
@@ -71,34 +61,15 @@ public class UniqueConstraintViolationHandler implements UiExceptionHandler, Ord
         }
     }
 
-    protected boolean doHandle(Throwable exception, UiContext context) {
-        Pattern pattern = getUniqueConstraintViolationPattern();
-        Matcher matcher = pattern.matcher(exception.toString());
-        if (matcher.find()) {
-            String constraintName = resolveConstraintName(matcher);
-            String message = getMessage(constraintName);
-            context.getNotifications()
-                    .create(Notifications.NotificationType.ERROR)
-                    .withDescription(message)
-                    .show();
-            return true;
-        }
-        return false;
-    }
-
-    protected String resolveConstraintName(Matcher matcher) {
-        String constraintName = "";
-        if (matcher.groupCount() == 1) {
-            constraintName = matcher.group(1);
-        } else {
-            for (int i = 1; i < matcher.groupCount(); i++) {
-                if (StringUtils.isNotBlank(matcher.group(i))) {
-                    constraintName = matcher.group(i);
-                    break;
-                }
-            }
-        }
-        return constraintName.toUpperCase();
+    protected boolean doHandle(UniqueConstraintViolationException exception, UiContext context) {
+        String constraintName = exception.getConstraintName();
+        log.debug("handle: UniqueConstraintViolationException with constraintName={}", constraintName);
+        String message = getMessage(constraintName);
+        context.getNotifications()
+                .create(Notifications.NotificationType.ERROR)
+                .withDescription(message)
+                .show();
+        return true;
     }
 
     protected String getMessage(String constraintName) {
@@ -113,25 +84,6 @@ public class UniqueConstraintViolationHandler implements UiExceptionHandler, Ord
             msg = msg + " (" + constraintName + ")";
         }
         return msg;
-    }
-
-    protected Pattern getUniqueConstraintViolationPattern() {
-        String defaultPatternExpression = dbmsSpecifics.getDbmsFeatures().getUniqueConstraintViolationPattern();
-        String patternExpression = uiProperties.getUniqueConstraintViolationPattern();
-
-        Pattern pattern;
-        if (StringUtils.isBlank(patternExpression)) {
-            pattern = Pattern.compile(defaultPatternExpression);
-        } else {
-            try {
-                pattern = Pattern.compile(patternExpression);
-            } catch (PatternSyntaxException e) {
-                pattern = Pattern.compile(defaultPatternExpression);
-                log.warn("Incorrect regexp property {}: {}",
-                        "'jmix.ui.uniqueConstraintViolationPattern'", patternExpression, e);
-            }
-        }
-        return pattern;
     }
 
     @Override

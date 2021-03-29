@@ -45,7 +45,6 @@ public class UiProperties {
     List<String> viewFileExtensions;
     int saveExportedByteArrayDataThresholdBytes;
     long webJarResourcesCacheTime;
-    String uniqueConstraintViolationPattern;
     long backgroundTaskTimeoutCheckInterval;
 
     Integer defaultMaxFetchSize;
@@ -79,7 +78,6 @@ public class UiProperties {
             @DefaultValue({"htm", "html", "jpg", "png", "jpeg", "pdf"}) List<String> viewFileExtensions,
             @DefaultValue("102400") int saveExportedByteArrayDataThresholdBytes,
             @DefaultValue("31536000") long webJarResourcesCacheTime, // 60 * 60 * 24 * 365
-            @Nullable String uniqueConstraintViolationPattern,
             @DefaultValue("5000") long backgroundTaskTimeoutCheckInterval,
             @DefaultValue("10000") Integer defaultMaxFetchSize,
             @Nullable Map<String, Integer> entityMaxFetchSize,
@@ -111,7 +109,6 @@ public class UiProperties {
         this.viewFileExtensions = viewFileExtensions;
         this.saveExportedByteArrayDataThresholdBytes = saveExportedByteArrayDataThresholdBytes;
         this.webJarResourcesCacheTime = webJarResourcesCacheTime;
-        this.uniqueConstraintViolationPattern = uniqueConstraintViolationPattern;
         this.backgroundTaskTimeoutCheckInterval = backgroundTaskTimeoutCheckInterval;
         this.defaultMaxFetchSize = defaultMaxFetchSize;
         this.entityMaxFetchSize = entityMaxFetchSize == null ? Collections.emptyMap() : entityMaxFetchSize;
@@ -199,14 +196,6 @@ public class UiProperties {
      */
     public int getJmxConsoleMBeanOperationTimeoutSec() {
         return jmxConsoleMBeanOperationTimeoutSec;
-    }
-
-    /**
-     * @return Overridden pattern to parse Unique Constraint Violation exception
-     */
-    @Nullable
-    public String getUniqueConstraintViolationPattern() {
-        return uniqueConstraintViolationPattern;
     }
 
     /**

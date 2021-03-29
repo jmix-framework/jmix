@@ -48,6 +48,7 @@ import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import io.jmix.data.DataConfiguration;
 import io.jmix.data.impl.NumberIdCache;
+import io.jmix.datatools.DatatoolsConfiguration;
 import io.jmix.datatoolsui.DatatoolsUiConfiguration;
 import io.jmix.dynattr.DynAttrConfiguration;
 import io.jmix.dynattrui.DynAttrUiConfiguration;
@@ -96,7 +97,8 @@ import java.util.Collections;
 @ConfigurationPropertiesScan
 @JmixModule(dependsOn = {CoreConfiguration.class, DataConfiguration.class, UiConfiguration.class, UiDataConfiguration.class,
         DynAttrConfiguration.class, DynAttrUiConfiguration.class, LocalFileStorageConfiguration.class,
-        SecurityConfiguration.class, SecurityDataConfiguration.class, SecurityUiConfiguration.class, DatatoolsUiConfiguration.class
+        SecurityConfiguration.class, SecurityDataConfiguration.class, SecurityUiConfiguration.class,
+        DatatoolsConfiguration.class, DatatoolsUiConfiguration.class
 })
 @PropertySource(name = "com.haulmont.cuba", value = "classpath:/com/haulmont/cuba/module.properties")
 @EnableScheduling

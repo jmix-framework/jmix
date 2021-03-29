@@ -20,6 +20,7 @@ import com.haulmont.cuba.CubaConfiguration;
 import com.haulmont.cuba.core.app.ConfigStorage;
 import io.jmix.core.CoreConfiguration;
 import io.jmix.data.DataConfiguration;
+import io.jmix.datatools.DatatoolsConfiguration;
 import io.jmix.datatoolsui.DatatoolsUiConfiguration;
 import io.jmix.dynattr.DynAttrConfiguration;
 import io.jmix.dynattrui.DynAttrUiConfiguration;
@@ -45,6 +46,7 @@ import javax.cache.configuration.MutableConfiguration;
         DynAttrUiConfiguration.class,
         LocalFileStorageConfiguration.class,
         UiDataConfiguration.class,
+        DatatoolsConfiguration.class,
         DatatoolsUiConfiguration.class,
         CubaConfiguration.class})
 public class CubaAutoConfiguration {

@@ -290,7 +290,7 @@ public class GsonSerializationSupport {
         return exclusionPolicy != null && exclusionPolicy.exclude(objectClass, propertyName);
     }
 
-    public String convertToString(Entity entity) {
+    public String convertToString(Object entity) {
         return gsonBuilder.create().toJson(entity);
     }
 

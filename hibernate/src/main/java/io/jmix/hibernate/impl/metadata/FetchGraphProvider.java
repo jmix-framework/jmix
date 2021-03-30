@@ -21,7 +21,6 @@ import io.jmix.core.FetchPlanProperty;
 import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.core.metamodel.model.Range;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.graph.internal.RootGraphImpl;
 import org.hibernate.graph.spi.GraphImplementor;
@@ -52,18 +51,19 @@ public class FetchGraphProvider {
         MetaClass metaClass = metadata.getClass(fetchPlan.getEntityClass());
         for (FetchPlanProperty fetchPlanProperty : fetchPlan.getProperties()) {
             if (rootGraph.getGraphedType().findAttribute(fetchPlanProperty.getName()) != null) {
-                rootGraph.addAttributeNode(fetchPlanProperty.getName());
-                if (fetchPlanProperty.getFetchPlan() != null
-                        && !isManyToMany(metaClass.getProperty(fetchPlanProperty.getName()))) {
-                    SubGraphImplementor subGraph = rootGraph.addSubGraph(fetchPlanProperty.getName());
-                    fillGraph(subGraph, fetchPlanProperty.getFetchPlan());
+                if (!isMany(metaClass.getProperty(fetchPlanProperty.getName()))) {
+                    rootGraph.addAttributeNode(fetchPlanProperty.getName());
+                    if (fetchPlanProperty.getFetchPlan() != null) {
+                        SubGraphImplementor subGraph = rootGraph.addSubGraph(fetchPlanProperty.getName());
+                        fillGraph(subGraph, fetchPlanProperty.getFetchPlan());
+                    }
                 }
             }
         }
     }
 
-    private boolean isManyToMany(MetaProperty metaProperty) {
-        return Range.Cardinality.MANY_TO_MANY == metaProperty.getRange().getCardinality();
+    private boolean isMany(MetaProperty metaProperty) {
+        return metaProperty.getRange().getCardinality().isMany();
     }
 
     private EntityTypeDescriptor findEntityDescriptor(FetchPlan fetchPlan, SessionFactoryImplementor sessionFactoryImplementor) {

@@ -28,7 +28,6 @@
             <fetchPlan extends="_local">
                 <property name="parent" fetchPlan="_local"/>
             </fetchPlan>
-            <loader id="filterConditionsDl"/>
         </collection>
     </data>
     <dialogMode resizable="true" forceDialog="true"

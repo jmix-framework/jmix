@@ -24,6 +24,7 @@ import io.jmix.ui.entity.LogicalFilterCondition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,5 +54,26 @@ public class LogicalFilterSupport {
             }
         });
         return filterConditions;
+    }
+
+    @Nullable
+    public FilterCondition findSelectedConditionFromRootFilterCondition(LogicalFilterCondition rootCondition,
+                                                                        @Nullable FilterCondition selectedCondition) {
+        if (selectedCondition == null) {
+            return null;
+        }
+
+        List<FilterCondition> childrenCondition = getChildrenConditions(rootCondition);
+        for (FilterCondition condition : childrenCondition) {
+            if (condition.equals(selectedCondition)) {
+                return condition;
+            }
+
+            if (condition instanceof LogicalFilterCondition) {
+                return findSelectedConditionFromRootFilterCondition((LogicalFilterCondition) condition, selectedCondition);
+            }
+        }
+
+        return null;
     }
 }

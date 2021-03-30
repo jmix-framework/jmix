@@ -18,18 +18,22 @@ package io.jmix.ui.app.filter.condition;
 
 import com.google.common.base.Strings;
 import io.jmix.core.Messages;
+import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.RemoveOperation;
 import io.jmix.ui.action.filter.FilterAddConditionAction;
 import io.jmix.ui.action.list.EditAction;
 import io.jmix.ui.action.list.RemoveAction;
 import io.jmix.ui.component.Filter;
 import io.jmix.ui.component.ListComponent;
+import io.jmix.ui.component.PropertyFilter;
 import io.jmix.ui.component.Tree;
 import io.jmix.ui.component.ValidationErrors;
 import io.jmix.ui.component.filter.registration.FilterComponents;
 import io.jmix.ui.component.groupfilter.LogicalFilterSupport;
+import io.jmix.ui.component.propertyfilter.PropertyFilterSupport;
 import io.jmix.ui.entity.FilterCondition;
 import io.jmix.ui.entity.LogicalFilterCondition;
+import io.jmix.ui.entity.PropertyFilterCondition;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.screen.EditorScreen;
 import io.jmix.ui.screen.Screen;
@@ -38,9 +42,7 @@ import io.jmix.ui.screen.Subscribe;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 
 public abstract class LogicalFilterConditionEdit<E extends LogicalFilterCondition> extends FilterConditionEdit<E> {
@@ -51,6 +53,8 @@ public abstract class LogicalFilterConditionEdit<E extends LogicalFilterConditio
     protected FilterComponents filterComponents;
     @Autowired
     protected LogicalFilterSupport logicalFilterSupport;
+    @Autowired
+    protected PropertyFilterSupport propertyFilterSupport;
 
     public abstract CollectionContainer<FilterCondition> getCollectionContainer();
 
@@ -92,8 +96,11 @@ public abstract class LogicalFilterConditionEdit<E extends LogicalFilterConditio
         if (getListComponent() != null) {
             if (!selectedConditions.isEmpty()) {
                 for (FilterCondition selectedCondition : selectedConditions) {
+                    updatePropertyConditionLocalizedCaption(selectedCondition);
+
                     LogicalFilterCondition parent;
-                    FilterCondition singleSelected = getListComponent().getSingleSelected();
+                    FilterCondition singleSelected = logicalFilterSupport.findSelectedConditionFromRootFilterCondition(
+                            getEditedEntity(), getListComponent().getSingleSelected());
                     if (singleSelected != null) {
                         if (singleSelected instanceof LogicalFilterCondition) {
                             parent = (LogicalFilterCondition) singleSelected;
@@ -111,6 +118,23 @@ public abstract class LogicalFilterConditionEdit<E extends LogicalFilterConditio
                     expandItems();
                 }
             }
+        }
+    }
+
+    protected void updatePropertyConditionLocalizedCaption(FilterCondition condition) {
+        if (condition instanceof PropertyFilterCondition
+                && Strings.isNullOrEmpty(condition.getCaption())) {
+            PropertyFilterCondition propertyFilterCondition = (PropertyFilterCondition) condition;
+
+            MetaClass metaClass = currentConfiguration.getOwner().getDataLoader().getContainer().getEntityMetaClass();
+            String property = propertyFilterCondition.getProperty();
+            PropertyFilter.Operation operation = propertyFilterCondition.getOperation();
+            boolean operationCaptionVisible = propertyFilterCondition.getOperationCaptionVisible()
+                    && !propertyFilterCondition.getOperationEditable();
+
+            String localizedCaption = propertyFilterSupport.getPropertyFilterCaption(metaClass, property, operation,
+                    operationCaptionVisible);
+            propertyFilterCondition.setLocalizedCaption(localizedCaption);
         }
     }
 
@@ -147,14 +171,17 @@ public abstract class LogicalFilterConditionEdit<E extends LogicalFilterConditio
         if (afterCloseEvent.closedWith(StandardOutcome.COMMIT)
                 && screen instanceof EditorScreen
                 && getListComponent() != null) {
-            FilterCondition selectedCondition = getListComponent().getSingleSelected();
-            FilterCondition editedCondition = (FilterCondition) ((EditorScreen<?>) screen).getEditedEntity();
 
-            if (selectedCondition != null
-                    && selectedCondition.getParent() instanceof LogicalFilterCondition) {
-                LogicalFilterCondition parent = (LogicalFilterCondition) selectedCondition.getParent();
-                int index = parent.getOwnFilterConditions().indexOf(selectedCondition);
+            FilterCondition singleSelected = logicalFilterSupport.findSelectedConditionFromRootFilterCondition(
+                    getEditedEntity(), getListComponent().getSingleSelected());
+
+            if (singleSelected != null && singleSelected.getParent() instanceof LogicalFilterCondition) {
+                LogicalFilterCondition parent = (LogicalFilterCondition) singleSelected.getParent();
+                int index = parent.getOwnFilterConditions().indexOf(singleSelected);
+
+                FilterCondition editedCondition = (FilterCondition) ((EditorScreen<?>) screen).getEditedEntity();
                 parent.getOwnFilterConditions().set(index, editedCondition);
+                editedCondition.setParent(parent);
 
                 refreshChildrenConditions();
                 expandItems();
@@ -172,9 +199,14 @@ public abstract class LogicalFilterConditionEdit<E extends LogicalFilterConditio
 
     protected void afterActionPerformedHandler(RemoveOperation.AfterActionPerformedEvent<FilterCondition> event) {
         event.getItems().forEach(filterCondition -> {
-            FilterCondition parent = filterCondition.getParent();
-            if (parent instanceof LogicalFilterCondition) {
-                ((LogicalFilterCondition) parent).getOwnFilterConditions().remove(filterCondition);
+            FilterCondition removedCondition = logicalFilterSupport.findSelectedConditionFromRootFilterCondition(
+                    getEditedEntity(), filterCondition);
+            if (removedCondition != null) {
+                FilterCondition parent = removedCondition.getParent();
+                if (parent instanceof LogicalFilterCondition) {
+                    ((LogicalFilterCondition) parent).getOwnFilterConditions().remove(filterCondition);
+                }
+                removedCondition.setParent(null);
             }
         });
 

@@ -283,9 +283,9 @@ public class AddConditionScreen extends StandardLookup<FilterCondition> {
         FilterCondition parent = child.getParent();
         if (parent != null) {
             if (!foundConditions.contains(parent)) {
-                foundConditions.add(child.getParent());
+                foundConditions.add(parent);
             }
-            addParentToExpand(child.getParent());
+            addParentToExpand(parent);
         }
     }
 }

@@ -5,7 +5,7 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <changeSet author="data" id="1" dbms="mysql,mariadb">
+    <changeSet author="data" id="1" context="!cuba" dbms="mysql,mariadb">
 
         <createTable tableName="SYS_SEQUENCE">
             <column name="NAME" type="varchar(100)">

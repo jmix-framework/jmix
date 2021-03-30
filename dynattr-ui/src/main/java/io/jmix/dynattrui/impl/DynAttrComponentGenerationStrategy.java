@@ -383,8 +383,10 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
     protected Map<String, ?> getLocalizedEnumerationMap(AttributeDefinition attribute) {
         String enumeration = attribute.getEnumeration();
         Map<String, Object> result = new LinkedHashMap<>();
-        for (String value : Splitter.on(",").omitEmptyStrings().split(enumeration)) {
-            result.put(msgBundleTools.getLocalizedEnumeration(attribute.getEnumerationMsgBundle(), value), value);
+        if (enumeration != null) {
+            for (String value : Splitter.on(",").omitEmptyStrings().split(enumeration)) {
+                result.put(msgBundleTools.getLocalizedEnumeration(attribute.getEnumerationMsgBundle(), value), value);
+            }
         }
         return result;
     }

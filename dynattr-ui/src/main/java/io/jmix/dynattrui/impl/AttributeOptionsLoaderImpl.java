@@ -69,10 +69,11 @@ public class AttributeOptionsLoaderImpl implements AttributeOptionsLoader {
     public List loadOptions(Object entity, AttributeDefinition attribute) {
         AttributeDefinition.Configuration configuration = attribute.getConfiguration();
         String loaderScript = configuration.getOptionsLoaderScript();
-
-        OptionsLoaderStrategy loaderStrategy = resolveLoaderStrategy(configuration.getOptionsLoaderType());
-        List result = loaderStrategy.loadOptions(entity, attribute, loaderScript);
-
+        List result = null;
+        if (Objects.nonNull(configuration.getOptionsLoaderType())) {
+            OptionsLoaderStrategy loaderStrategy = resolveLoaderStrategy(configuration.getOptionsLoaderType());
+            result = loaderStrategy.loadOptions(entity, attribute, loaderScript);
+        }
         return result == null ? Collections.emptyList() : result;
     }
 

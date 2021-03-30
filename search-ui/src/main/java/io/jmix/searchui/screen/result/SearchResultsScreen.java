@@ -20,7 +20,7 @@ import com.google.common.collect.EvictingQueue;
 import io.jmix.core.*;
 import io.jmix.core.common.datastruct.Pair;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.search.SearchProperties;
+import io.jmix.search.SearchApplicationProperties;
 import io.jmix.search.searching.impl.SearchResult;
 import io.jmix.search.searching.impl.FieldHit;
 import io.jmix.search.searching.impl.SearchResultEntry;
@@ -57,7 +57,7 @@ public class SearchResultsScreen extends Screen {
     @Autowired
     protected DataManager dataManager;
     @Autowired
-    protected SearchProperties searchProperties;
+    protected SearchApplicationProperties searchApplicationProperties;
     @Autowired
     protected PropertyTools propertyTools;
 
@@ -140,7 +140,7 @@ public class SearchResultsScreen extends Screen {
 
         //todo paging
         //noinspection UnstableApiUsage
-        pages = EvictingQueue.create(searchProperties.getMaxSearchPageCount());
+        pages = EvictingQueue.create(searchApplicationProperties.getMaxSearchPageCount());
         currentPage = new SearchResultsScreen.Page(0);
         currentPage.setSearchResult(searchResult);
         pages.add(currentPage);

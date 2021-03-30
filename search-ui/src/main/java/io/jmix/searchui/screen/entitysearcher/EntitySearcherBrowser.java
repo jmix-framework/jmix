@@ -16,28 +16,13 @@
 
 package io.jmix.searchui.screen.entitysearcher;
 
-import io.jmix.core.*;
-import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.search.IndexProcessManager;
-import io.jmix.search.SearchProperties;
-import io.jmix.search.searching.impl.FieldHit;
-import io.jmix.search.searching.impl.SearchResult;
-import io.jmix.search.searching.impl.SearchResultEntry;
-import io.jmix.search.utils.PropertyTools;
-import io.jmix.ui.AppUI;
-import io.jmix.ui.ScreenBuilders;
-import io.jmix.ui.UiComponents;
 import io.jmix.ui.action.Action;
-import io.jmix.ui.action.BaseAction;
-import io.jmix.ui.component.*;
-import io.jmix.ui.screen.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import io.jmix.ui.screen.Screen;
+import io.jmix.ui.screen.Subscribe;
+import io.jmix.ui.screen.UiController;
+import io.jmix.ui.screen.UiDescriptor;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.*;
-
-import static io.jmix.ui.component.Component.Alignment.MIDDLE_LEFT;
 
 //TODO Temporaty screen. It will be removed later
 @UiController("entitySearcher.browser")

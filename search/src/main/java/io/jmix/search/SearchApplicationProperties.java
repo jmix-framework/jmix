@@ -22,7 +22,7 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 
 @ConfigurationProperties(prefix = "jmix.search")
 @ConstructorBinding
-public class SearchProperties {
+public class SearchApplicationProperties {
 
     protected final int esSearchSize;
     protected final int maxSearchPageCount;
@@ -33,14 +33,19 @@ public class SearchProperties {
 
     protected final boolean autoMapIndexFileContent;
 
-    public SearchProperties(
+    protected final String elasticsearchHost;
+    protected final int elasticsearchPort;
+
+    public SearchApplicationProperties(
             @DefaultValue("100") int esSearchSize,
             @DefaultValue("100") int maxSearchPageCount,
             @DefaultValue("100") int searchReloadEntitiesBatchSize,
             @DefaultValue("100") int processQueueBatchSize,
             @DefaultValue("1000") int maxProcessedQueueItemsPerExecution,
             @DefaultValue("100") int reindexEntityEnqueueBatchSize,
-            @DefaultValue("false") boolean autoMapIndexFileContent) {
+            @DefaultValue("false") boolean autoMapIndexFileContent,
+            @DefaultValue("localhost") String elasticsearchHost,
+            @DefaultValue("9200") int elasticsearchPort) {
         this.esSearchSize = esSearchSize;
         this.maxSearchPageCount = maxSearchPageCount;
         this.searchReloadEntitiesBatchSize = searchReloadEntitiesBatchSize;
@@ -48,6 +53,9 @@ public class SearchProperties {
         this.maxProcessedQueueItemsPerExecution = maxProcessedQueueItemsPerExecution;
         this.reindexEntityEnqueueBatchSize = reindexEntityEnqueueBatchSize;
         this.autoMapIndexFileContent = autoMapIndexFileContent;
+
+        this.elasticsearchHost = elasticsearchHost;
+        this.elasticsearchPort = elasticsearchPort;
     }
 
     /**
@@ -97,5 +105,19 @@ public class SearchProperties {
      */
     public boolean isAutoMapIndexFileContent() {
         return autoMapIndexFileContent;
+    }
+
+    /**
+     * @return Elasticsearch connection host
+     */
+    public String getElasticsearchHost() {
+        return elasticsearchHost;
+    }
+
+    /**
+     * @return Elasticsearch connection port
+     */
+    public int getElasticsearchPort() {
+        return elasticsearchPort;
     }
 }

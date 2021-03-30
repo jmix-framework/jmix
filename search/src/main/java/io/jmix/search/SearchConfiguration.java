@@ -22,7 +22,7 @@ import io.jmix.data.DataConfiguration;
 import org.apache.http.HttpHost;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -38,13 +38,15 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableScheduling
 public class SearchConfiguration {
 
-    @Value("${jmix.search.elasticsearch.host}")
-    protected String elasticsearchHost;
-    @Value("${jmix.search.elasticsearch.port}")
-    protected int elasticsearchPort;
+    @Autowired
+    protected SearchApplicationProperties searchApplicationProperties;
 
     @Bean("search_RestHighLevelClient")
     public RestHighLevelClient elasticSearchClient() { //todo credentials
-        return new RestHighLevelClient(RestClient.builder(new HttpHost(elasticsearchHost, elasticsearchPort)));
+        return new RestHighLevelClient(
+                RestClient.builder(
+                        new HttpHost(searchApplicationProperties.getElasticsearchHost(), searchApplicationProperties.getElasticsearchPort())
+                )
+        );
     }
 }

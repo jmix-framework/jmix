@@ -21,7 +21,7 @@ import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.SystemAuthenticator;
 import io.jmix.search.IndexProcessManager;
-import io.jmix.search.SearchProperties;
+import io.jmix.search.SearchApplicationProperties;
 import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.IndexManagementService;
 import io.jmix.search.index.mapping.IndexConfigurationProvider;
@@ -54,7 +54,7 @@ public class IndexProcessManagerImpl implements IndexProcessManager {
     @Autowired
     protected SystemAuthenticator authenticator;
     @Autowired
-    protected SearchProperties searchProperties;
+    protected SearchApplicationProperties searchApplicationProperties;
 
     protected final ReentrantLock writeLock = new ReentrantLock();
     protected final ReentrantLock reindexLock = new ReentrantLock();
@@ -100,7 +100,7 @@ public class IndexProcessManagerImpl implements IndexProcessManager {
                     }
                     writeLock.unlock();
                     writeLocked = false;
-                    queueService.enqueueAll(entityName, searchProperties.getReindexEntityEnqueueBatchSize());
+                    queueService.enqueueAll(entityName, searchApplicationProperties.getReindexEntityEnqueueBatchSize());
                 } catch (IOException e) {
                     throw new RuntimeException("Unable to recreate index '" + indexConfiguration.getIndexName() + "'", e);
                 } finally {
@@ -166,8 +166,8 @@ public class IndexProcessManagerImpl implements IndexProcessManager {
         try {
             authenticator.begin();
             count = queueService.processQueue(
-                    searchProperties.getProcessQueueBatchSize(),
-                    searchProperties.getMaxProcessedQueueItemsPerExecution()
+                    searchApplicationProperties.getProcessQueueBatchSize(),
+                    searchApplicationProperties.getMaxProcessedQueueItemsPerExecution()
             );
         } finally {
             writeLock.unlock();

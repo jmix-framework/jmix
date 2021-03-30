@@ -20,7 +20,7 @@ import com.google.common.collect.Lists;
 import io.jmix.core.*;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.search.SearchProperties;
+import io.jmix.search.SearchApplicationProperties;
 import io.jmix.search.searching.EntitySearcher;
 import io.jmix.search.utils.PropertyTools;
 import org.apache.commons.lang3.StringUtils;
@@ -61,7 +61,7 @@ public class EntitySearcherImpl implements EntitySearcher {
     @Autowired
     protected InstanceNameProvider instanceNameProvider;
     @Autowired
-    protected SearchProperties searchProperties;
+    protected SearchApplicationProperties searchApplicationProperties;
     @Autowired
     protected PropertyTools propertyTools;
 
@@ -72,7 +72,7 @@ public class EntitySearcherImpl implements EntitySearcher {
         SearchRequest searchRequest = new SearchRequest("*_search_index");
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         searchSourceBuilder.query(QueryBuilders.multiMatchQuery(searchTerm, "*"));
-        searchSourceBuilder.size(searchProperties.getEsSearchSize());
+        searchSourceBuilder.size(searchApplicationProperties.getEsSearchSize());
 
         HighlightBuilder highlightBuilder = new HighlightBuilder();
         highlightBuilder.field("*");
@@ -128,7 +128,7 @@ public class EntitySearcherImpl implements EntitySearcher {
     protected Map<String, String> loadEntityInstanceNames(MetaClass metaClass, List<String> entityIds) {
         String primaryKeyProperty = propertyTools.getPrimaryKeyPropertyNameForIndex(metaClass);
         Map<String, String> result = new HashMap<>();
-        for (List<String> partition : Lists.partition(entityIds, searchProperties.getSearchReloadEntitiesBatchSize())) {
+        for (List<String> partition : Lists.partition(entityIds, searchApplicationProperties.getSearchReloadEntitiesBatchSize())) {
             log.debug("Load instance names for ids: {}", partition);
             List<Object> partitionResult = secureDataManager
                     .load(metaClass.getJavaClass())

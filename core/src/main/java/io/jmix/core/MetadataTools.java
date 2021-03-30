@@ -142,17 +142,7 @@ public class MetadataTools {
 //            }
 //        }
 
-        if (range.isDatatype()) {
-            Datatype datatype = range.asDatatype();
-            if (datatype instanceof TimeZoneAwareDatatype) {
-                Boolean ignoreUserTimeZone = getMetaAnnotationValue(property, IgnoreUserTimeZone.class);
-                if (!Boolean.TRUE.equals(ignoreUserTimeZone)) {
-                    return ((TimeZoneAwareDatatype) datatype).format(value,
-                            currentAuthentication.getLocale(), currentAuthentication.getTimeZone());
-                }
-            }
-            return datatype.format(value, currentAuthentication.getLocale());
-        } else if (range.isEnum()) {
+        if (range.isEnum()) {
             return messages.getMessage((Enum) value);
         } else if (value instanceof Entity) {
             return getInstanceName((Entity) value);
@@ -162,6 +152,16 @@ public class MetadataTools {
             return collection.stream()
                     .map(this::format)
                     .collect(Collectors.joining(", "));
+        } else if (range.isDatatype()) {
+            Datatype datatype = range.asDatatype();
+            if (datatype instanceof TimeZoneAwareDatatype) {
+                Boolean ignoreUserTimeZone = getMetaAnnotationValue(property, IgnoreUserTimeZone.class);
+                if (!Boolean.TRUE.equals(ignoreUserTimeZone)) {
+                    return ((TimeZoneAwareDatatype) datatype).format(value,
+                            currentAuthentication.getLocale(), currentAuthentication.getTimeZone());
+                }
+            }
+            return datatype.format(value, currentAuthentication.getLocale());
         } else {
             return value.toString();
         }

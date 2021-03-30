@@ -16,13 +16,11 @@
 
 package io.jmix.ui.app.filter.condition;
 
-import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.filter.FilterAddConditionAction;
 import io.jmix.ui.action.list.EditAction;
 import io.jmix.ui.action.list.RemoveAction;
 import io.jmix.ui.component.Button;
-import io.jmix.ui.component.Filter;
 import io.jmix.ui.component.ListComponent;
 import io.jmix.ui.component.LogicalFilterComponent;
 import io.jmix.ui.component.Tree;
@@ -64,8 +62,6 @@ public class GroupFilterConditionEdit extends LogicalFilterConditionEdit<GroupFi
     @Autowired
     protected Tree<FilterCondition> conditionsTree;
 
-    protected MetaClass filterMetaClass;
-
     @Override
     public InstanceContainer<GroupFilterCondition> getInstanceContainer() {
         return filterConditionDc;
@@ -100,13 +96,6 @@ public class GroupFilterConditionEdit extends LogicalFilterConditionEdit<GroupFi
     @Override
     public ListComponent<FilterCondition> getListComponent() {
         return conditionsTree;
-    }
-
-    @Override
-    public void setCurrentConfiguration(Filter.Configuration currentConfiguration) {
-        super.setCurrentConfiguration(currentConfiguration);
-
-        filterMetaClass = currentConfiguration.getOwner().getDataLoader().getContainer().getEntityMetaClass();
     }
 
     @Subscribe

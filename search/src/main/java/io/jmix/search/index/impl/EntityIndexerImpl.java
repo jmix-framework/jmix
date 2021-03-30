@@ -57,7 +57,7 @@ public class EntityIndexerImpl implements EntityIndexer {
     @Autowired
     protected RestHighLevelClient esClient;
     @Autowired
-    protected IndexConfigurationProvider indexDefinitionsProvider;
+    protected IndexConfigurationProvider indexConfigurationProvider;
     @Autowired
     protected Metadata metadata;
     @Autowired
@@ -89,7 +89,7 @@ public class EntityIndexerImpl implements EntityIndexer {
 
     public void indexEntitiesByPks(MetaClass metaClass, Collection<String> entityPks, EntityOp changeType) {
         log.debug("Index entities: Class={}, Change Type={}, Pks={}", metaClass, changeType, entityPks);
-        IndexConfiguration indexConfiguration = indexDefinitionsProvider.getIndexDefinitionByEntityName(metaClass.getName());
+        IndexConfiguration indexConfiguration = indexConfigurationProvider.getIndexConfigurationByEntityName(metaClass.getName());
         if (indexConfiguration == null) {
             log.error("Index Definition not found for entity '{}'", metaClass);
             return;

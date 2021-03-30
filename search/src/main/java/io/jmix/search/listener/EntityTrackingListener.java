@@ -51,7 +51,7 @@ public class EntityTrackingListener {
     @Autowired
     protected Metadata metadata;
     @Autowired
-    protected IndexConfigurationProvider indexDefinitionsProvider;
+    protected IndexConfigurationProvider indexConfigurationProvider;
     @Autowired
     protected DataManager dataManager;
     @Autowired
@@ -86,7 +86,7 @@ public class EntityTrackingListener {
                 .hint(PersistenceHints.SOFT_DELETION, false)
                 .one();
 
-        if (indexDefinitionsProvider.isDirectlyIndexed(entityName)) { //todo check dirty fields
+        if (indexConfigurationProvider.isDirectlyIndexed(entityName)) { //todo check dirty fields
             log.debug("{} is directly indexed", entityId);
 
             queueService.enqueue(entity, entityOperation);
@@ -115,18 +115,18 @@ public class EntityTrackingListener {
 
     protected boolean isProcessingRequired(EntityChangedEvent<?> event) {
         Class<?> entityClass = event.getEntityId().getEntityClass();
-        return !QueueItem.class.equals(entityClass) && indexDefinitionsProvider.isAffectedEntityClass(entityClass);
+        return !QueueItem.class.equals(entityClass) && indexConfigurationProvider.isAffectedEntityClass(entityClass);
     }
 
     protected Map<MetaClass, Set<String>> getDependentEntityPksForUpdate(Object entity, Class<?> entityClass, AttributeChanges changes) {
         log.debug("Get dependent entity primary keys for updated entity: {}", entity);
-        Map<MetaClass, Set<MetaPropertyPath>> dependencies = indexDefinitionsProvider.getDependenciesMetaDataForUpdate(entityClass, changes.getAttributes());
+        Map<MetaClass, Set<MetaPropertyPath>> dependencies = indexConfigurationProvider.getDependenciesMetaDataForUpdate(entityClass, changes.getAttributes());
         return loadDependentEntityPks(entity, dependencies);
     }
 
     protected Map<MetaClass, Set<String>> getDependentEntityPksForDelete(Object entity, Class<?> entityClass) {
         log.debug("Get dependent entity primary keys for deleted entity: {}", entity);
-        Map<MetaClass, Set<MetaPropertyPath>> dependencies = indexDefinitionsProvider.getDependenciesMetaDataForDelete(entityClass);
+        Map<MetaClass, Set<MetaPropertyPath>> dependencies = indexConfigurationProvider.getDependenciesMetaDataForDelete(entityClass);
         return loadDependentEntityPks(entity, dependencies);
     }
 

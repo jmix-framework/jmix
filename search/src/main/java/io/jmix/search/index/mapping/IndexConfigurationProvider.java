@@ -51,8 +51,7 @@ public class IndexConfigurationProvider {
         log.debug("Create Index Configurations");
 
         Registry registry = new Registry(instanceNameProvider);
-        classNames.stream().map(builder::createIndexConfiguration).forEach(registry::registerIndexDefinition);
-
+        classNames.stream().map(builder::createIndexConfiguration).forEach(registry::registerIndexConfiguration);
         this.registry = registry;
     }
 
@@ -61,7 +60,7 @@ public class IndexConfigurationProvider {
      * @return all {@link IndexConfiguration}
      */
     public Collection<IndexConfiguration> getIndexConfigurations() {
-        return registry.getIndexDefinitions();
+        return registry.getIndexConfiguration();
     }
 
     /**
@@ -70,8 +69,8 @@ public class IndexConfigurationProvider {
      * @return {@link IndexConfiguration}
      */
     @Nullable
-    public IndexConfiguration getIndexDefinitionByEntityName(String entityName) {
-        return registry.getIndexDefinitionByEntityName(entityName);
+    public IndexConfiguration getIndexConfigurationByEntityName(String entityName) {
+        return registry.getIndexConfigurationByEntityName(entityName);
     }
 
     /**
@@ -80,8 +79,8 @@ public class IndexConfigurationProvider {
      * @return {@link IndexConfiguration}
      */
     @Nullable
-    public IndexConfiguration getIndexDefinitionByIndexName(String indexName) {
-        return registry.getIndexDefinitionByIndexName(indexName);
+    public IndexConfiguration getIndexConfigurationByIndexName(String indexName) {
+        return registry.getIndexConfigurationByIndexName(indexName);
     }
 
     /**
@@ -234,8 +233,8 @@ public class IndexConfigurationProvider {
     private static class Registry {
         private final InstanceNameProvider instanceNameProvider;
 
-        private final Map<String, IndexConfiguration> indexDefinitionsByEntityName = new HashMap<>();
-        private final Map<String, IndexConfiguration> indexDefinitionsByIndexName = new HashMap<>();
+        private final Map<String, IndexConfiguration> indexConfigurationsByEntityName = new HashMap<>();
+        private final Map<String, IndexConfiguration> indexConfigurationsByIndexName = new HashMap<>();
         private final Map<Class<?>, Map<String, Set<MetaPropertyPath>>> referentiallyAffectedPropertiesForUpdate = new HashMap<>();
         private final Map<Class<?>, Set<MetaPropertyPath>> referentiallyAffectedPropertiesForDelete = new HashMap<>();
         private final Set<Class<?>> registeredEntityClasses = new HashSet<>();
@@ -244,7 +243,7 @@ public class IndexConfigurationProvider {
             this.instanceNameProvider = instanceNameProvider;
         }
 
-        void registerIndexDefinition(IndexConfiguration indexConfiguration) {
+        void registerIndexConfiguration(IndexConfiguration indexConfiguration) {
             registerInMainRegistries(indexConfiguration);
 
             indexConfiguration.getMapping().getFields().values()
@@ -255,16 +254,16 @@ public class IndexConfigurationProvider {
                     .forEach(this::processEntityFieldDescriptor);
         }
 
-        IndexConfiguration getIndexDefinitionByEntityName(String entityName) {
-            return indexDefinitionsByEntityName.get(entityName);
+        IndexConfiguration getIndexConfigurationByEntityName(String entityName) {
+            return indexConfigurationsByEntityName.get(entityName);
         }
 
-        IndexConfiguration getIndexDefinitionByIndexName(String indexName) {
-            return indexDefinitionsByIndexName.get(indexName);
+        IndexConfiguration getIndexConfigurationByIndexName(String indexName) {
+            return indexConfigurationsByIndexName.get(indexName);
         }
 
-        Collection<IndexConfiguration> getIndexDefinitions() {
-            return indexDefinitionsByEntityName.values();
+        Collection<IndexConfiguration> getIndexConfiguration() {
+            return indexConfigurationsByEntityName.values();
         }
 
         Map<String, Set<MetaPropertyPath>> getBackRefPropertiesForUpdate(Class<?> entityClass) {
@@ -276,7 +275,7 @@ public class IndexConfigurationProvider {
         }
 
         boolean hasDefinitionForEntity(String entityName) {
-            return indexDefinitionsByEntityName.containsKey(entityName);
+            return indexConfigurationsByEntityName.containsKey(entityName);
         }
 
         boolean isEntityClassRegistered(Class<?> entityClass) {
@@ -285,11 +284,11 @@ public class IndexConfigurationProvider {
 
         private void registerInMainRegistries(IndexConfiguration indexConfiguration) {
             String entityName = indexConfiguration.getEntityName();
-            if (indexDefinitionsByEntityName.containsKey(entityName)) {
+            if (indexConfigurationsByEntityName.containsKey(entityName)) {
                 log.warn("Multiple Index Definitions are detected for entity '{}'", entityName);
             } else {
-                indexDefinitionsByEntityName.put(entityName, indexConfiguration);
-                indexDefinitionsByIndexName.put(indexConfiguration.getIndexName(), indexConfiguration);
+                indexConfigurationsByEntityName.put(entityName, indexConfiguration);
+                indexConfigurationsByIndexName.put(indexConfiguration.getIndexName(), indexConfiguration);
                 registeredEntityClasses.addAll(indexConfiguration.getAffectedEntityClasses());
             }
         }

@@ -48,7 +48,7 @@ public class IndexProcessManagerImpl implements IndexProcessManager {
     @Autowired
     protected QueueService queueService;
     @Autowired
-    protected IndexConfigurationProvider indexDefinitionsProvider;
+    protected IndexConfigurationProvider indexConfigurationProvider;
     @Autowired
     protected Metadata metadata;
     @Autowired
@@ -62,8 +62,8 @@ public class IndexProcessManagerImpl implements IndexProcessManager {
 
     @Override
     public void reindexAll() {
-        Collection<IndexConfiguration> indexConfigurations = indexDefinitionsProvider.getIndexConfigurations();
-        indexConfigurations.forEach(indexDefinition -> reindexEntity(indexDefinition.getEntityName()));
+        Collection<IndexConfiguration> indexConfigurations = indexConfigurationProvider.getIndexConfigurations();
+        indexConfigurations.forEach(indexConfiguration -> reindexEntity(indexConfiguration.getEntityName()));
     }
 
     @Override
@@ -71,7 +71,7 @@ public class IndexProcessManagerImpl implements IndexProcessManager {
         Preconditions.checkNotNullArgument(entityName);
 
         log.info("Reindex entity '{}'", entityName);
-        IndexConfiguration indexConfiguration = indexDefinitionsProvider.getIndexDefinitionByEntityName(entityName);
+        IndexConfiguration indexConfiguration = indexConfigurationProvider.getIndexConfigurationByEntityName(entityName);
         if (indexConfiguration == null) {
             throw new RuntimeException("Index definition not found for entity '" + entityName + "'");
         }
@@ -119,7 +119,7 @@ public class IndexProcessManagerImpl implements IndexProcessManager {
 
     @Override
     public void scheduleReindexAll() {
-        indexDefinitionsProvider.getIndexConfigurations().stream()
+        indexConfigurationProvider.getIndexConfigurations().stream()
                 .map(IndexConfiguration::getEntityName)
                 .forEach(this::scheduleReindexEntity);
     }
@@ -129,7 +129,7 @@ public class IndexProcessManagerImpl implements IndexProcessManager {
         Preconditions.checkNotNullArgument(entityName);
 
         MetaClass metaClass = metadata.getClass(entityName);
-        Preconditions.checkNotNullArgument(indexDefinitionsProvider.getIndexDefinitionByEntityName(metaClass.getName()),
+        Preconditions.checkNotNullArgument(indexConfigurationProvider.getIndexConfigurationByEntityName(metaClass.getName()),
                 "Entity '%s' doesn't have index configuration", entityName);
         if (!reindexEntitiesQueue.contains(entityName)) {
             log.info("Schedule reindexing of entity '{}'", entityName);

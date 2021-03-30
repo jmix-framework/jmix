@@ -50,7 +50,7 @@ public class IndexManagementServiceImpl implements IndexManagementService {
     @Autowired
     protected RestHighLevelClient esClient;
     @Autowired
-    protected IndexConfigurationProvider indexDefinitionsProvider;
+    protected IndexConfigurationProvider indexConfigurationProvider;
 
     protected ObjectMapper objectMapper = new ObjectMapper();
 
@@ -129,7 +129,7 @@ public class IndexManagementServiceImpl implements IndexManagementService {
     @Override
     public void prepareIndexes() {
         log.info("Prepare search indexes");
-        Collection<IndexConfiguration> indexConfigurations = indexDefinitionsProvider.getIndexConfigurations();
+        Collection<IndexConfiguration> indexConfigurations = indexConfigurationProvider.getIndexConfigurations();
         indexConfigurations.forEach(this::prepareIndex);
     }
 

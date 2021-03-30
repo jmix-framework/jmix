@@ -24,7 +24,7 @@ import io.jmix.ui.sys.DialogsImpl;
  * @deprecated Use {@link io.jmix.ui.sys.DialogsImpl} instead
  */
 @Deprecated
-public class CubaDialogs extends DialogsImpl {
+public class CubaDialogs extends DialogsImpl implements Dialogs {
 
     @Override
     public OptionDialogBuilder createOptionDialog() {

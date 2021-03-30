@@ -119,7 +119,7 @@ public class AttributeLocationFragment extends ScreenFragment {
                     if (configuration != null) {
                         configuration.setColumnNumber(dataContainers.indexOf(currentList));
                         configuration.setRowNumber(currentList.indexOf(attribute));
-                        attribute.setConfiguration(configuration);
+                        attribute.setConfiguration((CategoryAttributeConfiguration) configuration.clone());
                     }
                 }
             }
@@ -131,7 +131,7 @@ public class AttributeLocationFragment extends ScreenFragment {
                 if (configuration != null) {
                     configuration.setColumnNumber(null);
                     configuration.setRowNumber(null);
-                    attribute.setConfiguration(attribute.getConfiguration());
+                    attribute.setConfiguration((CategoryAttributeConfiguration) configuration.clone());
                 }
             }
         }

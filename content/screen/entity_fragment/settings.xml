@@ -36,7 +36,6 @@
 
     <property caption="Descriptor name"
               code="descriptorName"
-              defaultValue="new-fragment"
               propertyType="DESCRIPTOR_NAME"
               required="true"
               dynamic="true"
@@ -49,7 +48,6 @@
     <property caption="Controller name"
               code="controllerName"
               propertyType="CLASS_NAME"
-              defaultValue="NewFragment"
               required="true"
               dynamic="true"
               advanced="true"
@@ -61,12 +59,11 @@
     <property caption="Fragment id"
               code="id"
               propertyType="SCREEN_ID"
-              defaultValue="new-fragment"
               advanced="true"
               dynamic="true"
               required="true"
-              valueTemplate="${project_id}${controllerName}">
-        <dependency code="controllerName"/>
+              valueTemplate="${api.evaluateScript('screen/screenIdByDescriptorName.groovy', ['descriptorName': descriptorName, 'projectId': project_id])}">
+        <dependency code="descriptorName"/>
     </property>
 
     <source fileExt="xml"

@@ -43,7 +43,7 @@ import java.util.stream.Collectors;
 @Listeners("report_ReportDetachListener")
 @JmixEntity
 @SuppressWarnings("unused")
-public class Report implements com.haulmont.yarg.structure.Report, io.jmix.core.Entity {
+public class Report implements com.haulmont.yarg.structure.Report {
     private static final long serialVersionUID = -2817764915661205093L;
     protected static final String IDX_SEPARATOR = ",";
 

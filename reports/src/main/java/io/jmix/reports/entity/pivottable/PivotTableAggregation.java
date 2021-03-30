@@ -28,7 +28,7 @@ import java.io.Serializable;
 import java.util.UUID;
 
 @JmixEntity(name = "report_PivotTableAggregation")
-public class PivotTableAggregation implements Serializable {
+public class PivotTableAggregation {
 
     @Id
     @JmixGeneratedValue

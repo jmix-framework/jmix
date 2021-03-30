@@ -27,7 +27,7 @@ import java.io.Serializable;
 import java.util.UUID;
 
 @JmixEntity(name = "report_PivotTableProperty")
-public class PivotTableProperty implements Serializable {
+public class PivotTableProperty {
 
     @Id
     @JmixGeneratedValue

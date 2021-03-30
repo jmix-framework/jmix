@@ -33,7 +33,7 @@ import java.util.UUID;
 
 @JmixEntity(name = "report_WizardReportEntityTreeNode", annotatedPropertiesOnly = true)
 @SystemLevel
-public class EntityTreeNode implements Entity {
+public class EntityTreeNode {
 
     private static final long serialVersionUID = 465985155557062476L;
 

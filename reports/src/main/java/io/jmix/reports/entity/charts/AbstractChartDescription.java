@@ -33,7 +33,7 @@ import java.util.UUID;
 
 @JmixEntity(name = "report_AbstractChartDescription")
 @SystemLevel
-public abstract class AbstractChartDescription implements Serializable {
+public abstract class AbstractChartDescription {
 
     private static final long serialVersionUID = 3418759346397067914L;
 

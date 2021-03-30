@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.UUID;
 
 @JmixEntity(name = "report_TemplateTableDescription")
-public class TemplateTableDescription implements Serializable {
+public class TemplateTableDescription {
 
     protected final static Gson gson;
 

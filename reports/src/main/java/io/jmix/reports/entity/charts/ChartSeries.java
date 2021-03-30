@@ -27,7 +27,7 @@ import java.util.UUID;
 
 @JmixEntity(name = "report_ChartSeries")
 @SystemLevel
-public class ChartSeries implements Serializable {
+public class ChartSeries {
 
     private static final long serialVersionUID = -3205550424620740535L;
 

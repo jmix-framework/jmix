@@ -22,7 +22,7 @@ import io.jmix.core.Entity;
  * Interface to be implemented by some entities that order display can be changed in UI.
  * That order might to be set by com.haulmont.reports.gui.components.actions.OrderableItemMoveAction
  */
-public interface OrderableEntity extends Entity {
+public interface OrderableEntity {
     Long getOrderNum();
 
     void setOrderNum(Long orderNum);

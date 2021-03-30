@@ -38,7 +38,7 @@ import java.util.UUID;
 @Table(name = "REPORT_GROUP")
 @JmixEntity
 @SuppressWarnings("unused")
-public class ReportGroup implements io.jmix.core.Entity {
+public class ReportGroup {
 
     private static final long serialVersionUID = 5399528790289039413L;
 

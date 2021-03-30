@@ -25,7 +25,7 @@ import java.io.Serializable;
 import java.util.UUID;
 
 @JmixEntity(name = "report_TemplateTableColumn")
-public class TemplateTableColumn implements Serializable {
+public class TemplateTableColumn {
 
     @Id
     @JmixGeneratedValue

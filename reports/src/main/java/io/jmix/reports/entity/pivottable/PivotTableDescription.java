@@ -30,7 +30,7 @@ import java.util.*;
 
 @JmixEntity(name = "report_PivotTableDescription")
 @SystemLevel
-public class PivotTableDescription implements Serializable {
+public class PivotTableDescription {
 
     protected final static Gson gson;
 

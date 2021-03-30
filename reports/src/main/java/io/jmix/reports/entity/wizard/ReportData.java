@@ -34,7 +34,7 @@ import java.util.UUID;
 
 @JmixEntity(name = "report_WizardReportData", annotatedPropertiesOnly = true)
 @SystemLevel
-public class ReportData implements Serializable {
+public class ReportData {
 
     private static final long serialVersionUID = -1649648403032678085L;
 

@@ -28,7 +28,7 @@ import java.util.UUID;
 
 
 @JmixEntity(name = "report_TemplateTableBand")
-public class TemplateTableBand implements Serializable {
+public class TemplateTableBand {
 
     @Id
     @JmixGeneratedValue

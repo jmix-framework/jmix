@@ -21,66 +21,69 @@
 $jmix-pagination-page-border-radius: $v-border-radius !default;
 
 /**
- * Defines margin-right for elements in pagination like Items Per Page Label and Last navigation button.
+ * Defines margin between elements in pagination like Items Per Page Label and Last navigation button.
  * @group pagination
  */
-$jmix-pagination-layout-margin-right: $v-layout-spacing-horizontal !default;
+$jmix-pagination-layout-margin-width: $v-layout-spacing-horizontal !default;
 
 @mixin halo-pagination($primary-stylename: jmix-pagination) {
 
- .#{$primary-stylename} {
-   padding-left: 1px;
+  .#{$primary-stylename} {
+    padding-left: 1px;
 
-   & > * {
-     vertical-align: middle;
-   }
+    & > * {
+      vertical-align: middle;
+    }
 
-   .v-button.#{$primary-stylename}-navigation-btn,
-   .v-button.#{$primary-stylename}-page {
-     border-radius: 0;
-     padding: 0 round($v-unit-size/4);
-     line-height: $v-font-size;
-     margin-left: -1px;
+    .v-button.#{$primary-stylename}-navigation-btn,
+    .v-button.#{$primary-stylename}-page {
+      border-radius: 0;
+      padding: 0 round($v-unit-size/4);
+      line-height: $v-font-size;
+      margin-left: -1px;
 
-     @include halo-pagination-page-min-width-style($v-unit-size, $v-font-size);
-   }
+      @include halo-pagination-page-min-width-style($v-unit-size, $v-font-size);
+    }
+  }
 
-   .#{$primary-stylename}-itemsperpage-layout .#{$primary-stylename}-itemsperpage-label {
-     line-height: $v-unit-size;
-     margin-right: $jmix-pagination-layout-margin-right;
-   }
- }
+  .#{$primary-stylename}-itemsperpage-layout {
+    margin-left: $jmix-pagination-layout-margin-width;
 
- .v-button.#{$primary-stylename}-navigation-btn:focus:after,
- .v-button.#{$primary-stylename}-page:focus:after {
-   border-color: first-color(valo-border());
+    .#{$primary-stylename}-itemsperpage-label {
+      line-height: $v-unit-size;
+      margin-right: $jmix-pagination-layout-margin-width;
+    }
+  }
 
-   @include box-shadow(none);
- }
+  .v-button.#{$primary-stylename}-navigation-btn:focus:after,
+  .v-button.#{$primary-stylename}-page:focus:after {
+    border-color: first-color(valo-border());
 
- .#{$primary-stylename}-page.selected-page {
-   border-color: $v-selection-color;
-   color: valo-font-color($v-selection-color, 0.9);
-   z-index: 1;
+    @include box-shadow(none);
+  }
 
-   @include valo-gradient($v-selection-color);
-   @include box-shadow(none);
- }
+  .#{$primary-stylename}-page.selected-page {
+    border-color: $v-selection-color;
+    color: valo-font-color($v-selection-color, 0.9);
+    z-index: 1;
 
- .v-button.#{$primary-stylename}-page.selected-page:focus:after {
-   border-color: $v-focus-color;
- }
+    @include valo-gradient($v-selection-color);
+    @include box-shadow(none);
+  }
 
- .v-button.#{$primary-stylename}-navigation-btn.first {
-   border-top-left-radius: $jmix-pagination-page-border-radius;
-   border-bottom-left-radius: $jmix-pagination-page-border-radius;
- }
+  .v-button.#{$primary-stylename}-page.selected-page:focus:after {
+    border-color: $v-focus-color;
+  }
 
- .v-button.#{$primary-stylename}-navigation-btn.last {
-   border-top-right-radius: $jmix-pagination-page-border-radius;
-   border-bottom-right-radius: $jmix-pagination-page-border-radius;
-   margin-right: $jmix-pagination-layout-margin-right;
- }
+  .v-button.#{$primary-stylename}-navigation-btn.first {
+    border-top-left-radius: $jmix-pagination-page-border-radius;
+    border-bottom-left-radius: $jmix-pagination-page-border-radius;
+  }
+
+  .v-button.#{$primary-stylename}-navigation-btn.last {
+    border-top-right-radius: $jmix-pagination-page-border-radius;
+    border-bottom-right-radius: $jmix-pagination-page-border-radius;
+  }
 }
 
 @mixin halo-pagination-page-min-width-style($unit-size: $v-unit-size, $font-size: $v-font-size) {

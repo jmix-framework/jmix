@@ -43,6 +43,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -142,7 +143,7 @@ public abstract class AbstractPagination<T extends JmixAbstractPagination>
                 setSilentlyItemsPerPageValue(value);
                 //noinspection ConstantConditions
                 dataBinder.setMaxResults(value);
-            } else if (value == null && isItemsPerPageUnlimitedOptionVisible()) {
+            } else if (canSetUnlimitedValue(value)) {
                 setSilentlyItemsPerPageValue(null);
                 dataBinder.setMaxResults(getEntityMaxFetchSize(dataBinder.getEntityMetaClass()));
             } else {
@@ -150,6 +151,13 @@ public abstract class AbstractPagination<T extends JmixAbstractPagination>
                         + " The value is not set.", value);
             }
         }
+    }
+
+    protected boolean canSetUnlimitedValue(@Nullable Integer value) {
+        int maxFetch = getEntityMaxFetchSize(dataBinder.getEntityMetaClass());
+
+        return value == null && isItemsPerPageUnlimitedOptionVisible()
+                || Objects.equals(value, maxFetch) && isItemsPerPageUnlimitedOptionVisible();
     }
 
     protected BeforeRefreshEvent fireBeforeRefreshEvent() {

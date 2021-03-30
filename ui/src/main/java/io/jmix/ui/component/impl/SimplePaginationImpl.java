@@ -345,7 +345,8 @@ public class SimplePaginationImpl extends AbstractPagination<JmixSimplePaginatio
 
         if (dataBinder.getMaxResults() != getItemsCountToDisplay()) {
             if (isItemsPerPageVisible()) {
-                setSilentlyItemsPerPageValue(dataBinder.getMaxResults());
+                Integer maxResult = canSetUnlimitedValue(dataBinder.getMaxResults()) ? null : dataBinder.getMaxResults();
+                setSilentlyItemsPerPageValue(maxResult);
             }
         }
     }

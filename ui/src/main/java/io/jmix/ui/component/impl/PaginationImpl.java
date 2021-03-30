@@ -207,10 +207,11 @@ public class PaginationImpl extends AbstractPagination<JmixPagination> implement
             // if maxResult was changed not in this component try to adjust pages and ItemsPerPage value
             if (component.getItemsToDisplay() != maxResult) {
                 if (isItemsPerPageVisible()) {
-                    setSilentlyItemsPerPageValue(maxResult);
+                    Integer value = canSetUnlimitedValue(maxResult) ? null : maxResult;
+                    setSilentlyItemsPerPageValue(value);
                 }
 
-                createPageButtons();
+                createPageButtons(getTotalCount(), maxResult);
 
                 component.setCurrentPageNumberByFirstResult(firstResult);
             } else {
@@ -244,6 +245,10 @@ public class PaginationImpl extends AbstractPagination<JmixPagination> implement
     }
 
     protected void createPageButtons() {
+        createPageButtons(getTotalCount(), getItemsCountToDisplay());
+    }
+
+    protected void createPageButtons(int totalCount, int itemsToDisplay) {
         checkDataBound();
         component.removePages();
 
@@ -251,7 +256,7 @@ public class PaginationImpl extends AbstractPagination<JmixPagination> implement
             return;
         }
 
-        component.createPages(getTotalCount(), getItemsCountToDisplay());
+        component.createPages(totalCount, itemsToDisplay);
 
         component.setDataBinder(dataBinder);
         component.setOnAfterRefreshListener(this::fireAfterRefreshEvent);

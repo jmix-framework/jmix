@@ -83,6 +83,7 @@ public class JpqlFilterConverter extends AbstractFilterComponentConverter<JpqlFi
     public JpqlFilterCondition convertToModel(JpqlFilter jpqlFilter) {
         JpqlFilterCondition condition = super.convertToModel(jpqlFilter);
         condition.setCaption(jpqlFilter.getCaption());
+        condition.setLocalizedCaption(getLocalizedModelCaption(jpqlFilter));
         condition.setCaptionPosition(jpqlFilter.getCaptionPosition());
         condition.setRequired(jpqlFilter.isRequired());
         condition.setParameterName(jpqlFilter.getParameterName());
@@ -107,6 +108,12 @@ public class JpqlFilterConverter extends AbstractFilterComponentConverter<JpqlFi
     @Override
     protected JpqlFilterCondition createModel() {
         return metadata.create(JpqlFilterCondition.class);
+    }
+
+    @Nullable
+    @Override
+    protected String getLocalizedModelCaption(JpqlFilter component) {
+        return component.getCaption();
     }
 
     protected HasValue generateValueComponent(JpqlFilter component, JpqlFilterCondition model) {

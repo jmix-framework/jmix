@@ -16,6 +16,7 @@
 
 package io.jmix.ui.component.propertyfilter;
 
+import com.google.common.base.Strings;
 import io.jmix.core.Metadata;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -51,7 +52,7 @@ public class PropertyFilterConverter
     @Autowired
     protected Metadata metadata;
 
-    protected PropertyFilterConverter(Filter filter) {
+    public PropertyFilterConverter(Filter filter) {
         super(filter);
     }
 
@@ -80,6 +81,7 @@ public class PropertyFilterConverter
     public PropertyFilterCondition convertToModel(PropertyFilter propertyFilter) {
         PropertyFilterCondition condition = super.convertToModel(propertyFilter);
         condition.setCaption(propertyFilter.getCaption());
+        condition.setLocalizedCaption(getLocalizedModelCaption(propertyFilter));
         condition.setCaptionPosition(propertyFilter.getCaptionPosition());
         condition.setRequired(propertyFilter.isRequired());
         condition.setProperty(propertyFilter.getProperty());
@@ -104,6 +106,19 @@ public class PropertyFilterConverter
     @Override
     protected PropertyFilterCondition createModel() {
         return metadata.create(PropertyFilterCondition.class);
+    }
+
+    @Nullable
+    @Override
+    protected String getLocalizedModelCaption(PropertyFilter component) {
+        String caption = component.getCaption();
+        if (Strings.isNullOrEmpty(caption)) {
+            MetaClass metaClass = filter.getDataLoader().getContainer().getEntityMetaClass();
+            return propertyFilterSupport.getPropertyFilterCaption(metaClass, component.getProperty(), component.getOperation(),
+                    component.isOperationCaptionVisible() && !component.isOperationEditable());
+        } else {
+            return caption;
+        }
     }
 
     protected HasValue generateValueComponent(PropertyFilterCondition model) {

@@ -27,7 +27,7 @@ public abstract class AbstractConditionBuilder implements ConditionBuilder {
 
     protected HeaderFilterCondition createHeaderFilterCondition(String caption) {
         HeaderFilterCondition headerFilterCondition = metadata.create(HeaderFilterCondition.class);
-        headerFilterCondition.setCaption(caption);
+        headerFilterCondition.setLocalizedCaption(caption);
         return headerFilterCondition;
     }
 }

@@ -554,6 +554,7 @@ public class FilterImpl extends CompositeComponent<GroupBoxLayout> implements Fi
         GroupFilter rootGroupFilter = uiComponents.create(GroupFilter.NAME);
         rootGroupFilter.setConditionModificationDelegated(true);
         rootGroupFilter.setOperation(rootOperation);
+        rootGroupFilter.setOperationCaptionVisible(false);
 
         if (dataLoader != null) {
             rootGroupFilter.setDataLoader(dataLoader);

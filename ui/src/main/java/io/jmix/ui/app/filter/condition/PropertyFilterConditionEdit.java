@@ -16,6 +16,7 @@
 
 package io.jmix.ui.app.filter.condition;
 
+import com.google.common.base.Strings;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -217,6 +218,18 @@ public class PropertyFilterConditionEdit extends FilterConditionEdit<PropertyFil
             FilterValueComponent valueComponent = getEditedEntity().getValueComponent();
             valueComponent.setDefaultValue(modelDefaultValue);
             valueComponent.setComponentName(singleFilterSupport.getValueComponentName(defaultValueField));
+
+            String caption = getEditedEntity().getCaption();
+            String localizedCaption;
+            if (!Strings.isNullOrEmpty(caption)) {
+                localizedCaption = caption;
+            } else {
+                localizedCaption = propertyFilterSupport.getPropertyFilterCaption(filterMetaClass,
+                        getEditedEntity().getProperty(), getEditedEntity().getOperation(),
+                        getEditedEntity().getOperationCaptionVisible()
+                                && !getEditedEntity().getOperationEditable());
+            }
+            getEditedEntity().setLocalizedCaption(localizedCaption);
         }
     }
 }

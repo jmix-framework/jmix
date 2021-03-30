@@ -17,6 +17,7 @@
 package io.jmix.ui.component.filter.builder;
 
 import io.jmix.core.JmixOrder;
+import io.jmix.core.MessageTools;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
@@ -38,6 +39,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
@@ -53,6 +55,8 @@ public class PropertyConditionBuilder extends AbstractConditionBuilder {
     protected PropertyFilterSupport propertyFilterSupport;
     @Autowired
     protected SingleFilterSupport singleFilterSupport;
+    @Autowired
+    protected MessageTools messageTools;
 
     @Override
     public List<FilterCondition> build(Filter filter) {
@@ -90,7 +94,7 @@ public class PropertyConditionBuilder extends AbstractConditionBuilder {
         }
 
         conditions.sort((condition1, condition2) ->
-                ObjectUtils.compare(condition1.getCaption(), condition2.getCaption()));
+                ObjectUtils.compare(condition1.getLocalizedCaption(), condition2.getLocalizedCaption()));
 
         return conditions;
     }
@@ -108,9 +112,10 @@ public class PropertyConditionBuilder extends AbstractConditionBuilder {
                     PropertyConditionUtils.generateParameterName(property));
             ((PropertyFilterCondition) filterCondition)
                     .setCaptionPosition(SupportsCaptionPosition.CaptionPosition.LEFT);
+            String localizedCaption = messageTools.getPropertyCaption(metaClass, property);
+            filterCondition.setLocalizedCaption(localizedCaption);
 
-            String propertyFilterPrefix =
-                    propertyFilterSupport.getPropertyFilterPrefix(null, property);
+            String propertyFilterPrefix = propertyFilterSupport.getPropertyFilterPrefix(null, property);
             filterCondition.setComponentId(propertyFilterPrefix.substring(0, propertyFilterPrefix.length() - 1));
 
             PropertyFilter.Operation operation = propertyFilterSupport.getDefaultOperation(metaClass, property);
@@ -128,10 +133,12 @@ public class PropertyConditionBuilder extends AbstractConditionBuilder {
     }
 
     @Nullable
-    protected FilterCondition getParentCondition(MetaPropertyPath path, List<FilterCondition> conditions) {
+    protected FilterCondition getParentCondition(MetaPropertyPath mpp, List<FilterCondition> conditions) {
+        String[] path = mpp.getPath();
+        String parentPath = String.join(".", Arrays.copyOf(path, path.length - 1));
         return conditions.stream()
                 .filter(filterCondition -> filterCondition instanceof PropertyFilterCondition
-                        && path.toPathString().startsWith(((PropertyFilterCondition) filterCondition).getProperty()))
+                        && parentPath.equals(((PropertyFilterCondition) filterCondition).getProperty()))
                 .findFirst()
                 .orElse(null);
     }

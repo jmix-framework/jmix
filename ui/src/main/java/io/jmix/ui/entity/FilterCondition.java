@@ -43,8 +43,11 @@ public abstract class FilterCondition implements Serializable {
     protected Boolean enabled = true;
 
     @JmixProperty
-    @InstanceName
     protected String caption;
+
+    @JmixProperty
+    @InstanceName
+    protected String localizedCaption;
 
     @JmixProperty
     protected String styleName;
@@ -82,6 +85,14 @@ public abstract class FilterCondition implements Serializable {
 
     public void setCaption(String caption) {
         this.caption = caption;
+    }
+
+    public String getLocalizedCaption() {
+        return localizedCaption;
+    }
+
+    public void setLocalizedCaption(String localizedCaption) {
+        this.localizedCaption = localizedCaption;
     }
 
     public String getStyleName() {

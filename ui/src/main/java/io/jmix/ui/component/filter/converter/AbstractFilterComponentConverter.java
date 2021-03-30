@@ -20,12 +20,14 @@ import io.jmix.ui.component.Filter;
 import io.jmix.ui.component.FilterComponent;
 import io.jmix.ui.entity.FilterCondition;
 
+import javax.annotation.Nullable;
+
 public abstract class AbstractFilterComponentConverter<C extends FilterComponent, M extends FilterCondition>
         implements FilterConverter<C, M> {
 
     protected final Filter filter;
 
-    protected AbstractFilterComponentConverter(Filter filter) {
+    public AbstractFilterComponentConverter(Filter filter) {
         this.filter = filter;
     }
 
@@ -60,4 +62,7 @@ public abstract class AbstractFilterComponentConverter<C extends FilterComponent
     protected abstract C createComponent();
 
     protected abstract M createModel();
+
+    @Nullable
+    protected abstract String getLocalizedModelCaption(C component);
 }

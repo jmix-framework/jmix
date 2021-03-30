@@ -16,7 +16,6 @@
 
 package io.jmix.ui.app.filter.condition;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import io.jmix.core.AccessManager;
 import io.jmix.core.LoadContext;
@@ -40,10 +39,8 @@ import io.jmix.ui.component.propertyfilter.PropertyFilterSupport;
 import io.jmix.ui.entity.AbstractSingleFilterCondition;
 import io.jmix.ui.entity.FilterCondition;
 import io.jmix.ui.entity.FilterValueComponent;
-import io.jmix.ui.entity.GroupFilterCondition;
 import io.jmix.ui.entity.HeaderFilterCondition;
 import io.jmix.ui.entity.JpqlFilterCondition;
-import io.jmix.ui.entity.PropertyFilterCondition;
 import io.jmix.ui.model.CollectionLoader;
 import io.jmix.ui.screen.Install;
 import io.jmix.ui.screen.LookupComponent;
@@ -218,7 +215,7 @@ public class AddConditionScreen extends StandardLookup<FilterCondition> {
     protected HeaderFilterCondition getHeaderFilterConditionByCaption(String caption) {
         return conditions.stream()
                 .filter(condition -> condition instanceof HeaderFilterCondition
-                        && Objects.equals(condition.getCaption(), caption))
+                        && Objects.equals(condition.getLocalizedCaption(), caption))
                 .map(condition -> (HeaderFilterCondition) condition)
                 .findFirst()
                 .orElse(null);
@@ -264,7 +261,7 @@ public class AddConditionScreen extends StandardLookup<FilterCondition> {
                                              boolean addChildrenAutomatically) {
         for (FilterCondition condition : conditions) {
             boolean conditionFound = addChildrenAutomatically ||
-                    StringUtils.containsIgnoreCase(condition.getCaption(), searchValue);
+                    StringUtils.containsIgnoreCase(condition.getLocalizedCaption(), searchValue);
             if (conditionFound) {
                 foundConditions.add(condition);
             }
@@ -290,21 +287,5 @@ public class AddConditionScreen extends StandardLookup<FilterCondition> {
             }
             addParentToExpand(child.getParent());
         }
-    }
-
-    @Install(to = "filterConditionsTree", subject = "itemCaptionProvider")
-    protected String filterConditionsTreeItemCaptionProvider(FilterCondition filterCondition) {
-        if (Strings.isNullOrEmpty(filterCondition.getCaption())) {
-            if (filterCondition instanceof PropertyFilterCondition) {
-                return messageTools.getPropertyCaption(filterMetaClass,
-                        ((PropertyFilterCondition) filterCondition).getProperty());
-            }
-
-            if (filterCondition instanceof GroupFilterCondition) {
-                return logicalFilterSupport.getOperationCaption(((GroupFilterCondition) filterCondition).getOperation());
-            }
-        }
-
-        return filterCondition.getCaption();
     }
 }

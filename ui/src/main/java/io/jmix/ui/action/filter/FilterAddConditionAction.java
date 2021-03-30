@@ -127,7 +127,7 @@ public class FilterAddConditionAction extends FilterAction {
                     String caption = String.format(
                             messages.getMessage(FilterAddConditionAction.class,
                                     "addConditionAction.invalidCondition"),
-                            selectedCondition.getCaption());
+                            selectedCondition.getLocalizedCaption());
 
                     notifications.create(Notifications.NotificationType.WARNING)
                             .withCaption(caption)

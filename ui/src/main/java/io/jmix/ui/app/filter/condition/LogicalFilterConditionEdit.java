@@ -16,6 +16,7 @@
 
 package io.jmix.ui.app.filter.condition;
 
+import com.google.common.base.Strings;
 import io.jmix.core.Messages;
 import io.jmix.ui.RemoveOperation;
 import io.jmix.ui.action.filter.FilterAddConditionAction;
@@ -50,8 +51,6 @@ public abstract class LogicalFilterConditionEdit<E extends LogicalFilterConditio
     protected FilterComponents filterComponents;
     @Autowired
     protected LogicalFilterSupport logicalFilterSupport;
-
-    protected List<FilterCondition> filterConditions = new ArrayList<>();
 
     public abstract CollectionContainer<FilterCondition> getCollectionContainer();
 
@@ -217,5 +216,18 @@ public abstract class LogicalFilterConditionEdit<E extends LogicalFilterConditio
         Filter filter = currentConfiguration.getOwner();
         return filter.getConfiguration(currentConfiguration.getId()) != null
                 && !Objects.equals(filter.getCurrentConfiguration().getId(), currentConfiguration.getId());
+    }
+
+    @Subscribe
+    protected void onBeforeCommitChanges(BeforeCommitChangesEvent event) {
+        String caption = getEditedEntity().getCaption();
+        String localizedCaption;
+        if (!Strings.isNullOrEmpty(caption)) {
+            localizedCaption = caption;
+        } else {
+            localizedCaption = logicalFilterSupport.getOperationCaption(getEditedEntity().getOperation(),
+                    getEditedEntity().getOperationCaptionVisible());
+        }
+        getEditedEntity().setLocalizedCaption(localizedCaption);
     }
 }

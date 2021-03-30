@@ -16,6 +16,7 @@
 
 package io.jmix.ui.component.groupfilter;
 
+import com.google.common.base.Strings;
 import io.jmix.core.Metadata;
 import io.jmix.core.annotation.Internal;
 import io.jmix.ui.UiComponents;
@@ -32,6 +33,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,8 +49,10 @@ public class GroupFilterConverter extends AbstractFilterComponentConverter<Group
     protected UiComponents uiComponents;
     @Autowired
     protected FilterComponents filterComponents;
+    @Autowired
+    protected LogicalFilterSupport logicalFilterSupport;
 
-    protected GroupFilterConverter(Filter filter) {
+    public GroupFilterConverter(Filter filter) {
         super(filter);
     }
 
@@ -78,6 +82,7 @@ public class GroupFilterConverter extends AbstractFilterComponentConverter<Group
 
         groupFilterCondition.setOperation(groupFilter.getOperation());
         groupFilterCondition.setCaption(groupFilter.getCaption());
+        groupFilterCondition.setLocalizedCaption(getLocalizedModelCaption(groupFilter));
         groupFilterCondition.setOperationCaptionVisible(groupFilter.isOperationCaptionVisible());
 
         List<FilterCondition> ownFilterConditions = new ArrayList<>();
@@ -104,5 +109,17 @@ public class GroupFilterConverter extends AbstractFilterComponentConverter<Group
     @Override
     protected GroupFilterCondition createModel() {
         return metadata.create(GroupFilterCondition.class);
+    }
+
+    @Nullable
+    @Override
+    protected String getLocalizedModelCaption(GroupFilter component) {
+        String caption = component.getCaption();
+        if (Strings.isNullOrEmpty(caption)) {
+            return logicalFilterSupport.getOperationCaption(component.getOperation(),
+                    component.isOperationCaptionVisible());
+        } else {
+            return caption;
+        }
     }
 }

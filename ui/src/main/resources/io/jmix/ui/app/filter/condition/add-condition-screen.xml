@@ -44,7 +44,7 @@
         <tree id="filterConditionsTree"
               dataContainer="filterConditionsDc"
               hierarchyProperty="parent"
-              captionProperty="caption"
+              captionProperty="localizedCaption"
               width="100%"
               multiselect="true">
             <buttonsPanel id="buttonsPanel" alwaysVisible="true">

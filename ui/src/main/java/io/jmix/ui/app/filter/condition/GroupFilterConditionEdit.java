@@ -16,7 +16,6 @@
 
 package io.jmix.ui.app.filter.condition;
 
-import com.google.common.base.Strings;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.filter.FilterAddConditionAction;
@@ -31,7 +30,6 @@ import io.jmix.ui.component.propertyfilter.PropertyFilterSupport;
 import io.jmix.ui.entity.FilterCondition;
 import io.jmix.ui.entity.GroupFilterCondition;
 import io.jmix.ui.entity.LogicalFilterCondition;
-import io.jmix.ui.entity.PropertyFilterCondition;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.screen.EditedEntityContainer;
@@ -188,24 +186,5 @@ public class GroupFilterConditionEdit extends LogicalFilterConditionEdit<GroupFi
 
         moveUpButton.setEnabled(moveUpButtonEnabled);
         moveDownButton.setEnabled(moveDownButtonEnabled);
-    }
-
-    @Install(to = "conditionsTree", subject = "itemCaptionProvider")
-    protected String conditionsTreeItemCaptionProvider(FilterCondition filterCondition) {
-        if (Strings.isNullOrEmpty(filterCondition.getCaption())) {
-            if (filterCondition instanceof PropertyFilterCondition) {
-                PropertyFilterCondition propertyFilterCondition = (PropertyFilterCondition) filterCondition;
-                return propertyFilterSupport.getPropertyFilterCaption(filterMetaClass,
-                        propertyFilterCondition.getProperty(), propertyFilterCondition.getOperation(),
-                        propertyFilterCondition.getOperationCaptionVisible()
-                                && !propertyFilterCondition.getOperationEditable());
-            }
-
-            if (filterCondition instanceof GroupFilterCondition) {
-                return logicalFilterSupport.getOperationCaption(((GroupFilterCondition) filterCondition).getOperation());
-            }
-        }
-
-        return filterCondition.getCaption();
     }
 }

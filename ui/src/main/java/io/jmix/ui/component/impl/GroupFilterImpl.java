@@ -20,11 +20,11 @@ import com.google.common.base.Strings;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.LogicalCondition;
+import io.jmix.ui.UiComponentProperties;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.groupfilter.LogicalFilterSupport;
 import io.jmix.ui.model.DataLoader;
-import io.jmix.ui.UiComponentProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
@@ -99,6 +99,8 @@ public class GroupFilterImpl extends CompositeComponent<GroupBoxLayout> implemen
         if (!isConditionModificationDelegated()) {
             updateDataLoaderCondition();
         }
+
+        updateCaption();
     }
 
     @Override
@@ -191,19 +193,10 @@ public class GroupFilterImpl extends CompositeComponent<GroupBoxLayout> implemen
 
     protected void updateCaption() {
         String caption;
-        if (operationCaptionVisible) {
-            String operationCaption = logicalFilterSupport.getOperationCaption(operation);
-            if (Strings.isNullOrEmpty(this.caption)) {
-                caption = operationCaption;
-            } else {
-                caption = this.caption + " " + operationCaption;
-            }
+        if (Strings.isNullOrEmpty(this.caption)) {
+            caption = logicalFilterSupport.getOperationCaption(operation, operationCaptionVisible);
         } else {
-            if (Strings.isNullOrEmpty(this.caption)) {
-                caption = null;
-            } else {
-                caption = this.caption;
-            }
+            caption = this.caption;
         }
 
         getComposition().setCaption(caption);

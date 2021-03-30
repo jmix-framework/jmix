@@ -38,6 +38,12 @@ public class LogicalFilterSupport {
         return messages.getMessage("logicalFilterComponent.Operation." + operation.name());
     }
 
+    public String getOperationCaption(LogicalFilterComponent.Operation operation, boolean operationCaptionVisible) {
+        return operationCaptionVisible
+                ? getOperationCaption(operation)
+                : "";
+    }
+
     public List<FilterCondition> getChildrenConditions(LogicalFilterCondition parent) {
         List<FilterCondition> filterConditions = new ArrayList<>();
         parent.getOwnFilterConditions().forEach(filterCondition -> {

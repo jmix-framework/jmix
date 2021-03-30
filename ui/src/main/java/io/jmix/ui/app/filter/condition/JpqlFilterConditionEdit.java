@@ -16,6 +16,7 @@
 
 package io.jmix.ui.app.filter.condition;
 
+import com.google.common.base.Strings;
 import io.jmix.core.ClassManager;
 import io.jmix.core.Entity;
 import io.jmix.core.MessageTools;
@@ -352,6 +353,11 @@ public class JpqlFilterConditionEdit extends FilterConditionEdit<JpqlFilterCondi
             FilterValueComponent valueComponent = getEditedEntity().getValueComponent();
             valueComponent.setDefaultValue(modelDefaultValue);
             valueComponent.setComponentName(singleFilterSupport.getValueComponentName(defaultValueField));
+        }
+
+        String caption = getEditedEntity().getCaption();
+        if (!Strings.isNullOrEmpty(caption)) {
+            getEditedEntity().setLocalizedCaption(caption);
         }
     }
 }

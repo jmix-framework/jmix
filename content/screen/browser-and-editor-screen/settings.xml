@@ -189,16 +189,16 @@
     <!--sources-->
     <source fileExt="xml"
             group="browse"
-            name="../lookup/descriptor"/>
+            name="../browser/descriptor"/>
     <source fileExt="java"
             group="browse"
-            name="../lookup/controller"/>
+            name="../browser/controller"/>
     <source fileExt="groovy"
             group="browse"
-            name="../lookup/controller"/>
+            name="../browser/controller"/>
     <source fileExt="kt"
             group="browse"
-            name="../lookup/controller"/>
+            name="../browser/controller"/>
 
     <source fileExt="xml"
             group="editor"

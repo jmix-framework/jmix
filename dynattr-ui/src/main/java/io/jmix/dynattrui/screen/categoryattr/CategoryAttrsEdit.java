@@ -928,19 +928,19 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
 
     @Subscribe(target = Target.DATA_CONTEXT)
     protected void onPreCommit(DataContext.PreCommitEvent event) {
-        preCommitLocalizationFields();
-        preCommitTargetScreensField();
-        preCommitConfiguration();
+        preCommitLocalizationFields(event);
+        preCommitTargetScreensField(event);
+        preCommitConfiguration(event);
     }
 
-    protected void preCommitLocalizationFields() {
+    protected void preCommitLocalizationFields(DataContext.PreCommitEvent event) {
         if (localizationFragment != null) {
             getEditedEntity().setLocaleNames(localizationFragment.getNameMsgBundle());
             getEditedEntity().setLocaleDescriptions(localizationFragment.getDescriptionMsgBundle());
         }
     }
 
-    protected void preCommitTargetScreensField() {
+    protected void preCommitTargetScreensField(DataContext.PreCommitEvent event) {
         CategoryAttribute attribute = getEditedEntity();
         StringBuilder stringBuilder = new StringBuilder();
         for (TargetScreenComponent targetScreenComponent : targetScreensDc.getItems()) {
@@ -960,7 +960,7 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
         attribute.setTargetScreens(stringBuilder.toString());
     }
 
-    protected void preCommitConfiguration() {
+    protected void preCommitConfiguration(DataContext.PreCommitEvent event) {
         CategoryAttribute attribute = getEditedEntity();
         if (attribute.getConfiguration() != null) {
             if (dependsOnAttributesField.getValue() != null) {
@@ -973,7 +973,12 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
             }
         }
         if (getScreenData().getDataContext().isModified(attribute.getConfiguration())) {
-            attribute.setConfiguration(configurationDc.getItemOrNull());
+            CategoryAttributeConfiguration configuration = configurationDc.getItemOrNull();
+            if (configuration != null) {
+                attribute.setConfiguration((CategoryAttributeConfiguration) configuration.clone());
+                //noinspection unchecked
+                event.getModifiedInstances().add(attribute);
+            }
         }
     }
 }

@@ -17,6 +17,8 @@
 package io.jmix.dynattr.model;
 
 import com.google.common.base.Strings;
+import io.jmix.core.Entity;
+import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
@@ -33,11 +35,12 @@ import java.util.UUID;
 
 @JmixEntity(name = "dynat_CategoryAttributeConfiguration")
 @SystemLevel
-public class CategoryAttributeConfiguration implements Serializable {
+public class CategoryAttributeConfiguration implements Serializable, Cloneable {
     private static final long serialVersionUID = 2670605418267938507L;
 
     @Id
     @JmixProperty
+    @JmixGeneratedValue
     protected String id;
 
     @JmixProperty
@@ -228,18 +231,6 @@ public class CategoryAttributeConfiguration implements Serializable {
         this.optionsLoaderScript = optionsLoaderScript;
     }
 
-//    public boolean hasOptionsLoader() {
-//        if (getOptionsLoaderType() != null) {
-//            OptionsLoaderType loaderType = getOptionsLoaderType();
-//            if (SQL == loaderType || GROOVY == loaderType) {
-//                return !Strings.isNullOrEmpty(getOptionsLoaderScript());
-//            } else if (JPQL == loaderType) {
-//                return categoryAttribute != null && categoryAttribute.getDataType() == PropertyType.ENTITY;
-//            }
-//        }
-//        return false;
-//    }
-
     public Integer getColumnNumber() {
         return columnNumber;
     }
@@ -254,5 +245,17 @@ public class CategoryAttributeConfiguration implements Serializable {
 
     public void setRowNumber(Integer rowNumber) {
         this.rowNumber = rowNumber;
+    }
+
+    @Override
+    public Object clone() {
+        try {
+            CategoryAttributeConfiguration configuration = (CategoryAttributeConfiguration) super.clone();
+            configuration.setId(UUID.randomUUID().toString());
+            ((Entity) configuration).__copyEntityEntry();
+            return configuration;
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException("Error while clone object", e);
+        }
     }
 }

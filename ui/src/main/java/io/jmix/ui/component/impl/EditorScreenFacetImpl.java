@@ -156,7 +156,8 @@ public class EditorScreenFacetImpl<E, S extends Screen & EditorScreen<E>>
             builder = screenBuilders.editor(entityPicker);
         } else {
             throw new IllegalStateException(
-                    "Unable to create EditorScreen Facet. At least one of entityClass, listComponent or field must be specified");
+                    "Unable to create EditorScreenFacet. At least one of entityClass," +
+                            "listComponent or field must be specified");
         }
 
         if (editMode == EditMode.CREATE) {

@@ -123,7 +123,8 @@ public class LookupScreenFacetImpl<E, S extends Screen & LookupScreen<E>>
             builder = screenBuilders.lookup(entityPicker);
         } else {
             throw new IllegalStateException(
-                    "Unable to create EditorScreen Facet. At least one of entityClass, listComponent or field must be specified");
+                    "Unable to create LookupScreenFacet. At least one of entityClass," +
+                            "listComponent or field must be specified");
         }
 
         if (screenClass != null) {

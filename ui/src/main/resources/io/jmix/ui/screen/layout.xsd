@@ -1174,10 +1174,6 @@
         <xs:attribute name="property" type="xs:string"/>
     </xs:attributeGroup>
 
-    <xs:attributeGroup name="requiresDatasource">
-        <xs:attribute name="datasource" type="xs:string" use="required"/>
-    </xs:attributeGroup>
-
     <xs:attributeGroup name="hasValue">
         <xs:attribute name="value" type="xs:string"/>
     </xs:attributeGroup>
@@ -1853,7 +1849,6 @@
 
                 <xs:attributeGroup ref="hasContextHelp"/>
 
-                <xs:attribute name="datasource" type="xs:string"/>
                 <xs:attribute name="dataContainer" type="xs:string"/>
 
                 <xs:attribute name="datatype" type="dateTimeDatatypeEnum"/>
@@ -2463,7 +2458,6 @@
                         <!-- legacy data binding -->
                         <xs:complexType>
                             <xs:attributeGroup ref="hasCaptionSource"/>
-                            <xs:attribute name="datasource" type="xs:string"/>
                             <xs:attribute name="hierarchyProperty" type="xs:string"/>
                         </xs:complexType>
                     </xs:element>
@@ -2801,7 +2795,6 @@
                 <xs:attribute name="columnsCollapsingAllowed" type="xs:boolean"/>
                 <xs:attribute name="columnResizeMode" type="dataGridColumnResizeMode"/>
                 <xs:attribute name="contextMenuEnabled" type="xs:boolean"/>
-                <xs:attribute name="datasource" type="xs:string"/>
                 <xs:attribute name="dataContainer" type="xs:string"/>
                 <xs:attribute name="metaClass" type="xs:string"/>
                 <xs:attribute name="frozenColumnCount" type="xs:integer"/>

@@ -230,21 +230,6 @@ public abstract class MasterDetailScreen<T> extends StandardLookup<T> {
         createAction.withHandler(actionPerformedEvent -> {
             T entity = getApplicationContext().getBean(Metadata.class).create(getEntityClass());
             T trackedEntity = getScreenData().getDataContext().merge(entity);
-            // todo dynamic attributes
-/*            DynamicAttributesGuiTools tools = getBeanLocator().get(DynamicAttributesGuiTools.NAME);
-            String screenId = getScreenContext().getWindowInfo().getId();
-
-            InstanceLoader<T> instanceLoader = null;
-            InstanceContainer<T> editedEntityContainer = getEditContainer();
-            if (editedEntityContainer instanceof HasLoader) {
-                if (((HasLoader) editedEntityContainer).getLoader() instanceof InstanceLoader) {
-                    instanceLoader = getEditLoader();
-                    if (tools.screenContainsDynamicAttributes(editedEntityContainer.getView(), screenId)) {
-                        instanceLoader.setLoadDynamicAttributes(true);
-                    }
-                }
-            }
-*/
 
             fireEvent(InitEntityEvent.class, new InitEntityEvent<>(this, trackedEntity));
 

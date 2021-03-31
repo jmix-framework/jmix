@@ -16,16 +16,34 @@
 
 package io.jmix.searchui.component;
 
+import io.jmix.core.Messages;
 import io.jmix.core.common.event.Subscription;
-import io.jmix.searchui.SearchLauncher;
+import io.jmix.core.common.util.ParamsMap;
+import io.jmix.search.SearchApplicationProperties;
+import io.jmix.search.searching.EntitySearcher;
+import io.jmix.search.searching.SearchResult;
+import io.jmix.search.searching.impl.SearchDetails;
+import io.jmix.searchui.screen.result.SearchResultsScreen;
+import io.jmix.ui.Notifications;
+import io.jmix.ui.ScreenBuilders;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.data.ValueSource;
 import io.jmix.ui.component.validation.Validator;
+import io.jmix.ui.screen.MapScreenOptions;
+import io.jmix.ui.screen.OpenMode;
 import io.jmix.ui.screen.Screen;
+import io.jmix.ui.screen.ScreenContext;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.function.Consumer;
+
+import static io.jmix.ui.Notifications.NotificationType.HUMANIZED;
+import static io.jmix.ui.screen.UiControllerUtils.getScreenContext;
 
 /**
  * UI component that performs full text search
@@ -35,7 +53,17 @@ public class SearchField extends CompositeComponent<CssLayout> implements Field<
         CompositeWithCaption, CompositeWithHtmlCaption, CompositeWithHtmlDescription,
         CompositeWithIcon, CompositeWithContextHelp {
 
+    private static final Logger log = LoggerFactory.getLogger(SearchField.class);
     public static final String NAME = "searchField";
+
+    @Autowired
+    protected Messages messages;
+    @Autowired
+    protected EntitySearcher entitySearcher;
+    @Autowired
+    protected ScreenBuilders screenBuilders;
+    @Autowired
+    protected SearchApplicationProperties searchApplicationProperties;
 
     protected TextField<String> inputField;
     protected Button searchButton;
@@ -53,11 +81,43 @@ public class SearchField extends CompositeComponent<CssLayout> implements Field<
     }
 
     protected void performSearch() {
-        SearchLauncher searchLauncher = applicationContext.getBean(SearchLauncher.NAME, SearchLauncher.class);
         Screen frameOwner = ComponentsHelper.getWindowNN(this).getFrameOwner();
         String searchTerm = inputField.getValue();
+        ScreenContext screenContext = getScreenContext(frameOwner);
+        if (StringUtils.isBlank(searchTerm)) {
+            Notifications notifications = screenContext.getNotifications();
+            notifications.create(HUMANIZED)
+                    .withCaption(messages.getMessage("io.jmix.searchui.noSearchTerm"))
+                    .show();
+        } else {
+            String preparedSearchTerm = searchTerm.trim();
 
-        searchLauncher.search(frameOwner, searchTerm);
+            SearchResult searchResult = entitySearcher.search(
+                    preparedSearchTerm,
+                    new SearchDetails().setSize(searchApplicationProperties.getSearchResultPageSize())
+            );
+
+            if (searchResult.isEmpty()) {
+                Notifications notifications = screenContext.getNotifications();
+
+                notifications.create(HUMANIZED)
+                        .withCaption(messages.getMessage("io.jmix.searchui.noResults"))
+                        .show();
+            } else {
+                screenBuilders.screen(frameOwner)
+                        .withScreenId(SearchResultsScreen.SCREEN_ID)
+                        .withOpenMode(OpenMode.NEW_TAB)
+                        .withOptions(
+                                new MapScreenOptions(
+                                        ParamsMap.of(
+                                                "searchResult", searchResult
+                                        )
+                                )
+                        )
+                        .build()
+                        .show();
+            }
+        }
     }
 
     @Override

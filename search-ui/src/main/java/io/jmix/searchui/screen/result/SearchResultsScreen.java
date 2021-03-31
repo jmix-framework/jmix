@@ -252,7 +252,7 @@ public class SearchResultsScreen extends Screen {
                 currentPage.setLastPage(true);
                 renderNavigationControls(pages);
                 notifications.create(HUMANIZED)
-                        .withCaption(messages.getMessage(SearchResultsScreen.class, "noResults"))
+                        .withCaption(messages.getMessage("io.jmix.searchui.noResults"))
                         .show();
             } else {
                 currentPage = new Page(lastPage.getPageNumber() + 1);
@@ -291,14 +291,14 @@ public class SearchResultsScreen extends Screen {
 
     protected Label<String> createNoSearchTermLabel() {
         Label<String> label = uiComponents.create(Label.of(String.class));
-        label.setValue(messages.getMessage(SearchResultsScreen.class, "noSearchTerm"));
+        label.setValue(messages.getMessage("io.jmix.searchui.noSearchTerm"));
         label.setStyleName("h2");
         return label;
     }
 
     protected Label<String> createNotFoundLabel() {
         Label<String> label = uiComponents.create(Label.of(String.class));
-        label.setValue(messages.getMessage(SearchResultsScreen.class, "noResults"));
+        label.setValue(messages.getMessage("io.jmix.searchui.noResults"));
         label.setStyleName("h2");
         return label;
     }

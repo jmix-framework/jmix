@@ -6,6 +6,7 @@ import io.jmix.core.*;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.impl.importexport.EntityImportPlanJsonBuilder;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.validation.EntityValidationException;
 import io.jmix.graphql.schema.NamingUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,7 +52,12 @@ public class EntityMutationDataFetcher {
             Object entity = entitySerialization.entityFromJson(entityJson, metaClass);
 
             EntityImportPlan entityImportPlan = entityImportPlanJsonBuilder.buildFromJson(entityJson, metaClass);
-            Collection<Object> objects = entityImportExport.importEntities(Collections.singletonList(entity), entityImportPlan);
+            Collection<Object> objects;
+            try {
+                objects = entityImportExport.importEntities(Collections.singletonList(entity), entityImportPlan, true);
+            } catch (EntityValidationException eve) {
+                throw new GqlEntityValidationException(eve);
+            }
             Object mainEntity = getMainEntity(objects, metaClass);
 
             FetchPlan fetchPlan = dataFetcherPlanBuilder.buildFetchPlan(metaClass.getJavaClass(), environment);

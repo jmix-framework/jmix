@@ -146,4 +146,67 @@ will return result as follows:
 }
 ```
 
+### Bean Validation
+
+Bean validation errors available in GraphQL response property `errors.extensions.constraintViolations`
+
+Error structure contains validated property path, message and property value that is invalid. 
+For example, if `regNumber` has validation constraint:
+
+```
+    @Size(min = 0, max = 5)
+    @Pattern(regexp = "[a-zA-Z]{2}\\d{3}")
+    @Column(name = "REG_NUMBER", length = 5)
+    protected String regNumber;
+```
+
+And we try to save it with incorrect value:
+
+```
+mutation {
+  upsert_scr_Car (car: {
+	manufacturer: "TESS"
+    carType: SEDAN
+    regNumber: "aa12"
+  }) {
+    _instanceName
+  }
+}
+```
+
+Error response will look like:
+
+```
+{
+  "errors": [
+    {
+      "message": "Exception while fetching data (/upsert_scr_Car) : Entity validation failed",
+      "locations": [
+        {
+          "line": 2,
+          "column": 3
+        }
+      ],
+      "path": [
+        "upsert_scr_Car"
+      ],
+      "extensions": {
+        "constraintViolations": [
+          {
+            "path": "regNumber",
+            "message": "must match \"[a-zA-Z]{2}\\d{3}\"",
+            "messageTemplate": "{javax.validation.constraints.Pattern.message}",
+            "invalidValue": "aa12"
+          }
+        ],
+        "classification": "DataFetchingException"
+      }
+    }
+  ],
+  "data": {
+    "upsert_scr_Car": null
+  }
+}
+```
+
 

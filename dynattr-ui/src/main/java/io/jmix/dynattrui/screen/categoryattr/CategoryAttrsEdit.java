@@ -873,6 +873,9 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
                     attribute.getDefaultDecimal()
             );
             validationErrors.addAll(errors);
+        } else if (ENUMERATION.equals(dataType)) {
+            ValidationErrors errors = validateEnumeration(attribute.getEnumeration(), attribute.getDefaultString());
+            validationErrors.addAll(errors);
         }
 
         Category category = getEditedEntity().getCategory();
@@ -891,6 +894,16 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
         }
 
         event.addErrors(validationErrors);
+    }
+
+    protected ValidationErrors validateEnumeration(String enumeration, String defaultValue) {
+        ValidationErrors validationErrors = new ValidationErrors();
+        if (enumeration == null) {
+            validationErrors.add(messages.getMessage(CategoryAttrsEdit.class, "enumerationField.required"));
+        } else if (defaultValue != null & Arrays.stream(enumeration.split(",")).noneMatch(defaultValue::equalsIgnoreCase)) {
+            validationErrors.add(messages.getMessage(CategoryAttrsEdit.class, "defaultValueIsNotInEnumeration"));
+        }
+        return validationErrors;
     }
 
     protected ValidationErrors validateNumbers(AttributeType type, Number minNumber, Number maxNumber, Number defaultNumber) {

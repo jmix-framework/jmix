@@ -28,7 +28,7 @@ public abstract class AbstractSingleFilterCondition extends FilterCondition {
     private static final long serialVersionUID = 3911163960016094584L;
 
     @JmixProperty
-    protected String captionPosition;
+    protected String captionPosition = "LEFT";
 
     @JmixProperty
     protected FilterValueComponent valueComponent;

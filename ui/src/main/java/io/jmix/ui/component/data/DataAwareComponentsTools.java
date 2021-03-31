@@ -220,16 +220,5 @@ public class DataAwareComponentsTools {
             //noinspection unchecked
             optionsField.setOptions(new EnumOptions(metaProperty.getRange().asEnumeration().getJavaClass()));
         }
-        // todo dynamic attributes
-//        else if (DynamicAttributesUtils.isDynamicAttribute(metaProperty)) {
-//            CategoryAttribute categoryAttribute = DynamicAttributesUtils.getCategoryAttribute(metaProperty);
-//
-//            if (categoryAttribute != null
-//                    && categoryAttribute.getDataType() == PropertyType.ENUMERATION) {
-//
-//                //noinspection unchecked
-//                optionsField.setOptionsMap(categoryAttribute.getLocalizedEnumerationMap());
-//            }
-//        }
     }
 }

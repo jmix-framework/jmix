@@ -107,17 +107,6 @@ public class QueueItem {
         this.id = id;
     }
 
-    @Override
-    public String toString() {
-        return "QueueItem{" +
-                "id=" + id +
-                ", entityName='" + entityName + '\'' +
-                ", changeType='" + changeType + '\'' +
-                ", entityId='" + entityId + '\'' +
-                ", createdDate=" + createdDate +
-                '}';
-    }
-
     @InstanceName
     @DependsOnProperties({"entityId", "entityName"})
     public String getInstanceName() {

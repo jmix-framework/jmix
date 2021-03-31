@@ -132,8 +132,6 @@
                         <comboBox id="optionsLoaderTypeField" property="configuration.optionsLoaderType"/>
                         <sourceCodeEditor id="optionsLoaderScriptField" property="configuration.optionsLoaderScript"
                                           showGutter="false"/>
-                        <linkButton id="constraintWizardField" caption="msg://constraintWizardField.caption"
-                                    visible="false"/>
                         <sourceCodeEditor id="joinClauseField" property="joinClause" highlightActiveLine="false"
                                           showGutter="false" height="70px"/>
                         <sourceCodeEditor id="whereClauseField" property="whereClause" highlightActiveLine="false"

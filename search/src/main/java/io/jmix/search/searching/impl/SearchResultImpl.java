@@ -16,66 +16,70 @@
 
 package io.jmix.search.searching.impl;
 
+import io.jmix.search.searching.SearchResult;
+
 import java.util.*;
 
-/**
- * Represents result of search by some term.
- */
-public class SearchResult {
+public class SearchResultImpl implements SearchResult {
     protected final String searchTerm;
+    protected SearchDetails searchDetails;
     protected final Map<String, Set<SearchResultEntry>> entriesByEntityName = new HashMap<>();
+    protected int size = 0;
+    protected int effectiveOffset;
+    protected boolean moreDataAvailable = false;
 
-    public SearchResult(String searchTerm) {
+    public SearchResultImpl(String searchTerm, SearchDetails searchDetails) {
         this.searchTerm = searchTerm;
+        this.searchDetails = searchDetails;
+        this.effectiveOffset = searchDetails.getOffset();
     }
 
-    /**
-     * Appends provided {@link SearchResultEntry} to this {@link SearchResult}.
-     *
-     * @param searchResultEntry search result entry
-     */
     public void addEntry(SearchResultEntry searchResultEntry) {
         Set<SearchResultEntry> entriesForEntityName = entriesByEntityName.computeIfAbsent(
                 searchResultEntry.getEntityName(),
                 s -> new LinkedHashSet<>()
         );
         entriesForEntityName.add(searchResultEntry);
+        size++;
     }
 
-    /**
-     * Gets all {@link SearchResultEntry} specific for provided entity.
-     *
-     * @param entityName entity name
-     * @return set of {@link SearchResultEntry}
-     */
     public Set<SearchResultEntry> getEntriesByEntityName(String entityName) {
         return entriesByEntityName.get(entityName);
     }
 
-    /**
-     * Checks if there is any data in result.
-     *
-     * @return true if this {@link SearchResult} contains any {@link SearchResultEntry}, false otherwise
-     */
     public boolean isEmpty() {
         return entriesByEntityName.isEmpty();
     }
 
-    /**
-     * Gets names of all entities presented in this {@link SearchResult}.
-     *
-     * @return collection of entity names
-     */
     public Collection<String> getEntityNames() {
         return entriesByEntityName.keySet();
     }
 
-    /**
-     * Gets term search has been performed with.
-     *
-     * @return search term
-     */
     public String getSearchTerm() {
         return searchTerm;
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    public int getEffectiveOffset() {
+        return effectiveOffset;
+    }
+
+    public void incrementOffset() {
+        this.effectiveOffset++;
+    }
+
+    public SearchDetails getSearchDetails() {
+        return searchDetails;
+    }
+
+    public boolean isMoreDataAvailable() {
+        return moreDataAvailable;
+    }
+
+    public void setMoreDataAvailable(boolean moreDataAvailable) {
+        this.moreDataAvailable = moreDataAvailable;
     }
 }

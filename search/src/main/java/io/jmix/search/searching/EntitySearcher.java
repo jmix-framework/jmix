@@ -16,7 +16,7 @@
 
 package io.jmix.search.searching;
 
-import io.jmix.search.searching.impl.SearchResult;
+import io.jmix.search.searching.impl.SearchDetails;
 
 /**
  * Provides functionality for searching entities in index.
@@ -25,8 +25,10 @@ public interface EntitySearcher {
 
     /**
      * Performs search in all search indices with provided term.
-     * @param searchTerm term to search in indices
+     *
+     * @param searchTerm    term to search in indices
+     * @param searchDetails additional details of search
      * @return {@link SearchResult} with found objects
      */
-    SearchResult search(String searchTerm);
+    SearchResult search(String searchTerm, SearchDetails searchDetails);
 }

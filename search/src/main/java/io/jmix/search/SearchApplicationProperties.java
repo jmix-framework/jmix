@@ -24,7 +24,7 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 @ConstructorBinding
 public class SearchApplicationProperties {
 
-    protected final int esSearchSize;
+    protected final int searchResultPageSize;
     protected final int maxSearchPageCount;
     protected final int searchReloadEntitiesBatchSize;
     protected final int processQueueBatchSize;
@@ -37,7 +37,7 @@ public class SearchApplicationProperties {
     protected final int elasticsearchPort;
 
     public SearchApplicationProperties(
-            @DefaultValue("100") int esSearchSize,
+            @DefaultValue("100") int searchResultPageSize,
             @DefaultValue("100") int maxSearchPageCount,
             @DefaultValue("100") int searchReloadEntitiesBatchSize,
             @DefaultValue("100") int processQueueBatchSize,
@@ -46,7 +46,7 @@ public class SearchApplicationProperties {
             @DefaultValue("false") boolean autoMapIndexFileContent,
             @DefaultValue("localhost") String elasticsearchHost,
             @DefaultValue("9200") int elasticsearchPort) {
-        this.esSearchSize = esSearchSize;
+        this.searchResultPageSize = searchResultPageSize;
         this.maxSearchPageCount = maxSearchPageCount;
         this.searchReloadEntitiesBatchSize = searchReloadEntitiesBatchSize;
         this.processQueueBatchSize = processQueueBatchSize;
@@ -59,10 +59,10 @@ public class SearchApplicationProperties {
     }
 
     /**
-     * @return max amount of documents returned by single search request to Elasticsearch
+     * @return max amount of objects displayed on single page of search result
      */
-    public int getEsSearchSize() {
-        return esSearchSize;
+    public int getSearchResultPageSize() {
+        return searchResultPageSize;
     }
 
     /**

@@ -21,11 +21,14 @@ import io.jmix.core.*;
 import io.jmix.core.common.datastruct.Pair;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.search.SearchApplicationProperties;
-import io.jmix.search.searching.impl.SearchResult;
+import io.jmix.search.searching.EntitySearcher;
+import io.jmix.search.searching.SearchResult;
+import io.jmix.search.searching.impl.SearchDetails;
 import io.jmix.search.searching.impl.FieldHit;
 import io.jmix.search.searching.impl.SearchResultEntry;
 import io.jmix.search.utils.PropertyTools;
 import io.jmix.ui.AppUI;
+import io.jmix.ui.Notifications;
 import io.jmix.ui.ScreenBuilders;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.action.BaseAction;
@@ -36,6 +39,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
 
+import static io.jmix.ui.Notifications.NotificationType.HUMANIZED;
 import static io.jmix.ui.component.Component.Alignment.MIDDLE_LEFT;
 
 @UiController(SearchResultsScreen.SCREEN_ID)
@@ -60,6 +64,10 @@ public class SearchResultsScreen extends Screen {
     protected SearchApplicationProperties searchApplicationProperties;
     @Autowired
     protected PropertyTools propertyTools;
+    @Autowired
+    protected EntitySearcher entitySearcher;
+    @Autowired
+    protected Notifications notifications;
 
     @Autowired
     protected ScrollBoxLayout contentBox;
@@ -138,7 +146,6 @@ public class SearchResultsScreen extends Screen {
             return;
         }
 
-        //todo paging
         //noinspection UnstableApiUsage
         pages = EvictingQueue.create(searchApplicationProperties.getMaxSearchPageCount());
         currentPage = new SearchResultsScreen.Page(0);
@@ -146,7 +153,7 @@ public class SearchResultsScreen extends Screen {
         pages.add(currentPage);
 
         renderResult(currentPage);
-        //paintNavigationControls(pages);
+        renderNavigationControls(pages);
     }
 
     protected void handleNoSearchTerm() {
@@ -191,6 +198,91 @@ public class SearchResultsScreen extends Screen {
                 contentBox.add(container);
             }
         }
+    }
+
+    protected void renderNavigationControls(Queue<Page> pages) {
+        navigationBox.removeAll();
+        for (Page page : pages) {
+            LinkButton pageButton = uiComponents.create(LinkButton.class);
+            BaseAction action = new BaseAction("page_" + page.getPageNumber())
+                    .withCaption(page.getDisplayedPageNumber())
+                    .withHandler(e -> openPage(page));
+            pageButton.setAction(action);
+            if (page == currentPage) {
+                pageButton.setStyleName("c-fts-current-page");
+            } else {
+                pageButton.setStyleName("c-fts-page");
+            }
+            navigationBox.add(pageButton);
+        }
+
+        boolean showNextPage = true;
+        Page lastPage = getLastPage();
+        if (lastPage != null && lastPage.getSearchResult() != null) {
+            SearchResult lastSearchResult = lastPage.getSearchResult();
+            showNextPage = lastSearchResult.isMoreDataAvailable();
+        }
+
+        if (showNextPage) {
+            LinkButton nextPageButton = uiComponents.create(LinkButton.class);
+            BaseAction action = new BaseAction("nextPage")
+                    .withCaption(messages.getMessage(SearchResultsScreen.class, "nextPage"))
+                    .withHandler(e -> openNextPage());
+            nextPageButton.setAction(action);
+            nextPageButton.setStyleName("c-fts-page");
+            navigationBox.add(nextPageButton);
+        }
+    }
+
+    protected void openPage(Page page) {
+        currentPage = page;
+        renderResult(page);
+        renderNavigationControls(pages);
+    }
+
+    protected void openNextPage() {
+        Page lastPage = getLastPage();
+        if (lastPage != null) {
+            SearchResult lastSearchResult = lastPage.getSearchResult();
+            SearchResult searchResult = entitySearcher.search(
+                    lastSearchResult.getSearchTerm(),
+                    createNextSearchDetails(lastSearchResult)
+            );
+            if (searchResult.getSize() == 0) {
+                currentPage.setLastPage(true);
+                renderNavigationControls(pages);
+                notifications.create(HUMANIZED)
+                        .withCaption(messages.getMessage(SearchResultsScreen.class, "noResults"))
+                        .show();
+            } else {
+                currentPage = new Page(lastPage.getPageNumber() + 1);
+                currentPage.setSearchResult(searchResult);
+                pages.add(currentPage);
+                renderResult(currentPage);
+                renderNavigationControls(pages);
+            }
+        }
+    }
+
+    protected SearchDetails createNextSearchDetails(SearchResult searchResult) {
+        SearchDetails currentSearchDetails = searchResult.getSearchDetails();
+        return new SearchDetails()
+                .setSize(currentSearchDetails.getSize())
+                .setOffset(searchResult.getEffectiveOffset());
+    }
+
+    protected Page getLastPage() {
+        Page lastPage = null;
+        for (Page page : pages) {
+            if (lastPage == null) {
+                lastPage = page;
+            } else {
+                if (page.getPageNumber() > lastPage.getPageNumber()) {
+                    lastPage = page;
+                }
+            }
+        }
+        return lastPage;
     }
 
     protected CssLayout createCssLayout() {

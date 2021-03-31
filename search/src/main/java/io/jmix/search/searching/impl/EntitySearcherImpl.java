@@ -17,11 +17,15 @@
 package io.jmix.search.searching.impl;
 
 import com.google.common.collect.Lists;
-import io.jmix.core.*;
+import io.jmix.core.DataManager;
+import io.jmix.core.FetchPlan;
+import io.jmix.core.InstanceNameProvider;
+import io.jmix.core.Metadata;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.search.SearchApplicationProperties;
 import io.jmix.search.searching.EntitySearcher;
+import io.jmix.search.searching.SearchResult;
 import io.jmix.search.utils.PropertyTools;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.search.SearchRequest;
@@ -66,13 +70,38 @@ public class EntitySearcherImpl implements EntitySearcher {
     protected PropertyTools propertyTools;
 
     @Override
-    public SearchResult search(String searchTerm) {
+    public SearchResult search(String searchTerm, SearchDetails searchDetails) {
         //todo Currently it's a simple search over all fields of all search indices without any paging
-        log.debug("Perform search by term '{}'", searchTerm);
+        log.debug("Perform search by term '{}' and with details: {}", searchTerm, searchDetails);
+        SearchRequest searchRequest = createSearchRequest(searchTerm, searchDetails);
+
+        SearchResultImpl searchResultImpl = new SearchResultImpl(searchTerm, searchDetails);
+        boolean moreDataAvailable;
+        do {
+            searchRequest.source().from(searchResultImpl.getEffectiveOffset());
+
+            SearchResponse searchResponse;
+            try {
+                searchResponse = esClient.search(searchRequest, RequestOptions.DEFAULT);
+            } catch (IOException e) {
+                throw new RuntimeException("Search failed", e);
+            }
+            SearchHits searchHits = searchResponse.getHits();
+            Map<String, List<SearchHit>> hitsByEntityName = groupSearchHitsByEntity(searchHits);
+            fillSearchResult(searchResultImpl, hitsByEntityName);
+
+            long totalHits = searchResponse.getHits().getTotalHits().value;
+            moreDataAvailable = (totalHits - searchResultImpl.getEffectiveOffset()) > 0;
+        } while (moreDataAvailable && !isResultFull(searchResultImpl, searchDetails));
+        searchResultImpl.setMoreDataAvailable(moreDataAvailable);
+        return searchResultImpl;
+    }
+
+    protected SearchRequest createSearchRequest(String searchTerm, SearchDetails searchDetails) {
         SearchRequest searchRequest = new SearchRequest("*_search_index");
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         searchSourceBuilder.query(QueryBuilders.multiMatchQuery(searchTerm, "*"));
-        searchSourceBuilder.size(searchApplicationProperties.getEsSearchSize());
+        searchSourceBuilder.size(searchDetails.getSize());
 
         HighlightBuilder highlightBuilder = new HighlightBuilder();
         highlightBuilder.field("*");
@@ -81,16 +110,15 @@ public class EntitySearcherImpl implements EntitySearcher {
 
         searchRequest.source(searchSourceBuilder);
 
-        try {
-            SearchResponse searchResponse = esClient.search(searchRequest, RequestOptions.DEFAULT);
-            return processHits(searchTerm, searchResponse.getHits());
-        } catch (IOException e) {
-            throw new RuntimeException("Search failed", e);
-        }
+        return searchRequest;
     }
 
-    protected SearchResult processHits(String searchTerm, SearchHits searchHits) {
-        Map<String, List<SearchHit>> hitsByEntityName = Stream.of(searchHits.getHits())
+    protected boolean isResultFull(SearchResultImpl searchResultImpl, SearchDetails searchSettings) {
+        return searchResultImpl.getSize() >= searchSettings.getSize();
+    }
+
+    protected Map<String, List<SearchHit>> groupSearchHitsByEntity(SearchHits searchHits) {
+        return Stream.of(searchHits.getHits())
                 .collect(Collectors.groupingBy(hit -> {
                     Object metaObject = hit.getSourceAsMap().get("meta");
                     if (metaObject instanceof Map) {
@@ -99,8 +127,10 @@ public class EntitySearcherImpl implements EntitySearcher {
                         throw new RuntimeException("Entity metadata not found in ES document " + hit.getIndex() + "/" + hit.getId());
                     }
                 }));
+    }
 
-        SearchResult searchResult = new SearchResult(searchTerm);
+    protected void fillSearchResult(SearchResultImpl searchResultImpl, Map<String, List<SearchHit>> hitsByEntityName) {
+        int sizeLimit = searchResultImpl.getSearchDetails().getSize();
         for (Map.Entry<String, List<SearchHit>> entry : hitsByEntityName.entrySet()) {
             String entityName = entry.getKey();
             List<SearchHit> entityHits = entry.getValue();
@@ -108,21 +138,28 @@ public class EntitySearcherImpl implements EntitySearcher {
             Map<String, String> reloadedIdNames = loadEntityInstanceNames(metadata.getClass(entityName), entityIds);
 
             for (SearchHit searchHit : entityHits) {
+                if (searchResultImpl.getSize() >= sizeLimit) {
+                    return;
+                }
+
                 String entityId = searchHit.getId();
                 if (reloadedIdNames.containsKey(entityId)) {
                     String instanceName = reloadedIdNames.get(entityId);
-                    Map<String, HighlightField> highlightFields = searchHit.getHighlightFields();
-                    List<FieldHit> fieldHits = new ArrayList<>();
-                    highlightFields.forEach((f, h) -> {
-                        String highlight = Arrays.stream(h.getFragments()).map(Text::toString).collect(Collectors.joining("..."));
-                        fieldHits.add(new FieldHit(formatFieldName(f), highlight));
-                    });
-                    searchResult.addEntry(new SearchResultEntry(entityId, instanceName, entityName, fieldHits));
+                    searchResultImpl.addEntry(createSearchResultEntry(entityId, instanceName, entityName, searchHit));
                 }
+                searchResultImpl.incrementOffset();
             }
         }
+    }
 
-        return searchResult;
+    protected SearchResultEntry createSearchResultEntry(String entityId, String instanceName, String entityName, SearchHit searchHit) {
+        Map<String, HighlightField> highlightFields = searchHit.getHighlightFields();
+        List<FieldHit> fieldHits = new ArrayList<>();
+        highlightFields.forEach((f, h) -> {
+            String highlight = Arrays.stream(h.getFragments()).map(Text::toString).collect(Collectors.joining("..."));
+            fieldHits.add(new FieldHit(formatFieldName(f), highlight));
+        });
+        return new SearchResultEntry(entityId, instanceName, entityName, fieldHits);
     }
 
     protected Map<String, String> loadEntityInstanceNames(MetaClass metaClass, List<String> entityIds) {
@@ -152,5 +189,4 @@ public class EntitySearcherImpl implements EntitySearcher {
     protected String formatFieldName(String fieldName) {
         return StringUtils.removeStart(StringUtils.removeEnd(fieldName, "._instance_name"), "content.");
     }
-
 }

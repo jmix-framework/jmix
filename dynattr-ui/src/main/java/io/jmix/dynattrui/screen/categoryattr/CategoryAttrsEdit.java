@@ -900,8 +900,9 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
         ValidationErrors validationErrors = new ValidationErrors();
         if (enumeration == null) {
             validationErrors.add(messages.getMessage(CategoryAttrsEdit.class, "enumerationField.required"));
-        } else if (defaultValue != null & Arrays.stream(enumeration.split(",")).noneMatch(defaultValue::equalsIgnoreCase)) {
-            validationErrors.add(messages.getMessage(CategoryAttrsEdit.class, "defaultValueIsNotInEnumeration"));
+        } else if (defaultValue != null) {
+            if (Arrays.stream(enumeration.split(",")).noneMatch(defaultValue::equalsIgnoreCase))
+                validationErrors.add(messages.getMessage(CategoryAttrsEdit.class, "defaultValueIsNotInEnumeration"));
         }
         return validationErrors;
     }

@@ -72,7 +72,6 @@ public class RelatedEntitiesLoader extends AbstractComponentLoader<RelatedEntiti
             }
         });
 
-        loadFocusable(resultComponent, element);
         loadTabIndex(resultComponent, element);
     }
 

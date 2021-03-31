@@ -2499,7 +2499,6 @@
 
                 <xs:attribute name="stylename" type="buttonStylename"/>
 
-                <xs:attribute name="focusable" type="xs:boolean"/>
                 <xs:attribute name="primary" type="xs:boolean"/>
             </xs:extension>
         </xs:complexContent>
@@ -2532,8 +2531,6 @@
                 </xs:sequence>
 
                 <xs:attribute name="showActionIcons" type="xs:boolean"/>
-                <xs:attribute name="focusable" type="xs:boolean"/>
-
 
                 <xs:attribute name="menuWidth" type="componentSize"/>
                 <xs:attribute name="autoClose" type="xs:boolean"/>
@@ -3341,7 +3338,6 @@
                 <xs:attribute name="openMode" type="openMode"/>
                 <xs:attribute name="for" type="xs:string" use="required"/>
                 <xs:attribute name="exclude" type="xs:string"/>
-                <xs:attribute name="focusable" type="xs:boolean"/>
 
                 <xs:attributeGroup ref="hasTabIndex"/>
             </xs:extension>
@@ -3365,7 +3361,6 @@
                 <xs:attribute name="for" type="xs:string" use="required"/>
                 <xs:attribute name="exclude" type="xs:string"/>
                 <xs:attribute name="includeProperties" type="xs:string"/>
-                <xs:attribute name="focusable" type="xs:boolean"/>
                 <xs:attribute name="loadDynamicAttributes" type="xs:boolean"/>
                 <xs:attribute name="useConfirmDialog" type="xs:boolean"/>
 

@@ -76,8 +76,6 @@ public class PopupButtonLoader extends AbstractComponentLoader<PopupButton> {
         if (StringUtils.isNotEmpty(menuWidth)) {
             resultComponent.setMenuWidth(menuWidth);
         }
-
-        loadFocusable(resultComponent, element);
     }
 
     @Override

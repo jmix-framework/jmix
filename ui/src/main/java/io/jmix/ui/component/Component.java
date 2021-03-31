@@ -421,20 +421,27 @@ public interface Component {
      * Focusable means that component can be focused by TAB button.
      */
     interface Focusable extends Component {
-        /** Set focus to this component */
+
+        /**
+         * Sets focus to this component
+         */
         void focus();
 
         /**
-         * Is component focusable?
+         * @return whether this component should be focusable
          */
         default boolean isFocusable() {
             return getTabIndex() >= 0;
         }
+
         /**
-         * Set component focusability
+         * Sets whether this component should be focusable, i.e. sets
+         * tabulator index to 0 if {@code true}, -1 otherwise.
+         *
+         * @param focusable whether this component should be focusable
          */
         default void setFocusable(boolean focusable) {
-            setTabIndex(-1);
+            setTabIndex(focusable ? 0 : -1);
         }
 
         /**

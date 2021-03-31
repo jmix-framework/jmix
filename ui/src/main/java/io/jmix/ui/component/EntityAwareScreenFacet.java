@@ -37,7 +37,7 @@ public interface EntityAwareScreenFacet<E> {
      *
      * @param entityClass entity class
      */
-    @StudioProperty(type = PropertyType.JAVA_CLASS_NAME)
+    @StudioProperty(type = PropertyType.ENTITY_CLASS, typeParameter = "E")
     void setEntityClass(@Nullable Class<E> entityClass);
 
     /**
@@ -54,7 +54,8 @@ public interface EntityAwareScreenFacet<E> {
      * <p>
      * Usually, the list component is a {@code Table} or {@code DataGrid} displaying the list of entities.
      */
-    @StudioProperty(type = PropertyType.COMPONENT_REF)
+    @StudioProperty(type = PropertyType.COMPONENT_REF, typeParameter = "E",
+            options = "io.jmix.ui.component.ListComponent")
     void setListComponent(@Nullable ListComponent<E> listComponent);
 
     /**
@@ -68,7 +69,8 @@ public interface EntityAwareScreenFacet<E> {
      * <p>
      * If the field is set, the framework sets the committed entity to the field after successful editor commit.
      */
-    @StudioProperty(type = PropertyType.COMPONENT_REF)
+    @StudioProperty(name = "field", type = PropertyType.COMPONENT_REF, typeParameter = "E",
+            options = "io.jmix.ui.component.EntityPicker")
     void setEntityPicker(@Nullable EntityPicker<E> entityPicker);
 
     /**
@@ -84,7 +86,7 @@ public interface EntityAwareScreenFacet<E> {
      * the framework automatically initializes the reference to the parent entity and sets up data contexts
      * for editing compositions.
      */
-    @StudioProperty(type = PropertyType.DATACONTAINER_REF)
+    @StudioProperty(type = PropertyType.COLLECTION_DATACONTAINER_REF, typeParameter = "E")
     void setContainer(@Nullable CollectionContainer<E> container);
 
     /**

@@ -20,11 +20,11 @@ import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.LogicalCondition;
+import io.jmix.ui.UiComponentProperties;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.component.*;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.model.DataLoader;
-import io.jmix.ui.UiComponentProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
@@ -327,10 +327,10 @@ public abstract class AbstractSingleFilterComponent<V> extends CompositeComponen
         checkState(valueComponent != null, "Value component isn't set");
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     public Subscription addValueChangeListener(Consumer<ValueChangeEvent<V>> listener) {
-        return getEventHub().subscribe(ValueChangeEvent.class, (Consumer) listener);
+        checkValueComponentState();
+        return valueComponent.addValueChangeListener(listener);
     }
 
     @Nullable

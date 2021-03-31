@@ -38,6 +38,13 @@ public class CubaPopupButtonLoader extends PopupButtonLoader {
     }
 
     @Override
+    public void loadComponent() {
+        super.loadComponent();
+
+        loadFocusable(resultComponent, element);
+    }
+
+    @Override
     protected Action loadDeclarativeAction(ActionsHolder actionsHolder, Element element) {
         return loadInvokeAction(
                 context,

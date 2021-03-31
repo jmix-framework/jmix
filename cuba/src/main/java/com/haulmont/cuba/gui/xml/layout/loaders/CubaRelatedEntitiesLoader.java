@@ -33,6 +33,13 @@ public class CubaRelatedEntitiesLoader extends RelatedEntitiesLoader {
     }
 
     @Override
+    public void loadComponent() {
+        super.loadComponent();
+
+        loadFocusable(resultComponent, element);
+    }
+
+    @Override
     protected void loadPropertyOption(Element routeElement) {
         String property = loadString(routeElement, "name")
                 .orElseThrow(() ->

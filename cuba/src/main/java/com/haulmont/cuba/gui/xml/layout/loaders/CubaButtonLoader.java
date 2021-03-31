@@ -31,6 +31,7 @@ public class CubaButtonLoader extends ButtonLoader {
     public void loadComponent() {
         super.loadComponent();
         loadInvoke(resultComponent, element);
+        loadFocusable(resultComponent, element);
     }
 
     protected void loadInvoke(Button component, Element element) {

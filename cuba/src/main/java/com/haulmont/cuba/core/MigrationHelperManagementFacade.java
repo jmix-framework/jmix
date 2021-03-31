@@ -31,9 +31,9 @@ import javax.annotation.Nullable;
 import javax.sql.DataSource;
 import java.util.*;
 
-@ManagedResource(objectName = "com.haulmont.cuba.core:type=MigrationHelperBean", description = "Contains migration steps")
+@ManagedResource(objectName = "jmix.cuba:type=MigrationHelper", description = "Contains CUBA to Jmix migration actions")
 @Component("cuba_MigrationHelperBean")
-public class MigrationHelperBean {
+public class MigrationHelperManagementFacade {
     private static final String DEFAULT_STORAGE_NAME = "fs";
     private static final int BATCH_SIZE = 50000;
 

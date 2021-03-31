@@ -36,7 +36,7 @@
 
     <property caption="Descriptor name"
               code="descriptorName"
-              defaultValue="main-screen"
+              defaultValue="main-screen-top-menu"
               propertyType="DESCRIPTOR_NAME"
               required="true"
               sourceName="descriptor"/>
@@ -44,14 +44,14 @@
     <property caption="Controller name"
               code="controllerName"
               propertyType="CLASS_NAME"
-              defaultValue="MainScreen"
+              defaultValue="MainScreenTopMenu"
               required="true"
               sourceName="controller"/>
 
     <property caption="Screen id"
               code="screenId"
               propertyType="SCREEN_ID"
-              defaultValue="Main"
+              defaultValue="MainTop"
               required="true"/>
 
     <source fileExt="xml"

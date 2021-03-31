@@ -12,7 +12,7 @@
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="INCREMENT" type="int" defaultValue="1"/>
-            <column name="CURR_VALUE" type="int" defaultValue="0"/>
+            <column name="CURR_VALUE" type="bigint" defaultValue="0"/>
         </createTable>
 
     </changeSet>

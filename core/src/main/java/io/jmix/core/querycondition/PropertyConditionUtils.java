@@ -31,12 +31,56 @@ public class PropertyConditionUtils {
     }
 
     /**
+     * @param propertyCondition property condition
+     * @return true if property condition operation is collection (doesn't require parameter value), e.g "in list"
+     */
+    public static boolean isCollectionOperation(PropertyCondition propertyCondition) {
+        String operation = propertyCondition.getOperation();
+        return PropertyCondition.Operation.IN_LIST.equals(operation)
+                || PropertyCondition.Operation.NOT_IN_LIST.equals(operation);
+    }
+
+    /**
      * @param property an entity property
      * @return a parameter name
      */
     public static String generateParameterName(String property) {
-        return (Strings.nullToEmpty(property)
-                + RandomStringUtils.randomAlphabetic(8)).replace(".", "_");
+        return (Strings.nullToEmpty(property) + RandomStringUtils.randomAlphabetic(8))
+                .replace(".", "_")
+                .replace("+", "");
     }
 
+    /**
+     * @param condition property condition
+     * @return a JPQL operation
+     */
+    public static String getJpqlOperation(PropertyCondition condition) {
+        switch (condition.getOperation()) {
+            case PropertyCondition.Operation.EQUAL:
+                return "=";
+            case PropertyCondition.Operation.NOT_EQUAL:
+                return "<>";
+            case PropertyCondition.Operation.GREATER:
+                return ">";
+            case PropertyCondition.Operation.GREATER_OR_EQUAL:
+                return ">=";
+            case PropertyCondition.Operation.LESS:
+                return "<";
+            case PropertyCondition.Operation.LESS_OR_EQUAL:
+                return "<=";
+            case PropertyCondition.Operation.CONTAINS:
+            case PropertyCondition.Operation.STARTS_WITH:
+            case PropertyCondition.Operation.ENDS_WITH:
+                return "like";
+            case PropertyCondition.Operation.NOT_CONTAINS:
+                return "not like";
+            case PropertyCondition.Operation.IN_LIST:
+                return "in";
+            case PropertyCondition.Operation.NOT_IN_LIST:
+                return "not in";
+            case PropertyCondition.Operation.IS_SET:
+                return Boolean.TRUE.equals(condition.getParameterValue()) ? "is not null" : "is null";
+        }
+        throw new RuntimeException("Unknown PropertyCondition operation: " + condition.getOperation());
+    }
 }

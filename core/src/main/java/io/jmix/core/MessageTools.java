@@ -23,12 +23,13 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 import java.util.Locale;
 import java.util.function.Function;
 
@@ -62,6 +63,9 @@ public class MessageTools {
 
     @Autowired
     protected CoreProperties properties;
+
+    @Autowired(required = false)
+    protected List<MessageResolver> messageResolvers;
 
     /**
      * Get localized message by reference provided in the full format.
@@ -213,7 +217,7 @@ public class MessageTools {
             return message;
         }
 
-        MetaPropertyPath propertyPath = metaClass.getPropertyPath(propertyName);
+        MetaPropertyPath propertyPath = metadataTools.resolveMetaPropertyPathOrNull(metaClass, propertyName);
         if (propertyPath != null) {
             return getPropertyCaption(propertyPath.getMetaProperty());
         } else {
@@ -241,6 +245,15 @@ public class MessageTools {
     public String getPropertyCaption(MetaProperty property, @Nullable Locale locale) {
         Class<?> declaringClass = property.getDeclaringClass();
         if (declaringClass == null) {
+            if (messageResolvers != null) {
+                for (MessageResolver resolver : messageResolvers) {
+                    String propertyCaption = resolver.getPropertyCaption(property, locale);
+                    if (propertyCaption != null) {
+                        return propertyCaption;
+                    }
+                }
+            }
+
             return property.getName();
         }
 
@@ -250,25 +263,6 @@ public class MessageTools {
         }
 
         return messages.getMessage(declaringClass, className + "." + property.getName(), locale);
-    }
-
-    /**
-     * Checks whether a localized name of the property exists.
-     * @param property  MetaProperty
-     * @return          true if {@link #getPropertyCaption(io.jmix.core.metamodel.model.MetaProperty)} returns a
-     * string which has no dots inside or the first part before a dot is not equal to the declaring class
-     */
-    public boolean hasPropertyCaption(MetaProperty property) {
-        Class<?> declaringClass = property.getDeclaringClass();
-        if (declaringClass == null)
-            return false;
-
-        String caption = getPropertyCaption(property);
-        int i = caption.indexOf('.');
-        if (i > 0 && declaringClass.getSimpleName().equals(caption.substring(0, i)))
-            return false;
-        else
-            return true;
     }
 
     /**

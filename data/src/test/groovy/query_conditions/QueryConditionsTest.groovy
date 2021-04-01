@@ -22,7 +22,8 @@ import io.jmix.core.querycondition.ConditionXmlLoader
 import io.jmix.core.querycondition.JpqlCondition
 import io.jmix.core.querycondition.LogicalCondition
 import io.jmix.data.DataConfiguration
-import io.jmix.data.impl.ConditionJpqlGenerator
+import io.jmix.data.impl.jpql.generator.ConditionGenerationContext
+import io.jmix.data.impl.jpql.generator.ConditionJpqlGenerator
 import io.jmix.eclipselink.EclipselinkConfiguration
 import org.dom4j.Element
 import org.springframework.beans.factory.annotation.Autowired
@@ -136,7 +137,7 @@ class QueryConditionsTest extends Specification {
 
         Condition condition = xmlSerializer.fromXml(xml)
         Condition actualized = condition.actualize(['login', 'roleName', 'foo', 'bar'].toSet())
-        String query = jpqlGenerator.processQuery('select u from test$User u', null, actualized)
+        String query = jpqlGenerator.processQuery('select u from test$User u', new ConditionGenerationContext(actualized))
 
         then:
 
@@ -166,7 +167,7 @@ class QueryConditionsTest extends Specification {
         when:
 
         actualized = condition.actualize(['login', 'roleName', 'foo'].toSet())
-        query = jpqlGenerator.processQuery('select u from test$User u', null, actualized)
+        query = jpqlGenerator.processQuery('select u from test$User u', new ConditionGenerationContext(actualized))
 
         then:
 
@@ -189,7 +190,7 @@ class QueryConditionsTest extends Specification {
         when:
 
         actualized = condition.actualize(['login', 'roleName'].toSet())
-        query = jpqlGenerator.processQuery('select u from test$User u', null, actualized)
+        query = jpqlGenerator.processQuery('select u from test$User u', new ConditionGenerationContext(actualized))
 
         then:
 
@@ -209,7 +210,7 @@ class QueryConditionsTest extends Specification {
         when:
 
         actualized = condition.actualize(['roleName'].toSet())
-        query = jpqlGenerator.processQuery('select u from test$User u', null, actualized)
+        query = jpqlGenerator.processQuery('select u from test$User u', new ConditionGenerationContext(actualized))
 
         then:
 
@@ -221,7 +222,7 @@ class QueryConditionsTest extends Specification {
         when:
 
         actualized = condition.actualize(Collections.emptySet())
-        query = jpqlGenerator.processQuery('select u from test$User u', null, actualized)
+        query = jpqlGenerator.processQuery('select u from test$User u', new ConditionGenerationContext(actualized))
 
         then:
 

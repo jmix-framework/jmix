@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.data.impl;
+package io.jmix.data.impl.jpql.generator;
 
 import com.google.common.collect.Iterables;
 import io.jmix.data.QueryTransformer;

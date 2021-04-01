@@ -27,6 +27,10 @@ import io.jmix.core.querycondition.*;
 import io.jmix.data.JmixQuery;
 import io.jmix.data.QueryTransformer;
 import io.jmix.data.QueryTransformerFactory;
+import io.jmix.data.impl.jpql.generator.ConditionGenerationContext;
+import io.jmix.data.impl.jpql.generator.ConditionJpqlGenerator;
+import io.jmix.data.impl.jpql.generator.ParameterJpqlGenerator;
+import io.jmix.data.impl.jpql.generator.SortJpqlGenerator;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -41,7 +45,7 @@ import java.util.stream.Collectors;
 /**
  * Builds {@link Query} instance to use in DataService.
  */
-@Component("data_OrmQueryBuilder")
+@Component("data_JpqlQueryBuilder")
 @Scope("prototype")
 public class JpqlQueryBuilder<Q extends JmixQuery> {
 
@@ -70,6 +74,9 @@ public class JpqlQueryBuilder<Q extends JmixQuery> {
 
     @Autowired
     protected ConditionJpqlGenerator conditionJpqlGenerator;
+
+    @Autowired
+    protected ParameterJpqlGenerator conditionParameterJpqlGenerator;
 
     @Autowired
     protected SortJpqlGenerator sortJpqlGenerator;
@@ -213,89 +220,22 @@ public class JpqlQueryBuilder<Q extends JmixQuery> {
                     .filter(e -> e.getValue() != null)
                     .map(Map.Entry::getKey)
                     .collect(Collectors.toSet());
+
             Condition actualized = condition.actualize(nonNullParamNames);
             if (actualized != null) {
-                List<PropertyCondition> propertyConditions = collectNestedPropertyConditions(actualized);
-                for (PropertyCondition propertyCondition : propertyConditions) {
-                    String parameterName = propertyCondition.getParameterName();
-                    if (PropertyConditionUtils.isUnaryOperation(propertyCondition)) {
-                        //remove query parameter for unary operations (e.g. IS_NULL)
-                        resultParameters.remove(parameterName);
-                    } else {
-                        //PropertyCondition may take a value from queryParameters collection or from the
-                        //PropertyCondition.parameterValue attribute. queryParameters has higher priority.
-                        Object parameterValue;
-                        if (!nonNullParamNames.contains(parameterName)) {
-                            parameterValue = wrapQueryParameterValueForJpql(propertyCondition.getOperation(), propertyCondition.getParameterValue());
-                        } else {
-                            //modify the query parameter value (e.g. wrap value for "contains" jpql operation)
-                            Object queryParameterValue = queryParameters.get(parameterName);
-                            parameterValue = wrapQueryParameterValueForJpql(propertyCondition.getOperation(), queryParameterValue);
-                        }
-                        resultParameters.put(parameterName, parameterValue);
-                    }
-                }
-
-                List<JpqlCondition> jpqlConditions = collectNestedJpqlConditions(actualized);
-                for (JpqlCondition jpqlCondition : jpqlConditions) {
-                    for (Map.Entry<String, Object> parameter : jpqlCondition.getParameterValuesMap().entrySet()) {
-                        // JpqlCondition may take a value from queryParameters collection or from the
-                        // JpqlCondition.parameterValuesMap attribute. queryParameters value has higher priority.
-                        Object parameterValue;
-                        if (!nonNullParamNames.contains(parameter.getKey())) {
-                            // Modify the query parameter value (e.g. wrap value from JpqlFilter for "contains"
-                            // jpql operation)
-                            parameterValue = wrapQueryParameterValueForJpql(PropertyCondition.Operation.CONTAINS,
-                                    parameter.getValue());
-                        } else {
-                            // In other cases, it is assumed that the value has already been modified
-                            // (e.g. wrapped value from DataLoadCoordinator)
-                            parameterValue = queryParameters.get(parameter.getKey());
-                        }
-                        resultParameters.put(parameter.getKey(), parameterValue);
-                    }
-                }
+                resultParameters = conditionParameterJpqlGenerator.processParameters(resultParameters, queryParameters,
+                        actualized);
             }
-            resultQuery = conditionJpqlGenerator.processQuery(resultQuery, valueProperties, actualized);
+
+            resultQuery = conditionJpqlGenerator.processQuery(resultQuery, createConditionGenerationContext(actualized));
         }
     }
 
-    @Nullable
-    protected Object wrapQueryParameterValueForJpql(String operation, @Nullable Object parameterValue) {
-        if (parameterValue instanceof String) {
-            switch (operation) {
-                case PropertyCondition.Operation.CONTAINS:
-                case PropertyCondition.Operation.NOT_CONTAINS:
-                    return "(?i)%" + parameterValue + "%";
-                case PropertyCondition.Operation.STARTS_WITH:
-                    return "(?i)" + parameterValue + "%";
-                case PropertyCondition.Operation.ENDS_WITH:
-                    return "(?i)%" + parameterValue;
-            }
-        }
-        return parameterValue;
-    }
-
-    protected List<PropertyCondition> collectNestedPropertyConditions(Condition rootCondition) {
-        List<PropertyCondition> propertyConditions = new ArrayList<>();
-        if (rootCondition instanceof LogicalCondition) {
-            ((LogicalCondition) rootCondition).getConditions().forEach(c ->
-                    propertyConditions.addAll(collectNestedPropertyConditions(c)));
-        } else if (rootCondition instanceof PropertyCondition) {
-            propertyConditions.add((PropertyCondition) rootCondition);
-        }
-        return propertyConditions;
-    }
-
-    protected List<JpqlCondition> collectNestedJpqlConditions(Condition rootCondition) {
-        List<JpqlCondition> jpqlConditions = new ArrayList<>();
-        if (rootCondition instanceof LogicalCondition) {
-            ((LogicalCondition) rootCondition).getConditions().forEach(c ->
-                    jpqlConditions.addAll(collectNestedJpqlConditions(c)));
-        } else if (rootCondition instanceof JpqlCondition) {
-            jpqlConditions.add((JpqlCondition) rootCondition);
-        }
-        return jpqlConditions;
+    protected ConditionGenerationContext createConditionGenerationContext(@Nullable Condition condition) {
+        ConditionGenerationContext generationContext = new ConditionGenerationContext(condition);
+        generationContext.setEntityName(entityName);
+        generationContext.setValueProperties(valueProperties);
+        return generationContext;
     }
 
     protected void applyCount() {

@@ -84,26 +84,29 @@ public class InspectorFetchPlanBuilder {
         }
         fetchPlanBuilder.addFetchPlan(FetchPlan.LOCAL);
         for (MetaProperty metaProperty : metaClass.getProperties()) {
+            MetaClass metaPropertyClass = metaProperty.getRange().asClass();
             switch (metaProperty.getType()) {
-                case ASSOCIATION:
-                case COMPOSITION:
-                    MetaClass metaPropertyClass = metaProperty.getRange().asClass();
-
-                    if (withEmbedded && metadataTools.isEmbedded(metaProperty)) {
+                case EMBEDDED:
+                    if (withEmbedded) {
                         fetchPlanBuilder.add(metaProperty.getName(), builder -> {
                             createEmbeddedPlan(metaPropertyClass, builder);
                         });
-                    } else {
-                        if (isMany(metaProperty)) {
-                            if (withCollections) {
-                                fetchPlanBuilder.add(metaProperty.getName(),
-                                        builder -> builder.addFetchPlan(FetchPlan.LOCAL)
-                                                .addSystem());
-                            }
-                        } else {
+                    }
+                    break;
+                case ASSOCIATION:
+                case COMPOSITION:
+                    if (withEmbedded) {
+                        break;
+                    }
+                    if (isMany(metaProperty)) {
+                        if (withCollections) {
                             fetchPlanBuilder.add(metaProperty.getName(),
-                                    builder -> builder.addFetchPlan(FetchPlan.INSTANCE_NAME));
+                                    builder -> builder.addFetchPlan(FetchPlan.LOCAL)
+                                            .addSystem());
                         }
+                    } else {
+                        fetchPlanBuilder.add(metaProperty.getName(),
+                                builder -> builder.addFetchPlan(FetchPlan.INSTANCE_NAME));
                     }
                     break;
             }

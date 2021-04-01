@@ -164,9 +164,7 @@ public class InspectorFormBuilder {
                 case COMPOSITION:
                 case ASSOCIATION:
                     if (!isMany(metaProperty)) {
-                        if (!isEmbedded(metaProperty)) {
-                            addField(container, form, metaProperty, isReadonly);
-                        }
+                        addField(container, form, metaProperty, isReadonly);
                     }
                     break;
                 default:

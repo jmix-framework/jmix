@@ -16,7 +16,10 @@
 
 package io.jmix.datatoolsui.screen.entityinspector;
 
-import io.jmix.core.*;
+import io.jmix.core.AccessManager;
+import io.jmix.core.EntityStates;
+import io.jmix.core.MessageTools;
+import io.jmix.core.Metadata;
 import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -26,17 +29,15 @@ import io.jmix.datatoolsui.screen.entityinspector.assistant.InspectorFetchPlanBu
 import io.jmix.datatoolsui.screen.entityinspector.assistant.InspectorFormBuilder;
 import io.jmix.datatoolsui.screen.entityinspector.assistant.InspectorTableBuilder;
 import io.jmix.ui.Actions;
+import io.jmix.ui.UiComponentProperties;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.accesscontext.UiEntityAttributeContext;
 import io.jmix.ui.accesscontext.UiEntityContext;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.list.*;
 import io.jmix.ui.component.*;
-import io.jmix.ui.icon.Icons;
-import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.model.*;
 import io.jmix.ui.model.impl.NoopDataContext;
-import io.jmix.ui.UiComponentProperties;
 import io.jmix.ui.screen.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -46,7 +47,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static io.jmix.core.metamodel.model.MetaProperty.Type.ASSOCIATION;
-import static io.jmix.datatoolsui.screen.entityinspector.EntityFormUtils.isEmbedded;
 import static io.jmix.datatoolsui.screen.entityinspector.EntityFormUtils.isMany;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
@@ -172,21 +172,20 @@ public class EntityInspectorEditor extends StandardEditor {
                 case ASSOCIATION:
                     if (isMany(metaProperty)) {
                         addTable(container, metaProperty);
-                    } else {
-                        if (isEmbedded(metaProperty)) {
-                            Object propertyValue = EntityValues.getValue(item, metaProperty.getName());
-                            if (propertyValue != null) {
-                                propertyValue = dataContext.merge(propertyValue);
-                            }
-                            InstanceContainer embeddedContainer = dataComponents.createInstanceContainer(
-                                    metaProperty.getRange().asClass().getJavaClass(), container, metaProperty.getName());
-                            embeddedContainer.setItem(propertyValue);
-                            Form embeddedForm = InspectorFormBuilder.from(getApplicationContext(), embeddedContainer)
-                                    .withCaption(getPropertyCaption(metaClass, metaProperty))
-                                    .build();
-                            contentPane.add(embeddedForm);
-                        }
                     }
+                    break;
+                case EMBEDDED:
+                    Object propertyValue = EntityValues.getValue(item, metaProperty.getName());
+                    if (propertyValue != null) {
+                        propertyValue = dataContext.merge(propertyValue);
+                    }
+                    InstanceContainer embeddedContainer = dataComponents.createInstanceContainer(
+                            metaProperty.getRange().asClass().getJavaClass(), container, metaProperty.getName());
+                    embeddedContainer.setItem(propertyValue);
+                    Form embeddedForm = InspectorFormBuilder.from(getApplicationContext(), embeddedContainer)
+                            .withCaption(getPropertyCaption(metaClass, metaProperty))
+                            .build();
+                    contentPane.add(embeddedForm);
                     break;
                 default:
                     break;

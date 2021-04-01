@@ -488,6 +488,7 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
                 case ENUM:
                     planBuilder.addLocalProperty(metaProperty.getName());
                     break;
+                case EMBEDDED:
                 case ASSOCIATION:
                 case COMPOSITION:
                     Range.Cardinality cardinality = metaProperty.getRange().getCardinality();

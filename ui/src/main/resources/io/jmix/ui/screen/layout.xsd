@@ -3422,11 +3422,6 @@
     <xs:complexType name="dialogType">
         <xs:attribute name="id" type="xs:string" use="required"/>
         <xs:attribute name="caption" type="resourceString"/>
-        <xs:attribute name="message" type="resourceString"/>
-
-        <xs:attribute name="contentMode" type="contentMode"/>
-        <xs:attribute name="windowMode" type="windowMode"/>
-        <xs:attribute name="styleName" type="xs:string"/>
 
         <xs:attributeGroup ref="hasSize"/>
         <xs:attributeGroup ref="facetTriggerType"/>
@@ -3436,6 +3431,11 @@
     <xs:complexType name="messageDialogType">
         <xs:complexContent>
             <xs:extension base="dialogType">
+                <xs:attribute name="message" type="resourceString"/>
+                <xs:attribute name="contentMode" type="contentMode"/>
+                <xs:attribute name="windowMode" type="windowMode"/>
+                <xs:attribute name="styleName" type="xs:string"/>
+
                 <xs:attribute name="closeOnClickOutside" type="xs:boolean"/>
                 <xs:attribute name="modal" type="xs:boolean"/>
                 <xs:attributeGroup ref="hasHtmlSanitizer"/>
@@ -3450,6 +3450,12 @@
                 <xs:sequence>
                     <xs:element name="actions" type="dialogActionsType" minOccurs="0"/>
                 </xs:sequence>
+
+                <xs:attribute name="message" type="resourceString"/>
+                <xs:attribute name="contentMode" type="contentMode"/>
+                <xs:attribute name="windowMode" type="windowMode"/>
+                <xs:attribute name="styleName" type="xs:string"/>
+
                 <xs:attributeGroup ref="hasHtmlSanitizer"/>
             </xs:extension>
         </xs:complexContent>

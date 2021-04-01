@@ -19,12 +19,9 @@ package io.jmix.securityui.action;
 import io.jmix.core.Messages;
 import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.security.UserManager;
 import io.jmix.securityui.screen.resetpassword.ResetPasswordDialog;
-import io.jmix.ui.Notifications;
 import io.jmix.ui.ScreenBuilders;
 import io.jmix.ui.UiComponentProperties;
-import io.jmix.ui.UiComponents;
 import io.jmix.ui.accesscontext.UiEntityContext;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.ActionType;
@@ -40,12 +37,8 @@ public class ResetPasswordAction extends SecuredListAction implements Action.Exe
 
     public static final String ID = "resetPassword";
 
-    protected UiComponents uiComponents;
     // Set default caption only once
-    protected boolean currentPasswordRequired = false;
     protected Messages messages;
-    protected UserManager userManager;
-    protected Notifications notifications;
     private ScreenBuilders screenBuilders;
 
     public ResetPasswordAction() {
@@ -64,31 +57,13 @@ public class ResetPasswordAction extends SecuredListAction implements Action.Exe
     @Autowired
     protected void setMessages(Messages messages) {
         this.messages = messages;
-        this.caption = messages.getMessage("actions.resetPassword");
+        this.caption = this.messages.getMessage("actions.resetPassword");
     }
 
-    @Autowired
-    public void setNotifications(Notifications notifications) {
-        this.notifications = notifications;
-    }
 
     @Autowired
     protected void setUiComponentProperties(UiComponentProperties componentProperties) {
         setShortcut(componentProperties.getTableEditShortcut());
-    }
-
-    @Autowired
-    public void setUiComponents(UiComponents uiComponents) {
-        this.uiComponents = uiComponents;
-    }
-
-    @Autowired
-    public void setUserManager(UserManager userManager) {
-        this.userManager = userManager;
-    }
-
-    public void setCurrentPasswordRequired(boolean currentPasswordRequired) {
-        this.currentPasswordRequired = currentPasswordRequired;
     }
 
     @Override

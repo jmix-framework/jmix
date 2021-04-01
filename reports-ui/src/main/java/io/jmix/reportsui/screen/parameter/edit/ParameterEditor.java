@@ -407,6 +407,10 @@ public class ParameterEditor extends StandardEditor<ReportInputParameter> {
 
         predefinedTransformationBox.setVisible(isText);
 
+        if(!isText){
+            isPredefinedTransformationField.setValue(false);
+        }
+
         initDefaultValueField();
         initCurrentDateTimeField();
     }

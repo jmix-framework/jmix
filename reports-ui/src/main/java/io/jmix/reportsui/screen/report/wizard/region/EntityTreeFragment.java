@@ -1,15 +1,10 @@
 package io.jmix.reportsui.screen.report.wizard.region;
 
-import io.jmix.core.Messages;
+import io.jmix.core.DataManager;
 import io.jmix.reports.entity.wizard.EntityTreeNode;
-import io.jmix.ui.Notifications;
-import io.jmix.ui.action.Action;
 import io.jmix.ui.component.Tree;
 import io.jmix.ui.model.CollectionContainer;
-import io.jmix.ui.screen.ScreenFragment;
-import io.jmix.ui.screen.Subscribe;
-import io.jmix.ui.screen.UiController;
-import io.jmix.ui.screen.UiDescriptor;
+import io.jmix.ui.screen.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @UiController("report_EntityTree.fragment")
@@ -17,28 +12,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class EntityTreeFragment extends ScreenFragment {
 
     @Autowired
-    private Tree<EntityTreeNode> entityTree;
-
-    @Autowired
-    protected Notifications notifications;
-
-    @Autowired
-    protected Messages messages;
-
+    protected DataManager dataManager;
     @Autowired
     private CollectionContainer<EntityTreeNode> reportEntityTreeNodeDc;
+    @Autowired
+    private Tree<EntityTreeNode> entityTree;
 
-    @Subscribe("search")
-    public void onSearch(Action.ActionPerformedEvent event) {
-                if (!reportEntityTreeNodeDc.getItems().isEmpty()) {
-                    entityTree.collapseTree();
-                    //todo
-                    //entityTree.expand(rootNode.getId());
-                } else {
-                    notifications.create(Notifications.NotificationType.HUMANIZED)
-                            .withCaption(messages.getMessage("valueNotFound"))
-                            .show();
-                }
+    @Subscribe(target = Target.PARENT_CONTROLLER)
+    public void onBeforeShow(Screen.BeforeShowEvent event) {
+        RegionEditor regionEditor = (RegionEditor) getHostScreen();
+
+        reportEntityTreeNodeDc.getMutableItems().add(regionEditor.getRootNode());
+        reportEntityTreeNodeDc.getMutableItems().addAll(regionEditor.getRootNode().getChildren());
+        entityTree.expand(regionEditor.getRootNode());
     }
 
 }

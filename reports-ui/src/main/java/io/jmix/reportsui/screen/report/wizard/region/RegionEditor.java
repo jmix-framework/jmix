@@ -40,6 +40,7 @@ import java.util.Set;
 
 @UiController("report_Region.edit")
 @UiDescriptor("region-edit.xml")
+@EditedEntityContainer("reportRegionDc")
 public class RegionEditor extends StandardEditor<ReportRegion> {
     //    @Named("entityTreeFrame.reportEntityTreeNodeDs")
 //    protected AbstractTreeDatasource reportEntityTreeNodeDs;
@@ -89,12 +90,17 @@ public class RegionEditor extends StandardEditor<ReportRegion> {
         this.updatePermission = updatePermission;
     }
 
+    public EntityTreeNode getRootNode() {
+        return rootNode;
+    }
+
     public void setRootNode(EntityTreeNode rootNode) {
         this.rootNode = rootNode;
     }
 
     @Subscribe
-    protected void onInit(InitEvent event) {
+    public void onBeforeShow(BeforeShowEvent event) {
+        getEditedEntity().getRegionPropertiesRootNode().setWrappedMetaClass(rootNode.getWrappedMetaClass());
         //params.put("component$reportPropertyName", reportPropertyName);
         //todo
         //reportEntityTreeNodeDs.refresh(params);
@@ -112,6 +118,7 @@ public class RegionEditor extends StandardEditor<ReportRegion> {
         tipLabel.setValue(messages.formatMessage(group, rootNode.getLocalizedName()));
         tipLabel.setHtmlEnabled(true);
         initComponents();
+        getScreenData().loadAll();
     }
 
     @Install(to = "addItemAction", subject = "enabledRule")
@@ -184,7 +191,7 @@ public class RegionEditor extends StandardEditor<ReportRegion> {
             initAsViewEditor();
         }
         entityTree.setSelectionMode(Tree.SelectionMode.MULTI);
-        entityTree.expand(rootNode);
+
     }
 
     protected void initAsViewEditor() {
@@ -248,12 +255,20 @@ public class RegionEditor extends StandardEditor<ReportRegion> {
     }
 
     @Subscribe
+    public void onBeforeClose(BeforeCloseEvent event) {
+        getEditedEntity().setRegionProperties(new ArrayList<>(propertiesTable.getItems().getItems()));
+        event.closedWith(StandardOutcome.COMMIT);
+    }
+
+    @Subscribe
     protected void onBeforeCommit(BeforeCommitChangesEvent event) {
         if (reportRegionPropertiesTableDc.getItems().isEmpty()) {
             notifications.create(Notifications.NotificationType.TRAY)
                     .withCaption(messages.getMessage("selectAtLeastOneProp"))
                     .show();
             event.preventCommit();
+        } else {
+            event.resume();
         }
     }
 }

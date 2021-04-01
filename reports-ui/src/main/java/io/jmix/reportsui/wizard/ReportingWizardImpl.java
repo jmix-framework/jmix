@@ -306,8 +306,10 @@ public class ReportingWizardImpl implements ReportingWizard {
         viewsForNodes.put(entityTreeRootNode, fetchPlanBuilder);
         for (ReportRegion reportRegion : reportRegions) {
             for (RegionProperty regionProperty : reportRegion.getRegionProperties()) {
+                fetchPlanBuilder.add(regionProperty.getName());
                 EntityTreeNode entityTreeNode = regionProperty.getEntityTreeNode();
-                MetaClass metaClass = entityTreeNode.getWrappedMetaClass();
+                MetaClass metaClass = metadata.getClass(entityTreeNode);
+
                 if (metaClass != null) {
                     FetchPlanBuilder propertyFetchPlanBuilder = viewsForNodes.get(entityTreeNode);
                     if (propertyFetchPlanBuilder == null) {

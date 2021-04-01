@@ -26,6 +26,7 @@ import io.jmix.reports.entity.BandDefinition;
 import io.jmix.reports.entity.DataSet;
 import io.jmix.reports.entity.DataSetType;
 import io.jmix.reports.entity.Report;
+import io.jmix.reports.entity.wizard.ReportData;
 import io.jmix.reports.entity.wizard.ReportRegion;
 import io.jmix.reportsui.screen.report.wizard.region.RegionEditor;
 import io.jmix.security.constraint.PolicyStore;
@@ -36,18 +37,14 @@ import io.jmix.ui.action.ActionType;
 import io.jmix.ui.action.ListAction;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.Table;
-import io.jmix.ui.component.Window;
 import io.jmix.ui.meta.StudioAction;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.screen.OpenMode;
-import io.jmix.ui.screen.Screen;
-import io.jmix.ui.screen.StandardCloseAction;
+import io.jmix.ui.screen.StandardOutcome;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @StudioAction(target = "io.jmix.ui.component.ListComponent", description = "Edit action for an entity band")
 @ActionType(EditViewAction.ID)
@@ -84,6 +81,8 @@ public class EditViewAction extends ListAction {
 
     protected Table<DataSet> dataSetsTable;
     protected CollectionContainer<BandDefinition> bandsDc;
+    @Autowired
+    protected DataManager dataManager;
 
     public EditViewAction() {
         this(ID);
@@ -128,13 +127,19 @@ public class EditViewAction extends ListAction {
                             editorParams.put("scalarOnly", Boolean.TRUE);
                             editorParams.put("updateDisabled", !secureOperations.isEntityUpdatePermitted(metadata.getClass(Report.class), policyStore));
 
-                            Screen screen = screenBuilders.editor(ReportRegion.class, dataSetsTable.getFrame().getFrameOwner())
+                            reportRegion.setReportData(dataManager.create(ReportData.class));
+                            reportRegion.setBandNameFromReport(dataSet.getName());
+
+                            RegionEditor screen = screenBuilders.editor(ReportRegion.class, dataSetsTable.getFrame().getFrameOwner())
                                     .editEntity(reportRegion)
                                     .withScreenClass(RegionEditor.class)
                                     .withOpenMode(OpenMode.DIALOG)
                                     .build();
+                            screen.setRootNode(reportRegion.getRegionPropertiesRootNode());
                             screen.addAfterCloseListener(afterCloseEvent -> {
-                                if (Window.COMMIT_ACTION_ID.equals(((StandardCloseAction) afterCloseEvent.getCloseAction()).getActionId())) {
+                                if (afterCloseEvent.closedWith(StandardOutcome.COMMIT)) {
+                                    RegionEditor editor = (RegionEditor) afterCloseEvent.getScreen();
+                                    reportRegion.setRegionProperties(editor.getEditedEntity().getRegionProperties());
                                     dataSet.setFetchPlan(reportRegionToView(entityTree, reportRegion));
                                 }
                             });
@@ -211,7 +216,7 @@ public class EditViewAction extends ListAction {
                         //We must to create minimal view that contains collection property for ability of creating ReportRegion.regionPropertiesRootNode later
                         MetaClass metaClass = entityTree.getEntityTreeRootNode().getWrappedMetaClass();
                         MetaProperty metaProperty = metaClass.getProperty(collectionPropertyName);
-                        if (metaProperty != null && metaProperty.getDomain() != null && metaProperty.getRange().getCardinality().isMany()) {
+                        if (metaProperty.getDomain() != null && metaProperty.getRange().getCardinality().isMany()) {
                             view = fetchPlans.builder(metaProperty.getDomain().getJavaClass()).build();
                         } else {
                             notifications.create(Notifications.NotificationType.TRAY)

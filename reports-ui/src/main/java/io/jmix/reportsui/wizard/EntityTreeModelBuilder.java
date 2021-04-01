@@ -18,6 +18,8 @@ package io.jmix.reportsui.wizard;
 
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.reports.app.EntityTree;
+import org.springframework.stereotype.Service;
+
 
 public interface EntityTreeModelBuilder {
     String NAME = "report_EntityTreeModelBuilder";

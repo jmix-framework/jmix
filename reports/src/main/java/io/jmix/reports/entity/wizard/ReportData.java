@@ -84,6 +84,7 @@ public class ReportData {
     }
 
     @Id
+    @JmixProperty
     @JmixGeneratedValue
     protected UUID id;
 

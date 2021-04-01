@@ -21,6 +21,7 @@ import com.haulmont.yarg.structure.ReportQuery;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.JmixId;
 import io.jmix.core.entity.annotation.SystemLevel;
+import io.jmix.core.metamodel.annotation.Composition;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
@@ -53,6 +54,7 @@ public class BandDefinition implements ReportBand {
     protected List<BandDefinition> childrenBandDefinitions = new ArrayList<>();
 
     @JmixProperty
+    @Composition
     protected List<DataSet> dataSets = new ArrayList<>();
 
     @JmixProperty

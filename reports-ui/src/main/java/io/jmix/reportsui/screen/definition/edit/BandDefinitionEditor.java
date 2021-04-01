@@ -307,13 +307,12 @@ public class BandDefinitionEditor extends ScreenFragment implements Suggester {
     @Subscribe("dataSetsTable.create")
     protected void onDataSetsCreate(Action.ActionPerformedEvent event) {
         BandDefinition selectedBand = bandsDc.getItem();
-        if (selectedBand != null) {
-            DataSet dataset = dataSetFactory.createEmptyDataSet(selectedBand);
-            selectedBand.getDataSets().add(dataset);
-            dataSetsDc.getMutableItems().add(dataset);
-            dataSetsDc.setItem(dataset);
-            dataSetsTable.setSelected(dataset);
-        }
+
+        DataSet dataset = dataSetFactory.createEmptyDataSet(selectedBand);
+        selectedBand.getDataSets().add(dataset);
+        dataSetsDc.getMutableItems().add(dataset);
+        dataSetsDc.setItem(dataset);
+        dataSetsTable.setSelected(dataset);
     }
 
     @Install(to = "dataSetsTable.create", subject = "enabledRule")

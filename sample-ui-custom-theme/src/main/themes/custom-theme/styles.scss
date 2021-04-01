@@ -1,8 +1,0 @@
-@import "custom-theme-defaults";
-@import "addons";
-@import "custom-theme";
-
-.custom-theme {
-  @include addons;
-  @include custom-theme;
-}

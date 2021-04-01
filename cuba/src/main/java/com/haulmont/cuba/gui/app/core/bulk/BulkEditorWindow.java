@@ -19,17 +19,13 @@ package com.haulmont.cuba.gui.app.core.bulk;
 import com.haulmont.cuba.core.global.*;
 import com.haulmont.cuba.gui.UiComponents;
 import com.haulmont.cuba.gui.components.*;
-import com.haulmont.cuba.gui.components.CssLayout;
-import com.haulmont.cuba.gui.components.Field;
-import com.haulmont.cuba.gui.components.Label;
-import com.haulmont.cuba.gui.components.ScrollBoxLayout;
-import com.haulmont.cuba.gui.components.VBoxLayout;
 import com.haulmont.cuba.gui.data.DataSupplier;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.NestedDatasource;
 import com.haulmont.cuba.gui.data.impl.DatasourceImpl;
 import com.haulmont.cuba.gui.data.impl.DsContextImpl;
 import com.haulmont.cuba.gui.data.impl.EmbeddedDatasourceImpl;
+import com.haulmont.cuba.security.entity.EntityAttrAccess;
 import io.jmix.core.Entity;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.MessageTools;
@@ -38,7 +34,6 @@ import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-import com.haulmont.cuba.security.entity.EntityAttrAccess;
 import io.jmix.core.security.EntityOp;
 import io.jmix.ui.WindowParam;
 import io.jmix.ui.action.Action;
@@ -49,8 +44,9 @@ import io.jmix.ui.app.bulk.ColumnsMode;
 import io.jmix.ui.app.bulk.FieldSorter;
 import io.jmix.ui.bulk.BulkEditorDataService;
 import io.jmix.ui.bulk.BulkEditorDataService.LoadDescriptor;
-import io.jmix.ui.component.*;
+import io.jmix.ui.component.Button;
 import io.jmix.ui.component.Component;
+import io.jmix.ui.component.ValidationException;
 import io.jmix.ui.component.validator.AbstractBeanValidator;
 import io.jmix.ui.deviceinfo.DeviceInfo;
 import io.jmix.ui.deviceinfo.DeviceInfoProvider;
@@ -396,7 +392,8 @@ public class BulkEditorWindow extends AbstractWindow {
     protected void createNestedEmbeddedDatasources(Datasource masterDs, MetaClass metaClass, String fqnPrefix) {
         for (MetaProperty metaProperty : metaClass.getProperties()) {
             if (MetaProperty.Type.ASSOCIATION == metaProperty.getType()
-                    || MetaProperty.Type.COMPOSITION == metaProperty.getType()) {
+                    || MetaProperty.Type.COMPOSITION == metaProperty.getType()
+                    || MetaProperty.Type.EMBEDDED == metaProperty.getType()) {
                 String fqn = metaProperty.getName();
                 if (StringUtils.isNotEmpty(fqnPrefix)) {
                     fqn = fqnPrefix + "." + fqn;
@@ -437,19 +434,18 @@ public class BulkEditorWindow extends AbstractWindow {
                 case ENUM:
                     view.addProperty(metaProperty.getName());
                     break;
+                case EMBEDDED: {
+                    // build view for embedded property
+                    FetchPlan propView = createEmbeddedView(metaProperty.getRange().asClass(), metaProperty.getName());
+                    view.addProperty(metaProperty.getName(), propView);
+                    break;
+                }
                 case ASSOCIATION:
                 case COMPOSITION:
-                    FetchPlan propView;
-                    if (!metadataTools.isEmbedded(metaProperty)) {
-                        propView = viewRepository.getView(metaProperty.getRange().asClass(), View.MINIMAL);
-                        //in some cases JPA loads extended entities as instance of base class which leads to ClassCastException
-                        //loading property lazy prevents this from happening
-                        view.addProperty(metaProperty.getName(), propView);
-                    } else {
-                        // build view for embedded property
-                        propView = createEmbeddedView(metaProperty.getRange().asClass(), metaProperty.getName());
-                        view.addProperty(metaProperty.getName(), propView);
-                    }
+                    FetchPlan propView = viewRepository.getView(metaProperty.getRange().asClass(), View.MINIMAL);
+                    //in some cases JPA loads extended entities as instance of base class which leads to ClassCastException
+                    //loading property lazy prevents this from happening
+                    view.addProperty(metaProperty.getName(), propView);
                     break;
                 default:
                     throw new IllegalStateException("unknown property type");
@@ -472,15 +468,14 @@ public class BulkEditorWindow extends AbstractWindow {
                 case ENUM:
                     view.addProperty(metaProperty.getName());
                     break;
+                case EMBEDDED: {
+                    FetchPlan propView = createEmbeddedView(metaProperty.getRange().asClass(), fqn);
+                    view.addProperty(metaProperty.getName(), propView);
+                    break;
+                }
                 case ASSOCIATION:
                 case COMPOSITION:
-                    FetchPlan propView;
-                    if (!metadataTools.isEmbedded(metaProperty)) {
-                        propView = viewRepository.getView(metaProperty.getRange().asClass(), View.MINIMAL);
-                    } else {
-                        // build view for embedded property
-                        propView = createEmbeddedView(metaProperty.getRange().asClass(), fqn);
-                    }
+                    FetchPlan propView = viewRepository.getView(metaProperty.getRange().asClass(), View.MINIMAL);
                     //in some cases JPA loads extended entities as instance of base class which leads to ClassCastException
                     //loading property lazy prevents this from happening
                     view.addProperty(metaProperty.getName(), propView);

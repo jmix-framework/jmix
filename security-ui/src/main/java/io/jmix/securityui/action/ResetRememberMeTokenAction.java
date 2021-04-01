@@ -18,6 +18,7 @@ package io.jmix.securityui.action;
 
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.security.UserManager;
 import io.jmix.ui.Dialogs;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.action.*;
@@ -28,11 +29,9 @@ import io.jmix.ui.component.data.meta.EntityDataUnit;
 import io.jmix.ui.screen.UiControllerUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 
 import java.util.Collection;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @ActionType(ResetRememberMeTokenAction.ID)
 public class ResetRememberMeTokenAction extends ListAction implements Action.ExecutableAction, Action.AdjustWhenScreenReadOnly {
@@ -40,7 +39,7 @@ public class ResetRememberMeTokenAction extends ListAction implements Action.Exe
     public static final String ID = "resetRememberMeToken";
     protected Messages messages;
     protected Notifications notifications;
-    protected PersistentTokenRepository tokenRepository;
+    protected UserManager userManager;
 
     public ResetRememberMeTokenAction() {
         super(ID);
@@ -51,8 +50,8 @@ public class ResetRememberMeTokenAction extends ListAction implements Action.Exe
     }
 
     @Autowired
-    public void setTokenRepository(PersistentTokenRepository tokenRepository) {
-        this.tokenRepository = tokenRepository;
+    public void setUserManager(UserManager userManager) {
+        this.userManager = userManager;
     }
 
     @Autowired
@@ -126,12 +125,7 @@ public class ResetRememberMeTokenAction extends ListAction implements Action.Exe
     }
 
     public void resetRememberMe(Collection<UserDetails> users) {
-        Set<String> userNames = users.stream()
-                .map(UserDetails::getUsername)
-                .collect(Collectors.toSet());
-        for (String userName : userNames) {
-            tokenRepository.removeUserTokens(userName);
-        }
+        userManager.resetRememberMe(users);
         notifications.create()
                 .withCaption(messages.getMessage("resetRememberMeResetDialog.resetRememberMeCompleted"))
                 .withType(Notifications.NotificationType.HUMANIZED)

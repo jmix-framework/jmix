@@ -20,6 +20,7 @@ import io.jmix.core.DataManager;
 import io.jmix.core.Metadata;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
+import io.jmix.core.event.UserPasswordResetEvent;
 import io.jmix.core.security.PasswordNotMatchException;
 import io.jmix.core.security.UserManager;
 import io.jmix.core.security.UserRepository;
@@ -32,18 +33,21 @@ import io.jmix.security.role.RowLevelRoleRepository;
 import io.jmix.security.role.assignment.RoleAssignment;
 import io.jmix.security.role.assignment.RoleAssignmentRepository;
 import io.jmix.security.role.assignment.RoleAssignmentRoleType;
+import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 
 import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
+import java.nio.charset.StandardCharsets;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -69,6 +73,10 @@ public abstract class AbstractDatabaseUserRepository<T extends UserDetails> impl
     private RoleAssignmentRepository roleAssignmentRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private PersistentTokenRepository tokenRepository;
+    @Autowired
+    protected ApplicationEventPublisher events;
 
     /**
      * Helps create authorities from roles.
@@ -190,8 +198,12 @@ public abstract class AbstractDatabaseUserRepository<T extends UserDetails> impl
         Preconditions.checkNotNullArgument(userName, "Null userName");
         Preconditions.checkNotNullArgument(newPassword, "Null new password");
         T userDetails = loadUserByUsername(userName);
+        changePassword(userDetails, oldPassword, newPassword);
+    }
+
+    private void changePassword(T userDetails, @Nullable String oldPassword, @Nullable String newPassword) throws PasswordNotMatchException {
         if (oldPassword != null) {
-            if (passwordEncoder.matches(oldPassword, userDetails.getPassword())) {
+            if (!passwordEncoder.matches(oldPassword, userDetails.getPassword())) {
                 throw new PasswordNotMatchException();
             }
         } else {
@@ -201,6 +213,35 @@ public abstract class AbstractDatabaseUserRepository<T extends UserDetails> impl
         }
         EntityValues.setValue(userDetails, "password", passwordEncoder.encode(newPassword));
         dataManager.save(userDetails);
+    }
+
+    @Override
+    public Map<UserDetails, String> resetPasswords(Set<UserDetails> users) {
+        Map<UserDetails, String> usernamePasswordMap = new LinkedHashMap<>();
+        for (UserDetails user : users) {
+            String newPassword;
+            boolean success = false;
+            do {
+                newPassword = generateRandomPassword();
+                try {
+                    changePassword(user.getUsername(), null, newPassword);
+                } catch (PasswordNotMatchException e) {
+                    continue;
+                }
+                success = true;
+            } while (!success);
+            usernamePasswordMap.put(user, newPassword);
+        }
+        resetRememberMe(users);
+        events.publishEvent(new UserPasswordResetEvent(usernamePasswordMap.entrySet().stream()
+                .collect(Collectors.toMap(entry -> entry.getKey().getUsername(), Map.Entry::getValue))));
+        return usernamePasswordMap;
+    }
+
+    public void resetRememberMe(Collection<UserDetails> users) {
+        for (UserDetails user : users) {
+            tokenRepository.removeUserTokens(user.getUsername());
+        }
     }
 
     private Collection<? extends GrantedAuthority> createAuthorities(String username) {
@@ -231,5 +272,17 @@ public abstract class AbstractDatabaseUserRepository<T extends UserDetails> impl
      */
     protected GrantedAuthoritiesBuilder getGrantedAuthoritiesBuilder() {
         return new GrantedAuthoritiesBuilder();
+    }
+
+    private String generateRandomPassword() {
+        SecureRandom random;
+        try {
+            random = SecureRandom.getInstance("SHA1PRNG");
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("Unable to load SHA1PRNG", e);
+        }
+        byte[] passwordBytes = new byte[6];
+        random.nextBytes(passwordBytes);
+        return new String(Base64.encodeBase64(passwordBytes), StandardCharsets.UTF_8).replace("=", "");
     }
 }

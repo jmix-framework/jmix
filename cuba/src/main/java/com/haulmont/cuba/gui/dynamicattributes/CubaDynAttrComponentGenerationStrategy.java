@@ -36,12 +36,12 @@ import io.jmix.dynattrui.MsgBundleTools;
 import io.jmix.dynattrui.impl.AttributeDependencies;
 import io.jmix.dynattrui.impl.AttributeOptionsLoader;
 import io.jmix.dynattrui.impl.AttributeValidators;
-import io.jmix.dynattrui.impl.DynAttrComponentGenerationStrategy;
+import io.jmix.dynattrui.impl.factory.DynAttrComponentGenerationStrategy;
 import io.jmix.ui.Actions;
 import io.jmix.ui.WindowConfig;
-import io.jmix.ui.action.valuepicker.ValueClearAction;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.ComponentGenerationContext;
+import io.jmix.ui.component.EntityPicker;
 import io.jmix.ui.component.Field;
 import io.jmix.ui.component.data.options.MapOptions;
 import io.jmix.ui.component.data.value.ContainerValueSource;
@@ -237,7 +237,7 @@ public class CubaDynAttrComponentGenerationStrategy extends DynAttrComponentGene
         return component;
     }
 
-    protected Component createEntityField(ComponentGenerationContext context, AttributeDefinition attribute) {
+    protected EntityPicker createEntityField(ComponentGenerationContext context, AttributeDefinition attribute) {
         if (attribute.getConfiguration().isLookup()) {
             LookupPickerField lookupPickerField = cubaUiComponents.create(LookupPickerField.class);
 

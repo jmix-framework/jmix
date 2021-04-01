@@ -17,16 +17,25 @@
 package io.jmix.dynattrui;
 
 import io.jmix.core.CoreConfiguration;
+import io.jmix.core.DataManager;
+import io.jmix.core.MessageTools;
+import io.jmix.core.Messages;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
+import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.dynattr.DynAttrConfiguration;
+import io.jmix.dynattr.DynAttrMetadata;
+import io.jmix.dynattrui.propertyfilter.DynAttrPropertyFilterSupport;
 import io.jmix.ui.UiConfiguration;
+import io.jmix.ui.component.propertyfilter.PropertyFilterSupport;
 import io.jmix.ui.sys.UiControllersConfiguration;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.PropertySource;
 
 import java.util.Collections;
@@ -45,5 +54,17 @@ public class DynAttrUiConfiguration {
                 = new UiControllersConfiguration(applicationContext, metadataReaderFactory);
         uiControllers.setBasePackages(Collections.singletonList("io.jmix.dynattrui"));
         return uiControllers;
+    }
+
+    @Bean("dynat_DynAttrPropertyFilterSupport")
+    @Primary
+    public PropertyFilterSupport propertyFilterSupport(Messages messages,
+                                                       MessageTools messageTools,
+                                                       MetadataTools metadataTools,
+                                                       DataManager dataManager,
+                                                       DatatypeRegistry datatypeRegistry,
+                                                       DynAttrMetadata dynAttrMetadata) {
+        return new DynAttrPropertyFilterSupport(messages, messageTools, metadataTools, dataManager, datatypeRegistry,
+                dynAttrMetadata);
     }
 }

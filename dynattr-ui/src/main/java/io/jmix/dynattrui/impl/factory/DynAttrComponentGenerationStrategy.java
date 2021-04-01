@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.dynattrui.impl;
+package io.jmix.dynattrui.impl.factory;
 
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
@@ -29,6 +29,10 @@ import io.jmix.dynattr.AttributeType;
 import io.jmix.dynattr.DynAttrMetadata;
 import io.jmix.dynattr.DynAttrUtils;
 import io.jmix.dynattrui.MsgBundleTools;
+import io.jmix.dynattrui.impl.AttributeDependencies;
+import io.jmix.dynattrui.impl.AttributeOptionsLoader;
+import io.jmix.dynattrui.impl.AttributeRecalculationListener;
+import io.jmix.dynattrui.impl.AttributeValidators;
 import io.jmix.ui.Actions;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.WindowConfig;
@@ -53,7 +57,7 @@ import java.util.*;
 
 import static io.jmix.dynattr.AttributeType.*;
 
-@org.springframework.stereotype.Component("dynat_DynamicAttributeComponentGenerationStrategy")
+@org.springframework.stereotype.Component("dynat_DynAttrComponentGenerationStrategy")
 public class DynAttrComponentGenerationStrategy implements ComponentGenerationStrategy, Ordered {
     protected Messages messages;
     protected UiComponents uiComponents;
@@ -261,8 +265,7 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
         return component;
     }
 
-    @SuppressWarnings("unchecked")
-    protected Component createEntityField(ComponentGenerationContext context, AttributeDefinition attribute) {
+    protected EntityPicker createEntityField(ComponentGenerationContext context, AttributeDefinition attribute) {
         if (attribute.getConfiguration().isLookup()) {
             EntityComboBox entityComboBox = uiComponents.create(EntityComboBox.class);
 

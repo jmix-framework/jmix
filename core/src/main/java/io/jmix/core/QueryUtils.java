@@ -24,6 +24,10 @@ public class QueryUtils {
 
     public static final String CASE_INSENSITIVE_MARKER = "(?i)";
 
+    public static final String QUERY_PARAMETER_REGEXP = "(?:^|[^\\w]):(\\(\\?i\\))?([^\\d][\\w.$]*)";
+
+    public static final String LIKE_REGEXP = "\\slike\\s*" + QUERY_PARAMETER_REGEXP + "\\s*(escape '(\\S+)')?";
+
     /**
      * Escapes a parameter value for a 'like' operation in JPQL query
      *

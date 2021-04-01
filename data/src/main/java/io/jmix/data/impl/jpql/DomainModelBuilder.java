@@ -21,15 +21,15 @@ import io.jmix.core.MessageTools;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.annotation.Internal;
-import io.jmix.data.impl.jpql.model.EntityBuilder;
-import io.jmix.data.impl.jpql.model.JpqlEntityModel;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Range;
+import io.jmix.data.impl.jpql.model.EntityBuilder;
+import io.jmix.data.impl.jpql.model.JpqlEntityModel;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Collection;
 
 /**
@@ -86,6 +86,7 @@ public class DomainModelBuilder {
         Class<?> javaType = prop.getJavaType();
         Range range = prop.getRange();
         switch (type) {
+            case EMBEDDED:
             case COMPOSITION:
             case ASSOCIATION:
                 if (range.isClass()) {

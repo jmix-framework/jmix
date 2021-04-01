@@ -89,6 +89,10 @@ It will have <i>Save and close</i>, <i>Save</i> and <i>Cancel</i> buttons.</html
               code="extendedWindowActions"
               propertyType="BOOLEAN"
               preferences="true"/>
+    <property caption="Keep editor actions at the bottom"
+              code="editorActionBottom"
+              propertyType="BOOLEAN"
+              preferences="true"/>
 
     <source fileExt="xml"
             name="descriptor"/>

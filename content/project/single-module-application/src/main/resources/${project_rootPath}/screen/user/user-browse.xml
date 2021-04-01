@@ -43,6 +43,7 @@
                 <action id="remove" type="remove"/>
                 <action id="showRoleAssignments" type="showRoleAssignments"/>
                 <action id="changePassword" type="changePassword"/>
+                <action id="resetPassword" type="resetPassword"/>
                 <action id="resetRememberMeToken" type="resetRememberMeToken"/>
             </actions>
             <columns>
@@ -62,6 +63,7 @@
                 <popupButton id="additionalActionsBtn" caption="msg://additional" icon="GEARS">
                     <actions>
                         <action id="usersTable.changePassword"/>
+                        <action id="usersTable.resetPassword"/>
                         <action id="usersTable.resetRememberMeToken"/>
                     </actions>
                 </popupButton>

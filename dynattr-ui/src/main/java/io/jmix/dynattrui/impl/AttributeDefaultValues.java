@@ -29,6 +29,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Component("dynat_AttributeDefaultValues")
 public class AttributeDefaultValues {
@@ -59,7 +60,7 @@ public class AttributeDefaultValues {
                 if (attribute.isCollection()) {
                     if (attribute.getDataType() == AttributeType.ENTITY) {
                         //noinspection unchecked
-                        List<Object> defaultEntities = ((Collection<Object>) attribute.getDefaultValue()).stream()
+                        List<Object> defaultEntities = Stream.of(attribute.getDefaultValue())
                                 .map(id -> reloadEntity(attribute, id))
                                 .collect(Collectors.toList());
                         EntityValues.setValue(entity, propertyName, defaultEntities);

@@ -18,7 +18,7 @@ package io.jmix.securityui.screen.resetpassword;
 
 import io.jmix.core.Messages;
 import io.jmix.core.security.UserManager;
-import io.jmix.ui.UiProperties;
+import io.jmix.ui.UiScreenProperties;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.component.Label;
@@ -49,7 +49,7 @@ public class ResetPasswordDialog extends Screen {
     @Autowired
     private Icons icons;
     @Autowired
-    private UiProperties uiProperties;
+    private UiScreenProperties uiProperties;
     @Autowired
     private Label<String> expectedResultLabel;
     @Autowired

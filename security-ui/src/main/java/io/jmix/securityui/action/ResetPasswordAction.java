@@ -23,8 +23,8 @@ import io.jmix.core.security.UserManager;
 import io.jmix.securityui.screen.resetpassword.ResetPasswordDialog;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.ScreenBuilders;
+import io.jmix.ui.UiComponentProperties;
 import io.jmix.ui.UiComponents;
-import io.jmix.ui.UiProperties;
 import io.jmix.ui.accesscontext.UiEntityContext;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.ActionType;
@@ -73,8 +73,8 @@ public class ResetPasswordAction extends SecuredListAction implements Action.Exe
     }
 
     @Autowired
-    protected void setUiProperties(UiProperties properties) {
-        setShortcut(properties.getTableEditShortcut());
+    protected void setUiComponentProperties(UiComponentProperties componentProperties) {
+        setShortcut(componentProperties.getTableEditShortcut());
     }
 
     @Autowired

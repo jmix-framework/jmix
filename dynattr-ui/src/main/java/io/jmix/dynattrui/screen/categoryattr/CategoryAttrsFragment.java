@@ -143,16 +143,14 @@ public class CategoryAttrsFragment extends ScreenFragment {
                 }
                 break;
             case ENUMERATION:
-                defaultValue = attribute.getEnumeration();
+            case STRING:
+                defaultValue = attribute.getDefaultString();
                 break;
             case INTEGER:
                 Integer defaultInt = attribute.getDefaultInt();
                 if (defaultInt != null) {
                     defaultValue = defaultInt.toString();
                 }
-                break;
-            case STRING:
-                defaultValue = attribute.getDefaultString();
                 break;
         }
 

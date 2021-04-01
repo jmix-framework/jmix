@@ -31,6 +31,7 @@ import io.jmix.ui.action.Action;
 import io.jmix.ui.component.Label;
 import io.jmix.ui.component.Table;
 import io.jmix.ui.model.CollectionContainer;
+import io.jmix.ui.model.CollectionLoader;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.model.InstanceLoader;
 import io.jmix.ui.screen.*;
@@ -61,6 +62,8 @@ public class CategoryBrowse extends StandardLookup<Category> {
     protected InstanceContainer<Category> categoryDc;
     @Autowired
     protected InstanceLoader<Category> categoryDl;
+    @Autowired
+    private CollectionLoader<Category> categoriesDl;
 
     @Subscribe
     protected void onBeforeShow(BeforeShowEvent event) {
@@ -101,6 +104,16 @@ public class CategoryBrowse extends StandardLookup<Category> {
         }
 
         return new Table.PlainTextCell(labelContent);
+    }
+
+    @Install(to = "categoriesTable.edit", subject = "afterCommitHandler")
+    private void categoriesTableEditAfterCommitHandler(Category category) {
+        categoriesDl.load();
+    }
+
+    @Install(to = "categoriesTable.create", subject = "afterCommitHandler")
+    private void categoriesTableCreateAfterCommitHandler(Category category) {
+        categoriesDl.load();
     }
 
     @Subscribe(id = "categoriesDc", target = Target.DATA_CONTAINER)

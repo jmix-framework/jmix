@@ -351,7 +351,8 @@ public class ScreensHelper {
     protected List<String> getCompositionAndAssociationFieldNames(MetaClass editedEntityClass, MetaClass targetEntityClass) {
         return editedEntityClass.getProperties().stream()
                 .filter(p -> MetaProperty.Type.ASSOCIATION.equals(p.getType())
-                        || MetaProperty.Type.COMPOSITION.equals(p.getType()))
+                        || MetaProperty.Type.COMPOSITION.equals(p.getType())
+                        || MetaProperty.Type.EMBEDDED.equals(p.getType()))
                 .filter(p -> metadataTools.isAssignableFrom(p.getRange().asClass(), targetEntityClass))
                 .map(MetaProperty::getName)
                 .collect(Collectors.toList());

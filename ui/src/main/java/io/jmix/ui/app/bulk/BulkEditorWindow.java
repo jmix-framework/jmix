@@ -379,7 +379,8 @@ public class BulkEditorWindow<E> extends Screen implements BulkEditorController<
                                               InstanceContainer<?> parent, @Nullable String fqnPrefix) {
         for (MetaProperty metaProperty : metaClass.getProperties()) {
             if (MetaProperty.Type.ASSOCIATION == metaProperty.getType()
-                    || MetaProperty.Type.COMPOSITION == metaProperty.getType()) {
+                    || MetaProperty.Type.COMPOSITION == metaProperty.getType()
+                    || MetaProperty.Type.EMBEDDED == metaProperty.getType()) {
 
                 String fqn = generateFqn(metaProperty, fqnPrefix);
 
@@ -443,6 +444,7 @@ public class BulkEditorWindow<E> extends Screen implements BulkEditorController<
             case ENUM:
                 builder.add(metaProperty.getName());
                 break;
+            case EMBEDDED:
             case ASSOCIATION:
             case COMPOSITION:
                 MetaClass propMetaClass = metaProperty.getRange().asClass();

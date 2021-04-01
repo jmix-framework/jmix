@@ -16,17 +16,24 @@
 
 package io.jmix.data.impl.jpql.generator;
 
+import com.google.common.base.Strings;
 import io.jmix.core.JmixOrder;
+import io.jmix.core.QueryUtils;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.JpqlCondition;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
+import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Component("data_JpqlConditionGenerator")
 @Order(JmixOrder.LOWEST_PRECEDENCE)
 public class JpqlConditionGenerator implements ConditionGenerator {
+
+    public static final Pattern LIKE_PATTERN = Pattern.compile(QueryUtils.LIKE_REGEXP, Pattern.CASE_INSENSITIVE);
 
     @Override
     public boolean supports(ConditionGenerationContext context) {
@@ -62,8 +69,24 @@ public class JpqlConditionGenerator implements ConditionGenerator {
         }
 
         if (parameterValue instanceof String) {
-            return "(?i)%" + parameterValue + "%";
+            String where = jpqlCondition.getWhere();
+            Matcher matcher = LIKE_PATTERN.matcher(where);
+            if (matcher.find()) {
+                String parameterName = matcher.group(2);
+                if (Objects.equals(jpqlCondition.getParameterValuesMap().get(parameterName), parameterValue)) {
+                    boolean escape = !Strings.isNullOrEmpty(matcher.group(3));
+                    if (escape) {
+                        String escapeChar = matcher.group(4);
+                        if (!Strings.isNullOrEmpty(escapeChar)) {
+                            parameterValue = QueryUtils.escapeForLike((String) parameterValue, escapeChar);
+                        }
+                    }
+
+                    return QueryUtils.CASE_INSENSITIVE_MARKER + "%" + parameterValue + "%";
+                }
+            }
         }
+
         return parameterValue;
     }
 }

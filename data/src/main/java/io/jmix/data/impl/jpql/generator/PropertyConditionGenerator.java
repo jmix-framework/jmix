@@ -17,6 +17,7 @@
 package io.jmix.data.impl.jpql.generator;
 
 import io.jmix.core.JmixOrder;
+import io.jmix.core.QueryUtils;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.core.querycondition.PropertyConditionUtils;
@@ -64,11 +65,11 @@ public class PropertyConditionGenerator implements ConditionGenerator {
             switch (propertyCondition.getOperation()) {
                 case PropertyCondition.Operation.CONTAINS:
                 case PropertyCondition.Operation.NOT_CONTAINS:
-                    return "(?i)%" + parameterValue + "%";
+                    return QueryUtils.CASE_INSENSITIVE_MARKER + "%" + parameterValue + "%";
                 case PropertyCondition.Operation.STARTS_WITH:
-                    return "(?i)" + parameterValue + "%";
+                    return QueryUtils.CASE_INSENSITIVE_MARKER + parameterValue + "%";
                 case PropertyCondition.Operation.ENDS_WITH:
-                    return "(?i)%" + parameterValue;
+                    return QueryUtils.CASE_INSENSITIVE_MARKER + "%" + parameterValue;
             }
         }
         return parameterValue;

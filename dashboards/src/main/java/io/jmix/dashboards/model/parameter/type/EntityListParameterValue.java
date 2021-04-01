@@ -16,12 +16,15 @@
 
 package io.jmix.dashboards.model.parameter.type;
 
+import io.jmix.core.metamodel.annotation.JmixEntity;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-public class EntityListParameterValue implements ParameterValue {
+@JmixEntity(name = "dshbrd_EntityListParameterValue")
+public class EntityListParameterValue extends ParameterValue {
     protected List<EntityParameterValue> entityValues;
 
     public EntityListParameterValue() {
@@ -32,17 +35,17 @@ public class EntityListParameterValue implements ParameterValue {
         this.entityValues = entityValues;
     }
 
-    public List<EntityParameterValue> getValue() {
+    public List<EntityParameterValue> getEntityValues() {
         return entityValues;
     }
 
-    public void setValue(List<EntityParameterValue> entityValues) {
+    public void setEntityValues(List<EntityParameterValue> entityValues) {
         this.entityValues = entityValues;
     }
 
     @Override
     public String toString() {
-        return "type: list entities";
+        return "type: entity list";
     }
 
     @Override

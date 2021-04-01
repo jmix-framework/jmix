@@ -16,10 +16,13 @@
 
 package io.jmix.dashboards.model.parameter.type;
 
+import io.jmix.core.metamodel.annotation.JmixEntity;
+
 import java.util.Date;
 import java.util.Objects;
 
-public class DateParameterValue implements ParameterValue {
+@JmixEntity(name = "dshbrd_DateParameterValue")
+public class DateParameterValue extends ParameterValue implements HasPrimitiveValue {
     protected Date value;
 
     public DateParameterValue() {

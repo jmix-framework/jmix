@@ -16,7 +16,6 @@
 
 package io.jmix.dashboardsui.screen.parameter;
 
-import io.jmix.core.common.util.ParamsMap;
 import io.jmix.dashboards.model.DashboardModel;
 import io.jmix.dashboards.model.parameter.Parameter;
 import io.jmix.ui.WindowParam;
@@ -91,22 +90,7 @@ public class ParametersFragment extends ScreenFragment {
 
     @Install(to = "parametersTable.value", subject = "columnGenerator")
     public Component generateValueCell(Parameter parameter) {
-        String valueText = parameter.getParameterValue() == null ? StringUtils.EMPTY : parameter.getParameterValue().toString();
+        String valueText = parameter.getValue() == null ? StringUtils.EMPTY : parameter.getValue().toString();
         return new Table.PlainTextCell(valueText);
-    }
-
-    @Install(to = "parametersTable.create", subject = "afterCommitHandler")
-    private void parametersTableCreateAfterCommitHandler(Parameter parameter) {
-        parametersDc.replaceItem(parameter);
-    }
-
-    @Install(to = "parametersTable.edit", subject = "afterCommitHandler")
-    private void parametersTableEditAfterCommitHandler(Parameter parameter) {
-        parametersDc.replaceItem(parameter);
-    }
-
-    @Install(to = "parametersTable.edit", subject = "screenOptionsSupplier")
-    private ScreenOptions parametersTableEditScreenOptionsSupplier() {
-        return new MapScreenOptions(ParamsMap.of(ParameterEdit.ITEM, parametersTable.getSingleSelected()));
     }
 }

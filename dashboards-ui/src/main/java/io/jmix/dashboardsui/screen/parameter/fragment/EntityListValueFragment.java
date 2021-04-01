@@ -34,9 +34,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-@UiController("dshbrd_EntitiesListValue.fragment")
-@UiDescriptor("entities-list-value-fragment.xml")
-public class EntitiesListValueFragment extends ScreenFragment implements ValueFragment {
+@UiController("dshbrd_EntityListValue.fragment")
+@UiDescriptor("entity-list-value-fragment.xml")
+public class EntityListValueFragment extends ScreenFragment implements ValueFragment {
     @Autowired
     protected KeyValueCollectionContainer entitiesDc;
 
@@ -65,11 +65,11 @@ public class EntitiesListValueFragment extends ScreenFragment implements ValueFr
     protected void initDc(Map<String, Object> params) {
         EntityListParameterValue value = (EntityListParameterValue) params.get(VALUE);
 
-        if (value == null || value.getValue() == null) {
+        if (value == null || value.getEntityValues() == null) {
             value = new EntityListParameterValue();
         }
 
-        for (EntityParameterValue entityValue : value.getValue()) {
+        for (EntityParameterValue entityValue : value.getEntityValues()) {
             KeyValueEntity keyValueEntity = createKeyValueEntity(entityValue);
             entitiesDc.getMutableItems().add(keyValueEntity);
             tableValues.put(keyValueEntity, entityValue);
@@ -121,7 +121,7 @@ public class EntitiesListValueFragment extends ScreenFragment implements ValueFr
             oldValue = null;
         }
 
-        KeyValueEntity newValue = EntitiesListValueFragment.this.createKeyValueEntity(windowValue);
+        KeyValueEntity newValue = EntityListValueFragment.this.createKeyValueEntity(windowValue);
         entitiesDc.getMutableItems().add(newValue);
         tableValues.put(newValue, windowValue);
     }

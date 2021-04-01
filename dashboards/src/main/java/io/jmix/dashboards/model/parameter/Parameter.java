@@ -20,33 +20,31 @@ import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
-import io.jmix.dashboards.model.parameter.type.ParameterValue;
+import io.jmix.dashboards.model.parameter.type.*;
 
 import javax.persistence.Id;
 import java.util.UUID;
 
-@JmixEntity(name = "dshbrd_Parameter", annotatedPropertiesOnly = true)
+@JmixEntity(name = "dshbrd_Parameter")
 public class Parameter {
     @Id
     @JmixGeneratedValue
     @JmixProperty
     protected UUID id;
 
-    @JmixProperty
     @InstanceName
     protected String name;
 
-    @JmixProperty
     protected String alias;
 
-    protected ParameterValue parameterValue;
+    protected ParameterValue value;
 
-    public void setParameterValue(ParameterValue parameterValue) {
-        this.parameterValue = parameterValue;
+    public void setValue(ParameterValue parameterValue) {
+        this.value = parameterValue;
     }
 
-    public ParameterValue getParameterValue() {
-        return parameterValue;
+    public ParameterValue getValue() {
+        return value;
     }
 
     public void setName(String name) {

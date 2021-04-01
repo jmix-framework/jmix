@@ -16,9 +16,12 @@
 
 package io.jmix.dashboards.model.parameter.type;
 
+import io.jmix.core.metamodel.annotation.JmixEntity;
+
 import java.util.Objects;
 
-public class EnumParameterValue implements ParameterValue {
+@JmixEntity(name = "dshbrd_EnumParameterValue")
+public class EnumParameterValue extends ParameterValue implements HasPrimitiveValue {
     protected String enumClassName;
 
     public EnumParameterValue() {
@@ -32,7 +35,11 @@ public class EnumParameterValue implements ParameterValue {
         return enumClassName;
     }
 
-    public void setValue(String enumClassName) {
+    public String getEnumClassName() {
+        return enumClassName;
+    }
+
+    public void setEnumClassName(String enumClassName) {
         this.enumClassName = enumClassName;
     }
 

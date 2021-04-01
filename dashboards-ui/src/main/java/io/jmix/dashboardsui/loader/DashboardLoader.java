@@ -114,7 +114,7 @@ public class DashboardLoader extends AbstractComponentLoader<DashboardImpl> {
         Parameter parameter = metadata.create(Parameter.class);
         parameter.setName(name);
         parameter.setAlias(name);
-        parameter.setParameterValue(createParameterValue(type, value));
+        parameter.setValue(createParameterValue(type, value));
         return parameter;
     }
 

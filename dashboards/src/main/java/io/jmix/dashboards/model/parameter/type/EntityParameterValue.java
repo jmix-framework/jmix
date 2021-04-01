@@ -16,10 +16,12 @@
 
 package io.jmix.dashboards.model.parameter.type;
 
-import java.util.HashMap;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+
 import java.util.Objects;
 
-public class EntityParameterValue implements ParameterValue {
+@JmixEntity(name = "dshbrd_EntityParameterValue")
+public class EntityParameterValue extends ParameterValue {
     protected String metaClassName;
     protected String entityId;
     protected String fetchPlanName;
@@ -31,17 +33,6 @@ public class EntityParameterValue implements ParameterValue {
         this.metaClassName = metaClassName;
         this.entityId = entityId;
         this.fetchPlanName = fetchPlanName;
-    }
-
-    @Override
-    public Object getValue() {
-        return new HashMap<String, String>() {
-            {
-                put("metaClassName", metaClassName);
-                put("entityId", entityId);
-                put("fetchPlanName", fetchPlanName);
-            }
-        };
     }
 
     public String getMetaClassName() {

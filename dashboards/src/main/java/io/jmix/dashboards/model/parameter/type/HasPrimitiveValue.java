@@ -16,9 +16,6 @@
 
 package io.jmix.dashboards.model.parameter.type;
 
-import io.jmix.core.metamodel.annotation.JmixEntity;
-
-@JmixEntity(name = "dshbrd_ParameterValue")
-public abstract class ParameterValue  {
-
+public interface HasPrimitiveValue {
+    Object getValue();
 }

@@ -209,7 +209,7 @@ public class DashboardImpl extends CompositeComponent<VBoxLayout> implements Das
                         Parameter parameter = metadata.create(Parameter.class);
                         parameter.setName(key);
                         parameter.setAlias(key);
-                        parameter.setParameterValue(parameterTransformer.createParameterValue(params.get(key)));
+                        parameter.setValue(parameterTransformer.createParameterValue(params.get(key)));
                         return parameter;
                     })
                     .collect(Collectors.toMap(Parameter::getName, Function.identity()));

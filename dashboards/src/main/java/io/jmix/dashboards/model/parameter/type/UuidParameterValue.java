@@ -16,10 +16,13 @@
 
 package io.jmix.dashboards.model.parameter.type;
 
+import io.jmix.core.metamodel.annotation.JmixEntity;
+
 import java.util.Objects;
 import java.util.UUID;
 
-public class UuidParameterValue implements ParameterValue {
+@JmixEntity(name = "dshbrd_UuidParameterValue")
+public class UuidParameterValue extends ParameterValue implements HasPrimitiveValue {
     protected UUID value;
 
     public UuidParameterValue() {

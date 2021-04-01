@@ -16,7 +16,10 @@
 
 package io.jmix.dashboardsui.transformation.impl;
 
-import io.jmix.core.*;
+import io.jmix.core.DataManager;
+import io.jmix.core.Entity;
+import io.jmix.core.FluentLoader;
+import io.jmix.core.Metadata;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.datatype.impl.EnumClass;
 import io.jmix.dashboards.model.parameter.ParameterType;
@@ -58,12 +61,12 @@ public class ParameterTransformerImpl implements ParameterTransformer {
         } else if (parameterValue instanceof EntityParameterValue) {
             return loadEntity((EntityParameterValue) parameterValue);
         } else {
-            return parameterValue.getValue();
+            return ((HasPrimitiveValue) parameterValue).getValue();
         }
     }
 
     protected List<Entity> loadEntities(EntityListParameterValue parameter) {
-        return parameter.getValue().stream()
+        return parameter.getEntityValues().stream()
                 .map(this::loadEntity)
                 .collect(Collectors.toList());
     }

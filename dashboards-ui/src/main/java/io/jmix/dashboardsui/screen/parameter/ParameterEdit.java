@@ -21,7 +21,6 @@ import io.jmix.dashboards.model.parameter.ParameterType;
 import io.jmix.dashboards.model.parameter.type.*;
 import io.jmix.dashboardsui.screen.parameter.fragment.*;
 import io.jmix.ui.Fragments;
-import io.jmix.ui.WindowParam;
 import io.jmix.ui.component.ComboBox;
 import io.jmix.ui.component.VBoxLayout;
 import io.jmix.ui.model.DataContext;
@@ -30,7 +29,6 @@ import io.jmix.ui.screen.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
-
 import java.util.Map;
 
 import static io.jmix.dashboards.model.parameter.ParameterType.*;
@@ -41,8 +39,6 @@ import static io.jmix.dashboards.model.parameter.ParameterType.*;
 @EditedEntityContainer("parameterDc")
 public class ParameterEdit extends StandardEditor<Parameter> {
 
-    protected final static String ITEM = "item";
-
     @Autowired
     protected InstanceContainer<Parameter> parameterDc;
     @Autowired
@@ -52,16 +48,10 @@ public class ParameterEdit extends StandardEditor<Parameter> {
     @Autowired
     protected Fragments fragments;
 
-    @WindowParam(name = ITEM)
-    protected Parameter parameter;
-
     protected ValueFragment valueFragment;
 
     @Subscribe
     protected void onBeforeShow(BeforeShowEvent event) {
-        if (parameter != null) {
-            parameterDc.setItem(parameter);
-        }
         initParameter();
         typeComboBox.addValueChangeListener(e -> parameterTypeChanged(e.getValue()));
     }
@@ -69,11 +59,11 @@ public class ParameterEdit extends StandardEditor<Parameter> {
     @Subscribe(target = Target.DATA_CONTEXT)
     protected void preCommit(DataContext.PreCommitEvent event) {
         ParameterValue parameterValue = valueFragment == null ? null : valueFragment.getValue();
-        getEditedEntity().setParameterValue(parameterValue);
+        getEditedEntity().setValue(parameterValue);
     }
 
     protected void initParameter() {
-        ParameterValue parameterValue = parameterDc.getItem().getParameterValue();
+        ParameterValue parameterValue = parameterDc.getItem().getValue();
         valueBox.removeAll();
         if (parameterValue instanceof EntityParameterValue) {
             typeComboBox.setValue(ENTITY);
@@ -181,10 +171,10 @@ public class ParameterEdit extends StandardEditor<Parameter> {
         return fragment;
     }
 
-    protected EntitiesListValueFragment openEntitiesListValueFragment(EntityListParameterValue value) {
-        EntitiesListValueFragment fragment = (EntitiesListValueFragment) fragments.create(
+    protected EntityListValueFragment openEntitiesListValueFragment(EntityListParameterValue value) {
+        EntityListValueFragment fragment = (EntityListValueFragment) fragments.create(
                 this,
-                EntitiesListValueFragment.class,
+                EntityListValueFragment.class,
                 new MapScreenOptions(ParamsMap.of(ValueFragment.VALUE, value))
         ).init();
         valueBox.add(fragment.getFragment());

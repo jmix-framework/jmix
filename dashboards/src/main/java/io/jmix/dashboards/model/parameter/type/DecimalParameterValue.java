@@ -16,10 +16,13 @@
 
 package io.jmix.dashboards.model.parameter.type;
 
+import io.jmix.core.metamodel.annotation.JmixEntity;
+
 import java.math.BigDecimal;
 import java.util.Objects;
 
-public class DecimalParameterValue implements ParameterValue {
+@JmixEntity(name = "dshbrd_DecimalParameterValue")
+public class DecimalParameterValue extends ParameterValue implements HasPrimitiveValue {
     BigDecimal value;
 
     public DecimalParameterValue() {

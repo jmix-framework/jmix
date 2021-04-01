@@ -393,7 +393,7 @@ This screen allows editing parameters. A parameter is a key-value pair, where th
 Value* field is a value. The following types of values are available:
 
 - ENTITY
-- LIST_ENTITY
+- ENTITY_LIST
 - ENUM
 - DATE
 - DATETIME
@@ -445,10 +445,8 @@ Dashboard parameter tag has the following attributes:
 
 - `name` - the name of the parameter, required;
 - `value` - the value of the parameter, required;
-- `type` - the type of the value, can take one of the following values: boolean, date, dateTime, decimal, int, long,
-  string, time, uuid.
-
-**Note:** by default, the parameter type is set to string.
+- `type` - the type of the value, required. Can take one of the following values: boolean, date, dateTime, decimal, int, long,
+  string, time, uuid. Type is required.
 
 ### 4.4.1. Loading a dashboard from JSON file <a name='loading-a-dashboard-from-json-file'></a>
 

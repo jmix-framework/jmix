@@ -121,7 +121,7 @@ public class WidgetRepositoryImpl implements WidgetRepository {
                     .findFirst();
             if (fieldValueOpt.isPresent()) {
                 Parameter p = fieldValueOpt.get();
-                Object rawValue = parameterTransformer.transform(p.getParameterValue());
+                Object rawValue = parameterTransformer.transform(p.getValue());
                 try {
                     FieldUtils.writeField(parameterField, widgetFragment, rawValue, true);
                 } catch (IllegalAccessException e) {
@@ -136,19 +136,19 @@ public class WidgetRepositoryImpl implements WidgetRepository {
         Map<String, Object> widgetParams = new HashMap<>();
 
         for (Parameter p : widget.getWidgetFields()) {
-            Object rawValue = parameterTransformer.transform(p.getParameterValue());
+            Object rawValue = parameterTransformer.transform(p.getValue());
             widgetParams.put(getAlias(p), rawValue);
         }
 
         if (widget.getDashboard() != null) {
             for (Parameter p : widget.getDashboard().getParameters()) {
-                Object rawValue = parameterTransformer.transform(p.getParameterValue());
+                Object rawValue = parameterTransformer.transform(p.getValue());
                 widgetParams.put(getAlias(p), rawValue);
             }
         }
 
         for (Parameter p : widget.getParameters()) {
-            Object rawValue = parameterTransformer.transform(p.getParameterValue());
+            Object rawValue = parameterTransformer.transform(p.getValue());
             widgetParams.put(getAlias(p), rawValue);
         }
         return widgetParams;
@@ -167,7 +167,7 @@ public class WidgetRepositoryImpl implements WidgetRepository {
             parameter.setName(parameterField.getName());
             parameter.setAlias(parameterField.getName());
             ParameterValue parameterValue = parameterTransformer.createParameterValue(parameterField, widgetFragment);
-            parameter.setParameterValue(parameterValue);
+            parameter.setValue(parameterValue);
             widget.getWidgetFields().add(parameter);
         }
     }

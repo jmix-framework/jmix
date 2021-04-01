@@ -402,7 +402,7 @@ public abstract class AbstractComponentGenerationStrategy implements ComponentGe
 
     @Nullable
     protected MetaPropertyPath resolveMetaPropertyPath(MetaClass metaClass, String property) {
-        return metaClass.getPropertyPath(property);
+        return metadataTools.resolveMetaPropertyPathOrNull(metaClass, property);
     }
 
     @SuppressWarnings("unchecked")

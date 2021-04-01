@@ -46,7 +46,7 @@ import java.net.URI;
 @org.springframework.stereotype.Component("ui_PropertyFilterComponentGenerationStrategy")
 public class PropertyFilterComponentGenerationStrategy extends AbstractComponentGenerationStrategy implements Ordered {
 
-    protected static final String UNARY_FIELD_STYLENAME = "unary-field";
+    public static final String UNARY_FIELD_STYLENAME = "unary-field";
 
     protected DataAwareComponentsTools dataAwareComponentsTools;
 

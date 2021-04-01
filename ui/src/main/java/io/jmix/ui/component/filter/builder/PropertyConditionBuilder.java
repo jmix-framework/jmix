@@ -26,6 +26,7 @@ import io.jmix.ui.component.Filter;
 import io.jmix.ui.component.HasValue;
 import io.jmix.ui.component.PropertyFilter;
 import io.jmix.ui.component.SupportsCaptionPosition;
+import io.jmix.ui.component.filter.FilterMetadataTools;
 import io.jmix.ui.component.filter.registration.FilterComponents;
 import io.jmix.ui.component.propertyfilter.PropertyFilterSupport;
 import io.jmix.ui.component.propertyfilter.SingleFilterSupport;
@@ -47,16 +48,26 @@ import java.util.function.Predicate;
 @Component("ui_PropertyConditionBuilder")
 public class PropertyConditionBuilder extends AbstractConditionBuilder {
 
-    @Autowired
     protected FilterComponents filterComponents;
-    @Autowired
     protected Messages messages;
-    @Autowired
-    protected PropertyFilterSupport propertyFilterSupport;
-    @Autowired
-    protected SingleFilterSupport singleFilterSupport;
-    @Autowired
     protected MessageTools messageTools;
+    protected PropertyFilterSupport propertyFilterSupport;
+    protected FilterMetadataTools filterMetadataTools;
+    protected SingleFilterSupport singleFilterSupport;
+
+    @Autowired
+    public PropertyConditionBuilder(FilterComponents filterComponents,
+                                    Messages messages,
+                                    MessageTools messageTools,
+                                    PropertyFilterSupport propertyFilterSupport,
+                                    FilterMetadataTools filterMetadataTools, SingleFilterSupport singleFilterSupport) {
+        this.filterComponents = filterComponents;
+        this.messages = messages;
+        this.messageTools = messageTools;
+        this.propertyFilterSupport = propertyFilterSupport;
+        this.filterMetadataTools = filterMetadataTools;
+        this.singleFilterSupport = singleFilterSupport;
+    }
 
     @Override
     public List<FilterCondition> build(Filter filter) {
@@ -64,7 +75,7 @@ public class PropertyConditionBuilder extends AbstractConditionBuilder {
         String query = filter.getDataLoader().getQuery();
         Predicate<MetaPropertyPath> propertiesFilterPredicate = filter.getPropertiesFilterPredicate();
 
-        List<MetaPropertyPath> paths = propertyFilterSupport.getPropertyPaths(filterMetaClass, query,
+        List<MetaPropertyPath> paths = filterMetadataTools.getPropertyPaths(filterMetaClass, query,
                 propertiesFilterPredicate);
 
         return !paths.isEmpty()

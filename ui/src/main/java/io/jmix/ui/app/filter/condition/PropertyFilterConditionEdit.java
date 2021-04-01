@@ -30,6 +30,7 @@ import io.jmix.ui.component.HBoxLayout;
 import io.jmix.ui.component.HasValue;
 import io.jmix.ui.component.PropertyFilter;
 import io.jmix.ui.component.TextField;
+import io.jmix.ui.component.filter.FilterMetadataTools;
 import io.jmix.ui.component.propertyfilter.PropertyFilterSupport;
 import io.jmix.ui.component.propertyfilter.SingleFilterSupport;
 import io.jmix.ui.entity.FilterValueComponent;
@@ -58,6 +59,8 @@ public class PropertyFilterConditionEdit extends FilterConditionEdit<PropertyFil
 
     @Autowired
     protected PropertyFilterSupport propertyFilterSupport;
+    @Autowired
+    protected FilterMetadataTools filterMetadataTools;
     @Autowired
     protected SingleFilterSupport singleFilterSupport;
     @Autowired
@@ -108,7 +111,7 @@ public class PropertyFilterConditionEdit extends FilterConditionEdit<PropertyFil
 
     protected void initPropertyField() {
         if (filterMetaClass != null) {
-            List<MetaPropertyPath> paths = propertyFilterSupport.getPropertyPaths(filterMetaClass, query,
+            List<MetaPropertyPath> paths = filterMetadataTools.getPropertyPaths(filterMetaClass, query,
                     propertiesFilterPredicate);
             Map<String, String> properties = new TreeMap<>();
             for (MetaPropertyPath mpp : paths) {

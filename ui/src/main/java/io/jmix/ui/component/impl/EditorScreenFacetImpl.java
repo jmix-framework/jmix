@@ -131,7 +131,6 @@ public class EditorScreenFacetImpl<E, S extends Screen & EditorScreen<E>>
                 .withField(entityPicker)
                 .withContainer(container)
                 .withAddFirst(addFirst)
-                .withScreenId(screenId)
                 .withOpenMode(openMode)
                 .withOptions(getScreenOptions())
                 .withInitializer(initializer)
@@ -171,7 +170,9 @@ public class EditorScreenFacetImpl<E, S extends Screen & EditorScreen<E>>
         }
 
         if (screenClass != null) {
-            builder.withScreenClass(screenClass);
+            builder = builder.withScreenClass(screenClass);
+        } else {
+            builder.withScreenId(screenId);
         }
 
         return builder;

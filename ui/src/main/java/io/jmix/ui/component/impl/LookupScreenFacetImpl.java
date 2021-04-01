@@ -98,7 +98,6 @@ public class LookupScreenFacetImpl<E, S extends Screen & LookupScreen<E>>
                 .withField(entityPicker)
                 .withListComponent(listComponent)
                 .withContainer(container)
-                .withScreenId(screenId)
                 .withOpenMode(openMode)
                 .withOptions(getScreenOptions())
                 .withSelectValidator(selectValidator)
@@ -128,7 +127,9 @@ public class LookupScreenFacetImpl<E, S extends Screen & LookupScreen<E>>
         }
 
         if (screenClass != null) {
-            builder.withScreenClass(screenClass);
+            builder = builder.withScreenClass(screenClass);
+        } else {
+            builder.withScreenId(screenId);
         }
 
         return builder;

@@ -16,14 +16,19 @@
 
 package facet.screen.screen;
 
+import facet.screen.screen.product_tag.ProductTagBrowse;
+import facet.screen.screen.product_tag.ProductTagEdit;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.Button;
+import io.jmix.ui.component.EditorScreenFacet;
+import io.jmix.ui.component.LookupScreenFacet;
 import io.jmix.ui.component.ScreenFacet;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.Subscribe;
 import io.jmix.ui.screen.UiController;
 import io.jmix.ui.screen.UiDescriptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import test_support.entity.sales.ProductTag;
 
 @UiController
 @UiDescriptor("screen-facet-test-screen.xml")
@@ -38,6 +43,16 @@ public class ScreenFacetTestScreen extends Screen {
     public ScreenFacet<FacetTestScreen> screenIdFacet;
     @Autowired
     public ScreenFacet<FacetTestScreen> screenClassFacet;
+
+    @Autowired
+    public LookupScreenFacet<ProductTag, ProductTagBrowse> screenIdLookupScreen;
+    @Autowired
+    public LookupScreenFacet<ProductTag, ProductTagBrowse> screenClassLookupScreen;
+
+    @Autowired
+    public EditorScreenFacet<ProductTag, ProductTagEdit> screenIdEditScreen;
+    @Autowired
+    public EditorScreenFacet<ProductTag, ProductTagEdit> screenClassEditScreen;
 
     public boolean afterShowListenerTriggered = false;
     public boolean afterCloseListenerTriggered = false;

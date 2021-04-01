@@ -40,6 +40,22 @@
         <screen id="screenClassFacet"
                 screenClass="facet.screen.screen.FacetTestScreen"
                 onButton="button"/>
+
+        <lookupScreen id="screenIdLookupScreen"
+                      entityClass="test_support.entity.sales.ProductTag"
+                      screenId="test_ProductTag.facet_browse"/>
+
+        <lookupScreen id="screenClassLookupScreen"
+                      entityClass="test_support.entity.sales.ProductTag"
+                      screenClass="facet.screen.screen.product_tag.ProductTagBrowse"/>
+
+        <editorScreen id="screenIdEditScreen"
+                      entityClass="test_support.entity.sales.ProductTag"
+                      screenId="test_ProductTag.facet_edit"/>
+
+        <editorScreen id="screenClassEditScreen"
+                      entityClass="test_support.entity.sales.ProductTag"
+                      screenClass="facet.screen.screen.product_tag.ProductTagEdit"/>
     </facets>
     <layout>
         <button id="button"/>

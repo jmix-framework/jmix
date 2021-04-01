@@ -21,7 +21,6 @@ import com.google.common.collect.ImmutableMap;
 import io.jmix.core.JmixOrder;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
-import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.dynattr.AttributeDefinition;
@@ -54,7 +53,6 @@ import static io.jmix.ui.component.factory.PropertyFilterComponentGenerationStra
 @org.springframework.stereotype.Component("dynat_DynAttrPropertyFilterComponentGenerationStrategy")
 public class DynAttrPropertyFilterComponentGenerationStrategy extends DynAttrComponentGenerationStrategy {
 
-    protected MetadataTools metadataTools;
     protected DataAwareComponentsTools dataAwareComponentsTools;
 
     public DynAttrPropertyFilterComponentGenerationStrategy(Messages messages,
@@ -70,13 +68,11 @@ public class DynAttrPropertyFilterComponentGenerationStrategy extends DynAttrCom
                                                             AttributeDependencies attributeDependencies,
                                                             FormatStringsRegistry formatStringsRegistry,
                                                             ApplicationContext applicationContext,
-                                                            MetadataTools metadataTools,
                                                             DataAwareComponentsTools dataAwareComponentsTools) {
         super(messages, uiComponents, dynamicModelMetadata, metadata, msgBundleTools, optionsLoader,
                 attributeValidators, windowConfig, screensHelper, actions, attributeDependencies, formatStringsRegistry,
                 applicationContext);
 
-        this.metadataTools = metadataTools;
         this.dataAwareComponentsTools = dataAwareComponentsTools;
     }
 

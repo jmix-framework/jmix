@@ -17,7 +17,8 @@
 package io.jmix.rest.api.service.filter.data;
 
 
-import io.jmix.core.*;
+import io.jmix.core.MessageTools;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -48,6 +49,7 @@ public class MetaPropertyInfo {
                     this.type = datatype.toString();
                 }
                 break;
+            case EMBEDDED:
             case ASSOCIATION:
             case COMPOSITION:
                 this.type = metaProperty.getRange().asClass().getName();

@@ -81,7 +81,7 @@ public class EntityImportPlanJsonBuilderImpl implements EntityImportPlanJsonBuil
                 }
             } else if (propertyRange.isClass()) {
                 if (Entity.class.isAssignableFrom(propertyType)) {
-                    if (metadataTools.isEmbedded(metaProperty)) {
+                    if (metaProperty.getType() == MetaProperty.Type.EMBEDDED) {
                         MetaClass propertyMetaClass = metadata.getClass(propertyType);
                         JsonElement propertyJsonObject = entry.getValue();
                         if (!propertyJsonObject.isJsonObject()) {

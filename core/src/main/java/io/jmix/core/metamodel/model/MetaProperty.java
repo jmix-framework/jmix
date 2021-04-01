@@ -31,20 +31,32 @@ public interface MetaProperty extends MetadataObject {
      */
     enum Type {
 
-        /** Simple value type, e.g. String, Number */
+        /**
+         * Simple value type, e.g. String, Number
+         */
         DATATYPE,
 
-        /** Enumeration */
+        /**
+         * Enumeration
+         */
         ENUM,
 
-        /** Reference type. Attribute of this type contains a related entity. */
+        /**
+         * Reference type. Attribute of this type contains a related entity.
+         */
         ASSOCIATION,
 
         /**
          * Reference type. Attribute of this type contains a related entity.
          * Composition implies ownership, that is the referenced object exists only as part of the owning entity.
          */
-        COMPOSITION
+        COMPOSITION,
+
+        /**
+         * Reference type. Attribute of this type contains a related entity.
+         * Specifies a persistent field or property of an entity whose value is an instance of an embeddable class. The embeddable class must be annotated as Embeddable.
+         */
+        EMBEDDED
     }
 
     /**

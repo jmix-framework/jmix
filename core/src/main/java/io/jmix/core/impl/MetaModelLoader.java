@@ -24,7 +24,6 @@ import io.jmix.core.MetadataTools;
 import io.jmix.core.Stores;
 import io.jmix.core.annotation.DeletedBy;
 import io.jmix.core.annotation.DeletedDate;
-import io.jmix.core.annotation.Internal;
 import io.jmix.core.annotation.TenantId;
 import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
@@ -868,7 +867,10 @@ public class MetaModelLoader {
     protected void assignPropertyType(AnnotatedElement field, MetaProperty property, Range range) {
         if (range.isClass()) {
             Composition composition = field.getAnnotation(Composition.class);
-            if (composition != null) {
+            Embedded embedded = field.getAnnotation(Embedded.class);
+            if (embedded != null) {
+                ((MetaPropertyImpl) property).setType(MetaProperty.Type.EMBEDDED);
+            } else if (composition != null) {
                 ((MetaPropertyImpl) property).setType(MetaProperty.Type.COMPOSITION);
             } else {
                 ((MetaPropertyImpl) property).setType(MetaProperty.Type.ASSOCIATION);

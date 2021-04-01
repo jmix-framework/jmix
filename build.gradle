@@ -74,6 +74,7 @@ dependencies {
     def bpmVersion = baseVersion
     def coreVersion = baseVersion
     def cubaVersion = baseVersion
+    def dashboardsVersion = baseVersion
     def dataVersion = baseVersion
     def dynattrVersion = baseVersion
     def emailVersion = baseVersion
@@ -119,6 +120,11 @@ dependencies {
 
         api "io.jmix.cuba:jmix-cuba:${snapshotOr(cubaVersion)}"
         api "io.jmix.cuba:jmix-cuba-starter:${snapshotOr(cubaVersion)}"
+
+        api "io.jmix.dashboards:jmix-dashboards:${snapshotOr(dashboardsVersion)}"
+        api "io.jmix.dashboards:jmix-dashboards-starter:${snapshotOr(dashboardsVersion)}"
+        api "io.jmix.dashboards:jmix-dashboards-ui:${snapshotOr(dashboardsVersion)}"
+        api "io.jmix.dashboards:jmix-dashboards-ui-starter:${snapshotOr(dashboardsVersion)}"
 
         api "io.jmix.data:jmix-data:${snapshotOr(dataVersion)}"
         api "io.jmix.data:jmix-data-autoconfigure:${snapshotOr(dataVersion)}"

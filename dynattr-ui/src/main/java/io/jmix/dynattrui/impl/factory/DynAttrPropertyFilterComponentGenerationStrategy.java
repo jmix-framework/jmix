@@ -21,8 +21,10 @@ import com.google.common.collect.ImmutableMap;
 import io.jmix.core.JmixOrder;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.Range;
 import io.jmix.dynattr.AttributeDefinition;
 import io.jmix.dynattr.DynAttrMetadata;
 import io.jmix.dynattr.DynAttrUtils;
@@ -40,6 +42,7 @@ import io.jmix.ui.component.ComponentGenerationContext;
 import io.jmix.ui.component.DateField;
 import io.jmix.ui.component.EntityPicker;
 import io.jmix.ui.component.Field;
+import io.jmix.ui.component.HasDatatype;
 import io.jmix.ui.component.PropertyFilter;
 import io.jmix.ui.component.data.DataAwareComponentsTools;
 import io.jmix.ui.component.factory.PropertyFilterComponentGenerationContext;
@@ -54,6 +57,7 @@ import static io.jmix.ui.component.factory.PropertyFilterComponentGenerationStra
 public class DynAttrPropertyFilterComponentGenerationStrategy extends DynAttrComponentGenerationStrategy {
 
     protected DataAwareComponentsTools dataAwareComponentsTools;
+    protected MetadataTools metadataTools;
 
     public DynAttrPropertyFilterComponentGenerationStrategy(Messages messages,
                                                             UiComponents uiComponents,
@@ -68,12 +72,14 @@ public class DynAttrPropertyFilterComponentGenerationStrategy extends DynAttrCom
                                                             AttributeDependencies attributeDependencies,
                                                             FormatStringsRegistry formatStringsRegistry,
                                                             ApplicationContext applicationContext,
-                                                            DataAwareComponentsTools dataAwareComponentsTools) {
+                                                            DataAwareComponentsTools dataAwareComponentsTools,
+                                                            MetadataTools metadataTools) {
         super(messages, uiComponents, dynamicModelMetadata, metadata, msgBundleTools, optionsLoader,
                 attributeValidators, windowConfig, screensHelper, actions, attributeDependencies, formatStringsRegistry,
                 applicationContext);
 
         this.dataAwareComponentsTools = dataAwareComponentsTools;
+        this.metadataTools = metadataTools;
     }
 
     @Override
@@ -152,6 +158,18 @@ public class DynAttrPropertyFilterComponentGenerationStrategy extends DynAttrCom
         DateField dateField = (DateField) super.createDateField(context, attribute);
         dataAwareComponentsTools.setupDateFormat(dateField, attribute.getMetaProperty());
         return dateField;
+    }
+
+    @Override
+    protected Component createDatatypeField(ComponentGenerationContext context, AttributeDefinition attribute) {
+        Component field = super.createDatatypeField(context, attribute);
+
+        Range range = attribute.getMetaProperty().getRange();
+        if (field instanceof HasDatatype && range.isDatatype()) {
+            ((HasDatatype<?>) field).setDatatype(range.asDatatype());
+        }
+
+        return field;
     }
 
     @Override

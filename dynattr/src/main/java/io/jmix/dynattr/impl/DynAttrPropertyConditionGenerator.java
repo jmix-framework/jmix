@@ -38,6 +38,8 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Date;
 
 @Component("data_DynAttrPropertyConditionGenerator")
@@ -168,10 +170,14 @@ public class DynAttrPropertyConditionGenerator extends PropertyConditionGenerato
             valueFieldName = "intValue";
         } else if (Double.class.isAssignableFrom(javaClass)) {
             valueFieldName = "doubleValue";
+        } else if (BigDecimal.class.isAssignableFrom(javaClass)) {
+            valueFieldName = "decimalValue";
         } else if (Boolean.class.isAssignableFrom(javaClass)) {
             valueFieldName = "booleanValue";
         } else if (Date.class.isAssignableFrom(javaClass)) {
             valueFieldName = "dateValue";
+        } else if (LocalDate.class.isAssignableFrom(javaClass)) {
+            valueFieldName = "dateWithoutTimeValue";
         }
 
         return valueFieldName;

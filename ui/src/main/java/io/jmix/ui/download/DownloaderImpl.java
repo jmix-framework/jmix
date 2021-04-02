@@ -109,7 +109,9 @@ public class DownloaderImpl implements Downloader {
      * @see io.jmix.ui.download.ByteArrayDataProvider
      */
     @Override
-    public void download(DownloadDataProvider dataProvider, String resourceName, final DownloadFormat downloadFormat) {
+    public void download(DownloadDataProvider dataProvider,
+                         String resourceName,
+                         @Nullable DownloadFormat downloadFormat) {
         backgroundWorker.checkUIAccess();
 
         boolean showNewWindow = this.newWindow;
@@ -166,13 +168,34 @@ public class DownloaderImpl implements Downloader {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+    public void download(FileRef fileReference) {
+        DownloadFormat format = DownloadFormat.getByExtension(FilenameUtils.getExtension(fileReference.getFileName()));
+        download(fileReference, format);
+    }
+
+    @Override
     public void download(FileRef fileReference, @Nullable DownloadFormat format) {
         if (fileStorage == null) {
             fileStorage = fileStorageLocator.getDefault();
         }
         String fileName = fileReference.getFileName();
         download(new FileDataProvider(fileReference, fileStorage), fileName, format);
+    }
+
+    @Override
+    public void download(byte[] data, String resourceName) {
+        ByteArrayDataProvider dataProvider = new ByteArrayDataProvider(data,
+                uiProperties.getSaveExportedByteArrayDataThresholdBytes(),
+                coreProperties.getTempDir());
+        download(dataProvider, resourceName);
+    }
+
+    @Override
+    public void download(byte[] data, String resourceName, @Nullable DownloadFormat format) {
+        ByteArrayDataProvider dataProvider = new ByteArrayDataProvider(data,
+                uiProperties.getSaveExportedByteArrayDataThresholdBytes(),
+                coreProperties.getTempDir());
+        download(dataProvider, resourceName, format);
     }
 
     @Override
@@ -191,18 +214,6 @@ public class DownloaderImpl implements Downloader {
 
         // newWindow is set explicitly
         this.useViewList = false;
-    }
-
-    @Override
-    public void download(FileRef fileReference) {
-        DownloadFormat format = DownloadFormat.getByExtension(FilenameUtils.getExtension(fileReference.getFileName()));
-        download(fileReference, format);
-    }
-
-    public void download(byte[] content, String resourceName, DownloadFormat format) {
-        download(new ByteArrayDataProvider(content, uiProperties.getSaveExportedByteArrayDataThresholdBytes(), coreProperties.getTempDir()),
-                resourceName,
-                format);
     }
 
     /**

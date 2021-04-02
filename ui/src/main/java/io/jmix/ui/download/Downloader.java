@@ -64,6 +64,23 @@ public interface Downloader {
     void download(FileRef fileReference, @Nullable DownloadFormat format);
 
     /**
+     * Downloads passed byte array.
+     *
+     * @param data         data in the form of byte array
+     * @param resourceName resource name
+     */
+    void download(byte[] data, String resourceName);
+
+    /**
+     * Downloads passed byte array.
+     *
+     * @param data         data in the form of byte array
+     * @param resourceName resource name
+     * @param format       download format, can be null
+     */
+    void download(byte[] data, String resourceName, @Nullable DownloadFormat format);
+
+    /**
      * Sets a file storage where the files will be downloaded from.
      *
      * @param fileStorage file storage

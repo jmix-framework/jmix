@@ -103,9 +103,7 @@ public class AnnotatedIndexDefinitionProcessor {
     }
 
     protected String createIndexName(JmixEntitySearchIndex indexAnnotation, MetaClass entityMetaClass) {
-        return StringUtils.isNotEmpty(indexAnnotation.indexName())
-                ? indexAnnotation.indexName().toLowerCase()
-                : createIndexName(entityMetaClass);
+        return createIndexName(entityMetaClass); //TODO support custom index name;
     }
 
     protected String createIndexName(MetaClass entityMetaClass) {

@@ -31,14 +31,6 @@ import java.lang.annotation.Target;
 public @interface JmixEntitySearchIndex {
 
     /**
-     * Provides custom name of index.
-     * <p>Index name will be generated if it isn't explicitly specified
-     *
-     * @return name of index
-     */
-    String indexName() default "";
-
-    /**
      * Provides entity that should be indexed using this index definition interface.
      * <p>All properties defined in further field-mapping annotation related to this entity.
      *

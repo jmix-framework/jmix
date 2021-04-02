@@ -15,8 +15,9 @@
  */
 package io.jmix.ui.xml.layout.loader;
 
+import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.component.HasValue;
 import io.jmix.ui.component.PropertyFilter;
 import io.jmix.ui.component.PropertyFilter.Operation;
@@ -65,9 +66,9 @@ public class PropertyFilterLoader extends AbstractSingleFilterComponentLoader<Pr
         if (element.attribute("defaultValue") != null) {
             String defaultValue = element.attributeValue("defaultValue");
             MetaClass metaClass = component.getDataLoader().getContainer().getEntityMetaClass();
-            MetaProperty metaProperty = metaClass.findProperty(component.getProperty());
-            if (metaProperty != null) {
-                Object value = getPropertyFilterSupport().parseDefaultValue(metaProperty,
+            MetaPropertyPath mpp = getMetadataTools().resolveMetaPropertyPathOrNull(metaClass, component.getProperty());
+            if (mpp != null) {
+                Object value = getPropertyFilterSupport().parseDefaultValue(mpp.getMetaProperty(),
                         component.getOperation().getType(), defaultValue);
                 component.setValue(value);
             }
@@ -76,5 +77,9 @@ public class PropertyFilterLoader extends AbstractSingleFilterComponentLoader<Pr
 
     protected PropertyFilterSupport getPropertyFilterSupport() {
         return applicationContext.getBean(PropertyFilterSupport.class);
+    }
+
+    protected MetadataTools getMetadataTools() {
+        return applicationContext.getBean(MetadataTools.class);
     }
 }

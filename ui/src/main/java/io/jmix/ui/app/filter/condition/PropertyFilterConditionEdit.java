@@ -19,8 +19,8 @@ package io.jmix.ui.app.filter.condition;
 import com.google.common.base.Strings;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.querycondition.PropertyConditionUtils;
 import io.jmix.ui.UiComponents;
@@ -65,6 +65,8 @@ public class PropertyFilterConditionEdit extends FilterConditionEdit<PropertyFil
     protected SingleFilterSupport singleFilterSupport;
     @Autowired
     protected UiComponents uiComponents;
+    @Autowired
+    protected MetadataTools metadataTools;
 
     @Autowired
     protected InstanceContainer<PropertyFilterCondition> filterConditionDc;
@@ -148,9 +150,10 @@ public class PropertyFilterConditionEdit extends FilterConditionEdit<PropertyFil
             if (getEditedEntity().getValueComponent() != null
                     && getEditedEntity().getValueComponent().getDefaultValue() != null) {
                 String modelDefaultValue = getEditedEntity().getValueComponent().getDefaultValue();
-                MetaProperty metaProperty = filterMetaClass.findProperty(getEditedEntity().getProperty());
-                if (metaProperty != null) {
-                    Object defaultValue = propertyFilterSupport.parseDefaultValue(metaProperty,
+                MetaPropertyPath mpp = metadataTools.resolveMetaPropertyPathOrNull(filterMetaClass,
+                        getEditedEntity().getProperty());
+                if (mpp != null) {
+                    Object defaultValue = propertyFilterSupport.parseDefaultValue(mpp.getMetaProperty(),
                             getEditedEntity().getOperation().getType(), modelDefaultValue);
                     defaultValueField.setValue(defaultValue);
                 }
@@ -210,11 +213,11 @@ public class PropertyFilterConditionEdit extends FilterConditionEdit<PropertyFil
         if (defaultValueField != null
                 && getEditedEntity().getProperty() != null
                 && getEditedEntity().getOperation() != null) {
-            MetaProperty metaProperty = filterMetaClass.findProperty(getEditedEntity().getProperty());
-
+            MetaPropertyPath mpp = metadataTools.resolveMetaPropertyPathOrNull(filterMetaClass,
+                    getEditedEntity().getProperty());
             String modelDefaultValue = null;
-            if (metaProperty != null) {
-                modelDefaultValue = propertyFilterSupport.formatDefaultValue(metaProperty,
+            if (mpp != null) {
+                modelDefaultValue = propertyFilterSupport.formatDefaultValue(mpp.getMetaProperty(),
                         getEditedEntity().getOperation().getType(), defaultValueField.getValue());
             }
 

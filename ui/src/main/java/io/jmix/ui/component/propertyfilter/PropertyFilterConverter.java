@@ -18,9 +18,10 @@ package io.jmix.ui.component.propertyfilter;
 
 import com.google.common.base.Strings;
 import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.component.Filter;
 import io.jmix.ui.component.HasValue;
@@ -51,6 +52,8 @@ public class PropertyFilterConverter
     protected UiComponents uiComponents;
     @Autowired
     protected Metadata metadata;
+    @Autowired
+    protected MetadataTools metadataTools;
 
     public PropertyFilterConverter(Filter filter) {
         super(filter);
@@ -151,10 +154,10 @@ public class PropertyFilterConverter
         Object value = null;
         if (model.getProperty() != null && model.getOperation() != null) {
             MetaClass metaClass = filter.getDataLoader().getContainer().getEntityMetaClass();
-            MetaProperty metaProperty = metaClass.findProperty(model.getProperty());
-            if (metaProperty != null) {
-                value = propertyFilterSupport.parseDefaultValue(metaProperty, model.getOperation().getType(),
-                        modelDefaultValue);
+            MetaPropertyPath mpp = metadataTools.resolveMetaPropertyPathOrNull(metaClass, model.getProperty());
+            if (mpp != null) {
+                value = propertyFilterSupport.parseDefaultValue(mpp.getMetaProperty(),
+                        model.getOperation().getType(), modelDefaultValue);
             }
         }
 
@@ -176,11 +179,10 @@ public class PropertyFilterConverter
     protected String convertDefaultValueToModel(PropertyFilter component) {
         Object defaultValue = component.getValue();
         MetaClass metaClass = filter.getDataLoader().getContainer().getEntityMetaClass();
-        MetaProperty metaProperty = metaClass.findProperty(component.getProperty());
-
+        MetaPropertyPath mpp = metadataTools.resolveMetaPropertyPathOrNull(metaClass, component.getProperty());
         String modelDefaultValue = null;
-        if (metaProperty != null) {
-            modelDefaultValue = propertyFilterSupport.formatDefaultValue(metaProperty,
+        if (mpp != null) {
+            modelDefaultValue = propertyFilterSupport.formatDefaultValue(mpp.getMetaProperty(),
                     component.getOperation().getType(), defaultValue);
         }
 

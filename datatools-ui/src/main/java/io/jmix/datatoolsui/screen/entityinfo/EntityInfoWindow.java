@@ -19,6 +19,7 @@ package io.jmix.datatoolsui.screen.entityinfo;
 import io.jmix.core.*;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.data.PersistenceHints;
 import io.jmix.datatools.EntitySqlGenerationService;
 import io.jmix.datatoolsui.DatatoolsUiProperties;
 import io.jmix.datatoolsui.screen.entityinfo.model.InfoValue;
@@ -222,6 +223,7 @@ public class EntityInfoWindow extends Screen {
         DataManager dataManager = getApplicationContext().getBean(DataManager.class);
         return dataManager.load(entity.getClass())
                 .id(id)
+                .hint(PersistenceHints.SOFT_DELETION, false)
                 .fetchPlan(fetchPlan)
                 .one();
     }

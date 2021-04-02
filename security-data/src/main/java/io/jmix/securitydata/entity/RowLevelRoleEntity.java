@@ -22,6 +22,7 @@ import io.jmix.core.annotation.DeletedDate;
 import io.jmix.core.annotation.TenantId;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.OnDelete;
+import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.Composition;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
@@ -41,6 +42,7 @@ import java.util.UUID;
 @Table(name = "SEC_ROW_LEVEL_ROLE")
 @Entity(name = "sec_RowLevelRoleEntity")
 @JmixEntity
+@SystemLevel
 public class RowLevelRoleEntity implements Serializable {
     private static final long serialVersionUID = -1587602133446436634L;
 

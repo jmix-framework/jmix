@@ -101,7 +101,6 @@ public class PropertyFilterImpl<V> extends AbstractSingleFilterComponent<V> impl
 
             if (operation != null) {
                 operationSelector.setCaption(getOperationCaption(operation));
-                updateCaption(caption);
             }
         }
     }
@@ -115,6 +114,7 @@ public class PropertyFilterImpl<V> extends AbstractSingleFilterComponent<V> impl
         super.setDataLoader(dataLoader);
 
         initOperationSelectorActions(operationSelector);
+        updateCaption(caption);
     }
 
     @Override
@@ -135,6 +135,7 @@ public class PropertyFilterImpl<V> extends AbstractSingleFilterComponent<V> impl
         }
 
         initOperationSelectorActions(operationSelector);
+        updateCaption(caption);
     }
 
     @Override

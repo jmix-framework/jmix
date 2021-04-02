@@ -97,7 +97,7 @@ public class SendingMessageBrowser extends Screen {
 
     @Subscribe
     protected void onAfterInit(AfterInitEvent event) {
-        fg.add(buildContentTextField(), 0, 3);
+        fg.add(buildContentTextField(), 0, 5);
 
         sendingMessageDc.addItemChangeListener(e -> selectedItemChanged(e.getItem()));
     }

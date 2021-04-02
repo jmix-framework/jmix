@@ -42,7 +42,6 @@ import java.util.UUID;
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "DISCRIMINATOR", discriminatorType = DiscriminatorType.INTEGER)
 @DiscriminatorValue("0")
-@SystemLevel
 public class Category implements Serializable {
     private static final long serialVersionUID = 7160259865207148541L;
 

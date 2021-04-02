@@ -289,7 +289,7 @@ public class CommonAttributeDefinition implements AttributeDefinition {
 
     @Override
     public boolean isReadOnly() {
-        return false;
+        return !Strings.isNullOrEmpty(this.attribute.getConfiguration().getRecalculationScript());
     }
 
     @Override

@@ -21,7 +21,6 @@ import com.google.common.collect.ImmutableMap;
 import io.jmix.core.JmixOrder;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
-import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.Range;
@@ -57,7 +56,6 @@ import static io.jmix.ui.component.factory.PropertyFilterComponentGenerationStra
 public class DynAttrPropertyFilterComponentGenerationStrategy extends DynAttrComponentGenerationStrategy {
 
     protected DataAwareComponentsTools dataAwareComponentsTools;
-    protected MetadataTools metadataTools;
 
     public DynAttrPropertyFilterComponentGenerationStrategy(Messages messages,
                                                             UiComponents uiComponents,
@@ -72,14 +70,12 @@ public class DynAttrPropertyFilterComponentGenerationStrategy extends DynAttrCom
                                                             AttributeDependencies attributeDependencies,
                                                             FormatStringsRegistry formatStringsRegistry,
                                                             ApplicationContext applicationContext,
-                                                            DataAwareComponentsTools dataAwareComponentsTools,
-                                                            MetadataTools metadataTools) {
+                                                            DataAwareComponentsTools dataAwareComponentsTools) {
         super(messages, uiComponents, dynamicModelMetadata, metadata, msgBundleTools, optionsLoader,
                 attributeValidators, windowConfig, screensHelper, actions, attributeDependencies, formatStringsRegistry,
                 applicationContext);
 
         this.dataAwareComponentsTools = dataAwareComponentsTools;
-        this.metadataTools = metadataTools;
     }
 
     @Override

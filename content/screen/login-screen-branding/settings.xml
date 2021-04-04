@@ -24,6 +24,9 @@
         <![CDATA[<html>A login screen with controls located on the left and branding wallpaper on the right.</html>]]>
     </description>
 
+    <locMessages key="caption">
+        <message lang="default">Sample</message>
+    </locMessages>
     <locMessages key="submitAction">
         <message lang="default">Log in</message>
     </locMessages>

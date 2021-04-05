@@ -868,7 +868,8 @@ public class MetaModelLoader {
         if (range.isClass()) {
             Composition composition = field.getAnnotation(Composition.class);
             Embedded embedded = field.getAnnotation(Embedded.class);
-            if (embedded != null) {
+            EmbeddedId embeddedId = field.getAnnotation(EmbeddedId.class);
+            if (embedded != null || embeddedId != null) {
                 ((MetaPropertyImpl) property).setType(MetaProperty.Type.EMBEDDED);
             } else if (composition != null) {
                 ((MetaPropertyImpl) property).setType(MetaProperty.Type.COMPOSITION);

@@ -381,22 +381,13 @@ public class MetadataTools {
      * Determine whether the given property denotes an embedded object.
      *
      * @see Embedded
+     * @see EmbeddedId
      */
     public boolean isEmbedded(MetaProperty metaProperty) {
         Objects.requireNonNull(metaProperty, "metaProperty is null");
         return metaProperty.getAnnotatedElement() != null
-                && metaProperty.getAnnotatedElement().isAnnotationPresent(Embedded.class);
-    }
-
-    /**
-     * Determine whether the given property denotes an embedded id object.
-     *
-     * @see EmbeddedId
-     */
-    public boolean isEmbeddedId(MetaProperty metaProperty) {
-        Objects.requireNonNull(metaProperty, "metaProperty is null");
-        return metaProperty.getAnnotatedElement() != null
-                && metaProperty.getAnnotatedElement().isAnnotationPresent(EmbeddedId.class);
+                && (metaProperty.getAnnotatedElement().isAnnotationPresent(Embedded.class) ||
+                metaProperty.getAnnotatedElement().isAnnotationPresent(EmbeddedId.class));
     }
 
     /**

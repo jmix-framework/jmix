@@ -127,20 +127,20 @@ public class CollectionContainerImpl<E>
         IndexKey indexKey;
         if (entityOrId instanceof Entity) {
             // if an entity instance is passed instead of id, check if the entity is of valid class and extract id
-            Object entity = entityOrId;
-            if (!entityMetaClass.getJavaClass().isAssignableFrom(entity.getClass())) {
-                throw new IllegalArgumentException("Invalid entity class: " + entity.getClass());
-            }
-            if (EntitySystemAccess.isEmbeddable(entity)) {
+            if (EntitySystemAccess.isEmbeddable(entityOrId)) {
                 indexKey = IndexKey.of(entityOrId);
             } else {
-                indexKey = IndexKey.ofEntity(entity);
+                if (!entityMetaClass.getJavaClass().isAssignableFrom(entityOrId.getClass())) {
+                    throw new IllegalArgumentException("Invalid entity class: " + entityOrId.getClass());
+                }
+                indexKey = IndexKey.ofEntity(entityOrId);
             }
+
             Integer idx = idMap.get(indexKey);
             if (idx != null) {
                 return idx;
             } else {
-                idx = idMap.get(IndexKey.of(entity));
+                idx = idMap.get(IndexKey.of(entityOrId));
                 return idx != null ? idx : -1;
             }
         } else {

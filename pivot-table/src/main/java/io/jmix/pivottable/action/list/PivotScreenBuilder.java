@@ -422,7 +422,7 @@ public class PivotScreenBuilder {
         MetaProperty metaProperty = metaClass.getProperty(primaryKey);
         // in this case we should use `metaProperty.getJavaType()` because
         // we need to get class type of EmbeddedId property and then get MetaClass of it
-        return metadataTools.isEmbeddedId(metaProperty) ? metadata.getClass(metaProperty.getJavaType()) : null;
+        return metadataTools.isEmbedded(metaProperty) ? metadata.getClass(metaProperty.getJavaType()) : null;
     }
 
     protected List<String> removeNonExistingProperties(List<String> properties, MetaClass metaClass, FetchPlan fetchPlan) {

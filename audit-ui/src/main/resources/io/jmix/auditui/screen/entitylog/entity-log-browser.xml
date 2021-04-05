@@ -122,12 +122,11 @@
                           spacing="true"
                           height="100%"
                           width="100%">
-                        <!-- TODO filter
-                        filter applyTo="entityLogTable"
+                        <filter
                                 collapsed="true"
                                 dataLoader="entityLogDl">
                             <properties include=".*"/>
-                        </filter -->
+                        </filter>
                         <table id="entityLogTable" width="100%" dataContainer="entityLogDc">
                             <columns>
                                 <column id="eventTs" caption="msg://when">

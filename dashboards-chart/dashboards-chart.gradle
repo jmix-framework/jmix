@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-rootProject.name = 'jmix-dashboards'
+apply plugin: 'groovy'
+apply plugin: 'io.jmix'
 
-include 'dashboards'
-include 'dashboards-starter'
-include 'dashboards-ui'
-include 'dashboards-ui-starter'
-include 'dashboards-chart'
-include 'dashboards-chart-starter'
+group = 'io.jmix.dashboards'
+archivesBaseName = 'jmix-dashboards-chart'
 
-rootProject.children.each { p1 ->
-    p1.buildFileName = "${p1.name}.gradle"
+dependencies {
+    api platform("io.jmix.bom:jmix-bom:$bomVersion")
+
+    api project(':dashboards-ui')
+
+    api 'io.jmix.ui:jmix-charts'
+    api 'io.jmix.reports:jmix-reports-ui'
 }
-
-

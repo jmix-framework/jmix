@@ -14,17 +14,11 @@
  * limitations under the License.
  */
 
-rootProject.name = 'jmix-dashboards'
+group = 'io.jmix.dashboards'
+archivesBaseName = 'jmix-dashboards-chart-starter'
 
-include 'dashboards'
-include 'dashboards-starter'
-include 'dashboards-ui'
-include 'dashboards-ui-starter'
-include 'dashboards-chart'
-include 'dashboards-chart-starter'
+dependencies {
+    api project(':dashboards-chart')
 
-rootProject.children.each { p1 ->
-    p1.buildFileName = "${p1.name}.gradle"
+    implementation 'org.springframework.boot:spring-boot-autoconfigure'
 }
-
-

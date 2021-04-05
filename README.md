@@ -32,6 +32,9 @@ summarized information, data sets, charts and can be accessible only by authoriz
 A dashboard consists of widgets — individual elements based on a fragment. An integrated set of layouts allows positioning
 widgets on a dashboard according to your needs. Use responsive layouts to adapt your dashboards to different displays.
 
+You can add your widgets or use the ```dashboards-chart``` module that provides an additional chart widget.
+Chart widget is based on the report which has a template with output type Chart.
+
 # 2. Installation <a name="installation"></a>
 
 The add-on can be added to your project using dependencies :
@@ -39,6 +42,11 @@ The add-on can be added to your project using dependencies :
 ```groovy
     implementation 'io.jmix.dashboards:jmix-dashboards-starter'
     implementation 'io.jmix.dashboards:jmix-dashboards-ui-starter'
+```
+
+Add the following dependency to use the Chart widget from ```dashboards-chart``` module:
+```groovy
+    implementation 'io.jmix.dashboards:jmix-dashboards-chart-starter'
 ```
 
 # 3.Configuration <a name="configuration"></a>
@@ -232,7 +240,7 @@ The following fields are available to set:
 
 - *Refresh period (sec)* - a time period in seconds for the refresh a dashboard UI.
 - *Assistant bean name* - an optional reference to a Spring bean class that should be used for customizing the
-  dashboard (assistance bean must have `prototype` bean scope).
+  dashboard (assistant bean must have `prototype` bean scope).
 - *Group* - a dashboard group.
 - *Available for all users* - a flag which defines the user access to the dashboard. If set to `false`, then only the
   user who created the dashboard can view and edit it. Otherwise, all users can view and edit the dashboard.
@@ -253,9 +261,22 @@ the canvas, the corresponding element will be added to the canvas.
 By default, there are no widgets in this tab. You can add widgets as described
 in [Adding Widget Types](#adding-widget-types) section. Drag an element from the palette for adding it on the canvas,
 and the widget editor will be opened in a dialog window. It is possible to make the widget a template (in this case, it
-is added to the tab *Widget Templates*).
+is added to the tab *Widget templates*).
 
 ![palette-widgets](img/palette-widgets.png)
+
+If the ```dashboards-chart``` module is used in the project then the Chart widget is available in this tab:
+
+![palette-widgets](img/chart-widget.png)
+
+After the Chart widget is added to the layout on the canvas a widget editor is opened:
+
+![palette-widgets](img/chart-widget-editor.png)
+
+Chart widget has specific settings:
+- **Report** - a report which contains a chart template.
+- **Template** - a chart template.
+- **Refresh automatically** - if checked then a chart will be updated automatically on dashboard update.
 
 #### 4.1.3.2 Layouts <a name='layouts'></a>
 
@@ -289,8 +310,8 @@ canvas.
 
 ![canvas-drag-grid-layout](img/canvas-drag-grid-layout.png)
 
-When dragging the *Grid Layout* to the canvas the dialog will open where you can set the number of rows and columns.
-When dragging a widget, the *Widget editor* dialog will open. When dragging the *Responsive Layout* the dialog with
+When dragging the *Grid layout* to the canvas the dialog will open where you can set the number of rows and columns.
+When dragging a widget, the *Widget editor* dialog will open. When dragging the *Responsive layout* the dialog with
 settings will open.
 
 Example of the dashboard with widgets:

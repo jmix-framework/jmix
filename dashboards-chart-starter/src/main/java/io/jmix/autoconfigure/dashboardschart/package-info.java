@@ -13,18 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+@Internal
+package io.jmix.autoconfigure.dashboardschart;
 
-rootProject.name = 'jmix-dashboards'
-
-include 'dashboards'
-include 'dashboards-starter'
-include 'dashboards-ui'
-include 'dashboards-ui-starter'
-include 'dashboards-chart'
-include 'dashboards-chart-starter'
-
-rootProject.children.each { p1 ->
-    p1.buildFileName = "${p1.name}.gradle"
-}
-
-
+import io.jmix.core.annotation.Internal;

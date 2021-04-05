@@ -14,17 +14,13 @@
  * limitations under the License.
  */
 
-rootProject.name = 'jmix-dashboards'
+package io.jmix.autoconfigure.dashboardschart;
 
-include 'dashboards'
-include 'dashboards-starter'
-include 'dashboards-ui'
-include 'dashboards-ui-starter'
-include 'dashboards-chart'
-include 'dashboards-chart-starter'
+import io.jmix.dashboardschart.DashboardsChartConfiguration;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 
-rootProject.children.each { p1 ->
-    p1.buildFileName = "${p1.name}.gradle"
+@Configuration
+@Import({DashboardsChartConfiguration.class})
+public class DashboardsChartAutoConfiguration {
 }
-
-

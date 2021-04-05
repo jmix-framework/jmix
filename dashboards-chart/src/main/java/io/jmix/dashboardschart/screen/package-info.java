@@ -14,17 +14,7 @@
  * limitations under the License.
  */
 
-rootProject.name = 'jmix-dashboards'
+@NonNullApi
+package io.jmix.dashboardschart.screen;
 
-include 'dashboards'
-include 'dashboards-starter'
-include 'dashboards-ui'
-include 'dashboards-ui-starter'
-include 'dashboards-chart'
-include 'dashboards-chart-starter'
-
-rootProject.children.each { p1 ->
-    p1.buildFileName = "${p1.name}.gradle"
-}
-
-
+import org.springframework.lang.NonNullApi;

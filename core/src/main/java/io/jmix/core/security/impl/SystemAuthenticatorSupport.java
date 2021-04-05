@@ -73,24 +73,6 @@ public abstract class SystemAuthenticatorSupport {
         return null;
     }
 
-    @Nullable
-    protected Authentication peekAuthentication() {
-        Deque<Authentication> stack = threadLocalStack.get();
-        if (stack != null) {
-            Authentication authentication = stack.peek();
-            if (authentication != null) {
-                if (authentication == NULL_AUTHENTICATION) {
-                    return null;
-                } else {
-                    return authentication;
-                }
-            }
-        } else {
-            log.warn("Stack does not exist. Check correctness of begin/end invocations.");
-        }
-        return null;
-    }
-
     protected static class NullAuthentication extends SystemAuthenticationToken {
 
         private static final long serialVersionUID = 5437664860036209641L;

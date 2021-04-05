@@ -82,6 +82,7 @@ public interface SystemAuthenticator {
     <T> T withSystem(AuthenticatedOperation<T> operation);
 
     interface AuthenticatedOperation<T> {
+        @Nullable
         T call();
     }
 }

@@ -20,13 +20,11 @@ import io.jmix.core.AccessManager;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.dynattr.AttributeDefinition;
-import io.jmix.dynattr.AttributeType;
-import io.jmix.dynattr.DynAttrMetadata;
-import io.jmix.dynattr.DynAttrQueryHints;
+import io.jmix.dynattr.*;
+import io.jmix.ui.accesscontext.UiEntityAttributeContext;
+import io.jmix.ui.accesscontext.UiEntityContext;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.Frame;
-import io.jmix.ui.accesscontext.UiEntityContext;
 import io.jmix.ui.model.*;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.UiControllerUtils;
@@ -108,7 +106,7 @@ public abstract class BaseEmbeddingStrategy implements EmbeddingStrategy {
     protected List<AttributeDefinition> findVisibleAttributes(MetaClass entityMetaClass, String windowId, String componentId) {
         return dynAttrMetadata.getAttributes(entityMetaClass).stream()
                 .filter(attr -> isVisibleAttribute(attr, windowId, componentId))
-                .filter(this::checkPermissions)
+                .filter(attr -> checkPermissions(attr, entityMetaClass))
                 .sorted(Comparator.comparingInt(AttributeDefinition::getOrderNo))
                 .collect(Collectors.toList());
     }
@@ -118,15 +116,23 @@ public abstract class BaseEmbeddingStrategy implements EmbeddingStrategy {
         return screens.contains(screen) || screens.contains(screen + "#" + componentId);
     }
 
-    protected boolean checkPermissions(AttributeDefinition attributeDefinition) {
-        if (attributeDefinition.getDataType() != AttributeType.ENTITY) {
+    protected boolean checkPermissions(AttributeDefinition attributeDefinition, MetaClass entityMetaClass) {
+        UiEntityAttributeContext uiEntityAttributeContext =
+                new UiEntityAttributeContext(metadataTools.resolveMetaPropertyPath(entityMetaClass,
+                        DynAttrUtils.getPropertyFromAttributeCode(attributeDefinition.getCode())));
+
+        accessManager.applyRegisteredConstraints(uiEntityAttributeContext);
+
+        if (uiEntityAttributeContext.canView()) {
+            if (attributeDefinition.getDataType() == AttributeType.ENTITY) {
+                MetaClass referenceEntityClass = metadata.getClass(attributeDefinition.getJavaType());
+                UiEntityContext uiEntityContext = new UiEntityContext(referenceEntityClass);
+                accessManager.applyRegisteredConstraints(uiEntityContext);
+                return uiEntityContext.isViewPermitted();
+            }
             return true;
         }
 
-        MetaClass entityClass = metadata.getClass(attributeDefinition.getJavaType());
-
-        UiEntityContext uiEntityContext = new UiEntityContext(entityClass);
-        accessManager.applyRegisteredConstraints(uiEntityContext);
-        return uiEntityContext.isViewPermitted();
+        return false;
     }
 }

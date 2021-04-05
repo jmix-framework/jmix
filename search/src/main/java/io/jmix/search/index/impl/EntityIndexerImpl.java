@@ -28,7 +28,7 @@ import io.jmix.search.index.EntityIndexer;
 import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.index.mapping.MappingFieldDescriptor;
-import io.jmix.search.index.queue.entity.QueueItem;
+import io.jmix.search.index.queue.entity.IndexingQueueItem;
 import io.jmix.search.utils.PropertyTools;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
@@ -66,29 +66,29 @@ public class EntityIndexerImpl implements EntityIndexer {
     protected ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public void indexQueueItems(Collection<QueueItem> queueItems) {
+    public void indexQueueItems(Collection<IndexingQueueItem> queueItems) {
         log.debug("Index Queue Items: {}", queueItems);
         Map<MetaClass, Map<EntityOp, Set<String>>> indexScope = new HashMap<>();
         queueItems.forEach(queueItem -> {
             MetaClass metaClass = metadata.getClass(queueItem.getEntityName());
             Map<EntityOp, Set<String>> changesByClass = indexScope.computeIfAbsent(metaClass, k -> new HashMap<>());
-            Set<String> changesByChangeType = changesByClass.computeIfAbsent(EntityOp.fromId(queueItem.getChangeType()), k -> new HashSet<>());
-            changesByChangeType.add(queueItem.getEntityId());
+            Set<String> changesByOperation = changesByClass.computeIfAbsent(EntityOp.fromId(queueItem.getOperation()), k -> new HashSet<>());
+            changesByOperation.add(queueItem.getEntityId());
         });
 
         indexScope.forEach(
                 (metaClass, changes) -> changes.forEach(
-                        (entityChangeType, pks) -> indexEntitiesByPks(metaClass, pks, entityChangeType)
+                        (operation, pks) -> indexEntitiesByPks(metaClass, pks, operation)
                 )
         );
     }
 
-    public void indexEntityByPk(MetaClass metaClass, String entityPk, EntityOp changeType) {
-        indexEntitiesByPks(metaClass, Collections.singletonList(entityPk), changeType);
+    public void indexEntityByPk(MetaClass metaClass, String entityPk, EntityOp operation) {
+        indexEntitiesByPks(metaClass, Collections.singletonList(entityPk), operation);
     }
 
-    public void indexEntitiesByPks(MetaClass metaClass, Collection<String> entityPks, EntityOp changeType) {
-        log.debug("Index entities: Class={}, Change Type={}, Pks={}", metaClass, changeType, entityPks);
+    public void indexEntitiesByPks(MetaClass metaClass, Collection<String> entityPks, EntityOp operation) {
+        log.debug("Index entities: Class={}, Operation={}, Pks={}", metaClass, operation, entityPks);
         IndexConfiguration indexConfiguration = indexConfigurationManager.getIndexConfigurationByEntityName(metaClass.getName());
         if (indexConfiguration == null) {
             log.error("Index Definition not found for entity '{}'", metaClass);
@@ -96,12 +96,12 @@ public class EntityIndexerImpl implements EntityIndexer {
         }
         log.debug("Mapping Fields for entity '{}': {}", metaClass, indexConfiguration.getMapping().getFields());
 
-        if (EntityOp.UPDATE.equals(changeType) || EntityOp.CREATE.equals(changeType)) {
+        if (EntityOp.UPDATE.equals(operation) || EntityOp.CREATE.equals(operation)) {
             indexDocuments(indexConfiguration, metaClass, entityPks);
-        } else if (EntityOp.DELETE.equals(changeType)) {
+        } else if (EntityOp.DELETE.equals(operation)) {
             deleteDocuments(indexConfiguration, entityPks);
         } else {
-            throw new UnsupportedOperationException("Entity Change Type '" + changeType + "' is not supported");
+            throw new UnsupportedOperationException("Entity operation '" + operation + "' is not supported");
         }
     }
 

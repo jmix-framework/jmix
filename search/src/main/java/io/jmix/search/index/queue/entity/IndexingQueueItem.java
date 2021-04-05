@@ -29,11 +29,11 @@ import java.util.Date;
 import java.util.UUID;
 
 @JmixEntity
-@Table(name = "SEARCH_QUEUE", indexes = {
-        @Index(name = "IDX_SEARCH_QUEUE_ENTITY_NAME", columnList = "ENTITY_NAME")
+@Table(name = "SEARCH_INDEXING_QUEUE", indexes = {
+        @Index(name = "IDX_SEARCH_IDXNG_QUEUE_E_NAME", columnList = "ENTITY_NAME")
 })
-@Entity(name = "search_Queue")
-public class QueueItem {
+@Entity(name = "search_IndexingQueue")
+public class IndexingQueueItem {
 
     @JmixGeneratedValue
     @Id
@@ -41,8 +41,8 @@ public class QueueItem {
     private UUID id;
 
     @NotNull
-    @Column(name = "CHANGE_TYPE", nullable = false)
-    private String changeType;
+    @Column(name = "OPERATION", nullable = false)
+    private String operation;
 
     @NotNull
     @Column(name = "ENTITY_ID", nullable = false, length = 1000)
@@ -75,12 +75,12 @@ public class QueueItem {
         this.entityId = entityId;
     }
 
-    public String getChangeType() {
-        return changeType;
+    public String getOperation() {
+        return operation;
     }
 
-    public void setChangeType(String changeType) {
-        this.changeType = changeType;
+    public void setOperation(String operation) {
+        this.operation = operation;
     }
 
     public Date getCreatedDate() {

@@ -18,7 +18,7 @@ package io.jmix.search.index;
 
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.EntityOp;
-import io.jmix.search.index.queue.entity.QueueItem;
+import io.jmix.search.index.queue.entity.IndexingQueueItem;
 
 import java.util.Collection;
 
@@ -32,23 +32,23 @@ public interface EntityIndexer {
      *
      * @param queueItems collection of queue items
      */
-    void indexQueueItems(Collection<QueueItem> queueItems);
+    void indexQueueItems(Collection<IndexingQueueItem> queueItems);
 
     /**
      * Stores single document to index using primary key.
      *
-     * @param metaClass  entity meta class
-     * @param entityPk   entity primary key
-     * @param changeType type of performed operation
+     * @param metaClass entity meta class
+     * @param entityPk  entity primary key
+     * @param operation type of performed operation
      */
-    void indexEntityByPk(MetaClass metaClass, String entityPk, EntityOp changeType);
+    void indexEntityByPk(MetaClass metaClass, String entityPk, EntityOp operation);
 
     /**
      * Stores multiple documents to index using primary keys
      *
-     * @param metaClass  entity meta class
-     * @param entityPks  entity primary keys
-     * @param changeType type of performed operation
+     * @param metaClass entity meta class
+     * @param entityPks entity primary keys
+     * @param operation type of performed operation
      */
-    void indexEntitiesByPks(MetaClass metaClass, Collection<String> entityPks, EntityOp changeType);
+    void indexEntitiesByPks(MetaClass metaClass, Collection<String> entityPks, EntityOp operation);
 }

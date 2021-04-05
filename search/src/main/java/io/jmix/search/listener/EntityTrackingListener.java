@@ -29,8 +29,8 @@ import io.jmix.core.security.EntityOp;
 import io.jmix.data.PersistenceHints;
 import io.jmix.data.StoreAwareLocator;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
-import io.jmix.search.index.queue.QueueService;
-import io.jmix.search.index.queue.entity.QueueItem;
+import io.jmix.search.index.queue.IndexingQueueManager;
+import io.jmix.search.index.queue.entity.IndexingQueueItem;
 import io.jmix.search.utils.PropertyTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,7 +55,7 @@ public class EntityTrackingListener {
     @Autowired
     protected DataManager dataManager;
     @Autowired
-    protected QueueService queueService;
+    protected IndexingQueueManager indexingQueueManager;
     @Autowired
     protected PropertyTools propertyTools;
     @Autowired
@@ -89,7 +89,7 @@ public class EntityTrackingListener {
         if (indexConfigurationManager.isDirectlyIndexed(entityName)) { //todo check dirty fields
             log.debug("{} is directly indexed", entityId);
 
-            queueService.enqueue(entity, entityOperation);
+            indexingQueueManager.enqueue(entity, entityOperation);
         }
 
         Map<MetaClass, Set<String>> dependentEntityPks;
@@ -109,13 +109,13 @@ public class EntityTrackingListener {
                 break;
         }
         dependentEntityPks.forEach(
-                ((dependentEntityClass, primaryKeys) -> queueService.enqueue(dependentEntityClass, primaryKeys, EntityOp.UPDATE))
+                ((dependentEntityClass, primaryKeys) -> indexingQueueManager.enqueue(dependentEntityClass, primaryKeys, EntityOp.UPDATE))
         );
     }
 
     protected boolean isProcessingRequired(EntityChangedEvent<?> event) {
         Class<?> entityClass = event.getEntityId().getEntityClass();
-        return !QueueItem.class.equals(entityClass) && indexConfigurationManager.isAffectedEntityClass(entityClass);
+        return !IndexingQueueItem.class.equals(entityClass) && indexConfigurationManager.isAffectedEntityClass(entityClass);
     }
 
     protected Map<MetaClass, Set<String>> getDependentEntityPksForUpdate(Object entity, Class<?> entityClass, AttributeChanges changes) {

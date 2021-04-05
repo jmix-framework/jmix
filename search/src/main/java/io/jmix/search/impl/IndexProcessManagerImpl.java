@@ -25,7 +25,7 @@ import io.jmix.search.SearchApplicationProperties;
 import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.ESIndexManager;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
-import io.jmix.search.index.queue.QueueService;
+import io.jmix.search.index.queue.IndexingQueueManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +46,7 @@ public class IndexProcessManagerImpl implements IndexProcessManager {
     @Autowired
     protected ESIndexManager esIndexManager;
     @Autowired
-    protected QueueService queueService;
+    protected IndexingQueueManager indexingQueueManager;
     @Autowired
     protected IndexConfigurationManager indexConfigurationManager;
     @Autowired
@@ -93,14 +93,14 @@ public class IndexProcessManagerImpl implements IndexProcessManager {
             if (writeLocked) {
                 try {
                     authenticator.begin();
-                    queueService.emptyQueue(entityName);
+                    indexingQueueManager.emptyQueue(entityName);
                     boolean recreated = esIndexManager.recreateIndex(indexConfiguration);
                     if (!recreated) {
                         throw new RuntimeException("Failed to recreate index '" + indexConfiguration.getIndexName() + "'");
                     }
                     writeLock.unlock();
                     writeLocked = false;
-                    queueService.enqueueAll(entityName, searchApplicationProperties.getReindexEntityEnqueueBatchSize());
+                    indexingQueueManager.enqueueAll(entityName, searchApplicationProperties.getReindexEntityEnqueueBatchSize());
                 } catch (IOException e) {
                     throw new RuntimeException("Unable to recreate index '" + indexConfiguration.getIndexName() + "'", e);
                 } finally {
@@ -165,7 +165,7 @@ public class IndexProcessManagerImpl implements IndexProcessManager {
 
         try {
             authenticator.begin();
-            count = queueService.processQueue(
+            count = indexingQueueManager.processQueue(
                     searchApplicationProperties.getProcessQueueBatchSize(),
                     searchApplicationProperties.getMaxProcessedQueueItemsPerExecution()
             );

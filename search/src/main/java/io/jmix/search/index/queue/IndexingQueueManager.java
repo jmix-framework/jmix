@@ -24,7 +24,7 @@ import java.util.Collection;
 /**
  * Provides functionality for enqueuing entity instances and processing queue.
  */
-public interface QueueService {
+public interface IndexingQueueManager {
 
     /**
      * Sends provided entity instance to queue.

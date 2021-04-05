@@ -23,8 +23,8 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.EntityOp;
 import io.jmix.data.StoreAwareLocator;
 import io.jmix.search.index.EntityIndexer;
-import io.jmix.search.index.queue.QueueService;
-import io.jmix.search.index.queue.entity.QueueItem;
+import io.jmix.search.index.queue.IndexingQueueManager;
+import io.jmix.search.index.queue.entity.IndexingQueueItem;
 import io.jmix.search.utils.PropertyTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,10 +38,10 @@ import javax.persistence.Query;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Component("search_JpaQueueService")
-public class JpaQueueService implements QueueService {
+@Component("search_JpaIndexingQueueManager")
+public class JpaIndexingQueueManager implements IndexingQueueManager {
 
-    private static final Logger log = LoggerFactory.getLogger(JpaQueueService.class);
+    private static final Logger log = LoggerFactory.getLogger(JpaIndexingQueueManager.class);
 
     @Autowired
     protected DataManager dataManager;
@@ -87,7 +87,7 @@ public class JpaQueueService implements QueueService {
 
     @Override
     public void enqueue(MetaClass metaClass, Collection<String> entityPks, EntityOp operation) {
-        List<QueueItem> queueItems = entityPks.stream()
+        List<IndexingQueueItem> queueItems = entityPks.stream()
                 .map(id -> createQueueItem(metaClass.getName(), id, operation))
                 .collect(Collectors.toList());
 
@@ -115,7 +115,7 @@ public class JpaQueueService implements QueueService {
                     .fetchPlan(fetchPlan)
                     .list();
 
-            List<QueueItem> queueItems = entities.stream()
+            List<IndexingQueueItem> queueItems = entities.stream()
                     .map(entity -> EntityValues.getValue(entity, primaryKeyPropertyName))
                     .filter(Objects::nonNull)
                     .map(pk -> createQueueItem(entityName, pk.toString(), EntityOp.UPDATE))
@@ -134,11 +134,11 @@ public class JpaQueueService implements QueueService {
             log.error("Size of batch during queue processing must be positive");
         }
 
-        List<QueueItem> queueItems;
+        List<IndexingQueueItem> queueItems;
         int count = 0;
         do {
-            queueItems = dataManager.load(QueueItem.class)
-                    .query("select q from search_Queue q order by q.createdDate asc")
+            queueItems = dataManager.load(IndexingQueueItem.class)
+                    .query("select q from search_IndexingQueue q order by q.createdDate asc")
                     .maxResults(batchSize)
                     .list();
             log.trace("Dequeued {} items", queueItems.size());
@@ -165,7 +165,7 @@ public class JpaQueueService implements QueueService {
         transactionTemplate.executeWithoutResult(status -> {
             log.debug("Empty queue for entity '{}'", entityName);
             EntityManager entityManager = storeAwareLocator.getEntityManager(Stores.MAIN);
-            Query query = entityManager.createQuery("delete from search_Queue q where q.entityName = ?1");
+            Query query = entityManager.createQuery("delete from search_IndexingQueue q where q.entityName = ?1");
             query.setParameter(1, entityName);
             int deleted = query.executeUpdate();
             log.debug("{} records for entity '{}' have been deleted from queue", entityName, deleted);
@@ -173,15 +173,15 @@ public class JpaQueueService implements QueueService {
     }
 
     protected void enqueue(MetaClass metaClass, String entityPk, EntityOp operation) {
-        QueueItem queueItem = createQueueItem(metaClass.getName(), entityPk, operation);
+        IndexingQueueItem queueItem = createQueueItem(metaClass.getName(), entityPk, operation);
         enqueue(queueItem);
     }
 
-    protected void enqueue(QueueItem queueItem) {
+    protected void enqueue(IndexingQueueItem queueItem) {
         enqueue(Collections.singletonList(queueItem));
     }
 
-    protected void enqueue(Collection<QueueItem> queueItems) {
+    protected void enqueue(Collection<IndexingQueueItem> queueItems) {
         log.trace("Enqueue items: {}", queueItems);
         TransactionTemplate transactionTemplate = storeAwareLocator.getTransactionTemplate(Stores.MAIN);
         transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
@@ -191,9 +191,9 @@ public class JpaQueueService implements QueueService {
         });
     }
 
-    protected QueueItem createQueueItem(String entityName, String entityPk, EntityOp entityChangeType) {
-        QueueItem queueItem = metadata.create(QueueItem.class);
-        queueItem.setChangeType(entityChangeType.getId());
+    protected IndexingQueueItem createQueueItem(String entityName, String entityPk, EntityOp operation) {
+        IndexingQueueItem queueItem = metadata.create(IndexingQueueItem.class);
+        queueItem.setOperation(operation.getId());
         queueItem.setEntityId(entityPk);
         queueItem.setEntityName(entityName);
 

@@ -21,7 +21,7 @@ import io.jmix.core.LoadContext;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import io.jmix.core.entity.EntityValues;
-import io.jmix.dynattrui.MsgBundleTools;
+import io.jmix.dynattr.MsgBundleTools;
 import io.jmix.dynattrui.impl.model.AttributeLocalizedValue;
 import io.jmix.ui.component.DataGrid;
 import io.jmix.ui.model.CollectionContainer;

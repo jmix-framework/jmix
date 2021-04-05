@@ -18,11 +18,12 @@ package io.jmix.dynattrui.panel;
 
 import com.google.common.base.Strings;
 import io.jmix.core.Messages;
-import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.dynattr.AttributeDefinition;
 import io.jmix.dynattr.CategoryDefinition;
 import io.jmix.dynattr.DynAttrMetadata;
+import io.jmix.dynattr.DynAttrQueryHints;
+import io.jmix.dynattr.model.Categorized;
 import io.jmix.dynattr.model.Category;
 import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.UiComponents;
@@ -34,6 +35,8 @@ import io.jmix.ui.meta.CanvasIconSize;
 import io.jmix.ui.meta.PropertyType;
 import io.jmix.ui.meta.StudioComponent;
 import io.jmix.ui.meta.StudioProperty;
+import io.jmix.ui.model.DataLoader;
+import io.jmix.ui.model.HasLoader;
 import io.jmix.ui.model.InstanceContainer;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -44,6 +47,8 @@ import java.util.stream.Collectors;
 
 @StudioComponent(category = "Components",
         unsupportedProperties = {"enable", "responsive"},
+        xmlns = "http://jmix.io/schema/dynattr/ui",
+        xmlnsAlias = "dynattr",
         icon = "icon/dynamicAttributesPanel.svg",
         canvasIcon = "icon/dynamicAttributesPanel_canvas.svg",
         canvasIconSize = CanvasIconSize.LARGE)
@@ -170,20 +175,16 @@ public class DynamicAttributesPanel extends CompositeComponent<VBoxLayout> imple
         return propertiesCount;
     }
 
-    protected List<AttributeDefinition> getAttributesByCategory() {
+    protected Collection<AttributeDefinition> getAttributesByCategory() {
         Category category = categoryField.getValue();
-        if (category == null) {
-            return Collections.emptyList();
+        if (category != null) {
+            for (CategoryDefinition categoryDefinition : dynAttrMetadata.getCategories(instanceContainer.getEntityMetaClass())) {
+                if (category.equals(categoryDefinition.getSource())) {
+                    return categoryDefinition.getAttributeDefinitions();
+                }
+            }
         }
-        //TODO: think about categories
-
-        List<AttributeDefinition> result = new ArrayList<>();
-//        for (CategoryAttribute categoryAttribute : dynamicAttributes.getAttributesForMetaClass(metaClass)) {
-//            if (category.equals(categoryAttribute.getCategory())) {
-//                result.add(new DynamicAttributesMetaProperty(metaClass, categoryAttribute));
-//            }
-//        }
-        return result;
+        return Collections.emptyList();
     }
 
     protected Component generateFieldComponent(AttributeDefinition attribute) {
@@ -216,33 +217,24 @@ public class DynamicAttributesPanel extends CompositeComponent<VBoxLayout> imple
     }
 
     @Nullable
-    protected CategoryDefinition getDefaultCategory() {
-        //TODO: think about categories
-
-//        for (Category category : getCategoriesOptions()) {
-//            if (category != null && Boolean.TRUE.equals(category.getIsDefault())) {
-//                return category;
-//            }
-//        }
+    protected Category getDefaultCategory() {
+        for (CategoryDefinition category : getCategoryDefinitions()) {
+            if (category != null && category.isDefault()) {
+                return (Category) category.getSource();
+            }
+        }
         return null;
     }
 
-    protected Collection<CategoryDefinition> getCategoriesOptions() {
+    protected Collection<CategoryDefinition> getCategoryDefinitions() {
         return dynAttrMetadata.getCategories(instanceContainer.getEntityMetaClass());
     }
 
     protected List<Category> getCategoriesOptionsList() {
-        //TODO: think about categories
-//        Collection<Category> options = getCategoriesOptions();
-
-        List<Category> optionsList = new ArrayList<>();
-//        if (options instanceof List) {
-//            optionsList = (List<Category>) options;
-//        } else {
-//            optionsList = new ArrayList<>(options);
-//        }
-
-        return optionsList;
+        Collection<CategoryDefinition> options = getCategoryDefinitions();
+        return options.stream().
+                map(definition -> (Category) definition.getSource())
+                .collect(Collectors.toList());
     }
 
     protected void initFieldCaptionWidth(Form newRuntimeForm) {
@@ -256,11 +248,10 @@ public class DynamicAttributesPanel extends CompositeComponent<VBoxLayout> imple
     }
 
     protected void onInstanceContainerItemChangeEvent(InstanceContainer.ItemChangeEvent<?> event) {
-        //TODO: think about category
-//        if (event.getItem() instanceof Categorized
-//                && ((Categorized) event.getItem()).getCategory() == null) {
-//            ((Categorized) event.getItem()).setCategory(getDefaultCategory());
-//        }
+        if (event.getItem() instanceof Categorized
+                && ((Categorized) event.getItem()).getCategory() == null) {
+            ((Categorized) event.getItem()).setCategory(getDefaultCategory());
+        }
         if (event.getItem() == null) {
             propertiesForm.removeAll();
         }
@@ -269,15 +260,21 @@ public class DynamicAttributesPanel extends CompositeComponent<VBoxLayout> imple
     /**
      * Defines InstanceContainer for DynamicAttributesPanel.
      *
-     * @param instanceContainer {@link InstanceContainer} object with editing entity
+     * @param container {@link InstanceContainer} object with editing entity
      */
     @StudioProperty(name = "dataContainer", type = PropertyType.DATACONTAINER_REF, required = true)
-    public void setInstanceContainer(InstanceContainer<Object> instanceContainer) {
-        this.instanceContainer = instanceContainer;
+    public void setInstanceContainer(InstanceContainer<Object> container) {
+        this.instanceContainer = container;
         propertiesForm.setValueSourceProvider(new ContainerValueSourceProvider<>(instanceContainer));
         initCategoryField(instanceContainer);
         initPropertiesForm();
-        this.instanceContainer.addItemChangeListener(this::onInstanceContainerItemChangeEvent);
+        instanceContainer.addItemChangeListener(this::onInstanceContainerItemChangeEvent);
+        if (instanceContainer instanceof HasLoader) {
+            DataLoader loader = ((HasLoader) instanceContainer).getLoader();
+            if (loader != null) {
+                loader.setHint(DynAttrQueryHints.LOAD_DYN_ATTR, true);
+            }
+        }
     }
 
     /**

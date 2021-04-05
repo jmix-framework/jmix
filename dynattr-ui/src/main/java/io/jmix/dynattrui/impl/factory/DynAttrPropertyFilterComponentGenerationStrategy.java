@@ -27,7 +27,7 @@ import io.jmix.core.metamodel.model.Range;
 import io.jmix.dynattr.AttributeDefinition;
 import io.jmix.dynattr.DynAttrMetadata;
 import io.jmix.dynattr.DynAttrUtils;
-import io.jmix.dynattrui.MsgBundleTools;
+import io.jmix.dynattr.MsgBundleTools;
 import io.jmix.dynattrui.impl.AttributeDependencies;
 import io.jmix.dynattrui.impl.AttributeOptionsLoader;
 import io.jmix.dynattrui.impl.AttributeValidators;

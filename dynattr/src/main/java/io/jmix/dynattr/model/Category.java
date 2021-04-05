@@ -24,7 +24,10 @@ import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.OnDelete;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.Composition;
+import io.jmix.core.metamodel.annotation.DependsOnProperties;
+import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.dynattr.MsgBundleTools;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -95,11 +98,6 @@ public class Category implements Serializable {
 
     @Column(name = "LOCALE_NAMES")
     protected String localeNames;
-
-//    @Transient
-//    @InstanceName
-//    @JmixProperty(related = "localeNames,name")
-//    protected String localeName;
 
     @Column(name = "SPECIAL")
     protected String special;
@@ -214,5 +212,11 @@ public class Category implements Serializable {
 
     public void setLocaleNames(String localeNames) {
         this.localeNames = localeNames;
+    }
+
+    @InstanceName
+    @DependsOnProperties({"name", "localeNames"})
+    public String getDisplayName(MsgBundleTools msgBundleTools) {
+        return msgBundleTools.getLocalizedValue(localeNames, name);
     }
 }

@@ -20,7 +20,7 @@ import com.google.common.base.Strings;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.dynattr.AttributeDefinition;
 import io.jmix.dynattr.AttributeType;
-import io.jmix.dynattrui.MsgBundleTools;
+import io.jmix.dynattr.MsgBundleTools;
 import io.jmix.ui.component.formatter.Formatter;
 import org.springframework.beans.factory.annotation.Autowired;
 

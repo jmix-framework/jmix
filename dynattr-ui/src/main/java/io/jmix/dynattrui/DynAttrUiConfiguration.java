@@ -26,10 +26,14 @@ import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.dynattr.DynAttrConfiguration;
 import io.jmix.dynattr.DynAttrMetadata;
+import io.jmix.dynattrui.panel.DynamicAttributesPanel;
+import io.jmix.dynattrui.panel.DynamicAttributesPanelLoader;
 import io.jmix.dynattrui.propertyfilter.DynAttrPropertyFilterSupport;
 import io.jmix.ui.UiConfiguration;
 import io.jmix.ui.component.propertyfilter.PropertyFilterSupport;
 import io.jmix.ui.sys.UiControllersConfiguration;
+import io.jmix.ui.sys.registration.ComponentRegistration;
+import io.jmix.ui.sys.registration.ComponentRegistrationBuilder;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -66,5 +70,14 @@ public class DynAttrUiConfiguration {
                                                        DynAttrMetadata dynAttrMetadata) {
         return new DynAttrPropertyFilterSupport(messages, messageTools, metadataTools, dataManager, datatypeRegistry,
                 dynAttrMetadata);
+    }
+
+    @Bean
+    public ComponentRegistration dynamicAttributesPanel() {
+        return ComponentRegistrationBuilder.create(DynamicAttributesPanel.NAME)
+                .withComponentClass(DynamicAttributesPanel.class)
+                .withComponentLoaderClass(DynamicAttributesPanelLoader.class)
+                .withTag("dynamicAttributesPanel")
+                .build();
     }
 }

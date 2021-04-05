@@ -21,8 +21,8 @@
           spacing="true"
           width="100%">
         <hbox id="categoryFieldBox" width="100%" expand="categoryField" spacing="true">
-            <label id="categoryFieldLabel" value="msg://dynamicAttributes.category" align="MIDDLE_LEFT"/>
-            <comboBox id="categoryField" captionProperty="localeName"/>
+            <label id="categoryFieldLabel" value="msg://category" align="MIDDLE_LEFT"/>
+            <comboBox id="categoryField"/>
         </hbox>
         <form id="propertiesForm" width="100%"/>
     </vbox>

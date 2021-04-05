@@ -22,7 +22,7 @@ import com.google.common.collect.Lists;
 import io.jmix.core.CoreProperties;
 import io.jmix.core.LoadContext;
 import io.jmix.core.Metadata;
-import io.jmix.dynattrui.MsgBundleTools;
+import io.jmix.dynattr.MsgBundleTools;
 import io.jmix.dynattrui.impl.model.AttributeLocalizedEnumValue;
 import io.jmix.dynattrui.screen.localization.AttributeLocalizationFragment;
 import io.jmix.ui.Fragments;

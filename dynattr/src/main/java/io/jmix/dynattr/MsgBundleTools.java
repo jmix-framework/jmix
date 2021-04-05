@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.dynattrui;
+package io.jmix.dynattr;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;

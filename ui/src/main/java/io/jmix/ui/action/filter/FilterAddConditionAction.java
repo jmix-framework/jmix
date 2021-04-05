@@ -23,6 +23,7 @@ import io.jmix.ui.action.ActionType;
 import io.jmix.ui.app.filter.condition.AddConditionScreen;
 import io.jmix.ui.component.Filter;
 import io.jmix.ui.component.FilterComponent;
+import io.jmix.ui.component.LogicalFilterComponent;
 import io.jmix.ui.component.SingleFilterComponent;
 import io.jmix.ui.component.filter.builder.FilterConditionsBuilder;
 import io.jmix.ui.component.filter.configuration.DesignTimeConfiguration;
@@ -158,14 +159,10 @@ public class FilterAddConditionAction extends FilterAction {
                     FilterComponent filterComponent = converter.convertToComponent(selectedCondition);
                     currentConfiguration.getRootLogicalFilterComponent().add(filterComponent);
                     currentConfiguration.setFilterComponentModified(filterComponent, true);
-                    if (filterComponent instanceof SingleFilterComponent) {
-                        currentConfiguration.setFilterComponentDefaultValue(
-                                ((SingleFilterComponent<?>) filterComponent).getParameterName(),
-                                ((SingleFilterComponent<?>) filterComponent).getValue());
 
-                        if (((SingleFilterComponent<?>) filterComponent).getValue() != null) {
-                            dataLoadNeeded = true;
-                        }
+                    boolean nonNullDefaultValue = setFilterComponentDefaultValue(filterComponent, currentConfiguration);
+                    if (nonNullDefaultValue) {
+                        dataLoadNeeded = true;
                     }
                 }
 
@@ -176,6 +173,29 @@ public class FilterAddConditionAction extends FilterAction {
                 }
             }
         };
+    }
+
+    protected boolean setFilterComponentDefaultValue(FilterComponent filterComponent,
+                                                     Filter.Configuration currentConfiguration) {
+        boolean dataLoadNeeded = false;
+        if (filterComponent instanceof LogicalFilterComponent) {
+            for (FilterComponent childComponent : ((LogicalFilterComponent) filterComponent).getOwnFilterComponents()) {
+                boolean nonNullDefaultValue = setFilterComponentDefaultValue(childComponent, currentConfiguration);
+                if (nonNullDefaultValue) {
+                    dataLoadNeeded = true;
+                }
+            }
+        } else if (filterComponent instanceof SingleFilterComponent) {
+            currentConfiguration.setFilterComponentDefaultValue(
+                    ((SingleFilterComponent<?>) filterComponent).getParameterName(),
+                    ((SingleFilterComponent<?>) filterComponent).getValue());
+
+            if (((SingleFilterComponent<?>) filterComponent).getValue() != null) {
+                dataLoadNeeded = true;
+            }
+        }
+
+        return dataLoadNeeded;
     }
 
     protected void openAddConditionScreen(List<FilterCondition> filterConditions) {

@@ -139,7 +139,6 @@ public class GroupFilterImpl extends CompositeComponent<GroupBoxLayout> implemen
         if (this.operation != operation) {
             this.operation = operation;
 
-            updateQueryCondition();
             updateCaption();
 
             if (!isConditionModificationDelegated()) {
@@ -225,7 +224,7 @@ public class GroupFilterImpl extends CompositeComponent<GroupBoxLayout> implemen
 
         filterComponent.setConditionModificationDelegated(true);
         filterComponent.setAutoApply(isAutoApply());
-        queryCondition.add(filterComponent.getQueryCondition());
+        getQueryCondition().add(filterComponent.getQueryCondition());
         ownFilterComponentsOrder.add(filterComponent);
         updateConditionsLayout();
 
@@ -248,7 +247,6 @@ public class GroupFilterImpl extends CompositeComponent<GroupBoxLayout> implemen
             }
 
             updateConditionsLayout();
-            updateQueryCondition();
 
             if (!isConditionModificationDelegated()) {
                 updateDataLoaderCondition();
@@ -267,7 +265,6 @@ public class GroupFilterImpl extends CompositeComponent<GroupBoxLayout> implemen
         ownFilterComponentsOrder = new ArrayList<>();
 
         updateConditionsLayout();
-        updateQueryCondition();
 
         if (!isConditionModificationDelegated()) {
             updateDataLoaderCondition();
@@ -276,6 +273,7 @@ public class GroupFilterImpl extends CompositeComponent<GroupBoxLayout> implemen
 
     @Override
     public LogicalCondition getQueryCondition() {
+        updateQueryCondition();
         return queryCondition;
     }
 

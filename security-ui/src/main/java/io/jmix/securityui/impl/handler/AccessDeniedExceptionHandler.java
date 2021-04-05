@@ -20,12 +20,15 @@ import io.jmix.core.Messages;
 import io.jmix.core.security.AccessDeniedException;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.exception.AbstractUiExceptionHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 
 @Component("sec_AccessDeniedExceptionHandler")
 public class AccessDeniedExceptionHandler extends AbstractUiExceptionHandler {
+    private final Logger LOG = LoggerFactory.getLogger(AccessDeniedExceptionHandler.class);
 
     private final Messages messages;
 
@@ -39,5 +42,6 @@ public class AccessDeniedExceptionHandler extends AbstractUiExceptionHandler {
         context.getNotifications().create(Notifications.NotificationType.ERROR)
                 .withCaption(messages.getMessage("accessDenied.message"))
                 .show();
+        LOG.error(message);
     }
 }

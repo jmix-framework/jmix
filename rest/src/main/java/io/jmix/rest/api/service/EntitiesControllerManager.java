@@ -121,7 +121,7 @@ public class EntitiesControllerManager {
             ctx.setFetchPlan(view);
         }
 
-        ctx.setHint("dynattr.load", BooleanUtils.isTrue(dynamicAttributes));
+        ctx.setHint("jmix.dynattr", BooleanUtils.isTrue(dynamicAttributes));
 
         Object entity = dataManager.load(ctx);
         checkEntityIsNotNull(entityName, entityId, entity);
@@ -315,7 +315,7 @@ public class EntitiesControllerManager {
             ctx.setFetchPlan(view);
         }
 
-        ctx.setHint("dynattr.load", BooleanUtils.isTrue(dynamicAttributes));
+        ctx.setHint("jmix.dynattr", BooleanUtils.isTrue(dynamicAttributes));
 
         List<Object> entities = dataManager.loadList(ctx);
 

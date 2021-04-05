@@ -22,16 +22,16 @@ import java.util.*;
 
 public class SearchResultImpl implements SearchResult {
     protected final String searchTerm;
-    protected SearchDetails searchDetails;
+    protected SearchContext searchContext;
     protected final Map<String, Set<SearchResultEntry>> entriesByEntityName = new HashMap<>();
     protected int size = 0;
     protected int effectiveOffset;
     protected boolean moreDataAvailable = false;
 
-    public SearchResultImpl(String searchTerm, SearchDetails searchDetails) {
+    public SearchResultImpl(String searchTerm, SearchContext searchContext) {
         this.searchTerm = searchTerm;
-        this.searchDetails = searchDetails;
-        this.effectiveOffset = searchDetails.getOffset();
+        this.searchContext = searchContext;
+        this.effectiveOffset = searchContext.getOffset();
     }
 
     public void addEntry(SearchResultEntry searchResultEntry) {
@@ -71,8 +71,8 @@ public class SearchResultImpl implements SearchResult {
         this.effectiveOffset++;
     }
 
-    public SearchDetails getSearchDetails() {
-        return searchDetails;
+    public SearchContext getSearchContext() {
+        return searchContext;
     }
 
     public boolean isMoreDataAvailable() {

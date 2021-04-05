@@ -16,7 +16,7 @@
 
 package io.jmix.search.searching.impl;
 
-public class SearchDetails {
+public class SearchContext {
 
     protected int size;
     protected int offset;
@@ -25,7 +25,7 @@ public class SearchDetails {
         return size;
     }
 
-    public SearchDetails setSize(int size) {
+    public SearchContext setSize(int size) {
         this.size = size;
         return this;
     }
@@ -34,14 +34,14 @@ public class SearchDetails {
         return offset;
     }
 
-    public SearchDetails setOffset(int offset) {
+    public SearchContext setOffset(int offset) {
         this.offset = offset;
         return this;
     }
 
     @Override
     public String toString() {
-        return "SearchDetails{" +
+        return "SearchContext{" +
                 "size=" + size +
                 ", offset=" + offset +
                 '}';

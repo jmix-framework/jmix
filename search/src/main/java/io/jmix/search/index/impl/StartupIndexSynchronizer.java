@@ -16,7 +16,7 @@
 
 package io.jmix.search.index.impl;
 
-import io.jmix.search.index.IndexManagementService;
+import io.jmix.search.index.ESIndexManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,20 +25,20 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 
 /**
- * Prepares indices on application startup.
+ * Synchronizes search indices on application startup.
  */
-@Component("search_StartupIndexPreparer")
-public class StartupIndexPreparer {
+@Component("search_StartupIndexSynchronizer")
+public class StartupIndexSynchronizer {
 
-    private static final Logger log = LoggerFactory.getLogger(StartupIndexPreparer.class);
+    private static final Logger log = LoggerFactory.getLogger(StartupIndexSynchronizer.class);
 
     @Autowired
-    protected IndexManagementService indexManagementService;
+    protected ESIndexManager esIndexManager;
 
     @PostConstruct
     protected void postConstruct() {
         try {
-            indexManagementService.prepareIndexes();
+            esIndexManager.synchronizeIndexes();
         } catch (Exception e) {
             log.error("Failed to setup indexes", e);
         }

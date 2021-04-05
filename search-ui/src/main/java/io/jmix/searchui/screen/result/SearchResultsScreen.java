@@ -23,7 +23,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.search.SearchApplicationProperties;
 import io.jmix.search.searching.EntitySearcher;
 import io.jmix.search.searching.SearchResult;
-import io.jmix.search.searching.impl.SearchDetails;
+import io.jmix.search.searching.impl.SearchContext;
 import io.jmix.search.searching.impl.FieldHit;
 import io.jmix.search.searching.impl.SearchResultEntry;
 import io.jmix.search.utils.PropertyTools;
@@ -246,7 +246,7 @@ public class SearchResultsScreen extends Screen {
             SearchResult lastSearchResult = lastPage.getSearchResult();
             SearchResult searchResult = entitySearcher.search(
                     lastSearchResult.getSearchTerm(),
-                    createNextSearchDetails(lastSearchResult)
+                    createNextSearchContext(lastSearchResult)
             );
             if (searchResult.getSize() == 0) {
                 currentPage.setLastPage(true);
@@ -264,10 +264,10 @@ public class SearchResultsScreen extends Screen {
         }
     }
 
-    protected SearchDetails createNextSearchDetails(SearchResult searchResult) {
-        SearchDetails currentSearchDetails = searchResult.getSearchDetails();
-        return new SearchDetails()
-                .setSize(currentSearchDetails.getSize())
+    protected SearchContext createNextSearchContext(SearchResult searchResult) {
+        SearchContext currentSearchContext = searchResult.getSearchContext();
+        return new SearchContext()
+                .setSize(currentSearchContext.getSize())
                 .setOffset(searchResult.getEffectiveOffset());
     }
 

@@ -23,8 +23,8 @@ import io.jmix.core.security.SystemAuthenticator;
 import io.jmix.search.IndexProcessManager;
 import io.jmix.search.SearchApplicationProperties;
 import io.jmix.search.index.IndexConfiguration;
-import io.jmix.search.index.IndexManagementService;
-import io.jmix.search.index.mapping.IndexConfigurationProvider;
+import io.jmix.search.index.ESIndexManager;
+import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.index.queue.QueueService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,11 +44,11 @@ public class IndexProcessManagerImpl implements IndexProcessManager {
     private static final Logger log = LoggerFactory.getLogger(IndexProcessManagerImpl.class);
 
     @Autowired
-    protected IndexManagementService indexManagementService;
+    protected ESIndexManager esIndexManager;
     @Autowired
     protected QueueService queueService;
     @Autowired
-    protected IndexConfigurationProvider indexConfigurationProvider;
+    protected IndexConfigurationManager indexConfigurationManager;
     @Autowired
     protected Metadata metadata;
     @Autowired
@@ -62,7 +62,7 @@ public class IndexProcessManagerImpl implements IndexProcessManager {
 
     @Override
     public void reindexAll() {
-        Collection<IndexConfiguration> indexConfigurations = indexConfigurationProvider.getIndexConfigurations();
+        Collection<IndexConfiguration> indexConfigurations = indexConfigurationManager.getAllIndexConfigurations();
         indexConfigurations.forEach(indexConfiguration -> reindexEntity(indexConfiguration.getEntityName()));
     }
 
@@ -71,7 +71,7 @@ public class IndexProcessManagerImpl implements IndexProcessManager {
         Preconditions.checkNotNullArgument(entityName);
 
         log.info("Reindex entity '{}'", entityName);
-        IndexConfiguration indexConfiguration = indexConfigurationProvider.getIndexConfigurationByEntityName(entityName);
+        IndexConfiguration indexConfiguration = indexConfigurationManager.getIndexConfigurationByEntityName(entityName);
         if (indexConfiguration == null) {
             throw new RuntimeException("Index definition not found for entity '" + entityName + "'");
         }
@@ -94,7 +94,7 @@ public class IndexProcessManagerImpl implements IndexProcessManager {
                 try {
                     authenticator.begin();
                     queueService.emptyQueue(entityName);
-                    boolean recreated = indexManagementService.recreateIndex(indexConfiguration);
+                    boolean recreated = esIndexManager.recreateIndex(indexConfiguration);
                     if (!recreated) {
                         throw new RuntimeException("Failed to recreate index '" + indexConfiguration.getIndexName() + "'");
                     }
@@ -119,7 +119,7 @@ public class IndexProcessManagerImpl implements IndexProcessManager {
 
     @Override
     public void scheduleReindexAll() {
-        indexConfigurationProvider.getIndexConfigurations().stream()
+        indexConfigurationManager.getAllIndexConfigurations().stream()
                 .map(IndexConfiguration::getEntityName)
                 .forEach(this::scheduleReindexEntity);
     }
@@ -129,7 +129,7 @@ public class IndexProcessManagerImpl implements IndexProcessManager {
         Preconditions.checkNotNullArgument(entityName);
 
         MetaClass metaClass = metadata.getClass(entityName);
-        Preconditions.checkNotNullArgument(indexConfigurationProvider.getIndexConfigurationByEntityName(metaClass.getName()),
+        Preconditions.checkNotNullArgument(indexConfigurationManager.getIndexConfigurationByEntityName(metaClass.getName()),
                 "Entity '%s' doesn't have index configuration", entityName);
         if (!reindexEntitiesQueue.contains(entityName)) {
             log.info("Schedule reindexing of entity '{}'", entityName);

@@ -177,8 +177,8 @@ public class AnnotatedIndexDefinitionProcessor {
         return affectedClasses;
     }
 
-    protected Map<String, MappingFieldDescriptor> processMappingDefinition(MetaClass metaClass, MappingDefinition template) {
-        return template.getElements().stream()
+    protected Map<String, MappingFieldDescriptor> processMappingDefinition(MetaClass metaClass, MappingDefinition mappingDefinition) {
+        return mappingDefinition.getElements().stream()
                 .map(item -> processMappingDefinitionElement(metaClass, item))
                 .flatMap(Collection::stream)
                 .collect(Collectors.toMap(MappingFieldDescriptor::getIndexPropertyFullName, Function.identity(), (v1, v2) -> {
@@ -191,13 +191,13 @@ public class AnnotatedIndexDefinitionProcessor {
                 }));
     }
 
-    protected List<MappingFieldDescriptor> processMappingDefinitionElement(MetaClass metaClass, MappingDefinitionElement template) {
+    protected List<MappingFieldDescriptor> processMappingDefinitionElement(MetaClass metaClass, MappingDefinitionElement element) {
         Map<String, MetaPropertyPath> effectiveProperties = resolveEffectiveProperties(
-                metaClass, template.getIncludedProperties(), template.getExcludedProperties()
+                metaClass, element.getIncludedProperties(), element.getExcludedProperties()
         );
 
         return effectiveProperties.values().stream()
-                .map(propertyPath -> createMappingFieldDescriptor(propertyPath, template))
+                .map(propertyPath -> createMappingFieldDescriptor(propertyPath, element))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(Collectors.toList());
@@ -246,8 +246,8 @@ public class AnnotatedIndexDefinitionProcessor {
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
-    protected Optional<MappingFieldDescriptor> createMappingFieldDescriptor(MetaPropertyPath propertyPath, MappingDefinitionElement template) {
-        FieldMappingStrategy fieldMappingStrategy = resolveFieldMappingStrategy(template.getFieldMappingStrategyClass());
+    protected Optional<MappingFieldDescriptor> createMappingFieldDescriptor(MetaPropertyPath propertyPath, MappingDefinitionElement element) {
+        FieldMappingStrategy fieldMappingStrategy = resolveFieldMappingStrategy(element.getFieldMappingStrategyClass());
         if (fieldMappingStrategy.isSupported(propertyPath)) {
             List<MetaPropertyPath> instanceNameRelatedProperties;
             if (propertyPath.getRange().isClass()) {
@@ -278,7 +278,7 @@ public class AnnotatedIndexDefinitionProcessor {
             fieldDescriptor.setValueMapper(fieldMappingStrategy.getValueMapper(propertyPath));
             fieldDescriptor.setInstanceNameRelatedProperties(instanceNameRelatedProperties);
 
-            FieldConfiguration fieldConfiguration = fieldMappingStrategy.createFieldConfiguration(propertyPath, template.getParameters());
+            FieldConfiguration fieldConfiguration = fieldMappingStrategy.createFieldConfiguration(propertyPath, element.getParameters());
             fieldDescriptor.setFieldConfiguration(fieldConfiguration);
 
             return Optional.of(fieldDescriptor);

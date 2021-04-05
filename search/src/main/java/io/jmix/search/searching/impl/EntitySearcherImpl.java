@@ -70,12 +70,12 @@ public class EntitySearcherImpl implements EntitySearcher {
     protected PropertyTools propertyTools;
 
     @Override
-    public SearchResult search(String searchTerm, SearchDetails searchDetails) {
+    public SearchResult search(String searchTerm, SearchContext searchContext) {
         //todo Currently it's a simple search over all fields of all search indices without any paging
-        log.debug("Perform search by term '{}' and with details: {}", searchTerm, searchDetails);
-        SearchRequest searchRequest = createSearchRequest(searchTerm, searchDetails);
+        log.debug("Perform search by term '{}' and with details: {}", searchTerm, searchContext);
+        SearchRequest searchRequest = createSearchRequest(searchTerm, searchContext);
 
-        SearchResultImpl searchResultImpl = new SearchResultImpl(searchTerm, searchDetails);
+        SearchResultImpl searchResultImpl = new SearchResultImpl(searchTerm, searchContext);
         boolean moreDataAvailable;
         do {
             searchRequest.source().from(searchResultImpl.getEffectiveOffset());
@@ -92,16 +92,16 @@ public class EntitySearcherImpl implements EntitySearcher {
 
             long totalHits = searchResponse.getHits().getTotalHits().value;
             moreDataAvailable = (totalHits - searchResultImpl.getEffectiveOffset()) > 0;
-        } while (moreDataAvailable && !isResultFull(searchResultImpl, searchDetails));
+        } while (moreDataAvailable && !isResultFull(searchResultImpl, searchContext));
         searchResultImpl.setMoreDataAvailable(moreDataAvailable);
         return searchResultImpl;
     }
 
-    protected SearchRequest createSearchRequest(String searchTerm, SearchDetails searchDetails) {
+    protected SearchRequest createSearchRequest(String searchTerm, SearchContext searchContext) {
         SearchRequest searchRequest = new SearchRequest("*_search_index");
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         searchSourceBuilder.query(QueryBuilders.multiMatchQuery(searchTerm, "*"));
-        searchSourceBuilder.size(searchDetails.getSize());
+        searchSourceBuilder.size(searchContext.getSize());
 
         HighlightBuilder highlightBuilder = new HighlightBuilder();
         highlightBuilder.field("*");
@@ -113,7 +113,7 @@ public class EntitySearcherImpl implements EntitySearcher {
         return searchRequest;
     }
 
-    protected boolean isResultFull(SearchResultImpl searchResultImpl, SearchDetails searchSettings) {
+    protected boolean isResultFull(SearchResultImpl searchResultImpl, SearchContext searchSettings) {
         return searchResultImpl.getSize() >= searchSettings.getSize();
     }
 
@@ -130,7 +130,7 @@ public class EntitySearcherImpl implements EntitySearcher {
     }
 
     protected void fillSearchResult(SearchResultImpl searchResultImpl, Map<String, List<SearchHit>> hitsByEntityName) {
-        int sizeLimit = searchResultImpl.getSearchDetails().getSize();
+        int sizeLimit = searchResultImpl.getSearchContext().getSize();
         for (Map.Entry<String, List<SearchHit>> entry : hitsByEntityName.entrySet()) {
             String entityName = entry.getKey();
             List<SearchHit> entityHits = entry.getValue();

@@ -20,9 +20,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jmix.core.common.util.Preconditions;
+import io.jmix.search.index.ESIndexManager;
 import io.jmix.search.index.IndexConfiguration;
-import io.jmix.search.index.IndexManagementService;
-import io.jmix.search.index.mapping.IndexConfigurationProvider;
+import io.jmix.search.index.mapping.IndexConfigurationManager;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.support.master.AcknowledgedResponse;
 import org.elasticsearch.client.RequestOptions;
@@ -36,21 +36,21 @@ import org.elasticsearch.common.xcontent.XContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
 
-@Service(IndexManagementService.NAME)
-public class IndexManagementServiceImpl implements IndexManagementService {
+@Component("search_ESIndexManager")
+public class ESIndexManagerImpl implements ESIndexManager {
 
-    private static final Logger log = LoggerFactory.getLogger(IndexManagementServiceImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(ESIndexManagerImpl.class);
 
     @Autowired
     protected RestHighLevelClient esClient;
     @Autowired
-    protected IndexConfigurationProvider indexConfigurationProvider;
+    protected IndexConfigurationManager indexConfigurationManager;
 
     protected ObjectMapper objectMapper = new ObjectMapper();
 
@@ -127,14 +127,14 @@ public class IndexManagementServiceImpl implements IndexManagementService {
     }
 
     @Override
-    public void prepareIndexes() {
+    public void synchronizeIndexes() {
         log.info("Prepare search indexes");
-        Collection<IndexConfiguration> indexConfigurations = indexConfigurationProvider.getIndexConfigurations();
-        indexConfigurations.forEach(this::prepareIndex);
+        Collection<IndexConfiguration> indexConfigurations = indexConfigurationManager.getAllIndexConfigurations();
+        indexConfigurations.forEach(this::synchronizeIndex);
     }
 
     @Override
-    public void prepareIndex(IndexConfiguration indexConfiguration) {
+    public void synchronizeIndex(IndexConfiguration indexConfiguration) {
         Preconditions.checkNotNullArgument(indexConfiguration);
 
         log.info("Prepare search index '{}'", indexConfiguration.getIndexName());

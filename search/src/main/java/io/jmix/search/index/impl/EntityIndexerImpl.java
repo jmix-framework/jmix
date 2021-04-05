@@ -26,7 +26,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.EntityOp;
 import io.jmix.search.index.EntityIndexer;
 import io.jmix.search.index.IndexConfiguration;
-import io.jmix.search.index.mapping.IndexConfigurationProvider;
+import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.index.mapping.MappingFieldDescriptor;
 import io.jmix.search.index.queue.entity.QueueItem;
 import io.jmix.search.utils.PropertyTools;
@@ -57,7 +57,7 @@ public class EntityIndexerImpl implements EntityIndexer {
     @Autowired
     protected RestHighLevelClient esClient;
     @Autowired
-    protected IndexConfigurationProvider indexConfigurationProvider;
+    protected IndexConfigurationManager indexConfigurationManager;
     @Autowired
     protected Metadata metadata;
     @Autowired
@@ -89,7 +89,7 @@ public class EntityIndexerImpl implements EntityIndexer {
 
     public void indexEntitiesByPks(MetaClass metaClass, Collection<String> entityPks, EntityOp changeType) {
         log.debug("Index entities: Class={}, Change Type={}, Pks={}", metaClass, changeType, entityPks);
-        IndexConfiguration indexConfiguration = indexConfigurationProvider.getIndexConfigurationByEntityName(metaClass.getName());
+        IndexConfiguration indexConfiguration = indexConfigurationManager.getIndexConfigurationByEntityName(metaClass.getName());
         if (indexConfiguration == null) {
             log.error("Index Definition not found for entity '{}'", metaClass);
             return;

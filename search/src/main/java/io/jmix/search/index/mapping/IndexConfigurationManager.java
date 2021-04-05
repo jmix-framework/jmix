@@ -36,22 +36,24 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@Component("search_IndexConfigurationProvider")
-public class IndexConfigurationProvider {
+@Component("search_IndexConfigurationManager")
+public class IndexConfigurationManager {
 
-    private static final Logger log = LoggerFactory.getLogger(IndexConfigurationProvider.class);
+    private static final Logger log = LoggerFactory.getLogger(IndexConfigurationManager.class);
 
     protected final Registry registry;
 
     @Autowired
-    public IndexConfigurationProvider(JmixModulesClasspathScanner classpathScanner,
-                                      AnnotatedIndexDefinitionProcessor builder,
-                                      InstanceNameProvider instanceNameProvider) {
+    public IndexConfigurationManager(JmixModulesClasspathScanner classpathScanner,
+                                     AnnotatedIndexDefinitionProcessor indexDefinitionProcessor,
+                                     InstanceNameProvider instanceNameProvider) {
         Set<String> classNames = classpathScanner.getClassNames(IndexDefinitionDetector.class);
         log.debug("Create Index Configurations");
 
         Registry registry = new Registry(instanceNameProvider);
-        classNames.stream().map(builder::createIndexConfiguration).forEach(registry::registerIndexConfiguration);
+        classNames.stream()
+                .map(indexDefinitionProcessor::createIndexConfiguration)
+                .forEach(registry::registerIndexConfiguration);
         this.registry = registry;
     }
 
@@ -59,8 +61,8 @@ public class IndexConfigurationProvider {
      * Gets all {@link IndexConfiguration} registered in application
      * @return all {@link IndexConfiguration}
      */
-    public Collection<IndexConfiguration> getIndexConfigurations() {
-        return registry.getIndexConfiguration();
+    public Collection<IndexConfiguration> getAllIndexConfigurations() {
+        return registry.getIndexConfigurations();
     }
 
     /**
@@ -262,7 +264,7 @@ public class IndexConfigurationProvider {
             return indexConfigurationsByIndexName.get(indexName);
         }
 
-        Collection<IndexConfiguration> getIndexConfiguration() {
+        Collection<IndexConfiguration> getIndexConfigurations() {
             return indexConfigurationsByEntityName.values();
         }
 

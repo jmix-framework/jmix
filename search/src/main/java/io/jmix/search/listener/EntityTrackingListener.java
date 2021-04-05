@@ -28,7 +28,7 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.security.EntityOp;
 import io.jmix.data.PersistenceHints;
 import io.jmix.data.StoreAwareLocator;
-import io.jmix.search.index.mapping.IndexConfigurationProvider;
+import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.index.queue.QueueService;
 import io.jmix.search.index.queue.entity.QueueItem;
 import io.jmix.search.utils.PropertyTools;
@@ -51,7 +51,7 @@ public class EntityTrackingListener {
     @Autowired
     protected Metadata metadata;
     @Autowired
-    protected IndexConfigurationProvider indexConfigurationProvider;
+    protected IndexConfigurationManager indexConfigurationManager;
     @Autowired
     protected DataManager dataManager;
     @Autowired
@@ -86,7 +86,7 @@ public class EntityTrackingListener {
                 .hint(PersistenceHints.SOFT_DELETION, false)
                 .one();
 
-        if (indexConfigurationProvider.isDirectlyIndexed(entityName)) { //todo check dirty fields
+        if (indexConfigurationManager.isDirectlyIndexed(entityName)) { //todo check dirty fields
             log.debug("{} is directly indexed", entityId);
 
             queueService.enqueue(entity, entityOperation);
@@ -115,18 +115,18 @@ public class EntityTrackingListener {
 
     protected boolean isProcessingRequired(EntityChangedEvent<?> event) {
         Class<?> entityClass = event.getEntityId().getEntityClass();
-        return !QueueItem.class.equals(entityClass) && indexConfigurationProvider.isAffectedEntityClass(entityClass);
+        return !QueueItem.class.equals(entityClass) && indexConfigurationManager.isAffectedEntityClass(entityClass);
     }
 
     protected Map<MetaClass, Set<String>> getDependentEntityPksForUpdate(Object entity, Class<?> entityClass, AttributeChanges changes) {
         log.debug("Get dependent entity primary keys for updated entity: {}", entity);
-        Map<MetaClass, Set<MetaPropertyPath>> dependencies = indexConfigurationProvider.getDependenciesMetaDataForUpdate(entityClass, changes.getAttributes());
+        Map<MetaClass, Set<MetaPropertyPath>> dependencies = indexConfigurationManager.getDependenciesMetaDataForUpdate(entityClass, changes.getAttributes());
         return loadDependentEntityPks(entity, dependencies);
     }
 
     protected Map<MetaClass, Set<String>> getDependentEntityPksForDelete(Object entity, Class<?> entityClass) {
         log.debug("Get dependent entity primary keys for deleted entity: {}", entity);
-        Map<MetaClass, Set<MetaPropertyPath>> dependencies = indexConfigurationProvider.getDependenciesMetaDataForDelete(entityClass);
+        Map<MetaClass, Set<MetaPropertyPath>> dependencies = indexConfigurationManager.getDependenciesMetaDataForDelete(entityClass);
         return loadDependentEntityPks(entity, dependencies);
     }
 

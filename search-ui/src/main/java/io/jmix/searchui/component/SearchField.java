@@ -22,7 +22,7 @@ import io.jmix.core.common.util.ParamsMap;
 import io.jmix.search.SearchApplicationProperties;
 import io.jmix.search.searching.EntitySearcher;
 import io.jmix.search.searching.SearchResult;
-import io.jmix.search.searching.impl.SearchDetails;
+import io.jmix.search.searching.impl.SearchContext;
 import io.jmix.searchui.screen.result.SearchResultsScreen;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.ScreenBuilders;
@@ -94,7 +94,7 @@ public class SearchField extends CompositeComponent<CssLayout> implements Field<
 
             SearchResult searchResult = entitySearcher.search(
                     preparedSearchTerm,
-                    new SearchDetails().setSize(searchApplicationProperties.getSearchResultPageSize())
+                    new SearchContext().setSize(searchApplicationProperties.getSearchResultPageSize())
             );
 
             if (searchResult.isEmpty()) {

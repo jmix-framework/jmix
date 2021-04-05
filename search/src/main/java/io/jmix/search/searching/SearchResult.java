@@ -16,7 +16,7 @@
 
 package io.jmix.search.searching;
 
-import io.jmix.search.searching.impl.SearchDetails;
+import io.jmix.search.searching.impl.SearchContext;
 import io.jmix.search.searching.impl.SearchResultEntry;
 
 import java.util.Collection;
@@ -65,11 +65,11 @@ public interface SearchResult {
     String getSearchTerm();
 
     /**
-     * Gets {@link SearchDetails} that was used to gain this {@link SearchResult}.
+     * Gets {@link SearchContext} that was used to gain this {@link SearchResult}.
      *
-     * @return {@link SearchDetails}
+     * @return {@link SearchContext}
      */
-    SearchDetails getSearchDetails();
+    SearchContext getSearchContext();
 
     /**
      * Checks if there is any data in result.

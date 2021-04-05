@@ -23,9 +23,7 @@ import java.io.IOException;
 /**
  * Provides functionality for index management.
  */
-public interface IndexManagementService {
-
-    String NAME = "search_IndexManagementService";
+public interface ESIndexManager {
 
     /**
      * Creates index if not exists using provided {@link IndexConfiguration}.
@@ -82,16 +80,18 @@ public interface IndexManagementService {
     GetIndexResponse getIndex(String indexName) throws IOException;
 
     /**
-     * Prepares all search indices defined in application.
-     * <p>See {@link IndexManagementService#prepareIndex(IndexConfiguration)}
+     * Updates all search indices defined in application to the actual state.
+     * <p>Non-existent index will be created, irrelevant index will be recreated.
+     * <p>See {@link ESIndexManager#synchronizeIndex(IndexConfiguration)}
      */
-    void prepareIndexes();
+    void synchronizeIndexes();
 
     /**
      * Updates index to the actual state.
      * <p>Non-existent index will be created, irrelevant index will be recreated.
+     * <p>See {@link ESIndexManager#synchronizeIndexes}
      *
      * @param indexConfiguration actual index configuration
      */
-    void prepareIndex(IndexConfiguration indexConfiguration);
+    void synchronizeIndex(IndexConfiguration indexConfiguration);
 }

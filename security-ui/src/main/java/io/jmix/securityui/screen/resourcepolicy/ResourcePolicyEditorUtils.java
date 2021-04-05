@@ -17,9 +17,11 @@
 package io.jmix.securityui.screen.resourcepolicy;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Streams;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.ui.WindowConfig;
@@ -42,6 +44,9 @@ public class ResourcePolicyEditorUtils {
 
     @Autowired
     private Metadata metadata;
+
+    @Autowired
+    private MetadataTools metadataTools;
 
     @Autowired
     private MessageTools messageTools;
@@ -76,14 +81,17 @@ public class ResourcePolicyEditorUtils {
         MetaClass metaClass = metadata.getClass(entityName);
         Map<String, String> result = new LinkedHashMap<>();
         result.put(messages.getMessage(ResourcePolicyEditorUtils.class, "allAttributes"), "*");
-        result.putAll(metaClass.getProperties().stream()
-                .collect(Collectors.toMap(
-                        this::getEntityAttributeCaption,
-                        MetaProperty::getName,
-                        (v1, v2) -> {
-                            throw new RuntimeException(String.format("Duplicate key for values %s and %s", v1, v2));
-                        },
-                        TreeMap::new)));
+
+        result.putAll(
+                Streams.concat(metaClass.getProperties().stream(),
+                        metadataTools.getAdditionalProperties(metaClass).stream())
+                        .collect(Collectors.toMap(
+                                this::getEntityAttributeCaption,
+                                MetaProperty::getName,
+                                (v1, v2) -> {
+                                    throw new RuntimeException(String.format("Duplicate key for values %s and %s", v1, v2));
+                                },
+                                TreeMap::new)));
         return result;
     }
 
@@ -141,8 +149,7 @@ public class ResourcePolicyEditorUtils {
             String screenCaption = screensHelper.getScreenCaption(windowInfo);
             if (Strings.isNullOrEmpty(screenCaption)) {
                 return windowInfo.getId();
-            }
-            else {
+            } else {
                 return screenCaption;
             }
         } catch (FileNotFoundException e) {

@@ -29,6 +29,7 @@ import io.jmix.ui.model.CollectionLoader;
 import io.jmix.ui.screen.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.Nullable;
 import java.util.*;
 
 @UiController("dynat_AttributeLocalizationFragment")
@@ -58,7 +59,7 @@ public class AttributeLocalizationFragment extends ScreenFragment {
 
     protected boolean descriptionColumnVisible = false;
 
-    public void setNameMsgBundle(String nameMsgBundle) {
+    public void setNameMsgBundle(@Nullable String nameMsgBundle) {
         localizedValues.clear();
         loadLocalizedValues();
         setMsgBundle(nameMsgBundle, NAME_PROPERTY);
@@ -140,10 +141,12 @@ public class AttributeLocalizationFragment extends ScreenFragment {
         return localizedValue;
     }
 
-    protected void setMsgBundle(String msgBundle, String propertyName) {
-        Map<String, String> msgBundleValues = msgBundleTools.getMsgBundleValues(msgBundle);
-        for (Map.Entry<String, String> entry : msgBundleValues.entrySet()) {
-            addAttributeLocalizedValue(entry.getKey(), propertyName, entry.getValue());
+    protected void setMsgBundle(@Nullable String msgBundle, String propertyName) {
+        if (msgBundle != null) {
+            Map<String, String> msgBundleValues = msgBundleTools.getMsgBundleValues(msgBundle);
+            for (Map.Entry<String, String> entry : msgBundleValues.entrySet()) {
+                addAttributeLocalizedValue(entry.getKey(), propertyName, entry.getValue());
+            }
         }
     }
 

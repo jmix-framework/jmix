@@ -253,11 +253,23 @@ public class PersistentDashboardEdit extends StandardEditor<PersistentDashboard>
         DashboardModel dashboardModel = event.getItem();
         if (StringUtils.equals(event.getProperty(), "title")) {
             getEditedEntity().setName(dashboardModel.getTitle());
-        } else if(StringUtils.equals(event.getProperty(), "code")) {
+        } else if (StringUtils.equals(event.getProperty(), "code")) {
             getEditedEntity().setCode(dashboardModel.getCode());
-        } else if(StringUtils.equals(event.getProperty(), "isAvailableForAllUsers")) {
+        } else if (StringUtils.equals(event.getProperty(), "isAvailableForAllUsers")) {
             getEditedEntity().setIsAvailableForAllUsers(dashboardModel.getIsAvailableForAllUsers());
         } else {
+            String jsonModel = converter.dashboardToJson(dashboardModel);
+            getEditedEntity().setDashboardModel(jsonModel);
+        }
+    }
+
+    @Subscribe(id = "dashboardDc", target = Target.DATA_CONTAINER)
+    public void onDashboardDcItemChange(InstanceContainer.ItemChangeEvent<DashboardModel> event) {
+        DashboardModel dashboardModel = event.getItem();
+        if (dashboardModel != null) {
+            getEditedEntity().setName(dashboardModel.getTitle());
+            getEditedEntity().setCode(dashboardModel.getCode());
+            getEditedEntity().setIsAvailableForAllUsers(dashboardModel.getIsAvailableForAllUsers());
             String jsonModel = converter.dashboardToJson(dashboardModel);
             getEditedEntity().setDashboardModel(jsonModel);
         }

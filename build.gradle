@@ -123,6 +123,8 @@ dependencies {
 
         api "io.jmix.dashboards:jmix-dashboards:${snapshotOr(dashboardsVersion)}"
         api "io.jmix.dashboards:jmix-dashboards-starter:${snapshotOr(dashboardsVersion)}"
+        api "io.jmix.dashboards:jmix-dashboards-chart:${snapshotOr(dashboardsVersion)}"
+        api "io.jmix.dashboards:jmix-dashboards-chart-starter:${snapshotOr(dashboardsVersion)}"
         api "io.jmix.dashboards:jmix-dashboards-ui:${snapshotOr(dashboardsVersion)}"
         api "io.jmix.dashboards:jmix-dashboards-ui-starter:${snapshotOr(dashboardsVersion)}"
 

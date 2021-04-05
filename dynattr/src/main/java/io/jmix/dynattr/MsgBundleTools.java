@@ -26,6 +26,7 @@ import io.jmix.core.security.CurrentAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -76,6 +77,7 @@ public final class MsgBundleTools {
         return result;
     }
 
+    @Nullable
     public String getMsgBundle(Properties properties) {
         StringWriter writer = new StringWriter();
         String result = null;

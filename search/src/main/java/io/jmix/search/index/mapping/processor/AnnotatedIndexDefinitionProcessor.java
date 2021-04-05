@@ -107,7 +107,7 @@ public class AnnotatedIndexDefinitionProcessor {
     }
 
     protected String createIndexName(MetaClass entityMetaClass) {
-        return entityMetaClass.getName().toLowerCase() + "_search_index"; //todo naming
+        return "search_index_" + entityMetaClass.getName().toLowerCase();
     }
 
     protected IndexMappingConfiguration createIndexMappingConfig(MetaClass entityMetaClass, Class<?> indexDefClass) {

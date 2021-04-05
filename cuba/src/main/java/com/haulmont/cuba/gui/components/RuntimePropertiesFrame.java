@@ -35,7 +35,7 @@ import io.jmix.dynattr.AttributeDefinition;
 import io.jmix.dynattr.DynAttrMetadata;
 import io.jmix.dynattr.DynAttrUtils;
 import io.jmix.dynattr.model.Categorized;
-import io.jmix.dynattrui.MsgBundleTools;
+import io.jmix.dynattr.MsgBundleTools;
 import io.jmix.ui.WindowParam;
 import io.jmix.ui.component.BoxLayout;
 import io.jmix.ui.component.Component;

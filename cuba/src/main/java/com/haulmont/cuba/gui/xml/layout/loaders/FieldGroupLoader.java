@@ -41,7 +41,7 @@ import io.jmix.core.security.EntityOp;
 import io.jmix.dynattr.AttributeDefinition;
 import io.jmix.dynattr.DynAttrMetadata;
 import io.jmix.dynattr.DynAttrUtils;
-import io.jmix.dynattrui.MsgBundleTools;
+import io.jmix.dynattr.MsgBundleTools;
 import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.Frame;

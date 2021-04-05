@@ -34,7 +34,7 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.dynattr.AttributeDefinition;
 import io.jmix.dynattr.CategoryDefinition;
 import io.jmix.dynattr.DynAttrMetadata;
-import io.jmix.dynattrui.MsgBundleTools;
+import io.jmix.dynattr.MsgBundleTools;
 import io.jmix.ui.component.Label;
 import io.jmix.ui.component.TextField;
 import org.apache.commons.lang3.RandomStringUtils;

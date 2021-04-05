@@ -32,7 +32,7 @@ import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.dynattr.AttributeDefinition;
 import io.jmix.dynattr.DynAttrMetadata;
-import io.jmix.dynattrui.MsgBundleTools;
+import io.jmix.dynattr.MsgBundleTools;
 import com.haulmont.cuba.core.global.filter.ConditionType;
 import com.haulmont.cuba.core.global.filter.Op;
 import org.apache.commons.lang3.BooleanUtils;

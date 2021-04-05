@@ -98,7 +98,7 @@ public class EntitySearcherImpl implements EntitySearcher {
     }
 
     protected SearchRequest createSearchRequest(String searchTerm, SearchContext searchContext) {
-        SearchRequest searchRequest = new SearchRequest("*_search_index");
+        SearchRequest searchRequest = new SearchRequest("search_index_*");
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         searchSourceBuilder.query(QueryBuilders.multiMatchQuery(searchTerm, "*"));
         searchSourceBuilder.size(searchContext.getSize());

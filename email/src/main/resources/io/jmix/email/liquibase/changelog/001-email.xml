@@ -82,6 +82,7 @@
 
     <changeSet author="email" id="3" context="!cuba">
         <renameColumn tableName="EMAIL_SENDING_MESSAGE"
+                      columnDataType="int"
                       oldColumnName="ATTEMPTS_COUNT"
                       newColumnName="ATTEMPTS_LIMIT"/>
     </changeSet>

@@ -21,6 +21,7 @@ import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Range;
+import io.jmix.data.PersistenceHints;
 import io.jmix.datatools.EntitySqlGenerationService;
 import io.jmix.datatools.EntitySqlGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,6 +85,7 @@ public class EntitySqlGenerationServiceImpl implements EntitySqlGenerationServic
         return dataManager.load(entityClass)
                 .id(id)
                 .fetchPlan(fetchPlan)
+                .hint(PersistenceHints.SOFT_DELETION, false)
                 .one();
     }
 

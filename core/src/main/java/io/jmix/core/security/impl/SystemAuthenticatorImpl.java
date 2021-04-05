@@ -30,6 +30,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
@@ -65,22 +66,28 @@ public class SystemAuthenticatorImpl extends SystemAuthenticatorSupport implemen
             throw new IllegalStateException("AuthenticationManager is not defined");
         }
 
-        Authentication authentication;
+        pushAuthentication(SecurityContextHelper.getAuthentication());
+        try {
+            Authentication authentication;
 
-        if (!Strings.isNullOrEmpty(login)) {
-            log.trace("Authenticating as {}", login);
-            Authentication authToken = new SystemAuthenticationToken(login);
-            authentication = authenticationManager.authenticate(authToken);
-        } else {
-            log.trace("Authenticating as system");
-            Authentication authToken = new SystemAuthenticationToken(null);
-            authentication = authenticationManager.authenticate(authToken);
+            if (!Strings.isNullOrEmpty(login)) {
+                log.trace("Authenticating as {}", login);
+                Authentication authToken = new SystemAuthenticationToken(login);
+                authentication = authenticationManager.authenticate(authToken);
+            } else {
+                log.trace("Authenticating as system");
+                Authentication authToken = new SystemAuthenticationToken(null);
+                authentication = authenticationManager.authenticate(authToken);
+            }
+
+            SecurityContextHelper.setAuthentication(authentication);
+
+            return authentication;
+
+        } catch (AuthenticationException e) {
+            pollAuthentication();
+            throw e;
         }
-
-        pushAuthentication(authentication);
-        SecurityContextHelper.setAuthentication(authentication);
-
-        return authentication;
     }
 
     @Override
@@ -91,9 +98,7 @@ public class SystemAuthenticatorImpl extends SystemAuthenticatorSupport implemen
     @Override
     public void end() {
         log.trace("Set previous Authentication");
-        //remove current authentication from stack
-        pollAuthentication();
-        Authentication previous = peekAuthentication();
+        Authentication previous = pollAuthentication();
         SecurityContextHolder.getContext().setAuthentication(previous);
         LogMdc.setup(previous);
     }

@@ -84,10 +84,10 @@ public class InspectorFetchPlanBuilder {
         }
         fetchPlanBuilder.addFetchPlan(FetchPlan.LOCAL);
         for (MetaProperty metaProperty : metaClass.getProperties()) {
-            MetaClass metaPropertyClass = metaProperty.getRange().asClass();
             switch (metaProperty.getType()) {
                 case EMBEDDED:
                     if (withEmbedded) {
+                        MetaClass metaPropertyClass = metaProperty.getRange().asClass();
                         fetchPlanBuilder.add(metaProperty.getName(), builder -> {
                             createEmbeddedPlan(metaPropertyClass, builder);
                         });

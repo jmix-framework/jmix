@@ -28,7 +28,7 @@ import javax.annotation.Nullable;
 
 @Component("sec_AccessDeniedExceptionHandler")
 public class AccessDeniedExceptionHandler extends AbstractUiExceptionHandler {
-    private final Logger LOG = LoggerFactory.getLogger(AccessDeniedExceptionHandler.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AccessDeniedExceptionHandler.class);
 
     private final Messages messages;
 

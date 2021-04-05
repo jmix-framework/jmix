@@ -54,24 +54,16 @@ public class ConditionJpqlGenerator {
             context.setSelectedExpressions(parser.getSelectedExpressionsList());
         }
 
-        String joins = generateJoins(context);
-        String where = generateWhere(context);
+        ConditionGenerator generator = resolver.getConditionGenerator(context);
+        ConditionJpqlClause clause = generator.generateJoinAndWhere(context);
+        String join = clause.getJoin();
+        String where = clause.getWhere();
 
-        if (!Strings.isNullOrEmpty(joins)) {
-            transformer.addJoinAndWhere(joins, where);
+        if (!Strings.isNullOrEmpty(join)) {
+            transformer.addJoinAndWhere(join, where);
         } else {
             transformer.addWhere(where);
         }
         return transformer.getResult();
-    }
-
-    protected String generateJoins(ConditionGenerationContext context) {
-        ConditionGenerator generator = resolver.getConditionGenerator(context);
-        return generator.generateJoin(context);
-    }
-
-    protected String generateWhere(ConditionGenerationContext context) {
-        ConditionGenerator generator = resolver.getConditionGenerator(context);
-        return generator.generateWhere(context);
     }
 }

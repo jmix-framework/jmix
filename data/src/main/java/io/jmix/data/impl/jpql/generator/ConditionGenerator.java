@@ -50,6 +50,14 @@ public interface ConditionGenerator {
     String generateWhere(ConditionGenerationContext context);
 
     /**
+     * Returns JPQL 'join' and 'where' clauses modified according to the given context.
+     *
+     * @param context condition generation context
+     * @return JPQL 'join' and 'where' clauses modified according to the given context
+     */
+    ConditionJpqlClause generateJoinAndWhere(ConditionGenerationContext context);
+
+    /**
      * Returns a parameter value modified according to the given condition.
      *
      * @param condition a condition

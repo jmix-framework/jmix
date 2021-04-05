@@ -47,12 +47,19 @@ public class LogicalConditionGenerator implements ConditionGenerator {
             return "";
         }
 
-        return logical.getConditions().stream()
+        List<String> joinClauses = logical.getConditions().stream()
                 .map(childCondition -> {
                     ConditionGenerationContext childContext = createChildContext(context, childCondition);
                     ConditionGenerator generator = resolver.getConditionGenerator(childContext);
                     return generator.generateJoin(childContext);
                 })
+                .collect(Collectors.toList());
+        return generateJoin(joinClauses);
+    }
+
+    protected String generateJoin(List<String> joinClauses) {
+        return joinClauses.stream()
+                .filter(joinClause -> !Strings.isNullOrEmpty(joinClause))
                 .collect(Collectors.joining(" "));
     }
 
@@ -63,17 +70,23 @@ public class LogicalConditionGenerator implements ConditionGenerator {
             return "";
         }
 
-        List<Condition> conditions = logical.getConditions();
-        StringBuilder sb = new StringBuilder();
-
-        String op = logical.getType() == LogicalCondition.Type.AND ? " and " : " or ";
-
-        String where = conditions.stream()
+        List<String> whereClauses = logical.getConditions().stream()
                 .map(childCondition -> {
                     ConditionGenerationContext childContext = createChildContext(context, childCondition);
                     ConditionGenerator generator = resolver.getConditionGenerator(childContext);
                     return generator.generateWhere(childContext);
                 })
+                .collect(Collectors.toList());
+
+        return generateWhere(whereClauses, logical.getType());
+    }
+
+    protected String generateWhere(List<String> whereClauses, LogicalCondition.Type type) {
+        StringBuilder sb = new StringBuilder();
+
+        String op = type == LogicalCondition.Type.AND ? " and " : " or ";
+
+        String where = whereClauses.stream()
                 .filter(whereClause -> !Strings.isNullOrEmpty(whereClause))
                 .collect(Collectors.joining(op));
 
@@ -84,6 +97,34 @@ public class LogicalConditionGenerator implements ConditionGenerator {
         }
 
         return sb.toString();
+    }
+
+    @Override
+    public ConditionJpqlClause generateJoinAndWhere(ConditionGenerationContext context) {
+        LogicalCondition logical = (LogicalCondition) context.getCondition();
+        if (logical == null || logical.getConditions().isEmpty()) {
+            return new ConditionJpqlClause("", "");
+        }
+
+        List<ConditionJpqlClause> clauses = logical.getConditions().stream()
+                .map(childCondition -> {
+                    ConditionGenerationContext childContext = createChildContext(context, childCondition);
+                    ConditionGenerator generator = resolver.getConditionGenerator(childContext);
+                    return generator.generateJoinAndWhere(childContext);
+                })
+                .collect(Collectors.toList());
+
+        List<String> joinClauses = clauses.stream()
+                .map(ConditionJpqlClause::getJoin)
+                .collect(Collectors.toList());
+        String join = generateJoin(joinClauses);
+
+        List<String> whereClauses = clauses.stream()
+                .map(ConditionJpqlClause::getWhere)
+                .collect(Collectors.toList());
+        String where = generateWhere(whereClauses, logical.getType());
+
+        return new ConditionJpqlClause(join, where);
     }
 
     @Nullable

@@ -37,26 +37,35 @@ public class EditorPrintFormAction extends AbstractPrintFormAction {
 
     public static final String ID = "editorPrintForm";
 
-    @Autowired
     protected Messages messages;
 
     @Autowired
     protected Metadata metadata;
 
-    protected final EditorScreen editor;
-    protected final String reportOutputName;
+    protected EditorScreen editor;
+    protected String reportOutputName;
 
-    public EditorPrintFormAction(EditorScreen editor, @Nullable String reportOutputName) {
-        this(ID, editor, reportOutputName);
+    public EditorPrintFormAction() {
+        this(ID);
     }
 
-    public EditorPrintFormAction(String id, EditorScreen editor, @Nullable String reportOutputName) {
+    public EditorPrintFormAction(String id) {
         super(id);
-
-        this.editor = editor;
-        this.caption = messages.getMessage(getClass(), "actions.Report");
-        this.reportOutputName = reportOutputName;
         this.icon = "icons/reports-print.png";
+    }
+
+    @Autowired
+    protected void setMessages(Messages messages) {
+        this.messages = messages;
+        this.caption = messages.getMessage(getClass(), "actions.Report");
+    }
+
+    public void setEditor(@Nullable EditorScreen editor) {
+        this.editor = editor;
+    }
+
+    public void setReportOutputName(@Nullable String reportOutputName) {
+        this.reportOutputName = reportOutputName;
     }
 
     @Override

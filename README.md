@@ -83,12 +83,13 @@ OAuth header could be partially skipped in development mode. To switch on dev mo
 ```
 jmix.security.oauth2.devMode=true
 jmix.security.oauth2.devUsername=admin
+graphiql.props.variables.headerEditorEnabled=true
 ```
 In this mode no generated token required for authorization. Request automatically got permissions 
 of user which username set in `devUsername`. Due to issues in jmix OAuth service, header still need to be sent 
 but with empty token.
 ```
-{ "Authorization": "Bearer" }
+{ "Authorization": "bearer" }
 ```
 
 

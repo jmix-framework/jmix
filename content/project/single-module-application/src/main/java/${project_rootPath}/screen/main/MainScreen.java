@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @UiController("${normalizedPrefix_underscore}MainScreen")
 @UiDescriptor("main-screen.xml")
+@Route(path = "main", root = true)
 public class MainScreen extends Screen implements Window.HasWorkArea {
 
     @Autowired
@@ -46,5 +47,7 @@ public class MainScreen extends Screen implements Window.HasWorkArea {
     public void onAfterShow(AfterShowEvent event) {
         screenTools.openDefaultScreen(
                 UiControllerUtils.getScreenContext(this).getScreens());
+
+        screenTools.handleRedirect();
     }
 }

@@ -60,13 +60,6 @@ public class JpqlConditionGenerator implements ConditionGenerator {
                 : "";
     }
 
-    @Override
-    public ConditionJpqlClause generateJoinAndWhere(ConditionGenerationContext context) {
-        String join = generateJoin(context);
-        String where = generateWhere(context);
-        return new ConditionJpqlClause(join, where);
-    }
-
     @Nullable
     @Override
     public Object generateParameterValue(@Nullable Condition condition, @Nullable Object parameterValue) {

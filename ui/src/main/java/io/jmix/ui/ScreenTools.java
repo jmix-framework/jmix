@@ -29,4 +29,9 @@ public interface ScreenTools {
      * @param screens {@link Screens} bean reference
      */
     void openDefaultScreen(Screens screens);
+
+    /**
+     * Handle redirect if it is scheduled.
+     */
+    void handleRedirect();
 }

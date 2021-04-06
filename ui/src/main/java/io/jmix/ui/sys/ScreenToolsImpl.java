@@ -21,6 +21,7 @@ import io.jmix.ui.*;
 import io.jmix.ui.component.Window;
 import io.jmix.ui.component.impl.WindowImpl;
 import io.jmix.ui.navigation.EditorTypeExtractor;
+import io.jmix.ui.navigation.RedirectHandler;
 import io.jmix.ui.screen.EditorScreen;
 import io.jmix.ui.screen.OpenMode;
 import io.jmix.ui.screen.Screen;
@@ -104,5 +105,17 @@ public class ScreenToolsImpl implements ScreenTools {
         }
 
         return metadata.create(entityClass);
+    }
+
+    @Override
+    public void handleRedirect() {
+        AppUI ui = AppUI.getCurrent();
+        if (ui != null) {
+            RedirectHandler redirectHandler = ui.getUrlChangeHandler().getRedirectHandler();
+            if (redirectHandler != null
+                    && redirectHandler.scheduled()) {
+                redirectHandler.redirect();
+            }
+        }
     }
 }

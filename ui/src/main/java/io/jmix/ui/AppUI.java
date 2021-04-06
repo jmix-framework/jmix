@@ -53,6 +53,7 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -275,9 +276,14 @@ public class AppUI extends UI implements ErrorHandler, EnhancedUI, UiExceptionHa
         processExternalLink(request, requestedState);
     }
 
-    //todo MG remove
+    /**
+     * @return {@code true} if authentication is set and
+     * it isn't represent {@link AnonymousAuthenticationToken}
+     */
     public boolean hasAuthenticatedSession() {
-        return currentAuthentication.isSet();
+        // Think of Anonymous Authentication as no Authentication
+        return currentAuthentication.isSet() &&
+                !(currentAuthentication.getAuthentication() instanceof AnonymousAuthenticationToken);
     }
 
     protected void publishAppInitializedEvent(App app) {

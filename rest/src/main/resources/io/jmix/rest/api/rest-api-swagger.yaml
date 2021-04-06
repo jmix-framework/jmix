@@ -270,31 +270,37 @@ definitions:
               description: Method argument type. A fully qualified java class name is returned here.
               example: java.lang.String
 
+  permissionEntityItem:
+    type: object
+    properties:
+      target:
+        type: string
+        example: app$Order:create
+      value:
+        type: integer
+        example: 1
+
+  permissionAttributeItem:
+    type: object
+    properties:
+      target:
+        type: string
+        example: app$Order:number
+      value:
+        type: integer
+        example: 1
+
   permission:
     type: object
     properties:
       entities:
         type: array
         items:
-          type: object
-          properties:
-            target:
-              type: string
-              example: app$Order:create
-          value:
-            type: integer
-            example: 1
+          $ref: '#/definitions/permissionAttributeItem'
       entityAttributes:
         type: array
-          items:
-            type: object
-            properties:
-              target:
-                type: string
-                example: app$Order:number
-            value:
-              type: integer
-              example: 1
+        items:
+          $ref: '#/definitions/permissionEntityItem'
 
   entityMetadata:
     type: object
@@ -1482,19 +1488,6 @@ paths:
       summary: Get a list of current user security permissions (entities, entity attributes)
       description: |
         Gets a list of current user security permissions (entities, entity attributes)
-      parameters:
-        - name: entities
-          in: path
-          type: boolean
-          required: false
-          description: defines the ability to include entity permissions in the response
-          default: false
-        - name: entityAttributes
-            in: path
-            type: boolean
-            required: false
-            description: defines the ability to include entity attribute permissions in the response
-            default: false
       responses:
         200:
           description: Success

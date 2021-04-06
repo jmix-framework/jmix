@@ -38,6 +38,8 @@ import io.jmix.ui.component.data.meta.EntityValueSource;
 import io.jmix.ui.component.data.meta.ValueBinding;
 import io.jmix.ui.component.validation.Validator;
 import io.jmix.ui.component.validator.BeanPropertyValidator;
+import io.jmix.ui.model.InstanceContainer;
+import io.jmix.ui.model.Nested;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -90,7 +92,36 @@ public class ValueBinder {
                 accessManager.applyRegisteredConstraints(attributeContext);
 
                 if (component instanceof Component.Editable) {
-                    if (!attributeContext.canModify()) {
+                    MetaClass metaClass = entityValueSource.getEntityMetaClass();
+                    boolean permittedIfEmbedded = true;
+                    if (entityValueSource instanceof ContainerValueSource) {
+                        InstanceContainer<?> container = ((ContainerValueSource<?, ?>) entityValueSource).getContainer();
+                        if (container instanceof Nested && metaClass != null && metadataTools.isJpaEmbeddable(metaClass)) {
+                            String embeddedProperty = ((Nested) container).getProperty();
+                            MetaClass masterMetaClass = ((Nested) container).getMaster().getEntityMetaClass();
+
+                            UiEntityAttributeContext embeddedAttributeContext = new UiEntityAttributeContext(masterMetaClass, embeddedProperty);
+                            accessManager.applyRegisteredConstraints(embeddedAttributeContext);
+
+                            permittedIfEmbedded = embeddedAttributeContext.canModify();
+                        }
+                        if (permittedIfEmbedded && metaPropertyPath.length() > 1) {
+                            for (MetaProperty property : metaPropertyPath.getMetaProperties()) {
+                                if (metadataTools.isEmbedded(property)) {
+                                    UiEntityAttributeContext childAttributeContext =
+                                            new UiEntityAttributeContext(property.getDomain(), property.getName());
+                                    accessManager.applyRegisteredConstraints(childAttributeContext);
+
+                                    if (!childAttributeContext.canModify()) {
+                                        permittedIfEmbedded = false;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if (!attributeContext.canModify() || !permittedIfEmbedded) {
                         ((Component.Editable) component).setEditable(false);
                     }
                 }

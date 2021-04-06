@@ -49,7 +49,7 @@ public class AnnotatedRoleBuilderImpl implements AnnotatedRoleBuilder {
                 roleClass.getAnnotation(io.jmix.security.role.annotation.ResourceRole.class);
 
         ResourceRole role = new ResourceRole();
-        initBaseParameters(role, roleAnnotation.name(), roleAnnotation.code());
+        initBaseParameters(role, roleAnnotation.name(), roleAnnotation.code(), roleAnnotation.description());
         role.setResourcePolicies(extractResourcePolicies(roleClass));
 
         return role;
@@ -63,7 +63,7 @@ public class AnnotatedRoleBuilderImpl implements AnnotatedRoleBuilder {
                 roleClass.getAnnotation(io.jmix.security.role.annotation.RowLevelRole.class);
 
         RowLevelRole role = new RowLevelRole();
-        initBaseParameters(role, roleAnnotation.name(), roleAnnotation.code());
+        initBaseParameters(role, roleAnnotation.name(), roleAnnotation.code(), roleAnnotation.description());
         role.setRowLevelPolicies(extractRowLevelPolicies(roleClass));
 
         return role;
@@ -79,9 +79,10 @@ public class AnnotatedRoleBuilderImpl implements AnnotatedRoleBuilder {
         return clazz;
     }
 
-    protected void initBaseParameters(BaseRole role, String name, String code) {
+    protected void initBaseParameters(BaseRole role, String name, String code, String description) {
         role.setName(name);
         role.setCode(code);
+        role.setDescription(description);
         role.setSource(RoleSource.ANNOTATED_CLASS);
     }
 

@@ -41,6 +41,9 @@ public abstract class BaseRoleModel {
     protected String name;
 
     @JmixProperty
+    protected String description;
+
+    @JmixProperty
     private String source;
 
     @JmixProperty
@@ -79,6 +82,14 @@ public abstract class BaseRoleModel {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Set<String> getChildRoles() {

@@ -25,6 +25,7 @@ public abstract class BaseRole {
     private String name;
     private String code;
     private String source;
+    private String description;
     private Set<String> childRoles;
     private Map<String, String> customProperties = new HashMap<>();
 
@@ -54,6 +55,14 @@ public abstract class BaseRole {
 
     public Map<String, String> getCustomProperties() {
         return customProperties;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @Nullable

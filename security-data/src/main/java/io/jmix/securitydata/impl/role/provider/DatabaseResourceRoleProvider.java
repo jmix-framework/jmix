@@ -46,7 +46,7 @@ public class DatabaseResourceRoleProvider extends BaseDatabaseRoleProvider<Resou
     @Override
     protected void buildFetchPlan(FetchPlanBuilder fetchPlanBuilder) {
         fetchPlanBuilder
-                .addAll("name", "code", "childRoles")
+                .addAll("name", "code", "description", "childRoles")
                 .add("resourcePolicies", FetchPlan.BASE);
     }
 
@@ -56,6 +56,7 @@ public class DatabaseResourceRoleProvider extends BaseDatabaseRoleProvider<Resou
         ResourceRole role = new ResourceRole();
         role.setName(roleEntity.getName());
         role.setCode(roleEntity.getCode());
+        role.setDescription(roleEntity.getDescription());
         role.setSource(RoleSource.DATABASE);
         role.setChildRoles(roleEntity.getChildRoles());
         role.getCustomProperties().put("databaseId", roleEntity.getId().toString());

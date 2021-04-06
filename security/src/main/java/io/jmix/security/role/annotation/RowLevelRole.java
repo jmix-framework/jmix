@@ -73,4 +73,9 @@ public @interface RowLevelRole {
      */
     String code();
 
+    /**
+     * Role description
+     */
+    String description() default "";
+
 }

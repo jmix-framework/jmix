@@ -40,6 +40,7 @@
                 <column id="name"/>
                 <column id="code"/>
                 <column id="source"/>
+                <column id="description"/>
             </columns>
             <simplePagination/>
             <buttonsPanel id="buttonsPanel"

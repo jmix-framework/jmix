@@ -84,4 +84,9 @@ public @interface ResourceRole {
      */
     String code();
 
+    /**
+     * Role description
+     */
+    String description() default "";
+
 }

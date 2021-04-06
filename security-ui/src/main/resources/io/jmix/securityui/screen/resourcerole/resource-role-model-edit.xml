@@ -35,6 +35,7 @@
             <column width="350px">
                 <textField id="nameField" property="name"/>
                 <textField id="codeField" property="code"/>
+                <textArea id="descriptionField" property="description"/>
             </column>
             <column width="350px">
                 <textField id="sourceField" caption="msg://io.jmix.securityui.model/ResourceRoleModel.source"

@@ -102,6 +102,7 @@ class DatabaseRoleProviderTest extends SecurityDataSpecification {
         with(role) {
             code == 'role1'
             name == 'Role1'
+            description == 'Role1\nrole1'
             resourcePolicies.size() == 2
         }
     }
@@ -151,6 +152,7 @@ class DatabaseRoleProviderTest extends SecurityDataSpecification {
         ResourceRoleEntity role1 = metadata.create(ResourceRoleEntity)
         role1.code = 'role1'
         role1.name = 'Role1'
+        role1.description = 'Role1\nrole1'
 
         def entitiesToSave = []
 

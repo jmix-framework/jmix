@@ -59,6 +59,7 @@ public class RoleModelConverter {
 
     protected void initBaseParameters(BaseRoleModel roleModel, BaseRole role) {
         roleModel.setCode(role.getCode());
+        roleModel.setDescription(role.getDescription());
         roleModel.setName(role.getName());
         roleModel.setSource(role.getSource());
         roleModel.setChildRoles(role.getChildRoles());

@@ -1,6 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright 2020 Haulmont.
+  ~ Copyright 2021 Haulmont.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -21,10 +20,13 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <property name="uuid.type" dbms="oracle" value="varchar2(32)"/>
-    <property name="uuid.type" dbms="!oracle" value="uuid"/>
-
-    <include file="/io/jmix/securitydata/liquibase/changelog/001-security-data.xml"/>
-    <include file="/io/jmix/securitydata/liquibase/changelog/002-security-data.xml"/>
+    <changeSet author="security-data" id="1">
+        <addColumn tableName="SEC_RESOURCE_ROLE">
+            <column name="DESCRIPTION" type="text"/>
+        </addColumn>
+        <addColumn tableName="SEC_ROW_LEVEL_ROLE">
+            <column name="DESCRIPTION" type="text"/>
+        </addColumn>
+    </changeSet>
 
 </databaseChangeLog>

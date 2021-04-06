@@ -219,6 +219,7 @@ public class RowLevelRoleModelEdit extends StandardEditor<RowLevelRoleModel> {
         roleEntity = dataContext.merge(roleEntity);
         roleEntity.setName(roleModel.getName());
         roleEntity.setCode(roleModel.getCode());
+        roleEntity.setDescription(roleModel.getDescription());
 
         boolean roleModelModified = modifiedInstances.stream()
                 .anyMatch(entity -> entity instanceof ResourceRoleModel);

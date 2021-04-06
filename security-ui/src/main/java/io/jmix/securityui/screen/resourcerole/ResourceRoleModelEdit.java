@@ -351,6 +351,7 @@ public class ResourceRoleModelEdit extends StandardEditor<ResourceRoleModel> {
         roleEntity = dataContext.merge(roleEntity);
         roleEntity.setName(roleModel.getName());
         roleEntity.setCode(roleModel.getCode());
+        roleEntity.setDescription(roleModel.getDescription());
 
         boolean roleModelModified = modifiedInstances.stream()
                 .anyMatch(entity -> entity instanceof ResourceRoleModel);

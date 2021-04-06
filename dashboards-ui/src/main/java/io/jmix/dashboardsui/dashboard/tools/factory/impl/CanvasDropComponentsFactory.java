@@ -25,12 +25,12 @@ import io.jmix.dashboards.model.visualmodel.*;
 import io.jmix.dashboards.model.visualmodel.CssLayout;
 import io.jmix.dashboards.model.visualmodel.GridLayout;
 import io.jmix.dashboardsui.DashboardStyleConstants;
+import io.jmix.dashboardsui.component.CanvasLayout;
 import io.jmix.dashboardsui.component.impl.*;
-import io.jmix.dashboardsui.dashboard.event.CanvasLayoutElementClickedEvent;
 import io.jmix.dashboardsui.dashboard.event.WidgetAddedEvent;
 import io.jmix.dashboardsui.dashboard.event.WidgetDropLocation;
 import io.jmix.dashboardsui.dashboard.event.WidgetMovedEvent;
-import io.jmix.dashboardsui.component.CanvasLayout;
+import io.jmix.dashboardsui.dashboard.event.WidgetSelectedEvent;
 import io.jmix.dashboardsui.dashboard.tools.factory.ActionProviderFactory;
 import io.jmix.dashboardsui.screen.dashboard.editor.canvas.CanvasFragment;
 import io.jmix.ui.UiComponents;
@@ -38,9 +38,9 @@ import io.jmix.ui.UiEventPublisher;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.*;
 import io.jmix.ui.widget.JmixCssActionsLayout;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.UUID;
 
@@ -50,10 +50,10 @@ import java.util.UUID;
  * <ul>
  *     <li>Description;</li>
  *     <li>Actions; </li>
- *     <li>Click listener.</li>
+ *     <li>Click listener (only for {@link CanvasRootLayout}.</li>
  * </ul>
  */
-@Component("dshbrd_CanvasDropComponentsFactory")
+@org.springframework.stereotype.Component("dshbrd_CanvasDropComponentsFactory")
 public class CanvasDropComponentsFactory extends CanvasUiComponentsFactory {
 
     @Autowired
@@ -79,7 +79,6 @@ public class CanvasDropComponentsFactory extends CanvasUiComponentsFactory {
         layout.addStyleName(DashboardStyleConstants.DASHBOARD_SHADOW_BORDER);
         layout.setDescription(layoutModel.getCaption());
         createBaseLayoutActions(layout, layoutModel);
-        addLayoutClickListener(layout);
         initDragExtension(layoutModel, layout);
         initDropExtension(layout);
     }
@@ -166,6 +165,7 @@ public class CanvasDropComponentsFactory extends CanvasUiComponentsFactory {
     public CanvasRootLayout createCanvasRootLayout(RootLayout rootLayout) {
         CanvasRootLayout layout = super.createCanvasRootLayout(rootLayout);
         initLayout(rootLayout, layout);
+        addLayoutClickListener(layout);
         return layout;
     }
 
@@ -178,17 +178,34 @@ public class CanvasDropComponentsFactory extends CanvasUiComponentsFactory {
 
     protected void addLayoutClickListener(CanvasLayout layout) {
         layout.addLayoutClickListener(e -> {
-            HasComponents source = e.getSource();
             CanvasLayout selectedLayout = null;
-            if (source instanceof ComponentContainer) {
-                selectedLayout = (CanvasLayout) ((ComponentContainer) source).getParent();
-            } else if (source instanceof ResponsiveGridLayout) {
-                selectedLayout = (CanvasLayout) ((ResponsiveGridLayout) source).getParent();
+            Component clickedComponent = e.getClickedComponent();
+            if (clickedComponent == null) {
+                HasComponents source = e.getSource();
+                if (source instanceof ComponentContainer) {
+                    Component parent = ((ComponentContainer) source).getParent();
+                    if (parent instanceof CanvasLayout) {
+                        selectedLayout = (CanvasLayout) parent;
+                    }
+                }
+            } else {
+                selectedLayout = findCanvasLayout(clickedComponent);
             }
+
             if (selectedLayout != null) {
-                uiEventPublisher.publishEvent(new CanvasLayoutElementClickedEvent(selectedLayout.getUuid(), e.getMouseEventDetails()));
+                uiEventPublisher.publishEvent(new WidgetSelectedEvent(selectedLayout.getUuid(), WidgetSelectedEvent.Target.CANVAS));
             }
         });
+    }
+
+    @Nullable
+    protected CanvasLayout findCanvasLayout(Component component) {
+        if (component instanceof CanvasLayout) {
+            return (CanvasLayout) component;
+        } else {
+            Component parent = component.getParent();
+            return parent != null ? findCanvasLayout(parent) : null;
+        }
     }
 
     @Override

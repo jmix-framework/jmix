@@ -21,7 +21,6 @@ import io.jmix.dashboards.model.DashboardModel;
 import io.jmix.dashboards.model.visualmodel.RootLayout;
 import io.jmix.dashboardsui.DashboardStyleConstants;
 import io.jmix.dashboardsui.component.CanvasLayout;
-import io.jmix.dashboardsui.dashboard.event.CanvasLayoutElementClickedEvent;
 import io.jmix.dashboardsui.dashboard.event.DashboardRefreshEvent;
 import io.jmix.dashboardsui.dashboard.event.WidgetSelectedEvent;
 import io.jmix.dashboardsui.dashboard.tools.DashboardModelConverter;
@@ -29,7 +28,6 @@ import io.jmix.dashboardsui.screen.dashboard.editor.DashboardLayoutHolderCompone
 import io.jmix.ui.UiEventPublisher;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.HasComponents;
-import io.jmix.ui.component.MouseEventDetails;
 import io.jmix.ui.screen.UiController;
 import io.jmix.ui.screen.UiDescriptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,8 +39,6 @@ import java.util.UUID;
 @UiController("dshbrd_CanvasEditor.fragment")
 @UiDescriptor("canvas-editor-fragment.xml")
 public class CanvasEditorFragment extends CanvasFragment implements DashboardLayoutHolderComponent {
-
-    private MouseEventDetails mouseEventDetails;
 
     @Autowired
     @Qualifier("dropModelConverter")
@@ -91,23 +87,5 @@ public class CanvasEditorFragment extends CanvasFragment implements DashboardLay
         RootLayout dashboardModel = (RootLayout) event.getSource();
         this.dashboardModel.setVisualModel(dashboardModel);
         updateLayout(this.dashboardModel);
-    }
-
-    @EventListener
-    public void canvasLayoutElementClickedEventListener(CanvasLayoutElementClickedEvent event) {
-        UUID layoutUuid = event.getSource();
-        MouseEventDetails md = event.getMouseEventDetails();
-
-        if (mouseEventDetails == null) {
-            mouseEventDetails = md;
-        } else {
-            if (mouseEventDetails.getClientX() == md.getClientX() && mouseEventDetails.getClientY() == md.getClientY()) {
-                return;
-            } else {
-                mouseEventDetails = md;
-            }
-        }
-
-        uiEventPublisher.publishEvent(new WidgetSelectedEvent(layoutUuid, WidgetSelectedEvent.Target.CANVAS));
     }
 }

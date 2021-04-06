@@ -99,12 +99,8 @@ public class EmailDataProviderImpl implements EmailDataProvider {
                     .getResultList();
 
             resList.forEach(msg -> {
-                if (shouldMarkNotSent(msg)) {
-                    msg.setStatus(SendingStatus.NOT_SENT);
-                } else {
                     msg.setStatus(SendingStatus.SENDING);
                     emailsToSend.add(msg);
-                }
             });
         });
 
@@ -119,8 +115,12 @@ public class EmailDataProviderImpl implements EmailDataProvider {
             transaction.executeWithoutResult(transactionStatus -> {
                 SendingMessage msg = entityManager.merge(sendingMessage);
 
-                msg.setStatus(status);
                 msg.setAttemptsMade(msg.getAttemptsMade() + 1);
+                msg.setStatus(status);
+
+                if(status == SendingStatus.QUEUE && shouldMarkNotSent(msg)) {
+                    msg.setStatus(SendingStatus.NOT_SENT);
+                }
                 if (status == SendingStatus.SENT) {
                     msg.setDateSent(timeSource.currentTimestamp());
                 }

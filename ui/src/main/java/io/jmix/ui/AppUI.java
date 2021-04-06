@@ -278,7 +278,7 @@ public class AppUI extends UI implements ErrorHandler, EnhancedUI, UiExceptionHa
 
     /**
      * @return {@code true} if authentication is set and
-     * it isn't represent {@link AnonymousAuthenticationToken}
+     * it isn't represented by {@link AnonymousAuthenticationToken}
      */
     public boolean hasAuthenticatedSession() {
         // Think of Anonymous Authentication as no Authentication

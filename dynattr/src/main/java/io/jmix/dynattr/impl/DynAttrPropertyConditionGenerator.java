@@ -29,7 +29,6 @@ import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.core.querycondition.PropertyConditionUtils;
 import io.jmix.data.impl.jpql.generator.ConditionGenerationContext;
-import io.jmix.data.impl.jpql.generator.ConditionJpqlClause;
 import io.jmix.data.impl.jpql.generator.PropertyConditionGenerator;
 import io.jmix.dynattr.AttributeDefinition;
 import io.jmix.dynattr.DynAttrMetadata;
@@ -47,8 +46,6 @@ import java.util.Date;
 @Component("data_DynAttrPropertyConditionGenerator")
 @Order(JmixOrder.LOWEST_PRECEDENCE - 20)
 public class DynAttrPropertyConditionGenerator extends PropertyConditionGenerator {
-
-    protected static final String CATEGORY_ATTRIBUTE_ALIAS = "cav";
 
     protected ReferenceToEntitySupport referenceToEntitySupport;
     protected DynAttrMetadata dynAttrMetadata;
@@ -83,31 +80,7 @@ public class DynAttrPropertyConditionGenerator extends PropertyConditionGenerato
     }
 
     @Override
-    public ConditionJpqlClause generateJoinAndWhere(ConditionGenerationContext context) {
-        String cavAlias = CATEGORY_ATTRIBUTE_ALIAS + RandomStringUtils.randomAlphabetic(5);
-        String join = generateJoin(context, cavAlias);
-        String where = generateWhere(context, cavAlias);
-        return new ConditionJpqlClause(join, where);
-    }
-
-    @Override
-    public String generateJoin(ConditionGenerationContext context) {
-        return generateJoin(context, CATEGORY_ATTRIBUTE_ALIAS);
-    }
-
-    protected String generateJoin(ConditionGenerationContext context, String cavAlias) {
-        PropertyCondition condition = (PropertyCondition) context.getCondition();
-        return condition == null || PropertyConditionUtils.isCollectionOperation(condition)
-                ? ""
-                : ", dynat_CategoryAttributeValue " + cavAlias + " ";
-    }
-
-    @Override
     public String generateWhere(ConditionGenerationContext context) {
-        return generateWhere(context, CATEGORY_ATTRIBUTE_ALIAS);
-    }
-
-    protected String generateWhere(ConditionGenerationContext context, String cavAlias) {
         PropertyCondition condition = (PropertyCondition) context.getCondition();
         if (condition == null) {
             return "";
@@ -127,7 +100,7 @@ public class DynAttrPropertyConditionGenerator extends PropertyConditionGenerato
                 if (entityMetaClass != null) {
                     MetaPropertyPath mpp = metadataTools.resolveMetaPropertyPathOrNull(entityMetaClass, dynAttrPropertyPath);
                     if (mpp != null && mpp.getMetaProperty() instanceof DynAttrMetaProperty) {
-                        return generateWhere(propertyPath, cavAlias, context, (DynAttrMetaProperty) mpp.getMetaProperty());
+                        return generateWhere(propertyPath, context, (DynAttrMetaProperty) mpp.getMetaProperty());
                     }
                 }
             }
@@ -139,7 +112,7 @@ public class DynAttrPropertyConditionGenerator extends PropertyConditionGenerato
         return "";
     }
 
-    protected String generateWhere(String entityPropertyPath, String cavAlias, ConditionGenerationContext context,
+    protected String generateWhere(String entityPropertyPath, ConditionGenerationContext context,
                                    DynAttrMetaProperty metaProperty) {
         PropertyCondition condition = (PropertyCondition) context.getCondition();
         if (condition == null) {
@@ -147,6 +120,7 @@ public class DynAttrPropertyConditionGenerator extends PropertyConditionGenerato
         }
 
         String cavEntityId = referenceToEntitySupport.getReferenceIdPropertyName(metaProperty.getDomain());
+        String cavAlias = "cav" + RandomStringUtils.randomAlphabetic(5);
 
         String parameterName = condition.getParameterName();
         String valueFieldName = getValueFieldName(metaProperty);
@@ -161,19 +135,10 @@ public class DynAttrPropertyConditionGenerator extends PropertyConditionGenerato
             operation = operation + " :" + parameterName;
         }
 
-        String where;
-        if (PropertyConditionUtils.isCollectionOperation(condition)) {
-            where = "(exists (select " + cavAlias + " from dynat_CategoryAttributeValue " + cavAlias +
-                    " where " + cavAlias + ".entity." + cavEntityId + "=" + entityAlias + entityPropertyPath + ".id and "
-                    + cavAlias + "." + valueFieldName + " " + operation + " and " + cavAlias +
-                    ".categoryAttribute.id='" + attributeId + "'))";
-        } else {
-            where = "(" + cavAlias + ".entity." + cavEntityId + "=" + entityAlias + entityPropertyPath + ".id and " +
-                    cavAlias + "." + valueFieldName + " " + operation + " and " + cavAlias +
-                    ".categoryAttribute.id='" + attributeId + "')";
-        }
-
-        return where;
+        return "(exists (select " + cavAlias + " from dynat_CategoryAttributeValue " + cavAlias +
+                " where " + cavAlias + ".entity." + cavEntityId + "=" + entityAlias + entityPropertyPath + ".id and "
+                + cavAlias + "." + valueFieldName + " " + operation + " and " + cavAlias +
+                ".categoryAttribute.id='" + attributeId + "'))";
     }
 
     protected String getValueFieldName(MetaProperty metaProperty) {

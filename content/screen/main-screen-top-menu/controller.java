@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @UiController("${id}")
 @UiDescriptor("${descriptorName}.xml")
+@Route(path = "main", root = true)
 public class ${controllerName} extends Screen implements Window.HasWorkArea {
 
     @Autowired

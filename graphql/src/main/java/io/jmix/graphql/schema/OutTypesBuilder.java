@@ -2,10 +2,12 @@ package io.jmix.graphql.schema;
 
 
 import graphql.language.*;
+import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -17,6 +19,8 @@ import static io.jmix.graphql.schema.NamingUtils.normalizeOutTypeName;
 @Component
 public class OutTypesBuilder extends BaseTypesBuilder {
 
+    @Autowired
+    Metadata metadata;
 
     private static final Logger log = LoggerFactory.getLogger(OutTypesBuilder.class);
 
@@ -40,6 +44,17 @@ public class OutTypesBuilder extends BaseTypesBuilder {
                         .name(NamingUtils.SYS_ATTR_INSTANCE_NAME).type(new TypeName("String"))
                         .build())
                 .build();
+    }
+
+    public MetaClass findMetaClassByOutTypeName(String outTypeName) {
+        MetaClass result = metadata.findClass(outTypeName);
+        if (result == null) {
+            result = metadata.findClass(outTypeName .replaceAll("_", "\\$"));
+        }
+        if (result == null) {
+            throw new UnsupportedOperationException("No matched meta class found for out type " + outTypeName);
+        }
+        return result;
     }
 
     protected Stream<FieldDefinition> getObjectFieldDef(MetaProperty metaProperty) {

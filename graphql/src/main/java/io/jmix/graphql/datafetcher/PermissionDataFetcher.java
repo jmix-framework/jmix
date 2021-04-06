@@ -47,7 +47,7 @@ public class PermissionDataFetcher {
 
     public DataFetcher<?> loadPermissions() {
         return environment -> {
-            Set<String> defs = environment.getSelectionSet().getDefinitions().keySet();
+            Set<String> defs = environment.getSelectionSet().getFieldsGroupedByResultKey().keySet();
             boolean loadEntities = defs.contains(NamingUtils.ENTITIES);
             boolean loadEntityAttrs = defs.contains(NamingUtils.ENTITY_ATTRS);
             return getPermissions(loadEntities, loadEntityAttrs); };

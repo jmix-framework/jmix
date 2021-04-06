@@ -17,50 +17,64 @@
 package io.jmix.graphql.datafetcher;
 
 import graphql.schema.DataFetchingEnvironment;
+import graphql.schema.DataFetchingFieldSelectionSet;
+import io.jmix.core.MetadataTools;
+import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.graphql.schema.NamingUtils;
+import io.jmix.graphql.schema.OutTypesBuilder;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static io.jmix.graphql.schema.NamingUtils.SYS_ATTR_INSTANCE_NAME;
 
+@Component
 public class EnvironmentUtils {
+
+    @Autowired
+    MetadataTools metadataTools;
+    @Autowired
+    private OutTypesBuilder outTypesBuilder;
 
     /**
      * @param environment gql data fetch environment
      * @return true if _instanceName should be returned for query, else false
      */
-    public static boolean hasInstanceNameProperty(DataFetchingEnvironment environment) {
-        return environment.getSelectionSet().getDefinitions().keySet().stream()
-                .anyMatch(def -> def.equals(NamingUtils.SYS_ATTR_INSTANCE_NAME));
+    public boolean hasInstanceNameProperty(DataFetchingEnvironment environment) {
+        return getPropertyPaths(environment)
+                .anyMatch(def -> def.equals(SYS_ATTR_INSTANCE_NAME));
     }
 
     /**
      * @param props gql data fetch properties
      * @return true if _instanceName should be returned for query, else false
      */
-    public static boolean hasInstanceNameProperty(Set<String> props) {
+    public boolean hasInstanceNameProperty(Set<String> props) {
         return props != null && props.stream()
-                .anyMatch(def -> def.equals(NamingUtils.SYS_ATTR_INSTANCE_NAME));
+                .anyMatch(def -> def.equals(SYS_ATTR_INSTANCE_NAME));
     }
 
-    public static Set<String> getDotDelimitedProps(DataFetchingEnvironment environment) {
-        return environment.getSelectionSet().getDefinitions().keySet().stream()
-                .map(prop -> prop.replaceAll("/", "."))
+    public Set<String> getDotDelimitedProps(DataFetchingEnvironment environment) {
+        return getPropertyPaths(environment)
                 .collect(Collectors.toSet());
     }
 
     /**
      * Filter out system properties such _instanceName or --typeName that not exist as entity fields.
      * Such properties must not be added in fetch plan.
+     *
      * @param environment gql data fetch environment
      * @return only properties that exist in entity as fields
      */
-    public static List<String> getEntityProperties(DataFetchingEnvironment environment) {
-        return environment.getSelectionSet().getDefinitions().keySet().stream()
-                .map(def -> def.replaceAll("/", "."))
+    public List<String> getEntityProperties(DataFetchingEnvironment environment) {
+        return getPropertyPaths(environment)
                 // remove '__typename' from fetch plan
                 .filter(propertyNotMatch(NamingUtils.SYS_ATTR_TYPENAME))
                 // todo fetch failed, if we need to return instanceName in nested entity,
@@ -72,19 +86,49 @@ public class EnvironmentUtils {
                 .collect(Collectors.toList());
     }
 
-
     /**
      * @param property property to check
      * @return true if property NOT match 'someProperty' and '*.someProperty'
      */
-    public static Predicate<String> propertyNotMatch(String property) {
+    public Predicate<String> propertyNotMatch(String property) {
         return prop -> !prop.equals(property) && !prop.matches(".*\\." + property);
     }
 
-    public static Set<String> getNestedProps(Set<String> props, String propName) {
+    public Set<String> getNestedProps(Set<String> props, String propName) {
         return props.stream()
                 .filter(p -> p.startsWith(propName) && !p.equals(propName))
                 .map(p -> p.replaceFirst("^" + propName + "\\.", ""))
                 .collect(Collectors.toSet());
     }
+
+    public Stream<String> getPropertyPaths(DataFetchingEnvironment environment) {
+        return getPaths(environment.getSelectionSet(), "").stream();
+    }
+
+    public List<String> getPaths(DataFetchingFieldSelectionSet selectionSet, String currentPath) {
+        List<String> result = new ArrayList<>();
+        selectionSet.getImmediateFields().forEach(field -> {
+            // additional attrs should to be added to fetch plan for proper _instanceName compose
+            if (field.getQualifiedName().equals(SYS_ATTR_INSTANCE_NAME)) {
+                String metaClassName = field.getFullyQualifiedName()
+                        .replace("." + field.getQualifiedName(), "");
+                MetaClass metaClass = outTypesBuilder.findMetaClassByOutTypeName(metaClassName);
+
+                metadataTools.getInstanceNameRelatedProperties(metaClass).forEach(prop ->
+                        result.add(StringUtils.isEmpty(currentPath)
+                                ? prop.getName() : currentPath + "." + prop.getName()));
+            }
+
+            String path = StringUtils.isEmpty(currentPath)
+                    ? field.getQualifiedName() : currentPath + "." + field.getQualifiedName();
+
+            if (field.getSelectionSet().getImmediateFields().isEmpty()) {
+                result.add(path);
+            } else {
+                result.addAll(getPaths(field.getSelectionSet(), path));
+            }
+        });
+        return result;
+    }
+
 }

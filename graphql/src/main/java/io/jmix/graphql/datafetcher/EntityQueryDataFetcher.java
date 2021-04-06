@@ -37,6 +37,8 @@ public class EntityQueryDataFetcher {
     protected FilterConditionBuilder filterConditionBuilder;
     @Autowired
     protected AccessManager accessManager;
+    @Autowired
+    protected EnvironmentUtils environmentUtils;
 
     public DataFetcher<?> loadEntity(MetaClass metaClass) {
         return environment -> {
@@ -54,7 +56,7 @@ public class EntityQueryDataFetcher {
             Object entity = dataManager.load(lc);
             if (entity == null) return null;
 
-            return responseBuilder.buildResponse((Entity) entity, fetchPlan, metaClass, EnvironmentUtils.getDotDelimitedProps(environment));
+            return responseBuilder.buildResponse((Entity) entity, fetchPlan, metaClass, environmentUtils.getDotDelimitedProps(environment));
         };
     }
     public DataFetcher<List<Map<String, Object>>> loadEntities(MetaClass metaClass) {
@@ -109,7 +111,7 @@ public class EntityQueryDataFetcher {
             ctx.setFetchPlan(fetchPan);
             List<Object> objects = dataManager.loadList(ctx);
 
-            Set<String> props = EnvironmentUtils.getDotDelimitedProps(environment);
+            Set<String> props = environmentUtils.getDotDelimitedProps(environment);
             List<Map<String, Object>> entitiesAsMap = objects.stream()
                     .map(e -> responseBuilder.buildResponse((Entity) e, fetchPan, metaClass, props))
                     .collect(Collectors.toList());

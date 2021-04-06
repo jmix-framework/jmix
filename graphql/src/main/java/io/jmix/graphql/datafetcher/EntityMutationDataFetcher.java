@@ -36,6 +36,8 @@ public class EntityMutationDataFetcher {
     protected DataFetcherPlanBuilder dataFetcherPlanBuilder;
     @Autowired
     protected EntityStates entityStates;
+    @Autowired
+    private EnvironmentUtils environmentUtils;
 
 
     // todo batch commit with association not supported now (not transferred from cuba-graphql)
@@ -65,13 +67,13 @@ public class EntityMutationDataFetcher {
             // todo need more correct condition to reload or not entity
             // will be implemented as part of https://github.com/Haulmont/jmix-graphql/issues/30
             if (!entityStates.isLoadedWithFetchPlan(entity, fetchPlan)
-                    || EnvironmentUtils.hasInstanceNameProperty(environment)) {
+                    || environmentUtils.hasInstanceNameProperty(environment)) {
                 LoadContext loadContext = new LoadContext(metaClass).setFetchPlan(fetchPlan);
                 loadContext.setId(EntityValues.getId(entity));
                 mainEntity = dataManager.load(loadContext);
             }
 
-            return responseBuilder.buildResponse((Entity) mainEntity, fetchPlan, metaClass, EnvironmentUtils.getDotDelimitedProps(environment));
+            return responseBuilder.buildResponse((Entity) mainEntity, fetchPlan, metaClass, environmentUtils.getDotDelimitedProps(environment));
         };
     }
 

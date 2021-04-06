@@ -49,6 +49,8 @@ public class ResponseBuilder {
     Metadata metadata;
     @Autowired
     protected FetchPlans fetchPlans;
+    @Autowired
+    protected EnvironmentUtils environmentUtils;
 
 
     /**
@@ -64,7 +66,7 @@ public class ResponseBuilder {
         Map<String, Object> entityAsMap = new HashMap<>();
 
         // check and evaluate _instanceName, if required
-        if (EnvironmentUtils.hasInstanceNameProperty(props)) {
+        if (environmentUtils.hasInstanceNameProperty(props)) {
             entityAsMap.put(NamingUtils.SYS_ATTR_INSTANCE_NAME, metadataTools.getInstanceName(entity));
         }
 
@@ -87,7 +89,7 @@ public class ResponseBuilder {
             }
 
             if (propertyRange.isClass()) {
-                Set<String> nestedProps = EnvironmentUtils.getNestedProps(props, propName);
+                Set<String> nestedProps = environmentUtils.getNestedProps(props, propName);
 
                 if (fieldValue instanceof Entity) {
                     entityAsMap.put(propName, buildResponse((Entity) fieldValue, prop.getFetchPlan(), propertyRange.asClass(), nestedProps));

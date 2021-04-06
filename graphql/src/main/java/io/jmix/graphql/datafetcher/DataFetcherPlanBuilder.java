@@ -25,18 +25,20 @@ public class DataFetcherPlanBuilder {
     private MetadataTools metadataTools;
     @Autowired
     private Metadata metadata;
+    @Autowired
+    private EnvironmentUtils environmentUtils;
 
     private final static Logger log = LoggerFactory.getLogger(DataFetcherPlanBuilder.class);
 
     public <E extends Entity> FetchPlan buildFetchPlan(Class<E> entityClass, DataFetchingEnvironment environment) {
-        List<String> properties = EnvironmentUtils.getEntityProperties(environment);
+        List<String> properties = environmentUtils.getEntityProperties(environment);
         log.debug("properties {}", properties);
 
         // todo inject correctly
         io.jmix.core.FetchPlanBuilder fetchPlanBuilder = context.getBean(io.jmix.core.FetchPlanBuilder.class, entityClass);
 
         // todo support _instName for nested entities too
-        if (EnvironmentUtils.hasInstanceNameProperty(environment)) {
+        if (environmentUtils.hasInstanceNameProperty(environment)) {
             Collection<String> instanceNameRelatedProperties = metadataTools
                     .getInstanceNameRelatedProperties(metadata.getClass(entityClass)).stream()
                     .map(MetadataObject::getName)

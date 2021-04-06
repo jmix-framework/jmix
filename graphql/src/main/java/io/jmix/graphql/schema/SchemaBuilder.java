@@ -92,6 +92,21 @@ public class SchemaBuilder {
         typeDefinitionRegistry.add(ScalarTypeDefinition.newScalarTypeDefinition()
                 .name(CustomScalars.GraphQLVoid.getName())
                 .build());
+        typeDefinitionRegistry.add(ScalarTypeDefinition.newScalarTypeDefinition()
+                .name(Scalars.GraphQLLong.getName())
+                .build());
+        typeDefinitionRegistry.add(ScalarTypeDefinition.newScalarTypeDefinition()
+                .name(Scalars.GraphQLBigDecimal.getName())
+                .build());
+        typeDefinitionRegistry.add(ScalarTypeDefinition.newScalarTypeDefinition()
+                .name(Scalars.GraphQLBigInteger.getName())
+                .build());
+        typeDefinitionRegistry.add(ScalarTypeDefinition.newScalarTypeDefinition()
+                .name(Scalars.GraphQLShort.getName())
+                .build());
+        typeDefinitionRegistry.add(ScalarTypeDefinition.newScalarTypeDefinition()
+                .name(Scalars.GraphQLChar.getName())
+                .build());
 
         // find enums used in properties and create type definitions for enums
         allPersistentMetaClasses.stream()
@@ -163,7 +178,10 @@ public class SchemaBuilder {
                 .scalar(CustomScalars.GraphQLBigDecimal)
                 .scalar(CustomScalars.GraphQLDate)
                 .scalar(CustomScalars.GraphQLLocalDateTime)
-                .scalar(CustomScalars.GraphQLVoid);
+                .scalar(CustomScalars.GraphQLVoid)
+                .scalar(Scalars.GraphQLBigInteger)
+                .scalar(Scalars.GraphQLChar)
+                .scalar(Scalars.GraphQLShort);
 
         allPersistentMetaClasses.stream()
                 .filter(this::isNotIgnored)

@@ -123,5 +123,6 @@ public class AbstractMainWindow extends AbstractTopLevelWindow
         super.ready();
 
         screenTools.openDefaultScreen(screens);
+        screenTools.handleRedirect();
     }
 }

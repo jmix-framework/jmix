@@ -156,8 +156,9 @@ public class MainScreen extends Screen implements Window.HasWorkArea, Window.Has
     protected void onAfterShow(AfterShowEvent event) {
         Screens screens = UiControllerUtils.getScreenContext(this)
                 .getScreens();
-        getApplicationContext().getBean(ScreenTools.class)
-                .openDefaultScreen(screens);
+        ScreenTools screenTools = getApplicationContext().getBean(ScreenTools.class);
+        screenTools.openDefaultScreen(screens);
+        screenTools.handleRedirect();
     }
 
     @Nullable

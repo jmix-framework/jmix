@@ -16,15 +16,20 @@
 
 package io.jmix.searchui.screen.result;
 
+import com.google.common.base.Joiner;
 import com.google.common.collect.EvictingQueue;
+import com.google.common.collect.ImmutableMap;
 import io.jmix.core.*;
 import io.jmix.core.common.datastruct.Pair;
+import io.jmix.core.metamodel.datatype.Datatype;
+import io.jmix.core.metamodel.datatype.impl.FileRefDatatype;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.search.SearchApplicationProperties;
 import io.jmix.search.searching.EntitySearcher;
 import io.jmix.search.searching.SearchResult;
-import io.jmix.search.searching.impl.SearchContext;
 import io.jmix.search.searching.impl.FieldHit;
+import io.jmix.search.searching.impl.SearchContext;
 import io.jmix.search.searching.impl.SearchResultEntry;
 import io.jmix.search.utils.PropertyTools;
 import io.jmix.ui.AppUI;
@@ -47,6 +52,11 @@ import static io.jmix.ui.component.Component.Alignment.MIDDLE_LEFT;
 public class SearchResultsScreen extends Screen {
 
     public static final String SCREEN_ID = "searchResultsScreen";
+
+    private static final Map<String, String> systemFieldLabels = ImmutableMap.<String, String>builder()
+            .put("_file_name", "fileName")
+            .put("_content", "content")
+            .build();
 
     @Autowired
     protected UiComponents uiComponents;
@@ -320,7 +330,8 @@ public class SearchResultsScreen extends Screen {
 
             List<String> list = new ArrayList<>(entry.getFieldHits().size());
             for (FieldHit fieldHit : entry.getFieldHits()) {
-                list.add(fieldHit.getFieldName() + " : " + fieldHit.getHighlights());
+                String fieldCaption = formatFieldCaption(entityName, fieldHit.getFieldName());
+                list.add(fieldCaption + " : " + fieldHit.getHighlights());
             }
             Collections.sort(list);
 
@@ -329,6 +340,41 @@ public class SearchResultsScreen extends Screen {
                 instancesLayout.add(hitLabel);
             }
         }
+    }
+
+    protected String formatFieldCaption(String entityName, String fieldName) {
+        List<String> captionParts = new ArrayList<>();
+        String[] parts = fieldName.split("\\.");
+        MetaClass currentMetaClass = metadata.getClass(entityName);
+        for (int i = 0; i < parts.length; i++) {
+            String part = parts[i];
+            MetaProperty currentMetaProperty = currentMetaClass.findProperty(part);
+            if (currentMetaProperty == null) {
+                break;
+            }
+
+            if (currentMetaProperty.getRange().isDatatype()
+                    && (Datatype<?>) currentMetaProperty.getRange().asDatatype() instanceof FileRefDatatype
+                    && i + 1 < parts.length) {
+                String propertyCaption = messageTools.getPropertyCaption(currentMetaProperty);
+                String nextPart = parts[i + 1];
+                String labelKey = systemFieldLabels.get(nextPart);
+                if (labelKey != null) {
+                    String labelValue = messages.getMessage(SearchResultsScreen.class, labelKey);
+                    propertyCaption = propertyCaption + "[" + labelValue + "]";
+                }
+                captionParts.add(propertyCaption);
+            } else {
+                captionParts.add(messageTools.getPropertyCaption(currentMetaProperty));
+
+                if (currentMetaProperty.getRange().isClass()) {
+                    currentMetaClass = currentMetaProperty.getRange().asClass();
+                } else {
+                    break;
+                }
+            }
+        }
+        return Joiner.on(".").join(captionParts);
     }
 
     protected Button createInstanceButton(String entityName, SearchResultEntry entry) {

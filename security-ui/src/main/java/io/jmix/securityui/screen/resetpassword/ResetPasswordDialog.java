@@ -21,7 +21,6 @@ import io.jmix.core.security.UserManager;
 import io.jmix.ui.UiScreenProperties;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.BaseAction;
-import io.jmix.ui.component.Label;
 import io.jmix.ui.component.TextArea;
 import io.jmix.ui.component.Window;
 import io.jmix.ui.icon.Icons;
@@ -51,8 +50,6 @@ public class ResetPasswordDialog extends Screen {
     @Autowired
     private UiScreenProperties uiProperties;
     @Autowired
-    private Label<String> expectedResultLabel;
-    @Autowired
     private TextArea<String> readyPassword;
 
     @Subscribe
@@ -66,7 +63,6 @@ public class ResetPasswordDialog extends Screen {
         if (usersObject instanceof Set) {
             users = (Set<UserDetails>) usersObject;
         }
-        expectedResultLabel.setValue(messageBundle.getMessage("ResetPasswordDialog.printPasswords"));
 
         initScreenActions();
     }
@@ -85,7 +81,7 @@ public class ResetPasswordDialog extends Screen {
                     Map<UserDetails, String> newPasswords = userManager.resetPasswords(users);
                     StringBuilder builder = new StringBuilder();
                     for (Map.Entry<UserDetails, String> entry : newPasswords.entrySet()) {
-                        builder.append(entry.getKey().getUsername()).append("\t").append(entry.getValue());
+                        builder.append(entry.getKey().getUsername()).append("\t").append(entry.getValue()).append("\n");
                     }
                     readyPassword.setValue(builder.toString());
                     readyPassword.setVisible(true);

@@ -6,6 +6,7 @@ import io.jmix.ui.component.Button;
 import io.jmix.ui.component.Window;
 import io.jmix.ui.component.mainwindow.Drawer;
 import io.jmix.ui.icon.JmixIcon;
+import io.jmix.ui.navigation.Route;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.Subscribe;
 import io.jmix.ui.screen.UiController;

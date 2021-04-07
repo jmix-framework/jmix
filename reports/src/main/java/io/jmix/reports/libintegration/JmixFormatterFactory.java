@@ -20,16 +20,20 @@ import com.haulmont.yarg.formatters.factory.DefaultFormatterFactory;
 import com.haulmont.yarg.formatters.impl.DocxFormatter;
 import com.haulmont.yarg.formatters.impl.HtmlFormatter;
 import com.haulmont.yarg.formatters.impl.XlsxFormatter;
-import freemarker.template.Template;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class JmixFormatterFactory extends DefaultFormatterFactory {
+
+    @Autowired
+    protected BeanFactory beanFactory;
 
     protected boolean useOfficeForDocumentConversion = true;
 
     public JmixFormatterFactory() {
         super();
         FormatterCreator ftlCreator = factoryInput -> {
-            HtmlFormatter htmlFormatter = new JmixHtmlFormatter(factoryInput);
+            HtmlFormatter htmlFormatter = beanFactory.getBean(JmixHtmlFormatter.class, factoryInput);
             htmlFormatter.setDefaultFormatProvider(defaultFormatProvider);
             htmlFormatter.setScripting(scripting);
             return htmlFormatter;
@@ -38,7 +42,7 @@ public class JmixFormatterFactory extends DefaultFormatterFactory {
         formattersMap.put("html", ftlCreator);
 
         FormatterCreator docxCreator = factoryInput -> {
-            DocxFormatter docxFormatter = new DocxFormatter(factoryInput);
+            DocxFormatter docxFormatter = beanFactory.getBean(DocxFormatter.class, factoryInput);
             docxFormatter.setDefaultFormatProvider(defaultFormatProvider);
             if (useOfficeForDocumentConversion) {
                 docxFormatter.setDocumentConverter(documentConverter);
@@ -49,11 +53,11 @@ public class JmixFormatterFactory extends DefaultFormatterFactory {
         };
 
         formattersMap.put("docx", docxCreator);
-        formattersMap.put("chart", ChartFormatter::new);
-        formattersMap.put("pivot", PivotTableFormatter::new);
+        formattersMap.put("chart", factoryInput -> beanFactory.getBean(ChartFormatter.class, factoryInput));
+        formattersMap.put("pivot", factoryInput -> beanFactory.getBean(PivotTableFormatter.class, factoryInput));
 
         FormatterCreator xlsxCreator = factoryInput -> {
-            XlsxFormatter xlsxFormatter = new JmixXlsxFormatter(factoryInput);
+            XlsxFormatter xlsxFormatter = beanFactory.getBean(JmixXlsxFormatter.class, factoryInput);
             xlsxFormatter.setDefaultFormatProvider(defaultFormatProvider);
             xlsxFormatter.setDocumentConverter(documentConverter);
             xlsxFormatter.setScripting(scripting);
@@ -61,7 +65,7 @@ public class JmixFormatterFactory extends DefaultFormatterFactory {
         };
         formattersMap.put("xlsx", xlsxCreator);
 
-        formattersMap.put("table", JmixTableFormatter::new);
+        formattersMap.put("table", factoryInput -> beanFactory.getBean(JmixTableFormatter.class, factoryInput));
     }
 
     public boolean isUseOfficeForDocumentConversion() {

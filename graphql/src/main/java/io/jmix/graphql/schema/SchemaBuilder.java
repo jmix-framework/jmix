@@ -137,7 +137,7 @@ public class SchemaBuilder {
         Map<String, InputObjectTypeDefinition> scalarFilterConditionTypesMap = Arrays.stream(Types.scalars)
                     // todo byte type not supported now
                     .filter(type -> !type.getName().equals(Scalars.GraphQLByte.getName()))
-                    .collect(Collectors.toMap(GraphQLScalarType::getName, type -> filterTypesBuilder.buildScalarFilterConditionType(type.getName())));
+                    .collect(Collectors.toMap(GraphQLScalarType::getName, type -> filterTypesBuilder.buildScalarFilterConditionType(type)));
         scalarFilterConditionTypesMap.values().forEach(typeDefinitionRegistry::add);
 
         // order by

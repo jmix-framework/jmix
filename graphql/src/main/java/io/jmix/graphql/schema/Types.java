@@ -19,25 +19,28 @@ public class Types {
     }
 
     public enum FilterOperation {
-        EQ("_eq", PropertyCondition.Operation.EQUAL),
-        NEQ("_neq", PropertyCondition.Operation.NOT_EQUAL),
-        GT("_gt", PropertyCondition.Operation.GREATER),
-        GTE("_gte", PropertyCondition.Operation.GREATER_OR_EQUAL),
-        LT("_lt", PropertyCondition.Operation.LESS),
-        LTE("_lte", PropertyCondition.Operation.LESS_OR_EQUAL),
-        CONTAINS("_contains", PropertyCondition.Operation.CONTAINS),
-        NOT_CONTAINS("_notContains", PropertyCondition.Operation.NOT_CONTAINS),
-        STARTS_WITH("_startsWith", PropertyCondition.Operation.STARTS_WITH),
-        ENDS_WITH("_endsWith", PropertyCondition.Operation.ENDS_WITH),
-        IN_LIST("_in", PropertyCondition.Operation.IN_LIST),
-        NOT_IN_LIST("_notIn", PropertyCondition.Operation.NOT_IN_LIST);
+        EQ("_eq", PropertyCondition.Operation.EQUAL, "equals"),
+        NEQ("_neq", PropertyCondition.Operation.NOT_EQUAL, "not equals"),
+        GT("_gt", PropertyCondition.Operation.GREATER, "greater than"),
+        GTE("_gte", PropertyCondition.Operation.GREATER_OR_EQUAL, "greater than or equals"),
+        LT("_lt", PropertyCondition.Operation.LESS, "less that"),
+        LTE("_lte", PropertyCondition.Operation.LESS_OR_EQUAL, "less than or equals"),
+        CONTAINS("_contains", PropertyCondition.Operation.CONTAINS, "contains substring"),
+        NOT_CONTAINS("_notContains", PropertyCondition.Operation.NOT_CONTAINS, "not contains substring"),
+        STARTS_WITH("_startsWith", PropertyCondition.Operation.STARTS_WITH, "starts with substring"),
+        ENDS_WITH("_endsWith", PropertyCondition.Operation.ENDS_WITH, "ends with substring"),
+        IN_LIST("_in", PropertyCondition.Operation.IN_LIST, "in list"),
+        NOT_IN_LIST("_notIn", PropertyCondition.Operation.NOT_IN_LIST, "not in list"),
+        IS_NULL("_isNull", PropertyCondition.Operation.IS_SET, "is null");
 
         private final String id;
         private final String jmixOperation;
+        private final String description;
 
-        FilterOperation(String id, String jmixOperation) {
+        FilterOperation(String id, String jmixOperation, @Nullable String description) {
             this.id = id;
             this.jmixOperation = jmixOperation;
+            this.description = description;
         }
 
         public static FilterOperation fromId(String id) {
@@ -59,6 +62,10 @@ public class Types {
 
         public String getJmixOperation() {
             return jmixOperation;
+        }
+
+        public String getDescription() {
+            return description;
         }
     }
 
@@ -97,6 +104,16 @@ public class Types {
     }
 
     /**
+     * Shortcut for input value definition
+     *
+     * @param operation field name and describtion
+     * @return field
+     */
+    public static InputValueDefinition valueDef(FilterOperation operation, String type) {
+        return valueDef(operation.getId(), type, operation.description);
+    }
+
+    /**
      * Shortcut for input value definition that has list type
      *
      * @param fieldName field name
@@ -109,6 +126,16 @@ public class Types {
                 .name(fieldName).type(new ListType(new TypeName(type)))
                 .description(StringUtils.isBlank(description) ? null : new Description(description, null, false))
                 .build();
+    }
+
+    /**
+     * Shortcut for input value definition that has list type
+     *
+     * @param operation field name and describtion
+     * @return field
+     */
+    public static InputValueDefinition listValueDef(FilterOperation operation, String type) {
+        return listValueDef(operation.getId(), type, operation.getDescription());
     }
 
 }

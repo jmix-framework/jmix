@@ -2,23 +2,20 @@ package io.jmix.graphql.schema.scalar;
 
 import graphql.language.StringValue;
 import graphql.schema.Coercing;
+import graphql.schema.CoercingParseLiteralException;
 import graphql.schema.CoercingSerializeException;
 import graphql.schema.GraphQLScalarType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.DateTimeException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 
-import static io.jmix.graphql.schema.scalar.CustomScalars.SERIALIZATION_DATE_FORMAT;
+public class LocalDateTimeScalar extends GraphQLScalarType {
 
-public class LocalDateTimeScalar extends GraphQLScalarType{
-
-    static final Logger log = LoggerFactory.getLogger(LocalDateTimeScalar.class);
     public static final String LOCAL_DATE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
+    static final Logger log = LoggerFactory.getLogger(LocalDateTimeScalar.class);
 
     public LocalDateTimeScalar() {
         super("LocalDateTime", "Date type", new Coercing() {
@@ -37,24 +34,30 @@ public class LocalDateTimeScalar extends GraphQLScalarType{
 
             @Override
             public Object parseValue(Object input) {
-                return serialize(input);
+                return parseLiteral(input);
             }
 
             @Override
             public Object parseLiteral(Object input) {
                 if (input instanceof StringValue) {
                     String value = ((StringValue) input).getValue();
+                    if (value.isEmpty()) {
+                        return LocalDateTime.MIN;
+                    }
                     try {
-                        Date date = new SimpleDateFormat(LOCAL_DATE_TIME_FORMAT).parse(value);
-                        String dateString = SERIALIZATION_DATE_FORMAT.format(date);
-                        log.info("parseLiteral return {}", dateString);
-                        return dateString;
-                    } catch (ParseException e) {
-                        throw new CoercingSerializeException(e);
+                        LocalDateTime localDateTime = LocalDateTime.from(
+                                DateTimeFormatter
+                                        .ofPattern(LOCAL_DATE_TIME_FORMAT)
+                                        .parse(value)
+                        );
+                        log.info("parseLiteral return {}", localDateTime.toString());
+                        return localDateTime;
+                    } catch (DateTimeException e) {
+                        throw new CoercingParseLiteralException(e);
                     }
 
                 }
-                throw new CoercingSerializeException(
+                throw new CoercingParseLiteralException(
                         "Expected type 'StringValue' but was '" + input.getClass().getSimpleName() + "'.");
 
             }

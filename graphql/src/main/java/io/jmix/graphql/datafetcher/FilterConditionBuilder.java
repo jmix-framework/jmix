@@ -5,6 +5,7 @@ import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.graphql.schema.FilterTypesBuilder;
 import io.jmix.graphql.schema.Types;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,8 +16,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import static io.jmix.graphql.schema.Types.FilterOperation.IN_LIST;
-import static io.jmix.graphql.schema.Types.FilterOperation.NOT_IN_LIST;
+import static io.jmix.graphql.schema.Types.FilterOperation.*;
 
 @Component
 public class FilterConditionBuilder {
@@ -57,6 +57,10 @@ public class FilterConditionBuilder {
                 return;
             }
 
+            //ignore value from request because of specific filters
+            if (IS_NULL.getId().equals(condPath) && condition instanceof Boolean) {
+                condition = BooleanUtils.negate((Boolean) condition);
+            }
             log.debug("buildPropertyCondition: {} {} {}", path, condPath, condition);
             Types.FilterOperation operation = Types.FilterOperation.fromId(condPath);
             result.add(PropertyCondition.createWithValue(path, operation.getJmixOperation(), condition));

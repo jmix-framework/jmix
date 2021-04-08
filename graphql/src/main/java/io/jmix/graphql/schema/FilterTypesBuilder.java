@@ -1,8 +1,10 @@
 package io.jmix.graphql.schema;
 
+import graphql.Scalars;
 import graphql.language.Comment;
 import graphql.language.InputObjectTypeDefinition;
 import graphql.language.InputValueDefinition;
+import graphql.schema.GraphQLScalarType;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import org.slf4j.Logger;
@@ -11,10 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static io.jmix.graphql.schema.Types.FilterOperation.*;
@@ -25,23 +24,10 @@ import static io.jmix.graphql.schema.Types.valueDef;
 public class FilterTypesBuilder extends BaseTypesBuilder {
 
     private static final Logger log = LoggerFactory.getLogger(FilterTypesBuilder.class);
-
-    public enum ConditionUnionType {
-// todo need to investigate how to implement using jmix conditions
-//        NOT,
-        AND,
-        OR;
-
-        @Nullable
-        public static ConditionUnionType find(String type) {
-            return Arrays.stream(FilterTypesBuilder.ConditionUnionType.values())
-                    .filter(conditionUnionType -> conditionUnionType.name().equals(type))
-                    .findAny().orElse(null);
-        }
-    }
-
     @Autowired
     InpTypesBuilder inpTypesBuilder;
+    @Autowired
+    FilterManager filterManager;
 
     @Override
     protected String normalizeName(String entityName) {
@@ -49,30 +35,32 @@ public class FilterTypesBuilder extends BaseTypesBuilder {
     }
 
     // todo operators to constants or enums
-    public InputObjectTypeDefinition buildScalarFilterConditionType(String scalarTypeName) {
+    public InputObjectTypeDefinition buildScalarFilterConditionType(GraphQLScalarType scalarType) {
 
+        String scalarTypeName = scalarType.getName();
         String comment = String.format(
                 "expression to compare columns of type %s. All fields are combined with logical 'AND'", scalarTypeName);
 
         String name = composeFilterConditionTypeName(scalarTypeName);
-        return InputObjectTypeDefinition.newInputObjectDefinition()
-                .name(name)
-                .comments(Collections.singletonList(new Comment(comment, null)))
-                .inputValueDefinition(valueDef(EQ.getId(), scalarTypeName, "equals"))
-                .inputValueDefinition(valueDef(NEQ.getId(), scalarTypeName, "not equals"))
-                .inputValueDefinition(valueDef(GT.getId(), scalarTypeName, "greater than"))
-                .inputValueDefinition(valueDef(GTE.getId(), scalarTypeName, "greater than or equals"))
-                .inputValueDefinition(valueDef(LT.getId(), scalarTypeName, "less that"))
-                .inputValueDefinition(valueDef(LTE.getId(), scalarTypeName, "less than or equals"))
-                .inputValueDefinition(valueDef(CONTAINS.getId(), scalarTypeName, "contains substring"))
-                .inputValueDefinition(valueDef(NOT_CONTAINS.getId(), scalarTypeName, "not contains substring"))
-                .inputValueDefinition(valueDef(STARTS_WITH.getId(), scalarTypeName, "starts with substring"))
-                .inputValueDefinition(valueDef(ENDS_WITH.getId(), scalarTypeName, "ends with substring"))
-                .inputValueDefinition(listValueDef(IN_LIST.getId(), scalarTypeName, "in list"))
-                .inputValueDefinition(listValueDef(NOT_IN_LIST.getId(), scalarTypeName, "not in list"))
-                .build();
-    }
 
+        EnumSet<Types.FilterOperation> availableOperations = filterManager.availableOperations(scalarType);
+
+        InputObjectTypeDefinition.Builder defBuilder = InputObjectTypeDefinition.newInputObjectDefinition()
+                .name(name)
+                .comments(Collections.singletonList(new Comment(comment, null)));
+
+        availableOperations.forEach(operation -> {
+            if (IN_LIST.equals(operation) || NOT_IN_LIST.equals(operation)) {
+                defBuilder.inputValueDefinition(listValueDef(operation, scalarTypeName));
+            } else if (IS_NULL.equals(operation)) {
+                defBuilder.inputValueDefinition(valueDef(operation, Scalars.GraphQLBoolean.getName()));
+            } else {
+                defBuilder.inputValueDefinition(valueDef(operation, scalarTypeName));
+            }
+        });
+
+        return defBuilder.build();
+    }
 
     public InputObjectTypeDefinition buildFilterConditionType(MetaClass metaClass) {
 
@@ -104,6 +92,8 @@ public class FilterTypesBuilder extends BaseTypesBuilder {
         valueDefs.add(listValueDef(ConditionUnionType.AND.name(), className, null));
 //        valueDefs.add(listValueDef(ConditionUnionType.NOT.name(), className, null));
         valueDefs.add(listValueDef(ConditionUnionType.OR.name(), className, null));
+        //condition for filtering by null references
+        valueDefs.add(valueDef(IS_NULL, Scalars.GraphQLBoolean.getName()));
 
         builder.inputValueDefinitions(valueDefs);
 
@@ -178,6 +168,20 @@ public class FilterTypesBuilder extends BaseTypesBuilder {
             name = normalizeName(name);
         }
         return name + suffix;
+    }
+
+    public enum ConditionUnionType {
+        // todo need to investigate how to implement using jmix conditions
+//        NOT,
+        AND,
+        OR;
+
+        @Nullable
+        public static ConditionUnionType find(String type) {
+            return Arrays.stream(FilterTypesBuilder.ConditionUnionType.values())
+                    .filter(conditionUnionType -> conditionUnionType.name().equals(type))
+                    .findAny().orElse(null);
+        }
     }
 
 }

@@ -124,7 +124,7 @@
                           width="100%">
                         <filter
                                 collapsed="true"
-                                dataLoader="entityLogDl">
+                                dataLoader="entityLogDl" columnsCount="2">
                             <properties include=".*"/>
                         </filter>
                         <table id="entityLogTable" width="100%" dataContainer="entityLogDc">

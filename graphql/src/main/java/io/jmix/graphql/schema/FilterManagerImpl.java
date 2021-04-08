@@ -71,7 +71,7 @@ public class FilterManagerImpl implements FilterManager {
             return EnumSet.of(EQ, NEQ, IS_NULL);
         }
         if (scalarType.equals(GraphQLVoid)) {
-            return EnumSet.noneOf(Types.FilterOperation.class);
+            return EnumSet.of(IS_NULL);
         }
 
         throw new UnsupportedOperationException("Can't define the operation type for " + scalarType);

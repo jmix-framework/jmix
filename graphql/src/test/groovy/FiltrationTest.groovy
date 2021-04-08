@@ -39,7 +39,7 @@ class FiltrationTest extends AbstractGraphQLTest {
         numbersFilterOPs = new HashSet<Types.FilterOperation>(Arrays.asList(EQ, NEQ, GT, GTE, LT, LTE, IN_LIST, NOT_IN_LIST, IS_NULL))
         dateTimeFilterOPs = new HashSet<Types.FilterOperation>(Arrays.asList(EQ, NEQ, IN_LIST, NOT_IN_LIST, GT, GTE, LT, LTE, IS_NULL))
         booleanFilterOPs = new HashSet<Types.FilterOperation>(Arrays.asList(EQ, NEQ, IS_NULL))
-        emptyFilterOPs = Collections.emptySet()
+        emptyFilterOPs = new HashSet<Types.FilterOperation>(Arrays.asList(IS_NULL))
     }
 
     @SuppressWarnings('UnnecessaryQualifiedReference')

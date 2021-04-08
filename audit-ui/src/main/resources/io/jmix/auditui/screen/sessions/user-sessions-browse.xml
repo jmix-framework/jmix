@@ -26,6 +26,27 @@
     <dialogMode height="600"
                 width="800"/>
     <layout spacing="true" expand="sessionsTable">
+        <hbox id="filterHBox" spacing="true" width="100%">
+            <groupBox id="filterGroupBox" caption="msg://UserSessions.filter" orientation="horizontal" spacing="true"
+                      width="AUTO">
+                <gridLayout id="filterGrid" spacing="true">
+                    <columns count="3"/>
+                    <rows>
+                        <row>
+                            <label value="msg://UserSessions.nameField"/>
+                            <label value="msg://UserSessions.lastRequestDateFrom"/>
+                            <label value="msg://UserSessions.lastRequestDateTo"/>
+                        </row>
+                        <row>
+                            <textField id="userName" datatype="string"/>
+                            <dateField id="lastRequestDateFrom" datatype="date"/>
+                            <dateField id="lastRequestDateTo" datatype="date"/>
+                        </row>
+                    </rows>
+                </gridLayout>
+                <button id="clearButton" caption="clear" align="BOTTOM_RIGHT"/>
+            </groupBox>
+        </hbox>
         <groupTable id="sessionsTable"
                     width="100%"
                     dataContainer="userSessionsDc"

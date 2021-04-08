@@ -16,19 +16,24 @@
 
 package io.jmix.auditui.screen.sessions;
 
-import io.jmix.audit.entity.UserSession;
 import io.jmix.audit.UserSessions;
+import io.jmix.audit.entity.UserSession;
 import io.jmix.core.Messages;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.action.Action;
+import io.jmix.ui.component.Button;
+import io.jmix.ui.component.DateField;
 import io.jmix.ui.component.Table;
+import io.jmix.ui.component.TextField;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.CollectionLoader;
 import io.jmix.ui.navigation.Route;
 import io.jmix.ui.screen.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Date;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @UiController("userSessions.browse")
 @UiDescriptor("user-sessions-browse.xml")
@@ -53,6 +58,13 @@ public class UserSessionsBrowse extends StandardLookup<UserSession> {
 
     @Autowired
     protected Messages messages;
+    @Autowired
+    private TextField<String> userName;
+    @Autowired
+    private DateField<Date> lastRequestDateFrom;
+    @Autowired
+    private DateField<Date> lastRequestDateTo;
+
 
     @Subscribe
     protected void onInit(InitEvent event) {
@@ -72,4 +84,33 @@ public class UserSessionsBrowse extends StandardLookup<UserSession> {
         }
     }
 
+    @Subscribe("clearButton")
+    public void onClearButtonClick(Button.ClickEvent event) {
+        userName.setValue(null);
+        lastRequestDateFrom.setValue(null);
+        lastRequestDateTo.setValue(null);
+        refreshDlItems();
+    }
+
+    @Subscribe("sessionsTable.refresh")
+    public void onSessionsTableRefresh(Action.ActionPerformedEvent event) {
+        refreshDlItems();
+    }
+
+    private void refreshDlItems() {
+        userSessionsDl.setLoadDelegate(loadContext -> {
+            Stream<UserSession> sessions = userSessions.sessions();
+            if (userName.getValue() != null) {
+                sessions = sessions.filter(o -> o.getPrincipalName().toLowerCase().contains(userName.getValue()));
+            }
+            if (lastRequestDateFrom.getValue() != null) {
+                sessions = sessions.filter(o -> o.getLastRequest().after(lastRequestDateFrom.getValue()));
+            }
+            if (lastRequestDateTo.getValue() != null) {
+                sessions = sessions.filter(o -> o.getLastRequest().before(lastRequestDateTo.getValue()));
+            }
+            return sessions.collect(Collectors.toList());
+        });
+        userSessionsDl.load();
+    }
 }

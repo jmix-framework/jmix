@@ -463,14 +463,10 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
         selectAction.setOptions(new ListEntityOptions<>(getAttributesOptions(), metadata));
 
         if (getEditedEntity().getConfiguration() != null
-                && getEditedEntity().getConfiguration().getDependsOnAttributeCodes() != null
-                && !getEditedEntity().getConfiguration().getDependsOnAttributeCodes().isEmpty()) {
-            dependsOnAttributesField.setValue(
-                    dataManager.load(CategoryAttribute.class)
-                            .query("select e from dynat_CategoryAttribute e where e.code in (:codes)")
-                            .parameter("codes", String.join(",", getEditedEntity().getConfiguration().getDependsOnAttributeCodes()))
-                            .list()
-            );
+                && getEditedEntity().getConfiguration().getDependsOnAttributeCodes() != null) {
+            dependsOnAttributesField.setValue(getAttributesOptions().stream().filter(o ->
+                    getEditedEntity().getConfiguration().getDependsOnAttributeCodes().contains(o.getCode()))
+                    .collect(Collectors.toList()));
         }
     }
 

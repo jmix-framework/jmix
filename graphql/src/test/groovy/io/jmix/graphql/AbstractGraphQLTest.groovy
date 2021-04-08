@@ -16,11 +16,18 @@
 
 package io.jmix.graphql
 
+import com.graphql.spring.boot.test.GraphQLTestAutoConfiguration
 import io.jmix.core.CoreConfiguration
 import io.jmix.data.DataConfiguration
 import io.jmix.eclipselink.EclipselinkConfiguration
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration
+import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration
+import org.springframework.boot.autoconfigure.web.servlet.ServletWebServerFactoryAutoConfiguration
+import org.springframework.boot.test.autoconfigure.OverrideAutoConfiguration
+import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.context.TestPropertySource
 import org.springframework.transaction.PlatformTransactionManager
 import org.springframework.transaction.TransactionDefinition
 import org.springframework.transaction.support.TransactionTemplate
@@ -34,6 +41,15 @@ import test_support.TestContextInitializer
                 GraphQLTestConfiguration, GraphqlConfiguration],
         initializers = [TestContextInitializer]
 )
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@OverrideAutoConfiguration(enabled = false)
+@ImportAutoConfiguration(
+        classes = [
+                ServletWebServerFactoryAutoConfiguration.class,
+                GraphQLTestAutoConfiguration.class,
+                JacksonAutoConfiguration.class
+        ]
+)@TestPropertySource("classpath:/test_support/test-app.properties")
 class AbstractGraphQLTest extends Specification {
 
     protected TransactionTemplate transaction

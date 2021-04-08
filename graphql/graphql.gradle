@@ -31,6 +31,16 @@ dependencies {
 
     testImplementation 'org.spockframework:spock-core'
     testImplementation 'org.spockframework:spock-spring'
+    testImplementation ('org.springframework.boot:spring-boot-starter-test')
+    {
+//      todo configure logger correctly
+        exclude module: "spring-boot-starter-logging"
+    }
+    testImplementation ('com.graphql-java-kickstart:graphql-spring-boot-starter-test:11.0.0')
+    {
+//      todo configure logger correctly
+        exclude module: "spring-boot-starter-logging"
+    }
     testImplementation 'io.jmix.data:jmix-data'
     testImplementation 'io.jmix.data:jmix-eclipselink'
     testRuntimeOnly 'org.slf4j:slf4j-simple'

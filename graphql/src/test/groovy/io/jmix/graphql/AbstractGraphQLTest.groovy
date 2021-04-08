@@ -1,20 +1,7 @@
-import io.jmix.core.CoreConfiguration
-import io.jmix.data.DataConfiguration
-import io.jmix.eclipselink.EclipselinkConfiguration
-import io.jmix.graphql.GraphqlConfiguration
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.test.context.ContextConfiguration
-import org.springframework.transaction.PlatformTransactionManager
-import org.springframework.transaction.TransactionDefinition
-import org.springframework.transaction.support.TransactionTemplate
-import spock.lang.Specification
-import test_support.GraphQLTestConfiguration
-import test_support.TestContextInitializer
-
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2021 Haulmont.
  *
- * Licensed under the Apache License, Version 2.0 (the "License")
+ * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -26,6 +13,20 @@ import test_support.TestContextInitializer
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package io.jmix.graphql
+
+import io.jmix.core.CoreConfiguration
+import io.jmix.data.DataConfiguration
+import io.jmix.eclipselink.EclipselinkConfiguration
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.test.context.ContextConfiguration
+import org.springframework.transaction.PlatformTransactionManager
+import org.springframework.transaction.TransactionDefinition
+import org.springframework.transaction.support.TransactionTemplate
+import spock.lang.Specification
+import test_support.GraphQLTestConfiguration
+import test_support.TestContextInitializer
 
 @SuppressWarnings('SpringJavaInjectionPointsAutowiringInspection')
 @ContextConfiguration(

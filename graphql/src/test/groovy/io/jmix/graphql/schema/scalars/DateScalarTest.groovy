@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package scalars
+package io.jmix.graphql.schema.scalars
 
 import graphql.language.StringValue
 import graphql.schema.CoercingParseLiteralException

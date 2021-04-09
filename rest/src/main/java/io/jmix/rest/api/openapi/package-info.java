@@ -15,6 +15,6 @@
  */
 
 @Internal
-package io.jmix.rest.api.swagger;
+package io.jmix.rest.api.openapi;
 
 import io.jmix.core.annotation.Internal;

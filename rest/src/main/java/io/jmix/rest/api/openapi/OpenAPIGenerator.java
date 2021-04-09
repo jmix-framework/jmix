@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package io.jmix.rest.api.swagger;
+package io.jmix.rest.api.openapi;
 
-import io.swagger.models.Swagger;
+import io.swagger.v3.oas.models.OpenAPI;
 
 /**
- * This bean generates Swagger documentation according to the 2.0 specification.
+ * This bean generates OpenAPI documentation according to the 3.1 specification.
  * <p>
  * Generated documentation includes operations with entities, predefined REST queries and exposed services.
  */
-public interface SwaggerGenerator {
+public interface OpenAPIGenerator {
 
     /**
-     * @return a {@code Swagger} object that can be transformed to JSON or YAML version of documentation
+     * @return a {@code OpenAPI} object that can be transformed to JSON or YAML version of documentation
      */
-    Swagger generateSwagger();
+    OpenAPI generateOpenAPI();
 }

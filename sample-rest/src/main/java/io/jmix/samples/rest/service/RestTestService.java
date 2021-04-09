@@ -99,7 +99,5 @@ public interface RestTestService {
 
     List<Map<String, Object>> methodReturnsListOfMap();
 
-//    TransientDriver getTransientDriver();
-
     NotPersistentStringIdEntity getNotPersistentStringIdEntity();
 }

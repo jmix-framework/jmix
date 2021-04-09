@@ -16,25 +16,23 @@
 
 package io.jmix.rest.api.controller;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import io.jmix.core.Resources;
 import io.jmix.rest.api.exception.RestAPIException;
-import io.jmix.rest.api.swagger.SwaggerGenerator;
-import io.swagger.models.Swagger;
+import io.jmix.rest.api.openapi.OpenAPIGenerator;
+import io.swagger.v3.core.util.Json;
+import io.swagger.v3.core.util.Yaml;
+import io.swagger.v3.oas.models.OpenAPI;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import java.io.IOException;
 
-import static com.fasterxml.jackson.dataformat.yaml.YAMLGenerator.Feature.WRITE_DOC_START_MARKER;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController("rest_DocumentationController")
@@ -45,16 +43,16 @@ public class DocumentationController {
     protected Resources resources;
 
     @Autowired
-    protected SwaggerGenerator swaggerGenerator;
+    protected OpenAPIGenerator openAPIGenerator;
 
-    @RequestMapping(value = "/swagger.yaml", method = RequestMethod.GET, produces = "application/yaml")
-    public String getSwaggerYaml() {
-        return resources.getResourceAsString("classpath:io/jmix/rest/api/rest-api-swagger.yaml");
+    @RequestMapping(value = "/openapi.yaml", method = RequestMethod.GET, produces = "application/yaml")
+    public String getOpenApiYaml() {
+        return resources.getResourceAsString("classpath:io/jmix/rest/api/rest-openapi.yaml");
     }
 
-    @RequestMapping(value = "/swagger.json", method = RequestMethod.GET, produces = "application/json")
-    public String getSwaggerJson() {
-        String yaml = getSwaggerYaml();
+    @RequestMapping(value = "/openapi.json", method = RequestMethod.GET, produces = "application/json")
+    public String getOpenApiJson() {
+        String yaml = getOpenApiYaml();
         ObjectMapper yamlReader = new ObjectMapper(new YAMLFactory());
         Object obj;
         try {
@@ -66,35 +64,24 @@ public class DocumentationController {
         }
     }
 
-    @RequestMapping(value = "/swaggerDetailed.yaml", method = RequestMethod.GET, produces = "application/yaml")
-    public String getProjectSwaggerYaml() {
-        ObjectMapper jsonWriter = new ObjectMapper()
-                .setSerializationInclusion(JsonInclude.Include.NON_NULL);
-
-        YAMLMapper yamlMapper = new YAMLMapper()
-                .disable(WRITE_DOC_START_MARKER);
-
+    @RequestMapping(value = "/openApiDetailed.yaml", method = RequestMethod.GET, produces = "application/yaml")
+    public String getProjectOpenApiYaml() {
         try {
-            Swagger swagger = swaggerGenerator.generateSwagger();
+            OpenAPI openAPI = openAPIGenerator.generateOpenAPI();
 
-            JsonNode jsonNode = jsonWriter.readTree(
-                    jsonWriter.writeValueAsBytes(swagger));
-
-            return yamlMapper.writeValueAsString(jsonNode);
+            return Yaml.pretty().writeValueAsString(openAPI);
         } catch (IOException e) {
             throw new RestAPIException("An error occurred while generating Swagger documentation", e.getMessage(),
                     HttpStatus.INTERNAL_SERVER_ERROR, e);
         }
     }
 
-    @RequestMapping(value = "/swaggerDetailed.json", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
-    public String getProjectSwaggerJson() {
-        ObjectMapper jsonWriter = new ObjectMapper();
-        jsonWriter.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+    @RequestMapping(value = "/openapiDetailed.json", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
+    public String getProjectOpenApiJson() {
         try {
-            Swagger swagger = swaggerGenerator.generateSwagger();
+            OpenAPI openAPI = openAPIGenerator.generateOpenAPI();
 
-            return jsonWriter.writeValueAsString(swagger);
+            return Json.pretty().writeValueAsString(openAPI);
         } catch (JsonProcessingException e) {
             throw new RestAPIException("An error occurred while generating Swagger documentation", e.getMessage(),
                     HttpStatus.INTERNAL_SERVER_ERROR, e);

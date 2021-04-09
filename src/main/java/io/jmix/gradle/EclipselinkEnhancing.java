@@ -28,12 +28,10 @@ import java.util.Set;
 
 public class EclipselinkEnhancing implements PersistenceProviderEnhancing {
 
-    protected Set<ResolvedDependency> visited = new HashSet<>();
-
     public void run(Project project, SourceSet sourceSet, Set<String> allStores) {
         for (String storeName : allStores) {
             Configuration conf = project.getConfigurations().findByName(sourceSet.getCompileClasspathConfigurationName());
-            if (!findJpaDependencies(conf.getResolvedConfiguration().getFirstLevelModuleDependencies())) {
+            if (!findJpaDependencies(conf.getResolvedConfiguration().getFirstLevelModuleDependencies(), new HashSet<>())) {
                 project.getLogger().info("Jpa dependencies not found in classpath, EclipseLink enhancer will not run");
                 return;
             }
@@ -58,13 +56,13 @@ public class EclipselinkEnhancing implements PersistenceProviderEnhancing {
         }
     }
 
-    protected boolean findJpaDependencies(Set<ResolvedDependency> deps) {
+    protected boolean findJpaDependencies(Set<ResolvedDependency> deps, Set visited) {
         for (ResolvedDependency dep : deps) {
             if (!visited.contains(dep)) {
                 if ("org.eclipse.persistence".equals(dep.getModuleGroup()) && "org.eclipse.persistence.core".equals(dep.getModuleName()))
                     return true;
                 visited.add(dep);
-                if (findJpaDependencies(dep.getChildren()))
+                if (findJpaDependencies(dep.getChildren(), visited))
                     return true;
             }
         }

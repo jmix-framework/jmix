@@ -16,29 +16,17 @@
 
 package io.jmix.reports.entity.table;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonSyntaxException;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
 
 import javax.persistence.Id;
-import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
 @JmixEntity(name = "report_TemplateTableDescription")
 public class TemplateTableDescription {
-
-    protected final static Gson gson;
-
-    static {
-        gson = new GsonBuilder()
-                .create();
-    }
-
     @Id
     @JmixGeneratedValue
     protected UUID id;
@@ -60,17 +48,5 @@ public class TemplateTableDescription {
 
     public void setTemplateTableBands(List<TemplateTableBand> templateTableBands) {
         this.templateTableBands = templateTableBands;
-    }
-
-    public static String toJsonString(TemplateTableDescription description) {
-        return gson.toJson(description);
-    }
-
-    public static TemplateTableDescription fromJsonString(String json) {
-        try {
-            return gson.fromJson(json, TemplateTableDescription.class);
-        } catch (JsonSyntaxException e) {
-            return null;
-        }
     }
 }

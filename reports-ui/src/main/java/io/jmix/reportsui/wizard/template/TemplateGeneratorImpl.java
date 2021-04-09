@@ -20,11 +20,12 @@ import io.jmix.reports.entity.wizard.ReportData;
 import io.jmix.reports.entity.wizard.TemplateFileType;
 import io.jmix.reports.exception.TemplateGenerationException;
 import io.jmix.reportsui.wizard.template.generators.*;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 @Component("report_TemplateGenerator")
-@Scope("prototype")
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class TemplateGeneratorImpl implements TemplateGenerator {
 
     protected final ReportData reportData;

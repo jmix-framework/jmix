@@ -232,7 +232,6 @@ public class TableEditFragment extends DescriptionEditFragment {
         } else {
             templateTableDc.setItem(reportTemplate.getTemplateTableDescription());
         }
-
     }
 
     @Override

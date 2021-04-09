@@ -16,6 +16,8 @@
 
 package io.jmix.reportsui.wizard.template.generators;
 
+import io.jmix.core.DataManager;
+import io.jmix.reports.app.MetadataFieldsIgnoringGsonBuilder;
 import io.jmix.reports.entity.table.TemplateTableBand;
 import io.jmix.reports.entity.table.TemplateTableColumn;
 import io.jmix.reports.entity.table.TemplateTableDescription;
@@ -23,15 +25,24 @@ import io.jmix.reports.entity.wizard.RegionProperty;
 import io.jmix.reports.entity.wizard.ReportData;
 import io.jmix.reports.entity.wizard.ReportRegion;
 import io.jmix.reportsui.wizard.template.Generator;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.util.LinkedList;
 import java.util.List;
 
+@Component("reports_TableGenerator")
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class TableGenerator implements Generator {
+
+    @Autowired
+    private DataManager dataManager;
 
     @Override
     public byte[] generate(ReportData reportData) {
-        TemplateTableDescription templateTableDescription = new TemplateTableDescription();
+        TemplateTableDescription templateTableDescription = dataManager.create(TemplateTableDescription.class);
         List<TemplateTableBand> bands = new LinkedList<>();
 
         for (int i = 0; i < reportData.getReportRegions().size(); i++) {
@@ -56,8 +67,12 @@ public class TableGenerator implements Generator {
             band.setColumns(columns);
             bands.add(band);
         }
-        templateTableDescription.setTemplateTableBands(bands);
-        return TemplateTableDescription.toJsonString(templateTableDescription).getBytes();
-    }
 
+        templateTableDescription.setTemplateTableBands(bands);
+
+        return new MetadataFieldsIgnoringGsonBuilder()
+                .build()
+                .toJson(templateTableDescription)
+                .getBytes();
+    }
 }

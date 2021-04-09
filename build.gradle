@@ -273,7 +273,8 @@ dependencies {
         api 'org.spockframework:spock-core:2.0-M4-groovy-2.5'
         api 'org.spockframework:spock-spring:2.0-M4-groovy-2.5'
 
-        api 'io.swagger:swagger-models:1.6.1'
+        api 'io.swagger.core.v3:swagger-models:2.1.7'
+        api 'io.swagger.core.v3:swagger-core:2.1.7'
 
         api 'org.springframework.security.oauth:spring-security-oauth2:2.4.1.RELEASE'
 

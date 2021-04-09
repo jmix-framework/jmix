@@ -91,7 +91,7 @@ public class ResetPasswordDialog extends Screen {
 
         Action closeAction = new BaseAction(Window.CLOSE_ACTION_ID)
                 .withIcon(icons.get(JmixIcon.EDITOR_CANCEL))
-                .withCaption(messages.getMessage("actions.Cancel"))
+                .withCaption(messages.getMessage("actions.Close"))
                 .withHandler(actionPerformedEvent -> close(new StandardCloseAction(Window.CLOSE_ACTION_ID)));
 
         window.addAction(closeAction);

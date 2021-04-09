@@ -16,9 +16,12 @@
 package com.haulmont.cuba.gui.components;
 
 import com.google.common.collect.Iterables;
+import com.haulmont.chile.core.datatypes.Datatypes;
+import com.haulmont.cuba.core.app.LockService;
 import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.core.global.PersistenceHelper;
 import com.haulmont.cuba.core.global.Security;
+import com.haulmont.cuba.core.global.UserSessionSource;
 import com.haulmont.cuba.gui.WindowParams;
 import com.haulmont.cuba.gui.data.*;
 import com.haulmont.cuba.gui.data.impl.CollectionPropertyDatasourceImpl;
@@ -33,6 +36,8 @@ import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.core.pessimisticlocking.LockInfo;
+import io.jmix.core.pessimisticlocking.LockNotSupported;
 import io.jmix.core.security.EntityOp;
 import io.jmix.core.validation.group.UiCrossFieldChecks;
 import io.jmix.dynattr.model.Categorized;
@@ -56,6 +61,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ElementKind;
 import javax.validation.Validator;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Set;
 
 /**
@@ -267,31 +273,33 @@ public class AbstractEditor<T extends Entity> extends AbstractWindow
             if (security.isEntityOpPermitted(ds.getMetaClass(), EntityOp.UPDATE)) {
                 readOnlyDueToLock = false;
 
-                // todo LockService
-//                LockService lockService = getBeanLocator().get(LockService.NAME);
-//
-//                LockInfo lockInfo = lockService.lock(getMetaClassForLocking(ds).getName(), item.getId().toString());
-//                if (lockInfo == null) {
-//                    justLocked = true;
-//                    addAfterCloseListener(afterCloseEvent -> {
-//                        releaseLock();
-//                    });
-//                } else if (!(lockInfo instanceof LockNotSupported)) {
-//                    UserSessionSource userSessionSource = getBeanLocator().get(UserSessionSource.NAME);
-//
-//                    getFrame().getWindowManager().showNotification(
-//                            messages.getMainMessage("entityLocked.msg"),
-//                            String.format(messages.getMainMessage("entityLocked.desc"),
-//                                    lockInfo.getUser().getLogin(),
-//                                    Datatypes.getNN(Date.class).format(lockInfo.getSince(), userSessionSource.getLocale())
-//                            ),
-//                            Frame.NotificationType.HUMANIZED
-//                    );
-//
-//                    readOnlyDueToLock = true;
-//                    showEnableEditingBtn = false;
-//                    setReadOnly(true);
-//                }
+                LockService lockService = (LockService) getApplicationContext().getBean(LockService.NAME);
+
+                LockInfo lockInfo = lockService.lock(
+                        getMetaClassForLocking(ds).getName(), EntityValues.getId(item).toString());
+                if (lockInfo == null) {
+                    justLocked = true;
+                    addAfterCloseListener(afterCloseEvent -> {
+                        releaseLock();
+                    });
+                } else if (!(lockInfo instanceof LockNotSupported)) {
+                    UserSessionSource userSessionSource =
+                            (UserSessionSource) getApplicationContext().getBean(UserSessionSource.NAME);
+
+                    Frame frame = (Frame) getFrame();
+                    frame.getWindowManager().showNotification(
+                            messages.getMainMessage("entityLocked.msg"),
+                            String.format(messages.getMainMessage("entityLocked.desc"),
+                                    lockInfo.getUsername(),
+                                    Datatypes.getNN(Date.class).format(lockInfo.getSince(), userSessionSource.getLocale())
+                            ),
+                            Frame.NotificationType.HUMANIZED
+                    );
+
+                    readOnlyDueToLock = true;
+                    showEnableEditingBtn = false;
+                    setReadOnly(true);
+                }
             } else {
                 showEnableEditingBtn = false;
                 setReadOnly(true);
@@ -300,14 +308,14 @@ public class AbstractEditor<T extends Entity> extends AbstractWindow
     }
 
     public void releaseLock() {
-        // todo LockService
-//        if (justLocked) {
-//            Datasource ds = getDatasourceInternal();
-//            Entity entity = ds.getItem();
-//            if (entity != null) {
-//                getBeanLocator().get(LockService.class).unlock(getMetaClassForLocking(ds).getName(), entity.getId().toString());
-//            }
-//        }
+        if (justLocked) {
+            Datasource ds = getDatasourceInternal();
+            Entity entity = ds.getItem();
+            if (entity != null) {
+                getApplicationContext().getBean(LockService.class)
+                        .unlock(getMetaClassForLocking(ds).getName(), EntityValues.getId(entity).toString());
+            }
+        }
     }
 
     /**

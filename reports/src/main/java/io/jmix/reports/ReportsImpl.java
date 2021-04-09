@@ -486,31 +486,15 @@ public class ReportsImpl implements Reports {
 
         }
 
-//        Transaction tx = persistence.createTransaction();
-//        try {
-//
-//            Long countOfReportsWithSameName = (Long) persistence.getEntityManager()
-//                    .createQuery("select count(r) from report_Report r where r.name = :name")
-//                    .setParameter("name", reportName)
-//                    .getSingleResult();
-//            tx.commit();
-//            if (countOfReportsWithSameName > 0) {
-//                return generateReportName(sourceName, ++iteration);
-//            }
-//        } finally {
-//            tx.end();
-//        }
-
         String finalReportName = reportName;
-        transaction.executeWithoutResult(status -> {
-            Long countOfReportsWithSameName = (Long) em.createQuery("select count(r) from report_Report r where r.name = :name")
-                    .setParameter("name", finalReportName)
-                    .getSingleResult();
-            if (countOfReportsWithSameName > 0) {
-                //todo
-                //return generateReportName(sourceName, ++iteration);
-            }
-        });
+        Long countOfReportsWithSameName = transaction.execute(status -> (Long) em.createQuery("select count(r) from report_Report r where r.name = :name")
+                .setParameter("name", finalReportName)
+                .getSingleResult());
+
+        if (countOfReportsWithSameName != null && countOfReportsWithSameName > 0) {
+            return generateReportName(sourceName, ++iteration);
+        }
+
         return reportName;
     }
 

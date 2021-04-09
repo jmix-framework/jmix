@@ -59,6 +59,7 @@ public abstract class StandardEditor<T> extends Screen
     private boolean justLocked = false;
     private boolean readOnly = false;
     private boolean readOnlyDueToLock = false;
+    protected boolean showEnableEditingBtn = true;
 
     // whether user has edited entity after screen opening
     private boolean entityModified = false;
@@ -241,10 +242,14 @@ public abstract class StandardEditor<T> extends Screen
                     addAfterDetachListener(afterDetachEvent ->
                             releaseLock()
                     );
-                } else if (lockStatus == PessimisticLockStatus.FAILED){
-                    disableCommitActions();
+                } else if (lockStatus == PessimisticLockStatus.FAILED) {
                     readOnlyDueToLock = true;
+                    showEnableEditingBtn = false;
+                    setReadOnly(true);
                 }
+            } else {
+                showEnableEditingBtn = false;
+                setReadOnly(true);
             }
         }
     }
@@ -464,7 +469,7 @@ public abstract class StandardEditor<T> extends Screen
             this.readOnly = readOnly;
 
             ReadOnlyScreensSupport readOnlyScreensSupport = getApplicationContext().getBean(ReadOnlyScreensSupport.class);
-            readOnlyScreensSupport.setScreenReadOnly(this, readOnly);
+            readOnlyScreensSupport.setScreenReadOnly(this, readOnly, showEnableEditingBtn);
 
             if (readOnlyDueToLock) {
                 disableCommitActions();
@@ -559,7 +564,7 @@ public abstract class StandardEditor<T> extends Screen
                 .show();
     }
 
-    protected String getSaveNotificationCaption(){
+    protected String getSaveNotificationCaption() {
         Metadata metadata = getApplicationContext().getBean(Metadata.class);
         Messages messages = getApplicationContext().getBean(Messages.class);
         MessageTools messageTools = getApplicationContext().getBean(MessageTools.class);

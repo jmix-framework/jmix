@@ -21,8 +21,10 @@ import io.jmix.core.Entity;
 import io.jmix.core.EntityEntry;
 import io.jmix.core.entity.BaseEntityEntry;
 import io.jmix.core.entity.EntityValues;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.annotation.Nullable;
+import javax.persistence.Embeddable;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -74,6 +76,10 @@ public class EntityInternals {
         return false;
     }
 
+    /**
+     * Used by enhancing process as implementation of {@code hashCode()} method for
+     * each {@link JmixEntity} that is not {@link Embeddable}.
+     */
     public static int hashCode(Entity entity) {
         return entity.__getEntityEntry().hashCode();
     }

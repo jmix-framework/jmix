@@ -53,6 +53,10 @@ public class EntityValues {
         return getEntityEntry(entity).getGeneratedId();
     }
 
+    public static void setGeneratedId(Object entity, Object id) {
+        getEntityEntry(entity).setGeneratedId(id);
+    }
+
     /**
      * Set an attribute value.
      * <br>

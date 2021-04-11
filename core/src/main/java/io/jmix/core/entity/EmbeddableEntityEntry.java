@@ -18,8 +18,10 @@ package io.jmix.core.entity;
 
 import io.jmix.core.Entity;
 
+import javax.persistence.Embeddable;
+
 /**
- * Used by enhancing process
+ * Used for {@link Embeddable} entities  by enhancing process
  */
 @SuppressWarnings("unsed")
 public class EmbeddableEntityEntry extends BaseEntityEntry {
@@ -76,6 +78,11 @@ public class EmbeddableEntityEntry extends BaseEntityEntry {
     @Override
     public Object getGeneratedIdOrNull() {
         return getEntityId();
+    }
+
+    @Override
+    public void setGeneratedId(Object id) {
+        //not needed, {@code source} used as an id and has been already set at creation
     }
 
     @Override

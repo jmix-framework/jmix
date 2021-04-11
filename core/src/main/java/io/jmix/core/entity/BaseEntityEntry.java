@@ -21,16 +21,25 @@ import io.jmix.core.EntityEntry;
 import io.jmix.core.EntityEntryExtraState;
 import io.jmix.core.EntityValuesProvider;
 import io.jmix.core.common.util.ReflectionHelper;
+import io.jmix.core.entity.annotation.JmixGeneratedValue;
+import io.jmix.core.entity.annotation.JmixId;
 import io.jmix.core.metamodel.model.utils.MethodsCache;
 import io.jmix.core.metamodel.model.utils.RelatedPropertiesCache;
 import org.springframework.lang.NonNull;
 
 import javax.annotation.Nullable;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Id;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.*;
 import java.util.function.BiConsumer;
 
+/**
+ * Used by enhancing process. Direct subclass of {@link BaseEntityEntry} will be created for entity, that
+ * has primary key (an attribute annotated with {@link Id}, {@link EmbeddedId} or {@link JmixId}) and this primary key
+ * annotated with {@link JmixGeneratedValue}
+ */
 public abstract class BaseEntityEntry implements EntityEntry, Cloneable {
     protected byte state = NEW;
     protected SecurityState securityState = new SecurityState();

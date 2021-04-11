@@ -80,6 +80,11 @@ public class KeyValueEntity
         }
 
         @Override
+        public void setGeneratedId(Object id) {
+            //do not needed because {@code generatedId} is the same as {@code entityId} for {@code KeyValueEntity}
+        }
+
+        @Override
         public <T> T getAttributeValue(@NonNull String name) {
             return ((KeyValueEntity) source).getValue(name);
         }

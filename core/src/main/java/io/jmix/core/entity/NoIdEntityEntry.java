@@ -16,14 +16,21 @@
 
 package io.jmix.core.entity;
 
-import io.jmix.core.EntityEntry;
 import io.jmix.core.Entity;
+import io.jmix.core.EntityEntry;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.annotation.Nullable;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * An {@link EntityEntry} implementation for model objects without identifiers.
+ * An {@link EntityEntry} implementation for model objects without identifiers.<br/>
+ * Used by enhancing process when {@link JmixEntity} does not include any of annotations:
+ *  <ul>
+ *      <li>{@link javax.persistence.Id}</li>
+ *      <li>{@link javax.persistence.EmbeddedId}</li>
+ *      <li>{@link io.jmix.core.entity.annotation.JmixId}</li>
+ *  </ul>
  * <p>
  * Such entities should not be saved in any persistent storage.
  */
@@ -58,6 +65,12 @@ public class NoIdEntityEntry extends BaseEntityEntry {
     public Object getGeneratedIdOrNull() {
         return generatedId;
     }
+
+    @Override
+    public void setGeneratedId(Object id) {
+        //do not needed because {@code generatedId} is the same as {@code entityId} for {@code NoIdEntity}
+    }
+
 
     @Override
     public void copy(EntityEntry entry) {

@@ -16,20 +16,20 @@
 
 package data_components
 
-import io.jmix.core.SaveContext
 import io.jmix.core.EntitySet
+import io.jmix.core.SaveContext
 import io.jmix.eclipselink.impl.JmixEntityFetchGroup
 import io.jmix.ui.model.DataComponents
 import io.jmix.ui.model.DataContext
 import io.jmix.ui.model.impl.NoopDataContext
+import org.eclipse.persistence.queries.FetchGroupTracker
+import org.springframework.beans.factory.annotation.Autowired
 import test_support.DataContextSpec
+import test_support.entity.TestNotGeneratedIdEntity
 import test_support.entity.sales.*
 import test_support.entity.sec.Role
 import test_support.entity.sec.User
 import test_support.entity.sec.UserRole
-import org.eclipse.persistence.queries.FetchGroupTracker
-
-import org.springframework.beans.factory.annotation.Autowired
 
 @SuppressWarnings(["GroovyAccessibility", "GroovyAssignabilityCheck"])
 class DataContextTest extends DataContextSpec {
@@ -708,5 +708,15 @@ class DataContextTest extends DataContextSpec {
         then:
 
         !modified.contains(order)
+    }
+
+    void "copy generated id"() {
+        DataContext context = factory.createDataContext()
+        when:
+        TestNotGeneratedIdEntity entity = metadata.create(TestNotGeneratedIdEntity)
+        context.merge(entity)
+        then:
+        ((TestNotGeneratedIdEntity) context.getModified().iterator().next()).uuid != null
+
     }
 }

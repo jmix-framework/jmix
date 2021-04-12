@@ -73,7 +73,7 @@ public class ResetPasswordDialog extends Screen {
         String commitShortcut = uiProperties.getCommitShortcut();
 
         Action commitAndCloseAction = new BaseAction(Window.COMMIT_ACTION_ID)
-                .withCaption(messages.getMessage("actions.Ok"))
+                .withCaption(messages.getMessage("io.jmix.securityui.screen.resetpassword/ResetPasswordDialog.generateSave"))
                 .withIcon(icons.get(JmixIcon.EDITOR_OK))
                 .withPrimary(true)
                 .withShortcut(commitShortcut)

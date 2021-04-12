@@ -31,11 +31,11 @@ import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 /**
  * <code>TimeDatatype</code> works with <code>java.sql.Time</code> but is parametrized with <code>java.util.Date</code>
@@ -81,7 +81,11 @@ public class TimeDatatype implements Datatype<Date>, ParameterizedDatatype {
         if (StringUtils.isBlank(value)) {
             return null;
         }
-        return new Date(TimeUnit.SECONDS.toMillis(DateTimeFormatter.ISO_TIME.parse(value.trim(), LocalTime::from).getSecond()));
+        return Date.from(DateTimeFormatter.ISO_TIME.parse(value.trim(), LocalTime::from).atDate(Instant
+                .ofEpochMilli(0L)
+                .atOffset(ZoneOffset.UTC)
+                .toLocalDate()).
+                atZone(ZoneId.systemDefault()).toInstant());
     }
 
     @Override

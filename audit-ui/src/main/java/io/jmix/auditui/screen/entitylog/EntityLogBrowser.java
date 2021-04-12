@@ -333,7 +333,7 @@ public class EntityLogBrowser extends StandardLookup<EntityLogItem> {
 
     protected void enableControls() {
         loggedEntityTable.setEnabled(false);
-        entityNameField.setEditable(false);
+        entityNameField.setEditable(true);
         autoCheckBox.setEditable(true);
         manualCheckBox.setEditable(true);
         for (Component c : attributesBoxScroll.getComponents())

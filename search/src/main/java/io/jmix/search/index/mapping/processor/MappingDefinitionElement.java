@@ -19,6 +19,7 @@ package io.jmix.search.index.mapping.processor;
 import io.jmix.search.index.annotation.JmixEntitySearchIndex;
 import io.jmix.search.index.mapping.strategy.FieldMappingStrategy;
 
+import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -27,10 +28,10 @@ import java.util.Map;
  */
 public class MappingDefinitionElement {
 
-    protected String[] includedProperties;
-    protected String[] excludedProperties;
+    protected String[] includedProperties = new String[0];
+    protected String[] excludedProperties = new String[0];
     protected Class<? extends FieldMappingStrategy> fieldMappingStrategyClass;
-    protected Map<String, Object> parameters;
+    protected Map<String, Object> parameters = Collections.emptyMap();
     //todo attributes for standalone fields
 
     /**
@@ -41,8 +42,9 @@ public class MappingDefinitionElement {
         return includedProperties;
     }
 
-    public void setIncludedProperties(String[] includedProperties) {
+    public MappingDefinitionElement setIncludedProperties(String... includedProperties) {
         this.includedProperties = includedProperties;
+        return this;
     }
 
     /**
@@ -53,8 +55,9 @@ public class MappingDefinitionElement {
         return excludedProperties;
     }
 
-    public void setExcludedProperties(String[] excludedProperties) {
+    public MappingDefinitionElement setExcludedProperties(String... excludedProperties) {
         this.excludedProperties = excludedProperties;
+        return this;
     }
 
     /**
@@ -65,15 +68,17 @@ public class MappingDefinitionElement {
         return fieldMappingStrategyClass;
     }
 
-    public void setFieldMappingStrategyClass(Class<? extends FieldMappingStrategy> fieldMappingStrategyClass) {
+    public MappingDefinitionElement setFieldMappingStrategyClass(Class<? extends FieldMappingStrategy> fieldMappingStrategyClass) {
         this.fieldMappingStrategyClass = fieldMappingStrategyClass;
+        return this;
     }
 
     public Map<String, Object> getParameters() {
         return parameters;
     }
 
-    public void setParameters(Map<String, Object> parameters) {
+    public MappingDefinitionElement setParameters(Map<String, Object> parameters) {
         this.parameters = parameters;
+        return this;
     }
 }

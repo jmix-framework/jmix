@@ -37,10 +37,10 @@ public class AutoMappedFieldAnnotationProcessor extends AbstractFieldAnnotationP
     @Override
     public MappingDefinitionElement createMappingDefinitionElement(MetaClass rootEntityMetaClass, AutoMappedField annotation) {
         MappingDefinitionElement item = new MappingDefinitionElement(); //todo use builder
-        item.setIncludedProperties(annotation.includeProperty());
-        item.setExcludedProperties(annotation.excludeProperty());
-        item.setFieldMappingStrategyClass(getFieldMappingStrategyClass());
-        item.setParameters(createParameters(annotation));
+        item.setIncludedProperties(annotation.includeProperty())
+                .setExcludedProperties(annotation.excludeProperty())
+                .setFieldMappingStrategyClass(getFieldMappingStrategyClass())
+                .setParameters(createParameters(annotation));
 
         return item;
     }

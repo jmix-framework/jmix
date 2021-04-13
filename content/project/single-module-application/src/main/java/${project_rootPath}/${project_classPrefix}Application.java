@@ -36,7 +36,7 @@ public class ${project_classPrefix}Application {
 	@EventListener
 	public void printApplicationUrl(ApplicationStartedEvent event) {
 		LoggerFactory.getLogger(${project_classPrefix}Application.class).info("Application started at "
-				+ "http://" + InetAddress.getLoopbackAddress().getHostName() + ":"
+				+ "http://localhost:"
 				+ environment.getProperty("local.server.port")
 				+ Strings.nullToEmpty(environment.getProperty("server.servlet.context-path")));
 	}

@@ -61,7 +61,7 @@ public class ResourceRoleModelEdit extends StandardEditor<ResourceRoleModel> {
     private TextField<String> codeField;
 
     @Autowired
-    private TagPicker<String> scopesField;
+    private CheckBoxGroup<String> scopesField;
 
     @Autowired
     @Qualifier("resourcePoliciesTable.edit")

@@ -40,8 +40,8 @@
             <column width="350px">
                 <textField id="sourceField" caption="msg://io.jmix.securityui.model/ResourceRoleModel.source"
                            editable="false"/>
-                <tagPicker id="scopesField" property="scopes"
-                           required="true" inlineTags="true"/>
+                <checkBoxGroup id="scopesField" property="scopes"
+                           required="true" orientation="vertical" rowspan="2"/>
             </column>
         </form>
         <tabSheet id="policiesTabSheet">

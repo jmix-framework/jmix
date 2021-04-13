@@ -17,16 +17,11 @@
 package io.jmix.search.searching.impl;
 
 import com.google.common.collect.Lists;
-import io.jmix.core.DataManager;
-import io.jmix.core.FetchPlan;
-import io.jmix.core.InstanceNameProvider;
-import io.jmix.core.Metadata;
-import io.jmix.core.entity.EntityValues;
+import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.search.SearchApplicationProperties;
 import io.jmix.search.searching.EntitySearcher;
 import io.jmix.search.searching.SearchResult;
-import io.jmix.search.utils.PropertyTools;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
@@ -67,7 +62,7 @@ public class EntitySearcherImpl implements EntitySearcher {
     @Autowired
     protected SearchApplicationProperties searchApplicationProperties;
     @Autowired
-    protected PropertyTools propertyTools;
+    protected IdSerialization idSerialization;
 
     @Override
     public SearchResult search(String searchTerm, SearchContext searchContext) {
@@ -87,7 +82,7 @@ public class EntitySearcherImpl implements EntitySearcher {
                 throw new RuntimeException("Search failed", e);
             }
             SearchHits searchHits = searchResponse.getHits();
-            Map<String, List<SearchHit>> hitsByEntityName = groupSearchHitsByEntity(searchHits);
+            Map<MetaClass, List<SearchHit>> hitsByEntityName = groupSearchHitsByEntity(searchHits);
             fillSearchResult(searchResultImpl, hitsByEntityName);
 
             long totalHits = searchResponse.getHits().getTotalHits().value;
@@ -105,7 +100,6 @@ public class EntitySearcherImpl implements EntitySearcher {
 
         HighlightBuilder highlightBuilder = new HighlightBuilder();
         highlightBuilder.field("*");
-        highlightBuilder.fragmentSize(10);
         searchSourceBuilder.highlighter(highlightBuilder);
 
         searchRequest.source(searchSourceBuilder);
@@ -117,25 +111,25 @@ public class EntitySearcherImpl implements EntitySearcher {
         return searchResultImpl.getSize() >= searchSettings.getSize();
     }
 
-    protected Map<String, List<SearchHit>> groupSearchHitsByEntity(SearchHits searchHits) {
+    protected Map<MetaClass, List<SearchHit>> groupSearchHitsByEntity(SearchHits searchHits) {
         return Stream.of(searchHits.getHits())
                 .collect(Collectors.groupingBy(hit -> {
-                    Object metaObject = hit.getSourceAsMap().get("meta");
-                    if (metaObject instanceof Map) {
-                        return (String) ((Map<?, ?>) metaObject).get("entityClass");
-                    } else {
-                        throw new RuntimeException("Entity metadata not found in ES document " + hit.getIndex() + "/" + hit.getId());
-                    }
+                    Id<Object> entityId = idSerialization.stringToId(hit.getId());
+                    return metadata.getClass(entityId.getEntityClass());
                 }));
     }
 
-    protected void fillSearchResult(SearchResultImpl searchResultImpl, Map<String, List<SearchHit>> hitsByEntityName) {
+    protected void fillSearchResult(SearchResultImpl searchResultImpl, Map<MetaClass, List<SearchHit>> hitsByEntityName) {
         int sizeLimit = searchResultImpl.getSearchContext().getSize();
-        for (Map.Entry<String, List<SearchHit>> entry : hitsByEntityName.entrySet()) {
-            String entityName = entry.getKey();
+        for (Map.Entry<MetaClass, List<SearchHit>> entry : hitsByEntityName.entrySet()) {
+            MetaClass metaClass = entry.getKey();
             List<SearchHit> entityHits = entry.getValue();
-            List<String> entityIds = entityHits.stream().map(SearchHit::getId).collect(Collectors.toList());
-            Map<String, String> reloadedIdNames = loadEntityInstanceNames(metadata.getClass(entityName), entityIds);
+            List<Object> entityIds = entityHits.stream()
+                    .map(SearchHit::getId)
+                    .map(idSerialization::stringToId)
+                    .map(Id::getValue)
+                    .collect(Collectors.toList());
+            Map<String, String> reloadedIdNames = loadEntityInstanceNames(metaClass, entityIds);
 
             for (SearchHit searchHit : entityHits) {
                 if (searchResultImpl.getSize() >= sizeLimit) {
@@ -145,7 +139,7 @@ public class EntitySearcherImpl implements EntitySearcher {
                 String entityId = searchHit.getId();
                 if (reloadedIdNames.containsKey(entityId)) {
                     String instanceName = reloadedIdNames.get(entityId);
-                    searchResultImpl.addEntry(createSearchResultEntry(entityId, instanceName, entityName, searchHit));
+                    searchResultImpl.addEntry(createSearchResultEntry(entityId, instanceName, metaClass.getName(), searchHit));
                 }
                 searchResultImpl.incrementOffset();
             }
@@ -162,31 +156,24 @@ public class EntitySearcherImpl implements EntitySearcher {
         return new SearchResultEntry(entityId, instanceName, entityName, fieldHits);
     }
 
-    protected Map<String, String> loadEntityInstanceNames(MetaClass metaClass, List<String> entityIds) {
-        String primaryKeyProperty = propertyTools.getPrimaryKeyPropertyNameForIndex(metaClass);
+    protected Map<String, String> loadEntityInstanceNames(MetaClass metaClass, List<Object> entityIds) {
         Map<String, String> result = new HashMap<>();
-        for (List<String> partition : Lists.partition(entityIds, searchApplicationProperties.getSearchReloadEntitiesBatchSize())) {
-            log.debug("Load instance names for ids: {}", partition);
+        for (List<Object> idsPartition : Lists.partition(entityIds, searchApplicationProperties.getSearchReloadEntitiesBatchSize())) {
+            log.debug("Load instance names for ids: {}", idsPartition);
             List<Object> partitionResult = secureDataManager
                     .load(metaClass.getJavaClass())
-                    .query(String.format("select e from %s e where e.%s in :ids", metaClass.getName(), primaryKeyProperty))
-                    .parameter("ids", partition)
+                    .ids(idsPartition)
                     .fetchPlan(FetchPlan.INSTANCE_NAME)
                     .list();
             partitionResult.forEach(entity -> {
-                Object primaryKeyValue = EntityValues.getValue(entity, primaryKeyProperty);
-                if (primaryKeyValue == null) {
-                    log.error("Primary key value is not set for entity {}", entity);
-                } else {
-                    String instanceName = instanceNameProvider.getInstanceName(entity);
-                    result.put(primaryKeyValue.toString(), instanceName);
-                }
+                String instanceName = instanceNameProvider.getInstanceName(entity);
+                result.put(idSerialization.idToString(Id.of(entity)), instanceName);
             });
         }
         return result;
     }
 
     protected String formatFieldName(String fieldName) {
-        return StringUtils.removeStart(StringUtils.removeEnd(fieldName, "._instance_name"), "content.");
+        return StringUtils.removeEnd(fieldName, "._instance_name");
     }
 }

@@ -20,6 +20,7 @@ import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.DependsOnProperties;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.search.index.queue.impl.IndexingOperation;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 
@@ -75,12 +76,12 @@ public class IndexingQueueItem {
         this.entityId = entityId;
     }
 
-    public String getOperation() {
-        return operation;
+    public IndexingOperation getOperation() {
+        return IndexingOperation.fromId(operation);
     }
 
-    public void setOperation(String operation) {
-        this.operation = operation;
+    public void setOperation(IndexingOperation operation) {
+        this.operation = operation.getId();
     }
 
     public Date getCreatedDate() {

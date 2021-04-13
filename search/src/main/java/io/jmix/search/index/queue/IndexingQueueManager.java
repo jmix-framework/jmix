@@ -16,8 +16,7 @@
 
 package io.jmix.search.index.queue;
 
-import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.security.EntityOp;
+import io.jmix.core.Id;
 
 import java.util.Collection;
 
@@ -27,30 +26,39 @@ import java.util.Collection;
 public interface IndexingQueueManager {
 
     /**
-     * Sends provided entity instance to queue.
+     * Removes all queue items related to provided entity.
+     *
+     * @param entityName entity
+     */
+    void emptyQueue(String entityName);
+
+    /**
+     * Sends provided entity instance to indexing queue in order to store it to index.
      *
      * @param entityInstance instance
-     * @param operation      type of performed operation
      */
-    void enqueue(Object entityInstance, EntityOp operation);
+    void enqueueIndex(Object entityInstance);
 
     /**
-     * Sends provided entity instances to queue
+     * Sends provided entity instances to indexing queue in order to store them to index.
      *
      * @param entityInstances instances
-     * @param operation       type of performed operation
      */
-    void enqueue(Collection<Object> entityInstances, EntityOp operation);
+    void enqueueIndexCollection(Collection<Object> entityInstances);
 
     /**
-     * Sends entity instances to queue by provided primary keys.
-     * Every PK should belong to instances of the same entity.
+     * Sends entity instance to indexing queue by provided ID in order to store it to index.
      *
-     * @param metaClass MetaClass of enqueuing entity
-     * @param entityPks primary keys of entities
-     * @param operation type of performed operation
+     * @param entityId ID of entity instance
      */
-    void enqueue(MetaClass metaClass, Collection<String> entityPks, EntityOp operation);
+    void enqueueIndexByEntityId(Id<?> entityId);
+
+    /**
+     * Sends entity instances to indexing queue by provided IDs in order to store them to index.
+     *
+     * @param entityIds IDs of entity instances
+     */
+    void enqueueIndexCollectionByEntityIds(Collection<Id<?>> entityIds);
 
     /**
      * Sends all instances of provided entity to queue.
@@ -58,21 +66,55 @@ public interface IndexingQueueManager {
      * @param entityName entity name
      * @param batchSize  amount of instances enqueued in single batch
      */
-    void enqueueAll(String entityName, int batchSize);
+    void enqueueIndexAll(String entityName, int batchSize);
 
     /**
-     * Retrieves items from queue and save them to index.
+     * Sends provided entity instance to indexing queue in order to delete it from index.
      *
-     * @param batchSize                amount of items processed in single batch
-     * @param maxProcessedPerExecution max amount of items can be processed during single execution
-     * @return amount of processed items
+     * @param entityInstance instance
      */
-    int processQueue(int batchSize, int maxProcessedPerExecution);
+    void enqueueDelete(Object entityInstance);
 
     /**
-     * Removes all queue items related to provided entity.
+     * Sends provided entity instances to indexing queue in order to delete them from index.
      *
-     * @param entityName entity
+     * @param entityInstances instances
      */
-    void emptyQueue(String entityName);
+    void enqueueDeleteCollection(Collection<Object> entityInstances);
+
+    /**
+     * Sends entity instance to indexing queue by provided ID in order to delete it from index.
+     *
+     * @param entityId ID of entity instance
+     */
+    void enqueueDeleteByEntityId(Id<?> entityId);
+
+    /**
+     * Sends entity instances to indexing queue by provided IDs in order to delete them from index.
+     *
+     * @param entityIds IDs of entity instances
+     */
+    void enqueueDeleteCollectionByEntityIds(Collection<Id<?>> entityIds);
+
+    /**
+     * Retrieves next batch of items from indexing queue and process them - store/remove related documents in index.
+     *
+     * @return amount of processed queue items
+     */
+    int processNextBatch();
+
+    /**
+     * Retrieves next batch of items from indexing queue and process them - store/remove related documents in index.
+     *
+     * @param batchSize amount of queue items to process
+     * @return amount of processed queue items
+     */
+    int processNextBatch(int batchSize);
+
+    /**
+     * Retrieves items from indexing queue and process them - store/remove related documents in index.
+     *
+     * @return amount of processed queue items
+     */
+    int processEntireQueue();
 }

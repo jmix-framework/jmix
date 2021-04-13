@@ -16,24 +16,13 @@
 
 package io.jmix.searchui.screen.entitysearcher;
 
-import io.jmix.search.IndexProcessManager;
-import io.jmix.ui.action.Action;
 import io.jmix.ui.screen.Screen;
-import io.jmix.ui.screen.Subscribe;
 import io.jmix.ui.screen.UiController;
 import io.jmix.ui.screen.UiDescriptor;
-import org.springframework.beans.factory.annotation.Autowired;
 
-//TODO Temporaty screen. It will be removed later
+//TODO Temporary screen. It will be removed later
 @UiController("entitySearcher.browser")
 @UiDescriptor("entity-searcher-browser.xml")
 public class EntitySearcherBrowser extends Screen {
 
-    @Autowired
-    protected IndexProcessManager indexManager;
-
-    @Subscribe("reindexAllAction")
-    public void onReindexAllAction(Action.ActionPerformedEvent event) {
-        indexManager.scheduleReindexAll();
-    }
 }

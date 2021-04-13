@@ -18,14 +18,17 @@ package io.jmix.search.index.queue.impl;
 
 import io.jmix.core.*;
 import io.jmix.core.common.util.Preconditions;
-import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.security.EntityOp;
+import io.jmix.core.security.SystemAuthenticator;
 import io.jmix.data.StoreAwareLocator;
+import io.jmix.search.SearchApplicationProperties;
 import io.jmix.search.index.EntityIndexer;
+import io.jmix.search.index.IndexConfiguration;
+import io.jmix.search.index.impl.IndexingLocker;
+import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.index.queue.IndexingQueueManager;
 import io.jmix.search.index.queue.entity.IndexingQueueItem;
-import io.jmix.search.utils.PropertyTools;
+import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,111 +55,15 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
     @Autowired
     protected StoreAwareLocator storeAwareLocator;
     @Autowired
-    protected FetchPlans fetchPlans;
+    protected IndexConfigurationManager indexConfigurationManager;
     @Autowired
-    protected PropertyTools propertyTools;
-
-    @Override
-    public void enqueue(Object entityInstance, EntityOp operation) {
-        Preconditions.checkNotNullArgument(entityInstance);
-        Preconditions.checkNotNullArgument(operation);
-
-        Optional<String> primaryKeyOpt = propertyTools.getPrimaryKeyForIndexOpt(entityInstance);
-        if (primaryKeyOpt.isPresent()) {
-            MetaClass metaClass = metadata.getClass(entityInstance);
-            enqueue(metaClass, primaryKeyOpt.get(), operation);
-        }
-    }
-
-    @Override
-    public void enqueue(Collection<Object> entityInstances, EntityOp operation) {
-        Preconditions.checkNotNullArgument(entityInstances);
-        Preconditions.checkNotNullArgument(operation);
-
-        Map<MetaClass, Set<String>> groupedEntities = new HashMap<>();
-        entityInstances.forEach(entity -> {
-            Optional<String> primaryKeyOpt = propertyTools.getPrimaryKeyForIndexOpt(entity);
-            if (primaryKeyOpt.isPresent()) {
-                MetaClass metaClass = metadata.getClass(entity);
-                Set<String> pks = groupedEntities.computeIfAbsent(metaClass, k -> new HashSet<>());
-                pks.add(primaryKeyOpt.get());
-            }
-        });
-        groupedEntities.forEach((metaClass, pks) -> enqueue(metaClass, pks, operation));
-    }
-
-    @Override
-    public void enqueue(MetaClass metaClass, Collection<String> entityPks, EntityOp operation) {
-        List<IndexingQueueItem> queueItems = entityPks.stream()
-                .map(id -> createQueueItem(metaClass.getName(), id, operation))
-                .collect(Collectors.toList());
-
-        enqueue(queueItems);
-    }
-
-    @Override
-    public void enqueueAll(String entityName, int batchSize) {
-        if (batchSize <= 0) {
-            log.error("Size of enqueuing batch during reindex entity must be positive");
-        }
-
-        MetaClass metaClass = metadata.getClass(entityName);
-        String primaryKeyPropertyName = propertyTools.getPrimaryKeyPropertyNameForIndex(metaClass);
-        FetchPlan fetchPlan = fetchPlans.builder(metaClass.getJavaClass())
-                .add(primaryKeyPropertyName)
-                .build();
-        int batchOffset = 0;
-        int batchLoaded;
-        do {
-            List<Object> entities = dataManager.load(metaClass.getJavaClass())
-                    .all()
-                    .firstResult(batchOffset) //todo integer limit?
-                    .maxResults(batchSize)
-                    .fetchPlan(fetchPlan)
-                    .list();
-
-            List<IndexingQueueItem> queueItems = entities.stream()
-                    .map(entity -> EntityValues.getValue(entity, primaryKeyPropertyName))
-                    .filter(Objects::nonNull)
-                    .map(pk -> createQueueItem(entityName, pk.toString(), EntityOp.UPDATE))
-                    .collect(Collectors.toList());
-
-            enqueue(queueItems);
-
-            batchLoaded = entities.size();
-            batchOffset += batchLoaded;
-        } while (batchLoaded == batchSize);
-    }
-
-    @Override
-    public int processQueue(int batchSize, int maxProcessedPerExecution) {
-        if (batchSize <= 0) {
-            log.error("Size of batch during queue processing must be positive");
-        }
-
-        List<IndexingQueueItem> queueItems;
-        int count = 0;
-        do {
-            queueItems = dataManager.load(IndexingQueueItem.class)
-                    .query("select q from search_IndexingQueue q order by q.createdDate asc")
-                    .maxResults(batchSize)
-                    .list();
-            log.trace("Dequeued {} items", queueItems.size());
-
-            if (queueItems.isEmpty()) {
-                break;
-            }
-
-            count += queueItems.size(); //todo Return actual amount of indexed entities from 'entityIndexerImpl.indexEntities'
-            entityIndexer.indexQueueItems(queueItems); //todo handle failed commands of bulk request
-
-            SaveContext saveContext = new SaveContext();
-            saveContext.removing(queueItems);
-            dataManager.save(saveContext);
-        } while (queueItems.size() == batchSize && (maxProcessedPerExecution <= 0 || count < maxProcessedPerExecution));
-
-        return count;
-    }
+    protected IdSerialization idSerialization;
+    @Autowired
+    protected SystemAuthenticator authenticator;
+    @Autowired
+    protected IndexingLocker locker;
+    @Autowired
+    protected SearchApplicationProperties searchApplicationProperties;
 
     @Override
     public void emptyQueue(String entityName) {
@@ -172,13 +79,184 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
         });
     }
 
-    protected void enqueue(MetaClass metaClass, String entityPk, EntityOp operation) {
-        IndexingQueueItem queueItem = createQueueItem(metaClass.getName(), entityPk, operation);
-        enqueue(queueItem);
+    @Override
+    public void enqueueIndex(Object entityInstance) {
+        Preconditions.checkNotNullArgument(entityInstance);
+        enqueueIndexCollection(Collections.singletonList(entityInstance));
     }
 
-    protected void enqueue(IndexingQueueItem queueItem) {
-        enqueue(Collections.singletonList(queueItem));
+    @Override
+    public void enqueueIndexCollection(Collection<Object> entityInstances) {
+        Preconditions.checkNotNullArgument(entityInstances);
+        enqueue(entityInstances, IndexingOperation.INDEX);
+    }
+
+    @Override
+    public void enqueueIndexByEntityId(Id<?> entityId) {
+        enqueueIndexCollectionByEntityIds(Collections.singletonList(entityId));
+    }
+
+    @Override
+    public void enqueueIndexCollectionByEntityIds(Collection<Id<?>> entityIds) {
+        enqueueByIds(entityIds, IndexingOperation.INDEX);
+    }
+
+    @Override
+    public void enqueueIndexAll(String entityName, int batchSize) {
+        if (batchSize <= 0) {
+            log.error("Size of enqueuing batch during reindex entity must be positive");
+            return;
+        }
+
+        IndexConfiguration indexConfiguration = indexConfigurationManager.getIndexConfigurationByEntityName(entityName);
+        if (indexConfiguration == null) {
+            log.warn("Unable to enqueue instances of entity '{}' - entity is not configured for indexing", entityName);
+            return;
+        }
+
+        MetaClass metaClass = metadata.getClass(entityName);
+        int batchOffset = 0;
+        int batchLoaded;
+        do {
+            List<Object> instances = dataManager.load(metaClass.getJavaClass())
+                    .all()
+                    .firstResult(batchOffset) //todo integer limit?
+                    .maxResults(batchSize)
+                    .list();
+
+            List<IndexingQueueItem> queueItems = instances.stream()
+                    .map(instance -> idSerialization.idToString(Id.of(instance)))
+                    .map(id -> createQueueItem(entityName, id, IndexingOperation.INDEX))
+                    .collect(Collectors.toList());
+
+            enqueue(queueItems);
+
+            batchLoaded = instances.size();
+            batchOffset += batchLoaded;
+        } while (batchLoaded == batchSize);
+    }
+
+    @Override
+    public void enqueueDelete(Object entityInstance) {
+        Preconditions.checkNotNullArgument(entityInstance);
+        enqueueDeleteCollection(Collections.singletonList(entityInstance));
+    }
+
+    @Override
+    public void enqueueDeleteCollection(Collection<Object> entityInstances) {
+        Preconditions.checkNotNullArgument(entityInstances);
+        enqueue(entityInstances, IndexingOperation.DELETE);
+    }
+
+    @Override
+    public void enqueueDeleteByEntityId(Id<?> entityId) {
+        enqueueDeleteCollectionByEntityIds(Collections.singletonList(entityId));
+    }
+
+    @Override
+    public void enqueueDeleteCollectionByEntityIds(Collection<Id<?>> entityIds) {
+        enqueueByIds(entityIds, IndexingOperation.DELETE);
+    }
+
+    @Override
+    public int processNextBatch() {
+        return processNextBatch(searchApplicationProperties.getProcessQueueBatchSize());
+    }
+
+    @Override
+    public int processNextBatch(int batchSize) {
+        return processQueue(batchSize, batchSize);
+    }
+
+    @Override
+    public int processEntireQueue() {
+        return processQueue(searchApplicationProperties.getProcessQueueBatchSize(), -1);
+    }
+
+    protected int processQueue(int batchSize, int maxProcessedPerExecution) {
+        //todo check global conditions to proceed (ES availability, etc)
+
+        log.debug("Start processing queue");
+        int count = 0;
+        boolean locked = locker.tryLockQueueProcessing();
+        if (!locked) {
+            log.debug("Unable to process queue: queue is being processed at the moment");
+            return count;
+        }
+
+        try {
+            authenticator.begin();
+            if (batchSize <= 0) {
+                throw new IllegalArgumentException("Size of batch during queue processing must be positive");
+            }
+
+            List<IndexingQueueItem> queueItems;
+            do {
+                queueItems = dataManager.load(IndexingQueueItem.class)
+                        .query("select q from search_IndexingQueue q order by q.createdDate asc")
+                        .maxResults(batchSize)
+                        .list();
+                log.debug("Dequeued {} items: {}", queueItems.size(), queueItems);
+
+                if (queueItems.isEmpty()) {
+                    break;
+                }
+
+                count += queueItems.size(); //todo Return actual amount of indexed entities from 'entityIndexer'
+
+                Map<IndexingOperation, List<Id<?>>> idsGroupedByOperation = queueItems.stream().collect(
+                        Collectors.groupingBy(
+                                IndexingQueueItem::getOperation,
+                                Collectors.mapping(
+                                        item -> idSerialization.stringToId(item.getEntityId()),
+                                        Collectors.toList()
+                                )
+                        )
+                );
+                List<Id<?>> idsForIndex = idsGroupedByOperation.get(IndexingOperation.INDEX);
+                List<Id<?>> idsForDelete = idsGroupedByOperation.get(IndexingOperation.DELETE);
+                //todo handle failed commands of bulk request
+                if (CollectionUtils.isNotEmpty(idsForIndex)) {
+                    entityIndexer.indexCollectionByEntityIds(idsForIndex);
+                }
+                if (CollectionUtils.isNotEmpty(idsForDelete)) {
+                    entityIndexer.deleteCollectionByEntityIds(idsForDelete);
+                }
+                //todo check case update after delete (restore entity?)
+
+                SaveContext saveContext = new SaveContext();
+                saveContext.removing(queueItems);
+                dataManager.save(saveContext);
+            } while (queueItems.size() == batchSize && (maxProcessedPerExecution <= 0 || queueItems.size() <= maxProcessedPerExecution));
+        } finally {
+            locker.unlockQueueProcessing();
+            authenticator.end();
+        }
+
+        log.debug("{} queue items have been successfully processed", count);
+        return count;
+    }
+
+    protected void enqueue(Collection<Object> entityInstances, IndexingOperation operation) {
+        List<Id<?>> ids = entityInstances.stream().map(Id::of).collect(Collectors.toList());
+        enqueueByIds(ids, operation);
+    }
+
+    protected void enqueueByIds(Collection<Id<?>> entityIds, IndexingOperation operation) {
+        List<IndexingQueueItem> queueItems = entityIds.stream()
+                .map(id -> {
+                    MetaClass metaClass = metadata.getClass(id.getEntityClass());
+                    IndexConfiguration indexConfiguration = indexConfigurationManager.getIndexConfigurationByEntityName(metaClass.getName());
+                    if (indexConfiguration == null) {
+                        return null;
+                    } else {
+                        String serializedEntityId = idSerialization.idToString(id);
+                        return createQueueItem(metaClass, serializedEntityId, operation);
+                    }
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+        enqueue(queueItems);
     }
 
     protected void enqueue(Collection<IndexingQueueItem> queueItems) {
@@ -191,12 +269,15 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
         });
     }
 
-    protected IndexingQueueItem createQueueItem(String entityName, String entityPk, EntityOp operation) {
-        IndexingQueueItem queueItem = metadata.create(IndexingQueueItem.class);
-        queueItem.setOperation(operation.getId());
-        queueItem.setEntityId(entityPk);
-        queueItem.setEntityName(entityName);
+    protected IndexingQueueItem createQueueItem(MetaClass metaClass, String entityId, IndexingOperation operation) {
+        return createQueueItem(metaClass.getName(), entityId, operation);
+    }
 
+    protected IndexingQueueItem createQueueItem(String entityName, String entityId, IndexingOperation operation) {
+        IndexingQueueItem queueItem = metadata.create(IndexingQueueItem.class);
+        queueItem.setOperation(operation);
+        queueItem.setEntityId(entityId);
+        queueItem.setEntityName(entityName);
         return queueItem;
     }
 }

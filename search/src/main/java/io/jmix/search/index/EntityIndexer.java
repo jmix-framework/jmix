@@ -16,39 +16,68 @@
 
 package io.jmix.search.index;
 
-import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.security.EntityOp;
-import io.jmix.search.index.queue.entity.IndexingQueueItem;
+import io.jmix.core.Id;
 
 import java.util.Collection;
 
 /**
- * Provides functionality for documents indexing.
+ * Provides functionality for direct documents indexing.
  */
 public interface EntityIndexer {
 
     /**
-     * Stores documents defined in provided queue items to index.
+     * Stores provided entity instance to index.
      *
-     * @param queueItems collection of queue items
+     * @param entityInstance instance
      */
-    void indexQueueItems(Collection<IndexingQueueItem> queueItems);
+    void index(Object entityInstance);
 
     /**
-     * Stores single document to index using primary key.
+     * Stores provided entity instances to index.
      *
-     * @param metaClass entity meta class
-     * @param entityPk  entity primary key
-     * @param operation type of performed operation
+     * @param entityInstances instances
      */
-    void indexEntityByPk(MetaClass metaClass, String entityPk, EntityOp operation);
+    void indexCollection(Collection<Object> entityInstances);
 
     /**
-     * Stores multiple documents to index using primary keys
+     * Stores entity instance to index by provided ID.
      *
-     * @param metaClass entity meta class
-     * @param entityPks entity primary keys
-     * @param operation type of performed operation
+     * @param entityId ID of entity instance
      */
-    void indexEntitiesByPks(MetaClass metaClass, Collection<String> entityPks, EntityOp operation);
+    void indexByEntityId(Id<?> entityId);
+
+    /**
+     * Stores entity instances to index by provided IDs.
+     *
+     * @param entityIds IDs of entity instances
+     */
+    void indexCollectionByEntityIds(Collection<Id<?>> entityIds);
+
+    /**
+     * Deletes provided entity instance from index.
+     *
+     * @param entityInstance instance
+     */
+    void delete(Object entityInstance);
+
+    /**
+     * Deletes provided entity instances from index.
+     *
+     * @param entityInstances instances
+     */
+    void deleteCollection(Collection<Object> entityInstances);
+
+    /**
+     * Deletes entity instance from index by provided ID.
+     *
+     * @param entityId ID of entity instance
+     */
+    void deleteByEntityId(Id<?> entityId);
+
+    /**
+     * Deletes entity instances from index by provided IDs.
+     *
+     * @param entityIds IDs of entity instances
+     */
+    void deleteCollectionByEntityIds(Collection<Id<?>> entityIds);
 }

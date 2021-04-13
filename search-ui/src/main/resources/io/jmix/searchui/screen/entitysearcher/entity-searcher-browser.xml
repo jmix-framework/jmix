@@ -24,11 +24,6 @@
     </actions>
     <layout spacing="true">
         <vbox spacing="true">
-            <groupBox orientation="horizontal" spacing="true" caption="Index">
-                <buttonsPanel>
-                    <button id="reindexAllButton" action="reindexAllAction" caption="Reindex All"/>
-                </buttonsPanel>
-            </groupBox>
             <search:searchField id="searchField"/>
         </vbox>
     </layout>

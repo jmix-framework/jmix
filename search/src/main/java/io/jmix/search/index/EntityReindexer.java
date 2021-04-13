@@ -14,7 +14,22 @@
  * limitations under the License.
  */
 
-@NonNullApi
-package io.jmix.search.impl;
+package io.jmix.search.index;
 
-import org.springframework.lang.NonNullApi;
+public interface EntityReindexer {
+
+    /**
+     * Sends all instances of all index-configured entities to indexing queue.
+     * <p>Indexing queue will be cleared and indices will be recreated.
+     */
+    void enqueueReindexAll();
+
+    /**
+     * Sends all instance of provided index-configured entity to indexing queue.
+     * <p>All items related to this entity will be deleted from indexing queue
+     * and index for this entity will be recreated.
+     *
+     * @param entityName entity name
+     */
+    void enqueueReindexAll(String entityName);
+}

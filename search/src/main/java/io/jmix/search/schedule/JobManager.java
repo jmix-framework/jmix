@@ -16,7 +16,7 @@
 
 package io.jmix.search.schedule;
 
-import io.jmix.search.IndexProcessManager;
+import io.jmix.search.index.queue.IndexingQueueManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +30,7 @@ public class JobManager {
     private static final Logger log = LoggerFactory.getLogger(JobManager.class);
 
     @Autowired
-    protected IndexProcessManager indexProcessManager;
+    protected IndexingQueueManager indexingQueueManager;
 
     //TODO Property for timing.
     // Make internal monitoring of non-empty queue to reduce database requests?
@@ -38,12 +38,6 @@ public class JobManager {
     @Scheduled(fixedDelay = 5000L)
     public void scheduleQueueTrackingJob() {
         log.trace("Process Queue");
-        indexProcessManager.processQueue();
-    }
-
-    @Scheduled(fixedDelay = 1000L)
-    public void scheduleReindexJob() {
-        log.trace("Check reindex entities");
-        indexProcessManager.processNextReindexingEntity();
+        indexingQueueManager.processNextBatch();
     }
 }

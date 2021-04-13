@@ -18,7 +18,6 @@ package io.jmix.search.utils;
 
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
-import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
@@ -45,7 +44,8 @@ public class PropertyTools {
 
     /**
      * Finds properties of entity by provided path string. Path string supports wildcard '*'.
-     * @param metaClass entity meta class
+     *
+     * @param metaClass  entity meta class
      * @param pathString path to property to find
      * @return map with effective property path as a key and property itself as a value
      */
@@ -62,56 +62,6 @@ public class PropertyTools {
                 return Collections.singletonMap(pathString, propertyPath);
             }
         }
-    }
-
-    /**
-     * Checks if entity primary key is used as index primary key.
-     * @param metaClass entity meta class
-     * @return true if entity pk property is used for indexing as identifier
-     */
-    public boolean isEntityIdUsedAsIndexPrimaryKey(MetaClass metaClass) {
-        return getPrimaryKeyPropertyNameForIndexOpt(metaClass)
-                .map(searchPk -> searchPk.equals(metadataTools.getPrimaryKeyName(metaClass)))
-                .orElse(false);
-    }
-
-    /**
-     * Gets name of property contains unique primary key is used as identifier for index object.
-     * Throws exception if primary key can't be resolved.
-     * @param metaClass entity meta class
-     * @return property name
-     */
-    public String getPrimaryKeyPropertyNameForIndex(MetaClass metaClass) {
-        return getPrimaryKeyPropertyNameForIndexOpt(metaClass).orElseThrow(
-                () -> new RuntimeException("Proper primary key property not found for entity " + metaClass.getName())
-        );
-    }
-
-    /**
-     * Gets optional name of property contains unique primary key is used as identifier for index object.
-     * @param metaClass entity meta class
-     * @return Optional property name
-     */
-    public Optional<String> getPrimaryKeyPropertyNameForIndexOpt(MetaClass metaClass) {
-        String primaryKeyPropertyName;
-        if (metadataTools.hasCompositePrimaryKey(metaClass) && metadataTools.hasUuid(metaClass)) {
-            primaryKeyPropertyName = metadataTools.getUuidPropertyName(metaClass.getJavaClass());
-        } else {
-            primaryKeyPropertyName = metadataTools.getPrimaryKeyName(metaClass);
-        }
-        return Optional.ofNullable(primaryKeyPropertyName);
-    }
-
-    /**
-     * Extracts index primary key value from entity instance
-     * @param instance entity instance
-     * @return primary key value
-     */
-    public Optional<String> getPrimaryKeyForIndexOpt(Object instance) {
-        MetaClass metaClass = metadata.getClass(instance);
-        return getPrimaryKeyPropertyNameForIndexOpt(metaClass)
-                .map(pk -> EntityValues.getValue(instance, pk))
-                .map(Object::toString);
     }
 
     protected Map<String, MetaPropertyPath> findPropertiesByWildcardPath(MetaClass metaClass, String path) {

@@ -47,20 +47,14 @@ public class IndexMappingConfigurationSerializer extends StdSerializer<IndexMapp
         gen.writeTree(mergedMappingStructure);
     }
 
-    //todo check merger from EntityIndexerImpl
     protected ObjectNode mergeFields(Collection<MappingFieldDescriptor> fields) {
         ObjectNode root = JsonNodeFactory.instance.objectNode();
         ObjectNode rootProperties = root.putObject("properties");
-        rootProperties.putObject("meta")
-                .putObject("properties")
-                .putObject("entityClass")
-                .put("type", "keyword");
-        ObjectNode contentProperties = rootProperties.putObject("content").putObject("properties");
 
         for (MappingFieldDescriptor field : fields) {
             String path = field.getIndexPropertyFullName();
             ObjectNode config = field.getFieldConfiguration().asJson();
-            mergeField(contentProperties, path, config);
+            mergeField(rootProperties, path, config);
         }
 
         return root;

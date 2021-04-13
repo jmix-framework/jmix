@@ -31,7 +31,6 @@ import io.jmix.search.searching.SearchResult;
 import io.jmix.search.searching.impl.FieldHit;
 import io.jmix.search.searching.impl.SearchContext;
 import io.jmix.search.searching.impl.SearchResultEntry;
-import io.jmix.search.utils.PropertyTools;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.ScreenBuilders;
@@ -73,11 +72,11 @@ public class SearchResultsScreen extends Screen {
     @Autowired
     protected SearchApplicationProperties searchApplicationProperties;
     @Autowired
-    protected PropertyTools propertyTools;
-    @Autowired
     protected EntitySearcher entitySearcher;
     @Autowired
     protected Notifications notifications;
+    @Autowired
+    protected IdSerialization idSerialization;
 
     @Autowired
     protected ScrollBoxLayout contentBox;
@@ -424,7 +423,7 @@ public class SearchResultsScreen extends Screen {
 
     protected void openEntityWindow(SearchResultEntry entry, String entityName, OpenMode openMode, FrameOwner origin) {
         MetaClass metaClass = metadata.getSession().getClass(entityName);
-        Object entity = reloadEntity(metaClass, entry.getDocId());
+        Object entity = reloadEntity(metaClass, idSerialization.stringToId(entry.getDocId()));
         screenBuilders.editor(metaClass.getJavaClass(), origin)
                 .withOpenMode(openMode)
                 .editEntity(entity)
@@ -432,11 +431,9 @@ public class SearchResultsScreen extends Screen {
     }
 
     protected Object reloadEntity(MetaClass metaClass, Object entityId) {
-        String primaryKeyProperty = propertyTools.getPrimaryKeyPropertyNameForIndex(metaClass);
         return dataManager
                 .load(metaClass.getJavaClass())
-                .query(String.format("select e from %s e where e.%s in :id", metaClass.getName(), primaryKeyProperty))
-                .parameter("id", Collections.singleton(entityId))
+                .id(entityId)
                 .fetchPlan(FetchPlan.LOCAL)
                 .one();
     }

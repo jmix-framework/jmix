@@ -23,13 +23,10 @@ import com.fasterxml.jackson.databind.node.*;
 import io.jmix.core.*;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.security.EntityOp;
 import io.jmix.search.index.EntityIndexer;
 import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.index.mapping.MappingFieldDescriptor;
-import io.jmix.search.index.queue.entity.IndexingQueueItem;
-import io.jmix.search.utils.PropertyTools;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.delete.DeleteRequest;
@@ -44,6 +41,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component("search_EntityIndexer")
 public class EntityIndexerImpl implements EntityIndexer {
@@ -61,109 +59,194 @@ public class EntityIndexerImpl implements EntityIndexer {
     @Autowired
     protected Metadata metadata;
     @Autowired
-    protected PropertyTools propertyTools;
+    protected IdSerialization idSerialization;
 
     protected ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public void indexQueueItems(Collection<IndexingQueueItem> queueItems) {
-        log.debug("Index Queue Items: {}", queueItems);
-        Map<MetaClass, Map<EntityOp, Set<String>>> indexScope = new HashMap<>();
-        queueItems.forEach(queueItem -> {
-            MetaClass metaClass = metadata.getClass(queueItem.getEntityName());
-            Map<EntityOp, Set<String>> changesByClass = indexScope.computeIfAbsent(metaClass, k -> new HashMap<>());
-            Set<String> changesByOperation = changesByClass.computeIfAbsent(EntityOp.fromId(queueItem.getOperation()), k -> new HashSet<>());
-            changesByOperation.add(queueItem.getEntityId());
-        });
-
-        indexScope.forEach(
-                (metaClass, changes) -> changes.forEach(
-                        (operation, pks) -> indexEntitiesByPks(metaClass, pks, operation)
-                )
-        );
+    public void index(Object entityInstance) {
+        indexCollection(Collections.singletonList(entityInstance));
     }
 
-    public void indexEntityByPk(MetaClass metaClass, String entityPk, EntityOp operation) {
-        indexEntitiesByPks(metaClass, Collections.singletonList(entityPk), operation);
+    @Override
+    public void indexCollection(Collection<Object> entityInstances) {
+        Map<IndexConfiguration, Collection<Object>> groupedInstances = prepareInstancesForIndexing(entityInstances);
+        indexGroupedInstances(groupedInstances);
     }
 
-    public void indexEntitiesByPks(MetaClass metaClass, Collection<String> entityPks, EntityOp operation) {
-        log.debug("Index entities: Class={}, Operation={}, Pks={}", metaClass, operation, entityPks);
-        IndexConfiguration indexConfiguration = indexConfigurationManager.getIndexConfigurationByEntityName(metaClass.getName());
-        if (indexConfiguration == null) {
-            log.error("Index Definition not found for entity '{}'", metaClass);
-            return;
+    @Override
+    public void indexByEntityId(Id<?> entityId) {
+        indexCollectionByEntityIds(Collections.singletonList(entityId));
+    }
+
+    @Override
+    public void indexCollectionByEntityIds(Collection<Id<?>> entityIds) {
+        Map<IndexConfiguration, Collection<Object>> groupedInstances = prepareInstancesForIndexingByIds(entityIds);
+        indexGroupedInstances(groupedInstances);
+    }
+
+    @Override
+    public void delete(Object entityInstance) {
+        deleteCollection(Collections.singletonList(entityInstance));
+    }
+
+    @Override
+    public void deleteCollection(Collection<Object> entityInstances) {
+        Map<IndexConfiguration, Collection<String>> groupedIndexIds = prepareIndexIdsByEntityInstances(entityInstances);
+        deleteByGroupedIndexIds(groupedIndexIds);
+    }
+
+    @Override
+    public void deleteByEntityId(Id<?> entityId) {
+        deleteCollectionByEntityIds(Collections.singletonList(entityId));
+    }
+
+    @Override
+    public void deleteCollectionByEntityIds(Collection<Id<?>> entityIds) {
+        Map<IndexConfiguration, Collection<String>> groupedIndexIds = prepareIndexIdsByEntityIds(entityIds);
+        deleteByGroupedIndexIds(groupedIndexIds);
+    }
+
+    protected void indexGroupedInstances(Map<IndexConfiguration, Collection<Object>> groupedInstancesForIndexing) {
+        if (log.isDebugEnabled()) {
+            Integer amountOfInstances = groupedInstancesForIndexing.values().stream()
+                    .map(Collection::size)
+                    .reduce(Integer::sum)
+                    .orElse(0);
+            log.debug("Prepared {} instances within {} entities", amountOfInstances, groupedInstancesForIndexing.keySet().size());
         }
-        log.debug("Mapping Fields for entity '{}': {}", metaClass, indexConfiguration.getMapping().getFields());
 
-        if (EntityOp.UPDATE.equals(operation) || EntityOp.CREATE.equals(operation)) {
-            indexDocuments(indexConfiguration, metaClass, entityPks);
-        } else if (EntityOp.DELETE.equals(operation)) {
-            deleteDocuments(indexConfiguration, entityPks);
-        } else {
-            throw new UnsupportedOperationException("Entity operation '" + operation + "' is not supported");
+        BulkRequest request = new BulkRequest();
+        for (Map.Entry<IndexConfiguration, Collection<Object>> entry : groupedInstancesForIndexing.entrySet()) {
+            IndexConfiguration indexConfiguration = entry.getKey();
+            for (Object instance : entry.getValue()) {
+                addIndexActionToBulkRequest(request, indexConfiguration, instance);
+            }
         }
-    }
-
-    protected void indexDocuments(IndexConfiguration indexConfiguration, MetaClass metaClass, Collection<String> entityPks) {
-        String primaryKeyPropertyName = propertyTools.getPrimaryKeyPropertyNameForIndex(metaClass);
-        List<Object> loaded = reloadEntities(indexConfiguration, metaClass, entityPks, primaryKeyPropertyName);
-        log.debug("Loaded {} entities", loaded.size());
-
-        BulkRequest request = new BulkRequest(indexConfiguration.getIndexName());
-        loaded.forEach(entity -> addIndexActionToBulkRequest(request, indexConfiguration, metaClass, entity, primaryKeyPropertyName));
 
         try {
             BulkResponse bulkResponse = esClient.bulk(request, RequestOptions.DEFAULT);
-            log.debug("Bulk Response (Index): Took {}, Status = {}, With Failures = {}",
-                    bulkResponse.getTook(), bulkResponse.status(), bulkResponse.hasFailures());
+            log.debug("Bulk Response (Index): Took {}, Status = {}, With Failures = {}{}",
+                    bulkResponse.getTook(), bulkResponse.status(), bulkResponse.hasFailures(),
+                    bulkResponse.hasFailures() ? ": " + bulkResponse.buildFailureMessage() : "");
         } catch (IOException e) {
             throw new RuntimeException("Bulk request failed", e);
         }
     }
 
-    protected List<Object> reloadEntities(IndexConfiguration indexConfiguration,
-                                          MetaClass metaClass,
-                                          Collection<String> entityPks,
-                                          String primaryKeyPropertyName) {
-        FetchPlan fetchPlan = createFetchPlan(indexConfiguration);
-        log.debug("Fetch plan for entity {}: {}", metaClass, fetchPlan.getProperties());
-        return dataManager.load(metaClass.getJavaClass())
-                .query(String.format("select e from %s e where e.%s in :ids", metaClass.getName(), primaryKeyPropertyName))
-                .parameter("ids", entityPks)
-                .fetchPlan(fetchPlan)
-                .list();
+    protected Map<IndexConfiguration, Collection<Object>> prepareInstancesForIndexing(Collection<Object> instances) {
+        Map<MetaClass, List<Object>> idsGroupedByMetaClass = instances.stream().collect(
+                Collectors.groupingBy(
+                        instance -> metadata.getClass(instance),
+                        Collectors.mapping(EntityValues::getId, Collectors.toList())
+                )
+        );
+
+        return reloadEntityInstances(idsGroupedByMetaClass);
+    }
+
+    protected Map<IndexConfiguration, Collection<Object>> prepareInstancesForIndexingByIds(Collection<Id<?>> entityIds) {
+        Map<MetaClass, List<Object>> idsGroupedByMetaClass = entityIds.stream().collect(
+                Collectors.groupingBy(
+                        id -> metadata.getClass(id.getEntityClass()),
+                        Collectors.mapping(Id::getValue, Collectors.toList())
+                )
+        );
+
+        return reloadEntityInstances(idsGroupedByMetaClass);
+    }
+
+    protected Map<IndexConfiguration, Collection<Object>> reloadEntityInstances(Map<MetaClass, List<Object>> idsGroupedByMetaClass) {
+        Map<IndexConfiguration, FetchPlan> fetchPlanLocalCache = new HashMap<>();
+        Map<IndexConfiguration, Collection<Object>> result = new HashMap<>();
+        idsGroupedByMetaClass.forEach((metaClass, entityIds) -> {
+            IndexConfiguration indexConfiguration = indexConfigurationManager.getIndexConfigurationByEntityName(metaClass.getName());
+            if (indexConfiguration != null) {
+                FetchPlan fetchPlan = fetchPlanLocalCache.computeIfAbsent(indexConfiguration, this::createFetchPlan);
+                List<Object> loaded = dataManager.load(metaClass.getJavaClass())
+                        .ids(entityIds)
+                        .fetchPlan(fetchPlan)
+                        .list();
+                result.put(indexConfiguration, loaded);
+            }
+        });
+        return result;
+    }
+
+    protected FetchPlan createFetchPlan(IndexConfiguration indexConfiguration) {
+        FetchPlanBuilder fetchPlanBuilder = fetchPlans.builder(indexConfiguration.getEntityClass());
+        indexConfiguration.getMapping().getFields().values().forEach(field -> {
+            log.trace("Add property to fetch plan: {}", field.getEntityPropertyFullName());
+            fetchPlanBuilder.add(field.getEntityPropertyFullName());
+            field.getInstanceNameRelatedProperties().forEach(instanceNameRelatedProperty -> {
+                log.trace("Add instance name related property to fetch plan: {}", instanceNameRelatedProperty.toPathString());
+                fetchPlanBuilder.add(instanceNameRelatedProperty.toPathString());
+            });
+        });
+        return fetchPlanBuilder.build();
     }
 
     protected void addIndexActionToBulkRequest(BulkRequest request,
                                                IndexConfiguration indexConfiguration,
-                                               MetaClass metaClass,
-                                               Object entity,
-                                               String primaryKeyPropertyName) {
-        ObjectNode entityIndexContent = JsonNodeFactory.instance.objectNode();
+                                               Object instance) {
+        ObjectNode sourceObject = JsonNodeFactory.instance.objectNode();
         indexConfiguration.getMapping().getFields().values().stream()
                 .filter(field -> !field.isStandalone())
-                .forEach(field -> addFieldValueToEntityIndexContent(entityIndexContent, field, entity));
+                .forEach(field -> addFieldValueToEntityIndexContent(sourceObject, field, instance));
 
-        ObjectNode resultObject = createResultIndexDocument(metaClass, entityIndexContent);
-        log.debug("Result object: {}", resultObject);
+        log.debug("Source object: {}", sourceObject);
         try {
-            Object primaryKey = EntityValues.getValue(entity, primaryKeyPropertyName);
-            if (primaryKey == null) {
-                log.error("Unable to create Index Request for '{}({})': Primary key not found", metaClass.getName(), EntityValues.getId(entity));
-            } else {
-                request.add(new IndexRequest()
-                        .id(primaryKey.toString())
-                        .source(objectMapper.writeValueAsString(resultObject), XContentType.JSON));
-            }
+            String serializedEntityId = idSerialization.idToString(Id.of(instance));
+            request.add(new IndexRequest()
+                    .index(indexConfiguration.getIndexName())
+                    .id(serializedEntityId)
+                    .source(objectMapper.writeValueAsString(sourceObject), XContentType.JSON));
         } catch (JsonProcessingException e) {
             throw new RuntimeException("Failed to create index request: unable to parse source object", e);
         }
     }
 
-    protected void deleteDocuments(IndexConfiguration indexConfiguration, Collection<String> entityPks) {
-        BulkRequest request = new BulkRequest(indexConfiguration.getIndexName());
-        entityPks.forEach(id -> request.add(new DeleteRequest().id(id)));
+    protected Map<IndexConfiguration, Collection<String>> prepareIndexIdsByEntityInstances(Collection<Object> instances) {
+        Map<IndexConfiguration, Collection<String>> result = new HashMap<>();
+        instances.forEach(instance -> {
+            MetaClass metaClass = metadata.getClass(instance);
+            IndexConfiguration indexConfiguration = indexConfigurationManager.getIndexConfigurationByEntityName(metaClass.getName());
+            if (indexConfiguration != null) {
+                String indexId = idSerialization.idToString(Id.of(instance));
+                Collection<String> idsForConfig = result.computeIfAbsent(indexConfiguration, k -> new HashSet<>());
+                idsForConfig.add(indexId);
+            }
+        });
+        return result;
+    }
+
+    protected Map<IndexConfiguration, Collection<String>> prepareIndexIdsByEntityIds(Collection<Id<?>> entityIds) {
+        Map<IndexConfiguration, Collection<String>> result = new HashMap<>();
+        entityIds.forEach(entityId -> {
+            MetaClass metaClass = metadata.getClass(entityId.getEntityClass());
+            IndexConfiguration indexConfiguration = indexConfigurationManager.getIndexConfigurationByEntityName(metaClass.getName());
+            if (indexConfiguration != null) {
+                String indexId = idSerialization.idToString(entityId);
+                Collection<String> idsForConfig = result.computeIfAbsent(indexConfiguration, k -> new HashSet<>());
+                idsForConfig.add(indexId);
+            }
+        });
+        return result;
+    }
+
+    protected void deleteByGroupedIndexIds(Map<IndexConfiguration, Collection<String>> groupedIndexIds) {
+        if (log.isDebugEnabled()) {
+            Integer amountOfInstances = groupedIndexIds.values().stream().map(Collection::size).reduce(Integer::sum).orElse(0);
+            log.debug("Prepared {} instances within {} entities", amountOfInstances, groupedIndexIds.keySet().size());
+        }
+
+        BulkRequest request = new BulkRequest();
+        for (Map.Entry<IndexConfiguration, Collection<String>> entry : groupedIndexIds.entrySet()) {
+            IndexConfiguration indexConfiguration = entry.getKey();
+            for (String indexId : entry.getValue()) {
+                addDeleteActionToBulkRequest(request, indexConfiguration, indexId);
+            }
+        }
 
         try {
             BulkResponse bulkResponse = esClient.bulk(request, RequestOptions.DEFAULT);
@@ -174,20 +257,10 @@ public class EntityIndexerImpl implements EntityIndexer {
         }
     }
 
-    protected FetchPlan createFetchPlan(IndexConfiguration indexConfiguration) {
-        FetchPlanBuilder fetchPlanBuilder = fetchPlans.builder(indexConfiguration.getEntityClass());
-        MetaClass metaClass = metadata.getClass(indexConfiguration.getEntityName());
-        String primaryKeyPropertyName = propertyTools.getPrimaryKeyPropertyNameForIndex(metaClass);
-        fetchPlanBuilder.add(primaryKeyPropertyName);
-        indexConfiguration.getMapping().getFields().values().forEach(field -> {
-            log.trace("Add property to fetch plan: {}", field.getEntityPropertyFullName());
-            fetchPlanBuilder.add(field.getEntityPropertyFullName());
-            field.getInstanceNameRelatedProperties().forEach(instanceNameRelatedProperty -> {
-                log.trace("Add instance name related property to fetch plan: {}", instanceNameRelatedProperty.toPathString());
-                fetchPlanBuilder.add(instanceNameRelatedProperty.toPathString());
-            });
-        });
-        return fetchPlanBuilder.build();
+    protected void addDeleteActionToBulkRequest(BulkRequest request,
+                                                IndexConfiguration indexConfiguration,
+                                                String indexId) {
+        request.add(new DeleteRequest(indexConfiguration.getIndexName(), indexId));
     }
 
     protected ObjectNode createObjectNodeForField(String key, JsonNode value) {
@@ -214,13 +287,6 @@ public class EntityIndexerImpl implements EntityIndexer {
             log.trace("Field value tree: {}", objectNodeForField);
             merge(objectNodeForField, entityIndexContent);
         }
-    }
-
-    protected ObjectNode createResultIndexDocument(MetaClass metaClass, ObjectNode entityIndexContent) {
-        ObjectNode resultObject = JsonNodeFactory.instance.objectNode();
-        resultObject.putObject("meta").put("entityClass", metaClass.getName());
-        resultObject.set("content", entityIndexContent);
-        return resultObject;
     }
 
     //todo move to tools?

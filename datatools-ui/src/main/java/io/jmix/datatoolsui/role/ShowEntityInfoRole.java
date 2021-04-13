@@ -19,6 +19,7 @@ package io.jmix.datatoolsui.role;
 import io.jmix.datatoolsui.screen.entityinfo.model.InfoValue;
 import io.jmix.security.model.EntityAttributePolicyAction;
 import io.jmix.security.model.EntityPolicyAction;
+import io.jmix.security.model.SecurityScope;
 import io.jmix.security.role.annotation.EntityAttributePolicy;
 import io.jmix.security.role.annotation.EntityPolicy;
 import io.jmix.security.role.annotation.ResourceRole;
@@ -28,7 +29,7 @@ import io.jmix.securityui.role.annotation.ScreenPolicy;
 /**
  * System role that grants permissions for the entity info functionality.
  */
-@ResourceRole(name = "Data Tools: Entity Information window", code = ShowEntityInfoRole.CODE)
+@ResourceRole(name = "Data Tools: Entity Information window", code = ShowEntityInfoRole.CODE, scope = SecurityScope.UI)
 public interface ShowEntityInfoRole {
 
     String CODE = "datatools-entity-info";

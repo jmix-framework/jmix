@@ -96,9 +96,9 @@ public class EmailerImpl implements Emailer {
     }
 
     @Override
-    public SendingMessage sendEmailAsync(EmailInfo info, @Nullable Integer attemptsCount, @Nullable Date deadline) {
+    public SendingMessage sendEmailAsync(EmailInfo info, @Nullable Integer attemptsLimit, @Nullable Date deadline) {
         prepareEmailInfo(info);
-        SendingMessage message = convertToSendingMessage(info, attemptsCount, deadline);
+        SendingMessage message = convertToSendingMessage(info, attemptsLimit, deadline);
         emailDataProvider.persistMessage(message, SendingStatus.QUEUE);
         return message;
     }
@@ -117,7 +117,7 @@ public class EmailerImpl implements Emailer {
         }
     }
 
-    protected SendingMessage convertToSendingMessage(EmailInfo info, @Nullable Integer attemptsCount, @Nullable Date deadline) {
+    protected SendingMessage convertToSendingMessage(EmailInfo info, @Nullable Integer attemptsLimit, @Nullable Date deadline) {
         SendingMessage sendingMessage = metadata.create(SendingMessage.class);
 
         sendingMessage.setAddress(info.getAddresses());
@@ -126,7 +126,7 @@ public class EmailerImpl implements Emailer {
         sendingMessage.setFrom(info.getFrom());
         sendingMessage.setContentText(info.getBody());
         sendingMessage.setSubject(info.getSubject());
-        sendingMessage.setAttemptsLimit(attemptsCount);
+        sendingMessage.setAttemptsLimit(attemptsLimit);
         sendingMessage.setDeadline(deadline);
         sendingMessage.setAttemptsMade(0);
 

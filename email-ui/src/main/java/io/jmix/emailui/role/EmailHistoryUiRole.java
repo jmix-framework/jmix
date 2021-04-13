@@ -16,16 +16,24 @@
 
 package io.jmix.emailui.role;
 
+import io.jmix.email.entity.SendingMessage;
+import io.jmix.security.model.EntityAttributePolicyAction;
+import io.jmix.security.model.EntityPolicyAction;
+import io.jmix.security.model.SecurityScope;
+import io.jmix.security.role.annotation.EntityAttributePolicy;
+import io.jmix.security.role.annotation.EntityPolicy;
 import io.jmix.security.role.annotation.ResourceRole;
 import io.jmix.securityui.role.annotation.MenuPolicy;
 import io.jmix.securityui.role.annotation.ScreenPolicy;
 
-@ResourceRole(code = EmailHistoryUiRole.CODE, name = "Email: view history in UI")
-public interface EmailHistoryUiRole extends io.jmix.email.role.EmailHistoryRole {
+@ResourceRole(code = EmailHistoryUiRole.CODE, name = "Email: view history in UI", scope = SecurityScope.UI)
+public interface EmailHistoryUiRole {
 
     String CODE = "email-history-ui";
 
     @ScreenPolicy(screenIds = {"email_SendingMessage.browse", "ResendMessage"})
     @MenuPolicy(menuIds = {"email_SendingMessage.browse"})
+    @EntityPolicy(entityClass = SendingMessage.class, actions = {EntityPolicyAction.READ})
+    @EntityAttributePolicy(entityClass = SendingMessage.class, attributes = "*", action = EntityAttributePolicyAction.VIEW)
     void emailHistoryUi();
 }

@@ -19,6 +19,11 @@
           icon="resource://template/template_blank.svg"
           name="Entity fragment"
           order="90">
+    <tags>
+        <tag>ENTITY</tag>
+        <tag>JPA</tag>
+        <tag>FRAGMENT</tag>
+    </tags>
     <description>
         <![CDATA[<html>Fragment associated with an entity. It differs from blank fragment in that it has data container defined for selected entity with given view.</html>]]>
     </description>

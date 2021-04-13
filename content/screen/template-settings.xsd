@@ -159,6 +159,7 @@
             <xs:enumeration value="MAIN"/>
             <xs:enumeration value="FRAGMENT"/>
             <xs:enumeration value="EXTEND"/>
+            <xs:enumeration value="OVERRIDE"/>
         </xs:restriction>
     </xs:simpleType>
 </xs:schema>

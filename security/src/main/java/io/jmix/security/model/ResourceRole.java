@@ -29,7 +29,7 @@ import java.util.Set;
  * Role objects may be created from different sources:
  * <ul>
  *     <li>from interfaces annotated with {@link io.jmix.security.role.annotation.ResourceRole}</li>
- *     <li>from database Role entities</li>s
+ *     <li>from database Role entities</li>
  *     <li>created explicitly by the application</li>
  * </ul>
  */

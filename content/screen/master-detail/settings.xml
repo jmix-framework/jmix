@@ -19,6 +19,10 @@
           icon="resource://template/template_single_screen.svg"
           name="Master-detail screen"
           order="40">
+    <tags>
+        <tag>ENTITY</tag>
+        <tag>JPA</tag>
+    </tags>
     <description>
         <![CDATA[<html>Combined screen with the browser on the left and the editor on the right.
         Editor fields are disabled until a user clicks <i>Create</i> or <i>Edit</i>.</html>]]>

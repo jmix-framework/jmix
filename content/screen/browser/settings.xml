@@ -19,6 +19,10 @@
           icon="resource://template/template_browse.svg"
           name="Entity browser"
           order="10">
+    <tags>
+        <tag>ENTITY</tag>
+        <tag>JPA</tag>
+    </tags>
     <description>
         <![CDATA[<html>Standard browser screen with a filter on top and a table consuming all available space.</html>]]>
     </description>

@@ -8,6 +8,7 @@
     <xs:element name="template">
         <xs:complexType>
             <xs:sequence>
+                <xs:element name="tags" type="tagsType" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="description" minOccurs="1" maxOccurs="1"/>
                 <xs:element name="locMessages" type="locMessagesType" minOccurs="0" maxOccurs="unbounded"/>
                 <xs:element name="steps" type="stepsType" minOccurs="0" maxOccurs="1"/>
@@ -140,5 +141,24 @@
                 </xs:restriction>
             </xs:simpleType>
         </xs:union>
+    </xs:simpleType>
+
+    <xs:complexType name="tagsType">
+        <xs:sequence>
+            <xs:element name="tag" type="tagType" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:simpleType name="tagType">
+        <xs:restriction>
+            <xs:enumeration value="ENTITY"/>
+            <xs:enumeration value="JPA"/>
+            <xs:enumeration value="DTO"/>
+            <xs:enumeration value="BLANK"/>
+            <xs:enumeration value="LOGIN"/>
+            <xs:enumeration value="MAIN"/>
+            <xs:enumeration value="FRAGMENT"/>
+            <xs:enumeration value="EXTEND"/>
+        </xs:restriction>
     </xs:simpleType>
 </xs:schema>

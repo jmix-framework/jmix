@@ -19,6 +19,10 @@
           icon="resource://template/browser_and_editor.svg"
           name="Entity browser and editor screens"
           order="30">
+    <tags>
+        <tag>ENTITY</tag>
+        <tag>JPA</tag>
+    </tags>
     <description>
         <![CDATA[<html>Standard browser and editor screens created at once.</html>]]>
     </description>

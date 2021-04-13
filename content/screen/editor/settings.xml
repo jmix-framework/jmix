@@ -19,6 +19,10 @@
           icon="resource://template/template_editor.svg"
           name="Entity editor"
           order="20">
+    <tags>
+        <tag>ENTITY</tag>
+        <tag>JPA</tag>
+    </tags>
     <description>
         <![CDATA[<html>Standard editor screen with a form and window action buttons: <i>OK</i> and <i>Cancel</i>.
 <br>Select <b>Extended window actions</b> checkbox to create an editor that can be saved without closing the screen.

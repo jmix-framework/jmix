@@ -16,6 +16,7 @@
 
 package io.jmix.core.security;
 
+import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -31,6 +32,7 @@ public class ClientDetails implements Serializable {
     private String address;
     private String info;
     private String clientType;
+    private String scope;
     private String sessionId;
 
     private ClientDetails() {
@@ -60,6 +62,10 @@ public class ClientDetails implements Serializable {
         return clientType;
     }
 
+    public String getScope() {
+        return scope;
+    }
+
     public String getSessionId() {
         return sessionId;
     }
@@ -78,6 +84,7 @@ public class ClientDetails implements Serializable {
                     .address(clientDetails.getAddress())
                     .info(clientDetails.getInfo())
                     .clientType(clientDetails.getClientType())
+                    .scope(clientDetails.getScope())
                     .sessionId(clientDetails.getSessionId());
         }
 
@@ -86,7 +93,7 @@ public class ClientDetails implements Serializable {
             return this;
         }
 
-        public Builder timeZone(TimeZone timeZone) {
+        public Builder timeZone(@Nullable TimeZone timeZone) {
             obj.timeZone = timeZone;
             return this;
         }
@@ -103,6 +110,11 @@ public class ClientDetails implements Serializable {
 
         public Builder clientType(String clientType) {
             obj.clientType = clientType;
+            return this;
+        }
+
+        public Builder scope(String scope) {
+            obj.scope = scope;
             return this;
         }
 

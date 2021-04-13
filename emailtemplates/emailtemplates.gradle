@@ -27,8 +27,6 @@ dependencies {
     api 'io.jmix.reports:jmix-reports'
     api 'io.jmix.email:jmix-email'
 
-    compileOnly 'io.jmix.security:jmix-security'
-
     api 'org.jsoup:jsoup'
 
     testImplementation 'io.jmix.data:jmix-eclipselink'

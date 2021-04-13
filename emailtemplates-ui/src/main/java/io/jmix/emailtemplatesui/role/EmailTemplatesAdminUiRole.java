@@ -17,15 +17,23 @@
 package io.jmix.emailtemplatesui.role;
 
 
-import io.jmix.emailtemplates.role.EmailTemplatesAdminRole;
+import io.jmix.emailtemplates.entity.*;
+import io.jmix.reports.entity.*;
 import io.jmix.reportsui.role.ReportsRunUiRole;
+import io.jmix.security.model.EntityAttributePolicyAction;
+import io.jmix.security.model.EntityPolicyAction;
+import io.jmix.security.model.SecurityScope;
+import io.jmix.security.role.annotation.EntityAttributePolicy;
+import io.jmix.security.role.annotation.EntityPolicy;
 import io.jmix.security.role.annotation.ResourceRole;
 import io.jmix.security.role.annotation.SpecificPolicy;
 import io.jmix.securityui.role.annotation.MenuPolicy;
 import io.jmix.securityui.role.annotation.ScreenPolicy;
 
-@ResourceRole(code = EmailTemplatesAdminUiRole.CODE, name = "Email Templates: administration UI")
-public interface EmailTemplatesAdminUiRole extends EmailTemplatesAdminRole, ReportsRunUiRole {
+import static io.jmix.security.model.EntityAttributePolicyAction.VIEW;
+
+@ResourceRole(code = EmailTemplatesAdminUiRole.CODE, name = "Email Templates: administration UI", scope = SecurityScope.UI)
+public interface EmailTemplatesAdminUiRole extends ReportsRunUiRole {
 
     String CODE = "emailtemplates-admin-ui";
 
@@ -49,5 +57,29 @@ public interface EmailTemplatesAdminUiRole extends EmailTemplatesAdminRole, Repo
             "report_ReportValueFormat.edit"})
     @MenuPolicy(menuIds = {"emltmp_EmailTemplate.browse"})
     @SpecificPolicy(resources = {"groupsButton", "blocksButton"})
+    @EntityPolicy(entityClass = Report.class, actions = {EntityPolicyAction.READ})
+    @EntityPolicy(entityClass = ReportValueFormat.class, actions = {EntityPolicyAction.ALL})
+    @EntityPolicy(entityClass = ReportInputParameter.class, actions = {EntityPolicyAction.ALL})
+    @EntityPolicy(entityClass = EmailTemplateAttachment.class, actions = {EntityPolicyAction.ALL})
+    @EntityPolicy(entityClass = TemplateReport.class, actions = {EntityPolicyAction.ALL})
+    @EntityPolicy(entityClass = TemplateGroup.class, actions = {EntityPolicyAction.ALL})
+    @EntityPolicy(entityClass = TemplateBlockGroup.class, actions = {EntityPolicyAction.ALL})
+    @EntityPolicy(entityClass = TemplateBlock.class, actions = {EntityPolicyAction.ALL})
+    @EntityPolicy(entityClass = ParameterValue.class, actions = {EntityPolicyAction.ALL})
+    @EntityPolicy(entityClass = ReportEmailTemplate.class, actions = {EntityPolicyAction.ALL})
+    @EntityPolicy(entityClass = EmailTemplate.class, actions = {EntityPolicyAction.ALL})
+    @EntityPolicy(entityClass = JsonEmailTemplate.class, actions = {EntityPolicyAction.ALL})
+    @EntityAttributePolicy(entityClass = ReportValueFormat.class, action = EntityAttributePolicyAction.MODIFY, attributes = "*")
+    @EntityAttributePolicy(entityClass = ReportInputParameter.class, action = EntityAttributePolicyAction.MODIFY, attributes = "*")
+    @EntityAttributePolicy(entityClass = Report.class, action = EntityAttributePolicyAction.MODIFY, attributes = "*")
+    @EntityAttributePolicy(entityClass = EmailTemplateAttachment.class, action = EntityAttributePolicyAction.MODIFY, attributes = "*")
+    @EntityAttributePolicy(entityClass = TemplateReport.class, action = EntityAttributePolicyAction.MODIFY, attributes = "*")
+    @EntityAttributePolicy(entityClass = TemplateGroup.class, action = EntityAttributePolicyAction.MODIFY, attributes = "*")
+    @EntityAttributePolicy(entityClass = TemplateBlockGroup.class, action = EntityAttributePolicyAction.MODIFY, attributes = "*")
+    @EntityAttributePolicy(entityClass = TemplateBlock.class, action = EntityAttributePolicyAction.MODIFY, attributes = "*")
+    @EntityAttributePolicy(entityClass = ParameterValue.class, action = EntityAttributePolicyAction.MODIFY, attributes = "*")
+    @EntityAttributePolicy(entityClass = ReportEmailTemplate.class, action = EntityAttributePolicyAction.MODIFY, attributes = "*")
+    @EntityAttributePolicy(entityClass = EmailTemplate.class, action = EntityAttributePolicyAction.MODIFY, attributes = "*")
+    @EntityAttributePolicy(entityClass = JsonEmailTemplate.class, action = EntityAttributePolicyAction.MODIFY, attributes = "*")
     void emailTemplatesAdminUi();
 }

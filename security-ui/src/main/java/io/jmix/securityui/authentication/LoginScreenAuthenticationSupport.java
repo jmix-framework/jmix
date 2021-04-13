@@ -22,6 +22,7 @@ import io.jmix.core.AccessManager;
 import io.jmix.core.CoreProperties;
 import io.jmix.core.Messages;
 import io.jmix.core.security.ClientDetails;
+import io.jmix.security.model.SecurityScope;
 import io.jmix.securityui.accesscontext.UiLoginToUiContext;
 import io.jmix.ui.ScreenBuilders;
 import io.jmix.ui.UiProperties;
@@ -41,6 +42,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import static org.springframework.security.web.authentication.rememberme.AbstractRememberMeServices.DEFAULT_PARAMETER;
 
@@ -135,7 +137,8 @@ public class LoginScreenAuthenticationSupport {
                 createAuthenticationToken(
                         authDetails.getUsername(),
                         authDetails.getPassword(),
-                        authDetails.getLocale())
+                        authDetails.getLocale(),
+                        authDetails.getTimeZone())
         );
 
         onSuccessfulAuthentication(authenticationToken, authDetails, frameOwner);
@@ -181,12 +184,16 @@ public class LoginScreenAuthenticationSupport {
         }
     }
 
-    protected Authentication createAuthenticationToken(String username, String password, @Nullable Locale locale) {
+    protected Authentication createAuthenticationToken(String username, String password,
+                                                       @Nullable Locale locale,
+                                                       @Nullable TimeZone timeZone) {
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(username, password);
 
         ClientDetails clientDetails = ClientDetails.builder()
                 .locale(locale != null ? locale : getDefaultLocale())
+                .scope(SecurityScope.UI)
+                .timeZone(timeZone)
                 .build();
 
         authenticationToken.setDetails(clientDetails);

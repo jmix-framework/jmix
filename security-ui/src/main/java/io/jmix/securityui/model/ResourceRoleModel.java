@@ -21,6 +21,7 @@ import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
 
 import java.util.Collection;
+import java.util.Set;
 
 /**
  * Non-persistent entity used to display resource roles in UI
@@ -32,11 +33,22 @@ public class ResourceRoleModel extends BaseRoleModel {
     @JmixProperty
     private Collection<ResourcePolicyModel> resourcePolicies;
 
+    @JmixProperty
+    private Set<String> scopes;
+
     public Collection<ResourcePolicyModel> getResourcePolicies() {
         return resourcePolicies;
     }
 
     public void setResourcePolicies(Collection<ResourcePolicyModel> resourcePolicies) {
         this.resourcePolicies = resourcePolicies;
+    }
+
+    public Set<String> getScopes() {
+        return scopes;
+    }
+
+    public void setScopes(Set<String> scopes) {
+        this.scopes = scopes;
     }
 }

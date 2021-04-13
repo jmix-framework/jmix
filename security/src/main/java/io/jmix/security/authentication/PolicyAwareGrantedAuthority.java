@@ -31,6 +31,7 @@ import java.util.stream.Stream;
  * @see RowLevelPolicy
  */
 public interface PolicyAwareGrantedAuthority extends GrantedAuthority {
+    Collection<String> getScopes();
 
     Collection<ResourcePolicy> getResourcePolicies();
 

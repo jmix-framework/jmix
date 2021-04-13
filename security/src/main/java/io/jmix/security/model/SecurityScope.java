@@ -14,19 +14,18 @@
  * limitations under the License.
  */
 
-package io.jmix.securityoauth2;
+package io.jmix.security.model;
 
-import io.jmix.core.CoreConfiguration;
-import io.jmix.core.annotation.JmixModule;
-import io.jmix.security.SecurityConfiguration;
-import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-
-
-@Configuration
-@JmixModule(dependsOn = {CoreConfiguration.class, SecurityConfiguration.class})
-@ComponentScan
-@ConfigurationPropertiesScan
-public class SecurityOAuth2Configuration {
+/**
+ * Predefined security scope constants for UI and REST API/GraphQL
+ */
+public interface SecurityScope {
+    /**
+     * Default security scope for generic UI
+     */
+    String UI = "UI";
+    /**
+     * Default security scope for API calls like REST API or GraphQL
+     */
+    String API = "API";
 }

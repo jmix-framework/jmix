@@ -17,6 +17,7 @@
 package io.jmix.security.role.annotation;
 
 import io.jmix.security.impl.role.provider.AnnotatedResourceRoleProvider;
+import io.jmix.security.model.SecurityScope;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -89,4 +90,8 @@ public @interface ResourceRole {
      */
     String description() default "";
 
+    /**
+     * Role security scope.
+     */
+    String[] scope() default {SecurityScope.UI, SecurityScope.API};
 }

@@ -34,10 +34,7 @@ import io.jmix.ui.action.list.AddAction;
 import io.jmix.ui.action.list.EditAction;
 import io.jmix.ui.action.list.RemoveAction;
 import io.jmix.ui.action.list.ViewAction;
-import io.jmix.ui.component.GroupTable;
-import io.jmix.ui.component.PopupButton;
-import io.jmix.ui.component.TextField;
-import io.jmix.ui.component.ValidationException;
+import io.jmix.ui.component.*;
 import io.jmix.ui.model.CollectionChangeType;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.CollectionPropertyContainer;
@@ -62,6 +59,9 @@ public class ResourceRoleModelEdit extends StandardEditor<ResourceRoleModel> {
 
     @Autowired
     private TextField<String> codeField;
+
+    @Autowired
+    private TagPicker<String> scopesField;
 
     @Autowired
     @Qualifier("resourcePoliciesTable.edit")
@@ -164,20 +164,8 @@ public class ResourceRoleModelEdit extends StandardEditor<ResourceRoleModel> {
         childRolesTableRemove.setConfirmation(false);
         sourceField.setValue(messages.getMessage("io.jmix.securityui.model/roleSource." + getEditedEntity().getSource()));
 
-        codeField.addValidator(s -> {
-            ResourceRoleModel editedEntity = getEditedEntity();
-            boolean exist = roleRepository.getAllRoles().stream()
-                    .filter(resourceRole -> {
-                        if (resourceRole.getCustomProperties().isEmpty()) {
-                            return true;
-                        }
-                        return !resourceRole.getCustomProperties().get("databaseId").equals(editedEntity.getCustomProperties().get("databaseId"));
-                    })
-                    .anyMatch(resourceRole -> resourceRole.getCode().equals(s));
-            if (exist) {
-                throw new ValidationException(messages.getMessage("io.jmix.securityui.screen.role/RoleModelEdit.uniqueCode"));
-            }
-        });
+        initCodeField();
+        initScopesField();
 
         forRemove = new HashSet<>();
     }
@@ -352,6 +340,7 @@ public class ResourceRoleModelEdit extends StandardEditor<ResourceRoleModel> {
         roleEntity.setName(roleModel.getName());
         roleEntity.setCode(roleModel.getCode());
         roleEntity.setDescription(roleModel.getDescription());
+        roleEntity.setScopes(roleModel.getScopes());
 
         boolean roleModelModified = modifiedInstances.stream()
                 .anyMatch(entity -> entity instanceof ResourceRoleModel);
@@ -434,5 +423,26 @@ public class ResourceRoleModelEdit extends StandardEditor<ResourceRoleModel> {
             }
         }
         resourcePoliciesDc.getMutableItems().removeAll(forRemove);
+    }
+
+    protected void initScopesField() {
+        scopesField.setOptionsList(Arrays.asList(SecurityScope.UI, SecurityScope.API));
+    }
+
+    private void initCodeField() {
+        codeField.addValidator(s -> {
+            ResourceRoleModel editedEntity = getEditedEntity();
+            boolean exist = roleRepository.getAllRoles().stream()
+                    .filter(resourceRole -> {
+                        if (resourceRole.getCustomProperties().isEmpty()) {
+                            return true;
+                        }
+                        return !resourceRole.getCustomProperties().get("databaseId").equals(editedEntity.getCustomProperties().get("databaseId"));
+                    })
+                    .anyMatch(resourceRole -> resourceRole.getCode().equals(s));
+            if (exist) {
+                throw new ValidationException(messages.getMessage("io.jmix.securityui.screen.role/RoleModelEdit.uniqueCode"));
+            }
+        });
     }
 }

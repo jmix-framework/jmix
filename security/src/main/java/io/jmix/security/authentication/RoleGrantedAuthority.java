@@ -17,10 +17,7 @@
 package io.jmix.security.authentication;
 
 import io.jmix.core.common.util.ReflectionHelper;
-import io.jmix.security.model.ResourcePolicy;
-import io.jmix.security.model.ResourceRole;
-import io.jmix.security.model.RowLevelPolicy;
-import io.jmix.security.model.RowLevelRole;
+import io.jmix.security.model.*;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -31,6 +28,7 @@ public class RoleGrantedAuthority implements PolicyAwareGrantedAuthority {
     private static final long serialVersionUID = 2024837359721996022L;
 
     protected final String code;
+    protected final Collection<String> scopes;
     protected final Collection<ResourcePolicy> resourcePolicies;
     protected final Collection<RowLevelPolicy> rowLevelPolicies;
     protected Map<Class<?>, ResourcePolicyIndex> resourceIndexes = new ConcurrentHashMap<>();
@@ -97,14 +95,21 @@ public class RoleGrantedAuthority implements PolicyAwareGrantedAuthority {
 
     private RoleGrantedAuthority(ResourceRole role) {
         this.code = role.getCode();
+        this.scopes = Collections.unmodifiableCollection(role.getScopes());
         this.resourcePolicies = Collections.unmodifiableCollection(new ArrayList<>(role.getAllResourcePolicies()));
         this.rowLevelPolicies = Collections.emptyList();
     }
 
     private RoleGrantedAuthority(RowLevelRole role) {
         this.code = "";
+        this.scopes = Collections.emptyList();
         this.resourcePolicies = Collections.emptyList();
         this.rowLevelPolicies = Collections.unmodifiableCollection(new ArrayList<>(role.getAllRowLevelPolicies()));
+    }
+
+    @Override
+    public Collection<String> getScopes() {
+        return scopes;
     }
 
     @Override

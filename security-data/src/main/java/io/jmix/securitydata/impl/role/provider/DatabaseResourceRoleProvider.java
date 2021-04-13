@@ -26,6 +26,7 @@ import io.jmix.securitydata.entity.ResourcePolicyEntity;
 import io.jmix.securitydata.entity.ResourceRoleEntity;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,7 +47,7 @@ public class DatabaseResourceRoleProvider extends BaseDatabaseRoleProvider<Resou
     @Override
     protected void buildFetchPlan(FetchPlanBuilder fetchPlanBuilder) {
         fetchPlanBuilder
-                .addAll("name", "code", "description", "childRoles")
+                .addAll("name", "code", "description", "childRoles", "scopes")
                 .add("resourcePolicies", FetchPlan.BASE);
     }
 
@@ -60,6 +61,7 @@ public class DatabaseResourceRoleProvider extends BaseDatabaseRoleProvider<Resou
         role.setSource(RoleSource.DATABASE);
         role.setChildRoles(roleEntity.getChildRoles());
         role.getCustomProperties().put("databaseId", roleEntity.getId().toString());
+        role.setScopes(roleEntity.getScopes() == null ? Collections.emptySet() : roleEntity.getScopes());
 
         List<ResourcePolicyEntity> resourcePolicyEntities = roleEntity.getResourcePolicies();
         if (resourcePolicyEntities != null) {

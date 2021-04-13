@@ -16,9 +16,11 @@
 
 package io.jmix.securityui.screen.resourcerole;
 
+import com.google.common.collect.Sets;
 import io.jmix.core.Messages;
 import io.jmix.security.model.ResourceRole;
 import io.jmix.security.model.RoleSource;
+import io.jmix.security.model.SecurityScope;
 import io.jmix.security.role.ResourceRoleRepository;
 import io.jmix.securityui.model.ResourceRoleModel;
 import io.jmix.securityui.model.RoleModelConverter;
@@ -89,7 +91,10 @@ public class ResourceRoleModelBrowse extends StandardLookup<ResourceRoleModel> {
         ResourceRoleModelEdit editor = screenBuilders.editor(roleModelsTable)
                 .withScreenClass(ResourceRoleModelEdit.class)
                 .newEntity()
-                .withInitializer(roleModel -> roleModel.setSource(RoleSource.DATABASE))
+                .withInitializer(roleModel -> {
+                    roleModel.setSource(RoleSource.DATABASE);
+                    roleModel.setScopes(Sets.newHashSet(SecurityScope.UI));
+                })
                 .withAfterCloseListener(afterCloseEvent -> {
                     if (afterCloseEvent.closedWith(StandardOutcome.COMMIT)) {
                         loadRoles();

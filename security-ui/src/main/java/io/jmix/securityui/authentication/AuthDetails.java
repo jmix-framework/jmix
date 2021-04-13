@@ -18,6 +18,7 @@ package io.jmix.securityui.authentication;
 
 import javax.annotation.Nullable;
 import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * Class contains authentication information.
@@ -43,6 +44,7 @@ public class AuthDetails {
     protected String password;
 
     protected Locale locale;
+    protected TimeZone timeZone;
     protected boolean rememberMe = false;
 
     private AuthDetails(String username, String password) {
@@ -110,6 +112,25 @@ public class AuthDetails {
      */
     public AuthDetails withLocale(@Nullable Locale locale) {
         this.locale = locale;
+        return this;
+    }
+
+    /**
+     * @return a timezone or {@code null} if not set
+     */
+    @Nullable
+    public TimeZone getTimeZone() {
+        return timeZone;
+    }
+
+    /**
+     * Sets user timezone to be used in application.
+     *
+     * @param timeZone a timezone
+     * @return current instance
+     */
+    public AuthDetails withTimeZone(@Nullable TimeZone timeZone) {
+        this.timeZone = timeZone;
         return this;
     }
 }

@@ -16,6 +16,7 @@
 
 package io.jmix.security.impl.role.builder;
 
+import com.google.common.collect.Sets;
 import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.security.impl.role.builder.extractor.ResourcePolicyExtractor;
 import io.jmix.security.impl.role.builder.extractor.RowLevelPolicyExtractor;
@@ -50,6 +51,7 @@ public class AnnotatedRoleBuilderImpl implements AnnotatedRoleBuilder {
 
         ResourceRole role = new ResourceRole();
         initBaseParameters(role, roleAnnotation.name(), roleAnnotation.code(), roleAnnotation.description());
+        role.setScopes(Sets.newHashSet(roleAnnotation.scope()));
         role.setResourcePolicies(extractResourcePolicies(roleClass));
 
         return role;

@@ -28,27 +28,27 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Converter
-public class AggregatedRoleChildrenConverter implements AttributeConverter<Set<String>, String> {
+public class StringCollectionConverter implements AttributeConverter<Set<String>, String> {
 
     public static final String REGEX = "\"[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*\"";
     private static final Pattern pattern = Pattern.compile(REGEX);
 
     @Override
-    public String convertToDatabaseColumn(Set<String> childRoles) {
-        if (childRoles == null || childRoles.isEmpty()) {
+    public String convertToDatabaseColumn(Set<String> values) {
+        if (values == null || values.isEmpty()) {
             return null;
         }
-        return childRoles.stream()
+        return values.stream()
                 .map(s -> s.replaceAll("\"", Matcher.quoteReplacement("\\\"")))
                 .collect(Collectors.joining("\", \"", "\"", "\""));
     }
 
     @Override
-    public Set<String> convertToEntityAttribute(String childRoles) {
-        if (StringUtils.isBlank(childRoles)) {
+    public Set<String> convertToEntityAttribute(String dbData) {
+        if (StringUtils.isBlank(dbData)) {
             return Collections.emptySet();
         }
-        Matcher matcher = pattern.matcher(childRoles);
+        Matcher matcher = pattern.matcher(dbData);
         Set<String> result = new HashSet<>();
         while (matcher.find()) {
             String code = matcher.group();

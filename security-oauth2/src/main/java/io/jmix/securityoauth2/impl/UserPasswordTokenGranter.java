@@ -17,6 +17,7 @@
 package io.jmix.securityoauth2.impl;
 
 import io.jmix.core.session.SessionData;
+import io.jmix.security.model.SecurityScope;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
@@ -81,6 +82,7 @@ public class UserPasswordTokenGranter extends ResourceOwnerPasswordTokenGranter 
     protected io.jmix.core.security.ClientDetails buildClientDetails() {
         return io.jmix.core.security.ClientDetails.builder()
                 .clientType("REST")
+                .scope(SecurityScope.API)
                 .locale(requestLocale())
                 .build();
     }

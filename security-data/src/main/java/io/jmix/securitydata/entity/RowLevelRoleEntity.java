@@ -96,7 +96,7 @@ public class RowLevelRoleEntity implements Serializable {
 
     @Lob
     @Column(name = "CHILD_ROLES")
-    @Convert(converter = AggregatedRoleChildrenConverter.class)
+    @Convert(converter = StringCollectionConverter.class)
     private Set<String> childRoles;
 
     @TenantId

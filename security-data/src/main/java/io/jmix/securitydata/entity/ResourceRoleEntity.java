@@ -96,8 +96,12 @@ public class ResourceRoleEntity implements Serializable {
 
     @Lob
     @Column(name = "CHILD_ROLES")
-    @Convert(converter = AggregatedRoleChildrenConverter.class)
+    @Convert(converter = StringCollectionConverter.class)
     private Set<String> childRoles;
+
+    @Column(name = "SCOPES")
+    @Convert(converter = StringCollectionConverter.class)
+    private Set<String> scopes;
 
     @TenantId
     @Column(name = "SYS_TENANT_ID")
@@ -181,6 +185,14 @@ public class ResourceRoleEntity implements Serializable {
 
     public void setChildRoles(Set<String> childRoles) {
         this.childRoles = childRoles;
+    }
+
+    public Set<String> getScopes() {
+        return scopes;
+    }
+
+    public void setScopes(Set<String> scopes) {
+        this.scopes = scopes;
     }
 
     public String getCode() {

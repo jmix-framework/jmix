@@ -40,7 +40,7 @@ public class RoleModelConverter {
         ResourceRoleModel roleModel = metadata.create(ResourceRoleModel.class);
 
         initBaseParameters(roleModel, role);
-
+        roleModel.setScopes(role.getScopes());
         roleModel.setResourcePolicies(createResourcePolicyModels(role.getResourcePolicies()));
 
         return roleModel;

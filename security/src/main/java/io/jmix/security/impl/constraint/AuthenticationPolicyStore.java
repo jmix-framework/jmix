@@ -18,10 +18,11 @@ package io.jmix.security.impl.constraint;
 
 import io.jmix.core.ExtendedEntities;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.security.ClientDetails;
 import io.jmix.core.security.CurrentAuthentication;
+import io.jmix.security.authentication.PolicyAwareGrantedAuthority;
 import io.jmix.security.authentication.ResourcePolicyIndex;
 import io.jmix.security.authentication.RowLevelPolicyIndex;
-import io.jmix.security.authentication.PolicyAwareGrantedAuthority;
 import io.jmix.security.constraint.PolicyStore;
 import io.jmix.security.model.ResourcePolicy;
 import io.jmix.security.model.ResourcePolicyType;
@@ -31,6 +32,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -65,32 +67,54 @@ public class AuthenticationPolicyStore implements PolicyStore {
     public Stream<ResourcePolicy> getEntityResourcePolicies(MetaClass metaClass) {
         MetaClass originalMetaClass = extendedEntities.getOriginalOrThisMetaClass(metaClass);
 
-        return extractFromAuthentication(authority -> authority.getResourcePoliciesByIndex(EntityResourcePolicyByEntityIndex.class,
+        return extractFromAuthenticationByScope(authority -> authority.getResourcePoliciesByIndex(EntityResourcePolicyByEntityIndex.class,
                 index -> index.getPolicies(originalMetaClass.getName())));
     }
 
     @Override
     public Stream<ResourcePolicy> getEntityResourcePoliciesByWildcard(String wildcard) {
-        return extractFromAuthentication(authority -> authority.getResourcePoliciesByIndex(EntityResourcePolicyByEntityIndex.class,
+        return extractFromAuthenticationByScope(authority -> authority.getResourcePoliciesByIndex(EntityResourcePolicyByEntityIndex.class,
                 index -> index.getPolicies(wildcard)));
     }
 
     @Override
     public Stream<ResourcePolicy> getEntityAttributesResourcePolicies(MetaClass metaClass, String attribute) {
-        return extractFromAuthentication(authority -> authority.getResourcePoliciesByIndex(EntityResourcePolicyByAttributesIndex.class,
+        return extractFromAuthenticationByScope(authority -> authority.getResourcePoliciesByIndex(EntityResourcePolicyByAttributesIndex.class,
                 index -> index.getPolicies(metaClass.getName(), attribute)));
     }
 
     @Override
     public Stream<ResourcePolicy> getEntityAttributesResourcePoliciesByWildcard(String entityWildcard, String attributeWildcard) {
-        return extractFromAuthentication(authority -> authority.getResourcePoliciesByIndex(EntityResourcePolicyByAttributesIndex.class,
+        return extractFromAuthenticationByScope(authority -> authority.getResourcePoliciesByIndex(EntityResourcePolicyByAttributesIndex.class,
                 index -> index.getPolicies(entityWildcard, attributeWildcard)));
     }
 
     @Override
     public Stream<ResourcePolicy> getSpecificResourcePolicies(String resourceName) {
-        return extractFromAuthentication(authority ->
+        return extractFromAuthenticationByScope(authority ->
                 authority.getResourcePoliciesByIndex(SpecificResourcePolicyByNameIndex.class, index -> index.getPolicies(resourceName)));
+    }
+
+    protected <T> Stream<T> extractFromAuthenticationByScope(Function<PolicyAwareGrantedAuthority, Stream<T>> extractor) {
+        Stream<T> stream = Stream.empty();
+
+        Authentication authentication = currentAuthentication.getAuthentication();
+        if (authentication != null) {
+            String scope = getScope(authentication);
+            for (GrantedAuthority authority : authentication.getAuthorities()) {
+                if (authority instanceof PolicyAwareGrantedAuthority) {
+                    PolicyAwareGrantedAuthority policyAwareAuthority = (PolicyAwareGrantedAuthority) authority;
+                    if (isAppliedForScope(policyAwareAuthority, scope)) {
+                        Stream<T> extractedStream = extractor.apply(policyAwareAuthority);
+                        if (extractedStream != null) {
+                            stream = Stream.concat(stream, extractedStream);
+                        }
+                    }
+                }
+            }
+        }
+
+        return stream;
     }
 
     protected <T> Stream<T> extractFromAuthentication(Function<PolicyAwareGrantedAuthority, Stream<T>> extractor) {
@@ -100,7 +124,8 @@ public class AuthenticationPolicyStore implements PolicyStore {
         if (authentication != null) {
             for (GrantedAuthority authority : authentication.getAuthorities()) {
                 if (authority instanceof PolicyAwareGrantedAuthority) {
-                    Stream<T> extractedStream = extractor.apply((PolicyAwareGrantedAuthority) authority);
+                    PolicyAwareGrantedAuthority policyAwareAuthority = (PolicyAwareGrantedAuthority) authority;
+                    Stream<T> extractedStream = extractor.apply(policyAwareAuthority);
                     if (extractedStream != null) {
                         stream = Stream.concat(stream, extractedStream);
                     }
@@ -109,6 +134,19 @@ public class AuthenticationPolicyStore implements PolicyStore {
         }
 
         return stream;
+    }
+
+    @Nullable
+    protected String getScope(Authentication authentication) {
+        Object details = authentication.getDetails();
+        if (details instanceof ClientDetails) {
+            return ((ClientDetails) details).getScope();
+        }
+        return null;
+    }
+
+    private boolean isAppliedForScope(PolicyAwareGrantedAuthority policyAwareAuthority, @Nullable String scope) {
+        return scope == null || policyAwareAuthority.getScopes().contains(scope);
     }
 
     public static class RowLevelPolicyByEntityIndex implements RowLevelPolicyIndex {

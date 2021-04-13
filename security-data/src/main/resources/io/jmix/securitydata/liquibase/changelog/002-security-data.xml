@@ -29,4 +29,10 @@
         </addColumn>
     </changeSet>
 
+    <changeSet author="security-data" id="2">
+        <addColumn tableName="SEC_RESOURCE_ROLE">
+            <column name="SCOPES" type="varchar(1000)"/>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

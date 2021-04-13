@@ -288,10 +288,24 @@ public class EntityValues {
                 && ((EntityEntrySoftDelete) getUncheckedEntityEntry(entity)).isDeleted();
     }
 
+    public static Object getDeletedDate(Object entity){
+        if (isSoftDeletionSupported(entity)) {
+            return ((EntityEntrySoftDelete) getUncheckedEntityEntry(entity)).getDeletedDate();
+        }
+        return null;
+    }
+
     public static void setDeletedDate(Object entity, Object value) {
         if (isSoftDeletionSupported(entity)) {
             ((EntityEntrySoftDelete) getUncheckedEntityEntry(entity)).setDeletedDate(value);
         }
+    }
+
+    public static Object getDeletedBy(Object entity){
+        if (isSoftDeletionSupported(entity)) {
+            return ((EntityEntrySoftDelete) getUncheckedEntityEntry(entity)).getDeletedBy();
+        }
+        return null;
     }
 
     public static void setDeletedBy(Object entity, Object value) {
@@ -304,10 +318,24 @@ public class EntityValues {
         return getEntityEntry(entity) instanceof EntityEntryAuditable;
     }
 
+    public static Object getCreatedDate(Object entity){
+        if(isAuditSupported(entity)){
+            return ((EntityEntryAuditable) getUncheckedEntityEntry(entity)).getCreatedDate();
+        }
+        return null;
+    }
+
     public static void setCreatedDate(Object entity, Object value) {
         if (isAuditSupported(entity)) {
             ((EntityEntryAuditable) getUncheckedEntityEntry(entity)).setCreatedDate(value);
         }
+    }
+
+    public static Object getCreatedBy(Object entity){
+        if(isAuditSupported(entity)){
+            return ((EntityEntryAuditable) getUncheckedEntityEntry(entity)).getCreatedBy();
+        }
+        return null;
     }
 
     public static void setCreatedBy(Object entity, Object value) {
@@ -316,10 +344,24 @@ public class EntityValues {
         }
     }
 
+    public static Object getLastModifiedDate(Object entity){
+        if(isAuditSupported(entity)){
+            return ((EntityEntryAuditable) getUncheckedEntityEntry(entity)).getLastModifiedDate();
+        }
+        return null;
+    }
+
     public static void setLastModifiedDate(Object entity, Object value) {
         if (isAuditSupported(entity)) {
             ((EntityEntryAuditable) getUncheckedEntityEntry(entity)).setLastModifiedDate(value);
         }
+    }
+
+    public static Object getLastModifiedBy(Object entity){
+        if(isAuditSupported(entity)){
+            return ((EntityEntryAuditable) getUncheckedEntityEntry(entity)).getLastModifiedBy();
+        }
+        return null;
     }
 
     public static void setLastModifiedBy(Object entity, Object value) {

@@ -20,11 +20,19 @@ import javax.annotation.Nullable;
 
 public interface EntityEntryAuditable {
 
+    Object getCreatedDate();
+
     void setCreatedDate(Object date);
+
+    Object getCreatedBy();
 
     void setCreatedBy(Object createdBy);
 
+    Object getLastModifiedDate();
+
     void setLastModifiedDate(Object date);
+
+    Object getLastModifiedBy();
 
     void setLastModifiedBy(Object updatedBy);
 

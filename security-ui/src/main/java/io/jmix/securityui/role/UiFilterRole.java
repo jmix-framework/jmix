@@ -18,6 +18,7 @@ package io.jmix.securityui.role;
 
 import io.jmix.security.model.EntityAttributePolicyAction;
 import io.jmix.security.model.EntityPolicyAction;
+import io.jmix.security.model.SecurityScope;
 import io.jmix.security.role.annotation.EntityAttributePolicy;
 import io.jmix.security.role.annotation.EntityPolicy;
 import io.jmix.security.role.annotation.ResourceRole;
@@ -28,7 +29,7 @@ import io.jmix.ui.entity.GroupFilterCondition;
 import io.jmix.ui.entity.JpqlFilterCondition;
 import io.jmix.ui.entity.PropertyFilterCondition;
 
-@ResourceRole(name = "UI: edit filters", code = UiFilterRole.CODE)
+@ResourceRole(name = "UI: edit filters", code = UiFilterRole.CODE, scope = SecurityScope.UI)
 public interface UiFilterRole {
 
     String CODE = "ui-filter";

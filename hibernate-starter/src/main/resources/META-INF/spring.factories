@@ -1,4 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  io.jmix.autoconfigure.hibernate.HibernateAutoConfiguration,\
-  io.jmix.autoconfigure.data.JmixLiquibaseAutoConfiguration
-

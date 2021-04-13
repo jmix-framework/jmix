@@ -163,6 +163,9 @@ public class EmailDataProviderImpl implements EmailDataProvider {
         MessagePersistingContext context = new MessagePersistingContext();
         try {
             transaction.executeWithoutResult(transactionStatus -> {
+                if (sendingMessage.getAttemptsLimit() == null) {
+                    sendingMessage.setAttemptsLimit(emailerProperties.getDefaultSendingAttemptsLimit());
+                }
                 sendingMessage.setStatus(status);
                 persistSendingMessage(sendingMessage, context);
             });

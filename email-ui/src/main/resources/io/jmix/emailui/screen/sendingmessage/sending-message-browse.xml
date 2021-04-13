@@ -95,7 +95,7 @@
                             <field id="dateSent" property="dateSent"/>
                             <field id="updateTs" property="updateTs"/>
                             <field id="deadline" property="deadline"/>
-                            <field id="attemptsCount" property="attemptsLimit"/>
+                            <field id="attemptsLimit" property="attemptsLimit"/>
                             <field id="attemptsMade" property="attemptsMade"/>
                         </column>
                     </form>

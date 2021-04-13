@@ -140,6 +140,7 @@ public class SendingMessageBrowser extends Screen {
         return contentArea;
     }
 
+
     protected void selectedItemChanged(SendingMessage item) {
         String contentText = null;
         if (item != null) {

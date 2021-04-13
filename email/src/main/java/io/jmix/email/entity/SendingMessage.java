@@ -23,6 +23,7 @@ import io.jmix.core.annotation.TenantId;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.PropertyDatatype;
 import io.jmix.email.SendingStatus;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.annotation.CreatedBy;
@@ -53,7 +54,7 @@ public class SendingMessage implements Serializable {
     public static final String HEADERS_SEPARATOR = "\n";
 
     @Id
-    @Column(name = "ID")
+    @Column(name = "ID", nullable = false)
     @JmixGeneratedValue
     private UUID id;
 
@@ -106,6 +107,7 @@ public class SendingMessage implements Serializable {
     @Column(name = "CONTENT_TEXT")
     protected String contentText;
 
+    @PropertyDatatype("fileRef")
     @Column(name = "CONTENT_TEXT_FILE")
     protected FileRef contentTextFile;
 
@@ -127,7 +129,7 @@ public class SendingMessage implements Serializable {
     @Column(name = "ATTEMPTS_MADE")
     protected Integer attemptsMade;
 
-    @OneToMany(mappedBy = "message", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "message")
     protected List<SendingAttachment> attachments;
 
     @Column(name = "EMAIL_HEADERS")

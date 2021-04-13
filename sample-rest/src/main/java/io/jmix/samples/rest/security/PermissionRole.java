@@ -16,6 +16,7 @@
 
 package io.jmix.samples.rest.security;
 
+import io.jmix.security.model.SecurityScope;
 import io.jmix.security.role.annotation.EntityAttributePolicy;
 import io.jmix.security.role.annotation.EntityPolicy;
 import io.jmix.security.role.annotation.ResourceRole;
@@ -25,7 +26,7 @@ import static io.jmix.security.model.EntityAttributePolicyAction.MODIFY;
 import static io.jmix.security.model.EntityPolicyAction.READ;
 import static io.jmix.security.model.EntityPolicyAction.UPDATE;
 
-@ResourceRole(name = PermissionRole.NAME, code = PermissionRole.NAME)
+@ResourceRole(name = PermissionRole.NAME, code = PermissionRole.NAME,scope = SecurityScope.API)
 public interface PermissionRole {
 
     String NAME = "permission-role";

@@ -16,6 +16,7 @@
 
 package io.jmix.samples.rest.security;
 
+import io.jmix.security.model.SecurityScope;
 import io.jmix.security.role.annotation.EntityAttributePolicy;
 import io.jmix.security.role.annotation.EntityPolicy;
 import io.jmix.security.role.annotation.ResourceRole;
@@ -25,7 +26,7 @@ import static io.jmix.security.model.EntityAttributePolicyAction.MODIFY;
 import static io.jmix.security.model.EntityPolicyAction.DELETE;
 import static io.jmix.security.model.EntityPolicyAction.READ;
 
-@ResourceRole(name = ColorDeleteRole.NAME, code = ColorDeleteRole.NAME)
+@ResourceRole(name = ColorDeleteRole.NAME, code = ColorDeleteRole.NAME, scope = SecurityScope.API)
 public interface ColorDeleteRole {
 
     String NAME = "color-delete-access";

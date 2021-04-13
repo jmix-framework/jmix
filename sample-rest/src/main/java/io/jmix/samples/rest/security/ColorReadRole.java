@@ -16,6 +16,7 @@
 
 package io.jmix.samples.rest.security;
 
+import io.jmix.security.model.SecurityScope;
 import io.jmix.security.role.annotation.EntityAttributePolicy;
 import io.jmix.security.role.annotation.EntityPolicy;
 import io.jmix.security.role.annotation.ResourceRole;
@@ -24,7 +25,7 @@ import io.jmix.security.role.annotation.SpecificPolicy;
 import static io.jmix.security.model.EntityAttributePolicyAction.VIEW;
 import static io.jmix.security.model.EntityPolicyAction.READ;
 
-@ResourceRole(name = ColorReadRole.NAME, code = ColorReadRole.NAME)
+@ResourceRole(name = ColorReadRole.NAME, code = ColorReadRole.NAME, scope = SecurityScope.API)
 public interface ColorReadRole {
 
     String NAME = "color-read-access";

@@ -16,6 +16,7 @@
 
 package io.jmix.samples.rest.security;
 
+import io.jmix.security.model.SecurityScope;
 import io.jmix.security.role.annotation.EntityAttributePolicy;
 import io.jmix.security.role.annotation.EntityPolicy;
 import io.jmix.security.role.annotation.ResourceRole;
@@ -24,7 +25,7 @@ import io.jmix.security.role.annotation.SpecificPolicy;
 import static io.jmix.security.model.EntityAttributePolicyAction.VIEW;
 import static io.jmix.security.model.EntityPolicyAction.READ;
 
-@ResourceRole(name = AnonymousAccessRole.NAME, code = AnonymousAccessRole.NAME)
+@ResourceRole(name = AnonymousAccessRole.NAME, code = AnonymousAccessRole.NAME, scope = SecurityScope.API)
 public interface AnonymousAccessRole {
 
     String NAME = "anonymous-access";

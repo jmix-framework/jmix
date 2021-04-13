@@ -16,6 +16,7 @@
 
 package io.jmix.samples.rest.security;
 
+import io.jmix.security.model.SecurityScope;
 import io.jmix.security.role.annotation.EntityAttributePolicy;
 import io.jmix.security.role.annotation.EntityPolicy;
 import io.jmix.security.role.annotation.ResourceRole;
@@ -24,7 +25,7 @@ import io.jmix.security.role.annotation.SpecificPolicy;
 import static io.jmix.security.model.EntityAttributePolicyAction.MODIFY;
 import static io.jmix.security.model.EntityPolicyAction.ALL;
 
-@ResourceRole(name = FullAccessRole.NAME, code = FullAccessRole.NAME)
+@ResourceRole(name = FullAccessRole.NAME, code = FullAccessRole.NAME, scope = SecurityScope.API)
 public interface FullAccessRole {
 
     String NAME = "system-full-access";

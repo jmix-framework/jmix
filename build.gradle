@@ -132,8 +132,6 @@ dependencies {
         api "io.jmix.data:jmix-data-autoconfigure:${snapshotOr(dataVersion)}"
         api "io.jmix.data:jmix-eclipselink:${snapshotOr(dataVersion)}"
         api "io.jmix.data:jmix-eclipselink-starter:${snapshotOr(dataVersion)}"
-        api "io.jmix.data:jmix-hibernate:${snapshotOr(dataVersion)}"
-        api "io.jmix.data:jmix-hibernate-starter:${snapshotOr(dataVersion)}"
 
         api "io.jmix.datatools:jmix-datatools:${snapshotOr(datatoolsVersion)}"
         api "io.jmix.datatools:jmix-datatools-starter:${snapshotOr(datatoolsVersion)}"

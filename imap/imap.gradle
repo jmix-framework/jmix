@@ -30,8 +30,6 @@ dependencies {
 
     api 'com.fasterxml.jackson.core:jackson-databind'
 
-    compileOnly 'io.jmix.security:jmix-security'
-
     testImplementation 'org.junit.jupiter:junit-jupiter-api'
     testImplementation 'org.springframework:spring-test'
     testImplementation 'org.spockframework:spock-core'

@@ -16,13 +16,18 @@
 
 package io.jmix.imapui.role;
 
-import io.jmix.imap.role.ImapAdminRole;
+import io.jmix.imap.entity.*;
+import io.jmix.security.model.EntityAttributePolicyAction;
+import io.jmix.security.model.EntityPolicyAction;
+import io.jmix.security.model.SecurityScope;
+import io.jmix.security.role.annotation.EntityAttributePolicy;
+import io.jmix.security.role.annotation.EntityPolicy;
 import io.jmix.security.role.annotation.ResourceRole;
 import io.jmix.securityui.role.annotation.MenuPolicy;
 import io.jmix.securityui.role.annotation.ScreenPolicy;
 
-@ResourceRole(code = ImapAdminUiRole.CODE, name = "IMAP: administration UI")
-public interface ImapAdminUiRole extends ImapAdminRole {
+@ResourceRole(code = ImapAdminUiRole.CODE, name = "IMAP: administration UI", scope = SecurityScope.UI)
+public interface ImapAdminUiRole {
 
     String CODE = "imap-admin-ui";
 
@@ -37,5 +42,24 @@ public interface ImapAdminUiRole extends ImapAdminRole {
             "imap-component",
             "imap_MailBox.browse",
             "imap_Message.browse"})
+    @EntityPolicy(entityClass = ImapSimpleAuthentication.class, actions = {EntityPolicyAction.ALL})
+    @EntityPolicy(entityClass = ImapProxy.class, actions = {EntityPolicyAction.ALL})
+    @EntityPolicy(entityClass = ImapMessageSync.class, actions = {EntityPolicyAction.ALL})
+    @EntityPolicy(entityClass = ImapMessageAttachment.class, actions = {EntityPolicyAction.ALL})
+    @EntityPolicy(entityClass = ImapMessage.class, actions = {EntityPolicyAction.ALL})
+    @EntityPolicy(entityClass = ImapFolderEvent.class, actions = {EntityPolicyAction.ALL})
+    @EntityPolicy(entityClass = ImapFolder.class, actions = {EntityPolicyAction.ALL})
+    @EntityPolicy(entityClass = ImapEventHandler.class, actions = {EntityPolicyAction.ALL})
+    @EntityPolicy(entityClass = ImapMailBox.class, actions = {EntityPolicyAction.ALL})
+    @EntityAttributePolicy(entityClass = ImapMailBox.class, action = EntityAttributePolicyAction.MODIFY, attributes = "*")
+    @EntityAttributePolicy(entityClass = ImapSimpleAuthentication.class, action = EntityAttributePolicyAction.MODIFY, attributes = "*")
+    @EntityAttributePolicy(entityClass = ImapProxy.class, action = EntityAttributePolicyAction.MODIFY, attributes = "*")
+    @EntityAttributePolicy(entityClass = ImapMessageSync.class, action = EntityAttributePolicyAction.MODIFY, attributes = "*")
+    @EntityAttributePolicy(entityClass = ImapMessageAttachment.class, action = EntityAttributePolicyAction.MODIFY, attributes = "*")
+    @EntityAttributePolicy(entityClass = ImapMessage.class, action = EntityAttributePolicyAction.MODIFY, attributes = "*")
+    @EntityAttributePolicy(entityClass = ImapFolderEvent.class, action = EntityAttributePolicyAction.MODIFY, attributes = "*")
+    @EntityAttributePolicy(entityClass = ImapFolder.class, action = EntityAttributePolicyAction.MODIFY, attributes = "*")
+    @EntityAttributePolicy(entityClass = ImapEventHandler.class, action = EntityAttributePolicyAction.MODIFY, attributes = "*")
+    @EntityAttributePolicy(entityClass = ImapMailBox.class, action = EntityAttributePolicyAction.MODIFY, attributes = "*")
     void imapAdminUi();
 }

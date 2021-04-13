@@ -144,7 +144,16 @@ class JmixBuildPlugin implements Plugin<Project> {
             options.memberLevel = JavadocMemberLevel.PROTECTED
             destinationDir = project.file("$project.buildDir/docs/javadoc")
 
-            title = "${project.name.toUpperCase()} ${project.version.replace('-SNAPSHOT', '')} API"
+            title = "Jmix ${project.name} ${project.version.replace('-SNAPSHOT', '')} API"
+
+            if (project.hasProperty('javadocPublishCmd')) {
+                doLast {
+                    project.exec {
+                        workingDir "$project.buildDir/docs/javadoc"
+                        commandLine 'sh', '-c', project.javadocPublishCmd
+                    }
+                }
+            }
         }
     }
 

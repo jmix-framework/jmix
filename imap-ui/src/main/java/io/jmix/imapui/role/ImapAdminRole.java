@@ -26,10 +26,10 @@ import io.jmix.security.role.annotation.ResourceRole;
 import io.jmix.securityui.role.annotation.MenuPolicy;
 import io.jmix.securityui.role.annotation.ScreenPolicy;
 
-@ResourceRole(code = ImapAdminUiRole.CODE, name = "IMAP: administration UI", scope = SecurityScope.UI)
-public interface ImapAdminUiRole {
+@ResourceRole(code = ImapAdminRole.CODE, name = "IMAP: administration", scope = SecurityScope.UI)
+public interface ImapAdminRole {
 
-    String CODE = "imap-admin-ui";
+    String CODE = "imap-admin";
 
     @ScreenPolicy(screenIds = {
             "imap_Folder.lookup",
@@ -61,5 +61,5 @@ public interface ImapAdminUiRole {
     @EntityAttributePolicy(entityClass = ImapFolder.class, action = EntityAttributePolicyAction.MODIFY, attributes = "*")
     @EntityAttributePolicy(entityClass = ImapEventHandler.class, action = EntityAttributePolicyAction.MODIFY, attributes = "*")
     @EntityAttributePolicy(entityClass = ImapMailBox.class, action = EntityAttributePolicyAction.MODIFY, attributes = "*")
-    void imapAdminUi();
+    void imapAdmin();
 }

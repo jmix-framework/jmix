@@ -52,6 +52,7 @@ publishing {
                     username rootProject['jmixUploadUser']
                     password rootProject['jmixUploadPassword']
                 }
+                allowInsecureProtocol = true
             }
         }
     }

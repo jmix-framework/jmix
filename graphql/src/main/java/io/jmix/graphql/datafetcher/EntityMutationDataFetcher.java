@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.persistence.PersistenceException;
 import java.util.*;
 
 @Component
@@ -57,8 +58,10 @@ public class EntityMutationDataFetcher {
             Collection<Object> objects;
             try {
                 objects = entityImportExport.importEntities(Collections.singletonList(entity), entityImportPlan, true);
-            } catch (EntityValidationException eve) {
-                throw new GqlEntityValidationException(eve);
+            } catch (EntityValidationException ex) {
+                throw new GqlEntityValidationException(ex);
+            } catch (PersistenceException ex) {
+                throw new GqlEntityValidationException(ex);
             }
             Object mainEntity = getMainEntity(objects, metaClass);
 

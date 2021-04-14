@@ -43,6 +43,7 @@ dependencies {
     }
     testImplementation 'io.jmix.data:jmix-data'
     testImplementation 'io.jmix.data:jmix-eclipselink'
+    testImplementation 'com.google.code.gson:gson:2.8.6'
     testRuntimeOnly 'org.slf4j:slf4j-simple'
     testRuntimeOnly 'org.hsqldb:hsqldb'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'

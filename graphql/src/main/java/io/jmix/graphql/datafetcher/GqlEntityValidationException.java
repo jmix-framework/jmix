@@ -22,15 +22,27 @@ import graphql.GraphQLError;
 import graphql.language.SourceLocation;
 import io.jmix.core.validation.EntityValidationException;
 
-import java.util.*;
+import javax.persistence.PersistenceException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class GqlEntityValidationException extends RuntimeException implements GraphQLError  {
 
     public static final String EXTENSION_CONSTRAINT_VIOLATIONS = "constraintViolations";
 
-    public GqlEntityValidationException(EntityValidationException eve) {
-        super(eve.getMessage(), eve);
+    public static final String EXTENSION_PERSISTENCE_ERROR_NAME = "persistenceError";
+    public static final String EXTENSION_PERSISTENCE_ERROR_VALUE = "Can't save entity to database";
+
+    public GqlEntityValidationException(EntityValidationException ex) {
+        super(ex.getMessage(), ex);
+    }
+
+    public GqlEntityValidationException(PersistenceException ex) {
+        // we should not pass persistence details to client, so message need to be empty
+        super("", ex);
     }
 
     @Override
@@ -45,18 +57,38 @@ public class GqlEntityValidationException extends RuntimeException implements Gr
 
     @Override
     public Map<String, Object> getExtensions() {
-        EntityValidationException eve = (EntityValidationException) getCause();
+        Throwable cause = getCause();
+        if (cause == null) return  Collections.emptyMap();
 
-        List<Map<String, Object>> constraintViolationList = eve.getConstraintViolations().stream()
-                .map(constraintViolation -> {
-                    Map<String, Object> cv = new HashMap<>();
-                    cv.put("messageTemplate", constraintViolation.getMessageTemplate());
-                    cv.put("message", constraintViolation.getMessage());
-                    cv.put("path", constraintViolation.getPropertyPath().toString());
-                    cv.put("invalidValue", constraintViolation.getInvalidValue());
-                    return cv;
-                }).collect(Collectors.toList());
+        Class<? extends Throwable> causeClass = cause.getClass();
 
-        return Collections.singletonMap(EXTENSION_CONSTRAINT_VIOLATIONS, constraintViolationList);
+        // bean validation
+        if (causeClass.isAssignableFrom(EntityValidationException.class)) {
+
+            EntityValidationException eve = (EntityValidationException) cause;
+            List<Map<String, Object>> constraintViolationList = eve.getConstraintViolations().stream()
+                    .map(cv -> composeErrorExtension(
+                            cv.getMessageTemplate(), cv.getMessage(), "" + cv.getPropertyPath(), "" + cv.getInvalidValue())
+                    ).collect(Collectors.toList());
+
+            return Collections.singletonMap(EXTENSION_CONSTRAINT_VIOLATIONS, constraintViolationList);
+        }
+
+        // other validation such `integrity constraint violation: NOT NULL check constraint`
+        if (causeClass.isAssignableFrom(PersistenceException.class)) {
+            return Collections.singletonMap(EXTENSION_PERSISTENCE_ERROR_NAME, EXTENSION_PERSISTENCE_ERROR_VALUE);
+        }
+
+        return Collections.emptyMap();
+    }
+
+
+    protected Map<String, Object> composeErrorExtension(String messageTemplate, String message, String path, String invalidValue) {
+        Map<String, Object> cv = new HashMap<>();
+        cv.put("messageTemplate", messageTemplate);
+        cv.put("message", message);
+        cv.put("path", path);
+        cv.put("invalidValue", invalidValue);
+        return cv;
     }
 }

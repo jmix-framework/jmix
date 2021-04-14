@@ -1,0 +1,9 @@
+mutation {
+    upsert_scr_Car (car: {
+        model: "Z"
+        carType: SEDAN
+        regNumber: "a00a"
+    }) {
+        _instanceName
+    }
+}

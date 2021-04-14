@@ -17,7 +17,7 @@
 package io.jmix.security.model;
 
 /**
- * Predefined security scope constants for UI and REST/GraphQL API.
+ * Predefined security scope constants for Backoffice UI and REST/GraphQL API.
  */
 public interface SecurityScope {
     /**

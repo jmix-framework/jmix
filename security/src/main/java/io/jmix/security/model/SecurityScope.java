@@ -17,15 +17,15 @@
 package io.jmix.security.model;
 
 /**
- * Predefined security scope constants for UI and REST API/GraphQL
+ * Predefined security scope constants for UI and REST/GraphQL API.
  */
 public interface SecurityScope {
     /**
-     * Default security scope for generic UI
+     * Default security scope for Backoffice UI.
      */
     String UI = "UI";
     /**
-     * Default security scope for API calls like REST API or GraphQL
+     * Default security scope for REST/GraphQL API calls.
      */
     String API = "API";
 }

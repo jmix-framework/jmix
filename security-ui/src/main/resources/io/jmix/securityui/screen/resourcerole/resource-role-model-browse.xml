@@ -40,7 +40,8 @@
                 <column id="name"/>
                 <column id="code"/>
                 <column id="source"/>
-                <column id="description"/>
+                <column id="description" maxTextLength="50"/>
+                <column id="scopes"/>
             </columns>
             <simplePagination/>
             <buttonsPanel id="buttonsPanel"

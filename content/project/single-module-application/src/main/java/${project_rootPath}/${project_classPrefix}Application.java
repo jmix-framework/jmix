@@ -14,7 +14,6 @@ import org.springframework.context.event.EventListener;
 import org.springframework.core.env.Environment;
 
 import javax.sql.DataSource;
-import java.net.InetAddress;
 
 @SpringBootApplication
 public class ${project_classPrefix}Application {

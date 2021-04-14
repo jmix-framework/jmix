@@ -26,14 +26,14 @@ import io.jmix.security.role.annotation.ResourceRole;
 import io.jmix.securityui.role.annotation.MenuPolicy;
 import io.jmix.securityui.role.annotation.ScreenPolicy;
 
-@ResourceRole(code = EmailHistoryUiRole.CODE, name = "Email: view history in UI", scope = SecurityScope.UI)
-public interface EmailHistoryUiRole {
+@ResourceRole(code = EmailHistoryRole.CODE, name = "Email: view history", scope = SecurityScope.UI)
+public interface EmailHistoryRole {
 
-    String CODE = "email-history-ui";
+    String CODE = "email-history";
 
     @ScreenPolicy(screenIds = {"email_SendingMessage.browse", "ResendMessage"})
     @MenuPolicy(menuIds = {"email_SendingMessage.browse"})
     @EntityPolicy(entityClass = SendingMessage.class, actions = {EntityPolicyAction.READ})
     @EntityAttributePolicy(entityClass = SendingMessage.class, attributes = "*", action = EntityAttributePolicyAction.VIEW)
-    void emailHistoryUi();
+    void emailHistory();
 }

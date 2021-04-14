@@ -14,21 +14,37 @@
  * limitations under the License.
  */
 
-package io.jmix.dashboards.role;
+package io.jmix.dashboardsui.role;
 
+import io.jmix.dashboards.entity.DashboardGroup;
 import io.jmix.dashboards.entity.PersistentDashboard;
 import io.jmix.security.model.EntityAttributePolicyAction;
 import io.jmix.security.model.EntityPolicyAction;
+import io.jmix.security.model.SecurityScope;
 import io.jmix.security.role.annotation.EntityAttributePolicy;
 import io.jmix.security.role.annotation.EntityPolicy;
 import io.jmix.security.role.annotation.ResourceRole;
+import io.jmix.security.role.annotation.SpecificPolicy;
+import io.jmix.securityui.role.annotation.MenuPolicy;
+import io.jmix.securityui.role.annotation.ScreenPolicy;
 
-@ResourceRole(code = DashboardsViewRole.CODE, name = "Dashboards: read embedded dashboards")
-public interface DashboardsViewRole {
+@ResourceRole(code = DashboardsBrowseRole.CODE, name = "Dashboards: view a list of available dashboards", scope = SecurityScope.UI)
+public interface DashboardsBrowseRole {
 
-    String CODE = "dashboards-view";
+    String CODE = "dashboards-browse";
 
+    @ScreenPolicy(screenIds = {
+            "dshbrd_PersistentDashboard.browse",
+            "dshbrd_DashboardView.screen"
+    })
+    @MenuPolicy(menuIds = {
+            "dashboard",
+            "dshbrd_PersistentDashboard.browse"
+    })
+    @SpecificPolicy(resources = {"dashboardGroupsBrowse"})
+    @EntityPolicy(entityClass = DashboardGroup.class, actions = {EntityPolicyAction.READ})
     @EntityPolicy(entityClass = PersistentDashboard.class, actions = {EntityPolicyAction.READ})
+    @EntityAttributePolicy(entityClass = DashboardGroup.class, action = EntityAttributePolicyAction.MODIFY, attributes = "*")
     @EntityAttributePolicy(entityClass = PersistentDashboard.class, action = EntityAttributePolicyAction.MODIFY, attributes = "*")
-    void dashboardsView();
+    void dashboardsBrowse();
 }

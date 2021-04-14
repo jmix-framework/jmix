@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-package io.jmix.dashboards.role;
+package io.jmix.dashboardsui.role;
+
 import io.jmix.dashboards.entity.DashboardGroup;
 import io.jmix.dashboards.entity.PersistentDashboard;
 import io.jmix.dashboards.entity.WidgetTemplate;
@@ -22,14 +23,42 @@ import io.jmix.dashboards.entity.WidgetTemplateGroup;
 import io.jmix.dashboards.model.parameter.Parameter;
 import io.jmix.security.model.EntityAttributePolicyAction;
 import io.jmix.security.model.EntityPolicyAction;
+import io.jmix.security.model.SecurityScope;
 import io.jmix.security.role.annotation.EntityAttributePolicy;
 import io.jmix.security.role.annotation.EntityPolicy;
 import io.jmix.security.role.annotation.ResourceRole;
+import io.jmix.securityui.role.annotation.MenuPolicy;
+import io.jmix.securityui.role.annotation.ScreenPolicy;
 
-@ResourceRole(code = DashboardsAdminRole.CODE, name = "Dashboards: administration")
+@ResourceRole(code = DashboardsAdminRole.CODE, name = "Dashboards: administration", scope = SecurityScope.UI)
 public interface DashboardsAdminRole {
     String CODE = "dashboards-admin";
 
+    @ScreenPolicy(screenIds = {
+            "dshbrd_PersistentDashboard.browse",
+            "dshbrd_WidgetTemplate.browse",
+            "dshbrd_PersistentDashboard.edit",
+            "dshbrd_Colspan.dialog",
+            "dshbrd_CssLayoutCreation.dialog",
+            "dshbrd_Expand.dialog",
+            "dshbrd_GridCreation.dialog",
+            "dshbrd_ResponsiveCreation.dialog",
+            "dshbrd_Style.dialog",
+            "dshbrd_Weight.dialog",
+            "dshbrd_DashboardView.screen",
+            "dshbrd_Parameter.edit",
+            "dshbrd_DashboardGroup.browse",
+            "dshbrd_DashboardGroup.edit",
+            "dshbrd_Widget.edit",
+            "dshbrd_WidgetTemplate.edit",
+            "dshbrd_WidgetTemplateGroup.edit",
+            "dshbrd_WidgetTemplateGroup.browse"
+    })
+    @MenuPolicy(menuIds = {
+            "dashboard",
+            "dshbrd_PersistentDashboard.browse",
+            "dshbrd_WidgetTemplate.browse"
+    })
     @EntityPolicy(entityClass = Parameter.class, actions = {EntityPolicyAction.ALL})
     @EntityPolicy(entityClass = WidgetTemplateGroup.class, actions = {EntityPolicyAction.ALL})
     @EntityPolicy(entityClass = WidgetTemplate.class, actions = {EntityPolicyAction.ALL})

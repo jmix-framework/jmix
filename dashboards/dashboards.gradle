@@ -26,8 +26,6 @@ dependencies {
     api 'io.jmix.core:jmix-core'
     api 'io.jmix.data:jmix-eclipselink'
 
-    compileOnly 'io.jmix.security:jmix-security'
-
     testImplementation 'org.junit.jupiter:junit-jupiter-engine'
     testImplementation 'org.junit.vintage:junit-vintage-engine'
     testImplementation 'org.springframework:spring-test'

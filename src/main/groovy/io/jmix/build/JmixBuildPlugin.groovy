@@ -95,6 +95,7 @@ class JmixBuildPlugin implements Plugin<Project> {
                                         username rootProject['jmixUploadUser']
                                         password rootProject['jmixUploadPassword']
                                     }
+                                    allowInsecureProtocol = true
                                 }
                             }
                         }

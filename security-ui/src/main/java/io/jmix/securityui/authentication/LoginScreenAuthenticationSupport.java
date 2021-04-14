@@ -16,8 +16,7 @@
 
 package io.jmix.securityui.authentication;
 
-import com.vaadin.server.VaadinServletRequest;
-import com.vaadin.server.VaadinServletResponse;
+import com.vaadin.server.*;
 import io.jmix.core.AccessManager;
 import io.jmix.core.CoreProperties;
 import io.jmix.core.Messages;
@@ -26,6 +25,8 @@ import io.jmix.security.model.SecurityScope;
 import io.jmix.securityui.accesscontext.UiLoginToUiContext;
 import io.jmix.ui.ScreenBuilders;
 import io.jmix.ui.UiProperties;
+import io.jmix.ui.deviceinfo.DeviceInfo;
+import io.jmix.ui.deviceinfo.DeviceInfoProvider;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.OpenMode;
 import org.slf4j.Logger;
@@ -77,6 +78,7 @@ public class LoginScreenAuthenticationSupport {
     protected ScreenBuilders screenBuilders;
     protected AccessManager accessManager;
     protected Messages messages;
+    protected DeviceInfoProvider deviceInfoProvider;
 
     private SessionAuthenticationStrategy authenticationStrategy;
 
@@ -108,6 +110,11 @@ public class LoginScreenAuthenticationSupport {
     @Autowired
     public void setMessages(Messages messages) {
         this.messages = messages;
+    }
+
+    @Autowired
+    public void setDeviceInfoProvider(DeviceInfoProvider deviceInfoProvider) {
+        this.deviceInfoProvider = deviceInfoProvider;
     }
 
     @Autowired(required = false)
@@ -193,7 +200,7 @@ public class LoginScreenAuthenticationSupport {
         ClientDetails clientDetails = ClientDetails.builder()
                 .locale(locale != null ? locale : getDefaultLocale())
                 .scope(SecurityScope.UI)
-                .timeZone(timeZone)
+                .timeZone(timeZone == null ? getDeviceTimeZone() : timeZone)
                 .build();
 
         authenticationToken.setDetails(clientDetails);
@@ -204,5 +211,11 @@ public class LoginScreenAuthenticationSupport {
     protected Locale getDefaultLocale() {
         Collection<Locale> localeMap = coreProperties.getAvailableLocales().values();
         return localeMap.iterator().next();
+    }
+
+    @Nullable
+    protected TimeZone getDeviceTimeZone() {
+        DeviceInfo deviceInfo = deviceInfoProvider.getDeviceInfo();
+        return deviceInfo != null ? deviceInfo.getTimeZone() : null;
     }
 }

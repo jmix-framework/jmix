@@ -19,12 +19,13 @@ package io.jmix.dashboardsui.role;
 import io.jmix.dashboards.entity.PersistentDashboard;
 import io.jmix.security.model.EntityAttributePolicyAction;
 import io.jmix.security.model.EntityPolicyAction;
+import io.jmix.security.model.SecurityScope;
 import io.jmix.security.role.annotation.EntityAttributePolicy;
 import io.jmix.security.role.annotation.EntityPolicy;
 import io.jmix.security.role.annotation.ResourceRole;
 import io.jmix.securityui.role.annotation.ScreenPolicy;
 
-@ResourceRole(code = DashboardsViewRole.CODE, name = "Dashboards: see embedded dashboards")
+@ResourceRole(code = DashboardsViewRole.CODE, name = "Dashboards: see embedded dashboards", scope = SecurityScope.UI)
 public interface DashboardsViewRole {
 
     String CODE = "dashboards-view";

@@ -47,7 +47,7 @@ public interface EntityEntry extends Serializable {
      *     <li>any other UUID {@link JmixGeneratedValue} property will be chosen if primary key doesn't  have {@link JmixGeneratedValue} annotation, </li>
      *     <li>primary key or some synthetic id will be used if there is no {@link JmixGeneratedValue} satisfiyng conditions below (see {@code EntityEntry} implementations for details).</li>
      * </ol>
-     * <br/>
+     * <br>
      * This algorithm used for {@link BaseEntityEntry} and {@link NullableIdEntityEntry}. See implementing classes description to clarify whether each of them will be used
      * (directly or through subclass creation during enhancing process)
      */

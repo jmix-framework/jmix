@@ -24,7 +24,7 @@ import javax.annotation.Nullable;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * An {@link EntityEntry} implementation for model objects without identifiers.<br/>
+ * An {@link EntityEntry} implementation for model objects without identifiers.<br>
  * Used by enhancing process when {@link JmixEntity} does not include any of annotations:
  *  <ul>
  *      <li>{@link javax.persistence.Id}</li>

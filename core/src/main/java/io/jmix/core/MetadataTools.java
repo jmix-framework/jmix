@@ -77,6 +77,7 @@ public class MetadataTools {
 
     public static final String DELETED_DATE_ANN_NAME = DeletedDate.class.getName();
     public static final String DELETED_BY_ANN_NAME = DeletedBy.class.getName();
+    public static final String LAST_MODIFIED_DATE_ANN_NAME = LastModifiedDate.class.getName();
 
 
     @Autowired
@@ -765,6 +766,14 @@ public class MetadataTools {
     @Nullable
     public String findDeletedByProperty(Class<?> clazz) {
         return findPropertyByAnnotation(clazz, DELETED_BY_ANN_NAME);
+    }
+
+    /**
+     * @return field annotated with @LastModifiedDate or null if annotation is not present
+     */
+    @Nullable
+    public String findLastModifiedDateProperty(Class<?> clazz) {
+        return findPropertyByAnnotation(clazz, LAST_MODIFIED_DATE_ANN_NAME);
     }
 
     @Nullable

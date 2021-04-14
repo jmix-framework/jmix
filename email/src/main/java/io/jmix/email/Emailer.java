@@ -64,7 +64,7 @@ public interface Emailer {
      *                      {@link SendingStatus#NOT_SENT}
      * @return created {@link SendingMessage}
      */
-    SendingMessage sendEmailAsync(EmailInfo info, @Nullable Integer attemptsCount, @Nullable Date deadline);
+    SendingMessage sendEmailAsync(EmailInfo info, @Nullable Integer attemptsLimit, @Nullable Date deadline);
 
     /**
      * Send email asynchronously.

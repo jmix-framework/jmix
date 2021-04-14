@@ -43,6 +43,7 @@ jar {
     with copySpec {
         from sourceSets.main.allSource
         include "io/jmix/ui/widget/**"
+        duplicatesStrategy = DuplicatesStrategy.WARN
     }
 }
 

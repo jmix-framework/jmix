@@ -203,12 +203,16 @@ public class EntityEntryEnhancingStep extends BaseEnhancingStep {
         CtField lastModifiedByField = info.getAnnotatedField(LAST_MODIFIED_BY);
 
         createObjectSetter("CreatedDate", createdDateField, nestedClass, ctClass);
+        createObjectGetter("CreatedDate", createdDateField, nestedClass, ctClass);
         createTypeGetter("CreatedDate", createdDateField, nestedClass, ctClass);
         createObjectSetter("CreatedBy", createdByField, nestedClass, ctClass);
+        createObjectGetter("CreatedBy", createdByField, nestedClass, ctClass);
         createTypeGetter("CreatedBy", createdByField, nestedClass, ctClass);
         createObjectSetter("LastModifiedDate", lastModifiedDateField, nestedClass, ctClass);
+        createObjectGetter("LastModifiedDate", lastModifiedDateField, nestedClass, ctClass);
         createTypeGetter("LastModifiedDate", lastModifiedDateField, nestedClass, ctClass);
         createObjectSetter("LastModifiedBy", lastModifiedByField, nestedClass, ctClass);
+        createObjectGetter("LastModifiedBy", lastModifiedByField, nestedClass, ctClass);
         createTypeGetter("LastModifiedBy", lastModifiedByField, nestedClass, ctClass);
 
         if (createdDateField != null || createdByField != null || lastModifiedDateField != null || lastModifiedByField != null) {

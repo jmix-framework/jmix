@@ -13,12 +13,12 @@ import io.jmix.securityui.role.annotation.ScreenPolicy;
 import static io.jmix.security.model.EntityAttributePolicyAction.VIEW;
 
 /**
- * Role that grants minimal permissions to run reports in UI.
+ * Role that grants minimal permissions to run reports.
  */
-@ResourceRole(name = "Reports: run reports in UI", code = ReportsRunUiRole.CODE, scope = SecurityScope.UI)
-public interface ReportsRunUiRole {
+@ResourceRole(name = "Reports: run reports", code = ReportsRunRole.CODE, scope = SecurityScope.UI)
+public interface ReportsRunRole {
 
-    String CODE = "report-run-ui";
+    String CODE = "report-run";
 
     @ScreenPolicy(screenIds = {
             "report_inputParameters",
@@ -34,5 +34,5 @@ public interface ReportsRunUiRole {
     @EntityAttributePolicy(entityClass = Report.class, attributes = {"locName", "description", "code", "updateTs", "group"}, action = VIEW)
     @EntityAttributePolicy(entityClass = ReportGroup.class, attributes = {"title", "localeNames"}, action = VIEW)
     @EntityAttributePolicy(entityClass = ReportTemplate.class, attributes = {"code", "name", "customDefinition", "custom", "alterable"}, action = VIEW)
-    void reportsRunUi();
+    void reportsRun();
 }

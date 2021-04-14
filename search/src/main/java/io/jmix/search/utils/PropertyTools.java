@@ -85,10 +85,11 @@ public class PropertyTools {
         if (pathItems.length == 1) {
             log.debug("'{}' is the last level of path", pathItem);
             if (hasWildcard(pathItem)) {
-                Pattern pattern = Pattern.compile(pathItem.replace("*", ".*")); //todo exclude inverse properties
+                Pattern pattern = Pattern.compile(pathItem.replace("*", ".*"));
                 List<MetaProperty> localPropertiesByPattern = findLocalPropertiesByPattern(metaClass, pattern);
                 result = localPropertiesByPattern.stream()
                         .filter(this::isSearchableProperty)
+                        .filter(property -> !isInverseProperty(property, parentPath))
                         .map(property -> createPropertyPath(parentPath, property))
                         .collect(Collectors.toMap(MetaPropertyPath::toPathString, Function.identity()));
             } else {
@@ -107,7 +108,7 @@ public class PropertyTools {
                 List<MetaProperty> localPropertiesByPattern = findLocalPropertiesByPattern(metaClass, pattern);
                 result = new HashMap<>();
                 for (MetaProperty property : localPropertiesByPattern) {
-                    if (isReferenceProperty(property)) {
+                    if (isReferenceProperty(property) && !isInverseProperty(property, parentPath)) {
                         MetaClass nextMetaClass = property.getRange().asClass();
                         MetaPropertyPath nextPath = createPropertyPath(parentPath, property);
                         result.putAll(findPropertiesByPathItems(nextMetaClass, Arrays.copyOfRange(pathItems, 1, pathItems.length), nextPath));
@@ -149,5 +150,14 @@ public class PropertyTools {
 
     protected boolean hasWildcard(String path) {
         return path.contains("*");
+    }
+
+    protected boolean isInverseProperty(MetaProperty propertyToCheck, MetaPropertyPath parentPath) {
+        if(parentPath.length() > 0) {
+            MetaProperty parentProperty = parentPath.getMetaProperty();
+            MetaProperty inverseProperty = propertyToCheck.getInverse();
+            return parentProperty.equals(inverseProperty);
+        }
+        return false;
     }
 }

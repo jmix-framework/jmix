@@ -17,6 +17,7 @@
 package io.jmix.ui.deviceinfo;
 
 import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * Class that represents information about the web browser the user is using.
@@ -28,6 +29,7 @@ public class DeviceInfo {
 
     private String browserApplication = null;
     private Locale locale;
+    private TimeZone timeZone;
     private String address;
     private boolean secureConnection;
 
@@ -102,6 +104,17 @@ public class DeviceInfo {
 
     public void setLocale(Locale locale) {
         this.locale = locale;
+    }
+
+    /**
+     * Get the default timezone of the browser.
+     */
+    public TimeZone getTimeZone() {
+        return timeZone;
+    }
+
+    public void setTimeZone(TimeZone timeZone) {
+        this.timeZone = timeZone;
     }
 
     /**

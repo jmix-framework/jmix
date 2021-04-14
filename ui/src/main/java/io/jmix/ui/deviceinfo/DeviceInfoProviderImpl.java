@@ -16,13 +16,16 @@
 
 package io.jmix.ui.deviceinfo;
 
+import com.google.common.base.Strings;
 import com.vaadin.server.Page;
 import com.vaadin.server.VaadinServletService;
 import com.vaadin.server.WebBrowser;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
+import java.util.TimeZone;
 
 @Component("ui_DeviceInfoProvider")
 public class DeviceInfoProviderImpl implements DeviceInfoProvider {
@@ -89,8 +92,26 @@ public class DeviceInfoProviderImpl implements DeviceInfoProvider {
         di.setScreenHeight(webBrowser.getScreenHeight());
         di.setScreenWidth(webBrowser.getScreenWidth());
 
+        di.setTimeZone(detectTimeZone(webBrowser));
+
         currentServletRequest.setAttribute(ATTR_NAME, di);
 
         return di;
+    }
+
+    protected TimeZone detectTimeZone(WebBrowser webBrowser) {
+        String timeZoneId = webBrowser.getTimeZoneId();
+        if (!Strings.isNullOrEmpty(timeZoneId)) {
+            return TimeZone.getTimeZone(timeZoneId);
+        } else {
+            int offset = webBrowser.getTimezoneOffset() / 1000 / 60;
+            char sign = offset >= 0 ? '+' : '-';
+            int absOffset = Math.abs(offset);
+
+            String hours = StringUtils.leftPad(String.valueOf(absOffset / 60), 2, '0');
+            String minutes = StringUtils.leftPad(String.valueOf(absOffset % 60), 2, '0');
+
+            return TimeZone.getTimeZone("GMT" + sign + hours + minutes);
+        }
     }
 }

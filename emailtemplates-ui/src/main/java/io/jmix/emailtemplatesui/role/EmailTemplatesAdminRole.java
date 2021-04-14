@@ -19,7 +19,7 @@ package io.jmix.emailtemplatesui.role;
 
 import io.jmix.emailtemplates.entity.*;
 import io.jmix.reports.entity.*;
-import io.jmix.reportsui.role.ReportsRunUiRole;
+import io.jmix.reportsui.role.ReportsRunRole;
 import io.jmix.security.model.EntityAttributePolicyAction;
 import io.jmix.security.model.EntityPolicyAction;
 import io.jmix.security.model.SecurityScope;
@@ -30,12 +30,10 @@ import io.jmix.security.role.annotation.SpecificPolicy;
 import io.jmix.securityui.role.annotation.MenuPolicy;
 import io.jmix.securityui.role.annotation.ScreenPolicy;
 
-import static io.jmix.security.model.EntityAttributePolicyAction.VIEW;
+@ResourceRole(code = EmailTemplatesAdminRole.CODE, name = "Email Templates: administration", scope = SecurityScope.UI)
+public interface EmailTemplatesAdminRole extends ReportsRunRole {
 
-@ResourceRole(code = EmailTemplatesAdminUiRole.CODE, name = "Email Templates: administration UI", scope = SecurityScope.UI)
-public interface EmailTemplatesAdminUiRole extends ReportsRunUiRole {
-
-    String CODE = "emailtemplates-admin-ui";
+    String CODE = "emailtemplates-admin";
 
     @ScreenPolicy(screenIds = {
             "emltmp_TemplateGroup.edit",
@@ -81,5 +79,5 @@ public interface EmailTemplatesAdminUiRole extends ReportsRunUiRole {
     @EntityAttributePolicy(entityClass = ReportEmailTemplate.class, action = EntityAttributePolicyAction.MODIFY, attributes = "*")
     @EntityAttributePolicy(entityClass = EmailTemplate.class, action = EntityAttributePolicyAction.MODIFY, attributes = "*")
     @EntityAttributePolicy(entityClass = JsonEmailTemplate.class, action = EntityAttributePolicyAction.MODIFY, attributes = "*")
-    void emailTemplatesAdminUi();
+    void emailTemplatesAdmin();
 }

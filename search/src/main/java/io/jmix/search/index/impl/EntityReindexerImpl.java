@@ -19,7 +19,6 @@ package io.jmix.search.index.impl;
 import io.jmix.core.Metadata;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.security.SystemAuthenticator;
-import io.jmix.search.SearchApplicationProperties;
 import io.jmix.search.index.ESIndexManager;
 import io.jmix.search.index.EntityReindexer;
 import io.jmix.search.index.IndexConfiguration;
@@ -51,8 +50,6 @@ public class EntityReindexerImpl implements EntityReindexer {
     protected IndexingQueueManager indexingQueueManager;
     @Autowired
     protected ESIndexManager indexManager;
-    @Autowired
-    protected SearchApplicationProperties searchApplicationProperties;
 
     @Override
     public void enqueueReindexAll() {
@@ -95,7 +92,7 @@ public class EntityReindexerImpl implements EntityReindexer {
                     }
                     locker.unlockQueueProcessing();
                     queueProcessingLocked = false;
-                    indexingQueueManager.enqueueIndexAll(entityName, searchApplicationProperties.getReindexEntityEnqueueBatchSize());
+                    indexingQueueManager.enqueueIndexAll(entityName);
                 } catch (IOException e) {
                     throw new RuntimeException("Unable to recreate index '" + indexConfiguration.getIndexName() + "'", e);
                 } finally {

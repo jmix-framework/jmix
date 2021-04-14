@@ -102,38 +102,14 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
     }
 
     @Override
-    public void enqueueIndexAll(String entityName, int batchSize) {
-        if (batchSize <= 0) {
-            log.error("Size of enqueuing batch during reindex entity must be positive");
-            return;
-        }
+    public void enqueueIndexAll() {
+        Collection<IndexConfiguration> indexConfigurations = indexConfigurationManager.getAllIndexConfigurations();
+        indexConfigurations.forEach(config -> enqueueIndexAll(config.getEntityName()));
+    }
 
-        IndexConfiguration indexConfiguration = indexConfigurationManager.getIndexConfigurationByEntityName(entityName);
-        if (indexConfiguration == null) {
-            log.warn("Unable to enqueue instances of entity '{}' - entity is not configured for indexing", entityName);
-            return;
-        }
-
-        MetaClass metaClass = metadata.getClass(entityName);
-        int batchOffset = 0;
-        int batchLoaded;
-        do {
-            List<Object> instances = dataManager.load(metaClass.getJavaClass())
-                    .all()
-                    .firstResult(batchOffset) //todo integer limit?
-                    .maxResults(batchSize)
-                    .list();
-
-            List<IndexingQueueItem> queueItems = instances.stream()
-                    .map(instance -> idSerialization.idToString(Id.of(instance)))
-                    .map(id -> createQueueItem(entityName, id, IndexingOperation.INDEX))
-                    .collect(Collectors.toList());
-
-            enqueue(queueItems);
-
-            batchLoaded = instances.size();
-            batchOffset += batchLoaded;
-        } while (batchLoaded == batchSize);
+    @Override
+    public void enqueueIndexAll(String entityName) {
+        enqueueIndexAll(entityName, searchApplicationProperties.getReindexEntityEnqueueBatchSize());
     }
 
     @Override
@@ -171,6 +147,40 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
     @Override
     public int processEntireQueue() {
         return processQueue(searchApplicationProperties.getProcessQueueBatchSize(), -1);
+    }
+
+    protected void enqueueIndexAll(String entityName, int batchSize) {
+        if (batchSize <= 0) {
+            log.error("Size of enqueuing batch during reindex entity must be positive");
+            return;
+        }
+
+        IndexConfiguration indexConfiguration = indexConfigurationManager.getIndexConfigurationByEntityName(entityName);
+        if (indexConfiguration == null) {
+            log.warn("Unable to enqueue instances of entity '{}' - entity is not configured for indexing", entityName);
+            return;
+        }
+
+        MetaClass metaClass = metadata.getClass(entityName);
+        int batchOffset = 0;
+        int batchLoaded;
+        do {
+            List<Object> instances = dataManager.load(metaClass.getJavaClass())
+                    .all()
+                    .firstResult(batchOffset) //todo integer limit?
+                    .maxResults(batchSize)
+                    .list();
+
+            List<IndexingQueueItem> queueItems = instances.stream()
+                    .map(instance -> idSerialization.idToString(Id.of(instance)))
+                    .map(id -> createQueueItem(entityName, id, IndexingOperation.INDEX))
+                    .collect(Collectors.toList());
+
+            enqueue(queueItems);
+
+            batchLoaded = instances.size();
+            batchOffset += batchLoaded;
+        } while (batchLoaded == batchSize);
     }
 
     protected int processQueue(int batchSize, int maxProcessedPerExecution) {

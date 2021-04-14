@@ -61,12 +61,16 @@ public interface IndexingQueueManager {
     void enqueueIndexCollectionByEntityIds(Collection<Id<?>> entityIds);
 
     /**
-     * Sends all instances of provided entity to queue.
+     * Sends all instances of all index-configured entities to indexing queue.
+     */
+    void enqueueIndexAll();
+
+    /**
+     * Sends all instances of provided entity to indexing queue.
      *
      * @param entityName entity name
-     * @param batchSize  amount of instances enqueued in single batch
      */
-    void enqueueIndexAll(String entityName, int batchSize);
+    void enqueueIndexAll(String entityName);
 
     /**
      * Sends provided entity instance to indexing queue in order to delete it from index.

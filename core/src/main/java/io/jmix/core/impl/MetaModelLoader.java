@@ -721,6 +721,12 @@ public class MetaModelLoader {
             }
         }
 
+        LastModifiedDate lastModifiedDate =
+                annotatedElement.getAnnotation(LastModifiedDate.class);
+        if (lastModifiedDate != null) {
+            metaProperty.getAnnotations().put(lastModifiedDate.annotationType().getName(), lastModifiedDate);
+        }
+
         loadBeanValidationAnnotations(metaProperty, annotatedElement);
     }
 

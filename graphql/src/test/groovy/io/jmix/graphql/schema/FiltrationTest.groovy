@@ -17,7 +17,6 @@
 package io.jmix.graphql.schema
 
 import graphql.language.*
-import graphql.schema.*
 import io.jmix.core.Metadata
 import io.jmix.graphql.AbstractGraphQLTest
 import io.jmix.graphql.schema.scalar.CustomScalars
@@ -46,7 +45,6 @@ class FiltrationTest extends AbstractGraphQLTest {
     private Set<Types.FilterOperation> numbersFilterOPs
     private Set<Types.FilterOperation> dateTimeFilterOPs
     private Set<Types.FilterOperation> booleanFilterOPs
-    private Set<Types.FilterOperation> emptyFilterOPs
 
     @SuppressWarnings('unused')
     void setup() {
@@ -55,13 +53,11 @@ class FiltrationTest extends AbstractGraphQLTest {
         numbersFilterOPs = new HashSet<Types.FilterOperation>(Arrays.asList(EQ, NEQ, GT, GTE, LT, LTE, IN_LIST, NOT_IN_LIST, IS_NULL))
         dateTimeFilterOPs = new HashSet<Types.FilterOperation>(Arrays.asList(EQ, NEQ, IN_LIST, NOT_IN_LIST, GT, GTE, LT, LTE, IS_NULL))
         booleanFilterOPs = new HashSet<Types.FilterOperation>(Arrays.asList(EQ, NEQ, IS_NULL))
-        emptyFilterOPs = new HashSet<Types.FilterOperation>(Arrays.asList(IS_NULL))
     }
 
     @SuppressWarnings('UnnecessaryQualifiedReference')
     def "buildScalarFilterConditionType for GraphQLString"() {
         given:
-        def emptyER = createCondition("inp_voidFilterCondition", emptyFilterOPs)
         def uuidER = createCondition("inp_uUIDFilterCondition", uuidFilterOPs)
         def booleanER = createCondition("inp_booleanFilterCondition", booleanFilterOPs)
 
@@ -83,7 +79,6 @@ class FiltrationTest extends AbstractGraphQLTest {
         def charER = createCondition("inp_charFilterCondition", stringFilterOPs)
 
         when:
-        def emptyAR = filterTypesBuilder.buildScalarFilterConditionType(CustomScalars.GraphQLVoid)
         def uuidAR = filterTypesBuilder.buildScalarFilterConditionType(CustomScalars.GraphQLUUID)
         def booleanAR = filterTypesBuilder.buildScalarFilterConditionType(GraphQLBoolean)
 
@@ -105,7 +100,6 @@ class FiltrationTest extends AbstractGraphQLTest {
         def charAR = filterTypesBuilder.buildScalarFilterConditionType(GraphQLChar)
 
         then:
-        emptyAR.isEqualTo(emptyER)
         uuidAR.isEqualTo(uuidER)
         booleanAR.isEqualTo(booleanER)
 
@@ -132,7 +126,6 @@ class FiltrationTest extends AbstractGraphQLTest {
         given:
 
         when:
-        def voidActual = filterManager.availableOperations(CustomScalars.GraphQLVoid)
         def uuidActual = filterManager.availableOperations(CustomScalars.GraphQLUUID)
         def booleanActual = filterManager.availableOperations(GraphQLBoolean)
 
@@ -154,7 +147,6 @@ class FiltrationTest extends AbstractGraphQLTest {
         def charActual = filterManager.availableOperations(GraphQLChar)
 
         then:
-        voidActual == emptyFilterOPs
         uuidActual == uuidFilterOPs
         booleanActual == booleanFilterOPs
         bigDecimalActual == numbersFilterOPs
@@ -172,28 +164,9 @@ class FiltrationTest extends AbstractGraphQLTest {
 
     def "doesn't support operation"() {
         given:
-        def unsupportedScalar = new GraphQLScalarType(
-                "unknownName",
-                "unknown description",
-                new Coercing() {
-                    @Override
-                    Object serialize(Object dataFetcherResult) throws CoercingSerializeException {
-                        return null
-                    }
-
-                    @Override
-                    Object parseValue(Object input) throws CoercingParseValueException {
-                        return null
-                    }
-
-                    @Override
-                    Object parseLiteral(Object input) throws CoercingParseLiteralException {
-                        return null
-                    }
-                })
 
         when:
-        filterManager.availableOperations(unsupportedScalar)
+        filterManager.availableOperations(CustomScalars.GraphQLVoid)
 
         then:
         thrown UnsupportedOperationException

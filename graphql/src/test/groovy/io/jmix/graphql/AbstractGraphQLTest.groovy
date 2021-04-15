@@ -49,7 +49,8 @@ import test_support.TestContextInitializer
                 GraphQLTestAutoConfiguration.class,
                 JacksonAutoConfiguration.class
         ]
-)@TestPropertySource("classpath:/test_support/test-app.properties")
+)
+@TestPropertySource("classpath:/test_support/test-app.properties")
 class AbstractGraphQLTest extends Specification {
 
     protected TransactionTemplate transaction

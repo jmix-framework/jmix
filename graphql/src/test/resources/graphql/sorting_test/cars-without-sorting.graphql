@@ -1,0 +1,6 @@
+{
+  scr_CarList(limit: 50){
+    id
+    lastModifiedDate
+  }
+}

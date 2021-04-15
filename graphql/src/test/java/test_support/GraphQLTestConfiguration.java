@@ -29,9 +29,11 @@ import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.*;
+import org.springframework.core.io.Resource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
+import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -39,6 +41,10 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.LinkedList;
+import java.util.List;
 
 @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 @Configuration
@@ -68,6 +74,7 @@ public class GraphQLTestConfiguration {
                                                                 JmixModules jmixModules,
                                                                 JpaVendorAdapter jpaVendorAdapter,
                                                                 Resources resources) {
+        initializeData(dataSource, resources);
         return new JmixEntityManagerFactoryBean(Stores.MAIN, dataSource, jpaVendorAdapter, dbmsSpecifics, jmixModules, resources);
     }
 
@@ -94,4 +101,20 @@ public class GraphQLTestConfiguration {
         return new ConcurrentMapCacheManager();
     }
 
+    private void initializeData(DataSource dataSource, Resources resources) {
+        List<Resource> scripts = new LinkedList<Resource>() {
+            {
+                add(resources.getResource("classpath:scripts/tables.sql"));
+                add(resources.getResource("classpath:scripts/data.sql"));
+                add(resources.getResource("classpath:scripts/test-entities-data.sql"));
+                add(resources.getResource("classpath:scripts/security.sql"));
+            }
+        };
+        try {
+            Connection connection = dataSource.getConnection();
+            scripts.forEach(script -> ScriptUtils.executeSqlScript(connection, script));
+        } catch (SQLException e) {
+            e.getErrorCode();
+        }
+    }
 }

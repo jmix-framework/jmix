@@ -39,6 +39,8 @@ public class EntityQueryDataFetcher {
     protected AccessManager accessManager;
     @Autowired
     protected EnvironmentUtils environmentUtils;
+    @Autowired
+    protected MetadataTools metadataTools;
 
     public DataFetcher<?> loadEntity(MetaClass metaClass) {
         return environment -> {
@@ -59,6 +61,7 @@ public class EntityQueryDataFetcher {
             return responseBuilder.buildResponse((Entity) entity, fetchPlan, metaClass, environmentUtils.getDotDelimitedProps(environment));
         };
     }
+
     public DataFetcher<List<Map<String, Object>>> loadEntities(MetaClass metaClass) {
         return environment -> {
 
@@ -104,6 +107,13 @@ public class EntityQueryDataFetcher {
                 Types.SortOrder sortOrder = orderByPathAndOrder.getValue();
                 query.setSort(Sort.by(
                         sortOrder == Types.SortOrder.ASC ? Sort.Order.asc(path) : Sort.Order.desc(path)));
+            } else {
+                String lastModifiedDateProperty = metadataTools.findLastModifiedDateProperty(metaClass.getJavaClass());
+
+                if (lastModifiedDateProperty != null) {
+                    query.setSort(
+                            Sort.by(Sort.Order.desc(lastModifiedDateProperty)));
+                }
             }
 
             LoadContext<Object> ctx = new LoadContext<>(metaClass);
@@ -124,11 +134,12 @@ public class EntityQueryDataFetcher {
     /**
      * Convert graphql orderBy object to jmix format.
      *
-     * @param path - parent property path
+     * @param path    - parent property path
      * @param orderBy - graphql orderBy object
      * @return pair that contains propertyPath as key ans SortOrder as value
      */
-    @Nullable protected Pair<String, Types.SortOrder> buildOrderBy(String path, @Nullable Object orderBy) {
+    @Nullable
+    protected Pair<String, Types.SortOrder> buildOrderBy(String path, @Nullable Object orderBy) {
         if (orderBy == null || !Map.class.isAssignableFrom(orderBy.getClass())) {
             return null;
         }

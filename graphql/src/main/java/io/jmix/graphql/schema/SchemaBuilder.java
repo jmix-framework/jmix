@@ -135,9 +135,11 @@ public class SchemaBuilder {
 
         // scalar filter conditions
         Map<String, InputObjectTypeDefinition> scalarFilterConditionTypesMap = Arrays.stream(Types.scalars)
-                    // todo byte type not supported now
-                    .filter(type -> !type.getName().equals(Scalars.GraphQLByte.getName()))
-                    .collect(Collectors.toMap(GraphQLScalarType::getName, type -> filterTypesBuilder.buildScalarFilterConditionType(type)));
+                // todo byte type not supported now
+                //GraphQLVoid excluded because no need to filter such scalar type
+                .filter(type -> !type.getName().equals(Scalars.GraphQLByte.getName())
+                        && !type.getName().equals(CustomScalars.GraphQLVoid.getName()))
+                .collect(Collectors.toMap(GraphQLScalarType::getName, type -> filterTypesBuilder.buildScalarFilterConditionType(type)));
         scalarFilterConditionTypesMap.values().forEach(typeDefinitionRegistry::add);
 
         // order by
@@ -300,8 +302,8 @@ public class SchemaBuilder {
     /**
      * Shortcut for query argument builder
      *
-     * @param name argument name
-     * @param type argument type
+     * @param name        argument name
+     * @param type        argument type
      * @param description argument description
      * @return argument
      */
@@ -315,8 +317,8 @@ public class SchemaBuilder {
     /**
      * Shortcut for query argument builder (list type argument)
      *
-     * @param name argument name
-     * @param type argument type
+     * @param name        argument name
+     * @param type        argument type
      * @param description argument description
      * @return argument
      */

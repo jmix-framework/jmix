@@ -28,7 +28,7 @@ import io.jmix.dashboards.model.Widget;
 import io.jmix.dashboards.model.visualmodel.*;
 import io.jmix.dashboardsui.DashboardException;
 import io.jmix.dashboardsui.dashboard.assistant.DashboardViewAssistant;
-import io.jmix.dashboardsui.dashboard.converter.JsonConverter;
+import io.jmix.dashboards.converter.JsonConverter;
 import io.jmix.dashboardsui.dashboard.event.DashboardRefreshEvent;
 import io.jmix.dashboardsui.dashboard.event.WidgetAddedEvent;
 import io.jmix.dashboardsui.dashboard.event.WidgetMovedEvent;

@@ -20,7 +20,7 @@ import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import io.jmix.dashboards.entity.WidgetTemplate;
 import io.jmix.dashboards.model.Widget;
-import io.jmix.dashboardsui.dashboard.converter.JsonConverter;
+import io.jmix.dashboards.converter.JsonConverter;
 import io.jmix.dashboardsui.dashboard.tools.AccessConstraintsHelper;
 import io.jmix.dashboardsui.dashboard.tools.WidgetUtils;
 import io.jmix.dashboardsui.repository.WidgetRepository;

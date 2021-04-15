@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.dashboardsui.dashboard.converter;
+package io.jmix.dashboards.converter;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

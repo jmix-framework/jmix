@@ -68,7 +68,7 @@
             <column name="NAME" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="REFERENCE_NAME" type="varchar(255)">
+            <column name="CODE" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
             <column name="GROUP_ID" type="${uuid.type}">
@@ -77,8 +77,8 @@
             <column name="IS_AVAILABLE_FOR_ALL_USERS" type="boolean"/>
         </createTable>
 
-        <createIndex tableName="DSHBRD_PERSISTENT_DASHBOARD" indexName="IDX_PERS_DASHBOARD_UK_REFNAME" unique="true">
-            <column name="REFERENCE_NAME"/>
+        <createIndex tableName="DSHBRD_PERSISTENT_DASHBOARD" indexName="IDX_PERS_DASHBOARD_UK_CODE" unique="true">
+            <column name="CODE"/>
             <column name="DELETE_TS"/>
         </createIndex>
 

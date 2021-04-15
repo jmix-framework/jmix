@@ -14,7 +14,21 @@
  * limitations under the License.
  */
 
-@NonNullApi
-package io.jmix.dashboardsui.dashboard.converter;
+package io.jmix.dashboards.converter;
 
-import org.springframework.lang.NonNullApi;
+import com.google.gson.ExclusionStrategy;
+import com.google.gson.FieldAttributes;
+import io.jmix.dashboards.model.json.Exclude;
+
+public class AnnotationExclusionStrategy implements ExclusionStrategy {
+
+    @Override
+    public boolean shouldSkipField(FieldAttributes f) {
+        return f.getAnnotation(Exclude.class) != null;
+    }
+
+    @Override
+    public boolean shouldSkipClass(Class<?> clazz) {
+        return false;
+    }
+}

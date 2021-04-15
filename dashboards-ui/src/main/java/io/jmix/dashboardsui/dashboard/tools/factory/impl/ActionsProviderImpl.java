@@ -22,7 +22,7 @@ import io.jmix.dashboards.model.visualmodel.WidgetLayout;
 import io.jmix.dashboardsui.DashboardIcon;
 import io.jmix.dashboardsui.dashboard.event.CreateWidgetTemplateEvent;
 import io.jmix.dashboardsui.dashboard.event.model.*;
-import io.jmix.dashboardsui.dashboard.tools.factory.ActionProviderFactory;
+import io.jmix.dashboardsui.dashboard.tools.factory.ActionsProvider;
 import io.jmix.ui.UiEventPublisher;
 import io.jmix.ui.action.AbstractAction;
 import io.jmix.ui.action.Action;
@@ -35,8 +35,8 @@ import java.util.List;
 import static io.jmix.dashboards.utils.DashboardLayoutUtils.*;
 import static io.jmix.ui.icon.JmixIcon.*;
 
-@Component("dshbrd_ActionProviderFactory")
-public class ActionProviderFactoryImpl implements ActionProviderFactory {
+@Component("dshbrd_ActionsProvider")
+public class ActionsProviderImpl implements ActionsProvider {
 
     @Autowired
     protected UiEventPublisher uiEventPublisher;

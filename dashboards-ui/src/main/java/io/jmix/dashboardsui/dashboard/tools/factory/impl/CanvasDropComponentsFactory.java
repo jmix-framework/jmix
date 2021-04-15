@@ -31,7 +31,7 @@ import io.jmix.dashboardsui.dashboard.event.WidgetAddedEvent;
 import io.jmix.dashboardsui.dashboard.event.WidgetDropLocation;
 import io.jmix.dashboardsui.dashboard.event.WidgetMovedEvent;
 import io.jmix.dashboardsui.dashboard.event.WidgetSelectedEvent;
-import io.jmix.dashboardsui.dashboard.tools.factory.ActionProviderFactory;
+import io.jmix.dashboardsui.dashboard.tools.factory.ActionsProvider;
 import io.jmix.dashboardsui.screen.dashboard.editor.canvas.CanvasFragment;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.UiEventPublisher;
@@ -66,7 +66,7 @@ public class CanvasDropComponentsFactory extends CanvasUiComponentsFactory {
     protected Metadata metadata;
 
     @Autowired
-    protected ActionProviderFactory actionProviderFactory;
+    protected ActionsProvider actionsProvider;
 
     @Override
     public CanvasVerticalLayout createCanvasVerticalLayout(VerticalLayout verticalLayout) {
@@ -144,7 +144,7 @@ public class CanvasDropComponentsFactory extends CanvasUiComponentsFactory {
         HBoxLayout buttonsPanel = canvasLayout.createButtonsPanel();
         buttonsPanel.addStyleName(DashboardStyleConstants.DASHBOARD_LAYOUT_CONTROLS);
 
-        List<Action> actions = actionProviderFactory.getLayoutActions(layout);
+        List<Action> actions = actionsProvider.getLayoutActions(layout);
         for (Action action : actions) {
             Button button = createButton(action);
             buttonsPanel.add(button);

@@ -26,7 +26,7 @@ import io.jmix.dashboards.model.visualmodel.*;
 import io.jmix.dashboardsui.DashboardIcon;
 import io.jmix.dashboardsui.DashboardStyleConstants;
 import io.jmix.dashboardsui.component.impl.PaletteButton;
-import io.jmix.dashboardsui.dashboard.converter.JsonConverter;
+import io.jmix.dashboards.converter.JsonConverter;
 import io.jmix.dashboardsui.dashboard.tools.WidgetUtils;
 import io.jmix.dashboardsui.dashboard.tools.factory.PaletteComponentsFactory;
 import io.jmix.dashboardsui.repository.WidgetRepository;

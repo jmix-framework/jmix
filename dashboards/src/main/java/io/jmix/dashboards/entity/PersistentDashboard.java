@@ -89,7 +89,7 @@ public class PersistentDashboard {
     protected String name;
 
     @NotNull
-    @Column(name = "REFERENCE_NAME", nullable = false, unique = true)
+    @Column(name = "CODE", nullable = false, unique = true)
     protected String code;
 
     @ManyToOne(fetch = FetchType.LAZY)

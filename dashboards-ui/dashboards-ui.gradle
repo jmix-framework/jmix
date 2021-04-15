@@ -27,8 +27,6 @@ dependencies {
 
     api 'io.jmix.ui:jmix-ui'
 
-    implementation 'com.google.code.gson:gson'
-
     compileOnly 'io.jmix.security:jmix-security-ui'
 }
 

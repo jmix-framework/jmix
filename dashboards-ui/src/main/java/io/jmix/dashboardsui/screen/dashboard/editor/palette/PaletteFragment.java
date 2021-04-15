@@ -31,9 +31,9 @@ import io.jmix.dashboards.model.visualmodel.DashboardLayout;
 import io.jmix.dashboards.model.visualmodel.RootLayout;
 import io.jmix.dashboardsui.DashboardStyleConstants;
 import io.jmix.dashboardsui.component.impl.PaletteButton;
-import io.jmix.dashboardsui.dashboard.converter.JsonConverter;
+import io.jmix.dashboards.converter.JsonConverter;
 import io.jmix.dashboardsui.dashboard.event.*;
-import io.jmix.dashboardsui.dashboard.tools.factory.ActionProviderFactory;
+import io.jmix.dashboardsui.dashboard.tools.factory.ActionsProvider;
 import io.jmix.dashboardsui.dashboard.tools.factory.PaletteComponentsFactory;
 import io.jmix.dashboardsui.repository.WidgetRepository;
 import io.jmix.dashboardsui.screen.dashboard.editor.DashboardLayoutsTree;
@@ -93,7 +93,7 @@ public class PaletteFragment extends ScreenFragment implements DashboardLayoutHo
     @WindowParam
     protected DashboardModel dashboardModel;
     @Autowired
-    protected ActionProviderFactory actionProviderFactory;
+    protected ActionsProvider actionsProvider;
     @Autowired
     protected ScreenBuilders screenBuilders;
 
@@ -198,7 +198,7 @@ public class PaletteFragment extends ScreenFragment implements DashboardLayoutHo
 
     private void createActions(Tree<DashboardLayout> widgetTree, DashboardLayout layout) {
         widgetTree.removeAllActions();
-        List<Action> actions = actionProviderFactory.getLayoutActions(layout);
+        List<Action> actions = actionsProvider.getLayoutActions(layout);
         for (Action action : actions) {
             widgetTree.addAction(action);
         }

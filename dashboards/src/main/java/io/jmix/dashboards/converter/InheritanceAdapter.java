@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package io.jmix.dashboardsui.dashboard.converter;
+package io.jmix.dashboards.converter;
 
 import com.google.gson.*;
 
 import java.lang.reflect.Type;
 
 /**
- * Supports json serialization/deserialization for inherited classes
+ * Supports JSON serialization/deserialization for inherited classes
  */
 public class InheritanceAdapter implements JsonSerializer, JsonDeserializer {
 

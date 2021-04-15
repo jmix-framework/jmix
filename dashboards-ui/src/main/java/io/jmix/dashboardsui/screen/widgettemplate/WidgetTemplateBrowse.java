@@ -18,7 +18,7 @@ package io.jmix.dashboardsui.screen.widgettemplate;
 
 import io.jmix.core.Metadata;
 import io.jmix.dashboards.entity.WidgetTemplate;
-import io.jmix.dashboardsui.dashboard.converter.JsonConverter;
+import io.jmix.dashboards.converter.JsonConverter;
 import io.jmix.dashboardsui.dashboard.tools.AccessConstraintsHelper;
 import io.jmix.dashboardsui.screen.widgettemplategroup.WidgetTemplateGroupBrowse;
 import io.jmix.ui.Screens;

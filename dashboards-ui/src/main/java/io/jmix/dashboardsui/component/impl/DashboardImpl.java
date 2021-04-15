@@ -28,7 +28,7 @@ import io.jmix.dashboardsui.DashboardException;
 import io.jmix.dashboardsui.component.CanvasLayout;
 import io.jmix.dashboardsui.component.Dashboard;
 import io.jmix.dashboardsui.dashboard.assistant.DashboardViewAssistant;
-import io.jmix.dashboardsui.dashboard.converter.JsonConverter;
+import io.jmix.dashboards.converter.JsonConverter;
 import io.jmix.dashboardsui.dashboard.tools.AccessConstraintsHelper;
 import io.jmix.dashboardsui.event.DashboardEvent;
 import io.jmix.dashboardsui.event.DashboardUpdatedEvent;

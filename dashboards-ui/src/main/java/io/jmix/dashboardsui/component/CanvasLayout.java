@@ -17,7 +17,7 @@
 package io.jmix.dashboardsui.component;
 
 import io.jmix.dashboards.model.visualmodel.DashboardLayout;
-import io.jmix.dashboardsui.dashboard.tools.factory.ActionProviderFactory;
+import io.jmix.dashboardsui.dashboard.tools.factory.ActionsProvider;
 import io.jmix.ui.component.*;
 
 import java.util.Collection;
@@ -50,7 +50,7 @@ public interface CanvasLayout extends Component, ComponentContainer, LayoutClick
     /**
      * Creates an empty panel for dashboard layout actions.
      *
-     * @see ActionProviderFactory#getLayoutActions(DashboardLayout)
+     * @see ActionsProvider#getLayoutActions(DashboardLayout)
      *
      * @return empty buttons panel
      */

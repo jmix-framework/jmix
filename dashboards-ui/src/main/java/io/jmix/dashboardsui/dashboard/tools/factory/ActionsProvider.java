@@ -37,7 +37,7 @@ import java.util.List;
  * </ul>
  *
  */
-public interface ActionProviderFactory {
+public interface ActionsProvider {
 
     /**
      * Provides the actions for specified layout.

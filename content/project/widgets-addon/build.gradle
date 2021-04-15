@@ -33,6 +33,7 @@ jar {
     with copySpec {
         from sourceSets.main.allJava
         include "${project_rootPath}/**"
+        duplicatesStrategy = DuplicatesStrategy.WARN
     }
     // register exported widgetset
     manifest {

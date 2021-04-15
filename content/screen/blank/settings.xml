@@ -28,12 +28,6 @@
         </message>
     </locMessages>
 
-    <property caption="Entity"
-              code="entity"
-              propertyType="ENTITY"
-              required="false"
-              visible="false"/>
-
     <property caption="Descriptor name"
               code="descriptorName"
               defaultValue="new-screen"

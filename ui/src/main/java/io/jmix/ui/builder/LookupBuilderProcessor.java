@@ -71,7 +71,7 @@ public class LookupBuilderProcessor {
     protected FetchPlans fetchPlans;
 
     @SuppressWarnings("unchecked")
-    public <E> Screen buildLookup(LookupBuilder<E> builder) {
+    public <E, S extends Screen> S buildLookup(LookupBuilder<E> builder) {
         FrameOwner origin = builder.getOrigin();
         Screens screens = getScreenContext(origin).getScreens();
 
@@ -136,20 +136,20 @@ public class LookupBuilderProcessor {
         }
 
         if (builder instanceof LookupClassBuilder) {
-            List<Consumer<Screen.AfterShowEvent>> afterShowListeners =
+            List<Consumer<Screen.AfterShowEvent<S>>> afterShowListeners =
                     ((LookupClassBuilder) builder).getAfterShowListeners();
-            for (Consumer<Screen.AfterShowEvent> afterShowListener : afterShowListeners) {
+            for (Consumer<Screen.AfterShowEvent<S>> afterShowListener : afterShowListeners) {
                 screen.addAfterShowListener(afterShowListener);
             }
 
-            List<Consumer<Screen.AfterCloseEvent>> afterCloseListeners =
+            List<Consumer<Screen.AfterCloseEvent<S>>> afterCloseListeners =
                     ((LookupClassBuilder) builder).getAfterCloseListeners();
-            for (Consumer<Screen.AfterCloseEvent> afterCloseListener : afterCloseListeners) {
+            for (Consumer<Screen.AfterCloseEvent<S>> afterCloseListener : afterCloseListeners) {
                 screen.addAfterCloseListener(afterCloseListener);
             }
         }
 
-        return screen;
+        return (S) screen;
     }
 
     protected <E> Screen createScreen(LookupBuilder<E> builder, Screens screens) {

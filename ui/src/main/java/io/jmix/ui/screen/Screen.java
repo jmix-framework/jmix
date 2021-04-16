@@ -239,8 +239,8 @@ public abstract class Screen implements FrameOwner {
      * @param listener listener
      * @return subscription
      */
-    public Subscription addAfterShowListener(Consumer<AfterShowEvent> listener) {
-        return eventHub.subscribe(AfterShowEvent.class, listener);
+    public <S extends Screen> Subscription addAfterShowListener(Consumer<AfterShowEvent<S>> listener) {
+        return eventHub.subscribe(AfterShowEvent.class, (Consumer) listener);
     }
 
     /**
@@ -257,8 +257,8 @@ public abstract class Screen implements FrameOwner {
      * @param listener listener
      * @return subscription
      */
-    public Subscription addAfterCloseListener(Consumer<AfterCloseEvent> listener) {
-        return eventHub.subscribe(AfterCloseEvent.class, listener);
+    public <S extends Screen> Subscription addAfterCloseListener(Consumer<AfterCloseEvent<S>> listener) {
+        return eventHub.subscribe(AfterCloseEvent.class, (Consumer) listener);
     }
 
     /**
@@ -491,17 +491,19 @@ public abstract class Screen implements FrameOwner {
      *     }
      * </pre>
      *
+     * @param <S> type of screen
      * @see #addAfterShowListener(Consumer)
      */
     @TriggerOnce
-    public static class AfterShowEvent extends EventObject {
-        public AfterShowEvent(Screen source) {
+    public static class AfterShowEvent<S extends Screen> extends EventObject {
+        public AfterShowEvent(S source) {
             super(source);
         }
 
         @Override
-        public Screen getSource() {
-            return (Screen) super.getSource();
+        public S getSource() {
+            //noinspection unchecked
+            return (S) super.getSource();
         }
     }
 
@@ -603,25 +605,27 @@ public abstract class Screen implements FrameOwner {
      *     }
      * </pre>
      *
+     * @param <S> type of screen
      * @see #addAfterCloseListener(Consumer)
      */
     @TriggerOnce
-    public static class AfterCloseEvent extends EventObject {
+    public static class AfterCloseEvent<S extends Screen> extends EventObject {
 
         protected final CloseAction closeAction;
 
-        public AfterCloseEvent(Screen source, CloseAction closeAction) {
+        public AfterCloseEvent(S source, CloseAction closeAction) {
             super(source);
             this.closeAction = closeAction;
         }
 
         @Override
-        public Screen getSource() {
-            return (Screen) super.getSource();
+        public S getSource() {
+            //noinspection unchecked
+            return (S) super.getSource();
         }
 
-        public Screen getScreen() {
-            return (Screen) super.getSource();
+        public S getScreen() {
+            return getSource();
         }
 
         /**

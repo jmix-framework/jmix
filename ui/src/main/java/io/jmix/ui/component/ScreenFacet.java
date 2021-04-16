@@ -161,7 +161,7 @@ public interface ScreenFacet<S extends Screen> extends Facet, ApplicationContext
      * @param listener listener
      * @return after show event subscription
      */
-    Subscription addAfterShowEventListener(Consumer<Screen.AfterShowEvent> listener);
+    Subscription addAfterShowEventListener(Consumer<Screen.AfterShowEvent<S>> listener);
 
     /**
      * Adds the given {@code Consumer} as screen after close event listener.
@@ -169,5 +169,5 @@ public interface ScreenFacet<S extends Screen> extends Facet, ApplicationContext
      * @param listener listener
      * @return after close event subscription
      */
-    Subscription addAfterCloseEventListener(Consumer<Screen.AfterCloseEvent> listener);
+    Subscription addAfterCloseEventListener(Consumer<Screen.AfterCloseEvent<S>> listener);
 }

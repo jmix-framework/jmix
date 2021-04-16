@@ -32,7 +32,7 @@ import static io.jmix.ui.screen.UiControllerUtils.getScreenContext;
 public class ScreenBuilderProcessor {
 
     @SuppressWarnings("unchecked")
-    public Screen buildScreen(ScreenBuilder builder) {
+    public <S extends Screen> S buildScreen(ScreenBuilder builder) {
         FrameOwner origin = builder.getOrigin();
         Screens screens = getScreenContext(origin).getScreens();
 
@@ -48,13 +48,13 @@ public class ScreenBuilderProcessor {
 
             screen = screens.create(screenClass, builder.getOpenMode(), builder.getOptions());
 
-            List<Consumer<Screen.AfterShowEvent>> afterShowListeners = screenClassBuilder.getAfterShowListeners();
-            for (Consumer<Screen.AfterShowEvent> afterShowListener : afterShowListeners) {
+            List<Consumer<Screen.AfterShowEvent<S>>> afterShowListeners = screenClassBuilder.getAfterShowListeners();
+            for (Consumer<Screen.AfterShowEvent<S>> afterShowListener : afterShowListeners) {
                 screen.addAfterShowListener(afterShowListener);
             }
 
-            List<Consumer<Screen.AfterCloseEvent>> afterCloseListeners = screenClassBuilder.getAfterCloseListeners();
-            for (Consumer<Screen.AfterCloseEvent> afterCloseListener : afterCloseListeners) {
+            List<Consumer<Screen.AfterCloseEvent<S>>> afterCloseListeners = screenClassBuilder.getAfterCloseListeners();
+            for (Consumer<Screen.AfterCloseEvent<S>> afterCloseListener : afterCloseListeners) {
                 screen.addAfterCloseListener(afterCloseListener);
             }
         } else {
@@ -65,6 +65,6 @@ public class ScreenBuilderProcessor {
             screen = screens.create(builder.getScreenId(), builder.getOpenMode(), builder.getOptions());
         }
 
-        return screen;
+        return (S) screen;
     }
 }

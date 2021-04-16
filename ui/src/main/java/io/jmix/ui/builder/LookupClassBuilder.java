@@ -38,8 +38,8 @@ import java.util.function.Predicate;
 public class LookupClassBuilder<E, S extends Screen & LookupScreen<E>> extends LookupBuilder<E> {
 
     protected Class<S> screenClass;
-    protected List<Consumer<Screen.AfterCloseEvent>> afterCloseListeners = new ArrayList<>();
-    protected List<Consumer<Screen.AfterShowEvent>> afterShowListeners = new ArrayList<>();
+    protected List<Consumer<Screen.AfterCloseEvent<S>>> afterCloseListeners = new ArrayList<>();
+    protected List<Consumer<Screen.AfterShowEvent<S>>> afterShowListeners = new ArrayList<>();
 
     public LookupClassBuilder(LookupBuilder<E> builder, Class<S> screenClass) {
         super(builder);
@@ -105,7 +105,7 @@ public class LookupClassBuilder<E, S extends Screen & LookupScreen<E>> extends L
      *
      * @param listener listener
      */
-    public LookupClassBuilder<E, S> withAfterShowListener(Consumer<Screen.AfterShowEvent> listener) {
+    public LookupClassBuilder<E, S> withAfterShowListener(Consumer<Screen.AfterShowEvent<S>> listener) {
         afterShowListeners.add(listener);
         return this;
     }
@@ -115,7 +115,7 @@ public class LookupClassBuilder<E, S extends Screen & LookupScreen<E>> extends L
      *
      * @param listener listener
      */
-    public LookupClassBuilder<E, S> withAfterCloseListener(Consumer<Screen.AfterCloseEvent> listener) {
+    public LookupClassBuilder<E, S> withAfterCloseListener(Consumer<Screen.AfterCloseEvent<S>> listener) {
         afterCloseListeners.add(listener);
         return this;
     }
@@ -137,14 +137,14 @@ public class LookupClassBuilder<E, S extends Screen & LookupScreen<E>> extends L
     /**
      * @return after show screen listeners
      */
-    public List<Consumer<Screen.AfterShowEvent>> getAfterShowListeners() {
+    public List<Consumer<Screen.AfterShowEvent<S>>> getAfterShowListeners() {
         return afterShowListeners;
     }
 
     /**
      * @return after close screen listeners
      */
-    public List<Consumer<Screen.AfterCloseEvent>> getAfterCloseListeners() {
+    public List<Consumer<Screen.AfterCloseEvent<S>>> getAfterCloseListeners() {
         return afterCloseListeners;
     }
 

@@ -58,12 +58,12 @@ public class ScreenFacetTestScreen extends Screen {
     public boolean afterCloseListenerTriggered = false;
 
     @Subscribe("screenIdFacet")
-    public void onScreenAfterShow(Screen.AfterShowEvent event) {
+    public void onScreenAfterShow(Screen.AfterShowEvent<ScreenFacetTestScreen> event) {
         afterShowListenerTriggered = true;
     }
 
     @Subscribe("screenIdFacet")
-    public void onScreenAfterClose(Screen.AfterCloseEvent event) {
+    public void onScreenAfterClose(Screen.AfterCloseEvent<ScreenFacetTestScreen> event) {
         afterCloseListenerTriggered = true;
     }
 }

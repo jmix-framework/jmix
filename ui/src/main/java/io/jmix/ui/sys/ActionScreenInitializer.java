@@ -165,7 +165,7 @@ public class ActionScreenInitializer {
 
     public void initScreen(Screen screen) {
         if (afterCloseHandler != null) {
-            screen.addAfterCloseListener(afterCloseHandler);
+            screen.addAfterCloseListener((Consumer) afterCloseHandler);
         }
 
         if (screenConfigurer != null) {

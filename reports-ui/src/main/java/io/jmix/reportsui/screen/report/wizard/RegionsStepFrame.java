@@ -113,7 +113,7 @@ public class RegionsStepFrame extends StepFrame {
                                     .withOptions(new MapScreenOptions(editorParams))
                                     .build();
 
-                            regionEditor.addAfterCloseListener(new RegionEditorCloseListener());
+                            regionEditor.addAfterCloseListener((Consumer) new RegionEditorCloseListener());
                             regionEditor.show();
                         }
                     })
@@ -138,7 +138,7 @@ public class RegionsStepFrame extends StepFrame {
                     .withOptions(new MapScreenOptions(editorParams))
                     .build();
 
-            regionEditor.addAfterCloseListener(new RegionEditorCloseListener());
+            regionEditor.addAfterCloseListener((Consumer) new RegionEditorCloseListener());
             regionEditor.show();
         }
 
@@ -330,7 +330,7 @@ public class RegionsStepFrame extends StepFrame {
                         .withOpenMode(OpenMode.DIALOG)
                         .withOptions(new MapScreenOptions(editorParams))
                         .build();
-                regionEditor.addAfterCloseListener(new RegionEditorCloseListener());
+                regionEditor.addAfterCloseListener((Consumer) new RegionEditorCloseListener());
                 regionEditor.show();
             }
         }

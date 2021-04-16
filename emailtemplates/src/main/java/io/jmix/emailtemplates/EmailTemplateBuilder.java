@@ -117,7 +117,7 @@ public interface EmailTemplateBuilder {
      * That terminal method fills 'attachedTemplateReports' property of email template {@link EmailTemplate}
      * by collection of {@link TemplateReport} for each reports.
      *
-     * @param reports {@link Collection<Report>}
+     * @param reports collection of {@link Report}
      * @return {@link EmailTemplateBuilder}
      */
     EmailTemplateBuilder setAttachmentReports(Collection<Report> reports);
@@ -131,7 +131,7 @@ public interface EmailTemplateBuilder {
     /**
      * That terminal method fills 'attachedFiles' property of email template {@link EmailTemplate}.
      *
-     * @param files {@link List<EmailTemplateAttachment>}
+     * @param files list of {@link EmailTemplateAttachment}
      * @return {@link EmailTemplateBuilder}
      */
     EmailTemplateBuilder setAttachmentFiles(List<EmailTemplateAttachment> files);
@@ -142,7 +142,7 @@ public interface EmailTemplateBuilder {
      *
      * @param key {@link String} is alias property of {@link ParameterValue}
      * @param value {@link Object} will be converted to defaultValue property of {@link ParameterValue}
-     * @return {@link EmailTemplateBuilder
+     * @return {@link EmailTemplateBuilder}
      */
     EmailTemplateBuilder setBodyParameter(String key, Object value);
     /**
@@ -158,6 +158,7 @@ public interface EmailTemplateBuilder {
      * That terminal method fills 'attachedTemplateReports' property of email template {@link EmailTemplate}.
      * Method removes all {@link TemplateReport} with same report if they exist.
      *
+     * @param report report
      * @param key {@link String} is alias property of {@link ParameterValue}
      * @param value {@link Object} will be converted to defaultValue property of {@link ParameterValue}
      * @return {@link EmailTemplateBuilder}
@@ -184,7 +185,7 @@ public interface EmailTemplateBuilder {
      * That terminal method fills 'attachedTemplateReports' property of email template {@link EmailTemplate}.
      * Method removes all {@link TemplateReport} with same report if they exist.
      *
-     * @param reportsWithParams {@link Collection<ReportWithParams>}
+     * @param reportsWithParams collection of {@link ReportWithParams}
      * @return {@link EmailTemplateBuilder}
      */
     EmailTemplateBuilder setAttachmentParameters(Collection<ReportWithParams> reportsWithParams);
@@ -208,6 +209,7 @@ public interface EmailTemplateBuilder {
      *
      * @throws ReportParameterTypeChangedException If parameter type of inputParameter does not equal to type saved in parameterValue.
      * @throws TemplateNotFoundException If emailTemplate does not contain reports or null.
+     * @throws EmailException if an error occurs during email sending
      */
     void sendEmail() throws TemplateNotFoundException, ReportParameterTypeChangedException, EmailException;
     /**
@@ -216,6 +218,7 @@ public interface EmailTemplateBuilder {
      * @param async Provides choice of selecting asynchronous option.
      * @throws ReportParameterTypeChangedException If parameter type of inputParameter does not equal to type saved in parameterValue.
      * @throws TemplateNotFoundException If emailTemplate does not contain reports or null.
+     * @throws EmailException if an error occurs during email sending
      */
     void sendEmail(boolean async) throws TemplateNotFoundException, ReportParameterTypeChangedException, EmailException;
     /**

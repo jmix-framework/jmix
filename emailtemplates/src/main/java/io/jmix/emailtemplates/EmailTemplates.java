@@ -44,7 +44,8 @@ public interface EmailTemplates {
      * @param emailTemplate {@link EmailTemplate} entity containing body and attachments reports
      * @param params        map containing parameters for all included reports
      * @return {@link EmailInfo} from Jmix emailer
-     * @throws TemplateNotFoundException If emailTemplate do not contain reports or null
+     * @throws TemplateNotFoundException If emailTemplate does not contain reports or null
+     * @throws ReportParameterTypeChangedException If parameter type of inputParameter does not equal to type saved in parameterValue.
      */
     EmailInfo generateEmail(EmailTemplate emailTemplate, Map<String, Object> params)
             throws TemplateNotFoundException, ReportParameterTypeChangedException;
@@ -57,6 +58,7 @@ public interface EmailTemplates {
      * @param params        {@link ReportWithParams} wrapper containing report and its parameters
      * @return {@link EmailInfo} from Jmix emailer
      * @throws TemplateNotFoundException If emailTemplate does not contain reports or null
+     * @throws ReportParameterTypeChangedException If parameter type of inputParameter does not equal to type saved in parameterValue.
      */
     EmailInfo generateEmail(EmailTemplate emailTemplate, Collection<ReportWithParams> params)
             throws TemplateNotFoundException, ReportParameterTypeChangedException;
@@ -68,6 +70,7 @@ public interface EmailTemplates {
      * @param params            map containing parameters for all included reports
      * @return {@link EmailInfo} from Jmix emailer
      * @throws TemplateNotFoundException If emailTemplate does not contain reports or null
+     * @throws ReportParameterTypeChangedException If parameter type of inputParameter does not equal to type saved in parameterValue.
      */
     EmailInfo generateEmail(String emailTemplateCode, Map<String, Object> params)
             throws TemplateNotFoundException, ReportParameterTypeChangedException;
@@ -79,6 +82,7 @@ public interface EmailTemplates {
      * @param params            {@link ReportWithParams} wrapper containing report and its parameters
      * @return {@link EmailInfo} from Jmix emailer
      * @throws TemplateNotFoundException If emailTemplate does not contain reports or null
+     * @throws ReportParameterTypeChangedException If parameter type of inputParameter does not equal to type saved in parameterValue.
      */
     EmailInfo generateEmail(String emailTemplateCode, Collection<ReportWithParams> params)
             throws TemplateNotFoundException, ReportParameterTypeChangedException;

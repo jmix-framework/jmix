@@ -23,6 +23,7 @@ import com.haulmont.cuba.gui.components.compatibility.AfterCloseListenerAdapter;
 import io.jmix.ui.screen.Screen;
 
 import javax.annotation.Nullable;
+import java.util.function.Consumer;
 
 /**
  * Wrapper object for compatibility with legacy code.
@@ -43,12 +44,12 @@ public class ScreenWrapper extends AbstractWindow {
 
     @Override
     public void addListener(CloseListener listener) {
-        screen.addAfterCloseListener(new AfterCloseListenerAdapter(listener));
+        screen.addAfterCloseListener((Consumer) new AfterCloseListenerAdapter(listener));
     }
 
     @Override
     public void addCloseListener(CloseListener listener) {
-        screen.addAfterCloseListener(new AfterCloseListenerAdapter(listener));
+        screen.addAfterCloseListener((Consumer) new AfterCloseListenerAdapter(listener));
     }
 
     @Nullable

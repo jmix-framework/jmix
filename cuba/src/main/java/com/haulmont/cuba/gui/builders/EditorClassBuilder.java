@@ -120,13 +120,13 @@ public class EditorClassBuilder<E, S extends Screen & EditorScreen<E>>
     }
 
     @Override
-    public EditorClassBuilder<E, S> withAfterShowListener(Consumer<Screen.AfterShowEvent> listener) {
+    public EditorClassBuilder<E, S> withAfterShowListener(Consumer<Screen.AfterShowEvent<S>> listener) {
         super.withAfterShowListener(listener);
         return this;
     }
 
     @Override
-    public EditorClassBuilder<E, S> withAfterCloseListener(Consumer<Screen.AfterCloseEvent> listener) {
+    public EditorClassBuilder<E, S> withAfterCloseListener(Consumer<Screen.AfterCloseEvent<S>> listener) {
         super.withAfterCloseListener(listener);
         return this;
     }

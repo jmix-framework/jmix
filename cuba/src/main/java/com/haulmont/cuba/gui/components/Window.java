@@ -118,7 +118,7 @@ public interface Window extends io.jmix.ui.component.Window, Frame {
      */
     @Deprecated
     default void addListener(CloseListener listener) {
-        getFrameOwner().addAfterCloseListener(new AfterCloseListenerAdapter(listener));
+        getFrameOwner().addAfterCloseListener((Consumer) new AfterCloseListenerAdapter(listener));
     }
 
     /**
@@ -141,7 +141,7 @@ public interface Window extends io.jmix.ui.component.Window, Frame {
      */
     @Deprecated
     default void addCloseListener(CloseListener listener) {
-        getFrameOwner().addAfterCloseListener(new AfterCloseListenerAdapter(listener));
+        getFrameOwner().addAfterCloseListener((Consumer) new AfterCloseListenerAdapter(listener));
     }
 
     /**

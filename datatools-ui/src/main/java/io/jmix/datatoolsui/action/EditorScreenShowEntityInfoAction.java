@@ -42,6 +42,10 @@ public class EditorScreenShowEntityInfoAction extends BaseAction implements Acti
         super(ID);
     }
 
+    public EditorScreenShowEntityInfoAction(String id) {
+        super(id);
+    }
+
     @Autowired
     public void setMessages(Messages messages) {
         setCaption(messages.getMessage(ShowEntityInfoAction.class, "showEntityInfoAction.caption"));

@@ -30,7 +30,7 @@
 
     <property caption="Descriptor name"
               code="descriptorName"
-              defaultValue="new-screen"
+              defaultValue="blank-screen"
               propertyType="DESCRIPTOR_NAME"
               required="true"
               sourceName="descriptor"/>

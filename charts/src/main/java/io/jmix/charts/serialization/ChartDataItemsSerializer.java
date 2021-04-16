@@ -19,13 +19,12 @@ package io.jmix.charts.serialization;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
+import io.jmix.charts.model.chart.impl.GanttChartModelImpl;
+import io.jmix.charts.widget.amcharts.serialization.ChartJsonSerializationContext;
 import io.jmix.core.Messages;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.EntityValues;
-import io.jmix.core.metamodel.datatype.impl.EnumClass;
 import io.jmix.ui.data.DataItem;
-import io.jmix.charts.model.chart.impl.GanttChartModelImpl;
-import io.jmix.charts.widget.amcharts.serialization.ChartJsonSerializationContext;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.FastDateFormat;
@@ -153,7 +152,7 @@ public class ChartDataItemsSerializer {
         Object formattedValue;
         if (EntityValues.isEntity(value)) {
             formattedValue = metadataTools.getInstanceName(value);
-        } else if (value instanceof EnumClass) {
+        } else if (value instanceof Enum) {
             formattedValue = messages.getMessage((Enum) value);
         } else if (value instanceof Date) {
             formattedValue = DATE_FORMATTER.format((Date) value);

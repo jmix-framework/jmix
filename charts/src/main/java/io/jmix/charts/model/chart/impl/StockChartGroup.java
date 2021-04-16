@@ -618,7 +618,7 @@ public class StockChartGroup extends ChartModelImpl
         void onChange(DataSetDataProviderChangeEvent event);
     }
 
-    public class DataSetDataProviderChangeEvent {
+    public static class DataSetDataProviderChangeEvent {
         private final DataSet dataSet;
 
         public DataSetDataProviderChangeEvent(DataSet dataSet) {

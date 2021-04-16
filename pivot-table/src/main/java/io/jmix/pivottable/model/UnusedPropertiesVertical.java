@@ -16,6 +16,8 @@
 
 package io.jmix.pivottable.model;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * Defines value of PivotTable's {@code unusedPropertiesVertical} property.
  * <p>
@@ -95,6 +97,6 @@ public class UnusedPropertiesVertical extends AbstractPivotObject {
 
     @Override
     public String toString() {
-        return intVal != null ? intVal.toString() : (boolVal != null ? boolVal.toString() : null);
+        return intVal != null ? intVal.toString() : (boolVal != null ? boolVal.toString() : StringUtils.EMPTY);
     }
 }

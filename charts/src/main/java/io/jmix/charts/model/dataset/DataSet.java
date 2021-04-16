@@ -329,7 +329,7 @@ public class DataSet extends AbstractChartObject {
         void onChange(DataProviderChangeEvent event);
     }
 
-    public class DataProviderChangeEvent {
+    public static class DataProviderChangeEvent {
         private final DataSet dataSet;
 
         public DataProviderChangeEvent(DataSet dataSet) {

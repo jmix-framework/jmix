@@ -26,15 +26,14 @@ import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
-import io.jmix.core.metamodel.datatype.impl.EnumClass;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.security.CurrentAuthentication;
+import io.jmix.pivottable.widget.serialization.PivotJsonSerializationContext;
+import io.jmix.pivottable.widget.serialization.PivotTableSerializationContext;
 import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.data.DataItem;
 import io.jmix.ui.data.impl.EntityDataItem;
-import io.jmix.pivottable.widget.serialization.PivotJsonSerializationContext;
-import io.jmix.pivottable.widget.serialization.PivotTableSerializationContext;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -125,7 +124,7 @@ public class PivotTableDataItemsSerializer {
             formattedValue = StringUtils.EMPTY;
         } else if (EntityValues.isEntity(value)) {
             formattedValue = metadataTools.getInstanceName(value);
-        } else if (value instanceof EnumClass) {
+        } else if (value instanceof Enum) {
             formattedValue = messages.getMessage((Enum) value);
         } else if (value instanceof Date || value instanceof Temporal) {
             if (item instanceof EntityDataItem) {

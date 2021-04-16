@@ -155,7 +155,7 @@ public class JmixAmchartsSceneWidget extends Widget {
         String type = config.getChartType();
         if (PIE_TYPE.equals(type) || FUNNEL_TYPE.equals(type)) {
             Double startDuration = (Double) JsUtils.getValueByKey(config, "startDuration");
-            startDuration = startDuration == null ? 1 : startDuration;
+            startDuration = startDuration == null ? Double.valueOf(1) : startDuration;
             if (startDuration > 0) {
                 jsOverlay.animateOnce();
             }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2019 Haulmont.
+ * Copyright 2021 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,14 +22,11 @@ import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
 
 import javax.persistence.Id;
-import java.io.Serializable;
 import java.util.UUID;
 
 @JmixEntity(name = "report_ChartSeries")
 @SystemLevel
 public class ChartSeries {
-
-    private static final long serialVersionUID = -3205550424620740535L;
 
     @Id
     @JmixGeneratedValue

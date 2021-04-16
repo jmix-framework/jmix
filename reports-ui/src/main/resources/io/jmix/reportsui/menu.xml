@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright (c) 2008-2019 Haulmont.
+  ~ Copyright 2021 Haulmont.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -21,9 +21,9 @@
         <item id="report_Report.browse" caption="msg://io.jmix.reportsui/menu.report_Report.browse"/>
         <item id="report_ReportGroup.browse" caption="msg://io.jmix.reportsui/menu.report_ReportGroup.browse"/>
         <item id="report_Report.run" caption="msg://io.jmix.reportsui/menu.report_Report.run"/>
-        <item id="report_ShowChart.lookup" caption="msg://io.jmix.reportsui/menu.report_ShowChart.lookup"/>
+        <item id="report_ShowChart.screen" caption="msg://io.jmix.reportsui/menu.report_ShowChart.screen"/>
         <item id="report_ShowReportTable.lookup" caption="msg://io.jmix.reportsui/menu.report_ShowReportTable.lookup"/>
-        <item id="report_ShowPivotTable.lookup" caption="msg://io.jmix.reportsui/menu.report_ShowPivotTable.lookup"/>
+        <item id="report_ShowPivotTable.screen" caption="msg://io.jmix.reportsui/menu.report_ShowPivotTable.screen"/>
     </menu>
 
 </menu-config>

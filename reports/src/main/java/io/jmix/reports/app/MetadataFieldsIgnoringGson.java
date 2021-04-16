@@ -21,6 +21,8 @@ import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.lang.reflect.Type;
+
 public class MetadataFieldsIgnoringGson {
 
     protected final static String METADATA_STARTS_CHAR = "_";
@@ -51,6 +53,16 @@ public class MetadataFieldsIgnoringGson {
 
         public MetadataFieldsIgnoringGsonBuilder addIgnoringStrategy() {
             gsonBuilder.addSerializationExclusionStrategy(strategy);
+            return this;
+        }
+
+        public MetadataFieldsIgnoringGsonBuilder registerTypeAdapter(Type type, Object typeAdapter) {
+            gsonBuilder.registerTypeAdapter(type, typeAdapter);
+            return this;
+        }
+
+        public MetadataFieldsIgnoringGsonBuilder setIgnoringStrategy() {
+            gsonBuilder.setExclusionStrategies(strategy);
             return this;
         }
 

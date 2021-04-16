@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2019 Haulmont.
+ * Copyright 2021 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,17 +25,15 @@ import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
+import io.jmix.reports.app.MetadataFieldsIgnoringGson;
 
 import javax.annotation.Nullable;
 import javax.persistence.Id;
-import java.io.Serializable;
 import java.util.UUID;
 
 @JmixEntity(name = "report_AbstractChartDescription")
 @SystemLevel
 public abstract class AbstractChartDescription {
-
-    private static final long serialVersionUID = 3418759346397067914L;
 
     @Id
     @JmixGeneratedValue
@@ -50,7 +48,7 @@ public abstract class AbstractChartDescription {
     @Nullable
     public static AbstractChartDescription fromJsonString(String jsonString) {
         Preconditions.checkNotNullArgument(jsonString);
-        Gson gson = new Gson();
+        Gson gson = getGson();
         JsonObject jsonElement;
 
         try {
@@ -78,9 +76,15 @@ public abstract class AbstractChartDescription {
 
     public static String toJsonString(AbstractChartDescription chartDescription) {
         Preconditions.checkNotNullArgument(chartDescription);
-        Gson gson = new Gson();
+        Gson gson = getGson();
         String jsonString = gson.toJson(chartDescription);
         return jsonString;
+    }
+
+    protected static Gson getGson() {
+        return MetadataFieldsIgnoringGson.create()
+                .setIgnoringStrategy()
+                .build();
     }
 
     public AbstractChartDescription(String type) {

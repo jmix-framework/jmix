@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2019 Haulmont.
+ * Copyright 2021 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import io.jmix.reports.entity.BandDefinition;
 import io.jmix.reports.entity.ReportOutputType;
 import io.jmix.reports.entity.ReportTemplate;
 import io.jmix.reports.entity.charts.*;
-import io.jmix.reportsui.screen.report.run.ShowChartLookup;
+import io.jmix.reportsui.screen.report.run.ShowChartScreen;
 import io.jmix.reportsui.screen.template.edit.generator.RandomChartDataGenerator;
 import io.jmix.ui.Actions;
 import io.jmix.ui.Dialogs;
@@ -46,7 +46,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @UiController("report_ChartEdit.fragment")
-@UiDescriptor("chart-edit-frame.xml")
+@UiDescriptor("chart-edit-fragment.xml")
 public class ChartEditFragment extends DescriptionEditFragment {
     @Autowired
     protected ComboBox<String> serialBandNameField;
@@ -86,27 +86,17 @@ public class ChartEditFragment extends DescriptionEditFragment {
     protected DataManager dataManager;
     @Autowired
     protected Fragments fragments;
+    @Autowired
+    private RandomChartDataGenerator chartDataGenerator;
+
 
     @Subscribe
     @SuppressWarnings("IncorrectCreateEntity")
     protected void onInit(InitEvent event) {
         super.onInit(event);
-
-        pieChartDc.setItem(new PieChartDescription());
-        serialChartDc.setItem(new SerialChartDescription());
         typeField.setOptionsList(Arrays.asList(ChartType.values()));
-
-        pieChartForm.setVisible(false);
-        serialChartForm.setVisible(false);
-        seriesGroupBox.setVisible(false);
-        serialJsonConfigEditor.setVisible(false);
-        pieJsonConfigEditor.setVisible(false);
-
-        seriesTable.addAction(new ChartSeriesMoveAction(true));
-        seriesTable.addAction(new ChartSeriesMoveAction(false));
-
-        serialJsonConfigEditor.addValidator(new JsonConfigValidator(getClass()));
-        pieJsonConfigEditor.addValidator(new JsonConfigValidator(getClass()));
+        initPieChartFields();
+        initSerialChartFields();
     }
 
     @Subscribe("seriesTable.create")
@@ -118,8 +108,10 @@ public class ChartEditFragment extends DescriptionEditFragment {
 
     @Subscribe(id = "seriesDc", target = Target.DATA_CONTAINER)
     protected void onSeriesDcCollectionChange(CollectionContainer.CollectionChangeEvent<ChartSeries> event) {
-        checkSeriesOrder();
-        showPreview();
+        if (typeField.getValue() == ChartType.SERIAL) {
+            checkSeriesOrder();
+            showPreview();
+        }
     }
 
     @Subscribe(id = "seriesDc", target = Target.DATA_CONTAINER)
@@ -158,13 +150,35 @@ public class ChartEditFragment extends DescriptionEditFragment {
     }
 
     @Subscribe("typeField")
-    protected void onTypeFieldValueChange(HasValue.ValueChangeEvent event) {
-        pieChartForm.setVisible(ChartType.PIE == event.getValue());
-        serialChartForm.setVisible(ChartType.SERIAL == event.getValue());
-        seriesGroupBox.setVisible(ChartType.SERIAL == event.getValue());
-        serialJsonConfigEditor.setVisible(ChartType.SERIAL == event.getValue());
-        pieJsonConfigEditor.setVisible(ChartType.PIE == event.getValue());
+    protected void onTypeFieldValueChange(HasValue.ValueChangeEvent<ChartType> event) {
+        setPieChartComponentsVisible(ChartType.PIE == event.getValue());
+        setSerialChartComponentsVisible(ChartType.SERIAL == event.getValue());
         showPreview();
+    }
+
+    protected void initPieChartFields() {
+        pieChartDc.setItem(dataManager.create(PieChartDescription.class));
+        pieJsonConfigEditor.addValidator(beanFactory.getBean(JsonConfigValidator.class, getClass()));
+        setPieChartComponentsVisible(false);
+    }
+
+    protected void initSerialChartFields() {
+        serialChartDc.setItem(dataManager.create(SerialChartDescription.class));
+        seriesTable.addAction(new ChartSeriesMoveAction(true));
+        seriesTable.addAction(new ChartSeriesMoveAction(false));
+        serialJsonConfigEditor.addValidator(beanFactory.getBean(JsonConfigValidator.class, getClass()));
+        setSerialChartComponentsVisible(false);
+    }
+
+    protected void setPieChartComponentsVisible(boolean visible) {
+        pieChartForm.setVisible(visible);
+        pieJsonConfigEditor.setVisible(visible);
+    }
+
+    protected void setSerialChartComponentsVisible(boolean visible) {
+        serialChartForm.setVisible(visible);
+        seriesGroupBox.setVisible(visible);
+        serialJsonConfigEditor.setVisible(visible);
     }
 
     protected void codeEditorChangeListener(HasValue.ValueChangeEvent<String> event) {
@@ -177,8 +191,9 @@ public class ChartEditFragment extends DescriptionEditFragment {
 
     protected void jsonEditorContextHelpIconClickHandler(HasContextHelp.ContextHelpIconClickEvent event) {
         dialogs.createMessageDialog()
-                .withCaption(messages.getMessage("chartEdit.jsonConfig"))
+                .withCaption(messages.getMessage(getClass(), "chartEdit.jsonConfig"))
                 .withMessage(event.getSource().getContextHelpText())
+                .withContentMode(ContentMode.HTML)
                 .show();
     }
 
@@ -248,30 +263,29 @@ public class ChartEditFragment extends DescriptionEditFragment {
         String chartJson = null;
         if (ChartType.SERIAL == typeField.getValue()) {
             SerialChartDescription chartDescription = serialChartDc.getItem();
-            data = new RandomChartDataGenerator().generateRandomChartData(chartDescription);
+            data = chartDataGenerator.generateRandomChartData(chartDescription);
             ChartToJsonConverter chartToJsonConverter = beanFactory.getBean(ChartToJsonConverter.class);
             chartJson = chartToJsonConverter.convertSerialChart(chartDescription, data);
         } else if (ChartType.PIE == typeField.getValue()) {
             PieChartDescription chartDescription = pieChartDc.getItem();
-            data = new RandomChartDataGenerator().generateRandomChartData(chartDescription);
+            data = chartDataGenerator.generateRandomChartData(chartDescription);
             ChartToJsonConverter chartToJsonConverter = beanFactory.getBean(ChartToJsonConverter.class);
             chartJson = chartToJsonConverter.convertPieChart(chartDescription, data);
         }
         chartJson = chartJson == null ? "{}" : chartJson;
 
-        Map<String, Object> parmas = ParamsMap.of(ShowChartLookup.CHART_JSON_PARAMETER, chartJson);
+        Map<String, Object> params = ParamsMap.of(ShowChartScreen.CHART_JSON_PARAMETER, chartJson);
 
-        //todo chart
-//        Fragment fragment = fragments.create(this, ShowChartLookup.JSON_CHART_SCREEN_ID, new MapScreenOptions(parmas))
-//                .init()
-//                .getFragment();
-//
-//        if (ChartType.SERIAL == typeField.getValue()) {
-//            fragment.setHeight("700px");
-//        } else if (ChartType.PIE == typeField.getValue()) {
-//            fragment.setHeight("350px");
-//        }
-//        previewBox.add(fragment);
+        Fragment fragment = fragments.create(this, ShowChartScreen.JSON_CHART_SCREEN_ID, new MapScreenOptions(params))
+                .init()
+                .getFragment();
+
+        if (ChartType.SERIAL == typeField.getValue()) {
+            fragment.setHeight("700px");
+        } else if (ChartType.PIE == typeField.getValue()) {
+            fragment.setHeight("350px");
+        }
+        previewBox.add(fragment);
     }
 
     @Nullable
@@ -323,7 +337,7 @@ public class ChartEditFragment extends DescriptionEditFragment {
 
         ChartSeriesMoveAction(boolean up) {
             super(up ? "up" : "down");
-            setCaption(messages.getMessage(getClass(), up ? "generalFrame.up" : "generalFrame.down"));
+            setCaption(messages.getMessage(getClass(), up ? "chartSeries.up" : "chartSeries.down"));
             this.target = seriesTable;
             this.up = up;
         }
@@ -342,7 +356,7 @@ public class ChartEditFragment extends DescriptionEditFragment {
             changing.setOrder(newOrder);
             neighbor.setOrder(currentOrder);
 
-            sortSeriesByOrder();
+            Collections.swap(seriesDc.getMutableItems(), currentOrder - 1, newOrder - 1);
         }
 
         @Override

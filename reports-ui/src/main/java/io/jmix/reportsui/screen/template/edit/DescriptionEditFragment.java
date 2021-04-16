@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2019 Haulmont.
+ * Copyright 2021 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ package io.jmix.reportsui.screen.template.edit;
 import io.jmix.reports.entity.ReportOutputType;
 import io.jmix.reports.entity.ReportTemplate;
 import io.jmix.ui.component.BoxLayout;
-import io.jmix.ui.component.Fragment;
+import io.jmix.ui.component.DialogWindow;
 import io.jmix.ui.screen.ScreenFragment;
 import io.jmix.ui.screen.Subscribe;
 
@@ -27,7 +27,6 @@ public abstract class DescriptionEditFragment extends ScreenFragment {
 
     protected ReportTemplate reportTemplate;
     protected BoxLayout previewBox;
-    protected boolean supportPreview;
 
     @Subscribe
     protected void onInit(InitEvent event) {
@@ -48,9 +47,10 @@ public abstract class DescriptionEditFragment extends ScreenFragment {
         previewBox.setWidth("100%");
         previewBox.removeAll();
 
-        Fragment parent = getFragment();
-        parent.setResponsive(true);
+        DialogWindow parent = (DialogWindow) getHostScreen().getWindow();
+        parent.setResizable(true);
         parent.setWidth("1280px");
+        parent.center();
 
         initPreviewContent(previewBox);
     }
@@ -59,9 +59,10 @@ public abstract class DescriptionEditFragment extends ScreenFragment {
         previewBox.setVisible(false);
         previewBox.removeAll();
 
-        Fragment parent = getFragment();
+        DialogWindow parent = (DialogWindow) getHostScreen().getWindow();
         parent.setSizeAuto();
-        parent.setResponsive(false);
+        parent.setResizable(false);
+        parent.center();
     }
 
     public void setVisible(boolean visible) {

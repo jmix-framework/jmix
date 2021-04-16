@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2019 Haulmont.
+ * Copyright 2021 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,20 +17,25 @@
 package io.jmix.reportsui.screen.template.edit.pivottable.aggregation.edit;
 
 import io.jmix.core.Messages;
+import io.jmix.reports.entity.pivottable.AggregationMode;
 import io.jmix.reports.entity.pivottable.PivotTableAggregation;
 import io.jmix.ui.Dialogs;
 import io.jmix.ui.WindowParam;
+import io.jmix.ui.component.ContentMode;
 import io.jmix.ui.component.HasContextHelp;
 import io.jmix.ui.component.SourceCodeEditor;
 import io.jmix.ui.component.ValidationErrors;
+import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.screen.*;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collection;
 import java.util.Objects;
 
 @UiController("report_PivotTableAggregation.edit")
-@UiDescriptor("pivottable-aggregation-edit.xml")
+@UiDescriptor("pivot-table-aggregation-edit.xml")
+@EditedEntityContainer("aggregationDc")
 public class PivotTableAggregationEdit extends StandardEditor<PivotTableAggregation> {
 
     @WindowParam
@@ -47,29 +52,37 @@ public class PivotTableAggregationEdit extends StandardEditor<PivotTableAggregat
     @Install(to = "sourceCodeEditor", subject = "contextHelpIconClickHandler")
     protected void sourceCodeEditorContextHelpIconClickHandler(HasContextHelp.ContextHelpIconClickEvent contextHelpIconClickEvent) {
         dialogs.createMessageDialog()
-                .withCaption(messages.getMessage("pivotTable.functionHelpCaption"))
-                .withMessage(messages.getMessage("pivotTable.aggregationFunctionHelp"))
+                .withCaption(messages.getMessage(getClass(), "pivotTable.functionHelpCaption"))
+                .withMessage(messages.getMessage(getClass(), "pivotTable.aggregationFunctionHelp"))
                 .withModal(false)
                 .withWidth("560px")
+                .withContentMode(ContentMode.HTML)
                 .show();
+    }
+
+    @Subscribe(id = "aggregationDc", target = Target.DATA_CONTAINER)
+    public void onAggregationDcItemPropertyChange(InstanceContainer.ItemPropertyChangeEvent<PivotTableAggregation> event) {
+        if (StringUtils.equals(event.getProperty(), "mode")) {
+            AggregationMode mode = getEditedEntity().getMode();
+            String caption = mode != null ? messages.getMessage(mode) : null;
+            getEditedEntity().setCaption(caption);
+        }
     }
 
     @Subscribe
     protected void onBeforeCommit(BeforeCommitChangesEvent event) {
-        if (event.isCommitPrevented()) {
+        if (!event.isCommitPrevented()) {
             PivotTableAggregation aggregation = getEditedEntity();
             boolean hasMatches = existingItems.stream().
                     anyMatch(e -> !Objects.equals(aggregation, e) &&
                             Objects.equals(aggregation.getCaption(), e.getCaption()));
             if (hasMatches) {
                 ValidationErrors validationErrors = new ValidationErrors();
-                validationErrors.add(messages.getMessage("pivotTableEdit.uniqueAggregationOptionCaption"));
+                validationErrors.add(messages.getMessage(getClass(), "pivotTableEdit.uniqueAggregationOptionCaption"));
 
                 screenValidation.showValidationErrors(this, validationErrors);
                 event.preventCommit();
             }
-            event.resume();
         }
-        event.preventCommit();
     }
 }

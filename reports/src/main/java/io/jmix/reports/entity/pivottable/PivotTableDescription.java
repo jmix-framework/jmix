@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2019 Haulmont.
+ * Copyright 2021 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,10 +21,10 @@ import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
+import io.jmix.reports.app.MetadataFieldsIgnoringGson;
 
 import javax.persistence.Id;
 import javax.persistence.Lob;
-import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.*;
 
@@ -35,10 +35,11 @@ public class PivotTableDescription {
     protected final static Gson gson;
 
     static {
-        gson = new GsonBuilder()
+        gson = MetadataFieldsIgnoringGson.create()
+                .addIgnoringStrategy()
                 .registerTypeAdapter(RendererType.class, new RendererTypeAdapter())
                 .registerTypeAdapter(AggregationMode.class, new AggregationTypeAdapter())
-                .create();
+                .build();
     }
 
     @Id

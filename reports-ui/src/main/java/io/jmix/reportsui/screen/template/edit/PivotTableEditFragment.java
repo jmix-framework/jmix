@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2019 Haulmont.
+ * Copyright 2021 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,11 +25,11 @@ import io.jmix.reports.entity.BandDefinition;
 import io.jmix.reports.entity.ReportOutputType;
 import io.jmix.reports.entity.ReportTemplate;
 import io.jmix.reports.entity.pivottable.*;
+import io.jmix.reportsui.screen.report.run.ShowPivotTableScreen;
 import io.jmix.reportsui.screen.template.edit.generator.RandomPivotTableDataGenerator;
 import io.jmix.ui.Actions;
+import io.jmix.ui.Fragments;
 import io.jmix.ui.action.list.CreateAction;
-import io.jmix.ui.action.list.EditAction;
-import io.jmix.ui.action.list.RemoveAction;
 import io.jmix.ui.component.*;
 import io.jmix.ui.model.CollectionChangeType;
 import io.jmix.ui.model.CollectionContainer;
@@ -38,11 +38,10 @@ import io.jmix.ui.screen.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 @UiController("report_PivotTableEdit.fragment")
-@UiDescriptor("pivottable-frame.xml")
+@UiDescriptor("pivot-table-edit-fragment.xml")
 public class PivotTableEditFragment extends DescriptionEditFragment {
 
     public static final Set<RendererType> C3_RENDERER_TYPES = Sets.newHashSet(
@@ -94,6 +93,12 @@ public class PivotTableEditFragment extends DescriptionEditFragment {
     @Autowired
     protected RandomPivotTableDataGenerator dataGenerator;
 
+    @Autowired
+    private Fragments fragments;
+
+    @Autowired
+    private ScreenValidation screenValidation;
+
     @Subscribe
     @SuppressWarnings("IncorrectCreateEntity")
     protected void onInit(InitEvent event) {
@@ -101,7 +106,6 @@ public class PivotTableEditFragment extends DescriptionEditFragment {
 
         PivotTableDescription description = createDefaultPivotTableDescription();
         pivotTableDc.setItem(description);
-        initAggregationTable();
         initPropertyTable();
         pivotTableDc.addItemPropertyChangeListener(e -> showPreview());
     }
@@ -125,8 +129,7 @@ public class PivotTableEditFragment extends DescriptionEditFragment {
     public boolean applyChanges() {
         ValidationErrors errors = validatePivotTableDescription(getPivotTableDescription());
         if (!errors.isEmpty()) {
-            //todo
-//            showValidationErrors(errors);
+            screenValidation.showValidationErrors(this, errors);
             return false;
         }
         getReportTemplate().setPivotTableDescription(getPivotTableDescription());
@@ -159,11 +162,16 @@ public class PivotTableEditFragment extends DescriptionEditFragment {
         ValidationErrors errors = validatePivotTableDescription(pivotTableDescription);
         if (errors.isEmpty()) {
             List<KeyValueEntity> data = dataGenerator.generate(pivotTableDescription, 10);
-            //todo
-//            Frame frame = openFrame(previewBox, ShowPivotTableController.PIVOT_TABLE_SCREEN_ID, ParamsMap.of(
-//                    "pivotTableJson", PivotTableDescription.toJsonString(pivotTableDescription),
-//                    "values", data));
-//            frame.setHeight("472px");
+
+            Map<String, Object> params = ParamsMap.of(
+                    "pivotTableJson", PivotTableDescription.toJsonString(pivotTableDescription),
+                    "values", data);
+            Fragment fragment = fragments.create(this, ShowPivotTableScreen.PIVOT_TABLE_SCREEN_ID, new MapScreenOptions(params))
+                    .init()
+                    .getFragment();
+            fragment.setHeight("472px");
+
+            previewBox.add(fragment);
         }
     }
 
@@ -174,33 +182,33 @@ public class PivotTableEditFragment extends DescriptionEditFragment {
     protected ValidationErrors validatePivotTableDescription(PivotTableDescription description) {
         ValidationErrors validationErrors = new ValidationErrors();
         if (description.getBandName() == null) {
-            validationErrors.add(messages.getMessage("pivotTableEdit.bandRequired"));
+            validationErrors.add(messages.getMessage(getClass(), "pivotTableEdit.bandRequired"));
         }
         if (description.getDefaultRenderer() == null) {
-            validationErrors.add(messages.getMessage("pivotTableEdit.rendererRequired"));
+            validationErrors.add(messages.getMessage(getClass(), "pivotTableEdit.rendererRequired"));
         }
         if (description.getAggregations().isEmpty()) {
-            validationErrors.add(messages.getMessage("pivotTableEdit.aggregationsRequired"));
+            validationErrors.add(messages.getMessage(getClass(), "pivotTableEdit.aggregationsRequired"));
         }
         if (description.getProperties().isEmpty()) {
-            validationErrors.add(messages.getMessage("pivotTableEdit.propertiesRequired"));
+            validationErrors.add(messages.getMessage(getClass(), "pivotTableEdit.propertiesRequired"));
         }
         if (description.getAggregationProperties().isEmpty()) {
-            validationErrors.add(messages.getMessage("pivotTableEdit.aggregationPropertiesRequired"));
+            validationErrors.add(messages.getMessage(getClass(), "pivotTableEdit.aggregationPropertiesRequired"));
         }
         if (description.getColumnsProperties().isEmpty() && description.getRowsProperties().isEmpty()) {
-            validationErrors.add(messages.getMessage("pivotTableEdit.columnsOrRowsRequired"));
+            validationErrors.add(messages.getMessage(getClass(), "pivotTableEdit.columnsOrRowsRequired"));
         }
         if (!Collections.disjoint(description.getRowsProperties(), description.getColumnsProperties())
                 || !Collections.disjoint(description.getRowsProperties(), description.getAggregationProperties())
                 || !Collections.disjoint(description.getColumnsProperties(), description.getAggregationProperties())) {
-            validationErrors.add(messages.getMessage("pivotTableEdit.propertyIntersection"));
+            validationErrors.add(messages.getMessage(getClass(), "pivotTableEdit.propertyIntersection"));
         } else if (description.getProperties() != null) {
             Set<String> propertyNames = description.getProperties().stream()
                     .map(PivotTableProperty::getName)
                     .collect(Collectors.toSet());
             if (propertyNames.size() != description.getProperties().size()) {
-                validationErrors.add(messages.getMessage("pivotTableEdit.propertyIntersection"));
+                validationErrors.add(messages.getMessage(getClass(), "pivotTableEdit.propertyIntersection"));
             }
         }
         return validationErrors;
@@ -231,24 +239,21 @@ public class PivotTableEditFragment extends DescriptionEditFragment {
         });
     }
 
-    protected void initAggregationTable() {
-        Supplier<Map<String, Object>> paramsSupplier = () -> ParamsMap.of("existingItems", aggregationsDc.getItems());
+    @Subscribe(id = "aggregationsDc", target = Target.DATA_CONTAINER)
+    public void onAggregationsDcCollectionChange(CollectionContainer.CollectionChangeEvent<PivotTableAggregation> e) {
+        if (e.getChangeType() == CollectionChangeType.REMOVE_ITEMS) {
+            defaultAggregationField.setOptionsList(aggregationsDc.getItems());
+        }
+    }
 
-        CreateAction createAction = actions.create(CreateAction.class);
-        createAction.setScreenOptionsSupplier(paramsSupplier);
-        aggregationsTable.addAction(createAction);
+    @Install(to = "aggregationsTable.create", subject = "screenOptionsSupplier")
+    protected ScreenOptions aggregationsTableCreateScreenOptionsSupplier() {
+        return new MapScreenOptions(ParamsMap.of("existingItems", aggregationsDc.getItems()));
+    }
 
-        EditAction editAction = actions.create(EditAction.class);
-        editAction.setScreenOptionsSupplier(paramsSupplier);
-        aggregationsTable.addAction(editAction);
-
-        aggregationsTable.addAction(actions.create(RemoveAction.class));
-
-        aggregationsDc.addCollectionChangeListener(e -> {
-            if (e.getChangeType() == CollectionChangeType.REMOVE_ITEMS) {
-                defaultAggregationField.setOptionsList(aggregationsDc.getItems());
-            }
-        });
+    @Install(to = "aggregationsTable.edit", subject = "screenOptionsSupplier")
+    protected ScreenOptions aggregationsTableEditScreenOptionsSupplier() {
+        return new MapScreenOptions(ParamsMap.of("existingItems", aggregationsDc.getItems()));
     }
 
     protected void initCustomGroups() {
@@ -263,32 +268,28 @@ public class PivotTableEditFragment extends DescriptionEditFragment {
         defaultRendererField.setEnabled(rendererTypes.size() > 1);
     }
 
-    protected void initPropertyTable() {
-        propertyDc.addCollectionChangeListener(e -> {
-            PivotTableDescription description = getPivotTableDescription();
-            description.getAggregationProperties().clear();
-            description.getColumnsProperties().clear();
-            description.getRowsProperties().clear();
+    @Subscribe(id = "propertyDc", target = Target.DATA_CONTAINER)
+    public void onPropertyDcCollectionChange(CollectionContainer.CollectionChangeEvent<PivotTableProperty> event) {
+        PivotTableDescription description = getPivotTableDescription();
+        description.getAggregationProperties().clear();
+        description.getColumnsProperties().clear();
+        description.getRowsProperties().clear();
 
-            for (PivotTableProperty property : getPivotTableDescription().getProperties()) {
-                if (property.getType() == PivotTablePropertyType.AGGREGATIONS) {
-                    description.getAggregationProperties().add(property.getName());
-                } else if (property.getType() == PivotTablePropertyType.COLUMNS) {
-                    description.getColumnsProperties().add(property.getName());
-                } else if (property.getType() == PivotTablePropertyType.ROWS) {
-                    description.getRowsProperties().add(property.getName());
-                }
+        for (PivotTableProperty property : getPivotTableDescription().getProperties()) {
+            if (property.getType() == PivotTablePropertyType.AGGREGATIONS) {
+                description.getAggregationProperties().add(property.getName());
+            } else if (property.getType() == PivotTablePropertyType.COLUMNS) {
+                description.getColumnsProperties().add(property.getName());
+            } else if (property.getType() == PivotTablePropertyType.ROWS) {
+                description.getRowsProperties().add(property.getName());
             }
-            propertyTable.expandAll();
-            showPreview();
-        });
+        }
+        propertyTable.expandAll();
+        showPreview();
+    }
 
-        propertyTable.addAction(createPropertyRemoveAction());
-        propertyTable.addAction(createPropertyEditAction());
-
-        propertiesCreateButton.setCaption(messages.getMessage("actions.Create"));
-
-        CreateAction createAction = createPropertyCreateAction(PivotTablePropertyType.ROWS);
+    protected void initPropertyTable() {
+        CreateAction<PivotTableProperty> createAction = createPropertyCreateAction(PivotTablePropertyType.ROWS);
         propertyTable.addAction(createAction);
         propertiesCreateButton.addAction(createAction);
 
@@ -305,22 +306,15 @@ public class PivotTableEditFragment extends DescriptionEditFragment {
         propertiesCreateButton.addAction(createAction);
     }
 
-    protected RemoveAction createPropertyRemoveAction() {
-        RemoveAction removeAction = actions.create(RemoveAction.class);
-        removeAction.setTarget(propertyTable);
-        return removeAction;
+    @Install(to = "propertyTable.edit", subject = "afterCommitHandler")
+    protected void propertyTableEditAfterCommitHandler(PivotTableProperty property) {
+        propertyTable.expandAll();
     }
 
-    protected EditAction createPropertyEditAction() {
-        EditAction action = (EditAction) propertyTable.getAction(EditAction.ID);
-        action.setAfterCommitHandler(entity -> propertyTable.expandAll());
-        return action;
-    }
-
-    protected CreateAction createPropertyCreateAction(PivotTablePropertyType propertyType) {
-        CreateAction action = actions.create(CreateAction.class, "create_" + propertyType.getId());
+    protected CreateAction<PivotTableProperty> createPropertyCreateAction(PivotTablePropertyType propertyType) {
+        CreateAction<PivotTableProperty> action = actions.create(CreateAction.class, "create_" + propertyType.getId());
         action.setOpenMode(OpenMode.THIS_TAB);
-        action.setScreenOptionsSupplier(() -> new MapScreenOptions(ParamsMap.of("type", propertyType)));
+        action.setInitializer(property -> property.setType(propertyType));
         action.setCaption(messages.getMessage(propertyType));
         return action;
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2019 Haulmont.
+ * Copyright 2021 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,8 +29,8 @@ import io.jmix.reports.exception.FailedToConnectToOpenOfficeException;
 import io.jmix.reports.exception.NoOpenOfficeFreePortsException;
 import io.jmix.reports.exception.ReportingException;
 import io.jmix.reportsui.screen.report.run.InputParametersDialog;
-import io.jmix.reportsui.screen.report.run.ShowChartLookup;
-import io.jmix.reportsui.screen.report.run.ShowPivotTableLookup;
+import io.jmix.reportsui.screen.report.run.ShowChartScreen;
+import io.jmix.reportsui.screen.report.run.ShowPivotTableScreen;
 import io.jmix.reportsui.screen.report.run.ShowReportTableLookup;
 import io.jmix.ui.*;
 import io.jmix.ui.component.ComponentsHelper;
@@ -313,19 +313,19 @@ public class ReportGuiManager {
                                     @Nullable ReportOutputType outputType, @Nullable FrameOwner screen) {
 
         if (document.getReportOutputType().getId().equals(JmixReportOutputType.chart.getId())) {
-            ShowChartLookup showChartLookup = (ShowChartLookup) screens.create("report_ShowChart.lookup", OpenMode.DIALOG);
-            showChartLookup.setChartJson(new String(document.getContent(), StandardCharsets.UTF_8));
-            showChartLookup.setReport((Report) document.getReport());
-            showChartLookup.setTemplateCode(templateCode);
-            showChartLookup.setReportParameters(params);
-            showChartLookup.show();
+            ShowChartScreen showChartScreen = (ShowChartScreen) screens.create("report_ShowChart.screen", OpenMode.DIALOG);
+            showChartScreen.setChartJson(new String(document.getContent(), StandardCharsets.UTF_8));
+            showChartScreen.setReport((Report) document.getReport());
+            showChartScreen.setTemplateCode(templateCode);
+            showChartScreen.setReportParameters(params);
+            showChartScreen.show();
         } else if (document.getReportOutputType().getId().equals(JmixReportOutputType.pivot.getId())) {
-            ShowPivotTableLookup pivotTableLookup = (ShowPivotTableLookup) screens.create("report_ShowPivotTable.lookup", OpenMode.DIALOG);
-            pivotTableLookup.setPivotTableData(document.getContent());
-            pivotTableLookup.setReport((Report) document.getReport());
-            pivotTableLookup.setTemplateCode(templateCode);
-            pivotTableLookup.setParams(params);
-            pivotTableLookup.show();
+            ShowPivotTableScreen showPivotTableScreen = (ShowPivotTableScreen) screens.create("report_ShowPivotTable.screen", OpenMode.DIALOG);
+            showPivotTableScreen.setPivotTableData(document.getContent());
+            showPivotTableScreen.setReport((Report) document.getReport());
+            showPivotTableScreen.setTemplateCode(templateCode);
+            showPivotTableScreen.setParams(params);
+            showPivotTableScreen.show();
         } else if (document.getReportOutputType().getId().equals(JmixReportOutputType.table.getId())) {
             ShowReportTableLookup reportTable = (ShowReportTableLookup) screens.create("report_ShowReportTable.lookup", OpenMode.DIALOG);
             reportTable.setTableData(document.getContent());

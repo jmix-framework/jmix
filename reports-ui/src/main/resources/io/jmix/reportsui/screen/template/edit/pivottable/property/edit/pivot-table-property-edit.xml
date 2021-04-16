@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright (c) 2008-2019 Haulmont.
+  ~ Copyright 2021 Haulmont.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -33,22 +33,22 @@
         <groupBox id="editBox" showAsPanel="true">
             <form id="propertyForm" dataContainer="propertyDc" width="100%">
                 <column width="100%">
-                    <field property="name" width="337px"/>
-                    <field property="caption" width="337px"/>
+                    <textField property="name" width="337px"/>
+                    <textField property="caption" width="337px"/>
                     <comboBox property="type" required="true" width="337px"/>
                     <sourceCodeEditor id="sourceCodeEditor"
                                       property="function"
                                       editable="true"
                                       mode="JavaScript"
                                       height="300px"
-                                      width="100%"/>
+                                      width="350px"/>
 
                 </column>
             </form>
         </groupBox>
-        <hbox spacing="true" stylename="c-edit-window-actions">
-            <button id="windowCommit" action="windowCommit" icon="EDITOR_OK"/>
-            <button id="windowClose" action="windowClose" icon="EDITOR_CANCEL"/>
+        <hbox id="editActions" spacing="true">
+            <button action="windowCommitAndClose"/>
+            <button action="windowClose"/>
         </hbox>
     </layout>
 </window>

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2019 Haulmont.
+ * Copyright 2021 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,8 +26,8 @@ import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportOutputType;
 import io.jmix.reports.entity.ReportTemplate;
 import io.jmix.reportsui.screen.definition.edit.scripteditordialog.ScriptEditorDialog;
-import io.jmix.reportsui.screen.report.run.ShowChartLookup;
-import io.jmix.reportsui.screen.report.run.ShowPivotTableLookup;
+import io.jmix.reportsui.screen.report.run.ShowChartScreen;
+import io.jmix.reportsui.screen.report.run.ShowPivotTableScreen;
 import io.jmix.security.constraint.PolicyStore;
 import io.jmix.security.constraint.SecureOperations;
 import io.jmix.ui.Dialogs;
@@ -232,7 +232,7 @@ public class TemplateEditor extends StandardEditor<ReportTemplate> {
 
         ReportTemplate reportTemplate = getEditedEntity();
         initTemplateEditor(reportTemplate);
-        getDescriptionEditFrames().forEach(controller -> controller.setItem(reportTemplate));
+        getDescriptionEditFragments().forEach(controller -> controller.setItem(reportTemplate));
         setupVisibility(reportTemplate.getCustom(), reportTemplate.getReportOutputType());
     }
 
@@ -241,7 +241,7 @@ public class TemplateEditor extends StandardEditor<ReportTemplate> {
         templateUploadField.setFileName(event.getFileName());
     }
 
-    protected Collection<DescriptionEditFragment> getDescriptionEditFrames() {
+    protected Collection<DescriptionEditFragment> getDescriptionEditFragments() {
         return Arrays.asList(chartEditFragment, pivotTableEditFragment, tableEditFragment);
     }
 
@@ -310,28 +310,28 @@ public class TemplateEditor extends StandardEditor<ReportTemplate> {
     }
 
     protected void setupVisibilityDescriptionEdit(boolean customEnabled, ReportOutputType reportOutputType) {
-        DescriptionEditFragment applicableFrame =
-                getDescriptionEditFrames().stream()
+        DescriptionEditFragment applicableFragment =
+                getDescriptionEditFragments().stream()
                         .filter(c -> c.isApplicable(reportOutputType))
                         .findFirst().orElse(null);
-        if (applicableFrame != null) {
+        if (applicableFragment != null) {
             descriptionEditBox.setVisible(!customEnabled);
-            applicableFrame.setVisible(!customEnabled);
-            applicableFrame.setItem(getEditedEntity());
+            applicableFragment.setVisible(!customEnabled);
+            applicableFragment.setItem(getEditedEntity());
 
-            if (!customEnabled && applicableFrame.isSupportPreview()) {
-                applicableFrame.showPreview();
+            if (!customEnabled && applicableFragment.isSupportPreview()) {
+                applicableFragment.showPreview();
             } else {
-                applicableFrame.hidePreview();
+                applicableFragment.hidePreview();
             }
         }
 
-        for (DescriptionEditFragment frame : getDescriptionEditFrames()) {
-            if (applicableFrame != frame) {
-                frame.setVisible(false);
+        for (DescriptionEditFragment fragment : getDescriptionEditFragments()) {
+            if (applicableFragment != fragment) {
+                fragment.setVisible(false);
             }
-            if (applicableFrame == null) {
-                frame.hidePreview();
+            if (applicableFragment == null) {
+                fragment.hidePreview();
                 descriptionEditBox.setVisible(false);
             }
         }
@@ -350,10 +350,10 @@ public class TemplateEditor extends StandardEditor<ReportTemplate> {
     protected void initOutputTypeList() {
         ArrayList<ReportOutputType> outputTypes = new ArrayList<>(Arrays.asList(ReportOutputType.values()));
 
-        if (!windowConfig.hasWindow(ShowChartLookup.JSON_CHART_SCREEN_ID)) {
+        if (!windowConfig.hasWindow(ShowChartScreen.JSON_CHART_SCREEN_ID)) {
             outputTypes.remove(ReportOutputType.CHART);
         }
-        if (!windowConfig.hasWindow(ShowPivotTableLookup.PIVOT_TABLE_SCREEN_ID)) {
+        if (!windowConfig.hasWindow(ShowPivotTableScreen.PIVOT_TABLE_SCREEN_ID)) {
             outputTypes.remove(ReportOutputType.PIVOT_TABLE);
         }
 
@@ -439,9 +439,9 @@ public class TemplateEditor extends StandardEditor<ReportTemplate> {
             event.preventCommit();
         }
         ReportTemplate reportTemplate = getEditedEntity();
-        for (DescriptionEditFragment frame : getDescriptionEditFrames()) {
-            if (frame.isApplicable(reportTemplate.getReportOutputType())) {
-                if (!frame.applyChanges()) {
+        for (DescriptionEditFragment fragment : getDescriptionEditFragments()) {
+            if (fragment.isApplicable(reportTemplate.getReportOutputType())) {
+                if (!fragment.applyChanges()) {
                     event.preventCommit();
                 }
             }

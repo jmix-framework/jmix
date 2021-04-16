@@ -46,4 +46,13 @@
     <fetchPlan entity="report_ReportExecution" name="reportExecution.browse" extends="_local">
         <!--        <property name="fileUri" fetchPlan="_instance_name"/>-->
     </fetchPlan>
+
+    <fetchPlan entity="report_Report" name="report.selectTemplate" extends="_instance_name">
+        <property name="templates" fetchPlan="reportTemplate.withOutputType"/>
+    </fetchPlan>
+
+    <fetchPlan entity="report_ReportTemplate" name="reportTemplate.withOutputType" extends="_instance_name">
+        <property name="reportOutputType"/>
+        <property name="custom"/>
+    </fetchPlan>
 </fetchPlans>

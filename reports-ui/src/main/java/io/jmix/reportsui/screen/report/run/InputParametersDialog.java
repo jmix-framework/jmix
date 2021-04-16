@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2019 Haulmont.
+ * Copyright 2021 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,7 +58,7 @@ public class InputParametersDialog extends Screen {
     protected ReportGuiManager reportGuiManager;
 
     @Autowired
-    protected InputParametersFragment inputParametersFrame;
+    protected InputParametersFragment inputParametersFragment;
 
     @Autowired
     protected ReportParameterValidator reportParameterValidator;
@@ -110,19 +110,19 @@ public class InputParametersDialog extends Screen {
 
     @Subscribe("printReportButton")
     public void onPrintReportButtonClick(Button.ClickEvent event) {
-        if (inputParametersFrame.getReport() != null) {
+        if (inputParametersFragment.getReport() != null) {
             ValidationErrors validationErrors = screenValidation.validateUiComponents(getWindow());
             if (validationErrors.isEmpty()) {
-                ReportTemplate template = inputParametersFrame.getReportTemplate();
+                ReportTemplate template = inputParametersFragment.getReportTemplate();
                 if (template != null) {
                     templateCode = template.getCode();
                 }
-                Report report = inputParametersFrame.getReport();
-                Map<String, Object> parameters = inputParametersFrame.collectParameters();
+                Report report = inputParametersFragment.getReport();
+                Map<String, Object> parameters = inputParametersFragment.collectParameters();
                 if (bulkPrint) {
-                    reportGuiManager.bulkPrint(report, templateCode, inputParametersFrame.getOutputType(), inputParameter.getAlias(), selectedEntities, this, parameters);
+                    reportGuiManager.bulkPrint(report, templateCode, inputParametersFragment.getOutputType(), inputParameter.getAlias(), selectedEntities, this, parameters);
                 } else {
-                    reportGuiManager.printReport(report, parameters, templateCode, outputFileName, inputParametersFrame.getOutputType(), this);
+                    reportGuiManager.printReport(report, parameters, templateCode, outputFileName, inputParametersFragment.getOutputType(), this);
                 }
             } else {
                 screenValidation.showValidationErrors(this, validationErrors);
@@ -132,15 +132,15 @@ public class InputParametersDialog extends Screen {
 
     @Subscribe
     protected void onBeforeShow(BeforeShowEvent event) {
-        inputParametersFrame.initTemplateAndOutputSelect();
+        inputParametersFragment.initTemplateAndOutputSelect();
     }
 
     protected boolean crossValidateParameters() {
         boolean isValid = true;
-        if (BooleanUtils.isTrue(inputParametersFrame.getReport().getValidationOn())) {
+        if (BooleanUtils.isTrue(inputParametersFragment.getReport().getValidationOn())) {
             try {
-                reportParameterValidator.crossValidateParameters(inputParametersFrame.getReport(),
-                        inputParametersFrame.collectParameters());
+                reportParameterValidator.crossValidateParameters(inputParametersFragment.getReport(),
+                        inputParametersFragment.collectParameters());
             } catch (ReportParametersValidationException e) {
 
                 notifications.create(Notifications.NotificationType.WARNING)

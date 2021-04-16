@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
-  ~ Copyright (c) 2008-2019 Haulmont.
+  ~ Copyright 2021 Haulmont.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -20,12 +20,19 @@
 
     <data>
         <collection id="reportsDc"
-                    class="io.jmix.reports.entity.Report">
+                    class="io.jmix.reports.entity.Report"
+                    fetchPlan="report.selectTemplate">
             <loader id="reportsDl">
-                <query>select r from report_Report r, in (r.templates) t where t.reportOutputType = 100</query>
+                <query>
+                    <![CDATA[select distinct r from report_Report r, in (r.templates) t where t.reportOutputType = 100]]>
+                </query>
             </loader>
         </collection>
     </data>
+
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
 
     <dialogMode height="800"
                 width="1024"
@@ -35,11 +42,15 @@
         <hbox id="reportSelectorBox" spacing="true">
             <label id="reportLookupLabel" align="MIDDLE_CENTER" value="msg://caption.reportForPivotTable"/>
             <entityComboBox id="reportEntityComboBox" optionsContainer="reportsDc" width="400px"/>
+            <hbox id="reportTemplateSelectorBox" spacing="true" visible="false">
+                <label id="reportTemplateLookupLabel" align="MIDDLE_CENTER" value="msg://caption.reportTemplate"/>
+                <entityComboBox id="reportTemplateComboBox" width="400px"/>
+            </hbox>
         </hbox>
         <groupBox id="reportParamsBox" collapsable="true" collapsed="false" visible="false"
                   caption="msg://caption.reportParameters" spacing="true">
-            <vbox id="parametersFrameHolder"/>
-            <button id="printReportBtn" caption="msg://input.printReport" icon="icons/run.png"/>
+            <vbox id="parametersFragmentHolder"/>
+            <button id="printReportBtn" caption="msg://input.printReport" icon="ANGLE_DOUBLE_RIGHT"/>
         </groupBox>
         <groupBox id="reportBox" width="100%" spacing="true"/>
     </layout>

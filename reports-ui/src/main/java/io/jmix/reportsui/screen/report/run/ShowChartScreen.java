@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2019 Haulmont.
+ * Copyright 2021 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package io.jmix.reportsui.screen.report.run;
 import com.haulmont.yarg.reporting.ReportOutputDocument;
 import io.jmix.core.Messages;
 import io.jmix.core.common.util.ParamsMap;
+import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportOutputType;
 import io.jmix.reports.entity.ReportTemplate;
@@ -27,17 +28,22 @@ import io.jmix.ui.Fragments;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.WindowConfig;
 import io.jmix.ui.component.*;
+import io.jmix.ui.model.CollectionContainer;
+import io.jmix.ui.model.CollectionLoader;
 import io.jmix.ui.screen.*;
 import io.jmix.ui.theme.ThemeConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-@UiController("report_ShowChart.lookup")
-@UiDescriptor("show-chart.xml")
-public class ShowChartLookup extends StandardLookup {
-    public static final String JSON_CHART_SCREEN_ID = "chart$jsonChart";
+@UiController("report_ShowChart.screen")
+@UiDescriptor("show-chart-screen.xml")
+public class ShowChartScreen extends Screen {
+    public static final String JSON_CHART_SCREEN_ID = "ui_JsonChartFragment";
 
     public static final String CHART_JSON_PARAMETER = "chartJson";
 
@@ -63,7 +69,7 @@ public class ShowChartLookup extends StandardLookup {
     protected Button printReportBtn;
 
     @Autowired
-    protected BoxLayout parametersFrameHolder;
+    protected BoxLayout parametersFragmentHolder;
 
     @Autowired
     protected HBoxLayout reportSelectorBox;
@@ -80,7 +86,19 @@ public class ShowChartLookup extends StandardLookup {
     @Autowired
     protected ScreenValidation screenValidation;
 
-    protected InputParametersFragment inputParametersFrame;
+    protected InputParametersFragment inputParametersFragment;
+
+    @Autowired
+    private HBoxLayout reportTemplateSelectorBox;
+
+    @Autowired
+    private EntityComboBox<ReportTemplate> reportTemplateComboBox;
+
+    @Autowired
+    private CurrentAuthentication currentAuthentication;
+
+    @Autowired
+    private CollectionContainer<Report> reportsDc;
 
     protected Report report;
 
@@ -107,7 +125,7 @@ public class ShowChartLookup extends StandardLookup {
     }
 
     @Subscribe
-    protected void onInit(InitEvent event) {
+    protected void onBeforeShow(BeforeShowEvent event) {
         if (!windowConfig.hasWindow(JSON_CHART_SCREEN_ID)) {
             showChartsNotIncluded();
             return;
@@ -115,24 +133,56 @@ public class ShowChartLookup extends StandardLookup {
 
         if (report != null) {
             reportSelectorBox.setVisible(false);
-            initFrames(chartJson, reportParameters);
+            initFragments(chartJson, reportParameters);
         } else {
             showDiagramStubText();
         }
 
         reportEntityComboBox.addValueChangeListener(e -> {
             report = e.getValue();
-            initFrames(null, null);
+            initFragments(null, null);
+            initReportTemplatesComboBox();
         });
     }
 
-    protected void initFrames(String chartJson, Map<String, Object> reportParameters) {
+    @Subscribe(id = "reportsDl", target = Target.DATA_LOADER)
+    public void onReportsDlPostLoad(CollectionLoader.PostLoadEvent<Report> event) {
+        List<Report> entities = event.getLoadedEntities();
+        List<Report> availableReports = reportGuiManager.getAvailableReports(null, currentAuthentication.getUser(), null);
+        entities.retainAll(availableReports);
+        reportsDc.setItems(entities);
+    }
+
+    protected void initReportTemplatesComboBox() {
+        if (report != null) {
+            List<ReportTemplate> chartTemplates = report.getTemplates().stream()
+                    .filter(rt -> ReportOutputType.CHART == rt.getReportOutputType())
+                    .collect(Collectors.toList());
+            if (chartTemplates.size() > 1) {
+                reportTemplateSelectorBox.setVisible(true);
+                reportTemplateComboBox.setOptionsList(chartTemplates);
+            } else {
+                resetReportTemplate();
+            }
+        } else {
+            resetReportTemplate();
+        }
+
+    }
+
+    private void resetReportTemplate() {
+        reportTemplateSelectorBox.setVisible(false);
+        reportTemplateComboBox.setOptionsList(new ArrayList<>());
+        reportTemplateComboBox.setValue(null);
+    }
+
+    protected void initFragments(String chartJson, Map<String, Object> reportParameters) {
         openChart(chartJson);
         openReportParameters(reportParameters);
     }
 
     private void openReportParameters(Map<String, Object> reportParameters) {
-        parametersFrameHolder.removeAll();
+        parametersFragmentHolder.removeAll();
 
         if (report != null) {
             Map<String, Object> params = ParamsMap.of(
@@ -140,12 +190,12 @@ public class ShowChartLookup extends StandardLookup {
                     InputParametersFragment.PARAMETERS_PARAMETER, reportParameters
             );
 
-            fragments.create(this,
+            inputParametersFragment = (InputParametersFragment) fragments.create(this,
                     "report_InputParameters.fragment",
                     new MapScreenOptions(params))
                     .init();
 
-            parametersFrameHolder.add(inputParametersFrame.getFragment());
+            parametersFragmentHolder.add(inputParametersFragment.getFragment());
             reportParamsBox.setVisible(true);
         } else {
             reportParamsBox.setVisible(false);
@@ -159,9 +209,9 @@ public class ShowChartLookup extends StandardLookup {
                     CHART_JSON_PARAMETER,
                     chartJson);
 
-            //TODO chart
-//            fragments.create(this, JSON_CHART_SCREEN_ID, new MapScreenOptions(params))
-//                    .init();
+            ScreenFragment chartFragment = fragments.create(this, JSON_CHART_SCREEN_ID, new MapScreenOptions(params))
+                    .init();
+            chartBox.add(chartFragment.getFragment());
         }
 
         showDiagramStubText();
@@ -169,7 +219,7 @@ public class ShowChartLookup extends StandardLookup {
 
     protected void showDiagramStubText() {
         if (chartBox.getOwnComponents().isEmpty()) {
-            chartBox.add(createLabel(messages.getMessage("showChart.caption")));
+            chartBox.add(createLabel(messages.getMessage(getClass(), "showChart.caption")));
         }
     }
 
@@ -188,21 +238,26 @@ public class ShowChartLookup extends StandardLookup {
     }
 
     @Subscribe("printReportBtn")
-    protected void printReport() {
-        if (inputParametersFrame != null && inputParametersFrame.getReport() != null) {
+    protected void printReport(Button.ClickEvent event) {
+        if (inputParametersFragment != null && inputParametersFragment.getReport() != null) {
             ValidationErrors validationErrors = screenValidation.validateUiComponents(getWindow());
             if (validationErrors.isEmpty()) {
-                Map<String, Object> parameters = inputParametersFrame.collectParameters();
-                Report report = inputParametersFrame.getReport();
+                Map<String, Object> parameters = inputParametersFragment.collectParameters();
+                Report report = inputParametersFragment.getReport();
 
+                String resultTemplateCode = templateCode;
                 if (templateCode == null) {
-                    templateCode = report.getTemplates().stream()
-                            .filter(template -> template.getReportOutputType() == ReportOutputType.CHART)
-                            .findFirst()
-                            .map(ReportTemplate::getCode).orElse(null);
+                    if (reportTemplateComboBox.getValue() != null) {
+                        resultTemplateCode = reportTemplateComboBox.getValue().getCode();
+                    } else {
+                        resultTemplateCode = report.getTemplates().stream()
+                                .filter(template -> template.getReportOutputType() == ReportOutputType.CHART)
+                                .findFirst()
+                                .map(ReportTemplate::getCode).orElse(null);
+                    }
                 }
 
-                ReportOutputDocument reportResult = reportGuiManager.getReportResult(report, parameters, templateCode);
+                ReportOutputDocument reportResult = reportGuiManager.getReportResult(report, parameters, resultTemplateCode);
                 openChart(new String(reportResult.getContent(), StandardCharsets.UTF_8));
             } else {
                 screenValidation.showValidationErrors(this, validationErrors);

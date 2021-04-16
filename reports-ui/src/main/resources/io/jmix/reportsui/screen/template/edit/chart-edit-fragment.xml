@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright (c) 2008-2019 Haulmont.
+  ~ Copyright 2021 Haulmont.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -36,33 +36,33 @@
             <columns count="2"/>
             <rows>
                 <row>
-                    <label value="msg://AbstractChartDescription.type"
+                    <label value="msg://io.jmix.reports.entity.charts/AbstractChartDescription.type"
                            align="MIDDLE_LEFT" width="${typeCaptionWidth}"/>
                     <comboBox id="typeField" width="${width}" required="true" align="MIDDLE_RIGHT"/>
                 </row>
                 <row>
                     <form id="pieChartForm" dataContainer="pieChartDc" colspan="2">
-                        <column width="${width}">
+                        <column width="${width}" childrenCaptionWidth="${captionWidth}">
                             <comboBox id="pieBandNameField" property="bandName"/>
-                            <field id="titleField" property="titleField"/>
-                            <field id="valueField" property="valueField"/>
-                            <field id="colorField" property="colorField"/>
-                            <field id="unitsField" property="units"/>
-                            <field id="showLegendField" property="showLegend"/>
+                            <textField id="titleField" property="titleField"/>
+                            <textField id="valueField" property="valueField"/>
+                            <textField id="colorField" property="colorField"/>
+                            <textField id="unitsField" property="units"/>
+                            <checkBox id="showLegendField" property="showLegend"/>
                         </column>
                     </form>
                 </row>
                 <row>
                     <form id="serialChartForm" dataContainer="serialChartDc" colspan="2">
-                        <column width="${width}">
+                        <column width="${width}" childrenCaptionWidth="${captionWidth}">
                             <comboBox id="serialBandNameField" property="bandName"/>
-                            <field id="categoryField" property="categoryField"/>
-                            <field id="categoryAxisCaptionField" property="categoryAxisCaption"/>
-                            <field id="categoryAxisLabelRotationField" property="categoryAxisLabelRotation"/>
-                            <field id="valueAxisCaptionField" property="valueAxisCaption"/>
-                            <field id="valueAxisUnitsField" property="valueAxisUnits"/>
-                            <field id="valueStackTypeField" property="valueStackType"/>
-                            <field id="showLegendField" property="showLegend"/>
+                            <textField id="categoryField" property="categoryField"/>
+                            <textField id="categoryAxisCaptionField" property="categoryAxisCaption"/>
+                            <textField id="categoryAxisLabelRotationField" property="categoryAxisLabelRotation"/>
+                            <textField id="valueAxisCaptionField" property="valueAxisCaption"/>
+                            <textField id="valueAxisUnitsField" property="valueAxisUnits"/>
+                            <textField id="valueStackTypeField" property="valueStackType"/>
+                            <checkBox id="showLegendChkBox" property="showLegend"/>
                         </column>
                     </form>
                 </row>

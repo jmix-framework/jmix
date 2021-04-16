@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2019 Haulmont.
+ * Copyright 2021 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import io.jmix.core.Messages;
 import io.jmix.reports.entity.pivottable.PivotTableProperty;
 import io.jmix.reports.entity.pivottable.PivotTablePropertyType;
 import io.jmix.ui.Dialogs;
+import io.jmix.ui.component.ContentMode;
 import io.jmix.ui.component.Form;
 import io.jmix.ui.component.HasContextHelp;
 import io.jmix.ui.component.SourceCodeEditor;
@@ -28,7 +29,8 @@ import io.jmix.ui.screen.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @UiController("report_PivotTableProperty.edit")
-@UiDescriptor("pivottable-property-edit.xml")
+@UiDescriptor("pivot-table-property-edit.xml")
+@EditedEntityContainer("propertyDc")
 public class PivotTablePropertyEdit extends StandardEditor<PivotTableProperty> {
     @Autowired
     protected Form propertyForm;
@@ -56,16 +58,16 @@ public class PivotTablePropertyEdit extends StandardEditor<PivotTableProperty> {
     @Install(to = "sourceCodeEditor", subject = "contextHelpIconClickHandler")
     protected void sourceCodeEditorContextHelpIconClickHandler(HasContextHelp.ContextHelpIconClickEvent contextHelpIconClickEvent) {
         dialogs.createMessageDialog()
-                .withCaption(messages.getMessage("pivotTable.functionHelpCaption"))
-                .withMessage(messages.getMessage("pivotTable.propertyFunctionHelp"))
+                .withCaption(messages.getMessage(getClass(), "pivotTable.functionHelpCaption"))
+                .withMessage(messages.getMessage(getClass(), "pivotTable.propertyFunctionHelp"))
                 .withModal(false)
                 .withWidth("560px")
+                .withContentMode(ContentMode.HTML)
                 .show();
     }
 
     protected void initFunctionField() {
         PivotTableProperty property = getEditedEntity();
-        propertyForm.getComponent("function")
-                .setVisible(property.getType() == PivotTablePropertyType.DERIVED);
+        sourceCodeEditor.setVisible(property.getType() == PivotTablePropertyType.DERIVED);
     }
 }

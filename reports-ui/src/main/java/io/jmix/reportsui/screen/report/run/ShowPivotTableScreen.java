@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2019 Haulmont.
+ * Copyright 2021 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 package io.jmix.reportsui.screen.report.run;
 
 import com.haulmont.yarg.reporting.ReportOutputDocument;
-import io.jmix.core.LoadContext;
 import io.jmix.core.Messages;
 import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.entity.KeyValueEntity;
@@ -31,18 +30,22 @@ import io.jmix.reportsui.screen.ReportGuiManager;
 import io.jmix.ui.Fragments;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.component.*;
+import io.jmix.ui.model.CollectionContainer;
+import io.jmix.ui.model.CollectionLoader;
 import io.jmix.ui.screen.*;
 import io.jmix.ui.theme.ThemeConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
-@UiController("report_ShowPivotTable.lookup")
-@UiDescriptor("show-pivot-table.xml")
-public class ShowPivotTableLookup extends StandardLookup {
-    public static final String PIVOT_TABLE_SCREEN_ID = "chart$pivotTable";
+@UiController("report_ShowPivotTable.screen")
+@UiDescriptor("show-pivot-table-screen.xml")
+public class ShowPivotTableScreen extends Screen {
+    public static final String PIVOT_TABLE_SCREEN_ID = "ui_PivotTableFragment";
 
     @Autowired
     protected ReportGuiManager reportGuiManager;
@@ -60,7 +63,7 @@ public class ShowPivotTableLookup extends StandardLookup {
     protected GroupBoxLayout reportParamsBox;
 
     @Autowired
-    protected BoxLayout parametersFrameHolder;
+    protected BoxLayout parametersFragmentHolder;
 
     @Autowired
     protected EntityComboBox<Report> reportEntityComboBox;
@@ -83,6 +86,15 @@ public class ShowPivotTableLookup extends StandardLookup {
     @Autowired
     protected CurrentAuthentication currentAuthentication;
 
+    @Autowired
+    private CollectionContainer<Report> reportsDc;
+
+    @Autowired
+    private HBoxLayout reportTemplateSelectorBox;
+
+    @Autowired
+    private EntityComboBox<ReportTemplate> reportTemplateComboBox;
+
     protected Report report;
 
     protected Map<String, Object> params;
@@ -91,7 +103,7 @@ public class ShowPivotTableLookup extends StandardLookup {
 
     protected byte[] pivotTableData;
 
-    protected InputParametersFragment inputParametersFrame;
+    protected InputParametersFragment inputParametersFragment;
 
     public void setReport(Report report) {
         this.report = report;
@@ -109,19 +121,21 @@ public class ShowPivotTableLookup extends StandardLookup {
         this.pivotTableData = pivotTableData;
     }
 
-    @Install(to = "reportsDl", target = Target.DATA_LOADER)
-    protected List<Report> reportsDlLoadDelegate(LoadContext<Report> loadContext) {
-        return reportGuiManager.getAvailableReports(null, currentAuthentication.getUser(), null);
+    @Subscribe(id = "reportsDl", target = Target.DATA_LOADER)
+    public void onReportsDlPostLoad(CollectionLoader.PostLoadEvent<Report> event) {
+        List<Report> entities = event.getLoadedEntities();
+        List<Report> availableReports = reportGuiManager.getAvailableReports(null, currentAuthentication.getUser(), null);
+        entities.retainAll(availableReports);
+        reportsDc.setItems(entities);
     }
 
-
     @Subscribe
-    protected void onInit(InitEvent event) {
+    protected void onBeforeShow(BeforeShowEvent event) {
         if (report != null) {
             reportSelectorBox.setVisible(false);
             if (pivotTableData != null) {
                 PivotTableData result = (PivotTableData) serialization.deserialize(pivotTableData);
-                initFrames(result.getPivotTableJson(), result.getValues(), params);
+                initFragments(result.getPivotTableJson(), result.getValues(), params);
             }
         } else {
             showStubText();
@@ -129,29 +143,30 @@ public class ShowPivotTableLookup extends StandardLookup {
 
         reportEntityComboBox.addValueChangeListener(e -> {
             report = e.getValue();
-            initFrames(null, null, null);
+            initFragments(null, null, null);
+            initReportTemplatesComboBox();
         });
 
     }
 
-    protected void initFrames(String pivotTableJson, List<KeyValueEntity> values, Map<String, Object> reportParameters) {
+    protected void initFragments(String pivotTableJson, List<KeyValueEntity> values, Map<String, Object> reportParameters) {
         openPivotTable(pivotTableJson, values);
         openReportParameters(reportParameters);
     }
 
     protected void openReportParameters(Map<String, Object> reportParameters) {
-        parametersFrameHolder.removeAll();
+        parametersFragmentHolder.removeAll();
         if (report != null) {
             Map<String, Object> params = ParamsMap.of(
                     InputParametersFragment.REPORT_PARAMETER, report,
                     InputParametersFragment.PARAMETERS_PARAMETER, reportParameters
             );
 
-            inputParametersFrame = (InputParametersFragment) fragments.create(this,
+            inputParametersFragment = (InputParametersFragment) fragments.create(this,
                     "report_InputParameters.fragment",
                     new MapScreenOptions(params))
                     .init();
-            parametersFrameHolder.add(inputParametersFrame.getFragment());
+            parametersFragmentHolder.add(inputParametersFragment.getFragment());
 
             reportParamsBox.setVisible(true);
         } else {
@@ -160,21 +175,26 @@ public class ShowPivotTableLookup extends StandardLookup {
     }
 
     @Subscribe("printReportBtn")
-    protected void printReport() {
-        if (inputParametersFrame != null && inputParametersFrame.getReport() != null) {
+    protected void printReport(Button.ClickEvent event) {
+        if (inputParametersFragment != null && inputParametersFragment.getReport() != null) {
             ValidationErrors validationErrors = screenValidation.validateUiComponents(getWindow());
             if (validationErrors.isEmpty()) {
-                Map<String, Object> parameters = inputParametersFrame.collectParameters();
-                Report report = inputParametersFrame.getReport();
+                Map<String, Object> parameters = inputParametersFragment.collectParameters();
+                Report report = inputParametersFragment.getReport();
 
+                String resultTemplateCode = templateCode;
                 if (templateCode == null) {
-                    templateCode = report.getTemplates().stream()
-                            .filter(template -> template.getReportOutputType() == ReportOutputType.PIVOT_TABLE)
-                            .findFirst()
-                            .map(ReportTemplate::getCode).orElse(null);
+                    if (reportTemplateComboBox.getValue() != null) {
+                        resultTemplateCode = reportTemplateComboBox.getValue().getCode();
+                    } else {
+                        resultTemplateCode = report.getTemplates().stream()
+                                .filter(template -> template.getReportOutputType() == ReportOutputType.PIVOT_TABLE)
+                                .findFirst()
+                                .map(ReportTemplate::getCode).orElse(null);
+                    }
                 }
 
-                ReportOutputDocument document = reportGuiManager.getReportResult(report, parameters, templateCode);
+                ReportOutputDocument document = reportGuiManager.getReportResult(report, parameters, resultTemplateCode);
                 PivotTableData result = (PivotTableData) serialization.deserialize(document.getContent());
                 openPivotTable(result.getPivotTableJson(), result.getValues());
             } else {
@@ -197,6 +217,28 @@ public class ShowPivotTableLookup extends StandardLookup {
             reportBox.add(fragment);
         }
         showStubText();
+    }
+
+    protected void initReportTemplatesComboBox() {
+        if (report != null) {
+            List<ReportTemplate> pivotTableTemplates = report.getTemplates().stream()
+                    .filter(rt -> ReportOutputType.PIVOT_TABLE == rt.getReportOutputType())
+                    .collect(Collectors.toList());
+            if (pivotTableTemplates.size() > 1) {
+                reportTemplateSelectorBox.setVisible(true);
+                reportTemplateComboBox.setOptionsList(pivotTableTemplates);
+            } else {
+                resetReportTemplate();
+            }
+        } else {
+            resetReportTemplate();
+        }
+    }
+
+    private void resetReportTemplate() {
+        reportTemplateSelectorBox.setVisible(false);
+        reportTemplateComboBox.setOptionsList(new ArrayList<>());
+        reportTemplateComboBox.setValue(null);
     }
 
     protected void showStubText() {

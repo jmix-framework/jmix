@@ -575,7 +575,9 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
 
     private void fireSelectionEventOnTable(Collection items) {
         entitiesTable.setSelected(Collections.EMPTY_LIST);
-        entitiesTable.setSelected(items);
+        if (entitiesDc.getItems().containsAll(items)) {
+            entitiesTable.setSelected(items);
+        }
     }
 
     public class ExportAction extends ItemTrackingAction {

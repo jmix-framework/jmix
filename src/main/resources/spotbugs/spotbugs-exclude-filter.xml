@@ -201,4 +201,14 @@
         <Class name="io.jmix.ui.component.impl.LookupScreenFacetImpl"/>
     </Match>
 
+    <Match>
+        <Bug pattern="UWF_UNWRITTEN_PUBLIC_OR_PROTECTED_FIELD"/>
+        <Class name="~io\.jmix\.pivottable\.screen\.PivotTableFragment\$.*"/>
+    </Match>
+
+    <Match>
+        <Bug pattern="MS_PKGPROTECT"/>
+        <Class name="io.jmix.charts.widget.client.amcharts.JmixAmchartsJsOverlay"/>
+    </Match>
+
 </FindBugsFilter>

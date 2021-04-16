@@ -24,7 +24,7 @@ import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.DependsOnProperties;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
-import io.jmix.reports.app.MetadataFieldsIgnoringGsonBuilder;
+import io.jmix.reports.app.MetadataFieldsIgnoringGson;
 import io.jmix.reports.entity.charts.AbstractChartDescription;
 import io.jmix.reports.entity.pivottable.PivotTableDescription;
 import io.jmix.reports.entity.table.TemplateTableDescription;
@@ -358,14 +358,16 @@ public class ReportTemplate implements com.haulmont.yarg.structure.ReportTemplat
         if (getContent() == null)
             return null;
 
-        return new MetadataFieldsIgnoringGsonBuilder()
+        return MetadataFieldsIgnoringGson.create()
+                .addIgnoringStrategy()
                 .build()
                 .fromJson(new String(getContent(), StandardCharsets.UTF_8), TemplateTableDescription.class);
     }
 
     public void setTemplateTableDescription(TemplateTableDescription description) {
         if (description != null && getReportOutputType() == ReportOutputType.TABLE) {
-            byte[] template = new MetadataFieldsIgnoringGsonBuilder()
+            byte[] template = MetadataFieldsIgnoringGson.create()
+                    .addIgnoringStrategy()
                     .build()
                     .toJson(description)
                     .getBytes(StandardCharsets.UTF_8);

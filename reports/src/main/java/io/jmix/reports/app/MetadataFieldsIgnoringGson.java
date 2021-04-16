@@ -21,12 +21,19 @@ import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-public class MetadataFieldsIgnoringGsonBuilder {
+public class MetadataFieldsIgnoringGson {
 
     protected final static String METADATA_STARTS_CHAR = "_";
 
-    public Gson build() {
-        ExclusionStrategy strategy = new ExclusionStrategy() {
+    public static MetadataFieldsIgnoringGsonBuilder create() {
+        return new MetadataFieldsIgnoringGsonBuilder();
+    }
+
+    public static class MetadataFieldsIgnoringGsonBuilder {
+
+        protected GsonBuilder gsonBuilder;
+
+        protected ExclusionStrategy strategy = new ExclusionStrategy() {
             @Override
             public boolean shouldSkipClass(Class<?> clazz) {
                 return false;
@@ -38,8 +45,17 @@ public class MetadataFieldsIgnoringGsonBuilder {
             }
         };
 
-        return new GsonBuilder()
-                .addSerializationExclusionStrategy(strategy)
-                .create();
+        public MetadataFieldsIgnoringGsonBuilder() {
+            gsonBuilder = new GsonBuilder();
+        }
+
+        public MetadataFieldsIgnoringGsonBuilder addIgnoringStrategy() {
+            gsonBuilder.addSerializationExclusionStrategy(strategy);
+            return this;
+        }
+
+        public Gson build() {
+            return gsonBuilder.create();
+        }
     }
 }

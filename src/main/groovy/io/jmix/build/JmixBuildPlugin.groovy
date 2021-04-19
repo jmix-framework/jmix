@@ -165,9 +165,11 @@ class JmixBuildPlugin implements Plugin<Project> {
                             group = JavaBasePlugin.DOCUMENTATION_GROUP
                             options.encoding = 'UTF-8'
                             options.memberLevel = JavadocMemberLevel.PROTECTED
-                            dependsOn javaSubprojects.javadoc
+                            options.addStringOption("sourcepath", "")
 
+                            dependsOn javaSubprojects.javadoc
                             source javaSubprojects.javadoc.source
+
                             destinationDir = rootProject.file("$rootProject.buildDir/docs/javadoc")
                             classpath = rootProject.files(javaSubprojects.javadoc.classpath)
 

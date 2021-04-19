@@ -16,7 +16,11 @@
 
 package io.jmix.searchui.component;
 
+import com.google.common.base.Strings;
+import io.jmix.search.searching.SearchStrategy;
+import io.jmix.search.searching.SearchStrategyManager;
 import io.jmix.ui.xml.layout.loader.AbstractFieldLoader;
+import org.dom4j.Element;
 
 public class SearchFieldLoader extends AbstractFieldLoader<SearchField> {
 
@@ -24,5 +28,24 @@ public class SearchFieldLoader extends AbstractFieldLoader<SearchField> {
     public void createComponent() {
         resultComponent = factory.create(SearchField.NAME);
         loadId(resultComponent, element);
+    }
+
+    @Override
+    public void loadComponent() {
+        super.loadComponent();
+
+        loadStrategy(resultComponent, element);
+    }
+
+    protected void loadStrategy(SearchField component, Element element) {
+        String strategyName = element.attributeValue("strategy");
+        SearchStrategyManager strategyManager = applicationContext.getBean(SearchStrategyManager.class);
+        SearchStrategy strategy;
+        if (Strings.isNullOrEmpty(strategyName)) {
+            strategy = strategyManager.getDefaultSearchStrategy();
+        } else {
+            strategy = strategyManager.getSearchStrategyByName(strategyName);
+        }
+        component.setSearchStrategy(strategy);
     }
 }

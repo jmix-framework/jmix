@@ -36,6 +36,8 @@ public class SearchApplicationProperties {
     protected final String elasticsearchHost;
     protected final int elasticsearchPort;
 
+    protected final String defaultSearchStrategy;
+
     public SearchApplicationProperties(
             @DefaultValue("100") int searchResultPageSize,
             @DefaultValue("100") int maxSearchPageCount,
@@ -45,7 +47,8 @@ public class SearchApplicationProperties {
             @DefaultValue("100") int reindexEntityEnqueueBatchSize,
             @DefaultValue("false") boolean autoMapIndexFileContent,
             @DefaultValue("localhost") String elasticsearchHost,
-            @DefaultValue("9200") int elasticsearchPort) {
+            @DefaultValue("9200") int elasticsearchPort,
+            @DefaultValue("anyTermAnyField") String defaultSearchStrategy) {
         this.searchResultPageSize = searchResultPageSize;
         this.maxSearchPageCount = maxSearchPageCount;
         this.searchReloadEntitiesBatchSize = searchReloadEntitiesBatchSize;
@@ -53,6 +56,7 @@ public class SearchApplicationProperties {
         this.maxProcessedQueueItemsPerExecution = maxProcessedQueueItemsPerExecution;
         this.reindexEntityEnqueueBatchSize = reindexEntityEnqueueBatchSize;
         this.autoMapIndexFileContent = autoMapIndexFileContent;
+        this.defaultSearchStrategy = defaultSearchStrategy;
 
         this.elasticsearchHost = elasticsearchHost;
         this.elasticsearchPort = elasticsearchPort;
@@ -119,5 +123,12 @@ public class SearchApplicationProperties {
      */
     public int getElasticsearchPort() {
         return elasticsearchPort;
+    }
+
+    /**
+     * @return name of default search strategy
+     */
+    public String getDefaultSearchStrategy() {
+        return defaultSearchStrategy;
     }
 }

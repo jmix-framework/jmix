@@ -25,6 +25,7 @@
         <xs:complexType>
             <xs:complexContent>
                 <xs:extension base="layout:baseFieldComponent">
+                    <xs:attribute name="strategy" type="xs:string"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>

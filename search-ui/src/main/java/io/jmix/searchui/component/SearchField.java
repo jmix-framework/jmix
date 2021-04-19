@@ -21,8 +21,9 @@ import io.jmix.core.common.event.Subscription;
 import io.jmix.core.common.util.ParamsMap;
 import io.jmix.search.SearchApplicationProperties;
 import io.jmix.search.searching.EntitySearcher;
+import io.jmix.search.searching.SearchContext;
 import io.jmix.search.searching.SearchResult;
-import io.jmix.search.searching.impl.SearchContext;
+import io.jmix.search.searching.SearchStrategy;
 import io.jmix.searchui.screen.result.SearchResultsScreen;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.ScreenBuilders;
@@ -34,8 +35,6 @@ import io.jmix.ui.screen.OpenMode;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.ScreenContext;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
@@ -53,7 +52,6 @@ public class SearchField extends CompositeComponent<CssLayout> implements Field<
         CompositeWithCaption, CompositeWithHtmlCaption, CompositeWithHtmlDescription,
         CompositeWithIcon, CompositeWithContextHelp {
 
-    private static final Logger log = LoggerFactory.getLogger(SearchField.class);
     public static final String NAME = "searchField";
 
     @Autowired
@@ -67,6 +65,7 @@ public class SearchField extends CompositeComponent<CssLayout> implements Field<
 
     protected TextField<String> inputField;
     protected Button searchButton;
+    protected SearchStrategy searchStrategy;
 
     public SearchField() {
         addCreateListener(this::onCreate);
@@ -82,19 +81,18 @@ public class SearchField extends CompositeComponent<CssLayout> implements Field<
 
     protected void performSearch() {
         Screen frameOwner = ComponentsHelper.getWindowNN(this).getFrameOwner();
-        String searchTerm = inputField.getValue();
+        String searchText = inputField.getValue();
         ScreenContext screenContext = getScreenContext(frameOwner);
-        if (StringUtils.isBlank(searchTerm)) {
+        if (StringUtils.isBlank(searchText)) {
             Notifications notifications = screenContext.getNotifications();
             notifications.create(HUMANIZED)
-                    .withCaption(messages.getMessage("io.jmix.searchui.noSearchTerm"))
+                    .withCaption(messages.getMessage("io.jmix.searchui.noSearchText"))
                     .show();
         } else {
-            String preparedSearchTerm = searchTerm.trim();
-
+            String preparedSearchText = searchText.trim();
             SearchResult searchResult = entitySearcher.search(
-                    preparedSearchTerm,
-                    new SearchContext().setSize(searchApplicationProperties.getSearchResultPageSize())
+                    new SearchContext(preparedSearchText).setSize(searchApplicationProperties.getSearchResultPageSize()),
+                    searchStrategy
             );
 
             if (searchResult.isEmpty()) {
@@ -204,5 +202,13 @@ public class SearchField extends CompositeComponent<CssLayout> implements Field<
     @Override
     public ValueSource<String> getValueSource() {
         return inputField.getValueSource();
+    }
+
+    public SearchStrategy getSearchStrategy() {
+        return searchStrategy;
+    }
+
+    public void setSearchStrategy(SearchStrategy searchStrategy) {
+        this.searchStrategy = searchStrategy;
     }
 }

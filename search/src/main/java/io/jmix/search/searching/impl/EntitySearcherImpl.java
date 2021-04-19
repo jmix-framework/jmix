@@ -21,14 +21,16 @@ import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.search.SearchApplicationProperties;
 import io.jmix.search.searching.EntitySearcher;
+import io.jmix.search.searching.SearchContext;
 import io.jmix.search.searching.SearchResult;
+import io.jmix.search.searching.SearchStrategy;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.support.IndicesOptions;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.text.Text;
-import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
@@ -65,50 +67,84 @@ public class EntitySearcherImpl implements EntitySearcher {
     protected IdSerialization idSerialization;
 
     @Override
-    public SearchResult search(String searchTerm, SearchContext searchContext) {
-        //todo Currently it's a simple search over all fields of all search indices without any paging
-        log.debug("Perform search by term '{}' and with details: {}", searchTerm, searchContext);
-        SearchRequest searchRequest = createSearchRequest(searchTerm, searchContext);
-
-        SearchResultImpl searchResultImpl = new SearchResultImpl(searchTerm, searchContext);
+    public SearchResult search(SearchContext searchContext, SearchStrategy searchStrategy) {
+        log.debug("Perform search by context '{}'", searchContext);
+        SearchResultImpl searchResult = initSearchResult(searchContext, searchStrategy);
+        SearchRequest searchRequest = createSearchRequest(searchContext, searchStrategy);
         boolean moreDataAvailable;
         do {
-            searchRequest.source().from(searchResultImpl.getEffectiveOffset());
-
+            updateRequestOffset(searchRequest, searchResult);
             SearchResponse searchResponse;
             try {
+                log.debug("Search Request: {}", searchRequest);
                 searchResponse = esClient.search(searchRequest, RequestOptions.DEFAULT);
             } catch (IOException e) {
                 throw new RuntimeException("Search failed", e);
             }
             SearchHits searchHits = searchResponse.getHits();
             Map<MetaClass, List<SearchHit>> hitsByEntityName = groupSearchHitsByEntity(searchHits);
-            fillSearchResult(searchResultImpl, hitsByEntityName);
+            fillSearchResult(searchResult, hitsByEntityName);
 
             long totalHits = searchResponse.getHits().getTotalHits().value;
-            moreDataAvailable = (totalHits - searchResultImpl.getEffectiveOffset()) > 0;
-        } while (moreDataAvailable && !isResultFull(searchResultImpl, searchContext));
-        searchResultImpl.setMoreDataAvailable(moreDataAvailable);
-        return searchResultImpl;
+            moreDataAvailable = (totalHits - searchResult.getEffectiveOffset()) > 0;
+        } while (moreDataAvailable && !isResultFull(searchResult, searchContext));
+        searchResult.setMoreDataAvailable(moreDataAvailable);
+        return searchResult;
     }
 
-    protected SearchRequest createSearchRequest(String searchTerm, SearchContext searchContext) {
-        SearchRequest searchRequest = new SearchRequest("search_index_*");
-        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-        searchSourceBuilder.query(QueryBuilders.multiMatchQuery(searchTerm, "*"));
-        searchSourceBuilder.size(searchContext.getSize());
+    @Override
+    public SearchResult searchNextPage(SearchResult previousSearchResult) {
+        return search(previousSearchResult.createNextPageSearchContext(), previousSearchResult.getSearchStrategy());
+    }
 
-        HighlightBuilder highlightBuilder = new HighlightBuilder();
-        highlightBuilder.field("*");
-        searchSourceBuilder.highlighter(highlightBuilder);
+    protected SearchResultImpl initSearchResult(SearchContext searchContext, SearchStrategy searchStrategy) {
+        return new SearchResultImpl(searchContext, searchStrategy);
+    }
 
-        searchRequest.source(searchSourceBuilder);
-
+    protected SearchRequest createSearchRequest(SearchContext searchContext, SearchStrategy searchStrategy) {
+        SearchRequest searchRequest = createBaseSearchRequest(searchContext);
+        searchStrategy.configureRequest(searchRequest, searchContext);
+        postStrategyConfiguration(searchRequest, searchContext);
         return searchRequest;
     }
 
-    protected boolean isResultFull(SearchResultImpl searchResultImpl, SearchContext searchSettings) {
-        return searchResultImpl.getSize() >= searchSettings.getSize();
+    protected SearchRequest createBaseSearchRequest(SearchContext searchContext) {
+        SearchRequest searchRequest = new SearchRequest();
+        configureTargetIndices(searchRequest, searchContext);
+        searchRequest.indicesOptions(IndicesOptions.lenientExpandOpen());
+        return searchRequest;
+    }
+
+    protected void postStrategyConfiguration(SearchRequest searchRequest, SearchContext searchContext) {
+        searchRequest.source().size(searchContext.getSize());
+        configureHighlight(searchRequest);
+    }
+
+    protected void configureTargetIndices(SearchRequest searchRequest, SearchContext searchContext) {
+        List<String> indices = searchContext.getIndices();
+        if (indices.isEmpty()) {
+            searchRequest.indices("search_index_*");
+        } else {
+            searchRequest.indices(indices.toArray(new String[0]));
+        }
+    }
+
+    protected void configureHighlight(SearchRequest searchRequest) {
+        SearchSourceBuilder searchSourceBuilder = searchRequest.source();
+        if (searchSourceBuilder.highlighter() == null) {
+            HighlightBuilder highlightBuilder = new HighlightBuilder();
+            highlightBuilder.field("*").preTags("<b>").postTags("</b>");
+            highlightBuilder.requireFieldMatch(true);
+            searchRequest.source().highlighter(highlightBuilder);
+        }
+    }
+
+    protected void updateRequestOffset(SearchRequest searchRequest, SearchResultImpl searchResult) {
+        searchRequest.source().from(searchResult.getEffectiveOffset());
+    }
+
+    protected boolean isResultFull(SearchResultImpl searchResultImpl, SearchContext searchContext) {
+        return searchResultImpl.getSize() >= searchContext.getSize();
     }
 
     protected Map<MetaClass, List<SearchHit>> groupSearchHitsByEntity(SearchHits searchHits) {

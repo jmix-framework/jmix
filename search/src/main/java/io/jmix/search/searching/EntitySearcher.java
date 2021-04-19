@@ -16,19 +16,26 @@
 
 package io.jmix.search.searching;
 
-import io.jmix.search.searching.impl.SearchContext;
-
 /**
  * Provides functionality for searching entities in index.
  */
 public interface EntitySearcher {
 
     /**
-     * Performs search in all search indices with provided term.
+     * Performs search in search indices according to provided {@link SearchContext} and {@link SearchStrategy}.
      *
-     * @param searchTerm    term to search in indices
-     * @param searchContext context of search
+     * @param searchContext  runtime settings of specific search
+     * @param searchStrategy the way incoming search text should be processed
      * @return {@link SearchResult} with found objects
      */
-    SearchResult search(String searchTerm, SearchContext searchContext);
+    SearchResult search(SearchContext searchContext, SearchStrategy searchStrategy);
+
+    /**
+     * Performs search of next page according to {@link SearchContext} and {@link SearchResult} contained
+     * in provided {@link SearchStrategy} related to previous page.
+     *
+     * @param previousSearchResult {@link SearchResult} of previous page
+     * @return {@link SearchResult} with found objects
+     */
+    SearchResult searchNextPage(SearchResult previousSearchResult);
 }

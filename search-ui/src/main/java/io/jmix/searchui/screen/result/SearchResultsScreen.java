@@ -29,7 +29,6 @@ import io.jmix.search.SearchApplicationProperties;
 import io.jmix.search.searching.EntitySearcher;
 import io.jmix.search.searching.SearchResult;
 import io.jmix.search.searching.impl.FieldHit;
-import io.jmix.search.searching.impl.SearchContext;
 import io.jmix.search.searching.impl.SearchResultEntry;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.Notifications;
@@ -141,17 +140,17 @@ public class SearchResultsScreen extends Screen {
 
     protected void initScreenCaption(SearchResult searchResult) {
         String caption = messages.getMessage(SearchResultsScreen.class, "resultScreenCaption");
-        String searchTerm = searchResult.getSearchTerm();
-        if (StringUtils.isNotBlank(searchTerm)) {
-            caption = caption + ": " + searchTerm;
+        String searchText = searchResult.getSearchText();
+        if (StringUtils.isNotBlank(searchText)) {
+            caption = caption + ": " + searchText;
         }
         getWindow().setCaption(caption);
     }
 
     protected void handleSearchResult(SearchResult searchResult) {
-        String searchTerm = searchResult.getSearchTerm();
-        if (StringUtils.isBlank(searchTerm)) {
-            handleNoSearchTerm();
+        String searchText = searchResult.getSearchText();
+        if (StringUtils.isBlank(searchText)) {
+            handleNoSearchText();
             return;
         }
 
@@ -165,8 +164,8 @@ public class SearchResultsScreen extends Screen {
         renderNavigationControls(pages);
     }
 
-    protected void handleNoSearchTerm() {
-        Label<String> label = createNoSearchTermLabel();
+    protected void handleNoSearchText() {
+        Label<String> label = createNoSearchTextLabel();
         contentBox.add(label);
     }
 
@@ -253,10 +252,7 @@ public class SearchResultsScreen extends Screen {
         Page lastPage = getLastPage();
         if (lastPage != null) {
             SearchResult lastSearchResult = lastPage.getSearchResult();
-            SearchResult searchResult = entitySearcher.search(
-                    lastSearchResult.getSearchTerm(),
-                    createNextSearchContext(lastSearchResult)
-            );
+            SearchResult searchResult = entitySearcher.searchNextPage(lastSearchResult);
             if (searchResult.getSize() == 0) {
                 currentPage.setLastPage(true);
                 renderNavigationControls(pages);
@@ -271,13 +267,6 @@ public class SearchResultsScreen extends Screen {
                 renderNavigationControls(pages);
             }
         }
-    }
-
-    protected SearchContext createNextSearchContext(SearchResult searchResult) {
-        SearchContext currentSearchContext = searchResult.getSearchContext();
-        return new SearchContext()
-                .setSize(currentSearchContext.getSize())
-                .setOffset(searchResult.getEffectiveOffset());
     }
 
     protected Page getLastPage() {
@@ -298,9 +287,9 @@ public class SearchResultsScreen extends Screen {
         return uiComponents.create(CssLayout.class);
     }
 
-    protected Label<String> createNoSearchTermLabel() {
+    protected Label<String> createNoSearchTextLabel() {
         Label<String> label = uiComponents.create(Label.of(String.class));
-        label.setValue(messages.getMessage("io.jmix.searchui.noSearchTerm"));
+        label.setValue(messages.getMessage("io.jmix.searchui.noSearchText"));
         label.setStyleName("h2");
         return label;
     }

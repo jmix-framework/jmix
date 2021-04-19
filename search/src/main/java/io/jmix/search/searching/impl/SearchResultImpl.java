@@ -16,22 +16,24 @@
 
 package io.jmix.search.searching.impl;
 
+import io.jmix.search.searching.SearchContext;
 import io.jmix.search.searching.SearchResult;
+import io.jmix.search.searching.SearchStrategy;
 
 import java.util.*;
 
 public class SearchResultImpl implements SearchResult {
-    protected final String searchTerm;
     protected SearchContext searchContext;
     protected final Map<String, Set<SearchResultEntry>> entriesByEntityName = new HashMap<>();
     protected int size = 0;
     protected int effectiveOffset;
     protected boolean moreDataAvailable = false;
+    protected SearchStrategy searchStrategy;
 
-    public SearchResultImpl(String searchTerm, SearchContext searchContext) {
-        this.searchTerm = searchTerm;
+    public SearchResultImpl(SearchContext searchContext, SearchStrategy searchStrategy) {
         this.searchContext = searchContext;
         this.effectiveOffset = searchContext.getOffset();
+        this.searchStrategy = searchStrategy;
     }
 
     public void addEntry(SearchResultEntry searchResultEntry) {
@@ -43,26 +45,32 @@ public class SearchResultImpl implements SearchResult {
         size++;
     }
 
+    @Override
     public Set<SearchResultEntry> getEntriesByEntityName(String entityName) {
         return entriesByEntityName.get(entityName);
     }
 
+    @Override
     public boolean isEmpty() {
         return entriesByEntityName.isEmpty();
     }
 
+    @Override
     public Collection<String> getEntityNames() {
         return entriesByEntityName.keySet();
     }
 
-    public String getSearchTerm() {
-        return searchTerm;
+    @Override
+    public String getSearchText() {
+        return searchContext.getSearchText();
     }
 
+    @Override
     public int getSize() {
         return size;
     }
 
+    @Override
     public int getEffectiveOffset() {
         return effectiveOffset;
     }
@@ -71,12 +79,26 @@ public class SearchResultImpl implements SearchResult {
         this.effectiveOffset++;
     }
 
+    @Override
     public SearchContext getSearchContext() {
         return searchContext;
     }
 
+    @Override
     public boolean isMoreDataAvailable() {
         return moreDataAvailable;
+    }
+
+    @Override
+    public SearchStrategy getSearchStrategy() {
+        return searchStrategy;
+    }
+
+    @Override
+    public SearchContext createNextPageSearchContext() {
+        return new SearchContext(this.searchContext.getSearchText())
+                .setSize(this.searchContext.getSize())
+                .setOffset(getEffectiveOffset());
     }
 
     public void setMoreDataAvailable(boolean moreDataAvailable) {

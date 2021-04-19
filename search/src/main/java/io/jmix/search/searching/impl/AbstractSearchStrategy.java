@@ -16,34 +16,18 @@
 
 package io.jmix.search.searching.impl;
 
-public class SearchContext {
+import io.jmix.search.searching.SearchStrategy;
 
-    protected int size;
-    protected int offset;
-
-    public int getSize() {
-        return size;
-    }
-
-    public SearchContext setSize(int size) {
-        this.size = size;
-        return this;
-    }
-
-    public int getOffset() {
-        return offset;
-    }
-
-    public SearchContext setOffset(int offset) {
-        this.offset = offset;
-        return this;
-    }
+/**
+ * Base class for all search strategies.
+ */
+public abstract class AbstractSearchStrategy implements SearchStrategy {
 
     @Override
     public String toString() {
-        return "SearchContext{" +
-                "size=" + size +
-                ", offset=" + offset +
+        return "SearchStrategy{" +
+                "Name=" + getName() +
+                ", Class=" + getClass() +
                 '}';
     }
 }

@@ -16,14 +16,13 @@
 
 package io.jmix.search.searching;
 
-import io.jmix.search.searching.impl.SearchContext;
 import io.jmix.search.searching.impl.SearchResultEntry;
 
 import java.util.Collection;
 import java.util.Set;
 
 /**
- * Represents result of search by some term.
+ * Represents result of search by some text.
  */
 public interface SearchResult {
 
@@ -58,11 +57,11 @@ public interface SearchResult {
     Set<SearchResultEntry> getEntriesByEntityName(String entityName);
 
     /**
-     * Gets term search has been performed with.
+     * Gets text search has been performed with.
      *
-     * @return search term
+     * @return search text
      */
-    String getSearchTerm();
+    String getSearchText();
 
     /**
      * Gets {@link SearchContext} that was used to gain this {@link SearchResult}.
@@ -84,4 +83,18 @@ public interface SearchResult {
      * @return true if index contains more suitable data, false otherwise
      */
     boolean isMoreDataAvailable();
+
+    /**
+     * Gets {@link SearchStrategy} that was used to gain this {@link SearchResult}.
+     *
+     * @return {@link SearchStrategy}
+     */
+    SearchStrategy getSearchStrategy();
+
+    /**
+     * Creates new {@link SearchContext} based on current one and describes next-page search
+     *
+     * @return {@link SearchContext}
+     */
+    SearchContext createNextPageSearchContext();
 }

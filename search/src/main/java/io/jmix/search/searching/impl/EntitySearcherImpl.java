@@ -16,6 +16,7 @@
 
 package io.jmix.search.searching.impl;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -95,6 +96,39 @@ public class EntitySearcherImpl implements EntitySearcher {
     @Override
     public SearchResult searchNextPage(SearchResult previousSearchResult) {
         return search(previousSearchResult.createNextPageSearchContext(), previousSearchResult.getSearchStrategy());
+    }
+
+    @Override
+    public Collection<Object> loadEntityInstances(SearchResult searchResult) {
+        return loadEntityInstances(searchResult, Collections.emptyMap());
+    }
+
+    @Override
+    public Collection<Object> loadEntityInstances(SearchResult searchResult, Map<String, FetchPlan> fetchPlans) {
+        List<Object> result = new ArrayList<>(searchResult.getSize());
+        searchResult.getEntityNames().forEach(entityName -> {
+            MetaClass metaClass = metadata.getClass(entityName);
+            Collection<SearchResultEntry> entries = searchResult.getEntriesByEntityName(entityName);
+
+            for (Collection<SearchResultEntry> entriesPartition : Iterables.partition(entries, searchApplicationProperties.getSearchReloadEntitiesBatchSize())) {
+                List<Object> partitionIds = entriesPartition.stream()
+                        .map(entry -> idSerialization.stringToId(entry.getDocId()))
+                        .map(Id::getValue)
+                        .collect(Collectors.toList());
+
+                FetchPlan fetchPlan = fetchPlans.get(entityName);
+                FluentLoader.ByIds<Object> loader = secureDataManager.load(metaClass.getJavaClass()).ids(partitionIds);
+                if (fetchPlan == null) {
+                    loader.fetchPlan(FetchPlan.LOCAL);
+                } else {
+                    loader.fetchPlan(fetchPlan);
+                }
+                List<Object> partitionResult = loader.list();
+
+                result.addAll(partitionResult);
+            }
+        });
+        return result;
     }
 
     protected SearchResultImpl initSearchResult(SearchContext searchContext, SearchStrategy searchStrategy) {

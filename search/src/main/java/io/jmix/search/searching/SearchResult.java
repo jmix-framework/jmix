@@ -19,7 +19,6 @@ package io.jmix.search.searching;
 import io.jmix.search.searching.impl.SearchResultEntry;
 
 import java.util.Collection;
-import java.util.Set;
 
 /**
  * Represents result of search by some text.
@@ -52,9 +51,16 @@ public interface SearchResult {
      * Gets all {@link SearchResultEntry} specific for provided entity.
      *
      * @param entityName entity name
-     * @return set of {@link SearchResultEntry}
+     * @return collection of {@link SearchResultEntry}
      */
-    Set<SearchResultEntry> getEntriesByEntityName(String entityName);
+    Collection<SearchResultEntry> getEntriesByEntityName(String entityName);
+
+    /**
+     * Gets all {@link SearchResultEntry}
+     *
+     * @return collection of {@link SearchResultEntry}
+     */
+    Collection<SearchResultEntry> getAllEntries();
 
     /**
      * Gets text search has been performed with.

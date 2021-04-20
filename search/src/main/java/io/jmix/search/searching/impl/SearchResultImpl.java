@@ -24,7 +24,8 @@ import java.util.*;
 
 public class SearchResultImpl implements SearchResult {
     protected SearchContext searchContext;
-    protected final Map<String, Set<SearchResultEntry>> entriesByEntityName = new HashMap<>();
+    protected final Map<String, Collection<SearchResultEntry>> entriesByEntityName = new HashMap<>();
+    protected final Collection<SearchResultEntry> allEntries = new ArrayList<>();
     protected int size = 0;
     protected int effectiveOffset;
     protected boolean moreDataAvailable = false;
@@ -37,17 +38,23 @@ public class SearchResultImpl implements SearchResult {
     }
 
     public void addEntry(SearchResultEntry searchResultEntry) {
-        Set<SearchResultEntry> entriesForEntityName = entriesByEntityName.computeIfAbsent(
+        Collection<SearchResultEntry> entriesForEntityName = entriesByEntityName.computeIfAbsent(
                 searchResultEntry.getEntityName(),
-                s -> new LinkedHashSet<>()
+                s -> new ArrayList<>()
         );
         entriesForEntityName.add(searchResultEntry);
+        allEntries.add(searchResultEntry);
         size++;
     }
 
     @Override
-    public Set<SearchResultEntry> getEntriesByEntityName(String entityName) {
-        return entriesByEntityName.get(entityName);
+    public Collection<SearchResultEntry> getEntriesByEntityName(String entityName) {
+        return Collections.unmodifiableCollection(entriesByEntityName.get(entityName));
+    }
+
+    @Override
+    public Collection<SearchResultEntry> getAllEntries() {
+        return Collections.unmodifiableCollection(allEntries);
     }
 
     @Override
@@ -57,7 +64,7 @@ public class SearchResultImpl implements SearchResult {
 
     @Override
     public Collection<String> getEntityNames() {
-        return entriesByEntityName.keySet();
+        return Collections.unmodifiableCollection(entriesByEntityName.keySet());
     }
 
     @Override

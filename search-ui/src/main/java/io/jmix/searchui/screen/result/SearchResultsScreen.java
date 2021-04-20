@@ -310,7 +310,7 @@ public class SearchResultsScreen extends Screen {
     }
 
     protected void displayInstances(SearchResult searchResult, String entityName, CssLayout instancesLayout) {
-        Set<SearchResultEntry> entries = searchResult.getEntriesByEntityName(entityName);
+        Collection<SearchResultEntry> entries = searchResult.getEntriesByEntityName(entityName);
 
         for (SearchResultEntry entry : entries) {
             Button instanceBtn = createInstanceButton(entityName, entry);

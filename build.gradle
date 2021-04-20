@@ -211,8 +211,10 @@ dependencies {
         api "io.jmix.ui:jmix-ui-data-starter:${snapshotOr(uiVersion)}"
         api "io.jmix.ui:jmix-charts:${snapshotOr(uiVersion)}"
         api "io.jmix.ui:jmix-charts-starter:${snapshotOr(uiVersion)}"
+        api "io.jmix.ui:jmix-charts-widgets:${snapshotOr(uiVersion)}"
         api "io.jmix.ui:jmix-pivot-table:${snapshotOr(uiVersion)}"
         api "io.jmix.ui:jmix-pivot-table-starter:${snapshotOr(uiVersion)}"
+        api "io.jmix.ui:jmix-pivot-table-widgets:${snapshotOr(uiVersion)}"
 
         api 'com.google.guava:guava:27.0.1-jre'
         api 'commons-io:commons-io:2.6'

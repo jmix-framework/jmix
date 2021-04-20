@@ -13,8 +13,10 @@ include 'ui-widgets'
 include 'ui-widgets-compiled'
 include 'charts'
 include 'charts-starter'
+include 'charts-widgets'
 include 'pivot-table'
 include 'pivot-table-starter'
+include 'pivot-table-widgets'
 
 rootProject.children.each { p1 ->
 	p1.buildFileName = "${p1.name}.gradle"

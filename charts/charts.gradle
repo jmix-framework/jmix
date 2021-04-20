@@ -24,9 +24,6 @@ dependencies {
     api platform("io.jmix.bom:jmix-bom:$bomVersion")
 
     api project(':ui')
-    api project(':ui-widgets')
-
-    api 'com.vaadin:vaadin-client'
 
     api 'org.webjars:amcharts'
 
@@ -47,9 +44,5 @@ jar {
     with copySpec {
         from sourceSets.main.allJava
         include "io/jmix/charts/widget/client/**"
-    }
-    // register exported widgetset
-    manifest {
-        attributes(['Vaadin-Widgetsets': 'io.jmix.charts.widget.ChartsWidgetSet'])
     }
 }

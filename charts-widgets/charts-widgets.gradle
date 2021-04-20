@@ -14,37 +14,26 @@
  * limitations under the License.
  */
 
-apply plugin: 'groovy'
-apply plugin: 'io.jmix'
-
 group = 'io.jmix.ui'
-archivesBaseName = 'jmix-pivot-table'
+archivesBaseName = 'jmix-charts-widgets'
 
 dependencies {
     api platform("io.jmix.bom:jmix-bom:$bomVersion")
 
-    api project(':ui')
-    api project(':ui-export')
-    api project(':ui-widgets') // temporary fix, see Haulmont/jmix-ui#392
+    api project(':charts')
+    api project(':ui-widgets')
 
-    api 'org.apache.poi:poi'
-
-    api 'org.webjars.bower:pivottable'
-    api 'org.webjars:jquery-ui-touch-punch'
-
-    testImplementation 'org.junit.jupiter:junit-jupiter-api'
-    testImplementation 'org.springframework:spring-test'
-    testImplementation 'org.spockframework:spock-core'
-    testImplementation 'org.spockframework:spock-spring'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
-    testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'
-    testRuntimeOnly 'org.slf4j:slf4j-simple'
+    implementation 'com.google.code.gson:gson'
 }
 
 jar {
     // pack client Java sources
     with copySpec {
         from sourceSets.main.allJava
-        include "io/jmix/pivottable/widget/client/**"
+        include "io/jmix/charts/widget/client/**"
+    }
+    // register exported widgetset
+    manifest {
+        attributes(['Vaadin-Widgetsets': 'io.jmix.charts.widget.ChartsWidgetSet'])
     }
 }

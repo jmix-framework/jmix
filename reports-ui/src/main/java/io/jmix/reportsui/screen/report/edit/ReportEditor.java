@@ -170,7 +170,6 @@ public class ReportEditor extends StandardEditor<Report> {
 
     @Subscribe
     public void onAfterShow(AfterShowEvent event) {
-        updateBands();
         bandTree.expandTree();
         bandTree.setSelected(getEditedEntity().getRootBandDefinition());
 
@@ -178,16 +177,6 @@ public class ReportEditor extends StandardEditor<Report> {
         generalFragment.sortBandDefinitionsTableByPosition();
 
         setScreenCaption();
-    }
-
-    private void updateBands() {
-        if (StringUtils.isNotBlank(getEditedEntity().getXml())) {
-            Report reportFromXml = reports.convertToReport(getEditedEntity().getXml());
-            if (reportFromXml.getBands() != null) {
-                getEditedEntity().setBands(reportFromXml.getBands());
-                bandsDc.replaceItem(reportFromXml.getRootBandDefinition());
-            }
-        }
     }
 
     @Override

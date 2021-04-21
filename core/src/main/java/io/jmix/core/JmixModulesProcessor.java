@@ -18,6 +18,7 @@ package io.jmix.core;
 
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.annotation.JmixModule;
+import io.jmix.core.impl.JmixModulesSorter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -111,20 +112,14 @@ public class JmixModulesProcessor implements BeanDefinitionRegistryPostProcessor
             }
         }
 
-        modules.sort((c1, c2) -> {
-            int res = c1.compareTo(c2);
-            if (res != 0)
-                return res;
-            else
-                return moduleIds.indexOf(c1.getId()) - moduleIds.indexOf(c2.getId());
-        });
+        List<JmixModuleDescriptor> sortedModules = JmixModulesSorter.sort(modules);
 
-        log.info("Using Jmix modules: {}", modules);
+        log.info("Using Jmix modules: {}", sortedModules);
 
-        jmixModules = new JmixModules(modules, environment);
+        jmixModules = new JmixModules(sortedModules, environment);
 
-        for (int i = modules.size() - 1; i >= 0; i--) {
-            JmixModuleDescriptor module = modules.get(i);
+        for (int i = sortedModules.size() - 1; i >= 0; i--) {
+            JmixModuleDescriptor module = sortedModules.get(i);
             PropertySource source = module.getPropertySource();
             if (source != null) {
                 environment.getPropertySources().addLast(source);

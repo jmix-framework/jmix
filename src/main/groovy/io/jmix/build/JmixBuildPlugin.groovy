@@ -23,9 +23,9 @@ class JmixBuildPlugin implements Plugin<Project> {
         setupCompilation(project, extension)
         setupTestExecution(project)
         setupJavadocsBuilding(project)
+        setupAggregateJavadocsBuilding(project)
         setupPublishing(project)
         setupSpotbugs(project)
-        setupAggregateJavadocsBuilding(project)
     }
 
     private void setupRepositories(Project project) {
@@ -152,7 +152,7 @@ class JmixBuildPlugin implements Plugin<Project> {
         }
     }
 
-    void setupAggregateJavadocsBuilding(Project project) {
+    private void setupAggregateJavadocsBuilding(Project project) {
         Project rootProject = project.rootProject
         if (rootProject) {
             rootProject.gradle.projectsEvaluated {
@@ -173,7 +173,7 @@ class JmixBuildPlugin implements Plugin<Project> {
                             destinationDir = rootProject.file("$rootProject.buildDir/docs/javadoc")
                             classpath = rootProject.files(javaSubprojects.javadoc.classpath)
 
-                            title = "${rootProject.name.capitalize()} ${rootProject.version.replace('-SNAPSHOT', '')} API"
+                            title = "${rootProject.name.capitalize()} ${getApiVersion(rootProject)} API"
 
                             if (rootProject.hasProperty('javadocPublishCmd')) {
                                 doLast {
@@ -187,6 +187,15 @@ class JmixBuildPlugin implements Plugin<Project> {
                     }
                 }
             }
+        }
+    }
+
+    private String getApiVersion(Project rootProject) {
+        String[] parts = rootProject.version.split('\\.')
+        if (parts.length > 1) {
+            return parts[0] + '.' + parts[1]
+        } else {
+            return parts[0]
         }
     }
 

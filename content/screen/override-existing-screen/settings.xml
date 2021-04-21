@@ -16,18 +16,22 @@
   -->
 
 <template xmlns="http://schemas.haulmont.com/studio/template-settings.xsd"
-          icon="resource://template/template_extends.svg"
-          name="Extend an existing screen">
+          icon="resource://template/template_blank.svg"
+          name="Override an existing screen">
     <tags>
-        <tag>EXTEND</tag>
+        <tag>OVERRIDE</tag>
     </tags>
-    <!--This totally repeats original extend screen template-->
     <description>
-        <![CDATA[<html> Create new screen based on another screen.</html>]]>
+        <![CDATA[<html>Create new screen which will be used in the application instead of the existing one. New screen optionally can be based on the previous screen.</html>]]>
     </description>
-    <property caption="Extend screen"
-              code="extendScreen"
+    <property caption="Override screen"
+              code="overrideScreen"
               propertyType="SCREEN"
+              required="true"/>
+
+    <property caption="Init screen layout with"
+              code="overrideAction"
+              propertyType="OVERRIDE_PROPERTY"
               required="true"/>
 
     <property caption="Descriptor name"
@@ -36,8 +40,10 @@
               sourceName="descriptor"
               required="true"
               dynamic="true"
-              valueTemplate="ext-${extendScreen.descriptorName}">
-        <dependency code="extendScreen"/>
+              defaultValue="override"
+              valueTemplate="ext-${overrideScreen.descriptorName}">
+        <dependency code="overrideScreen"/>
+        <dependency code="overrideAction"/>
     </property>
 
     <property caption="Controller name"
@@ -45,8 +51,8 @@
               propertyType="CLASS_NAME"
               sourceName="controller"
               dynamic="true"
-              valueTemplate="Ext${extendScreen.controllerClassName}">
-        <dependency code="extendScreen"/>
+              valueTemplate="Ext${overrideScreen.controllerClassName}">
+        <dependency code="overrideScreen"/>
     </property>
 
     <property caption="Screen id"
@@ -55,8 +61,9 @@
               dynamic="true"
               advanced="true"
               required="true"
-              valueTemplate="${&quot;ext_&quot;+extendScreen.id}">
-        <dependency code="extendScreen"/>
+              valueTemplate="${overrideScreen.id}">
+        <dependency code="overrideScreen"/>
+        <dependency code="overrideAction"/>
     </property>
 
     <source fileExt="xml"

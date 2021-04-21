@@ -138,6 +138,7 @@
                     <xs:enumeration value="REST_QUERY"/>
                     <xs:enumeration value="REST_SERVICE_METHOD"/>
                     <xs:enumeration value="VIEW_COMPONENT"/>
+                    <xs:enumeration value="OVERRIDE_PROPERTY"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:union>

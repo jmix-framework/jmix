@@ -1,0 +1,14 @@
+<%if (overrideActionType == "COPY") {%>${api.evaluateScript('screen/process_copy.groovy',
+        ['content': overrideScreen.originalDescriptorText,
+        'messages': messageKeys])}<%} else {%>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://jmix.io/schema/ui/window"
+        caption="msg://${api.evaluateScript('screen/findOriginalCaptionKey.groovy',
+        ['content': overrideScreen.originalDescriptorText,
+        'messages': messageKeys])}"<%if (overrideActionType == "EMPTY") {%>>
+    <layout>
+
+    </layout><%}%><%if (overrideActionType == "EXTEND") {%>
+        extends="${overrideScreen.reference}">
+    <layout/><%}%>
+</window><%}%>

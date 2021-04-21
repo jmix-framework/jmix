@@ -1,9 +1,5 @@
-<%
-def xmlns = extendScreen.legacy ? "http://jmix.io/schema/ui/window" : "http://jmix.io/schema/ui/window"
-%><?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<window xmlns="${xmlns}"
-        xmlns:ext="http://schemas.haulmont.com/cuba/window-ext.xsd" <%if (extendScreen.legacy) {%>
-        class="${packageName}.${controllerName}"<%}%>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://jmix.io/schema/ui/window"
         extends="${extendScreen.reference}">
     <layout/>
 </window>

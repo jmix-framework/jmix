@@ -17,7 +17,13 @@
 package io.jmix.ui.component;
 
 import io.jmix.core.common.event.Subscription;
-import io.jmix.ui.meta.*;
+import io.jmix.ui.meta.PropertiesConstraint;
+import io.jmix.ui.meta.PropertiesGroup;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioElementsGroup;
+import io.jmix.ui.meta.StudioFacet;
+import io.jmix.ui.meta.StudioProperties;
+import io.jmix.ui.meta.StudioProperty;
 import io.jmix.ui.screen.OpenMode;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.ScreenOptions;
@@ -43,6 +49,9 @@ import java.util.function.Supplier;
 @StudioProperties(
         properties = {
                 @StudioProperty(name = "id", type = PropertyType.COMPONENT_ID, required = true)
+        },
+        groups = {
+                @PropertiesGroup(properties = {"screenId", "screenClass"}, constraint = PropertiesConstraint.ONE_OF)
         }
 )
 public interface ScreenFacet<S extends Screen> extends Facet, ApplicationContextAware {
@@ -52,7 +61,7 @@ public interface ScreenFacet<S extends Screen> extends Facet, ApplicationContext
      *
      * @param screenId screen id
      */
-    @StudioProperty(type = PropertyType.STRING)
+    @StudioProperty(type = PropertyType.SCREEN_ID)
     void setScreenId(@Nullable String screenId);
 
     /**

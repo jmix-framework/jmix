@@ -92,6 +92,7 @@ public class TemplatesFragment extends ScreenFragment {
 
             ReportTemplate copy = metadataTools.copy(template);
             copy.setId(UuidProvider.createUuid());
+            copy.setVersion(null);
 
             String copyNamingPattern = messages.getMessage(getClass(), "template.copyNamingPattern");
             String copyCode = String.format(copyNamingPattern, StringUtils.isEmpty(copy.getCode())

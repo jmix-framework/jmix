@@ -34,7 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-@Component("reports_chartFormatter")
+@Component("report_ChartFormatter")
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class ChartFormatter extends AbstractFormatter {
 

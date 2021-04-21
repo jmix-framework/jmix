@@ -33,7 +33,7 @@ import org.springframework.stereotype.Component;
 import java.util.LinkedList;
 import java.util.List;
 
-@Component("reports_TableGenerator")
+@Component("report_TableGenerator")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class TableGenerator implements Generator {
 

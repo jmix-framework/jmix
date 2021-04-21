@@ -27,7 +27,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Component("report_prototypesLoader")
+@Component("report_PrototypesLoader")
 public class PrototypesLoader {
 
     @Autowired

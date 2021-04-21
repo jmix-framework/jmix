@@ -25,7 +25,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Component("reporting_ReportingMigrator")
+@Component("report_ReportingMigrator")
 public class ReportingMigrator implements io.jmix.reports.ReportingMigratorMBean {
 
     @Autowired

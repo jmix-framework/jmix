@@ -32,7 +32,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Nullable;
 import java.util.*;
 
-@Component("reports_ChartToJsonConverter")
+@Component("report_ChartToJsonConverter")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ChartToJsonConverter {
 

@@ -25,7 +25,7 @@ import java.util.Collections;
 @PropertySource(name = "io.jmix.reportsui", value = "classpath:/io/jmix/reportsui/module.properties")
 public class ReportsUIConfiguration {
 
-    @Bean("reports_ReportsUiControllers")
+    @Bean("report_ReportsUiControllers")
     public UiControllersConfiguration screens(ApplicationContext applicationContext,
                                               AnnotationScanMetadataReaderFactory metadataReaderFactory) {
         UiControllersConfiguration uiControllers
@@ -34,7 +34,7 @@ public class ReportsUIConfiguration {
         return uiControllers;
     }
 
-    @Bean("reports_ReportsUiActions")
+    @Bean("report_ReportsUiActions")
     public ActionsConfiguration actions(ApplicationContext applicationContext,
                                         AnnotationScanMetadataReaderFactory metadataReaderFactory) {
         ActionsConfiguration actionsConfiguration = new ActionsConfiguration(applicationContext, metadataReaderFactory);
@@ -47,7 +47,7 @@ public class ReportsUIConfiguration {
         return new DataSetFactory();
     }
 
-    @Bean("reports_CrossTabOrientationTableDecorator")
+    @Bean("report_CrossTabOrientationTableDecorator")
     public CrossTabTableDecorator crossTabTableDecorator() {
         return new CrossTabTableDecorator();
     }

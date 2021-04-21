@@ -34,7 +34,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Component("reports_pivotTableFormatter")
+@Component("report_PivotTableFormatter")
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class PivotTableFormatter extends AbstractFormatter {
 

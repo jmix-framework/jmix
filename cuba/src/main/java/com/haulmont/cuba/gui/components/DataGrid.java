@@ -117,7 +117,7 @@ public interface DataGrid<E extends Entity> extends ListComponent<E>, io.jmix.ui
      * @deprecated Use {@link Subscription} instead
      */
     @Deprecated
-    void removeEditorPreCommitListener(Consumer<EditorPreCommitEvent> listener);
+    void removeEditorPreCommitListener(Consumer<EditorPreCommitEvent<E>> listener);
 
     /**
      * Removes a previously registered DataGrid editor post commit listener.
@@ -126,7 +126,7 @@ public interface DataGrid<E extends Entity> extends ListComponent<E>, io.jmix.ui
      * @deprecated Use {@link Subscription} instead
      */
     @Deprecated
-    void removeEditorPostCommitListener(Consumer<EditorPostCommitEvent> listener);
+    void removeEditorPostCommitListener(Consumer<EditorPostCommitEvent<E>> listener);
 
     /**
      * Removes a previously registered DataGrid editor close listener.
@@ -135,7 +135,7 @@ public interface DataGrid<E extends Entity> extends ListComponent<E>, io.jmix.ui
      * @deprecated Use {@link Subscription} instead
      */
     @Deprecated
-    void removeEditorCloseListener(Consumer<EditorCloseEvent> listener);
+    void removeEditorCloseListener(Consumer<EditorCloseEvent<E>> listener);
 
     /**
      * Removes a previously registered DataGrid editor open listener.
@@ -144,7 +144,7 @@ public interface DataGrid<E extends Entity> extends ListComponent<E>, io.jmix.ui
      * @deprecated Use {@link Subscription} instead
      */
     @Deprecated
-    void removeEditorOpenListener(Consumer<EditorOpenEvent> listener);
+    void removeEditorOpenListener(Consumer<EditorOpenEvent<E>> listener);
 
     /**
      * Removes a previously registered column collapsing change listener.

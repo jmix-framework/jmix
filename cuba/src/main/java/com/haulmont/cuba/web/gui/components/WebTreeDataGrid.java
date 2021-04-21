@@ -367,22 +367,22 @@ public class WebTreeDataGrid<E extends Entity> extends TreeDataGridImpl<E>
     }
 
     @Override
-    public void removeEditorPreCommitListener(Consumer<EditorPreCommitEvent> listener) {
+    public void removeEditorPreCommitListener(Consumer<EditorPreCommitEvent<E>> listener) {
         internalRemoveEditorPreCommitListener(listener);
     }
 
     @Override
-    public void removeEditorPostCommitListener(Consumer<EditorPostCommitEvent> listener) {
+    public void removeEditorPostCommitListener(Consumer<EditorPostCommitEvent<E>> listener) {
         internalRemoveEditorPostCommitListener(listener);
     }
 
     @Override
-    public void removeEditorCloseListener(Consumer<EditorCloseEvent> listener) {
+    public void removeEditorCloseListener(Consumer<EditorCloseEvent<E>> listener) {
         internalRemoveEditorCloseListener(listener);
     }
 
     @Override
-    public void removeEditorOpenListener(Consumer<EditorOpenEvent> listener) {
+    public void removeEditorOpenListener(Consumer<EditorOpenEvent<E>> listener) {
         internalRemoveEditorOpenListener(listener);
     }
 

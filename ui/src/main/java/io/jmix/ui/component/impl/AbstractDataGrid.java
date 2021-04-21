@@ -1246,12 +1246,12 @@ public abstract class AbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E>, 
     }
 
     @Override
-    public Subscription addEditorOpenListener(Consumer<EditorOpenEvent> listener) {
+    public Subscription addEditorOpenListener(Consumer<EditorOpenEvent<E>> listener) {
         if (editorOpenListener == null) {
             editorOpenListener = component.getEditor().addOpenListener(this::onEditorOpen);
         }
 
-        getEventHub().subscribe(EditorOpenEvent.class, listener);
+        getEventHub().subscribe(EditorOpenEvent.class, (Consumer) listener);
 
         return () -> internalRemoveEditorOpenListener(listener);
     }
@@ -1265,8 +1265,8 @@ public abstract class AbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E>, 
         publish(EditorOpenEvent.class, e);
     }
 
-    protected void internalRemoveEditorOpenListener(Consumer<EditorOpenEvent> listener) {
-        unsubscribe(EditorOpenEvent.class, listener);
+    protected void internalRemoveEditorOpenListener(Consumer<EditorOpenEvent<E>> listener) {
+        unsubscribe(EditorOpenEvent.class, (Consumer) listener);
 
         if (!hasSubscriptions(EditorOpenEvent.class)) {
             editorOpenListener.remove();
@@ -1275,12 +1275,12 @@ public abstract class AbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E>, 
     }
 
     @Override
-    public Subscription addEditorCloseListener(Consumer<EditorCloseEvent> listener) {
+    public Subscription addEditorCloseListener(Consumer<EditorCloseEvent<E>> listener) {
         if (editorCancelListener == null) {
             editorCancelListener = component.getEditor().addCancelListener(this::onEditorCancel);
         }
 
-        getEventHub().subscribe(EditorCloseEvent.class, listener);
+        getEventHub().subscribe(EditorCloseEvent.class, (Consumer) listener);
 
         return () -> internalRemoveEditorCloseListener(listener);
     }
@@ -1294,8 +1294,8 @@ public abstract class AbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E>, 
         publish(EditorCloseEvent.class, e);
     }
 
-    protected void internalRemoveEditorCloseListener(Consumer<EditorCloseEvent> listener) {
-        unsubscribe(EditorCloseEvent.class, listener);
+    protected void internalRemoveEditorCloseListener(Consumer<EditorCloseEvent<E>> listener) {
+        unsubscribe(EditorCloseEvent.class, (Consumer) listener);
 
         if (!hasSubscriptions(EditorCloseEvent.class)) {
             editorCancelListener.remove();
@@ -1304,14 +1304,14 @@ public abstract class AbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E>, 
     }
 
     @Override
-    public Subscription addEditorPreCommitListener(Consumer<EditorPreCommitEvent> listener) {
+    public Subscription addEditorPreCommitListener(Consumer<EditorPreCommitEvent<E>> listener) {
         if (editorBeforeSaveListener == null) {
             //noinspection unchecked
             JmixEditorImpl<E> editor = (JmixEditorImpl) component.getEditor();
             editorBeforeSaveListener = editor.addBeforeSaveListener(this::onEditorBeforeSave);
         }
 
-        getEventHub().subscribe(EditorPreCommitEvent.class, listener);
+        getEventHub().subscribe(EditorPreCommitEvent.class, (Consumer) listener);
 
         return () -> internalRemoveEditorPreCommitListener(listener);
     }
@@ -1323,8 +1323,8 @@ public abstract class AbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E>, 
         publish(EditorPreCommitEvent.class, e);
     }
 
-    protected void internalRemoveEditorPreCommitListener(Consumer<EditorPreCommitEvent> listener) {
-        unsubscribe(EditorPreCommitEvent.class, listener);
+    protected void internalRemoveEditorPreCommitListener(Consumer<EditorPreCommitEvent<E>> listener) {
+        unsubscribe(EditorPreCommitEvent.class, (Consumer) listener);
 
         if (!hasSubscriptions(EditorPreCommitEvent.class)) {
             editorBeforeSaveListener.remove();
@@ -1333,12 +1333,12 @@ public abstract class AbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E>, 
     }
 
     @Override
-    public Subscription addEditorPostCommitListener(Consumer<EditorPostCommitEvent> listener) {
+    public Subscription addEditorPostCommitListener(Consumer<EditorPostCommitEvent<E>> listener) {
         if (editorSaveListener == null) {
             editorSaveListener = component.getEditor().addSaveListener(this::onEditorSave);
         }
 
-        getEventHub().subscribe(EditorPostCommitEvent.class, listener);
+        getEventHub().subscribe(EditorPostCommitEvent.class, (Consumer) listener);
 
         return () -> internalRemoveEditorPostCommitListener(listener);
     }
@@ -1352,8 +1352,8 @@ public abstract class AbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E>, 
         publish(EditorPostCommitEvent.class, e);
     }
 
-    protected void internalRemoveEditorPostCommitListener(Consumer<EditorPostCommitEvent> listener) {
-        unsubscribe(EditorPostCommitEvent.class, listener);
+    protected void internalRemoveEditorPostCommitListener(Consumer<EditorPostCommitEvent<E>> listener) {
+        unsubscribe(EditorPostCommitEvent.class, (Consumer) listener);
 
         if (!hasSubscriptions(EditorPostCommitEvent.class)) {
             editorSaveListener.remove();

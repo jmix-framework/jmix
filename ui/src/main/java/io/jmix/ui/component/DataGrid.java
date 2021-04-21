@@ -618,7 +618,7 @@ public interface DataGrid<E> extends ListComponent<E>, HasButtonsPanel, Componen
      *
      * @param listener the listener to register
      */
-    Subscription addEditorPreCommitListener(Consumer<EditorPreCommitEvent> listener);
+    Subscription addEditorPreCommitListener(Consumer<EditorPreCommitEvent<E>> listener);
 
     /**
      * An event that is fired after the item is updated.
@@ -642,7 +642,7 @@ public interface DataGrid<E> extends ListComponent<E>, HasButtonsPanel, Componen
      *
      * @param listener the listener to register
      */
-    Subscription addEditorPostCommitListener(Consumer<EditorPostCommitEvent> listener);
+    Subscription addEditorPostCommitListener(Consumer<EditorPostCommitEvent<E>> listener);
 
     /**
      * An event that is fired when the DataGrid editor is closed.
@@ -666,7 +666,7 @@ public interface DataGrid<E> extends ListComponent<E>, HasButtonsPanel, Componen
      *
      * @param listener the listener to register
      */
-    Subscription addEditorCloseListener(Consumer<EditorCloseEvent> listener);
+    Subscription addEditorCloseListener(Consumer<EditorCloseEvent<E>> listener);
 
     /**
      * An event that is fired before the DataGrid editor is opened.
@@ -705,7 +705,7 @@ public interface DataGrid<E> extends ListComponent<E>, HasButtonsPanel, Componen
      *
      * @param listener the listener to register
      */
-    Subscription addEditorOpenListener(Consumer<EditorOpenEvent> listener);
+    Subscription addEditorOpenListener(Consumer<EditorOpenEvent<E>> listener);
 
     /**
      * Repaint UI representation of the DataGrid without refreshing the table data.

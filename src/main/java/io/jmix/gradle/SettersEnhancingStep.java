@@ -17,15 +17,9 @@
 package io.jmix.gradle;
 
 import javassist.*;
-import javassist.bytecode.AnnotationsAttribute;
-import javassist.bytecode.annotation.Annotation;
-import javassist.bytecode.annotation.StringMemberValue;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static io.jmix.gradle.MetaModelUtil.*;
 
@@ -60,20 +54,20 @@ public class SettersEnhancingStep extends BaseEnhancingStep {
             if (!isSetterMethod(ctMethod)) {
                 continue;
             }
-            String fieldName = generateFieldNameByMethod(ctMethod.getName());
-            CtField field = findDeclaredField(ctClass, fieldName);
 
-            if (field == null || isPersistentEntity && isTransientField(ctClass, fieldName)) {
+            CtField field = findDeclaredFieldByAccessor(ctClass, ctMethod.getName());
+
+            if (field == null || isPersistentEntity && isTransientField(ctClass, field.getName())) {
                 continue;
             }
 
-            if (isPersistentField(ctClass, fieldName) || isJmixProperty(ctClass, fieldName) || !jmixPropertiesAnnotatedOnly) {
+            if (isPersistentField(ctClass, field.getName()) || isJmixProperty(ctClass, field.getName()) || !jmixPropertiesAnnotatedOnly) {
                 CtClass paramType = ctMethod.getParameterTypes()[0];
 
                 if (paramType.isPrimitive()) {
                     throw new IllegalStateException(
                             String.format("Unable to enhance field %s.%s with primitive type %s. Use type %s.",
-                                    ctClass.getName(), fieldName,
+                                    ctClass.getName(), field.getName(),
                                     paramType.getSimpleName(), StringUtils.capitalize(paramType.getSimpleName())));
                 }
 
@@ -81,12 +75,12 @@ public class SettersEnhancingStep extends BaseEnhancingStep {
                 ctMethod.addLocalVariable("__new", paramType);
 
                 ctMethod.insertBefore(
-                        "__prev = this.get" + StringUtils.capitalize(fieldName) + "();"
+                        "__prev = this.get" + ctMethod.getName().substring(3) + "();"
                 );
 
                 ctMethod.insertAfter(
-                        "__new = this.get" + StringUtils.capitalize(fieldName) + "();" +
-                                "io.jmix.core.impl.EntityInternals.fireListeners(this, \"" + fieldName + "\", __prev, __new);"
+                        "__new = this.get" + ctMethod.getName().substring(3) + "();" +
+                                "io.jmix.core.impl.EntityInternals.fireListeners(this, \"" + field.getName() + "\", __prev, __new);"
                 );
             }
         }

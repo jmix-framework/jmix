@@ -178,6 +178,16 @@ public class MetaModelUtil {
         return StringUtils.uncapitalize(methodName.substring(3));
     }
 
+    public static CtField findDeclaredFieldByAccessor(CtClass ctClass, String accessorName) {
+        String fieldName = accessorName.substring(3);
+        for (CtField field : ctClass.getDeclaredFields()) {
+            if (field.getName().equals(fieldName) || field.getName().equals(StringUtils.uncapitalize(fieldName))) {
+                return field;
+            }
+        }
+        return null;
+    }
+
     public static CtField findDeclaredField(CtClass ctClass, String fieldName) {
         for (CtField field : ctClass.getDeclaredFields()) {
             if (field.getName().equals(fieldName)) {

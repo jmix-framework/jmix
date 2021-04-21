@@ -156,7 +156,7 @@ public interface InstanceLoader<E> extends DataLoader {
      * You can also add an event listener declaratively using a controller method annotated with {@link Subscribe}:
      * <pre>
      *    &#64;Subscribe(id = "fooDl", target = Target.DATA_LOADER)
-     *     private void onFooDlPreLoad(InstanceLoader.PreLoadEvent event) {
+     *     private void onFooDlPreLoad(InstanceLoader.PreLoadEvent&lt;Foo&gt; event) {
      *         // handle event here
      *     }
      * </pre>
@@ -164,7 +164,7 @@ public interface InstanceLoader<E> extends DataLoader {
      * @param listener listener
      * @return subscription
      */
-    Subscription addPreLoadListener(Consumer<PreLoadEvent> listener);
+    Subscription addPreLoadListener(Consumer<PreLoadEvent<E>> listener);
 
     /**
      * Event sent after successful loading of an entity instance, merging it into {@code DataContext} and setting to
@@ -204,7 +204,7 @@ public interface InstanceLoader<E> extends DataLoader {
      * You can also add an event listener declaratively using a controller method annotated with {@link Subscribe}:
      * <pre>
      *    &#64;Subscribe(id = "fooDl", target = Target.DATA_LOADER)
-     *     private void onFooDlPostLoad(InstanceLoader.PostLoadEvent event) {
+     *     private void onFooDlPostLoad(InstanceLoader.PostLoadEvent&lt;Foo&gt; event) {
      *         // handle event here
      *     }
      * </pre>
@@ -212,5 +212,5 @@ public interface InstanceLoader<E> extends DataLoader {
      * @param listener listener
      * @return subscription
      */
-    Subscription addPostLoadListener(Consumer<PostLoadEvent> listener);
+    Subscription addPostLoadListener(Consumer<PostLoadEvent<E>> listener);
 }

@@ -223,7 +223,7 @@ public abstract class AbstractDataStore implements DataStore {
             fireEvent(savingEvent);
 
             deletedEntities = deleteAll(context);
-            DataStoreEntityDeletingEvent deletingEvent = new DataStoreEntityDeletingEvent(context, savedEntities, saveState);
+            DataStoreEntityDeletingEvent deletingEvent = new DataStoreEntityDeletingEvent(context, deletedEntities, saveState);
             fireEvent(deletingEvent);
 
             beforeSaveTransactionCommit(context, savedEntities, deletedEntities);

@@ -17,6 +17,7 @@
 package io.jmix.ui;
 
 import io.jmix.core.*;
+import io.jmix.core.annotation.Secure;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -52,6 +53,7 @@ public class RemoveOperation {
     @Autowired
     protected WindowConfig windowConfig;
     @Autowired
+    @Secure
     protected DataManager dataManager;
     @Autowired
     protected Messages messages;

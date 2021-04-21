@@ -46,12 +46,12 @@ import io.jmix.core.impl.MetadataLoader;
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
-import io.jmix.data.DataConfiguration;
 import io.jmix.data.impl.NumberIdCache;
 import io.jmix.datatools.DatatoolsConfiguration;
 import io.jmix.datatoolsui.DatatoolsUiConfiguration;
 import io.jmix.dynattr.DynAttrConfiguration;
 import io.jmix.dynattrui.DynAttrUiConfiguration;
+import io.jmix.eclipselink.EclipselinkConfiguration;
 import io.jmix.localfs.LocalFileStorageConfiguration;
 import io.jmix.security.SecurityConfiguration;
 import io.jmix.securitydata.SecurityDataConfiguration;
@@ -95,7 +95,7 @@ import java.util.Collections;
 @Configuration
 @ComponentScan
 @ConfigurationPropertiesScan
-@JmixModule(dependsOn = {CoreConfiguration.class, DataConfiguration.class, UiConfiguration.class, UiDataConfiguration.class,
+@JmixModule(dependsOn = {CoreConfiguration.class, EclipselinkConfiguration.class, UiConfiguration.class, UiDataConfiguration.class,
         DynAttrConfiguration.class, DynAttrUiConfiguration.class, LocalFileStorageConfiguration.class,
         SecurityConfiguration.class, SecurityDataConfiguration.class, SecurityUiConfiguration.class,
         DatatoolsConfiguration.class, DatatoolsUiConfiguration.class

@@ -219,7 +219,7 @@ The table below shows the dependency of types.
 | :---          |    :---- |
 | uuid          | _eq, _neq, _in, _notIn, _isNull |
 | numbers       | _eq, _neq, _gt, _gte, _lt, _lte, _in, _notIn, _isNull |
-| string/char   | _eq, _neq, _in, _notIn, _contains, _startsWith, _endsWith, _isNull |
+| string/char   | _eq, _neq, _in, _notIn, _contains, _notContains, _startsWith, _endsWith, _isNull |
 | date          | _eq, _neq, _gt, _gte, _lt, _lte, _in, _notIn, _isNull |
 | boolean       | _eq, _neq, _isNull |
 

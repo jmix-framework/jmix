@@ -31,7 +31,7 @@ import static io.jmix.graphql.schema.Types.FilterOperation.*
 import static io.jmix.graphql.schema.scalar.CustomScalars.GraphQLLong
 import static io.jmix.graphql.schema.scalar.CustomScalars.GraphQLUUID
 
-class FiltrationTest extends AbstractGraphQLTest {
+class FilterComponentTest extends AbstractGraphQLTest {
 
     @Autowired
     private FilterTypesBuilder filterTypesBuilder
@@ -48,7 +48,7 @@ class FiltrationTest extends AbstractGraphQLTest {
 
     @SuppressWarnings('unused')
     void setup() {
-        stringFilterOPs = new HashSet<Types.FilterOperation>(Arrays.asList(EQ, NEQ, IN_LIST, NOT_IN_LIST, STARTS_WITH, ENDS_WITH, CONTAINS, IS_NULL))
+        stringFilterOPs = new HashSet<Types.FilterOperation>(Arrays.asList(EQ, NEQ, IN_LIST, NOT_IN_LIST, STARTS_WITH, ENDS_WITH, CONTAINS, NOT_CONTAINS, IS_NULL))
         uuidFilterOPs = new HashSet<Types.FilterOperation>(Arrays.asList(EQ, NEQ, IN_LIST, NOT_IN_LIST, IS_NULL))
         numbersFilterOPs = new HashSet<Types.FilterOperation>(Arrays.asList(EQ, NEQ, GT, GTE, LT, LTE, IN_LIST, NOT_IN_LIST, IS_NULL))
         dateTimeFilterOPs = new HashSet<Types.FilterOperation>(Arrays.asList(EQ, NEQ, IN_LIST, NOT_IN_LIST, GT, GTE, LT, LTE, IS_NULL))

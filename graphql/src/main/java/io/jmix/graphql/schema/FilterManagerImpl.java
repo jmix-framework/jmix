@@ -62,7 +62,7 @@ public class FilterManagerImpl implements FilterManager {
             return EnumSet.of(EQ, NEQ, GT, GTE, LT, LTE, IN_LIST, NOT_IN_LIST, IS_NULL);
         }
         if (stringTypes.contains(scalarType)) {
-            return EnumSet.of(EQ, NEQ, IN_LIST, NOT_IN_LIST, STARTS_WITH, ENDS_WITH, CONTAINS, IS_NULL);
+            return EnumSet.of(EQ, NEQ, IN_LIST, NOT_IN_LIST, STARTS_WITH, ENDS_WITH, CONTAINS, NOT_CONTAINS, IS_NULL);
         }
         if (dateTimeTypes.contains(scalarType)) {
             return EnumSet.of(EQ, NEQ, IN_LIST, NOT_IN_LIST, GT, GTE, LT, LTE, IS_NULL);

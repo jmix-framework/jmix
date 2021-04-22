@@ -16,7 +16,6 @@
 
 package io.jmix.emailtemplates;
 
-import io.jmix.core.CoreConfiguration;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.data.DataConfiguration;
 import io.jmix.reports.ReportsConfiguration;
@@ -26,7 +25,7 @@ import org.springframework.context.annotation.PropertySource;
 
 @Configuration
 @ComponentScan
-@JmixModule(dependsOn = {CoreConfiguration.class, DataConfiguration.class, ReportsConfiguration.class})
+@JmixModule(dependsOn = {DataConfiguration.class, ReportsConfiguration.class})
 @PropertySource(name = "io.jmix.emailtemplates", value = "classpath:/io/jmix/emailtemplates/module.properties")
 public class EmailTemplatesConfiguration {
 }

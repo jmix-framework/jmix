@@ -16,7 +16,6 @@
 
 package io.jmix.emailui;
 
-import io.jmix.core.CoreConfiguration;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
 import io.jmix.email.EmailConfiguration;
@@ -32,7 +31,7 @@ import java.util.Collections;
 
 @Configuration
 @ComponentScan
-@JmixModule(dependsOn = {CoreConfiguration.class, EmailConfiguration.class, UiConfiguration.class})
+@JmixModule(dependsOn = {EmailConfiguration.class, UiConfiguration.class})
 @PropertySource(name = "io.jmix.emailui", value = "classpath:/io/jmix/emailui/module.properties")
 public class EmailUiConfiguration {
 

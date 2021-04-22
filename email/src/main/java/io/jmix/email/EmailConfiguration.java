@@ -16,7 +16,6 @@
 
 package io.jmix.email;
 
-import io.jmix.core.CoreConfiguration;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.data.DataConfiguration;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
@@ -30,7 +29,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 @Configuration
 @ComponentScan
 @ConfigurationPropertiesScan
-@JmixModule(dependsOn = {CoreConfiguration.class, DataConfiguration.class})
+@JmixModule(dependsOn = DataConfiguration.class)
 @PropertySource(name = "io.jmix.email", value = "classpath:/io/jmix/email/module.properties")
 public class EmailConfiguration {
 

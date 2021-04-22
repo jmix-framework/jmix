@@ -16,9 +16,9 @@
 
 package io.jmix.datatoolsui;
 
-import io.jmix.core.CoreConfiguration;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
+import io.jmix.datatools.DatatoolsConfiguration;
 import io.jmix.ui.UiConfiguration;
 import io.jmix.ui.sys.ActionsConfiguration;
 import io.jmix.ui.sys.UiControllersConfiguration;
@@ -36,7 +36,7 @@ import java.util.Collections;
 @ComponentScan
 @ConfigurationPropertiesScan
 @EnableTransactionManagement
-@JmixModule(dependsOn = {CoreConfiguration.class, UiConfiguration.class})
+@JmixModule(dependsOn = {DatatoolsConfiguration.class, UiConfiguration.class})
 @PropertySource(name = "io.jmix.datatoolsui", value = "classpath:/io/jmix/datatoolsui/module.properties")
 public class DatatoolsUiConfiguration {
 

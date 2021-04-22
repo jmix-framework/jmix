@@ -16,7 +16,6 @@
 
 package io.jmix.datatools;
 
-import io.jmix.core.CoreConfiguration;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.data.DataConfiguration;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
@@ -27,7 +26,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Configuration
 @ComponentScan
 @ConfigurationPropertiesScan
-@JmixModule(dependsOn = {CoreConfiguration.class, DataConfiguration.class})
+@JmixModule(dependsOn = DataConfiguration.class)
 @EnableTransactionManagement
 public class DatatoolsConfiguration {
 }

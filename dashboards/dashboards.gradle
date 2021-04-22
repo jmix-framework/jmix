@@ -24,7 +24,7 @@ dependencies {
     api platform("io.jmix.bom:jmix-bom:$bomVersion")
 
     api 'io.jmix.core:jmix-core'
-    api 'io.jmix.data:jmix-eclipselink'
+    api 'io.jmix.data:jmix-data'
 
     implementation 'com.google.code.gson:gson'
 

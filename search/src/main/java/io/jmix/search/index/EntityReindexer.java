@@ -21,8 +21,10 @@ public interface EntityReindexer {
     /**
      * Sends all instances of all index-configured entities to indexing queue.
      * <p>Indexing queue will be cleared and indices will be recreated.
+     *
+     * @return amount of enqueued instances
      */
-    void enqueueReindexAll();
+    int enqueueReindexAll();
 
     /**
      * Sends all instance of provided index-configured entity to indexing queue.
@@ -30,6 +32,7 @@ public interface EntityReindexer {
      * and index for this entity will be recreated.
      *
      * @param entityName entity name
+     * @return amount of enqueued instances
      */
-    void enqueueReindexAll(String entityName);
+    int enqueueReindexAll(String entityName);
 }

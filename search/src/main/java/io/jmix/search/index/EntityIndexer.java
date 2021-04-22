@@ -29,55 +29,63 @@ public interface EntityIndexer {
      * Stores provided entity instance to index.
      *
      * @param entityInstance instance
+     * @return {@link IndexResult}
      */
-    void index(Object entityInstance);
+    IndexResult index(Object entityInstance);
 
     /**
      * Stores provided entity instances to index.
      *
      * @param entityInstances instances
+     * @return {@link IndexResult}
      */
-    void indexCollection(Collection<Object> entityInstances);
+    IndexResult indexCollection(Collection<Object> entityInstances);
 
     /**
      * Stores entity instance to index by provided ID.
      *
      * @param entityId ID of entity instance
+     * @return {@link IndexResult}
      */
-    void indexByEntityId(Id<?> entityId);
+    IndexResult indexByEntityId(Id<?> entityId);
 
     /**
      * Stores entity instances to index by provided IDs.
      *
      * @param entityIds IDs of entity instances
+     * @return {@link IndexResult}
      */
-    void indexCollectionByEntityIds(Collection<Id<?>> entityIds);
+    IndexResult indexCollectionByEntityIds(Collection<Id<?>> entityIds);
 
     /**
      * Deletes provided entity instance from index.
      *
      * @param entityInstance instance
+     * @return {@link IndexResult}
      */
-    void delete(Object entityInstance);
+    IndexResult delete(Object entityInstance);
 
     /**
      * Deletes provided entity instances from index.
      *
      * @param entityInstances instances
+     * @return {@link IndexResult}
      */
-    void deleteCollection(Collection<Object> entityInstances);
+    IndexResult deleteCollection(Collection<Object> entityInstances);
 
     /**
      * Deletes entity instance from index by provided ID.
      *
      * @param entityId ID of entity instance
+     * @return {@link IndexResult}
      */
-    void deleteByEntityId(Id<?> entityId);
+    IndexResult deleteByEntityId(Id<?> entityId);
 
     /**
      * Deletes entity instances from index by provided IDs.
      *
      * @param entityIds IDs of entity instances
+     * @return {@link IndexResult}
      */
-    void deleteCollectionByEntityIds(Collection<Id<?>> entityIds);
+    IndexResult deleteCollectionByEntityIds(Collection<Id<?>> entityIds);
 }

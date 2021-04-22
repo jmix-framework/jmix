@@ -46,8 +46,8 @@ public class EntityIndexingManagementFacade {
     @Authenticated
     @ManagedOperation(description = "Recreate indexes and enqueue all instances of all indexed entities")
     public String reindexAll() {
-        entityReindexer.enqueueReindexAll();
-        return "All instances have been enqueued"; //todo amount of instances
+        int amount = entityReindexer.enqueueReindexAll();
+        return String.format("%d instances of all indexed entities have been enqueued", amount);
     }
 
     @Authenticated
@@ -57,15 +57,15 @@ public class EntityIndexingManagementFacade {
     })
     public String reindexEntity(String entityName) {
         Preconditions.checkNotEmptyString(entityName);
-        entityReindexer.enqueueReindexAll(entityName);
-        return String.format("All instance of entity '%s' have been enqueued", entityName);
+        int amount = entityReindexer.enqueueReindexAll(entityName);
+        return String.format("%d instances of entity '%s' have been enqueued", amount, entityName);
     }
 
     @Authenticated
     @ManagedOperation(description = "Enqueue all instances of all indexed entities")
     public String enqueueAll() {
-        indexingQueueManager.enqueueIndexAll();
-        return "All instances have been enqueued";
+        int amount = indexingQueueManager.enqueueIndexAll();
+        return String.format("%d instances of all indexed entities have been enqueued", amount);
     }
 
     @Authenticated
@@ -75,8 +75,8 @@ public class EntityIndexingManagementFacade {
     })
     public String enqueueAll(String entityName) {
         Preconditions.checkNotEmptyString(entityName);
-        indexingQueueManager.enqueueIndexAll(entityName);
-        return String.format("All instance of entity '%s' have been enqueued", entityName);
+        int amount = indexingQueueManager.enqueueIndexAll(entityName);
+        return String.format("%d instances of entity '%s' have been enqueued", amount, entityName);
     }
 
     @Authenticated

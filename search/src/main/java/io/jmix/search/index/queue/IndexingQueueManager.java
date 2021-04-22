@@ -36,69 +36,80 @@ public interface IndexingQueueManager {
      * Sends provided entity instance to indexing queue in order to store it to index.
      *
      * @param entityInstance instance
+     * @return amount of enqueued instances
      */
-    void enqueueIndex(Object entityInstance);
+    int enqueueIndex(Object entityInstance);
 
     /**
      * Sends provided entity instances to indexing queue in order to store them to index.
      *
      * @param entityInstances instances
+     * @return amount of enqueued instances
      */
-    void enqueueIndexCollection(Collection<Object> entityInstances);
+    int enqueueIndexCollection(Collection<Object> entityInstances);
 
     /**
      * Sends entity instance to indexing queue by provided ID in order to store it to index.
      *
      * @param entityId ID of entity instance
+     * @return amount of enqueued instances
      */
-    void enqueueIndexByEntityId(Id<?> entityId);
+    int enqueueIndexByEntityId(Id<?> entityId);
 
     /**
      * Sends entity instances to indexing queue by provided IDs in order to store them to index.
      *
      * @param entityIds IDs of entity instances
+     * @return amount of enqueued instances
      */
-    void enqueueIndexCollectionByEntityIds(Collection<Id<?>> entityIds);
+    int enqueueIndexCollectionByEntityIds(Collection<Id<?>> entityIds);
 
     /**
      * Sends all instances of all index-configured entities to indexing queue.
+     *
+     * @return amount of enqueued instances
      */
-    void enqueueIndexAll();
+    int enqueueIndexAll();
 
     /**
      * Sends all instances of provided entity to indexing queue.
      *
      * @param entityName entity name
+     * @return amount of enqueued instances
      */
-    void enqueueIndexAll(String entityName);
+    int enqueueIndexAll(String entityName);
 
     /**
      * Sends provided entity instance to indexing queue in order to delete it from index.
      *
      * @param entityInstance instance
+     * @return amount of enqueued instances
      */
-    void enqueueDelete(Object entityInstance);
+    int enqueueDelete(Object entityInstance);
 
     /**
      * Sends provided entity instances to indexing queue in order to delete them from index.
      *
      * @param entityInstances instances
+     * @return amount of enqueued instances
      */
-    void enqueueDeleteCollection(Collection<Object> entityInstances);
+    int enqueueDeleteCollection(Collection<Object> entityInstances);
 
     /**
      * Sends entity instance to indexing queue by provided ID in order to delete it from index.
      *
      * @param entityId ID of entity instance
+     * @return amount of enqueued instances
      */
-    void enqueueDeleteByEntityId(Id<?> entityId);
+    int enqueueDeleteByEntityId(Id<?> entityId);
 
     /**
      * Sends entity instances to indexing queue by provided IDs in order to delete them from index.
      *
      * @param entityIds IDs of entity instances
+     * @return amount of enqueued instances
      */
-    void enqueueDeleteCollectionByEntityIds(Collection<Id<?>> entityIds);
+    int enqueueDeleteCollectionByEntityIds(Collection<Id<?>> entityIds);
 
     /**
      * Retrieves next batch of items from indexing queue and process them - store/remove related documents in index.

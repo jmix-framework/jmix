@@ -25,6 +25,7 @@ import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.search.index.EntityIndexer;
 import io.jmix.search.index.IndexConfiguration;
+import io.jmix.search.index.IndexResult;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.index.mapping.MappingFieldDescriptor;
 import org.elasticsearch.action.bulk.BulkRequest;
@@ -64,50 +65,50 @@ public class EntityIndexerImpl implements EntityIndexer {
     protected ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public void index(Object entityInstance) {
-        indexCollection(Collections.singletonList(entityInstance));
+    public IndexResult index(Object entityInstance) {
+        return indexCollection(Collections.singletonList(entityInstance));
     }
 
     @Override
-    public void indexCollection(Collection<Object> entityInstances) {
+    public IndexResult indexCollection(Collection<Object> entityInstances) {
         Map<IndexConfiguration, Collection<Object>> groupedInstances = prepareInstancesForIndexing(entityInstances);
-        indexGroupedInstances(groupedInstances);
+        return indexGroupedInstances(groupedInstances);
     }
 
     @Override
-    public void indexByEntityId(Id<?> entityId) {
-        indexCollectionByEntityIds(Collections.singletonList(entityId));
+    public IndexResult indexByEntityId(Id<?> entityId) {
+        return indexCollectionByEntityIds(Collections.singletonList(entityId));
     }
 
     @Override
-    public void indexCollectionByEntityIds(Collection<Id<?>> entityIds) {
+    public IndexResult indexCollectionByEntityIds(Collection<Id<?>> entityIds) {
         Map<IndexConfiguration, Collection<Object>> groupedInstances = prepareInstancesForIndexingByIds(entityIds);
-        indexGroupedInstances(groupedInstances);
+        return indexGroupedInstances(groupedInstances);
     }
 
     @Override
-    public void delete(Object entityInstance) {
-        deleteCollection(Collections.singletonList(entityInstance));
+    public IndexResult delete(Object entityInstance) {
+        return deleteCollection(Collections.singletonList(entityInstance));
     }
 
     @Override
-    public void deleteCollection(Collection<Object> entityInstances) {
+    public IndexResult deleteCollection(Collection<Object> entityInstances) {
         Map<IndexConfiguration, Collection<String>> groupedIndexIds = prepareIndexIdsByEntityInstances(entityInstances);
-        deleteByGroupedIndexIds(groupedIndexIds);
+        return deleteByGroupedIndexIds(groupedIndexIds);
     }
 
     @Override
-    public void deleteByEntityId(Id<?> entityId) {
-        deleteCollectionByEntityIds(Collections.singletonList(entityId));
+    public IndexResult deleteByEntityId(Id<?> entityId) {
+        return deleteCollectionByEntityIds(Collections.singletonList(entityId));
     }
 
     @Override
-    public void deleteCollectionByEntityIds(Collection<Id<?>> entityIds) {
+    public IndexResult deleteCollectionByEntityIds(Collection<Id<?>> entityIds) {
         Map<IndexConfiguration, Collection<String>> groupedIndexIds = prepareIndexIdsByEntityIds(entityIds);
-        deleteByGroupedIndexIds(groupedIndexIds);
+        return deleteByGroupedIndexIds(groupedIndexIds);
     }
 
-    protected void indexGroupedInstances(Map<IndexConfiguration, Collection<Object>> groupedInstancesForIndexing) {
+    protected IndexResult indexGroupedInstances(Map<IndexConfiguration, Collection<Object>> groupedInstancesForIndexing) {
         if (log.isDebugEnabled()) {
             Integer amountOfInstances = groupedInstancesForIndexing.values().stream()
                     .map(Collection::size)
@@ -129,6 +130,7 @@ public class EntityIndexerImpl implements EntityIndexer {
             log.debug("Bulk Response (Index): Took {}, Status = {}, With Failures = {}{}",
                     bulkResponse.getTook(), bulkResponse.status(), bulkResponse.hasFailures(),
                     bulkResponse.hasFailures() ? ": " + bulkResponse.buildFailureMessage() : "");
+            return IndexResult.create(bulkResponse);
         } catch (IOException e) {
             throw new RuntimeException("Bulk request failed", e);
         }
@@ -234,7 +236,7 @@ public class EntityIndexerImpl implements EntityIndexer {
         return result;
     }
 
-    protected void deleteByGroupedIndexIds(Map<IndexConfiguration, Collection<String>> groupedIndexIds) {
+    protected IndexResult deleteByGroupedIndexIds(Map<IndexConfiguration, Collection<String>> groupedIndexIds) {
         if (log.isDebugEnabled()) {
             Integer amountOfInstances = groupedIndexIds.values().stream().map(Collection::size).reduce(Integer::sum).orElse(0);
             log.debug("Prepared {} instances within {} entities", amountOfInstances, groupedIndexIds.keySet().size());
@@ -250,8 +252,10 @@ public class EntityIndexerImpl implements EntityIndexer {
 
         try {
             BulkResponse bulkResponse = esClient.bulk(request, RequestOptions.DEFAULT);
-            log.debug("Bulk Response (Delete): Took {}, Status = {}, With Failures = {}",
-                    bulkResponse.getTook(), bulkResponse.status(), bulkResponse.hasFailures());
+            log.debug("Bulk Response (Delete): Took {}, Status = {}, With Failures = {}{}",
+                    bulkResponse.getTook(), bulkResponse.status(), bulkResponse.hasFailures(),
+                    bulkResponse.hasFailures() ? ": " + bulkResponse.buildFailureMessage() : "");
+            return IndexResult.create(bulkResponse);
         } catch (IOException e) {
             throw new RuntimeException("Bulk request failed", e);
         }

@@ -30,7 +30,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
 @Component("search_EntityReindexer")
@@ -52,13 +51,16 @@ public class EntityReindexerImpl implements EntityReindexer {
     protected ESIndexManager indexManager;
 
     @Override
-    public void enqueueReindexAll() {
-        Collection<IndexConfiguration> indexConfigurations = indexConfigurationManager.getAllIndexConfigurations();
-        indexConfigurations.forEach(indexConfiguration -> enqueueReindexAll(indexConfiguration.getEntityName()));
+    public int enqueueReindexAll() {
+        return indexConfigurationManager.getAllIndexConfigurations().stream()
+                .map(IndexConfiguration::getEntityName)
+                .map(this::enqueueReindexAll)
+                .reduce(Integer::sum)
+                .orElse(0);
     }
 
     @Override
-    public void enqueueReindexAll(String entityName) {
+    public int enqueueReindexAll(String entityName) {
         Preconditions.checkNotNullArgument(entityName);
 
         log.info("Reindex entity '{}'", entityName);
@@ -70,7 +72,7 @@ public class EntityReindexerImpl implements EntityReindexer {
         boolean reindexLocked = locker.tryLockReindexing();
         if (!reindexLocked) {
             log.info("Unable to start reindex of entity '{}': reindex is currently in progress", entityName);
-            return;
+            return 0;
         }
 
         try {
@@ -79,7 +81,7 @@ public class EntityReindexerImpl implements EntityReindexer {
                 queueProcessingLocked = locker.tryLockQueueProcessing(10, TimeUnit.SECONDS); //wait a little to let current indexing process finish. //todo property
             } catch (InterruptedException e) {
                 log.info("Unable to start reindex of entity '{}': indexing queue is being processed", entityName);
-                return;
+                return 0;
             }
 
             if (queueProcessingLocked) {
@@ -92,7 +94,7 @@ public class EntityReindexerImpl implements EntityReindexer {
                     }
                     locker.unlockQueueProcessing();
                     queueProcessingLocked = false;
-                    indexingQueueManager.enqueueIndexAll(entityName);
+                    return indexingQueueManager.enqueueIndexAll(entityName);
                 } catch (IOException e) {
                     throw new RuntimeException("Unable to recreate index '" + indexConfiguration.getIndexName() + "'", e);
                 } finally {
@@ -103,6 +105,7 @@ public class EntityReindexerImpl implements EntityReindexer {
                 }
             } else {
                 log.info("Unable to start reindex entity '{}': indexing process in progress", entityName);
+                return 0;
             }
         } finally {
             locker.unlockReindexing();

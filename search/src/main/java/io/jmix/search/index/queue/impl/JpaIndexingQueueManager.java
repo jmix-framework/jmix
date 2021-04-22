@@ -24,11 +24,12 @@ import io.jmix.data.StoreAwareLocator;
 import io.jmix.search.SearchApplicationProperties;
 import io.jmix.search.index.EntityIndexer;
 import io.jmix.search.index.IndexConfiguration;
+import io.jmix.search.index.IndexResult;
 import io.jmix.search.index.impl.IndexingLocker;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.index.queue.IndexingQueueManager;
 import io.jmix.search.index.queue.entity.IndexingQueueItem;
-import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +40,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Component("search_JpaIndexingQueueManager")
@@ -67,6 +69,7 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
 
     @Override
     public void emptyQueue(String entityName) {
+        Preconditions.checkNotEmptyString(entityName);
         TransactionTemplate transactionTemplate = storeAwareLocator.getTransactionTemplate(Stores.MAIN);
         transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
         transactionTemplate.executeWithoutResult(status -> {
@@ -80,58 +83,66 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
     }
 
     @Override
-    public void enqueueIndex(Object entityInstance) {
+    public int enqueueIndex(Object entityInstance) {
         Preconditions.checkNotNullArgument(entityInstance);
-        enqueueIndexCollection(Collections.singletonList(entityInstance));
+        return enqueueIndexCollection(Collections.singletonList(entityInstance));
     }
 
     @Override
-    public void enqueueIndexCollection(Collection<Object> entityInstances) {
+    public int enqueueIndexCollection(Collection<Object> entityInstances) {
         Preconditions.checkNotNullArgument(entityInstances);
-        enqueue(entityInstances, IndexingOperation.INDEX);
+        return enqueue(entityInstances, IndexingOperation.INDEX);
     }
 
     @Override
-    public void enqueueIndexByEntityId(Id<?> entityId) {
-        enqueueIndexCollectionByEntityIds(Collections.singletonList(entityId));
+    public int enqueueIndexByEntityId(Id<?> entityId) {
+        Preconditions.checkNotNullArgument(entityId);
+        return enqueueIndexCollectionByEntityIds(Collections.singletonList(entityId));
     }
 
     @Override
-    public void enqueueIndexCollectionByEntityIds(Collection<Id<?>> entityIds) {
-        enqueueByIds(entityIds, IndexingOperation.INDEX);
+    public int enqueueIndexCollectionByEntityIds(Collection<Id<?>> entityIds) {
+        Preconditions.checkNotNullArgument(entityIds);
+        return enqueueByIds(entityIds, IndexingOperation.INDEX);
     }
 
     @Override
-    public void enqueueIndexAll() {
-        Collection<IndexConfiguration> indexConfigurations = indexConfigurationManager.getAllIndexConfigurations();
-        indexConfigurations.forEach(config -> enqueueIndexAll(config.getEntityName()));
+    public int enqueueIndexAll() {
+        return indexConfigurationManager.getAllIndexConfigurations().stream()
+                .map(IndexConfiguration::getEntityName)
+                .map(this::enqueueIndexAll)
+                .reduce(Integer::sum)
+                .orElse(0);
     }
 
     @Override
-    public void enqueueIndexAll(String entityName) {
-        enqueueIndexAll(entityName, searchApplicationProperties.getReindexEntityEnqueueBatchSize());
+    public int enqueueIndexAll(String entityName) {
+        Preconditions.checkNotEmptyString(entityName);
+        return enqueueIndexAll(entityName, searchApplicationProperties.getReindexEntityEnqueueBatchSize());
     }
 
     @Override
-    public void enqueueDelete(Object entityInstance) {
+    public int enqueueDelete(Object entityInstance) {
         Preconditions.checkNotNullArgument(entityInstance);
-        enqueueDeleteCollection(Collections.singletonList(entityInstance));
+        return enqueueDeleteCollection(Collections.singletonList(entityInstance));
     }
 
     @Override
-    public void enqueueDeleteCollection(Collection<Object> entityInstances) {
+    public int enqueueDeleteCollection(Collection<Object> entityInstances) {
         Preconditions.checkNotNullArgument(entityInstances);
-        enqueue(entityInstances, IndexingOperation.DELETE);
+        return enqueue(entityInstances, IndexingOperation.DELETE);
     }
 
     @Override
-    public void enqueueDeleteByEntityId(Id<?> entityId) {
-        enqueueDeleteCollectionByEntityIds(Collections.singletonList(entityId));
+    public int enqueueDeleteByEntityId(Id<?> entityId) {
+        Preconditions.checkNotNullArgument(entityId);
+        return enqueueDeleteCollectionByEntityIds(Collections.singletonList(entityId));
     }
 
     @Override
-    public void enqueueDeleteCollectionByEntityIds(Collection<Id<?>> entityIds) {
-        enqueueByIds(entityIds, IndexingOperation.DELETE);
+    public int enqueueDeleteCollectionByEntityIds(Collection<Id<?>> entityIds) {
+        Preconditions.checkNotNullArgument(entityIds);
+        return enqueueByIds(entityIds, IndexingOperation.DELETE);
     }
 
     @Override
@@ -149,21 +160,20 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
         return processQueue(searchApplicationProperties.getProcessQueueBatchSize(), -1);
     }
 
-    protected void enqueueIndexAll(String entityName, int batchSize) {
+    protected int enqueueIndexAll(String entityName, int batchSize) {
         if (batchSize <= 0) {
-            log.error("Size of enqueuing batch during reindex entity must be positive");
-            return;
+            throw new IllegalArgumentException("Size of enqueuing batch during reindex entity must be positive");
         }
 
         IndexConfiguration indexConfiguration = indexConfigurationManager.getIndexConfigurationByEntityName(entityName);
         if (indexConfiguration == null) {
-            log.warn("Unable to enqueue instances of entity '{}' - entity is not configured for indexing", entityName);
-            return;
+            throw new IllegalArgumentException(String.format("Unable to enqueue instances of entity '%s' - entity is not configured for indexing", entityName));
         }
 
         MetaClass metaClass = metadata.getClass(entityName);
         int batchOffset = 0;
         int batchLoaded;
+        int total = 0;
         do {
             List<Object> instances = dataManager.load(metaClass.getJavaClass())
                     .all()
@@ -176,11 +186,14 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
                     .map(id -> createQueueItem(entityName, id, IndexingOperation.INDEX))
                     .collect(Collectors.toList());
 
-            enqueue(queueItems);
+            int enqueued = enqueue(queueItems);
+            total += enqueued;
 
             batchLoaded = instances.size();
             batchOffset += batchLoaded;
         } while (batchLoaded == batchSize);
+
+        return total;
     }
 
     protected int processQueue(int batchSize, int maxProcessedPerExecution) {
@@ -211,32 +224,13 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
                 if (queueItems.isEmpty()) {
                     break;
                 }
-
-                count += queueItems.size(); //todo Return actual amount of indexed entities from 'entityIndexer'
-
-                Map<IndexingOperation, List<Id<?>>> idsGroupedByOperation = queueItems.stream().collect(
-                        Collectors.groupingBy(
-                                IndexingQueueItem::getOperation,
-                                Collectors.mapping(
-                                        item -> idSerialization.stringToId(item.getEntityId()),
-                                        Collectors.toList()
-                                )
-                        )
-                );
-                List<Id<?>> idsForIndex = idsGroupedByOperation.get(IndexingOperation.INDEX);
-                List<Id<?>> idsForDelete = idsGroupedByOperation.get(IndexingOperation.DELETE);
-                //todo handle failed commands of bulk request
-                if (CollectionUtils.isNotEmpty(idsForIndex)) {
-                    entityIndexer.indexCollectionByEntityIds(idsForIndex);
-                }
-                if (CollectionUtils.isNotEmpty(idsForDelete)) {
-                    entityIndexer.deleteCollectionByEntityIds(idsForDelete);
-                }
-                //todo check case update after delete (restore entity?)
+                List<IndexingQueueItem> successfullyProcessedQueueItems = processQueueItems(queueItems);
 
                 SaveContext saveContext = new SaveContext();
-                saveContext.removing(queueItems);
+                saveContext.removing(successfullyProcessedQueueItems);
                 dataManager.save(saveContext);
+
+                count += successfullyProcessedQueueItems.size();
             } while (queueItems.size() == batchSize && (maxProcessedPerExecution <= 0 || queueItems.size() <= maxProcessedPerExecution));
         } finally {
             locker.unlockQueueProcessing();
@@ -247,12 +241,65 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
         return count;
     }
 
-    protected void enqueue(Collection<Object> entityInstances, IndexingOperation operation) {
-        List<Id<?>> ids = entityInstances.stream().map(Id::of).collect(Collectors.toList());
-        enqueueByIds(ids, operation);
+    protected List<IndexingQueueItem> processQueueItems(List<IndexingQueueItem> queueItems) {
+        Map<IndexingOperation, Map<Id<?>, List<IndexingQueueItem>>> groupedQueueItems = groupQueueItems(queueItems);
+
+        Map<Id<?>, List<IndexingQueueItem>> itemsForIndex = groupedQueueItems.get(IndexingOperation.INDEX);
+        Map<Id<?>, List<IndexingQueueItem>> itemsForDelete = groupedQueueItems.get(IndexingOperation.DELETE);
+        //todo check case update after delete (restore entity?)
+
+        List<IndexingQueueItem> successfullyProcessedQueueItems = new ArrayList<>(queueItems.size());
+        if (MapUtils.isNotEmpty(itemsForIndex)) {
+            successfullyProcessedQueueItems.addAll(
+                    processQueueItemsGroup(itemsForIndex, entityIndexer::indexCollectionByEntityIds)
+            );
+        }
+        if (MapUtils.isNotEmpty(itemsForDelete)) {
+            successfullyProcessedQueueItems.addAll(
+                    processQueueItemsGroup(itemsForDelete, entityIndexer::deleteCollectionByEntityIds)
+            );
+        }
+
+        return successfullyProcessedQueueItems;
     }
 
-    protected void enqueueByIds(Collection<Id<?>> entityIds, IndexingOperation operation) {
+    protected List<IndexingQueueItem> processQueueItemsGroup(Map<Id<?>, List<IndexingQueueItem>> itemsGroup,
+                                                             Function<Collection<Id<?>>, IndexResult> processingFunction) {
+        Set<Id<?>> entityIds = itemsGroup.keySet();
+        IndexResult indexResult = processingFunction.apply(entityIds);
+        return handleIndexResult(indexResult, itemsGroup);
+    }
+
+    protected List<IndexingQueueItem> handleIndexResult(IndexResult indexResult, Map<Id<?>, List<IndexingQueueItem>> itemsGroup) {
+        List<Id<?>> failedIds = Collections.emptyList();
+        if (indexResult.hasFailures()) {
+            failedIds = indexResult.getFailedIndexIds().stream()
+                    .map(idSerialization::stringToId)
+                    .collect(Collectors.toList());
+        }
+        itemsGroup.keySet().removeAll(failedIds);
+        return itemsGroup.values().stream().flatMap(Collection::stream).collect(Collectors.toList());
+    }
+
+    protected Map<IndexingOperation, Map<Id<?>, List<IndexingQueueItem>>> groupQueueItems(Collection<IndexingQueueItem> queueItems) {
+        Map<IndexingOperation, Map<Id<?>, List<IndexingQueueItem>>> result = new HashMap<>();
+        queueItems.forEach(item -> {
+            IndexingOperation operation = item.getOperation();
+            Id<?> id = idSerialization.stringToId(item.getEntityId());
+            Map<Id<?>, List<IndexingQueueItem>> itemsForOperation = result.computeIfAbsent(operation, k -> new HashMap<>());
+            List<IndexingQueueItem> itemsForInstanceId = itemsForOperation.computeIfAbsent(id, k -> new ArrayList<>());
+            itemsForInstanceId.add(item);
+        });
+
+        return result;
+    }
+
+    protected int enqueue(Collection<Object> entityInstances, IndexingOperation operation) {
+        List<Id<?>> ids = entityInstances.stream().map(Id::of).collect(Collectors.toList());
+        return enqueueByIds(ids, operation);
+    }
+
+    protected int enqueueByIds(Collection<Id<?>> entityIds, IndexingOperation operation) {
         List<IndexingQueueItem> queueItems = entityIds.stream()
                 .map(id -> {
                     MetaClass metaClass = metadata.getClass(id.getEntityClass());
@@ -266,10 +313,10 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
                 })
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
-        enqueue(queueItems);
+        return enqueue(queueItems);
     }
 
-    protected void enqueue(Collection<IndexingQueueItem> queueItems) {
+    protected int enqueue(Collection<IndexingQueueItem> queueItems) {
         log.trace("Enqueue items: {}", queueItems);
         TransactionTemplate transactionTemplate = storeAwareLocator.getTransactionTemplate(Stores.MAIN);
         transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
@@ -277,6 +324,7 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
             EntityManager entityManager = storeAwareLocator.getEntityManager(Stores.MAIN);
             queueItems.forEach(entityManager::persist);
         });
+        return queueItems.size();
     }
 
     protected IndexingQueueItem createQueueItem(MetaClass metaClass, String entityId, IndexingOperation operation) {

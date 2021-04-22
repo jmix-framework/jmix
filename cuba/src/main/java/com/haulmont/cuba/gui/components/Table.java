@@ -144,7 +144,7 @@ public interface Table<E extends Entity> extends ListComponent<E>, io.jmix.ui.co
      */
     @Deprecated
     default void addColumnCollapsedListener(ColumnCollapseListener columnCollapsedListener) {
-        addColumnCollapseListener(new TableColumnCollapseListenerWrapper(columnCollapsedListener));
+        addColumnCollapseListener(new TableColumnCollapseListenerWrapper<>(columnCollapsedListener));
     }
 
     /**
@@ -153,7 +153,7 @@ public interface Table<E extends Entity> extends ListComponent<E>, io.jmix.ui.co
      */
     @Deprecated
     default void removeColumnCollapseListener(ColumnCollapseListener columnCollapseListener) {
-        removeColumnCollapseListener(new TableColumnCollapseListenerWrapper(columnCollapseListener));
+        removeColumnCollapseListener(new TableColumnCollapseListenerWrapper<>(columnCollapseListener));
     }
 
     /**
@@ -161,7 +161,7 @@ public interface Table<E extends Entity> extends ListComponent<E>, io.jmix.ui.co
      * @deprecated Use {@link Subscription} instead
      */
     @Deprecated
-    void removeColumnCollapseListener(Consumer<ColumnCollapseEvent> listener);
+    void removeColumnCollapseListener(Consumer<ColumnCollapseEvent<E>> listener);
 
     /**
      * Adds lightweight click handler for column cells.<br>

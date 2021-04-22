@@ -20,8 +20,9 @@ import com.haulmont.cuba.gui.components.Table;
 
 import java.util.function.Consumer;
 
+@SuppressWarnings("rawtypes")
 @Deprecated
-public class TableColumnCollapseListenerWrapper implements Consumer<Table.ColumnCollapseEvent> {
+public class TableColumnCollapseListenerWrapper<E> implements Consumer<Table.ColumnCollapseEvent<E>> {
 
     protected final Table.ColumnCollapseListener listener;
 

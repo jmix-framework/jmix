@@ -289,7 +289,7 @@ public class WebTreeTable<E extends Entity> extends TreeTableImpl<E>
     }
 
     @Override
-    public void removeColumnCollapseListener(Consumer<ColumnCollapseEvent> listener) {
+    public void removeColumnCollapseListener(Consumer<ColumnCollapseEvent<E>> listener) {
         internalRemoveColumnCollapseListener(listener);
     }
 

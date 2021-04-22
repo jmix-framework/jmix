@@ -288,7 +288,7 @@ public class WebTable<E extends Entity> extends TableImpl<E>
     }
 
     @Override
-    public void removeColumnCollapseListener(Consumer<ColumnCollapseEvent> listener) {
+    public void removeColumnCollapseListener(Consumer<ColumnCollapseEvent<E>> listener) {
         internalRemoveColumnCollapseListener(listener);
     }
 

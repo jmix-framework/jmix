@@ -291,7 +291,7 @@ public class WebGroupTable<E extends Entity> extends GroupTableImpl<E>
     }
 
     @Override
-    public void removeColumnCollapseListener(Consumer<ColumnCollapseEvent> listener) {
+    public void removeColumnCollapseListener(Consumer<ColumnCollapseEvent<E>> listener) {
         internalRemoveColumnCollapseListener(listener);
     }
 

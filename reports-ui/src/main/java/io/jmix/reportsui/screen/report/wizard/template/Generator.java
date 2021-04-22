@@ -14,11 +14,16 @@
  * limitations under the License.
  */
 
-package io.jmix.reportsui.wizard.template;
+package io.jmix.reportsui.screen.report.wizard.template;
 
+import freemarker.template.TemplateException;
+import io.jmix.reports.entity.wizard.ReportData;
 import io.jmix.reports.exception.TemplateGenerationException;
 
-public interface TemplateGenerator {
+import java.io.IOException;
 
-    byte[] generateTemplate() throws TemplateGenerationException;
+public interface Generator {
+
+    byte[] generate(ReportData reportData) throws TemplateGenerationException, TemplateException, IOException;
+
 }

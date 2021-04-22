@@ -19,6 +19,6 @@
         caption="msg://tabulatedLookup">
 
     <layout expand="entityTreeFrame" height="500px">
-        <fragment id="entityTreeFrame" screen="report_FirstDetails.fragment" width="100%"/>
+        <fragment id="entityTreeFrame" screen="report_DetailsStep.fragment" width="100%"/>
     </layout>
 </window>

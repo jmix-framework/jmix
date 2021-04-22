@@ -38,7 +38,7 @@ public class OutputFileNameValidator extends AbstractValidator<String> {
     public void accept(String value) {
         if (StringUtils.isNotEmpty(value) && !value.matches("^[^/:*<>?\\\\]*$"))
             throw new ValidationException(String.format(
-                    messages.getMessage(OutputFileNameValidator.class, "fillCorrectOutputFileNameMsg"),
+                    messages.getMessage(getClass(), "fillCorrectOutputFileNameMsg"),
                     messages.getMessage(ReportWizardCreator.class, "outputFileName")));
     }
 }

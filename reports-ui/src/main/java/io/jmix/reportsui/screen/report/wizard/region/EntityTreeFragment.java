@@ -22,9 +22,10 @@ public class EntityTreeFragment extends ScreenFragment {
     public void onBeforeShow(Screen.BeforeShowEvent event) {
         RegionEditor regionEditor = (RegionEditor) getHostScreen();
 
-        reportEntityTreeNodeDc.getMutableItems().add(regionEditor.getRootNode());
-        reportEntityTreeNodeDc.getMutableItems().addAll(regionEditor.getRootNode().getChildren());
-        entityTree.expand(regionEditor.getRootNode());
+        reportEntityTreeNodeDc.getMutableItems().add(regionEditor.getRootEntity());
+        reportEntityTreeNodeDc.getMutableItems().addAll(regionEditor.getRootEntity().getChildren());
+
+        entityTree.expand(regionEditor.getRootEntity());
     }
 
 }

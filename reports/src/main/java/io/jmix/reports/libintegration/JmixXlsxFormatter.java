@@ -18,9 +18,15 @@ package io.jmix.reports.libintegration;
 
 import com.haulmont.yarg.formatters.factory.FormatterFactoryInput;
 import com.haulmont.yarg.formatters.impl.XlsxFormatter;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 import org.xlsx4j.sml.Cell;
 
+@Component("report_JmixXlsxFormatter")
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class JmixXlsxFormatter extends XlsxFormatter {
+
     public JmixXlsxFormatter(FormatterFactoryInput formatterFactoryInput) {
         super(formatterFactoryInput);
     }

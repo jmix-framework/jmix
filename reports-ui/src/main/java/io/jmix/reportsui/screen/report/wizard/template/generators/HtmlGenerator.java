@@ -14,52 +14,62 @@
  * limitations under the License.
  */
 
-package io.jmix.reportsui.wizard.template.generators;
+package io.jmix.reportsui.screen.report.wizard.template.generators;
 
 import freemarker.cache.StringTemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
+import io.jmix.core.Messages;
 import io.jmix.reports.entity.wizard.RegionProperty;
 import io.jmix.reports.entity.wizard.ReportData;
 import io.jmix.reports.entity.wizard.ReportRegion;
-import io.jmix.reportsui.wizard.ReportingWizardImpl;
-import io.jmix.reportsui.wizard.template.Generator;
-import io.jmix.reportsui.wizard.template.ReportTemplatePlaceholder;
+import io.jmix.reportsui.screen.report.wizard.ReportsWizard;
+import io.jmix.reportsui.screen.report.wizard.template.Generator;
+import io.jmix.reportsui.screen.report.wizard.template.ReportTemplatePlaceholder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+@Component("report_HtmlGenerator")
 public class HtmlGenerator implements Generator {
-    protected ReportTemplatePlaceholder reportTemplatePlaceholder = new ReportTemplatePlaceholder();
+
     protected static final String HTML_TEMPLATE_NAME = "defaultTemplate";
     protected static final String HTML_TEMPLATE_PLACEHOLDER_TITLE = "title";
     protected static final String HTML_TEMPLATE_PLACEHOLDER_STYLES = "styles";
     protected static final String HTML_TEMPLATE_PLACEHOLDER_BODY = "body";
+
+    @Autowired
+    protected ReportTemplatePlaceholder reportTemplatePlaceholder;
+
+    @Autowired
+    protected Messages messages;
+
     protected volatile static Configuration freeMarkerConfiguration;
-    protected ReportData reportData;
 
     @Override
     public byte[] generate(ReportData reportData) throws TemplateException, IOException {
-        this.reportData = reportData;
-        byte[] template;
         Configuration conf = getFreemarkerConfiguration();
         Template freeMarkerHtmlReportTemplate = conf.getTemplate(HTML_TEMPLATE_NAME);
         StringWriter out = new StringWriter(2048);
+
         Map<String, String> templateParameters = new HashMap<>();
-        putTitleHtml(templateParameters);
+        putTitleHtml(reportData.getName(), templateParameters);
         putStylesHtml(templateParameters);
-        putBodyHtml(templateParameters);
+        putBodyHtml(reportData.getReportRegions(), templateParameters);
         freeMarkerHtmlReportTemplate.process(templateParameters, out);
-        template = out.toString().getBytes(StandardCharsets.UTF_8);
-        return template;
+
+        return out.toString().getBytes(StandardCharsets.UTF_8);
     }
 
-    protected void putTitleHtml(Map<String, String> templateParameters) {
-        templateParameters.put(HTML_TEMPLATE_PLACEHOLDER_TITLE, reportData.getName());
+    protected void putTitleHtml(String title, Map<String, String> templateParameters) {
+        templateParameters.put(HTML_TEMPLATE_PLACEHOLDER_TITLE, title);
 
     }
 
@@ -67,17 +77,17 @@ public class HtmlGenerator implements Generator {
         templateParameters.put(HTML_TEMPLATE_PLACEHOLDER_STYLES, " body  {font-family: 'Charis SIL', sans-serif;}\n tbody tr {height:20px; min-height:20px}\n");
     }
 
-    protected void putBodyHtml(Map<String, String> templateParameters) {
+    protected void putBodyHtml(List<ReportRegion> reportRegions, Map<String, String> templateParameters) {
         StringBuilder templateBody = new StringBuilder();
         //Add #assign statements:
-        for (ReportRegion reportRegion : reportData.getReportRegions()) {
+        for (ReportRegion reportRegion : reportRegions) {
             //header of table is filled here, so the three lines of code below is unused:
             appendHtmlFreeMarkerAssignments(templateBody, reportRegion.getNameForBand());
         }
 
         appendFreeMarkerSettings(templateBody);
 
-        for (ReportRegion reportRegion : reportData.getReportRegions()) {
+        for (ReportRegion reportRegion : reportRegions) {
             if (reportRegion.isTabulatedRegion()) {
                 //Are U ready for a String porn?
                 //table def
@@ -112,20 +122,18 @@ public class HtmlGenerator implements Generator {
     }
 
     protected void appendFreeMarkerSettings(StringBuilder templateBody) {
-        //todo
-//        Messages messages = AppBeans.get(Messages.NAME);
-//        templateBody.append("\n<#setting boolean_format=\"").
-//                append(messages.getMainMessage( "trueString")).
-//                append(",").
-//                append(messages.getMainMessage( "falseString")).
-//                append("\">");
+        templateBody.append("\n<#setting boolean_format=\"").
+                append(messages.getMessage( "trueString")).
+                append(",").
+                append(messages.getMessage( "falseString")).
+                append("\">");
     }
 
     protected void appendHtmlFreeMarkerAssignments(StringBuilder stringBuilder, String bandName) {
         stringBuilder.append("\n<#assign ").
                 append(bandName).
                 append(" = ").
-                append(ReportingWizardImpl.ROOT_BAND_DEFINITION_NAME).
+                append(ReportsWizard.ROOT_BAND_DEFINITION_NAME).
                 append(".bands.").
                 append(bandName).
                 append("><br/>");

@@ -21,40 +21,54 @@
             <collection id="reportRegionsDc" property="reportRegions">
                 <collection id="regionPropertiesDc" property="regionProperties"/>
             </collection>
+            <collection id="queryParametersDc" property="queryParameters"/>
         </instance>
 
         <collection id="groupsDc" class="io.jmix.reports.entity.ReportGroup" fetchPlan="_local">
             <loader id="groupsDl">
-                <![CDATA[ select rg from report_ReportGroup rg order by rg.createTs asc ]]>
+                <query>
+                    <![CDATA[select rg from report_ReportGroup rg order by rg.createTs asc]]>
+                </query>
             </loader>
         </collection>
     </data>
 
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+
+    <actions>
+        <action id="back"/>
+        <action id="next"/>
+        <action id="save"/>
+    </actions>
+
     <dialogMode width="800"/>
 
     <layout expand="editAreaVbox" spacing="true">
-        <label id="tipLabel"
+        <label id="descriptionLabel"
                stylename="report-wizard-tip-label"
                width="100%"/>
 
         <vbox id="editAreaVbox">
-            <groupBox id="editAreaGroupBox" width="100%" height="100%">
-                <frame src="/io/jmix/reportsui/screen/report/wizard/step/first-details-fragment.xml" id="detailsStep"
-                       width="100%" height="100%"
-                       visible="false"/>
-                <frame src="/io/jmix/reportsui/screen/report/wizard/step/last-save-frame.xml" id="saveStep"
-                       width="100%" height="100%"
-                       visible="false"/>
-            </groupBox>
-            <frame src="/io/jmix/reportsui/screen/report/wizard/step/intermediate-regions-frame.xml"
-                   id="regionsStep"
-                   width="100%" height="100%"
-                   visible="false"/>
+            <fragment id="detailsFragment" screen="report_DetailsStep.fragment"
+                      width="100%" height="100%"
+                      visible="false"/>
+            <fragment id="saveStepFragment" screen="report_Save.fragment"
+                      width="100%" height="100%"
+                      visible="false"/>
+            <fragment id="queryStepFragment" screen="report_QueryStep.fragment"
+                      width="100%" height="100%"
+                      visible="false"/>
+            <fragment id="regionsStepFragment"
+                      screen="report_Region.fragment"
+                      width="100%" height="100%"
+                      visible="false"/>
         </vbox>
         <buttonsPanel id="navBtnsPanel">
-            <button id="bwd" caption="msg://backward" icon="icons/report-wizard-previous.png"/>
-            <button id="fwd" caption="msg://forward" icon="icons/report-wizard-next.png"/>
-            <button id="save" caption="msg://save" visible="false" icon="EDITOR_OK"/>
+            <button id="backBtn" action="back" caption="msg://backward" icon="ARROW_LEFT"/>
+            <button id="nextBtn" action="next" caption="msg://forward" icon="ARROW_RIGHT"/>
+            <button id="saveBtn" action="save" caption="msg://save" icon="EDITOR_OK"/>
         </buttonsPanel>
     </layout>
 </window>

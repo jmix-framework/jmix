@@ -14,23 +14,29 @@
  * limitations under the License.
  */
 
-package io.jmix.reportsui.wizard.template.generators;
+package io.jmix.reportsui.screen.report.wizard.template.generators;
 
 import com.google.common.base.Joiner;
 import io.jmix.reports.entity.wizard.RegionProperty;
 import io.jmix.reports.entity.wizard.ReportData;
 import io.jmix.reports.entity.wizard.ReportRegion;
-import io.jmix.reportsui.wizard.template.Generator;
-import io.jmix.reportsui.wizard.template.ReportTemplatePlaceholder;
+import io.jmix.reportsui.screen.report.wizard.template.Generator;
+import io.jmix.reportsui.screen.report.wizard.template.ReportTemplatePlaceholder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
+@Component("report_CsvGenerator")
 public class CsvGenerator implements Generator {
-    protected ReportTemplatePlaceholder reportTemplatePlaceholder = new ReportTemplatePlaceholder();
+
     protected static final String SEPARATOR = ";";
     protected static final String WRAPPER = "\"";
+
+    @Autowired
+    protected ReportTemplatePlaceholder reportTemplatePlaceholder;
 
     @Override
     public byte[] generate(ReportData reportData) {
@@ -59,7 +65,7 @@ public class CsvGenerator implements Generator {
             aliases.add(Joiner.on(SEPARATOR).join(propertyAliases));
         }
 
-        return Joiner.on(SEPARATOR).join(headers) + "\n" +  Joiner.on(SEPARATOR).join(aliases);
+        return Joiner.on(SEPARATOR).join(headers) + "\n" + Joiner.on(SEPARATOR).join(aliases);
     }
 
     protected static String wrapField(String fieldValue) {

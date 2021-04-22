@@ -46,7 +46,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Set;
-import java.util.UUID;
 
 @UiController("report_Report.browse")
 @UiDescriptor("report-browse.xml")
@@ -103,11 +102,9 @@ public class ReportBrowser extends StandardLookup<Report> {
                 reportEditor.show()
                         .addAfterCloseListener(closeEvent -> {
                             if (closeEvent.closedWith(StandardOutcome.COMMIT)) {
-                                Report item1 = reportEditor.getEditedEntity();
-                                reportDc.replaceItem(item1);
+                                reportDc.replaceItem(reportEditor.getEditedEntity());
                             }
-                            UUID newReportId = reportEditor.getEditedEntity().getId();
-                            reportsTable.expandPath(reportDc.getItem(newReportId));
+                            reportsTable.expandPath(reportDc.getItem(reportEditor.getEditedEntity()));
                         });
             }
         });

@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package io.jmix.reportsui.wizard.template.generators;
+package io.jmix.reportsui.screen.report.wizard.template.generators;
 
 import io.jmix.reports.entity.wizard.RegionProperty;
+import io.jmix.reports.entity.wizard.ReportData;
 import io.jmix.reports.entity.wizard.ReportRegion;
 import org.docx4j.model.table.TblFactory;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
@@ -25,14 +26,16 @@ import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;
 import org.docx4j.wml.Tbl;
 import org.docx4j.wml.Tr;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Component("report_DocxGenerator")
 public class DocxGenerator extends AbstractOfficeGenerator {
 
     @Override
-    protected OpcPackage generatePackage() throws Docx4JException {
+    protected OpcPackage generatePackage(ReportData reportData) throws Docx4JException {
         WordprocessingMLPackage wordMLPackage = WordprocessingMLPackage.createPackage();
         MainDocumentPart mainDocumentPart = wordMLPackage.getMainDocumentPart();
         org.docx4j.wml.ObjectFactory factory = org.docx4j.jaxb.Context.getWmlObjectFactory();

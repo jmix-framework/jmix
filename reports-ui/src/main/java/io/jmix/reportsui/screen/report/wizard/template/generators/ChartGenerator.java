@@ -14,23 +14,32 @@
  * limitations under the License.
  */
 
-package io.jmix.reportsui.wizard.template.generators;
+package io.jmix.reportsui.screen.report.wizard.template.generators;
 
+import freemarker.template.TemplateException;
+import io.jmix.core.Metadata;
+import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.reports.entity.charts.*;
 import io.jmix.reports.entity.wizard.RegionProperty;
 import io.jmix.reports.entity.wizard.ReportData;
 import io.jmix.reports.entity.wizard.ReportRegion;
 import io.jmix.reports.exception.TemplateGenerationException;
-import io.jmix.reportsui.wizard.template.Generator;
-import freemarker.template.TemplateException;
+import io.jmix.reportsui.screen.report.wizard.template.Generator;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+@Component("report_ChartGenerator")
 public class ChartGenerator implements Generator {
+
+    @Autowired
+    protected Metadata metadata;
+
     @Override
     public byte[] generate(ReportData reportData) throws TemplateGenerationException, TemplateException, IOException {
         if (reportData.getChartType() == ChartType.SERIAL) {
@@ -52,12 +61,14 @@ public class ChartGenerator implements Generator {
 
             List<RegionProperty> regionProperties = reportRegion.getRegionProperties();
             RegionProperty firstProperty = regionProperties.get(0);
-            serialChartDescription.setCategoryField(firstProperty.getEntityTreeNode().getWrappedMetaProperty().getName());
+
+            serialChartDescription.setCategoryField(firstProperty.getEntityTreeNode().getWrappedMetaProperty());
             serialChartDescription.setCategoryAxisCaption(firstProperty.getLocalizedName());
             if (regionProperties.size() > 1) {
                 for (int i = 1; i < regionProperties.size(); i++) {
                     RegionProperty regionProperty = regionProperties.get(i);
-                    MetaProperty wrappedMetaProperty = regionProperty.getEntityTreeNode().getWrappedMetaProperty();
+                    MetaClass wrapperMetaClass = metadata.getClass(regionProperty.getEntityTreeNode().getWrappedMetaClass());
+                    MetaProperty wrappedMetaProperty = wrapperMetaClass.getProperty(regionProperty.getEntityTreeNode().getWrappedMetaProperty());
                     Class<?> javaType = wrappedMetaProperty.getJavaType();
                     if (Number.class.isAssignableFrom(javaType)) {
                         ChartSeries chartSeries = new ChartSeries();
@@ -85,11 +96,12 @@ public class ChartGenerator implements Generator {
 
         List<RegionProperty> regionProperties = reportRegion.getRegionProperties();
         RegionProperty firstProperty = regionProperties.get(0);
-        pieChartDescription.setTitleField(firstProperty.getEntityTreeNode().getWrappedMetaProperty().getName());
+        pieChartDescription.setTitleField(firstProperty.getEntityTreeNode().getWrappedMetaProperty());
         if (regionProperties.size() > 1) {
             for (int i = 1; i < regionProperties.size(); i++) {
                 RegionProperty regionProperty = regionProperties.get(i);
-                MetaProperty wrappedMetaProperty = regionProperty.getEntityTreeNode().getWrappedMetaProperty();
+                MetaClass wrapperMetaClass = metadata.getClass(regionProperty.getEntityTreeNode().getWrappedMetaClass());
+                MetaProperty wrappedMetaProperty = wrapperMetaClass.getProperty(regionProperty.getEntityTreeNode().getWrappedMetaProperty());
                 Class<?> javaType = wrappedMetaProperty.getJavaType();
                 if (Number.class.isAssignableFrom(javaType)) {
                     pieChartDescription.setValueField(wrappedMetaProperty.getName());

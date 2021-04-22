@@ -38,51 +38,6 @@ public class ReportData {
 
     private static final long serialVersionUID = -1649648403032678085L;
 
-    public static class Parameter implements Serializable {
-        public final String name;
-        public final Class javaClass;
-        public final ParameterType parameterType;
-        public final String defaultValue;
-        public final PredefinedTransformation predefinedTransformation;
-        public final Boolean hidden;
-
-        public Parameter(String name, Class javaClass, ParameterType parameterType, String defaultValue, Boolean hidden) {
-            this(name, javaClass, parameterType, defaultValue, null, hidden);
-        }
-
-        public Parameter(String name, Class javaClass, ParameterType parameterType, String defaultValue, PredefinedTransformation transformation,
-                         Boolean hidden) {
-            this.name = name;
-            this.javaClass = javaClass;
-            this.parameterType = parameterType;
-            this.defaultValue = defaultValue;
-            this.predefinedTransformation = transformation;
-            this.hidden = hidden;
-        }
-    }
-
-    public enum ReportType {
-        SINGLE_ENTITY(false, true),
-        LIST_OF_ENTITIES(true, true),
-        LIST_OF_ENTITIES_WITH_QUERY(true, false);
-
-        private boolean list;
-        private boolean entity;
-
-        ReportType(boolean list, boolean entity) {
-            this.list = list;
-            this.entity = entity;
-        }
-
-        public boolean isList() {
-            return list;
-        }
-
-        public boolean isEntity() {
-            return entity;
-        }
-    }
-
     @Id
     @JmixProperty
     @JmixGeneratedValue
@@ -91,6 +46,10 @@ public class ReportData {
     @JmixProperty
     @Transient
     protected String name;
+
+    @JmixProperty
+    @Transient
+    protected String entityName;
 
     @JmixProperty
     @Transient
@@ -106,7 +65,7 @@ public class ReportData {
 
     @JmixProperty
     @Transient
-    protected ReportType reportType;
+    protected ReportTypeGenerate reportTypeGenerate;
 
     @JmixProperty
     @Transient
@@ -126,15 +85,20 @@ public class ReportData {
     @OneToMany(targetEntity = RegionProperty.class)
     protected List<ReportRegion> reportRegions = new ArrayList<>();
 
+    @JmixProperty
     @Transient
     protected String query;
 
+    @JmixProperty
+    @Composition
     @Transient
-    protected List<Parameter> queryParameters;
+    @OneToMany(targetEntity = QueryParameter.class)
+    protected List<QueryParameter> queryParameters;
 
     @Transient
     protected String dataStore;
 
+    @JmixProperty
     @Transient
     protected TemplateFileType templateFileType;
 
@@ -150,6 +114,14 @@ public class ReportData {
 
     public void setId(UUID id) {
         this.id = id;
+    }
+
+    public String getEntityName() {
+        return entityName;
+    }
+
+    public void setEntityName(String entityName) {
+        this.entityName = entityName;
     }
 
     public Report getGeneratedReport() {
@@ -168,12 +140,12 @@ public class ReportData {
         this.group = group;
     }
 
-    public ReportType getReportType() {
-        return reportType;
+    public ReportTypeGenerate getReportTypeGenerate() {
+        return reportTypeGenerate;
     }
 
-    public void setReportType(ReportType reportType) {
-        this.reportType = reportType;
+    public void setReportTypeGenerate(ReportTypeGenerate reportTypeGenerate) {
+        this.reportTypeGenerate = reportTypeGenerate;
     }
 
     public String getTemplateFileName() {
@@ -262,11 +234,11 @@ public class ReportData {
         this.dataStore = dataStore;
     }
 
-    public List<Parameter> getQueryParameters() {
+    public List<QueryParameter> getQueryParameters() {
         return queryParameters;
     }
 
-    public void setQueryParameters(List<Parameter> queryParameters) {
+    public void setQueryParameters(List<QueryParameter> queryParameters) {
         this.queryParameters = queryParameters;
     }
 

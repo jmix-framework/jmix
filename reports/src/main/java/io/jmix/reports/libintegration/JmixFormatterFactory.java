@@ -42,7 +42,7 @@ public class JmixFormatterFactory extends DefaultFormatterFactory {
         formattersMap.put("html", ftlCreator);
 
         FormatterCreator docxCreator = factoryInput -> {
-            DocxFormatter docxFormatter = beanFactory.getBean(DocxFormatter.class, factoryInput);
+            DocxFormatter docxFormatter = new DocxFormatter(factoryInput);
             docxFormatter.setDefaultFormatProvider(defaultFormatProvider);
             if (useOfficeForDocumentConversion) {
                 docxFormatter.setDocumentConverter(documentConverter);

@@ -32,7 +32,7 @@ import java.util.UUID;
 
 @JmixEntity(name = "report_WizardReportRegion")
 @SystemLevel
-public class  ReportRegion implements OrderableEntity {
+public class ReportRegion implements OrderableEntity {
 
     private static final long serialVersionUID = -3122228074679382191L;
     public static final String HEADER_BAND_PREFIX = "header";
@@ -121,8 +121,7 @@ public class  ReportRegion implements OrderableEntity {
     @JmixProperty
     @Transient
     public String getNameForBand() {
-        MetaClass wrapperMetaClass = getRegionPropertiesRootNode().getWrappedMetaClass();
-        return StringUtils.isEmpty(bandNameFromReport) ? wrapperMetaClass.getJavaClass().getSimpleName() +
+        return StringUtils.isEmpty(bandNameFromReport) ? getRegionPropertiesRootNode().getName() +
                 (isTabulatedRegion() ? "s" : "") +
                 (getReportData().getReportRegions().size() == 1 ? "" : getOrderNum().toString()) : bandNameFromReport;
     }

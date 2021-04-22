@@ -17,6 +17,7 @@
 package io.jmix.reports.entity.wizard;
 
 import io.jmix.core.Entity;
+import io.jmix.core.entity.annotation.DisableEnhancing;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.Composition;
@@ -59,11 +60,13 @@ public class EntityTreeNode {
     @Transient
     protected List<EntityTreeNode> children = new ArrayList<>();
 
+    @JmixProperty
     @Transient
-    protected transient MetaClass wrappedMetaClass;//'wrappedMetaClass' name cause 'metaClass' field already exists in superclass
+    protected String wrappedMetaClass;//'wrappedMetaClass' name cause 'metaClass' field already exists in superclass
 
+    @JmixProperty
     @Transient
-    protected transient MetaProperty wrappedMetaProperty;
+    protected String wrappedMetaProperty;
 
     @JmixProperty
     @Transient
@@ -190,19 +193,19 @@ public class EntityTreeNode {
         this.children = children;
     }
 
-    public MetaClass getWrappedMetaClass() {
+    public String getWrappedMetaClass() {
         return wrappedMetaClass;
     }
 
-    public void setWrappedMetaClass(MetaClass wrappedMetaClass) {
+    public void setWrappedMetaClass(String wrappedMetaClass) {
         this.wrappedMetaClass = wrappedMetaClass;
     }
 
-    public MetaProperty getWrappedMetaProperty() {
+    public String getWrappedMetaProperty() {
         return wrappedMetaProperty;
     }
 
-    public void setWrappedMetaProperty(MetaProperty wrappedMetaProperty) {
+    public void setWrappedMetaProperty(String wrappedMetaProperty) {
         this.wrappedMetaProperty = wrappedMetaProperty;
     }
 }

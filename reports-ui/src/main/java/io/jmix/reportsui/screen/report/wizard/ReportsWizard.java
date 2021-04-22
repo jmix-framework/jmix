@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2019 Haulmont.
+ * Copyright 2021 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.reportsui.wizard;
+package io.jmix.reportsui.screen.report.wizard;
 
 import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -25,7 +25,9 @@ import io.jmix.reports.ReportsProperties;
 import io.jmix.reports.app.EntityTree;
 import io.jmix.reports.entity.*;
 import io.jmix.reports.entity.wizard.*;
+import io.jmix.reports.exception.TemplateGenerationException;
 import io.jmix.reports.util.DataSetFactory;
+import io.jmix.reportsui.screen.report.wizard.template.TemplateGenerator;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.Transformer;
 import org.apache.commons.lang3.StringUtils;
@@ -35,12 +37,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
+import javax.inject.Provider;
 import javax.persistence.Temporal;
 import java.lang.reflect.AnnotatedElement;
 import java.util.*;
 
-@Component("report_ReportingWizardApi")
-public class ReportingWizardImpl implements ReportingWizard {
+/**
+ * API for report wizard
+ */
+@Component("report_ReportsWizard")
+public class ReportsWizard {
 
     public static final String ROOT_BAND_DEFINITION_NAME = "Root";
     protected static final String DEFAULT_SINGLE_ENTITY_ALIAS = "entity";//cause Thesis used it for running reports from screens without selection input params
@@ -50,22 +56,34 @@ public class ReportingWizardImpl implements ReportingWizard {
 
     @Autowired
     protected Metadata metadata;
+
     @Autowired
     protected Reports reports;
+
     @Autowired
     protected ReportsProperties reportsProperties;
+
     @Autowired
     protected ExtendedEntities extendedEntities;
+
     @Autowired
     protected DataSetFactory dataSetFactory;
+
     @Autowired
     protected Messages messages;
+
     @Autowired
     protected MetadataTools metadataTools;
+
+    @Autowired
+    protected TemplateGenerator templateGenerator;
+
+    @Autowired
+    protected Provider<EntityTreeModelBuilder> entityTreeModelBuilderApiProvider;
+
     @Autowired
     protected FetchPlans fetchPlans;
 
-    @Override
     public Report toReport(ReportData reportData, boolean temporary) {
         Report report = createReport(reportData, temporary);
         ReportInputParameter mainParameter = createParameters(reportData, report);
@@ -102,7 +120,7 @@ public class ReportingWizardImpl implements ReportingWizard {
 
             BandDefinition dataBand = createDataBand(report, rootReportBandDefinition, reportRegion.getNameForBand(), bandDefinitionPosition++);
 
-            if (reportData.getReportType().isEntity()) {
+            if (reportData.getReportTypeGenerate().isEntity()) {
                 FetchPlan parameterView = createViewByReportRegions(reportData.getEntityTreeRootNode(), reportData.getReportRegions());
                 createEntityDataSet(reportData, reportRegion, dataBand, mainParameter, parameterView);
             } else {
@@ -118,29 +136,29 @@ public class ReportingWizardImpl implements ReportingWizard {
     @Nullable
     protected ReportInputParameter createParameters(ReportData reportData, Report report) {
         ReportInputParameter mainParameter = null;
-        if (reportData.getReportType().isEntity()) {
+        if (reportData.getReportTypeGenerate().isEntity()) {
             mainParameter = createMainInputParameter(report, reportData);
             report.getInputParameters().add(mainParameter);
         } else if (reportData.getQueryParameters() != null) {
             int i = 1;
-            for (ReportData.Parameter queryParameter : reportData.getQueryParameters()) {
+            for (QueryParameter queryParameter : reportData.getQueryParameters()) {
                 ReportInputParameter parameter = createParameter(report, i++);
-                parameter.setAlias(queryParameter.name);
-                parameter.setName(StringUtils.capitalize(queryParameter.name));
-                parameter.setType(queryParameter.parameterType);
-                parameter.setParameterClass(queryParameter.javaClass);
-                parameter.setDefaultValue(queryParameter.defaultValue);
-                parameter.setPredefinedTransformation(queryParameter.predefinedTransformation);
-                parameter.setHidden(queryParameter.hidden);
+                parameter.setAlias(queryParameter.getName());
+                parameter.setName(StringUtils.capitalize(queryParameter.getName()));
+                parameter.setType(queryParameter.getParameterType());
+                parameter.setParameterClass(metadata.getClass(queryParameter.getJavaClassName()).getJavaClass());
+                parameter.setDefaultValue(queryParameter.getDefaultValue());
+                parameter.setPredefinedTransformation(queryParameter.getPredefinedTransformation());
+                parameter.setHidden(queryParameter.getHidden());
 
-                if (queryParameter.parameterType == ParameterType.ENTITY
-                        || queryParameter.parameterType == ParameterType.ENTITY_LIST) {
-                    MetaClass metaClass = metadata.getClass(queryParameter.javaClass);
+                if (queryParameter.getParameterType() == ParameterType.ENTITY
+                        || queryParameter.getParameterType() == ParameterType.ENTITY_LIST) {
+                    MetaClass metaClass = metadata.getClass(queryParameter.getJavaClassName());
                     if (metaClass != null) {
                         parameter.setEntityMetaClass(metaClass.getName());
                     }
-                } else if (queryParameter.parameterType == ParameterType.ENUMERATION && queryParameter.javaClass != null) {
-                    parameter.setEnumerationClass(queryParameter.javaClass.getName());
+                } else if (queryParameter.getParameterType() == ParameterType.ENUMERATION && queryParameter.getJavaClassName() != null) {
+                    parameter.setEnumerationClass(queryParameter.getJavaClassName());
                 }
 
                 report.getInputParameters().add(parameter);
@@ -175,11 +193,11 @@ public class ReportingWizardImpl implements ReportingWizard {
                                        ReportInputParameter mainParameter, FetchPlan parameterView) {
         DataSet dataSet = dataSetFactory.createEmptyDataSet(dataBand);
         dataSet.setName(messages.getMessage(getClass(), "dataSet"));
-        if (ReportData.ReportType.LIST_OF_ENTITIES == reportData.getReportType()) {
+        if (ReportTypeGenerate.LIST_OF_ENTITIES == reportData.getReportTypeGenerate()) {
             dataSet.setType(DataSetType.MULTI);
             dataSet.setListEntitiesParamName(mainParameter.getAlias());
             dataSet.setFetchPlan(parameterView);
-        } else if (ReportData.ReportType.SINGLE_ENTITY == reportData.getReportType()) {
+        } else if (ReportTypeGenerate.SINGLE_ENTITY == reportData.getReportTypeGenerate()) {
             if (reportRegion.isTabulatedRegion()) {
                 dataSet.setType(DataSetType.MULTI);
                 dataSet.setListEntitiesParamName(mainParameter.getAlias() + "#" + reportRegion.getRegionPropertiesRootNode().getName());
@@ -205,10 +223,10 @@ public class ReportingWizardImpl implements ReportingWizard {
         ReportInputParameter reportInputParameter = createParameter(report, 1);
 
         reportInputParameter.setName(reportData.getEntityTreeRootNode().getLocalizedName());
-        MetaClass wrapperMetaClass = reportData.getEntityTreeRootNode().getWrappedMetaClass();
+        String wrapperMetaClass = reportData.getEntityTreeRootNode().getWrappedMetaClass();
 
-        reportInputParameter.setEntityMetaClass(wrapperMetaClass.getName());
-        if (ReportData.ReportType.LIST_OF_ENTITIES == reportData.getReportType()) {
+        reportInputParameter.setEntityMetaClass(wrapperMetaClass);
+        if (ReportTypeGenerate.LIST_OF_ENTITIES == reportData.getReportTypeGenerate()) {
             reportInputParameter.setType(ParameterType.ENTITY_LIST);
             reportInputParameter.setAlias(DEFAULT_LIST_OF_ENTITIES_ALIAS);
         } else {
@@ -260,12 +278,16 @@ public class ReportingWizardImpl implements ReportingWizard {
         ArrayList<ReportValueFormat> formats = new ArrayList<>();
         if (!reportData.getTemplateFileName().endsWith(".html")) {
             for (RegionProperty regionProperty : reportRegion.getRegionProperties()) {
-                if (regionProperty.getEntityTreeNode().getWrappedMetaProperty().getJavaType().isAssignableFrom(Date.class)) {
+                EntityTreeNode entityTreeNode = regionProperty.getEntityTreeNode();
+                MetaClass metaClass = metadata.getClass(entityTreeNode.getWrappedMetaClass());
+                MetaProperty metaProperty = metaClass.getProperty(entityTreeNode.getWrappedMetaProperty());
+
+                if (metaProperty.getJavaType().isAssignableFrom(Date.class)) {
                     ReportValueFormat rvf = new ReportValueFormat();
                     rvf.setReport(report);
                     rvf.setValueName(reportRegion.getNameForBand() + "." + regionProperty.getHierarchicalNameExceptRoot());
                     rvf.setFormatString(messages.getMessage("dateTimeFormat"));
-                    AnnotatedElement annotatedElement = regionProperty.getEntityTreeNode().getWrappedMetaProperty().getAnnotatedElement();
+                    AnnotatedElement annotatedElement = metaProperty.getAnnotatedElement();
                     if (annotatedElement != null && annotatedElement.isAnnotationPresent(Temporal.class)) {
                         switch (annotatedElement.getAnnotation(Temporal.class).value()) {
                             case TIME:
@@ -297,9 +319,8 @@ public class ReportingWizardImpl implements ReportingWizard {
         return headerBandDefinition;
     }
 
-    @Override
     public FetchPlan createViewByReportRegions(EntityTreeNode entityTreeRootNode, List<ReportRegion> reportRegions) {
-        MetaClass rootWrapperMetaClass = entityTreeRootNode.getWrappedMetaClass();
+        MetaClass rootWrapperMetaClass = metadata.getClass(entityTreeRootNode.getWrappedMetaClass());
         FetchPlanBuilder fetchPlanBuilder = fetchPlans.builder(rootWrapperMetaClass.getJavaClass());
 
         Map<EntityTreeNode, FetchPlanBuilder> viewsForNodes = new HashMap<>();
@@ -341,7 +362,6 @@ public class ReportingWizardImpl implements ReportingWizard {
      * @param collectionPropertyName must to be non-null for a tabulated region
      * @return report region
      */
-    @Override
     public ReportRegion createReportRegionByView(EntityTree entityTree, boolean isTabulated, @Nullable FetchPlan fetchPlan, @Nullable String collectionPropertyName) {
         if (StringUtils.isNotBlank(collectionPropertyName) && fetchPlan == null) {
             //without view we can`t correctly set rootNode for region which is necessary for tabulated regions for a
@@ -377,7 +397,7 @@ public class ReportingWizardImpl implements ReportingWizard {
      */
     protected FetchPlanBuilder ensureParentViewsExist(EntityTreeNode entityTreeNode, Map<EntityTreeNode, FetchPlanBuilder> viewsForNodes) {
         EntityTreeNode parentNode = entityTreeNode.getParent();
-        MetaClass wrapperMetaClass = parentNode.getWrappedMetaClass();
+        MetaClass wrapperMetaClass = metadata.getClass(parentNode.getWrappedMetaClass());
 
         FetchPlanBuilder parentFetchPlanBuilder = fetchPlans.builder(wrapperMetaClass.getJavaClass());
 
@@ -434,7 +454,6 @@ public class ReportingWizardImpl implements ReportingWizard {
         }
     }
 
-    @Override
     public boolean isEntityAllowedForReportWizard(final MetaClass effectiveMetaClass) {
         if (metadataTools.isSystemLevel(effectiveMetaClass)
                 || metadataTools.isJpaEmbeddable(effectiveMetaClass)
@@ -474,7 +493,7 @@ public class ReportingWizardImpl implements ReportingWizard {
         return !propertiesNamesList.isEmpty();
     }
 
-    @Override
+
     public boolean isPropertyAllowedForReportWizard(MetaClass metaClass, MetaProperty metaProperty) {
         //here we can`t just to determine metaclass using property argument cause it can be an ancestor of it
         List<String> propertiesBlackList = reportsProperties.getWizardPropertiesBlackList();
@@ -486,6 +505,14 @@ public class ReportingWizardImpl implements ReportingWizard {
         return !(propertiesBlackList.contains(classAndPropertyName)
                 || (propertiesBlackList.contains(originalDomainMetaClass.getName() + "." + metaProperty.getName())
                 && !wizardPropertiesExcludedBlackList.contains(classAndPropertyName)));
+    }
+
+    public byte[] generateTemplate(ReportData reportData, TemplateFileType templateFileType) throws TemplateGenerationException {
+        return templateGenerator.generateTemplate(reportData, templateFileType);
+    }
+
+    public EntityTree buildEntityTree(MetaClass metaClass) {
+        return entityTreeModelBuilderApiProvider.get().buildEntityTree(metaClass);
     }
 
     protected List<String> getWizardBlackListedEntities() {

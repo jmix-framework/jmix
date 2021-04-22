@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2019 Haulmont.
+ * Copyright 2021 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package io.jmix.reportsui.screen.report.wizard.region;
 import io.jmix.core.Messages;
 import io.jmix.reports.entity.wizard.EntityTreeNode;
 import io.jmix.ui.Notifications;
+import io.jmix.ui.WindowParam;
 import io.jmix.ui.component.Button;
 import io.jmix.ui.component.TextField;
 import io.jmix.ui.component.Tree;
@@ -29,11 +30,11 @@ import javax.inject.Named;
 
 @UiController("report_ReportEntityTree.lookup")
 @UiDescriptor("entity-tree-lookup.xml")
-@LookupComponent("entityTreeFrame.entityTree")
 public class EntityTreeLookup extends StandardLookup {
 
     //    @Named("entityTreeFrame.reportEntityTreeNodeDs")
 //    protected AbstractTreeDatasource reportEntityTreeNodeDs;
+
     @Named("entityTreeFrame.entityTree")
     protected Tree entityTree;
     @Named("entityTreeFrame.reportPropertyName")
@@ -47,18 +48,19 @@ public class EntityTreeLookup extends StandardLookup {
     @Autowired
     protected Notifications notifications;
 
-    protected EntityTreeNode rootNode;
+    @WindowParam
+    protected EntityTreeNode rootEntity;
 
     @Subscribe
     protected void onInit(InitEvent event) {
-        //todo params
+//        //todo params
 //        params.put("component$reportPropertyName", reportPropertyName);
 //
 //        reportEntityTreeNodeDs.refresh(params);
 //        rootNode = (EntityTreeNode) params.get("rootEntity");
 //        entityTree.expandTree();
-//
-//
+
+
 //        this.setLookupValidator(() -> {
 //            if (entityTree.getSingleSelected() == null) {
 //                notifications.create(Notifications.NotificationType.TRAY)

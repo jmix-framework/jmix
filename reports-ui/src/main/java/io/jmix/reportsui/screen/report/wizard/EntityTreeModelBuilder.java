@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2019 Haulmont.
+ * Copyright 2021 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.reportsui.wizard;
+package io.jmix.reportsui.screen.report.wizard;
 
 import io.jmix.core.ExtendedEntities;
 import io.jmix.core.MessageTools;
@@ -28,6 +28,7 @@ import io.jmix.reports.app.EntityTreeStructureInfo;
 import io.jmix.reports.entity.wizard.EntityTreeNode;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -36,14 +37,14 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Component("report_EntityTreeModelBuilder")
-@Scope("prototype")
-public class EntityTreeModelBuilderImpl implements EntityTreeModelBuilder {
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
+public class EntityTreeModelBuilder {
 
     @Autowired
     protected MessageTools messageTools;
 
     @Autowired
-    protected ReportingWizard reportingWizard;
+    protected ReportsWizard reportsWizard;
 
     @Autowired
     protected ReportsProperties reportsProperties;
@@ -59,6 +60,11 @@ public class EntityTreeModelBuilderImpl implements EntityTreeModelBuilder {
 
     protected int entityTreeModelMaxDeep;
 
+    @PostConstruct
+    protected void init() {
+        entityTreeModelMaxDeep = reportsProperties.getEntityTreeModelMaxDeep();
+    }
+
     public int getEntityTreeModelMaxDeep() {
         return entityTreeModelMaxDeep;
     }
@@ -67,19 +73,13 @@ public class EntityTreeModelBuilderImpl implements EntityTreeModelBuilder {
         this.entityTreeModelMaxDeep = entityTreeModelMaxDeep;
     }
 
-    @PostConstruct
-    void init() {
-        entityTreeModelMaxDeep = reportsProperties.getEntityTreeModelMaxDeep();
-    }
-
-    @Override
     public EntityTree buildEntityTree(MetaClass metaClass) {
         EntityTree entityTree = new EntityTree();
         EntityTreeStructureInfo entityTreeStructureInfo = new EntityTreeStructureInfo();
         EntityTreeNode root = metadata.create(EntityTreeNode.class);
         root.setName(metaClass.getName());
         root.setLocalizedName(StringUtils.isEmpty(messageTools.getEntityCaption(metaClass)) ? metaClass.getName() : messageTools.getEntityCaption(metaClass));
-        root.setWrappedMetaClass(metaClass);
+        root.setWrappedMetaClass(metaClass.getName());
         fillChildNodes(root, 1, new HashSet<String>(), entityTreeStructureInfo);
         entityTree.setEntityTreeRootNode(root);
         entityTree.setEntityTreeStructureInfo(entityTreeStructureInfo);
@@ -91,10 +91,11 @@ public class EntityTreeModelBuilderImpl implements EntityTreeModelBuilder {
         if (depth > getEntityTreeModelMaxDeep()) {
             return parentEntityTreeNode;
         }
+        //todo
 //        MetaClass fileDescriptorMetaClass = metadata.getClass(FileDescriptor.class);
-        MetaClass wrappedMetaClass = parentEntityTreeNode.getWrappedMetaClass();
+        MetaClass wrappedMetaClass = metadata.getClass(parentEntityTreeNode.getWrappedMetaClass());
         for (MetaProperty metaProperty : wrappedMetaClass.getProperties()) {
-            if (!reportingWizard.isPropertyAllowedForReportWizard(wrappedMetaClass, metaProperty)) {
+            if (!reportsWizard.isPropertyAllowedForReportWizard(wrappedMetaClass, metaProperty)) {
                 continue;
             }
             if (metaProperty.getRange().isClass()) {
@@ -106,25 +107,21 @@ public class EntityTreeModelBuilderImpl implements EntityTreeModelBuilder {
                     int newDepth = depth + 1;
                     EntityTreeNode newParentModelNode = metadata.create(EntityTreeNode.class);
                     newParentModelNode.setName(metaProperty.getName());
-                    //newParentModelNode.setLocalizedName(messageTools.getEntityCaption(effectiveMetaClass));
+                    newParentModelNode.setLocalizedName(messageTools.getEntityCaption(effectiveMetaClass));
                     newParentModelNode.setLocalizedName(
                             StringUtils.isEmpty(messageTools.getPropertyCaption(wrappedMetaClass, metaProperty.getName())) ?
                                     metaProperty.getName() : messageTools.getPropertyCaption(wrappedMetaClass, metaProperty.getName())
                     );
-                    newParentModelNode.setWrappedMetaClass(effectiveMetaClass);
-                    newParentModelNode.setWrappedMetaProperty(metaProperty);
+                    newParentModelNode.setWrappedMetaClass(effectiveMetaClass.getName());
+                    //newParentModelNode.setWrappedMetaProperty(metaProperty.getName());
                     newParentModelNode.setParent(parentEntityTreeNode);
 
 
                     if (alreadyAddedMetaProps.contains(getTreeNodeInfo(parentEntityTreeNode) + "|" + getTreeNodeInfo(newParentModelNode))) {
                         continue; //avoid parent-child-parent-... infinite loops
                     }
-                    //alreadyAddedMetaProps.add(getTreeNodeInfo(parentEntityTreeNode) + "|" + getTreeNodeInfo(newParentModelNode));
-                    alreadyAddedMetaProps.add(getTreeNodeInfo(newParentModelNode) + "|" + getTreeNodeInfo(parentEntityTreeNode));
 
-                    //System.err.println(StringUtils.leftPad("", newDepth * 2, " ") + getTreeNodeInfo(parentEntityTreeNode) + "     |     " + getTreeNodeInfo(newParentModelNode));
-                    //System.err.println(StringUtils.leftPad("", newDepth * 2, " ") + getTreeNodeInfo(newParentModelNode) + "     |     " + getTreeNodeInfo(parentEntityTreeNode));
-                    //System.err.println("");
+                    alreadyAddedMetaProps.add(getTreeNodeInfo(newParentModelNode) + "|" + getTreeNodeInfo(parentEntityTreeNode));
 
                     if (!entityTreeStructureInfo.isEntityTreeRootHasCollections() && metaProperty.getRange().getCardinality().isMany() && depth == 1) {
                         entityTreeStructureInfo.setEntityTreeRootHasCollections(true);//TODO set to true if only simple attributes of that collection as children exists
@@ -142,10 +139,10 @@ public class EntityTreeModelBuilderImpl implements EntityTreeModelBuilder {
                 child.setLocalizedName(StringUtils.isEmpty(messageTools.
                         getPropertyCaption(wrappedMetaClass, metaProperty.getName())) ?
                         metaProperty.getName() : messageTools.getPropertyCaption(wrappedMetaClass, metaProperty.getName()));
-                child.setWrappedMetaProperty(metaProperty);
+                child.setWrappedMetaClass(wrappedMetaClass.getName());
+                child.setWrappedMetaProperty(metaProperty.getName());
                 child.setParent(parentEntityTreeNode);
                 parentEntityTreeNode.getChildren().add(child);
-
             }
 
         }
@@ -153,14 +150,24 @@ public class EntityTreeModelBuilderImpl implements EntityTreeModelBuilder {
     }
 
     private String getTreeNodeInfo(EntityTreeNode parentEntityTreeNode) {
-        MetaClass wrappedMetaClass = parentEntityTreeNode.getWrappedMetaClass();
-        if (parentEntityTreeNode.getWrappedMetaProperty() != null) {
-            return (parentEntityTreeNode.getWrappedMetaProperty().getDomain().getName().equals(wrappedMetaClass.getName()) ?
-                    "" : parentEntityTreeNode.getWrappedMetaProperty().getDomain() + ".") +
-                    wrappedMetaClass.getName() + " isMany:" + parentEntityTreeNode.getWrappedMetaProperty().getRange().getCardinality().isMany();
-        } else {
-            return wrappedMetaClass.getName() + " isMany:false";
+        MetaClass parentMetaClass = metadata.getClass(parentEntityTreeNode.getWrappedMetaClass());
+        String parentMetaClassName = parentMetaClass.getName();
+
+        if (parentEntityTreeNode.getWrappedMetaProperty() == null) {
+            return parentMetaClassName + " isMany:false";
         }
+
+        MetaClass metaClass = metadata.getClass(parentEntityTreeNode.getWrappedMetaClass());
+        MetaProperty metaProperty = metaClass.getProperty(parentEntityTreeNode.getWrappedMetaProperty());
+
+        boolean isMany = metaProperty.getRange().getCardinality().isMany();
+        MetaClass domain = metaProperty.getDomain();
+
+        if (domain.getName().equals(parentMetaClassName)) {
+            return parentMetaClass + " isMany:" + isMany;
+        }
+
+        return domain + "." + parentMetaClass + " isMany:" + isMany;
     }
 }
 

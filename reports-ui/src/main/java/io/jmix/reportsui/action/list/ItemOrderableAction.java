@@ -16,18 +16,15 @@
 
 package io.jmix.reportsui.action.list;
 
-import io.jmix.core.Metadata;
 import io.jmix.core.Sort;
 import io.jmix.reports.entity.wizard.OrderableEntity;
-import io.jmix.ui.action.AbstractAction;
+import io.jmix.ui.action.ActionType;
+import io.jmix.ui.action.list.SecuredListAction;
 import io.jmix.ui.component.Component;
-import io.jmix.ui.component.ListComponent;
 import io.jmix.ui.component.data.DataUnit;
 import io.jmix.ui.component.data.meta.ContainerDataUnit;
 import io.jmix.ui.model.CollectionContainer;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.annotation.Nullable;
 import java.util.*;
 
 /**
@@ -39,35 +36,40 @@ import java.util.*;
  *     <li>index recalculating algorithm if more than one item selected)</li>
  * </ul>
  */
-public class OrderableItemMoveAction<T extends ListComponent<E>, E extends OrderableEntity> extends AbstractAction {
+@ActionType(ItemOrderableAction.ID)
+public class ItemOrderableAction<E extends OrderableEntity> extends SecuredListAction {
 
-    @Autowired
-    protected Metadata metadata;
+    public static final String ID = "itemOrderable";
 
-    protected T listComponent;
     protected Direction direction;
 
-    public OrderableItemMoveAction(String actionId, Direction direction, T listComponent, @Nullable String shortcut) {
-        super(actionId, shortcut);
-        ContainerDataUnit containerDataUnit = (ContainerDataUnit) listComponent.getItems();
-        if (!(OrderableEntity.class.isAssignableFrom(containerDataUnit.getEntityMetaClass().getJavaClass()))) {
-            throw new UnsupportedOperationException("List component must contain datasource with entities type of OrderableEntity for ordering");
-        }
-        this.direction = direction;
-        this.listComponent = listComponent;
+    public ItemOrderableAction() {
+        this(ID);
     }
 
-    public OrderableItemMoveAction(String actionId, Direction direction, T listComponent) {
-        this(actionId, direction, listComponent, null);
+    public ItemOrderableAction(String actionId) {
+        super(actionId);
+    }
+
+    public void setDirection(Direction direction) {
+        this.direction = direction;
     }
 
     @Override
     public void actionPerform(Component component) {
-        swapItems();
+        if (!hasSubscriptions(ActionPerformedEvent.class)) {
+            execute();
+        } else {
+            super.actionPerform(component);
+        }
     }
 
-    protected void swapItems() {
-        int selectedCnt = listComponent.getSelected().size();
+    protected void execute() {
+        if (target == null) {
+            throw new IllegalStateException("OrderableAction target is not set");
+        }
+
+        int selectedCnt = target.getSelected().size();
         if (selectedCnt == 1) {
             swapSingleItemWithNeighbour();
         } else if (selectedCnt > 1) {
@@ -79,11 +81,11 @@ public class OrderableItemMoveAction<T extends ListComponent<E>, E extends Order
      * Swap items is simple
      */
     protected void swapSingleItemWithNeighbour() {
-        OrderableEntity selectedItem = listComponent.getSingleSelected();
+        OrderableEntity selectedItem = (OrderableEntity) target.getSingleSelected();
         OrderableEntity neighbourItem = null;
-        List<OrderableEntity> allItems = getItems(listComponent);
+        List<OrderableEntity> allItems = getItems();
         for (ListIterator<OrderableEntity> iterator = allItems.listIterator(); iterator.hasNext(); ) {
-            if (iterator.next().equals(selectedItem)) {
+            if (iterator.next().equals(target.getSingleSelected())) {
                 neighbourItem = getItemNeighbour(iterator);
                 break;
             }
@@ -122,8 +124,8 @@ public class OrderableItemMoveAction<T extends ListComponent<E>, E extends Order
     }
 
     protected void sortTableDsByItemsOrderNum() {
-        DataUnit dataUnit = listComponent.getItems();
-        if(dataUnit instanceof ContainerDataUnit) {
+        DataUnit dataUnit = target.getItems();
+        if (dataUnit instanceof ContainerDataUnit) {
             ContainerDataUnit containerDataUnit = (ContainerDataUnit) dataUnit;
             CollectionContainer collectionContainer = containerDataUnit.getContainer();
             collectionContainer.getSorter().sort(Sort.by(Sort.Direction.ASC, "orderNum"));
@@ -136,9 +138,9 @@ public class OrderableItemMoveAction<T extends ListComponent<E>, E extends Order
      */
     protected void moveFewItems() {
         //System.out.println("swap-------------");
-        List<E> allItems = getItems(listComponent);
-        Set<E> selectedItems = listComponent.getSelected();
-        int spreadKoef = listComponent.getSelected().size();//U can use 10 for easier debug
+        List<E> allItems = getItems();
+        Set<E> selectedItems = target.getSelected();
+        int spreadKoef = target.getSelected().size();//U can use 10 for easier debug
 
         long idx = 0;
         long lastIdxInGrp = Long.MAX_VALUE;
@@ -208,14 +210,9 @@ public class OrderableItemMoveAction<T extends ListComponent<E>, E extends Order
         return "";
     }
 
-    private List getItems(T listComponent) {
-        DataUnit dataUnit = listComponent.getItems();
-        if (dataUnit instanceof ContainerDataUnit) {
-            ContainerDataUnit containerDataUnit = (ContainerDataUnit) dataUnit;
-            return containerDataUnit.getContainer().getItems();
-        } else {
-            return null;
-        }
+    private List getItems() {
+        ContainerDataUnit<E> containerDataUnit = (ContainerDataUnit) target.getItems();
+        return containerDataUnit.getContainer().getItems();
     }
 
     /**
@@ -224,7 +221,7 @@ public class OrderableItemMoveAction<T extends ListComponent<E>, E extends Order
     protected void normalizeEntityOrderNum() {
         long normalizedIdx = 0;
 
-        List<OrderableEntity> allItems = getItems(listComponent);
+        List<OrderableEntity> allItems = getItems();
         for (OrderableEntity item : allItems) {
             item.setOrderNum(++normalizedIdx); //first must to be 1
         }

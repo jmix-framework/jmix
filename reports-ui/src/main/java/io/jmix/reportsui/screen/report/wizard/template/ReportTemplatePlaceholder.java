@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package io.jmix.reportsui.wizard.template;
+package io.jmix.reportsui.screen.report.wizard.template;
 
 import io.jmix.core.Messages;
+import io.jmix.core.Metadata;
+import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.reports.entity.wizard.RegionProperty;
-import io.jmix.reports.entity.wizard.ReportData;
-import io.jmix.reports.entity.wizard.ReportRegion;
+import io.jmix.reports.entity.wizard.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +32,7 @@ import java.util.Date;
 
 @Component("report_ReportTemplatePlaceholder")
 public class ReportTemplatePlaceholder {
+
     protected static final String HAS_CONTENT = "?has_content";
     protected static final String AND = " && ";
     protected static final String TABLE_MASK = "${%s}";
@@ -41,6 +42,9 @@ public class ReportTemplatePlaceholder {
     protected static final String HTML_DATE_MASK = "<#if %5$s %1$s.fields('%2$s')%4$s?has_content>${%1$s.fields('%2$s')%4$s?string(\"%3$s\")}</#if>";// /like <#if Task[0].fields('updateTs')?has_content>${Task[0].fields('updateTs')?string("dd.MM.yyyy hh:mm")}</#if>
 
     private static final Logger log = LoggerFactory.getLogger(ReportTemplatePlaceholder.class);
+
+    @Autowired
+    protected Metadata metadata;
 
     @Autowired
     protected Messages messages;
@@ -62,14 +66,17 @@ public class ReportTemplatePlaceholder {
 
     public String getHtmlPlaceholderValue(ReportRegion reportRegion, RegionProperty regionProperty) {
         String bandName;
-        String fieldName = regionProperty.getEntityTreeNode().getHierarchicalNameExceptRoot();
+        EntityTreeNode entityTreeNode = regionProperty.getEntityTreeNode();
+        String fieldName = entityTreeNode.getHierarchicalNameExceptRoot();
+
         if (reportRegion.isTabulatedRegion()) {
             bandName = "row";
-            fieldName = StringUtils.removeStart(regionProperty.getEntityTreeNode().getHierarchicalNameExceptRoot(), reportRegion.getRegionPropertiesRootNode().getName() + ".");
+            fieldName = StringUtils.removeStart(entityTreeNode.getHierarchicalNameExceptRoot(), reportRegion.getRegionPropertiesRootNode().getName() + ".");
         } else {
             bandName = reportRegion.getNameForBand() + "[0]";
         }
-        MetaProperty wrappedMetaProperty = regionProperty.getEntityTreeNode().getWrappedMetaProperty();
+        MetaClass metaClass = metadata.getClass(entityTreeNode.getWrappedMetaClass());
+        MetaProperty wrappedMetaProperty = metaClass.getProperty(entityTreeNode.getWrappedMetaProperty());
         Temporal temporal = wrappedMetaProperty.getAnnotatedElement().getAnnotation(Temporal.class);
         if (temporal != null || wrappedMetaProperty.getJavaType().isAssignableFrom(Date.class)) {
             if (temporal != null && !wrappedMetaProperty.getJavaType().isAssignableFrom(Date.class)) {
@@ -98,7 +105,7 @@ public class ReportTemplatePlaceholder {
         } else {
             ReportData reportData = reportRegion.getReportData();
             String[] partsFieldName;
-            if (reportData != null && reportData.getReportType() == ReportData.ReportType.LIST_OF_ENTITIES_WITH_QUERY) {
+            if (reportData != null && reportData.getReportTypeGenerate() == ReportTypeGenerate.LIST_OF_ENTITIES_WITH_QUERY) {
                 partsFieldName = new String[]{fieldName};
             } else {
                 partsFieldName = fieldName.split("\\.");
@@ -125,11 +132,14 @@ public class ReportTemplatePlaceholder {
         StringBuilder pathForEntityField = new StringBuilder();
         StringBuilder condition = new StringBuilder();
         if (partsFieldName.length > 1) {
-            condition.append(String.format(HTML_VALUE_MASK, bandName, fieldName, pathForEntityField.toString())).append(HAS_CONTENT).append(AND);
+            String format = String.format(HTML_VALUE_MASK, bandName, fieldName, pathForEntityField.toString());
+            condition.append(format).append(HAS_CONTENT).append(AND);
+
             for (int i = 1; i < partsFieldName.length; i++) {
                 pathForEntityField.append(".").append(partsFieldName[i]);
-                if (i < partsFieldName.length - 1)
-                    condition.append(" ").append(String.format(HTML_VALUE_MASK, bandName, fieldName, pathForEntityField.toString())).append(HAS_CONTENT).append(AND);
+                if (i < partsFieldName.length - 1) {
+                    condition.append(" ").append(format).append(HAS_CONTENT).append(AND);
+                }
             }
             if (condition.length() > 4 && addIf) {
                 condition.delete(condition.length() - 4, condition.length());

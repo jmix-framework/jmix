@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2019 Haulmont.
+ * Copyright 2021 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,28 +14,26 @@
  * limitations under the License.
  */
 
-package io.jmix.reportsui.screen.report.wizard.step;
+package io.jmix.reports.entity.wizard;
 
-import io.jmix.ui.component.Button;
-import io.jmix.ui.screen.Screen;
+public enum ReportTypeGenerate {
+    SINGLE_ENTITY(false, true),
+    LIST_OF_ENTITIES(true, true),
+    LIST_OF_ENTITIES_WITH_QUERY(true, false);
 
-public interface MainWizardFrame<T extends Screen> {
+    private boolean list;
+    private boolean entity;
 
-//    String getMessage(String key);
-//
-//    String formatMessage(String key, Object... params);
+    ReportTypeGenerate(boolean list, boolean entity) {
+        this.list = list;
+        this.entity = entity;
+    }
 
-    T getMainWizardFrame();
+    public boolean isList() {
+        return list;
+    }
 
-    Button getBackwardBtn();
-
-    Button getForwardBtn();
-
-    void removeBtns();
-
-    void addForwardBtn();
-
-    void addBackwardBtn();
-
-    void addSaveBtn();
+    public boolean isEntity() {
+        return entity;
+    }
 }

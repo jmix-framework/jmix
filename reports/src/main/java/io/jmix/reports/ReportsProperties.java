@@ -20,6 +20,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
+import javax.annotation.Nullable;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -76,16 +78,16 @@ public class ReportsProperties {
     boolean useOfficeForDocumentConversion;
 
     public ReportsProperties(@DefaultValue("/") String officePath,
-                             @DefaultValue({"8100","8101","8102","8103"}) List<Integer> officePorts,
+                             @DefaultValue({"8100", "8101", "8102", "8103"}) List<Integer> officePorts,
                              @DefaultValue("20") int docFormatterTimeout,
                              @DefaultValue("false") boolean displayDeviceAvailable,
                              String pdfFontsDirectory,
                              @DefaultValue("true") boolean putEmptyRowIfNoDataSelected,
                              @DefaultValue("1000") int parameterPrototypeQueryLimit,
-                             @DefaultValue("") List<String> wizardEntitiesBlackList,
-                             @DefaultValue("") List<String> wizardEntitiesWhiteList,
-                             @DefaultValue("") List<String> wizardPropertiesBlackList,
-                             @DefaultValue("") List<String> wizardPropertiesExcludedBlackList,
+                             @Nullable List<String> wizardEntitiesBlackList,
+                             @Nullable List<String> wizardEntitiesWhiteList,
+                             @Nullable List<String> wizardPropertiesBlackList,
+                             @Nullable List<String> wizardPropertiesExcludedBlackList,
                              @DefaultValue("3") int entityTreeModelMaxDeep,
                              @DefaultValue("5") int htmlExternalResourcesTimeoutSec,
                              @DefaultValue("curl") String curlPath,
@@ -105,10 +107,10 @@ public class ReportsProperties {
         this.pdfFontsDirectory = pdfFontsDirectory;
         this.putEmptyRowIfNoDataSelected = putEmptyRowIfNoDataSelected;
         this.parameterPrototypeQueryLimit = parameterPrototypeQueryLimit;
-        this.wizardEntitiesBlackList = wizardEntitiesBlackList;
-        this.wizardEntitiesWhiteList = wizardEntitiesWhiteList;
-        this.wizardPropertiesBlackList = wizardPropertiesBlackList;
-        this.wizardPropertiesExcludedBlackList = wizardPropertiesExcludedBlackList;
+        this.wizardEntitiesBlackList = wizardEntitiesBlackList == null ? Collections.emptyList() : wizardEntitiesBlackList;
+        this.wizardEntitiesWhiteList = wizardEntitiesWhiteList == null ? Collections.emptyList() : wizardEntitiesWhiteList;
+        this.wizardPropertiesBlackList = wizardPropertiesBlackList == null ? Collections.emptyList() : wizardPropertiesBlackList;
+        this.wizardPropertiesExcludedBlackList = wizardPropertiesExcludedBlackList == null ? Collections.emptyList() : wizardPropertiesExcludedBlackList;
         this.entityTreeModelMaxDeep = entityTreeModelMaxDeep;
         this.htmlExternalResourcesTimeoutSec = htmlExternalResourcesTimeoutSec;
         this.curlPath = curlPath;

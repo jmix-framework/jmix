@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.reportsui.wizard.template.generators;
+package io.jmix.reportsui.screen.report.wizard.template.generators;
 
 import io.jmix.core.DataManager;
 import io.jmix.reports.app.MetadataFieldsIgnoringGson;
@@ -24,7 +24,7 @@ import io.jmix.reports.entity.table.TemplateTableDescription;
 import io.jmix.reports.entity.wizard.RegionProperty;
 import io.jmix.reports.entity.wizard.ReportData;
 import io.jmix.reports.entity.wizard.ReportRegion;
-import io.jmix.reportsui.wizard.template.Generator;
+import io.jmix.reportsui.screen.report.wizard.template.Generator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;

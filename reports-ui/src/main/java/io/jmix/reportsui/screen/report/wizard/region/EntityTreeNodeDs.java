@@ -60,84 +60,84 @@ public class EntityTreeNodeDs extends CollectionContainerImpl<EntityTreeNode> {
 
         Tree<EntityTreeNode> resultTree = new Tree<>();
 
-        TextField<String> reportPropertyField = (TextField) params.get("component$reportPropertyName");
-        String searchValue = StringUtils.defaultIfBlank(reportPropertyField.getValue(), "").toLowerCase().trim();
-        if (params.get("rootEntity") != null) {
-            EntityTreeNode rootNodeObject = (EntityTreeNode) params.get("rootEntity");
-            List<Node<EntityTreeNode>> rootNodes;
-            if (isTreeMustContainRoot(params)) {
-                Node<EntityTreeNode> rootNode = new Node<>(rootNodeObject);
-                if (rootNodeObject.getLocalizedName().toLowerCase().contains(searchValue))
-                    fill(rootNode);
-                else
-                    fill(rootNode, searchValue);
-                rootNodes = !rootNode.getChildren().isEmpty() ? Collections.singletonList(rootNode) : Collections.emptyList();
-            } else {//don`t show current node in the tree. show only children
-                rootNodes = new ArrayList<>(rootNodeObject.getChildren().size());
-                for (EntityTreeNode child : rootNodeObject.getChildren()) {
-                    if (scalarOnly && child.getWrappedMetaProperty().getRange().getCardinality().isMany()) {
-                        continue;
-                    }
-                    Node<EntityTreeNode> newRootNode = new Node<>(child);
-                    if (child.getLocalizedName().toLowerCase().contains(searchValue))
-                        fill(newRootNode);
-                    else
-                        fill(newRootNode, searchValue);
-                    if (!newRootNode.getChildren().isEmpty())
-                        rootNodes.add(newRootNode);
-                }
-            }
-            resultTree.setRootNodes(rootNodes);
-        }
+//        TextField<String> reportPropertyField = (TextField) params.get("component$reportPropertyName");
+//        String searchValue = StringUtils.defaultIfBlank(reportPropertyField.getValue(), "").toLowerCase().trim();
+//        if (params.get("rootEntity") != null) {
+//            EntityTreeNode rootNodeObject = (EntityTreeNode) params.get("rootEntity");
+//            List<Node<EntityTreeNode>> rootNodes;
+//            if (isTreeMustContainRoot(params)) {
+//                Node<EntityTreeNode> rootNode = new Node<>(rootNodeObject);
+//                if (rootNodeObject.getLocalizedName().toLowerCase().contains(searchValue))
+//                    fill(rootNode);
+//                else
+//                    fill(rootNode, searchValue);
+//                rootNodes = !rootNode.getChildren().isEmpty() ? Collections.singletonList(rootNode) : Collections.emptyList();
+//            } else {//don`t show current node in the tree. show only children
+//                rootNodes = new ArrayList<>(rootNodeObject.getChildren().size());
+//                for (EntityTreeNode child : rootNodeObject.getChildren()) {
+//                    if (scalarOnly && child.getWrappedMetaProperty().getRange().getCardinality().isMany()) {
+//                        continue;
+//                    }
+//                    Node<EntityTreeNode> newRootNode = new Node<>(child);
+//                    if (child.getLocalizedName().toLowerCase().contains(searchValue))
+//                        fill(newRootNode);
+//                    else
+//                        fill(newRootNode, searchValue);
+//                    if (!newRootNode.getChildren().isEmpty())
+//                        rootNodes.add(newRootNode);
+//                }
+//            }
+//            resultTree.setRootNodes(rootNodes);
+//        }
         return resultTree;
     }
 
     protected void fill(final Node<EntityTreeNode> parentNode, String searchValue) {
-        parentNode.getData().getChildren().sort(nodeComparator);
-
-        for (EntityTreeNode child : parentNode.getData().getChildren()) {
-            if (collectionsOnly && !child.getWrappedMetaProperty().getRange().getCardinality().isMany()) {
-                continue;
-            }
-
-            if (metadataTools.isSystemLevel(child.getWrappedMetaProperty())) {
-                continue;
-            }
-
-            if (scalarOnly && child.getWrappedMetaProperty().getRange().getCardinality().isMany()) {
-                continue;
-            }
-
-            if (collectionsOnly && (
-                    (showRoot && parentNode.getParent() != null && parentNode.getParent().getParent() == null) ||
-                            (!showRoot && parentNode.getParent() == null)
-            )) {
-                //for collections max selection depth is limited to 2 cause reporting is not supported collection multiplying. And it is good )
-                continue;
-            }
-
-            if (persistentOnly && !metadataTools.isJpa(child.getWrappedMetaProperty())) {
-                continue;
-            }
-
-            if (!child.getChildren().isEmpty()) {
-                Node<EntityTreeNode> newParentNode = new Node<>(child);
-                newParentNode.parent = parentNode;
-                if (StringUtils.isEmpty(searchValue) || child.getLocalizedName().toLowerCase().contains(searchValue)) {
-                    fill(newParentNode);
-                    parentNode.addChild(newParentNode);
-                }
-            } else {
-                if (scalarOnly && child.getWrappedMetaProperty().getRange().isClass()) {
-                    //doesn't fetch if it is a last entity and is a class cause we can`t select it in UI anyway
-                    continue;
-                }
-                Node<EntityTreeNode> childNode = new Node<>(child);
-                if (StringUtils.isEmpty(searchValue) || child.getLocalizedName().toLowerCase().contains(searchValue)) {
-                    parentNode.addChild(childNode);
-                }
-            }
-        }
+//        parentNode.getData().getChildren().sort(nodeComparator);
+//
+//        for (EntityTreeNode child : parentNode.getData().getChildren()) {
+//            if (collectionsOnly && !child.getWrappedMetaProperty().getRange().getCardinality().isMany()) {
+//                continue;
+//            }
+//
+//            if (metadataTools.isSystemLevel(child.getWrappedMetaProperty())) {
+//                continue;
+//            }
+//
+//            if (scalarOnly && child.getWrappedMetaProperty().getRange().getCardinality().isMany()) {
+//                continue;
+//            }
+//
+//            if (collectionsOnly && (
+//                    (showRoot && parentNode.getParent() != null && parentNode.getParent().getParent() == null) ||
+//                            (!showRoot && parentNode.getParent() == null)
+//            )) {
+//                //for collections max selection depth is limited to 2 cause reporting is not supported collection multiplying. And it is good )
+//                continue;
+//            }
+//
+//            if (persistentOnly && !metadataTools.isJpa(child.getWrappedMetaProperty())) {
+//                continue;
+//            }
+//
+//            if (!child.getChildren().isEmpty()) {
+//                Node<EntityTreeNode> newParentNode = new Node<>(child);
+//                newParentNode.parent = parentNode;
+//                if (StringUtils.isEmpty(searchValue) || child.getLocalizedName().toLowerCase().contains(searchValue)) {
+//                    fill(newParentNode);
+//                    parentNode.addChild(newParentNode);
+//                }
+//            } else {
+//                if (scalarOnly && child.getWrappedMetaProperty().getRange().isClass()) {
+//                    //doesn't fetch if it is a last entity and is a class cause we can`t select it in UI anyway
+//                    continue;
+//                }
+//                Node<EntityTreeNode> childNode = new Node<>(child);
+//                if (StringUtils.isEmpty(searchValue) || child.getLocalizedName().toLowerCase().contains(searchValue)) {
+//                    parentNode.addChild(childNode);
+//                }
+//            }
+//        }
     }
 
     protected void fill(final Node<EntityTreeNode> parentNode) {

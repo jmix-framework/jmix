@@ -14,14 +14,19 @@
  * limitations under the License.
  */
 
-package io.jmix.reportsui.wizard.template;
+package io.jmix.reportsui.screen.report.wizard.step;
 
-import freemarker.template.TemplateException;
-import io.jmix.reports.entity.wizard.ReportData;
-import io.jmix.reports.exception.TemplateGenerationException;
+import io.jmix.ui.component.Button;
 
-import java.io.IOException;
+public interface WizardScreen {
 
-public interface Generator {
-    byte[] generate(ReportData reportData) throws TemplateGenerationException, TemplateException, IOException;
+    void setCaption(String caption);
+
+    void setDescription(String description);
+
+    Button getBackwardBtn();
+
+    Button getForwardBtn();
+
+    Button getSaveBtn();
 }

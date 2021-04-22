@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package io.jmix.reportsui.wizard.template.generators;
+package io.jmix.reportsui.screen.report.wizard.template.generators;
 
 import io.jmix.reports.entity.wizard.RegionProperty;
+import io.jmix.reports.entity.wizard.ReportData;
 import io.jmix.reports.entity.wizard.ReportRegion;
 import org.apache.poi.ss.util.CellReference;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
@@ -27,18 +28,23 @@ import org.docx4j.openpackaging.parts.PartName;
 import org.docx4j.openpackaging.parts.Parts;
 import org.docx4j.openpackaging.parts.SpreadsheetML.Styles;
 import org.docx4j.openpackaging.parts.SpreadsheetML.WorksheetPart;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 import org.xlsx4j.sml.*;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import java.util.List;
 
+@Component("report_XlsxGenerator")
 public class XlsxGenerator extends AbstractOfficeGenerator {
+
     public static final String CELL_MASK = "$%s$%s";
     protected static final String SHEET = "Sheet1"; //PartName can`t contain non-utf symbols cause it used URI encoding
 
     @Override
-    protected OpcPackage generatePackage() throws Docx4JException, JAXBException {
+    protected OpcPackage generatePackage(ReportData reportData) throws Docx4JException, JAXBException {
         SpreadsheetMLPackage pkg = SpreadsheetMLPackage.createPackage();
         //String sheetInternalName = ((Messages) AppBeans.get(Messages.NAME)).getMessage(getClass(), SHEET);
         WorksheetPart sheet = pkg.createWorksheetPart(new PartName("/xl/worksheets/" + SHEET + ".xml"), SHEET, 1);

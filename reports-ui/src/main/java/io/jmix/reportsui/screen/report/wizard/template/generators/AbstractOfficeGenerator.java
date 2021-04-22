@@ -14,17 +14,18 @@
  * limitations under the License.
  */
 
-package io.jmix.reportsui.wizard.template.generators;
+package io.jmix.reportsui.screen.report.wizard.template.generators;
 
 import io.jmix.reports.entity.wizard.ReportData;
 import io.jmix.reports.exception.TemplateGenerationException;
-import io.jmix.reportsui.wizard.template.Generator;
-import io.jmix.reportsui.wizard.template.ReportTemplatePlaceholder;
+import io.jmix.reportsui.screen.report.wizard.template.Generator;
+import io.jmix.reportsui.screen.report.wizard.template.ReportTemplatePlaceholder;
 import org.apache.poi.ss.util.CellReference;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.docx4j.openpackaging.io3.Save;
 import org.docx4j.openpackaging.packages.OpcPackage;
 import org.docx4j.wml.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.xlsx4j.sml.Cell;
 import org.xlsx4j.sml.Row;
 import org.xlsx4j.sml.STCellType;
@@ -35,17 +36,16 @@ import java.io.IOException;
 import java.util.List;
 
 public abstract class AbstractOfficeGenerator implements Generator {
-    protected ReportTemplatePlaceholder reportTemplatePlaceholder = new ReportTemplatePlaceholder();
 
-    protected ReportData reportData;
+    @Autowired
+    protected ReportTemplatePlaceholder reportTemplatePlaceholder;
 
     @Override
     public byte[] generate(ReportData reportData) throws TemplateGenerationException {
-        this.reportData = reportData;
         byte[] template;
         OpcPackage basePackage;
         try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
-            basePackage = generatePackage();
+            basePackage = generatePackage(reportData);
             Save saver = new Save(basePackage);
             saver.save(byteArrayOutputStream);
             template = byteArrayOutputStream.toByteArray();
@@ -86,5 +86,5 @@ public abstract class AbstractOfficeGenerator implements Generator {
         }
     }
 
-    protected abstract OpcPackage generatePackage() throws TemplateGenerationException, Docx4JException, JAXBException;
+    protected abstract OpcPackage generatePackage(ReportData reportData) throws TemplateGenerationException, Docx4JException, JAXBException;
 }

@@ -16,14 +16,13 @@
 
 package io.jmix.reportsui.screen.report.wizard.region;
 
-import io.jmix.core.Entity;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import io.jmix.reports.entity.wizard.EntityTreeNode;
 import io.jmix.reports.entity.wizard.RegionProperty;
 import io.jmix.reports.entity.wizard.ReportRegion;
-import io.jmix.reportsui.action.list.OrderableItemMoveAction;
 import io.jmix.ui.Notifications;
+import io.jmix.ui.WindowParam;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.*;
 import io.jmix.ui.model.CollectionContainer;
@@ -42,8 +41,7 @@ import java.util.Set;
 @UiDescriptor("region-edit.xml")
 @EditedEntityContainer("reportRegionDc")
 public class RegionEditor extends StandardEditor<ReportRegion> {
-    //    @Named("entityTreeFrame.reportEntityTreeNodeDs")
-//    protected AbstractTreeDatasource reportEntityTreeNodeDs;
+
     @Autowired
     protected CollectionContainer<RegionProperty> reportRegionPropertiesTableDc;
     @Named("entityTreeFrame.entityTree")
@@ -73,9 +71,13 @@ public class RegionEditor extends StandardEditor<ReportRegion> {
     @Autowired
     protected Notifications notifications;
 
+    @WindowParam
+    protected EntityTreeNode rootEntity;
+
     protected boolean isTabulated;//if true then user perform add tabulated region action
     protected boolean asViewEditor;
-    protected EntityTreeNode rootNode;
+
+
     protected boolean updatePermission;
 
     public void setTabulated(boolean tabulated) {
@@ -90,24 +92,23 @@ public class RegionEditor extends StandardEditor<ReportRegion> {
         this.updatePermission = updatePermission;
     }
 
-    public EntityTreeNode getRootNode() {
-        return rootNode;
+    public void setRootEntity(EntityTreeNode rootEntity) {
+        this.rootEntity = rootEntity;
     }
 
-    public void setRootNode(EntityTreeNode rootNode) {
-        this.rootNode = rootNode;
+    public EntityTreeNode getRootEntity() {
+        return rootEntity;
     }
 
     @Subscribe
     public void onBeforeShow(BeforeShowEvent event) {
-        getEditedEntity().getRegionPropertiesRootNode().setWrappedMetaClass(rootNode.getWrappedMetaClass());
         //params.put("component$reportPropertyName", reportPropertyName);
         //todo
         //reportEntityTreeNodeDs.refresh(params);
         //TODO add disallowing of classes selection in tree
         if (!asViewEditor) {
             if (isTabulated) {
-                setTabulatedRegionEditorCaption(rootNode.getName());
+                setTabulatedRegionEditorCaption(rootEntity.getName());
             } else {
                 setSimpleRegionEditorCaption();
             }
@@ -115,10 +116,9 @@ public class RegionEditor extends StandardEditor<ReportRegion> {
         String group = isTabulated
                 ? "selectEntityPropertiesForTableArea"
                 : "selectEntityProperties";
-        tipLabel.setValue(messages.formatMessage(group, rootNode.getLocalizedName()));
+        tipLabel.setValue(messages.formatMessage(group, rootEntity.getLocalizedName()));
         tipLabel.setHtmlEnabled(true);
         initComponents();
-        getScreenData().loadAll();
     }
 
     @Install(to = "addItemAction", subject = "enabledRule")
@@ -138,7 +138,7 @@ public class RegionEditor extends StandardEditor<ReportRegion> {
         List<RegionProperty> addedItems = new ArrayList<>();
         boolean alreadyAdded = false;
         for (EntityTreeNode entityTreeNode : selectedItems) {
-            if (entityTreeNode.getWrappedMetaClass() != null) {
+            if (entityTreeNode.getWrappedMetaProperty() == null) {
                 continue;
             }
             if (!alreadyAddedNodes.contains(entityTreeNode)) {
@@ -177,7 +177,7 @@ public class RegionEditor extends StandardEditor<ReportRegion> {
 
     @Subscribe("removeItemAction")
     public void onRemoveItemAction(Action.ActionPerformedEvent event) {
-        for (Entity item : propertiesTable.getSelected()) {
+        for (RegionProperty item : propertiesTable.getSelected()) {
             reportRegionPropertiesTableDc.getMutableItems().remove(item);
             normalizeRegionPropertiesOrderNum();
         }
@@ -185,13 +185,11 @@ public class RegionEditor extends StandardEditor<ReportRegion> {
 
     protected void initComponents() {
         initControlBtnsActions();
-        addRegionPropertiesDsListener();
 
         if (asViewEditor) {
             initAsViewEditor();
         }
         entityTree.setSelectionMode(Tree.SelectionMode.MULTI);
-
     }
 
     protected void initAsViewEditor() {
@@ -214,9 +212,14 @@ public class RegionEditor extends StandardEditor<ReportRegion> {
         getWindow().setCaption(messages.getMessage("simpleRegionEditor"));
     }
 
-    protected void addRegionPropertiesDsListener() {
-        reportRegionPropertiesTableDc.addItemChangeListener(e -> showOrHideSortBtns());
-        reportRegionPropertiesTableDc.addCollectionChangeListener(e -> showOrHideSortBtns());
+    @Subscribe(id = "reportRegionPropertiesTableDc", target = Target.DATA_CONTAINER)
+    public void onReportRegionPropertiesTableDcCollectionChange(CollectionContainer.CollectionChangeEvent<RegionProperty> event) {
+        showOrHideSortBtns();
+    }
+
+    @Subscribe(id = "reportRegionPropertiesTableDc", target = Target.DATA_CONTAINER)
+    public void onReportRegionPropertiesTableDcItemChange(InstanceContainer.ItemChangeEvent<RegionProperty> event) {
+        showOrHideSortBtns();
     }
 
     protected void showOrHideSortBtns() {
@@ -232,18 +235,18 @@ public class RegionEditor extends StandardEditor<ReportRegion> {
 
 
     protected void initControlBtnsActions() {
-        upItem.setAction(new OrderableItemMoveAction<Table<RegionProperty>, RegionProperty>("upItem", OrderableItemMoveAction.Direction.UP, propertiesTable) {
-            @Override
-            public boolean isEnabled() {
-                return super.isEnabled() && isUpdatePermitted();
-            }
-        });
-        downItem.setAction(new OrderableItemMoveAction<Table<RegionProperty>, RegionProperty>("downItem", OrderableItemMoveAction.Direction.DOWN, propertiesTable) {
-            @Override
-            public boolean isEnabled() {
-                return super.isEnabled() && isUpdatePermitted();
-            }
-        });
+//        upItem.setAction(new OrderableItemAction<Table<RegionProperty>, RegionProperty>("upItem", OrderableItemAction.Direction.UP, propertiesTable) {
+//            @Override
+//            public boolean isEnabled() {
+//                return super.isEnabled() && isUpdatePermitted();
+//            }
+//        });
+//        downItem.setAction(new OrderableItemAction<Table<RegionProperty>, RegionProperty>("downItem", OrderableItemAction.Direction.DOWN, propertiesTable) {
+//            @Override
+//            public boolean isEnabled() {
+//                return super.isEnabled() && isUpdatePermitted();
+//            }
+//        });
     }
 
     protected void normalizeRegionPropertiesOrderNum() {
@@ -267,8 +270,6 @@ public class RegionEditor extends StandardEditor<ReportRegion> {
                     .withCaption(messages.getMessage("selectAtLeastOneProp"))
                     .show();
             event.preventCommit();
-        } else {
-            event.resume();
         }
     }
 }

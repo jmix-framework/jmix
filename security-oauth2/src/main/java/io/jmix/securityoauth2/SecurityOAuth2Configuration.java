@@ -16,7 +16,6 @@
 
 package io.jmix.securityoauth2;
 
-import io.jmix.core.CoreConfiguration;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.security.SecurityConfiguration;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
@@ -25,7 +24,7 @@ import org.springframework.context.annotation.Configuration;
 
 
 @Configuration
-@JmixModule(dependsOn = {CoreConfiguration.class, SecurityConfiguration.class})
+@JmixModule(dependsOn = SecurityConfiguration.class)
 @ComponentScan
 @ConfigurationPropertiesScan
 public class SecurityOAuth2Configuration {

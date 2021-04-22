@@ -16,7 +16,6 @@
 
 package io.jmix.securityui;
 
-import io.jmix.core.CoreConfiguration;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
 import io.jmix.security.SecurityConfiguration;
@@ -24,12 +23,15 @@ import io.jmix.ui.UiConfiguration;
 import io.jmix.ui.sys.ActionsConfiguration;
 import io.jmix.ui.sys.UiControllersConfiguration;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.PropertySource;
 
 import java.util.Collections;
 
 @Configuration
-@JmixModule(dependsOn = {CoreConfiguration.class, SecurityConfiguration.class, UiConfiguration.class})
+@JmixModule(dependsOn = {SecurityConfiguration.class, UiConfiguration.class})
 @PropertySource(name = "io.jmix.securityui", value = "classpath:/io/jmix/securityui/module.properties")
 @Import(StandardSecurityUiConfiguration.class)
 public class SecurityUiConfiguration {

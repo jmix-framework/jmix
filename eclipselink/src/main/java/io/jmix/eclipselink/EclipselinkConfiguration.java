@@ -16,7 +16,6 @@
 
 package io.jmix.eclipselink;
 
-import io.jmix.core.CoreConfiguration;
 import io.jmix.core.EntitySystemStateSupport;
 import io.jmix.core.PersistentAttributesLoadChecker;
 import io.jmix.core.annotation.JmixModule;
@@ -34,7 +33,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Configuration
 @ComponentScan
 @ConfigurationPropertiesScan
-@JmixModule(dependsOn = {CoreConfiguration.class, DataConfiguration.class})
+@JmixModule(dependsOn = DataConfiguration.class)
 @EnableTransactionManagement
 public class EclipselinkConfiguration {
     @Bean("data_PersistentAttributesLoadChecker")

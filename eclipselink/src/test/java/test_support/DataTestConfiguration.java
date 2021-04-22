@@ -22,12 +22,11 @@ import io.jmix.core.Stores;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.impl.JmixMessageSource;
 import io.jmix.core.security.CoreSecurityConfiguration;
-import io.jmix.data.DataConfiguration;
-import io.jmix.eclipselink.EclipselinkConfiguration;
 import io.jmix.data.impl.JmixEntityManagerFactoryBean;
-import io.jmix.eclipselink.impl.JmixEclipselinkTransactionManager;
 import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.data.persistence.JpqlSortExpressionProvider;
+import io.jmix.eclipselink.EclipselinkConfiguration;
+import io.jmix.eclipselink.impl.JmixEclipselinkTransactionManager;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
@@ -49,7 +48,7 @@ import javax.sql.DataSource;
 @Configuration
 @ComponentScan
 @PropertySource("classpath:/test_support/test-app.properties")
-@JmixModule(dependsOn = {DataConfiguration.class, EclipselinkConfiguration.class})
+@JmixModule(dependsOn = EclipselinkConfiguration.class)
 public class DataTestConfiguration {
 
     @EnableWebSecurity

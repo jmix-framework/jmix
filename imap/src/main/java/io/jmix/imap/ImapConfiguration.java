@@ -16,7 +16,6 @@
 
 package io.jmix.imap;
 
-import io.jmix.core.CoreConfiguration;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.data.DataConfiguration;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
@@ -27,7 +26,7 @@ import org.springframework.context.annotation.PropertySource;
 @Configuration
 @ComponentScan
 @ConfigurationPropertiesScan
-@JmixModule(dependsOn = {CoreConfiguration.class, DataConfiguration.class})
+@JmixModule(dependsOn = DataConfiguration.class)
 @PropertySource(name = "io.jmix.imap", value = "classpath:/io/jmix/imap/module.properties")
 public class ImapConfiguration {
 }

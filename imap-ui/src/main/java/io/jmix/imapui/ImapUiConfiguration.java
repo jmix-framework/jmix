@@ -16,7 +16,6 @@
 
 package io.jmix.imapui;
 
-import io.jmix.core.CoreConfiguration;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
 import io.jmix.imap.ImapConfiguration;
@@ -32,7 +31,7 @@ import java.util.Collections;
 
 @Configuration
 @ComponentScan
-@JmixModule(dependsOn = {CoreConfiguration.class, ImapConfiguration.class, UiConfiguration.class})
+@JmixModule(dependsOn = {ImapConfiguration.class, UiConfiguration.class})
 @PropertySource(name = "io.jmix.imapui", value = "classpath:/io/jmix/imapui/module.properties")
 public class ImapUiConfiguration {
 

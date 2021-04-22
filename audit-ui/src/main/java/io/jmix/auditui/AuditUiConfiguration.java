@@ -17,7 +17,6 @@
 package io.jmix.auditui;
 
 import io.jmix.audit.AuditConfiguration;
-import io.jmix.core.CoreConfiguration;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
 import io.jmix.ui.UiConfiguration;
@@ -34,7 +33,7 @@ import java.util.Collections;
 @Configuration
 @ComponentScan
 @EnableTransactionManagement
-@JmixModule(dependsOn = {CoreConfiguration.class, AuditConfiguration.class, UiConfiguration.class})
+@JmixModule(dependsOn = {AuditConfiguration.class, UiConfiguration.class})
 @PropertySource(name = "io.jmix.auditui", value = "classpath:/io/jmix/auditui/module.properties")
 public class AuditUiConfiguration {
 

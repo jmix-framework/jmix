@@ -67,8 +67,6 @@ import io.jmix.ui.menu.MenuItemCommands;
 import io.jmix.ui.model.ScreenData;
 import io.jmix.ui.model.impl.ScreenDataXmlLoader;
 import io.jmix.ui.navigation.UrlChangeHandler;
-import io.jmix.ui.UiComponentProperties;
-import io.jmix.ui.UiScreenProperties;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.ScreenOptions;
 import io.jmix.ui.settings.UserSettingService;
@@ -95,7 +93,7 @@ import java.util.Collections;
 @Configuration
 @ComponentScan
 @ConfigurationPropertiesScan
-@JmixModule(dependsOn = {CoreConfiguration.class, EclipselinkConfiguration.class, UiConfiguration.class, UiDataConfiguration.class,
+@JmixModule(dependsOn = {EclipselinkConfiguration.class, UiConfiguration.class, UiDataConfiguration.class,
         DynAttrConfiguration.class, DynAttrUiConfiguration.class, LocalFileStorageConfiguration.class,
         SecurityConfiguration.class, SecurityDataConfiguration.class, SecurityUiConfiguration.class,
         DatatoolsConfiguration.class, DatatoolsUiConfiguration.class

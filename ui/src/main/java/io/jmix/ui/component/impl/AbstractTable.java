@@ -3068,20 +3068,22 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
         return defaultTableSettings;
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
-    public Subscription addColumnCollapseListener(Consumer<ColumnCollapseEvent> listener) {
+    public Subscription addColumnCollapseListener(Consumer<ColumnCollapseEvent<E>> listener) {
         if (columnCollapseListener == null) {
             columnCollapseListener = this::onColumnCollapseStateChange;
             component.addColumnCollapseListener(columnCollapseListener);
         }
 
-        getEventHub().subscribe(ColumnCollapseEvent.class, listener);
+        getEventHub().subscribe(ColumnCollapseEvent.class, (Consumer) listener);
 
         return () -> internalRemoveColumnCollapseListener(listener);
     }
 
-    protected void internalRemoveColumnCollapseListener(Consumer<ColumnCollapseEvent> listener) {
-        unsubscribe(ColumnCollapseEvent.class, listener);
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    protected void internalRemoveColumnCollapseListener(Consumer<ColumnCollapseEvent<E>> listener) {
+        unsubscribe(ColumnCollapseEvent.class, (Consumer) listener);
 
         if (!hasSubscriptions(ColumnCollapseEvent.class)
                 && columnCollapseListener != null) {

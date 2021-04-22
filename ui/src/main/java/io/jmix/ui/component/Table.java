@@ -435,7 +435,7 @@ public interface Table<E>
      * @param listener a listener to add
      * @return a {@link Subscription} object
      */
-    Subscription addColumnCollapseListener(Consumer<ColumnCollapseEvent> listener);
+    Subscription addColumnCollapseListener(Consumer<ColumnCollapseEvent<E>> listener);
 
     /**
      * Sets the row header mode.

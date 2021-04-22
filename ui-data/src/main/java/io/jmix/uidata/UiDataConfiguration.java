@@ -17,7 +17,6 @@
 package io.jmix.uidata;
 
 import io.jmix.core.AccessManager;
-import io.jmix.core.CoreConfiguration;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
@@ -40,12 +39,7 @@ import io.jmix.uidata.filter.UiDataFilterSupport;
 import io.jmix.uidata.settings.ScreenSettingsManagerImpl;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.*;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.util.Collections;
@@ -54,7 +48,7 @@ import java.util.Collections;
 @ComponentScan
 @EnableTransactionManagement
 @PropertySource(name = "io.jmix.uidata", value = "classpath:/io/jmix/uidata/module.properties")
-@JmixModule(dependsOn = {CoreConfiguration.class, DataConfiguration.class, UiConfiguration.class})
+@JmixModule(dependsOn = {DataConfiguration.class, UiConfiguration.class})
 public class UiDataConfiguration {
 
     @Bean("ui_UiDataActions")

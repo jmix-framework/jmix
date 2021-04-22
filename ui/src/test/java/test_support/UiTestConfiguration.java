@@ -60,7 +60,7 @@ import java.util.Collections;
 @Configuration
 @ComponentScan
 @PropertySource("classpath:/test_support/test-ui-app.properties")
-@JmixModule(dependsOn = {CoreConfiguration.class, CoreSecurityConfiguration.class})
+@JmixModule(dependsOn = CoreConfiguration.class)
 public class UiTestConfiguration {
 
     @Bean

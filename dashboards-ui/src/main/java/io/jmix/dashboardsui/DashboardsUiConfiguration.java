@@ -16,13 +16,11 @@
 
 package io.jmix.dashboardsui;
 
-import io.jmix.core.CoreConfiguration;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
 import io.jmix.dashboards.DashboardsConfiguration;
 import io.jmix.dashboardsui.component.Dashboard;
 import io.jmix.dashboardsui.component.impl.*;
-import io.jmix.dashboardsui.loader.DashboardResponsiveLayoutLoader;
 import io.jmix.dashboardsui.dashboard.tools.DashboardModelConverter;
 import io.jmix.dashboardsui.dashboard.tools.factory.CanvasComponentsFactory;
 import io.jmix.dashboardsui.loader.DashboardLoader;
@@ -42,7 +40,7 @@ import java.util.Collections;
 
 @Configuration
 @ComponentScan
-@JmixModule(dependsOn = {CoreConfiguration.class, DashboardsConfiguration.class, UiConfiguration.class})
+@JmixModule(dependsOn = {DashboardsConfiguration.class, UiConfiguration.class})
 @PropertySource(name = "io.jmix.dashboardsui", value = "classpath:/io/jmix/dashboardsui/module.properties")
 public class DashboardsUiConfiguration {
 

@@ -13,4 +13,5 @@ Add to your project's `build.gradle` dependencies:
 
 ```groovy
 implementation 'io.jmix.rest:jmix-rest-starter'
+implementation "io.jmix.security:jmix-security-oauth2-starter"
 ```

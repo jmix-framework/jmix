@@ -16,7 +16,6 @@
 
 package io.jmix.dynattrui;
 
-import io.jmix.core.CoreConfiguration;
 import io.jmix.core.DataManager;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Messages;
@@ -36,18 +35,14 @@ import io.jmix.ui.sys.registration.ComponentRegistration;
 import io.jmix.ui.sys.registration.ComponentRegistrationBuilder;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.*;
 
 import java.util.Collections;
 
 @Configuration
 @ComponentScan
 @ConfigurationPropertiesScan
-@JmixModule(dependsOn = {CoreConfiguration.class, DynAttrConfiguration.class, UiConfiguration.class})
+@JmixModule(dependsOn = {DynAttrConfiguration.class, UiConfiguration.class})
 @PropertySource(name = "io.jmix.dynattrui", value = "classpath:/io/jmix/dynattrui/module.properties")
 public class DynAttrUiConfiguration {
 

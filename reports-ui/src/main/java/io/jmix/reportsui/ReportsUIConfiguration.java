@@ -1,6 +1,5 @@
 package io.jmix.reportsui;
 
-import io.jmix.core.CoreConfiguration;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
 import io.jmix.reports.ReportsConfiguration;
@@ -21,7 +20,7 @@ import java.util.Collections;
 @Configuration
 @ComponentScan
 @ConfigurationPropertiesScan
-@JmixModule(dependsOn = {CoreConfiguration.class, UiConfiguration.class, ReportsConfiguration.class})
+@JmixModule(dependsOn = {UiConfiguration.class, ReportsConfiguration.class})
 @PropertySource(name = "io.jmix.reportsui", value = "classpath:/io/jmix/reportsui/module.properties")
 public class ReportsUIConfiguration {
 

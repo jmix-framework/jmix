@@ -11,7 +11,6 @@ import com.haulmont.yarg.reporting.extraction.controller.CrossTabExtractionContr
 import com.haulmont.yarg.reporting.extraction.preprocessor.SqlCrosstabPreprocessor;
 import com.haulmont.yarg.structure.BandOrientation;
 import com.haulmont.yarg.util.groovy.Scripting;
-import io.jmix.core.CoreConfiguration;
 import io.jmix.core.CoreProperties;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.data.DataConfiguration;
@@ -29,7 +28,7 @@ import java.util.Map;
 @Configuration
 @ComponentScan
 @ConfigurationPropertiesScan
-@JmixModule(dependsOn = {CoreConfiguration.class, DataConfiguration.class})
+@JmixModule(dependsOn = DataConfiguration.class)
 @PropertySource(name = "io.jmix.reports", value = "classpath:/io/jmix/reports/module.properties")
 public class ReportsConfiguration {
 

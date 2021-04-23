@@ -192,12 +192,16 @@ public class QueriesControllerManager {
         LoadContext<?> ctx = new LoadContext<>(metaClass);
         LoadContext.Query query = new LoadContext.Query(queryInfo.getJpql());
 
+        int limitFromProperties = restProperties.getEntityMaxFetchSize(entityName);
+        if (limit != null && limit > limitFromProperties || queryInfo.getLimit() != null && queryInfo.getLimit() > limitFromProperties) {
+            throw new RestAPIException("The value of limit exceeded", "The value of the limit exceeds the maximum possible value from application.properties", HttpStatus.BAD_REQUEST);
+        }
         if (limit != null) {
             query.setMaxResults(limit);
         } else if (queryInfo.getLimit() != null) {
             query.setMaxResults(queryInfo.getLimit());
         } else {
-            query.setMaxResults(restProperties.getEntityMaxFetchSize(entityName));
+            query.setMaxResults(limitFromProperties);
         }
 
         if (offset != null) {

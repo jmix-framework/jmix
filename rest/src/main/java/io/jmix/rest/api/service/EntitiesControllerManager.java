@@ -296,10 +296,14 @@ public class EntitiesControllerManager {
         String orderedQueryString = addOrderBy(queryString, sort, metaClass);
         LoadContext.Query query = new LoadContext.Query(orderedQueryString);
 
+        int limitFromProperties = restProperties.getEntityMaxFetchSize(metaClass.getName());
+        if (limit != null && limit > limitFromProperties) {
+            throw new RestAPIException("The value of limit exceeded", "The value of the limit exceeds the maximum possible value from application.properties", HttpStatus.BAD_REQUEST);
+        }
         if (limit != null) {
             query.setMaxResults(limit);
         } else {
-            query.setMaxResults(restProperties.getEntityMaxFetchSize(metaClass.getName()));
+            query.setMaxResults(limitFromProperties);
         }
         if (offset != null) {
             query.setFirstResult(offset);

@@ -22,7 +22,6 @@ import graphql.GraphQLError;
 import graphql.language.SourceLocation;
 import io.jmix.core.validation.EntityValidationException;
 
-import javax.persistence.PersistenceException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -34,23 +33,17 @@ public class GqlEntityValidationException extends RuntimeException implements Gr
     public static final String EXTENSION_CONSTRAINT_VIOLATIONS = "constraintViolations";
 
     public static final String EXTENSION_PERSISTENCE_ERROR_NAME = "persistenceError";
-    public static final String EXTENSION_PERSISTENCE_ERROR_DEFAULT_VALUE = "Can't save entity to database";
 
-    private String extensionPersistenceErrorValue;
+    private String clientMessage;
 
     public GqlEntityValidationException(EntityValidationException ex) {
         super(ex.getMessage(), ex);
     }
 
-    public GqlEntityValidationException(PersistenceException ex) {
-        // we should not pass persistence details to client, so message need to be empty
-        super("", ex);
-    }
-
-    public GqlEntityValidationException(PersistenceException ex, String extensionPersistenceErrorValue) {
-        // we should not pass persistence details to client, so message need to be empty
-        super("", ex);
-        this.extensionPersistenceErrorValue = extensionPersistenceErrorValue;
+    // used when we should not pass exception persistence details to client, so client message need to be changed
+    public GqlEntityValidationException(Throwable ex, String clientMessage) {
+        super(clientMessage, ex);
+        this.clientMessage = clientMessage;
     }
 
     @Override
@@ -83,10 +76,8 @@ public class GqlEntityValidationException extends RuntimeException implements Gr
         }
 
         // other validation such `integrity constraint violation: NOT NULL check constraint`
-        if (causeClass.isAssignableFrom(PersistenceException.class)) {
-            return Collections.singletonMap(
-                    EXTENSION_PERSISTENCE_ERROR_NAME,
-                    this.extensionPersistenceErrorValue != null ? this.extensionPersistenceErrorValue : EXTENSION_PERSISTENCE_ERROR_DEFAULT_VALUE);
+        if (clientMessage != null) {
+            return Collections.singletonMap(EXTENSION_PERSISTENCE_ERROR_NAME, this.clientMessage);
         }
 
         return Collections.emptyMap();

@@ -7,6 +7,7 @@ import io.jmix.core.accesscontext.CrudEntityContext;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.impl.importexport.EntityImportPlanJsonBuilder;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.security.AccessDeniedException;
 import io.jmix.core.validation.EntityValidationException;
 import io.jmix.graphql.schema.NamingUtils;
 import org.slf4j.Logger;
@@ -63,8 +64,8 @@ public class EntityMutationDataFetcher {
                 objects = entityImportExport.importEntities(Collections.singletonList(entity), entityImportPlan, true);
             } catch (EntityValidationException ex) {
                 throw new GqlEntityValidationException(ex);
-            } catch (PersistenceException ex) {
-                throw new GqlEntityValidationException(ex);
+            } catch (PersistenceException | AccessDeniedException ex) {
+                throw new GqlEntityValidationException(ex, "Can't save entity to database");
             }
             Object mainEntity = getMainEntity(objects, metaClass);
 

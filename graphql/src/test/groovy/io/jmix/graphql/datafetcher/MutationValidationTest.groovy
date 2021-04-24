@@ -39,7 +39,7 @@ class MutationValidationTest extends AbstractGraphQLTest {
 //        println "response = $response.rawResponse"
 
         then:
-        errorMsg == "Exception while fetching data (/upsert_scr_Car) : "
+        errorMsg == "Exception while fetching data (/upsert_scr_Car) : Can't save entity to database"
         extensionErrMsg == "Can't save entity to database"
     }
 

@@ -34,7 +34,9 @@ public class GqlEntityValidationException extends RuntimeException implements Gr
     public static final String EXTENSION_CONSTRAINT_VIOLATIONS = "constraintViolations";
 
     public static final String EXTENSION_PERSISTENCE_ERROR_NAME = "persistenceError";
-    public static final String EXTENSION_PERSISTENCE_ERROR_VALUE = "Can't save entity to database";
+    public static final String EXTENSION_PERSISTENCE_ERROR_DEFAULT_VALUE = "Can't save entity to database";
+
+    private String extensionPersistenceErrorValue;
 
     public GqlEntityValidationException(EntityValidationException ex) {
         super(ex.getMessage(), ex);
@@ -43,6 +45,12 @@ public class GqlEntityValidationException extends RuntimeException implements Gr
     public GqlEntityValidationException(PersistenceException ex) {
         // we should not pass persistence details to client, so message need to be empty
         super("", ex);
+    }
+
+    public GqlEntityValidationException(PersistenceException ex, String extensionPersistenceErrorValue) {
+        // we should not pass persistence details to client, so message need to be empty
+        super("", ex);
+        this.extensionPersistenceErrorValue = extensionPersistenceErrorValue;
     }
 
     @Override
@@ -76,7 +84,9 @@ public class GqlEntityValidationException extends RuntimeException implements Gr
 
         // other validation such `integrity constraint violation: NOT NULL check constraint`
         if (causeClass.isAssignableFrom(PersistenceException.class)) {
-            return Collections.singletonMap(EXTENSION_PERSISTENCE_ERROR_NAME, EXTENSION_PERSISTENCE_ERROR_VALUE);
+            return Collections.singletonMap(
+                    EXTENSION_PERSISTENCE_ERROR_NAME,
+                    this.extensionPersistenceErrorValue != null ? this.extensionPersistenceErrorValue : EXTENSION_PERSISTENCE_ERROR_DEFAULT_VALUE);
         }
 
         return Collections.emptyMap();

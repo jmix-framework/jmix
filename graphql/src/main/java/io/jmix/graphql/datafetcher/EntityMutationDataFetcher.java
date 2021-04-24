@@ -3,6 +3,7 @@ package io.jmix.graphql.datafetcher;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import graphql.schema.DataFetcher;
 import io.jmix.core.*;
+import io.jmix.core.accesscontext.CrudEntityContext;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.impl.importexport.EntityImportPlanJsonBuilder;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -39,6 +40,8 @@ public class EntityMutationDataFetcher {
     protected EntityStates entityStates;
     @Autowired
     private EnvironmentUtils environmentUtils;
+    @Autowired
+    private AccessManager accessManager;
 
 
     // todo batch commit with association not supported now (not transferred from cuba-graphql)
@@ -82,6 +85,11 @@ public class EntityMutationDataFetcher {
 
     public DataFetcher<?> deleteEntity(MetaClass metaClass) {
         return environment -> {
+            try {
+                checkCanDeleteEntity(metaClass);
+            } catch (PersistenceException ex) {
+                throw new GqlEntityValidationException(ex, ex.getMessage());
+            }
             // todo support not only UUID types of id
             UUID id = UUID.fromString(environment.getArgument("id"));
             log.debug("deleteEntity: id {}", id);
@@ -102,5 +110,13 @@ public class EntityMutationDataFetcher {
         return mainEntity;
     }
 
+    protected void checkCanDeleteEntity(MetaClass metaClass) {
+        CrudEntityContext entityContext = new CrudEntityContext(metaClass);
+        accessManager.applyRegisteredConstraints(entityContext);
+        if (!entityContext.isDeletePermitted()) {
+            throw new PersistenceException(
+                    String.format("Deletion of the %s is forbidden", metaClass.getName()));
+        }
+    }
 
 }

@@ -5,10 +5,10 @@ VALUES
 ('62864fc8-0273-7c57-890d-314c1fd2fde3', 1, 'manager', '{bcrypt}$2a$10$pO.Edb8qWb3VTP0RSjRXXefIzLAVpXLvhZobCdpCYODx5FP8.4qWG', 'Ivan', 'Petrov', 'ivanp@example.com', true, NULL);
 
 -- roles
-INSERT INTO sec_resource_role (id, create_ts, created_by, name, code)
+INSERT INTO sec_resource_role (id, create_ts, created_by, name, code, scopes)
 VALUES
-('23548523-3f0f-f96a-07ff-0d60b9cb5c1b', '2021-02-19 15:59:57.976', 'admin', 'Mechanics', 'mechanics'),
-('91099ca3-194e-6ba5-7aa6-15b03bcef05a', '2021-02-19 16:00:16.377', 'admin', 'Managers', 'managers');
+('23548523-3f0f-f96a-07ff-0d60b9cb5c1b', '2021-02-19 15:59:57.976', 'admin', 'Mechanics', 'mechanics',  '"API", "UI"'),
+('91099ca3-194e-6ba5-7aa6-15b03bcef05a', '2021-02-19 16:00:16.377', 'admin', 'Managers', 'managers',  '"API", "UI"');
 
 -- users to roles
 INSERT INTO sec_role_assignment (id, create_ts, created_by, username, role_code, role_type)
@@ -42,7 +42,7 @@ VALUES
 ('b12f7355-3358-02ac-f54d-e9b27291c2b2', '2021-02-19 16:24:59.947', 'admin', 'entity',    'scr$Car',  'scr$Car',      'create', 'allow', '23548523-3f0f-f96a-07ff-0d60b9cb5c1b'),
 ('4a34b7db-381d-b55d-126b-9bac1c644d1e', '2021-02-19 16:24:59.947', 'admin', 'entity',    'scr$Car',  'scr$Car',      'read',   'allow', '23548523-3f0f-f96a-07ff-0d60b9cb5c1b'),
 ('2866648a-e6f5-42e4-bf0d-1cb565b27971', '2021-02-19 16:24:59.948', 'admin', 'entity',    'scr$Car',  'scr$Car',      'update', 'allow', '23548523-3f0f-f96a-07ff-0d60b9cb5c1b'),
-('868403ca-5475-7e3e-a5a7-1e700d25824b', '2021-02-19 16:24:59.947', 'admin', 'entity',    'scr$Car',  'scr$Car',      'delete', 'allow', '23548523-3f0f-f96a-07ff-0d60b9cb5c1b'),
+('868403ca-5475-7e3e-a5a7-1e700d25824b', '2021-02-19 16:24:59.947', 'admin', 'entity',    'scr$Car',  'scr$Car',      'delete', 'deny', '23548523-3f0f-f96a-07ff-0d60b9cb5c1b'),
 ('e45b39c6-f251-4507-987a-598d954dbec2', '2021-02-19 16:24:59.947', 'admin', 'entityAttribute', 'scr$Car', 'scr$Car.carType',       'modify', 'allow', '23548523-3f0f-f96a-07ff-0d60b9cb5c1b'),
 ('fd08d779-5515-4035-b4db-ed58531d8f14', '2021-02-19 16:24:59.948', 'admin', 'entityAttribute', 'scr$Car', 'scr$Car.manufacturer',  'modify', 'allow', '23548523-3f0f-f96a-07ff-0d60b9cb5c1b'),
 ('a5d5adb1-2bc5-4599-b308-427892c54e92', '2021-02-19 16:24:59.947', 'admin', 'entityAttribute', 'scr$Car', 'scr$Car.model',         'modify', 'allow', '23548523-3f0f-f96a-07ff-0d60b9cb5c1b'),

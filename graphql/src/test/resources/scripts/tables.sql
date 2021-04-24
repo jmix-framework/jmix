@@ -298,7 +298,8 @@ CREATE TABLE sec_resource_role (
     code character varying(255) NOT NULL,
     child_roles character ,
     sys_tenant_id character varying(255),
-    description character
+    description character,
+    scopes character varying(1000)
 );
 
 CREATE TABLE sec_role_assignment (

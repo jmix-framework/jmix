@@ -20,7 +20,7 @@ import io.jmix.core.DataManager;
 import io.jmix.core.Metadata;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
-import io.jmix.core.event.UserPasswordResetEvent;
+import io.jmix.core.security.event.UserPasswordResetEvent;
 import io.jmix.core.security.PasswordNotMatchException;
 import io.jmix.core.security.UserManager;
 import io.jmix.core.security.UserRepository;

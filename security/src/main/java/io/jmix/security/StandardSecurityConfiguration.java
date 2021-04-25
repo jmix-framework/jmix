@@ -17,6 +17,8 @@
 package io.jmix.security;
 
 import io.jmix.core.JmixOrder;
+import io.jmix.core.security.PostAuthenticationChecks;
+import io.jmix.core.security.PreAuthenticationChecks;
 import io.jmix.core.security.UserRepository;
 import io.jmix.core.security.impl.SystemAuthenticationProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,9 +38,12 @@ public class StandardSecurityConfiguration extends WebSecurityConfigurerAdapter 
 
     @Autowired
     private UserRepository userRepository;
-
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private PreAuthenticationChecks preAuthenticationChecks;
+    @Autowired
+    private PostAuthenticationChecks postAuthenticationChecks;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) {
@@ -47,6 +52,9 @@ public class StandardSecurityConfiguration extends WebSecurityConfigurerAdapter 
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
         daoAuthenticationProvider.setUserDetailsService(userRepository);
         daoAuthenticationProvider.setPasswordEncoder(passwordEncoder);
+        daoAuthenticationProvider.setPreAuthenticationChecks(preAuthenticationChecks);
+        daoAuthenticationProvider.setPostAuthenticationChecks(postAuthenticationChecks);
+
         auth.authenticationProvider(daoAuthenticationProvider);
     }
 

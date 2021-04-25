@@ -21,6 +21,7 @@ import io.jmix.core.AccessManager;
 import io.jmix.core.CoreProperties;
 import io.jmix.core.Messages;
 import io.jmix.core.security.ClientDetails;
+import io.jmix.core.security.SecurityContextHelper;
 import io.jmix.security.model.SecurityScope;
 import io.jmix.securityui.accesscontext.UiLoginToUiContext;
 import io.jmix.ui.ScreenBuilders;
@@ -32,11 +33,14 @@ import io.jmix.ui.screen.OpenMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.event.InteractiveAuthenticationSuccessEvent;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
 import org.springframework.stereotype.Component;
 
@@ -79,6 +83,8 @@ public class LoginScreenAuthenticationSupport {
     protected AccessManager accessManager;
     protected Messages messages;
     protected DeviceInfoProvider deviceInfoProvider;
+    protected RememberMeServices rememberMeServices;
+    protected ApplicationEventPublisher applicationEventPublisher;
 
     private SessionAuthenticationStrategy authenticationStrategy;
 
@@ -117,9 +123,19 @@ public class LoginScreenAuthenticationSupport {
         this.deviceInfoProvider = deviceInfoProvider;
     }
 
+    @Autowired
+    public void setRememberMeServices(RememberMeServices rememberMeServices) {
+        this.rememberMeServices = rememberMeServices;
+    }
+
     @Autowired(required = false)
     public void setAuthenticationStrategy(SessionAuthenticationStrategy authenticationStrategy) {
         this.authenticationStrategy = authenticationStrategy;
+    }
+
+    @Autowired
+    public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     /**
@@ -164,14 +180,27 @@ public class LoginScreenAuthenticationSupport {
             authenticationStrategy.onAuthentication(authentication, request, response);
         }
 
-        checkLoginToUi(authDetails);
+        checkLoginToUi(authDetails, authentication);
+
+        SecurityContextHelper.setAuthentication(authentication);
+        rememberMeServices.loginSuccess(request, response, authentication);
+        applicationEventPublisher.publishEvent(
+                new InteractiveAuthenticationSuccessEvent(authentication, this.getClass()));
 
         showMainScreen(frameOwner);
     }
 
-    protected void checkLoginToUi(AuthDetails authDetails) {
+    protected void checkLoginToUi(AuthDetails authDetails, Authentication authentication) {
+        Authentication currentAuthentication = SecurityContextHelper.getAuthentication();
+
         UiLoginToUiContext loginToUiContext = new UiLoginToUiContext();
-        accessManager.applyRegisteredConstraints(loginToUiContext);
+        try {
+            SecurityContextHelper.setAuthentication(authentication);
+            accessManager.applyRegisteredConstraints(loginToUiContext);
+        } finally {
+            SecurityContextHelper.setAuthentication(currentAuthentication);
+        }
+
         if (!loginToUiContext.isPermitted()) {
             log.warn("Attempt of login to UI for user '{}' without '{}' permission", authDetails.getUsername(),
                     loginToUiContext.getName());

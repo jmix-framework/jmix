@@ -16,10 +16,13 @@
 
 package io.jmix.securityoauth2.impl;
 
+import io.jmix.core.security.SecurityContextHelper;
 import io.jmix.core.session.SessionData;
 import io.jmix.security.model.SecurityScope;
 import org.springframework.beans.factory.ObjectFactory;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.authentication.*;
+import org.springframework.security.authentication.event.InteractiveAuthenticationSuccessEvent;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.oauth2.common.exceptions.InvalidGrantException;
@@ -36,17 +39,20 @@ public class UserPasswordTokenGranter extends ResourceOwnerPasswordTokenGranter 
     private final AuthenticationManager authenticationManager;
     private final ObjectFactory<SessionData> sessionDataFactory;
     private final RequestLocaleProvider localeProvider;
+    private final ApplicationEventPublisher eventPublisher;
 
     public UserPasswordTokenGranter(AuthenticationManager authenticationManager,
                                     AuthorizationServerTokenServices tokenServices,
                                     ClientDetailsService clientDetailsService,
                                     OAuth2RequestFactory requestFactory,
                                     ObjectFactory<SessionData> sessionDataFactory,
-                                    RequestLocaleProvider localeProvider) {
+                                    RequestLocaleProvider localeProvider,
+                                    ApplicationEventPublisher eventPublisher) {
         super(authenticationManager, tokenServices, clientDetailsService, requestFactory);
         this.authenticationManager = authenticationManager;
         this.sessionDataFactory = sessionDataFactory;
         this.localeProvider = localeProvider;
+        this.eventPublisher = eventPublisher;
     }
 
     @Override
@@ -76,7 +82,20 @@ public class UserPasswordTokenGranter extends ResourceOwnerPasswordTokenGranter 
                     .build());
         }
 
+        publishInteractiveAuthenticationSuccessEvent(oAuth2Authentication);
+
         return oAuth2Authentication;
+    }
+
+    protected void publishInteractiveAuthenticationSuccessEvent(OAuth2Authentication oAuth2Authentication) {
+        Authentication currentAuthentication = SecurityContextHelper.getAuthentication();
+        try {
+            SecurityContextHelper.setAuthentication(oAuth2Authentication);
+            eventPublisher.publishEvent(
+                    new InteractiveAuthenticationSuccessEvent(oAuth2Authentication, UserPasswordTokenGranter.class));
+        } finally {
+            SecurityContextHelper.setAuthentication(currentAuthentication);
+        }
     }
 
     protected io.jmix.core.security.ClientDetails buildClientDetails() {

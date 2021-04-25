@@ -21,6 +21,8 @@ import io.jmix.core.CoreProperties;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.rememberme.JmixRememberMeServices;
 import io.jmix.core.rememberme.RememberMeProperties;
+import io.jmix.core.security.PostAuthenticationChecks;
+import io.jmix.core.security.PreAuthenticationChecks;
 import io.jmix.core.security.UserRepository;
 import io.jmix.core.security.impl.JmixSessionAuthenticationStrategy;
 import io.jmix.core.session.SessionProperties;
@@ -85,9 +87,8 @@ public class SecurityConfiguration {
         return new InMemoryTokenRepositoryImpl();
     }
 
-
     @Bean("sec_rememberMeServices")
-    protected RememberMeServices rememberMeServices() {
+    public RememberMeServices rememberMeServices() {
         JmixRememberMeServices rememberMeServices =
                 new JmixRememberMeServices(rememberMeProperties.getKey(), userRepository, rememberMeTokenRepository);
         rememberMeServices.setTokenValiditySeconds(rememberMeProperties.getTokenValiditySeconds());
@@ -97,7 +98,7 @@ public class SecurityConfiguration {
 
     @Primary
     @Bean
-    protected SessionAuthenticationStrategy sessionControlAuthenticationStrategy() {
+    public SessionAuthenticationStrategy sessionControlAuthenticationStrategy() {
         return new CompositeSessionAuthenticationStrategy(strategies());
     }
 
@@ -117,13 +118,22 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    protected SessionAuthenticationStrategy jmixSessionAuthenticationStrategy() {
+    public SessionAuthenticationStrategy jmixSessionAuthenticationStrategy() {
         return new JmixSessionAuthenticationStrategy();
     }
 
     @Bean(name = "sec_SessionRegistry")
-    protected SessionRegistry sessionRegistry() {
+    public SessionRegistry sessionRegistry() {
         return new SessionRegistryImpl();
     }
 
+    @Bean(name = "sec_PreAuthenticationChecks")
+    public PreAuthenticationChecks preAuthenticationChecks() {
+        return new PreAuthenticationChecks();
+    }
+
+    @Bean(name = "sec_PostAuthenticationChecks")
+    public PostAuthenticationChecks postAuthenticationChecks() {
+        return new PostAuthenticationChecks();
+    }
 }

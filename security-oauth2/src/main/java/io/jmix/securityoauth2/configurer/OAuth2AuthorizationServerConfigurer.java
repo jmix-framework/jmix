@@ -23,6 +23,7 @@ import io.jmix.securityoauth2.impl.SessionTokenEnhancer;
 import io.jmix.securityoauth2.impl.UserPasswordTokenGranter;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -55,6 +56,7 @@ public class OAuth2AuthorizationServerConfigurer extends WebSecurityConfigurerAd
     private TokenStore tokenStore;
     private ObjectProvider<SessionData> sessionDataProvider;
     private RequestLocaleProvider localeProvider;
+    private ApplicationEventPublisher eventPublisher;
 
     private TokenEnhancer tokenEnhancer;
     private ClientDetailsService clientDetails;
@@ -87,6 +89,11 @@ public class OAuth2AuthorizationServerConfigurer extends WebSecurityConfigurerAd
         this.sessionDataProvider = sessionDataProvider;
     }
 
+    @Autowired
+    public void setEventPublisher(ApplicationEventPublisher eventPublisher) {
+        this.eventPublisher = eventPublisher;
+    }
+
     public AuthenticationManager getAuthenticationManager() {
         return authenticationManager;
     }
@@ -101,6 +108,10 @@ public class OAuth2AuthorizationServerConfigurer extends WebSecurityConfigurerAd
 
     public RequestLocaleProvider getLocaleProvider() {
         return localeProvider;
+    }
+
+    public ApplicationEventPublisher getEventPublisher() {
+        return eventPublisher;
     }
 
     public TokenEnhancer getTokenEnhancer() {
@@ -210,7 +221,7 @@ public class OAuth2AuthorizationServerConfigurer extends WebSecurityConfigurerAd
 
         if (getAuthenticationManager() != null) {
             tokenGranters.add(new UserPasswordTokenGranter(getAuthenticationManager(), getTokenServices(), getClientDetails(),
-                    getOAuth2RequestFactory(), getSessionDataProvider(), getLocaleProvider()));
+                    getOAuth2RequestFactory(), getSessionDataProvider(), getLocaleProvider(), getEventPublisher()));
         }
         return new CompositeTokenGranter(tokenGranters);
     }

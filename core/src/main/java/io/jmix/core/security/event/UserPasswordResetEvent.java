@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Class for user password event. It includes user names and new passwords
+ * Class for user password event. It includes user names and new passwords.
  */
 public class UserPasswordResetEvent extends ApplicationEvent {
     private static final long serialVersionUID = -5109995742911792935L;

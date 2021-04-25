@@ -31,7 +31,7 @@ import org.springframework.security.core.userdetails.UserDetailsChecker;
 
 /**
  * Verifies the status of the loaded UserDetails before validation of the credentials takes place.
- * See {@link org.springframework.security.authentication.dao.AbstractUserDetailsAuthenticationProvider#setPreAuthenticationChecks(UserDetailsChecker)}.}
+ * See {@link org.springframework.security.authentication.dao.AbstractUserDetailsAuthenticationProvider#setPreAuthenticationChecks(UserDetailsChecker)}.
  */
 public class PreAuthenticationChecks implements UserDetailsChecker {
     private ApplicationEventPublisher eventPublisher;

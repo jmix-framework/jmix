@@ -30,7 +30,7 @@ import org.springframework.security.core.userdetails.UserDetailsChecker;
 
 /**
  * Verifies the status of the loaded UserDetails after validation of the credentials takes place.
- * See {@link org.springframework.security.authentication.dao.AbstractUserDetailsAuthenticationProvider#setPostAuthenticationChecks(UserDetailsChecker)}.}
+ * See {@link org.springframework.security.authentication.dao.AbstractUserDetailsAuthenticationProvider#setPostAuthenticationChecks(UserDetailsChecker)}.
  */
 public class PostAuthenticationChecks implements UserDetailsChecker {
     private ApplicationEventPublisher eventPublisher;

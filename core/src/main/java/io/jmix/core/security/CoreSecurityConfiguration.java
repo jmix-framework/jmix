@@ -57,6 +57,9 @@ public class CoreSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
         daoAuthenticationProvider.setUserDetailsService(userRepository());
+        daoAuthenticationProvider.setPreAuthenticationChecks(preAuthenticationChecks());
+        daoAuthenticationProvider.setPostAuthenticationChecks(postAuthenticationChecks());
+
         auth.authenticationProvider(daoAuthenticationProvider);
     }
 
@@ -82,5 +85,15 @@ public class CoreSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Bean(name = "core_UserRepository")
     public UserRepository userRepository() {
         return new InMemoryUserRepository();
+    }
+
+    @Bean(name = "core_PreAuthenticationChecks")
+    public PreAuthenticationChecks preAuthenticationChecks() {
+        return new PreAuthenticationChecks();
+    }
+
+    @Bean(name = "core_PostAuthenticationChecks")
+    public PostAuthenticationChecks postAuthenticationChecks() {
+        return new PostAuthenticationChecks();
     }
 }

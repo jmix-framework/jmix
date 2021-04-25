@@ -16,10 +16,8 @@
 
 package io.jmix.core.security.impl;
 
-import io.jmix.core.security.SecurityContextHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.security.authentication.event.InteractiveAuthenticationSuccessEvent;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.authentication.session.SessionAuthenticationException;
@@ -38,9 +36,5 @@ public class JmixSessionAuthenticationStrategy implements SessionAuthenticationS
 
     @Override
     public void onAuthentication(Authentication authentication, HttpServletRequest request, HttpServletResponse response) throws SessionAuthenticationException {
-        SecurityContextHelper.setAuthentication(authentication);
-        rememberMeServices.loginSuccess(request, response, authentication);
-        applicationEventPublisher.publishEvent(
-                new InteractiveAuthenticationSuccessEvent(authentication, this.getClass()));
     }
 }

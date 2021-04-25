@@ -224,7 +224,7 @@ public class FluentLoader<E extends Entity> extends io.jmix.core.FluentLoader<E>
         }
 
         @Override
-        public FluentLoader.ById<E> accessConstraints(List<AccessConstraint<?>> accessConstraints) {
+        public FluentLoader.ById<E> accessConstraints(Collection<AccessConstraint<?>> accessConstraints) {
             return (ById<E>) super.accessConstraints(accessConstraints);
         }
 
@@ -306,7 +306,7 @@ public class FluentLoader<E extends Entity> extends io.jmix.core.FluentLoader<E>
         }
 
         @Override
-        public FluentLoader.ByIds<E> accessConstraints(List<AccessConstraint<?>> accessConstraints) {
+        public FluentLoader.ByIds<E> accessConstraints(Collection<AccessConstraint<?>> accessConstraints) {
             return (ByIds<E>) super.accessConstraints(accessConstraints);
         }
 
@@ -445,7 +445,7 @@ public class FluentLoader<E extends Entity> extends io.jmix.core.FluentLoader<E>
         }
 
         @Override
-        public FluentLoader.ByQuery<E> accessConstraints(List<AccessConstraint<?>> accessConstraints) {
+        public FluentLoader.ByQuery<E> accessConstraints(Collection<AccessConstraint<?>> accessConstraints) {
             return (ByQuery<E>) super.accessConstraints(accessConstraints);
         }
 

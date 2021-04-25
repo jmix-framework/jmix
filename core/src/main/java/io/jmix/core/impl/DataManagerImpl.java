@@ -18,6 +18,8 @@ package io.jmix.core.impl;
 
 import io.jmix.core.*;
 import io.jmix.core.common.util.Preconditions;
+import io.jmix.core.constraint.AccessConstraint;
+import io.jmix.core.constraint.RowLevelConstraint;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -68,11 +70,19 @@ public class DataManagerImpl implements DataManager {
     @Autowired
     protected ExtendedEntities extendedEntities;
 
+    @Autowired
+    protected CoreProperties properties;
+
+    @Autowired
+    protected AccessConstraintsRegistry accessConstraintsRegistry;
+
     @Nullable
     @Override
     public <E> E load(LoadContext<E> context) {
         MetaClass metaClass = getEffectiveMetaClassFromContext(context);
         DataStore storage = dataStoreFactory.get(getStoreName(metaClass));
+
+        prepareLoadContext(context);
 
         @SuppressWarnings("unchecked")
         E entity = (E) storage.load(context);
@@ -87,6 +97,8 @@ public class DataManagerImpl implements DataManager {
         MetaClass metaClass = getEffectiveMetaClassFromContext(context);
         DataStore storage = dataStoreFactory.get(getStoreName(metaClass));
 
+        prepareLoadContext(context);
+
         @SuppressWarnings("unchecked")
         List<E> entities = (List<E>) storage.loadList(context);
 
@@ -98,6 +110,9 @@ public class DataManagerImpl implements DataManager {
     public long getCount(LoadContext<?> context) {
         MetaClass metaClass = getEffectiveMetaClassFromContext(context);
         DataStore storage = dataStoreFactory.get(getStoreName(metaClass));
+
+        prepareLoadContext(context);
+
         return storage.getCount(context);
     }
 
@@ -312,5 +327,13 @@ public class DataManagerImpl implements DataManager {
 
     protected <E> MetaClass getEffectiveMetaClassFromContext(LoadContext<E> context) {
         return extendedEntities.getEffectiveMetaClass(context.getEntityMetaClass());
+    }
+
+    protected <E> void prepareLoadContext(LoadContext<E> context) {
+        Set<AccessConstraint<?>> accessConstraints = new LinkedHashSet<>(context.getAccessConstraints());
+        if (properties.isDataManagerAlwaysAppliesRowLevelConstraints()) {
+            accessConstraints.addAll(accessConstraintsRegistry.getConstraintsOfType(RowLevelConstraint.class));
+        }
+        context.setAccessConstraints(accessConstraints);
     }
 }

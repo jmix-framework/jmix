@@ -25,6 +25,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -145,7 +146,7 @@ public class SecureDataManagerImpl implements DataManager {
         return dataManager.getReference(entityId);
     }
 
-    protected List<AccessConstraint<?>> mergeConstraints(List<AccessConstraint<?>> accessConstraints) {
+    protected List<AccessConstraint<?>> mergeConstraints(Collection<AccessConstraint<?>> accessConstraints) {
         if (accessConstraints.isEmpty()) {
             return accessConstraintsRegistry.getConstraints();
         } else {

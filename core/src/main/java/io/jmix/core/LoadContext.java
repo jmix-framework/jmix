@@ -53,7 +53,7 @@ public class LoadContext<E> implements DataLoadContext, Serializable {
     protected Object id;
     protected List<Object> idList = new ArrayList<>(0);
     protected List<Query> prevQueries = new ArrayList<>(0);
-    protected List<AccessConstraint<?>> accessConstraints;
+    protected List<AccessConstraint<?>> accessConstraints = new ArrayList<>();
     protected int queryKey;
 
     protected boolean loadPartialEntities = true;
@@ -226,12 +226,21 @@ public class LoadContext<E> implements DataLoadContext, Serializable {
         return this;
     }
 
+    /**
+     * Returns directly accessible list of access constraints.
+     */
     public List<AccessConstraint<?>> getAccessConstraints() {
-        return this.accessConstraints == null ? Collections.emptyList() : this.accessConstraints;
+        return accessConstraints;
     }
 
-    public LoadContext<E> setAccessConstraints(List<AccessConstraint<?>> accessConstraints) {
-        this.accessConstraints = accessConstraints;
+    /**
+     * Sets list of access constraints.
+     */
+    public LoadContext<E> setAccessConstraints(@Nullable Collection<AccessConstraint<?>> accessConstraints) {
+        this.accessConstraints.clear();
+        if (accessConstraints != null) {
+            this.accessConstraints.addAll(accessConstraints);
+        }
         return this;
     }
 
@@ -263,6 +272,7 @@ public class LoadContext<E> implements DataLoadContext, Serializable {
         if (hints != null) {
             ctx.setHints(new HashMap<>(hints));
         }
+        ctx.accessConstraints.addAll(accessConstraints);
         ctx.joinTransaction = joinTransaction;
         return ctx;
     }

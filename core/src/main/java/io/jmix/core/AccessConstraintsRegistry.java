@@ -37,7 +37,7 @@ public class AccessConstraintsRegistry {
         return accessConstraints;
     }
 
-    public Collection<? extends AccessConstraint<?>> getConstraintsOfType(Class<?> accessConstraintClass) {
+    public Collection<AccessConstraint<?>> getConstraintsOfType(Class<?> accessConstraintClass) {
         return accessConstraints.stream()
                 .filter(constraint -> accessConstraintClass.isAssignableFrom(constraint.getClass()))
                 .collect(Collectors.toList());

@@ -49,7 +49,7 @@ public class FluentLoader<E> {
     private String fetchPlanName;
     private FetchPlanBuilder fetchPlanBuilder;
     private Map<String, Serializable> hints;
-    private List<AccessConstraint<?>> accessConstraints;
+    private Collection<AccessConstraint<?>> accessConstraints;
 
     @Autowired
     private Metadata metadata;
@@ -62,6 +62,9 @@ public class FluentLoader<E> {
 
     @Autowired
     private ObjectProvider<FetchPlanBuilder> fetchPlanBuilderProvider;
+
+    @Autowired
+    private AccessConstraintsRegistry accessConstraintsRegistry;
 
     @Autowired
     public void setDataManager(DataManager dataManager) {
@@ -279,8 +282,16 @@ public class FluentLoader<E> {
         /**
          * Sets access constraints.
          */
-        public ById<E> accessConstraints(List<AccessConstraint<?>> accessConstraints) {
+        public ById<E> accessConstraints(Collection<AccessConstraint<?>> accessConstraints) {
             loader.accessConstraints = accessConstraints;
+            return this;
+        }
+
+        /**
+         * Sets access constraints.
+         */
+        public ById<E> accessConstraints(Class<? extends AccessConstraint> accessConstraintsClass) {
+            loader.accessConstraints = loader.accessConstraintsRegistry.getConstraintsOfType(accessConstraintsClass);
             return this;
         }
 
@@ -394,8 +405,16 @@ public class FluentLoader<E> {
         /**
          * Sets access constraints.
          */
-        public ByIds<E> accessConstraints(List<AccessConstraint<?>> accessConstraints) {
+        public ByIds<E> accessConstraints(Collection<AccessConstraint<?>> accessConstraints) {
             loader.accessConstraints = accessConstraints;
+            return this;
+        }
+
+        /**
+         * Sets access constraints.
+         */
+        public ByIds<E> accessConstraints(Class<? extends AccessConstraint> accessConstraintsClass) {
+            loader.accessConstraints = loader.accessConstraintsRegistry.getConstraintsOfType(accessConstraintsClass);
             return this;
         }
 
@@ -633,8 +652,16 @@ public class FluentLoader<E> {
         /**
          * Sets access constraints.
          */
-        public ByQuery<E> accessConstraints(List<AccessConstraint<?>> accessConstraints) {
+        public ByQuery<E> accessConstraints(Collection<AccessConstraint<?>> accessConstraints) {
             loader.accessConstraints = accessConstraints;
+            return this;
+        }
+
+        /**
+         * Sets access constraints.
+         */
+        public ByQuery<E> accessConstraints(Class<? extends AccessConstraint> accessConstraintsClass) {
+            loader.accessConstraints = loader.accessConstraintsRegistry.getConstraintsOfType(accessConstraintsClass);
             return this;
         }
 
@@ -861,8 +888,16 @@ public class FluentLoader<E> {
         /**
          * Sets access constraints.
          */
-        public ByCondition<E> accessConstraints(List<AccessConstraint<?>> accessConstraints) {
+        public ByCondition<E> accessConstraints(Collection<AccessConstraint<?>> accessConstraints) {
             loader.accessConstraints = accessConstraints;
+            return this;
+        }
+
+        /**
+         * Sets access constraints.
+         */
+        public ByCondition<E> accessConstraints(Class<? extends AccessConstraint> accessConstraintsClass) {
+            loader.accessConstraints = loader.accessConstraintsRegistry.getConstraintsOfType(accessConstraintsClass);
             return this;
         }
 

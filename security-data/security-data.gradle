@@ -33,8 +33,8 @@ dependencies {
     testImplementation 'org.apache.commons:commons-dbcp2'
     testImplementation 'org.liquibase:liquibase-core'
     testImplementation 'io.jmix.data:jmix-eclipselink'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
-    testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine'
+    testImplementation 'org.junit.vintage:junit-vintage-engine'
     testRuntimeOnly 'org.slf4j:slf4j-simple'
     testRuntimeOnly 'org.hsqldb:hsqldb'
 }

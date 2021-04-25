@@ -18,6 +18,7 @@ package io.jmix.securitydata.constraint;
 
 import io.jmix.core.accesscontext.InMemoryCrudEntityContext;
 import io.jmix.core.constraint.InMemoryConstraint;
+import io.jmix.core.constraint.RowLevelConstraint;
 import io.jmix.security.constraint.PolicyStore;
 import io.jmix.security.model.RowLevelPolicyAction;
 import io.jmix.security.model.RowLevelPolicyType;
@@ -28,7 +29,8 @@ import org.springframework.stereotype.Component;
 
 @Component("sec_InMemoryCrudEntityConstraint")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class InMemoryCrudEntityConstraint implements InMemoryConstraint<InMemoryCrudEntityContext> {
+public class InMemoryCrudEntityConstraint
+        implements InMemoryConstraint<InMemoryCrudEntityContext>, RowLevelConstraint<InMemoryCrudEntityContext> {
 
     protected PolicyStore policyStore;
 

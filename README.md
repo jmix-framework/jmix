@@ -161,7 +161,7 @@ For example, if `regNumber` has validation constraint:
     protected String regNumber;
 ```
 
-And we try to save it with incorrect value:
+Then we try to save it with incorrect value:
 
 ```
 mutation {
@@ -210,6 +210,8 @@ Error response will look like:
 }
 ```
 
+## Entity Filters
+
 ### Filter conditions
 
 Every field has a different set of available operations which depends on the type.
@@ -224,4 +226,161 @@ The table below shows the dependency of types.
 | boolean       | _eq, _neq, _isNull |
 
 
-**Please pay attention** that filter conditions `_eq`, `_in`, `_notIn` have strict case matching and `_contains`, `_endsWith`, `_startsWith` have ignore case matching for strings.
+**Please pay attention** that filter conditions `_eq`, `_in`, `_notIn` have strict case matching and `_contains`, `_endsWith`, `_startsWith` have ignored case matching for strings.
+
+### Condition types
+
+GraphQL backend used strictly typed entity and datatype conditions.
+
+Filter for each entity has it own type in schema, each datatype condition also represent as separate type.
+
+Condition operators start with `_` (prefix used for all system names) and have names in camel case notation.
+
+
+
+Filter condition for `Car` class:
+
+```
+input inp_scr_CarFilterCondition {
+  
+  # nested entity conditions
+  garage: [inp_scr_GarageFilterCondition]
+ 
+  # datatype conditions
+  wheelOnRight: [inp_booleanFilterCondition]
+  manufactureDate: [inp_dateFilterCondition]
+  model: [inp_stringFilterCondition]
+ 
+  # conditon compostion operators
+  AND: [inp_scr_CarFilterCondition]
+  OR: [inp_scr_CarFilterCondition]
+  
+  #other property condtions (class and datatype)
+  # ....
+}
+```
+
+
+
+Condition for String datatype which is used for `Car.model` :
+
+```graphql
+# expression to compare columns of type String. All fields are combined with logical 'AND'
+input inp_stringFilterCondition {
+  
+  # contains substring
+  _contains: String
+  # not contains substring
+  _notContains: String
+  # starts with substring
+  _startsWith: String
+  # ends with substring
+  _endsWith: String
+
+  # other operators
+  # ....
+}
+```
+
+
+
+### Filter example in \*List query
+
+To apply filter condition we need to pass `filter` parameter in `*List` query:
+
+```
+{
+  carList(filter: {model: {_contains: "M"}}) {
+    model
+  }
+}
+```
+
+this return all cars which model name contains "M" letter
+
+
+
+Also, there could be more complicated conditions with nested entities:
+
+```
+{
+  carList(filter: {
+    garage: {name: {_contains: "P"}}
+  }) {
+    manufacturer
+  }
+}
+```
+
+return all cars which garage name contains "P"
+
+
+
+### Condition composition
+
+Each query could contain a set of condition. If conditions are required to composed by **AND** they could be passed to filter as array:
+
+```
+{
+  carList(filter: [{model: {_contains: "M"}}, {model: {_contains: "0"}}]) {
+    model
+  }
+}
+```
+
+return all cars which model name contains both "M" and "0"
+
+
+
+This also could be rewritten by using special **AND** and **OR** operators which exist in each class condition:
+
+```
+{
+  carList(filter: {AND: [{model: {_contains: "M"}}, {model: {_contains: "0"}}]}) {
+    model
+  }
+}
+```
+
+
+
+The same way we can create condition that search for models with "M" **or** "0" symbols:
+
+```
+{
+  carList(filter: {OR: [{model: {_contains: "M"}}, {model: {_contains: "0"}}]}) {
+    model
+  }
+}
+```
+
+
+
+Similar it works for nested entities:
+
+```
+{
+  carList(filter: {garage: {OR: [{name: {_contains: "1"}}, {name: {_contains: "A"}}]}}) {
+    model
+  }
+}
+```
+
+search cars which garage name contains "1" or "A"
+
+
+
+Finally, we can combine all this approaches in one query:
+
+```
+{
+  carList(filter: [
+    {model: {_contains: "M"}}, 
+    {garage: {OR: [{name: {_contains: "1"}}, {name: {_contains: "A"}}]}}]) 
+  {
+    model
+  }
+}
+```
+
+

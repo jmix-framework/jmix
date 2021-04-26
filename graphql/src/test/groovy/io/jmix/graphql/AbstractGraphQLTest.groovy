@@ -16,7 +16,11 @@
 
 package io.jmix.graphql
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.node.ObjectNode
+import com.graphql.spring.boot.test.GraphQLResponse
 import com.graphql.spring.boot.test.GraphQLTestAutoConfiguration
+import com.graphql.spring.boot.test.GraphQLTestTemplate
 import io.jmix.core.CoreConfiguration
 import io.jmix.data.DataConfiguration
 import io.jmix.eclipselink.EclipselinkConfiguration
@@ -53,6 +57,9 @@ import test_support.TestContextInitializer
 @TestPropertySource("classpath:/test_support/test-app.properties")
 class AbstractGraphQLTest extends Specification {
 
+    @Autowired
+    GraphQLTestTemplate graphQLTestTemplate
+
     protected TransactionTemplate transaction
 
     @Autowired
@@ -60,4 +67,14 @@ class AbstractGraphQLTest extends Specification {
         transaction = new TransactionTemplate(transactionManager)
         transaction.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW)
     }
+
+    static ObjectNode asObjectNode(String str) {
+        return new ObjectMapper().readValue(str, ObjectNode.class)
+    }
+
+    static String getBody(GraphQLResponse response) {
+        return response.rawResponse.body
+    }
+
+
 }

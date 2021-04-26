@@ -18,18 +18,12 @@ package io.jmix.graphql.datafetcher
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
-import com.graphql.spring.boot.test.GraphQLResponse
-import com.graphql.spring.boot.test.GraphQLTestTemplate
 import io.jmix.graphql.AbstractGraphQLTest
 import io.jmix.graphql.schema.Types
-import org.springframework.beans.factory.annotation.Autowired
 
 import static io.jmix.graphql.schema.Types.FilterOperation.*
 
 class FilterIntegrationTest extends AbstractGraphQLTest {
-
-    @Autowired
-    GraphQLTestTemplate graphQLTestTemplate
 
     def "_eq for numbers"() {
         when:
@@ -709,10 +703,6 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
                 '{"id":"b1a1f3c9-6076-4725-8c4a-65a4267d15e1"},' +
                 '{"id":"db9faa31-dfa3-4b97-943c-ba268888cdc3"}' +
                 ']}}'
-    }
-
-    private static String getBody(GraphQLResponse response) {
-        return response.rawResponse.body
     }
 
     @SuppressWarnings('GroovyAssignabilityCheck')

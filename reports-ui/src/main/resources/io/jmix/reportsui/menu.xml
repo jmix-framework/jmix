@@ -22,7 +22,7 @@
         <item id="report_ReportGroup.browse" caption="msg://io.jmix.reportsui/menu.report_ReportGroup.browse"/>
         <item id="report_Report.run" caption="msg://io.jmix.reportsui/menu.report_Report.run"/>
         <item id="report_ShowChart.screen" caption="msg://io.jmix.reportsui/menu.report_ShowChart.screen"/>
-        <item id="report_ShowReportTable.lookup" caption="msg://io.jmix.reportsui/menu.report_ShowReportTable.lookup"/>
+        <item id="report_ShowReportTable.screen" caption="msg://io.jmix.reportsui/menu.report_ShowReportTable.screen"/>
         <item id="report_ShowPivotTable.screen" caption="msg://io.jmix.reportsui/menu.report_ShowPivotTable.screen"/>
     </menu>
 

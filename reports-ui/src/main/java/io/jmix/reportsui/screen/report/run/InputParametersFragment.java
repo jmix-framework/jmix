@@ -35,6 +35,7 @@ import io.jmix.ui.screen.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 
 import java.util.*;
 
@@ -81,6 +82,9 @@ public class InputParametersFragment extends ScreenFragment {
 
     @Autowired
     protected ParameterClassResolver parameterClassResolver;
+
+    @Autowired
+    private ApplicationContext applicationContext;
 
     protected HashMap<String, Field> parameterComponents = new HashMap<>();
 
@@ -168,32 +172,23 @@ public class InputParametersFragment extends ScreenFragment {
             }
         }
 
-        if (!(field instanceof TagPicker)) {
-            field.setValue(value);
-        } else {
-//            CollectionDatasource datasource = (CollectionDatasource) field.getDatasource();
-//            if (value instanceof Collection) {
-//                Collection collection = (Collection) value;
-//                for (Object selected : collection) {
-//                    datasource.includeItem((Entity) selected);
-//                }
-//            }
-        }
+        field.setValue(value);
 
         if (BooleanUtils.isTrue(parameter.getValidationOn())) {
-            field.addValidator(new ReportParamFieldValidator(parameter));
+            field.addValidator(applicationContext.getBean(ReportParamFieldValidator.class, parameter));
         }
 
         if (BooleanUtils.isTrue(field.isRequired())) {
-            field.addValidator(new ReportCollectionValidator(field));
+            field.addValidator(applicationContext.getBean(ReportCollectionValidator.class, field));
         }
 
         Label<String> label = parameterFieldCreator.createLabel(parameter, field);
         label.setStyleName("c-report-parameter-caption");
 
-        if (currentGridRow == 0) {
-            //TODO request focus
-//            field.requestFocus();
+        if (currentGridRow == 2) {
+            if(field instanceof Component.Focusable) {
+                ((Component.Focusable) field).focus();
+            }
         }
 
         label.setVisible(visible);

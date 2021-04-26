@@ -44,7 +44,6 @@ import javax.inject.Named;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @UiController("report_Report.edit")
 @UiDescriptor("report-edit.xml")
@@ -58,12 +57,6 @@ public class ReportEditor extends StandardEditor<Report> {
 
     @Named("generalFragment.serviceTree")
     protected Tree<BandDefinition> bandTree;
-
-    @Named("generalFragment.invisibleFileUpload")
-    protected FileUploadField invisibleFileUpload;
-
-    @Named("generalFragment.reportFields")
-    protected HBoxLayout reportFields;
 
     @Named("parametersFragment.validationScriptGroupBox")
     protected GroupBoxLayout validationScriptGroupBox;
@@ -267,14 +260,6 @@ public class ReportEditor extends StandardEditor<Report> {
     protected void addCommitListeners() {
         String xml = reports.convertToString(getEditedEntity());
         getEditedEntity().setXml(xml);
-
-        //TODO
-//        reportDc.getDsContext().addBeforeCommitListener(context -> {
-//            context.getCommitInstances()
-//                    .removeIf(entity ->
-//                            !(entity instanceof Report || entity instanceof ReportTemplate)
-//                    );
-//        });
     }
 
     protected void checkForNameDuplication(ValidationErrors errors, Multimap<String, BandDefinition> names) {

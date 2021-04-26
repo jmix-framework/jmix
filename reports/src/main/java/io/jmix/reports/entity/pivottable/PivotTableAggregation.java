@@ -67,10 +67,6 @@ public class PivotTableAggregation {
 
     public void setMode(AggregationMode mode) {
         this.mode = mode;
-        if (StringUtils.isEmpty(caption)) {
-            //todo
-            //setCaption(AppBeans.get(Messages.class).getMessage(getClass(), "AggregationMode." + mode.toString()));
-        }
     }
 
     public String getCaption() {

@@ -21,9 +21,12 @@ import io.jmix.ui.model.CollectionPropertyContainer;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.model.InstanceLoader;
 import io.jmix.ui.screen.*;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.inject.Named;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 
 @UiController("report_ReportEditGeneral.fragment")
@@ -107,18 +110,9 @@ public class GeneralFragment extends ScreenFragment {
         final ReportTemplate defaultTemplate = reportDc.getItem().getDefaultTemplate();
         if (defaultTemplate != null) {
             if (!isTemplateWithoutFile(defaultTemplate)) {
-                //todo
-//                    File file = fileUpload.getFile(invisibleFileUpload.getFileName());
-//                    try {
-//                        byte[] data = FileUtils.readFileToByteArray(file);
-//                        defaultTemplate.setContent(data);
-//                        defaultTemplate.setName(invisibleFileUpload.getFileName());
-//                        templatesDc.modifyItem(defaultTemplate);
-//                    } catch (IOException e) {
-//                        throw new RuntimeException(String.format(
-//                                "An error occurred while uploading file for template [%s]",
-//                                defaultTemplate.getCode()));
-//                    }
+                defaultTemplate.setContent(invisibleFileUpload.getValue());
+                defaultTemplate.setName(event.getFileName());
+                templatesDc.replaceItem(defaultTemplate);
             } else {
                 notifications.create(Notifications.NotificationType.HUMANIZED)
                         .withCaption(messages.getMessage(getClass(), "notification.fileIsNotAllowedForSpecificTypes"))
@@ -192,10 +186,6 @@ public class GeneralFragment extends ScreenFragment {
                 ReportTemplate item = editor.getEditedEntity();
                 templatesDc.getMutableItems().add(item);
                 report.setDefaultTemplate(item);
-                //Workaround to disable button after default template
-                //TODO
-//                Action defaultTemplate = templatesTable.getActionNN("defaultTemplate");
-//                defaultTemplate.refreshState();
             }
             defaultTemplateField.focus();
         });
@@ -253,19 +243,18 @@ public class GeneralFragment extends ScreenFragment {
                 fileUploadDialog.addAfterCloseListener(closeEvent -> {
                     StandardCloseAction standardCloseAction = (StandardCloseAction) closeEvent.getCloseAction();
                     if (Window.COMMIT_ACTION_ID.equals(standardCloseAction.getActionId())) {
-                        //todo
-//                                        File file = fileUpload.getFile(fileUploadDialog.getFileId());
-//                                        try {
-//                                            byte[] data = FileUtils.readFileToByteArray(file);
-//                                            defaultTemplate.setContent(data);
-//                                            defaultTemplate.setName(fileUploadDialog.getFileName());
-//                                            //todo
-//                                            //templatesDc.modifyItem(defaultTemplate);
-//                                        } catch (IOException e) {
-//                                            throw new RuntimeException(String.format(
-//                                                    "An error occurred while uploading file for template [%s]",
-//                                                    defaultTemplate.getCode()));
-//                                        }
+                        try {
+                            InputStream content = fileUploadDialog.getFileContent();
+                            if (content != null) {
+                                defaultTemplate.setContent(IOUtils.toByteArray(content));
+                                defaultTemplate.setName(fileUploadDialog.getFileName());
+                                templatesDc.replaceItem(defaultTemplate);
+                            }
+                        } catch (IOException e) {
+                            throw new RuntimeException(String.format(
+                                    "An error occurred while uploading file for template [%s]",
+                                    defaultTemplate.getCode()));
+                        }
                     }
                     defaultTemplateField.focus();
                 });

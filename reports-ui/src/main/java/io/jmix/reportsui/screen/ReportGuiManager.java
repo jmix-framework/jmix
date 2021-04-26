@@ -31,7 +31,7 @@ import io.jmix.reports.exception.ReportingException;
 import io.jmix.reportsui.screen.report.run.InputParametersDialog;
 import io.jmix.reportsui.screen.report.run.ShowChartScreen;
 import io.jmix.reportsui.screen.report.run.ShowPivotTableScreen;
-import io.jmix.reportsui.screen.report.run.ShowReportTableLookup;
+import io.jmix.reportsui.screen.report.run.ShowReportTableScreen;
 import io.jmix.ui.*;
 import io.jmix.ui.component.ComponentsHelper;
 import io.jmix.ui.component.Window;
@@ -327,7 +327,7 @@ public class ReportGuiManager {
             showPivotTableScreen.setParams(params);
             showPivotTableScreen.show();
         } else if (document.getReportOutputType().getId().equals(JmixReportOutputType.table.getId())) {
-            ShowReportTableLookup reportTable = (ShowReportTableLookup) screens.create("report_ShowReportTable.lookup", OpenMode.DIALOG);
+            ShowReportTableScreen reportTable = (ShowReportTableScreen) screens.create("report_ShowReportTable.screen", OpenMode.DIALOG);
             reportTable.setTableData(document.getContent());
             reportTable.setReport((Report) document.getReport());
             reportTable.setTemplateCode(templateCode);

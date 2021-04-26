@@ -17,11 +17,14 @@
 package io.jmix.reportsui.screen.report.run;
 
 import com.haulmont.yarg.reporting.ReportOutputDocument;
+import io.jmix.core.Entity;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.impl.StandardSerialization;
+import io.jmix.core.metamodel.datatype.DatatypeRegistry;
+import io.jmix.core.metamodel.datatype.impl.EnumClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.reports.entity.JmixTableData;
@@ -35,9 +38,11 @@ import io.jmix.ui.UiComponents;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.data.table.ContainerGroupTableItems;
-import io.jmix.ui.model.CollectionContainer;
+import io.jmix.ui.model.DataComponents;
+import io.jmix.ui.model.KeyValueCollectionContainer;
 import io.jmix.ui.screen.*;
 import io.jmix.uiexport.action.ExcelExportAction;
+import org.apache.commons.collections.CollectionUtils;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,9 +52,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-@UiController("report_ShowReportTable.lookup")
-@UiDescriptor("show-report-table.xml")
-public class ShowReportTableLookup extends StandardLookup {
+@UiController("report_ShowReportTable.screen")
+@UiDescriptor("show-report-table-screen.xml")
+public class ShowReportTableScreen extends Screen {
 
     @Autowired
     protected GroupBoxLayout reportParamsBox;
@@ -80,6 +85,12 @@ public class ShowReportTableLookup extends StandardLookup {
     @Autowired
     protected Actions actions;
 
+    @Autowired
+    private DataComponents dataComponents;
+
+    @Autowired
+    private DatatypeRegistry datatypeRegistry;
+
     protected Report report;
 
     protected String templateCode;
@@ -89,9 +100,6 @@ public class ShowReportTableLookup extends StandardLookup {
     protected InputParametersFragment inputParametersFrame;
 
     protected byte[] tableData;
-
-    //todo
-//    protected DsContextImpl dsContext;
 
     public void setReport(Report report) {
         this.report = report;
@@ -110,9 +118,7 @@ public class ShowReportTableLookup extends StandardLookup {
     }
 
     @Subscribe
-    protected void onInit(InitEvent event) {
-        //dsContext = new DsContextImpl(getDsContext().getDataSupplier());
-
+    protected void onBeforeShow(BeforeShowEvent event) {
         if (report != null) {
             reportSelectorBox.setVisible(false);
             JmixTableData dto = (JmixTableData) serialization.deserialize(tableData);
@@ -149,7 +155,7 @@ public class ShowReportTableLookup extends StandardLookup {
     }
 
     @Subscribe("printReportBtn")
-    protected void printReport() {
+    protected void printReport(Button.ClickEvent button) {
         if (inputParametersFrame != null && inputParametersFrame.getReport() != null) {
             ValidationErrors validationErrors = screenValidation.validateUiComponents(getWindow());
             if (validationErrors.isEmpty()) {
@@ -183,10 +189,9 @@ public class ShowReportTableLookup extends StandardLookup {
             return;
 
         data.forEach((dataSetName, keyValueEntities) -> {
-            if (keyValueEntities != null && !keyValueEntities.isEmpty()) {
-                //todo
-//                CollectionContainer dataSource = createDataSource(dataSetName, keyValueEntities, headerMap);
-                Table table = createTable(dataSetName, null, headerMap);
+            if (CollectionUtils.isNotEmpty(keyValueEntities)) {
+                KeyValueCollectionContainer container = createContainer(dataSetName, keyValueEntities, headerMap);
+                Table table = createTable(dataSetName, container, headerMap);
 
                 GroupBoxLayout groupBox = uiComponents.create(GroupBoxLayout.class);
                 groupBox.setCaption(dataSetName);
@@ -199,37 +204,31 @@ public class ShowReportTableLookup extends StandardLookup {
         });
     }
 
-    //todo
-//    protected CollectionContainer createDataSource(String dataSetName, List<KeyValueEntity> keyValueEntities, Map<String, Set<CubaTableData.ColumnInfo>> headerMap) {
-//        DsBuilder dsBuilder = DsBuilder.create(getDsContext())
-//                .setId(dataSetName + "Ds")
-//                .setDataSupplier(getDsContext().getDataSupplier());
-//        ValueGroupDatasourceImpl ds = dsBuilder.buildValuesGroupDatasource();
-//        ds.setRefreshMode(CollectionDatasource.RefreshMode.NEVER);
-//
-//        Set<CubaTableData.ColumnInfo> headers = headerMap.get(dataSetName);
-//        for (CubaTableData.ColumnInfo header : headers) {
-//            Class javaClass = header.getColumnClass();
-//            if (Entity.class.isAssignableFrom(javaClass) ||
-//                    EnumClass.class.isAssignableFrom(javaClass) ||
-//                    Datatypes.get(javaClass) != null) {
-//                ds.addProperty(header.getKey(), javaClass);
-//            }
-//        }
-//
-//        dsContext.register(ds);
-//        keyValueEntities.forEach(ds::includeItem);
-//        return ds;
-//    }
+    protected KeyValueCollectionContainer createContainer(String dataSetName, List<KeyValueEntity> keyValueEntities, Map<String, Set<JmixTableData.ColumnInfo>> headerMap) {
+        KeyValueCollectionContainer collectionContainer = dataComponents.createKeyValueCollectionContainer();
+        collectionContainer.setIdName(dataSetName + "Dc");
+        collectionContainer.setItems(keyValueEntities);
 
-    protected Table createTable(String dataSetName, CollectionContainer dataSource, Map<String, Set<JmixTableData.ColumnInfo>> headerMap) {
+        Set<JmixTableData.ColumnInfo> columnInfos = headerMap.get(dataSetName);
+        columnInfos.forEach(columnInfo -> {
+            Class javaClass = columnInfo.getColumnClass();
+            if (Entity.class.isAssignableFrom(javaClass) ||
+                    EnumClass.class.isAssignableFrom(javaClass) ||
+                    datatypeRegistry.find(javaClass) != null) {
+                collectionContainer.addProperty(columnInfo.getKey(), javaClass);
+            }
+        });
+        return collectionContainer;
+    }
+
+    protected Table createTable(String dataSetName, KeyValueCollectionContainer collectionContainer, Map<String, Set<JmixTableData.ColumnInfo>> headerMap) {
         Table table = uiComponents.create(GroupTable.class);
         table.setId(dataSetName + "Table");
 
         Set<JmixTableData.ColumnInfo> headers = headerMap.get(dataSetName);
 
-        createColumns(dataSource, table, headers);
-        table.setItems(new ContainerGroupTableItems(dataSource));
+        createColumns(collectionContainer, table, headers);
+        table.setItems(new ContainerGroupTableItems(collectionContainer));
         table.setWidth("100%");
         table.setMultiSelect(true);
         table.setColumnControlVisible(false);
@@ -246,8 +245,8 @@ public class ShowReportTableLookup extends StandardLookup {
         return table;
     }
 
-    protected void createColumns(CollectionContainer dataSource, Table table, Set<JmixTableData.ColumnInfo> headers) {
-        Collection<MetaPropertyPath> paths = metadataTools.getPropertyPaths(dataSource.getEntityMetaClass());
+    protected void createColumns(KeyValueCollectionContainer collectionContainer, Table table, Set<JmixTableData.ColumnInfo> headers) {
+        Collection<MetaPropertyPath> paths = metadataTools.getPropertyPaths(collectionContainer.getEntityMetaClass());
         for (MetaPropertyPath metaPropertyPath : paths) {
             MetaProperty property = metaPropertyPath.getMetaProperty();
             if (!property.getRange().getCardinality().isMany() && !metadataTools.isSystem(property)) {

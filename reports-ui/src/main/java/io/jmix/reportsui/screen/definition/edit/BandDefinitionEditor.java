@@ -210,7 +210,7 @@ public class BandDefinitionEditor extends ScreenFragment implements Suggester {
                 && isUpdatePermitted());
     }
 
-    public InstanceContainer<BandDefinition> getBandDefinitionDs() {
+    public InstanceContainer<BandDefinition> getBandDefinitionDc() {
         return bandsDc;
     }
 
@@ -461,13 +461,13 @@ public class BandDefinitionEditor extends ScreenFragment implements Suggester {
                     break;
                 case SINGLE:
                     editPane.add(commonEntityGrid);
-                    setCommonEntityGridVisiblity(true, false);
+                    setCommonEntityGridVisibility(true, false);
                     editPane.add(spacerLabel);
                     editPane.expand(spacerLabel);
                     break;
                 case MULTI:
                     editPane.add(commonEntityGrid);
-                    setCommonEntityGridVisiblity(false, true);
+                    setCommonEntityGridVisibility(false, true);
                     editPane.add(spacerLabel);
                     editPane.expand(spacerLabel);
                     break;
@@ -547,7 +547,6 @@ public class BandDefinitionEditor extends ScreenFragment implements Suggester {
     }
 
     protected void selectFirstDataSet() {
-//        dataSetDc.refresh();
         if (!dataSetsDc.getItems().isEmpty()) {
             DataSet item = dataSetsDc.getItems().iterator().next();
             dataSetsTable.setSelected(item);
@@ -569,7 +568,7 @@ public class BandDefinitionEditor extends ScreenFragment implements Suggester {
         return true;
     }
 
-    protected void setCommonEntityGridVisiblity(boolean visibleEntityGrid, boolean visibleEntitiesGrid) {
+    protected void setCommonEntityGridVisibility(boolean visibleEntityGrid, boolean visibleEntitiesGrid) {
         entityParamLabel.setVisible(visibleEntityGrid);
         entityParamField.setVisible(visibleEntityGrid);
         entitiesParamLabel.setVisible(visibleEntitiesGrid);

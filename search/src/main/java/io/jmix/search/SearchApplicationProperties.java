@@ -35,6 +35,8 @@ public class SearchApplicationProperties {
 
     protected final String elasticsearchHost;
     protected final int elasticsearchPort;
+    protected final String elasticsearchLogin;
+    protected final String elasticsearchPassword;
 
     protected final String defaultSearchStrategy;
 
@@ -48,7 +50,9 @@ public class SearchApplicationProperties {
             @DefaultValue("false") boolean autoMapIndexFileContent,
             @DefaultValue("localhost") String elasticsearchHost,
             @DefaultValue("9200") int elasticsearchPort,
-            @DefaultValue("anyTermAnyField") String defaultSearchStrategy) {
+            @DefaultValue("anyTermAnyField") String defaultSearchStrategy,
+            String elasticsearchLogin,
+            String elasticsearchPassword) {
         this.searchResultPageSize = searchResultPageSize;
         this.maxSearchPageCount = maxSearchPageCount;
         this.searchReloadEntitiesBatchSize = searchReloadEntitiesBatchSize;
@@ -60,6 +64,8 @@ public class SearchApplicationProperties {
 
         this.elasticsearchHost = elasticsearchHost;
         this.elasticsearchPort = elasticsearchPort;
+        this.elasticsearchLogin = elasticsearchLogin;
+        this.elasticsearchPassword = elasticsearchPassword;
     }
 
     /**
@@ -123,6 +129,20 @@ public class SearchApplicationProperties {
      */
     public int getElasticsearchPort() {
         return elasticsearchPort;
+    }
+
+    /**
+     * @return Elasticsearch login
+     */
+    public String getElasticsearchLogin() {
+        return elasticsearchLogin;
+    }
+
+    /**
+     * @return Elasticsearch password
+     */
+    public String getElasticsearchPassword() {
+        return elasticsearchPassword;
     }
 
     /**

@@ -40,6 +40,11 @@ public class GqlEntityValidationException extends RuntimeException implements Gr
         super(ex.getMessage(), ex);
     }
 
+    public GqlEntityValidationException(String clientMessage) {
+        super(clientMessage);
+        this.clientMessage = clientMessage;
+    }
+
     // used when we should not pass exception persistence details to client, so client message need to be changed
     public GqlEntityValidationException(Throwable ex, String clientMessage) {
         super(clientMessage, ex);

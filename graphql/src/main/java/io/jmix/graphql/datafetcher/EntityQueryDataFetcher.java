@@ -171,11 +171,7 @@ public class EntityQueryDataFetcher {
         if (!entityContext.isReadPermitted()) {
             String exceptionMessage = String.format("Reading of the %s is forbidden", metaClass.getName());
             log.warn("checkCanReadEntity: throw exception {}", exceptionMessage);
-            // todo implement correct exception class
-            throw new UnsupportedOperationException(exceptionMessage);
-//            throw new RestAPIException("Reading forbidden",
-//                    String.format("Reading of the %s is forbidden", metaClass.getName()),
-//                    HttpStatus.FORBIDDEN);
+            throw new GqlEntityValidationException(String.format("Reading of the %s is forbidden", metaClass.getName()));
         }
     }
 

@@ -16,6 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.LockedException;
 
 import java.util.Locale;
 
@@ -86,7 +87,7 @@ public class LoginScreen extends Screen {
                     AuthDetails.of(username, password)
                             .withLocale(localesField.getValue())
                             .withRememberMe(rememberMeCheckBox.isChecked()), this);
-        } catch (BadCredentialsException | DisabledException e) {
+        } catch (BadCredentialsException | DisabledException | LockedException e) {
             notifications.create(Notifications.NotificationType.ERROR)
                     .withCaption(messages.getMessage(getClass(), "loginFailed"))
                     .withDescription(e.getMessage())

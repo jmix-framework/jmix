@@ -44,56 +44,56 @@ public class ReportsConfiguration {
     @Autowired
     protected Reports reports;
 
-    @Bean("reporting_lib_Scripting")
+    @Bean("report_Scripting")
     public Scripting scripting() {
         return new JmixReportingScripting();
     }
 
-    @Bean("reporting_lib_SqlParametersConverter")
+    @Bean("report_SqlParametersConverter")
     public SqlParametersConverter sqlParametersConverter() {
         return new SqlParametersConverter();
     }
 
-    @Bean("reporting_lib_JpqlParametersConverter")
+    @Bean("report_JpqlParametersConverter")
     public JpqlParametersConverter jpqlParametersConverter() {
         return new JpqlParametersConverter();
     }
 
-    @Bean("reporting_lib_GroovyDataLoader")
+    @Bean("report_GroovyDataLoader")
     public JmixGroovyDataLoader groovyDataLoader() {
         return new JmixGroovyDataLoader(scripting());
     }
 
-    @Bean("reporting_lib_JsonDataLoader")
+    @Bean("report_JsonDataLoader")
     public JmixJsonDataLoader jsonDataLoader() {
         return new JmixJsonDataLoader(scripting());
     }
 
-    @Bean("reporting_lib_SqlDataLoader")
+    @Bean("report_SqlDataLoader")
     public ReportDataLoader sqlDataLoader() {
         JmixSqlDataLoader sqlDataLoader = new JmixSqlDataLoader(dataSource);
         sqlDataLoader.setParametersConverter(sqlParametersConverter());
         return sqlDataLoader;
     }
 
-    @Bean("reporting_lib_JpqlDataLoader")
-    public JpqlDataDataLoader jpqlDataDataLoader() {
-        JpqlDataDataLoader jpqlDataDataLoader = new JpqlDataDataLoader();
-        jpqlDataDataLoader.setParametersConverter(jpqlParametersConverter());
-        return jpqlDataDataLoader;
+    @Bean("report_JpqlDataLoader")
+    public JpqlDataLoader jpqlDataLoader() {
+        JpqlDataLoader jpqlDataLoader = new JpqlDataLoader();
+        jpqlDataLoader.setParametersConverter(jpqlParametersConverter());
+        return jpqlDataLoader;
     }
 
-    @Bean("reporting_lib_SingleEntityDataLoader")
+    @Bean("report_SingleEntityDataLoader")
     public SingleEntityDataLoader singleEntityDataLoader() {
         return new SingleEntityDataLoader();
     }
 
-    @Bean("reporting_lib_MultiEntityDataLoader")
+    @Bean("report_MultiEntityDataLoader")
     public MultiEntityDataLoader multiEntityDataLoader() {
         return new MultiEntityDataLoader();
     }
 
-    @Bean("reporting_lib_OfficeIntegration")
+    @Bean("report_OfficeIntegration")
     public JmixOfficeIntegration officeIntegration() {
         JmixOfficeIntegration officeIntegration = new JmixOfficeIntegration(reportsProperties.getOfficePath(), reportsProperties.getOfficePorts());
         officeIntegration.setDisplayDeviceAvailable(reportsProperties.getDisplayDeviceAvailable());
@@ -103,17 +103,17 @@ public class ReportsConfiguration {
         return officeIntegration;
     }
 
-    @Bean("reporting_lib_JmixFieldFormatProvider")
+    @Bean("report_JmixFieldFormatProvider")
     public JmixFieldFormatProvider fieldFormatProvider() {
         return new JmixFieldFormatProvider();
     }
 
-    @Bean("reporting_lib_InlinersProvider")
+    @Bean("report_InlinersProvider")
     public JmixInlinersProvider inlinersProvider() {
         return new JmixInlinersProvider();
     }
 
-    @Bean("reporting_lib_FormatterFactory")
+    @Bean("report_FormatterFactory")
     public JmixFormatterFactory formatterFactory() {
         JmixFormatterFactory formatterFactory = new JmixFormatterFactory();
         formatterFactory.setUseOfficeForDocumentConversion(reportsProperties.isUseOfficeForDocumentConversion());
@@ -124,13 +124,13 @@ public class ReportsConfiguration {
         return formatterFactory;
     }
 
-    @Bean("reporting_lib_LoaderFactory")
+    @Bean("report_LoaderFactory")
     public ReportLoaderFactory loaderFactory() {
         DefaultLoaderFactory loaderFactory = new DefaultLoaderFactory();
         Map<String, ReportDataLoader> dataLoaders = new HashMap<>();
         dataLoaders.put("sql", sqlDataLoader());
         dataLoaders.put("groovy", groovyDataLoader());
-        dataLoaders.put("jpql", jpqlDataDataLoader());
+        dataLoaders.put("jpql", jpqlDataLoader());
         dataLoaders.put("json", jsonDataLoader());
         dataLoaders.put("single", singleEntityDataLoader());
         dataLoaders.put("multi", multiEntityDataLoader());
@@ -138,13 +138,13 @@ public class ReportsConfiguration {
         return loaderFactory;
     }
 
-    @Bean("reporting_lib_SqlQueryLoaderPreprocessor")
+    @Bean("report_SqlQueryLoaderPreprocessor")
     @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     public SqlCrosstabPreprocessor sqlCrosstabPreprocessor() {
         return new SqlCrosstabPreprocessor();
     }
 
-    @Bean("reporting_lib_PreprocessorFactory")
+    @Bean("report_PreprocessorFactory")
     public DefaultPreprocessorFactory preprocessorFactory() {
         DefaultPreprocessorFactory preprocessorFactory = new DefaultPreprocessorFactory();
         Map<String, QueryLoaderPreprocessor> preprocessors = new HashMap<>();
@@ -154,7 +154,7 @@ public class ReportsConfiguration {
         return preprocessorFactory;
     }
 
-    @Bean("reporting_lib_ExtractionControllerFactory")
+    @Bean("report_ExtractionControllerFactory")
     public DefaultExtractionControllerFactory extractionControllerFactory() {
         DefaultExtractionControllerFactory extractionControllerFactory = new DefaultExtractionControllerFactory(loaderFactory());
         Map<BandOrientation, ExtractionController> extractionControllers = new HashMap<>();
@@ -163,7 +163,7 @@ public class ReportsConfiguration {
         return extractionControllerFactory;
     }
 
-    @Bean("reporting_lib_CrossTabExtractionController")
+    @Bean("report_CrossTabExtractionController")
     @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     public CrossTabExtractionController crossTabExtractionController(DefaultExtractionControllerFactory extractionControllerFactory) {
         CrossTabExtractionController extractionController = new CrossTabExtractionController(extractionControllerFactory, loaderFactory());
@@ -171,19 +171,19 @@ public class ReportsConfiguration {
         return extractionController;
     }
 
-    @Bean("reporting_lib_DataExtractor")
+    @Bean("report_DataExtractor")
     public JmixDataExtractor dataExtractor() {
         JmixDataExtractor jmixDataExtractor = new JmixDataExtractor(loaderFactory());
         jmixDataExtractor.setExtractionControllerFactory(extractionControllerFactory());
         return jmixDataExtractor;
     }
 
-    @Bean("reporting_lib_StringConverter")
+    @Bean("report_StringConverter")
     public JmixObjectToStringConverter objectToStringConverter() {
         return new JmixObjectToStringConverter();
     }
 
-    @Bean("reporting_lib_Reporting")
+    @Bean("report_Reporting")
     public JmixReporting reporting() {
         JmixReporting jmixReporting = new JmixReporting();
         jmixReporting.setLoaderFactory(loaderFactory());

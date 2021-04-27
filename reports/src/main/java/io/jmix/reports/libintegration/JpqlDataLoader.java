@@ -21,16 +21,16 @@ import com.haulmont.yarg.loaders.ReportDataLoader;
 import com.haulmont.yarg.loaders.impl.AbstractDbDataLoader;
 import com.haulmont.yarg.structure.BandData;
 import com.haulmont.yarg.structure.ReportQuery;
-import io.jmix.core.DataManager;
-import io.jmix.core.Entity;
+import io.jmix.core.*;
+import io.jmix.data.StoreAwareLocator;
 import io.jmix.reports.app.EntityMap;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,7 +39,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class JpqlDataDataLoader extends AbstractDbDataLoader implements ReportDataLoader {
+public class JpqlDataLoader extends AbstractDbDataLoader implements ReportDataLoader {
 
     @Autowired
     protected TransactionTemplate transaction;
@@ -50,8 +50,8 @@ public class JpqlDataDataLoader extends AbstractDbDataLoader implements ReportDa
     @Autowired
     protected DataManager dataManager;
 
-    @PersistenceContext
-    protected EntityManager entityManager;
+    @Autowired
+    protected StoreAwareLocator storeAwareLocator;
 
     private static final String QUERY_END = "%%END%%";
     private static final String ALIAS_PATTERN = "as\\s+\"?([\\w|\\d|_|\\.]+)\"?\\s*";
@@ -78,8 +78,6 @@ public class JpqlDataDataLoader extends AbstractDbDataLoader implements ReportDa
             return Collections.emptyList();
         }
         try {
-            //todo
-//            transaction.executeWithoutResult(status -> {
             if (Boolean.TRUE.equals(reportQuery.getProcessTemplate())) {
                 query = processQueryTemplate(query, parentBand, params);
             }
@@ -89,9 +87,8 @@ public class JpqlDataDataLoader extends AbstractDbDataLoader implements ReportDa
             query = query.replaceAll("(?i)" + ALIAS_PATTERN + ",", ",");//replaces [as alias_name], entries except last
             query = query.replaceAll("(?i)" + ALIAS_PATTERN, " ");//replaces last [as alias_name] entry
 
-            Query select = insertParameters(trimQuery(query), storeName, parentBand, params);
-            List queryResult = select.getResultList();
-            if (queryResult.size() > 0 && queryResult.get(0) instanceof Entity) {
+            List queryResult = executeQuery(parentBand, params, storeName, query);
+            if (CollectionUtils.isNotEmpty(queryResult) && queryResult.get(0) instanceof Entity) {
                 List<Map<String, Object>> wrappedResults = new ArrayList<>();
                 for (Object theResult : queryResult) {
                     wrappedResults.add(new EntityMap((Entity) theResult, beanFactory));
@@ -100,16 +97,23 @@ public class JpqlDataDataLoader extends AbstractDbDataLoader implements ReportDa
             } else {
                 return fillOutputData(queryResult, outputParameters);
             }
-//            });
         } catch (Throwable e) {
             throw new DataLoadingException(String.format("An error occurred while loading data for data set [%s]", reportQuery.getName()), e);
         }
+    }
+
+    protected List executeQuery(BandData parentBand, Map<String, Object> params, String storeName, String query) {
+        return storeAwareLocator.getTransactionTemplate(storeName).execute(transactionStatus -> {
+            Query select = insertParameters(trimQuery(query), storeName, parentBand, params);
+            return select.getResultList();
+        });
     }
 
     protected Query insertParameters(String query, String storeName, BandData parentBand, Map<String, Object> params) {
         QueryPack pack = prepareQuery(query, parentBand, params);
 
         boolean inserted = pack.getParams().length > 0;
+        EntityManager entityManager = storeAwareLocator.getEntityManager(storeName);
         Query select = entityManager.createQuery(pack.getQuery());
         if (inserted) {
             //insert parameters to their position

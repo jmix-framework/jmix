@@ -90,7 +90,7 @@ public class BruteForceAuthenticationChecks {
                 return xForwardedHeader.split(",")[0];
             }
         }
-        return null;
+        return "";
     }
 
     private boolean isSystem(Authentication authentication) {

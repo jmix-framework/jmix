@@ -21,6 +21,8 @@ public class NamingUtils {
     public static final String OFFSET = "offset";
     public static final String ORDER_BY = "orderBy";
 
+    public static final String ID_ATTR_NAME = "id";
+
 
     /**
      * Replace all symbols that we can't use in graphql types, such '$'

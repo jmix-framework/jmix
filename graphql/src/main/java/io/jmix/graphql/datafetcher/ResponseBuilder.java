@@ -33,7 +33,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-;
+import static io.jmix.graphql.schema.NamingUtils.ID_ATTR_NAME;
 
 /**
  * Converts entities to Map&lt;String, Object&gt; response format.
@@ -69,6 +69,9 @@ public class ResponseBuilder {
         if (environmentUtils.hasInstanceNameProperty(props)) {
             entityAsMap.put(NamingUtils.SYS_ATTR_INSTANCE_NAME, metadataTools.getInstanceName(entity));
         }
+
+        // must include id
+        writeIdField(entity, entityAsMap);
 
         // compose result object by iterating over fetch plan props
         fetchPlan.getProperties().forEach(prop -> {
@@ -132,6 +135,14 @@ public class ResponseBuilder {
             }
         }
         return fetchPlanBuilder;
+    }
+
+    protected void writeIdField(Entity entity, Map<String, Object> entityAsMap) {
+        MetaClass metaClass = metadata.getClass(entity.getClass());
+        if (metadataTools.hasCompositePrimaryKey(metaClass)) {
+            throw new UnsupportedOperationException("Composite primary keys are not supported now for " + metaClass);
+        }
+        entityAsMap.put(ID_ATTR_NAME, EntityValues.getId(entity));
     }
 
 }

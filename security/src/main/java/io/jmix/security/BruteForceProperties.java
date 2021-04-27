@@ -43,7 +43,7 @@ public class BruteForceProperties {
 
     /**
      * @return a time interval for which a user is blocked after a series of
-     * unsuccessful login attempts
+     * unsuccessful login attempts.
      */
     public Duration getBlockInterval() {
         return blockInterval;
@@ -57,7 +57,7 @@ public class BruteForceProperties {
     }
 
     /**
-     * @return a maximum number of unsuccessful authentication attempts
+     * @return a maximum number of unsuccessful authentication attempts.
      */
     public int getMaxLoginAttemptsNumber() {
         return maxLoginAttemptsNumber;

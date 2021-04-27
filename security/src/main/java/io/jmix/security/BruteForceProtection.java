@@ -23,16 +23,15 @@ public interface BruteForceProtection {
     /**
      * Returns a number of login attempts left for the specified pair of login and IP-address.
      *
-     * @param username     username
-     * @param ipAddress user IP-address
-     * @return true if count of login attempts left
+     * @param username     username.
+     * @param ipAddress user IP-address.
+     * @return true if count of login attempts left.
      */
     boolean isBlocked(String username, String ipAddress);
 
     /**
      * Registers unsuccessful login attempt.
      *
-     * @return a number of login attempts left for the specified pair of login and IP-address
      */
     void registerLoginFailed(String username, String ipAddress);
 
@@ -44,8 +43,8 @@ public interface BruteForceProtection {
     /**
      * Registers successful login attempt. Clear attempts count for user.
      *
-     * @param username     username
-     * @param ipAddress user IP-address
+     * @param username     username.
+     * @param ipAddress user IP-address.
      */
     void registerLoginSucceeded(String username, String ipAddress);
 }

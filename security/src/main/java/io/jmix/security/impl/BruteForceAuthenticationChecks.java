@@ -37,7 +37,7 @@ import javax.servlet.http.HttpServletRequest;
 public class BruteForceAuthenticationChecks {
     @Autowired
     private BruteForceProtection bruteForceProtection;
-    @Autowired
+    @Autowired(required = false)
     private HttpServletRequest httpRequest;
     private final MessageSourceAccessor messages = SpringSecurityMessageSource.getAccessor();
 
@@ -82,12 +82,15 @@ public class BruteForceAuthenticationChecks {
     }
 
     private String getIpAddress() {
-        String xForwardedHeader = httpRequest.getHeader("X-Forwarded-For");
-        if (xForwardedHeader == null) {
-            return httpRequest.getRemoteAddr();
-        } else {
-            return xForwardedHeader.split(",")[0];
+        if (httpRequest != null) {
+            String xForwardedHeader = httpRequest.getHeader("X-Forwarded-For");
+            if (xForwardedHeader == null) {
+                return httpRequest.getRemoteAddr();
+            } else {
+                return xForwardedHeader.split(",")[0];
+            }
         }
+        return null;
     }
 
     private boolean isSystem(Authentication authentication) {

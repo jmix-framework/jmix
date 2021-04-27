@@ -19,22 +19,14 @@ package io.jmix.security;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;
 import org.springframework.boot.context.properties.bind.DefaultValue;
+import org.springframework.boot.convert.DurationUnit;
+
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 
 @ConfigurationProperties(prefix = "jmix.security")
 @ConstructorBinding
 public class SecurityProperties {
-
-    String keyForSecurityTokenEncryption;
-
-    public SecurityProperties(
-            @DefaultValue("jmix") String keyForSecurityTokenEncryption) {
-        this.keyForSecurityTokenEncryption = keyForSecurityTokenEncryption;
-    }
-
-    /**
-     * &lt;= 16 symbols string, used as key for AES encryption of security token
-     */
-    public String getKeyForSecurityTokenEncryption() {
-        return keyForSecurityTokenEncryption;
+    public SecurityProperties() {
     }
 }

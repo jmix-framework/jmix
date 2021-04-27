@@ -36,9 +36,7 @@ public class JmixXlsxFormatter extends XlsxFormatter {
         Object parent = cell.getParent();
         try {
             cell.setParent(null);
-            //TODO copy cell
-//            return (Cell) SerializationSupport.getKryoSerialization().copy(cell);
-            return cell;
+            return super.copyCell(cell);
         } finally {
             cell.setParent(parent);
         }

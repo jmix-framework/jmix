@@ -18,27 +18,26 @@ package io.jmix.reports.libintegration;
 
 import com.haulmont.yarg.loaders.impl.SqlDataLoader;
 import com.haulmont.yarg.structure.ReportQuery;
+import com.haulmont.yarg.util.db.QueryRunner;
 import com.haulmont.yarg.util.db.ResultSetHandler;
-import org.springframework.jdbc.core.JdbcTemplate;
+import io.jmix.data.StoreAwareLocator;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
-import java.util.Collections;
 import java.util.List;
 
 public class JmixSqlDataLoader extends SqlDataLoader {
-
-    protected JdbcTemplate jdbcTemplate;
+    @Autowired
+    protected StoreAwareLocator storeAwareLocator;
 
     public JmixSqlDataLoader(DataSource dataSource) {
         super(dataSource);
-
-        jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
     @Override
     protected List runQuery(ReportQuery reportQuery, String queryString, Object[] params, ResultSetHandler<List> handler) throws SQLException {
-//        QueryRunner runner = new QueryRunner(persistence.getDataSource(StoreUtils.getStoreName(reportQuery)));
-        return Collections.emptyList();
+        QueryRunner runner = new QueryRunner(storeAwareLocator.getDataSource(StoreUtils.getStoreName(reportQuery)));
+        return runner.query(queryString, params, handler);
     }
 }

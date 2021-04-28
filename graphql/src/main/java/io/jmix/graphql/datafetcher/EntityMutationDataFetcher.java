@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import graphql.schema.DataFetcher;
 import io.jmix.core.*;
 import io.jmix.core.accesscontext.CrudEntityContext;
+import io.jmix.core.annotation.Secure;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.impl.importexport.EntityImportPlanJsonBuilder;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -28,6 +29,7 @@ public class EntityMutationDataFetcher {
     @Autowired
     private Metadata metadata;
     @Autowired
+    @Secure
     protected DataManager dataManager;
     @Autowired
     protected EntitySerialization entitySerialization;

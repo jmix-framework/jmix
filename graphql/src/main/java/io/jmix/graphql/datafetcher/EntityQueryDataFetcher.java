@@ -3,6 +3,7 @@ package io.jmix.graphql.datafetcher;
 import graphql.schema.DataFetcher;
 import io.jmix.core.*;
 import io.jmix.core.accesscontext.CrudEntityContext;
+import io.jmix.core.annotation.Secure;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.LogicalCondition;
@@ -30,6 +31,7 @@ public class EntityQueryDataFetcher {
     @Autowired
     ResponseBuilder responseBuilder;
     @Autowired
+    @Secure
     protected DataManager dataManager;
     @Autowired
     protected DataFetcherPlanBuilder dataFetcherPlanBuilder;

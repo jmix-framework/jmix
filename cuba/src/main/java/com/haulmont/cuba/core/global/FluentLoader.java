@@ -425,8 +425,12 @@ public class FluentLoader<E extends Entity> extends io.jmix.core.FluentLoader<E>
         }
 
         @Override
+        public FluentLoader.ByQuery<E> parameters(Map<String, Object> parameters) {
+            return (ByQuery<E>) super.parameters(parameters);
+        }
+
         public FluentLoader.ByQuery<E> setParameters(Map<String, Object> parameters) {
-            return (ByQuery<E>) super.setParameters(parameters);
+            return (ByQuery<E>) super.parameters(parameters);
         }
 
         @Override

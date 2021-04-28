@@ -24,6 +24,7 @@ import io.jmix.ui.xml.layout.ComponentLoader;
 import org.dom4j.Element;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -74,7 +75,12 @@ public class ScreenSettingsFacetProvider implements FacetProvider<ScreenSettings
     }
 
     protected List<String> loadComponentIds(ComponentLoader.ComponentContext context, Element root) {
-        List<Element> components = root.elements("component");
+        Element componentsElement = root.element("components");
+        if (componentsElement == null) {
+            return Collections.emptyList();
+        }
+
+        List<Element> components = componentsElement.elements("component");
         List<String> result = new ArrayList<>(components.size());
 
         for (Element element : components) {

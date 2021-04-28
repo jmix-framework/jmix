@@ -21,6 +21,10 @@ import io.jmix.ui.component.Component;
 import io.jmix.ui.component.Facet;
 import io.jmix.ui.component.TabSheet;
 import io.jmix.ui.component.Window;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioCollection;
+import io.jmix.ui.meta.StudioFacet;
+import io.jmix.ui.meta.StudioProperty;
 import io.jmix.ui.screen.Screen.AfterDetachEvent;
 import io.jmix.ui.screen.Screen.AfterShowEvent;
 import io.jmix.ui.screen.Screen.BeforeShowEvent;
@@ -39,6 +43,14 @@ import java.util.function.Consumer;
  * @see ComponentSettings
  * @see ComponentSettingsBinder
  */
+@StudioFacet(
+        xmlElement = "screenSettings",
+        caption = "ScreenSettings",
+        category = "Facets",
+        description = "Provides ability to save and apply component settings",
+        defaultProperty = "auto",
+        icon = "io/jmix/ui/icon/facet/screenSettings.svg"
+)
 public interface ScreenSettingsFacet extends Facet {
 
     /**
@@ -51,6 +63,7 @@ public interface ScreenSettingsFacet extends Facet {
      *
      * @param auto whether facet should include all components for saving settings
      */
+    @StudioProperty(defaultValue = "false", initialValue = "true")
     void setAuto(boolean auto);
 
     /**
@@ -60,6 +73,11 @@ public interface ScreenSettingsFacet extends Facet {
      *
      * @param ids component ids
      */
+    @StudioCollection(xmlElement = "components",
+            itemXmlElement = "component",
+            itemProperties = {
+                    @StudioProperty(name = "id", type = PropertyType.COMPONENT_REF, required = true)
+            })
     void addComponentIds(String... ids);
 
     /**

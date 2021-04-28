@@ -29,6 +29,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
 import javax.persistence.TemporalType;
 import java.io.Serializable;
@@ -48,8 +49,8 @@ public class FluentLoader<E> {
     private FetchPlan fetchPlan;
     private String fetchPlanName;
     private FetchPlanBuilder fetchPlanBuilder;
-    private Map<String, Serializable> hints;
-    private Collection<AccessConstraint<?>> accessConstraints;
+    private Map<String, Serializable> hints = new HashMap<>();
+    private Collection<AccessConstraint<?>> accessConstraints = new ArrayList<>(0);
 
     @Autowired
     private Metadata metadata;
@@ -219,7 +220,7 @@ public class FluentLoader<E> {
         /**
          * Sets a fetch plan.
          */
-        public ById<E> fetchPlan(FetchPlan fetchPlan) {
+        public ById<E> fetchPlan(@Nullable FetchPlan fetchPlan) {
             loader.fetchPlan = fetchPlan;
             return this;
         }
@@ -227,7 +228,7 @@ public class FluentLoader<E> {
         /**
          * Sets a fetch plan by name.
          */
-        public ById<E> fetchPlan(String fetchPlanName) {
+        public ById<E> fetchPlan(@Nullable String fetchPlanName) {
             loader.fetchPlanName = fetchPlanName;
             return this;
         }
@@ -261,37 +262,34 @@ public class FluentLoader<E> {
         }
 
         /**
-         * Sets custom hint that should be used by the query.
+         * Adds a custom hint that should be used by the query.
          */
         public ById<E> hint(String hintName, Serializable value) {
-            if (loader.hints == null) {
-                loader.hints = new HashMap<>();
-            }
             loader.hints.put(hintName, value);
             return this;
         }
 
         /**
-         * Sets custom hints that should be used by the query.
+         * Adds custom hints that should be used by the query.
          */
         public ById<E> hints(Map<String, Serializable> hints) {
-            loader.hints = hints;
+            loader.hints.putAll(hints);
             return this;
         }
 
         /**
-         * Sets access constraints.
+         * Adds access constraints.
          */
         public ById<E> accessConstraints(Collection<AccessConstraint<?>> accessConstraints) {
-            loader.accessConstraints = accessConstraints;
+            loader.accessConstraints.addAll(accessConstraints);
             return this;
         }
 
         /**
-         * Sets access constraints.
+         * Adds registered access constraints that are subclasses of the given class.
          */
         public ById<E> accessConstraints(Class<? extends AccessConstraint> accessConstraintsClass) {
-            loader.accessConstraints = loader.accessConstraintsRegistry.getConstraintsOfType(accessConstraintsClass);
+            loader.accessConstraints.addAll(loader.accessConstraintsRegistry.getConstraintsOfType(accessConstraintsClass));
             return this;
         }
 
@@ -334,7 +332,7 @@ public class FluentLoader<E> {
         /**
          * Sets a fetch plan.
          */
-        public ByIds<E> fetchPlan(FetchPlan fetchPlan) {
+        public ByIds<E> fetchPlan(@Nullable FetchPlan fetchPlan) {
             loader.fetchPlan = fetchPlan;
             return this;
         }
@@ -342,7 +340,7 @@ public class FluentLoader<E> {
         /**
          * Sets a fetch plan by name.
          */
-        public ByIds<E> fetchPlan(String fetchPlanName) {
+        public ByIds<E> fetchPlan(@Nullable String fetchPlanName) {
             loader.fetchPlanName = fetchPlanName;
             return this;
         }
@@ -384,37 +382,34 @@ public class FluentLoader<E> {
         }
 
         /**
-         * Sets custom hint that should be used by the query.
+         * Adds custom hint that should be used by the query.
          */
         public ByIds<E> hint(String hintName, Serializable value) {
-            if (loader.hints == null) {
-                loader.hints = new HashMap<>();
-            }
             loader.hints.put(hintName, value);
             return this;
         }
 
         /**
-         * Sets custom hints that should be used by the query.
+         * Adds custom hints that should be used by the query.
          */
         public ByIds<E> hints(Map<String, Serializable> hints) {
-            loader.hints = hints;
+            loader.hints.putAll(hints);
             return this;
         }
 
         /**
-         * Sets access constraints.
+         * Adds access constraints.
          */
         public ByIds<E> accessConstraints(Collection<AccessConstraint<?>> accessConstraints) {
-            loader.accessConstraints = accessConstraints;
+            loader.accessConstraints.addAll(accessConstraints);
             return this;
         }
 
         /**
-         * Sets access constraints.
+         * Adds registered access constraints that are subclasses of the given class.
          */
         public ByIds<E> accessConstraints(Class<? extends AccessConstraint> accessConstraintsClass) {
-            loader.accessConstraints = loader.accessConstraintsRegistry.getConstraintsOfType(accessConstraintsClass);
+            loader.accessConstraints.addAll(loader.accessConstraintsRegistry.getConstraintsOfType(accessConstraintsClass));
             return this;
         }
 
@@ -517,7 +512,7 @@ public class FluentLoader<E> {
         /**
          * Sets a fetch plan.
          */
-        public ByQuery<E> fetchPlan(FetchPlan fetchPlan) {
+        public ByQuery<E> fetchPlan(@Nullable FetchPlan fetchPlan) {
             loader.fetchPlan = fetchPlan;
             return this;
         }
@@ -525,7 +520,7 @@ public class FluentLoader<E> {
         /**
          * Sets a fetchPlan by name.
          */
-        public ByQuery<E> fetchPlan(String fetchPlanName) {
+        public ByQuery<E> fetchPlan(@Nullable String fetchPlanName) {
             loader.fetchPlanName = fetchPlanName;
             return this;
         }
@@ -560,21 +555,18 @@ public class FluentLoader<E> {
 
 
         /**
-         * Sets custom hint that should be used by the query.
+         * Adds custom hint that should be used by the query.
          */
         public ByQuery<E> hint(String hintName, Serializable value) {
-            if (loader.hints == null) {
-                loader.hints = new HashMap<>();
-            }
             loader.hints.put(hintName, value);
             return this;
         }
 
         /**
-         * Sets custom hints that should be used by the query.
+         * Adds custom hints that should be used by the query.
          */
         public ByQuery<E> hints(Map<String, Serializable> hints) {
-            loader.hints = hints;
+            loader.hints.putAll(hints);
             return this;
         }
 
@@ -609,9 +601,9 @@ public class FluentLoader<E> {
         }
 
         /**
-         * Sets the map of query parameters.
+         * Adds the given parameters to the map of query parameters.
          */
-        public ByQuery<E> setParameters(Map<String, Object> parameters) {
+        public ByQuery<E> parameters(Map<String, Object> parameters) {
             this.parameters.putAll(parameters);
             return this;
         }
@@ -650,18 +642,18 @@ public class FluentLoader<E> {
         }
 
         /**
-         * Sets access constraints.
+         * Adds access constraints.
          */
         public ByQuery<E> accessConstraints(Collection<AccessConstraint<?>> accessConstraints) {
-            loader.accessConstraints = accessConstraints;
+            loader.accessConstraints.addAll(accessConstraints);
             return this;
         }
 
         /**
-         * Sets access constraints.
+         * Adds registered access constraints that are subclasses of the given class.
          */
         public ByQuery<E> accessConstraints(Class<? extends AccessConstraint> accessConstraintsClass) {
-            loader.accessConstraints = loader.accessConstraintsRegistry.getConstraintsOfType(accessConstraintsClass);
+            loader.accessConstraints.addAll(loader.accessConstraintsRegistry.getConstraintsOfType(accessConstraintsClass));
             return this;
         }
 
@@ -761,7 +753,7 @@ public class FluentLoader<E> {
         /**
          * Sets a fetch plan.
          */
-        public ByCondition<E> fetchPlan(FetchPlan fetchPlan) {
+        public ByCondition<E> fetchPlan(@Nullable FetchPlan fetchPlan) {
             loader.fetchPlan = fetchPlan;
             return this;
         }
@@ -769,7 +761,7 @@ public class FluentLoader<E> {
         /**
          * Sets a fetchPlan by name.
          */
-        public ByCondition<E> fetchPlan(String fetchPlanName) {
+        public ByCondition<E> fetchPlan(@Nullable String fetchPlanName) {
             loader.fetchPlanName = fetchPlanName;
             return this;
         }
@@ -803,21 +795,18 @@ public class FluentLoader<E> {
         }
 
         /**
-         * Sets custom hint that should be used by the query.
+         * Adds custom hint that should be used by the query.
          */
         public ByCondition<E> hint(String hintName, Serializable value) {
-            if (loader.hints == null) {
-                loader.hints = new HashMap<>();
-            }
             loader.hints.put(hintName, value);
             return this;
         }
 
         /**
-         * Sets custom hints that should be used by the query.
+         * Adds custom hints that should be used by the query.
          */
         public ByCondition<E> hints(Map<String, Serializable> hints) {
-            loader.hints = hints;
+            loader.hints.putAll(hints);
             return this;
         }
 
@@ -845,9 +834,9 @@ public class FluentLoader<E> {
         }
 
         /**
-         * Sets the map of query parameters.
+         * Adds the given parameters to the map of query parameters.
          */
-        public ByCondition<E> setParameters(Map<String, Object> parameters) {
+        public ByCondition<E> parameters(Map<String, Object> parameters) {
             this.parameters.putAll(parameters);
             return this;
         }
@@ -886,18 +875,18 @@ public class FluentLoader<E> {
         }
 
         /**
-         * Sets access constraints.
+         * Adds access constraints.
          */
         public ByCondition<E> accessConstraints(Collection<AccessConstraint<?>> accessConstraints) {
-            loader.accessConstraints = accessConstraints;
+            loader.accessConstraints.addAll(accessConstraints);
             return this;
         }
 
         /**
-         * Sets access constraints.
+         * Adds registered access constraints that are subclasses of the given class.
          */
         public ByCondition<E> accessConstraints(Class<? extends AccessConstraint> accessConstraintsClass) {
-            loader.accessConstraints = loader.accessConstraintsRegistry.getConstraintsOfType(accessConstraintsClass);
+            loader.accessConstraints.addAll(loader.accessConstraintsRegistry.getConstraintsOfType(accessConstraintsClass));
             return this;
         }
 

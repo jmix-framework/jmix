@@ -58,7 +58,7 @@ public class InstanceLoaderImpl<E> implements InstanceLoader<E> {
     protected Object entityId;
     protected FetchPlan fetchPlan;
     protected String fetchPlanName;
-    protected Map<String, Serializable> hints;
+    protected Map<String, Serializable> hints = new HashMap<>();
     protected Function<LoadContext<E>, E> delegate;
     protected EventHub events = new EventHub();
 
@@ -230,9 +230,6 @@ public class InstanceLoaderImpl<E> implements InstanceLoader<E> {
 
     @Override
     public void setHint(String hintName, Serializable value) {
-        if (hints == null) {
-            hints = new HashMap<>();
-        }
         hints.put(hintName, value);
     }
 

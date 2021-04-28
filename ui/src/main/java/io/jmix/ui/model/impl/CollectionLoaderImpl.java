@@ -57,7 +57,7 @@ public class CollectionLoaderImpl<E> implements CollectionLoader<E> {
     protected FetchPlan fetchPlan;
     protected String fetchPlanName;
     protected Sort sort;
-    protected Map<String, Serializable> hints;
+    protected Map<String, Serializable> hints = new HashMap<>();
     protected Function<LoadContext<E>, List<E>> delegate;
     protected EventHub events = new EventHub();
 
@@ -239,9 +239,6 @@ public class CollectionLoaderImpl<E> implements CollectionLoader<E> {
 
     @Override
     public void setHint(String hintName, Serializable value) {
-        if (hints == null) {
-            hints = new HashMap<>();
-        }
         hints.put(hintName, value);
     }
 

@@ -106,6 +106,5 @@ public interface DataLoader {
     /**
      * @return custom hints which are used by the query for loading data.
      */
-    @Nullable
     Map<String, Serializable> getHints();
 }

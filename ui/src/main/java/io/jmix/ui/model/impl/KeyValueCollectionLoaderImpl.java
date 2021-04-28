@@ -55,7 +55,7 @@ public class KeyValueCollectionLoaderImpl implements KeyValueCollectionLoader {
     protected int firstResult = 0;
     protected int maxResults = Integer.MAX_VALUE;
     protected Sort sort;
-    protected Map<String, Serializable> hints;
+    protected Map<String, Serializable> hints = new HashMap<>();
     protected String storeName = Stores.MAIN;
     protected Function<ValueLoadContext, List<KeyValueEntity>> delegate;
     protected EventHub events = new EventHub();
@@ -230,9 +230,6 @@ public class KeyValueCollectionLoaderImpl implements KeyValueCollectionLoader {
 
     @Override
     public void setHint(String hintName, Serializable value) {
-        if (hints == null) {
-            hints = new HashMap<>();
-        }
         hints.put(hintName, value);
     }
 

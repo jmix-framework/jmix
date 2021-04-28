@@ -51,7 +51,7 @@ public class KeyValueInstanceLoaderImpl implements KeyValueInstanceLoader {
     protected String query;
     protected Condition condition;
     protected Map<String, Object> parameters = new HashMap<>();
-    protected Map<String, Serializable> hints;
+    protected Map<String, Serializable> hints = new HashMap<>();
     protected String storeName = Stores.MAIN;
     protected Function<ValueLoadContext, KeyValueEntity> delegate;
     protected EventHub events = new EventHub();
@@ -189,9 +189,6 @@ public class KeyValueInstanceLoaderImpl implements KeyValueInstanceLoader {
 
     @Override
     public void setHint(String hintName, Serializable value) {
-        if (hints == null) {
-            hints = new HashMap<>();
-        }
         hints.put(hintName, value);
     }
 

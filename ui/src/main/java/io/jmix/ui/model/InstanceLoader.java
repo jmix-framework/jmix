@@ -74,17 +74,6 @@ public interface InstanceLoader<E> extends DataLoader {
     void setView(String viewName);
 
     /**
-     * Sets custom hint that should be used by the query for loading data.
-     */
-    void setHint(String hintName, Serializable value);
-
-    /**
-     * @return custom hints which are used by the query for loading data.
-     */
-    @Nullable
-    Map<String, Serializable> getHints();
-
-    /**
      * Returns a function which will be used to load data instead of standard implementation.
      */
     Function<LoadContext<E>, E> getLoadDelegate();

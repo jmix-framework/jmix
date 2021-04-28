@@ -63,41 +63,17 @@ public interface CollectionLoader<E> extends BaseCollectionLoader {
     void setCacheable(boolean cacheable);
 
     /**
-     * @deprecated replaced by {@link CollectionLoader#getFetchPlan()}
-     */
-    @Deprecated
-    default FetchPlan getView() {
-        return getFetchPlan();
-    }
-
-    /**
-     * Returns the fetch plan which is used when loading.
+     * Returns the fetch plan used for loading entities.
      */
     FetchPlan getFetchPlan();
 
     /**
-     * @deprecated replaced by {@link CollectionLoader#setFetchPlan(FetchPlan)}
-     */
-    @Deprecated
-    default void setView(FetchPlan view) {
-        setFetchPlan(view);
-    }
-
-    /**
-     * Sets the fetch plan which is used when loading.
+     * Sets the fetch plan to use for loading entities.
      */
     void setFetchPlan(FetchPlan fetchPlan);
 
     /**
-     * @deprecated replaced by {@link CollectionLoader#setFetchPlan(String)}
-     */
-    @Deprecated
-    default void setView(String viewName) {
-        setFetchPlan(viewName);
-    }
-
-    /**
-     * Sets the name of the fetch plan which is used when loading.
+     * Sets the name of the fetch plan to use for loading entities.
      *
      * @throws IllegalStateException if the fetch plan has already been set by {@link #setFetchPlan(FetchPlan)}
      */

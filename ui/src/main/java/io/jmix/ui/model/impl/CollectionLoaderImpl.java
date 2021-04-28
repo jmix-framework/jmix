@@ -133,14 +133,14 @@ public class CollectionLoaderImpl<E> implements CollectionLoader<E> {
     }
 
     protected FetchPlan resolveFetchPlan() {
-        FetchPlan view = this.fetchPlan;
-        if (view == null && fetchPlanName != null) {
-            view = fetchPlanRepository.getFetchPlan(container.getEntityMetaClass(), fetchPlanName);
+        FetchPlan fp = this.fetchPlan;
+        if (fp == null && fetchPlanName != null) {
+            fp = fetchPlanRepository.getFetchPlan(container.getEntityMetaClass(), fetchPlanName);
         }
-        if (view == null) {
-            view = container.getFetchPlan();
+        if (fp == null) {
+            fp = container.getFetchPlan();
         }
-        return view;
+        return fp;
     }
 
     protected boolean sendPreLoadEvent(LoadContext<E> loadContext) {

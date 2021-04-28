@@ -57,21 +57,21 @@ public interface InstanceLoader<E> extends DataLoader {
     void setEntityId(Object entityId);
 
     /**
-     * Returns the view which is used when loading.
+     * Returns the fetch plan used for loading the entity.
      */
     FetchPlan getFetchPlan();
 
     /**
-     * Sets the view which is used when loading.
+     * Sets the fetch plan to use for loading the entity.
      */
     void setFetchPlan(FetchPlan fetchPlan);
 
     /**
-     * Sets the name of the view which is used when loading.
+     * Sets the name of the fetch plan to use for loading the entity.
      *
-     * @throws IllegalStateException if the view has already been set by {@link #setFetchPlan(FetchPlan)}
+     * @throws IllegalStateException if the fetch plan has already been set by {@link #setFetchPlan(FetchPlan)}
      */
-    void setView(String viewName);
+    void setFetchPlan(String fetchPlanName);
 
     /**
      * Returns a function which will be used to load data instead of standard implementation.

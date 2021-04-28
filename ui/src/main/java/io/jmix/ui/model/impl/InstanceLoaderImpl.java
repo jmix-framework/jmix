@@ -135,14 +135,14 @@ public class InstanceLoaderImpl<E> implements InstanceLoader<E> {
     }
 
     protected FetchPlan resolveFetchPlan() {
-        FetchPlan view = this.fetchPlan;
-        if (view == null && fetchPlanName != null) {
-            view = fetchPlanRepository.getFetchPlan(container.getEntityMetaClass(), fetchPlanName);
+        FetchPlan fp = this.fetchPlan;
+        if (fp == null && fetchPlanName != null) {
+            fp = fetchPlanRepository.getFetchPlan(container.getEntityMetaClass(), fetchPlanName);
         }
-        if (view == null) {
-            view = container.getFetchPlan();
+        if (fp == null) {
+            fp = container.getFetchPlan();
         }
-        return view;
+        return fp;
     }
 
     protected boolean sendPreLoadEvent(LoadContext<E> loadContext) {
@@ -271,9 +271,9 @@ public class InstanceLoaderImpl<E> implements InstanceLoader<E> {
     }
 
     @Override
-    public void setView(String viewName) {
+    public void setFetchPlan(String fetchPlanName) {
         if (this.fetchPlan != null)
-            throw new IllegalStateException("view is already set");
-        this.fetchPlanName = viewName;
+            throw new IllegalStateException("fetch plan is already set");
+        this.fetchPlanName = fetchPlanName;
     }
 }

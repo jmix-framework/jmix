@@ -49,8 +49,8 @@ import java.util.stream.Collectors;
         unsupportedProperties = {"enable", "responsive"},
         xmlns = "http://jmix.io/schema/dynattr/ui",
         xmlnsAlias = "dynattr",
-        icon = "icon/dynamicAttributesPanel.svg",
-        canvasIcon = "icon/dynamicAttributesPanel_canvas.svg",
+        icon = "io/jmix/dynattrui/icon/component/dynamicAttributesPanel.svg",
+        canvasIcon = "io/jmix/dynattrui/icon/component/dynamicAttributesPanel_canvas.svg",
         canvasIconSize = CanvasIconSize.LARGE)
 @CompositeDescriptor("dynamic-attributes-panel.xml")
 public class DynamicAttributesPanel extends CompositeComponent<VBoxLayout> implements Validatable {

@@ -18,7 +18,10 @@ package io.jmix.ui.component;
 
 import io.jmix.core.common.event.Subscription;
 import io.jmix.ui.Notifications;
-import io.jmix.ui.meta.*;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioFacet;
+import io.jmix.ui.meta.StudioProperties;
+import io.jmix.ui.meta.StudioProperty;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.PositiveOrZero;
@@ -34,7 +37,7 @@ import java.util.function.Supplier;
         description = "Prepares and shows notifications",
         defaultProperty = "caption",
         category = "Facets",
-        icon = "icon/notification.svg"
+        icon = "io/jmix/ui/icon/facet/notification.svg"
 )
 @StudioProperties(
         properties = {
@@ -116,7 +119,7 @@ public interface NotificationFacet extends Facet {
      *
      * @param styleName style name
      */
-    @StudioProperty(type = PropertyType.STRING)
+    @StudioProperty(type = PropertyType.CSS_CLASSNAME_LIST)
     void setStyleName(String styleName);
 
     /**
@@ -130,7 +133,7 @@ public interface NotificationFacet extends Facet {
      *
      * @param position position
      */
-    @StudioProperty
+    @StudioProperty(type = PropertyType.ENUMERATION, defaultValue = "DEFAULT")
     void setPosition(Notifications.Position position);
 
     /**
@@ -175,7 +178,7 @@ public interface NotificationFacet extends Facet {
      *
      * @param htmlSanitizerEnabled specifies whether html sanitizer is enabled
      */
-    @StudioProperty(type = PropertyType.BOOLEAN)
+    @StudioProperty(type = PropertyType.BOOLEAN, defaultValue = "true")
     void setHtmlSanitizerEnabled(boolean htmlSanitizerEnabled);
 
     /**

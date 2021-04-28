@@ -28,7 +28,7 @@ import java.util.function.Consumer;
  */
 @StudioComponent(xmlElement = "fileMultiUpload",
         category = "Components",
-        icon = "icon/fileUpload.svg",
+        icon = "io/jmix/ui/icon/component/fileUpload.svg",
         canvasBehaviour = CanvasBehaviour.BUTTON,
         canvasText = "Upload",
         canvasTextProperty = "caption")

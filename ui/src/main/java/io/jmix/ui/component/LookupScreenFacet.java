@@ -34,10 +34,11 @@ import java.util.function.Predicate;
  */
 @StudioFacet(
         xmlElement = "lookupScreen",
-        caption = "Lookup Screen",
+        caption = "LookupScreen",
         description = "Prepares and shows lookup screens",
         category = "Facets",
-        icon = "icon/screen.svg"
+        defaultProperty = "screenId",
+        icon = "io/jmix/ui/icon/facet/screen.svg"
 )
 @StudioProperties(
         properties = {

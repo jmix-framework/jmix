@@ -27,7 +27,7 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
  *
  * @see UiControllerPropertyInjector
  */
-@StudioElement(caption = "UI Controller Property", xmlElement = "property")
+@StudioElement(caption = "Controller property", xmlElement = "property")
 @StudioProperties(properties = @StudioProperty(name = "ref", type = PropertyType.STRING),
         groups = @PropertiesGroup(properties = {"value", "ref"}, constraint = PropertiesConstraint.ONE_OF))
 public class UiControllerProperty {

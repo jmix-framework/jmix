@@ -3514,9 +3514,9 @@
                 <xs:element name="longParameter" type="inputDialogPrimitiveParam"/>
                 <xs:element name="bigDecimalParameter" type="inputDialogPrimitiveParam"/>
 
-                <xs:element name="dateParameter" type="inputDialogParameter"/>
-                <xs:element name="timeParameter" type="inputDialogParameter"/>
-                <xs:element name="dateTimeParameter" type="inputDialogParameter"/>
+                <xs:element name="dateParameter" type="inputDialogPrimitiveParam"/>
+                <xs:element name="timeParameter" type="inputDialogPrimitiveParam"/>
+                <xs:element name="dateTimeParameter" type="inputDialogPrimitiveParam"/>
 
                 <xs:element name="entityParameter" type="inputDialogEntityParameter"/>
                 <xs:element name="enumParameter" type="inputDialogEnumParameter"/>

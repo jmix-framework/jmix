@@ -16,7 +16,9 @@
 
 package io.jmix.ui.meta;
 
-import java.lang.annotation.*;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Target;
 
 /**
  * Indicates that the annotated method should be shown in Studio Screen Designer as UI component property.
@@ -58,6 +60,12 @@ public @interface StudioProperty {
      * @return default value of the property that can be safely omitted from XML
      */
     String defaultValue() default "";
+
+    /**
+     * @return the initial value of the property that will be added to the XML element when selected from
+     * the Component Palette
+     */
+    String initialValue() default "";
 
     /**
      * Context dependent list of options for the component property.<p>

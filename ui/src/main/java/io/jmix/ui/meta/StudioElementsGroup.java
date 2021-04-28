@@ -24,6 +24,15 @@ import java.lang.annotation.Documented;
  */
 @Documented
 public @interface StudioElementsGroup {
+    /**
+     * @return caption of the elements group in Studio Screen Designer
+     */
+    String caption() default "";
+
+    /**
+     * @return description of the elements group in Studio Screen Designer
+     */
+    String description() default "";
 
     /**
      * @return XML tag of the elements group
@@ -33,6 +42,7 @@ public @interface StudioElementsGroup {
     /**
      * Specifies path to the component icon, SVG or PNG. Relative to the component module root.
      * The icon used in the Component Hierarchy.
+     *
      * @return relative path to the SVG or PNG icon file.
      */
     String icon() default "";

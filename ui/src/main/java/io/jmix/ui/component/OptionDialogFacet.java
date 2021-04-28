@@ -28,11 +28,11 @@ import javax.annotation.Nullable;
  */
 @StudioFacet(
         xmlElement = "optionDialog",
-        caption = "Option Dialog",
+        caption = "OptionDialog",
         description = "Prepares and shows option dialogs",
         defaultProperty = "message",
         category = "Facets",
-        icon = "icon/dialog.svg"
+        icon = "io/jmix/ui/icon/facet/dialog.svg"
 )
 @StudioProperties(
         properties = {
@@ -100,7 +100,7 @@ public interface OptionDialogFacet extends Facet, ActionsAwareDialogFacet<Option
      *
      * @param styleName style name
      */
-    @StudioProperty(type = PropertyType.STRING)
+    @StudioProperty(type = PropertyType.CSS_CLASSNAME_LIST)
     void setStyleName(String styleName);
 
     /**
@@ -182,7 +182,7 @@ public interface OptionDialogFacet extends Facet, ActionsAwareDialogFacet<Option
      *
      * @param htmlSanitizerEnabled specifies whether html sanitizer is enabled
      */
-    @StudioProperty(type = PropertyType.BOOLEAN)
+    @StudioProperty(type = PropertyType.BOOLEAN, defaultValue = "true")
     void setHtmlSanitizerEnabled(boolean htmlSanitizerEnabled);
 
     /**

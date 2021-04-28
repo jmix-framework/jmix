@@ -21,6 +21,10 @@ import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.impl.EnumClass;
 import io.jmix.ui.component.Field;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioProperties;
+import io.jmix.ui.meta.StudioProperty;
 
 import javax.annotation.Nullable;
 import java.math.BigDecimal;
@@ -250,6 +254,18 @@ public class InputParameter {
      * @param id field id
      * @return input parameter
      */
+    @StudioElement(
+            caption = "String parameter",
+            xmlElement = "stringParameter"
+    )
+    @StudioProperties(
+            properties = {
+                    @StudioProperty(name = "id", type = PropertyType.COMPONENT_ID, required = true),
+                    @StudioProperty(name = "caption", type = PropertyType.LOCALIZED_STRING),
+                    @StudioProperty(name = "required", type = PropertyType.BOOLEAN),
+                    @StudioProperty(name = "defaultValue", type = PropertyType.STRING)
+            }
+    )
     public static InputParameter stringParameter(String id) {
         return new InputParameter(id).withDatatypeJavaClass(String.class);
     }
@@ -260,6 +276,18 @@ public class InputParameter {
      * @param id field id
      * @return input parameter
      */
+    @StudioElement(
+            caption = "Integer parameter",
+            xmlElement = "intParameter"
+    )
+    @StudioProperties(
+            properties = {
+                    @StudioProperty(name = "id", type = PropertyType.COMPONENT_ID, required = true),
+                    @StudioProperty(name = "caption", type = PropertyType.LOCALIZED_STRING),
+                    @StudioProperty(name = "required", type = PropertyType.BOOLEAN),
+                    @StudioProperty(name = "defaultValue", type = PropertyType.INTEGER)
+            }
+    )
     public static InputParameter intParameter(String id) {
         return new InputParameter(id).withDatatypeJavaClass(Integer.class);
     }
@@ -270,6 +298,18 @@ public class InputParameter {
      * @param id field id
      * @return input parameter
      */
+    @StudioElement(
+            caption = "Double parameter",
+            xmlElement = "doubleParameter"
+    )
+    @StudioProperties(
+            properties = {
+                    @StudioProperty(name = "id", type = PropertyType.COMPONENT_ID, required = true),
+                    @StudioProperty(name = "caption", type = PropertyType.LOCALIZED_STRING),
+                    @StudioProperty(name = "required", type = PropertyType.BOOLEAN),
+                    @StudioProperty(name = "defaultValue", type = PropertyType.DOUBLE)
+            }
+    )
     public static InputParameter doubleParameter(String id) {
         return new InputParameter(id).withDatatypeJavaClass(Double.class);
     }
@@ -280,6 +320,18 @@ public class InputParameter {
      * @param id field id
      * @return input parameter
      */
+    @StudioElement(
+            caption = "Big decimal parameter",
+            xmlElement = "bigDecimalParameter"
+    )
+    @StudioProperties(
+            properties = {
+                    @StudioProperty(name = "id", type = PropertyType.COMPONENT_ID, required = true),
+                    @StudioProperty(name = "caption", type = PropertyType.LOCALIZED_STRING),
+                    @StudioProperty(name = "required", type = PropertyType.BOOLEAN),
+                    @StudioProperty(name = "defaultValue", type = PropertyType.BIG_DECIMAL)
+            }
+    )
     public static InputParameter bigDecimalParameter(String id) {
         return new InputParameter(id).withDatatypeJavaClass(BigDecimal.class);
     }
@@ -290,6 +342,18 @@ public class InputParameter {
      * @param id field id
      * @return input parameter
      */
+    @StudioElement(
+            caption = "Long parameter",
+            xmlElement = "longParameter"
+    )
+    @StudioProperties(
+            properties = {
+                    @StudioProperty(name = "id", type = PropertyType.COMPONENT_ID, required = true),
+                    @StudioProperty(name = "caption", type = PropertyType.LOCALIZED_STRING),
+                    @StudioProperty(name = "required", type = PropertyType.BOOLEAN),
+                    @StudioProperty(name = "defaultValue", type = PropertyType.LONG)
+            }
+    )
     public static InputParameter longParameter(String id) {
         return new InputParameter(id).withDatatypeJavaClass(Long.class);
     }
@@ -300,6 +364,18 @@ public class InputParameter {
      * @param id field id
      * @return input parameter
      */
+    @StudioElement(
+            caption = "Date parameter",
+            xmlElement = "dateParameter"
+    )
+    @StudioProperties(
+            properties = {
+                    @StudioProperty(name = "id", type = PropertyType.COMPONENT_ID, required = true),
+                    @StudioProperty(name = "caption", type = PropertyType.LOCALIZED_STRING),
+                    @StudioProperty(name = "required", type = PropertyType.BOOLEAN),
+                    @StudioProperty(name = "defaultValue", type = PropertyType.DATE)
+            }
+    )
     public static InputParameter dateParameter(String id) {
         return new InputParameter(id).withDatatypeJavaClass(java.sql.Date.class);
     }
@@ -310,6 +386,18 @@ public class InputParameter {
      * @param id field id
      * @return input parameter
      */
+    @StudioElement(
+            caption = "Time parameter",
+            xmlElement = "timeParameter"
+    )
+    @StudioProperties(
+            properties = {
+                    @StudioProperty(name = "id", type = PropertyType.COMPONENT_ID, required = true),
+                    @StudioProperty(name = "caption", type = PropertyType.LOCALIZED_STRING),
+                    @StudioProperty(name = "required", type = PropertyType.BOOLEAN),
+                    @StudioProperty(name = "defaultValue", type = PropertyType.TIME)
+            }
+    )
     public static InputParameter timeParameter(String id) {
         return new InputParameter(id).withDatatypeJavaClass(Time.class);
     }
@@ -320,6 +408,18 @@ public class InputParameter {
      * @param id field id
      * @return input parameter
      */
+    @StudioElement(
+            caption = "DateTime parameter",
+            xmlElement = "dateTimeParameter"
+    )
+    @StudioProperties(
+            properties = {
+                    @StudioProperty(name = "id", type = PropertyType.COMPONENT_ID, required = true),
+                    @StudioProperty(name = "caption", type = PropertyType.LOCALIZED_STRING),
+                    @StudioProperty(name = "required", type = PropertyType.BOOLEAN),
+                    @StudioProperty(name = "defaultValue", type = PropertyType.DATE_TIME)
+            }
+    )
     public static InputParameter dateTimeParameter(String id) {
         return new InputParameter(id).withDatatypeJavaClass(Date.class);
     }
@@ -331,6 +431,18 @@ public class InputParameter {
      * @param entityClass entity class
      * @return input parameter
      */
+    @StudioElement(
+            caption = "Entity parameter",
+            xmlElement = "entityParameter"
+    )
+    @StudioProperties(
+            properties = {
+                    @StudioProperty(name = "id", type = PropertyType.COMPONENT_ID, required = true),
+                    @StudioProperty(name = "caption", type = PropertyType.LOCALIZED_STRING),
+                    @StudioProperty(name = "required", type = PropertyType.BOOLEAN),
+                    @StudioProperty(name = "entityClass", type = PropertyType.ENTITY_CLASS, required = true)
+            }
+    )
     public static InputParameter entityParameter(String id, Class<?> entityClass) {
         return new InputParameter(id).withEntityClass(entityClass);
     }
@@ -341,6 +453,18 @@ public class InputParameter {
      * @param id field id
      * @return input parameter
      */
+    @StudioElement(
+            caption = "Boolean parameter",
+            xmlElement = "booleanParameter"
+    )
+    @StudioProperties(
+            properties = {
+                    @StudioProperty(name = "id", type = PropertyType.COMPONENT_ID, required = true),
+                    @StudioProperty(name = "caption", type = PropertyType.LOCALIZED_STRING),
+                    @StudioProperty(name = "required", type = PropertyType.BOOLEAN),
+                    @StudioProperty(name = "defaultValue", type = PropertyType.BOOLEAN)
+            }
+    )
     public static InputParameter booleanParameter(String id) {
         return new InputParameter(id).withDatatypeJavaClass(Boolean.class);
     }
@@ -372,6 +496,18 @@ public class InputParameter {
      * @param enumClass enum class
      * @return input parameter
      */
+    @StudioElement(
+            caption = "Enum parameter",
+            xmlElement = "enumParameter"
+    )
+    @StudioProperties(
+            properties = {
+                    @StudioProperty(name = "id", type = PropertyType.COMPONENT_ID, required = true),
+                    @StudioProperty(name = "caption", type = PropertyType.LOCALIZED_STRING),
+                    @StudioProperty(name = "required", type = PropertyType.BOOLEAN),
+                    @StudioProperty(name = "enumClass", type = PropertyType.ENUM_CLASS, required = true)
+            }
+    )
     public static InputParameter enumParameter(String id, Class<? extends EnumClass> enumClass) {
         return new InputParameter(id).withEnumClass(enumClass);
     }

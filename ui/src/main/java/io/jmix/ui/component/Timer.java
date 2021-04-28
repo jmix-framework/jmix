@@ -16,13 +16,32 @@
 package io.jmix.ui.component;
 
 import io.jmix.core.common.event.Subscription;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioFacet;
+import io.jmix.ui.meta.StudioProperties;
+import io.jmix.ui.meta.StudioProperty;
 
+import javax.validation.constraints.PositiveOrZero;
 import java.util.EventObject;
 import java.util.function.Consumer;
 
 /**
  * Client-side timer component that fires events at fixed intervals.
  */
+@StudioFacet(
+        xmlElement = "timer",
+        caption = "Timer",
+        description = "Fires events at fixed intervals",
+        defaultProperty = "id",
+        category = "Facets",
+        icon = "io/jmix/ui/icon/facet/timer.svg"
+)
+@StudioProperties(
+        properties = {
+                @StudioProperty(name = "id", type = PropertyType.COMPONENT_ID, required = true),
+                @StudioProperty(name = "autostart", type = PropertyType.BOOLEAN, defaultValue = "false")
+        }
+)
 public interface Timer extends Facet {
 
     String NAME = "timer";
@@ -37,6 +56,7 @@ public interface Timer extends Facet {
      *
      * @param repeating repeating flag
      */
+    @StudioProperty(defaultValue = "false")
     void setRepeating(boolean repeating);
 
     /**
@@ -47,6 +67,8 @@ public interface Timer extends Facet {
     /**
      * @param delayMs delay in milliseconds.
      */
+    @StudioProperty(required = true)
+    @PositiveOrZero
     void setDelay(int delayMs);
 
     /**

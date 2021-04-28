@@ -44,7 +44,7 @@ import java.util.function.Supplier;
         description = "Prepares and shows screens",
         defaultProperty = "screenId",
         category = "Facets",
-        icon = "icon/screen.svg"
+        icon = "io/jmix/ui/icon/facet/screen.svg"
 )
 @StudioProperties(
         properties = {
@@ -61,7 +61,7 @@ public interface ScreenFacet<S extends Screen> extends Facet, ApplicationContext
      *
      * @param screenId screen id
      */
-    @StudioProperty(type = PropertyType.SCREEN_ID)
+    @StudioProperty(type = PropertyType.SCREEN_ID, typeParameter = "S")
     void setScreenId(@Nullable String screenId);
 
     /**
@@ -115,7 +115,7 @@ public interface ScreenFacet<S extends Screen> extends Facet, ApplicationContext
      *
      * @param properties screen properties
      */
-    @StudioElementsGroup(xmlElement = "properties")
+    @StudioElementsGroup(caption = "Properties", xmlElement = "properties")
     void setProperties(Collection<UiControllerProperty> properties);
 
     /**

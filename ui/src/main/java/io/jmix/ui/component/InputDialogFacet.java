@@ -31,11 +31,11 @@ import java.util.function.Function;
  */
 @StudioFacet(
         xmlElement = "inputDialog",
-        caption = "Input Dialog",
+        caption = "InputDialog",
         description = "Prepares and shows input dialogs",
         defaultProperty = "caption",
         category = "Facets",
-        icon = "icon/dialog.svg"
+        icon = "io/jmix/ui/icon/facet/dialog.svg"
 )
 @StudioProperties(
         properties = {
@@ -168,6 +168,7 @@ public interface InputDialogFacet extends Facet, ActionsAwareDialogFacet<InputDi
      *
      * @param parameters set of {@link InputParameter}
      */
+    @StudioElementsGroup(xmlElement = "parameters", caption = "Parameters")
     void setParameters(InputParameter... parameters);
 
     /**

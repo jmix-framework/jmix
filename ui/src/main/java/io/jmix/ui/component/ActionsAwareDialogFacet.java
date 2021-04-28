@@ -29,10 +29,9 @@ import java.util.function.Consumer;
 /**
  * Base interface for actions aware dialog facets.
  *
+ * @param <T> dialog facet type
  * @see OptionDialogFacet
  * @see InputDialogFacet
- *
- * @param <T> dialog facet type
  */
 public interface ActionsAwareDialogFacet<T> {
 
@@ -41,7 +40,9 @@ public interface ActionsAwareDialogFacet<T> {
      *
      * @param actions actions
      */
-    @StudioElementsGroup(xmlElement = "actions", icon = "icon/actions.svg")
+    @StudioElementsGroup(caption = "Dialog actions",
+            xmlElement = "actions",
+            icon = "io/jmix/ui/icon/element/actions.svg")
     void setActions(@Nullable Collection<DialogAction<T>> actions);
 
     /**
@@ -56,9 +57,9 @@ public interface ActionsAwareDialogFacet<T> {
     class DialogActionPerformedEvent<T> {
 
         protected T dialog;
-        protected DialogAction dialogAction;
+        protected DialogAction<T> dialogAction;
 
-        public DialogActionPerformedEvent(T dialog, DialogAction dialogAction) {
+        public DialogActionPerformedEvent(T dialog, DialogAction<T> dialogAction) {
             this.dialog = dialog;
             this.dialogAction = dialogAction;
         }
@@ -67,7 +68,7 @@ public interface ActionsAwareDialogFacet<T> {
             return dialog;
         }
 
-        public DialogAction getDialogAction() {
+        public DialogAction<T> getDialogAction() {
             return dialogAction;
         }
     }
@@ -75,7 +76,7 @@ public interface ActionsAwareDialogFacet<T> {
     /**
      * Immutable POJO that stores dialog action settings.
      */
-    @StudioElement(xmlElement = "action", icon = "icon/action.svg")
+    @StudioElement(xmlElement = "action", caption = "Dialog action", icon = "io/jmix/ui/icon/element/action.svg")
     class DialogAction<T> {
 
         protected final String id;

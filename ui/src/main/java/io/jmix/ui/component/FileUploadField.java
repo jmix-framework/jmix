@@ -24,7 +24,7 @@ import javax.annotation.Nullable;
  */
 @StudioComponent(xmlElement = "fileUpload",
         category = "Components",
-        icon = "icon/fileUpload.svg",
+        icon = "io/jmix/ui/icon/component/fileUpload.svg",
         canvasBehaviour = CanvasBehaviour.BUTTON,
         canvasText = "Upload",
         canvasTextProperty = "uploadButtonCaption")

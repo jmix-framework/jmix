@@ -46,6 +46,10 @@ public enum PropertyType {
      */
     DOUBLE,
     /**
+     * Big decimal type.
+     */
+    BIG_DECIMAL,
+    /**
      * String type.
      */
     STRING,
@@ -106,6 +110,10 @@ public enum PropertyType {
      * FQN of Entity class.
      */
     ENTITY_CLASS,
+    /**
+     * FQN of Enum class.
+     */
+    ENUM_CLASS,
 
     /**
      * FQN of Java class.

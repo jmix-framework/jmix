@@ -35,10 +35,11 @@ import java.util.function.Supplier;
  */
 @StudioFacet(
         xmlElement = "editorScreen",
-        caption = "Editor Screen",
+        caption = "EditorScreen",
         description = "Prepares and shows editor screens",
         category = "Facets",
-        icon = "icon/screen.svg"
+        defaultProperty = "screenId",
+        icon = "io/jmix/ui/icon/facet/screen.svg"
 )
 @StudioProperties(
         properties = {
@@ -53,7 +54,7 @@ public interface EditorScreenFacet<E, S extends Screen & EditorScreen<E>>
      *
      * @param editMode edit mode
      */
-    @StudioProperty(type = PropertyType.ENUMERATION)
+    @StudioProperty(type = PropertyType.ENUMERATION, defaultValue = "CREATE")
     void setEditMode(EditMode editMode);
 
     /**
@@ -67,7 +68,7 @@ public interface EditorScreenFacet<E, S extends Screen & EditorScreen<E>>
      *
      * @param addFirst add first
      */
-    @StudioProperty(type = PropertyType.BOOLEAN)
+    @StudioProperty(type = PropertyType.BOOLEAN, defaultValue = "false")
     void setAddFirst(boolean addFirst);
 
     /**

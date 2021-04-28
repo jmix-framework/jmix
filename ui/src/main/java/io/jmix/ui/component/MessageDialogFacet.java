@@ -28,11 +28,11 @@ import javax.annotation.Nullable;
  */
 @StudioFacet(
         xmlElement = "messageDialog",
-        caption = "Message Dialog",
+        caption = "MessageDialog",
         description = "Prepares and shows message dialogs",
         defaultProperty = "message",
         category = "Facets",
-        icon = "icon/dialog.svg"
+        icon = "io/jmix/ui/icon/facet/dialog.svg"
 )
 @StudioProperties(
         properties = {
@@ -43,6 +43,7 @@ public interface MessageDialogFacet extends Facet {
 
     /**
      * Sets dialog caption.
+     *
      * @param caption caption
      */
     @StudioProperty(type = PropertyType.LOCALIZED_STRING)
@@ -56,6 +57,7 @@ public interface MessageDialogFacet extends Facet {
 
     /**
      * Sets dialog message.
+     *
      * @param message message
      */
     @StudioProperty(type = PropertyType.LOCALIZED_STRING)
@@ -69,6 +71,7 @@ public interface MessageDialogFacet extends Facet {
 
     /**
      * Sets dialog message content mode.
+     *
      * @param contentMode content mode
      */
     @StudioProperty(type = PropertyType.ENUMERATION, defaultValue = "TEXT")
@@ -94,6 +97,7 @@ public interface MessageDialogFacet extends Facet {
 
     /**
      * Sets whether dialog should be modal
+     *
      * @param modal modal
      */
     @StudioProperty(type = PropertyType.BOOLEAN)
@@ -106,9 +110,10 @@ public interface MessageDialogFacet extends Facet {
 
     /**
      * Sets dialog style name.
+     *
      * @param styleName style name
      */
-    @StudioProperty(type = PropertyType.STRING)
+    @StudioProperty(type = PropertyType.CSS_CLASSNAME_LIST)
     void setStyleName(String styleName);
 
     /**
@@ -119,6 +124,7 @@ public interface MessageDialogFacet extends Facet {
 
     /**
      * Sets dialog width.
+     *
      * @param width width
      */
     @StudioProperty(type = PropertyType.SIZE)
@@ -136,6 +142,7 @@ public interface MessageDialogFacet extends Facet {
 
     /**
      * Sets dialog height.
+     *
      * @param height height
      */
     @StudioProperty(type = PropertyType.SIZE)
@@ -201,7 +208,7 @@ public interface MessageDialogFacet extends Facet {
      *
      * @param htmlSanitizerEnabled specifies whether html sanitizer is enabled
      */
-    @StudioProperty(type = PropertyType.BOOLEAN)
+    @StudioProperty(type = PropertyType.BOOLEAN, defaultValue = "true")
     void setHtmlSanitizerEnabled(boolean htmlSanitizerEnabled);
 
     /**

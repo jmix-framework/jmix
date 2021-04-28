@@ -32,9 +32,10 @@ import java.util.function.Consumer;
 @StudioFacet(
         xmlElement = "clipboardTrigger",
         caption = "ClipboardTrigger",
-        description = "Copies the text content of the input to the clipboard on button click.",
+        description = "Copies the text content of the input to the clipboard on button click",
         category = "Facets",
-        icon = "icon/clipboardTrigger.svg"
+        defaultProperty = "input",
+        icon = "io/jmix/ui/icon/facet/clipboardTrigger.svg"
 )
 public interface ClipboardTrigger extends Facet {
 
@@ -46,6 +47,7 @@ public interface ClipboardTrigger extends Facet {
     @StudioProperty(type = PropertyType.COMPONENT_REF,
             options = "io.jmix.ui.component.TextInputField")
     void setInput(@Nullable TextInputField<?> input);
+
     /**
      * @return input field
      */
@@ -60,6 +62,7 @@ public interface ClipboardTrigger extends Facet {
     @StudioProperty(type = PropertyType.COMPONENT_REF,
             options = "io.jmix.ui.component.Button")
     void setButton(@Nullable Button button);
+
     /**
      * @return button
      */

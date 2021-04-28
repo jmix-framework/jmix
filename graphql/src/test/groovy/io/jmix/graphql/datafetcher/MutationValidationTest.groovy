@@ -16,10 +16,6 @@
 
 package io.jmix.graphql.datafetcher
 
-import com.google.gson.JsonArray
-import com.google.gson.JsonObject
-import com.google.gson.JsonParser
-import com.graphql.spring.boot.test.GraphQLResponse
 import com.graphql.spring.boot.test.GraphQLTestTemplate
 import io.jmix.graphql.AbstractGraphQLTest
 import org.springframework.beans.factory.annotation.Autowired
@@ -59,17 +55,4 @@ class MutationValidationTest extends AbstractGraphQLTest {
         messages.get(0) == "manufacturerEmpty"
         messages.get(1) == "must match \"[a-zA-Z]{2}\\d{3}\""
     }
-
-    private static JsonObject getExtensions(JsonObject error) {
-        error.getAsJsonObject("extensions").getAsJsonObject()
-    }
-
-    private static String getMessage(JsonObject jsonObject) {
-        jsonObject.get("message").getAsString()
-    }
-
-    private static JsonArray getErrors(GraphQLResponse response) {
-        JsonParser.parseString(response.rawResponse.body).getAsJsonArray("errors")
-    }
-
 }

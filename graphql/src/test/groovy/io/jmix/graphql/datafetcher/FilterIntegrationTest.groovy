@@ -16,10 +16,7 @@
 
 package io.jmix.graphql.datafetcher
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.node.ObjectNode
 import io.jmix.graphql.AbstractGraphQLTest
-import io.jmix.graphql.schema.Types
 
 import static io.jmix.graphql.schema.Types.FilterOperation.*
 
@@ -703,36 +700,5 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
                 '{"id":"b1a1f3c9-6076-4725-8c4a-65a4267d15e1"},' +
                 '{"id":"db9faa31-dfa3-4b97-943c-ba268888cdc3"}' +
                 ']}}'
-    }
-
-    @SuppressWarnings('GroovyAssignabilityCheck')
-    private static ObjectNode getFilterVariables(String fieldName, Types.FilterOperation filterOperation, Object value) {
-        def variables = new ObjectMapper().createObjectNode()
-        def fieldForCondition = new ObjectMapper().createObjectNode()
-        def condition = new ObjectMapper().createObjectNode()
-
-        condition.put(filterOperation.getId(), value)
-        fieldForCondition.set(fieldName, condition)
-        variables.set("filter", fieldForCondition)
-
-        return variables
-    }
-
-    @SuppressWarnings('GroovyAssignabilityCheck')
-    private static ObjectNode getFilterVariablesWithArray(String fieldName,
-                                                          Types.FilterOperation filterOperation,
-                                                          Collection<?> value) {
-        def variables = new ObjectMapper().createObjectNode()
-        def fieldForCondition = new ObjectMapper().createObjectNode()
-        def condition = new ObjectMapper().createObjectNode()
-        def array = new ObjectMapper().createArrayNode()
-
-        value.forEach({ val -> array.add(val) })
-
-        condition.set(filterOperation.getId(), array)
-        fieldForCondition.set(fieldName, condition)
-        variables.set("filter", fieldForCondition)
-
-        return variables
     }
 }

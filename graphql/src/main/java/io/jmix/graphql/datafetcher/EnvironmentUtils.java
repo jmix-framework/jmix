@@ -16,6 +16,7 @@
 
 package io.jmix.graphql.datafetcher;
 
+import graphql.kickstart.servlet.context.DefaultGraphQLServletContext;
 import graphql.schema.DataFetchingEnvironment;
 import graphql.schema.DataFetchingFieldSelectionSet;
 import io.jmix.core.MetadataTools;
@@ -26,6 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -129,6 +131,15 @@ public class EnvironmentUtils {
             }
         });
         return result;
+    }
+
+    @Nullable
+    public static String getRemoteIPAddress(Object context) {
+        if (context instanceof DefaultGraphQLServletContext) {
+            DefaultGraphQLServletContext gqlContext = (DefaultGraphQLServletContext) context;
+            return gqlContext.getHttpServletRequest().getRemoteAddr();
+        }
+        return null;
     }
 
 }

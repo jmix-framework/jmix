@@ -18,12 +18,16 @@ package io.jmix.graphql
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
+import com.google.gson.JsonArray
+import com.google.gson.JsonObject
+import com.google.gson.JsonParser
 import com.graphql.spring.boot.test.GraphQLResponse
 import com.graphql.spring.boot.test.GraphQLTestAutoConfiguration
 import com.graphql.spring.boot.test.GraphQLTestTemplate
 import io.jmix.core.CoreConfiguration
 import io.jmix.data.DataConfiguration
 import io.jmix.eclipselink.EclipselinkConfiguration
+import io.jmix.graphql.schema.Types
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration
@@ -76,5 +80,46 @@ class AbstractGraphQLTest extends Specification {
         return response.rawResponse.body
     }
 
+    @SuppressWarnings('GroovyAssignabilityCheck')
+    static ObjectNode getFilterVariables(String fieldName, Types.FilterOperation filterOperation, Object value) {
+        def variables = new ObjectMapper().createObjectNode()
+        def fieldForCondition = new ObjectMapper().createObjectNode()
+        def condition = new ObjectMapper().createObjectNode()
 
+        condition.put(filterOperation.getId(), value)
+        fieldForCondition.set(fieldName, condition)
+        variables.set("filter", fieldForCondition)
+
+        return variables
+    }
+
+    @SuppressWarnings('GroovyAssignabilityCheck')
+    static ObjectNode getFilterVariablesWithArray(String fieldName,
+                                                          Types.FilterOperation filterOperation,
+                                                          Collection<?> value) {
+        def variables = new ObjectMapper().createObjectNode()
+        def fieldForCondition = new ObjectMapper().createObjectNode()
+        def condition = new ObjectMapper().createObjectNode()
+        def array = new ObjectMapper().createArrayNode()
+
+        value.forEach({ val -> array.add(val) })
+
+        condition.set(filterOperation.getId(), array)
+        fieldForCondition.set(fieldName, condition)
+        variables.set("filter", fieldForCondition)
+
+        return variables
+    }
+
+    static JsonObject getExtensions(JsonObject error) {
+        error.getAsJsonObject("extensions").getAsJsonObject()
+    }
+
+    static String getMessage(JsonObject jsonObject) {
+        jsonObject.get("message").getAsString()
+    }
+
+    static JsonArray getErrors(GraphQLResponse response) {
+        JsonParser.parseString(response.rawResponse.body).getAsJsonArray("errors")
+    }
 }

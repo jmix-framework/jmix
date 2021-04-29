@@ -21,7 +21,7 @@
     <dialogMode width="400"/>
 
     <layout spacing="true" stylename="c-report-upload">
-        <hbox id="dropZone" width="100%" height="150px" stylename="dropzone-container" visible="false">
+        <hbox id="dropZone" width="100%" height="150px" stylename="dropzone-container">
             <label stylename="dropzone-description" value="msg://uploadDescription" align="MIDDLE_CENTER"/>
         </hbox>
         <hbox spacing="true">

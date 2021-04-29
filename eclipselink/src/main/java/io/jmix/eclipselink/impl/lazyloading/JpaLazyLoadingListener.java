@@ -48,7 +48,7 @@ public class JpaLazyLoadingListener implements DataStoreEventListener {
     @Autowired
     protected EntityStates entityStates;
     @Autowired
-    protected DataManager dataManager;
+    protected UnsafeDataManager dataManager;
     @Autowired
     protected BeanFactory beanFactory;
     @Autowired

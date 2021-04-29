@@ -328,7 +328,7 @@ public class ReportTemplate implements com.haulmont.yarg.structure.ReportTemplat
     }
 
     @InstanceName
-    @DependsOnProperties({"code", "name", "customDefinition"})
+    @DependsOnProperties({"code", "name", "customDefinition", "custom"})
     public String getCaption() {
         if (isCustom()) {
             return String.format(NAME_FORMAT, this.code, this.customDefinition);

@@ -942,7 +942,7 @@ public class Param {
     protected CollectionLoader<Entity> createEntityOptionsLoader(MetaClass metaClass) {
         CollectionLoader<Entity> dataLoader = dataComponents.createCollectionLoader();
 
-        dataLoader.setView(entityView);
+        dataLoader.setFetchPlan(entityView);
 
         String query = String.format("select e from %s e", metaClass.getName());
         if (!Strings.isNullOrEmpty(entityWhere)) {

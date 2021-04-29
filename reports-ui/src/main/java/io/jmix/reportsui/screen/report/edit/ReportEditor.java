@@ -40,6 +40,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import javax.inject.Named;
 import java.util.Collection;
 import java.util.HashSet;
@@ -130,6 +131,9 @@ public class ReportEditor extends StandardEditor<Report> {
     @Autowired
     protected GeneralFragment generalFragment;
 
+    @Autowired
+    private ScreenValidation screenValidation;
+
     @Subscribe
     protected void initNewItem(InitEntityEvent<Report> event) {
         Report report = event.getEntity();
@@ -196,24 +200,33 @@ public class ReportEditor extends StandardEditor<Report> {
 
     @Subscribe("run")
     protected void onRunClick(Button.ClickEvent event) {
-        if (getWindow().validateAll() && validateInputOutputFormats()) {
-            getEditedEntity().setIsTmp(true);
-            Map<String, Object> params = ParamsMap.of("report", getEditedEntity());
+        ValidationErrors errors = new ValidationErrors();
+        validateBands(errors);
+        if (errors.isEmpty()) {
+            if (validateInputOutputFormats()) {
+                getEditedEntity().setIsTmp(true);
+                Map<String, Object> params = ParamsMap.of("report", getEditedEntity());
 
-            Screen screen = screenBuilders.screen(getWindow().getFrameOwner())
-                    .withScreenClass(InputParametersDialog.class)
-                    .withOpenMode(OpenMode.DIALOG)
-                    .withOptions(new MapScreenOptions(params))
-                    .build();
-            screen.addAfterCloseListener(e -> bandTree.focus());
-            screen.show();
+                Screen screen = screenBuilders.screen(getWindow().getFrameOwner())
+                        .withScreenClass(InputParametersDialog.class)
+                        .withOpenMode(OpenMode.DIALOG)
+                        .withOptions(new MapScreenOptions(params))
+                        .build();
+                screen.addAfterCloseListener(e -> bandTree.focus());
+                screen.show();
+            }
+        } else {
+            screenValidation.showValidationErrors(this, errors);
         }
     }
 
 
     @Subscribe
     protected void onValidation(ValidationEvent event) {
-        ValidationErrors validationErrors = new ValidationErrors();
+        validateBands(event.getErrors());
+    }
+
+    protected void validateBands(ValidationErrors validationErrors) {
         if (getEditedEntity().getRootBand() == null) {
             validationErrors.add(messages.getMessage(getClass(), "error.rootBandNull"));
         }

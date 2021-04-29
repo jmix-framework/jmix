@@ -348,10 +348,6 @@ public class InputDialog extends Screen {
         }
 
         if (datatype == null) {
-            Field field = createFieldByClass(parameter.getDatatypeJavaClass());
-            if (field != null) {
-                return field;
-            }
             datatype = datatypeRegistry.get(String.class);
         }
 
@@ -394,7 +390,9 @@ public class InputDialog extends Screen {
 
     protected Field createEntityField(InputParameter parameter) {
         MetaClass metaClass = metadata.getClass(parameter.getEntityClass());
-        return entityFieldCreationSupport.createEntityField(metaClass, null);
+        Field field = entityFieldCreationSupport.createEntityField(metaClass, null);
+        field.setWidthFull();
+        return field;
     }
 
     @SuppressWarnings("unchecked")
@@ -403,12 +401,6 @@ public class InputDialog extends Screen {
         comboBox.setOptionsEnum(parameter.getEnumClass());
         comboBox.setWidthFull();
         return comboBox;
-    }
-
-    @SuppressWarnings("unchecked")
-    @Nullable
-    protected Field createFieldByClass(@Nullable Class datatypeJavaClass) {
-        return null;
     }
 
     protected void initActions(List<Action> actions) {

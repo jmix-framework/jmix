@@ -113,6 +113,7 @@ public class InputParameter {
     /**
      * @return field Datatype
      */
+    @Nullable
     public Datatype getDatatype() {
         return datatype;
     }
@@ -140,6 +141,7 @@ public class InputParameter {
         return this;
     }
 
+    @Nullable
     protected Class getDatatypeJavaClass() {
         return datatypeJavaClass;
     }
@@ -187,6 +189,7 @@ public class InputParameter {
     /**
      * @return entity class
      */
+    @Nullable
     public Class<?> getEntityClass() {
         return entityClass;
     }
@@ -210,6 +213,7 @@ public class InputParameter {
     /**
      * @return enum class
      */
+    @Nullable
     public Class<? extends EnumClass> getEnumClass() {
         return enumClass;
     }

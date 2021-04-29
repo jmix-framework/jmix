@@ -17,7 +17,6 @@
 package io.jmix.reports;
 
 import io.jmix.core.*;
-import io.jmix.core.annotation.Secure;
 import io.jmix.core.common.util.StringHelper;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.reports.app.ParameterPrototype;
@@ -33,7 +32,6 @@ public class PrototypesLoader {
     @Autowired
     protected FetchPlanRepository fetchPlanRepository;
 
-    @Secure
     @Autowired
     protected DataManager dataManager;
 

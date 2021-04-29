@@ -20,7 +20,6 @@ import io.jmix.core.DataManager;
 import io.jmix.core.Sort;
 import io.jmix.core.Stores;
 import io.jmix.core.ValueLoadContext;
-import io.jmix.core.annotation.Secure;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.entity.KeyValueEntity;
@@ -41,7 +40,6 @@ import java.util.function.Function;
 public class KeyValueCollectionLoaderImpl implements KeyValueCollectionLoader {
 
     @Autowired
-    @Secure
     protected DataManager dataManager;
 
     @Autowired

@@ -17,7 +17,6 @@
 package io.jmix.ui.model.impl;
 
 import io.jmix.core.*;
-import io.jmix.core.annotation.Secure;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.querycondition.Condition;
@@ -36,7 +35,6 @@ import java.util.function.Function;
 public class CollectionLoaderImpl<E> implements CollectionLoader<E> {
 
     @Autowired
-    @Secure
     protected DataManager dataManager;
 
     @Autowired

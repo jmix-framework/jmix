@@ -18,7 +18,6 @@ package io.jmix.ui.model.impl;
 
 import com.google.common.collect.Sets;
 import io.jmix.core.*;
-import io.jmix.core.annotation.Secure;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.entity.*;
@@ -61,7 +60,6 @@ public class DataContextImpl implements DataContext {
     protected EntityStates entityStates;
 
     @Autowired
-    @Secure
     protected DataManager dataManager;
 
     @Autowired

@@ -24,6 +24,7 @@ dependencies {
     api platform("io.jmix.bom:jmix-bom:$bomVersion")
 
     api 'io.jmix.core:jmix-core'
+    compileOnly 'io.jmix.security:jmix-security'
 
     api 'org.springframework.security:spring-security-core'
     api 'org.springframework.security:spring-security-config'

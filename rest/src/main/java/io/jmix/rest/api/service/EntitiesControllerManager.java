@@ -21,7 +21,6 @@ import com.google.common.base.Strings;
 import com.google.gson.*;
 import io.jmix.core.*;
 import io.jmix.core.accesscontext.CrudEntityContext;
-import io.jmix.core.annotation.Secure;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.impl.importexport.EntityImportException;
@@ -62,7 +61,6 @@ import static io.jmix.core.EntitySerializationOption.*;
 public class EntitiesControllerManager {
 
     @Autowired
-    @Secure
     protected DataManager dataManager;
 
     @Autowired

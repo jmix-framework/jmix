@@ -22,7 +22,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import io.jmix.core.*;
 import io.jmix.core.accesscontext.CrudEntityContext;
-import io.jmix.core.annotation.Secure;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.datatype.impl.EnumClass;
@@ -54,7 +53,6 @@ public class QueriesControllerManager {
     protected RestQueriesConfiguration restQueriesConfiguration;
 
     @Autowired
-    @Secure
     protected DataManager dataManager;
 
     @Autowired

@@ -20,6 +20,7 @@ import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportImportOption;
 import io.jmix.reports.entity.ReportImportResult;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.EnumSet;
 
@@ -32,4 +33,6 @@ public interface ReportImportExport {
     Collection<Report> importReports(byte[] zipBytes, EnumSet<ReportImportOption> importOptions);
 
     ReportImportResult importReportsWithResult(byte[] zipBytes, EnumSet<ReportImportOption> importOptions);
+
+    Collection<Report> importReportsFromPath(String path) throws IOException;
 }

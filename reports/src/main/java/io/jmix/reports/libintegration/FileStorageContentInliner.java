@@ -18,7 +18,10 @@ package io.jmix.reports.libintegration;
 
 import com.haulmont.yarg.exception.ReportFormattingException;
 import com.haulmont.yarg.formatters.impl.inline.AbstractInliner;
-import io.jmix.core.*;
+import io.jmix.core.DataManager;
+import io.jmix.core.FileRef;
+import io.jmix.core.FileStorageLocator;
+import io.jmix.core.Metadata;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -39,8 +42,6 @@ public class FileStorageContentInliner extends AbstractInliner {
     @Autowired
     protected FileStorageLocator fileStorageLocator;
 
-    protected FileStorage fileStorage;
-
     public FileStorageContentInliner() {
         tagPattern = Pattern.compile(REGULAR_EXPRESSION, Pattern.CASE_INSENSITIVE);
     }
@@ -53,24 +54,28 @@ public class FileStorageContentInliner extends AbstractInliner {
     @Override
     protected byte[] getContent(Object paramValue) {
         try {
-            //todo image format
-            FileRef fileRef = null;
-//            if (paramValue instanceof FileDescriptor) {
-//                file = dataManager.load(new LoadContext(metadata.getClass(FileDescriptor.class)).setId(((FileDescriptor) paramValue).getId()));
-//            } else {
-//                file = dataManager.load(new LoadContext(metadata.getClass(FileDescriptor.class)).setId(UuidProvider.fromString(paramValue.toString())));
-//            }
-            byte[] bytes = IOUtils.toByteArray(getFileStorage().openStream(fileRef));
-            return bytes;
+            FileRef fileRef;
+            if (paramValue instanceof FileRef) {
+                fileRef = (FileRef) paramValue;
+            } else {
+                fileRef = getFileRef((String) paramValue);
+            }
+
+            if (fileRef != null) {
+                return IOUtils.toByteArray(fileStorageLocator.getByName(fileRef.getStorageName()).openStream(fileRef));
+            }
+
         } catch (IOException e) {
             throw new ReportFormattingException(String.format("Unable to get image from file storage. File id [%s]", paramValue), e);
         }
+        return new byte[0];
     }
 
-    protected FileStorage getFileStorage() {
-        if (fileStorage == null) {
-            fileStorage = fileStorageLocator.getDefault();
+    protected FileRef getFileRef(String uri) {
+        try {
+            return FileRef.fromString(uri);
+        } catch (IllegalArgumentException e) {
+            return null;
         }
-        return fileStorage;
     }
 }

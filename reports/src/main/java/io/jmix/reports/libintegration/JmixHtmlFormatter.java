@@ -60,7 +60,6 @@ public class JmixHtmlFormatter extends HtmlFormatter {
     //todo
     protected static final String JMIX_FONTS_DIR = "/jmix/fonts";
 
-    public static final String FS_PROTOCOL_PREFIX = "fs://";
     public static final String WEB_APP_PREFIX = "web://";
     public static final String CORE_APP_PREFIX = "core://";
 
@@ -78,8 +77,6 @@ public class JmixHtmlFormatter extends HtmlFormatter {
     protected Metadata metadata;
     @Autowired
     protected FileStorageLocator fileStorageLocator;
-
-    protected FileStorage fileStorage;
 
     public JmixHtmlFormatter(FormatterFactoryInput formatterFactoryInput) {
         super(formatterFactoryInput);
@@ -170,7 +167,8 @@ public class JmixHtmlFormatter extends HtmlFormatter {
 
         @Override
         public ImageResource getImageResource(String uri) {
-            if (StringUtils.startsWith(uri, FS_PROTOCOL_PREFIX)) {
+            FileRef fileRef = getFileRef(uri);
+            if (fileRef != null) {
                 ImageResource resource;
                 resource = (ImageResource) _imageCache.get(uri);
                 if (resource == null) {
@@ -227,36 +225,27 @@ public class JmixHtmlFormatter extends HtmlFormatter {
 
         @Override
         protected InputStream resolveAndOpenStream(String uri) {
-            if (StringUtils.startsWith(uri, FS_PROTOCOL_PREFIX)) {
-                //todo path to file
-                String uuidString = StringUtils.substring(uri, FS_PROTOCOL_PREFIX.length());
-
-                UUID id = UUID.fromString(uuidString);
-//                URI uriFile = temporaryStorage.getFile(id).toURI();
-
-//                LoadContext<FileDescriptor> loadContext = new LoadContext(metadata.getClass(FileDescriptor.class));
-//                loadContext.setFetchPlan(fetchPlanRepository.getFetchPlan(FileDescriptor.class, FetchPlan.LOCAL));
-//
-//                UUID id = UUID.fromString(uuidString);
-//                loadContext.setId(id);
-//
-//                FileDescriptor fd = dataManager.load(loadContext);
-//                if (fd == null) {
-//                    throw new ReportFormattingException(
-//                            format("File with id [%s] has not been found in file storage", id));
-//                }
-
+            FileRef fileRef = getFileRef(uri);
+            if (fileRef != null) {
                 try {
-                    return getFileStorage().openStream(null);
+                    return fileStorageLocator.getByName(fileRef.getStorageName()).openStream(fileRef);
                 } catch (FileStorageException e) {
                     throw wrapWithReportingException(
-                            format("An error occurred while loading file with id [%s] from file storage", id), e);
+                            format("An error occurred while loading file with URI [%s] from file storage", uri), e);
                 }
             } else if (StringUtils.startsWith(uri, WEB_APP_PREFIX) || StringUtils.startsWith(uri, CORE_APP_PREFIX)) {
                 String resolvedUri = resolveServerPrefix(uri);
                 return getInputStream(resolvedUri);
             } else {
                 return getInputStream(uri);
+            }
+        }
+
+        protected FileRef getFileRef(String uri) {
+            try {
+                return FileRef.fromString(uri);
+            } catch (IllegalArgumentException e) {
+                return null;
             }
         }
 
@@ -368,12 +357,5 @@ public class JmixHtmlFormatter extends HtmlFormatter {
 
     protected void throwIncorrectArgType(String methodName, int argIdx, String type) throws TemplateModelException {
         throw new TemplateModelException(String.format("Incorrect argument[%s] type for method %s. Expected type %s", argIdx, methodName, type));
-    }
-
-    protected FileStorage getFileStorage() {
-        if (fileStorage == null) {
-            fileStorage = fileStorageLocator.getDefault();
-        }
-        return fileStorage;
     }
 }

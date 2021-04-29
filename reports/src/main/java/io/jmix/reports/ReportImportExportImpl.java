@@ -34,13 +34,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.zip.CRC32;
 
 @Component("report_ReportImportExport")
-public class ReportImportExportImpl implements ReportImportExport, ReportImportExportMBean {
+public class ReportImportExportImpl implements ReportImportExport {
     public static final String ENCODING = "CP866";
 
     private static final Logger log = LoggerFactory.getLogger(ReportImportExportImpl.class);
@@ -112,7 +115,7 @@ public class ReportImportExportImpl implements ReportImportExport, ReportImportE
 
 
     /**
-     * Deploys report from folder
+     * Import all reports from the specified folder.
      * Folder should have the following structure, in other cases RuntimeException will be thrown
      * <p>
      * folder
@@ -124,13 +127,11 @@ public class ReportImportExportImpl implements ReportImportExport, ReportImportE
      * template.docx
      *
      * @param path to folder with reports
-     * @return status
+     * @return collection of imported reports
      * @throws IOException
      */
     @Override
-    //TODO Auth annotation
-//    @Authenticated
-    public String deployAllReportsFromPath(String path) throws IOException {
+    public Collection<Report> importReportsFromPath(String path) throws IOException {
         File directory = new File(path);
         if (directory.exists() && directory.isDirectory()) {
             File[] subDirectories = directory.listFiles();
@@ -151,12 +152,11 @@ public class ReportImportExportImpl implements ReportImportExport, ReportImportE
                         throw new ReportingException("Report deployment failed. Root folder should have special structure.");
                     }
                 }
-                importReports(zipContent(map));
-                return String.format("%d reports deployed", map.size());
+                return importReports(zipContent(map));
             }
         }
 
-        return "No reports deployed.";
+        return Collections.emptyList();
     }
 
     /**
@@ -239,7 +239,7 @@ public class ReportImportExportImpl implements ReportImportExport, ReportImportE
     }
 
     protected Report fromByteArray(byte[] zipBytes) throws IOException {
-        Report report = null; // TODO Probably should be empty but not null
+        Report report = null;
 
         try (ZipArchiveInputStream archiveReader = new ZipArchiveInputStream(new ByteArrayInputStream(zipBytes))) {
             ZipArchiveEntry archiveEntry;

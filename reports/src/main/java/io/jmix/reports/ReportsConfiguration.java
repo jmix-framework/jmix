@@ -18,6 +18,7 @@ import io.jmix.reports.libintegration.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.*;
 
 import javax.sql.DataSource;
@@ -41,12 +42,52 @@ public class ReportsConfiguration {
     @Autowired
     protected CoreProperties coreProperties;
 
-    @Autowired
-    protected Reports reports;
-
     @Bean("report_Scripting")
     public Scripting scripting() {
         return new JmixReportingScripting();
+    }
+
+    @Bean("report_Reporting")
+    public JmixReporting reporting(ReportLoaderFactory loaderFactory,
+                                   JmixFormatterFactory formatterFactory,
+                                   JmixDataExtractor dataExtractor,
+                                   JmixObjectToStringConverter converter,
+                                   Scripting scripting,
+                                   Reports reports) {
+        JmixReporting jmixReporting = new JmixReporting();
+        jmixReporting.setLoaderFactory(loaderFactory);
+        jmixReporting.setFormatterFactory(formatterFactory);
+        jmixReporting.setDataExtractor(dataExtractor);
+        jmixReporting.setObjectToStringConverter(converter);
+        jmixReporting.setScripting(scripting);
+        jmixReporting.setReports(reports);
+        return jmixReporting;
+    }
+
+    @Bean("report_LoaderFactory")
+    public ReportLoaderFactory loaderFactory(JmixSqlDataLoader sqlDataLoader,
+                                             JmixGroovyDataLoader groovyDataLoader,
+                                             JpqlDataLoader jpqlDataLoader,
+                                             JmixJsonDataLoader jsonDataLoader,
+                                             SingleEntityDataLoader singleEntityDataLoader,
+                                             MultiEntityDataLoader multiEntityDataLoader) {
+        DefaultLoaderFactory loaderFactory = new DefaultLoaderFactory();
+        Map<String, ReportDataLoader> dataLoaders = new HashMap<>();
+        dataLoaders.put("sql", sqlDataLoader);
+        dataLoaders.put("groovy", groovyDataLoader);
+        dataLoaders.put("jpql", jpqlDataLoader);
+        dataLoaders.put("json", jsonDataLoader);
+        dataLoaders.put("single", singleEntityDataLoader);
+        dataLoaders.put("multi", multiEntityDataLoader);
+        loaderFactory.setDataLoaders(dataLoaders);
+        return loaderFactory;
+    }
+
+    @Bean("report_SqlDataLoader")
+    public JmixSqlDataLoader sqlDataLoader(SqlParametersConverter converter) {
+        JmixSqlDataLoader sqlDataLoader = new JmixSqlDataLoader(dataSource);
+        sqlDataLoader.setParametersConverter(converter);
+        return sqlDataLoader;
     }
 
     @Bean("report_SqlParametersConverter")
@@ -54,33 +95,26 @@ public class ReportsConfiguration {
         return new SqlParametersConverter();
     }
 
+    @Bean("report_GroovyDataLoader")
+    public JmixGroovyDataLoader groovyDataLoader(Scripting scripting) {
+        return new JmixGroovyDataLoader(scripting);
+    }
+
+    @Bean("report_JpqlDataLoader")
+    public JpqlDataLoader jpqlDataLoader(JpqlParametersConverter converter) {
+        JpqlDataLoader jpqlDataLoader = new JpqlDataLoader();
+        jpqlDataLoader.setParametersConverter(converter);
+        return jpqlDataLoader;
+    }
+
     @Bean("report_JpqlParametersConverter")
     public JpqlParametersConverter jpqlParametersConverter() {
         return new JpqlParametersConverter();
     }
 
-    @Bean("report_GroovyDataLoader")
-    public JmixGroovyDataLoader groovyDataLoader() {
-        return new JmixGroovyDataLoader(scripting());
-    }
-
     @Bean("report_JsonDataLoader")
-    public JmixJsonDataLoader jsonDataLoader() {
-        return new JmixJsonDataLoader(scripting());
-    }
-
-    @Bean("report_SqlDataLoader")
-    public ReportDataLoader sqlDataLoader() {
-        JmixSqlDataLoader sqlDataLoader = new JmixSqlDataLoader(dataSource);
-        sqlDataLoader.setParametersConverter(sqlParametersConverter());
-        return sqlDataLoader;
-    }
-
-    @Bean("report_JpqlDataLoader")
-    public JpqlDataLoader jpqlDataLoader() {
-        JpqlDataLoader jpqlDataLoader = new JpqlDataLoader();
-        jpqlDataLoader.setParametersConverter(jpqlParametersConverter());
-        return jpqlDataLoader;
+    public JmixJsonDataLoader jsonDataLoader(Scripting scripting) {
+        return new JmixJsonDataLoader(scripting);
     }
 
     @Bean("report_SingleEntityDataLoader")
@@ -93,6 +127,30 @@ public class ReportsConfiguration {
         return new MultiEntityDataLoader();
     }
 
+    @Bean("report_FormatterFactory")
+    public JmixFormatterFactory formatterFactory(JmixInlinersProvider inlinersProvider,
+                                                 JmixFieldFormatProvider fieldFormatProvider,
+                                                 Scripting scripting,
+                                                 JmixOfficeIntegration officeIntegration) {
+        JmixFormatterFactory formatterFactory = new JmixFormatterFactory();
+        formatterFactory.setUseOfficeForDocumentConversion(reportsProperties.isUseOfficeForDocumentConversion());
+        formatterFactory.setInlinersProvider(inlinersProvider);
+        formatterFactory.setDefaultFormatProvider(fieldFormatProvider);
+        formatterFactory.setOfficeIntegration(officeIntegration);
+        formatterFactory.setScripting(scripting);
+        return formatterFactory;
+    }
+
+    @Bean("report_InlinersProvider")
+    public JmixInlinersProvider inlinersProvider(FileStorageContentInliner fileStorageContentInliner) {
+        return new JmixInlinersProvider(fileStorageContentInliner);
+    }
+
+    @Bean("report_FieldFormatProvider")
+    public JmixFieldFormatProvider fieldFormatProvider() {
+        return new JmixFieldFormatProvider();
+    }
+
     @Bean("report_OfficeIntegration")
     public JmixOfficeIntegration officeIntegration() {
         JmixOfficeIntegration officeIntegration = new JmixOfficeIntegration(reportsProperties.getOfficePath(), reportsProperties.getOfficePorts());
@@ -103,39 +161,45 @@ public class ReportsConfiguration {
         return officeIntegration;
     }
 
-    @Bean("report_JmixFieldFormatProvider")
-    public JmixFieldFormatProvider fieldFormatProvider() {
-        return new JmixFieldFormatProvider();
+    @Bean("report_DataExtractor")
+    public JmixDataExtractor dataExtractor(ReportLoaderFactory loaderFactory,
+                                           DefaultExtractionControllerFactory extractionControllerFactory) {
+        JmixDataExtractor jmixDataExtractor = new JmixDataExtractor(loaderFactory);
+        jmixDataExtractor.setExtractionControllerFactory(extractionControllerFactory);
+        return jmixDataExtractor;
     }
 
-    @Bean("report_InlinersProvider")
-    public JmixInlinersProvider inlinersProvider() {
-        return new JmixInlinersProvider();
+    @Bean("report_ExtractionControllerFactory")
+    public DefaultExtractionControllerFactory extractionControllerFactory(ReportLoaderFactory loaderFactory,
+                                                                          ApplicationContext applicationContext,
+                                                                          DefaultPreprocessorFactory defaultPreprocessorFactory) {
+        DefaultExtractionControllerFactory extractionControllerFactory = new DefaultExtractionControllerFactory(loaderFactory);
+        Map<BandOrientation, ExtractionController> extractionControllers = new HashMap<>();
+        extractionControllers.put(BandOrientation.CROSS, applicationContext.getBean(CrossTabExtractionController.class, extractionControllerFactory,
+                loaderFactory, defaultPreprocessorFactory));
+        extractionControllerFactory.setExtractionControllers(extractionControllers);
+        return extractionControllerFactory;
     }
 
-    @Bean("report_FormatterFactory")
-    public JmixFormatterFactory formatterFactory() {
-        JmixFormatterFactory formatterFactory = new JmixFormatterFactory();
-        formatterFactory.setUseOfficeForDocumentConversion(reportsProperties.isUseOfficeForDocumentConversion());
-        formatterFactory.setInlinersProvider(inlinersProvider());
-        formatterFactory.setDefaultFormatProvider(fieldFormatProvider());
-        formatterFactory.setOfficeIntegration(officeIntegration());
-        formatterFactory.setScripting(scripting());
-        return formatterFactory;
+    @Bean("report_CrossTabExtractionController")
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
+    public CrossTabExtractionController crossTabExtractionController(DefaultExtractionControllerFactory extractionControllerFactory,
+                                                                     ReportLoaderFactory loaderFactory,
+                                                                     DefaultPreprocessorFactory defaultPreprocessorFactory) {
+        CrossTabExtractionController extractionController = new CrossTabExtractionController(extractionControllerFactory, loaderFactory);
+        extractionController.setPreprocessorFactory(defaultPreprocessorFactory);
+        return extractionController;
     }
 
-    @Bean("report_LoaderFactory")
-    public ReportLoaderFactory loaderFactory() {
-        DefaultLoaderFactory loaderFactory = new DefaultLoaderFactory();
-        Map<String, ReportDataLoader> dataLoaders = new HashMap<>();
-        dataLoaders.put("sql", sqlDataLoader());
-        dataLoaders.put("groovy", groovyDataLoader());
-        dataLoaders.put("jpql", jpqlDataLoader());
-        dataLoaders.put("json", jsonDataLoader());
-        dataLoaders.put("single", singleEntityDataLoader());
-        dataLoaders.put("multi", multiEntityDataLoader());
-        loaderFactory.setDataLoaders(dataLoaders);
-        return loaderFactory;
+    @Bean("report_PreprocessorFactory")
+    public DefaultPreprocessorFactory preprocessorFactory(SqlCrosstabPreprocessor sqlCrosstabPreprocessor,
+                                                          SqlCrosstabPreprocessor jpqlCrosstabPreprocessor) {
+        DefaultPreprocessorFactory preprocessorFactory = new DefaultPreprocessorFactory();
+        Map<String, QueryLoaderPreprocessor> preprocessors = new HashMap<>();
+        preprocessors.put("sql", sqlCrosstabPreprocessor);
+        preprocessors.put("jpql", jpqlCrosstabPreprocessor);
+        preprocessorFactory.setPreprocessors(preprocessors);
+        return preprocessorFactory;
     }
 
     @Bean("report_SqlQueryLoaderPreprocessor")
@@ -144,73 +208,9 @@ public class ReportsConfiguration {
         return new SqlCrosstabPreprocessor();
     }
 
-    @Bean("report_PreprocessorFactory")
-    public DefaultPreprocessorFactory preprocessorFactory() {
-        DefaultPreprocessorFactory preprocessorFactory = new DefaultPreprocessorFactory();
-        Map<String, QueryLoaderPreprocessor> preprocessors = new HashMap<>();
-        preprocessors.put("sql", sqlCrosstabPreprocessor());
-        preprocessors.put("jpql", sqlCrosstabPreprocessor());
-        preprocessorFactory.setPreprocessors(preprocessors);
-        return preprocessorFactory;
-    }
-
-    @Bean("report_ExtractionControllerFactory")
-    public DefaultExtractionControllerFactory extractionControllerFactory() {
-        DefaultExtractionControllerFactory extractionControllerFactory = new DefaultExtractionControllerFactory(loaderFactory());
-        Map<BandOrientation, ExtractionController> extractionControllers = new HashMap<>();
-        extractionControllers.put(BandOrientation.CROSS, crossTabExtractionController(extractionControllerFactory));
-        extractionControllerFactory.setExtractionControllers(extractionControllers);
-        return extractionControllerFactory;
-    }
-
-    @Bean("report_CrossTabExtractionController")
-    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-    public CrossTabExtractionController crossTabExtractionController(DefaultExtractionControllerFactory extractionControllerFactory) {
-        CrossTabExtractionController extractionController = new CrossTabExtractionController(extractionControllerFactory, loaderFactory());
-        extractionController.setPreprocessorFactory(preprocessorFactory());
-        return extractionController;
-    }
-
-    @Bean("report_DataExtractor")
-    public JmixDataExtractor dataExtractor() {
-        JmixDataExtractor jmixDataExtractor = new JmixDataExtractor(loaderFactory());
-        jmixDataExtractor.setExtractionControllerFactory(extractionControllerFactory());
-        return jmixDataExtractor;
-    }
 
     @Bean("report_StringConverter")
     public JmixObjectToStringConverter objectToStringConverter() {
         return new JmixObjectToStringConverter();
     }
-
-    @Bean("report_Reporting")
-    public JmixReporting reporting() {
-        JmixReporting jmixReporting = new JmixReporting();
-        jmixReporting.setLoaderFactory(loaderFactory());
-        jmixReporting.setFormatterFactory(formatterFactory());
-        jmixReporting.setDataExtractor(dataExtractor());
-        jmixReporting.setObjectToStringConverter(objectToStringConverter());
-        jmixReporting.setScripting(scripting());
-        jmixReporting.setReports(reports);
-        return jmixReporting;
-    }
-
-
-    //TODO ReportExceptionHandler
-
-    //TODO create JMX beans
-//    <!-- MBeans registration -->
-//    <bean id="reports_MBeanExporter" class="com.haulmont.cuba.core.sys.jmx.MBeanExporter" lazy-init="false">
-//        <property name="beans">
-//            <map>
-//                <entry key="${cuba.webContextName}.reports:type=CubaOfficeIntegration"
-//    value-ref="reporting_lib_OfficeIntegration"/>
-//                <entry key="${cuba.webContextName}.reports:type=ReportImportExport"
-//    value="reporting_ReportImportExport"/>
-//                <entry key="${cuba.webContextName}.reports:type=ReportingMigrator"
-//    value="reporting_ReportingMigrator"/>
-//            </map>
-//        </property>
-//    </bean>
-
 }

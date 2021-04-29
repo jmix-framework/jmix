@@ -17,11 +17,14 @@
 package io.jmix.reports.libintegration;
 
 import com.haulmont.yarg.formatters.factory.inline.DefaultInlinersProvider;
+import com.haulmont.yarg.formatters.impl.inline.ContentInliner;
 
 public class JmixInlinersProvider extends DefaultInlinersProvider {
 
-    public JmixInlinersProvider() {
+    public JmixInlinersProvider(ContentInliner... inliners) {
         super();
-        addInliner(new FileStorageContentInliner());
+        for (ContentInliner inliner : inliners) {
+            addInliner(inliner);
+        }
     }
 }

@@ -29,7 +29,7 @@ import javax.annotation.PreDestroy;
 import java.util.List;
 import java.util.concurrent.*;
 
-public class JmixOfficeIntegration extends OfficeIntegration implements JmixOfficeIntegrationMBean {
+public class JmixOfficeIntegration extends OfficeIntegration {
 
     public JmixOfficeIntegration(String openOfficePath, Integer... ports) {
         super(openOfficePath, ports);

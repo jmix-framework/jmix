@@ -40,7 +40,6 @@ public class CoreProperties {
     String dbDir;
     String defaultFileStorage;
     private String anonymousAuthenticationTokenKey;
-    private boolean dataManagerAlwaysAppliesRowLevelConstraints;
     Map<String, Locale> availableLocales;
     boolean localeSelectVisible;
     int crossDataStoreReferenceLoadingBatchSize;
@@ -71,8 +70,7 @@ public class CoreProperties {
             @DefaultValue("KEY")
                     String entitySerializationTokenEncryptionKey,
             @DefaultValue("false")
-                    boolean fetchPlanSerializationUseView,
-            boolean dataManagerAlwaysAppliesRowLevelConstraints) {
+                    boolean fetchPlanSerializationUseView) {
         this.webHostName = webHostName;
         this.webPort = webPort;
         this.confDir = confDir;
@@ -81,7 +79,6 @@ public class CoreProperties {
         this.dbDir = dbDir;
         this.defaultFileStorage = defaultFileStorage;
         this.anonymousAuthenticationTokenKey = anonymousAuthenticationTokenKey;
-        this.dataManagerAlwaysAppliesRowLevelConstraints = dataManagerAlwaysAppliesRowLevelConstraints;
 
         if (availableLocales == null) {
             this.availableLocales = Collections.singletonMap("English", Locale.ENGLISH);

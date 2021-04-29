@@ -19,7 +19,6 @@ package io.jmix.core.impl;
 import io.jmix.core.*;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.constraint.AccessConstraint;
-import io.jmix.core.constraint.RowLevelConstraint;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -82,7 +81,7 @@ public class DataManagerImpl implements DataManager {
         MetaClass metaClass = getEffectiveMetaClassFromContext(context);
         DataStore storage = dataStoreFactory.get(getStoreName(metaClass));
 
-        prepareLoadContext(context);
+        context.setAccessConstraints(mergeConstraints(context.getAccessConstraints()));
 
         @SuppressWarnings("unchecked")
         E entity = (E) storage.load(context);
@@ -97,7 +96,7 @@ public class DataManagerImpl implements DataManager {
         MetaClass metaClass = getEffectiveMetaClassFromContext(context);
         DataStore storage = dataStoreFactory.get(getStoreName(metaClass));
 
-        prepareLoadContext(context);
+        context.setAccessConstraints(mergeConstraints(context.getAccessConstraints()));
 
         @SuppressWarnings("unchecked")
         List<E> entities = (List<E>) storage.loadList(context);
@@ -111,7 +110,7 @@ public class DataManagerImpl implements DataManager {
         MetaClass metaClass = getEffectiveMetaClassFromContext(context);
         DataStore storage = dataStoreFactory.get(getStoreName(metaClass));
 
-        prepareLoadContext(context);
+        context.setAccessConstraints(mergeConstraints(context.getAccessConstraints()));
 
         return storage.getCount(context);
     }
@@ -140,6 +139,7 @@ public class DataManagerImpl implements DataManager {
 
     @Override
     public EntitySet save(SaveContext context) {
+        context.setAccessConstraints(mergeConstraints(context.getAccessConstraints()));
         Map<String, SaveContext> storeToContextMap = new TreeMap<>();
         Set<Object> toRepeat = new HashSet<>();
         for (Object entity : context.getEntitiesToSave()) {
@@ -198,34 +198,46 @@ public class DataManagerImpl implements DataManager {
     @Override
     public List<KeyValueEntity> loadValues(ValueLoadContext context) {
         DataStore store = dataStoreFactory.get(getStoreName(context.getStoreName()));
+        context.setAccessConstraints(mergeConstraints(context.getAccessConstraints()));
         return store.loadValues(context);
     }
 
     @Override
     public long getCount(ValueLoadContext context) {
         DataStore store = dataStoreFactory.get(getStoreName(context.getStoreName()));
+        context.setAccessConstraints(mergeConstraints(context.getAccessConstraints()));
         return store.getCount(context);
     }
 
     @Override
     public <E> FluentLoader<E> load(Class<E> entityClass) {
-        return fluentLoaderProvider.getObject(entityClass);
+        //noinspection unchecked
+        FluentLoader<E> fluentLoader = fluentLoaderProvider.getObject(entityClass);
+        fluentLoader.setDataManager(this);
+        return fluentLoader;
     }
 
     @Override
     public <E> FluentLoader.ById<E> load(Id<E> entityId) {
-        return fluentLoaderProvider.getObject(entityId.getEntityClass())
-                .id(entityId.getValue());
+        //noinspection unchecked
+        FluentLoader<E> fluentLoader = fluentLoaderProvider.getObject(entityId.getEntityClass());
+        fluentLoader.setDataManager(this);
+        return fluentLoader.id(entityId.getValue());
     }
 
     @Override
     public FluentValuesLoader loadValues(String queryString) {
-        return fluentValuesLoaderProvider.getObject(queryString);
+        FluentValuesLoader fluentValuesLoader = fluentValuesLoaderProvider.getObject(queryString);
+        fluentValuesLoader.setDataManager(this);
+        return fluentValuesLoader;
     }
 
     @Override
     public <T> FluentValueLoader<T> loadValue(String queryString, Class<T> valueClass) {
-        return fluentValueLoaderProvider.getObject(queryString, valueClass);
+        //noinspection unchecked
+        FluentValueLoader<T> fluentValueLoader = fluentValueLoaderProvider.getObject(queryString, valueClass);
+        fluentValueLoader.setDataManager(this);
+        return fluentValueLoader;
     }
 
     protected SaveContext createSaveContext(SaveContext context) {
@@ -329,11 +341,17 @@ public class DataManagerImpl implements DataManager {
         return extendedEntities.getEffectiveMetaClass(context.getEntityMetaClass());
     }
 
-    protected <E> void prepareLoadContext(LoadContext<E> context) {
-        Set<AccessConstraint<?>> accessConstraints = new LinkedHashSet<>(context.getAccessConstraints());
-        if (properties.isDataManagerAlwaysAppliesRowLevelConstraints()) {
-            accessConstraints.addAll(accessConstraintsRegistry.getConstraintsOfType(RowLevelConstraint.class));
+    protected List<AccessConstraint<?>> mergeConstraints(List<AccessConstraint<?>> accessConstraints) {
+        if (accessConstraints.isEmpty()) {
+            return getRegisteredConstraints();
+        } else {
+            Set<AccessConstraint<?>> newAccessConstraints = new LinkedHashSet<>(getRegisteredConstraints());
+            newAccessConstraints.addAll(accessConstraints);
+            return new ArrayList<>(newAccessConstraints);
         }
-        context.setAccessConstraints(accessConstraints);
+    }
+
+    protected List<AccessConstraint<?>> getRegisteredConstraints() {
+        return accessConstraintsRegistry.getConstraints();
     }
 }

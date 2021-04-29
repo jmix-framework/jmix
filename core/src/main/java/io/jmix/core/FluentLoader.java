@@ -67,7 +67,6 @@ public class FluentLoader<E> {
     @Autowired
     private AccessConstraintsRegistry accessConstraintsRegistry;
 
-    @Autowired
     public void setDataManager(DataManager dataManager) {
         this.dataManager = dataManager;
     }

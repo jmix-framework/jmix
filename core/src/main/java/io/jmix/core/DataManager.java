@@ -25,6 +25,7 @@ import java.util.List;
  * Central interface to provide CRUD functionality for entities.
  * <p>
  * Delegates to {@link DataStore} implementations, handles references between entities from different stores.
+ * Applies registered CRUD and row level {@link io.jmix.core.constraint.AccessConstraint} for all operations.
  */
 public interface DataManager {
 

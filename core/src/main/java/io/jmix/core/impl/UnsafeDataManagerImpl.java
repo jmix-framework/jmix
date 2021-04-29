@@ -14,20 +14,19 @@
  * limitations under the License.
  */
 
-package io.jmix.core.annotation;
+package io.jmix.core.impl;
 
-import org.springframework.beans.factory.annotation.Qualifier;
+import io.jmix.core.UnsafeDataManager;
+import io.jmix.core.constraint.AccessConstraint;
+import org.springframework.stereotype.Component;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.util.Collections;
+import java.util.List;
 
-/**
- * Qualifier annotations for bean that uses registered {@link io.jmix.core.constraint.AccessConstraint}
- */
-@Target({ElementType.FIELD, ElementType.PARAMETER, ElementType.TYPE})
-@Retention(RetentionPolicy.RUNTIME)
-@Qualifier
-public @interface Secure {
+@Component("core_UnsafeDataManager")
+public class UnsafeDataManagerImpl extends DataManagerImpl implements UnsafeDataManager {
+    @Override
+    protected List<AccessConstraint<?>> getRegisteredConstraints() {
+        return Collections.emptyList();
+    }
 }

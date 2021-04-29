@@ -48,7 +48,7 @@ public class CrossDataStoreReferenceLoader {
     private MetadataTools metadataTools;
 
     @Autowired
-    private DataManager dataManager;
+    private UnsafeDataManager dataManager;
 
     @Autowired
     private CoreProperties properties;

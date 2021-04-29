@@ -194,8 +194,4 @@ public class CoreProperties {
     public boolean isFetchPlanSerializationUseView() {
         return fetchPlanSerializationUseView;
     }
-
-    public boolean isDataManagerAlwaysAppliesRowLevelConstraints() {
-        return dataManagerAlwaysAppliesRowLevelConstraints;
-    }
 }

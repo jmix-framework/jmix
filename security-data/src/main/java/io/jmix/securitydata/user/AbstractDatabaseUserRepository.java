@@ -16,14 +16,14 @@
 
 package io.jmix.securitydata.user;
 
-import io.jmix.core.DataManager;
 import io.jmix.core.Metadata;
+import io.jmix.core.UnsafeDataManager;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
-import io.jmix.core.security.event.UserPasswordResetEvent;
 import io.jmix.core.security.PasswordNotMatchException;
 import io.jmix.core.security.UserManager;
 import io.jmix.core.security.UserRepository;
+import io.jmix.core.security.event.UserPasswordResetEvent;
 import io.jmix.security.authentication.AcceptsGrantedAuthorities;
 import io.jmix.security.authentication.RoleGrantedAuthority;
 import io.jmix.security.model.ResourceRole;
@@ -62,7 +62,7 @@ public abstract class AbstractDatabaseUserRepository<T extends UserDetails> impl
     private T anonymousUser;
 
     @Autowired
-    private DataManager dataManager;
+    private UnsafeDataManager dataManager;
     @Autowired
     private Metadata metadata;
     @Autowired

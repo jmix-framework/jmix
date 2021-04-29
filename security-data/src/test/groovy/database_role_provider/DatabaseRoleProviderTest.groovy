@@ -16,9 +16,10 @@
 
 package database_role_provider
 
-import io.jmix.core.DataManager
+
 import io.jmix.core.Metadata
 import io.jmix.core.SaveContext
+import io.jmix.core.UnsafeDataManager
 import io.jmix.security.model.*
 import io.jmix.securitydata.entity.ResourcePolicyEntity
 import io.jmix.securitydata.entity.ResourceRoleEntity
@@ -39,7 +40,7 @@ class DatabaseRoleProviderTest extends SecurityDataSpecification {
     DatabaseRowLevelRoleProvider databaseRowLevelRoleProvider
 
     @Autowired
-    DataManager dataManager
+    UnsafeDataManager dataManager
 
     @Autowired
     Metadata metadata

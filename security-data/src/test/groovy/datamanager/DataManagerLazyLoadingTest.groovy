@@ -1,8 +1,8 @@
 package datamanager
 
 import io.jmix.core.AccessConstraintsRegistry
-import io.jmix.core.DataManager
 import io.jmix.core.Metadata
+import io.jmix.core.UnsafeDataManager
 import io.jmix.core.security.InMemoryUserRepository
 import io.jmix.core.security.SecurityContextHelper
 import io.jmix.security.authentication.RoleGrantedAuthority
@@ -26,7 +26,7 @@ import javax.sql.DataSource
 
 class DataManagerLazyLoadingTest extends SecurityDataSpecification {
     @Autowired
-    DataManager dataManager
+    UnsafeDataManager dataManager
 
     @Autowired
     AuthenticationManager authenticationManager

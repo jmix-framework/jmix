@@ -19,6 +19,7 @@ package datamanager
 import io.jmix.core.AccessConstraintsRegistry
 import io.jmix.core.DataManager
 import io.jmix.core.Metadata
+import io.jmix.core.UnsafeDataManager
 import io.jmix.core.security.InMemoryUserRepository
 import io.jmix.core.security.SecurityContextHelper
 import io.jmix.security.authentication.RoleGrantedAuthority
@@ -40,6 +41,9 @@ import javax.sql.DataSource
 class DataManagerReadQueryConstraintTest extends SecurityDataSpecification {
     @Autowired
     DataManager dataManager
+
+    @Autowired
+    UnsafeDataManager unsafeDataManager
 
     @Autowired
     AuthenticationManager authenticationManager
@@ -91,8 +95,7 @@ class DataManagerReadQueryConstraintTest extends SecurityDataSpecification {
         orderAllowed = metadata.create(TestOrder)
         orderAllowed.number = 'allowed_3'
 
-
-        dataManager.save(orderDenied1, orderDenied2, orderAllowed)
+        unsafeDataManager.save(orderDenied1, orderDenied2, orderAllowed)
 
         systemAuthentication = SecurityContextHelper.getAuthentication()
     }
@@ -113,7 +116,7 @@ class DataManagerReadQueryConstraintTest extends SecurityDataSpecification {
 
         when:
 
-        def result = dataManager.load(TestOrder.class).all().list()
+        def result = unsafeDataManager.load(TestOrder.class).all().list()
 
         then:
 
@@ -132,9 +135,27 @@ class DataManagerReadQueryConstraintTest extends SecurityDataSpecification {
 
         when:
 
-        def result = dataManager.load(TestOrder.class)
+        def result = unsafeDataManager.load(TestOrder.class)
                 .all()
                 .accessConstraints(accessConstraintsRegistry.getConstraints())
+                .list()
+
+        then:
+
+        result.size() == 1
+
+        result.contains(orderAllowed)
+    }
+
+    def "load with secured"() {
+        setup:
+
+        authenticate('user1')
+
+        when:
+
+        def result = dataManager.load(TestOrder.class)
+                .all()
                 .list()
 
         then:

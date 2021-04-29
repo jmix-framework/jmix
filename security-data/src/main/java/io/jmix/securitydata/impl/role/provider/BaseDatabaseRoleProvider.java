@@ -18,13 +18,12 @@ package io.jmix.securitydata.impl.role.provider;
 
 import com.google.common.base.Strings;
 import io.jmix.core.AccessManager;
-import io.jmix.core.DataManager;
 import io.jmix.core.FetchPlanBuilder;
 import io.jmix.core.Metadata;
+import io.jmix.core.UnsafeDataManager;
 import io.jmix.core.accesscontext.CrudEntityContext;
 import io.jmix.security.model.BaseRole;
 import io.jmix.security.role.RoleProvider;
-import io.jmix.securitydata.entity.ResourceRoleEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
@@ -37,7 +36,7 @@ import java.util.stream.Collectors;
  */
 public abstract class BaseDatabaseRoleProvider<T extends BaseRole> implements RoleProvider<T> {
 
-    protected DataManager dataManager;
+    protected UnsafeDataManager dataManager;
     protected Metadata metadata;
     protected AccessManager accessManager;
 
@@ -85,7 +84,7 @@ public abstract class BaseDatabaseRoleProvider<T extends BaseRole> implements Ro
     }
 
     @Autowired
-    public void setDataManager(DataManager dataManager) {
+    public void setDataManager(UnsafeDataManager dataManager) {
         this.dataManager = dataManager;
     }
 

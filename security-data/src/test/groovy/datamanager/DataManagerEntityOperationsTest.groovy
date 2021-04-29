@@ -17,7 +17,6 @@
 package datamanager
 
 import io.jmix.core.*
-import io.jmix.core.annotation.Secure
 import io.jmix.core.security.AccessDeniedException
 import io.jmix.core.security.InMemoryUserRepository
 import io.jmix.core.security.SecurityContextHelper
@@ -38,9 +37,8 @@ import javax.sql.DataSource
 
 class DataManagerEntityOperationsTest extends SecurityDataSpecification {
     @Autowired
-    DataManager dataManager
+    UnsafeDataManager dataManager
 
-    @Secure
     @Autowired
     DataManager secureDataManager
 

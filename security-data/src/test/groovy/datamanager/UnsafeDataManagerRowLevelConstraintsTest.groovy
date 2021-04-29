@@ -16,11 +16,8 @@
 
 package datamanager
 
-import io.jmix.core.AccessConstraintsRegistry
-import io.jmix.core.CoreProperties
-import io.jmix.core.DataManager
-import io.jmix.core.LoadContext
-import io.jmix.core.Metadata
+import io.jmix.core.*
+import io.jmix.core.constraint.RowLevelConstraint
 import io.jmix.core.entity.EntityValues
 import io.jmix.core.security.InMemoryUserRepository
 import io.jmix.core.security.SecurityContextHelper
@@ -42,9 +39,9 @@ import test_support.role.TestDefaultConstraintsRole
 
 import javax.sql.DataSource
 
-class DataManagerDefaultConstraintsTest extends SecurityDataSpecification {
+class UnsafeDataManagerRowLevelConstraintsTest extends SecurityDataSpecification {
     @Autowired
-    DataManager dataManager
+    UnsafeDataManager dataManager
 
     @Autowired
     AuthenticationManager authenticationManager
@@ -125,7 +122,7 @@ class DataManagerDefaultConstraintsTest extends SecurityDataSpecification {
 
         userRepository.removeUser(user1)
 
-        new JdbcTemplate(dataSource).execute('delete from TEST_ORDER;'+
+        new JdbcTemplate(dataSource).execute('delete from TEST_ORDER;' +
                 ' delete from TEST_MANY_TO_ONE_ENTITY;' +
                 ' delete from TEST_ONE_TO_MANY_ENTITY;')
     }
@@ -134,12 +131,12 @@ class DataManagerDefaultConstraintsTest extends SecurityDataSpecification {
         setup:
 
         authenticate('user1')
-        coreProperties.dataManagerAlwaysAppliesRowLevelConstraints = true
 
         when:
 
         def result = dataManager.load(TestOrder.class)
                 .all()
+                .accessConstraints(RowLevelConstraint)
                 .list()
 
         then:
@@ -147,68 +144,57 @@ class DataManagerDefaultConstraintsTest extends SecurityDataSpecification {
         result.size() == 1
 
         result.contains(orderAllowed)
-
-        cleanup:
-        coreProperties.dataManagerAlwaysAppliesRowLevelConstraints = false
     }
 
     def "count root"() {
         setup:
 
         authenticate('user1')
-        coreProperties.dataManagerAlwaysAppliesRowLevelConstraints = true
 
         when:
 
-        def count = dataManager.getCount(new LoadContext<>(metadata.getClass(TestOrder)))
+        def count = dataManager.getCount(
+                new LoadContext<>(metadata.getClass(TestOrder))
+                        .setAccessConstraints(accessConstraintsRegistry.getConstraintsOfType(RowLevelConstraint)))
 
         then:
 
         count == 1
-
-        cleanup:
-        coreProperties.dataManagerAlwaysAppliesRowLevelConstraints = false
     }
 
     def "load collection"() {
         setup:
 
         authenticate('user1')
-        coreProperties.dataManagerAlwaysAppliesRowLevelConstraints = true
 
         when:
 
         def oneToManyEntity = dataManager.load(OneToManyEntity.class)
                 .id(oneToManyId)
+                .accessConstraints(RowLevelConstraint)
                 .one()
 
         then:
 
         oneToManyEntity.manyToOneEntities.size() == 1
-
-        cleanup:
-        coreProperties.dataManagerAlwaysAppliesRowLevelConstraints = false
     }
 
     def "load collection eagerly"() {
         setup:
 
         authenticate('user1')
-        coreProperties.dataManagerAlwaysAppliesRowLevelConstraints = true
 
         when:
 
         def oneToManyEntity = dataManager.load(OneToManyEntity.class)
                 .id(oneToManyId)
-                .fetchPlan({ fpb -> fpb.addAll('name', 'manyToOneEntities.name')})
+                .accessConstraints(RowLevelConstraint)
+                .fetchPlan({ fpb -> fpb.addAll('name', 'manyToOneEntities.name') })
                 .one()
 
         then:
 
         oneToManyEntity.manyToOneEntities.size() == 1
-
-        cleanup:
-        coreProperties.dataManagerAlwaysAppliesRowLevelConstraints = false
     }
 
     protected void authenticate(String username) {

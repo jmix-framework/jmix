@@ -16,8 +16,8 @@
 
 package io.jmix.securitydata.impl.role.assignment;
 
-import io.jmix.core.DataManager;
 import io.jmix.core.FetchPlan;
+import io.jmix.core.UnsafeDataManager;
 import io.jmix.security.role.assignment.RoleAssignment;
 import io.jmix.security.role.assignment.RoleAssignmentProvider;
 import io.jmix.securitydata.entity.RoleAssignmentEntity;
@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 public class DatabaseRoleAssignmentProvider implements RoleAssignmentProvider {
 
     @Autowired
-    protected DataManager dataManager;
+    protected UnsafeDataManager dataManager;
 
     @Override
     public Collection<RoleAssignment> getAllAssignments() {

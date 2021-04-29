@@ -436,6 +436,13 @@
         </xs:restriction>
     </xs:simpleType>
 
+    <xs:simpleType name="sortDirection">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="ASCENDING"/>
+            <xs:enumeration value="DESCENDING"/>
+        </xs:restriction>
+    </xs:simpleType>
+
     <xs:simpleType name="contentMode">
         <xs:restriction base="xs:string">
             <xs:enumeration value="TEXT"/>
@@ -2676,6 +2683,8 @@
         <xs:attributeGroup ref="hasCaptionSource"/>
         <xs:attribute name="resolution" type="dateFieldResolution"/>
         <xs:attribute name="dateFormat" type="xs:string"/>
+
+        <xs:attribute name="sort" type="sortDirection"/>
     </xs:complexType>
 
     <!-- GroupTable.Column -->
@@ -2779,6 +2788,8 @@
         <xs:attributeGroup ref="hasWidthProp"/>
         <xs:attribute name="minimumWidth" type="xs:string"/>
         <xs:attribute name="maximumWidth" type="xs:string"/>
+
+        <xs:attribute name="sort" type="sortDirection"/>
     </xs:complexType>
 
     <!-- DataGrid -->

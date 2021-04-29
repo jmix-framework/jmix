@@ -24,12 +24,13 @@ import com.haulmont.cuba.core.global.FluentLoader;
 import com.haulmont.cuba.core.global.FluentValueLoader;
 import com.haulmont.cuba.core.global.FluentValuesLoader;
 import com.haulmont.cuba.core.global.LoadContext;
-import com.haulmont.cuba.core.global.*;
 import com.haulmont.cuba.core.global.ValueLoadContext;
-import io.jmix.core.EntityStates;
+import com.haulmont.cuba.core.global.*;
 import io.jmix.core.Metadata;
 import io.jmix.core.*;
 import io.jmix.core.common.util.Preconditions;
+import io.jmix.core.constraint.AccessConstraint;
+import io.jmix.core.constraint.RowLevelConstraint;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -42,41 +43,42 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Nullable;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static io.jmix.core.entity.EntitySystemAccess.getExtraState;
 
 @Component(DataManager.NAME)
 public class CubaDataManager implements DataManager {
+    protected Metadata metadata;
+    protected FetchPlanRepository fetchPlanRepository;
+    protected CubaProperties properties;
+    protected Validator validator;
+    protected ApplicationContext applicationContext;
+    protected AccessConstraintsRegistry accessConstraintsRegistry;
 
-    @Autowired
     protected io.jmix.core.DataManager delegate;
 
     @Autowired
-    protected Metadata metadata;
+    public CubaDataManager(Metadata metadata,
+                           FetchPlanRepository fetchPlanRepository,
+                           CubaProperties properties,
+                           Validator validator,
+                           AccessConstraintsRegistry accessConstraintsRegistry,
+                           ApplicationContext applicationContext) {
+        this.metadata = metadata;
+        this.fetchPlanRepository = fetchPlanRepository;
+        this.properties = properties;
+        this.validator = validator;
+        this.accessConstraintsRegistry = accessConstraintsRegistry;
+        this.applicationContext = applicationContext;
 
-    @Autowired
-    protected MetadataTools metadataTools;
+        initDelegate();
+    }
 
-    @Autowired
-    protected FetchPlanRepository fetchPlanRepository;
-
-    @Autowired
-    protected EntityStates entityStates;
-
-    @Autowired
-    protected CubaProperties properties;
-
-    @Autowired
-    protected Validator validator;
-
-    @Autowired
-    protected ApplicationContext applicationContext;
-
-    @Autowired
-    protected AccessConstraintsRegistry accessConstraintsRegistry;
+    protected void initDelegate() {
+        this.delegate = new RowLevelConstraintsDataManager(applicationContext.getBean(UnsafeDataManager.class),
+                accessConstraintsRegistry);
+    }
 
     @Nullable
     @Override
@@ -187,7 +189,8 @@ public class CubaDataManager implements DataManager {
 
     @Override
     public DataManager secure() {
-        return new Secure(this, metadata, accessConstraintsRegistry);
+        return new Secure(metadata, fetchPlanRepository, properties, validator, accessConstraintsRegistry,
+                applicationContext);
     }
 
     @Override
@@ -197,6 +200,7 @@ public class CubaDataManager implements DataManager {
 
     @Override
     public <E extends Entity> FluentLoader<E> load(Class<E> entityClass) {
+        //noinspection unchecked
         FluentLoader<E> loader = applicationContext.getBean(FluentLoader.class, entityClass);
         loader.setDataManager(getDelegate());
         loader.joinTransaction(false);
@@ -205,6 +209,7 @@ public class CubaDataManager implements DataManager {
 
     @Override
     public <E extends Entity, K> FluentLoader.ById<E> load(Id<E, K> entityId) {
+        //noinspection unchecked
         FluentLoader<E> loader = applicationContext.getBean(FluentLoader.class, entityId.getEntityClass());
         loader.setDataManager(getDelegate());
         loader.joinTransaction(false);
@@ -220,7 +225,8 @@ public class CubaDataManager implements DataManager {
 
     @Override
     public <T> FluentValueLoader<T> loadValue(String queryString, Class<T> valueClass) {
-        FluentValueLoader loader = applicationContext.getBean(FluentValueLoader.class, queryString, valueClass);
+        //noinspection unchecked
+        FluentValueLoader<T> loader = applicationContext.getBean(FluentValueLoader.class, queryString, valueClass);
         loader.setDataManager(delegate);
         return loader;
     }
@@ -261,50 +267,136 @@ public class CubaDataManager implements DataManager {
             throw new EntityValidationException(String.format("Entity %s validation failed.", entity.toString()), violations);
     }
 
+
     private static class Secure extends CubaDataManager {
-
-        private final DataManager dataManager;
-
-        public Secure(DataManager dataManager, Metadata metadata, AccessConstraintsRegistry accessConstraintsRegistry) {
-            this.dataManager = dataManager;
-            this.metadata = metadata;
-            this.accessConstraintsRegistry = accessConstraintsRegistry;
+        public Secure(Metadata metadata,
+                      FetchPlanRepository fetchPlanRepository,
+                      CubaProperties properties,
+                      Validator validator,
+                      AccessConstraintsRegistry accessConstraintsRegistry,
+                      ApplicationContext applicationContext) {
+            super(metadata, fetchPlanRepository, properties, validator, accessConstraintsRegistry, applicationContext);
         }
 
         @Override
-        public io.jmix.core.DataManager getDelegate() {
-            return dataManager.getDelegate();
+        protected void initDelegate() {
+            this.delegate = applicationContext.getBean(io.jmix.core.DataManager.class);
+        }
+    }
+
+    private static class RowLevelConstraintsDataManager implements io.jmix.core.DataManager {
+        private final io.jmix.core.DataManager delegate;
+        private final AccessConstraintsRegistry accessConstraintsRegistry;
+
+        private RowLevelConstraintsDataManager(io.jmix.core.DataManager delegate,
+                                               AccessConstraintsRegistry accessConstraintsRegistry) {
+            this.delegate = delegate;
+            this.accessConstraintsRegistry = accessConstraintsRegistry;
         }
 
         @Nullable
         @Override
-        public <E extends Entity> E load(LoadContext<E> context) {
-            context.setAccessConstraints(accessConstraintsRegistry.getConstraints());
-            return dataManager.load(context);
+        public <E> E load(io.jmix.core.LoadContext<E> context) {
+            context.setAccessConstraints(mergeConstraints(context.getAccessConstraints()));
+            return delegate.load(context);
         }
 
         @Override
-        public <E extends Entity> List<E> loadList(LoadContext<E> context) {
-            context.setAccessConstraints(accessConstraintsRegistry.getConstraints());
-            return dataManager.loadList(context);
+        public <E> List<E> loadList(io.jmix.core.LoadContext<E> context) {
+            context.setAccessConstraints(mergeConstraints(context.getAccessConstraints()));
+            return delegate.loadList(context);
         }
 
         @Override
-        public List<KeyValueEntity> loadValues(ValueLoadContext context) {
-            context.setAccessConstraints(accessConstraintsRegistry.getConstraints());
-            return dataManager.loadValues(context);
+        public long getCount(io.jmix.core.LoadContext<?> context) {
+            context.setAccessConstraints(mergeConstraints(context.getAccessConstraints()));
+            return delegate.getCount(context);
         }
 
         @Override
-        public long getCount(LoadContext<? extends Entity> context) {
-            context.setAccessConstraints(accessConstraintsRegistry.getConstraints());
-            return dataManager.getCount(context);
+        public io.jmix.core.EntitySet save(SaveContext context) {
+            context.setAccessConstraints(mergeConstraints(context.getAccessConstraints()));
+            return delegate.save(context);
         }
 
         @Override
-        public EntitySet commit(CommitContext context) {
-            context.setAccessConstraints(accessConstraintsRegistry.getConstraints());
-            return dataManager.commit(context);
+        public io.jmix.core.EntitySet save(Object... entities) {
+            return save(new SaveContext().saving(entities));
+        }
+
+        @Override
+        public <E> E save(E entity) {
+            return save(new SaveContext().saving(entity))
+                    .optional(entity)
+                    .orElseThrow(() -> new IllegalStateException("Data store didn't return a saved entity"));
+        }
+
+        @Override
+        public void remove(Object... entities) {
+            save(new SaveContext().removing(entities));
+        }
+
+        @Override
+        public <E> void remove(io.jmix.core.Id<E> entityId) {
+            remove(getReference(entityId));
+        }
+
+        @Override
+        public List<KeyValueEntity> loadValues(io.jmix.core.ValueLoadContext context) {
+            context.setAccessConstraints(mergeConstraints(context.getAccessConstraints()));
+            return delegate.loadValues(context);
+        }
+
+        @Override
+        public long getCount(io.jmix.core.ValueLoadContext context) {
+            context.setAccessConstraints(mergeConstraints(context.getAccessConstraints()));
+            return delegate.getCount(context);
+        }
+
+        @Override
+        public <E> io.jmix.core.FluentLoader<E> load(Class<E> entityClass) {
+            return delegate.load(entityClass);
+        }
+
+        @Override
+        public <E> io.jmix.core.FluentLoader.ById<E> load(io.jmix.core.Id<E> entityId) {
+            return delegate.load(entityId);
+        }
+
+        @Override
+        public io.jmix.core.FluentValuesLoader loadValues(String queryString) {
+            return delegate.loadValues(queryString);
+        }
+
+        @Override
+        public <T> io.jmix.core.FluentValueLoader<T> loadValue(String queryString, Class<T> valueClass) {
+            return delegate.loadValue(queryString, valueClass);
+        }
+
+        @Override
+        public <T> T create(Class<T> entityClass) {
+            return delegate.create(entityClass);
+        }
+
+        @Override
+        public <T> T getReference(Class<T> entityClass, Object id) {
+            return delegate.getReference(entityClass, id);
+        }
+
+        @Override
+        public <T> T getReference(io.jmix.core.Id<T> entityId) {
+            return delegate.getReference(entityId);
+        }
+
+        protected List<AccessConstraint<?>> mergeConstraints(List<AccessConstraint<?>> accessConstraints) {
+            if (accessConstraints.isEmpty()) {
+                return accessConstraintsRegistry.getConstraintsOfType(RowLevelConstraint.class);
+            } else {
+                Set<AccessConstraint<?>> newAccessConstraints =
+                        new LinkedHashSet<>(accessConstraintsRegistry.getConstraintsOfType(RowLevelConstraint.class));
+                newAccessConstraints.addAll(accessConstraints);
+                return new ArrayList<>(newAccessConstraints);
+            }
         }
     }
 }

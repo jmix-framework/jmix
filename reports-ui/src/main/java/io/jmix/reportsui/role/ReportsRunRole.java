@@ -24,6 +24,7 @@ import io.jmix.security.model.SecurityScope;
 import io.jmix.security.role.annotation.EntityAttributePolicy;
 import io.jmix.security.role.annotation.EntityPolicy;
 import io.jmix.security.role.annotation.ResourceRole;
+import io.jmix.securityui.role.annotation.MenuPolicy;
 import io.jmix.securityui.role.annotation.ScreenPolicy;
 
 import static io.jmix.security.model.EntityAttributePolicyAction.VIEW;
@@ -37,13 +38,13 @@ public interface ReportsRunRole {
     String CODE = "report-run";
 
     @ScreenPolicy(screenIds = {
-            "report_inputParameters",
+            "report_InputParameters.dialog",
             "report_Report.run",
-            "report_showReportTable",
+            "report_ShowReportTable.screen",
             "report_ShowPivotTable.screen",
-            "report_ShowChart.screen",
-            "commonLookup"
+            "report_ShowChart.screen"
     })
+    @MenuPolicy(menuIds = {"reports", "report_Report.run"})
     @EntityPolicy(entityClass = Report.class, actions = {EntityPolicyAction.READ})
     @EntityPolicy(entityClass = ReportGroup.class, actions = {EntityPolicyAction.READ})
     @EntityPolicy(entityClass = ReportTemplate.class, actions = {EntityPolicyAction.READ})

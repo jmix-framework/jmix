@@ -74,7 +74,7 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
     private static final String BASE_SELECT_QUERY = "select e from %s e";
     private static final String DELETED_ONLY_SELECT_QUERY = "select e from %s e where e.%s is not null";
     private static final String RESTORE_ACTION_ID = "restore";
-    public static final String WIPE_OUT_ACTION_ID = "wipeOut";
+    private static final String WIPE_OUT_ACTION_ID = "wipeOut";
 
     protected static final Logger log = LoggerFactory.getLogger(EntityInspectorBrowser.class);
 
@@ -322,6 +322,10 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
 
         Button removeButton = uiComponents.create(Button.class);
         RemoveAction removeAction = createRemoveAction(table);
+        if (metadataTools.isSoftDeletable(selectedMeta.getJavaClass()) &&
+                ShowMode.ALL.equals(showMode.getValue())) {
+            removeAction.setAfterActionPerformedHandler(removedItems -> entitiesDl.load());
+        }
         table.addAction(removeAction);
         removeButton.setAction(removeAction);
         removeButton.setIcon(icons.get(JmixIcon.REMOVE_ACTION));

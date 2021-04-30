@@ -25,7 +25,7 @@
                        contentMode="HTML"
                        height="200px"
                        width="350px"
-                       styleName="msg-dialog-style"
+                       stylename="msg-dialog-style"
                        modal="true"
                        windowMode="MAXIMIZED"
                        closeOnClickOutside="true"/>

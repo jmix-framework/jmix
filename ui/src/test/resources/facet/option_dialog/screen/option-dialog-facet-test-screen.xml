@@ -25,7 +25,7 @@
                       contentMode="HTML"
                       height="200"
                       width="350"
-                      styleName="opt-dialog-style"
+                      stylename="opt-dialog-style"
                       windowMode="MAXIMIZED">
             <actions>
                 <action id="ok"

@@ -26,7 +26,7 @@
                       delay="3000"
                       contentMode="HTML"
                       position="TOP_CENTER"
-                      styleName="notification-facet-style"/>
+                      stylename="notification-facet-style"/>
 
         <notification id="notificationActionSub"
                       onAction="notificationAction"

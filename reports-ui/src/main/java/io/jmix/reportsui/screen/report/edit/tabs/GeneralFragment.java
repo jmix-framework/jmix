@@ -320,7 +320,7 @@ public class GeneralFragment extends ScreenFragment {
 
     @Subscribe("serviceTree.create")
     protected void onServiceTreeCreate(Action.ActionPerformedEvent event) {
-        BandDefinition parentDefinition = bandsDc.getItem();
+        BandDefinition parentDefinition = bandsDc.getItemOrNull();
         Report report = reportDc.getItem();
         // Use root band as parent if no items selected
         if (parentDefinition == null) {

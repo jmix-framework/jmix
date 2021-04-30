@@ -84,6 +84,7 @@ dependencies {
     def imapVersion = baseVersion
     def localfsVersion = baseVersion
     def awsfsVersion = baseVersion
+    def awsqueueVerion = baseVersion
     def mapsVersion = baseVersion
     def restVersion = baseVersion
     def datatoolsVersion = baseVersion
@@ -108,6 +109,11 @@ dependencies {
 
         api "io.jmix.awsfs:jmix-awsfs:${snapshotOr(awsfsVersion)}"
         api "io.jmix.awsfs:jmix-awsfs-starter:${snapshotOr(awsfsVersion)}"
+
+        api "io.jmix.awsqueue:jmix-awsqueue:${snapshotOr(awsqueueVerion)}"
+        api "io.jmix.awsqueue:jmix-awsqueue-starter:${snapshotOr(awsqueueVerion)}"
+        api "io.jmix.awsqueue:jmix-awsqueue-ui:${snapshotOr(awsqueueVerion)}"
+        api "io.jmix.awsqueue:jmix-awsqueue-ui-starter:${snapshotOr(awsqueueVerion)}"
 
         api "io.jmix.bpm:jmix-bpm:${snapshotOr(bpmVersion)}"
         api "io.jmix.bpm:jmix-bpm-modeler:${snapshotOr(bpmVersion)}"
@@ -275,6 +281,8 @@ dependencies {
 
         api 'io.swagger.core.v3:swagger-models:2.1.7'
         api 'io.swagger.core.v3:swagger-core:2.1.7'
+
+        api 'org.springframework.cloud:spring-cloud-aws-messaging:2.2.6.RELEASE'
 
         api 'org.springframework.security.oauth:spring-security-oauth2:2.5.1.RELEASE'
 

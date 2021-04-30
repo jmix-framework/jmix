@@ -38,6 +38,7 @@ import io.jmix.ui.UiComponents;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.data.table.ContainerGroupTableItems;
+import io.jmix.ui.model.CollectionLoader;
 import io.jmix.ui.model.DataComponents;
 import io.jmix.ui.model.KeyValueCollectionContainer;
 import io.jmix.ui.screen.*;
@@ -87,7 +88,8 @@ public class ShowReportTableScreen extends Screen {
 
     @Autowired
     private DataComponents dataComponents;
-
+    @Autowired
+    private CollectionLoader<Report> reportsDl;
     @Autowired
     private DatatypeRegistry datatypeRegistry;
 
@@ -119,6 +121,7 @@ public class ShowReportTableScreen extends Screen {
 
     @Subscribe
     protected void onBeforeShow(BeforeShowEvent event) {
+        reportsDl.load();
         if (report != null) {
             reportSelectorBox.setVisible(false);
             JmixTableData dto = (JmixTableData) serialization.deserialize(tableData);

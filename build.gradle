@@ -71,11 +71,15 @@ dependencies {
 
     def baseVersion = '1.0.0'
     def auditVersion = baseVersion
+    def awsfsVersion = baseVersion
+    def awsqueueVerion = baseVersion
+    def awssecurityVerion = baseVersion
     def bpmVersion = baseVersion
     def coreVersion = baseVersion
     def cubaVersion = baseVersion
     def dashboardsVersion = baseVersion
     def dataVersion = baseVersion
+    def datatoolsVersion = baseVersion
     def dynattrVersion = baseVersion
     def emailVersion = baseVersion
     def emailtemplatesVersion = baseVersion
@@ -83,16 +87,13 @@ dependencies {
     def graphqlVersion = baseVersion
     def imapVersion = baseVersion
     def localfsVersion = baseVersion
-    def awsfsVersion = baseVersion
-    def awsqueueVerion = baseVersion
     def mapsVersion = baseVersion
+    def reportsVersion = baseVersion
     def restVersion = baseVersion
-    def datatoolsVersion = baseVersion
     def securityVersion = baseVersion
     def sessionsVersion = baseVersion
     def translationsVersion = baseVersion
     def uiVersion = baseVersion
-    def reportsVersion = baseVersion
 
     if (isTrialBuild()) {
         mapsVersion = mapsVersion + '.trial'
@@ -114,6 +115,9 @@ dependencies {
         api "io.jmix.awsqueue:jmix-awsqueue-starter:${snapshotOr(awsqueueVerion)}"
         api "io.jmix.awsqueue:jmix-awsqueue-ui:${snapshotOr(awsqueueVerion)}"
         api "io.jmix.awsqueue:jmix-awsqueue-ui-starter:${snapshotOr(awsqueueVerion)}"
+
+        api "io.jmix.awssecurity:jmix-awssecurity:${snapshotOr(awssecurityVerion)}"
+        api "io.jmix.awssecurity:jmix-awssecurity-starter:${snapshotOr(awssecurityVerion)}"
 
         api "io.jmix.bpm:jmix-bpm:${snapshotOr(bpmVersion)}"
         api "io.jmix.bpm:jmix-bpm-modeler:${snapshotOr(bpmVersion)}"

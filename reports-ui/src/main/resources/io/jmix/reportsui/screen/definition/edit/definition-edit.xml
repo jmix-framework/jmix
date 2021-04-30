@@ -44,7 +44,7 @@
             <label value="msg://definition.orientation" align="MIDDLE_LEFT"/>
             <comboBox id="orientationField" dataContainer="bandsDc" property="orientation" width="${width}"/>
             <label value="msg://definition.parentBand" align="MIDDLE_LEFT"/>
-            <entityComboBox id="parentBandField" dataContainer="bandsDc"
+            <entityComboBox id="parentBandField" dataContainer="bandsDc" optionsContainer="availableParentBandsDc"
                             property="parentBandDefinition" width="${width}"/>
         </hbox>
 

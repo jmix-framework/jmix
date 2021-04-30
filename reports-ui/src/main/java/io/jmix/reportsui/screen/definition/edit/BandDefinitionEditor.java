@@ -407,6 +407,7 @@ public class BandDefinitionEditor extends ScreenFragment implements Suggester {
     protected void updateRequiredIndicators(BandDefinition item) {
         boolean required = !(item == null || reportDc.getItem().getRootBandDefinition().equals(item));
         parentBandField.setRequired(required);
+        parentBandField.setNullOptionVisible(!required);
         orientationField.setRequired(required);
         nameField.setRequired(item != null);
     }

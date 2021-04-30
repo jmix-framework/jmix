@@ -29,6 +29,8 @@ dependencies {
 
     implementation 'com.google.code.gson:gson'
 
+    compileOnly 'io.jmix.security:jmix-security-ui'
+
     testImplementation 'org.springframework:spring-test'
     testImplementation 'org.spockframework:spock-core'
     testImplementation 'org.spockframework:spock-spring'

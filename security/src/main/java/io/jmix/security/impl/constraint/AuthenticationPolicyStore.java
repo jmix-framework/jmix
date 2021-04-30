@@ -145,7 +145,7 @@ public class AuthenticationPolicyStore implements PolicyStore {
         return null;
     }
 
-    private boolean isAppliedForScope(PolicyAwareGrantedAuthority policyAwareAuthority, @Nullable String scope) {
+    protected boolean isAppliedForScope(PolicyAwareGrantedAuthority policyAwareAuthority, @Nullable String scope) {
         return scope == null || policyAwareAuthority.getScopes().contains(scope);
     }
 

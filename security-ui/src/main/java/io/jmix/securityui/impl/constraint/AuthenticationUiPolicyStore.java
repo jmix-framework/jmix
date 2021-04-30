@@ -16,6 +16,7 @@
 
 package io.jmix.securityui.impl.constraint;
 
+import io.jmix.core.security.ClientDetails;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.security.authentication.ResourcePolicyIndex;
 import io.jmix.security.authentication.PolicyAwareGrantedAuthority;
@@ -27,6 +28,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -40,33 +42,49 @@ public class AuthenticationUiPolicyStore implements UiPolicyStore {
 
     @Override
     public Stream<ResourcePolicy> getScreenResourcePolicies(String windowId) {
-        return extractFromAuthentication(authority ->
+        return extractFromAuthenticationByScope(authority ->
                 authority.getResourcePoliciesByIndex(ScreenResourcePolicyByIdIndex.class, index -> index.getPolicies(windowId)));
     }
 
     @Override
     public Stream<ResourcePolicy> getMenuResourcePolicies(String menuId) {
-        return extractFromAuthentication(authority ->
+        return extractFromAuthenticationByScope(authority ->
                 authority.getResourcePoliciesByIndex(MenuResourcePolicyByIdIndex.class, index -> index.getPolicies(menuId)));
     }
 
-    protected Stream<ResourcePolicy> extractFromAuthentication(
-            Function<PolicyAwareGrantedAuthority, Stream<ResourcePolicy>> extractor) {
-        Stream<ResourcePolicy> stream = Stream.empty();
+    protected <T> Stream<T> extractFromAuthenticationByScope(Function<PolicyAwareGrantedAuthority, Stream<T>> extractor) {
+        Stream<T> stream = Stream.empty();
 
         Authentication authentication = currentAuthentication.getAuthentication();
         if (authentication != null) {
+            String scope = getScope(authentication);
             for (GrantedAuthority authority : authentication.getAuthorities()) {
                 if (authority instanceof PolicyAwareGrantedAuthority) {
-                    Stream<ResourcePolicy> extractedStream = extractor.apply((PolicyAwareGrantedAuthority) authority);
-                    if (extractedStream != null) {
-                        stream = Stream.concat(stream, extractedStream);
+                    PolicyAwareGrantedAuthority policyAwareAuthority = (PolicyAwareGrantedAuthority) authority;
+                    if (isAppliedForScope(policyAwareAuthority, scope)) {
+                        Stream<T> extractedStream = extractor.apply(policyAwareAuthority);
+                        if (extractedStream != null) {
+                            stream = Stream.concat(stream, extractedStream);
+                        }
                     }
                 }
             }
         }
 
         return stream;
+    }
+
+    @Nullable
+    protected String getScope(Authentication authentication) {
+        Object details = authentication.getDetails();
+        if (details instanceof ClientDetails) {
+            return ((ClientDetails) details).getScope();
+        }
+        return null;
+    }
+
+    protected boolean isAppliedForScope(PolicyAwareGrantedAuthority policyAwareAuthority, @Nullable String scope) {
+        return scope == null || policyAwareAuthority.getScopes().contains(scope);
     }
 
     public static class ScreenResourcePolicyByIdIndex implements ResourcePolicyIndex {

@@ -18,8 +18,6 @@ package io.jmix.graphql.datafetcher
 
 import io.jmix.graphql.AbstractGraphQLTest
 
-import static io.jmix.graphql.schema.Types.FilterOperation.*
-
 class FilterIntegrationTest extends AbstractGraphQLTest {
 
     def "_eq for numbers"() {
@@ -27,7 +25,9 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
         //where capacity = 50
         def response = graphQLTestTemplate.perform(
                 "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
-                getFilterVariables("capacity", EQ, 50)
+                asObjectNode('{"filter": {"AND": [' +
+                        '{"capacity": {"_eq": "50"}}' +
+                        ']}}')
         )
 
         then:
@@ -42,7 +42,9 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
         //where name = "Hillwood City"
         def response = graphQLTestTemplate.perform(
                 "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
-                getFilterVariables("name", EQ, "Hillwood City")
+                asObjectNode('{"filter": {"AND": [' +
+                        '{"name": {"_eq": "Hillwood City"}}' +
+                        ']}}')
         )
 
         then:
@@ -56,7 +58,9 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
         //where name = "hillwood city"
         def response = graphQLTestTemplate.perform(
                 "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
-                getFilterVariables("name", EQ, "hillwood city")
+                asObjectNode('{"filter": {"AND": [' +
+                        '{"name": {"_eq": "hillwood city"}}' +
+                        ']}}')
         )
 
         then:
@@ -68,7 +72,9 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
         //where vanEntry = false
         def response = graphQLTestTemplate.perform(
                 "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
-                getFilterVariables("vanEntry", EQ, false)
+                asObjectNode('{"filter": {"AND": [' +
+                        '{"vanEntry": {"_eq": "false"}}' +
+                        ']}}')
         )
 
         then:
@@ -84,7 +90,9 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
         //where id = "bfe41616-f03d-f287-1397-8619f5dde390"
         def response = graphQLTestTemplate.perform(
                 "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
-                getFilterVariables("id", EQ, "bfe41616-f03d-f287-1397-8619f5dde390")
+                asObjectNode('{"filter": {"AND": [' +
+                        '{"id": {"_eq": "bfe41616-f03d-f287-1397-8619f5dde390"}}' +
+                        ']}}')
         )
 
         then:
@@ -98,7 +106,9 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
         //where capacity <> 50
         def response = graphQLTestTemplate.perform(
                 "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
-                getFilterVariables("capacity", NEQ, 50)
+                asObjectNode('{"filter": {"AND": [' +
+                        '{"capacity": {"_neq": "50"}}' +
+                        ']}}')
         )
 
         then:
@@ -119,7 +129,9 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
         //where name <> "Hillwood City"
         def response = graphQLTestTemplate.perform(
                 "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
-                getFilterVariables("name", NEQ, "Hillwood City")
+                asObjectNode('{"filter": {"AND": [' +
+                        '{"name": {"_neq": "Hillwood City"}}' +
+                        ']}}')
         )
 
         then:
@@ -141,7 +153,9 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
         //where name <> "hillwood city"
         def response = graphQLTestTemplate.perform(
                 "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
-                getFilterVariables("name", NEQ, "hillwood city")
+                asObjectNode('{"filter": {"AND": [' +
+                        '{"name": {"_neq": "hillwood city"}}' +
+                        ']}}')
         )
 
         then:
@@ -164,7 +178,9 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
         //where vanEntry <> false
         def response = graphQLTestTemplate.perform(
                 "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
-                getFilterVariables("vanEntry", NEQ, false)
+                asObjectNode('{"filter": {"AND": [' +
+                        '{"vanEntry": {"_neq": "false"}}' +
+                        ']}}')
         )
 
         then:
@@ -184,7 +200,9 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
         //where id <> "bfe41616-f03d-f287-1397-8619f5dde390"
         def response = graphQLTestTemplate.perform(
                 "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
-                getFilterVariables("id", NEQ, "bfe41616-f03d-f287-1397-8619f5dde390")
+                asObjectNode('{"filter": {"AND": [' +
+                        '{"id": {"_neq": "bfe41616-f03d-f287-1397-8619f5dde390"}}' +
+                        ']}}')
         )
 
         then:
@@ -206,7 +224,9 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
         //where capacity > 50
         def response = graphQLTestTemplate.perform(
                 "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
-                getFilterVariables("capacity", GT, 50)
+                asObjectNode('{"filter": {"AND": [' +
+                        '{"capacity": {"_gt": "50"}}' +
+                        ']}}')
         )
 
         then:
@@ -222,7 +242,9 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
         //where capacity >= 50
         def response = graphQLTestTemplate.perform(
                 "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
-                getFilterVariables("capacity", GTE, 50)
+                asObjectNode('{"filter": {"AND": [' +
+                        '{"capacity": {"_gte": "50"}}' +
+                        ']}}')
         )
 
         then:
@@ -240,7 +262,9 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
         //where capacity < 50
         def response = graphQLTestTemplate.perform(
                 "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
-                getFilterVariables("capacity", LT, 50)
+                asObjectNode('{"filter": {"AND": [' +
+                        '{"capacity": {"_lt": "50"}}' +
+                        ']}}')
         )
 
         then:
@@ -258,7 +282,9 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
         //where capacity <= 50
         def response = graphQLTestTemplate.perform(
                 "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
-                getFilterVariables("capacity", LTE, 50)
+                asObjectNode('{"filter": {"AND": [' +
+                        '{"capacity": {"_lte": "50"}}' +
+                        ']}}')
         )
 
         then:
@@ -278,7 +304,9 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
         //where name like "%Hillwood%"
         def response = graphQLTestTemplate.perform(
                 "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
-                getFilterVariables("name", CONTAINS, "Hillwood")
+                asObjectNode('{"filter": {"AND": [' +
+                        '{"name": {"_contains": "Hillwood"}}' +
+                        ']}}')
         )
 
         then:
@@ -292,7 +320,9 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
         //where name like "%hillwood%"
         def response = graphQLTestTemplate.perform(
                 "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
-                getFilterVariables("name", CONTAINS, "hillwood")
+                asObjectNode('{"filter": {"AND": [' +
+                        '{"name": {"_contains": "hillwood"}}' +
+                        ']}}')
         )
 
         then:
@@ -306,7 +336,9 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
         //where name not like "%Hillwood%"
         def response = graphQLTestTemplate.perform(
                 "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
-                getFilterVariables("name", NOT_CONTAINS, "Hillwood")
+                asObjectNode('{"filter": {"AND": [' +
+                        '{"name": {"_notContains": "Hillwood"}}' +
+                        ']}}')
         )
 
         then:
@@ -328,7 +360,9 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
         //where name not like "%hillwood%"
         def response = graphQLTestTemplate.perform(
                 "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
-                getFilterVariables("name", NOT_CONTAINS, "hillwood")
+                asObjectNode('{"filter": {"AND": [' +
+                        '{"name": {"_notContains": "hillwood"}}' +
+                        ']}}')
         )
 
         then:
@@ -350,7 +384,9 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
         //where name like "Hil%"
         def response = graphQLTestTemplate.perform(
                 "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
-                getFilterVariables("name", STARTS_WITH, "Hil")
+                asObjectNode('{"filter": {"AND": [' +
+                        '{"name": {"_startsWith": "Hil"}}' +
+                        ']}}')
         )
 
         then:
@@ -364,7 +400,9 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
         //where name like "hil%"
         def response = graphQLTestTemplate.perform(
                 "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
-                getFilterVariables("name", STARTS_WITH, "hil")
+                asObjectNode('{"filter": {"AND": [' +
+                        '{"name": {"_startsWith": "hil"}}' +
+                        ']}}')
         )
 
         then:
@@ -378,7 +416,9 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
         //where name like "%ity"
         def response = graphQLTestTemplate.perform(
                 "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
-                getFilterVariables("name", ENDS_WITH, "ity")
+                asObjectNode('{"filter": {"AND": [' +
+                        '{"name": {"_endsWith": "ity"}}' +
+                        ']}}')
         )
 
         then:
@@ -392,7 +432,9 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
         //where name like "%ITY"
         def response = graphQLTestTemplate.perform(
                 "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
-                getFilterVariables("name", ENDS_WITH, "ITY")
+                asObjectNode('{"filter": {"AND": [' +
+                        '{"name": {"_endsWith": "ITY"}}' +
+                        ']}}')
         )
 
         then:
@@ -406,7 +448,9 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
         //where capacity in (50, 21, 7)
         def response = graphQLTestTemplate.perform(
                 "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
-                getFilterVariablesWithArray("capacity", IN_LIST, [50, 21, 7])
+                asObjectNode('{"filter": {"AND": [' +
+                        '{"capacity": {"_in": ["50", "21", "7"]}}' +
+                        ']}}')
         )
 
         then:
@@ -423,7 +467,9 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
         //where name in ("Hillwood City", "Chez Paris")
         def response = graphQLTestTemplate.perform(
                 "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
-                getFilterVariablesWithArray("name", IN_LIST, ["Hillwood City", "Chez Paris"])
+                asObjectNode('{"filter": {"AND": [' +
+                        '{"name": {"_in": ["Hillwood City", "Chez Paris"]}}' +
+                        ']}}')
         )
 
         then:
@@ -438,7 +484,9 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
         //where name in ("hillwood city", "chez paris")
         def response = graphQLTestTemplate.perform(
                 "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
-                getFilterVariablesWithArray("name", IN_LIST, ["hillwood city", "chez paris"])
+                asObjectNode('{"filter": {"AND": [' +
+                        '{"name": {"_in": ["hillwood city", "chez paris"]}}' +
+                        ']}}')
         )
 
         then:
@@ -450,11 +498,9 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
         //where id in ("bfe41616-f03d-f287-1397-8619f5dde390", "2094170e-5739-43bd-ed5c-783c949c9948")
         def response = graphQLTestTemplate.perform(
                 "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
-                getFilterVariablesWithArray(
-                        "id",
-                        IN_LIST,
-                        ["bfe41616-f03d-f287-1397-8619f5dde390", "2094170e-5739-43bd-ed5c-783c949c9948"]
-                )
+                asObjectNode('{"filter": {"AND": [' +
+                        '{"id": {"_in": ["bfe41616-f03d-f287-1397-8619f5dde390", "2094170e-5739-43bd-ed5c-783c949c9948"]}}' +
+                        ']}}')
         )
 
         then:
@@ -469,7 +515,9 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
         //where capacity not in (50, 21, 7)
         def response = graphQLTestTemplate.perform(
                 "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
-                getFilterVariablesWithArray("capacity", NOT_IN_LIST, [50, 21, 7])
+                asObjectNode('{"filter": {"AND": [' +
+                        '{"capacity": {"_notIn": ["50", "21", "7"]}}' +
+                        ']}}')
         )
 
         then:
@@ -488,7 +536,9 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
         //where name not in ("Hillwood City", "Chez Paris")
         def response = graphQLTestTemplate.perform(
                 "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
-                getFilterVariablesWithArray("name", NOT_IN_LIST, ["Hillwood City", "Chez Paris"])
+                asObjectNode('{"filter": {"AND": [' +
+                        '{"name": {"_notIn": ["Hillwood City", "Chez Paris"]}}' +
+                        ']}}')
         )
 
         then:
@@ -509,7 +559,9 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
         //where name not in ("hillwood city", "chez paris")
         def response = graphQLTestTemplate.perform(
                 "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
-                getFilterVariablesWithArray("name", NOT_IN_LIST, ["hillwood city", "chez paris"])
+                asObjectNode('{"filter": {"AND": [' +
+                        '{"name": {"_notIn": ["hillwood city", "chez paris"]}}' +
+                        ']}}')
         )
 
         then:
@@ -532,11 +584,9 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
         //where id not in ("bfe41616-f03d-f287-1397-8619f5dde390", "2094170e-5739-43bd-ed5c-783c949c9948")
         def response = graphQLTestTemplate.perform(
                 "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
-                getFilterVariablesWithArray(
-                        "id",
-                        NOT_IN_LIST,
-                        ["bfe41616-f03d-f287-1397-8619f5dde390", "2094170e-5739-43bd-ed5c-783c949c9948"]
-                )
+                asObjectNode('{"filter": {"AND": [' +
+                        '{"id": {"_notIn": ["bfe41616-f03d-f287-1397-8619f5dde390", "2094170e-5739-43bd-ed5c-783c949c9948"]}}' +
+                        ']}}')
         )
 
         then:
@@ -557,7 +607,9 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
         //where integerAttr is null
         def response = graphQLTestTemplate.perform(
                 "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                getFilterVariables("integerAttr", IS_NULL, true)
+                asObjectNode('{"filter": {"AND": [' +
+                        '{"integerAttr": {"_isNull": "true"}}' +
+                        ']}}')
         )
 
         then:
@@ -571,7 +623,9 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
         //where stringAttr is null
         def response = graphQLTestTemplate.perform(
                 "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                getFilterVariables("stringAttr", IS_NULL, true)
+                asObjectNode('{"filter": {"AND": [' +
+                        '{"stringAttr": {"_isNull": "true"}}' +
+                        ']}}')
         )
 
         then:
@@ -585,7 +639,9 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
         //where booleanAttr is null
         def response = graphQLTestTemplate.perform(
                 "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                getFilterVariables("booleanAttr", IS_NULL, true)
+                asObjectNode('{"filter": {"AND": [' +
+                        '{"booleanAttr": {"_isNull": "true"}}' +
+                        ']}}')
         )
 
         then:
@@ -600,7 +656,9 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
         //where uuidAttr is null
         def response = graphQLTestTemplate.perform(
                 "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                getFilterVariables("uuidAttr", IS_NULL, true)
+                asObjectNode('{"filter": {"AND": [' +
+                        '{"uuidAttr": {"_isNull": "true"}}' +
+                        ']}}')
         )
 
         then:
@@ -614,7 +672,9 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
         //where dateAttr is null
         def response = graphQLTestTemplate.perform(
                 "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                getFilterVariables("dateAttr", IS_NULL, true)
+                asObjectNode('{"filter": {"AND": [' +
+                        '{"dateAttr": {"_isNull": "true"}}' +
+                        ']}}')
         )
 
         then:
@@ -628,7 +688,9 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
         //where integerAttr is not null
         def response = graphQLTestTemplate.perform(
                 "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                getFilterVariables("integerAttr", IS_NULL, false)
+                asObjectNode('{"filter": {"AND": [' +
+                        '{"integerAttr": {"_isNull": "false"}}' +
+                        ']}}')
         )
 
         then:
@@ -644,7 +706,9 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
         //where stringAttr is not null
         def response = graphQLTestTemplate.perform(
                 "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                getFilterVariables("stringAttr", IS_NULL, false)
+                asObjectNode('{"filter": {"AND": [' +
+                        '{"stringAttr": {"_isNull": "false"}}' +
+                        ']}}')
         )
 
         then:
@@ -660,7 +724,9 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
         //where booleanAttr is not null
         def response = graphQLTestTemplate.perform(
                 "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                getFilterVariables("booleanAttr", IS_NULL, false)
+                asObjectNode('{"filter": {"AND": [' +
+                        '{"booleanAttr": {"_isNull": "false"}}' +
+                        ']}}')
         )
 
         then:
@@ -675,7 +741,9 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
         //where uuidAttr is not null
         def response = graphQLTestTemplate.perform(
                 "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                getFilterVariables("uuidAttr", IS_NULL, false)
+                asObjectNode('{"filter": {"AND": [' +
+                        '{"uuidAttr": {"_isNull": "false"}}' +
+                        ']}}')
         )
 
         then:
@@ -691,7 +759,9 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
         //where dateAttr is not null
         def response = graphQLTestTemplate.perform(
                 "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                getFilterVariables("dateAttr", IS_NULL, false)
+                asObjectNode('{"filter": {"AND": [' +
+                        '{"dateAttr": {"_isNull": "false"}}' +
+                        ']}}')
         )
 
         then:

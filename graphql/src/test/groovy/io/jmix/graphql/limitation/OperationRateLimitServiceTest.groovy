@@ -21,9 +21,7 @@ import io.jmix.graphql.AbstractGraphQLTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.TestPropertySource
 
-import static io.jmix.graphql.schema.Types.FilterOperation.EQ
-
-@TestPropertySource("/test_support/test-app-limitations.properties")
+@TestPropertySource(properties = ["jmix.graphql.operationRateLimitPerMinute=3"])
 class OperationRateLimitServiceTest extends AbstractGraphQLTest {
 
     @Autowired
@@ -37,7 +35,9 @@ class OperationRateLimitServiceTest extends AbstractGraphQLTest {
         for (i in 0..<2) {
             response = graphQLTestTemplate.perform(
                     "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
-                    getFilterVariables("capacity", EQ, 50)
+                    asObjectNode('{"filter": {"AND": [' +
+                            '{"capacity": {"_eq": "50"}}' +
+                            ']}}')
             )
         }
 
@@ -66,7 +66,9 @@ class OperationRateLimitServiceTest extends AbstractGraphQLTest {
         for (i in 0..<4) {
             response = graphQLTestTemplate.perform(
                     "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
-                    getFilterVariables("capacity", EQ, 50)
+                    asObjectNode('{"filter": {"AND": [' +
+                            '{"capacity": {"_eq": "50"}}' +
+                            ']}}')
             )
         }
         def error = getErrors(response)[0].getAsJsonObject()

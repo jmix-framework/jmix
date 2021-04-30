@@ -132,7 +132,7 @@ public class MessageDialogFacetProvider implements FacetProvider<MessageDialogFa
     }
 
     protected void loadStyleName(MessageDialogFacet facet, Element element) {
-        String styleName = element.attributeValue("styleName");
+        String styleName = element.attributeValue("stylename");
         if (isNotEmpty(styleName)) {
             facet.setStyleName(styleName);
         }

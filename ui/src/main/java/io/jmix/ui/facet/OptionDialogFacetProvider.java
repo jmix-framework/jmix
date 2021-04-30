@@ -140,7 +140,7 @@ public class OptionDialogFacetProvider
     }
 
     protected void loadStyleName(OptionDialogFacet facet, Element element) {
-        String styleName = element.attributeValue("styleName");
+        String styleName = element.attributeValue("stylename");
         if (isNotEmpty(styleName)) {
             facet.setStyleName(styleName);
         }

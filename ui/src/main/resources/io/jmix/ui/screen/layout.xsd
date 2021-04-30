@@ -3410,7 +3410,7 @@
         <xs:attribute name="delay" type="xs:int"/>
 
         <xs:attribute name="contentMode" type="notificationContentMode"/>
-        <xs:attribute name="styleName" type="xs:string"/>
+        <xs:attribute name="stylename" type="xs:string"/>
         <xs:attribute name="position" type="notificationPositionEnum"/>
 
         <xs:attributeGroup ref="facetTriggerType"/>
@@ -3445,7 +3445,7 @@
                 <xs:attribute name="message" type="resourceString"/>
                 <xs:attribute name="contentMode" type="contentMode"/>
                 <xs:attribute name="windowMode" type="windowMode"/>
-                <xs:attribute name="styleName" type="xs:string"/>
+                <xs:attribute name="stylename" type="xs:string"/>
 
                 <xs:attribute name="closeOnClickOutside" type="xs:boolean"/>
                 <xs:attribute name="modal" type="xs:boolean"/>
@@ -3465,7 +3465,7 @@
                 <xs:attribute name="message" type="resourceString"/>
                 <xs:attribute name="contentMode" type="contentMode"/>
                 <xs:attribute name="windowMode" type="windowMode"/>
-                <xs:attribute name="styleName" type="xs:string"/>
+                <xs:attribute name="stylename" type="xs:string"/>
 
                 <xs:attributeGroup ref="hasHtmlSanitizer"/>
             </xs:extension>

@@ -116,7 +116,7 @@ public class NotificationFacetProvider implements FacetProvider<NotificationFace
     }
 
     protected void loadStyleName(NotificationFacet facet, Element element) {
-        String styleName = element.attributeValue("styleName");
+        String styleName = element.attributeValue("stylename");
         if (isNotEmpty(styleName)) {
             facet.setStyleName(styleName);
         }

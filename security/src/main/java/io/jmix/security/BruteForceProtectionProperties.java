@@ -24,14 +24,14 @@ import org.springframework.boot.convert.DurationUnit;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 
-@ConfigurationProperties(prefix = "jmix.security.bruteforce")
+@ConfigurationProperties(prefix = "jmix.security.bruteforceprotection")
 @ConstructorBinding
-public class BruteForceProperties {
+public class BruteForceProtectionProperties {
     private final boolean enabled;
     private final Duration blockInterval;
     private final int maxLoginAttemptsNumber;
 
-    public BruteForceProperties(
+    public BruteForceProtectionProperties(
             @DefaultValue("false") boolean enabled,
             @DurationUnit(ChronoUnit.SECONDS)
             @DefaultValue("60") Duration blockInterval,

@@ -34,7 +34,7 @@ import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 
 @Component("sec_BruteForceAuthenticationChecks")
-public class BruteForceAuthenticationChecks {
+public class BruteForceProtectionAuthenticationChecks {
     @Autowired
     private BruteForceProtection bruteForceProtection;
     @Autowired(required = false)

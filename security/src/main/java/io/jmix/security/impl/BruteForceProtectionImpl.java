@@ -20,7 +20,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import io.jmix.security.BruteForceProtection;
-import io.jmix.security.BruteForceProperties;
+import io.jmix.security.BruteForceProtectionProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -32,7 +32,7 @@ import java.util.concurrent.ExecutionException;
 public class BruteForceProtectionImpl implements BruteForceProtection {
     private LoadingCache<String, Integer> attemptsCache;
     @Autowired
-    private BruteForceProperties properties;
+    private BruteForceProtectionProperties properties;
 
     @PostConstruct
     protected void init() {

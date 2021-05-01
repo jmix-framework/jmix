@@ -24,6 +24,7 @@ dependencies {
     api platform("io.jmix.bom:jmix-bom:$bomVersion")
 
     api 'io.jmix.core:jmix-core'
+    compileOnly 'io.jmix.security:jmix-security'
 
     // todo move to bom
     implementation 'com.graphql-java:graphql-java:16.2'

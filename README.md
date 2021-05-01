@@ -80,8 +80,8 @@ http POST http://localhost:8080/graphql query="{carList {_instanceName}}" "Autho
 
 ### Specific permission
 The user must have specific permission to work with GraphQL API. 
-To make it available, have to set access for `graphql.enabled` resource in the user's resource role.
-
+To make it available, have to set access for `graphql.enabled` resource in the user's resource role, 
+or assign `graphql-minimal` role to user.  
 
 ## Jmix Security Development Mode
 OAuth header could be partially skipped in development mode. To switch on dev mode configure properties in app:

@@ -66,6 +66,9 @@ class AbstractGraphQLTest extends Specification {
     protected TransactionTemplate transaction
 
     @Autowired
+    protected GraphQLTestTemplate graphQLTestTemplate
+
+    @Autowired
     protected void setTransactionManager(PlatformTransactionManager transactionManager) {
         transaction = new TransactionTemplate(transactionManager)
         transaction.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW)

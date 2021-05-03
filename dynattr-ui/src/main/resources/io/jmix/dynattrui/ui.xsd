@@ -21,7 +21,9 @@
            elementFormDefault="qualified">
 
     <!-- DynamicAttributes Facet -->
-    <xs:complexType name="dynamicAttributesType"/>
+    <xs:complexType name="dynamicAttributesType">
+        <xs:attribute name="id" type="xs:string"/>
+    </xs:complexType>
 
     <!-- DynamicAttributesPanel -->
     <xs:complexType name="dynamicAttributesPanel">

@@ -321,7 +321,7 @@ public class InputParameter {
      * @return input parameter
      */
     @StudioElement(
-            caption = "Big decimal parameter",
+            caption = "BigDecimal parameter",
             xmlElement = "bigDecimalParameter"
     )
     @StudioProperties(

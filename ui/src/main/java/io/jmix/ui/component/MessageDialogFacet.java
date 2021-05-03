@@ -113,7 +113,7 @@ public interface MessageDialogFacet extends Facet {
      *
      * @param styleName style name
      */
-    @StudioProperty(type = PropertyType.CSS_CLASSNAME_LIST)
+    @StudioProperty(name = "stylename", type = PropertyType.CSS_CLASSNAME_LIST)
     void setStyleName(String styleName);
 
     /**

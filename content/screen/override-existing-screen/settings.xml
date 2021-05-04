@@ -41,7 +41,7 @@
               required="true"
               dynamic="true"
               defaultValue="override"
-              valueTemplate="ext-${overrideScreen.descriptorName}">
+              valueTemplate="${project_id.isEmpty()?'ext-':project_id.replace('_','-')}${overrideScreen.descriptorName}">
         <dependency code="overrideScreen"/>
         <dependency code="overrideAction"/>
     </property>
@@ -51,7 +51,7 @@
               propertyType="CLASS_NAME"
               sourceName="controller"
               dynamic="true"
-              valueTemplate="Ext${overrideScreen.controllerClassName}">
+              valueTemplate="${project_id.isEmpty()?'Ext':project_id.capitalize().replace('_','')}${overrideScreen.controllerClassName}">
         <dependency code="overrideScreen"/>
     </property>
 

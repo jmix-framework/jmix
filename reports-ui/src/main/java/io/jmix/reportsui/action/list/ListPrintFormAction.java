@@ -22,14 +22,16 @@ import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.reports.app.ParameterPrototype;
 import io.jmix.reportsui.action.AbstractPrintFormAction;
-import io.jmix.reportsui.screen.ReportGuiManager;
 import io.jmix.ui.Dialogs;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.action.AbstractAction;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.ActionType;
 import io.jmix.ui.action.DialogAction;
-import io.jmix.ui.component.*;
+import io.jmix.ui.component.Component;
+import io.jmix.ui.component.ComponentsHelper;
+import io.jmix.ui.component.ListComponent;
+import io.jmix.ui.component.Window;
 import io.jmix.ui.component.data.BindingState;
 import io.jmix.ui.component.data.meta.ContainerDataUnit;
 import io.jmix.ui.icon.Icons;
@@ -111,7 +113,8 @@ public class ListPrintFormAction extends AbstractPrintFormAction implements Acti
                         printSelected(selected);
                     }
                 };
-                printSelectedAction.setIcon("icons/reports-print-row.png");
+                printSelectedAction.setIcon(JmixIcon.BARS.source());
+                printSelectedAction.setCaption(messages.getMessage(getClass(), "actions.printSelected"));
 
                 Action printAllAction = new AbstractAction("actions.printAll") {
                     @Override
@@ -119,11 +122,12 @@ public class ListPrintFormAction extends AbstractPrintFormAction implements Acti
                         printAll();
                     }
                 };
-                printAllAction.setIcon("icons/reports-print-all.png");
+                printAllAction.setIcon(JmixIcon.TABLE.source());
+                printAllAction.setCaption(messages.getMessage(getClass(), "actions.printAll"));
 
                 dialogs.createOptionDialog()
-                        .withCaption(messages.getMessage(ReportGuiManager.class, "notifications.confirmPrintSelectedheader"))
-                        .withMessage(messages.getMessage(ReportGuiManager.class, "notifications.confirmPrintSelected"))
+                        .withCaption(messages.getMessage(getClass(), "notifications.confirmPrintSelectedHeader"))
+                        .withMessage(messages.getMessage(getClass(), "notifications.confirmPrintSelected"))
                         .withActions(printAllAction, printSelectedAction, cancelAction)
                         .show();
             } else {
@@ -148,7 +152,7 @@ public class ListPrintFormAction extends AbstractPrintFormAction implements Acti
             } else {
                 Notifications notifications = screenContext.getNotifications();
                 notifications.create()
-                        .withCaption(messages.getMessage(ReportGuiManager.class, "notifications.noSelectedEntity"))
+                        .withCaption(messages.getMessage(getClass(), "notifications.noSelectedEntity"))
                         .withType(Notifications.NotificationType.HUMANIZED)
                         .show();
             }

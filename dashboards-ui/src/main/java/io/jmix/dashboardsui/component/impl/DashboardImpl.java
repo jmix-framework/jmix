@@ -120,8 +120,6 @@ public class DashboardImpl extends CompositeComponent<VBoxLayout> implements Das
     @Autowired
     protected Messages messages;
 
-    private List<ApplicationListener> uiEventListeners;
-
     protected String code;
     protected String jsonPath;
     protected Integer timerDelay = 0;
@@ -135,7 +133,6 @@ public class DashboardImpl extends CompositeComponent<VBoxLayout> implements Das
 
     private void onCreate(CreateEvent createEvent) {
         canvasBox = getComposition();
-        initListeners();
     }
 
     @Override
@@ -436,47 +433,5 @@ public class DashboardImpl extends CompositeComponent<VBoxLayout> implements Das
     @Override
     public void setAssistantBeanName(String assistantBeanName) {
         this.assistantBeanName = assistantBeanName;
-    }
-
-    private void initListeners() {
-        UiControllerReflectionInspector reflectionInspector = applicationContext.getBean(UiControllerReflectionInspector.class);
-        UiControllerReflectionInspector.ScreenIntrospectionData screenIntrospectionData = reflectionInspector.getScreenIntrospectionData(getClass());
-
-        List<Method> eventListenerMethods = screenIntrospectionData.getEventListenerMethods();
-
-        if (!eventListenerMethods.isEmpty()) {
-            uiEventListeners = eventListenerMethods.stream()
-                    .map(m -> new UiEventListenerMethodAdapter(this, getClass(), m, applicationContext))
-                    .collect(Collectors.toList());
-
-            addAttachListener(event -> enableEventListeners());
-            addDetachListener(event -> disableEventListeners());
-        }
-    }
-
-    private void disableEventListeners() {
-        if (uiEventListeners != null) {
-            AppUI ui = AppUI.getCurrent();
-            if (ui != null) {
-                UiEventsMulticaster multicaster = ui.getUiEventsMulticaster();
-
-                for (ApplicationListener listener : uiEventListeners) {
-                    multicaster.removeApplicationListener(listener);
-                }
-            }
-        }
-    }
-
-    private void enableEventListeners() {
-        if (uiEventListeners != null) {
-            AppUI ui = AppUI.getCurrent();
-            if (ui != null) {
-                UiEventsMulticaster multicaster = ui.getUiEventsMulticaster();
-
-                for (ApplicationListener listener : uiEventListeners) {
-                    multicaster.addApplicationListener(listener);
-                }
-            }
-        }
     }
 }

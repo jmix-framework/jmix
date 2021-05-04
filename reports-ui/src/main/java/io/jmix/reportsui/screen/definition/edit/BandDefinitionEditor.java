@@ -249,6 +249,7 @@ public class BandDefinitionEditor extends ScreenFragment implements Suggester {
                 .withMessage(messages.getMessage(getClass(), "dataSet.jsonSourceGroovyCodeHelp"))
                 .withModal(false)
                 .withWidth("700px")
+                .withContentMode(ContentMode.HTML)
                 .show();
     }
 
@@ -259,6 +260,7 @@ public class BandDefinitionEditor extends ScreenFragment implements Suggester {
                 .withMessage(messages.getMessage(getClass(), "dataSet.jsonPathQueryHelp"))
                 .withModal(false)
                 .withWidth("700px")
+                .withContentMode(ContentMode.HTML)
                 .show();
     }
 

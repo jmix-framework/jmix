@@ -72,6 +72,10 @@ public class CollectionLoaderImpl<E> implements CollectionLoader<E> {
 
     @Override
     public void load() {
+        _load();
+    }
+
+    protected boolean _load() {
         if (container == null)
             throw new IllegalStateException("container is null");
         if (query == null && delegate == null)
@@ -80,7 +84,7 @@ public class CollectionLoaderImpl<E> implements CollectionLoader<E> {
         LoadContext<E> loadContext = createLoadContext();
 
         if (!sendPreLoadEvent(loadContext)) {
-            return;
+            return false;
         }
 
         List<E> list;
@@ -101,6 +105,8 @@ public class CollectionLoaderImpl<E> implements CollectionLoader<E> {
         }
 
         sendPostLoadEvent(list);
+
+        return true;
     }
 
     @Override

@@ -309,7 +309,7 @@ public class ScreenDataXmlLoader {
             assert hostScreenData != null;
             loader = hostScreenData.getLoader(loaderId);
         } else {
-            loader = factory.createCollectionLoader();
+            loader = createCollectionLoader(element);
             loader.setDataContext(screenData.getDataContextOrNull());
             loader.setContainer(container);
 
@@ -321,6 +321,10 @@ public class ScreenDataXmlLoader {
         }
 
         screenData.registerLoader(loaderId, loader);
+    }
+
+    protected CollectionLoader<Object> createCollectionLoader(Element element) {
+        return factory.createCollectionLoader();
     }
 
     protected void loadKeyValueCollectionLoader(ScreenData screenData, Element element, KeyValueCollectionContainer container,

@@ -101,7 +101,7 @@ public class RoleGrantedAuthority implements PolicyAwareGrantedAuthority {
     }
 
     private RoleGrantedAuthority(RowLevelRole role) {
-        this.code = "";
+        this.code = String.format("row_level_role:%s", role.getCode());
         this.scopes = Collections.emptyList();
         this.resourcePolicies = Collections.emptyList();
         this.rowLevelPolicies = Collections.unmodifiableCollection(new ArrayList<>(role.getAllRowLevelPolicies()));

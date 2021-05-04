@@ -293,7 +293,6 @@ public abstract class AbstractDatabaseUserRepository<T extends UserDetails> impl
     @EventListener
     private void onUserChanged(EntityChangedEvent<? extends UserDetails> event) {
         if (Objects.equals(event.getEntityId().getEntityClass(), getUserClass())) {
-            AttributeChanges changes = event.getChanges();
             if (isUserDisabled(event)) {
                 UserDetails userDetails = dataManager.load(event.getEntityId())
                         .optional()

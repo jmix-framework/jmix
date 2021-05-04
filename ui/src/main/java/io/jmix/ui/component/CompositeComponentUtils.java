@@ -16,6 +16,10 @@
 
 package io.jmix.ui.component;
 
+import org.springframework.context.ApplicationListener;
+
+import java.util.List;
+
 public final class CompositeComponentUtils {
 
     private CompositeComponentUtils() {
@@ -30,5 +34,10 @@ public final class CompositeComponentUtils {
     public static <E> void fireEvent(CompositeComponent compositeComponent,
                                      Class<E> eventType, E event) {
         compositeComponent.publish(eventType, event);
+    }
+
+    public static void setUiEventListeners(CompositeComponent compositeComponent,
+                                           List<ApplicationListener> listeners) {
+        compositeComponent.setUiEventListeners(listeners);
     }
 }

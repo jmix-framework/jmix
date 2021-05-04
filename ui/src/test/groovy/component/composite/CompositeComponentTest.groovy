@@ -16,18 +16,22 @@
 
 package component.composite
 
+import component.composite.appevent.TestAppEvent
 import component.composite.component.TestCommentaryPanel
 import component.composite.component.TestProgrammaticCommentaryPanel
 import component.composite.component.TestStepperField
 import component.composite.screen.CommentaryPanelTestScreen
+import component.composite.screen.EventPanelTestScreen
 import component.composite.screen.StepperFieldTestScreen
 import io.jmix.core.CoreConfiguration
 import io.jmix.data.DataConfiguration
 import io.jmix.eclipselink.EclipselinkConfiguration
+import io.jmix.ui.AppUI
 import io.jmix.ui.ScreenBuilders
 import io.jmix.ui.UiConfiguration
 import io.jmix.ui.component.Button
 import io.jmix.ui.model.InstanceContainer
+import io.jmix.ui.screen.StandardOutcome
 import io.jmix.ui.screen.UiControllerUtils
 import io.jmix.ui.testassist.spec.ScreenSpecification
 import org.springframework.beans.factory.annotation.Autowired
@@ -110,5 +114,25 @@ class CompositeComponentTest extends ScreenSpecification {
 
         then: "Button has caption"
         sendBtn.caption == "Send"
+    }
+
+    def "Composite component handles ApplicationEvent fired by EventsMulticaster"() {
+        showTestMainScreen()
+
+        def screen = (EventPanelTestScreen) screens.create(EventPanelTestScreen)
+        screen.show()
+
+        when: "Fire app event via EventsMulticaster"
+        AppUI.current.uiEventsMulticaster.multicastEvent(new TestAppEvent(screen))
+
+        then: "Event should be handled by composite component"
+        screen.testEventPanel.eventCounter == 1
+
+        when: "Close screen and fire event again"
+        screen.close(StandardOutcome.CLOSE)
+        AppUI.current.uiEventsMulticaster.multicastEvent(new TestAppEvent(screen))
+
+        then: "Component should unsubscribe and event should not be handled"
+        screen.testEventPanel.eventCounter == 1
     }
 }

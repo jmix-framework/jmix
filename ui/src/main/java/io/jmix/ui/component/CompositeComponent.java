@@ -17,20 +17,23 @@
 package io.jmix.ui.component;
 
 import com.google.common.base.Preconditions;
+import com.vaadin.ui.AbstractComponent;
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.common.event.TriggerOnce;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.component.impl.FrameImplementation;
 import io.jmix.ui.sys.TestIdManager;
+import io.jmix.ui.sys.event.UiEventsMulticaster;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationListener;
 
 import javax.annotation.Nullable;
-import java.util.EventObject;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Consumer;
 
 public class CompositeComponent<T extends Component>
@@ -44,6 +47,9 @@ public class CompositeComponent<T extends Component>
 
     // private, lazily initialized
     private EventHub eventHub = null;
+
+    // Global event listeners
+    private List<ApplicationListener> uiEventListeners;
 
     @Autowired
     public void setApplicationContext(ApplicationContext applicationContext) {
@@ -136,6 +142,11 @@ public class CompositeComponent<T extends Component>
     protected void setComposition(T composition) {
         Preconditions.checkState(root == null, "Composition root has already been initialized");
         this.root = composition;
+
+        root.withUnwrapped(AbstractComponent.class, component -> {
+            component.addAttachListener(event -> enableEventListeners());
+            component.addDetachListener(event -> disableEventListeners());
+        });
     }
 
     @Nullable
@@ -457,5 +468,43 @@ public class CompositeComponent<T extends Component>
      */
     protected Subscription addCreateListener(Consumer<CreateEvent> listener) {
         return getEventHub().subscribe(CreateEvent.class, listener);
+    }
+
+    @Internal
+    protected List<ApplicationListener> getUiEventListeners() {
+        return uiEventListeners == null
+                ? Collections.emptyList()
+                : Collections.unmodifiableList(uiEventListeners);
+    }
+
+    @Internal
+    protected void setUiEventListeners(List<ApplicationListener> uiEventListeners) {
+        this.uiEventListeners = uiEventListeners;
+    }
+
+    @Internal
+    protected void enableEventListeners() {
+        List<ApplicationListener> listeners = getUiEventListeners();
+        if (CollectionUtils.isNotEmpty(listeners)) {
+            AppUI ui = AppUI.getCurrent();
+            UiEventsMulticaster multicaster = ui.getUiEventsMulticaster();
+
+            for (ApplicationListener listener : uiEventListeners) {
+                multicaster.addApplicationListener(listener);
+            }
+        }
+    }
+
+    @Internal
+    protected void disableEventListeners() {
+        List<ApplicationListener> listeners = getUiEventListeners();
+        if (CollectionUtils.isNotEmpty(listeners)) {
+            AppUI ui = AppUI.getCurrent();
+            UiEventsMulticaster multicaster = ui.getUiEventsMulticaster();
+
+            for (ApplicationListener listener : uiEventListeners) {
+                multicaster.removeApplicationListener(listener);
+            }
+        }
     }
 }

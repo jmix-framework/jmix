@@ -39,4 +39,10 @@
             </xs:complexContent>
         </xs:complexType>
     </xs:element>
+
+    <xs:element name="testEventPanel">
+        <xs:complexType>
+            <xs:attribute name="id" type="xs:string"/>
+        </xs:complexType>
+    </xs:element>
 </xs:schema>

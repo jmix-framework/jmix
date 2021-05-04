@@ -16,6 +16,7 @@
 
 package io.jmix.ui.sys;
 
+import com.google.common.collect.ImmutableList;
 import io.jmix.core.DevelopmentException;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.ui.UiComponents;
@@ -23,6 +24,7 @@ import io.jmix.ui.component.*;
 import io.jmix.ui.component.impl.*;
 import io.jmix.ui.component.mainwindow.*;
 import io.jmix.ui.component.mainwindow.impl.*;
+import io.jmix.ui.sys.event.UiEventListenerMethodAdapter;
 import io.jmix.ui.xml.layout.loader.CompositeComponentLayoutLoader;
 import io.jmix.ui.xml.layout.loader.CompositeComponentLoaderContext;
 import io.jmix.ui.xml.layout.loader.CompositeDescriptorLoader;
@@ -33,15 +35,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.EventListener;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.util.ReflectionUtils;
 
 import javax.annotation.Nullable;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
+import java.lang.reflect.*;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+
+import static org.springframework.core.annotation.AnnotatedElementUtils.findMergedAnnotation;
 
 @org.springframework.stereotype.Component("ui_UiComponents")
 public class UiComponentsImpl implements UiComponents {
@@ -260,6 +267,23 @@ public class UiComponentsImpl implements UiComponents {
         }
 
         CompositeComponent compositeComponent = (CompositeComponent) instance;
+
+        Method[] methods = ReflectionUtils.getUniqueDeclaredMethods(componentClass);
+        List<Method> eventListeners = Arrays.stream(methods)
+                .filter(m -> findMergedAnnotation(m, EventListener.class) != null)
+                .peek(m -> {
+                    if (!m.isAccessible()) {
+                        m.setAccessible(true);
+                    }
+                })
+                .collect(ImmutableList.toImmutableList());
+        if (!eventListeners.isEmpty()) {
+            List<ApplicationListener> listeners = eventListeners.stream()
+                    .map(m -> new UiEventListenerMethodAdapter(compositeComponent, componentClass, m, applicationContext))
+                    .collect(Collectors.toList());
+
+            CompositeComponentUtils.setUiEventListeners(compositeComponent, listeners);
+        }
 
         CompositeDescriptor descriptor = componentClass.getAnnotation(CompositeDescriptor.class);
         if (descriptor != null) {

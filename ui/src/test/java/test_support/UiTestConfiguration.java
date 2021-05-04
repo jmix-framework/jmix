@@ -17,9 +17,11 @@
 package test_support;
 
 import component.composite.component.TestCommentaryPanel;
+import component.composite.component.TestEventPanel;
 import component.composite.component.TestProgrammaticCommentaryPanel;
 import component.composite.component.TestStepperField;
 import component.composite.loader.TestCommentaryPanelLoader;
+import component.composite.loader.TestEventPanelLoader;
 import component.composite.loader.TestStepperFieldLoader;
 import io.jmix.core.CoreConfiguration;
 import io.jmix.core.JmixModules;
@@ -154,6 +156,14 @@ public class UiTestConfiguration {
         return ComponentRegistrationBuilder.create(TestStepperField.NAME)
                 .withComponentClass(TestStepperField.class)
                 .withComponentLoaderClass(TestStepperFieldLoader.class)
+                .build();
+    }
+
+    @Bean
+    public ComponentRegistration testEventPanel() {
+        return ComponentRegistrationBuilder.create(TestEventPanel.NAME)
+                .withComponentClass(TestEventPanel.class)
+                .withComponentLoaderClass(TestEventPanelLoader.class)
                 .build();
     }
 }

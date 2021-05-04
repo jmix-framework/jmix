@@ -17,15 +17,31 @@
 package com.haulmont.cuba.gui.model.impl;
 
 import com.google.common.base.Strings;
+import com.haulmont.cuba.gui.model.CubaDataComponents;
+import com.haulmont.cuba.gui.xml.layout.CubaLoaderConfig;
 import io.jmix.data.PersistenceHints;
+import io.jmix.ui.model.CollectionContainer;
+import io.jmix.ui.model.CollectionLoader;
 import io.jmix.ui.model.DataLoader;
+import io.jmix.ui.model.ScreenData;
 import io.jmix.ui.model.impl.ScreenDataXmlLoader;
 import org.dom4j.Element;
 
+import javax.annotation.Nullable;
+
 public class CubaScreenDataXmlLoader extends ScreenDataXmlLoader {
+
     protected void loadAdditionalLoaderProperties(Element element, DataLoader loader) {
         String softDeletionVal = element.attributeValue("softDeletion");
         if (!Strings.isNullOrEmpty(softDeletionVal))
             loader.setHint(PersistenceHints.SOFT_DELETION, Boolean.parseBoolean(softDeletionVal));
+    }
+
+    @Override
+    protected CollectionLoader<Object> createCollectionLoader(Element element) {
+        String schema = element.getNamespace().getStringValue();
+        return schema.startsWith(CubaLoaderConfig.CUBA_XSD_PREFIX) ?
+                ((CubaDataComponents) factory).createCubaCollectionLoader()
+                : super.createCollectionLoader(element);
     }
 }

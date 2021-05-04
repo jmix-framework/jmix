@@ -35,9 +35,9 @@ import com.haulmont.cuba.gui.UiComponents;
 import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.WindowManager.OpenType;
 import com.haulmont.cuba.gui.WindowParams;
-import com.haulmont.cuba.gui.components.CubaComponentsHelper;
+import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.components.Filter;
-import com.haulmont.cuba.gui.components.FilterDataContext;
+import com.haulmont.cuba.gui.components.GridLayout;
 import com.haulmont.cuba.gui.components.ListComponent;
 import com.haulmont.cuba.gui.components.LookupField;
 import com.haulmont.cuba.gui.components.actions.ItemTrackingAction;
@@ -51,6 +51,7 @@ import com.haulmont.cuba.gui.components.filter.edit.FilterEditor;
 import com.haulmont.cuba.gui.components.filter.filterselect.FilterSelectWindow;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.HierarchicalDatasource;
+import com.haulmont.cuba.gui.model.LoaderSupportsApplyToSelected;
 import com.haulmont.cuba.gui.screen.compatibility.LegacyFrame;
 import com.haulmont.cuba.security.entity.FilterEntity;
 import com.haulmont.cuba.security.entity.SearchFolder;
@@ -83,7 +84,22 @@ import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.action.DialogAction;
 import io.jmix.ui.action.DialogAction.Type;
 import io.jmix.ui.component.*;
+import io.jmix.ui.component.BoxLayout;
+import io.jmix.ui.component.ButtonsPanel;
+import io.jmix.ui.component.CheckBox;
+import io.jmix.ui.component.Component;
 import io.jmix.ui.component.Component.Alignment;
+import io.jmix.ui.component.CssLayout;
+import io.jmix.ui.component.Field;
+import io.jmix.ui.component.Frame;
+import io.jmix.ui.component.GroupBoxLayout;
+import io.jmix.ui.component.HBoxLayout;
+import io.jmix.ui.component.Label;
+import io.jmix.ui.component.PopupButton;
+import io.jmix.ui.component.Table;
+import io.jmix.ui.component.TextField;
+import io.jmix.ui.component.VBoxLayout;
+import io.jmix.ui.component.Window;
 import io.jmix.ui.component.data.meta.ContainerDataUnit;
 import io.jmix.ui.component.data.meta.EntityDataUnit;
 import com.haulmont.cuba.core.global.filter.Clause;
@@ -100,6 +116,7 @@ import io.jmix.ui.model.BaseCollectionLoader;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.presentation.TablePresentations;
 import io.jmix.ui.screen.FrameOwner;
+import io.jmix.ui.screen.StandardCloseAction;
 import io.jmix.ui.sys.ValuePathHelper;
 import io.jmix.ui.theme.ThemeConstants;
 import io.jmix.ui.theme.ThemeConstantsManager;
@@ -599,7 +616,8 @@ public class FilterDelegateImpl implements FilterDelegate {
         } catch (Exception e) {
             log.error("Exception on loading default filter '{}'", defaultFilter.getName(), e);
             getNotifications().create(Notifications.NotificationType.ERROR)
-                    .withCaption(messages.formatMainMessage("filter.errorLoadingDefaultFilter"))
+                    .withCaption(messages.formatMainMessage("filter.errorLoadingDefaultFilter",
+                            defaultFilter.getName()))
                     .withDescription(defaultFilter.getName())
                     .show();
             defaultFilter = adHocFilter;
@@ -1243,9 +1261,9 @@ public class FilterDelegateImpl implements FilterDelegate {
      */
     protected void loadFilterEntities() {
         filterEntities = new ArrayList<>(dataService.load(FilterEntity.class)
-                .query("select f from sec$Filter f " +  /*"left join f.user u " +*/
+                .query("select f from sec$Filter f " +
                         "where f.componentId = :component and (f.username = :username or f.username is null) " +
-                        /*+ "and (u.id = :userId or u is null)*/ "order by f.name")
+                        "order by f.name")
                 .parameter("component", CubaComponentsHelper.getFilterComponentPath(filter))
                 .fetchPlan("app")
                 // todo user substitution
@@ -1633,7 +1651,7 @@ public class FilterDelegateImpl implements FilterDelegate {
             if (!textMaxResults) {
                 List<Integer> optionsList = ((LookupField) maxResultsField).getOptionsList();
                 if (CollectionUtils.isNotEmpty(optionsList)) {
-                    boolean removed = optionsList.removeIf(option-> option > maxFetchUI);
+                    boolean removed = optionsList.removeIf(option -> option > maxFetchUI);
                     if (removed || optionsList.isEmpty()) {
                         if (optionsList.isEmpty()) {
                             optionsList.add(maxFetchUI);
@@ -2706,8 +2724,12 @@ public class FilterDelegateImpl implements FilterDelegate {
                     params.put("filterName", filterEntity.getName());
                 }
                 final SaveFilterWindow window = (SaveFilterWindow) getWindowManager().openWindow(windowInfo, OpenType.DIALOG, params);
-                window.addAfterCloseListener(actionId -> {
-                    if (Window.COMMIT_ACTION_ID.equals(actionId)) {
+                window.addAfterCloseListener(closeEvent -> {
+                    String closeActionId = closeEvent.getCloseAction() instanceof StandardCloseAction ?
+                            ((StandardCloseAction) closeEvent.getCloseAction()).getActionId()
+                            : AbstractWindow.UNKNOWN_CLOSE_ACTION_ID;
+
+                    if (Window.COMMIT_ACTION_ID.equals(closeActionId)) {
                         String filterName = window.getFilterName();
                         filterEntity.setName(filterName);
 
@@ -3595,8 +3617,7 @@ public class FilterDelegateImpl implements FilterDelegate {
 
         @Override
         public boolean supportsApplyToSelected() {
-            return false;
-            // return loader instanceof LoaderSupportsApplyToSelected;
+            return loader instanceof LoaderSupportsApplyToSelected;
         }
 
         @Override

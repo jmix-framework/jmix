@@ -18,6 +18,7 @@
 <fetchPlans xmlns="http://jmix.io/schema/core/fetch-plans">
     <fetchPlan class="com.haulmont.cuba.security.entity.FilterEntity" name="app">
         <property name="componentId"/>
+        <property name="username"/>
         <property name="name"/>
         <property name="code"/>
         <property name="xml"/>

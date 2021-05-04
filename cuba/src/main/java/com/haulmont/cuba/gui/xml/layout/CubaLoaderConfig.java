@@ -86,7 +86,7 @@ public class CubaLoaderConfig extends BaseLoaderConfig implements LoaderConfig {
 
     public static final String NAME = "cuba_LegacyLoaderConfig";
 
-    protected static final String CUBA_XSD_PREFIX = "http://schemas.haulmont.com/cuba/";
+    public static final String CUBA_XSD_PREFIX = "http://schemas.haulmont.com/cuba/";
 
     protected Class<? extends WindowLoader> windowLoader = CubaWindowLoader.class;
     protected Class<? extends FragmentLoader> fragmentLoader = CubaFragmentLoader.class;

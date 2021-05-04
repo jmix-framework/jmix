@@ -31,8 +31,13 @@ import com.haulmont.cuba.core.global.UserSessionSource;
 import com.haulmont.cuba.gui.UiComponents;
 import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.WindowManagerProvider;
-import com.haulmont.cuba.gui.components.*;
+import com.haulmont.cuba.gui.actions.picker.LookupAction;
+import com.haulmont.cuba.gui.components.FilterDataContext;
 import com.haulmont.cuba.gui.components.Frame.NotificationType;
+import com.haulmont.cuba.gui.components.ListEditor;
+import com.haulmont.cuba.gui.components.LookupField;
+import com.haulmont.cuba.gui.components.LookupPickerField;
+import com.haulmont.cuba.gui.components.PickerField;
 import com.haulmont.cuba.gui.components.filter.dateinterval.DateInIntervalComponent;
 import com.haulmont.cuba.gui.components.listeditor.ListEditorHelper;
 import com.haulmont.cuba.security.global.UserSession;
@@ -53,12 +58,6 @@ import io.jmix.data.QueryTransformerFactory;
 import io.jmix.dynattr.DynAttrUtils;
 import io.jmix.ui.Actions;
 import io.jmix.ui.action.entitypicker.EntityClearAction;
-import io.jmix.ui.action.entitypicker.EntityOpenAction;
-import io.jmix.ui.component.CheckBox;
-import io.jmix.ui.component.Component;
-import io.jmix.ui.component.DateField;
-import io.jmix.ui.component.TextField;
-import io.jmix.ui.component.TimeField;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.data.ValueConversionException;
 import io.jmix.ui.component.data.options.ContainerOptions;
@@ -880,7 +879,7 @@ public class Param {
                 picker.setMetaClass(metaClass);
 
                 picker.setWidth(theme.get("cuba.gui.filter.Param.textComponent.width"));
-                picker.addAction(actions.create(EntityOpenAction.ID));
+                picker.addAction(actions.create(LookupAction.ID));
                 picker.addAction(actions.create(EntityClearAction.ID));
 
                 picker.addValueChangeListener(e ->

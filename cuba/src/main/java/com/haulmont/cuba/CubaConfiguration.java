@@ -28,6 +28,7 @@ import com.haulmont.cuba.core.sys.CubaMetaModelLoader;
 import com.haulmont.cuba.core.sys.CubaNumberIdCache;
 import com.haulmont.cuba.gui.components.CubaUiTestIdsSupport;
 import com.haulmont.cuba.gui.components.presentation.CubaPresentationActionsBuilder;
+import com.haulmont.cuba.gui.model.CubaDataComponents;
 import com.haulmont.cuba.gui.model.impl.CubaScreenDataImpl;
 import com.haulmont.cuba.gui.model.impl.CubaScreenDataXmlLoader;
 import com.haulmont.cuba.gui.presentation.Presentations;
@@ -319,6 +320,12 @@ public class CubaConfiguration {
                                                                 UiScreenProperties screenProperties,
                                                                 CubaProperties cubaProperties) {
         return new CubaPropertyShortcutLoader(componentProperties, screenProperties, cubaProperties);
+    }
+
+    @Bean("cuba_DataComponents")
+    @Primary
+    protected CubaDataComponents dataComponents() {
+        return new CubaDataComponents();
     }
 
     @EventListener

@@ -21,6 +21,7 @@ import com.haulmont.yarg.structure.BandOrientation;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
+import io.jmix.core.SaveContext;
 import io.jmix.core.common.util.ParamsMap;
 import io.jmix.reports.ReportPrintHelper;
 import io.jmix.reports.Reports;
@@ -31,7 +32,10 @@ import io.jmix.reportsui.screen.report.run.InputParametersDialog;
 import io.jmix.security.constraint.PolicyStore;
 import io.jmix.security.constraint.SecureOperations;
 import io.jmix.ui.*;
-import io.jmix.ui.component.*;
+import io.jmix.ui.component.Button;
+import io.jmix.ui.component.GroupBoxLayout;
+import io.jmix.ui.component.Tree;
+import io.jmix.ui.component.ValidationErrors;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.CollectionLoader;
 import io.jmix.ui.model.InstanceContainer;
@@ -45,6 +49,7 @@ import javax.inject.Named;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 @UiController("report_Report.edit")
 @UiDescriptor("report-edit.xml")
@@ -196,6 +201,24 @@ public class ReportEditor extends StandardEditor<Report> {
         if (bandTree.getSingleSelected() == null) {
             bandEditor.setEnabled(false);
         }
+    }
+
+    @Install(target = Target.DATA_CONTEXT)
+    protected Set<Object> commitDelegate(SaveContext saveContext) {
+        Set<Object> result = new HashSet<>();
+        Report reportToStore = null;
+        for (Object entity : saveContext.getEntitiesToSave()) {
+            if (entity instanceof Report) {
+                reportToStore = (Report) entity;
+            } else if (entity instanceof ReportTemplate) {
+                reportToStore = ((ReportTemplate) entity).getReport();
+            }
+        }
+
+        if (reportToStore != null) {
+            result.add(reports.storeReportEntity(reportToStore));
+        }
+        return result;
     }
 
     @Subscribe("run")

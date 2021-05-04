@@ -27,6 +27,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.AccessDeniedException;
 import io.jmix.core.security.EntityOp;
 import io.jmix.data.PersistenceHints;
+import io.jmix.dynattr.DynAttrQueryHints;
 import io.jmix.reports.app.ParameterPrototype;
 import io.jmix.reports.converter.GsonConverter;
 import io.jmix.reports.converter.XStreamConverter;
@@ -63,7 +64,7 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 @Component("report_Reports")
 public class ReportsImpl implements Reports {
 
-    public static final String REPORT_EDIT_VIEW_NAME = "report.edit";
+    public static final String REPORT_EDIT_FETCH_PLAN_NAME = "report.edit";
     protected static final int MAX_REPORT_NAME_LENGTH = 255;
     protected static final String IDX_SEPARATOR = ",";
 
@@ -86,10 +87,6 @@ public class ReportsImpl implements Reports {
     @Autowired
     protected PolicyStore policyStore;
 
-    //TODO global config
-//    @Autowired
-//    protected GlobalConfig globalConfig;
-
     @Autowired
     protected ReportsProperties reportsProperties;
 
@@ -99,11 +96,7 @@ public class ReportsImpl implements Reports {
     @Autowired
     protected MetadataTools metadataTools;
 
-    //TODO Dynamic attributes manager API
-//    @Autowired
-//    protected DynamicAttributesManagerAPI dynamicAttributesManagerAPI;
-
-    //TODO executions
+    //todo https://github.com/Haulmont/jmix-reports/issues/22
 //    @Autowired
 //    protected Executions executions;
 
@@ -136,13 +129,11 @@ public class ReportsImpl implements Reports {
 
         Report savedReport = transaction.execute(action -> saveReport(report));
 
-        FetchPlan reportEditView = fetchPlanRepository.getFetchPlan(metadata.getClass(savedReport), REPORT_EDIT_VIEW_NAME);
+        FetchPlan reportEditFetchPlan = fetchPlanRepository.getFetchPlan(metadata.getClass(savedReport), REPORT_EDIT_FETCH_PLAN_NAME);
         return dataManager.load(Id.of(savedReport))
-                .fetchPlan(reportEditView)
+                .fetchPlan(reportEditFetchPlan)
+                .hint(DynAttrQueryHints.LOAD_DYN_ATTR, true)
                 .one();
-
-        //TODO Dynamic attributes manager
-        //return dataManager.reload(savedReport, reportEditView, metadata.getClass(savedReport), true);
     }
 
     @NotNull
@@ -165,7 +156,6 @@ public class ReportsImpl implements Reports {
             }
         }
         em.setProperty(PersistenceHints.SOFT_DELETION, false);
-        //em.setSoftDeletion(false);
         Report existingReport;
         List<ReportTemplate> existingTemplates = null;
         try {
@@ -190,9 +180,6 @@ public class ReportsImpl implements Reports {
                 report.setVersion(0);
                 report = em.merge(report);
             }
-
-            //TODO Dynamic attributes manager
-//                dynamicAttributesManagerAPI.storeDynamicAttributes(report);
 
             if (loadedTemplates != null) {
                 if (existingTemplates != null) {
@@ -236,28 +223,28 @@ public class ReportsImpl implements Reports {
 
     @Override
     public ReportOutputDocument createReport(Report report, Map<String, Object> params) {
-        report = reloadEntity(report, REPORT_EDIT_VIEW_NAME);
+        report = reloadEntity(report, REPORT_EDIT_FETCH_PLAN_NAME);
         ReportTemplate reportTemplate = getDefaultTemplate(report);
         return createReportDocument(new ReportRunParams().setReport(report).setReportTemplate(reportTemplate).setParams(params));
     }
 
     @Override
     public ReportOutputDocument createReport(Report report, Map<String, Object> params, ReportOutputType outputType) {
-        report = reloadEntity(report, REPORT_EDIT_VIEW_NAME);
+        report = reloadEntity(report, REPORT_EDIT_FETCH_PLAN_NAME);
         ReportTemplate template = getDefaultTemplate(report);
         return createReportDocument(new ReportRunParams().setReport(report).setReportTemplate(template).setOutputType(outputType).setParams(params));
     }
 
     @Override
     public ReportOutputDocument createReport(Report report, String templateCode, Map<String, Object> params) {
-        report = reloadEntity(report, REPORT_EDIT_VIEW_NAME);
+        report = reloadEntity(report, REPORT_EDIT_FETCH_PLAN_NAME);
         ReportTemplate template = report.getTemplateByCode(templateCode);
         return createReportDocument(new ReportRunParams().setReport(report).setReportTemplate(template).setParams(params));
     }
 
     @Override
     public ReportOutputDocument createReport(Report report, String templateCode, Map<String, Object> params, io.jmix.reports.entity.ReportOutputType outputType) {
-        report = reloadEntity(report, REPORT_EDIT_VIEW_NAME);
+        report = reloadEntity(report, REPORT_EDIT_FETCH_PLAN_NAME);
         ReportTemplate template = report.getTemplateByCode(templateCode);
         return createReportDocument(new ReportRunParams().setReport(report).setReportTemplate(template).setOutputType(outputType).setParams(params));
     }
@@ -265,7 +252,7 @@ public class ReportsImpl implements Reports {
     @Override
     public ReportOutputDocument createReport(ReportRunParams reportRunParams) {
         Report report = reportRunParams.getReport();
-        report = reloadEntity(report, REPORT_EDIT_VIEW_NAME);
+        report = reloadEntity(report, REPORT_EDIT_FETCH_PLAN_NAME);
         reportRunParams.setReport(report);
         return createReportDocument(reportRunParams);
     }
@@ -278,7 +265,7 @@ public class ReportsImpl implements Reports {
     @Override
     public ReportOutputDocument bulkPrint(Report report, String templateCode, io.jmix.reports.entity.ReportOutputType outputType, List<Map<String, Object>> paramsList) {
         try {
-            report = reloadEntity(report, REPORT_EDIT_VIEW_NAME);
+            report = reloadEntity(report, REPORT_EDIT_FETCH_PLAN_NAME);
 
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 
@@ -338,7 +325,7 @@ public class ReportsImpl implements Reports {
 
     @Override
     public ReportOutputDocument createReport(Report report, ReportTemplate template, Map<String, Object> params) {
-        report = reloadEntity(report, REPORT_EDIT_VIEW_NAME);
+        report = reloadEntity(report, REPORT_EDIT_FETCH_PLAN_NAME);
         return createReportDocument(new ReportRunParams().setReport(report).setReportTemplate(template).setParams(params));
     }
 
@@ -381,9 +368,7 @@ public class ReportsImpl implements Reports {
 
         StopWatch stopWatch = null;
         MDC.put("user", SecurityContextHolder.getContext().getAuthentication().getName());
-        //TODO web context name
-//        MDC.put("webContextName", globalConfig.getWebContextName());
-        //TODO executions
+        //todo https://github.com/Haulmont/jmix-reports/issues/22
 //        executions.startExecution(report.getId().toString(), "Reporting");
         try {
             //TODO Slf4JStopWatch
@@ -421,7 +406,7 @@ public class ReportsImpl implements Reports {
             throw new ReportCanceledException(String.format("Report is canceled. %s", ie.getMessage()));
         } catch (com.haulmont.yarg.exception.ReportingException re) {
             Throwable rootCause = ExceptionUtils.getRootCause(re);
-            //TODO cancelled exception
+            //todo https://github.com/Haulmont/jmix-reports/issues/22
 //            if (rootCause instanceof ResourceCanceledException) {
 //                throw new ReportCanceledException(String.format("Report is canceled. %s", rootCause.getMessage()));
 //            }
@@ -437,10 +422,9 @@ public class ReportsImpl implements Reports {
 
             throw new ReportingException(sb.toString());
         } finally {
-            //TODO executions
+            //todo https://github.com/Haulmont/jmix-reports/issues/22
 //            executions.endExecution();
             MDC.remove("user");
-            MDC.remove("webContextName");
             if (stopWatch != null) {
                 stopWatch.stop();
             }
@@ -454,7 +438,7 @@ public class ReportsImpl implements Reports {
 
     @Override
     public Report copyReport(Report source) {
-        source = reloadEntity(source, REPORT_EDIT_VIEW_NAME);
+        source = reloadEntity(source, REPORT_EDIT_FETCH_PLAN_NAME);
         Report copiedReport = metadataTools.deepCopy(source);
         copiedReport.setId(UuidProvider.createUuid());
         copiedReport.setName(generateReportName(source.getName()));
@@ -505,7 +489,7 @@ public class ReportsImpl implements Reports {
 
     @Override
     public FileRef createAndSaveReport(Report report, Map<String, Object> params, String fileName) {
-        report = reloadEntity(report, REPORT_EDIT_VIEW_NAME);
+        report = reloadEntity(report, REPORT_EDIT_FETCH_PLAN_NAME);
         ReportTemplate template = getDefaultTemplate(report);
         return createAndSaveReport(report, template, params, fileName);
     }
@@ -513,7 +497,7 @@ public class ReportsImpl implements Reports {
     @Override
     public FileRef createAndSaveReport(Report report, String templateCode,
                                        Map<String, Object> params, String fileName) {
-        report = reloadEntity(report, REPORT_EDIT_VIEW_NAME);
+        report = reloadEntity(report, REPORT_EDIT_FETCH_PLAN_NAME);
         ReportTemplate template = report.getTemplateByCode(templateCode);
         return createAndSaveReport(report, template, params, fileName);
     }
@@ -521,7 +505,7 @@ public class ReportsImpl implements Reports {
     @Override
     public FileRef createAndSaveReport(Report report, ReportTemplate template,
                                        Map<String, Object> params, String fileName) {
-        report = reloadEntity(report, REPORT_EDIT_VIEW_NAME);
+        report = reloadEntity(report, REPORT_EDIT_FETCH_PLAN_NAME);
         ReportRunParams reportRunParams = new ReportRunParams()
                 .setReport(report)
                 .setReportTemplate(template)
@@ -533,7 +517,7 @@ public class ReportsImpl implements Reports {
     @Override
     public FileRef createAndSaveReport(ReportRunParams reportRunParams) {
         Report report = reportRunParams.getReport();
-        report = reloadEntity(report, REPORT_EDIT_VIEW_NAME);
+        report = reloadEntity(report, REPORT_EDIT_FETCH_PLAN_NAME);
         reportRunParams.setReport(report);
         return createAndSaveReportDocument(reportRunParams);
     }
@@ -582,13 +566,13 @@ public class ReportsImpl implements Reports {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> T reloadEntity(T entity, FetchPlan view) {
+    public <T> T reloadEntity(T entity, FetchPlan fetchPlan) {
         if (entity instanceof Report && ((Report) entity).getIsTmp()) {
             return entity;
         }
         return (T) dataManager.load(entity.getClass())
                 .id(Id.of(entity))
-                .fetchPlan(view)
+                .fetchPlan(fetchPlan)
                 .one();
     }
 
@@ -667,7 +651,7 @@ public class ReportsImpl implements Reports {
 
     @Override
     public void cancelReportExecution(UUID userSessionId, UUID reportId) {
-        //TODO executions
+        //todo https://github.com/Haulmont/jmix-reports/issues/22
 //        executions.cancelExecution(userSessionId, "Reporting", reportId.toString());
     }
 
@@ -700,14 +684,14 @@ public class ReportsImpl implements Reports {
     }
 
     @SuppressWarnings("unchecked")
-    protected <T> T reloadEntity(T entity, String viewName) {
+    protected <T> T reloadEntity(T entity, String fetchPlanName) {
         if (entity instanceof Report && ((Report) entity).getIsTmp()) {
             return entity;
         }
 
         return (T) dataManager.load(entity.getClass())
                 .id(Id.of(entity))
-                .fetchPlan(viewName)
+                .fetchPlan(fetchPlanName)
                 .one();
     }
 

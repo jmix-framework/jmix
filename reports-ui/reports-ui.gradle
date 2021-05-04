@@ -32,8 +32,7 @@ dependencies {
     api 'io.jmix.ui:jmix-ui-export'
     api 'io.jmix.security:jmix-security'
     api 'io.jmix.security:jmix-security-ui'
-//    api 'io.jmix.dynattr:jmix-dynattr'
-//    api 'io.jmix.dynattr:jmix-dynattr-ui'
+    compileOnly 'io.jmix.dynattr:jmix-dynattr'
 
     api ('com.haulmont.yarg:yarg-api') {
         exclude group: 'org.codehaus.groovy', module: 'groovy-all'

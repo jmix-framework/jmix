@@ -21,6 +21,7 @@ import io.jmix.core.*;
 import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.CurrentAuthentication;
+import io.jmix.dynattr.DynAttrQueryHints;
 import io.jmix.reports.ReportSecurityManager;
 import io.jmix.reports.Reports;
 import io.jmix.reports.app.ParameterPrototype;
@@ -374,7 +375,7 @@ public class ReportGuiManager {
         Report targetReport = getReportForPrinting(report);
 
         long timeout = reportingClientConfig.getBackgroundReportProcessingTimeoutMs();
-        //TODO executions
+        //todo https://github.com/Haulmont/jmix-reports/issues/22
         //UUID userSessionId = currentAuthentication.getUser().getId();
 
         Screen hostScreen = UiControllerUtils.getScreen(screen);
@@ -430,7 +431,7 @@ public class ReportGuiManager {
                     @Override
                     public void canceled() {
                         super.canceled();
-                        //todo
+                        //todo https://github.com/Haulmont/jmix-reports/issues/22
                         //reportService.cancelReportExecution(userSessionId, report.getId());
                     }
                 };
@@ -455,8 +456,7 @@ public class ReportGuiManager {
     public List<Report> getAvailableReports(@Nullable String screenId, @Nullable UserDetails user, @Nullable MetaClass inputValueMetaClass) {
         MetaClass metaClass = metadata.getClass(Report.class);
         LoadContext<Report> lc = new LoadContext<>(metaClass);
-        //todo
-        //lc.setLoadDynamicAttributes(true);
+        lc.setHint(DynAttrQueryHints.LOAD_DYN_ATTR, true);
         FetchPlan fetchPlan = fetchPlans.builder(Report.class)
                 .add("name")
                 .add("localeNames")

@@ -217,4 +217,10 @@ public class ReportBrowser extends StandardLookup<Report> {
     protected boolean popupCreateBtnWizardEnabledRule() {
         return isPermissionsToCreateReports();
     }
+
+    @Install(to = "reportsTable.create", subject = "afterCommitHandler")
+    private void reportsTableCreateAfterCommitHandler(Report report) {
+        reportsTable.expandPath(report);
+        reportsTable.setSelected(report);
+    }
 }

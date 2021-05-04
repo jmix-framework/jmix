@@ -200,7 +200,7 @@ public interface Reports {
      */
     ReportOutputDocument bulkPrint(Report report, String templateCode, ReportOutputType outputType, List<Map<String, Object>> paramsList);
 
-    <T> T reloadEntity(T entity, FetchPlan view);
+    <T> T reloadEntity(T entity, FetchPlan fetchPlan);
 
     MetaClass findMetaClassByDataSetEntityAlias(String alias, DataSetType dataSetType, List<ReportInputParameter> reportInputParameters);
 

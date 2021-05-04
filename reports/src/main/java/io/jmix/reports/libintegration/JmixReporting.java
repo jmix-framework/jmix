@@ -141,7 +141,7 @@ public class JmixReporting extends com.haulmont.yarg.reporting.Reporting {
 
     @Override
     protected void logException(ReportingException e) {
-        //TODO ResourceCanceledException
+        //todo https://github.com/Haulmont/jmix-reports/issues/22
 //        if (ExceptionUtils.getRootCause(e) instanceof ResourceCanceledException) {
 //            logger.info("Report is canceled by user request");
 //        } else {

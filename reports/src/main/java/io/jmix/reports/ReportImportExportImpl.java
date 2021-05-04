@@ -102,7 +102,7 @@ public class ReportImportExportImpl implements ReportImportExport {
         try (ZipArchiveInputStream archiveReader = new ZipArchiveInputStream(byteArrayInputStream)) {
             while (archiveReader.getNextZipEntry() != null) {
                 final byte[] buffer = readBytesFromEntry(archiveReader);
-                importResult = importReport(buffer, importOptions);
+                importReport(buffer, importOptions, importResult);
             }
         } catch (IOException e) {
             importResult.addException(e);
@@ -208,13 +208,12 @@ public class ReportImportExportImpl implements ReportImportExport {
     }
 
 
-    protected ReportImportResult importReport(byte[] zipBytes, EnumSet<ReportImportOption> importOptions) throws IOException {
-        ReportImportResult importResult = new ReportImportResult();
+    protected void importReport(byte[] zipBytes, EnumSet<ReportImportOption> importOptions, ReportImportResult importResult) throws IOException {
         Report report = fromByteArray(zipBytes);
 
         if (report == null) {
             importResult.addException(new ReportingException("Unable to convert data from archive to report"));
-            return importResult;
+            return;
         }
 
         updateReportTemplate(report, zipBytes);
@@ -235,7 +234,6 @@ public class ReportImportExportImpl implements ReportImportExport {
             importResult.addCreatedReport(report);
             log.info("New report {} imported", report);
         }
-        return importResult;
     }
 
     protected Report fromByteArray(byte[] zipBytes) throws IOException {
@@ -263,7 +261,7 @@ public class ReportImportExportImpl implements ReportImportExport {
 
 
     protected void updateReportTemplate(Report report, byte[] zipBytes) throws IOException {
-        // importring template files
+        // importing template files
         // not using zipInputStream.reset here because marks not supported.
 
         try (ZipArchiveInputStream archiveReader = new ZipArchiveInputStream(new ByteArrayInputStream(zipBytes))) {
@@ -376,7 +374,7 @@ public class ReportImportExportImpl implements ReportImportExport {
 
     protected Report reloadReport(Report report) {
         return dataManager.load(Id.of(report))
-                .fetchPlan(ReportsImpl.REPORT_EDIT_VIEW_NAME)
+                .fetchPlan(ReportsImpl.REPORT_EDIT_FETCH_PLAN_NAME)
                 .one();
     }
 

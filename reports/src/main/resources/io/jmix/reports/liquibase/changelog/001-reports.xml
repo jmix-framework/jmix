@@ -106,12 +106,7 @@
             <column name="DELETED_BY" type="varchar(50)"/>
 
             <column name="REPORT_ID" type="${uuid.type}"/>
-            <!--todo-->
-            <!--            <column name="REPORT_ID" type="${uuid.type}">-->
-            <!--                <constraints nullable="false"-->
-            <!--                             foreignKeyName="FK_REPORT_TEMPLATE_TO_REPORT"-->
-            <!--                             references="REPORT_REPORT(ID)"/>-->
-            <!--            </column>-->
+          
             <column name="CODE" type="varchar(50)"/>
             <column name="OUTPUT_TYPE" type="integer" defaultValue="0">
                 <constraints nullable="false"/>
@@ -210,6 +205,13 @@ ru=Общие
             </column>
             <where>id = '4e0835300b9c11e19b416bdaa41bff94'</where>
         </update>
+    </changeSet>
+    
+    <changeSet id="3" author="reports" context="!cuba">
+        <addForeignKeyConstraint baseTableName="REPORT_TEMPLATE" baseColumnNames="REPORT_ID" constraintName="FK_REPORT_TEMPLATE_TO_REPORT"
+                                 referencedTableName="REPORT_REPORT"
+                                 referencedColumnNames="ID" onDelete="CASCADE"/>
+        <addNotNullConstraint tableName="REPORT_TEMPLATE" columnName="REPORT_ID"/>
     </changeSet>
 
 </databaseChangeLog>

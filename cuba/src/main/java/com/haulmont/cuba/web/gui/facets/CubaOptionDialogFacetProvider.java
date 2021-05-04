@@ -53,4 +53,12 @@ public class CubaOptionDialogFacetProvider extends OptionDialogFacetProvider {
             facet.setMaximized(Boolean.parseBoolean(maximized));
         }
     }
+
+    @Override
+    protected void loadStyleName(io.jmix.ui.component.OptionDialogFacet facet, Element element) {
+        String styleName = element.attributeValue("styleName");
+        if (isNotEmpty(styleName)) {
+            facet.setStyleName(styleName);
+        }
+    }
 }

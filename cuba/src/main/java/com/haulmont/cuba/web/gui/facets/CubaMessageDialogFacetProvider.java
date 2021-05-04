@@ -53,4 +53,12 @@ public class CubaMessageDialogFacetProvider extends MessageDialogFacetProvider {
             facet.setMaximized(Boolean.parseBoolean(maximized));
         }
     }
+
+    @Override
+    protected void loadStyleName(io.jmix.ui.component.MessageDialogFacet facet, Element element) {
+        String styleName = element.attributeValue("styleName");
+        if (isNotEmpty(styleName)) {
+            facet.setStyleName(styleName);
+        }
+    }
 }

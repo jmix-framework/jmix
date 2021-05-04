@@ -92,8 +92,17 @@ public class GroupTableLoader extends AbstractTableLoader<GroupTable> {
                 }
             }
 
-            getComponentContext().addPostInitTask((context1, window) ->
-                    ((GroupTable) component).groupBy(groupProperties.toArray())
+            getComponentContext().addPostInitTask((context1, window) -> {
+                        // enable grouping columns from descriptor if columnReorderingAllowed = false
+                        boolean reorderDisabled = !component.getColumnReorderingAllowed();
+                        component.setColumnReorderingAllowed(true);
+
+                        ((GroupTable) component).groupBy(groupProperties.toArray());
+
+                        if (reorderDisabled) {
+                            component.setColumnReorderingAllowed(false);
+                        }
+                    }
             );
         }
 

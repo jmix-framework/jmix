@@ -45,7 +45,7 @@
             <vbox id="parametersFrameHolder">
 
             </vbox>
-            <button id="printReportBtn" caption="msg://input.printReport" icon="icons/run.png"/>
+            <button id="printReportBtn" caption="msg://input.printReport" icon="ANGLE_DOUBLE_RIGHT"/>
         </groupBox>
 
         <vbox id="tablesVBoxLayout" spacing="true"/>

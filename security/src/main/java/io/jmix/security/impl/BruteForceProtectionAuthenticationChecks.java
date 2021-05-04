@@ -54,7 +54,7 @@ public class BruteForceProtectionAuthenticationChecks {
     @EventListener
     public void onPreAuthenticationCheck(PreAuthenticationCheckEvent event) {
         if (bruteForceProtection.isProtectionEnabled()) {
-            UserDetails userDetails = event.getUserDetails();
+            UserDetails userDetails = event.getUser();
             if (bruteForceProtection.isBlocked(userDetails.getUsername(), getIpAddress())) {
                 throw new LockedException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.locked",
                         "User account is locked"));

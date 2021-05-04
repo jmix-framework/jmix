@@ -20,9 +20,12 @@ import io.jmix.core.Metadata;
 import io.jmix.core.UnsafeDataManager;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
+import io.jmix.core.event.AttributeChanges;
+import io.jmix.core.event.EntityChangedEvent;
 import io.jmix.core.security.PasswordNotMatchException;
 import io.jmix.core.security.UserManager;
 import io.jmix.core.security.UserRepository;
+import io.jmix.core.security.event.UserDisabledEvent;
 import io.jmix.core.security.event.UserPasswordResetEvent;
 import io.jmix.security.authentication.AcceptsGrantedAuthorities;
 import io.jmix.security.authentication.RoleGrantedAuthority;
@@ -36,6 +39,7 @@ import io.jmix.security.role.assignment.RoleAssignmentRoleType;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.event.EventListener;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -76,7 +80,7 @@ public abstract class AbstractDatabaseUserRepository<T extends UserDetails> impl
     @Autowired
     private PersistentTokenRepository tokenRepository;
     @Autowired
-    protected ApplicationEventPublisher events;
+    protected ApplicationEventPublisher eventPublisher;
 
     /**
      * Helps create authorities from roles.
@@ -233,7 +237,7 @@ public abstract class AbstractDatabaseUserRepository<T extends UserDetails> impl
             usernamePasswordMap.put(user, newPassword);
         }
         resetRememberMe(users);
-        events.publishEvent(new UserPasswordResetEvent(usernamePasswordMap.entrySet().stream()
+        eventPublisher.publishEvent(new UserPasswordResetEvent(usernamePasswordMap.entrySet().stream()
                 .collect(Collectors.toMap(entry -> entry.getKey().getUsername(), Map.Entry::getValue))));
         return usernamePasswordMap;
     }
@@ -284,5 +288,26 @@ public abstract class AbstractDatabaseUserRepository<T extends UserDetails> impl
         byte[] passwordBytes = new byte[6];
         random.nextBytes(passwordBytes);
         return new String(Base64.encodeBase64(passwordBytes), StandardCharsets.UTF_8).replace("=", "");
+    }
+
+    @EventListener
+    private void onUserChanged(EntityChangedEvent<? extends UserDetails> event) {
+        if (Objects.equals(event.getEntityId().getEntityClass(), getUserClass())) {
+            AttributeChanges changes = event.getChanges();
+            if (isUserDisabled(event)) {
+                UserDetails userDetails = dataManager.load(event.getEntityId())
+                        .optional()
+                        .orElse(null);
+
+                if (userDetails != null && !userDetails.isEnabled()) {
+                    eventPublisher.publishEvent(new UserDisabledEvent(userDetails));
+                }
+            }
+        }
+    }
+
+    protected boolean isUserDisabled(EntityChangedEvent<? extends UserDetails> event) {
+        return event.getChanges().isChanged("enabled")
+                && Boolean.TRUE.equals(event.getChanges().getOldValue("enabled"));
     }
 }

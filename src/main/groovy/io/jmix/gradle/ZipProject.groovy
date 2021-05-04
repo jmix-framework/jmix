@@ -16,12 +16,10 @@
 
 package io.jmix.gradle
 
-import org.apache.tools.ant.DirectoryScanner
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
 
@@ -37,7 +35,8 @@ class ZipProject extends DefaultTask {
     List<String> includeToZip = []
 
     @Option(option = "zipDir", description = "Where to place resulting ZIP")
-    @Internal // don't respect the dir in up-to-date checks
+    @Internal
+    // don't respect the dir in up-to-date checks
     def zipDir = "${project.rootDir}"
 
     @Option(option = "zipFileName", description = "Resulting ZIP file name with extension")
@@ -50,7 +49,7 @@ class ZipProject extends DefaultTask {
         def tmpDir = "${project.buildDir}/zip"
         def tmpRootDir = "${project.buildDir}/zip/${project.name}"
 
-        def includeToZip = ['.gitignore']
+        def includeToZip = []
         includeToZip += this.includeToZip
 
         def excludeFromZip = [
@@ -67,9 +66,6 @@ class ZipProject extends DefaultTask {
         project.logger.info("[ZipProject] Deleting old archive")
         // to exclude recursive packing
         project.delete(zipFilePath)
-
-        // Due to GRADLE-1883
-        DirectoryScanner.removeDefaultExclude("**/.gitignore")
 
         project.logger.info("[ZipProject] Packing files from: ${project.rootDir}")
         project.copy {
@@ -91,8 +87,6 @@ class ZipProject extends DefaultTask {
         ant.zip(destfile: zipFilePath, basedir: tmpDir)
 
         println("Zip archive has been created at '${project.file(zipFilePath).absolutePath}'")
-
-        DirectoryScanner.resetDefaultExcludes()
 
         project.delete(tmpDir)
     }

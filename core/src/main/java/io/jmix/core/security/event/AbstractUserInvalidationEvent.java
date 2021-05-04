@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Haulmont.
+ * Copyright (c) 2008-2017 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,27 +18,19 @@ package io.jmix.core.security.event;
 
 import org.springframework.context.ApplicationEvent;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsChecker;
 
 /**
- * Event is fired during authentication process to verify the status of the loaded UserDetails
- * before validation of the credentials takes place.
- * See {@link org.springframework.security.authentication.dao.AbstractUserDetailsAuthenticationProvider#setPreAuthenticationChecks(UserDetailsChecker)}.
+ * This event is used to notify listeners about user invalidation: when the user has been deleted or disabled.
  */
-public class PreAuthenticationCheckEvent extends ApplicationEvent {
-    private static final long serialVersionUID = 894886319582273173L;
+public abstract class AbstractUserInvalidationEvent extends ApplicationEvent {
+    private static final long serialVersionUID = 1024128494761069121L;
 
-    /**
-     * Create a new {@code PreAuthenticationCheckEvent}.
-     *
-     * @param user - {@link UserDetails} to validate.
-     */
-    public PreAuthenticationCheckEvent(UserDetails user) {
+    public AbstractUserInvalidationEvent(UserDetails user) {
         super(user);
     }
 
     /**
-     * @return {@link UserDetails} to validate
+     * @return {@link UserDetails} to invalidate
      */
     public UserDetails getUser() {
         return (UserDetails) getSource();

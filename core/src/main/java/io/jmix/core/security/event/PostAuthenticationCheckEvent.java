@@ -40,7 +40,7 @@ public class PostAuthenticationCheckEvent extends ApplicationEvent {
     /**
      * @return {@link UserDetails} to validate
      */
-    public UserDetails getUserDetails() {
+    public UserDetails getUser() {
         return (UserDetails) getSource();
     }
 }

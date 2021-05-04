@@ -199,6 +199,7 @@ public class RowLevelRoleModelEdit extends StandardEditor<RowLevelRoleModel> {
         List<RowLevelPolicyModel> policyModels = event.getItems();
         Set<UUID> databaseIds = policyModels.stream()
                 .map(resourcePolicyModel -> resourcePolicyModel.getCustomProperties().get("databaseId"))
+                .filter(Objects::nonNull)
                 .map(UUID::fromString)
                 .collect(Collectors.toSet());
         forRemove.addAll(databaseIds);

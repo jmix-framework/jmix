@@ -321,6 +321,7 @@ public class ResourceRoleModelEdit extends StandardEditor<ResourceRoleModel> {
         List<ResourcePolicyModel> policyModels = event.getItems();
         Set<UUID> databaseIds = policyModels.stream()
                 .map(resourcePolicyModel -> resourcePolicyModel.getCustomProperties().get("databaseId"))
+                .filter(Objects::nonNull)
                 .map(UUID::fromString)
                 .collect(Collectors.toSet());
         forRemove.addAll(databaseIds);

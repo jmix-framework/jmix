@@ -28,11 +28,12 @@ import io.jmix.core.metamodel.datatype.impl.EnumClass;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.data.*;
 import io.jmix.data.impl.EntityFetcher;
+import io.jmix.data.impl.QueryConstantHandler;
 import io.jmix.data.impl.QueryMacroHandler;
-import io.jmix.eclipselink.impl.entitycache.QueryCacheManager;
-import io.jmix.eclipselink.impl.entitycache.QueryKey;
 import io.jmix.data.persistence.DbmsFeatures;
 import io.jmix.data.persistence.DbmsSpecifics;
+import io.jmix.eclipselink.impl.entitycache.QueryCacheManager;
+import io.jmix.eclipselink.impl.entitycache.QueryKey;
 import org.eclipse.persistence.config.CascadePolicy;
 import org.eclipse.persistence.config.HintValues;
 import org.eclipse.persistence.config.QueryHints;
@@ -77,6 +78,7 @@ public class JmixEclipseLinkQuery<E> implements JmixQuery<E> {
     protected QueryHintsProcessor hintsProcessor;
     protected DbmsSpecifics dbmsSpecifics;
     protected Collection<QueryMacroHandler> macroHandlers;
+    protected Collection<QueryConstantHandler> constantHandlers;
 
     protected JpaQuery query;
     protected boolean isNative;
@@ -114,6 +116,8 @@ public class JmixEclipseLinkQuery<E> implements JmixQuery<E> {
         hintsProcessor = beanFactory.getBean(QueryHintsProcessor.class);
         dbmsSpecifics = beanFactory.getBean(DbmsSpecifics.class);
         macroHandlers = beanFactory.getBeanProvider(QueryMacroHandler.class).stream().collect(Collectors.toList());
+        constantHandlers = beanFactory.getBeanProvider(QueryConstantHandler.class).stream().collect(Collectors.toList());
+
     }
 
     @Override
@@ -559,7 +563,8 @@ public class JmixEclipseLinkQuery<E> implements JmixQuery<E> {
     }
 
     private String transformQueryString() {
-        String result = expandMacros(queryString);
+        String result = replaceConstants(queryString);
+        result = expandMacros(result);
 
         boolean rebuildParser = false;
         QueryParser parser = queryTransformerFactory.parser(result);
@@ -615,6 +620,16 @@ public class JmixEclipseLinkQuery<E> implements JmixQuery<E> {
         if (macroHandlers != null) {
             for (QueryMacroHandler handler : macroHandlers) {
                 result = handler.expandMacro(result);
+            }
+        }
+        return result;
+    }
+
+    private String replaceConstants(String queryStr) {
+        String result = queryStr;
+        if (constantHandlers != null) {
+            for (QueryConstantHandler handler : constantHandlers) {
+                result = handler.expandConstant(result);
             }
         }
         return result;

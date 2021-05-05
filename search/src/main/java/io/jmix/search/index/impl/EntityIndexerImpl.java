@@ -50,7 +50,7 @@ public class EntityIndexerImpl implements EntityIndexer {
     private static final Logger log = LoggerFactory.getLogger(EntityIndexerImpl.class);
 
     @Autowired
-    protected DataManager dataManager;
+    protected UnsafeDataManager dataManager;
     @Autowired
     protected FetchPlans fetchPlans;
     @Autowired

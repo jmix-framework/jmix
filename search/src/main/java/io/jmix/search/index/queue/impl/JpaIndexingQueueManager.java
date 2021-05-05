@@ -49,7 +49,7 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
     private static final Logger log = LoggerFactory.getLogger(JpaIndexingQueueManager.class);
 
     @Autowired
-    protected DataManager dataManager;
+    protected UnsafeDataManager dataManager;
     @Autowired
     protected Metadata metadata;
     @Autowired

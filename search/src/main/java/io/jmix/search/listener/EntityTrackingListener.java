@@ -16,9 +16,9 @@
 
 package io.jmix.search.listener;
 
-import io.jmix.core.DataManager;
 import io.jmix.core.Id;
 import io.jmix.core.Metadata;
+import io.jmix.core.UnsafeDataManager;
 import io.jmix.core.event.AttributeChanges;
 import io.jmix.core.event.EntityChangedEvent;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -50,7 +50,7 @@ public class EntityTrackingListener {
     @Autowired
     protected IndexConfigurationManager indexConfigurationManager;
     @Autowired
-    protected DataManager dataManager;
+    protected UnsafeDataManager dataManager;
     @Autowired
     protected IndexingQueueManager indexingQueueManager;
     @Autowired

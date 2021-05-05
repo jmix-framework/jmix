@@ -67,7 +67,7 @@ public class SearchResultsScreen extends Screen {
     @Autowired
     protected ScreenBuilders screenBuilders;
     @Autowired
-    protected DataManager dataManager;
+    protected UnsafeDataManager dataManager;
     @Autowired
     protected SearchApplicationProperties searchApplicationProperties;
     @Autowired

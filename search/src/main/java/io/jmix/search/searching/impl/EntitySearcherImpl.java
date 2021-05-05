@@ -58,7 +58,6 @@ public class EntitySearcherImpl implements EntitySearcher {
     @Autowired
     protected Metadata metadata;
     @Autowired
-    @Qualifier("core_SecureDataManager")
     protected DataManager secureDataManager;
     @Autowired
     protected InstanceNameProvider instanceNameProvider;

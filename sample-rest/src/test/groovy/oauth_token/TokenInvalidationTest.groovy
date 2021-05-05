@@ -16,16 +16,21 @@
 
 package oauth_token
 
+import io.jmix.core.security.event.UserDisabledEvent
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.security.core.session.SessionRegistry
 import org.springframework.security.core.userdetails.User
+import org.springframework.security.core.userdetails.UserDetails
 import test_support.RestSpec
 
 import static test_support.RestSpecsUtils.createRequest
 
-class TokenSessionExpiredResponseTest extends RestSpec {
+class TokenInvalidationTest extends RestSpec {
     @Autowired
     protected SessionRegistry sessionRegistry
+    @Autowired
+    protected ApplicationEventPublisher eventPublisher
 
     def "session associated with access token is expired"() {
         when:
@@ -58,6 +63,27 @@ class TokenSessionExpiredResponseTest extends RestSpec {
         response.then().statusCode(401)
     }
 
+    def "invalidate token if user is deactivated"() {
+        when:
+        def response = createRequest(userToken)
+                .when()
+                .get('/userInfo')
+
+        then:
+        response.then().statusCode(200)
+        response.thenReturn().path('username') == "admin"
+
+        when:
+        disableUser('admin')
+
+        response = createRequest(userToken)
+                .when()
+                .get('/userInfo')
+
+        then:
+        response.then().statusCode(401)
+    }
+
     protected void killSession(String username) {
         User principal = sessionRegistry.getAllPrincipals().stream()
                 .filter({ it instanceof User })
@@ -69,5 +95,10 @@ class TokenSessionExpiredResponseTest extends RestSpec {
         sessionRegistry.getAllSessions(principal, false)
                 .stream()
                 .forEach({ it.expireNow() })
+    }
+
+    protected void disableUser(String username) {
+        UserDetails userDetails = userRepository.loadUserByUsername(username)
+        eventPublisher.publishEvent(new UserDisabledEvent(userDetails))
     }
 }

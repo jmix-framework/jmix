@@ -29,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 @Component("sec_UserInvalidationListener")
@@ -48,8 +49,8 @@ public class UserInvalidationListener {
         try {
             log.info("Handling user invalidation: {}", userDetails.getUsername());
 
-            Collection<OAuth2AccessToken> accessTokens = tokenStore.findTokensByClientIdAndUserName(properties.getClientId(),
-                    userDetails.getUsername());
+            Collection<OAuth2AccessToken> accessTokens = new ArrayList<>(
+                    tokenStore.findTokensByClientIdAndUserName(properties.getClientId(), userDetails.getUsername()));
 
             for (OAuth2AccessToken accessToken : accessTokens) {
                 tokenStore.removeAccessToken(accessToken);

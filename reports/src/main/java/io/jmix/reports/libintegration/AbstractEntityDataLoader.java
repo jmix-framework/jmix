@@ -37,27 +37,27 @@ public abstract class AbstractEntityDataLoader implements ReportDataLoader {
     @Autowired
     protected FetchPlanRepository fetchPlanRepository;
 
-    protected Entity reloadEntityByDataSetView(ReportQuery reportQuery, Object inputObject) {
+    protected Entity reloadEntityByDataSetFetchPlan(ReportQuery reportQuery, Object inputObject) {
         Entity entity = null;
         if (inputObject instanceof Entity && reportQuery instanceof DataSet) {
             entity = (Entity) inputObject;
             DataSet dataSet = (DataSet) reportQuery;
-            FetchPlan view = getView(entity, dataSet);
-            if (view != null) {
-                entity = reports.reloadEntity(entity, view);
+            FetchPlan fetchPlan = getFetchPlan(entity, dataSet);
+            if (fetchPlan != null) {
+                entity = reports.reloadEntity(entity, fetchPlan);
             }
         }
 
         return entity;
     }
 
-    protected FetchPlan getView(Entity entity, DataSet dataSet) {
-        FetchPlan view;
-        if (Boolean.TRUE.equals(dataSet.getUseExistingView())) {
-            view = fetchPlanRepository.getFetchPlan(entity.getClass(), dataSet.getViewName());
+    protected FetchPlan getFetchPlan(Entity entity, DataSet dataSet) {
+        FetchPlan fetchPlan;
+        if (Boolean.TRUE.equals(dataSet.getUseExistingFetchPLan())) {
+            fetchPlan = fetchPlanRepository.getFetchPlan(entity.getClass(), dataSet.getFetchPlanName());
         } else {
-            view = dataSet.getFetchPlan();
+            fetchPlan = dataSet.getFetchPlan();
         }
-        return view;
+        return fetchPlan;
     }
 }

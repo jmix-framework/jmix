@@ -47,7 +47,7 @@ public class MultiEntityDataLoader extends AbstractEntityDataLoader {
         boolean hasNestedCollection = paramName.contains(NESTED_COLLECTION_SEPARATOR);
         String entityParameterName = StringUtils.substringBefore(paramName, NESTED_COLLECTION_SEPARATOR);
         String nestedCollectionName = StringUtils.substringAfter(paramName, NESTED_COLLECTION_SEPARATOR);
-        FetchPlan nestedCollectionView = null;
+        FetchPlan nestedCollectionFetchPLan = null;
 
         dataSet = ProxyWrapper.unwrap(dataSet);
         Object entities = null;
@@ -55,14 +55,14 @@ public class MultiEntityDataLoader extends AbstractEntityDataLoader {
             entities = params.get(paramName);
         } else if (hasNestedCollection && params.containsKey(entityParameterName)) {
             Entity entity = (Entity) params.get(entityParameterName);
-            entity = reloadEntityByDataSetView(dataSet, entity);
+            entity = reloadEntityByDataSetFetchPlan(dataSet, entity);
             if (entity != null) {
                 entities = EntityValues.getValueEx(entity, nestedCollectionName);
                 if (dataSet instanceof DataSet) {
-                    FetchPlan entityView = getView(entity, (DataSet) dataSet);
-                    if (entityView != null && entityView.getProperty(nestedCollectionName) != null) {
+                    FetchPlan entityFetchPlan = getFetchPlan(entity, (DataSet) dataSet);
+                    if (entityFetchPlan != null && entityFetchPlan.getProperty(nestedCollectionName) != null) {
                         //noinspection ConstantConditions
-                        nestedCollectionView = entityView.getProperty(nestedCollectionName).getFetchPlan();
+                        nestedCollectionFetchPLan = entityFetchPlan.getProperty(nestedCollectionName).getFetchPlan();
                     }
                 }
             }
@@ -88,17 +88,17 @@ public class MultiEntityDataLoader extends AbstractEntityDataLoader {
 
         for (Entity entity : entitiesList) {
             if (!hasNestedCollection) {
-                entity = reloadEntityByDataSetView(dataSet, entity);
+                entity = reloadEntityByDataSetFetchPlan(dataSet, entity);
             }
             if (dataSet instanceof DataSet) {
                 if (hasNestedCollection) {
-                    if (nestedCollectionView != null) {
-                        resultList.add(new EntityMap(entity, nestedCollectionView, beanFactory));
+                    if (nestedCollectionFetchPLan != null) {
+                        resultList.add(new EntityMap(entity, nestedCollectionFetchPLan, beanFactory));
                     } else {
                         resultList.add(new EntityMap(entity, beanFactory));
                     }
                 } else {
-                    resultList.add(new EntityMap(entity, getView(entity, (DataSet) dataSet), beanFactory));
+                    resultList.add(new EntityMap(entity, getFetchPlan(entity, (DataSet) dataSet), beanFactory));
                 }
             } else {
                 resultList.add(new EntityMap(entity, beanFactory));

@@ -217,7 +217,7 @@ public class ReportsProperties {
     }
 
     /**
-     * Maximum depth of entity model that is used in report wizard and report dataset view editor.
+     * Maximum depth of entity model that is used in report wizard and report dataset fetchPlan editor.
      */
     public Integer getEntityTreeModelMaxDeep() {
         return entityTreeModelMaxDeep;

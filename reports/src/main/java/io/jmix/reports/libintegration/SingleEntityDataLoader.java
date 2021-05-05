@@ -49,12 +49,12 @@ public class SingleEntityDataLoader extends AbstractEntityDataLoader {
         }
 
         dataSet = ProxyWrapper.unwrap(dataSet);
-        entity = reloadEntityByDataSetView(dataSet, entity);
+        entity = reloadEntityByDataSetFetchPlan(dataSet, entity);
         params.put(paramName, entity);
 
         EntityMap result;
         if (dataSet instanceof DataSet) {
-            result = new EntityMap((Entity) entity, getView((Entity) entity, (DataSet) dataSet), beanFactory);
+            result = new EntityMap((Entity) entity, getFetchPlan((Entity) entity, (DataSet) dataSet), beanFactory);
         } else {
             result = new EntityMap((Entity) entity, beanFactory);
         }

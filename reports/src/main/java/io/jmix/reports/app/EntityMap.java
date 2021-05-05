@@ -37,7 +37,7 @@ public class EntityMap implements Map<String, Object> {
     protected InstanceNameProvider instanceNameProvider;
 
     protected Entity instance;
-    protected FetchPlan view;
+    protected FetchPlan fetchPlan;
     protected HashMap<String, Object> explicitData;
 
     protected boolean loaded = false;
@@ -52,7 +52,7 @@ public class EntityMap implements Map<String, Object> {
 
     public EntityMap(Entity entity, FetchPlan loadedAttributes, BeanFactory beanFactory) {
         this(entity, beanFactory);
-        view = loadedAttributes;
+        fetchPlan = loadedAttributes;
     }
 
     @Override
@@ -144,11 +144,11 @@ public class EntityMap implements Map<String, Object> {
             MetaClass metaClass = getMetaClass(instance);
             String pkName = metadataTools.getPrimaryKeyName(metaClass);
             for (MetaProperty property : metaClass.getProperties()) {
-                if (view != null && view.getProperty(property.getName()) != null) {
+                if (fetchPlan != null && fetchPlan.getProperty(property.getName()) != null) {
                     explicitData.put(property.getName(), getValue(instance, property.getName()));
-                } else if (view != null && Objects.equals(pkName, property.getName())) {
+                } else if (fetchPlan != null && Objects.equals(pkName, property.getName())) {
                     explicitData.put(property.getName(), getValue(instance, property.getName()));
-                } else if (view == null) {
+                } else if (fetchPlan == null) {
                     explicitData.put(property.getName(), getValue(instance, property.getName()));
                 }
             }
@@ -202,7 +202,7 @@ public class EntityMap implements Map<String, Object> {
         return instance;
     }
 
-    public FetchPlan getView() {
-        return view;
+    public FetchPlan getFetchPlan() {
+        return fetchPlan;
     }
 }

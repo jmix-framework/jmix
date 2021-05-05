@@ -75,8 +75,7 @@ public class RegionEditor extends StandardEditor<ReportRegion> {
     protected EntityTreeNode rootEntity;
 
     protected boolean isTabulated;//if true then user perform add tabulated region action
-    protected boolean asViewEditor;
-
+    protected boolean asFetchPlanEditor;
 
     protected boolean updatePermission;
 
@@ -84,8 +83,8 @@ public class RegionEditor extends StandardEditor<ReportRegion> {
         isTabulated = tabulated;
     }
 
-    public void setAsViewEditor(boolean asViewEditor) {
-        this.asViewEditor = asViewEditor;
+    public void setAsFetchPlanEditor(boolean asFetchPlanEditor) {
+        this.asFetchPlanEditor = asFetchPlanEditor;
     }
 
     public void setUpdatePermission(boolean updatePermission) {
@@ -106,17 +105,17 @@ public class RegionEditor extends StandardEditor<ReportRegion> {
         //todo
         //reportEntityTreeNodeDs.refresh(params);
         //TODO add disallowing of classes selection in tree
-        if (!asViewEditor) {
+        if (!asFetchPlanEditor) {
             if (isTabulated) {
                 setTabulatedRegionEditorCaption(rootEntity.getName());
             } else {
                 setSimpleRegionEditorCaption();
             }
         }
-        String group = isTabulated
+        String messageKey = isTabulated
                 ? "selectEntityPropertiesForTableArea"
                 : "selectEntityProperties";
-        tipLabel.setValue(messages.formatMessage(group, rootEntity.getLocalizedName()));
+        tipLabel.setValue(messages.formatMessage(getClass(), messageKey, rootEntity.getLocalizedName()));
         tipLabel.setHtmlEnabled(true);
         initComponents();
     }
@@ -186,17 +185,17 @@ public class RegionEditor extends StandardEditor<ReportRegion> {
     protected void initComponents() {
         initControlBtnsActions();
 
-        if (asViewEditor) {
-            initAsViewEditor();
+        if (asFetchPlanEditor) {
+            initAsFetchPlanEditor();
         }
         entityTree.setSelectionMode(Tree.SelectionMode.MULTI);
     }
 
-    protected void initAsViewEditor() {
+    protected void initAsFetchPlanEditor() {
         if (isTabulated) {
-            getWindow().setCaption(messages.getMessage("singleEntityDataSetViewEditor"));
+            getWindow().setCaption(messages.getMessage(getClass(), "singleEntityDataSetFetchPlanEditor"));
         } else {
-            getWindow().setCaption(messages.getMessage("multiEntityDataSetViewEditor"));
+            getWindow().setCaption(messages.getMessage(getClass(),"multiEntityDataSetFetchPlanEditor"));
         }
     }
 

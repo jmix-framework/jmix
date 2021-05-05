@@ -102,17 +102,17 @@ public class JmixTableFormatter extends AbstractFormatter {
                 Map<String, Object> data = bandData.getData();
                 final Entity instance;
                 final String pkName;
-                final boolean pkInView;
+                final boolean pkInFetchPlan;
 
                 if (data instanceof EntityMap) {
                     instance = ((EntityMap) data).getInstance();
                     pkName = metadataTools.getPrimaryKeyName(metadata.getClass(instance));
-                    FetchPlan view = ((EntityMap) data).getView();
-                    pkInView = view != null && pkName != null && view.containsProperty(pkName);
+                    FetchPlan fetchPlan = ((EntityMap) data).getFetchPlan();
+                    pkInFetchPlan = fetchPlan != null && pkName != null && fetchPlan.containsProperty(pkName);
                 } else {
                     instance = null;
                     pkName = null;
-                    pkInView = false;
+                    pkInFetchPlan = false;
                 }
 
                 KeyValueEntity entityRow = new KeyValueEntity();
@@ -121,7 +121,7 @@ public class JmixTableFormatter extends AbstractFormatter {
                     if (INSTANCE_NAME_KEY.equals(name)) {
                         return;
                     }
-                    if (checkAddHeader(pkName, pkInView, name)) {
+                    if (checkAddHeader(pkName, pkInFetchPlan, name)) {
                         if (instance != null) {
                             name = messageTools.getPropertyCaption(metadata.getClass(instance), name);
                         }
@@ -142,7 +142,7 @@ public class JmixTableFormatter extends AbstractFormatter {
                         if (INSTANCE_NAME_KEY.equals(name)) {
                             return;
                         }
-                        if (checkAddHeader(pkName, pkInView, name)) {
+                        if (checkAddHeader(pkName, pkInFetchPlan, name)) {
                             if (instance != null) {
                                 name = messageTools.getPropertyCaption(metadata.getClass(instance), name);
                             }
@@ -197,16 +197,16 @@ public class JmixTableFormatter extends AbstractFormatter {
             bandDataList.forEach(bandData -> {
                 Map<String, Object> data = bandData.getData();
                 final String pkName;
-                final boolean pkInView;
+                final boolean pkInFetchPlan;
 
                 if (data instanceof EntityMap) {
                     Entity instance = ((EntityMap) data).getInstance();
                     pkName = metadataTools.getPrimaryKeyName(metadata.getClass(instance));
-                    FetchPlan view = ((EntityMap) data).getView();
-                    pkInView = view != null && pkName != null && view.containsProperty(pkName);
+                    FetchPlan fetchPlan = ((EntityMap) data).getFetchPlan();
+                    pkInFetchPlan = fetchPlan != null && pkName != null && fetchPlan.containsProperty(pkName);
                 } else {
                     pkName = null;
-                    pkInView = false;
+                    pkInFetchPlan = false;
                 }
 
                 KeyValueEntity entityRow = new KeyValueEntity();
@@ -219,7 +219,7 @@ public class JmixTableFormatter extends AbstractFormatter {
                         return;
                     }
 
-                    if (checkAddHeader(pkName, pkInView, key)) {
+                    if (checkAddHeader(pkName, pkInFetchPlan, key)) {
                         checkInstanceNameLoaded(value);
 
                         String transformationKey = transformationKey(key);
@@ -240,7 +240,7 @@ public class JmixTableFormatter extends AbstractFormatter {
                         if (INSTANCE_NAME_KEY.equals(key)) {
                             return;
                         }
-                        if (checkAddHeader(pkName, pkInView, key)) {
+                        if (checkAddHeader(pkName, pkInFetchPlan, key)) {
 
                             String transformationKey = transformationKey(key);
                             if (value != null) {
@@ -280,8 +280,8 @@ public class JmixTableFormatter extends AbstractFormatter {
         return bandName + "." + parameterName;
     }
 
-    private boolean checkAddHeader(String pkName, boolean pkInView, String name) {
-        return pkName == null || !pkName.equals(name) || pkInView;
+    private boolean checkAddHeader(String pkName, boolean pkInFetchPlan, String name) {
+        return pkName == null || !pkName.equals(name) || pkInFetchPlan;
     }
 
     protected boolean containsLowerCaseDuplicate(JmixTableData.ColumnInfo columnInfo, Set<JmixTableData.ColumnInfo> headers) {

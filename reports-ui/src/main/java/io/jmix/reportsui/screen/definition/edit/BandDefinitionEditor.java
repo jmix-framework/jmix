@@ -22,7 +22,7 @@ import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.reports.entity.*;
 import io.jmix.reports.util.DataSetFactory;
-import io.jmix.reportsui.action.list.EditViewAction;
+import io.jmix.reportsui.action.list.EditFetchPlanAction;
 import io.jmix.reportsui.screen.ReportsClientProperties;
 import io.jmix.reportsui.screen.definition.edit.crosstab.CrossTabTableDecorator;
 import io.jmix.reportsui.screen.definition.edit.scripteditordialog.ScriptEditorDialog;
@@ -90,7 +90,7 @@ public class BandDefinitionEditor extends ScreenFragment implements Suggester {
     @Autowired
     protected HBoxLayout textParamsBox;
     @Autowired
-    protected Label<String> viewNameLabel;
+    protected Label<String> fetchPlanNameLabel;
     @Autowired
     protected ComboBox<Orientation> orientationField;
     @Autowired
@@ -98,7 +98,7 @@ public class BandDefinitionEditor extends ScreenFragment implements Suggester {
     @Autowired
     protected TextField<String> nameField;
     @Autowired
-    protected ComboBox<String> viewNameField;
+    protected ComboBox<String> fetchPlanNameField;
     @Autowired
     protected ComboBox<String> entitiesParamField;
     @Autowired
@@ -108,9 +108,9 @@ public class BandDefinitionEditor extends ScreenFragment implements Suggester {
     @Autowired
     protected CheckBox isProcessTemplateField;
     @Autowired
-    protected CheckBox isUseExistingViewField;
+    protected CheckBox isUseExistingFetchPlanField;
     @Autowired
-    protected Button viewEditButton;
+    protected Button fetchPlanEditButton;
     @Autowired
     protected Label<String> buttonEmptyElement;
     @Autowired
@@ -323,16 +323,16 @@ public class BandDefinitionEditor extends ScreenFragment implements Suggester {
     }
 
     protected void initActions() {
-        EditViewAction editViewAction = (EditViewAction) actions.create(EditViewAction.ID);
-        editViewAction.setDataSetsTable(dataSetsTable);
-        editViewAction.setBandsDc(bandsDc);
-        viewEditButton.setAction(editViewAction);
+        EditFetchPlanAction editFetchPlanAction = (EditFetchPlanAction) actions.create(EditFetchPlanAction.ID);
+        editFetchPlanAction.setDataSetsTable(dataSetsTable);
+        editFetchPlanAction.setBandsDc(bandsDc);
+        fetchPlanEditButton.setAction(editFetchPlanAction);
 
-        viewNameField.setOptionsMap(new HashMap<>());
+        fetchPlanNameField.setOptionsMap(new HashMap<>());
 
         entitiesParamField.setEnterPressHandler(LinkedWithPropertyNewOptionHandler.handler(dataSetsDc, "listEntitiesParamName"));
         entityParamField.setEnterPressHandler(LinkedWithPropertyNewOptionHandler.handler(dataSetsDc, "entityParamName"));
-        viewNameField.setEnterPressHandler(LinkedWithPropertyNewOptionHandler.handler(dataSetsDc, "viewName"));
+        fetchPlanNameField.setEnterPressHandler(LinkedWithPropertyNewOptionHandler.handler(dataSetsDc, "fetchPlanName"));
     }
 
     @Subscribe(id = "parametersDc", target = Target.DATA_CONTAINER)
@@ -372,9 +372,9 @@ public class BandDefinitionEditor extends ScreenFragment implements Suggester {
             applyVisibilityRules(event.getItem());
 
             if (dataSet.getType() == DataSetType.SINGLE) {
-                refreshViewNames(findParameterByAlias(dataSet.getEntityParamName()));
+                refreshFetchPlanNames(findParameterByAlias(dataSet.getEntityParamName()));
             } else if (dataSet.getType() == DataSetType.MULTI) {
-                refreshViewNames(findParameterByAlias(dataSet.getListEntitiesParamName()));
+                refreshFetchPlanNames(findParameterByAlias(dataSet.getListEntitiesParamName()));
             }
 
             dataSetScriptField.resetEditHistory();
@@ -388,7 +388,7 @@ public class BandDefinitionEditor extends ScreenFragment implements Suggester {
         applyVisibilityRules(event.getItem());
         if ("entityParamName".equals(event.getProperty()) || "listEntitiesParamName".equals(event.getProperty())) {
             ReportInputParameter linkedParameter = findParameterByAlias(String.valueOf(event.getValue()));
-            refreshViewNames(linkedParameter);
+            refreshFetchPlanNames(linkedParameter);
         }
 
         if ("processTemplate".equals(event.getProperty())) {
@@ -424,7 +424,7 @@ public class BandDefinitionEditor extends ScreenFragment implements Suggester {
         return null;
     }
 
-    protected void refreshViewNames(@Nullable ReportInputParameter reportInputParameter) {
+    protected void refreshFetchPlanNames(@Nullable ReportInputParameter reportInputParameter) {
         if (reportInputParameter != null) {
             if (StringUtils.isNotBlank(reportInputParameter.getEntityMetaClass())) {
                 MetaClass parameterMetaClass = metadata.getClass(reportInputParameter.getEntityMetaClass());
@@ -435,12 +435,12 @@ public class BandDefinitionEditor extends ScreenFragment implements Suggester {
                 }
                 fetchPlans.put(FetchPlan.LOCAL, FetchPlan.LOCAL);
                 fetchPlans.put(FetchPlan.INSTANCE_NAME, FetchPlan.INSTANCE_NAME);
-                viewNameField.setOptionsMap(fetchPlans);
+                fetchPlanNameField.setOptionsMap(fetchPlans);
                 return;
             }
         }
 
-        viewNameField.setOptionsMap(new HashMap<>());
+        fetchPlanNameField.setOptionsMap(new HashMap<>());
     }
 
     protected void applyVisibilityRules(DataSet item) {
@@ -520,22 +520,22 @@ public class BandDefinitionEditor extends ScreenFragment implements Suggester {
     }
 
     protected void applyVisibilityRulesForEntityType(DataSet item) {
-        commonEntityGrid.remove(viewNameLabel);
-        commonEntityGrid.remove(viewNameField);
-        commonEntityGrid.remove(viewEditButton);
+        commonEntityGrid.remove(fetchPlanNameLabel);
+        commonEntityGrid.remove(fetchPlanNameField);
+        commonEntityGrid.remove(fetchPlanEditButton);
         commonEntityGrid.remove(buttonEmptyElement);
-        commonEntityGrid.remove(isUseExistingViewField);
+        commonEntityGrid.remove(isUseExistingFetchPlanField);
         commonEntityGrid.remove(checkboxEmptyElement);
 
-        if (Boolean.TRUE.equals(item.getUseExistingView())) {
-            commonEntityGrid.add(viewNameLabel);
-            commonEntityGrid.add(viewNameField);
+        if (Boolean.TRUE.equals(item.getUseExistingFetchPLan())) {
+            commonEntityGrid.add(fetchPlanNameLabel);
+            commonEntityGrid.add(fetchPlanNameField);
         } else {
-            commonEntityGrid.add(viewEditButton);
+            commonEntityGrid.add(fetchPlanEditButton);
             commonEntityGrid.add(buttonEmptyElement);
         }
 
-        commonEntityGrid.add(isUseExistingViewField);
+        commonEntityGrid.add(isUseExistingFetchPlanField);
         commonEntityGrid.add(checkboxEmptyElement);
     }
 
@@ -559,15 +559,15 @@ public class BandDefinitionEditor extends ScreenFragment implements Suggester {
     }
 
     // This is a stub for using set in some DataSet change listener
-    protected void setViewEditVisibility(DataSet dataSet) {
-        if (isViewEditAllowed(dataSet)) {
-            viewEditButton.setVisible(true);
+    protected void setFetchPlanEditVisibility(DataSet dataSet) {
+        if (isFetchPlanEditAllowed(dataSet)) {
+            fetchPlanEditButton.setVisible(true);
         } else {
-            viewEditButton.setVisible(false);
+            fetchPlanEditButton.setVisible(false);
         }
     }
 
-    protected boolean isViewEditAllowed(DataSet dataSet) {
+    protected boolean isFetchPlanEditAllowed(DataSet dataSet) {
         return true;
     }
 

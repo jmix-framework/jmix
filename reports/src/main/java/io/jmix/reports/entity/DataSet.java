@@ -49,9 +49,9 @@ public class DataSet implements ReportQuery {
     @JmixProperty
     protected String name;
     @JmixProperty
-    protected Boolean useExistingView = false;
+    protected Boolean useExistingFetchPLan = false;
     @JmixProperty
-    protected String viewName;
+    protected String fetchPlanName;
     @JmixProperty
     protected String text;
     @JmixProperty
@@ -93,12 +93,12 @@ public class DataSet implements ReportQuery {
         this.fetchPlan = fetchPlan;
     }
 
-    public Boolean getUseExistingView() {
-        return useExistingView;
+    public Boolean getUseExistingFetchPLan() {
+        return useExistingFetchPLan;
     }
 
-    public void setUseExistingView(Boolean useExistingView) {
-        this.useExistingView = useExistingView;
+    public void setUseExistingFetchPLan(Boolean useExistingFetchPLan) {
+        this.useExistingFetchPLan = useExistingFetchPLan;
     }
 
     @Override
@@ -110,12 +110,12 @@ public class DataSet implements ReportQuery {
         this.name = name;
     }
 
-    public String getViewName() {
-        return viewName;
+    public String getFetchPlanName() {
+        return fetchPlanName;
     }
 
-    public void setViewName(String viewName) {
-        this.viewName = viewName;
+    public void setFetchPlanName(String fetchPlanName) {
+        this.fetchPlanName = fetchPlanName;
     }
 
     public String getText() {

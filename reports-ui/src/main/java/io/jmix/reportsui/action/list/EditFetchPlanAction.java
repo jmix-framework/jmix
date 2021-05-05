@@ -44,13 +44,13 @@ import io.jmix.ui.screen.StandardOutcome;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.*;
+import java.util.Collections;
 
 @StudioAction(target = "io.jmix.ui.component.ListComponent", description = "Edit action for an entity band")
-@ActionType(EditViewAction.ID)
-public class EditViewAction extends ListAction {
+@ActionType(EditFetchPlanAction.ID)
+public class EditFetchPlanAction extends ListAction {
 
-    public static final String ID = "editViewEntity";
+    public static final String ID = "editFetchPlanEntity";
 
     @Autowired
     protected ScreenBuilders screenBuilders;
@@ -68,7 +68,7 @@ public class EditViewAction extends ListAction {
     protected Reports reports;
 
     @Autowired
-    protected ReportsWizard reportWizardService;
+    protected ReportsWizard reportsWizard;
 
     @Autowired
     protected Metadata metadata;
@@ -85,11 +85,11 @@ public class EditViewAction extends ListAction {
     protected Table<DataSet> dataSetsTable;
     protected CollectionContainer<BandDefinition> bandsDc;
 
-    public EditViewAction() {
+    public EditFetchPlanAction() {
         this(ID);
     }
 
-    public EditViewAction(String id) {
+    public EditFetchPlanAction(String id) {
         super(id);
     }
 
@@ -109,7 +109,7 @@ public class EditViewAction extends ListAction {
                 MetaClass forEntityTreeModelMetaClass = findMetaClassByAlias(dataSet);
                 if (forEntityTreeModelMetaClass != null) {
 
-                    final EntityTree entityTree = reportWizardService.buildEntityTree(forEntityTreeModelMetaClass);
+                    final EntityTree entityTree = reportsWizard.buildEntityTree(forEntityTreeModelMetaClass);
                     ReportRegion reportRegion = dataSetToReportRegion(dataSet, entityTree);
 
                     if (reportRegion != null) {
@@ -121,13 +121,7 @@ public class EditViewAction extends ListAction {
                             //without that root node region editor form will not initialized correctly and became empty. just return
                             return;
                         } else {
-                            //Open editor and convert saved in editor ReportRegion item to View
-                            Map<String, Object> editorParams = new HashMap<>();
-                            editorParams.put("asViewEditor", Boolean.TRUE);
-                            editorParams.put("rootEntity", reportRegion.getRegionPropertiesRootNode());
-                            editorParams.put("scalarOnly", Boolean.TRUE);
-                            editorParams.put("updateDisabled", !secureOperations.isEntityUpdatePermitted(metadata.getClass(Report.class), policyStore));
-
+                            //Open editor and convert saved in editor ReportRegion item to Fetch plan
                             reportRegion.setReportData(dataManager.create(ReportData.class));
                             reportRegion.setBandNameFromReport(dataSet.getName());
 
@@ -136,12 +130,16 @@ public class EditViewAction extends ListAction {
                                     .withScreenClass(RegionEditor.class)
                                     .withOpenMode(OpenMode.DIALOG)
                                     .build();
+                            screen.setAsFetchPlanEditor(true);
+                            screen.setRootEntity(reportRegion.getRegionPropertiesRootNode());
+                            screen.setUpdatePermission(secureOperations.isEntityUpdatePermitted(metadata.getClass(Report.class), policyStore));
+                            //todo show only scalar properties
 
                             screen.addAfterCloseListener(afterCloseEvent -> {
                                 if (afterCloseEvent.closedWith(StandardOutcome.COMMIT)) {
                                     RegionEditor editor = (RegionEditor) afterCloseEvent.getScreen();
                                     reportRegion.setRegionProperties(editor.getEditedEntity().getRegionProperties());
-                                    dataSet.setFetchPlan(reportRegionToView(entityTree, reportRegion));
+                                    dataSet.setFetchPlan(reportRegionToFetchPlan(entityTree, reportRegion));
                                 }
                             });
                             screen.show();
@@ -173,12 +171,12 @@ public class EditViewAction extends ListAction {
             return null;
             //when byAliasMetaClass is null we return also null
         } else {
-            //Detect metaclass by current view for comparison
-            MetaClass viewMetaClass = null;
+            //Detect metaclass by current fetch plan for comparison
+            MetaClass fetchPlanMetaClass = null;
             if (dataSet.getFetchPlan() != null) {
-                viewMetaClass = metadata.getClass(dataSet.getFetchPlan().getEntityClass());
+                fetchPlanMetaClass = metadata.getClass(dataSet.getFetchPlan().getEntityClass());
             }
-            if (viewMetaClass != null && !byAliasMetaClass.getName().equals(viewMetaClass.getName())) {
+            if (fetchPlanMetaClass != null && !byAliasMetaClass.getName().equals(fetchPlanMetaClass.getName())) {
                 notifications.create(Notifications.NotificationType.TRAY)
                         .withCaption(messages.formatMessage(getClass(), "dataSet.entityWasChanged", byAliasMetaClass.getName()))
                         .show();
@@ -189,12 +187,12 @@ public class EditViewAction extends ListAction {
 
     protected ReportRegion dataSetToReportRegion(DataSet dataSet, EntityTree entityTree) {
         boolean isTabulatedRegion;
-        FetchPlan view = null;
+        FetchPlan fetchPlan = null;
         String collectionPropertyName;
         switch (dataSet.getType()) {
             case SINGLE:
                 isTabulatedRegion = false;
-                view = dataSet.getFetchPlan();
+                fetchPlan = dataSet.getFetchPlan();
                 collectionPropertyName = null;
                 break;
             case MULTI:
@@ -209,16 +207,16 @@ public class EditViewAction extends ListAction {
                 if (StringUtils.isNotBlank(collectionPropertyName)) {
 
                     if (dataSet.getFetchPlan() != null) {
-                        view = findSubViewByCollectionPropertyName(dataSet.getFetchPlan(), collectionPropertyName);
+                        fetchPlan = findSubFetchPlanByCollectionPropertyName(dataSet.getFetchPlan(), collectionPropertyName);
 
                     }
-                    if (view == null) {
-                        //View was never created for current dataset.
-                        //We must to create minimal view that contains collection property for ability of creating ReportRegion.regionPropertiesRootNode later
+                    if (fetchPlan == null) {
+                        //Fetch plan was never created for current dataset.
+                        //We must to create minimal fetch plan that contains collection property for ability of creating ReportRegion.regionPropertiesRootNode later
                         MetaClass metaClass = metadata.getClass(entityTree.getEntityTreeRootNode().getWrappedMetaClass());
                         MetaProperty metaProperty = metaClass.getProperty(collectionPropertyName);
                         if (metaProperty.getDomain() != null && metaProperty.getRange().getCardinality().isMany()) {
-                            view = fetchPlans.builder(metaProperty.getDomain().getJavaClass()).build();
+                            fetchPlan = fetchPlans.builder(metaProperty.getDomain().getJavaClass()).build();
                         } else {
                             notifications.create(Notifications.NotificationType.TRAY)
                                     .withCaption(messages.formatMessage(getClass(), "dataSet.cantFindCollectionProperty",
@@ -228,34 +226,34 @@ public class EditViewAction extends ListAction {
                         }
                     }
                 } else {
-                    view = dataSet.getFetchPlan();
+                    fetchPlan = dataSet.getFetchPlan();
                 }
                 break;
             default:
                 return null;
         }
-        return reportWizardService.createReportRegionByView(entityTree, isTabulatedRegion, view, collectionPropertyName);
+        return reportsWizard.createReportRegionByFetchPlan(entityTree, isTabulatedRegion, fetchPlan, collectionPropertyName);
     }
 
-    protected FetchPlan reportRegionToView(EntityTree entityTree, ReportRegion reportRegion) {
-        return reportWizardService.createViewByReportRegions(entityTree.getEntityTreeRootNode(), Collections.singletonList(reportRegion));
+    protected FetchPlan reportRegionToFetchPlan(EntityTree entityTree, ReportRegion reportRegion) {
+        return reportsWizard.createFetchPlanByReportRegions(entityTree.getEntityTreeRootNode(), Collections.singletonList(reportRegion));
     }
 
-    public FetchPlan findSubViewByCollectionPropertyName(FetchPlan view, final String propertyName) {
-        if (view == null) {
+    public FetchPlan findSubFetchPlanByCollectionPropertyName(FetchPlan fetchPlan, final String propertyName) {
+        if (fetchPlan == null) {
             return null;
         }
-        for (FetchPlanProperty viewProperty : view.getProperties()) {
-            if (propertyName.equals(viewProperty.getName())) {
-                if (viewProperty.getFetchMode() != null) {
-                    return viewProperty.getFetchPlan();
+        for (FetchPlanProperty fetchPlanProperty : fetchPlan.getProperties()) {
+            if (propertyName.equals(fetchPlanProperty.getName())) {
+                if (fetchPlanProperty.getFetchMode() != null) {
+                    return fetchPlanProperty.getFetchPlan();
                 }
             }
 
-            if (viewProperty.getFetchMode() != null) {
-                FetchPlan foundedView = findSubViewByCollectionPropertyName(viewProperty.getFetchPlan(), propertyName);
-                if (foundedView != null) {
-                    return foundedView;
+            if (fetchPlanProperty.getFetchMode() != null) {
+                FetchPlan foundFetchPlan = findSubFetchPlanByCollectionPropertyName(fetchPlanProperty.getFetchPlan(), propertyName);
+                if (foundFetchPlan != null) {
+                    return foundFetchPlan;
                 }
             }
         }

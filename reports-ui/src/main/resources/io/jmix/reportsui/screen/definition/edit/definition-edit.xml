@@ -113,17 +113,17 @@
                                       property="entityParamName"/>
                         </row>
                         <row>
-                            <button id="viewEditButton" caption="msg://dataSet.editView"/>
+                            <button id="fetchPlanEditButton" caption="msg://dataSet.editFetchPlan"/>
                             <label id="buttonEmptyElement"/>
                         </row>
                         <row>
-                            <label id="viewNameLabel" value="msg://dataSet.viewName"/>
-                            <comboBox id="viewNameField" dataContainer="dataSetsDc" property="viewName"
+                            <label id="fetchPlanNameLabel" value="msg://dataSet.fetchPlanName"/>
+                            <comboBox id="fetchPlanNameField" dataContainer="dataSetsDc" property="fetchPlanName"
                                       width="${width}"/>
                         </row>
                         <row>
-                            <checkBox id="isUseExistingViewField" dataContainer="dataSetsDc"
-                                      property="useExistingView" caption="msg://dataSet.useExistingView"/>
+                            <checkBox id="isUseExistingFetchPlanField" dataContainer="dataSetsDc"
+                                      property="useExistingFetchPLan" caption="msg://dataSet.useExistingFetchPlan"/>
                             <label id="checkboxEmptyElement"/>
                         </row>
                     </rows>

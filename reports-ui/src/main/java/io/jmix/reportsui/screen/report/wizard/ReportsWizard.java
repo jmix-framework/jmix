@@ -121,8 +121,8 @@ public class ReportsWizard {
             BandDefinition dataBand = createDataBand(report, rootReportBandDefinition, reportRegion.getNameForBand(), bandDefinitionPosition++);
 
             if (reportData.getReportTypeGenerate().isEntity()) {
-                FetchPlan parameterView = createViewByReportRegions(reportData.getEntityTreeRootNode(), reportData.getReportRegions());
-                createEntityDataSet(reportData, reportRegion, dataBand, mainParameter, parameterView);
+                FetchPlan parameterFetchPlan = createFetchPlanByReportRegions(reportData.getEntityTreeRootNode(), reportData.getReportRegions());
+                createEntityDataSet(reportData, reportRegion, dataBand, mainParameter, parameterFetchPlan);
             } else {
                 createJpqlDataSet(reportData, reportRegion, dataBand);
             }
@@ -190,13 +190,13 @@ public class ReportsWizard {
     }
 
     protected void createEntityDataSet(ReportData reportData, ReportRegion reportRegion, BandDefinition dataBand,
-                                       ReportInputParameter mainParameter, FetchPlan parameterView) {
+                                       ReportInputParameter mainParameter, FetchPlan parameterFetchPlan) {
         DataSet dataSet = dataSetFactory.createEmptyDataSet(dataBand);
         dataSet.setName(messages.getMessage(getClass(), "dataSet"));
         if (ReportTypeGenerate.LIST_OF_ENTITIES == reportData.getReportTypeGenerate()) {
             dataSet.setType(DataSetType.MULTI);
             dataSet.setListEntitiesParamName(mainParameter.getAlias());
-            dataSet.setFetchPlan(parameterView);
+            dataSet.setFetchPlan(parameterFetchPlan);
         } else if (ReportTypeGenerate.SINGLE_ENTITY == reportData.getReportTypeGenerate()) {
             if (reportRegion.isTabulatedRegion()) {
                 dataSet.setType(DataSetType.MULTI);
@@ -205,7 +205,7 @@ public class ReportsWizard {
                 dataSet.setType(DataSetType.SINGLE);
                 dataSet.setEntityParamName(mainParameter.getAlias());
             }
-            dataSet.setFetchPlan(parameterView);
+            dataSet.setFetchPlan(parameterFetchPlan);
         }
         dataBand.getDataSets().add(dataSet);
     }
@@ -319,12 +319,12 @@ public class ReportsWizard {
         return headerBandDefinition;
     }
 
-    public FetchPlan createViewByReportRegions(EntityTreeNode entityTreeRootNode, List<ReportRegion> reportRegions) {
+    public FetchPlan createFetchPlanByReportRegions(EntityTreeNode entityTreeRootNode, List<ReportRegion> reportRegions) {
         MetaClass rootWrapperMetaClass = metadata.getClass(entityTreeRootNode.getWrappedMetaClass());
         FetchPlanBuilder fetchPlanBuilder = fetchPlans.builder(rootWrapperMetaClass.getJavaClass());
 
-        Map<EntityTreeNode, FetchPlanBuilder> viewsForNodes = new HashMap<>();
-        viewsForNodes.put(entityTreeRootNode, fetchPlanBuilder);
+        Map<EntityTreeNode, FetchPlanBuilder> fetchPlansForNodes = new HashMap<>();
+        fetchPlansForNodes.put(entityTreeRootNode, fetchPlanBuilder);
         for (ReportRegion reportRegion : reportRegions) {
             for (RegionProperty regionProperty : reportRegion.getRegionProperties()) {
                 fetchPlanBuilder.add(regionProperty.getName());
@@ -332,17 +332,17 @@ public class ReportsWizard {
                 MetaClass metaClass = metadata.getClass(entityTreeNode);
 
                 if (metaClass != null) {
-                    FetchPlanBuilder propertyFetchPlanBuilder = viewsForNodes.get(entityTreeNode);
+                    FetchPlanBuilder propertyFetchPlanBuilder = fetchPlansForNodes.get(entityTreeNode);
                     if (propertyFetchPlanBuilder == null) {
                         propertyFetchPlanBuilder = fetchPlans.builder(metaClass.getJavaClass());
-                        viewsForNodes.put(entityTreeNode, propertyFetchPlanBuilder);
+                        fetchPlansForNodes.put(entityTreeNode, propertyFetchPlanBuilder);
                     }
 
-                    FetchPlanBuilder parentView = ensureParentViewsExist(entityTreeNode, viewsForNodes);
-                    parentView.add(regionProperty.getName(), propertyFetchPlanBuilder);
+                    FetchPlanBuilder parentFetchPlan = ensureParentFetchPlansExist(entityTreeNode, fetchPlansForNodes);
+                    parentFetchPlan.add(regionProperty.getName(), propertyFetchPlanBuilder);
                 } else {
-                    FetchPlanBuilder parentView = ensureParentViewsExist(entityTreeNode, viewsForNodes);
-                    parentView.add(regionProperty.getName());
+                    FetchPlanBuilder parentFetchPlan = ensureParentFetchPlansExist(entityTreeNode, fetchPlansForNodes);
+                    parentFetchPlan.add(regionProperty.getName());
                 }
             }
         }
@@ -351,22 +351,22 @@ public class ReportsWizard {
     }
 
     /**
-     * Create report region using view and whole entity model as entityTree param
-     * For creating tabulated report region for collection of entity (when used # in alias of dataset) view and
+     * Create report region using fetch plan and whole entity model as entityTree param
+     * For creating tabulated report region for collection of entity (when used # in alias of dataset) fetch plan and
      * parameters must to be non-nul values because otherwise necessary ReportRegion.regionPropertiesRootNode field value
-     * will be null. That value is determined by that view.
+     * will be null. That value is determined by that fetch plan.
      *
      * @param entityTree             the whole entity tree model
      * @param isTabulated            determine which region will be created
-     * @param fetchPlan              by that view region will be created
+     * @param fetchPlan              by that fetch plan the region will be created
      * @param collectionPropertyName must to be non-null for a tabulated region
      * @return report region
      */
-    public ReportRegion createReportRegionByView(EntityTree entityTree, boolean isTabulated, @Nullable FetchPlan fetchPlan, @Nullable String collectionPropertyName) {
+    public ReportRegion createReportRegionByFetchPlan(EntityTree entityTree, boolean isTabulated, @Nullable FetchPlan fetchPlan, @Nullable String collectionPropertyName) {
         if (StringUtils.isNotBlank(collectionPropertyName) && fetchPlan == null) {
-            //without view we can`t correctly set rootNode for region which is necessary for tabulated regions for a
+            //without fetch plan we can`t correctly set rootNode for region which is necessary for tabulated regions for a
             // collection of entities (when alias contain #)
-            log.warn("Detected incorrect parameters for createReportRegionByView method. View must not to be null if " +
+            log.warn("Detected incorrect parameters for createReportRegionByFetchPlan method. Fetch plan must not to be null if " +
                     "collection collectionPropertyName is not null (" + collectionPropertyName + ")");
         }
         ReportRegion reportRegion = metadata.create(ReportRegion.class);
@@ -386,16 +386,16 @@ public class ReportsWizard {
             scalarOnly = true;
         }
         if (fetchPlan != null) {
-            iterateViewAndCreatePropertiesForRegion(scalarOnly, fetchPlan, allNodesAndHierarchicalPathsMap, reportRegion.getRegionProperties(), collectionPropertyName, 0);
+            iterateFetchPlanAndCreatePropertiesForRegion(scalarOnly, fetchPlan, allNodesAndHierarchicalPathsMap, reportRegion.getRegionProperties(), collectionPropertyName, 0);
         }
         return reportRegion;
     }
 
     /**
-     * Search for view for parent node
-     * If does not exists - createDataSet it and add property to parent of parent view
+     * Search for fetch plan for parent node
+     * If does not exists - createDataSet it and add property to parent of parent fetch plan
      */
-    protected FetchPlanBuilder ensureParentViewsExist(EntityTreeNode entityTreeNode, Map<EntityTreeNode, FetchPlanBuilder> viewsForNodes) {
+    protected FetchPlanBuilder ensureParentFetchPlansExist(EntityTreeNode entityTreeNode, Map<EntityTreeNode, FetchPlanBuilder> fetchPlansForNodes) {
         EntityTreeNode parentNode = entityTreeNode.getParent();
         MetaClass wrapperMetaClass = metadata.getClass(parentNode.getWrappedMetaClass());
 
@@ -403,10 +403,10 @@ public class ReportsWizard {
 
         if (parentFetchPlanBuilder == null && parentNode != null) {
             parentFetchPlanBuilder = fetchPlans.builder(wrapperMetaClass.getJavaClass());
-            viewsForNodes.put(parentNode, parentFetchPlanBuilder);
-            FetchPlanBuilder parentOfParentView = ensureParentViewsExist(parentNode, viewsForNodes);
-            if (parentOfParentView != null) {
-                parentOfParentView.add(parentNode.getName(), parentFetchPlanBuilder);
+            fetchPlansForNodes.put(parentNode, parentFetchPlanBuilder);
+            FetchPlanBuilder parentOfParentFetchPlan = ensureParentFetchPlansExist(parentNode, fetchPlansForNodes);
+            if (parentOfParentFetchPlan != null) {
+                parentOfParentFetchPlan.add(parentNode.getName(), parentFetchPlanBuilder);
             }
         }
 
@@ -414,24 +414,24 @@ public class ReportsWizard {
     }
 
 
-    protected void iterateViewAndCreatePropertiesForRegion(final boolean scalarOnly, final FetchPlan parentView, final Map<String, EntityTreeNode> allNodesAndHierarchicalPathsMap, final List<RegionProperty> regionProperties, String pathFromParentView, long propertyOrderNum) {
-        if (pathFromParentView == null) {
-            pathFromParentView = "";
+    protected void iterateFetchPlanAndCreatePropertiesForRegion(final boolean scalarOnly, final FetchPlan parentFetchPlan, final Map<String, EntityTreeNode> allNodesAndHierarchicalPathsMap, final List<RegionProperty> regionProperties, String pathFromParentFetchPlan, long propertyOrderNum) {
+        if (pathFromParentFetchPlan == null) {
+            pathFromParentFetchPlan = "";
         }
-        for (FetchPlanProperty viewProperty : parentView.getProperties()) {
+        for (FetchPlanProperty fetchPlanProperty : parentFetchPlan.getProperties()) {
 
             if (scalarOnly) {
-                MetaClass metaClass = metadata.getClass(parentView.getEntityClass());
-                MetaProperty metaProperty = metaClass.getProperty(viewProperty.getName());
+                MetaClass metaClass = metadata.getClass(parentFetchPlan.getEntityClass());
+                MetaProperty metaProperty = metaClass.getProperty(fetchPlanProperty.getName());
                 if (metaProperty != null && metaProperty.getRange().getCardinality().isMany()) {
                     continue;
                 }
             }
 
-            if (viewProperty.getFetchPlan() != null) {
-                iterateViewAndCreatePropertiesForRegion(scalarOnly, viewProperty.getFetchPlan(), allNodesAndHierarchicalPathsMap, regionProperties, pathFromParentView + "." + viewProperty.getName(), propertyOrderNum);
+            if (fetchPlanProperty.getFetchPlan() != null) {
+                iterateFetchPlanAndCreatePropertiesForRegion(scalarOnly, fetchPlanProperty.getFetchPlan(), allNodesAndHierarchicalPathsMap, regionProperties, pathFromParentFetchPlan + "." + fetchPlanProperty.getName(), propertyOrderNum);
             } else {
-                EntityTreeNode entityTreeNode = allNodesAndHierarchicalPathsMap.get(StringUtils.removeStart(pathFromParentView + "." + viewProperty.getName(), "."));
+                EntityTreeNode entityTreeNode = allNodesAndHierarchicalPathsMap.get(StringUtils.removeStart(pathFromParentFetchPlan + "." + fetchPlanProperty.getName(), "."));
 
                 if (entityTreeNode != null) {
                     RegionProperty regionProperty = metadata.create(RegionProperty.class);

@@ -40,7 +40,7 @@ public interface ActionsAwareDialogFacet<T> {
      *
      * @param actions actions
      */
-    @StudioElementsGroup(caption = "Dialog actions",
+    @StudioElementsGroup(caption = "Dialog Actions",
             xmlElement = "actions",
             icon = "io/jmix/ui/icon/element/actions.svg")
     void setActions(@Nullable Collection<DialogAction<T>> actions);
@@ -76,7 +76,7 @@ public interface ActionsAwareDialogFacet<T> {
     /**
      * Immutable POJO that stores dialog action settings.
      */
-    @StudioElement(xmlElement = "action", caption = "Dialog action", icon = "io/jmix/ui/icon/element/action.svg")
+    @StudioElement(xmlElement = "action", caption = "Dialog Action", icon = "io/jmix/ui/icon/element/action.svg")
     class DialogAction<T> {
 
         protected final String id;

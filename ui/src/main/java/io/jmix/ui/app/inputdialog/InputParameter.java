@@ -255,7 +255,7 @@ public class InputParameter {
      * @return input parameter
      */
     @StudioElement(
-            caption = "String parameter",
+            caption = "String Parameter",
             xmlElement = "stringParameter"
     )
     @StudioProperties(
@@ -277,7 +277,7 @@ public class InputParameter {
      * @return input parameter
      */
     @StudioElement(
-            caption = "Integer parameter",
+            caption = "Integer Parameter",
             xmlElement = "intParameter"
     )
     @StudioProperties(
@@ -299,7 +299,7 @@ public class InputParameter {
      * @return input parameter
      */
     @StudioElement(
-            caption = "Double parameter",
+            caption = "Double Parameter",
             xmlElement = "doubleParameter"
     )
     @StudioProperties(
@@ -321,7 +321,7 @@ public class InputParameter {
      * @return input parameter
      */
     @StudioElement(
-            caption = "BigDecimal parameter",
+            caption = "BigDecimal Parameter",
             xmlElement = "bigDecimalParameter"
     )
     @StudioProperties(
@@ -343,7 +343,7 @@ public class InputParameter {
      * @return input parameter
      */
     @StudioElement(
-            caption = "Long parameter",
+            caption = "Long Parameter",
             xmlElement = "longParameter"
     )
     @StudioProperties(
@@ -365,7 +365,7 @@ public class InputParameter {
      * @return input parameter
      */
     @StudioElement(
-            caption = "Date parameter",
+            caption = "Date Parameter",
             xmlElement = "dateParameter"
     )
     @StudioProperties(
@@ -387,7 +387,7 @@ public class InputParameter {
      * @return input parameter
      */
     @StudioElement(
-            caption = "Time parameter",
+            caption = "Time Parameter",
             xmlElement = "timeParameter"
     )
     @StudioProperties(
@@ -409,7 +409,7 @@ public class InputParameter {
      * @return input parameter
      */
     @StudioElement(
-            caption = "DateTime parameter",
+            caption = "DateTime Parameter",
             xmlElement = "dateTimeParameter"
     )
     @StudioProperties(
@@ -432,7 +432,7 @@ public class InputParameter {
      * @return input parameter
      */
     @StudioElement(
-            caption = "Entity parameter",
+            caption = "Entity Parameter",
             xmlElement = "entityParameter"
     )
     @StudioProperties(
@@ -454,7 +454,7 @@ public class InputParameter {
      * @return input parameter
      */
     @StudioElement(
-            caption = "Boolean parameter",
+            caption = "Boolean Parameter",
             xmlElement = "booleanParameter"
     )
     @StudioProperties(
@@ -497,7 +497,7 @@ public class InputParameter {
      * @return input parameter
      */
     @StudioElement(
-            caption = "Enum parameter",
+            caption = "Enum Parameter",
             xmlElement = "enumParameter"
     )
     @StudioProperties(

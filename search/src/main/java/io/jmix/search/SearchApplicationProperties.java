@@ -33,10 +33,7 @@ public class SearchApplicationProperties {
 
     protected final boolean autoMapIndexFileContent;
 
-    protected final String elasticsearchHost;
-    protected final int elasticsearchPort;
-    protected final String elasticsearchLogin;
-    protected final String elasticsearchPassword;
+    protected final Elasticsearch elasticsearch;
 
     protected final String defaultSearchStrategy;
 
@@ -48,11 +45,8 @@ public class SearchApplicationProperties {
             @DefaultValue("1000") int maxProcessedQueueItemsPerExecution,
             @DefaultValue("100") int reindexEntityEnqueueBatchSize,
             @DefaultValue("false") boolean autoMapIndexFileContent,
-            @DefaultValue("localhost") String elasticsearchHost,
-            @DefaultValue("9200") int elasticsearchPort,
             @DefaultValue("anyTermAnyField") String defaultSearchStrategy,
-            String elasticsearchLogin,
-            String elasticsearchPassword) {
+            @DefaultValue Elasticsearch elasticsearch) {
         this.searchResultPageSize = searchResultPageSize;
         this.maxSearchPageCount = maxSearchPageCount;
         this.searchReloadEntitiesBatchSize = searchReloadEntitiesBatchSize;
@@ -61,11 +55,7 @@ public class SearchApplicationProperties {
         this.reindexEntityEnqueueBatchSize = reindexEntityEnqueueBatchSize;
         this.autoMapIndexFileContent = autoMapIndexFileContent;
         this.defaultSearchStrategy = defaultSearchStrategy;
-
-        this.elasticsearchHost = elasticsearchHost;
-        this.elasticsearchPort = elasticsearchPort;
-        this.elasticsearchLogin = elasticsearchLogin;
-        this.elasticsearchPassword = elasticsearchPassword;
+        this.elasticsearch = elasticsearch;
     }
 
     /**
@@ -118,37 +108,104 @@ public class SearchApplicationProperties {
     }
 
     /**
-     * @return Elasticsearch connection host
-     */
-    public String getElasticsearchHost() {
-        return elasticsearchHost;
-    }
-
-    /**
-     * @return Elasticsearch connection port
-     */
-    public int getElasticsearchPort() {
-        return elasticsearchPort;
-    }
-
-    /**
-     * @return Elasticsearch login
-     */
-    public String getElasticsearchLogin() {
-        return elasticsearchLogin;
-    }
-
-    /**
-     * @return Elasticsearch password
-     */
-    public String getElasticsearchPassword() {
-        return elasticsearchPassword;
-    }
-
-    /**
      * @return name of default search strategy
      */
     public String getDefaultSearchStrategy() {
         return defaultSearchStrategy;
+    }
+
+    /**
+     * @return Elasticsearch URL
+     */
+    public String getElasticsearchUrl() {
+        return elasticsearch.url;
+    }
+
+    /**
+     * @return Elasticsearch login for common base authentication
+     */
+    public String getElasticsearchLogin() {
+        return elasticsearch.login;
+    }
+
+    /**
+     * @return Elasticsearch password for common base authentication
+     */
+    public String getElasticsearchPassword() {
+        return elasticsearch.password;
+    }
+
+    /**
+     * @return true if AWS IAM user is used to access to Elasticsearch service, false if common base authentication is used
+     */
+    public boolean isElasticsearchAwsIamAuthentication() {
+        return elasticsearch.aws.iamAuth;
+    }
+
+    /**
+     * @return AWS Elasticsearch region. It's used to sign requests if IAM authentication is enabled
+     */
+    public String getElasticsearchAwsRegion() {
+        return elasticsearch.aws.region;
+    }
+
+    /**
+     * @return AWS Elasticsearch service name. It's used to sign requests if IAM authentication is enabled
+     */
+    public String getElasticsearchAwsServiceName() {
+        return elasticsearch.aws.serviceName;
+    }
+
+    /**
+     * @return Access Key of AWS IAM user that is used to access to Elasticsearch service if IAM authentication is enabled
+     */
+    public String getElasticsearchAwsAccessKey() {
+        return elasticsearch.aws.accessKey;
+    }
+
+    /**
+     * @return Secret Key of AWS IAM user that is used to access to Elasticsearch service if IAM authentication is enabled
+     */
+    public String getElasticsearchAwsSecretKey() {
+        return elasticsearch.aws.secretKey;
+    }
+
+    protected static class Elasticsearch {
+        protected final String url;
+        protected final String login;
+        protected final String password;
+        protected final AWS aws;
+
+        public Elasticsearch(
+                @DefaultValue("localhost:9200") String url,
+                String login,
+                String password,
+                @DefaultValue AWS aws) {
+            this.url = url;
+            this.login = login;
+            this.password = password;
+            this.aws = aws;
+        }
+    }
+
+    protected static class AWS {
+        protected final boolean iamAuth;
+        protected final String region;
+        protected final String serviceName;
+        protected final String accessKey;
+        protected final String secretKey;
+
+        public AWS(
+                @DefaultValue("false") boolean iamAuth,
+                String region,
+                @DefaultValue("es") String serviceName,
+                String accessKey,
+                String secretKey) {
+            this.iamAuth = iamAuth;
+            this.region = region;
+            this.serviceName = serviceName;
+            this.accessKey = accessKey;
+            this.secretKey = secretKey;
+        }
     }
 }

@@ -183,15 +183,15 @@ public class EntityChangedEventManager {
                     builder.withChange(changeRecord.getAttribute(), Id.of(oldValue));
                 } else if (oldValue instanceof Collection) {
                     Collection<Object> coll = (Collection<Object>) oldValue;
-                    Collection<Object> idColl = oldValue instanceof List ? new ArrayList<>() : new LinkedHashSet<>();
+                    Collection<Object> resultColl = oldValue instanceof List ? new ArrayList<>() : new LinkedHashSet<>();
                     for (Object item : coll) {
                         if (item instanceof Entity) {
-                            idColl.add(Id.of(item));
+                            resultColl.add(Id.of(item));
                         } else {
-                            idColl.add(item);
+                            resultColl.add(item);
                         }
                     }
-                    builder.withChange(changeRecord.getAttribute(), idColl);
+                    builder.withChange(changeRecord.getAttribute(), resultColl);
                 } else {
                     Object convertedValue;
                     if (entity != null) {
@@ -299,11 +299,15 @@ public class EntityChangedEventManager {
                         }
                     } else if (value instanceof Collection) {
                         Collection<Object> coll = (Collection<Object>) value;
-                        Collection<Id> idColl = value instanceof List ? new ArrayList<>() : new LinkedHashSet<>();
+                        Collection<Object> resultColl = value instanceof List ? new ArrayList<>() : new LinkedHashSet<>();
                         for (Object item : coll) {
-                            idColl.add(Id.of(item));
+                            if (item instanceof Entity) {
+                                resultColl.add(Id.of(item));
+                            } else {
+                                resultColl.add(item);
+                            }
                         }
-                        builder.withChange(property.getName(), idColl);
+                        builder.withChange(property.getName(), resultColl);
                     } else {
                         builder.withChange(property.getName(), convertValueIfNeeded(property, value));
                     }

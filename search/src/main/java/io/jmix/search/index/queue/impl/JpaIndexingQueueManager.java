@@ -277,7 +277,7 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
                     .map(idSerialization::stringToId)
                     .collect(Collectors.toList());
         }
-        itemsGroup.keySet().removeAll(failedIds);
+        failedIds.forEach(itemsGroup.keySet()::remove);
         return itemsGroup.values().stream().flatMap(Collection::stream).collect(Collectors.toList());
     }
 

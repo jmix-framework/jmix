@@ -25,4 +25,5 @@ dependencies {
 
     api 'io.jmix.core:jmix-core'
     api project(':security')
+    implementation 'org.springframework:spring-tx'
 }

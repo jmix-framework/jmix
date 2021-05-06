@@ -266,12 +266,12 @@ public class BulkEditorWindow extends AbstractWindow {
                                     editField.setValue(null);
                                 }
 
-                                e.getButton().setIconFromSet(JmixIcon.EDIT);
-                                e.getButton().setDescription(
+                                e.getSource().setIconFromSet(JmixIcon.EDIT);
+                                e.getSource().setDescription(
                                         messages.getMessage("io.jmix.ui.app.bulk/bulk.editAttribute"));
                             } else {
-                                e.getButton().setIconFromSet(JmixIcon.TRASH);
-                                e.getButton().setDescription(
+                                e.getSource().setIconFromSet(JmixIcon.TRASH);
+                                e.getSource().setDescription(
                                         messages.getMessage("io.jmix.ui.app.bulk/bulk.clearAttribute"));
                             }
                         });

@@ -25,11 +25,13 @@
     </data>
     <dialogMode height="600"
                 width="800"/>
+    <facets>
+        <presentations id="presentations" auto="true"/>
+    </facets>
     <layout spacing="true" expand="roleModelsTable">
         <groupTable id="roleModelsTable"
                     width="100%"
-                    dataContainer="roleModelsDc"
-                    presentations="true">
+                    dataContainer="roleModelsDc">
             <actions>
                 <action id="create" type="create"/>
                 <action id="edit" type="edit"/>

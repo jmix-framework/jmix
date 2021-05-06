@@ -25,12 +25,14 @@
     </data>
     <dialogMode height="600"
                 width="800"/>
+    <facets>
+        <presentations id="presentations" auto="true"/>
+    </facets>
     <layout spacing="true" expand="roleModelsTable">
         <table id="roleModelsTable"
                     width="100%"
                     dataContainer="roleModelsDc"
-                    multiselect="true"
-                    presentations="true">
+                    multiselect="true">
             <columns>
                 <column id="name"/>
                 <column id="code"/>

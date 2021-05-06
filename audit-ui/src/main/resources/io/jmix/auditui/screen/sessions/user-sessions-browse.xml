@@ -25,6 +25,9 @@
     </data>
     <dialogMode height="600"
                 width="800"/>
+    <facets>
+        <presentations id="presentations" auto="true"/>
+    </facets>
     <layout spacing="true" expand="sessionsTable">
         <hbox id="filterHBox" spacing="true" width="100%">
             <groupBox id="filterGroupBox" caption="msg://UserSessions.filter" orientation="horizontal" spacing="true"
@@ -50,8 +53,7 @@
         <groupTable id="sessionsTable"
                     width="100%"
                     dataContainer="userSessionsDc"
-                    multiselect="true"
-                    presentations="true">
+                    multiselect="true">
             <actions>
                 <action id="refresh" type="refresh"/>
                 <action id="expire" caption="msg://expire" icon="BAN"/>

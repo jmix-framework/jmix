@@ -17,6 +17,7 @@
 package io.jmix.reports.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -53,8 +54,11 @@ public class ReportImportResult implements Serializable {
         return getInnerExceptions().size() != 0;
     }
 
-    public void addException(Exception exception){
-        getInnerExceptions().add(exception);
+    public void addException(Exception exception) {
+        if (innerExceptions == null) {
+            innerExceptions = new ArrayList<>();
+        }
+        innerExceptions.add(exception);
     }
 
     public void addImportedReport(Report importedReport) {

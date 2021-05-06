@@ -25,6 +25,7 @@
     </actions>
     <facets>
         <dataLoadCoordinator auto="true"/>
+        <presentations auto="true"/>
     </facets>
     <dialogMode height="600"
                 width="800"/>
@@ -35,8 +36,7 @@
         <groupTable id="usersTable"
                     width="100%"
                     dataContainer="usersDc"
-                    multiselect="true"
-                    presentations="true">
+                    multiselect="true">
             <actions>
                 <action id="create" type="create"/>
                 <action id="edit" type="edit"/>

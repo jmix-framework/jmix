@@ -27,6 +27,7 @@ import io.jmix.dynattr.AttributeDefinition;
 import io.jmix.dynattr.AttributeType;
 import io.jmix.dynattr.DynAttrMetadata;
 import io.jmix.dynattr.DynAttrUtils;
+import io.jmix.ui.app.propertyfilter.dateinterval.DateIntervalUtils;
 import io.jmix.ui.component.PropertyFilter;
 import io.jmix.ui.component.propertyfilter.PropertyFilterSupport;
 
@@ -47,8 +48,9 @@ public class DynAttrPropertyFilterSupport extends PropertyFilterSupport {
                                         MetadataTools metadataTools,
                                         DataManager dataManager,
                                         DatatypeRegistry datatypeRegistry,
-                                        DynAttrMetadata dynAttrMetadata) {
-        super(messages, messageTools, metadataTools, dataManager, datatypeRegistry);
+                                        DynAttrMetadata dynAttrMetadata,
+                                        DateIntervalUtils dateIntervalUtils) {
+        super(messages, messageTools, metadataTools, dataManager, datatypeRegistry, dateIntervalUtils);
         this.dynAttrMetadata = dynAttrMetadata;
     }
 

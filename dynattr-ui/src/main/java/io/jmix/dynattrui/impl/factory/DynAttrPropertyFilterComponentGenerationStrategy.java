@@ -35,14 +35,11 @@ import io.jmix.ui.Actions;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.WindowConfig;
 import io.jmix.ui.action.entitypicker.EntityLookupAction;
-import io.jmix.ui.component.ComboBox;
-import io.jmix.ui.component.Component;
-import io.jmix.ui.component.ComponentGenerationContext;
-import io.jmix.ui.component.DateField;
-import io.jmix.ui.component.EntityPicker;
-import io.jmix.ui.component.Field;
-import io.jmix.ui.component.HasDatatype;
-import io.jmix.ui.component.PropertyFilter;
+import io.jmix.ui.action.propertyfilter.DateIntervalAction;
+import io.jmix.ui.action.valuepicker.ValueClearAction;
+import io.jmix.ui.app.propertyfilter.dateinterval.BaseDateInterval;
+import io.jmix.ui.app.propertyfilter.dateinterval.DateIntervalUtils;
+import io.jmix.ui.component.*;
 import io.jmix.ui.component.data.DataAwareComponentsTools;
 import io.jmix.ui.component.factory.PropertyFilterComponentGenerationContext;
 import io.jmix.ui.screen.OpenMode;
@@ -56,6 +53,7 @@ import static io.jmix.ui.component.factory.PropertyFilterComponentGenerationStra
 public class DynAttrPropertyFilterComponentGenerationStrategy extends DynAttrComponentGenerationStrategy {
 
     protected DataAwareComponentsTools dataAwareComponentsTools;
+    protected DateIntervalUtils dateIntervalUtils;
 
     public DynAttrPropertyFilterComponentGenerationStrategy(Messages messages,
                                                             UiComponents uiComponents,
@@ -70,12 +68,14 @@ public class DynAttrPropertyFilterComponentGenerationStrategy extends DynAttrCom
                                                             AttributeDependencies attributeDependencies,
                                                             FormatStringsRegistry formatStringsRegistry,
                                                             ApplicationContext applicationContext,
-                                                            DataAwareComponentsTools dataAwareComponentsTools) {
+                                                            DataAwareComponentsTools dataAwareComponentsTools,
+                                                            DateIntervalUtils dateIntervalUtils) {
         super(messages, uiComponents, dynamicModelMetadata, metadata, msgBundleTools, optionsLoader,
                 attributeValidators, windowConfig, screensHelper, actions, attributeDependencies, formatStringsRegistry,
                 applicationContext);
 
         this.dataAwareComponentsTools = dataAwareComponentsTools;
+        this.dateIntervalUtils = dateIntervalUtils;
     }
 
     @Override
@@ -112,6 +112,8 @@ public class DynAttrPropertyFilterComponentGenerationStrategy extends DynAttrCom
             resultComponent = createCollectionField(context, attribute);
         } else if (attribute.getDataType() == ENTITY) {
             resultComponent = createClassField(context, attribute);
+        } else if (type == PropertyFilter.Operation.Type.INTERVAL) {
+            resultComponent = createIntervalField(context);
         } else {
             resultComponent = createDatatypeField(context, attribute);
         }
@@ -147,6 +149,14 @@ public class DynAttrPropertyFilterComponentGenerationStrategy extends DynAttrCom
         entityPicker.setMetaClass(metaClass);
 
         return entityPicker;
+    }
+
+    protected Field createIntervalField(ComponentGenerationContext context) {
+        ValuePicker<BaseDateInterval> valuePicker = uiComponents.create(ValuePicker.NAME);
+        valuePicker.addAction(actions.create(DateIntervalAction.ID));
+        valuePicker.addAction(actions.create(ValueClearAction.ID));
+        valuePicker.setFormatter(interval -> dateIntervalUtils.formatDateIntervalToLocalizedValue(interval));
+        return valuePicker;
     }
 
     @Override

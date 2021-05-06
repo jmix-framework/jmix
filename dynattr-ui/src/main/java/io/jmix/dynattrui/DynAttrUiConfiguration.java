@@ -29,6 +29,7 @@ import io.jmix.dynattrui.panel.DynamicAttributesPanel;
 import io.jmix.dynattrui.panel.DynamicAttributesPanelLoader;
 import io.jmix.dynattrui.propertyfilter.DynAttrPropertyFilterSupport;
 import io.jmix.ui.UiConfiguration;
+import io.jmix.ui.app.propertyfilter.dateinterval.DateIntervalUtils;
 import io.jmix.ui.component.propertyfilter.PropertyFilterSupport;
 import io.jmix.ui.sys.UiControllersConfiguration;
 import io.jmix.ui.sys.registration.ComponentRegistration;
@@ -62,9 +63,10 @@ public class DynAttrUiConfiguration {
                                                        MetadataTools metadataTools,
                                                        DataManager dataManager,
                                                        DatatypeRegistry datatypeRegistry,
-                                                       DynAttrMetadata dynAttrMetadata) {
+                                                       DynAttrMetadata dynAttrMetadata,
+                                                       DateIntervalUtils dateIntervalUtils) {
         return new DynAttrPropertyFilterSupport(messages, messageTools, metadataTools, dataManager, datatypeRegistry,
-                dynAttrMetadata);
+                dynAttrMetadata, dateIntervalUtils);
     }
 
     @Bean

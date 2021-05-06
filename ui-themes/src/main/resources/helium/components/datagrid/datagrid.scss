@@ -95,7 +95,7 @@
 
   .#{$primary-stylename}-header,
   .#{$primary-stylename}-footer {
-    color: var(--text-secondary-color);
+    color: var(--grid-header-text-color);
     background: var(--grid-background-color);
   }
 

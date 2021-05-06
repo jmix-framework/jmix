@@ -34,13 +34,21 @@ $he-table-header-row-height-scale: 1.5 !default;
   }
 
   .c-table-prefs-editor {
-    // TODO: gg, style
     @include he-box-shadow(--table-prefs-editor-shadow);
 
     color: var(--text-main-color);
+    background-color: var(--table-background-color);
 
     .c-table-prefs-title {
       border-bottom-color: var(--border-dim-color);
+    }
+
+    .c-table-prefs-list.v-menubar {
+      color: var(--text-main-color);
+
+      .v-menubar-menuitem:hover:before {
+        background: none;
+      }
     }
   }
 
@@ -213,7 +221,7 @@ $he-table-header-row-height-scale: 1.5 !default;
   .#{$primary-stylename}-header-drag {
     border: $table-outer-border;
     background: var(--table-background-color);
-    color: var(--text-secondary-color);
+    color: var(--table-header-text-color);
   }
 
   .#{$primary-stylename}-row {

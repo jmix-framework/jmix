@@ -55,8 +55,9 @@ public class ParameterJpqlGenerator {
         List<PropertyCondition> propertyConditions = collectNestedPropertyConditions(actualized);
         for (PropertyCondition propertyCondition : propertyConditions) {
             String parameterName = propertyCondition.getParameterName();
-            if (PropertyConditionUtils.isUnaryOperation(propertyCondition)) {
-                //remove query parameter for unary operations (e.g. IS_NULL)
+            if (PropertyConditionUtils.isUnaryOperation(propertyCondition)
+                    || PropertyConditionUtils.isInIntervalOperation(propertyCondition)) {
+                //remove query parameter for unary operations (e.g. IS_NULL) and "in interval" operations
                 parameters.remove(parameterName);
             } else {
                 //PropertyCondition may take a value from queryParameters collection or from the

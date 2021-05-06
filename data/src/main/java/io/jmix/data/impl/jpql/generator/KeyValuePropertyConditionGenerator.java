@@ -73,6 +73,8 @@ public class KeyValuePropertyConditionGenerator extends PropertyConditionGenerat
             return String.format("%s %s",
                     entityAlias,
                     PropertyConditionUtils.getJpqlOperation(propertyCondition));
+        } else if (PropertyConditionUtils.isInIntervalOperation(propertyCondition)) {
+            return PropertyConditionUtils.getJpqlOperation(propertyCondition);
         } else {
             return String.format("%s %s :%s",
                     entityAlias,

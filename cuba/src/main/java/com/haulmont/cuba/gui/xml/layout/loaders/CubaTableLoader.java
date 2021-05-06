@@ -17,6 +17,7 @@
 package com.haulmont.cuba.gui.xml.layout.loaders;
 
 import com.haulmont.cuba.gui.UiComponents;
+import com.haulmont.cuba.gui.components.HasPresentations;
 import com.haulmont.cuba.gui.components.RowsCount;
 import com.haulmont.cuba.gui.components.Table;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
@@ -49,6 +50,8 @@ public class CubaTableLoader extends io.jmix.ui.xml.layout.loader.TableLoader {
     public void loadComponent() {
         super.loadComponent();
 
+        ComponentLoaderHelper.loadPresentations((HasPresentations) resultComponent, element,
+                applicationContext, getComponentContext());
         ComponentLoaderHelper.loadSettingsEnabled((Table) resultComponent, element);
     }
 

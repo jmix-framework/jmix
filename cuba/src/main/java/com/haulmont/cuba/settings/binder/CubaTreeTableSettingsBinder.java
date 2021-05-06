@@ -16,11 +16,20 @@
 
 package com.haulmont.cuba.settings.binder;
 
+import com.haulmont.cuba.settings.component.CubaTreeTableSettings;
 import com.haulmont.cuba.web.gui.components.WebTreeTable;
 import io.jmix.core.JmixOrder;
+import io.jmix.core.UuidProvider;
 import io.jmix.ui.component.Component;
+import io.jmix.ui.component.Table;
+import io.jmix.ui.settings.component.ComponentSettings;
+import io.jmix.ui.settings.component.SettingsWrapper;
+import io.jmix.ui.settings.component.TableSettings;
 import io.jmix.ui.settings.component.binder.TreeTableSettingsBinder;
 import org.springframework.core.annotation.Order;
+
+import java.util.Objects;
+import java.util.UUID;
 
 @Order(JmixOrder.LOWEST_PRECEDENCE - 10)
 @org.springframework.stereotype.Component(CubaTreeTableSettingsBinder.NAME)
@@ -31,5 +40,45 @@ public class CubaTreeTableSettingsBinder extends TreeTableSettingsBinder {
     @Override
     public Class<? extends Component> getComponentClass() {
         return WebTreeTable.class;
+    }
+
+    @Override
+    public Class<? extends ComponentSettings> getSettingsClass() {
+        return CubaTreeTableSettings.class;
+    }
+
+    @Override
+    public boolean saveSettings(Table table, SettingsWrapper wrapper) {
+        boolean settingsChanged = super.saveSettings(table, wrapper);
+        if (settingsChanged) {
+            return true;
+        }
+
+        CubaTreeTableSettings tableSettings = wrapper.getSettings();
+
+        if (!Objects.equals(tableSettings.getPresentationId(), table.getDefaultPresentationId())) {
+            tableSettings.setPresentationId((UUID) table.getDefaultPresentationId());
+
+            settingsChanged = true;
+        }
+        return settingsChanged;
+    }
+
+    @Override
+    public TableSettings getSettings(Table table) {
+        CubaTreeTableSettings settings = (CubaTreeTableSettings) super.getSettings(table);
+
+        // get default presentation
+        Object presentationId = table.getDefaultPresentationId();
+        if (presentationId != null) {
+            settings.setPresentationId(UuidProvider.fromString(String.valueOf(presentationId)));
+        }
+
+        return settings;
+    }
+
+    @Override
+    protected TableSettings createTableSettings() {
+        return new CubaTreeTableSettings();
     }
 }

@@ -77,6 +77,8 @@ public class WebGroupTable<E extends Entity> extends GroupTableImpl<E>
     protected LegacyPresentationsDelegate presentationsDelegate;
     protected TableDelegate tableDelegate;
 
+    protected boolean usePresentations;
+
     @Override
     public void afterPropertiesSet() {
         super.afterPropertiesSet();
@@ -160,6 +162,60 @@ public class WebGroupTable<E extends Entity> extends GroupTableImpl<E>
             presentationsDelegate.resetPresentations(settingsDelegate.getDefaultSettings());
         } else {
             super.resetPresentation();
+        }
+    }
+
+    @Override
+    public void usePresentations(boolean b) {
+        this.usePresentations = b;
+    }
+
+    @Override
+    public boolean isUsePresentations() {
+        return usePresentations;
+    }
+
+    @Override
+    public void loadPresentations() {
+        if (isUsePresentations()) {
+            super.loadPresentations();
+        } else {
+            throw new UnsupportedOperationException("Component doesn't use presentations");
+        }
+    }
+
+    @Nullable
+    @Override
+    public TablePresentations getPresentations() {
+        if (isUsePresentations()) {
+            return super.getPresentations();
+        } else {
+            throw new UnsupportedOperationException("Component doesn't use presentations");
+        }
+    }
+
+    @Override
+    public void applyPresentation(Object id) {
+        if (isUsePresentations()) {
+            super.applyPresentation(id);
+        } else {
+            throw new UnsupportedOperationException("Component doesn't use presentations");
+        }
+    }
+
+    @Override
+    public void applyPresentationAsDefault(Object id) {
+        if (isUsePresentations()) {
+            super.applyPresentationAsDefault(id);
+        } else {
+            throw new UnsupportedOperationException("Component doesn't use presentations");
+        }
+    }
+
+    @Override
+    protected void handlePresentationVariables(Map<String, Object> variables) {
+        if (isUsePresentations()) {
+            super.handlePresentationVariables(variables);
         }
     }
 

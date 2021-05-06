@@ -52,7 +52,7 @@ import java.util.function.Function;
 @Deprecated
 @SuppressWarnings("rawtypes")
 public interface Table<E extends Entity> extends ListComponent<E>, io.jmix.ui.component.Table<E>, HasSettings,
-        HasDataLoadingSettings, HasRowsCount, RowsCount.RowsCountTarget, LookupComponent<E> {
+        HasDataLoadingSettings, HasPresentations, HasRowsCount, RowsCount.RowsCountTarget, LookupComponent<E> {
 
     static <T extends Entity> TypeToken<Table<T>> of(@SuppressWarnings("unused") Class<T> itemClass) {
         return new TypeToken<Table<T>>() {

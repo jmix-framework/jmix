@@ -16,6 +16,8 @@
 
 package com.haulmont.cuba.settings.converter;
 
+import com.haulmont.cuba.settings.component.CubaTableSettings;
+import com.haulmont.cuba.settings.component.HasSettingsPresentation;
 import io.jmix.core.UuidProvider;
 import io.jmix.ui.settings.component.ComponentSettings;
 import io.jmix.ui.settings.component.TableSettings;
@@ -59,8 +61,9 @@ public class LegacyTableSettingsConverter implements LegacySettingsConverter {
         }
 
         String presentationId = settings.attributeValue("presentation");
-        if (StringUtils.isNotBlank(presentationId)) {
-            tableSettings.setPresentationId(UuidProvider.fromString(presentationId));
+        if (StringUtils.isNotBlank(presentationId)
+                && tableSettings instanceof HasSettingsPresentation) {
+            ((HasSettingsPresentation) tableSettings).setPresentationId(UuidProvider.fromString(presentationId));
         }
 
         Element columnsElem = settings.element("columns");
@@ -106,9 +109,12 @@ public class LegacyTableSettingsConverter implements LegacySettingsConverter {
         if (textSelection != null)
             element.addAttribute("textSelection", textSelection.toString());
 
-        UUID presentationId = tableSettings.getPresentationId();
-        if (presentationId != null)
-            element.addAttribute("presentation", presentationId.toString());
+        if (tableSettings instanceof HasSettingsPresentation) {
+            UUID presentationId = ((HasSettingsPresentation) tableSettings).getPresentationId();
+            if (presentationId != null) {
+                element.addAttribute("presentation", presentationId.toString());
+            }
+        }
 
         List<ColumnSettings> columns = tableSettings.getColumns();
         if (columns != null) {
@@ -135,6 +141,6 @@ public class LegacyTableSettingsConverter implements LegacySettingsConverter {
     }
 
     protected TableSettings createSettings() {
-        return new TableSettings();
+        return new CubaTableSettings();
     }
 }

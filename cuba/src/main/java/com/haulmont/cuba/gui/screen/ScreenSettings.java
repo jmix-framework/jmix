@@ -17,6 +17,7 @@
 package com.haulmont.cuba.gui.screen;
 
 import com.haulmont.cuba.gui.components.HasDataLoadingSettings;
+import com.haulmont.cuba.gui.components.HasPresentations;
 import io.jmix.ui.component.HasTablePresentations;
 import com.haulmont.cuba.gui.components.HasSettings;
 import io.jmix.ui.presentation.TablePresentations;
@@ -117,11 +118,11 @@ public class ScreenSettings {
                         Element e = settings.get(name);
                         boolean modified = ((HasSettings) component).saveSettings(e);
 
-                        if (component instanceof HasTablePresentations
-                                && ((HasTablePresentations) component).isUsePresentations()) {
-                            Object def = ((HasTablePresentations) component).getDefaultPresentationId();
+                        if (component instanceof HasPresentations
+                                && ((HasPresentations) component).isUsePresentations()) {
+                            Object def = ((HasPresentations) component).getDefaultPresentationId();
                             e.addAttribute("presentation", def != null ? def.toString() : "");
-                            TablePresentations presentations = ((HasTablePresentations) component).getPresentations();
+                            TablePresentations presentations = ((HasPresentations) component).getPresentations();
                             if (presentations != null) {
                                 presentations.commit();
                             }

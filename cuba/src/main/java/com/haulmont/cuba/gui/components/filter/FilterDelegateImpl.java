@@ -38,6 +38,7 @@ import com.haulmont.cuba.gui.WindowParams;
 import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.components.Filter;
 import com.haulmont.cuba.gui.components.GridLayout;
+import com.haulmont.cuba.gui.components.HasPresentations;
 import com.haulmont.cuba.gui.components.ListComponent;
 import com.haulmont.cuba.gui.components.LookupField;
 import com.haulmont.cuba.gui.components.actions.ItemTrackingAction;
@@ -913,8 +914,8 @@ public class FilterDelegateImpl implements FilterDelegate {
             }
         }
         TablePresentations presentations;
-        if (applyTo != null && applyTo instanceof HasTablePresentations) {
-            final HasTablePresentations presentationsOwner = (HasTablePresentations) applyTo;
+        if (applyTo != null && applyTo instanceof HasPresentations) {
+            final HasPresentations presentationsOwner = (HasPresentations) applyTo;
             presentations = presentationsOwner.isUsePresentations()
                     ? presentationsOwner.getPresentations() : null;
         } else {

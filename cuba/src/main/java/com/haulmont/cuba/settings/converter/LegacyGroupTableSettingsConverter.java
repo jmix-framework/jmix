@@ -16,6 +16,7 @@
 
 package com.haulmont.cuba.settings.converter;
 
+import com.haulmont.cuba.settings.component.CubaGroupTableSettings;
 import io.jmix.ui.settings.component.GroupTableSettings;
 import io.jmix.ui.settings.component.TableSettings;
 import org.dom4j.Element;
@@ -66,6 +67,6 @@ public class LegacyGroupTableSettingsConverter extends LegacyTableSettingsConver
 
     @Override
     protected TableSettings createSettings() {
-        return new GroupTableSettings();
+        return new CubaGroupTableSettings();
     }
 }

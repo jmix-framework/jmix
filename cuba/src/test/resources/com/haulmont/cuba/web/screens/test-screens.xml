@@ -19,4 +19,6 @@
     <screen id="testOpenFrame" template="/spec/haulmont/cuba/web/frames/screens/test-open-frame.xml"/>
     <screen id="test_LegacyUserBrowse" template="/spec/haulmont/cuba/web/frames/screens/legacy-user-browse-test.xml"/>
     <screen id="test_LegacyUserEditor" template="/spec/haulmont/cuba/web/screens/legacy/legacy-user-edit.xml"/>
+    <screen id="test_PresentationsLegacyTestScreen"
+            template="/legacy_presentations/screens/presentations-legacy-test-screen.xml"/>
 </screen-config>

@@ -38,6 +38,7 @@ import io.jmix.ui.component.ActionsHolder;
 import io.jmix.ui.component.DataGrid;
 import io.jmix.ui.component.formatter.Formatter;
 import io.jmix.ui.xml.layout.ComponentLoader;
+import com.haulmont.cuba.gui.xml.layout.loaders.LoadPresentationsPostInitTask;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Attribute;
 import org.dom4j.Element;
@@ -437,6 +438,19 @@ public final class ComponentLoaderHelper {
             DatatypeRegistry datatypeRegistry = applicationContext.getBean(DatatypeRegistry.class);
             Datatype datatype = datatypeRegistry.get(type);
             ((Table.Column<?>) column).setType(datatype.getJavaClass());
+        }
+    }
+
+    public static void loadPresentations(HasPresentations component,
+                                     Element element,
+                                     ApplicationContext applicationContext,
+                                     ComponentLoader.ComponentContext context) {
+        String presentations = element.attributeValue("presentations");
+        if (StringUtils.isNotEmpty(presentations)) {
+            if (applicationContext.containsBean("ui_Presentations")) {
+                component.usePresentations(Boolean.parseBoolean(presentations));
+                context.addPostInitTask(new LoadPresentationsPostInitTask(component));
+            }
         }
     }
 }

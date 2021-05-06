@@ -34,7 +34,7 @@ import io.jmix.ui.component.data.TableItems;
 @Deprecated
 @SuppressWarnings("rawtypes")
 public interface GroupTable<E extends Entity> extends ListComponent<E>, io.jmix.ui.component.GroupTable<E>, Table<E>,
-        HasSettings, HasDataLoadingSettings, HasRowsCount, RowsCount.RowsCountTarget {
+        HasSettings, HasDataLoadingSettings, HasPresentations, HasRowsCount, RowsCount.RowsCountTarget {
 
     static <T extends Entity> TypeToken<GroupTable<T>> of(@SuppressWarnings("unused") Class<T> itemClass) {
         return new TypeToken<GroupTable<T>>() {};

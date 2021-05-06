@@ -18,6 +18,7 @@ package com.haulmont.cuba.gui.xml.layout.loaders;
 
 import com.haulmont.cuba.gui.UiComponents;
 import com.haulmont.cuba.gui.components.GroupTable;
+import com.haulmont.cuba.gui.components.HasPresentations;
 import com.haulmont.cuba.gui.components.RowsCount;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper;
@@ -49,6 +50,8 @@ public class CubaGroupTableLoader extends GroupTableLoader {
     public void loadComponent() {
         super.loadComponent();
 
+        ComponentLoaderHelper.loadPresentations((HasPresentations) resultComponent, element,
+                applicationContext, getComponentContext());
         ComponentLoaderHelper.loadSettingsEnabled((GroupTable) resultComponent, element);
     }
 

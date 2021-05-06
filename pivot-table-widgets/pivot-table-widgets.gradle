@@ -21,8 +21,7 @@ dependencies {
     api platform("io.jmix.bom:jmix-bom:$bomVersion")
 
     api project(':pivot-table')
-
-    api 'com.vaadin:vaadin-client'
+    api project(':ui-widgets')
 
     implementation 'com.google.code.gson:gson'
 }

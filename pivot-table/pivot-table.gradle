@@ -25,12 +25,13 @@ dependencies {
 
     api project(':ui')
     api project(':ui-export')
-    api project(':ui-widgets') // temporary fix, see Haulmont/jmix-ui#392
 
     api 'org.apache.poi:poi'
 
     api 'org.webjars.bower:pivottable'
     api 'org.webjars:jquery-ui-touch-punch'
+
+    implementation 'com.google.code.gson:gson'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api'
     testImplementation 'org.springframework:spring-test'

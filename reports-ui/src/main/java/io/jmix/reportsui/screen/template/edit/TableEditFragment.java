@@ -145,7 +145,7 @@ public class TableEditFragment extends DescriptionEditFragment {
             tableColumnsDc.getMutableItems().add(item);
         } else {
             notifications.create(Notifications.NotificationType.HUMANIZED)
-                    .withCaption(messages.getMessage("template.bandRequired"))
+                    .withCaption(messages.getMessage(getClass(),"template.bandRequired"))
                     .show();
         }
     }

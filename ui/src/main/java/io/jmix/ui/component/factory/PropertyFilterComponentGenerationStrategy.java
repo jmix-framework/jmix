@@ -29,6 +29,10 @@ import io.jmix.ui.Actions;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.action.entitypicker.EntityClearAction;
 import io.jmix.ui.action.entitypicker.EntityLookupAction;
+import io.jmix.ui.action.propertyfilter.DateIntervalAction;
+import io.jmix.ui.action.valuepicker.ValueClearAction;
+import io.jmix.ui.app.propertyfilter.dateinterval.BaseDateInterval;
+import io.jmix.ui.app.propertyfilter.dateinterval.DateIntervalUtils;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.data.DataAwareComponentsTools;
 import io.jmix.ui.component.impl.EntityFieldCreationSupport;
@@ -49,6 +53,7 @@ public class PropertyFilterComponentGenerationStrategy extends AbstractComponent
     public static final String UNARY_FIELD_STYLENAME = "unary-field";
 
     protected DataAwareComponentsTools dataAwareComponentsTools;
+    protected DateIntervalUtils dateIntervalUtils;
 
     @Autowired
     public PropertyFilterComponentGenerationStrategy(Messages messages,
@@ -58,9 +63,11 @@ public class PropertyFilterComponentGenerationStrategy extends AbstractComponent
                                                      MetadataTools metadataTools,
                                                      Icons icons,
                                                      Actions actions,
-                                                     DataAwareComponentsTools dataAwareComponentsTools) {
+                                                     DataAwareComponentsTools dataAwareComponentsTools,
+                                                     DateIntervalUtils dateIntervalUtils) {
         super(messages, uiComponents, entityFieldCreationSupport, metadata, metadataTools, icons, actions);
         this.dataAwareComponentsTools = dataAwareComponentsTools;
+        this.dateIntervalUtils = dateIntervalUtils;
     }
 
     @Override
@@ -89,6 +96,8 @@ public class PropertyFilterComponentGenerationStrategy extends AbstractComponent
             return createUnaryField(context);
         } else if (pfContext.getOperation().getType() == PropertyFilter.Operation.Type.LIST) {
             return createCollectionField(context, mpp);
+        } else if (pfContext.getOperation().getType() == PropertyFilter.Operation.Type.INTERVAL) {
+            return createIntervalField(context);
         }
 
         return super.createComponentInternal(context);
@@ -182,6 +191,14 @@ public class PropertyFilterComponentGenerationStrategy extends AbstractComponent
         component.setOptionsEnum(enumeration.getJavaClass());
 
         return component;
+    }
+
+    protected Field createIntervalField(ComponentGenerationContext context) {
+        ValuePicker<BaseDateInterval> valuePicker = uiComponents.create(ValuePicker.NAME);
+        valuePicker.addAction(actions.create(DateIntervalAction.ID));
+        valuePicker.addAction(actions.create(ValueClearAction.ID));
+        valuePicker.setFormatter(interval -> dateIntervalUtils.formatDateIntervalToLocalizedValue(interval));
+        return valuePicker;
     }
 
     @Override

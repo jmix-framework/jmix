@@ -152,7 +152,7 @@ public interface PropertyFilter<V> extends SingleFilterComponent<V> {
         IS_NOT_SET(Type.UNARY),
         IN_LIST(Type.LIST),
         NOT_IN_LIST(Type.LIST),
-//        DATE_INTERVAL(Type.INTERVAL),
+        DATE_INTERVAL(Type.INTERVAL),
         ;
 
         private final Type type;

@@ -32,6 +32,8 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.Range;
 import io.jmix.core.metamodel.model.impl.DatatypeRange;
 import io.jmix.core.querycondition.PropertyCondition;
+import io.jmix.ui.app.propertyfilter.dateinterval.BaseDateInterval;
+import io.jmix.ui.app.propertyfilter.dateinterval.DateIntervalUtils;
 import io.jmix.ui.component.PropertyFilter;
 import io.jmix.ui.component.PropertyFilter.Operation;
 import org.slf4j.Logger;
@@ -75,18 +77,21 @@ public class PropertyFilterSupport {
     protected MetadataTools metadataTools;
     protected DataManager dataManager;
     protected DatatypeRegistry datatypeRegistry;
+    protected DateIntervalUtils dateIntervalUtils;
 
     @Autowired
     public PropertyFilterSupport(Messages messages,
                                  MessageTools messageTools,
                                  MetadataTools metadataTools,
                                  DataManager dataManager,
-                                 DatatypeRegistry datatypeRegistry) {
+                                 DatatypeRegistry datatypeRegistry,
+                                 DateIntervalUtils dateIntervalUtils) {
         this.messages = messages;
         this.messageTools = messageTools;
         this.metadataTools = metadataTools;
         this.dataManager = dataManager;
         this.datatypeRegistry = datatypeRegistry;
+        this.dateIntervalUtils = dateIntervalUtils;
     }
 
     public String getOperationCaption(Operation operation) {
@@ -186,9 +191,9 @@ public class PropertyFilterSupport {
                         NOT_IN_LIST);
             } else if (dateTimeClasses.contains(type)) {
                 return EnumSet.of(EQUAL, NOT_EQUAL, GREATER, GREATER_OR_EQUAL, LESS, LESS_OR_EQUAL, IS_SET, IN_LIST,
-                        NOT_IN_LIST);  // TODO: add DATE_INTERVAL
+                        NOT_IN_LIST, DATE_INTERVAL);
             } else if (timeClasses.contains(type)) {
-                return EnumSet.of(EQUAL, NOT_EQUAL, GREATER, GREATER_OR_EQUAL, LESS, LESS_OR_EQUAL, IS_SET); // TODO: add DATE_INTERVAL
+                return EnumSet.of(EQUAL, NOT_EQUAL, GREATER, GREATER_OR_EQUAL, LESS, LESS_OR_EQUAL, IS_SET, DATE_INTERVAL);
             } else if (Number.class.isAssignableFrom(type)) {
                 return EnumSet.of(EQUAL, NOT_EQUAL, GREATER, GREATER_OR_EQUAL, LESS, LESS_OR_EQUAL, IS_SET, IN_LIST,
                         NOT_IN_LIST);
@@ -261,6 +266,8 @@ public class PropertyFilterSupport {
                 return PropertyCondition.Operation.IN_LIST;
             case NOT_IN_LIST:
                 return PropertyCondition.Operation.NOT_IN_LIST;
+            case DATE_INTERVAL:
+                return PropertyCondition.Operation.IN_INTERVAL;
             default:
                 throw new IllegalArgumentException("Unknown operation: " + operation);
         }
@@ -294,6 +301,8 @@ public class PropertyFilterSupport {
         } else if (operationType == Type.UNARY) {
             DatatypeRange booleanRange = new DatatypeRange(datatypeRegistry.get(Boolean.class));
             return formatSingleDefaultValue(booleanRange, value);
+        } else if (operationType == Type.INTERVAL) {
+            return dateIntervalUtils.formatDateInterval((BaseDateInterval) value);
         } else {
             return formatSingleDefaultValue(range, value);
         }
@@ -335,6 +344,8 @@ public class PropertyFilterSupport {
         } else if (operationType == Type.UNARY) {
             DatatypeRange booleanRange = new DatatypeRange(datatypeRegistry.get(Boolean.class));
             return parseSingleDefaultValue(booleanRange, value);
+        } else if (operationType == Type.INTERVAL) {
+            return dateIntervalUtils.parseDateInterval(value);
         } else {
             return parseSingleDefaultValue(range, value);
         }

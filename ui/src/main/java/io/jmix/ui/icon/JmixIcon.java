@@ -46,6 +46,9 @@ public enum JmixIcon implements Icons.Icon {
     VALUEPICKER_CLEAR("font-icon:TIMES"),
     VALUEPICKER_CLEAR_READONLY("font-icon:TIMES"),
 
+    VALUEPICKER_DATEINTERVAL("font-icon:ELLIPSIS_H"),
+    VALUEPICKER_DATEINTERVAL_READONLY("font-icon:ELLIPSIS_H"),
+
     VALUESPICKER_SELECT("font-icon:ELLIPSIS_H"),
     VALUESPICKER_SELECT_READONLY("font-icon:ELLIPSIS_H"),
 

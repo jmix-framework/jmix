@@ -266,7 +266,7 @@ public class BulkEditorWindow<E> extends Screen implements BulkEditorController<
     protected Consumer<Button.ClickEvent> createClearButtonClickListener(Field<?> editField) {
         return e -> {
             editField.setEnabled(!editField.isEnabled());
-            Button button = e.getButton();
+            Button button = e.getSource();
 
             button.setIconFromSet(editField.isEnabled() ? JmixIcon.TRASH : JmixIcon.EDIT);
             button.setDescription(messageBundle.getMessage(editField.isEnabled()

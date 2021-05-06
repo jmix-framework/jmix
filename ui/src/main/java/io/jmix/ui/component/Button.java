@@ -91,9 +91,5 @@ public interface Button extends Component, Component.HasCaption, Component.Belon
         public Button getSource() {
             return (Button) super.getSource();
         }
-
-        public Button getButton() {
-            return (Button) super.getSource();
-        }
     }
 }

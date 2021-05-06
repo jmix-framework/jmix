@@ -238,19 +238,19 @@ public class EntityInfoWindow extends Screen {
 
     @Subscribe("insertBtn")
     public void onInsertBtnClick(Button.ClickEvent event) {
-        updateButtons(event.getButton());
+        updateButtons(event.getSource());
         updateScriptArea(sqlGenerationService.generateInsertScript(entity));
     }
 
     @Subscribe("selectBtn")
     public void onSelectBtnClick(Button.ClickEvent event) {
-        updateButtons(event.getButton());
+        updateButtons(event.getSource());
         updateScriptArea(sqlGenerationService.generateSelectScript(entity));
     }
 
     @Subscribe("updateBtn")
     public void onUpdateBtnClick(Button.ClickEvent event) {
-        updateButtons(event.getButton());
+        updateButtons(event.getSource());
         updateScriptArea(sqlGenerationService.generateUpdateScript(entity));
     }
 

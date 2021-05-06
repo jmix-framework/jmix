@@ -9,12 +9,14 @@
             <loader id="executionsDl"/>
         </collection>
     </data>
+    <facets>
+        <presentations id="presentations" auto="true"/>
+    </facets>
     <layout spacing="true" expand="executionsTable">
         <filter id="filter" dataLoader="executionsDl" applyTo="executionsTable">
             <properties include=".*"/>
         </filter>
-        <table id="executionsTable" dataContainer="executionsDc" width="100%"
-               presentations="true" multiselect="true">
+        <table id="executionsTable" dataContainer="executionsDc" width="100%" multiselect="true">
             <actions>
                 <action id="excel" type="excelExport"/>
             </actions>

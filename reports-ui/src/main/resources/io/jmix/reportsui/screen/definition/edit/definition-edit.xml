@@ -51,7 +51,7 @@
         <split id="split" orientation="horizontal" pos="40" width="100%">
             <vbox margin="false;true;false;false" width="100%" height="100%">
                 <table id="dataSetsTable" editable="true" width="100%" height="100%" columnControlVisible="false"
-                       reorderingAllowed="false" presentations="false" dataContainer="dataSetsDc">
+                       reorderingAllowed="false" dataContainer="dataSetsDc">
                     <actions>
                         <action id="create" type="create"/>
                         <action id="remove" type="remove"/>

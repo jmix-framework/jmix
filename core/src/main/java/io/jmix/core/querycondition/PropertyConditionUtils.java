@@ -19,6 +19,8 @@ package io.jmix.core.querycondition;
 import com.google.common.base.Strings;
 import org.apache.commons.lang3.RandomStringUtils;
 
+import java.util.function.Function;
+
 public class PropertyConditionUtils {
 
     /**
@@ -38,6 +40,15 @@ public class PropertyConditionUtils {
         String operation = propertyCondition.getOperation();
         return PropertyCondition.Operation.IN_LIST.equals(operation)
                 || PropertyCondition.Operation.NOT_IN_LIST.equals(operation);
+    }
+
+    /**
+     * @param propertyCondition property condition
+     * @return true if property condition operation is "in interval"
+     */
+    public static boolean isInIntervalOperation(PropertyCondition propertyCondition) {
+        String operation = propertyCondition.getOperation();
+        return PropertyCondition.Operation.IN_INTERVAL.equals(operation);
     }
 
     /**
@@ -80,7 +91,20 @@ public class PropertyConditionUtils {
                 return "not in";
             case PropertyCondition.Operation.IS_SET:
                 return Boolean.TRUE.equals(condition.getParameterValue()) ? "is not null" : "is null";
+            case PropertyCondition.Operation.IN_INTERVAL:
+                return getInIntervalJpqlOperation(condition);
         }
         throw new RuntimeException("Unknown PropertyCondition operation: " + condition.getOperation());
+    }
+
+    protected static String getInIntervalJpqlOperation(PropertyCondition condition) {
+        Object parameterValue = condition.getParameterValue();
+        if (parameterValue == null) {
+            throw new RuntimeException("Cannot build operation condition for date interval " +
+                    "because parameter value is null");
+        }
+
+        //noinspection unchecked
+        return ((Function<String, String>) parameterValue).apply(condition.getProperty());
     }
 }

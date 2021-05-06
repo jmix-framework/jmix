@@ -257,5 +257,6 @@ public class PropertyCondition implements Condition {
         public static final String ENDS_WITH = "ends_with";
         public static final String IN_LIST = "in_list";
         public static final String NOT_IN_LIST = "not_in_list";
+        public static final String IN_INTERVAL = "in_interval";
     }
 }

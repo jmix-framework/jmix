@@ -26,7 +26,7 @@ import io.jmix.ui.icon.IconResolver;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.security.UiPermissionDescriptor;
 import io.jmix.ui.security.UiPermissionValue;
-import io.jmix.ui.settings.UserSettingsTools;
+import io.jmix.ui.settings.facet.ScreenSettingsFacetResolver;
 import io.jmix.ui.sys.TestIdManager;
 import io.jmix.ui.widget.JmixTabSheet;
 import io.jmix.ui.xml.layout.ComponentLoader;
@@ -52,8 +52,8 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 public class TabSheetImpl extends AbstractComponent<JmixTabSheet>
         implements TabSheet, UiPermissionAware, SupportsChildrenSelection {
 
-    @Autowired(required = false)
-    protected UserSettingsTools userSettingsTools;
+    @Autowired
+    protected ScreenSettingsFacetResolver settingsFacetResolver;
 
     @Autowired
     protected UiComponents uiComponents;
@@ -652,8 +652,9 @@ public class TabSheetImpl extends AbstractComponent<JmixTabSheet>
         }
 
         protected void applySettings(@Nullable Window window) {
-            if (window != null && userSettingsTools != null) {
-                userSettingsTools.applyLazyTabSettings(window, TabSheetImpl.this, tabContent);
+            if (window != null) {
+                settingsFacetResolver.resolveLazyTabSelectEvent(
+                        window, TabSheetImpl.this, tabContent.getComponents());
             }
         }
     }

@@ -127,16 +127,10 @@ public class GroupTableSettingsBinder extends AbstractTableSettingsBinder {
 
     @SuppressWarnings("unchecked")
     protected boolean isGroupTableSettingsChanged(GroupTable groupTable, GroupTableSettings groupTableSettings) {
+        // if group properties are null consider settings changed, because we cannot track changes
+        // without previous "state"
         if (groupTableSettings.getGroupProperties() == null) {
-            if (groupTable.getDefaultSettings() != null) {
-                List<String> groupProperties = ((GroupTableSettings) groupTable.getDefaultSettings()).getGroupProperties();
-                if (groupProperties == null) {
-                    return true;
-                }
-                groupTableSettings.setGroupProperties(new ArrayList<>(groupProperties));
-            } else {
-                return false;
-            }
+            return true;
         }
 
         List<String> settingsProperties = groupTableSettings.getGroupProperties();

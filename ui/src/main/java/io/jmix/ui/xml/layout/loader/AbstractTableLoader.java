@@ -94,8 +94,6 @@ public abstract class AbstractTableLoader<T extends Table> extends ActionsHolder
         loadAggregatable(resultComponent, element);
         loadAggregationStyle(resultComponent, element);
 
-        loadPresentations(resultComponent, element);
-
         loadActions(resultComponent, element);
         loadContextMenuEnabled(resultComponent, element);
         loadMultiLineCells(resultComponent, element);

@@ -16,15 +16,13 @@
 
 package io.jmix.uidata.settings;
 
+import com.google.common.base.Strings;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.ui.component.Component;
-import io.jmix.ui.component.HasTablePresentations;
-import io.jmix.ui.presentation.TablePresentations;
 import io.jmix.ui.settings.AbstractScreenSettings;
 import io.jmix.ui.settings.ComponentSettingsRegistry;
 import io.jmix.ui.settings.ScreenSettingsManager;
 import io.jmix.ui.settings.component.ComponentSettings;
-import io.jmix.ui.settings.component.ComponentSettings.HasSettingsPresentation;
 import io.jmix.ui.settings.component.SettingsWrapperImpl;
 import io.jmix.ui.settings.component.binder.ComponentSettingsBinder;
 import io.jmix.ui.settings.component.binder.DataLoadingSettingsBinder;
@@ -34,7 +32,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collection;
-import java.util.UUID;
 
 import static io.jmix.ui.component.ComponentsHelper.getComponentPath;
 
@@ -52,8 +49,8 @@ public class ScreenSettingsManagerImpl implements ScreenSettingsManager {
         Preconditions.checkNotNullArgument(screenSettings);
 
         for (Component component : components) {
-            if (!settingsRegistry.isSettingsRegisteredFor(component.getClass())
-                    || component.getId() == null) {
+            if (Strings.isNullOrEmpty(component.getId())
+                    || !settingsRegistry.isSettingsRegisteredFor(component.getClass())) {
                 continue;
             }
 
@@ -61,23 +58,10 @@ public class ScreenSettingsManagerImpl implements ScreenSettingsManager {
 
             ComponentSettingsBinder binder = settingsRegistry.getSettingsBinder(component.getClass());
 
-            if (component instanceof HasTablePresentations) {
-                ComponentSettings defaultSettings = binder.getSettings(component);
-                ((HasTablePresentations) component).setDefaultSettings(new SettingsWrapperImpl(defaultSettings));
-            }
-
             Class<? extends ComponentSettings> settingsClass = settingsRegistry.getSettingsClass(component.getClass());
             ComponentSettings settings = screenSettings.getSettingsOrCreate(component.getId(), settingsClass);
 
             binder.applySettings(component, new SettingsWrapperImpl(settings));
-
-            if (component instanceof HasTablePresentations
-                    && settings instanceof HasSettingsPresentation) {
-                UUID presentationId = ((HasSettingsPresentation) settings).getPresentationId();
-                if (presentationId != null) {
-                    ((HasTablePresentations) component).applyPresentationAsDefault(presentationId);
-                }
-            }
         }
     }
 
@@ -131,14 +115,6 @@ public class ScreenSettingsManagerImpl implements ScreenSettingsManager {
                 isModified = true;
 
                 screenSettings.put(settings);
-            }
-
-            if (component instanceof HasTablePresentations) {
-                HasTablePresentations compWithPres = (HasTablePresentations) component;
-                if (compWithPres.isUsePresentations()) {
-                    TablePresentations presentations = compWithPres.getPresentations();
-                    presentations.commit();
-                }
             }
         }
 

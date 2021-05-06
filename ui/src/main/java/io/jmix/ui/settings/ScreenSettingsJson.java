@@ -239,26 +239,6 @@ public class ScreenSettingsJson extends AbstractScreenSettings {
     }
 
     @Override
-    public <T extends ComponentSettings> T toComponentSettings(String settings, Class<T> settingsClass) {
-        Preconditions.checkNotNullArgument(settings);
-        Preconditions.checkNotNullArgument(settingsClass);
-
-        try {
-            return gson.fromJson(settings, settingsClass);
-        } catch (JsonSyntaxException e) {
-            log.error("Cannot map settings: {} to '{}'", settings, settingsClass, e);
-            return null;
-        }
-    }
-
-    @Override
-    public String toSettingsString(ComponentSettings settings) {
-        Preconditions.checkNotNullArgument(settings);
-
-        return gson.toJson(settings);
-    }
-
-    @Override
     public ScreenSettings remove(String componentId) {
         Preconditions.checkNotNullArgument(componentId);
 

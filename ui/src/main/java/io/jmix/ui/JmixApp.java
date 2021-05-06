@@ -52,7 +52,7 @@ public class JmixApp extends App {
     @Override
     public OperationResult logout() {
         closeWindowsInternal(true);
-        removeAllWindows(Collections.singletonList(AppUI.getCurrent()));
+        clearSettingsCache();
 
         String contextPath = environment.getProperty(CoreProperties.SERVER_SERVLET_CONTEXTPATH);
         String logoutPath = Strings.isNullOrEmpty(contextPath) ? "/logout" : contextPath + "/logout";

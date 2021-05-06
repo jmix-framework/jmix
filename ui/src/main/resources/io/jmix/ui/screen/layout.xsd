@@ -1279,7 +1279,6 @@
         <xs:attribute name="aggregatable" type="xs:boolean"/>
         <xs:attribute name="aggregationStyle" type="aggregationPosition"/>
         <xs:attribute name="showTotalAggregation" type="xs:boolean"/>
-        <xs:attribute name="presentations" type="xs:boolean"/>
         <xs:attribute name="contextMenuEnabled" type="xs:boolean"/>
         <xs:attribute name="multiLineCells" type="xs:boolean"/>
         <xs:attribute name="emptyStateMessage" type="resourceString"/>
@@ -3706,6 +3705,17 @@
         <xs:attribute name="id" type="xs:string" use="required"/>
     </xs:complexType>
 
+    <!-- PresentationsFacet   -->
+
+    <xs:complexType name="presentationsType">
+        <xs:sequence>
+            <xs:element name="components" minOccurs="0" type="screenSettingsComponentsType"/>
+        </xs:sequence>
+
+        <xs:attribute name="id" type="xs:string"/>
+        <xs:attribute name="auto" type="xs:boolean"/>
+    </xs:complexType>
+
     <xs:complexType name="facets">
         <xs:sequence>
             <xs:choice minOccurs="0" maxOccurs="unbounded">
@@ -3724,6 +3734,7 @@
                 <xs:element name="lookupScreen" type="lookupScreenType" minOccurs="0"/>
 
                 <xs:element name="screenSettings" type="screenSettingsType" minOccurs="0"/>
+                <xs:element name="presentations" type="presentationsType" minOccurs="0"/>
 
                 <!-- allow custom facets from any namespace -->
                 <xs:any/>

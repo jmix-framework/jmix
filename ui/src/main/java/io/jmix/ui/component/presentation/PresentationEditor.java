@@ -80,8 +80,6 @@ public class PresentationEditor extends JmixWindow implements InitializingBean {
     protected AccessManager accessManager;
     @Autowired
     protected EntityStates entityStates;
-    @Autowired(required = false)
-    protected UserSettingsTools userSettingsTools;
 
     public PresentationEditor(FrameOwner frameOwner, TablePresentation presentation, HasTablePresentations component,
                               ComponentSettingsBinder settingsBinder) {
@@ -204,7 +202,7 @@ public class PresentationEditor extends JmixWindow implements InitializingBean {
 
         presentation.setName(nameField.getValue());
         presentation.setAutoSave(autoSaveField.getValue());
-        presentation.setDefault(defaultField.getValue());
+        presentation.setIsDefault(defaultField.getValue());
 
         // todo user substitution
         UserDetails user = currentAuthentication.getUser();
@@ -231,15 +229,10 @@ public class PresentationEditor extends JmixWindow implements InitializingBean {
     }
 
     protected String getStringSettings() {
-        if (userSettingsTools == null) {
-            throw new IllegalStateException("Cannot commit presentation because add-on that provides settings" +
-                    "functionality is not added");
-        }
-
         ComponentSettings componentSettings = SettingsHelper.createSettings(settingsBinder.getSettingsClass());
         settingsBinder.saveSettings((Component) component, new SettingsWrapperImpl(componentSettings));
 
-        return userSettingsTools.convertSettingsToString(componentSettings);
+        return SettingsHelper.toSettingsString(componentSettings);
     }
 
     protected String getPresentationCaption() {

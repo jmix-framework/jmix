@@ -27,15 +27,14 @@ import io.jmix.ui.UiConfiguration;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.filter.FilterMetadataTools;
 import io.jmix.ui.component.filter.FilterSupport;
+import io.jmix.ui.presentation.PresentationsManager;
 import io.jmix.ui.presentation.TablePresentations;
-import io.jmix.ui.settings.ScreenSettingsManager;
-import io.jmix.ui.settings.UiSettingsCache;
-import io.jmix.ui.settings.UserSettingService;
-import io.jmix.ui.settings.UserSettingsTools;
+import io.jmix.ui.settings.*;
 import io.jmix.ui.sys.ActionsConfiguration;
 import io.jmix.ui.sys.UiControllersConfiguration;
 import io.jmix.uidata.filter.UiDataFilterMetadataTools;
 import io.jmix.uidata.filter.UiDataFilterSupport;
+import io.jmix.uidata.settings.PresentationsManagerImpl;
 import io.jmix.uidata.settings.ScreenSettingsManagerImpl;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.ApplicationContext;
@@ -92,6 +91,11 @@ public class UiDataConfiguration {
     @Bean("ui_ScreenSettingsManager")
     public ScreenSettingsManager screenSettingsManager() {
         return new ScreenSettingsManagerImpl();
+    }
+
+    @Bean("ui_PresentationsManager")
+    public PresentationsManager presentationsManager(ComponentSettingsRegistry settingsRegistry) {
+        return new PresentationsManagerImpl(settingsRegistry);
     }
 
     @Bean("ui_UiDataFilterSupport")

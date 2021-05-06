@@ -134,14 +134,12 @@ public abstract class AbstractTableSettingsBinder implements DataLoadingSettings
 
         boolean settingsChanged = false;
 
-        if (table.isUsePresentations()) {
-            Boolean textSelection = tableSettings.getTextSelection();
-            if (textSelection == null
-                    || BooleanUtils.toBoolean(textSelection) != table.isTextSelectionEnabled()) {
-                tableSettings.setTextSelection(table.isTextSelectionEnabled());
+        Boolean textSelection = tableSettings.getTextSelection();
+        if (textSelection == null
+                || BooleanUtils.toBoolean(textSelection) != table.isTextSelectionEnabled()) {
+            tableSettings.setTextSelection(table.isTextSelectionEnabled());
 
-                settingsChanged = true;
-            }
+            settingsChanged = true;
         }
 
         String settingsSortProperty = null;
@@ -172,13 +170,6 @@ public abstract class AbstractTableSettingsBinder implements DataLoadingSettings
             settingsChanged = true;
         }
 
-        // save presentation
-        if (!Objects.equals(tableSettings.getPresentationId(), table.getDefaultPresentationId())) {
-            tableSettings.setPresentationId((UUID) table.getDefaultPresentationId());
-
-            settingsChanged = true;
-        }
-
         return settingsChanged;
     }
 
@@ -187,9 +178,7 @@ public abstract class AbstractTableSettingsBinder implements DataLoadingSettings
         TableSettings tableSettings = createTableSettings();
         tableSettings.setId(table.getId());
 
-        if (table.isUsePresentations()) {
-            tableSettings.setTextSelection(table.isTextSelectionEnabled());
-        }
+        tableSettings.setTextSelection(table.isTextSelectionEnabled());
 
         // get column settings
         tableSettings.setColumns(getTableColumnSettings(table));
@@ -202,12 +191,6 @@ public abstract class AbstractTableSettingsBinder implements DataLoadingSettings
                 tableSettings.setSortProperty(sortProperty.toString());
                 tableSettings.setSortAscending(sortInfo.getAscending());
             }
-        }
-
-        // get default presentation
-        Object presentationId = table.getDefaultPresentationId();
-        if (presentationId != null) {
-            tableSettings.setPresentationId(UuidProvider.fromString(String.valueOf(presentationId)));
         }
 
         return tableSettings;

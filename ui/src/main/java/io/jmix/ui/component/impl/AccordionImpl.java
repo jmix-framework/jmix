@@ -26,7 +26,7 @@ import io.jmix.ui.icon.IconResolver;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.security.UiPermissionDescriptor;
 import io.jmix.ui.security.UiPermissionValue;
-import io.jmix.ui.settings.UserSettingsTools;
+import io.jmix.ui.settings.facet.ScreenSettingsFacetResolver;
 import io.jmix.ui.sys.TestIdManager;
 import io.jmix.ui.widget.JmixAccordion;
 import io.jmix.ui.xml.layout.ComponentLoader;
@@ -45,8 +45,8 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 public class AccordionImpl extends AbstractComponent<JmixAccordion>
         implements Accordion, UiPermissionAware, SupportsChildrenSelection {
 
-    @Autowired(required = false)
-    protected UserSettingsTools userSettingsTools;
+    @Autowired
+    protected ScreenSettingsFacetResolver settingsFacetResolver;
 
     @Autowired
     protected UiComponents uiComponents;
@@ -604,8 +604,9 @@ public class AccordionImpl extends AbstractComponent<JmixAccordion>
         }
 
         protected void applySettings(@Nullable Window window) {
-            if (window != null && userSettingsTools != null) {
-                userSettingsTools.applyLazyTabSettings(window, AccordionImpl.this, tabContent);
+            if (window != null) {
+                settingsFacetResolver.resolveLazyTabSelectEvent(
+                        window, AccordionImpl.this, tabContent.getComponents());
             }
         }
     }

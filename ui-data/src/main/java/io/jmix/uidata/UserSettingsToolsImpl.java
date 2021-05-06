@@ -74,45 +74,4 @@ public class UserSettingsToolsImpl implements UserSettingsTools {
     public void saveAppWindowTheme(String theme) {
         userSettingService.saveSetting("theme", theme);
     }
-
-    @Override
-    public <T extends ComponentSettings> T convertToComponentSettings(String settings, Class<T> settingsClass) {
-        // screen id is empty as we won't commit any changes
-        ScreenSettings screenSettings = applicationContext.getBean(ScreenSettings.class, "");
-        return screenSettings.toComponentSettings(settings, settingsClass);
-    }
-
-    @Override
-    public String convertSettingsToString(ComponentSettings settings) {
-        // screen id is empty as we won't commit any changes
-        ScreenSettings screenSettings = applicationContext.getBean(ScreenSettings.class, "");
-        return screenSettings.toSettingsString(settings);
-    }
-
-    @Override
-    public void applyLazyTabSettings(Window window, Component source, ComponentContainer tabContent) {
-        Preconditions.checkNotNullArgument(window);
-        Preconditions.checkNotNullArgument(tabContent);
-
-        window.getFacets().forEach(facet -> {
-            if (facet instanceof ScreenSettingsFacet) {
-                ScreenSettingsFacet settingsFacet = (ScreenSettingsFacet) facet;
-                Consumer<ScreenSettingsFacet.SettingsContext> applyHandler = settingsFacet.getApplySettingsDelegate();
-
-                ScreenSettings settings = settingsFacet.getSettings();
-                if (settings == null) {
-                    throw new IllegalStateException("ScreenSettingsFacet is not attached to the frame");
-                }
-
-                if (applyHandler != null) {
-                    applyHandler.accept(new ScreenSettingsFacet.SettingsContext(
-                            source,
-                            tabContent.getComponents(),
-                            settings));
-                } else {
-                    settingsFacet.applySettings();
-                }
-            }
-        });
-    }
 }

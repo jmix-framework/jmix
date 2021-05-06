@@ -212,7 +212,6 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
 
     protected Map<Column, String> aggregationCells = null;
 
-    protected boolean usePresentations;
     protected TablePresentations presentations;
 
     protected TableSettings defaultTableSettings;
@@ -2885,33 +2884,38 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
     }
 
     protected boolean handleSpecificVariables(Map<String, Object> variables) {
-        if (isUsePresentations() && presentations != null) {
+        handlePresentationVariables(variables);
+        return false;
+    }
+
+    protected void handlePresentationVariables(Map<String, Object> variables) {
+        if (presentations != null) {
             TablePresentations p = getPresentations();
 
             if (p.getCurrent() != null && p.isAutoSave(p.getCurrent()) && needUpdatePresentation(variables)) {
                 updatePresentationSettings(p);
             }
         }
-
-        return false;
     }
 
     protected void updatePresentationSettings(TablePresentations p) {
-        if (userSettingsTools != null) {
-            ComponentSettings settings = getSettingsFromPresentation(p.getCurrent());
-            getSettingsBinder().saveSettings(this, new SettingsWrapperImpl(settings));
+        ComponentSettings settings = getSettingsFromPresentation(p.getCurrent());
+        getSettingsBinder().saveSettings(this, new SettingsWrapperImpl(settings));
 
-            String rawSettings = userSettingsTools.convertSettingsToString(settings);
-            p.setSettings(p.getCurrent(), rawSettings);
-        }
+        String rawSettings = SettingsHelper.toSettingsString(settings);
+        p.setSettings(p.getCurrent(), rawSettings);
     }
 
     protected ComponentSettingsBinder getSettingsBinder() {
-        if (settingsRegistry == null) {
+        if (!isSettingsAvailable()) {
             throw new IllegalStateException("User settings are not available "
-                    + "because the module that provides the given functionality is not added");
+                    + "because the starter that provides the given functionality is not added");
         }
         return settingsRegistry.getSettingsBinder(this.getClass());
+    }
+
+    protected boolean isSettingsAvailable() {
+        return settingsRegistry != null;
     }
 
     protected boolean needUpdatePresentation(Map<String, Object> variables) {
@@ -2938,16 +2942,6 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
         return visibleColumns;
     }
 
-    @Override
-    public void usePresentations(boolean use) {
-        usePresentations = use;
-    }
-
-    @Override
-    public boolean isUsePresentations() {
-        return usePresentations;
-    }
-
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
     public void resetPresentation() {
@@ -2964,47 +2958,36 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
 
     @Override
     public void loadPresentations() {
-        if (isUsePresentations()) {
+        if (isSettingsAvailable()) {
             presentations = createTablePresentations();
-
             setTablePresentationsLayout(createTablePresentationsLayout());
-        } else {
-            throw new UnsupportedOperationException("Component doesn't use presentations");
         }
     }
 
     @Nullable
     @Override
     public TablePresentations getPresentations() {
-        if (isUsePresentations()) {
-            return presentations;
-        } else {
-            throw new UnsupportedOperationException("Component doesn't use presentations");
-        }
+        return presentations;
     }
 
     @Override
     public void applyPresentation(Object id) {
-        if (isUsePresentations() && presentations != null) {
+        if (presentations != null) {
             TablePresentation p = presentations.getPresentation(id);
             if (p != null) {
                 applyPresentation(p);
             }
-        } else {
-            throw new UnsupportedOperationException("Component doesn't use presentations");
         }
     }
 
     @Override
     public void applyPresentationAsDefault(Object id) {
-        if (isUsePresentations() && presentations != null) {
+        if (presentations != null) {
             TablePresentation p = presentations.getPresentation(id);
             if (p != null) {
                 presentations.setDefault(p);
                 applyPresentation(p);
             }
-        } else {
-            throw new UnsupportedOperationException("Component doesn't use presentations");
         }
     }
 
@@ -3030,8 +3013,8 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
         ComponentSettings settings = SettingsHelper.createSettings(settingsClass, getId());
 
         String settingsString = presentations.getSettingsString(p);
-        if (settingsString != null && userSettingsTools != null) {
-            ComponentSettings convertedSettings = userSettingsTools.convertToComponentSettings(settingsString, settingsClass);
+        if (settingsString != null) {
+            ComponentSettings convertedSettings = SettingsHelper.toComponentSettings(settingsString, settingsClass);
             if (convertedSettings != null) {
                 settings = convertedSettings;
             }

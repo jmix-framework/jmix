@@ -52,7 +52,7 @@ public class TablePresentationsImpl implements TablePresentations {
     protected String name;
     protected Map<Object, TablePresentation> presentations;
     protected TablePresentation current;
-    protected TablePresentation def;
+    protected TablePresentation defaultPresentation;
 
     protected Set<TablePresentation> needToUpdate = new HashSet<>();
     protected Set<TablePresentation> needToRemove = new HashSet<>();
@@ -73,8 +73,8 @@ public class TablePresentationsImpl implements TablePresentations {
         if (entityStates.isNew(p)) {
             needToUpdate.add(p);
 
-            if (BooleanUtils.isTrue(p.getDefault())) {
-                def = p;
+            if (BooleanUtils.isTrue(p.getIsDefault())) {
+                setDefault(p);
             }
         }
         firePresentationsSetChanged();
@@ -150,17 +150,14 @@ public class TablePresentationsImpl implements TablePresentations {
     @Override
     public void setDefault(@Nullable TablePresentation p) {
         checkLoad();
-        if (p == null) {
-            Object old = def;
-            def = null;
-            fireDefaultPresentationChanged(old);
-        } else if (presentations.containsKey(EntityValues.<UUID>getId(p))) {
-            Object old = def;
-            if (def != null) {
-                def.setDefault(false);
-            }
-            p.setDefault(true);
-            def = p;
+
+        if (p == null || presentations.containsKey(EntityValues.<UUID>getId(p))) {
+            TablePresentation old = defaultPresentation;
+
+            persistDefaultPresentation(p);
+
+            defaultPresentation = p;
+
             fireDefaultPresentationChanged(old);
         } else {
             throw new IllegalStateException(String.format("Invalid presentation: %s", EntityValues.<UUID>getId(p)));
@@ -169,7 +166,19 @@ public class TablePresentationsImpl implements TablePresentations {
 
     @Override
     public TablePresentation getDefault() {
-        return def;
+        return defaultPresentation;
+    }
+
+    protected void persistDefaultPresentation(@Nullable TablePresentation newDef) {
+        if (defaultPresentation != null) {
+            defaultPresentation.setIsDefault(false);
+            needToUpdate.add(defaultPresentation);
+        }
+
+        if (newDef != null && !BooleanUtils.isTrue(newDef.getIsDefault())) {
+            newDef.setIsDefault(true);
+            needToUpdate.add(newDef);
+        }
     }
 
     @Override
@@ -185,8 +194,8 @@ public class TablePresentationsImpl implements TablePresentations {
                 needToRemove.add(p);
             }
 
-            if (p.equals(def)) {
-                def = null;
+            if (p.equals(defaultPresentation)) {
+                defaultPresentation = null;
             }
 
             if (p.equals(current)) {
@@ -204,9 +213,9 @@ public class TablePresentationsImpl implements TablePresentations {
         checkLoad();
         if (presentations.containsKey(EntityValues.<UUID>getId(p))) {
             needToUpdate.add(p);
-            if (BooleanUtils.isTrue(p.getDefault())) {
+            if (BooleanUtils.isTrue(p.getIsDefault())) {
                 setDefault(p);
-            } else if (def != null && EntityValues.<UUID>getId(def).equals(EntityValues.<UUID>getId(p))) {
+            } else if (defaultPresentation != null && EntityValues.<UUID>getId(defaultPresentation).equals(EntityValues.<UUID>getId(p))) {
                 setDefault(null);
             }
         } else {
@@ -245,10 +254,13 @@ public class TablePresentationsImpl implements TablePresentations {
 
     public void commited(Set entities) {
         for (Object entity : entities) {
-            if (entity.equals(def))
-                setDefault((TablePresentation) entity);
-            else if (entity.equals(current))
+            if (entity.equals(defaultPresentation)) {
+                TablePresentation old = defaultPresentation;
+                defaultPresentation = (TablePresentation) entity;
+                fireDefaultPresentationChanged(old);
+            } else if (entity.equals(current)) {
                 current = (TablePresentation) entity;
+            }
 
             if (presentations.containsKey(EntityValues.getId(entity))) {
                 presentations.put(EntityValues.getId(entity), (TablePresentation) entity);

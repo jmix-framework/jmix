@@ -19,6 +19,7 @@ package uitest.grouptable_settings
 import io.jmix.core.DataManager
 import io.jmix.core.security.CurrentAuthentication
 import io.jmix.ui.component.GroupTable
+import io.jmix.ui.settings.SettingsHelper
 import io.jmix.ui.settings.component.GroupTableSettings
 import io.jmix.ui.settings.component.TableSettings
 import io.jmix.ui.settings.component.binder.GroupTableSettingsBinder
@@ -96,7 +97,7 @@ class GroupTableSettingsTest extends UiDataTestSpecification {
 
         when: "Open screen and save presentation "
         def screen = createAndShow(GroupTableSettingsTestScreen)
-        def presentation = persistTablePresentation(screen.projectsTable, screen.facet.settings)
+        def presentation = persistTablePresentation(screen.projectsTable)
 
         screen.projectsTable.withUnwrapped(JmixGroupTable, { table ->
             assert table.groupProperties.size() == 0
@@ -110,7 +111,7 @@ class GroupTableSettingsTest extends UiDataTestSpecification {
         })
     }
 
-    UiTablePresentation persistTablePresentation(GroupTable table, ScreenSettings screenSettings) {
+    UiTablePresentation persistTablePresentation(GroupTable table) {
         UiTablePresentation presentation = metadata.create(UiTablePresentation)
         presentation.componentId = table.id
         presentation.username = authentication.user.username
@@ -119,7 +120,7 @@ class GroupTableSettingsTest extends UiDataTestSpecification {
         def groupTableSettings = tableBinder.getSettings(table)
         groupTableSettings.setGroupProperties(["name", "active"])
 
-        presentation.settings = screenSettings.toSettingsString(groupTableSettings)
+        presentation.settings = SettingsHelper.toSettingsString(groupTableSettings)
 
         table.presentations.add(presentation)
         dataManager.save(presentation)

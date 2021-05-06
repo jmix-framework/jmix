@@ -57,8 +57,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.dom4j.Attribute;
 import org.dom4j.Element;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 
@@ -73,8 +71,6 @@ import static io.jmix.ui.icon.Icons.ICON_NAME_REGEX;
 import static org.apache.commons.lang3.StringUtils.trimToNull;
 
 public abstract class AbstractComponentLoader<T extends Component> implements ComponentLoader<T> {
-
-    private static final Logger log = LoggerFactory.getLogger(AbstractComponentLoader.class);
 
     protected Context context;
 
@@ -506,19 +502,6 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
             componentContext.addPostInitTask(
                     new ActionOwnerAssignActionPostInitTask(component, actionId, componentContext.getFrame())
             );
-        }
-    }
-
-    protected void loadPresentations(HasTablePresentations component, Element element) {
-        String presentations = element.attributeValue("presentations");
-        if (StringUtils.isNotEmpty(presentations)) {
-            if (applicationContext.containsBean("ui_Presentations")) {
-                component.usePresentations(Boolean.parseBoolean(presentations));
-                getComponentContext().addPostInitTask(new LoadPresentationsPostInitTask(component));
-            } else {
-                log.warn("Presentations is not available for the project. Add `ui-data`" +
-                        " starter in order to use Presentations.");
-            }
         }
     }
 

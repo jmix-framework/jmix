@@ -46,9 +46,9 @@ public interface TablePresentation {
     void setUsername(@Nullable String username);
 
     @Nullable
-    Boolean getDefault();
+    Boolean getIsDefault();
 
-    void setDefault(@Nullable Boolean isDefault);
+    void setIsDefault(@Nullable Boolean isDefault);
 
     @Nullable
     Boolean getAutoSave();

@@ -85,4 +85,10 @@
                       newColumnName="CONFIGURATION_ID"
                       columnDataType="varchar(255)"/>
     </changeSet>
+
+    <changeSet author="ui-data" id="5" >
+        <addColumn tableName="UI_TABLE_PRESENTATION">
+            <column name="IS_DEFAULT" type="boolean"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

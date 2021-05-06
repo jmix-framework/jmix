@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2016 Haulmont.
+ * Copyright 2021 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,23 +12,21 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
-package io.jmix.ui.settings;
+package uitest.presentations.screen;
 
-import io.jmix.ui.component.AppWorkArea;
+import io.jmix.ui.component.GroupTable;
+import io.jmix.ui.screen.Screen;
+import io.jmix.ui.screen.UiController;
+import io.jmix.ui.screen.UiDescriptor;
+import org.springframework.beans.factory.annotation.Autowired;
+import test_support.entity.Project;
 
-/**
- * Utility bean for work with user settings on web client tier.
- */
-public interface UserSettingsTools {
+@UiController
+@UiDescriptor("presentations-test-screen.xml")
+public class PresentationsTestScreen extends Screen {
 
-    AppWorkArea.Mode loadAppWindowMode();
-
-    void saveAppWindowMode(AppWorkArea.Mode mode);
-
-    String loadTheme();
-
-    void saveAppWindowTheme(String theme);
+    @Autowired
+    public GroupTable<Project> groupTable;
 }

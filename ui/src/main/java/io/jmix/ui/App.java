@@ -37,6 +37,7 @@ import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.screen.OpenMode;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.UiControllerUtils;
+import io.jmix.ui.settings.UiSettingsCache;
 import io.jmix.ui.sys.*;
 import io.jmix.ui.theme.ThemeConstants;
 import io.jmix.ui.theme.ThemeConstantsRepository;
@@ -94,6 +95,8 @@ public abstract class App {
     protected ThemeConstantsRepository themeConstantsRepository;
     @Autowired
     protected MessageTools messageTools;
+    @Autowired(required = false)
+    protected UiSettingsCache settingsCache;
 
     @Autowired
     protected ApplicationContext applicationContext;
@@ -553,12 +556,14 @@ public abstract class App {
 
     protected void performStandardLogout(AppUI ui) {
         closeWindowsInternal(true);
+        clearSettingsCache();
 
         forceLogout();
     }
 
     protected void performForceLogout() {
         closeWindowsInternal(false);
+        clearSettingsCache();
 
         forceLogout();
     }
@@ -592,5 +597,11 @@ public abstract class App {
         }
         return contextPath;
 
+    }
+
+    protected void clearSettingsCache() {
+        if (settingsCache != null) {
+            settingsCache.clear();
+        }
     }
 }

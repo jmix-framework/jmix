@@ -24,11 +24,11 @@
     </data>
     <facets>
         <screenSettings id="facet" auto="true"/>
+        <presentations auto="true"/>
     </facets>
     <layout spacing="true">
         <groupTable id="projectsTable"
                     width="100%"
-                    presentations="true"
                     dataContainer="projectsDc">
             <columns>
                 <column id="name"/>

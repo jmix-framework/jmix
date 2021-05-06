@@ -19,10 +19,10 @@ package uitest.table_settings
 import io.jmix.core.DataManager
 import io.jmix.core.security.CurrentAuthentication
 import io.jmix.ui.component.Table
+import io.jmix.ui.settings.SettingsHelper
 import io.jmix.ui.settings.component.TableSettings
 import io.jmix.ui.settings.component.binder.TableSettingsBinder
 import io.jmix.uidata.entity.UiTablePresentation
-import io.jmix.ui.settings.ScreenSettings
 import org.springframework.beans.factory.annotation.Autowired
 import test_support.UiDataTestSpecification
 import uitest.table_settings.screen.TableSettingsTestScreen
@@ -115,7 +115,7 @@ class TableSettingsTest extends UiDataTestSpecification {
 
         when: "Open screen and save presentation "
         def screen = createAndShow(TableSettingsTestScreen)
-        def presentation = persistTablePresentation(screen.projectsTable, screen.facet.settings)
+        def presentation = persistTablePresentation(screen.projectsTable)
 
         then: "Apply presentation"
         screen.projectsTable.applyPresentation(presentation.id)
@@ -127,7 +127,7 @@ class TableSettingsTest extends UiDataTestSpecification {
         screen.projectsTable.sortInfo.propertyId == screen.getColumnId("description")
     }
 
-    UiTablePresentation persistTablePresentation(Table table, ScreenSettings screenSettings) {
+    UiTablePresentation persistTablePresentation(Table table) {
         UiTablePresentation presentation = metadata.create(UiTablePresentation)
         presentation.componentId = table.id
         presentation.username = authentication.user.username
@@ -139,7 +139,7 @@ class TableSettingsTest extends UiDataTestSpecification {
         tableSettings.sortProperty = "description"
         tableSettings.getColumns().get(0).visible = false
 
-        presentation.settings = screenSettings.toSettingsString(tableSettings)
+        presentation.settings = SettingsHelper.toSettingsString(tableSettings)
 
         table.presentations.add(presentation)
         dataManager.save(presentation)

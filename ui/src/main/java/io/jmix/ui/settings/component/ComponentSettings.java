@@ -32,10 +32,4 @@ public interface ComponentSettings {
     String getId();
 
     void setId(@Nullable String id);
-
-    interface HasSettingsPresentation {
-
-        @Nullable
-        UUID getPresentationId();
-    }
 }

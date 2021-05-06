@@ -70,6 +70,9 @@ public class UiTablePresentation implements TablePresentation, Serializable {
     @Column(name = "IS_AUTO_SAVE")
     private Boolean autoSave;
 
+    @Column(name = "IS_DEFAULT")
+    private Boolean isDefault;
+
     @LastModifiedDate
     @Column(name = "UPDATE_TS")
     protected Date updateTs;
@@ -81,9 +84,6 @@ public class UiTablePresentation implements TablePresentation, Serializable {
     @TenantId
     @Column(name = "SYS_TENANT_ID")
     protected String sysTenantId;
-
-    @Transient
-    private Boolean isDefault;
 
     public UUID getId() {
         return id;
@@ -165,12 +165,12 @@ public class UiTablePresentation implements TablePresentation, Serializable {
     }
 
     @Override
-    public Boolean getDefault() {
+    public Boolean getIsDefault() {
         return isDefault;
     }
 
     @Override
-    public void setDefault(Boolean isDefault) {
+    public void setIsDefault(Boolean isDefault) {
         this.isDefault = isDefault;
     }
 

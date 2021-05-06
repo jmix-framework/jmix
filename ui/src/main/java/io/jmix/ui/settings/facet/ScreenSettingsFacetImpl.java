@@ -31,6 +31,7 @@ import io.jmix.ui.screen.ScreenFragment;
 import io.jmix.ui.screen.UiControllerUtils;
 import io.jmix.ui.settings.ScreenSettingsManager;
 import io.jmix.ui.settings.ScreenSettings;
+import io.jmix.ui.settings.facet.ScreenSettingsFacetResolver.AfterShowEventHandler;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,13 +44,14 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @Internal
-public class ScreenSettingsFacetImpl extends AbstractFacet implements ScreenSettingsFacet {
+public class ScreenSettingsFacetImpl extends AbstractFacet implements ScreenSettingsFacet, AfterShowEventHandler {
 
     private static final Logger log = LoggerFactory.getLogger(ScreenSettingsFacetImpl.class);
 
     protected Set<String> componentIds;
 
     protected boolean auto = false;
+    protected boolean isAfterShowHandled = false;
 
     protected ScreenSettings screenSettings;
 
@@ -63,6 +65,8 @@ public class ScreenSettingsFacetImpl extends AbstractFacet implements ScreenSett
 
     @Autowired(required = false)
     protected ScreenSettingsManager settingsManager;
+    @Autowired
+    protected ScreenSettingsFacetResolver settingsFacetResolver;
 
     @Autowired
     protected BeanFactory beanFactory;
@@ -203,7 +207,7 @@ public class ScreenSettingsFacetImpl extends AbstractFacet implements ScreenSett
             subscribe();
 
             if (!isSettingsEnabled()) {
-                log.warn("ScreenSettingsFacet does not work for '{}' due to add-on "
+                log.warn("ScreenSettingsFacet does not work for '{}' due to starter "
                         + "that provides the ability to work with settings is not added", getScreenOwner().getId());
             }
         }
@@ -215,9 +219,9 @@ public class ScreenSettingsFacetImpl extends AbstractFacet implements ScreenSett
         //noinspection ConstantConditions
         EventHub screenEvents = UiControllerUtils.getEventHub(getScreenOwner());
 
-        beforeShowSubscription = screenEvents.subscribe(BeforeShowEvent.class, this::onScreenBeforeShow);
-        afterShowSubscription = screenEvents.subscribe(AfterShowEvent.class, this::onScreenAfterShow);
-        afterDetachedSubscription = screenEvents.subscribe(AfterDetachEvent.class, this::onScreenAfterDetach);
+        beforeShowSubscription = screenEvents.subscribe(BeforeShowEvent.class, this::onBeforeShowEvent);
+        afterShowSubscription = screenEvents.subscribe(AfterShowEvent.class, settingsFacetResolver::resolveAfterShowEvent);
+        afterDetachedSubscription = screenEvents.subscribe(AfterDetachEvent.class, this::onAfterDetachEvent);
     }
 
     protected void unsubscribe() {
@@ -245,10 +249,10 @@ public class ScreenSettingsFacetImpl extends AbstractFacet implements ScreenSett
             throw new IllegalStateException("ScreenSettingsFacet does not work in fragments");
         }
 
-        return  (Screen) getOwner().getFrameOwner();
+        return (Screen) frame.getFrameOwner();
     }
 
-    protected void onScreenBeforeShow(BeforeShowEvent event) {
+    protected void onBeforeShowEvent(BeforeShowEvent event) {
         checkAttachedFrame();
 
         if (applyDataLoadingSettingsDelegate != null) {
@@ -262,8 +266,13 @@ public class ScreenSettingsFacetImpl extends AbstractFacet implements ScreenSett
         }
     }
 
-    protected void onScreenAfterShow(AfterShowEvent event) {
+    @Override
+    public void onAfterShowEvent(AfterShowEvent event) {
         checkAttachedFrame();
+
+        if (isAfterShowHandled) {
+            return;
+        }
 
         if (applySettingsDelegate != null) {
             //noinspection ConstantConditions
@@ -274,9 +283,11 @@ public class ScreenSettingsFacetImpl extends AbstractFacet implements ScreenSett
         } else {
             applySettings();
         }
+
+        isAfterShowHandled = true;
     }
 
-    protected void onScreenAfterDetach(AfterDetachEvent event) {
+    protected void onAfterDetachEvent(AfterDetachEvent event) {
         checkAttachedFrame();
 
         if (saveSettingsDelegate != null) {

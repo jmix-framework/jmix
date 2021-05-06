@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright 2020 Haulmont.
+  ~ Copyright 2021 Haulmont.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -18,25 +18,24 @@
     <data>
         <collection id="projectsDc"
                     class="test_support.entity.Project">
-            <fetchPlan extends="_local"/>
-            <loader/>
+            <loader id="projectsLd">
+                <query>select e from test_uidata_Project e</query>
+            </loader>
         </collection>
     </data>
     <facets>
-        <screenSettings id="facet" auto="true"/>
         <presentations auto="true"/>
     </facets>
     <layout>
-        <table id="projectsTable"
-               width="100%"
-               dataContainer="projectsDc">
+        <groupTable id="groupTable"
+                    dataContainer="projectsDc">
             <columns>
                 <column id="name"/>
                 <column id="description"/>
                 <column id="budget"/>
-                <column id="startDate"/>
                 <column id="active"/>
+                <column id="startDate"/>
             </columns>
-        </table>
+        </groupTable>
     </layout>
 </window>

@@ -20,13 +20,13 @@ import io.jmix.core.Metadata;
 import io.jmix.core.UnsafeDataManager;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
-import io.jmix.core.event.AttributeChanges;
 import io.jmix.core.event.EntityChangedEvent;
 import io.jmix.core.security.PasswordNotMatchException;
 import io.jmix.core.security.UserManager;
 import io.jmix.core.security.UserRepository;
 import io.jmix.core.security.event.UserDisabledEvent;
 import io.jmix.core.security.event.UserPasswordResetEvent;
+import io.jmix.core.security.event.UserRemovedEvent;
 import io.jmix.security.authentication.AcceptsGrantedAuthorities;
 import io.jmix.security.authentication.RoleGrantedAuthority;
 import io.jmix.security.model.ResourceRole;
@@ -292,14 +292,21 @@ public abstract class AbstractDatabaseUserRepository<T extends UserDetails> impl
 
     @EventListener
     private void onUserChanged(EntityChangedEvent<? extends UserDetails> event) {
-        if (Objects.equals(event.getEntityId().getEntityClass(), getUserClass())) {
-            if (isUserDisabled(event)) {
-                UserDetails userDetails = dataManager.load(event.getEntityId())
-                        .optional()
-                        .orElse(null);
+        if (event.getType() == EntityChangedEvent.Type.DELETED) {
+            UserDetails userDetails = dataManager.create(getUserClass());
 
-                if (userDetails != null && !userDetails.isEnabled()) {
-                    eventPublisher.publishEvent(new UserDisabledEvent(userDetails));
+            EntityValues.setId(userDetails, event.getEntityId().getValue());
+            EntityValues.setValue(userDetails, "username",
+                    event.getChanges().getOldValue("username"));
+
+            eventPublisher.publishEvent(new UserRemovedEvent(userDetails));
+        } else if (event.getType() == EntityChangedEvent.Type.UPDATED) {
+            if (Objects.equals(event.getEntityId().getEntityClass(), getUserClass())) {
+                if (isUserDisabled(event)) {
+                    UserDetails userDetails = dataManager.load(event.getEntityId()).one();
+                    if (!userDetails.isEnabled()) {
+                        eventPublisher.publishEvent(new UserDisabledEvent(userDetails));
+                    }
                 }
             }
         }

@@ -18,13 +18,22 @@ package io.jmix.securitydata.impl.role.assignment;
 
 import io.jmix.core.FetchPlan;
 import io.jmix.core.UnsafeDataManager;
+import io.jmix.core.security.event.AbstractUserInvalidationEvent;
+import io.jmix.core.security.event.UserRemovedEvent;
 import io.jmix.security.role.assignment.RoleAssignment;
 import io.jmix.security.role.assignment.RoleAssignmentProvider;
 import io.jmix.securitydata.entity.RoleAssignmentEntity;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -56,6 +65,16 @@ public class DatabaseRoleAssignmentProvider implements RoleAssignmentProvider {
                 .stream()
                 .map(this::buildRoleAssignment)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT, fallbackExecution = true)
+    private void onUserInvalidation(UserRemovedEvent event) {
+        List<RoleAssignmentEntity> assignments = dataManager.load(RoleAssignmentEntity.class)
+                .query("e.username = :username")
+                .parameter("username", event.getUser().getUsername())
+                .list();
+        dataManager.remove(assignments.toArray());
     }
 
     protected RoleAssignment buildRoleAssignment(RoleAssignmentEntity roleAssignmentEntity) {

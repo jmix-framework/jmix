@@ -18,9 +18,12 @@ package io.jmix.security.impl.role.assignment;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import io.jmix.core.security.event.UserRemovedEvent;
 import io.jmix.security.role.assignment.RoleAssignment;
 import io.jmix.security.role.assignment.RoleAssignmentProvider;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
 
 import java.util.Collection;
 
@@ -50,5 +53,10 @@ public class InMemoryRoleAssignmentProvider implements RoleAssignmentProvider {
 
     public void removeAssignments(String username) {
         assignments.removeAll(username);
+    }
+
+    @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT, fallbackExecution = true)
+    private void onUserInvalidation(UserRemovedEvent event) {
+        removeAssignments(event.getUser().getUsername());
     }
 }

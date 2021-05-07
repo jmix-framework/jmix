@@ -44,7 +44,7 @@ public class UserInvalidationListener {
 
     @Transactional
     @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT, fallbackExecution = true)
-    public void handleUserInvalidation(AbstractUserInvalidationEvent event) {
+    public void onUserInvalidation(AbstractUserInvalidationEvent event) {
         UserDetails userDetails = event.getUser();
         try {
             log.info("Handling user invalidation: {}", userDetails.getUsername());

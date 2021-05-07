@@ -28,7 +28,12 @@
     </description>
     <locMessages key="browseCaption" expressionKey="${studioUtils.decapitalize(lookupControllerName)}.caption">
         <message lang="default">
-            <![CDATA[${studioUtils.makeNaturalMessage(entity.className)} browser]]>
+            <![CDATA[${studioUtils.makeScreenNaturalCaption(entity.className.concat('.browse'), null)}]]>
+        </message>
+    </locMessages>
+    <locMessages key="browseMenu" expressionKey="${studioUtils.decapitalize(lookupControllerName)}.menu">
+        <message lang="default">
+            <![CDATA[${studioUtils.makeScreenNaturalCaption(entity.className.concat('.browse'), null)}]]>
         </message>
     </locMessages>
     <locMessages key="editorCaption" expressionKey="${studioUtils.decapitalize(editorControllerName)}.caption">

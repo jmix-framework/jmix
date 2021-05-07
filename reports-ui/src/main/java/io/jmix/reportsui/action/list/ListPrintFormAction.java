@@ -17,6 +17,7 @@
 package io.jmix.reportsui.action.list;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import io.jmix.core.LoadContext;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -193,9 +194,14 @@ public class ListPrintFormAction extends AbstractPrintFormAction implements Acti
         LoadContext.Query query = loadContext.getQuery();
         parameterPrototype.setQueryString(query.getQueryString());
         parameterPrototype.setQueryParams(query.getParameters());
-        parameterPrototype.setViewName(loadContext.getFetchPlan().getName());
         parameterPrototype.setCondition(query.getCondition());
         parameterPrototype.setSort(query.getSort());
+
+        if (!Strings.isNullOrEmpty(loadContext.getFetchPlan().getName())) {
+            parameterPrototype.setFetchPlanName(loadContext.getFetchPlan().getName());
+        } else {
+            parameterPrototype.setFetchPlan(loadContext.getFetchPlan());
+        }
 
         Window window = ComponentsHelper.getWindowNN(target);
         openRunReportScreen(window.getFrameOwner(), parameterPrototype, metaClass);

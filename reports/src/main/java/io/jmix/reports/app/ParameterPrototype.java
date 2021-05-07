@@ -16,6 +16,7 @@
 
 package io.jmix.reports.app;
 
+import io.jmix.core.FetchPlan;
 import io.jmix.core.Sort;
 import io.jmix.core.querycondition.Condition;
 
@@ -33,7 +34,7 @@ public class ParameterPrototype implements Serializable {
 
     protected String queryString;
 
-    protected String viewName;
+    protected String fetchPlanName;
 
     protected String metaClassName;
 
@@ -46,6 +47,8 @@ public class ParameterPrototype implements Serializable {
     protected Condition condition;
 
     protected Sort sort;
+
+    protected FetchPlan fetchPlan;
 
     public ParameterPrototype(String paramName) {
         this.paramName = paramName;
@@ -67,12 +70,12 @@ public class ParameterPrototype implements Serializable {
         this.queryString = queryString;
     }
 
-    public String getViewName() {
-        return viewName;
+    public String getFetchPlanName() {
+        return fetchPlanName;
     }
 
-    public void setViewName(String viewName) {
-        this.viewName = viewName;
+    public void setFetchPlanName(String fetchPlanName) {
+        this.fetchPlanName = fetchPlanName;
     }
 
     public String getMetaClassName() {
@@ -121,5 +124,13 @@ public class ParameterPrototype implements Serializable {
 
     public void setSort(Sort sort) {
         this.sort = sort;
+    }
+
+    public FetchPlan getFetchPlan() {
+        return fetchPlan;
+    }
+
+    public void setFetchPlan(FetchPlan fetchPlan) {
+        this.fetchPlan = fetchPlan;
     }
 }

@@ -48,9 +48,12 @@ public class PrototypesLoader {
      * @return Entities list
      */
     public List loadData(ParameterPrototype parameterPrototype) {
-
         MetaClass metaClass = metadata.getSession().getClass(parameterPrototype.getMetaClassName());
-        FetchPlan queryView = fetchPlanRepository.getFetchPlan(metaClass, parameterPrototype.getViewName());
+
+        FetchPlan queryFetchPlan = parameterPrototype.getFetchPlan();
+        if (queryFetchPlan == null) {
+           queryFetchPlan = fetchPlanRepository.getFetchPlan(metaClass, parameterPrototype.getFetchPlanName());
+        }
 
         LoadContext loadContext = new LoadContext(metaClass);
 
@@ -67,7 +70,7 @@ public class PrototypesLoader {
             query.setMaxResults(reportsProperties.getParameterPrototypeQueryLimit());
         }
 
-        loadContext.setFetchPlan(queryView);
+        loadContext.setFetchPlan(queryFetchPlan);
         loadContext.setQuery(query);
         List queryResult;
         try {

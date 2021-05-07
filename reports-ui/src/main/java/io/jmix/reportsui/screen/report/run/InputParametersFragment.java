@@ -172,7 +172,9 @@ public class InputParametersFragment extends ScreenFragment {
             }
         }
 
-        field.setValue(value);
+        if (value instanceof Collection) {
+            field.setValue(value);
+        }
 
         if (BooleanUtils.isTrue(parameter.getValidationOn())) {
             field.addValidator(applicationContext.getBean(ReportParamFieldValidator.class, parameter));

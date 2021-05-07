@@ -16,15 +16,13 @@
 
 package io.jmix.core.security.event;
 
-import org.springframework.security.core.userdetails.UserDetails;
-
 /**
  * This event is used to notify listeners about user invalidation: when the user has been removed.
  */
 public class UserRemovedEvent extends AbstractUserInvalidationEvent {
     private static final long serialVersionUID = 1914841530777842945L;
 
-    public UserRemovedEvent(UserDetails user) {
-        super(user);
+    public UserRemovedEvent(String username) {
+        super(username);
     }
 }

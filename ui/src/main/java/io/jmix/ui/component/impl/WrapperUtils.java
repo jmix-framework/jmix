@@ -891,6 +891,8 @@ public final class WrapperUtils {
         checkNotNullArgument(alignSelf);
 
         switch (alignSelf) {
+            case AUTO:
+                return AlignSelf.AUTO;
             case START:
                 return AlignSelf.START;
             case CENTER:
@@ -910,6 +912,8 @@ public final class WrapperUtils {
         checkNotNullArgument(alignSelf);
 
         switch (alignSelf) {
+            case AUTO:
+                return ResponsiveGridLayout.AlignSelf.AUTO;
             case START:
                 return ResponsiveGridLayout.AlignSelf.START;
             case CENTER:

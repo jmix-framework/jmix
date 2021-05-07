@@ -18,6 +18,7 @@ package io.jmix.ui.action.list;
 
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.security.EntityOp;
 import io.jmix.ui.ScreenBuilders;
 import io.jmix.ui.accesscontext.UiEntityContext;
 import io.jmix.ui.action.Action;
@@ -72,6 +73,7 @@ public class ViewAction<E> extends SecuredListAction implements Action.ScreenOpe
 
     public ViewAction(String id) {
         super(id);
+        super.setConstraintEntityOp(EntityOp.READ);
     }
 
     @Nullable

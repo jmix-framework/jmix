@@ -18,6 +18,7 @@ package io.jmix.ui.action.list;
 
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.security.EntityOp;
 import io.jmix.ui.ScreenBuilders;
 import io.jmix.ui.accesscontext.UiEntityContext;
 import io.jmix.ui.action.Action;
@@ -79,6 +80,7 @@ public class EditAction<E> extends SecuredListAction
 
     public EditAction(String id) {
         super(id);
+        super.setConstraintEntityOp(EntityOp.UPDATE);
     }
 
     @Nullable
@@ -279,8 +281,10 @@ public class EditAction<E> extends SecuredListAction
             if (metaClass != null) {
                 if (entityContext.isEditPermitted()) {
                     setCaption(messages.getMessage("actions.Edit"));
+                    super.setConstraintEntityOp(EntityOp.UPDATE);
                 } else {
                     setCaption(messages.getMessage("actions.View"));
+                    super.setConstraintEntityOp(EntityOp.READ);
                 }
             }
         }

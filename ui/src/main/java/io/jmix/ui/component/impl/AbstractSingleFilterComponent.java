@@ -169,6 +169,7 @@ public abstract class AbstractSingleFilterComponent<V> extends CompositeComponen
             this.captionPosition = captionPosition;
             updateCaptionLayout();
             updateChildAlignment();
+            updateCaption(caption);
         }
     }
 

@@ -16,12 +16,32 @@
 
 @mixin he-reconnect-dialog($primary-stylename: v-reconnect-dialog) {
   .#{$primary-stylename} {
-    @include he-box-shadow(--box-shadow);
-
-    background: var(--text-main-color);
-
-    .spinner {
-      @include he-spinner();
-    }
+    @include he-reconnect-dialog-style();
   }
+
+  &.small .#{$primary-stylename} {
+    @include he-reconnect-dialog-size-style($unit-size: $v-unit-size--small, $font-size: $v-font-size--small);
+  }
+
+  &.large .#{$primary-stylename} {
+    @include he-reconnect-dialog-size-style($unit-size: $v-unit-size--large, $font-size: $v-font-size--large);
+  }
+}
+
+@mixin he-reconnect-dialog-style() {
+  @include he-reconnect-dialog-size-style();
+  @include he-box-shadow(--box-shadow);
+
+  color: var(--notification-system-caption-color);
+  background: var(--notification-system-background-color);
+
+  .spinner {
+    @include he-spinner();
+  }
+}
+
+@mixin he-reconnect-dialog-size-style($unit-size  : $v-unit-size,
+                                      $font-size  : $v-font-size) {
+  padding: round($unit-size/3) round($unit-size/2.5);
+  line-height: round($font-size * 1.4);
 }

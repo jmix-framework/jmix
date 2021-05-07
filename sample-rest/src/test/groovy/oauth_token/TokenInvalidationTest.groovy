@@ -99,6 +99,6 @@ class TokenInvalidationTest extends RestSpec {
 
     protected void disableUser(String username) {
         UserDetails userDetails = userRepository.loadUserByUsername(username)
-        eventPublisher.publishEvent(new UserDisabledEvent(userDetails))
+        eventPublisher.publishEvent(new UserDisabledEvent(username))
     }
 }

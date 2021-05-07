@@ -40,7 +40,6 @@ import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -57,6 +56,8 @@ public class EntitySearcherImpl implements EntitySearcher {
     protected RestHighLevelClient esClient;
     @Autowired
     protected Metadata metadata;
+    @Autowired
+    private MetadataTools metadataTools;
     @Autowired
     protected DataManager secureDataManager;
     @Autowired
@@ -227,13 +228,30 @@ public class EntitySearcherImpl implements EntitySearcher {
 
     protected Map<String, String> loadEntityInstanceNames(MetaClass metaClass, List<Object> entityIds) {
         Map<String, String> result = new HashMap<>();
+        String primaryKeyName = metadataTools.getPrimaryKeyName(metaClass);
         for (List<Object> idsPartition : Lists.partition(entityIds, searchApplicationProperties.getSearchReloadEntitiesBatchSize())) {
             log.debug("Load instance names for ids: {}", idsPartition);
-            List<Object> partitionResult = secureDataManager
-                    .load(metaClass.getJavaClass())
-                    .ids(idsPartition)
-                    .fetchPlan(FetchPlan.INSTANCE_NAME)
-                    .list();
+
+            List<Object> partitionResult;
+            if (metadataTools.hasCompositePrimaryKey(metaClass)) {
+                partitionResult = idsPartition.stream()
+                        .map(id -> secureDataManager
+                                .load(metaClass.getJavaClass())
+                                .id(id)
+                                .fetchPlan(FetchPlan.INSTANCE_NAME)
+                                .optional())
+                        .filter(Optional::isPresent)
+                        .map(Optional::get)
+                        .collect(Collectors.toList());
+            } else {
+                partitionResult = secureDataManager
+                        .load(metaClass.getJavaClass())
+                        .query("select e from " + metaClass.getName() + " e where e." + primaryKeyName + " in :ids")
+                        .parameter("ids", idsPartition)
+                        .fetchPlan(FetchPlan.INSTANCE_NAME)
+                        .list();
+            }
+
             partitionResult.forEach(entity -> {
                 String instanceName = instanceNameProvider.getInstanceName(entity);
                 result.put(idSerialization.idToString(Id.of(entity)), instanceName);

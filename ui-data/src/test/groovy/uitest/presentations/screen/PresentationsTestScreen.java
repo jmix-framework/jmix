@@ -17,6 +17,7 @@
 package uitest.presentations.screen;
 
 import io.jmix.ui.component.GroupTable;
+import io.jmix.ui.presentation.facet.PresentationsFacet;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.UiController;
 import io.jmix.ui.screen.UiDescriptor;
@@ -26,6 +27,9 @@ import test_support.entity.Project;
 @UiController
 @UiDescriptor("presentations-test-screen.xml")
 public class PresentationsTestScreen extends Screen {
+
+    @Autowired
+    public PresentationsFacet componentsPresentations;
 
     @Autowired
     public GroupTable<Project> groupTable;

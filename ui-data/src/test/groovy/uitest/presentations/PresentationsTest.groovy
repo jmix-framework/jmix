@@ -114,6 +114,18 @@ class PresentationsTest extends UiDataTestSpecification {
         defaultBudget.width == getColumnSettings(settings, "budget").width
     }
 
+    def "load components"() {
+        showTestMainScreen()
+
+        when: "Open screen with custom set of components in the presentations facet"
+        def screen = (PresentationsTestScreen) screens.create(PresentationsTestScreen)
+        screen.show()
+
+        then: "Components should be loaded from the descriptor"
+        screen.componentsPresentations.components.size() == 1
+        screen.componentsPresentations.components.contains(screen.groupTable)
+    }
+
     protected ColumnSettings getColumnSettings(GroupTableSettings settings, String id) {
         return settings.columns.stream()
                 .filter({ it.id == id })

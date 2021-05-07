@@ -27,10 +27,7 @@ import io.jmix.ui.xml.layout.ComponentLoader;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Internal
 @org.springframework.stereotype.Component("ui_PresentationsFacetProvider")
@@ -96,13 +93,18 @@ public class PresentationsFacetProvider implements FacetProvider<PresentationsFa
     }
 
     protected List<String> loadComponentIds(ComponentLoader.ComponentContext context, Element root) {
-        List<Element> components = root.elements("component");
+        Element componentsElement = root.element("components");
+        if (componentsElement == null) {
+            return Collections.emptyList();
+        }
+
+        List<Element> components = componentsElement.elements("component");
         List<String> result = new ArrayList<>(components.size());
 
         for (Element element : components) {
             String id = element.attributeValue("id");
             if (id == null) {
-                throw new GuiDevelopmentException("Component does not define an id", context);
+                throw new GuiDevelopmentException("ScreenSettings component does not define an id", context);
             }
 
             result.add(id);

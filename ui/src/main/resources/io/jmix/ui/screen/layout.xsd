@@ -3143,7 +3143,6 @@
                 <xs:attribute name="maxSplitPosition" type="xs:string"/>
                 <xs:attribute name="reversePosition" type="xs:boolean"/>
                 <xs:attribute name="locked" type="xs:boolean"/>
-                <xs:attribute name="settingsEnabled" type="xs:boolean"/>
                 <xs:attribute name="dockable" type="xs:boolean"/>
                 <xs:attribute name="dockMode" type="splitPanelDockMode"/>
             </xs:extension>

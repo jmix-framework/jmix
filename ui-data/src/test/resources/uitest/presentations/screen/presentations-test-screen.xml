@@ -25,6 +25,11 @@
     </data>
     <facets>
         <presentations auto="true"/>
+        <presentations id="componentsPresentations">
+            <components>
+                <component id="groupTable"/>
+            </components>
+        </presentations>
     </facets>
     <layout>
         <groupTable id="groupTable"

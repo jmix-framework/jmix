@@ -45,12 +45,11 @@ public class UserInvalidationListener {
     @Transactional
     @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT, fallbackExecution = true)
     public void onUserInvalidation(AbstractUserInvalidationEvent event) {
-        UserDetails userDetails = event.getUser();
         try {
-            log.info("Handling user invalidation: {}", userDetails.getUsername());
+            log.info("Handling user invalidation: {}", event.getUsername());
 
             Collection<OAuth2AccessToken> accessTokens = new ArrayList<>(
-                    tokenStore.findTokensByClientIdAndUserName(properties.getClientId(), userDetails.getUsername()));
+                    tokenStore.findTokensByClientIdAndUserName(properties.getClientId(), event.getUsername()));
 
             for (OAuth2AccessToken accessToken : accessTokens) {
                 tokenStore.removeAccessToken(accessToken);
@@ -59,9 +58,9 @@ public class UserInvalidationListener {
                 }
             }
 
-            log.info("Tokens were invalidated for a user: {}", userDetails.getUsername());
+            log.info("Tokens were invalidated for a user: {}", event.getUsername());
         } catch (Throwable t) {
-            log.error("An error occurred while handling invalidation for user: {}.", userDetails.getUsername(), t);
+            log.error("An error occurred while handling invalidation for user: {}.", event.getUsername(), t);
         }
     }
 }

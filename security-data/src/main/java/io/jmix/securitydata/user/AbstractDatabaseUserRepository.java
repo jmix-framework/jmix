@@ -293,19 +293,14 @@ public abstract class AbstractDatabaseUserRepository<T extends UserDetails> impl
     @EventListener
     private void onUserChanged(EntityChangedEvent<? extends UserDetails> event) {
         if (event.getType() == EntityChangedEvent.Type.DELETED) {
-            UserDetails userDetails = dataManager.create(getUserClass());
-
-            EntityValues.setId(userDetails, event.getEntityId().getValue());
-            EntityValues.setValue(userDetails, "username",
-                    event.getChanges().getOldValue("username"));
-
-            eventPublisher.publishEvent(new UserRemovedEvent(userDetails));
+            eventPublisher.publishEvent(new UserRemovedEvent(
+                    Objects.requireNonNull(event.getChanges().getOldValue("username"))));
         } else if (event.getType() == EntityChangedEvent.Type.UPDATED) {
             if (Objects.equals(event.getEntityId().getEntityClass(), getUserClass())) {
                 if (isUserDisabled(event)) {
                     UserDetails userDetails = dataManager.load(event.getEntityId()).one();
                     if (!userDetails.isEnabled()) {
-                        eventPublisher.publishEvent(new UserDisabledEvent(userDetails));
+                        eventPublisher.publishEvent(new UserDisabledEvent(userDetails.getUsername()));
                     }
                 }
             }

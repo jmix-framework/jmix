@@ -57,6 +57,6 @@ public class InMemoryRoleAssignmentProvider implements RoleAssignmentProvider {
 
     @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT, fallbackExecution = true)
     private void onUserInvalidation(UserRemovedEvent event) {
-        removeAssignments(event.getUser().getUsername());
+        removeAssignments(event.getUsername());
     }
 }

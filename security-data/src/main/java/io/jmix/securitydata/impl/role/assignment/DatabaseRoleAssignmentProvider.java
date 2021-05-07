@@ -72,7 +72,7 @@ public class DatabaseRoleAssignmentProvider implements RoleAssignmentProvider {
     private void onUserInvalidation(UserRemovedEvent event) {
         List<RoleAssignmentEntity> assignments = dataManager.load(RoleAssignmentEntity.class)
                 .query("e.username = :username")
-                .parameter("username", event.getUser().getUsername())
+                .parameter("username", event.getUsername())
                 .list();
         dataManager.remove(assignments.toArray());
     }

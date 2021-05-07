@@ -109,7 +109,7 @@ public class ResourcePolicyEditorUtils {
         result.put(messages.getMessage(ResourcePolicyEditorUtils.class, "allScreens"), "*");
         TreeMap<String, String> map = windowConfig.getWindows().stream()
                 .collect(Collectors.toMap(
-                        this::getScreenCaption,
+                        this::getDetailedScreenCaption,
                         WindowInfo::getId,
                         (v1, v2) -> {
                             throw new RuntimeException(String.format("Duplicate key for values %s and %s", v1, v2));
@@ -141,16 +141,24 @@ public class ResourcePolicyEditorUtils {
 
     public String getScreenCaption(String screenId) {
         WindowInfo windowInfo = windowConfig.findWindowInfo(screenId);
-        return windowInfo == null ? screenId : getScreenCaption(windowInfo);
+        return windowInfo == null ? screenId : getScreenCaption(windowInfo, false);
     }
 
-    public String getScreenCaption(WindowInfo windowInfo) {
+    protected String getDetailedScreenCaption(WindowInfo windowInfo) {
+        return getScreenCaption(windowInfo, true);
+    }
+
+    protected String getScreenCaption(WindowInfo windowInfo, boolean detailed) {
         try {
             String screenCaption = screensHelper.getScreenCaption(windowInfo);
             if (Strings.isNullOrEmpty(screenCaption)) {
                 return windowInfo.getId();
             } else {
-                return screenCaption;
+                if (!Objects.equals(screenCaption, windowInfo.getId()) && detailed) {
+                    return String.format("%s (%s)", screenCaption, windowInfo.getId());
+                } else {
+                    return screenCaption;
+                }
             }
         } catch (FileNotFoundException e) {
             return windowInfo.getId();

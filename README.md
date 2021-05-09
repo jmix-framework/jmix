@@ -91,11 +91,15 @@ jmix.security.oauth2.devUsername=admin
 graphiql.props.variables.headerEditorEnabled=true
 ```
 In this mode no generated token required for authorization. Request automatically got permissions 
-of user which username set in `devUsername`. Due to issues in jmix OAuth service, header still need to be sent 
-but with empty token.
+of user which username set in `devUsername`. Authorization header should be set to `bearer`:
 ```
 { "Authorization": "bearer" }
 ```
+You can set authorization header for GraphIQL using application property:
+```
+graphiql.headers.Authorization=Bearer
+```
+
 
 ## Rate limit
 Set `jmix.graphql.operationRateLimitPerMinute` property with integer value in `application.property` to control how many times 

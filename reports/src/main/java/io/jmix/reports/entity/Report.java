@@ -24,6 +24,7 @@ import io.jmix.core.entity.annotation.Listeners;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.*;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -218,9 +219,6 @@ public class Report implements com.haulmont.yarg.structure.Report {
         }
     }
 
-
-
-
     public Boolean getIsTmp() {
         return isTmp;
     }
@@ -231,7 +229,7 @@ public class Report implements com.haulmont.yarg.structure.Report {
 
     public BandDefinition getRootBandDefinition() {
         if (rootBandDefinition == null && bands != null && bands.size() > 0) {
-            rootBandDefinition = CollectionUtils.find(bands, band ->
+            rootBandDefinition = IterableUtils.find(bands, band ->
                     band.getParentBandDefinition() == null
             );
         }

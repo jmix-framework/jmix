@@ -38,6 +38,7 @@ import io.jmix.ui.component.Tree;
 import io.jmix.ui.component.ValidationErrors;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.CollectionLoader;
+import io.jmix.ui.model.DataContext;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.screen.*;
 import org.apache.commons.collections4.CollectionUtils;
@@ -139,6 +140,9 @@ public class ReportEditor extends StandardEditor<Report> {
     @Autowired
     private ScreenValidation screenValidation;
 
+    @Autowired
+    private DataContext dataContext;
+
     @Subscribe
     protected void initNewItem(InitEntityEvent<Report> event) {
         Report report = event.getEntity();
@@ -163,7 +167,7 @@ public class ReportEditor extends StandardEditor<Report> {
     }
 
     protected BandDefinition createRootBandDefinition(Report report) {
-        BandDefinition rootDefinition = metadata.create(BandDefinition.class);
+        BandDefinition rootDefinition = dataContext.create(BandDefinition.class);
         rootDefinition.setName(ROOT_BAND);
         rootDefinition.setPosition(0);
         rootDefinition.setReport(report);
@@ -253,10 +257,9 @@ public class ReportEditor extends StandardEditor<Report> {
         if (getEditedEntity().getRootBand() == null) {
             validationErrors.add(messages.getMessage(getClass(), "error.rootBandNull"));
         }
-
         if (CollectionUtils.isNotEmpty(getEditedEntity().getRootBandDefinition().getChildrenBandDefinitions())) {
             Multimap<String, BandDefinition> names = ArrayListMultimap.create();
-            names.put(getEditedEntity().getRootBand().getName(), getEditedEntity().getRootBandDefinition());
+            names.put(getEditedEntity().getRootBandDefinition().getName(), getEditedEntity().getRootBandDefinition());
 
             for (BandDefinition band : getEditedEntity().getRootBandDefinition().getChildrenBandDefinitions()) {
                 validateBand(validationErrors, band, names);

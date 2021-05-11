@@ -58,14 +58,9 @@ import com.haulmont.cuba.security.entity.FilterEntity;
 import com.haulmont.cuba.security.entity.SearchFolder;
 import com.haulmont.cuba.security.global.UserSession;
 import com.haulmont.cuba.settings.SettingsImpl;
-import io.jmix.core.DataManager;
-import io.jmix.core.EntitySet;
-import io.jmix.core.Entity;
-import io.jmix.core.MetadataTools;
+import io.jmix.core.*;
 import io.jmix.data.QueryParser;
 import io.jmix.data.QueryTransformerFactory;
-import io.jmix.core.Stores;
-import io.jmix.core.UuidProvider;
 import io.jmix.core.common.datastruct.Node;
 import io.jmix.core.common.datastruct.Pair;
 import io.jmix.core.common.event.Subscription;
@@ -3628,7 +3623,7 @@ public class FilterDelegateImpl implements FilterDelegate {
 
         @Override
         public void pinQuery() {
-            /*UserSession userSession = userSessionSource.getUserSession();
+            UserSession userSession = userSessionSource.getUserSession();
             LoaderSupportsApplyToSelected supportsApplyToSelected = (LoaderSupportsApplyToSelected) loader;
             List<LoadContext.Query> prevQueries = supportsApplyToSelected.getPrevQueries();
 
@@ -3644,14 +3639,14 @@ public class FilterDelegateImpl implements FilterDelegate {
 
             if (supportsApplyToSelected.getLastQuery() != null) {
                 supportsApplyToSelected.getPrevQueries().add(supportsApplyToSelected.getLastQuery());
-            }*/
+            }
         }
 
         @Override
         public void unpinAllQuery() {
-            /*LoaderSupportsApplyToSelected supportsApplyToSelected = (LoaderSupportsApplyToSelected) loader;
+            LoaderSupportsApplyToSelected supportsApplyToSelected = (LoaderSupportsApplyToSelected) loader;
             supportsApplyToSelected.setPrevQueries(null);
-            supportsApplyToSelected.setQueryKey(null);*/
+            supportsApplyToSelected.setQueryKey(null);
         }
 
         @Override

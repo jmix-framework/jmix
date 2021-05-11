@@ -18,7 +18,6 @@ package io.jmix.reportsui.screen.template.edit;
 
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
-import io.jmix.core.Sort;
 import io.jmix.reports.entity.ReportOutputType;
 import io.jmix.reports.entity.ReportTemplate;
 import io.jmix.reports.entity.table.TemplateTableBand;
@@ -35,7 +34,11 @@ import io.jmix.ui.screen.Install;
 import io.jmix.ui.screen.Subscribe;
 import io.jmix.ui.screen.UiController;
 import io.jmix.ui.screen.UiDescriptor;
+import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Collections;
+import java.util.List;
 
 @UiController("report_TableEdit.fragment")
 @UiDescriptor("table-edit-frame.xml")
@@ -43,7 +46,6 @@ public class TableEditFragment extends DescriptionEditFragment {
 
     public static final int UP = 1;
     public static final int DOWN = -1;
-    public static final String POSITION = "position";
 
     protected ReportTemplate reportTemplate;
     protected TemplateTableDescription description;
@@ -79,10 +81,6 @@ public class TableEditFragment extends DescriptionEditFragment {
     @Subscribe
     protected void onInit(InitEvent event) {
         super.onInit(event);
-    }
-
-    protected void sortParametersByPosition(CollectionContainer collectionContainer) {
-        collectionContainer.getSorter().sort(Sort.by(Sort.Direction.ASC, POSITION));
     }
 
     @Install(to = "bandsTable.remove", subject = "afterActionPerformedHandler")
@@ -192,31 +190,32 @@ public class TableEditFragment extends DescriptionEditFragment {
     }
 
     private void changeOrderColumnsOfIndexes(int order) {
-        TemplateTableColumn currentColumn = columnsTable.getSingleSelected();
-        int currentPosition = currentColumn.getPosition();
+        List<TemplateTableColumn> items = tableColumnsDc.getMutableItems();
+        TemplateTableColumn currentItem = tableColumnsDc.getItem();
+        TemplateTableColumn itemToSwap = IterableUtils.find(items,
+                e -> e.getPosition().equals(currentItem.getPosition() - order)
+        );
 
-        for (TemplateTableColumn templateTableColumn : tableColumnsDc.getItems()) {
-            if (templateTableColumn.getPosition() == (currentPosition - order)) {
-                templateTableColumn.setPosition(templateTableColumn.getPosition() + order);
-            }
-            currentColumn.setPosition(currentPosition - order);
-        }
-        sortParametersByPosition(tableColumnsDc);
+        int currentItemPosition = currentItem.getPosition();
+        currentItem.setPosition(itemToSwap.getPosition());
+        itemToSwap.setPosition(currentItemPosition);
+
+        Collections.swap(items, itemToSwap.getPosition(), currentItem.getPosition());
     }
 
     private void changeOrderBandsOfIndexes(int order) {
-        TemplateTableBand currentBand = bandsTable.getSingleSelected();
-        int currentPosition = currentBand.getPosition();
+        List<TemplateTableBand> items = tableBandsDc.getMutableItems();
+        TemplateTableBand currentItem = tableBandsDc.getItem();
+        TemplateTableBand itemToSwap = IterableUtils.find(items,
+                e -> e.getPosition().equals(currentItem.getPosition() - order)
+        );
 
-        for (TemplateTableBand templateTableBand : tableBandsDc.getItems()) {
-            if (templateTableBand.getPosition() == (currentPosition - order)) {
-                templateTableBand.setPosition(templateTableBand.getPosition() + order);
-            }
-            currentBand.setPosition(currentPosition - order);
-        }
-        sortParametersByPosition(tableBandsDc);
+        int currentItemPosition = currentItem.getPosition();
+        currentItem.setPosition(itemToSwap.getPosition());
+        itemToSwap.setPosition(currentItemPosition);
+
+        Collections.swap(items, itemToSwap.getPosition(), currentItem.getPosition());
     }
-
 
     protected TemplateTableDescription createDefaultTemplateTableDescription() {
         description = metadata.create(TemplateTableDescription.class);

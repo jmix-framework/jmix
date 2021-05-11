@@ -54,6 +54,7 @@
         <groupBox id="validationScriptGroupBox"
                   caption="msg://report.crossParametersValidation"
                   collapsable="true"
+                  collapsed="true"
                   width="100%">
             <vbox id="validationScriptVBox">
                 <hbox margin="true;true;true;false" spacing="true">

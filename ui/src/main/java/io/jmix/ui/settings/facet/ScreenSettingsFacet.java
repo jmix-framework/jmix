@@ -76,7 +76,8 @@ public interface ScreenSettingsFacet extends Facet {
     @StudioCollection(xmlElement = "components",
             itemXmlElement = "component",
             itemProperties = {
-                    @StudioProperty(name = "id", type = PropertyType.COMPONENT_REF, required = true)
+                    @StudioProperty(name = "id", type = PropertyType.COMPONENT_REF, required = true,
+                            options = {"io.jmix.ui.component.Component"})
             })
     void addComponentIds(String... ids);
 

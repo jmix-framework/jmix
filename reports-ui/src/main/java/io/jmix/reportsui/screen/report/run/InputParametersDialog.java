@@ -132,6 +132,13 @@ public class InputParametersDialog extends Screen {
 
     @Subscribe
     protected void onBeforeShow(BeforeShowEvent event) {
+        if (report != null) {
+            inputParametersFragment.setReport(report);
+            inputParametersFragment.setInputParameter(inputParameter);
+            inputParametersFragment.setParameters(parameters);
+            inputParametersFragment.setBulkPrint(bulkPrint);
+            inputParametersFragment.initLayout();
+        }
         inputParametersFragment.initTemplateAndOutputSelect();
     }
 

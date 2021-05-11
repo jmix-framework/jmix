@@ -120,6 +120,10 @@ public class InputParametersFragment extends ScreenFragment {
 //            inputParameter = (ReportInputParameter) mapScreenOptions.getParams().get(INPUT_PARAMETER);
         }
 
+        initLayout();
+    }
+
+    protected void initLayout() {
         if (report != null && !report.getIsTmp()) {
             report = dataManager.load(Id.of(report))
                     .fetchPlan("report.edit")

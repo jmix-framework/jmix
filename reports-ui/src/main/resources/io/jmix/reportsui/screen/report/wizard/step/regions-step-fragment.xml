@@ -29,6 +29,9 @@
               expand="spacer">
 
             <hbox id="buttonsBox">
+                <button id="addRegionDisabledBtn" caption="msg://addRegion" enable="false"/>
+                <button id="addSimpleRegionBtn" action="addRegionPopupBtn.addSimpleRegion" caption="msg://simpleRegion"/>
+                <button id="addTabulatedRegionBtn" action="addRegionPopupBtn.addTabulatedRegion" caption="msg://tabulatedRegion"/>
                 <popupButton id="addRegionPopupBtn" caption="msg://add">
                     <actions>
                         <action id="addSimpleRegion" caption="msg://simpleRegion"/>

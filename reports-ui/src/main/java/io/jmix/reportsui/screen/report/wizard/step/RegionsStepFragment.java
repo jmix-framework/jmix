@@ -26,6 +26,8 @@ import io.jmix.reportsui.screen.report.wizard.region.RegionEditor;
 import io.jmix.ui.*;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.*;
+import io.jmix.ui.model.CollectionChangeType;
+import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.CollectionPropertyContainer;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.screen.*;
@@ -45,6 +47,15 @@ public class RegionsStepFragment extends StepFragment {
 
     @Autowired
     protected PopupButton addRegionPopupBtn;
+
+    @Autowired
+    protected Button addTabulatedRegionBtn;
+
+    @Autowired
+    protected Button addSimpleRegionBtn;
+
+    @Autowired
+    protected Button addRegionDisabledBtn;
 
     @Autowired
     protected Button removeBtn;
@@ -112,6 +123,11 @@ public class RegionsStepFragment extends StepFragment {
     public void initMoveAction() {
 //        moveDownBtn.getAction().setDirection(ItemOrderableAction.Direction.UP);
 //        down.setDirection(ItemOrderableAction.Direction.DOWN);
+    }
+
+    @Override
+    public void beforeShow() {
+        updateButtons();
     }
 
     @Override
@@ -231,6 +247,32 @@ public class RegionsStepFragment extends StepFragment {
         List<ReportRegion> allItems = new ArrayList<>(reportRegionsDc.getItems());
         for (ReportRegion item : allItems) {
             item.setOrderNum(++normalizedIdx); //first must to be 1
+        }
+    }
+
+    @Subscribe(id = "reportRegionsDc", target = Target.DATA_CONTAINER)
+    public void onReportRegionsDcCollectionChange(CollectionContainer.CollectionChangeEvent<ReportRegion> event) {
+        if (event.getChangeType() == CollectionChangeType.ADD_ITEMS || event.getChangeType() == CollectionChangeType.REMOVE_ITEMS) {
+            updateButtons();
+        }
+    }
+
+    protected void updateButtons() {
+        ReportData item = reportDataDc.getItem();
+        buttonsBox.removeAll();
+        if (item.getReportTypeGenerate().isList()) {
+            addTabulatedRegionBtn.setEnabled(entityTreeHasSimpleAttrs && item.getReportRegions().isEmpty());
+            buttonsBox.add(addTabulatedRegionBtn);
+        } else {
+            if (entityTreeHasSimpleAttrs && entityTreeHasCollections) {
+                buttonsBox.add(addRegionPopupBtn);
+            } else if (entityTreeHasSimpleAttrs) {
+                buttonsBox.add(addSimpleRegionBtn);
+            } else if (entityTreeHasCollections) {
+                buttonsBox.add(addTabulatedRegionBtn);
+            } else {
+                buttonsBox.add(addRegionDisabledBtn);
+            }
         }
     }
 

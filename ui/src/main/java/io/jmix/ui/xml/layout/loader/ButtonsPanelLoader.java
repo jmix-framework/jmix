@@ -16,14 +16,15 @@
 package io.jmix.ui.xml.layout.loader;
 
 import io.jmix.core.common.util.ReflectionHelper;
+import io.jmix.ui.UiComponents;
 import io.jmix.ui.component.ButtonsPanel;
 import io.jmix.ui.component.Component;
-import org.apache.commons.lang3.StringUtils;
+import org.dom4j.Element;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
-import java.util.function.Supplier;
+import java.util.function.Function;
 
 public class ButtonsPanelLoader extends ContainerLoader<ButtonsPanel> {
 
@@ -64,27 +65,32 @@ public class ButtonsPanelLoader extends ContainerLoader<ButtonsPanel> {
         if (!element.elements().isEmpty()) {
             loadSubComponents();
         } else {
-            String className = element.attributeValue("providerClass");
-            if (StringUtils.isNotEmpty(className)) {
-                Class<Supplier<Collection<Component>>> clazz = ReflectionHelper.getClass(className);
-
-                Supplier<Collection<Component>> instance;
-                try {
-                    Constructor<Supplier<Collection<Component>>> constructor = clazz.getConstructor();
-                    instance = constructor.newInstance();
-                } catch (NoSuchMethodException | InstantiationException
-                        | InvocationTargetException | IllegalAccessException e) {
-                    throw new RuntimeException("Unable to apply buttons provider", e);
-                }
-
-                applyButtonsProvider(resultComponent, instance);
-            }
+            loadProviderClass(resultComponent, element);
         }
     }
 
-    protected void applyButtonsProvider(ButtonsPanel panel, Supplier<Collection<Component>> buttonsProvider) {
-        Collection<Component> buttons = buttonsProvider.get();
-        for (Component button : buttons) {
+    protected void loadProviderClass(ButtonsPanel resultComponent, Element element) {
+        loadString(element, "providerClass")
+                .ifPresent(className -> {
+                    Class<Function<UiComponents, Collection<Component>>> clazz = ReflectionHelper.getClass(className);
+
+                    Function<UiComponents, Collection<Component>> instance;
+                    try {
+                        Constructor<Function<UiComponents, Collection<Component>>> constructor = clazz.getConstructor();
+                        instance = constructor.newInstance();
+                    } catch (NoSuchMethodException | InstantiationException
+                            | InvocationTargetException | IllegalAccessException e) {
+                        throw new RuntimeException("Unable to apply buttons provider", e);
+                    }
+
+                    applyComponentsProvider(resultComponent, instance);
+                });
+    }
+
+    protected void applyComponentsProvider(ButtonsPanel panel,
+                                           Function<UiComponents, Collection<Component>> componentsProvider) {
+        Collection<Component> components = componentsProvider.apply(getFactory());
+        for (Component button : components) {
             panel.add(button);
         }
     }

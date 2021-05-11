@@ -21,10 +21,14 @@ import com.google.common.collect.Lists;
 import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.search.SearchApplicationProperties;
+import io.jmix.search.index.IndexConfiguration;
+import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.searching.EntitySearcher;
 import io.jmix.search.searching.SearchContext;
 import io.jmix.search.searching.SearchResult;
 import io.jmix.search.searching.SearchStrategy;
+import io.jmix.security.constraint.PolicyStore;
+import io.jmix.security.constraint.SecureOperations;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
@@ -57,7 +61,7 @@ public class EntitySearcherImpl implements EntitySearcher {
     @Autowired
     protected Metadata metadata;
     @Autowired
-    private MetadataTools metadataTools;
+    protected MetadataTools metadataTools;
     @Autowired
     protected DataManager secureDataManager;
     @Autowired
@@ -66,6 +70,12 @@ public class EntitySearcherImpl implements EntitySearcher {
     protected SearchApplicationProperties searchApplicationProperties;
     @Autowired
     protected IdSerialization idSerialization;
+    @Autowired
+    protected SecureOperations secureOperations;
+    @Autowired
+    protected IndexConfigurationManager indexConfigurationManager;
+    @Autowired
+    protected PolicyStore policyStore;
 
     @Override
     public SearchResult search(SearchContext searchContext, SearchStrategy searchStrategy) {
@@ -155,12 +165,21 @@ public class EntitySearcherImpl implements EntitySearcher {
     }
 
     protected void configureTargetIndices(SearchRequest searchRequest, SearchContext searchContext) {
-        List<String> indices = searchContext.getIndices();
-        if (indices.isEmpty()) {
-            searchRequest.indices("search_index_*");
-        } else {
-            searchRequest.indices(indices.toArray(new String[0]));
+        Collection<String> requestedEntities = searchContext.getEntities();
+        if (requestedEntities.isEmpty()) {
+            requestedEntities = indexConfigurationManager.getAllIndexedEntities();
         }
+
+        List<String> targetIndices = requestedEntities.stream()
+                .map(metadata::getClass)
+                .filter(metaClass -> secureOperations.isEntityReadPermitted(metaClass, policyStore))
+                .map(metaClass -> indexConfigurationManager.getIndexConfigurationByEntityNameOpt(metaClass.getName()))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .map(IndexConfiguration::getIndexName)
+                .collect(Collectors.toList());
+
+        searchRequest.indices(targetIndices.toArray(targetIndices.toArray(new String[0])));
     }
 
     protected void configureHighlight(SearchRequest searchRequest) {

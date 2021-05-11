@@ -25,7 +25,7 @@ public class SearchContext {
     protected int size;
     protected int offset;
     protected String searchText;
-    protected List<String> indices = Collections.emptyList();
+    protected List<String> entities = Collections.emptyList();
 
     public SearchContext(String searchText) {
         this.searchText = searchText;
@@ -53,17 +53,17 @@ public class SearchContext {
         return searchText;
     }
 
-    public SearchContext setIndices(List<String> indices) {
-        this.indices = indices;
+    public SearchContext setEntities(List<String> entities) {
+        this.entities = entities;
         return this;
     }
 
-    public SearchContext setIndices(String... indices) {
-        return setIndices(Arrays.asList(indices));
+    public SearchContext setEntities(String... entities) {
+        return setEntities(Arrays.asList(entities));
     }
 
-    public List<String> getIndices() {
-        return Collections.unmodifiableList(indices);
+    public List<String> getEntities() {
+        return Collections.unmodifiableList(entities);
     }
 
     @Override
@@ -72,7 +72,7 @@ public class SearchContext {
                 "size=" + size +
                 ", offset=" + offset +
                 ", searchText='" + searchText + '\'' +
-                ", indices=" + indices +
+                ", entities=" + entities +
                 '}';
     }
 }

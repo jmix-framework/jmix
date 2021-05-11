@@ -165,8 +165,7 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
             throw new IllegalArgumentException("Size of enqueuing batch during reindex entity must be positive");
         }
 
-        IndexConfiguration indexConfiguration = indexConfigurationManager.getIndexConfigurationByEntityName(entityName);
-        if (indexConfiguration == null) {
+        if(!indexConfigurationManager.isDirectlyIndexed(entityName)) {
             throw new IllegalArgumentException(String.format("Unable to enqueue instances of entity '%s' - entity is not configured for indexing", entityName));
         }
 
@@ -303,12 +302,12 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
         List<IndexingQueueItem> queueItems = entityIds.stream()
                 .map(id -> {
                     MetaClass metaClass = metadata.getClass(id.getEntityClass());
-                    IndexConfiguration indexConfiguration = indexConfigurationManager.getIndexConfigurationByEntityName(metaClass.getName());
-                    if (indexConfiguration == null) {
-                        return null;
-                    } else {
+                    Optional<IndexConfiguration> indexConfigurationOpt = indexConfigurationManager.getIndexConfigurationByEntityNameOpt(metaClass.getName());
+                    if (indexConfigurationOpt.isPresent()) {
                         String serializedEntityId = idSerialization.idToString(id);
                         return createQueueItem(metaClass, serializedEntityId, operation);
+                    } else {
+                        return null;
                     }
                 })
                 .filter(Objects::nonNull)

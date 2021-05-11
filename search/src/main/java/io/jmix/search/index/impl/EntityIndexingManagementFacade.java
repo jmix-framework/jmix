@@ -30,6 +30,8 @@ import org.springframework.jmx.export.annotation.ManagedOperationParameters;
 import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 @ManagedResource(description = "Manages entity indexing for full text search", objectName = "jmix.search:type=EntityIndexing")
 @Component("search_EntityIndexingManagementFacade")
 public class EntityIndexingManagementFacade {
@@ -93,12 +95,12 @@ public class EntityIndexingManagementFacade {
     })
     public String synchronizeIndex(String entityName) {
         Preconditions.checkNotEmptyString(entityName);
-        IndexConfiguration indexConfiguration = indexConfigurationManager.getIndexConfigurationByEntityName(entityName);
-        if (indexConfiguration == null) {
+        Optional<IndexConfiguration> indexConfigurationOpt = indexConfigurationManager.getIndexConfigurationByEntityNameOpt(entityName);
+        if (!indexConfigurationOpt.isPresent()) {
             return String.format("Entity '%s' is not configured for indexing", entityName);
         }
 
-        esIndexManager.synchronizeIndex(indexConfiguration);
+        esIndexManager.synchronizeIndex(indexConfigurationOpt.get());
         return String.format("Index for entity '%s' has been synchronized", entityName);
     }
 }

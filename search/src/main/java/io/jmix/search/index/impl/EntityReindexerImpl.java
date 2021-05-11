@@ -65,9 +65,6 @@ public class EntityReindexerImpl implements EntityReindexer {
 
         log.info("Reindex entity '{}'", entityName);
         IndexConfiguration indexConfiguration = indexConfigurationManager.getIndexConfigurationByEntityName(entityName);
-        if (indexConfiguration == null) {
-            throw new RuntimeException("Unable to perform reindex entity '" + entityName + "' - it is not configured for indexing");
-        }
 
         boolean reindexLocked = locker.tryLockReindexing();
         if (!reindexLocked) {

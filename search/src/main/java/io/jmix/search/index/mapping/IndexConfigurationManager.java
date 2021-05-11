@@ -59,6 +59,7 @@ public class IndexConfigurationManager {
 
     /**
      * Gets all {@link IndexConfiguration} registered in application
+     *
      * @return all {@link IndexConfiguration}
      */
     public Collection<IndexConfiguration> getAllIndexConfigurations() {
@@ -67,26 +68,61 @@ public class IndexConfigurationManager {
 
     /**
      * Gets {@link IndexConfiguration} registered for provided entity name.
-     * @param entityName entity name
+     * Throws {@link IllegalArgumentException} if there is no configuration for provided entity name.
+     *
+     * @param entityName entity name.
      * @return {@link IndexConfiguration}
      */
-    @Nullable
     public IndexConfiguration getIndexConfigurationByEntityName(String entityName) {
-        return registry.getIndexConfigurationByEntityName(entityName);
+        IndexConfiguration indexConfiguration = registry.getIndexConfigurationByEntityName(entityName);
+        if (indexConfiguration == null) {
+            throw new IllegalArgumentException("Entity '" + entityName + "' is not configured for indexing");
+        }
+        return indexConfiguration;
+    }
+
+    /**
+     * Gets optional {@link IndexConfiguration} registered for provided entity name.
+     *
+     * @param entityName entity name
+     * @return optional {@link IndexConfiguration}
+     */
+    public Optional<IndexConfiguration> getIndexConfigurationByEntityNameOpt(String entityName) {
+        return Optional.ofNullable(registry.getIndexConfigurationByEntityName(entityName));
     }
 
     /**
      * Gets {@link IndexConfiguration} registered for provided index name.
+     * Throws {@link IllegalArgumentException} if there is no configuration for provided index name.
+     *
      * @param indexName index name
      * @return {@link IndexConfiguration}
      */
-    @Nullable
     public IndexConfiguration getIndexConfigurationByIndexName(String indexName) {
-        return registry.getIndexConfigurationByIndexName(indexName);
+        IndexConfiguration indexConfiguration = registry.getIndexConfigurationByIndexName(indexName);
+        if (indexConfiguration == null) {
+            throw new IllegalArgumentException("There is no configuration for index name '" + indexName + "'");
+        }
+        return indexConfiguration;
+    }
+
+    /**
+     * Gets optional {@link IndexConfiguration} registered for provided index name.
+     *
+     * @param indexName index name
+     * @return optional {@link IndexConfiguration}
+     */
+    public Optional<IndexConfiguration> getIndexConfigurationByIndexNameOpt(String indexName) {
+        return Optional.ofNullable(registry.getIndexConfigurationByIndexName(indexName));
+    }
+
+    public Collection<String> getAllIndexedEntities() {
+        return registry.getAllIndexedEntities();
     }
 
     /**
      * Checks if provided entity is declared to be indexed directly (not as a part of another entity).
+     *
      * @param entityName entity name
      * @return true if entity is indexed, false otherwise
      */
@@ -96,6 +132,7 @@ public class IndexConfigurationManager {
 
     /**
      * Checks if provided entity is involved in index process directly or as a part of another entity.
+     *
      * @param entityClass entity java class
      * @return true if entity is involved in index process, false otherwise
      */
@@ -105,7 +142,8 @@ public class IndexConfigurationManager {
 
     /**
      * Gets metadata of entities dependent on updated main entity and its changed properties.
-     * @param entityClass java class of main entity
+     *
+     * @param entityClass       java class of main entity
      * @param changedProperties changed property of main entity
      * @return dependent entities grouped by their {@link MetaClass}.
      * For every meta class group there are set of properties representing dependency-to-main references
@@ -134,6 +172,7 @@ public class IndexConfigurationManager {
 
     /**
      * Gets metadata of entities dependent on deleted main entity.
+     *
      * @param deletedEntityClass java class of main entity
      * @return dependent entities grouped by their {@link MetaClass}.
      * For every meta class group there are set of properties representing dependency-to-main references
@@ -256,10 +295,12 @@ public class IndexConfigurationManager {
                     .forEach(this::processEntityFieldDescriptor);
         }
 
+        @Nullable
         IndexConfiguration getIndexConfigurationByEntityName(String entityName) {
             return indexConfigurationsByEntityName.get(entityName);
         }
 
+        @Nullable
         IndexConfiguration getIndexConfigurationByIndexName(String indexName) {
             return indexConfigurationsByIndexName.get(indexName);
         }
@@ -268,12 +309,18 @@ public class IndexConfigurationManager {
             return indexConfigurationsByEntityName.values();
         }
 
+        @Nullable
         Map<String, Set<MetaPropertyPath>> getBackRefPropertiesForUpdate(Class<?> entityClass) {
             return referentiallyAffectedPropertiesForUpdate.get(entityClass);
         }
 
+        @Nullable
         Set<MetaPropertyPath> getBackRefPropertiesForDelete(Class<?> entityClass) {
             return referentiallyAffectedPropertiesForDelete.get(entityClass);
+        }
+
+        Collection<String> getAllIndexedEntities() {
+            return indexConfigurationsByEntityName.keySet();
         }
 
         boolean hasDefinitionForEntity(String entityName) {

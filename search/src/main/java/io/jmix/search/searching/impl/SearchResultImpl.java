@@ -105,6 +105,7 @@ public class SearchResultImpl implements SearchResult {
     public SearchContext createNextPageSearchContext() {
         return new SearchContext(this.searchContext.getSearchText())
                 .setSize(this.searchContext.getSize())
+                .setEntities(this.searchContext.getEntities())
                 .setOffset(getEffectiveOffset());
     }
 

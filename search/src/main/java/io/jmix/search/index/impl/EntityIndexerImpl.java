@@ -162,8 +162,9 @@ public class EntityIndexerImpl implements EntityIndexer {
         Map<IndexConfiguration, FetchPlan> fetchPlanLocalCache = new HashMap<>();
         Map<IndexConfiguration, Collection<Object>> result = new HashMap<>();
         idsGroupedByMetaClass.forEach((metaClass, entityIds) -> {
-            IndexConfiguration indexConfiguration = indexConfigurationManager.getIndexConfigurationByEntityName(metaClass.getName());
-            if (indexConfiguration != null) {
+            Optional<IndexConfiguration> indexConfigurationOpt = indexConfigurationManager.getIndexConfigurationByEntityNameOpt(metaClass.getName());
+            if (indexConfigurationOpt.isPresent()) {
+                IndexConfiguration indexConfiguration = indexConfigurationOpt.get();
                 FetchPlan fetchPlan = fetchPlanLocalCache.computeIfAbsent(indexConfiguration, this::createFetchPlan);
                 List<Object> loaded = dataManager.load(metaClass.getJavaClass())
                         .ids(entityIds)
@@ -212,8 +213,9 @@ public class EntityIndexerImpl implements EntityIndexer {
         Map<IndexConfiguration, Collection<String>> result = new HashMap<>();
         instances.forEach(instance -> {
             MetaClass metaClass = metadata.getClass(instance);
-            IndexConfiguration indexConfiguration = indexConfigurationManager.getIndexConfigurationByEntityName(metaClass.getName());
-            if (indexConfiguration != null) {
+            Optional<IndexConfiguration> indexConfigurationOpt = indexConfigurationManager.getIndexConfigurationByEntityNameOpt(metaClass.getName());
+            if (indexConfigurationOpt.isPresent()) {
+                IndexConfiguration indexConfiguration = indexConfigurationOpt.get();
                 String indexId = idSerialization.idToString(Id.of(instance));
                 Collection<String> idsForConfig = result.computeIfAbsent(indexConfiguration, k -> new HashSet<>());
                 idsForConfig.add(indexId);
@@ -226,8 +228,9 @@ public class EntityIndexerImpl implements EntityIndexer {
         Map<IndexConfiguration, Collection<String>> result = new HashMap<>();
         entityIds.forEach(entityId -> {
             MetaClass metaClass = metadata.getClass(entityId.getEntityClass());
-            IndexConfiguration indexConfiguration = indexConfigurationManager.getIndexConfigurationByEntityName(metaClass.getName());
-            if (indexConfiguration != null) {
+            Optional<IndexConfiguration> indexConfigurationOpt = indexConfigurationManager.getIndexConfigurationByEntityNameOpt(metaClass.getName());
+            if (indexConfigurationOpt.isPresent()) {
+                IndexConfiguration indexConfiguration = indexConfigurationOpt.get();
                 String indexId = idSerialization.idToString(entityId);
                 Collection<String> idsForConfig = result.computeIfAbsent(indexConfiguration, k -> new HashSet<>());
                 idsForConfig.add(indexId);

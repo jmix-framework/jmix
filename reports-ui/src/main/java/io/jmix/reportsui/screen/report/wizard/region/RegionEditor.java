@@ -21,9 +21,13 @@ import io.jmix.core.Metadata;
 import io.jmix.reports.entity.wizard.EntityTreeNode;
 import io.jmix.reports.entity.wizard.RegionProperty;
 import io.jmix.reports.entity.wizard.ReportRegion;
+import io.jmix.ui.Actions;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.WindowParam;
 import io.jmix.ui.action.Action;
+import io.jmix.ui.action.BaseAction;
+import io.jmix.ui.action.ItemTrackingAction;
+import io.jmix.ui.action.ListAction;
 import io.jmix.ui.component.*;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.InstanceContainer;
@@ -44,18 +48,10 @@ public class RegionEditor extends StandardEditor<ReportRegion> {
 
     @Autowired
     protected CollectionContainer<RegionProperty> reportRegionPropertiesTableDc;
-    @Named("entityTreeFrame.entityTree")
+    @Named("entityTreeFragment.entityTree")
     protected Tree<EntityTreeNode> entityTree;
-    @Named("entityTreeFrame.reportPropertyName")
-    protected TextField<String> reportPropertyName;
-    @Named("entityTreeFrame.reportPropertyNameSearchButton")
-    protected Button reportPropertyNameSearchButton;
-    @Autowired
-    protected InstanceContainer<ReportRegion> reportRegionDc;
     @Autowired
     protected Button addItem;
-    @Autowired
-    protected Button removeItem;
     @Autowired
     protected Button upItem;
     @Autowired
@@ -70,14 +66,15 @@ public class RegionEditor extends StandardEditor<ReportRegion> {
     protected Messages messages;
     @Autowired
     protected Notifications notifications;
-
+    @Autowired
+    private Actions actions;
     @WindowParam
     protected EntityTreeNode rootEntity;
 
     protected boolean isTabulated;//if true then user perform add tabulated region action
     protected boolean asFetchPlanEditor;
 
-    protected boolean updatePermission;
+    protected boolean updatePermission = true;
 
     public void setTabulated(boolean tabulated) {
         isTabulated = tabulated;
@@ -101,10 +98,6 @@ public class RegionEditor extends StandardEditor<ReportRegion> {
 
     @Subscribe
     public void onBeforeShow(BeforeShowEvent event) {
-        //params.put("component$reportPropertyName", reportPropertyName);
-        //todo
-        //reportEntityTreeNodeDs.refresh(params);
-        //TODO add disallowing of classes selection in tree
         if (!asFetchPlanEditor) {
             if (isTabulated) {
                 setTabulatedRegionEditorCaption(rootEntity.getName());
@@ -120,13 +113,32 @@ public class RegionEditor extends StandardEditor<ReportRegion> {
         initComponents();
     }
 
-    @Install(to = "addItemAction", subject = "enabledRule")
-    private boolean addItemActionEnabledRule() {
-        return isUpdatePermitted();
+    protected void initComponents() {
+        initControlBtnsActions();
+
+        if (asFetchPlanEditor) {
+            initAsFetchPlanEditor();
+        }
+
+        initEntityTree();
     }
 
-    @Subscribe("addItemAction")
-    public void onAddItemAction(Action.ActionPerformedEvent event) {
+    protected void initEntityTree() {
+        entityTree.setSelectionMode(Tree.SelectionMode.MULTI);
+
+        BaseAction doubleClickAction = new BaseAction("doubleClick")
+                .withHandler(event -> addProperty());
+        doubleClickAction.addEnabledRule(this::isUpdatePermitted);
+        entityTree.setItemClickAction(doubleClickAction);
+
+        ListAction addPropertyAction = actions.create(ItemTrackingAction.class, "addItemAction")
+                .withHandler(event -> addProperty());
+        addPropertyAction.addEnabledRule(this::isUpdatePermitted);
+        entityTree.addAction(addPropertyAction);
+        addItem.setAction(addPropertyAction);
+    }
+
+    protected void addProperty() {
         @SuppressWarnings("unchecked")
         List<EntityTreeNode> nodesList = CollectionUtils.transform(
                 reportRegionPropertiesTableDc.getItems(), o -> ((RegionProperty) o).getEntityTreeNode());
@@ -137,7 +149,7 @@ public class RegionEditor extends StandardEditor<ReportRegion> {
         List<RegionProperty> addedItems = new ArrayList<>();
         boolean alreadyAdded = false;
         for (EntityTreeNode entityTreeNode : selectedItems) {
-            if (entityTreeNode.getWrappedMetaProperty() == null) {
+            if (entityTreeNode.getMetaClassName() != null) {
                 continue;
             }
             if (!alreadyAddedNodes.contains(entityTreeNode)) {
@@ -153,15 +165,15 @@ public class RegionEditor extends StandardEditor<ReportRegion> {
         if (addedItems.isEmpty()) {
             if (alreadyAdded) {
                 notifications.create(Notifications.NotificationType.TRAY)
-                        .withCaption(messages.getMessage("elementsAlreadyAdded"))
+                        .withCaption(messages.getMessage(getClass(), "elementsAlreadyAdded"))
                         .show();
             } else if (selectedItems.size() != 0) {
                 notifications.create(Notifications.NotificationType.HUMANIZED)
-                        .withCaption(messages.getMessage("selectPropertyFromEntity"))
+                        .withCaption(messages.getMessage(getClass(), "selectPropertyFromEntity"))
                         .show();
             } else {
                 notifications.create(Notifications.NotificationType.TRAY)
-                        .withCaption(messages.getMessage("elementsWasNotAdded"))
+                        .withCaption(messages.getMessage(getClass(), "elementsWasNotAdded"))
                         .show();
             }
         } else {
@@ -169,33 +181,11 @@ public class RegionEditor extends StandardEditor<ReportRegion> {
         }
     }
 
-    @Install(to = "removeItemAction", subject = "enabledRule")
-    private boolean removeItemActionEnabledRule() {
-        return isUpdatePermitted();
-    }
-
-    @Subscribe("removeItemAction")
-    public void onRemoveItemAction(Action.ActionPerformedEvent event) {
-        for (RegionProperty item : propertiesTable.getSelected()) {
-            reportRegionPropertiesTableDc.getMutableItems().remove(item);
-            normalizeRegionPropertiesOrderNum();
-        }
-    }
-
-    protected void initComponents() {
-        initControlBtnsActions();
-
-        if (asFetchPlanEditor) {
-            initAsFetchPlanEditor();
-        }
-        entityTree.setSelectionMode(Tree.SelectionMode.MULTI);
-    }
-
     protected void initAsFetchPlanEditor() {
         if (isTabulated) {
             getWindow().setCaption(messages.getMessage(getClass(), "singleEntityDataSetFetchPlanEditor"));
         } else {
-            getWindow().setCaption(messages.getMessage(getClass(),"multiEntityDataSetFetchPlanEditor"));
+            getWindow().setCaption(messages.getMessage(getClass(), "multiEntityDataSetFetchPlanEditor"));
         }
     }
 
@@ -204,11 +194,24 @@ public class RegionEditor extends StandardEditor<ReportRegion> {
     }
 
     protected void setTabulatedRegionEditorCaption(String collectionEntityName) {
-        getWindow().setCaption(messages.getMessage("tabulatedRegionEditor"));
+        getWindow().setCaption(messages.getMessage(getClass(), "tabulatedRegionEditor"));
     }
 
     protected void setSimpleRegionEditorCaption() {
-        getWindow().setCaption(messages.getMessage("simpleRegionEditor"));
+        getWindow().setCaption(messages.getMessage(getClass(), "simpleRegionEditor"));
+    }
+
+    @Install(to = "propertiesTable.removeItemAction", subject = "enabledRule")
+    private boolean removeItemActionEnabledRule() {
+        return isUpdatePermitted();
+    }
+
+    @Subscribe("propertiesTable.removeItemAction")
+    public void onRemoveItemAction(Action.ActionPerformedEvent event) {
+        for (RegionProperty item : propertiesTable.getSelected()) {
+            reportRegionPropertiesTableDc.getMutableItems().remove(item);
+            normalizeRegionPropertiesOrderNum();
+        }
     }
 
     @Subscribe(id = "reportRegionPropertiesTableDc", target = Target.DATA_CONTAINER)
@@ -266,7 +269,7 @@ public class RegionEditor extends StandardEditor<ReportRegion> {
     protected void onBeforeCommit(BeforeCommitChangesEvent event) {
         if (reportRegionPropertiesTableDc.getItems().isEmpty()) {
             notifications.create(Notifications.NotificationType.TRAY)
-                    .withCaption(messages.getMessage("selectAtLeastOneProp"))
+                    .withCaption(messages.getMessage(getClass(), "selectAtLeastOneProp"))
                     .show();
             event.preventCommit();
         }

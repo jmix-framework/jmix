@@ -18,7 +18,11 @@
         messagesPack="io.jmix.reportsui.screen.report.wizard"
         caption="msg://tabulatedLookup">
 
-    <layout expand="entityTreeFrame" height="500px">
-        <fragment id="entityTreeFrame" screen="report_DetailsStep.fragment" width="100%"/>
+    <layout expand="entityTreeFragment" height="500px" spacing="true">
+        <fragment id="entityTreeFragment" screen="report_EntityTree.fragment" width="100%"/>
+        <hbox id="lookupActions" spacing="true">
+            <button action="lookupSelectAction"/>
+            <button action="lookupCancelAction"/>
+        </hbox>
     </layout>
 </window>

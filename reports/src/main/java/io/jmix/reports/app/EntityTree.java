@@ -26,6 +26,14 @@ public class EntityTree implements Serializable {
     protected EntityTreeNode entityTreeRootNode;
     protected EntityTreeStructureInfo entityTreeStructureInfo;
 
+    public EntityTree() {
+    }
+
+    public EntityTree(EntityTreeNode entityTreeRootNode, EntityTreeStructureInfo entityTreeStructureInfo) {
+        this.entityTreeRootNode = entityTreeRootNode;
+        this.entityTreeStructureInfo = entityTreeStructureInfo;
+    }
+
     public EntityTreeNode getEntityTreeRootNode() {
         return entityTreeRootNode;
     }

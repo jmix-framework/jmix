@@ -19,28 +19,18 @@ package io.jmix.reportsui.screen.report.wizard.region;
 import io.jmix.core.Messages;
 import io.jmix.reports.entity.wizard.EntityTreeNode;
 import io.jmix.ui.Notifications;
-import io.jmix.ui.WindowParam;
-import io.jmix.ui.component.Button;
-import io.jmix.ui.component.TextField;
 import io.jmix.ui.component.Tree;
 import io.jmix.ui.screen.*;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import javax.inject.Named;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 @UiController("report_ReportEntityTree.lookup")
 @UiDescriptor("entity-tree-lookup.xml")
-public class EntityTreeLookup extends StandardLookup {
-
-    //    @Named("entityTreeFrame.reportEntityTreeNodeDs")
-//    protected AbstractTreeDatasource reportEntityTreeNodeDs;
-
-    @Named("entityTreeFrame.entityTree")
-    protected Tree entityTree;
-    @Named("entityTreeFrame.reportPropertyName")
-    protected TextField<String> reportPropertyName;
-    @Named("entityTreeFrame.reportPropertyNameSearchButton")
-    protected Button reportPropertyNameSearchButton;
+@LookupComponent("entityTreeFragment.entityTree")
+public class EntityTreeLookup extends StandardLookup<EntityTreeNode> {
+    @Autowired
+    @Qualifier("entityTreeFragment.entityTree")
+    protected Tree<EntityTreeNode> entityTree;
 
     @Autowired
     protected Messages messages;
@@ -48,36 +38,24 @@ public class EntityTreeLookup extends StandardLookup {
     @Autowired
     protected Notifications notifications;
 
-    @WindowParam
-    protected EntityTreeNode rootEntity;
-
     @Subscribe
     protected void onInit(InitEvent event) {
-//        //todo params
-//        params.put("component$reportPropertyName", reportPropertyName);
-//
-//        reportEntityTreeNodeDs.refresh(params);
-//        rootNode = (EntityTreeNode) params.get("rootEntity");
-//        entityTree.expandTree();
+        setSelectValidator(validationContext -> {
+            if (entityTree.getSingleSelected() == null) {
+                notifications.create(Notifications.NotificationType.TRAY)
+                        .withCaption(messages.getMessage(getClass(),"selectItemForContinue"))
+                        .show();
+                return false;
+            } else {
+                if (entityTree.getSingleSelected().getParent() == null) {
+                    notifications.create(Notifications.NotificationType.TRAY)
+                            .withCaption(messages.getMessage(getClass(),"selectNotARoot"))
+                            .show();
 
-
-//        this.setLookupValidator(() -> {
-//            if (entityTree.getSingleSelected() == null) {
-//                notifications.create(Notifications.NotificationType.TRAY)
-//                        .withCaption(messages.getMessage("selectItemForContinue"))
-//                        .show();
-//                return false;
-//            } else {
-//                if (((EntityTreeNode) entityTree.getSingleSelected()).getParent() == null) {
-//                    notifications.create(Notifications.NotificationType.TRAY)
-//                            .withCaption(messages.getMessage("selectNotARoot"))
-//                            .show();
-//
-//                    return false;
-//                }
-//            }
-//            return true;
-//        });
+                    return false;
+                }
+            }
+            return true;
+        });
     }
-
 }

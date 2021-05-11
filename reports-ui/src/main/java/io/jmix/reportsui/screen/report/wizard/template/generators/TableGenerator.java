@@ -46,7 +46,7 @@ public class TableGenerator implements Generator {
 
         for (int i = 0; i < reportData.getReportRegions().size(); i++) {
             ReportRegion reportRegion = reportData.getReportRegions().get(i);
-            TemplateTableBand band = new TemplateTableBand();
+            TemplateTableBand band = dataManager.create(TemplateTableBand.class);
             band.setPosition(i);
             band.setBandName(reportRegion.getNameForBand());
 
@@ -56,7 +56,7 @@ public class TableGenerator implements Generator {
 
                 String caption = regionProperty.getHierarchicalLocalizedNameExceptRoot().replace('.', ' ');
 
-                TemplateTableColumn column = new TemplateTableColumn();
+                TemplateTableColumn column = dataManager.create(TemplateTableColumn.class);
                 column.setPosition(j);
                 column.setKey(regionProperty.getHierarchicalNameExceptRoot());
                 column.setCaption(caption);

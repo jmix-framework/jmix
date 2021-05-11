@@ -48,8 +48,8 @@ public class ReportGsonSerializationSupport extends GsonSerializationSupport {
     @Override
     protected void readUnresolvedProperty(Entity entity, String propertyName, JsonReader in) throws IOException {
         if (entity instanceof DataSet && "fetchPlan".equals(propertyName)) {
-            String viewDefinition = in.nextString();
-            FetchPlan fetchPlan = gsonBuilder.create().fromJson(viewDefinition, FetchPlan.class);
+            String fetchPlanDefinition = in.nextString();
+            FetchPlan fetchPlan = gsonBuilder.create().fromJson(fetchPlanDefinition, FetchPlan.class);
             ((DataSet) entity).setFetchPlan(fetchPlan);
         } else {
             super.readUnresolvedProperty(entity, propertyName, in);

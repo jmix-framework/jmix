@@ -16,15 +16,12 @@
 
 package io.jmix.reports.entity.wizard;
 
-import io.jmix.core.Entity;
-import io.jmix.core.entity.annotation.DisableEnhancing;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.Composition;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
-import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.metamodel.model.MetaProperty;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.Id;
 import javax.persistence.Transient;
@@ -35,8 +32,6 @@ import java.util.UUID;
 @JmixEntity(name = "report_WizardReportEntityTreeNode", annotatedPropertiesOnly = true)
 @SystemLevel
 public class EntityTreeNode {
-
-    private static final long serialVersionUID = 465985155557062476L;
 
     @Id
     @JmixProperty
@@ -62,11 +57,11 @@ public class EntityTreeNode {
 
     @JmixProperty
     @Transient
-    protected String wrappedMetaClass;//'wrappedMetaClass' name cause 'metaClass' field already exists in superclass
+    protected String metaClassName;
 
     @JmixProperty
     @Transient
-    protected String wrappedMetaProperty;
+    protected String metaPropertyName;
 
     @JmixProperty
     @Transient
@@ -166,11 +161,6 @@ public class EntityTreeNode {
 
     public String getName() {
         return name;
-        /*if (isAttribute) {
-            return wrappedMetaProperty.getFullName();
-        } else {
-            return wrappedMetaClass.getFullName();
-        }*/
     }
 
     public void setName(String name) {
@@ -193,19 +183,23 @@ public class EntityTreeNode {
         this.children = children;
     }
 
-    public String getWrappedMetaClass() {
-        return wrappedMetaClass;
+    public String getMetaClassName() {
+        return metaClassName;
     }
 
-    public void setWrappedMetaClass(String wrappedMetaClass) {
-        this.wrappedMetaClass = wrappedMetaClass;
+    public void setMetaClassName(String metaClassName) {
+        this.metaClassName = metaClassName;
     }
 
-    public String getWrappedMetaProperty() {
-        return wrappedMetaProperty;
+    public String getMetaPropertyName() {
+        return metaPropertyName;
     }
 
-    public void setWrappedMetaProperty(String wrappedMetaProperty) {
-        this.wrappedMetaProperty = wrappedMetaProperty;
+    public void setMetaPropertyName(String metaPropertyName) {
+        this.metaPropertyName = metaPropertyName;
+    }
+
+    public String getParentMetaClassName() {
+        return parent != null ? parent.getMetaClassName() : StringUtils.EMPTY;
     }
 }

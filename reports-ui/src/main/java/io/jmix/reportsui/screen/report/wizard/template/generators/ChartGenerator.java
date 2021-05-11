@@ -53,7 +53,7 @@ public class ChartGenerator implements Generator {
     protected byte[] generateSerialChart(ReportData reportData) {
         if (CollectionUtils.isNotEmpty(reportData.getReportRegions())) {
             ReportRegion reportRegion = reportData.getReportRegions().get(0);
-            SerialChartDescription serialChartDescription = new SerialChartDescription();
+            SerialChartDescription serialChartDescription = metadata.create(SerialChartDescription.class);
             serialChartDescription.setBandName(reportRegion.getNameForBand());
             serialChartDescription.setValueAxisUnits("");
             serialChartDescription.setCategoryAxisCaption("");
@@ -62,18 +62,18 @@ public class ChartGenerator implements Generator {
             List<RegionProperty> regionProperties = reportRegion.getRegionProperties();
             RegionProperty firstProperty = regionProperties.get(0);
 
-            serialChartDescription.setCategoryField(firstProperty.getEntityTreeNode().getWrappedMetaProperty());
+            serialChartDescription.setCategoryField(firstProperty.getEntityTreeNode().getMetaPropertyName());
             serialChartDescription.setCategoryAxisCaption(firstProperty.getLocalizedName());
             if (regionProperties.size() > 1) {
                 for (int i = 1; i < regionProperties.size(); i++) {
                     RegionProperty regionProperty = regionProperties.get(i);
-                    MetaClass wrapperMetaClass = metadata.getClass(regionProperty.getEntityTreeNode().getWrappedMetaClass());
-                    MetaProperty wrappedMetaProperty = wrapperMetaClass.getProperty(regionProperty.getEntityTreeNode().getWrappedMetaProperty());
-                    Class<?> javaType = wrappedMetaProperty.getJavaType();
+                    MetaClass parentMetaClass = metadata.getClass(regionProperty.getEntityTreeNode().getParentMetaClassName());
+                    MetaProperty metaProperty = parentMetaClass.getProperty(regionProperty.getEntityTreeNode().getMetaPropertyName());
+                    Class<?> javaType = metaProperty.getJavaType();
                     if (Number.class.isAssignableFrom(javaType)) {
                         ChartSeries chartSeries = new ChartSeries();
                         chartSeries.setName(regionProperty.getLocalizedName());
-                        chartSeries.setValueField(wrappedMetaProperty.getName());
+                        chartSeries.setValueField(metaProperty.getName());
                         chartSeries.setType(SeriesType.COLUMN);
                         chartSeries.setOrder(serialChartDescription.getSeries().size() + 1);
                         serialChartDescription.getSeries().add(chartSeries);
@@ -89,22 +89,21 @@ public class ChartGenerator implements Generator {
 
     protected byte[] generatePieChart(ReportData reportData) {
         ReportRegion reportRegion = reportData.getReportRegions().get(0);
-        PieChartDescription pieChartDescription = new PieChartDescription();
+        PieChartDescription pieChartDescription = metadata.create(PieChartDescription.class);
         pieChartDescription.setBandName(reportRegion.getNameForBand());
-//        pieChartDescription.setShowLegend(true);
         pieChartDescription.setUnits("");
 
         List<RegionProperty> regionProperties = reportRegion.getRegionProperties();
         RegionProperty firstProperty = regionProperties.get(0);
-        pieChartDescription.setTitleField(firstProperty.getEntityTreeNode().getWrappedMetaProperty());
+        pieChartDescription.setTitleField(firstProperty.getEntityTreeNode().getMetaPropertyName());
         if (regionProperties.size() > 1) {
             for (int i = 1; i < regionProperties.size(); i++) {
                 RegionProperty regionProperty = regionProperties.get(i);
-                MetaClass wrapperMetaClass = metadata.getClass(regionProperty.getEntityTreeNode().getWrappedMetaClass());
-                MetaProperty wrappedMetaProperty = wrapperMetaClass.getProperty(regionProperty.getEntityTreeNode().getWrappedMetaProperty());
-                Class<?> javaType = wrappedMetaProperty.getJavaType();
+                MetaClass parentMetaClass = metadata.getClass(regionProperty.getEntityTreeNode().getParentMetaClassName());
+                MetaProperty metaProperty = parentMetaClass.getProperty(regionProperty.getEntityTreeNode().getMetaPropertyName());
+                Class<?> javaType = metaProperty.getJavaType();
                 if (Number.class.isAssignableFrom(javaType)) {
-                    pieChartDescription.setValueField(wrappedMetaProperty.getName());
+                    pieChartDescription.setValueField(metaProperty.getName());
                     break;
                 }
             }

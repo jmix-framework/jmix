@@ -153,7 +153,7 @@ public class ReportsWizard {
 
                 if (queryParameter.getParameterType() == ParameterType.ENTITY
                         || queryParameter.getParameterType() == ParameterType.ENTITY_LIST) {
-                    MetaClass metaClass = metadata.getClass(queryParameter.getJavaClassName());
+                    MetaClass metaClass = metadata.findClass(queryParameter.getJavaClassName());
                     if (metaClass != null) {
                         parameter.setEntityMetaClass(metaClass.getName());
                     }
@@ -223,9 +223,9 @@ public class ReportsWizard {
         ReportInputParameter reportInputParameter = createParameter(report, 1);
 
         reportInputParameter.setName(reportData.getEntityTreeRootNode().getLocalizedName());
-        String wrapperMetaClass = reportData.getEntityTreeRootNode().getWrappedMetaClass();
+        String metaClassName = reportData.getEntityTreeRootNode().getMetaClassName();
 
-        reportInputParameter.setEntityMetaClass(wrapperMetaClass);
+        reportInputParameter.setEntityMetaClass(metaClassName);
         if (ReportTypeGenerate.LIST_OF_ENTITIES == reportData.getReportTypeGenerate()) {
             reportInputParameter.setType(ParameterType.ENTITY_LIST);
             reportInputParameter.setAlias(DEFAULT_LIST_OF_ENTITIES_ALIAS);
@@ -279,11 +279,11 @@ public class ReportsWizard {
         if (!reportData.getTemplateFileName().endsWith(".html")) {
             for (RegionProperty regionProperty : reportRegion.getRegionProperties()) {
                 EntityTreeNode entityTreeNode = regionProperty.getEntityTreeNode();
-                MetaClass metaClass = metadata.getClass(entityTreeNode.getWrappedMetaClass());
-                MetaProperty metaProperty = metaClass.getProperty(entityTreeNode.getWrappedMetaProperty());
+                MetaClass metaClass = metadata.getClass(entityTreeNode.getParentMetaClassName());
+                MetaProperty metaProperty = metaClass.getProperty(entityTreeNode.getMetaPropertyName());
 
                 if (metaProperty.getJavaType().isAssignableFrom(Date.class)) {
-                    ReportValueFormat rvf = new ReportValueFormat();
+                    ReportValueFormat rvf = metadata.create(ReportValueFormat.class);
                     rvf.setReport(report);
                     rvf.setValueName(reportRegion.getNameForBand() + "." + regionProperty.getHierarchicalNameExceptRoot());
                     rvf.setFormatString(messages.getMessage("dateTimeFormat"));
@@ -320,18 +320,18 @@ public class ReportsWizard {
     }
 
     public FetchPlan createFetchPlanByReportRegions(EntityTreeNode entityTreeRootNode, List<ReportRegion> reportRegions) {
-        MetaClass rootWrapperMetaClass = metadata.getClass(entityTreeRootNode.getWrappedMetaClass());
-        FetchPlanBuilder fetchPlanBuilder = fetchPlans.builder(rootWrapperMetaClass.getJavaClass());
+        MetaClass rootMetaClass = metadata.getClass(entityTreeRootNode.getMetaClassName());
+        FetchPlanBuilder fetchPlanBuilder = fetchPlans.builder(rootMetaClass.getJavaClass());
 
         Map<EntityTreeNode, FetchPlanBuilder> fetchPlansForNodes = new HashMap<>();
         fetchPlansForNodes.put(entityTreeRootNode, fetchPlanBuilder);
         for (ReportRegion reportRegion : reportRegions) {
             for (RegionProperty regionProperty : reportRegion.getRegionProperties()) {
-                fetchPlanBuilder.add(regionProperty.getName());
                 EntityTreeNode entityTreeNode = regionProperty.getEntityTreeNode();
-                MetaClass metaClass = metadata.getClass(entityTreeNode);
+                String metaClassName = entityTreeNode.getMetaClassName();
 
-                if (metaClass != null) {
+                if (metaClassName != null) {
+                    MetaClass metaClass = metadata.getClass(metaClassName);
                     FetchPlanBuilder propertyFetchPlanBuilder = fetchPlansForNodes.get(entityTreeNode);
                     if (propertyFetchPlanBuilder == null) {
                         propertyFetchPlanBuilder = fetchPlans.builder(metaClass.getJavaClass());
@@ -397,12 +397,11 @@ public class ReportsWizard {
      */
     protected FetchPlanBuilder ensureParentFetchPlansExist(EntityTreeNode entityTreeNode, Map<EntityTreeNode, FetchPlanBuilder> fetchPlansForNodes) {
         EntityTreeNode parentNode = entityTreeNode.getParent();
-        MetaClass wrapperMetaClass = metadata.getClass(parentNode.getWrappedMetaClass());
-
-        FetchPlanBuilder parentFetchPlanBuilder = fetchPlans.builder(wrapperMetaClass.getJavaClass());
+        FetchPlanBuilder parentFetchPlanBuilder = fetchPlansForNodes.get(parentNode);
 
         if (parentFetchPlanBuilder == null && parentNode != null) {
-            parentFetchPlanBuilder = fetchPlans.builder(wrapperMetaClass.getJavaClass());
+            MetaClass metaClass = metadata.getClass(parentNode.getMetaClassName());
+            parentFetchPlanBuilder = fetchPlans.builder(metaClass.getJavaClass());
             fetchPlansForNodes.put(parentNode, parentFetchPlanBuilder);
             FetchPlanBuilder parentOfParentFetchPlan = ensureParentFetchPlansExist(parentNode, fetchPlansForNodes);
             if (parentOfParentFetchPlan != null) {

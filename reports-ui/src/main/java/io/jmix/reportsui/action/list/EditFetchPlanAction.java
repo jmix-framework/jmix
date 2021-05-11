@@ -39,12 +39,15 @@ import io.jmix.ui.component.Component;
 import io.jmix.ui.component.Table;
 import io.jmix.ui.meta.StudioAction;
 import io.jmix.ui.model.CollectionContainer;
+import io.jmix.ui.screen.MapScreenOptions;
 import io.jmix.ui.screen.OpenMode;
 import io.jmix.ui.screen.StandardOutcome;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 @StudioAction(target = "io.jmix.ui.component.ListComponent", description = "Edit action for an entity band")
 @ActionType(EditFetchPlanAction.ID)
@@ -125,15 +128,18 @@ public class EditFetchPlanAction extends ListAction {
                             reportRegion.setReportData(dataManager.create(ReportData.class));
                             reportRegion.setBandNameFromReport(dataSet.getName());
 
+                            Map<String, Object> editorParams = new HashMap<>();
+                            editorParams.put("rootEntity", reportRegion.getRegionPropertiesRootNode());
+                            editorParams.put("scalarOnly", Boolean.TRUE);
+
                             RegionEditor screen = screenBuilders.editor(ReportRegion.class, dataSetsTable.getFrame().getFrameOwner())
                                     .editEntity(reportRegion)
                                     .withScreenClass(RegionEditor.class)
                                     .withOpenMode(OpenMode.DIALOG)
+                                    .withOptions(new MapScreenOptions(editorParams))
                                     .build();
                             screen.setAsFetchPlanEditor(true);
-                            screen.setRootEntity(reportRegion.getRegionPropertiesRootNode());
                             screen.setUpdatePermission(secureOperations.isEntityUpdatePermitted(metadata.getClass(Report.class), policyStore));
-                            //todo show only scalar properties
 
                             screen.addAfterCloseListener(afterCloseEvent -> {
                                 if (afterCloseEvent.closedWith(StandardOutcome.COMMIT)) {
@@ -213,7 +219,7 @@ public class EditFetchPlanAction extends ListAction {
                     if (fetchPlan == null) {
                         //Fetch plan was never created for current dataset.
                         //We must to create minimal fetch plan that contains collection property for ability of creating ReportRegion.regionPropertiesRootNode later
-                        MetaClass metaClass = metadata.getClass(entityTree.getEntityTreeRootNode().getWrappedMetaClass());
+                        MetaClass metaClass = metadata.getClass(entityTree.getEntityTreeRootNode().getMetaClassName());
                         MetaProperty metaProperty = metaClass.getProperty(collectionPropertyName);
                         if (metaProperty.getDomain() != null && metaProperty.getRange().getCardinality().isMany()) {
                             fetchPlan = fetchPlans.builder(metaProperty.getDomain().getJavaClass()).build();

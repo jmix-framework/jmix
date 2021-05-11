@@ -154,7 +154,6 @@ public class RegionsStepFragment extends StepFragment {
         final Map<String, Object> lookupParams = new HashMap<>();
         lookupParams.put("rootEntity", reportDataDc.getItem().getEntityTreeRootNode());
         lookupParams.put("collectionsOnly", Boolean.TRUE);
-        lookupParams.put("persistentOnly", ReportTypeGenerate.LIST_OF_ENTITIES_WITH_QUERY == getReportTypeGenerate());
 
         EntityTreeLookup entityTreeLookup = (EntityTreeLookup) screenBuilders.lookup(EntityTreeNode.class, getFragment().getFrameOwner())
                 .withScreenId("report_ReportEntityTree.lookup")
@@ -166,7 +165,6 @@ public class RegionsStepFragment extends StepFragment {
 
                         Map<String, Object> editorParams = new HashMap<>();
                         editorParams.put("scalarOnly", Boolean.TRUE);
-                        editorParams.put("persistentOnly", ReportTypeGenerate.LIST_OF_ENTITIES_WITH_QUERY == getReportTypeGenerate());
                         editorParams.put("rootEntity", regionPropertiesRootNode);
                         item.setRegionPropertiesRootNode(regionPropertiesRootNode);
 
@@ -211,7 +209,7 @@ public class RegionsStepFragment extends StepFragment {
     public void onRunBtnClick(Button.ClickEvent event) {
         if (reportDataDc.getItem().getReportRegions().isEmpty()) {
             notifications.create(Notifications.NotificationType.TRAY)
-                    .withCaption(messages.getMessage(getClass(),"addRegionsWarn"))
+                    .withCaption(messages.getMessage(getClass(), "addRegionsWarn"))
                     .show();
             return;
         }

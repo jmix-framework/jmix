@@ -75,12 +75,13 @@ public class ReportTemplatePlaceholder {
         } else {
             bandName = reportRegion.getNameForBand() + "[0]";
         }
-        MetaClass metaClass = metadata.getClass(entityTreeNode.getWrappedMetaClass());
-        MetaProperty wrappedMetaProperty = metaClass.getProperty(entityTreeNode.getWrappedMetaProperty());
-        Temporal temporal = wrappedMetaProperty.getAnnotatedElement().getAnnotation(Temporal.class);
-        if (temporal != null || wrappedMetaProperty.getJavaType().isAssignableFrom(Date.class)) {
-            if (temporal != null && !wrappedMetaProperty.getJavaType().isAssignableFrom(Date.class)) {
-                log.warn("Temporal annotated class property " + reportRegion.getNameForBand() + "." + wrappedMetaProperty.getName() + " is not assignable from java.util.Date class");
+        String parentMetaClassName = entityTreeNode.getParentMetaClassName();
+        MetaClass metaClass = metadata.getClass(parentMetaClassName);
+        MetaProperty metaProperty = metaClass.getProperty(entityTreeNode.getMetaPropertyName());
+        Temporal temporal = metaProperty.getAnnotatedElement().getAnnotation(Temporal.class);
+        if (temporal != null || metaProperty.getJavaType().isAssignableFrom(Date.class)) {
+            if (temporal != null && !metaProperty.getJavaType().isAssignableFrom(Date.class)) {
+                log.warn("Temporal annotated class property " + reportRegion.getNameForBand() + "." + metaProperty.getName() + " is not assignable from java.util.Date class");
             }
             String dateMask;
             if (temporal != null) {

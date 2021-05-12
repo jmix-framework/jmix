@@ -278,9 +278,6 @@ public class MessagesTest {
         assertTrue(availableLocales.contains(Locale.forLanguageTag("fr")));
         assertTrue(availableLocales.contains(Locale.forLanguageTag("fr-CA")));
 
-        boolean localeLanguageOnly = messages.getTools().useLocaleLanguageOnly();
-        assertFalse(localeLanguageOnly);
-
         String msg;
 
         msg = messages.getMessage("com.haulmont.cuba.core.messagespack", "commonMsg", Locale.forLanguageTag("fr-CA"));
@@ -305,9 +302,6 @@ public class MessagesTest {
 
         assertEquals(LocaleResolver.resolve("sr-Latn"), Locale.forLanguageTag("sr-Latn"));
         assertEquals(LocaleResolver.resolve("ja_JP_JP"), LocaleUtils.toLocale("ja_JP_JP"));
-
-        boolean localeLanguageOnly = messages.getTools().useLocaleLanguageOnly();
-        assertFalse(localeLanguageOnly);
 
         String msg;
 

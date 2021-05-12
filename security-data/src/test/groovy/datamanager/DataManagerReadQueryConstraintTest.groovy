@@ -18,6 +18,7 @@ package datamanager
 
 import io.jmix.core.AccessConstraintsRegistry
 import io.jmix.core.DataManager
+import io.jmix.core.EntityAccessException
 import io.jmix.core.Metadata
 import io.jmix.core.UnsafeDataManager
 import io.jmix.core.security.InMemoryUserRepository
@@ -147,6 +148,23 @@ class DataManagerReadQueryConstraintTest extends SecurityDataSpecification {
         result.contains(orderAllowed)
     }
 
+    def "load with constraints by ids"() {
+        setup:
+
+        authenticate('user1')
+
+        when:
+
+        unsafeDataManager.load(TestOrder.class)
+                .ids(orderDenied1.id, orderAllowed.id, orderDenied2.id)
+                .accessConstraints(accessConstraintsRegistry.getConstraints())
+                .list()
+
+        then:
+
+        thrown EntityAccessException
+    }
+
     def "load with secured"() {
         setup:
 
@@ -155,7 +173,7 @@ class DataManagerReadQueryConstraintTest extends SecurityDataSpecification {
         when:
 
         def result = dataManager.load(TestOrder.class)
-                .all()
+                .ids(orderDenied1.id, orderAllowed.id, orderDenied2.id)
                 .list()
 
         then:

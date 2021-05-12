@@ -154,7 +154,6 @@ public class ReportEditor extends StandardEditor<Report> {
         if (report.getBands().isEmpty()) {
             BandDefinition rootDefinition = createRootBandDefinition(report);
 
-            report.setBands(new HashSet<>());
             report.getBands().add(rootDefinition);
         }
 

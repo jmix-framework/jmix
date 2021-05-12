@@ -217,12 +217,12 @@ public abstract class App {
     }
 
     protected Locale resolveLocale(@Nullable Locale requestLocale) {
-        Map<String, Locale> locales = coreProperties.getAvailableLocales();
+        List<Locale> locales = coreProperties.getAvailableLocales();
 
-        if (coreProperties.isLocaleSelectVisible()) {
+        if (uiProperties.isLocaleSelectVisible()) {
             String lastLocale = getCookieValue(COOKIE_LOCALE);
             if (lastLocale != null) {
-                for (Locale locale : locales.values()) {
+                for (Locale locale : locales) {
                     if (locale.toLanguageTag().equals(lastLocale)) {
                         return locale;
                     }
@@ -232,14 +232,14 @@ public abstract class App {
 
         if (requestLocale != null) {
             Locale requestTrimmedLocale = messageTools.trimLocale(requestLocale);
-            if (locales.containsValue(requestTrimmedLocale)) {
+            if (locales.contains(requestTrimmedLocale)) {
                 return requestTrimmedLocale;
             }
 
             // if not found and application locale contains country, try to match by language only
             if (!StringUtils.isEmpty(requestLocale.getCountry())) {
                 Locale appLocale = Locale.forLanguageTag(requestLocale.getLanguage());
-                for (Locale locale : locales.values()) {
+                for (Locale locale : locales) {
                     if (Locale.forLanguageTag(locale.getLanguage()).equals(appLocale)) {
                         return locale;
                     }

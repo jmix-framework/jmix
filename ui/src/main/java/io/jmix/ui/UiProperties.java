@@ -60,6 +60,7 @@ public class UiProperties {
     String loginScreenId;
     String mainScreenId;
     String initialScreenId;
+    boolean localeSelectVisible;
     boolean forceRefreshAuthenticatedTabs;
     int mainTabCaptionLength;
 
@@ -90,6 +91,7 @@ public class UiProperties {
             @DefaultValue("login") String loginScreenId,
             @DefaultValue("main") String mainScreenId,
             String initialScreenId,
+            @DefaultValue("true") boolean localeSelectVisible,
             @DefaultValue("false") boolean forceRefreshAuthenticatedTabs,
             @DefaultValue("25") int mainTabCaptionLength
     ) {
@@ -121,6 +123,7 @@ public class UiProperties {
         this.loginScreenId = loginScreenId;
         this.mainScreenId = mainScreenId;
         this.initialScreenId = initialScreenId;
+        this.localeSelectVisible = localeSelectVisible;
         this.forceRefreshAuthenticatedTabs = forceRefreshAuthenticatedTabs;
         this.mainTabCaptionLength = mainTabCaptionLength;
     }
@@ -297,5 +300,12 @@ public class UiProperties {
      */
     public int getMainTabCaptionLength() {
         return mainTabCaptionLength;
+    }
+
+    /**
+     * Whether the locale select field is shown on login screen.
+     */
+    public boolean isLocaleSelectVisible() {
+        return localeSelectVisible;
     }
 }

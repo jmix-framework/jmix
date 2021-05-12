@@ -173,7 +173,7 @@ class DataManagerReadQueryConstraintTest extends SecurityDataSpecification {
         when:
 
         def result = dataManager.load(TestOrder.class)
-                .ids(orderDenied1.id, orderAllowed.id, orderDenied2.id)
+                .all()
                 .list()
 
         then:
@@ -181,6 +181,22 @@ class DataManagerReadQueryConstraintTest extends SecurityDataSpecification {
         result.size() == 1
 
         result.contains(orderAllowed)
+    }
+
+    def "load with secured by ids"() {
+        setup:
+
+        authenticate('user1')
+
+        when:
+
+        dataManager.load(TestOrder.class)
+                .ids(orderDenied1.id, orderAllowed.id, orderDenied2.id)
+                .list()
+
+        then:
+
+        thrown EntityAccessException
     }
 
     protected void authenticate(String username) {

@@ -21,16 +21,21 @@ import com.haulmont.cuba.core.global.Messages;
 import com.haulmont.cuba.gui.components.LookupField;
 import com.haulmont.cuba.web.security.AuthInfo;
 import io.jmix.core.CoreProperties;
+import io.jmix.core.MessageTools;
 import io.jmix.core.security.ClientDetails;
 import io.jmix.securityui.authentication.AuthDetails;
 import io.jmix.securityui.authentication.LoginScreenAuthenticationSupport;
-import io.jmix.ui.*;
+import io.jmix.ui.App;
+import io.jmix.ui.JmixApp;
+import io.jmix.ui.Notifications;
+import io.jmix.ui.Screens;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.*;
 import io.jmix.ui.navigation.Route;
 import io.jmix.ui.screen.*;
 import io.jmix.ui.security.UiLoginProperties;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.Authentication;
@@ -77,6 +82,8 @@ public class LoginScreen extends Screen {
     protected PasswordField passwordField;
     @Inject
     protected LookupField<Locale> localesSelect;
+    @Autowired
+    private MessageTools messageTools;
 
     @Subscribe
     protected void onInit(InitEvent event) {
@@ -103,7 +110,7 @@ public class LoginScreen extends Screen {
     }
 
     protected void initLocales() {
-        localesSelect.setOptionsMap(coreProperties.getAvailableLocales());
+        localesSelect.setOptionsMap(messageTools.getAvailableLocalesMap());
         localesSelect.setValue(app.getLocale());
 
         boolean localeSelectVisible = cubaProperties.isLocaleSelectVisible();

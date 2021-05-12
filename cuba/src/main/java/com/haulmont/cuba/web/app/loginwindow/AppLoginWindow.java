@@ -36,6 +36,8 @@ import org.springframework.security.core.Authentication;
 import javax.inject.Inject;
 import java.util.Locale;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Legacy base class for a controller of application Login window.
@@ -103,7 +105,7 @@ public class AppLoginWindow extends AbstractWindow implements Window.TopLevelWin
     }
 
     protected void initLocales() {
-        localesSelect.setOptionsMap(coreProperties.getAvailableLocales());
+        localesSelect.setOptionsMap(messageTools.getAvailableLocalesMap());
         localesSelect.setValue(app.getLocale());
 
         boolean localeSelectVisible = cubaProperties.isLocaleSelectVisible();

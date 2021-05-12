@@ -38,6 +38,7 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -273,9 +274,9 @@ public class MessagesTest {
     public void testLanguageAndCountry() throws Exception {
         Messages messages = AppBeans.get(Messages.class);
 
-        Map<String, Locale> availableLocales = AppBeans.get(CoreProperties.class).getAvailableLocales();
-        assertTrue(availableLocales.containsValue(Locale.forLanguageTag("fr")));
-        assertTrue(availableLocales.containsValue(Locale.forLanguageTag("fr-CA")));
+        List<Locale> availableLocales = AppBeans.get(CoreProperties.class).getAvailableLocales();
+        assertTrue(availableLocales.contains(Locale.forLanguageTag("fr")));
+        assertTrue(availableLocales.contains(Locale.forLanguageTag("fr-CA")));
 
         boolean localeLanguageOnly = messages.getTools().useLocaleLanguageOnly();
         assertFalse(localeLanguageOnly);
@@ -296,11 +297,11 @@ public class MessagesTest {
     public void testScriptAndVariant() throws Exception {
         Messages messages = AppBeans.get(Messages.class);
 
-        Map<String, Locale> availableLocales = AppBeans.get(CoreProperties.class).getAvailableLocales();
-        assertTrue(availableLocales.containsValue(LocaleUtils.toLocale("sr")));
-        assertTrue(availableLocales.containsValue(Locale.forLanguageTag("sr-Latn")));
-        assertTrue(availableLocales.containsValue(LocaleUtils.toLocale("ja")));
-        assertTrue(availableLocales.containsValue(LocaleUtils.toLocale("ja_JP_JP")));
+        List<Locale> availableLocales = AppBeans.get(CoreProperties.class).getAvailableLocales();
+        assertTrue(availableLocales.contains(LocaleUtils.toLocale("sr")));
+        assertTrue(availableLocales.contains(Locale.forLanguageTag("sr-Latn")));
+        assertTrue(availableLocales.contains(LocaleUtils.toLocale("ja")));
+        assertTrue(availableLocales.contains(LocaleUtils.toLocale("ja_JP_JP")));
 
         assertEquals(LocaleResolver.resolve("sr-Latn"), Locale.forLanguageTag("sr-Latn"));
         assertEquals(LocaleResolver.resolve("ja_JP_JP"), LocaleUtils.toLocale("ja_JP_JP"));

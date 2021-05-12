@@ -20,29 +20,55 @@ import com.google.common.base.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Component("ui_ThemeVariantsProvider")
-public class HeliumThemeVariantsProvider implements ThemeVariantsProvider {
+public class ThemeVariantsProviderImpl implements ThemeVariantsProvider {
 
     @Autowired
-    protected HeliumThemeVariantsManager variantsManager;
+    protected ThemeVariantsManager variantsManager;
 
     @Override
     public List<String> getThemeVariants() {
         List<String> variants = new ArrayList<>(2);
 
-        String themeMode = variantsManager.getUserAppThemeMode();
+        String themeMode = getThemeMode();
         if (!Strings.isNullOrEmpty(themeMode)) {
             variants.add(themeMode);
         }
 
-        String themeSize = variantsManager.getUserAppThemeSize();
+        String themeSize = getThemeSize();
         if (!Strings.isNullOrEmpty(themeSize)) {
             variants.add(themeSize);
         }
 
         return variants;
+    }
+
+    @Nullable
+    protected String getThemeMode() {
+        String themeMode = variantsManager.getThemeModeCookieValue();
+        if (Strings.isNullOrEmpty(themeMode)) {
+            themeMode = variantsManager.getDefaultThemeModeToUse();
+        }
+
+        return Objects.equals(themeMode, variantsManager.getDefaultThemeMode())
+                ? null          // Don't add the default value to the result style class names list
+                : themeMode;
+    }
+
+    @Nullable
+    protected String getThemeSize() {
+        String themeSize = variantsManager.getThemeSizeCookieValue();
+        if (Strings.isNullOrEmpty(themeSize)) {
+            themeSize = variantsManager.getDefaultThemeSizeToUse();
+        }
+
+        return Objects.equals(themeSize, variantsManager.getDefaultThemeSize())
+                ? null          // Don't add the default value to the result style class names list
+                : themeSize;
     }
 }

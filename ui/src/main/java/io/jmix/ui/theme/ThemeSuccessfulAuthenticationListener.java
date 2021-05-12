@@ -13,23 +13,23 @@ import java.util.Objects;
 public class ThemeSuccessfulAuthenticationListener {
 
     @Autowired
-    protected HeliumThemeVariantsManager variantsManager;
+    protected ThemeVariantsManager variantsManager;
 
     @EventListener
     public void onAuthenticationSuccess(InteractiveAuthenticationSuccessEvent event) {
         Authentication authentication = event.getAuthentication();
         if (authentication.isAuthenticated()) {
-            String modeCookie = variantsManager.getUserAppThemeMode();
-            String mode = variantsManager.loadUserAppThemeModeSetting();
+            String modeCookie = variantsManager.getThemeModeCookieValue();
+            String mode = variantsManager.getThemeModeUserSetting();
 
-            String sizeCookie = variantsManager.getUserAppThemeSize();
-            String size = variantsManager.loadUserAppThemeSizeSetting();
+            String sizeCookie = variantsManager.getThemeSizeCookieValue();
+            String size = variantsManager.getThemeSizeUserSetting();
 
             if (!Objects.equals(modeCookie, mode)
                     || !Objects.equals(sizeCookie, size)) {
                 // if either modes or sizes are not equal, user settings take precedence
-                variantsManager.setUserAppThemeMode(mode);
-                variantsManager.setUserAppThemeSize(size);
+                variantsManager.setThemeMode(mode);
+                variantsManager.setThemeSize(size);
 
                 Page.getCurrent().reload();
             }

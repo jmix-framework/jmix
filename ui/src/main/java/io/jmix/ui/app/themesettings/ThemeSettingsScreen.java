@@ -22,7 +22,7 @@ import io.jmix.ui.Notifications;
 import io.jmix.ui.component.*;
 import io.jmix.ui.navigation.Route;
 import io.jmix.ui.screen.*;
-import io.jmix.ui.theme.HeliumThemeVariantsManager;
+import io.jmix.ui.theme.ThemeVariantsManager;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -56,7 +56,7 @@ public class ThemeSettingsScreen extends Screen {
     private CheckBoxGroup<String> checkBoxGroup;
 
     @Autowired
-    protected HeliumThemeVariantsManager variantsManager;
+    protected ThemeVariantsManager variantsManager;
 
     @Autowired
     protected Environment environment;
@@ -94,8 +94,8 @@ public class ThemeSettingsScreen extends Screen {
     }
 
     protected void checkSettingsAvailable() {
-        List<String> appThemeModeList = variantsManager.getAppThemeModeList();
-        List<String> appThemeSizeList = variantsManager.getAppThemeSizeList();
+        List<String> appThemeModeList = variantsManager.getThemeModeList();
+        List<String> appThemeSizeList = variantsManager.getThemeSizeList();
 
         settingsAvailable = CollectionUtils.isNotEmpty(appThemeModeList)
                 || CollectionUtils.isNotEmpty(appThemeSizeList);
@@ -114,13 +114,13 @@ public class ThemeSettingsScreen extends Screen {
     }
 
     protected void initModeField() {
-        modeField.setOptionsList(variantsManager.getAppThemeModeList());
-        modeField.setValue(variantsManager.loadUserAppThemeModeSettingOrDefault());
+        modeField.setOptionsList(variantsManager.getThemeModeList());
+        modeField.setValue(variantsManager.getThemeModeUserSettingOrDefault());
     }
 
     protected void initSizeField() {
-        sizeField.setOptionsList(variantsManager.getAppThemeSizeList());
-        sizeField.setValue(variantsManager.loadUserAppThemeSizeSettingOrDefault());
+        sizeField.setOptionsList(variantsManager.getThemeSizeList());
+        sizeField.setValue(variantsManager.getThemeSizeUserSettingOrDefault());
     }
 
     @Subscribe("applyBtn")
@@ -133,12 +133,12 @@ public class ThemeSettingsScreen extends Screen {
 
     protected void applyThemeMode() {
         String mode = modeField.getValue();
-        variantsManager.setUserAppThemeMode(mode);
+        variantsManager.setThemeMode(mode);
     }
 
     protected void applyThemeSize() {
         String size = sizeField.getValue();
-        variantsManager.setUserAppThemeSize(size);
+        variantsManager.setThemeSize(size);
     }
 
     @Subscribe("modeField")

@@ -14,6 +14,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.graphql.datafetcher.EntityMutationDataFetcher;
 import io.jmix.graphql.datafetcher.EntityQueryDataFetcher;
+import io.jmix.graphql.datafetcher.MessagesDataFetcher;
 import io.jmix.graphql.datafetcher.PermissionDataFetcher;
 import io.jmix.graphql.schema.scalar.CustomScalars;
 import org.slf4j.Logger;
@@ -56,7 +57,11 @@ public class SchemaBuilder {
     @Autowired
     protected PermissionDataFetcher permissionDataFetcher;
     @Autowired
+    protected MessagesDataFetcher messagesDataFetcher;
+    @Autowired
     protected Metadata metadata;
+    @Autowired
+    private MessagesTypesBuilder messagesTypesBuilder;
 
     public GraphQLSchema createSchema() {
 
@@ -166,6 +171,9 @@ public class SchemaBuilder {
         // permission types
         typeDefinitionRegistry.addAll(permissionTypesBuilder.buildPermissionTypes());
 
+        //messages types
+        typeDefinitionRegistry.addAll(messagesTypesBuilder.buildMessagesTypes());
+
         GraphQLSchema graphQLSchema = new SchemaGenerator()
                 .makeExecutableSchema(typeDefinitionRegistry, buildRuntimeWiring(allPersistentMetaClasses).build());
         // schema could be downloaded via 'graphqurl', not need in log
@@ -190,10 +198,10 @@ public class SchemaBuilder {
                 // todo filter persistent
                 .forEach(metaClass -> {
                     rwBuilder.type(SCHEMA_QUERY, typeWiring -> typeWiring
-                            .dataFetcher(NamingUtils.composeListQueryName(metaClass), entityQueryDataFetcher.loadEntities(metaClass))
-                            .dataFetcher(NamingUtils.composeByIdQueryName(metaClass), entityQueryDataFetcher.loadEntity(metaClass))
-                            .dataFetcher(NamingUtils.composeCountQueryName(metaClass), entityQueryDataFetcher.countEntities(metaClass))
-                            .dataFetcher(NamingUtils.QUERY_PERMISSIONS, permissionDataFetcher.loadPermissions()));
+                                    .dataFetcher(NamingUtils.composeListQueryName(metaClass), entityQueryDataFetcher.loadEntities(metaClass))
+                                    .dataFetcher(NamingUtils.composeByIdQueryName(metaClass), entityQueryDataFetcher.loadEntity(metaClass))
+                                    .dataFetcher(NamingUtils.composeCountQueryName(metaClass), entityQueryDataFetcher.countEntities(metaClass))
+                                    .dataFetcher(NamingUtils.QUERY_PERMISSIONS, permissionDataFetcher.loadPermissions()));
 
                     rwBuilder.type(SCHEMA_MUTATION, typeWiring -> typeWiring
                             .dataFetcher(NamingUtils.composeUpsertMutationName(metaClass), entityMutationDataFetcher.upsertEntity(metaClass))
@@ -203,6 +211,12 @@ public class SchemaBuilder {
                             .dataFetcher(NamingUtils.composeDeleteMutationName(metaClass), entityMutationDataFetcher.deleteEntity(metaClass))
                     );
                 });
+
+        rwBuilder.type(SCHEMA_QUERY, typeWiring -> typeWiring
+                .dataFetcher(NamingUtils.QUERY_ENUM_MESSAGES, messagesDataFetcher.loadEnumMessages())
+                .dataFetcher(NamingUtils.QUERY_ENTITY_MESSAGES, messagesDataFetcher.loadEntityMessages())
+        );
+
         return rwBuilder;
     }
 
@@ -247,7 +261,6 @@ public class SchemaBuilder {
                             .name(NamingUtils.composeCountQueryName(metaClass))
                             .type(new TypeName(CustomScalars.GraphQLLong.getName()))
                             .build());
-
         });
 
         // custom query for permissions
@@ -255,6 +268,24 @@ public class SchemaBuilder {
                 FieldDefinition.newFieldDefinition()
                         .name(NamingUtils.QUERY_PERMISSIONS)
                         .type(new TypeName(NamingUtils.TYPE_SEC_PERMISSION_CONFIG))
+                        .build());
+
+        // custom query for entities messages
+        fields.add(
+                FieldDefinition.newFieldDefinition()
+                        .name(NamingUtils.QUERY_ENTITY_MESSAGES)
+                        .type(ListType.newListType(new TypeName(NamingUtils.TYPE_GQL_MESSAGE_DETAIL)).build())
+                        .inputValueDefinition(arg("className", "String", null))
+                        .inputValueDefinition(arg("locale", "String", null))
+                        .build());
+
+        // custom query for enum messages
+        fields.add(
+                FieldDefinition.newFieldDefinition()
+                        .name(NamingUtils.QUERY_ENUM_MESSAGES)
+                        .type(ListType.newListType(new TypeName(NamingUtils.TYPE_GQL_MESSAGE_DETAIL)).build())
+                        .inputValueDefinition(arg("className", "String", null))
+                        .inputValueDefinition(arg("locale", "String", null))
                         .build());
 
         return ObjectTypeDefinition.newObjectTypeDefinition()

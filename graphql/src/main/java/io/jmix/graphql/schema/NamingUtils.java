@@ -7,7 +7,10 @@ import javax.validation.constraints.NotNull;
 
 public class NamingUtils {
 
+    public static final String QUERY_ENTITY_MESSAGES = "entityMessages";
+    public static final String QUERY_ENUM_MESSAGES = "enumMessages";
     public static final String QUERY_PERMISSIONS = "permissions";
+    public static final String TYPE_GQL_MESSAGE_DETAIL = "gql_MessageDetail";
     public static final String TYPE_SEC_PERMISSION = "sec_Permission";
     public static final String TYPE_SEC_PERMISSION_CONFIG = "sec_PermissionConfig";
     public static final String ENTITIES = "entities";

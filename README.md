@@ -395,4 +395,116 @@ Finally, we can combine all this approaches in one query:
 }
 ```
 
+### Examples of getting localization messages 
+The query for getting messages for all entities:
 
+```
+{
+    entityMessages{
+        key
+        value
+    }
+}
+```
+
+The part of the result will look like this:
+```
+{
+  "data": {
+    "entityMessages": [
+        ...
+        {
+            "key": "scr$Car",
+            "value": "Car"
+        },
+        {
+            "key": "scr$Car.purchaseDate",
+            "value": "Purchase Date"
+        },
+        {
+            "key": "scr$Car.lastModifiedDate",
+            "value": "Last modified date"
+        },
+        {
+            "key": "scr$Car.maxPassengers",
+            "value": "Max Passengers"
+        },
+        {
+            "key": "scr$Car.lastModifiedBy",
+            "value": "Last modified by"
+        },
+        {
+            "key": "scr$Car.garage",
+            "value": "Garage"
+        },
+        ...
+    ]
+  }
+}
+```
+
+Messages for enums can get by the query:
+```
+{
+    enumMessages{
+        key
+        value
+    }
+}
+```
+And the part of the result:
+```
+{
+  "data": {
+    "enumMessages": [
+        ...
+        {
+            "key": "com.company.scr.entity.CarType",
+            "value": "CarType"
+        },
+        {
+            "key": "com.company.scr.entity.CarType.SEDAN",
+            "value": "Sedan"
+        },
+        {
+            "key": "com.company.scr.entity.CarType.HATCHBACK",
+            "value": "Hatchback"
+        },
+        ...
+    ]
+  }
+}
+```
+
+Also available getting messages for only one entity with `String` parameter `className` :
+```
+{
+    entityMessages(className: "scr$Car") {
+        key
+        value
+    }
+}
+```
+Or enum:
+```
+{
+    enumMessages(className: "com.company.scr.entity.CarType"){
+        key
+        value
+    }
+}
+```
+Localized messages can be loaded by `String` parameter `locale`. 
+If the parameter doesn't define, so the locale will be received from the current user:
+```
+{
+    entityMessages(className: "scr$Car" locale:"ru") {
+        key
+        value
+    }
+    enumMessages(className: "com.company.scr.entity.CarType" locale: "en"){
+        key
+        value
+    }
+}
+```

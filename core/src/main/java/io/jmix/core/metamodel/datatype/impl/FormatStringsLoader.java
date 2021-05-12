@@ -75,7 +75,7 @@ public class FormatStringsLoader {
                 log.warn("Localized format strings are not defined for {}", locale);
 
             formatStringsRegistry.setFormatStrings(
-                    messageTools.trimLocale(locale),
+                    locale.stripExtensions(),
                     new FormatStrings(
                             numberDecimalSeparator.charAt(0),
                             numberGroupingSeparator.charAt(0),

@@ -49,8 +49,6 @@ public class MessageTools {
 
     private static final Logger log = LoggerFactory.getLogger(MessageTools.class);
 
-    protected volatile Boolean useLocaleLanguageOnly;
-
     @Autowired
     protected Messages messages;
 
@@ -350,52 +348,7 @@ public class MessageTools {
     }
 
     /**
-     * @return whether to use a full locale representation, or language only. Returns true if all locales listed
-     * in {@code jmix.core.availableLocales} app property are language only.
-     */
-    public boolean useLocaleLanguageOnly() {
-        if (useLocaleLanguageOnly == null) {
-            boolean found = false;
-            for (Locale locale : properties.getAvailableLocales()) {
-                if (!StringUtils.isEmpty(locale.getCountry()) || !StringUtils.isEmpty(locale.getVariant())
-                        || !StringUtils.isEmpty(locale.getScript())) {
-                    useLocaleLanguageOnly = false;
-                    found = true;
-                    break;
-                }
-            }
-            if (!found)
-                useLocaleLanguageOnly = true;
-        }
-        return useLocaleLanguageOnly;
-    }
-
-    /**
-     * Locale representation depending on {@code cuba.useLocaleLanguageOnly} application property.
-     *
-     * @param locale locale instance
-     * @return language code if {@code cuba.useLocaleLanguageOnly=true}, or full locale representation otherwise
-     */
-    public String localeToString(Locale locale) {
-        Preconditions.checkNotNullArgument(locale);
-
-        return useLocaleLanguageOnly() ? locale.getLanguage() : LocaleResolver.localeToString(locale);
-    }
-
-    /**
-     * Trims locale to language-only if {@link #useLocaleLanguageOnly()} is true.
-     * @param locale    a locale
-     * @return          the locale with the same language and empty country and variant
-     */
-    public Locale trimLocale(Locale locale) {
-        Preconditions.checkNotNullArgument(locale);
-
-        return useLocaleLanguageOnly() ? Locale.forLanguageTag(locale.getLanguage()) : locale.stripExtensions();
-    }
-
-    /**
-     * @return first locale from the list defined in {@code jmix.core.availableLocales} app property, taking into
-     * account {@link #useLocaleLanguageOnly()} return value.
+     * Returns the first locale from the list defined in {@code jmix.core.availableLocales} app property.
      */
     public Locale getDefaultLocale() {
         if (properties.getAvailableLocales().isEmpty())

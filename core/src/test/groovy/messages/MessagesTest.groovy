@@ -86,4 +86,12 @@ class MessagesTest extends Specification {
         messages.formatMessage('', 'formattedMessage', LOC_EN, 'abc') == 'value abc'
         messages.formatMessage('', 'formattedMessage', LOC_RU, 'abc') == 'значение abc'
     }
+
+    def "language tag with country"() {
+        expect:
+
+        messages.getMessage('localeDisplayName.fr_CA', Locale.forLanguageTag('fr-CA')) == 'Français (Canada)'
+        messages.getMessage('messageInFr', Locale.forLanguageTag('fr-CA')) == 'message in fr'
+        messages.getMessage('messageInFrCA', Locale.forLanguageTag('fr-CA')) == 'message in fr CA'
+    }
 }

@@ -29,6 +29,8 @@ class JmixPlugin implements Plugin<Project> {
 
     public static final String THEMES_CONFIGURATION_NAME = 'themes'
     public static final String WIDGETS_CONFIGURATION_NAME = 'widgets'
+    public static final String PROVIDED_RUNTIME_CONFIGURATION_NAME = 'providedRuntime'
+    public static final String PRODUCTION_RUNTIME_CLASSPATH_CONFIGURATION_NAME = 'productionRuntimeClasspath'
 
     public static final String COMPILE_THEMES_TASK_NAME = 'compileThemes'
     public static final String COMPILE_WIDGETS_TASK_NAME = 'compileWidgets'
@@ -44,9 +46,17 @@ class JmixPlugin implements Plugin<Project> {
                 project.dependencies.add('implementation', platform)
                 project.dependencies.add(THEMES_CONFIGURATION_NAME, platform)
                 project.dependencies.add(WIDGETS_CONFIGURATION_NAME, platform)
+
+                if (project.plugins.hasPlugin('war')) {
+                    project.dependencies.add(PROVIDED_RUNTIME_CONFIGURATION_NAME, platform)
+                }
+
+                if (project.plugins.hasPlugin('org.springframework.boot')) {
+                    project.dependencies.add(PRODUCTION_RUNTIME_CLASSPATH_CONFIGURATION_NAME, platform)
+                }
             }
 
-            if (project.plugins.hasPlugin("org.springframework.boot")) {
+            if (project.plugins.hasPlugin('org.springframework.boot')) {
                 project.with {
                     springBoot {
                         buildInfo()

@@ -26,6 +26,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -50,8 +51,8 @@ public class RestLocaleUtils {
         if (!Strings.isNullOrEmpty(request.getHeader(HttpHeaders.ACCEPT_LANGUAGE))) {
             Locale requestLocale = request.getLocale();
 
-            Map<String, Locale> availableLocales = coreProperties.getAvailableLocales();
-            if (availableLocales.values().contains(requestLocale)) {
+            List<Locale> availableLocales = coreProperties.getAvailableLocales();
+            if (availableLocales.contains(requestLocale)) {
                 locale = requestLocale;
             } else {
                 log.warn("Locale {} passed in the Accept-Language header is not supported by the application. It was ignored.", requestLocale);

@@ -37,7 +37,7 @@
     </facets>
 
     <layout spacing="true" expand="reportGroupsTable">
-        <filter applyTo="reportGroupsTable" dataLoader="groupsDl" margin="false,false,true,false">
+        <filter dataLoader="groupsDl" margin="false,false,true,false">
             <properties include=".*"/>
         </filter>
         <table id="reportGroupsTable" dataContainer="groupsDc" width="100%">
@@ -52,7 +52,7 @@
                 <button action="reportGroupsTable.remove"/>
             </buttonsPanel>
             <columns>
-                <column id="locName"/>
+                <column id="title"/>
                 <column id="systemFlag"/>
             </columns>
         </table>

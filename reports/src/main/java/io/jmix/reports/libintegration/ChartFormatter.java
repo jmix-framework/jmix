@@ -16,6 +16,7 @@
 
 package io.jmix.reports.libintegration;
 
+import io.jmix.core.MetadataTools;
 import io.jmix.reports.entity.ReportTemplate;
 import io.jmix.reports.entity.charts.*;
 import com.haulmont.yarg.formatters.factory.FormatterFactoryInput;
@@ -40,6 +41,9 @@ public class ChartFormatter extends AbstractFormatter {
 
     @Autowired
     private BeanFactory beanFactory;
+
+    @Autowired
+    private MetadataTools metadataTools;
 
     public ChartFormatter(FormatterFactoryInput formatterFactoryInput) {
         super(formatterFactoryInput);
@@ -72,7 +76,7 @@ public class ChartFormatter extends AbstractFormatter {
             data.add(bandData.getData());
         }
 
-        return beanFactory.getBean(ChartToJsonConverter.class, ((ReportTemplate) reportTemplate).getReport().getLocName())
+        return beanFactory.getBean(ChartToJsonConverter.class, metadataTools.getInstanceName(((ReportTemplate) reportTemplate).getReport()))
                 .convertSerialChart(description, data);
     }
 
@@ -83,7 +87,7 @@ public class ChartFormatter extends AbstractFormatter {
             data.add(bandData.getData());
         }
 
-        return beanFactory.getBean(ChartToJsonConverter.class, ((ReportTemplate) reportTemplate).getReport().getLocName())
+        return beanFactory.getBean(ChartToJsonConverter.class, metadataTools.getInstanceName(((ReportTemplate) reportTemplate).getReport()))
                 .convertPieChart(description, data);
     }
 }

@@ -17,6 +17,7 @@
 package io.jmix.reportsui.screen.report.history;
 
 import io.jmix.core.LoadContext;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.reports.entity.Report;
@@ -63,6 +64,9 @@ public class ReportExecutionDialog extends StandardLookup<Report> {
     protected DateField<Date> filterUpdatedDate;
     @Autowired
     protected CurrentAuthentication currentAuthentication;
+
+    @Autowired
+    protected MetadataTools metadataTools;
 
     @WindowParam(name = META_CLASS_PARAMETER)
     protected MetaClass metaClassParameter;
@@ -137,5 +141,10 @@ public class ReportExecutionDialog extends StandardLookup<Report> {
         }
 
         return true;
+    }
+
+    @Install(to = "reportsTable.name", subject = "valueProvider")
+    protected String reportsTableNameValueProvider(Report report) {
+        return metadataTools.getInstanceName(report);
     }
 }

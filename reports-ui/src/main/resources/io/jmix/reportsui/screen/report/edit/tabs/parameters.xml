@@ -44,7 +44,7 @@
                 <button id="downButton" action="inputParametersTable.down" icon="font-icon:CARET_DOWN"/>
             </buttonsPanel>
             <columns>
-                <column id="locName"/>
+                <column id="name"/>
                 <column id="alias"/>
                 <column id="type"/>
                 <column id="required"/>

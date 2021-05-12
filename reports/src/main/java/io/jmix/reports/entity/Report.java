@@ -23,6 +23,7 @@ import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.Listeners;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.*;
+import io.jmix.reports.util.MsgBundleTools;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -37,7 +38,7 @@ import java.util.stream.Collectors;
 
 /**
  * Attention! This entity should be detached for correct work. If you do not detach it please use logic as in
- * com.haulmont.reports.listener.ReportDetachListener#onBeforeDetach(com.haulmont.reports.entity.Report, io.jmix.core.DataManager )
+ * {@link io.jmix.reports.listener.ReportDetachListener#onBeforeDetach(Report)}
  */
 @Entity(name = "report_Report")
 @Table(name = "REPORT_REPORT")
@@ -159,9 +160,6 @@ public class Report implements com.haulmont.yarg.structure.Report {
     @JmixProperty
     @Composition
     protected Set<ReportRole> reportRoles = new HashSet<>();
-
-    @Transient
-    protected String localeName;
 
     @Transient
     protected Boolean isTmp = Boolean.FALSE;
@@ -480,17 +478,6 @@ public class Report implements com.haulmont.yarg.structure.Report {
         this.sysTenantId = sysTenantId;
     }
 
-    @JmixProperty
-    public String getLocName() {
-        if (localeName == null) {
-            //TODO Locale helper
-//            localeName = LocaleHelper.getLocalizedName(localeNames);
-            if (localeName == null)
-                localeName = name;
-        }
-        return localeName;
-    }
-
     @Override
     public Map<String, com.haulmont.yarg.structure.ReportTemplate> getReportTemplates() {
         Map<String, com.haulmont.yarg.structure.ReportTemplate> templateMap = new HashMap<>();
@@ -533,8 +520,8 @@ public class Report implements com.haulmont.yarg.structure.Report {
     }
 
     @InstanceName
-    @DependsOnProperties({"locName", "name"})
-    public String getCaption() {
-        return String.format("%s [%s]", getLocName(), getName());
+    @DependsOnProperties({"localeNames", "name"})
+    public String getInstanceName(MsgBundleTools msgBundleTools) {
+        return msgBundleTools.getLocalizedValue(localeNames, name);
     }
 }

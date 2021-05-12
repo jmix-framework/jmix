@@ -56,6 +56,9 @@ public class ReportGroupBrowser extends StandardLookup<ReportGroup> {
     @Autowired
     protected FetchPlanRepository fetchPlanRepository;
 
+    @Autowired
+    protected MetadataTools metadataTools;
+
     @Subscribe("reportGroupsTable.remove")
     protected void onReportGroupsTableRemove(Action.ActionPerformedEvent event) {
         if (!event.getSource().isEnabled()) {
@@ -86,5 +89,10 @@ public class ReportGroupBrowser extends StandardLookup<ReportGroup> {
                 }
             }
         }
+    }
+
+    @Install(to = "reportGroupsTable.title", subject = "valueProvider")
+    protected String reportGroupsTableTitleValueProvider(ReportGroup reportGroup) {
+        return metadataTools.getInstanceName(reportGroup);
     }
 }

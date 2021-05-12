@@ -19,6 +19,7 @@ package io.jmix.reportsui.screen.report.run;
 import io.jmix.core.DataManager;
 import io.jmix.core.Id;
 import io.jmix.core.Messages;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.reports.entity.Report;
@@ -74,6 +75,9 @@ public class ReportRun extends StandardLookup<Report> {
 
     @Autowired
     protected DataManager dataManager;
+
+    @Autowired
+    protected MetadataTools metadataTools;
 
     protected List<Report> reports;
 
@@ -193,5 +197,10 @@ public class ReportRun extends StandardLookup<Report> {
             Table.SortDirection direction = sortInfo.getAscending() ? Table.SortDirection.ASCENDING : Table.SortDirection.DESCENDING;
             reportsTable.sort(sortInfo.getPropertyId().toString(), direction);
         }
+    }
+
+    @Install(to = "reportsTable.name", subject = "valueProvider")
+    protected String reportsTableNameValueProvider(Report report) {
+        return metadataTools.getInstanceName(report);
     }
 }

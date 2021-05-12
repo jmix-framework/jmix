@@ -2,6 +2,7 @@ package io.jmix.reportsui.screen.report.edit.tabs;
 
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.Sort;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportInputParameter;
@@ -48,6 +49,14 @@ public class ParametersFragment extends ScreenFragment {
 
     @Autowired
     protected Messages messages;
+
+    @Autowired
+    protected MetadataTools metadataTools;
+
+    @Install(to = "inputParametersTable.name", subject = "valueProvider")
+    protected String inputParametersTableNameValueProvider(ReportInputParameter parameter) {
+        return metadataTools.getInstanceName(parameter);
+    }
 
     @Install(to = "inputParametersTable.up", subject = "enabledRule")
     protected boolean inputParametersTableUpEnabledRule() {

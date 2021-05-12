@@ -24,6 +24,7 @@ import io.jmix.core.metamodel.annotation.DependsOnProperties;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
+import io.jmix.reports.util.MsgBundleTools;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -87,9 +88,6 @@ public class ReportGroup {
     @SystemLevel
     @Column(name = "SYS_TENANT_ID")
     private String sysTenantId;
-
-    @Transient
-    private String localeName;
 
     public UUID getId() {
         return id;
@@ -188,17 +186,6 @@ public class ReportGroup {
     }
 
     @JmixProperty
-    public String getLocName() {
-        if (localeName == null) {
-            //TODO Locale helper
-//            localeName = LocaleHelper.getLocalizedName(localeNames);
-            if (localeName == null)
-                localeName = title;
-        }
-        return localeName;
-    }
-
-    @JmixProperty
     @DependsOnProperties("code")
     public Boolean getSystemFlag() {
         return StringUtils.isNotEmpty(code);
@@ -206,7 +193,7 @@ public class ReportGroup {
 
     @InstanceName
     @DependsOnProperties({"title", "localeNames"})
-    public String getCaption() {
-        return String.format("%s [%s]", getTitle(), getLocName());
+    public String getInstanceName(MsgBundleTools msgBundleTools) {
+        return msgBundleTools.getLocalizedValue(localeNames, title);
     }
 }

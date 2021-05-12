@@ -87,6 +87,8 @@ public class ReportBrowser extends StandardLookup<Report> {
     protected Downloader downloader;
     @Autowired
     protected ScreenBuilders screenBuilders;
+    @Autowired
+    protected MetadataTools metadataTools;
 
     @Subscribe("popupCreateBtn.wizard")
     protected void onPopupCreateBtnWizard(Action.ActionPerformedEvent event) {
@@ -121,6 +123,11 @@ public class ReportBrowser extends StandardLookup<Report> {
     @Install(to = "reportsTable.import", subject = "enabledRule")
     protected boolean tableImportEnabledRule() {
         return isPermissionsToCreateReports();
+    }
+
+    @Install(to = "reportsTable.name", subject = "valueProvider")
+    protected String reportsTableNameValueProvider(Report report) {
+        return metadataTools.getInstanceName(report);
     }
 
     @Subscribe("reportsTable.runReport")

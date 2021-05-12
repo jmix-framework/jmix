@@ -77,6 +77,9 @@ public class ParameterFieldCreator {
     @Autowired
     protected Actions actions;
 
+    @Autowired
+    protected MetadataTools metadataTools;
+
     protected Map<ParameterType, FieldCreator> fieldCreationMapping = new ImmutableMap.Builder<ParameterType, FieldCreator>()
             .put(ParameterType.BOOLEAN, new CheckBoxCreator())
             .put(ParameterType.DATE, new DateFieldCreator())
@@ -93,13 +96,13 @@ public class ParameterFieldCreator {
         Label<String> label = uiComponents.create(Label.class);
         label.setAlignment(field instanceof TagPicker ? Component.Alignment.TOP_LEFT : Component.Alignment.MIDDLE_LEFT);
         label.setWidth(Component.AUTO_SIZE);
-        label.setValue(parameter.getLocName());
+        label.setValue(metadataTools.getInstanceName(parameter));
         return label;
     }
 
     public Field createField(ReportInputParameter parameter) {
         Field field = fieldCreationMapping.get(parameter.getType()).createField(parameter);
-        field.setRequiredMessage(messages.formatMessage(this.getClass(), "error.paramIsRequiredButEmpty", parameter.getLocName()));
+        field.setRequiredMessage(messages.formatMessage(this.getClass(), "error.paramIsRequiredButEmpty", metadataTools.getInstanceName(parameter)));
 
         field.setId("param_" + parameter.getAlias());
         field.setWidth("100%");

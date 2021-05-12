@@ -89,7 +89,7 @@
             </actions>
             <columns>
                 <column id="group"/>
-                <column id="locName"/>
+                <column id="name"/>
                 <column id="description"/>
                 <column id="code"/>
                 <column id="updateTs"/>

@@ -81,7 +81,7 @@
                 <group>
                     <column id="group" width="200px"/>
                 </group>
-                <column id="name"/> <!-- //TODO Locale helper (locName/localeName property when it will be ok) -->
+                <column id="name"/>
                 <column id="description" maxTextLength="100"/>
                 <column id="code"/>
             </columns>

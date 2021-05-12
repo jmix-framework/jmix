@@ -16,18 +16,16 @@
 package io.jmix.reports.entity;
 
 import com.haulmont.yarg.structure.ReportParameterWithDefaultValue;
-import io.jmix.core.Messages;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.DependsOnProperties;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
-import org.apache.commons.lang3.ObjectUtils;
+import io.jmix.reports.util.MsgBundleTools;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.Id;
-import javax.persistence.Transient;
 import java.util.UUID;
 
 @JmixEntity(name = "report_ReportInputParameter")
@@ -104,9 +102,6 @@ public class ReportInputParameter implements ReportParameterWithDefaultValue {
     @JmixProperty
     protected Boolean defaultDateIsCurrent = false;
 
-    @Transient
-    protected String localeName;
-
     public UUID getId() {
         return id;
     }
@@ -137,9 +132,6 @@ public class ReportInputParameter implements ReportParameterWithDefaultValue {
     }
 
     public void setName(String name) {
-        if (ObjectUtils.notEqual(name, this.name)) {
-            localeName = null;
-        }
         this.name = name;
     }
 
@@ -222,22 +214,13 @@ public class ReportInputParameter implements ReportParameterWithDefaultValue {
     }
 
     public void setLocaleNames(String localeNames) {
-        if (ObjectUtils.notEqual(localeNames, this.localeNames)) {
-            localeName = null;
-        }
         this.localeNames = localeNames;
     }
 
-    @JmixProperty
     @InstanceName
-    public String getLocName() {
-        if (localeName == null) {
-            //TODO Locale helper
-//            localeName = LocaleHelper.getLocalizedName(localeNames);
-            if (localeName == null)
-                localeName = name;
-        }
-        return localeName;
+    @DependsOnProperties({"localeNames", "name"})
+    public String getInstanceName(MsgBundleTools msgBundleTools) {
+        return msgBundleTools.getLocalizedValue(localeNames, name);
     }
 
     @Override

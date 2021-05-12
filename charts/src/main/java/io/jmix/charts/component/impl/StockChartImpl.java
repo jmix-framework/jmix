@@ -17,6 +17,7 @@
 package io.jmix.charts.component.impl;
 
 import com.google.common.base.Strings;
+import io.jmix.core.LocaleResolver;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
@@ -140,7 +141,7 @@ public class StockChartImpl extends AbstractComponent<JmixAmStockChartScene>
             Locale locale = currentAuthentication.getLocale();
 
             // chart
-            String localeString = messageTools.localeToString(locale);
+            String localeString = LocaleResolver.localeToString(locale);
             amchartsIntegration.setChartMessages(localeString, chartLocaleHelper.getChartLocaleMap(locale));
 
             // export
@@ -152,7 +153,7 @@ public class StockChartImpl extends AbstractComponent<JmixAmStockChartScene>
     }
 
     protected void setupDefaults(StockChartGroup chart) {
-        chart.setLanguage(messageTools.localeToString(currentAuthentication.getLocale()));
+        chart.setLanguage(LocaleResolver.localeToString(currentAuthentication.getLocale()));
 
         chart.setDataDateFormat(ChartJsonSerializationContext.DEFAULT_JS_DATE_FORMAT);
     }

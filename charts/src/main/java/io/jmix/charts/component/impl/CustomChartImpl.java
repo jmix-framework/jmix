@@ -17,6 +17,7 @@
 package io.jmix.charts.component.impl;
 
 
+import io.jmix.core.LocaleResolver;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.datatype.FormatStrings;
@@ -132,7 +133,7 @@ public class CustomChartImpl extends AbstractComponent<JmixAmchartsScene> implem
             Locale locale = currentAuthentication.getLocale();
 
             // chart
-            String localeString = messageTools.localeToString(locale);
+            String localeString = LocaleResolver.localeToString(locale);
             amchartsIntegration.setChartMessages(localeString, chartLocaleHelper.getChartLocaleMap(locale));
 
             // export
@@ -159,7 +160,7 @@ public class CustomChartImpl extends AbstractComponent<JmixAmchartsScene> implem
 
         // language
         if (StringUtils.isEmpty(chart.getLanguage())) {
-            chart.setLanguage(messageTools.localeToString(currentAuthentication.getLocale()));
+            chart.setLanguage(LocaleResolver.localeToString(currentAuthentication.getLocale()));
         }
 
         // export

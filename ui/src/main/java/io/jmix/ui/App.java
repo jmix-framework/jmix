@@ -231,7 +231,7 @@ public abstract class App {
         }
 
         if (requestLocale != null) {
-            Locale requestTrimmedLocale = messageTools.trimLocale(requestLocale);
+            Locale requestTrimmedLocale = requestLocale.stripExtensions();
             if (locales.contains(requestTrimmedLocale)) {
                 return requestTrimmedLocale;
             }

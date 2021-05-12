@@ -17,6 +17,7 @@
 package io.jmix.pivottable.component.impl;
 
 
+import io.jmix.core.LocaleResolver;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Messages;
 import io.jmix.core.common.event.Subscription;
@@ -92,7 +93,7 @@ public class PivotTableImpl extends AbstractComponent<JmixPivotTable> implements
 
     protected void initLocale() {
         Locale locale = currentAuthentication.getLocale();
-        String localeString = messageTools.localeToString(locale);
+        String localeString = LocaleResolver.localeToString(locale);
         if (!Objects.equals(localeString, component.getLocaleString())) {
             component.setPivotTableMessages(localeString, pivotTableLocaleHelper.getPivotTableLocaleMap(locale));
             component.setLocaleString(localeString);

@@ -21,10 +21,11 @@ import org.springframework.boot.context.properties.ConstructorBinding;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 @ConfigurationProperties(prefix = "jmix.core")
 @ConstructorBinding
@@ -40,8 +41,7 @@ public class CoreProperties {
     String dbDir;
     String defaultFileStorage;
     private String anonymousAuthenticationTokenKey;
-    Map<String, Locale> availableLocales;
-    boolean localeSelectVisible;
+    List<Locale> availableLocales;
     int crossDataStoreReferenceLoadingBatchSize;
     boolean idGenerationForEntitiesInAdditionalDataStoresEnabled;
     int dom4jMaxPoolSize;
@@ -57,8 +57,7 @@ public class CoreProperties {
             String workDir,
             String tempDir,
             String dbDir,
-            Map<String, String> availableLocales,
-            @DefaultValue("true") boolean localeSelectVisible,
+            List<String> availableLocales,
             @DefaultValue("50") int crossDataStoreReferenceLoadingBatchSize,
             @DefaultValue("true") boolean idGenerationForEntitiesInAdditionalDataStoresEnabled,
             @DefaultValue("100") int dom4jMaxPoolSize,
@@ -81,15 +80,13 @@ public class CoreProperties {
         this.anonymousAuthenticationTokenKey = anonymousAuthenticationTokenKey;
 
         if (availableLocales == null) {
-            this.availableLocales = Collections.singletonMap("English", Locale.ENGLISH);
+            this.availableLocales = Collections.singletonList(Locale.ENGLISH);
         } else {
-            this.availableLocales = new HashMap<>(availableLocales.size());
-            for (Map.Entry<String, String> entry : availableLocales.entrySet()) {
-                this.availableLocales.put(entry.getValue(), LocaleResolver.resolve(entry.getKey()));
-            }
+            this.availableLocales = availableLocales.stream()
+                    .map(LocaleResolver::resolve)
+                    .collect(Collectors.toList());
         }
 
-        this.localeSelectVisible = localeSelectVisible;
         this.crossDataStoreReferenceLoadingBatchSize = crossDataStoreReferenceLoadingBatchSize;
         this.idGenerationForEntitiesInAdditionalDataStoresEnabled = idGenerationForEntitiesInAdditionalDataStoresEnabled;
         this.dom4jMaxPoolSize = dom4jMaxPoolSize;
@@ -135,12 +132,12 @@ public class CoreProperties {
         return defaultFileStorage;
     }
 
-    public Map<String, Locale> getAvailableLocales() {
+    /**
+     * List of locales supported by the application.
+     * If not specified, contains the single {@code Locale.ENGLISH} element.
+     */
+    public List<Locale> getAvailableLocales() {
         return availableLocales;
-    }
-
-    public boolean isLocaleSelectVisible() {
-        return localeSelectVisible;
     }
 
     public int getCrossDataStoreReferenceLoadingBatchSize() {

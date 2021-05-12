@@ -31,7 +31,9 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Utility class to provide common functionality related to localized messages.
@@ -354,7 +356,7 @@ public class MessageTools {
     public boolean useLocaleLanguageOnly() {
         if (useLocaleLanguageOnly == null) {
             boolean found = false;
-            for (Locale locale : properties.getAvailableLocales().values()) {
+            for (Locale locale : properties.getAvailableLocales()) {
                 if (!StringUtils.isEmpty(locale.getCountry()) || !StringUtils.isEmpty(locale.getVariant())
                         || !StringUtils.isEmpty(locale.getScript())) {
                     useLocaleLanguageOnly = false;
@@ -398,7 +400,30 @@ public class MessageTools {
     public Locale getDefaultLocale() {
         if (properties.getAvailableLocales().isEmpty())
             throw new DevelopmentException("Invalid jmix.core.availableLocales application property");
-        return properties.getAvailableLocales().entrySet().iterator().next().getValue();
+        return properties.getAvailableLocales().get(0);
+    }
+
+    /**
+     * Returns display name of the given locale set in the message bundle with the {@code localeDisplayName.<code>} key.
+     * If such message is not defined, returns {@link Locale#getDisplayName()}.
+     */
+    public String getLocaleDisplayName(Locale locale) {
+        Preconditions.checkNotNullArgument(locale, "locale is null");
+
+        String localeDisplayName = messages.findMessage("localeDisplayName." + LocaleResolver.localeToString(locale), locale);
+        return localeDisplayName != null ? localeDisplayName : locale.getDisplayName();
+    }
+
+    /**
+     * Returns locales set in the {@code jmix.core.availableLocales} property as a map of the locale display name
+     * to the locale object.
+     */
+    public Map<String, Locale> getAvailableLocalesMap() {
+        return properties.getAvailableLocales().stream()
+                .collect(Collectors.toMap(
+                        locale -> getLocaleDisplayName(locale),
+                        Function.identity()
+                ));
     }
 
     /**

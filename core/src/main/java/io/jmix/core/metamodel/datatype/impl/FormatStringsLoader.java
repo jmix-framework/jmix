@@ -49,7 +49,7 @@ public class FormatStringsLoader {
 
     @EventListener(ContextRefreshedEvent.class)
     private void init() {
-        for (Locale locale : coreProperties.getAvailableLocales().values()) {
+        for (Locale locale : coreProperties.getAvailableLocales()) {
             String numberDecimalSeparator = getMessage("numberDecimalSeparator", locale);
             String numberGroupingSeparator = getMessage("numberGroupingSeparator", locale);
             String integerFormat = getMessage("integerFormat", locale);

@@ -3,7 +3,6 @@ package io.jmix.reportsui.screen.report.edit.tabs;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
-import io.jmix.core.Sort;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportInputParameter;
 import io.jmix.security.constraint.PolicyStore;
@@ -17,15 +16,16 @@ import io.jmix.ui.component.Table;
 import io.jmix.ui.model.CollectionPropertyContainer;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.screen.*;
+import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @UiController("report_ReportEditParameters.fragment")
 @UiDescriptor("parameters.xml")
 public class ParametersFragment extends ScreenFragment {
-
     @Autowired
     protected InstanceContainer<Report> reportDc;
 
@@ -72,26 +72,7 @@ public class ParametersFragment extends ScreenFragment {
 
     @Subscribe("inputParametersTable.up")
     protected void onInputParametersTableUp(Action.ActionPerformedEvent event) {
-        ReportInputParameter parameter = inputParametersTable.getSingleSelected();
-        if (parameter != null) {
-            List<ReportInputParameter> inputParameters = reportDc.getItem().getInputParameters();
-            int index = parameter.getPosition();
-            if (index > 0) {
-                ReportInputParameter previousParameter = null;
-                for (ReportInputParameter _param : inputParameters) {
-                    if (_param.getPosition() == index - 1) {
-                        previousParameter = _param;
-                        break;
-                    }
-                }
-                if (previousParameter != null) {
-                    parameter.setPosition(previousParameter.getPosition());
-                    previousParameter.setPosition(index);
-
-                    sortParametersByPosition();
-                }
-            }
-        }
+        replaceParameters(true);
     }
 
     @Install(to = "inputParametersTable.down", subject = "enabledRule")
@@ -108,26 +89,7 @@ public class ParametersFragment extends ScreenFragment {
 
     @Subscribe("inputParametersTable.down")
     protected void onInputParametersTableDown(Action.ActionPerformedEvent event) {
-        ReportInputParameter parameter = inputParametersTable.getSingleSelected();
-        if (parameter != null) {
-            List<ReportInputParameter> inputParameters = reportDc.getItem().getInputParameters();
-            int index = parameter.getPosition();
-            if (index < parametersDc.getItems().size() - 1) {
-                ReportInputParameter nextParameter = null;
-                for (ReportInputParameter _param : inputParameters) {
-                    if (_param.getPosition() == index + 1) {
-                        nextParameter = _param;
-                        break;
-                    }
-                }
-                if (nextParameter != null) {
-                    parameter.setPosition(nextParameter.getPosition());
-                    nextParameter.setPosition(index);
-
-                    sortParametersByPosition();
-                }
-            }
-        }
+        replaceParameters(false);
     }
 
     @Install(to = "inputParametersTable.create", subject = "initializer")
@@ -172,7 +134,16 @@ public class ParametersFragment extends ScreenFragment {
         return secureOperations.isEntityUpdatePermitted(metadata.getClass(Report.class), policyStore);
     }
 
-    protected void sortParametersByPosition() {
-        parametersDc.getSorter().sort(Sort.by(Sort.Direction.ASC, "position"));
+    protected void replaceParameters(boolean up) {
+        List<ReportInputParameter> items = parametersDc.getMutableItems();
+        ReportInputParameter currentItem = parametersDc.getItem();
+        ReportInputParameter itemToSwap = IterableUtils.find(items,
+                e -> e.getPosition().equals(currentItem.getPosition() - (up ? 1 : -1)));
+        int currentPosition = currentItem.getPosition();
+
+        currentItem.setPosition(itemToSwap.getPosition());
+        itemToSwap.setPosition(currentPosition);
+
+        Collections.swap(items, itemToSwap.getPosition(), currentItem.getPosition());
     }
 }

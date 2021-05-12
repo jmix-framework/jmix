@@ -238,7 +238,7 @@ public class LoginScreenAuthenticationSupport {
     }
 
     protected Locale getDefaultLocale() {
-        Collection<Locale> localeMap = coreProperties.getAvailableLocales().values();
+        Collection<Locale> localeMap = coreProperties.getAvailableLocales();
         return localeMap.iterator().next();
     }
 

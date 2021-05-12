@@ -231,7 +231,7 @@ public class ReportWizardCreator extends Screen implements WizardScreen {
     protected void convertToReportAndForceCloseWizard() {
         Report report = buildReport(false);
         if (report != null) {
-            closeWithDefaultAction();
+            close(WINDOW_COMMIT_AND_CLOSE_ACTION);
         }
     }
 

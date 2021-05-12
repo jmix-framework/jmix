@@ -16,10 +16,7 @@
 
 package io.jmix.dynattrui.screen.localization;
 
-import io.jmix.core.CoreProperties;
-import io.jmix.core.LoadContext;
-import io.jmix.core.Messages;
-import io.jmix.core.Metadata;
+import io.jmix.core.*;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.dynattr.MsgBundleTools;
 import io.jmix.dynattrui.impl.model.AttributeLocalizedValue;
@@ -47,6 +44,8 @@ public class AttributeLocalizationFragment extends ScreenFragment {
     protected Metadata metadata;
     @Autowired
     protected Messages messages;
+    @Autowired
+    protected MessageTools messageTools;
 
     @Autowired
     protected CollectionLoader<AttributeLocalizedValue> localizedValuesDl;
@@ -106,15 +105,15 @@ public class AttributeLocalizationFragment extends ScreenFragment {
     }
 
     protected void loadLocalizedValues() {
-        for (Map.Entry<String, Locale> entry : coreProperties.getAvailableLocales().entrySet()) {
-            String locale = entry.getValue().toLanguageTag();
-            AttributeLocalizedValue localizedValue = getAttributeLocalizedValue(locale);
+        for (Locale locale : coreProperties.getAvailableLocales()) {
+            String localeCode = locale.toLanguageTag();
+            AttributeLocalizedValue localizedValue = getAttributeLocalizedValue(localeCode);
             if (localizedValue == null) {
-                localizedValue = createAttributeLocalizedValue(locale);
+                localizedValue = createAttributeLocalizedValue(localeCode);
             }
 
             if (localizedValue.getLanguage() == null) {
-                localizedValue.setLanguage(entry.getKey());
+                localizedValue.setLanguage(messageTools.getLocaleDisplayName(locale));
             }
         }
     }

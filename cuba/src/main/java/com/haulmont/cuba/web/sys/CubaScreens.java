@@ -16,6 +16,7 @@
 
 package com.haulmont.cuba.web.sys;
 
+import com.google.common.base.Strings;
 import com.haulmont.cuba.gui.Screens;
 import com.haulmont.cuba.gui.UiComponents;
 import com.haulmont.cuba.gui.WindowManager;
@@ -40,15 +41,14 @@ import com.haulmont.cuba.gui.screen.compatibility.ScreenLookupWrapper;
 import com.haulmont.cuba.gui.screen.compatibility.ScreenWrapper;
 import com.haulmont.cuba.gui.sys.ScreenViewsLoader;
 import com.haulmont.cuba.gui.xml.data.DsContextLoader;
+import com.haulmont.cuba.gui.xml.layout.CubaLoaderConfig;
 import com.haulmont.cuba.settings.CubaLegacySettings;
+import com.haulmont.cuba.settings.CubaSettingsFacet;
 import com.haulmont.cuba.settings.Settings;
 import com.haulmont.cuba.settings.SettingsImpl;
 import io.jmix.core.Entity;
 import io.jmix.core.common.util.ReflectionHelper;
-import io.jmix.ui.Dialogs;
-import io.jmix.ui.Fragments;
-import io.jmix.ui.Notifications;
-import io.jmix.ui.WindowInfo;
+import io.jmix.ui.*;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.impl.AppWorkAreaImpl;
@@ -60,6 +60,7 @@ import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.ScreenFragment;
 import io.jmix.ui.screen.ScreenOptions;
 import io.jmix.ui.screen.UiControllerUtils;
+import io.jmix.ui.sys.ScreenXmlLoader;
 import io.jmix.ui.sys.ScreensImpl;
 import io.jmix.ui.sys.WindowContextImpl;
 import io.jmix.ui.xml.layout.loader.ComponentLoaderContext;
@@ -81,6 +82,10 @@ public final class CubaScreens extends ScreensImpl implements Screens, WindowMan
     protected ScreenViewsLoader screenViewsLoader;
     @Autowired
     protected UiComponents cubaUiComponents;
+    @Autowired
+    protected ScreenXmlLoader screenXmlLoader;
+    @Autowired
+    protected Facets facets;
 
     protected DataSupplier defaultDataSupplier = new GenericDataSupplier();
 
@@ -341,18 +346,37 @@ public final class CubaScreens extends ScreensImpl implements Screens, WindowMan
     }
 
     @Override
-    protected DialogWindow createDialogWindow() {
-        return cubaUiComponents.create(DialogWindow.NAME);
+    protected DialogWindow createDialogWindow(WindowInfo windowInfo) {
+        return isCubaScreen(windowInfo)
+                ? cubaUiComponents.create(DialogWindow.NAME)
+                : super.createDialogWindow(windowInfo);
     }
 
     @Override
-    protected RootWindow createRootWindow() {
-        return cubaUiComponents.create(RootWindow.NAME);
+    protected RootWindow createRootWindow(WindowInfo windowInfo) {
+        return isCubaScreen(windowInfo)
+                ? cubaUiComponents.create(RootWindow.NAME)
+                : super.createRootWindow(windowInfo);
     }
 
     @Override
-    protected TabWindow createTabWindow() {
-        return cubaUiComponents.create(TabWindow.NAME);
+    protected TabWindow createTabWindow(WindowInfo windowInfo) {
+        return isCubaScreen(windowInfo)
+                ? cubaUiComponents.create(TabWindow.NAME)
+                : super.createTabWindow(windowInfo);
+    }
+
+    protected boolean isCubaScreen(WindowInfo windowInfo) {
+        String template = windowInfo.getTemplate();
+        if (Strings.isNullOrEmpty(template)) {
+            // screen without template considered as Jmix screen
+            return false;
+        }
+
+        Element windowElement = screenXmlLoader.load(template, windowInfo.getId(), Collections.emptyMap());
+
+        String schema = windowElement.getNamespace().getStringValue();
+        return schema.startsWith(CubaLoaderConfig.CUBA_XSD_PREFIX);
     }
 
     @Override
@@ -566,6 +590,22 @@ public final class CubaScreens extends ScreensImpl implements Screens, WindowMan
                 ((DatasourceImplementation) ds).initialized();
             }
         }
+    }
+
+    @Override
+    protected void fireScreenInitEvent(FrameOwner frameOwner, Class<Screen.InitEvent> eventType, Screen.InitEvent event) {
+        Screen screen = (Screen) frameOwner;
+
+        if (!(screen instanceof LegacyFrame)
+                && screen.getWindow() instanceof com.haulmont.cuba.gui.components.Window) {
+            Window window = screen.getWindow();
+
+            CubaSettingsFacet facet = facets.create(CubaSettingsFacet.class);
+            facet.setId("cubaSettingsFacet");
+            window.addFacet(facet);
+        }
+
+        super.fireScreenInitEvent(screen, eventType, event);
     }
 
     @Override

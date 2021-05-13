@@ -25,11 +25,13 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 /**
- * Helium theme configuration properties class.
+ * Theme configuration properties class.
  */
 @ConfigurationProperties(prefix = "jmix.ui.theme")
 @ConstructorBinding
 public class UiThemeProperties {
+
+    String name;
 
     List<String> modes;
     String defaultMode;
@@ -40,6 +42,8 @@ public class UiThemeProperties {
     String defaultSizeToUse;
 
     public UiThemeProperties(
+            @DefaultValue("helium") String name,
+
             @DefaultValue({"light", "dark"}) List<String> modes,
             @DefaultValue("light") String defaultMode,
             @Nullable String defaultModeToUse,
@@ -48,6 +52,8 @@ public class UiThemeProperties {
             @DefaultValue("medium") String defaultSize,
             @Nullable String defaultSizeToUse
     ) {
+        this.name = name;
+
         this.modes = modes;
         this.defaultMode = defaultMode;
         this.defaultModeToUse = defaultModeToUse;
@@ -55,6 +61,13 @@ public class UiThemeProperties {
         this.sizes = sizes;
         this.defaultSize = defaultSize;
         this.defaultSizeToUse = defaultSizeToUse;
+    }
+
+    /**
+     * @return the name of the currently used UI theme
+     */
+    public String getName() {
+        return name;
     }
 
     /**

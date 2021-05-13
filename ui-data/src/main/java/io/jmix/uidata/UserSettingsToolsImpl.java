@@ -19,19 +19,12 @@ package io.jmix.uidata;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.ui.UiProperties;
+import io.jmix.ui.UiThemeProperties;
 import io.jmix.ui.component.AppWorkArea;
-import io.jmix.ui.component.Component;
-import io.jmix.ui.component.ComponentContainer;
-import io.jmix.ui.component.Window;
 import io.jmix.ui.settings.UserSettingService;
 import io.jmix.ui.settings.UserSettingsTools;
-import io.jmix.ui.settings.component.ComponentSettings;
-import io.jmix.ui.settings.ScreenSettings;
-import io.jmix.ui.settings.facet.ScreenSettingsFacet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-
-import java.util.function.Consumer;
 
 @Internal
 public class UserSettingsToolsImpl implements UserSettingsTools {
@@ -41,6 +34,9 @@ public class UserSettingsToolsImpl implements UserSettingsTools {
 
     @Autowired
     protected UiProperties uiProperties;
+
+    @Autowired
+    protected UiThemeProperties uiThemeProperties;
 
     @Autowired
     protected ApplicationContext applicationContext;
@@ -68,7 +64,7 @@ public class UserSettingsToolsImpl implements UserSettingsTools {
         if (s != null) {
             return s;
         }
-        return uiProperties.getTheme();
+        return uiThemeProperties.getName();
     }
 
     public void saveAppWindowTheme(String theme) {

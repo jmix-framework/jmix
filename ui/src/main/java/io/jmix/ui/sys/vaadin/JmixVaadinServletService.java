@@ -25,6 +25,7 @@ import elemental.json.JsonObject;
 import io.jmix.core.Messages;
 import io.jmix.ui.App;
 import io.jmix.ui.UiProperties;
+import io.jmix.ui.UiThemeProperties;
 import io.jmix.ui.sys.WebJarResourceResolver;
 import io.jmix.ui.sys.event.WebSessionDestroyedEvent;
 import io.jmix.ui.sys.event.WebSessionInitializedEvent;
@@ -55,6 +56,7 @@ public class JmixVaadinServletService extends SpringVaadinServletService
     protected String serviceUrl;
 
     protected UiProperties uiProperties;
+    protected UiThemeProperties uiThemeProperties;
 
     protected boolean testMode;
     protected boolean performanceTestMode;
@@ -76,6 +78,8 @@ public class JmixVaadinServletService extends SpringVaadinServletService
         uiProperties = applicationContext.getBean(UiProperties.class);
         testMode = uiProperties.isTestMode();
         performanceTestMode = uiProperties.isPerformanceTestMode();
+
+        uiThemeProperties = applicationContext.getBean(UiThemeProperties.class);
 
         this.messages = applicationContext.getBean(Messages.class);
         this.environment = applicationContext.getBean(Environment.class);
@@ -116,7 +120,7 @@ public class JmixVaadinServletService extends SpringVaadinServletService
 
     @Override
     public String getConfiguredTheme(VaadinRequest request) {
-        return uiProperties.getTheme();
+        return uiThemeProperties.getName();
     }
 
     @Override

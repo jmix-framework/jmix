@@ -34,7 +34,6 @@ public class UiProperties {
     boolean performanceTestMode;
     boolean productionMode;
 
-    String theme;
     String appWindowMode;
     boolean compositeMenu;
     boolean allowAnonymousAccess;
@@ -68,7 +67,6 @@ public class UiProperties {
             boolean testMode,
             boolean performanceTestMode,
             @DefaultValue("true") boolean productionMode,
-            @DefaultValue("helium") String theme,
             @DefaultValue("TABBED") String appWindowMode,
             @DefaultValue("true") boolean compositeMenu,
             @DefaultValue("false") boolean allowAnonymousAccess,
@@ -98,7 +96,6 @@ public class UiProperties {
         this.testMode = testMode;
         this.performanceTestMode = performanceTestMode;
         this.productionMode = productionMode;
-        this.theme = theme;
         this.appWindowMode = appWindowMode;
         this.compositeMenu = compositeMenu;
         this.allowAnonymousAccess = allowAnonymousAccess;
@@ -153,10 +150,6 @@ public class UiProperties {
 
     public UrlHandlingMode getUrlHandlingMode() {
         return urlHandlingMode;
-    }
-
-    public String getTheme() {
-        return theme;
     }
 
     public List<String> getLinkHandlerActions() {

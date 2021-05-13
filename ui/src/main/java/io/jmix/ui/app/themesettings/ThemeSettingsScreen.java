@@ -19,13 +19,13 @@ package io.jmix.ui.app.themesettings;
 import com.vaadin.server.Page;
 import io.jmix.core.annotation.Internal;
 import io.jmix.ui.Notifications;
+import io.jmix.ui.UiThemeProperties;
 import io.jmix.ui.component.*;
 import io.jmix.ui.navigation.Route;
 import io.jmix.ui.screen.*;
 import io.jmix.ui.theme.ThemeVariantsManager;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 
 import java.util.Arrays;
 import java.util.List;
@@ -47,23 +47,23 @@ public class ThemeSettingsScreen extends Screen {
     protected ScrollBoxLayout innerPreviewBox;
 
     @Autowired
-    private ComboBox<String> requiredComboBox;
+    protected ComboBox<String> requiredComboBox;
     @Autowired
-    private ComboBox<String> comboBox;
+    protected ComboBox<String> comboBox;
     @Autowired
-    private RadioButtonGroup<String> radioButtonGroup;
+    protected RadioButtonGroup<String> radioButtonGroup;
     @Autowired
-    private CheckBoxGroup<String> checkBoxGroup;
+    protected CheckBoxGroup<String> checkBoxGroup;
 
     @Autowired
     protected ThemeVariantsManager variantsManager;
 
     @Autowired
-    protected Environment environment;
+    protected UiThemeProperties uiThemeProperties;
     @Autowired
-    private MessageBundle messageBundle;
+    protected MessageBundle messageBundle;
     @Autowired
-    private Notifications notifications;
+    protected Notifications notifications;
 
     protected String appWindowTheme;
     protected boolean settingsAvailable;
@@ -73,7 +73,7 @@ public class ThemeSettingsScreen extends Screen {
         checkSettingsAvailable();
 
         if (settingsAvailable) {
-            appWindowTheme = environment.getProperty("jmix.ui.theme", "helium");
+            appWindowTheme = uiThemeProperties.getName();
 
             initModeField();
             initSizeField();

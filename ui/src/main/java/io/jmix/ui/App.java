@@ -102,6 +102,8 @@ public abstract class App {
     protected ApplicationContext applicationContext;
     @Autowired
     protected UiProperties uiProperties;
+    @Autowired
+    protected UiThemeProperties uiThemeProperties;
 
     protected AppCookies cookies;
 
@@ -116,7 +118,7 @@ public abstract class App {
     }
 
     protected ThemeConstants loadTheme() {
-        String appWindowTheme = uiProperties.getTheme();
+        String appWindowTheme = uiThemeProperties.getName();
         String userAppTheme = cookies.getCookieValue(APP_THEME_COOKIE_PREFIX + getContextPathName());
         if (userAppTheme != null) {
             if (!Objects.equals(userAppTheme, appWindowTheme)) {
@@ -592,11 +594,11 @@ public abstract class App {
     @Nullable
     protected String getContextPathName() {
         String contextPath = environment.getProperty(CoreProperties.SERVER_SERVLET_CONTEXTPATH);
-        if (!Strings.isNullOrEmpty(contextPath)) {
-            return contextPath.substring(1);
+        if (Strings.isNullOrEmpty(contextPath)) {
+            return "ROOT";
         }
-        return contextPath;
 
+        return contextPath.substring(1);
     }
 
     protected void clearSettingsCache() {

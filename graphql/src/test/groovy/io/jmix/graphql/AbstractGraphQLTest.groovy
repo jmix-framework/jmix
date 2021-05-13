@@ -74,6 +74,10 @@ class AbstractGraphQLTest extends Specification {
         transaction.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW)
     }
 
+    protected query(String queryFilePath) {
+        return graphQLTestTemplate.postForResource("graphql/io/jmix/graphql/" + queryFilePath)
+    }
+
     static ObjectNode asObjectNode(String str) {
         return new ObjectMapper().readValue(str, ObjectNode.class)
     }

@@ -30,6 +30,19 @@ To add **request headers** tab configure application property:
 
 ```graphiql.props.variables.headerEditorEnabled=true``` 
 
+## Query Limits
+
+### Rate Limit
+Set `jmix.graphql.operationRateLimitPerMinute` property with integer value in `application.properties` 
+to control how many times it's possible to send queries per minute from one IP address.
+
+### Max Query Depth
+Query depth could be configured via `jmix.graphql.maxQueryDepth` property.
+By default, query depth has no limit (`maxQueryDepth` is set to `0`).
+
+
+
+
 ## Work with OAuth protected queries and mutations
 
 To fetch and modify entities protected by jmix security, 
@@ -99,11 +112,6 @@ You can set authorization header for GraphIQL using application property:
 ```
 graphiql.headers.Authorization=Bearer
 ```
-
-
-## Rate limit
-Set `jmix.graphql.operationRateLimitPerMinute` property with integer value in `application.property` to control how many times 
-is possible send queries per minute from one IP address
 
 ## Schema download
 Schema could be downloaded using `graphqurl`

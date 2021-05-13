@@ -23,10 +23,14 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 @ConfigurationProperties(prefix = "jmix.graphql")
 @ConstructorBinding
 public class LimitationProperties {
+
+    int maxQueryDepth;
+
     int operationRateLimitPerMinute;
 
-    public LimitationProperties(@DefaultValue("0") int operationRateLimitPerMinute) {
+    public LimitationProperties(@DefaultValue("0") int operationRateLimitPerMinute, @DefaultValue("0") int maxQueryDepth) {
         this.operationRateLimitPerMinute = operationRateLimitPerMinute;
+        this.maxQueryDepth = maxQueryDepth;
     }
 
     /**
@@ -35,5 +39,13 @@ public class LimitationProperties {
      */
     public int getOperationRateLimitPerMinute() {
         return operationRateLimitPerMinute;
+    }
+
+    /**
+     * @return max allowed depth for query
+     * Default value 0 means the client has no limit
+     */
+    public int getMaxQueryDepth() {
+        return maxQueryDepth;
     }
 }

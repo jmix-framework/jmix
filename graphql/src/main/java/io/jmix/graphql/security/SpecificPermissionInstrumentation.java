@@ -22,6 +22,7 @@ import graphql.execution.instrumentation.SimpleInstrumentation;
 import graphql.execution.instrumentation.parameters.InstrumentationCreateStateParameters;
 import io.jmix.core.AccessManager;
 import io.jmix.core.Messages;
+import io.jmix.graphql.InstrumentationUtils;
 import io.jmix.graphql.accesscontext.GraphqlAccessContext;
 
 public class SpecificPermissionInstrumentation extends SimpleInstrumentation {
@@ -39,8 +40,7 @@ public class SpecificPermissionInstrumentation extends SimpleInstrumentation {
         GraphqlAccessContext accessContext = new GraphqlAccessContext();
         accessManager.applyRegisteredConstraints(accessContext);
 
-        if (!"IntrospectionQuery".equals(parameters.getExecutionInput().getOperationName())
-                && !accessContext.isPermitted()) {
+        if (!InstrumentationUtils.isIntrospectionQuery(parameters.getExecutionInput()) && !accessContext.isPermitted()) {
             throw new AbortExecutionException(messages.getMessage("io.jmix.graphql/gqlApiAccessDenied"));
         }
 

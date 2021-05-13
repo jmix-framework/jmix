@@ -43,14 +43,14 @@ class MutationTest extends AbstractGraphQLTest {
         response.get('$.data.upsert_scr_Car.maxPassengers') == null
     }
 
-//    def "should create new Car instance and return additional fetched attributes without _instanceName"() {
-//        when:
-//        def response = graphQLTestTemplate.perform(
-//                "graphql/io/jmix/graphql/datafetcher/upsert-car.gql", asObjectNode("{\"id\":\"$id2\"}"))
-//        then:
-//        response.get('$.data.upsert_scr_Car.garage') == null
-//        response.get('$.data.upsert_scr_Car.maxPassengers') == null
-//        response.get('$.data.upsert_scr_Car.purchaseDate') == null
-//    }
+    def "should create new Car instance and return additional fetched attributes without _instanceName"() {
+        when:
+        def response = graphQLTestTemplate.perform(
+                "graphql/io/jmix/graphql/datafetcher/upsert-car.gql", asObjectNode("{\"id\":\"$id2\"}"))
+        then:
+        response.get('$.data.upsert_scr_Car.garage') == null
+        response.get('$.data.upsert_scr_Car.maxPassengers') == null
+        response.get('$.data.upsert_scr_Car.purchaseDate') == null
+    }
 
 }

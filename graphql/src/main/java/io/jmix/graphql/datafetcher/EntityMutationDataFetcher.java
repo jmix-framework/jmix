@@ -71,12 +71,9 @@ public class EntityMutationDataFetcher {
 
             FetchPlan fetchPlan = dataFetcherPlanBuilder.buildFetchPlan(metaClass.getJavaClass(), environment);
             // reload for response fetch plan, if required
-            // todo need more correct condition to reload or not entity
-            // will be implemented as part of https://github.com/Haulmont/jmix-graphql/issues/30
-            if (!entityStates.isLoadedWithFetchPlan(entity, fetchPlan)
-                    || environmentUtils.hasInstanceNameProperty(environment)) {
+            if (!entityStates.isLoadedWithFetchPlan(mainEntity, fetchPlan)) {
                 LoadContext loadContext = new LoadContext(metaClass).setFetchPlan(fetchPlan);
-                loadContext.setId(EntityValues.getId(entity));
+                loadContext.setId(EntityValues.getId(mainEntity));
                 mainEntity = dataManager.load(loadContext);
             }
 

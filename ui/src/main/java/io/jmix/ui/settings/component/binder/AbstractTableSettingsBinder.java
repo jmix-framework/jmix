@@ -60,8 +60,9 @@ public abstract class AbstractTableSettingsBinder implements DataLoadingSettings
         if (tableSettings.getTextSelection() != null) {
             table.setTextSelectionEnabled(tableSettings.getTextSelection());
 
-            if (table.getPresentations() != null) {
-                ((TablePresentationsLayout) getEnhancedTable(table).getPresentationsLayout()).updateTextSelection();
+            com.vaadin.ui.Component presentationsLayout = getEnhancedTable(table).getPresentationsLayout();
+            if (presentationsLayout != null) {
+                ((TablePresentationsLayout) presentationsLayout).updateTextSelection();
             }
         }
 

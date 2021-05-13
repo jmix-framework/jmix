@@ -37,6 +37,7 @@ public interface JmixEnhancedTable extends AggregationContainer {
     void setContextMenuPopup(Layout contextMenu);
     void hideContextMenuPopup();
 
+    @Nullable
     Component getPresentationsLayout();
     void setPresentationsLayout(Component presentations);
     void hidePresentationsPopup();

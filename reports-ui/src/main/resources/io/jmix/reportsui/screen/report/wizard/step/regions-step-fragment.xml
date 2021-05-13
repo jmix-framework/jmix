@@ -30,8 +30,10 @@
 
             <hbox id="buttonsBox">
                 <button id="addRegionDisabledBtn" caption="msg://addRegion" enable="false"/>
-                <button id="addSimpleRegionBtn" action="addRegionPopupBtn.addSimpleRegion" caption="msg://simpleRegion"/>
-                <button id="addTabulatedRegionBtn" action="addRegionPopupBtn.addTabulatedRegion" caption="msg://tabulatedRegion"/>
+                <button id="addSimpleRegionBtn" action="addRegionPopupBtn.addSimpleRegion"
+                        caption="msg://simpleRegion"/>
+                <button id="addTabulatedRegionBtn" action="addRegionPopupBtn.addTabulatedRegion"
+                        caption="msg://tabulatedRegion"/>
                 <popupButton id="addRegionPopupBtn" caption="msg://add">
                     <actions>
                         <action id="addSimpleRegion" caption="msg://simpleRegion"/>
@@ -52,8 +54,16 @@
                    sortable="false" reorderingAllowed="false" columnControlVisible="false"
                    height="200px" width="100%">
                 <actions>
-                    <action id="up" type="itemOrderable"/>
-                    <action id="down" type="itemOrderable"/>
+                    <action id="up" type="itemOrderable">
+                        <properties>
+                            <property name="direction" value="up"/>
+                        </properties>
+                    </action>
+                    <action id="down" type="itemOrderable">
+                        <properties>
+                            <property name="direction" value="down"/>
+                        </properties>
+                    </action>
                     <action id="remove" type="remove"/>
                 </actions>
                 <columns>

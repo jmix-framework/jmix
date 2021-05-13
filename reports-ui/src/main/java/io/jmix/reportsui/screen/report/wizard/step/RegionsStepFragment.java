@@ -112,7 +112,6 @@ public class RegionsStepFragment extends StepFragment {
 
     @Subscribe
     public void onInit(InitEvent event) {
-        initMoveAction();
         initRegionsTable();
     }
 
@@ -120,9 +119,22 @@ public class RegionsStepFragment extends StepFragment {
         regionsTable.addGeneratedColumn("regionsGeneratedColumn", new ReportRegionTableColumnGenerator());
     }
 
-    public void initMoveAction() {
-//        moveDownBtn.getAction().setDirection(ItemOrderableAction.Direction.UP);
-//        down.setDirection(ItemOrderableAction.Direction.DOWN);
+    @Install(to = "regionsTable.down", subject = "enabledRule")
+    private boolean regionsTableDownEnabledRule() {
+        ReportRegion item = regionsTable.getSingleSelected();
+        if (item == null) {
+            return false;
+        }
+        return item.getOrderNum() < reportRegionsDc.getItems().size();
+    }
+
+    @Install(to = "regionsTable.up", subject = "enabledRule")
+    private boolean regionsTableUpEnabledRule() {
+        ReportRegion item = regionsTable.getSingleSelected();
+        if (item == null) {
+            return false;
+        }
+        return item.getOrderNum() > 1;
     }
 
     @Override

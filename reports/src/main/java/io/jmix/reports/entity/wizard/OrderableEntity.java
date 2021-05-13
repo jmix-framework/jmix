@@ -16,8 +16,6 @@
 
 package io.jmix.reports.entity.wizard;
 
-import io.jmix.core.Entity;
-
 /**
  * Interface to be implemented by some entities that order display can be changed in UI.
  * That order might to be set by com.haulmont.reports.gui.components.actions.OrderableItemMoveAction

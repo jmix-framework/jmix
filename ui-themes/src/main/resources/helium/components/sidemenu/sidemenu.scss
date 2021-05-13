@@ -93,7 +93,10 @@ $cuba-sidemenu-top-height--large: $v-unit-size--large + 2 * $cuba-sidemenu-top-o
 }
 
 @mixin he-sidemenu-styles($primary-stylename: c-sidemenu) {
-  @include he-sidemenu-size-styles($primary-stylename: $primary-stylename);
+
+  .#{$primary-stylename} {
+    @include he-sidemenu-size-styles($primary-stylename: $primary-stylename);
+  }
 
   // TODO: gg, does it really exist?
   .#{$primary-stylename}-user {
@@ -247,8 +250,8 @@ $cuba-sidemenu-top-height--large: $v-unit-size--large + 2 * $cuba-sidemenu-top-o
                                $sidemenu-top-offset : $cuba-sidemenu-top-offset,
                                $sidemenu-top-height : $cuba-sidemenu-top-height) {
 
-   font-size: $font-size;
-   line-height: round($unit-size);
+  font-size: $font-size;
+  line-height: round($unit-size);
 
   .#{$primary-stylename}-wrap {
     font-size: 0;

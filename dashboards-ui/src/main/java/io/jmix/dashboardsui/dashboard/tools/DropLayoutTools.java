@@ -78,7 +78,7 @@ public class DropLayoutTools {
             screen.addAfterCloseListener(e -> {
                 StandardCloseAction closeAction = (StandardCloseAction) e.getCloseAction();
                 if (Window.COMMIT_ACTION_ID.equals(closeAction.getActionId())) {
-                    CssLayoutCreationDialog dialog = (CssLayoutCreationDialog) e.getScreen();
+                    CssLayoutCreationDialog dialog = (CssLayoutCreationDialog) e.getSource();
                     CssLayout cssLayout = layoutManager.createCssLayout(dialog.getResponsive(), dialog.getCssStyleName());
                     reorderWidgetsAndPushEvents(cssLayout, targetLayout, location);
                 }
@@ -89,7 +89,7 @@ public class DropLayoutTools {
             screen.addAfterCloseListener(e -> {
                 StandardCloseAction closeAction = (StandardCloseAction) e.getCloseAction();
                 if (Window.COMMIT_ACTION_ID.equals(closeAction.getActionId())) {
-                    GridCreationDialog dialog = (GridCreationDialog) e.getScreen();
+                    GridCreationDialog dialog = (GridCreationDialog) e.getSource();
                     GridLayout gridLayout = layoutManager.createGridLayout(dialog.getCols(), dialog.getRows());
                     reorderWidgetsAndPushEvents(gridLayout, targetLayout, location);
                 }
@@ -107,7 +107,7 @@ public class DropLayoutTools {
                     .addAfterCloseListener(e -> {
                         StandardCloseAction closeAction = (StandardCloseAction) e.getCloseAction();
                         if (Window.COMMIT_ACTION_ID.equals(closeAction.getActionId())) {
-                            widgetLayout.setWidget(((WidgetEdit) e.getScreen()).getEditedEntity());
+                            widgetLayout.setWidget(((WidgetEdit) e.getSource()).getEditedEntity());
                             reorderWidgetsAndPushEvents(widgetLayout, targetLayout, location);
                         }
                     });

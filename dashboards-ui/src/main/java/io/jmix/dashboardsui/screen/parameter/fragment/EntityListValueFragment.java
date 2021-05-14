@@ -109,7 +109,7 @@ public class EntityListValueFragment extends ScreenFragment implements ValueFrag
                 .addAfterCloseListener(e -> {
                     StandardCloseAction closeAction = (StandardCloseAction) e.getCloseAction();
                     if (Window.COMMIT_ACTION_ID.equals(closeAction.getActionId())) {
-                        saveWindowValue((EntityParameterValue) ((EntityValueScreen) e.getScreen()).getValue());
+                        saveWindowValue((EntityParameterValue) ((EntityValueScreen) e.getSource()).getValue());
                     }
                 });
     }

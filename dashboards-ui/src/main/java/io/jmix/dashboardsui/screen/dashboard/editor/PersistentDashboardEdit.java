@@ -361,7 +361,7 @@ public class PersistentDashboardEdit extends StandardEditor<PersistentDashboard>
                 .addAfterCloseListener(e -> {
                     StandardCloseAction closeAction = (StandardCloseAction) e.getCloseAction();
                     if (Window.COMMIT_ACTION_ID.equals(closeAction.getActionId())) {
-                        DashboardLayout expandLayout = ((ExpandDialog) e.getScreen()).getExpand();
+                        DashboardLayout expandLayout = ((ExpandDialog) e.getSource()).getExpand();
                         if (expandLayout != null) {
                             source.setExpand(expandLayout.getId());
                         } else {
@@ -383,7 +383,7 @@ public class PersistentDashboardEdit extends StandardEditor<PersistentDashboard>
                     StandardCloseAction closeAction = (StandardCloseAction) e.getCloseAction();
                     if (Window.COMMIT_ACTION_ID.equals(closeAction.getActionId())) {
                         DashboardModel dashboard = getDashboardModel();
-                        StyleDialog styleDialog = (StyleDialog) e.getScreen();
+                        StyleDialog styleDialog = (StyleDialog) e.getSource();
                         DashboardLayout layout = dashboard.getVisualModel().findLayout(source.getId());
                         layout.setStyleName(styleDialog.getLayoutStyleName());
                         layout.setHeight(styleDialog.getLayoutHeight());
@@ -419,7 +419,7 @@ public class PersistentDashboardEdit extends StandardEditor<PersistentDashboard>
                     StandardCloseAction closeAction = (StandardCloseAction) e.getCloseAction();
                     if (Window.COMMIT_ACTION_ID.equals(closeAction.getActionId())) {
                         WidgetLayout widgetLayout = getDashboardModel().getWidgetLayout(widget.getId());
-                        widgetLayout.setWidget(((WidgetEdit) e.getScreen()).getEditedEntity());
+                        widgetLayout.setWidget(((WidgetEdit) e.getSource()).getEditedEntity());
                         uiEventPublisher.publishEvent(new DashboardRefreshEvent(getDashboardModel().getVisualModel(), widget.getId()));
                     }
                 });

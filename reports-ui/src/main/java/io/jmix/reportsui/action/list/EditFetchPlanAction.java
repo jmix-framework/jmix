@@ -143,7 +143,7 @@ public class EditFetchPlanAction extends ListAction {
 
                             screen.addAfterCloseListener(afterCloseEvent -> {
                                 if (afterCloseEvent.closedWith(StandardOutcome.COMMIT)) {
-                                    RegionEditor editor = (RegionEditor) afterCloseEvent.getScreen();
+                                    RegionEditor editor = (RegionEditor) afterCloseEvent.getSource();
                                     reportRegion.setRegionProperties(editor.getEditedEntity().getRegionProperties());
                                     dataSet.setFetchPlan(reportRegionToFetchPlan(entityTree, reportRegion));
                                 }

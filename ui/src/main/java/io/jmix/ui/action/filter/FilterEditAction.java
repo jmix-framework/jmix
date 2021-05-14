@@ -137,7 +137,7 @@ public class FilterEditAction extends FilterAction {
         editScreen.addAfterCloseListener(afterCloseEvent -> {
             if (afterCloseEvent.closedWith(StandardOutcome.COMMIT)) {
                 LogicalFilterCondition filterCondition =
-                        (LogicalFilterCondition) ((FilterConditionEdit) afterCloseEvent.getScreen())
+                        (LogicalFilterCondition) ((FilterConditionEdit) afterCloseEvent.getSource())
                                 .getInstanceContainer()
                                 .getItem();
 

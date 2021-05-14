@@ -542,10 +542,6 @@ public abstract class Screen implements FrameOwner {
             return (Screen) super.getSource();
         }
 
-        public Screen getScreen() {
-            return (Screen) super.getSource();
-        }
-
         /**
          * @return action passed to the {@link #close(CloseAction)} method of the screen.
          */
@@ -622,10 +618,6 @@ public abstract class Screen implements FrameOwner {
         public S getSource() {
             //noinspection unchecked
             return (S) super.getSource();
-        }
-
-        public S getScreen() {
-            return getSource();
         }
 
         /**

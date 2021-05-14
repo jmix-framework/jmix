@@ -167,7 +167,7 @@ public abstract class LogicalFilterConditionEdit<E extends LogicalFilterConditio
     }
 
     protected void editActionAfterCloseHandler(AfterCloseEvent afterCloseEvent) {
-        Screen screen = afterCloseEvent.getScreen();
+        Screen screen = afterCloseEvent.getSource();
         if (afterCloseEvent.closedWith(StandardOutcome.COMMIT)
                 && screen instanceof EditorScreen
                 && getListComponent() != null) {

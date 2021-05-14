@@ -195,7 +195,7 @@ public class AddConditionScreen extends StandardLookup<FilterCondition> {
     protected void onEditScreenAfterCommit(AfterCloseEvent afterCloseEvent) {
         if (afterCloseEvent.closedWith(StandardOutcome.COMMIT)) {
             FilterCondition filterCondition =
-                    (FilterCondition) ((FilterConditionEdit) afterCloseEvent.getScreen())
+                    (FilterCondition) ((FilterConditionEdit) afterCloseEvent.getSource())
                             .getInstanceContainer()
                             .getItem();
             select(Lists.newArrayList(filterCondition));

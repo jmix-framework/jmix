@@ -44,7 +44,16 @@ public class FilterManagerImpl implements FilterManager {
 
     private static final List<GraphQLScalarType> dateTimeTypes = ImmutableList.of(
             GraphQLLocalDateTime,
-            GraphQLDate
+            GraphQLLocalDate,
+            GraphQLOffsetDateTime,
+            GraphQLDate,
+            GraphQLDateTime
+    );
+
+    private static final List<GraphQLScalarType> timeTypes = ImmutableList.of(
+            GraphQLLocalTime,
+            GraphQLOffsetTime,
+            GraphQLTime
     );
 
     private static final List<GraphQLScalarType> stringTypes = ImmutableList.of(
@@ -66,6 +75,9 @@ public class FilterManagerImpl implements FilterManager {
         }
         if (dateTimeTypes.contains(scalarType)) {
             return EnumSet.of(EQ, NEQ, IN_LIST, NOT_IN_LIST, GT, GTE, LT, LTE, IS_NULL);
+        }
+        if (timeTypes.contains(scalarType)) {
+            return EnumSet.of(EQ, NEQ, GT, GTE, LT, LTE, IS_NULL);
         }
         if (scalarType.equals(GraphQLBoolean)) {
             return EnumSet.of(EQ, NEQ, IS_NULL);

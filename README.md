@@ -167,6 +167,120 @@ will return result as follows:
 }
 ```
 
+### Messages query 
+The query for getting messages for all entities:
+
+```
+{
+    entityMessages{
+        key
+        value
+    }
+}
+```
+
+The part of the result will look like this:
+```
+{
+  "data": {
+    "entityMessages": [
+        ...
+        {
+            "key": "scr$Car",
+            "value": "Car"
+        },
+        {
+            "key": "scr$Car.purchaseDate",
+            "value": "Purchase Date"
+        },
+        {
+            "key": "scr$Car.lastModifiedDate",
+            "value": "Last modified date"
+        },
+        {
+            "key": "scr$Car.maxPassengers",
+            "value": "Max Passengers"
+        },
+        {
+            "key": "scr$Car.lastModifiedBy",
+            "value": "Last modified by"
+        },
+        {
+            "key": "scr$Car.garage",
+            "value": "Garage"
+        },
+        ...
+    ]
+  }
+}
+```
+
+Messages for enums can get by the query:
+```
+{
+    enumMessages{
+        key
+        value
+    }
+}
+```
+And the part of the result:
+```
+{
+  "data": {
+    "enumMessages": [
+        ...
+        {
+            "key": "com.company.scr.entity.CarType",
+            "value": "CarType"
+        },
+        {
+            "key": "com.company.scr.entity.CarType.SEDAN",
+            "value": "Sedan"
+        },
+        {
+            "key": "com.company.scr.entity.CarType.HATCHBACK",
+            "value": "Hatchback"
+        },
+        ...
+    ]
+  }
+}
+```
+
+Also available getting messages for only one entity with `String` parameter `className` :
+```
+{
+    entityMessages(className: "scr$Car") {
+        key
+        value
+    }
+}
+```
+Or enum:
+```
+{
+    enumMessages(className: "com.company.scr.entity.CarType"){
+        key
+        value
+    }
+}
+```
+Localized messages can be loaded by `String` parameter `locale`. 
+If the parameter doesn't define, so the locale will be received from the current user:
+```
+{
+    entityMessages(className: "scr$Car" locale:"ru") {
+        key
+        value
+    }
+    enumMessages(className: "com.company.scr.entity.CarType" locale: "en"){
+        key
+        value
+    }
+}
+```
+
 ### Bean Validation
 
 Bean validation errors available in GraphQL response property `errors.extensions.constraintViolations`
@@ -242,7 +356,8 @@ The table below shows the dependency of types.
 | uuid          | _eq, _neq, _in, _notIn, _isNull |
 | numbers       | _eq, _neq, _gt, _gte, _lt, _lte, _in, _notIn, _isNull |
 | string/char   | _eq, _neq, _in, _notIn, _contains, _notContains, _startsWith, _endsWith, _isNull |
-| date          | _eq, _neq, _gt, _gte, _lt, _lte, _in, _notIn, _isNull |
+| date, dateTime| _eq, _neq, _gt, _gte, _lt, _lte, _in, _notIn, _isNull |
+| time          | _eq, _neq, _gt, _gte, _lt, _lte, _isNull |
 | boolean       | _eq, _neq, _isNull |
 
 
@@ -403,116 +518,16 @@ Finally, we can combine all this approaches in one query:
 }
 ```
 
-### Examples of getting localization messages 
-The query for getting messages for all entities:
+## Supported date datatypes
+The table below describes which scalar used for every date type and shows its string format:
 
-```
-{
-    entityMessages{
-        key
-        value
-    }
-}
-```
-
-The part of the result will look like this:
-```
-{
-  "data": {
-    "entityMessages": [
-        ...
-        {
-            "key": "scr$Car",
-            "value": "Car"
-        },
-        {
-            "key": "scr$Car.purchaseDate",
-            "value": "Purchase Date"
-        },
-        {
-            "key": "scr$Car.lastModifiedDate",
-            "value": "Last modified date"
-        },
-        {
-            "key": "scr$Car.maxPassengers",
-            "value": "Max Passengers"
-        },
-        {
-            "key": "scr$Car.lastModifiedBy",
-            "value": "Last modified by"
-        },
-        {
-            "key": "scr$Car.garage",
-            "value": "Garage"
-        },
-        ...
-    ]
-  }
-}
-```
-
-Messages for enums can get by the query:
-```
-{
-    enumMessages{
-        key
-        value
-    }
-}
-```
-And the part of the result:
-```
-{
-  "data": {
-    "enumMessages": [
-        ...
-        {
-            "key": "com.company.scr.entity.CarType",
-            "value": "CarType"
-        },
-        {
-            "key": "com.company.scr.entity.CarType.SEDAN",
-            "value": "Sedan"
-        },
-        {
-            "key": "com.company.scr.entity.CarType.HATCHBACK",
-            "value": "Hatchback"
-        },
-        ...
-    ]
-  }
-}
-```
-
-Also available getting messages for only one entity with `String` parameter `className` :
-```
-{
-    entityMessages(className: "scr$Car") {
-        key
-        value
-    }
-}
-```
-Or enum:
-```
-{
-    enumMessages(className: "com.company.scr.entity.CarType"){
-        key
-        value
-    }
-}
-```
-Localized messages can be loaded by `String` parameter `locale`. 
-If the parameter doesn't define, so the locale will be received from the current user:
-```
-{
-    entityMessages(className: "scr$Car" locale:"ru") {
-        key
-        value
-    }
-    enumMessages(className: "com.company.scr.entity.CarType" locale: "en"){
-        key
-        value
-    }
-}
-```
+| Java type                                     | GQL scalar            | Date format           | Example|
+| :---                                          | :---                  | :---                  | :---|
+| ```@Temporal(TemporalType.DATE) Date```       | GraphQLDate           | [ISO_LOCAL_DATE](https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/time/format/DateTimeFormatter.html#ISO_LOCAL_DATE) | '2011-12-03'|
+| ```@Temporal(TemporalType.TIME) Date```       | GraphQLTime           | [ISO_TIME](https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/time/format/DateTimeFormatter.html#ISO_TIME) | '10:15', '10:15:30' or '10:15:30+01:00'|
+| ```@Temporal(TemporalType.TIMESTAMP) Date```  | GraphQLDateTime       | [ISO_LOCAL_DATE_TIME](https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/time/format/DateTimeFormatter.html#ISO_LOCAL_DATE_TIME) | '2011-12-03T10:15:30'|
+| ```LocalDate```                               | GraphQLLocalDate      | [ISO_LOCAL_DATE](https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/time/format/DateTimeFormatter.html#ISO_LOCAL_DATE) | '2011-12-03'|
+| ```LocalTime```                               | GraphQLLocalTime      | [ISO_LOCAL_TIME](https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/time/format/DateTimeFormatter.html#ISO_LOCAL_TIME) | '10:15', '10:15:30' or '10:15:30+01:00'|
+| ```LocalDateTime```                           | GraphQLLocalDateTime  | [ISO_LOCAL_DATE_TIME](https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/time/format/DateTimeFormatter.html#ISO_LOCAL_DATE_TIME) | '2011-12-03T10:15:30'|
+| ```OffsetTime```                              | GraphQLOffsetTime     | [ISO_OFFSET_TIME](https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/time/format/DateTimeFormatter.html#ISO_OFFSET_TIME) | '10:15+01:00' or '10:15:30+01:00'|
+| ```OffsetDateTime```                          | GraphQLOffsetDateTime | [ISO_OFFSET_DATE_TIME](https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/time/format/DateTimeFormatter.html#ISO_OFFSET_DATE_TIME) | '2011-12-03T10:15:30+01:00'|

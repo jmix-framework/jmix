@@ -92,7 +92,25 @@ public class SchemaBuilder {
                 .name(CustomScalars.GraphQLDate.getName())
                 .build());
         typeDefinitionRegistry.add(ScalarTypeDefinition.newScalarTypeDefinition()
+                .name(CustomScalars.GraphQLTime.getName())
+                .build());
+        typeDefinitionRegistry.add(ScalarTypeDefinition.newScalarTypeDefinition()
+                .name(CustomScalars.GraphQLDateTime.getName())
+                .build());
+        typeDefinitionRegistry.add(ScalarTypeDefinition.newScalarTypeDefinition()
                 .name(CustomScalars.GraphQLLocalDateTime.getName())
+                .build());
+        typeDefinitionRegistry.add(ScalarTypeDefinition.newScalarTypeDefinition()
+                .name(CustomScalars.GraphQLLocalDate.getName())
+                .build());
+        typeDefinitionRegistry.add(ScalarTypeDefinition.newScalarTypeDefinition()
+                .name(CustomScalars.GraphQLLocalTime.getName())
+                .build());
+        typeDefinitionRegistry.add(ScalarTypeDefinition.newScalarTypeDefinition()
+                .name(CustomScalars.GraphQLOffsetDateTime.getName())
+                .build());
+        typeDefinitionRegistry.add(ScalarTypeDefinition.newScalarTypeDefinition()
+                .name(CustomScalars.GraphQLOffsetTime.getName())
                 .build());
         typeDefinitionRegistry.add(ScalarTypeDefinition.newScalarTypeDefinition()
                 .name(CustomScalars.GraphQLVoid.getName())
@@ -187,7 +205,13 @@ public class SchemaBuilder {
                 .scalar(CustomScalars.GraphQLLong)
                 .scalar(CustomScalars.GraphQLBigDecimal)
                 .scalar(CustomScalars.GraphQLDate)
+                .scalar(CustomScalars.GraphQLTime)
+                .scalar(CustomScalars.GraphQLDateTime)
                 .scalar(CustomScalars.GraphQLLocalDateTime)
+                .scalar(CustomScalars.GraphQLLocalDate)
+                .scalar(CustomScalars.GraphQLLocalTime)
+                .scalar(CustomScalars.GraphQLOffsetDateTime)
+                .scalar(CustomScalars.GraphQLOffsetTime)
                 .scalar(CustomScalars.GraphQLVoid)
                 .scalar(Scalars.GraphQLBigInteger)
                 .scalar(Scalars.GraphQLChar)

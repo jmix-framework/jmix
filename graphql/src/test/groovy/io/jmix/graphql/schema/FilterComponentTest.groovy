@@ -44,6 +44,7 @@ class FilterComponentTest extends AbstractGraphQLTest {
     private Set<Types.FilterOperation> uuidFilterOPs
     private Set<Types.FilterOperation> numbersFilterOPs
     private Set<Types.FilterOperation> dateTimeFilterOPs
+    private Set<Types.FilterOperation> timeFilterOPs
     private Set<Types.FilterOperation> booleanFilterOPs
 
     @SuppressWarnings('unused')
@@ -52,6 +53,7 @@ class FilterComponentTest extends AbstractGraphQLTest {
         uuidFilterOPs = new HashSet<Types.FilterOperation>(Arrays.asList(EQ, NEQ, IN_LIST, NOT_IN_LIST, IS_NULL))
         numbersFilterOPs = new HashSet<Types.FilterOperation>(Arrays.asList(EQ, NEQ, GT, GTE, LT, LTE, IN_LIST, NOT_IN_LIST, IS_NULL))
         dateTimeFilterOPs = new HashSet<Types.FilterOperation>(Arrays.asList(EQ, NEQ, IN_LIST, NOT_IN_LIST, GT, GTE, LT, LTE, IS_NULL))
+        timeFilterOPs = new HashSet<Types.FilterOperation>(Arrays.asList(EQ, NEQ, GT, GTE, LT, LTE, IS_NULL))
         booleanFilterOPs = new HashSet<Types.FilterOperation>(Arrays.asList(EQ, NEQ, IS_NULL))
     }
 
@@ -72,7 +74,15 @@ class FilterComponentTest extends AbstractGraphQLTest {
 
         //dateTimeTypes
         def localDateTimeER = createCondition("inp_localDateTimeFilterCondition", dateTimeFilterOPs)
+        def localDateER = createCondition("inp_localDateFilterCondition", dateTimeFilterOPs)
+        def offsetDateTimeER = createCondition("inp_offsetDateTimeFilterCondition", dateTimeFilterOPs)
         def dateER = createCondition("inp_dateFilterCondition", dateTimeFilterOPs)
+        def dateTimeER = createCondition("inp_dateTimeFilterCondition", dateTimeFilterOPs)
+
+        //timeTypes
+        def localTimeER = createCondition("inp_localTimeFilterCondition", timeFilterOPs)
+        def offsetTimeER = createCondition("inp_offsetTimeFilterCondition", timeFilterOPs)
+        def timeER = createCondition("inp_timeFilterCondition", timeFilterOPs)
 
         //stringTypes
         def stringER = createCondition("inp_stringFilterCondition", stringFilterOPs)
@@ -93,7 +103,15 @@ class FilterComponentTest extends AbstractGraphQLTest {
 
         //dateTimeTypes
         def localDateTimeAR = filterTypesBuilder.buildScalarFilterConditionType(CustomScalars.GraphQLLocalDateTime)
+        def offsetDateTimeAR = filterTypesBuilder.buildScalarFilterConditionType(CustomScalars.GraphQLOffsetDateTime)
+        def localDateAR = filterTypesBuilder.buildScalarFilterConditionType(CustomScalars.GraphQLLocalDate)
         def dateAR = filterTypesBuilder.buildScalarFilterConditionType(CustomScalars.GraphQLDate)
+        def dateTimeAR = filterTypesBuilder.buildScalarFilterConditionType(CustomScalars.GraphQLDateTime)
+
+        //timeTypes
+        def offsetTimeAR = filterTypesBuilder.buildScalarFilterConditionType(CustomScalars.GraphQLOffsetTime)
+        def localTimeAR = filterTypesBuilder.buildScalarFilterConditionType(CustomScalars.GraphQLLocalTime)
+        def timeAR = filterTypesBuilder.buildScalarFilterConditionType(CustomScalars.GraphQLTime)
 
         //stringTypes
         def stringAR = filterTypesBuilder.buildScalarFilterConditionType(GraphQLString)
@@ -114,7 +132,15 @@ class FilterComponentTest extends AbstractGraphQLTest {
 
         //dateTimeTypes
         localDateTimeAR.isEqualTo(localDateTimeER)
+        offsetDateTimeAR.isEqualTo(offsetDateTimeER)
+        localDateAR.isEqualTo(localDateER)
         dateAR.isEqualTo(dateER)
+        dateTimeAR.isEqualTo(dateTimeER)
+
+        //timeTypes
+        offsetTimeAR.isEqualTo(offsetTimeER)
+        localTimeAR.isEqualTo(localTimeER)
+        timeAR.isEqualTo(timeER)
 
         //stringTypes
         charAR.isEqualTo(charER)
@@ -140,7 +166,15 @@ class FilterComponentTest extends AbstractGraphQLTest {
 
         //dateTimeTypes
         def localDateTimeActual = filterManager.availableOperations(CustomScalars.GraphQLLocalDateTime)
+        def offsetDateTimeActual = filterManager.availableOperations(CustomScalars.GraphQLOffsetDateTime)
+        def localDateActual = filterManager.availableOperations(CustomScalars.GraphQLLocalDate)
         def dateActual = filterManager.availableOperations(CustomScalars.GraphQLDate)
+        def dateTimeActual = filterManager.availableOperations(CustomScalars.GraphQLDateTime)
+
+        //timeTypes
+        def offsetTimeActual = filterManager.availableOperations(CustomScalars.GraphQLOffsetTime)
+        def localTimeActual = filterManager.availableOperations(CustomScalars.GraphQLLocalTime)
+        def timeActual = filterManager.availableOperations(CustomScalars.GraphQLTime)
 
         //stringTypes
         def stringActual = filterManager.availableOperations(GraphQLString)
@@ -157,7 +191,13 @@ class FilterComponentTest extends AbstractGraphQLTest {
         bigIntActual == numbersFilterOPs
         intActual == numbersFilterOPs
         localDateTimeActual == dateTimeFilterOPs
+        localDateActual == dateTimeFilterOPs
+        localTimeActual == timeFilterOPs
+        offsetTimeActual == timeFilterOPs
+        timeActual == timeFilterOPs
+        offsetDateTimeActual == dateTimeFilterOPs
         dateActual == dateTimeFilterOPs
+        dateTimeActual == dateTimeFilterOPs
         stringActual == stringFilterOPs
         charActual == stringFilterOPs
     }

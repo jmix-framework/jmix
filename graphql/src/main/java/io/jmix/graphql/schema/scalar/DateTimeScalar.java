@@ -6,20 +6,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.Instant;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
-import static io.jmix.graphql.schema.scalar.CustomScalars.SERIALIZATION_DATE_FORMAT;
+import static io.jmix.graphql.schema.scalar.CustomScalars.SERIALIZATION_DATETIME_FORMAT;
 
 
-public class DateScalar extends GraphQLScalarType {
+public class DateTimeScalar extends GraphQLScalarType {
 
-    static final Logger log = LoggerFactory.getLogger(DateScalar.class);
+    static final Logger log = LoggerFactory.getLogger(DateTimeScalar.class);
 
-    public DateScalar() {
-        super("Date", "Date type", new BaseDateCoercing() {
+    public DateTimeScalar() {
+        super("DateTime", "Date type with time", new BaseDateCoercing() {
 
             @Override
             public Object serialize(Object input) {
@@ -27,7 +27,8 @@ public class DateScalar extends GraphQLScalarType {
 
                 if (input instanceof Date) {
                     Date date = (Date) input;
-                    return DateTimeFormatter.ISO_LOCAL_DATE
+
+                    return DateTimeFormatter.ISO_LOCAL_DATE_TIME
                             .withZone(ZoneId.systemDefault())
                             .format(Instant.ofEpochMilli(date.getTime()));
                 }
@@ -40,12 +41,12 @@ public class DateScalar extends GraphQLScalarType {
                 if (value.isEmpty()) {
                     return Date.from(Instant.EPOCH);
                 }
-                Instant temporalAccessor = LocalDate.parse(value)
-                        .atStartOfDay(ZoneId.systemDefault())
+                Instant temporalAccessor = LocalDateTime.parse(value)
+                        .atZone(ZoneId.systemDefault())
                         .toInstant();
                 Date date = Date.from(temporalAccessor);
 
-                String dateString = SERIALIZATION_DATE_FORMAT.format(date);
+                String dateString = SERIALIZATION_DATETIME_FORMAT.format(date);
                 log.debug("parseLiteral return {}", dateString);
                 return date;
             }

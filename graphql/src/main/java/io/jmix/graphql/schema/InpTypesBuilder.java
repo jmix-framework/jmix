@@ -4,13 +4,15 @@ import graphql.Scalars;
 import graphql.language.*;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.graphql.MetadataUtils;
+import io.jmix.graphql.datafetcher.GqlEntityValidationException;
 import io.jmix.graphql.schema.scalar.CustomScalars;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.*;
 import java.util.Collection;
 import java.util.Date;
 import java.util.UUID;
@@ -91,10 +93,31 @@ public class InpTypesBuilder extends BaseTypesBuilder {
                 return CustomScalars.GraphQLBigDecimal.getName();
             }
             if (Date.class.isAssignableFrom(javaType)) {
-                return CustomScalars.GraphQLDate.getName();
+                if (MetadataUtils.isDate(metaProperty)) {
+                    return CustomScalars.GraphQLDate.getName();
+                }
+                if (MetadataUtils.isTime(metaProperty)) {
+                    return CustomScalars.GraphQLTime.getName();
+                }
+                if (MetadataUtils.isDateTime(metaProperty)) {
+                    return CustomScalars.GraphQLDateTime.getName();
+                }
+                throw new GqlEntityValidationException("Unsupported datatype mapping for date property " + metaProperty);
             }
             if (LocalDateTime.class.isAssignableFrom(javaType)) {
                 return CustomScalars.GraphQLLocalDateTime.getName();
+            }
+            if (LocalDate.class.isAssignableFrom(javaType)) {
+                return CustomScalars.GraphQLLocalDate.getName();
+            }
+            if (LocalTime.class.isAssignableFrom(javaType)) {
+                return CustomScalars.GraphQLLocalTime.getName();
+            }
+            if (OffsetDateTime.class.isAssignableFrom(javaType)) {
+                return CustomScalars.GraphQLOffsetDateTime.getName();
+            }
+            if (OffsetTime.class.isAssignableFrom(javaType)) {
+                return CustomScalars.GraphQLOffsetTime.getName();
             }
         }
 

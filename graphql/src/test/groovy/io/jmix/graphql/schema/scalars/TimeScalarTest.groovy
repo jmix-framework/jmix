@@ -19,13 +19,11 @@ package io.jmix.graphql.schema.scalars
 import graphql.language.StringValue
 import graphql.schema.CoercingParseLiteralException
 import graphql.schema.CoercingSerializeException
-import io.jmix.graphql.schema.scalar.DateScalar
+import io.jmix.graphql.schema.scalar.TimeScalar
 import org.apache.commons.lang3.time.DateUtils
 import spock.lang.Specification
 
-import java.time.Instant
-import java.time.LocalDate
-import java.time.ZoneId
+import static io.jmix.graphql.schema.scalar.CustomScalars.SERIALIZATION_TIME_FORMAT
 
 /*
  * Copyright 2021 Haulmont.
@@ -43,39 +41,39 @@ import java.time.ZoneId
  * limitations under the License.
  */
 
-class DateScalarTest extends Specification {
+class TimeScalarTest extends Specification {
 
-    def "date scalar test"() {
+    def "time scalar test"() {
         given:
-        def scalar = new DateScalar()
-        def stringDate = "2021-01-01"
-        def temporalAccessor = LocalDate.parse(stringDate).atStartOfDay(ZoneId.systemDefault()).toInstant()
-        def date = Date.from(temporalAccessor)
+        def scalar = new TimeScalar()
+        def stringDate = "23:59:59"
+        def time = DateUtils.parseDate(stringDate.trim(), SERIALIZATION_TIME_FORMAT.toPattern());
         def coercing = scalar.getCoercing()
         def parsedLiteral
         def parsedValue
         def serialized
         def nullParsedLiteral
         def nullParsedValue
+        def midnight = DateUtils.parseDate("00:00:00", SERIALIZATION_TIME_FORMAT.toPattern());
 
         when:
         parsedLiteral = (Date) coercing.parseLiteral(new StringValue(stringDate))
         parsedValue = (Date) coercing.parseValue(stringDate)
-        serialized = coercing.serialize(date)
+        serialized = coercing.serialize(time)
         nullParsedLiteral = (Date) coercing.parseLiteral(new StringValue(""))
         nullParsedValue = (Date) coercing.parseLiteral(new StringValue(""))
 
         then:
-        DateUtils.isSameDay(parsedLiteral, date)
-        DateUtils.isSameDay(parsedValue, date)
+        DateUtils.isSameDay(parsedLiteral, time)
+        DateUtils.isSameDay(parsedValue, time)
         serialized == stringDate
-        DateUtils.isSameDay(nullParsedLiteral, Date.from(Instant.EPOCH))
-        DateUtils.isSameDay(nullParsedValue, Date.from(Instant.EPOCH))
+        DateUtils.isSameDay(nullParsedLiteral, midnight)
+        DateUtils.isSameDay(nullParsedValue, midnight)
     }
 
-    def "date scalar coercing throws CoercingSerializeException"() {
+    def "time scalar coercing throws CoercingSerializeException"() {
         given:
-        def scalar = new DateScalar()
+        def scalar = new TimeScalar()
         def coercing = scalar.getCoercing()
 
         when:
@@ -86,9 +84,9 @@ class DateScalarTest extends Specification {
         exception.message == "Expected type 'Date' but was 'String'."
     }
 
-    def "date scalar coercing throws CoercingParseLiteralException with parseLiteral"() {
+    def "time scalar coercing throws CoercingParseLiteralException with parseLiteral"() {
         given:
-        def scalar = new DateScalar()
+        def scalar = new TimeScalar()
         def coercing = scalar.getCoercing()
 
         when:
@@ -99,9 +97,9 @@ class DateScalarTest extends Specification {
         exception.message == "Expected type 'StringValue' but was 'String'."
     }
 
-    def "date scalar coercing throws CoercingParseLiteralException with parseValue"() {
+    def "time scalar coercing throws CoercingParseLiteralException with parseValue"() {
         given:
-        def scalar = new DateScalar()
+        def scalar = new TimeScalar()
         def coercing = scalar.getCoercing()
 
         when:

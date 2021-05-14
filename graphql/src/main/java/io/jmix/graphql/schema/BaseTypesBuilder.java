@@ -5,6 +5,8 @@ import graphql.language.EnumTypeDefinition;
 import graphql.language.EnumValueDefinition;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.graphql.MetadataUtils;
+import io.jmix.graphql.datafetcher.GqlEntityValidationException;
 import io.jmix.graphql.schema.scalar.CustomScalars;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.*;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.UUID;
@@ -26,7 +28,7 @@ public abstract class BaseTypesBuilder {
     @Autowired
     protected MetadataTools metadataTools;
 
-    public static EnumTypeDefinition buildEnumTypeDef(Class<?> javaType)  {
+    public static EnumTypeDefinition buildEnumTypeDef(Class<?> javaType) {
         String enumClassName = javaType.getSimpleName();
         Enum<?>[] enumValues;
         try {
@@ -99,10 +101,31 @@ public abstract class BaseTypesBuilder {
             return CustomScalars.GraphQLBigDecimal.getName();
         }
         if (Date.class.isAssignableFrom(javaType)) {
-            return CustomScalars.GraphQLDate.getName();
+            if (MetadataUtils.isDate(metaProperty)) {
+                return CustomScalars.GraphQLDate.getName();
+            }
+            if (MetadataUtils.isTime(metaProperty)) {
+                return CustomScalars.GraphQLTime.getName();
+            }
+            if (MetadataUtils.isDateTime(metaProperty)) {
+                return CustomScalars.GraphQLDateTime.getName();
+            }
+            throw new GqlEntityValidationException("Unsupported datatype mapping for date property " + metaProperty);
         }
         if (LocalDateTime.class.isAssignableFrom(javaType)) {
             return CustomScalars.GraphQLLocalDateTime.getName();
+        }
+        if (LocalDate.class.isAssignableFrom(javaType)) {
+            return CustomScalars.GraphQLLocalDate.getName();
+        }
+        if (LocalTime.class.isAssignableFrom(javaType)) {
+            return CustomScalars.GraphQLLocalTime.getName();
+        }
+        if (OffsetDateTime.class.isAssignableFrom(javaType)) {
+            return CustomScalars.GraphQLOffsetDateTime.getName();
+        }
+        if (OffsetTime.class.isAssignableFrom(javaType)) {
+            return CustomScalars.GraphQLOffsetTime.getName();
         }
 
         log.warn("getDatatypeFieldTypeName: can't resolve type for datatype meta property {} class {}", metaProperty, javaType);

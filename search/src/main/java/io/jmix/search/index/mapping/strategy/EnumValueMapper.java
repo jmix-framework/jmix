@@ -23,8 +23,8 @@ import io.jmix.core.CoreProperties;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 
+import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 public class EnumValueMapper extends AbstractValueMapper {
 
@@ -43,9 +43,9 @@ public class EnumValueMapper extends AbstractValueMapper {
 
     @Override
     protected JsonNode transformSingleValue(Object value) {
-        Map<String, Locale> availableLocales = coreProperties.getAvailableLocales();
+        List<Locale> availableLocales = coreProperties.getAvailableLocales();
         ArrayNode arrayNode = JsonNodeFactory.instance.arrayNode();
-        for (Locale locale : availableLocales.values()) {
+        for (Locale locale : availableLocales) {
             String message = messages.getMessage((Enum<?>) value, locale);
             arrayNode.add(message);
         }

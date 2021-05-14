@@ -494,7 +494,7 @@ public class WebTokenList<V extends Entity> extends AbstractField<CubaTokenList<
         if (afterLookupCloseHandler != null) {
             lookupScreen.addAfterCloseListener(event -> {
                 String actionId = ((StandardCloseAction) event.getCloseAction()).getActionId();
-                afterLookupCloseHandler.onClose(event.getScreen().getWindow(), actionId);
+                afterLookupCloseHandler.onClose(event.getSource().getWindow(), actionId);
             });
         }
     }

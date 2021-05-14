@@ -18,7 +18,9 @@ package com.haulmont.cuba.gui.xml.layout.loaders;
 
 import com.haulmont.cuba.gui.UiComponents;
 import com.haulmont.cuba.gui.components.BrowserFrame;
+import io.jmix.ui.component.ResourceView;
 import io.jmix.ui.xml.layout.loader.BrowserFrameLoader;
+import org.dom4j.Element;
 
 public class CubaBrowserFrameLoader extends BrowserFrameLoader {
 
@@ -27,5 +29,10 @@ public class CubaBrowserFrameLoader extends BrowserFrameLoader {
         UiComponents uiComponents = applicationContext.getBean(UiComponents.class);
         resultComponent = uiComponents.create(BrowserFrame.NAME);
         loadId(resultComponent, element);
+    }
+
+    @Override
+    protected void loadResource(ResourceView component, Element element) {
+        loadNestedResource(component, element);
     }
 }

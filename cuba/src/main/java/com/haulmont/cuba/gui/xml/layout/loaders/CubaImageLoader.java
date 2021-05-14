@@ -20,6 +20,7 @@ import com.haulmont.cuba.gui.UiComponents;
 import com.haulmont.cuba.gui.components.DatasourceComponent;
 import com.haulmont.cuba.gui.components.Image;
 import com.haulmont.cuba.gui.xml.data.DatasourceLoaderHelper;
+import io.jmix.ui.component.ResourceView;
 import io.jmix.ui.xml.layout.loader.ImageLoader;
 import org.dom4j.Element;
 
@@ -41,5 +42,10 @@ public class CubaImageLoader extends ImageLoader {
                 .loadDatasourceIfValueSourceNull((DatasourceComponent) resultComponent, element, context,
                         (ComponentLoaderContext) getComponentContext())
                 .ifPresent(component::setValueSource);
+    }
+
+    @Override
+    protected void loadResource(ResourceView component, Element element) {
+        loadNestedResource(component, element);
     }
 }

@@ -157,6 +157,7 @@ public class WidgetTemplateEdit extends StandardEditor<WidgetTemplate> {
                 WidgetTemplate widgetTemplate = widgetTemplateDc.getItem();
                 if (StringUtils.isNotEmpty(widgetTemplate.getWidgetModel())) {
                     Widget widget = converter.widgetFromJson(widgetTemplateDc.getItem().getWidgetModel());
+                    widget = dataContext.merge(widget);
                     openWidgetEditor(widget);
                 }
             }

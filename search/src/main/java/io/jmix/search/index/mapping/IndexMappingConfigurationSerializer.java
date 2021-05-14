@@ -26,7 +26,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.Collection;
 
 public class IndexMappingConfigurationSerializer extends StdSerializer<IndexMappingConfiguration> {
 
@@ -39,23 +38,26 @@ public class IndexMappingConfigurationSerializer extends StdSerializer<IndexMapp
     }
 
     @Override
-    public void serialize(IndexMappingConfiguration value, JsonGenerator gen, SerializerProvider provider) throws IOException {
-        log.trace("Start serialize Index Mapping Config: {}", value);
+    public void serialize(IndexMappingConfiguration configuration, JsonGenerator gen, SerializerProvider provider) throws IOException {
+        log.trace("Start serialize Index Mapping Config: {}", configuration);
 
-        ObjectNode mergedMappingStructure = mergeFields(value.getFields().values());
+        ObjectNode mergedMappingStructure = mergeFields(configuration);
         log.trace("Result mapping structure = {}", mergedMappingStructure);
         gen.writeTree(mergedMappingStructure);
     }
 
-    protected ObjectNode mergeFields(Collection<MappingFieldDescriptor> fields) {
+    protected ObjectNode mergeFields(IndexMappingConfiguration configuration) {
         ObjectNode root = JsonNodeFactory.instance.objectNode();
         ObjectNode rootProperties = root.putObject("properties");
 
-        for (MappingFieldDescriptor field : fields) {
+        for (MappingFieldDescriptor field : configuration.getFields().values()) {
             String path = field.getIndexPropertyFullName();
             ObjectNode config = field.getFieldConfiguration().asJson();
             mergeField(rootProperties, path, config);
         }
+
+        DisplayedNameDescriptor displayedNameDescriptor = configuration.getDisplayedNameDescriptor();
+        rootProperties.set(displayedNameDescriptor.getIndexPropertyFullName(), displayedNameDescriptor.getFieldConfiguration().asJson());
 
         return root;
     }

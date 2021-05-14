@@ -26,7 +26,9 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.search.index.EntityIndexer;
 import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.IndexResult;
+import io.jmix.search.index.mapping.DisplayedNameDescriptor;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
+import io.jmix.search.index.mapping.IndexMappingConfiguration;
 import io.jmix.search.index.mapping.MappingFieldDescriptor;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
@@ -186,6 +188,15 @@ public class EntityIndexerImpl implements EntityIndexer {
                 fetchPlanBuilder.add(instanceNameRelatedProperty.toPathString());
             });
         });
+
+        indexConfiguration.getMapping()
+                .getDisplayedNameDescriptor()
+                .getInstanceNameRelatedProperties()
+                .forEach(instanceNameRelatedProperty -> {
+                    log.trace("Add instance name related property (displayed name) to fetch plan: {}", instanceNameRelatedProperty.toPathString());
+                    fetchPlanBuilder.add(instanceNameRelatedProperty.toPathString());
+                });
+
         return fetchPlanBuilder.build();
     }
 
@@ -193,9 +204,16 @@ public class EntityIndexerImpl implements EntityIndexer {
                                                IndexConfiguration indexConfiguration,
                                                Object instance) {
         ObjectNode sourceObject = JsonNodeFactory.instance.objectNode();
-        indexConfiguration.getMapping().getFields().values().stream()
+        IndexMappingConfiguration indexMappingConfiguration = indexConfiguration.getMapping();
+        indexMappingConfiguration.getFields()
+                .values()
+                .stream()
                 .filter(field -> !field.isStandalone())
                 .forEach(field -> addFieldValueToEntityIndexContent(sourceObject, field, instance));
+
+        DisplayedNameDescriptor displayedNameDescriptor = indexMappingConfiguration.getDisplayedNameDescriptor();
+        JsonNode displayedName = displayedNameDescriptor.getValue(instance);
+        sourceObject.set(displayedNameDescriptor.getIndexPropertyFullName(), displayedName);
 
         log.debug("Source object: {}", sourceObject);
         try {

@@ -24,11 +24,10 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.annotation.JmixEntitySearchIndex;
+import io.jmix.search.index.mapping.DisplayedNameDescriptor;
 import io.jmix.search.index.mapping.IndexMappingConfiguration;
 import io.jmix.search.index.mapping.MappingFieldDescriptor;
-import io.jmix.search.index.mapping.strategy.FieldConfiguration;
-import io.jmix.search.index.mapping.strategy.FieldMappingStrategy;
-import io.jmix.search.index.mapping.strategy.FieldMappingStrategyProvider;
+import io.jmix.search.index.mapping.strategy.*;
 import io.jmix.search.utils.PropertyTools;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -36,6 +35,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -69,6 +69,7 @@ public class AnnotatedIndexDefinitionProcessor {
     /**
      * Processes index definition interface marked with {@link JmixEntitySearchIndex} annotation
      * and creates {@link IndexConfiguration} based on it.
+     *
      * @param className full name of index definition interface
      * @return {@link IndexConfiguration}
      */
@@ -114,6 +115,7 @@ public class AnnotatedIndexDefinitionProcessor {
         Method[] methods = indexDefClass.getDeclaredMethods();
         IndexMappingConfiguration indexMappingConfiguration;
 
+        DisplayedNameDescriptor displayedNameDescriptor = createDisplayedNameDescriptor(entityMetaClass);
         if (methods.length > 0) {
             List<Annotation> fieldAnnotations = new ArrayList<>();
             Method methodWithDefinitionImplementation = null;
@@ -147,9 +149,9 @@ public class AnnotatedIndexDefinitionProcessor {
                 }
             }
             Map<String, MappingFieldDescriptor> fieldDescriptors = processMappingDefinition(entityMetaClass, mappingDefinition);
-            indexMappingConfiguration = new IndexMappingConfiguration(entityMetaClass, fieldDescriptors);
+            indexMappingConfiguration = new IndexMappingConfiguration(entityMetaClass, fieldDescriptors, displayedNameDescriptor);
         } else {
-            indexMappingConfiguration = new IndexMappingConfiguration(entityMetaClass, Collections.emptyMap());
+            indexMappingConfiguration = new IndexMappingConfiguration(entityMetaClass, Collections.emptyMap(), displayedNameDescriptor);
         }
         return indexMappingConfiguration;
     }
@@ -251,19 +253,7 @@ public class AnnotatedIndexDefinitionProcessor {
         if (fieldMappingStrategy.isSupported(propertyPath)) {
             List<MetaPropertyPath> instanceNameRelatedProperties;
             if (propertyPath.getRange().isClass()) {
-                Collection<MetaProperty> instanceNameRelatedLocalProperties = instanceNameProvider.getInstanceNameRelatedProperties(
-                        propertyPath.getRange().asClass(), true
-                );
-                MetaProperty[] metaProperties = propertyPath.getMetaProperties();
-
-                instanceNameRelatedProperties = instanceNameRelatedLocalProperties.stream()
-                        .map(instanceNameRelatedProperty -> {
-                            MetaProperty[] extendedPropertyArray = Arrays.copyOf(metaProperties, metaProperties.length + 1);
-                            extendedPropertyArray[extendedPropertyArray.length - 1] = instanceNameRelatedProperty;
-                            return new MetaPropertyPath(propertyPath.getMetaClass(), extendedPropertyArray);
-                        })
-                        .collect(Collectors.toList());
-
+                instanceNameRelatedProperties = resolveInstanceNameRelatedProperties(propertyPath.getRange().asClass(), propertyPath);
                 log.debug("Properties related to Instance Name ({}): {}", propertyPath, instanceNameRelatedProperties);
             } else {
                 instanceNameRelatedProperties = Collections.emptyList();
@@ -285,6 +275,37 @@ public class AnnotatedIndexDefinitionProcessor {
         } else {
             return Optional.empty();
         }
+    }
+
+    protected DisplayedNameDescriptor createDisplayedNameDescriptor(MetaClass metaClass) {
+        DisplayedNameDescriptor displayedNameDescriptor = new DisplayedNameDescriptor();
+        FieldConfiguration fieldConfiguration = new NativeFieldConfiguration(
+                new TextFieldMapper().createJsonConfiguration(Collections.emptyMap())
+        );
+        displayedNameDescriptor.setFieldConfiguration(fieldConfiguration);
+
+        List<MetaPropertyPath> instanceNameRelatedProperties = resolveInstanceNameRelatedProperties(metaClass, null);
+        displayedNameDescriptor.setInstanceNameRelatedProperties(instanceNameRelatedProperties);
+        displayedNameDescriptor.setValueMapper(new DisplayedNameValueMapper(metadataTools));
+
+        return displayedNameDescriptor;
+    }
+
+    protected List<MetaPropertyPath> resolveInstanceNameRelatedProperties(MetaClass metaClass, @Nullable MetaPropertyPath rootPropertyPath) {
+        MetaProperty[] rootProperties = rootPropertyPath == null ? null : rootPropertyPath.getMetaProperties();
+        return instanceNameProvider.getInstanceNameRelatedProperties(metaClass, true)
+                .stream()
+                .map(property -> {
+                    if (rootProperties == null) {
+                        return new MetaPropertyPath(metaClass, property);
+                    } else {
+                        MetaProperty[] extendedPropertiesArray = Arrays.copyOf(rootProperties, rootProperties.length + 1);
+                        extendedPropertiesArray[extendedPropertiesArray.length - 1] = property;
+                        return new MetaPropertyPath(rootPropertyPath.getMetaClass(), extendedPropertiesArray);
+                    }
+
+                })
+                .collect(Collectors.toList());
     }
 
     protected FieldMappingStrategy resolveFieldMappingStrategy(Class<? extends FieldMappingStrategy> strategyClass) {

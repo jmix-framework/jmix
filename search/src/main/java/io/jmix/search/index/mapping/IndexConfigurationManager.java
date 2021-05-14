@@ -286,13 +286,20 @@ public class IndexConfigurationManager {
 
         void registerIndexConfiguration(IndexConfiguration indexConfiguration) {
             registerInMainRegistries(indexConfiguration);
+            IndexMappingConfiguration mappingConfiguration = indexConfiguration.getMapping();
 
-            indexConfiguration.getMapping().getFields().values()
+            mappingConfiguration
+                    .getFields()
+                    .values()
                     .stream()
-                    .filter(f -> {
-                        return !f.isStandalone();//todo
-                    })
-                    .forEach(this::processEntityFieldDescriptor);
+                    .filter(f -> !f.isStandalone())
+                    .map(MappingFieldDescriptor::getMetaPropertyPath)
+                    .forEach(this::processProperty);
+
+            mappingConfiguration
+                    .getDisplayedNameDescriptor()
+                    .getInstanceNameRelatedProperties()
+                    .forEach(this::processProperty);
         }
 
         @Nullable
@@ -342,13 +349,13 @@ public class IndexConfigurationManager {
             }
         }
 
-        private void processEntityFieldDescriptor(MappingFieldDescriptor fieldDescriptor) {
+        private void processProperty(MetaPropertyPath propertyPath) {
             List<MetaPropertyPath> effectiveProperties;
-            if (fieldDescriptor.getMetaPropertyPath().getRange().isClass()) {
+            if (propertyPath.getRange().isClass()) {
                 // Extend properties with instance-name-affected properties for simple 'refEntity' field declaration case
-                effectiveProperties = createExtendedPropertiesForClassField(fieldDescriptor);
+                effectiveProperties = extendClassProperty(propertyPath);
             } else {
-                effectiveProperties = Collections.singletonList(fieldDescriptor.getMetaPropertyPath());
+                effectiveProperties = Collections.singletonList(propertyPath);
             }
             log.debug("Effective properties = {}", effectiveProperties);
 
@@ -360,18 +367,18 @@ public class IndexConfigurationManager {
             propertyTrackingInfoList.forEach(this::processPropertyTrackingInfo);
         }
 
-        private List<MetaPropertyPath> createExtendedPropertiesForClassField(MappingFieldDescriptor fieldDescriptor) {
+        private List<MetaPropertyPath> extendClassProperty(MetaPropertyPath propertyPath) {
             Collection<MetaProperty> instanceNameRelatedProperties = instanceNameProvider.getInstanceNameRelatedProperties(
-                    fieldDescriptor.getMetaPropertyPath().getRange().asClass(), true
+                    propertyPath.getRange().asClass(), true
             );
             log.debug("Instance Name related properties: {}", instanceNameRelatedProperties);
-            MetaProperty[] metaProperties = fieldDescriptor.getMetaPropertyPath().getMetaProperties();
+            MetaProperty[] metaProperties = propertyPath.getMetaProperties();
 
             return instanceNameRelatedProperties.stream()
                     .map(instanceNameRelatedProperty -> {
                         MetaProperty[] extendedPropertyArray = Arrays.copyOf(metaProperties, metaProperties.length + 1);
                         extendedPropertyArray[extendedPropertyArray.length - 1] = instanceNameRelatedProperty;
-                        return new MetaPropertyPath(fieldDescriptor.getMetaPropertyPath().getMetaClass(), extendedPropertyArray);
+                        return new MetaPropertyPath(propertyPath.getMetaClass(), extendedPropertyArray);
                     })
                     .collect(Collectors.toList());
         }

@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.search.utils.Constants;
 
 public class ReferenceValueMapper extends AbstractValueMapper {
 
@@ -40,7 +41,7 @@ public class ReferenceValueMapper extends AbstractValueMapper {
     protected JsonNode transformSingleValue(Object value) {
         String instanceName = metadataTools.getInstanceName(value);
         ObjectNode result = JsonNodeFactory.instance.objectNode();
-        result.put("_instance_name", instanceName);
+        result.put(Constants.INSTANCE_NAME_FIELD, instanceName);
         return result;
     }
 
@@ -51,7 +52,7 @@ public class ReferenceValueMapper extends AbstractValueMapper {
             arrayNode.add(metadataTools.getInstanceName(value));
         }
         ObjectNode result = JsonNodeFactory.instance.objectNode();
-        result.set("_instance_name", arrayNode);
+        result.set(Constants.INSTANCE_NAME_FIELD, arrayNode);
         return result;
     }
 }

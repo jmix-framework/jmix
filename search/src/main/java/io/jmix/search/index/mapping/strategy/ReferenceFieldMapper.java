@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Sets;
+import io.jmix.search.utils.Constants;
 
 import java.util.Map;
 import java.util.Set;
@@ -40,7 +41,7 @@ public class ReferenceFieldMapper extends AbstractFieldMapper {
 
         ObjectNode root = JsonNodeFactory.instance.objectNode();
         JsonNode config = objectMapper.valueToTree(effectiveParameters);
-        root.putObject("properties").set("_instance_name", config);
+        root.putObject("properties").set(Constants.INSTANCE_NAME_FIELD, config);
         return root;
     }
 }

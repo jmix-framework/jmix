@@ -152,7 +152,7 @@ public class MappingFieldDescriptor {
 
     /**
      * Gets all properties that used in instance name value.
-     * Makes sence only if current {@link MappingFieldDescriptor} relates to reference property
+     * Makes sense only if current {@link MappingFieldDescriptor} relates to reference property
      *
      * @return list of {@link MetaPropertyPath}
      */

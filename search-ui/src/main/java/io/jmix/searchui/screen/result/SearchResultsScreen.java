@@ -384,7 +384,7 @@ public class SearchResultsScreen extends Screen {
         Label<String> hitLabel = uiComponents.create(Label.of(String.class));
         hitLabel.setValue(caption);
         hitLabel.setHtmlEnabled(true);
-        hitLabel.addStyleName("c-fts-hit fts-hit"); //todo do we need both?
+        hitLabel.addStyleName("c-fts-hit");
         hitLabel.setAlignment(MIDDLE_LEFT);
         return hitLabel;
     }

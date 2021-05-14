@@ -2414,16 +2414,25 @@
         </xs:restriction>
     </xs:simpleType>
 
+    <xs:complexType name="resourceType">
+        <xs:choice maxOccurs="unbounded">
+            <xs:choice minOccurs="0">
+                <xs:element name="file" type="fileResource"/>
+                <xs:element name="theme" type="themeResource"/>
+                <xs:element name="classpath" type="classpathResource"/>
+                <xs:element name="url" type="urlResource"/>
+                <xs:element name="relativePath" type="relativePathResource"/>
+            </xs:choice>
+        </xs:choice>
+    </xs:complexType>
+
     <xs:complexType name="resourceViewComponent">
         <xs:complexContent>
             <xs:extension base="baseComponent">
-                <xs:choice minOccurs="0">
-                    <xs:element name="file" type="fileResource"/>
-                    <xs:element name="theme" type="themeResource"/>
-                    <xs:element name="classpath" type="classpathResource"/>
-                    <xs:element name="url" type="urlResource"/>
-                    <xs:element name="relativePath" type="relativePathResource"/>
-                </xs:choice>
+                <xs:all>
+                    <xs:element name="resource" type="resourceType"/>
+                </xs:all>
+
                 <xs:attribute name="alternateText" type="xs:string"/>
 
                 <xs:attributeGroup ref="hasContextHelp"/>
@@ -3993,6 +4002,7 @@
             </xs:choice>
         </xs:sequence>
     </xs:complexType>
+
     <xs:complexType name="componentFormatter">
         <xs:sequence>
             <xs:group ref="formatters" minOccurs="0"/>

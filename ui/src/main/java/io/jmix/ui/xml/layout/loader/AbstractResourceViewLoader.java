@@ -53,15 +53,24 @@ public abstract class AbstractResourceViewLoader<T extends ResourceView> extends
     }
 
     protected void loadResource(ResourceView component, Element element) {
-        if (loadFileResource(component, element)) return;
+        Element resourceElement = element.element("resource");
+        if (resourceElement == null) {
+            return;
+        }
 
-        if (loadThemeResource(component, element)) return;
+        loadNestedResource(component, resourceElement);
+    }
 
-        if (loadClasspathResource(component, element)) return;
+    protected void loadNestedResource(ResourceView component, Element resourceElement) {
+        if (loadFileResource(component, resourceElement)) return;
 
-        if (loadRelativePathResource(component, element)) return;
+        if (loadThemeResource(component, resourceElement)) return;
 
-        loadUrlResource(component, element);
+        if (loadClasspathResource(component, resourceElement)) return;
+
+        if (loadRelativePathResource(component, resourceElement)) return;
+
+        loadUrlResource(component, resourceElement);
     }
 
     protected boolean loadRelativePathResource(ResourceView resultComponent, Element element) {

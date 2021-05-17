@@ -11,7 +11,9 @@
                    align="MIDDLE_CENTER"
                    scaleMode="SCALE_DOWN"
                    stylename="app-icon">
-                <theme path="branding/app-icon-menu.svg"/>
+                <resource>
+                    <theme path="branding/app-icon-menu.svg"/>
+                </resource>
             </image>
             <menu id="mainMenu"
                   align="MIDDLE_LEFT"/>

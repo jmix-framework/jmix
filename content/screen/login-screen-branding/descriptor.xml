@@ -75,7 +75,9 @@
             <image id="backgroundImage"
                    scaleMode="COVER"
                    stylename="jmix-brandlogin-background">
-                <relativePath path="VAADIN/brand-login-screen/background.svg"/>
+                <resource>
+                    <relativePath path="VAADIN/brand-login-screen/background.svg"/>
+                </resource>
             </image>
         </cssLayout>
     </layout>

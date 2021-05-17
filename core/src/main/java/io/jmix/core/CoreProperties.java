@@ -21,7 +21,7 @@ import org.springframework.boot.context.properties.ConstructorBinding;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
+import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -40,7 +40,7 @@ public class CoreProperties {
     String tempDir;
     String dbDir;
     String defaultFileStorage;
-    private String anonymousAuthenticationTokenKey;
+    String anonymousAuthenticationTokenKey;
     List<Locale> availableLocales;
     int crossDataStoreReferenceLoadingBatchSize;
     boolean idGenerationForEntitiesInAdditionalDataStoresEnabled;
@@ -49,6 +49,8 @@ public class CoreProperties {
     boolean entitySerializationTokenRequired;
     String entitySerializationTokenEncryptionKey;
     boolean fetchPlanSerializationUseView;
+    boolean triggerFilesEnabled;
+    Duration triggerFilesProcessInterval;
 
     public CoreProperties(
             String webHostName,
@@ -69,7 +71,11 @@ public class CoreProperties {
             @DefaultValue("KEY")
                     String entitySerializationTokenEncryptionKey,
             @DefaultValue("false")
-                    boolean fetchPlanSerializationUseView) {
+                    boolean fetchPlanSerializationUseView,
+            @DefaultValue("true")
+                    boolean triggerFilesEnabled,
+            @DefaultValue("5000")
+            Duration triggerFilesProcessInterval) {
         this.webHostName = webHostName;
         this.webPort = webPort;
         this.confDir = confDir;
@@ -95,6 +101,8 @@ public class CoreProperties {
         this.entitySerializationTokenRequired = entitySerializationTokenRequired;
         this.entitySerializationTokenEncryptionKey = entitySerializationTokenEncryptionKey;
         this.fetchPlanSerializationUseView = fetchPlanSerializationUseView;
+        this.triggerFilesEnabled = triggerFilesEnabled;
+        this.triggerFilesProcessInterval = triggerFilesProcessInterval;
     }
 
     /**
@@ -187,5 +195,24 @@ public class CoreProperties {
 
     public boolean isFetchPlanSerializationUseView() {
         return fetchPlanSerializationUseView;
+    }
+
+    /**
+     * @return true if enables the processing of bean invocation trigger files. Default value: true
+     * </p>
+     * The trigger file is a file that is placed in the triggers subdirectory of the application temporary directory.
+     * The file name consists of two parts separated with a #: the first part is the bean class, the second part is the method name
+     * of the bean to invoke. For example: io.jmix.core.Messages#clearCache.
+     * The trigger files handler monitors the folder for new trigger files, invokes the appropriate methods and then removes the files.
+     */
+    public boolean isTriggerFilesEnabled() {
+        return triggerFilesEnabled;
+    }
+
+    /**
+     * Defines the period in milliseconds of trigger files processing
+     */
+    public Duration getTriggerFilesProcessInterval() {
+        return triggerFilesProcessInterval;
     }
 }

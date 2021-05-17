@@ -25,6 +25,7 @@ import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.*;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 import javax.validation.MessageInterpolator;
@@ -39,6 +40,7 @@ import javax.validation.MessageInterpolator;
 @PropertySource(name = "io.jmix.core", value = "classpath:/io/jmix/core/module.properties")
 @EnableCaching
 @EnableAspectJAutoProxy
+@Import(CoreScheduleConfiguration.class)
 public class CoreConfiguration {
 
     @Bean("core_ModulesProcessor")

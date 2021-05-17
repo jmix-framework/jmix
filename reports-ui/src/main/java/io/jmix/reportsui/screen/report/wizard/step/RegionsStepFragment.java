@@ -140,6 +140,7 @@ public class RegionsStepFragment extends StepFragment {
     @Override
     public void beforeShow() {
         updateButtons();
+        showAddRegion();
     }
 
     @Override
@@ -168,6 +169,22 @@ public class RegionsStepFragment extends StepFragment {
         reportRegion.setIsTabulatedRegion(tabulated);
         reportRegion.setOrderNum((long) reportDataDc.getItem().getReportRegions().size() + 1L);
         return reportRegion;
+    }
+
+    protected void showAddRegion() {
+        if (reportRegionsDc.getItems().isEmpty()) {
+            if (getReportTypeGenerate().isList()) {
+                if (entityTreeHasSimpleAttrs) {
+                    openTabulatedRegionEditor(createReportRegion(true));
+                }
+            } else {
+                if (entityTreeHasSimpleAttrs) {
+                    openRegionEditor(createReportRegion(false));
+                } else if (entityTreeHasCollections) {
+                    openTabulatedRegionEditor(createReportRegion(true));
+                }
+            }
+        }
     }
 
     protected void openTabulatedRegionEditor(final ReportRegion item) {

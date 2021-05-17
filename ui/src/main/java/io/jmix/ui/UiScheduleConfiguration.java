@@ -21,33 +21,35 @@ import io.jmix.ui.executor.impl.WebTasksWatchDog;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.SchedulingConfigurer;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
-import org.springframework.scheduling.config.IntervalTask;
-import org.springframework.scheduling.config.ScheduledTaskRegistrar;
+import org.springframework.scheduling.TaskScheduler;
+import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
+import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 
-@EnableScheduling
+import java.util.concurrent.Executors;
+
 @Configuration
-public class UiScheduleConfiguration implements SchedulingConfigurer {
+public class UiScheduleConfiguration {
 
     @Autowired
     protected UiProperties uiProperties;
 
-    @Override
-    public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {
-        taskRegistrar.setScheduler(threadPoolTaskScheduler());
-        taskRegistrar.addFixedDelayTask(new IntervalTask(() -> watchDog().cleanupTasks(),
-                uiProperties.getBackgroundTaskTimeoutCheckInterval()));
+    @Bean("ui_ThreadPoolTaskScheduler")
+    public TaskScheduler threadPoolTaskScheduler() {
+        CustomizableThreadFactory threadFactory =
+                new CustomizableThreadFactory("ui_backgroundScheduler");
+        threadFactory.setDaemon(true);
+
+        ConcurrentTaskScheduler taskScheduler = new ConcurrentTaskScheduler(
+                Executors.newSingleThreadScheduledExecutor(threadFactory));
+
+        configureTasks(taskScheduler);
+
+        return taskScheduler;
     }
 
-    @Bean("ui_ThreadPoolTaskScheduler")
-    public ThreadPoolTaskScheduler threadPoolTaskScheduler() {
-        ThreadPoolTaskScheduler taskScheduler = new ThreadPoolTaskScheduler();
-        taskScheduler.setDaemon(true);
-        taskScheduler.setPoolSize(1);
-        taskScheduler.setThreadNamePrefix("ui_backgroundScheduler");
-        return taskScheduler;
+    protected void configureTasks(TaskScheduler scheduler) {
+        scheduler.scheduleWithFixedDelay(() -> watchDog().cleanupTasks(),
+                uiProperties.getBackgroundTaskTimeoutCheckInterval());
     }
 
     @Bean("ui_BackgroundWorker_WatchDog")

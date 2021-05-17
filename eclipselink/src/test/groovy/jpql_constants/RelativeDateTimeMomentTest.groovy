@@ -20,6 +20,7 @@ import io.jmix.core.DataManager
 import io.jmix.core.LoadContext
 import io.jmix.core.Metadata
 import org.springframework.beans.factory.annotation.Autowired
+import spock.lang.Ignore
 import test_support.DataSpec
 import test_support.entity.TestDateTimeEntity
 
@@ -313,6 +314,7 @@ class RelativeDateTimeMomentTest extends DataSpec {
 
     }
 
+    @Ignore
     def "constants with java.time.LocalDate"() {
         //----------YEAR--------
 

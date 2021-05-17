@@ -199,7 +199,6 @@ public class CoreProperties {
 
     /**
      * @return true if enables the processing of bean invocation trigger files. Default value: true
-     * </p>
      * The trigger file is a file that is placed in the triggers subdirectory of the application temporary directory.
      * The file name consists of two parts separated with a #: the first part is the bean class, the second part is the method name
      * of the bean to invoke. For example: io.jmix.core.Messages#clearCache.

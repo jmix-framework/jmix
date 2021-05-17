@@ -18,11 +18,7 @@
 package com.haulmont.cuba.gui.components.filter.edit;
 
 import com.haulmont.cuba.CubaProperties;
-import com.haulmont.cuba.core.global.AppBeans;
-import com.haulmont.cuba.core.global.CommitContext;
-import com.haulmont.cuba.core.global.DataManager;
-import com.haulmont.cuba.core.global.Metadata;
-import com.haulmont.cuba.core.global.UserSessionSource;
+import com.haulmont.cuba.core.global.*;
 import com.haulmont.cuba.gui.components.AbstractWindow;
 import com.haulmont.cuba.gui.components.Filter;
 import com.haulmont.cuba.gui.components.filter.AddConditionHelper;
@@ -61,6 +57,9 @@ public class FilterEditor extends AbstractWindow {
     protected FilterEntity filterEntity;
 
     protected Filter filter;
+
+    @Autowired
+    protected Security security;
 
     @Autowired
     protected ConditionsDs conditionsDs;
@@ -190,13 +189,12 @@ public class FilterEditor extends AbstractWindow {
             globalDefaultCb.setEnabled(false);
         }
 
-        // todo filter permission
-        /*if (!userSessionSource.getUserSession().isSpecificPermitted(GLOBAL_FILTER_PERMISSION)) {
+        if (!security.isSpecificPermitted(GLOBAL_FILTER_PERMISSION)) {
             availableForAllCb.setVisible(false);
             availableForAllLabel.setVisible(false);
             globalDefaultCb.setVisible(false);
             globalDefaultLabel.setVisible(false);
-        }*/
+        }
 
         availableForAllCb.addValueChangeListener(e -> {
             Boolean isFilterAvailableForAll = e.getValue();

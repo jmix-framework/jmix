@@ -125,23 +125,22 @@ public class EntityTreeModelBuilder {
     }
 
     private String getTreeNodeInfo(EntityTreeNode node) {
+        String metaClassName = node.getMetaClassName();
         if (node.getMetaPropertyName() == null) {
-            return String.format("%s isMany:false", node.getMetaClassName());
+            return String.format("%s isMany:false", metaClassName);
         }
 
         MetaClass parentMetaClass = metadata.getClass(node.getParentMetaClassName());
-        String parentMetaClassName = parentMetaClass.getName();
-
         MetaProperty metaProperty = parentMetaClass.getProperty(node.getMetaPropertyName());
 
         boolean isMany = isMany(metaProperty);
         MetaClass domain = metaProperty.getDomain();
 
-        if (domain.getName().equals(parentMetaClassName)) {
-            return String.format("%s isMany:%s", parentMetaClassName, isMany);
+        if (domain.getName().equals(metaClassName)) {
+            return String.format("%s isMany:%s", metaClassName, isMany);
         }
 
-        return String.format("%s.%s isMany:%s", domain, parentMetaClassName, isMany);
+        return String.format("%s.%s isMany:%s", domain, metaClassName, isMany);
     }
 
     protected EntityTreeNode createEntityTreeNode(MetaProperty metaProperty,

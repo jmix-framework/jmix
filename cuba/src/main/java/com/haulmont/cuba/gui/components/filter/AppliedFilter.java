@@ -102,9 +102,9 @@ public class AppliedFilter {
             sb.append(condition.getLocCaption()).append(" ");
             if (condition.getOperator() == Op.NOT_EMPTY) {
                 if (BooleanUtils.isTrue((Boolean) param.getValue())) {
-                    sb.append(messages.getMainMessage("Op.NOT_EMPTY"));
+                    sb.append(messages.getMessage(Op.class, "Op.NOT_EMPTY"));
                 } else {
-                    sb.append(messages.getMainMessage("Op.EMPTY"));
+                    sb.append(messages.getMessage(Op.class, "Op.EMPTY"));
                 }
             } else {
                 sb.append(condition.getOperationCaption())

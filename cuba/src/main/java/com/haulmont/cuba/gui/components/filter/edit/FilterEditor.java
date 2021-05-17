@@ -181,15 +181,16 @@ public class FilterEditor extends AbstractWindow {
         if (!messages.getMessage("filter.adHocFilter").equals(filterEntity.getName())) {
             filterName.setValue(filterEntity.getName());
         }
-        // availableForAllCb.setValue(filterEntity.getUser() == null);
+        availableForAllCb.setValue(filterEntity.getUsername() == null);
         defaultCb.setValue(filterEntity.getIsDefault());
         applyDefaultCb.setValue(filterEntity.getApplyDefault());
         globalDefaultCb.setValue(filterEntity.getGlobalDefault());
 
-        /*if (filterEntity.getUser() != null) {
+        if (filterEntity.getUsername() != null) {
             globalDefaultCb.setEnabled(false);
-        }*/
+        }
 
+        // todo filter permission
         /*if (!userSessionSource.getUserSession().isSpecificPermitted(GLOBAL_FILTER_PERMISSION)) {
             availableForAllCb.setVisible(false);
             availableForAllLabel.setVisible(false);
@@ -214,14 +215,14 @@ public class FilterEditor extends AbstractWindow {
             applyDefaultLabel.setVisible(manualApplyRequired);
         }
 
-        /*if (filterEntity.getFolder() != null) {
+        if (filterEntity.getFolder() != null) {
             availableForAllCb.setVisible(false);
             availableForAllLabel.setVisible(false);
             globalDefaultCb.setVisible(false);
             globalDefaultLabel.setVisible(false);
             defaultCb.setVisible(false);
             defaultLabel.setVisible(false);
-        }*/
+        }
 
         conditionsDs.addItemChangeListener(e -> {
             if (!treeItemChangeListenerEnabled) {
@@ -328,12 +329,13 @@ public class FilterEditor extends AbstractWindow {
             activeConditionFrame.commit();
         }
         filterEntity.setName(filterName.getValue());
-        // todo user substitution
-        /*if (availableForAllCb.getValue()) {
-            filterEntity.setUser(null);
+        if (Boolean.TRUE.equals(availableForAllCb.getValue())) {
+            filterEntity.setUsername(null);
         } else {
-            filterEntity.setUser(userSessionSource.getUserSession().getCurrentOrSubstitutedUser());
-        }*/
+            // todo user substitution
+//            filterEntity.setUsername(userSessionSource.getUserSession().getCurrentOrSubstitutedUser());
+            filterEntity.setUsername(userSessionSource.getUserSession().getUser().getUsername());
+        }
         filterEntity.setIsDefault(defaultCb.getValue());
         filterEntity.setApplyDefault(applyDefaultCb.getValue());
 

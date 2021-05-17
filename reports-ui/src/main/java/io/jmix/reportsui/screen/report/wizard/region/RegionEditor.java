@@ -114,8 +114,6 @@ public class RegionEditor extends StandardEditor<ReportRegion> {
     }
 
     protected void initComponents() {
-        initControlBtnsActions();
-
         if (asFetchPlanEditor) {
             initAsFetchPlanEditor();
         }
@@ -235,20 +233,14 @@ public class RegionEditor extends StandardEditor<ReportRegion> {
         }
     }
 
+    @Install(to = "propertiesTable.upItemAction", subject = "enabledRule")
+    protected boolean propertiesTableUpItemActionEnabledRule() {
+        return isUpdatePermitted();
+    }
 
-    protected void initControlBtnsActions() {
-//        upItem.setAction(new OrderableItemAction<Table<RegionProperty>, RegionProperty>("upItem", OrderableItemAction.Direction.UP, propertiesTable) {
-//            @Override
-//            public boolean isEnabled() {
-//                return super.isEnabled() && isUpdatePermitted();
-//            }
-//        });
-//        downItem.setAction(new OrderableItemAction<Table<RegionProperty>, RegionProperty>("downItem", OrderableItemAction.Direction.DOWN, propertiesTable) {
-//            @Override
-//            public boolean isEnabled() {
-//                return super.isEnabled() && isUpdatePermitted();
-//            }
-//        });
+    @Install(to = "propertiesTable.downItemAction", subject = "enabledRule")
+    protected boolean propertiesTableDownItemActionEnabledRule() {
+        return isUpdatePermitted();
     }
 
     protected void normalizeRegionPropertiesOrderNum() {

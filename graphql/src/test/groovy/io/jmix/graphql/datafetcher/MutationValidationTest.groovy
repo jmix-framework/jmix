@@ -55,4 +55,14 @@ class MutationValidationTest extends AbstractGraphQLTest {
         messages.get(0) == "manufacturerEmpty"
         messages.get(1) == "must match \"[a-zA-Z]{2}\\d{3}\""
     }
+
+    def "should throw exception while creating new DatatypesTestEntity with read-only attributes"() {
+        when:
+        def response = graphQLTestTemplate.postForResource(
+                "graphql/io/jmix/graphql/datafetcher/upsert-datatypes-test-entity.graphql")
+        def error = getErrors(response)[0].getAsJsonObject()
+
+        then:
+        getMessage(error) == "Exception while fetching data (/upsert_scr_DatatypesTestEntity) : Modifying read-only attributes is forbidden [readOnlyStringAttr]"
+    }
 }

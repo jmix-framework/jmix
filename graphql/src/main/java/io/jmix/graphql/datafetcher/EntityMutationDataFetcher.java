@@ -7,6 +7,7 @@ import io.jmix.core.accesscontext.CrudEntityContext;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.impl.importexport.EntityImportPlanJsonBuilder;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.security.AccessDeniedException;
 import io.jmix.core.validation.EntityValidationException;
 import io.jmix.graphql.schema.NamingUtils;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Component;
 
 import javax.persistence.PersistenceException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 public class EntityMutationDataFetcher {
@@ -59,6 +61,8 @@ public class EntityMutationDataFetcher {
             Object entity = entitySerialization.entityFromJson(entityJson, metaClass);
 
             EntityImportPlan entityImportPlan = entityImportPlanJsonBuilder.buildFromJson(entityJson, metaClass);
+            checkReadOnlyAttributeWrite(metaClass, entityImportPlan);
+
             Collection<Object> objects;
             try {
                 objects = entityImportExport.importEntities(Collections.singletonList(entity), entityImportPlan, true);
@@ -114,6 +118,18 @@ public class EntityMutationDataFetcher {
         if (!entityContext.isDeletePermitted()) {
             throw new PersistenceException(
                     String.format("Deletion of the %s is forbidden", metaClass.getName()));
+        }
+    }
+
+    protected void checkReadOnlyAttributeWrite(MetaClass metaClass, EntityImportPlan importPlan) {
+        List<String> readOnlyAttributes = importPlan.getProperties().stream()
+                .map(property -> metaClass.getProperty(property.getName()))
+                .filter(MetaProperty::isReadOnly)
+                .map(MetaProperty::getName)
+                .collect(Collectors.toList());
+
+        if (!readOnlyAttributes.isEmpty()) {
+            throw new GqlEntityValidationException("Modifying read-only attributes is forbidden " + readOnlyAttributes);
         }
     }
 

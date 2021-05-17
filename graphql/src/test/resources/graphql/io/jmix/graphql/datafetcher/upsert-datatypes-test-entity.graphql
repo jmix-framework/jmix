@@ -1,0 +1,32 @@
+mutation {
+    upsert_scr_DatatypesTestEntity(datatypesTestEntity:{
+        bigDecimalAttr: 11111
+        booleanAttr: null
+        dateAttr: null
+        dateTimeAttr:null
+        doubleAttr:null
+        integerAttr:null
+        longAttr:null
+        stringAttr:null
+        timeAttr:null
+        uuidAttr:null
+        localDateTimeAttr:null
+        offsetDateTimeAttr:null
+        localDateAttr:null
+        localTimeAttr:null
+        offsetTimeAttr:null
+        enumAttr:null
+        associationO2Oattr:null
+        associationM2Oattr:null
+        associationM2Mattr:[]
+        intIdentityIdTestEntityAssociationO2OAttr:null
+        integerIdTestEntityAssociationM2MAttr:[]
+        datatypesTestEntity3:null
+        name:null
+        readOnlyStringAttr:"read-only"
+        id:"6a538099-9dfd-8761-fa32-b496c236dbe8"
+    }){
+        id
+        readOnlyStringAttr
+    }
+}

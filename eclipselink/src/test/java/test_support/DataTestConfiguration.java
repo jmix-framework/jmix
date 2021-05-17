@@ -25,6 +25,7 @@ import io.jmix.core.security.CoreSecurityConfiguration;
 import io.jmix.data.impl.JmixEntityManagerFactoryBean;
 import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.data.persistence.JpqlSortExpressionProvider;
+import io.jmix.data.repositories.config.EnableJmixRepositories;
 import io.jmix.eclipselink.EclipselinkConfiguration;
 import io.jmix.eclipselink.impl.JmixEclipselinkTransactionManager;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -48,6 +49,7 @@ import javax.sql.DataSource;
 @Configuration
 @ComponentScan
 @PropertySource("classpath:/test_support/test-app.properties")
+@EnableJmixRepositories
 @JmixModule(dependsOn = EclipselinkConfiguration.class)
 public class DataTestConfiguration {
 

@@ -20,6 +20,7 @@ import io.jmix.dashboards.entity.DashboardGroup;
 import io.jmix.dashboards.entity.PersistentDashboard;
 import io.jmix.dashboards.entity.WidgetTemplate;
 import io.jmix.dashboards.entity.WidgetTemplateGroup;
+import io.jmix.dashboards.model.Widget;
 import io.jmix.dashboards.model.parameter.Parameter;
 import io.jmix.security.model.EntityAttributePolicyAction;
 import io.jmix.security.model.EntityPolicyAction;
@@ -64,10 +65,12 @@ public interface DashboardsAdminRole {
     @EntityPolicy(entityClass = WidgetTemplate.class, actions = {EntityPolicyAction.ALL})
     @EntityPolicy(entityClass = DashboardGroup.class, actions = {EntityPolicyAction.ALL})
     @EntityPolicy(entityClass = PersistentDashboard.class, actions = {EntityPolicyAction.ALL})
+    @EntityPolicy(entityClass = Widget.class, actions = {EntityPolicyAction.ALL})
     @EntityAttributePolicy(entityClass = Parameter.class, action = EntityAttributePolicyAction.MODIFY, attributes = "*")
     @EntityAttributePolicy(entityClass = WidgetTemplateGroup.class, action = EntityAttributePolicyAction.MODIFY, attributes = "*")
     @EntityAttributePolicy(entityClass = WidgetTemplate.class, action = EntityAttributePolicyAction.MODIFY, attributes = "*")
     @EntityAttributePolicy(entityClass = DashboardGroup.class, action = EntityAttributePolicyAction.MODIFY, attributes = "*")
     @EntityAttributePolicy(entityClass = PersistentDashboard.class, action = EntityAttributePolicyAction.MODIFY, attributes = "*")
+    @EntityAttributePolicy(entityClass = Widget.class, action = EntityAttributePolicyAction.MODIFY, attributes = "*")
     void dashboardsAdmin();
 }

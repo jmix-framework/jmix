@@ -84,39 +84,21 @@
     }
   }
 
-  /* Global size */
-
-  &.small .#{$primary-stylename} {
-    @include he-drawer-size-style($primary-stylename: $primary-stylename);
+  &.small {
+    @include he-drawer-size-style($primary-stylename: $primary-stylename, $font-size: $v-font-size--small);
   }
 
-  &.large .#{$primary-stylename} {
-    @include he-drawer-size-style($primary-stylename: $primary-stylename);
-  }
-
-  /* Size within a container */
-
-  .small .#{$primary-stylename} {
-    @include he-drawer-size-style($primary-stylename: $primary-stylename);
-  }
-
-  .large .#{$primary-stylename} {
-    @include he-drawer-size-style($primary-stylename: $primary-stylename);
-  }
-
-  /* Own size */
-
-  .#{$primary-stylename}.small {
-    @include he-drawer-size-style($primary-stylename: $primary-stylename);
-  }
-
-  .#{$primary-stylename}.large {
-    @include he-drawer-size-style($primary-stylename: $primary-stylename);
+  &.large {
+    @include he-drawer-size-style($primary-stylename: $primary-stylename, $font-size: $v-font-size--large);
   }
 }
 
-@mixin he-drawer-size-style($primary-stylename: jmix-drawer) {
+@mixin he-drawer-size-style($primary-stylename: jmix-drawer, $font-size: $v-font-size) {
   .#{$primary-stylename}-footer .#{$primary-stylename}-collapse-button {
     @include drawer-footer-button()
+  }
+
+  .#{$primary-stylename}-header {
+    font-size: $font-size;
   }
 }

@@ -23,9 +23,7 @@ $cuba-sidemenu-top-height--large: $v-unit-size--large + 2 * $cuba-sidemenu-top-o
 @mixin he-sidemenu($primary-stylename: c-sidemenu) {
   @include he-sidemenu-styles($primary-stylename: $primary-stylename);
 
-  /* Global size */
-
-  &.small .#{$primary-stylename} {
+  &.small {
     @include he-sidemenu-size-styles($primary-stylename   : $primary-stylename,
                                      $unit-size           : $v-unit-size--small,
                                      $font-size           : $v-font-size--small,
@@ -34,55 +32,7 @@ $cuba-sidemenu-top-height--large: $v-unit-size--large + 2 * $cuba-sidemenu-top-o
                                      $sidemenu-top-height : $cuba-sidemenu-top-height--small);
   }
 
-  &.large .#{$primary-stylename} {
-    @include he-sidemenu-size-styles($primary-stylename   : $primary-stylename,
-                                     $unit-size           : $v-unit-size--large,
-                                     $font-size           : $v-font-size--large,
-                                     $scaling-factor      : $v-scaling-factor--large,
-                                     $sidemenu-top-offset : $cuba-sidemenu-top-offset--large,
-                                     $sidemenu-top-height : $cuba-sidemenu-top-height--large);
-  }
-
-  /* Size within a container */
-
-  .small .#{$primary-stylename} {
-    @include he-sidemenu-size-styles($primary-stylename   : $primary-stylename,
-                                     $unit-size           : $v-unit-size--small,
-                                     $font-size           : $v-font-size--small,
-                                     $scaling-factor      : $v-scaling-factor--small,
-                                     $sidemenu-top-offset : $cuba-sidemenu-top-offset--small,
-                                     $sidemenu-top-height : $cuba-sidemenu-top-height--small);
-  }
-
-  .medium .#{$primary-stylename} {
-    @include he-sidemenu-size-styles($primary-stylename: $primary-stylename);
-  }
-
-  .large .#{$primary-stylename} {
-    @include he-sidemenu-size-styles($primary-stylename   : $primary-stylename,
-                                     $unit-size           : $v-unit-size--large,
-                                     $font-size           : $v-font-size--large,
-                                     $scaling-factor      : $v-scaling-factor--large,
-                                     $sidemenu-top-offset : $cuba-sidemenu-top-offset--large,
-                                     $sidemenu-top-height : $cuba-sidemenu-top-height--large);
-  }
-
-  /* Own size */
-
-  .#{$primary-stylename}.small {
-    @include he-sidemenu-size-styles($primary-stylename   : $primary-stylename,
-                                     $unit-size           : $v-unit-size--small,
-                                     $font-size           : $v-font-size--small,
-                                     $scaling-factor      : $v-scaling-factor--small,
-                                     $sidemenu-top-offset : $cuba-sidemenu-top-offset--small,
-                                     $sidemenu-top-height : $cuba-sidemenu-top-height--small);
-  }
-
-  .#{$primary-stylename}.medium {
-    @include he-sidemenu-size-styles($primary-stylename: $primary-stylename);
-  }
-
-  .#{$primary-stylename}.large {
+  &.large {
     @include he-sidemenu-size-styles($primary-stylename   : $primary-stylename,
                                      $unit-size           : $v-unit-size--large,
                                      $font-size           : $v-font-size--large,
@@ -93,8 +43,7 @@ $cuba-sidemenu-top-height--large: $v-unit-size--large + 2 * $cuba-sidemenu-top-o
 }
 
 @mixin he-sidemenu-styles($primary-stylename: c-sidemenu) {
-
-  @include he-sidemenu-size-styles($primary-stylename: $primary-stylename, $sizePredefined: false);
+  @include he-sidemenu-size-styles($primary-stylename: $primary-stylename);
 
   // TODO: gg, does it really exist?
   .#{$primary-stylename}-user {
@@ -246,16 +195,11 @@ $cuba-sidemenu-top-height--large: $v-unit-size--large + 2 * $cuba-sidemenu-top-o
                                $font-size           : $v-font-size,
                                $scaling-factor      : 1,
                                $sidemenu-top-offset : $cuba-sidemenu-top-offset,
-                               $sidemenu-top-height : $cuba-sidemenu-top-height,
-                               $sizePredefined      : true) {
-  @if $sizePredefined {
+                               $sidemenu-top-height : $cuba-sidemenu-top-height) {
+
+  .#{$primary-stylename} {
     font-size: $font-size;
     line-height: round($unit-size);
-  } @else {
-    .#{$primary-stylename} {
-      font-size: $font-size;
-      line-height: round($unit-size);
-    }
   }
 
   .#{$primary-stylename}-wrap {

@@ -234,6 +234,11 @@ public class PropertyCondition implements Condition {
     }
 
     @Override
+    public String toString() {
+        return "[" + property + " " + operation + " " + (parameterName != null ? (":" + parameterName) : parameterValue) + "]";
+    }
+
+    @Override
     public PropertyCondition copy() {
         PropertyCondition pc = new PropertyCondition();
         pc.setProperty(this.property);

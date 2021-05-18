@@ -171,36 +171,27 @@ public class EntityInfoWindow extends Screen {
         addItem(items, EntityValues.getVersion(entity), "entityInfo.version");
 
         if (EntityValues.isAuditSupported(entity)) {
-            addItem(items, entity, "createdDate", "entityInfo.createdDate", metadataTools::format);
-            addItem(items, entity, "createdBy", "entityInfo.createdBy");
+            addItem(items, EntityValues.getCreatedDate(entity), "entityInfo.createdDate", metadataTools::format);
+            addItem(items, EntityValues.getCreatedBy(entity), "entityInfo.createdBy");
 
-            addItem(items, entity, "lastModifiedDate", "entityInfo.lastModifiedDate", metadataTools::format);
-            addItem(items, entity, "lastModifiedBy", "entityInfo.lastModifiedBy");
+            addItem(items,
+                    EntityValues.getLastModifiedDate(entity), "entityInfo.lastModifiedDate", metadataTools::format);
+            addItem(items, EntityValues.getLastModifiedBy(entity), "entityInfo.lastModifiedBy");
         }
 
         if (EntityValues.isSoftDeleted(entity)) {
-            addItem(items, entity, "deletedDate", "entityInfo.deletedDate", metadataTools::format);
-            addItem(items, entity, "deletedBy", "entityInfo.deletedBy");
+            addItem(items, EntityValues.getDeletedDate(entity), "entityInfo.deletedDate", metadataTools::format);
+            addItem(items, EntityValues.getDeletedBy(entity), "entityInfo.deletedBy");
         }
 
         infoDc.setItems(items);
     }
 
-    protected void addItem(List<InfoValue> items, Object entity, String param, String messageKey) {
-        addItem(items, entity, param, messageKey, null);
+    protected void addItem(List<InfoValue> items, @Nullable Object value, String messageKey) {
+        addItem(items, value, messageKey, null);
     }
 
-    protected void addItem(List<InfoValue> items, Object entity, String param, String messageKey,
-                           @Nullable Function<Object, String> formatter) {
-        Object value = EntityValues.getValue(entity, param);
-        addItem(items, value, messageKey, formatter);
-    }
-
-    protected void addItem(List<InfoValue> items, Object value, String messageKey) {
-        addItem(items, value, messageKey, (Function<Object, String>) null);
-    }
-
-    protected void addItem(List<InfoValue> items, Object value, String messageKey,
+    protected void addItem(List<InfoValue> items, @Nullable Object value, String messageKey,
                            @Nullable Function<Object, String> formatter) {
         if (value != null) {
             items.add(createItem(messageKey, formatter != null

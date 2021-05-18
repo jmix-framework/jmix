@@ -125,7 +125,9 @@
                         <table id="entityLogTable" width="100%" dataContainer="entityLogDc">
                             <columns>
                                 <column id="eventTs" caption="msg://when">
-                                    <dateFormatter format="msg://dateTimeWithSeconds"/>
+                                    <formatter>
+                                        <date format="msg://dateTimeWithSeconds"/>
+                                    </formatter>
                                 </column>
                                 <column id="username" caption="msg://user"/>
                                 <column id="type" caption="msg://changeType"/>

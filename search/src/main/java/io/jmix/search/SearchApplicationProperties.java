@@ -108,7 +108,7 @@ public class SearchApplicationProperties {
     }
 
     /**
-     * @return is file content indexed using Auto Map strategy
+     * @return true if Auto Mapping strategy indexes file content. False if only file name is indexed
      */
     public boolean isAutoMapIndexFileContent() {
         return autoMapIndexFileContent;

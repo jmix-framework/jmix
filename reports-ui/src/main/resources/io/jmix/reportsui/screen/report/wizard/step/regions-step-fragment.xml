@@ -56,12 +56,12 @@
                 <actions>
                     <action id="up" type="itemOrderable">
                         <properties>
-                            <property name="direction" value="up"/>
+                            <property name="direction" value="UP"/>
                         </properties>
                     </action>
                     <action id="down" type="itemOrderable">
                         <properties>
-                            <property name="direction" value="down"/>
+                            <property name="direction" value="DOWN"/>
                         </properties>
                     </action>
                     <action id="remove" type="remove"/>

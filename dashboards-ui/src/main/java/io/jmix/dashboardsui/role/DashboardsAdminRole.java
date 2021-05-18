@@ -29,6 +29,7 @@ import io.jmix.security.model.SecurityScope;
 import io.jmix.security.role.annotation.EntityAttributePolicy;
 import io.jmix.security.role.annotation.EntityPolicy;
 import io.jmix.security.role.annotation.ResourceRole;
+import io.jmix.security.role.annotation.SpecificPolicy;
 import io.jmix.securityui.role.annotation.MenuPolicy;
 import io.jmix.securityui.role.annotation.ScreenPolicy;
 
@@ -61,6 +62,7 @@ public interface DashboardsAdminRole {
             "dshbrd_PersistentDashboard.browse",
             "dshbrd_WidgetTemplate.browse"
     })
+    @SpecificPolicy(resources = "dashboardGroupsBrowse")
     @EntityPolicy(entityClass = Parameter.class, actions = {EntityPolicyAction.ALL})
     @EntityPolicy(entityClass = WidgetTemplateGroup.class, actions = {EntityPolicyAction.ALL})
     @EntityPolicy(entityClass = WidgetTemplate.class, actions = {EntityPolicyAction.ALL})

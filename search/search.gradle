@@ -30,8 +30,7 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-annotations'
     implementation 'com.fasterxml.jackson.module:jackson-module-jaxb-annotations'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml'
-    implementation 'org.elasticsearch.client:elasticsearch-rest-high-level-client:7.10.2'
-    implementation 'com.amazonaws:aws-java-sdk-core:1.11.221'
+    api 'org.elasticsearch.client:elasticsearch-rest-high-level-client:7.10.2'
 
     implementation ('org.apache.tika:tika-parsers:1.23') {
         exclude(group: 'junit', module: 'junit')

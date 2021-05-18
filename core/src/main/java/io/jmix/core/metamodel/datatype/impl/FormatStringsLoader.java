@@ -33,7 +33,7 @@ import java.util.Locale;
 @Component("core_FormatStringsLoader")
 public class FormatStringsLoader {
 
-    private static final Logger log = LoggerFactory.getLogger(FormatStringsRegistryImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(FormatStringsLoader.class);
 
     @Autowired
     protected CoreProperties coreProperties;

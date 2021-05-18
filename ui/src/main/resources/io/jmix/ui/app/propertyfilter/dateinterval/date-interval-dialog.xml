@@ -26,7 +26,11 @@
                            datatype="int"
                            required="true"
                            requiredMessage="msg://dateIntervalDialog.numberField.requiredMessage"
-                           width="70px"/>
+                           width="70px">
+                    <validators>
+                        <positiveOrZero/>
+                    </validators>
+                </textField>
                 <comboBox id="timeUnitComboBox"
                           nullOptionVisible="false"
                           required="true"

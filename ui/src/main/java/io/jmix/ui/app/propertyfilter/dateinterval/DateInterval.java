@@ -16,6 +16,8 @@
 
 package io.jmix.ui.app.propertyfilter.dateinterval;
 
+import com.google.common.base.Preconditions;
+
 import javax.annotation.Nullable;
 
 /**
@@ -24,7 +26,7 @@ import javax.annotation.Nullable;
 public class DateInterval implements BaseDateInterval {
 
     enum TimeUnit {
-        DAY, HOUR, MINUTE, MONTH
+        MINUTE, HOUR, DAY, MONTH
     }
 
     protected final Type type;
@@ -33,6 +35,9 @@ public class DateInterval implements BaseDateInterval {
     protected Boolean includingCurrent;
 
     public DateInterval(Type type, Integer number, TimeUnit timeUnit, @Nullable Boolean includingCurrent) {
+        Preconditions.checkArgument(number >= 0,
+                "Incorrect date interval. Value must be greater than or equal to 0.");
+
         this.type = type;
         this.timeUnit = timeUnit;
         this.number = number;
@@ -66,7 +71,7 @@ public class DateInterval implements BaseDateInterval {
             moment2 = Boolean.TRUE.equals(includingCurrent) ? "now + 1" : "now";
         } else if (type == Type.NEXT) {
             moment1 = Boolean.TRUE.equals(includingCurrent) ? "now" : "now + 1";
-            moment2 = "now + " + number;
+            moment2 = "now + " + (number + 1);
         }
         return String.format("@between(%s.%s, %s, %s, %s)", "{E}", property, moment1, moment2, timeUnit.name());
     }

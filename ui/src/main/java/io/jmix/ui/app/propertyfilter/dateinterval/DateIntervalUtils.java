@@ -139,7 +139,7 @@ public class DateIntervalUtils {
                     + " "
                     + interval.getNumber()
                     + " "
-                    + messages.getMessage(this.getClass(), interval.getTimeUnit().name().toLowerCase()).toLowerCase()
+                    + messages.getMessage(interval.getTimeUnit()).toLowerCase()
                     + (Boolean.TRUE.equals(include)
                     ? " " + messages.getMessage(this.getClass(), "dateIntervals.includingCurrent")
                     : "");

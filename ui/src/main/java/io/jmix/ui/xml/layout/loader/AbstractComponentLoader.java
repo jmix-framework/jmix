@@ -772,12 +772,24 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
 
     @Nullable
     protected Formatter<?> loadFormatter(Element element) {
-        FormatterLoadFactory loadFactory = applicationContext.getBean(FormatterLoadFactory.class);
-        for (Element childElement : element.elements()) {
-            if (loadFactory.isFormatter(childElement)) {
-                return loadFactory.createFormatter(childElement);
-            }
+        Element formatterElement = element.element("formatter");
+        if (formatterElement == null) {
+            return null;
         }
+
+        int size = formatterElement.elements().size();
+        if (size != 1) {
+            throw new GuiDevelopmentException("Only one formatter needs to be defined. " +
+                    "The current number of formatters is " + size, getContext(),
+                    "Component ID", resultComponent.getId());
+        }
+
+        Element childElement = formatterElement.elements().get(0);
+        FormatterLoadFactory loadFactory = applicationContext.getBean(FormatterLoadFactory.class);
+        if (loadFactory.isFormatter(childElement)) {
+            return loadFactory.createFormatter(childElement);
+        }
+
         return null;
     }
 

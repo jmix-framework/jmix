@@ -60,6 +60,6 @@ public class LabelLoader extends AbstractComponentLoader<Label> {
         loadResponsive(resultComponent, element);
         loadCss(resultComponent, element);
 
-        resultComponent.setFormatter(loadFormatter(element));
+        loadFormatter(resultComponent, element);
     }
 }

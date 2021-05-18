@@ -55,21 +55,4 @@ public abstract class AbstractValuePickerLoader<T extends ValuePicker> extends A
     protected Action loadDeclarativeAction(ActionsHolder actionsHolder, Element element) {
         return loadValuePickerDeclarativeAction(actionsHolder, element);
     }
-
-    @Override
-    protected void loadFormatter(HasFormatter component, Element element) {
-        Element formatterElement = element.element("formatter");
-        if (formatterElement == null) {
-            return;
-        }
-
-        int size = formatterElement.elements().size();
-        if (size != 1) {
-            throw new GuiDevelopmentException("Only one formatter needs to be defined. " +
-                    "The current number of formatters is " + size, getContext(),
-                    "Component ID", ((Component) component).getId());
-        }
-
-        super.loadFormatter(component, formatterElement);
-    }
 }

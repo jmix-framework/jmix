@@ -37,11 +37,11 @@ public class FormatterLoadFactory {
 
     protected final Map<String, Function<Element, ? extends Formatter>> FORMATTERS_MAP =
             ImmutableMap.<String, Function<Element, ? extends Formatter>>builder()
-                    .put("classNameFormatter", this::loadClassNameFormatter)
-                    .put("collectionFormatter", this::loadCollectionFormatter)
-                    .put("customFormatter", this::loadCustomFormatter)
-                    .put("dateFormatter", this::loadDateFormatter)
-                    .put("numberFormatter", this::loadNumberFormatter)
+                    .put("className", this::loadClassNameFormatter)
+                    .put("collection", this::loadCollectionFormatter)
+                    .put("custom", this::loadCustomFormatter)
+                    .put("date", this::loadDateFormatter)
+                    .put("number", this::loadNumberFormatter)
                     .build();
 
     @Autowired

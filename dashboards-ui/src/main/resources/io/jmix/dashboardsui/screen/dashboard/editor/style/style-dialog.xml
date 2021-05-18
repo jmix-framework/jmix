@@ -28,21 +28,21 @@
             </columns>
             <rows>
                 <row>
-                    <label value="msg://styleName"/>
+                    <label value="msg://styleName" align="MIDDLE_LEFT"/>
                     <textField id="styleName" width="100%"/>
                 </row>
                 <row>
-                    <label value="msg://width"/>
+                    <label value="msg://width" align="MIDDLE_LEFT"/>
                     <hbox spacing="true" width="100%" expand="width">
-                        <checkBox id="autoWidth" caption="msg://autoSize"/>
+                        <checkBox id="autoWidth" caption="msg://autoSize" align="MIDDLE_LEFT"/>
                         <textField id="width" datatype="int"/>
                         <comboBox id="widthUnits" width="80px" required="true"/>
                     </hbox>
                 </row>
                 <row>
-                    <label value="msg://height"/>
+                    <label value="msg://height" align="MIDDLE_LEFT"/>
                     <hbox spacing="true" width="100%" expand="height">
-                        <checkBox id="autoHeight" caption="msg://autoSize"/>
+                        <checkBox id="autoHeight" caption="msg://autoSize" align="MIDDLE_LEFT"/>
                         <textField id="height" datatype="int"/>
                         <comboBox id="heightUnits" width="80px" required="true"/>
                     </hbox>

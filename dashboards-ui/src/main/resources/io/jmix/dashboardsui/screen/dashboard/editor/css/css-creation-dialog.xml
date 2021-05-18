@@ -29,11 +29,11 @@
             </columns>
             <rows>
                 <row>
-                    <label value="msg://styleName"/>
+                    <label value="msg://styleName" align="MIDDLE_LEFT"/>
                     <textField id="styleName" width="100%"/>
                 </row>
                 <row>
-                    <label value="msg://responsive"/>
+                    <label value="msg://responsive" align="MIDDLE_LEFT"/>
                     <checkBox id="responsive"/>
                 </row>
             </rows>

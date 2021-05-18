@@ -18,6 +18,7 @@ package com.haulmont.cuba.gui.components.formatters;
 
 import com.haulmont.cuba.core.global.AppBeans;
 import io.jmix.core.Messages;
+import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import io.jmix.core.security.CurrentAuthentication;
 import org.dom4j.Element;
 
@@ -41,6 +42,7 @@ public class DateFormatter extends io.jmix.ui.component.formatter.DateFormatter 
     public String apply(Date value) {
         messages = AppBeans.get(Messages.class);
         currentAuthentication = AppBeans.get(CurrentAuthentication.class);
+        formatStringsRegistry = AppBeans.get(FormatStringsRegistry.class);
         return super.apply(value);
     }
 }

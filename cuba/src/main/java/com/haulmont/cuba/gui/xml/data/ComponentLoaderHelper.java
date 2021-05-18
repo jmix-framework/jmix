@@ -246,14 +246,14 @@ public final class ComponentLoaderHelper {
                     return (Formatter<?>) constructor.newInstance(formatterElement);
                 } catch (Throwable e) {
                     throw new GuiDevelopmentException(
-                            String.format("Unable to instantiate class %s: %s", className, e.toString()), context);
+                            String.format("Unable to instantiate class %s: %s", className, e), context);
                 }
             } catch (NoSuchMethodException e) {
                 try {
                     return (Formatter<?>) aClass.getDeclaredConstructor().newInstance();
                 } catch (Exception e1) {
                     throw new GuiDevelopmentException(
-                            String.format("Unable to instantiate class %s: %s", className, e1.toString()), context);
+                            String.format("Unable to instantiate class %s: %s", className, e1), context);
                 }
             }
         } else {

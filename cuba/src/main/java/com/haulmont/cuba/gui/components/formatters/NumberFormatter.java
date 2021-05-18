@@ -18,6 +18,8 @@ package com.haulmont.cuba.gui.components.formatters;
 
 import com.haulmont.cuba.core.global.AppBeans;
 import io.jmix.core.Messages;
+import io.jmix.core.metamodel.datatype.DatatypeRegistry;
+import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import io.jmix.core.security.CurrentAuthentication;
 import org.dom4j.Element;
 
@@ -37,6 +39,8 @@ public class NumberFormatter extends io.jmix.ui.component.formatter.NumberFormat
     public String apply(Number value) {
         messages = AppBeans.get(Messages.class);
         currentAuthentication = AppBeans.get(CurrentAuthentication.class);
+        formatStringsRegistry = AppBeans.get(FormatStringsRegistry.class);
+        datatypeRegistry = AppBeans.get(DatatypeRegistry.class);
         return super.apply(value);
     }
 }

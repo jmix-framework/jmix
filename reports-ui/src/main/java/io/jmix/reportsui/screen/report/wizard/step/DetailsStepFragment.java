@@ -164,7 +164,7 @@ public class DetailsStepFragment extends StepFragment {
         needUpdateEntityModel = true;
         setReportName(reportData, prevValue, value);
 
-        reportData.getReportRegions().clear();
+        reportRegionsDc.getMutableItems().clear();
         reportData.setEntityName(value.getName());
 
         clearQuery();

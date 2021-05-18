@@ -30,6 +30,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Component("report_ReportSecurityManager")
@@ -55,6 +56,7 @@ public class ReportSecurityManager {
         if (userDetails != null) {
             List<BaseRole> roles = roleAssignmentRepository.getAssignmentsByUsername(userDetails.getUsername()).stream()
                     .map(roleAssignment -> resourceRoleRepository.findRoleByCode(roleAssignment.getRoleCode()))
+                    .filter(Objects::nonNull)
                     .collect(Collectors.toList());
 
             StringBuilder roleCondition = new StringBuilder("r.rolesIdx is null");

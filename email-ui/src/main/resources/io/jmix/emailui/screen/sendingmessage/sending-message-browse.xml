@@ -57,13 +57,19 @@
                         <column id="status"/>
                         <column id="bodyContentType"/>
                         <column id="createTs">
-                            <dateFormatter format="msg://dateTimeWithSeconds"/>
+                            <formatter>
+                                <date format="msg://dateTimeWithSeconds"/>
+                            </formatter>
                         </column>
                         <column id="dateSent">
-                            <dateFormatter format="msg://dateTimeWithSeconds"/>
+                            <formatter>
+                                <date format="msg://dateTimeWithSeconds"/>
+                            </formatter>
                         </column>
                         <column id="updateTs">
-                            <dateFormatter format="msg://dateTimeWithSeconds"/>
+                            <formatter>
+                                <date format="msg://dateTimeWithSeconds"/>
+                            </formatter>
                         </column>
                         <column id="attachmentsName" sortable="false"/>
                         <column id="attemptsLimit"/>

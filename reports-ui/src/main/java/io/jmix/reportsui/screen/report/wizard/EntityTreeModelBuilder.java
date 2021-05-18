@@ -152,6 +152,7 @@ public class EntityTreeModelBuilder {
         node.setLocalizedName(StringUtils.defaultIfEmpty(messageTools.getPropertyCaption(parentMetaClass, metaProperty.getName()), metaProperty.getName()));
         if (propertyMetaClass != null) {
             node.setMetaClassName(propertyMetaClass.getName());
+            node.setEntityClassName(propertyMetaClass.getJavaClass().getSimpleName());
         }
         node.setMetaPropertyName(metaProperty.getName());
         node.setParent(parent);
@@ -162,6 +163,7 @@ public class EntityTreeModelBuilder {
     protected EntityTreeNode createRootNode(MetaClass metaClass) {
         EntityTreeNode root = metadata.create(EntityTreeNode.class);
         root.setName(metaClass.getName());
+        root.setEntityClassName(metaClass.getJavaClass().getSimpleName());
         root.setLocalizedName(StringUtils.defaultIfEmpty(messageTools.getEntityCaption(metaClass), metaClass.getName()));
         root.setMetaClassName(metaClass.getName());
         return root;

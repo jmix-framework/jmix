@@ -121,7 +121,7 @@ public class ReportRegion implements OrderableEntity {
     @JmixProperty
     @Transient
     public String getNameForBand() {
-        return StringUtils.isEmpty(bandNameFromReport) ? getRegionPropertiesRootNode().getName() +
+        return StringUtils.isEmpty(bandNameFromReport) ? getRegionPropertiesRootNode().getEntityClassName() +
                 (isTabulatedRegion() ? "s" : "") +
                 (getReportData().getReportRegions().size() == 1 ? "" : getOrderNum().toString()) : bandNameFromReport;
     }

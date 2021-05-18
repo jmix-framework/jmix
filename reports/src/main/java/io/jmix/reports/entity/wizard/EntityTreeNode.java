@@ -61,6 +61,10 @@ public class EntityTreeNode {
 
     @JmixProperty
     @Transient
+    protected String entityClassName;
+
+    @JmixProperty
+    @Transient
     protected String metaPropertyName;
 
     @JmixProperty
@@ -189,6 +193,14 @@ public class EntityTreeNode {
 
     public void setMetaClassName(String metaClassName) {
         this.metaClassName = metaClassName;
+    }
+
+    public String getEntityClassName() {
+        return entityClassName;
+    }
+
+    public void setEntityClassName(String entityClassName) {
+        this.entityClassName = entityClassName;
     }
 
     public String getMetaPropertyName() {

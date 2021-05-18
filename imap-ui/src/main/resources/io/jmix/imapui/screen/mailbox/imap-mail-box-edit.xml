@@ -48,7 +48,9 @@
                             <textField id="name" property="name"/>
                             <textField id="host" property="host"/>
                             <textField id="port" property="port">
-                                <numberFormatter format="#####"/>
+                                <formatter>
+                                    <number format="#####"/>
+                                </formatter>
                             </textField>
                             <field property="secureMode"/>
                             <fileStorageUpload id="mailBoxRootCertificateField" property="rootCertificate"/>
@@ -101,7 +103,9 @@
                                 <textField id="proxyPortField"
                                            caption="msg://proxyPortCaption"
                                            property="port">
-                                    <numberFormatter format="#####"/>
+                                    <formatter>
+                                        <number format="#####"/>
+                                    </formatter>
                                 </textField>
                                 <checkBox id="webProxyChkBox"
                                            caption="msg://proxyUseWebCaption"

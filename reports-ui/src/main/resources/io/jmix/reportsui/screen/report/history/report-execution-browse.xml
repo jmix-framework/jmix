@@ -27,12 +27,14 @@
             <simplePagination/>
             <columns>
                 <column id="startTime">
-                    <formatter class="io.jmix.ui.component.formatter.DateFormatter"
-                               format="msg://dateTimeWithSeconds"/>
+                    <formatter>
+                        <date format="msg://dateTimeWithSeconds"/>
+                    </formatter>
                 </column>
                 <column id="finishTime">
-                    <formatter class="io.jmix.ui.component.formatter.DateFormatter"
-                               format="msg://dateTimeWithSeconds"/>
+                    <formatter>
+                        <date format="msg://dateTimeWithSeconds"/>
+                    </formatter>
                 </column>
                 <column id="executionTimeSec"/>
                 <column id="reportName"/>

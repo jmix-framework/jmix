@@ -33,6 +33,9 @@ public class SearchApplicationProperties {
 
     protected final boolean autoMapIndexFileContent;
 
+    protected final boolean changedEntitiesIndexingEnabled;
+    protected final boolean startupIndexSynchronizationEnabled;
+
     protected final Elasticsearch elasticsearch;
 
     protected final String defaultSearchStrategy;
@@ -45,6 +48,8 @@ public class SearchApplicationProperties {
             @DefaultValue("1000") int maxProcessedQueueItemsPerExecution,
             @DefaultValue("100") int reindexEntityEnqueueBatchSize,
             @DefaultValue("false") boolean autoMapIndexFileContent,
+            @DefaultValue("true") boolean changedEntitiesIndexingEnabled,
+            @DefaultValue("true") boolean startupIndexSynchronizationEnabled,
             @DefaultValue("anyTermAnyField") String defaultSearchStrategy,
             @DefaultValue Elasticsearch elasticsearch) {
         this.searchResultPageSize = searchResultPageSize;
@@ -54,6 +59,8 @@ public class SearchApplicationProperties {
         this.maxProcessedQueueItemsPerExecution = maxProcessedQueueItemsPerExecution;
         this.reindexEntityEnqueueBatchSize = reindexEntityEnqueueBatchSize;
         this.autoMapIndexFileContent = autoMapIndexFileContent;
+        this.changedEntitiesIndexingEnabled = changedEntitiesIndexingEnabled;
+        this.startupIndexSynchronizationEnabled = startupIndexSynchronizationEnabled;
         this.defaultSearchStrategy = defaultSearchStrategy;
         this.elasticsearch = elasticsearch;
     }
@@ -105,6 +112,20 @@ public class SearchApplicationProperties {
      */
     public boolean isAutoMapIndexFileContent() {
         return autoMapIndexFileContent;
+    }
+
+    /**
+     * @return true if automatic indexing of changed entities is enabled. False otherwise
+     */
+    public boolean isChangedEntitiesIndexingEnabled() {
+        return changedEntitiesIndexingEnabled;
+    }
+
+    /**
+     * @return true is synchronization of indices on application startup is enabled. False otherwise
+     */
+    public boolean isStartupIndexSynchronizationEnabled() {
+        return startupIndexSynchronizationEnabled;
     }
 
     /**

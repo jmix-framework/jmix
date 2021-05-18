@@ -16,6 +16,7 @@
 
 package io.jmix.search.index.impl;
 
+import io.jmix.search.SearchApplicationProperties;
 import io.jmix.search.index.ESIndexManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,13 +35,17 @@ public class StartupIndexSynchronizer {
 
     @Autowired
     protected ESIndexManager esIndexManager;
+    @Autowired
+    protected SearchApplicationProperties searchApplicationProperties;
 
     @PostConstruct
     protected void postConstruct() {
         try {
-            esIndexManager.synchronizeIndexes();
+            if (searchApplicationProperties.isStartupIndexSynchronizationEnabled()) {
+                esIndexManager.synchronizeIndexes();
+            }
         } catch (Exception e) {
-            log.error("Failed to setup indexes", e);
+            log.error("Failed to synchronize indexes", e);
         }
     }
 }

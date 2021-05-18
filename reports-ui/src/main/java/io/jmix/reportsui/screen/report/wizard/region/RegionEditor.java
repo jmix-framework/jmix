@@ -32,6 +32,7 @@ import io.jmix.ui.component.*;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.screen.*;
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.core.CollectionUtils;
 
@@ -76,10 +77,6 @@ public class RegionEditor extends StandardEditor<ReportRegion> {
 
     protected boolean updatePermission = true;
 
-    public void setTabulated(boolean tabulated) {
-        isTabulated = tabulated;
-    }
-
     public void setAsFetchPlanEditor(boolean asFetchPlanEditor) {
         this.asFetchPlanEditor = asFetchPlanEditor;
     }
@@ -98,6 +95,8 @@ public class RegionEditor extends StandardEditor<ReportRegion> {
 
     @Subscribe
     public void onBeforeShow(BeforeShowEvent event) {
+        isTabulated = BooleanUtils.toBoolean(getEditedEntity().getIsTabulatedRegion());
+
         if (!asFetchPlanEditor) {
             if (isTabulated) {
                 setTabulatedRegionEditorCaption(rootEntity.getName());

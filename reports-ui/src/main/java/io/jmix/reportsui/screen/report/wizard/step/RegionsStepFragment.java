@@ -245,8 +245,6 @@ public class RegionsStepFragment extends StepFragment {
                 .withOptions(new MapScreenOptions(editorParams))
                 .build();
 
-//            regionEditor.setTabulated(item.getIsTabulatedRegion());
-
         regionEditor.show();
     }
 

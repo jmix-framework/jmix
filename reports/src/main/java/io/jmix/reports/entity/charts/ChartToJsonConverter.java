@@ -209,6 +209,8 @@ public class ChartToJsonConverter {
         addField(fields, description.getTitleField());
         chart.put("valueField", description.getValueField());
         addField(fields, description.getValueField());
+        chart.put("colorField", description.getColorField());
+        addField(fields, description.getColorField());
         exportConfig(chart);
 
         if (Boolean.TRUE.equals(description.getShowLegend())) {

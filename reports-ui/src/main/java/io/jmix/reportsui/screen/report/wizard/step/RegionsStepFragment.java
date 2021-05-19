@@ -156,7 +156,19 @@ public class RegionsStepFragment extends StepFragment {
         linkButton.setHeight("40px");
         linkButton.setCaption(attributes);
         linkButton.setWidthFull();
+        linkButton.addClickListener(event -> editRegion());
         return linkButton;
+    }
+
+    protected void editRegion() {
+        ReportRegion selectedRegion = regionsTable.getSingleSelected();
+        if (selectedRegion != null) {
+            Map<String, Object> editorParams = new HashMap<>();
+            editorParams.put("rootEntity", selectedRegion.getRegionPropertiesRootNode());
+            editorParams.put("scalarOnly", Boolean.TRUE);
+            editorParams.put("persistentOnly", ReportTypeGenerate.LIST_OF_ENTITIES_WITH_QUERY == getReportTypeGenerate());
+            showRegionEditor(selectedRegion, editorParams);
+        }
     }
 
     @Install(to = "regionsTable.name", subject = "columnGenerator")
@@ -231,15 +243,7 @@ public class RegionsStepFragment extends StepFragment {
                         editorParams.put("rootEntity", regionPropertiesRootNode);
                         item.setRegionPropertiesRootNode(regionPropertiesRootNode);
 
-                        RegionEditor regionEditor = screenBuilders.editor(ReportRegion.class, getFragment().getFrameOwner())
-                                .withScreenClass(RegionEditor.class)
-                                .editEntity(item)
-                                .withOpenMode(OpenMode.DIALOG)
-                                .withContainer(reportRegionsDc)
-                                .withOptions(new MapScreenOptions(editorParams))
-                                .build();
-
-                        regionEditor.show();
+                        showRegionEditor(item, editorParams);
                     }
                 })
                 .build();
@@ -255,6 +259,10 @@ public class RegionsStepFragment extends StepFragment {
         editorParams.put("scalarOnly", Boolean.TRUE);
         editorParams.put("persistentOnly", ReportTypeGenerate.LIST_OF_ENTITIES_WITH_QUERY == getReportTypeGenerate());
 
+        showRegionEditor(item, editorParams);
+    }
+
+    protected void showRegionEditor(ReportRegion item, Map<String, Object> editorParams) {
         RegionEditor regionEditor = screenBuilders.editor(ReportRegion.class, getFragment().getFrameOwner())
                 .withScreenClass(RegionEditor.class)
                 .editEntity(item)

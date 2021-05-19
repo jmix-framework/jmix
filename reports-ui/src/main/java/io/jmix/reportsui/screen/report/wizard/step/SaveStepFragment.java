@@ -18,13 +18,18 @@ package io.jmix.reportsui.screen.report.wizard.step;
 
 import io.jmix.core.CoreProperties;
 import io.jmix.core.Messages;
+import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.reports.entity.ReportOutputType;
+import io.jmix.reports.entity.charts.*;
 import io.jmix.reports.entity.wizard.ReportData;
 import io.jmix.reports.entity.wizard.TemplateFileType;
 import io.jmix.reports.exception.TemplateGenerationException;
+import io.jmix.reportsui.screen.report.run.ShowChartScreen;
 import io.jmix.reportsui.screen.report.wizard.OutputFormatTools;
+import io.jmix.reportsui.screen.report.wizard.ReportWizardCreator;
 import io.jmix.reportsui.screen.report.wizard.ReportsWizard;
+import io.jmix.reportsui.screen.template.edit.generator.RandomChartDataGenerator;
 import io.jmix.ui.Dialogs;
 import io.jmix.ui.Fragments;
 import io.jmix.ui.Notifications;
@@ -38,6 +43,8 @@ import io.jmix.ui.screen.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Map;
 
 @UiController("report_Save.fragment")
@@ -82,6 +89,15 @@ public class SaveStepFragment extends StepFragment {
 
     @Autowired
     protected OutputFormatTools outputFormatTools;
+
+    @Autowired
+    protected VBoxLayout chartPreviewBox;
+
+    @Autowired
+    protected ComboBox<ChartType> diagramType;
+
+    @Autowired
+    protected RandomChartDataGenerator randomChartDataGenerator;
 
     @Subscribe("outputFileName")
     public void onOutputFileNameValueChange(HasValue.ValueChangeEvent<String> event) {
@@ -155,38 +171,25 @@ public class SaveStepFragment extends StepFragment {
             outputFileName.setValue(generateOutputFileName(reportData.getTemplateFileType().toString().toLowerCase()));
         }
 
-        //initChartPreview();
+        initChartPreview();
     }
 
-            //todo chart
-//        protected void initChartPreview() {
-//            if (wizard.outputFileFormat.getValue() == ReportOutputType.CHART) {
-//                wizard.chartPreviewBox.setVisible(true);
-//                wizard.diagramTypeLabel.setVisible(true);
-//                wizard.diagramType.setVisible(true);
-//
-//                showChart();
-//
-//
-//                wizard.getDialogOptions()
-//                        .setHeight(wizard.wizardHeight + 400).setHeightUnit(SizeUnit.PIXELS)
-//                        .center();
-//
-//                wizard.diagramType.setRequired(true);
-//                wizard.diagramType.setOptionsList(Arrays.asList(ChartType.values()));
-//                wizard.diagramType.setValue(ChartType.SERIAL);
-//
-//                wizard.diagramType.addValueChangeListener(e -> {
-//                    wizard.getItem().setChartType((ChartType) e.getValue());
-//                    wizard.chartPreviewBox.removeAll();
-//                    showChart();
-//                });
-//            } else {
-//                wizard.chartPreviewBox.setVisible(false);
-//                wizard.diagramTypeLabel.setVisible(false);
-//                wizard.diagramType.setVisible(false);
-//            }
-//        }
+    protected void initChartPreview() {
+        boolean isChartTemplate = outputFileFormat.getValue() == ReportOutputType.CHART;
+        chartPreviewBox.setVisible(isChartTemplate);
+        diagramType.setVisible(isChartTemplate);
+        if (isChartTemplate) {
+            showChart();
+
+            diagramType.setRequired(true);
+            diagramType.setValue(ChartType.SERIAL);
+
+            diagramType.addValueChangeListener(e -> {
+                reportDataDc.getItem().setChartType(e.getValue());
+                showChart();
+            });
+        }
+    }
 
     public void updateDownloadTemplateFile() {
         String templateFileName = generateTemplateFileName(reportDataDc.getItem().getTemplateFileType().toString().toLowerCase());
@@ -199,7 +202,7 @@ public class SaveStepFragment extends StepFragment {
         ReportData reportData = reportDataDc.getItem();
         MetaClass entityMetaClass = metadata.findClass(reportData.getEntityName());
         return entityMetaClass != null ?
-                messages.formatMessage(getClass(),"downloadTemplateFileNamePattern", reportData.getName(), fileExtension) :
+                messages.formatMessage(getClass(), "downloadTemplateFileNamePattern", reportData.getName(), fileExtension) :
                 "";
     }
 
@@ -223,23 +226,28 @@ public class SaveStepFragment extends StepFragment {
     }
 
 
-            //todo chart
-//        protected void showChart() {
-//            byte[] content = wizard.buildReport(true).getDefaultTemplate().getContent();
-//            String chartDescriptionJson = new String(content, StandardCharsets.UTF_8);
-//            AbstractChartDescription chartDescription = AbstractChartDescription.fromJsonString(chartDescriptionJson);
-//            RandomChartDataGenerator randomChartDataGenerator = new RandomChartDataGenerator();
-//            List<Map<String, Object>> randomChartData = randomChartDataGenerator.generateRandomChartData(chartDescription);
-//            ChartToJsonConverter chartToJsonConverter = new ChartToJsonConverter();
-//            String chartJson = null;
-//            if (chartDescription instanceof PieChartDescription) {
-//                chartJson = chartToJsonConverter.convertPieChart((PieChartDescription) chartDescription, randomChartData);
-//            } else if (chartDescription instanceof SerialChartDescription) {
-//                chartJson = chartToJsonConverter.convertSerialChart((SerialChartDescription) chartDescription, randomChartData);
-//            }
-//
-//            wizard.openFrame(wizard.chartPreviewBox, ShowChartController.JSON_CHART_SCREEN_ID,
-//                    ParamsMap.of(ShowChartController.CHART_JSON_PARAMETER, chartJson));
-//        }
-//    }
+    protected void showChart() {
+        chartPreviewBox.removeAll();
+
+        ReportWizardCreator reportWizardCreator = (ReportWizardCreator) getFragment().getFrameOwner().getHostController();
+        byte[] content = reportWizardCreator.buildReport(true).getDefaultTemplate().getContent();
+        String chartDescriptionJson = new String(content, StandardCharsets.UTF_8);
+        AbstractChartDescription chartDescription = AbstractChartDescription.fromJsonString(chartDescriptionJson);
+        List<Map<String, Object>> randomChartData = randomChartDataGenerator.generateRandomChartData(chartDescription);
+        ChartToJsonConverter chartToJsonConverter = new ChartToJsonConverter();
+        String chartJson = null;
+        if (chartDescription instanceof PieChartDescription) {
+            chartJson = chartToJsonConverter.convertPieChart((PieChartDescription) chartDescription, randomChartData);
+        } else if (chartDescription instanceof SerialChartDescription) {
+            chartJson = chartToJsonConverter.convertSerialChart((SerialChartDescription) chartDescription, randomChartData);
+        }
+
+        Fragment chartFragment = fragments.create(this, ShowChartScreen.JSON_CHART_SCREEN_ID,
+                new MapScreenOptions(ParamsMap.of(ShowChartScreen.CHART_JSON_PARAMETER, chartJson)))
+                .init()
+                .getFragment();
+        chartFragment.setHeight("400px");
+        chartPreviewBox.add(chartFragment);
+    }
+
 }

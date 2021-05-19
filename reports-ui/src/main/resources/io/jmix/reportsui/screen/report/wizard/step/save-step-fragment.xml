@@ -40,14 +40,14 @@
                                   required="true" colspan="2" width="100%"
                                   property="outputFileType" description="msg://outputFileTypeHintMsg"/>
                         <comboBox id="diagramType" caption="msg://diagramType"
-                                  required="true" colspan="2" width="100%" visible="false"/>
+                                  required="true" colspan="2" width="100%" visible="false" optionsEnum="io.jmix.reports.entity.charts.ChartType"/>
                     </column>
                     <column>
                         <button id="downloadTemplateFile" stylename="link"
                                 description="msg://templateHintMsg"/>
                     </column>
                 </form>
-                <vbox id="chartPreviewBox" visible="false">
+                <vbox id="chartPreviewBox" visible="false" width="100%">
                 </vbox>
             </vbox>
         </groupBox>

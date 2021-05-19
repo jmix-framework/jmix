@@ -67,7 +67,9 @@
                     <action id="remove" type="remove"/>
                 </actions>
                 <columns>
-                    <column id="regionsGeneratedColumn" caption="msg://reportRegionsColumn"/>
+                    <column id="name" caption="msg://regionName"/>
+                    <column id="attributes" caption="msg://attributes" width="480px"/>
+                    <column id="entity" caption="msg://entity"/>
                 </columns>
             </table>
         </vbox>

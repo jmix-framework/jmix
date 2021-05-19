@@ -107,19 +107,6 @@ public class ReportRegion implements OrderableEntity {
 
     @JmixProperty
     @Transient
-    public String getName() {
-        //todo
-//        Messages messages = AppBeans.get(Messages.NAME);
-//        if (isTabulatedRegion()) {
-//            return messages.formatMessage(getClass(), "ReportRegion.tabulatedName", getOrderNum());
-//        } else {
-//            return messages.formatMessage(getClass(), "ReportRegion.simpleName", getOrderNum());
-//        }
-        return "";
-    }
-
-    @JmixProperty
-    @Transient
     public String getNameForBand() {
         return StringUtils.isEmpty(bandNameFromReport) ? getRegionPropertiesRootNode().getEntityClassName() +
                 (isTabulatedRegion() ? "s" : "") +

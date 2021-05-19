@@ -17,6 +17,7 @@
 package io.jmix.reportsui.screen.report.wizard.step;
 
 import io.jmix.core.MessageTools;
+import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.wizard.*;
 import io.jmix.reportsui.screen.ReportGuiManager;
@@ -44,6 +45,7 @@ import java.util.Map;
 @UiController("report_Region.fragment")
 @UiDescriptor("regions-step-fragment.xml")
 public class RegionsStepFragment extends StepFragment {
+    protected static final int MAX_ATTRS_BTN_CAPTION_WIDTH = 135;
 
     @Autowired
     protected PopupButton addRegionPopupBtn;
@@ -110,15 +112,6 @@ public class RegionsStepFragment extends StepFragment {
         return reportDataDc.getItem().getReportTypeGenerate();
     }
 
-    @Subscribe
-    public void onInit(InitEvent event) {
-        initRegionsTable();
-    }
-
-    public void initRegionsTable() {
-        regionsTable.addGeneratedColumn("regionsGeneratedColumn", new ReportRegionTableColumnGenerator());
-    }
-
     @Install(to = "regionsTable.down", subject = "enabledRule")
     private boolean regionsTableDownEnabledRule() {
         ReportRegion item = regionsTable.getSingleSelected();
@@ -151,6 +144,31 @@ public class RegionsStepFragment extends StepFragment {
     @Override
     public String getDescription() {
         return messages.getMessage(getClass(), "addPropertiesAndTableAreas");
+    }
+
+    @Install(to = "regionsTable.attributes", subject = "columnGenerator")
+    protected Component regionsTableAttributesColumnGenerator(ReportRegion reportRegion) {
+        String attributes = StringUtils.abbreviate(StringUtils.join(
+                CollectionUtils.collect(reportRegion.getRegionProperties(),
+                        RegionProperty::getHierarchicalLocalizedNameExceptRoot), ", "),
+                MAX_ATTRS_BTN_CAPTION_WIDTH);
+        LinkButton linkButton = uiComponents.create(LinkButton.class);
+        linkButton.setHeight("40px");
+        linkButton.setCaption(attributes);
+        linkButton.setWidthFull();
+        return linkButton;
+    }
+
+    @Install(to = "regionsTable.name", subject = "columnGenerator")
+    protected Component regionsTableNameColumnGenerator(ReportRegion reportRegion) {
+        String messageKey = reportRegion.isTabulatedRegion() ? "ReportRegion.tabulatedName" : "ReportRegion.simpleName";
+        return new Table.PlainTextCell(messages.formatMessage(getClass(), messageKey, reportRegion.getOrderNum()));
+    }
+
+    @Install(to = "regionsTable.entity", subject = "columnGenerator")
+    protected Component regionsTableEntityColumnGenerator(ReportRegion reportRegion) {
+        MetaClass metaClass = metadata.getClass(reportRegion.getRegionPropertiesRootNode().getMetaClassName());
+        return new Table.PlainTextCell(messageTools.getEntityCaption(metaClass));
     }
 
     @Subscribe("addRegionPopupBtn.addTabulatedRegion")
@@ -300,101 +318,6 @@ public class RegionsStepFragment extends StepFragment {
             } else {
                 buttonsBox.add(addRegionDisabledBtn);
             }
-        }
-    }
-
-    protected class ReportRegionTableColumnGenerator implements Table.ColumnGenerator<ReportRegion> {
-        protected static final String WIDTH_PERCENT_100 = "100%";
-        protected static final int MAX_ATTRS_BTN_CAPTION_WIDTH = 95;
-        protected static final String BOLD_LABEL_STYLE = "semi-bold-label";
-
-        private ReportRegion currentReportRegionGeneratedColumn;
-
-        @Override
-        public Component generateCell(ReportRegion entity) {
-            currentReportRegionGeneratedColumn = entity;
-            BoxLayout mainLayout = uiComponents.create(VBoxLayout.class);
-            mainLayout.setWidth(WIDTH_PERCENT_100);
-            mainLayout.add(createFirstTwoRowsLayout());
-            mainLayout.add(createThirdRowAttrsLayout());
-            return mainLayout;
-        }
-
-        private BoxLayout createFirstTwoRowsLayout() {
-            BoxLayout firstTwoRowsLayout = uiComponents.create(HBoxLayout.class);
-            BoxLayout expandedAttrsLayout = createExpandedAttrsLayout();
-            firstTwoRowsLayout.setWidth(WIDTH_PERCENT_100);
-            firstTwoRowsLayout.add(expandedAttrsLayout);
-            firstTwoRowsLayout.add(createBtnsLayout());
-            firstTwoRowsLayout.expand(expandedAttrsLayout);
-            return firstTwoRowsLayout;
-        }
-
-        private BoxLayout createExpandedAttrsLayout() {
-            BoxLayout expandedAttrsLayout = uiComponents.create(HBoxLayout.class);
-            expandedAttrsLayout.setWidth(WIDTH_PERCENT_100);
-            expandedAttrsLayout.add(createFirstRowAttrsLayout());
-            expandedAttrsLayout.add(createSecondRowAttrsLayout());
-            return expandedAttrsLayout;
-        }
-
-        private BoxLayout createFirstRowAttrsLayout() {
-            BoxLayout firstRowAttrsLayout = uiComponents.create(HBoxLayout.class);
-            firstRowAttrsLayout.setSpacing(true);
-            Label regionLbl = uiComponents.create(Label.class);
-            regionLbl.setStyleName(BOLD_LABEL_STYLE);
-            regionLbl.setValue(messages.getMessage("region"));
-            Label regionValueLbl = uiComponents.create(Label.class);
-            regionValueLbl.setValue(currentReportRegionGeneratedColumn.getName());
-            regionValueLbl.setWidth(WIDTH_PERCENT_100);
-            firstRowAttrsLayout.add(regionLbl);
-            firstRowAttrsLayout.add(regionValueLbl);
-            return firstRowAttrsLayout;
-        }
-
-        private BoxLayout createSecondRowAttrsLayout() {
-            BoxLayout secondRowAttrsLayout = uiComponents.create(HBoxLayout.class);
-            secondRowAttrsLayout.setSpacing(true);
-            Label entityLbl = uiComponents.create(Label.class);
-            entityLbl.setStyleName(BOLD_LABEL_STYLE);
-            entityLbl.setValue(messages.getMessage("entity"));
-            Label entityValueLbl = uiComponents.create(Label.class);
-
-            entityValueLbl.setValue(currentReportRegionGeneratedColumn.getNameForBand());
-            entityValueLbl.setWidth(WIDTH_PERCENT_100);
-            secondRowAttrsLayout.add(entityLbl);
-            secondRowAttrsLayout.add(entityValueLbl);
-            return secondRowAttrsLayout;
-        }
-
-        private BoxLayout createBtnsLayout() {
-            BoxLayout btnsLayout = uiComponents.create(HBoxLayout.class);
-            btnsLayout.setSpacing(true);
-            btnsLayout.setStyleName("on-hover-visible-layout");
-            return btnsLayout;
-        }
-
-        private BoxLayout createThirdRowAttrsLayout() {
-            BoxLayout thirdRowAttrsLayout = uiComponents.create(HBoxLayout.class);
-            thirdRowAttrsLayout.setSpacing(true);
-            Label entityLbl = uiComponents.create(Label.class);
-            entityLbl.setStyleName(BOLD_LABEL_STYLE);
-            entityLbl.setValue(messages.getMessage("attributes"));
-            Button editBtn = uiComponents.create(Button.class);
-            editBtn.setCaption(generateAttrsBtnCaption());
-            editBtn.setStyleName("link");
-            editBtn.setWidth(WIDTH_PERCENT_100);
-            thirdRowAttrsLayout.add(entityLbl);
-            thirdRowAttrsLayout.add(editBtn);
-            return thirdRowAttrsLayout;
-        }
-
-        private String generateAttrsBtnCaption() {
-            return StringUtils.abbreviate(StringUtils.join(
-                    CollectionUtils.collect(currentReportRegionGeneratedColumn.getRegionProperties(),
-                            RegionProperty::getHierarchicalLocalizedNameExceptRoot), ", "
-                    ), MAX_ATTRS_BTN_CAPTION_WIDTH
-            );
         }
     }
 

@@ -51,7 +51,7 @@ public class JmixQueryLookupStrategy implements QueryLookupStrategy {
         JmixAbstractQuery resolvedQuery;
         if (jmixQuery != null) {
             String qryString = jmixQuery.value();
-            resolvedQuery = new JmixCustomQuery(dataManager, jmixMetadata, method, repositoryMetadata, factory, qryString);
+            resolvedQuery = new JmixCustomLoadQuery(dataManager, jmixMetadata, method, repositoryMetadata, factory, qryString);
         } else {
             PartTree qryTree = new PartTree(method.getName(), repositoryMetadata.getDomainType());
             if (qryTree.isDelete()) {

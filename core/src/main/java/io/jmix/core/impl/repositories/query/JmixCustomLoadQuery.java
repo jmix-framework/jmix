@@ -32,14 +32,14 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class JmixCustomQuery extends JmixAbstractQuery {
+public class JmixCustomLoadQuery extends JmixAbstractQuery {
 
     protected static final String PARAMETER_TEMPLATE = "([:?][a-zA-Z0-9_$]+)";
     protected static final String PARAMETER_PREFIX = "p_";
 
     protected String query;
 
-    public JmixCustomQuery(DataManager dataManager, Metadata jmixMetadata, Method method, RepositoryMetadata metadata, ProjectionFactory factory, String query) {
+    public JmixCustomLoadQuery(DataManager dataManager, Metadata jmixMetadata, Method method, RepositoryMetadata metadata, ProjectionFactory factory, String query) {
         super(dataManager, jmixMetadata, method, metadata, factory);
         this.query = query;
         Matcher m = Pattern.compile(PARAMETER_TEMPLATE).matcher(query);

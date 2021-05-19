@@ -103,9 +103,10 @@ public class FragmentHelper {
             Timer.Sample sample = Timer.start(meterRegistry);
 
             FrameOwner controller = fragment.getFrameOwner();
-            UiControllerDependencyInjector dependencyInjector =
-                    applicationContext.getBean(UiControllerDependencyInjector.class, controller, options);
-            dependencyInjector.inject();
+
+            UiControllerDependencyManager dependencyManager
+                    = applicationContext.getBean(UiControllerDependencyManager.class);
+            dependencyManager.inject(controller, options);
 
             sample.stop(createScreenTimer(meterRegistry, ScreenLifeCycle.INJECTION, getFullFrameId(this.fragment)));
         }

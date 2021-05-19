@@ -109,6 +109,9 @@ public class ScreensImpl implements Screens {
     protected AccessManager accessManager;
 
     @Autowired
+    protected UiControllerDependencyManager dependencyManager;
+
+    @Autowired
     protected UiProperties uiProperties;
 
     protected AppUI ui;
@@ -206,9 +209,7 @@ public class ScreensImpl implements Screens {
         // inject top level screen dependencies
         Timer.Sample injectSample = Timer.start(meterRegistry);
 
-        UiControllerDependencyInjector dependencyInjector =
-                applicationContext.getBean(UiControllerDependencyInjector.class, controller, options);
-        dependencyInjector.inject();
+        dependencyManager.inject(controller, options);
 
         injectSample.stop(createScreenTimer(meterRegistry, ScreenLifeCycle.INJECTION, windowInfo.getId()));
 

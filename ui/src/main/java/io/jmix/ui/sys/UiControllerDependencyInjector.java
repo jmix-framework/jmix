@@ -55,10 +55,8 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
-import org.springframework.context.annotation.Scope;
 import org.springframework.context.event.EventListener;
 
 import javax.annotation.Nullable;
@@ -92,37 +90,25 @@ import static org.springframework.core.annotation.AnnotatedElementUtils.findMerg
  * and {@link Subscribe}, {@link Install} and {@link EventListener} methods.
  */
 @org.springframework.stereotype.Component("ui_UiControllerDependencyInjector")
-@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class UiControllerDependencyInjector {
 
     private static final Logger log = LoggerFactory.getLogger(UiControllerDependencyInjector.class);
 
-    protected FrameOwner frameOwner;
-    protected ScreenOptions options;
-
     protected ApplicationContext applicationContext;
     protected UiControllerReflectionInspector reflectionInspector;
 
-    public UiControllerDependencyInjector(FrameOwner frameOwner, ScreenOptions options) {
-        this.frameOwner = frameOwner;
-        this.options = options;
-    }
-
     @Autowired
-    public void setApplicationContext(ApplicationContext applicationContext) {
+    public UiControllerDependencyInjector(ApplicationContext applicationContext,
+                                          UiControllerReflectionInspector reflectionInspector) {
         this.applicationContext = applicationContext;
-    }
-
-    @Autowired
-    public void setReflectionInspector(UiControllerReflectionInspector reflectionInspector) {
         this.reflectionInspector = reflectionInspector;
     }
 
-    public void inject() {
+    public void inject(FrameOwner frameOwner, ScreenOptions options) {
         ScreenIntrospectionData screenIntrospectionData =
                 reflectionInspector.getScreenIntrospectionData(frameOwner.getClass());
 
-        injectValues(frameOwner, screenIntrospectionData);
+        injectValues(frameOwner, options, screenIntrospectionData);
 
         initSubscribeListeners(frameOwner, screenIntrospectionData);
 
@@ -157,7 +143,8 @@ public class UiControllerDependencyInjector {
             Class<?> instanceClass = targetInstance.getClass();
             Method installMethod = annotatedMethod.getMethod();
 
-            MethodHandle targetSetterMethod = getInstallTargetSetterMethod(annotation, frame, instanceClass, installMethod);
+            MethodHandle targetSetterMethod =
+                    getInstallTargetSetterMethod(annotation, frame, instanceClass, installMethod);
             Class<?> targetParameterType = targetSetterMethod.type().parameterList().get(1);
 
             Object handler = null;
@@ -279,12 +266,12 @@ public class UiControllerDependencyInjector {
         }
     }
 
-    protected void injectValues(@SuppressWarnings("unused") FrameOwner frameOwner,
+    protected void injectValues(FrameOwner frameOwner, ScreenOptions options,
                                 ScreenIntrospectionData screenIntrospectionData) {
         List<InjectElement> injectElements = screenIntrospectionData.getInjectElements();
 
         for (InjectElement entry : injectElements) {
-            doInjection(entry.getElement(), entry.getAnnotationClass());
+            doInjection(entry, frameOwner, options);
         }
     }
 
@@ -371,7 +358,8 @@ public class UiControllerDependencyInjector {
 
             if (eventTarget == null) {
                 if (annotation.required()) {
-                    throw new DevelopmentException(String.format("Unable to find @Subscribe target %s in %s", target, frame.getId()));
+                    throw new DevelopmentException(String.format("Unable to find @Subscribe target %s in %s",
+                            target, frame.getId()));
                 }
 
                 log.trace("Skip @Subscribe method {} of {} : it is not required and target not found",
@@ -473,57 +461,16 @@ public class UiControllerDependencyInjector {
         }
     }
 
-    protected void doInjection(AnnotatedElement element, Class annotationClass) {
-        Class<?> type;
-        String name = null;
-        if (annotationClass == Named.class) {
-            name = element.getAnnotation(Named.class).value();
-        } else if (annotationClass == Resource.class) {
-            name = element.getAnnotation(Resource.class).name();
-        } else if (annotationClass == Autowired.class) {
-            if (element.isAnnotationPresent(Qualifier.class)) {
-                name = element.getAnnotation(Qualifier.class).value();
-            }
-        } else if (annotationClass == WindowParam.class) {
-            name = element.getAnnotation(WindowParam.class).name();
-        }
+    protected void doInjection(InjectElement injectElement, FrameOwner frameOwner, ScreenOptions options) {
+        String name = getInjectionName(injectElement);
+        Class<?> type = getInjectionType(injectElement);
 
-        boolean required = true;
-        if (element.isAnnotationPresent(WindowParam.class)) {
-            required = element.getAnnotation(WindowParam.class).required();
-        } else if (element.isAnnotationPresent(Autowired.class)) {
-            required = element.getAnnotation(Autowired.class).required();
-        }
-
-        if (element instanceof Field) {
-            type = ((Field) element).getType();
-            if (StringUtils.isEmpty(name)) {
-                name = ((Field) element).getName();
-            }
-        } else if (element instanceof Method) {
-            Class<?>[] types = ((Method) element).getParameterTypes();
-            if (types.length != 1) {
-                throw new IllegalStateException("Can inject to methods with one parameter only");
-            }
-
-            type = types[0];
-            if (StringUtils.isEmpty(name)) {
-                if (((Method) element).getName().startsWith("set")) {
-                    name = StringUtils.uncapitalize(((Method) element).getName().substring(3));
-                } else {
-                    name = ((Method) element).getName();
-                }
-            }
-        } else {
-            throw new IllegalStateException("Can inject to fields and setter methods only");
-        }
-
-        Object instance = getInjectedInstance(type, name, annotationClass, element);
+        Object instance = getInjectedInstance(type, name, injectElement, frameOwner, options);
 
         if (instance != null) {
-            assignValue(element, instance);
-        } else if (required) {
-            Class<?> declaringClass = ((Member) element).getDeclaringClass();
+            assignValue(injectElement.getElement(), instance, frameOwner);
+        } else if (isInjectionRequired(injectElement)) {
+            Class<?> declaringClass = ((Member) injectElement.getElement()).getDeclaringClass();
             Class<? extends FrameOwner> frameClass = frameOwner.getClass();
 
             String msg;
@@ -544,8 +491,71 @@ public class UiControllerDependencyInjector {
         }
     }
 
+    protected String getInjectionName(InjectElement injectElement) {
+        AnnotatedElement element = injectElement.getElement();
+        Class annotationClass = injectElement.getAnnotationClass();
+
+        String name = null;
+        if (annotationClass == Named.class) {
+            name = element.getAnnotation(Named.class).value();
+        } else if (annotationClass == Resource.class) {
+            name = element.getAnnotation(Resource.class).name();
+        } else if (annotationClass == Autowired.class) {
+            if (element.isAnnotationPresent(Qualifier.class)) {
+                name = element.getAnnotation(Qualifier.class).value();
+            }
+        } else if (annotationClass == WindowParam.class) {
+            name = element.getAnnotation(WindowParam.class).name();
+        }
+
+        if (StringUtils.isEmpty(name)) {
+            if (element instanceof Field) {
+                name = ((Field) element).getName();
+            } else if (element instanceof Method) {
+                if (((Method) element).getName().startsWith("set")) {
+                    name = StringUtils.uncapitalize(((Method) element).getName().substring(3));
+                } else {
+                    name = ((Method) element).getName();
+                }
+            } else {
+                throw new IllegalStateException("Can inject to fields and setter methods only");
+            }
+        }
+        return name;
+    }
+
+    protected Class<?> getInjectionType(InjectElement injectElement) {
+        AnnotatedElement element = injectElement.getElement();
+
+        if (element instanceof Field) {
+            return ((Field) element).getType();
+        } else if (element instanceof Method) {
+            Class<?>[] types = ((Method) element).getParameterTypes();
+            if (types.length != 1) {
+                throw new IllegalStateException("Can inject to methods with one parameter only");
+            }
+            return types[0];
+        } else {
+            throw new IllegalStateException("Can inject to fields and setter methods only");
+        }
+    }
+
+    protected boolean isInjectionRequired(InjectElement injectElement) {
+        AnnotatedElement element = injectElement.getElement();
+        if (element.isAnnotationPresent(WindowParam.class)) {
+            return element.getAnnotation(WindowParam.class).required();
+        } else if (element.isAnnotationPresent(Autowired.class)) {
+            return element.getAnnotation(Autowired.class).required();
+        }
+        return true;
+    }
+
     @Nullable
-    protected Object getInjectedInstance(Class<?> type, String name, Class annotationClass, AnnotatedElement element) {
+    protected Object getInjectedInstance(Class<?> type, String name, InjectElement injectElement,
+                                         FrameOwner frameOwner, ScreenOptions options) {
+        AnnotatedElement element = injectElement.getElement();
+        Class annotationClass = injectElement.getAnnotationClass();
+
         Frame frame = UiControllerUtils.getFrame(frameOwner);
 
         if (annotationClass == WindowParam.class) {
@@ -567,9 +577,9 @@ public class UiControllerDependencyInjector {
             /// if legacy frame - inject controller
             Component component = frame.getComponent(name);
             if (component instanceof Fragment) {
-                ScreenFragment frameOwner = ((Fragment) component).getFrameOwner();
-                if (type.isAssignableFrom(frameOwner.getClass())) {
-                    return frameOwner;
+                ScreenFragment fragmentFrameOwner = ((Fragment) component).getFrameOwner();
+                if (type.isAssignableFrom(fragmentFrameOwner.getClass())) {
+                    return fragmentFrameOwner;
                 }
             }
 
@@ -683,7 +693,9 @@ public class UiControllerDependencyInjector {
         return null;
     }
 
-    protected MessageBundle createMessageBundle(@SuppressWarnings("unused") AnnotatedElement element, FrameOwner frameOwner, Frame frame) {
+    protected MessageBundle createMessageBundle(@SuppressWarnings("unused") AnnotatedElement element,
+                                                FrameOwner frameOwner,
+                                                Frame frame) {
         MessageBundle messageBundle = applicationContext.getBean(MessageBundle.class);
 
         Class<? extends FrameOwner> screenClass = frameOwner.getClass();
@@ -703,7 +715,7 @@ public class UiControllerDependencyInjector {
         return messageBundle;
     }
 
-    protected void assignValue(AnnotatedElement element, Object value) {
+    protected void assignValue(AnnotatedElement element, Object value, FrameOwner frameOwner) {
         // element is already marked as accessible in UiControllerReflectionInspector
 
         if (element instanceof Field) {

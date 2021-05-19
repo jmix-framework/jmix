@@ -16,13 +16,13 @@
 
 package test_support.repository;
 
-import io.jmix.data.repositories.config.JmixJpaRepository;
+import io.jmix.core.repositories.JmixDataRepository;
 import test_support.entity.sales.Customer;
 
 import java.util.List;
 import java.util.UUID;
 
-public interface JCustomerRepository extends JmixJpaRepository<Customer, UUID> {
+public interface JCustomerRepository extends JmixDataRepository<Customer, UUID> {
 
     List<Customer> findCustomersByName(String name);
 

@@ -16,7 +16,8 @@
 
 package test_support.repository;
 
-import io.jmix.data.repositories.config.JmixJpaRepository;
+import io.jmix.core.repositories.JmixDataRepository;
+import io.jmix.core.repositories.JmixQuery;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -25,10 +26,13 @@ import test_support.entity.data_repositories.Employee;
 import java.util.List;
 import java.util.UUID;
 
-public interface EmployeeRepository extends JmixJpaRepository<Employee, UUID> {
+public interface EmployeeRepository extends JmixDataRepository<Employee, UUID> {
     List<Employee> findEmployeesByHomeAddressStreetOrWorkAddressStreetOrRegistrationAddressStreet(String homeStreet, String workStreet, String registrationStreet);
 
     Page<Employee> findEmployeesByNameNotNullOrderByNameDesc(Pageable pageable);
 
     List<Employee> findEmployeesByNameNotNullOrderByNameAsc(Sort sort);
+
+    @JmixQuery("select e from repository$Employee e where(e.name like ?1 or e.secondName like ?1 or e.lastName like ?2)")
+    List<Employee> findEmployeesByNames(String nameOrSecondName, String thirdName);
 }

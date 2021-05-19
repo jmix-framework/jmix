@@ -235,4 +235,42 @@ class MiscDataRepositoriesTest extends DataSpec {
         dataManager.remove(e1, e2, e3, e4, e5, e6)
 
     }
+
+    void "check repeated parameters in query"() {
+        setup:
+        Employee e1 = metadata.create(Employee);
+        e1.name = "R."
+        e1.secondName = "B."
+        e1.lastName = "F."
+
+        Employee e2 = metadata.create(Employee);
+        e2.name = "John"
+        e2.secondName = "R."
+        e2.lastName = "Smith"
+
+        Employee e3 = metadata.create(Employee);
+        e3.name = "Helen"
+        e3.secondName = "N."
+        e3.lastName = "Phillips"
+
+        Employee e4 = metadata.create(Employee);
+        e4.name = "Howard"
+        e4.secondName = "Phillips"
+        e4.lastName = "Lovecraft"
+
+        dataManager.save(e1, e2, e3)
+
+        when:
+        List<Employee> employees = employeeRepository.findEmployeesByNames("R.", "Phillips")
+
+        then:
+        employees.size() == 3
+        employees.contains(e1)
+        employees.contains(e2)
+        employees.contains(e3)
+
+        cleanup:
+        dataManager.remove(e1, e2, e3)
+
+    }
 }

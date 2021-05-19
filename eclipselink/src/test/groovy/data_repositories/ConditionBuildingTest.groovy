@@ -16,10 +16,10 @@
 
 package data_repositories
 
+import io.jmix.core.impl.repositories.query.utils.ConditionTransformer
 import io.jmix.core.querycondition.Condition
 import io.jmix.core.querycondition.LogicalCondition
 import io.jmix.core.querycondition.PropertyCondition
-import io.jmix.data.repositories.query.utils.ConditionTransformer
 import org.springframework.data.repository.query.parser.PartTree
 import test_support.DataSpec
 import test_support.entity.data_repositories.Customer

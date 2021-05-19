@@ -26,7 +26,7 @@ import java.util.UUID;
 
 @JmixEntity
 @Table(name = "REPOSITORY_EMPLOYEE")
-@Entity
+@Entity(name = "repository$Employee")
 public class Employee {
     @JmixGeneratedValue
     @Column(name = "ID", nullable = false)

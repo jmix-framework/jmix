@@ -17,9 +17,9 @@
 package test_support.repository;
 
 
-import io.jmix.data.repositories.config.FetchPlan;
-import io.jmix.data.repositories.config.JmixJpaRepository;
-import io.jmix.data.repositories.config.JpqlQuery;
+import io.jmix.core.repositories.FetchPlan;
+import io.jmix.core.repositories.JmixDataRepository;
+import io.jmix.core.repositories.JmixQuery;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -32,7 +32,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-public interface OrderRepository extends JmixJpaRepository<SalesOrder, UUID> {
+public interface OrderRepository extends JmixDataRepository<SalesOrder, UUID> {
 
     @FetchPlan("_instance_name")
     List<SalesOrder> findByCustomer(Customer customer);
@@ -63,13 +63,18 @@ public interface OrderRepository extends JmixJpaRepository<SalesOrder, UUID> {
 
     Slice<SalesOrder> findSalesByCustomerNameIn(List<String> customerNames, Pageable pageable);
 
-    @JpqlQuery("select o from repository$SalesOrder o where (o.date> ?1 and o.number in ?2)")
+    @JmixQuery("select o from repository$SalesOrder o where (o.date> ?1 and o.number in ?2)")
     List<SalesOrder> findSalesByQuery(Date date, Sort sort, List<String> numbers);
 
-    @JpqlQuery("select o from repository$SalesOrder o where (o.date> :date and o.number in :names)")
+    @JmixQuery("select o from repository$SalesOrder o where (o.date> :date and o.number in :numbers)")
     Page<SalesOrder> findSalesByQueryWithPaging(@Param("date") Date date,
                                                 Pageable pageable,
-                                                @Param("names") List<String> names);
+                                                @Param("numbers") List<String> numbers);
+
+    @JmixQuery("select o from repository$SalesOrder o where (o.date> ?2 and o.number in ?1)")
+    Page<SalesOrder> findSalesByQueryWithPagingAndPositionalParameters(List<String> names,
+                                                                       Pageable pageable,
+                                                                       Date date);
 
 
     long countByNumberInOrDateIsNull(List<String> numbers);

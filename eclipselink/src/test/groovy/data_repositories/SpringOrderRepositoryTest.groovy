@@ -329,6 +329,19 @@ class SpringOrderRepositoryTest extends DataSpec {
         !pageByQueryTwo.hasNext()
         pageByQueryTwo.hasPrevious()
 
+        when: "jpql query request paged 3 (with positional parameters)"
+        Page<SalesOrder> pageByQueryThree = orderRepository.findSalesByQueryWithPagingAndPositionalParameters(
+                ["111", "114", "113", "112"],
+                PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "number")),
+                new Date(0))
+        then:
+        pageByQueryThree.numberOfElements == 3
+        pageByQueryThree.toList()[0] == order4
+        pageByQueryThree.toList()[1] == order3
+        pageByQueryThree.toList()[2] == order2
+        pageByQueryThree.hasNext()
+        !pageByQueryThree.hasPrevious()
+
     }
 
     void 'slicing works'() {

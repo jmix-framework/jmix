@@ -63,6 +63,7 @@ public interface DashboardsAdminRole {
             "dshbrd_WidgetTemplate.browse"
     })
     @SpecificPolicy(resources = "dashboardGroupsBrowse")
+    @SpecificPolicy(resources = "dashboardEditButton")
     @EntityPolicy(entityClass = Parameter.class, actions = {EntityPolicyAction.ALL})
     @EntityPolicy(entityClass = WidgetTemplateGroup.class, actions = {EntityPolicyAction.ALL})
     @EntityPolicy(entityClass = WidgetTemplate.class, actions = {EntityPolicyAction.ALL})

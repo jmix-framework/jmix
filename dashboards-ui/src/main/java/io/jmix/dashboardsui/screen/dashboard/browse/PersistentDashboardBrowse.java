@@ -21,15 +21,19 @@ import io.jmix.core.common.util.ParamsMap;
 import io.jmix.dashboards.entity.PersistentDashboard;
 import io.jmix.dashboardsui.dashboard.tools.AccessConstraintsHelper;
 import io.jmix.dashboardsui.role.accesscontext.DashboardGroupBrowseContext;
+import io.jmix.dashboardsui.role.accesscontext.PersistentDashboardEditButtonContext;
 import io.jmix.dashboardsui.screen.dashboard.view.DashboardViewScreen;
 import io.jmix.dashboardsui.screen.dashboardgroup.DashboardGroupBrowse;
 import io.jmix.ui.Screens;
 import io.jmix.ui.action.Action;
+import io.jmix.ui.action.list.EditAction;
 import io.jmix.ui.component.Button;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.CollectionLoader;
 import io.jmix.ui.screen.*;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.inject.Named;
 
 @UiController("dshbrd_PersistentDashboard.browse")
 @UiDescriptor("persistent-dashboard-browse.xml")
@@ -54,12 +58,22 @@ public class PersistentDashboardBrowse extends StandardLookup<PersistentDashboar
     @Autowired
     private Button dashboardGroupsBrowse;
 
+    @Named("persistentDashboardsTable.edit")
+    private EditAction<PersistentDashboard> persistentDashboardsTableEdit;
+
     @Subscribe
     public void onBeforeShow(BeforeShowEvent event) {
         persistentDashboardsDl.setParameter("currentUser", accessConstraintsHelper.getCurrentUsername());
         persistentDashboardsDl.load();
 
+        persistentDashboardsTableEdit.setEnabled(isDashboardEditButtonPermitted());
         dashboardGroupsBrowse.setEnabled(isDashboardGroupBrowsePermitted());
+    }
+
+    protected boolean isDashboardEditButtonPermitted() {
+        PersistentDashboardEditButtonContext dashboardEditButtonContext = new PersistentDashboardEditButtonContext();
+        accessManager.applyRegisteredConstraints(dashboardEditButtonContext);
+        return dashboardEditButtonContext.isPermitted();
     }
 
     protected boolean isDashboardGroupBrowsePermitted() {
@@ -73,8 +87,8 @@ public class PersistentDashboardBrowse extends StandardLookup<PersistentDashboar
         screens.create(DashboardGroupBrowse.class, OpenMode.NEW_TAB).show();
     }
 
-    @Subscribe("persistentDashboardsTable.view")
-    public void viewDashboard(Action.ActionPerformedEvent event) {
+    @Subscribe("persistentDashboardsTable.show")
+    public void showDashboard(Action.ActionPerformedEvent event) {
         PersistentDashboard item = persistentDashboardsDc.getItemOrNull();
         if (item != null) {
             screens.create(DashboardViewScreen.class, OpenMode.NEW_TAB, new MapScreenOptions(ParamsMap.of(

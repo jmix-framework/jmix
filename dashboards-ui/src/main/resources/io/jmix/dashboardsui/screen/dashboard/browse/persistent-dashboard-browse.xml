@@ -44,8 +44,8 @@
                 <action id="create" type="create"/>
                 <action id="edit" type="edit"/>
                 <action id="remove" type="remove"/>
-                <action id="view"
-                        caption="msg://view"
+                <action id="show"
+                        caption="msg://show"
                         icon="EYE"/>
             </actions>
             <columns>
@@ -62,8 +62,8 @@
                         action="persistentDashboardsTable.edit"/>
                 <button id="removeBtn"
                         action="persistentDashboardsTable.remove"/>
-                <button id="viewBtn"
-                        action="persistentDashboardsTable.view"/>
+                <button id="showBtn"
+                        action="persistentDashboardsTable.show"/>
                 <button id="dashboardGroupsBrowse"
                         caption="msg://dashboardGroupsBrowse"/>
             </buttonsPanel>

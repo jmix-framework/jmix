@@ -21,4 +21,6 @@
     <screen id="test_LegacyUserEditor" template="/spec/haulmont/cuba/web/screens/legacy/legacy-user-edit.xml"/>
     <screen id="test_PresentationsLegacyTestScreen"
             template="/legacy_presentations/screens/presentations-legacy-test-screen.xml"/>
+    <screen id="autowireLegacyParamsScreen"
+            template="/spec/haulmont/cuba/web/ui_controller_depenency_injector/screen/autowire-legacy-params-screen.xml"/>
 </screen-config>

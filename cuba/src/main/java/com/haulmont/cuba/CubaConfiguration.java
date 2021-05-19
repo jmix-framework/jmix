@@ -36,7 +36,8 @@ import com.haulmont.cuba.gui.presentation.PresentationsImpl;
 import com.haulmont.cuba.gui.xml.CubaPropertyShortcutLoader;
 import com.haulmont.cuba.security.app.UserSettingServiceBean;
 import com.haulmont.cuba.web.app.settings.UserSettingsToolsImpl;
-import com.haulmont.cuba.web.gui.CubaUiControllerReflectionInspector;
+import com.haulmont.cuba.web.gui.CubaUiControllerDependencyInjector;
+import com.haulmont.cuba.web.gui.CubaUiControllerDependencyManager;
 import com.haulmont.cuba.web.sys.*;
 import com.haulmont.cuba.web.sys.navigation.CubaUrlChangeHandler;
 import com.vaadin.spring.annotation.UIScope;
@@ -68,15 +69,10 @@ import io.jmix.ui.menu.MenuItemCommands;
 import io.jmix.ui.model.ScreenData;
 import io.jmix.ui.model.impl.ScreenDataXmlLoader;
 import io.jmix.ui.navigation.UrlChangeHandler;
-import io.jmix.ui.screen.FrameOwner;
-import io.jmix.ui.screen.ScreenOptions;
 import io.jmix.ui.settings.UserSettingService;
 import io.jmix.ui.settings.UserSettingsTools;
 import io.jmix.ui.settings.component.binder.ComponentSettingsBinder;
-import io.jmix.ui.sys.ActionsConfiguration;
-import io.jmix.ui.sys.UiControllerDependencyInjector;
-import io.jmix.ui.sys.UiControllerReflectionInspector;
-import io.jmix.ui.sys.UiControllersConfiguration;
+import io.jmix.ui.sys.*;
 import io.jmix.uidata.UiDataConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -203,14 +199,17 @@ public class CubaConfiguration {
         return actionsConfiguration;
     }
 
+    @Bean("cuba_UiControllerDependencyManager")
+    @Primary
+    protected UiControllerDependencyManager uiControllerDependencyManager() {
+        return new CubaUiControllerDependencyManager();
+    }
+
     @Bean("cuba_UiControllerDependencyInjector")
     @Primary
-    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-    protected UiControllerDependencyInjector uiControllerDependencyInjector(FrameOwner frameOwner, ScreenOptions options) {
-        UiControllerDependencyInjector injector = new CubaUiControllerReflectionInspector(frameOwner, options);
-        injector.setApplicationContext(applicationContext);
-        injector.setReflectionInspector(uiControllerReflectionInspector);
-        return injector;
+    protected UiControllerDependencyInjector uiControllerDependencyInjector(ApplicationContext applicationContext,
+                                                                            UiControllerReflectionInspector inspector) {
+        return new CubaUiControllerDependencyInjector(applicationContext, inspector);
     }
 
     @Bean("cuba_MenuItemCommands")

@@ -60,33 +60,33 @@ class FilterComponentTest extends AbstractGraphQLTest {
     @SuppressWarnings('UnnecessaryQualifiedReference')
     def "buildScalarFilterConditionType for GraphQLString"() {
         given:
-        def uuidER = createCondition("inp_uUIDFilterCondition", uuidFilterOPs)
-        def booleanER = createCondition("inp_booleanFilterCondition", booleanFilterOPs)
+        def uuidER = createCondition("inp_UUIDFilterCondition", uuidFilterOPs)
+        def booleanER = createCondition("inp_BooleanFilterCondition", booleanFilterOPs)
 
         //numberTypes
-        def bigDecimalER = createCondition("inp_bigDecimalFilterCondition", numbersFilterOPs)
-        def longER = createCondition("inp_longFilterCondition", numbersFilterOPs)
-        def byteER = createCondition("inp_byteFilterCondition", numbersFilterOPs)
-        def shortER = createCondition("inp_shortFilterCondition", numbersFilterOPs)
-        def floatER = createCondition("inp_floatFilterCondition", numbersFilterOPs)
-        def bigIntER = createCondition("inp_bigIntegerFilterCondition", numbersFilterOPs)
-        def intER = createCondition("inp_intFilterCondition", numbersFilterOPs)
+        def bigDecimalER = createCondition("inp_BigDecimalFilterCondition", numbersFilterOPs)
+        def longER = createCondition("inp_LongFilterCondition", numbersFilterOPs)
+        def byteER = createCondition("inp_ByteFilterCondition", numbersFilterOPs)
+        def shortER = createCondition("inp_ShortFilterCondition", numbersFilterOPs)
+        def floatER = createCondition("inp_FloatFilterCondition", numbersFilterOPs)
+        def bigIntER = createCondition("inp_BigIntegerFilterCondition", numbersFilterOPs)
+        def intER = createCondition("inp_IntFilterCondition", numbersFilterOPs)
 
         //dateTimeTypes
-        def localDateTimeER = createCondition("inp_localDateTimeFilterCondition", dateTimeFilterOPs)
-        def localDateER = createCondition("inp_localDateFilterCondition", dateTimeFilterOPs)
-        def offsetDateTimeER = createCondition("inp_offsetDateTimeFilterCondition", dateTimeFilterOPs)
-        def dateER = createCondition("inp_dateFilterCondition", dateTimeFilterOPs)
-        def dateTimeER = createCondition("inp_dateTimeFilterCondition", dateTimeFilterOPs)
+        def localDateTimeER = createCondition("inp_LocalDateTimeFilterCondition", dateTimeFilterOPs)
+        def localDateER = createCondition("inp_LocalDateFilterCondition", dateTimeFilterOPs)
+        def offsetDateTimeER = createCondition("inp_OffsetDateTimeFilterCondition", dateTimeFilterOPs)
+        def dateER = createCondition("inp_DateFilterCondition", dateTimeFilterOPs)
+        def dateTimeER = createCondition("inp_DateTimeFilterCondition", dateTimeFilterOPs)
 
         //timeTypes
-        def localTimeER = createCondition("inp_localTimeFilterCondition", timeFilterOPs)
-        def offsetTimeER = createCondition("inp_offsetTimeFilterCondition", timeFilterOPs)
-        def timeER = createCondition("inp_timeFilterCondition", timeFilterOPs)
+        def localTimeER = createCondition("inp_LocalTimeFilterCondition", timeFilterOPs)
+        def offsetTimeER = createCondition("inp_OffsetTimeFilterCondition", timeFilterOPs)
+        def timeER = createCondition("inp_TimeFilterCondition", timeFilterOPs)
 
         //stringTypes
-        def stringER = createCondition("inp_stringFilterCondition", stringFilterOPs)
-        def charER = createCondition("inp_charFilterCondition", stringFilterOPs)
+        def stringER = createCondition("inp_StringFilterCondition", stringFilterOPs)
+        def charER = createCondition("inp_CharFilterCondition", stringFilterOPs)
 
         when:
         def uuidAR = filterTypesBuilder.buildScalarFilterConditionType(CustomScalars.GraphQLUUID)

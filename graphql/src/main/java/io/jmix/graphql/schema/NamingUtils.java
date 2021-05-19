@@ -42,7 +42,7 @@ public class NamingUtils {
      * @return normalized name
      */
     public static String normalizeInpTypeName(String name) {
-        return "inp_" + StringUtils.uncapitalize(name.replaceAll("\\$", "_"));
+        return "inp_" + name.replaceAll("\\$", "_");
     }
 
     public static String normalizeName(String name) {

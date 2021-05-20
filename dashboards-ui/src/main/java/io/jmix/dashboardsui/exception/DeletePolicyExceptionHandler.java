@@ -48,44 +48,46 @@ public class DeletePolicyExceptionHandler extends AbstractUiExceptionHandler imp
 
 	@Override
 	protected void doHandle(String className, String message, @Nullable Throwable throwable, UiContext context) {
-		DeletePolicyException exception = (DeletePolicyException) throwable;
+		if (throwable != null) {
+			DeletePolicyException exception = (DeletePolicyException) throwable;
 
-		String caption = null;
-		String notificationMessage = null;
+			String caption = null;
+			String notificationMessage = null;
 
-		MetaClass deletedEntityMetaClass = recognizeEntityMetaClass(exception.getEntity());
-		if (deletedEntityMetaClass != null) {
-			String customCaptionKey = String.format("deletePolicy.caption.%s", deletedEntityMetaClass.getName());
-			String customCaption = messages.getMessage(customCaptionKey);
-			if (!customCaptionKey.equals(customCaption)) {
-				caption = customCaption;
+			MetaClass deletedEntityMetaClass = recognizeEntityMetaClass(exception.getEntity());
+			if (deletedEntityMetaClass != null) {
+				String customCaptionKey = String.format("deletePolicy.caption.%s", deletedEntityMetaClass.getName());
+				String customCaption = messages.getMessage(customCaptionKey);
+				if (!customCaptionKey.equals(customCaption)) {
+					caption = customCaption;
+				}
+
+				String customMessageKey = String.format("deletePolicy.references.message.%s", deletedEntityMetaClass.getName());
+				String customMessage = messages.getMessage(customMessageKey);
+				if (!customMessageKey.equals(customMessage)) {
+					notificationMessage = customMessage;
+				}
 			}
 
-			String customMessageKey = String.format("deletePolicy.references.message.%s", deletedEntityMetaClass.getName());
-			String customMessage = messages.getMessage(customMessageKey);
-			if (!customMessageKey.equals(customMessage)) {
-				notificationMessage = customMessage;
+			if (StringUtils.isEmpty(caption)) {
+				caption = messages.getMessage("deletePolicy.caption");
 			}
-		}
 
-		if (StringUtils.isEmpty(caption)) {
-			caption = messages.getMessage("deletePolicy.caption");
-		}
-
-		if (StringUtils.isEmpty(notificationMessage)) {
-			MetaClass metaClass = recognizeEntityMetaClass(exception.getRefEntity());
-			if (metaClass != null) {
-				String localizedEntityName = messageTools.getEntityCaption(metaClass);
-				String referencesMessage = messages.getMessage("deletePolicy.references.message");
-				notificationMessage = String.format(referencesMessage, localizedEntityName);
+			if (StringUtils.isEmpty(notificationMessage)) {
+				MetaClass metaClass = recognizeEntityMetaClass(exception.getRefEntity());
+				if (metaClass != null) {
+					String localizedEntityName = messageTools.getEntityCaption(metaClass);
+					String referencesMessage = messages.getMessage("deletePolicy.references.message");
+					notificationMessage = String.format(referencesMessage, localizedEntityName);
+				}
 			}
-		}
 
-		context.getNotifications()
-				.create(Notifications.NotificationType.ERROR)
-				.withCaption(caption)
-				.withDescription(notificationMessage)
-				.show();
+			context.getNotifications()
+					.create(Notifications.NotificationType.ERROR)
+					.withCaption(caption)
+					.withDescription(notificationMessage)
+					.show();
+		}
 	}
 
 	@Nullable

@@ -15,7 +15,7 @@
  */
 @Internal
 @NonNullApi
-package io.jmix.core.impl.repositories.query.utils;
+package io.jmix.core.impl.repository.query;
 
 import io.jmix.core.annotation.Internal;
 import org.springframework.lang.NonNullApi;

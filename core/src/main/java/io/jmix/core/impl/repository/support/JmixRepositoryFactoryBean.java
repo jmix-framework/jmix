@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.core.impl.repositories.support;
+package io.jmix.core.impl.repository.support;
 
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;

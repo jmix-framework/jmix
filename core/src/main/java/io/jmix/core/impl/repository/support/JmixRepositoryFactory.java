@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package io.jmix.core.impl.repositories.support;
+package io.jmix.core.impl.repository.support;
 
 import io.jmix.core.DataManager;
 import io.jmix.core.EntityStates;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
-import io.jmix.core.impl.repositories.query.utils.JmixQueryLookupStrategy;
+import io.jmix.core.impl.repository.query.utils.JmixQueryLookupStrategy;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.repository.core.EntityInformation;
 import org.springframework.data.repository.core.RepositoryInformation;

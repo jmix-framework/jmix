@@ -14,38 +14,27 @@
  * limitations under the License.
  */
 
-package io.jmix.core.impl.repositories.query;
-
+package io.jmix.core.impl.repository.query;
 
 import io.jmix.core.DataManager;
-import io.jmix.core.LoadContext;
 import io.jmix.core.Metadata;
 import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.data.repository.core.RepositoryMetadata;
 import org.springframework.data.repository.query.parser.PartTree;
 
 import java.lang.reflect.Method;
+import java.util.List;
 
-public class JmixCountQuery extends JmixStructuredQuery {
+public class JmixDeleteQuery extends JmixListQuery {
 
-    public JmixCountQuery(DataManager dataManager, Metadata jmixMetadata, Method method, RepositoryMetadata metadata, ProjectionFactory factory, PartTree qryTree) {
+    public JmixDeleteQuery(DataManager dataManager, Metadata jmixMetadata, Method method, RepositoryMetadata metadata, ProjectionFactory factory, PartTree qryTree) {
         super(dataManager, jmixMetadata, method, metadata, factory, qryTree);
     }
 
     @Override
     public Object execute(Object[] parameters) {
-        String entityName = jmixMetadata.getClass(metadata.getDomainType()).getName();
-
-        String queryString = String.format("select %s e from %s e", distinct ? "distinct" : "", entityName);
-
-        LoadContext context = new LoadContext(jmixMetadata.getClass(metadata.getDomainType())).setQuery(
-                new LoadContext.Query(queryString)
-                        .setCondition(conditions)
-                        .setParameters(buildNamedParametersMap(parameters))
-        );
-
-        return dataManager.getCount(context);
+        List<Object> loaded = (List<Object>) super.execute(parameters);
+        dataManager.remove(loaded);
+        return loaded;
     }
-
-
 }

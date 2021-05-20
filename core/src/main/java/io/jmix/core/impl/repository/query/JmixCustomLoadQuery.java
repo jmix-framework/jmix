@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package io.jmix.core.impl.repositories.query;
+package io.jmix.core.impl.repository.query;
 
 import io.jmix.core.*;
-import io.jmix.core.impl.repositories.query.utils.LoaderHelper;
+import io.jmix.core.impl.repository.query.utils.LoaderHelper;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.*;
 import org.springframework.data.projection.ProjectionFactory;

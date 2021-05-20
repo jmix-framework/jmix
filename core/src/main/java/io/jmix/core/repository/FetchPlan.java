@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.core.repositories;
+package io.jmix.core.repository;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

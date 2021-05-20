@@ -13,9 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@Internal
 @NonNullApi
-package io.jmix.core.impl.repositories.support;
+package io.jmix.core.repository;
 
-import io.jmix.core.annotation.Internal;
 import org.springframework.lang.NonNullApi;

@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package io.jmix.core.impl.repositories.support;
+package io.jmix.core.impl.repository.support;
 
 import io.jmix.core.*;
-import io.jmix.core.impl.repositories.query.utils.LoaderHelper;
+import io.jmix.core.impl.repository.query.utils.LoaderHelper;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.repositories.JmixDataRepository;
+import io.jmix.core.repository.JmixDataRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -30,7 +30,7 @@ import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.*;
 
-import static io.jmix.core.impl.repositories.query.utils.LoaderHelper.springToJmixSort;
+import static io.jmix.core.impl.repository.query.utils.LoaderHelper.springToJmixSort;
 
 @NoRepositoryBean
 public class JmixDataRepositoryImpl<T, ID extends Serializable> implements JmixDataRepository<T, ID> {
@@ -50,30 +50,28 @@ public class JmixDataRepositoryImpl<T, ID extends Serializable> implements JmixD
     }
 
     @Override
-    public Optional<T> findOne(ID id, String fetchPlan) {
+    public T newOne() {
+        return dataManager.create(domainClass);
+    }
+
+
+    @Override
+    public Optional<T> findOne(ID id, FetchPlan fetchPlan) {
         return dataManager.load(domainClass).id(id).fetchPlan(fetchPlan).optional();
     }
 
     @Override
-    public Iterable<T> findAll(String fetchPlan) {
+    public Iterable<T> findAll(FetchPlan fetchPlan) {
         return dataManager.load(domainClass).all().fetchPlan(fetchPlan).list();
     }
 
     @Override
-    public Iterable<T> findAll(Iterable<ID> ids, @Nullable String fetchPlan) {
+    public Iterable<T> findAll(Iterable<ID> ids, @Nullable FetchPlan fetchPlan) {
         if (!ids.iterator().hasNext()) {
             return Collections.emptyList();
         }
 
-        Collection<ID> collection;
-        if (ids instanceof Collection) {
-            collection = (Collection<ID>) ids;
-        } else {
-            collection = new ArrayList<>();
-            ids.forEach(collection::add);
-        }
-
-        return dataManager.load(domainClass).ids(collection).fetchPlan(fetchPlan).list();
+        return dataManager.load(domainClass).ids(toCollection(ids)).fetchPlan(fetchPlan).list();
     }
 
     @Override
@@ -149,13 +147,24 @@ public class JmixDataRepositoryImpl<T, ID extends Serializable> implements JmixD
 
     @Override
     public Iterable<T> findAll(Sort sort) {
-        return dataManager.load(domainClass).all().sort(springToJmixSort(sort)).list();
+        return findAll(sort, null);
     }
 
     @Override
     public Page<T> findAll(Pageable pageable) {
+        return findAll(pageable, null);
+    }
+
+    @Override
+    public Iterable<T> findAll(Sort sort, @Nullable FetchPlan fetchPlan) {
+        return dataManager.load(domainClass).all().sort(springToJmixSort(sort)).fetchPlan(fetchPlan).list();
+    }
+
+    @Override
+    public Page<T> findAll(Pageable pageable, @Nullable FetchPlan fetchPlan) {
         FluentLoader.ByCondition<T> loader = dataManager.load(domainClass)
-                .all();
+                .all()
+                .fetchPlan(fetchPlan);
 
         LoaderHelper.applyPageableForConditionLoader(loader, pageable);
         loader.sort(springToJmixSort(pageable.getSort()));
@@ -168,6 +177,17 @@ public class JmixDataRepositoryImpl<T, ID extends Serializable> implements JmixD
 
         long total = dataManager.getCount(context);
         return new PageImpl<>(results, pageable, total);
-
     }
+
+    protected Collection<ID> toCollection(Iterable<ID> ids) {
+        Collection<ID> collection;
+        if (ids instanceof Collection) {
+            collection = (Collection<ID>) ids;
+        } else {
+            collection = new ArrayList<>();
+            ids.forEach(collection::add);
+        }
+        return collection;
+    }
+
 }

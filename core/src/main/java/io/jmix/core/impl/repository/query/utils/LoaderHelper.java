@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.core.impl.repositories.query.utils;
+package io.jmix.core.impl.repository.query.utils;
 
 import io.jmix.core.FluentLoader;
 import io.jmix.core.Sort;

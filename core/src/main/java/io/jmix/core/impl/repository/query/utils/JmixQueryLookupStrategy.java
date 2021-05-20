@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package io.jmix.core.impl.repositories.query.utils;
+package io.jmix.core.impl.repository.query.utils;
 
 import io.jmix.core.DataManager;
 import io.jmix.core.Metadata;
-import io.jmix.core.impl.repositories.query.*;
-import io.jmix.core.repositories.JmixQuery;
+import io.jmix.core.impl.repository.query.*;
+import io.jmix.core.repository.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.projection.ProjectionFactory;
@@ -47,10 +47,10 @@ public class JmixQueryLookupStrategy implements QueryLookupStrategy {
     public RepositoryQuery resolveQuery(Method method, RepositoryMetadata repositoryMetadata, ProjectionFactory factory, NamedQueries namedQueries) {
 
 
-        JmixQuery jmixQuery = method.getDeclaredAnnotation(JmixQuery.class);
+        Query query = method.getDeclaredAnnotation(Query.class);
         JmixAbstractQuery resolvedQuery;
-        if (jmixQuery != null) {
-            String qryString = jmixQuery.value();
+        if (query != null) {
+            String qryString = query.value();
             resolvedQuery = new JmixCustomLoadQuery(dataManager, jmixMetadata, method, repositoryMetadata, factory, qryString);
         } else {
             PartTree qryTree = new PartTree(method.getName(), repositoryMetadata.getDomainType());

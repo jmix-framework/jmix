@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package io.jmix.core.repositories;
+package io.jmix.core.repository;
 
 
-import io.jmix.core.impl.repositories.support.JmixDataRepositoryImpl;
-import io.jmix.core.impl.repositories.support.JmixRepositoriesRegistrar;
-import io.jmix.core.impl.repositories.support.JmixRepositoryFactoryBean;
+import io.jmix.core.impl.repository.support.JmixDataRepositoryImpl;
+import io.jmix.core.impl.repository.support.JmixRepositoriesRegistrar;
+import io.jmix.core.impl.repository.support.JmixRepositoryFactoryBean;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.repository.query.QueryLookupStrategy;
@@ -118,9 +118,9 @@ public @interface EnableJmixDataRepositories {
 
     /**
      * Configures whether nested repository-interfaces (e.g. defined as inner classes) should be discovered by the
-     * repositories infrastructure.
+     * repository infrastructure.
      *
-     * @return Flag that indicates if we should consider nested repositories during scan
+     * @return Flag that indicates if we should consider nested repository during scan
      */
     boolean considerNestedRepositories() default false;
 

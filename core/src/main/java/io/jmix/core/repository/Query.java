@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.core.repositories;
+package io.jmix.core.repository;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -26,7 +26,7 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface JmixQuery {
+public @interface Query {
 
     /**
      * @return query that should be executed

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.core.impl.repositories.support;
+package io.jmix.core.impl.repository.support;
 
 import io.jmix.core.EntityStates;
 import io.jmix.core.MetadataTools;

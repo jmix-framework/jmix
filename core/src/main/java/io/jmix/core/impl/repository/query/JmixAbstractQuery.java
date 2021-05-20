@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package io.jmix.core.impl.repositories.query;
+package io.jmix.core.impl.repository.query;
 
 import io.jmix.core.DataManager;
 import io.jmix.core.Metadata;
-import io.jmix.core.impl.repositories.query.utils.JmixQueryLookupStrategy;
-import io.jmix.core.repositories.FetchPlan;
+import io.jmix.core.impl.repository.query.utils.JmixQueryLookupStrategy;
+import io.jmix.core.repository.FetchPlan;
 import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.data.repository.core.RepositoryMetadata;
 import org.springframework.data.repository.query.Parameters;

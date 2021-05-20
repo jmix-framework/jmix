@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package io.jmix.core.impl.repositories.support;
+package io.jmix.core.impl.repository.support;
 
-import io.jmix.core.repositories.EnableJmixDataRepositories;
+import io.jmix.core.repository.EnableJmixDataRepositories;
 import org.springframework.data.repository.config.RepositoryBeanDefinitionRegistrarSupport;
 import org.springframework.data.repository.config.RepositoryConfigurationExtension;
 

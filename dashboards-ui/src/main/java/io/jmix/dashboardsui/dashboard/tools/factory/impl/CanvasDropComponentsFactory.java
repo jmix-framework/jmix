@@ -116,6 +116,7 @@ public class CanvasDropComponentsFactory extends CanvasUiComponentsFactory {
         removeButton.addStyleName(DashboardStyleConstants.DASHBOARD_EDIT_BUTTON);
         removeButton.setIcon(action.getIcon());
         removeButton.setCaption("");
+        removeButton.setDescription(action.getCaption());
         return removeButton;
     }
 

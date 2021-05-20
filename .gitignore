@@ -1,0 +1,6 @@
+.idea/*
+!.idea/copyright
+
+build/
+.gradle/
+.jmix

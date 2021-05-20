@@ -19,6 +19,7 @@ package io.jmix.search.index.mapping.processor;
 import io.jmix.core.InstanceNameProvider;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
+import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
@@ -30,6 +31,7 @@ import io.jmix.search.index.mapping.MappingFieldDescriptor;
 import io.jmix.search.index.mapping.strategy.*;
 import io.jmix.search.utils.PropertyTools;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,9 +39,12 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
+import java.lang.reflect.Proxy;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -84,7 +89,7 @@ public class AnnotatedIndexDefinitionProcessor {
         if (entityMetaClass == null) {
             throw new RuntimeException("MetaClass for '" + entityJavaClass + "' not found");
         }
-        String indexName = createIndexName(indexAnnotation, entityMetaClass);
+        String indexName = createIndexName(entityMetaClass);
         log.debug("Index name for entity {}: {}", entityMetaClass, indexName);
 
         IndexMappingConfiguration indexMappingConfiguration = createIndexMappingConfig(entityMetaClass, indexDefClass);
@@ -103,10 +108,6 @@ public class AnnotatedIndexDefinitionProcessor {
         }
     }
 
-    protected String createIndexName(JmixEntitySearchIndex indexAnnotation, MetaClass entityMetaClass) {
-        return createIndexName(entityMetaClass); //TODO support custom index name;
-    }
-
     protected String createIndexName(MetaClass entityMetaClass) {
         return "search_index_" + entityMetaClass.getName().toLowerCase();
     }
@@ -118,11 +119,11 @@ public class AnnotatedIndexDefinitionProcessor {
         DisplayedNameDescriptor displayedNameDescriptor = createDisplayedNameDescriptor(entityMetaClass);
         if (methods.length > 0) {
             List<Annotation> fieldAnnotations = new ArrayList<>();
-            Method methodWithDefinitionImplementation = null;
+            Method methodWithMappingDefinitionImplementation = null;
             for (Method method : methods) {
-                if (isDefinitionImplementationMethod(method)) {
-                    if (methodWithDefinitionImplementation == null) {
-                        methodWithDefinitionImplementation = method;
+                if (isMappingDefinitionImplementationMethod(method)) {
+                    if (methodWithMappingDefinitionImplementation == null) {
+                        methodWithMappingDefinitionImplementation = method;
                     } else {
                         throw new RuntimeException("There can be only one method with body in Index Definition interface '" + indexDefClass + "'");
                     }
@@ -132,7 +133,7 @@ public class AnnotatedIndexDefinitionProcessor {
             }
 
             MappingDefinition mappingDefinition;
-            if (methodWithDefinitionImplementation == null) {
+            if (methodWithMappingDefinitionImplementation == null) {
                 List<MappingDefinitionElement> items = fieldAnnotations.stream()
                         .map(annotation -> processAnnotation(annotation, entityMetaClass))
                         .filter(Optional::isPresent)
@@ -143,9 +144,10 @@ public class AnnotatedIndexDefinitionProcessor {
                 mappingDefinition.setElements(items);
             } else {
                 try {
-                    mappingDefinition = (MappingDefinition) methodWithDefinitionImplementation.invoke(null);
+                    Object proxy = createProxy(indexDefClass);
+                    mappingDefinition = (MappingDefinition) methodWithMappingDefinitionImplementation.invoke(proxy);
                 } catch (IllegalAccessException | InvocationTargetException e) {
-                    throw new RuntimeException("Failed to call method '" + methodWithDefinitionImplementation + "'", e);
+                    throw new RuntimeException("Failed to call method '" + methodWithMappingDefinitionImplementation + "'", e);
                 }
             }
             Map<String, MappingFieldDescriptor> fieldDescriptors = processMappingDefinition(entityMetaClass, mappingDefinition);
@@ -156,10 +158,64 @@ public class AnnotatedIndexDefinitionProcessor {
         return indexMappingConfiguration;
     }
 
-    protected boolean isDefinitionImplementationMethod(Method method) {
-        return Modifier.isStatic(method.getModifiers())
+    protected boolean isMappingDefinitionImplementationMethod(Method method) {
+        return method.isDefault()
                 && MappingDefinition.class.equals(method.getReturnType())
                 && method.getParameterCount() == 0;
+    }
+
+    protected Object createProxy(Class<?> ownerClass) {
+        return ownerClass.isInterface()
+                ? createInterfaceProxyInstance(ownerClass)
+                : createClassProxyInstance(ownerClass);
+    }
+
+    protected Object createInterfaceProxyInstance(Class<?> ownerClass) {
+        ClassLoader classLoader = ownerClass.getClassLoader();
+        return Proxy.newProxyInstance(classLoader, new Class[]{ownerClass},
+                (proxy, method, args) -> invokeProxyMethod(ownerClass, proxy, method, args));
+    }
+
+    protected Object createClassProxyInstance(Class<?> ownerClass) {
+        try {
+            return ReflectionHelper.newInstance(ownerClass);
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(String.format("Cannot create Index Definition [%s] proxy", ownerClass), e);
+        }
+    }
+
+    @Nullable
+    protected Object invokeProxyMethod(Class<?> ownerClass, Object proxy, Method method, Object[] args) {
+        if (method.isDefault()) {
+            try {
+                if (SystemUtils.IS_JAVA_1_8) {
+                    Constructor<MethodHandles.Lookup> lookupConstructor =
+                            MethodHandles.Lookup.class.getDeclaredConstructor(Class.class, Integer.TYPE);
+                    if (!lookupConstructor.isAccessible()) {
+                        lookupConstructor.setAccessible(true);
+                    }
+                    return lookupConstructor.newInstance(ownerClass, MethodHandles.Lookup.PRIVATE)
+                            .unreflectSpecial(method, ownerClass)
+                            .bindTo(proxy)
+                            .invokeWithArguments(args);
+                } else {
+                    return MethodHandles.lookup()
+                            .findSpecial(
+                                    ownerClass,
+                                    method.getName(),
+                                    MethodType.methodType(method.getReturnType(),
+                                    method.getParameterTypes()),
+                                    ownerClass
+                            )
+                            .bindTo(proxy)
+                            .invokeWithArguments(args);
+                }
+            } catch (Throwable throwable) {
+                throw new RuntimeException("Error invoking default method of Index Definition interface", throwable);
+            }
+        } else {
+            return null;
+        }
     }
 
     protected Optional<MappingDefinitionElement> processAnnotation(Annotation annotation, MetaClass entityMetaClass) {

@@ -26,6 +26,7 @@ import io.jmix.ui.component.data.meta.ContainerDataUnit;
 import io.jmix.ui.model.CollectionContainer;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Move items in ListComponent up or down. Items in datasource must to be of type {@link OrderableEntity}. <br>
@@ -127,8 +128,12 @@ public class ItemOrderableAction<E extends OrderableEntity> extends SecuredListA
         DataUnit dataUnit = target.getItems();
         if (dataUnit instanceof ContainerDataUnit) {
             ContainerDataUnit containerDataUnit = (ContainerDataUnit) dataUnit;
-            CollectionContainer collectionContainer = containerDataUnit.getContainer();
-            collectionContainer.getSorter().sort(Sort.by(Sort.Direction.ASC, "orderNum"));
+            CollectionContainer<? extends OrderableEntity> collectionContainer = containerDataUnit.getContainer();
+            List sortedItems = collectionContainer.getItems()
+                    .stream()
+                    .sorted(Comparator.comparingLong(OrderableEntity::getOrderNum))
+                    .collect(Collectors.toList());
+            collectionContainer.setItems(sortedItems);
         }
     }
 

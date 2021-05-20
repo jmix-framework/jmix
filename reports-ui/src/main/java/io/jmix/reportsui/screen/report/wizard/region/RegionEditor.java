@@ -28,7 +28,10 @@ import io.jmix.ui.action.Action;
 import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.action.ItemTrackingAction;
 import io.jmix.ui.action.ListAction;
-import io.jmix.ui.component.*;
+import io.jmix.ui.component.Button;
+import io.jmix.ui.component.Label;
+import io.jmix.ui.component.Table;
+import io.jmix.ui.component.Tree;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.screen.*;
@@ -248,12 +251,6 @@ public class RegionEditor extends StandardEditor<ReportRegion> {
         for (RegionProperty item : allItems) {
             item.setOrderNum(++normalizedIdx); //first must to be 1
         }
-    }
-
-    @Subscribe
-    public void onBeforeClose(BeforeCloseEvent event) {
-        getEditedEntity().setRegionProperties(new ArrayList<>(propertiesTable.getItems().getItems()));
-        event.closedWith(StandardOutcome.COMMIT);
     }
 
     @Subscribe

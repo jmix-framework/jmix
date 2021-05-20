@@ -24,6 +24,7 @@ import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.data.repository.core.RepositoryMetadata;
 import org.springframework.data.repository.query.parser.PartTree;
 
+import javax.annotation.Nonnull;
 import java.lang.reflect.Method;
 
 public class JmixCountQuery extends JmixStructuredQuery {
@@ -33,12 +34,13 @@ public class JmixCountQuery extends JmixStructuredQuery {
     }
 
     @Override
+    @Nonnull
     public Object execute(Object[] parameters) {
         String entityName = jmixMetadata.getClass(metadata.getDomainType()).getName();
 
         String queryString = String.format("select %s e from %s e", distinct ? "distinct" : "", entityName);
 
-        LoadContext context = new LoadContext(jmixMetadata.getClass(metadata.getDomainType())).setQuery(
+        LoadContext<?> context = new LoadContext<>(jmixMetadata.getClass(metadata.getDomainType())).setQuery(
                 new LoadContext.Query(queryString)
                         .setCondition(conditions)
                         .setParameters(buildNamedParametersMap(parameters))

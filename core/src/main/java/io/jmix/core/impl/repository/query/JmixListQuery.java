@@ -26,6 +26,7 @@ import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.data.repository.core.RepositoryMetadata;
 import org.springframework.data.repository.query.parser.PartTree;
 
+import javax.annotation.Nonnull;
 import java.lang.reflect.Method;
 import java.util.LinkedList;
 import java.util.List;
@@ -41,6 +42,7 @@ public class JmixListQuery extends JmixStructuredQuery {
     }
 
     @Override
+    @Nonnull
     public Object execute(Object[] parameters) {
         FluentLoader.ByCondition<?> loader = dataManager.load(metadata.getDomainType())
                 .condition(conditions)

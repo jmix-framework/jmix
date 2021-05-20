@@ -30,6 +30,6 @@ public interface HasHtmlSanitizer {
      *
      * @param htmlSanitizerEnabled specifies whether html sanitizer is enabled
      */
-    @StudioProperty(defaultValue = "false")
+    @StudioProperty(defaultValue = "true")
     void setHtmlSanitizerEnabled(boolean htmlSanitizerEnabled);
 }

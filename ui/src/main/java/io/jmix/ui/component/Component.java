@@ -18,6 +18,7 @@ package io.jmix.ui.component;
 import io.jmix.core.annotation.Internal;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioProperties;
 import io.jmix.ui.meta.StudioProperty;
 import org.dom4j.Element;
 
@@ -27,6 +28,12 @@ import java.util.function.Consumer;
 /**
  * Root of the Generic UI components hierarchy.
  */
+@StudioProperties(
+        properties = {
+                @StudioProperty(name = "css", type = PropertyType.STRING),
+                @StudioProperty(name = "box.expandRatio", type = PropertyType.FLOAT, defaultValue = "0.0")
+        }
+)
 public interface Component {
 
     enum Alignment {
@@ -47,10 +54,10 @@ public interface Component {
     String FULL_SIZE = "100%";
 
     /** Component ID as defined in {@code id} attribute */
-    @StudioProperty(type = PropertyType.COMPONENT_ID)
     @Nullable
     String getId();
     /** Set component ID */
+    @StudioProperty(type = PropertyType.COMPONENT_ID)
     void setId(@Nullable String id);
 
     /**
@@ -198,7 +205,8 @@ public interface Component {
     }
 
     Alignment getAlignment();
-    @StudioProperty(name = "align", type = PropertyType.ENUMERATION, defaultValue = "TOP_LEFT", required = true)
+
+    @StudioProperty(name = "align", type = PropertyType.ENUMERATION, defaultValue = "TOP_LEFT")
     void setAlignment(Alignment alignment);
 
     /**
@@ -460,7 +468,7 @@ public interface Component {
          *
          * @param tabIndex tab index
          */
-        @StudioProperty
+        @StudioProperty(defaultValue = "0")
         void setTabIndex(int tabIndex);
     }
 

@@ -15,9 +15,22 @@
  */
 package io.jmix.ui.component;
 
+import io.jmix.ui.meta.CanvasBehaviour;
+import io.jmix.ui.meta.StudioComponent;
+
 /**
  * A button looking like hyperlink.
  */
+@StudioComponent(
+        caption = "LinkButton",
+        category = "Components",
+        xmlElement = "linkButton",
+        icon = "io/jmix/ui/icon/component/linkButton.svg",
+        canvasText = "New Link Button",
+        canvasTextProperty = "caption",
+        canvasBehaviour = CanvasBehaviour.BUTTON,
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/link-button.html"
+)
 public interface LinkButton extends Button {
     String NAME = "linkButton";
 }

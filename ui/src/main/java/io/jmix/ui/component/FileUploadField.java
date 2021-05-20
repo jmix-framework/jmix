@@ -28,15 +28,14 @@ import javax.annotation.Nullable;
         canvasBehaviour = CanvasBehaviour.BUTTON,
         canvasText = "Upload",
         canvasTextProperty = "uploadButtonCaption")
-@StudioProperties(properties = {
-        @StudioProperty(name = "css", type = PropertyType.STRING),
-        @StudioProperty(name = "property", type = PropertyType.PROPERTY_PATH_REF, options = "byteArray"),
-        @StudioProperty(name = "datasource", type = PropertyType.DATASOURCE_REF),
-        @StudioProperty(name = "dataContainer", type = PropertyType.DATACONTAINER_REF)
-}, groups = {
-        @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING, properties = {"datasource", "property"}),
-        @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING, properties = {"dataContainer", "property"})
-})
+@StudioProperties(
+        properties = {
+                @StudioProperty(name = "property", type = PropertyType.PROPERTY_PATH_REF, options = "byteArray"),
+                @StudioProperty(name = "dataContainer", type = PropertyType.DATACONTAINER_REF)
+        },
+        groups = {
+                @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING, properties = {"dataContainer", "property"})
+        })
 public interface FileUploadField extends SingleFileUploadField, Field<byte[]> {
     String NAME = "fileUpload";
 

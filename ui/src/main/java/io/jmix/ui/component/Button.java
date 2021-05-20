@@ -16,14 +16,33 @@
 package io.jmix.ui.component;
 
 import io.jmix.core.common.event.Subscription;
+import io.jmix.ui.meta.CanvasBehaviour;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioComponent;
+import io.jmix.ui.meta.StudioProperties;
+import io.jmix.ui.meta.StudioProperty;
 
 import javax.annotation.Nullable;
 import java.util.EventObject;
 import java.util.function.Consumer;
 
+@StudioComponent(
+        caption = "Button",
+        category = "Components",
+        xmlElement = "button",
+        icon = "io/jmix/ui/icon/component/button.svg",
+        canvasTextProperty = "caption",
+        canvasBehaviour = CanvasBehaviour.BUTTON,
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/button.html"
+)
+@StudioProperties(
+        properties = {
+                @StudioProperty(name = "primary", type = PropertyType.BOOLEAN, defaultValue = "false"),
+        }
+)
 public interface Button extends Component, Component.HasCaption, Component.BelongToFrame, ActionOwner,
-                                Component.HasIcon, Component.Focusable, HasHtmlCaption, HasHtmlDescription,
-                                HasHtmlSanitizer {
+        Component.HasIcon, Component.Focusable, HasHtmlCaption, HasHtmlDescription,
+        HasHtmlSanitizer {
     String NAME = "button";
 
     /**
@@ -33,22 +52,13 @@ public interface Button extends Component, Component.HasCaption, Component.Belon
      *
      * @param disableOnClick disable on click option.
      */
+    @StudioProperty(defaultValue = "false")
     void setDisableOnClick(boolean disableOnClick);
+
     /**
      * @return true if the button is disabled when clicked.
      */
     boolean isDisableOnClick();
-
-    /**
-     * Enable or disable HTML mode for caption.
-     *
-     * @param captionAsHtml pass true to enable HTML mode for caption.
-     */
-    void setCaptionAsHtml(boolean captionAsHtml);
-    /**
-     * @return true if caption is inserted to DOM as HTML
-     */
-    boolean isCaptionAsHtml();
 
     /**
      * @return action's shortcut
@@ -68,6 +78,7 @@ public interface Button extends Component, Component.HasCaption, Component.Belon
      *
      * @param shortcut string of type "Modifiers-Key", e.g. "Alt-N". Case-insensitive.
      */
+    @StudioProperty(type = PropertyType.SHORTCUT)
     void setShortcut(@Nullable String shortcut);
 
     /**

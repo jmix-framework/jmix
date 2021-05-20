@@ -32,7 +32,6 @@ import java.util.function.Consumer;
         canvasBehaviour = CanvasBehaviour.BUTTON,
         canvasText = "Upload",
         canvasTextProperty = "caption")
-@StudioProperties(properties = @StudioProperty(name = "css", type = PropertyType.STRING))
 public interface FileMultiUploadField extends UploadField {
 
     String NAME = "fileMultiUpload";

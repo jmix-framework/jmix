@@ -17,6 +17,8 @@
 package io.jmix.ui.component;
 
 import io.jmix.ui.action.Action;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioProperty;
 
 import javax.annotation.Nullable;
 
@@ -47,6 +49,7 @@ public interface ActionOwner {
      *
      * @param action an action
      */
+    @StudioProperty(type = PropertyType.COMPONENT_REF, options = "io.jmix.ui.action.Action")
     default void setAction(@Nullable Action action) {
         setAction(action, true);
     }

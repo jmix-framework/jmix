@@ -28,7 +28,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Nullable;
 
 @Component("dshbrd_DeletePolicyHandler")
-public class DeletePolicyHandler extends AbstractUiExceptionHandler implements Ordered {
+public class DeletePolicyExceptionHandler extends AbstractUiExceptionHandler implements Ordered {
 
 	@Autowired
 	protected Messages messages;
@@ -42,7 +42,7 @@ public class DeletePolicyHandler extends AbstractUiExceptionHandler implements O
 	@Autowired
 	private ExtendedEntities extendedEntities;
 
-	public DeletePolicyHandler() {
+	public DeletePolicyExceptionHandler() {
 		super(DeletePolicyException.class.getName());
 	}
 

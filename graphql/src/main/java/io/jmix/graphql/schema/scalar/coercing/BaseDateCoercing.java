@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.graphql.schema.scalar;
+package io.jmix.graphql.schema.scalar.coercing;
 
 import graphql.language.StringValue;
 import graphql.schema.Coercing;

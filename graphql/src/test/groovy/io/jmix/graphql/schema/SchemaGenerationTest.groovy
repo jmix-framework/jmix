@@ -16,18 +16,20 @@
 
 package io.jmix.graphql.schema
 
+import graphql.schema.idl.SchemaPrinter
 import io.jmix.graphql.AbstractGraphQLTest
+import io.jmix.graphql.spqr.SpqrSchemaGenerator
 import org.springframework.beans.factory.annotation.Autowired
 
-class SchemaBuilderTest extends AbstractGraphQLTest {
+class SchemaGenerationTest extends AbstractGraphQLTest {
 
     @Autowired
-    SchemaBuilder schemaBuilder
+    SpqrSchemaGenerator spqrSchemaGenerator
 
     def "graphql schema created"() {
         when:
-        def schema = schemaBuilder.createSchema()
-//        println new SchemaPrinter().print(schema)
+        def schema = spqrSchemaGenerator.generate()
+        println new SchemaPrinter().print(schema)
 
         then:
         schema.getQueryType().getFieldDefinition('scr_CarList') != null

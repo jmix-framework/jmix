@@ -17,31 +17,32 @@
 package io.jmix.graphql.schema;
 
 import graphql.Scalars;
-import graphql.language.FieldDefinition;
-import graphql.language.ObjectTypeDefinition;
-import graphql.language.SDLDefinition;
-import graphql.language.TypeName;
+import graphql.schema.GraphQLFieldDefinition;
+import graphql.schema.GraphQLObjectType;
+import graphql.schema.GraphQLType;
+import graphql.schema.GraphQLTypeReference;
+import io.jmix.graphql.NamingUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class MessagesTypesBuilder {
+public class MessageTypesGenerator {
 
     @SuppressWarnings("rawtypes")
-    public List<SDLDefinition> buildMessagesTypes() {
-        List<SDLDefinition> messagesTypes = new ArrayList<>();
+    public List<GraphQLType> generateMessageTypes() {
+        List<GraphQLType> messagesTypes = new ArrayList<>();
 
-        messagesTypes.add(ObjectTypeDefinition.newObjectTypeDefinition()
+        messagesTypes.add(GraphQLObjectType.newObject()
                 .name(NamingUtils.TYPE_GQL_MESSAGE_DETAIL)
-                .fieldDefinition(FieldDefinition.newFieldDefinition()
+                .field(GraphQLFieldDefinition.newFieldDefinition()
                         .name("key")
-                        .type(new TypeName(Scalars.GraphQLString.getName()))
+                        .type(new GraphQLTypeReference(Scalars.GraphQLString.getName()))
                         .build())
-                .fieldDefinition(FieldDefinition.newFieldDefinition()
+                .field(GraphQLFieldDefinition.newFieldDefinition()
                         .name("value")
-                        .type(new TypeName(Scalars.GraphQLString.getName()))
+                        .type(new GraphQLTypeReference(Scalars.GraphQLString.getName()))
                         .build())
                 .build());
 

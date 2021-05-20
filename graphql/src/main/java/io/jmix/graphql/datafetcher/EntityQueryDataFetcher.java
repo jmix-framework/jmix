@@ -6,7 +6,7 @@ import io.jmix.core.accesscontext.CrudEntityContext;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.LogicalCondition;
-import io.jmix.graphql.schema.NamingUtils;
+import io.jmix.graphql.NamingUtils;
 import io.jmix.graphql.schema.Types;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;

@@ -23,7 +23,7 @@ import io.jmix.core.accesscontext.CrudEntityContext;
 import io.jmix.core.accesscontext.EntityAttributeContext;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.graphql.schema.NamingUtils;
+import io.jmix.graphql.NamingUtils;
 import io.jmix.graphql.schema.permission.PermissionConfig;
 import io.jmix.graphql.schema.permission.ShortPermissionInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +54,7 @@ public class PermissionDataFetcher {
             return getPermissions(loadEntities, loadEntityAttrs); };
     }
 
-    public PermissionConfig getPermissions(boolean entities, boolean entityAttrs) {
+    protected PermissionConfig getPermissions(boolean entities, boolean entityAttrs) {
         PermissionConfig PermissionConfig = new PermissionConfig();
 
         List<ShortPermissionInfo> entityPermissions = new ArrayList<>();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Haulmont.
+ * Copyright 2021 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,19 @@
  * limitations under the License.
  */
 
-package io.jmix.autoconfigure.graphql;
+package io.jmix.graphql.schema.scalar.coercing;
 
-import io.jmix.core.CoreConfiguration;
-import io.jmix.graphql.GraphqlConfiguration;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
+import graphql.schema.CoercingParseValueException;
+import graphql.schema.CoercingSerializeException;
 
-@Configuration
-@Import({CoreConfiguration.class, GraphqlConfiguration.class})
-public class GraphqlAutoConfiguration {
+public class VoidCoercing extends BaseScalarCoercing {
+    @Override
+    public Object serialize(Object dataFetcherResult) throws CoercingSerializeException {
+        return null;
+    }
+
+    @Override
+    public Object parseValue(Object input) throws CoercingParseValueException {
+        return null;
+    }
 }
-

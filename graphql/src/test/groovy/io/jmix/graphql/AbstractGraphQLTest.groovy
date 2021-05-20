@@ -27,6 +27,7 @@ import com.graphql.spring.boot.test.GraphQLTestTemplate
 import io.jmix.core.CoreConfiguration
 import io.jmix.data.DataConfiguration
 import io.jmix.eclipselink.EclipselinkConfiguration
+import io.leangen.graphql.spqr.spring.autoconfigure.BaseAutoConfiguration
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration
@@ -45,13 +46,14 @@ import test_support.TestContextInitializer
 @SuppressWarnings('SpringJavaInjectionPointsAutowiringInspection')
 @ContextConfiguration(
         classes = [CoreConfiguration, DataConfiguration, EclipselinkConfiguration,
-                GraphQLTestConfiguration, GraphqlConfiguration],
+                GraphQLTestConfiguration, GraphQLConfiguration],
         initializers = [TestContextInitializer]
 )
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @OverrideAutoConfiguration(enabled = false)
 @ImportAutoConfiguration(
         classes = [
+                BaseAutoConfiguration.class,
                 ServletWebServerFactoryAutoConfiguration.class,
                 GraphQLTestAutoConfiguration.class,
                 JacksonAutoConfiguration.class

@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  io.jmix.autoconfigure.graphql.GraphqlAutoConfiguration
+  io.jmix.autoconfigure.graphql.GraphQLAutoConfiguration

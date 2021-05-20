@@ -17,39 +17,45 @@
 package io.jmix.graphql.schema;
 
 import graphql.Scalars;
-import graphql.language.*;
+import graphql.schema.GraphQLFieldDefinition;
+import graphql.schema.GraphQLObjectType;
+import graphql.schema.GraphQLType;
+import graphql.schema.GraphQLTypeReference;
+import io.jmix.graphql.NamingUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static io.jmix.graphql.schema.BaseTypesGenerator.listType;
+
 @Component
-public class PermissionTypesBuilder {
+public class PermissionTypesGenerator {
 
-    public List<SDLDefinition> buildPermissionTypes() {
-        List<SDLDefinition> permissionTypes = new ArrayList<>();
+    public List<GraphQLType> generatePermissionTypes() {
+        List<GraphQLType> permissionTypes = new ArrayList<>();
 
-        permissionTypes.add(ObjectTypeDefinition.newObjectTypeDefinition()
+        permissionTypes.add(GraphQLObjectType.newObject()
                 .name(NamingUtils.TYPE_SEC_PERMISSION)
-                .fieldDefinition(FieldDefinition.newFieldDefinition()
+                .field(GraphQLFieldDefinition.newFieldDefinition()
                         .name("target")
-                        .type(new TypeName(Scalars.GraphQLString.getName()))
+                        .type(new GraphQLTypeReference(Scalars.GraphQLString.getName()))
                         .build())
-                .fieldDefinition(FieldDefinition.newFieldDefinition()
+                .field(GraphQLFieldDefinition.newFieldDefinition()
                         .name("value")
-                        .type(new TypeName(Scalars.GraphQLInt.getName()))
+                        .type(new GraphQLTypeReference(Scalars.GraphQLInt.getName()))
                         .build())
                 .build());
 
-        permissionTypes.add(ObjectTypeDefinition.newObjectTypeDefinition()
+        permissionTypes.add(GraphQLObjectType.newObject()
                 .name(NamingUtils.TYPE_SEC_PERMISSION_CONFIG)
-                .fieldDefinition(FieldDefinition.newFieldDefinition()
+                .field(GraphQLFieldDefinition.newFieldDefinition()
                         .name(NamingUtils.ENTITIES)
-                        .type(ListType.newListType(new TypeName(NamingUtils.TYPE_SEC_PERMISSION)).build())
+                        .type(listType(NamingUtils.TYPE_SEC_PERMISSION))
                         .build())
-                .fieldDefinition(FieldDefinition.newFieldDefinition()
+                .field(GraphQLFieldDefinition.newFieldDefinition()
                         .name(NamingUtils.ENTITY_ATTRS)
-                        .type(ListType.newListType(new TypeName(NamingUtils.TYPE_SEC_PERMISSION)).build())
+                        .type(listType(NamingUtils.TYPE_SEC_PERMISSION))
                         .build())
                 .build());
         return permissionTypes;

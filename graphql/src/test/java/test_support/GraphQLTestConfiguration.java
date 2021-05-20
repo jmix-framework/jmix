@@ -25,7 +25,7 @@ import io.jmix.core.security.CoreSecurityConfiguration;
 import io.jmix.data.impl.JmixEntityManagerFactoryBean;
 import io.jmix.data.impl.JmixTransactionManager;
 import io.jmix.data.persistence.DbmsSpecifics;
-import io.jmix.graphql.GraphqlConfiguration;
+import io.jmix.graphql.GraphQLConfiguration;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.MessageSource;
@@ -52,7 +52,7 @@ import java.util.List;
 @Configuration
 @ComponentScan
 @PropertySource("classpath:/test_support/test-app.properties")
-@JmixModule(dependsOn = GraphqlConfiguration.class)
+@JmixModule(dependsOn = GraphQLConfiguration.class)
 public class GraphQLTestConfiguration {
 
     @Bean

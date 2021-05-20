@@ -16,9 +16,20 @@
 
 package io.jmix.graphql;
 
+import io.jmix.core.MetadataTools;
+import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Component
 public class MetadataUtils {
+
+    @Autowired
+    MetadataTools metadataTools;
 
     public static final String DATATYPE_ID_DATE = "date";
     public static final String DATATYPE_ID_TIME = "time";
@@ -39,6 +50,16 @@ public class MetadataUtils {
     public static String getDatatypeId(MetaProperty metaProperty) {
         return metaProperty.getRange().asDatatype().getId();
     }
+
+    public List<MetaClass> allSupportedMetaClasses() {
+        return metadataTools.getAllJpaEntityMetaClasses()
+                // todo need to be fixed later - ReferenceToEntity is not persistent but returned in 'metadataTools.getAllPersistentMetaClasses'
+                .stream()
+                .filter(metaClass -> !metaClass.getJavaClass().getSimpleName().equals("ReferenceToEntity"))
+                .collect(Collectors.toList());
+    }
+
+
 
 
 }

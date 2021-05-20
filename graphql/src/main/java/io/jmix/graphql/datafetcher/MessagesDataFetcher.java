@@ -95,7 +95,7 @@ public class MessagesDataFetcher {
         };
     }
 
-    public List<MessageDetail> getEntityMessages(MetaClass metaClass, Locale locale) {
+    protected List<MessageDetail> getEntityMessages(MetaClass metaClass, Locale locale) {
         List<MessageDetail> messages = new ArrayList<>();
         CrudEntityContext entityContext = new CrudEntityContext(metaClass);
         accessManager.applyRegisteredConstraints(entityContext);
@@ -122,7 +122,7 @@ public class MessagesDataFetcher {
         return messages;
     }
 
-    public List<MessageDetail> getEnumMessages(Class<?> enumClass, Locale locale) {
+    protected List<MessageDetail> getEnumMessages(Class<?> enumClass, Locale locale) {
         List<MessageDetail> enumMessages = new ArrayList<>();
         String classCaption;
         if (locale == null) {

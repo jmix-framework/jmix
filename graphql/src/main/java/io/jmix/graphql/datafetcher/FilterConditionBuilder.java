@@ -3,7 +3,6 @@ package io.jmix.graphql.datafetcher;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.core.querycondition.PropertyCondition;
-import io.jmix.graphql.schema.FilterTypesBuilder;
 import io.jmix.graphql.schema.Types;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -35,7 +34,7 @@ public class FilterConditionBuilder {
             Map.Entry<String, Object> condEntry = condItem.entrySet().iterator().next();
             String condPath = condEntry.getKey();
             Object condition = condEntry.getValue();
-            FilterTypesBuilder.ConditionUnionType conditionUnionType = FilterTypesBuilder.ConditionUnionType.find(condPath);
+            Types.ConditionUnionType conditionUnionType = Types.ConditionUnionType.find(condPath);
             if (conditionUnionType != null) {
                 // aggregate nested conditions
                 List<Condition> conditions = buildCollectionOfConditions(path, (Collection<Map<String, Object>>) condition);

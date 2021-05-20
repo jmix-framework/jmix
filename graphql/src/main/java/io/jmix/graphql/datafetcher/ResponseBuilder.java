@@ -21,7 +21,7 @@ import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Range;
-import io.jmix.graphql.schema.NamingUtils;
+import io.jmix.graphql.NamingUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +33,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static io.jmix.graphql.schema.NamingUtils.ID_ATTR_NAME;
+import static io.jmix.graphql.NamingUtils.ID_ATTR_NAME;
 
 /**
  * Converts entities to Map&lt;String, Object&gt; response format.
@@ -47,8 +47,6 @@ public class ResponseBuilder {
     MetadataTools metadataTools;
     @Autowired
     Metadata metadata;
-    @Autowired
-    protected FetchPlans fetchPlans;
     @Autowired
     protected EnvironmentUtils environmentUtils;
 
@@ -112,29 +110,6 @@ public class ResponseBuilder {
             throw new IllegalStateException("Unsupported range type " + propertyRange);
         });
         return entityAsMap;
-    }
-
-    /**
-     * Method constructs {@link FetchPlanBuilder} for a regular {@link FetchPlan} from the {@link EntityImportPlan}. The
-     * regular fetchPlan will include all properties defined in the import plan.
-     *
-     * @param importPlan regular import plan
-     * @return builder for constructed fetch plan
-     */
-    protected FetchPlanBuilder constructFetchPlanFromImportPlan(EntityImportPlan importPlan) {
-        FetchPlanBuilder fetchPlanBuilder = fetchPlans.builder(importPlan.getEntityClass());
-        MetaClass metaClass = metadata.getClass(importPlan.getEntityClass());
-        for (EntityImportPlanProperty importPlanProperty : importPlan.getProperties()) {
-            EntityImportPlan importPlanPropertyPlan = importPlanProperty.getPlan();
-            if (importPlanPropertyPlan == null) {
-                MetaProperty metaProperty = metaClass.getProperty(importPlanProperty.getName());
-                if (metaProperty.isReadOnly()) continue;
-                fetchPlanBuilder.add(importPlanProperty.getName());
-            } else {
-                fetchPlanBuilder.add(importPlanProperty.getName(), constructFetchPlanFromImportPlan(importPlanPropertyPlan));
-            }
-        }
-        return fetchPlanBuilder;
     }
 
     protected void writeIdField(Entity entity, Map<String, Object> entityAsMap) {

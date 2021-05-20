@@ -10,7 +10,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.security.AccessDeniedException;
 import io.jmix.core.validation.EntityValidationException;
-import io.jmix.graphql.schema.NamingUtils;
+import io.jmix.graphql.NamingUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,13 +1,19 @@
 package io.jmix.graphql.schema;
 
+import com.google.common.collect.ImmutableList;
 import graphql.Scalars;
-import graphql.language.*;
 import graphql.schema.GraphQLScalarType;
 import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.graphql.schema.scalar.CustomScalars;
-import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
+import java.util.Arrays;
+import java.util.List;
+
+import static graphql.Scalars.*;
+import static io.jmix.graphql.schema.scalar.CustomScalars.GraphQLBigDecimal;
+import static io.jmix.graphql.schema.scalar.CustomScalars.GraphQLLong;
+import static io.jmix.graphql.schema.scalar.CustomScalars.*;
 
 
 // todo rename to FilterTypes ?
@@ -87,61 +93,51 @@ public class Types {
             CustomScalars.GraphQLDate,
             CustomScalars.GraphQLTime,
             CustomScalars.GraphQLDateTime,
-            CustomScalars.GraphQLBigDecimal,
-            CustomScalars.GraphQLLong,
+            GraphQLBigDecimal,
+            GraphQLLong,
             CustomScalars.GraphQLUUID,
     };
 
-    public static EnumTypeDefinition enumSortOrder = BaseTypesBuilder.buildEnumTypeDef(SortOrder.class);
+    public static final List<GraphQLScalarType> numberTypes = ImmutableList.of(
+            GraphQLBigDecimal,
+            GraphQLLong,
+            GraphQLByte,
+            GraphQLShort,
+            GraphQLFloat,
+            GraphQLBigInteger,
+            GraphQLInt
+    );
 
-    /**
-     * Shortcut for input value definition
-     *
-     * @param fieldName field name
-     * @param type input value type
-     * @param description input value description
-     * @return field
-     */
-    public static InputValueDefinition valueDef(String fieldName, String type, @Nullable String description) {
-        return InputValueDefinition.newInputValueDefinition()
-                .name(fieldName).type(new TypeName(type))
-                .description(StringUtils.isBlank(description) ? null : new Description(description, null, false))
-                .build();
+    public static final List<GraphQLScalarType> dateTimeTypes = ImmutableList.of(
+            GraphQLLocalDateTime,
+            GraphQLLocalDate,
+            GraphQLOffsetDateTime,
+            GraphQLDate,
+            GraphQLDateTime
+    );
+
+    public static final List<GraphQLScalarType> timeTypes = ImmutableList.of(
+            GraphQLLocalTime,
+            GraphQLOffsetTime,
+            GraphQLTime
+    );
+
+    public static final List<GraphQLScalarType> stringTypes = ImmutableList.of(
+            GraphQLString,
+            GraphQLChar
+    );
+
+    public enum ConditionUnionType {
+        // todo need to investigate how to implement using jmix conditions
+//        NOT,
+        AND,
+        OR;
+
+        @Nullable
+        public static ConditionUnionType find(String type) {
+            return Arrays.stream(values())
+                    .filter(conditionUnionType -> conditionUnionType.name().equals(type))
+                    .findAny().orElse(null);
+        }
     }
-
-    /**
-     * Shortcut for input value definition
-     *
-     * @param operation field name and describtion
-     * @return field
-     */
-    public static InputValueDefinition valueDef(FilterOperation operation, String type) {
-        return valueDef(operation.getId(), type, operation.description);
-    }
-
-    /**
-     * Shortcut for input value definition that has list type
-     *
-     * @param fieldName field name
-     * @param type input value type
-     * @param description input value description
-     * @return field
-     */
-    public static InputValueDefinition listValueDef(String fieldName, String type, @Nullable String description) {
-        return InputValueDefinition.newInputValueDefinition()
-                .name(fieldName).type(new ListType(new TypeName(type)))
-                .description(StringUtils.isBlank(description) ? null : new Description(description, null, false))
-                .build();
-    }
-
-    /**
-     * Shortcut for input value definition that has list type
-     *
-     * @param operation field name and describtion
-     * @return field
-     */
-    public static InputValueDefinition listValueDef(FilterOperation operation, String type) {
-        return listValueDef(operation.getId(), type, operation.getDescription());
-    }
-
 }

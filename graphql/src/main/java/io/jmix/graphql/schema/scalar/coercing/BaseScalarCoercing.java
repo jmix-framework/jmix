@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 
-package io.jmix.graphql.schema;
+package io.jmix.graphql.schema.scalar.coercing;
 
-import graphql.schema.GraphQLScalarType;
+import graphql.language.StringValue;
+import graphql.schema.Coercing;
+import graphql.schema.CoercingParseLiteralException;
 
-import java.util.EnumSet;
+public abstract class BaseScalarCoercing implements Coercing {
 
-public interface FilterManager {
-
-    EnumSet<Types.FilterOperation> availableOperations(GraphQLScalarType scalarType);
+    @Override
+    public Object parseLiteral(Object input) throws CoercingParseLiteralException {
+        return (input instanceof StringValue) ? parseValue(((StringValue) input).getValue()) : null;
+    }
 }

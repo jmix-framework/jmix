@@ -19,10 +19,10 @@ package io.jmix.graphql.datafetcher;
 import graphql.kickstart.servlet.context.DefaultGraphQLServletContext;
 import graphql.schema.DataFetchingEnvironment;
 import graphql.schema.DataFetchingFieldSelectionSet;
+import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.graphql.schema.NamingUtils;
-import io.jmix.graphql.schema.OutTypesBuilder;
+import io.jmix.graphql.NamingUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -35,7 +35,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static io.jmix.graphql.schema.NamingUtils.SYS_ATTR_INSTANCE_NAME;
+import static io.jmix.graphql.NamingUtils.SYS_ATTR_INSTANCE_NAME;
 
 @Component
 public class EnvironmentUtils {
@@ -43,7 +43,7 @@ public class EnvironmentUtils {
     @Autowired
     MetadataTools metadataTools;
     @Autowired
-    private OutTypesBuilder outTypesBuilder;
+    private Metadata metadata;
 
     /**
      * @param environment gql data fetch environment
@@ -114,7 +114,7 @@ public class EnvironmentUtils {
             if (field.getQualifiedName().equals(SYS_ATTR_INSTANCE_NAME)) {
                 String metaClassName = field.getFullyQualifiedName()
                         .replace("." + field.getQualifiedName(), "");
-                MetaClass metaClass = outTypesBuilder.findMetaClassByOutTypeName(metaClassName);
+                MetaClass metaClass = findMetaClassByOutTypeName(metaClassName);
 
                 metadataTools.getInstanceNameRelatedProperties(metaClass).forEach(prop ->
                         result.add(StringUtils.isEmpty(currentPath)
@@ -141,5 +141,17 @@ public class EnvironmentUtils {
         }
         return null;
     }
+
+    protected MetaClass findMetaClassByOutTypeName(String outTypeName) {
+        MetaClass result = metadata.findClass(outTypeName);
+        if (result == null) {
+            result = metadata.findClass(outTypeName .replaceAll("_", "\\$"));
+        }
+        if (result == null) {
+            throw new UnsupportedOperationException("No matched meta class found for out type " + outTypeName);
+        }
+        return result;
+    }
+
 
 }

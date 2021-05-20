@@ -14,20 +14,15 @@
  * limitations under the License.
  */
 
-package io.jmix.graphql;
+package io.jmix.autoconfigure.graphql;
 
 import io.jmix.core.CoreConfiguration;
-import io.jmix.core.annotation.JmixModule;
-import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
-import org.springframework.boot.web.servlet.ServletComponentScan;
-import org.springframework.context.annotation.ComponentScan;
+import io.jmix.graphql.GraphQLConfiguration;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 
 @Configuration
-@ComponentScan
-@ConfigurationPropertiesScan
-@ServletComponentScan
-@JmixModule(dependsOn = CoreConfiguration.class)
-public class GraphqlConfiguration {
-
+@Import({CoreConfiguration.class, GraphQLConfiguration.class})
+public class GraphQLAutoConfiguration {
 }
+

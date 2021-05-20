@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package test_support.entity.data_repositories;
+package test_support.entity.repository;
 
 import io.jmix.core.entity.annotation.EmbeddedParameters;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;

@@ -76,10 +76,13 @@
         <property name="name"/>
     </fetchPlan>
 
-    <fetchPlan class="test_support.entity.data_repositories.SalesOrder" name="SalesOrder.full" extends="_local">
+    <fetchPlan class="test_support.entity.repository.SalesOrder" name="SalesOrder.full" extends="_local">
         <property name="customer" fetchPlan="_local">
             <property name="address" fetchPlan="_local"/>
         </property>
 
+    </fetchPlan>
+    <fetchPlan class="test_support.entity.repository.Customer" name="repository_Customer.full" extends="_local">
+        <property name="address" fetchPlan="_local"/>
     </fetchPlan>
 </fetchPlans>

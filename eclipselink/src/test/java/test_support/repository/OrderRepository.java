@@ -17,16 +17,16 @@
 package test_support.repository;
 
 
-import io.jmix.core.repositories.FetchPlan;
-import io.jmix.core.repositories.JmixDataRepository;
-import io.jmix.core.repositories.JmixQuery;
+import io.jmix.core.repository.FetchPlan;
+import io.jmix.core.repository.JmixDataRepository;
+import io.jmix.core.repository.Query;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.Param;
-import test_support.entity.data_repositories.Customer;
-import test_support.entity.data_repositories.SalesOrder;
+import test_support.entity.repository.Customer;
+import test_support.entity.repository.SalesOrder;
 
 import java.util.Date;
 import java.util.List;
@@ -63,15 +63,15 @@ public interface OrderRepository extends JmixDataRepository<SalesOrder, UUID> {
 
     Slice<SalesOrder> findSalesByCustomerNameIn(List<String> customerNames, Pageable pageable);
 
-    @JmixQuery("select o from repository$SalesOrder o where (o.date> ?1 and o.number in ?2)")
+    @Query("select o from repository$SalesOrder o where (o.date> ?1 and o.number in ?2)")
     List<SalesOrder> findSalesByQuery(Date date, Sort sort, List<String> numbers);
 
-    @JmixQuery("select o from repository$SalesOrder o where (o.date> :date and o.number in :numbers)")
+    @Query("select o from repository$SalesOrder o where (o.date> :date and o.number in :numbers)")
     Page<SalesOrder> findSalesByQueryWithPaging(@Param("date") Date date,
                                                 Pageable pageable,
                                                 @Param("numbers") List<String> numbers);
 
-    @JmixQuery("select o from repository$SalesOrder o where (o.date> ?2 and o.number in ?1)")
+    @Query("select o from repository$SalesOrder o where (o.date> ?2 and o.number in ?1)")
     Page<SalesOrder> findSalesByQueryWithPagingAndPositionalParameters(List<String> names,
                                                                        Pageable pageable,
                                                                        Date date);

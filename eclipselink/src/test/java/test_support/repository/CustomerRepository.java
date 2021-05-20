@@ -17,17 +17,17 @@
 package test_support.repository;
 
 
-import io.jmix.core.repositories.FetchPlan;
-import io.jmix.core.repositories.JmixDataRepository;
-import io.jmix.core.repositories.JmixQuery;
+import io.jmix.core.repository.FetchPlan;
+import io.jmix.core.repository.JmixDataRepository;
+import io.jmix.core.repository.Query;
 import org.springframework.data.repository.query.Param;
-import test_support.entity.data_repositories.Customer;
+import test_support.entity.repository.Customer;
 
 import java.util.List;
 import java.util.UUID;
 
 public interface CustomerRepository extends JmixDataRepository<Customer, UUID> {
-
+    @FetchPlan("repository_Customer.full")
     List<Customer> findByName(String name);
 
     List<Customer> findByAddressCity(String city);
@@ -40,16 +40,18 @@ public interface CustomerRepository extends JmixDataRepository<Customer, UUID> {
 
     boolean existsByName(String name);
 
+    void removeByName(String name);
+
     @FetchPlan("_instance_name")
-    @JmixQuery("select c from repository$Customer c where c.name like concat(:name, '%')")
+    @Query("select c from repository$Customer c where c.name like concat(:name, '%')")
     List<Customer> findByNameStartingWith(@Param("name") String name);
 
-    @JmixQuery("select c from repository$Customer c where c.name like concat(?1, '%')")
+    @Query("select c from repository$Customer c where c.name like concat(?1, '%')")
     List<Customer> findByQueryWithPositionParameter(String name);
 
-    @JmixQuery("select c from repository$Customer c where c.name like ?2 and c.address.city like ?1")
+    @Query("select c from repository$Customer c where c.name like ?2 and c.address.city like ?1")
     List<Customer> findByQueryWithReversedPositionalParametersOrder(String city, String name);
 
-    @JmixQuery("select c from repository$Customer c where c.name like :name and c.address.city like :city")
+    @Query("select c from repository$Customer c where c.name like :name and c.address.city like :city")
     List<Customer> findByQueryWithReversedNamedParametersOrder(@Param("city") String city, @Param("name") String name);
 }

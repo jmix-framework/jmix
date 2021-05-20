@@ -14,7 +14,7 @@
 * limitations under the License.
 */
 
-package data_repositories
+package repository
 
 import io.jmix.core.DataManager
 import io.jmix.core.Metadata
@@ -25,15 +25,15 @@ import org.springframework.data.domain.Slice
 import org.springframework.data.domain.Sort
 import org.springframework.jdbc.core.JdbcTemplate
 import test_support.DataSpec
-import test_support.entity.data_repositories.Address
-import test_support.entity.data_repositories.Customer
-import test_support.entity.data_repositories.SalesOrder
+import test_support.entity.repository.Address
+import test_support.entity.repository.Customer
+import test_support.entity.repository.SalesOrder
 import test_support.repository.OrderRepository
 
 import java.time.LocalDate
 import java.time.ZoneOffset
 
-class SpringOrderRepositoryTest extends DataSpec {
+class OrderRepositoryTest extends DataSpec {
     @Autowired
     private Metadata metadata;
     @Autowired

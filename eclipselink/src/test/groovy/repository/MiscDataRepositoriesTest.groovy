@@ -30,7 +30,7 @@
  * limitations under the License.
  */
 
-package data_repositories
+package repository
 
 import io.jmix.core.DataManager
 import io.jmix.core.Metadata
@@ -38,16 +38,17 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
+import org.springframework.jdbc.core.JdbcTemplate
 import test_support.DataSpec
-import test_support.entity.data_repositories.Employee
-import test_support.entity.sales.Customer
-import test_support.entity.sales.Status
+import test_support.entity.repository.Address
+import test_support.entity.repository.Customer
+import test_support.entity.repository.Employee
+import test_support.repository.CustomerRepository
 import test_support.repository.EmployeeRepository
-import test_support.repository.JCustomerRepository
 
 class MiscDataRepositoriesTest extends DataSpec {
     @Autowired
-    JCustomerRepository customerRepository
+    CustomerRepository customerRepository
 
     @Autowired
     EmployeeRepository employeeRepository
@@ -57,20 +58,27 @@ class MiscDataRepositoriesTest extends DataSpec {
 
     @Autowired
     DataManager dataManager
+    @Autowired
+    JdbcTemplate jdbcTemplate
 
     void setup() {
-        Customer customer = new Customer();
+        Customer customer = customerRepository.newOne();
         customer.name = "first"
-        customer.status = Status.OK
+        customer.address = new Address()
+        customer.address.street = "Shadows"
+        customer.address.city = "Ant-Meerin"
         customerRepository.save(customer)
         customer = new Customer();
         customer.name = "second"
-        customer.status = Status.NOT_OK
+        customer.address = new Address()
+        customer.address.street = "undefined"
+        customer.address.city = "Ubarweld"
         customerRepository.save(customer)
     }
 
     void cleanup() {
-        customerRepository.deleteAll()
+        jdbcTemplate.execute("delete from REPOSITORY_CUSTOMER")
+        jdbcTemplate.execute("delete from REPOSITORY_EMPLOYEE")
     }
 
 
@@ -82,11 +90,11 @@ class MiscDataRepositoriesTest extends DataSpec {
     void "test get customers"() {
         expect:
         customerRepository.findAll().size() == 2
-        customerRepository.findCustomersByName("first").size() == 1
-        customerRepository.findCustomersByName("first")[0].status == Status.OK
-        customerRepository.findCustomersByName("second").size() == 1
-        customerRepository.findCustomersByName("second")[0].status == Status.NOT_OK
-        customerRepository.findCustomersByName("third").size() == 0
+        customerRepository.findByName("first").size() == 1
+        customerRepository.findByName("first")[0].address.street == "Shadows"
+        customerRepository.findByName("second").size() == 1
+        customerRepository.findByName("second")[0].address.street == "undefined"
+        customerRepository.findByName("third").size() == 0
     }
 
     void "test remove method"() {
@@ -94,23 +102,23 @@ class MiscDataRepositoriesTest extends DataSpec {
         customerRepository.findAll().size() == 2
 
         when:
-        customerRepository.removeCustomerByName("first")
+        customerRepository.removeByName("first")
         then:
         customerRepository.findAll().size() == 1
-        !customerRepository.existsCustomerByName("first")
-        customerRepository.existsCustomerByName("second")
+        !customerRepository.existsByName("first")
+        customerRepository.existsByName("second")
 
         when:
-        customerRepository.removeCustomerByName("second")
+        customerRepository.removeByName("second")
         then:
         customerRepository.findAll().size() == 0
-        !customerRepository.existsCustomerByName("first")
-        !customerRepository.existsCustomerByName("second")
+        !customerRepository.existsByName("first")
+        !customerRepository.existsByName("second")
     }
 
     void "test parameter names do not clash"() {
         setup:
-        Employee e1 = metadata.create(Employee);
+        Employee e1 = employeeRepository.newOne();
         e1.name = "First"
         e1.homeAddress.city = "Moscow"
         e1.homeAddress.street = "Arbat"
@@ -119,7 +127,7 @@ class MiscDataRepositoriesTest extends DataSpec {
         e1.registrationAddress.city = "Moscow"
         e1.registrationAddress.street = "Sharikopodshipnikovskaya"
 
-        Employee e2 = metadata.create(Employee);
+        Employee e2 = employeeRepository.newOne();
         e2.name = "Second"
         e2.homeAddress.city = "St. Petersburg"
         e2.homeAddress.street = "Nevskiy pr."
@@ -128,7 +136,7 @@ class MiscDataRepositoriesTest extends DataSpec {
         e2.registrationAddress.city = "St. Petersburg"
         e2.registrationAddress.street = "Rabochaya"
 
-        Employee e3 = metadata.create(Employee);
+        Employee e3 = employeeRepository.newOne();
         e3.name = "Third"
         e3.homeAddress.city = "Samara"
         e3.homeAddress.street = "Molodogvardeyskaya"
@@ -152,32 +160,32 @@ class MiscDataRepositoriesTest extends DataSpec {
 
     void 'check sort priority'() {
         setup:
-        Employee e1 = metadata.create(Employee);
+        Employee e1 = employeeRepository.newOne();
         e1.name = "1"
         e1.secondName = "1"
         e1.lastName = "2"
 
-        Employee e2 = metadata.create(Employee);
+        Employee e2 = employeeRepository.newOne();
         e2.name = "1"
         e2.secondName = "2"
         e2.lastName = "1"
 
-        Employee e3 = metadata.create(Employee);
+        Employee e3 = employeeRepository.newOne();
         e3.name = "2"
         e3.secondName = "1"
         e3.lastName = "2"
 
-        Employee e4 = metadata.create(Employee);
+        Employee e4 = employeeRepository.newOne();
         e4.name = "2"
         e4.secondName = "2"
         e4.lastName = "1"
 
-        Employee e5 = metadata.create(Employee)
+        Employee e5 = employeeRepository.newOne()
         e5.name = "3"
         e5.secondName = "1"
         e5.lastName = "2"
 
-        Employee e6 = metadata.create(Employee);
+        Employee e6 = employeeRepository.newOne();
         e6.name = "3"
         e6.secondName = "2"
         e6.lastName = "1"
@@ -238,22 +246,22 @@ class MiscDataRepositoriesTest extends DataSpec {
 
     void "check repeated parameters in query"() {
         setup:
-        Employee e1 = metadata.create(Employee);
+        Employee e1 = employeeRepository.newOne();
         e1.name = "R."
         e1.secondName = "B."
         e1.lastName = "F."
 
-        Employee e2 = metadata.create(Employee);
+        Employee e2 = employeeRepository.newOne();
         e2.name = "John"
         e2.secondName = "R."
         e2.lastName = "Smith"
 
-        Employee e3 = metadata.create(Employee);
+        Employee e3 = employeeRepository.newOne();
         e3.name = "Helen"
         e3.secondName = "N."
         e3.lastName = "Phillips"
 
-        Employee e4 = metadata.create(Employee);
+        Employee e4 = employeeRepository.newOne();
         e4.name = "Howard"
         e4.secondName = "Phillips"
         e4.lastName = "Lovecraft"

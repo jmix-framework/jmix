@@ -30,49 +30,37 @@
  * limitations under the License.
  */
 
-package data_repositories
+package repository
 
 import com.google.common.collect.Lists
 import io.jmix.core.DataManager
 import io.jmix.core.EntityStates
-import io.jmix.core.Metadata
 import io.jmix.core.security.InMemoryUserRepository
 import io.jmix.core.security.SystemAuthenticator
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.security.core.userdetails.User
-import org.springframework.transaction.support.TransactionTemplate
 import test_support.DataSpec
-import test_support.entity.data_repositories.Address
-import test_support.entity.data_repositories.Customer
+import test_support.entity.repository.Address
+import test_support.entity.repository.Customer
 import test_support.repository.CustomerRepository
 
-import javax.persistence.EntityManager
-import javax.persistence.PersistenceContext
-
-class SpringCustomerRepositoryTest extends DataSpec {
+class CustomerRepositoryTest extends DataSpec {
 
     @Autowired
-    private Metadata metadata;
+    private CustomerRepository customerRepository
     @Autowired
-    private CustomerRepository customerRepository;
+    private EntityStates entityStates
     @Autowired
-    private EntityStates entityStates;
-    @Autowired
-    private DataManager dataManager;
+    private DataManager dataManager
     @Autowired
     JdbcTemplate jdbcTemplate
     @Autowired
     protected SystemAuthenticator authenticator
     @Autowired
     protected InMemoryUserRepository userRepository
-    @Autowired
-    TransactionTemplate tx;
-    @PersistenceContext
-    EntityManager entityManager;
 
-
-    private Customer customer1, customer2, customer3;
+    private Customer customer1, customer2, customer3
 
     private User admin
 
@@ -83,20 +71,20 @@ class SpringCustomerRepositoryTest extends DataSpec {
                 .authorities(Collections.emptyList())
                 .build()
         userRepository.addUser(admin)
-        customer1 = metadata.create(Customer.class);
-        customer1.setName("cust1");
-        customer1.setAddress(new Address());
-        customer1.getAddress().setCity("Samara");
+        customer1 = customerRepository.newOne()
+        customer1.setName("cust1")
+        customer1.setAddress(new Address())
+        customer1.getAddress().setCity("Samara")
 
-        customer2 = metadata.create(Customer.class);
-        customer2.setName("some cust 2");
-        customer2.setAddress(new Address());
-        customer2.getAddress().setCity("Springfield");
+        customer2 = customerRepository.newOne()
+        customer2.setName("some cust 2")
+        customer2.setAddress(new Address())
+        customer2.getAddress().setCity("Springfield")
 
-        customer3 = metadata.create(Customer.class);
-        customer3.setName("another cust 3");
-        customer3.setAddress(new Address());
-        customer3.getAddress().setCity("Springfield");
+        customer3 = customerRepository.newOne()
+        customer3.setName("another cust 3")
+        customer3.setAddress(new Address())
+        customer3.getAddress().setCity("Springfield")
 
 
         dataManager.save(
@@ -117,13 +105,13 @@ class SpringCustomerRepositoryTest extends DataSpec {
         setup:
         authenticator.begin()
         when:
-        Customer customer = metadata.create(Customer.class);
-        customer.setName("customer");
+        Customer customer = customerRepository.newOne()
+        customer.setName("customer")
 
 
-        customerRepository.save(customer);
+        customerRepository.save(customer)
 
-        Map<String, Object> row = jdbcTemplate.queryForMap("select * from REPOSITORY_CUSTOMER where ID = '" + customer.getId() + "'");
+        Map<String, Object> row = jdbcTemplate.queryForMap("select * from REPOSITORY_CUSTOMER where ID = '" + customer.getId() + "'")
         then:
         row != null
         row.get("CREATE_TS") != null
@@ -135,7 +123,7 @@ class SpringCustomerRepositoryTest extends DataSpec {
 
     void testBasicCount() {
         when:
-        long count = customerRepository.count();
+        long count = customerRepository.count()
         then:
         count == 3
     }
@@ -143,7 +131,7 @@ class SpringCustomerRepositoryTest extends DataSpec {
 
     void testFindAll() {
         when:
-        List<Customer> customers = Lists.newArrayList(customerRepository.findAll());
+        List<Customer> customers = Lists.newArrayList(customerRepository.findAll())
         then:
         customers.size() == 3
         customers.contains(customer1)
@@ -153,26 +141,26 @@ class SpringCustomerRepositoryTest extends DataSpec {
 
     void testFindAllById() {
         when:
-        List<Customer> customers = Lists.newArrayList(customerRepository.findAllById(Arrays.asList(customer1.getId(), customer2.getId())));
+        List<Customer> customers = Lists.newArrayList(customerRepository.findAllById(Arrays.asList(customer1.getId(), customer2.getId())))
         then:
-        customers.size() == 2;
+        customers.size() == 2
         customers.contains(customer1)
         customers.contains(customer2)
     }
 
     void testCountCustomersByCity() {
         when:
-        long first = customerRepository.countCustomersByAddressCity("Samara");
+        long first = customerRepository.countCustomersByAddressCity("Samara")
         then:
         first == 1
 
         when:
-        long second = customerRepository.countCustomersByAddressCity("Springfield");
+        long second = customerRepository.countCustomersByAddressCity("Springfield")
         then:
         second == 2
 
         when:
-        long third = customerRepository.countCustomersByAddressCity("London");
+        long third = customerRepository.countCustomersByAddressCity("London")
         then:
         third == 0
     }
@@ -180,7 +168,7 @@ class SpringCustomerRepositoryTest extends DataSpec {
 
     void testFindCustomersByCityInList() {
         when:
-        List<Customer> customers = customerRepository.findByAddressCityIn(Arrays.asList("Samara", "Springfield"));
+        List<Customer> customers = customerRepository.findByAddressCityIn(Arrays.asList("Samara", "Springfield"))
         then:
         customers.contains(customer1)
         customers.contains(customer2)
@@ -191,8 +179,8 @@ class SpringCustomerRepositoryTest extends DataSpec {
 
     void testSoftDeleteCustomer() {
         when:
-        Customer customer = customerRepository.findById(customer3.getId()).get();
-        customerRepository.delete(customer);
+        Customer customer = customerRepository.findById(customer3.getId()).get()
+        customerRepository.delete(customer)
 
         Customer deleted = dataManager.load(Customer).id(customer.getId()).optional().orElse(null)
 
@@ -204,23 +192,23 @@ class SpringCustomerRepositoryTest extends DataSpec {
     @Test//todo make separae test(s?) for softDelition when considering of it will be implemented
     public void testDeleteCustomer() throws SQLException {
         try (Transaction tx = persistence.getTransaction()) {
-            persistence.setSoftDeletion(false);
-            Customer customer = customerRepository.findOne(customer3.getId());
-            customerRepository.delete(customer);
-            tx.commit();
+            persistence.setSoftDeletion(false)
+            Customer customer = customerRepository.findOne(customer3.getId())
+            customerRepository.delete(customer)
+            tx.commit()
         }
 
-        QueryRunner runner = new QueryRunner(persistence.getDataSource());
+        QueryRunner runner = new QueryRunner(persistence.getDataSource())
         Map<String, Object> row = runner.query("select * from REPOSITORY_CUSTOMER where ID = '" + customer3.getId() + "'",
-                new MapHandler());
-        assertNull(row);
+                new MapHandler())
+        assertNull(row)
     }
 */
 
 
     void testSoftDeleteCustomerById() {
         when:
-        customerRepository.deleteById(customer3.getId());
+        customerRepository.deleteById(customer3.getId())
 
         Customer deleted = dataManager.load(Customer).id(customer3.getId()).optional().orElse(null)
 
@@ -231,7 +219,7 @@ class SpringCustomerRepositoryTest extends DataSpec {
 
     void testFindCustomerById() {
         when:
-        Customer customer = customerRepository.findById(customer1.getId()).get();
+        Customer customer = customerRepository.findById(customer1.getId()).get()
         then:
         customer == customer1
         entityStates.isDetached(customer)
@@ -240,7 +228,7 @@ class SpringCustomerRepositoryTest extends DataSpec {
 
     void testFindCustomerByName() {
         when:
-        List<Customer> customers = customerRepository.findByName(customer1.getName());
+        List<Customer> customers = customerRepository.findByName(customer1.getName())
         then:
         customers.size() == 1
         customers.get(0) == customer1
@@ -249,15 +237,15 @@ class SpringCustomerRepositoryTest extends DataSpec {
 
     void testFindCustomerByAddressCity() {
         when:
-        List<Customer> customers = customerRepository.findByAddressCity(customer1.getAddress().getCity());
+        List<Customer> customers = customerRepository.findByAddressCity(customer1.getAddress().getCity())
         then:
         customers.size() == 1
         customers.get(0) == customer1
     }
 
-    void testQueryWithAdvancedLike() {//todo step two
+    void testQueryWithAdvancedLike() {
         when:
-        List<Customer> customers = customerRepository.findByNameStartingWith("cust");
+        List<Customer> customers = customerRepository.findByNameStartingWith("cust")
         then:
         customers.size() == 1
         customers.get(0) == customer1
@@ -265,7 +253,7 @@ class SpringCustomerRepositoryTest extends DataSpec {
 
     void testQueryWithPositionalParam() {
         when:
-        List<Customer> customers = customerRepository.findByQueryWithPositionParameter("cust");
+        List<Customer> customers = customerRepository.findByQueryWithPositionParameter("cust")
         then:
         customers.size() == 1
         customers.get(0) == customer1
@@ -273,14 +261,14 @@ class SpringCustomerRepositoryTest extends DataSpec {
 
     void testQueryWithInClause() {
         when:
-        List<Customer> customers = customerRepository.findByNameIsIn(Arrays.asList(customer1.getName(), customer2.getName()));
+        List<Customer> customers = customerRepository.findByNameIsIn(Arrays.asList(customer1.getName(), customer2.getName()))
         then:
         customers.size() == 2
         customers.contains(customer1)
         customers.contains(customer2)
 
         when:
-        customers = customerRepository.findByNameIsIn(Collections.singletonList("Fake Name Should not be found"));
+        customers = customerRepository.findByNameIsIn(Collections.singletonList("Fake Name Should not be found"))
         then:
         customers.size() == 0
     }

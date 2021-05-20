@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package data_repositories
+package repository
 
-import io.jmix.core.impl.repositories.query.utils.ConditionTransformer
+import io.jmix.core.impl.repository.query.utils.ConditionTransformer
 import io.jmix.core.querycondition.Condition
 import io.jmix.core.querycondition.LogicalCondition
 import io.jmix.core.querycondition.PropertyCondition
 import org.springframework.data.repository.query.parser.PartTree
 import test_support.DataSpec
-import test_support.entity.data_repositories.Customer
-import test_support.entity.data_repositories.SalesOrder
+import test_support.entity.repository.Customer
+import test_support.entity.repository.SalesOrder
 
 class ConditionBuildingTest extends DataSpec {
 

@@ -31,6 +31,11 @@
         </property>
     </fetchPlan>
 
+    <fetchPlan entity="report_Report" name="report.run" extends="_base">
+        <property name="templates" fetchPlan="_base"/>
+        <property name="defaultTemplate" fetchPlan="_base"/>
+    </fetchPlan>
+
     <fetchPlan entity="report_Report" name="report.withTemplates" extends="_instance_name">
         <property name="templates" fetchPlan="_instance_name"/>
     </fetchPlan>

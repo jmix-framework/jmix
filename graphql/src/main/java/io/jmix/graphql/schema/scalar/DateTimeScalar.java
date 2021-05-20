@@ -19,7 +19,7 @@ public class DateTimeScalar extends GraphQLScalarType {
     static final Logger log = LoggerFactory.getLogger(DateTimeScalar.class);
 
     public DateTimeScalar() {
-        super("DateTime", "Date type with time", new BaseDateCoercing() {
+        super("DateTime", "Date type with time", new BaseDateCoercing(LocalDateTimeScalar.LOCAL_DATE_TIME_FORMAT) {
 
             @Override
             public Object serialize(Object input) {

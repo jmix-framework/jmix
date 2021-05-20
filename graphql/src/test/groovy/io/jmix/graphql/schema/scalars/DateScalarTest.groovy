@@ -17,6 +17,7 @@
 package io.jmix.graphql.schema.scalars
 
 import graphql.language.StringValue
+import graphql.schema.Coercing
 import graphql.schema.CoercingParseLiteralException
 import graphql.schema.CoercingSerializeException
 import io.jmix.graphql.schema.scalar.DateScalar
@@ -45,13 +46,19 @@ import java.time.ZoneId
 
 class DateScalarTest extends Specification {
 
+    private final DateScalar scalar = new DateScalar()
+    private Coercing coercing
+
+    @SuppressWarnings('unused')
+    def setup() {
+        coercing = scalar.getCoercing()
+    }
+
     def "date scalar test"() {
         given:
-        def scalar = new DateScalar()
         def stringDate = "2021-01-01"
         def temporalAccessor = LocalDate.parse(stringDate).atStartOfDay(ZoneId.systemDefault()).toInstant()
         def date = Date.from(temporalAccessor)
-        def coercing = scalar.getCoercing()
         def parsedLiteral
         def parsedValue
         def serialized
@@ -59,11 +66,11 @@ class DateScalarTest extends Specification {
         def nullParsedValue
 
         when:
-        parsedLiteral = (Date) coercing.parseLiteral(new StringValue(stringDate))
-        parsedValue = (Date) coercing.parseValue(stringDate)
-        serialized = coercing.serialize(date)
-        nullParsedLiteral = (Date) coercing.parseLiteral(new StringValue(""))
-        nullParsedValue = (Date) coercing.parseLiteral(new StringValue(""))
+        parsedLiteral = (Date) this.coercing.parseLiteral(new StringValue(stringDate))
+        parsedValue = (Date) this.coercing.parseValue(stringDate)
+        serialized = this.coercing.serialize(date)
+        nullParsedLiteral = (Date) this.coercing.parseLiteral(new StringValue(""))
+        nullParsedValue = (Date) this.coercing.parseLiteral(new StringValue(""))
 
         then:
         DateUtils.isSameDay(parsedLiteral, date)
@@ -74,10 +81,6 @@ class DateScalarTest extends Specification {
     }
 
     def "date scalar coercing throws CoercingSerializeException"() {
-        given:
-        def scalar = new DateScalar()
-        def coercing = scalar.getCoercing()
-
         when:
         coercing.serialize("")
 
@@ -87,10 +90,6 @@ class DateScalarTest extends Specification {
     }
 
     def "date scalar coercing throws CoercingParseLiteralException with parseLiteral"() {
-        given:
-        def scalar = new DateScalar()
-        def coercing = scalar.getCoercing()
-
         when:
         coercing.parseLiteral("")
 
@@ -100,15 +99,20 @@ class DateScalarTest extends Specification {
     }
 
     def "date scalar coercing throws CoercingParseLiteralException with parseValue"() {
-        given:
-        def scalar = new DateScalar()
-        def coercing = scalar.getCoercing()
-
         when:
         coercing.parseValue(new StringValue(""))
 
         then:
         def exception = thrown(CoercingParseLiteralException)
         exception.message == "Expected type 'String' but was 'StringValue'."
+    }
+
+    def "date scalar throws CoercingParseLiteralException with wrong value"() {
+        when:
+        coercing.parseLiteral(new StringValue("1"))
+
+        then:
+        def exception = thrown(CoercingParseLiteralException)
+        exception.message == "Please use the format 'yyyy-MM-dd'"
     }
 }

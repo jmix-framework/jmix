@@ -20,13 +20,25 @@ import graphql.language.StringValue;
 import graphql.schema.Coercing;
 import graphql.schema.CoercingParseLiteralException;
 
+import java.time.format.DateTimeParseException;
+
 public abstract class BaseDateCoercing implements Coercing {
+
+    private final String format;
+
+    public BaseDateCoercing(String format) {
+        this.format = format;
+    }
 
     @Override
     public Object parseValue(Object input) {
         if (input instanceof String) {
             String value = (String) input;
-            return parseString(value);
+            try {
+                return parseString(value);
+            } catch (DateTimeParseException exception) {
+                throw new CoercingParseLiteralException("Please use the format " + format);
+            }
         }
         throw new CoercingParseLiteralException(
                 "Expected type 'String' but was '" + input.getClass().getSimpleName() + "'.");
@@ -36,7 +48,11 @@ public abstract class BaseDateCoercing implements Coercing {
     public Object parseLiteral(Object input) {
         if (input instanceof StringValue) {
             String value = ((StringValue) input).getValue();
-            return parseString(value);
+            try {
+                return parseString(value);
+            } catch (Exception exception) {
+                throw new CoercingParseLiteralException("Please use the format " + format);
+            }
         }
         throw new CoercingParseLiteralException(
                 "Expected type 'StringValue' but was '" + input.getClass().getSimpleName() + "'.");

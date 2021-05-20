@@ -14,10 +14,11 @@ import java.time.format.DateTimeFormatter;
 
 public class OffsetDateTimeScalar extends GraphQLScalarType {
 
+    public static final String OFFSET_DATE_TIME_FORMAT = "'yyyy-MM-dd'T'HH:mm:ss+hh:mm'";
     static final Logger log = LoggerFactory.getLogger(OffsetDateTimeScalar.class);
 
     public OffsetDateTimeScalar() {
-        super("OffsetDateTime", "Date type", new BaseDateCoercing() {
+        super("OffsetDateTime", "Date type", new BaseDateCoercing(OFFSET_DATE_TIME_FORMAT) {
 
             @Override
             public Object serialize(Object input) {

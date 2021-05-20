@@ -17,6 +17,7 @@
 package io.jmix.graphql.schema.scalars
 
 import graphql.language.StringValue
+import graphql.schema.Coercing
 import graphql.schema.CoercingParseLiteralException
 import graphql.schema.CoercingSerializeException
 import io.jmix.graphql.schema.scalar.TimeScalar
@@ -43,12 +44,18 @@ import static io.jmix.graphql.schema.scalar.CustomScalars.SERIALIZATION_TIME_FOR
 
 class TimeScalarTest extends Specification {
 
+    private final TimeScalar scalar = new TimeScalar()
+    private Coercing coercing
+
+    @SuppressWarnings('unused')
+    def setup() {
+        coercing = scalar.getCoercing()
+    }
+
     def "time scalar test"() {
         given:
-        def scalar = new TimeScalar()
         def stringDate = "23:59:59"
         def time = DateUtils.parseDate(stringDate.trim(), SERIALIZATION_TIME_FORMAT.toPattern());
-        def coercing = scalar.getCoercing()
         def parsedLiteral
         def parsedValue
         def serialized
@@ -57,11 +64,11 @@ class TimeScalarTest extends Specification {
         def midnight = DateUtils.parseDate("00:00:00", SERIALIZATION_TIME_FORMAT.toPattern());
 
         when:
-        parsedLiteral = (Date) coercing.parseLiteral(new StringValue(stringDate))
-        parsedValue = (Date) coercing.parseValue(stringDate)
-        serialized = coercing.serialize(time)
-        nullParsedLiteral = (Date) coercing.parseLiteral(new StringValue(""))
-        nullParsedValue = (Date) coercing.parseLiteral(new StringValue(""))
+        parsedLiteral = (Date) this.coercing.parseLiteral(new StringValue(stringDate))
+        nullParsedValue = (Date) this.coercing.parseValue("")
+        nullParsedLiteral = (Date) this.coercing.parseLiteral(new StringValue(""))
+        parsedValue = (Date) this.coercing.parseValue(stringDate)
+        serialized = this.coercing.serialize(time)
 
         then:
         DateUtils.isSameDay(parsedLiteral, time)
@@ -72,10 +79,6 @@ class TimeScalarTest extends Specification {
     }
 
     def "time scalar coercing throws CoercingSerializeException"() {
-        given:
-        def scalar = new TimeScalar()
-        def coercing = scalar.getCoercing()
-
         when:
         coercing.serialize("")
 
@@ -85,10 +88,6 @@ class TimeScalarTest extends Specification {
     }
 
     def "time scalar coercing throws CoercingParseLiteralException with parseLiteral"() {
-        given:
-        def scalar = new TimeScalar()
-        def coercing = scalar.getCoercing()
-
         when:
         coercing.parseLiteral("")
 
@@ -98,15 +97,20 @@ class TimeScalarTest extends Specification {
     }
 
     def "time scalar coercing throws CoercingParseLiteralException with parseValue"() {
-        given:
-        def scalar = new TimeScalar()
-        def coercing = scalar.getCoercing()
-
         when:
         coercing.parseValue(new StringValue(""))
 
         then:
         def exception = thrown(CoercingParseLiteralException)
         exception.message == "Expected type 'String' but was 'StringValue'."
+    }
+
+    def "time scalar throws CoercingParseLiteralException with wrong value"() {
+        when:
+        coercing.parseLiteral(new StringValue("1"))
+
+        then:
+        def exception = thrown(CoercingParseLiteralException)
+        exception.message == "Please use the format 'HH:mm:ss' or 'HH:mm'"
     }
 }

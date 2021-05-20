@@ -12,11 +12,11 @@ import java.time.format.DateTimeFormatter;
 
 public class LocalDateTimeScalar extends GraphQLScalarType {
 
-    public static final String LOCAL_DATE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
+    public static final String LOCAL_DATE_TIME_FORMAT = "'yyyy-MM-dd'T'HH:mm:ss'";
     static final Logger log = LoggerFactory.getLogger(LocalDateTimeScalar.class);
 
     public LocalDateTimeScalar() {
-        super("LocalDateTime", "Date type", new BaseDateCoercing() {
+        super("LocalDateTime", "Date type", new BaseDateCoercing(LOCAL_DATE_TIME_FORMAT) {
 
             @Override
             public Object serialize(Object input) {

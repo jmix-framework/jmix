@@ -55,13 +55,13 @@ public class EntityMutationDataFetcher {
             Map<String, String> input = environment.getArgument(NamingUtils.uncapitalizedSimpleName(javaClass));
             log.debug("upsertEntity: input {}", input);
 
-            String entityJson =  new ObjectMapper().writeValueAsString(input);
+            String entityJson = new ObjectMapper().writeValueAsString(input);
             log.debug("upsertEntity: json {}", entityJson);
 
             Object entity = entitySerialization.entityFromJson(entityJson, metaClass);
 
             EntityImportPlan entityImportPlan = entityImportPlanJsonBuilder.buildFromJson(entityJson, metaClass);
-            checkReadOnlyAttributeWrite(metaClass, entityImportPlan);
+            checkReadOnlyAttributeWrite(metaClass, entityImportPlan, entity);
 
             Collection<Object> objects;
             try {
@@ -123,7 +123,7 @@ public class EntityMutationDataFetcher {
         }
     }
 
-    protected void checkReadOnlyAttributeWrite(MetaClass metaClass, EntityImportPlan importPlan) {
+    protected void checkReadOnlyAttributeWrite(MetaClass metaClass, EntityImportPlan importPlan, Object entity) {
         List<String> readOnlyAttributes = importPlan.getProperties().stream()
                 .map(property -> metaClass.getProperty(property.getName()))
                 .filter(MetaProperty::isReadOnly)
@@ -132,6 +132,25 @@ public class EntityMutationDataFetcher {
 
         if (!readOnlyAttributes.isEmpty()) {
             throw new GqlEntityValidationException("Modifying read-only attributes is forbidden " + readOnlyAttributes);
+        }
+
+        List<String> availableProperties = importPlan.getProperties().stream()
+                .map(EntityImportPlanProperty::getName)
+                .collect(Collectors.toList());
+
+        Object id = EntityValues.getId(entity);
+        List<String> excludedProperties = metaClass.getProperties().stream()
+                .filter(metaProperty -> {
+                    Object value = EntityValues.getValue(entity, metaProperty.getName());
+                    return value != null
+                            && !value.equals(id);
+                })
+                .map(MetaProperty::getName)
+                .filter(name -> !availableProperties.contains(name))
+                .collect(Collectors.toList());
+
+        if (!excludedProperties.isEmpty()) {
+            throw new GqlEntityValidationException("Modifying attributes is forbidden " + excludedProperties);
         }
     }
 

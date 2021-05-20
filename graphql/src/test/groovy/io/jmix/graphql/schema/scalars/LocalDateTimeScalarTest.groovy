@@ -41,7 +41,7 @@ class LocalDateTimeScalarTest extends Specification {
         def stringDate = new StringValue("2021-01-01T23:59:59")
         def localDateTime = LocalDateTime.from(
                 DateTimeFormatter
-                        .ofPattern(LocalDateTimeScalar.LOCAL_DATE_TIME_FORMAT)
+                        .ISO_LOCAL_DATE_TIME
                         .parse(stringDate.getValue())
         )
         def parsedLiteral
@@ -90,5 +90,14 @@ class LocalDateTimeScalarTest extends Specification {
         then:
         def exception = thrown(CoercingParseLiteralException)
         exception.message == "Expected type 'String' but was 'StringValue'."
+    }
+
+    def "localDateTime scalar throws CoercingParseLiteralException with wrong value"() {
+        when:
+        coercing.parseLiteral(new StringValue("1"))
+
+        then:
+        def exception = thrown(CoercingParseLiteralException)
+        exception.message == "Please use the format 'yyyy-MM-dd'T'HH:mm:ss'"
     }
 }

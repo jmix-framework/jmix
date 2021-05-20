@@ -91,4 +91,13 @@ class OffsetTimeScalarTest extends Specification {
         def exception = thrown(CoercingParseLiteralException)
         exception.message == "Expected type 'String' but was 'StringValue'."
     }
+
+    def "OffsetTime scalar throws CoercingParseLiteralException with wrong value"() {
+        when:
+        coercing.parseLiteral(new StringValue("1"))
+
+        then:
+        def exception = thrown(CoercingParseLiteralException)
+        exception.message == "Please use the format 'HH:mm:ss+hh:mm' or 'HH:mm+hh:mm'"
+    }
 }

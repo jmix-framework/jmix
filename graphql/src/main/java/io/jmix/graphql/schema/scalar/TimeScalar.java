@@ -1,5 +1,6 @@
 package io.jmix.graphql.schema.scalar;
 
+import graphql.schema.CoercingParseLiteralException;
 import graphql.schema.CoercingSerializeException;
 import graphql.schema.GraphQLScalarType;
 import org.apache.commons.lang3.time.DateUtils;
@@ -21,7 +22,7 @@ public class TimeScalar extends GraphQLScalarType {
     static final Logger log = LoggerFactory.getLogger(TimeScalar.class);
 
     public TimeScalar() {
-        super("Time", "Time type", new BaseDateCoercing() {
+        super("Time", "Time type", new BaseDateCoercing(LocalTimeScalar.LOCAL_TIME_FORMAT) {
 
             @Override
             public Object serialize(Object input) {
@@ -40,26 +41,20 @@ public class TimeScalar extends GraphQLScalarType {
 
             protected Object parseString(String value) {
                 if (value.isEmpty()) {
-                    return dateFromString(LocalTime.MIN.toString());
+                    return new Date(
+                            DateTimeFormatter.ISO_TIME
+                                    .parse("00:00:00", LocalTime::from)
+                                    .getSecond()
+                    );
                 }
-                Date date = dateFromString(value);
-
-                String dateString = SERIALIZATION_TIME_FORMAT.format(date);
-                log.debug("parseLiteral return {}", dateString);
-                return date;
-            }
-
-            private Date dateFromString(String value) {
                 try {
-                    return DateUtils.parseDate(value.trim(), SERIALIZATION_TIME_FORMAT.toPattern());
+                    Date date = DateUtils.parseDate(value.trim(), SERIALIZATION_TIME_FORMAT.toPattern());
+                    String dateString = SERIALIZATION_TIME_FORMAT.format(date);
+                    log.debug("parseLiteral return {}", dateString);
+                    return date;
                 } catch (ParseException e) {
-                    log.error(e.getMessage());
+                    throw new CoercingParseLiteralException(e);
                 }
-                return new Date(
-                        DateTimeFormatter.ISO_TIME
-                                .parse("00:00:00", LocalTime::from)
-                                .getSecond()
-                );
             }
         });
     }

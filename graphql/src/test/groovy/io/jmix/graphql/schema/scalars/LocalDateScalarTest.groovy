@@ -91,4 +91,13 @@ class LocalDateScalarTest extends Specification {
         def exception = thrown(CoercingParseLiteralException)
         exception.message == "Expected type 'String' but was 'StringValue'."
     }
+
+    def "localDate scalar throws CoercingParseLiteralException with wrong value"() {
+        when:
+        coercing.parseLiteral(new StringValue("1"))
+
+        then:
+        def exception = thrown(CoercingParseLiteralException)
+        exception.message == "Please use the format 'yyyy-MM-dd'"
+    }
 }

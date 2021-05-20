@@ -48,12 +48,8 @@ public class AutoMappedFieldAnnotationProcessor extends AbstractFieldAnnotationP
     @Override
     protected Map<String, Object> createParameters(AutoMappedField specificAnnotation) {
         HashMap<String, Object> parameters = new HashMap<>();
-        //todo move validation to Field Mappers?
         if (StringUtils.isNotBlank(specificAnnotation.analyzer())) {
             parameters.put("analyzer", specificAnnotation.analyzer());
-        }
-        if (StringUtils.isNotBlank(specificAnnotation.normalizer())) {
-            parameters.put("normalizer", specificAnnotation.normalizer());
         }
         return parameters;
     }

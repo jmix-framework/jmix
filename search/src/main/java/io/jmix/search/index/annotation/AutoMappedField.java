@@ -52,13 +52,6 @@ public @interface AutoMappedField {
      */
     String analyzer() default "";
 
-    /**
-     * Provides normalizer that should be applied to all keyword fields covered by this annotation.
-     *
-     * @return name of normalizer
-     */
-    String normalizer() default "";
-
     @Target(ElementType.METHOD)
     @Retention(RetentionPolicy.RUNTIME)
     @interface Container {

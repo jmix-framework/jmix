@@ -16,7 +16,4 @@
   -->
 
 <menu-config xmlns="http://jmix.io/schema/ui/menu">
-    <menu id="administration">
-        <item screen="entitySearcher.browser"/>
-    </menu>
 </menu-config>

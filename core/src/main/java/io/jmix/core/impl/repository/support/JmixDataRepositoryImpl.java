@@ -130,6 +130,10 @@ public class JmixDataRepositoryImpl<T, ID extends Serializable> implements JmixD
         entities.forEach(dataManager::remove);
     }
 
+    @Override
+    public void deleteAllById(Iterable<? extends ID> ids) {
+        //TODO:
+    }
 
     @Override
     public void deleteAll() {

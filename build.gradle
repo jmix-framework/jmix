@@ -280,8 +280,8 @@ dependencies {
         api 'org.webjars.bowergithub.mootools:slick:1.1.7'
         api 'org.webjars:ckeditor:4.14.0'
 
-        api 'org.spockframework:spock-core:2.0-M5-groovy-3.0'
-        api 'org.spockframework:spock-spring:2.0-M5-groovy-3.0'
+        api 'org.spockframework:spock-core:2.0-groovy-3.0'
+        api 'org.spockframework:spock-spring:2.0-groovy-3.0'
 
         api 'io.swagger.core.v3:swagger-models:2.1.7'
         api 'io.swagger.core.v3:swagger-core:2.1.7'

@@ -59,15 +59,22 @@ public abstract class StepFragment extends ScreenFragment {
     public abstract String getDescription();
 
     /**
-     * Entry point for adding functionality before showing the fragment
+     * Entry point for adding functionality before hiding the fragment
      */
     public void beforeHide() {
     }
 
     /**
-     * Entry point for adding functionality before hiding the fragment
+     * Entry point for adding functionality before showing the fragment
      */
     public void beforeShow() {
+    }
+
+    /**
+     * Entry point for adding functionality after the fragment is shown
+     */
+    public void afterShow() {
+
     }
 
     public void initFragment() {

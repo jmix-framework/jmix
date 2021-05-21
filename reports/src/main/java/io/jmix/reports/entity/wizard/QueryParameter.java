@@ -24,27 +24,38 @@ import io.jmix.core.metamodel.annotation.JmixProperty;
 import io.jmix.reports.entity.ParameterType;
 import io.jmix.reports.entity.PredefinedTransformation;
 
-import javax.persistence.Id;
 import java.util.UUID;
 
-@JmixEntity(name = "report_QueryParameter")
+@JmixEntity(name = "report_QueryParameter", annotatedPropertiesOnly = true)
 @SystemLevel
 public class QueryParameter {
 
     @JmixId
     @JmixGeneratedValue
+    @JmixProperty
     protected UUID id;
 
+    @JmixProperty
     protected String name;
 
+    @JmixProperty
     protected String javaClassName;
 
+    @JmixProperty
+    protected String entityMetaClassName;
+
+    @JmixProperty
     protected ParameterType parameterType;
 
-    protected String defaultValue;
+    @JmixProperty
+    protected String defaultValueString;
 
+    protected Object defaultValue;
+
+    @JmixProperty
     protected PredefinedTransformation predefinedTransformation;
 
+    @JmixProperty
     protected Boolean hidden;
 
     public UUID getId() {
@@ -79,12 +90,12 @@ public class QueryParameter {
         this.parameterType = parameterType;
     }
 
-    public String getDefaultValue() {
-        return defaultValue;
+    public String getDefaultValueString() {
+        return defaultValueString;
     }
 
-    public void setDefaultValue(String defaultValue) {
-        this.defaultValue = defaultValue;
+    public void setDefaultValueString(String defaultValueString) {
+        this.defaultValueString = defaultValueString;
     }
 
     public PredefinedTransformation getPredefinedTransformation() {
@@ -101,5 +112,21 @@ public class QueryParameter {
 
     public void setHidden(Boolean hidden) {
         this.hidden = hidden;
+    }
+
+    public String getEntityMetaClassName() {
+        return entityMetaClassName;
+    }
+
+    public void setEntityMetaClassName(String entityMetaClassName) {
+        this.entityMetaClassName = entityMetaClassName;
+    }
+
+    public Object getDefaultValue() {
+        return defaultValue;
+    }
+
+    public void setDefaultValue(Object defaultValue) {
+        this.defaultValue = defaultValue;
     }
 }

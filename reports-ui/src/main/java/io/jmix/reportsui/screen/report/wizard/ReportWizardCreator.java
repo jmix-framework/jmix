@@ -128,7 +128,7 @@ public class ReportWizardCreator extends Screen implements WizardScreen {
         if (event.getProperty().equals("reportTypeGenerate")) {
             List<StepFragment> stepFragments = new ArrayList<>(getBasicFragments());
             if (Objects.equals(event.getValue(), ReportTypeGenerate.LIST_OF_ENTITIES_WITH_QUERY)) {
-                stepFragments.add(1, queryStepFragment);
+                stepFragments.add(2, queryStepFragment);
             }
 
             stepFragmentManager.setStepFragments(stepFragments);

@@ -27,6 +27,7 @@ import io.jmix.reports.entity.*;
 import io.jmix.reports.entity.wizard.*;
 import io.jmix.reports.exception.TemplateGenerationException;
 import io.jmix.reports.util.DataSetFactory;
+import io.jmix.reportsui.screen.report.wizard.query.JpqlQueryBuilder;
 import io.jmix.reportsui.screen.report.wizard.template.TemplateGenerator;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.Transformer;
@@ -146,14 +147,14 @@ public class ReportsWizard {
                 parameter.setAlias(queryParameter.getName());
                 parameter.setName(StringUtils.capitalize(queryParameter.getName()));
                 parameter.setType(queryParameter.getParameterType());
-                parameter.setParameterClass(metadata.getClass(queryParameter.getJavaClassName()).getJavaClass());
-                parameter.setDefaultValue(queryParameter.getDefaultValue());
+                parameter.setParameterClassName(queryParameter.getJavaClassName());
+                parameter.setDefaultValue(queryParameter.getDefaultValueString());
                 parameter.setPredefinedTransformation(queryParameter.getPredefinedTransformation());
                 parameter.setHidden(queryParameter.getHidden());
 
                 if (queryParameter.getParameterType() == ParameterType.ENTITY
                         || queryParameter.getParameterType() == ParameterType.ENTITY_LIST) {
-                    MetaClass metaClass = metadata.findClass(queryParameter.getJavaClassName());
+                    MetaClass metaClass = metadata.findClass(queryParameter.getEntityMetaClassName());
                     if (metaClass != null) {
                         parameter.setEntityMetaClass(metaClass.getName());
                     }
@@ -180,10 +181,10 @@ public class ReportsWizard {
 
     protected void createJpqlDataSet(ReportData reportData, ReportRegion reportRegion, BandDefinition dataBand) {
         DataSet dataSet = dataSetFactory.createEmptyDataSet(dataBand);
-        dataSet.setName(messages.getMessage(getClass(), "dataSet"));
+        dataSet.setName(messages.getMessage("dataSet"));
         dataSet.setType(DataSetType.JPQL);
 
-        String query = new JpqlQueryBuilder(reportData, reportRegion).buildQuery();
+        String query = new JpqlQueryBuilder(reportData, reportRegion).buildFinalQuery();
         dataSet.setText(query);
         dataSet.setDataStore(reportData.getDataStore());
         dataBand.getDataSets().add(dataSet);
@@ -192,7 +193,7 @@ public class ReportsWizard {
     protected void createEntityDataSet(ReportData reportData, ReportRegion reportRegion, BandDefinition dataBand,
                                        ReportInputParameter mainParameter, FetchPlan parameterFetchPlan) {
         DataSet dataSet = dataSetFactory.createEmptyDataSet(dataBand);
-        dataSet.setName(messages.getMessage(getClass(), "dataSet"));
+        dataSet.setName(messages.getMessage("dataSet"));
         if (ReportTypeGenerate.LIST_OF_ENTITIES == reportData.getReportTypeGenerate()) {
             dataSet.setType(DataSetType.MULTI);
             dataSet.setListEntitiesParamName(mainParameter.getAlias());

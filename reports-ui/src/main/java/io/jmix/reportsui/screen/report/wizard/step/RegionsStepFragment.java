@@ -137,6 +137,11 @@ public class RegionsStepFragment extends StepFragment {
     }
 
     @Override
+    public void afterShow() {
+        runBtn.setVisible(getReportTypeGenerate() != ReportTypeGenerate.LIST_OF_ENTITIES_WITH_QUERY);
+    }
+
+    @Override
     public String getCaption() {
         return messages.getMessage(getClass(), "reportRegions");
     }

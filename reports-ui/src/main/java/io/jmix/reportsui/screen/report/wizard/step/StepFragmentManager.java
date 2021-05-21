@@ -26,7 +26,7 @@ import org.springframework.util.StringUtils;
 
 import java.util.List;
 
-@Component("report_StepFrameManager")
+@Component("report_StepFragmentManager")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class StepFragmentManager {
 
@@ -38,7 +38,7 @@ public class StepFragmentManager {
 
     protected List<StepFragment> stepFragments;
     protected WizardScreen wizardScreen;
-    protected int currentFrameIdx = 0;
+    protected int currentFragmentIdx = 0;
 
     public void setStepFragments(List<StepFragment> stepFragments) {
         this.stepFragments = stepFragments;
@@ -59,10 +59,11 @@ public class StepFragmentManager {
         getCurrentStepFragment().initFragment();
         getCurrentStepFragment().beforeShow();
         getCurrentStepFragment().getFragment().setVisible(true);
+        getCurrentStepFragment().afterShow();
     }
 
     protected StepFragment getCurrentStepFragment() {
-        return stepFragments.get(currentFrameIdx);
+        return stepFragments.get(currentFragmentIdx);
     }
 
     public void updateWizardDescription() {
@@ -72,17 +73,17 @@ public class StepFragmentManager {
     public void updateWizardCaption() {
         wizardScreen.setCaption(messages.formatMessage(getClass(), "stepNo",
                 getCurrentStepFragment().getCaption(),
-                currentFrameIdx + 1,
+                currentFragmentIdx + 1,
                 stepFragments.size())
         );
     }
 
     protected void visibleButtons() {
-        if (currentFrameIdx <= 0) {
+        if (currentFragmentIdx <= 0) {
             wizardScreen.getForwardBtn().setVisible(true);
             wizardScreen.getBackwardBtn().setVisible(false);
             wizardScreen.getSaveBtn().setVisible(false);
-        } else if (currentFrameIdx >= stepFragments.size() - 1) {
+        } else if (currentFragmentIdx >= stepFragments.size() - 1) {
             wizardScreen.getForwardBtn().setVisible(false);
             wizardScreen.getBackwardBtn().setVisible(true);
             wizardScreen.getSaveBtn().setVisible(true);
@@ -94,12 +95,12 @@ public class StepFragmentManager {
     }
 
     public boolean prevFragment() {
-        if (currentFrameIdx == 0) {
+        if (currentFragmentIdx == 0) {
             throw new ArrayIndexOutOfBoundsException("Previous step is not exists");
         }
         if (!getCurrentStepFragment().isValidateBeforePrev() || validateCurrentFragment()) {
             hideCurrentFrame();
-            currentFrameIdx--;
+            currentFragmentIdx--;
             showCurrentFragment();
             return true;
         } else {
@@ -108,12 +109,12 @@ public class StepFragmentManager {
     }
 
     public boolean nextFragment() {
-        if (currentFrameIdx > stepFragments.size()) {
+        if (currentFragmentIdx > stepFragments.size()) {
             throw new ArrayIndexOutOfBoundsException("Next step is not exists");
         }
         if (!getCurrentStepFragment().isValidateBeforeNext() || validateCurrentFragment()) {
             hideCurrentFrame();
-            currentFrameIdx++;
+            currentFragmentIdx++;
             showCurrentFragment();
             return true;
         } else {

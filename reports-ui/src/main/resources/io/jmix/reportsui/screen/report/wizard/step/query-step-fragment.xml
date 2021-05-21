@@ -27,38 +27,43 @@
         </instance>
     </data>
 
-    <layout width="100%" spacing="true">
-        <groupBox width="100%" spacing="true" height="100%">
-            <sourceCodeEditor id="reportQueryCodeEditor"
-                              contextHelpTextHtmlEnabled="true"
-                              dataContainer="reportDataDc"
-                              property="query"
-                              caption="msg://reportQuery"
-                              required="true"
-                              requiredMessage="msg://fillReportQueryMsg"
-                              height="100px"
-                              width="100%"/>
-            <label value="msg://reportParameter"/>
-            <table id="reportParameterTable"
-                   editable="true"
-                   dataContainer="queryParametersDc"
-                   width="100%" height="300px">
-                <actions>
-                    <action id="generate"/>
-                    <action id="add"/>
-                    <action id="remove" type="remove"/>
-                </actions>
-                <buttonsPanel>
-                    <button id="generateParameters" action="reportParameterTable.generate" caption="msg://generateParameters"/>
-                    <button id="addParameterBtn" action="reportParameterTable.add" icon="PLUS"/>
-                    <button id="removeParameterBtn" action="reportParameterTable.remove" caption="" icon="REMOVE"/>
-                </buttonsPanel>
-                <columns>
-                    <column id="name" required="true" editable="true"/>
-                    <column id="parameterType" required="true" editable="true"/>
-                    <column id="defaultValue" required="true" editable="true"/>
-                </columns>
-            </table>
-        </groupBox>
+    <layout width="100%" height="100%" spacing="true" >
+        <scrollBox spacing="true">
+            <groupBox width="100%" spacing="true" height="100%">
+                <button id="runBtn" caption="msg://runReport" icon="ANGLE_DOUBLE_RIGHT"/>
+                <sourceCodeEditor id="reportQueryCodeEditor"
+                                  contextHelpTextHtmlEnabled="true"
+                                  dataContainer="reportDataDc"
+                                  property="query"
+                                  caption="msg://reportQuery"
+                                  required="true"
+                                  requiredMessage="msg://fillReportQueryMsg"
+                                  height="150px"
+                                  width="100%"/>
+                <table id="reportParameterTable"
+                       editable="true"
+                       dataContainer="queryParametersDc"
+                       height="250px"
+                       width="100%" caption="msg://reportParameter">
+                    <actions>
+                        <action id="generate"/>
+                        <action id="create" type="create"/>
+                        <action id="edit" type="edit"/>
+                        <action id="remove" type="remove"/>
+                    </actions>
+                    <buttonsPanel>
+                        <button id="generateParameters" action="reportParameterTable.generate" caption="msg://generateParameters"/>
+                        <button id="createParameterBtn" action="reportParameterTable.create" />
+                        <button id="editParameterBtn" action="reportParameterTable.edit" />
+                        <button id="removeParameterBtn" action="reportParameterTable.remove"/>
+                    </buttonsPanel>
+                    <columns>
+                        <column id="name"/>
+                        <column id="parameterType"/>
+                        <column id="defaultValueString"/>
+                    </columns>
+                </table>
+            </groupBox>
+        </scrollBox>
     </layout>
 </fragment>

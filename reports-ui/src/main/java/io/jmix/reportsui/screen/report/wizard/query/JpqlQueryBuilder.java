@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package io.jmix.reportsui.screen.report.wizard;
+package io.jmix.reportsui.screen.report.wizard.query;
 
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.reports.entity.wizard.*;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
@@ -28,7 +29,7 @@ public class JpqlQueryBuilder {
     protected ReportData reportData;
     protected ReportRegion reportRegion;
     protected StringBuilder outputFieldsBuilder = new StringBuilder("\n");
-    private final StringBuilder joinsBuilder = new StringBuilder(" queryEntity ");
+    private final StringBuilder joinsBuilder = new StringBuilder(" e ");
     private final Map<String, String> entityNamesAndAliases = new HashMap<>();
     private String result;
 
@@ -38,7 +39,7 @@ public class JpqlQueryBuilder {
         this.result = reportData.getQuery();
     }
 
-    public String buildQuery() {
+    public String buildInitialQuery() {
         Preconditions.checkNotNullArgument(reportData.getQuery(), "No query provided to build JPQL data set");
 
         for (RegionProperty regionProperty : reportRegion.getRegionProperties()) {
@@ -49,18 +50,41 @@ public class JpqlQueryBuilder {
             }
 
             addPropertyToQuery(propertyPath, nestedEntityAlias);
-            addAliasToQuery(propertyPath);
-
+            addAliasToQuery(null);
         }
 
         addDefaultOrderBy();
 
-        insertOutputFields();
+        insertOutputFields(" e ");
         if (joinsExist()) {
             insertJoins();
         }
 
-        return result.trim().replace("queryEntity", "e");
+        return result.trim();
+    }
+
+    public String buildFinalQuery() {
+        Preconditions.checkNotNullArgument(reportData.getQuery(), "No query provided to build JPQL data set");
+
+        String outputFields = StringUtils.substringBetween(result, "select", "from");
+        for (RegionProperty regionProperty : reportRegion.getRegionProperties()) {
+            String propertyPath = regionProperty.getHierarchicalNameExceptRoot();
+            String nestedEntityAlias = null;
+            if (propertyOfNestedEntity(propertyPath)) {
+                nestedEntityAlias = getNestedEntityAlias(propertyPath);
+            }
+            addPropertyToQuery(propertyPath, nestedEntityAlias);
+            addAliasToQuery(propertyPath);
+        }
+        insertOutputFields(outputFields);
+
+        if (CollectionUtils.isNotEmpty(reportData.getQueryParameters())) {
+            for (QueryParameter queryParameter : reportData.getQueryParameters()) {
+                result = result.replace(":" + queryParameter.getName(), "${" + queryParameter.getName() + "}");
+            }
+        }
+
+        return result.trim();
     }
 
     protected void addDefaultOrderBy() {
@@ -70,21 +94,21 @@ public class JpqlQueryBuilder {
                         .findFirst()
                         .ifPresent(regionProperty -> {
                             String regionPropertyName = regionProperty.getEntityTreeNode().getName();
-                            result += " order by queryEntity." + regionPropertyName;
+                            result += " order by e." + regionPropertyName;
                         });
             }
         }
     }
 
-    protected void insertOutputFields() {
+    protected void insertOutputFields(String toReplace) {
         outputFieldsBuilder.delete(outputFieldsBuilder.length() - 2, outputFieldsBuilder.length());
         outputFieldsBuilder.append("\n");
-        result = result.replaceFirst(" queryEntity ", outputFieldsBuilder.toString());
+        result = result.replaceFirst(toReplace, outputFieldsBuilder.toString());
     }
 
     protected void insertJoins() {
         joinsBuilder.append(" \n");
-        result = result.replaceFirst(" queryEntity([^\\.]|$)", joinsBuilder.toString() + "$1");
+        result = result.replaceFirst(" e([^\\.]|$)", joinsBuilder.toString() + "$1");
     }
 
     protected boolean joinsExist() {
@@ -95,14 +119,18 @@ public class JpqlQueryBuilder {
         return propertyPath.contains(".");
     }
 
-    protected void addAliasToQuery(String propertyPath) {
-        outputFieldsBuilder.append(" as \"").append(propertyPath).append("\"")
-                .append(",\n");
+    protected void addAliasToQuery(@Nullable String alias) {
+        if (alias == null) {
+            outputFieldsBuilder.append(", ");
+        } else {
+            outputFieldsBuilder.append(" as \"").append(alias).append("\"")
+                    .append(",\n");
+        }
     }
 
     protected void addPropertyToQuery(String propertyPath, @Nullable String nestedEntityAlias) {
         if (nestedEntityAlias == null) {
-            outputFieldsBuilder.append("queryEntity.").append(propertyPath);
+            outputFieldsBuilder.append("e.").append(propertyPath);
         } else {
             String propertyName = StringUtils.substringAfterLast(propertyPath, ".");
             outputFieldsBuilder.append(nestedEntityAlias).append(".").append(propertyName);
@@ -115,11 +143,16 @@ public class JpqlQueryBuilder {
 
         if (!entityNamesAndAliases.containsKey(entityName)) {
             nestedEntityAlias = entityName.replaceAll("\\.", "_");
-            joinsBuilder.append(" \nleft join queryEntity.").append(entityName).append(" ").append(nestedEntityAlias);
+            joinsBuilder.append(" \nleft join e.").append(entityName).append(" ").append(nestedEntityAlias);
             entityNamesAndAliases.put(entityName, nestedEntityAlias);
         } else {
             nestedEntityAlias = entityNamesAndAliases.get(entityName);
         }
         return nestedEntityAlias;
+    }
+
+    protected String getNestedEntityAlias(String propertyPath) {
+        String entityName = StringUtils.substringBeforeLast(propertyPath, ".");
+        return entityName.replaceAll("\\.", "_");
     }
 }

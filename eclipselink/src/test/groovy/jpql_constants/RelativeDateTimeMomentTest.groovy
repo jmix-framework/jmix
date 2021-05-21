@@ -20,7 +20,6 @@ import io.jmix.core.DataManager
 import io.jmix.core.LoadContext
 import io.jmix.core.Metadata
 import org.springframework.beans.factory.annotation.Autowired
-import spock.lang.Ignore
 import test_support.DataSpec
 import test_support.entity.TestDateTimeEntity
 
@@ -314,13 +313,12 @@ class RelativeDateTimeMomentTest extends DataSpec {
 
     }
 
-    @Ignore
     def "constants with java.time.LocalDate"() {
         //----------YEAR--------
 
         when:
         def loadContext = new LoadContext(metadata.getClass(TestDateTimeEntity.class))
-        loadContext.setQueryString("select e from test_TestDateTimeEntity e where e.localDate > FIRST_DAY_OF_CURRENT_YEAR and e.localDate < LAST_DAY_OF_CURRENT_YEAR")
+        loadContext.setQueryString("select e from test_TestDateTimeEntity e where e.localDate >= FIRST_DAY_OF_CURRENT_YEAR and e.localDate <= LAST_DAY_OF_CURRENT_YEAR")
         def e = dataManager.loadList(loadContext)
 
         then:
@@ -340,7 +338,7 @@ class RelativeDateTimeMomentTest extends DataSpec {
 
         when:
         loadContext = new LoadContext(metadata.getClass(TestDateTimeEntity.class))
-        loadContext.setQueryString("select e from test_TestDateTimeEntity e where e.localDate > FIRST_DAY_OF_CURRENT_MONTH and e.localDate < LAST_DAY_OF_CURRENT_MONTH")
+        loadContext.setQueryString("select e from test_TestDateTimeEntity e where e.localDate >= FIRST_DAY_OF_CURRENT_MONTH and e.localDate <= LAST_DAY_OF_CURRENT_MONTH")
         e = dataManager.loadList(loadContext)
 
         then:
@@ -361,7 +359,7 @@ class RelativeDateTimeMomentTest extends DataSpec {
 
         when:
         loadContext = new LoadContext(metadata.getClass(TestDateTimeEntity.class))
-        loadContext.setQueryString("select e from test_TestDateTimeEntity e where e.localDate > FIRST_DAY_OF_CURRENT_WEEK and e.localDate < LAST_DAY_OF_CURRENT_WEEK")
+        loadContext.setQueryString("select e from test_TestDateTimeEntity e where e.localDate >= FIRST_DAY_OF_CURRENT_WEEK and e.localDate <= LAST_DAY_OF_CURRENT_WEEK")
         e = dataManager.loadList(loadContext)
 
         then:

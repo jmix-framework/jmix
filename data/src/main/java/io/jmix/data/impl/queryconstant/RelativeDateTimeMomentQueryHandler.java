@@ -77,13 +77,13 @@ public class RelativeDateTimeMomentQueryHandler implements QueryConstantHandler 
             case START_OF_TOMORROW:
                 return String.format(result, LocalDateTime.of(now, LocalTime.MIDNIGHT).plusDays(1).format(dateTimeFormatter));
             case START_OF_CURRENT_HOUR:
-                return String.format(result, LocalDateTime.now().withMinute(0).format(dateTimeFormatter));
+                return String.format(result, LocalDateTime.now().withMinute(0).withSecond(0).withNano(0).format(dateTimeFormatter));
             case END_OF_CURRENT_HOUR:
-                return String.format(result, LocalDateTime.now().withMinute(59).format(dateTimeFormatter));
+                return String.format(result, LocalDateTime.now().withMinute(59).withSecond(59).withNano(999_999_999).format(dateTimeFormatter));
             case START_OF_CURRENT_MINUTE:
-                return String.format(result, LocalDateTime.now().withSecond(0).format(dateTimeFormatter));
+                return String.format(result, LocalDateTime.now().withSecond(0).withNano(0).format(dateTimeFormatter));
             case END_OF_CURRENT_MINUTE:
-                return String.format(result, LocalDateTime.now().withSecond(59).format(dateTimeFormatter));
+                return String.format(result, LocalDateTime.now().withSecond(59).withNano(999_999_999).format(dateTimeFormatter));
         }
         return moment.name();
     }

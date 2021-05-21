@@ -26,7 +26,10 @@ import io.jmix.core.metamodel.datatype.impl.EnumClass;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Range;
+import io.jmix.core.security.AccessDeniedException;
 import io.jmix.core.security.UserRepository;
+import io.jmix.security.constraint.PolicyStore;
+import io.jmix.security.constraint.SecureOperations;
 import io.jmix.ui.*;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.DialogAction;
@@ -74,6 +77,8 @@ public class EntityLogBrowser extends StandardLookup<EntityLogItem> {
     protected Notifications notifications;
     @Autowired
     protected ScreenBuilders screenBuilders;
+    @Autowired
+    protected PolicyStore policyStore;
 
     @Autowired
     protected CollectionContainer<LoggedEntity> loggedEntityDc;
@@ -129,6 +134,8 @@ public class EntityLogBrowser extends StandardLookup<EntityLogItem> {
 
     // allow or not selectAllCheckBox to change values of other checkboxes
     protected boolean canSelectAllCheckboxGenerateEvents = true;
+    @Autowired
+    private SecureOperations secureOperations;
 
     @Subscribe
     protected void onInit(InitEvent event) {
@@ -298,18 +305,30 @@ public class EntityLogBrowser extends StandardLookup<EntityLogItem> {
             if (metaClass == null) {
                 throw new IllegalStateException("Please specify metaclass or property for PickerField");
             }
+            if (!secureOperations.isEntityReadPermitted(metaClass, policyStore)) {
+                notifications.create(Notifications.NotificationType.ERROR)
+                        .withCaption(messages.getMessage(EntityLogBrowser.class, "entityAccessDeniedMessage"))
+                        .show();
+                return;
+            }
+            try {
+                Screen lookup = screenBuilders.lookup(instancePicker)
+                        .withSelectHandler(items -> {
+                            if (!items.isEmpty()) {
+                                Object item = items.iterator().next();
+                                instancePicker.setValue(item);
+                            }
+                        })
+                        .build();
 
-            Screen lookup = screenBuilders.lookup(instancePicker)
-                    .withSelectHandler(items -> {
-                        if (!items.isEmpty()) {
-                            Object item = items.iterator().next();
-                            instancePicker.setValue(item);
-                        }
-                    })
-                    .build();
-
-            lookup.addAfterCloseListener(afterCloseEvent -> instancePicker.focus());
-            lookup.show();
+                lookup.addAfterCloseListener(afterCloseEvent -> instancePicker.focus());
+                lookup.show();
+            } catch (AccessDeniedException ex) {
+                notifications.create(Notifications.NotificationType.ERROR)
+                        .withCaption(messages.getMessage(EntityLogBrowser.class, "entityScreenAccessDeniedMessage"))
+                        .show();
+                return;
+            }
         }
     }
 

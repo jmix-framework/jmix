@@ -18,14 +18,11 @@ package io.jmix.ui;
 
 import com.google.common.base.Strings;
 import com.vaadin.spring.annotation.VaadinSessionScope;
-import io.jmix.core.CoreProperties;
 import io.jmix.core.security.SecurityContextHelper;
 import io.jmix.ui.util.OperationResult;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
-
-import java.util.Collections;
 
 @Component("ui_App")
 @VaadinSessionScope
@@ -54,7 +51,7 @@ public class JmixApp extends App {
         closeWindowsInternal(true);
         clearSettingsCache();
 
-        String contextPath = environment.getProperty(CoreProperties.SERVER_SERVLET_CONTEXTPATH);
+        String contextPath = servletContext == null ? null : servletContext.getContextPath();
         String logoutPath = Strings.isNullOrEmpty(contextPath) ? "/logout" : contextPath + "/logout";
 
         AppUI.getCurrent().getPage().setLocation(logoutPath);

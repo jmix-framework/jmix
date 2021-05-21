@@ -17,15 +17,14 @@
 package io.jmix.ui.theme;
 
 import com.google.common.base.Strings;
-import io.jmix.core.CoreProperties;
 import io.jmix.ui.UiThemeProperties;
 import io.jmix.ui.settings.UserSettingService;
 import io.jmix.ui.sys.AppCookies;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
+import javax.servlet.ServletContext;
 import java.util.List;
 
 @Component("ui_ThemeVariantsManager")
@@ -37,8 +36,8 @@ public class ThemeVariantsManager {
     protected static final String THEME_MODE_COOKIE_PREFIX = "UI_THEME_MODE_";
     protected static final String THEME_SIZE_COOKIE_PREFIX = "UI_THEME_SIZE_";
 
-    @Autowired
-    protected Environment environment;
+    @Autowired(required = false)
+    protected ServletContext servletContext;
 
     @Autowired(required = false)
     protected UserSettingService userSettingService;
@@ -142,8 +141,8 @@ public class ThemeVariantsManager {
     }
 
     protected String getFullCookieName(String prefix) {
-        String contextName = environment.getProperty(CoreProperties.SERVER_SERVLET_CONTEXTPATH);
-        return prefix + (Strings.isNullOrEmpty(contextName) ? "ROOT" : contextName.substring(1));
+        String contextPath = servletContext == null ? null : servletContext.getContextPath();
+        return prefix + (Strings.isNullOrEmpty(contextPath) ? "ROOT" : contextPath.substring(1));
     }
 
     protected void saveUserSetting(String name, String value) {

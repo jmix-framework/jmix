@@ -49,9 +49,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.core.env.Environment;
 
 import javax.annotation.Nullable;
+import javax.servlet.ServletContext;
 import java.util.*;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
@@ -87,8 +87,8 @@ public abstract class App {
 
     @Autowired
     protected CoreProperties coreProperties;
-    @Autowired
-    protected Environment environment;
+    @Autowired(required = false)
+    protected ServletContext servletContext;
     @Autowired
     protected WindowConfig windowConfig;
     @Autowired
@@ -571,7 +571,7 @@ public abstract class App {
     }
 
     protected void forceLogout() {
-        String contextPath = environment.getProperty(CoreProperties.SERVER_SERVLET_CONTEXTPATH);
+        String contextPath = servletContext == null ? null : servletContext.getContextPath();
         String logoutPath = Strings.isNullOrEmpty(contextPath) ? "/logout" : contextPath + "/logout";
 
         AppUI.getCurrent().getPage().setLocation(logoutPath);
@@ -593,7 +593,7 @@ public abstract class App {
 
     @Nullable
     protected String getContextPathName() {
-        String contextPath = environment.getProperty(CoreProperties.SERVER_SERVLET_CONTEXTPATH);
+        String contextPath = servletContext == null ? null : servletContext.getContextPath();
         if (Strings.isNullOrEmpty(contextPath)) {
             return "ROOT";
         }

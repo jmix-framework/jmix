@@ -31,8 +31,6 @@ import java.util.stream.Collectors;
 @ConstructorBinding
 public class CoreProperties {
 
-    public static final String SERVER_SERVLET_CONTEXTPATH = "server.servlet.contextPath";
-
     String webHostName;
     String webPort;
     String confDir;

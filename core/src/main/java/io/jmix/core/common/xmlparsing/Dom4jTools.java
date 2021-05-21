@@ -26,11 +26,13 @@ import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.xml.sax.SAXException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.annotation.Nullable;
+import javax.servlet.ServletContext;
 import javax.xml.parsers.SAXParser;
 import java.io.*;
 import java.util.Map;
@@ -46,7 +48,7 @@ import java.util.function.Function;
 public class Dom4jTools {
 
     protected CoreProperties properties;
-    protected Environment environment;
+    protected ServletContext servletContext;
 
     protected GenericObjectPool<SAXParser> pool;
 
@@ -55,9 +57,9 @@ public class Dom4jTools {
      */
     @Internal
     @Autowired
-    public Dom4jTools(CoreProperties properties, Environment environment) {
+    public Dom4jTools(CoreProperties properties, @Nullable ServletContext servletContext) {
         this.properties = properties;
-        this.environment = environment;
+        this.servletContext = servletContext;
         initPool();
     }
 
@@ -68,7 +70,7 @@ public class Dom4jTools {
         poolConfig.setMaxTotal(poolSize);
         poolConfig.setMaxWaitMillis(properties.getDom4jMaxBorrowWaitMillis());
 
-        String contextPath = environment.getProperty(CoreProperties.SERVER_SERVLET_CONTEXTPATH);
+        String contextPath = servletContext == null ? null : servletContext.getContextPath();
         String jmxName = "dom4JTools-" + (Strings.isNullOrEmpty(contextPath) ? contextPath : contextPath.substring(1));
         poolConfig.setJmxNamePrefix(jmxName);
 
@@ -138,7 +140,7 @@ public class Dom4jTools {
         }
     }
 
-    protected  <T> T withSAXParserFromPool(Function<SAXParser, T> action) {
+    protected <T> T withSAXParserFromPool(Function<SAXParser, T> action) {
         SAXParser parser;
         try {
             parser = pool.borrowObject();

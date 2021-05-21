@@ -36,7 +36,6 @@ import io.jmix.security.role.RowLevelRoleRepository;
 import io.jmix.security.role.assignment.RoleAssignment;
 import io.jmix.security.role.assignment.RoleAssignmentRepository;
 import io.jmix.security.role.assignment.RoleAssignmentRoleType;
-import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
@@ -287,7 +286,7 @@ public abstract class AbstractDatabaseUserRepository<T extends UserDetails> impl
         }
         byte[] passwordBytes = new byte[6];
         random.nextBytes(passwordBytes);
-        return new String(Base64.encodeBase64(passwordBytes), StandardCharsets.UTF_8).replace("=", "");
+        return new String(Base64.getEncoder().encode(passwordBytes), StandardCharsets.UTF_8).replace("=", "");
     }
 
     @EventListener

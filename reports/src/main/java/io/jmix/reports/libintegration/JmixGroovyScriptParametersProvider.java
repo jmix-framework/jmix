@@ -27,6 +27,7 @@ import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.reports.ReportsProperties;
 import org.codehaus.groovy.runtime.MethodClosure;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -50,6 +51,9 @@ public class JmixGroovyScriptParametersProvider implements GroovyScriptParameter
     @Autowired
     protected TimeSource timeSource;
 
+    @Autowired
+    protected ApplicationContext applicationContext;
+
     @Override
     public Map<String, Object> prepareParameters(ReportQuery reportQuery, BandData parentBand, Map<String, Object> reportParameters) {
 
@@ -57,11 +61,11 @@ public class JmixGroovyScriptParametersProvider implements GroovyScriptParameter
         scriptParams.put("reportQuery", reportQuery);
         scriptParams.put("parentBand", parentBand);
         scriptParams.put("params", reportParameters);
-        scriptParams.put("user", currentAuthentication.getUser());
+        scriptParams.put("currentAuthentication", currentAuthentication);
         scriptParams.put("metadata", metadata);
         scriptParams.put("dataManager", dataManager);
         scriptParams.put("timeSource", timeSource);
-//        scriptParams.put("transactional", new MethodClosure(this, "transactional"));
+        scriptParams.put("applicationContext", applicationContext);
         scriptParams.put("validationException", new MethodClosure(this, "validationException"));
 
         return scriptParams;
@@ -70,19 +74,4 @@ public class JmixGroovyScriptParametersProvider implements GroovyScriptParameter
     protected void validationException(String message) {
         throw new ValidationException(message);
     }
-
-//    protected void transactional(Closure closure) {
-//        Transaction tx;
-//        if (!persistence.isInTransaction() && reportingConfig.getUseReadOnlyTransactionForGroovy()) {
-//            tx = persistence.createTransaction(new TransactionParams().setReadOnly(true));
-//        } else {
-//            tx = persistence.getTransaction();
-//        }
-//        try {
-//            closure.call(persistence.getEntityManager());
-//            tx.commit();
-//        } finally {
-//            tx.end();
-//        }
-//    }
 }

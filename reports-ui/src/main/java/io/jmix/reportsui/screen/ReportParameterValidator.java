@@ -27,6 +27,7 @@ import io.jmix.reports.exception.ReportingException;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.groovy.runtime.MethodClosure;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.scripting.ScriptEvaluator;
 import org.springframework.scripting.support.StaticScriptSource;
 import org.springframework.stereotype.Component;
@@ -44,6 +45,8 @@ public class ReportParameterValidator {
     protected ScriptEvaluator scripting;
     @Autowired
     protected CurrentAuthentication currentAuthentication;
+    @Autowired
+    protected ApplicationContext applicationContext;
 
     /**
      * Checking validation for an input parameter field before running the report.
@@ -90,7 +93,8 @@ public class ReportParameterValidator {
     }
 
     protected void addCommonContext(Map<String, Object> context) {
-        context.put("user", currentAuthentication.getUser());
+        context.put("currentAuthentication", currentAuthentication);
+        context.put("applicationContext", applicationContext);
         context.put("dataManager", dataManager);
         context.put("metadata", metadata);
         context.put("invalid", new MethodClosure(this, "invalidThrowMethod"));

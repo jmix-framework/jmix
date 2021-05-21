@@ -34,6 +34,7 @@ import io.jmix.reports.entity.ReportInputParameter;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -55,6 +56,9 @@ public class JmixReporting extends com.haulmont.yarg.reporting.Reporting {
 
     @Autowired
     protected Metadata metadata;
+
+    @Autowired
+    protected ApplicationContext applicationContext;
 
     public void setScripting(Scripting scripting) {
         this.scripting = scripting;
@@ -124,10 +128,9 @@ public class JmixReporting extends com.haulmont.yarg.reporting.Reporting {
         Map<String, Object> scriptParams = new HashMap<>();
         scriptParams.put("params", params);
         scriptParams.put("paramValue", paramValue);
-        //todo
-        //scriptParams.put("persistence", persistence);
         scriptParams.put("dataManager", dataManager);
         scriptParams.put("metadata", metadata);
+        scriptParams.put("applicationContext", applicationContext);
         script = StringUtils.trim(script);
         if (script.endsWith(".groovy")) {
             script = resources.getResourceAsString(script);

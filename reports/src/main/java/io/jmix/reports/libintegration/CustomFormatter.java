@@ -33,6 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.scripting.ScriptEvaluator;
@@ -67,6 +68,9 @@ public class CustomFormatter implements CustomReport {
 
     @Autowired
     protected CoreProperties coreProperties;
+
+    @Autowired
+    protected ApplicationContext applicationContext;
 
     public static final String PARAMS = "params";
     private static final String ROOT_BAND = "rootBand";
@@ -132,6 +136,7 @@ public class CustomFormatter implements CustomReport {
         Map<String, Object> scriptParams = new HashMap<>();
         scriptParams.put(PARAMS, params);
         scriptParams.put(ROOT_BAND, rootBand);
+        scriptParams.put("applicationContext", applicationContext);
 
         if (Pattern.matches(PATH_GROOVY_FILE, customDefinition)) {
             result = scriptEvaluator.evaluate(new ResourceScriptSource(new ClassPathResource(customDefinition)), scriptParams);

@@ -30,9 +30,13 @@ import io.jmix.ui.screen.UiControllerUtils;
 import io.jmix.ui.sys.UiControllerDependencyInjector;
 import io.jmix.ui.sys.UiControllerReflectionInspector;
 import io.jmix.ui.sys.UiControllerReflectionInspector.InjectElement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
 import javax.annotation.Nullable;
+import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Field;
 
 public class CubaUiControllerDependencyInjector extends UiControllerDependencyInjector {
 
@@ -45,6 +49,8 @@ public class CubaUiControllerDependencyInjector extends UiControllerDependencyIn
     @Override
     protected Object getInjectedInstance(Class<?> type, String name, InjectElement injectElement, FrameOwner frameOwner,
                                          ScreenOptions options) {
+        AnnotatedElement element = injectElement.getElement();
+
         if (Config.class.isAssignableFrom(type)) {
             Configuration configuration = (Configuration) applicationContext.getBean(Configuration.NAME);
             //noinspection unchecked
@@ -63,6 +69,9 @@ public class CubaUiControllerDependencyInjector extends UiControllerDependencyIn
             return ((LegacyFrame) frameOwner).getDsContext().getDataSupplier();
         } else if (WindowManager.class.isAssignableFrom(type)) {
             return UiControllerUtils.getScreenContext(frameOwner).getScreens();
+        } else if (Logger.class == type && element instanceof Field) {
+            // injecting logger
+            return LoggerFactory.getLogger(((Field) element).getDeclaringClass());
         }
 
         return super.getInjectedInstance(type, name, injectElement, frameOwner, options);

@@ -22,6 +22,7 @@ import com.haulmont.cuba.gui.components.AbstractWindow;
 import com.haulmont.cuba.gui.data.DataSupplier;
 import com.haulmont.cuba.gui.data.DsContext;
 import com.haulmont.cuba.gui.data.impl.CollectionDatasourceImpl;
+import org.slf4j.Logger;
 
 import javax.inject.Inject;
 
@@ -41,4 +42,7 @@ public class AutowireLegacyParamsScreen extends AbstractWindow {
 
     @Inject
     public WindowManager windowManager;
+
+    @Inject
+    public Logger logger;
 }

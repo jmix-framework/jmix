@@ -39,5 +39,6 @@ class CubaUiControllerDependencyInjectorTest extends UiScreenSpec {
         screen.schedulingConfig != null
         screen.dsContext != null
         screen.window != null
+        screen.logger != null
     }
 }

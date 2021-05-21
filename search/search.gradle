@@ -30,8 +30,9 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-annotations'
     implementation 'com.fasterxml.jackson.module:jackson-module-jaxb-annotations'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml'
-    api 'org.elasticsearch.client:elasticsearch-rest-high-level-client:7.10.2'
+    api 'org.elasticsearch.client:elasticsearch-rest-high-level-client'
 
+    implementation 'org.apache.poi:poi'
     implementation ('org.apache.tika:tika-parsers:1.23') {
         exclude(group: 'junit', module: 'junit')
         exclude(group: 'org.apache.poi', module: 'poi')
@@ -59,6 +60,4 @@ dependencies {
         exclude (group: 'org.bouncycastle', module: 'bcmail-jdk15on')
         exclude (group: 'org.bouncycastle', module: 'bcprov-jdk15on')
     }
-
-    implementation 'org.apache.poi:poi:4.1.2'
 }

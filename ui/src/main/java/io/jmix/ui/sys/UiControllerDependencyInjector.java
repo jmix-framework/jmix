@@ -638,10 +638,6 @@ public class UiControllerDependencyInjector {
             // Injecting a Downloader
             return applicationContext.getBean(Downloader.class);
 
-        } else if (Logger.class == type && element instanceof Field) {
-            // injecting logger
-            return LoggerFactory.getLogger(((Field) element).getDeclaringClass());
-
         } else if (MessageBundle.class == type) {
             return createMessageBundle(element, frameOwner, frame);
 

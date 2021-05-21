@@ -22,6 +22,7 @@ import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.entity.*;
 import io.jmix.core.impl.StandardSerialization;
+import io.jmix.core.metamodel.datatype.impl.EnumClass;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.ui.model.DataContext;
@@ -345,6 +346,9 @@ public class DataContextImpl implements DataContext {
             if (annotatedElement instanceof Field) {
                 Field field = (Field) annotatedElement;
                 field.setAccessible(true);
+                if (value instanceof EnumClass) {
+                    value = ((EnumClass<?>) value).getId();
+                }
                 try {
                     field.set(entity, value);
                 } catch (IllegalAccessException e) {

@@ -46,10 +46,10 @@ import io.swagger.v3.oas.models.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import javax.servlet.ServletContext;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -76,8 +76,8 @@ public class OpenAPIGeneratorImpl implements OpenAPIGenerator {
 
     @Autowired
     protected CoreProperties coreProperties;
-    @Autowired
-    protected Environment environment;
+    @Autowired(required = false)
+    protected ServletContext servletContext;
     @Autowired
     protected Resources resources;
     @Autowired
@@ -126,7 +126,7 @@ public class OpenAPIGeneratorImpl implements OpenAPIGenerator {
     }
 
     protected void buildServer(OpenAPI openAPI) {
-        String contextPath = environment.getProperty(CoreProperties.SERVER_SERVLET_CONTEXTPATH);
+        String contextPath = servletContext == null ? null : servletContext.getContextPath();
 
         StringBuilder url = new StringBuilder();
 
@@ -139,7 +139,7 @@ public class OpenAPIGeneratorImpl implements OpenAPIGenerator {
         }
 
         if (!Strings.isNullOrEmpty(contextPath)) {
-            url.append("/").append(contextPath);
+            url.append(contextPath);
         }
 
         url.append("/rest");

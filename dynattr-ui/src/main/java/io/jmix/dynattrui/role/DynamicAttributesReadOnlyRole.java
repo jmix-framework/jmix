@@ -18,7 +18,9 @@ package io.jmix.dynattrui.role;
 
 import io.jmix.dynattr.model.Category;
 import io.jmix.dynattr.model.CategoryAttribute;
+import io.jmix.dynattr.model.CategoryAttributeConfiguration;
 import io.jmix.dynattr.model.CategoryAttributeValue;
+import io.jmix.dynattrui.impl.model.TargetScreenComponent;
 import io.jmix.security.model.EntityAttributePolicyAction;
 import io.jmix.security.model.EntityPolicyAction;
 import io.jmix.security.model.SecurityScope;
@@ -35,10 +37,14 @@ public interface DynamicAttributesReadOnlyRole {
     @EntityPolicy(entityClass = Category.class, actions = {EntityPolicyAction.READ})
     @EntityPolicy(entityClass = CategoryAttribute.class, actions = {EntityPolicyAction.READ})
     @EntityPolicy(entityClass = CategoryAttributeValue.class, actions = {EntityPolicyAction.READ})
+    @EntityPolicy(entityClass = CategoryAttributeConfiguration.class, actions = {EntityPolicyAction.READ})
+    @EntityPolicy(entityClass = TargetScreenComponent.class, actions = {EntityPolicyAction.READ})
 
     @EntityAttributePolicy(entityClass = Category.class, attributes = "*", action = EntityAttributePolicyAction.VIEW)
     @EntityAttributePolicy(entityClass = CategoryAttribute.class, attributes = "*", action = EntityAttributePolicyAction.VIEW)
     @EntityAttributePolicy(entityClass = CategoryAttributeValue.class, attributes = "*", action = EntityAttributePolicyAction.VIEW)
+    @EntityAttributePolicy(entityClass = CategoryAttributeConfiguration.class, attributes = "*", action = EntityAttributePolicyAction.VIEW)
+    @EntityAttributePolicy(entityClass = TargetScreenComponent.class, attributes = "*", action = EntityAttributePolicyAction.VIEW)
 
     @ScreenPolicy(screenIds = {"dynat_Category.browse", "dynat_Category.edit", "dynat_CategoryAttribute.edit", "dynat_CategoryAttribute.fragment"})
     @MenuPolicy(menuIds = {"dynat_Category.browse"})

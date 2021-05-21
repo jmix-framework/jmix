@@ -21,6 +21,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 import io.jmix.core.*;
+import io.jmix.core.accesscontext.CrudEntityContext;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
@@ -37,6 +38,7 @@ import io.jmix.dynattrui.impl.model.TargetScreenComponent;
 import io.jmix.dynattrui.screen.localization.AttributeLocalizationFragment;
 import io.jmix.ui.*;
 import io.jmix.ui.action.Action;
+import io.jmix.ui.action.valuepicker.ValueClearAction;
 import io.jmix.ui.action.valuespicker.ValuesSelectAction;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.autocomplete.JpqlUiSuggestionProvider;
@@ -53,6 +55,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
+import javax.inject.Named;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
@@ -223,10 +226,16 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
     protected FormatStringsRegistry formatStringsRegistry;
     @Autowired
     protected JpqlUiSuggestionProvider jpqlUiSuggestionProvider;
+    @Autowired
+    protected AccessManager accessManager;
 
     protected AttributeLocalizationFragment localizationFragment;
 
     protected List<TargetScreenComponent> targetScreens = new ArrayList<>();
+    @Named("dependsOnAttributesField.clear")
+    private ValueClearAction dependsOnAttributesFieldClear;
+    @Named("dependsOnAttributesField.select")
+    private ValuesSelectAction dependsOnAttributesFieldSelect;
 
     @Subscribe
     protected void onInit(InitEvent event) {
@@ -467,6 +476,13 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
             dependsOnAttributesField.setValue(getAttributesOptions().stream().filter(o ->
                     getEditedEntity().getConfiguration().getDependsOnAttributeCodes().contains(o.getCode()))
                     .collect(Collectors.toList()));
+        }
+        CrudEntityContext crudEntityContext = new CrudEntityContext(configurationDc.getEntityMetaClass());
+        accessManager.applyRegisteredConstraints(crudEntityContext);
+        if (!crudEntityContext.isUpdatePermitted()) {
+            dependsOnAttributesField.setEnabled(false);
+            dependsOnAttributesFieldClear.setEnabled(false);
+            dependsOnAttributesFieldSelect.setEnabled(false);
         }
     }
 

@@ -90,6 +90,7 @@ dependencies {
     def mapsVersion = baseVersion
     def reportsVersion = baseVersion
     def restVersion = baseVersion
+    def searchVersion = baseVersion
     def securityVersion = baseVersion
     def sessionsVersion = baseVersion
     def translationsVersion = baseVersion
@@ -192,6 +193,12 @@ dependencies {
 
         api "io.jmix.rest:jmix-rest:${snapshotOr(restVersion)}"
         api "io.jmix.rest:jmix-rest-starter:${snapshotOr(restVersion)}"
+
+        api "io.jmix.search:jmix-search:${snapshotOr(searchVersion)}"
+        api "io.jmix.search:jmix-search-starter:${snapshotOr(searchVersion)}"
+        api "io.jmix.search:jmix-search-aws-starter:${snapshotOr(searchVersion)}"
+        api "io.jmix.search:jmix-search-ui:${snapshotOr(searchVersion)}"
+        api "io.jmix.search:jmix-search-ui-starter:${snapshotOr(searchVersion)}"
 
         api "io.jmix.security:jmix-security:${snapshotOr(securityVersion)}"
         api "io.jmix.security:jmix-security-ui:${snapshotOr(securityVersion)}"
@@ -307,6 +314,7 @@ dependencies {
         api 'com.thoughtworks.xstream:xstream:1.4.13'
 
         api 'software.amazon.awssdk:s3:2.15.75'
+        api 'com.amazonaws:aws-java-sdk-core:1.11.1022'
 
         def yargVersion = '2.2.9'
         api "com.haulmont.yarg:yarg-api:$yargVersion"
@@ -315,6 +323,7 @@ dependencies {
         api 'org.jsoup:jsoup:1.11.3'
 
         api 'org.apache.poi:poi:4.1.2'
+        api 'org.apache.tika:tika-parsers:1.23'
 
         api 'org.webjars.bower:pivottable:2.21.0.jmix.0'
         api 'org.webjars:jquery-ui-touch-punch:0.2.3-2'

@@ -16,12 +16,32 @@
 
 package io.jmix.ui.component;
 
+import io.jmix.ui.meta.CanvasIconSize;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioComponent;
+import io.jmix.ui.meta.StudioProperties;
+import io.jmix.ui.meta.StudioProperty;
+
 import javax.annotation.Nullable;
 import java.util.EnumSet;
 
 /**
  * A component displaying an embedded web page. Implemented as a HTML <code>iframe</code> element.
  */
+@StudioComponent(
+        caption = "BrowserFrame",
+        category = "Components",
+        xmlElement = "browserFrame",
+        icon = "io/jmix/ui/icon/component/browserFrame.svg",
+        canvasIconSize = CanvasIconSize.LARGE,
+        canvasIcon = "io/jmix/ui/icon/component/browserFrame_canvas.png",
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/browser-frame.html"
+)
+@StudioProperties(
+        properties = {
+                @StudioProperty(name = "srcdocFile", type = PropertyType.STRING)
+        }
+)
 public interface BrowserFrame extends ResourceView {
     String NAME = "browserFrame";
 
@@ -50,6 +70,12 @@ public interface BrowserFrame extends ResourceView {
      *
      * @param sandbox sandbox
      */
+    @StudioProperty(type = PropertyType.ENUMERATION, options = {
+            "allow-forms", "allow-modals", "allow-orientation-lock", "allow-pointer-lock", "allow-popups",
+            "allow-popups-to-escape-sandbox", "allow-presentation", "allow-same-origin", "allow-scripts",
+            "allow-storage-access-by-user-activation", "allow-top-navigation", "allow-top-navigation-by-user-activation",
+            "allow-downloads-without-user-activation"
+    })
     void setSandbox(Sandbox sandbox);
 
     /**
@@ -139,6 +165,7 @@ public interface BrowserFrame extends ResourceView {
      *
      * @param value inline HTML code
      */
+    @StudioProperty(name = "srcdoc")
     void setSrcdoc(@Nullable String value);
 
     /**
@@ -159,6 +186,10 @@ public interface BrowserFrame extends ResourceView {
      *
      * @param allow allow
      */
+    @StudioProperty(type = PropertyType.ENUMERATION, options = {
+            "autoplay", "camera", "document-domain", "encrypted-media", "fullscreen", "geolocation", "microphone",
+            "midi", "payment", "vr"
+    })
     void setAllow(Allow allow);
 
     /**
@@ -250,6 +281,10 @@ public interface BrowserFrame extends ResourceView {
      *
      * @param referrerPolicy referrerpolicy
      */
+    @StudioProperty(name = "referrerpolicy", type = PropertyType.ENUMERATION, options = {
+            "no-referrer", "no-referrer-when-downgrade", "origin", "origin-when-cross-origin", "same-origin",
+            "strict-origin", "strict-origin-when-cross-origin", "unsafe-url"
+    })
     void setReferrerPolicy(ReferrerPolicy referrerPolicy);
 
     /**

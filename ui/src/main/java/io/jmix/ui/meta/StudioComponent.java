@@ -80,7 +80,7 @@ public @interface StudioComponent {
 
     /**
      * Specifies path to the UI component icon shown on canvas as a placeholder, SVG or PNG.
-     * Relative to the component module root. Used if {@link #canvasBehaviour()} is {@link CanvasBehaviour#COMPONENT}.
+     * Relative to the component module root. Used if {@link #canvasBehaviour()} is {@link CanvasBehaviour#BOX}.
      * @return relative path to the SVG or PNG icon file.
      */
     String canvasIcon() default "";
@@ -106,7 +106,7 @@ public @interface StudioComponent {
     /**
      * @return behaviour of UI component on Screen designer canvas
      */
-    CanvasBehaviour canvasBehaviour() default CanvasBehaviour.COMPONENT;
+    CanvasBehaviour canvasBehaviour() default CanvasBehaviour.BOX;
 
     /**
      * @return type of container layout if {@link #canvasBehaviour()} is {@link CanvasBehaviour#CONTAINER}

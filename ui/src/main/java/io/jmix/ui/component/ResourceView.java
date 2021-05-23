@@ -17,6 +17,9 @@
 package io.jmix.ui.component;
 
 import io.jmix.core.common.event.Subscription;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioElementsGroup;
+import io.jmix.ui.meta.StudioProperty;
 
 import javax.annotation.Nullable;
 import java.util.EventObject;
@@ -40,6 +43,7 @@ public interface ResourceView extends Component, Component.HasCaption, HasContex
      *
      * @param resource Resource instance
      */
+    @StudioElementsGroup(caption = "Resource", xmlElement = "resource")
     void setSource(@Nullable Resource resource);
 
     /**
@@ -58,6 +62,7 @@ public interface ResourceView extends Component, Component.HasCaption, HasContex
      *
      * @param alternateText a short, human-readable description of this component's content
      */
+    @StudioProperty
     void setAlternateText(@Nullable String alternateText);
 
     /**
@@ -113,6 +118,8 @@ public interface ResourceView extends Component, Component.HasCaption, HasContex
          *
          * @param mimeType the MIME type to be set
          */
+        @StudioProperty(type = PropertyType.ENUMERATION, options = {"image/bmp", "image/gif", "image/jpeg", "image/png",
+                "image/svg+xml", "image/tiff"})
         void setMimeType(String mimeType);
 
         /**
@@ -135,6 +142,7 @@ public interface ResourceView extends Component, Component.HasCaption, HasContex
          *
          * @param cacheTime the cache time in milliseconds
          */
+        @StudioProperty
         void setCacheTime(long cacheTime);
 
         /**
@@ -147,6 +155,7 @@ public interface ResourceView extends Component, Component.HasCaption, HasContex
          *
          * @param bufferSize the size of the buffer in bytes
          */
+        @StudioProperty
         void setBufferSize(int bufferSize);
 
         /**

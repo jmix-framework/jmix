@@ -16,13 +16,22 @@
 
 package io.jmix.ui.component;
 
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioProperty;
+
 import java.net.URL;
 
 /**
  * A resource that can be loaded from the given <code>URL</code>.
  */
+@StudioElement(
+        caption = "URL Resource",
+        xmlElement = "url"
+)
 public interface UrlResource extends Resource, ResourceView.HasMimeType {
 
+    @StudioProperty(type = PropertyType.STRING, required = true)
     UrlResource setUrl(URL url);
 
     URL getUrl();

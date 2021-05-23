@@ -18,6 +18,13 @@ package io.jmix.ui.component;
 
 import io.jmix.core.common.event.Subscription;
 import io.jmix.ui.component.data.HasValueSource;
+import io.jmix.ui.meta.CanvasIconSize;
+import io.jmix.ui.meta.PropertiesConstraint;
+import io.jmix.ui.meta.PropertiesGroup;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioComponent;
+import io.jmix.ui.meta.StudioProperties;
+import io.jmix.ui.meta.StudioProperty;
 
 import java.util.EventObject;
 import java.util.function.Consumer;
@@ -25,6 +32,28 @@ import java.util.function.Consumer;
 /**
  * The Image component is intended for displaying graphic content.
  */
+@StudioComponent(
+        caption = "Image",
+        category = "Components",
+        xmlElement = "image",
+        icon = "io/jmix/ui/icon/component/image.svg",
+        canvasIconSize = CanvasIconSize.LARGE,
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/image.html"
+)
+@StudioProperties(
+        properties = {
+                @StudioProperty(name = "editable", type = PropertyType.BOOLEAN),
+                @StudioProperty(name = "required", type = PropertyType.BOOLEAN),
+                @StudioProperty(name = "requiredMessage", type = PropertyType.STRING),
+                @StudioProperty(name = "property", type = PropertyType.PROPERTY_PATH_REF,
+                        options = {"byteArray", "fileRef"}),
+                @StudioProperty(name = "dataContainer", type = PropertyType.DATACONTAINER_REF)
+        },
+        groups = {
+                @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                        properties = {"dataContainer", "property"})
+        }
+)
 public interface Image<T> extends ResourceView, HasValueSource<T> {
     String NAME = "image";
 
@@ -45,6 +74,8 @@ public interface Image<T> extends ResourceView, HasValueSource<T> {
      *
      * @param scaleMode scale mode
      */
+    @StudioProperty(type = PropertyType.ENUMERATION, defaultValue = "NONE",
+            options = {"NONE", "FILL", "CONTAIN", "COVER", "SCALE_MODE"})
     void setScaleMode(ScaleMode scaleMode);
 
     /**
@@ -136,7 +167,7 @@ public interface Image<T> extends ResourceView, HasValueSource<T> {
          * took place. The position is relative to the clicked component.
          *
          * @return The mouse cursor x position relative to the clicked layout
-         *         component or -1 if no x coordinate available
+         * component or -1 if no x coordinate available
          */
         public int getRelativeX() {
             return details.getRelativeX();
@@ -147,7 +178,7 @@ public interface Image<T> extends ResourceView, HasValueSource<T> {
          * took place. The position is relative to the clicked component.
          *
          * @return The mouse cursor y position relative to the clicked layout
-         *         component or -1 if no y coordinate available
+         * component or -1 if no y coordinate available
          */
         public int getRelativeY() {
             return details.getRelativeY();

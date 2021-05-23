@@ -16,15 +16,23 @@
 
 package io.jmix.ui.component;
 
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioProperty;
+
 /**
  * A theme resource, e.g. <code>VAADIN/themes/yourtheme/some/path/image.png</code>.
  */
+@StudioElement(
+        caption = "Theme Resource",
+        xmlElement = "theme"
+)
 public interface ThemeResource extends Resource {
 
     /**
      * @param path path to the theme resource, e.g. "some/path/image.png"
      * @return current ThemeResource instance
      */
+    @StudioProperty(required = true)
     ThemeResource setPath(String path);
 
     String getPath();

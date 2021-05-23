@@ -25,7 +25,7 @@ public enum CanvasBehaviour {
     /**
      * Component is shown on canvas as a simple box with icon.
      */
-    COMPONENT,
+    BOX,
 
     /**
      * Component is shown on canvas as an input field.

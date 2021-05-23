@@ -16,16 +16,24 @@
 
 package io.jmix.ui.component;
 
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioProperty;
+
 /**
  * A resource that is stored in the directory of deployed application, e.g.:
  * <code>${catalina.base}/webapps/app/VAADIN/images/image.png</code>.
  */
+@StudioElement(
+        caption = "RelativePath Resource",
+        xmlElement = "relativePath"
+)
 public interface RelativePathResource extends Resource, ResourceView.HasMimeType {
 
     /**
      * @param path path to the resource, e.g. "VAADIN/images/image.png"
      * @return current RelativePathResource instance
      */
+    @StudioProperty(required = true)
     RelativePathResource setPath(String path);
 
     String getPath();

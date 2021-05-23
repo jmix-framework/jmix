@@ -16,13 +16,22 @@
 
 package io.jmix.ui.component;
 
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioProperty;
+
 import java.io.File;
 
 /**
  * A resource that is stored in the file system as the given <code>File</code>.
  */
+@StudioElement(
+        caption = "File Resource",
+        xmlElement = "file"
+)
 public interface FileResource extends Resource, ResourceView.HasStreamSettings {
 
+    @StudioProperty(name = "path", type = PropertyType.STRING, required = true)
     FileResource setFile(File file);
 
     File getFile();

@@ -167,8 +167,8 @@ public class TemplateEditor extends StandardEditor<ReportTemplate> {
     @Install(to = "outputNamePatternLabel", subject = "contextHelpIconClickHandler")
     protected void outputNamePatternLabelContextHelpIconClickHandler(HasContextHelp.ContextHelpIconClickEvent contextHelpIconClickEvent) {
         dialogs.createMessageDialog()
-                .withCaption(messages.getMessage(getClass(), "template.namePatternText"))
-                .withMessage(messages.getMessage(getClass(), "template.namePatternTextHelp"))
+                .withCaption(messages.getMessage("template.namePatternText"))
+                .withMessage(messages.getMessage("template.namePatternTextHelp"))
                 .withContentMode(ContentMode.HTML)
                 .withModal(false)
                 .withWidth("560px")

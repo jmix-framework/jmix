@@ -104,11 +104,12 @@ public class SaveStepFragment extends StepFragment {
         reportDataDc.getItem().setTemplateFileName(event.getValue());
     }
 
-    @Install(to = "outputFileFormat", subject = "contextHelpIconClickHandler")
-    protected void outputFileFormatContextHelpIconClickHandler(HasContextHelp.ContextHelpIconClickEvent contextHelpIconClickEvent) {
+    @Install(to = "outputFileName", subject = "contextHelpIconClickHandler")
+    protected void outputFileNameContextHelpIconClickHandler(HasContextHelp.ContextHelpIconClickEvent contextHelpIconClickEvent) {
         dialogs.createMessageDialog()
                 .withCaption(messages.getMessage("template.namePatternText"))
                 .withMessage(messages.getMessage("template.namePatternTextHelp"))
+                .withContentMode(ContentMode.HTML)
                 .withModal(false)
                 .withWidth("560px")
                 .show();

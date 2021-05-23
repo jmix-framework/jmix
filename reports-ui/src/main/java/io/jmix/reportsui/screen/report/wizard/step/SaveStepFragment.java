@@ -104,7 +104,7 @@ public class SaveStepFragment extends StepFragment {
 
     @Subscribe("outputFileName")
     public void onOutputFileNameValueChange(HasValue.ValueChangeEvent<String> event) {
-        reportDataDc.getItem().setTemplateFileName(event.getValue());
+        reportDataDc.getItem().setOutputNamePattern(event.getValue());
     }
 
     @Install(to = "outputFileName", subject = "contextHelpIconClickHandler")

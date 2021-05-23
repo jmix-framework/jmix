@@ -40,7 +40,7 @@
                         <row>
                             <label value="msg://outputFileName" align="MIDDLE_LEFT"/>
                             <textField id="outputFileName" width="100%" required="true"
-                                       dataContainer="reportDataDc" property="templateFileName"
+                                       dataContainer="reportDataDc" property="outputNamePattern"
                                        description="msg://outputFileNameHintMsg" maxLength="255">
                                 <validators>
                                     <custom bean="report_OutputFileNameValidator"/>

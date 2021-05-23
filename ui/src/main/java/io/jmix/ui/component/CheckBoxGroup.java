@@ -17,6 +17,13 @@
 package io.jmix.ui.component;
 
 import io.jmix.ui.component.data.Options;
+import io.jmix.ui.meta.CanvasBehaviour;
+import io.jmix.ui.meta.PropertiesConstraint;
+import io.jmix.ui.meta.PropertiesGroup;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioComponent;
+import io.jmix.ui.meta.StudioProperties;
+import io.jmix.ui.meta.StudioProperty;
 
 import java.util.Collection;
 
@@ -25,6 +32,28 @@ import java.util.Collection;
  *
  * @param <I> item type
  */
+@StudioComponent(
+        caption = "CheckBoxGroup",
+        category = "Components",
+        xmlElement = "checkBoxGroup",
+        icon = "io/jmix/ui/icon/component/checkBoxGroup.svg",
+        canvasBehaviour = CanvasBehaviour.OPTIONS_GROUP,
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/check-box-group.html"
+)
+@StudioProperties(
+        properties = {
+                @StudioProperty(name = "dataContainer", type = PropertyType.DATACONTAINER_REF),
+                @StudioProperty(name = "property", type = PropertyType.PROPERTY_PATH_REF),
+                @StudioProperty(name = "optionsContainer", type = PropertyType.COLLECTION_DATACONTAINER_REF),
+                @StudioProperty(name = "captionProperty", type = PropertyType.PROPERTY_PATH_REF)
+        },
+        groups = {
+                @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                        properties = {"dataContainer", "property"}),
+                @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                        properties = {"optionsContainer", "captionProperty"}),
+        }
+)
 public interface CheckBoxGroup<I> extends OptionsField<Collection<I>, I>, Component.Focusable, HasOrientation,
         HasOptionIconProvider<I>, HasOptionDescriptionProvider<I> {
 

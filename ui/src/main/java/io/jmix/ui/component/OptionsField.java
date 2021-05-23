@@ -22,6 +22,8 @@ import io.jmix.ui.component.data.Options;
 import io.jmix.ui.component.data.options.EnumOptions;
 import io.jmix.ui.component.data.options.ListOptions;
 import io.jmix.ui.component.data.options.MapOptions;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioProperty;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -81,6 +83,7 @@ public interface OptionsField<V, I> extends Field<V>, HasOptionCaptionProvider<I
      *
      * @param optionsEnum enum class
      */
+    @StudioProperty(name = "optionsEnum", type = PropertyType.ENUM_CLASS)
     @SuppressWarnings("unchecked")
     default void setOptionsEnum(Class<I> optionsEnum) {
         checkNotNullArgument(optionsEnum);

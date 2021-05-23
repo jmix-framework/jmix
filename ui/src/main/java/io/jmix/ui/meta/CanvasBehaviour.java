@@ -40,5 +40,15 @@ public enum CanvasBehaviour {
     /**
      * Component is shown on canvas as a button.
      */
-    BUTTON
+    BUTTON,
+
+    /**
+     * Component is shown on canvas as a checkBox.
+     */
+    CHECK_BOX,
+
+    /**
+     * Component is shown on canvas as a group of options.
+     */
+    OPTIONS_GROUP
 }

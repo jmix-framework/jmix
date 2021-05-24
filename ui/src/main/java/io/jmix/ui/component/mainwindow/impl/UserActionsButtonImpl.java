@@ -40,7 +40,7 @@ import java.util.function.Consumer;
 
 public class UserActionsButtonImpl extends AbstractComponent<JmixMenuBar> implements UserActionsButton {
 
-    public static final String USERACTIONS_BUTTON_STYLENAME = "c-useractions-button";
+    public static final String USERACTIONS_BUTTON_STYLENAME = "jmix-useractions-button";
 
     protected IconResolver iconResolver;
     protected Icons icons;

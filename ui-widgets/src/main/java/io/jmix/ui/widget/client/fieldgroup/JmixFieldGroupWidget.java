@@ -20,7 +20,7 @@ import io.jmix.ui.widget.client.groupbox.JmixGroupBoxWidget;
 
 public class JmixFieldGroupWidget extends JmixGroupBoxWidget {
 
-    protected static final String CLASSNAME = "c-fieldgroup";
+    protected static final String CLASSNAME = "jmix-fieldgroup";
 
     public JmixFieldGroupWidget() {
         super(CLASSNAME);

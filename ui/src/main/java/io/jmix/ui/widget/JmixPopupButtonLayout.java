@@ -18,7 +18,7 @@ package io.jmix.ui.widget;
 
 public class JmixPopupButtonLayout extends JmixCssActionsLayout {
     public JmixPopupButtonLayout() {
-        setStyleName("c-popupbutton-container");
+        setStyleName("jmix-popupbutton-container");
         setWidthUndefined();
         setMargin(false);
         setSpacing(false);

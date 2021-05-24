@@ -39,7 +39,7 @@ public class JmixAmchartsSceneWidget extends Widget {
 
     public JmixAmchartsSceneWidget() {
         setElement(Document.get().createDivElement());
-        setStyleName("c-amcharts-chart");
+        setStyleName("jmix-amcharts-chart");
 
         sinkEvents(Event.ONCONTEXTMENU | Event.ONCLICK);
     }

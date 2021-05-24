@@ -19,9 +19,9 @@
  * The background color of search field input that is applied while a user entering value.
  * @group searchselect
  */
-$cuba-searchselect-edit-color: scale-color(lighten($v-focus-color, 35%), $saturation: -15%) !default;
+$jmix-searchselect-edit-color: scale-color(lighten($v-focus-color, 35%), $saturation: -15%) !default;
 
-@mixin halo-cuba-searchselect($primary-stylename: c-searchselect) {
+@mixin halo-jmix-searchselect($primary-stylename: jmix-searchselect) {
   .#{$primary-stylename},
   .#{$primary-stylename} .v-filterselect-input {
     padding-right: 0;
@@ -34,6 +34,6 @@ $cuba-searchselect-edit-color: scale-color(lighten($v-focus-color, 35%), $satura
 
   .#{$primary-stylename}.v-filterselect-edit-filter.v-filterselect-focus:not(.v-readonly),
   .#{$primary-stylename}.v-filterselect-edit-filter.v-filterselect-focus:not(.v-readonly) .v-filterselect-input:focus {
-    background-color: $cuba-searchselect-edit-color;
+    background-color: $jmix-searchselect-edit-color;
   }
 }

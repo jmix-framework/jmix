@@ -35,7 +35,7 @@ import java.util.stream.Stream;
 
 public class GroupBoxImpl extends AbstractComponent<JmixGroupBox> implements GroupBoxLayout, InitializingBean {
 
-    private static final String GROUPBOX_PANEL_STYLENAME = "c-panel-groupbox";
+    private static final String GROUPBOX_PANEL_STYLENAME = "jmix-panel-groupbox";
 
     protected List<Component> ownComponents = new ArrayList<>();
 
@@ -57,7 +57,7 @@ public class GroupBoxImpl extends AbstractComponent<JmixGroupBox> implements Gro
         component.setExpandChangeHandler(this::fireExpandStateChange);
 
         JmixVerticalActionsLayout container = new JmixVerticalActionsLayout();
-        container.setStyleName("c-groupbox-inner");
+        container.setStyleName("jmix-groupbox-inner");
         component.setContent(container);
     }
 
@@ -84,7 +84,7 @@ public class GroupBoxImpl extends AbstractComponent<JmixGroupBox> implements Gro
         }
 
         if (newContent != null) {
-            newContent.setStyleName("c-groupbox-inner");
+            newContent.setStyleName("jmix-groupbox-inner");
             component.setContent(newContent);
 
             JmixOrderedActionsLayout currentContent = (JmixOrderedActionsLayout) component.getContent();

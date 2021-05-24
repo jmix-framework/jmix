@@ -24,8 +24,8 @@
 @mixin hover {
   @include halo;
 
-  @include hover-cuba-table-paging;
-  @include hover-cuba-report-wizard;
+  @include hover-jmix-table-paging;
+  @include hover-jmix-report-wizard;
 
   @include hover-simplepagination;
 }

@@ -331,7 +331,7 @@ public abstract class AbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E>, 
     }
 
     protected void initComponentComposition(GridComposition componentComposition) {
-        componentComposition.setPrimaryStyleName("c-data-grid-composition");
+        componentComposition.setPrimaryStyleName("jmix-data-grid-composition");
         componentComposition.setGrid(component);
         componentComposition.addComponent(component);
         componentComposition.setWidthUndefined();
@@ -1848,7 +1848,7 @@ public abstract class AbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E>, 
 
     protected ActionMenuItemWrapper createContextMenuItem(Action action) {
         MenuItem menuItem = contextMenu.addItem(action.getCaption(), null);
-        menuItem.setStyleName("c-cm-item");
+        menuItem.setStyleName("jmix-cm-item");
 
         return new ActionMenuItemWrapper(menuItem, showIconsForPopupMenuActions, iconResolver) {
             @Override
@@ -2128,7 +2128,7 @@ public abstract class AbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E>, 
 
     protected CssLayout createTopPanel() {
         CssLayout topPanel = new CssLayout();
-        topPanel.setStyleName("c-data-grid-top");
+        topPanel.setStyleName("jmix-data-grid-top");
         return topPanel;
     }
 
@@ -2861,7 +2861,7 @@ public abstract class AbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E>, 
         if (isAggregatable()) {
             if (getAggregationPosition() == AggregationPosition.TOP) {
                 headerAggregationRow = component.appendHeaderRow();
-                headerAggregationRow.setStyleName("c-aggregation-row");
+                headerAggregationRow.setStyleName("jmix-aggregation-row");
 
                 for (Column<E> column : columns.values()) {
                     if (column.getAggregation() != null) {
@@ -2872,7 +2872,7 @@ public abstract class AbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E>, 
                 addHeaderRowInternal(headerAggregationRow);
             } else if (getAggregationPosition() == AggregationPosition.BOTTOM) {
                 footerAggregationRow = component.prependFooterRow();
-                footerAggregationRow.setStyleName("c-aggregation-row");
+                footerAggregationRow.setStyleName("jmix-aggregation-row");
 
                 for (Column<E> column : columns.values()) {
                     if (column.getAggregation() != null) {

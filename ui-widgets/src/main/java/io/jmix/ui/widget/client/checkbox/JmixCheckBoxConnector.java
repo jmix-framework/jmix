@@ -31,8 +31,8 @@ import com.vaadin.shared.ui.Connect;
 @Connect(value = JmixCheckBox.class, loadStyle = Connect.LoadStyle.EAGER)
 public class JmixCheckBoxConnector extends CheckBoxConnector {
 
-    public static final String CONTEXT_HELP_CLASSNAME = "c-context-help-button";
-    public static final String CONTEXT_HELP_CLICKABLE_CLASSNAME = "c-context-help-button-clickable";
+    public static final String CONTEXT_HELP_CLASSNAME = "jmix-context-help-button";
+    public static final String CONTEXT_HELP_CLICKABLE_CLASSNAME = "jmix-context-help-button-clickable";
 
     @Override
     public boolean delegateCaptionHandling() {

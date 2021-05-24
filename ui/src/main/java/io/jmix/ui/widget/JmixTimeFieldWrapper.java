@@ -35,9 +35,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class JmixTimeFieldWrapper extends CustomField<LocalTime> {
 
-    public static final String TIME_FIELD_STYLENAME = "c-timefield-wrapper";
-    public static final String TIME_FIELD_LAYOUT_STYLENAME = "c-timefield-layout";
-    public static final String AM_PM_FIELD_STYLE_NAME = "c-timefield-ampm";
+    public static final String TIME_FIELD_STYLENAME = "jmix-timefield-wrapper";
+    public static final String TIME_FIELD_LAYOUT_STYLENAME = "jmix-timefield-layout";
+    public static final String AM_PM_FIELD_STYLE_NAME = "jmix-timefield-ampm";
 
     protected JmixCssActionsLayout container;
     protected JmixTimeField timeField;

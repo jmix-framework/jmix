@@ -38,7 +38,7 @@ import java.util.function.Function;
 public class JmixSideMenuWidget extends FocusableFlowPanel
         implements KeyPressHandler, KeyDownHandler, FocusHandler, HasEnabled, BlurHandler {
 
-    protected static final String CLASS_NAME = "c-sidemenu";
+    protected static final String CLASS_NAME = "jmix-sidemenu";
 
     protected boolean enabled = true;
     protected boolean focused = true;

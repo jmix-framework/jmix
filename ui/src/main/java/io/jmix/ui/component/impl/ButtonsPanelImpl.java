@@ -26,7 +26,7 @@ import java.util.function.Consumer;
 
 public class ButtonsPanelImpl extends FlowBoxLayoutImpl implements ButtonsPanel, VisibilityChangeNotifier {
 
-    public static final String BUTTONS_PANEL_STYLENAME = "c-buttons-panel";
+    public static final String BUTTONS_PANEL_STYLENAME = "jmix-buttons-panel";
 
     protected boolean alwaysVisible = false;
 

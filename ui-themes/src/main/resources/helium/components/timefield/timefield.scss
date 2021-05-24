@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-$c-timefield-hour-width: 44px;
-$c-timefield-minute-width: 64px;
-$c-timefield-second-width: 84px;
+$jmix-timefield-hour-width: 44px;
+$jmix-timefield-minute-width: 64px;
+$jmix-timefield-second-width: 84px;
 
-@mixin he-timefield($primary-stylename: c-timefield) {
+@mixin he-timefield($primary-stylename: jmix-timefield) {
   @include he-textfield($primary-stylename);
   @include he-timefield-width-style($primary-stylename: $primary-stylename);
 
@@ -65,24 +65,24 @@ $c-timefield-second-width: 84px;
   }
 }
 
-@mixin he-timefield-width-style($primary-stylename : c-timefield,
+@mixin he-timefield-width-style($primary-stylename : jmix-timefield,
                                 $scaling-factor    : 1) {
   .#{$primary-stylename}-hour,
   &.#{$primary-stylename}-hour {
-    width: round($c-timefield-hour-width * $scaling-factor);
+    width: round($jmix-timefield-hour-width * $scaling-factor);
   }
 
   .#{$primary-stylename}-minute,
   &.#{$primary-stylename}-minute {
-    width: round($c-timefield-minute-width * $scaling-factor);
+    width: round($jmix-timefield-minute-width * $scaling-factor);
   }
 
   .#{$primary-stylename}-second,
   &.#{$primary-stylename}-second {
-    width: round($c-timefield-second-width * $scaling-factor);
+    width: round($jmix-timefield-second-width * $scaling-factor);
   }
 
-  .c-timefield-ampm {
-    width: round($c-timefield-ampm-width * $scaling-factor);
+  .jmix-timefield-ampm {
+    width: round($jmix-timefield-ampm-width * $scaling-factor);
   }
 }

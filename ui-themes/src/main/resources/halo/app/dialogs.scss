@@ -3,11 +3,11 @@
  * Use is subject to license terms, see http://www.cuba-platform.com/commercial-software-license for details.
  */
 
-@mixin cuba-dialogs() {
-  .c-app-message-dialog-text.v-has-width {
+@mixin jmix-dialogs() {
+  .jmix-app-message-dialog-text.v-has-width {
     overflow-x: auto;
   }
-  .c-app-message-dialog-text.v-has-height {
+  .jmix-app-message-dialog-text.v-has-height {
     overflow-y: auto;
   }
 }

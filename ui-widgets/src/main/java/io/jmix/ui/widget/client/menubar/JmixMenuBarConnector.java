@@ -40,9 +40,9 @@ public class JmixMenuBarConnector extends MenuBarConnector {
         super.layout();
 
         if (getState().vertical) {
-            getWidget().addStyleName("c-menubar-vertical");
+            getWidget().addStyleName("jmix-menubar-vertical");
         } else {
-            getWidget().removeStyleName("c-menubar-vertical");
+            getWidget().removeStyleName("jmix-menubar-vertical");
         }
     }
 

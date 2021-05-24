@@ -35,16 +35,16 @@ public class TableEmptyState implements EventListener {
 
     public TableEmptyState() {
         container = Document.get().createDivElement();
-        container.setClassName("c-table-empty-state");
+        container.setClassName("jmix-table-empty-state");
 
         messageBox = Document.get().createDivElement();
-        messageBox.setClassName("c-table-empty-state-message-box");
+        messageBox.setClassName("jmix-table-empty-state-message-box");
 
         messageLabel = Document.get().createDivElement();
-        messageLabel.setClassName("c-table-empty-state-message");
+        messageLabel.setClassName("jmix-table-empty-state-message");
 
         linkMessageLabel = Document.get().createSpanElement();
-        linkMessageLabel.setClassName("c-table-empty-state-link-message v-button-link");
+        linkMessageLabel.setClassName("jmix-table-empty-state-link-message v-button-link");
 
         container.appendChild(messageBox);
 

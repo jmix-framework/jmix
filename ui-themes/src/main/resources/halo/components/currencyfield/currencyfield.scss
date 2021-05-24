@@ -15,7 +15,7 @@
  *
  */
 
-@mixin halo-cuba-currencyfield($primary-stylename: c-currencyfield) {
+@mixin halo-jmix-currencyfield($primary-stylename: jmix-currencyfield) {
   .#{$primary-stylename} {
     display: inline-table;
     height: $v-unit-size;
@@ -37,9 +37,9 @@
       @include currencyfield-size-style($v-unit-size--tiny, $v-font-size--tiny);
     }
 
-    & > .c-currencyfield-layout {
-      & > .c-currencyfield-text,
-      & > .ie9-input-wrap > .c-currencyfield-text {
+    & > .jmix-currencyfield-layout {
+      & > .jmix-currencyfield-text,
+      & > .ie9-input-wrap > .jmix-currencyfield-text {
         height: 100%;
       }
     }
@@ -123,15 +123,15 @@
   }
 }
 
-@mixin currencyfield-size-style($c-unit-size, $font-size) {
-  height: $c-unit-size;
+@mixin currencyfield-size-style($jmix-unit-size, $font-size) {
+  height: $jmix-unit-size;
 
-  .c-currencyfield-text {
-    @include valo-textfield-style($unit-size: $c-unit-size, $states: normal, $background-color: null, $border: null, $gradient: null, $bevel: null, $shadow: null);
+  .jmix-currencyfield-text {
+    @include valo-textfield-style($unit-size: $jmix-unit-size, $states: normal, $background-color: null, $border: null, $gradient: null, $bevel: null, $shadow: null);
     font-size: $font-size;
   }
 
-  .c-currencyfield-currency {
+  .jmix-currencyfield-currency {
     font-size: $font-size;
   }
 }

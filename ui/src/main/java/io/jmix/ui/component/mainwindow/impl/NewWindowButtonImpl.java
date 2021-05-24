@@ -31,7 +31,7 @@ import java.net.URL;
 
 public class NewWindowButtonImpl extends AbstractComponent<JmixButton> implements NewWindowButton {
 
-    public static final String NEW_WINDOW_BUTTON_STYLENAME = "c-newwindow-button";
+    public static final String NEW_WINDOW_BUTTON_STYLENAME = "jmix-newwindow-button";
 
     public NewWindowButtonImpl() {
         component = new JmixButton();

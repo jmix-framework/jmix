@@ -26,7 +26,7 @@ public class JmixSearchSelect<V> extends JmixComboBox<V> {
     protected Consumer<String> filterHandler = null;
 
     public JmixSearchSelect() {
-        setStyleName("c-searchselect");
+        setStyleName("jmix-searchselect");
     }
 
     @Override

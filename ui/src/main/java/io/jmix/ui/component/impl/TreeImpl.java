@@ -175,7 +175,7 @@ public class TreeImpl<E>
     }
 
     protected void initComponentComposition(TreeComposition composition) {
-        composition.setPrimaryStyleName("c-tree-composition");
+        composition.setPrimaryStyleName("jmix-tree-composition");
         composition.setTree(component);
         composition.setWidthUndefined();
 
@@ -457,7 +457,7 @@ public class TreeImpl<E>
 
     protected AbstractDataGrid.ActionMenuItemWrapper createContextMenuItem(Action action) {
         MenuItem menuItem = contextMenu.addItem(action.getCaption(), null);
-        menuItem.setStyleName("c-cm-item");
+        menuItem.setStyleName("jmix-cm-item");
 
         return new AbstractDataGrid.ActionMenuItemWrapper(menuItem, showIconsForPopupMenuActions, iconResolver) {
             @Override
@@ -695,7 +695,7 @@ public class TreeImpl<E>
         HorizontalLayout topPanel = new HorizontalLayout();
         topPanel.setSpacing(false);
         topPanel.setMargin(false);
-        topPanel.setStyleName("c-tree-top");
+        topPanel.setStyleName("jmix-tree-top");
         return topPanel;
     }
 
@@ -1267,7 +1267,7 @@ public class TreeImpl<E>
 
         protected com.vaadin.ui.CssLayout createTreeWrapper() {
             com.vaadin.ui.CssLayout treeWrapper = new com.vaadin.ui.CssLayout();
-            treeWrapper.setStyleName("c-tree-wrapper");
+            treeWrapper.setStyleName("jmix-tree-wrapper");
             return treeWrapper;
         }
     }

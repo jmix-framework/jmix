@@ -101,7 +101,7 @@
   }
 }
 
-@mixin he-cuba-contextmenu($primary-stylename: c-cm-container) {
+@mixin he-jmix-contextmenu($primary-stylename: jmix-cm-container) {
   .#{$primary-stylename} {
     @include he-box-shadow(--selection-overlay-shadow);
     background: var(--overlay-background-color);

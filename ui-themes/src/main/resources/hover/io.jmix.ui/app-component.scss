@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2008-2016 Haulmont.
+/*!
+ * Copyright (c) 2008-2018 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,5 +14,8 @@
  * limitations under the License.
  */
 
-/* Empty configuration for Vaadin Addons styles.
-   Prevents automatic lookup of addons styles for com.haulmont.cuba app component. */
+@import "../hover";
+
+@mixin io_jmix_ui {
+  @include hover;
+}

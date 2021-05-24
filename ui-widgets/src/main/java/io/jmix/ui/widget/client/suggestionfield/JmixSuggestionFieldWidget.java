@@ -436,7 +436,7 @@ public class JmixSuggestionFieldWidget extends Composite implements HasEnabled, 
 
     protected class SuggestionPopup extends VOverlay implements PopupPanel.PositionCallback {
         protected static final int Z_INDEX = 30000;
-        protected static final String C_HAS_WIDTH = "c-has-width";
+        protected static final String C_HAS_WIDTH = "jmix-has-width";
         protected static final String POPUP_PARENT_WIDTH = "parent";
         protected static final String POPUP_AUTO_WIDTH = "auto";
 

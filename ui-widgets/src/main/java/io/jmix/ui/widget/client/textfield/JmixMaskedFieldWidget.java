@@ -33,9 +33,9 @@ import java.util.logging.Logger;
 
 public class JmixMaskedFieldWidget extends VTextField implements ShortcutActionHandler.ShortcutActionHandlerOwner {
 
-    public static final String CLASSNAME = "c-maskedfield";
+    public static final String CLASSNAME = "jmix-maskedfield";
 
-    protected static final String EMPTY_FIELD_CLASS = "c-maskedfield-empty";
+    protected static final String EMPTY_FIELD_CLASS = "jmix-maskedfield-empty";
 
     protected static final char PLACE_HOLDER = '_';
 
@@ -89,14 +89,14 @@ public class JmixMaskedFieldWidget extends VTextField implements ShortcutActionH
 
             if (!isReadOnly() && isEnabled()) {
                 if (mask != null && nullRepresentation != null && nullRepresentation.equals(super.getText())) {
-                    addStyleName("c-focus-move");
+                    addStyleName("jmix-focus-move");
 
                     Scheduler.get().scheduleDeferred(() -> {
                         if (!isReadOnly() && isEnabled() && focused) {
                             setSelectionRange(getPreviousPos(0), 0);
                         }
 
-                        removeStyleName("c-focus-move");
+                        removeStyleName("jmix-focus-move");
                     });
                 }
             }

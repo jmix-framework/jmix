@@ -20,7 +20,7 @@ import com.vaadin.shared.ui.customfield.CustomFieldState;
 
 public class JmixResizableTextAreaWrapperState extends CustomFieldState {
     {
-        primaryStyleName = "c-resizabletextarea-wrapper";
+        primaryStyleName = "jmix-resizabletextarea-wrapper";
     }
 
     public ResizeDirection resizableDirection = ResizeDirection.BOTH;

@@ -25,9 +25,9 @@ import java.util.Objects;
 
 public class JmixTimeFieldWidget extends JmixMaskedFieldWidget {
 
-    public static final String CLASSNAME = "c-timefield";
+    public static final String CLASSNAME = "jmix-timefield";
 
-    protected static final String EMPTY_FIELD_CLASSNAME = "c-timefield-empty";
+    protected static final String EMPTY_FIELD_CLASSNAME = "jmix-timefield-empty";
 
     protected TimeResolution resolution = TimeResolution.HOUR;
     protected String timeFormat;

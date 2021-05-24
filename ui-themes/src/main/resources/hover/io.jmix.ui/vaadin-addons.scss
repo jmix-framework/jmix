@@ -1,5 +1,5 @@
-/*!
- * Copyright 2020 Haulmont.
+/*
+ * Copyright (c) 2008-2016 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,5 @@
  * limitations under the License.
  */
 
-@import "../helium";
-
-@mixin com_haulmont_cuba {
-  @include helium;
-}
+/* Empty configuration for Vaadin Addons styles.
+   Prevents automatic lookup of addons styles for io.jmix.ui app component. */

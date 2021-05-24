@@ -15,7 +15,7 @@
  *
  */
 
-@mixin halo-cuba-dateintervaleditor($primary-stylename: c-dateintervaleditor) {
+@mixin halo-jmix-dateintervaleditor($primary-stylename: jmix-dateintervaleditor) {
   .#{$primary-stylename} {
     display: inline-table;
   }
@@ -112,7 +112,7 @@
     }
   }
 
-  .#{$primary-stylename} .v-slot-c-dateintervaleditor-button:last-child > .v-button.#{$primary-stylename}-button {
+  .#{$primary-stylename} .v-slot-jmix-dateintervaleditor-button:last-child > .v-button.#{$primary-stylename}-button {
     border-top-right-radius: $v-border-radius;
     border-bottom-right-radius: $v-border-radius;
 

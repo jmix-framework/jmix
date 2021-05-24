@@ -28,7 +28,7 @@ import com.vaadin.client.ui.VComboBox;
 
 public class JmixSearchSelectWidget extends JmixComboBoxWidget {
 
-    protected static final String CLASSNAME = "c-searchselect";
+    protected static final String CLASSNAME = "jmix-searchselect";
 
     protected static final String INPUT_STATE = "edit-filter";
 

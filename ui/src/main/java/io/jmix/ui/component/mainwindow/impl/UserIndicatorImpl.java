@@ -34,7 +34,7 @@ import javax.annotation.Nullable;
 
 public class UserIndicatorImpl extends CompositeComponent<CssLayout> implements UserIndicator {
 
-    protected static final String USER_INDICATOR_STYLENAME = "c-userindicator";
+    protected static final String USER_INDICATOR_STYLENAME = "jmix-userindicator";
 
     protected MetadataTools metadataTools;
     protected UiComponents uiComponents;
@@ -78,7 +78,7 @@ public class UserIndicatorImpl extends CompositeComponent<CssLayout> implements 
         UserDetails user = authentication.getUser();
 
         userNameLabel = uiComponents.create(Label.of(UserDetails.class));
-        userNameLabel.setStyleName("c-user-select-label");
+        userNameLabel.setStyleName("jmix-user-select-label");
         userNameLabel.setFormatter(this::generateUserCaption);
         userNameLabel.setValue(user);
 

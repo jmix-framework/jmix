@@ -1110,7 +1110,7 @@ public class ScreensImpl implements Screens {
                 getConfiguredWorkArea().generateUrlStateMark()));
 
         TabWindowContainer windowContainer = new TabWindowContainerImpl();
-        windowContainer.setPrimaryStyleName("c-app-window-wrap");
+        windowContainer.setPrimaryStyleName("jmix-app-window-wrap");
         windowContainer.setSizeFull();
 
         windowContainer.setBreadCrumbs(breadCrumbs);
@@ -1124,7 +1124,7 @@ public class ScreensImpl implements Screens {
         AppWorkAreaImpl workArea = getConfiguredWorkArea();
 
         if (workArea.getMode() == Mode.TABBED) {
-            windowContainer.addStyleName("c-app-tabbed-window");
+            windowContainer.addStyleName("jmix-app-tabbed-window");
 
             TabSheetBehaviour tabSheet = workArea.getTabbedWindowContainer().getTabSheetBehaviour();
 
@@ -1159,7 +1159,7 @@ public class ScreensImpl implements Screens {
             tabSheet.setTabCloseHandler(windowContainer, this::handleTabWindowClose);
             tabSheet.setSelectedTab(windowContainer);
         } else {
-            windowContainer.addStyleName("c-app-single-window");
+            windowContainer.addStyleName("jmix-app-single-window");
 
             JmixSingleModeContainer mainLayout = workArea.getSingleWindowContainer();
 

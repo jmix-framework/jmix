@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@mixin he-generic-filter($primary-stylename: c-generic-filter) {
+@mixin he-generic-filter($primary-stylename: jmix-generic-filter) {
   .#{$primary-stylename} {
 
     .filter-control-with-top-border {
@@ -31,7 +31,7 @@
         @include he-button-default-style();
       }
 
-      @if $cuba-filter-friendly-search-button {
+      @if $jmix-filter-friendly-search-button {
         .v-button.filter-search-button,
         .v-button.v-popupbutton {
           @include he-button-friendly-style();
@@ -106,10 +106,10 @@
     height: $unit-size !important; // fix for high dpi
   }
 
-  .c-maxresults {
+  .jmix-maxresults {
     height: $unit-size !important; // fix for high dpi
   }
-  .c-maxresults-label {
+  .jmix-maxresults-label {
     line-height: $unit-size;
   }
 }

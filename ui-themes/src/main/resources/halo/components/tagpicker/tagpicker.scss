@@ -113,24 +113,24 @@ $jmix-tagpicker-tag-border-radius: $jmix-taglabel-border-radius !default;
       display: flex;
     }
 
-    .c-pickerfield-layout {
+    .jmix-pickerfield-layout {
       min-width: $jmix-tagpicker-tags-sides-fieldlayout-min-width;
       max-width: $jmix-tagpicker-tags-sides-fieldlayout-max-width;
     }
   }
 
-  .#{$primary-stylename}.no-actions .c-pickerfield-layout {
+  .#{$primary-stylename}.no-actions .jmix-pickerfield-layout {
     display: flex;
   }
 
   .v-ie & {
-    .#{$primary-stylename}.no-actions .c-pickerfield-combobox {
+    .#{$primary-stylename}.no-actions .jmix-pickerfield-combobox {
       display: inline-block;
     }
 
     .#{$primary-stylename}:not(.v-readonly).tags-left,
     .#{$primary-stylename}:not(.v-readonly).tags-right {
-      .c-pickerfield-layout {
+      .jmix-pickerfield-layout {
         display: flex;
         flex-basis: 50%;
       }

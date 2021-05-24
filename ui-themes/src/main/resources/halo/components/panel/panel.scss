@@ -16,7 +16,7 @@
  */
 
 @mixin halo-panel($primary-stylename : v-panel) {
-  .#{$primary-stylename}.c-shrink-empty {
+  .#{$primary-stylename}.jmix-shrink-empty {
     font-size: 0 !important;
 
     & > .#{$primary-stylename}-captionwrap > .#{$primary-stylename}-caption,
@@ -25,8 +25,8 @@
     }
   }
 
-  .#{$primary-stylename}.c-hide-overflow,
-  .#{$primary-stylename}.c-hide-overflow > .#{$primary-stylename}-content {
+  .#{$primary-stylename}.jmix-hide-overflow,
+  .#{$primary-stylename}.jmix-hide-overflow > .#{$primary-stylename}-content {
     overflow: hidden;
   }
 }

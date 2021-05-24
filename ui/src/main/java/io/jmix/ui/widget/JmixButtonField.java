@@ -29,7 +29,7 @@ public class JmixButtonField<V> extends CustomField<V> {
     protected V value;
 
     public JmixButtonField() {
-        setPrimaryStyleName("c-buttonfield");
+        setPrimaryStyleName("jmix-buttonfield");
     }
 
     @Override

@@ -15,5 +15,5 @@
  */
 
 @mixin he-popupbutton($primary-stylename: v-popupbutton) {
-  @include he-cuba-contextmenu($primary-stylename + "-popup");
+  @include he-jmix-contextmenu($primary-stylename + "-popup");
 }

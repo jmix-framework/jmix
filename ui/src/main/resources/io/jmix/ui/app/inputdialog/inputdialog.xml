@@ -19,7 +19,7 @@
     <layout expand="actionsLayout" spacing="true">
         <form id="form" width="100%"/>
         <hbox id="actionsLayout" width="100%" expand="spacer" spacing="true" align="BOTTOM_RIGHT"
-              stylename="c-app-input-dialog-actions-layout">
+              stylename="jmix-app-input-dialog-actions-layout">
             <label id="spacer"/>
         </hbox>
     </layout>

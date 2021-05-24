@@ -2,15 +2,15 @@
  * The background color of suggestion field input that is applied while a user entering value.
  * @group suggestionfield
  */
-$cuba-suggestionfield-edit-color: scale-color(lighten($v-focus-color, 35%), $saturation: -15%) !default;
+$jmix-suggestionfield-edit-color: scale-color(lighten($v-focus-color, 35%), $saturation: -15%) !default;
 
-@mixin halo-cuba-suggestionfield($primary-stylename: c-suggestionfield) {
+@mixin halo-jmix-suggestionfield($primary-stylename: jmix-suggestionfield) {
   .#{$primary-stylename} {
     @include valo-textfield-style;
     width: $v-default-field-width;
 
     &.modified {
-      background-color: $cuba-suggestionfield-edit-color;
+      background-color: $jmix-suggestionfield-edit-color;
     }
 
     &.tiny {
@@ -60,7 +60,7 @@ $cuba-suggestionfield-edit-color: scale-color(lighten($v-focus-color, 35%), $sat
     overflow-y: auto;
     outline: 0px;
 
-    &.c-has-width {
+    &.jmix-has-width {
       min-width: auto;
       max-width: none;
     }

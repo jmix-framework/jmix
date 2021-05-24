@@ -15,19 +15,19 @@
  */
 
 @mixin he-folders-pane() {
-  .c-folders-pane {
+  .jmix-folders-pane {
     background: var(--folders-pane-background-color);
   }
 
-  .c-main-menu.v-menubar > .v-menubar-menuitem.v-menubar-menuitem-folders-pane-icon,
-  .c-main-menu.v-menubar > .v-menubar-menuitem.v-menubar-menuitem-folders-pane-icon-active {
+  .jmix-main-menu.v-menubar > .v-menubar-menuitem.v-menubar-menuitem-folders-pane-icon,
+  .jmix-main-menu.v-menubar > .v-menubar-menuitem.v-menubar-menuitem-folders-pane-icon-active {
     &:before {
       color: var(--text-main-color);
     }
   }
 
-  .c-main-menu.v-menubar > .v-menubar-menuitem.v-menubar-menuitem-folders-pane-icon-active,
-  .c-main-menu.v-menubar > .v-menubar-menuitem.v-menubar-menuitem-folders-pane-icon-active:hover {
+  .jmix-main-menu.v-menubar > .v-menubar-menuitem.v-menubar-menuitem-folders-pane-icon-active,
+  .jmix-main-menu.v-menubar > .v-menubar-menuitem.v-menubar-menuitem-folders-pane-icon-active:hover {
     // TODO: gg, implement
   }
 
@@ -49,13 +49,13 @@
 @mixin he-folders-pane-size-style($unit-size      : $v-unit-size,
                                   $font-size      : $v-font-size,
                                   $scaling-factor : 1) {
-  .c-folders-pane-caption {
+  .jmix-folders-pane-caption {
     line-height: $unit-size;
     font-size: round($v-font-size--h3 * $scaling-factor);
   }
 
-  .c-main-menu.v-menubar > .v-menubar-menuitem.v-menubar-menuitem-folders-pane-icon,
-  .c-main-menu.v-menubar > .v-menubar-menuitem.v-menubar-menuitem-folders-pane-icon-active {
+  .jmix-main-menu.v-menubar > .v-menubar-menuitem.v-menubar-menuitem-folders-pane-icon,
+  .jmix-main-menu.v-menubar > .v-menubar-menuitem.v-menubar-menuitem-folders-pane-icon-active {
     &:before {
       font-size: $font-size;
     }

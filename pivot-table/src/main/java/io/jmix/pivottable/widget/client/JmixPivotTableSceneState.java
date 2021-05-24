@@ -23,7 +23,7 @@ import java.util.Map;
 public class JmixPivotTableSceneState extends AbstractComponentState {
 
     {
-        primaryStyleName = "c-pivot-table";
+        primaryStyleName = "jmix-pivot-table";
     }
 
     public static final String REFRESH_EVENT = "r";

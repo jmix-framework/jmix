@@ -25,7 +25,7 @@ import java.util.Set;
 public class JmixFileUploadState extends TabIndexState {
 
     {
-        primaryStyleName = "c-fileupload";
+        primaryStyleName = "jmix-fileupload";
     }
 
     @NoLayout

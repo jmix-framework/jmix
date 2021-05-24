@@ -67,7 +67,7 @@ public class LayoutAnalyzerContextMenuProvider {
                     layoutAnalyzerScreen.show();
                 }
             });
-            menuItem.setStyleName("c-cm-item");
+            menuItem.setStyleName("jmix-cm-item");
         }
     }
 }

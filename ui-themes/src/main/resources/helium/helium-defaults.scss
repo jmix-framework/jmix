@@ -68,8 +68,8 @@ $v-table-header-font-size--large: $v-font-size--large;
 
 $v-table-cell-padding-horizontal: 16px;
 
-$cuba-table-highlight-hover-row: true;
-$cuba-table-header-font-weight: 600;
+$jmix-table-highlight-hover-row: true;
+$jmix-table-header-font-weight: 600;
 
 $v-grid-border: $v-grid-border-size solid var(--grid-border-color);
 
@@ -87,8 +87,8 @@ $v-grid-details-border-top-stripe: $v-grid-border;
 $v-grid-details-border-bottom: $v-grid-border;
 $v-grid-details-border-bottom-stripe: $v-grid-border;
 
-$cuba-datagrid-header-font-weight: 600;
-$cuba-datagrid-highlight-hover-row: true;
+$jmix-datagrid-header-font-weight: 600;
+$jmix-datagrid-highlight-hover-row: true;
 
 $v-focus-style: none;
 $v-error-focus-style: none;
@@ -105,24 +105,24 @@ $v-disabled-opacity: 1;
 $v-window-shadow: 0px 0px 1px rgba(0, 0, 0, 0.1), 0px 2px 6px rgba(79, 92, 120, 0.15), 0px 16px 24px rgba(79, 92, 120, 0.25);
 $v-window-nonmodal-shadow: $v-window-shadow;
 
-$cuba-window-modal-header-font-weight: 600;
-$cuba-window-modal-header-font-size: 22px;
-$cuba-window-modal-header-height: ceil($v-unit-size * 1.88);
-$cuba-window-modal-header-buttons-line-height: $v-unit-size;
-$cuba-window-modal-header-line-height: $cuba-window-modal-header-height;
+$jmix-window-modal-header-font-weight: 600;
+$jmix-window-modal-header-font-size: 22px;
+$jmix-window-modal-header-height: ceil($v-unit-size * 1.88);
+$jmix-window-modal-header-buttons-line-height: $v-unit-size;
+$jmix-window-modal-header-line-height: $jmix-window-modal-header-height;
 
 $v-tooltip-border-radius: round($v-border-radius / 2);
 $v-tooltip-box-shadow: $v-window-shadow;
 
-$cuba-sidemenu-item-font-weight: 600;
-$cuba-sidemenu-separate-items: false;
-$cuba-sidemenu-timezone-font-weight: 600;
-$cuba-sidemenu-title-font-size: $v-font-size--h3;
-$cuba-sidemenu-title-font-weight: 600;
-$cuba-sidemenu-title-gradient: false;
+$jmix-sidemenu-item-font-weight: 600;
+$jmix-sidemenu-separate-items: false;
+$jmix-sidemenu-timezone-font-weight: 600;
+$jmix-sidemenu-title-font-size: $v-font-size--h3;
+$jmix-sidemenu-title-font-weight: 600;
+$jmix-sidemenu-title-gradient: false;
 // TODO: gg, remove after cuba-platform/cuba#2741 is fixed
-$cuba-sidemenu-title-background: #FF0000;
-$cuba-sidemenu-userindicator-font-weight: 600;
+$jmix-sidemenu-title-background: #FF0000;
+$jmix-sidemenu-userindicator-font-weight: 600;
 
 /**
  * Whether to enable show/hide animations for dialog windows.
@@ -138,30 +138,30 @@ $v-show-required-indicators: true;
  * Enables custom colored scrollbars for webkit/blink browsers.
  * @group scrollbar
  */
-$cuba-scrollbars-style-enabled: false !default;
+$jmix-scrollbars-style-enabled: false !default;
 /**
  * Whether buttons should be placed in one row or can wrap onto multiple rows.
  * @group buttonspanel
  */
-$cuba-buttonspanel-flow: true !default;
+$jmix-buttonspanel-flow: true !default;
 /**
  *  Whether to show a border for the Tree component
  */
-$cuba-show-tree-border: true !default;
+$jmix-show-tree-border: true !default;
 
-$cuba-filter-friendly-search-button: true;
+$jmix-filter-friendly-search-button: true;
 
-$cuba-highlight-primary-action: true;
+$jmix-highlight-primary-action: true;
 
-$cuba-maintabsheet-selected-tab-font-weight: bold;
-$cuba-maintabsheet-tabs-border-radius: 2px;
-$cuba-maintabsheet-tab-border-left-width: 0;
-$cuba-maintabsheet-tab-border-top-width: 0;
-$cuba-maintabsheet-tab-margin-left: 0;
-$cuba-maintabsheet-tabbar-side-padding: 0;
-$cuba-maintabsheet-tabs-border-radius: 0;
-$cuba-maintabsheet-top-padding: 0;
+$jmix-maintabsheet-selected-tab-font-weight: bold;
+$jmix-maintabsheet-tabs-border-radius: 2px;
+$jmix-maintabsheet-tab-border-left-width: 0;
+$jmix-maintabsheet-tab-border-top-width: 0;
+$jmix-maintabsheet-tab-margin-left: 0;
+$jmix-maintabsheet-tabbar-side-padding: 0;
+$jmix-maintabsheet-tabs-border-radius: 0;
+$jmix-maintabsheet-top-padding: 0;
 
-$cuba-splitpanel-splitter-width: 4px;
+$jmix-splitpanel-splitter-width: 4px;
 
-$c-timefield-ampm-width: 72px;
+$jmix-timefield-ampm-width: 72px;

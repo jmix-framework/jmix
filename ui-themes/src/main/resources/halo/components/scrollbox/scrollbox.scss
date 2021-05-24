@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@mixin halo-scrollbox($primary-stylename: c-scrollbox) {
+@mixin halo-scrollbox($primary-stylename: jmix-scrollbox) {
   .#{$primary-stylename} {
     border: 0;
     border-radius: 0;

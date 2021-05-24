@@ -174,7 +174,7 @@ public class ExceptionDialog extends JmixWindow {
         buttonsLayout.addComponent(spacer);
         buttonsLayout.setExpandRatio(spacer, 1);
 
-        String logContentClassName = "c-exception-dialog-log-content";
+        String logContentClassName = "jmix-exception-dialog-log-content";
         String copyLogContentClassName = logContentClassName + "-" + UUID.randomUUID();
 
         if (JmixCopyButtonExtension.browserSupportsCopy()) {

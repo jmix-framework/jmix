@@ -26,7 +26,7 @@ import javax.annotation.Nullable;
 
 public class LogoutButtonImpl extends AbstractComponent<JmixButton> implements LogoutButton {
 
-    public static final String LOGOUT_BUTTON_STYLENAME = "c-logout-button";
+    public static final String LOGOUT_BUTTON_STYLENAME = "jmix-logout-button";
 
     public LogoutButtonImpl() {
         component = new JmixButton();

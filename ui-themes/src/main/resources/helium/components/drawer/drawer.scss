@@ -24,22 +24,22 @@
       background: var(--sidemenu-title-background-color);
     }
 
-    .jmix-drawer-content.c-sidemenu {
+    .jmix-drawer-content.jmix-sidemenu {
       color: var(--sidemenu-text-color);
 
-      .c-sidemenu-item {
+      .jmix-sidemenu-item {
         @include he-sidemenu-item-style();
       }
 
-      .c-sidemenu-item-header {
+      .jmix-sidemenu-item-header {
         @include he-sidemenu-item-header-style();
       }
 
-      .c-sidemenu-item-focused {
+      .jmix-sidemenu-item-focused {
         @include he-sidemenu-item-focused-style();
       }
 
-      .c-sidemenu-submenu.c-sidemenu-submenu-open {
+      .jmix-sidemenu-submenu.jmix-sidemenu-submenu-open {
         background: var(--app-background-color);
       }
     }
@@ -47,9 +47,9 @@
     .jmix-drawer-footer {
       background-color: var(--sidemenu-collapsible-controls-panel-background-color);
 
-      .c-settings-button,
-      .c-logout-button,
-      .c-login-button {
+      .jmix-settings-button,
+      .jmix-logout-button,
+      .jmix-login-button {
         @include he-sidemenu-action-button-color-style(
                 $color                    : --sidemenu-collapsible-action-button-color,
                 $hover-background-color   : --sidemenu-collapsible-action-button-hover-background-color,

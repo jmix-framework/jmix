@@ -21,13 +21,13 @@
     height: 100%;
 
     // Have to override explicit width to make collapsing work correctly
-    .c-main-tabsheet > .v-tabsheet-content,
-    .c-main-tabsheet > .v-tabsheet-content > .v-tabsheet-tabsheetpanel,
-    .c-main-tabsheet > .v-tabsheet-content > .v-tabsheet-tabsheetpanel > .v-scrollable {
+    .jmix-main-tabsheet > .v-tabsheet-content,
+    .jmix-main-tabsheet > .v-tabsheet-content > .v-tabsheet-tabsheetpanel,
+    .jmix-main-tabsheet > .v-tabsheet-content > .v-tabsheet-tabsheetpanel > .v-scrollable {
       width: 100% !important;
     }
 
-    .c-workarea {
+    .jmix-workarea {
       flex-grow: 1;
       flex-shrink: 1;
       z-index: 0;
@@ -40,29 +40,29 @@
     flex-direction: column;
     flex-shrink: 0;
     outline: none;
-    width: $cuba-sidemenu-layout-expanded-width;
-    @include cuba-sidemenu-collapsed(false);
+    width: $jmix-sidemenu-layout-expanded-width;
+    @include jmix-sidemenu-collapsed(false);
 
-    $bg: $cuba-sidemenu-background-color;
+    $bg: $jmix-sidemenu-background-color;
     @include linear-gradient(to left, (darken($bg, valo-gradient-opacity() / 2) 0%, $bg round($v-unit-size/4)), $fallback: $bg);
     color: valo-font-color($bg, 0.5);
 
     &.collapsed {
-      width: $cuba-sidemenu-layout-collapsed-width;
+      width: $jmix-sidemenu-layout-collapsed-width;
       overflow: hidden;
-      @include cuba-sidemenu-collapsed(true);
+      @include jmix-sidemenu-collapsed(true);
     }
 
     &.collapsed.expand-on-hover:hover {
-      width: $cuba-sidemenu-layout-expanded-width;
-      @include cuba-sidemenu-collapsed(false);
+      width: $jmix-sidemenu-layout-expanded-width;
+      @include jmix-sidemenu-collapsed(false);
     }
 
     .jmix-drawer-header {
       $logo-size: 20px;
 
-      color: valo-font-color($cuba-sidemenu-title-background-color, 0.9);
-      background: $cuba-sidemenu-title-background-color;
+      color: valo-font-color($jmix-sidemenu-title-background-color, 0.9);
+      background: $jmix-sidemenu-title-background-color;
 
       display: flex;
       flex-wrap: nowrap;
@@ -70,7 +70,7 @@
 
       height: 40px;
       // consider 1px right border
-      padding: 0 floor(($cuba-sidemenu-layout-collapsed-width - $logo-size) / 2);
+      padding: 0 floor(($jmix-sidemenu-layout-collapsed-width - $logo-size) / 2);
 
       .app-icon {
         height: $logo-size;
@@ -81,10 +81,10 @@
       }
 
       .app-title {
-        font-size: $cuba-sidemenu-title-font-size;
-        font-weight: $cuba-sidemenu-title-font-weight;
+        font-size: $jmix-sidemenu-title-font-size;
+        font-weight: $jmix-sidemenu-title-font-weight;
 
-        width: $cuba-sidemenu-layout-expanded-width -
+        width: $jmix-sidemenu-layout-expanded-width -
         3 * $v-layout-spacing-horizontal - $logo-size;
 
         overflow: hidden;
@@ -99,21 +99,21 @@
       @include halo-drawer-content-style();
     }
 
-    .c-user-timezone-label {
-      font-weight: $cuba-sidemenu-timezone-font-weight;
+    .jmix-user-timezone-label {
+      font-weight: $jmix-sidemenu-timezone-font-weight;
       padding: round($v-layout-spacing-vertical / 2) $v-layout-spacing-vertical;
       text-align: center;
     }
 
     .jmix-drawer-footer {
-      background: $cuba-sidemenu-title-background-color;
+      background: $jmix-sidemenu-title-background-color;
 
       display: flex;
       align-items: center;
 
       overflow: hidden;
 
-      height: $cuba-sidemenu-layout-collapsed-width;
+      height: $jmix-sidemenu-layout-collapsed-width;
 
       & > * {
         flex-shrink: 0;
@@ -121,28 +121,28 @@
         border-radius: 0;
       }
 
-      .c-settings-button,
-      .c-logout-button,
-      .c-login-button {
+      .jmix-settings-button,
+      .jmix-logout-button,
+      .jmix-login-button {
         @include drawer-footer-button();
 
         width: $v-unit-size;
 
-        color: $cuba-menubar-text-color;
+        color: $jmix-menubar-text-color;
 
         &:hover {
-          color: $cuba-menubar-menuitem-text-selected-color;
+          color: $jmix-menubar-menuitem-text-selected-color;
         }
       }
 
-      .c-logout-button,
-      .c-login-button {
+      .jmix-logout-button,
+      .jmix-login-button {
         margin-left: auto;
       }
 
-      .c-userindicator {
-        font-weight: $cuba-sidemenu-userindicator-font-weight;
-        width: $cuba-sidemenu-layout-expanded-width - $cuba-sidemenu-layout-collapsed-width - 2 * $v-unit-size;
+      .jmix-userindicator {
+        font-weight: $jmix-sidemenu-userindicator-font-weight;
+        width: $jmix-sidemenu-layout-expanded-width - $jmix-sidemenu-layout-collapsed-width - 2 * $v-unit-size;
         padding: 0 round($v-layout-spacing-horizontal / 2);
 
         font-size: 1.1em;
@@ -154,8 +154,8 @@
           text-align: center;
         }
 
-        @if $cuba-sidemenu-layout-collapse-enabled == false {
-          width: $cuba-sidemenu-layout-expanded-width - 2 * $v-unit-size;
+        @if $jmix-sidemenu-layout-collapse-enabled == false {
+          width: $jmix-sidemenu-layout-expanded-width - 2 * $v-unit-size;
         }
       }
     }
@@ -168,11 +168,11 @@
   .#{$button-stylename} {
     @include drawer-footer-button();
 
-    $bg: darken($cuba-sidemenu-title-background-color, 6%);
+    $bg: darken($jmix-sidemenu-title-background-color, 6%);
 
     background: $bg;
     color: valo-font-color($bg, 0.40);
-    width: $cuba-sidemenu-layout-collapsed-width;
+    width: $jmix-sidemenu-layout-collapsed-width;
 
     margin-right: auto;
 
@@ -186,14 +186,14 @@
       color: valo-font-color($bg, 1);
     }
 
-    @if $cuba-sidemenu-layout-collapse-enabled == false {
+    @if $jmix-sidemenu-layout-collapse-enabled == false {
       display: none;
     }
   }
 }
 
 @mixin drawer-footer-button() {
-  height: $cuba-sidemenu-layout-collapsed-width;
+  height: $jmix-sidemenu-layout-collapsed-width;
 
   padding: 0;
 
@@ -210,22 +210,22 @@
 }
 
 @mixin halo-drawer-content-style() {
-  &.c-sidemenu {
-    $bg: $cuba-sidemenu-background-color;
+  &.jmix-sidemenu {
+    $bg: $jmix-sidemenu-background-color;
     color: valo-font-color($bg, 0.5);
 
-    .c-sidemenu-item {
-      font-weight: $cuba-sidemenu-item-font-weight;
+    .jmix-sidemenu-item {
+      font-weight: $jmix-sidemenu-item-font-weight;
 
       &:hover {
         color: valo-font-color($bg, 1);
       }
     }
 
-    .c-sidemenu-item-header {
+    .jmix-sidemenu-item-header {
       color: valo-font-color($bg, 0.5);
 
-      @if $cuba-sidemenu-separate-items {
+      @if $jmix-sidemenu-separate-items {
         border-bottom: valo-border(
                 $color: $bg,
                 $strength: 0.5,
@@ -235,7 +235,7 @@
       }
     }
 
-    .c-sidemenu-item-focused {
+    .jmix-sidemenu-item-focused {
       color: valo-font-color($bg, 1);
 
       .v-ch & span.v-icon {
@@ -243,8 +243,8 @@
       }
     }
 
-    .c-sidemenu-submenu.c-sidemenu-submenu-open {
-      background: $cuba-sidemenu-submenu-background-color;
+    .jmix-sidemenu-submenu.jmix-sidemenu-submenu-open {
+      background: $jmix-sidemenu-submenu-background-color;
     }
   }
 }

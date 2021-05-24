@@ -28,7 +28,7 @@ import com.vaadin.client.ui.VCssLayout;
 @Deprecated
 public class JmixTokenListLabelWidget extends VCssLayout {
 
-    protected static final String CLOSE_STYLENAME = "c-tokenlist-label-close";
+    protected static final String CLOSE_STYLENAME = "jmix-tokenlist-label-close";
 
     private Label label = new Label();
     private Element closeDiv = DOM.createDiv();

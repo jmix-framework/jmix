@@ -25,7 +25,7 @@
     color: $font-color;
   }
 
-  .c-tree-composition {
+  .jmix-tree-composition {
     font-size: 0;
     & > * {
       font-size: $v-font-size;
@@ -36,59 +36,59 @@
     }
   }
 
-  .c-tree-composition .c-tree-wrapper {
-    @if $cuba-show-tree-border == true {
+  .jmix-tree-composition .jmix-tree-wrapper {
+    @if $jmix-show-tree-border == true {
       padding: round($v-unit-size/4);
       border: valo-border();
     }
     display: inherit;
   }
 
-  .c-tree-composition.has-top-panel {
+  .jmix-tree-composition.has-top-panel {
     display: flex;
     flex-direction: column;
 
-    .c-tree-top {
+    .jmix-tree-top {
       flex-shrink: 0;
       overflow-x: hidden;
       min-height: $v-unit-size;
     }
 
     // The caption of ButtonsPanel inside of Tree will be ignored
-    .v-caption-c-buttons-panel {
+    .v-caption-jmix-buttons-panel {
       display: none;
     }
 
     .v-ie11 &,
     .v-edge & {
-      .c-tree-top {
+      .jmix-tree-top {
         overflow-y: hidden;
       }
 
-      .c-buttons-panel {
+      .jmix-buttons-panel {
         overflow-x: hidden
       }
     }
   }
 
-  @if $cuba-buttonspanel-flow == false {
-    .c-tree-composition {
-      .v-csslayout.c-flowlayout {
+  @if $jmix-buttonspanel-flow == false {
+    .jmix-tree-composition {
+      .v-csslayout.jmix-flowlayout {
         white-space: nowrap;
       }
 
-      .v-csslayout.c-flowlayout > * {
+      .v-csslayout.jmix-flowlayout > * {
         float: none;
       }
     }
 
-    .c-tree-composition.has-top-panel {
+    .jmix-tree-composition.has-top-panel {
       $top-panel-height: $v-unit-size + ceil($v-layout-spacing-vertical);
 
       display: block;
       padding-top: $top-panel-height;
 
-      .c-tree-top {
+      .jmix-tree-top {
         margin-top: -1 * $top-panel-height;
       }
     }

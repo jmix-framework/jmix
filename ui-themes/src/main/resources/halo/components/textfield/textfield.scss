@@ -15,8 +15,8 @@
  *
  */
 
-@mixin halo-cuba-textfield($primary-stylename: v-textfield) {
-  .#{$primary-stylename}.c-disabled-or-readonly.c-empty-value {
+@mixin halo-jmix-textfield($primary-stylename: v-textfield) {
+  .#{$primary-stylename}.jmix-disabled-or-readonly.jmix-empty-value {
     color: transparent;
   }
 
@@ -30,7 +30,7 @@
   }
 
   .v-slot-inline-icon > .v-caption-on-top,
-  .c-fglayout-slot:not(.inline) {
+  .jmix-fglayout-slot:not(.inline) {
     & > .v-caption-inline-icon {
       & > .v-icon {
         bottom: auto;

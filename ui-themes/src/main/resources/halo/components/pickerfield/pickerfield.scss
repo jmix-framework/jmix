@@ -15,14 +15,14 @@
  *
  */
 
-@mixin halo-cuba-pickerfield($primary-stylename: c-pickerfield) {
+@mixin halo-jmix-pickerfield($primary-stylename: jmix-pickerfield) {
   .#{$primary-stylename} {
     width: $v-default-field-width;
 
-    &.c-has-field-icon {
+    &.jmix-has-field-icon {
       position: relative;
 
-      .c-suggestionfield.inline-icon,
+      .jmix-suggestionfield.inline-icon,
       .v-textfield.inline-icon {
         padding-left: $v-unit-size;
         border-top-right-radius: 0;
@@ -109,8 +109,8 @@
     }
   }
 
-  .#{$primary-stylename}-layout > .v-filterselect-c-searchselect > input,
-  .#{$primary-stylename}-layout > .safari-input-wrap > .v-filterselect-c-searchselect > input {
+  .#{$primary-stylename}-layout > .v-filterselect-jmix-searchselect > input,
+  .#{$primary-stylename}-layout > .safari-input-wrap > .v-filterselect-jmix-searchselect > input {
     padding-right: ceil($v-unit-size/6) + ceil($v-border-radius/3);
   }
 
@@ -203,9 +203,9 @@
 
   .#{$primary-stylename}-error {
     .v-filterselect .v-filterselect-input,
-    .c-searchselect .c-searchselect-input,
+    .jmix-searchselect .jmix-searchselect-input,
     .v-textfield.v-textfield-readonly,
-    .c-suggestionfield {
+    .jmix-suggestionfield {
       @include valo-textfield-error-style;
     }
 
@@ -257,7 +257,7 @@
   }
 
   .v-ie10 & {
-    .c-pickerfield > .c-pickerfield-layout > .c-pickerfield-button.v-button {
+    .jmix-pickerfield > .jmix-pickerfield-layout > .jmix-pickerfield-button.v-button {
       height: auto;
     }
   }
@@ -286,14 +286,14 @@
 @mixin pickerfield-size-style($font-size, $unit-size) {
   $rightPadding: ceil($unit-size/6) + ceil($v-border-radius/3);
 
-  .v-sa & .c-pickerfield-layout > .safari-input-wrap {
+  .v-sa & .jmix-pickerfield-layout > .safari-input-wrap {
     display: inline-block;
   }
 
   height: $unit-size;
   font-size: $font-size;
 
-  & .c-pickerfield-layout {
+  & .jmix-pickerfield-layout {
     height: 100%;
 
     & .safari-input-wrap {
@@ -324,13 +324,13 @@
       }
     }
 
-    & .v-filterselect-c-searchselect input {
+    & .v-filterselect-jmix-searchselect input {
       padding-right: $rightPadding;
     }
 
     & .safari-input-wrap .v-filterselect [class$="button"],
     & .v-filterselect [class$="button"],
-    & .c-pickerfield-button.v-button {
+    & .jmix-pickerfield-button.v-button {
       width: $unit-size;
       min-width: $unit-size;
 
@@ -340,7 +340,7 @@
       }
     }
 
-    & .c-pickerfield-button.v-button:after {
+    & .jmix-pickerfield-button.v-button:after {
       height: $unit-size;
     }
   }

@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-$c-timefield-hour-width: 32px;
-$c-timefield-minute-width: 58px;
-$c-timefield-second-width: 84px;
-$c-timefield-ampm-width: 62px !default;
+$jmix-timefield-hour-width: 32px;
+$jmix-timefield-minute-width: 58px;
+$jmix-timefield-second-width: 84px;
+$jmix-timefield-ampm-width: 62px !default;
 
-@mixin halo-cuba-timefield($primary-stylename: c-timefield) {
+@mixin halo-jmix-timefield($primary-stylename: jmix-timefield) {
   .#{$primary-stylename}-layout {
     white-space: nowrap;
     outline: 0;
@@ -54,27 +54,27 @@ $c-timefield-ampm-width: 62px !default;
   }
 
   .#{$primary-stylename}-hour {
-    width: $c-timefield-hour-width;
+    width: $jmix-timefield-hour-width;
   }
 
   .#{$primary-stylename}-minute {
-    width: $c-timefield-minute-width;
+    width: $jmix-timefield-minute-width;
   }
 
   .#{$primary-stylename}-second {
-    width: $c-timefield-second-width;
+    width: $jmix-timefield-second-width;
   }
 
-  .c-focus-move::selection {
+  .jmix-focus-move::selection {
     background: transparent;
   }
 
-  .c-focus-move::-moz-selection {
+  .jmix-focus-move::-moz-selection {
     background: transparent;
   }
 
   .#{$primary-stylename}-ampm {
-    width: $c-timefield-ampm-width;
+    width: $jmix-timefield-ampm-width;
     margin-left: round($v-layout-spacing-horizontal/2);
   }
 }

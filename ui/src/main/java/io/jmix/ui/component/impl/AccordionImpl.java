@@ -384,7 +384,7 @@ public class AccordionImpl extends AbstractComponent<JmixAccordion>
                                    Element descriptor,
                                    ComponentLoader loader) {
         CssLayout tabContent = createLazyTabLayout();
-        tabContent.setStyleName("c-tabsheet-lazytab");
+        tabContent.setStyleName("jmix-tabsheet-lazytab");
         tabContent.setSizeFull();
 
         Tab tab = new Tab(name, tabContent);

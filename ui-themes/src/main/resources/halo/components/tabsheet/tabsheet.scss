@@ -19,12 +19,12 @@
  * The color of caption of selected tab.
  * @group tabsheet
  */
-$cuba-tabsheet-tab-caption-selected-color: $v-selection-color !default;
+$jmix-tabsheet-tab-caption-selected-color: $v-selection-color !default;
 /**
  * The color of bottom border of selected tab.
  * @group tabsheet
  */
-$cuba-tabsheet-tab-border-selected-color: $v-selection-color !default;
+$jmix-tabsheet-tab-border-selected-color: $v-selection-color !default;
 
 @mixin halo-tabsheet($primary-stylename: v-tabsheet) {
   // we rarely hide first tab but often hide other tabs
@@ -39,12 +39,12 @@ $cuba-tabsheet-tab-border-selected-color: $v-selection-color !default;
     }
 
     .v-caption:hover {
-      color: $cuba-tabsheet-tab-caption-selected-color;
+      color: $jmix-tabsheet-tab-caption-selected-color;
     }
 
     .v-tabsheet-tabitem-selected .v-caption.v-caption {
-      border-bottom-color: $cuba-tabsheet-tab-border-selected-color;
-      color: $cuba-tabsheet-tab-caption-selected-color;
+      border-bottom-color: $jmix-tabsheet-tab-border-selected-color;
+      color: $jmix-tabsheet-tab-caption-selected-color;
     }
   }
 }

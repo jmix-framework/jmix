@@ -24,25 +24,25 @@
     display: none;
   }
 
-  .c-context-help-button {
+  .jmix-context-help-button {
     display: inline-block;
     font-size: 0;
     width: $v-font-size + $v-font-size * .2; // icon padding = .2em, so we need to add
                                              // this value to the context-help-button width
   }
 
-  .c-context-help-button::before {
+  .jmix-context-help-button::before {
     font-family: FontAwesome;
     content: "\f059";
     font-size: $v-font-size;
     padding-left: .2em;
   }
 
-  .c-context-help-button-clickable {
+  .jmix-context-help-button-clickable {
     cursor: pointer;
   }
 
-  .v-disabled .c-context-help-button-clickable {
+  .v-disabled .jmix-context-help-button-clickable {
     @include opacity($v-disabled-opacity);
     cursor: default;
   }
@@ -52,12 +52,12 @@
   }
 
   .v-tooltip {
-    .c-tooltip-context-help {
+    .jmix-tooltip-context-help {
       margin-top: $v-tooltip-padding-vertical * 2;
       overflow: auto;
     }
 
-    .v-errormessage[aria-hidden="true"]+.v-tooltip-text[aria-hidden="true"]+.c-tooltip-context-help {
+    .v-errormessage[aria-hidden="true"]+.v-tooltip-text[aria-hidden="true"]+.jmix-tooltip-context-help {
       margin-top: 0;
     }
   }
@@ -68,21 +68,21 @@
     }
   }
 
-  .v-gridlayout.c-shrink-empty {
+  .v-gridlayout.jmix-shrink-empty {
     font-size: 0;
     & > .v-gridlayout-slot > * {
       font-size: $v-font-size;
     }
   }
-  .v-csslayout.c-shrink-empty {
+  .v-csslayout.jmix-shrink-empty {
     font-size: 0;
     & > * {
       font-size: $v-font-size;
     }
   }
 
-  .v-gridlayout.c-hide-overflow,
-  .v-gridlayout.c-hide-overflow > .v-gridlayout-slot {
+  .v-gridlayout.jmix-hide-overflow,
+  .v-gridlayout.jmix-hide-overflow > .v-gridlayout-slot {
     overflow: hidden;
   }
 

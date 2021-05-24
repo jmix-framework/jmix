@@ -14,5 +14,8 @@
  * limitations under the License.
  */
 
-/* Empty configuration for Vaadin Addons styles.
-   Prevents automatic lookup of addons styles for com.haulmont.cuba app component. */
+@import "../halo";
+
+@mixin io_jmix_ui {
+  @include halo;
+}

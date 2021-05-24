@@ -39,7 +39,7 @@ public class JmixColorPickerWrapper extends CustomField<Color> {
         // the first time we set 'null', it doesn't change the color to Black
         setInternalValue(field.getValue());
         setFocusDelegate(field);
-        setPrimaryStyleName("c-color-picker");
+        setPrimaryStyleName("jmix-color-picker");
         setWidthUndefined();
     }
 

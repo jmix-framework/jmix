@@ -20,7 +20,7 @@ import com.vaadin.shared.annotations.NoLayout;
 
 public class JmixMaskedTextFieldState extends JmixTextFieldState {
     {
-        primaryStyleName = "c-maskedfield";
+        primaryStyleName = "jmix-maskedfield";
     }
 
     @NoLayout

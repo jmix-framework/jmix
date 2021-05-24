@@ -27,7 +27,7 @@
     @include he-input-disabled-style();
   }
 
-  .#{$primary-stylename}.c-disabled-or-readonly.c-empty-value {
+  .#{$primary-stylename}.jmix-disabled-or-readonly.jmix-empty-value {
     color: transparent;
   }
 

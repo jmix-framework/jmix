@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@mixin he-capslockindicator($primary-stylename: c-capslockindicator) {
+@mixin he-capslockindicator($primary-stylename: jmix-capslockindicator) {
 
   .#{$primary-stylename}.capslock-on span::before {
     color: var(--capslockindicator-icon-color-on);

@@ -38,7 +38,7 @@ import java.util.List;
 
 public class SuggestionsContainer extends Widget {
 
-    protected static final String STYLENAME = "c-suggestionfield-popup";
+    protected static final String STYLENAME = "jmix-suggestionfield-popup";
 
     protected final List<SuggestionItem> items = new ArrayList<>();
     protected SuggestionItem selectedItem;

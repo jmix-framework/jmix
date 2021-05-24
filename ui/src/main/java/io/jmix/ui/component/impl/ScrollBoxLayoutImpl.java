@@ -38,8 +38,8 @@ import java.util.stream.Stream;
 
 public class ScrollBoxLayoutImpl extends AbstractComponent<JmixScrollBoxLayout> implements ScrollBoxLayout {
 
-    protected static final String SCROLLBOX_CONTENT_STYLENAME = "c-scrollbox-content";
-    protected static final String SCROLLBOX_STYLENAME = "c-scrollbox";
+    protected static final String SCROLLBOX_CONTENT_STYLENAME = "jmix-scrollbox-content";
+    protected static final String SCROLLBOX_STYLENAME = "jmix-scrollbox";
 
     protected List<Component> ownComponents = new ArrayList<>();
     protected Registration layoutClickRegistration;

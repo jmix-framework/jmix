@@ -30,8 +30,8 @@ import java.util.stream.Stream;
 
 public class JmixSearchSelectPickerField<T> extends JmixPickerField<T> {
 
-    protected static final String SEARCHSELECT_PICKERFIELD_STYLENAME = "c-searchselect-pickerfield";
-    protected static final String SEARCHSELECT_FIELD_STYLENAME = "c-pickerfield-searchselect";
+    protected static final String SEARCHSELECT_PICKERFIELD_STYLENAME = "jmix-searchselect-pickerfield";
+    protected static final String SEARCHSELECT_FIELD_STYLENAME = "jmix-pickerfield-searchselect";
 
     @Override
     protected void init() {

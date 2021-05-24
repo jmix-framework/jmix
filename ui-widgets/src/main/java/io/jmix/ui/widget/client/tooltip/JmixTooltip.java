@@ -43,7 +43,7 @@ public class JmixTooltip extends VTooltip {
     protected Element contextHelpElement = DOM.createDiv();
 
     public JmixTooltip() {
-        contextHelpElement.setClassName("c-tooltip-context-help");
+        contextHelpElement.setClassName("jmix-tooltip-context-help");
         DOM.appendChild(getWidget().getElement(), contextHelpElement);
         tooltipEventHandler = new JmixTooltipEventHandler();
     }

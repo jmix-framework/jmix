@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 
-@mixin he-dateintervaleditor($primary-stylename: c-dateintervaleditor) {
+@mixin he-dateintervaleditor($primary-stylename: jmix-dateintervaleditor) {
   @include he-listeditor($primary-stylename: $primary-stylename);
 }

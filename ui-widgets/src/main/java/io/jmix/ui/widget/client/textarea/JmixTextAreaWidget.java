@@ -21,9 +21,9 @@ import com.vaadin.client.BrowserInfo;
 import com.vaadin.client.ui.VTextArea;
 
 public class JmixTextAreaWidget extends VTextArea {
-    protected static final String DISABLED_OR_READONLY_CLASSNAME = "c-disabled-or-readonly";
+    protected static final String DISABLED_OR_READONLY_CLASSNAME = "jmix-disabled-or-readonly";
     protected static final String PROMPT_STYLE = "prompt";
-    protected static final String EMPTY_VALUE_CLASSNAME = "c-empty-value";
+    protected static final String EMPTY_VALUE_CLASSNAME = "jmix-empty-value";
 
     protected static final String CASE_CONVERSION_MODE_NONE = "NONE";
 

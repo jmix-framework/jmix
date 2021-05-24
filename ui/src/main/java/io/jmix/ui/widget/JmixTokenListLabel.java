@@ -29,7 +29,7 @@ import java.util.List;
 @Deprecated
 public class JmixTokenListLabel extends CssLayout {
 
-    protected static final String LABEL_STYLENAME = "c-tokenlist-label";
+    protected static final String LABEL_STYLENAME = "jmix-tokenlist-label";
 
     protected ClickListener clickListener;
 

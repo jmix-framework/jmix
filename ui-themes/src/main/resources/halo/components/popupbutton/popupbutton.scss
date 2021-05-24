@@ -19,10 +19,10 @@
  * The font weight of popupbutton indicator.
  * @group popupbutton
  */
-$cuba-popupbutton-indicator-font-weight: $v-font-weight !default;
+$jmix-popupbutton-indicator-font-weight: $v-font-weight !default;
 
 @mixin halo-popupbutton($primary-stylename: v-popupbutton) {
-  @include halo-cuba-contextmenu($primary-stylename + "-popup");
+  @include halo-jmix-contextmenu($primary-stylename + "-popup");
 
   .#{$primary-stylename}-popup {
     font-size: $v-font-size;
@@ -39,7 +39,7 @@ $cuba-popupbutton-indicator-font-weight: $v-font-weight !default;
     padding-left: 0;
   }
 
-  .v-disabled.c-cm-button.v-selected {
+  .v-disabled.jmix-cm-button.v-selected {
     background: transparent;
     color: inherit;
   }
@@ -60,7 +60,7 @@ $cuba-popupbutton-indicator-font-weight: $v-font-weight !default;
 
       &:after {
         font-family: FontAwesome;
-        font-weight: $cuba-popupbutton-indicator-font-weight;
+        font-weight: $jmix-popupbutton-indicator-font-weight;
         content: "\f107";
       }
     }

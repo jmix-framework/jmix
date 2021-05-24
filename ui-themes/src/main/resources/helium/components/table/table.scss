@@ -21,29 +21,29 @@ $he-table-header-row-height-scale: 1.5 !default;
     @include he-table-style($primary-stylename: $primary-stylename);
   }
 
-  .c-table-composition {
+  .jmix-table-composition {
     @include he-table-composition-size-style();
   }
 
-  .c-table-contextmenu {
-    @include he-selection-overlay-style($item-stylename: c-table-contextmenu-item);
+  .jmix-table-contextmenu {
+    @include he-selection-overlay-style($item-stylename: jmix-table-contextmenu-item);
   }
 
-  .c-table-view-textcut {
+  .jmix-table-view-textcut {
     @include he-overlay-style();
   }
 
-  .c-table-prefs-editor {
+  .jmix-table-prefs-editor {
     @include he-box-shadow(--table-prefs-editor-shadow);
 
     color: var(--text-main-color);
     background-color: var(--table-background-color);
 
-    .c-table-prefs-title {
+    .jmix-table-prefs-title {
       border-bottom-color: var(--border-dim-color);
     }
 
-    .c-table-prefs-list.v-menubar {
+    .jmix-table-prefs-list.v-menubar {
       color: var(--text-main-color);
 
       .v-menubar-menuitem:hover:before {
@@ -63,15 +63,15 @@ $he-table-header-row-height-scale: 1.5 !default;
               $header-font-size: $v-table-header-font-size--small);
     }
 
-    .c-table-composition {
+    .jmix-table-composition {
       @include he-table-composition-size-style($v-unit-size--small);
     }
 
-    .c-table-contextmenu {
+    .jmix-table-contextmenu {
       @include he-selection-overlay-size-style(
               $item-height: $v-selection-item-height--large,
               $font-size: $v-font-size--large,
-              $item-stylename: c-table-contextmenu-item);
+              $item-stylename: jmix-table-contextmenu-item);
     }
   }
 
@@ -84,15 +84,15 @@ $he-table-header-row-height-scale: 1.5 !default;
               $header-font-size: $v-table-header-font-size--large);
     }
 
-    .c-table-composition {
+    .jmix-table-composition {
       @include he-table-composition-size-style($v-unit-size--large);
     }
 
-    .c-table-contextmenu {
+    .jmix-table-contextmenu {
       @include he-selection-overlay-size-style(
               $item-height: $v-selection-item-height--large,
               $font-size: $v-font-size--large,
-              $item-stylename: c-table-contextmenu-item);
+              $item-stylename: jmix-table-contextmenu-item);
     }
   }
 
@@ -107,7 +107,7 @@ $he-table-header-row-height-scale: 1.5 !default;
               $header-font-size: $v-table-header-font-size--small);
     }
 
-    .c-table-composition {
+    .jmix-table-composition {
       @include he-table-composition-size-style($v-unit-size--small);
     }
   }
@@ -121,7 +121,7 @@ $he-table-header-row-height-scale: 1.5 !default;
               $header-font-size: $v-table-header-font-size);
     }
 
-    .c-table-composition {
+    .jmix-table-composition {
       @include he-table-composition-size-style($v-unit-size);
     }
   }
@@ -135,7 +135,7 @@ $he-table-header-row-height-scale: 1.5 !default;
               $header-font-size: $v-table-header-font-size--large);
     }
 
-    .c-table-composition {
+    .jmix-table-composition {
       @include he-table-composition-size-style($v-unit-size--large);
     }
   }
@@ -152,7 +152,7 @@ $he-table-header-row-height-scale: 1.5 !default;
             $header-font-size: $v-table-header-font-size--small);
   }
 
-  .c-table-composition.small {
+  .jmix-table-composition.small {
     @include he-table-composition-size-style($v-unit-size--small);
   }
 
@@ -166,7 +166,7 @@ $he-table-header-row-height-scale: 1.5 !default;
             $header-font-size: $v-table-header-font-size);
   }
 
-  .c-table-composition.medium {
+  .jmix-table-composition.medium {
     @include he-table-composition-size-style($v-unit-size);
   }
 
@@ -180,7 +180,7 @@ $he-table-header-row-height-scale: 1.5 !default;
             $header-font-size: $v-table-header-font-size--large);
   }
 
-  .c-table-composition.large {
+  .jmix-table-composition.large {
     @include he-table-composition-size-style($v-unit-size--large);
   }
 }
@@ -261,7 +261,7 @@ $he-table-header-row-height-scale: 1.5 !default;
     border-top: none;
   }
 
-  .c-table-cell-textcut .c-table-clickable-cell {
+  .jmix-table-cell-textcut .jmix-table-clickable-cell {
     color: var(--link-color);
     border-bottom: 1px dashed var(--link-color);
   }
@@ -283,8 +283,8 @@ $he-table-header-row-height-scale: 1.5 !default;
       border-left-color: var(--table-selected-row-border-color);
     }
 
-    .c-table-cell-link .c-table-clickable-cell,
-    .c-table-cell-textcut .c-table-clickable-cell,
+    .jmix-table-cell-link .jmix-table-clickable-cell,
+    .jmix-table-cell-textcut .jmix-table-clickable-cell,
     .v-popupview,
     .v-button-link,
     .v-link,
@@ -292,7 +292,7 @@ $he-table-header-row-height-scale: 1.5 !default;
       color: var(--table-selected-row-text-color);
     }
 
-    .c-table-cell-textcut .c-table-clickable-cell {
+    .jmix-table-cell-textcut .jmix-table-clickable-cell {
       border-bottom-color: var(--table-selected-row-text-color);
     }
   }
@@ -305,7 +305,7 @@ $he-table-header-row-height-scale: 1.5 !default;
     }
   }
 
-  @if $cuba-table-highlight-hover-row {
+  @if $jmix-table-highlight-hover-row {
     .#{$primary-stylename}-row:hover,
     .#{$primary-stylename}-row-odd:hover {
       background-color: var(--table-hovered-row-background-color);
@@ -399,7 +399,7 @@ $he-table-header-row-height-scale: 1.5 !default;
     @include he-table-control-button-style()
   }
 
-  .c-table-prefs-icon {
+  .jmix-table-prefs-icon {
     @include he-table-control-button-style()
   }
 
@@ -464,11 +464,11 @@ $he-table-header-row-height-scale: 1.5 !default;
     @include he-control-button-size-style($table-header-row-height)
   }
 
-  .c-table-prefs-icon {
+  .jmix-table-prefs-icon {
     @include he-control-button-size-style($table-header-row-height)
   }
 
-  &.collapsing-allowed .c-table-prefs-icon {
+  &.collapsing-allowed .jmix-table-prefs-icon {
     right: 2 * round($table-header-row-height/2);
   }
 
@@ -479,7 +479,7 @@ $he-table-header-row-height-scale: 1.5 !default;
     }
   }
 
-  &.c-grouptable {
+  &.jmix-grouptable {
     @include he-group-table-size-style($primary-stylename: $primary-stylename);
   }
 
@@ -493,13 +493,13 @@ $he-table-header-row-height-scale: 1.5 !default;
 }
 
 @mixin he-group-table-style($primary-stylename : v-table) {
-  .c-grouptable-group-cell-expander {
+  .jmix-grouptable-group-cell-expander {
     &:before {
       color: var(--text-main-color);
     }
   }
 
-  .v-expanded .c-grouptable-group-cell-expander {
+  .v-expanded .jmix-grouptable-group-cell-expander {
     &:before {
       color: var(--text-main-color);
     }
@@ -507,7 +507,7 @@ $he-table-header-row-height-scale: 1.5 !default;
 
   $table-inner-border: he-table-border(--table-inner-border-color);
 
-  .c-grouptable-group-divider-header {
+  .jmix-grouptable-group-divider-header {
     .#{$primary-stylename}-caption-container {
       border-left: $table-inner-border;
     }
@@ -531,10 +531,10 @@ $he-table-header-row-height-scale: 1.5 !default;
 @mixin he-group-table-size-style($primary-stylename : v-table) {
   // TODO: gg, possibly move to halo as it can be a proper fix
   //  when $v-table-cell-padding-horizontal has value other than 7px
-  .c-grouptable-group-divider .#{$primary-stylename}-cell-wrapper,
-  .#{$primary-stylename}-cell-content-c-grouptable-group-divider .#{$primary-stylename}-cell-wrapper,
-  .c-grouptable-group-divider-header .#{$primary-stylename}-caption-container,
-  .c-grouptable-group-divider-footer .#{$primary-stylename}-footer-container {
+  .jmix-grouptable-group-divider .#{$primary-stylename}-cell-wrapper,
+  .#{$primary-stylename}-cell-content-jmix-grouptable-group-divider .#{$primary-stylename}-cell-wrapper,
+  .jmix-grouptable-group-divider-header .#{$primary-stylename}-caption-container,
+  .jmix-grouptable-group-divider-footer .#{$primary-stylename}-footer-container {
     padding: 0;
   }
 }
@@ -589,7 +589,7 @@ $he-table-header-row-height-scale: 1.5 !default;
   &.has-top-panel {
     padding-top: $unit-size + ceil($v-layout-spacing-vertical);
 
-    .c-table-top {
+    .jmix-table-top {
       min-height: $unit-size;
       margin-top: -1 * ($unit-size + ceil($v-layout-spacing-vertical));
     }

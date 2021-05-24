@@ -23,7 +23,7 @@
             $primary-stylename          : $primary-stylename,
             $unit-size                  : $v-unit-size--small,
             $header-height              : ceil($v-unit-size--small * 1.88),
-            $header-font-size           : round($cuba-window-modal-header-font-size * $v-scaling-factor--small),
+            $header-font-size           : round($jmix-window-modal-header-font-size * $v-scaling-factor--small),
             $header-line-height         : ceil($v-unit-size--small * 1.88),
             $header-buttons-line-height : $v-unit-size--small);
   }
@@ -33,7 +33,7 @@
             $primary-stylename          : $primary-stylename,
             $unit-size                  : $v-unit-size--large,
             $header-height              : ceil($v-unit-size--large * 1.88),
-            $header-font-size           : round($cuba-window-modal-header-font-size * $v-scaling-factor--large),
+            $header-font-size           : round($jmix-window-modal-header-font-size * $v-scaling-factor--large),
             $header-line-height         : ceil($v-unit-size--large * 1.88),
             $header-buttons-line-height : $v-unit-size--large);
   }
@@ -74,10 +74,10 @@
 
 @mixin he-window-size-style($primary-stylename          : v-window,
                             $unit-size                  : $v-unit-size,
-                            $header-height              : $cuba-window-modal-header-height,
-                            $header-font-size           : $cuba-window-modal-header-font-size,
-                            $header-line-height         : $cuba-window-modal-header-line-height,
-                            $header-buttons-line-height : $cuba-window-modal-header-buttons-line-height) {
+                            $header-height              : $jmix-window-modal-header-height,
+                            $header-font-size           : $jmix-window-modal-header-font-size,
+                            $header-line-height         : $jmix-window-modal-header-line-height,
+                            $header-buttons-line-height : $jmix-window-modal-header-buttons-line-height) {
   $padding: round($unit-size/1.4);
 
   .#{$primary-stylename}-outerheader {

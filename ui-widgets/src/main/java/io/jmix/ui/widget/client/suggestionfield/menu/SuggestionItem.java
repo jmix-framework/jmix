@@ -25,7 +25,7 @@ import io.jmix.ui.widget.client.suggestionfield.JmixSuggestionFieldWidget;
 
 public class SuggestionItem extends Widget implements HasText {
 
-    protected static final String STYLENAME = "c-suggestionfield-item";
+    protected static final String STYLENAME = "jmix-suggestionfield-item";
     protected static final String SELECTED_ITEM_STYLENAME = "selected";
 
     protected Scheduler.ScheduledCommand cmd;

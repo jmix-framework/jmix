@@ -20,7 +20,7 @@ import com.vaadin.shared.AbstractComponentState;
 
 public class JmixAmchartsSceneState extends AbstractComponentState {
     {
-        primaryStyleName = "c-amcharts-chart";
+        primaryStyleName = "jmix-amcharts-chart";
     }
 
     public static final String CHART_CLICK_EVENT = "cc";

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@mixin he-currencyfield($primary-stylename: c-currencyfield) {
+@mixin he-currencyfield($primary-stylename: jmix-currencyfield) {
   .#{$primary-stylename} {
     @include he-currencyfield-style($primary-stylename: $primary-stylename);
   }
@@ -74,7 +74,7 @@
   }
 }
 
-@mixin he-currencyfield-style($primary-stylename: c-currencyfield) {
+@mixin he-currencyfield-style($primary-stylename: jmix-currencyfield) {
   @include he-currencyfield-size-style($primary-stylename: $primary-stylename);
 
   .#{$primary-stylename}-text {
@@ -117,7 +117,7 @@
   }
 }
 
-@mixin he-currencyfield-size-style($primary-stylename : c-currencyfield,
+@mixin he-currencyfield-size-style($primary-stylename : jmix-currencyfield,
                                    $unit-size         : $v-unit-size,
                                    $font-size         : $v-font-size) {
   height: $unit-size;

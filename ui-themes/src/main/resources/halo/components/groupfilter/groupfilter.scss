@@ -15,5 +15,5 @@
  */
 
 @mixin halo-group-filter($primary-stylename: jmix-group-filter) {
-  @include halo-cuba-groupbox($primary-stylename);
+  @include halo-jmix-groupbox($primary-stylename);
 }

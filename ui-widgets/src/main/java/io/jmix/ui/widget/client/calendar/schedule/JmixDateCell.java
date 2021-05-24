@@ -27,7 +27,7 @@ import java.util.Date;
 
 public class JmixDateCell extends DateCell {
 
-    public static final String SLOT_NUMBER_STYLENAME = "c-date-number";
+    public static final String SLOT_NUMBER_STYLENAME = "jmix-date-number";
 
     protected boolean rangeSelect = false;
 

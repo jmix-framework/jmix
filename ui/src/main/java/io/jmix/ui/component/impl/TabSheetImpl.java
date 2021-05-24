@@ -380,7 +380,7 @@ public class TabSheetImpl extends AbstractComponent<JmixTabSheet>
     @Override
     public TabSheet.Tab addLazyTab(String name, Element descriptor, ComponentLoader loader) {
         CssLayout tabContent = createLazyTabLayout();
-        tabContent.setStyleName("c-tabsheet-lazytab");
+        tabContent.setStyleName("jmix-tabsheet-lazytab");
         tabContent.setSizeFull();
 
         Tab tab = new Tab(name, tabContent);

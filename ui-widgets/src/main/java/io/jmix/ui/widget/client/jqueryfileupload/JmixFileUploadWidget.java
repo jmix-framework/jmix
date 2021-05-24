@@ -38,8 +38,8 @@ import java.util.Set;
 
 public class JmixFileUploadWidget extends FlowPanel implements Focusable, HasEnabled {
 
-    public static final String DEFAULT_CLASSNAME = "c-fileupload";
-    public static final String JMIX_FILEUPLOAD_DROPZONE_CLASSNAME = "c-fileupload-dropzone";
+    public static final String DEFAULT_CLASSNAME = "jmix-fileupload";
+    public static final String JMIX_FILEUPLOAD_DROPZONE_CLASSNAME = "jmix-fileupload-dropzone";
 
     protected VButton submitButton;
 

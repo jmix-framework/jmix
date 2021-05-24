@@ -36,7 +36,7 @@ import java.io.ByteArrayInputStream;
 import java.util.function.Consumer;
 
 public class ImageImpl<T> extends AbstractResourceView<JmixImage> implements Image<T>, InitializingBean {
-    protected static final String IMAGE_STYLENAME = "c-image";
+    protected static final String IMAGE_STYLENAME = "jmix-image";
 
     protected ValueSource<T> valueSource;
 

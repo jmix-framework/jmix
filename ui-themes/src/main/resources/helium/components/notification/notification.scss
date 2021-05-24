@@ -39,7 +39,7 @@
     @include he-notification-error-style($primary-stylename: $primary-stylename);
   }
 
-  .c-notification-modalitycurtain {
+  .jmix-notification-modalitycurtain {
     background: var(--notification-modalitycurtain-color);
     opacity: .25;
   }

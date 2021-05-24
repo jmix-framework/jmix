@@ -15,7 +15,7 @@
  *
  */
 
-@mixin halo-pivottable($primary-stylename: c-pivot-table) {
+@mixin halo-pivottable($primary-stylename: jmix-pivot-table) {
 
   $background-color: $v-table-background-color or valo-table-background-color();
   $border-color: $v-table-border-color or first-color(valo-border($color: $background-color, $strength: 0.7));

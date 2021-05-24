@@ -339,12 +339,12 @@ public class ThemeClassNames {
     /**
      * Side menu panel style. Used with {@link io.jmix.ui.component.mainwindow.SideMenu}.
      */
-    public static final String LAYOUT_SIDE_MENU_PANEL = "c-sidemenu-panel";
+    public static final String LAYOUT_SIDE_MENU_PANEL = "jmix-sidemenu-panel";
 
     /**
      * Side menu header style. Used with {@link io.jmix.ui.component.mainwindow.SideMenu}.
      */
-    public static final String LAYOUT_SIDE_MENU_TITLE = "c-sidemenu-title";
+    public static final String LAYOUT_SIDE_MENU_TITLE = "jmix-sidemenu-title";
 
     /**
      * Add this style name to a CssLayout to create a grouped set of components, i.e. a row of components
@@ -379,53 +379,53 @@ public class ThemeClassNames {
     /**
      * Style for layout tag in mainwindow with responsive {@link io.jmix.ui.component.mainwindow.SideMenu}.
      */
-    public static final String SIDEMENU_LAYOUT_RESPONSIVE = "c-sidemenu-responsive";
+    public static final String SIDEMENU_LAYOUT_RESPONSIVE = "jmix-sidemenu-responsive";
 
     /**
      * Style for horizontal layout that contains {@link #SIDEMENU_PANEL} and {@link io.jmix.ui.component.AppWorkArea}
      * in responsive mainwindow with {@link io.jmix.ui.component.mainwindow.SideMenu}.
      */
-    public static final String SIDEMENU_LAYOUT = "c-sidemenu-layout";
+    public static final String SIDEMENU_LAYOUT = "jmix-sidemenu-layout";
 
     /**
      * Style for side panel in responsive mainwindow with {@link io.jmix.ui.component.mainwindow.SideMenu}.
      */
-    public static final String SIDEMENU_PANEL = "c-sidemenu-panel";
+    public static final String SIDEMENU_PANEL = "jmix-sidemenu-panel";
 
     /**
      * Style for opened side panel in responsive mainwindow with {@link io.jmix.ui.component.mainwindow.SideMenu}.
      */
-    public static final String SIDEMENU_PANEL_OPEN = "c-sidemenu-open";
+    public static final String SIDEMENU_PANEL_OPEN = "jmix-sidemenu-open";
 
     /**
      * Style for opened side panel content in responsive mainwindow with {@link io.jmix.ui.component.mainwindow.SideMenu}.
      */
-    public static final String SIDEMENU_WRAP = "c-sidemenu-wrap";
+    public static final String SIDEMENU_WRAP = "jmix-sidemenu-wrap";
 
     /**
      * Style for side panel toggle button in responsive mainwindow with {@link io.jmix.ui.component.mainwindow.SideMenu}.
      */
-    public static final String SIDEMENU_TOGGLE_BUTTON = "c-sidemenu-toggle";
+    public static final String SIDEMENU_TOGGLE_BUTTON = "jmix-sidemenu-toggle";
 
     /**
      * Style for mobile buttons in top panel in responsive mainwindow with {@link io.jmix.ui.component.mainwindow.SideMenu}.
      */
-    public static final String SIDEMENU_MOBILE_BUTTONS = "c-sidemenu-mobile-buttons";
+    public static final String SIDEMENU_MOBILE_BUTTONS = "jmix-sidemenu-mobile-buttons";
 
     /**
      * Style for top header in responsive mainwindow with {@link io.jmix.ui.component.mainwindow.SideMenu}.
      */
-    public static final String SIDEMENU_TITLE = "c-sidemenu-title";
+    public static final String SIDEMENU_TITLE = "jmix-sidemenu-title";
 
     /**
      * Style for layouts to hide empty / zero height content.
      */
-    public static final String SHRINK_EMPTY_CONTAINER = "c-shrink-empty";
+    public static final String SHRINK_EMPTY_CONTAINER = "jmix-shrink-empty";
 
     /**
      * Style for layouts to hide overflow of nested content.
      */
-    public static final String HIDE_CONTAINER_OVERFLOW = "c-hide-overflow";
+    public static final String HIDE_CONTAINER_OVERFLOW = "jmix-hide-overflow";
 
     /**
      * Tiny component size. Can be combined with any other component style.
@@ -475,5 +475,5 @@ public class ThemeClassNames {
     /**
      * Highlights the button component with special visual style.
      */
-    public static final String PRIMARY_ACTION = "c-primary-action";
+    public static final String PRIMARY_ACTION = "jmix-primary-action";
 }

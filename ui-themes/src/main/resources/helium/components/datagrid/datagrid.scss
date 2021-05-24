@@ -34,45 +34,45 @@
     }
   }
 
-  .c-data-grid-composition {
+  .jmix-data-grid-composition {
     @include he-grid-composition-size-style()
   }
 
   /* Global size */
 
-  &.small .c-data-grid-composition {
+  &.small .jmix-data-grid-composition {
     @include he-grid-composition-size-style($v-unit-size--small)
   }
 
-  &.large .c-data-grid-composition {
+  &.large .jmix-data-grid-composition {
     @include he-grid-composition-size-style($v-unit-size--large)
   }
 
   /* Size within a container */
 
-  .small .c-data-grid-composition {
+  .small .jmix-data-grid-composition {
     @include he-grid-composition-size-style($v-unit-size--small)
   }
 
-  .medium .c-data-grid-composition {
+  .medium .jmix-data-grid-composition {
     @include he-grid-composition-size-style($v-unit-size)
   }
 
-  .large .c-data-grid-composition {
+  .large .jmix-data-grid-composition {
     @include he-grid-composition-size-style($v-unit-size--large)
   }
 
   /* Own size */
 
-  .c-data-grid-composition.small {
+  .jmix-data-grid-composition.small {
     @include he-grid-composition-size-style($v-unit-size--small)
   }
 
-  .c-data-grid-composition.medium {
+  .jmix-data-grid-composition.medium {
     @include he-grid-composition-size-style($v-unit-size)
   }
 
-  .c-data-grid-composition.large {
+  .jmix-data-grid-composition.large {
     @include he-grid-composition-size-style($v-unit-size--large)
   }
 }
@@ -161,7 +161,7 @@
     }
   }
 
-  @if $cuba-datagrid-highlight-hover-row {
+  @if $jmix-datagrid-highlight-hover-row {
     .#{$primary-stylename}-body .#{$primary-stylename}-row:hover > td {
       background-color: var(--grid-hovered-row-background-color);
       color: var(--grid-hovered-row-text-color);
@@ -226,15 +226,15 @@
     background: var(--grid-background-color);
 
     // TODO: gg, style other components
-    .v-button.c-pickerfield-button {
+    .v-button.jmix-pickerfield-button {
       border-left: he-border($color: --border-dim-color);
     }
   }
 
   // Aggregation
 
-  .#{$primary-stylename}-header .#{$primary-stylename}-row.c-aggregation-row > th,
-  .#{$primary-stylename}-footer .#{$primary-stylename}-row.c-aggregation-row > td {
+  .#{$primary-stylename}-header .#{$primary-stylename}-row.jmix-aggregation-row > th,
+  .#{$primary-stylename}-footer .#{$primary-stylename}-row.jmix-aggregation-row > td {
     background: var(--grid-aggregation-background-color);
     color: var(--grid-aggregation-text-color);
     border-left-color: var(--grid-aggregation-border-color);
@@ -272,7 +272,7 @@
   &.has-top-panel {
     padding-top: $unit-size + ceil($v-layout-spacing-vertical);
 
-    .c-data-grid-top {
+    .jmix-data-grid-top {
       min-height: $unit-size;
       margin-top: -1 * ($unit-size + ceil($v-layout-spacing-vertical));
     }

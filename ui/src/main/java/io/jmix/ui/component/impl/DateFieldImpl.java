@@ -61,7 +61,7 @@ public class DateFieldImpl<V extends Comparable<V>>
         extends AbstractViewComponent<JmixCssActionsLayout, LocalDateTime, V>
         implements DateField<V>, InitializingBean {
 
-    public static final String DATEFIELD_WITH_TIME_STYLENAME = "c-datefield-withtime";
+    public static final String DATEFIELD_WITH_TIME_STYLENAME = "jmix-datefield-withtime";
 
     protected static final int VALIDATORS_LIST_INITIAL_CAPACITY = 2;
 
@@ -93,7 +93,7 @@ public class DateFieldImpl<V extends Comparable<V>>
 
     public DateFieldImpl() {
         component = createComponent();
-        component.setPrimaryStyleName("c-datefield-layout");
+        component.setPrimaryStyleName("jmix-datefield-layout");
 
         if (App.isBound()) {
             theme = App.getInstance().getThemeConstants();
@@ -374,7 +374,7 @@ public class DateFieldImpl<V extends Comparable<V>>
             component.addComponent(timeField);
             component.addStyleName(DATEFIELD_WITH_TIME_STYLENAME);
         } else {
-            component.removeStyleName("c-datefield-withtime");
+            component.removeStyleName("jmix-datefield-withtime");
         }
     }
 

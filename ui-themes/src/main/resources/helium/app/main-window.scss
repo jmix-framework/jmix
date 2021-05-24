@@ -21,13 +21,13 @@ $he-sidemenu-collapsible-logo-default-size: 20px !default;
 @mixin he-main-window {
   @include he-sidemenu-layout-collapsible-style();
 
-  .c-app-workarea {
+  .jmix-app-workarea {
     @include he-box-shadow(--app-workarea-shadow);
   }
 
   $tabsheet-stylename: v-tabsheet;
 
-  .#{$tabsheet-stylename}.c-main-tabsheet.framed.padded-tabbar > .#{$tabsheet-stylename}-tabcontainer {
+  .#{$tabsheet-stylename}.jmix-main-tabsheet.framed.padded-tabbar > .#{$tabsheet-stylename}-tabcontainer {
     @if ($he-maintabsheet-light) {
       @include he-maintabsheet-light-style($tabsheet-stylename: v-tabsheet);
     }
@@ -35,16 +35,16 @@ $he-sidemenu-collapsible-logo-default-size: 20px !default;
     background-color: var(--maintabsheet-tabcontainer-background-color);
   }
 
-  .c-app-work-area-single {
+  .jmix-app-work-area-single {
     background: var(--panel-background-color);
   }
 
-  .c-main-singlewindow {
+  .jmix-main-singlewindow {
     background-color: var(--panel-background-color);
   }
 
-  .c-welcome-text,
-  .v-label.c-welcome-text {
+  .jmix-welcome-text,
+  .v-label.jmix-welcome-text {
     color: var(--text-secondary-color);
   }
 
@@ -78,7 +78,7 @@ $he-sidemenu-collapsible-logo-default-size: 20px !default;
 @mixin he-maintabsheet-size-style($tabsheet-stylename  : v-tabsheet,
                                   $unit-size           : $v-unit-size,
                                   $font-size           : $v-font-size) {
-  .#{$tabsheet-stylename}.c-main-tabsheet > .#{$tabsheet-stylename}-tabcontainer .#{$tabsheet-stylename}-caption-close {
+  .#{$tabsheet-stylename}.jmix-main-tabsheet > .#{$tabsheet-stylename}-tabcontainer .#{$tabsheet-stylename}-caption-close {
     top: round($unit-size/2 - $font-size/2);
   }
 }
@@ -109,25 +109,25 @@ $he-sidemenu-collapsible-logo-default-size: 20px !default;
 @mixin he-sidemenu-layout-collapsible-style() {
   @include he-sidemenu-layout-collapsible-size-style();
 
-  .c-sidemenu-layout.v-csslayout {
-    .c-sidemenu-panel {
-      .c-sidemenu .c-sidemenu-submenu.c-sidemenu-submenu-open {
+  .jmix-sidemenu-layout.v-csslayout {
+    .jmix-sidemenu-panel {
+      .jmix-sidemenu .jmix-sidemenu-submenu.jmix-sidemenu-submenu-open {
         background: var(--sidemenu-collapsible-submenu-background-color);
       }
     }
 
     // TODO: gg, remove after cuba-platform/cuba#2741 is fixed
-    .c-sidemenu-panel.collapsed:hover {
-      .c-sidemenu .c-sidemenu-submenu.c-sidemenu-submenu-open {
+    .jmix-sidemenu-panel.collapsed:hover {
+      .jmix-sidemenu .jmix-sidemenu-submenu.jmix-sidemenu-submenu-open {
         background: var(--sidemenu-collapsible-submenu-background-color);
       }
     }
 
-    .c-sidemenu-controls {
+    .jmix-sidemenu-controls {
       background-color: var(--sidemenu-collapsible-controls-panel-background-color);
     }
 
-    .c-sidemenu-collapse-button {
+    .jmix-sidemenu-collapse-button {
       color: var(--sidemenu-collapsible-collapse-button-color);
       background: var(--sidemenu-collapsible-collapse-button-background-color);
 
@@ -142,9 +142,9 @@ $he-sidemenu-collapsible-logo-default-size: 20px !default;
       }
     }
 
-    .c-settings-button,
-    .c-logout-button,
-    .c-login-button {
+    .jmix-settings-button,
+    .jmix-logout-button,
+    .jmix-login-button {
       @include he-sidemenu-action-button-color-style(
               $color                    : --sidemenu-collapsible-action-button-color,
               $hover-background-color   : --sidemenu-collapsible-action-button-hover-background-color,
@@ -157,18 +157,18 @@ $he-sidemenu-collapsible-logo-default-size: 20px !default;
 @mixin he-sidemenu-layout-collapsible-size-style($unit-size       : $v-unit-size,
                                                  $scaling-factor  : 1) {
 
-  $layout-expanded-width: round($cuba-sidemenu-layout-expanded-width * $scaling-factor);
-  .c-sidemenu-layout.v-csslayout {
-    .c-sidemenu-container {
+  $layout-expanded-width: round($jmix-sidemenu-layout-expanded-width * $scaling-factor);
+  .jmix-sidemenu-layout.v-csslayout {
+    .jmix-sidemenu-container {
       width: $layout-expanded-width;
     }
 
-    $layout-collapsed-width: round($cuba-sidemenu-layout-collapsed-width * $scaling-factor);
-    .c-sidemenu-container.collapsed {
+    $layout-collapsed-width: round($jmix-sidemenu-layout-collapsed-width * $scaling-factor);
+    .jmix-sidemenu-container.collapsed {
       width: $layout-collapsed-width;
     }
 
-    .c-sidemenu-panel {
+    .jmix-sidemenu-panel {
       width: $layout-expanded-width;
 
       @include he-sidemenu-collapsed(
@@ -177,8 +177,8 @@ $he-sidemenu-collapsible-logo-default-size: 20px !default;
               $layout-collapsed-width : $layout-collapsed-width);
     }
 
-    .c-sidemenu-panel.collapsed {
-      @if $cuba-sidemenu-layout-collapse-enabled {
+    .jmix-sidemenu-panel.collapsed {
+      @if $jmix-sidemenu-layout-collapse-enabled {
         width: $layout-collapsed-width !important;
         @include he-sidemenu-collapsed(
                 $collapsed              : true,
@@ -187,8 +187,8 @@ $he-sidemenu-collapsible-logo-default-size: 20px !default;
       }
     }
 
-    .c-sidemenu-panel.collapsed:hover {
-      @if $cuba-sidemenu-layout-collapse-enabled {
+    .jmix-sidemenu-panel.collapsed:hover {
+      @if $jmix-sidemenu-layout-collapse-enabled {
         width: $layout-expanded-width !important;
         @include he-sidemenu-collapsed(
                 $collapsed              : false,
@@ -198,45 +198,45 @@ $he-sidemenu-collapsible-logo-default-size: 20px !default;
       }
     }
 
-    .c-sidemenu-title {
+    .jmix-sidemenu-title {
       $logo-size: round($he-sidemenu-collapsible-logo-default-size * $scaling-factor);
 
       height: 40px;
       // consider 1px right border
       padding: 0 floor(($layout-collapsed-width - $logo-size) / 2);
 
-      .c-app-icon {
+      .jmix-app-icon {
         height: $logo-size;
         width: $logo-size;
       }
 
-      .c-app-title {
+      .jmix-app-title {
         width: $layout-expanded-width - 3 * $v-layout-spacing-horizontal - $logo-size;
       }
     }
 
-    .c-sidemenu-controls {
+    .jmix-sidemenu-controls {
       height: $layout-collapsed-width;
     }
 
-    .c-sidemenu-collapse-button {
+    .jmix-sidemenu-collapse-button {
       width: $layout-collapsed-width;
       height: $layout-collapsed-width;
     }
 
     $buttons-width: round($he-sidemenu-collapsible-action-buttons-default-width * $scaling-factor);
 
-    .c-userindicator {
+    .jmix-userindicator {
       width: $layout-expanded-width - $layout-collapsed-width - 2 * $buttons-width;
 
-      @if $cuba-sidemenu-layout-collapse-enabled == false {
+      @if $jmix-sidemenu-layout-collapse-enabled == false {
         width: $layout-expanded-width - 2 * $buttons-width;
       }
     }
 
-    .c-settings-button,
-    .c-logout-button,
-    .c-login-button {
+    .jmix-settings-button,
+    .jmix-logout-button,
+    .jmix-login-button {
       width: $buttons-width;
       height: $layout-collapsed-width;
     }
@@ -246,20 +246,20 @@ $he-sidemenu-collapsible-logo-default-size: 20px !default;
 // Collapsible SideMenu layout style
 @mixin he-sidemenu-collapsed($collapsed               : false,
                              $unit-size               : $v-unit-size,
-                             $layout-collapsed-width  : $cuba-sidemenu-layout-collapsed-width) {
+                             $layout-collapsed-width  : $jmix-sidemenu-layout-collapsed-width) {
   @if $collapsed {
-    .c-sidemenu > .c-sidemenu-item {
+    .jmix-sidemenu > .jmix-sidemenu-item {
       padding: 0;
 
-      .c-sidemenu-item-wrap {
+      .jmix-sidemenu-item-wrap {
         width: $layout-collapsed-width;
       }
     }
   } @else {
-    .c-sidemenu > .c-sidemenu-item {
+    .jmix-sidemenu > .jmix-sidemenu-item {
       padding: 0 $unit-size 0 round($unit-size / 2);
 
-      .c-sidemenu-item-wrap {
+      .jmix-sidemenu-item-wrap {
         width: 100%;
       }
     }

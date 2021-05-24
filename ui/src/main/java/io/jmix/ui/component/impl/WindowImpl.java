@@ -51,7 +51,7 @@ import static io.jmix.ui.component.HtmlAttributes.CSS;
 public abstract class WindowImpl implements Window, Component.Wrapper, Component.HasXmlDescriptor,
         SecuredActionsHolder, Component.HasIcon, FrameImplementation, WindowImplementation {
 
-    protected static final String C_WINDOW_LAYOUT = "c-window-layout";
+    protected static final String C_WINDOW_LAYOUT = "jmix-window-layout";
 
     private static final Logger log = LoggerFactory.getLogger(WindowImpl.class);
 

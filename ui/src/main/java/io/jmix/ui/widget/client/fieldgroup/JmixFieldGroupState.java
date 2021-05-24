@@ -20,7 +20,7 @@ import io.jmix.ui.widget.client.groupbox.JmixGroupBoxState;
 
 public class JmixFieldGroupState extends JmixGroupBoxState {
     {
-        primaryStyleName = "c-fieldgroup";
+        primaryStyleName = "jmix-fieldgroup";
     }
 
     public boolean borderVisible = false;

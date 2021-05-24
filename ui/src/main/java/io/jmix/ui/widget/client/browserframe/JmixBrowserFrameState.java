@@ -20,7 +20,7 @@ import com.vaadin.shared.ui.browserframe.BrowserFrameState;
 
 public class JmixBrowserFrameState extends BrowserFrameState {
     {
-        primaryStyleName = "c-browserframe";
+        primaryStyleName = "jmix-browserframe";
     }
 
     public static final String SANDBOX = "sandbox";

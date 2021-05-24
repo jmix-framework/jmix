@@ -58,18 +58,18 @@ import static java.util.Collections.singletonList;
 
 public class AppWorkAreaImpl extends AbstractComponent<CssLayout> implements AppWorkArea, HasInnerComponents {
 
-    public static final String WORKAREA_STYLENAME = "c-app-workarea";
+    public static final String WORKAREA_STYLENAME = "jmix-app-workarea";
 
-    public static final String MODE_TABBED_STYLENAME = "c-app-workarea-tabbed";
-    public static final String MODE_SINGLE_STYLENAME = "c-app-workarea-single";
+    public static final String MODE_TABBED_STYLENAME = "jmix-app-workarea-tabbed";
+    public static final String MODE_SINGLE_STYLENAME = "jmix-app-workarea-single";
 
-    public static final String STATE_INITIAL_STYLENAME = "c-app-workarea-initial";
-    public static final String STATE_WINDOWS_STYLENAME = "c-app-workarea-windows";
+    public static final String STATE_INITIAL_STYLENAME = "jmix-app-workarea-initial";
+    public static final String STATE_WINDOWS_STYLENAME = "jmix-app-workarea-windows";
 
-    public static final String SINGLE_CONTAINER_STYLENAME = "c-main-singlewindow";
-    public static final String TABBED_CONTAINER_STYLENAME = "c-main-tabsheet";
+    public static final String SINGLE_CONTAINER_STYLENAME = "jmix-main-singlewindow";
+    public static final String TABBED_CONTAINER_STYLENAME = "jmix-main-tabsheet";
 
-    public static final String INITIAL_LAYOUT_STYLENAME = "c-initial-layout";
+    public static final String INITIAL_LAYOUT_STYLENAME = "jmix-initial-layout";
 
     protected Mode mode = Mode.TABBED;
     protected State state = State.INITIAL_LAYOUT;

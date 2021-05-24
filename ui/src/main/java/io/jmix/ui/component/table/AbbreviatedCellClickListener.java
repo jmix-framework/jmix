@@ -82,7 +82,7 @@ public class AbbreviatedCellClickListener implements Consumer<Table.Column.Click
         layout.setMargin(false);
         layout.setSpacing(false);
         layout.setWidthUndefined();
-        layout.setStyleName("c-table-view-textcut");
+        layout.setStyleName("jmix-table-view-textcut");
         return layout;
     }
 

@@ -15,7 +15,7 @@
  *
  */
 
-@mixin halo-cuba-listeditor($primary-stylename: c-listeditor) {
+@mixin halo-jmix-listeditor($primary-stylename: jmix-listeditor) {
   .#{$primary-stylename} {
     display: inline-table;
   }
@@ -113,7 +113,7 @@
     }
   }
 
-  .#{$primary-stylename}-layout .v-slot-c-listeditor-button:last-child > .v-button.#{$primary-stylename}-button {
+  .#{$primary-stylename}-layout .v-slot-jmix-listeditor-button:last-child > .v-button.#{$primary-stylename}-button {
     border-top-right-radius: $v-border-radius;
     border-bottom-right-radius: $v-border-radius;
 

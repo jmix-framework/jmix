@@ -17,45 +17,45 @@
 @mixin he-tree($primary-stylename: v-tree8) {
   @include he-tree-style($primary-stylename: $primary-stylename);
 
-  .c-tree-composition {
+  .jmix-tree-composition {
     @include he-tree-composition-size-style()
   }
 
   /* Global size */
 
-  &.small .c-tree-composition {
+  &.small .jmix-tree-composition {
     @include he-tree-composition-size-style($v-unit-size--small)
   }
 
-  &.large .c-tree-composition {
+  &.large .jmix-tree-composition {
     @include he-tree-composition-size-style($v-unit-size--large)
   }
 
   /* Size within a container */
 
-  .small .c-tree-composition {
+  .small .jmix-tree-composition {
     @include he-tree-composition-size-style($v-unit-size--small)
   }
 
-  .medium .c-tree-composition {
+  .medium .jmix-tree-composition {
     @include he-tree-composition-size-style($v-unit-size)
   }
 
-  .large .c-tree-composition {
+  .large .jmix-tree-composition {
     @include he-tree-composition-size-style($v-unit-size--large)
   }
 
   /* Own size */
 
-  .c-tree-composition.small {
+  .jmix-tree-composition.small {
     @include he-tree-composition-size-style($v-unit-size--small)
   }
 
-  .c-tree-composition.medium {
+  .jmix-tree-composition.medium {
     @include he-tree-composition-size-style($v-unit-size)
   }
 
-  .c-tree-composition.large {
+  .jmix-tree-composition.large {
     @include he-tree-composition-size-style($v-unit-size--large)
   }
 }
@@ -91,8 +91,8 @@
     }
   }
 
-  .c-tree-composition .c-tree-wrapper {
-    @if $cuba-show-tree-border == true {
+  .jmix-tree-composition .jmix-tree-wrapper {
+    @if $jmix-show-tree-border == true {
       border: he-border($color: --tree-border-color);
       border-radius: $v-border-radius;
     }
@@ -103,7 +103,7 @@
   &.has-top-panel {
     padding-top: $unit-size + ceil($v-layout-spacing-vertical);
 
-    .c-tree-top {
+    .jmix-tree-top {
       min-height: $unit-size;
       margin-top: -1 * ($unit-size + ceil($v-layout-spacing-vertical));
     }

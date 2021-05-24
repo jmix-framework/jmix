@@ -19,11 +19,11 @@
  * The default background color for main menu bar header.
  * @group menubar
  */
-$cuba-default-menubar-background: #1c1e20 !default;
+$jmix-default-menubar-background: #1c1e20 !default;
 
 @function get-menu-background-color($color) {
     @if ($color == #fafafa) {
-      @return $cuba-default-menubar-background;
+      @return $jmix-default-menubar-background;
     } @else {
       @return scale-color($color, $lightness: if(color-luminance($color) < 10, 15%, -70%));
     }
@@ -31,7 +31,7 @@ $cuba-default-menubar-background: #1c1e20 !default;
 
 @function get-menu-border-color($color) {
     @if ($color == #fafafa) {
-      @return $cuba-default-menubar-background;
+      @return $jmix-default-menubar-background;
     } @else {
       @return first-color(valo-border($color: $v-selection-color));
     }
@@ -41,50 +41,50 @@ $cuba-default-menubar-background: #1c1e20 !default;
  * The background color for main menu bar.
  * @group menubar
  */
-$cuba-menubar-background-color: get-menu-background-color($v-app-background-color) !default;
+$jmix-menubar-background-color: get-menu-background-color($v-app-background-color) !default;
 /**
  * The border color for main menu bar.
  * @group menubar
  */
-$cuba-menubar-border-color: get-menu-border-color($v-app-background-color) !default;
+$jmix-menubar-border-color: get-menu-border-color($v-app-background-color) !default;
 /**
  * The padding for main menu submenus.
  * @group menubar
  */
-$cuba-menubar-submenu-padding: 0px !default;
+$jmix-menubar-submenu-padding: 0px !default;
 /**
  * The font color for application header components.
  * @group menubar
  */
-$cuba-menubar-text-color: #adaeb0 !default;
+$jmix-menubar-text-color: #adaeb0 !default;
 /**
  * The color of selected menubar item background.
  * @group menubar
  */
-$cuba-menubar-menuitem-background-selected-color: $v-selection-color !default;
+$jmix-menubar-menuitem-background-selected-color: $v-selection-color !default;
 /**
  * The border radius of the main menubar items.
  * @group menubar
  */
-$cuba-menubar-menuitem-border-radius: $v-border-radius !default;
+$jmix-menubar-menuitem-border-radius: $v-border-radius !default;
 /**
  * The main menu item font weight.
  * @group menubar
  */
-$cuba-menubar-menuitem-font-weight: $v-font-weight !default;
+$jmix-menubar-menuitem-font-weight: $v-font-weight !default;
 /**
  * The font color for main menu selected item.
  * @group menubar
  */
-$cuba-menubar-menuitem-text-selected-color: #e8e8e8 !default;
+$jmix-menubar-menuitem-text-selected-color: #e8e8e8 !default;
 /**
  * The main menu submenu item font weight.
  * @group menubar
  */
-$cuba-menubar-submenu-item-font-weight: $v-font-weight !default;
+$jmix-menubar-submenu-item-font-weight: $v-font-weight !default;
 
-@mixin cuba-menubar {
-  .c-main-menu.v-menubar {
+@mixin jmix-menubar {
+  .jmix-main-menu.v-menubar {
     border: 0;
     background: transparent;
     box-shadow: none;
@@ -99,7 +99,7 @@ $cuba-menubar-submenu-item-font-weight: $v-font-weight !default;
     }
   }
 
-  .c-app-menubar .c-main-menu {
+  .jmix-app-menubar .jmix-main-menu {
     .v-menubar-menuitem-shortcut {
       padding-left: round($v-unit-size/5);
     }
@@ -108,26 +108,26 @@ $cuba-menubar-submenu-item-font-weight: $v-font-weight !default;
     }
   }
 
-  .c-main-menu.v-menubar > .v-menubar-menuitem {
+  .jmix-main-menu.v-menubar > .v-menubar-menuitem {
     border-right: 0;
-    font-weight: $cuba-menubar-menuitem-font-weight;
+    font-weight: $jmix-menubar-menuitem-font-weight;
 
-    @if $cuba-menubar-menuitem-border-radius > 0 {
+    @if $jmix-menubar-menuitem-border-radius > 0 {
       $border-width: first-number($v-border);
-      $br: max(0, $cuba-menubar-menuitem-border-radius - $border-width);
+      $br: max(0, $jmix-menubar-menuitem-border-radius - $border-width);
       border-radius: $br;
     }
   }
 
-  .c-main-menu.v-menubar-submenu {
+  .jmix-main-menu.v-menubar-submenu {
     display: table;
     overflow: hidden;
     white-space: nowrap;
-    padding: $cuba-menubar-submenu-padding;
+    padding: $jmix-menubar-submenu-padding;
 
     .v-menubar-menuitem {
       display: table-row;
-      font-weight: $cuba-menubar-submenu-item-font-weight;
+      font-weight: $jmix-menubar-submenu-item-font-weight;
       position: relative;
 
       &:active:before {
@@ -140,8 +140,8 @@ $cuba-menubar-submenu-item-font-weight: $v-font-weight !default;
     }
 
     .v-menubar-menuitem-caption {
-      border-top-left-radius: $cuba-menubar-menuitem-border-radius;
-      border-bottom-left-radius: $cuba-menubar-menuitem-border-radius;
+      border-top-left-radius: $jmix-menubar-menuitem-border-radius;
+      border-bottom-left-radius: $jmix-menubar-menuitem-border-radius;
       display: table-cell;
       padding-left: round(2*$v-unit-size/3);
 
@@ -158,8 +158,8 @@ $cuba-menubar-submenu-item-font-weight: $v-font-weight !default;
       display: table-cell;
       padding-left: round($v-unit-size/3);
       padding-right: round(2*$v-unit-size/3);
-      border-top-right-radius: $cuba-menubar-menuitem-border-radius;
-      border-bottom-right-radius: $cuba-menubar-menuitem-border-radius;
+      border-top-right-radius: $jmix-menubar-menuitem-border-radius;
+      border-bottom-right-radius: $jmix-menubar-menuitem-border-radius;
 
       .v-ie11 & {
         border-left: 1px solid transparent;
@@ -223,7 +223,7 @@ $cuba-menubar-submenu-item-font-weight: $v-font-weight !default;
     }
   }
 
-  .c-main-menu.v-menubar-submenu-has-icons .v-menubar-menuitem {
+  .jmix-main-menu.v-menubar-submenu-has-icons .v-menubar-menuitem {
     .v-icon {
       margin-left: -$v-font-size--h1;
       margin-right: 0;
@@ -235,7 +235,7 @@ $cuba-menubar-submenu-item-font-weight: $v-font-weight !default;
     }
   }
 
-  .c-ftsfield {
+  .jmix-ftsfield {
     padding-right: $v-unit-size;
     font-size: 0;
     white-space: nowrap;
@@ -245,29 +245,29 @@ $cuba-menubar-submenu-item-font-weight: $v-font-weight !default;
     }
   }
 
-  .c-ftsfield-text {
+  .jmix-ftsfield-text {
     width: 120px;
   }
 
-  .c-ftsfield-button {
+  .jmix-ftsfield-button {
     width: $v-unit-size;
     margin-right: -$v-unit-size;
   }
 
-  .c-app-menubar {
-    .c-main-menu {
+  .jmix-app-menubar {
+    .jmix-main-menu {
       .v-menubar-menuitem-more-item,
       .v-menubar-menuitem-caption,
       .v-menubar-menuitem-shortcut {
-        color: $cuba-menubar-text-color;
+        color: $jmix-menubar-text-color;
       }
 
       .v-menubar-menuitem-selected {
         @include valo-button-style(
-                $background-color: $cuba-menubar-menuitem-background-selected-color,
+                $background-color: $jmix-menubar-menuitem-background-selected-color,
                 $border: none,
-                $border-radius: $cuba-menubar-menuitem-border-radius,
-                $font-weight: $cuba-menubar-menuitem-font-weight,
+                $border-radius: $jmix-menubar-menuitem-border-radius,
+                $font-weight: $jmix-menubar-menuitem-font-weight,
                 $padding: ('0', 'round($v-unit-size/2.4)'),
                 $unit-size: null);
       }
@@ -278,25 +278,25 @@ $cuba-menubar-submenu-item-font-weight: $v-font-weight !default;
       .v-menubar-menuitem-selected .v-menubar-menuitem-caption,
       .v-menubar-menuitem-selected .v-menubar-menuitem-shortcut,
       .v-menubar-menuitem-selected.v-menubar-menuitem-more-item {
-        color: $cuba-menubar-menuitem-text-selected-color;
+        color: $jmix-menubar-menuitem-text-selected-color;
       }
     }
 
-    .c-user-select-label,
-    .c-user-timezone-label,
-    .c-ftsfield-button,
-    .c-logout-button,
-    .c-newwindow-button {
-      color: $cuba-menubar-text-color;
+    .jmix-user-select-label,
+    .jmix-user-timezone-label,
+    .jmix-ftsfield-button,
+    .jmix-logout-button,
+    .jmix-newwindow-button {
+      color: $jmix-menubar-text-color;
     }
 
-    .c-ftsfield-button:hover,
-    .c-ftsfield-button:focus,
-    .c-logout-button:hover,
-    .c-newwindow-button:hover,
-    .c-logout-button:focus,
-    .c-newwindow-button:focus {
-      color: $cuba-menubar-menuitem-text-selected-color;
+    .jmix-ftsfield-button:hover,
+    .jmix-ftsfield-button:focus,
+    .jmix-logout-button:hover,
+    .jmix-newwindow-button:hover,
+    .jmix-logout-button:focus,
+    .jmix-newwindow-button:focus {
+      color: $jmix-menubar-menuitem-text-selected-color;
     }
   }
 }

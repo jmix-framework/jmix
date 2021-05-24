@@ -21,7 +21,7 @@ import com.vaadin.shared.ui.label.LabelState;
 public class JmixCapsLockIndicatorState extends LabelState {
 
     {
-        primaryStyleName = "c-capslockindicator";
+        primaryStyleName = "jmix-capslockindicator";
     }
 
     public String capsLockOnMessage;

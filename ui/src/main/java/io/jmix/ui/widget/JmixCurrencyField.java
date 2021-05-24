@@ -29,10 +29,10 @@ import java.util.function.Supplier;
 
 public class JmixCurrencyField extends CustomField<String> {
 
-    protected static final String CURRENCYFIELD_STYLENAME = "c-currencyfield";
-    protected static final String CURRENCYFIELD_LAYOUT_STYLENAME = "c-currencyfield-layout";
-    protected static final String CURRENCY_STYLENAME = "c-currencyfield-currency";
-    protected static final String CURRENCYFIELD_TEXT_STYLENAME = "c-currencyfield-text";
+    protected static final String CURRENCYFIELD_STYLENAME = "jmix-currencyfield";
+    protected static final String CURRENCYFIELD_LAYOUT_STYLENAME = "jmix-currencyfield-layout";
+    protected static final String CURRENCY_STYLENAME = "jmix-currencyfield-currency";
+    protected static final String CURRENCYFIELD_TEXT_STYLENAME = "jmix-currencyfield-text";
 
     protected static final String CURRENCY_VISIBLE = "currency-visible";
     protected static final String IE9_INPUT_WRAP_STYLENAME = "ie9-input-wrap";

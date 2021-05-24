@@ -23,7 +23,7 @@ import com.vaadin.client.ui.layout.ComponentConnectorLayoutSlot;
 
 public class JmixFieldGroupLayoutWidget extends JmixGridLayoutWidget {
 
-    public static final String CLASSNAME = "c-fglayout";
+    public static final String CLASSNAME = "jmix-fglayout";
 
     protected boolean useInlineCaption = true;
 

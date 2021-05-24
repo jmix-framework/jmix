@@ -24,13 +24,13 @@
     }
   }
 
-  .c-resizabletextarea-wrapper-error {
+  .jmix-resizabletextarea-wrapper-error {
     .#{$primary-stylename} {
       @include valo-textfield-error-style;
     }
   }
 
-  .#{$primary-stylename}.c-disabled-or-readonly.c-empty-value {
+  .#{$primary-stylename}.jmix-disabled-or-readonly.jmix-empty-value {
     color: transparent;
   }
 

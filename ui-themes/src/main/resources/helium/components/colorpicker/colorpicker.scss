@@ -15,7 +15,7 @@
  */
 
 @mixin he-colorpicker($primary-stylename: v-colorpicker) {
-  .c-color-picker {
+  .jmix-color-picker {
     @include he-colorpicker-size-style($primary-stylename: $primary-stylename);
 
     .#{$primary-stylename}-button-color {
@@ -23,7 +23,7 @@
     }
   }
 
-  .c-color-picker-error > .v-colorpicker {
+  .jmix-color-picker-error > .v-colorpicker {
     @include he-input-error-style();
   }
 
@@ -35,7 +35,7 @@
   /* Global size */
 
   &.small {
-    .c-color-picker {
+    .jmix-color-picker {
       @include he-colorpicker-size-style(
               $primary-stylename  : $primary-stylename,
               $unit-size          : $v-unit-size--small,
@@ -51,7 +51,7 @@
   }
 
   &.large {
-    .c-color-picker {
+    .jmix-color-picker {
       @include he-colorpicker-size-style(
               $primary-stylename  : $primary-stylename,
               $unit-size          : $v-unit-size--large,
@@ -68,21 +68,21 @@
 
   /* Size within a container */
 
-  .small .c-color-picker {
+  .small .jmix-color-picker {
     @include he-colorpicker-size-style(
             $primary-stylename  : $primary-stylename,
             $unit-size          : $v-unit-size--small,
             $font-size          : $v-font-size--small);
   }
 
-  .medium .c-color-picker {
+  .medium .jmix-color-picker {
     @include he-colorpicker-size-style(
             $primary-stylename  : $primary-stylename,
             $unit-size          : $v-unit-size,
             $font-size          : $v-font-size);
   }
 
-  .large .c-color-picker {
+  .large .jmix-color-picker {
     @include he-colorpicker-size-style(
             $primary-stylename  : $primary-stylename,
             $unit-size          : $v-unit-size--large,
@@ -91,21 +91,21 @@
 
   /* Own size */
 
-  .c-color-picker.small {
+  .jmix-color-picker.small {
     @include he-colorpicker-size-style(
             $primary-stylename  : $primary-stylename,
             $unit-size          : $v-unit-size--small,
             $font-size          : $v-font-size--small);
   }
 
-  .c-color-picker.medium {
+  .jmix-color-picker.medium {
     @include he-colorpicker-size-style(
             $primary-stylename  : $primary-stylename,
             $unit-size          : $v-unit-size,
             $font-size          : $v-font-size);
   }
 
-  .c-color-picker.large {
+  .jmix-color-picker.large {
     @include he-colorpicker-size-style(
             $primary-stylename  : $primary-stylename,
             $unit-size          : $v-unit-size--large,

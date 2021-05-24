@@ -118,11 +118,11 @@ public class JmixMainTabSheetWidget extends VDDTabSheet {
 
         VTabsheet.Tab tab = tabBar.getTab(index);
         if (tab.isHiddenOnServer()) {
-            tab.removeStyleName("c-tab-visible");
-            tab.addStyleName("c-tab-hidden");
+            tab.removeStyleName("jmix-tab-visible");
+            tab.addStyleName("jmix-tab-hidden");
         } else {
-            tab.removeStyleName("c-tab-hidden");
-            tab.addStyleName("c-tab-visible");
+            tab.removeStyleName("jmix-tab-hidden");
+            tab.addStyleName("jmix-tab-visible");
         }
     }
 
@@ -136,12 +136,12 @@ public class JmixMainTabSheetWidget extends VDDTabSheet {
             boolean firstVisibleAfterSelection = false;
             for (Widget widget : tabBar) {
                 VTabsheet.Tab t = (VTabsheet.Tab) widget;
-                t.removeStyleName("c-tab-sibling-visible");
+                t.removeStyleName("jmix-tab-sibling-visible");
 
                 if (!firstVisibleAfterSelection
                         && i > navIndex
                         && !t.isHiddenOnServer()) {
-                    t.addStyleName("c-tab-sibling-visible");
+                    t.addStyleName("jmix-tab-sibling-visible");
                     firstVisibleAfterSelection = true;
                 }
 

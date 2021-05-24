@@ -24,7 +24,7 @@ import javax.annotation.Nullable;
 
 public class FlowBoxLayoutImpl extends AbstractOrderedLayout<JmixFlowLayout> implements FlowBoxLayout {
 
-    protected static final String FLOWLAYOUT_STYLENAME = "c-flowlayout";
+    protected static final String FLOWLAYOUT_STYLENAME = "jmix-flowlayout";
 
     public FlowBoxLayoutImpl() {
         component = createComponent();

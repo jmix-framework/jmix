@@ -15,12 +15,12 @@
  *
  */
 
-@mixin cuba-breadcrumbs {
-  .c-breadcrumbs-logo {
+@mixin jmix-breadcrumbs {
+  .jmix-breadcrumbs-logo {
     padding: 0;
   }
 
-  .v-button.c-closetab-button {
+  .v-button.jmix-closetab-button {
     border: none;
     background: transparent none;
     box-shadow: none;
@@ -33,18 +33,18 @@
     }
   }
 
-  .c-app-workarea-single .v-button.c-closetab-button {
+  .jmix-app-workarea-single .v-button.jmix-closetab-button {
     float: right;
   }
 
-  .v-button.c-closetab-button:hover {
+  .v-button.jmix-closetab-button:hover {
     .v-button-wrap {
       background: transparent none;
       padding: 0;
     }
   }
 
-  .c-headline-container {
+  .jmix-headline-container {
     display: block;
     flex-shrink: 0;
     min-height: $v-unit-size;
@@ -52,18 +52,18 @@
     white-space: nowrap;
   }
 
-  .c-breadcrumbs-separator,
-  .c-breadcrumbs-win-caption {
+  .jmix-breadcrumbs-separator,
+  .jmix-breadcrumbs-win-caption {
     vertical-align: bottom;
     margin-left: 2px;
   }
 
-  .c-breadcrumbs-container {
+  .jmix-breadcrumbs-container {
     margin-right: ceil($v-layout-spacing-horizontal/2);
     max-width: 100%;
   }
 
-  .c-breadcrumbs {
+  .jmix-breadcrumbs {
     display: flex;
     flex-wrap: wrap;
 

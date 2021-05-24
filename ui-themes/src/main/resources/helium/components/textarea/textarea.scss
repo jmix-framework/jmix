@@ -33,7 +33,7 @@
     @include he-input-error-style;
   }
 
-  .c-resizabletextarea-wrapper-error {
+  .jmix-resizabletextarea-wrapper-error {
     .#{$primary-stylename} {
       @include he-input-error-style();
       color: var(--text-secondary-color);

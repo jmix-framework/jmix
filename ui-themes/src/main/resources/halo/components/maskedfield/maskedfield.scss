@@ -15,7 +15,7 @@
  *
  */
 
-@mixin halo-cuba-maskedfield($primary-stylename: c-maskedfield) {
+@mixin halo-jmix-maskedfield($primary-stylename: jmix-maskedfield) {
   .#{$primary-stylename} {
     @include box-defaults;
     @include valo-textfield-style;
@@ -35,11 +35,11 @@
     @include valo-textfield-error-style;
   }
 
-  .c-focus-move::selection {
+  .jmix-focus-move::selection {
     background: transparent;
   }
 
-  .c-focus-move::-moz-selection {
+  .jmix-focus-move::-moz-selection {
     background: transparent;
   }
 }

@@ -1141,7 +1141,7 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
 
         componentComposition = new TableComposition();
         componentComposition.setTable(component);
-        componentComposition.setPrimaryStyleName("c-table-composition");
+        componentComposition.setPrimaryStyleName("jmix-table-composition");
         componentComposition.addComponent(component);
 
         component.setCellStyleGenerator(createStyleGenerator());
@@ -2589,7 +2589,7 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
 
     protected CssLayout createTopPanel() {
         CssLayout topPanel = new CssLayout();
-        topPanel.setStyleName("c-table-top");
+        topPanel.setStyleName("jmix-table-top");
         return topPanel;
     }
 
@@ -3102,7 +3102,7 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
         customContextMenu.setMargin(false);
         customContextMenu.setSpacing(false);
         customContextMenu.setWidthUndefined();
-        customContextMenu.setStyleName("c-cm-container");
+        customContextMenu.setStyleName("jmix-cm-container");
 
         for (Action action : actions) {
             JmixButton contextMenuButton = createContextMenuButton();
@@ -3213,11 +3213,11 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
 
                 if (propertyPath.getRange().isClass()) {
                     if (StringUtils.isNotEmpty(isLink) && Boolean.parseBoolean(isLink)) {
-                        style = "c-table-cell-link";
+                        style = "jmix-table-cell-link";
                     }
                 } else if (propertyPath.getRange().isDatatype()) {
                     if (StringUtils.isNotEmpty(isLink) && Boolean.parseBoolean(isLink)) {
-                        style = "c-table-cell-link";
+                        style = "jmix-table-cell-link";
                     } else if (column.getMaxTextLength() != null) {
                         style = generateClickableCellStyles(itemId, column, propertyPath);
                     }
@@ -3257,10 +3257,10 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
             boolean isMultiLineCell = StringUtils.contains(stringValue, "\n");
             if ((stringValue.length() > column.getMaxTextLength() + MAX_TEXT_LENGTH_GAP)
                     || isMultiLineCell) {
-                return "c-table-cell-textcut";
+                return "jmix-table-cell-textcut";
             } else {
                 // use special marker stylename
-                return "c-table-clickable-text";
+                return "jmix-table-clickable-text";
             }
         }
         return null;

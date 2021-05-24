@@ -40,8 +40,8 @@ import com.vaadin.client.ui.orderedlayout.VAbstractOrderedLayout;
 
 public class Tools {
 
-    public static final String SELECTED_ITEM_STYLE = "c-cm-button-selected";
-    public static final String CONTEXT_MENU_CONTAINER_CLASSNAME = "c-cm-container";
+    public static final String SELECTED_ITEM_STYLE = "jmix-cm-button-selected";
+    public static final String CONTEXT_MENU_CONTAINER_CLASSNAME = "jmix-cm-container";
 
     private static ToolsImpl impl;
 
@@ -72,7 +72,7 @@ public class Tools {
     public static VOverlay createJmixTablePopup(boolean autoClose) {
         VOverlay tableCustomPopup = autoClose ? createTableContextMenu() : new VOverlay();
 
-        tableCustomPopup.setStyleName("c-table-popup");
+        tableCustomPopup.setStyleName("jmix-table-popup");
 
         return tableCustomPopup;
     }
@@ -80,7 +80,7 @@ public class Tools {
     public static VOverlay createJmixTableContextMenu() {
         VOverlay tableContextMenu = createTableContextMenu();
 
-        tableContextMenu.setStyleName("c-context-menu");
+        tableContextMenu.setStyleName("jmix-context-menu");
 
         return tableContextMenu;
     }

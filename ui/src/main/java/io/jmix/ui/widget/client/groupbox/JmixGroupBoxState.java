@@ -20,7 +20,7 @@ import com.vaadin.shared.ui.panel.PanelState;
 
 public class JmixGroupBoxState extends PanelState {
     {
-        primaryStyleName = "c-groupbox";
+        primaryStyleName = "jmix-groupbox";
     }
 
     public boolean collapsable = false;

@@ -62,7 +62,7 @@ import static io.jmix.ui.app.bulk.ColumnsMode.TWO_COLUMNS;
 @UiDescriptor("bulk-editor-window.xml")
 public class BulkEditorWindow<E> extends Screen implements BulkEditorController<E> {
 
-    protected static final String COLUMN_COUNT_STYLENAME = "c-bulk-editor-columns-";
+    protected static final String COLUMN_COUNT_STYLENAME = "jmix-bulk-editor-columns-";
 
     protected static final ColumnsMode DEFAULT_COLUMNS_MODE = TWO_COLUMNS;
 
@@ -222,11 +222,11 @@ public class BulkEditorWindow<E> extends Screen implements BulkEditorController<
         Field<?> editField = createField(metaProperty, fieldDc);
 
         editField.setFrame(getWindow().getFrame());
-        editField.setStyleName("c-bulk-editor-field");
+        editField.setStyleName("jmix-bulk-editor-field");
 
         if (isEntityPickerWrapperNeeded(editField)) {
             CssLayout wrapper = uiComponents.create(CssLayout.NAME);
-            wrapper.setStyleName("c-bulk-editor-picker-field-wrapper");
+            wrapper.setStyleName("jmix-bulk-editor-picker-field-wrapper");
             wrapper.add(editField);
             row.add(wrapper);
         } else {
@@ -236,7 +236,7 @@ public class BulkEditorWindow<E> extends Screen implements BulkEditorController<
         Button clearButton = createClearButton();
         if (editField.isRequired()) {
             // hidden component for correctly showing layout
-            clearButton.setStyleName("c-bulk-editor-spacer");
+            clearButton.setStyleName("jmix-bulk-editor-spacer");
         } else {
             clearButton.addClickListener(createClearButtonClickListener(editField));
         }
@@ -299,20 +299,20 @@ public class BulkEditorWindow<E> extends Screen implements BulkEditorController<
     protected Label<String> createLabel(ManagedField field) {
         Label<String> label = uiComponents.create(Label.NAME);
         label.setValue(field.getLocalizedName());
-        label.setStyleName("c-bulk-editor-label");
+        label.setStyleName("jmix-bulk-editor-label");
         return label;
     }
 
     protected ComponentContainer createRowLayout() {
         CssLayout row = uiComponents.create(CssLayout.NAME);
-        row.setStyleName("c-bulk-editor-row");
+        row.setStyleName("jmix-bulk-editor-row");
         row.setWidth("100%");
         return row;
     }
 
     protected ComponentContainer createColumnLayout() {
         VBoxLayout column = uiComponents.create(VBoxLayout.NAME);
-        column.setStyleName("c-bulk-editor-column");
+        column.setStyleName("jmix-bulk-editor-column");
         column.setWidth(Component.AUTO_SIZE);
         return column;
     }
@@ -325,7 +325,7 @@ public class BulkEditorWindow<E> extends Screen implements BulkEditorController<
 
     protected ComponentContainer createFieldsLayout() {
         CssLayout fieldsLayout = uiComponents.create(CssLayout.NAME);
-        fieldsLayout.setStyleName("c-bulk-editor-fields-layout");
+        fieldsLayout.setStyleName("jmix-bulk-editor-fields-layout");
         fieldsLayout.setWidthFull();
         fieldsLayout.setHeightFull();
         return fieldsLayout;

@@ -25,7 +25,7 @@ import com.vaadin.client.ui.VCustomField;
 
 public class JmixResizableTextAreaWrapperWidget extends VCustomField {
 
-    public static final String RESIZE_ELEMENT = "c-resizabletextarea-resize-corner";
+    public static final String RESIZE_ELEMENT = "jmix-resizabletextarea-resize-corner";
 
     protected boolean dragDrop = false;
     protected boolean enabled = true;

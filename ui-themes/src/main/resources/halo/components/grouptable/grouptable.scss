@@ -15,7 +15,7 @@
  *
  */
 
-@mixin halo-cuba-grouptable($primary-stylename: c-grouptable) {
+@mixin halo-jmix-grouptable($primary-stylename: jmix-grouptable) {
   .#{$primary-stylename}-group-cell-expander {
     @include box-defaults;
 

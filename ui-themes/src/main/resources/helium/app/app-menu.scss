@@ -15,11 +15,11 @@
  */
 
 @mixin he-menubar {
-  .c-main-menu.v-menubar {
+  .jmix-main-menu.v-menubar {
     text-shadow: none;
   }
 
-  .c-main-menu.v-menubar-submenu {
+  .jmix-main-menu.v-menubar-submenu {
     .v-menubar-menuitem {
       &:active {
         background: var(--selection-overlay-selected-item-active-background-color);
@@ -46,11 +46,11 @@
     }
   }
 
-  .c-app-menubar {
+  .jmix-app-menubar {
     background: var(--menubar-background-color);
     border: he-border($color: --menubar-border-color);
 
-    .c-main-menu {
+    .jmix-main-menu {
       .v-menubar-menuitem-more-item,
       .v-menubar-menuitem-caption,
       .v-menubar-menuitem-shortcut {
@@ -85,17 +85,17 @@
       }
     }
 
-    .c-user-select-label,
-    .c-user-timezone-label,
-    .c-ftsfield-button,
-    .c-logout-button,
-    .c-newwindow-button {
+    .jmix-user-select-label,
+    .jmix-user-timezone-label,
+    .jmix-ftsfield-button,
+    .jmix-logout-button,
+    .jmix-newwindow-button {
       color: var(--menubar-action-button-color);
     }
 
-    .c-ftsfield-button,
-    .c-logout-button,
-    .c-newwindow-button {
+    .jmix-ftsfield-button,
+    .jmix-logout-button,
+    .jmix-newwindow-button {
       &:focus {
         color: var(--menubar-action-button-hover-text-color);
       }

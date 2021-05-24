@@ -696,7 +696,7 @@ public class JmixTreeTable extends com.vaadin.v7.ui.TreeTable implements TreeTab
             paintAggregationRow(target, ((AggregationContainer) items).aggregate(new Context(items.getItemIds())));
         }
 
-        // paint cuba-ids
+        // paint jmix-ids
 
         if (getJTestId() != null) {
             ArrayList<String> visibleColOrder = new ArrayList<>();

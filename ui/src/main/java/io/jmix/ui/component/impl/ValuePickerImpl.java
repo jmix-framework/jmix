@@ -353,7 +353,7 @@ public class ValuePickerImpl<V>
         if (this.fieldIconProvider != iconProvider) {
             this.fieldIconProvider = iconProvider;
 
-            component.setStyleName("c-has-field-icon", iconProvider != null);
+            component.setStyleName("jmix-has-field-icon", iconProvider != null);
             component.getField().setStyleName(ThemeClassNames.TEXTFIELD_INLINE_ICON, iconProvider != null);
 
             component.setIconGenerator(iconProvider != null

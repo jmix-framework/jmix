@@ -441,7 +441,7 @@ public class JmixTreeTableWidget extends VTreeTable implements TableWidget {
 
         public JmixTreeTableTableHead() {
             Element iconElement = presentationsEditIcon.getElement();
-            iconElement.setClassName("c-table-prefs-icon");
+            iconElement.setClassName("jmix-table-prefs-icon");
             iconElement.getStyle().setDisplay(Style.Display.NONE);
 
             Element columnSelector = (Element) getElement().getLastChild();
@@ -853,7 +853,7 @@ public class JmixTreeTableWidget extends VTreeTable implements TableWidget {
 
                     if (SpanElement.TAG.equalsIgnoreCase(eventTarget.getTagName())
                             && eventTarget.hasClassName(TABLE_CLICKABLE_CELL_CLASSNAME)) {
-                        // found <span class="c-table-clickable-cell">
+                        // found <span class="jmix-table-clickable-cell">
                         return true;
                     }
                 }

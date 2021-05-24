@@ -15,8 +15,8 @@
  *
  */
 
-@mixin cuba-table-showlink {
-  .c-table-showlink-textarea {
+@mixin jmix-table-showlink {
+  .jmix-table-showlink-textarea {
     resize: vertical;
     width: 100%;
     height: 5 * $v-font-size;

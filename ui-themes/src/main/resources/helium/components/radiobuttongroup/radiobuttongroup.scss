@@ -127,7 +127,7 @@ $he-radio-check-size--large: null !default;
   }
 }
 
-@mixin he-radiobuttongroup-style($unit-size   : $cuba-checkbox-size,
+@mixin he-radiobuttongroup-style($unit-size   : $jmix-checkbox-size,
                                  $font-size   : $v-font-size,
                                  $check-size  : $he-radio-check-size) {
   .v-radiobutton {

@@ -90,7 +90,7 @@ public class JmixSideMenu extends AbstractComponent implements Component.Focusab
                     if (menuItem.getCommand() != null) {
                         menuItem.getCommand().accept(new MenuItemTriggeredEvent(JmixSideMenu.this, menuItem));
                     }
-                    removeStyleName("c-sidemenu-open");
+                    removeStyleName("jmix-sidemenu-open");
                 }
             }
 

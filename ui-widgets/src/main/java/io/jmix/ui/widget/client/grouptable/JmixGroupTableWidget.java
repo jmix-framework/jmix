@@ -34,7 +34,7 @@ import java.util.*;
 
 public class JmixGroupTableWidget extends JmixScrollTableWidget {
 
-    public static final String CLASSNAME = "c-grouptable";
+    public static final String CLASSNAME = "jmix-grouptable";
     public static final String GROUP_DIVIDER_COLUMN_KEY = "-1";
     public static final int GROUP_DIVIDER_WIDTH = 16;
 
@@ -43,7 +43,7 @@ public class JmixGroupTableWidget extends JmixScrollTableWidget {
     protected boolean isAggregationEditable = false;
 
     public JmixGroupTableWidget() {
-        addStyleName("c-grouptable");
+        addStyleName("jmix-grouptable");
     }
 
     public void updateGroupColumns(Set<String> groupColumns) {
@@ -552,7 +552,7 @@ public class JmixGroupTableWidget extends JmixScrollTableWidget {
             public JmixGroupTableGroupRow(UIDL uidl, char[] aligns) {
                 super(uidl, aligns);
                 selectable = false;
-                addStyleName("c-group-row");
+                addStyleName("jmix-group-row");
             }
 
             @Override
@@ -788,7 +788,7 @@ public class JmixGroupTableWidget extends JmixScrollTableWidget {
                 InputElement inputElement = DOM.createInputText().cast();
                 inputElement.setValue(text);
                 inputElement.addClassName("v-textfield v-widget");
-                inputElement.addClassName("c-group-aggregation-textfield");
+                inputElement.addClassName("jmix-group-aggregation-textfield");
                 Style elemStyle = inputElement.getStyle();
                 elemStyle.setWidth(100, Style.Unit.PCT);
                 DOM.appendChild(container, inputElement);

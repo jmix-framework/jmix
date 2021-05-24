@@ -15,10 +15,10 @@
  *
  */
 
-$cuba-capslockindicator-icon-color-on: #ddd533 !default;
-$cuba-capslockindicator-icon-color-off: #c5c5c5 !default;
+$jmix-capslockindicator-icon-color-on: #ddd533 !default;
+$jmix-capslockindicator-icon-color-off: #c5c5c5 !default;
 
-@mixin halo-cuba-capslockindicator($primary-stylename: c-capslockindicator) {
+@mixin halo-jmix-capslockindicator($primary-stylename: jmix-capslockindicator) {
 
   .#{$primary-stylename} {
     display: inline-table;
@@ -27,11 +27,11 @@ $cuba-capslockindicator-icon-color-off: #c5c5c5 !default;
   }
 
   .#{$primary-stylename}.capslock-on span::before{
-    color: $cuba-capslockindicator-icon-color-on;
+    color: $jmix-capslockindicator-icon-color-on;
   }
 
   .#{$primary-stylename}.capslock-off span::before{
-    color: $cuba-capslockindicator-icon-color-off;
+    color: $jmix-capslockindicator-icon-color-off;
     content: none;
   }
 

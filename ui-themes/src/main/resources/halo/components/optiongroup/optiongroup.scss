@@ -19,33 +19,33 @@
  * The size of option group.
  * @group optiongroup
  */
-$cuba-optiongroup-size: $v-unit-size/2 !default;
+$jmix-optiongroup-size: $v-unit-size/2 !default;
 
 @mixin halo-optiongroup($primary-stylename: v-select-optiongroup) {
   .#{$primary-stylename} {
     .v-radiobutton {
       :root & {
-        line-height: $cuba-optiongroup-size;
-        padding-left: round($cuba-optiongroup-size * 1.33);
+        line-height: $jmix-optiongroup-size;
+        padding-left: round($jmix-optiongroup-size * 1.33);
       }
 
       :root & > input {
         & ~ label:before {
-          height: round($cuba-optiongroup-size);
-          width: round($cuba-optiongroup-size);
+          height: round($jmix-optiongroup-size);
+          width: round($jmix-optiongroup-size);
         }
 
         & ~ label:after {
-          width: $cuba-optiongroup-size;
-          height: $cuba-optiongroup-size;
+          width: $jmix-optiongroup-size;
+          height: $jmix-optiongroup-size;
           top: 0;
           left: 0;
         }
 
         &:checked ~ label:after {
-          $factor: $cuba-optiongroup-size * 2 / $v-unit-size;
-          $size: ceil(($cuba-optiongroup-size * $factor) / 3);
-          $offset: round($cuba-optiongroup-size / (3 * $factor));
+          $factor: $jmix-optiongroup-size * 2 / $v-unit-size;
+          $size: ceil(($jmix-optiongroup-size * $factor) / 3);
+          $offset: round($jmix-optiongroup-size / (3 * $factor));
 
           width: $size;
           height: $size;

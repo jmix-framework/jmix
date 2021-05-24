@@ -18,25 +18,25 @@
 /*
  * Is used for supporting RowsCount in compatibility module.
  */
-@mixin halo-cuba-table-paging {
-  .c-table-rows-count {
+@mixin halo-jmix-table-paging {
+  .jmix-table-rows-count {
     text-align: right;
     float: right;
     padding-left: round($v-layout-spacing-horizontal/2);
   }
 
-  .c-table-rows-count,
-  .c-paging-wrap {
+  .jmix-table-rows-count,
+  .jmix-paging-wrap {
     height: $v-unit-size;
   }
 
-  .c-paging-wrap > * {
+  .jmix-paging-wrap > * {
     vertical-align: middle;
     margin-right: round($v-layout-spacing-horizontal/2);
     margin-bottom: round($v-layout-spacing-vertical/2);
   }
 
-  .v-button.c-paging-change-page {
+  .v-button.jmix-paging-change-page {
     height: round($v-unit-size/1.5);
     width: ceil($v-unit-size * 2 / 3);
     padding: 0 round($v-unit-size/6);
@@ -47,15 +47,15 @@
     }
   }
 
-  .c-paging-status {
+  .jmix-paging-status {
     line-height: $v-unit-size;
   }
 
-  .c-paging-count {
+  .jmix-paging-count {
     height: round($v-unit-size/1.5);
   }
 
-  .v-button.v-button-link.c-paging-count-number {
+  .v-button.v-button-link.jmix-paging-count-number {
     text-decoration: none;
     opacity: inherit;
 

@@ -15,7 +15,7 @@
  *
  */
 
-@mixin halo-cuba-multiupload($primary-stylename: c-multiupload) {
+@mixin halo-jmix-multiupload($primary-stylename: jmix-multiupload) {
   .#{$primary-stylename} {
     @include box-defaults;
 

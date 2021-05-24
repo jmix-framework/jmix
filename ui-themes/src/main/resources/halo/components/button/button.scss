@@ -19,27 +19,27 @@
  * The button caption font weight.
  * @group button
  */
-$cuba-button-font-weight: $v-font-weight !default;
+$jmix-button-font-weight: $v-font-weight !default;
 /**
  * Defines whether button with primary action should be highlighted.
  * @group button
  */
-$cuba-highlight-primary-action: false !default;
+$jmix-highlight-primary-action: false !default;
 /**
  * Whether linkButton caption should be placed in one row or can wrap onto multiple rows.
  * @group linkButton
  */
-$cuba-link-button-caption-wrap: true !default;
+$jmix-link-button-caption-wrap: true !default;
 
 @mixin halo-button($primary-stylename: v-button) {
   $link-padding: 2px;
 
   .#{$primary-stylename} {
     .v-button-caption {
-      font-weight: $cuba-button-font-weight;
+      font-weight: $jmix-button-font-weight;
     }
 
-    &.c-cm-button .v-button-caption {
+    &.jmix-cm-button .v-button-caption {
       font-weight: $v-font-weight;
     }
   }
@@ -97,8 +97,8 @@ $cuba-link-button-caption-wrap: true !default;
     }
   }
 
-  @if $cuba-highlight-primary-action {
-    .#{$primary-stylename}.c-primary-action {
+  @if $jmix-highlight-primary-action {
+    .#{$primary-stylename}.jmix-primary-action {
       @include valo-button-style($background-color: $v-focus-color, $unit-size: null);
     }
   }
@@ -130,7 +130,7 @@ $cuba-link-button-caption-wrap: true !default;
     margin-top: auto;
   }
 
-  @if $cuba-link-button-caption-wrap == false {
+  @if $jmix-link-button-caption-wrap == false {
     .#{$primary-stylename}.link {
       display: inline-block;
 

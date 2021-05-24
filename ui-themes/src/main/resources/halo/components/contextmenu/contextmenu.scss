@@ -15,7 +15,7 @@
  *
  */
 
-@mixin halo-cuba-contextmenu($primary-stylename: c-cm-container) {
+@mixin halo-jmix-contextmenu($primary-stylename: jmix-cm-container) {
   .#{$primary-stylename} {
     @include valo-selection-overlay-style;
   }

@@ -35,16 +35,16 @@ public class JmixGridEmptyState implements EventListener {
 
     public JmixGridEmptyState() {
         container = Document.get().createDivElement();
-        container.setClassName("c-datagrid-empty-state");
+        container.setClassName("jmix-datagrid-empty-state");
 
         messageBox = Document.get().createDivElement();
-        messageBox.setClassName("c-datagrid-empty-state-message-box");
+        messageBox.setClassName("jmix-datagrid-empty-state-message-box");
 
         messageLabel = Document.get().createDivElement();
-        messageLabel.setClassName("c-datagrid-empty-state-message");
+        messageLabel.setClassName("jmix-datagrid-empty-state-message");
 
         linkMessageLabel = Document.get().createSpanElement();
-        linkMessageLabel.setClassName("c-datagrid-empty-state-link-message v-button-link");
+        linkMessageLabel.setClassName("jmix-datagrid-empty-state-link-message v-button-link");
 
         container.appendChild(messageBox);
 

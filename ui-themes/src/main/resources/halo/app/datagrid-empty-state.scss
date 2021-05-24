@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
- @mixin cuba-datagrid-empty-state {
+ @mixin jmix-datagrid-empty-state {
 
-   .c-datagrid-empty-state {
+   .jmix-datagrid-empty-state {
      bottom: 0;
      font-size: $v-font-size--h2;
      left: 0;
@@ -31,7 +31,7 @@
      }
    }
 
-   .c-datagrid-empty-state:after {
+   .jmix-datagrid-empty-state:after {
      display: inline-block;
      height: 100%;
 
@@ -39,11 +39,11 @@
      content: "";
    }
 
-   .c-datagrid-empty-state-message-box {
+   .jmix-datagrid-empty-state-message-box {
      display: inline-block;
    }
 
-   .c-datagrid-empty-state-message {
+   .jmix-datagrid-empty-state-message {
      color: valo-font-color($v-font-color, 0.50);
      display: inline-block;
      user-select: none;
@@ -54,7 +54,7 @@
      width: 100%;
    }
 
-   .c-datagrid-empty-state-link-message {
+   .jmix-datagrid-empty-state-link-message {
      text-align: center;
      user-select: none;
      -moz-user-select: none;

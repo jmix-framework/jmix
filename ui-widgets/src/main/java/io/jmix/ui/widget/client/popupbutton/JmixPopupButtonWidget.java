@@ -28,7 +28,7 @@ import com.vaadin.client.ui.VUpload;
 
 public class JmixPopupButtonWidget extends VPopupButton {
 
-    public static final String SELECTED_ITEM_STYLE = "c-cm-button-selected";
+    public static final String SELECTED_ITEM_STYLE = "jmix-cm-button-selected";
 
     protected boolean customLayout = false;
 

@@ -15,47 +15,47 @@
  *
  */
 
-@mixin cuba-log-control {
+@mixin jmix-log-control {
 
-  .v-label.c-log-content,
-  .v-textarea.c-exception-dialog-log-content {
+  .v-label.jmix-log-content,
+  .v-textarea.jmix-exception-dialog-log-content {
     line-height: $v-font-size;
     font-family: monospace;
     border-radius: 0;
   }
 
   .v-label {
-    span.c-log-lowered-attention {
+    span.jmix-log-lowered-attention {
       opacity: .5;
     }
 
-    span.c-log-level {
+    span.jmix-log-level {
       font-weight: bold;
     }
 
-    span.c-log-level-DEBUG {
+    span.jmix-log-level-DEBUG {
       color: #000000;
     }
 
-    span.c-log-level-INFO {
+    span.jmix-log-level-INFO {
       color: blue;
     }
 
-    span.c-log-level-ERROR {
+    span.jmix-log-level-ERROR {
       color: red;
     }
 
-    span.c-log-level-SEVERE,
-    span.c-log-level-WARNING,
-    span.c-log-level-WARN {
+    span.jmix-log-level-SEVERE,
+    span.jmix-log-level-WARNING,
+    span.jmix-log-level-WARN {
       color: orange;
     }
 
-    span.c-log-level-TRACE {
+    span.jmix-log-level-TRACE {
       color: #c0c0c0;
     }
 
-    span.c-log-level-FATAL {
+    span.jmix-log-level-FATAL {
       color: red;
     }
   }

@@ -30,7 +30,7 @@ import java.util.function.Consumer;
 
 public class JmixGroupBoxWidget extends VPanel implements HasEnabled {
 
-    public static final String CLASSNAME = "c-groupbox";
+    public static final String CLASSNAME = "jmix-groupbox";
 
     protected boolean expanded = true;
     protected boolean collapsable = false;
@@ -217,10 +217,10 @@ public class JmixGroupBoxWidget extends VPanel implements HasEnabled {
     public void setOuterMargin(MarginInfo marginInfo) {
         this.marginInfo = marginInfo;
         if (marginInfo != null) {
-            setStyleName("c-outer-margin-top", marginInfo.hasTop());
-            setStyleName("c-outer-margin-right", marginInfo.hasRight());
-            setStyleName("c-outer-margin-bottom", marginInfo.hasBottom());
-            setStyleName("c-outer-margin-left", marginInfo.hasLeft());
+            setStyleName("jmix-outer-margin-top", marginInfo.hasTop());
+            setStyleName("jmix-outer-margin-right", marginInfo.hasRight());
+            setStyleName("jmix-outer-margin-bottom", marginInfo.hasBottom());
+            setStyleName("jmix-outer-margin-left", marginInfo.hasLeft());
         }
     }
 }

@@ -46,7 +46,7 @@ public class JmixGridWidget extends Grid<JsonObject> {
 
     public static final String JMIX_ID_COLUMN_PREFIX = "column_";
     public static final String JMIX_ID_COLUMN_HIDING_TOGGLE_PREFIX = "cc_";
-    public static final String SORT_LAST_STYLENAME = "c-sort-last";
+    public static final String SORT_LAST_STYLENAME = "jmix-sort-last";
     public static final String COLUMN_HIDING_TOGGLE_STYLENAME = "column-hiding-toggle";
     public static final String MULTI_CHECK_STYLENAME = "multi-check";
 
@@ -274,7 +274,7 @@ public class JmixGridWidget extends Grid<JsonObject> {
         @Override
         protected void cleanup(FlyweightCell cell) {
             super.cleanup(cell);
-            cell.getElement().removeClassName("c-sort-last");
+            cell.getElement().removeClassName("jmix-sort-last");
         }
     }
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@mixin he-listeditor($primary-stylename: c-listeditor) {
+@mixin he-listeditor($primary-stylename: jmix-listeditor) {
   @include he-pickerfield-style($primary-stylename: $primary-stylename);
   @include he-listeditor-size-style($primary-stylename: $primary-stylename);
 
@@ -85,7 +85,7 @@
   }
 }
 
-@mixin he-listeditor-size-style($primary-stylename  : c-listeditor,
+@mixin he-listeditor-size-style($primary-stylename  : jmix-listeditor,
                                 $unit-size          : $v-unit-size,
                                 $font-size          : $v-font-size) {
   @include he-pickerfield-size-style($primary-stylename: $primary-stylename, $unit-size: $unit-size, $font-size: $font-size);

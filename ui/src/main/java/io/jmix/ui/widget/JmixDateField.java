@@ -33,7 +33,7 @@ public class JmixDateField extends com.vaadin.ui.DateField implements Action.Con
     protected String dateString;
 
     public JmixDateField() {
-        setStyleName("c-datefield");
+        setStyleName("jmix-datefield");
     }
 
     @Override

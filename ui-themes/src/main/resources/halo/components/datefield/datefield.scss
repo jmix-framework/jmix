@@ -15,14 +15,14 @@
  *
  */
 
-$c-default-datefield-width: 120px;
+$jmix-default-datefield-width: 120px;
 
-@mixin halo-datefield($primary-stylename : c-datefield) {
+@mixin halo-datefield($primary-stylename : jmix-datefield) {
   .#{$primary-stylename}-layout {
     white-space: nowrap;
     outline: none;
 
-    .c-timefield {
+    .jmix-timefield {
       margin-left: $v-layout-spacing-horizontal/2;
     }
   }
@@ -38,7 +38,7 @@ $c-default-datefield-width: 120px;
   .#{$primary-stylename}-layout {
     &.borderless {
       .v-datefield,
-      .c-timefield,
+      .jmix-timefield,
       [class*="textfield"],
       [class*="button"] {
         @include valo-textfield-borderless-style;
@@ -47,7 +47,7 @@ $c-default-datefield-width: 120px;
 
     &.tiny {
       .v-datefield,
-      .c-timefield {
+      .jmix-timefield {
         @include valo-datefield-style($unit-size: $v-unit-size--tiny, $bevel: null, $shadow: null, $border: null, $background-color: null, $states: normal);
         font-size: $v-font-size--tiny;
       }
@@ -55,7 +55,7 @@ $c-default-datefield-width: 120px;
 
     &.small {
       .v-datefield,
-      .c-timefield {
+      .jmix-timefield {
         @include valo-datefield-style($unit-size: $v-unit-size--small, $bevel: null, $shadow: null, $border: null, $background-color: null, $states: normal);
         font-size: $v-font-size--small;
       }
@@ -88,7 +88,7 @@ $c-default-datefield-width: 120px;
   }
 
   .#{$primary-stylename}-composition-error {
-    .c-timefield,
+    .jmix-timefield,
     .v-datefield-textfield {
       @include valo-textfield-error-style;
     }
@@ -106,7 +106,7 @@ $c-default-datefield-width: 120px;
   .#{$primary-stylename}.v-datefield-day,
   .#{$primary-stylename}.v-datefield-month,
   .#{$primary-stylename}.v-datefield-year {
-    width: $c-default-datefield-width;
+    width: $jmix-default-datefield-width;
   }
 
   .#{$primary-stylename}.v-datefield-popup {

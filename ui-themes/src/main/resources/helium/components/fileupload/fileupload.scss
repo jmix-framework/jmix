@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@mixin he-fileupload($primary-stylename: c-fileupload) {
+@mixin he-fileupload($primary-stylename: jmix-fileupload) {
   @include he-fileupload-style($primary-stylename: $primary-stylename);
 
   /* Global size */
@@ -105,7 +105,7 @@
   }
 }
 
-@mixin he-fileupload-style($primary-stylename: c-fileupload) {
+@mixin he-fileupload-style($primary-stylename: jmix-fileupload) {
   .#{$primary-stylename} .v-button-focus {
     border-color: var(--button-default-focused-border-color);
   }
@@ -145,7 +145,7 @@
   }
 
   .#{$primary-stylename}-wrapper-error {
-    .c-fileupload-filename {
+    .#{$primary-stylename}-filename {
       color: var(--error-color) !important;
 
       &:focus:not(.v-disabled) {
@@ -155,7 +155,7 @@
   }
 }
 
-@mixin he-fileupload-size-style($primary-stylename : c-fileupload,
+@mixin he-fileupload-size-style($primary-stylename : jmix-fileupload,
                                 $unit-size         : $v-unit-size,
                                 $font-size         : $v-font-size,
                                 $scaling-factor    : 1) {

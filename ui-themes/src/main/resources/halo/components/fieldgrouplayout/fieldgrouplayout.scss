@@ -15,7 +15,7 @@
  *
  */
 
-@mixin halo-cuba-fieldgrouplayout($primary-stylename: c-fglayout) {
+@mixin halo-jmix-fieldgrouplayout($primary-stylename: jmix-fglayout) {
   @include valo-gridlayout-global($primary-stylename);
   @include valo-gridlayout($primary-stylename);
 
@@ -30,7 +30,7 @@
   .#{$primary-stylename}-slot > .v-caption {
     line-height: $v-line-height;
 
-    .c-context-help-button {
+    .jmix-context-help-button {
       line-height: $v-line-height;
     }
   }
@@ -65,14 +65,14 @@
     padding-bottom: 0;
   }
 
-  .#{$primary-stylename}-slot.c-full-height-widget .v-caption .v-captiontext {
+  .#{$primary-stylename}-slot.jmix-full-height-widget .v-caption .v-captiontext {
     line-height: $v-line-height;
 
     white-space: normal;
     word-wrap: break-word;
     overflow-wrap: break-word;
 
-    &.c-captiontext-preformatted {
+    &.jmix-captiontext-preformatted {
       white-space: pre-wrap;
     }
   }

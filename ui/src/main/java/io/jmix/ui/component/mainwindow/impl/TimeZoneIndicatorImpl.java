@@ -31,7 +31,7 @@ import java.util.TimeZone;
 
 public class TimeZoneIndicatorImpl extends AbstractComponent<Label> implements TimeZoneIndicator {
 
-    protected static final String USER_TIMEZONE_LABEL_STYLENAME = "c-user-timezone-label";
+    protected static final String USER_TIMEZONE_LABEL_STYLENAME = "jmix-user-timezone-label";
 
     public TimeZoneIndicatorImpl() {
         component = new Label();

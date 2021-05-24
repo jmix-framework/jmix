@@ -30,13 +30,13 @@ public class JmixHorizontalSplitPanelWidget extends VSplitPanelHorizontal {
     /**
      * Styles for widget
      */
-    protected static final String SP_DOCK_BUTTON = "c-splitpanel-dock-button";
-    protected static final String SP_DOCK_BUTTON_LEFT = "c-splitpanel-dock-button-left";
-    protected static final String SP_DOCK_BUTTON_RIGHT = "c-splitpanel-dock-button-right";
-    protected static final String SP_DOCK_LEFT = "c-splitpanel-dock-left";
-    protected static final String SP_DOCK_RIGHT = "c-splitpanel-dock-right";
-    protected static final String SP_DOCKABLE_LEFT = "c-splitpanel-dockable-left";
-    protected static final String SP_DOCKABLE_RIGHT = "c-splitpanel-dockable-right";
+    protected static final String SP_DOCK_BUTTON = "jmix-splitpanel-dock-button";
+    protected static final String SP_DOCK_BUTTON_LEFT = "jmix-splitpanel-dock-button-left";
+    protected static final String SP_DOCK_BUTTON_RIGHT = "jmix-splitpanel-dock-button-right";
+    protected static final String SP_DOCK_LEFT = "jmix-splitpanel-dock-left";
+    protected static final String SP_DOCK_RIGHT = "jmix-splitpanel-dock-right";
+    protected static final String SP_DOCKABLE_LEFT = "jmix-splitpanel-dockable-left";
+    protected static final String SP_DOCKABLE_RIGHT = "jmix-splitpanel-dockable-right";
 
     protected static final int BUTTON_WIDTH_SPACE = 10;
     protected boolean reversed;

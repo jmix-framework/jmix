@@ -20,7 +20,7 @@ import com.vaadin.shared.ui.gridlayout.GridLayoutState;
 
 public class JmixFieldGroupLayoutState extends GridLayoutState {
     {
-        primaryStyleName = "c-fglayout";
+        primaryStyleName = "jmix-fglayout";
     }
 
     public boolean useInlineCaption = true;

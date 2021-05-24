@@ -33,7 +33,7 @@ public class JmixDateFieldWidget extends VPopupCalendar implements ShortcutActio
 
     protected ShortcutActionHandler shortcutHandler;
 
-    protected static final String EMPTY_FIELD_CLASS = "c-datefield-empty";
+    protected static final String EMPTY_FIELD_CLASS = "jmix-datefield-empty";
 
     protected static final String RANGE_DATE_FORMAT = "yyyy-MM-dd";
     protected static final String EMPTY_MASK = "__";

@@ -22,7 +22,7 @@ import java.util.List;
 
 public class JmixSuggestionFieldState extends AbstractFieldState {
     {
-        primaryStyleName = "c-suggestionfield";
+        primaryStyleName = "jmix-suggestionfield";
     }
 
     public int minSearchStringLength = 0;

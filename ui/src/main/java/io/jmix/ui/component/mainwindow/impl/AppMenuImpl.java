@@ -49,7 +49,7 @@ public class AppMenuImpl extends AbstractComponent<JmixMenuBar> implements AppMe
     protected Map<String, MenuItem> allItemsIds = new HashMap<>();
     protected Map<MenuBar.MenuItem, MenuItem> viewModelMap = new HashMap<>();
 
-    public static final String MENU_STYLENAME = "c-main-menu";
+    public static final String MENU_STYLENAME = "jmix-main-menu";
 
     public AppMenuImpl() {
         component = new JmixMenuBar();

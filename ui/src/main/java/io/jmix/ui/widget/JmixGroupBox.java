@@ -208,7 +208,7 @@ public class JmixGroupBox extends Panel implements ComponentContainer {
             if (showAsPanel) {
                 setPrimaryStyleName("v-panel");
             } else {
-                setPrimaryStyleName("c-groupbox");
+                setPrimaryStyleName("jmix-groupbox");
             }
 
             getState().showAsPanel = showAsPanel;

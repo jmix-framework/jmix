@@ -42,7 +42,7 @@ import static io.jmix.ui.component.ComponentsHelper.findActionById;
 
 public class PopupButtonImpl extends AbstractComponent<JmixPopupButton> implements PopupButton, SecuredActionsHolder {
 
-    protected final static String CONTEXT_MENU_BUTTON_STYLENAME = "c-cm-button";
+    protected final static String CONTEXT_MENU_BUTTON_STYLENAME = "jmix-cm-button";
 
     protected Component popupComponent;
     protected com.vaadin.ui.Component vPopupComponent;

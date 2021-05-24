@@ -35,7 +35,7 @@ public class JmixPivotTableSceneWidget extends Widget implements HasEnabled {
 
     public JmixPivotTableSceneWidget() {
         setElement(Document.get().createDivElement());
-        setStyleName("c-pivot-table");
+        setStyleName("jmix-pivot-table");
     }
 
     public void init(PivotTableConfig config, PivotTableEvents events) {

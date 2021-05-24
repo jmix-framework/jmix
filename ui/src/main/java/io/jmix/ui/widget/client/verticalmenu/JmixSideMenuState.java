@@ -20,7 +20,7 @@ import com.vaadin.shared.ui.TabIndexState;
 
 public class JmixSideMenuState extends TabIndexState {
     {
-        primaryStyleName = "c-sidemenu";
+        primaryStyleName = "jmix-sidemenu";
     }
 
     public boolean selectOnClick = false;

@@ -29,8 +29,8 @@ import java.util.stream.Stream;
 
 public class JmixComboBoxPickerField<T> extends JmixPickerField<T> {
 
-    protected static final String COMBOBOX_PICKERFIELD_STYLENAME = "c-combobox-pickerfield";
-    protected static final String COMBOBOX_FIELD_STYLENAME = "c-pickerfield-combobox";
+    protected static final String COMBOBOX_PICKERFIELD_STYLENAME = "jmix-combobox-pickerfield";
+    protected static final String COMBOBOX_FIELD_STYLENAME = "jmix-pickerfield-combobox";
 
     @Override
     protected void init() {

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-@mixin he-searchselect($primary-stylename: c-searchselect) {
+@mixin he-searchselect($primary-stylename: jmix-searchselect) {
   .#{$primary-stylename},
-  .#{$primary-stylename}.c-pickerfield-searchselect {
+  .#{$primary-stylename}.jmix-pickerfield-searchselect {
     @include he-searchselect-size-style();
   }
 

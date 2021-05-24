@@ -19,47 +19,47 @@
  * The max width of range when menu toggle button caption is not shown
  * @group sidemenu
  */
-$cuba-responsive-sidemenu-togglebutton-caption-disappeared-max-width-range: 500px !default;
+$jmix-responsive-sidemenu-togglebutton-caption-disappeared-max-width-range: 500px !default;
 
 /**
  * The max width of range when menu toggle button is shown
  * @group sidemenu
  */
-$cuba-responsive-sidemenu-togglebutton-appeared-max-width-range: 800px !default;
+$jmix-responsive-sidemenu-togglebutton-appeared-max-width-range: 800px !default;
 
 /**
  * The max width of range when small style side menu is shown
  * @group sidemenu
  */
-$cuba-responsive-sidemenu-small-style-max-width-range: 1100px !default;
+$jmix-responsive-sidemenu-small-style-max-width-range: 1100px !default;
 
 /**
  * Whether use custom width for side menu, small side menu and toggled side menu
  * @group sidemenu
  */
-$cuba-responsive-sidemenu-use-custom-width: false !default;
+$jmix-responsive-sidemenu-use-custom-width: false !default;
 
 /**
  * Responsive sidemenu width
  * @group sidemenu
  */
-$cuba-responsive-sidemenu-width: auto !default;
+$jmix-responsive-sidemenu-width: auto !default;
 
 /**
- * Responsive side menu width when it is in range between $cuba-responsive-sidemenu-togglebutton-appeared-max-width-range
- * and $cuba-responsive-sidemenu-small-style-max-width-range
+ * Responsive side menu width when it is in range between $jmix-responsive-sidemenu-togglebutton-appeared-max-width-range
+ * and $jmix-responsive-sidemenu-small-style-max-width-range
  * @group sidemenu
  */
-$cuba-responsive-sidemenu-small-width: $v-unit-size * 3 !default;
+$jmix-responsive-sidemenu-small-width: $v-unit-size * 3 !default;
 
 /**
  * Responsive side menu width when it is opened using a menu toggle button
  * @group sidemenu
  */
-$cuba-responsive-sidemenu-toggled-menu-width: $cuba-responsive-sidemenu-small-width !default;
+$jmix-responsive-sidemenu-toggled-menu-width: $jmix-responsive-sidemenu-small-width !default;
 
-@mixin side-menu-large-icons-style($primary-stylename: c-sidemenu) {
-  $bg: $cuba-sidemenu-background-color;
+@mixin side-menu-large-icons-style($primary-stylename: jmix-sidemenu) {
+  $bg: $jmix-sidemenu-background-color;
 
   background-color: $bg;
 
@@ -74,7 +74,7 @@ $cuba-responsive-sidemenu-toggled-menu-width: $cuba-responsive-sidemenu-small-wi
     }
   }
 
-  .c-userindicator {
+  .jmix-userindicator {
     padding-left: $v-layout-margin-left/2;
     padding-right: $v-layout-margin-right/2;
 
@@ -83,7 +83,7 @@ $cuba-responsive-sidemenu-toggled-menu-width: $cuba-responsive-sidemenu-small-wi
     }
   }
 
-  .c-main-buttons {
+  .jmix-main-buttons {
     .v-icon {
       font-size: round($v-font-size * 1.5);
     }
@@ -97,15 +97,15 @@ $cuba-responsive-sidemenu-toggled-menu-width: $cuba-responsive-sidemenu-small-wi
     min-width: $v-unit-size * 3;
     max-width: $v-unit-size * 4;
 
-    @if $cuba-responsive-sidemenu-use-custom-width {
-      max-width: $cuba-responsive-sidemenu-small-width;
+    @if $jmix-responsive-sidemenu-use-custom-width {
+      max-width: $jmix-responsive-sidemenu-small-width;
     }
   }
 
   .v-ie & {
     max-width: $v-unit-size * 4 + 18px;
-    @if $cuba-responsive-sidemenu-use-custom-width {
-      max-width: $cuba-responsive-sidemenu-small-width;
+    @if $jmix-responsive-sidemenu-use-custom-width {
+      max-width: $jmix-responsive-sidemenu-small-width;
     }
 
     .#{$primary-stylename}-title,
@@ -113,8 +113,8 @@ $cuba-responsive-sidemenu-toggled-menu-width: $cuba-responsive-sidemenu-small-wi
     .#{$primary-stylename}-wrap > * {
       max-width: $v-unit-size * 4 + 18px;
 
-      @if $cuba-responsive-sidemenu-use-custom-width {
-        max-width: $cuba-responsive-sidemenu-small-width;
+      @if $jmix-responsive-sidemenu-use-custom-width {
+        max-width: $jmix-responsive-sidemenu-small-width;
       }
     }
   }
@@ -200,59 +200,59 @@ $cuba-responsive-sidemenu-toggled-menu-width: $cuba-responsive-sidemenu-small-wi
  * The sidemenu background color.
  * @group sidemenu
  */
-$cuba-sidemenu-background-color: $valo-menu-background-color !default;
+$jmix-sidemenu-background-color: $valo-menu-background-color !default;
 /**
  * The sidemenu items font weight.
  * @group sidemenu
  */
-$cuba-sidemenu-item-font-weight: $v-font-weight + 100 !default;
+$jmix-sidemenu-item-font-weight: $v-font-weight + 100 !default;
 /**
  * Defines whether sidemenu items should have delimiters.
  * @group sidemenu
  */
-$cuba-sidemenu-separate-items: true !default;
+$jmix-sidemenu-separate-items: true !default;
 /**
  * The sidemenu timezone font weight.
  * @group sidemenu
  */
-$cuba-sidemenu-timezone-font-weight: $v-font-weight !default;
+$jmix-sidemenu-timezone-font-weight: $v-font-weight !default;
 /**
  * The sidemenu title font size.
  * @group sidemenu
  */
-$cuba-sidemenu-title-font-size: $v-font-size--h2 !default;
+$jmix-sidemenu-title-font-size: $v-font-size--h2 !default;
 /**
  * The sidemenu title font weight.
  * @group sidemenu
  */
-$cuba-sidemenu-title-font-weight: $v-font-weight !default;
+$jmix-sidemenu-title-font-weight: $v-font-weight !default;
 /**
  * Defines whether sidemenu title should have gradient.
  * @group sidemenu
  */
-$cuba-sidemenu-title-gradient: true !default;
+$jmix-sidemenu-title-gradient: true !default;
 /**
- * Defines sidemenu title background color if $cuba-sidemenu-title-gradient is false
+ * Defines sidemenu title background color if $jmix-sidemenu-title-gradient is false
  * @group sidemenu
  */
-$cuba-sidemenu-title-background-color: if(is-dark-color($cuba-sidemenu-background-color), lighten($cuba-sidemenu-background-color, 5%), darken($cuba-sidemenu-background-color, 5%)) !default;
+$jmix-sidemenu-title-background-color: if(is-dark-color($jmix-sidemenu-background-color), lighten($jmix-sidemenu-background-color, 5%), darken($jmix-sidemenu-background-color, 5%)) !default;
 /**
  * The top offset of mobile buttons and show/hide toggle button.
  * @group sidemenu
  */
-$cuba-sidemenu-top-offset: floor(($v-unit-size - $v-unit-size * 0.8) / 2);
+$jmix-sidemenu-top-offset: floor(($v-unit-size - $v-unit-size * 0.8) / 2);
 /**
  * The reserved height for mobile buttons and show/hide toggle button in mobile mode.
  * @group sidemenu
  */
-$cuba-sidemenu-top-height: $v-unit-size + 2 * $cuba-sidemenu-top-offset;
+$jmix-sidemenu-top-height: $v-unit-size + 2 * $jmix-sidemenu-top-offset;
 /**
  * The sidemenu user indicator font weight.
  * @group sidemenu
  */
-$cuba-sidemenu-userindicator-font-weight: $v-font-weight !default;
+$jmix-sidemenu-userindicator-font-weight: $v-font-weight !default;
 
-@mixin halo-cuba-sidemenu($primary-stylename: c-sidemenu) {
+@mixin halo-jmix-sidemenu($primary-stylename: jmix-sidemenu) {
   $bg: $v-app-background-color;
 
   .#{$primary-stylename}-user {
@@ -266,7 +266,7 @@ $cuba-sidemenu-userindicator-font-weight: $v-font-weight !default;
     }
   }
 
-  .#{$primary-stylename}-layout .c-main-tabsheet > .v-tabsheet-tabcontainer {
+  .#{$primary-stylename}-layout .jmix-main-tabsheet > .v-tabsheet-tabcontainer {
     border: 0;
   }
 
@@ -279,19 +279,19 @@ $cuba-sidemenu-userindicator-font-weight: $v-font-weight !default;
   }
 
   .#{$primary-stylename}-title {
-    $font-color: valo-font-color($cuba-sidemenu-title-background-color, 0.9);
-    @if $cuba-sidemenu-title-gradient {
+    $font-color: valo-font-color($jmix-sidemenu-title-background-color, 0.9);
+    @if $jmix-sidemenu-title-gradient {
       @include valo-gradient($color: $v-selection-color);
       border-bottom: valo-border($color: $v-selection-color);
       $font-color: valo-font-color($v-selection-color, 0.9);
     } @else {
-      background: $cuba-sidemenu-title-background-color;
+      background: $jmix-sidemenu-title-background-color;
     }
 
     color: $font-color;
-    font-size: $cuba-sidemenu-title-font-size;
-    line-height: $cuba-sidemenu-title-font-size * 1.4;
-    font-weight: $cuba-sidemenu-title-font-weight;
+    font-size: $jmix-sidemenu-title-font-size;
+    line-height: $jmix-sidemenu-title-font-size * 1.4;
+    font-weight: $jmix-sidemenu-title-font-weight;
 
     text-shadow: valo-text-shadow($font-color: $font-color, $background-color: $v-selection-color);
     padding: round($v-unit-size/3) round($v-unit-size/2);
@@ -367,7 +367,7 @@ $cuba-sidemenu-userindicator-font-weight: $v-font-weight !default;
     color: valo-font-color($bg, 0.7);
     margin: round($v-unit-size/5) 0;
 
-    @if $cuba-sidemenu-separate-items {
+    @if $jmix-sidemenu-separate-items {
       border-bottom: valo-border(
               $color: $bg,
               $strength: 0.5,
@@ -448,13 +448,13 @@ $cuba-sidemenu-userindicator-font-weight: $v-font-weight !default;
   }
 
   .#{$primary-stylename}-toggle {
-    top: $cuba-sidemenu-top-offset;
-    left: $cuba-sidemenu-top-offset;
+    top: $jmix-sidemenu-top-offset;
+    left: $jmix-sidemenu-top-offset;
     min-width: 0;
   }
 
   .#{$primary-stylename}-mobile-buttons {
-    top: $cuba-sidemenu-top-offset;
+    top: $jmix-sidemenu-top-offset;
     right: 0;
 
     .v-button {
@@ -469,21 +469,21 @@ $cuba-sidemenu-userindicator-font-weight: $v-font-weight !default;
       height: 100%;
     }
 
-    .c-app-icon {
+    .jmix-app-icon {
       margin: $v-layout-spacing-vertical auto;
     }
 
-    .c-userindicator > .v-label {
+    .jmix-userindicator > .v-label {
       overflow: hidden;
       word-wrap: normal;
       white-space: nowrap;
     }
 
-    .c-userindicator > .v-label,
-    .c-app-icon,
-    .c-welcome-text,
-    .c-user-timezone-label,
-    .c-main-buttons {
+    .jmix-userindicator > .v-label,
+    .jmix-app-icon,
+    .jmix-welcome-text,
+    .jmix-user-timezone-label,
+    .jmix-main-buttons {
       text-align: center;
     }
 
@@ -494,27 +494,27 @@ $cuba-sidemenu-userindicator-font-weight: $v-font-weight !default;
 
     .#{$primary-stylename}-wrap {
       & > .#{$primary-stylename},
-      & > .c-app-icon,
-      & > .c-userindicator,
-      & > .c-user-timezone-label,
-      & > .c-ftsfield,
-      & > .c-main-buttons {
+      & > .jmix-app-icon,
+      & > .jmix-userindicator,
+      & > .jmix-user-timezone-label,
+      & > .jmix-ftsfield,
+      & > .jmix-main-buttons {
         display: block;
       }
     }
 
-    @include width-range($min: $cuba-responsive-sidemenu-togglebutton-appeared-max-width-range + 1px, $max: $cuba-responsive-sidemenu-small-style-max-width-range) {
+    @include width-range($min: $jmix-responsive-sidemenu-togglebutton-appeared-max-width-range + 1px, $max: $jmix-responsive-sidemenu-small-style-max-width-range) {
       .#{$primary-stylename}-panel {
         @include side-menu-large-icons-style;
 
-        @if $cuba-responsive-sidemenu-use-custom-width {
-          width: $cuba-responsive-sidemenu-small-width;
+        @if $jmix-responsive-sidemenu-use-custom-width {
+          width: $jmix-responsive-sidemenu-small-width;
         }
       }
     }
 
-    @include width-range($max: $cuba-responsive-sidemenu-togglebutton-appeared-max-width-range) {
-      padding-top: $cuba-sidemenu-top-height;
+    @include width-range($max: $jmix-responsive-sidemenu-togglebutton-appeared-max-width-range) {
+      padding-top: $jmix-sidemenu-top-height;
 
       .#{$primary-stylename}-panel {
         overflow: visible;
@@ -527,7 +527,7 @@ $cuba-sidemenu-userindicator-font-weight: $v-font-weight !default;
         display: inline-block;
       }
 
-      .c-main-buttons {
+      .jmix-main-buttons {
         display: none;
       }
 
@@ -537,7 +537,7 @@ $cuba-sidemenu-userindicator-font-weight: $v-font-weight !default;
         top: 0;
         left: 0;
         right: 0;
-        height: $cuba-sidemenu-top-height !important;
+        height: $jmix-sidemenu-top-height !important;
         padding-top: 0;
         padding-bottom: 0;
         -webkit-backface-visibility: hidden;
@@ -547,17 +547,17 @@ $cuba-sidemenu-userindicator-font-weight: $v-font-weight !default;
           line-height: $v-unit-size;
         }
 
-        @if ($cuba-sidemenu-title-gradient == false) {
-          background: $cuba-sidemenu-title-background-color;
+        @if ($jmix-sidemenu-title-gradient == false) {
+          background: $jmix-sidemenu-title-background-color;
         }
       }
 
       .#{$primary-stylename}-wrap {
-        @include valo-menu-style($bg: $cuba-sidemenu-background-color);
+        @include valo-menu-style($bg: $jmix-sidemenu-background-color);
 
         position: fixed;
         z-index: 9000;
-        top: $cuba-sidemenu-top-height;
+        top: $jmix-sidemenu-top-height;
         bottom: 0;
         height: auto;
         max-width: 100%;
@@ -569,8 +569,8 @@ $cuba-sidemenu-userindicator-font-weight: $v-font-weight !default;
           @include transition(transform 300ms);
         }
 
-        @if $cuba-responsive-sidemenu-use-custom-width {
-          width: $cuba-responsive-sidemenu-toggled-menu-width;
+        @if $jmix-responsive-sidemenu-use-custom-width {
+          width: $jmix-responsive-sidemenu-toggled-menu-width;
         }
 
         .v-edge & {
@@ -583,15 +583,15 @@ $cuba-sidemenu-userindicator-font-weight: $v-font-weight !default;
       }
     }
 
-    @include width-range($max: $cuba-responsive-sidemenu-togglebutton-caption-disappeared-max-width-range) {
+    @include width-range($max: $jmix-responsive-sidemenu-togglebutton-caption-disappeared-max-width-range) {
       .#{$primary-stylename}-toggle .v-button-caption {
         display: none;
       }
     }
 
-    @if $cuba-responsive-sidemenu-use-custom-width {
+    @if $jmix-responsive-sidemenu-use-custom-width {
       .#{$primary-stylename}-panel {
-        width: $cuba-responsive-sidemenu-width;
+        width: $jmix-responsive-sidemenu-width;
 
         .#{$primary-stylename}-item [class*="caption"] {
           max-width: initial;
@@ -601,9 +601,9 @@ $cuba-sidemenu-userindicator-font-weight: $v-font-weight !default;
   }
 
   .#{$primary-stylename}-panel {
-    @include valo-menu-style($cuba-sidemenu-background-color);
+    @include valo-menu-style($jmix-sidemenu-background-color);
 
-    $bg: $cuba-sidemenu-background-color;
+    $bg: $jmix-sidemenu-background-color;
 
     .#{$primary-stylename} {
       background: transparent none;
@@ -614,13 +614,13 @@ $cuba-sidemenu-userindicator-font-weight: $v-font-weight !default;
       width: 100%;
     }
 
-    .c-userindicator {
-      font-weight: $cuba-sidemenu-userindicator-font-weight;
+    .jmix-userindicator {
+      font-weight: $jmix-sidemenu-userindicator-font-weight;
     }
 
-    .c-ftsfield-button,
-    .c-newwindow-button,
-    .c-logout-button {
+    .jmix-ftsfield-button,
+    .jmix-newwindow-button,
+    .jmix-logout-button {
       color: valo-font-color($bg, 0.5);
 
       &:hover {
@@ -628,23 +628,23 @@ $cuba-sidemenu-userindicator-font-weight: $v-font-weight !default;
       }
     }
 
-    .c-user-timezone-label {
+    .jmix-user-timezone-label {
       color: valo-font-color($bg, 0.5);
-      font-weight: $cuba-sidemenu-timezone-font-weight;
+      font-weight: $jmix-sidemenu-timezone-font-weight;
     }
 
-    .c-app-icon {
+    .jmix-app-icon {
       height: 64px;
     }
 
-    .v-button.c-ftsfield-button,
-    .v-button.c-logout-button,
-    .v-button.c-newwindow-button {
+    .v-button.jmix-ftsfield-button,
+    .v-button.jmix-logout-button,
+    .v-button.jmix-newwindow-button {
       height: $v-unit-size;
       padding: ceil($v-unit-size/10) ceil($v-unit-size/5);
     }
 
-    .c-ftsfield {
+    .jmix-ftsfield {
       padding-left: $v-layout-margin-left;
       padding-right: $v-layout-margin-right + $v-unit-size;
       padding-bottom: $v-layout-margin-bottom;
@@ -662,7 +662,7 @@ $cuba-sidemenu-userindicator-font-weight: $v-font-weight !default;
         -webkit-mask-image: none;
       }
 
-      font-weight: $cuba-sidemenu-item-font-weight;
+      font-weight: $jmix-sidemenu-item-font-weight;
 
       &:hover {
         color: valo-font-color($bg, 1);
@@ -672,7 +672,7 @@ $cuba-sidemenu-userindicator-font-weight: $v-font-weight !default;
     .#{$primary-stylename}-item-header {
       color: valo-font-color($bg, 0.5);
 
-      @if $cuba-sidemenu-separate-items {
+      @if $jmix-sidemenu-separate-items {
         border-bottom: valo-border(
                 $color: $bg,
                 $strength: 0.5,

@@ -21,7 +21,7 @@ import com.vaadin.shared.annotations.NoLayout;
 
 public class JmixTimeFieldState extends JmixMaskedTextFieldState {
     {
-        primaryStyleName = "c-timefield";
+        primaryStyleName = "jmix-timefield";
     }
 
     public TimeResolution resolution = TimeResolution.MINUTE;

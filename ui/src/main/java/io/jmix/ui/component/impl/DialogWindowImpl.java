@@ -397,7 +397,7 @@ public class DialogWindowImpl extends WindowImpl implements DialogWindow, Initia
         public GuiDialogWindow(DialogWindow dialogWindow) {
             this.dialogWindow = dialogWindow;
 
-            setStyleName("c-app-dialog-window");
+            setStyleName("jmix-app-dialog-window");
             setModal(true);
             setResizable(false);
             center();

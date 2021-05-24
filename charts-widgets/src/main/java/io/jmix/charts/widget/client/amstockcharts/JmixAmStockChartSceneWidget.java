@@ -35,7 +35,7 @@ public class JmixAmStockChartSceneWidget extends Widget {
 
     public JmixAmStockChartSceneWidget() {
         setElement(Document.get().createDivElement());
-        setStyleName("c-amcharts-stockchart");
+        setStyleName("jmix-amcharts-stockchart");
 
         sinkEvents(Event.ONCONTEXTMENU | Event.ONCLICK);
     }

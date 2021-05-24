@@ -15,7 +15,7 @@
  *
  */
 
-@mixin halo-cuba-flowlayout($primary-stylename: c-flowlayout) {
+@mixin halo-jmix-flowlayout($primary-stylename: jmix-flowlayout) {
   .v-csslayout.#{$primary-stylename} {
     overflow-y: auto;
   }

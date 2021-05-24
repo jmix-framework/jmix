@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@mixin he-pivottable($primary-stylename: c-pivot-table) {
+@mixin he-pivottable($primary-stylename: jmix-pivot-table) {
   .#{$primary-stylename} {
     table.pvtTable tbody tr td,
     .pvtUi,

@@ -15,7 +15,7 @@
  *
  */
 
-@mixin halo-cuba-resizabletextarea($primary-stylename: c-resizabletextarea) {
+@mixin halo-jmix-resizabletextarea($primary-stylename: jmix-resizabletextarea) {
   $textarea-corner-color: valo-border-color($color: $v-overlay-background-color, $strength: 1.0);
 
   .#{$primary-stylename}-wrapper {

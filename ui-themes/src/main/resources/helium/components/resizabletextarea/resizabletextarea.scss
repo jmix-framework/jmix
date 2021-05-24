@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@mixin he-resizabletextarea($primary-stylename: c-resizabletextarea) {
+@mixin he-resizabletextarea($primary-stylename: jmix-resizabletextarea) {
   .#{$primary-stylename}-resize-corner {
     &:after {
       border-color: transparent transparent var(--border-color) transparent;

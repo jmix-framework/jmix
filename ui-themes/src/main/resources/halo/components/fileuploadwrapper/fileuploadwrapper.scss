@@ -15,18 +15,18 @@
  *
  */
 
-@mixin halo-cuba-fileupload-wrapper($primary-stylename: c-fileupload-wrapper) {
-  .c-fileupload-container {
+@mixin halo-jmix-fileupload-wrapper($primary-stylename: jmix-fileupload-wrapper) {
+  .jmix-fileupload-container {
     min-height: $v-unit-size;
     display: inline-flex;
   }
 
-  .c-fileupload-filename.v-has-width > * {
+  .jmix-fileupload-filename.v-has-width > * {
     overflow: hidden;
     text-overflow: ellipsis;
   }
 
-  .c-fileupload-filename.c-fileupload-empty {
+  .jmix-fileupload-filename.jmix-fileupload-empty {
     color: $v-font-color;
     text-decoration: none;
     cursor: default;
@@ -57,8 +57,8 @@
     }
   }
 
-  .c-fileupload-wrapper-error {
-    .c-fileupload-filename {
+  .jmix-fileupload-wrapper-error {
+    .jmix-fileupload-filename {
       color: $v-error-indicator-color !important;
 
        &:focus:after {
@@ -67,17 +67,17 @@
     }
   }
 
-  .c-fileupload-container {
-    .c-fileupload-filename {
+  .jmix-fileupload-container {
+    .jmix-fileupload-filename {
       margin-right: $v-layout-margin-right;
     }
 
-    .c-fileupload-clear {
+    .jmix-fileupload-clear {
       margin-left: $v-layout-margin-left;
     }
   }
 
-  .v-ie11 & .c-fileupload-filename .v-button-wrap {
+  .v-ie11 & .jmix-fileupload-filename .v-button-wrap {
     display: inline-flex;
     align-items: center;
 

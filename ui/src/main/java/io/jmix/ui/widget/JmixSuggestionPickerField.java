@@ -26,8 +26,8 @@ import java.util.function.Function;
 
 public class JmixSuggestionPickerField<T> extends JmixPickerField<T> {
 
-    protected static final String SUGGESTION_PICKERFIELD_STYLENAME = "c-suggestion-pickerfield";
-    protected static final String SUGGESTION_FIELD_STYLENAME = "c-pickerfield-suggestion";
+    protected static final String SUGGESTION_PICKERFIELD_STYLENAME = "jmix-suggestion-pickerfield";
+    protected static final String SUGGESTION_FIELD_STYLENAME = "jmix-pickerfield-suggestion";
 
     @Override
     protected void init() {

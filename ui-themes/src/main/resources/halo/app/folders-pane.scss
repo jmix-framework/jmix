@@ -15,26 +15,26 @@
  *
  */
 
-@mixin cuba-folders-pane {
-  .c-folders-pane {
+@mixin jmix-folders-pane {
+  .jmix-folders-pane {
     background: $v-panel-background-color;
   }
 
-  .v-tree8-row.c-clickable-folder .v-tree8-cell-content span {
+  .v-tree8-row.jmix-clickable-folder .v-tree8-cell-content span {
     cursor: pointer;
   }
 
-  .v-tree8-row.c-clickable-folder .v-tree8-cell-content span:hover {
+  .v-tree8-row.jmix-clickable-folder .v-tree8-cell-content span:hover {
     text-decoration: underline;
   }
 
-  .c-folders-pane-caption {
+  .jmix-folders-pane-caption {
     line-height: $v-unit-size;
     font-size: $v-font-size--h3;
   }
 
-  .c-main-menu.v-menubar > .v-menubar-menuitem.v-menubar-menuitem-folders-pane-icon,
-  .c-main-menu.v-menubar > .v-menubar-menuitem.v-menubar-menuitem-folders-pane-icon-active {
+  .jmix-main-menu.v-menubar > .v-menubar-menuitem.v-menubar-menuitem-folders-pane-icon,
+  .jmix-main-menu.v-menubar > .v-menubar-menuitem.v-menubar-menuitem-folders-pane-icon-active {
     &:before {
       color: $v-font-color;
       font-size: $v-font-size;
@@ -43,8 +43,8 @@
     }
   }
 
-  .c-main-menu.v-menubar > .v-menubar-menuitem.v-menubar-menuitem-folders-pane-icon-active,
-  .c-main-menu.v-menubar > .v-menubar-menuitem.v-menubar-menuitem-folders-pane-icon-active:hover {
+  .jmix-main-menu.v-menubar > .v-menubar-menuitem.v-menubar-menuitem-folders-pane-icon-active,
+  .jmix-main-menu.v-menubar > .v-menubar-menuitem.v-menubar-menuitem-folders-pane-icon-active:hover {
     @include valo-button-active-style();
   }
 }

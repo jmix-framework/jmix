@@ -15,7 +15,7 @@
  *
  */
 
-@mixin halo-cuba-image($primary-stylename: c-image) {
+@mixin halo-jmix-image($primary-stylename: jmix-image) {
   .#{$primary-stylename} {
     &.object-fit-fill {
       object-fit: fill;

@@ -84,7 +84,7 @@ public class JmixMenuBarWidget extends VMenuBar {
         super.showChildMenuAt(item, top, left);
 
         if (popup != null) {
-            popup.addStyleName("c-main-menu-popup");
+            popup.addStyleName("jmix-main-menu-popup");
         }
     }
 }

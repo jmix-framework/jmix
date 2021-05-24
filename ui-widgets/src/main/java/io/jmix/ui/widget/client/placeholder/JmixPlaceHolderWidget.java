@@ -19,7 +19,7 @@ package io.jmix.ui.widget.client.placeholder;
 import com.google.gwt.user.client.ui.SimplePanel;
 
 public class JmixPlaceHolderWidget extends SimplePanel {
-    public static final String CLASSNAME = "c-placeholder";
+    public static final String CLASSNAME = "jmix-placeholder";
 
     public JmixPlaceHolderWidget() {
         setStyleName(CLASSNAME);

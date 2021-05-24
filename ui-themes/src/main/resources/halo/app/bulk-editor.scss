@@ -18,39 +18,39 @@
  * Defines min width of field caption.
  * @group bulkeditor
  */
-$c-bulk-editor-label-min-width: 270px !default;
+$jmix-bulk-editor-label-min-width: 270px !default;
 
 /**
  * Defines max width of field caption.
  * @group bulkeditor
  */
-$c-bulk-editor-label-max-width: 270px !default;
+$jmix-bulk-editor-label-max-width: 270px !default;
 
 /**
  * Defines width of field caption.
  * @group bulkeditor
  */
-$c-bulk-editor-label-width: 100% !default;
+$jmix-bulk-editor-label-width: 100% !default;
 
 /**
  * Defines min width of field.
  * @group bulkeditor
  */
-$c-bulk-editor-field-min-width: 240px !default;
+$jmix-bulk-editor-field-min-width: 240px !default;
 
 /**
  * Defines max width of field.
  * @group bulkeditor
  */
-$c-bulk-editor-field-max-width: none !default;
+$jmix-bulk-editor-field-max-width: none !default;
 
 /*
  * Defines field width.
  * @group bulkeditor
  */
-$c-bulk-editor-field-width: 100% !default;
+$jmix-bulk-editor-field-width: 100% !default;
 
-@mixin cuba-bulk-editor($primary-stylename: c-bulk-editor) {
+@mixin jmix-bulk-editor($primary-stylename: jmix-bulk-editor) {
   .#{$primary-stylename}-grid .field-label {
     line-height: $v-unit-size;
   }
@@ -60,23 +60,23 @@ $c-bulk-editor-field-width: 100% !default;
   }
 
   .#{$primary-stylename}-fields-layout {
-    $c-bulk-editor-horizontal-spacing: $v-layout-spacing-horizontal;
-    $c-bulk-editor-vertical-spacing: $v-layout-spacing-vertical;
+    $jmix-bulk-editor-horizontal-spacing: $v-layout-spacing-horizontal;
+    $jmix-bulk-editor-vertical-spacing: $v-layout-spacing-vertical;
 
     display: flex;
     flex-wrap: wrap;
 
     .#{$primary-stylename}-column {
-      padding-right: $c-bulk-editor-horizontal-spacing;
+      padding-right: $jmix-bulk-editor-horizontal-spacing;
 
       .#{$primary-stylename}-row {
         display: flex;
-        margin-bottom: $c-bulk-editor-vertical-spacing;
+        margin-bottom: $jmix-bulk-editor-vertical-spacing;
 
         /* wrapper is added for FireFox, Safari, Edge and IE11 */
         .#{$primary-stylename}-picker-field-wrapper {
-          margin-right: $c-bulk-editor-horizontal-spacing;
-          width: $c-bulk-editor-field-width;
+          margin-right: $jmix-bulk-editor-horizontal-spacing;
+          width: $jmix-bulk-editor-field-width;
           display: flex;
 
           .#{$primary-stylename}-field {
@@ -87,32 +87,32 @@ $c-bulk-editor-field-width: 100% !default;
         }
 
         .#{$primary-stylename}-field {
-          margin-right: $c-bulk-editor-horizontal-spacing;
-          max-width: $c-bulk-editor-field-max-width;
-          min-width: $c-bulk-editor-field-min-width;
-          width: $c-bulk-editor-field-width;
+          margin-right: $jmix-bulk-editor-horizontal-spacing;
+          max-width: $jmix-bulk-editor-field-max-width;
+          min-width: $jmix-bulk-editor-field-min-width;
+          width: $jmix-bulk-editor-field-width;
 
-          .c-listeditor-layout {
+          .jmix-listeditor-layout {
             display: flex;
             width: 100%;
 
-            .v-slot-c-listeditor-text {
+            .v-slot-jmix-listeditor-text {
               /* listeditor width is calculated as: input width + button width
                  as we wont to configure min-width by one variable we need to remove button width */
-              min-width: $c-bulk-editor-field-min-width - $v-unit-size;
+              min-width: $jmix-bulk-editor-field-min-width - $v-unit-size;
               width: 100%;
 
-              .c-listeditor-text {
+              .jmix-listeditor-text {
                 width: 100%;
               }
             }
           }
         }
 
-        .#{$primary-stylename}-field.c-datefield-layout {
+        .#{$primary-stylename}-field.jmix-datefield-layout {
           display: flex;
 
-          .c-datefield {
+          .jmix-datefield {
             width:100%;
             flex-basis:100%;
           }
@@ -128,10 +128,10 @@ $c-bulk-editor-field-width: 100% !default;
         }
 
         .#{$primary-stylename}-label {
-          margin-right: $c-bulk-editor-horizontal-spacing;
-          max-width: $c-bulk-editor-label-max-width;
-          min-width: $c-bulk-editor-label-min-width;
-          width: $c-bulk-editor-label-width;
+          margin-right: $jmix-bulk-editor-horizontal-spacing;
+          max-width: $jmix-bulk-editor-label-max-width;
+          min-width: $jmix-bulk-editor-label-min-width;
+          width: $jmix-bulk-editor-label-width;
           white-space: normal;
           line-height: $v-unit-size;
         }
@@ -143,8 +143,8 @@ $c-bulk-editor-field-width: 100% !default;
     }
   }
 
-  .c-bulk-editor-columns-1 {
-    .c-bulk-editor-column {
+  .jmix-bulk-editor-columns-1 {
+    .jmix-bulk-editor-column {
       flex: 1 0 100%;
 
       .v-ie11 & {
@@ -154,8 +154,8 @@ $c-bulk-editor-field-width: 100% !default;
     }
   }
 
-  .c-bulk-editor-columns-2 {
-    .c-bulk-editor-column {
+  .jmix-bulk-editor-columns-2 {
+    .jmix-bulk-editor-column {
       flex: 1 0 50%;
 
       .v-ie11 & {

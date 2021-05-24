@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@mixin he-suggestionfield($primary-stylename: c-suggestionfield) {
+@mixin he-suggestionfield($primary-stylename: jmix-suggestionfield) {
   @include he-textfield($primary-stylename);
 
   .#{$primary-stylename} {

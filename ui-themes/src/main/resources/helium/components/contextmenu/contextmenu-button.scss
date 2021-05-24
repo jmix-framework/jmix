@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@mixin he-contextmenu-button($primary-stylename: c-cm-button) {
+@mixin he-contextmenu-button($primary-stylename: jmix-cm-button) {
   .#{$primary-stylename} {
     @include he-button-borderless-style($main-color: --text-main-color);
     @include he-contextmenu-button-size-style();

@@ -30,8 +30,8 @@ import javax.annotation.Nullable;
 import java.util.Set;
 
 public class JmixFileUploadField extends CustomField<String> {
-    protected static final String FILE_UPLOAD_WRAPPER_STYLENAME = "c-fileupload-wrapper";
-    protected static final String EMPTY_VALUE_STYLENAME = "c-fileupload-empty";
+    protected static final String FILE_UPLOAD_WRAPPER_STYLENAME = "jmix-fileupload-wrapper";
+    protected static final String EMPTY_VALUE_STYLENAME = "jmix-fileupload-empty";
 
     protected CssLayout container;
     protected Button fileNameButton;
@@ -176,19 +176,19 @@ public class JmixFileUploadField extends CustomField<String> {
 
     protected void initLayout() {
         container = new CssLayout();
-        container.addStyleName("c-fileupload-container");
+        container.addStyleName("jmix-fileupload-container");
 
         fileNameButton = new JmixButton();
         fileNameButton.setWidth(100, Unit.PERCENTAGE);
         fileNameButton.addStyleName(ValoTheme.BUTTON_LINK);
-        fileNameButton.addStyleName("c-fileupload-filename");
+        fileNameButton.addStyleName("jmix-fileupload-filename");
         setFileNameButtonCaption(null);
         container.addComponent(fileNameButton);
 
         container.addComponent(uploadButton);
 
         clearButton = new JmixButton("");
-        clearButton.setStyleName("c-fileupload-clear");
+        clearButton.setStyleName("jmix-fileupload-clear");
         container.addComponent(clearButton);
         setShowClearButton(showClearButton);
 

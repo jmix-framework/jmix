@@ -34,7 +34,7 @@ public class JmixRowsCount extends JmixCssActionsLayout {
     protected Button countButton;
 
     public JmixRowsCount() {
-        setStyleName("c-paging");
+        setStyleName("jmix-paging");
         setMargin(new MarginInfo(false, false, false, true));
 
         ComponentContainer contentLayout = createContentLayout();
@@ -45,39 +45,39 @@ public class JmixRowsCount extends JmixCssActionsLayout {
 
     protected ComponentContainer createContentLayout() {
         JmixCssActionsLayout contentLayout = new JmixCssActionsLayout();
-        contentLayout.setStyleName("c-paging-wrap");
+        contentLayout.setStyleName("jmix-paging-wrap");
         contentLayout.setSpacing(true);
 
         firstButton = new JmixButton();
-        firstButton.setStyleName("c-paging-change-page");
-        firstButton.addStyleName("c-paging-first");
+        firstButton.setStyleName("jmix-paging-change-page");
+        firstButton.addStyleName("jmix-paging-first");
         contentLayout.addComponent(firstButton);
 
         prevButton = new JmixButton();
-        prevButton.setStyleName("c-paging-change-page");
-        prevButton.addStyleName("c-paging-prev");
+        prevButton.setStyleName("jmix-paging-change-page");
+        prevButton.addStyleName("jmix-paging-prev");
         contentLayout.addComponent(prevButton);
 
         label = new Label();
         label.setWidthUndefined();
-        label.setStyleName("c-paging-status");
+        label.setStyleName("jmix-paging-status");
         contentLayout.addComponent(label);
 
         countButton = new JmixButton("[?]");
         countButton.setWidthUndefined();
         countButton.setStyleName(ValoTheme.BUTTON_LINK);
-        countButton.addStyleName("c-paging-count");
+        countButton.addStyleName("jmix-paging-count");
         countButton.setTabIndex(-1);
         contentLayout.addComponent(countButton);
 
         nextButton = new JmixButton();
-        nextButton.setStyleName("c-paging-change-page");
-        nextButton.addStyleName("c-paging-next");
+        nextButton.setStyleName("jmix-paging-change-page");
+        nextButton.addStyleName("jmix-paging-next");
         contentLayout.addComponent(nextButton);
 
         lastButton = new JmixButton();
-        lastButton.setStyleName("c-paging-change-page");
-        lastButton.addStyleName("c-paging-last");
+        lastButton.setStyleName("jmix-paging-change-page");
+        lastButton.addStyleName("jmix-paging-last");
         contentLayout.addComponent(lastButton);
 
         return contentLayout;

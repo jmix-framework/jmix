@@ -33,8 +33,8 @@ public class JmixComboBoxWidget extends VComboBox
 
     private static final String READONLY_STYLE_SUFFIX = "readonly";
     private static final String PROMPT_STYLE = "prompt";
-    private static final String JMIX_DISABLED_OR_READONLY_CLASSNAME = "c-disabled-or-readonly";
-    private static final String JMIX_EMPTY_VALUE_CLASSNAME = "c-empty-value";
+    private static final String JMIX_DISABLED_OR_READONLY_CLASSNAME = "jmix-disabled-or-readonly";
+    private static final String JMIX_EMPTY_VALUE_CLASSNAME = "jmix-empty-value";
 
     protected ShortcutActionHandler shortcutHandler;
 

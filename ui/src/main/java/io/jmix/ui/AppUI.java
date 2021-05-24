@@ -297,18 +297,18 @@ public class AppUI extends UI implements ErrorHandler, EnhancedUI, UiExceptionHa
         VerticalLayout content = new VerticalLayout();
         content.setMargin(false);
         content.setSpacing(false);
-        content.setStyleName("c-init-error-view");
+        content.setStyleName("jmix-init-error-view");
         content.setSizeFull();
 
         VerticalLayout errorPanel = new VerticalLayout();
-        errorPanel.setStyleName("c-init-error-panel");
+        errorPanel.setStyleName("jmix-init-error-panel");
         errorPanel.setWidthUndefined();
         errorPanel.setMargin(false);
         errorPanel.setSpacing(true);
 
         Label captionLabel = new Label(initErrorCaption);
         captionLabel.setWidthUndefined();
-        captionLabel.setStyleName("c-init-error-caption");
+        captionLabel.setStyleName("jmix-init-error-caption");
         captionLabel.addStyleName("h2");
         captionLabel.setValue(initErrorCaption);
 
@@ -316,13 +316,13 @@ public class AppUI extends UI implements ErrorHandler, EnhancedUI, UiExceptionHa
 
         Label messageLabel = new Label(initErrorCaption);
         messageLabel.setWidthUndefined();
-        messageLabel.setStyleName("c-init-error-message");
+        messageLabel.setStyleName("jmix-init-error-message");
         messageLabel.setValue(initErrorMessage);
 
         errorPanel.addComponent(messageLabel);
 
         Button retryButton = new Button(messages.getMessage("app.initRetry"));
-        retryButton.setStyleName("c-init-error-retry");
+        retryButton.setStyleName("jmix-init-error-retry");
         retryButton.addClickListener(event -> {
             // always restart UI
             String url = ControllerUtils.getLocationWithoutParams() + "?restartApp";

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@mixin he-fieldgrouplayout($primary-stylename: c-fglayout) {
+@mixin he-fieldgrouplayout($primary-stylename: jmix-fglayout) {
   @include he-fieldgrouplayout-size-style($primary-stylename: $primary-stylename);
 
   &.small {
@@ -43,7 +43,7 @@
   }
 }
 
-@mixin he-fieldgrouplayout-size-style($primary-stylename  : c-fglayout,
+@mixin he-fieldgrouplayout-size-style($primary-stylename  : jmix-fglayout,
                                       $unit-size          : $v-unit-size) {
   .#{$primary-stylename}-slot.inline > .v-caption {
     line-height: $unit-size;

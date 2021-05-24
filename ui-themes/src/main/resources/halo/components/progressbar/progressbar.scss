@@ -18,7 +18,7 @@
 $v-progressbar-define-indeterminate: false;
 $v-progressbar-indeterminate-indicator-width: 120px !default;
 
-@mixin cuba-progressbar($primary-stylename: v-progressbar) {
+@mixin jmix-progressbar($primary-stylename: v-progressbar) {
   .#{$primary-stylename}-indeterminate {
     .#{$primary-stylename}-wrapper {
       position: relative;

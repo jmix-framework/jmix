@@ -34,9 +34,9 @@ import com.vaadin.shared.ui.ComponentStateUtil;
 
 public class JmixCaptionWidget extends VCaption implements ClickHandler {
 
-    public static final String JMIX_CLASSNAME = "c-caption";
-    public static final String CONTEXT_HELP_CLASSNAME = "c-context-help-button";
-    public static final String CONTEXT_HELP_CLICKABLE_CLASSNAME = "c-context-help-button-clickable";
+    public static final String JMIX_CLASSNAME = "jmix-caption";
+    public static final String CONTEXT_HELP_CLASSNAME = "jmix-context-help-button";
+    public static final String CONTEXT_HELP_CLICKABLE_CLASSNAME = "jmix-context-help-button-clickable";
 
     protected Element contextHelpIndicatorElement;
 
@@ -239,7 +239,7 @@ public class JmixCaptionWidget extends VCaption implements ClickHandler {
         if (state.captionAsHtml) {
             captionText.setInnerHTML(state.caption);
         } else {
-            captionText.addClassName("c-captiontext-preformatted");
+            captionText.addClassName("jmix-captiontext-preformatted");
             captionText.setInnerText(state.caption);
         }
     }

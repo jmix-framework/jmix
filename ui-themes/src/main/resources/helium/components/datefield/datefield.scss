@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-$c-default-datefield-width: 140px;
+$jmix-default-datefield-width: 140px;
 $he-datefield-calendar-button-padding: 2px !default;
 
-@mixin he-datefield($primary-stylename : c-datefield) {
+@mixin he-datefield($primary-stylename : jmix-datefield) {
   .#{$primary-stylename}-layout {
     @include he-datefield-style($primary-stylename: $primary-stylename);
   }
@@ -111,7 +111,7 @@ $he-datefield-calendar-button-padding: 2px !default;
   }
 }
 
-@mixin he-datefield-style($primary-stylename : c-datefield) {
+@mixin he-datefield-style($primary-stylename : jmix-datefield) {
   .#{$primary-stylename} {
 
     [class*="textfield"] {
@@ -155,16 +155,16 @@ $he-datefield-calendar-button-padding: 2px !default;
   @include he-datefield-size-style($primary-stylename: $primary-stylename);
 }
 
-@mixin he-datefield-size-style($primary-stylename : c-datefield,
+@mixin he-datefield-size-style($primary-stylename : jmix-datefield,
                                $unit-size         : $v-unit-size,
                                $font-size         : null,
                                $scaling-factor    : 1) {
-  .c-timefield,
+  .jmix-timefield,
   .#{$primary-stylename} [class*="textfield"] {
     @include he-input-size-style($unit-size: $unit-size, $font-size: $font-size);
   }
 
-  .c-timefield {
+  .jmix-timefield {
     @include he-timefield-width-style($scaling-factor: $scaling-factor);
   }
 
@@ -188,7 +188,7 @@ $he-datefield-calendar-button-padding: 2px !default;
     &.v-datefield-day,
     &.v-datefield-month,
     &.v-datefield-year {
-      width: round($c-default-datefield-width * $scaling-factor);
+      width: round($jmix-default-datefield-width * $scaling-factor);
     }
   }
 

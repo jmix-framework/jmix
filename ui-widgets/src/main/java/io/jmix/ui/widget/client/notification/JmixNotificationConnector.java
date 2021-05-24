@@ -27,7 +27,7 @@ import com.vaadin.ui.Notification;
 @Connect(value = Notification.class)
 public class JmixNotificationConnector extends NotificationConnector {
 
-    public static final String JMIX_NOTIFICATION_MODALITY_CURTAIN_CLASSNAME = "c-notification-modalitycurtain";
+    public static final String JMIX_NOTIFICATION_MODALITY_CURTAIN_CLASSNAME = "jmix-notification-modalitycurtain";
 
     @Override
     protected NotificationDelegate getDelegate() {

@@ -19,32 +19,32 @@
  * The extra height of checkbox.
  * @group checkbox
  */
-$cuba-checkbox-extra-height: ceil($v-unit-size / 10);
+$jmix-checkbox-extra-height: ceil($v-unit-size / 10);
 /**
  * The line height of checkbox.
  * @group checkbox
  */
-$cuba-checkbox-line-height: ceil($v-unit-size / 1.9);
+$jmix-checkbox-line-height: ceil($v-unit-size / 1.9);
 /**
  * The line height of small checkbox.
  * @group checkbox
  */
-$cuba-checkbox-line-height--small: ceil($v-unit-size / 2.1);
+$jmix-checkbox-line-height--small: ceil($v-unit-size / 2.1);
 /**
  * The line height of large checkbox.
  * @group checkbox
  */
-$cuba-checkbox-line-height--large: ceil($v-unit-size / 1.6);
+$jmix-checkbox-line-height--large: ceil($v-unit-size / 1.6);
 /**
  * The size of checkbox.
  * @group checkbox
  */
-$cuba-checkbox-size: null !default;
+$jmix-checkbox-size: null !default;
 
 @mixin halo-checkbox($primary-stylename: v-checkbox) {
   .#{$primary-stylename} {
-    line-height: $cuba-checkbox-line-height;
-    height: $cuba-checkbox-line-height + $cuba-checkbox-extra-height;
+    line-height: $jmix-checkbox-line-height;
+    height: $jmix-checkbox-line-height + $jmix-checkbox-extra-height;
 
     label {
       @include user-select(text);
@@ -64,31 +64,31 @@ $cuba-checkbox-size: null !default;
   }
 
   .#{$primary-stylename}-small {
-    line-height: $cuba-checkbox-line-height--small;
-    height: $cuba-checkbox-line-height--small + $cuba-checkbox-extra-height;
+    line-height: $jmix-checkbox-line-height--small;
+    height: $jmix-checkbox-line-height--small + $jmix-checkbox-extra-height;
   }
 
   .#{$primary-stylename}-large {
-    line-height: $cuba-checkbox-line-height--large;
-    height: $cuba-checkbox-line-height--large + $cuba-checkbox-extra-height;
+    line-height: $jmix-checkbox-line-height--large;
+    height: $jmix-checkbox-line-height--large + $jmix-checkbox-extra-height;
   }
 
-  @if $cuba-checkbox-size {
+  @if $jmix-checkbox-size {
     .#{$primary-stylename} {
-      @include cuba-checkbox-custom-size($cuba-checkbox-size);
+      @include jmix-checkbox-custom-size($jmix-checkbox-size);
     }
 
     .#{$primary-stylename}-small {
-      @include cuba-checkbox-custom-size($cuba-checkbox-size * 0.8);
+      @include jmix-checkbox-custom-size($jmix-checkbox-size * 0.8);
     }
 
     .#{$primary-stylename}-large {
-      @include cuba-checkbox-custom-size($cuba-checkbox-size * 1.2);
+      @include jmix-checkbox-custom-size($jmix-checkbox-size * 1.2);
     }
   }
 }
 
-@mixin cuba-checkbox-custom-size($checkbox-size) {
+@mixin jmix-checkbox-custom-size($checkbox-size) {
   :root & {
     line-height: $checkbox-size;
     padding-left: round($checkbox-size * 1.33);

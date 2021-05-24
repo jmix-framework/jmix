@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
- @mixin cuba-table-empty-state {
+ @mixin jmix-table-empty-state {
 
-    .c-table-empty-state {
+    .jmix-table-empty-state {
       bottom: 0;
       font-size: $v-font-size--h2;
       left: 0;
@@ -31,7 +31,7 @@
       }
     }
 
-    .c-table-empty-state:after {
+    .jmix-table-empty-state:after {
       display: inline-block;
       height: 100%;
 
@@ -39,11 +39,11 @@
       content: "";
     }
 
-    .c-table-empty-state-message-box {
+    .jmix-table-empty-state-message-box {
       display: inline-block;
     }
 
-    .c-table-empty-state-message {
+    .jmix-table-empty-state-message {
       color: valo-font-color($v-font-color, 0.50);
       display: inline-block;
       user-select: none;
@@ -54,7 +54,7 @@
       width: 100%;
     }
 
-    .c-table-empty-state-link-message {
+    .jmix-table-empty-state-link-message {
       text-align: center;
       user-select: none;
       -moz-user-select: none;

@@ -39,11 +39,11 @@ import java.util.List;
 import java.util.Set;
 
 public class TableWidgetDelegate {
-    public static final String TABLE_CLICKABLE_CELL_CONTENT_CLASSNAME = "c-table-clickable-cell-content";
-    public static final String TABLE_CLICKABLE_CELL_CLASSNAME = "c-table-clickable-cell";
-    public static final String TABLE_CLICKABLE_TEXT_CLASSNAME = "c-table-clickable-text";
+    public static final String TABLE_CLICKABLE_CELL_CONTENT_CLASSNAME = "jmix-table-clickable-cell-content";
+    public static final String TABLE_CLICKABLE_CELL_CLASSNAME = "jmix-table-clickable-cell";
+    public static final String TABLE_CLICKABLE_TEXT_CLASSNAME = "jmix-table-clickable-text";
     public static final String WIDGET_CELL_CLASSNAME = "widget-container";
-    public static final String TABLE_SORT_CONTEXTMENU_ITEM = "c-table-contextmenu-item";
+    public static final String TABLE_SORT_CONTEXTMENU_ITEM = "jmix-table-contextmenu-item";
     public static final String TREE_TABLE_SPACER = "v-treetable-treespacer";
 
     public VScrollTable table;
@@ -120,7 +120,7 @@ public class TableWidgetDelegate {
     public void showPresentationEditorPopup(Event event, Widget presentationsEditIcon) {
         if (event.getEventTarget().cast() == presentationsEditIcon.getElement() && tableWidget.isEnabled()) {
             this.presentationsEditorPopup = new VOverlay();
-            this.presentationsEditorPopup.setStyleName("c-table-prefs-editor");
+            this.presentationsEditorPopup.setStyleName("jmix-table-prefs-editor");
             this.presentationsEditorPopup.setOwner(table);
             this.presentationsEditorPopup.setWidget(this.presentationsMenu);
 
@@ -335,7 +335,7 @@ public class TableWidgetDelegate {
             sortDirectionPopup.hide();
         });
 
-        sortDirectionMenu.addStyleName("c-table-contextmenu");
+        sortDirectionMenu.addStyleName("jmix-table-contextmenu");
         sortDirectionPopup.setWidget(sortDirectionMenu);
 
         sortDirectionPopup.setAutoHideEnabled(true);

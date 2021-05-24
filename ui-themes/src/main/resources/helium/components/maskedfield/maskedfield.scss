@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@mixin he-maskedfield($primary-stylename: c-maskedfield) {
+@mixin he-maskedfield($primary-stylename: jmix-maskedfield) {
   @include he-textfield($primary-stylename);
 
   .#{$primary-stylename}.v-readonly {

@@ -31,13 +31,13 @@ public class JmixVerticalSplitPanelWidget extends VSplitPanelVertical {
     /**
      * Styles for widget
      */
-    protected static final String SP_DOCK_BUTTON = "c-splitpanel-dock-button-vertical";
-    protected static final String SP_DOCK_BUTTON_UP = "c-splitpanel-dock-button-up";
-    protected static final String SP_DOCK_BUTTON_DOWN = "c-splitpanel-dock-button-down";
-    protected static final String SP_DOCK_UP = "c-splitpanel-dock-up";
-    protected static final String SP_DOCK_DOWN = "c-splitpanel-dock-down";
-    protected static final String SP_DOCKABLE_UP = "c-splitpanel-dockable-up";
-    protected static final String SP_DOCKABLE_DOWN = "c-splitpanel-dockable-down";
+    protected static final String SP_DOCK_BUTTON = "jmix-splitpanel-dock-button-vertical";
+    protected static final String SP_DOCK_BUTTON_UP = "jmix-splitpanel-dock-button-up";
+    protected static final String SP_DOCK_BUTTON_DOWN = "jmix-splitpanel-dock-button-down";
+    protected static final String SP_DOCK_UP = "jmix-splitpanel-dock-up";
+    protected static final String SP_DOCK_DOWN = "jmix-splitpanel-dock-down";
+    protected static final String SP_DOCKABLE_UP = "jmix-splitpanel-dockable-up";
+    protected static final String SP_DOCKABLE_DOWN = "jmix-splitpanel-dockable-down";
 
     protected static final int BUTTON_HEIGHT_SPACE = 12;
     protected boolean reversed;

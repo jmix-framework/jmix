@@ -27,8 +27,8 @@
     -ms-scroll-limit: 0;
   }
 
-  .v-horizontallayout.c-shrink-empty,
-  .v-verticallayout.c-shrink-empty {
+  .v-horizontallayout.jmix-shrink-empty,
+  .v-verticallayout.jmix-shrink-empty {
     font-size: 0 !important;
 
     & > .v-slot > *,
@@ -37,8 +37,8 @@
     }
   }
 
-  .v-horizontallayout.c-hide-overflow,
-  .v-verticallayout.c-hide-overflow {
+  .v-horizontallayout.jmix-hide-overflow,
+  .v-verticallayout.jmix-hide-overflow {
     overflow: hidden;
 
     & > .v-expand > .v-slot,

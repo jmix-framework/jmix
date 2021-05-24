@@ -33,8 +33,8 @@ import com.vaadin.shared.ui.MarginInfo;
 @Connect(JmixGroupBox.class)
 public class JmixGroupBoxConnector extends PanelConnector {
 
-    public static final String CONTEXT_HELP_CLASSNAME = "c-context-help-button";
-    public static final String CONTEXT_HELP_CLICKABLE_CLASSNAME = "c-context-help-button-clickable";
+    public static final String CONTEXT_HELP_CLASSNAME = "jmix-context-help-button";
+    public static final String CONTEXT_HELP_CLICKABLE_CLASSNAME = "jmix-context-help-button-clickable";
     public static final String REQUIRED_INDICATOR_CLASSNAME = "v-required-field-indicator";
 
     protected boolean widgetInitialized = false;

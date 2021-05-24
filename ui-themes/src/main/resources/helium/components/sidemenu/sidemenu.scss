@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-$cuba-sidemenu-top-offset--small: floor(($v-unit-size--small - $v-unit-size--small * 0.8) / 2) !default;
-$cuba-sidemenu-top-height--small: $v-unit-size--small + 2 * $cuba-sidemenu-top-offset--small !default;
+$jmix-sidemenu-top-offset--small: floor(($v-unit-size--small - $v-unit-size--small * 0.8) / 2) !default;
+$jmix-sidemenu-top-height--small: $v-unit-size--small + 2 * $jmix-sidemenu-top-offset--small !default;
 
-$cuba-sidemenu-top-offset--large: floor(($v-unit-size--large - $v-unit-size--large * 0.8) / 2) !default;
-$cuba-sidemenu-top-height--large: $v-unit-size--large + 2 * $cuba-sidemenu-top-offset--large !default;
+$jmix-sidemenu-top-offset--large: floor(($v-unit-size--large - $v-unit-size--large * 0.8) / 2) !default;
+$jmix-sidemenu-top-height--large: $v-unit-size--large + 2 * $jmix-sidemenu-top-offset--large !default;
 
-@mixin he-sidemenu($primary-stylename: c-sidemenu) {
+@mixin he-sidemenu($primary-stylename: jmix-sidemenu) {
   @include he-sidemenu-styles($primary-stylename: $primary-stylename);
 
   &.small {
@@ -28,8 +28,8 @@ $cuba-sidemenu-top-height--large: $v-unit-size--large + 2 * $cuba-sidemenu-top-o
                                      $unit-size           : $v-unit-size--small,
                                      $font-size           : $v-font-size--small,
                                      $scaling-factor      : $v-scaling-factor--small,
-                                     $sidemenu-top-offset : $cuba-sidemenu-top-offset--small,
-                                     $sidemenu-top-height : $cuba-sidemenu-top-height--small);
+                                     $sidemenu-top-offset : $jmix-sidemenu-top-offset--small,
+                                     $sidemenu-top-height : $jmix-sidemenu-top-height--small);
   }
 
   &.large {
@@ -37,12 +37,12 @@ $cuba-sidemenu-top-height--large: $v-unit-size--large + 2 * $cuba-sidemenu-top-o
                                      $unit-size           : $v-unit-size--large,
                                      $font-size           : $v-font-size--large,
                                      $scaling-factor      : $v-scaling-factor--large,
-                                     $sidemenu-top-offset : $cuba-sidemenu-top-offset--large,
-                                     $sidemenu-top-height : $cuba-sidemenu-top-height--large);
+                                     $sidemenu-top-offset : $jmix-sidemenu-top-offset--large,
+                                     $sidemenu-top-height : $jmix-sidemenu-top-height--large);
   }
 }
 
-@mixin he-sidemenu-styles($primary-stylename: c-sidemenu) {
+@mixin he-sidemenu-styles($primary-stylename: jmix-sidemenu) {
   @include he-sidemenu-size-styles($primary-stylename: $primary-stylename);
 
   // TODO: gg, does it really exist?
@@ -50,7 +50,7 @@ $cuba-sidemenu-top-height--large: $v-unit-size--large + 2 * $cuba-sidemenu-top-o
     // TODO: gg, implement?
   }
 
-  .#{$primary-stylename}-layout .c-main-tabsheet > .v-tabsheet-tabcontainer {
+  .#{$primary-stylename}-layout .jmix-main-tabsheet > .v-tabsheet-tabcontainer {
     border: 0;
   }
 
@@ -81,8 +81,8 @@ $cuba-sidemenu-top-height--large: $v-unit-size--large + 2 * $cuba-sidemenu-top-o
   }
 
   .#{$primary-stylename}-responsive {
-    $small_min: $cuba-responsive-sidemenu-togglebutton-appeared-max-width-range + 1px;
-    $small_max: $cuba-responsive-sidemenu-small-style-max-width-range;
+    $small_min: $jmix-responsive-sidemenu-togglebutton-appeared-max-width-range + 1px;
+    $small_max: $jmix-responsive-sidemenu-small-style-max-width-range;
 
     &[width-range~="#{$small_min}-#{$small_max}"] {
       .#{$primary-stylename}-panel {
@@ -103,7 +103,7 @@ $cuba-sidemenu-top-height--large: $v-unit-size--large + 2 * $cuba-sidemenu-top-o
       }
     }
 
-    &[width-range~="0-#{$cuba-responsive-sidemenu-togglebutton-appeared-max-width-range}"] {
+    &[width-range~="0-#{$jmix-responsive-sidemenu-togglebutton-appeared-max-width-range}"] {
       .#{$primary-stylename}-title {
         background: var(--sidemenu-responsive-title-background-color);
         color: var(--sidemenu-responsive-title-text-color);
@@ -118,7 +118,7 @@ $cuba-sidemenu-top-height--large: $v-unit-size--large + 2 * $cuba-sidemenu-top-o
           );
         }
 
-        .c-useractions-button {
+        .jmix-useractions-button {
           @include he-sidemenu-useractions-button-color-style(
                   $color                    : --sidemenu-mobile-button-color,
                   $hover-background-color   : --sidemenu-mobile-button-hover-background-color,
@@ -142,13 +142,13 @@ $cuba-sidemenu-top-height--large: $v-unit-size--large + 2 * $cuba-sidemenu-top-o
 
     border-right: 0;
 
-    .c-userindicator {
+    .jmix-userindicator {
       color: var(--sidemenu-text-color);
     }
 
-    .c-ftsfield-button,
-    .c-newwindow-button,
-    .c-logout-button {
+    .jmix-ftsfield-button,
+    .jmix-newwindow-button,
+    .jmix-logout-button {
       @include he-sidemenu-action-button-color-style(
               $color                    : --sidemenu-action-button-color,
               $hover-background-color   : --sidemenu-action-button-hover-background-color,
@@ -156,7 +156,7 @@ $cuba-sidemenu-top-height--large: $v-unit-size--large + 2 * $cuba-sidemenu-top-o
       );
     }
 
-    .c-useractions-button {
+    .jmix-useractions-button {
       @include he-sidemenu-useractions-button-color-style(
               $color                    : --sidemenu-action-button-color,
               $hover-background-color   : --sidemenu-action-button-hover-background-color,
@@ -164,7 +164,7 @@ $cuba-sidemenu-top-height--large: $v-unit-size--large + 2 * $cuba-sidemenu-top-o
       );
     }
 
-    .c-user-timezone-label {
+    .jmix-user-timezone-label {
       color: var(--sidemenu-text-color);
     }
 
@@ -190,12 +190,12 @@ $cuba-sidemenu-top-height--large: $v-unit-size--large + 2 * $cuba-sidemenu-top-o
   }
 }
 
-@mixin he-sidemenu-size-styles($primary-stylename   : c-sidemenu,
+@mixin he-sidemenu-size-styles($primary-stylename   : jmix-sidemenu,
                                $unit-size           : $v-unit-size,
                                $font-size           : $v-font-size,
                                $scaling-factor      : 1,
-                               $sidemenu-top-offset : $cuba-sidemenu-top-offset,
-                               $sidemenu-top-height : $cuba-sidemenu-top-height) {
+                               $sidemenu-top-offset : $jmix-sidemenu-top-offset,
+                               $sidemenu-top-height : $jmix-sidemenu-top-height) {
 
   .#{$primary-stylename} {
     font-size: $font-size;
@@ -211,7 +211,7 @@ $cuba-sidemenu-top-height--large: $v-unit-size--large + 2 * $cuba-sidemenu-top-o
   }
 
   .#{$primary-stylename}-title {
-    $title-font-size: round($cuba-sidemenu-title-font-size * $scaling-factor);
+    $title-font-size: round($jmix-sidemenu-title-font-size * $scaling-factor);
     font-size: $title-font-size;
     padding: round($unit-size/3) round($unit-size/2);
 
@@ -251,12 +251,12 @@ $cuba-sidemenu-top-height--large: $v-unit-size--large + 2 * $cuba-sidemenu-top-o
       padding-bottom: $unit-size;
     }
 
-    $small_min: $cuba-responsive-sidemenu-togglebutton-appeared-max-width-range + 1px;
-    $small_max: $cuba-responsive-sidemenu-small-style-max-width-range;
+    $small_min: $jmix-responsive-sidemenu-togglebutton-appeared-max-width-range + 1px;
+    $small_max: $jmix-responsive-sidemenu-small-style-max-width-range;
 
     &[width-range~="#{$small_min}-#{$small_max}"] {
       .#{$primary-stylename}-panel {
-        .c-main-buttons {
+        .jmix-main-buttons {
           .v-icon {
             font-size: round($font-size * 1.5);
           }
@@ -306,7 +306,7 @@ $cuba-sidemenu-top-height--large: $v-unit-size--large + 2 * $cuba-sidemenu-top-o
       }
     }
 
-    &[width-range~="0-#{$cuba-responsive-sidemenu-togglebutton-appeared-max-width-range}"] {
+    &[width-range~="0-#{$jmix-responsive-sidemenu-togglebutton-appeared-max-width-range}"] {
       padding-top: $sidemenu-top-height;
 
       .#{$primary-stylename}-toggle {
@@ -340,14 +340,14 @@ $cuba-sidemenu-top-height--large: $v-unit-size--large + 2 * $cuba-sidemenu-top-o
     font-size: $font-size;
     line-height: $unit-size;
 
-    .v-button.c-ftsfield-button,
-    .v-button.c-logout-button,
-    .v-button.c-newwindow-button {
+    .v-button.jmix-ftsfield-button,
+    .v-button.jmix-logout-button,
+    .v-button.jmix-newwindow-button {
       height: $unit-size;
       padding: 0 ceil($unit-size/5);
     }
 
-    .c-ftsfield {
+    .jmix-ftsfield {
       padding-right: $v-layout-margin-right + $unit-size;
     }
 
@@ -356,7 +356,7 @@ $cuba-sidemenu-top-height--large: $v-unit-size--large + 2 * $cuba-sidemenu-top-o
     }
   }
 
-  .c-useractions-button:not(.v-menubar-submenu) {
+  .jmix-useractions-button:not(.v-menubar-submenu) {
     height: $unit-size;
     line-height: $unit-size;
   }
@@ -402,7 +402,7 @@ $cuba-sidemenu-top-height--large: $v-unit-size--large + 2 * $cuba-sidemenu-top-o
 
 @mixin he-sidemenu-item-header-style() {
   color: var(--sidemenu-text-color);
-  font-weight: $cuba-sidemenu-item-font-weight;
+  font-weight: $jmix-sidemenu-item-font-weight;
 }
 
 @mixin he-sidemenu-item-header-size-style($unit-size: $v-unit-size) {

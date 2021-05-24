@@ -37,8 +37,8 @@ import java.util.List;
 
 public class JmixOrderedLayoutSlot extends Slot implements ClickHandler {
 
-    public static final String CONTEXT_HELP_CLASSNAME = "c-context-help-button";
-    public static final String CONTEXT_HELP_CLICKABLE_CLASSNAME = "c-context-help-button-clickable";
+    public static final String CONTEXT_HELP_CLASSNAME = "jmix-context-help-button";
+    public static final String CONTEXT_HELP_CLICKABLE_CLASSNAME = "jmix-context-help-button-clickable";
 
     protected Element contextHelpIcon;
 

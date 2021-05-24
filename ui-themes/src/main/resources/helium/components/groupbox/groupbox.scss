@@ -18,7 +18,7 @@ $he-groupbox-caption-height: round($v-unit-size * 1.4);
 $he-groupbox-caption-height--small: round($v-unit-size--small * 1.4);
 $he-groupbox-caption-height--large: round($v-unit-size--large * 1.4);
 
-@mixin he-groupbox($primary-stylename: c-groupbox) {
+@mixin he-groupbox($primary-stylename: jmix-groupbox) {
   @include he-groupbox-style(
           $primary-stylename: $primary-stylename,
           $groupbox-caption-height: $he-groupbox-caption-height,
@@ -70,7 +70,7 @@ $he-groupbox-caption-height--large: round($v-unit-size--large * 1.4);
   }
 }
 
-@mixin he-groupbox-style($primary-stylename       : c-groupbox,
+@mixin he-groupbox-style($primary-stylename       : jmix-groupbox,
                          $groupbox-caption-height : $he-groupbox-caption-height,
                          $font-size               : $v-font-size) {
   $padding: $groupbox-caption-height / 3;

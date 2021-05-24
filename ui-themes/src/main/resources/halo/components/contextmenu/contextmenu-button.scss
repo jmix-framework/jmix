@@ -15,7 +15,7 @@
  *
  */
 
-@mixin halo-cuba-contextmenu-button($primary-stylename: c-cm-button) {
+@mixin halo-jmix-contextmenu-button($primary-stylename: jmix-cm-button) {
   .#{$primary-stylename} {
     @include valo-button-static-style;
     @include valo-button-style($font-color: $v-button-font-color);

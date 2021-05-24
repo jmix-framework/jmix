@@ -44,7 +44,7 @@ public class JmixManagedTabSheet extends JmixTabSheetCssLayout
 
     private static final long serialVersionUID = 1425920612516520121L;
 
-    protected static final String MANAGED_TABSHEET_STYLENAME = "c-managed-tabsheet";
+    protected static final String MANAGED_TABSHEET_STYLENAME = "jmix-managed-tabsheet";
     protected static final String HIDDEN_TAB = "hidden-tab";
     protected static final String VISIBLE_TAB = "visible-tab";
 
@@ -469,7 +469,7 @@ public class JmixManagedTabSheet extends JmixTabSheetCssLayout
 
         protected String id;
 
-        protected static final String MANAGED_TAB_STYLENAME = "c-managed-tab";
+        protected static final String MANAGED_TAB_STYLENAME = "jmix-managed-tab";
 
         protected CloseHandler closeHandler;
 

@@ -22,7 +22,7 @@ import com.vaadin.ui.Layout;
 public class JmixFlowLayout extends JmixCssActionsLayout implements Layout.MarginHandler, Layout.SpacingHandler {
 
     public JmixFlowLayout() {
-        setStyleName("c-flowlayout");
+        setStyleName("jmix-flowlayout");
     }
 
     @Override

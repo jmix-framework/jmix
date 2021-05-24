@@ -62,7 +62,7 @@ $he-checkbox-size-reduction : 10 !default;
 
 @mixin he-checkbox-size-style($checkbox-size: $v-unit-size, $font-size: null) {
   line-height: $checkbox-size;
-  height: $checkbox-size + $cuba-checkbox-extra-height;
+  height: $checkbox-size + $jmix-checkbox-extra-height;
   font-size: $font-size;
 
   :root & {
@@ -81,7 +81,7 @@ $he-checkbox-size-reduction : 10 !default;
   }
 }
 
-@mixin he-checkbox-style($checkbox-size: $cuba-checkbox-size, $font-size: null) {
+@mixin he-checkbox-style($checkbox-size: $jmix-checkbox-size, $font-size: null) {
   @include he-checkbox-size-style($checkbox-size: $checkbox-size, $font-size: $font-size);
 
   color: var(--text-main-color);

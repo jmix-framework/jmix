@@ -35,10 +35,10 @@ import static io.jmix.ui.widget.JmixPickerField.FieldValueChangeListener.FIELD_V
 
 public class JmixPickerField<T> extends com.vaadin.ui.CustomField<T> implements Action.Container {
 
-    protected static final String PRIMARY_STYLENAME = "c-pickerfield";
-    protected static final String LAYOUT_STYLENAME = "c-pickerfield-layout";
-    protected static final String TEXT_FIELD_STYLENAME = "c-pickerfield-text";
-    protected static final String BUTTON_STYLENAME = "c-pickerfield-button";
+    protected static final String PRIMARY_STYLENAME = "jmix-pickerfield";
+    protected static final String LAYOUT_STYLENAME = "jmix-pickerfield-layout";
+    protected static final String TEXT_FIELD_STYLENAME = "jmix-pickerfield-text";
+    protected static final String BUTTON_STYLENAME = "jmix-pickerfield-button";
 
     protected T internalValue;
 

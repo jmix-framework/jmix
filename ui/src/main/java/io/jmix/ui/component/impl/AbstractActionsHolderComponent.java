@@ -77,7 +77,7 @@ public abstract class AbstractActionsHolderComponent<T extends com.vaadin.ui.Abs
         contextMenuPopup.setMargin(false);
 
         contextMenuPopup.setSizeUndefined();
-        contextMenuPopup.setStyleName("c-cm-container");
+        contextMenuPopup.setStyleName("jmix-cm-container");
 
         AppUI ui = AppUI.getCurrent();
         if (ui != null && ui.isTestMode()) {
@@ -228,7 +228,7 @@ public abstract class AbstractActionsHolderComponent<T extends com.vaadin.ui.Abs
     }
 
     protected void initContextMenuButton(JmixButton contextMenuButton, Action action) {
-        contextMenuButton.setStyleName("c-cm-button");
+        contextMenuButton.setStyleName("jmix-cm-button");
         setContextMenuButtonAction(contextMenuButton, action);
     }
 

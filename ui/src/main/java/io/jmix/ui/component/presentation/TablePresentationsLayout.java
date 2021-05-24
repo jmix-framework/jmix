@@ -40,11 +40,11 @@ public class TablePresentationsLayout extends VerticalLayout {
 
     public static final String CUSTOM_STYLE_NAME_PREFIX = "cs";
 
-    protected static final String CURRENT_MENUITEM_STYLENAME = "c-table-prefs-menuitem-current";
-    protected static final String DEFAULT_MENUITEM_STYLENAME = "c-table-prefs-menuitem-default";
-    protected static final String TABLE_PREFS_STYLENAME = "c-table-prefs";
+    protected static final String CURRENT_MENUITEM_STYLENAME = "jmix-table-prefs-menuitem-current";
+    protected static final String DEFAULT_MENUITEM_STYLENAME = "jmix-table-prefs-menuitem-default";
+    protected static final String TABLE_PREFS_STYLENAME = "jmix-table-prefs";
 
-    protected static final String CONTEXT_MENU_BUTTON_STYLENAME = "c-cm-button";
+    protected static final String CONTEXT_MENU_BUTTON_STYLENAME = "jmix-cm-button";
 
     protected JmixMenuBar menuBar;
     protected JmixPopupButton button;
@@ -191,13 +191,13 @@ public class TablePresentationsLayout extends VerticalLayout {
         setSpacing(true);
 
         Label titleLabel = new Label(messages.getMessage("PresentationsPopup.title"));
-        titleLabel.setStyleName("c-table-prefs-title");
+        titleLabel.setStyleName("jmix-table-prefs-title");
         titleLabel.setWidthUndefined();
         addComponent(titleLabel);
         setComponentAlignment(titleLabel, Alignment.MIDDLE_CENTER);
 
         menuBar = new JmixMenuBar();
-        menuBar.setStyleName("c-table-prefs-list");
+        menuBar.setStyleName("jmix-table-prefs-list");
         menuBar.setWidth(100, Unit.PERCENTAGE);
         menuBar.setHeightUndefined();
         menuBar.setVertical(true);

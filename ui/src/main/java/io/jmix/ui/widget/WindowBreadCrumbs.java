@@ -45,8 +45,8 @@ import java.util.Iterator;
 
 public class WindowBreadCrumbs extends CssLayout {
 
-    protected static final String BREADCRUMBS_VISIBLE_WRAP_STYLE = "c-breadcrumbs-visible";
-    protected static final String C_HEADLINE_CONTAINER = "c-headline-container";
+    protected static final String BREADCRUMBS_VISIBLE_WRAP_STYLE = "jmix-breadcrumbs-visible";
+    protected static final String C_HEADLINE_CONTAINER = "jmix-headline-container";
 
     protected boolean visibleExplicitly = true;
 
@@ -90,7 +90,7 @@ public class WindowBreadCrumbs extends CssLayout {
             closeBtn.setDescription(messages.getMessage("windowBreadCrumbs.closeButton.description"));
             closeBtn.setClickHandler(this::onCloseWindowButtonClick);
             closeBtn.setIcon(resolveIcon(applicationContext, JmixIcon.CLOSE));
-            closeBtn.setStyleName("c-closetab-button");
+            closeBtn.setStyleName("jmix-closetab-button");
 
             this.closeBtn = closeBtn;
         }
@@ -142,19 +142,19 @@ public class WindowBreadCrumbs extends CssLayout {
 
     protected Layout createEnclosingLayout() {
         Layout enclosingLayout = new CssLayout();
-        enclosingLayout.setPrimaryStyleName("c-breadcrumbs-container");
+        enclosingLayout.setPrimaryStyleName("jmix-breadcrumbs-container");
         return enclosingLayout;
     }
 
     protected Layout createLinksLayout() {
         CssLayout linksLayout = new CssLayout();
-        linksLayout.setPrimaryStyleName("c-breadcrumbs");
+        linksLayout.setPrimaryStyleName("jmix-breadcrumbs");
         return linksLayout;
     }
 
     protected Layout createLogoLayout() {
         CssLayout logoLayout = new CssLayout();
-        logoLayout.setPrimaryStyleName("c-breadcrumbs-logo");
+        logoLayout.setPrimaryStyleName("jmix-breadcrumbs-logo");
         return logoLayout;
     }
 
@@ -250,13 +250,13 @@ public class WindowBreadCrumbs extends CssLayout {
                 linksLayout.addComponent(button);
 
                 Label separatorLab = new Label("&nbsp;&gt;&nbsp;");
-                separatorLab.setStyleName("c-breadcrumbs-separator");
+                separatorLab.setStyleName("jmix-breadcrumbs-separator");
                 separatorLab.setSizeUndefined();
                 separatorLab.setContentMode(ContentMode.HTML);
                 linksLayout.addComponent(separatorLab);
             } else {
                 Label captionLabel = new Label(window.getCaption());
-                captionLabel.setStyleName("c-breadcrumbs-win-caption");
+                captionLabel.setStyleName("jmix-breadcrumbs-win-caption");
                 captionLabel.setSizeUndefined();
                 linksLayout.addComponent(captionLabel);
             }

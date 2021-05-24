@@ -19,24 +19,24 @@
  * The width of split panel splitter.
  * @group splitpanel
  */
-$cuba-splitpanel-splitter-width: 3px !default;
+$jmix-splitpanel-splitter-width: 3px !default;
 /**
  * The width of split panel dock button.
  * @group splitpanel
  */
-$cuba-splitpanel-dock-button-width: round($v-unit-size / 3) !default;
+$jmix-splitpanel-dock-button-width: round($v-unit-size / 3) !default;
 
 @mixin halo-splitpanel($primary-stylename: v-splitpanel) {
   .#{$primary-stylename}-horizontal > div > .#{$primary-stylename}-hsplitter {
-    width: $cuba-splitpanel-splitter-width;
+    width: $jmix-splitpanel-splitter-width;
   }
 
   .#{$primary-stylename}-vertical > div > .#{$primary-stylename}-vsplitter {
-    height: $cuba-splitpanel-splitter-width;
+    height: $jmix-splitpanel-splitter-width;
   }
 
   .#{$primary-stylename}-horizontal > div > .#{$primary-stylename}-second-container {
-    margin-left: $cuba-splitpanel-splitter-width;
+    margin-left: $jmix-splitpanel-splitter-width;
   }
 
   $border-color: first-color(valo-border($strength: 1.2));
@@ -44,9 +44,9 @@ $cuba-splitpanel-dock-button-width: round($v-unit-size / 3) !default;
   $border-radius: $v-border-radius;
   $button-color: valo-font-color($v-app-background-color, .5);
 
-  .c-splitpanel-dock-button {
+  .jmix-splitpanel-dock-button {
     cursor: pointer;
-    width: $cuba-splitpanel-dock-button-width;
+    width: $jmix-splitpanel-dock-button-width;
     background: $v-panel-background-color;
     border: $border-width solid $border-color;
     font-family: FontAwesome;
@@ -58,7 +58,7 @@ $cuba-splitpanel-dock-button-width: round($v-unit-size / 3) !default;
     display: inline-block;
   }
 
-  .c-splitpanel-dock-button-vertical {
+  .jmix-splitpanel-dock-button-vertical {
       cursor: pointer;
       height: round($v-unit-size/3);
       line-height: round($v-unit-size/3);
@@ -73,43 +73,43 @@ $cuba-splitpanel-dock-button-width: round($v-unit-size / 3) !default;
       display: block;
     }
 
-  .c-splitpanel-dock-button-left {
+  .jmix-splitpanel-dock-button-left {
     border-right-color: $v-panel-background-color;
-    margin-left: -($cuba-splitpanel-splitter-width - $border-width);
+    margin-left: -($jmix-splitpanel-splitter-width - $border-width);
     border-radius: $border-radius 0 0 $border-radius;
   }
 
-  .c-splitpanel-dock-button-right {
+  .jmix-splitpanel-dock-button-right {
     border-left-color: $v-panel-background-color;
-    margin-left: $cuba-splitpanel-splitter-width - $border-width;
+    margin-left: $jmix-splitpanel-splitter-width - $border-width;
     border-radius: 0 $border-radius $border-radius 0;
   }
 
-  .c-splitpanel-dock-button-up {
+  .jmix-splitpanel-dock-button-up {
     border-bottom-color: $v-panel-background-color;
-    margin-top: -($cuba-splitpanel-splitter-width - $border-width);
+    margin-top: -($jmix-splitpanel-splitter-width - $border-width);
     border-radius: $border-radius $border-radius 0 0;
   }
 
-  .c-splitpanel-dock-button-down {
+  .jmix-splitpanel-dock-button-down {
     border-top-color: $v-panel-background-color;
-    margin-top: $cuba-splitpanel-splitter-width - $border-width;
+    margin-top: $jmix-splitpanel-splitter-width - $border-width;
     border-radius: 0 0 $border-radius $border-radius;
   }
 
-  .c-splitpanel-dock-button-left:after {
+  .jmix-splitpanel-dock-button-left:after {
     content: "\f053";
   }
 
-  .c-splitpanel-dock-button-right:after {
+  .jmix-splitpanel-dock-button-right:after {
     content: "\f054";
   }
 
-  .c-splitpanel-dock-button-up:after {
+  .jmix-splitpanel-dock-button-up:after {
     content: "\f077";
   }
 
-  .c-splitpanel-dock-button-down:after {
+  .jmix-splitpanel-dock-button-down:after {
     content: "\f078";
   }
 }

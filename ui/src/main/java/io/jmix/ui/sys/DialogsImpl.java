@@ -174,7 +174,7 @@ public class DialogsImpl implements Dialogs {
             messageLabel.setWidth(100, Sizeable.Unit.PERCENTAGE);
 
             layout = new VerticalLayout();
-            layout.setStyleName("c-app-option-dialog");
+            layout.setStyleName("jmix-app-option-dialog");
             layout.setMargin(false);
             layout.setSpacing(true);
 
@@ -420,12 +420,12 @@ public class DialogsImpl implements Dialogs {
             window.setResizable(false);
 
             layout = new VerticalLayout();
-            layout.setStyleName("c-app-message-dialog");
+            layout.setStyleName("jmix-app-message-dialog");
             layout.setMargin(false);
             layout.setSpacing(true);
 
             messageLabel = new JmixLabel();
-            messageLabel.setStyleName("c-app-message-dialog-text");
+            messageLabel.setStyleName("jmix-app-message-dialog-text");
             messageLabel.setWidth(100, Sizeable.Unit.PERCENTAGE);
 
             DialogAction action = new DialogAction(DialogAction.Type.OK);

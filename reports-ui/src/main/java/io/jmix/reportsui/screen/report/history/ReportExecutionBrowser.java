@@ -17,23 +17,19 @@
 package io.jmix.reportsui.screen.report.history;
 
 
-import io.jmix.core.CoreProperties;
 import io.jmix.core.FileRef;
-import io.jmix.core.FileStorage;
-import io.jmix.core.FileStorageLocator;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportExecution;
-import io.jmix.ui.UiProperties;
 import io.jmix.ui.WindowParam;
 import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.Table;
 import io.jmix.ui.download.Downloader;
 import io.jmix.ui.icon.JmixIcon;
-import io.jmix.ui.model.CollectionLoader;
 import io.jmix.ui.screen.*;
+import io.jmix.ui.model.CollectionLoader;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -54,19 +50,9 @@ public class ReportExecutionBrowser extends StandardLookup<ReportExecution> {
     protected Downloader downloader;
     @Autowired
     protected SecondsToTextFormatter durationFormatter;
-    @Autowired
-    protected FileStorageLocator fileStorageLocator;
-    @Autowired
-    protected UiProperties uiProperties;
-    @Autowired
-    protected CoreProperties coreProperties;
 
-    protected FileStorage fileStorage;
-
-    //todo
     @WindowParam(name = REPORTS_PARAMETER)
     protected List<Report> filterByReports;
-
 
     @Subscribe
     protected void onInit(InitEvent event) {
@@ -77,7 +63,7 @@ public class ReportExecutionBrowser extends StandardLookup<ReportExecution> {
     protected void onBeforeShow(BeforeShowEvent event) {
         initDataLoader();
 
-        if (filterByReports != null && !filterByReports.isEmpty()) {
+        if (CollectionUtils.isNotEmpty(filterByReports)) {
             String caption = messageBundle.formatMessage("report.executionHistory.byReport", getReportsNames());
             getWindow().setCaption(caption);
         }
@@ -143,12 +129,5 @@ public class ReportExecutionBrowser extends StandardLookup<ReportExecution> {
                 downloader.download(fileRef);
             }
         }
-    }
-
-    protected FileStorage getFileStorage() {
-        if (fileStorage == null) {
-            fileStorage = fileStorageLocator.getDefault();
-        }
-        return fileStorage;
     }
 }

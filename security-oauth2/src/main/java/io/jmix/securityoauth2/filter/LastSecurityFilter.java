@@ -86,6 +86,11 @@ public class LastSecurityFilter extends OncePerRequestFilter {
                         filterChain.doFilter(request, response);
                     } else {
                         log.debug("Request invocation prevented by BeforeInvocationEvent handler");
+                        int errorCode = beforeInvocationEvent.getErrorCode();
+                        if (errorCode > 0) {
+                            log.warn("Send an error response with errorCode {}", errorCode);
+                            response.sendError(errorCode);
+                        }
                     }
                 } finally {
                     applicationEventPublisher.publishEvent(new AfterInvocationEvent(authentication, request, response, invocationPrevented));

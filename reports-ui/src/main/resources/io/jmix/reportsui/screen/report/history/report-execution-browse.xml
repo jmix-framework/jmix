@@ -29,7 +29,7 @@
         <presentations id="presentations" auto="true"/>
     </facets>
     <layout spacing="true" expand="executionsTable">
-        <filter id="filter" dataLoader="executionsDl" applyTo="executionsTable">
+        <filter id="filter" dataLoader="executionsDl">
             <properties include=".*"/>
         </filter>
         <table id="executionsTable" dataContainer="executionsDc" width="100%" multiselect="true">
@@ -58,8 +58,7 @@
                 <column id="user"/>
                 <column id="success"/>
                 <column id="cancelled"/>
-                <column id="outputDocument.name"
-                        caption="msg://io.jmix.reports.entity/ReportExecution.outputDocument"/>
+                <column id="outputDocument"/>
                 <column id="params" maxTextLength="100"/>
                 <column id="errorMessage" maxTextLength="100"/>
                 <column id="serverId"/>

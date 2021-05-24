@@ -97,6 +97,11 @@ public class ReportExecutionBrowser extends StandardLookup<ReportExecution> {
                 .collect(Collectors.joining(", "));
     }
 
+    @Install(to = "executionsTable.outputDocument", subject = "valueProvider")
+    protected String executionsTableOutputDocumentValueProvider(ReportExecution reportExecution) {
+        return reportExecution.getOutputDocument() != null ? reportExecution.getOutputDocument().getFileName() : "";
+    }
+
     public class DownloadDocumentAction extends BaseAction {
         public DownloadDocumentAction() {
             super("download");

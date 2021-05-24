@@ -21,6 +21,7 @@ import com.haulmont.yarg.reporting.ReportOutputDocument;
 import com.haulmont.yarg.structure.ReportOutputType;
 import io.jmix.core.*;
 import io.jmix.core.security.CurrentAuthentication;
+import io.jmix.core.security.SystemAuthenticator;
 import io.jmix.reports.entity.JmixReportOutputType;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportExecution;
@@ -62,6 +63,8 @@ public class ReportExecutionHistoryRecorderImpl implements ReportExecutionHistor
     protected FileStorageLocator fileStorageLocator;
     @Autowired
     protected EntityStates entityStates;
+    @Autowired
+    protected SystemAuthenticator systemAuthenticator;
 
     protected FileStorage fileStorage;
 
@@ -164,22 +167,21 @@ public class ReportExecutionHistoryRecorderImpl implements ReportExecutionHistor
     }
 
     /**
-     * It is not rare for large reports to execute longer than {@link //TODO fix javadoc ServerConfig#getUserSessionExpirationTimeoutSec()}.
+     * It is not rare for large reports to execute for a long time.
      * In this case when report is finished - user session is already expired and can't be used to make changes to database.
+     * @param action action for the execution
      */
     protected void handleSessionExpired(Runnable action) {
-        //TODO handle session expired
-//        boolean userSessionIsValid = currentAuthentication.getAuthentication();
-//        if (userSessionIsValid) {
-//            action.run();
-//        } else {
-//            log.debug("No valid user session, record history under system user");
-        //TODO with system user
-//            authentication.withSystemUser(() -> {
-//                action.run();
-//                return null;
-//            });
-//        }
+        boolean userSessionIsValid = currentAuthentication.isSet();
+        if (userSessionIsValid) {
+            action.run();
+        } else {
+            log.debug("No valid user session, record history under system user");
+            systemAuthenticator.withSystem(() -> {
+                action.run();
+                return null;
+            });
+        }
     }
 
     @Override

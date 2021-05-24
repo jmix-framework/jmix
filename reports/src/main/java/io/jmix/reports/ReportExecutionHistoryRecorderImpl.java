@@ -22,9 +22,11 @@ import com.haulmont.yarg.structure.ReportOutputType;
 import io.jmix.core.*;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.core.security.SystemAuthenticator;
+import io.jmix.data.PersistenceHints;
 import io.jmix.reports.entity.JmixReportOutputType;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportExecution;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -169,6 +171,7 @@ public class ReportExecutionHistoryRecorderImpl implements ReportExecutionHistor
     /**
      * It is not rare for large reports to execute for a long time.
      * In this case when report is finished - user session is already expired and can't be used to make changes to database.
+     *
      * @param action action for the execution
      */
     protected void handleSessionExpired(Runnable action) {
@@ -206,18 +209,20 @@ public class ReportExecutionHistoryRecorderImpl implements ReportExecutionHistor
         List<FileRef> fileRefs = new ArrayList<>();
 
         int deleted = transaction.execute(status -> {
-            //todo test the query
-            List<FileRef> fileRefs1 = entityManager.createQuery("select e.outputDocument from report_ReportExecution e"
-                    + " where e.pathDocument is not null and e.startTime < :borderDate", FileRef.class)
-                    .setParameter("borderDate", borderDate)
-                    .getResultList();
-            fileRefs.addAll(fileRefs1);
+            try {
+                List<FileRef> fileRefs1 = entityManager.createQuery("select e.outputDocument from report_ReportExecution e"
+                        + " where e.outputDocument is not null and e.startTime < :borderDate", FileRef.class)
+                        .setParameter("borderDate", borderDate)
+                        .getResultList();
+                fileRefs.addAll(fileRefs1);
 
-            //todo
-            //entityManager.setSoftDeletion(false);
-            return entityManager.createQuery("delete from report_ReportExecution e where e.startTime < :borderDate")
-                    .setParameter("borderDate", borderDate)
-                    .executeUpdate();
+                entityManager.setProperty(PersistenceHints.SOFT_DELETION, false);
+                return entityManager.createQuery("delete from report_ReportExecution e where e.startTime < :borderDate")
+                        .setParameter("borderDate", borderDate)
+                        .executeUpdate();
+            } finally {
+                entityManager.setProperty(PersistenceHints.SOFT_DELETION, true);
+            }
         });
 
         deleteFiles(fileRefs);
@@ -263,33 +268,39 @@ public class ReportExecutionHistoryRecorderImpl implements ReportExecutionHistor
     private int deleteForOneReport(UUID reportId, int maxItemsPerReport) {
         List<FileRef> fileRefs = new ArrayList<>();
         int deleted = transaction.execute(status -> {
-            //em.setSoftDeletion(false);
-            int rows = 0;
-            Date borderStartTime = entityManager.createQuery(
-                    "select e.startTime from report_ReportExecution e"
-                            + " where e.report.id = :reportId"
-                            + " order by e.startTime desc", Date.class)
-                    .setParameter("reportId", reportId)
-                    .setFirstResult(maxItemsPerReport)
-                    .setMaxResults(1)
-                    .getSingleResult();
-
-            if (borderStartTime != null) {
-                //todo test the query
-                List<FileRef> fileRefs1 = entityManager.createQuery("select e.outputDocument from report_ReportExecution e"
-                        + " where e.outputDocument is not null and e.report.id = :reportId and e.startTime <= :borderTime", FileRef.class)
+            try {
+                entityManager.setProperty(PersistenceHints.SOFT_DELETION, false);
+                int rows = 0;
+                List<Date> datesList = entityManager.createQuery(
+                        "select e.startTime from report_ReportExecution e"
+                                + " where e.report.id = :reportId"
+                                + " order by e.startTime desc", Date.class)
                         .setParameter("reportId", reportId)
-                        .setParameter("borderTime", borderStartTime)
+                        .setFirstResult(maxItemsPerReport)
+                        .setMaxResults(1)
                         .getResultList();
-                fileRefs.addAll(fileRefs1);
 
-                rows = entityManager.createQuery("delete from report_ReportExecution e"
-                        + " where e.report.id = :reportId and e.startTime <= :borderTime")
-                        .setParameter("reportId", reportId)
-                        .setParameter("borderTime", borderStartTime)
-                        .executeUpdate();
+                Date borderStartTime = CollectionUtils.isNotEmpty(datesList) ? datesList.get(0) : null;
+
+                if (borderStartTime != null) {
+                    List<FileRef> fileRefs1 = entityManager.createQuery("select e.outputDocument from report_ReportExecution e"
+                            + " where e.outputDocument is not null and e.report.id = :reportId and e.startTime <= :borderTime", FileRef.class)
+                            .setParameter("reportId", reportId)
+                            .setParameter("borderTime", borderStartTime)
+                            .getResultList();
+                    fileRefs.addAll(fileRefs1);
+
+                    rows = entityManager.createQuery("delete from report_ReportExecution e"
+                            + " where e.report.id = :reportId and e.startTime <= :borderTime")
+                            .setParameter("reportId", reportId)
+                            .setParameter("borderTime", borderStartTime)
+                            .executeUpdate();
+                }
+
+                return rows;
+            } finally {
+                entityManager.setProperty(PersistenceHints.SOFT_DELETION, true);
             }
-            return rows;
         });
         deleteFiles(fileRefs);
         return deleted;

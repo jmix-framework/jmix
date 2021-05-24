@@ -8,54 +8,54 @@
                 shortcut="ENTER"/>
     </actions>
 
-    <layout stylename="c-login-main-layout">
+    <layout stylename="jmix-login-main-layout">
         <vbox id="loginWrapper" height="100%" width="100%">
             <vbox id="loginMainBox"
                   align="MIDDLE_CENTER"
                   margin="true"
                   spacing="true"
-                  stylename="c-login-panel"
+                  stylename="jmix-login-panel"
                   width="AUTO">
                 <hbox id="loginTitleBox"
                       align="MIDDLE_CENTER"
                       spacing="true"
-                      stylename="c-login-title">
+                      stylename="jmix-login-title">
                     <label id="welcomeLabel"
                            align="MIDDLE_LEFT"
-                           stylename="c-login-caption"
+                           stylename="jmix-login-caption"
                            value="msg://welcomeLabel"/>
                 </hbox>
 
                 <vbox id="loginForm"
                       spacing="true"
-                      stylename="c-login-form">
+                      stylename="jmix-login-form">
                     <cssLayout id="loginCredentials"
-                               stylename="c-login-credentials">
+                               stylename="jmix-login-credentials">
                         <textField id="usernameField"
                                    htmlName="usernameField"
                                    inputPrompt="msg://usernamePlaceholder"
-                                   stylename="c-login-username"/>
+                                   stylename="jmix-login-username"/>
                         <passwordField id="passwordField"
                                        autocomplete="true"
                                        htmlName="passwordField"
                                        inputPrompt="msg://passwordPlaceholder"
-                                       stylename="c-login-password"/>
+                                       stylename="jmix-login-password"/>
                     </cssLayout>
                     <hbox id="rememberLocalesBox"
-                          stylename="c-login-remember-locales">
+                          stylename="jmix-login-remember-locales">
                         <checkBox id="rememberMeCheckBox"
                                   caption="msg://loginScreen.rememberMe"
-                                  stylename="c-login-remember-me"/>
+                                  stylename="jmix-login-remember-me"/>
                         <comboBox id="localesField"
                                   nullOptionVisible="false"
-                                  stylename="c-login-locale"
+                                  stylename="jmix-login-locale"
                                   textInputAllowed="false"/>
                     </hbox>
 
                     <button id="loginButton"
                             align="MIDDLE_CENTER"
                             action="submit"
-                            stylename="c-login-submit-button"/>
+                            stylename="jmix-login-submit-button"/>
                 </vbox>
             </vbox>
         </vbox>

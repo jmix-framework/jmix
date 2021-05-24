@@ -4,7 +4,7 @@
         <hbox id="header"
               expand="mainMenu"
               margin="false;true;false;true"
-              stylename="c-app-menubar"
+              stylename="jmix-app-menubar"
               spacing="true"
               width="100%">
             <image id="logoImage"
@@ -23,7 +23,7 @@
                                align="MIDDLE_LEFT"/>
             <hbox id="mainButtonsBox"
                   align="MIDDLE_LEFT"
-                  stylename="c-main-buttons">
+                  stylename="jmix-main-buttons">
                 <newWindowButton id="newWindowButton"
                                  icon="TH_LARGE"
                                  description="msg://newWindowBtnDescription"/>
@@ -33,7 +33,7 @@
             </hbox>
         </hbox>
         <workArea id="workArea"
-                  stylename="c-workarea"
+                  stylename="jmix-workarea"
                   width="100%">
             <initialLayout margin="true"
                            spacing="true">

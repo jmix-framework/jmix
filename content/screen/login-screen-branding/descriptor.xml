@@ -22,7 +22,7 @@
                            align="MIDDLE_CENTER"
                            height="AUTO"
                            scaleMode="SCALE_DOWN"
-                           stylename="c-login-logo"
+                           stylename="jmix-login-logo"
                            width="AUTO"/>
                     <label id="welcomeLabel"
                            align="MIDDLE_CENTER"
@@ -68,7 +68,7 @@
                                 align="MIDDLE_CENTER"
                                 width="200px"
                                 height="40px"
-                                stylename="c-login-button primary"/>
+                                stylename="jmix-login-button primary"/>
                     </vbox>
                 </vbox>
             </vbox>

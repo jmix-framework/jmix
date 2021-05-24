@@ -10,7 +10,7 @@
   margin-top: 10px;
 }
 
-.jmix-brandlogin-login-panel .c-login-button {
+.jmix-brandlogin-login-panel .jmix-login-button {
   margin-top: 30px;
 }
 
@@ -19,11 +19,11 @@
   width: 100%;
 }
 
-.c-login-logo {
+.jmix-login-logo {
   margin-bottom: 15px;
 }
 
-.v-ie .c-login-logo {
+.v-ie .jmix-login-logo {
   width: 64px;
 }
 

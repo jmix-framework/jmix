@@ -39,7 +39,7 @@
                 </cssLayout>
             </drawer>
             <workArea id="workArea"
-                      stylename="c-workarea"
+                      stylename="jmix-workarea"
                       height="100%">
                 <initialLayout spacing="true" margin="true">
                 </initialLayout>

@@ -24,6 +24,7 @@ def tableXml = api.processSnippet('screen/dto_table.xml',
         <dataLoadCoordinator auto="true"/>
         <%if(jmixDynattrUiStarter) {%><dynamicAttributes/><%}%>
         <%if(jmixUiDataStarter) {%><screenSettings id="settingsFacet" auto="true"/><%}%>
+        <%if(presentation) {%><presentations auto="true"/><%}%>
     </facets>
     <actions>
         <action id="lookupSelectAction"

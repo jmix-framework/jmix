@@ -12,7 +12,6 @@ def tableXml = api.processSnippet('screen/cuba_7_table.xml',
         'tableType': tableType,
         'tableId': tableId,
         'multiselect': multiselect,
-        'presentation': presentation,
         'tableActions': tableActions,
         'hierarchicalProperty': binding.hasVariable('tableType_hierarchicalProperty') ? binding.getVariable('tableType_hierarchicalProperty') : null])
 %><?xml version="1.0" encoding="UTF-8" standalone="no"?>
@@ -37,6 +36,7 @@ def tableXml = api.processSnippet('screen/cuba_7_table.xml',
         <dataLoadCoordinator auto="true"/>
         <%if(jmixDynattrUiStarter) {%><dynattr:dynamicAttributes/><%}%>
         <%if(jmixUiDataStarter) {%><screenSettings id="settingsFacet" auto="true"/><%}%>
+        <%if(presentation) {%><presentations auto="true"/><%}%>
     </facets>
     <actions>
         <action id="lookupSelectAction"

@@ -23,7 +23,7 @@
 
     <layout expand="editor"
             spacing="true">
-        <sourceCodeEditor id="editor" width="100%" stylename="c-report-source-code-font-size"/>
+        <sourceCodeEditor id="editor" width="100%" stylename="jmix-report-source-code-font-size"/>
 
         <hbox id="editActions" spacing="true">
             <button id="commitBtn" action="commit"/>

@@ -78,7 +78,7 @@
                     </row>
                 </rows>
             </gridLayout>
-            <fileUpload id="invisibleFileUpload" dropZone="reportFields" stylename="c-report-upload-invisible"/>
+            <fileUpload id="invisibleFileUpload" dropZone="reportFields" stylename="jmix-report-upload-invisible"/>
             <label id="spacer"/>
         </hbox>
 

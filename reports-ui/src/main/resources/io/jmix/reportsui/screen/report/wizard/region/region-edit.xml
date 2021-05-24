@@ -69,7 +69,7 @@
                 </table>
             </groupBox>
         </hbox>
-        <hbox spacing="true" stylename="c-edit-window-actions">
+        <hbox spacing="true" stylename="jmix-edit-window-actions">
             <button id="windowCommitAndClose" action="windowCommitAndClose" icon="font-icon:CHECK"/>
             <button id="windowClose" action="windowClose" icon="EDITOR_CANCEL"/>
         </hbox>

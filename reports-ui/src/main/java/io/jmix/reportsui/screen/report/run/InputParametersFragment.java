@@ -187,7 +187,7 @@ public class InputParametersFragment extends ScreenFragment {
         }
 
         Label<String> label = parameterFieldCreator.createLabel(parameter, field);
-        label.setStyleName("c-report-parameter-caption");
+        label.setStyleName("jmix-report-parameter-caption");
 
         if (currentGridRow == 2) {
             if(field instanceof Component.Focusable) {

@@ -250,7 +250,7 @@ public class EmailTemplateParametersFragment extends ScreenFragment {
         }
 
         Label label = parameterFieldCreator.createLabel(parameter, field);
-        label.setStyleName("c-report-parameter-caption");
+        label.setStyleName("jmix-report-parameter-caption");
 
         if (currentGridRow == 0) {
             if (field instanceof Component.Focusable) {

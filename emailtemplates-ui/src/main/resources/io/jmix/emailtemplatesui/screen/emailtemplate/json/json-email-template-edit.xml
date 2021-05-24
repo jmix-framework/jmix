@@ -92,7 +92,7 @@
                                   expand="space"
                                   margin="true"
                                   spacing="true"
-                                  stylename="c-edit-window-actions"
+                                  stylename="jmix-edit-window-actions"
                                   width="100%">
                                 <fileUpload id="fileUpload"
                                             description="msg://importHtml"

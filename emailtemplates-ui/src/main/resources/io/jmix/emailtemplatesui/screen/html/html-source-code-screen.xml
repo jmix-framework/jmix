@@ -25,7 +25,7 @@
                           mode="HTML"
                           editable="true"
                           width="100%"/>
-        <hbox id="buttons" spacing="true" stylename="c-edit-window-actions">
+        <hbox id="buttons" spacing="true" stylename="jmix-edit-window-actions">
             <button id="windowCommit" caption="msg://save" icon="EDITOR_OK"/>
             <button id="windowClose" caption="msg://close" icon="EDITOR_CANCEL"/>
         </hbox>

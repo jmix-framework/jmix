@@ -68,7 +68,7 @@ public class ShowLinkAction extends BaseAction {
 
         Messages messages = AppBeans.get(Messages.class);
         sb.append(messages.getMessage("table.showLinkAction.link")).append("<br/>");
-        sb.append("<textarea class=\"c-table-showlink-textarea\" autofocus=\"true\" readonly=\"true\">").
+        sb.append("<textarea class=\"jmix-table-showlink-textarea\" autofocus=\"true\" readonly=\"true\">").
                 append(handler.makeLink(ds.getItem()).replace("&", "&amp")).append("</textarea>");
 
         return sb.toString();

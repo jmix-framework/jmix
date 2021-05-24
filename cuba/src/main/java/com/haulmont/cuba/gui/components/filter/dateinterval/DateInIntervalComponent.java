@@ -59,18 +59,18 @@ public class DateInIntervalComponent {
 
     public Component createComponent(String dateIntervalDescription) {
         HBoxLayout layout = componentsFactory.createComponent(HBoxLayout.class);
-        layout.setStyleName("c-dateintervaleditor");
+        layout.setStyleName("jmix-dateintervaleditor");
 
         TextField textField = componentsFactory.createComponent(TextField.class);
         value = AppBeans.getPrototype(DateIntervalValue.NAME, dateIntervalDescription);
         textField.setValue(value.getLocalizedValue());
-        textField.setStyleName("c-dateintervaleditor-text");
+        textField.setStyleName("jmix-dateintervaleditor-text");
         textField.setEditable(false);
         layout.add(textField);
 
         Button openEditorBtn = componentsFactory.createComponent(Button.class);
         openEditorBtn.setIconFromSet(JmixIcon.ENTITYPICKER_LOOKUP);
-        openEditorBtn.setStyleName("c-dateintervaleditor-button");
+        openEditorBtn.setStyleName("jmix-dateintervaleditor-button");
         openEditorBtn.setCaption("");
         openEditorBtn.setAction(new AbstractAction("openEditor") {
             @Override
@@ -99,7 +99,7 @@ public class DateInIntervalComponent {
 
         Button clearBtn = componentsFactory.createComponent(Button.class);
         clearBtn.setIconFromSet(JmixIcon.VALUEPICKER_CLEAR);
-        clearBtn.setStyleName("c-dateintervaleditor-button");
+        clearBtn.setStyleName("jmix-dateintervaleditor-button");
         clearBtn.setCaption("");
         clearBtn.setAction(new AbstractAction("clear") {
             @Override

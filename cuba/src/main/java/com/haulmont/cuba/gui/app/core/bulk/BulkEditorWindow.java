@@ -66,7 +66,7 @@ import static io.jmix.ui.app.bulk.ColumnsMode.TWO_COLUMNS;
 
 public class BulkEditorWindow extends AbstractWindow {
 
-    public static final String COLUMN_COUNT_STYLENAME = "c-bulk-editor-columns-";
+    public static final String COLUMN_COUNT_STYLENAME = "jmix-bulk-editor-columns-";
 
     @Autowired
     protected ViewRepository viewRepository;
@@ -196,7 +196,7 @@ public class BulkEditorWindow extends AbstractWindow {
         editFields.sort(comparator);
 
         CssLayout fieldsLayout = uiComponents.create(CssLayout.NAME);
-        fieldsLayout.setStyleName("c-bulk-editor-fields-layout");
+        fieldsLayout.setStyleName("jmix-bulk-editor-fields-layout");
         fieldsLayout.setWidthFull();
         fieldsLayout.setHeightFull();
 
@@ -213,19 +213,19 @@ public class BulkEditorWindow extends AbstractWindow {
             DeviceInfo deviceInfo = deviceInfoProvider.getDeviceInfo();
 
             VBoxLayout column = uiComponents.create(VBoxLayout.NAME);
-            column.setStyleName("c-bulk-editor-column");
+            column.setStyleName("jmix-bulk-editor-column");
             column.setWidth(Component.AUTO_SIZE);
 
             for (int fieldIndex = fromField; fieldIndex < toField; fieldIndex++) {
                 ManagedField field = editFields.get(fieldIndex);
 
                 CssLayout row = uiComponents.create(CssLayout.NAME);
-                row.setStyleName("c-bulk-editor-row");
+                row.setStyleName("jmix-bulk-editor-row");
                 row.setWidth("100%");
 
                 Label<String> label = uiComponents.create(Label.NAME);
                 label.setValue(field.getLocalizedName());
-                label.setStyleName("c-bulk-editor-label");
+                label.setStyleName("jmix-bulk-editor-label");
                 row.add(label);
 
                 Datasource<Entity> fieldDs = datasource;
@@ -239,11 +239,11 @@ public class BulkEditorWindow extends AbstractWindow {
                 Field<?> editField = fieldFactory.createField(fieldDs, field.getMetaProperty());
                 if (editField != null) {
                     editField.setFrame(getFrame());
-                    editField.setStyleName("c-bulk-editor-field");
+                    editField.setStyleName("jmix-bulk-editor-field");
 
                     if (isPickerFieldWrapperNeeded(editField, deviceInfo)) {
                         CssLayout wrapper = uiComponents.create(CssLayout.NAME);
-                        wrapper.setStyleName("c-bulk-editor-picker-field-wrapper");
+                        wrapper.setStyleName("jmix-bulk-editor-picker-field-wrapper");
                         wrapper.add(editField);
                         row.add(wrapper);
                     } else {
@@ -281,7 +281,7 @@ public class BulkEditorWindow extends AbstractWindow {
                         // hidden component for correctly showing layout
                         Button spacerButton = uiComponents.create(Button.class);
                         spacerButton.setIconFromSet(JmixIcon.TRASH);
-                        spacerButton.setStyleName("c-bulk-editor-spacer");
+                        spacerButton.setStyleName("jmix-bulk-editor-spacer");
                         row.add(spacerButton);
                     }
 

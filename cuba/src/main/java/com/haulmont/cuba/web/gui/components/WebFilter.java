@@ -46,7 +46,7 @@ import java.util.function.Consumer;
 public class WebFilter extends AbstractComponent<com.vaadin.ui.Component> implements Filter, FilterImplementation,
         Component.HasXmlDescriptor {
 
-    protected static final String FILTER_STYLENAME = "c-generic-filter";
+    protected static final String FILTER_STYLENAME = "jmix-generic-filter";
 
     protected FilterDelegate delegate;
     protected boolean settingsEnabled = true;

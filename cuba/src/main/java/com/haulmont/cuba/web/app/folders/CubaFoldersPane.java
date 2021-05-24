@@ -95,7 +95,7 @@ import static io.jmix.ui.component.Window.COMMIT_ACTION_ID;
 public class CubaFoldersPane extends VerticalLayout {
 
     private static final long serialVersionUID = 6666603397626574763L;
-    public static final String C_FOLDERS_PANE = "c-folders-pane";
+    public static final String C_FOLDERS_PANE = "jmix-folders-pane";
 
     protected static final Method REFRESH_FOLDERS_METHOD = ReflectTools.findMethod(
             RefreshFoldersListener.class, "refreshFolders", RefreshFoldersEvent.class);
@@ -273,7 +273,7 @@ public class CubaFoldersPane extends VerticalLayout {
         searchFoldersPane.setWidth(100, Unit.PERCENTAGE);
         if (isNeedFoldersTitle()) {
             searchFoldersLabel = new Label(messages.getMainMessage("folders.searchFoldersRoot"));
-            searchFoldersLabel.setStyleName("c-folders-pane-caption");
+            searchFoldersLabel.setStyleName("jmix-folders-pane-caption");
         } else {
             searchFoldersLabel = null;
         }
@@ -317,7 +317,7 @@ public class CubaFoldersPane extends VerticalLayout {
         appFoldersPane.setWidth("100%");
         if (isNeedFoldersTitle()) {
             appFoldersLabel = new Label(messages.getMainMessage("folders.appFoldersRoot"));
-            appFoldersLabel.setStyleName("c-folders-pane-caption");
+            appFoldersLabel.setStyleName("jmix-folders-pane-caption");
         } else {
             appFoldersLabel = null;
         }
@@ -724,9 +724,9 @@ public class CubaFoldersPane extends VerticalLayout {
                 String style;
                 // clickable tree item
                 if (getItemClickable(folder)) {
-                    style = "c-clickable-folder";
+                    style = "jmix-clickable-folder";
                 } else {
-                    style = "c-nonclickable-folder";
+                    style = "jmix-nonclickable-folder";
                 }
 
                 // handle custom styles

@@ -40,7 +40,7 @@ import java.util.function.Supplier;
 public class WebListEditor<V> extends AbstractField<WebListEditor.CubaListEditor<V>, List<V>, List<V>>
         implements ListEditor<V>, InitializingBean {
 
-    protected static final String LISTEDITOR_STYLENAME = "c-listeditor";
+    protected static final String LISTEDITOR_STYLENAME = "jmix-listeditor";
 
     protected ListEditorDelegate<V> delegate;
 

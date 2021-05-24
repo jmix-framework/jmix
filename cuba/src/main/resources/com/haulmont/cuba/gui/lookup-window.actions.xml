@@ -19,11 +19,11 @@
     <!-- DEPRECATED -->
 
     <layout>
-        <hbox id="lookupActionsBox" spacing="true" stylename="c-lookup-window-actions">
+        <hbox id="lookupActionsBox" spacing="true" stylename="jmix-lookup-window-actions">
             <button id="selectButton" action="lookupSelectAction" caption="mainMsg://actions.Select"
-                    icon="LOOKUP_OK" stylename="c-window-action-button"/>
+                    icon="LOOKUP_OK" stylename="jmix-window-action-button"/>
             <button id="cancelButton" action="lookupCancelAction" caption="mainMsg://actions.Cancel"
-                    icon="LOOKUP_CANCEL" stylename="c-window-action-button"/>
+                    icon="LOOKUP_CANCEL" stylename="jmix-window-action-button"/>
         </hbox>
     </layout>
 </window>

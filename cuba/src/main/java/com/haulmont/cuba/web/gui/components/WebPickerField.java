@@ -90,7 +90,7 @@ public class WebPickerField<V extends Entity> extends EntityPickerImpl<V> implem
         if (this.iconProvider != optionIconProvider) {
             this.iconProvider = optionIconProvider;
 
-            component.setStyleName("c-has-field-icon", optionIconProvider != null);
+            component.setStyleName("jmix-has-field-icon", optionIconProvider != null);
             component.getField().setStyleName(HaloTheme.TEXTFIELD_INLINE_ICON, optionIconProvider != null);
 
             component.setIconGenerator(this::generateOptionIcon);

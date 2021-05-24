@@ -107,7 +107,7 @@ public class WebSuggestionPickerField<V extends Entity> extends EntitySuggestion
         if (this.iconProvider != optionIconProvider) {
             this.iconProvider = optionIconProvider;
 
-            component.setStyleName("c-has-field-icon", optionIconProvider != null);
+            component.setStyleName("jmix-has-field-icon", optionIconProvider != null);
             component.getField().setStyleName(HaloTheme.TEXTFIELD_INLINE_ICON, optionIconProvider != null);
 
             component.setIconGenerator(this::generateOptionIcon);

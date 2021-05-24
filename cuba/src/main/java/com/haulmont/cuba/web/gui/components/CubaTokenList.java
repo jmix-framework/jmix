@@ -35,11 +35,11 @@ import java.util.*;
 
 public class CubaTokenList<T extends Entity> extends CustomField<Collection<T>> {
 
-    protected static final String TOKENLIST_STYLENAME = "c-tokenlist";
-    protected static final String TOKENLIST_EDITOR_STYLENAME = "c-tokenlist-editor";
-    protected static final String TOKENLIST_COMPOSITION_STYLENAME = "c-tokenlist-composition";
-    protected static final String TOKENLIST_SCROLLBOX_STYLENAME = "c-tokenlist-scrollbox";
-    protected static final String TOKENLIST_WRAPPER_STYLENAME = "c-tokenlist-wrapper";
+    protected static final String TOKENLIST_STYLENAME = "jmix-tokenlist";
+    protected static final String TOKENLIST_EDITOR_STYLENAME = "jmix-tokenlist-editor";
+    protected static final String TOKENLIST_COMPOSITION_STYLENAME = "jmix-tokenlist-composition";
+    protected static final String TOKENLIST_SCROLLBOX_STYLENAME = "jmix-tokenlist-scrollbox";
+    protected static final String TOKENLIST_WRAPPER_STYLENAME = "jmix-tokenlist-wrapper";
 
     protected static final String ADD_BTN_STYLENAME = "add-btn";
     protected static final String CLEAR_BTN_STYLENAME = "clear-btn";

@@ -36,7 +36,7 @@ import java.util.Map;
 
 @Deprecated
 public class WebSearchField<V extends Entity> extends WebLookupField<V> implements SearchField<V> {
-    protected static final String SEARCHSELECT_STYLENAME = "c-searchselect";
+    protected static final String SEARCHSELECT_STYLENAME = "jmix-searchselect";
 
     protected int minSearchStringLength = 0;
     protected Mode mode = Mode.CASE_SENSITIVE;

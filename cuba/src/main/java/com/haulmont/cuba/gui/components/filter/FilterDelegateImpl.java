@@ -542,22 +542,22 @@ public class FilterDelegateImpl implements FilterDelegate {
 
     protected void createMaxResultsLayout() {
         maxResultsLayout = uiComponents.create(HBoxLayout.class);
-        maxResultsLayout.setStyleName("c-maxresults");
+        maxResultsLayout.setStyleName("jmix-maxresults");
         maxResultsLayout.setSpacing(true);
         Label<String> maxResultsLabel = uiComponents.create(Label.NAME);
-        maxResultsLabel.setStyleName("c-maxresults-label");
+        maxResultsLabel.setStyleName("jmix-maxresults-label");
         maxResultsLabel.setValue(messages.getMainMessage("filter.maxResults.label1"));
         maxResultsLabel.setAlignment(Alignment.MIDDLE_RIGHT);
         maxResultsLayout.add(maxResultsLabel);
 
         maxResultsTextField = uiComponents.create(com.haulmont.cuba.gui.components.TextField.TYPE_INTEGER);
-        maxResultsTextField.setStyleName("c-maxresults-input");
+        maxResultsTextField.setStyleName("jmix-maxresults-input");
         maxResultsTextField.setMaxLength(4);
         maxResultsTextField.setWidth(theme.get("cuba.gui.Filter.maxResults.width"));
         maxResultsTextField.addValueChangeListener(this::onMaxResultsChange);
 
         maxResultsLookupField = maxResultsFieldHelper.createMaxResultsLookupField();
-        maxResultsLookupField.setStyleName("c-maxresults-select");
+        maxResultsLookupField.setStyleName("jmix-maxresults-select");
         maxResultsLookupField.addValueChangeListener(this::onMaxResultsChange);
 
         maxResultsField = textMaxResults ? maxResultsTextField : maxResultsLookupField;

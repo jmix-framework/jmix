@@ -60,8 +60,8 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 public class WebRowsCount extends AbstractComponent<JmixRowsCount> implements RowsCount, VisibilityChangeNotifier,
         InitializingBean {
 
-    protected static final String TABLE_ROWS_COUNT_STYLENAME = "c-table-rows-count";
-    protected static final String PAGING_COUNT_NUMBER_STYLENAME = "c-paging-count-number";
+    protected static final String TABLE_ROWS_COUNT_STYLENAME = "jmix-table-rows-count";
+    protected static final String PAGING_COUNT_NUMBER_STYLENAME = "jmix-paging-count-number";
 
     private static final Logger log = LoggerFactory.getLogger(WebRowsCount.class);
 

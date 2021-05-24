@@ -103,18 +103,18 @@ public class ListEditorDelegateImpl<V> implements ListEditorDelegate<V> {
     @PostConstruct
     public void init() {
         layout = uiComponents.create(HBoxLayout.class);
-        layout.setStyleName("c-listeditor-layout");
+        layout.setStyleName("jmix-listeditor-layout");
         layout.setWidth("100%");
 
         displayValuesField = uiComponents.create(TextField.NAME);
-        displayValuesField.setStyleName("c-listeditor-text");
+        displayValuesField.setStyleName("jmix-listeditor-text");
         displayValuesField.setEditable(false);
 
         initDisplayValuesFieldValueChangeListener();
 
         Button openEditorBtn = uiComponents.create(Button.class);
         openEditorBtn.setIconFromSet(JmixIcon.ENTITYPICKER_LOOKUP);
-        openEditorBtn.setStyleName("c-listeditor-button");
+        openEditorBtn.setStyleName("jmix-listeditor-button");
         openEditorBtn.setCaption("");
         openEditorBtn.addClickListener(e -> openEditor());
 
@@ -378,7 +378,7 @@ public class ListEditorDelegateImpl<V> implements ListEditorDelegate<V> {
     protected void addClearBtn() {
         clearBtn = uiComponents.create(Button.class);
         clearBtn.setIconFromSet(JmixIcon.VALUEPICKER_CLEAR);
-        clearBtn.setStyleName("c-listeditor-button");
+        clearBtn.setStyleName("jmix-listeditor-button");
         clearBtn.setCaption("");
         clearBtn.setAction(new BaseAction("clear")
                 .withCaption("Clear")

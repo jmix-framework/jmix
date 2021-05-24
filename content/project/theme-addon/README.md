@@ -2,7 +2,7 @@
 
 Theme add-on may provide SCSS files for a theme compilation. See the [documentation](https://docs.jmix.io/jmix/0.x/backoffice-ui/themes/theme_addon.html) for more details.
 
-### Using the Theme Add-on
+### Using the Theme add-on
 
 * Build publish add-on to `.m2`:
 
@@ -25,4 +25,3 @@ _Linux & macOS:_
 implementation 'com.company:${project_name}:0.0.1-SNAPSHOT'
 ```
 * Reload the project.
-

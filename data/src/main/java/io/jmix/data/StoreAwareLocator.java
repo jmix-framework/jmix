@@ -16,6 +16,9 @@
 
 package io.jmix.data;
 
+import io.jmix.core.impl.TransactionManagerLocator;
+import io.jmix.data.impl.JmixJtaTransactionManager;
+import io.jmix.data.impl.JmixTransactionManager;
 import org.springframework.context.ApplicationContext;
 import io.jmix.core.Stores;
 import org.apache.commons.lang3.StringUtils;
@@ -23,6 +26,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.orm.jpa.EntityManagerFactoryUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +40,9 @@ public class StoreAwareLocator {
     @Autowired
     protected ApplicationContext applicationContext;
 
+    @Autowired
+    protected TransactionManagerLocator transactionManagerLocator;
+
     public DataSource getDataSource(String storeName) {
         return getBean(storeName, "dataSource", DataSource.class);
     }
@@ -45,7 +52,7 @@ public class StoreAwareLocator {
     }
 
     public PlatformTransactionManager getTransactionManager(String storeName) {
-        return getBean(storeName, "transactionManager", PlatformTransactionManager.class);
+        return transactionManagerLocator.getTransactionManager(storeName);
     }
 
     public TransactionTemplate getTransactionTemplate(String storeName) {
@@ -62,6 +69,16 @@ public class StoreAwareLocator {
             throw new IllegalStateException("Cannot get transactional EntityManager for " + storeName + " store");
         }
         return entityManager;
+    }
+
+    public String getTransactionManagerKey(String storeName) {
+        TransactionManager tm = getTransactionManager(storeName);
+        if (tm instanceof JmixTransactionManager) {
+            return ((JmixTransactionManager) tm).getKey();
+        } else if (tm instanceof JmixJtaTransactionManager) {
+            return ((JmixJtaTransactionManager) tm).getKey();
+        }
+        return storeName + "TransactionManager";
     }
 
     protected <T> T getBean(String storeName, String beanName, Class<T> beanClass) {

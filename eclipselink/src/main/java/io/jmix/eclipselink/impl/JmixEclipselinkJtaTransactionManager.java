@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2021 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,17 +16,20 @@
 
 package io.jmix.eclipselink.impl;
 
-import io.jmix.data.impl.JmixTransactionManager;
+import io.jmix.data.impl.JmixJtaTransactionManager;
 import org.eclipse.persistence.internal.helper.CubaUtil;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.DefaultTransactionStatus;
 
-import javax.persistence.EntityManagerFactory;
+import javax.transaction.TransactionManager;
+import javax.transaction.UserTransaction;
 
-public class JmixEclipselinkTransactionManager extends JmixTransactionManager {
+public class JmixEclipselinkJtaTransactionManager extends JmixJtaTransactionManager {
 
-    public JmixEclipselinkTransactionManager(String storeName, EntityManagerFactory entityManagerFactory) {
-        super(storeName, entityManagerFactory);
+    public JmixEclipselinkJtaTransactionManager(String key,
+                                                UserTransaction userTransaction,
+                                                TransactionManager transactionManager) {
+        super(key, userTransaction, transactionManager);
     }
 
     @Override

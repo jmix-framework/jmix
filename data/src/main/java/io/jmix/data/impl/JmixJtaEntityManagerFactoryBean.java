@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Haulmont.
+ * Copyright 2021 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,27 +18,35 @@ package io.jmix.data.impl;
 
 import io.jmix.core.JmixModules;
 import io.jmix.core.Resources;
+import io.jmix.data.impl.jta.JmixJtaServerPlatform;
 import io.jmix.data.persistence.DbmsSpecifics;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 
 import javax.sql.DataSource;
 
-public class JmixEntityManagerFactoryBean extends JmixBaseEntityManagerFactoryBean {
+public class JmixJtaEntityManagerFactoryBean extends JmixBaseEntityManagerFactoryBean {
 
-    public JmixEntityManagerFactoryBean(String storeName,
-                                        DataSource dataSource,
-                                        JpaVendorAdapter jpaVendorAdapter,
-                                        DbmsSpecifics dbmsSpecifics,
-                                        JmixModules jmixModules,
-                                        Resources resources) {
+    public JmixJtaEntityManagerFactoryBean(String storeName,
+                                           DataSource jtaDataSource,
+                                           JpaVendorAdapter jpaVendorAdapter,
+                                           DbmsSpecifics dbmsSpecifics,
+                                           JmixModules jmixModules,
+                                           Resources resources) {
         this.storeName = storeName;
         this.dbmsSpecifics = dbmsSpecifics;
         this.jmixModules = jmixModules;
         this.resources = resources;
 
         setupPersistenceUnit();
-        setDataSource(dataSource);
+        setJtaDataSource(jtaDataSource);
         setJpaVendorAdapter(jpaVendorAdapter);
         setupJpaProperties();
+    }
+
+    @Override
+    protected void setupJpaProperties() {
+        super.setupJpaProperties();
+        getJpaPropertyMap().put("eclipselink.target-server", JmixJtaServerPlatform.class.getName());
+        getJpaPropertyMap().put("javax.persistence.transactionType", "JTA");
     }
 }

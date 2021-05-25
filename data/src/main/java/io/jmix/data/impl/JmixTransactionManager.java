@@ -16,6 +16,7 @@
 
 package io.jmix.data.impl;
 
+import io.jmix.core.Stores;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -28,12 +29,20 @@ import javax.persistence.EntityManagerFactory;
 
 public class JmixTransactionManager extends JpaTransactionManager implements ApplicationContextAware {
 
+    public final static String keyPattern = "%sTransactionManager";
+
     protected ApplicationContext applicationContext;
 
     protected String storeName;
+    protected String key;
 
     public JmixTransactionManager(String storeName, EntityManagerFactory entityManagerFactory) {
         this.storeName = storeName;
+        if (Stores.isMain(storeName)) {
+            this.key = "transactionManager";
+        } else {
+            this.key = String.format(keyPattern, storeName);
+        }
         setEntityManagerFactory(entityManagerFactory);
     }
 
@@ -61,6 +70,10 @@ public class JmixTransactionManager extends JpaTransactionManager implements App
                 TransactionSynchronizationManager.unbindResource(getDataSource());
             }
         }
+    }
+
+    public String getKey() {
+        return key;
     }
 
     @Override

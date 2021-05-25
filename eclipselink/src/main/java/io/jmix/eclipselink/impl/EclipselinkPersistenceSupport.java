@@ -23,12 +23,11 @@ import io.jmix.core.common.util.StackTrace;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.event.AttributeChanges;
 import io.jmix.core.event.EntityChangedEvent;
+import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.EntityOp;
 import io.jmix.data.AttributeChangesProvider;
 import io.jmix.data.StoreAwareLocator;
 import io.jmix.data.impl.*;
-import io.jmix.data.impl.AfterCompleteTransactionListener;
-import io.jmix.data.impl.BeforeCommitTransactionListener;
 import io.jmix.eclipselink.impl.entitycache.QueryCacheManager;
 import org.eclipse.persistence.descriptors.changetracking.ChangeTracker;
 import org.eclipse.persistence.internal.descriptors.changetracking.AttributeChangeListener;
@@ -127,9 +126,9 @@ public class EclipselinkPersistenceSupport implements ApplicationContextAware {
      * INTERNAL.
      * Register synchronizations with a just started transaction.
      */
-    public void registerSynchronizations(String store) {
-        log.trace("registerSynchronizations for store '{}'", store);
-        getInstanceContainerResourceHolder(store);
+    public void registerSynchronizations(String transactionManagerKey) {
+        log.trace("registerSynchronizations for transaction manager '{}'", transactionManagerKey);
+        prepareInstanceContainerResourceHolder(transactionManagerKey);
     }
 
     public void registerInstance(Object entity, EntityManager entityManager) {
@@ -137,7 +136,8 @@ public class EclipselinkPersistenceSupport implements ApplicationContextAware {
             throw new RuntimeException("No transaction");
 
         UnitOfWork unitOfWork = entityManager.unwrap(UnitOfWork.class);
-        getInstanceContainerResourceHolder(getStorageName(unitOfWork)).registerInstanceForUnitOfWork(entity, unitOfWork);
+        String storeName = getStorageName(unitOfWork);
+        getInstanceContainerResourceHolder(storeName).registerInstanceForUnitOfWork(entity, unitOfWork, storeName);
 
         getEntityEntry(entity).setDetached(false);
     }
@@ -149,8 +149,8 @@ public class EclipselinkPersistenceSupport implements ApplicationContextAware {
 
         if (!(session instanceof UnitOfWork))
             throw new RuntimeException("Session is not a UnitOfWork: " + session);
-
-        getInstanceContainerResourceHolder(getStorageName(session)).registerInstanceForUnitOfWork(entity, (UnitOfWork) session);
+        String storeName = getStorageName(session);
+        getInstanceContainerResourceHolder(storeName).registerInstanceForUnitOfWork(entity, (UnitOfWork) session, storeName);
     }
 
     public Collection<Object> getInstances(EntityManager entityManager) {
@@ -158,7 +158,8 @@ public class EclipselinkPersistenceSupport implements ApplicationContextAware {
             throw new RuntimeException("No transaction");
 
         UnitOfWork unitOfWork = entityManager.unwrap(UnitOfWork.class);
-        return getInstanceContainerResourceHolder(getStorageName(unitOfWork)).getInstances(unitOfWork);
+        String storeName = getStorageName(unitOfWork);
+        return getInstanceContainerResourceHolder(storeName).getInstances(unitOfWork, storeName);
     }
 
     public Collection<Object> getSavedInstances(String storeName) {
@@ -168,20 +169,28 @@ public class EclipselinkPersistenceSupport implements ApplicationContextAware {
         return getInstanceContainerResourceHolder(storeName).getSavedInstances();
     }
 
+    public Collection<Object> getSavedInstancesByTransactionManager(String tmKey) {
+        if (!TransactionSynchronizationManager.isActualTransactionActive())
+            throw new RuntimeException("No transaction");
+
+        return prepareInstanceContainerResourceHolder(tmKey).getSavedInstances();
+    }
+
     public String getStorageName(Session session) {
         String storeName = (String) session.getProperty(PersistenceUnitProperties.STORE_NAME_PROPERTY);
         return Strings.isNullOrEmpty(storeName) ? Stores.MAIN : storeName;
     }
 
-    public ContainerResourceHolder getInstanceContainerResourceHolder(String storeName) {
+    public ContainerResourceHolder prepareInstanceContainerResourceHolder(String transactionManagerKey) {
         ContainerResourceHolder holder =
                 (ContainerResourceHolder) TransactionSynchronizationManager.getResource(RESOURCE_HOLDER_KEY);
         if (holder == null) {
-            holder = new ContainerResourceHolder(storeName);
+            holder = new ContainerResourceHolder(transactionManagerKey);
             TransactionSynchronizationManager.bindResource(RESOURCE_HOLDER_KEY, holder);
-        } else if (!storeName.equals(holder.getStoreName())) {
-            throw new IllegalStateException("Cannot handle entity from " + storeName
-                    + " datastore because active transaction is for " + holder.getStoreName());
+        } else if (!holder.getTransactionManagerKey().equals(transactionManagerKey)) {
+            throw new IllegalStateException("Cannot prepare resource holder for " + transactionManagerKey
+                    + " transaction manager because active transaction is for " + holder.getTransactionManagerKey()
+                    + " transaction manager");
         }
 
         if (TransactionSynchronizationManager.isSynchronizationActive() && !holder.isSynchronizedWithTransaction()) {
@@ -192,10 +201,38 @@ public class EclipselinkPersistenceSupport implements ApplicationContextAware {
         return holder;
     }
 
+    public ContainerResourceHolder getInstanceContainerResourceHolder(String storeName) {
+        ContainerResourceHolder holder =
+                (ContainerResourceHolder) TransactionSynchronizationManager.getResource(RESOURCE_HOLDER_KEY /*+ "." + storeName*/);
+        String tmKey = storeAwareLocator.getTransactionManagerKey(storeName);
+        if (holder == null) {
+            holder = new ContainerResourceHolder(tmKey);
+            holder.addStore(storeName);
+            TransactionSynchronizationManager.bindResource(RESOURCE_HOLDER_KEY /*+ "." + storeName*/, holder);
+        } else if (!holder.getStores().contains(storeName)) {
+            if (tmKey.equals(holder.getTransactionManagerKey())) {
+                holder.addStore(storeName);
+            } else {
+                throw new IllegalStateException("Cannot handle entity from " + tmKey
+                        + " datastore because active transaction is for " + holder.getTransactionManagerKey()
+                        + " transaction manager");
+            }
+        }
+
+        if (TransactionSynchronizationManager.isSynchronizationActive() && !holder.isSynchronizedWithTransaction()) {
+            holder.setSynchronizedWithTransaction(true);
+            TransactionSynchronizationManager.registerSynchronization(
+                    new ContainerResourceSynchronization(holder, RESOURCE_HOLDER_KEY /*+ "." + storeName*/));
+        }
+        return holder;
+    }
+
     public void processFlush(EntityManager entityManager, boolean warnAboutImplicitFlush) {
         UnitOfWork unitOfWork = entityManager.unwrap(UnitOfWork.class);
         String storeName = getStorageName(unitOfWork);
-        traverseEntities(getInstanceContainerResourceHolder(storeName), new OnSaveEntityVisitor(storeName), warnAboutImplicitFlush);
+        traverseEntities(getInstanceContainerResourceHolder(storeName),
+                new OnSaveEntityVisitor(storeAwareLocator.getTransactionManagerKey(storeName)),
+                warnAboutImplicitFlush);
     }
 
     protected void fireBeforeDetachEntityListener(Object entity, String storeName) {
@@ -282,7 +319,7 @@ public class EclipselinkPersistenceSupport implements ApplicationContextAware {
         fireBeforeDetachEntityListener(entity, storeName);
 
         ContainerResourceHolder container = getInstanceContainerResourceHolder(storeName);
-        container.unregisterInstance(entity, unitOfWork);
+        container.unregisterInstance(entity, unitOfWork, storeName);
         if (getEntityEntry(entity).isNew()) {
             container.getNewDetachedInstances().add(entity);
         }
@@ -328,57 +365,84 @@ public class EclipselinkPersistenceSupport implements ApplicationContextAware {
 
     public static class ContainerResourceHolder extends ResourceHolderSupport {
 
-        protected Map<UnitOfWork, Set<Object>> unitOfWorkMap = new HashMap<>();
+        protected Map<String, Map<UnitOfWork, Set<Object>>> unitsOfWorkToStores = new HashMap<>();
 
         protected Set<Object> savedInstances = createEntitySet();
 
         protected Set<Object> newDetachedInstances = createEntitySet();
 
-        protected String storeName;
+        protected String transactionManagerKey;
 
-        public ContainerResourceHolder(String storeName) {
-            this.storeName = storeName;
+        protected Set<String> stores;
+
+        public ContainerResourceHolder(String transactionManagerKey) {
+            this.transactionManagerKey = transactionManagerKey;
+            this.stores = new HashSet<>();
         }
 
-        public String getStoreName() {
-            return storeName;
+        public String getTransactionManagerKey() {
+            return transactionManagerKey;
         }
 
-        protected void registerInstanceForUnitOfWork(Object instance, UnitOfWork unitOfWork) {
+        public Set<String> getStores() {
+            return stores;
+        }
+
+        public void addStore(String storeName) {
+            stores.add(storeName);
+        }
+
+        protected void registerInstanceForUnitOfWork(Object instance, UnitOfWork unitOfWork, String store) {
             if (log.isTraceEnabled())
                 log.trace("ContainerResourceHolder.registerInstanceForUnitOfWork: instance = " +
                         instance + ", UnitOfWork = " + unitOfWork);
 
             getEntityEntry(instance).setManaged(true);
 
-            Set<Object> instances = unitOfWorkMap.get(unitOfWork);
-            if (instances == null) {
-                instances = createEntitySet();
-                unitOfWorkMap.put(unitOfWork, instances);
-            }
+            Map<UnitOfWork, Set<Object>> unitOfWorkMap = unitsOfWorkToStores.computeIfAbsent(store, s -> new HashMap<>());
+            Set<Object> instances = unitOfWorkMap.computeIfAbsent(unitOfWork, u -> createEntitySet());
             instances.add(instance);
         }
 
-        protected void unregisterInstance(Object instance, UnitOfWork unitOfWork) {
-            Set<Object> instances = unitOfWorkMap.get(unitOfWork);
-            if (instances != null) {
-                instances.remove(instance);
+        protected void unregisterInstance(Object instance, UnitOfWork unitOfWork, String store) {
+            Map<UnitOfWork, Set<Object>> unitOfWorkMap = unitsOfWorkToStores.get(store);
+            if (unitOfWorkMap != null) {
+                Set<Object> instances = unitOfWorkMap.get(unitOfWork);
+                if (instances != null) {
+                    instances.remove(instance);
+                }
             }
         }
 
-        protected Collection<Object> getInstances(UnitOfWork unitOfWork) {
+        protected Collection<Object> getInstances(UnitOfWork unitOfWork, String store) {
             Set<Object> set = new HashSet<>();
-            Set<Object> entities = unitOfWorkMap.get(unitOfWork);
-            if (entities != null)
-                set.addAll(entities);
+            Map<UnitOfWork, Set<Object>> unitOfWorkMap = unitsOfWorkToStores.get(store);
+            if (unitOfWorkMap != null) {
+                Set<Object> entities = unitOfWorkMap.get(unitOfWork);
+                if (entities != null) {
+                    set.addAll(entities);
+                }
+            }
+            return set;
+        }
+
+        protected Collection<Object> getStoreInstances(String store) {
+            Set<Object> set = createEntitySet();
+            Map<UnitOfWork, Set<Object>> unitOfWorkMap = unitsOfWorkToStores.get(store);
+            if (unitOfWorkMap != null) {
+                for (Set<Object> instances : unitOfWorkMap.values()) {
+                    set.addAll(instances);
+                }
+            }
             return set;
         }
 
         protected Collection<Object> getAllInstances() {
             Set<Object> set = createEntitySet();
-            for (Set<Object> instances : unitOfWorkMap.values()) {
-                set.addAll(instances);
-            }
+            for (Map<UnitOfWork, Set<Object>> unitOfWorkMap : unitsOfWorkToStores.values())
+                for (Set<Object> instances : unitOfWorkMap.values()) {
+                    set.addAll(instances);
+                }
             return set;
         }
 
@@ -393,7 +457,7 @@ public class EclipselinkPersistenceSupport implements ApplicationContextAware {
         @Override
         public String toString() {
             return "ContainerResourceHolder@" + Integer.toHexString(hashCode()) + "{" +
-                    "storeName='" + storeName + '\'' +
+                    "transactionManagerKey='" + transactionManagerKey + '\'' +
                     '}';
         }
     }
@@ -410,7 +474,7 @@ public class EclipselinkPersistenceSupport implements ApplicationContextAware {
 
         @Override
         protected void cleanupResource(ContainerResourceHolder resourceHolder, String resourceKey, boolean committed) {
-            resourceHolder.unitOfWorkMap.clear();
+            resourceHolder.unitsOfWorkToStores.clear();
             resourceHolder.savedInstances.clear();
         }
 
@@ -420,8 +484,10 @@ public class EclipselinkPersistenceSupport implements ApplicationContextAware {
                 log.trace("ContainerResourceSynchronization.beforeCommit: instances=" + container.getAllInstances() + ", readOnly=" + readOnly);
 
             if (!readOnly) {
-                traverseEntities(container, new OnSaveEntityVisitor(container.getStoreName()), false);
-                fireFlush(container.getStoreName());
+                traverseEntities(container, new OnSaveEntityVisitor(container.getTransactionManagerKey()), false);
+                for (String storeName : container.getStores()) {
+                    fireFlush(storeName);
+                }
             }
 
             Collection<Object> instances = container.getAllInstances();
@@ -443,10 +509,11 @@ public class EclipselinkPersistenceSupport implements ApplicationContextAware {
                         if (fetchGroup != null && !(fetchGroup instanceof JmixEntityFetchGroup))
                             fetchGroupTracker._persistence_setFetchGroup(new JmixEntityFetchGroup(fetchGroup, entityStates));
                     }
+                    MetaClass metaClass = metadata.getClass(instance.getClass());
                     if (getEntityEntry(instance).isNew()) {
-                        typeNames.add(metadata.getClass(instance).getName());
+                        typeNames.add(metaClass.getName());
                     }
-                    fireBeforeDetachEntityListener(instance, container.getStoreName());
+                    fireBeforeDetachEntityListener(instance, metaClass.getStore().getName());
                 }
             }
 
@@ -455,9 +522,11 @@ public class EclipselinkPersistenceSupport implements ApplicationContextAware {
             }
 
             if (!readOnly) {
-                Collection<Object> allInstances = container.getAllInstances();
-                for (BeforeCommitTransactionListener transactionListener : beforeCommitTxListeners) {
-                    transactionListener.beforeCommit(container.getStoreName(), allInstances);
+                for (String storeName : container.getStores()) {
+                    Collection<Object> allInstances = container.getStoreInstances(storeName);
+                    for (BeforeCommitTransactionListener transactionListener : beforeCommitTxListeners) {
+                        transactionListener.beforeCommit(storeName, allInstances);
+                    }
                 }
                 queryCacheManager.invalidate(typeNames);
 
@@ -515,10 +584,12 @@ public class EclipselinkPersistenceSupport implements ApplicationContextAware {
                 }
             }
 
-            EntityManager jmixEm = storeAwareLocator.getEntityManager(container.getStoreName());
-            JpaEntityManager jpaEm = jmixEm.unwrap(JpaEntityManager.class);
-            jpaEm.flush();
-            jpaEm.clear();
+            for (String storeName : container.getStores()) {
+                EntityManager jmixEm = storeAwareLocator.getEntityManager(storeName);
+                JpaEntityManager jpaEm = jmixEm.unwrap(JpaEntityManager.class);
+                jpaEm.flush();
+                jpaEm.clear();
+            }
 
             for (Object instance : instances) {
                 makeDetached(instance);
@@ -553,17 +624,17 @@ public class EclipselinkPersistenceSupport implements ApplicationContextAware {
 
     protected class OnSaveEntityVisitor implements EntityVisitor {
 
-        private String storeName;
+        private String transactionManagerKey;
 
-        public OnSaveEntityVisitor(String storeName) {
-            this.storeName = storeName;
+        public OnSaveEntityVisitor(String transactionManagerKey) {
+            this.transactionManagerKey = transactionManagerKey;
         }
 
         @Override
         public boolean visit(Object entity) {
             if (getEntityEntry(entity).isNew()
-                    && !getSavedInstances(storeName).contains(entity)) {
-                entityListenerManager.fireListener(entity, EntityListenerType.BEFORE_INSERT, storeName);
+                    && !getSavedInstancesByTransactionManager(transactionManagerKey).contains(entity)) {
+                entityListenerManager.fireListener(entity, EntityListenerType.BEFORE_INSERT, transactionManagerKey);
 
                 fireEntityChange(entity, EntityOp.CREATE, null);
 
@@ -581,7 +652,7 @@ public class EclipselinkPersistenceSupport implements ApplicationContextAware {
             AttributeChanges changes = attributeChangesProvider.getAttributeChanges(entity);
 
             if (isDeleted(entity, changeListener)) {
-                entityListenerManager.fireListener(entity, EntityListenerType.BEFORE_DELETE, storeName);
+                entityListenerManager.fireListener(entity, EntityListenerType.BEFORE_DELETE, transactionManagerKey);
 
                 fireEntityChange(entity, EntityOp.DELETE, null);
 
@@ -593,7 +664,7 @@ public class EclipselinkPersistenceSupport implements ApplicationContextAware {
 
             } else if (changes.hasChanges()) {
                 if (changeListener.hasChanges()) {
-                    entityListenerManager.fireListener(entity, EntityListenerType.BEFORE_UPDATE, storeName);
+                    entityListenerManager.fireListener(entity, EntityListenerType.BEFORE_UPDATE, transactionManagerKey);
                 }
 
                 // add changes after listener

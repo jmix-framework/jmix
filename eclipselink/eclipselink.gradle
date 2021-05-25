@@ -28,6 +28,7 @@ dependencies {
     implementation 'org.springframework:spring-messaging'
     compileOnly 'org.postgresql:postgresql'
     implementation 'org.liquibase:liquibase-core'
+    compileOnly "jakarta.transaction:jakarta.transaction-api"
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api'
     testImplementation 'org.springframework:spring-test'

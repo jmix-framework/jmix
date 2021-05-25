@@ -70,9 +70,9 @@ public class LoginScreen extends Screen {
     }
 
     private void initDefaultCredentials() {
-        String defaultUser = loginProperties.getDefaultUsername();
-        if (!StringUtils.isBlank(defaultUser) && !"<disabled>".equals(defaultUser)) {
-            usernameField.setValue(defaultUser);
+        String defaultUsername = loginProperties.getDefaultUsername();
+        if (!StringUtils.isBlank(defaultUsername) && !"<disabled>".equals(defaultUsername)) {
+            usernameField.setValue(defaultUsername);
         } else {
             usernameField.setValue("");
         }

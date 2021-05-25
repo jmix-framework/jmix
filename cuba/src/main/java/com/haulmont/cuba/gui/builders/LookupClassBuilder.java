@@ -18,6 +18,8 @@ package com.haulmont.cuba.gui.builders;
 
 import com.google.common.base.Preconditions;
 import com.haulmont.cuba.gui.Screens;
+import io.jmix.ui.builder.AfterScreenCloseEvent;
+import io.jmix.ui.builder.AfterScreenShowEvent;
 import io.jmix.ui.component.HasValue;
 import io.jmix.ui.component.ListComponent;
 import io.jmix.ui.model.CollectionContainer;
@@ -103,13 +105,13 @@ public class LookupClassBuilder<E, S extends Screen & LookupScreen<E>>
     }
 
     @Override
-    public LookupClassBuilder<E, S> withAfterShowListener(Consumer<Screen.AfterShowEvent<S>> listener) {
+    public LookupClassBuilder<E, S> withAfterShowListener(Consumer<AfterScreenShowEvent<S>> listener) {
         super.withAfterShowListener(listener);
         return this;
     }
 
     @Override
-    public LookupClassBuilder<E, S> withAfterCloseListener(Consumer<Screen.AfterCloseEvent<S>> listener) {
+    public LookupClassBuilder<E, S> withAfterCloseListener(Consumer<AfterScreenCloseEvent<S>> listener) {
         super.withAfterCloseListener(listener);
         return this;
     }
@@ -118,6 +120,15 @@ public class LookupClassBuilder<E, S extends Screen & LookupScreen<E>>
     public LookupClassBuilder<E, S> withTransformation(Function<Collection<E>, Collection<E>> transformation) {
         super.withTransformation(transformation);
         return this;
+    }
+
+    /**
+     * @return after screen close listener.
+     * @deprecated Use {@link #getAfterCloseListener()} instead.
+     */
+    @Deprecated
+    public Consumer<AfterScreenCloseEvent<S>> getCloseListener() {
+        return getAfterCloseListener();
     }
 
     /**

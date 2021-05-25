@@ -51,12 +51,12 @@ public class ScreenEditorWrapper extends AbstractEditor {
 
     @Override
     public void addListener(CloseListener listener) {
-        screen.addAfterCloseListener((Consumer) new AfterCloseListenerAdapter(listener));
+        screen.addAfterCloseListener(new AfterCloseListenerAdapter(listener));
     }
 
     @Override
     public void addCloseListener(CloseListener listener) {
-        screen.addAfterCloseListener((Consumer) new AfterCloseListenerAdapter(listener));
+        screen.addAfterCloseListener(new AfterCloseListenerAdapter(listener));
     }
 
     @Override

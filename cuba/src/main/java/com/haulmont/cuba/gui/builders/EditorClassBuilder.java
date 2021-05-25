@@ -19,6 +19,8 @@ package com.haulmont.cuba.gui.builders;
 import com.google.common.base.Preconditions;
 import com.haulmont.cuba.gui.Screens;
 import com.haulmont.cuba.gui.screen.OpenMode;
+import io.jmix.ui.builder.AfterScreenCloseEvent;
+import io.jmix.ui.builder.AfterScreenShowEvent;
 import io.jmix.ui.component.HasValue;
 import io.jmix.ui.component.ListComponent;
 import io.jmix.ui.model.CollectionContainer;
@@ -120,13 +122,13 @@ public class EditorClassBuilder<E, S extends Screen & EditorScreen<E>>
     }
 
     @Override
-    public EditorClassBuilder<E, S> withAfterShowListener(Consumer<Screen.AfterShowEvent<S>> listener) {
+    public EditorClassBuilder<E, S> withAfterShowListener(Consumer<AfterScreenShowEvent<S>> listener) {
         super.withAfterShowListener(listener);
         return this;
     }
 
     @Override
-    public EditorClassBuilder<E, S> withAfterCloseListener(Consumer<Screen.AfterCloseEvent<S>> listener) {
+    public EditorClassBuilder<E, S> withAfterCloseListener(Consumer<AfterScreenCloseEvent<S>> listener) {
         super.withAfterCloseListener(listener);
         return this;
     }
@@ -135,6 +137,15 @@ public class EditorClassBuilder<E, S extends Screen & EditorScreen<E>>
     public EditorClassBuilder<E, S> withTransformation(@Nullable Function<E, E> transformation) {
         super.withTransformation(transformation);
         return this;
+    }
+
+    /**
+     * @return after close screen listener
+     * @deprecated Use {@link #getAfterCloseListener()} instead.
+     */
+    @Deprecated
+    public Consumer<AfterScreenCloseEvent<S>> getCloseListener() {
+        return getAfterCloseListener();
     }
 
     @Override

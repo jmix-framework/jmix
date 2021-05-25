@@ -48,12 +48,12 @@ public class ScreenLookupWrapper extends AbstractLookup {
 
     @Override
     public void addListener(CloseListener listener) {
-        screen.addAfterCloseListener((Consumer) new AfterCloseListenerAdapter(listener));
+        screen.addAfterCloseListener(new AfterCloseListenerAdapter(listener));
     }
 
     @Override
     public void addCloseListener(CloseListener listener) {
-        screen.addAfterCloseListener((Consumer) new AfterCloseListenerAdapter(listener));
+        screen.addAfterCloseListener(new AfterCloseListenerAdapter(listener));
     }
 
     @Override

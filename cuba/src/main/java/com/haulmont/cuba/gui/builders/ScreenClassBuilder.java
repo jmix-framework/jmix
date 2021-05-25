@@ -19,6 +19,8 @@ package com.haulmont.cuba.gui.builders;
 import com.google.common.base.Preconditions;
 import com.haulmont.cuba.gui.Screens;
 import com.haulmont.cuba.gui.screen.OpenMode;
+import io.jmix.ui.builder.AfterScreenCloseEvent;
+import io.jmix.ui.builder.AfterScreenShowEvent;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.ScreenOptions;
 
@@ -64,15 +66,24 @@ public class ScreenClassBuilder<S extends Screen> extends io.jmix.ui.builder.Scr
     }
 
     @Override
-    public ScreenClassBuilder<S> withAfterShowListener(Consumer<Screen.AfterShowEvent<S>> listener) {
+    public ScreenClassBuilder<S> withAfterShowListener(Consumer<AfterScreenShowEvent<S>> listener) {
         super.withAfterShowListener(listener);
         return this;
     }
 
     @Override
-    public ScreenClassBuilder<S> withAfterCloseListener(Consumer<Screen.AfterCloseEvent<S>> listener) {
+    public ScreenClassBuilder<S> withAfterCloseListener(Consumer<AfterScreenCloseEvent<S>> listener) {
         super.withAfterCloseListener(listener);
         return this;
+    }
+
+    /**
+     * @return after screen close listener
+     * @deprecated Use {@link #getAfterCloseListener()} instead.
+     */
+    @Deprecated
+    public Consumer<AfterScreenCloseEvent<S>> getCloseListener() {
+        return getAfterCloseListener();
     }
 
     /**

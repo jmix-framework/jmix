@@ -18,8 +18,10 @@ package io.jmix.core.impl.repository.query.utils;
 
 import io.jmix.core.DataManager;
 import io.jmix.core.Metadata;
+import io.jmix.core.UnsafeDataManager;
 import io.jmix.core.impl.repository.query.*;
 import io.jmix.core.repository.Query;
+import io.jmix.core.repository.UnsafeDataRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.projection.ProjectionFactory;
@@ -36,32 +38,37 @@ public class JmixQueryLookupStrategy implements QueryLookupStrategy {
     private static final Logger log = LoggerFactory.getLogger(QueryLookupStrategy.class);
 
     private DataManager dataManager;
+    private UnsafeDataManager unsafeDataManager;
     private Metadata jmixMetadata;
 
-    public JmixQueryLookupStrategy(DataManager dataManager, Metadata jmixMetadata) {
+    public JmixQueryLookupStrategy(DataManager dataManager, UnsafeDataManager unsafeDataManager, Metadata jmixMetadata) {
         this.dataManager = dataManager;
         this.jmixMetadata = jmixMetadata;
+        this.unsafeDataManager = unsafeDataManager;
     }
 
     @Override
     public RepositoryQuery resolveQuery(Method method, RepositoryMetadata repositoryMetadata, ProjectionFactory factory, NamedQueries namedQueries) {
 
+        DataManager queryDataManager = repositoryMetadata.getRepositoryInterface().isAnnotationPresent(UnsafeDataRepository.class)
+                ? unsafeDataManager
+                : dataManager;
 
         Query query = method.getDeclaredAnnotation(Query.class);
         JmixAbstractQuery resolvedQuery;
         if (query != null) {
             String qryString = query.value();
-            resolvedQuery = new JmixCustomLoadQuery(dataManager, jmixMetadata, method, repositoryMetadata, factory, qryString);
+            resolvedQuery = new JmixCustomLoadQuery(queryDataManager, jmixMetadata, method, repositoryMetadata, factory, qryString);
         } else {
             PartTree qryTree = new PartTree(method.getName(), repositoryMetadata.getDomainType());
             if (qryTree.isDelete()) {
-                resolvedQuery = new JmixDeleteQuery(dataManager, jmixMetadata, method, repositoryMetadata, factory, qryTree);
+                resolvedQuery = new JmixDeleteQuery(queryDataManager, jmixMetadata, method, repositoryMetadata, factory, qryTree);
             } else if (qryTree.isCountProjection()) {
-                resolvedQuery = new JmixCountQuery(dataManager, jmixMetadata, method, repositoryMetadata, factory, qryTree);
+                resolvedQuery = new JmixCountQuery(queryDataManager, jmixMetadata, method, repositoryMetadata, factory, qryTree);
             } else if (qryTree.isExistsProjection()) {
-                resolvedQuery = new JmixExistsQuery(dataManager, jmixMetadata, method, repositoryMetadata, factory, qryTree);
+                resolvedQuery = new JmixExistsQuery(queryDataManager, jmixMetadata, method, repositoryMetadata, factory, qryTree);
             } else {
-                resolvedQuery = new JmixListQuery(dataManager, jmixMetadata, method, repositoryMetadata, factory, qryTree);
+                resolvedQuery = new JmixListQuery(queryDataManager, jmixMetadata, method, repositoryMetadata, factory, qryTree);
             }
         }
 

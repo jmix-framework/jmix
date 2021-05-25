@@ -16,11 +16,9 @@
 
 package io.jmix.core.impl.repository.support;
 
-import io.jmix.core.DataManager;
-import io.jmix.core.EntityStates;
-import io.jmix.core.Metadata;
-import io.jmix.core.MetadataTools;
+import io.jmix.core.*;
 import io.jmix.core.impl.repository.query.utils.JmixQueryLookupStrategy;
+import io.jmix.core.repository.UnsafeDataRepository;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.repository.core.EntityInformation;
 import org.springframework.data.repository.core.RepositoryInformation;
@@ -48,7 +46,15 @@ public class JmixRepositoryFactory extends RepositoryFactorySupport {
     @Override
     protected Object getTargetRepository(RepositoryInformation metadata) {
         Object domainClass = metadata.getDomainType();
-        return getTargetRepositoryViaReflection(metadata, domainClass, ctx.getBean(DataManager.class), ctx.getBean(Metadata.class));
+        DataManager repositoryDataManager = getAppropriateDataManager(metadata);
+
+        return getTargetRepositoryViaReflection(metadata, domainClass, repositoryDataManager, ctx.getBean(Metadata.class));
+    }
+
+    protected DataManager getAppropriateDataManager(RepositoryInformation metadata) {
+        return metadata.getRepositoryInterface().isAnnotationPresent(UnsafeDataRepository.class)
+                ? ctx.getBean(UnsafeDataManager.class)
+                : ctx.getBean(DataManager.class);
     }
 
     @Override
@@ -60,6 +66,6 @@ public class JmixRepositoryFactory extends RepositoryFactorySupport {
     @Override
     protected Optional<QueryLookupStrategy> getQueryLookupStrategy(@Nullable QueryLookupStrategy.Key key,
                                                                    QueryMethodEvaluationContextProvider evaluationContextProvider) {
-        return Optional.of(new JmixQueryLookupStrategy(ctx.getBean(DataManager.class), ctx.getBean(Metadata.class)));
+        return Optional.of(new JmixQueryLookupStrategy(ctx.getBean(DataManager.class), ctx.getBean(UnsafeDataManager.class), ctx.getBean(Metadata.class)));
     }
 }

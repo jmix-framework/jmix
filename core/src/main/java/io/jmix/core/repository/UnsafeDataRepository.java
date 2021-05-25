@@ -13,9 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@NonNullApi
-@Experimental
+
 package io.jmix.core.repository;
 
-import io.jmix.core.annotation.Experimental;
-import org.springframework.lang.NonNullApi;
+import io.jmix.core.UnsafeDataManager;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+/**
+ * Disables CRUD and row level {@link io.jmix.core.constraint.AccessConstraint}s for {@link JmixDataRepository}.
+ * <p>
+ * {@link UnsafeDataManager} will be used instead of DataManager when this annotation present.
+ * <p>
+ */
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface UnsafeDataRepository {
+}

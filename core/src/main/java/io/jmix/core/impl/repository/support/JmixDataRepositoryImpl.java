@@ -27,13 +27,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.NoRepositoryBean;
 
 import javax.annotation.Nullable;
-import java.io.Serializable;
 import java.util.*;
 
 import static io.jmix.core.impl.repository.query.utils.LoaderHelper.springToJmixSort;
 
 @NoRepositoryBean
-public class JmixDataRepositoryImpl<T, ID extends Serializable> implements JmixDataRepository<T, ID> {
+public class JmixDataRepositoryImpl<T, ID> implements JmixDataRepository<T, ID> {
 
 
     protected Metadata metadata;
@@ -132,7 +131,14 @@ public class JmixDataRepositoryImpl<T, ID extends Serializable> implements JmixD
 
     @Override
     public void deleteAllById(Iterable<? extends ID> ids) {
-        //TODO:
+        if (!ids.iterator().hasNext())
+            return;
+
+        List<ID> idList = new LinkedList<>();
+        ids.forEach(idList::add);
+
+        Iterable<T> entities = findAllById(idList);
+        entities.forEach(dataManager::remove);
     }
 
     @Override

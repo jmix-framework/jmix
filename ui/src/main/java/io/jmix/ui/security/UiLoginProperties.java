@@ -24,19 +24,19 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 @ConstructorBinding
 public class UiLoginProperties {
 
-    String defaultUser;
+    String defaultUsername;
     String defaultPassword;
 
     public UiLoginProperties(
-            @DefaultValue("admin") String defaultUser,
+            @DefaultValue("admin") String defaultUsername,
             @DefaultValue("admin") String defaultPassword
     ) {
-        this.defaultUser = defaultUser;
+        this.defaultUsername = defaultUsername;
         this.defaultPassword = defaultPassword;
     }
 
-    public String getDefaultUser() {
-        return defaultUser;
+    public String getDefaultUsername() {
+        return defaultUsername;
     }
 
     public String getDefaultPassword() {

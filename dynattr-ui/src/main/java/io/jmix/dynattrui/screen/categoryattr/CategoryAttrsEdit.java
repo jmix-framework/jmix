@@ -332,7 +332,7 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
                 .withScreenClass(AttributeEnumerationScreen.class)
                 .withAfterCloseListener(afterCloseEvent -> {
                     if (afterCloseEvent.closedWith(StandardOutcome.COMMIT)) {
-                        AttributeEnumerationScreen screen = (AttributeEnumerationScreen) afterCloseEvent.getSource();
+                        AttributeEnumerationScreen screen = afterCloseEvent.getSource();
                         getEditedEntity().setEnumeration(screen.getEnumeration());
                         getEditedEntity().setEnumerationLocales(screen.getEnumerationLocales());
                     }

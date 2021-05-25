@@ -18,6 +18,8 @@ package com.haulmont.cuba.core.sys;
 import com.haulmont.cuba.core.Transaction;
 import com.haulmont.cuba.core.TransactionParams;
 import io.jmix.core.Stores;
+import io.jmix.data.impl.JmixJtaTransactionManager;
+import io.jmix.data.impl.JmixTransactionManager;
 import io.jmix.eclipselink.impl.EclipselinkPersistenceSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,7 +67,7 @@ public class TransactionImpl implements Transaction {
 
         ts = tm.getTransaction(td);
 
-        persistenceSupport.registerSynchronizations(storeName);
+        persistenceSupport.registerSynchronizations(getTransactionManagerKey());
     }
 
     @Override
@@ -116,7 +118,7 @@ public class TransactionImpl implements Transaction {
         tm.commit(ts);
 
         ts = tm.getTransaction(td);
-        persistenceSupport.registerSynchronizations(storeName);
+        persistenceSupport.registerSynchronizations(getTransactionManagerKey());
     }
 
     @Override
@@ -131,5 +133,14 @@ public class TransactionImpl implements Transaction {
     @Override
     public void close() {
         end();
+    }
+
+    protected String getTransactionManagerKey() {
+        if (tm instanceof JmixTransactionManager) {
+            return ((JmixTransactionManager) tm).getKey();
+        } else if (tm instanceof JmixJtaTransactionManager) {
+            return ((JmixJtaTransactionManager) tm).getKey();
+        }
+        return storeName + "TransactionManager";
     }
 }

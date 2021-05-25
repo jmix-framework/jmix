@@ -116,6 +116,18 @@ class MiscDataRepositoriesTest extends DataSpec {
         !customerRepository.existsByName("second")
     }
 
+    void "test deleteAllById"() {
+        expect:
+        customerRepository.findAll().size() == 2
+        when:
+        Set<UUID> ids = new HashSet<>()
+        customerRepository.findAll().forEach(it -> ids.add(it.id))
+        customerRepository.deleteAllById(ids)
+
+        then:
+        customerRepository.findAll().size() == 0
+    }
+
     void "test parameter names do not clash"() {
         setup:
         Employee e1 = employeeRepository.newOne();

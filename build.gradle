@@ -125,6 +125,8 @@ dependencies {
         api "io.jmix.bpm:jmix-bpm-starter:${snapshotOr(bpmVersion)}"
         api "io.jmix.bpm:jmix-bpm-ui:${snapshotOr(bpmVersion)}"
         api "io.jmix.bpm:jmix-bpm-ui-starter:${snapshotOr(bpmVersion)}"
+        api "io.jmix.bpm:jmix-bpm-rest:${snapshotOr(bpmVersion)}"
+        api "io.jmix.bpm:jmix-bpm-rest-starter:${snapshotOr(bpmVersion)}"
 
         api "io.jmix.core:jmix-core:${snapshotOr(coreVersion)}"
         api "io.jmix.core:jmix-core-starter:${snapshotOr(coreVersion)}"

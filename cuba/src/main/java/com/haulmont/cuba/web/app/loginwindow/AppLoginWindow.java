@@ -36,8 +36,6 @@ import org.springframework.security.core.Authentication;
 import javax.inject.Inject;
 import java.util.Locale;
 import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * Legacy base class for a controller of application Login window.
@@ -169,7 +167,7 @@ public class AppLoginWindow extends AbstractWindow implements Window.TopLevelWin
             return;
         }
 
-        String defaultUser = loginProperties.getDefaultUser();
+        String defaultUser = loginProperties.getDefaultUsername();
         if (!StringUtils.isBlank(defaultUser) && !"<disabled>".equals(defaultUser)) {
             loginField.setValue(defaultUser);
         } else {

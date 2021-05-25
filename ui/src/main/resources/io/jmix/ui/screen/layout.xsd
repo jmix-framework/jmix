@@ -3660,12 +3660,19 @@
 
     <xs:complexType name="dataLoadCoordinatorTriggerType">
         <xs:attribute name="loader" type="xs:string" use="required"/>
-        <xs:attribute name="param" type="xs:string"/>
-        <xs:attribute name="onScreenEvent" type="onScreenEventEnum"/>
-        <xs:attribute name="onFragmentEvent" type="onFragmentEventEnum"/>
-        <xs:attribute name="onContainerItemChanged" type="xs:string"/>
-        <xs:attribute name="onComponentValueChanged" type="xs:string"/>
-        <xs:attribute name="likeClause" type="likeClauseEnum"/>
+
+        <xs:sequence>
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element name="onScreenEvent" type="onScreenEventType"/>
+                <xs:element name="onFragmentEvent" type="onFragmentEventType"/>
+                <xs:element name="onContainerItemChanged" type="onContainerItemChangedType"/>
+                <xs:element name="onComponentValueChanged" type="onComponentValueChangedType"/>
+            </xs:choice>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="onScreenEventType">
+        <xs:attribute name="type" type="onScreenEventEnum" use="required"/>
     </xs:complexType>
 
     <xs:simpleType name="onScreenEventEnum">
@@ -3677,6 +3684,10 @@
         </xs:restriction>
     </xs:simpleType>
 
+    <xs:complexType name="onFragmentEventType">
+        <xs:attribute name="type" type="onFragmentEventEnum" use="required"/>
+    </xs:complexType>
+
     <xs:simpleType name="onFragmentEventEnum">
         <xs:restriction base="xs:string">
             <xs:enumeration value="Init"/>
@@ -3684,6 +3695,17 @@
             <xs:enumeration value="Attach"/>
         </xs:restriction>
     </xs:simpleType>
+
+    <xs:complexType name="onContainerItemChangedType">
+        <xs:attribute name="container" use="required"/>
+        <xs:attribute name="param" type="xs:string"/>
+    </xs:complexType>
+
+    <xs:complexType name="onComponentValueChangedType">
+        <xs:attribute name="component" use="required"/>
+        <xs:attribute name="param" type="xs:string"/>
+        <xs:attribute name="likeClause" type="likeClauseEnum"/>
+    </xs:complexType>
 
     <xs:simpleType name="likeClauseEnum">
         <xs:restriction base="xs:string">

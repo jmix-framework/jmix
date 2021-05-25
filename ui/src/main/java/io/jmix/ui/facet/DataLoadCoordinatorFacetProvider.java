@@ -31,6 +31,7 @@ import io.jmix.ui.screen.UiControllerUtils;
 import io.jmix.ui.sys.UiControllerReflectionInspector;
 import io.jmix.ui.xml.FacetProvider;
 import io.jmix.ui.xml.layout.ComponentLoader;
+import io.jmix.ui.xml.layout.ComponentLoader.ComponentContext;
 import org.dom4j.Element;
 
 import javax.annotation.Nullable;
@@ -62,7 +63,7 @@ public class DataLoadCoordinatorFacetProvider implements FacetProvider<DataLoadC
     }
 
     @Override
-    public void loadFromXml(DataLoadCoordinator facet, Element element, ComponentLoader.ComponentContext context) {
+    public void loadFromXml(DataLoadCoordinator facet, Element element, ComponentContext context) {
         facet.setOwner(context.getFrame());
 
         String id = element.attributeValue("id");
@@ -80,76 +81,129 @@ public class DataLoadCoordinatorFacetProvider implements FacetProvider<DataLoadC
         }
 
         for (Element loaderEl : element.elements("refresh")) {
-            String loaderId = loaderEl.attributeValue("loader");
-            if (loaderId == null) {
-                throw new GuiDevelopmentException("'dataLoadCoordinator.loader' element has no 'ref' attribute", context);
-            }
-
-            String onScreenEvent = loaderEl.attributeValue("onScreenEvent");
-            if (onScreenEvent != null) {
-                Class eventClass;
-                switch (onScreenEvent) {
-                    case "Init":
-                        eventClass = Screen.InitEvent.class;
-                        break;
-                    case "AfterInit":
-                        eventClass = Screen.AfterInitEvent.class;
-                        break;
-                    case "BeforeShow":
-                        eventClass = Screen.BeforeShowEvent.class;
-                        break;
-                    case "AfterShow":
-                        eventClass = Screen.AfterShowEvent.class;
-                        break;
-                    default:
-                        throw new GuiDevelopmentException("Unsupported 'dataLoadCoordinator/refresh/onScreenEvent' value: " + onScreenEvent, context);
-                }
-                context.addInjectTask(new OnFrameOwnerEventLoadTriggerInitTask(facet, loaderId, eventClass));
-                continue;
-            }
-
-            String onFragmentEvent = loaderEl.attributeValue("onFragmentEvent");
-            if (onFragmentEvent != null) {
-                Class eventClass;
-                switch (onFragmentEvent) {
-                    case "Init":
-                        eventClass = ScreenFragment.InitEvent.class;
-                        break;
-                    case "AfterInit":
-                        eventClass = ScreenFragment.AfterInitEvent.class;
-                        break;
-                    case "Attach":
-                        eventClass = ScreenFragment.AttachEvent.class;
-                        break;
-                    default:
-                        throw new GuiDevelopmentException("Unsupported 'dataLoadCoordinator/refresh/onFragmentEvent' value: " + onFragmentEvent, context);
-                }
-                context.addInjectTask(new OnFrameOwnerEventLoadTriggerInitTask(facet, loaderId, eventClass));
-                continue;
-            }
-
-            String onContainerItemChanged = loaderEl.attributeValue("onContainerItemChanged");
-            if (onContainerItemChanged != null) {
-                String param = loaderEl.attributeValue("param");
-                context.addInjectTask(new OnContainerItemChangedLoadTriggerInitTask(facet, loaderId, onContainerItemChanged, param));
-                continue;
-            }
-
-            String onComponentValueChanged = loaderEl.attributeValue("onComponentValueChanged");
-            if (onComponentValueChanged != null) {
-                String param = loaderEl.attributeValue("param");
-
-                String likeClauseAttr = loaderEl.attributeValue("likeClause");
-                DataLoadCoordinator.LikeClause likeClause = likeClauseAttr == null ? DataLoadCoordinator.LikeClause.NONE : DataLoadCoordinator.LikeClause.valueOf(likeClauseAttr);
-
-                context.addInjectTask(new OnComponentValueChangedLoadTriggerInitTask(
-                        facet, loaderId, onComponentValueChanged, param, likeClause));
-            }
+            loadRefresh(facet, context, loaderEl);
         }
 
         if (Boolean.parseBoolean(element.attributeValue("auto"))) {
             context.addInjectTask(new AutoConfigurationInitTask(facet));
         }
+    }
+
+    protected void loadRefresh(DataLoadCoordinator facet, ComponentContext context, Element element) {
+        String loaderId = element.attributeValue("loader");
+        if (loaderId == null) {
+            throw new GuiDevelopmentException("'dataLoadCoordinator/refresh' element has no 'loader' attribute", context);
+        }
+
+        for (Element eventElement : element.elements()) {
+            switch (eventElement.getName()) {
+                case "onScreenEvent":
+                    loadOnScreenEvent(facet, context, loaderId, eventElement);
+                    break;
+                case "onFragmentEvent":
+                    loadOnFragmentEvent(facet, context, loaderId, eventElement);
+                    break;
+                case "onContainerItemChanged":
+                    loadOnContainerItemChanged(facet, context, loaderId, eventElement);
+                    break;
+                case "onComponentValueChanged":
+                    loadOnComponentValueChanged(facet, context, loaderId, eventElement);
+                    break;
+                default:
+                    throw new GuiDevelopmentException("Unsupported nested element in 'dataLoadCoordinator/refresh': " +
+                            eventElement.getName(), context);
+            }
+        }
+    }
+
+    protected void loadOnScreenEvent(DataLoadCoordinator facet, ComponentContext context,
+                                     String loaderId, Element element) {
+        String type = loadEventRequiredAttribute(element, "type", context);
+
+        Class<?> eventClass;
+        switch (type) {
+            case "Init":
+                eventClass = Screen.InitEvent.class;
+                break;
+            case "AfterInit":
+                eventClass = Screen.AfterInitEvent.class;
+                break;
+            case "BeforeShow":
+                eventClass = Screen.BeforeShowEvent.class;
+                break;
+            case "AfterShow":
+                eventClass = Screen.AfterShowEvent.class;
+                break;
+            default:
+                throw new GuiDevelopmentException("Unsupported 'dataLoadCoordinator/refresh/onScreenEvent.event' " +
+                        "value: " + type, context);
+        }
+
+        context.addInjectTask(new OnFrameOwnerEventLoadTriggerInitTask(facet, loaderId, eventClass));
+    }
+
+    protected void loadOnFragmentEvent(DataLoadCoordinator facet, ComponentContext context,
+                                       String loaderId, Element element) {
+        String type = loadEventRequiredAttribute(element, "type", context);
+
+        Class<?> eventClass;
+        switch (type) {
+            case "Init":
+                eventClass = ScreenFragment.InitEvent.class;
+                break;
+            case "AfterInit":
+                eventClass = ScreenFragment.AfterInitEvent.class;
+                break;
+            case "Attach":
+                eventClass = ScreenFragment.AttachEvent.class;
+                break;
+            default:
+                throw new GuiDevelopmentException("Unsupported 'dataLoadCoordinator/refresh/onFragmentEvent.event' " +
+                        "value: " + type, context);
+        }
+        context.addInjectTask(new OnFrameOwnerEventLoadTriggerInitTask(facet, loaderId, eventClass));
+    }
+
+    protected void loadOnContainerItemChanged(DataLoadCoordinator facet, ComponentContext context,
+                                              String loaderId, Element element) {
+        String container = loadEventRequiredAttribute(element, "container", context);
+
+        String param = loadParam(element);
+        context.addInjectTask(new OnContainerItemChangedLoadTriggerInitTask(facet, loaderId, container, param));
+    }
+
+    protected void loadOnComponentValueChanged(DataLoadCoordinator facet, ComponentContext context,
+                                               String loaderId, Element element) {
+        String component = loadEventRequiredAttribute(element, "component", context);
+
+        String param = loadParam(element);
+        DataLoadCoordinator.LikeClause likeClause = loadLikeClause(element);
+
+        context.addInjectTask(new OnComponentValueChangedLoadTriggerInitTask(
+                facet, loaderId, component, param, likeClause));
+    }
+
+    protected String loadEventRequiredAttribute(Element element, String name, ComponentContext context) {
+        String value = element.attributeValue(name);
+        if (value == null) {
+            throw new GuiDevelopmentException("'dataLoadCoordinator/refresh/" + element.getName() +
+                    "' nas no '" + name + "' attribute", context);
+        }
+
+        return value;
+    }
+
+    @Nullable
+    protected String loadParam(Element element) {
+        return element.attributeValue("param");
+    }
+
+    protected DataLoadCoordinator.LikeClause loadLikeClause(Element element) {
+        String likeClauseAttr = element.attributeValue("likeClause");
+        DataLoadCoordinator.LikeClause likeClause = likeClauseAttr == null
+                ? DataLoadCoordinator.LikeClause.NONE
+                : DataLoadCoordinator.LikeClause.valueOf(likeClauseAttr);
+        return likeClause;
     }
 
     public static class OnFrameOwnerEventLoadTriggerInitTask implements ComponentLoader.InjectTask {
@@ -165,7 +219,7 @@ public class DataLoadCoordinatorFacetProvider implements FacetProvider<DataLoadC
         }
 
         @Override
-        public void execute(ComponentLoader.ComponentContext context, Frame window) {
+        public void execute(ComponentContext context, Frame window) {
             Preconditions.checkNotNull(facet.getOwner());
             ScreenData screenData = UiControllerUtils.getScreenData(facet.getOwner().getFrameOwner());
             DataLoader loader = screenData.getLoader(loaderId);
@@ -189,7 +243,7 @@ public class DataLoadCoordinatorFacetProvider implements FacetProvider<DataLoadC
         }
 
         @Override
-        public void execute(ComponentLoader.ComponentContext context, Frame window) {
+        public void execute(ComponentContext context, Frame window) {
             Preconditions.checkNotNull(facet.getOwner());
             ScreenData screenData = UiControllerUtils.getScreenData(facet.getOwner().getFrameOwner());
             DataLoader loader = screenData.getLoader(loaderId);
@@ -207,7 +261,8 @@ public class DataLoadCoordinatorFacetProvider implements FacetProvider<DataLoadC
         private DataLoadCoordinator.LikeClause likeClause;
 
         public OnComponentValueChangedLoadTriggerInitTask(
-                DataLoadCoordinator facet, String loaderId, String componentId, @Nullable String param, DataLoadCoordinator.LikeClause likeClause) {
+                DataLoadCoordinator facet, String loaderId, String componentId,
+                @Nullable String param, DataLoadCoordinator.LikeClause likeClause) {
             this.facet = facet;
             this.loaderId = loaderId;
             this.componentId = componentId;
@@ -216,7 +271,7 @@ public class DataLoadCoordinatorFacetProvider implements FacetProvider<DataLoadC
         }
 
         @Override
-        public void execute(ComponentLoader.ComponentContext context, Frame window) {
+        public void execute(ComponentContext context, Frame window) {
             Preconditions.checkNotNull(facet.getOwner());
             ScreenData screenData = UiControllerUtils.getScreenData(facet.getOwner().getFrameOwner());
             DataLoader loader = screenData.getLoader(loaderId);
@@ -234,7 +289,7 @@ public class DataLoadCoordinatorFacetProvider implements FacetProvider<DataLoadC
         }
 
         @Override
-        public void execute(ComponentLoader.ComponentContext context, Frame window) {
+        public void execute(ComponentContext context, Frame window) {
             facet.configureAutomatically();
         }
     }

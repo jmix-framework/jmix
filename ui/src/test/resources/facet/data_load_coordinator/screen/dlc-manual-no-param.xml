@@ -49,11 +49,14 @@
                 width="800"/>
     <facets>
         <dataLoadCoordinator id="dlc">
-            <refresh loader="ownersDl" onScreenEvent="Init"/>
-            <refresh loader="petsDl" param="owner" onContainerItemChanged="ownersDc"/>
-            <refresh loader="ownersDl" param="category" onComponentValueChanged="categoryFilterField"/>
-            <refresh loader="ownersDl" param="name" onComponentValueChanged="nameFilterField"
-                     likeClause="CASE_INSENSITIVE"/>
+            <refresh loader="ownersDl">
+                <onScreenEvent type="Init"/>
+                <onComponentValueChanged component="categoryFilterField" param="category"/>
+                <onComponentValueChanged component="nameFilterField" param="name" likeClause="CASE_INSENSITIVE"/>
+            </refresh>>
+            <refresh loader="petsDl">
+                <onContainerItemChanged container="ownersDc" param="owner"/>
+            </refresh>
         </dataLoadCoordinator>
     </facets>
     <layout expand="split"

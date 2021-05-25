@@ -16,7 +16,6 @@
 
 package authentication
 
-import io.jmix.core.DataManager
 import io.jmix.core.security.InMemoryUserRepository
 import io.jmix.core.security.SystemAuthenticationToken
 import org.springframework.beans.factory.annotation.Autowired
@@ -28,9 +27,6 @@ import org.springframework.security.core.userdetails.UserDetails
 import test_support.SecuritySpecification
 
 class AuthenticationTest extends SecuritySpecification {
-
-    @Autowired
-    DataManager dataManager
 
     @Autowired
     AuthenticationManager authenticationManager

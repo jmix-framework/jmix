@@ -334,6 +334,8 @@ dependencies {
         api "org.flowable:flowable-spring-boot-starter-process:$flowableVersion"
         api "org.flowable:flowable-spring-boot-starter-dmn:$flowableVersion"
         api "org.flowable:flowable-dmn-spring-configurator:$flowableVersion"
+        api "org.flowable:flowable-spring-boot-starter-process-rest:$flowableVersion"
+        api "org.flowable:flowable-spring-boot-starter-dmn-rest:$flowableVersion"
 
         runtime 'org.hsqldb:hsqldb:2.4.1'
     }

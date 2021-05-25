@@ -25,19 +25,28 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Primary
 @Component("core_DataManager")
 public class DataManagerImpl implements DataManager {
 
     private static final Logger log = LoggerFactory.getLogger(DataManagerImpl.class);
+
+    public static final String SAVE_TX_PREFIX = "DataManager-save-";
+    protected static final AtomicLong txCount = new AtomicLong();
 
     @Autowired
     protected Metadata metadata;
@@ -74,6 +83,9 @@ public class DataManagerImpl implements DataManager {
 
     @Autowired
     protected AccessConstraintsRegistry accessConstraintsRegistry;
+
+    @Autowired
+    protected TransactionManagerLocator transactionManagerLocator;
 
     @Nullable
     @Override
@@ -168,11 +180,47 @@ public class DataManagerImpl implements DataManager {
                 sc.getFetchPlans().put(entity, fetchPlan);
         }
 
+        Map<PlatformTransactionManager, Set<String>> txManagerToStore = new HashMap<>();
+        Set<String> storesWithoutTxManager = new TreeSet<>();
+        for (String store : storeToContextMap.keySet()) {
+            try {
+                PlatformTransactionManager transactionManager = transactionManagerLocator.getTransactionManager(store);
+                Set<String> stores = txManagerToStore.computeIfAbsent(transactionManager, key -> new TreeSet<>());
+                stores.add(store);
+            } catch (NoSuchBeanDefinitionException e) {
+                storesWithoutTxManager.add(store);
+            }
+        }
+
         Set result = new LinkedHashSet<>();
-        for (Map.Entry<String, SaveContext> entry : storeToContextMap.entrySet()) {
-            DataStore dataStore = dataStoreFactory.get(entry.getKey());
-            Set committed = dataStore.save(entry.getValue());
-            result.addAll(committed);
+        TransactionDefinition def = createTransactionDefinition(context.isJoinTransaction());
+        for (Map.Entry<PlatformTransactionManager, Set<String>> txMapEntry : txManagerToStore.entrySet()) {
+            Set<String> stores = txMapEntry.getValue();
+            if (stores.size() > 1) {
+                PlatformTransactionManager tm = txMapEntry.getKey();
+                TransactionStatus transaction = tm.getTransaction(def);
+                try {
+                    for (String store : stores) {
+                        SaveContext sc = storeToContextMap.get(store);
+                        boolean joinTransaction = sc.isJoinTransaction();
+                        sc.setJoinTransaction(true);
+                        result.addAll(saveContextToStore(store, sc));
+                        sc.setJoinTransaction(joinTransaction);
+                    }
+                    tm.commit(transaction);
+                } finally {
+                    if (!transaction.isCompleted()) {
+                        tm.rollback(transaction);
+                    }
+                }
+            } else {
+                for (String store : stores) {
+                    result.addAll(saveContextToStore(store, storeToContextMap.get(store)));
+                }
+            }
+        }
+        for (String store : storesWithoutTxManager) {
+            result.addAll(saveContextToStore(store, storeToContextMap.get(store)));
         }
 
         if (!toRepeat.isEmpty()) {
@@ -193,6 +241,22 @@ public class DataManagerImpl implements DataManager {
         }
 
         return EntitySet.of(result);
+    }
+
+    protected TransactionDefinition createTransactionDefinition(boolean isJoinTransaction) {
+        DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+        def.setName(SAVE_TX_PREFIX + txCount.incrementAndGet());
+        if (isJoinTransaction) {
+            def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+        } else {
+            def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+        }
+        return def;
+    }
+
+    protected Set saveContextToStore(String store, SaveContext context) {
+        DataStore dataStore = dataStoreFactory.get(store);
+        return dataStore.save(context);
     }
 
     @Override

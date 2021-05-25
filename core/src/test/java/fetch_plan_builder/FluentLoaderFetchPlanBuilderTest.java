@@ -19,6 +19,7 @@ package fetch_plan_builder;
 import io.jmix.core.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -37,60 +38,54 @@ import static org.junit.jupiter.api.Assertions.*;
 public class FluentLoaderFetchPlanBuilderTest {
 
     @Autowired
-    DataManager dataManager;
+    ObjectProvider<FluentLoader> fluentLoaderProvider;
     @Autowired
     Metadata metadata;
     @Autowired
     MetadataTools metadataTools;
 
 
+    @SuppressWarnings("unchecked")
     @Test
     public void testUsage() {
         UUID petId = UUID.randomUUID();
 
-        dataManager.load(Pet.class)
-                .id(petId)
-                .fetchPlan(fpBuilder -> fpBuilder.addAll(
-                        "name",
-                        "owner.name",
-                        "owner.address.city"))
-        /*.one()*/;
-
-        dataManager.load(Pet.class)
+        FluentLoader<Pet> fluentLoader = fluentLoaderProvider.getObject(Pet.class);
+        fluentLoader
                 .id(petId)
                 .fetchPlan(fpBuilder -> fpBuilder.addFetchPlan(FetchPlan.INSTANCE_NAME).addAll(
                         "owner.name",
-                        "owner.address.city"))
-        /*.one()*/;
+                        "owner.address.city"));
 
-        dataManager.load(Pet.class)
+        fluentLoader = fluentLoaderProvider.getObject(Pet.class);
+        fluentLoader
                 .id(petId)
                 .fetchPlanProperties(
                         "name",
                         "owner.name",
-                        "owner.address.city")
-        /*.one()*/;
+                        "owner.address.city");
 
-        dataManager.load(Pet.class)
+        fluentLoader = fluentLoaderProvider.getObject(Pet.class);
+        fluentLoader
                 .query("...")
                 .fetchPlan(fpBuilder -> fpBuilder.addFetchPlan(FetchPlan.LOCAL).addAll(
                         "owner.name",
-                        "owner.address.city"))
-        /*.list()*/;
+                        "owner.address.city"));
 
-        dataManager.load(Pet.class)
+        fluentLoader = fluentLoaderProvider.getObject(Pet.class);
+        fluentLoader
                 .query("...")
                 .fetchPlanProperties(
                         "name",
                         "owner.name",
-                        "owner.address.city")
-        /*.list()*/;
+                        "owner.address.city");
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void testLoadContext() {
-        //noinspection unchecked
-        LoadContext<Pet> loadContext = createLoadContext(dataManager.load(Pet.class).all()
+        FluentLoader<Pet> fluentLoader = fluentLoaderProvider.getObject(Pet.class);
+        LoadContext<Pet> loadContext = createLoadContext(fluentLoader.all()
                 .fetchPlan(fpBuilder -> fpBuilder.addAll(
                         "name",
                         "owner.name",
@@ -100,8 +95,8 @@ public class FluentLoaderFetchPlanBuilderTest {
         assertFalse(containsSystemProperties(fetchPlan));
         checkPetFetchPlan(fetchPlan);
 
-        //noinspection unchecked
-        loadContext = createLoadContext(dataManager.load(Pet.class).all()
+        fluentLoader = fluentLoaderProvider.getObject(Pet.class);
+        loadContext = createLoadContext(fluentLoader.all()
                 .fetchPlan(fpBuilder -> fpBuilder.addFetchPlan(FetchPlan.LOCAL).addAll(
                         "owner.name",
                         "owner.address.city")));
@@ -110,8 +105,8 @@ public class FluentLoaderFetchPlanBuilderTest {
         assertTrue(containsSystemProperties(fetchPlan));//all system properties of Pet is local
         checkPetFetchPlan(fetchPlan);
 
-        //noinspection unchecked
-        loadContext = createLoadContext(dataManager.load(Pet.class).all()
+        fluentLoader = fluentLoaderProvider.getObject(Pet.class);
+        loadContext = createLoadContext(fluentLoader.all()
                 .fetchPlan(fpBuilder -> fpBuilder.addFetchPlan(FetchPlan.LOCAL).addAll(
                         "owner.name",
                         "owner.address.city")));
@@ -120,8 +115,8 @@ public class FluentLoaderFetchPlanBuilderTest {
         assertTrue(containsSystemProperties(fetchPlan));
         checkPetFetchPlan(fetchPlan);
 
-        //noinspection unchecked
-        loadContext = createLoadContext(dataManager.load(Pet.class).all()
+        fluentLoader = fluentLoaderProvider.getObject(Pet.class);
+        loadContext = createLoadContext(fluentLoader.all()
                 .fetchPlanProperties(
                         "name",
                         "owner.name",
@@ -131,8 +126,8 @@ public class FluentLoaderFetchPlanBuilderTest {
         assertFalse(containsSystemProperties(fetchPlan));
         checkPetFetchPlan(fetchPlan);
 
-        //noinspection unchecked
-        loadContext = createLoadContext(dataManager.load(Pet.class).all()
+        fluentLoader = fluentLoaderProvider.getObject(Pet.class);
+        loadContext = createLoadContext(fluentLoader.all()
                 .fetchPlan(fpBuilder -> fpBuilder.addFetchPlan(FetchPlan.LOCAL))
                 .fetchPlanProperties(
                         "owner.name",
@@ -143,10 +138,11 @@ public class FluentLoaderFetchPlanBuilderTest {
         checkPetFetchPlan(fetchPlan);
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void testFetchPlanWithBuilder() {
-        //noinspection unchecked
-        LoadContext<Pet> loadContext = createLoadContext(dataManager.load(Pet.class).all()
+        FluentLoader<Pet> fluentLoader = fluentLoaderProvider.getObject(Pet.class);
+        LoadContext<Pet> loadContext = createLoadContext(fluentLoader.all()
                 .fetchPlan(FetchPlan.LOCAL)
                 .fetchPlan(fpBuilder -> fpBuilder.addAll(
                         "owner.name",
@@ -155,8 +151,8 @@ public class FluentLoaderFetchPlanBuilderTest {
         FetchPlan fetchPlan = loadContext.getFetchPlan();
         checkPetFetchPlan(fetchPlan);
 
-        //noinspection unchecked
-        loadContext = createLoadContext(dataManager.load(Pet.class).all()
+        fluentLoader = fluentLoaderProvider.getObject(Pet.class);
+        loadContext = createLoadContext(fluentLoader.all()
                 .fetchPlan(fpBuilder -> fpBuilder.addAll(
                         "owner.name",
                         "owner.address.city"))

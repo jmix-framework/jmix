@@ -339,6 +339,7 @@ $he-tabsheet-caption-font-size-scale: 0.95 !default;
       @if $outer-frame {
         border: he-border($color: --tabsheet-framed-tabcontainer-border-color);
         border-bottom: none;
+        background: var(--tabsheet-framed-tabcontainer-background-color);
       }
     }
   }

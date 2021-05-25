@@ -676,6 +676,8 @@
 
   --tabsheet-framed-content-background-color: var(--panel-background-color);
   --tabsheet-framed-content-border-color: var(--tabsheet-tabcontainer-border-color);
+
+  --tabsheet-framed-tabcontainer-background-color: var(--tabsheet-framed-content-background-color);
   --tabsheet-framed-tabcontainer-border-color: var(--tabsheet-framed-content-border-color);
 
   --tabsheet-scroller-button-color: inherit;

@@ -13,6 +13,7 @@ import io.jmix.ui.component.PasswordField;
 import io.jmix.ui.component.TextField;
 import io.jmix.ui.navigation.Route;
 import io.jmix.ui.screen.*;
+import io.jmix.ui.security.UiLoginProperties;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -53,6 +54,9 @@ public class LoginScreen extends Screen {
     @Autowired
     private CoreProperties coreProperties;
 
+    @Autowired
+    private UiLoginProperties loginProperties;
+
     @Subscribe
     private void onInit(InitEvent event) {
         usernameField.focus();
@@ -66,8 +70,19 @@ public class LoginScreen extends Screen {
     }
 
     private void initDefaultCredentials() {
-        usernameField.setValue("admin");
-        passwordField.setValue("admin");
+        String defaultUser = loginProperties.getDefaultUsername();
+        if (!StringUtils.isBlank(defaultUser) && !"<disabled>".equals(defaultUser)) {
+            usernameField.setValue(defaultUser);
+        } else {
+            usernameField.setValue("");
+        }
+
+        String defaultPassword = loginProperties.getDefaultPassword();
+        if (!StringUtils.isBlank(defaultPassword) && !"<disabled>".equals(defaultPassword)) {
+            passwordField.setValue(defaultPassword);
+        } else {
+            passwordField.setValue("");
+        }
     }
 
     @Subscribe("submit")

@@ -17,6 +17,7 @@
 package io.jmix.search.index.mapping.processor;
 
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.search.index.mapping.processor.MappingDefinition.MappingDefinitionBuilder;
 
 import java.lang.annotation.Annotation;
 
@@ -28,13 +29,13 @@ import java.lang.annotation.Annotation;
 public interface FieldAnnotationProcessor<T extends Annotation> {
 
     /**
-     * Processes field-mapping annotation.
+     * Processes field-mapping annotation and adds new Mapping Definition element to builder.
      *
+     * @param builder             Mapping Definition builder
      * @param rootEntityMetaClass entity holds indexed properties
      * @param annotation          processed annotation
-     * @return single {@link MappingDefinitionElement}
      */
-    MappingDefinitionElement process(MetaClass rootEntityMetaClass, Annotation annotation);
+    void process(MappingDefinitionBuilder builder, MetaClass rootEntityMetaClass, Annotation annotation);
 
     /**
      * Gets specific annotation class

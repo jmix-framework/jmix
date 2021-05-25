@@ -18,6 +18,7 @@ package io.jmix.search.index.mapping.processor;
 
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.search.index.annotation.AutoMappedField;
+import io.jmix.search.index.mapping.processor.MappingDefinition.MappingDefinitionBuilder;
 import io.jmix.search.index.mapping.strategy.AutoMappingStrategy;
 import io.jmix.search.index.mapping.strategy.FieldMappingStrategy;
 import org.apache.commons.lang3.StringUtils;
@@ -35,14 +36,14 @@ public class AutoMappedFieldAnnotationProcessor extends AbstractFieldAnnotationP
     }
 
     @Override
-    public MappingDefinitionElement createMappingDefinitionElement(MetaClass rootEntityMetaClass, AutoMappedField annotation) {
-        MappingDefinitionElement item = new MappingDefinitionElement(); //todo use builder
-        item.setIncludedProperties(annotation.includeProperty())
-                .setExcludedProperties(annotation.excludeProperty())
-                .setFieldMappingStrategyClass(getFieldMappingStrategyClass())
-                .setParameters(createParameters(annotation));
-
-        return item;
+    protected void processSpecificAnnotation(MappingDefinitionBuilder builder, MetaClass rootEntityMetaClass, AutoMappedField annotation) {
+        builder.newElement()
+                .includeProperties(annotation.includeProperty())
+                .excludeProperties(annotation.excludeProperty())
+                .usingFieldMappingStrategyClass(getFieldMappingStrategyClass())
+                .withParameters(createParameters(annotation))
+                .buildElement()
+                .buildMappingDefinition();
     }
 
     @Override

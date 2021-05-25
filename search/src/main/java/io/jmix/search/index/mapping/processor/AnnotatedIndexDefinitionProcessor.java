@@ -28,6 +28,8 @@ import io.jmix.search.index.annotation.JmixEntitySearchIndex;
 import io.jmix.search.index.mapping.DisplayedNameDescriptor;
 import io.jmix.search.index.mapping.IndexMappingConfiguration;
 import io.jmix.search.index.mapping.MappingFieldDescriptor;
+import io.jmix.search.index.mapping.processor.MappingDefinition.MappingDefinitionBuilder;
+import io.jmix.search.index.mapping.processor.MappingDefinition.MappingDefinitionElement;
 import io.jmix.search.index.mapping.strategy.*;
 import io.jmix.search.utils.PropertyTools;
 import org.apache.commons.lang3.StringUtils;
@@ -134,14 +136,9 @@ public class AnnotatedIndexDefinitionProcessor {
 
             MappingDefinition mappingDefinition;
             if (methodWithMappingDefinitionImplementation == null) {
-                List<MappingDefinitionElement> items = fieldAnnotations.stream()
-                        .map(annotation -> processAnnotation(annotation, entityMetaClass))
-                        .filter(Optional::isPresent)
-                        .map(Optional::get)
-                        .collect(Collectors.toList());
-
-                mappingDefinition = new MappingDefinition();
-                mappingDefinition.setElements(items);
+                MappingDefinitionBuilder builder = MappingDefinition.builder();
+                fieldAnnotations.forEach(annotation -> processAnnotation(builder, annotation, entityMetaClass));
+                mappingDefinition = builder.buildMappingDefinition();
             } else {
                 try {
                     Object proxy = createProxy(indexDefClass);
@@ -204,7 +201,7 @@ public class AnnotatedIndexDefinitionProcessor {
                                     ownerClass,
                                     method.getName(),
                                     MethodType.methodType(method.getReturnType(),
-                                    method.getParameterTypes()),
+                                            method.getParameterTypes()),
                                     ownerClass
                             )
                             .bindTo(proxy)
@@ -218,10 +215,10 @@ public class AnnotatedIndexDefinitionProcessor {
         }
     }
 
-    protected Optional<MappingDefinitionElement> processAnnotation(Annotation annotation, MetaClass entityMetaClass) {
+    protected void processAnnotation(MappingDefinitionBuilder builder, Annotation annotation, MetaClass entityMetaClass) {
         Class<? extends Annotation> aClass = annotation.annotationType();
         Optional<FieldAnnotationProcessor<? extends Annotation>> processor = mappingFieldAnnotationProcessorsRegistry.getProcessorForAnnotationClass(aClass);
-        return processor.map(fieldAnnotationProcessor -> fieldAnnotationProcessor.process(entityMetaClass, annotation));
+        processor.ifPresent(fieldAnnotationProcessor -> fieldAnnotationProcessor.process(builder, entityMetaClass, annotation));
     }
 
     protected Set<Class<?>> getAffectedEntityClasses(IndexMappingConfiguration indexMappingConfiguration) {

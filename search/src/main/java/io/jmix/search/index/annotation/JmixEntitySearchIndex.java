@@ -16,6 +16,8 @@
 
 package io.jmix.search.index.annotation;
 
+import io.jmix.search.index.mapping.processor.MappingDefinition;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -24,7 +26,15 @@ import java.lang.annotation.Target;
 /**
  * Annotation to mark index definition interfaces.
  * <p>Methods in such interfaces can be annotated via field-mapping annotations to map some entity properties to index fields.
- * //todo add info about manual implementation
+ * <p>
+ * Also there can be one method with implementation body - it allows to build {@link MappingDefinition} directly.
+ * Such method should fulfil the following requirements:
+ * <ul>
+ *     <li>default</li>
+ *     <li>With return type - {@link MappingDefinition}</li>
+ *     <li>Without parameters</li>
+ * </ul>
+ * <p><b>Note:</b> if there is definition method with implementation any field-mapping annotations will be ignored
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)

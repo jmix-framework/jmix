@@ -17,6 +17,7 @@
 package io.jmix.search.index.mapping.processor;
 
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.search.index.mapping.processor.MappingDefinition.MappingDefinitionBuilder;
 import io.jmix.search.index.mapping.strategy.FieldMappingStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,10 +35,10 @@ public abstract class AbstractFieldAnnotationProcessor<T extends Annotation> imp
     private static final Logger log = LoggerFactory.getLogger(AbstractFieldAnnotationProcessor.class);
 
     @Override
-    public MappingDefinitionElement process(MetaClass rootEntityMetaClass, Annotation annotation) {
+    public void process(MappingDefinitionBuilder builder, MetaClass rootEntityMetaClass, Annotation annotation) {
         log.debug("Start process annotation '{}' for entity class '{}'", annotation, rootEntityMetaClass);
         T specificAnnotation = getAnnotationClass().cast(annotation);
-        return createMappingDefinitionElement(rootEntityMetaClass, specificAnnotation);
+        processSpecificAnnotation(builder, rootEntityMetaClass, specificAnnotation);
     }
 
     /**
@@ -49,13 +50,13 @@ public abstract class AbstractFieldAnnotationProcessor<T extends Annotation> imp
     protected abstract Map<String, Object> createParameters(T specificAnnotation);
 
     /**
-     * Creates {@link MappingDefinitionElement} based on specific annotation.
+     * Processes specific field-mapping annotation and adds new Mapping definition element to builder.
      *
+     * @param builder             Mapping Definition builder
      * @param rootEntityMetaClass entity holds indexed properties
-     * @param specificAnnotation  processed annotation
-     * @return single {@link MappingDefinitionElement}
+     * @param annotation          processed annotation
      */
-    protected abstract MappingDefinitionElement createMappingDefinitionElement(MetaClass rootEntityMetaClass, T specificAnnotation);
+    protected abstract void processSpecificAnnotation(MappingDefinitionBuilder builder, MetaClass rootEntityMetaClass, T annotation);
 
     /**
      * Provides class of {@link FieldMappingStrategy} specific for this annotation.

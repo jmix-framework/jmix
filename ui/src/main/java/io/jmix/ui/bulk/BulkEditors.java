@@ -29,7 +29,7 @@ import io.jmix.ui.model.DataLoader;
 import io.jmix.ui.model.HasLoader;
 import io.jmix.ui.screen.CloseAction;
 import io.jmix.ui.screen.FrameOwner;
-import io.jmix.ui.screen.Screen.AfterCloseEvent;
+import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.StandardCloseAction;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
@@ -94,7 +94,7 @@ public class BulkEditors {
         return context;
     }
 
-    protected <E> Consumer<AfterCloseEvent<BulkEditorWindow<E>>> createAfterCloseHandler(BulkEditorBuilder<E> builder) {
+    protected <E> Consumer<Screen.AfterCloseEvent> createAfterCloseHandler(BulkEditorBuilder<E> builder) {
         return afterCloseEvent -> {
             ListComponent<E> listComponent = builder.getListComponent();
             CloseAction closeAction = afterCloseEvent.getCloseAction();

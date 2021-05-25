@@ -26,8 +26,6 @@ import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.ScreenOptions;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -37,8 +35,8 @@ import java.util.function.Function;
 public class EditorClassBuilder<E, S extends Screen & EditorScreen<E>> extends EditorBuilder<E> {
 
     protected Class<S> screenClass;
-    protected List<Consumer<Screen.AfterCloseEvent<S>>> afterCloseListeners = new ArrayList<>();
-    protected List<Consumer<Screen.AfterShowEvent<S>>> afterShowListeners = new ArrayList<>();
+    protected Consumer<AfterScreenCloseEvent<S>> afterCloseListener;
+    protected Consumer<AfterScreenShowEvent<S>> afterShowListener;
 
     public EditorClassBuilder(EditorBuilder<E> builder, Class<S> screenClass) {
         super(builder);
@@ -116,8 +114,8 @@ public class EditorClassBuilder<E, S extends Screen & EditorScreen<E>> extends E
      *
      * @param listener listener
      */
-    public EditorClassBuilder<E, S> withAfterShowListener(Consumer<Screen.AfterShowEvent<S>> listener) {
-        afterShowListeners.add(listener);
+    public EditorClassBuilder<E, S> withAfterShowListener(Consumer<AfterScreenShowEvent<S>> listener) {
+        afterShowListener = listener;
         return this;
     }
 
@@ -126,8 +124,8 @@ public class EditorClassBuilder<E, S extends Screen & EditorScreen<E>> extends E
      *
      * @param listener listener
      */
-    public EditorClassBuilder<E, S> withAfterCloseListener(Consumer<Screen.AfterCloseEvent<S>> listener) {
-        afterCloseListeners.add(listener);
+    public EditorClassBuilder<E, S> withAfterCloseListener(Consumer<AfterScreenCloseEvent<S>> listener) {
+        afterCloseListener = listener;
         return this;
     }
 
@@ -152,17 +150,17 @@ public class EditorClassBuilder<E, S extends Screen & EditorScreen<E>> extends E
     }
 
     /**
-     * @return after show screen listeners
+     * @return after show screen listener
      */
-    public List<Consumer<Screen.AfterShowEvent<S>>> getAfterShowListeners() {
-        return afterShowListeners;
+    public Consumer<AfterScreenShowEvent<S>> getAfterShowListener() {
+        return afterShowListener;
     }
 
     /**
-     * @return after close screen listeners
+     * @return after close screen listener
      */
-    public List<Consumer<Screen.AfterCloseEvent<S>>> getAfterCloseListeners() {
-        return afterCloseListeners;
+    public Consumer<AfterScreenCloseEvent<S>> getAfterCloseListener() {
+        return afterCloseListener;
     }
 
     @SuppressWarnings("unchecked")

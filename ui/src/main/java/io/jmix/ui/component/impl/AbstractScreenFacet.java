@@ -55,8 +55,8 @@ public abstract class AbstractScreenFacet<S extends Screen> extends AbstractFace
     protected String actionId;
     protected String buttonId;
 
-    protected List<Consumer<Screen.AfterShowEvent<S>>> afterShowListeners = new ArrayList<>();
-    protected List<Consumer<Screen.AfterCloseEvent<S>>> afterCloseListeners = new ArrayList<>();
+    protected List<Consumer<Screen.AfterShowEvent>> afterShowListeners = new ArrayList<>();
+    protected List<Consumer<Screen.AfterCloseEvent>> afterCloseListeners = new ArrayList<>();
 
     protected S screen;
 
@@ -149,31 +149,31 @@ public abstract class AbstractScreenFacet<S extends Screen> extends AbstractFace
     }
 
     @Override
-    public Subscription addAfterShowEventListener(Consumer<Screen.AfterShowEvent<S>> listener) {
+    public Subscription addAfterShowEventListener(Consumer<Screen.AfterShowEvent> listener) {
         afterShowListeners.add(listener);
         return () -> internalRemoveAfterShowEventListener(listener);
     }
 
-    protected void internalRemoveAfterShowEventListener(Consumer<Screen.AfterShowEvent<S>> listener) {
+    protected void internalRemoveAfterShowEventListener(Consumer<Screen.AfterShowEvent> listener) {
         afterShowListeners.remove(listener);
     }
 
     @Override
-    public Subscription addAfterCloseEventListener(Consumer<Screen.AfterCloseEvent<S>> listener) {
+    public Subscription addAfterCloseEventListener(Consumer<Screen.AfterCloseEvent> listener) {
         afterCloseListeners.add(listener);
         return () -> internalRemoveAfterCloseEventListener(listener);
     }
 
-    protected void internalRemoveAfterCloseEventListener(Consumer<Screen.AfterCloseEvent<S>> listener) {
+    protected void internalRemoveAfterCloseEventListener(Consumer<Screen.AfterCloseEvent> listener) {
         afterCloseListeners.remove(listener);
     }
 
     protected void initScreenListeners(Screen screen) {
-        for (Consumer<Screen.AfterShowEvent<S>> afterShowListener : afterShowListeners) {
+        for (Consumer<Screen.AfterShowEvent> afterShowListener : afterShowListeners) {
             screen.addAfterShowListener(afterShowListener);
         }
 
-        for (Consumer<Screen.AfterCloseEvent<S>> afterCloseListener : afterCloseListeners) {
+        for (Consumer<Screen.AfterCloseEvent> afterCloseListener : afterCloseListeners) {
             screen.addAfterCloseListener(afterCloseListener);
         }
     }

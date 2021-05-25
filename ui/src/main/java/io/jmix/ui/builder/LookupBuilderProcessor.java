@@ -136,16 +136,14 @@ public class LookupBuilderProcessor {
         }
 
         if (builder instanceof LookupClassBuilder) {
-            List<Consumer<Screen.AfterShowEvent<S>>> afterShowListeners =
-                    ((LookupClassBuilder) builder).getAfterShowListeners();
-            for (Consumer<Screen.AfterShowEvent<S>> afterShowListener : afterShowListeners) {
-                screen.addAfterShowListener(afterShowListener);
+            Consumer<AfterScreenShowEvent> afterShowListener = ((LookupClassBuilder) builder).getAfterShowListener();
+            if (afterShowListener != null) {
+                screen.addAfterShowListener(new AfterShowListenerAdapter(afterShowListener));
             }
 
-            List<Consumer<Screen.AfterCloseEvent<S>>> afterCloseListeners =
-                    ((LookupClassBuilder) builder).getAfterCloseListeners();
-            for (Consumer<Screen.AfterCloseEvent<S>> afterCloseListener : afterCloseListeners) {
-                screen.addAfterCloseListener(afterCloseListener);
+            Consumer<AfterScreenCloseEvent> afterCloseListener = ((LookupClassBuilder) builder).getAfterCloseListener();
+            if (afterCloseListener != null) {
+                screen.addAfterCloseListener(new AfterCloseListenerAdapter(afterCloseListener));
             }
         }
 

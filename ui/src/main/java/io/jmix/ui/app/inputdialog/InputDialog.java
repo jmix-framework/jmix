@@ -132,7 +132,7 @@ public class InputDialog extends Screen {
     }
 
     @Subscribe
-    protected void onAfterClose(AfterCloseEvent<InputDialog> event) {
+    protected void onAfterClose(AfterCloseEvent event) {
         InputDialogCloseEvent closeEvent =
                 new InputDialogCloseEvent(event.getSource(), getValues(), event.getCloseAction());
         getEventHub().publish(InputDialogCloseEvent.class, closeEvent);

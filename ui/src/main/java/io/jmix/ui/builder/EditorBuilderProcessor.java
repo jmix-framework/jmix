@@ -65,7 +65,7 @@ public class EditorBuilderProcessor {
     protected List<EditedEntityTransformer> editedEntityTransformers;
 
     @SuppressWarnings("unchecked")
-    public  <E, S extends Screen> S buildEditor(EditorBuilder<E> builder) {
+    public <E, S extends Screen> S buildEditor(EditorBuilder<E> builder) {
         FrameOwner origin = builder.getOrigin();
         Screens screens = getScreenContext(origin).getScreens();
 
@@ -178,16 +178,14 @@ public class EditorBuilderProcessor {
         }
 
         if (builder instanceof EditorClassBuilder) {
-            List<Consumer<Screen.AfterShowEvent<S>>> afterShowListeners =
-                    ((EditorClassBuilder) builder).getAfterShowListeners();
-            for (Consumer<Screen.AfterShowEvent<S>> afterShowListener : afterShowListeners) {
-                screen.addAfterShowListener(afterShowListener);
+            Consumer<AfterScreenShowEvent> afterShowListener = ((EditorClassBuilder) builder).getAfterShowListener();
+            if (afterShowListener != null) {
+                screen.addAfterShowListener(new AfterShowListenerAdapter(afterShowListener));
             }
 
-            List<Consumer<Screen.AfterCloseEvent<S>>> afterCloseListeners =
-                    ((EditorClassBuilder) builder).getAfterCloseListeners();
-            for (Consumer<Screen.AfterCloseEvent<S>> afterCloseListener : afterCloseListeners) {
-                screen.addAfterCloseListener(afterCloseListener);
+            Consumer<AfterScreenCloseEvent> closeListener = ((EditorClassBuilder) builder).getAfterCloseListener();
+            if (closeListener != null) {
+                screen.addAfterCloseListener(new AfterCloseListenerAdapter(closeListener));
             }
         }
 
@@ -204,14 +202,14 @@ public class EditorBuilderProcessor {
         return entity;
     }
 
-    protected  <E> E transform(E entity, EditorBuilder<E> builder) {
+    protected <E> E transform(E entity, EditorBuilder<E> builder) {
         if (builder.getTransformation() != null) {
             return builder.getTransformation().apply(entity);
         }
         return entity;
     }
 
-    protected  <E> E transformForCollectionContainer(E entity, CollectionContainer<E> container) {
+    protected <E> E transformForCollectionContainer(E entity, CollectionContainer<E> container) {
         E result = entity;
         for (EditedEntityTransformer transformer : editedEntityTransformers) {
             result = transformer.transformForCollectionContainer(result, container);
@@ -325,7 +323,7 @@ public class EditorBuilderProcessor {
     }
 
     @SuppressWarnings("unused")
-    protected  <E> ScreenOptions getOptionsForScreen(String editorScreenId, E entity, EditorBuilder<E> builder) {
+    protected <E> ScreenOptions getOptionsForScreen(String editorScreenId, E entity, EditorBuilder<E> builder) {
         return builder.getOptions();
     }
 

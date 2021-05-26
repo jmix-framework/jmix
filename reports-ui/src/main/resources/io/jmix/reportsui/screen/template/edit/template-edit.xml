@@ -104,7 +104,7 @@
                             <hbox>
                                 <label id="customDefinitionLabel" value="msg://template.customDefinition"
                                        align="MIDDLE_LEFT"/>
-                                <linkButton id="customDefinitionHelpLinkButton" icon="icons/question-white.png"/>
+                                <linkButton id="customDefinitionHelpLinkButton" icon="QUESTION_CIRCLE"/>
                             </hbox>
                             <vbox spacing="true" width="100%">
                                 <linkButton id="fullScreenLinkButton"

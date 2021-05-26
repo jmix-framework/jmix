@@ -530,11 +530,12 @@ public class TemplateEditor extends StandardEditor<ReportTemplate> {
     }
 
     @Subscribe("customDefinitionHelpLinkButton")
-    protected void showCustomDefinitionHelp() {
+    public void onCustomDefinitionHelpLinkButtonClick(Button.ClickEvent event) {
         dialogs.createMessageDialog()
                 .withCaption(messages.getMessage(getClass(), "templateEditor.titleHelpGroovy"))
                 .withMessage(messages.getMessage(getClass(), "templateEditor.textHelpGroovy"))
                 .withModal(false)
+                .withContentMode(ContentMode.HTML)
                 .withWidth("700px")
                 .show();
     }

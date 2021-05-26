@@ -112,6 +112,7 @@ public class InputParametersDialog extends Screen {
     public void onPrintReportButtonClick(Button.ClickEvent event) {
         if (inputParametersFragment.getReport() != null) {
             ValidationErrors validationErrors = screenValidation.validateUiComponents(getWindow());
+            crossValidateParameters(validationErrors);
             if (validationErrors.isEmpty()) {
                 ReportTemplate template = inputParametersFragment.getReportTemplate();
                 if (template != null) {
@@ -142,23 +143,15 @@ public class InputParametersDialog extends Screen {
         inputParametersFragment.initTemplateAndOutputSelect();
     }
 
-    protected boolean crossValidateParameters() {
-        boolean isValid = true;
+    protected void crossValidateParameters(ValidationErrors validationErrors) {
         if (BooleanUtils.isTrue(inputParametersFragment.getReport().getValidationOn())) {
             try {
                 reportParameterValidator.crossValidateParameters(inputParametersFragment.getReport(),
                         inputParametersFragment.collectParameters());
             } catch (ReportParametersValidationException e) {
-
-                notifications.create(Notifications.NotificationType.WARNING)
-                        .withCaption(messages.getMessage("validationFail.caption"))
-                        .withDescription(e.getMessage())
-                        .show();
-                isValid = false;
+                validationErrors.add(e.getMessage());
             }
         }
-
-        return isValid;
     }
 
     @Subscribe("cancelButton")

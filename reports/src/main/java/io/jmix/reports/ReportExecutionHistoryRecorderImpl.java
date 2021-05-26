@@ -52,9 +52,6 @@ public class ReportExecutionHistoryRecorderImpl implements ReportExecutionHistor
     protected CurrentAuthentication currentAuthentication;
     @Autowired
     protected TimeSource timeSource;
-    //TODO Server info API
-//    @Autowired
-//    protected ServerInfoAPI serverInfoAPI;
     @Autowired
     protected ReportsProperties reportsProperties;
     @Autowired
@@ -79,8 +76,6 @@ public class ReportExecutionHistoryRecorderImpl implements ReportExecutionHistor
         execution.setReportCode(report.getCode());
         execution.setUser(currentAuthentication.getUser().getUsername());
         execution.setStartTime(timeSource.currentTimestamp());
-        //TODO server info api
-//        execution.setServerId(serverInfoAPI.getServerId());
         setParametersString(execution, params);
         handleNewReportEntity(execution);
 

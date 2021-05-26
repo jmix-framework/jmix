@@ -33,8 +33,6 @@ import java.util.UUID;
 @Table(name = "REPORT_EXECUTION")
 @JmixEntity
 public class ReportExecution {
-    private static final long serialVersionUID = -1714474379895234441L;
-
     @Id
     @Column(name = "ID")
     @JmixGeneratedValue
@@ -89,9 +87,6 @@ public class ReportExecution {
     @Column(name = "ERROR_MESSAGE")
     @Lob
     private String errorMessage;
-
-    @Column(name = "SERVER_ID", length = 50)
-    private String serverId;
 
     @PostConstruct
     public void postConstruct() {
@@ -209,14 +204,6 @@ public class ReportExecution {
 
     public void setErrorMessage(String errorMessage) {
         this.errorMessage = errorMessage;
-    }
-
-    public String getServerId() {
-        return serverId;
-    }
-
-    public void setServerId(String serverId) {
-        this.serverId = serverId;
     }
 
     @JmixProperty

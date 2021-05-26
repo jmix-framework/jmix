@@ -61,7 +61,6 @@
                 <column id="outputDocument"/>
                 <column id="params" maxTextLength="100"/>
                 <column id="errorMessage" maxTextLength="100"/>
-                <column id="serverId"/>
             </columns>
         </table>
     </layout>

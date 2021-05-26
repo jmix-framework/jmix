@@ -214,4 +214,8 @@ ru=Общие
         <addNotNullConstraint tableName="REPORT_TEMPLATE" columnName="REPORT_ID"/>
     </changeSet>
 
+    <changeSet id="4" author="reports" context="!cuba">
+        <dropColumn tableName="REPORT_EXECUTION" columnName="SERVER_ID"/>
+    </changeSet>
+
 </databaseChangeLog>

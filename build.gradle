@@ -68,6 +68,7 @@ javaPlatform {
 
 dependencies {
     api platform("org.springframework.boot:spring-boot-dependencies:2.5.0")
+    api platform('software.amazon.awssdk:bom:2.16.69')
 
     def baseVersion = '1.0.0'
     def auditVersion = baseVersion
@@ -315,7 +316,6 @@ dependencies {
 
         api 'com.thoughtworks.xstream:xstream:1.4.13'
 
-        api 'software.amazon.awssdk:s3:2.15.75'
         api 'com.amazonaws:aws-java-sdk-core:1.11.1022'
 
         def yargVersion = '2.2.9'

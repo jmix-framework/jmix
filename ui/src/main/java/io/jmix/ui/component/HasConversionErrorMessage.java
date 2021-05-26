@@ -16,6 +16,9 @@
 
 package io.jmix.ui.component;
 
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioProperty;
+
 import javax.annotation.Nullable;
 
 /**
@@ -29,6 +32,7 @@ public interface HasConversionErrorMessage {
      *
      * @param conversionErrorMessage custom conversion error message
      */
+    @StudioProperty(type = PropertyType.LOCALIZED_STRING)
     void setConversionErrorMessage(@Nullable String conversionErrorMessage);
 
     /**

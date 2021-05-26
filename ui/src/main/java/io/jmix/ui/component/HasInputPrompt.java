@@ -16,6 +16,9 @@
 
 package io.jmix.ui.component;
 
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioProperty;
+
 import javax.annotation.Nullable;
 
 /**
@@ -34,5 +37,6 @@ public interface HasInputPrompt {
      *
      * @param inputPrompt input prompt
      */
+    @StudioProperty(type = PropertyType.LOCALIZED_STRING)
     void setInputPrompt(@Nullable String inputPrompt);
 }

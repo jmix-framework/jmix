@@ -17,6 +17,8 @@
 package io.jmix.ui.component;
 
 import io.jmix.core.metamodel.datatype.Datatype;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioProperty;
 
 import javax.annotation.Nullable;
 
@@ -27,6 +29,7 @@ public interface HasDatatype<V> {
      *
      * @param datatype {@link Datatype} instance
      */
+    @StudioProperty(type = PropertyType.DATATYPE_ID)
     void setDatatype(@Nullable Datatype<V> datatype);
 
     /**

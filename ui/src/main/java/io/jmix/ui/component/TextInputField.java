@@ -17,8 +17,12 @@
 package io.jmix.ui.component;
 
 import io.jmix.core.common.event.Subscription;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioProperty;
 
 import javax.annotation.Nullable;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.EventObject;
 import java.util.function.Consumer;
 
@@ -36,11 +40,16 @@ public interface TextInputField<V> extends Field<V>, Buffered, Component.Focusab
 
     interface TrimSupported {
         boolean isTrimming();
+
+        @StudioProperty(name = "trim", defaultValue = "true")
         void setTrimming(boolean trimming);
     }
 
     interface MaxLengthLimited {
         int getMaxLength();
+
+        @StudioProperty(defaultValue = "-1")
+        @PositiveOrZero
         void setMaxLength(int maxLength);
     }
 
@@ -61,6 +70,7 @@ public interface TextInputField<V> extends Field<V>, Buffered, Component.Focusab
         /**
          * Disable automatic case conversion or enable with chosen mode
          */
+        @StudioProperty(type = PropertyType.ENUMERATION, defaultValue = "NONE", options = {"NONE", "LOWER", "UPPER"})
         void setCaseConversion(CaseConversion caseConversion);
     }
 
@@ -98,6 +108,7 @@ public interface TextInputField<V> extends Field<V>, Buffered, Component.Focusab
          *
          * @param timeout timeout in milliseconds
          */
+        @StudioProperty(name = "textChangeTimeout", defaultValue = "400")
         void setTextChangeTimeout(int timeout);
 
         /**
@@ -110,6 +121,8 @@ public interface TextInputField<V> extends Field<V>, Buffered, Component.Focusab
          *
          * @param mode the new mode
          */
+        @StudioProperty(name = "textChangeEventMode", defaultValue = "LAZY",
+                options = {"BLUR", "EAGER", "TIMEOUT", "LAZY"})
         void setTextChangeEventMode(TextChangeEventMode mode);
     }
 
@@ -120,6 +133,7 @@ public interface TextInputField<V> extends Field<V>, Buffered, Component.Focusab
          *
          * @param htmlName name
          */
+        @StudioProperty
         void setHtmlName(@Nullable String htmlName);
 
         /**

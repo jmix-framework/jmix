@@ -16,6 +16,13 @@
 
 package io.jmix.ui.component;
 
+import io.jmix.ui.meta.CanvasBehaviour;
+import io.jmix.ui.meta.PropertiesConstraint;
+import io.jmix.ui.meta.PropertiesGroup;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioComponent;
+import io.jmix.ui.meta.StudioProperties;
+import io.jmix.ui.meta.StudioProperty;
 import org.springframework.core.ParameterizedTypeReference;
 
 import java.math.BigDecimal;
@@ -35,6 +42,24 @@ import java.util.UUID;
  * </ul>
  * Any other symbols in format will be treated as mask literals.
  */
+@StudioComponent(
+        caption = "MaskedField",
+        category = "Components",
+        xmlElement = "maskedField",
+        icon = "io/jmix/ui/icon/component/maskedField.svg",
+        canvasBehaviour = CanvasBehaviour.INPUT_FIELD,
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/masked-field.html"
+)
+@StudioProperties(
+        properties = {
+                @StudioProperty(name = "property", type = PropertyType.PROPERTY_PATH_REF),
+                @StudioProperty(name = "dataContainer", type = PropertyType.DATACONTAINER_REF)
+        },
+        groups = {
+                @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                        properties = {"dataContainer", "property"})
+        }
+)
 public interface MaskedField<V>
         extends
             TextInputField<V>,
@@ -62,6 +87,7 @@ public interface MaskedField<V>
     ParameterizedTypeReference<MaskedField<UUID>> TYPE_UUID =
             new ParameterizedTypeReference<MaskedField<UUID>>() {};
 
+    @StudioProperty(required = true)
     void setMask(String mask);
     String getMask();
 
@@ -74,7 +100,10 @@ public interface MaskedField<V>
      *
      * @param mode value mode
      */
+    @StudioProperty(name = "valueMode", type = PropertyType.ENUMERATION, defaultValue = "CLEAR",
+            options = {"CLEAR", "MASKED"})
     void setValueMode(ValueMode mode);
+
     ValueMode getValueMode();
 
     boolean isSendNullRepresentation();

@@ -15,6 +15,13 @@
  */
 package io.jmix.ui.component;
 
+import io.jmix.ui.meta.CanvasBehaviour;
+import io.jmix.ui.meta.PropertiesConstraint;
+import io.jmix.ui.meta.PropertiesGroup;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioComponent;
+import io.jmix.ui.meta.StudioProperties;
+import io.jmix.ui.meta.StudioProperty;
 import org.springframework.core.ParameterizedTypeReference;
 
 import java.math.BigDecimal;
@@ -30,6 +37,24 @@ import java.time.OffsetTime;
  *
  * @param <V> type of value
  */
+@StudioComponent(
+        caption = "TextField",
+        category = "Components",
+        xmlElement = "textField",
+        icon = "io/jmix/ui/icon/component/textField.svg",
+        canvasBehaviour = CanvasBehaviour.INPUT_FIELD,
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/text-field.html"
+)
+@StudioProperties(
+        properties = {
+                @StudioProperty(name = "property", type = PropertyType.PROPERTY_PATH_REF),
+                @StudioProperty(name = "dataContainer", type = PropertyType.DATACONTAINER_REF)
+        },
+        groups = {
+                @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                        properties = {"dataContainer", "property"})
+        }
+)
 public interface TextField<V>
         extends
             TextInputField<V>,

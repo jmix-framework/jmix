@@ -19,6 +19,10 @@ package io.jmix.ui.presentation.facet;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.Facet;
 import io.jmix.ui.component.Window;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioCollection;
+import io.jmix.ui.meta.StudioFacet;
+import io.jmix.ui.meta.StudioProperty;
 
 import java.util.Collection;
 import java.util.Set;
@@ -26,6 +30,13 @@ import java.util.Set;
 /**
  * Provides the ability to apply and save presentations for components.
  */
+@StudioFacet(
+        xmlElement = "presentations",
+        caption = "Presentations",
+        category = "Facets",
+        description = "Provides the ability to apply and save presentations for components",
+        defaultProperty = "auto"
+)
 public interface PresentationsFacet extends Facet {
 
     /**
@@ -40,6 +51,7 @@ public interface PresentationsFacet extends Facet {
      *
      * @param auto whether facet should include all components for applying/saving presentations
      */
+    @StudioProperty(defaultValue = "false", initialValue = "true")
     void setAuto(boolean auto);
 
     /**
@@ -49,6 +61,12 @@ public interface PresentationsFacet extends Facet {
      *
      * @param ids component ids
      */
+    @StudioCollection(xmlElement = "components",
+            itemXmlElement = "component",
+            itemProperties = {
+                    @StudioProperty(name = "id", type = PropertyType.COMPONENT_REF, required = true,
+                            options = {"io.jmix.ui.component.HasTablePresentations"})
+            })
     void addComponentIds(String... ids);
 
     /**

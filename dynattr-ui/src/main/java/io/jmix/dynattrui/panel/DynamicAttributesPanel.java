@@ -57,7 +57,7 @@ public class DynamicAttributesPanel extends CompositeComponent<VBoxLayout> imple
 
     public static final String NAME = "dynamicAttributesPanel";
 
-    public static final String DEFAULT_FIELD_WIDTH = "100%";
+    public static final String DEFAULT_FIELD_WIDTH = null;
 
     @Autowired
     protected UiComponentsGenerator uiComponentsGenerator;
@@ -91,6 +91,7 @@ public class DynamicAttributesPanel extends CompositeComponent<VBoxLayout> imple
         propertiesForm.setHeightAuto();
 
         categoryFieldBox = getInnerComponent("categoryFieldBox");
+        categoryField.setWidth(fieldWidth);
     }
 
     protected void initPropertiesForm() {
@@ -204,7 +205,7 @@ public class DynamicAttributesPanel extends CompositeComponent<VBoxLayout> imple
 
     protected void setWidth(Component component, AttributeDefinition attribute) {
         String formWidth = attribute.getConfiguration().getFormWidth();
-        if (Strings.isNullOrEmpty(formWidth)) {
+        if (!Strings.isNullOrEmpty(formWidth)) {
             component.setWidth(formWidth);
         } else {
             component.setWidth(fieldWidth);

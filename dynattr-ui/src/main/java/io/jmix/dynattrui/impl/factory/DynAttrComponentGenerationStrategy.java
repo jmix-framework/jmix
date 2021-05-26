@@ -182,7 +182,7 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
         ValuesSelectAction selectAction = actions.create(ValuesSelectAction.class);
         initValuesSelectActionByAttribute(selectAction, attribute);
 
-        if (valuesPicker.getValueSource() instanceof ContainerValueSource) {
+        if (valuesPicker.getValueSource() instanceof ContainerValueSource && attribute.getConfiguration().isLookup()) {
             ContainerValueSource valueSource = (ContainerValueSource) valuesPicker.getValueSource();
             setValuesPickerOptionsLoader(valuesPicker, attribute, valueSource);
         }

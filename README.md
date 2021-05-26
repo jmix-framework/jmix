@@ -60,10 +60,10 @@ The framework is also complemented with commercial tools with separate [licensin
 ## Jmix Users & Use Cases
 Jmix community have developed plenty of solutions from automobile configurator to full-featured ERP bank systems. Among Jmix customers are:
 
-- [Ingenico](https://www.ingenico.com/)
-- [TAB Bank](https://www.tabbank.com/)
-- [ITTI Digital](https://www.itti.digital/en)
-- [IKEA](https://www.ikea.com/)
+- [Ingenico](https://www.haulmont.com/open-source/cases/internal-time-management-system/)
+- [TAB Bank](https://www.haulmont.com/solutions/tabbank/)
+- [Russian Ministry of Health](https://www.haulmont.com/solutions/rnimu/)
+- [Card Access Services](https://www.haulmont.com/open-source/cases/payment-system/)
 - [Addison Lee](https://www.addisonlee.com/)
 - [Yieldmo](https://www.yieldmo.com/)
 - [Bosch](https://www.bosch.com/)

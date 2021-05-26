@@ -16,9 +16,36 @@
 
 package io.jmix.ui.component;
 
+import io.jmix.ui.meta.CanvasBehaviour;
+import io.jmix.ui.meta.PropertiesConstraint;
+import io.jmix.ui.meta.PropertiesGroup;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioComponent;
+import io.jmix.ui.meta.StudioProperties;
+import io.jmix.ui.meta.StudioProperty;
+
 /**
  * A simple RichTextArea to edit HTML format text.
  */
+@StudioComponent(
+        caption = "RichTextArea",
+        category = "Components",
+        xmlElement = "richTextArea",
+        icon = "io/jmix/ui/icon/component/richTextArea.svg",
+        canvasBehaviour = CanvasBehaviour.RICH_TEXT_AREA,
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/rich-text-area.html"
+)
+@StudioProperties(
+        properties = {
+                @StudioProperty(name = "property", type = PropertyType.PROPERTY_PATH_REF, options = "string"),
+                @StudioProperty(name = "dataContainer", type = PropertyType.DATACONTAINER_REF),
+                @StudioProperty(name = "htmlSanitizerEnabled", type = PropertyType.BOOLEAN, defaultValue = "false")
+        },
+        groups = {
+                @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                        properties = {"dataContainer", "property"})
+        }
+)
 public interface RichTextArea extends TextInputField<String> {
 
     String NAME = "richTextArea";

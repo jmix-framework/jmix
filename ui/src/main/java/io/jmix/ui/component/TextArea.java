@@ -15,6 +15,13 @@
  */
 package io.jmix.ui.component;
 
+import io.jmix.ui.meta.CanvasBehaviour;
+import io.jmix.ui.meta.PropertiesConstraint;
+import io.jmix.ui.meta.PropertiesGroup;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioComponent;
+import io.jmix.ui.meta.StudioProperties;
+import io.jmix.ui.meta.StudioProperty;
 import org.springframework.core.ParameterizedTypeReference;
 
 import java.math.BigDecimal;
@@ -29,6 +36,24 @@ import java.time.OffsetTime;
  *
  * @param <V> type of value
  */
+@StudioComponent(
+        caption = "TextArea",
+        category = "Components",
+        xmlElement = "textArea",
+        icon = "io/jmix/ui/icon/component/textArea.svg",
+        canvasBehaviour = CanvasBehaviour.TEXT_AREA,
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/text-area.html"
+)
+@StudioProperties(
+        properties = {
+                @StudioProperty(name = "property", type = PropertyType.PROPERTY_PATH_REF),
+                @StudioProperty(name = "dataContainer", type = PropertyType.DATACONTAINER_REF)
+        },
+        groups = {
+                @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                        properties = {"dataContainer", "property"})
+        }
+)
 public interface TextArea<V> extends TextInputField<V>,
                                   HasDatatype<V>,
                                   TextInputField.MaxLengthLimited,
@@ -79,6 +104,7 @@ public interface TextArea<V> extends TextInputField<V>,
      *
      * @param rows the number of rows
      */
+    @StudioProperty(defaultValue = "5")
     void setRows(int rows);
 
     /**
@@ -91,6 +117,7 @@ public interface TextArea<V> extends TextInputField<V>,
      *
      * @param wordWrap wordWrap
      */
+    @StudioProperty(defaultValue = "true")
     void setWordWrap(boolean wordWrap);
 
     /**

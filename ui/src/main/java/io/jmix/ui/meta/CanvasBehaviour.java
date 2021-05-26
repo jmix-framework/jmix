@@ -50,5 +50,15 @@ public enum CanvasBehaviour {
     /**
      * Component is shown on canvas as a group of options.
      */
-    OPTIONS_GROUP
+    OPTIONS_GROUP,
+
+    /**
+     * Component is shown on canvas as a textArea.
+     */
+    TEXT_AREA,
+
+    /**
+     * Component is shown on canvas as a richTextArea.
+     */
+    RICH_TEXT_AREA
 }

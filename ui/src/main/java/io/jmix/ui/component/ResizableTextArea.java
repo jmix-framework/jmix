@@ -17,6 +17,10 @@
 package io.jmix.ui.component;
 
 import io.jmix.core.common.event.Subscription;
+import io.jmix.ui.meta.CanvasBehaviour;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioComponent;
+import io.jmix.ui.meta.StudioProperty;
 
 import java.util.EventObject;
 import java.util.function.Consumer;
@@ -27,6 +31,14 @@ import java.util.function.Consumer;
  * @param <V> type of value
  * @see TextArea
  */
+@StudioComponent(
+        caption = "ResizableTextArea",
+        category = "Components",
+        xmlElement = "resizableTextArea",
+        icon = "io/jmix/ui/icon/component/resizableTextArea.svg",
+        canvasBehaviour = CanvasBehaviour.TEXT_AREA,
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/resizable-text-area.html"
+)
 public interface ResizableTextArea<V> extends TextArea<V> {
     String NAME = "resizableTextArea";
 
@@ -35,6 +47,8 @@ public interface ResizableTextArea<V> extends TextArea<V> {
      *
      * @param direction the direction in which resizes textArea.
      */
+    @StudioProperty(name = "resizableDirection", type = PropertyType.ENUMERATION, defaultValue = "BOTH",
+            options = {"HORIZONTAL", "VERTICAL", "BOTH", "NONE"})
     void setResizableDirection(ResizeDirection direction);
 
     /**

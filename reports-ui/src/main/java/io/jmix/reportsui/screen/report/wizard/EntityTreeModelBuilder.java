@@ -63,7 +63,7 @@ public class EntityTreeModelBuilder {
 
     @PostConstruct
     protected void init() {
-        entityTreeModelMaxDepth = reportsProperties.getEntityTreeModelMaxDeep();
+        entityTreeModelMaxDepth = reportsProperties.getEntityTreeModelMaxDepth();
     }
 
     public int getEntityTreeModelMaxDepth() {

@@ -53,7 +53,7 @@ public class ReportsProperties {
 
     List<String> wizardPropertiesExcludedBlackList;
 
-    int entityTreeModelMaxDeep;
+    int entityTreeModelMaxDepth;
 
     int htmlExternalResourcesTimeoutSec;
 
@@ -88,7 +88,7 @@ public class ReportsProperties {
                              @Nullable List<String> wizardEntitiesWhiteList,
                              @Nullable List<String> wizardPropertiesBlackList,
                              @Nullable List<String> wizardPropertiesExcludedBlackList,
-                             @DefaultValue("3") int entityTreeModelMaxDeep,
+                             @DefaultValue("3") int entityTreeModelMaxDepth,
                              @DefaultValue("5") int htmlExternalResourcesTimeoutSec,
                              @DefaultValue("curl") String curlPath,
                              @DefaultValue("") String curlParams,
@@ -111,7 +111,7 @@ public class ReportsProperties {
         this.wizardEntitiesWhiteList = wizardEntitiesWhiteList == null ? Collections.emptyList() : wizardEntitiesWhiteList;
         this.wizardPropertiesBlackList = wizardPropertiesBlackList == null ? Collections.emptyList() : wizardPropertiesBlackList;
         this.wizardPropertiesExcludedBlackList = wizardPropertiesExcludedBlackList == null ? Collections.emptyList() : wizardPropertiesExcludedBlackList;
-        this.entityTreeModelMaxDeep = entityTreeModelMaxDeep;
+        this.entityTreeModelMaxDepth = entityTreeModelMaxDepth;
         this.htmlExternalResourcesTimeoutSec = htmlExternalResourcesTimeoutSec;
         this.curlPath = curlPath;
         this.curlParams = curlParams;
@@ -219,8 +219,8 @@ public class ReportsProperties {
     /**
      * Maximum depth of entity model that is used in report wizard and report dataset fetchPlan editor.
      */
-    public Integer getEntityTreeModelMaxDeep() {
-        return entityTreeModelMaxDeep;
+    public Integer getEntityTreeModelMaxDepth() {
+        return entityTreeModelMaxDepth;
     }
 
 

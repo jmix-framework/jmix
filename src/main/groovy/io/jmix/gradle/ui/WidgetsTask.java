@@ -26,6 +26,7 @@ import org.gradle.api.file.FileCollection;
 import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.tasks.Internal;
 import org.gradle.api.tasks.SourceSet;
+import org.gradle.api.tasks.util.PatternFilterable;
 
 import java.io.File;
 import java.util.*;
@@ -38,6 +39,9 @@ public abstract class WidgetsTask extends DefaultTask {
     protected List<String> excludes = new ArrayList<>();
 
     @Internal
+    protected List<String> excludePaths = new ArrayList<>();
+
+    @Internal
     protected Set<String> compilerJvmArgs = new LinkedHashSet<>(Collections.singleton("-Djava.awt.headless=true"));
 
     public void excludeJars(String... artifacts) {
@@ -46,6 +50,20 @@ public abstract class WidgetsTask extends DefaultTask {
 
     public List<String> getExcludes() {
         return excludes;
+    }
+
+    public List<String> getExcludePaths() {
+        return excludePaths;
+    }
+
+    /**
+     * Set the allowable exclude patterns.
+     *
+     * @param excludes an Iterable providing new exclude patterns
+     * @see PatternFilterable Pattern Format
+     */
+    public void excludePaths(String... excludes) {
+        excludePaths.addAll(Arrays.asList(excludes));
     }
 
     public void jvmArgs(String... jvmArgs) {
@@ -132,8 +150,15 @@ public abstract class WidgetsTask extends DefaultTask {
         sources.forEach(sourceDir -> {
             if (sourceDir.exists()) {
                 getProject()
-                        .fileTree(sourceDir, f ->
-                                f.setExcludes(Arrays.asList("**/.*", "**/META-INF/build-info.properties")))
+                        .fileTree(sourceDir, f -> {
+                            List<String> excludes = new ArrayList<>();
+                            // Default excludes
+                            excludes.addAll(Arrays.asList("**/.*", "**/META-INF/build-info.properties"));
+                            // Custom excludes
+                            excludes.addAll(excludePaths);
+
+                            f.setExcludes(excludes);
+                        })
                         .forEach(files::add);
             }
         });

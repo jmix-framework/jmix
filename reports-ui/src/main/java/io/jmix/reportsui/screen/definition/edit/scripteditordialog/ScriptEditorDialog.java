@@ -20,8 +20,10 @@ import io.jmix.core.Messages;
 import io.jmix.ui.WindowParam;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.BaseAction;
+import io.jmix.ui.component.DialogWindow;
 import io.jmix.ui.component.HasContextHelp;
 import io.jmix.ui.component.SourceCodeEditor;
+import io.jmix.ui.component.WindowMode;
 import io.jmix.ui.component.autocomplete.Suggester;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
@@ -64,7 +66,9 @@ public class ScriptEditorDialog extends Screen {
     protected Messages messages;
 
     public void setCaption(String caption) {
-        getWindow().setCaption(caption);
+        if (StringUtils.isNotEmpty(caption)) {
+            getWindow().setCaption(caption);
+        }
     }
 
 
@@ -111,23 +115,25 @@ public class ScriptEditorDialog extends Screen {
         String width = userSettingService.loadSetting(WIDTH_SCRIPT_EDITOR_DIALOG);
         String height = userSettingService.loadSetting(HEIGHT_SCRIPT_EDITOR_DIALOG);
 
+        DialogWindow dialog = (DialogWindow) getWindow();
         if (StringUtils.equals(FULL, height) && StringUtils.equals(FULL, width)) {
-            getWindow().setSizeFull();
+            dialog.setWindowMode(WindowMode.MAXIMIZED);
             return;
         }
         if (NumberUtils.isCreatable(width) && NumberUtils.isCreatable(height)) {
-            getWindow().setWidth(width);
-            getWindow().setHeight(height);
+            dialog.setDialogWidth(width);
+            dialog.setDialogHeight(height);
         }
     }
 
     protected void saveParameterWindow() {
-        if (false) {
+        DialogWindow dialog = (DialogWindow) getWindow();
+        if (dialog.getWindowMode() == WindowMode.MAXIMIZED) {
             userSettingService.saveSetting(WIDTH_SCRIPT_EDITOR_DIALOG, FULL);
             userSettingService.saveSetting(HEIGHT_SCRIPT_EDITOR_DIALOG, FULL);
         } else {
-            userSettingService.saveSetting(WIDTH_SCRIPT_EDITOR_DIALOG, String.valueOf(getWindow().getWidth()));
-            userSettingService.saveSetting(HEIGHT_SCRIPT_EDITOR_DIALOG, String.valueOf(getWindow().getHeight()));
+            userSettingService.saveSetting(WIDTH_SCRIPT_EDITOR_DIALOG, String.valueOf(dialog.getDialogWidth()));
+            userSettingService.saveSetting(HEIGHT_SCRIPT_EDITOR_DIALOG, String.valueOf(dialog.getDialogHeight()));
         }
     }
 

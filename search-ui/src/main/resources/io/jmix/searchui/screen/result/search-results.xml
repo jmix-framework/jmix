@@ -17,7 +17,7 @@
 <window xmlns="http://jmix.io/schema/ui/window">
     <layout expand="contentBox">
         <scrollBox id="contentBox"/>
-        <hbox width="100%" stylename="c-fts-navigation-container">
+        <hbox width="100%" stylename="jmix-fts-navigation-container">
             <hbox id="navigationBox" align="MIDDLE_CENTER"/>
         </hbox>
     </layout>

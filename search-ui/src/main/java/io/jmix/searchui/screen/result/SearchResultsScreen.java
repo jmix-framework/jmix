@@ -189,11 +189,11 @@ public class SearchResultsScreen extends Screen {
                 String entityCaption = entityPair.getSecond();
 
                 CssLayout container = createCssLayout();
-                container.setStyleName("c-fts-entities-container");
+                container.setStyleName("jmix-fts-entities-container");
                 container.setWidth("100%");
 
                 CssLayout entityLabelLayout = createCssLayout();
-                entityLabelLayout.setStyleName("c-fts-entities-type");
+                entityLabelLayout.setStyleName("jmix-fts-entities-type");
                 entityLabelLayout.add(createEntityLabel(entityCaption));
 
                 container.add(entityLabelLayout);
@@ -217,9 +217,9 @@ public class SearchResultsScreen extends Screen {
                     .withHandler(e -> openPage(page));
             pageButton.setAction(action);
             if (page == currentPage) {
-                pageButton.setStyleName("c-fts-current-page");
+                pageButton.setStyleName("jmix-fts-current-page");
             } else {
-                pageButton.setStyleName("c-fts-page");
+                pageButton.setStyleName("jmix-fts-page");
             }
             navigationBox.add(pageButton);
         }
@@ -237,7 +237,7 @@ public class SearchResultsScreen extends Screen {
                     .withCaption(messages.getMessage(SearchResultsScreen.class, "nextPage"))
                     .withHandler(e -> openNextPage());
             nextPageButton.setAction(action);
-            nextPageButton.setStyleName("c-fts-page");
+            nextPageButton.setStyleName("jmix-fts-page");
             navigationBox.add(nextPageButton);
         }
     }
@@ -369,7 +369,7 @@ public class SearchResultsScreen extends Screen {
         LinkButton instanceBtn = uiComponents.create(LinkButton.class);
         instanceBtn.setStyleName("fts-found-instance");
         instanceBtn.setAlignment(MIDDLE_LEFT);
-        instanceBtn.addStyleName("c-fts-entity");
+        instanceBtn.addStyleName("jmix-fts-entity");
 
         BaseAction action = new BaseAction("instanceButton");
         action.withCaption(entry.getInstanceName());
@@ -384,7 +384,7 @@ public class SearchResultsScreen extends Screen {
         Label<String> hitLabel = uiComponents.create(Label.of(String.class));
         hitLabel.setValue(caption);
         hitLabel.setHtmlEnabled(true);
-        hitLabel.addStyleName("c-fts-hit");
+        hitLabel.addStyleName("jmix-fts-hit");
         hitLabel.setAlignment(MIDDLE_LEFT);
         return hitLabel;
     }

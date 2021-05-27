@@ -18,7 +18,9 @@ package io.jmix.graphql.datafetcher
 
 
 import io.jmix.graphql.AbstractGraphQLTest
+import spock.lang.Ignore
 
+@Ignore
 class FilterConditionCompositionTest extends AbstractGraphQLTest {
 
     def "filter conditions union - default (AND)"() {

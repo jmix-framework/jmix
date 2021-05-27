@@ -39,6 +39,7 @@ import org.springframework.test.context.TestPropertySource
 import org.springframework.transaction.PlatformTransactionManager
 import org.springframework.transaction.TransactionDefinition
 import org.springframework.transaction.support.TransactionTemplate
+import spock.lang.Ignore
 import spock.lang.Specification
 import test_support.GraphQLTestConfiguration
 import test_support.TestContextInitializer
@@ -60,6 +61,7 @@ import test_support.TestContextInitializer
         ]
 )
 @TestPropertySource("classpath:/test_support/test-app.properties")
+@Ignore
 class AbstractGraphQLTest extends Specification {
 
     @Autowired

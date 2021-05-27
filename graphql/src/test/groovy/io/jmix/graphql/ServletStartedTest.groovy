@@ -18,7 +18,9 @@ package io.jmix.graphql
 
 import com.graphql.spring.boot.test.GraphQLTestTemplate
 import org.springframework.beans.factory.annotation.Autowired
+import spock.lang.Ignore
 
+@Ignore
 class ServletStartedTest extends AbstractGraphQLTest {
 
     @Autowired

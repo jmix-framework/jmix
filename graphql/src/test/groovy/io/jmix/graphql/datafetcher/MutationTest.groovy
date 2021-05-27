@@ -21,7 +21,9 @@ import io.jmix.core.Metadata
 import io.jmix.graphql.AbstractGraphQLTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.annotation.DirtiesContext
+import spock.lang.Ignore
 
+@Ignore
 @DirtiesContext
 class MutationTest extends AbstractGraphQLTest {
 

@@ -18,7 +18,9 @@ package io.jmix.graphql.datafetcher
 
 import io.jmix.graphql.AbstractGraphQLTest
 import org.springframework.test.context.TestPropertySource
+import spock.lang.Ignore
 
+@Ignore
 @TestPropertySource(properties = ["eclipselink.logging.level.sql = FINE"])
 class FilterIntegrationTest extends AbstractGraphQLTest {
 

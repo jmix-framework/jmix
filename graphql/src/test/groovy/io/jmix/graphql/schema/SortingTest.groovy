@@ -19,7 +19,9 @@ package io.jmix.graphql.schema
 import com.graphql.spring.boot.test.GraphQLTestTemplate
 import io.jmix.graphql.AbstractGraphQLTest
 import org.springframework.beans.factory.annotation.Autowired
+import spock.lang.Ignore
 
+@Ignore
 class SortingTest extends AbstractGraphQLTest {
 
     @Autowired

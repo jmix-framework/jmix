@@ -20,7 +20,9 @@ package io.jmix.graphql.datafetcher
 import io.jmix.core.security.SystemAuthenticator
 import io.jmix.graphql.AbstractGraphQLTest
 import org.springframework.beans.factory.annotation.Autowired
+import spock.lang.Ignore
 
+@Ignore
 class MessagesDataFetcherTest extends AbstractGraphQLTest {
 
     @Autowired

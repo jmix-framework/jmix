@@ -20,7 +20,9 @@ import com.graphql.spring.boot.test.GraphQLResponse
 import io.jmix.graphql.AbstractGraphQLTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.TestPropertySource
+import spock.lang.Ignore
 
+@Ignore
 @TestPropertySource(properties = ["jmix.graphql.operationRateLimitPerMinute=3"])
 class OperationRateLimitServiceTest extends AbstractGraphQLTest {
 

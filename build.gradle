@@ -187,6 +187,9 @@ dependencies {
         api "io.jmix.maps:jmix-maps-starter:${snapshotOr(mapsVersion)}"
         api "io.jmix.maps:jmix-maps-ui-starter:${snapshotOr(mapsVersion)}"
 
+        api "io.jmix.multitenancy:jmix-multitenancy:${snapshotOr(localfsVersion)}"
+        api "io.jmix.multitenancy:jmix-multitenancy-starter:${snapshotOr(localfsVersion)}"
+
         api "io.jmix.reports:jmix-reports:${snapshotOr(reportsVersion)}"
         api "io.jmix.reports:jmix-reports-ui:${snapshotOr(reportsVersion)}"
         api "io.jmix.reports:jmix-reports-rest:${snapshotOr(reportsVersion)}"

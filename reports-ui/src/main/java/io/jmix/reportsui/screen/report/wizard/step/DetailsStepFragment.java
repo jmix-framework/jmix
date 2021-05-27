@@ -231,7 +231,6 @@ public class DetailsStepFragment extends StepFragment {
 
     protected Map<String, MetaClass> getAvailableEntities() {
         Map<String, MetaClass> result = new TreeMap<>(String::compareTo);
-        // todo need to be fixed later - ReferenceToEntity is not persistent but returned in 'metadataTools.getAllPersistentMetaClasses'
         Collection<MetaClass> classes = metadataTools.getAllJpaEntityMetaClasses();
         for (MetaClass metaClass : classes) {
             MetaClass effectiveMetaClass = extendedEntities.getEffectiveMetaClass(metaClass);

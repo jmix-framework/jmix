@@ -100,8 +100,8 @@ public interface MaskedField<V>
      *
      * @param mode value mode
      */
-    @StudioProperty(name = "valueMode", type = PropertyType.ENUMERATION, defaultValue = "CLEAR",
-            options = {"CLEAR", "MASKED"})
+    @StudioProperty(name = "valueMode", type = PropertyType.ENUMERATION, defaultValue = "clear",
+            options = {"clear", "masked"})
     void setValueMode(ValueMode mode);
 
     ValueMode getValueMode();

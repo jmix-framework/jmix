@@ -140,6 +140,22 @@
   .#{$primary-stylename}-item-content {
     background: var(--accordion-item-content-background-color);
   }
+
+  .#{$primary-stylename}-borderless {
+    border: none;
+    border-radius: 0;
+    @include box-shadow(none);
+
+    > .#{$primary-stylename}-item,
+    > .#{$primary-stylename}-item > div > .v-caption,
+    > .#{$primary-stylename}-item > .#{$primary-stylename}-item-content {
+      border-radius: 0;
+    }
+
+    .#{$primary-stylename}-item-caption > .v-caption {
+      background: transparent;
+    }
+  }
 }
 
 @mixin he-accordion-size-style($primary-stylename : v-accordion,

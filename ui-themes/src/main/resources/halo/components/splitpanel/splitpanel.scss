@@ -112,4 +112,12 @@ $jmix-splitpanel-dock-button-width: round($v-unit-size / 3) !default;
   .jmix-splitpanel-dock-button-down:after {
     content: "\f078";
   }
+
+  .#{$primary-stylename}-horizontal.splitter-large {
+    @include valo-splitpanel-style($splitter-size: round($v-unit-size/3), $splitter-handle-visible: true, $orientation: horizontal);
+  }
+
+  .#{$primary-stylename}-vertical.splitter-large {
+    @include valo-splitpanel-style($splitter-size: round($v-unit-size/3), $splitter-handle-visible: true, $orientation: vertical);
+  }
 }

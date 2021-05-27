@@ -58,6 +58,10 @@
     @include he-focus-style();
   }
 
+  .#{$primary-stylename}.borderless,
+  .#{$primary-stylename}-borderless {
+    @include he-textfield-borderless-style();
+  }
 
   /* Global size */
 

@@ -34,6 +34,17 @@
     @include he-combobox-popup-style();
   }
 
+  .#{$primary-stylename}.borderless,
+  .#{$primary-stylename}-borderless {
+    [class*="input"] {
+      @include he-textfield-borderless-style();
+    }
+
+    [class$="button"] {
+      @include opacity(1);
+    }
+  }
+
   /* Global size */
 
   &.small {

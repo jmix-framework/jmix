@@ -307,8 +307,13 @@
 
   --datefield-button-color: var(--dim-color);
   --datefield-button-text-color: var(--text-main-color);
+
   --datefield-button-hover-color: var(--dim-color-shade-1);
+  --datefield-button-hover-text-color: var(--text-secondary-color);
+
   --datefield-button-active-color: var(--dim-color-shade-2);
+  --datefield-button-active-text-color: var(--text-main-color);
+
   --datefield-button-disabled-color: transparent;
   --datefield-button-disabled-text-color: var(--text-dim-color);
 
@@ -511,6 +516,7 @@
   --panel-background-color: var(--background-color);
   --panel-border-color: var(--primary-dim-color);
   --panel-well-background-color: var(--dim-color);
+  --panel-caption-background-color: var(--panel-well-background-color);
 
   /* Tooltip */
 
@@ -729,6 +735,11 @@
   --splitpanel-splitter-background-color: var(--primary-dim-color);
   --splitpanel-splitter-border-color: var(--splitpanel-splitter-background-color);
   --splitpanel-splitter-border-radius: 5px;
+
+  --splitpanel-splitter-large-background-color: transparent;
+  --splitpanel-splitter-large-border-color: var(--primary-dim-color);
+  --splitpanel-splitter-large-border-radius: 2px;
+  --splitpanel-splitter-large-handle-color: var(--splitpanel-splitter-large-border-color);
 
   --splitpanel-dock-button-color: var(--text-main-color);
 

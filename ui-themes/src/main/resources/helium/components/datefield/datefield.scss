@@ -113,7 +113,6 @@ $he-datefield-calendar-button-padding: 2px !default;
 
 @mixin he-datefield-style($primary-stylename : jmix-datefield) {
   .#{$primary-stylename} {
-
     [class*="textfield"] {
       @include he-input-style();
     }
@@ -134,12 +133,13 @@ $he-datefield-calendar-button-padding: 2px !default;
     }
   }
 
-  .v-datefield.v-disabled {
+  &.v-disabled {
+    .jmix-timefield,
     [class*="textfield"] {
       @include he-input-disabled-style();
     }
 
-    [class*="button"] {
+    .#{$primary-stylename} [class*="button"] {
       background: var(--datefield-button-disabled-color);
       color: var(--datefield-button-disabled-text-color);
     }
@@ -149,6 +149,17 @@ $he-datefield-calendar-button-padding: 2px !default;
   .v-datefield-error-error {
     [class*="textfield"] {
       @include he-input-error-style();
+    }
+  }
+
+  &.borderless {
+    .jmix-timefield,
+    .#{$primary-stylename} [class*="textfield"] {
+      @include he-textfield-borderless-style();
+    }
+
+    .#{$primary-stylename}:not(.v-disabled) [class*="button"] {
+      @include he-datefield-button-borderless-style();
     }
   }
 
@@ -337,15 +348,33 @@ $he-datefield-calendar-button-padding: 2px !default;
 
 @mixin he-datefield-button-color-style() {
   @include he-button-color-style($main-color           : --datefield-button-color,
-  $text-color           : --datefield-button-text-color,
-  $hover-color          : --datefield-button-hover-color,
-  $active-color         : --datefield-button-active-color,
-  $disabled-color       : --datefield-button-disabled-color,
-  $disabled-text-color  : --datefield-button-disabled-text-color,
-  $focused-border-color : --datefield-button-color);
+                                 $text-color           : --datefield-button-text-color,
+                                 $hover-color          : --datefield-button-hover-color,
+                                 $active-color         : --datefield-button-active-color,
+                                 $disabled-color       : --datefield-button-disabled-color,
+                                 $disabled-text-color  : --datefield-button-disabled-text-color,
+                                 $focused-border-color : --datefield-button-color);
   border: none;
 
   &:after {
     display: none;
+  }
+}
+
+@mixin he-datefield-button-borderless-style() {
+  color: var(--datefield-button-text-color);
+  border-color: transparent;
+  background: transparent;
+
+  &:hover {
+    color: var(--datefield-button-hover-text-color);
+    border-color: transparent;
+    background: transparent;
+  }
+
+  &:active {
+    color: var(--datefield-button-active-text-color);
+    border-color: transparent;
+    background: var(--datefield-button-color);
   }
 }

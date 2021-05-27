@@ -23,8 +23,18 @@
 
   .#{$primary-stylename}-wrapper {
     &.v-disabled {
+      .v-textarea {
+        @include he-input-disabled-style();
+      }
+
       .#{$primary-stylename}-resize-corner {
         display: none;
+      }
+    }
+
+    &.borderless {
+      .v-textarea {
+        @include he-textfield-borderless-style();
       }
     }
 

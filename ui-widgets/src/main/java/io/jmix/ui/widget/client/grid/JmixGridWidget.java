@@ -148,6 +148,12 @@ public class JmixGridWidget extends Grid<JsonObject> {
     }
 
     @Override
+    public void setStylePrimaryName(String style) {
+        super.setStylePrimaryName(style);
+        getEditor().getEditorOverlay().addClassName("medium");
+    }
+
+    @Override
     protected boolean isWidgetAllowsClickHandling(Element targetElement, NativeEvent nativeEvent) {
         // By default, clicking on widget renderer prevents row selection.
         // We want to allow row selection. Every time selection is changed,

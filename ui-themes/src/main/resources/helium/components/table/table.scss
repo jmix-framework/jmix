@@ -261,8 +261,12 @@ $he-table-header-row-height-scale: 1.5 !default;
     border-top: none;
   }
 
+  .jmix-table-cell-link .jmix-table-clickable-cell,
   .jmix-table-cell-textcut .jmix-table-clickable-cell {
     color: var(--link-color);
+  }
+
+  .jmix-table-cell-textcut .jmix-table-clickable-cell {
     border-bottom: 1px dashed var(--link-color);
   }
 

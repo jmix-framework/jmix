@@ -221,6 +221,19 @@
       @include he-pickerfield-button-disabled-style();
     }
   }
+
+  .#{$primary-stylename}.borderless {
+    .v-filterselect .v-filterselect-input,
+    .jmix-searchselect .jmix-searchselect-input,
+    .v-textfield.v-textfield-readonly,
+    .jmix-suggestionfield {
+      @include he-textfield-borderless-style();
+    }
+
+    .v-button.#{$primary-stylename}-button {
+      @include he-pickerfield-button-borderless-style();
+    }
+  }
 }
 
 @mixin he-pickerfield-button-style() {
@@ -228,19 +241,19 @@
   color: var(--pickerfield-button-text-color);
   background: var(--pickerfield-button-background-color);
 
-  &:hover {
+  &:hover:not(.v-disabled) {
     border-color: var(--border-color);
     background: var(--pickerfield-button-hover-background-color);
     color: var(--pickerfield-button-hover-text-color);
   }
 
-  &:active {
+  &:active:not(.v-disabled) {
     border-color: var(--border-color);
     background: var(--pickerfield-button-active-background-color);
     color: var(--pickerfield-button-active-text-color);
   }
 
-  &:focus {
+  &:focus:not(.v-disabled) {
     border-color: var(--border-color);
   }
 }
@@ -263,5 +276,30 @@
 
   &:focus {
     border-color: var(--border-dim-color);
+  }
+}
+
+@mixin he-pickerfield-button-borderless-style() {
+  border-color: transparent;
+  background: transparent;
+
+  &:not(.v-disabled) {
+    color: var(--pickerfield-button-text-color);
+  }
+
+  &:hover:not(.v-disabled) {
+    color: var(--pickerfield-button-hover-text-color);
+    border-color: transparent;
+    background: transparent;
+  }
+
+  &:active:not(.v-disabled) {
+    color: var(--pickerfield-button-active-text-color);
+    border-color: transparent;
+    background: var(--pickerfield-button-active-background-color);
+  }
+
+  &.v-disabled:active {
+    background: transparent;
   }
 }

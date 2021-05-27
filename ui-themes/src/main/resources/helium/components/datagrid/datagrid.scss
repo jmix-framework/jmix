@@ -225,9 +225,33 @@
   .#{$primary-stylename}-editor-cells > div {
     background: var(--grid-background-color);
 
-    // TODO: gg, style other components
     .v-button.jmix-pickerfield-button {
       border-left: he-border($color: --border-dim-color);
+    }
+
+    .v-filterselect-button:active {
+      border-radius: 0;
+    }
+
+    .jmix-datefield-layout {
+      .jmix-datefield {
+        [class*="textfield"] {
+          border: none;
+
+          &.v-datefield-textfield {
+            padding-right: ceil($v-unit-size / 3);
+            padding-left: $v-unit-size;
+          }
+        }
+
+        [class*="button"] {
+          @include he-datefield-button-borderless-style();
+        }
+      }
+
+      .jmix-timefield {
+        border-left: he-border($color: --border-dim-color);
+      }
     }
   }
 

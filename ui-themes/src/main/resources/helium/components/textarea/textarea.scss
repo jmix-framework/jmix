@@ -21,16 +21,16 @@
 
   .#{$primary-stylename}.v-readonly,
   .#{$primary-stylename}-readonly {
-    @include he-input-readonly-style;
+    @include he-input-readonly-style();
   }
 
   .#{$primary-stylename}.v-disabled {
-    @include he-input-disabled-style;
+    @include he-input-disabled-style();
   }
 
   .#{$primary-stylename}-error,
   .#{$primary-stylename}-error-error {
-    @include he-input-error-style;
+    @include he-input-error-style();
   }
 
   .jmix-resizabletextarea-wrapper-error {
@@ -38,6 +38,11 @@
       @include he-input-error-style();
       color: var(--text-secondary-color);
     }
+  }
+
+  .#{$primary-stylename}.borderless,
+  .#{$primary-stylename}-borderless {
+    @include he-textfield-borderless-style();
   }
 
   /* Global size */

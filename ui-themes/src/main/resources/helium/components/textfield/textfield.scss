@@ -36,6 +36,11 @@
     @include he-input-error-style();
   }
 
+  .#{$primary-stylename}.borderless,
+  .#{$primary-stylename}-borderless {
+    @include he-textfield-borderless-style();
+  }
+
   /* Global size */
 
   &.small .#{$primary-stylename} {
@@ -142,4 +147,11 @@
   &:focus {
     @include he-focus-style(--error-color);
   }
+}
+
+@mixin he-textfield-borderless-style() {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  @include box-shadow(none);
 }

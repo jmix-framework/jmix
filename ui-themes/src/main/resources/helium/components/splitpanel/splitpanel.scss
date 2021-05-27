@@ -77,6 +77,21 @@ $he-splitpanel-dock-button-thickness: round($v-unit-size / 3) !default;
     }
   }
 
+  .#{$primary-stylename}-horizontal.splitter-large > div > .#{$primary-stylename}-hsplitter,
+  .#{$primary-stylename}-vertical.splitter-large > div > .#{$primary-stylename}-vsplitter {
+    div {
+      &:before {
+        background: var(--splitpanel-splitter-large-background-color);
+        border: he-border($color: --splitpanel-splitter-large-border-color);
+        border-radius: var(--splitpanel-splitter-large-border-radius);
+      }
+
+      &:after {
+        border: he-border($color: --splitpanel-splitter-large-handle-color, $strength: 0.6px);
+      }
+    }
+  }
+
   $border-width: first-number(he-border());
   .jmix-splitpanel-dock-button,
   .jmix-splitpanel-dock-button-vertical {

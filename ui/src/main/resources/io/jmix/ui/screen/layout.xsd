@@ -864,8 +864,6 @@
                     <xs:enumeration value="no-horizontal-lines"/>
                     <xs:enumeration value="no-header"/>
                     <xs:enumeration value="borderless"/>
-                    <xs:enumeration value="compact"/>
-                    <xs:enumeration value="small"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:union>

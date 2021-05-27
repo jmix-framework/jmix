@@ -158,6 +158,33 @@
     padding: 0;
     width: $unit-size;
   }
+
+  &.icon-align-top {
+    height: auto;
+    padding-top: ceil($unit-size/9);
+    padding-bottom: ceil($unit-size/9);
+
+    .v-icon {
+      margin-left: auto;
+      margin-right: auto;
+
+      + span:not(:empty) {
+        margin-top: ceil($unit-size/6);
+        margin-left: 0;
+      }
+    }
+  }
+
+  &.icon-align-right {
+    .v-icon {
+      $padding-width: ceil($unit-size/2.4);
+      margin-left: $padding-width + ceil($padding-width/-5);
+
+      + span:not(:empty) {
+        margin-left: 0;
+      }
+    }
+  }
 }
 
 @mixin he-button-primary-style() {

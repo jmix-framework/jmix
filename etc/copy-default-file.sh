@@ -1,5 +1,5 @@
 #
-# Copyright 2020 Haulmont.
+# Copyright 2021 Haulmont.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,9 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-io.jmix.security.model/RowLevelPolicyType.JPQL=JPQL
-io.jmix.security.model/RowLevelPolicyType.PREDICATE=Predicate
-io.jmix.security.model/RowLevelPolicyAction.CREATE=Create
-io.jmix.security.model/RowLevelPolicyAction.READ=Read
-io.jmix.security.model/RowLevelPolicyAction.UPDATE=Update
-io.jmix.security.model/RowLevelPolicyAction.DELETE=Delete
+
+#!/bin/sh
+
+mkdir -p ../content/$2
+cp ../../$1/src/main/resources/$2/messages.properties ../content/$2

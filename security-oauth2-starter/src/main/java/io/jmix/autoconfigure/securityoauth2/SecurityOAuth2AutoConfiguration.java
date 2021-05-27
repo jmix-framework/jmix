@@ -18,11 +18,13 @@ package io.jmix.autoconfigure.securityoauth2;
 
 import io.jmix.core.CoreConfiguration;
 import io.jmix.core.JmixOrder;
+import io.jmix.core.security.AuthorizedUrlsProvider;
 import io.jmix.security.SecurityConfiguration;
 import io.jmix.securityoauth2.SecurityOAuth2Configuration;
 import io.jmix.securityoauth2.configurer.OAuth2AuthorizationServerConfigurer;
 import io.jmix.securityoauth2.configurer.OAuth2ResourceServerConfigurer;
 import io.jmix.securityoauth2.impl.UniqueAuthenticationKeyGenerator;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -35,8 +37,6 @@ import org.springframework.security.oauth2.provider.token.store.InMemoryTokenSto
 
 @Configuration
 @Import({CoreConfiguration.class, SecurityConfiguration.class, SecurityOAuth2Configuration.class})
-@EnableResourceServer
-@EnableAuthorizationServer
 public class SecurityOAuth2AutoConfiguration {
     @Bean(name = "sec_TokenStore")
     @ConditionalOnMissingBean(TokenStore.class)
@@ -47,11 +47,15 @@ public class SecurityOAuth2AutoConfiguration {
     }
 
     @Configuration(proxyBeanMethods = false)
+    @EnableAuthorizationServer
+    @ConditionalOnBean(AuthorizedUrlsProvider.class)
     @Order(JmixOrder.HIGHEST_PRECEDENCE + 100)
     public static class Oauth2AuthorizationServerConfiguration extends OAuth2AuthorizationServerConfigurer {
     }
 
     @Configuration(proxyBeanMethods = false)
+    @EnableResourceServer
+    @ConditionalOnBean(AuthorizedUrlsProvider.class)
     @Order(JmixOrder.HIGHEST_PRECEDENCE + 100)
     public static class Oauth2ResourceServerConfiguration extends OAuth2ResourceServerConfigurer {
     }

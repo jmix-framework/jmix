@@ -56,4 +56,9 @@ public @interface StudioElementsGroup {
      * @return URL of the documentation page
      */
     String documentationURL() default "";
+
+    /**
+     * @return the maximum number of times a group of elements can occur
+     */
+    MaxOccurNumber maxOccurs() default MaxOccurNumber.ONE;
 }

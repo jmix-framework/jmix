@@ -20,10 +20,28 @@ import io.jmix.core.DevelopmentException;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.DataLoadCoordinator;
 import io.jmix.ui.component.HasValue;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioProperties;
+import io.jmix.ui.meta.StudioProperty;
 import io.jmix.ui.model.DataLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@StudioElement(
+        caption = "OnComponentValueChanged Trigger",
+        xmlElement = "onComponentValueChanged",
+        icon = "io/jmix/ui/icon/facet/onComponentValueChangedLoadTrigger.svg"
+)
+@StudioProperties(
+        properties = {
+                @StudioProperty(name = "component", type = PropertyType.COMPONENT_REF, required = true,
+                        options = {"io.jmix.ui.component.Component"}),
+                @StudioProperty(name = "param", type = PropertyType.STRING),
+                @StudioProperty(name = "likeClause", type = PropertyType.ENUMERATION, defaultValue = "NONE",
+                        options = {"NONE", "CASE_SENSITIVE", "CASE_INSENSITIVE"})
+        }
+)
 public class OnComponentValueChangedLoadTrigger implements DataLoadCoordinator.Trigger {
 
     private final DataLoader loader;

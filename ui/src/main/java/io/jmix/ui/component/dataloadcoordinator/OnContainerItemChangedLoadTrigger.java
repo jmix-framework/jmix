@@ -17,9 +17,24 @@
 package io.jmix.ui.component.dataloadcoordinator;
 
 import io.jmix.ui.component.DataLoadCoordinator;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioProperties;
+import io.jmix.ui.meta.StudioProperty;
 import io.jmix.ui.model.DataLoader;
 import io.jmix.ui.model.InstanceContainer;
 
+@StudioElement(
+        caption = "OnContainerItemChanged Trigger",
+        xmlElement = "onContainerItemChanged",
+        icon = "io/jmix/ui/icon/facet/onContainerItemChangedLoadTrigger.svg"
+)
+@StudioProperties(
+        properties = {
+                @StudioProperty(name = "container", type = PropertyType.DATACONTAINER_REF, required = true),
+                @StudioProperty(name = "param", type = PropertyType.STRING)
+        }
+)
 public class OnContainerItemChangedLoadTrigger implements DataLoadCoordinator.Trigger {
 
     private final DataLoader loader;

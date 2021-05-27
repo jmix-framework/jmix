@@ -24,7 +24,7 @@ import io.jmix.ui.sys.UiControllerReflectionInspector;
 import java.lang.invoke.MethodHandle;
 import java.util.function.Consumer;
 
-public class OnFrameOwnerEventLoadTrigger implements DataLoadCoordinator.Trigger {
+public abstract class OnFrameOwnerEventLoadTrigger implements DataLoadCoordinator.Trigger {
 
     private final DataLoader loader;
 

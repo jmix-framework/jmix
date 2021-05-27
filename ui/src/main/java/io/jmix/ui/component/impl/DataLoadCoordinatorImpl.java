@@ -19,14 +19,15 @@ package io.jmix.ui.component.impl;
 import com.google.common.base.Strings;
 import io.jmix.core.DevelopmentException;
 import io.jmix.core.querycondition.Condition;
-import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.core.querycondition.JpqlCondition;
+import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.DataLoadCoordinator;
 import io.jmix.ui.component.Frame;
 import io.jmix.ui.component.dataloadcoordinator.OnComponentValueChangedLoadTrigger;
 import io.jmix.ui.component.dataloadcoordinator.OnContainerItemChangedLoadTrigger;
-import io.jmix.ui.component.dataloadcoordinator.OnFrameOwnerEventLoadTrigger;
+import io.jmix.ui.component.dataloadcoordinator.OnFragmentEventLoadTrigger;
+import io.jmix.ui.component.dataloadcoordinator.OnScreenEventLoadTrigger;
 import io.jmix.ui.model.DataLoader;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.model.ScreenData;
@@ -82,8 +83,12 @@ public class DataLoadCoordinatorImpl extends AbstractFacet implements DataLoadCo
 
     @Override
     public void addOnFrameOwnerEventLoadTrigger(DataLoader loader, Class eventClass) {
-        OnFrameOwnerEventLoadTrigger loadTrigger = new OnFrameOwnerEventLoadTrigger(getFrameOwner(), reflectionInspector, loader, eventClass);
-        triggers.add(loadTrigger);
+        if (getFrameOwner() instanceof Screen) {
+            triggers.add(new OnScreenEventLoadTrigger((Screen) getFrameOwner(), reflectionInspector, loader, eventClass));
+        } else if (getFrameOwner() instanceof ScreenFragment) {
+            triggers.add(new OnFragmentEventLoadTrigger((ScreenFragment) getFrameOwner(), reflectionInspector, loader,
+                    eventClass));
+        }
     }
 
     @Override

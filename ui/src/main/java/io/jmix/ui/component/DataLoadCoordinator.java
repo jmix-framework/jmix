@@ -16,6 +16,12 @@
 
 package io.jmix.ui.component;
 
+import io.jmix.ui.meta.MaxOccurNumber;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioElementsGroup;
+import io.jmix.ui.meta.StudioFacet;
+import io.jmix.ui.meta.StudioProperties;
+import io.jmix.ui.meta.StudioProperty;
 import io.jmix.ui.model.DataLoader;
 import io.jmix.ui.model.InstanceContainer;
 
@@ -26,6 +32,15 @@ import java.util.List;
  * Controls triggering of data loaders and provides support for automatic linking data loaders to data containers
  * and visual components.
  */
+@StudioFacet(
+        xmlElement = "dataLoadCoordinator",
+        caption = "DataLoadCoordinator",
+        category = "Facets",
+        description = "Controls triggering of data loaders and provides support for automatic linking data loaders to " +
+                "data containers and visual components",
+        defaultProperty = "id",
+        icon = "io/jmix/ui/icon/facet/dataLoadCoordinator.svg"
+)
 public interface DataLoadCoordinator extends Facet {
 
     String DEFAULT_CONTAINER_PREFIX = "container_";
@@ -34,16 +49,19 @@ public interface DataLoadCoordinator extends Facet {
     /**
      * Sets parameter prefix to denote a data container.
      */
+    @StudioProperty(name = "containerPrefix", defaultValue = DEFAULT_CONTAINER_PREFIX)
     void setContainerPrefix(String value);
 
     /**
      * Sets parameter prefix to denote a visual component.
      */
+    @StudioProperty(name = "componentPrefix", defaultValue = DEFAULT_COMPONENT_PREFIX)
     void setComponentPrefix(String value);
 
     /**
      * Adds trigger on screen/fragment event.
-     *  @param loader loader
+     *
+     * @param loader     loader
      * @param eventClass event class
      */
     void addOnFrameOwnerEventLoadTrigger(DataLoader loader, Class eventClass);
@@ -51,18 +69,18 @@ public interface DataLoadCoordinator extends Facet {
     /**
      * Adds trigger on data container {@code ItemChangeEvent}.
      *
-     * @param loader loader
+     * @param loader    loader
      * @param container master data container
-     * @param param loader parameter
+     * @param param     loader parameter
      */
     void addOnContainerItemChangedLoadTrigger(DataLoader loader, InstanceContainer container, @Nullable String param);
 
     /**
      * Adds trigger on visual component {@code ValueChangeEvent}.
      *
-     * @param loader loader
-     * @param component component which must implement {@code HasValue}
-     * @param param loader parameter
+     * @param loader     loader
+     * @param component  component which must implement {@code HasValue}
+     * @param param      loader parameter
      * @param likeClause whether the condition using the parameter is a LIKE clause
      */
     void addOnComponentValueChangedLoadTrigger(DataLoader loader, Component component, @Nullable String param, LikeClause likeClause);
@@ -71,11 +89,22 @@ public interface DataLoadCoordinator extends Facet {
      * Configures triggers automatically relying upon parameter prefixes. All data containers that don't have a prefixed
      * parameter in the query string, are configured to be triggered on {@code BeforeShowEvent} or {@code AttachEvent}.
      */
+    @StudioProperty(name = "auto", type = PropertyType.BOOLEAN, defaultValue = "false", initialValue = "true")
     void configureAutomatically();
 
     /**
      * Returns configured triggers.
      */
+    @StudioElementsGroup(caption = "Refresh",
+            xmlElement = "refresh",
+            icon = "io/jmix/ui/icon/facet/refresh.svg",
+            maxOccurs = MaxOccurNumber.UNBOUNDED
+    )
+    @StudioProperties(
+            properties = {
+                    @StudioProperty(name = "loader", type = PropertyType.DATALOADER_REF, required = true)
+            }
+    )
     List<Trigger> getTriggers();
 
     /**

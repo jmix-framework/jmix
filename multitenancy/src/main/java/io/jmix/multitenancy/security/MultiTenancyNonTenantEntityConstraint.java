@@ -60,7 +60,9 @@ public class MultiTenancyNonTenantEntityConstraint implements EntityOperationCon
             if (authentication.getAuthentication() == null || authentication.getAuthentication().getDetails() == null) {
                 return;
             }
-            String tenantId = ((ClientDetails) authentication.getAuthentication().getDetails()).getTenantId();
+            //TODO:compile
+            String tenantId = null;
+            //String tenantId = ((ClientDetails) authentication.getAuthentication().getDetails()).getTenantId();
             Tenant tenant = tenantRepository.findTenantById(tenantId);
             if (tenant == null) {
                 return;
@@ -73,7 +75,9 @@ public class MultiTenancyNonTenantEntityConstraint implements EntityOperationCon
     }
 
     private void createReadOnlyPermitForNonTenantEntity(UiEntityContext context) {
-        String tenantIdPropertyName = metadataTools.findTenantIdProperty(context.getEntityClass().getJavaClass());
+        //TODO:compile
+        String tenantIdPropertyName = null;
+        //String tenantIdPropertyName = metadataTools.findTenantIdProperty(context.getEntityClass().getJavaClass());
         if (tenantIdPropertyName == null) {
             context.setCreateDenied();
             context.setDeleteDenied();

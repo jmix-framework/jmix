@@ -33,7 +33,8 @@ public class MultitenancyCurrentAuthenticationImpl extends CurrentAuthentication
             Object details = authentication.getDetails();
             String tenantId = null;
             if (details instanceof ClientDetails) {
-                tenantId = ((ClientDetails) details).getTenantId();
+                //TODO: compile
+                //tenantId = ((ClientDetails) details).getTenantId();
             }
             return tenantId;
         }

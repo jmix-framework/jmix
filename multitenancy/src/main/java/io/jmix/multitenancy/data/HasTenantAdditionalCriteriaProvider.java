@@ -18,7 +18,6 @@ package io.jmix.multitenancy.data;
 
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
-import io.jmix.core.TenantEntityOperation;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.eclipselink.persistence.AdditionalCriteriaProvider;
@@ -38,16 +37,19 @@ public class HasTenantAdditionalCriteriaProvider implements AdditionalCriteriaPr
     private static final String TENANT_ID = "tenantId";
 
     private final TenantProvider tenantProvider;
-    private final TenantEntityOperation tenantEntityOperation;
+    //TODO: compile
+    //private final TenantEntityOperation tenantEntityOperation;
     private final Metadata metadata;
     private final MetadataTools metadataTools;
 
     public HasTenantAdditionalCriteriaProvider(TenantProvider tenantProvider,
-                                               TenantEntityOperation tenantEntityOperation,
+                                               //TODO: compile
+                                               //TenantEntityOperation tenantEntityOperation,
                                                Metadata metadata,
                                                MetadataTools metadataTools) {
         this.tenantProvider = tenantProvider;
-        this.tenantEntityOperation = tenantEntityOperation;
+        //TODO: compile
+        //this.tenantEntityOperation = tenantEntityOperation;
         this.metadata = metadata;
         this.metadataTools = metadataTools;
     }
@@ -56,7 +58,9 @@ public class HasTenantAdditionalCriteriaProvider implements AdditionalCriteriaPr
     public boolean requiresAdditionalCriteria(Class<?> entityClass) {
         MetaClass metaClass = metadata.getClass(entityClass);
         if (entityClass.equals(metaClass.getJavaClass())) {
-            return metadataTools.findTenantIdProperty(entityClass) != null;
+            //TODO: compile
+            return false;
+            //return metadataTools.findTenantIdProperty(entityClass) != null;
         } else {
             return false;
         }
@@ -64,7 +68,9 @@ public class HasTenantAdditionalCriteriaProvider implements AdditionalCriteriaPr
 
     @Override
     public String getAdditionalCriteria(Class<?> entityClass) {
-        MetaProperty metaProperty = tenantEntityOperation.getTenantMetaProperty(entityClass);
+        //TODO: compile
+        MetaProperty metaProperty = null;
+        //MetaProperty metaProperty = tenantEntityOperation.getTenantMetaProperty(entityClass);
         return String.format("(:tenantId = '%s' or this.%s = :tenantId)", TenantProvider.NO_TENANT, metaProperty.getName());
     }
 

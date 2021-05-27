@@ -42,8 +42,9 @@ public class TenantEntityPersistingListener {
     public void beforePersist(EntitySavingEvent event) {
         Object entity = event.getEntity();
         String tenantId = tenantProvider.getCurrentUserTenantId();
-        if (metadataTools.findTenantIdProperty(entity.getClass()) != null && !tenantId.equals(TenantProvider.NO_TENANT)) {
-            tenantEntityOperation.setTenant(entity, tenantId);
-        }
+        //TODO: compile
+//        if (metadataTools.findTenantIdProperty(entity.getClass()) != null && !tenantId.equals(TenantProvider.NO_TENANT)) {
+//            tenantEntityOperation.setTenant(entity, tenantId);
+//        }
     }
 }

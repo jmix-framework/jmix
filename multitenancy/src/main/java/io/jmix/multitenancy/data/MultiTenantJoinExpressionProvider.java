@@ -81,7 +81,8 @@ public class MultiTenantJoinExpressionProvider extends AbstractJoinExpressionPro
     }
 
     private boolean isMultiTenant(Class<?> referenceClass) {
-        return metadataTools.findTenantIdProperty(referenceClass) != null;
+        //return metadataTools.findTenantIdProperty(referenceClass) != null;
+        return false;
     }
 
     private Field getTenantField(Class<?> referenceClass) {

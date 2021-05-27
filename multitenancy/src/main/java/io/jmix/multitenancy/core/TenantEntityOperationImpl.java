@@ -18,7 +18,6 @@ package io.jmix.multitenancy.core;
 
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
-import io.jmix.core.TenantEntityOperation;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -35,7 +34,7 @@ import javax.annotation.Nullable;
  * Helper for working with Tenant.
  */
 @Component("mten_TenantEntityOperation")
-public class TenantEntityOperationImpl implements TenantEntityOperation {
+public class TenantEntityOperationImpl {
 
     private static final Logger log = LoggerFactory.getLogger(TenantEntityOperationImpl.class);
 
@@ -62,7 +61,9 @@ public class TenantEntityOperationImpl implements TenantEntityOperation {
      */
     public MetaProperty getTenantMetaProperty(Class<?> entityClass) {
         MetaClass metaClass = metadata.getClass(entityClass);
-        String tenantIdNameProperty = metadataTools.findTenantIdProperty(metaClass.getJavaClass());
+        //TODO: compile
+        String tenantIdNameProperty = null;
+        //String tenantIdNameProperty = metadataTools.findTenantIdProperty(metaClass.getJavaClass());
         if (tenantIdNameProperty == null) {
             log.warn("Entity {} does not have an field marked @TenantId annotation", metaClass.getName());
             return null;
@@ -118,7 +119,6 @@ public class TenantEntityOperationImpl implements TenantEntityOperation {
     }
 
     @Nullable
-    @Override
     public String getTenantIdByUsername(String username) {
         return tenantAssigmentRepository.findAssigmentByUsername(username).map(tenantAssigmentEntity -> tenantAssigmentEntity.getTenant().getTenantId()).orElse(null);
     }

@@ -60,7 +60,9 @@ public class MultiTenancyAttributeConstraint implements EntityOperationConstrain
             if (authentication.getAuthentication() == null || authentication.getAuthentication().getDetails() == null) {
                 return;
             }
-            String tenantId = ((ClientDetails) authentication.getAuthentication().getDetails()).getTenantId();
+            //TODO: compile
+            //String tenantId = ((ClientDetails) authentication.getAuthentication().getDetails()).getTenantId();
+            String tenantId = null;
             Tenant tenant = tenantRepository.findTenantById(tenantId);
             if (tenant == null) {
                 return;
@@ -73,7 +75,9 @@ public class MultiTenancyAttributeConstraint implements EntityOperationConstrain
     }
 
     private void addHideTenantIdPermission(UiEntityAttributeContext context) {
-        String tenantIdPropertyName = metadataTools.findTenantIdProperty(context.getPropertyPath().getMetaClass().getJavaClass());
+        String tenantIdPropertyName = null;
+        //TODO: compile
+        //String tenantIdPropertyName = metadataTools.findTenantIdProperty(context.getPropertyPath().getMetaClass().getJavaClass());
         if (context.getPropertyPath().getMetaProperty().getName().equals(tenantIdPropertyName)) {
             context.setViewDenied();
             context.setModifyDenied();

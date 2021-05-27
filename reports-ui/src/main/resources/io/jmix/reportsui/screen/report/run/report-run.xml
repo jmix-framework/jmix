@@ -53,6 +53,7 @@
                             caption="msg://report.reportFilterButton"
                             align="BOTTOM_LEFT"
                             icon="SEARCH"
+                            shortcut="SHIFT-ENTER"
                             width="100px"/>
                 </row>
                 <row>

@@ -112,14 +112,6 @@ public class ReportRun extends StandardLookup<Report> {
         for (Report report : reports) {
             reportsDc.getMutableItems().add(report);
         }
-
-        //TODO shortcut
-//        Action applyAction = new BaseAction("applyFilter")
-//                .withShortcut(clientConfig.getFilterApplyShortcut())
-//                .withHandler(e -> {
-//                    filterReports();
-//                });
-//        reportsTable.addAction(applyAction);
     }
 
     @Subscribe("reportsTable.runReport")

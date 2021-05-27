@@ -28,7 +28,10 @@ dependencies {
 
     // todo move to bom
     implementation 'com.graphql-java:graphql-java:16.2'
-    implementation 'com.graphql-java-kickstart:graphql-java-servlet:11.1.0'
+
+    implementation ('com.graphql-java-kickstart:graphql-java-servlet:11.1.0') {
+        exclude group: 'javax.websocket', module: 'javax.websocket-api'
+    }
 
     testImplementation 'org.spockframework:spock-core'
     testImplementation 'org.spockframework:spock-spring'

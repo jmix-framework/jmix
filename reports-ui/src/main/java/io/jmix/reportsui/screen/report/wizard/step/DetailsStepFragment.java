@@ -39,6 +39,7 @@ import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.screen.Subscribe;
 import io.jmix.ui.screen.UiController;
 import io.jmix.ui.screen.UiDescriptor;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -115,9 +116,8 @@ public class DetailsStepFragment extends StepFragment {
     public void onReportTypeGenerateValueChange(HasValue.ValueChangeEvent<ReportTypeGenerate> event) {
         ReportData reportData = reportDataDc.getItem();
         ReportTypeGenerate currentType = event.getValue();
-        ReportTypeGenerate prevType = event.getPrevValue();
 
-        if (!isListOfEntityWithQuery(currentType) && isListOfEntityWithQuery(prevType)) {
+        if (CollectionUtils.isNotEmpty(reportRegionsDc.getItems())) {
             dialogs.createOptionDialog()
                     .withCaption(messages.getMessage("dialogs.Confirmation"))
                     .withMessage(messages.getMessage(getClass(), "regionsClearConfirm"))
@@ -128,10 +128,6 @@ public class DetailsStepFragment extends StepFragment {
         } else {
             updateReportTypeGenerate(reportData, currentType);
         }
-    }
-
-    protected boolean isListOfEntityWithQuery(ReportTypeGenerate currentType) {
-        return ReportTypeGenerate.LIST_OF_ENTITIES_WITH_QUERY.equals(currentType);
     }
 
     protected void updateReportTypeGenerate(ReportData reportData, ReportTypeGenerate reportTypeGenerate) {
@@ -147,7 +143,7 @@ public class DetailsStepFragment extends StepFragment {
         MetaClass currentMetaClass = event.getValue();
         MetaClass prevMetaClass = event.getPrevValue();
 
-        if (prevMetaClass != null && currentMetaClass != null) {
+        if (CollectionUtils.isNotEmpty(reportRegionsDc.getItems())) {
             dialogs.createOptionDialog()
                     .withCaption(messages.getMessage("dialogs.Confirmation"))
                     .withMessage(messages.getMessage(getClass(), "regionsClearConfirm"))

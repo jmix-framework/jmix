@@ -60,5 +60,25 @@ public enum CanvasBehaviour {
     /**
      * Component is shown on canvas as a richTextArea.
      */
-    RICH_TEXT_AREA
+    RICH_TEXT_AREA,
+
+    /**
+     * Component is shown on canvas as a calendar.
+     */
+    CALENDAR,
+
+    /**
+     * Component is shown on canvas as a label.
+     */
+    LABEL,
+
+    /**
+     * Component is shown on canvas as a link.
+     */
+    LINK,
+
+    /**
+     * Component is shown on canvas as a slider.
+     */
+    SLIDER
 }

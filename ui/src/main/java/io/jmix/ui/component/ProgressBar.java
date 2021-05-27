@@ -16,6 +16,9 @@
 package io.jmix.ui.component;
 
 import io.jmix.ui.component.data.HasValueSource;
+import io.jmix.ui.meta.CanvasIconSize;
+import io.jmix.ui.meta.StudioComponent;
+import io.jmix.ui.meta.StudioProperty;
 
 /**
  * Progress bar is a component that visually displays the progress of some task.
@@ -24,6 +27,14 @@ import io.jmix.ui.component.data.HasValueSource;
  * <br>
  * To indicate that a task of unknown length is executing, you can put a progress bar into indeterminate mode.
  */
+@StudioComponent(
+        caption = "ProgressBar",
+        category = "Components",
+        xmlElement = "progressBar",
+        icon = "io/jmix/ui/icon/component/progressBar.svg",
+        canvasIconSize = CanvasIconSize.LARGE,
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/progress-bar.html"
+)
 public interface ProgressBar extends Component, Component.BelongToFrame,
         HasValue<Double>, HasValueSource<Double>,
         Component.HasIcon, Component.HasCaption, HasContextHelp, HasHtmlCaption, HasHtmlDescription, HasHtmlSanitizer {
@@ -31,5 +42,7 @@ public interface ProgressBar extends Component, Component.BelongToFrame,
     String NAME = "progressBar";
 
     boolean isIndeterminate();
+
+    @StudioProperty(defaultValue = "false")
     void setIndeterminate(boolean indeterminate);
 }

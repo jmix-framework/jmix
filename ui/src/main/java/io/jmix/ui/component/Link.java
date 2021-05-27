@@ -16,21 +16,39 @@
 
 package io.jmix.ui.component;
 
+import io.jmix.ui.meta.CanvasBehaviour;
+import io.jmix.ui.meta.StudioComponent;
+import io.jmix.ui.meta.StudioProperty;
+
 import javax.annotation.Nullable;
 
 /**
  * HTML link component.
  */
+@StudioComponent(
+        caption = "Link",
+        category = "Components",
+        xmlElement = "link",
+        icon = "io/jmix/ui/icon/component/link.svg",
+        canvasBehaviour = CanvasBehaviour.LINK,
+        canvasText = "New Link",
+        canvasTextProperty = "caption",
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/link.html"
+)
 public interface Link extends Component, Component.HasCaption, Component.BelongToFrame, Component.HasIcon,
         HasHtmlCaption, HasHtmlDescription, HasHtmlSanitizer {
 
     String NAME = "link";
 
+    @StudioProperty
     void setUrl(String url);
+
     @Nullable
     String getUrl();
 
+    @StudioProperty
     void setTarget(String target);
+
     String getTarget();
 
     /**
@@ -39,6 +57,7 @@ public interface Link extends Component, Component.HasCaption, Component.BelongT
      *
      * @param rel string value of relation (e.g. noreferrer)
      */
+    @StudioProperty(defaultValue = "noopener noreferrer")
     void setRel(String rel);
 
     /**

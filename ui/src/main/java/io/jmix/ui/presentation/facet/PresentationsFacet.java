@@ -63,6 +63,7 @@ public interface PresentationsFacet extends Facet {
      */
     @StudioCollection(xmlElement = "components",
             itemXmlElement = "component",
+            itemCaption = "Component Id",
             itemProperties = {
                     @StudioProperty(name = "id", type = PropertyType.COMPONENT_REF, required = true,
                             options = {"io.jmix.ui.component.HasTablePresentations"})

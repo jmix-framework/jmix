@@ -191,5 +191,10 @@ public enum PropertyType {
     /**
      * Standard launch modes of {@link Screen}s.
      */
-    SCREEN_OPEN_MODE
+    SCREEN_OPEN_MODE,
+
+    /**
+     * Date format.
+     */
+    DATE_FORMAT
 }

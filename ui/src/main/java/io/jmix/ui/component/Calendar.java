@@ -20,8 +20,18 @@ import io.jmix.core.common.event.Subscription;
 import io.jmix.ui.component.calendar.CalendarEvent;
 import io.jmix.ui.component.calendar.CalendarEventProvider;
 import io.jmix.ui.component.calendar.ContainerCalendarEventProvider;
+import io.jmix.ui.meta.CanvasBehaviour;
+import io.jmix.ui.meta.PropertiesConstraint;
+import io.jmix.ui.meta.PropertiesGroup;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioCollection;
+import io.jmix.ui.meta.StudioComponent;
+import io.jmix.ui.meta.StudioProperties;
+import io.jmix.ui.meta.StudioProperty;
 
 import javax.annotation.Nullable;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.time.DayOfWeek;
 import java.time.Month;
 import java.util.EventObject;
@@ -34,6 +44,43 @@ import java.util.function.Consumer;
  *
  * @param <V> type of value
  */
+@StudioComponent(
+        caption = "Calendar",
+        category = "Components",
+        xmlElement = "calendar",
+        icon = "io/jmix/ui/icon/component/calendar.svg",
+        canvasBehaviour = CanvasBehaviour.CALENDAR,
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/calendar.html"
+)
+@StudioProperties(
+        properties = {
+                @StudioProperty(name = "dataContainer", type = PropertyType.DATACONTAINER_REF),
+                @StudioProperty(name = "captionProperty", type = PropertyType.PROPERTY_PATH_REF, options = "string"),
+                @StudioProperty(name = "descriptionProperty", type = PropertyType.PROPERTY_PATH_REF, options = "string"),
+                @StudioProperty(name = "stylenameProperty", type = PropertyType.PROPERTY_PATH_REF, options = "string"),
+                @StudioProperty(name = "isAllDayProperty", type = PropertyType.PROPERTY_PATH_REF, options = "boolean"),
+                @StudioProperty(name = "startDateProperty", type = PropertyType.PROPERTY_PATH_REF,
+                        options = {"date", "dateTime", "localDate", "localDateTime", "offsetDateTime"}),
+                @StudioProperty(name = "endDateProperty", type = PropertyType.PROPERTY_PATH_REF,
+                        options = {"date", "dateTime", "localDate", "localDateTime", "offsetDateTime"}),
+                @StudioProperty(name = "datatype", type = PropertyType.DATATYPE_ID, options = {"date", "dateTime",
+                        "localDate", "localDateTime", "offsetDateTime"})
+        },
+        groups = {
+                @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                        properties = {"dataContainer", "captionProperty"}),
+                @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                        properties = {"dataContainer", "descriptionProperty"}),
+                @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                        properties = {"dataContainer", "stylenameProperty"}),
+                @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                        properties = {"dataContainer", "isAllDayProperty"}),
+                @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                        properties = {"dataContainer", "startDateProperty"}),
+                @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                        properties = {"dataContainer", "endDateProperty"})
+        }
+)
 public interface Calendar<V> extends Component.BelongToFrame, Component.HasCaption, Component.HasIcon,
         HasContextHelp, HasHtmlCaption, HasHtmlDescription, HasDatatype<V>, HasHtmlSanitizer {
 
@@ -42,6 +89,7 @@ public interface Calendar<V> extends Component.BelongToFrame, Component.HasCapti
     /**
      * Set start date for the calendar range.
      */
+    @StudioProperty(name = "startDate", type = PropertyType.DATE)
     void setStartDate(@Nullable V date);
 
     /**
@@ -53,6 +101,7 @@ public interface Calendar<V> extends Component.BelongToFrame, Component.HasCapti
     /**
      * Set end date for the calendar's range.
      */
+    @StudioProperty(name = "endDate", type = PropertyType.DATE)
     void setEndDate(@Nullable V date);
 
     /**
@@ -74,6 +123,7 @@ public interface Calendar<V> extends Component.BelongToFrame, Component.HasCapti
     /**
      * Set format for time. 12H/24H.
      */
+    @StudioProperty(name = "timeFormat", type = PropertyType.ENUMERATION, defaultValue = "24H", options = {"12H", "24H"})
     void setTimeFormat(TimeFormat format);
 
     /**
@@ -84,6 +134,9 @@ public interface Calendar<V> extends Component.BelongToFrame, Component.HasCapti
     /**
      * Set first day of the week to show.
      */
+    @StudioProperty(name = "firstVisibleDayOfWeek", defaultValue = "1")
+    @Min(value = 1)
+    @Max(value = 7)
     void setFirstVisibleDayOfWeek(int firstDay);
 
     /**
@@ -94,6 +147,9 @@ public interface Calendar<V> extends Component.BelongToFrame, Component.HasCapti
     /**
      * Set last day of the week to show.
      */
+    @StudioProperty(name = "lastVisibleDayOfWeek", defaultValue = "7")
+    @Min(value = 1)
+    @Max(value = 7)
     void setLastVisibleDayOfWeek(int lastDay);
 
     /**
@@ -104,6 +160,9 @@ public interface Calendar<V> extends Component.BelongToFrame, Component.HasCapti
     /**
      * Set first hour of the day to show.
      */
+    @StudioProperty(name = "firstVisibleHourOfDay", defaultValue = "0")
+    @Min(value = 0)
+    @Max(value = 23)
     void setFirstVisibleHourOfDay(int firstHour);
 
     /**
@@ -114,6 +173,9 @@ public interface Calendar<V> extends Component.BelongToFrame, Component.HasCapti
     /**
      * Set last hour of the day to show.
      */
+    @StudioProperty(name = "lastVisibleHourOfDay", defaultValue = "23")
+    @Min(value = 0)
+    @Max(value = 23)
     void setLastVisibleHourOfDay(int lastHour);
 
     /**
@@ -135,6 +197,7 @@ public interface Calendar<V> extends Component.BelongToFrame, Component.HasCapti
     /**
      * Set date caption format for the weekly view.
      */
+    @StudioProperty(name = "weeklyCaptionFormat", type = PropertyType.DATE_FORMAT)
     void setWeeklyCaptionFormat(String dateFormatPattern);
 
     /**
@@ -158,6 +221,7 @@ public interface Calendar<V> extends Component.BelongToFrame, Component.HasCapti
     /**
      * Set visibility for the backward and forward buttons.
      */
+    @StudioProperty(name = "navigationButtonsVisible", defaultValue = "false")
     void setNavigationButtonsVisible(boolean value);
 
     /**
@@ -175,6 +239,16 @@ public interface Calendar<V> extends Component.BelongToFrame, Component.HasCapti
      *
      * @param dayNames {@link DayOfWeek} values matched to localized day names
      */
+    @StudioCollection(xmlElement = "dayNames",
+            itemXmlElement = "day",
+            itemCaption = "Day Name",
+            itemProperties = {
+                    @StudioProperty(name = "dayOfWeek", type = PropertyType.ENUMERATION, options = {
+                            "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY",
+                    }, required = true),
+                    @StudioProperty(name = "value", type = PropertyType.LOCALIZED_STRING, required = true)
+            }
+    )
     void setDayNames(Map<DayOfWeek, String> dayNames);
 
     /**
@@ -187,6 +261,17 @@ public interface Calendar<V> extends Component.BelongToFrame, Component.HasCapti
      *
      * @param monthNames {@link Month} values matched to localized month names
      */
+    @StudioCollection(xmlElement = "monthNames",
+            itemXmlElement = "month",
+            itemCaption = "Month Name",
+            itemProperties = {
+                    @StudioProperty(name = "month", type = PropertyType.ENUMERATION, options = {
+                            "JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER",
+                            "OCTOBER", "NOVEMBER", "DECEMBER"
+                    }, required = true),
+                    @StudioProperty(name = "value", type = PropertyType.LOCALIZED_STRING, required = true)
+            }
+    )
     void setMonthNames(Map<Month, String> monthNames);
 
     /**

@@ -16,6 +16,13 @@
 package io.jmix.ui.component;
 
 import io.jmix.ui.component.data.HasValueSource;
+import io.jmix.ui.meta.CanvasBehaviour;
+import io.jmix.ui.meta.PropertiesConstraint;
+import io.jmix.ui.meta.PropertiesGroup;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioComponent;
+import io.jmix.ui.meta.StudioProperties;
+import io.jmix.ui.meta.StudioProperty;
 import org.springframework.core.ParameterizedTypeReference;
 
 import java.math.BigDecimal;
@@ -28,6 +35,27 @@ import java.time.OffsetTime;
  *
  * @param <V> type of value
  */
+@StudioComponent(
+        caption = "Label",
+        category = "Components",
+        xmlElement = "label",
+        icon = "io/jmix/ui/icon/component/label.svg",
+        canvasBehaviour = CanvasBehaviour.LABEL,
+        canvasText = "New Label",
+        canvasTextProperty = "value",
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/label.html"
+)
+@StudioProperties(
+        properties = {
+                @StudioProperty(name = "dataContainer", type = PropertyType.DATACONTAINER_REF),
+                @StudioProperty(name = "property", type = PropertyType.PROPERTY_PATH_REF),
+                @StudioProperty(name = "value", type = PropertyType.LOCALIZED_STRING)
+        },
+        groups = {
+                @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                        properties = {"dataContainer", "property"})
+        }
+)
 public interface Label<V> extends Component, HasValue<V>, HasValueSource<V>, HasFormatter<V>,
         Component.HasDescription, Component.HasIcon, HasContextHelp, HasHtmlDescription, HasHtmlSanitizer {
 
@@ -65,6 +93,8 @@ public interface Label<V> extends Component, HasValue<V>, HasValueSource<V>, Has
             new ParameterizedTypeReference<Label<OffsetTime>>() {};
 
     boolean isHtmlEnabled();
+
+    @StudioProperty(defaultValue = "false")
     void setHtmlEnabled(boolean htmlEnabled);
 
     /**

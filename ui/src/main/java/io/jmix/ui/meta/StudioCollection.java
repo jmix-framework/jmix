@@ -36,6 +36,11 @@ public @interface StudioCollection {
     String itemXmlElement() default "";
 
     /**
+     * @return caption of the collection elements in Studio Screen Designer Palette
+     */
+    String itemCaption() default "";
+
+    /**
      * Specifies URL pointing to the documentation page for the annotated element.
      * Used in <i>Jmix Documentation</i> action in the Studio Screen Designer.<br>
      * If the documentation is version dependent, use %VERSION% as a placeholder.

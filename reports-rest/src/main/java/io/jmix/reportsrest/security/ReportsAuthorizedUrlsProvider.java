@@ -28,10 +28,11 @@ public class ReportsAuthorizedUrlsProvider implements AuthorizedUrlsProvider {
     @Override
     @NonNull
     public Collection<String> getAuthenticatedUrlPatterns() {
-        return Collections.singletonList("/rest/reports/**");
+        return Collections.singletonList("/reports/api/**");
     }
 
     @Override
+    @NonNull
     public Collection<String> getAnonymousUrlPatterns() {
         return Collections.emptyList();
     }

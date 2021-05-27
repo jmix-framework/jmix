@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.IOException;
 
 @RestController("report_ReportRestDocsController")
-@RequestMapping("/reports/v1/docs")
+@RequestMapping("/reports/api/docs")
 public class ReportRestDocsController {
 
     @Autowired

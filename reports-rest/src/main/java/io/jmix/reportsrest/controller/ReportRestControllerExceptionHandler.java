@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-@ControllerAdvice("com.jmix.reportsrest.controller")
+@ControllerAdvice("io.jmix.reportsrest.controller")
 public class ReportRestControllerExceptionHandler {
 
     private static final Logger log = LoggerFactory.getLogger(ReportRestControllerExceptionHandler.class);

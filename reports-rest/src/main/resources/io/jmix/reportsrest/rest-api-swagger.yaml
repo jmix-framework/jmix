@@ -14,7 +14,7 @@ info:
     * Getting report group details
     * Execution of report
 
-    The Reports REST API is available at the URL `/rest/reports/v1` in the web module, e.g. `http://localhost:8080/app/rest/reports/v1/report`
+    The Reports REST API is available at the URL `/reports/api`, e.g. `http://localhost:8080/reports/api/report`
 
   license:
     name: Apache 2.0
@@ -24,7 +24,7 @@ info:
 #                  Host, Base Path, Schemes and Content Types                  #
 ################################################################################
 
-basePath: /app/rest/reports/v1
+basePath: /reports/api
 produces:
   - application/json
 consumes:
@@ -126,7 +126,7 @@ definitions:
               type: boolean
             entityMetaClass:
               type: string
-              example: sec$User
+              example: sec_User
               description: |
                 For ENTITY, ENTITY_LIST type there will be a entity metaclass name here
             enumerationClass:
@@ -170,7 +170,7 @@ definitions:
           properties:
             name:
               type: string
-              description:
+              description: parameter alias
             value:
               type: string
             values:
@@ -206,7 +206,7 @@ securityDefinitions:
   oauth2:
     type: oauth2
     flow: password
-    tokenUrl: http://localhost:8080/app/rest/v2/oauth/token
+    tokenUrl: http://localhost:8080/oauth/token
     scopes:
       rest-api: use REST API
   tokenEndpointBasic:

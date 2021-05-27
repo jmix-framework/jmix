@@ -27,6 +27,8 @@ dependencies {
 
     api 'io.jmix.core:jmix-core'
 
+    compileOnly 'io.jmix.security:jmix-security-oauth2'
+
     api ('com.haulmont.yarg:yarg-api') {
         exclude group: 'org.codehaus.groovy', module: 'groovy-all'
     }

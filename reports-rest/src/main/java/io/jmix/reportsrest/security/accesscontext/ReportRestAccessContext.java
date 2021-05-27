@@ -14,19 +14,14 @@
  * limitations under the License.
  */
 
-package io.jmix.reportsrest;
+package io.jmix.reportsrest.security.accesscontext;
 
-import io.jmix.core.annotation.JmixModule;
-import io.jmix.reports.ReportsConfiguration;
-import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import io.jmix.core.accesscontext.SpecificOperationAccessContext;
 
-@Configuration
-@ComponentScan
-@ConfigurationPropertiesScan
-@EnableWebSecurity
-@JmixModule(dependsOn = ReportsConfiguration.class)
-public class ReportsRestConfiguration {
+public class ReportRestAccessContext extends SpecificOperationAccessContext {
+    public static final String NAME = "reports.rest.enabled";
+
+    public ReportRestAccessContext() {
+        super(NAME);
+    }
 }

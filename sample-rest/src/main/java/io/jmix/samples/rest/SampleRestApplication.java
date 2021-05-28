@@ -16,7 +16,7 @@
 
 package io.jmix.samples.rest;
 
-import io.jmix.core.UnsafeDataManager;
+import io.jmix.core.UnconstrainedDataManager;
 import io.jmix.core.security.SystemAuthenticator;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +33,7 @@ import javax.sql.DataSource;
 public class SampleRestApplication {
 
     @Autowired
-    protected UnsafeDataManager dataManager;
+    protected UnconstrainedDataManager dataManager;
 
     @Autowired
     SystemAuthenticator authenticator;

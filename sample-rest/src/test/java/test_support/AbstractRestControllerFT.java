@@ -17,7 +17,7 @@
 package test_support;
 
 import io.jmix.core.CoreConfiguration;
-import io.jmix.core.UnsafeDataManager;
+import io.jmix.core.UnconstrainedDataManager;
 import io.jmix.core.security.InMemoryUserRepository;
 import io.jmix.data.DataConfiguration;
 import io.jmix.dynattr.DynAttrMetadata;
@@ -72,7 +72,7 @@ public abstract class AbstractRestControllerFT {
     protected RowLevelRoleRepository rowLevelRoleRepository;
 
     @Autowired
-    protected UnsafeDataManager dataManager;
+    protected UnconstrainedDataManager dataManager;
 
     @Autowired
     protected DynAttrMetadata dynAttrMetadata;

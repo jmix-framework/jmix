@@ -217,5 +217,9 @@ ru=Общие
     <changeSet id="4" author="reports" context="!cuba">
         <dropColumn tableName="REPORT_EXECUTION" columnName="SERVER_ID"/>
     </changeSet>
+    
+    <changeSet id="5" author="reports" context="!cuba">
+        <modifyDataType tableName="REPORT_EXECUTION" columnName="PARAMS" newDataType="clob"/>
+    </changeSet>
 
 </databaseChangeLog>

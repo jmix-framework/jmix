@@ -15,8 +15,7 @@
   -->
 
 <window xmlns="http://jmix.io/schema/ui/window"
-        caption=""
-        messagesPack="io.jmix.datatoolsui.screen.entityinspector">
+        caption="">
     <layout expand="tablesTabSheet" spacing="true">
         <tabSheet id="tablesTabSheet" width="100%">
             <tab id="general" caption="msg://general" spacing="true">

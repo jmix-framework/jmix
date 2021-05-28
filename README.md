@@ -22,6 +22,7 @@ Publish only Russian translation to `.m2`:
 ## Usage
 
 ```groovy
+implementation 'io.jmix.translations:jmix-translations-de'
 implementation 'io.jmix.translations:jmix-translations-fr'
 implementation 'io.jmix.translations:jmix-translations-ru'
 ```

@@ -32,6 +32,7 @@ import io.jmix.ui.screen.UiControllerUtils;
 import io.jmix.ui.xml.layout.ComponentLoader;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
+import org.jetbrains.annotations.Nullable;
 
 public class TreeLoader extends ActionsHolderLoader<Tree> {
 
@@ -73,7 +74,8 @@ public class TreeLoader extends ActionsHolderLoader<Tree> {
             resultComponent.setSelectionMode(Tree.SelectionMode.MULTI);
         }
 
-        loadTreeChildren();
+        loadDataContainer(resultComponent, element);
+        loadCaptionProperty(resultComponent, element);
 
         loadHtmlSanitizerEnabled(resultComponent, element);
 
@@ -88,25 +90,7 @@ public class TreeLoader extends ActionsHolderLoader<Tree> {
         loadRowHeight(resultComponent, element);
     }
 
-    @SuppressWarnings("unchecked")
-    protected void loadTreeChildren() {
-        Element itemsElem = element.element("treechildren");
-
-        loadDataContainer();
-
-        String captionProperty = element.attributeValue("captionProperty");
-        if (captionProperty == null && itemsElem != null) {
-            captionProperty = itemsElem.attributeValue("captionProperty");
-        }
-
-        if (!StringUtils.isEmpty(captionProperty)) {
-            resultComponent.setItemCaptionProvider(
-                    new CaptionAdapter(captionProperty, applicationContext.getBean(Metadata.class), applicationContext.getBean(MetadataTools.class)));
-        }
-    }
-
-    protected void loadDataContainer() {
-        Element itemsElem = element.element("treechildren");
+    protected void loadDataContainer(Tree resultComponent, Element element) {
         String containerId = element.attributeValue("dataContainer");
 
         if (containerId != null) {
@@ -119,11 +103,7 @@ public class TreeLoader extends ActionsHolderLoader<Tree> {
             } else {
                 throw new GuiDevelopmentException("Not a CollectionContainer: " + containerId, context);
             }
-            String hierarchyProperty = element.attributeValue("hierarchyProperty");
-            if (hierarchyProperty == null && itemsElem != null) {
-                // legacy behaviour
-                hierarchyProperty = itemsElem.attributeValue("hierarchyProperty");
-            }
+            String hierarchyProperty = loadHierarchyProperty(element);
 
             if (Strings.isNullOrEmpty(hierarchyProperty)) {
                 throw new GuiDevelopmentException("Tree doesn't have 'hierarchyProperty' attribute of the 'treechildren' element",
@@ -135,6 +115,20 @@ public class TreeLoader extends ActionsHolderLoader<Tree> {
 
             resultComponent.setItems(new ContainerTreeItems(collectionContainer, hierarchyProperty, showOrphans));
         }
+    }
+
+    @Nullable
+    protected String loadHierarchyProperty(Element element) {
+        return element.attributeValue("hierarchyProperty");
+    }
+
+    protected void loadCaptionProperty(Tree resultComponent, Element element) {
+        loadString(element, "captionProperty")
+                .ifPresent(captionProperty ->
+                        resultComponent.setItemCaptionProvider(
+                                new CaptionAdapter(captionProperty,
+                                        applicationContext.getBean(Metadata.class),
+                                        applicationContext.getBean(MetadataTools.class))));
     }
 
     protected void createButtonsPanel(Tree resultComponent, Element element) {

@@ -2464,13 +2464,6 @@
                 <xs:all>
                     <xs:element name="actions" minOccurs="0" type="componentActions"/>
                     <xs:element name="buttonsPanel" minOccurs="0" type="buttonsPanelComponent"/>
-                    <xs:element name="treechildren" minOccurs="0">
-                        <!-- legacy data binding -->
-                        <xs:complexType>
-                            <xs:attributeGroup ref="hasCaptionSource"/>
-                            <xs:attribute name="hierarchyProperty" type="xs:string"/>
-                        </xs:complexType>
-                    </xs:element>
                 </xs:all>
 
                 <xs:attribute name="dataContainer" type="xs:string"/>

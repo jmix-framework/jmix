@@ -2,6 +2,7 @@ package ${packageName};
 
 import com.vaadin.ui.Dependency;
 import io.jmix.core.CoreProperties;
+import io.jmix.core.MessageTools;
 import io.jmix.core.Messages;
 import io.jmix.securityui.authentication.AuthDetails;
 import io.jmix.securityui.authentication.LoginScreenAuthenticationSupport;
@@ -10,6 +11,7 @@ import io.jmix.ui.action.Action;
 import io.jmix.ui.component.*;
 import io.jmix.ui.navigation.Route;
 import io.jmix.ui.screen.*;
+import io.jmix.ui.security.UiLoginProperties;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -44,10 +46,16 @@ public class BrandLoginScreen extends Screen {
     private Messages messages;
 
     @Autowired
+    private MessageTools messageTools;
+
+    @Autowired
     private LoginScreenAuthenticationSupport authenticationSupport;
 
     @Autowired
     private CoreProperties coreProperties;
+
+    @Autowired
+    private UiLoginProperties loginProperties;
 
     @Subscribe
     private void onInit(InitEvent event) {
@@ -59,13 +67,24 @@ public class BrandLoginScreen extends Screen {
     }
 
     private void initLocalesField() {
-        localesField.setOptionsMap(coreProperties.getAvailableLocales());
-        localesField.setValue(coreProperties.getAvailableLocales().values().iterator().next());
+        localesField.setOptionsMap(messageTools.getAvailableLocalesMap());
+        localesField.setValue(coreProperties.getAvailableLocales().get(0));
     }
 
     private void initDefaultCredentials() {
-        usernameField.setValue("admin");
-        passwordField.setValue("admin");
+        String defaultUsername = loginProperties.getDefaultUsername();
+        if (!StringUtils.isBlank(defaultUsername) && !"<disabled>".equals(defaultUsername)) {
+            usernameField.setValue(defaultUsername);
+        } else {
+            usernameField.setValue("");
+        }
+
+        String defaultPassword = loginProperties.getDefaultPassword();
+        if (!StringUtils.isBlank(defaultPassword) && !"<disabled>".equals(defaultPassword)) {
+            passwordField.setValue(defaultPassword);
+        } else {
+            passwordField.setValue("");
+        }
     }
 
     @Subscribe("submit")

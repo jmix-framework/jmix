@@ -25,6 +25,7 @@ import io.jmix.ui.UiConfiguration
 import io.jmix.ui.screen.UiControllerUtils
 import io.jmix.ui.testassist.spec.ScreenSpecification
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Unroll
 import test_support.UiTestConfiguration
@@ -40,9 +41,19 @@ class CompositionScreensTest extends ScreenSpecification {
     @Autowired
     DataManager dataManager
 
+    @Autowired
+    JdbcTemplate jdbcTemplate
+
     @Override
     void setup() {
         exportScreensPackages(['data_context.screen'])
+    }
+
+    @Override
+    void cleanup() {
+        jdbcTemplate.update("delete from TEST_ORDER_LINE_PARAM")
+        jdbcTemplate.update("delete from TEST_ORDER_LINE")
+        jdbcTemplate.update("delete from TEST_ORDER")
     }
 
     @Unroll

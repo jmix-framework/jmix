@@ -24,6 +24,7 @@ import io.jmix.eclipselink.EclipselinkConfiguration
 import io.jmix.ui.UiConfiguration
 import io.jmix.ui.testassist.spec.ScreenSpecification
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.ContextConfiguration
 import test_support.UiTestConfiguration
 import test_support.entity.sales.OrderLine
@@ -35,11 +36,19 @@ class BulkEditorTest extends ScreenSpecification {
     @Autowired
     DataManager dataManager
 
+    @Autowired
+    JdbcTemplate jdbcTemplate
+
     @Override
     void setup() {
         exportScreensPackages(["bulk_editor.screen", "io.jmix.ui.app.bulk"])
 
         2.times {dataManager.save(dataManager.create(OrderLine))}
+    }
+
+    @Override
+    void cleanup() {
+        jdbcTemplate.update("delete from TEST_ORDER_LINE")
     }
 
     def "open bulkEdit screen"() {

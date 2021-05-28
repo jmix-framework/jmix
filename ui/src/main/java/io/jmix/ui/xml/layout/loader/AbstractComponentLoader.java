@@ -333,7 +333,7 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
             ValidatorLoadFactory loadFactory = applicationContext.getBean(ValidatorLoadFactory.class);
 
             for (Element validatorElem : validators) {
-                Validator validator = loadFactory.createValidator(validatorElem, context.getMessagesPack());
+                Validator validator = loadFactory.createValidator(validatorElem, context.getMessageGroup());
                 if (validator != null) {
                     component.addValidator(validator);
                 }
@@ -362,7 +362,7 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
             return caption;
         }
 
-        return getMessageTools().loadString(context.getMessagesPack(), caption);
+        return getMessageTools().loadString(context.getMessageGroup(), caption);
     }
 
     @Nullable

@@ -75,15 +75,15 @@ public class FragmentHelper {
         return controller;
     }
 
-    public String getMessagePack(String descriptorPath) {
+    public String getMessageGroup(String descriptorPath) {
         if (descriptorPath.contains("/")) {
             descriptorPath = StringUtils.substring(descriptorPath, 0, descriptorPath.lastIndexOf("/"));
         }
 
-        String messagesPack = descriptorPath.replace("/", ".");
-        int start = messagesPack.startsWith(".") ? 1 : 0;
-        messagesPack = messagesPack.substring(start);
-        return messagesPack;
+        String messageGroup = descriptorPath.replace("/", ".");
+        int start = messageGroup.startsWith(".") ? 1 : 0;
+        messageGroup = messageGroup.substring(start);
+        return messageGroup;
     }
 
     public static class FragmentLoaderInjectTask implements ComponentLoader.InjectTask {

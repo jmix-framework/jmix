@@ -152,7 +152,7 @@ public class FragmentsImpl implements Fragments {
         // load XML if needed
         if (windowInfo.getTemplate() != null) {
             ComponentLoaderContext innerContext = createComponentLoaderContext(options);
-            innerContext.setMessagesPack(fragmentHelper.getMessagePack(windowInfo.getTemplate()));
+            innerContext.setMessageGroup(fragmentHelper.getMessageGroup(windowInfo.getTemplate()));
             innerContext.setCurrentFrameId(windowInfo.getId());
             innerContext.setFullFrameId(windowInfo.getId());
             innerContext.setFrame(fragment);
@@ -162,10 +162,7 @@ public class FragmentsImpl implements Fragments {
 
             Element rootElement = screenXmlLoader.load(windowInfo.getTemplate(), windowInfo.getId(), emptyMap());
 
-            String messagesPack = rootElement.attributeValue("messagesPack");
-            if (messagesPack != null) {
-                innerContext.setMessagesPack(messagesPack);
-            }
+            loadAdditionalData(rootElement, innerContext);
 
             ComponentLoader<Fragment> fragmentLoader =
                     layoutLoader.createFragmentContent(fragment, rootElement);
@@ -188,6 +185,10 @@ public class FragmentsImpl implements Fragments {
 
         //noinspection unchecked
         return (T) controller;
+    }
+
+    protected void loadAdditionalData(Element rootElement, ComponentLoaderContext innerContext) {
+        // do nothing
     }
 
     protected Fragment createFragmentInternal() {

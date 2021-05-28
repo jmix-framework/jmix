@@ -68,7 +68,7 @@ public interface TimeField<V> extends Field<V>, HasDatatype<V>, Buffered, Compon
     String getFormat();
 
     /**
-     * Sets the time format of the TimeField. It can be either a format string, or a key in message pack.
+     * Sets the time format of the TimeField. It can be either a format string, or a key in message group.
      *
      * @param timeFormat time format
      */

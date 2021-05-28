@@ -36,7 +36,7 @@ public class ComponentLoaderContext implements ComponentLoader.ComponentContext 
 
     protected ScreenData screenData;
 
-    protected String messagesPack;
+    protected String messageGroup;
     protected Frame frame;
     protected String fullFrameId;
     protected String currentFrameId;
@@ -87,12 +87,12 @@ public class ComponentLoaderContext implements ComponentLoader.ComponentContext 
     }
 
     @Override
-    public String getMessagesPack() {
-        return messagesPack;
+    public String getMessageGroup() {
+        return messageGroup;
     }
 
-    public void setMessagesPack(String messagesPack) {
-        this.messagesPack = messagesPack;
+    public void setMessageGroup(String messageGroup) {
+        this.messageGroup = messageGroup;
     }
 
     @Override

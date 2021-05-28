@@ -23,15 +23,15 @@ public class CompositeComponentLoaderContext implements ComponentLoader.Composit
 
     protected Class<? extends Component> componentClass;
     protected String descriptorPath;
-    protected String messagesPack;
+    protected String messageGroup;
 
     @Override
-    public String getMessagesPack() {
-        return messagesPack;
+    public String getMessageGroup() {
+        return messageGroup;
     }
 
-    public void setMessagesPack(String messagesPack) {
-        this.messagesPack = messagesPack;
+    public void setMessageGroup(String messageGroup) {
+        this.messageGroup = messageGroup;
     }
 
     @Override

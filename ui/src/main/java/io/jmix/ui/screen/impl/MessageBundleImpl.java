@@ -30,7 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class MessageBundleImpl implements MessageBundle {
 
     protected Messages messages;
-    protected String messagePack;
+    protected String messageGroup;
 
     @Autowired
     protected void setMessages(Messages messages) {
@@ -38,30 +38,30 @@ public class MessageBundleImpl implements MessageBundle {
     }
 
     @Override
-    public String getMessagesPack() {
-        return messagePack;
+    public String getMessageGroup() {
+        return messageGroup;
     }
 
     @Override
-    public void setMessagesPack(String messagePack) {
-        this.messagePack = messagePack;
+    public void setMessageGroup(String messageGroup) {
+        this.messageGroup = messageGroup;
     }
 
     @Override
     public String getMessage(String key) {
-        if (Strings.isNullOrEmpty(messagePack)) {
-            throw new IllegalStateException("messagePack is not set");
+        if (Strings.isNullOrEmpty(messageGroup)) {
+            throw new IllegalStateException("messageGroup is not set");
         }
 
-        return messages.getMessage(messagePack, key);
+        return messages.getMessage(messageGroup, key);
     }
 
     @Override
     public String formatMessage(String key, Object... params) {
-        if (Strings.isNullOrEmpty(messagePack)) {
-            throw new IllegalStateException("messagePack is not set");
+        if (Strings.isNullOrEmpty(messageGroup)) {
+            throw new IllegalStateException("messageGroup is not set");
         }
 
-        return messages.formatMessage(messagePack, key, params);
+        return messages.formatMessage(messageGroup, key, params);
     }
 }

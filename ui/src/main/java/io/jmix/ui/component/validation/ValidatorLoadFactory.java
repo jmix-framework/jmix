@@ -18,11 +18,11 @@ package io.jmix.ui.component.validation;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
-import org.springframework.context.ApplicationContext;
 import io.jmix.core.MessageTools;
 import io.jmix.core.common.util.Preconditions;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
@@ -78,22 +78,22 @@ public class ValidatorLoadFactory {
     /**
      * Creates validator from XML element.
      *
-     * @param element     validator element
-     * @param messagePack message pack
+     * @param element      validator element
+     * @param messageGroup message group
      * @return validator or null if there is no such element
      */
     @SuppressWarnings("rawtypes")
     @Nullable
-    public Validator createValidator(Element element, String messagePack) {
+    public Validator createValidator(Element element, String messageGroup) {
         BiFunction<Element, String, Validator> function = validatorsMap.get(element.getName());
         if (function != null) {
-            return function.apply(element, messagePack);
+            return function.apply(element, messageGroup);
         }
         return null;
     }
 
     @SuppressWarnings("rawtypes")
-    protected Validator loadCustomValidator(Element element, String messagePack) {
+    protected Validator loadCustomValidator(Element element, String messageGroup) {
         String beanName = element.attributeValue("bean");
         if (Strings.isNullOrEmpty(beanName)) {
             throw new IllegalArgumentException("Bean name is not defined");
@@ -102,14 +102,14 @@ public class ValidatorLoadFactory {
         Validator validator = (Validator) applicationContext.getBean(beanName);
 
         if (validator instanceof AbstractValidator) {
-            ((AbstractValidator) validator).setMessage(loadMessage(element, messagePack));
+            ((AbstractValidator) validator).setMessage(loadMessage(element, messageGroup));
         }
 
         return validator;
     }
 
     @SuppressWarnings("rawtypes")
-    protected Validator loadDecimalMinValidator(Element element, String messagePack) {
+    protected Validator loadDecimalMinValidator(Element element, String messageGroup) {
         String value = element.attributeValue("value");
         if (Strings.isNullOrEmpty(value)) {
             throw new IllegalArgumentException("Min value is not defined");
@@ -121,13 +121,13 @@ public class ValidatorLoadFactory {
         if (inclusive != null) {
             validator.setInclusive(inclusive);
         }
-        validator.setMessage(loadMessage(element, messagePack));
+        validator.setMessage(loadMessage(element, messageGroup));
 
         return validator;
     }
 
     @SuppressWarnings("rawtypes")
-    protected Validator loadDecimalMaxValidator(Element element, String messagePack) {
+    protected Validator loadDecimalMaxValidator(Element element, String messageGroup) {
         String value = element.attributeValue("value");
         if (Strings.isNullOrEmpty(value)) {
             throw new IllegalArgumentException("Max value is not defined");
@@ -139,13 +139,13 @@ public class ValidatorLoadFactory {
         if (inclusive != null) {
             validator.setInclusive(inclusive);
         }
-        validator.setMessage(loadMessage(element, messagePack));
+        validator.setMessage(loadMessage(element, messageGroup));
 
         return validator;
     }
 
     @SuppressWarnings("rawtypes")
-    protected Validator loadDoubleMinValidator(Element element, String messagePack) {
+    protected Validator loadDoubleMinValidator(Element element, String messageGroup) {
         String value = element.attributeValue("value");
         if (Strings.isNullOrEmpty(value)) {
             throw new IllegalArgumentException("Min value is not defined");
@@ -157,13 +157,13 @@ public class ValidatorLoadFactory {
         if (inclusive != null) {
             validator.setInclusive(inclusive);
         }
-        validator.setMessage(loadMessage(element, messagePack));
+        validator.setMessage(loadMessage(element, messageGroup));
 
         return validator;
     }
 
     @SuppressWarnings("rawtypes")
-    protected Validator loadDoubleMaxValidator(Element element, String messagePack) {
+    protected Validator loadDoubleMaxValidator(Element element, String messageGroup) {
         String value = element.attributeValue("value");
         if (Strings.isNullOrEmpty(value)) {
             throw new IllegalArgumentException("Max value is not defined");
@@ -175,13 +175,13 @@ public class ValidatorLoadFactory {
         if (inclusive != null) {
             validator.setInclusive(inclusive);
         }
-        validator.setMessage(loadMessage(element, messagePack));
+        validator.setMessage(loadMessage(element, messageGroup));
 
         return validator;
     }
 
     @SuppressWarnings("rawtypes")
-    protected Validator loadDigitsValidator(Element element, String messagePack) {
+    protected Validator loadDigitsValidator(Element element, String messageGroup) {
         String integer = element.attributeValue("integer");
         if (Strings.isNullOrEmpty(integer)) {
             throw new IllegalArgumentException("Integer value is not defined");
@@ -195,65 +195,65 @@ public class ValidatorLoadFactory {
         int fractionValue = Integer.parseInt(fraction);
 
         DigitsValidator validator = applicationContext.getBean(DigitsValidator.class, integerValue, fractionValue);
-        validator.setMessage(loadMessage(element, messagePack));
+        validator.setMessage(loadMessage(element, messageGroup));
 
         return validator;
     }
 
     @SuppressWarnings("rawtypes")
-    protected Validator loadFutureValidator(Element element, String messagePack) {
+    protected Validator loadFutureValidator(Element element, String messageGroup) {
         FutureValidator validator = applicationContext.getBean(FutureValidator.class);
 
         Boolean checkSeconds = loadCheckSeconds(element);
         if (checkSeconds != null) {
             validator.setCheckSeconds(checkSeconds);
         }
-        validator.setMessage(loadMessage(element, messagePack));
+        validator.setMessage(loadMessage(element, messageGroup));
 
         return validator;
     }
 
     @SuppressWarnings("rawtypes")
-    protected Validator loadFutureOrPresentValidator(Element element, String messagePack) {
+    protected Validator loadFutureOrPresentValidator(Element element, String messageGroup) {
         FutureOrPresentValidator validator = applicationContext.getBean(FutureOrPresentValidator.class);
 
         Boolean checkSeconds = loadCheckSeconds(element);
         if (checkSeconds != null) {
             validator.setCheckSeconds(checkSeconds);
         }
-        validator.setMessage(loadMessage(element, messagePack));
+        validator.setMessage(loadMessage(element, messageGroup));
 
         return validator;
     }
 
     @SuppressWarnings("rawtypes")
-    protected Validator loadPastValidator(Element element, String messagePack) {
+    protected Validator loadPastValidator(Element element, String messageGroup) {
         PastValidator validator = applicationContext.getBean(PastValidator.class);
 
         Boolean checkSeconds = loadCheckSeconds(element);
         if (checkSeconds != null) {
             validator.setCheckSeconds(checkSeconds);
         }
-        validator.setMessage(loadMessage(element, messagePack));
+        validator.setMessage(loadMessage(element, messageGroup));
 
         return validator;
     }
 
     @SuppressWarnings("rawtypes")
-    protected Validator loadPastOrPresentValidator(Element element, String messagePack) {
+    protected Validator loadPastOrPresentValidator(Element element, String messageGroup) {
         PastOrPresentValidator validator = applicationContext.getBean(PastOrPresentValidator.class);
 
         Boolean checkSeconds = loadCheckSeconds(element);
         if (checkSeconds != null) {
             validator.setCheckSeconds(checkSeconds);
         }
-        validator.setMessage(loadMessage(element, messagePack));
+        validator.setMessage(loadMessage(element, messageGroup));
 
         return validator;
     }
 
     @SuppressWarnings("rawtypes")
-    protected Validator loadMaxValidator(Element element, String messagePack) {
+    protected Validator loadMaxValidator(Element element, String messageGroup) {
         String value = element.attributeValue("value");
         if (Strings.isNullOrEmpty(value)) {
             throw new IllegalArgumentException("Max value is not defined");
@@ -261,12 +261,12 @@ public class ValidatorLoadFactory {
         long maxValue = Long.parseLong(value);
 
         MaxValidator validator = applicationContext.getBean(MaxValidator.class, maxValue);
-        validator.setMessage(loadMessage(element, messagePack));
+        validator.setMessage(loadMessage(element, messageGroup));
         return validator;
     }
 
     @SuppressWarnings("rawtypes")
-    protected Validator loadMinValidator(Element element, String messagePack) {
+    protected Validator loadMinValidator(Element element, String messageGroup) {
         String value = element.attributeValue("value");
         if (Strings.isNullOrEmpty(value)) {
             throw new IllegalArgumentException("Min value is not defined");
@@ -274,12 +274,12 @@ public class ValidatorLoadFactory {
         long minValue = Long.parseLong(value);
 
         MinValidator validator = applicationContext.getBean(MinValidator.class, minValue);
-        validator.setMessage(loadMessage(element, messagePack));
+        validator.setMessage(loadMessage(element, messageGroup));
         return validator;
     }
 
     @SuppressWarnings("rawtypes")
-    protected Validator loadValidatorWithoutAttributes(Element element, String messagePack) {
+    protected Validator loadValidatorWithoutAttributes(Element element, String messageGroup) {
         AbstractValidator validator;
         switch (element.getName()) {
             case "email":
@@ -309,24 +309,24 @@ public class ValidatorLoadFactory {
             default:
                 throw new IllegalArgumentException("Unknown validator element: " + element.getName());
         }
-        validator.setMessage(loadMessage(element, messagePack));
+        validator.setMessage(loadMessage(element, messageGroup));
         return validator;
     }
 
     @SuppressWarnings("rawtypes")
-    protected Validator loadRegexpValidator(Element element, String messagePack) {
+    protected Validator loadRegexpValidator(Element element, String messageGroup) {
         String regexp = element.attributeValue("regexp");
 
         Preconditions.checkNotNullArgument(regexp);
 
         RegexpValidator validator = applicationContext.getBean(RegexpValidator.class, regexp);
-        validator.setMessage(loadMessage(element, messagePack));
+        validator.setMessage(loadMessage(element, messageGroup));
 
         return validator;
     }
 
     @SuppressWarnings("rawtypes")
-    protected Validator loadSizeValidator(Element element, String messagePack) {
+    protected Validator loadSizeValidator(Element element, String messageGroup) {
         SizeValidator validator = applicationContext.getBean(SizeValidator.class);
 
         String min = element.attributeValue("min");
@@ -338,7 +338,7 @@ public class ValidatorLoadFactory {
             validator.setMax(Integer.parseInt(max));
         }
 
-        validator.setMessage(loadMessage(element, messagePack));
+        validator.setMessage(loadMessage(element, messageGroup));
         return validator;
     }
 
@@ -361,10 +361,10 @@ public class ValidatorLoadFactory {
     }
 
     @Nullable
-    protected String loadMessage(Element element, String messagePack) {
+    protected String loadMessage(Element element, String messageGroup) {
         String message = element.attributeValue("message");
         if (!Strings.isNullOrEmpty(message)) {
-            return messageTools.loadString(messagePack, message);
+            return messageTools.loadString(messageGroup, message);
         }
         return null;
     }

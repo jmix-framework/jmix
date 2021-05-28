@@ -526,12 +526,10 @@ public class ScreensHelper {
                 return caption;
             }
 
-            String messagePack = window.attributeValue("messagesPack");
-            if (StringUtils.isEmpty(messagePack)) {
-                messagePack = packageFromFilePath(src);
-            }
-            if (StringUtils.isNotEmpty(messagePack)) {
-                caption = messageTools.loadString(messagePack, caption);
+            String messageGroup = packageFromFilePath(src);
+
+            if (StringUtils.isNotEmpty(messageGroup)) {
+                caption = messageTools.loadString(messageGroup, caption);
                 cacheCaption(key, caption);
                 return caption;
             }

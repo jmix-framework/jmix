@@ -56,7 +56,6 @@
             </xs:sequence>
 
             <xs:attribute name="extends" type="xs:string"/>
-            <xs:attribute name="messagesPack" type="xs:string"/>
 
             <xs:attribute name="icon" type="xs:string"/>
             <xs:attribute name="caption" type="layout:resourceString"/>

@@ -312,7 +312,7 @@ public class UiComponentsImpl implements UiComponents {
         CompositeComponentLoaderContext context = new CompositeComponentLoaderContext();
         context.setComponentClass(componentClass);
         context.setDescriptorPath(descriptorPath);
-        context.setMessagesPack(getMessagePack(descriptorPath));
+        context.setMessageGroup(getMessageGroup(descriptorPath));
 
         CompositeDescriptorLoader compositeDescriptorLoader = applicationContext.getBean(CompositeDescriptorLoader.class);
         Element element = compositeDescriptorLoader.load(descriptorPath);
@@ -323,15 +323,15 @@ public class UiComponentsImpl implements UiComponents {
         return layoutLoader.createComponent(element);
     }
 
-    protected String getMessagePack(String descriptorPath) {
+    protected String getMessageGroup(String descriptorPath) {
         if (descriptorPath.contains("/")) {
             descriptorPath = StringUtils.substring(descriptorPath, 0, descriptorPath.lastIndexOf("/"));
         }
 
-        String messagesPack = descriptorPath.replace("/", ".");
-        int start = messagesPack.startsWith(".") ? 1 : 0;
-        messagesPack = messagesPack.substring(start);
-        return messagesPack;
+        String messageGroup = descriptorPath.replace("/", ".");
+        int start = messageGroup.startsWith(".") ? 1 : 0;
+        messageGroup = messageGroup.substring(start);
+        return messageGroup;
     }
 
     public void register(String name, Class<? extends Component> componentClass) {

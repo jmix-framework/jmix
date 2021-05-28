@@ -21,7 +21,6 @@ import io.jmix.core.DevelopmentException;
 import io.jmix.ui.WindowParam;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.Component;
-import io.jmix.ui.component.Component.HasXmlDescriptor;
 import io.jmix.ui.component.ComponentsHelper;
 import io.jmix.ui.component.Facet;
 import io.jmix.ui.component.Fragment;
@@ -48,7 +47,6 @@ import io.jmix.ui.sys.event.UiEventListenerMethodAdapter;
 import io.jmix.ui.theme.ThemeConstants;
 import io.jmix.ui.theme.ThemeConstantsManager;
 import org.apache.commons.lang3.StringUtils;
-import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
@@ -696,17 +694,7 @@ public class UiControllerDependencyInjector {
 
         Class<? extends FrameOwner> screenClass = frameOwner.getClass();
         String packageName = UiControllerUtils.getPackage(screenClass);
-        messageBundle.setMessagesPack(packageName);
-
-        if (frame instanceof HasXmlDescriptor) {
-            Element xmlDescriptor = ((HasXmlDescriptor) frame).getXmlDescriptor();
-            if (xmlDescriptor != null) {
-                String messagePack = xmlDescriptor.attributeValue("messagesPack");
-                if (messagePack != null) {
-                    messageBundle.setMessagesPack(messagePack);
-                }
-            }
-        }
+        messageBundle.setMessageGroup(packageName);
 
         return messageBundle;
     }

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <window xmlns="http://jmix.io/schema/ui/window"
-        caption="msg://selectValue.caption"
-        messagesPack="">
+        caption="msg://selectValue.caption">
     <dialogMode forceDialog="true"
                 width="theme://jmix.ui.selectValue.popup.dialog.width"
                 height="theme://jmix.ui.selectValue.popup.dialog.height"

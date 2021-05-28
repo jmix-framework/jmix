@@ -15,14 +15,13 @@
   -->
 
 <window xmlns="http://jmix.io/schema/ui/window"
-        caption="msg://backgroundWorkProgress.caption"
-        messagesPack="">
+        caption="msg:///backgroundWorkProgress.caption">
     <layout spacing="true">
-        <label id="text" value="msg://backgroundWorkProgress.defaultText" width="100%"/>
+        <label id="text" value="msg:///backgroundWorkProgress.defaultText" width="100%"/>
         <progressBar id="taskProgressBar" width="100%"/>
         <label id="progressText"/>
         <hbox align="MIDDLE_RIGHT">
-            <button id="cancelButton" icon="BAN" caption="msg://actions.Cancel"/>
+            <button id="cancelButton" icon="BAN" caption="msg:///actions.Cancel"/>
         </hbox>
     </layout>
 </window>

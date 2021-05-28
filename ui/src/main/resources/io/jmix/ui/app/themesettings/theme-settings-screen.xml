@@ -16,8 +16,7 @@
   -->
 
 <window xmlns="http://jmix.io/schema/ui/window"
-        caption="msg://themeSettings.caption"
-        messagesPack="">
+        caption="msg://themeSettings.caption">
     <layout expand="previewBox" spacing="true">
         <hbox id="settingsForm" spacing="true">
             <label id="modeLabel"

@@ -54,9 +54,9 @@ public class DateFormatter implements Formatter<Date> {
 
     /**
      * Sets the format string describing the date format which will be used to create {@link SimpleDateFormat} instance.
-     * It can be either a format string, or a key in message pack.
+     * It can be either a format string, or a key in message group.
      *
-     * @param format a format string or a key in message pack
+     * @param format a format string or a key in message group
      */
     public void setFormat(String format) {
         this.format = format;

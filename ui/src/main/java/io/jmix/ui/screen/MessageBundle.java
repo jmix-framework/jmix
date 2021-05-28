@@ -19,23 +19,23 @@ package io.jmix.ui.screen;
 import io.jmix.core.Messages;
 
 /**
- * Interface that provides messages from a message pack bound to screen controller.
+ * Interface that provides messages from a message group bound to screen controller.
  */
 public interface MessageBundle {
 
     /**
-     * Sets source message pack.
+     * Sets source message group.
      *
-     * @param messagePack associated message pack
+     * @param messageGroup associated message group
      */
-    void setMessagesPack(String messagePack);
+    void setMessageGroup(String messageGroup);
     /**
-     * @return associated message pack
+     * @return associated message group
      */
-    String getMessagesPack();
+    String getMessageGroup();
 
     /**
-     * Get localized message from the message pack associated with this frame or window.
+     * Get localized message from the message group associated with this frame or window.
      *
      * @param key message key
      * @return localized message
@@ -44,7 +44,7 @@ public interface MessageBundle {
     String getMessage(String key);
 
     /**
-     * Get localized message from the message pack associated with this frame or window, and use it as a format string
+     * Get localized message from the message group associated with this frame or window, and use it as a format string
      * for parameters provided.
      *
      * @param key    message key

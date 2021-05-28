@@ -17,7 +17,8 @@
 <window xmlns="http://jmix.io/schema/ui/window"
         caption="msg://dateIntervalDialog.caption">
     <dialogMode resizable="true"
-                width="theme://jmix.ui.screens.DateIntervalDialog.width"/>
+                forceDialog="true"
+                width="AUTO"/>
     <layout spacing="true">
         <hbox id="mainBox" spacing="true">
             <radioButtonGroup id="typeRadioButtonGroup"/>
@@ -39,6 +40,15 @@
                 <checkBox id="includingCurrentCheckBox"
                           align="MIDDLE_LEFT"
                           caption="msg://dateIntervalDialog.includingCurrentCheckBox.caption"/>
+                <comboBox id="relativeDateTimeOperationComboBox"
+                          nullOptionVisible="false"
+                          required="true"
+                          requiredMessage="msg://dateIntervalDialog.relativeDateTimeOperationComboBox.requiredMessage"
+                          width="70px"/>
+                <comboBox id="relativeDateTimeComboBox"
+                          nullOptionVisible="false"
+                          required="true"
+                          requiredMessage="msg://dateIntervalDialog.relativeDateTimeComboBox.requiredMessage"/>
             </hbox>
             <comboBox id="predefinedIntervalsComboBox"
                       nullOptionVisible="false"

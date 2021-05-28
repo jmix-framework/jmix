@@ -17,15 +17,24 @@
 package io.jmix.ui.app.propertyfilter.dateinterval;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
 import io.jmix.core.Messages;
 import io.jmix.core.annotation.Internal;
-import io.jmix.ui.app.propertyfilter.dateinterval.predefined.PredefinedDateInterval;
-import io.jmix.ui.app.propertyfilter.dateinterval.predefined.PredefinedDateIntervalRegistry;
+import io.jmix.core.common.util.Preconditions;
+import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.core.metamodel.model.Range;
+import io.jmix.ui.app.propertyfilter.dateinterval.converter.DateIntervalConverter;
+import io.jmix.ui.app.propertyfilter.dateinterval.model.BaseDateInterval;
+import io.jmix.ui.app.propertyfilter.dateinterval.model.DateInterval;
+import io.jmix.ui.app.propertyfilter.dateinterval.model.RelativeDateInterval;
+import io.jmix.ui.app.propertyfilter.dateinterval.model.predefined.PredefinedDateInterval;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import java.util.regex.Pattern;
+import java.time.LocalTime;
+import java.time.OffsetTime;
+import java.util.List;
 
 /**
  * Utility class for date intervals.
@@ -37,25 +46,20 @@ import java.util.regex.Pattern;
 @Component("ui_DateIntervalUtils")
 public class DateIntervalUtils {
 
-    protected PredefinedDateIntervalRegistry predefinedIntervalFactory;
+    protected static final List<Class<?>> partlySupportedTimeClasses =
+            ImmutableList.of(LocalTime.class, OffsetTime.class);
+
     protected Messages messages;
-
-    protected static final String INCLUDING_CURRENT_DESCR = "including_current";
-
-    protected static final Pattern NEXT_LAST_PATTERN =
-            Pattern.compile("(NEXT|LAST)\\s+\\d+\\s+(DAY|MONTH|MINUTE|HOUR)(\\s+including_current)?");
-
-    protected static final Pattern PREDEFINED_PATTERN =
-            Pattern.compile("PREDEFINED\\s+\\w+");
-
-    @Autowired
-    public void setPredefinedIntervalFactory(PredefinedDateIntervalRegistry predefinedIntervalFactory) {
-        this.predefinedIntervalFactory = predefinedIntervalFactory;
-    }
+    protected List<DateIntervalConverter> dateIntervalConverters;
 
     @Autowired
     public void setMessages(Messages messages) {
         this.messages = messages;
+    }
+
+    @Autowired
+    public void setDateIntervalConverters(List<DateIntervalConverter> dateIntervalConverters) {
+        this.dateIntervalConverters = dateIntervalConverters;
     }
 
     /**
@@ -64,6 +68,7 @@ public class DateIntervalUtils {
      * @param dateInterval string presentation of date interval
      * @return configured date interval or {@code null} if input parameter is null or empty.
      * @see DateInterval
+     * @see RelativeDateInterval
      * @see PredefinedDateInterval
      */
     @Nullable
@@ -72,26 +77,13 @@ public class DateIntervalUtils {
             return null;
         }
 
-        if (!NEXT_LAST_PATTERN.matcher(dateInterval).matches()
-                && !PREDEFINED_PATTERN.matcher(dateInterval).matches()) {
-            throw new IllegalArgumentException("Wrong filter date interval string format");
+        for (DateIntervalConverter converter : dateIntervalConverters) {
+            if (converter.matches(dateInterval)) {
+                return converter.parse(dateInterval);
+            }
         }
 
-        String[] parts = dateInterval.split("\\s+");
-        BaseDateInterval.Type type = BaseDateInterval.Type.valueOf(parts[0]);
-
-        if (type == BaseDateInterval.Type.PREDEFINED) {
-            return predefinedIntervalFactory.getIntervalByName(parts[1])
-                    .orElseThrow(() ->
-                            new IllegalArgumentException("There is no predefined date interval with given name: '"
-                                    + parts[1] + "'"));
-        } else {
-            Integer number = Integer.valueOf(parts[1]);
-            DateInterval.TimeUnit timeUnit = DateInterval.TimeUnit.valueOf(parts[2]);
-            Boolean includeCurrent = parts.length == 4 && INCLUDING_CURRENT_DESCR.equals(parts[3]);
-
-            return new DateInterval(type, number, timeUnit, includeCurrent);
-        }
+        throw new IllegalArgumentException("Wrong date interval string format");
     }
 
     /**
@@ -100,18 +92,17 @@ public class DateIntervalUtils {
      * @param dateInterval date interval instance
      * @return raw presentation of date interval
      * @see DateInterval
+     * @see RelativeDateInterval
      * @see PredefinedDateInterval
      */
     public String formatDateInterval(BaseDateInterval dateInterval) {
-        BaseDateInterval.Type type = dateInterval.getType();
-
-        if (type == BaseDateInterval.Type.PREDEFINED) {
-            return type.name() + " " + ((PredefinedDateInterval) dateInterval).getName();
-        } else {
-            DateInterval interval = (DateInterval) dateInterval;
-            return type.name() + " " + interval.getNumber() + " " + interval.getTimeUnit()
-                    + (Boolean.TRUE.equals(interval.getIncludingCurrent()) ? " " + INCLUDING_CURRENT_DESCR : "");
+        for (DateIntervalConverter converter : dateIntervalConverters) {
+            if (converter.supports(dateInterval.getType())) {
+                return converter.format(dateInterval);
+            }
         }
+
+        throw new IllegalStateException(String.format("Unknown date interval type: %s", dateInterval.getType()));
     }
 
     /**
@@ -120,29 +111,42 @@ public class DateIntervalUtils {
      * @param dateInterval date interval instance
      * @return localized value
      * @see DateInterval
+     * @see RelativeDateInterval
      * @see PredefinedDateInterval
      */
     @Nullable
-    public String formatDateIntervalToLocalizedValue(@Nullable BaseDateInterval dateInterval) {
+    public String getLocalizedValue(@Nullable BaseDateInterval dateInterval) {
         if (dateInterval == null) {
             return null;
         }
 
-        BaseDateInterval.Type type = dateInterval.getType();
-
-        if (type == DateInterval.Type.PREDEFINED) {
-            return ((PredefinedDateInterval) dateInterval).getLocalizedCaption();
-        } else {
-            DateInterval interval = (DateInterval) dateInterval;
-            Boolean include = interval.getIncludingCurrent();
-            return messages.getMessage(this.getClass(), type.name().toLowerCase())
-                    + " "
-                    + interval.getNumber()
-                    + " "
-                    + messages.getMessage(interval.getTimeUnit()).toLowerCase()
-                    + (Boolean.TRUE.equals(include)
-                    ? " " + messages.getMessage(this.getClass(), "dateIntervals.includingCurrent")
-                    : "");
+        for (DateIntervalConverter converter : dateIntervalConverters) {
+            if (converter.supports(dateInterval.getType())) {
+                return converter.getLocalizedValue(dateInterval);
+            }
         }
+
+        throw new IllegalStateException(String.format("Unknown date interval type: %s", dateInterval.getType()));
+    }
+
+    /**
+     * @param mpp   meta property path
+     * @param value date interval
+     * @return {@code true} if date interval type supports provided property type
+     */
+    public boolean isIntervalTypeSupportsDatatype(BaseDateInterval value, MetaPropertyPath mpp) {
+        Preconditions.checkNotNullArgument(mpp);
+        Preconditions.checkNotNullArgument(value);
+
+        Range range = mpp.getRange();
+        if (!range.isDatatype()) {
+            return false;
+        }
+
+        Class<?> javaClass = range.asDatatype().getJavaClass();
+        if (partlySupportedTimeClasses.contains(javaClass)) {
+            return value instanceof RelativeDateInterval;
+        }
+        return true;
     }
 }

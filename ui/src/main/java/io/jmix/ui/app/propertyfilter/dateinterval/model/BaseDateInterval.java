@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package io.jmix.ui.app.propertyfilter.dateinterval;
+package io.jmix.ui.app.propertyfilter.dateinterval.model;
 
-import io.jmix.ui.app.propertyfilter.dateinterval.predefined.PredefinedDateInterval;
+import io.jmix.ui.app.propertyfilter.dateinterval.model.predefined.PredefinedDateInterval;
 
 import java.util.function.Function;
 
@@ -47,11 +47,15 @@ public interface BaseDateInterval extends Function<String, String> {
 
         /**
          * Interval the preceding to the current.
+         *
+         * @see DateInterval
          */
         LAST,
 
         /**
          * Interval from the current to future.
+         *
+         * @see DateInterval
          */
         NEXT,
 
@@ -60,6 +64,13 @@ public interface BaseDateInterval extends Function<String, String> {
          *
          * @see PredefinedDateInterval
          */
-        PREDEFINED
+        PREDEFINED,
+
+        /**
+         * Interval that uses date and time constants (e.g. first day of the current week).
+         *
+         * @see RelativeDateInterval
+         */
+        RELATIVE
     }
 }

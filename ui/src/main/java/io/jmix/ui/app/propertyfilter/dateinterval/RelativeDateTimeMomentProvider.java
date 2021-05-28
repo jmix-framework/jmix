@@ -14,26 +14,31 @@
  * limitations under the License.
  */
 
-package io.jmix.ui.app.propertyfilter.dateinterval.predefined;
+package io.jmix.ui.app.propertyfilter.dateinterval;
 
-import io.jmix.core.JmixOrder;
 import io.jmix.core.annotation.Internal;
-import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Component;
 
+import java.util.List;
+
+/**
+ * Provides enum values for relative date and time moments.
+ */
 @Internal
-@Component("ui_YesterdayPredefinedDateInterval")
-@Order(JmixOrder.HIGHEST_PRECEDENCE + 20)
-public class YesterdayPredefinedDateInterval extends PredefinedDateInterval {
+public interface RelativeDateTimeMomentProvider {
 
-    public static final String NAME = "yesterday";
+    /**
+     * @return all enum values
+     */
+    List<Enum> getRelativeDateTimeMoments();
 
-    public YesterdayPredefinedDateInterval() {
-        super(NAME);
-    }
+    /**
+     * @return enum values that correspond to time types
+     */
+    List<Enum> getRelativeTimeMoments();
 
-    @Override
-    public String apply(String property) {
-        return String.format("@between({E}.%s, now - 1, now, day)", property);
-    }
+    /**
+     * @param name name of enum constant
+     * @return enum value
+     */
+    Enum getByName(String name);
 }

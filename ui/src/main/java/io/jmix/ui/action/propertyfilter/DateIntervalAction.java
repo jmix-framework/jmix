@@ -17,19 +17,24 @@
 package io.jmix.ui.action.propertyfilter;
 
 import io.jmix.core.Messages;
+import io.jmix.core.common.event.Subscription;
+import io.jmix.core.common.util.Preconditions;
+import io.jmix.core.metamodel.datatype.Datatype;
+import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.ScreenBuilders;
 import io.jmix.ui.action.ActionType;
 import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.app.propertyfilter.dateinterval.DateIntervalDialog;
-import io.jmix.ui.app.propertyfilter.dateinterval.BaseDateInterval;
 import io.jmix.ui.builder.AfterScreenCloseEvent;
+import io.jmix.ui.app.propertyfilter.dateinterval.DateIntervalUtils;
+import io.jmix.ui.app.propertyfilter.dateinterval.model.BaseDateInterval;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.Frame;
+import io.jmix.ui.component.HasValue;
 import io.jmix.ui.component.ValuePicker;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.screen.OpenMode;
-import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.StandardOutcome;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,8 +49,12 @@ public class DateIntervalAction extends BaseAction implements ValuePicker.ValueP
     protected Icons icons;
     protected Messages messages;
     protected ScreenBuilders screenBuilders;
+    protected DateIntervalUtils dateIntervalUtils;
 
     protected ValuePicker<BaseDateInterval> valuePicker;
+    protected MetaPropertyPath metaPropertyPath;
+
+    protected Subscription valueChangeSubscription;
 
     protected boolean editable = true;
 
@@ -72,6 +81,11 @@ public class DateIntervalAction extends BaseAction implements ValuePicker.ValueP
         this.screenBuilders = screenBuilders;
     }
 
+    @Autowired
+    public void setDateIntervalUtils(DateIntervalUtils dateIntervalUtils) {
+        this.dateIntervalUtils = dateIntervalUtils;
+    }
+
     @Override
     public void afterPropertiesSet() throws Exception {
         setIcon(icons.get(JmixIcon.VALUEPICKER_DATEINTERVAL));
@@ -80,8 +94,19 @@ public class DateIntervalAction extends BaseAction implements ValuePicker.ValueP
 
     @Override
     public void setPicker(@Nullable ValuePicker valuePicker) {
-        //noinspection unchecked
-        this.valuePicker = valuePicker;
+        if (this.valuePicker != valuePicker) {
+            if (valueChangeSubscription != null) {
+                valueChangeSubscription.remove();
+                valueChangeSubscription = null;
+            }
+
+            //noinspection unchecked
+            this.valuePicker = valuePicker;
+            if (this.valuePicker != null) {
+                valueChangeSubscription = this.valuePicker.addValueChangeListener(this::onValuePickerValueChange);
+                this.valuePicker.setFormatter(interval -> dateIntervalUtils.getLocalizedValue(interval));
+            }
+        }
     }
 
     @Override
@@ -108,6 +133,22 @@ public class DateIntervalAction extends BaseAction implements ValuePicker.ValueP
         }
     }
 
+    /**
+     * @return meta property path of entity's property for Date Interval
+     */
+    public MetaPropertyPath getMetaPropertyPath() {
+        return metaPropertyPath;
+    }
+
+    /**
+     * Sets meta property path of entity's property for Date Interval.
+     *
+     * @param metaPropertyPath meta property path
+     */
+    public void setMetaPropertyPath(MetaPropertyPath metaPropertyPath) {
+        this.metaPropertyPath = metaPropertyPath;
+    }
+
     @Override
     public void actionPerform(Component component) {
         super.actionPerform(component);
@@ -124,6 +165,7 @@ public class DateIntervalAction extends BaseAction implements ValuePicker.ValueP
                     .withAfterCloseListener(this::onDateIntervalDialogCloseEvent)
                     .build()
                     .withValue(valuePicker.getValue())
+                    .withMetaPropertyPath(metaPropertyPath)
                     .show();
         }
     }
@@ -131,6 +173,26 @@ public class DateIntervalAction extends BaseAction implements ValuePicker.ValueP
     protected void onDateIntervalDialogCloseEvent(AfterScreenCloseEvent<DateIntervalDialog> closeEvent) {
         if (closeEvent.closedWith(StandardOutcome.COMMIT)) {
             valuePicker.setValueFromUser(closeEvent.getSource().getValue());
+        }
+    }
+
+    protected void onValuePickerValueChange(HasValue.ValueChangeEvent<BaseDateInterval> event) {
+        if (event.getValue() != null) {
+            checkValueType(event.getValue());
+        }
+
+        valuePicker.setDescription(dateIntervalUtils.getLocalizedValue(event.getValue()));
+    }
+
+    protected void checkValueType(BaseDateInterval value) {
+        Preconditions.checkNotNullArgument(value);
+
+        if (metaPropertyPath != null) {
+            if (!dateIntervalUtils.isIntervalTypeSupportsDatatype(value, metaPropertyPath)) {
+                Datatype datatype = metaPropertyPath.getRange().asDatatype();
+                throw new IllegalStateException("Date interval with " + value.getType() + " type does not support '"
+                        + datatype.getJavaClass() + "'");
+            }
         }
     }
 }

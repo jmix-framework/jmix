@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.ui.app.propertyfilter.dateinterval.predefined;
+package io.jmix.ui.app.propertyfilter.dateinterval.model.predefined;
 
 import io.jmix.core.JmixOrder;
 import io.jmix.core.annotation.Internal;
@@ -22,18 +22,18 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 @Internal
-@Component("ui_LastMonthPredefinedDateInterval")
-@Order(JmixOrder.HIGHEST_PRECEDENCE + 40)
-public class LastMonthPredefinedDateInterval extends PredefinedDateInterval {
+@Component("ui_YesterdayPredefinedDateInterval")
+@Order(JmixOrder.HIGHEST_PRECEDENCE + 20)
+public class YesterdayPredefinedDateInterval extends PredefinedDateInterval {
 
-    public static final String NAME = "lastMonth";
+    public static final String NAME = "yesterday";
 
-    public LastMonthPredefinedDateInterval() {
+    public YesterdayPredefinedDateInterval() {
         super(NAME);
     }
 
     @Override
     public String apply(String property) {
-        return String.format("@between({E}.%s, now-1, now, month)", property);
+        return String.format("@between({E}.%s, now - 1, now, day)", property);
     }
 }

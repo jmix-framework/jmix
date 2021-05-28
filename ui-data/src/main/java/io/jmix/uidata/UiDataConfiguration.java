@@ -24,6 +24,7 @@ import io.jmix.data.DataConfiguration;
 import io.jmix.data.QueryTransformerFactory;
 import io.jmix.ui.UiComponentProperties;
 import io.jmix.ui.UiConfiguration;
+import io.jmix.ui.app.propertyfilter.dateinterval.RelativeDateTimeMomentProvider;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.filter.FilterMetadataTools;
 import io.jmix.ui.component.filter.FilterSupport;
@@ -32,6 +33,7 @@ import io.jmix.ui.presentation.TablePresentations;
 import io.jmix.ui.settings.*;
 import io.jmix.ui.sys.ActionsConfiguration;
 import io.jmix.ui.sys.UiControllersConfiguration;
+import io.jmix.uidata.dateinterval.RelativeDateTimeMomentProviderImpl;
 import io.jmix.uidata.filter.UiDataFilterMetadataTools;
 import io.jmix.uidata.filter.UiDataFilterSupport;
 import io.jmix.uidata.settings.PresentationsManagerImpl;
@@ -111,5 +113,10 @@ public class UiDataConfiguration {
                                                    AccessManager accessManager,
                                                    QueryTransformerFactory queryTransformerFactory) {
         return new UiDataFilterMetadataTools(metadataTools, uiComponentProperties, accessManager, queryTransformerFactory);
+    }
+
+    @Bean("ui_RelativeDateTimeMomentProvider")
+    public RelativeDateTimeMomentProvider relativeDateTimeMomentProvider() {
+        return new RelativeDateTimeMomentProviderImpl();
     }
 }

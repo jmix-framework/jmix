@@ -14,19 +14,23 @@
  * limitations under the License.
  */
 
-package io.jmix.ui.app.propertyfilter.dateinterval;
+package io.jmix.ui.app.propertyfilter.dateinterval.model;
 
 import com.google.common.base.Preconditions;
 
 import javax.annotation.Nullable;
 
 /**
- * Class describes date interval.
+ * Class describes date interval with the following types:
+ * <ul>
+ *   <li>{@link Type#LAST}</li>
+ *   <li>{@link Type#NEXT}</li>
+ * </ul>
  */
 public class DateInterval implements BaseDateInterval {
 
-    enum TimeUnit {
-        MINUTE, HOUR, DAY, MONTH
+    public enum TimeUnit {
+          MONTH, DAY, HOUR, MINUTE
     }
 
     protected final Type type;
@@ -73,6 +77,6 @@ public class DateInterval implements BaseDateInterval {
             moment1 = Boolean.TRUE.equals(includingCurrent) ? "now" : "now + 1";
             moment2 = "now + " + (number + 1);
         }
-        return String.format("@between(%s.%s, %s, %s, %s)", "{E}", property, moment1, moment2, timeUnit.name());
+        return String.format("@between({E}.%s, %s, %s, %s)", property, moment1, moment2, timeUnit.name());
     }
 }

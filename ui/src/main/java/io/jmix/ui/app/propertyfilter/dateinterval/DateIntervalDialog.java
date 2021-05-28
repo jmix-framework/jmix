@@ -17,16 +17,26 @@
 package io.jmix.ui.app.propertyfilter.dateinterval;
 
 import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimap;
 import io.jmix.core.Messages;
+import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.core.metamodel.model.Range;
 import io.jmix.ui.Notifications;
-import io.jmix.ui.app.propertyfilter.dateinterval.predefined.PredefinedDateInterval;
-import io.jmix.ui.app.propertyfilter.dateinterval.predefined.PredefinedDateIntervalRegistry;
+import io.jmix.ui.app.propertyfilter.dateinterval.model.BaseDateInterval;
+import io.jmix.ui.app.propertyfilter.dateinterval.model.BaseDateInterval.Type;
+import io.jmix.ui.app.propertyfilter.dateinterval.model.DateInterval;
+import io.jmix.ui.app.propertyfilter.dateinterval.model.DateInterval.TimeUnit;
+import io.jmix.ui.app.propertyfilter.dateinterval.model.RelativeDateInterval;
+import io.jmix.ui.app.propertyfilter.dateinterval.model.predefined.PredefinedDateInterval;
+import io.jmix.ui.app.propertyfilter.dateinterval.model.predefined.PredefinedDateIntervalRegistry;
 import io.jmix.ui.component.*;
 import io.jmix.ui.screen.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
+import java.time.LocalTime;
+import java.time.OffsetTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -37,6 +47,9 @@ import java.util.stream.Collectors;
 @UiDescriptor("date-interval-dialog.xml")
 public class DateIntervalDialog extends Screen {
 
+    protected static final List<Class<?>> timeClasses =
+            ImmutableList.of(java.sql.Time.class, LocalTime.class, OffsetTime.class);
+
     @Autowired
     protected Messages messages;
     @Autowired
@@ -44,40 +57,70 @@ public class DateIntervalDialog extends Screen {
     @Autowired
     protected PredefinedDateIntervalRegistry intervalFactory;
 
-    @Autowired
-    private RadioButtonGroup<BaseDateInterval.Type> typeRadioButtonGroup;
-    @Autowired
-    private TextField<Integer> numberField;
-    @Autowired
-    private ComboBox<DateInterval.TimeUnit> timeUnitComboBox;
-    @Autowired
-    private CheckBox includingCurrentCheckBox;
-    @Autowired
-    private ComboBox<PredefinedDateInterval> predefinedIntervalsComboBox;
+    @Autowired(required = false)
+    protected RelativeDateTimeMomentProvider relativeMomentProvider;
 
-    protected Multimap<BaseDateInterval.Type, Field> componentVisibilityMap = ArrayListMultimap.create();
+    @Autowired
+    protected RadioButtonGroup<Type> typeRadioButtonGroup;
+
+    @Autowired
+    protected TextField<Integer> numberField;
+    @Autowired
+    protected ComboBox<TimeUnit> timeUnitComboBox;
+    @Autowired
+    protected CheckBox includingCurrentCheckBox;
+
+    @Autowired
+    protected ComboBox<PredefinedDateInterval> predefinedIntervalsComboBox;
+
+    @Autowired
+    protected ComboBox<RelativeDateInterval.Operation> relativeDateTimeOperationComboBox;
+    @Autowired
+    protected ComboBox<Enum> relativeDateTimeComboBox;
+
+    protected Multimap<Type, Field> componentVisibilityMap = ArrayListMultimap.create();
 
     protected BaseDateInterval value;
+    protected MetaPropertyPath mpp;
 
     @Subscribe
-    public void onInit(InitEvent event) {
+    protected void onInit(InitEvent event) {
         initTypeRadioButtonGroup();
         initTimeUnitComboBox();
         initPredefinedIntervalsComboBox();
+        initRelativeDateTimeOperationComboBox();
+        initRelativeDateTimeComboBox();
 
-        componentVisibilityMap.putAll(BaseDateInterval.Type.LAST, Arrays.asList(numberField, timeUnitComboBox, includingCurrentCheckBox));
-        componentVisibilityMap.putAll(BaseDateInterval.Type.NEXT, Arrays.asList(numberField, timeUnitComboBox, includingCurrentCheckBox));
-        componentVisibilityMap.put(BaseDateInterval.Type.PREDEFINED, predefinedIntervalsComboBox);
-
-        typeRadioButtonGroup.setValue(BaseDateInterval.Type.LAST);
+        componentVisibilityMap.putAll(Type.LAST,
+                Arrays.asList(numberField, timeUnitComboBox, includingCurrentCheckBox));
+        componentVisibilityMap.putAll(Type.NEXT,
+                Arrays.asList(numberField, timeUnitComboBox, includingCurrentCheckBox));
+        componentVisibilityMap.putAll(Type.RELATIVE,
+                Arrays.asList(relativeDateTimeOperationComboBox, relativeDateTimeComboBox));
+        componentVisibilityMap.put(Type.PREDEFINED, predefinedIntervalsComboBox);
     }
 
     @Subscribe
-    public void onBeforeShow(BeforeShowEvent event) {
+    protected void onBeforeShow(BeforeShowEvent event) {
+        filterOptionsByPropertyType(mpp);
+
+        Type initialValue = Objects.requireNonNull(typeRadioButtonGroup.getOptions())
+                .getOptions()
+                .collect(Collectors.toList())
+                .get(0);
+        typeRadioButtonGroup.setValue(initialValue);
+
         if (value != null) {
             typeRadioButtonGroup.setValue(value.getType());
-            if (value.getType() == BaseDateInterval.Type.PREDEFINED) {
+            if (value.getType() == Type.PREDEFINED) {
                 predefinedIntervalsComboBox.setValue((PredefinedDateInterval) value);
+            } else if (value.getType() == Type.RELATIVE) {
+                RelativeDateInterval dateInterval = (RelativeDateInterval) value;
+                Enum relativeDateTime = relativeMomentProvider.getByName(
+                        dateInterval.getRelativeDateTimeMomentName());
+
+                relativeDateTimeComboBox.setValue(relativeDateTime);
+                relativeDateTimeOperationComboBox.setValue(dateInterval.getOperation());
             } else {
                 DateInterval dateInterval = (DateInterval) value;
                 numberField.setValue(dateInterval.getNumber());
@@ -115,17 +158,93 @@ public class DateIntervalDialog extends Screen {
         return this;
     }
 
+    /**
+     * @return meta property path of entity's property for Date Interval
+     */
+    @Nullable
+    public MetaPropertyPath getMetaPropertyPath() {
+        return mpp;
+    }
+
+    /**
+     * Sets meta property path of entity's property for Date Interval.
+     *
+     * @param metaPropertyPath meta property path
+     */
+    public void setMetaPropertyPath(@Nullable MetaPropertyPath metaPropertyPath) {
+        this.mpp = metaPropertyPath;
+    }
+
+    /**
+     * Sets meta property path of entity's property for Date Interval.
+     *
+     * @param metaPropertyPath meta property path
+     * @return screen instance
+     */
+    public DateIntervalDialog withMetaPropertyPath(@Nullable MetaPropertyPath metaPropertyPath) {
+        this.mpp = metaPropertyPath;
+        return this;
+    }
+
+    protected void filterOptionsByPropertyType(@Nullable MetaPropertyPath mpp) {
+        // If property is Dynamic Attribute mpp can be null.
+        // DynAttr contains only Date or DateTime attributes.
+        if (mpp == null) {
+            return;
+        }
+
+        Range range = mpp.getRange();
+        if (!range.isDatatype()) {
+            throw new IllegalStateException("Value is not a simple type");
+        }
+
+        Class<?> javaClass = range.asDatatype().getJavaClass();
+        if (!timeClasses.contains(javaClass)) {
+            return;
+        }
+
+        timeUnitComboBox.setOptionsMap(getLocalizedEnumMap(Arrays.asList(TimeUnit.HOUR, TimeUnit.MINUTE)));
+
+        if (relativeMomentProvider != null) {
+            relativeDateTimeComboBox.setOptionsMap(
+                    getLocalizedEnumMap(relativeMomentProvider.getRelativeTimeMoments()));
+        }
+
+        if (java.sql.Time.class.equals(javaClass)) {
+            List<Type> availableTypes = new ArrayList<>(Arrays.asList(Type.LAST, Type.NEXT));
+            if (relativeMomentProvider != null) {
+                availableTypes.add(Type.RELATIVE);
+            }
+            typeRadioButtonGroup.setOptionsMap(getLocalizedEnumMap(availableTypes));
+            return;
+        }
+
+        if (LocalTime.class.equals(javaClass)
+                || OffsetTime.class.equals(javaClass)) {
+            if (relativeMomentProvider != null) {
+                typeRadioButtonGroup.setOptionsMap(
+                        getLocalizedEnumMap(Collections.singletonList(Type.RELATIVE)));
+            } else {
+                throw new IllegalStateException("There is no available options in Date interval dialog for: '"
+                        + javaClass.getName() + "' type");
+            }
+        }
+    }
+
     protected void initTypeRadioButtonGroup() {
-        Map<String, BaseDateInterval.Type> map = getLocalizedEnumMap(BaseDateInterval.Type.class);
+        Map<String, Type> map = relativeMomentProvider == null
+                ? getLocalizedEnumMap(Arrays.asList(Type.LAST, Type.NEXT, Type.PREDEFINED))
+                : getLocalizedEnumMap(Type.class);
+
         typeRadioButtonGroup.setOptionsMap(map);
     }
 
     protected void initTimeUnitComboBox() {
-        Map<String, DateInterval.TimeUnit> map = getLocalizedEnumMap(DateInterval.TimeUnit.class);
+        Map<String, TimeUnit> map = getLocalizedEnumMap(TimeUnit.class);
         timeUnitComboBox.setOptionsMap(map);
     }
 
-    private void initPredefinedIntervalsComboBox() {
+    protected void initPredefinedIntervalsComboBox() {
         List<PredefinedDateInterval> predefinedDateIntervals = intervalFactory.getAllPredefineIntervals();
         Map<String, PredefinedDateInterval> map = new LinkedHashMap<>(predefinedDateIntervals.size());
 
@@ -136,33 +255,62 @@ public class DateIntervalDialog extends Screen {
         predefinedIntervalsComboBox.setOptionsMap(map);
     }
 
+    protected void initRelativeDateTimeOperationComboBox() {
+        RelativeDateInterval.Operation[] operations = RelativeDateInterval.Operation.values();
+        Map<String, RelativeDateInterval.Operation> operationsMap = new LinkedHashMap<>(operations.length);
+
+        for (RelativeDateInterval.Operation operation : operations) {
+            operationsMap.put(operation.getValue(), operation);
+        }
+        relativeDateTimeOperationComboBox.setOptionsMap(operationsMap);
+    }
+
+    protected void initRelativeDateTimeComboBox() {
+        if (relativeMomentProvider != null) {
+            List<Enum> relativeDateTimeMoments = relativeMomentProvider.getRelativeDateTimeMoments();
+            relativeDateTimeComboBox.setOptionsMap(getLocalizedEnumMap(relativeDateTimeMoments));
+        }
+    }
+
     @SuppressWarnings("rawtypes")
     protected <T extends Enum> Map<String, T> getLocalizedEnumMap(Class<T> enumClass) {
+        return getLocalizedEnumMap(Arrays.asList(enumClass.getEnumConstants()));
+    }
+
+    @SuppressWarnings("rawtypes")
+    protected <T extends Enum> Map<String, T> getLocalizedEnumMap(List<T> values) {
         Map<String, T> map = new LinkedHashMap<>();
-        for (T enumConst : enumClass.getEnumConstants()) {
+        for (T enumConst : values) {
             map.put(messages.getMessage(enumConst), enumConst);
         }
         return map;
     }
 
     @Subscribe("typeRadioButtonGroup")
-    public void onTypeRadioButtonGroupValueChange(HasValue.ValueChangeEvent<DateInterval.Type> event) {
+    protected void onTypeRadioButtonGroupValueChange(HasValue.ValueChangeEvent<Type> event) {
         if (event.getValue() != null) {
             componentVisibilityMap.values().forEach(component -> component.setVisible(false));
             componentVisibilityMap.get(event.getValue()).forEach(component -> component.setVisible(true));
+
+            DialogWindow window = (DialogWindow) getWindow();
+            window.center();
         }
     }
 
     @Subscribe("okBtn")
-    public void onOkBtnClick(Button.ClickEvent event) {
-        DateInterval.Type type = typeRadioButtonGroup.getValue();
+    protected void onOkBtnClick(Button.ClickEvent event) {
+        Type type = typeRadioButtonGroup.getValue();
 
         ValidationErrors errors = validateFields(componentVisibilityMap.get(type).toArray(new Field[0]));
         if (errors.isEmpty()) {
-            if (type == DateInterval.Type.PREDEFINED) {
+            if (type == Type.PREDEFINED) {
                 value = predefinedIntervalsComboBox.getValue();
-            } else {
+            } else if (type == Type.RELATIVE) {
                 //noinspection ConstantConditions
+                value = new RelativeDateInterval(
+                        relativeDateTimeOperationComboBox.getValue(),
+                        relativeDateTimeComboBox.getValue().name());
+            } else {
                 value = new DateInterval(type,
                         numberField.getValue(),
                         timeUnitComboBox.getValue(),
@@ -181,7 +329,7 @@ public class DateIntervalDialog extends Screen {
     }
 
     @Subscribe("cancelBtn")
-    public void onCancelBtnClick(Button.ClickEvent event) {
+    protected void onCancelBtnClick(Button.ClickEvent event) {
         close(StandardOutcome.CLOSE);
     }
 

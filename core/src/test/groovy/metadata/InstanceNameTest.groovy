@@ -34,6 +34,9 @@ import test_support.app.entity.Owner
 import io.jmix.core.security.SystemAuthenticator
 
 import org.springframework.beans.factory.annotation.Autowired
+import test_support.app.entity.instance_name.GPSDeviceWithFieldName
+import test_support.app.entity.instance_name.GPSDeviceWithMethodName
+import test_support.app.entity.instance_name.GPSDeviceWithOverridedMethodName
 import test_support.base.TestBaseConfiguration
 
 import java.util.stream.Collectors
@@ -97,6 +100,38 @@ class InstanceNameTest extends Specification {
         instanceNameProvider.getInstanceNameRelatedProperties(metadata.getClass(Owner),true).stream()
                 .map{p->p.getName()}
                 .collect(Collectors.toSet()) == ["name"] as Set
+
+        cleanup:
+        authenticator.end()
+    }
+
+    def "instance name method with inheritance"() {
+        when: "instance name method with class inheritance"
+        def device = metadata.create(GPSDeviceWithMethodName)
+        device.name = "gps"
+        device.model = "super_model"
+
+        then:
+        instanceNameProvider.getInstanceName(device) == "device:gps"
+
+        when: "instance name method with class inheritance and method is overridden"
+        def anotherDevice = metadata.create(GPSDeviceWithOverridedMethodName)
+        anotherDevice.name = "gps"
+        anotherDevice.model = "super_model"
+
+        then:
+        instanceNameProvider.getInstanceName(anotherDevice) == "gps:gps"
+    }
+
+    def "instance name property with inheritance"() {
+        def device = metadata.create(GPSDeviceWithFieldName)
+        device.name = "gps"
+        device.model = "super_model"
+
+        authenticator.begin()
+
+        expect:
+        instanceNameProvider.getInstanceName(device) == "gps"
 
         cleanup:
         authenticator.end()

@@ -31,6 +31,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nonnull;
@@ -181,8 +182,8 @@ public class InstanceNameProviderImpl implements InstanceNameProvider {
     public InstanceNameRec parseNamePattern(MetaClass metaClass) {
         Method method = null;
         MetaProperty nameProperty = null;
-        List<Method> instanceNameMethods = Stream.of(metaClass.getJavaClass().getDeclaredMethods())
-                .filter(m -> m.isAnnotationPresent(InstanceName.class))
+        List<Method> instanceNameMethods = Stream.of(metaClass.getJavaClass().getMethods())
+                .filter(m -> AnnotatedElementUtils.findMergedAnnotation(m, InstanceName.class) != null)
                 .collect(Collectors.toList());
         List<MetaProperty> nameProperties = metaClass.getProperties().stream()
                 .filter(p -> p.getAnnotatedElement().getAnnotation(InstanceName.class) != null)

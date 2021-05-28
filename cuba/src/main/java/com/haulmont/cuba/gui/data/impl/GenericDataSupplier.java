@@ -97,7 +97,7 @@ public class GenericDataSupplier implements DataSupplier {
     }
 
     @Override
-    public io.jmix.core.DataManager getDelegate() {
+    public io.jmix.core.UnconstrainedDataManager getDelegate() {
         return getDataManager().getDelegate();
     }
 

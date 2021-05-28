@@ -51,7 +51,7 @@ public class MigrationHelperManagementFacade {
     protected DataSource dataSource;
 
     @Autowired
-    protected UnsafeDataManager dataManager;
+    protected UnconstrainedDataManager dataManager;
 
     @ManagedOperation(description = "Checks cuba tables and fills FileRef column value for entities with FileDescriptor fields")
     @ManagedOperationParameters({

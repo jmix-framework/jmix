@@ -17,7 +17,9 @@
 package com.haulmont.cuba.core.global;
 
 import com.haulmont.cuba.core.entity.contracts.Id;
-import io.jmix.core.*;
+import io.jmix.core.Entity;
+import io.jmix.core.EntityAccessException;
+import io.jmix.core.FetchPlan;
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.metamodel.model.MetaClass;
 
@@ -192,7 +194,7 @@ public interface DataManager {
      */
     DataManager secure();
 
-    io.jmix.core.DataManager getDelegate();
+    io.jmix.core.UnconstrainedDataManager getDelegate();
 
     /**
      * Entry point to the fluent API for loading entities.

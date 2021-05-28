@@ -56,7 +56,7 @@ public class CubaDataManager implements DataManager {
     protected ApplicationContext applicationContext;
     protected AccessConstraintsRegistry accessConstraintsRegistry;
 
-    protected io.jmix.core.DataManager delegate;
+    protected io.jmix.core.UnconstrainedDataManager delegate;
 
     @Autowired
     public CubaDataManager(Metadata metadata,
@@ -76,7 +76,7 @@ public class CubaDataManager implements DataManager {
     }
 
     protected void initDelegate() {
-        this.delegate = new RowLevelConstraintsDataManager(applicationContext.getBean(UnsafeDataManager.class),
+        this.delegate = new RowLevelConstraintsDataManager(applicationContext.getBean(UnconstrainedDataManager.class),
                 accessConstraintsRegistry);
     }
 
@@ -194,7 +194,7 @@ public class CubaDataManager implements DataManager {
     }
 
     @Override
-    public io.jmix.core.DataManager getDelegate() {
+    public io.jmix.core.UnconstrainedDataManager getDelegate() {
         return delegate;
     }
 
@@ -284,11 +284,11 @@ public class CubaDataManager implements DataManager {
         }
     }
 
-    private static class RowLevelConstraintsDataManager implements io.jmix.core.DataManager {
-        private final io.jmix.core.DataManager delegate;
+    private static class RowLevelConstraintsDataManager implements io.jmix.core.UnconstrainedDataManager {
+        private final io.jmix.core.UnconstrainedDataManager delegate;
         private final AccessConstraintsRegistry accessConstraintsRegistry;
 
-        private RowLevelConstraintsDataManager(io.jmix.core.DataManager delegate,
+        private RowLevelConstraintsDataManager(io.jmix.core.UnconstrainedDataManager delegate,
                                                AccessConstraintsRegistry accessConstraintsRegistry) {
             this.delegate = delegate;
             this.accessConstraintsRegistry = accessConstraintsRegistry;

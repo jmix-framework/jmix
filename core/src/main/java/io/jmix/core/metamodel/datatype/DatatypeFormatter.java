@@ -44,7 +44,7 @@ public class DatatypeFormatter {
     protected DatatypeRegistry datatypeRegistry;
 
     /**
-     * Format Date (date without time) using {@code dateFormat} string specified in the main message pack.
+     * Format Date (date without time) using {@code dateFormat} string specified in the main message group.
      * @return string representation or empty string if the value is null
      */
     public String formatDate(@Nullable Date value) {
@@ -52,7 +52,7 @@ public class DatatypeFormatter {
     }
 
     /**
-     * Format Date (time without date) using {@code timeFormat} string specified in the main message pack.
+     * Format Date (time without date) using {@code timeFormat} string specified in the main message group.
      * @return string representation or empty string if the value is null
      */
     public String formatTime(@Nullable Date value) {
@@ -60,7 +60,7 @@ public class DatatypeFormatter {
     }
 
     /**
-     * Format Date (date and time) using {@code dateTimeFormat} string specified in the main message pack.
+     * Format Date (date and time) using {@code dateTimeFormat} string specified in the main message group.
      * <p>Takes into account time zone if it is set for the current user session.</p>
      * @return string representation or empty string if the value is null
      */
@@ -75,7 +75,7 @@ public class DatatypeFormatter {
 
     /**
      * Format LocalDate (date without time and without a time-zone) using {@code dateFormat} string specified in the
-     * main message pack.
+     * main message group.
      *
      * @return string representation or empty string if the value is null
      */
@@ -85,7 +85,7 @@ public class DatatypeFormatter {
 
     /**
      * Format LocalDateTime (date and time without a time-zone) using {@code dateTimeFormat} string specified in the
-     * main message pack.
+     * main message group.
      *
      * @return string representation or empty string if the value is null
      */
@@ -95,7 +95,7 @@ public class DatatypeFormatter {
 
     /**
      * Format LocalTime (time without date and without a time-zone) using {@code timeFormat} string specified in the
-     * main message pack.
+     * main message group.
      *
      * @return string representation or empty string if the value is null
      */
@@ -105,7 +105,7 @@ public class DatatypeFormatter {
 
     /**
      * Format OffsetDateTime (date and time with an offset from UTC/Greenwich) using {@code offsetDateTimeFormat} string
-     * specified in the main message pack.
+     * specified in the main message group.
      *
      * @return string representation or empty string if the value is null
      */
@@ -115,7 +115,7 @@ public class DatatypeFormatter {
 
     /**
      * Format OffsetTime (time with an offset from UTC/Greenwich) using {@code offsetTimeFormat} string specified in the
-     * main message pack.
+     * main message group.
      *
      * @return string representation or empty string if the value is null
      */
@@ -124,7 +124,7 @@ public class DatatypeFormatter {
     }
 
     /**
-     * Format Double using {@code doubleFormat} string specified in the main message pack.
+     * Format Double using {@code doubleFormat} string specified in the main message group.
      * @return string representation or empty string if the value is null
      */
     public String formatDouble(@Nullable Double value) {
@@ -132,7 +132,7 @@ public class DatatypeFormatter {
     }
 
     /**
-     * Format BigDecimal using {@code decimalFormat} string specified in the main message pack.
+     * Format BigDecimal using {@code decimalFormat} string specified in the main message group.
      * @return string representation or empty string if the value is null
      */
     public String formatBigDecimal(@Nullable BigDecimal value) {
@@ -140,7 +140,7 @@ public class DatatypeFormatter {
     }
 
     /**
-     * Format Boolean using {@code trueString} and {@code falseString} strings specified in the main message pack.
+     * Format Boolean using {@code trueString} and {@code falseString} strings specified in the main message group.
      * @return string representation or empty string if the value is null
      */
     public String formatBoolean(@Nullable Boolean value) {
@@ -148,7 +148,7 @@ public class DatatypeFormatter {
     }
 
     /**
-     * Format Integer using {@code integerFormat} string specified in the main message pack.
+     * Format Integer using {@code integerFormat} string specified in the main message group.
      * @return string representation or empty string if the value is null
      */
     public String formatInteger(@Nullable Integer value) {
@@ -156,7 +156,7 @@ public class DatatypeFormatter {
     }
 
     /**
-     * Format Long using {@code integerFormat} string specified in the main message pack.
+     * Format Long using {@code integerFormat} string specified in the main message group.
      * @return string representation or empty string if the value is null
      */
     public String formatLong(@Nullable Long value) {
@@ -164,7 +164,7 @@ public class DatatypeFormatter {
     }
 
     /**
-     * Parse Date (date without time) using {@code dateFormat} string specified in the main message pack.
+     * Parse Date (date without time) using {@code dateFormat} string specified in the main message group.
      * @return Date value or null if a blank string is provided
      */
     @Nullable
@@ -173,7 +173,7 @@ public class DatatypeFormatter {
     }
 
     /**
-     * Parse Date (time without date) using {@code timeFormat} string specified in the main message pack.
+     * Parse Date (time without date) using {@code timeFormat} string specified in the main message group.
      * @return Date value or null if a blank string is provided
      */
     @Nullable
@@ -182,7 +182,7 @@ public class DatatypeFormatter {
     }
 
     /**
-     * Parse Date (date and time) using {@code dateTimeFormat} string specified in the main message pack.
+     * Parse Date (date and time) using {@code dateTimeFormat} string specified in the main message group.
      * <p>Takes into account time zone if it is set for the current user session.</p>
      * @return Date value or null if a blank string is provided
      */
@@ -198,7 +198,7 @@ public class DatatypeFormatter {
 
     /**
      * Parse LocalDate (date without time and without a time-zone) using {@code dateFormat} string specified in the main
-     * message pack.
+     * message group.
      *
      * @return LocalDate value or null if a blank string is provided
      */
@@ -209,7 +209,7 @@ public class DatatypeFormatter {
 
     /**
      * Parse LocalTime (time without date and without a time-zone) using {@code timeFormat} string specified in the main
-     * message pack.
+     * message group.
      *
      * @return LocalTime value or null if a blank string is provided
      */
@@ -220,7 +220,7 @@ public class DatatypeFormatter {
 
     /**
      * Parse LocalDateTime (date and time without a time-zone) using {@code dateTimeFormat} string specified in the main
-     * message pack.
+     * message group.
      *
      * @return LocalDateTime value or null if a blank string is provided
      */
@@ -231,7 +231,7 @@ public class DatatypeFormatter {
 
     /**
      * Parse OffsetDateTime (date and time with an offset from UTC/Greenwich) using {@code offsetDateTimeFormat} string
-     * specified in the main message pack.
+     * specified in the main message group.
      *
      * @return OffsetDateTime value or null if a blank string is provided
      */
@@ -242,7 +242,7 @@ public class DatatypeFormatter {
 
     /**
      * Parse OffsetTime (time without date and with an offset from UTC/Greenwich) using {@code offsetTimeFormat} string
-     * specified in the main message pack.
+     * specified in the main message group.
      *
      * @return OffsetTime value or null if a blank string is provided
      */
@@ -252,7 +252,7 @@ public class DatatypeFormatter {
     }
 
     /**
-     * Parse Double using {@code doubleFormat} string specified in the main message pack.
+     * Parse Double using {@code doubleFormat} string specified in the main message group.
      * @return Double value or null if a blank string is provided
      */
     @Nullable
@@ -261,7 +261,7 @@ public class DatatypeFormatter {
     }
 
     /**
-     * Parse BigDecimal using {@code decimalFormat} string specified in the main message pack.
+     * Parse BigDecimal using {@code decimalFormat} string specified in the main message group.
      * @return BigDecimal value or null if a blank string is provided
      */
     @Nullable
@@ -270,7 +270,7 @@ public class DatatypeFormatter {
     }
 
     /**
-     * Parse Boolean using {@code trueString} and {@code falseString} strings specified in the main message pack.
+     * Parse Boolean using {@code trueString} and {@code falseString} strings specified in the main message group.
      * @return Boolean value or null if a blank string is provided
      */
     @Nullable
@@ -279,7 +279,7 @@ public class DatatypeFormatter {
     }
 
     /**
-     * Parse Integer using {@code integerFormat} string specified in the main message pack.
+     * Parse Integer using {@code integerFormat} string specified in the main message group.
      * @return Integer value or null if a blank string is provided
      */
     @Nullable
@@ -288,7 +288,7 @@ public class DatatypeFormatter {
     }
 
     /**
-     * Parse Long using {@code integerFormat} string specified in the main message pack.
+     * Parse Long using {@code integerFormat} string specified in the main message group.
      * @return Long value or null if a blank string is provided
      */
     @Nullable

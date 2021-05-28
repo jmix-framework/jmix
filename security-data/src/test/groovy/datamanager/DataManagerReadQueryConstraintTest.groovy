@@ -16,11 +16,7 @@
 
 package datamanager
 
-import io.jmix.core.AccessConstraintsRegistry
-import io.jmix.core.DataManager
-import io.jmix.core.EntityAccessException
-import io.jmix.core.Metadata
-import io.jmix.core.UnsafeDataManager
+import io.jmix.core.*
 import io.jmix.core.security.InMemoryUserRepository
 import io.jmix.core.security.SecurityContextHelper
 import io.jmix.security.authentication.RoleGrantedAuthority
@@ -44,7 +40,7 @@ class DataManagerReadQueryConstraintTest extends SecurityDataSpecification {
     DataManager dataManager
 
     @Autowired
-    UnsafeDataManager unsafeDataManager
+    UnconstrainedDataManager unsafeDataManager
 
     @Autowired
     AuthenticationManager authenticationManager

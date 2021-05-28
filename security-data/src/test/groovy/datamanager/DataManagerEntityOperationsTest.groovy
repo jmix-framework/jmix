@@ -37,7 +37,7 @@ import javax.sql.DataSource
 
 class DataManagerEntityOperationsTest extends SecurityDataSpecification {
     @Autowired
-    UnsafeDataManager dataManager
+    UnconstrainedDataManager dataManager
 
     @Autowired
     DataManager secureDataManager

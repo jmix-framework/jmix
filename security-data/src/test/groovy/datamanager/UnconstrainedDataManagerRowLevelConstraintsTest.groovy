@@ -39,9 +39,9 @@ import test_support.role.TestDefaultConstraintsRole
 
 import javax.sql.DataSource
 
-class UnsafeDataManagerRowLevelConstraintsTest extends SecurityDataSpecification {
+class UnconstrainedDataManagerRowLevelConstraintsTest extends SecurityDataSpecification {
     @Autowired
-    UnsafeDataManager dataManager
+    UnconstrainedDataManager dataManager
 
     @Autowired
     AuthenticationManager authenticationManager

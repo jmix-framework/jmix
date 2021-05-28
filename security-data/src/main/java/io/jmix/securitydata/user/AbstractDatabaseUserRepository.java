@@ -17,7 +17,7 @@
 package io.jmix.securitydata.user;
 
 import io.jmix.core.Metadata;
-import io.jmix.core.UnsafeDataManager;
+import io.jmix.core.UnconstrainedDataManager;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.event.EntityChangedEvent;
@@ -65,7 +65,7 @@ public abstract class AbstractDatabaseUserRepository<T extends UserDetails> impl
     private T anonymousUser;
 
     @Autowired
-    private UnsafeDataManager dataManager;
+    private UnconstrainedDataManager dataManager;
     @Autowired
     private Metadata metadata;
     @Autowired

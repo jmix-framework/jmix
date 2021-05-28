@@ -20,7 +20,7 @@ import com.google.common.base.Strings;
 import io.jmix.core.AccessManager;
 import io.jmix.core.FetchPlanBuilder;
 import io.jmix.core.Metadata;
-import io.jmix.core.UnsafeDataManager;
+import io.jmix.core.UnconstrainedDataManager;
 import io.jmix.core.accesscontext.CrudEntityContext;
 import io.jmix.security.model.BaseRole;
 import io.jmix.security.role.RoleProvider;
@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
  */
 public abstract class BaseDatabaseRoleProvider<T extends BaseRole> implements RoleProvider<T> {
 
-    protected UnsafeDataManager dataManager;
+    protected UnconstrainedDataManager dataManager;
     protected Metadata metadata;
     protected AccessManager accessManager;
 
@@ -84,7 +84,7 @@ public abstract class BaseDatabaseRoleProvider<T extends BaseRole> implements Ro
     }
 
     @Autowired
-    public void setDataManager(UnsafeDataManager dataManager) {
+    public void setDataManager(UnconstrainedDataManager dataManager) {
         this.dataManager = dataManager;
     }
 

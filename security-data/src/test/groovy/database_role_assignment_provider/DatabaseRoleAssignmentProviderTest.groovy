@@ -19,7 +19,7 @@ package database_role_assignment_provider
 
 import io.jmix.core.Metadata
 import io.jmix.core.SaveContext
-import io.jmix.core.UnsafeDataManager
+import io.jmix.core.UnconstrainedDataManager
 import io.jmix.security.role.assignment.RoleAssignmentRoleType
 import io.jmix.securitydata.entity.RoleAssignmentEntity
 import io.jmix.securitydata.impl.role.assignment.DatabaseRoleAssignmentProvider
@@ -35,7 +35,7 @@ class DatabaseRoleAssignmentProviderTest extends SecurityDataSpecification {
     Metadata metadata
 
     @Autowired
-    UnsafeDataManager dataManager
+    UnconstrainedDataManager dataManager
 
     def setup() {
         prepareTestData()

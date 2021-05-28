@@ -18,7 +18,7 @@ package repository
 
 
 import io.jmix.core.Metadata
-import io.jmix.core.UnsafeDataManager
+import io.jmix.core.UnconstrainedDataManager
 import io.jmix.core.security.InMemoryUserRepository
 import io.jmix.core.security.SecurityContextHelper
 import io.jmix.security.authentication.RoleGrantedAuthority
@@ -63,7 +63,7 @@ class RepositorySecurityTest extends SecurityDataSpecification {
     @Autowired
     DataSource dataSource
     @Autowired
-    UnsafeDataManager unsafeDataManager
+    UnconstrainedDataManager unsafeDataManager
     @Autowired
     ResourceRoleRepository resourceRoleRepository
 

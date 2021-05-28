@@ -16,7 +16,7 @@
 
 package io.jmix.multitenancy.data;
 
-import io.jmix.core.UnsafeDataManager;
+import io.jmix.core.UnconstrainedDataManager;
 import io.jmix.multitenancy.entity.TenantAssigmentEntity;
 import org.springframework.stereotype.Component;
 
@@ -25,9 +25,9 @@ import java.util.Optional;
 @Component("mten_TenantAssigmentRepository")
 public class TenantAssigmentRepositoryImpl implements TenantAssigmentRepository {
 
-    private final UnsafeDataManager dataManager;
+    private final UnconstrainedDataManager dataManager;
 
-    public TenantAssigmentRepositoryImpl(UnsafeDataManager dataManager) {
+    public TenantAssigmentRepositoryImpl(UnconstrainedDataManager dataManager) {
         this.dataManager = dataManager;
     }
 

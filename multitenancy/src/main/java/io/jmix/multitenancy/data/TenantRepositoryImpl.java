@@ -16,7 +16,7 @@
 
 package io.jmix.multitenancy.data;
 
-import io.jmix.core.UnsafeDataManager;
+import io.jmix.core.UnconstrainedDataManager;
 import io.jmix.multitenancy.entity.Tenant;
 import org.springframework.stereotype.Component;
 
@@ -25,9 +25,9 @@ import javax.annotation.Nullable;
 @Component("mten_TenantRepository")
 public class TenantRepositoryImpl implements TenantRepository {
 
-    private final UnsafeDataManager dataManager;
+    private final UnconstrainedDataManager dataManager;
 
-    public TenantRepositoryImpl(UnsafeDataManager dataManager) {
+    public TenantRepositoryImpl(UnconstrainedDataManager dataManager) {
         this.dataManager = dataManager;
     }
 

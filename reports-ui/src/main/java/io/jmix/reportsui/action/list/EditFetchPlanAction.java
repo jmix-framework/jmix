@@ -37,7 +37,6 @@ import io.jmix.ui.action.ActionType;
 import io.jmix.ui.action.ListAction;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.Table;
-import io.jmix.ui.meta.StudioAction;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.screen.MapScreenOptions;
 import io.jmix.ui.screen.OpenMode;
@@ -49,7 +48,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-@StudioAction(target = "io.jmix.ui.component.ListComponent", description = "Edit action for an entity band")
 @ActionType(EditFetchPlanAction.ID)
 public class EditFetchPlanAction extends ListAction {
 

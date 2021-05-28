@@ -62,8 +62,8 @@ public class ReportExecution {
     @Column(name = "REPORT_CODE")
     private String reportCode;
 
-    @Column(name = "PRINCIPAL")
-    private String user;
+    @Column(name = "USERNAME")
+    private String username;
 
     @Column(name = "START_TIME", nullable = false)
     private Date startTime;
@@ -142,12 +142,12 @@ public class ReportExecution {
         this.reportCode = reportCode;
     }
 
-    public String getUser() {
-        return user;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUser(String user) {
-        this.user = user;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public Date getStartTime() {

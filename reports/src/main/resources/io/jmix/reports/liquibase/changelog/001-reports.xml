@@ -221,5 +221,12 @@ ru=Общие
     <changeSet id="5" author="reports" context="!cuba">
         <modifyDataType tableName="REPORT_EXECUTION" columnName="PARAMS" newDataType="clob"/>
     </changeSet>
+    
+    <changeSet id="6" author="reports" context="!cuba">
+        <renameColumn tableName="REPORT_EXECUTION"
+                      oldColumnName="PRINCIPAL"
+                      newColumnName="USERNAME"
+                      columnDataType="varchar(255)"/>
+    </changeSet>
 
 </databaseChangeLog>

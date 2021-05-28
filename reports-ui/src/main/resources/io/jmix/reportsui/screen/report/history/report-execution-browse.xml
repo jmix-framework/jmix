@@ -55,7 +55,7 @@
                 <column id="executionTimeSec"/>
                 <column id="reportName"/>
                 <column id="reportCode"/>
-                <column id="user"/>
+                <column id="username"/>
                 <column id="success"/>
                 <column id="cancelled"/>
                 <column id="outputDocument"/>

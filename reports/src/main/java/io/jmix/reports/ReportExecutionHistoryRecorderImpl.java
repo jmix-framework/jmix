@@ -74,7 +74,7 @@ public class ReportExecutionHistoryRecorderImpl implements ReportExecutionHistor
         execution.setReport(report);
         execution.setReportName(report.getName());
         execution.setReportCode(report.getCode());
-        execution.setUser(currentAuthentication.getUser().getUsername());
+        execution.setUsername(currentAuthentication.getUser().getUsername());
         execution.setStartTime(timeSource.currentTimestamp());
         setParametersString(execution, params);
         handleNewReportEntity(execution);

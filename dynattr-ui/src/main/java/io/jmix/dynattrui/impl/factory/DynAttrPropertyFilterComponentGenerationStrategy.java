@@ -53,7 +53,6 @@ import static io.jmix.ui.component.factory.PropertyFilterComponentGenerationStra
 public class DynAttrPropertyFilterComponentGenerationStrategy extends DynAttrComponentGenerationStrategy {
 
     protected DataAwareComponentsTools dataAwareComponentsTools;
-    protected DateIntervalUtils dateIntervalUtils;
 
     public DynAttrPropertyFilterComponentGenerationStrategy(Messages messages,
                                                             UiComponents uiComponents,
@@ -68,14 +67,12 @@ public class DynAttrPropertyFilterComponentGenerationStrategy extends DynAttrCom
                                                             AttributeDependencies attributeDependencies,
                                                             FormatStringsRegistry formatStringsRegistry,
                                                             ApplicationContext applicationContext,
-                                                            DataAwareComponentsTools dataAwareComponentsTools,
-                                                            DateIntervalUtils dateIntervalUtils) {
+                                                            DataAwareComponentsTools dataAwareComponentsTools) {
         super(messages, uiComponents, dynamicModelMetadata, metadata, msgBundleTools, optionsLoader,
                 attributeValidators, windowConfig, screensHelper, actions, attributeDependencies, formatStringsRegistry,
                 applicationContext);
 
         this.dataAwareComponentsTools = dataAwareComponentsTools;
-        this.dateIntervalUtils = dateIntervalUtils;
     }
 
     @Override

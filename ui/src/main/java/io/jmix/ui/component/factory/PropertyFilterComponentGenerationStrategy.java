@@ -53,7 +53,6 @@ public class PropertyFilterComponentGenerationStrategy extends AbstractComponent
     public static final String UNARY_FIELD_STYLENAME = "unary-field";
 
     protected DataAwareComponentsTools dataAwareComponentsTools;
-    protected DateIntervalUtils dateIntervalUtils;
 
     @Autowired
     public PropertyFilterComponentGenerationStrategy(Messages messages,
@@ -63,11 +62,9 @@ public class PropertyFilterComponentGenerationStrategy extends AbstractComponent
                                                      MetadataTools metadataTools,
                                                      Icons icons,
                                                      Actions actions,
-                                                     DataAwareComponentsTools dataAwareComponentsTools,
-                                                     DateIntervalUtils dateIntervalUtils) {
+                                                     DataAwareComponentsTools dataAwareComponentsTools) {
         super(messages, uiComponents, entityFieldCreationSupport, metadata, metadataTools, icons, actions);
         this.dataAwareComponentsTools = dataAwareComponentsTools;
-        this.dateIntervalUtils = dateIntervalUtils;
     }
 
     @Override

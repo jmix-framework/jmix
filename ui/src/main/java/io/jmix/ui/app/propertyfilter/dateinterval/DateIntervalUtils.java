@@ -18,7 +18,6 @@ package io.jmix.ui.app.propertyfilter.dateinterval;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
-import io.jmix.core.Messages;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
@@ -49,13 +48,7 @@ public class DateIntervalUtils {
     protected static final List<Class<?>> partlySupportedTimeClasses =
             ImmutableList.of(LocalTime.class, OffsetTime.class);
 
-    protected Messages messages;
     protected List<DateIntervalConverter> dateIntervalConverters;
-
-    @Autowired
-    public void setMessages(Messages messages) {
-        this.messages = messages;
-    }
 
     @Autowired
     public void setDateIntervalConverters(List<DateIntervalConverter> dateIntervalConverters) {

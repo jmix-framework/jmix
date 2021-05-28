@@ -40,7 +40,7 @@ public class EntityAttributesEraserImpl implements EntityAttributesEraser {
     @Autowired
     protected Metadata metadata;
     @Autowired
-    protected UnsafeDataManager dataManager;
+    protected UnconstrainedDataManager dataManager;
     @Autowired
     protected EntityStates entityStates;
     @Autowired

@@ -16,7 +16,10 @@
 
 package io.jmix.eclipselink.impl.lazyloading;
 
-import io.jmix.core.*;
+import io.jmix.core.FetchPlans;
+import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
+import io.jmix.core.UnconstrainedDataManager;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaProperty;
 import org.eclipse.persistence.indirection.ValueHolderInterface;
@@ -356,8 +359,8 @@ public abstract class AbstractValueHolder extends UnitOfWorkValueHolder implemen
         return beanFactory.getBean(MetadataTools.class);
     }
 
-    protected DataManager getDataManager() {
-        return beanFactory.getBean(UnsafeDataManager.class);
+    protected UnconstrainedDataManager getDataManager() {
+        return beanFactory.getBean(UnconstrainedDataManager.class);
     }
 
     protected FetchPlans getFetchPlans() {

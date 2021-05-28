@@ -39,7 +39,7 @@ public class JmixCustomLoadQuery extends JmixAbstractQuery {
 
     protected String query;
 
-    public JmixCustomLoadQuery(DataManager dataManager, Metadata jmixMetadata, Method method, RepositoryMetadata metadata, ProjectionFactory factory, String query) {
+    public JmixCustomLoadQuery(UnconstrainedDataManager dataManager, Metadata jmixMetadata, Method method, RepositoryMetadata metadata, ProjectionFactory factory, String query) {
         super(dataManager, jmixMetadata, method, metadata, factory);
         this.query = query;
         Matcher m = Pattern.compile(PARAMETER_TEMPLATE).matcher(query);
@@ -79,7 +79,7 @@ public class JmixCustomLoadQuery extends JmixAbstractQuery {
 
     @Override
     public Object execute(Object[] parameters) {
-        DataManager dataManager = getDataManager();
+        UnconstrainedDataManager dataManager = getDataManager();
 
         FluentLoader.ByQuery<?> query = dataManager
                 .load(metadata.getDomainType())

@@ -16,8 +16,8 @@
 
 package io.jmix.core.impl.repository.query;
 
-import io.jmix.core.DataManager;
 import io.jmix.core.Metadata;
+import io.jmix.core.UnconstrainedDataManager;
 import io.jmix.core.impl.repository.query.utils.JmixQueryLookupStrategy;
 import io.jmix.core.repository.FetchPlan;
 import org.springframework.data.projection.ProjectionFactory;
@@ -42,7 +42,7 @@ public abstract class JmixAbstractQuery implements RepositoryQuery {
     protected final RepositoryMetadata metadata;
     protected final ProjectionFactory factory;
     protected final QueryMethod queryMethod;
-    protected DataManager dataManager;
+    protected UnconstrainedDataManager dataManager;
 
     protected Metadata jmixMetadata;
 
@@ -54,7 +54,7 @@ public abstract class JmixAbstractQuery implements RepositoryQuery {
 
     protected String fetchPlan = io.jmix.core.FetchPlan.LOCAL;
 
-    public JmixAbstractQuery(DataManager dataManager, Metadata jmixMetadata, Method method, RepositoryMetadata metadata, ProjectionFactory factory) {
+    public JmixAbstractQuery(UnconstrainedDataManager dataManager, Metadata jmixMetadata, Method method, RepositoryMetadata metadata, ProjectionFactory factory) {
         this.method = method;
         this.metadata = metadata;
         this.factory = factory;
@@ -70,7 +70,7 @@ public abstract class JmixAbstractQuery implements RepositoryQuery {
         return new QueryMethod(method, metadata, factory);
     }
 
-    public DataManager getDataManager() {
+    public UnconstrainedDataManager getDataManager() {
         return dataManager;
     }
 

@@ -36,7 +36,7 @@ public class JmixListQuery extends JmixStructuredQuery {
 
     private static final Logger log = LoggerFactory.getLogger(JmixStructuredQuery.class);
 
-    public JmixListQuery(DataManager dataManager, Metadata jmixMetadata, Method method, RepositoryMetadata metadata, ProjectionFactory factory, PartTree qryTree) {
+    public JmixListQuery(UnconstrainedDataManager dataManager, Metadata jmixMetadata, Method method, RepositoryMetadata metadata, ProjectionFactory factory, PartTree qryTree) {
         super(dataManager, jmixMetadata, method, metadata, factory, qryTree);
         staticSort = LoaderHelper.springToJmixSort(qryTree.getSort());
     }

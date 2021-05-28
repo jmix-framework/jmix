@@ -16,8 +16,8 @@
 
 package io.jmix.core.impl.repository.query;
 
-import io.jmix.core.DataManager;
 import io.jmix.core.Metadata;
+import io.jmix.core.UnconstrainedDataManager;
 import io.jmix.core.impl.repository.query.utils.ConditionTransformer;
 import io.jmix.core.querycondition.Condition;
 import org.springframework.data.projection.ProjectionFactory;
@@ -35,7 +35,7 @@ public abstract class JmixStructuredQuery extends JmixAbstractQuery {
     protected boolean distinct;
     protected Integer maxResults = null;
 
-    public JmixStructuredQuery(DataManager dataManager, Metadata jmixMetadata, Method method, RepositoryMetadata metadata, ProjectionFactory factory, PartTree qryTree) {
+    public JmixStructuredQuery(UnconstrainedDataManager dataManager, Metadata jmixMetadata, Method method, RepositoryMetadata metadata, ProjectionFactory factory, PartTree qryTree) {
         super(dataManager, jmixMetadata, method, metadata, factory);
         List<String> parameterNames = new ArrayList<>();
         conditions = ConditionTransformer.fromPartTree(qryTree, parameterNames);

@@ -46,14 +46,14 @@ public class JmixRepositoryFactory extends RepositoryFactorySupport {
     @Override
     protected Object getTargetRepository(RepositoryInformation metadata) {
         Object domainClass = metadata.getDomainType();
-        DataManager repositoryDataManager = getAppropriateDataManager(metadata);
+        UnconstrainedDataManager repositoryDataManager = getAppropriateDataManager(metadata);
 
         return getTargetRepositoryViaReflection(metadata, domainClass, repositoryDataManager, ctx.getBean(Metadata.class));
     }
 
-    protected DataManager getAppropriateDataManager(RepositoryInformation metadata) {
+    protected UnconstrainedDataManager getAppropriateDataManager(RepositoryInformation metadata) {
         return metadata.getRepositoryInterface().isAnnotationPresent(UnsafeDataRepository.class)
-                ? ctx.getBean(UnsafeDataManager.class)
+                ? ctx.getBean(UnconstrainedDataManager.class)
                 : ctx.getBean(DataManager.class);
     }
 
@@ -66,6 +66,6 @@ public class JmixRepositoryFactory extends RepositoryFactorySupport {
     @Override
     protected Optional<QueryLookupStrategy> getQueryLookupStrategy(@Nullable QueryLookupStrategy.Key key,
                                                                    QueryMethodEvaluationContextProvider evaluationContextProvider) {
-        return Optional.of(new JmixQueryLookupStrategy(ctx.getBean(DataManager.class), ctx.getBean(UnsafeDataManager.class), ctx.getBean(Metadata.class)));
+        return Optional.of(new JmixQueryLookupStrategy(ctx.getBean(DataManager.class), ctx.getBean(UnconstrainedDataManager.class), ctx.getBean(Metadata.class)));
     }
 }

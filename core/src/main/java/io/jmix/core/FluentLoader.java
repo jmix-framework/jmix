@@ -43,7 +43,7 @@ public class FluentLoader<E> {
     private Class<E> entityClass;
     private MetaClass metaClass;
 
-    private DataManager dataManager;
+    private UnconstrainedDataManager dataManager;
 
     private boolean joinTransaction = true;
     private FetchPlan fetchPlan;
@@ -67,7 +67,7 @@ public class FluentLoader<E> {
     @Autowired
     private AccessConstraintsRegistry accessConstraintsRegistry;
 
-    public void setDataManager(DataManager dataManager) {
+    public void setDataManager(UnconstrainedDataManager dataManager) {
         this.dataManager = dataManager;
     }
 

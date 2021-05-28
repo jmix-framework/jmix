@@ -16,7 +16,7 @@
 
 package io.jmix.core.repository;
 
-import io.jmix.core.UnsafeDataManager;
+import io.jmix.core.UnconstrainedDataManager;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -26,7 +26,7 @@ import java.lang.annotation.Target;
 /**
  * Disables CRUD and row level {@link io.jmix.core.constraint.AccessConstraint}s for {@link JmixDataRepository}.
  * <p>
- * {@link UnsafeDataManager} will be used instead of DataManager when this annotation present.
+ * {@link UnconstrainedDataManager} will be used instead of DataManager when this annotation present.
  * <p>
  */
 @Target(ElementType.TYPE)

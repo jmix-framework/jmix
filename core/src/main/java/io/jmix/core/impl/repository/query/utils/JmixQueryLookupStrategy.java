@@ -18,7 +18,7 @@ package io.jmix.core.impl.repository.query.utils;
 
 import io.jmix.core.DataManager;
 import io.jmix.core.Metadata;
-import io.jmix.core.UnsafeDataManager;
+import io.jmix.core.UnconstrainedDataManager;
 import io.jmix.core.impl.repository.query.*;
 import io.jmix.core.repository.Query;
 import io.jmix.core.repository.UnsafeDataRepository;
@@ -38,20 +38,20 @@ public class JmixQueryLookupStrategy implements QueryLookupStrategy {
     private static final Logger log = LoggerFactory.getLogger(QueryLookupStrategy.class);
 
     private DataManager dataManager;
-    private UnsafeDataManager unsafeDataManager;
+    private UnconstrainedDataManager unconstrainedDataManager;
     private Metadata jmixMetadata;
 
-    public JmixQueryLookupStrategy(DataManager dataManager, UnsafeDataManager unsafeDataManager, Metadata jmixMetadata) {
+    public JmixQueryLookupStrategy(DataManager dataManager, UnconstrainedDataManager unconstrainedDataManager, Metadata jmixMetadata) {
         this.dataManager = dataManager;
         this.jmixMetadata = jmixMetadata;
-        this.unsafeDataManager = unsafeDataManager;
+        this.unconstrainedDataManager = unconstrainedDataManager;
     }
 
     @Override
     public RepositoryQuery resolveQuery(Method method, RepositoryMetadata repositoryMetadata, ProjectionFactory factory, NamedQueries namedQueries) {
 
-        DataManager queryDataManager = repositoryMetadata.getRepositoryInterface().isAnnotationPresent(UnsafeDataRepository.class)
-                ? unsafeDataManager
+        UnconstrainedDataManager queryDataManager = repositoryMetadata.getRepositoryInterface().isAnnotationPresent(UnsafeDataRepository.class)
+                ? unconstrainedDataManager
                 : dataManager;
 
         Query query = method.getDeclaredAnnotation(Query.class);

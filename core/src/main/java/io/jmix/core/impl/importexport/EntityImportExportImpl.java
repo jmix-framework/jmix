@@ -62,7 +62,7 @@ public class EntityImportExportImpl implements EntityImportExport {
     protected Metadata metadata;
 
     @Autowired
-    protected UnsafeDataManager dataManager;
+    protected UnconstrainedDataManager dataManager;
 
     @Autowired
     protected MetadataTools metadataTools;

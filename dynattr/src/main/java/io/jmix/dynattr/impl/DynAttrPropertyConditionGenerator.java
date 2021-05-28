@@ -139,8 +139,9 @@ public class DynAttrPropertyConditionGenerator extends PropertyConditionGenerato
         String formattedOperation = cavAlias + "." + valueFieldName + " " + operation;
 
         if (PropertyConditionUtils.isInIntervalOperation(condition)) {
+            String lastSymbol = operation.contains("@between") ? "," : " ";
             formattedOperation = new StringBuilder(operation)
-                    .replace(operation.indexOf("{"), operation.indexOf(","), cavAlias + "." + valueFieldName)
+                    .replace(operation.indexOf("{"), operation.indexOf(lastSymbol), cavAlias + "." + valueFieldName)
                     .toString();
         }
 

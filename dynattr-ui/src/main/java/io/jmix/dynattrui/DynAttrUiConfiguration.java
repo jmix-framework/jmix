@@ -30,6 +30,7 @@ import io.jmix.dynattrui.panel.DynamicAttributesPanelLoader;
 import io.jmix.dynattrui.propertyfilter.DynAttrPropertyFilterSupport;
 import io.jmix.ui.UiConfiguration;
 import io.jmix.ui.app.propertyfilter.dateinterval.DateIntervalUtils;
+import io.jmix.ui.app.propertyfilter.dateinterval.RelativeDateTimeMomentProvider;
 import io.jmix.ui.component.propertyfilter.PropertyFilterSupport;
 import io.jmix.ui.sys.UiControllersConfiguration;
 import io.jmix.ui.sys.registration.ComponentRegistration;
@@ -38,6 +39,7 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.*;
 
+import javax.annotation.Nullable;
 import java.util.Collections;
 
 @Configuration
@@ -64,9 +66,10 @@ public class DynAttrUiConfiguration {
                                                        DataManager dataManager,
                                                        DatatypeRegistry datatypeRegistry,
                                                        DynAttrMetadata dynAttrMetadata,
-                                                       DateIntervalUtils dateIntervalUtils) {
+                                                       DateIntervalUtils dateIntervalUtils,
+                                                       @Nullable RelativeDateTimeMomentProvider relativeMomentProvider) {
         return new DynAttrPropertyFilterSupport(messages, messageTools, metadataTools, dataManager, datatypeRegistry,
-                dynAttrMetadata, dateIntervalUtils);
+                dynAttrMetadata, dateIntervalUtils, relativeMomentProvider);
     }
 
     @Bean

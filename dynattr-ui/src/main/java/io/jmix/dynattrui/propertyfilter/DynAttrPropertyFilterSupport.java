@@ -28,9 +28,11 @@ import io.jmix.dynattr.AttributeType;
 import io.jmix.dynattr.DynAttrMetadata;
 import io.jmix.dynattr.DynAttrUtils;
 import io.jmix.ui.app.propertyfilter.dateinterval.DateIntervalUtils;
+import io.jmix.ui.app.propertyfilter.dateinterval.RelativeDateTimeMomentProvider;
 import io.jmix.ui.component.PropertyFilter;
 import io.jmix.ui.component.propertyfilter.PropertyFilterSupport;
 
+import javax.annotation.Nullable;
 import java.util.EnumSet;
 
 import static io.jmix.ui.component.PropertyFilter.Operation.EQUAL;
@@ -49,8 +51,10 @@ public class DynAttrPropertyFilterSupport extends PropertyFilterSupport {
                                         DataManager dataManager,
                                         DatatypeRegistry datatypeRegistry,
                                         DynAttrMetadata dynAttrMetadata,
-                                        DateIntervalUtils dateIntervalUtils) {
-        super(messages, messageTools, metadataTools, dataManager, datatypeRegistry, dateIntervalUtils);
+                                        DateIntervalUtils dateIntervalUtils,
+                                        @Nullable RelativeDateTimeMomentProvider relativeMomentProvider) {
+        super(messages, messageTools, metadataTools, dataManager, datatypeRegistry, dateIntervalUtils,
+                relativeMomentProvider);
         this.dynAttrMetadata = dynAttrMetadata;
     }
 

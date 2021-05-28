@@ -37,12 +37,12 @@ public class JmixDataRepositoryImpl<T, ID> implements JmixDataRepository<T, ID> 
 
     protected Metadata metadata;
 
-    protected DataManager dataManager;
+    protected UnconstrainedDataManager dataManager;
 
 
     private Class<T> domainClass;
 
-    public JmixDataRepositoryImpl(Class<T> domainClass, DataManager dataManager, Metadata metadata) {
+    public JmixDataRepositoryImpl(Class<T> domainClass, UnconstrainedDataManager dataManager, Metadata metadata) {
         this.domainClass = domainClass;
         this.dataManager = dataManager;
         this.metadata = metadata;

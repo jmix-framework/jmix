@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package io.jmix.securityoauth2.token;
+package io.jmix.securityoauth2.impl;
 
 import io.jmix.securityoauth2.SecurityOAuth2Properties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-@Component("sec_RestTokenMasker")
+@Component("sec_TokenMasker")
 public class TokenMasker {
 
     protected static final String MASK_PREFIX = "***";

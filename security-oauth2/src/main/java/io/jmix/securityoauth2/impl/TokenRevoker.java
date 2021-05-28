@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.securityoauth2.token;
+package io.jmix.securityoauth2.impl;
 
 import io.jmix.securityoauth2.event.OAuth2TokenRevokedEvent;
 import io.jmix.securityoauth2.event.TokenRevocationInitiator;

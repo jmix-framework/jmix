@@ -30,7 +30,7 @@ public class AfterInvocationEvent extends ApplicationEvent {
 
     private final ServletRequest request;
     private final ServletResponse response;
-    private boolean invocationPrevented;
+    private final boolean invocationPrevented;
 
     public AfterInvocationEvent(Authentication authentication,
                                 ServletRequest request, ServletResponse response, boolean invocationPrevented) {

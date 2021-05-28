@@ -17,8 +17,8 @@
 package io.jmix.securityoauth2.controller;
 
 import io.jmix.securityoauth2.event.OAuth2TokenRevokedResponseEvent;
-import io.jmix.securityoauth2.token.TokenMasker;
-import io.jmix.securityoauth2.token.TokenRevoker;
+import io.jmix.securityoauth2.impl.TokenMasker;
+import io.jmix.securityoauth2.impl.TokenRevoker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

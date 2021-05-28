@@ -18,10 +18,10 @@ package io.jmix.securityoauth2.configurer;
 
 import io.jmix.core.security.UserRepository;
 import io.jmix.securityoauth2.SecurityOAuth2Properties;
-import io.jmix.securityoauth2.filter.LastSecurityFilter;
+import io.jmix.securityoauth2.impl.LastSecurityFilter;
 import io.jmix.securityoauth2.impl.DevTokenService;
 import io.jmix.securityoauth2.impl.RequestLocaleProvider;
-import io.jmix.securityoauth2.token.TokenMasker;
+import io.jmix.securityoauth2.impl.TokenMasker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;

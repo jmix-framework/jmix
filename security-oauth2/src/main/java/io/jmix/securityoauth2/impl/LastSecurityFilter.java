@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-package io.jmix.securityoauth2.filter;
+package io.jmix.securityoauth2.impl;
 
 import com.google.common.base.Strings;
 import io.jmix.core.security.ClientDetails;
 import io.jmix.securityoauth2.event.AfterInvocationEvent;
 import io.jmix.securityoauth2.event.BeforeInvocationEvent;
-import io.jmix.securityoauth2.impl.RequestLocaleProvider;
-import io.jmix.securityoauth2.token.TokenMasker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;

@@ -49,7 +49,7 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
     private static final Logger log = LoggerFactory.getLogger(JpaIndexingQueueManager.class);
 
     @Autowired
-    protected UnsafeDataManager dataManager;
+    protected UnconstrainedDataManager dataManager;
     @Autowired
     protected Metadata metadata;
     @Autowired
@@ -165,7 +165,7 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
             throw new IllegalArgumentException("Size of enqueuing batch during reindex entity must be positive");
         }
 
-        if(!indexConfigurationManager.isDirectlyIndexed(entityName)) {
+        if (!indexConfigurationManager.isDirectlyIndexed(entityName)) {
             throw new IllegalArgumentException(String.format("Unable to enqueue instances of entity '%s' - entity is not configured for indexing", entityName));
         }
 

@@ -74,7 +74,11 @@ public class KeyValuePropertyConditionGenerator extends PropertyConditionGenerat
                     entityAlias,
                     PropertyConditionUtils.getJpqlOperation(propertyCondition));
         } else if (PropertyConditionUtils.isInIntervalOperation(propertyCondition)) {
-            return PropertyConditionUtils.getJpqlOperation(propertyCondition);
+            String operation = PropertyConditionUtils.getJpqlOperation(propertyCondition);
+            String lastSymbol = operation.contains("@between") ? "," : " ";
+            return new StringBuilder(operation)
+                    .replace(operation.indexOf("{"), operation.indexOf(lastSymbol), entityAlias)
+                    .toString();
         } else {
             return String.format("%s %s :%s",
                     entityAlias,

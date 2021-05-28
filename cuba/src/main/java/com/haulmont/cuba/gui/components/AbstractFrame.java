@@ -346,12 +346,12 @@ public class AbstractFrame extends ScreenFragment implements com.haulmont.cuba.g
 
     @Override
     public String getMessagesPack() {
-        return messageBundle.getMessagesPack();
+        return messageBundle.getMessageGroup();
     }
 
     @Override
     public void setMessagesPack(String name) {
-        messageBundle.setMessagesPack(name);
+        messageBundle.setMessageGroup(name);
     }
 
     /**

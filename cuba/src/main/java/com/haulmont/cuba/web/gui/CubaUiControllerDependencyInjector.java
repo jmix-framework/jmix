@@ -24,12 +24,16 @@ import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.DsContext;
 import com.haulmont.cuba.gui.screen.compatibility.LegacyFrame;
 import io.jmix.core.DevelopmentException;
+import io.jmix.ui.component.Component;
+import io.jmix.ui.component.Frame;
 import io.jmix.ui.screen.FrameOwner;
+import io.jmix.ui.screen.MessageBundle;
 import io.jmix.ui.screen.ScreenOptions;
 import io.jmix.ui.screen.UiControllerUtils;
 import io.jmix.ui.sys.UiControllerDependencyInjector;
 import io.jmix.ui.sys.UiControllerReflectionInspector;
 import io.jmix.ui.sys.UiControllerReflectionInspector.InjectElement;
+import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -81,5 +85,22 @@ public class CubaUiControllerDependencyInjector extends UiControllerDependencyIn
         if (!(frameOwner instanceof LegacyFrame)) {
             throw new DevelopmentException(message);
         }
+    }
+
+    @Override
+    protected MessageBundle createMessageBundle(AnnotatedElement element, FrameOwner frameOwner, Frame frame) {
+        MessageBundle messageBundle = super.createMessageBundle(element, frameOwner, frame);
+
+        if (frame instanceof Component.HasXmlDescriptor) {
+            Element xmlDescriptor = ((Component.HasXmlDescriptor) frame).getXmlDescriptor();
+            if (xmlDescriptor != null) {
+                String messagePack = xmlDescriptor.attributeValue("messagesPack");
+                if (messagePack != null) {
+                    messageBundle.setMessageGroup(messagePack);
+                }
+            }
+        }
+
+        return messageBundle;
     }
 }

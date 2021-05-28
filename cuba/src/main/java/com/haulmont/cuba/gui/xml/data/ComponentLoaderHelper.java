@@ -175,14 +175,14 @@ public final class ComponentLoaderHelper {
         Consumer<?> validator = null;
 
         if (StringUtils.isNotBlank(scriptPath) || StringUtils.isNotBlank(script)) {
-            validator = new ScriptValidator(validatorElement, context.getMessagesPack());
+            validator = new ScriptValidator(validatorElement, context.getMessageGroup());
         } else {
             Class aClass = classManager.findClass(className);
             if (aClass == null)
                 throw new GuiDevelopmentException(String.format("Class %s is not found", className), context);
-            if (!StringUtils.isBlank(context.getMessagesPack()))
+            if (!StringUtils.isBlank(context.getMessageGroup()))
                 try {
-                    validator = (Consumer<?>) ReflectionHelper.newInstance(aClass, validatorElement, context.getMessagesPack());
+                    validator = (Consumer<?>) ReflectionHelper.newInstance(aClass, validatorElement, context.getMessageGroup());
                 } catch (NoSuchMethodException e) {
                     //
                 }

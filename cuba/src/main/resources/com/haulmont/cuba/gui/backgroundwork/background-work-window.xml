@@ -16,8 +16,7 @@
 
 <window xmlns="http://schemas.haulmont.com/cuba/window.xsd"
         caption="msg://backgroundWork.caption"
-        class="com.haulmont.cuba.gui.backgroundwork.BackgroundWorkWindow"
-        messagesPack="">
+        class="com.haulmont.cuba.gui.backgroundwork.BackgroundWorkWindow">
 
     <dialogMode width="theme://cuba.gui.BackgroundWorkWindow.width"/>
 
@@ -25,7 +24,7 @@
         <label id="text" value="msg://backgroundWork.defaultText" width="100%"/>
         <progressBar id="taskProgressBar" width="100%" indeterminate="true"/>
         <hbox align="MIDDLE_RIGHT">
-            <button id="cancelButton" invoke="cancel" icon="BAN" caption="msg://actions.Cancel"/>
+            <button id="cancelButton" invoke="cancel" icon="BAN" caption="msg:///actions.Cancel"/>
         </hbox>
     </layout>
 </window>

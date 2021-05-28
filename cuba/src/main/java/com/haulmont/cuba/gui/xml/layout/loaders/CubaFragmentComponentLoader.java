@@ -56,6 +56,16 @@ public class CubaFragmentComponentLoader extends FragmentComponentLoader {
         return frameHelper.createFakeWindowInfo(src, frameId);
     }
 
+    @Override
+    protected void loadAdditionalData(Element rootElement) {
+        super.loadAdditionalData(rootElement);
+
+        String messagesPack = rootElement.attributeValue("messagesPack");
+        if (messagesPack != null) {
+            innerContext.setMessageGroup(messagesPack);
+        }
+    }
+
     protected FrameHelper getFrameHelper() {
         return applicationContext.getBean(FrameHelper.class);
     }

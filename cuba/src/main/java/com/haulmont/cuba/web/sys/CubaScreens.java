@@ -555,6 +555,17 @@ public final class CubaScreens extends ScreensImpl implements Screens, WindowMan
         super.loadWindowFromXml(element, windowInfo, window, controller, componentLoaderContext);
     }
 
+    @Override
+    protected void findMessageGroup(Element element, String descriptorPath,
+                                    ComponentLoaderContext componentLoaderContext) {
+        String messagesPack = element.attributeValue("messagesPack");
+        if (messagesPack != null) {
+            componentLoaderContext.setMessageGroup(messagesPack);
+        } else {
+            super.findMessageGroup(element, descriptorPath, componentLoaderContext);
+        }
+    }
+
     protected void initDsContext(Screen screen, Element screenDescriptor, ComponentLoaderContext context) {
         DsContext dsContext = loadDsContext(screenDescriptor);
         initDatasources(screen.getWindow(), dsContext, context.getParams());

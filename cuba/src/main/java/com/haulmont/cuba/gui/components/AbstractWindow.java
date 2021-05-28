@@ -413,12 +413,12 @@ public class AbstractWindow extends Screen
 
     @Override
     public String getMessagesPack() {
-        return messageBundle.getMessagesPack();
+        return messageBundle.getMessageGroup();
     }
 
     @Override
     public void setMessagesPack(String name) {
-        messageBundle.setMessagesPack(name);
+        messageBundle.setMessageGroup(name);
     }
 
     /**

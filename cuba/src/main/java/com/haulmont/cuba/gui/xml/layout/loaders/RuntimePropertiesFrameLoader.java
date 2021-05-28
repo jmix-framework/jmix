@@ -119,7 +119,7 @@ public class RuntimePropertiesFrameLoader extends ContainerLoader<Frame> {
             }
 
             innerContext = new ComponentLoaderContext(getContext().getOptions());
-            innerContext.setMessagesPack(fragmentHelper.getMessagePack(windowInfo.getTemplate()));
+            innerContext.setMessageGroup(fragmentHelper.getMessageGroup(windowInfo.getTemplate()));
             innerContext.setCurrentFrameId(fragmentId);
             innerContext.setFullFrameId(frameId);
             innerContext.setFrame(fragment);
@@ -134,7 +134,7 @@ public class RuntimePropertiesFrameLoader extends ContainerLoader<Frame> {
 
             String messagesPack = rootElement.attributeValue("messagesPack");
             if (messagesPack != null) {
-                innerContext.setMessagesPack(messagesPack);
+                innerContext.setMessageGroup(messagesPack);
             }
 
             this.fragmentLoader = layoutLoader.createFragmentContent(fragment, rootElement);

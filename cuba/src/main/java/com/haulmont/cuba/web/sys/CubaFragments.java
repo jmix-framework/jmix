@@ -21,6 +21,7 @@ import com.haulmont.cuba.gui.xml.layout.loaders.ComponentLoaderContext;
 import io.jmix.ui.component.Fragment;
 import io.jmix.ui.screen.ScreenOptions;
 import io.jmix.ui.sys.FragmentsImpl;
+import org.dom4j.Element;
 
 @Deprecated
 public class CubaFragments extends FragmentsImpl {
@@ -34,5 +35,15 @@ public class CubaFragments extends FragmentsImpl {
     protected Fragment createFragmentInternal() {
         UiComponents uiComponents = applicationContext.getBean(UiComponents.class);
         return uiComponents.create(com.haulmont.cuba.gui.components.Fragment.NAME);
+    }
+
+    @Override
+    protected void loadAdditionalData(Element rootElement, io.jmix.ui.xml.layout.loader.ComponentLoaderContext innerContext) {
+        super.loadAdditionalData(rootElement, innerContext);
+
+        String messagesPack = rootElement.attributeValue("messagesPack");
+        if (messagesPack != null) {
+            innerContext.setMessageGroup(messagesPack);
+        }
     }
 }

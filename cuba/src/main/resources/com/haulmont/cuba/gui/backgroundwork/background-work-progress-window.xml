@@ -15,18 +15,17 @@
   -->
 
 <window xmlns="http://schemas.haulmont.com/cuba/window.xsd"
-        caption="msg://backgroundWorkProgress.caption"
-        class="com.haulmont.cuba.gui.backgroundwork.BackgroundWorkProgressWindow"
-        messagesPack="">
+        caption="msg:///backgroundWorkProgress.caption"
+        class="com.haulmont.cuba.gui.backgroundwork.BackgroundWorkProgressWindow">
 
     <dialogMode width="theme://cuba.gui.BackgroundWorkProgressWindow.width"/>
 
     <layout spacing="true">
-        <label id="text" value="msg://backgroundWorkProgress.defaultText" width="100%"/>
+        <label id="text" value="msg:///backgroundWorkProgress.defaultText" width="100%"/>
         <progressBar id="taskProgressBar" width="100%"/>
         <label id="progressText"/>
         <hbox align="MIDDLE_RIGHT">
-            <button id="cancelButton" invoke="cancel" icon="BAN" caption="msg://actions.Cancel"/>
+            <button id="cancelButton" invoke="cancel" icon="BAN" caption="msg:///actions.Cancel"/>
         </hbox>
     </layout>
 </window>

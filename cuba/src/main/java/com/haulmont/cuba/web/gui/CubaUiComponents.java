@@ -329,7 +329,7 @@ public class CubaUiComponents implements UiComponents {
         CompositeComponentLoaderContext context = new CompositeComponentLoaderContext();
         context.setComponentClass(componentClass);
         context.setDescriptorPath(descriptorPath);
-        context.setMessagesPack(getMessagePack(descriptorPath));
+        context.setMessageGroup(getMessagePack(descriptorPath));
 
         CompositeDescriptorLoader compositeDescriptorLoader = applicationContext.getBean(CompositeDescriptorLoader.class);
         Element element = compositeDescriptorLoader.load(descriptorPath);

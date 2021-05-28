@@ -29,6 +29,7 @@ import io.jmix.ui.component.ActionsHolder;
 import io.jmix.ui.xml.layout.loader.TreeLoader;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
@@ -44,10 +45,32 @@ public class CubaTreeLoader extends TreeLoader {
         createButtonsPanel(resultComponent, element);
     }
 
+    @Override
+    protected void loadCaptionProperty(io.jmix.ui.component.Tree resultComponent, Element element) {
+        Element itemsElem = getTreeChildrenElement(element);
+
+        String captionProperty = element.attributeValue("captionProperty");
+        if (captionProperty == null && itemsElem != null) {
+            captionProperty = itemsElem.attributeValue("captionProperty");
+        }
+
+        if (!StringUtils.isEmpty(captionProperty)) {
+            ((HasItemCaptionMode) resultComponent).setCaptionProperty(captionProperty);
+            ((HasItemCaptionMode) resultComponent).setCaptionMode(CaptionMode.PROPERTY);
+        }
+    }
+
     @SuppressWarnings("rawtypes")
     @Override
-    protected void loadDataContainer() {
-        Element itemsElem = element.element("treechildren");
+    protected void loadDataContainer(io.jmix.ui.component.Tree resultComponent, Element element) {
+        super.loadDataContainer(resultComponent, element);
+        if (resultComponent.getItems() != null) {
+            // dataContainer has been loaded
+            return;
+        }
+
+        // load datasource instead
+        Element itemsElem = getTreeChildrenElement(element);
         if (itemsElem != null) {
             String datasource = itemsElem.attributeValue("datasource");
             if (!StringUtils.isBlank(datasource)) {
@@ -62,6 +85,25 @@ public class CubaTreeLoader extends TreeLoader {
                 ((Tree) resultComponent).setDatasource((HierarchicalDatasource) ds);
             }
         }
+    }
+
+    @Nullable
+    protected Element getTreeChildrenElement(Element element) {
+        return element.element("treechildren");
+    }
+
+    @Nullable
+    @Override
+    protected String loadHierarchyProperty(Element element) {
+        String hierarchyProperty = super.loadHierarchyProperty(element);
+        if (hierarchyProperty == null) {
+            Element itemsElem = getTreeChildrenElement(element);
+            if (itemsElem != null) {
+                hierarchyProperty = itemsElem.attributeValue("hierarchyProperty");
+            }
+        }
+
+        return hierarchyProperty;
     }
 
     @Override
@@ -91,22 +133,5 @@ public class CubaTreeLoader extends TreeLoader {
 
         return actionOpt.orElseGet(() ->
                 super.loadDeclarativeAction(actionsHolder, element));
-    }
-
-    @Override
-    protected void loadTreeChildren() {
-        Element itemsElem = element.element("treechildren");
-
-        loadDataContainer();
-
-        String captionProperty = element.attributeValue("captionProperty");
-        if (captionProperty == null && itemsElem != null) {
-            captionProperty = itemsElem.attributeValue("captionProperty");
-        }
-
-        if (!StringUtils.isEmpty(captionProperty)) {
-            ((HasItemCaptionMode) resultComponent).setCaptionProperty(captionProperty);
-            ((HasItemCaptionMode) resultComponent).setCaptionMode(CaptionMode.PROPERTY);
-        }
     }
 }

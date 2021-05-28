@@ -41,7 +41,9 @@ import javax.sql.DataSource
 
 class UnconstrainedDataManagerRowLevelConstraintsTest extends SecurityDataSpecification {
     @Autowired
-    UnconstrainedDataManager dataManager
+    UnconstrainedDataManager unconstrainedDataManager
+    @Autowired
+    DataManager dataManager
 
     @Autowired
     AuthenticationManager authenticationManager
@@ -96,22 +98,22 @@ class UnconstrainedDataManagerRowLevelConstraintsTest extends SecurityDataSpecif
         orderAllowed = metadata.create(TestOrder)
         orderAllowed.number = 'allowed_3'
 
-        dataManager.save(orderDenied1, orderDenied2, orderAllowed)
+        dataManager.unconstrained().save(orderDenied1, orderDenied2, orderAllowed)
 
         OneToManyEntity oneToManyEntity = metadata.create(OneToManyEntity.class)
         oneToManyEntity.setName("allowed_1")
-        dataManager.save(oneToManyEntity)
+        dataManager.unconstrained().save(oneToManyEntity)
         oneToManyId = EntityValues.getId(oneToManyEntity) as UUID
 
         ManyToOneEntity manyToOneEntity = metadata.create(ManyToOneEntity.class)
         manyToOneEntity.setName("1")
         manyToOneEntity.setOneToManyEntity(oneToManyEntity)
-        dataManager.save(manyToOneEntity)
+        dataManager.unconstrained().save(manyToOneEntity)
 
         manyToOneEntity = metadata.create(ManyToOneEntity.class)
         manyToOneEntity.setName("allowed_1")
         manyToOneEntity.setOneToManyEntity(oneToManyEntity)
-        dataManager.save(manyToOneEntity)
+        dataManager.unconstrained().save(manyToOneEntity)
         manyToOneId = EntityValues.getId(manyToOneEntity) as UUID
 
         systemAuthentication = SecurityContextHelper.getAuthentication()
@@ -134,7 +136,7 @@ class UnconstrainedDataManagerRowLevelConstraintsTest extends SecurityDataSpecif
 
         when:
 
-        def result = dataManager.load(TestOrder.class)
+        def result = unconstrainedDataManager.load(TestOrder.class)
                 .all()
                 .accessConstraints(RowLevelConstraint)
                 .list()
@@ -153,7 +155,7 @@ class UnconstrainedDataManagerRowLevelConstraintsTest extends SecurityDataSpecif
 
         when:
 
-        def count = dataManager.getCount(
+        def count = unconstrainedDataManager.getCount(
                 new LoadContext<>(metadata.getClass(TestOrder))
                         .setAccessConstraints(accessConstraintsRegistry.getConstraintsOfType(RowLevelConstraint)))
 
@@ -169,7 +171,7 @@ class UnconstrainedDataManagerRowLevelConstraintsTest extends SecurityDataSpecif
 
         when:
 
-        def oneToManyEntity = dataManager.load(OneToManyEntity.class)
+        def oneToManyEntity = unconstrainedDataManager.load(OneToManyEntity.class)
                 .id(oneToManyId)
                 .accessConstraints(RowLevelConstraint)
                 .one()
@@ -186,7 +188,7 @@ class UnconstrainedDataManagerRowLevelConstraintsTest extends SecurityDataSpecif
 
         when:
 
-        def oneToManyEntity = dataManager.load(OneToManyEntity.class)
+        def oneToManyEntity = unconstrainedDataManager.load(OneToManyEntity.class)
                 .id(oneToManyId)
                 .accessConstraints(RowLevelConstraint)
                 .fetchPlan({ fpb -> fpb.addAll('name', 'manyToOneEntities.name') })

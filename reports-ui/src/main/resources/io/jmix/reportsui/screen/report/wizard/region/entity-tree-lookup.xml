@@ -15,7 +15,6 @@
   -->
 
 <window xmlns="http://jmix.io/schema/ui/window"
-        messagesPack="io.jmix.reportsui.screen.report.wizard"
         caption="msg://tabulatedLookup">
 
     <layout expand="entityTreeFragment" height="500px" spacing="true">

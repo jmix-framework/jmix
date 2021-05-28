@@ -14,8 +14,7 @@
   ~ limitations under the License.
   -->
 
-<fragment xmlns="http://jmix.io/schema/ui/fragment"
-          messagesPack="io.jmix.reportsui.screen.report.wizard">
+<fragment xmlns="http://jmix.io/schema/ui/fragment">
 
     <data>
         <instance id="reportDataDc" class="io.jmix.reports.entity.wizard.ReportData" provided="true">

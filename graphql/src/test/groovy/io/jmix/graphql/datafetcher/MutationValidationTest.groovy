@@ -16,21 +16,15 @@
 
 package io.jmix.graphql.datafetcher
 
-import com.graphql.spring.boot.test.GraphQLTestTemplate
-import io.jmix.graphql.AbstractGraphQLTest
-import org.springframework.beans.factory.annotation.Autowired
-import spock.lang.Ignore
 
-@Ignore
+import io.jmix.graphql.AbstractGraphQLTest 
+
 class MutationValidationTest extends AbstractGraphQLTest {
-
-    @Autowired
-    GraphQLTestTemplate graphQLTestTemplate
 
     def "should show correct validation message on submit not allowed null value"() {
         when:
         // todo shortcut .graphql path
-        def response = graphQLTestTemplate.postForResource("graphql/io/jmix/graphql/datafetcher/upsert-car-with-null-car-type.graphql")
+        def response = query("datafetcher/upsert-car-with-null-car-type.graphql")
         def error = getErrors(response)[0].getAsJsonObject()
         def errorMsg = getMessage(error)
         def extensionErrMsg = getExtensions(error).get("persistenceError").getAsString()
@@ -43,7 +37,7 @@ class MutationValidationTest extends AbstractGraphQLTest {
 
     def "should show bean validation messages"() {
         when:
-        def response = graphQLTestTemplate.postForResource("graphql/io/jmix/graphql/datafetcher/upsert-car-with-bean-validation-errors.graphql")
+        def response = query("datafetcher/upsert-car-with-bean-validation-errors.graphql")
         def error = getErrors(response)[0].getAsJsonObject()
         def extensions = getExtensions(error).getAsJsonArray("constraintViolations")
 
@@ -60,8 +54,8 @@ class MutationValidationTest extends AbstractGraphQLTest {
 
     def "should throw exception while creating new DatatypesTestEntity with read-only attributes"() {
         when:
-        def response = graphQLTestTemplate.postForResource(
-                "graphql/io/jmix/graphql/datafetcher/upsert-datatypes-test-entity.graphql")
+        def response = query(
+                "datafetcher/upsert-datatypes-test-entity.graphql")
         def error = getErrors(response)[0].getAsJsonObject()
 
         then:

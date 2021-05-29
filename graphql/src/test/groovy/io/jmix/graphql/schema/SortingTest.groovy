@@ -16,22 +16,14 @@
 
 package io.jmix.graphql.schema
 
-import com.graphql.spring.boot.test.GraphQLTestTemplate
 import io.jmix.graphql.AbstractGraphQLTest
-import org.springframework.beans.factory.annotation.Autowired
 import spock.lang.Ignore
 
-@Ignore
 class SortingTest extends AbstractGraphQLTest {
-
-    @Autowired
-    GraphQLTestTemplate graphQLTestTemplate
 
     def "default sorting by lastModifiedDate is enabled without any sorting"() {
         when:
-        def response = graphQLTestTemplate.postForResource("graphql/io/jmix/graphql/schema/cars-without-sorting.graphql")
-//        println "response = $response.rawResponse"
-
+        def response = query("schema/cars-without-sorting.graphql")
         then:
         response.rawResponse.body == '{"data":{"scr_CarList":[' +
                 '{"id":"c5a0c22e-a8ce-4c5a-9068-8fb142af26ae","lastModifiedDate":null},' +
@@ -59,13 +51,10 @@ class SortingTest extends AbstractGraphQLTest {
                 ']}}'
     }
 
+    @Ignore //todo should be fixed in https://github.com/Haulmont/jmix-graphql/issues/110
     def "default sorting by lastModifiedDate is disabled when it's already sorted"() {
         when:
-        def response = graphQLTestTemplate.postForResource(
-                "graphql/io/jmix/graphql/schema/cars-with-sorting-by-manufacturer.graphql"
-        )
-//        println "response = $response.rawResponse"
-
+        def response = query("schema/cars-with-sorting-by-manufacturer.graphql")
         then:
         response.rawResponse.body == '{"data":{"scr_CarList":[' +
                 '{"id":"73c05bf0-ef67-4291-48a2-1481fc7f17e6","lastModifiedDate":"2020-10-01"},' +

@@ -19,9 +19,7 @@ package io.jmix.graphql.limitation
 import com.graphql.spring.boot.test.GraphQLTestError
 import io.jmix.graphql.AbstractGraphQLTest
 import org.springframework.test.context.TestPropertySource
-import spock.lang.Ignore
 
-@Ignore
 @TestPropertySource(properties = ["jmix.graphql.maxQueryDepth=2"])
 class MaxQueryDepthTest extends AbstractGraphQLTest {
 

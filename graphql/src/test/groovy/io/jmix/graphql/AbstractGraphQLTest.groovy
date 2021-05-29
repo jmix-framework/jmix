@@ -22,55 +22,50 @@ import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.graphql.spring.boot.test.GraphQLResponse
-import com.graphql.spring.boot.test.GraphQLTestAutoConfiguration
 import com.graphql.spring.boot.test.GraphQLTestTemplate
-import io.jmix.core.CoreConfiguration
-import io.jmix.data.DataConfiguration
-import io.jmix.eclipselink.EclipselinkConfiguration
-import io.leangen.graphql.spqr.spring.autoconfigure.BaseAutoConfiguration
+import io.jmix.core.security.InMemoryUserRepository
+import io.jmix.security.authentication.RoleGrantedAuthority
+import io.jmix.security.role.ResourceRoleRepository
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.autoconfigure.ImportAutoConfiguration
-import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration
-import org.springframework.boot.autoconfigure.web.servlet.ServletWebServerFactoryAutoConfiguration
-import org.springframework.boot.test.autoconfigure.OverrideAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.TestPropertySource
+import org.springframework.boot.web.server.LocalServerPort
+import org.springframework.security.core.userdetails.User
+import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.transaction.PlatformTransactionManager
 import org.springframework.transaction.TransactionDefinition
 import org.springframework.transaction.support.TransactionTemplate
-import spock.lang.Ignore
 import spock.lang.Specification
-import test_support.GraphQLTestConfiguration
-import test_support.TestContextInitializer
+import test_support.App
+import test_support.RestTestUtils
 
-@SuppressWarnings('SpringJavaInjectionPointsAutowiringInspection')
-@ContextConfiguration(
-        classes = [CoreConfiguration, DataConfiguration, EclipselinkConfiguration,
-                GraphQLTestConfiguration, GraphQLConfiguration],
-        initializers = [TestContextInitializer]
-)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@OverrideAutoConfiguration(enabled = false)
-@ImportAutoConfiguration(
-        classes = [
-                BaseAutoConfiguration.class,
-                ServletWebServerFactoryAutoConfiguration.class,
-                GraphQLTestAutoConfiguration.class,
-                JacksonAutoConfiguration.class
-        ]
-)
-@TestPropertySource("classpath:/test_support/test-app.properties")
-@Ignore
+@SpringBootTest(classes = App, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class AbstractGraphQLTest extends Specification {
+
+    @LocalServerPort
+    int port
 
     @Autowired
     GraphQLTestTemplate graphQLTestTemplate
+    @Autowired
+    ResourceRoleRepository resourceRoleRepository
+    @Autowired
+    InMemoryUserRepository userRepository
 
     protected TransactionTemplate transaction
+    protected String adminToken
+    protected UserDetails admin
 
-    @Autowired
-    protected GraphQLTestTemplate graphQLTestTemplate
+    void setup() {
+        admin = User.builder()
+                .username("admin")
+                .password("{noop}admin")
+                .authorities(RoleGrantedAuthority.ofResourceRole(resourceRoleRepository.getRoleByCode("system-full-access")))
+                .build()
+
+        userRepository.addUser(admin)
+
+        adminToken = RestTestUtils.getAuthToken("http://localhost:$port", "admin", "admin", new HashMap<String, String>())
+    }
 
     @Autowired
     protected void setTransactionManager(PlatformTransactionManager transactionManager) {
@@ -79,7 +74,15 @@ class AbstractGraphQLTest extends Specification {
     }
 
     protected query(String queryFilePath) {
-        return graphQLTestTemplate.postForResource("graphql/io/jmix/graphql/" + queryFilePath)
+        return graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .postForResource("graphql/io/jmix/graphql/" + queryFilePath)
+    }
+
+    protected query(String queryFilePath, ObjectNode variables) {
+        return graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform("graphql/io/jmix/graphql/" + queryFilePath, variables)
     }
 
     static ObjectNode asObjectNode(String str) {

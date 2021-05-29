@@ -20,9 +20,7 @@ package io.jmix.graphql.datafetcher
 import io.jmix.core.security.SystemAuthenticator
 import io.jmix.graphql.AbstractGraphQLTest
 import org.springframework.beans.factory.annotation.Autowired
-import spock.lang.Ignore
 
-@Ignore
 class MessagesDataFetcherTest extends AbstractGraphQLTest {
 
     @Autowired
@@ -40,9 +38,8 @@ class MessagesDataFetcherTest extends AbstractGraphQLTest {
 
     def "all entities messages"() {
         when:
-        def response = graphQLTestTemplate
-                .postForResource(
-                        "graphql/io/jmix/graphql/datafetcher/entities-messages.graphql"
+        def response = query(
+                        "datafetcher/entities-messages.graphql"
                 )
 
         then:
@@ -72,9 +69,8 @@ class MessagesDataFetcherTest extends AbstractGraphQLTest {
 
     def 'scr$Car messages'() {
         when:
-        def response = graphQLTestTemplate
-                .perform(
-                        "graphql/io/jmix/graphql/datafetcher/entities-messages.graphql",
+        def response = query(
+                        "datafetcher/entities-messages.graphql",
                         asObjectNode('{"className": "scr$Car"}')
                 )
 
@@ -105,9 +101,8 @@ class MessagesDataFetcherTest extends AbstractGraphQLTest {
 
     def 'scr$Car messages with locale'() {
         when:
-        def response = graphQLTestTemplate
-                .perform(
-                        "graphql/io/jmix/graphql/datafetcher/entities-messages.graphql",
+        def response = query(
+                        "datafetcher/entities-messages.graphql",
                         asObjectNode('{"className": "scr$Car", "locale": "ru"}')
                 )
 
@@ -138,9 +133,8 @@ class MessagesDataFetcherTest extends AbstractGraphQLTest {
 
     def "all enum messages"() {
         when:
-        def response = graphQLTestTemplate
-                .postForResource(
-                        "graphql/io/jmix/graphql/datafetcher/enum-messages.graphql"
+        def response = query(
+                        "datafetcher/enum-messages.graphql"
                 )
 
         then:
@@ -153,9 +147,8 @@ class MessagesDataFetcherTest extends AbstractGraphQLTest {
 
     def "CarType enum messages"() {
         when:
-        def response = graphQLTestTemplate
-                .perform(
-                        "graphql/io/jmix/graphql/datafetcher/enum-messages.graphql",
+        def response = query(
+                        "datafetcher/enum-messages.graphql",
                         asObjectNode('{"className": "test_support.entity.CarType"}')
                 )
 
@@ -169,9 +162,8 @@ class MessagesDataFetcherTest extends AbstractGraphQLTest {
 
     def "CarType enum messages with locale"() {
         when:
-        def response = graphQLTestTemplate
-                .perform(
-                        "graphql/io/jmix/graphql/datafetcher/enum-messages.graphql",
+        def response = query(
+                        "datafetcher/enum-messages.graphql",
                         asObjectNode('{"className": "test_support.entity.CarType", "locale": "ru"}')
                 )
 

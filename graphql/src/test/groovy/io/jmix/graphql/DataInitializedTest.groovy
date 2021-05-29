@@ -16,7 +16,7 @@
 
 package io.jmix.graphql
 
-import io.jmix.core.DataManager
+import io.jmix.core.UnconstrainedDataManager
 import org.springframework.beans.factory.annotation.Autowired
 import test_support.entity.Car
 import test_support.entity.CarType
@@ -25,7 +25,7 @@ import test_support.entity.Garage
 class DataInitializedTest extends AbstractGraphQLTest {
 
     @Autowired
-    private DataManager dataManager
+    private UnconstrainedDataManager dataManager
 
     def "data is initialized"() {
         given:

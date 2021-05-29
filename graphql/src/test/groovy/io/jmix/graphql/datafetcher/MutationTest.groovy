@@ -16,29 +16,25 @@
 
 package io.jmix.graphql.datafetcher
 
-import io.jmix.core.DataManager
-import io.jmix.core.Metadata
+
 import io.jmix.graphql.AbstractGraphQLTest
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.annotation.DirtiesContext
-import spock.lang.Ignore
+import org.springframework.test.context.TestPropertySource
 
-@Ignore
 @DirtiesContext
+@TestPropertySource(properties = [
+        "jmix.security.oauth2.devMode=true",
+        "jmix.security.oauth2.devUsername=admin"
+])
 class MutationTest extends AbstractGraphQLTest {
-
-    @Autowired
-    DataManager dataManager;
-    @Autowired
-    Metadata metadata;
 
     def id1 = "4c34985b-67be-4788-891a-839d479bf9e6"
     def id2 = "0263a715-5fd4-4622-9b01-27daeeb9c357"
 
     def "should create new Car instance and return additional fetched attributes and _instanceName"() {
         when:
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/upsert-car-return-instance-name.gql", asObjectNode("{\"id\":\"$id1\"}"))
+        def response = query(
+                "datafetcher/upsert-car-return-instance-name.gql", asObjectNode("{\"id\":\"$id1\"}"))
         then:
         response.get('$.data.upsert_scr_Car._instanceName') == "TESLA - Z"
         response.get('$.data.upsert_scr_Car.garage') == null
@@ -47,8 +43,8 @@ class MutationTest extends AbstractGraphQLTest {
 
     def "should create new Car instance and return additional fetched attributes without _instanceName"() {
         when:
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/upsert-car.gql", asObjectNode("{\"id\":\"$id2\"}"))
+        def response = query(
+                "datafetcher/upsert-car.gql", asObjectNode("{\"id\":\"$id2\"}"))
         then:
         response.get('$.data.upsert_scr_Car.garage') == null
         response.get('$.data.upsert_scr_Car.maxPassengers') == null

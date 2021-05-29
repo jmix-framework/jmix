@@ -20,9 +20,7 @@ import com.graphql.spring.boot.test.GraphQLResponse
 import io.jmix.graphql.AbstractGraphQLTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.TestPropertySource
-import spock.lang.Ignore
 
-@Ignore
 @TestPropertySource(properties = ["jmix.graphql.operationRateLimitPerMinute=3"])
 class OperationRateLimitServiceTest extends AbstractGraphQLTest {
 
@@ -35,8 +33,8 @@ class OperationRateLimitServiceTest extends AbstractGraphQLTest {
         GraphQLResponse response = null
 
         for (i in 0..<2) {
-            response = graphQLTestTemplate.perform(
-                    "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
+            response = query(
+                    "datafetcher/query-garage-with-filter.graphql",
                     asObjectNode('{"filter": {"AND": [' +
                             '{"capacity": {"_eq": "50"}}' +
                             ']}}')
@@ -52,8 +50,8 @@ class OperationRateLimitServiceTest extends AbstractGraphQLTest {
 
     def "mutation limit is working with 1 attempt"() {
         when:
-        def response = graphQLTestTemplate.postForResource(
-                "graphql/io/jmix/graphql/datafetcher/upsert-car.graphql"
+        def response = query(
+                "datafetcher/upsert-car.graphql"
         )
 
         then:
@@ -66,8 +64,8 @@ class OperationRateLimitServiceTest extends AbstractGraphQLTest {
         def response = null
 
         for (i in 0..<4) {
-            response = graphQLTestTemplate.perform(
-                    "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
+            response = query(
+                    "datafetcher/query-garage-with-filter.graphql",
                     asObjectNode('{"filter": {"AND": [' +
                             '{"capacity": {"_eq": "50"}}' +
                             ']}}')
@@ -88,8 +86,8 @@ class OperationRateLimitServiceTest extends AbstractGraphQLTest {
         when:
         def response = null
         for (i in 0..<4) {
-            response = graphQLTestTemplate.postForResource(
-                    "graphql/io/jmix/graphql/datafetcher/upsert-car.graphql"
+            response = query(
+                    "datafetcher/upsert-car.graphql"
             )
         }
         def error = getErrors(response)[0].getAsJsonObject()

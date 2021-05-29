@@ -36,21 +36,40 @@ dependencies {
 
     testImplementation 'org.spockframework:spock-core'
     testImplementation 'org.spockframework:spock-spring'
-    testImplementation ('org.springframework.boot:spring-boot-starter-test')
-    {
+    testImplementation('org.springframework.boot:spring-boot-starter-test')
+            {
 //      todo configure logger correctly
-        exclude module: "spring-boot-starter-logging"
-    }
-    testImplementation ('com.graphql-java-kickstart:graphql-spring-boot-starter-test:11.0.0')
-    {
+                exclude module: "spring-boot-starter-logging"
+            }
+    testImplementation('com.graphql-java-kickstart:graphql-spring-boot-starter-test:11.0.0')
+            {
 //      todo configure logger correctly
-        exclude module: "spring-boot-starter-logging"
-    }
+                exclude module: "spring-boot-starter-logging"
+            }
+    testImplementation 'io.jmix.core:jmix-core-starter'
     testImplementation 'io.jmix.data:jmix-data'
-    testImplementation 'io.jmix.data:jmix-eclipselink'
+    testImplementation 'io.jmix.data:jmix-eclipselink-starter'
+    testImplementation 'io.jmix.security:jmix-security-starter'
+    testImplementation 'io.jmix.security:jmix-security-data-starter'
+    testImplementation 'io.jmix.security:jmix-security-oauth2-starter'
+
     testImplementation 'com.google.code.gson:gson:2.8.6'
+
+    testImplementation 'org.springframework:spring-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+
+    testImplementation 'org.apache.commons:commons-dbcp2'
+
+    testImplementation 'org.apache.httpcomponents.client5:httpclient5:5.0.3'
+    testImplementation 'org.apache.httpcomponents.core5:httpcore5-reactive:5.0.2'
+
+    testImplementation 'io.rest-assured:rest-assured'
+
     testRuntimeOnly 'org.slf4j:slf4j-simple'
     testRuntimeOnly 'org.hsqldb:hsqldb'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
     testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'
+
+    testImplementation 'io.leangen.graphql:graphql-spqr-spring-boot-starter:0.0.6'
+
 }

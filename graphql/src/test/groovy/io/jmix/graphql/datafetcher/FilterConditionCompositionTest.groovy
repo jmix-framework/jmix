@@ -18,16 +18,14 @@ package io.jmix.graphql.datafetcher
 
 
 import io.jmix.graphql.AbstractGraphQLTest
-import spock.lang.Ignore
 
-@Ignore
 class FilterConditionCompositionTest extends AbstractGraphQLTest {
 
     def "filter conditions union - default (AND)"() {
         when:
         //where capacity = 50
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-cars.gql",
+        def response = query(
+                "datafetcher/query-cars.gql",
                asObjectNode('{"filter": [' +
                        '  {"price": {"_lte": "30"}},' +
                        '  {"price": {"_isNull": false}}' +
@@ -46,8 +44,8 @@ class FilterConditionCompositionTest extends AbstractGraphQLTest {
     def "filter conditions union by AND"() {
         when:
         //where capacity = 50
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-cars.gql",
+        def response = query(
+                "datafetcher/query-cars.gql",
                asObjectNode('{"filter": {"AND": [' +
                        '  {"price": {"_lte": "30"}},' +
                        '  {"price": {"_isNull": false}}' +
@@ -66,8 +64,8 @@ class FilterConditionCompositionTest extends AbstractGraphQLTest {
     def "filter conditions union by OR"() {
         when:
         //where capacity = 50
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-cars.gql",
+        def response = query(
+                "datafetcher/query-cars.gql",
                asObjectNode('{"filter": {"OR": [' +
                        '  {"price": {"_lte": "10"}},' +
                        '  {"price": {"_gt": "40"}}' +

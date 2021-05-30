@@ -134,7 +134,8 @@ public interface SuggestionFieldComponent<V, I> extends Field<V>, Component.Focu
      */
     @StudioElement(
             caption = "Query",
-            xmlElement = "query"
+            xmlElement = "query",
+            icon = "io/jmix/ui/icon/element/query.svg"
     )
     @StudioProperties(
             properties = {

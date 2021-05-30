@@ -19,8 +19,9 @@ package io.jmix.ui.component;
 import io.jmix.ui.meta.CanvasBehaviour;
 import io.jmix.ui.meta.StudioComponent;
 import io.jmix.ui.meta.StudioElement;
-import org.jetbrains.annotations.Nullable;
 import org.springframework.core.ParameterizedTypeReference;
+
+import javax.annotation.Nullable;
 
 /**
  * EntitySuggestionField adds to EntityPicker the ability to search an entity by user input.
@@ -40,7 +41,8 @@ public interface EntitySuggestionField<V> extends SuggestionField<V>, EntityPick
     String NAME = "entitySuggestionField";
 
     static <T> ParameterizedTypeReference<EntitySuggestionField<T>> of(Class<T> valueClass) {
-        return new ParameterizedTypeReference<EntitySuggestionField<T>>() {};
+        return new ParameterizedTypeReference<EntitySuggestionField<T>>() {
+        };
     }
 
     @StudioElement

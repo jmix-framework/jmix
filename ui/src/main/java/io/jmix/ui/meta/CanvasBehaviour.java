@@ -28,19 +28,14 @@ public enum CanvasBehaviour {
     BOX,
 
     /**
-     * Component is shown on canvas as an input field.
-     */
-    INPUT_FIELD,
-
-    /**
-     * Component is shown on canvas as a component container.
-     */
-    CONTAINER,
-
-    /**
      * Component is shown on canvas as a button.
      */
     BUTTON,
+
+    /**
+     * Component is shown on canvas as a calendar.
+     */
+    CALENDAR,
 
     /**
      * Component is shown on canvas as a checkBox.
@@ -48,24 +43,24 @@ public enum CanvasBehaviour {
     CHECK_BOX,
 
     /**
-     * Component is shown on canvas as a group of options.
+     * Component is shown on canvas as a colorPicker.
      */
-    OPTIONS_GROUP,
+    COLOR_PICKER,
 
     /**
-     * Component is shown on canvas as a textArea.
+     * Component is shown on canvas as a comboBox.
      */
-    TEXT_AREA,
+    COMBO_BOX,
 
     /**
-     * Component is shown on canvas as a richTextArea.
+     * Component is shown on canvas as a component container.
      */
-    RICH_TEXT_AREA,
+    CONTAINER,
 
     /**
-     * Component is shown on canvas as a calendar.
+     * Component is shown on canvas as an input field.
      */
-    CALENDAR,
+    INPUT_FIELD,
 
     /**
      * Component is shown on canvas as a label.
@@ -78,7 +73,27 @@ public enum CanvasBehaviour {
     LINK,
 
     /**
+     * Component is shown on canvas as a group of options.
+     */
+    OPTIONS_GROUP,
+
+    /**
+     * Component is shown on canvas as a richTextArea.
+     */
+    RICH_TEXT_AREA,
+
+    /**
      * Component is shown on canvas as a slider.
      */
-    SLIDER
+    SLIDER,
+
+    /**
+     * Component is shown on canvas as a textArea.
+     */
+    TEXT_AREA,
+
+    /**
+     * Component is shown on canvas as a valuePicker.
+     */
+    VALUE_PICKER
 }

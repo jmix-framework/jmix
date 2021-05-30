@@ -16,9 +16,17 @@
 
 package io.jmix.ui.component;
 
+import io.jmix.ui.meta.CanvasBehaviour;
+import io.jmix.ui.meta.PropertiesConstraint;
+import io.jmix.ui.meta.PropertiesGroup;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioComponent;
+import io.jmix.ui.meta.StudioProperties;
+import io.jmix.ui.meta.StudioProperty;
 import org.springframework.core.ParameterizedTypeReference;
 
 import javax.annotation.Nullable;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -27,6 +35,24 @@ import java.util.function.Predicate;
  *
  * @param <V> type of options and value
  */
+@StudioComponent(
+        caption = "ComboBox",
+        category = "Components",
+        xmlElement = "comboBox",
+        icon = "io/jmix/ui/icon/component/comboBox.svg",
+        canvasBehaviour = CanvasBehaviour.COMBO_BOX,
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/combo-box.html"
+)
+@StudioProperties(
+        properties = {
+                @StudioProperty(name = "property", type = PropertyType.PROPERTY_PATH_REF),
+                @StudioProperty(name = "dataContainer", type = PropertyType.DATACONTAINER_REF)
+        },
+        groups = {
+                @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                        properties = {"dataContainer", "property"})
+        }
+)
 public interface ComboBox<V> extends OptionsField<V, V>, HasInputPrompt, Buffered,
         Component.Focusable, HasOptionStyleProvider<V>, HasOptionIconProvider<V>, HasOptionImageProvider<V>,
         HasFilterMode, HasEnterPressHandler {
@@ -54,6 +80,7 @@ public interface ComboBox<V> extends OptionsField<V, V>, HasInputPrompt, Buffere
      *
      * @param nullOption the caption to set, not {@code null}
      */
+    @StudioProperty(name = "nullName", type = PropertyType.LOCALIZED_STRING)
     void setNullSelectionCaption(String nullOption);
 
     /**
@@ -65,6 +92,7 @@ public interface ComboBox<V> extends OptionsField<V, V>, HasInputPrompt, Buffere
      * Sets whether it is possible to input text into the field or whether the field area of the component is just used
      * to show what is selected.
      */
+    @StudioProperty(defaultValue = "true")
     void setTextInputAllowed(boolean textInputAllowed);
 
     /**
@@ -88,11 +116,14 @@ public interface ComboBox<V> extends OptionsField<V, V>, HasInputPrompt, Buffere
      *
      * @param pageLength the pageLength to set
      */
+    @StudioProperty(defaultValue = "10")
+    @PositiveOrZero
     void setPageLength(int pageLength);
 
     /**
      * Sets visibility for first null element in suggestion popup.
      */
+    @StudioProperty(defaultValue = "true")
     void setNullOptionVisible(boolean nullOptionVisible);
 
     /**
@@ -101,7 +132,7 @@ public interface ComboBox<V> extends OptionsField<V, V>, HasInputPrompt, Buffere
     boolean isNullOptionVisible();
 
     /**
-     * Returns the suggestion pop-up's width as a string. By default this
+     * Returns the suggestion popup's width as a string. By default this
      * width is set to {@code null}.
      *
      * @return explicitly set popup width as size string or null if not set
@@ -110,13 +141,13 @@ public interface ComboBox<V> extends OptionsField<V, V>, HasInputPrompt, Buffere
     String getPopupWidth();
 
     /**
-     * Sets the suggestion pop-up's width as a string. By using relative
+     * Sets the suggestion popup's width as a string. By using relative
      * units (e.g. "50%") it's possible to set the popup's width relative to the
      * LookupField itself.
      * <p>
      * By default this width is set to {@code null} so that the popup's width
      * can be greater than a component width to fit the content of all displayed items.
-     * By setting width to "100%" the pop-up's width will be equal to the width of the LookupField.
+     * By setting width to "100%" the popup's width will be equal to the width of the LookupField.
      *
      * @param width the width
      */

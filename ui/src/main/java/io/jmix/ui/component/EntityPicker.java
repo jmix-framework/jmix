@@ -16,6 +16,13 @@
 package io.jmix.ui.component;
 
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.ui.meta.CanvasBehaviour;
+import io.jmix.ui.meta.PropertiesConstraint;
+import io.jmix.ui.meta.PropertiesGroup;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioComponent;
+import io.jmix.ui.meta.StudioProperties;
+import io.jmix.ui.meta.StudioProperty;
 import org.springframework.core.ParameterizedTypeReference;
 
 import javax.annotation.Nullable;
@@ -26,6 +33,23 @@ import javax.annotation.Nullable;
  *
  * @see EntityComboBox
  */
+@StudioComponent(
+        caption = "EntityPicker",
+        category = "Components",
+        xmlElement = "entityPicker",
+        icon = "io/jmix/ui/icon/component/entityPicker.svg",
+        canvasBehaviour = CanvasBehaviour.VALUE_PICKER,
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/entity-picker.html"
+)
+@StudioProperties(
+        properties = {
+                @StudioProperty(name = "captionProperty", type = PropertyType.PROPERTY_PATH_REF),
+        },
+        groups = {
+                @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                        properties = {"dataContainer", "captionProperty"})
+        }
+)
 public interface EntityPicker<V> extends ValuePicker<V>, LookupComponent<V> {
 
     String NAME = "entityPicker";
@@ -36,6 +60,8 @@ public interface EntityPicker<V> extends ValuePicker<V>, LookupComponent<V> {
 
     @Nullable
     MetaClass getMetaClass();
+
+    @StudioProperty(name = "metaClass", type = PropertyType.ENTITY_NAME)
     void setMetaClass(@Nullable MetaClass metaClass);
 
     interface EntityPickerAction extends ValuePickerAction {

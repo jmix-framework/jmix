@@ -19,6 +19,11 @@ package io.jmix.ui.component;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.action.tagpicker.TagLookupAction;
+import io.jmix.ui.meta.CanvasBehaviour;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioComponent;
+import io.jmix.ui.meta.StudioProperties;
+import io.jmix.ui.meta.StudioProperty;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -33,6 +38,19 @@ import java.util.function.Function;
  *
  * @param <V> type of value
  */
+@StudioComponent(
+        caption = "TagPicker",
+        category = "Components",
+        xmlElement = "tagPicker",
+        icon = "io/jmix/ui/icon/component/tagPicker.svg",
+        canvasBehaviour = CanvasBehaviour.COMBO_BOX,
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/tag-picker.html"
+)
+@StudioProperties(
+        properties = {
+                @StudioProperty(name = "optionsContainer", type = PropertyType.COLLECTION_DATACONTAINER_REF)
+        }
+)
 public interface TagPicker<V> extends ValuesPicker<V>, OptionsField<Collection<V>, V>, HasInputPrompt, HasFilterMode {
 
     String NAME = "tagPicker";
@@ -112,6 +130,7 @@ public interface TagPicker<V> extends ValuesPicker<V>, OptionsField<Collection<V
      *
      * @param inline whether tags should be placed inline
      */
+    @StudioProperty(name = "inlineTags", defaultValue = "false")
     void setInlineTags(boolean inline);
 
     /**
@@ -131,6 +150,8 @@ public interface TagPicker<V> extends ValuesPicker<V>, OptionsField<Collection<V
      *
      * @param position position to set
      */
+    @StudioProperty(name = "tagPosition", type = PropertyType.ENUMERATION, defaultValue = "BOTTOM",
+            options = {"TOP", "RIGHT", "BOTTOM", "LEFT"})
     void setTagPosition(TagPosition position);
 
     /**
@@ -158,6 +179,7 @@ public interface TagPicker<V> extends ValuesPicker<V>, OptionsField<Collection<V
      *
      * @param metaClass entity meta class
      */
+    @StudioProperty(name = "metaClass", type = PropertyType.ENTITY_NAME)
     void setMetaClass(MetaClass metaClass);
 
     /**
@@ -171,6 +193,7 @@ public interface TagPicker<V> extends ValuesPicker<V>, OptionsField<Collection<V
      *
      * @param hide {@code true} if selected options should be hidden, {@code false} otherwise
      */
+    @StudioProperty(name = "hideSelectedOptions", defaultValue = "false")
     void setHideSelectedOptions(boolean hide);
 
     /**

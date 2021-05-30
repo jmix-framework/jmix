@@ -16,16 +16,43 @@
 
 package io.jmix.ui.component;
 
+import io.jmix.ui.meta.CanvasBehaviour;
+import io.jmix.ui.meta.PropertiesConstraint;
+import io.jmix.ui.meta.PropertiesGroup;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioComponent;
+import io.jmix.ui.meta.StudioProperties;
+import io.jmix.ui.meta.StudioProperty;
 import org.springframework.core.ParameterizedTypeReference;
 
 /**
  * A components that adds to {@link EntityPicker} the ability to select an entity from drop-down list.
  */
+@StudioComponent(
+        caption = "EntityComboBox",
+        category = "Components",
+        xmlElement = "entityComboBox",
+        icon = "io/jmix/ui/icon/component/entityComboBox.svg",
+        canvasBehaviour = CanvasBehaviour.COMBO_BOX,
+        unsupportedProperties = {"fieldEditable"},
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/entity-combo-box.html"
+)
+@StudioProperties(
+        properties = {
+                @StudioProperty(name = "optionsContainer", type = PropertyType.COLLECTION_DATACONTAINER_REF),
+                @StudioProperty(name = "captionProperty", type = PropertyType.PROPERTY_PATH_REF)
+        },
+        groups = {
+                @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                        properties = {"optionsContainer", "captionProperty"}),
+        }
+)
 public interface EntityComboBox<V> extends ComboBox<V>, EntityPicker<V>, SupportsOptionsContainer<V> {
 
     String NAME = "entityComboBox";
 
     static <T> ParameterizedTypeReference<EntityComboBox<T>> of(Class<T> valueClass) {
-        return new ParameterizedTypeReference<EntityComboBox<T>>() {};
+        return new ParameterizedTypeReference<EntityComboBox<T>>() {
+        };
     }
 }

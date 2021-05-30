@@ -16,18 +16,30 @@
 
 package io.jmix.ui.component;
 
+import io.jmix.ui.meta.CanvasBehaviour;
+import io.jmix.ui.meta.StudioComponent;
 import org.springframework.core.ParameterizedTypeReference;
 
 import java.util.Collection;
 
+@StudioComponent(
+        caption = "ValuesPicker",
+        category = "Components",
+        xmlElement = "valuesPicker",
+        icon = "io/jmix/ui/icon/component/valuesPicker.svg",
+        canvasBehaviour = CanvasBehaviour.VALUE_PICKER,
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/values-picker.html"
+)
 public interface ValuesPicker<V> extends ValuePicker<Collection<V>> {
 
     String NAME = "valuesPicker";
 
     ParameterizedTypeReference<ValuesPicker<String>> TYPE_STRING =
-            new ParameterizedTypeReference<ValuesPicker<String>>() {};
+            new ParameterizedTypeReference<ValuesPicker<String>>() {
+            };
 
     static <T> ParameterizedTypeReference<ValuesPicker<T>> of(Class<T> valueClass) {
-        return new ParameterizedTypeReference<ValuesPicker<T>>() {};
+        return new ParameterizedTypeReference<ValuesPicker<T>>() {
+        };
     }
 }

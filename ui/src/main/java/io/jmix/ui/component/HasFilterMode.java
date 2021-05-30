@@ -16,6 +16,9 @@
 
 package io.jmix.ui.component;
 
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioProperty;
+
 /**
  * Interface for UI components that support filter mode.
  */
@@ -31,6 +34,8 @@ public interface HasFilterMode {
      *
      * @param filterMode filter mode to set
      */
+    @StudioProperty(type = PropertyType.ENUMERATION, defaultValue = "CONTAINS",
+            options = {"NO", "STARTS_WITH", "CONTAINS"})
     void setFilterMode(FilterMode filterMode);
 
     /**

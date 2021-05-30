@@ -16,13 +16,25 @@
 
 package io.jmix.ui.component;
 
+import io.jmix.ui.meta.CanvasBehaviour;
+import io.jmix.ui.meta.StudioComponent;
+import io.jmix.ui.meta.StudioElement;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.core.ParameterizedTypeReference;
 
 /**
- * SuggestionPickerField adds to PickerField the ability to search an entity by user input.
+ * EntitySuggestionField adds to EntityPicker the ability to search an entity by user input.
  *
  * @param <V> type of value
  */
+@StudioComponent(
+        caption = "EntitySuggestionField",
+        category = "Components",
+        xmlElement = "entitySuggestionField",
+        icon = "io/jmix/ui/icon/component/entitySuggestionField.svg",
+        canvasBehaviour = CanvasBehaviour.VALUE_PICKER,
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/entity-suggestion-field.html"
+)
 public interface EntitySuggestionField<V> extends SuggestionField<V>, EntityPicker<V> {
 
     String NAME = "entitySuggestionField";
@@ -30,4 +42,8 @@ public interface EntitySuggestionField<V> extends SuggestionField<V>, EntityPick
     static <T> ParameterizedTypeReference<EntitySuggestionField<T>> of(Class<T> valueClass) {
         return new ParameterizedTypeReference<EntitySuggestionField<T>>() {};
     }
+
+    @StudioElement
+    @Override
+    void setSearchExecutor(@Nullable SearchExecutor<V> searchExecutor);
 }

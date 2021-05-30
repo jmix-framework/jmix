@@ -16,6 +16,13 @@
 
 package io.jmix.ui.component;
 
+import io.jmix.ui.meta.PropertiesConstraint;
+import io.jmix.ui.meta.PropertiesGroup;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioProperties;
+import io.jmix.ui.meta.StudioProperty;
+
 import javax.annotation.Nullable;
 import java.util.EventObject;
 import java.util.List;
@@ -44,6 +51,7 @@ public interface SuggestionFieldComponent<V, I> extends Field<V>, Component.Focu
      *
      * @param asyncSearchDelayMs delay in ms
      */
+    @StudioProperty(defaultValue = "300")
     void setAsyncSearchDelayMs(int asyncSearchDelayMs);
 
     /**
@@ -81,6 +89,7 @@ public interface SuggestionFieldComponent<V, I> extends Field<V>, Component.Focu
      *
      * @param minSearchStringLength required string length to perform search
      */
+    @StudioProperty(defaultValue = "0")
     void setMinSearchStringLength(int minSearchStringLength);
 
     /**
@@ -93,6 +102,7 @@ public interface SuggestionFieldComponent<V, I> extends Field<V>, Component.Focu
      *
      * @param suggestionsLimit integer limit value
      */
+    @StudioProperty(defaultValue = "10")
     void setSuggestionsLimit(int suggestionsLimit);
 
     /**
@@ -108,6 +118,8 @@ public interface SuggestionFieldComponent<V, I> extends Field<V>, Component.Focu
      *
      * @param width width of the component popup
      */
+    @StudioProperty(name = "popupWidth", defaultValue = "auto", type = PropertyType.STRING,
+            options = {"auto", "parent"})
     void setPopupWidth(String width);
 
     /**
@@ -120,6 +132,23 @@ public interface SuggestionFieldComponent<V, I> extends Field<V>, Component.Focu
      *
      * @param <E> items type
      */
+    @StudioElement(
+            caption = "Query",
+            xmlElement = "query"
+    )
+    @StudioProperties(
+            properties = {
+                    @StudioProperty(name = "entityClass", type = PropertyType.ENTITY_CLASS, required = true),
+                    @StudioProperty(name = "fetchPlan", type = PropertyType.FETCH_PLAN),
+                    @StudioProperty(name = "escapeValueForLike", type = PropertyType.BOOLEAN, defaultValue = "false"),
+                    @StudioProperty(name = "searchStringFormat", type = PropertyType.STRING),
+                    @StudioProperty(name = "query", type = PropertyType.JPA_QUERY)
+            },
+            groups = {
+                    @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                            properties = {"entityClass", "fetchPlan"})
+            }
+    )
     interface SearchExecutor<E> {
 
         /**

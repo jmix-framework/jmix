@@ -16,20 +16,49 @@
 
 package io.jmix.ui.component;
 
+import io.jmix.ui.meta.CanvasBehaviour;
+import io.jmix.ui.meta.PropertiesConstraint;
+import io.jmix.ui.meta.PropertiesGroup;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioComponent;
+import io.jmix.ui.meta.StudioProperties;
+import io.jmix.ui.meta.StudioProperty;
+
 import javax.annotation.Nullable;
 
+@StudioComponent(
+        caption = "ColorPicker",
+        category = "Components",
+        xmlElement = "colorPicker",
+        icon = "io/jmix/ui/icon/component/colorPicker.svg",
+        canvasBehaviour = CanvasBehaviour.COLOR_PICKER,
+        unsupportedProperties = {"buffered"},
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/color-picker.html"
+)
+@StudioProperties(
+        properties = {
+                @StudioProperty(name = "property", type = PropertyType.PROPERTY_PATH_REF, options = "string"),
+                @StudioProperty(name = "dataContainer", type = PropertyType.DATACONTAINER_REF)
+        },
+        groups = {
+                @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                        properties = {"dataContainer", "property"})
+        }
+)
 public interface ColorPicker extends Field<String>, Component.Focusable, Buffered {
 
     String NAME = "colorPicker";
 
     /**
-     * Set caption for the popup window.
+     * Sets caption for the popup window.
      *
      * @param popupCaption caption text.
      */
+    @StudioProperty(type = PropertyType.LOCALIZED_STRING, defaultValue = "msg:///colorPicker.popupCaption")
     void setPopupCaption(@Nullable String popupCaption);
+
     /**
-     * Return caption of the popup window.
+     * Returns caption of the popup window.
      *
      * @return caption text.
      */
@@ -37,13 +66,15 @@ public interface ColorPicker extends Field<String>, Component.Focusable, Buffere
     String getPopupCaption();
 
     /**
-     * Set caption for the confirm button.
+     * Sets caption for the confirm button.
      *
      * @param confirmButtonCaption caption text.
      */
+    @StudioProperty(type = PropertyType.LOCALIZED_STRING, defaultValue = "msg:///colorPicker.confirmButtonCaption")
     void setConfirmButtonCaption(@Nullable String confirmButtonCaption);
+
     /**
-     * Return caption of the confirm button.
+     * Returns caption of the confirm button.
      *
      * @return caption text.
      */
@@ -51,13 +82,15 @@ public interface ColorPicker extends Field<String>, Component.Focusable, Buffere
     String getConfirmButtonCaption();
 
     /**
-     * Set caption for the cancel button.
+     * Sets caption for the cancel button.
      *
      * @param cancelButtonCaption caption text.
      */
+    @StudioProperty(type = PropertyType.LOCALIZED_STRING, defaultValue = "msg:///colorPicker.cancelButtonCaption")
     void setCancelButtonCaption(@Nullable String cancelButtonCaption);
+
     /**
-     * Return caption of the cancel button.
+     * Returns caption of the cancel button.
      *
      * @return caption text.
      */
@@ -65,13 +98,15 @@ public interface ColorPicker extends Field<String>, Component.Focusable, Buffere
     String getCancelButtonCaption();
 
     /**
-     * Set caption for the swatches tab.
+     * Sets caption for the swatches tab.
      *
      * @param swatchesTabCaption caption text.
      */
+    @StudioProperty(type = PropertyType.LOCALIZED_STRING, defaultValue = "msg:///colorPicker.swatchesTabCaption")
     void setSwatchesTabCaption(@Nullable String swatchesTabCaption);
+
     /**
-     * Return caption of the swatches tab.
+     * Returns caption of the swatches tab.
      *
      * @return caption text.
      */
@@ -79,13 +114,15 @@ public interface ColorPicker extends Field<String>, Component.Focusable, Buffere
     String getSwatchesTabCaption();
 
     /**
-     * Set caption for the all colors in lookup.
+     * Sets caption for the all colors in lookup.
      *
      * @param lookupAllCaption caption text.
      */
+    @StudioProperty(type = PropertyType.LOCALIZED_STRING, defaultValue = "msg:///colorPicker.lookupAll")
     void setLookupAllCaption(@Nullable String lookupAllCaption);
+
     /**
-     * Return caption of the all colors in lookup.
+     * Returns caption of the all colors in lookup.
      *
      * @return caption text.
      */
@@ -93,13 +130,15 @@ public interface ColorPicker extends Field<String>, Component.Focusable, Buffere
     String getLookupAllCaption();
 
     /**
-     * Set caption for the red colors in lookup.
+     * Sets caption for the red colors in lookup.
      *
      * @param lookupRedCaption caption text.
      */
+    @StudioProperty(type = PropertyType.LOCALIZED_STRING, defaultValue = "msg:///colorPicker.lookupRed")
     void setLookupRedCaption(@Nullable String lookupRedCaption);
+
     /**
-     * Return caption of the red colors in lookup.
+     * Returns caption of the red colors in lookup.
      *
      * @return caption text.
      */
@@ -107,13 +146,15 @@ public interface ColorPicker extends Field<String>, Component.Focusable, Buffere
     String getLookupRedCaption();
 
     /**
-     * Set caption for the green colors in lookup.
+     * Sets caption for the green colors in lookup.
      *
      * @param lookupGreenCaption caption text.
      */
+    @StudioProperty(type = PropertyType.LOCALIZED_STRING, defaultValue = "msg:///colorPicker.lookupGreen")
     void setLookupGreenCaption(@Nullable String lookupGreenCaption);
+
     /**
-     * Return caption of the green colors in lookup.
+     * Returns caption of the green colors in lookup.
      *
      * @return caption text.
      */
@@ -121,13 +162,15 @@ public interface ColorPicker extends Field<String>, Component.Focusable, Buffere
     String getLookupGreenCaption();
 
     /**
-     * Set caption for the blue colors in lookup.
+     * Sets caption for the blue colors in lookup.
      *
      * @param lookupBlueCaption caption text.
      */
+    @StudioProperty(type = PropertyType.LOCALIZED_STRING, defaultValue = "msg:///colorPicker.lookupBlue")
     void setLookupBlueCaption(@Nullable String lookupBlueCaption);
+
     /**
-     * Return caption of the blue colors in lookup.
+     * Returns caption of the blue colors in lookup.
      *
      * @return caption text.
      */
@@ -135,13 +178,15 @@ public interface ColorPicker extends Field<String>, Component.Focusable, Buffere
     String getLookupBlueCaption();
 
     /**
-     * Set caption for the slider of red color.
+     * Sets caption for the slider of red color.
      *
      * @param redSliderCaption caption text.
      */
+    @StudioProperty(type = PropertyType.LOCALIZED_STRING, defaultValue = "msg:///colorPicker.redSliderCaption")
     void setRedSliderCaption(@Nullable String redSliderCaption);
+
     /**
-     * Return caption of the slider for red color.
+     * Returns caption of the slider for red color.
      *
      * @return caption text.
      */
@@ -149,13 +194,15 @@ public interface ColorPicker extends Field<String>, Component.Focusable, Buffere
     String getRedSliderCaption();
 
     /**
-     * Set caption for the slider of green color.
+     * Sets caption for the slider of green color.
      *
      * @param greenSliderCaption caption text.
      */
+    @StudioProperty(type = PropertyType.LOCALIZED_STRING, defaultValue = "msg:///colorPicker.greenSliderCaption")
     void setGreenSliderCaption(@Nullable String greenSliderCaption);
+
     /**
-     * Return caption of the slider for green color.
+     * Returns caption of the slider for green color.
      *
      * @return caption text.
      */
@@ -163,13 +210,15 @@ public interface ColorPicker extends Field<String>, Component.Focusable, Buffere
     String getGreenSliderCaption();
 
     /**
-     * Set caption for the slider of blue color.
+     * Sets caption for the slider of blue color.
      *
      * @param blueSliderCaption caption text.
      */
+    @StudioProperty(type = PropertyType.LOCALIZED_STRING, defaultValue = "msg:///colorPicker.blueSliderCaption")
     void setBlueSliderCaption(@Nullable String blueSliderCaption);
+
     /**
-     * Return caption of the slider for blue color.
+     * Returns caption of the slider for blue color.
      *
      * @return caption text.
      */
@@ -177,13 +226,15 @@ public interface ColorPicker extends Field<String>, Component.Focusable, Buffere
     String getBlueSliderCaption();
 
     /**
-     * Set caption for the HUE slider.
+     * Sets caption for the HUE slider.
      *
      * @param hueSliderCaption caption text.
      */
+    @StudioProperty(type = PropertyType.LOCALIZED_STRING, defaultValue = "msg:///colorPicker.hueSliderCaption")
     void setHueSliderCaption(@Nullable String hueSliderCaption);
+
     /**
-     * Return caption of the slider for HUE.
+     * Returns caption of the slider for HUE.
      *
      * @return caption text.
      */
@@ -191,13 +242,15 @@ public interface ColorPicker extends Field<String>, Component.Focusable, Buffere
     String getHueSliderCaption();
 
     /**
-     * Set caption for the saturation slider.
+     * Sets caption for the saturation slider.
      *
      * @param saturationSliderCaption caption text.
      */
+    @StudioProperty(type = PropertyType.LOCALIZED_STRING, defaultValue = "msg:///colorPicker.saturationSliderCaption")
     void setSaturationSliderCaption(@Nullable String saturationSliderCaption);
+
     /**
-     * Return caption of the slider for saturation.
+     * Returns caption of the slider for saturation.
      *
      * @return caption text.
      */
@@ -205,13 +258,15 @@ public interface ColorPicker extends Field<String>, Component.Focusable, Buffere
     String getSaturationSliderCaption();
 
     /**
-     * Set caption for the value slider.
+     * Sets caption for the value slider.
      *
      * @param valueSliderCaption caption text.
      */
+    @StudioProperty(type = PropertyType.LOCALIZED_STRING, defaultValue = "msg:///valueSliderCaption")
     void setValueSliderCaption(@Nullable String valueSliderCaption);
+
     /**
-     * Return caption of the slider for value.
+     * Returns caption of the slider for value.
      *
      * @return caption text.
      */
@@ -219,68 +274,80 @@ public interface ColorPicker extends Field<String>, Component.Focusable, Buffere
     String getValueSliderCaption();
 
     /**
-     *  Set visibility for history pane
+     * Sets visibility for history pane
      *
-     *  @param historyVisible pane visibility.
+     * @param historyVisible pane visibility.
      */
+    @StudioProperty(defaultValue = "false")
     void setHistoryVisible(boolean historyVisible);
+
     /**
      * @return true if history pane is visible.
      */
     boolean isHistoryVisible();
 
     /**
-     *  Set visibility for swatches tab
+     * Sets visibility for swatches tab
      *
-     *  @param swatchesVisible tab visibility.
+     * @param swatchesVisible tab visibility.
      */
+    @StudioProperty(defaultValue = "false")
     void setSwatchesVisible(boolean swatchesVisible);
+
     /**
      * @return true if swatches tab is visible.
      */
     boolean isSwatchesVisible();
 
     /**
-     *  Set visibility for RGB tab
+     * Sets visibility for RGB tab
      *
-     *  @param rgbVisible tab visibility.
+     * @param rgbVisible tab visibility.
      */
+    @StudioProperty(name = "rgbVisible", defaultValue = "true")
     void setRGBVisible(boolean rgbVisible);
+
     /**
      * @return true if RGB tab is visible.
      */
     boolean isRGBVisible();
 
     /**
-     *  Set visibility for HSV tab
+     * Sets visibility for HSV tab
      *
-     *  @param hsvVisible tab visibility.
+     * @param hsvVisible tab visibility.
      */
+    @StudioProperty(name = "hsvVisible", defaultValue = "false")
     void setHSVVisible(boolean hsvVisible);
+
     /**
      * @return true if HSV tab is visible.
      */
     boolean isHSVVisible();
 
     /**
-     * Set HEX value as button caption.
+     * Sets HEX value as button caption.
      *
      * @param defaultCaptionEnabled true if HEX color is shown as button caption.
      */
+    @StudioProperty(defaultValue = "false")
     void setDefaultCaptionEnabled(boolean defaultCaptionEnabled);
+
     /**
      * @return true if caption is shown as HTML.
      */
     boolean isDefaultCaptionEnabled();
 
     /**
-     * Set caption for color picker button.
+     * Sets caption for color picker button.
      *
      * @param buttonCaption caption text.
      */
+    @StudioProperty(type = PropertyType.LOCALIZED_STRING)
     void setButtonCaption(String buttonCaption);
+
     /**
-     * Return caption of color picker button.
+     * Returns caption of color picker button.
      *
      * @return caption text.
      */

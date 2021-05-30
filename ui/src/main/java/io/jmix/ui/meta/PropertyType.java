@@ -102,6 +102,12 @@ public enum PropertyType {
      * JPA QL string.
      */
     JPA_QUERY,
+
+    /**
+     * Fetch plan name.
+     */
+    FETCH_PLAN,
+
     /**
      * Name of Entity meta class.
      */

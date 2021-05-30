@@ -16,7 +16,7 @@
 
 @Internal
 @NonNullApi
-package io.jmix.securityoauth2.controller;
+package io.jmix.securityoauth2.impl.controller;
 
 import io.jmix.core.annotation.Internal;
 import org.springframework.lang.NonNullApi;

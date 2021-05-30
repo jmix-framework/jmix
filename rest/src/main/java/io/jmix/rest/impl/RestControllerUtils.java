@@ -23,11 +23,13 @@ import io.jmix.core.FetchPlanRepository;
 import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.rest.impl.config.RestJsonTransformations;
-import io.jmix.rest.RestAPIException;
+import io.jmix.rest.exception.RestAPIException;
 import io.jmix.rest.transform.JsonTransformationDirection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.Nullable;
 
 
 /**
@@ -72,12 +74,12 @@ public class RestControllerUtils {
         }
     }
 
-    public String transformEntityNameIfRequired(String entityName, String modelVersion, JsonTransformationDirection direction) {
+    public String transformEntityNameIfRequired(String entityName, @Nullable String modelVersion, JsonTransformationDirection direction) {
         return Strings.isNullOrEmpty(modelVersion) ? entityName :
                 restJsonTransformations.getTransformer(entityName, modelVersion, direction).getTransformedEntityName();
     }
 
-    public String transformJsonIfRequired(String entityName, String modelVersion, JsonTransformationDirection direction, String json) {
+    public String transformJsonIfRequired(String entityName, @Nullable String modelVersion, JsonTransformationDirection direction, String json) {
         return Strings.isNullOrEmpty(modelVersion) ? json :
                 restJsonTransformations.getTransformer(entityName, modelVersion, direction).transformJson(json);
     }

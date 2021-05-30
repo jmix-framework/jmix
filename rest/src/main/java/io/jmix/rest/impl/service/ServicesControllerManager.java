@@ -27,7 +27,7 @@ import io.jmix.rest.impl.RestControllerUtils;
 import io.jmix.rest.impl.RestParseUtils;
 import io.jmix.rest.impl.config.RestServicesConfiguration;
 import io.jmix.rest.impl.controller.ServicesController;
-import io.jmix.rest.RestAPIException;
+import io.jmix.rest.exception.RestAPIException;
 import io.jmix.rest.transform.JsonTransformationDirection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

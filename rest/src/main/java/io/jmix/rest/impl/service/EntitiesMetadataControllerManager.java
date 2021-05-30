@@ -21,7 +21,7 @@ import io.jmix.core.*;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.rest.impl.RestControllerUtils;
-import io.jmix.rest.RestAPIException;
+import io.jmix.rest.exception.RestAPIException;
 import io.jmix.rest.impl.service.filter.data.MetaClassInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

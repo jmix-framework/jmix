@@ -30,7 +30,7 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.rest.RestProperties;
 import io.jmix.rest.impl.RestControllerUtils;
-import io.jmix.rest.RestAPIException;
+import io.jmix.rest.exception.RestAPIException;
 import io.jmix.rest.impl.service.filter.RestFilterParseException;
 import io.jmix.rest.impl.service.filter.RestFilterParseResult;
 import io.jmix.rest.impl.service.filter.RestFilterParser;
@@ -718,6 +718,7 @@ public class EntitiesControllerManager {
     /**
      * Finds entity with given metaClass.
      */
+    @Nullable
     protected Object getMainEntity(Collection<Object> importedEntities, MetaClass metaClass) {
         Object mainEntity = null;
         if (importedEntities.size() > 1) {

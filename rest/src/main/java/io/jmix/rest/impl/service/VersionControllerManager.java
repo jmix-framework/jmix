@@ -18,7 +18,7 @@
 package io.jmix.rest.impl.service;
 
 import io.jmix.rest.impl.controller.VersionController;
-import io.jmix.rest.RestAPIException;
+import io.jmix.rest.exception.RestAPIException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.info.BuildProperties;
 import org.springframework.http.HttpStatus;

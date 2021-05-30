@@ -57,7 +57,8 @@ public class RestParseUtils {
     @Autowired
     protected DatatypeRegistry datatypeRegistry;
 
-    public Object toObject(Type type, String value, @Nullable String modelVersion) throws ParseException {
+    @Nullable
+    public Object toObject(Type type, @Nullable String value, @Nullable String modelVersion) throws ParseException {
         if (value == null) return null;
         Class clazz;
         Class argumentTypeClass = null;

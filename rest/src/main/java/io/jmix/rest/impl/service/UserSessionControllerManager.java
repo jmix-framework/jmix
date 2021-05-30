@@ -19,7 +19,7 @@ package io.jmix.rest.impl.service;
 
 import io.jmix.core.security.ClientDetails;
 import io.jmix.rest.impl.RestLocaleUtils;
-import io.jmix.rest.RestAPIException;
+import io.jmix.rest.exception.RestAPIException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.Authentication;

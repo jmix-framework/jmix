@@ -16,41 +16,47 @@
 
 package io.jmix.rest.impl.controller;
 
+import javax.annotation.Nullable;
+
 public class ConstraintViolationInfo {
     private String message;
     private String messageTemplate;
     private String path;
     private Object invalidValue;
 
+    @Nullable
     public String getMessage() {
         return message;
     }
 
-    public void setMessage(String message) {
+    public void setMessage(@Nullable String message) {
         this.message = message;
     }
 
+    @Nullable
     public String getMessageTemplate() {
         return messageTemplate;
     }
 
-    public void setMessageTemplate(String messageTemplate) {
+    public void setMessageTemplate(@Nullable String messageTemplate) {
         this.messageTemplate = messageTemplate;
     }
 
+    @Nullable
     public String getPath() {
         return path;
     }
 
-    public void setPath(String path) {
+    public void setPath(@Nullable String path) {
         this.path = path;
     }
 
+    @Nullable
     public Object getInvalidValue() {
         return invalidValue;
     }
 
-    public void setInvalidValue(Object invalidValue) {
+    public void setInvalidValue(@Nullable Object invalidValue) {
         this.invalidValue = invalidValue;
     }
 }

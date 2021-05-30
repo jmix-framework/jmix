@@ -49,6 +49,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import javax.annotation.Nullable;
 import javax.servlet.ServletContext;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -492,6 +493,7 @@ public class OpenAPIGeneratorImpl implements OpenAPIGenerator {
         }
     }
 
+    @Nullable
     protected RequestBody createServiceMethodRequestBody(RestMethodInfo methodInfo, RequestMethod method) {
         if (method == RequestMethod.POST) {
             ObjectSchema schema = new ObjectSchema();
@@ -610,6 +612,7 @@ public class OpenAPIGeneratorImpl implements OpenAPIGenerator {
         );
     }
 
+    @Nullable
     protected RequestBody createQueryRequestBody(QueryInfo query, RequestMethod method) {
         if (method == RequestMethod.POST) {
             ObjectSchema schema = new ObjectSchema();
@@ -669,6 +672,7 @@ public class OpenAPIGeneratorImpl implements OpenAPIGenerator {
         return new StringSchema().description(type);
     }
 
+    @Nullable
     protected Schema<?> getObjectProperty(String classFqn) {
         Class<?> clazz;
         try {
@@ -691,6 +695,7 @@ public class OpenAPIGeneratorImpl implements OpenAPIGenerator {
         return null;
     }
 
+    @Nullable
     protected Schema<?> getPrimitiveProperty(String type) {
         String primitiveType = type;
         if (type.contains(".")) {

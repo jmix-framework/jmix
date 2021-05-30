@@ -20,7 +20,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import io.jmix.core.Resources;
-import io.jmix.rest.RestAPIException;
+import io.jmix.rest.exception.RestAPIException;
 import io.jmix.rest.impl.openapi.OpenAPIGenerator;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.Yaml;

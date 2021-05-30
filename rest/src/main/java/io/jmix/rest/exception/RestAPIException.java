@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-package io.jmix.rest;
+package io.jmix.rest.exception;
 
 import org.springframework.http.HttpStatus;
+
+import javax.annotation.Nullable;
 
 /**
  */

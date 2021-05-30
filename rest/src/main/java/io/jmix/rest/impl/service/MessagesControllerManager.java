@@ -22,7 +22,7 @@ import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.rest.impl.RestControllerUtils;
-import io.jmix.rest.RestAPIException;
+import io.jmix.rest.exception.RestAPIException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 

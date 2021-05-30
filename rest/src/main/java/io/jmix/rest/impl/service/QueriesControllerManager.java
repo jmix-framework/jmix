@@ -31,7 +31,7 @@ import io.jmix.rest.RestProperties;
 import io.jmix.rest.impl.RestControllerUtils;
 import io.jmix.rest.impl.RestParseUtils;
 import io.jmix.rest.impl.config.RestQueriesConfiguration;
-import io.jmix.rest.RestAPIException;
+import io.jmix.rest.exception.RestAPIException;
 import io.jmix.rest.transform.JsonTransformationDirection;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;

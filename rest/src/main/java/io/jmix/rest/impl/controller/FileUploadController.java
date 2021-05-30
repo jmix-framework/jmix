@@ -24,7 +24,7 @@ import io.jmix.core.FileStorageException;
 import io.jmix.core.FileStorageLocator;
 import io.jmix.core.Metadata;
 import io.jmix.rest.accesscontext.RestFileUploadContext;
-import io.jmix.rest.RestAPIException;
+import io.jmix.rest.exception.RestAPIException;
 import io.jmix.rest.impl.service.filter.data.FileInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

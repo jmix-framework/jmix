@@ -16,6 +16,7 @@
 
 package io.jmix.rest.impl.service.filter;
 
+import javax.annotation.Nullable;
 import java.util.Map;
 
 /**
@@ -27,15 +28,17 @@ public class RestFilterParseResult {
 
     protected Map<String, Object> queryParameters;
 
-    public RestFilterParseResult(String jpqlWhere, Map<String, Object> queryParameters) {
+    public RestFilterParseResult(@Nullable String jpqlWhere, @Nullable Map<String, Object> queryParameters) {
         this.jpqlWhere = jpqlWhere;
         this.queryParameters = queryParameters;
     }
 
+    @Nullable
     public String getJpqlWhere() {
         return jpqlWhere;
     }
 
+    @Nullable
     public Map<String, Object> getQueryParameters() {
         return queryParameters;
     }

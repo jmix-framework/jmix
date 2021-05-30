@@ -19,7 +19,7 @@ package io.jmix.rest.impl.controller;
 import io.jmix.core.*;
 import io.jmix.core.common.util.URLEncodeUtils;
 import io.jmix.rest.accesscontext.RestFileDownloadContext;
-import io.jmix.rest.RestAPIException;
+import io.jmix.rest.exception.RestAPIException;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.BooleanUtils;

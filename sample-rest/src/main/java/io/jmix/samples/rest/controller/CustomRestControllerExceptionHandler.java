@@ -16,7 +16,7 @@
 
 package io.jmix.samples.rest.controller;
 
-import io.jmix.rest.api.exception.ErrorInfo;
+import io.jmix.rest.impl.controller.ErrorInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.Ordered;
@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-@ControllerAdvice("io.jmix.rest.api.controller")
+@ControllerAdvice("io.jmix.rest.impl.controller")
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class CustomRestControllerExceptionHandler {
 

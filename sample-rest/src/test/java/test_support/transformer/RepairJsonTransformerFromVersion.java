@@ -9,8 +9,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.base.Strings;
-import io.jmix.rest.api.transform.AbstractEntityJsonTransformer;
-import io.jmix.rest.api.transform.JsonTransformationDirection;
+import io.jmix.rest.transform.AbstractEntityJsonTransformer;
+import io.jmix.rest.transform.JsonTransformationDirection;
 
 /**
  *

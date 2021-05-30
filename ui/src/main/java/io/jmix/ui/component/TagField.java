@@ -18,10 +18,22 @@ package io.jmix.ui.component;
 
 import com.google.common.base.Strings;
 import io.jmix.core.common.event.Subscription;
+import io.jmix.ui.meta.CanvasBehaviour;
+import io.jmix.ui.meta.PropertiesConstraint;
+import io.jmix.ui.meta.PropertiesGroup;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioComponent;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioProperties;
+import io.jmix.ui.meta.StudioProperty;
 import org.springframework.core.ParameterizedTypeReference;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.EventObject;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -30,6 +42,23 @@ import java.util.function.Function;
  *
  * @param <V> type of value
  */
+@StudioComponent(
+        caption = "TagField",
+        category = "Components",
+        xmlElement = "tagField",
+        canvasBehaviour = CanvasBehaviour.INPUT_FIELD,
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/tag-field.html"
+)
+@StudioProperties(
+        properties = {
+                @StudioProperty(name = "property", type = PropertyType.PROPERTY_PATH_REF),
+                @StudioProperty(name = "dataContainer", type = PropertyType.DATACONTAINER_REF)
+        },
+        groups = {
+                @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                        properties = {"dataContainer", "property"})
+        }
+)
 public interface TagField<V> extends SuggestionFieldComponent<Collection<V>, V>, SupportsUserAction<Collection<V>> {
 
     String NAME = "tagField";
@@ -38,6 +67,10 @@ public interface TagField<V> extends SuggestionFieldComponent<Collection<V>, V>,
         return new ParameterizedTypeReference<TagField<T>>() {
         };
     }
+
+    @StudioElement
+    @Override
+    void setSearchExecutor(@Nullable SearchExecutor<V> searchExecutor);
 
     /**
      * @return {code true} if clear button is visible
@@ -49,6 +82,7 @@ public interface TagField<V> extends SuggestionFieldComponent<Collection<V>, V>,
      *
      * @param visible whether to display clear button
      */
+    @StudioProperty(name = "clearAllVisible", defaultValue = "false")
     void setClearAllVisible(boolean visible);
 
     /**

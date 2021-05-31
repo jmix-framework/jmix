@@ -39,6 +39,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
+import java.util.List;
 import java.util.function.Consumer;
 
 import static io.jmix.ui.Notifications.NotificationType.HUMANIZED;
@@ -66,6 +67,7 @@ public class SearchField extends CompositeComponent<CssLayout> implements Field<
     protected TextField<String> inputField;
     protected Button searchButton;
     protected SearchStrategy searchStrategy;
+    protected List<String> entities;
 
     public SearchField() {
         addCreateListener(this::onCreate);
@@ -90,10 +92,10 @@ public class SearchField extends CompositeComponent<CssLayout> implements Field<
                     .show();
         } else {
             String preparedSearchText = searchText.trim();
-            SearchResult searchResult = entitySearcher.search(
-                    new SearchContext(preparedSearchText).setSize(searchApplicationProperties.getSearchResultPageSize()),
-                    searchStrategy
-            );
+            SearchContext searchContext = new SearchContext(preparedSearchText)
+                    .setSize(searchApplicationProperties.getSearchResultPageSize())
+                    .setEntities(getEntities());
+            SearchResult searchResult = entitySearcher.search(searchContext, searchStrategy);
 
             if (searchResult.isEmpty()) {
                 Notifications notifications = screenContext.getNotifications();
@@ -210,5 +212,13 @@ public class SearchField extends CompositeComponent<CssLayout> implements Field<
 
     public void setSearchStrategy(SearchStrategy searchStrategy) {
         this.searchStrategy = searchStrategy;
+    }
+
+    public List<String> getEntities() {
+        return entities;
+    }
+
+    public void setEntities(List<String> entities) {
+        this.entities = entities;
     }
 }

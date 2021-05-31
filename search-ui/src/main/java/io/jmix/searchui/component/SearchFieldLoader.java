@@ -22,6 +22,11 @@ import io.jmix.search.searching.SearchStrategyManager;
 import io.jmix.ui.xml.layout.loader.AbstractFieldLoader;
 import org.dom4j.Element;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 public class SearchFieldLoader extends AbstractFieldLoader<SearchField> {
 
     @Override
@@ -35,6 +40,7 @@ public class SearchFieldLoader extends AbstractFieldLoader<SearchField> {
         super.loadComponent();
 
         loadStrategy(resultComponent, element);
+        loadEntities(resultComponent, element);
     }
 
     protected void loadStrategy(SearchField component, Element element) {
@@ -47,5 +53,19 @@ public class SearchFieldLoader extends AbstractFieldLoader<SearchField> {
             strategy = strategyManager.getSearchStrategyByName(strategyName);
         }
         component.setSearchStrategy(strategy);
+    }
+
+    protected void loadEntities(SearchField component, Element element) {
+        String entitiesString = element.attributeValue("entities");
+        List<String> entities;
+        if (Strings.isNullOrEmpty(entitiesString)) {
+            entities = Collections.emptyList();
+        } else {
+            String[] split = entitiesString.split(",");
+            entities = Stream.of(split)
+                    .map(String::trim)
+                    .collect(Collectors.toList());
+        }
+        component.setEntities(entities);
     }
 }

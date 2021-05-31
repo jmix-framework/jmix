@@ -23,6 +23,6 @@ import javax.annotation.Nullable;
 public interface TenantRepository {
 
     @Nullable
-    Tenant findTenantById(String tenantId);
+    Tenant findByTenantId(String tenantId);
 
 }

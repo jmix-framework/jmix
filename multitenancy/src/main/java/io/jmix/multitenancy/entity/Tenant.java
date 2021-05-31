@@ -15,26 +15,23 @@
  */
 package io.jmix.multitenancy.entity;
 
+import io.jmix.core.annotation.DeletedBy;
+import io.jmix.core.annotation.DeletedDate;
 import io.jmix.core.annotation.TenantId;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
-import io.jmix.core.entity.annotation.Listeners;
 import io.jmix.core.metamodel.annotation.JmixEntity;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import java.util.Date;
 import java.util.UUID;
 
-/**
- * There is no need to extends StandardTenantEntity per se - we don't need to hide tenantId in the UI since tenants
- * don't have access to Tenant entity at all. However we have to have a descendant from MappedSuperclass defined in
- * the application component
- *
- * @see <a href="https://youtrack.cuba-platform.com/issue/PL-10474">PL-10474</a>
- */
 @JmixEntity
 @Table(name = "MTEN_TENANT")
 @Entity(name = "mten_Tenant")
-@Listeners("mten_TenantListener")
 public class Tenant {
 
     @Id
@@ -47,21 +44,27 @@ public class Tenant {
     private Integer version;
 
     @Column(name = "CREATE_TS")
+    @CreatedDate
     private Date createTs;
 
     @Column(name = "CREATED_BY", length = 50)
+    @CreatedBy
     private String createdBy;
 
     @Column(name = "UPDATE_TS")
+    @LastModifiedDate
     private Date updateTs;
 
     @Column(name = "UPDATED_BY", length = 50)
+    @LastModifiedBy
     private String updatedBy;
 
     @Column(name = "DELETE_TS")
+    @DeletedDate
     private Date deleteTs;
 
     @Column(name = "DELETED_BY", length = 50)
+    @DeletedBy
     private String deletedBy;
 
     @TenantId

@@ -33,7 +33,7 @@ public class TenantRepositoryImpl implements TenantRepository {
 
     @Nullable
     @Override
-    public Tenant findTenantById(String tenantId) {
+    public Tenant findByTenantId(String tenantId) {
         return dataManager.load(Tenant.class)
                 .query("select t from mten_Tenant t where t.tenantId = :tenantId")
                 .parameter("tenantId", tenantId)

@@ -14,14 +14,6 @@
  * limitations under the License.
  */
 
-package io.jmix.multitenancy.data;
-
-import io.jmix.multitenancy.entity.TenantAssigmentEntity;
-
-import java.util.Optional;
-
-public interface TenantAssigmentRepository {
-
-    Optional<TenantAssigmentEntity> findAssigmentByUsername(String username);
-
-}
+INSERT INTO MTEN_TENANT (id, name, tenantId, adminUsername)
+VALUES ('d99d468e-3cc0-01da-295e-595e48fec620', 'Tenant A', 'tenant-a', 'userA'),
+       ('d99d468e-3cc0-01da-295e-595e48fec620', 'Tenant B', 'tenant-b', 'userB');

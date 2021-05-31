@@ -38,6 +38,7 @@ public class UiMultitenancyAttributeConstraintsRegistration {
 
     @PostConstruct
     public void registerConstraints() {
-        accessConstraintsRegistry.register(beanFactory.getBean(MultiTenancyAttributeConstraint.class));
+        accessConstraintsRegistry.register(beanFactory.getBean(MultitenancyAttributeConstraint.class));
+        accessConstraintsRegistry.register(beanFactory.getBean(MultitenancyNonTenantEntityConstraint.class));
     }
 }

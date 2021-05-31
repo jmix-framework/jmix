@@ -16,35 +16,30 @@
 
 package io.jmix.multitenancy.listener;
 
-import io.jmix.core.MetadataTools;
+import io.jmix.core.TenantEntityOperation;
 import io.jmix.core.event.EntitySavingEvent;
-import io.jmix.multitenancy.core.TenantEntityOperationImpl;
 import io.jmix.multitenancy.core.TenantProvider;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-@Component("mten_EntityChangedListener")
-public class TenantEntityPersistingListener {
+@Component("mten_TenantPersistingListener")
+public class TenantPersistingListener {
 
     private final TenantProvider tenantProvider;
-    private final TenantEntityOperationImpl tenantEntityOperation;
-    private final MetadataTools metadataTools;
+    private final TenantEntityOperation tenantEntityOperation;
 
-    public TenantEntityPersistingListener(TenantProvider tenantProvider,
-                                          TenantEntityOperationImpl tenantEntityOperation,
-                                          MetadataTools metadataTools) {
+    public TenantPersistingListener(TenantProvider tenantProvider,
+                                    TenantEntityOperation tenantEntityOperation) {
         this.tenantProvider = tenantProvider;
         this.tenantEntityOperation = tenantEntityOperation;
-        this.metadataTools = metadataTools;
     }
 
     @EventListener
     public void beforePersist(EntitySavingEvent event) {
         Object entity = event.getEntity();
         String tenantId = tenantProvider.getCurrentUserTenantId();
-        //TODO: compile
-//        if (metadataTools.findTenantIdProperty(entity.getClass()) != null && !tenantId.equals(TenantProvider.NO_TENANT)) {
-//            tenantEntityOperation.setTenant(entity, tenantId);
-//        }
+        if (tenantEntityOperation.getTenantMetaProperty(entity.getClass()) != null && !TenantProvider.NO_TENANT.equals(tenantId)) {
+            tenantEntityOperation.setTenant(entity, tenantId);
+        }
     }
 }

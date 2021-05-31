@@ -21,13 +21,6 @@ package io.jmix.multitenancy.core;
  */
 public interface TenantProvider {
 
-    String NAME = "mten_TenantProvider";
-
-    /**
-     * The name attribute of a user's session to save the Tenant ID.
-     */
-    String TENANT_ID_ATTRIBUTE_NAME = "tenantAttrId";
-
     /**
      * Constant attribute user session for global visibility of all objects, regardless of the value of tenant.
      */

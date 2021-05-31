@@ -17,10 +17,8 @@
 package io.jmix.multitenancy.security.role;
 
 import io.jmix.multitenancy.entity.Tenant;
-import io.jmix.multitenancy.entity.TenantAssigmentEntity;
 import io.jmix.security.model.EntityAttributePolicyAction;
 import io.jmix.security.model.EntityPolicyAction;
-import io.jmix.security.model.SecurityScope;
 import io.jmix.security.role.annotation.EntityAttributePolicy;
 import io.jmix.security.role.annotation.EntityPolicy;
 import io.jmix.security.role.annotation.ResourceRole;
@@ -30,8 +28,8 @@ import io.jmix.securitydata.entity.RowLevelRoleEntity;
 import io.jmix.securityui.role.annotation.MenuPolicy;
 import io.jmix.securityui.role.annotation.ScreenPolicy;
 
-@ResourceRole(name = "Multitenancy: tenant admin role", code = TenantsAdminRole.CODE, description = "Enables access to multitenancy", scope = SecurityScope.API)
-public interface TenantsAdminRole {
+@ResourceRole(name = "Multitenancy: administration", code = MultitenancyAdminRole.CODE)
+public interface MultitenancyAdminRole {
 
     String CODE = "tenant-admin-role";
 
@@ -39,21 +37,16 @@ public interface TenantsAdminRole {
     @EntityPolicy(entityClass = ResourceRoleEntity.class, actions = {EntityPolicyAction.ALL})
     @EntityPolicy(entityClass = RowLevelRoleEntity.class, actions = {EntityPolicyAction.ALL})
     @EntityPolicy(entityClass = Tenant.class, actions = {EntityPolicyAction.ALL})
-    @EntityPolicy(entityClass = TenantAssigmentEntity.class, actions = {EntityPolicyAction.ALL})
     @EntityAttributePolicy(entityClass = Tenant.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)
-    @EntityAttributePolicy(entityClass = TenantAssigmentEntity.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)
     @EntityAttributePolicy(entityClass = RoleAssignmentEntity.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)
     @EntityAttributePolicy(entityClass = ResourceRoleEntity.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)
     @EntityAttributePolicy(entityClass = RowLevelRoleEntity.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)
     @ScreenPolicy(screenIds = {
             "mten_Tenant.browse",
-            "mten_Tenant.edit",
-            "mten_TenantAssigmentEntity.browse",
-            "mten_TenantAssigmentEntity.edit",
-            "sec_RoleAssignmentFragment"})
+            "mten_Tenant.edit"})
     @MenuPolicy(menuIds = {
             "mten_Tenant.browse",
-            "mten_TenantAssigmentEntity.browse"})
+            "mten_TenantAssignmentEntity.browse"})
     void multitenancyAccess();
 
 }

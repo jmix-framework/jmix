@@ -141,7 +141,7 @@
 
     <changeSet author="multitenancy" id="6" context="!cuba">
 
-        <createTable tableName="MTEN_TENANT_ASSIGMENT_ENTITY">
+        <createTable tableName="MTEN_TENANT_Assignment_ENTITY">
             <column name="ID" type="${uuid.type}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>

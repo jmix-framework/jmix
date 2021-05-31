@@ -16,18 +16,20 @@
 
 package io.jmix.multitenancy.core;
 
-import io.jmix.multitenancy.security.MultitenancyCurrentAuthentication;
+import io.jmix.core.security.CurrentAuthentication;
+import io.jmix.multitenancy.security.TenantSupport;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 /**
- * The implementation {@link } for Multitenancy.
+ * The implementation {@link TenantProvider} for Multitenancy.
  */
-@Component(TenantProvider.NAME)
-public class MultiTenantProviderBean implements TenantProvider {
+@Component("mten_TenantProvider")
+public class TenantProviderImpl implements TenantProvider {
 
-    private final MultitenancyCurrentAuthentication currentAuthentication;
+    private final CurrentAuthentication currentAuthentication;
 
-    public MultiTenantProviderBean(MultitenancyCurrentAuthentication currentAuthentication) {
+    public TenantProviderImpl(CurrentAuthentication currentAuthentication) {
         this.currentAuthentication = currentAuthentication;
     }
 
@@ -38,9 +40,14 @@ public class MultiTenantProviderBean implements TenantProvider {
      */
     @Override
     public String getCurrentUserTenantId() {
-        if (currentAuthentication.isSet() && currentAuthentication.getTenantId() != null) {
-            return currentAuthentication.getTenantId();
+        if (!currentAuthentication.isSet()) {
+            return TenantProvider.NO_TENANT;
         }
-        return TenantProvider.NO_TENANT;
+        UserDetails userDetails = currentAuthentication.getUser();
+        if (!(userDetails instanceof TenantSupport)) {
+            return TenantProvider.NO_TENANT;
+        }
+        String tenantId = ((TenantSupport) userDetails).getTenantId();
+        return tenantId != null ? tenantId : TenantProvider.NO_TENANT;
     }
 }

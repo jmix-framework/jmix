@@ -16,12 +16,11 @@
 
 package io.jmix.multitenancy.security;
 
-import io.jmix.core.MetadataTools;
+import io.jmix.core.TenantEntityOperation;
 import io.jmix.core.constraint.EntityOperationConstraint;
-import io.jmix.core.security.ClientDetails;
+import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.security.CurrentAuthentication;
-import io.jmix.multitenancy.data.TenantRepository;
-import io.jmix.multitenancy.entity.Tenant;
+import io.jmix.multitenancy.core.TenantProvider;
 import io.jmix.ui.accesscontext.UiEntityAttributeContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,22 +29,22 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-@Component("mten_MultiTenancyAttributeConstraint")
+@Component("mten_MultitenancyAttributeConstraint")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class MultiTenancyAttributeConstraint implements EntityOperationConstraint<UiEntityAttributeContext> {
+public class MultitenancyAttributeConstraint implements EntityOperationConstraint<UiEntityAttributeContext> {
 
-    private static final Logger log = LoggerFactory.getLogger(MultiTenancyAttributeConstraint.class);
+    private static final Logger log = LoggerFactory.getLogger(MultitenancyAttributeConstraint.class);
 
     private final BeanFactory beanFactory;
-    private final TenantRepository tenantRepository;
-    private final MetadataTools metadataTools;
+    private final TenantProvider tenantProvider;
+    private final TenantEntityOperation tenantEntityOperation;
 
-    public MultiTenancyAttributeConstraint(BeanFactory beanFactory,
-                                           TenantRepository tenantRepository,
-                                           MetadataTools metadataTools) {
+    public MultitenancyAttributeConstraint(BeanFactory beanFactory,
+                                           TenantProvider tenantProvider,
+                                           TenantEntityOperation tenantEntityOperation) {
         this.beanFactory = beanFactory;
-        this.tenantRepository = tenantRepository;
-        this.metadataTools = metadataTools;
+        this.tenantProvider = tenantProvider;
+        this.tenantEntityOperation = tenantEntityOperation;
     }
 
     @Override
@@ -60,25 +59,18 @@ public class MultiTenancyAttributeConstraint implements EntityOperationConstrain
             if (authentication.getAuthentication() == null || authentication.getAuthentication().getDetails() == null) {
                 return;
             }
-            //TODO: compile
-            //String tenantId = ((ClientDetails) authentication.getAuthentication().getDetails()).getTenantId();
-            String tenantId = null;
-            Tenant tenant = tenantRepository.findTenantById(tenantId);
-            if (tenant == null) {
+            if (TenantProvider.NO_TENANT.equals(tenantProvider.getCurrentUserTenantId())) {
                 return;
             }
             addHideTenantIdPermission(context);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
-
     }
 
     private void addHideTenantIdPermission(UiEntityAttributeContext context) {
-        String tenantIdPropertyName = null;
-        //TODO: compile
-        //String tenantIdPropertyName = metadataTools.findTenantIdProperty(context.getPropertyPath().getMetaClass().getJavaClass());
-        if (context.getPropertyPath().getMetaProperty().getName().equals(tenantIdPropertyName)) {
+        MetaProperty tenantMetaProperty = tenantEntityOperation.getTenantMetaProperty(context.getPropertyPath().getMetaClass().getJavaClass());
+        if (tenantMetaProperty != null && context.getPropertyPath().getMetaProperty().getName().equals(tenantMetaProperty.getName())) {
             context.setViewDenied();
             context.setModifyDenied();
         }

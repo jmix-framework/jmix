@@ -30,4 +30,16 @@ dependencies {
     api 'io.jmix.security:jmix-security-data'
     api 'io.jmix.security:jmix-security-ui'
 
+    testImplementation 'io.jmix.security:jmix-security-ui'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api'
+    testImplementation 'org.springframework:spring-test'
+    testImplementation 'org.spockframework:spock-core'
+    testImplementation 'org.spockframework:spock-spring'
+
+    testImplementation 'io.jmix.data:jmix-eclipselink'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+    testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'
+    testRuntimeOnly 'org.slf4j:slf4j-simple'
+    testRuntimeOnly 'org.hsqldb:hsqldb'
+
 }

@@ -17,40 +17,31 @@
 package io.jmix.multitenancy.core;
 
 import io.jmix.core.Metadata;
-import io.jmix.core.MetadataTools;
+import io.jmix.core.TenantEntityOperation;
+import io.jmix.core.annotation.TenantId;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.multitenancy.data.TenantAssigmentRepository;
-import io.jmix.multitenancy.data.TenantRepository;
-import io.jmix.multitenancy.entity.Tenant;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Nullable;
+import java.lang.reflect.Field;
+import java.util.Arrays;
 
 /**
- * Helper for working with Tenant.
+ * Helper for working with tenant entity.
  */
 @Component("mten_TenantEntityOperation")
-public class TenantEntityOperationImpl {
+public class TenantEntityOperationImpl implements TenantEntityOperation {
 
     private static final Logger log = LoggerFactory.getLogger(TenantEntityOperationImpl.class);
 
     private final Metadata metadata;
-    private final TenantRepository tenantRepository;
-    private final MetadataTools metadataTools;
-    private final TenantAssigmentRepository tenantAssigmentRepository;
 
-    public TenantEntityOperationImpl(Metadata metadata,
-                                     TenantRepository tenantRepository,
-                                     MetadataTools metadataTools,
-                                     TenantAssigmentRepository tenantAssigmentRepository) {
+    public TenantEntityOperationImpl(Metadata metadata) {
         this.metadata = metadata;
-        this.tenantRepository = tenantRepository;
-        this.metadataTools = metadataTools;
-        this.tenantAssigmentRepository = tenantAssigmentRepository;
     }
 
     /**
@@ -61,15 +52,19 @@ public class TenantEntityOperationImpl {
      */
     public MetaProperty getTenantMetaProperty(Class<?> entityClass) {
         MetaClass metaClass = metadata.getClass(entityClass);
-        //TODO: compile
-        String tenantIdNameProperty = null;
-        //String tenantIdNameProperty = metadataTools.findTenantIdProperty(metaClass.getJavaClass());
-        if (tenantIdNameProperty == null) {
+        Field tenantField = getTenantField(entityClass);
+        if (tenantField == null) {
             log.warn("Entity {} does not have an field marked @TenantId annotation", metaClass.getName());
             return null;
         }
-        return metaClass.getProperty(tenantIdNameProperty);
+        return metaClass.getProperty(tenantField.getName());
 
+    }
+
+    public Field getTenantField(Class<?> entityClass) {
+        return Arrays.stream(FieldUtils.getAllFields(entityClass))
+                .filter(f -> f.isAnnotationPresent(TenantId.class))
+                .findFirst().orElse(null);
     }
 
 
@@ -84,43 +79,6 @@ public class TenantEntityOperationImpl {
         if (property != null) {
             EntityValues.setValue(entity, property.getName(), tenantId);
         }
-    }
-
-
-    /**
-     * Returns the Tenant for some entity
-     *
-     * @param entity instance
-     * @return Tenant instance.
-     */
-
-    public Tenant getTenant(Object entity) {
-        MetaProperty property = getTenantMetaProperty(entity.getClass());
-        if (property != null) {
-            String tenantId = EntityValues.getValue(entity, property.getName());
-            return tenantRepository.findTenantById(tenantId);
-        }
-        return null;
-    }
-
-    /**
-     * Returns the Tenant Id for some entity
-     *
-     * @param entity instance
-     * @return String the value of Tenant Id.
-     */
-
-    public String getTenantId(Object entity) {
-        MetaProperty property = getTenantMetaProperty(entity.getClass());
-        if (property == null) {
-            return null;
-        }
-        return EntityValues.getValue(entity, property.getName());
-    }
-
-    @Nullable
-    public String getTenantIdByUsername(String username) {
-        return tenantAssigmentRepository.findAssigmentByUsername(username).map(tenantAssigmentEntity -> tenantAssigmentEntity.getTenant().getTenantId()).orElse(null);
     }
 
 

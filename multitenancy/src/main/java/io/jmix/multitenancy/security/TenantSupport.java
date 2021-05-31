@@ -14,16 +14,10 @@
  * limitations under the License.
  */
 
-package io.jmix.multitenancy.screen.tenantassigment;
+package io.jmix.multitenancy.security;
 
-import io.jmix.multitenancy.entity.TenantAssigmentEntity;
-import io.jmix.ui.screen.LookupComponent;
-import io.jmix.ui.screen.StandardLookup;
-import io.jmix.ui.screen.UiController;
-import io.jmix.ui.screen.UiDescriptor;
+public interface TenantSupport {
 
-@UiController("mten_TenantAssigmentEntity.browse")
-@UiDescriptor("tenant-assigment-entity-browse.xml")
-@LookupComponent("tenantAssigmentEntitiesTable")
-public class TenantAssigmentEntityBrowse extends StandardLookup<TenantAssigmentEntity> {
+    String getTenantId();
+
 }

@@ -18,6 +18,5 @@
 <menu-config xmlns="http://jmix.io/schema/ui/menu">
     <menu id="administration">
         <item screen="mten_Tenant.browse"/>
-        <item screen="mten_TenantAssigmentEntity.browse"/>
     </menu>
 </menu-config>

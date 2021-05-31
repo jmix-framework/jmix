@@ -16,7 +16,6 @@
 
 package io.jmix.multitenancy;
 
-import io.jmix.multitenancy.security.role.DefaultTenantRole;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;
 import org.springframework.boot.context.properties.bind.DefaultValue;
@@ -27,17 +26,17 @@ public class MultitenancyProperties {
 
     private final String adminUser;
     private final String anonymousUser;
-    private final boolean loginByTenantParamEnabled;
-    private final String defaultTenantRoleCode;
+    private final boolean authenticationByTenantParamEnabled;
+    private final String tenantIdUrlParamName;
 
     public MultitenancyProperties(String adminUser,
                                   String anonymousUser,
-                                  boolean loginByTenantParamEnabled,
-                                  @DefaultValue(DefaultTenantRole.CODE) String defaultTenantRoleCode) {
+                                  @DefaultValue("false") boolean authenticationByTenantParamEnabled,
+                                  @DefaultValue("tenantId") String tenantIdUrlParamName) {
         this.adminUser = adminUser;
         this.anonymousUser = anonymousUser;
-        this.loginByTenantParamEnabled = loginByTenantParamEnabled;
-        this.defaultTenantRoleCode = defaultTenantRoleCode;
+        this.authenticationByTenantParamEnabled = authenticationByTenantParamEnabled;
+        this.tenantIdUrlParamName = tenantIdUrlParamName;
     }
 
     public String getAdminUser() {
@@ -48,11 +47,11 @@ public class MultitenancyProperties {
         return anonymousUser;
     }
 
-    public boolean isLoginByTenantParamEnabled() {
-        return loginByTenantParamEnabled;
+    public boolean isAuthenticationByTenantParamEnabled() {
+        return authenticationByTenantParamEnabled;
     }
 
-    public String getDefaultTenantRoleCode() {
-        return defaultTenantRoleCode;
+    public String getTenantIdUrlParamName() {
+        return tenantIdUrlParamName;
     }
 }

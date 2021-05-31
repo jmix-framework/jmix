@@ -51,7 +51,7 @@ public class BrowserFrameLoader extends AbstractResourceViewLoader<BrowserFrame>
     protected void loadSrcdoc(BrowserFrame resultComponent, Element element) {
         String srcdoc = element.attributeValue("srcdoc");
         if (StringUtils.isNotEmpty(srcdoc)) {
-            resultComponent.setSrcdoc(srcdoc);
+            resultComponent.setSrcdoc(loadResourceString(srcdoc));
         }
     }
 

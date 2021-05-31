@@ -1243,7 +1243,7 @@
     </xs:attributeGroup>
 
     <xs:attributeGroup name="hasSrcdoc">
-        <xs:attribute name="srcdoc" type="xs:string"/>
+        <xs:attribute name="srcdoc" type="resourceString"/>
         <xs:attribute name="srcdocFile" type="xs:string"/>
     </xs:attributeGroup>
 

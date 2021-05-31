@@ -173,7 +173,7 @@ class RelativeDateTimeMomentTest extends DataSpec {
 
         when:
         loadContext = new LoadContext(metadata.getClass(TestDateTimeEntity.class))
-        loadContext.setQueryString("select e from test_TestDateTimeEntity e where e.nowDate > FIRST_DAY_OF_CURRENT_MONTH and e.nowDate < LAST_DAY_OF_CURRENT_MONTH")
+        loadContext.setQueryString("select e from test_TestDateTimeEntity e where e.nowDate >= FIRST_DAY_OF_CURRENT_MONTH and e.nowDate <= LAST_DAY_OF_CURRENT_MONTH")
         e = dataManager.loadList(loadContext)
 
         then:
@@ -453,7 +453,7 @@ class RelativeDateTimeMomentTest extends DataSpec {
 
         when:
         loadContext = new LoadContext(metadata.getClass(TestDateTimeEntity.class))
-        loadContext.setQueryString("select e from test_TestDateTimeEntity e where e.localDateTime > FIRST_DAY_OF_CURRENT_MONTH and e.localDateTime < LAST_DAY_OF_CURRENT_MONTH")
+        loadContext.setQueryString("select e from test_TestDateTimeEntity e where e.localDateTime >= FIRST_DAY_OF_CURRENT_MONTH and e.localDateTime <= LAST_DAY_OF_CURRENT_MONTH")
         e = dataManager.loadList(loadContext)
 
         then:
@@ -617,7 +617,7 @@ class RelativeDateTimeMomentTest extends DataSpec {
 
         when:
         loadContext = new LoadContext(metadata.getClass(TestDateTimeEntity.class))
-        loadContext.setQueryString("select e from test_TestDateTimeEntity e where e.offsetDateTime > FIRST_DAY_OF_CURRENT_MONTH and e.offsetDateTime < LAST_DAY_OF_CURRENT_MONTH")
+        loadContext.setQueryString("select e from test_TestDateTimeEntity e where e.offsetDateTime >= FIRST_DAY_OF_CURRENT_MONTH and e.offsetDateTime <= LAST_DAY_OF_CURRENT_MONTH")
         e = dataManager.loadList(loadContext)
 
         then:

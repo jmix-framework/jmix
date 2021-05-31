@@ -57,21 +57,21 @@ public class RelativeDateTimeMomentQueryHandler implements QueryConstantHandler 
             case FIRST_DAY_OF_CURRENT_YEAR:
                 return String.format(result, LocalDateTime.of(now.withDayOfYear(1), LocalTime.MIDNIGHT).format(dateTimeFormatter));
             case LAST_DAY_OF_CURRENT_YEAR:
-                return String.format(result, LocalDateTime.of((now.withDayOfYear(now.lengthOfYear())), LocalTime.MIDNIGHT).format(dateTimeFormatter));
+                return String.format(result, LocalDateTime.of((now.withDayOfYear(now.lengthOfYear())), LocalTime.MAX).format(dateTimeFormatter));
             case FIRST_DAY_OF_CURRENT_MONTH:
                 return String.format(result, LocalDateTime.of(LocalDate.of(currentYear, now.getMonth(), 1), LocalTime.MIDNIGHT).format(dateTimeFormatter));
             case LAST_DAY_OF_CURRENT_MONTH:
-                return String.format(result, LocalDateTime.of(LocalDate.of(currentYear, now.getMonth(), now.getMonth().length(now.isLeapYear())), LocalTime.MIDNIGHT).format(dateTimeFormatter));
+                return String.format(result, LocalDateTime.of(LocalDate.of(currentYear, now.getMonth(), now.getMonth().length(now.isLeapYear())), LocalTime.MAX).format(dateTimeFormatter));
             case FIRST_DAY_OF_CURRENT_WEEK:
                 TemporalField fieldISO = WeekFields.of(Locale.getDefault()).dayOfWeek();
                 return String.format(result, LocalDateTime.of(now.with(fieldISO, 1), LocalTime.MIDNIGHT).format(dateTimeFormatter));
             case LAST_DAY_OF_CURRENT_WEEK:
                 fieldISO = WeekFields.of(Locale.getDefault()).dayOfWeek();
-                return String.format(result, LocalDateTime.of(now.with(fieldISO, 7), LocalTime.MIDNIGHT).format(dateTimeFormatter));
+                return String.format(result, LocalDateTime.of(now.with(fieldISO, 7), LocalTime.MAX).format(dateTimeFormatter));
             case START_OF_CURRENT_DAY:
                 return String.format(result, LocalDateTime.of(now, LocalTime.MIDNIGHT).format(dateTimeFormatter));
             case END_OF_CURRENT_DAY:
-                return String.format(result, LocalDateTime.of(now, LocalTime.MIDNIGHT).plusDays(1).minusSeconds(1).format(dateTimeFormatter));
+                return String.format(result, LocalDateTime.of(now, LocalTime.MAX).format(dateTimeFormatter));
             case START_OF_YESTERDAY:
                 return String.format(result, LocalDateTime.of(now, LocalTime.MIDNIGHT).minusDays(1).format(dateTimeFormatter));
             case START_OF_TOMORROW:

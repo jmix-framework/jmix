@@ -442,7 +442,8 @@ public class PersistentDashboardEdit extends StandardEditor<PersistentDashboard>
                 .collect(toList());
 
         if (nonUniqueIds.size() > 0) {
-            errors.add(null, messages.formatMessage(PersistentDashboardEdit.class, "uniqueWidgetId", String.join(",", nonUniqueIds)));
+            errors.add(null, messages.formatMessage(PersistentDashboardEdit.class, "uniqueWidgetId",
+                    String.join(",", nonUniqueIds)));
         }
     }
 

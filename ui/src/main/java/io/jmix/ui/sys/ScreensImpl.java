@@ -1136,7 +1136,7 @@ public class ScreensImpl implements Screens {
                 String id = "tab_" + window.getId();
 
                 tabSheet.setTabTestId(tabId, ui.getTestIdManager().getTestId(id));
-                tabSheet.setTabCubaId(tabId, id);
+                tabSheet.setTabJmixId(tabId, id);
             }
             TabWindow tabWindow = (TabWindow) window;
 
@@ -1257,12 +1257,12 @@ public class ScreensImpl implements Screens {
         window.withUnwrappedComposition(JmixWindow.class, vWindow -> {
             vWindow.setErrorHandler(ui);
 
-            String cubaId = "dialog_" + window.getId();
+            String jmixId = "dialog_" + window.getId();
             if (ui.isTestMode()) {
-                vWindow.setJTestId(cubaId);
+                vWindow.setJTestId(jmixId);
             }
             if (ui.isPerformanceTestMode()) {
-                vWindow.setId(ui.getTestIdManager().getTestId(cubaId));
+                vWindow.setId(ui.getTestIdManager().getTestId(jmixId));
             }
 
             if (hasModalWindow()) {

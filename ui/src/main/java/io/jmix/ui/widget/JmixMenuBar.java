@@ -31,7 +31,7 @@ import java.util.Map;
 public class JmixMenuBar extends com.vaadin.ui.MenuBar {
 
     protected Map<MenuItem, String> shortcuts = null;
-    protected Map<MenuItem, String> cubaIds = null;
+    protected Map<MenuItem, String> jmixIds = null;
 
     @Override
     protected JmixMenuBarState getState() {
@@ -63,10 +63,10 @@ public class JmixMenuBar extends com.vaadin.ui.MenuBar {
     }
 
     public void setJTestId(MenuItem item, String id) {
-        if (cubaIds == null) {
-            cubaIds = new HashMap<>();
+        if (jmixIds == null) {
+            jmixIds = new HashMap<>();
         }
-        cubaIds.put(item, id);
+        jmixIds.put(item, id);
     }
 
     @Override
@@ -77,8 +77,8 @@ public class JmixMenuBar extends com.vaadin.ui.MenuBar {
                 target.addAttribute("shortcut", shortcut);
             }
         }
-        if (cubaIds != null && cubaIds.containsKey(item)) {
-            String idValue = cubaIds.get(item);
+        if (jmixIds != null && jmixIds.containsKey(item)) {
+            String idValue = jmixIds.get(item);
             if (idValue != null) {
                 target.addAttribute("cid", idValue);
             }

@@ -19,7 +19,7 @@ package io.jmix.ui.widget;
 import com.vaadin.ui.CssLayout;
 
 /*
-* This class is used to override connector hierarchy change behavior in the CubaTabSheetCssLayoutConnector.
+* This class is used to override connector hierarchy change behavior in the JmixTabSheetCssLayoutConnector.
 */
 public class JmixTabSheetCssLayout extends CssLayout {
 }

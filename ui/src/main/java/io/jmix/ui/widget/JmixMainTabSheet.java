@@ -287,7 +287,7 @@ public class JmixMainTabSheet extends DDTabSheet implements Action.Container, Ha
         TabSheet.Tab oldTab = getTab(c);
         String tabId = tabIds.inverse().get(oldTab);
 
-        String tabCubaId = getJTestId(oldTab);
+        String tabJmixId = getJTestId(oldTab);
 
         // do not detach close handler
         // call super
@@ -303,7 +303,7 @@ public class JmixMainTabSheet extends DDTabSheet implements Action.Container, Ha
         newTab.setIcon(oldTab.getIcon());
         newTab.setStyleName(oldTab.getStyleName());
 
-        setJTestId(newTab, tabCubaId);
+        setJTestId(newTab, tabJmixId);
 
         if (tabId != null) {
             tabIds.remove(tabId);
@@ -525,7 +525,7 @@ public class JmixMainTabSheet extends DDTabSheet implements Action.Container, Ha
         }
 
         @Override
-        public void setTabCubaId(String tabId, String id) {
+        public void setTabJmixId(String tabId, String id) {
             tabSheet.setJTestId(getTabNN(tabId), id);
         }
 

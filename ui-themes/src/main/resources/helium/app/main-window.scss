@@ -116,7 +116,6 @@ $he-sidemenu-collapsible-logo-default-size: 20px !default;
       }
     }
 
-    // TODO: gg, remove after cuba-platform/cuba#2741 is fixed
     .jmix-sidemenu-panel.collapsed:hover {
       .jmix-sidemenu .jmix-sidemenu-submenu.jmix-sidemenu-submenu-open {
         background: var(--sidemenu-collapsible-submenu-background-color);

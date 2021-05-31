@@ -150,7 +150,7 @@ public class AppUI extends UI implements ErrorHandler, EnhancedUI, UiExceptionHa
      *     new JQueryIntegration().extend(this);
      * }</code></pre>
      * <p>
-     * If you want to include scripts to generated page statically see todo CubaBootstrapListener
+     * If you want to include scripts to generated page statically implement {@link BootstrapListener}
      */
     protected void initJsLibraries() {
     }

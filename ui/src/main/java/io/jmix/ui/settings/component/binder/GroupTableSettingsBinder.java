@@ -134,7 +134,7 @@ public class GroupTableSettingsBinder extends AbstractTableSettingsBinder {
         }
 
         List<String> settingsProperties = groupTableSettings.getGroupProperties();
-        Collection<?> tableGroupProperties = getCubaGroupTable(groupTable).getGroupProperties();
+        Collection<?> tableGroupProperties = getJmixGroupTable(groupTable).getGroupProperties();
         if (settingsProperties.size() != tableGroupProperties.size()) {
             return true;
         }
@@ -165,7 +165,7 @@ public class GroupTableSettingsBinder extends AbstractTableSettingsBinder {
     }
 
     protected List<String> getGroupProperties(GroupTable groupTable) {
-        Collection<?> groupTableColumns = getCubaGroupTable(groupTable).getGroupProperties();
+        Collection<?> groupTableColumns = getJmixGroupTable(groupTable).getGroupProperties();
         List<String> groupProperties = new ArrayList<>(groupTableColumns.size());
 
         for (Object groupProperty : groupTableColumns) {
@@ -179,7 +179,7 @@ public class GroupTableSettingsBinder extends AbstractTableSettingsBinder {
         return groupProperties;
     }
 
-    protected JmixGroupTable getCubaGroupTable(GroupTable groupTable) {
+    protected JmixGroupTable getJmixGroupTable(GroupTable groupTable) {
         return groupTable.unwrap(JmixGroupTable.class);
     }
 }

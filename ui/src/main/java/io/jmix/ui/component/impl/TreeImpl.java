@@ -326,7 +326,7 @@ public class TreeImpl<E>
                 && ui.isPerformanceTestMode()) {
             //noinspection unchecked
             TreeComposition composition = (TreeComposition) getComposition();
-            composition.getTree().setId("cubaTree_" + ui.getTestIdManager().getTestId(id));
+            composition.getTree().setId("jmixTree_" + ui.getTestIdManager().getTestId(id));
         }
     }
 

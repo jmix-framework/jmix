@@ -14,7 +14,7 @@
   ~ limitations under the License.
   -->
 
-<window xmlns="http://schemas.haulmont.com/cuba/screen/window.xsd"
+<window xmlns="http://jmix.io/schema/ui/window"
         xmlns:app="http://jmix.io/schema/ui/composite/test-ui-component.xsd">
     <layout>
         <app:testEventPanel id="testEventPanel"/>

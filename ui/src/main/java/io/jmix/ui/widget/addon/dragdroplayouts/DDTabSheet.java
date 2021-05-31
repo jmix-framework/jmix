@@ -253,7 +253,7 @@ public class DDTabSheet extends TabSheet
      * (non-Javadoc)
      * 
      * @see fi.jasoft.dragdroplayouts.interfaces.LayoutDragSource#setDragMode
-     * (com.haulmont.cuba.web.widgets.client.addons.dragdroplayouts.ui.LayoutDragMode)
+     * (io.jmix.ui.widget.client.addon.dragdroplayouts.ui.LayoutDragMode)
      */
     public void setDragMode(LayoutDragMode mode) {
         getState().ddState.dragMode = mode;

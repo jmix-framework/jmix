@@ -42,7 +42,7 @@ public interface TabSheetBehaviour extends Serializable {
 
     void setTabTestId(String tabId, String testId);
 
-    void setTabCubaId(String tabId, String id);
+    void setTabJmixId(String tabId, String id);
 
     void setTabCloseHandler(Component tabContent, BiConsumer<HasTabSheetBehaviour, Component> closeHandler);
 

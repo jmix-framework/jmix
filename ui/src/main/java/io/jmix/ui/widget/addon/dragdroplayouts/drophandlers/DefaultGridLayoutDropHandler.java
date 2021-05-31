@@ -55,7 +55,7 @@ public class DefaultGridLayoutDropHandler
      * (non-Javadoc)
      * 
      * @see
-     * com.haulmont.cuba.web.widgets.addons.dragdroplayouts.drophandlers.AbstractDefaultLayoutDropHandler
+     * io.jmix.ui.widget.addon.dragdroplayouts.drophandlers.AbstractDefaultLayoutDropHandler
      * #handleComponentReordering(com.vaadin.event.dd.DragAndDropEvent)
      */
     @Override
@@ -79,7 +79,7 @@ public class DefaultGridLayoutDropHandler
      * (non-Javadoc)
      * 
      * @see
-     * com.haulmont.cuba.web.widgets.addons.dragdroplayouts.drophandlers.AbstractDefaultLayoutDropHandler
+     * io.jmix.ui.widget.addon.dragdroplayouts.drophandlers.AbstractDefaultLayoutDropHandler
      * #handleDropFromLayout(com.vaadin.event.dd.DragAndDropEvent)
      */
     @Override

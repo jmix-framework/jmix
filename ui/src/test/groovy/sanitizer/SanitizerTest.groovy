@@ -373,7 +373,7 @@ class SanitizerTest extends ScreenSpecification {
         screen.richTextArea.value == TEST_FONT_ELEMENT
     }
 
-    def "Sanitize component html caption depending on the value of the cuba.web.htmlSanitizerEnabled property"() {
+    def "Sanitize component html caption depending on the value of the jmix.ui.component.htmlSanitizerEnabled property"() {
         showTestMainScreen()
 
         def screen = screens.create(SanitizerTestScreen)

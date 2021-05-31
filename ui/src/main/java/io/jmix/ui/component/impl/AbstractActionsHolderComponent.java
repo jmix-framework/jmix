@@ -81,7 +81,7 @@ public abstract class AbstractActionsHolderComponent<T extends com.vaadin.ui.Abs
 
         AppUI ui = AppUI.getCurrent();
         if (ui != null && ui.isTestMode()) {
-            contextMenuPopup.setJTestId("cubaContextMenu");
+            contextMenuPopup.setJTestId("jmixContextMenu");
         }
     }
 

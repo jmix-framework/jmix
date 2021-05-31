@@ -65,7 +65,7 @@ public class AppMenuImpl extends AbstractComponent<JmixMenuBar> implements AppMe
         }
 
         for (Map.Entry<String, MenuItem> entry : allItemsIds.entrySet()) {
-            assignCubaIds(entry.getValue(), entry.getKey());
+            assignJTestIds(entry.getValue(), entry.getKey());
         }
     }
 
@@ -126,7 +126,7 @@ public class AppMenuImpl extends AbstractComponent<JmixMenuBar> implements AppMe
         return menuItem;
     }
 
-    protected void assignCubaIds(MenuItem menuItem, String id) {
+    protected void assignJTestIds(MenuItem menuItem, String id) {
         AppUI ui = (AppUI) component.getUI();
         if (ui == null || !ui.isTestMode()) {
             return;
@@ -145,7 +145,7 @@ public class AppMenuImpl extends AbstractComponent<JmixMenuBar> implements AppMe
         component.addMenuItem(((MenuItemImpl) menuItem).getDelegateItem());
         registerMenuItem(menuItem);
 
-        assignCubaIds(menuItem, menuItem.getId());
+        assignJTestIds(menuItem, menuItem.getId());
     }
 
     @Override
@@ -157,7 +157,7 @@ public class AppMenuImpl extends AbstractComponent<JmixMenuBar> implements AppMe
         component.addMenuItem(((MenuItemImpl) menuItem).getDelegateItem(), index);
         registerMenuItem(menuItem);
 
-        assignCubaIds(menuItem, menuItem.getId());
+        assignJTestIds(menuItem, menuItem.getId());
     }
 
     protected void registerMenuItem(MenuItem menuItem) {

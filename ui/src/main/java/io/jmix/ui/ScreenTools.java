@@ -24,7 +24,7 @@ public interface ScreenTools {
     /**
      * Opens default screen.
      * <p>
-     * Default screen can be defined with the {@code cuba.web.defaultScreenId} application property.
+     * Default screen can be defined with the {@code jmix.ui.defaultScreenId} application property.
      *
      * @param screens {@link Screens} bean reference
      */

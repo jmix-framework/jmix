@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Haulmont.
+ * Copyright 2021 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,21 @@
  * limitations under the License.
  */
 
-rootProject.name = 'jmix-multitenancy'
+package io.jmix.multitenancy.core;
 
-include 'multitenancy'
-include 'multitenancy-ui'
-include 'multitenancy-starter'
-include 'multitenancy-ui-starter'
+import io.jmix.core.metamodel.model.MetaProperty;
 
-rootProject.children.each { p1 ->
-    p1.buildFileName = "${p1.name}.gradle"
+import javax.annotation.Nullable;
+import java.lang.reflect.Field;
+
+public interface TenantEntityOperation {
+
+    @Nullable
+    MetaProperty getTenantMetaProperty(Class<?> entityClass);
+
+    @Nullable
+    Field getTenantField(Class<?> entityClass);
+
+    void setTenant(Object entity, String tenantId);
+
 }
-

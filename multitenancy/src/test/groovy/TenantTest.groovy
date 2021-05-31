@@ -16,7 +16,7 @@
 
 
 import io.jmix.core.Metadata
-import io.jmix.core.UnsafeDataManager
+import io.jmix.core.UnconstrainedDataManager
 import io.jmix.core.security.InMemoryUserRepository
 import io.jmix.eclipselink.EclipselinkConfiguration
 import io.jmix.multitenancy.MultitenancyConfiguration
@@ -53,7 +53,7 @@ import test_support.entity.User
 class TenantTest extends Specification {
 
     @Autowired
-    private UnsafeDataManager unsafeDataManager
+    private UnconstrainedDataManager unconstrainedDataManager
 
     @Autowired
     private InMemoryUserRepository userRepository;

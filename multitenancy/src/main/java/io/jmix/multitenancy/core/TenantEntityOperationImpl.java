@@ -17,7 +17,6 @@
 package io.jmix.multitenancy.core;
 
 import io.jmix.core.Metadata;
-import io.jmix.core.TenantEntityOperation;
 import io.jmix.core.annotation.TenantId;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;

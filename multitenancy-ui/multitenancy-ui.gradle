@@ -14,14 +14,17 @@
  * limitations under the License.
  */
 
-rootProject.name = 'jmix-multitenancy'
+apply plugin: 'groovy'
+apply plugin: 'io.jmix'
 
-include 'multitenancy'
-include 'multitenancy-ui'
-include 'multitenancy-starter'
-include 'multitenancy-ui-starter'
+group = 'io.jmix.multitenancy'
+archivesBaseName = 'jmix-multitenancy-ui'
 
-rootProject.children.each { p1 ->
-    p1.buildFileName = "${p1.name}.gradle"
+dependencies {
+    api platform("io.jmix.bom:jmix-bom:$bomVersion")
+
+    api project(':multitenancy')
+
+    api 'io.jmix.ui:jmix-ui'
+
 }
-

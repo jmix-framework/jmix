@@ -17,10 +17,10 @@
 package io.jmix.multitenancy.data;
 
 import io.jmix.core.Metadata;
-import io.jmix.core.TenantEntityOperation;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.eclipselink.persistence.AdditionalCriteriaProvider;
+import io.jmix.multitenancy.core.TenantEntityOperation;
 import io.jmix.multitenancy.core.TenantProvider;
 import org.springframework.stereotype.Component;
 

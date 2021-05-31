@@ -14,14 +14,7 @@
  * limitations under the License.
  */
 
-rootProject.name = 'jmix-multitenancy'
+@Internal
+package io.jmix.autoconfigure.multitenancyui;
 
-include 'multitenancy'
-include 'multitenancy-ui'
-include 'multitenancy-starter'
-include 'multitenancy-ui-starter'
-
-rootProject.children.each { p1 ->
-    p1.buildFileName = "${p1.name}.gradle"
-}
-
+import io.jmix.core.annotation.Internal;

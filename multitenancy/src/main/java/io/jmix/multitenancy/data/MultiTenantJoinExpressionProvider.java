@@ -16,8 +16,8 @@
 
 package io.jmix.multitenancy.data;
 
-import io.jmix.core.TenantEntityOperation;
 import io.jmix.eclipselink.impl.mapping.AbstractJoinExpressionProvider;
+import io.jmix.multitenancy.core.TenantEntityOperation;
 import org.eclipse.persistence.descriptors.ClassDescriptor;
 import org.eclipse.persistence.expressions.Expression;
 import org.eclipse.persistence.expressions.ExpressionBuilder;

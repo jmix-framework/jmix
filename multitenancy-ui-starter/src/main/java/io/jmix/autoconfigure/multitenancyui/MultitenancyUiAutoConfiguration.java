@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,13 @@
  * limitations under the License.
  */
 
-package io.jmix.multitenancy.screen.tenant;
+package io.jmix.autoconfigure.multitenancyui;
 
-import io.jmix.multitenancy.entity.Tenant;
-import io.jmix.ui.screen.LookupComponent;
-import io.jmix.ui.screen.StandardLookup;
-import io.jmix.ui.screen.UiController;
-import io.jmix.ui.screen.UiDescriptor;
+import io.jmix.multitenancyui.MultitenancyUiConfiguration;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 
-@UiController("mten_Tenant.browse")
-@UiDescriptor("tenant-browse.xml")
-@LookupComponent("tenantsTable")
-public class TenantBrowse extends StandardLookup<Tenant> {
+@Configuration
+@Import({MultitenancyUiConfiguration.class})
+public class MultitenancyUiAutoConfiguration {
 }

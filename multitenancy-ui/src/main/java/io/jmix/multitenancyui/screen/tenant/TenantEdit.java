@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.multitenancy.screen.tenant;
+package io.jmix.multitenancyui.screen.tenant;
 
 import io.jmix.core.security.UserRepository;
 import io.jmix.multitenancy.entity.Tenant;

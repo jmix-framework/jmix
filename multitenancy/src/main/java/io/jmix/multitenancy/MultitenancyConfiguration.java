@@ -18,17 +18,11 @@ package io.jmix.multitenancy;
 
 import io.jmix.core.CoreConfiguration;
 import io.jmix.core.annotation.JmixModule;
-import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
 import io.jmix.data.DataConfiguration;
-import io.jmix.ui.sys.UiControllersConfiguration;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-
-import java.util.Collections;
 
 @Configuration
 @ComponentScan
@@ -36,13 +30,4 @@ import java.util.Collections;
 @JmixModule(dependsOn = {CoreConfiguration.class, DataConfiguration.class})
 @PropertySource(name = "io.jmix.multitenancy", value = "classpath:/io/jmix/multitenancy/module.properties")
 public class MultitenancyConfiguration {
-
-    @Bean("mten_MultitenancyUiControllers")
-    public UiControllersConfiguration screens(ApplicationContext applicationContext,
-                                              AnnotationScanMetadataReaderFactory metadataReaderFactory) {
-        UiControllersConfiguration uiControllers
-                = new UiControllersConfiguration(applicationContext, metadataReaderFactory);
-        uiControllers.setBasePackages(Collections.singletonList("io.jmix.multitenancy"));
-        return uiControllers;
-    }
 }

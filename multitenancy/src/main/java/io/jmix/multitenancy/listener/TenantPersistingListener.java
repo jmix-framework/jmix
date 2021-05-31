@@ -16,8 +16,8 @@
 
 package io.jmix.multitenancy.listener;
 
-import io.jmix.core.TenantEntityOperation;
 import io.jmix.core.event.EntitySavingEvent;
+import io.jmix.multitenancy.core.TenantEntityOperation;
 import io.jmix.multitenancy.core.TenantProvider;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;

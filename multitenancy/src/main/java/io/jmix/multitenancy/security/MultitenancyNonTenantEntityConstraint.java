@@ -16,10 +16,10 @@
 
 package io.jmix.multitenancy.security;
 
-import io.jmix.core.TenantEntityOperation;
 import io.jmix.core.constraint.EntityOperationConstraint;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.security.CurrentAuthentication;
+import io.jmix.multitenancy.core.TenantEntityOperation;
 import io.jmix.multitenancy.core.TenantProvider;
 import io.jmix.ui.accesscontext.UiEntityContext;
 import org.slf4j.Logger;

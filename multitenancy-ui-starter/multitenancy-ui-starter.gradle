@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Haulmont.
+ * Copyright 2021 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-rootProject.name = 'jmix-multitenancy'
 
-include 'multitenancy'
-include 'multitenancy-ui'
-include 'multitenancy-starter'
-include 'multitenancy-ui-starter'
+group = 'io.jmix.multitenancy'
+archivesBaseName = 'jmix-multitenancy-ui-starter'
 
-rootProject.children.each { p1 ->
-    p1.buildFileName = "${p1.name}.gradle"
+dependencies {
+    api project(':multitenancy-ui')
+
+    api 'org.springframework.boot:spring-boot-autoconfigure'
 }
-

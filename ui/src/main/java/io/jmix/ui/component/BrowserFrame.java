@@ -165,7 +165,7 @@ public interface BrowserFrame extends ResourceView {
      *
      * @param value inline HTML code
      */
-    @StudioProperty(name = "srcdoc")
+    @StudioProperty(name = "srcdoc", type = PropertyType.LOCALIZED_STRING)
     void setSrcdoc(@Nullable String value);
 
     /**

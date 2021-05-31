@@ -3,7 +3,7 @@
 
     <menu id="application" caption="msg://${project_rootPackage}/menu.application" insertBefore="administration">
         <item screen="${normalizedPrefix_underscore}User.browse" caption="msg://${project_rootPackage}.screen.user/UserBrowse.caption"/>
-        <item screen="themeSettingsScreen" caption="msg:///themeSettings.caption"/>
+        <item screen="themeSettingsScreen" caption="msg://io.jmix.ui.app.themesettings/themeSettings.caption"/>
     </menu>
 
 </menu-config>

@@ -21,16 +21,15 @@ import org.springframework.boot.context.properties.ConstructorBinding;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import javax.annotation.Nullable;
+import java.time.Duration;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 @ConfigurationProperties(prefix = "jmix.core")
 @ConstructorBinding
 public class CoreProperties {
-
-    public static final String SERVER_SERVLET_CONTEXTPATH = "server.servlet.contextPath";
 
     String webHostName;
     String webPort;
@@ -39,9 +38,8 @@ public class CoreProperties {
     String tempDir;
     String dbDir;
     String defaultFileStorage;
-    private String anonymousAuthenticationTokenKey;
-    Map<String, Locale> availableLocales;
-    boolean localeSelectVisible;
+    String anonymousAuthenticationTokenKey;
+    List<Locale> availableLocales;
     int crossDataStoreReferenceLoadingBatchSize;
     boolean idGenerationForEntitiesInAdditionalDataStoresEnabled;
     int dom4jMaxPoolSize;
@@ -49,6 +47,8 @@ public class CoreProperties {
     boolean entitySerializationTokenRequired;
     String entitySerializationTokenEncryptionKey;
     boolean fetchPlanSerializationUseView;
+    boolean triggerFilesEnabled;
+    Duration triggerFilesProcessInterval;
 
     public CoreProperties(
             String webHostName,
@@ -57,8 +57,7 @@ public class CoreProperties {
             String workDir,
             String tempDir,
             String dbDir,
-            Map<String, String> availableLocales,
-            @DefaultValue("true") boolean localeSelectVisible,
+            List<String> availableLocales,
             @DefaultValue("50") int crossDataStoreReferenceLoadingBatchSize,
             @DefaultValue("true") boolean idGenerationForEntitiesInAdditionalDataStoresEnabled,
             @DefaultValue("100") int dom4jMaxPoolSize,
@@ -70,7 +69,11 @@ public class CoreProperties {
             @DefaultValue("KEY")
                     String entitySerializationTokenEncryptionKey,
             @DefaultValue("false")
-                    boolean fetchPlanSerializationUseView) {
+                    boolean fetchPlanSerializationUseView,
+            @DefaultValue("true")
+                    boolean triggerFilesEnabled,
+            @DefaultValue("5000")
+            Duration triggerFilesProcessInterval) {
         this.webHostName = webHostName;
         this.webPort = webPort;
         this.confDir = confDir;
@@ -81,15 +84,13 @@ public class CoreProperties {
         this.anonymousAuthenticationTokenKey = anonymousAuthenticationTokenKey;
 
         if (availableLocales == null) {
-            this.availableLocales = Collections.singletonMap("English", Locale.ENGLISH);
+            this.availableLocales = Collections.singletonList(Locale.ENGLISH);
         } else {
-            this.availableLocales = new HashMap<>(availableLocales.size());
-            for (Map.Entry<String, String> entry : availableLocales.entrySet()) {
-                this.availableLocales.put(entry.getValue(), LocaleResolver.resolve(entry.getKey()));
-            }
+            this.availableLocales = availableLocales.stream()
+                    .map(LocaleResolver::resolve)
+                    .collect(Collectors.toList());
         }
 
-        this.localeSelectVisible = localeSelectVisible;
         this.crossDataStoreReferenceLoadingBatchSize = crossDataStoreReferenceLoadingBatchSize;
         this.idGenerationForEntitiesInAdditionalDataStoresEnabled = idGenerationForEntitiesInAdditionalDataStoresEnabled;
         this.dom4jMaxPoolSize = dom4jMaxPoolSize;
@@ -98,6 +99,8 @@ public class CoreProperties {
         this.entitySerializationTokenRequired = entitySerializationTokenRequired;
         this.entitySerializationTokenEncryptionKey = entitySerializationTokenEncryptionKey;
         this.fetchPlanSerializationUseView = fetchPlanSerializationUseView;
+        this.triggerFilesEnabled = triggerFilesEnabled;
+        this.triggerFilesProcessInterval = triggerFilesProcessInterval;
     }
 
     /**
@@ -135,12 +138,12 @@ public class CoreProperties {
         return defaultFileStorage;
     }
 
-    public Map<String, Locale> getAvailableLocales() {
+    /**
+     * List of locales supported by the application.
+     * If not specified, contains the single {@code Locale.ENGLISH} element.
+     */
+    public List<Locale> getAvailableLocales() {
         return availableLocales;
-    }
-
-    public boolean isLocaleSelectVisible() {
-        return localeSelectVisible;
     }
 
     public int getCrossDataStoreReferenceLoadingBatchSize() {
@@ -190,5 +193,23 @@ public class CoreProperties {
 
     public boolean isFetchPlanSerializationUseView() {
         return fetchPlanSerializationUseView;
+    }
+
+    /**
+     * @return true if enables the processing of bean invocation trigger files. Default value: true
+     * The trigger file is a file that is placed in the triggers subdirectory of the application's temporary directory.
+     * The file name consists of two parts separated with a #: the first part is the bean class, the second part is the method name
+     * of the bean to invoke. For example: io.jmix.core.Messages#clearCache.
+     * The trigger files handler monitors the folder for new trigger files, invokes the appropriate methods and then removes the files.
+     */
+    public boolean isTriggerFilesEnabled() {
+        return triggerFilesEnabled;
+    }
+
+    /**
+     * Defines the period in milliseconds of trigger files processing
+     */
+    public Duration getTriggerFilesProcessInterval() {
+        return triggerFilesProcessInterval;
     }
 }

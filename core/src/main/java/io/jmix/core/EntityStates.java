@@ -194,7 +194,7 @@ public class EntityStates {
             }
         }
 
-        // after check we remove item from visited because different subtrees may have different view for one instance
+        // after check we remove item from visited because different subtrees may have different fetch plan for the same instance
         visited.remove(entity);
     }
 
@@ -268,7 +268,7 @@ public class EntityStates {
             }
         }
 
-        // after check we remove item from visited because different subtrees may have different view for one instance
+        // after check we remove item from visited because different subtrees may have different fetch plan for the same instance
         visited.remove(entity);
 
         return true;
@@ -325,7 +325,7 @@ public class EntityStates {
 
         // Using MetaClass of the fetchPlan helps in the case when the entity is an item of a collection, and the collection
         // can contain instances of different subclasses. So we don't want to add specific properties of subclasses
-        // to the resulting view.
+        // to the resulting fetch plan.
         MetaClass metaClass = metadata.getClass(builder.getEntityClass());
 
         for (MetaProperty property : metaClass.getProperties()) {

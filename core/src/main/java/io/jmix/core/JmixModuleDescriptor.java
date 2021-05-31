@@ -21,12 +21,13 @@ import org.springframework.core.env.PropertySource;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
  * Describes a Jmix module which the current application depends on.
  */
-public class JmixModuleDescriptor implements Comparable<JmixModuleDescriptor> {
+public class JmixModuleDescriptor {
 
     private final String id;
     private final List<JmixModuleDescriptor> dependencies = new ArrayList<>();
@@ -65,6 +66,13 @@ public class JmixModuleDescriptor implements Comparable<JmixModuleDescriptor> {
     }
 
     /**
+     * Returns an unmodifiable list of dependent modules.
+     */
+    public List<JmixModuleDescriptor> getDependencies() {
+        return Collections.unmodifiableList(dependencies);
+    }
+
+    /**
      * Check if this module depends on the given module.
      */
     public boolean dependsOn(JmixModuleDescriptor other) {
@@ -98,16 +106,6 @@ public class JmixModuleDescriptor implements Comparable<JmixModuleDescriptor> {
     @Nullable
     public String getProperty(String property) {
         return propertySource == null ? null : (String) propertySource.getProperty(property);
-    }
-
-    @Override
-    public int compareTo(JmixModuleDescriptor other) {
-        if (this.dependsOn(other))
-            return 1;
-        if (other.dependsOn(this)) {
-            return -1;
-        }
-        return 0;
     }
 
     @Override

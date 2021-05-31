@@ -721,6 +721,12 @@ public class MetaModelLoader {
             }
         }
 
+        LastModifiedDate lastModifiedDate =
+                annotatedElement.getAnnotation(LastModifiedDate.class);
+        if (lastModifiedDate != null) {
+            metaProperty.getAnnotations().put(lastModifiedDate.annotationType().getName(), lastModifiedDate);
+        }
+
         loadBeanValidationAnnotations(metaProperty, annotatedElement);
     }
 
@@ -837,6 +843,7 @@ public class MetaModelLoader {
             setterNames.add("set" + fieldName.substring(2));
         }
         setterNames.add("set" + StringUtils.capitalize(fieldName));
+        setterNames.add("set" + fieldName);
         return setterNames;
     }
 

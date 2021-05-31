@@ -16,12 +16,20 @@
 
 package io.jmix.core;
 
+import io.jmix.core.entity.BaseEntityEntry;
 import io.jmix.core.entity.EntityPropertyChangeListener;
+import io.jmix.core.entity.NullableIdEntityEntry;
 import io.jmix.core.entity.SecurityState;
+import io.jmix.core.entity.annotation.JmixGeneratedValue;
+import io.jmix.core.entity.annotation.JmixId;
+import io.jmix.core.impl.EntityInternals;
 
 import javax.annotation.Nullable;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Id;
 import java.io.Serializable;
 import java.util.Collection;
+
 
 public interface EntityEntry extends Serializable {
 
@@ -32,6 +40,17 @@ public interface EntityEntry extends Serializable {
 
     void setEntityId(@Nullable Object id);
 
+    /**
+     * GeneratedId will be determined at enhancing time as follows:
+     * <ol>
+     *     <li>primary key ({@link Id}, {@link EmbeddedId} or {@link JmixId} attribute) will be used if it has {@link JmixGeneratedValue} annotation,</li>
+     *     <li>any other UUID {@link JmixGeneratedValue} property will be chosen if primary key doesn't  have {@link JmixGeneratedValue} annotation, </li>
+     *     <li>primary key or some synthetic id will be used if there is no {@link JmixGeneratedValue} satisfiyng conditions below (see {@code EntityEntry} implementations for details).</li>
+     * </ol>
+     * <br>
+     * This algorithm used for {@link BaseEntityEntry} and {@link NullableIdEntityEntry}. See implementing classes description to clarify whether each of them will be used
+     * (directly or through subclass creation during enhancing process)
+     */
     @Nullable
     Object getGeneratedIdOrNull();
 
@@ -42,6 +61,14 @@ public interface EntityEntry extends Serializable {
         }
         return id;
     }
+
+    /**
+     * GeneratedId needed to identify entity, including hashCode calculation (see {@link EntityInternals#hashCode(Entity)}).
+     * Thus it has to be copied at the very beginning of entity copy creation.
+     *
+     * @param id
+     */
+    void setGeneratedId(Object id);
 
     @Nullable
     <T> T getAttributeValue(String name);

@@ -85,8 +85,12 @@ public class CurrentAuthenticationImpl implements CurrentAuthentication {
     public TimeZone getTimeZone() {
         Authentication authentication = getAuthentication();
         if (authentication != null) {
-            //todo MG
-            return TimeZone.getDefault();
+            Object details = authentication.getDetails();
+            TimeZone timeZone = null;
+            if (details instanceof ClientDetails) {
+                timeZone = ((ClientDetails) details).getTimeZone();
+            }
+            return timeZone == null ? TimeZone.getDefault() : timeZone;
         }
         throw new IllegalStateException("Authentication is not set");
     }

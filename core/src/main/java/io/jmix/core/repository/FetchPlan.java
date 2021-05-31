@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Haulmont.
+ * Copyright 2021 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.core.annotation;
-
-import org.springframework.beans.factory.annotation.Qualifier;
+package io.jmix.core.repository;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -24,10 +22,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Qualifier annotations for bean that uses registered {@link io.jmix.core.constraint.AccessConstraint}
+ * Specifies fetch plan name that will be applied to entities on extraction.
  */
-@Target({ElementType.FIELD, ElementType.PARAMETER, ElementType.TYPE})
+@Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-@Qualifier
-public @interface Secure {
+public @interface FetchPlan {
+
+    String value();
 }

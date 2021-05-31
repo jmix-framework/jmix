@@ -19,7 +19,7 @@ import javax.annotation.Nullable;
 import java.io.Serializable;
 
 /**
- * Defines a {@link FetchPlan} property. Each view property corresponds to a
+ * Defines a {@link FetchPlan} property. Each fetch plan property corresponds to a
  * {@link io.jmix.core.metamodel.model.MetaProperty} with the same name.
  *
  */

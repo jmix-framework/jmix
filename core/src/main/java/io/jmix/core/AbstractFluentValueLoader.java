@@ -17,7 +17,6 @@
 package io.jmix.core;
 
 import io.jmix.core.constraint.AccessConstraint;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.TemporalType;
 import java.io.Serializable;
@@ -25,7 +24,7 @@ import java.util.*;
 
 class AbstractFluentValueLoader {
 
-    protected DataManager dataManager;
+    protected UnconstrainedDataManager dataManager;
 
     private boolean joinTransaction = true;
     private String store;
@@ -41,8 +40,7 @@ class AbstractFluentValueLoader {
         this.queryString = queryString;
     }
 
-    @Autowired
-    public void setDataManager(DataManager dataManager) {
+    public void setDataManager(UnconstrainedDataManager dataManager) {
         this.dataManager = dataManager;
     }
 

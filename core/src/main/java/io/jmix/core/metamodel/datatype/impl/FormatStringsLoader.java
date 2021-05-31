@@ -33,7 +33,7 @@ import java.util.Locale;
 @Component("core_FormatStringsLoader")
 public class FormatStringsLoader {
 
-    private static final Logger log = LoggerFactory.getLogger(FormatStringsRegistryImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(FormatStringsLoader.class);
 
     @Autowired
     protected CoreProperties coreProperties;
@@ -49,7 +49,7 @@ public class FormatStringsLoader {
 
     @EventListener(ContextRefreshedEvent.class)
     private void init() {
-        for (Locale locale : coreProperties.getAvailableLocales().values()) {
+        for (Locale locale : coreProperties.getAvailableLocales()) {
             String numberDecimalSeparator = getMessage("numberDecimalSeparator", locale);
             String numberGroupingSeparator = getMessage("numberGroupingSeparator", locale);
             String integerFormat = getMessage("integerFormat", locale);
@@ -75,7 +75,7 @@ public class FormatStringsLoader {
                 log.warn("Localized format strings are not defined for {}", locale);
 
             formatStringsRegistry.setFormatStrings(
-                    messageTools.trimLocale(locale),
+                    locale.stripExtensions(),
                     new FormatStrings(
                             numberDecimalSeparator.charAt(0),
                             numberGroupingSeparator.charAt(0),

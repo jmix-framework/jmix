@@ -31,7 +31,9 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Utility class to provide common functionality related to localized messages.
@@ -46,8 +48,6 @@ public class MessageTools {
     public static final String MARK = "msg://";
 
     private static final Logger log = LoggerFactory.getLogger(MessageTools.class);
-
-    protected volatile Boolean useLocaleLanguageOnly;
 
     @Autowired
     protected Messages messages;
@@ -348,57 +348,35 @@ public class MessageTools {
     }
 
     /**
-     * @return whether to use a full locale representation, or language only. Returns true if all locales listed
-     * in {@code jmix.core.availableLocales} app property are language only.
-     */
-    public boolean useLocaleLanguageOnly() {
-        if (useLocaleLanguageOnly == null) {
-            boolean found = false;
-            for (Locale locale : properties.getAvailableLocales().values()) {
-                if (!StringUtils.isEmpty(locale.getCountry()) || !StringUtils.isEmpty(locale.getVariant())
-                        || !StringUtils.isEmpty(locale.getScript())) {
-                    useLocaleLanguageOnly = false;
-                    found = true;
-                    break;
-                }
-            }
-            if (!found)
-                useLocaleLanguageOnly = true;
-        }
-        return useLocaleLanguageOnly;
-    }
-
-    /**
-     * Locale representation depending on {@code cuba.useLocaleLanguageOnly} application property.
-     *
-     * @param locale locale instance
-     * @return language code if {@code cuba.useLocaleLanguageOnly=true}, or full locale representation otherwise
-     */
-    public String localeToString(Locale locale) {
-        Preconditions.checkNotNullArgument(locale);
-
-        return useLocaleLanguageOnly() ? locale.getLanguage() : LocaleResolver.localeToString(locale);
-    }
-
-    /**
-     * Trims locale to language-only if {@link #useLocaleLanguageOnly()} is true.
-     * @param locale    a locale
-     * @return          the locale with the same language and empty country and variant
-     */
-    public Locale trimLocale(Locale locale) {
-        Preconditions.checkNotNullArgument(locale);
-
-        return useLocaleLanguageOnly() ? Locale.forLanguageTag(locale.getLanguage()) : locale.stripExtensions();
-    }
-
-    /**
-     * @return first locale from the list defined in {@code jmix.core.availableLocales} app property, taking into
-     * account {@link #useLocaleLanguageOnly()} return value.
+     * Returns the first locale from the list defined in {@code jmix.core.availableLocales} app property.
      */
     public Locale getDefaultLocale() {
         if (properties.getAvailableLocales().isEmpty())
             throw new DevelopmentException("Invalid jmix.core.availableLocales application property");
-        return properties.getAvailableLocales().entrySet().iterator().next().getValue();
+        return properties.getAvailableLocales().get(0);
+    }
+
+    /**
+     * Returns display name of the given locale set in the message bundle with the {@code localeDisplayName.<code>} key.
+     * If such message is not defined, returns {@link Locale#getDisplayName()}.
+     */
+    public String getLocaleDisplayName(Locale locale) {
+        Preconditions.checkNotNullArgument(locale, "locale is null");
+
+        String localeDisplayName = messages.findMessage("localeDisplayName." + LocaleResolver.localeToString(locale), locale);
+        return localeDisplayName != null ? localeDisplayName : locale.getDisplayName();
+    }
+
+    /**
+     * Returns locales set in the {@code jmix.core.availableLocales} property as a map of the locale display name
+     * to the locale object.
+     */
+    public Map<String, Locale> getAvailableLocalesMap() {
+        return properties.getAvailableLocales().stream()
+                .collect(Collectors.toMap(
+                        locale -> getLocaleDisplayName(locale),
+                        Function.identity()
+                ));
     }
 
     /**

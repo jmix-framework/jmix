@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.core.event;
+package io.jmix.core.security.event;
 
 import org.springframework.context.ApplicationEvent;
 
@@ -22,9 +22,10 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Class for user password event. It includes user names and new passwords
+ * Class for user password event. It includes user names and new passwords.
  */
 public class UserPasswordResetEvent extends ApplicationEvent {
+    private static final long serialVersionUID = -5109995742911792935L;
 
     private final Map<String, String> passwordByUser;
 
@@ -40,6 +41,4 @@ public class UserPasswordResetEvent extends ApplicationEvent {
     public String getPasswordByUsername(String userName) {
         return passwordByUser.get(userName);
     }
-
-
 }

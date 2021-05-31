@@ -18,9 +18,22 @@ package io.jmix.core.entity;
 
 import io.jmix.core.Entity;
 import io.jmix.core.EntityEntry;
+import io.jmix.core.entity.annotation.JmixGeneratedValue;
+import io.jmix.core.entity.annotation.JmixId;
 
+import javax.persistence.EmbeddedId;
+import javax.persistence.Id;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 
+/**
+ * Used by enhancing process. Subclass of {@link NullableIdEntityEntry} will be created for entity that:
+ * <ul>
+ * <li>has primary key (an attribute annotated with {@link Id}, {@link EmbeddedId} or {@link JmixId})</li>
+ * <li>Primary key is not annotated with {@link JmixGeneratedValue}</li>
+ * <li>There is no {@link UUID} attribute annotated with {@link JmixGeneratedValue}</li>
+ * </ul>
+ */
 @SuppressWarnings("unused")
 public abstract class NullableIdEntityEntry extends BaseEntityEntry {
 
@@ -43,6 +56,11 @@ public abstract class NullableIdEntityEntry extends BaseEntityEntry {
     @Override
     public Object getGeneratedIdOrNull() {
         return generatedId;
+    }
+
+    @Override
+    public void setGeneratedId(Object id) {
+        this.generatedId = (long) id;
     }
 
     @Override

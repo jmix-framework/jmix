@@ -23,6 +23,7 @@ import io.jmix.core.FileStorageException;
 import io.jmix.core.TimeSource;
 import io.jmix.core.UuidProvider;
 import io.jmix.core.annotation.Internal;
+import io.jmix.core.common.util.Preconditions;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -51,6 +52,7 @@ import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Object;
 import software.amazon.awssdk.services.s3.model.UploadPartRequest;
 
@@ -140,6 +142,8 @@ public class AwsFileStorage implements FileStorage {
 
     public void refreshS3Client() {
         refreshProperties();
+        Preconditions.checkNotEmptyString(region, "region must not be empty");
+        Preconditions.checkNotEmptyString(bucket, "bucket must not be empty");
         AwsCredentialsProvider awsCredentialsProvider = getAwsCredentialsProvider();
         if (Strings.isNullOrEmpty(endpointUrl)) {
             s3ClientReference.set(S3Client.builder()
@@ -192,6 +196,14 @@ public class AwsFileStorage implements FileStorage {
             byte[] data = IOUtils.toByteArray(inputStream);
             S3Client s3Client = s3ClientReference.get();
             int chunkSizeBytes = this.chunkSize * 1024;
+
+            if (data.length == 0) {
+                s3Client.putObject(PutObjectRequest.builder()
+                        .bucket(bucket)
+                        .key(fileKey)
+                        .build(), RequestBody.fromBytes(data));
+                return new FileRef(getStorageName(), fileKey, fileName);
+            }
 
             CreateMultipartUploadRequest createMultipartUploadRequest = CreateMultipartUploadRequest.builder()
                     .bucket(bucket)

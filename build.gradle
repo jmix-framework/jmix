@@ -37,7 +37,15 @@ task contentJarFr(type: Jar) {
     }
 }
 
-assemble.dependsOn(contentJarRu, contentJarFr)
+task contentJarDe(type: Jar) {
+    archiveBaseName = 'jmix-translations-de'
+    includeEmptyDirs = false
+    from("content") {
+        include("**/messages_de.properties")
+    }
+}
+
+assemble.dependsOn(contentJarRu, contentJarFr, contentJarDe)
 
 publishing {
     publications {
@@ -48,6 +56,10 @@ publishing {
         Fr(MavenPublication) {
             artifactId = 'jmix-translations-fr'
             artifact(contentJarFr)
+        }
+        De(MavenPublication) {
+            artifactId = 'jmix-translations-de'
+            artifact(contentJarDe)
         }
     }
     if (rootProject.hasProperty('jmixUploadUrl')) {

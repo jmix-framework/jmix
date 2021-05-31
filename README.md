@@ -37,10 +37,6 @@ Jmix is a set of libraries and tools to speed up Spring Boot data-centric applic
 ## Using Jmix
 To get started, [download Jmix Studio](https://www.jmix.io/tools) - a plugin for IntelliJ IDEA. It helps you at all stages of the application development: creating and configuring a project, defining data model, generating database migration scripts, developing UI screens in a visual editor. It provides advanced navigation, code completion and inspections specific to Jmix projects.
 
-<p>
-<a href="https://www.jmix.io/tools/" target="_blank"><img src="img/install_button.png" height="47px" alt="" title=""></a>
-</p>
-
 Follow the [Quick Start](https://docs.jmix.io/jmix/0.x/quick-start/) guide to get up and running in 15 minutes. The guide will show some necessary things for creating any web application: how to design a data model, how to manipulate data, how to create business logic, and, finally, how to create a user interface.
 
 ## Building From Source

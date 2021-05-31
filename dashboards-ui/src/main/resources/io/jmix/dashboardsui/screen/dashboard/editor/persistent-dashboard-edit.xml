@@ -105,7 +105,7 @@
                     stylename="dashboard-left-margin-button"/>
             <fileUpload id="importJsonField"
                         uploadButtonCaption="msg://importJson"
-                        uploadButtonIcon="UPLOAD"/>
+                        uploadButtonIcon="UPLOAD" permittedExtensions=".json"/>
         </hbox>
     </layout>
 </window>

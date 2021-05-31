@@ -145,12 +145,30 @@ public class EntityQueryDataFetcher {
         }
 
         Map.Entry<String, Object> entry = ((Map<String, Object>) orderBy).entrySet().iterator().next();
-        if (Map.class.isAssignableFrom(entry.getValue().getClass())) {
-            return buildOrderBy(entry.getKey(), entry.getValue());
+        String key = entry.getKey();
+        Object valueObj = entry.getValue();
+        Class<?> valueClass = valueObj.getClass();
+
+        if (Map.class.isAssignableFrom(valueClass)) {
+            return buildOrderBy(key, valueObj);
         }
 
-        String propertyPath = StringUtils.isBlank(path) ? entry.getKey() : path + "." + entry.getKey();
-        return new ImmutablePair<>(propertyPath, Types.SortOrder.valueOf((String) entry.getValue()));
+        String propertyPath = StringUtils.isBlank(path) ? key : path + "." + key;
+
+        if (String.class.isAssignableFrom(valueClass)) {
+            String value = (String) valueObj;
+            return new ImmutablePair<>(propertyPath, Types.SortOrder.valueOf(value));
+        }
+
+        if (Collection.class.isAssignableFrom(valueClass)) {
+            valueObj = ((Collection<?>) valueObj).iterator().next();
+            if (Types.SortOrder.class.isAssignableFrom(valueObj.getClass())) {
+                return new ImmutablePair<>(propertyPath, ((Types.SortOrder) valueObj));
+            }
+            throw new UnsupportedOperationException("Can't parse orderBy value from value class " + valueObj.getClass());
+        }
+
+        throw new UnsupportedOperationException("Can't parse orderBy value from value class " + valueObj.getClass());
     }
 
     public DataFetcher<?> countEntities(MetaClass metaClass) {

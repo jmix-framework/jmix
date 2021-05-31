@@ -17,7 +17,6 @@
 package io.jmix.graphql.schema
 
 import io.jmix.graphql.AbstractGraphQLTest
-import spock.lang.Ignore
 
 class SortingTest extends AbstractGraphQLTest {
 
@@ -51,7 +50,6 @@ class SortingTest extends AbstractGraphQLTest {
                 ']}}'
     }
 
-    @Ignore //todo should be fixed in https://github.com/Haulmont/jmix-graphql/issues/110
     def "default sorting by lastModifiedDate is disabled when it's already sorted"() {
         when:
         def response = query("schema/cars-with-sorting-by-manufacturer.graphql")

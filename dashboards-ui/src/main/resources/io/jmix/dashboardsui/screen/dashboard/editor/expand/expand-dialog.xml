@@ -27,7 +27,7 @@
             width="100%"
             expand="btnPanel">
         <hbox width="100%" spacing="true" expand="expandEntityPicker">
-            <label value="msg://expand"/>
+            <label value="msg://expand" align="MIDDLE_LEFT"/>
             <entityComboBox id="expandEntityPicker" optionsContainer="layoutsDc"/>
         </hbox>
         <buttonsPanel id="btnPanel">

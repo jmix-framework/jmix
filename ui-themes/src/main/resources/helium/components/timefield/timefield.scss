@@ -26,6 +26,13 @@ $jmix-timefield-second-width: 84px;
     @include he-input-readonly-style();
   }
 
+  .#{$primary-stylename}-wrapper.borderless,
+  .#{$primary-stylename}-wrapper-borderless {
+    .#{$primary-stylename} {
+      @include he-textfield-borderless-style();
+    }
+  }
+
   /* Global size */
 
   &.small {

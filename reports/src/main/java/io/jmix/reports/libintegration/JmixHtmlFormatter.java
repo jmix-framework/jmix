@@ -46,6 +46,8 @@ import org.xhtmlrenderer.resource.ImageResource;
 
 import java.io.*;
 import java.lang.reflect.Field;
+import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
@@ -60,8 +62,7 @@ public class JmixHtmlFormatter extends HtmlFormatter {
     //todo
     protected static final String JMIX_FONTS_DIR = "/jmix/fonts";
 
-    public static final String WEB_APP_PREFIX = "web://";
-    public static final String CORE_APP_PREFIX = "core://";
+    public static final String RESOURCE_PREFIX = "resource://";
 
     private static final Logger log = LoggerFactory.getLogger(JmixHtmlFormatter.class);
 
@@ -77,6 +78,8 @@ public class JmixHtmlFormatter extends HtmlFormatter {
     protected Metadata metadata;
     @Autowired
     protected FileStorageLocator fileStorageLocator;
+    @Autowired
+    protected Resources resources;
 
     public JmixHtmlFormatter(FormatterFactoryInput formatterFactoryInput) {
         super(formatterFactoryInput);
@@ -172,21 +175,9 @@ public class JmixHtmlFormatter extends HtmlFormatter {
                 ImageResource resource;
                 resource = (ImageResource) _imageCache.get(uri);
                 if (resource == null) {
-                    InputStream is = resolveAndOpenStream(uri);
-                    if (is != null) {
-                        try {
-                            Image image = Image.getInstance(IOUtils.toByteArray(is));
-
-                            scaleToOutputResolution(image);
-                            resource = new ImageResource(uri, new ITextFSImage(image));
-                            //noinspection unchecked
-                            _imageCache.put(uri, resource);
-                        } catch (Exception e) {
-                            throw wrapWithReportingException(
-                                    format("Can't read image file; unexpected problem for URI '%s'", uri), e);
-                        } finally {
-                            IOUtils.closeQuietly(is);
-                        }
+                    resource = createImageResource(uri);
+                    if (resource != null) {
+                        _imageCache.put(uri, resource);
                     }
                 }
 
@@ -210,12 +201,35 @@ public class JmixHtmlFormatter extends HtmlFormatter {
                 }
 
                 return resource;
-            } else if (StringUtils.startsWith(uri, WEB_APP_PREFIX) || StringUtils.startsWith(uri, CORE_APP_PREFIX)) {
-                String resolvedUri = resolveServerPrefix(uri);
-                return super.getImageResource(resolvedUri);
+            } else if (StringUtils.startsWith(uri, RESOURCE_PREFIX)) {
+                ImageResource resource = createImageResource(uri);
+                if (resource == null) {
+                    resource = new ImageResource(uri, null);
+                }
+                return resource;
             }
 
             return super.getImageResource(uri);
+        }
+
+        protected ImageResource createImageResource(String uri) {
+            ImageResource resource = null;
+            InputStream is = resolveAndOpenStream(uri);
+            if (is != null) {
+                try {
+                    Image image = Image.getInstance(IOUtils.toByteArray(is));
+
+                    scaleToOutputResolution(image);
+                    resource = new ImageResource(uri, new ITextFSImage(image));
+                    //noinspection unchecked
+                } catch (Exception e) {
+                    throw wrapWithReportingException(
+                            format("Can't read image file; unexpected problem for URI '%s'", uri), e);
+                } finally {
+                    IOUtils.closeQuietly(is);
+                }
+            }
+            return resource;
         }
 
         protected void scaleToOutputResolution(Image image) {
@@ -233,9 +247,9 @@ public class JmixHtmlFormatter extends HtmlFormatter {
                     throw wrapWithReportingException(
                             format("An error occurred while loading file with URI [%s] from file storage", uri), e);
                 }
-            } else if (StringUtils.startsWith(uri, WEB_APP_PREFIX) || StringUtils.startsWith(uri, CORE_APP_PREFIX)) {
-                String resolvedUri = resolveServerPrefix(uri);
-                return getInputStream(resolvedUri);
+            } else if (StringUtils.startsWith(uri, RESOURCE_PREFIX)) {
+                String resolvedUri = resolveResourcePrefix(uri);
+                return resources.getResourceAsStream(resolvedUri);
             } else {
                 return getInputStream(uri);
             }
@@ -257,9 +271,9 @@ public class JmixHtmlFormatter extends HtmlFormatter {
                 URLConnection urlConnection = url.openConnection();
                 urlConnection.setConnectTimeout(reportsProperties.getHtmlExternalResourcesTimeoutSec() * 1000);
                 inputStream = urlConnection.getInputStream();
-            } catch (java.net.SocketTimeoutException e) {
+            } catch (SocketTimeoutException e) {
                 throw new ReportFormattingException(format("Loading resource [%s] has been stopped by timeout", uri), e);
-            } catch (java.net.MalformedURLException e) {
+            } catch (MalformedURLException e) {
                 throw new ReportFormattingException(format("Bad URL given: [%s]", uri), e);
             } catch (FileNotFoundException e) {
                 throw new ReportFormattingException(format("Resource at URL [%s] not found", uri));
@@ -271,10 +285,8 @@ public class JmixHtmlFormatter extends HtmlFormatter {
         }
     }
 
-    protected String resolveServerPrefix(String uri) {
-        String coreUrl = String.format("http://%s:%s/",
-                coreProperties.getWebHostName(), coreProperties.getWebPort());
-        return uri.replace(CORE_APP_PREFIX, coreUrl);
+    protected String resolveResourcePrefix(String uri) {
+        return uri.replace(RESOURCE_PREFIX, "");
     }
 
     @SuppressWarnings("unchecked")
@@ -349,13 +361,13 @@ public class JmixHtmlFormatter extends HtmlFormatter {
 
     protected void checkArgsCount(String methodName, List arguments, int... count) throws TemplateModelException {
         if ((arguments == null || arguments.size() == 0) && Arrays.binarySearch(count, 0) == -1)
-            throw new TemplateModelException(String.format("Arguments not specified for method: %s", methodName));
+            throw new TemplateModelException(format("Arguments not specified for method: %s", methodName));
         if (arguments != null && Arrays.binarySearch(count, arguments.size()) == -1) {
-            throw new TemplateModelException(String.format("Incorrect arguments count: %s. Expected count: %s", arguments.size(), Arrays.toString(count)));
+            throw new TemplateModelException(format("Incorrect arguments count: %s. Expected count: %s", arguments.size(), Arrays.toString(count)));
         }
     }
 
     protected void throwIncorrectArgType(String methodName, int argIdx, String type) throws TemplateModelException {
-        throw new TemplateModelException(String.format("Incorrect argument[%s] type for method %s. Expected type %s", argIdx, methodName, type));
+        throw new TemplateModelException(format("Incorrect argument[%s] type for method %s. Expected type %s", argIdx, methodName, type));
     }
 }

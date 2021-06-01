@@ -16,6 +16,13 @@
 
 package io.jmix.ui.component;
 
+import io.jmix.ui.meta.CanvasBehaviour;
+import io.jmix.ui.meta.PropertiesConstraint;
+import io.jmix.ui.meta.PropertiesGroup;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioComponent;
+import io.jmix.ui.meta.StudioProperties;
+import io.jmix.ui.meta.StudioProperty;
 import org.springframework.core.ParameterizedTypeReference;
 
 import javax.annotation.Nullable;
@@ -29,6 +36,27 @@ import java.time.OffsetDateTime;
  *
  * @param <V> type of value
  */
+@StudioComponent(
+        caption = "DatePicker",
+        category = "Components",
+        xmlElement = "datePicker",
+        icon = "io/jmix/ui/icon/component/datePicker.svg",
+        canvasBehaviour = CanvasBehaviour.DATE_PICKER,
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/date-picker.html"
+)
+@StudioProperties(
+        properties = {
+                @StudioProperty(name = "property", type = PropertyType.PROPERTY_PATH_REF,
+                        options = {"date", "dateTime", "localDate", "localDateTime", "offsetDateTime"}),
+                @StudioProperty(name = "dataContainer", type = PropertyType.DATACONTAINER_REF),
+                @StudioProperty(name = "datatype", type = PropertyType.DATATYPE_ID, options = {"date", "dateTime",
+                        "localDate", "localDateTime", "offsetDateTime"})
+        },
+        groups = {
+                @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                        properties = {"dataContainer", "property"})
+        }
+)
 public interface DatePicker<V> extends Field<V>, HasDatatype<V>, Component.Focusable, HasRange<V>, Buffered {
     String NAME = "datePicker";
 
@@ -53,16 +81,18 @@ public interface DatePicker<V> extends Field<V>, HasDatatype<V>, Component.Focus
     }
 
     /**
-     * Return resolution of the DatePicker.
+     * Returns resolution of the DatePicker.
      *
      * @return Resolution
      */
     Resolution getResolution();
+
     /**
-     * Set resolution of the DatePicker.
+     * Sets resolution of the DatePicker.
      *
      * @param resolution resolution
      */
+    @StudioProperty(type = PropertyType.ENUMERATION, defaultValue = "DAY", options = {"YEAR", "MONTH", "DAY"})
     void setResolution(Resolution resolution);
 
     @Nullable

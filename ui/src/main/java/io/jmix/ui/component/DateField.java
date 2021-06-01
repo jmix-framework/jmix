@@ -15,6 +15,13 @@
  */
 package io.jmix.ui.component;
 
+import io.jmix.ui.meta.CanvasBehaviour;
+import io.jmix.ui.meta.PropertiesConstraint;
+import io.jmix.ui.meta.PropertiesGroup;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioComponent;
+import io.jmix.ui.meta.StudioProperties;
+import io.jmix.ui.meta.StudioProperty;
 import org.springframework.core.ParameterizedTypeReference;
 
 import javax.annotation.Nullable;
@@ -29,6 +36,27 @@ import java.util.TimeZone;
  *
  * @param <V> type of value
  */
+@StudioComponent(
+        caption = "DateField",
+        category = "Components",
+        xmlElement = "dateField",
+        icon = "io/jmix/ui/icon/component/dateField.svg",
+        canvasBehaviour = CanvasBehaviour.DATE_FIELD,
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/date-field.html"
+)
+@StudioProperties(
+        properties = {
+                @StudioProperty(name = "property", type = PropertyType.PROPERTY_PATH_REF,
+                        options = {"date", "dateTime", "localDate", "localDateTime", "offsetDateTime"}),
+                @StudioProperty(name = "dataContainer", type = PropertyType.DATACONTAINER_REF),
+                @StudioProperty(name = "datatype", type = PropertyType.DATATYPE_ID, options = {"date", "dateTime",
+                        "localDate", "localDateTime", "offsetDateTime"})
+        },
+        groups = {
+                @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                        properties = {"dataContainer", "property"})
+        }
+)
 public interface DateField<V> extends Field<V>, HasDatatype<V>, Buffered, Component.Focusable, HasRange<V> {
     String NAME = "dateField";
 
@@ -58,11 +86,13 @@ public interface DateField<V> extends Field<V>, HasDatatype<V>, Buffered, Compon
     @Nullable
     Resolution getResolution();
 
+    @StudioProperty(type = PropertyType.ENUMERATION, options = {"YEAR", "MONTH", "DAY", "HOUR", "MIN", "SEC"})
     void setResolution(Resolution resolution);
 
     @Nullable
     String getDateFormat();
 
+    @StudioProperty(type = PropertyType.LOCALIZED_STRING)
     void setDateFormat(String dateFormat);
 
     /**
@@ -88,6 +118,7 @@ public interface DateField<V> extends Field<V>, HasDatatype<V>, Buffered, Compon
      *
      * @param autofill whether autofill is enabled
      */
+    @StudioProperty(defaultValue = "false")
     void setAutofill(boolean autofill);
 
     /**
@@ -102,6 +133,7 @@ public interface DateField<V> extends Field<V>, HasDatatype<V>, Buffered, Compon
      *
      * @param timeMode time mode
      */
+    @StudioProperty(name = "timeMode", type = PropertyType.ENUMERATION, defaultValue = "H_24", options = {"H_12", "H_24"})
     void setTimeMode(TimeField.TimeMode timeMode);
 
     /**

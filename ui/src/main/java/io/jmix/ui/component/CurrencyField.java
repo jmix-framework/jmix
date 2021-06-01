@@ -16,6 +16,14 @@
 
 package io.jmix.ui.component;
 
+import io.jmix.ui.meta.CanvasBehaviour;
+import io.jmix.ui.meta.PropertiesConstraint;
+import io.jmix.ui.meta.PropertiesGroup;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioComponent;
+import io.jmix.ui.meta.StudioProperties;
+import io.jmix.ui.meta.StudioProperty;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.core.ParameterizedTypeReference;
 
 import javax.annotation.Nullable;
@@ -24,6 +32,26 @@ import java.math.BigDecimal;
 /**
  * The CurrencyField component is intended for displaying currency values.
  */
+@StudioComponent(
+        caption = "CurrencyField",
+        category = "Components",
+        xmlElement = "currencyField",
+        icon = "io/jmix/ui/icon/component/currencyField.svg",
+        canvasBehaviour = CanvasBehaviour.INPUT_FIELD,
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/currency-field.html"
+)
+@StudioProperties(
+        properties = {
+                @StudioProperty(name = "property", type = PropertyType.PROPERTY_PATH_REF),
+                @StudioProperty(name = "dataContainer", type = PropertyType.DATACONTAINER_REF),
+                @StudioProperty(name = "datatype", type = PropertyType.DATATYPE_ID, options = {"decimal", "int",
+                        "long", "double", "float"})
+        },
+        groups = {
+                @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                        properties = {"dataContainer", "property"})
+        }
+)
 public interface CurrencyField<V extends Number> extends Field<V>, HasDatatype<V>, HasConversionErrorMessage, Buffered,
                                                          Component.Focusable {
 
@@ -49,6 +77,8 @@ public interface CurrencyField<V extends Number> extends Field<V>, HasDatatype<V
      *
      * @param currency currency ($, EUR, etc)
      */
+    @StudioProperty()
+    @Length(max = 3)
     void setCurrency(@Nullable String currency);
 
     /**
@@ -60,6 +90,7 @@ public interface CurrencyField<V extends Number> extends Field<V>, HasDatatype<V
     /**
      * Enables or disables currency label displaying.
      */
+    @StudioProperty(defaultValue = "true")
     void setShowCurrencyLabel(boolean showCurrencyLabel);
 
     /**
@@ -72,6 +103,7 @@ public interface CurrencyField<V extends Number> extends Field<V>, HasDatatype<V
      *
      * @param currencyLabelPosition not-null {@link CurrencyLabelPosition} value
      */
+    @StudioProperty(name = "currencyLabelPosition", defaultValue = "RIGHT", options = {"RIGHT", "LEFT"})
     void setCurrencyLabelPosition(CurrencyLabelPosition currencyLabelPosition);
 
     /**

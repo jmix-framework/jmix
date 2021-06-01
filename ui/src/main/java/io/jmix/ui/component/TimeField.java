@@ -15,6 +15,13 @@
  */
 package io.jmix.ui.component;
 
+import io.jmix.ui.meta.CanvasBehaviour;
+import io.jmix.ui.meta.PropertiesConstraint;
+import io.jmix.ui.meta.PropertiesGroup;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioComponent;
+import io.jmix.ui.meta.StudioProperties;
+import io.jmix.ui.meta.StudioProperty;
 import org.springframework.core.ParameterizedTypeReference;
 
 import java.sql.Date;
@@ -27,6 +34,27 @@ import java.time.OffsetTime;
  *
  * @param <V> type of value
  */
+@StudioComponent(
+        caption = "TimeField",
+        category = "Components",
+        xmlElement = "timeField",
+        icon = "io/jmix/ui/icon/component/timeField.svg",
+        canvasBehaviour = CanvasBehaviour.TIME_FIELD,
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/time-field.html"
+)
+@StudioProperties(
+        properties = {
+                @StudioProperty(name = "property", type = PropertyType.PROPERTY_PATH_REF,
+                        options = {"time", "localTime", "offsetTime"}),
+                @StudioProperty(name = "dataContainer", type = PropertyType.DATACONTAINER_REF),
+                @StudioProperty(name = "datatype", type = PropertyType.DATATYPE_ID,
+                        options = {"time", "localTime", "offsetTime"})
+        },
+        groups = {
+                @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                        properties = {"dataContainer", "property"})
+        }
+)
 public interface TimeField<V> extends Field<V>, HasDatatype<V>, Buffered, Component.Focusable {
     String NAME = "timeField";
 
@@ -58,6 +86,8 @@ public interface TimeField<V> extends Field<V>, HasDatatype<V>, Buffered, Compon
      *
      * @param resolution resolution
      */
+    @StudioProperty(type = PropertyType.ENUMERATION, defaultValue = "MIN",
+            options = {"HOUR", "MIN", "SEC"})
     void setResolution(Resolution resolution);
 
     /**
@@ -72,6 +102,7 @@ public interface TimeField<V> extends Field<V>, HasDatatype<V>, Buffered, Compon
      *
      * @param timeFormat time format
      */
+    @StudioProperty(name = "timeFormat", type = PropertyType.LOCALIZED_STRING)
     void setFormat(String timeFormat);
 
     /**
@@ -81,6 +112,7 @@ public interface TimeField<V> extends Field<V>, HasDatatype<V>, Buffered, Compon
      *
      * @param timeMode time mode
      */
+    @StudioProperty(type = PropertyType.ENUMERATION, defaultValue = "H_24", options = {"H_12", "H_24"})
     void setTimeMode(TimeMode timeMode);
 
     /**

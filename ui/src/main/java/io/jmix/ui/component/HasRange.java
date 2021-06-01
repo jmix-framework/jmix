@@ -16,6 +16,9 @@
 
 package io.jmix.ui.component;
 
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioProperty;
+
 import javax.annotation.Nullable;
 
 public interface HasRange<V> {
@@ -25,6 +28,7 @@ public interface HasRange<V> {
      *
      * @param rangeStart allowed start of range
      */
+    @StudioProperty(type = PropertyType.DATE)
     void setRangeStart(@Nullable V rangeStart);
 
     /**
@@ -41,6 +45,7 @@ public interface HasRange<V> {
      *
      * @param rangeEnd end of allowed range
      */
+    @StudioProperty(type = PropertyType.DATE)
     void setRangeEnd(@Nullable V rangeEnd);
 
     /**

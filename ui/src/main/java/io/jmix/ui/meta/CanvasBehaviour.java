@@ -58,6 +58,16 @@ public enum CanvasBehaviour {
     CONTAINER,
 
     /**
+     * Component is shown on canvas as a dateField.
+     */
+    DATE_FIELD,
+
+    /**
+     * Component is shown on canvas as a datePicker.
+     */
+    DATE_PICKER,
+
+    /**
      * Component is shown on canvas as an input field.
      */
     INPUT_FIELD,
@@ -91,6 +101,11 @@ public enum CanvasBehaviour {
      * Component is shown on canvas as a textArea.
      */
     TEXT_AREA,
+
+    /**
+     * Component is shown on canvas as a timeField.
+     */
+    TIME_FIELD,
 
     /**
      * Component is shown on canvas as a valuePicker.

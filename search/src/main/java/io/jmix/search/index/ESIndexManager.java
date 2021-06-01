@@ -19,6 +19,7 @@ package io.jmix.search.index;
 import org.elasticsearch.client.indices.GetIndexResponse;
 
 import java.io.IOException;
+import java.util.Collection;
 
 /**
  * Provides functionality for index management.
@@ -80,18 +81,32 @@ public interface ESIndexManager {
     GetIndexResponse getIndex(String indexName) throws IOException;
 
     /**
-     * Updates all search indices defined in application to the actual state.
-     * <p>Non-existent index will be created, irrelevant index will be recreated.
+     * Synchronizes schemas of all search indices defined in application.
+     * <p>See {@link ESIndexManager#synchronizeIndexes(Collection)}
      * <p>See {@link ESIndexManager#synchronizeIndex(IndexConfiguration)}
+     *
+     * @return Collection of {@link IndexSynchronizationResult} with details of synchronization
      */
-    void synchronizeIndexes();
+    Collection<IndexSynchronizationResult> synchronizeIndexes();
 
     /**
-     * Updates index to the actual state.
-     * <p>Non-existent index will be created, irrelevant index will be recreated.
-     * <p>See {@link ESIndexManager#synchronizeIndexes}
+     * Synchronizes schema of search indexes for provided collection of {@link IndexConfiguration}.
+     * <p>
+     * See {@link ESIndexManager#synchronizeIndex(IndexConfiguration)}
+     *
+     * @param indexConfigurations actual index configurations
+     * @return Collection of {@link IndexSynchronizationResult} with details of synchronization
+     */
+    Collection<IndexSynchronizationResult> synchronizeIndexes(Collection<IndexConfiguration> indexConfigurations);
+
+    /**
+     * Synchronizes schema of search index for provided {@link IndexConfiguration}.
+     * <p>
+     * It tries to update schema to the actual state according to {@link IndexSchemaManagementStrategy}
+     * defined by 'jmix.search.indexSchemaManagementStrategy' application property.
      *
      * @param indexConfiguration actual index configuration
+     * @return {@link IndexSynchronizationResult} with details of synchronization
      */
-    void synchronizeIndex(IndexConfiguration indexConfiguration);
+    IndexSynchronizationResult synchronizeIndex(IndexConfiguration indexConfiguration);
 }

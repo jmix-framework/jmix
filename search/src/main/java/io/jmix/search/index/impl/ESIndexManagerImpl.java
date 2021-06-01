@@ -20,8 +20,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jmix.core.common.util.Preconditions;
-import io.jmix.search.index.ESIndexManager;
-import io.jmix.search.index.IndexConfiguration;
+import io.jmix.search.SearchApplicationProperties;
+import io.jmix.search.index.*;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.support.master.AcknowledgedResponse;
@@ -41,6 +41,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component("search_ESIndexManager")
 public class ESIndexManagerImpl implements ESIndexManager {
@@ -51,6 +52,8 @@ public class ESIndexManagerImpl implements ESIndexManager {
     protected RestHighLevelClient esClient;
     @Autowired
     protected IndexConfigurationManager indexConfigurationManager;
+    @Autowired
+    protected SearchApplicationProperties searchApplicationProperties;
 
     protected ObjectMapper objectMapper = new ObjectMapper();
 
@@ -127,35 +130,75 @@ public class ESIndexManagerImpl implements ESIndexManager {
     }
 
     @Override
-    public void synchronizeIndexes() {
-        log.info("Prepare search indexes");
+    public Collection<IndexSynchronizationResult> synchronizeIndexes() {
         Collection<IndexConfiguration> indexConfigurations = indexConfigurationManager.getAllIndexConfigurations();
-        indexConfigurations.forEach(this::synchronizeIndex);
+        return synchronizeIndexes(indexConfigurations);
     }
 
     @Override
-    public void synchronizeIndex(IndexConfiguration indexConfiguration) {
+    public Collection<IndexSynchronizationResult> synchronizeIndexes(Collection<IndexConfiguration> indexConfigurations) {
+        return indexConfigurations.stream()
+                .map(this::synchronizeIndex)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public IndexSynchronizationResult synchronizeIndex(IndexConfiguration indexConfiguration) {
+        IndexSchemaManagementStrategy strategy = searchApplicationProperties.getIndexSchemaManagementStrategy();
+        return synchronizeIndex(indexConfiguration, strategy);
+    }
+
+    protected IndexSynchronizationResult synchronizeIndex(IndexConfiguration indexConfiguration, IndexSchemaManagementStrategy strategy) {
         Preconditions.checkNotNullArgument(indexConfiguration);
 
-        log.info("Prepare search index '{}'", indexConfiguration.getIndexName());
+        log.info("Synchronize search index '{}' according to strategy '{}'", indexConfiguration.getIndexName(), strategy);
+        IndexSynchronizationResult result;
         try {
             boolean indexExist = isIndexExist(indexConfiguration.getIndexName());
             if (indexExist) {
                 log.info("Index '{}' already exists", indexConfiguration.getIndexName());
-                //todo compare mapping & settings
-                if (isIndexActual(indexConfiguration)) {
+                boolean indexActual = isIndexActual(indexConfiguration);
+                if (indexActual) {
                     log.info("Index '{}' has actual configuration", indexConfiguration.getIndexName());
+                    result = new IndexSynchronizationResult(indexConfiguration, IndexSchemaStatus.ACTUAL);
                 } else {
                     log.info("Index '{}' has irrelevant configuration", indexConfiguration.getIndexName());
-                    dropIndex(indexConfiguration.getIndexName());
-                    createIndex(indexConfiguration);
+                    result = handleIrrelevantIndex(indexConfiguration, strategy);
                 }
             } else {
                 log.info("Index '{}' does not exists. Create", indexConfiguration.getIndexName());
-                createIndex(indexConfiguration);
+                result = handleMissingIndex(indexConfiguration, strategy);
             }
         } catch (IOException e) {
             throw new RuntimeException("Unable to prepare index '" + indexConfiguration.getIndexName() + "'", e);
         }
+        return result;
     }
+
+    protected IndexSynchronizationResult handleIrrelevantIndex(IndexConfiguration indexConfiguration, IndexSchemaManagementStrategy strategy) throws IOException {
+        IndexSynchronizationResult result;
+        if (IndexSchemaManagementStrategy.CREATE_OR_RECREATE.equals(strategy)) {
+            boolean created = recreateIndex(indexConfiguration);
+            if (created) {
+                result = new IndexSynchronizationResult(indexConfiguration, IndexSchemaStatus.CREATED);
+            } else {
+                result = new IndexSynchronizationResult(indexConfiguration, IndexSchemaStatus.IRRELEVANT);
+            }
+        } else {
+            result = new IndexSynchronizationResult(indexConfiguration, IndexSchemaStatus.IRRELEVANT);
+        }
+        return result;
+    }
+
+    protected IndexSynchronizationResult handleMissingIndex(IndexConfiguration indexConfiguration, IndexSchemaManagementStrategy strategy) throws IOException {
+        IndexSynchronizationResult result;
+        boolean created = createIndex(indexConfiguration);
+        if (created) {
+            result = new IndexSynchronizationResult(indexConfiguration, IndexSchemaStatus.CREATED);
+        } else {
+            result = new IndexSynchronizationResult(indexConfiguration, IndexSchemaStatus.MISSING);
+        }
+        return result;
+    }
+
 }

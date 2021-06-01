@@ -16,6 +16,7 @@
 
 package io.jmix.search;
 
+import io.jmix.search.index.IndexSchemaManagementStrategy;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;
 import org.springframework.boot.context.properties.bind.DefaultValue;
@@ -34,11 +35,12 @@ public class SearchApplicationProperties {
     protected final boolean autoMapIndexFileContent;
 
     protected final boolean changedEntitiesIndexingEnabled;
-    protected final boolean startupIndexSynchronizationEnabled;
 
     protected final Elasticsearch elasticsearch;
 
     protected final String defaultSearchStrategy;
+
+    protected final IndexSchemaManagementStrategy indexSchemaManagementStrategy;
 
     public SearchApplicationProperties(
             @DefaultValue("100") int searchResultPageSize,
@@ -49,8 +51,8 @@ public class SearchApplicationProperties {
             @DefaultValue("100") int reindexEntityEnqueueBatchSize,
             @DefaultValue("false") boolean autoMapIndexFileContent,
             @DefaultValue("true") boolean changedEntitiesIndexingEnabled,
-            @DefaultValue("true") boolean startupIndexSynchronizationEnabled,
             @DefaultValue("anyTermAnyField") String defaultSearchStrategy,
+            @DefaultValue("create-or-recreate") String indexSchemaManagementStrategy,
             @DefaultValue Elasticsearch elasticsearch) {
         this.searchResultPageSize = searchResultPageSize;
         this.maxSearchPageCount = maxSearchPageCount;
@@ -60,8 +62,8 @@ public class SearchApplicationProperties {
         this.reindexEntityEnqueueBatchSize = reindexEntityEnqueueBatchSize;
         this.autoMapIndexFileContent = autoMapIndexFileContent;
         this.changedEntitiesIndexingEnabled = changedEntitiesIndexingEnabled;
-        this.startupIndexSynchronizationEnabled = startupIndexSynchronizationEnabled;
         this.defaultSearchStrategy = defaultSearchStrategy;
+        this.indexSchemaManagementStrategy = IndexSchemaManagementStrategy.getByKey(indexSchemaManagementStrategy);
         this.elasticsearch = elasticsearch;
     }
 
@@ -122,13 +124,6 @@ public class SearchApplicationProperties {
     }
 
     /**
-     * @return true is synchronization of indices on application startup is enabled. False otherwise
-     */
-    public boolean isStartupIndexSynchronizationEnabled() {
-        return startupIndexSynchronizationEnabled;
-    }
-
-    /**
      * @return name of default search strategy
      */
     public String getDefaultSearchStrategy() {
@@ -154,6 +149,13 @@ public class SearchApplicationProperties {
      */
     public String getElasticsearchPassword() {
         return elasticsearch.password;
+    }
+
+    /**
+     * @return The way of index schema synchronization
+     */
+    public IndexSchemaManagementStrategy getIndexSchemaManagementStrategy() {
+        return indexSchemaManagementStrategy;
     }
 
     protected static class Elasticsearch {

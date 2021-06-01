@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.search.index.impl;
+package io.jmix.search.index;
 
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.security.Authenticated;

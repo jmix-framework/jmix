@@ -53,6 +53,8 @@ public class EntitySuggestionFieldLoader extends AbstractSuggestionFieldLoader<E
         loadPopupWidth(resultComponent, element);
 
         loadQuery(resultComponent, element);
+
+        loadFormatter(resultComponent, element);
     }
 
     protected void loadActions(EntitySuggestionField suggestionField) {

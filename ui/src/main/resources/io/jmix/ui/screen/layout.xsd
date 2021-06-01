@@ -2142,6 +2142,11 @@
     <xs:complexType name="suggestionFieldComponent">
         <xs:complexContent>
             <xs:extension base="baseFieldComponent">
+                <xs:all>
+                    <xs:element name="validators" minOccurs="0" type="baseValidatorType"/>
+                    <xs:element name="formatter" minOccurs="0" type="formatterType"/>
+                </xs:all>
+
                 <xs:attribute name="stylename" type="suggestionFieldStylename"/>
 
                 <xs:attribute name="asyncSearchDelayMs" type="xs:integer"/>
@@ -2163,8 +2168,9 @@
             <xs:extension base="suggestionFieldComponent">
                 <xs:all>
                     <xs:element name="actions" minOccurs="0" type="componentActions"/>
-                    <xs:element name="validators" minOccurs="0" type="constraintValidatorType"/>
+                    <xs:element name="validators" minOccurs="0" type="baseValidatorType"/>
                     <xs:element name="query" minOccurs="0" type="suggestionFieldQuery"/>
+                    <xs:element name="formatter" minOccurs="0" type="formatterType"/>
                 </xs:all>
 
                 <xs:attribute name="metaClass" type="xs:string"/>

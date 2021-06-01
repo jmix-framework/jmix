@@ -20,6 +20,8 @@ import com.vaadin.spring.annotation.UIScope;
 import io.jmix.core.FileStorageException;
 import io.jmix.core.Messages;
 import io.jmix.ui.Notifications;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -28,6 +30,8 @@ import javax.annotation.Nullable;
 @UIScope
 @Component("ui_FileStorageExceptionHandler")
 public class FileStorageExceptionHandler extends AbstractUiExceptionHandler {
+
+    private static final Logger log = LoggerFactory.getLogger(FileStorageExceptionHandler.class);
 
     @Autowired
     protected Messages messages;
@@ -54,6 +58,10 @@ public class FileStorageExceptionHandler extends AbstractUiExceptionHandler {
         if (msg == null) {
             msg = messages.getMessage(FileStorageExceptionHandler.class,
                     "fileStorageException.message");
+
+            if (throwable != null) {
+                log.error("Unable to handle FileStorageException", throwable);
+            }
         }
 
         context.getNotifications().create(Notifications.NotificationType.ERROR)

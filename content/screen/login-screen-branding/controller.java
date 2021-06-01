@@ -20,9 +20,9 @@ import org.springframework.security.authentication.DisabledException;
 import java.util.Locale;
 
 @UiController("${id}")
-@UiDescriptor("brand-login-screen.xml")
+@UiDescriptor("${descriptorName}.xml")
 @Route(path = "login", root = true)
-public class BrandLoginScreen extends Screen {
+public class ${controllerName} extends Screen {
 
     @Autowired
     private Image logoImage;

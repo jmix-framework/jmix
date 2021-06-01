@@ -52,24 +52,4 @@ public interface EntitySearcher {
      * @return {@link SearchResult} with found objects
      */
     SearchResult searchNextPage(SearchResult previousSearchResult);
-
-    /**
-     * Loads all entity instances based on provided {@link SearchResult}.
-     * Instances will be loaded using LOCAL fetch plan.
-     *
-     * @param searchResult {@link SearchResult}
-     * @return collection of entity instances
-     */
-    Collection<Object> loadEntityInstances(SearchResult searchResult);
-
-    /**
-     * Loads all entity instances based on provided {@link SearchResult} and fetch plans.
-     * Fetch plans can be provided for any entity.
-     * Instances of entities that don't have provided fetch plans will be loaded using LOCAL fetch plan
-     *
-     * @param searchResult {@link SearchResult}
-     * @param fetchPlans   Map: Entity name - {@link FetchPlan}
-     * @return collection of entity instances
-     */
-    Collection<Object> loadEntityInstances(SearchResult searchResult, Map<String, FetchPlan> fetchPlans);
 }

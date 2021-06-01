@@ -18,12 +18,14 @@ package io.jmix.search.index.impl;
 
 import io.jmix.search.SearchApplicationProperties;
 import io.jmix.search.index.ESIndexManager;
+import io.jmix.search.index.IndexSynchronizationResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.util.Collection;
 
 /**
  * Synchronizes search indices on application startup.
@@ -41,9 +43,11 @@ public class StartupIndexSynchronizer {
     @PostConstruct
     protected void postConstruct() {
         try {
-            if (searchApplicationProperties.isStartupIndexSynchronizationEnabled()) {
-                esIndexManager.synchronizeIndexes();
-            }
+            Collection<IndexSynchronizationResult> indexSynchronizationResults = esIndexManager.synchronizeIndexes();
+            indexSynchronizationResults.forEach(result -> log.info("Synchronization Result: entity={}, index={}, status={}",
+                    result.getIndexConfiguration().getEntityName(),
+                    result.getIndexConfiguration().getIndexName(),
+                    result.getSchemaStatus()));
         } catch (Exception e) {
             log.error("Failed to synchronize indexes", e);
         }

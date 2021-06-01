@@ -18,18 +18,18 @@ package io.jmix.search.index.impl;
 
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.security.Authenticated;
+import io.jmix.search.SearchApplicationProperties;
 import io.jmix.search.index.ESIndexManager;
 import io.jmix.search.index.EntityReindexer;
 import io.jmix.search.index.IndexConfiguration;
+import io.jmix.search.index.IndexSynchronizationResult;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.index.queue.IndexingQueueManager;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jmx.export.annotation.ManagedOperation;
-import org.springframework.jmx.export.annotation.ManagedOperationParameter;
-import org.springframework.jmx.export.annotation.ManagedOperationParameters;
-import org.springframework.jmx.export.annotation.ManagedResource;
+import org.springframework.jmx.export.annotation.*;
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
 import java.util.Optional;
 
 @ManagedResource(description = "Manages entity indexing for full text search", objectName = "jmix.search:type=EntityIndexing")
@@ -44,6 +44,13 @@ public class EntityIndexingManagementFacade {
     protected ESIndexManager esIndexManager;
     @Autowired
     protected IndexConfigurationManager indexConfigurationManager;
+    @Autowired
+    protected SearchApplicationProperties searchApplicationProperties;
+
+    @ManagedAttribute(description = "Defines the way of index synchronization")
+    public String getIndexSchemaManagementStrategy() {
+        return searchApplicationProperties.getIndexSchemaManagementStrategy().toString();
+    }
 
     @Authenticated
     @ManagedOperation(description = "Recreate indexes and enqueue all instances of all indexed entities")
@@ -82,14 +89,21 @@ public class EntityIndexingManagementFacade {
     }
 
     @Authenticated
-    @ManagedOperation(description = "Update all search indexes defined in application to the actual state")
+    @ManagedOperation(description = "Synchronize all search indexes defined in application. " +
+            "This may cause deletion of indexes with all their data - depends on schema management strategy")
     public String synchronizeIndexes() {
-        esIndexManager.synchronizeIndexes();
-        return "All indexes have been synchronized";
+        Collection<IndexSynchronizationResult> results = esIndexManager.synchronizeIndexes();
+        StringBuilder sb = new StringBuilder("Synchronization result:");
+        results.forEach(result -> sb.append(System.lineSeparator()).append("\t")
+                .append("Entity=").append(result.getIndexConfiguration().getEntityName())
+                .append(" Index=").append(result.getIndexConfiguration().getIndexName())
+                .append(" Status=").append(result.getSchemaStatus()));
+        return sb.toString();
     }
 
     @Authenticated
-    @ManagedOperation(description = "Update search index related to provided entity to the actual state")
+    @ManagedOperation(description = "Synchronize index related to provided entity. " +
+            "This may cause deletion of this index with all its data - depends on schema management strategy")
     @ManagedOperationParameters({
             @ManagedOperationParameter(name = "entityName", description = "Name of entity configured for indexing, e.g. demo_Order")
     })
@@ -100,7 +114,10 @@ public class EntityIndexingManagementFacade {
             return String.format("Entity '%s' is not configured for indexing", entityName);
         }
 
-        esIndexManager.synchronizeIndex(indexConfigurationOpt.get());
-        return String.format("Index for entity '%s' has been synchronized", entityName);
+        IndexSynchronizationResult result = esIndexManager.synchronizeIndex(indexConfigurationOpt.get());
+        return String.format(
+                "Synchronization result: Entity=%s Index=%s Status=%s",
+                entityName, result.getIndexConfiguration().getIndexName(), result.getSchemaStatus()
+        );
     }
 }

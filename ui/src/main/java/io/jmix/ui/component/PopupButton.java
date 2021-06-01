@@ -16,6 +16,10 @@
 package io.jmix.ui.component;
 
 import io.jmix.core.common.event.Subscription;
+import io.jmix.ui.meta.CanvasBehaviour;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioComponent;
+import io.jmix.ui.meta.StudioProperty;
 
 import javax.annotation.Nullable;
 import java.util.EventObject;
@@ -24,6 +28,15 @@ import java.util.function.Consumer;
 /**
  * A {@link Button} with a popup. The popup can contain actions or popup panel with custom content.
  */
+@StudioComponent(
+        caption = "PopupButton",
+        category = "Components",
+        xmlElement = "popupButton",
+        icon = "io/jmix/ui/icon/component/popupButton.svg",
+        canvasTextProperty = "caption",
+        canvasBehaviour = CanvasBehaviour.POPUP_BUTTON,
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/popup-button.html"
+)
 public interface PopupButton extends ActionsHolder, Component.HasCaption, Component.BelongToFrame,
         Component.HasIcon, Component.Focusable, HasHtmlCaption, HasHtmlDescription, HasHtmlSanitizer {
 
@@ -42,10 +55,11 @@ public interface PopupButton extends ActionsHolder, Component.HasCaption, Compon
     void setPopupVisible(boolean popupVisible);
 
     /**
-     * Set menu width.
+     * Sets menu width.
      *
      * @param width new menu width
      */
+    @StudioProperty(type = PropertyType.SIZE)
     void setMenuWidth(@Nullable String width);
 
     /**
@@ -66,19 +80,21 @@ public interface PopupButton extends ActionsHolder, Component.HasCaption, Compon
     boolean isAutoClose();
 
     /**
-     * Set menu automatic close after option click.
+     * Sets menu automatic close after option click.
      *
      * @param autoClose whether to close menu automatically after action triggering or not
      */
+    @StudioProperty(defaultValue = "true")
     void setAutoClose(boolean autoClose);
 
     /**
-     * Set show icons for action buttons
+     * Sets show icons for action buttons
      */
+    @StudioProperty(defaultValue = "false")
     void setShowActionIcons(boolean showActionIcons);
 
     /**
-     * Return show icons for action buttons
+     * Returns show icons for action buttons
      */
     boolean isShowActionIcons();
 
@@ -92,6 +108,7 @@ public interface PopupButton extends ActionsHolder, Component.HasCaption, Compon
      *
      * @param togglePopupVisibilityOnClick true if sequential click on popup should toggle popup visibility
      */
+    @StudioProperty(defaultValue = "true")
     void setTogglePopupVisibilityOnClick(boolean togglePopupVisibilityOnClick);
 
     /**
@@ -104,6 +121,7 @@ public interface PopupButton extends ActionsHolder, Component.HasCaption, Compon
      *
      * @param direction new direction
      */
+    @StudioProperty(type = PropertyType.ENUMERATION, options = {"BOTTOM_LEFT", "BOTTOM_RIGHT", "BOTTOM_CENTER"})
     void setPopupOpenDirection(PopupOpenDirection direction);
 
     /**
@@ -116,10 +134,11 @@ public interface PopupButton extends ActionsHolder, Component.HasCaption, Compon
      *
      * @param closePopupOnOutsideClick whether to close popup on outside click
      */
+    @StudioProperty(defaultValue = "true")
     void setClosePopupOnOutsideClick(boolean closePopupOnOutsideClick);
 
     /**
-     * Set custom inner content for the popup. Actions are ignored if a custom popup content is set.
+     * Sets custom inner content for the popup. Actions are ignored if a custom popup content is set.
      *
      * @param popupContent popup component.
      */

@@ -16,6 +16,10 @@
 
 package io.jmix.ui.component.pagination.data;
 
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioProperties;
+import io.jmix.ui.meta.StudioProperty;
 import io.jmix.ui.model.BaseCollectionLoader;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.DataLoader;
@@ -24,6 +28,15 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+@StudioElement(
+        caption = "Container Provider",
+        xmlElement = "containerProvider"
+)
+@StudioProperties(
+        properties = {
+                @StudioProperty(name = "dataContainer", type = PropertyType.COLLECTION_DATACONTAINER_REF, required = true)
+        }
+)
 @Component("ui_PaginationContainerProvider")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class PaginationContainerBinder extends AbstractPaginationDataBinder {

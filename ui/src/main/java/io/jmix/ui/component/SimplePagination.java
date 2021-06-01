@@ -16,10 +16,22 @@
 
 package io.jmix.ui.component;
 
+import io.jmix.ui.meta.CanvasBehaviour;
+import io.jmix.ui.meta.StudioComponent;
+import io.jmix.ui.meta.StudioProperty;
+
 /**
  * Component that makes a data binding to load data by pages. It contains label with current items count
  * and navigation buttons (next, last etc).
  */
+@StudioComponent(
+        caption = "SimplePagination",
+        category = "Components",
+        xmlElement = "simplePagination",
+        icon = "io/jmix/ui/icon/component/simplePagination.svg",
+        canvasBehaviour = CanvasBehaviour.LABEL,
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/simple-pagination.html"
+)
 public interface SimplePagination extends PaginationComponent {
 
     String NAME = "simplePagination";
@@ -36,5 +48,6 @@ public interface SimplePagination extends PaginationComponent {
      *
      * @param autoLoad pass true to enable auto load, or false otherwise
      */
+    @StudioProperty(defaultValue = "false")
     void setAutoLoad(boolean autoLoad);
 }

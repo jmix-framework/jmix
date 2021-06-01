@@ -34,6 +34,7 @@ import io.jmix.ui.component.ListComponent;
 import io.jmix.ui.component.RelatedEntities;
 import io.jmix.ui.component.data.meta.EntityDataUnit;
 import io.jmix.ui.screen.OpenMode;
+import io.jmix.ui.sys.PropertyOption;
 import io.jmix.ui.sys.ScreensHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -126,16 +127,8 @@ public class RelatedEntitiesImpl<E> extends PopupButtonImpl
     }
 
     @Override
-    public void addPropertyOption(String property,
-                                  @Nullable String screen,
-                                  @Nullable String caption,
-                                  @Nullable String configurationName) {
-        if (StringUtils.isBlank(property)) {
-            throw new IllegalArgumentException("Empty name for custom property option");
-        }
-
-        propertyOptions.put(property, new PropertyOption(screen, caption, configurationName));
-
+    public void addPropertyOption(PropertyOption propertyOption) {
+        propertyOptions.put(propertyOption.getName(), propertyOption);
         refreshNavigationActions();
     }
 
@@ -271,33 +264,5 @@ public class RelatedEntitiesImpl<E> extends PopupButtonImpl
         }
 
         return relatedAction;
-    }
-
-    protected static class PropertyOption {
-
-        protected String screenId;
-        protected String caption;
-        protected String configurationName;
-
-        public PropertyOption(@Nullable String screenId, @Nullable String caption, @Nullable String configurationName) {
-            this.screenId = screenId;
-            this.caption = caption;
-            this.configurationName = configurationName;
-        }
-
-        @Nullable
-        public String getScreenId() {
-            return screenId;
-        }
-
-        @Nullable
-        public String getCaption() {
-            return caption;
-        }
-
-        @Nullable
-        public String getConfigurationName() {
-            return configurationName;
-        }
     }
 }

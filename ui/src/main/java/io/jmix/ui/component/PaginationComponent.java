@@ -20,6 +20,9 @@ import io.jmix.core.common.event.Subscription;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.component.pagination.data.PaginationDataBinder;
 import io.jmix.ui.UiComponentProperties;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioProperty;
 
 import javax.annotation.Nullable;
 import java.util.EventObject;
@@ -61,6 +64,7 @@ public interface PaginationComponent extends Component.BelongToFrame {
     /**
      * Sets a data binder. It is used for managing data loading and dividing data to pages.
      */
+    @StudioElement
     void setDataBinder(PaginationDataBinder dataBinder);
 
     /**
@@ -88,6 +92,7 @@ public interface PaginationComponent extends Component.BelongToFrame {
      * of items for one page. If custom options are not set component will use
      * {@link UiComponentProperties#getPaginationItemsPerPageOptions()}. The default value is {@code false}.
      */
+    @StudioProperty(defaultValue = "false")
     void setItemsPerPageVisible(boolean itemsPerPageVisible);
 
     /**
@@ -100,6 +105,7 @@ public interface PaginationComponent extends Component.BelongToFrame {
      * is selected component will try to load data with {@link UiProperties#getEntityMaxFetchSize(String)} limitation.
      * The default value is {@code true}.
      */
+    @StudioProperty(name = "itemsPerPageUnlimitedOptionVisible", defaultValue = "true")
     void setItemsPerPageUnlimitedOptionVisible(boolean unlimitedOptionVisible);
 
     /**
@@ -114,6 +120,7 @@ public interface PaginationComponent extends Component.BelongToFrame {
      * @param options items per page options
      * @see UiProperties#getEntityMaxFetchSize(String)
      */
+    @StudioProperty(name = "itemsPerPageOptions", type = PropertyType.STRING)
     void setItemsPerPageOptions(List<Integer> options);
 
     /**
@@ -125,6 +132,7 @@ public interface PaginationComponent extends Component.BelongToFrame {
     /**
      * Sets default value for the items per page ComboBox.
      */
+    @StudioProperty(name = "itemsPerPageDefaultValue", type = PropertyType.INTEGER)
     void setItemsPerPageDefaultValue(@Nullable Integer defaultValue);
 
     /**

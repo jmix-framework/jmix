@@ -88,6 +88,11 @@ public enum CanvasBehaviour {
     OPTIONS_GROUP,
 
     /**
+     * Component is shown on canvas as a popupButton.
+     */
+    POPUP_BUTTON,
+
+    /**
      * Component is shown on canvas as a richTextArea.
      */
     RICH_TEXT_AREA,

@@ -17,6 +17,9 @@
 package io.jmix.ui.component;
 
 import io.jmix.core.common.event.Subscription;
+import io.jmix.ui.meta.CanvasBehaviour;
+import io.jmix.ui.meta.StudioComponent;
+import io.jmix.ui.meta.StudioProperty;
 
 import java.util.EventObject;
 import java.util.function.Consumer;
@@ -25,6 +28,14 @@ import java.util.function.Consumer;
  * Component that makes a data binding to load data by pages. It contains page numbers that enable the
  * user to select a specific page.
  */
+@StudioComponent(
+        caption = "Pagination",
+        category = "Components",
+        xmlElement = "pagination",
+        icon = "io/jmix/ui/icon/component/pagination.svg",
+        canvasBehaviour = CanvasBehaviour.BOX,
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/pagination.html"
+)
 public interface Pagination extends PaginationComponent {
 
     String NAME = "pagination";
@@ -40,6 +51,7 @@ public interface Pagination extends PaginationComponent {
      * the component has 10 pages and the maximum number of visible pages is 3, so users will see only 3 pages
      * at once. The default value is 5.
      */
+    @StudioProperty(defaultValue = "5")
     void setMaxVisiblePages(int maxVisiblePages);
 
     /**

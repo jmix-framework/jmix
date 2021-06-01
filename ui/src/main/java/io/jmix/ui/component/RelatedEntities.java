@@ -16,10 +16,25 @@
 
 package io.jmix.ui.component;
 
+import io.jmix.ui.meta.CanvasBehaviour;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioComponent;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioProperty;
 import io.jmix.ui.screen.OpenMode;
+import io.jmix.ui.sys.PropertyOption;
 
 import javax.annotation.Nullable;
 
+@StudioComponent(
+        caption = "RelatedEntities",
+        category = "Components",
+        xmlElement = "relatedEntities",
+        icon = "io/jmix/ui/icon/component/relatedEntities.svg",
+        canvasTextProperty = "caption",
+        canvasBehaviour = CanvasBehaviour.POPUP_BUTTON,
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/related-entities.html"
+)
 public interface RelatedEntities<E> extends Component,
         Component.HasCaption, Component.BelongToFrame, Component.HasIcon,
         Component.Focusable, HasHtmlCaption, HasHtmlDescription {
@@ -28,22 +43,25 @@ public interface RelatedEntities<E> extends Component,
 
     OpenMode getOpenMode();
 
+    @StudioProperty(type = PropertyType.ENUMERATION, defaultValue = "THIS_TAB",
+            options = {"NEW_TAB", "THIS_TAB", "DIALOG", "NEW_WINDOW"})
     void setOpenMode(OpenMode openMode);
 
     @Nullable
     String getExcludePropertiesRegex();
 
+    @StudioProperty(name = "exclude", type = PropertyType.STRING)
     void setExcludePropertiesRegex(@Nullable String excludeRegex);
 
-    void addPropertyOption(String property,
-                           @Nullable String screen,
-                           @Nullable String caption,
-                           @Nullable String configurationName);
+    @StudioElement
+    void addPropertyOption(PropertyOption property);
 
     void removePropertyOption(String property);
 
     @Nullable
     ListComponent<E> getListComponent();
 
+    @StudioProperty(name = "for", type = PropertyType.COMPONENT_REF, required = true,
+            options = {"io.jmix.ui.component.ListComponent"})
     void setListComponent(@Nullable ListComponent<E> listComponent);
 }

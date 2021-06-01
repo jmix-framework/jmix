@@ -16,11 +16,24 @@
 
 package io.jmix.ui.component.pagination.data;
 
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioProperties;
+import io.jmix.ui.meta.StudioProperty;
 import io.jmix.ui.model.*;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+@StudioElement(
+        caption = "Loader Provider",
+        xmlElement = "containerProvider"
+)
+@StudioProperties(
+        properties = {
+                @StudioProperty(name = "loaderId", type = PropertyType.DATALOADER_REF, required = true)
+        }
+)
 @Component("ui_PaginationLoaderProvider")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class PaginationLoaderBinder extends AbstractPaginationDataBinder {

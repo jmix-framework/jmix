@@ -22,6 +22,7 @@ import io.jmix.ui.component.Component;
 import io.jmix.ui.component.ListComponent;
 import io.jmix.ui.component.RelatedEntities;
 import io.jmix.ui.screen.OpenMode;
+import io.jmix.ui.sys.PropertyOption;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 
@@ -99,7 +100,7 @@ public class RelatedEntitiesLoader extends AbstractComponentLoader<RelatedEntiti
             }
         }
 
-        resultComponent.addPropertyOption(property, screen, caption, configurationName);
+        resultComponent.addPropertyOption(new PropertyOption(property, screen, caption, configurationName));
     }
 
     protected WindowConfig getWindowConfig() {

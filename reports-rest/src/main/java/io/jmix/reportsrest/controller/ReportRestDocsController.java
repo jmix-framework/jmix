@@ -34,12 +34,12 @@ public class ReportRestDocsController {
     @Autowired
     protected Resources resources;
 
-    @RequestMapping(value = "/swagger.yaml", method = RequestMethod.GET, produces = "application/yaml")
+    @RequestMapping(value = "/openapi.yaml", method = RequestMethod.GET, produces = "application/yaml")
     public String getSwaggerYaml() {
-        return resources.getResourceAsString("classpath:io/jmix/reportsrest/rest-api-swagger.yaml");
+        return resources.getResourceAsString("classpath:io/jmix/reportsrest/reports-rest-openapi.yaml");
     }
 
-    @RequestMapping(value = "/swagger.json", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/openapi.json", method = RequestMethod.GET, produces = "application/json")
     public String getSwaggerJson() {
         String yaml = getSwaggerYaml();
         ObjectMapper yamlReader = new ObjectMapper(new YAMLFactory());

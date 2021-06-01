@@ -23,7 +23,7 @@ import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.impl.FileRefDatatype;
 import io.jmix.core.metamodel.datatype.impl.StringDatatype;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.search.SearchApplicationProperties;
+import io.jmix.search.SearchProperties;
 import io.jmix.search.utils.FileProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -39,7 +39,7 @@ public class AutoMapFieldMapperResolver { //todo move to automap strategy?
     @Autowired
     protected MetadataTools metadataTools;
     @Autowired
-    protected SearchApplicationProperties searchApplicationProperties;
+    protected SearchProperties searchProperties;
     @Autowired
     protected FileProcessor fileProcessor;
     @Autowired
@@ -92,7 +92,7 @@ public class AutoMapFieldMapperResolver { //todo move to automap strategy?
         if (propertyPath.getRange().isDatatype()) {
             Datatype<?> datatype = propertyPath.getRange().asDatatype();
             if (datatype instanceof FileRefDatatype) {
-                valueMapper = new FileValueMapper(searchApplicationProperties.isAutoMapIndexFileContent(), fileProcessor);
+                valueMapper = new FileValueMapper(searchProperties.isAutoMapIndexFileContent(), fileProcessor);
             } else {
                 valueMapper = new SimpleValueMapper();
             }

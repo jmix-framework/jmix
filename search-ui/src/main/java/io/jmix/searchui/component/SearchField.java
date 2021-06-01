@@ -19,7 +19,7 @@ package io.jmix.searchui.component;
 import io.jmix.core.Messages;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.common.util.ParamsMap;
-import io.jmix.search.SearchApplicationProperties;
+import io.jmix.search.SearchProperties;
 import io.jmix.search.searching.EntitySearcher;
 import io.jmix.search.searching.SearchContext;
 import io.jmix.search.searching.SearchResult;
@@ -62,7 +62,7 @@ public class SearchField extends CompositeComponent<CssLayout> implements Field<
     @Autowired
     protected ScreenBuilders screenBuilders;
     @Autowired
-    protected SearchApplicationProperties searchApplicationProperties;
+    protected SearchProperties searchProperties;
 
     protected TextField<String> inputField;
     protected Button searchButton;
@@ -93,7 +93,7 @@ public class SearchField extends CompositeComponent<CssLayout> implements Field<
         } else {
             String preparedSearchText = searchText.trim();
             SearchContext searchContext = new SearchContext(preparedSearchText)
-                    .setSize(searchApplicationProperties.getSearchResultPageSize())
+                    .setSize(searchProperties.getSearchResultPageSize())
                     .setEntities(getEntities());
             SearchResult searchResult = entitySearcher.search(searchContext, searchStrategy);
 

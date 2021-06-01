@@ -19,7 +19,7 @@ package io.jmix.autoconfigure.search;
 import com.google.common.base.Strings;
 import io.jmix.core.CoreConfiguration;
 import io.jmix.data.DataConfiguration;
-import io.jmix.search.SearchApplicationProperties;
+import io.jmix.search.SearchProperties;
 import io.jmix.search.SearchConfiguration;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
@@ -44,26 +44,25 @@ public class SearchAutoConfiguration {
     private static final Logger log = LoggerFactory.getLogger(SearchAutoConfiguration.class);
 
     @Autowired
-    protected SearchApplicationProperties searchApplicationProperties;
+    protected SearchProperties searchProperties;
 
     @Bean("search_RestHighLevelClient")
     @ConditionalOnMissingBean(RestHighLevelClient.class)
     public RestHighLevelClient elasticSearchClient() {
         log.debug("Create simple ES Client");
 
-        String esUrl = searchApplicationProperties.getElasticsearchUrl();
+        String esUrl = searchProperties.getElasticsearchUrl();
         HttpHost esHttpHost = HttpHost.create(esUrl);
         RestClientBuilder restClientBuilder = RestClient.builder(esHttpHost);
 
-        if (!Strings.isNullOrEmpty(searchApplicationProperties.getElasticsearchLogin())) {
+        if (!Strings.isNullOrEmpty(searchProperties.getElasticsearchLogin())) {
             CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
             credentialsProvider.setCredentials(AuthScope.ANY,
-                    new UsernamePasswordCredentials(searchApplicationProperties.getElasticsearchLogin(), searchApplicationProperties.getElasticsearchPassword())
+                    new UsernamePasswordCredentials(searchProperties.getElasticsearchLogin(), searchProperties.getElasticsearchPassword())
             );
             restClientBuilder.setHttpClientConfigCallback(httpClientBuilder -> httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider));
         }
 
-        RestHighLevelClient restHighLevelClient = new RestHighLevelClient(restClientBuilder);
-        return restHighLevelClient;
+        return new RestHighLevelClient(restClientBuilder);
     }
 }

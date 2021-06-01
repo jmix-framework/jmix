@@ -34,7 +34,7 @@ public @interface AutoMappedField {
      *
      * @return properties should be processed
      */
-    String[] includeProperty() default "";
+    String[] includeProperties() default "";
 
     /**
      * Provides entity properties that should NOT be covered by this annotation.
@@ -43,7 +43,7 @@ public @interface AutoMappedField {
      *
      * @return properties should not be processed
      */
-    String[] excludeProperty() default "";
+    String[] excludeProperties() default "";
 
     /**
      * Provides analyzer that should be applied to all textual fields covered by this annotation.

@@ -18,7 +18,7 @@ package io.jmix.search.index.impl;
 
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.security.Authenticated;
-import io.jmix.search.SearchApplicationProperties;
+import io.jmix.search.SearchProperties;
 import io.jmix.search.index.ESIndexManager;
 import io.jmix.search.index.EntityReindexer;
 import io.jmix.search.index.IndexConfiguration;
@@ -45,11 +45,11 @@ public class EntityIndexingManagementFacade {
     @Autowired
     protected IndexConfigurationManager indexConfigurationManager;
     @Autowired
-    protected SearchApplicationProperties searchApplicationProperties;
+    protected SearchProperties searchProperties;
 
     @ManagedAttribute(description = "Defines the way of index synchronization")
     public String getIndexSchemaManagementStrategy() {
-        return searchApplicationProperties.getIndexSchemaManagementStrategy().toString();
+        return searchProperties.getIndexSchemaManagementStrategy().toString();
     }
 
     @Authenticated
@@ -64,7 +64,7 @@ public class EntityIndexingManagementFacade {
     @ManagedOperationParameters({
             @ManagedOperationParameter(name = "entityName", description = "Name of entity configured for indexing, e.g. demo_Order")
     })
-    public String reindexEntity(String entityName) {
+    public String reindexAll(String entityName) {
         Preconditions.checkNotEmptyString(entityName);
         int amount = entityReindexer.enqueueReindexAll(entityName);
         return String.format("%d instances of entity '%s' have been enqueued", amount, entityName);
@@ -72,7 +72,7 @@ public class EntityIndexingManagementFacade {
 
     @Authenticated
     @ManagedOperation(description = "Enqueue all instances of all indexed entities")
-    public String enqueueAll() {
+    public String enqueueIndexAll() {
         int amount = indexingQueueManager.enqueueIndexAll();
         return String.format("%d instances of all indexed entities have been enqueued", amount);
     }
@@ -82,17 +82,17 @@ public class EntityIndexingManagementFacade {
     @ManagedOperationParameters({
             @ManagedOperationParameter(name = "entityName", description = "Name of entity configured for indexing, e.g. demo_Order")
     })
-    public String enqueueAll(String entityName) {
+    public String enqueueIndexAll(String entityName) {
         Preconditions.checkNotEmptyString(entityName);
         int amount = indexingQueueManager.enqueueIndexAll(entityName);
         return String.format("%d instances of entity '%s' have been enqueued", amount, entityName);
     }
 
     @Authenticated
-    @ManagedOperation(description = "Synchronize all search indexes defined in application. " +
+    @ManagedOperation(description = "Synchronize schemas of all search indexes defined in application. " +
             "This may cause deletion of indexes with all their data - depends on schema management strategy")
-    public String synchronizeIndexes() {
-        Collection<IndexSynchronizationResult> results = esIndexManager.synchronizeIndexes();
+    public String synchronizeIndexSchemas() {
+        Collection<IndexSynchronizationResult> results = esIndexManager.synchronizeIndexSchemas();
         StringBuilder sb = new StringBuilder("Synchronization result:");
         results.forEach(result -> sb.append(System.lineSeparator()).append("\t")
                 .append("Entity=").append(result.getIndexConfiguration().getEntityName())
@@ -102,19 +102,19 @@ public class EntityIndexingManagementFacade {
     }
 
     @Authenticated
-    @ManagedOperation(description = "Synchronize index related to provided entity. " +
+    @ManagedOperation(description = "Synchronize schema of index related to provided entity. " +
             "This may cause deletion of this index with all its data - depends on schema management strategy")
     @ManagedOperationParameters({
             @ManagedOperationParameter(name = "entityName", description = "Name of entity configured for indexing, e.g. demo_Order")
     })
-    public String synchronizeIndex(String entityName) {
+    public String synchronizeIndexSchema(String entityName) {
         Preconditions.checkNotEmptyString(entityName);
         Optional<IndexConfiguration> indexConfigurationOpt = indexConfigurationManager.getIndexConfigurationByEntityNameOpt(entityName);
         if (!indexConfigurationOpt.isPresent()) {
             return String.format("Entity '%s' is not configured for indexing", entityName);
         }
 
-        IndexSynchronizationResult result = esIndexManager.synchronizeIndex(indexConfigurationOpt.get());
+        IndexSynchronizationResult result = esIndexManager.synchronizeIndexSchema(indexConfigurationOpt.get());
         return String.format(
                 "Synchronization result: Entity=%s Index=%s Status=%s",
                 entityName, result.getIndexConfiguration().getIndexName(), result.getSchemaStatus()

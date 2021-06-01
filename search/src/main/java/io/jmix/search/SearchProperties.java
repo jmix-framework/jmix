@@ -23,7 +23,7 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 
 @ConfigurationProperties(prefix = "jmix.search")
 @ConstructorBinding
-public class SearchApplicationProperties {
+public class SearchProperties {
 
     protected final int searchResultPageSize;
     protected final int maxSearchPageCount;
@@ -42,7 +42,7 @@ public class SearchApplicationProperties {
 
     protected final IndexSchemaManagementStrategy indexSchemaManagementStrategy;
 
-    public SearchApplicationProperties(
+    public SearchProperties(
             @DefaultValue("100") int searchResultPageSize,
             @DefaultValue("100") int maxSearchPageCount,
             @DefaultValue("100") int searchReloadEntitiesBatchSize,

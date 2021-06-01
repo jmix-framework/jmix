@@ -16,7 +16,7 @@
 
 package io.jmix.search.index.impl;
 
-import io.jmix.search.SearchApplicationProperties;
+import io.jmix.search.SearchProperties;
 import io.jmix.search.index.ESIndexManager;
 import io.jmix.search.index.IndexSynchronizationResult;
 import org.slf4j.Logger;
@@ -38,12 +38,12 @@ public class StartupIndexSynchronizer {
     @Autowired
     protected ESIndexManager esIndexManager;
     @Autowired
-    protected SearchApplicationProperties searchApplicationProperties;
+    protected SearchProperties searchProperties;
 
     @PostConstruct
     protected void postConstruct() {
         try {
-            Collection<IndexSynchronizationResult> indexSynchronizationResults = esIndexManager.synchronizeIndexes();
+            Collection<IndexSynchronizationResult> indexSynchronizationResults = esIndexManager.synchronizeIndexSchemas();
             indexSynchronizationResults.forEach(result -> log.info("Synchronization Result: entity={}, index={}, status={}",
                     result.getIndexConfiguration().getEntityName(),
                     result.getIndexConfiguration().getIndexName(),

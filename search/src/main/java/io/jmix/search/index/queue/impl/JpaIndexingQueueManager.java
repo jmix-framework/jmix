@@ -21,7 +21,7 @@ import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.SystemAuthenticator;
 import io.jmix.data.StoreAwareLocator;
-import io.jmix.search.SearchApplicationProperties;
+import io.jmix.search.SearchProperties;
 import io.jmix.search.index.EntityIndexer;
 import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.IndexResult;
@@ -65,7 +65,7 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
     @Autowired
     protected IndexingLocker locker;
     @Autowired
-    protected SearchApplicationProperties searchApplicationProperties;
+    protected SearchProperties searchProperties;
 
     @Override
     public void emptyQueue(String entityName) {
@@ -118,7 +118,7 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
     @Override
     public int enqueueIndexAll(String entityName) {
         Preconditions.checkNotEmptyString(entityName);
-        return enqueueIndexAll(entityName, searchApplicationProperties.getReindexEntityEnqueueBatchSize());
+        return enqueueIndexAll(entityName, searchProperties.getReindexEntityEnqueueBatchSize());
     }
 
     @Override
@@ -147,7 +147,7 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
 
     @Override
     public int processNextBatch() {
-        return processNextBatch(searchApplicationProperties.getProcessQueueBatchSize());
+        return processNextBatch(searchProperties.getProcessQueueBatchSize());
     }
 
     @Override
@@ -157,7 +157,7 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
 
     @Override
     public int processEntireQueue() {
-        return processQueue(searchApplicationProperties.getProcessQueueBatchSize(), -1);
+        return processQueue(searchProperties.getProcessQueueBatchSize(), -1);
     }
 
     protected int enqueueIndexAll(String entityName, int batchSize) {
@@ -176,7 +176,7 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
         do {
             List<Object> instances = dataManager.load(metaClass.getJavaClass())
                     .all()
-                    .firstResult(batchOffset) //todo integer limit?
+                    .firstResult(batchOffset)
                     .maxResults(batchSize)
                     .list();
 
@@ -196,8 +196,6 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
     }
 
     protected int processQueue(int batchSize, int maxProcessedPerExecution) {
-        //todo check global conditions to proceed (ES availability, etc)
-
         log.debug("Start processing queue");
         int count = 0;
         boolean locked = locker.tryLockQueueProcessing();

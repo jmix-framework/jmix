@@ -19,7 +19,7 @@ package io.jmix.autoconfigure.searchaws;
 import com.amazonaws.auth.*;
 import com.google.common.base.Strings;
 import io.jmix.autoconfigure.search.SearchAutoConfiguration;
-import io.jmix.search.SearchApplicationProperties;
+import io.jmix.search.SearchProperties;
 import io.jmix.search.SearchConfiguration;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequestInterceptor;
@@ -43,32 +43,32 @@ public class SearchAwsAutoConfiguration {
     private static final Logger log = LoggerFactory.getLogger(SearchConfiguration.class);
 
     @Autowired
-    protected SearchApplicationProperties searchApplicationProperties;
+    protected SearchProperties searchProperties;
     @Autowired
-    protected SearchAwsApplicationProperties searchAwsApplicationProperties;
+    protected SearchAwsProperties searchAwsProperties;
 
     @Bean("search_RestHighLevelClient")
     @ConditionalOnProperty(name = "jmix.search.elasticsearch.aws.iamAuth", matchIfMissing = true)
     public RestHighLevelClient elasticSearchClient() {
         log.debug("Create ES Client with AWS IAM Authentication");
-        String esUrl = searchApplicationProperties.getElasticsearchUrl();
+        String esUrl = searchProperties.getElasticsearchUrl();
         HttpHost esHttpHost = HttpHost.create(esUrl);
         RestClientBuilder restClientBuilder = RestClient.builder(esHttpHost);
 
-        String region = searchAwsApplicationProperties.getElasticsearchAwsRegion();
-        String serviceName = searchAwsApplicationProperties.getElasticsearchAwsServiceName();
+        String region = searchAwsProperties.getElasticsearchAwsRegion();
+        String serviceName = searchAwsProperties.getElasticsearchAwsServiceName();
 
         AWS4Signer signer = new AWS4Signer();
         signer.setServiceName(serviceName);
         signer.setRegionName(region);
 
         AWSCredentialsProvider credentialsProvider;
-        if (Strings.isNullOrEmpty(searchAwsApplicationProperties.getElasticsearchAwsAccessKey())) {
+        if (Strings.isNullOrEmpty(searchAwsProperties.getElasticsearchAwsAccessKey())) {
             credentialsProvider = DefaultAWSCredentialsProviderChain.getInstance();
         } else {
             AWSCredentials credentials = new BasicAWSCredentials(
-                    searchAwsApplicationProperties.getElasticsearchAwsAccessKey(),
-                    searchAwsApplicationProperties.getElasticsearchAwsSecretKey()
+                    searchAwsProperties.getElasticsearchAwsAccessKey(),
+                    searchAwsProperties.getElasticsearchAwsSecretKey()
             );
 
             credentialsProvider = new AWSStaticCredentialsProvider(credentials);

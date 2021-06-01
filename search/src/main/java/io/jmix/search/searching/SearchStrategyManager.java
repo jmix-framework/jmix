@@ -16,7 +16,7 @@
 
 package io.jmix.search.searching;
 
-import io.jmix.search.SearchApplicationProperties;
+import io.jmix.search.SearchProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +38,7 @@ public class SearchStrategyManager {
 
     @Autowired
     public SearchStrategyManager(Collection<SearchStrategy> searchStrategies,
-                                 SearchApplicationProperties applicationProperties) {
+                                 SearchProperties applicationProperties) {
         log.debug("Available search strategies: {}", searchStrategies);
         Map<String, SearchStrategy> tmpRegistry = new HashMap<>();
         searchStrategies.forEach(searchStrategy -> {

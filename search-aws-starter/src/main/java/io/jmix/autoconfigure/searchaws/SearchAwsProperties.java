@@ -22,7 +22,7 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 
 @ConfigurationProperties(prefix = "jmix.search.elasticsearch.aws")
 @ConstructorBinding
-public class SearchAwsApplicationProperties {
+public class SearchAwsProperties {
 
     protected final boolean iamAuth;
     protected final String region;
@@ -30,7 +30,7 @@ public class SearchAwsApplicationProperties {
     protected final String accessKey;
     protected final String secretKey;
 
-    public SearchAwsApplicationProperties(
+    public SearchAwsProperties(
             @DefaultValue("true") boolean iamAuth,
             String region,
             @DefaultValue("es") String serviceName,

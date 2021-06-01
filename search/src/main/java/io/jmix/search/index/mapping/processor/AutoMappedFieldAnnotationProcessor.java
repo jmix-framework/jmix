@@ -38,8 +38,8 @@ public class AutoMappedFieldAnnotationProcessor extends AbstractFieldAnnotationP
     @Override
     protected void processSpecificAnnotation(MappingDefinitionBuilder builder, MetaClass rootEntityMetaClass, AutoMappedField annotation) {
         builder.newElement()
-                .includeProperties(annotation.includeProperty())
-                .excludeProperties(annotation.excludeProperty())
+                .includeProperties(annotation.includeProperties())
+                .excludeProperties(annotation.excludeProperties())
                 .usingFieldMappingStrategyClass(getFieldMappingStrategyClass())
                 .withParameters(createParameters(annotation))
                 .buildElement()

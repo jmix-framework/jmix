@@ -19,13 +19,10 @@ package io.jmix.search.searching.impl;
 import com.google.common.collect.Iterables;
 import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.search.SearchApplicationProperties;
+import io.jmix.search.SearchProperties;
 import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
-import io.jmix.search.searching.EntitySearcher;
-import io.jmix.search.searching.SearchContext;
-import io.jmix.search.searching.SearchResult;
-import io.jmix.search.searching.SearchStrategy;
+import io.jmix.search.searching.*;
 import io.jmix.search.utils.Constants;
 import io.jmix.security.constraint.PolicyStore;
 import io.jmix.security.constraint.SecureOperations;
@@ -68,7 +65,7 @@ public class EntitySearcherImpl implements EntitySearcher {
     @Autowired
     protected InstanceNameProvider instanceNameProvider;
     @Autowired
-    protected SearchApplicationProperties searchApplicationProperties;
+    protected SearchProperties searchProperties;
     @Autowired
     protected IdSerialization idSerialization;
     @Autowired
@@ -77,6 +74,13 @@ public class EntitySearcherImpl implements EntitySearcher {
     protected IndexConfigurationManager indexConfigurationManager;
     @Autowired
     protected PolicyStore policyStore;
+    @Autowired
+    protected SearchStrategyManager searchStrategyManager;
+
+    @Override
+    public SearchResult search(SearchContext searchContext) {
+        return search(searchContext, searchStrategyManager.getDefaultSearchStrategy());
+    }
 
     @Override
     public SearchResult search(SearchContext searchContext, SearchStrategy searchStrategy) {
@@ -121,7 +125,7 @@ public class EntitySearcherImpl implements EntitySearcher {
             MetaClass metaClass = metadata.getClass(entityName);
             Collection<SearchResultEntry> entries = searchResult.getEntriesByEntityName(entityName);
 
-            for (Collection<SearchResultEntry> entriesPartition : Iterables.partition(entries, searchApplicationProperties.getSearchReloadEntitiesBatchSize())) {
+            for (Collection<SearchResultEntry> entriesPartition : Iterables.partition(entries, searchProperties.getSearchReloadEntitiesBatchSize())) {
                 List<Object> partitionIds = entriesPartition.stream()
                         .map(entry -> idSerialization.stringToId(entry.getDocId()))
                         .map(Id::getValue)
@@ -130,7 +134,7 @@ public class EntitySearcherImpl implements EntitySearcher {
                 FetchPlan fetchPlan = fetchPlans.get(entityName);
                 FluentLoader.ByIds<Object> loader = secureDataManager.load(metaClass.getJavaClass()).ids(partitionIds);
                 if (fetchPlan == null) {
-                    loader.fetchPlan(FetchPlan.LOCAL);
+                    loader.fetchPlan(FetchPlan.BASE);
                 } else {
                     loader.fetchPlan(fetchPlan);
                 }
@@ -271,7 +275,7 @@ public class EntitySearcherImpl implements EntitySearcher {
     protected Set<String> reloadIds(MetaClass metaClass, Collection<Object> entityIds) {
         Set<String> result = new HashSet<>();
         String primaryKeyName = metadataTools.getPrimaryKeyName(metaClass);
-        for (Collection<Object> idsPartition : Iterables.partition(entityIds, searchApplicationProperties.getSearchReloadEntitiesBatchSize())) {
+        for (Collection<Object> idsPartition : Iterables.partition(entityIds, searchProperties.getSearchReloadEntitiesBatchSize())) {
             log.debug("Load instance names for ids: {}", idsPartition);
 
             List<Object> partitionResult;

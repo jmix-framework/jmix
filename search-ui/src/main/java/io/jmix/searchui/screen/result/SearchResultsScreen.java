@@ -25,7 +25,7 @@ import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.impl.FileRefDatatype;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.search.SearchApplicationProperties;
+import io.jmix.search.SearchProperties;
 import io.jmix.search.searching.EntitySearcher;
 import io.jmix.search.searching.SearchResult;
 import io.jmix.search.searching.impl.FieldHit;
@@ -69,7 +69,7 @@ public class SearchResultsScreen extends Screen {
     @Autowired
     protected UnconstrainedDataManager dataManager;
     @Autowired
-    protected SearchApplicationProperties searchApplicationProperties;
+    protected SearchProperties searchProperties;
     @Autowired
     protected EntitySearcher entitySearcher;
     @Autowired
@@ -155,7 +155,7 @@ public class SearchResultsScreen extends Screen {
         }
 
         //noinspection UnstableApiUsage
-        pages = EvictingQueue.create(searchApplicationProperties.getMaxSearchPageCount());
+        pages = EvictingQueue.create(searchProperties.getMaxSearchPageCount());
         currentPage = new SearchResultsScreen.Page(0);
         currentPage.setSearchResult(searchResult);
         pages.add(currentPage);

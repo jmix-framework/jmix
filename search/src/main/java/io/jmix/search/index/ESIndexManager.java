@@ -82,22 +82,22 @@ public interface ESIndexManager {
 
     /**
      * Synchronizes schemas of all search indices defined in application.
-     * <p>See {@link ESIndexManager#synchronizeIndexes(Collection)}
-     * <p>See {@link ESIndexManager#synchronizeIndex(IndexConfiguration)}
+     * <p>See {@link ESIndexManager#synchronizeIndexSchemas(Collection)}
+     * <p>See {@link ESIndexManager#synchronizeIndexSchema(IndexConfiguration)}
      *
      * @return Collection of {@link IndexSynchronizationResult} with details of synchronization
      */
-    Collection<IndexSynchronizationResult> synchronizeIndexes();
+    Collection<IndexSynchronizationResult> synchronizeIndexSchemas();
 
     /**
-     * Synchronizes schema of search indexes for provided collection of {@link IndexConfiguration}.
+     * Synchronizes schemas of search indexes for provided collection of {@link IndexConfiguration}.
      * <p>
-     * See {@link ESIndexManager#synchronizeIndex(IndexConfiguration)}
+     * See {@link ESIndexManager#synchronizeIndexSchema(IndexConfiguration)}
      *
      * @param indexConfigurations actual index configurations
      * @return Collection of {@link IndexSynchronizationResult} with details of synchronization
      */
-    Collection<IndexSynchronizationResult> synchronizeIndexes(Collection<IndexConfiguration> indexConfigurations);
+    Collection<IndexSynchronizationResult> synchronizeIndexSchemas(Collection<IndexConfiguration> indexConfigurations);
 
     /**
      * Synchronizes schema of search index for provided {@link IndexConfiguration}.
@@ -108,5 +108,5 @@ public interface ESIndexManager {
      * @param indexConfiguration actual index configuration
      * @return {@link IndexSynchronizationResult} with details of synchronization
      */
-    IndexSynchronizationResult synchronizeIndex(IndexConfiguration indexConfiguration);
+    IndexSynchronizationResult synchronizeIndexSchema(IndexConfiguration indexConfiguration);
 }

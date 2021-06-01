@@ -26,7 +26,7 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.data.PersistenceHints;
 import io.jmix.data.StoreAwareLocator;
-import io.jmix.search.SearchApplicationProperties;
+import io.jmix.search.SearchProperties;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.index.queue.IndexingQueueManager;
 import io.jmix.search.index.queue.entity.IndexingQueueItem;
@@ -57,7 +57,7 @@ public class EntityTrackingListener {
     @Autowired
     protected StoreAwareLocator storeAwareLocator;
     @Autowired
-    protected SearchApplicationProperties searchApplicationProperties;
+    protected SearchProperties searchProperties;
 
     protected enum CheckState {
         OLD,
@@ -110,7 +110,7 @@ public class EntityTrackingListener {
     }
 
     protected boolean isProcessingRequired(EntityChangedEvent<?> event) {
-        if (!searchApplicationProperties.isChangedEntitiesIndexingEnabled()) {
+        if (!searchProperties.isChangedEntitiesIndexingEnabled()) {
             return false;
         }
 

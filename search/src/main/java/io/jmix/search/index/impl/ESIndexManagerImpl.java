@@ -20,7 +20,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jmix.core.common.util.Preconditions;
-import io.jmix.search.SearchApplicationProperties;
+import io.jmix.search.SearchProperties;
 import io.jmix.search.index.*;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
@@ -53,7 +53,7 @@ public class ESIndexManagerImpl implements ESIndexManager {
     @Autowired
     protected IndexConfigurationManager indexConfigurationManager;
     @Autowired
-    protected SearchApplicationProperties searchApplicationProperties;
+    protected SearchProperties searchProperties;
 
     protected ObjectMapper objectMapper = new ObjectMapper();
 
@@ -130,25 +130,25 @@ public class ESIndexManagerImpl implements ESIndexManager {
     }
 
     @Override
-    public Collection<IndexSynchronizationResult> synchronizeIndexes() {
+    public Collection<IndexSynchronizationResult> synchronizeIndexSchemas() {
         Collection<IndexConfiguration> indexConfigurations = indexConfigurationManager.getAllIndexConfigurations();
-        return synchronizeIndexes(indexConfigurations);
+        return synchronizeIndexSchemas(indexConfigurations);
     }
 
     @Override
-    public Collection<IndexSynchronizationResult> synchronizeIndexes(Collection<IndexConfiguration> indexConfigurations) {
+    public Collection<IndexSynchronizationResult> synchronizeIndexSchemas(Collection<IndexConfiguration> indexConfigurations) {
         return indexConfigurations.stream()
-                .map(this::synchronizeIndex)
+                .map(this::synchronizeIndexSchema)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public IndexSynchronizationResult synchronizeIndex(IndexConfiguration indexConfiguration) {
-        IndexSchemaManagementStrategy strategy = searchApplicationProperties.getIndexSchemaManagementStrategy();
-        return synchronizeIndex(indexConfiguration, strategy);
+    public IndexSynchronizationResult synchronizeIndexSchema(IndexConfiguration indexConfiguration) {
+        IndexSchemaManagementStrategy strategy = searchProperties.getIndexSchemaManagementStrategy();
+        return synchronizeIndexSchema(indexConfiguration, strategy);
     }
 
-    protected IndexSynchronizationResult synchronizeIndex(IndexConfiguration indexConfiguration, IndexSchemaManagementStrategy strategy) {
+    protected IndexSynchronizationResult synchronizeIndexSchema(IndexConfiguration indexConfiguration, IndexSchemaManagementStrategy strategy) {
         Preconditions.checkNotNullArgument(indexConfiguration);
 
         log.info("Synchronize search index '{}' according to strategy '{}'", indexConfiguration.getIndexName(), strategy);

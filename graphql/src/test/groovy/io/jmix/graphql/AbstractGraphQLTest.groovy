@@ -80,8 +80,12 @@ class AbstractGraphQLTest extends Specification {
     }
 
     protected query(String queryFilePath, ObjectNode variables) {
+        return query(queryFilePath, variables, adminToken)
+    }
+
+    protected query(String queryFilePath, ObjectNode variables, String token) {
         return graphQLTestTemplate
-                .withBearerAuth(adminToken)
+                .withBearerAuth(token)
                 .perform("graphql/io/jmix/graphql/" + queryFilePath, variables)
     }
 

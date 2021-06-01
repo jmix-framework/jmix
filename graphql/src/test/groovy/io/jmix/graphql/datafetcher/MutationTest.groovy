@@ -20,6 +20,7 @@ package io.jmix.graphql.datafetcher
 import io.jmix.graphql.AbstractGraphQLTest
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.TestPropertySource
+import test_support.entity.CarType
 
 @DirtiesContext
 @TestPropertySource(properties = [
@@ -44,7 +45,14 @@ class MutationTest extends AbstractGraphQLTest {
     def "should create new Car instance and return additional fetched attributes without _instanceName"() {
         when:
         def response = query(
-                "datafetcher/upsert-car.gql", asObjectNode("{\"id\":\"$id2\"}"))
+                "datafetcher/upsert-car.gql",
+                asObjectNode('{"car": {' +
+                        '"id": "' + id2 + '",' +
+                        '"manufacturer":"TESLA",' +
+                        '"model": "Z",' +
+                        '"carType":"' + CarType.SEDAN + '"' +
+                        '}}'),
+        )
         then:
         response.get('$.data.upsert_scr_Car.garage') == null
         response.get('$.data.upsert_scr_Car.maxPassengers') == null

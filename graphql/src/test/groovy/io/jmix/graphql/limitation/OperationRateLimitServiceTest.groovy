@@ -20,6 +20,7 @@ import com.graphql.spring.boot.test.GraphQLResponse
 import io.jmix.graphql.AbstractGraphQLTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.TestPropertySource
+import test_support.entity.CarType
 
 @TestPropertySource(properties = ["jmix.graphql.operationRateLimitPerMinute=3"])
 class OperationRateLimitServiceTest extends AbstractGraphQLTest {
@@ -51,7 +52,13 @@ class OperationRateLimitServiceTest extends AbstractGraphQLTest {
     def "mutation limit is working with 1 attempt"() {
         when:
         def response = query(
-                "datafetcher/upsert-car.graphql"
+                "datafetcher/upsert-car.graphql",
+                asObjectNode('{"car": {' +
+                        '"manufacturer":"TESLA",' +
+                        '"model": "Z",' +
+                        '"carType":"' + CarType.SEDAN + '",' +
+                        '"regNumber": "ab000"' +
+                        '}}')
         )
 
         then:
@@ -87,7 +94,13 @@ class OperationRateLimitServiceTest extends AbstractGraphQLTest {
         def response = null
         for (i in 0..<4) {
             response = query(
-                    "datafetcher/upsert-car.graphql"
+                    "datafetcher/upsert-car.graphql",
+                    asObjectNode('{"car": {' +
+                            '"manufacturer":"TESLA",' +
+                            '"model": "Z",' +
+                            '"carType":"' + CarType.SEDAN + '",' +
+                            '"regNumber": "ab000"' +
+                            '}}')
             )
         }
         def error = getErrors(response)[0].getAsJsonObject()

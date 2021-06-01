@@ -1,11 +1,5 @@
-mutation Upsert_scr_Car($id: UUID) {
-    upsert_scr_Car (car: {
-        id: $id
-        manufacturer: "TESLA"
-        model: "Z"
-        carType: SEDAN
-        regNumber: "ab000"
-    }) {
+mutation Upsert_scr_Car($car: inp_scr_Car!) {
+    upsert_scr_Car (car: $car) {
         id
         purchaseDate
         maxPassengers

@@ -21,7 +21,8 @@ import com.jayway.jsonpath.ReadContext;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.*;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
@@ -39,6 +40,10 @@ public class RestTestUtils {
 
     public static final String CLIENT_ID = "client";
     public static final String CLIENT_SECRET = "secret";
+
+    public static String getAuthToken(String login, String password, int port) throws IOException {
+        return getAuthToken("http://localhost:" + port, login, password, new HashMap<>());
+    }
 
     public static String getAuthToken(String baseUrl, String login, String password, Map<String, String> headers) throws IOException {
         String uri = baseUrl + "/oauth/token";

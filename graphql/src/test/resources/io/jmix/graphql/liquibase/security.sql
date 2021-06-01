@@ -62,11 +62,11 @@ VALUES
 ('bb818629-a6d6-4aaa-ad65-b431e0545d9e', '2021-02-19 16:24:59.947', 'admin', 'screen',    NULL,       '*',               'access', 'allow', '91099ca3-194e-6ba5-7aa6-25b03bcef05a'),
 ('173308a1-1ff4-4edb-a559-872c8b237283', '2021-02-19 16:24:59.947', 'admin', 'menu',      NULL,       '*',               'access', 'allow', '91099ca3-194e-6ba5-7aa6-25b03bcef05a'),
 
--- ('b12f7355-3358-02ac-f54d-e9b27291c2b2', '2021-02-19 16:24:59.947', 'admin', 'entity',    'scr$Car',  'scr$Car',      'create', 'allow', '23548523-3f0f-f96a-07ff-0d60b9cb5c1b'),
+('b12f7355-3358-02ac-f54d-e9b27291c2b1', '2021-02-19 16:24:59.947', 'admin', 'entity',    'scr$Car',  'scr$Car',      'create', 'allow', '91099ca3-194e-6ba5-7aa6-25b03bcef05a'),
 ('4a34b7db-381d-b55d-126b-9bac1c644d0e', '2021-02-19 16:24:59.947', 'admin', 'entity',    'scr$Car',  'scr$Car',      'read',   'allow', '91099ca3-194e-6ba5-7aa6-25b03bcef05a'),
--- ('2866648a-e6f5-42e4-bf0d-1cb565b27971', '2021-02-19 16:24:59.948', 'admin', 'entity',    'scr$Car',  'scr$Car',      'update', 'allow', '23548523-3f0f-f96a-07ff-0d60b9cb5c1b'),
--- ('868403ca-5475-7e3e-a5a7-1e700d25824b', '2021-02-19 16:24:59.947', 'admin', 'entity',    'scr$Car',  'scr$Car',      'delete', 'allow', '23548523-3f0f-f96a-07ff-0d60b9cb5c1b'),
--- ('e45b39c6-f251-4507-987a-598d954dbec2', '2021-02-19 16:24:59.947', 'admin', 'entityAttribute', 'scr$Car', 'scr$Car.carType',       'modify', 'allow', '23548523-3f0f-f96a-07ff-0d60b9cb5c1b'),
--- ('fd08d779-5515-4035-b4db-ed58531d8f14', '2021-02-19 16:24:59.948', 'admin', 'entityAttribute', 'scr$Car', 'scr$Car.manufacturer',  'modify', 'allow', '23548523-3f0f-f96a-07ff-0d60b9cb5c1b'),
--- ('a5d5adb1-2bc5-4599-b308-427892c54e92', '2021-02-19 16:24:59.947', 'admin', 'entityAttribute', 'scr$Car', 'scr$Car.model',         'modify', 'allow', '23548523-3f0f-f96a-07ff-0d60b9cb5c1b'),
-('44c2e703-64d8-0045-6f5b-e33d6140f287', '2021-02-19 16:24:59.948', 'admin', 'entityAttribute', 'scr$Car', 'scr$Car.mileage',       'view',   'allow', '91099ca3-194e-6ba5-7aa6-25b03bcef05a');
+('2866648a-e6f5-42e4-bf0d-1cb565b27972', '2021-02-19 16:24:59.948', 'admin', 'entity',    'scr$Car',  'scr$Car',      'update', 'allow', '91099ca3-194e-6ba5-7aa6-25b03bcef05a'),
+('868403ca-5475-7e3e-a5a7-1e700d25834b', '2021-02-19 16:24:59.947', 'admin', 'entity',    'scr$Car',  'scr$Car',      'delete', 'allow', '91099ca3-194e-6ba5-7aa6-25b03bcef05a'),
+('e45b39c6-f251-4507-987a-598d954dbec1', '2021-02-19 16:24:59.947', 'admin', 'entityAttribute', 'scr$Car', 'scr$Car.carType',       'modify', 'allow', '91099ca3-194e-6ba5-7aa6-25b03bcef05a'),
+('fd08d779-5515-4035-b4db-ed58531d8f12', '2021-02-19 16:24:59.948', 'admin', 'entityAttribute', 'scr$Car', 'scr$Car.manufacturer',  'modify', 'allow', '91099ca3-194e-6ba5-7aa6-25b03bcef05a'),
+('a5d5adb1-2bc5-4599-b308-427892c54e91', '2021-02-19 16:24:59.947', 'admin', 'entityAttribute', 'scr$Car', 'scr$Car.model',         'modify', 'allow', '91099ca3-194e-6ba5-7aa6-25b03bcef05a'),
+('44c2e703-64d8-0045-6f5b-e33d6140f237', '2021-02-19 16:24:59.948', 'admin', 'entityAttribute', 'scr$Car', 'scr$Car.mileage',       'view',   'allow', '91099ca3-194e-6ba5-7aa6-25b03bcef05a');

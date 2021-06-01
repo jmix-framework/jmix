@@ -2138,15 +2138,10 @@
         </xs:union>
     </xs:simpleType>
 
-    <!-- SuggestionField -->
-    <xs:complexType name="suggestionFieldComponent">
+
+    <xs:complexType name="baseSuggestionFieldComponent">
         <xs:complexContent>
             <xs:extension base="baseFieldComponent">
-                <xs:all>
-                    <xs:element name="validators" minOccurs="0" type="baseValidatorType"/>
-                    <xs:element name="formatter" minOccurs="0" type="formatterType"/>
-                </xs:all>
-
                 <xs:attribute name="stylename" type="suggestionFieldStylename"/>
 
                 <xs:attribute name="asyncSearchDelayMs" type="xs:integer"/>
@@ -2158,6 +2153,18 @@
                 <xs:attribute name="popupWidth" type="popupWidthType"/>
 
                 <xs:attributeGroup ref="hasTabIndex"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- SuggestionField -->
+    <xs:complexType name="suggestionFieldComponent">
+        <xs:complexContent>
+            <xs:extension base="baseSuggestionFieldComponent">
+                <xs:all>
+                    <xs:element name="validators" minOccurs="0" type="baseValidatorType"/>
+                    <xs:element name="formatter" minOccurs="0" type="formatterType"/>
+                </xs:all>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -2907,8 +2914,10 @@
 
     <xs:complexType name="tagFieldComponent">
         <xs:complexContent>
-            <xs:extension base="suggestionFieldComponent">
+            <xs:extension base="baseSuggestionFieldComponent">
                 <xs:all>
+                    <xs:element name="validators" minOccurs="0" type="collectionValidatorType"/>
+                    <xs:element name="formatter" minOccurs="0" type="formatterType"/>
                     <xs:element name="query" minOccurs="0" type="suggestionFieldQuery"/>
                 </xs:all>
 

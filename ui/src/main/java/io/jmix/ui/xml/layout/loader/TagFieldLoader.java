@@ -43,6 +43,8 @@ public class TagFieldLoader extends AbstractSuggestionFieldLoader<TagField> {
 
         loadQuery(resultComponent, element);
 
+        loadFormatter(resultComponent, element);
+
         loadBoolean(element, "clearAllVisible",
                 resultComponent::setClearAllVisible);
     }

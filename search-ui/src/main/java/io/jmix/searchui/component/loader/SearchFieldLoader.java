@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package io.jmix.searchui.component;
+package io.jmix.searchui.component.loader;
 
 import com.google.common.base.Strings;
 import io.jmix.search.searching.SearchStrategy;
 import io.jmix.search.searching.SearchStrategyManager;
+import io.jmix.searchui.component.SearchField;
 import io.jmix.ui.xml.layout.loader.AbstractFieldLoader;
 import org.dom4j.Element;
 

@@ -20,7 +20,8 @@ import io.jmix.core.CoreConfiguration;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
 import io.jmix.searchui.component.SearchField;
-import io.jmix.searchui.component.SearchFieldLoader;
+import io.jmix.searchui.component.impl.SearchFieldImpl;
+import io.jmix.searchui.component.loader.SearchFieldLoader;
 import io.jmix.ui.UiConfiguration;
 import io.jmix.ui.sys.UiControllersConfiguration;
 import io.jmix.ui.sys.registration.ComponentRegistration;
@@ -55,7 +56,7 @@ public class SearchUiConfiguration {
     @Bean
     public ComponentRegistration searchField() {
         return ComponentRegistrationBuilder.create(SearchField.NAME)
-                .withComponentClass(SearchField.class)
+                .withComponentClass(SearchFieldImpl.class)
                 .withComponentLoaderClass(SearchFieldLoader.class)
                 .build();
     }

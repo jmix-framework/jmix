@@ -19,6 +19,7 @@ package com.haulmont.cuba.gui.xml.layout.loaders;
 import com.haulmont.cuba.gui.UiComponents;
 import com.haulmont.cuba.gui.components.RelatedEntities;
 import io.jmix.ui.GuiDevelopmentException;
+import io.jmix.ui.sys.PropertyOption;
 import io.jmix.ui.xml.layout.loader.RelatedEntitiesLoader;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
@@ -57,6 +58,6 @@ public class CubaRelatedEntitiesLoader extends RelatedEntitiesLoader {
             }
         }
 
-        resultComponent.addPropertyOption(property, screen, caption, filterCaption);
+        resultComponent.addPropertyOption(new PropertyOption(property, screen, caption, filterCaption));
     }
 }

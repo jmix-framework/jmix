@@ -23,6 +23,7 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.ui.WindowInfo;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.impl.RelatedEntitiesImpl;
+import io.jmix.ui.sys.PropertyOption;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;

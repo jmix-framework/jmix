@@ -16,14 +16,11 @@
 
 package io.jmix.ui.xml.layout.loader;
 
+import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.filter.FilterAction;
-import io.jmix.ui.component.ActionsHolder;
-import io.jmix.ui.component.Filter;
-import io.jmix.ui.component.FilterComponent;
-import io.jmix.ui.component.LogicalFilterComponent;
-import io.jmix.ui.component.SingleFilterComponent;
-import io.jmix.ui.component.SupportsCaptionPosition;
+import io.jmix.ui.component.*;
+import io.jmix.ui.component.filter.FilterUtils;
 import io.jmix.ui.component.filter.inspector.FilterPropertiesInspector;
 import io.jmix.ui.model.DataLoader;
 import io.jmix.ui.model.ScreenData;
@@ -32,9 +29,7 @@ import io.jmix.ui.screen.UiControllerUtils;
 import io.jmix.ui.xml.layout.ComponentLoader;
 import org.dom4j.Element;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class FilterLoader extends ActionsHolderLoader<Filter> {
     @Override
@@ -141,7 +136,21 @@ public class FilterLoader extends ActionsHolderLoader<Filter> {
     }
 
     protected void loadConfigurations(Filter component, Element element) {
-        getComponentContext().addPostInitTask((context1, window) -> component.loadConfigurationsAndApplyDefault());
+        Set<String> filterPaths = new HashSet<>();
+        getComponentContext().addPostInitTask((context1, window) -> {
+            ComponentsHelper.walkComponents(window, (visitingComponent, name) -> {
+                if (visitingComponent instanceof Filter) {
+                    String path = FilterUtils.generateFilterPath((Filter) visitingComponent);
+                    if (filterPaths.contains(path)) {
+                        throw new GuiDevelopmentException("Filters with the same component path should have different ids",
+                                getComponentContext());
+                    } else {
+                        filterPaths.add(path);
+                    }
+                }
+            });
+            component.loadConfigurationsAndApplyDefault();
+        });
 
         Element configurationsElement = element.element("configurations");
         if (configurationsElement != null) {

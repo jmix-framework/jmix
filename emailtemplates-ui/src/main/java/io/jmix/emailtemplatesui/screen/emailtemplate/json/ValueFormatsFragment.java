@@ -26,7 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 @UiController("emltmp_ValueFormatsFragment")
-@UiDescriptor(path = "/io/jmix/reportsui/screen/report/edit/tabs/formats.xml")
+@UiDescriptor(path = "/io/jmix/reportsui/screen/report/edit/tabs/report-edit-value-formats-fragment.xml")
 public class ValueFormatsFragment extends ScreenFragment {
 
     @Autowired

@@ -109,7 +109,7 @@ public class LoginScreen extends Screen {
         } catch (BadCredentialsException | DisabledException | LockedException e) {
             notifications.create(Notifications.NotificationType.ERROR)
                     .withCaption(messages.getMessage(getClass(), "loginFailed"))
-                    .withDescription(e.getMessage())
+                    .withDescription(messages.getMessage(getClass(), "badCredentials"))
                     .show();
         }
     }

@@ -26,7 +26,10 @@ import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.AccessDeniedException;
 import io.jmix.core.security.EntityOp;
+import io.jmix.data.DataProperties;
 import io.jmix.data.PersistenceHints;
+import io.jmix.data.exception.UniqueConstraintViolationException;
+import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.dynattr.DynAttrQueryHints;
 import io.jmix.reports.app.ParameterPrototype;
 import io.jmix.reports.converter.GsonConverter;
@@ -52,11 +55,15 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceException;
 import javax.validation.constraints.NotNull;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 import java.util.zip.CRC32;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -114,6 +121,12 @@ public class ReportsImpl implements Reports {
 
     @Autowired
     protected ObjectToStringConverter objectToStringConverter;
+
+    @Autowired
+    protected DbmsSpecifics dbmsSpecifics;
+
+    @Autowired
+    protected DataProperties dataProperties;
 
     protected XStreamConverter xStreamConverter = new XStreamConverter();
 
@@ -205,10 +218,18 @@ public class ReportsImpl implements Reports {
                     savedTemplates.add(em.merge(loadedTemplate));
                 }
             }
+
+            em.flush();
+        } catch (PersistenceException e) {
+            Pattern pattern = getUniqueConstraintViolationPattern();
+            Matcher matcher = pattern.matcher(e.toString());
+            if (matcher.find()) {
+                throw new UniqueConstraintViolationException(e.getMessage(), resolveConstraintName(matcher), e);
+            }
+            throw e;
         } finally {
             em.setProperty(PersistenceHints.SOFT_DELETION, true);
         }
-        em.flush();
 
         for (ReportTemplate savedTemplate : savedTemplates) {
             if (savedTemplate.equals(defaultTemplate)) {
@@ -758,5 +779,37 @@ public class ReportsImpl implements Reports {
             fileStorage = fileStorageLocator.getDefault();
         }
         return fileStorage;
+    }
+
+    protected Pattern getUniqueConstraintViolationPattern() {
+        String defaultPatternExpression = dbmsSpecifics.getDbmsFeatures().getUniqueConstraintViolationPattern();
+        String patternExpression = dataProperties.getUniqueConstraintViolationPattern();
+
+        Pattern pattern;
+        if (StringUtils.isBlank(patternExpression)) {
+            pattern = Pattern.compile(defaultPatternExpression);
+        } else {
+            try {
+                pattern = Pattern.compile(patternExpression);
+            } catch (PatternSyntaxException e) {
+                pattern = Pattern.compile(defaultPatternExpression);
+            }
+        }
+        return pattern;
+    }
+
+    protected String resolveConstraintName(Matcher matcher) {
+        String constraintName = "";
+        if (matcher.groupCount() == 1) {
+            constraintName = matcher.group(1);
+        } else {
+            for (int i = 1; i < matcher.groupCount(); i++) {
+                if (StringUtils.isNotBlank(matcher.group(i))) {
+                    constraintName = matcher.group(i);
+                    break;
+                }
+            }
+        }
+        return constraintName.toUpperCase();
     }
 }

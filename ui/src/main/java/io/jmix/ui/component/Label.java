@@ -43,6 +43,7 @@ import java.time.OffsetTime;
         canvasBehaviour = CanvasBehaviour.LABEL,
         canvasText = "New Label",
         canvasTextProperty = "value",
+        unsupportedProperties = {"enable", "responsive"},
         documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/label.html"
 )
 @StudioProperties(

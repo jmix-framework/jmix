@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -175,29 +176,31 @@ public class ReportImportExportImpl implements ReportImportExport {
 
         report = reloadReport(report);
 
-        String xml = report.getXml();
-        byte[] xmlBytes = xml.getBytes(StandardCharsets.UTF_8);
-        ArchiveEntry zipEntryReportObject = newStoredEntry("report.structure", xmlBytes);
-        zipOutputStream.putArchiveEntry(zipEntryReportObject);
-        zipOutputStream.write(xmlBytes);
+        if (report != null) {
+            String xml = report.getXml();
+            byte[] xmlBytes = xml.getBytes(StandardCharsets.UTF_8);
+            ArchiveEntry zipEntryReportObject = newStoredEntry("report.structure", xmlBytes);
+            zipOutputStream.putArchiveEntry(zipEntryReportObject);
+            zipOutputStream.write(xmlBytes);
 
-        Report xmlReport = reports.convertToReport(xml);
-        if (report.getTemplates() != null && xmlReport.getTemplates() != null) {
-            for (int i = 0; i < report.getTemplates().size(); i++) {
-                ReportTemplate xmlTemplate = xmlReport.getTemplates().get(i);
-                ReportTemplate template = null;
-                for (ReportTemplate it : report.getTemplates()) {
-                    if (xmlTemplate.equals(it)) {
-                        template = it;
-                        break;
+            Report xmlReport = reports.convertToReport(xml);
+            if (report.getTemplates() != null && xmlReport.getTemplates() != null) {
+                for (int i = 0; i < report.getTemplates().size(); i++) {
+                    ReportTemplate xmlTemplate = xmlReport.getTemplates().get(i);
+                    ReportTemplate template = null;
+                    for (ReportTemplate it : report.getTemplates()) {
+                        if (xmlTemplate.equals(it)) {
+                            template = it;
+                            break;
+                        }
                     }
-                }
-                if (template != null && template.getContent() != null) {
-                    byte[] fileBytes = template.getContent();
-                    ArchiveEntry zipEntryTemplate = newStoredEntry(
-                            "templates/" + i + "/" + template.getName(), fileBytes);
-                    zipOutputStream.putArchiveEntry(zipEntryTemplate);
-                    zipOutputStream.write(fileBytes);
+                    if (template != null && template.getContent() != null) {
+                        byte[] fileBytes = template.getContent();
+                        ArchiveEntry zipEntryTemplate = newStoredEntry(
+                                "templates/" + i + "/" + template.getName(), fileBytes);
+                        zipOutputStream.putArchiveEntry(zipEntryTemplate);
+                        zipOutputStream.write(fileBytes);
+                    }
                 }
             }
         }
@@ -301,11 +304,11 @@ public class ReportImportExportImpl implements ReportImportExport {
                     } catch (EntityAccessException e) {
                         //Do nothing
                     }
-//                    if (dbReport != null) {
-//                        report.setRoles(dbReport.getRoles());
-//                    } else {
-//                        report.setRoles(Collections.emptySet());
-//                    }
+                    if (dbReport != null) {
+                        report.setReportRoles(dbReport.getReportRoles());
+                    } else {
+                        report.setReportRoles(Collections.emptySet());
+                    }
                     report.setXml(reports.convertToString(report));
                 }
             }
@@ -372,10 +375,12 @@ public class ReportImportExportImpl implements ReportImportExport {
         return IOUtils.toByteArray(archiveReader);
     }
 
+    @Nullable
     protected Report reloadReport(Report report) {
         return dataManager.load(Id.of(report))
                 .fetchPlan(ReportsImpl.REPORT_EDIT_FETCH_PLAN_NAME)
-                .one();
+                .optional()
+                .orElse(null);
     }
 
     protected boolean isReportsStructureFile(String name) {

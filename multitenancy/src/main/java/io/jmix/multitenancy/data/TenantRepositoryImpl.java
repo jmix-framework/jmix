@@ -21,6 +21,7 @@ import io.jmix.multitenancy.entity.Tenant;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
+import java.util.List;
 
 @Component("mten_TenantRepository")
 public class TenantRepositoryImpl implements TenantRepository {
@@ -39,5 +40,12 @@ public class TenantRepositoryImpl implements TenantRepository {
                 .parameter("tenantId", tenantId)
                 .optional()
                 .orElse(null);
+    }
+
+    @Override
+    public List<Tenant> findAll() {
+        return dataManager.load(Tenant.class)
+                .query("select t from mten_Tenant t")
+                .list();
     }
 }

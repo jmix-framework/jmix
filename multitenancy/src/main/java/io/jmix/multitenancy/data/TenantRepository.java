@@ -19,10 +19,13 @@ package io.jmix.multitenancy.data;
 import io.jmix.multitenancy.entity.Tenant;
 
 import javax.annotation.Nullable;
+import java.util.List;
 
 public interface TenantRepository {
 
     @Nullable
     Tenant findByTenantId(String tenantId);
+
+    List<Tenant> findAll();
 
 }

@@ -139,27 +139,5 @@
         </createIndex>
     </changeSet>
 
-    <changeSet author="multitenancy" id="6" context="!cuba">
-
-        <createTable tableName="MTEN_TENANT_Assignment_ENTITY">
-            <column name="ID" type="${uuid.type}">
-                <constraints primaryKey="true" nullable="false"/>
-            </column>
-            <column name="VERSION" type="integer" defaultValue="1">
-                <constraints nullable="false"/>
-            </column>
-            <column name="CREATED_DATE" type="datetime"/>
-            <column name="CREATED_BY" type="varchar(50)"/>
-            <column name="LAST_MODIFIED_DATE" type="datetime"/>
-            <column name="LAST_MODIFIED_BY" type="varchar(50)"/>
-            <column name="TENANT_ID" type="${uuid.type}"/>
-
-            <column name="USERNAME" type="varchar(255)">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-
-    </changeSet>
-
 
 </databaseChangeLog>

@@ -52,10 +52,10 @@ public interface FieldMappingStrategy {
     FieldConfiguration createFieldConfiguration(MetaPropertyPath propertyPath, Map<String, Object> parameters);
 
     /**
-     * Provides {@link ValueMapper} to extract property value from entity instances
+     * Provides {@link PropertyValueExtractor} to extract property value from entity instances
      *
      * @param propertyPath property
-     * @return {@link ValueMapper}
+     * @return {@link PropertyValueExtractor}
      */
-    ValueMapper getValueMapper(MetaPropertyPath propertyPath);
+    PropertyValueExtractor getPropertyValueExtractor(MetaPropertyPath propertyPath);
 }

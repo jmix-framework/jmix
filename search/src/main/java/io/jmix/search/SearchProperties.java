@@ -32,8 +32,6 @@ public class SearchProperties {
     protected final int maxProcessedQueueItemsPerExecution;
     protected final int reindexEntityEnqueueBatchSize;
 
-    protected final boolean autoMapIndexFileContent;
-
     protected final boolean changedEntitiesIndexingEnabled;
 
     protected final Elasticsearch elasticsearch;
@@ -49,7 +47,6 @@ public class SearchProperties {
             @DefaultValue("100") int processQueueBatchSize,
             @DefaultValue("1000") int maxProcessedQueueItemsPerExecution,
             @DefaultValue("100") int reindexEntityEnqueueBatchSize,
-            @DefaultValue("false") boolean autoMapIndexFileContent,
             @DefaultValue("true") boolean changedEntitiesIndexingEnabled,
             @DefaultValue("anyTermAnyField") String defaultSearchStrategy,
             @DefaultValue("create-or-recreate") String indexSchemaManagementStrategy,
@@ -60,7 +57,6 @@ public class SearchProperties {
         this.processQueueBatchSize = processQueueBatchSize;
         this.maxProcessedQueueItemsPerExecution = maxProcessedQueueItemsPerExecution;
         this.reindexEntityEnqueueBatchSize = reindexEntityEnqueueBatchSize;
-        this.autoMapIndexFileContent = autoMapIndexFileContent;
         this.changedEntitiesIndexingEnabled = changedEntitiesIndexingEnabled;
         this.defaultSearchStrategy = defaultSearchStrategy;
         this.indexSchemaManagementStrategy = IndexSchemaManagementStrategy.getByKey(indexSchemaManagementStrategy);
@@ -107,13 +103,6 @@ public class SearchProperties {
      */
     public int getReindexEntityEnqueueBatchSize() {
         return reindexEntityEnqueueBatchSize;
-    }
-
-    /**
-     * @return true if Auto Mapping strategy indexes file content. False if only file name is indexed
-     */
-    public boolean isAutoMapIndexFileContent() {
-        return autoMapIndexFileContent;
     }
 
     /**

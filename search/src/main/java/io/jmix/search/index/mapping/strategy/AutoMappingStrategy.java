@@ -17,11 +17,15 @@
 package io.jmix.search.index.mapping.strategy;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.jmix.core.metamodel.datatype.Datatype;
+import io.jmix.core.metamodel.datatype.impl.FileRefDatatype;
+import io.jmix.core.metamodel.datatype.impl.StringDatatype;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Strategy that automatically maps properties the most common way.
@@ -29,11 +33,14 @@ import java.util.Map;
 @Component("search_AutoMappingStrategy")
 public class AutoMappingStrategy implements FieldMappingStrategy {
 
-    protected AutoMapFieldMapperResolver autoMapFieldMapperResolver;
+    protected final PropertyValueExtractorProvider propertyValueExtractorProvider;
+    protected final FieldMapperProvider fieldMapperProvider;
 
     @Autowired
-    public AutoMappingStrategy(AutoMapFieldMapperResolver autoMapFieldMapperResolver) {
-        this.autoMapFieldMapperResolver = autoMapFieldMapperResolver;
+    public AutoMappingStrategy(PropertyValueExtractorProvider propertyValueExtractorProvider,
+                               FieldMapperProvider fieldMapperProvider) {
+        this.propertyValueExtractorProvider = propertyValueExtractorProvider;
+        this.fieldMapperProvider = fieldMapperProvider;
     }
 
     @Override
@@ -43,21 +50,65 @@ public class AutoMappingStrategy implements FieldMappingStrategy {
 
     @Override
     public boolean isSupported(MetaPropertyPath propertyPath) {
-        return autoMapFieldMapperResolver.hasFieldMapper(propertyPath)
-                && autoMapFieldMapperResolver.hasValueMapper(propertyPath);
+        return hasFieldMapper(propertyPath) && hasPropertyValueExtractor(propertyPath);
     }
 
     @Override
     public FieldConfiguration createFieldConfiguration(MetaPropertyPath propertyPath, Map<String, Object> parameters) {
-        FieldMapper fieldMapper = autoMapFieldMapperResolver.getFieldMapper(propertyPath)
+        FieldMapper fieldMapper = resolveFieldMapper(propertyPath)
                 .orElseThrow(() -> new RuntimeException("Property '" + propertyPath + "' is not supported"));
         ObjectNode jsonConfig = fieldMapper.createJsonConfiguration(parameters);
         return new NativeFieldConfiguration(jsonConfig);
     }
 
     @Override
-    public ValueMapper getValueMapper(MetaPropertyPath propertyPath) {
-        return autoMapFieldMapperResolver.getValueMapper(propertyPath)
+    public PropertyValueExtractor getPropertyValueExtractor(MetaPropertyPath propertyPath) {
+        return resolvePropertyValueExtractor(propertyPath)
                 .orElseThrow(() -> new RuntimeException("Property '" + propertyPath + "' is not supported"));
     }
+
+    protected boolean hasFieldMapper(MetaPropertyPath propertyPath) {
+        return resolveFieldMapper(propertyPath).isPresent();
+    }
+
+    protected boolean hasPropertyValueExtractor(MetaPropertyPath propertyPath) {
+        return resolvePropertyValueExtractor(propertyPath).isPresent();
+    }
+
+    protected Optional<FieldMapper> resolveFieldMapper(MetaPropertyPath propertyPath) {
+        FieldMapper fieldMapper = null;
+        if (propertyPath.getRange().isDatatype()) {
+            Datatype<?> datatype = propertyPath.getRange().asDatatype();
+            if (datatype instanceof StringDatatype) {
+                fieldMapper = fieldMapperProvider.getFieldMapper(TextFieldMapper.class);
+            } else if (datatype instanceof FileRefDatatype) {
+                fieldMapper = fieldMapperProvider.getFieldMapper(FileFieldMapper.class);
+            }
+        } else if (propertyPath.getRange().isClass()) {
+            fieldMapper = fieldMapperProvider.getFieldMapper(ReferenceFieldMapper.class);
+        } else if (propertyPath.getRange().isEnum()) {
+            fieldMapper = fieldMapperProvider.getFieldMapper(EnumFieldMapper.class);
+        }
+
+        return Optional.ofNullable(fieldMapper);
+    }
+
+    protected Optional<PropertyValueExtractor> resolvePropertyValueExtractor(MetaPropertyPath propertyPath) {
+        PropertyValueExtractor valueExtractor = null;
+        if (propertyPath.getRange().isDatatype()) {
+            Datatype<?> datatype = propertyPath.getRange().asDatatype();
+            if (datatype instanceof FileRefDatatype) {
+                valueExtractor = propertyValueExtractorProvider.getPropertyValueExtractor(FilePropertyValueExtractor.class);
+            } else {
+                valueExtractor = propertyValueExtractorProvider.getPropertyValueExtractor(SimplePropertyValueExtractor.class);
+            }
+        } else if (propertyPath.getRange().isClass()) {
+            valueExtractor = propertyValueExtractorProvider.getPropertyValueExtractor(ReferencePropertyValueExtractor.class);
+        } else if (propertyPath.getRange().isEnum()) {
+            valueExtractor = propertyValueExtractorProvider.getPropertyValueExtractor(EnumPropertyValueExtractor.class);
+        }
+        return Optional.ofNullable(valueExtractor);
+    }
+
+
 }

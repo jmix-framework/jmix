@@ -72,6 +72,8 @@ public class AnnotatedIndexDefinitionProcessor {
     protected FieldMappingStrategyProvider fieldMappingStrategyProvider;
     @Autowired
     protected InstanceNameProvider instanceNameProvider;
+    @Autowired
+    protected PropertyValueExtractorProvider propertyValueExtractorProvider;
 
     /**
      * Processes index definition interface marked with {@link JmixEntitySearchIndex} annotation
@@ -318,8 +320,9 @@ public class AnnotatedIndexDefinitionProcessor {
             fieldDescriptor.setMetaPropertyPath(propertyPath);
             fieldDescriptor.setStandalone(false); //todo implement standalone properties
             fieldDescriptor.setOrder(fieldMappingStrategy.getOrder());
-            fieldDescriptor.setValueMapper(fieldMappingStrategy.getValueMapper(propertyPath));
+            fieldDescriptor.setPropertyValueExtractor(fieldMappingStrategy.getPropertyValueExtractor(propertyPath));
             fieldDescriptor.setInstanceNameRelatedProperties(instanceNameRelatedProperties);
+            fieldDescriptor.setParameters(element.getParameters());
 
             FieldConfiguration fieldConfiguration = fieldMappingStrategy.createFieldConfiguration(propertyPath, element.getParameters());
             fieldDescriptor.setFieldConfiguration(fieldConfiguration);
@@ -339,7 +342,7 @@ public class AnnotatedIndexDefinitionProcessor {
 
         List<MetaPropertyPath> instanceNameRelatedProperties = resolveInstanceNameRelatedProperties(metaClass, null);
         displayedNameDescriptor.setInstanceNameRelatedProperties(instanceNameRelatedProperties);
-        displayedNameDescriptor.setValueMapper(new DisplayedNameValueMapper(metadataTools));
+        displayedNameDescriptor.setValueExtractor(propertyValueExtractorProvider.getPropertyValueExtractor(DisplayedNameValueExtractor.class));
 
         return displayedNameDescriptor;
     }

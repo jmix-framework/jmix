@@ -24,7 +24,7 @@ import java.util.Map;
 /**
  * Provide functionality for value extraction from entity instance.
  */
-public interface ValueMapper {
+public interface PropertyValueExtractor {
 
     /**
      * Extracts value from entity instance.

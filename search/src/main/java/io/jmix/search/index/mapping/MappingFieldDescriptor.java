@@ -20,10 +20,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.search.index.mapping.strategy.FieldConfiguration;
-import io.jmix.search.index.mapping.strategy.ValueMapper;
+import io.jmix.search.index.mapping.strategy.PropertyValueExtractor;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Contains details of single mapped field.
@@ -40,14 +42,13 @@ public class MappingFieldDescriptor {
 
     protected FieldConfiguration fieldConfiguration;
 
-    protected ValueMapper valueMapper;
+    protected PropertyValueExtractor propertyValueExtractor;
 
     protected int order;
 
     protected List<MetaPropertyPath> instanceNameRelatedProperties;
 
-    //todo runtime parameters
-
+    protected Map<String, Object> parameters = Collections.emptyMap();
 
     /**
      * Gets full property name in metamodel.
@@ -143,11 +144,19 @@ public class MappingFieldDescriptor {
      * @return value as json
      */
     public JsonNode getValue(Object entity) {
-        return valueMapper.getValue(entity, metaPropertyPath, Collections.emptyMap() /* runtime parameters */);
+        return propertyValueExtractor.getValue(entity, metaPropertyPath, getParameters());
     }
 
-    public void setValueMapper(ValueMapper valueMapper) {
-        this.valueMapper = valueMapper;
+    public void setPropertyValueExtractor(PropertyValueExtractor propertyValueExtractor) {
+        this.propertyValueExtractor = propertyValueExtractor;
+    }
+
+    public Map<String, Object> getParameters() {
+        return Collections.unmodifiableMap(parameters);
+    }
+
+    public void setParameters(Map<String, Object> parameters) {
+        this.parameters = new HashMap<>(parameters);
     }
 
     /**

@@ -20,16 +20,19 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Sets;
+import io.jmix.search.index.mapping.ParameterKeys;
+import org.springframework.stereotype.Component;
 
 import java.util.Map;
 import java.util.Set;
 
+@Component("search_FileFieldMapper")
 public class FileFieldMapper extends AbstractFieldMapper {
 
-    protected static final Set<String> supportedParameters = Sets.newHashSet("analyzer");
+    protected static final Set<String> supportedParameters = Sets.newHashSet(ParameterKeys.ANALYZER);
 
     @Override
-    public Set<String> getSupportedParameters() {
+    public Set<String> getSupportedMappingParameters() {
         return supportedParameters;
     }
 

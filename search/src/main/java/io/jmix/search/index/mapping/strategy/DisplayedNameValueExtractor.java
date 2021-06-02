@@ -20,15 +20,19 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import java.util.Map;
 
-public class DisplayedNameValueMapper implements ValueMapper {
+@Component("search_DisplayedNameValueExtractor")
+public class DisplayedNameValueExtractor implements PropertyValueExtractor {
 
     protected final MetadataTools metadataTools;
 
-    public DisplayedNameValueMapper(MetadataTools metadataTools) {
+    @Autowired
+    public DisplayedNameValueExtractor(MetadataTools metadataTools) {
         this.metadataTools = metadataTools;
     }
 

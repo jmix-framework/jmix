@@ -16,24 +16,26 @@
 
 package io.jmix.search.index.mapping.strategy;
 
-import com.google.common.collect.Sets;
-import io.jmix.search.index.mapping.ParameterKeys;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Set;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
-@Component("search_EnumFieldMapper")
-public class EnumFieldMapper extends SimpleFieldMapper {
+@Component("search_FieldMapperProvider")
+public class FieldMapperProvider {
 
-    protected static final Set<String> supportedParameters = Sets.newHashSet(ParameterKeys.ANALYZER);
+    protected Map<Class<? extends FieldMapper>, FieldMapper> registry;
 
-    @Override
-    protected String getElasticsearchDatatype() {
-        return "text";
+    @Autowired
+    public FieldMapperProvider(List<FieldMapper> fieldMappers) {
+        registry = fieldMappers.stream().collect(Collectors.toMap(FieldMapper::getClass, Function.identity()));
     }
 
-    @Override
-    public Set<String> getSupportedMappingParameters() {
-        return supportedParameters;
+    @SuppressWarnings("unchecked")
+    public <T extends FieldMapper> T getFieldMapper(Class<T> fieldMapperClass) {
+        return (T) registry.get(fieldMapperClass);
     }
 }

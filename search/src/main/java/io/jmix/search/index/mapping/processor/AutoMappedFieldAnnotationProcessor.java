@@ -18,6 +18,7 @@ package io.jmix.search.index.mapping.processor;
 
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.search.index.annotation.AutoMappedField;
+import io.jmix.search.index.mapping.ParameterKeys;
 import io.jmix.search.index.mapping.processor.MappingDefinition.MappingDefinitionBuilder;
 import io.jmix.search.index.mapping.strategy.AutoMappingStrategy;
 import io.jmix.search.index.mapping.strategy.FieldMappingStrategy;
@@ -50,8 +51,9 @@ public class AutoMappedFieldAnnotationProcessor extends AbstractFieldAnnotationP
     protected Map<String, Object> createParameters(AutoMappedField specificAnnotation) {
         HashMap<String, Object> parameters = new HashMap<>();
         if (StringUtils.isNotBlank(specificAnnotation.analyzer())) {
-            parameters.put("analyzer", specificAnnotation.analyzer());
+            parameters.put(ParameterKeys.ANALYZER, specificAnnotation.analyzer());
         }
+        parameters.put(ParameterKeys.INDEX_FILE_CONTENT, specificAnnotation.indexFileContent());
         return parameters;
     }
 

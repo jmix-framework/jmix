@@ -22,27 +22,32 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import io.jmix.core.CoreProperties;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
-public class EnumValueMapper extends AbstractValueMapper {
+@Component("search_EnumPropertyValueExtractor")
+public class EnumPropertyValueExtractor extends AbstractPropertyValueExtractor {
 
     protected final Messages messages;
     protected final CoreProperties coreProperties;
 
-    public EnumValueMapper(Messages messages, CoreProperties coreProperties) {
+    @Autowired
+    public EnumPropertyValueExtractor(Messages messages, CoreProperties coreProperties) {
         this.messages = messages;
         this.coreProperties = coreProperties;
     }
 
     @Override
-    protected boolean isSupported(Object entity, MetaPropertyPath propertyPath) {
+    protected boolean isSupported(Object entity, MetaPropertyPath propertyPath, Map<String, Object> parameters) {
         return propertyPath.getRange().isEnum();
     }
 
     @Override
-    protected JsonNode transformSingleValue(Object value) {
+    protected JsonNode transformSingleValue(Object value, Map<String, Object> parameters) {
         List<Locale> availableLocales = coreProperties.getAvailableLocales();
         ArrayNode arrayNode = JsonNodeFactory.instance.arrayNode();
         for (Locale locale : availableLocales) {
@@ -53,10 +58,10 @@ public class EnumValueMapper extends AbstractValueMapper {
     }
 
     @Override
-    protected JsonNode transformMultipleValues(Iterable<?> values) {
+    protected JsonNode transformMultipleValues(Iterable<?> values, Map<String, Object> parameters) {
         ArrayNode result = JsonNodeFactory.instance.arrayNode();
         for (Object value : values) {
-            result.addAll((ArrayNode) transformSingleValue(value));
+            result.addAll((ArrayNode) transformSingleValue(value, parameters));
         }
         return result;
     }

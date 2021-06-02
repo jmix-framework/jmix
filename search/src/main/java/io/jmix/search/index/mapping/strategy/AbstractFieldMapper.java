@@ -35,7 +35,7 @@ public abstract class AbstractFieldMapper implements FieldMapper {
      */
     protected Map<String, Object> createEffectiveParameters(Map<String, Object> rawParameters) {
         return rawParameters.entrySet().stream()
-                .filter((entry) -> getSupportedParameters().contains(entry.getKey()))
+                .filter((entry) -> getSupportedMappingParameters().contains(entry.getKey()))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 }

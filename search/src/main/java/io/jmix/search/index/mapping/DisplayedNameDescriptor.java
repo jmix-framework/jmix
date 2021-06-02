@@ -18,7 +18,7 @@ package io.jmix.search.index.mapping;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.search.index.mapping.strategy.DisplayedNameValueMapper;
+import io.jmix.search.index.mapping.strategy.DisplayedNameValueExtractor;
 import io.jmix.search.index.mapping.strategy.FieldConfiguration;
 import io.jmix.search.utils.Constants;
 
@@ -29,7 +29,7 @@ public class DisplayedNameDescriptor {
 
     protected FieldConfiguration fieldConfiguration;
 
-    protected DisplayedNameValueMapper valueMapper;
+    protected DisplayedNameValueExtractor propertyValueExtractor;
 
     protected List<MetaPropertyPath> instanceNameRelatedProperties;
 
@@ -45,12 +45,8 @@ public class DisplayedNameDescriptor {
         this.fieldConfiguration = fieldConfiguration;
     }
 
-    public DisplayedNameValueMapper getValueMapper() {
-        return valueMapper;
-    }
-
-    public void setValueMapper(DisplayedNameValueMapper valueMapper) {
-        this.valueMapper = valueMapper;
+    public void setValueExtractor(DisplayedNameValueExtractor propertyValueExtractor) {
+        this.propertyValueExtractor = propertyValueExtractor;
     }
 
     public List<MetaPropertyPath> getInstanceNameRelatedProperties() {
@@ -62,6 +58,6 @@ public class DisplayedNameDescriptor {
     }
 
     public JsonNode getValue(Object entity) {
-        return valueMapper.getValue(entity, null, Collections.emptyMap());
+        return propertyValueExtractor.getValue(entity, null, Collections.emptyMap());
     }
 }

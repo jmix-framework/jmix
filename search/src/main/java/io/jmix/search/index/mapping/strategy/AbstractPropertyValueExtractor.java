@@ -17,6 +17,7 @@
 package io.jmix.search.index.mapping.strategy;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.NullNode;
 import io.jmix.core.Entity;
 import io.jmix.core.entity.EntityValues;
@@ -29,17 +30,19 @@ import java.util.Map;
 import java.util.stream.StreamSupport;
 
 /**
- * Base class for {@link ValueMapper} implementations.
+ * Base class for {@link PropertyValueExtractor} implementations.
  */
-public abstract class AbstractValueMapper implements ValueMapper {
+public abstract class AbstractPropertyValueExtractor implements PropertyValueExtractor {
+
+    protected static final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     public JsonNode getValue(Object entity, MetaPropertyPath propertyPath, Map<String, Object> parameters) {
         JsonNode result = NullNode.getInstance();
-        if (isSupported(entity, propertyPath)) {
-            Object value = getFlatValueOrNull(entity, propertyPath);
+        if (isSupported(entity, propertyPath, parameters)) {
+            Object value = getFlatValueOrNull(entity, propertyPath, parameters);
             if (value != null) {
-                result = processValue(value);
+                result = processValue(value, parameters);
             }
         }
         return result;
@@ -52,7 +55,7 @@ public abstract class AbstractValueMapper implements ValueMapper {
      * @param propertyPath property
      * @return true if value mapper supports this property, false otherwise
      */
-    protected abstract boolean isSupported(Object entity, MetaPropertyPath propertyPath);
+    protected abstract boolean isSupported(Object entity, MetaPropertyPath propertyPath, Map<String, Object> parameters);
 
     /**
      * Transform extracted value of single-value property into result json.
@@ -60,7 +63,7 @@ public abstract class AbstractValueMapper implements ValueMapper {
      * @param value value of single-value property
      * @return value as json
      */
-    protected abstract JsonNode transformSingleValue(Object value);
+    protected abstract JsonNode transformSingleValue(Object value, Map<String, Object> parameters);
 
     /**
      * Transform extracted value of multi-value property into result json.
@@ -68,23 +71,23 @@ public abstract class AbstractValueMapper implements ValueMapper {
      * @param values values of multi-value property
      * @return value as json
      */
-    protected abstract JsonNode transformMultipleValues(Iterable<?> values);
+    protected abstract JsonNode transformMultipleValues(Iterable<?> values, Map<String, Object> parameters);
 
     protected boolean isCollection(Object value) {
         return !(value instanceof Entity) && value instanceof Iterable;
     }
 
-    protected JsonNode processValue(Object value) {
+    protected JsonNode processValue(Object value, Map<String, Object> parameters) {
         if (isCollection(value)) {
-            JsonNode result = transformMultipleValues((Iterable<?>) value);
+            JsonNode result = transformMultipleValues((Iterable<?>) value, parameters);
             return result.isEmpty() ? NullNode.getInstance() : result;
         } else {
-            return transformSingleValue(value);
+            return transformSingleValue(value, parameters);
         }
     }
 
     @Nullable
-    protected Object getFlatValueOrNull(Object entity, MetaPropertyPath propertyPath) {
+    protected Object getFlatValueOrNull(Object entity, MetaPropertyPath propertyPath, Map<String, Object> parameters) {
         String[] properties = propertyPath.getPropertyNames();
 
         Object currentValue = null;

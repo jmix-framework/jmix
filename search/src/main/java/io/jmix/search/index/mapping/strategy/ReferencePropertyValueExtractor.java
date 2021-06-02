@@ -23,22 +23,28 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.search.utils.Constants;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-public class ReferenceValueMapper extends AbstractValueMapper {
+import java.util.Map;
+
+@Component("search_ReferencePropertyValueExtractor")
+public class ReferencePropertyValueExtractor extends AbstractPropertyValueExtractor {
 
     protected final MetadataTools metadataTools;
 
-    public ReferenceValueMapper(MetadataTools metadataTools) {
+    @Autowired
+    public ReferencePropertyValueExtractor(MetadataTools metadataTools) {
         this.metadataTools = metadataTools;
     }
 
     @Override
-    protected boolean isSupported(Object entity, MetaPropertyPath propertyPath) {
+    protected boolean isSupported(Object entity, MetaPropertyPath propertyPath, Map<String, Object> parameters) {
         return propertyPath.getRange().isClass();
     }
 
     @Override
-    protected JsonNode transformSingleValue(Object value) {
+    protected JsonNode transformSingleValue(Object value, Map<String, Object> parameters) {
         String instanceName = metadataTools.getInstanceName(value);
         ObjectNode result = JsonNodeFactory.instance.objectNode();
         result.put(Constants.INSTANCE_NAME_FIELD, instanceName);
@@ -46,7 +52,7 @@ public class ReferenceValueMapper extends AbstractValueMapper {
     }
 
     @Override
-    protected JsonNode transformMultipleValues(Iterable<?> values) {
+    protected JsonNode transformMultipleValues(Iterable<?> values, Map<String, Object> parameters) {
         ArrayNode arrayNode = JsonNodeFactory.instance.arrayNode();
         for (Object value : values) {
             arrayNode.add(metadataTools.getInstanceName(value));

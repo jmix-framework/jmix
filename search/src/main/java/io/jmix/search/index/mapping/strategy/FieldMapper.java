@@ -27,11 +27,12 @@ import java.util.Set;
 public interface FieldMapper {
 
     /**
-     * Defines parameters supported by this field mapper.
+     * Defines Elasticsearch-native parameters supported by this field mapper.
+     * They will be used to build field configuration.
      *
      * @return names of supported parameters
      */
-    Set<String> getSupportedParameters();
+    Set<String> getSupportedMappingParameters();
 
     /**
      * Creates field configuration as Elasticsearch-native json.

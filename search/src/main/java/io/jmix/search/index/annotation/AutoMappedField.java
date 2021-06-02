@@ -52,6 +52,13 @@ public @interface AutoMappedField {
      */
     String analyzer() default "";
 
+    /**
+     * Defines if content of file found in matched File properties should be indexed.
+     *
+     * @return True if both file name and content are indexed (default) or false if only file name is indexed
+     */
+    boolean indexFileContent() default true;
+
     @Target(ElementType.METHOD)
     @Retention(RetentionPolicy.RUNTIME)
     @interface Container {

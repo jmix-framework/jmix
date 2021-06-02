@@ -17,18 +17,21 @@
 package io.jmix.search.index.mapping.strategy;
 
 import com.google.common.collect.Sets;
+import io.jmix.search.index.mapping.ParameterKeys;
+import org.springframework.stereotype.Component;
 
 import java.util.Set;
 
 /**
  * Maps field as analyzed text
  */
+@Component("search_TextFieldMapper")
 public class TextFieldMapper extends SimpleFieldMapper {
 
-    protected static final Set<String> supportedParameters = Sets.newHashSet("analyzer");
+    protected static final Set<String> supportedParameters = Sets.newHashSet(ParameterKeys.ANALYZER);
 
     @Override
-    public Set<String> getSupportedParameters() {
+    public Set<String> getSupportedMappingParameters() {
         return supportedParameters;
     }
 

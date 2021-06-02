@@ -17,27 +17,28 @@
 package io.jmix.search.index.mapping.strategy;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import org.springframework.stereotype.Component;
 
-public class SimpleValueMapper extends AbstractValueMapper {
+import java.util.Map;
 
-    protected static final ObjectMapper objectMapper = new ObjectMapper();
+@Component("search_SimplePropertyValueExtractor")
+public class SimplePropertyValueExtractor extends AbstractPropertyValueExtractor {
 
     @Override
-    protected boolean isSupported(Object entity, MetaPropertyPath propertyPath) {
+    protected boolean isSupported(Object entity, MetaPropertyPath propertyPath, Map<String, Object> parameters) {
         return propertyPath.getRange().isDatatype() || propertyPath.getRange().isEnum();
     }
 
     @Override
-    protected JsonNode transformSingleValue(Object value) {
+    protected JsonNode transformSingleValue(Object value, Map<String, Object> parameters) {
         return objectMapper.convertValue(value, JsonNode.class);
     }
 
     @Override
-    protected JsonNode transformMultipleValues(Iterable<?> values) {
+    protected JsonNode transformMultipleValues(Iterable<?> values, Map<String, Object> parameters) {
         ArrayNode result = JsonNodeFactory.instance.arrayNode();
         for (Object value : values) {
             result.add(objectMapper.convertValue(value, JsonNode.class));

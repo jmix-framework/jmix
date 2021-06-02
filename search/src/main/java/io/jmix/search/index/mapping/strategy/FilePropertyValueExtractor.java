@@ -25,24 +25,29 @@ import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.impl.FileRefDatatype;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.search.exception.FileParseException;
+import io.jmix.search.index.mapping.ParameterKeys;
 import io.jmix.search.utils.FileProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-public class FileValueMapper extends AbstractValueMapper {
+import java.util.Map;
 
-    private static final Logger log = LoggerFactory.getLogger(FileValueMapper.class);
+@Component("search_FilePropertyValueExtractor")
+public class FilePropertyValueExtractor extends AbstractPropertyValueExtractor {
 
-    protected final boolean mapFileContent;
+    private static final Logger log = LoggerFactory.getLogger(FilePropertyValueExtractor.class);
+
     protected final FileProcessor fileProcessor;
 
-    public FileValueMapper(boolean mapFileContent, FileProcessor fileProcessor) {
-        this.mapFileContent = mapFileContent;
+    @Autowired
+    public FilePropertyValueExtractor(FileProcessor fileProcessor) {
         this.fileProcessor = fileProcessor;
     }
 
     @Override
-    protected boolean isSupported(Object entity, MetaPropertyPath propertyPath) {
+    protected boolean isSupported(Object entity, MetaPropertyPath propertyPath, Map<String, Object> parameters) {
         if (propertyPath.getRange().isDatatype()) {
             Datatype<?> datatype = propertyPath.getRange().asDatatype();
             return datatype instanceof FileRefDatatype;
@@ -52,26 +57,30 @@ public class FileValueMapper extends AbstractValueMapper {
     }
 
     @Override
-    protected JsonNode transformSingleValue(Object value) {
-        return processFileRef((FileRef) value);
+    protected JsonNode transformSingleValue(Object value, Map<String, Object> parameters) {
+        return processFileRef((FileRef) value, parameters);
     }
 
     @Override
-    protected JsonNode transformMultipleValues(Iterable<?> values) {
+    protected JsonNode transformMultipleValues(Iterable<?> values, Map<String, Object> parameters) {
         ArrayNode result = JsonNodeFactory.instance.arrayNode();
         for (Object value : (values)) {
-            result.add(processFileRef((FileRef) value));
+            result.add(processFileRef((FileRef) value, parameters));
         }
         return result;
     }
 
-    protected ObjectNode processFileRef(FileRef fileRef) {
+    protected ObjectNode processFileRef(FileRef fileRef, Map<String, Object> parameters) {
         ObjectNode result = JsonNodeFactory.instance.objectNode();
         result.put("_file_name", fileRef.getFileName());
-        if (mapFileContent) {
+        if (isIndexFileContent(parameters)) {
             addFileContent(result, fileRef);
         }
         return result;
+    }
+
+    protected boolean isIndexFileContent(Map<String, Object> parameters) {
+        return (boolean) parameters.getOrDefault(ParameterKeys.INDEX_FILE_CONTENT, true);
     }
 
     protected void addFileContent(ObjectNode node, FileRef fileRef) {

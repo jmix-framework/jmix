@@ -15,7 +15,16 @@
  */
 package io.jmix.ui.component;
 
+import io.jmix.ui.meta.CanvasBehaviour;
+import io.jmix.ui.meta.PropertiesConstraint;
+import io.jmix.ui.meta.PropertiesGroup;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioComponent;
+import io.jmix.ui.meta.StudioProperties;
+import io.jmix.ui.meta.StudioProperty;
+
 import javax.annotation.Nullable;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.Collection;
 
 /**
@@ -23,6 +32,28 @@ import java.util.Collection;
  *
  * @param <V> value and options type for the component
  */
+@StudioComponent(
+        caption = "TwinColumn",
+        category = "Components",
+        xmlElement = "twinColumn",
+        icon = "io/jmix/ui/icon/component/twinColumn.svg",
+        canvasBehaviour = CanvasBehaviour.TWIN_COLUMN,
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/twin-column.html"
+)
+@StudioProperties(
+        properties = {
+                @StudioProperty(name = "dataContainer", type = PropertyType.DATACONTAINER_REF),
+                @StudioProperty(name = "property", type = PropertyType.PROPERTY_PATH_REF),
+                @StudioProperty(name = "optionsContainer", type = PropertyType.COLLECTION_DATACONTAINER_REF),
+                @StudioProperty(name = "captionProperty", type = PropertyType.PROPERTY_PATH_REF)
+        },
+        groups = {
+                @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                        properties = {"dataContainer", "property"}),
+                @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                        properties = {"optionsContainer", "captionProperty"}),
+        }
+)
 public interface TwinColumn<V> extends OptionsField<Collection<V>, V>, Component.Focusable, HasOptionStyleProvider<V> {
 
     String NAME = "twinColumn";
@@ -37,6 +68,8 @@ public interface TwinColumn<V> extends OptionsField<Collection<V>, V>, Component
      *
      * @param rows number of visible rows
      */
+    @StudioProperty(defaultValue = "0")
+    @PositiveOrZero
     void setRows(int rows);
 
     /**
@@ -58,6 +91,7 @@ public interface TwinColumn<V> extends OptionsField<Collection<V>, V>, Component
      *
      * @param enabled true if buttons should be enabled
      */
+    @StudioProperty(name = "addAllBtnEnabled", defaultValue = "false")
     void setAddAllBtnEnabled(boolean enabled);
 
     /**
@@ -66,14 +100,15 @@ public interface TwinColumn<V> extends OptionsField<Collection<V>, V>, Component
     boolean isAddAllBtnEnabled();
 
     /**
-     * Set caption for the left column.
+     * Sets caption for the left column.
      *
-     * @param leftColumnCaption
+     * @param leftColumnCaption a caption for the left column
      */
+    @StudioProperty(type = PropertyType.LOCALIZED_STRING)
     void setLeftColumnCaption(@Nullable String leftColumnCaption);
 
     /**
-     * Return caption of the left column.
+     * Returns caption of the left column.
      *
      * @return caption text or null if not set.
      */
@@ -81,14 +116,15 @@ public interface TwinColumn<V> extends OptionsField<Collection<V>, V>, Component
     String getLeftColumnCaption();
 
     /**
-     * Set caption for the right column.
+     * Sets caption for the right column.
      *
-     * @param rightColumnCaption
+     * @param rightColumnCaption a caption for the right column
      */
+    @StudioProperty(type = PropertyType.LOCALIZED_STRING)
     void setRightColumnCaption(@Nullable String rightColumnCaption);
 
     /**
-     * Return caption of the right column.
+     * Returns caption of the right column.
      *
      * @return caption text or null if not set.
      */

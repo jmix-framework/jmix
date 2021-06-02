@@ -113,6 +113,11 @@ public enum CanvasBehaviour {
     TIME_FIELD,
 
     /**
+     * Component is shown on canvas as a twinColumn.
+     */
+    TWIN_COLUMN,
+
+    /**
      * Component is shown on canvas as a valuePicker.
      */
     VALUE_PICKER

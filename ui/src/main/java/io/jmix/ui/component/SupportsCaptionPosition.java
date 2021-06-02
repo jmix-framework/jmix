@@ -17,6 +17,7 @@
 package io.jmix.ui.component;
 
 import io.jmix.core.metamodel.datatype.impl.EnumClass;
+import io.jmix.ui.meta.StudioProperty;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
@@ -36,6 +37,7 @@ public interface SupportsCaptionPosition {
      *
      * @param position component caption position
      */
+    @StudioProperty(name = "captionPosition", defaultValue = "LEFT", options = {"LEFT, TOP"})
     void setCaptionPosition(CaptionPosition position);
 
     /**

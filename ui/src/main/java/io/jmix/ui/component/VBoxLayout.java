@@ -16,9 +16,23 @@
 
 package io.jmix.ui.component;
 
+import io.jmix.ui.meta.CanvasBehaviour;
+import io.jmix.ui.meta.ContainerType;
+import io.jmix.ui.meta.StudioComponent;
+
 /**
  * Component container, which shows the subcomponents in the order of their addition (vertically).
  */
+@StudioComponent(
+        caption = "VBox",
+        category = "Containers",
+        xmlElement = "vbox",
+        icon = "io/jmix/ui/icon/container/vbox.svg",
+        canvasBehaviour = CanvasBehaviour.CONTAINER,
+        containerType = ContainerType.VERTICAL,
+        unsupportedProperties = "width",
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/containers/box-layout.html#vbox"
+)
 public interface VBoxLayout extends BoxLayout {
     String NAME = "vbox";
 }

@@ -16,6 +16,8 @@
 
 package io.jmix.ui.component;
 
+import io.jmix.ui.meta.StudioProperty;
+
 /**
  * An interface implemented by components that can have a required indicator.
  */
@@ -33,5 +35,6 @@ public interface HasRequiredIndicator {
      *
      * @param visible {@code true} if a required indicator should be shown, {@code false} otherwise
      */
+    @StudioProperty(name = "requiredIndicatorVisible", defaultValue = "false")
     void setRequiredIndicatorVisible(boolean visible);
 }

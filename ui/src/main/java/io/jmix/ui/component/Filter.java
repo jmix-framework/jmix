@@ -19,14 +19,20 @@ package io.jmix.ui.component;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.querycondition.LogicalCondition;
+import io.jmix.ui.UiComponentProperties;
 import io.jmix.ui.app.filter.condition.AddConditionScreen;
 import io.jmix.ui.component.filter.configuration.DesignTimeConfiguration;
 import io.jmix.ui.component.filter.configuration.RunTimeConfiguration;
+import io.jmix.ui.meta.CanvasIconSize;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioComponent;
+import io.jmix.ui.meta.StudioProperties;
+import io.jmix.ui.meta.StudioProperty;
 import io.jmix.ui.model.DataLoader;
-import io.jmix.ui.UiComponentProperties;
 import io.jmix.ui.xml.layout.ComponentLoader;
 
 import javax.annotation.Nullable;
+import javax.validation.constraints.Positive;
 import java.util.EventObject;
 import java.util.List;
 import java.util.function.Consumer;
@@ -35,6 +41,20 @@ import java.util.function.Predicate;
 /**
  * Generic filter component.
  */
+@StudioComponent(
+        caption = "Filter",
+        category = "Components",
+        xmlElement = "filter",
+        icon = "io/jmix/ui/icon/component/filter.svg",
+        canvasIconSize = CanvasIconSize.LARGE,
+        unsupportedProperties = "width",
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/filter.html"
+)
+@StudioProperties(
+        properties = {
+                @StudioProperty(name = "id", type = PropertyType.COMPONENT_ID, required = true)
+        }
+)
 public interface Filter extends Component, Component.BelongToFrame, Component.HasDescription, Component.HasCaption,
         Component.HasIcon, HasHtmlCaption, HasHtmlDescription, HasContextHelp, HasHtmlSanitizer, Collapsable,
         ActionsHolder, SupportsCaptionPosition, SupportsColumnsCount {
@@ -56,6 +76,8 @@ public interface Filter extends Component, Component.BelongToFrame, Component.Ha
      *
      * @param columnsCount the number of columns to be displayed on one row
      */
+    @StudioProperty
+    @Positive
     @Override
     void setColumnsCount(int columnsCount);
 
@@ -92,6 +114,7 @@ public interface Filter extends Component, Component.BelongToFrame, Component.Ha
      *
      * @param dataLoader a {@link DataLoader} to set
      */
+    @StudioProperty(type = PropertyType.DATALOADER_REF)
     void setDataLoader(DataLoader dataLoader);
 
     /**
@@ -108,6 +131,7 @@ public interface Filter extends Component, Component.BelongToFrame, Component.Ha
      *                  applied to the {@link DataLoader} when the value
      *                  component value is changed
      */
+    @StudioProperty
     void setAutoApply(boolean autoApply);
 
     /**
@@ -357,7 +381,7 @@ public interface Filter extends Component, Component.BelongToFrame, Component.Ha
          * This allows the default values to be saved and displayed in the configuration editor.
          *
          * @param parameterName a parameter name of filter component
-         * @param defaultValue a default value
+         * @param defaultValue  a default value
          */
         void setFilterComponentDefaultValue(String parameterName, @Nullable Object defaultValue);
 

@@ -202,5 +202,10 @@ public enum PropertyType {
     /**
      * Date format.
      */
-    DATE_FORMAT
+    DATE_FORMAT,
+
+    /**
+     * Margin info.
+     */
+    MARGIN
 }

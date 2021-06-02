@@ -17,6 +17,7 @@
 package io.jmix.ui.component;
 
 import io.jmix.core.common.event.Subscription;
+import io.jmix.ui.meta.StudioProperty;
 
 import java.util.EventObject;
 import java.util.function.Consumer;
@@ -26,9 +27,13 @@ import java.util.function.Consumer;
  */
 public interface Collapsable extends Component {
     boolean isExpanded();
+
+    @StudioProperty(name = "collapsed", defaultValue = "false")
     void setExpanded(boolean expanded);
 
     boolean isCollapsable();
+
+    @StudioProperty(defaultValue = "true")
     void setCollapsable(boolean collapsable);
 
     Subscription addExpandedStateChangeListener(Consumer<ExpandedStateChangeEvent> listener);

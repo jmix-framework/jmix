@@ -16,6 +16,9 @@
 
 package io.jmix.ui.component;
 
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioProperty;
+
 /**
  * A class that implements this interface can have indentation between the outer borders and the container content.
  */
@@ -28,6 +31,7 @@ public interface HasMargin {
         setMargin(new MarginInfo(topEnable, rightEnable, bottomEnable, leftEnable));
     }
 
+    @StudioProperty(name = "margin", type = PropertyType.MARGIN, defaultValue = "false")
     void setMargin(MarginInfo marginInfo);
     MarginInfo getMargin();
 }

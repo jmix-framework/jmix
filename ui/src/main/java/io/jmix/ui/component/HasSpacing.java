@@ -16,10 +16,14 @@
 
 package io.jmix.ui.component;
 
+import io.jmix.ui.meta.StudioProperty;
+
 /**
  * A class that implements this interface can have space between child components.
  */
 public interface HasSpacing {
+    @StudioProperty(defaultValue = "false", initialValue = "true")
     void setSpacing(boolean enabled);
+
     boolean getSpacing();
 }

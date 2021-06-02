@@ -18,6 +18,12 @@ package io.jmix.ui.component;
 
 import elemental.json.JsonArray;
 import elemental.json.JsonValue;
+import io.jmix.ui.meta.CanvasBehaviour;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioCollection;
+import io.jmix.ui.meta.StudioComponent;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioProperty;
 
 import javax.annotation.Nullable;
 import java.util.EventObject;
@@ -27,6 +33,14 @@ import java.util.function.Consumer;
 /**
  * A JavaScript wrapper.
  */
+@StudioComponent(
+        caption = "JavaScriptComponent",
+        category = "Containers",
+        xmlElement = "jsComponent",
+        icon = "io/jmix/ui/icon/container/jsComponent.svg",
+        canvasBehaviour = CanvasBehaviour.BOX,
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/js-component.html"
+)
 public interface JavaScriptComponent extends Component,
         Component.HasCaption, Component.HasDescription, Component.HasIcon, Component.BelongToFrame,
         HasContextHelp, HasRequiredIndicator {
@@ -49,6 +63,16 @@ public interface JavaScriptComponent extends Component,
      *
      * @param dependencies dependencies to set
      */
+    @StudioCollection(
+            xmlElement = "dependencies",
+            itemCaption = "Dependency",
+            itemXmlElement = "dependency",
+            itemProperties = {
+                    @StudioProperty(name = "path", type = PropertyType.STRING, required = true),
+                    @StudioProperty(name = "type", type = PropertyType.ENUMERATION,
+                            options = {"JAVASCRIPT", "STYLESHEET"})
+            }
+    )
     void setDependencies(List<ClientDependency> dependencies);
 
     /**
@@ -90,6 +114,7 @@ public interface JavaScriptComponent extends Component,
      *
      * @param initFunctionName an initialization function name
      */
+    @StudioProperty
     void setInitFunctionName(String initFunctionName);
 
     /**

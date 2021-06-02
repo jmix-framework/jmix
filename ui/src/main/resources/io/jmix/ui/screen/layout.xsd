@@ -4070,8 +4070,6 @@
                 <xs:attribute name="collapsed" type="xs:boolean"/>
                 <xs:attribute name="columnsCount" type="xs:int"/>
                 <xs:attribute name="captionPosition" type="captionPositionType"/>
-
-                <xs:attribute name="margin" type="xs:string"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

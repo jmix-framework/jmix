@@ -47,6 +47,13 @@ public class UserEdit extends StandardEditor<User> {
     }
 
     @Subscribe
+    public void onAfterShow(AfterShowEvent event) {
+        if (entityStates.isNew(getEditedEntity())) {
+            usernameField.focus();
+        }
+    }
+
+    @Subscribe
     protected void onBeforeCommit(BeforeCommitChangesEvent event) {
         if (entityStates.isNew(getEditedEntity())) {
             if (!Objects.equals(passwordField.getValue(), confirmPasswordField.getValue())) {

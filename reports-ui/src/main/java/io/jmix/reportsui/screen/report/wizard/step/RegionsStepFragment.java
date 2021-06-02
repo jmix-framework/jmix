@@ -148,7 +148,12 @@ public class RegionsStepFragment extends StepFragment {
 
     @Override
     public String getDescription() {
-        return messages.getMessage(getClass(), "addPropertiesAndTableAreas");
+        if (getReportTypeGenerate() != null && getReportTypeGenerate().isList()) {
+            MetaClass entityMetaClass = metadata.getClass(reportDataDc.getItem().getEntityName());
+            return messages.formatMessage(getClass(), "regionTabulatedMessage", messageTools.getEntityCaption(entityMetaClass));
+        } else {
+            return messages.getMessage(getClass(), "addPropertiesAndTableAreas");
+        }
     }
 
     @Install(to = "regionsTable.attributes", subject = "columnGenerator")

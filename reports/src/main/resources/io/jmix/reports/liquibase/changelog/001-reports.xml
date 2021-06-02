@@ -40,14 +40,8 @@
                 <constraints nullable="false"/>
             </column>
             <column name="CODE" type="varchar(255)"/>
-            <column name="LOCALE_NAMES" type="varchar(50)"/>
+            <column name="LOCALE_NAMES" type="clob"/>
         </createTable>
-
-        <addUniqueConstraint
-                columnNames="TITLE, SYS_TENANT_ID, DELETE_TS"
-                constraintName="REPORT_GROUP_UNIQ_TITLE"
-                tableName="REPORT_GROUP"
-        />
 
         <createTable tableName="REPORT_REPORT">
             <column name="ID" type="${uuid.type}">
@@ -68,7 +62,7 @@
             </column>
             <column name="CODE" type="varchar(255)"/>
             <column name="DESCRIPTION" type="varchar(500)"/>
-            <column name="LOCALE_NAMES" type="varchar(50)"/>
+            <column name="LOCALE_NAMES" type="clob"/>
             <column name="GROUP_ID" type="${uuid.type}">
                 <constraints nullable="false"
                              foreignKeyName="FK_REPORT_TO_REPORT_GROUP"
@@ -76,7 +70,7 @@
             </column>
             <column name="REPORT_TYPE" type="integer"/>
             <column name="DEFAULT_TEMPLATE_ID" type="${uuid.type}"/>
-            <column name="XML" type="longvarchar"/>
+            <column name="XML" type="clob"/>
             <column name="ROLES_IDX" type="varchar(1000)"/>
             <column name="SCREENS_IDX" type="varchar(1000)"/>
             <column name="INPUT_ENTITY_TYPES_IDX" type="varchar(1000)"/>
@@ -84,12 +78,6 @@
             <column name="IS_SYSTEM" type="boolean" defaultValue="false"/>
             <column name="SYS_TENANT_ID" type="varchar(255)"/>
         </createTable>
-
-        <addUniqueConstraint
-                columnNames="NAME, SYS_TENANT_ID, DELETE_TS"
-                constraintName="IDX_REPORT_UN_NAME_TENANT_ID"
-                tableName="REPORT_REPORT"
-        />
 
         <createTable tableName="REPORT_TEMPLATE">
             <column name="ID" type="${uuid.type}">
@@ -105,7 +93,9 @@
             <column name="DELETE_TS" type="datetime"/>
             <column name="DELETED_BY" type="varchar(50)"/>
 
-            <column name="REPORT_ID" type="${uuid.type}"/>
+            <column name="REPORT_ID" type="${uuid.type}">
+                <constraints nullable="false"/>
+            </column>
           
             <column name="CODE" type="varchar(50)"/>
             <column name="OUTPUT_TYPE" type="integer" defaultValue="0">
@@ -115,10 +105,10 @@
             <column name="IS_ALTERABLE_OUTPUT" type="boolean" defaultValue="false"/>
             <column name="IS_GROOVY" type="boolean" defaultValue="false"/>
             <column name="CUSTOM_DEFINED_BY" type="integer" defaultValue="100"/>
-            <column name="CUSTOM_CLASS" type="longvarchar"/>
+            <column name="CUSTOM_CLASS" type="clob"/>
             <column name="OUTPUT_NAME_PATTERN" type="varchar(255)"/>
             <column name="NAME" type="varchar(500)"/>
-            <column name="CONTENT" type="longvarbinary"/>
+            <column name="CONTENT" type="${byte_array.type}"/>
         </createTable>
 
         <addForeignKeyConstraint baseTableName="REPORT_REPORT"
@@ -126,6 +116,12 @@
                                  constraintName="FK_REPORT_TO_DEF_TEMPLATE"
                                  referencedTableName="REPORT_TEMPLATE"
                                  referencedColumnNames="ID"/>
+
+        <addForeignKeyConstraint baseTableName="REPORT_TEMPLATE"
+                                 baseColumnNames="REPORT_ID"
+                                 constraintName="FK_REPORT_TEMPLATE_TO_REPORT"
+                                 referencedTableName="REPORT_REPORT"
+                                 referencedColumnNames="ID" onDelete="CASCADE"/>
 
         <createTable tableName="REPORT_EXECUTION">
             <column name="ID" type="${uuid.type}">
@@ -135,9 +131,8 @@
             <column name="CREATED_BY" type="varchar(50)"/>
 
             <column name="REPORT_ID" type="${uuid.type}">
-                <constraints nullable="false"
-                             foreignKeyName="FK_REPORT_EXEC_TO_REPORT"
-                             references="REPORT_REPORT(ID)"/>
+                <constraints foreignKeyName="FK_REPORT_EXEC_TO_REPORT"
+                             references="REPORT_REPORT(ID)" />
             </column>
             <column name="REPORT_NAME" type="varchar(255)">
                 <constraints nullable="false"/>
@@ -152,8 +147,8 @@
             <column name="FINISH_TIME" type="datetime"/>
             <column name="IS_SUCCESS" type="boolean" defaultValue="false"/>
             <column name="CANCELLED" type="boolean" defaultValue="false"/>
-            <column name="PARAMS" type="varchar(100)"/>
-            <column name="ERROR_MESSAGE" type="varchar(500)"/>
+            <column name="PARAMS" type="clob"/>
+            <column name="ERROR_MESSAGE" type="clob"/>
             <column name="SERVER_ID" type="varchar(50)"/>
             <column name="OUTPUT_DOCUMENT" type="varchar(255)"/>
         </createTable>
@@ -174,7 +169,9 @@
             <column name="VERSION" value="0"/>
             <column name="TITLE" value="General"/>
             <column name="CODE" value="ReportGroup.default"/>
-            <column name="LOCALE_NAMES" value="'en=General\nru=Общие'"/>
+            <column name="LOCALE_NAMES">
+                <![CDATA[en=General
+ru=Общие]]></column>
         </insert>
 
         <insert tableName="REPORT_GROUP" dbms="oracle, mysql, mariadb">
@@ -185,44 +182,17 @@
             <column name="VERSION" value="0"/>
             <column name="TITLE" value="General"/>
             <column name="CODE" value="ReportGroup.default"/>
-            <column name="LOCALE_NAMES" value="'en=General\nru=Общие'"/>
+            <column name="LOCALE_NAMES">
+                <![CDATA[en=General
+ru=Общие]]></column>
         </insert>
     </changeSet>
 
     <changeSet id="2" author="reports" context="!cuba">
-        <update tableName="REPORT_GROUP" dbms="postgresql, mssql, hsqldb">
-            <column name="LOCALE_NAMES">
-                en=General
-ru=Общие
-            </column>
-            <where>id = '4e083530-0b9c-11e1-9b41-6bdaa41bff94'</where>
-        </update>
-
-        <update tableName="REPORT_GROUP" dbms="oracle, mysql, mariadb">
-            <column name="LOCALE_NAMES">
-                en=General
-ru=Общие
-            </column>
-            <where>id = '4e0835300b9c11e19b416bdaa41bff94'</where>
-        </update>
-    </changeSet>
-    
-    <changeSet id="3" author="reports" context="!cuba">
-        <addForeignKeyConstraint baseTableName="REPORT_TEMPLATE" baseColumnNames="REPORT_ID" constraintName="FK_REPORT_TEMPLATE_TO_REPORT"
-                                 referencedTableName="REPORT_REPORT"
-                                 referencedColumnNames="ID" onDelete="CASCADE"/>
-        <addNotNullConstraint tableName="REPORT_TEMPLATE" columnName="REPORT_ID"/>
-    </changeSet>
-
-    <changeSet id="4" author="reports" context="!cuba">
         <dropColumn tableName="REPORT_EXECUTION" columnName="SERVER_ID"/>
     </changeSet>
     
-    <changeSet id="5" author="reports" context="!cuba">
-        <modifyDataType tableName="REPORT_EXECUTION" columnName="PARAMS" newDataType="clob"/>
-    </changeSet>
-    
-    <changeSet id="6" author="reports" context="!cuba">
+    <changeSet id="3" author="reports" context="!cuba">
         <renameColumn tableName="REPORT_EXECUTION"
                       oldColumnName="PRINCIPAL"
                       newColumnName="USERNAME"

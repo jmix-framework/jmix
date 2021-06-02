@@ -86,21 +86,20 @@ public class SearchResultsScreen extends Screen {
     protected SearchResultsScreen.Page currentPage;
     protected Queue<SearchResultsScreen.Page> pages;
 
-    @Subscribe
-    public void onAfterInit(AfterInitEvent event) {
-        Map<String, Object> params = new HashMap<>(0);
-        ScreenOptions options = event.getOptions();
-        if (options instanceof MapScreenOptions) {
-            params = ((MapScreenOptions) options).getParams();
-        }
+    protected SearchResult searchResult;
 
-        SearchResult searchResult = (SearchResult) params.get("searchResult");
+    @Subscribe
+    public void onBeforeShow(BeforeShowEvent event) {
         if (searchResult == null) {
             throw new RuntimeException("Search result not found");
         }
-
         initScreenCaption(searchResult);
         handleSearchResult(searchResult);
+    }
+
+    public SearchResultsScreen setSearchResult(SearchResult searchResult) {
+        this.searchResult = searchResult;
+        return this;
     }
 
     protected static class Page {

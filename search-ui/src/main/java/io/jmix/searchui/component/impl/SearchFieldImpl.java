@@ -18,7 +18,6 @@ package io.jmix.searchui.component.impl;
 
 import io.jmix.core.Messages;
 import io.jmix.core.common.event.Subscription;
-import io.jmix.core.common.util.ParamsMap;
 import io.jmix.search.SearchProperties;
 import io.jmix.search.searching.EntitySearcher;
 import io.jmix.search.searching.SearchContext;
@@ -31,7 +30,6 @@ import io.jmix.ui.ScreenBuilders;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.data.ValueSource;
 import io.jmix.ui.component.validation.Validator;
-import io.jmix.ui.screen.MapScreenOptions;
 import io.jmix.ui.screen.OpenMode;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.ScreenContext;
@@ -103,16 +101,10 @@ public class SearchFieldImpl extends CompositeComponent<CssLayout> implements Se
                         .show();
             } else {
                 screenBuilders.screen(frameOwner)
-                        .withScreenId(SearchResultsScreen.SCREEN_ID)
+                        .withScreenClass(SearchResultsScreen.class)
                         .withOpenMode(OpenMode.NEW_TAB)
-                        .withOptions(
-                                new MapScreenOptions(
-                                        ParamsMap.of(
-                                                "searchResult", searchResult
-                                        )
-                                )
-                        )
                         .build()
+                        .setSearchResult(searchResult)
                         .show();
             }
         }

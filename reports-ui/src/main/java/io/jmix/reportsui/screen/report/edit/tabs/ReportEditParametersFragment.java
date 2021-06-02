@@ -40,8 +40,8 @@ import java.util.Collections;
 import java.util.List;
 
 @UiController("report_ReportEditParameters.fragment")
-@UiDescriptor("parameters.xml")
-public class ParametersFragment extends ScreenFragment {
+@UiDescriptor("report-edit-parameters-fragment.xml")
+public class ReportEditParametersFragment extends ScreenFragment {
     @Autowired
     protected InstanceContainer<Report> reportDc;
 

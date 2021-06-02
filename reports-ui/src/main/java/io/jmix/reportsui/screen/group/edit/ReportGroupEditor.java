@@ -21,7 +21,7 @@ import io.jmix.ui.navigation.Route;
 import io.jmix.ui.screen.*;
 
 @UiController("report_ReportGroup.edit")
-@UiDescriptor("group-edit.xml")
+@UiDescriptor("report-group-edit.xml")
 @EditedEntityContainer("groupDc")
 @Route(value = "reportGroups/edit", parentPrefix = "reportGroups")
 public class ReportGroupEditor extends StandardEditor<ReportGroup> {

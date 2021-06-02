@@ -74,7 +74,7 @@ public interface ReportsFullAccessRole {
 			"report_ReportTemplate.edit",
 			"report_ReportValueFormat.edit",
 			"report_TableEdit.fragment",
-			"report_Editor.dialog"
+			"report_ScriptEditor.dialog"
 	})
 	@MenuPolicy(menuIds = {
 			"reports",

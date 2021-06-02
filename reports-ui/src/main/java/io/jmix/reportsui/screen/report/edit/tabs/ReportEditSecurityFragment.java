@@ -42,8 +42,8 @@ import java.util.List;
 import java.util.Map;
 
 @UiController("report_ReportEditSecurity.fragment")
-@UiDescriptor("security.xml")
-public class SecurityFragment extends ScreenFragment {
+@UiDescriptor("report-edit-security-fragment.xml")
+public class ReportEditSecurityFragment extends ScreenFragment {
 
     @Autowired
     protected InstanceContainer<Report> reportDc;

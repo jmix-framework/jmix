@@ -60,7 +60,7 @@
                 <hbox width="100%" height="100%" spacing="true" margin="false;true;true;true">
                     <fragment screen="report_ReportEditParameters.fragment" id="parametersFragment"
                               height="100%" width="100%"/>
-                    <fragment screen="report_ReportEditFormats.fragment" id="formatsFragment" height="100%"
+                    <fragment screen="report_ReportEditValueFormats.fragment" id="formatsFragment" height="100%"
                               width="100%"/>
                 </hbox>
             </tab>

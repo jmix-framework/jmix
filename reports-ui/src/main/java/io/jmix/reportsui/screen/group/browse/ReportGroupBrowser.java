@@ -30,7 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.inject.Named;
 
 @UiController("report_ReportGroup.browse")
-@UiDescriptor("group-browse.xml")
+@UiDescriptor("report-group-browse.xml")
 @LookupComponent("reportGroupsTable")
 @Route("reportGroups")
 public class ReportGroupBrowser extends StandardLookup<ReportGroup> {

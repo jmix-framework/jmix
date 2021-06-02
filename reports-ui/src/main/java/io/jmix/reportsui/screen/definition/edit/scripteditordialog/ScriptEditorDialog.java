@@ -36,7 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.function.Consumer;
 
-@UiController("report_Editor.dialog")
+@UiController("report_ScriptEditor.dialog")
 @UiDescriptor("script-editor-dialog.xml")
 public class ScriptEditorDialog extends Screen {
 

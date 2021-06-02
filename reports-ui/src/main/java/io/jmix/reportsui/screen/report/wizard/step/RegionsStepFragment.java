@@ -42,7 +42,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@UiController("report_Region.fragment")
+@UiController("report_RegionStep.fragment")
 @UiDescriptor("regions-step-fragment.xml")
 public class RegionsStepFragment extends StepFragment {
     protected static final int MAX_ATTRS_BTN_CAPTION_WIDTH = 135;

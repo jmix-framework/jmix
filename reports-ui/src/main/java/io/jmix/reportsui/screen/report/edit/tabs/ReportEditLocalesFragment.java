@@ -27,8 +27,8 @@ import io.jmix.ui.screen.UiDescriptor;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @UiController("report_ReportEditLocales.fragment")
-@UiDescriptor("locales.xml")
-public class LocalesFragment extends ScreenFragment {
+@UiDescriptor("report-edit-locales-fragment.xml")
+public class ReportEditLocalesFragment extends ScreenFragment {
 
     @Autowired
     protected Dialogs dialogs;

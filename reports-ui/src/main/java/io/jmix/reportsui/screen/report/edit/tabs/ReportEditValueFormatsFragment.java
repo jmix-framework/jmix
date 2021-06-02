@@ -25,9 +25,9 @@ import io.jmix.ui.screen.UiController;
 import io.jmix.ui.screen.UiDescriptor;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@UiController("report_ReportEditFormats.fragment")
-@UiDescriptor("formats.xml")
-public class FormatsFragment extends ScreenFragment {
+@UiController("report_ReportEditValueFormats.fragment")
+@UiDescriptor("report-edit-value-formats-fragment.xml")
+public class ReportEditValueFormatsFragment extends ScreenFragment {
 
     @Autowired
     protected InstanceContainer<Report> reportDc;

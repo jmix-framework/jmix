@@ -46,8 +46,8 @@ import java.io.InputStream;
 import java.util.*;
 
 @UiController("report_ReportEditGeneral.fragment")
-@UiDescriptor("general.xml")
-public class GeneralFragment extends ScreenFragment {
+@UiDescriptor("report-edit-general-fragment.xml")
+public class ReportEditGeneralFragment extends ScreenFragment {
 
     @Named("serviceTree")
     protected Tree<BandDefinition> bandTree;

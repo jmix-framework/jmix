@@ -38,8 +38,8 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @UiController("report_ReportEditTemplates.fragment")
-@UiDescriptor("templates.xml")
-public class TemplatesFragment extends ScreenFragment {
+@UiDescriptor("report-edit-templates-fragment.xml")
+public class ReportEditTemplatesFragment extends ScreenFragment {
 
     @Autowired
     protected InstanceContainer<Report> reportDc;

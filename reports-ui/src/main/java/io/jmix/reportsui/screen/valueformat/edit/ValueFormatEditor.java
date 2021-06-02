@@ -39,7 +39,7 @@ import java.util.stream.Collectors;
 import static io.jmix.ui.component.Window.COMMIT_ACTION_ID;
 
 @UiController("report_ReportValueFormat.edit")
-@UiDescriptor("format-edit.xml")
+@UiDescriptor("value-format-edit.xml")
 @EditedEntityContainer("valuesFormatsDc")
 public class ValueFormatEditor extends StandardEditor<ReportValueFormat> {
 

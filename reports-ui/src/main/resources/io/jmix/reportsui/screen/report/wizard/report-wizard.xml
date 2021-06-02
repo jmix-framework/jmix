@@ -54,14 +54,14 @@
             <fragment id="detailsFragment" screen="report_DetailsStep.fragment"
                       width="100%" height="100%"
                       visible="false"/>
-            <fragment id="saveStepFragment" screen="report_Save.fragment"
+            <fragment id="saveStepFragment" screen="report_SaveStep.fragment"
                       width="100%" height="100%"
                       visible="false"/>
             <fragment id="queryStepFragment" screen="report_QueryStep.fragment"
                       width="100%" height="100%"
                       visible="false"/>
             <fragment id="regionsStepFragment"
-                      screen="report_Region.fragment"
+                      screen="report_RegionStep.fragment"
                       width="100%" height="100%"
                       visible="false"/>
         </vbox>

@@ -35,7 +35,7 @@ import java.util.Collection;
 import java.util.Map;
 
 @UiController("report_InputParameters.dialog")
-@UiDescriptor("input-parameters.xml")
+@UiDescriptor("input-parameters-dialog.xml")
 public class InputParametersDialog extends Screen {
     public static final String INPUT_PARAMETER = "inputParameter";
     public static final String REPORT_PARAMETER = "report";

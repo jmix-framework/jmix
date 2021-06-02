@@ -41,7 +41,7 @@ import java.util.Collections;
 import java.util.List;
 
 @UiController("report_TableEdit.fragment")
-@UiDescriptor("table-edit-frame.xml")
+@UiDescriptor("table-edit-fragment.xml")
 public class TableEditFragment extends DescriptionEditFragment {
 
     public static final int UP = 1;

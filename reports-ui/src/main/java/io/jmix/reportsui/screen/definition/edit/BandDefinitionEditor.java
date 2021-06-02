@@ -50,7 +50,7 @@ import javax.annotation.Nullable;
 import java.util.*;
 
 @UiController("report_BandDefinitionEditor.fragment")
-@UiDescriptor("definition-edit.xml")
+@UiDescriptor("band-definition-edit-fragment.xml")
 public class BandDefinitionEditor extends ScreenFragment implements Suggester {
 
     @Autowired

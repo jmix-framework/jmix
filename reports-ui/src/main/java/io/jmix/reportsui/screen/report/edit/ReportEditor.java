@@ -27,7 +27,7 @@ import io.jmix.reports.ReportPrintHelper;
 import io.jmix.reports.Reports;
 import io.jmix.reports.entity.*;
 import io.jmix.reportsui.screen.definition.edit.BandDefinitionEditor;
-import io.jmix.reportsui.screen.report.edit.tabs.GeneralFragment;
+import io.jmix.reportsui.screen.report.edit.tabs.ReportEditGeneralFragment;
 import io.jmix.reportsui.screen.report.run.InputParametersDialog;
 import io.jmix.security.constraint.PolicyStore;
 import io.jmix.security.constraint.SecureOperations;
@@ -135,7 +135,7 @@ public class ReportEditor extends StandardEditor<Report> {
     protected Actions actions;
 
     @Autowired
-    protected GeneralFragment generalFragment;
+    protected ReportEditGeneralFragment generalFragment;
 
     @Autowired
     private ScreenValidation screenValidation;

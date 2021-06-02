@@ -47,7 +47,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
-@UiController("report_Save.fragment")
+@UiController("report_SaveStep.fragment")
 @UiDescriptor("save-step-fragment.xml")
 public class SaveStepFragment extends StepFragment {
 

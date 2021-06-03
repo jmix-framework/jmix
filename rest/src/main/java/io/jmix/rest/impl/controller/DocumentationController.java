@@ -47,7 +47,7 @@ public class DocumentationController {
 
     @RequestMapping(value = "/openapi.yaml", method = RequestMethod.GET, produces = "application/yaml")
     public String getOpenApiYaml() {
-        return resources.getResourceAsString("classpath:io/jmix/rest/api/rest-openapi.yaml");
+        return resources.getResourceAsString("classpath:io/jmix/rest/rest-openapi.yaml");
     }
 
     @RequestMapping(value = "/openapi.json", method = RequestMethod.GET, produces = "application/json")

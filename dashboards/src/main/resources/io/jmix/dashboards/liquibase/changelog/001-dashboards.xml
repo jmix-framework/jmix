@@ -188,10 +188,60 @@
             <dropColumn tableName="DSHBRD_PERSISTENT_DASHBOARD" columnName="DELETE_TS_NN"/>
         </rollback>
     </changeSet>
-    
+
     <changeSet id="2-another-db" author="dashboards" dbms="mssql, hsqldb, oracle">
         <createIndex tableName="DSHBRD_PERSISTENT_DASHBOARD" indexName="IDX_PERS_DASHBOARD_UK_CODE" unique="true">
             <column name="CODE"/>
+            <column name="DELETE_TS"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="3" author="dashboards">
+        <dropIndex tableName="DSHBRD_DASHBOARD_GROUP" indexName="IDX_DASHBOARD_GROUP_UNIQ_NAME"/>
+    </changeSet>
+
+    <changeSet id="3-postgresql" author="dashboards" dbms="postgresql">
+        <createIndex tableName="DSHBRD_DASHBOARD_GROUP" indexName="IDX_DASHBOARD_GROUP_UNIQ_NAME" unique="true">
+            <column name="NAME"/>
+        </createIndex>
+        <modifySql>
+            <append value="where DELETE_TS is null"/>
+        </modifySql>
+    </changeSet>
+
+    <changeSet id="3-mysql-mariadb" author="dashboards" dbms="mysql, mariadb">
+        <addColumn tableName="DSHBRD_DASHBOARD_GROUP">
+            <column name="DELETE_TS_NN" type="datetime" defaultValue="1000-01-01 00:00:00.000">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+        <createIndex tableName="DSHBRD_DASHBOARD_GROUP" indexName="IDX_DASHBOARD_GROUP_UNIQ_NAME" unique="true">
+            <column name="NAME"/>
+            <column name="DELETE_TS_NN"/>
+        </createIndex>
+        <sql endDelimiter=";\ndelimiter $$">
+            <![CDATA[
+            create trigger DSHBRD_DASHBOARD_GROUP_DELETE_TS_NN_UPDATE_TRIGGER before update on DSHBRD_DASHBOARD_GROUP
+            for each row
+            begin
+                if not(NEW.DELETE_TS <=> OLD.DELETE_TS) then
+                    set NEW.DELETE_TS_NN = if (NEW.DELETE_TS is null, '1000-01-01 00:00:00.000', NEW.DELETE_TS);
+                end if;
+            end;
+            ]]>
+        </sql>
+        <rollback>
+            <sql>
+                DROP TRIGGER DSHBRD_DASHBOARD_GROUP_DELETE_TS_NN_UPDATE_TRIGGER
+            </sql>
+            <dropIndex tableName="DSHBRD_DASHBOARD_GROUP" indexName="IDX_DASHBOARD_GROUP_UNIQ_NAME"/>
+            <dropColumn tableName="DSHBRD_DASHBOARD_GROUP" columnName="DELETE_TS_NN"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="3-another-db" author="dashboards" dbms="mssql, hsqldb, oracle">
+        <createIndex tableName="DSHBRD_DASHBOARD_GROUP" indexName="IDX_DASHBOARD_GROUP_UNIQ_NAME" unique="true">
+            <column name="NAME"/>
             <column name="DELETE_TS"/>
         </createIndex>
     </changeSet>

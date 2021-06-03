@@ -32,8 +32,6 @@ import io.jmix.graphql.limitation.LimitationProperties;
 import io.jmix.graphql.limitation.OperationRateLimitInstrumentation;
 import io.jmix.graphql.limitation.OperationRateLimitService;
 import io.jmix.graphql.schema.*;
-import io.jmix.graphql.schema.scalar.CustomScalarTypeMapper;
-import io.jmix.graphql.schema.scalar.CustomScalars;
 import io.jmix.graphql.security.SpecificPermissionInstrumentation;
 import io.jmix.graphql.spqr.SpqrSchemaGenerator;
 import io.leangen.geantyref.GenericTypeReflector;
@@ -135,17 +133,6 @@ public class GraphQLConfiguration {
         types.addAll(messageTypesGenerator.generateMessageTypes());
 
         generator.withAdditionalTypes(types);
-
-        // mappers for custom scalars
-        List<CustomScalarTypeMapper> scalarMappers = CustomScalars.scalarsByClass().entrySet().stream()
-                .map(entry -> new CustomScalarTypeMapper(entry.getKey(), entry.getValue()))
-                .collect(Collectors.toList());
-        generator.withTypeMappersPrepended(scalarMappers.toArray(new CustomScalarTypeMapper[]{}));
-
-        //        generator.withResolverBuilders(
-//				new CustomAnnotatedResolverBuilder()
-//                new GenericResolverBuilder()
-//        );
 
         GraphQLCodeRegistry.Builder codeRegistryBuilder = GraphQLCodeRegistry.newCodeRegistry();
         genericGenerator.assignDataFetchers(codeRegistryBuilder);

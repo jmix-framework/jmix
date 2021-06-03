@@ -174,11 +174,8 @@ public class BaseTypesGenerator {
             if (MetadataUtils.isTime(metaProperty)) {
                 return CustomScalars.GraphQLTime.getName();
             }
-
             if (MetadataUtils.isDateTime(metaProperty)) {
-                // todo workaround, need to be fixed after second date scalar will be introduced
-//                    return CustomScalars.GraphQLDateTime.getName();
-                return CustomScalars.GraphQLDate.getName();
+                    return CustomScalars.GraphQLDateTime.getName();
             }
             throw new GqlEntityValidationException("Unsupported datatype mapping for date property " + metaProperty);
         }

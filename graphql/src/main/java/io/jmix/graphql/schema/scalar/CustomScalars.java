@@ -6,14 +6,7 @@ import io.jmix.graphql.schema.scalar.coercing.LongCoercing;
 import io.jmix.graphql.schema.scalar.coercing.UUIDCoercing;
 import io.jmix.graphql.schema.scalar.coercing.VoidCoercing;
 
-import java.math.BigDecimal;
-import java.sql.Time;
 import java.text.SimpleDateFormat;
-import java.time.*;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
 
 public class CustomScalars {
 
@@ -46,20 +39,4 @@ public class CustomScalars {
     public static GraphQLScalarType GraphQLVoid = GraphQLScalarType.newScalar()
             .name("Void").coercing(new VoidCoercing()).build();
 
-    public static Map<Class, GraphQLScalarType> scalarsByClass() {
-        Map<Class, GraphQLScalarType> scalars = new HashMap<>();
-        scalars.put(Date.class, GraphQLDate);
-        // todo two scalars for date
-        // scalars.put(Date.class, GraphQLDateTime);
-        scalars.put(Time.class, GraphQLTime);
-        scalars.put(LocalDateTime.class, GraphQLLocalDateTime);
-        scalars.put(LocalDate.class, GraphQLLocalDate);
-        scalars.put(LocalTime.class, GraphQLLocalTime);
-        scalars.put(OffsetDateTime.class, GraphQLOffsetDateTime);
-        scalars.put(OffsetTime.class, GraphQLOffsetTime);
-        scalars.put(Long.class, GraphQLLong);
-        scalars.put(BigDecimal.class, GraphQLBigDecimal);
-        scalars.put(UUID.class, GraphQLUUID);
-        return scalars;
-    }
 }

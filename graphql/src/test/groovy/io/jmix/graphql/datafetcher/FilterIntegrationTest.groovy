@@ -18,7 +18,6 @@ package io.jmix.graphql.datafetcher
 
 import io.jmix.graphql.AbstractGraphQLTest
 import org.springframework.test.context.TestPropertySource
-import spock.lang.Ignore
 
 @TestPropertySource(properties = ["eclipselink.logging.level.sql = FINE"])
 class FilterIntegrationTest extends AbstractGraphQLTest {
@@ -135,7 +134,6 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
                 ']}}'
     }
 
-    @Ignore //todo remove ignore dateTime support will be back
     def "_eq for dateTime"() {
         when:
         //where dateTimeAttr = "2020-03-03T03:03:03"
@@ -386,7 +384,6 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
                 ']}}'
     }
 
-    @Ignore //todo remove ignore dateTime support will be back
     def "_neq for dateTime"() {
         when:
         //where dateTimeAttr <> "2020-03-03T03:03:03"
@@ -541,7 +538,6 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
                 ']}}'
     }
 
-    @Ignore //todo remove ignore dateTime support will be back
     def "_gt for dateTime"() {
         when:
         //where dateTimeAttr > "2020-02-02T22:22:22"
@@ -693,7 +689,6 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
                 ']}}'
     }
 
-    @Ignore //todo remove ignore dateTime support will be back
     def "_gte for dateTime"() {
         when:
         //where dateTimeAttr >= "2020-02-02T22:22:22"
@@ -850,7 +845,6 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
                 ']}}'
     }
 
-    @Ignore //todo remove ignore dateTime support will be back
     def "_lt for dateTime"() {
         when:
         //where dateTimeAttr < "2020-02-02T22:22:22"
@@ -1005,7 +999,6 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
                 ']}}'
     }
 
-    @Ignore //todo remove ignore dateTime support will be back
     def "_lte for dateTime"() {
         when:
         //where dateTimeAttr <= "2020-02-02T22:22:22"
@@ -1289,7 +1282,6 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
                 ']}}'
     }
 
-    @Ignore //todo remove ignore dateTime support will be back
     def "_in for dateTime"() {
         when:
         //where dateTimeAttr in ("2020-02-02T22:22:22", "2020-03-03T03:03:03")
@@ -1445,7 +1437,6 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
                 ']}}'
     }
 
-    @Ignore //todo remove ignore dateTime support will be back
     def "_notIn for dateTime"() {
         when:
         //where dateTimeAttr not in ("2020-02-02T22:22:22", "2020-03-03T03:03:03")

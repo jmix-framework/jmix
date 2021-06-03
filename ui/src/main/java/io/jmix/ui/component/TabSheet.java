@@ -17,6 +17,13 @@ package io.jmix.ui.component;
 
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.event.Subscription;
+import io.jmix.ui.meta.CanvasBehaviour;
+import io.jmix.ui.meta.ContainerType;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioComponent;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioProperties;
+import io.jmix.ui.meta.StudioProperty;
 import io.jmix.ui.xml.layout.ComponentLoader;
 import org.dom4j.Element;
 
@@ -28,6 +35,22 @@ import java.util.function.Consumer;
 /**
  * TabSheet component interface.
  */
+@StudioComponent(
+        caption = "TabSheet",
+        category = "Containers",
+        xmlElement = "tabSheet",
+        icon = "io/jmix/ui/icon/container/tabSheet.svg",
+        canvasBehaviour = CanvasBehaviour.CONTAINER,
+        containerType = ContainerType.TAB_SHEET,
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/containers/tab-sheet.html"
+)
+@StudioProperties(
+        properties = {
+                @StudioProperty(name = "height", type = PropertyType.SIZE, defaultValue = "-1px",
+                        initialValue = "100px"),
+                @StudioProperty(name = "width", type = PropertyType.SIZE, defaultValue = "100%")
+        }
+)
 public interface TabSheet extends ComponentContainer, Component.BelongToFrame, Component.HasIcon, Component.HasCaption,
         Component.Focusable, HasContextHelp, HasHtmlCaption, HasHtmlDescription, HasHtmlSanitizer {
 
@@ -78,6 +101,7 @@ public interface TabSheet extends ComponentContainer, Component.BelongToFrame, C
      *
      * @param tab tab instance
      */
+    @StudioElement
     void setSelectedTab(Tab tab);
 
     /**
@@ -121,6 +145,7 @@ public interface TabSheet extends ComponentContainer, Component.BelongToFrame, C
      *
      * @param tabCaptionsAsHtml true if the tab captions are rendered as HTML, false if rendered as plain text
      */
+    @StudioProperty(defaultValue = "false")
     void setTabCaptionsAsHtml(boolean tabCaptionsAsHtml);
 
     /**
@@ -133,6 +158,7 @@ public interface TabSheet extends ComponentContainer, Component.BelongToFrame, C
      *
      * @param tabsVisible true if the tabs should be shown in the UI, false otherwise
      */
+    @StudioProperty(defaultValue = "true")
     void setTabsVisible(boolean tabsVisible);
 
     /**
@@ -146,6 +172,18 @@ public interface TabSheet extends ComponentContainer, Component.BelongToFrame, C
     /**
      * Tab interface.
      */
+    @StudioElement(
+            caption = "Tab",
+            xmlElement = "tab",
+            icon = "io/jmix/ui/icon/element/tab.svg",
+            defaultProperty = "id"
+    )
+    @StudioProperties(
+            properties = {
+                    @StudioProperty(name = "id", type = PropertyType.COMPONENT_ID, required = true),
+                    @StudioProperty(name = "lazy", type = PropertyType.BOOLEAN, defaultValue = "false")
+            }
+    )
     interface Tab extends Component.HasIcon, Component.HasCaption {
         /**
          * @return tab id.
@@ -172,6 +210,7 @@ public interface TabSheet extends ComponentContainer, Component.BelongToFrame, C
          *
          * @param enabled true if tab is enabled, false otherwise
          */
+        @StudioProperty(name = "enable", defaultValue = "true")
         void setEnabled(boolean enabled);
 
         /**
@@ -188,6 +227,7 @@ public interface TabSheet extends ComponentContainer, Component.BelongToFrame, C
          *
          * @param visible true if tab is visible, false otherwise
          */
+        @StudioProperty(defaultValue = "true")
         void setVisible(boolean visible);
 
         /**
@@ -203,6 +243,7 @@ public interface TabSheet extends ComponentContainer, Component.BelongToFrame, C
          *
          * @param closable true if the tab should be closable from the UI, false otherwise
          */
+        @StudioProperty(defaultValue = "false")
         void setClosable(boolean closable);
 
         /**
@@ -224,6 +265,7 @@ public interface TabSheet extends ComponentContainer, Component.BelongToFrame, C
          *
          * @param styleName style name
          */
+        @StudioProperty(name = "stylename", type = PropertyType.CSS_CLASSNAME_LIST)
         void setStyleName(@Nullable String styleName);
 
         /**

@@ -16,9 +16,22 @@
 
 package io.jmix.ui.component;
 
+import io.jmix.ui.meta.CanvasBehaviour;
+import io.jmix.ui.meta.ContainerType;
+import io.jmix.ui.meta.StudioComponent;
+
 /**
  * A flow layout arranges components in a directional flow, much like lines of text in a paragraph.
  */
+@StudioComponent(
+        caption = "FlowBox",
+        category = "Containers",
+        xmlElement = "flowBox",
+        icon = "io/jmix/ui/icon/container/flowBox.svg",
+        canvasBehaviour = CanvasBehaviour.CONTAINER,
+        containerType = ContainerType.FLOW,
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/containers/box-layout.html#flowbox"
+)
 public interface FlowBoxLayout extends OrderedContainer, Component.BelongToFrame, HasMargin,
         HasSpacing, Component.HasCaption, Component.HasIcon, HasContextHelp, HasHtmlSanitizer,
         LayoutClickNotifier, ShortcutNotifier, HasHtmlCaption, HasHtmlDescription, HasRequiredIndicator {

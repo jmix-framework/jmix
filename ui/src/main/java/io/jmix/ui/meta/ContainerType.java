@@ -16,20 +16,30 @@
 
 package io.jmix.ui.meta;
 
+import io.jmix.ui.component.Accordion;
 import io.jmix.ui.component.FlowBoxLayout;
 import io.jmix.ui.component.HBoxLayout;
+import io.jmix.ui.component.TabSheet;
 import io.jmix.ui.component.VBoxLayout;
 
 /**
  * Specifies standard container type for emulation in Studio Screen Designer.
  */
 public enum ContainerType {
+
     /**
-     * Vertical layout.
+     * Accordion component.
      *
-     * @see VBoxLayout
+     * @see Accordion
      */
-    VERTICAL,
+    ACCORDION,
+
+    /**
+     * Directional flow layout.
+     *
+     * @see FlowBoxLayout
+     */
+    FLOW,
 
     /**
      * Horizontal layout.
@@ -39,9 +49,16 @@ public enum ContainerType {
     HORIZONTAL,
 
     /**
-     * Directional flow layout.
+     * TabSheet component.
      *
-     * @see FlowBoxLayout
+     * @see TabSheet
      */
-    FLOW
+    TAB_SHEET,
+
+    /**
+     * Vertical layout.
+     *
+     * @see VBoxLayout
+     */
+    VERTICAL
 }

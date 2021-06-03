@@ -18,6 +18,13 @@ package io.jmix.ui.component;
 
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.event.Subscription;
+import io.jmix.ui.meta.CanvasBehaviour;
+import io.jmix.ui.meta.ContainerType;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioComponent;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioProperties;
+import io.jmix.ui.meta.StudioProperty;
 import io.jmix.ui.xml.layout.ComponentLoader;
 import org.dom4j.Element;
 
@@ -30,12 +37,28 @@ import java.util.function.Consumer;
  * An accordion is a component similar to a {@link TabSheet}, but with a vertical orientation and the selected component
  * presented between tabs.
  */
+@StudioComponent(
+        caption = "Accordion",
+        category = "Containers",
+        xmlElement = "accordion",
+        icon = "io/jmix/ui/icon/container/accordion.svg",
+        canvasBehaviour = CanvasBehaviour.CONTAINER,
+        containerType = ContainerType.ACCORDION,
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/containers/accordion.html"
+)
+@StudioProperties(
+        properties = {
+                @StudioProperty(name = "height", type = PropertyType.SIZE, defaultValue = "-1px",
+                        initialValue = "100px"),
+                @StudioProperty(name = "width", type = PropertyType.SIZE, defaultValue = "100%")
+        }
+)
 public interface Accordion extends ComponentContainer, Component.BelongToFrame, Component.HasCaption,
         Component.HasIcon, Component.Focusable, HasContextHelp, HasHtmlCaption, HasHtmlDescription, HasHtmlSanitizer {
     String NAME = "accordion";
 
     /**
-     * Add a new tab to the component.
+     * Adds a new tab to the component.
      *
      * @param name      id of the new tab
      * @param component a component that will be the content of the new tab
@@ -44,45 +67,46 @@ public interface Accordion extends ComponentContainer, Component.BelongToFrame, 
     Tab addTab(String name, Component component);
 
     /**
-     * INTERNAL. Add a new lazy tab to the component.
+     * INTERNAL. Adds a new lazy tab to the component.
      */
     @Internal
     Tab addLazyTab(String name, Element descriptor, ComponentLoader loader);
 
     /**
-     * Remove tab.
+     * Removes tab.
      *
      * @param name id of the tab to remove
      */
     void removeTab(String name);
 
     /**
-     * Remove all tabs.
+     * Removes all tabs.
      */
     void removeAllTabs();
 
     /**
-     * Get selected tab. May be null if the accordion does not contain tabs at all.
+     * Gets selected tab. May be null if the accordion does not contain tabs at all.
      */
     @Nullable
     Tab getSelectedTab();
 
     /**
-     * Set selected tab.
+     * Sets selected tab.
      *
      * @param tab tab instance
      */
+    @StudioElement
     void setSelectedTab(Tab tab);
 
     /**
-     * Set selected tab.
+     * Sets selected tab.
      *
      * @param name tab id
      */
     void setSelectedTab(String name);
 
     /**
-     * Get tab with the provided id.
+     * Gets tab with the provided id.
      *
      * @param name tab id
      * @return tab instance
@@ -91,7 +115,7 @@ public interface Accordion extends ComponentContainer, Component.BelongToFrame, 
     Tab getTab(String name);
 
     /**
-     * Get a component that is a content of the tab.
+     * Gets a component that is a content of the tab.
      *
      * @param name tab id
      * @return tab content
@@ -99,7 +123,7 @@ public interface Accordion extends ComponentContainer, Component.BelongToFrame, 
     Component getTabComponent(String name);
 
     /**
-     * Get all tabs.
+     * Gets all tabs.
      */
     Collection<Tab> getTabs();
 
@@ -113,10 +137,11 @@ public interface Accordion extends ComponentContainer, Component.BelongToFrame, 
      *
      * @param tabCaptionsAsHtml true if the tab captions are rendered as HTML, false if rendered as plain text
      */
+    @StudioProperty(defaultValue = "false")
     void setTabCaptionsAsHtml(boolean tabCaptionsAsHtml);
 
     /**
-     * Add a listener that will be notified when a selected tab is changed.
+     * Adds a listener that will be notified when a selected tab is changed.
      */
     Subscription addSelectedTabChangeListener(Consumer<SelectedTabChangeEvent> listener);
 
@@ -145,26 +170,38 @@ public interface Accordion extends ComponentContainer, Component.BelongToFrame, 
     /**
      * Tab interface.
      */
+    @StudioElement(
+            caption = "Tab",
+            xmlElement = "tab",
+            icon = "io/jmix/ui/icon/element/tab.svg",
+            defaultProperty = "id"
+    )
+    @StudioProperties(
+            properties = {
+                    @StudioProperty(name = "id", type = PropertyType.COMPONENT_ID, required = true)
+            }
+    )
     interface Tab extends Component.HasIcon {
         /**
-         * Get tab id.
+         * Gets tab id.
          */
         String getName();
 
         /**
-         * INTERNAL. Set tab id.
+         * INTERNAL. Sets tab id.
          */
         @Internal
         void setName(String name);
 
         /**
-         * Get tab caption.
+         * Gets tab caption.
          */
         String getCaption();
 
         /**
-         * Set tab caption.
+         * Sets tab caption.
          */
+        @StudioProperty(name = "caption", type = PropertyType.LOCALIZED_STRING)
         void setCaption(String caption);
 
         /**
@@ -172,6 +209,7 @@ public interface Accordion extends ComponentContainer, Component.BelongToFrame, 
          */
         boolean isEnabled();
 
+        @StudioProperty(name = "enable", defaultValue = "true")
         void setEnabled(boolean enabled);
 
         /**
@@ -179,13 +217,15 @@ public interface Accordion extends ComponentContainer, Component.BelongToFrame, 
          */
         boolean isVisible();
 
+        @StudioProperty(defaultValue = "true")
         void setVisible(boolean visible);
 
         /**
-         * Set style for UI element that represents the tab header.
+         * Sets style for UI element that represents the tab header.
          *
          * @param styleName style
          */
+        @StudioProperty(name = "stylename", type = PropertyType.CSS_CLASSNAME_LIST)
         void setStyleName(@Nullable String styleName);
 
         @Nullable

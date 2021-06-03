@@ -47,12 +47,12 @@ import java.util.function.Predicate;
         xmlElement = "filter",
         icon = "io/jmix/ui/icon/component/filter.svg",
         canvasIconSize = CanvasIconSize.LARGE,
-        unsupportedProperties = "width",
         documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/filter.html"
 )
 @StudioProperties(
         properties = {
-                @StudioProperty(name = "id", type = PropertyType.COMPONENT_ID, required = true)
+                @StudioProperty(name = "id", type = PropertyType.COMPONENT_ID, required = true),
+                @StudioProperty(name = "width", type = PropertyType.SIZE, defaultValue = "100%")
         }
 )
 public interface Filter extends Component, Component.BelongToFrame, Component.HasDescription, Component.HasCaption,

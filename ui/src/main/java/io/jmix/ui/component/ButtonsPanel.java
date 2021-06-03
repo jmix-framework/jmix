@@ -15,10 +15,32 @@
  */
 package io.jmix.ui.component;
 
+import io.jmix.ui.meta.CanvasBehaviour;
+import io.jmix.ui.meta.ContainerType;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioComponent;
+import io.jmix.ui.meta.StudioProperties;
+import io.jmix.ui.meta.StudioProperty;
+
 /**
  * A container that streamlines the use and placement of the components (usually, buttons) for data management in a
  * components that implement {@link HasButtonsPanel} interface.
  */
+@StudioComponent(
+        caption = "ButtonsPanel",
+        category = "Containers",
+        xmlElement = "buttonsPanel",
+        icon = "io/jmix/ui/icon/container/buttonsPanel.svg",
+        canvasBehaviour = CanvasBehaviour.CONTAINER,
+        containerType = ContainerType.FLOW,
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/containers/buttons-panel.html"
+)
+@StudioProperties(
+        properties = {
+                @StudioProperty(name = "providerClass", type = PropertyType.STRING),
+                @StudioProperty(name = "spacing", type = PropertyType.BOOLEAN, defaultValue = "true")
+        }
+)
 public interface ButtonsPanel extends FlowBoxLayout {
 
     String NAME = "buttonsPanel";
@@ -29,6 +51,7 @@ public interface ButtonsPanel extends FlowBoxLayout {
      *
      * @param alwaysVisible specifies whether buttons panel is always displayed on the lookup screen
      */
+    @StudioProperty(defaultValue = "false")
     void setAlwaysVisible(boolean alwaysVisible);
 
     /**

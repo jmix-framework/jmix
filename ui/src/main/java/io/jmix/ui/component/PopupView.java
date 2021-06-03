@@ -17,6 +17,11 @@
 package io.jmix.ui.component;
 
 import io.jmix.core.common.event.Subscription;
+import io.jmix.ui.meta.CanvasBehaviour;
+import io.jmix.ui.meta.ContainerType;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioComponent;
+import io.jmix.ui.meta.StudioProperty;
 
 import javax.annotation.Nullable;
 import java.util.EventObject;
@@ -26,12 +31,22 @@ import java.util.function.Consumer;
  * A component for displaying a two different views to data. The minimized view is normally used to render the component,
  * and when it is clicked the full view is displayed on a popup.
  */
+@StudioComponent(
+        caption = "PopupView",
+        category = "Components",
+        xmlElement = "popupView",
+        icon = "io/jmix/ui/icon/component/popupView.svg",
+        canvasBehaviour = CanvasBehaviour.BUTTON,
+        canvasText = "New Minimized Value",
+        canvasTextProperty = "minimizedValue",
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/popup-view.html"
+)
 public interface PopupView extends Component.HasCaption, Component.BelongToFrame,
         Component.HasIcon, HasContextHelp, HasHtmlCaption, HasHtmlDescription, HasHtmlSanitizer {
     String NAME = "popupView";
 
     /**
-     * Set visibility for the popup window.
+     * Sets visibility for the popup window.
      *
      * @param popupVisible popup visibility.
      */
@@ -42,10 +57,11 @@ public interface PopupView extends Component.HasCaption, Component.BelongToFrame
     boolean isPopupVisible();
 
     /**
-     * Set value for the label of component. Value of the label can contain HTML.
+     * Sets value for the label of component. Value of the label can contain HTML.
      *
      * @param minimizedValue label text.
      */
+    @StudioProperty(type = PropertyType.LOCALIZED_STRING)
     void setMinimizedValue(String minimizedValue);
     /**
      * @return value of the label of component.
@@ -53,7 +69,7 @@ public interface PopupView extends Component.HasCaption, Component.BelongToFrame
     String getMinimizedValue();
 
     /**
-     * Set inner content for the popup window.
+     * Sets inner content for the popup window.
      *
      * @param popupContent popup component.
      */
@@ -65,10 +81,11 @@ public interface PopupView extends Component.HasCaption, Component.BelongToFrame
     Component getPopupContent();
 
     /**
-     * Set possibility to close popup window on cursor out.
+     * Sets possibility to close popup window on cursor out.
      *
      * @param hideOnMouseOut popup hide option.
      */
+    @StudioProperty(defaultValue = "true", initialValue = "false")
     void setHideOnMouseOut(boolean hideOnMouseOut);
     /**
      * @return true if popup window closes on cursor out.
@@ -76,7 +93,7 @@ public interface PopupView extends Component.HasCaption, Component.BelongToFrame
     boolean isHideOnMouseOut();
 
     /**
-     * Set caption rendering as HTML.
+     * Sets caption rendering as HTML.
      *
      * @param captionAsHtml true if we want to show caption as HTML.
      */

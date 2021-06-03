@@ -15,19 +15,37 @@
  */
 package io.jmix.ui.component;
 
+import io.jmix.ui.meta.CanvasBehaviour;
+import io.jmix.ui.meta.ContainerType;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioComponent;
+import io.jmix.ui.meta.StudioProperty;
+
 import javax.annotation.Nullable;
 
 /**
  * Component container that shows scrollbars if its content does not fit the viewport.
  */
+@StudioComponent(
+        caption = "ScrollBox",
+        category = "Containers",
+        xmlElement = "scrollBox",
+        icon = "io/jmix/ui/icon/container/scrollBox.svg",
+        canvasBehaviour = CanvasBehaviour.CONTAINER,
+        containerType = ContainerType.VERTICAL,
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/containers/scroll-box-layout.html"
+)
 public interface ScrollBoxLayout
         extends OrderedContainer, Component.BelongToFrame, HasMargin, HasSpacing, HasOrientation,
-                Component.HasIcon, Component.HasCaption, ShortcutNotifier, HasContextHelp,
-                HasHtmlCaption, HasHtmlDescription, HasRequiredIndicator, LayoutClickNotifier, HasHtmlSanitizer {
+        Component.HasIcon, Component.HasCaption, ShortcutNotifier, HasContextHelp,
+        HasHtmlCaption, HasHtmlDescription, HasRequiredIndicator, LayoutClickNotifier, HasHtmlSanitizer {
 
     String NAME = "scrollBox";
 
     ScrollBarPolicy getScrollBarPolicy();
+
+    @StudioProperty(name = "scrollBars", type = PropertyType.ENUMERATION, defaultValue = "vertical",
+            options = {"vertical", "horizontal", "both", "none"})
     void setScrollBarPolicy(ScrollBarPolicy scrollBarPolicy);
 
     /**
@@ -35,11 +53,14 @@ public interface ScrollBoxLayout
      *
      * @param width width
      */
+    @StudioProperty(name = "contentWidth", type = PropertyType.SIZE)
     void setContentWidth(@Nullable String width);
+
     /**
      * @return content width value
      */
     float getContentWidth();
+
     /**
      * @return content width size unit
      */
@@ -50,11 +71,14 @@ public interface ScrollBoxLayout
      *
      * @param height height
      */
+    @StudioProperty(name = "contentHeight", type = PropertyType.SIZE)
     void setContentHeight(@Nullable String height);
+
     /**
      * @return content height value
      */
     float getContentHeight();
+
     /**
      * @return content height size unit
      */
@@ -65,7 +89,9 @@ public interface ScrollBoxLayout
      *
      * @param minWidth minimum width
      */
+    @StudioProperty(name = "contentMinWidth", type = PropertyType.SIZE)
     void setContentMinWidth(String minWidth);
+
     /**
      * @return minimal content width
      */
@@ -77,7 +103,9 @@ public interface ScrollBoxLayout
      *
      * @param maxWidth maximum width
      */
+    @StudioProperty(name = "contentMaxWidth", type = PropertyType.SIZE)
     void setContentMaxWidth(String maxWidth);
+
     /**
      * @return maximum content width
      */
@@ -89,7 +117,9 @@ public interface ScrollBoxLayout
      *
      * @param minHeight minimum height
      */
+    @StudioProperty(name = "contentMinHeight", type = PropertyType.SIZE)
     void setContentMinHeight(String minHeight);
+
     /**
      * @return minimum content width
      */
@@ -101,7 +131,9 @@ public interface ScrollBoxLayout
      *
      * @param maxHeight maximum height
      */
+    @StudioProperty(name = "contentMaxHeight", type = PropertyType.SIZE)
     void setContentMaxHeight(String maxHeight);
+
     /**
      * @return maximum content width
      */

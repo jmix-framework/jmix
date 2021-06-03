@@ -16,10 +16,23 @@
 
 package io.jmix.ui.component;
 
+import io.jmix.ui.meta.CanvasBehaviour;
+import io.jmix.ui.meta.ContainerType;
+import io.jmix.ui.meta.StudioComponent;
+
 /**
  * CssLayout is a layout component renders components and their captions into a same DIV element.
  * Component layout can then be adjusted with CSS.
  */
+@StudioComponent(
+        caption = "CssLayout",
+        category = "Containers",
+        xmlElement = "cssLayout",
+        icon = "io/jmix/ui/icon/container/cssLayout.svg",
+        canvasBehaviour = CanvasBehaviour.CONTAINER,
+        containerType = ContainerType.VERTICAL,
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/containers/css-layout.html"
+)
 public interface CssLayout extends OrderedContainer, Component.BelongToFrame, Component.HasCaption,
         Component.HasIcon, HasContextHelp, LayoutClickNotifier, ShortcutNotifier, HasHtmlCaption, HasHtmlDescription,
         HasRequiredIndicator, HasHtmlSanitizer {

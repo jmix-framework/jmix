@@ -207,5 +207,15 @@ public enum PropertyType {
     /**
      * Margin info.
      */
-    MARGIN
+    MARGIN,
+
+    /**
+     * HTML.
+     */
+    HTML,
+
+    /**
+     * Path to file.
+     */
+    FILE_REF
 }

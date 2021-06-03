@@ -54,7 +54,7 @@ import java.util.function.Consumer;
 )
 @StudioProperties(
         properties = {
-                @StudioProperty(name = "dataContainer", type = PropertyType.DATACONTAINER_REF),
+                @StudioProperty(name = "dataContainer", type = PropertyType.COLLECTION_DATACONTAINER_REF),
                 @StudioProperty(name = "captionProperty", type = PropertyType.PROPERTY_PATH_REF, options = "string"),
                 @StudioProperty(name = "descriptionProperty", type = PropertyType.PROPERTY_PATH_REF, options = "string"),
                 @StudioProperty(name = "stylenameProperty", type = PropertyType.PROPERTY_PATH_REF, options = "string"),

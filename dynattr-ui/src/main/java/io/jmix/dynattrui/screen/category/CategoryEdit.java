@@ -17,6 +17,7 @@
 package io.jmix.dynattrui.screen.category;
 
 import io.jmix.core.*;
+import io.jmix.core.accesscontext.CrudEntityContext;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.dynattr.model.Category;
 import io.jmix.dynattr.model.CategoryAttribute;
@@ -74,6 +75,8 @@ public class CategoryEdit extends StandardEditor<Category> {
 
     protected AttributeLocalizationFragment localizationFragment;
     protected AttributeLocationFragment attributeLocationFragment;
+    @Autowired
+    private AccessManager accessManager;
 
     @Subscribe
     protected void onInit(InitEvent event) {
@@ -88,6 +91,15 @@ public class CategoryEdit extends StandardEditor<Category> {
         initEntityTypeField();
         initLocalizationTab();
         initAttributeLocationTab();
+        setupFieldsLock();
+    }
+
+    protected void setupFieldsLock() {
+        CrudEntityContext crudEntityContext = new CrudEntityContext(categoryDc.getEntityMetaClass());
+        accessManager.applyRegisteredConstraints(crudEntityContext);
+        if (!crudEntityContext.isUpdatePermitted()) {
+            entityTypeField.setEnabled(false);
+        }
     }
 
     @Subscribe("entityTypeField")
@@ -159,9 +171,12 @@ public class CategoryEdit extends StandardEditor<Category> {
     }
 
     protected void initAttributeLocationTab() {
+        CrudEntityContext crudEntityContext = new CrudEntityContext(categoryDc.getEntityMetaClass());
+        accessManager.applyRegisteredConstraints(crudEntityContext);
+
         VBoxLayout attributesLocationTabComponent = (VBoxLayout) tabSheet.getTabComponent(ATTRIBUTES_LOCATION_TAB);
         attributeLocationFragment = fragments.create(this, AttributeLocationFragment.class);
-
+        attributeLocationFragment.setEnabled(crudEntityContext.isUpdatePermitted());
         Fragment fragment = attributeLocationFragment.getFragment();
         fragment.setWidth(Component.FULL_SIZE);
         attributesLocationTabComponent.add(fragment);

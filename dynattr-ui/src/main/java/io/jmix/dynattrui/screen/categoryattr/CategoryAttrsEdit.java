@@ -27,6 +27,7 @@ import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import io.jmix.core.metamodel.datatype.impl.AdaptiveNumberDatatype;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.security.AccessDeniedException;
 import io.jmix.dynattr.AttributeType;
 import io.jmix.dynattr.DynAttrMetadata;
 import io.jmix.dynattr.OptionsLoaderType;
@@ -40,6 +41,7 @@ import io.jmix.ui.*;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.valuepicker.ValueClearAction;
 import io.jmix.ui.action.valuespicker.ValuesSelectAction;
+import io.jmix.ui.builder.LookupBuilder;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.autocomplete.JpqlUiSuggestionProvider;
 import io.jmix.ui.component.autocomplete.Suggestion;
@@ -236,6 +238,8 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
     private ValueClearAction dependsOnAttributesFieldClear;
     @Named("dependsOnAttributesField.select")
     private ValuesSelectAction dependsOnAttributesFieldSelect;
+    @Autowired
+    private Button editEnumerationBtn;
 
     @Subscribe
     protected void onInit(InitEvent event) {
@@ -259,6 +263,7 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
         setupNumberFormat();
         refreshAttributesUI();
         centerDialogWindow();
+        setupFieldsLock();
     }
 
     @Subscribe("tabSheet")
@@ -530,7 +535,6 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
                 Class<?> javaClass = categoryAttribute.getJavaType();
 
                 if (javaClass != null) {
-                    defaultEntityIdField.setEditable(true);
                     defaultEntityIdField.setMetaClass(metadata.getClass(javaClass));
                     // todo: filter support FilteringLookupAction
                     //dynamicAttributesGuiTools.initEntityPickerField(defaultEntityId, attribute);
@@ -586,6 +590,41 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
         optionsLoaderTypeField.setEnabled(Boolean.TRUE.equals(categoryAttribute.getLookup()));
         optionsLoaderTypeField.setRequired(Boolean.TRUE.equals(categoryAttribute.getLookup()));
         optionsLoaderTypeField.setOptionsMap(getLoaderOptions());
+    }
+
+    @Subscribe("screenField")
+    public void onScreenFieldValueChange(HasValue.ValueChangeEvent event) {
+        if (Strings.isNullOrEmpty(screenField.getValue())) {
+            this.defaultEntityIdField.setEditable(false);
+        } else {
+            this.defaultEntityIdField.setEditable(true);
+        }
+    }
+
+    @Subscribe("defaultEntityIdField.lookup")
+    public void onDefaultEntityIdFieldLookup(Action.ActionPerformedEvent event) {
+        LookupBuilder lookup = screenBuilders.lookup(defaultEntityIdField);
+        if (!Strings.isNullOrEmpty(screenField.getValue())) {
+            lookup.withScreenId(screenField.getValue());
+        }
+        try {
+            lookup.build().show();
+        } catch (AccessDeniedException ex) {
+            notifications.create()
+                    .withCaption(messages.getMessage(CategoryAttrsEdit.class,
+                            "entityScreenAccessDeniedMessage"))
+                    .withType(Notifications.NotificationType.ERROR)
+                    .show();
+        }
+    }
+
+    protected void setupFieldsLock() {
+        CrudEntityContext crudEntityContext = new CrudEntityContext(configurationDc.getEntityMetaClass());
+        accessManager.applyRegisteredConstraints(crudEntityContext);
+        if (!crudEntityContext.isUpdatePermitted()) {
+            defaultEntityIdField.setEnabled(false);
+            editEnumerationBtn.setEnabled(false);
+        }
     }
 
     protected void refreshAttributesValues() {

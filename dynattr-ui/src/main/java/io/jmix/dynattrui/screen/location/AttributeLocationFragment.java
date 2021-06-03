@@ -71,6 +71,8 @@ public class AttributeLocationFragment extends ScreenFragment {
     protected HBoxLayout targetDataGridBox;
     @Autowired
     protected DataGrid<CategoryAttribute> sourceDataGrid;
+    @Autowired
+    private Button saveConfigurationBtn;
 
     protected List<CategoryAttribute> sourceDataContainer;
     protected List<List<CategoryAttribute>> dataContainers;
@@ -85,6 +87,23 @@ public class AttributeLocationFragment extends ScreenFragment {
     protected Grid<CategoryAttribute> attributesSourceGrid;
 
     protected int[] rowsCounts;
+    private boolean isEnabled;
+
+    public void setEnabled(boolean isEnabled) {
+        this.isEnabled = isEnabled;
+    }
+
+    @Subscribe
+    public void onAttach(AttachEvent event) {
+        setupFieldsLock();
+    }
+
+    protected void setupFieldsLock() {
+        if (!this.isEnabled) {
+            saveConfigurationBtn.setEnabled(false);
+            columnsCountLookupField.setEnabled(false);
+        }
+    }
 
     public void setCategoryAttributes(List<CategoryAttribute> categoryAttributes) {
         this.sourceDataContainer = categoryAttributes;
@@ -292,16 +311,20 @@ public class AttributeLocationFragment extends ScreenFragment {
     }
 
     protected void onGridDragStart(GridDragStartEvent<CategoryAttribute> event) {
-        dragSourceGrid = event.getComponent();
-        draggedItem = event.getDraggedItems().get(0);
-        droppedSuccessful = false;
+        if (isEnabled) {
+            dragSourceGrid = event.getComponent();
+            draggedItem = event.getDraggedItems().get(0);
+            droppedSuccessful = false;
+        }
     }
 
     protected void onGridDrop(GridDropEvent<CategoryAttribute> event, boolean isAttributesSourceGrid) {
-        event.getDragSourceExtension().ifPresent(source -> {
-            int dropIndex = addToDestinationGrid(event, isAttributesSourceGrid, source);
-            removeFromSourceGrid(dragSourceGrid, dragSourceGrid == attributesSourceGrid, event.getComponent(), dropIndex);
-        });
+        if (isEnabled) {
+            event.getDragSourceExtension().ifPresent(source -> {
+                int dropIndex = addToDestinationGrid(event, isAttributesSourceGrid, source);
+                removeFromSourceGrid(dragSourceGrid, dragSourceGrid == attributesSourceGrid, event.getComponent(), dropIndex);
+            });
+        }
     }
 
     protected int addToDestinationGrid(GridDropEvent<CategoryAttribute> event, boolean isSourceGrid, DragSourceExtension source) {

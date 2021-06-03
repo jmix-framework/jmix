@@ -39,12 +39,9 @@ import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.screen.*;
 import io.jmix.ui.upload.TemporaryStorage;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
@@ -373,13 +370,8 @@ public class TemplateEditor extends StandardEditor<ReportTemplate> {
         ReportTemplate reportTemplate = getEditedEntity();
         reportTemplate.setName(fileName);
 
-        try {
-            byte[] data = IOUtils.toByteArray(templateUploadField.getFileContent());
-            reportTemplate.setContent(data);
-        } catch (IOException ex) {
-            throw new RuntimeException(
-                    String.format("An error occurred while uploading file for template [%s]", getEditedEntity().getCode()), ex);
-        }
+        byte[] data = templateUploadField.getValue();
+        reportTemplate.setContent(data);
         initTemplateEditor(reportTemplate);
         setupTemplateTypeVisibility(hasTemplateOutput(reportTemplate.getReportOutputType()));
         updateOutputType();
@@ -393,8 +385,6 @@ public class TemplateEditor extends StandardEditor<ReportTemplate> {
         ReportTemplate reportTemplate = getEditedEntity();
         byte[] templateFile = reportTemplate.getContent();
         if (templateFile != null && !hasChartTemplateOutput(reportTemplate.getReportOutputType())) {
-            templateUploadField.setContentProvider(() -> new ByteArrayInputStream(templateFile));
-
             temporaryStorage.saveFile(templateFile);
             templateUploadField.setValue(templateFile);
             templateUploadField.setFileName(reportTemplate.getName());

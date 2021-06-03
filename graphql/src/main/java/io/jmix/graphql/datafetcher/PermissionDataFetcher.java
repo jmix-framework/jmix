@@ -24,6 +24,7 @@ import io.jmix.core.accesscontext.EntityAttributeContext;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.graphql.NamingUtils;
+import io.jmix.graphql.accesscontext.GraphqlAccessContext;
 import io.jmix.graphql.schema.permission.PermissionConfig;
 import io.jmix.graphql.schema.permission.ShortPermissionInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,9 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+
+import static io.jmix.graphql.accesscontext.GraphqlAccessContext.GRAPHQL_FILE_DOWNLOAD_ENABLED;
+import static io.jmix.graphql.accesscontext.GraphqlAccessContext.GRAPHQL_FILE_UPLOAD_ENABLED;
 
 @Component
 public class PermissionDataFetcher {
@@ -51,16 +55,20 @@ public class PermissionDataFetcher {
             Set<String> defs = environment.getSelectionSet().getFieldsGroupedByResultKey().keySet();
             boolean loadEntities = defs.contains(NamingUtils.ENTITIES);
             boolean loadEntityAttrs = defs.contains(NamingUtils.ENTITY_ATTRS);
-            return getPermissions(loadEntities, loadEntityAttrs); };
+            boolean loadSpecifics = defs.contains(NamingUtils.SPECIFICS);
+            return getPermissions(loadEntities, loadEntityAttrs, loadSpecifics);
+        };
     }
 
-    protected PermissionConfig getPermissions(boolean entities, boolean entityAttrs) {
+    protected PermissionConfig getPermissions(boolean entities, boolean entityAttrs, boolean specifics) {
         PermissionConfig PermissionConfig = new PermissionConfig();
 
         List<ShortPermissionInfo> entityPermissions = new ArrayList<>();
         List<ShortPermissionInfo> entityAttributePermissions = new ArrayList<>();
+        List<ShortPermissionInfo> specificPermissions = new ArrayList<>();
         PermissionConfig.setEntities(entityPermissions);
         PermissionConfig.setEntityAttributes(entityAttributePermissions);
+        PermissionConfig.setSpecifics(specificPermissions);
 
         for (MetaClass metaClass : metadata.getSession().getClasses()) {
             CrudEntityContext entityContext = new CrudEntityContext(metaClass);
@@ -100,6 +108,26 @@ public class PermissionDataFetcher {
                                 VIEW_ATTRIBUTE_PERMISSION));
                     }
                 }
+            }
+        }
+
+        if (specifics) {
+            GraphqlAccessContext downloadContext = new GraphqlAccessContext(GRAPHQL_FILE_DOWNLOAD_ENABLED);
+            accessManager.applyRegisteredConstraints(downloadContext);
+
+            if (downloadContext.isPermitted()) {
+                specificPermissions.add(new ShortPermissionInfo(downloadContext.getName(), 1));
+            } else {
+                specificPermissions.add(new ShortPermissionInfo(downloadContext.getName(), 0));
+            }
+
+            GraphqlAccessContext uploadContext = new GraphqlAccessContext(GRAPHQL_FILE_UPLOAD_ENABLED);
+            accessManager.applyRegisteredConstraints(uploadContext);
+
+            if (uploadContext.isPermitted()) {
+                specificPermissions.add(new ShortPermissionInfo(uploadContext.getName(), 1));
+            } else {
+                specificPermissions.add(new ShortPermissionInfo(uploadContext.getName(), 0));
             }
         }
 

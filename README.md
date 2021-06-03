@@ -135,6 +135,10 @@ gq http://localhost:8080/graphql --introspect > schema.graphql
       target
       value
     }
+    specifics {
+      target
+      value
+    }
   }
 }
 ```
@@ -161,6 +165,16 @@ will return result as follows:
 
         # more items
         # ...
+      ]
+      "specifics": [
+        {
+          "target": "graphql.fileDownload.enabled",
+          "value": 0
+        },
+        {
+          "target": "graphql.fileUpload.enabled",
+          "value": 0
+        }
       ]
     }
   }

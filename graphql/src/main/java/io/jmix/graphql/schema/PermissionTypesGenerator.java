@@ -57,6 +57,10 @@ public class PermissionTypesGenerator {
                         .name(NamingUtils.ENTITY_ATTRS)
                         .type(listType(NamingUtils.TYPE_SEC_PERMISSION))
                         .build())
+                .field(GraphQLFieldDefinition.newFieldDefinition()
+                        .name(NamingUtils.SPECIFICS)
+                        .type(listType(NamingUtils.TYPE_SEC_PERMISSION))
+                        .build())
                 .build());
         return permissionTypes;
     }

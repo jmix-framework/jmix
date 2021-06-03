@@ -53,7 +53,9 @@ class AbstractGraphQLTest extends Specification {
 
     protected TransactionTemplate transaction
     protected String adminToken
+    protected String mechanicToken
     protected UserDetails admin
+    protected UserDetails mechanic
 
     void setup() {
         admin = User.builder()
@@ -61,10 +63,17 @@ class AbstractGraphQLTest extends Specification {
                 .password("{noop}admin")
                 .authorities(RoleGrantedAuthority.ofResourceRole(resourceRoleRepository.getRoleByCode("system-full-access")))
                 .build()
-
         userRepository.addUser(admin)
 
-        adminToken = RestTestUtils.getAuthToken("http://localhost:$port", "admin", "admin", new HashMap<String, String>())
+        mechanic = User.builder()
+                .username("mechanic")
+                .password("{noop}1")
+                .authorities(RoleGrantedAuthority.ofResourceRole(resourceRoleRepository.getRoleByCode("mechanics")))
+                .build()
+        userRepository.addUser(mechanic)
+
+        adminToken = RestTestUtils.getAuthToken("admin", "admin", port)
+        mechanicToken = RestTestUtils.getAuthToken("mechanic", "1", port)
     }
 
     @Autowired

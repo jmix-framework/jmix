@@ -31,6 +31,7 @@ public class NamingUtils {
     public static final String TYPE_SEC_PERMISSION_CONFIG = "sec_PermissionConfig";
     public static final String ENTITIES = "entities";
     public static final String ENTITY_ATTRS = "entityAttributes";
+    public static final String SPECIFICS = "specifics";
 
     public static final String SYS_ATTR_TYPENAME = "__typename";
     public static final String SYS_ATTR_INSTANCE_NAME = "_instanceName";

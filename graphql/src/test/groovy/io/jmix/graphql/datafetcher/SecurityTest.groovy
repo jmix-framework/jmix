@@ -16,29 +16,12 @@
 
 package io.jmix.graphql.datafetcher
 
-
 import io.jmix.graphql.AbstractGraphQLTest
-import io.jmix.security.authentication.RoleGrantedAuthority
-import org.springframework.security.core.userdetails.User
 import org.springframework.test.annotation.DirtiesContext
-import test_support.RestTestUtils
 import test_support.entity.CarType
 
 @DirtiesContext
 class SecurityTest extends AbstractGraphQLTest {
-
-    private String mechanicToken
-
-    def setup() {
-        def mechanic = User.builder()
-                .username("mechanic")
-                .password("{noop}1")
-                .authorities(RoleGrantedAuthority.ofResourceRole(resourceRoleRepository.getRoleByCode("mechanics")))
-                .build()
-        userRepository.addUser(mechanic)
-
-        mechanicToken = RestTestUtils.getAuthToken("mechanic", "1", port)
-    }
 
     def 'Modifying attributes is forbidden for scr$Garage with mechanic role'() {
         def id = "d99d468e-3cc0-01da-295e-595e48fec620"

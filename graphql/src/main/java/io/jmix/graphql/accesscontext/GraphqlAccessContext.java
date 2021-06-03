@@ -19,9 +19,11 @@ package io.jmix.graphql.accesscontext;
 import io.jmix.core.accesscontext.SpecificOperationAccessContext;
 
 public class GraphqlAccessContext extends SpecificOperationAccessContext {
-    public static final String NAME = "graphql.enabled";
+    public static final String GRAPHQL_ENABLED = "graphql.enabled";
+    public static final String GRAPHQL_FILE_DOWNLOAD_ENABLED = "graphql.fileDownload.enabled";
+    public static final String GRAPHQL_FILE_UPLOAD_ENABLED = "graphql.fileUpload.enabled";
 
-    public GraphqlAccessContext() {
-        super(NAME);
+    public GraphqlAccessContext(String name) {
+        super(name);
     }
 }

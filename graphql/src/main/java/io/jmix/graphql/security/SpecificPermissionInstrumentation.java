@@ -16,12 +16,16 @@
 
 package io.jmix.graphql.security;
 
+import graphql.execution.AbortExecutionException;
 import graphql.execution.instrumentation.InstrumentationState;
 import graphql.execution.instrumentation.SimpleInstrumentation;
 import graphql.execution.instrumentation.parameters.InstrumentationCreateStateParameters;
 import io.jmix.core.AccessManager;
 import io.jmix.core.Messages;
+import io.jmix.graphql.InstrumentationUtils;
 import io.jmix.graphql.accesscontext.GraphqlAccessContext;
+
+import static io.jmix.graphql.accesscontext.GraphqlAccessContext.GRAPHQL_ENABLED;
 
 public class SpecificPermissionInstrumentation extends SimpleInstrumentation {
 
@@ -35,12 +39,12 @@ public class SpecificPermissionInstrumentation extends SimpleInstrumentation {
 
     @Override
     public InstrumentationState createState(InstrumentationCreateStateParameters parameters) {
-        GraphqlAccessContext accessContext = new GraphqlAccessContext();
+        GraphqlAccessContext accessContext = new GraphqlAccessContext(GRAPHQL_ENABLED);
         accessManager.applyRegisteredConstraints(accessContext);
 
-//        if (!InstrumentationUtils.isIntrospectionQuery(parameters.getExecutionInput()) && !accessContext.isPermitted()) {
-//            throw new AbortExecutionException(messages.getMessage("io.jmix.graphql/gqlApiAccessDenied"));
-//        }
+        if (!InstrumentationUtils.isIntrospectionQuery(parameters.getExecutionInput()) && !accessContext.isPermitted()) {
+            throw new AbortExecutionException(messages.getMessage("io.jmix.graphql/gqlApiAccessDenied"));
+        }
 
         return super.createState();
     }

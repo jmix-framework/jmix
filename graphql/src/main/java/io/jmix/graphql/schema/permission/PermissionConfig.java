@@ -24,6 +24,7 @@ public class PermissionConfig {
 
     private List<ShortPermissionInfo> entities;
     private List<ShortPermissionInfo> entityAttributes;
+    private List<ShortPermissionInfo> specifics;
 
     public PermissionConfig() {
     }
@@ -44,5 +45,14 @@ public class PermissionConfig {
 
     public void setEntityAttributes(List<ShortPermissionInfo> entityAttributes) {
         this.entityAttributes = entityAttributes;
+    }
+
+    @Nullable
+    public List<ShortPermissionInfo> getSpecifics() {
+        return specifics;
+    }
+
+    public void setSpecifics(List<ShortPermissionInfo> specifics) {
+        this.specifics = specifics;
     }
 }

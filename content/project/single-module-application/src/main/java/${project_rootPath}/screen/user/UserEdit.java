@@ -28,7 +28,7 @@ public class UserEdit extends StandardEditor<User> {
     private PasswordField passwordField;
 
     @Autowired
-    private TextField usernameField;
+    private TextField<String> usernameField;
 
     @Autowired
     private PasswordField confirmPasswordField;

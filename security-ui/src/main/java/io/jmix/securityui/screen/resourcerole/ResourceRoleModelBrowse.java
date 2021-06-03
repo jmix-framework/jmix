@@ -17,11 +17,14 @@
 package io.jmix.securityui.screen.resourcerole;
 
 import com.google.common.collect.Sets;
+import io.jmix.core.DataManager;
 import io.jmix.core.Messages;
 import io.jmix.security.model.ResourceRole;
 import io.jmix.security.model.RoleSource;
 import io.jmix.security.model.SecurityScope;
 import io.jmix.security.role.ResourceRoleRepository;
+import io.jmix.securitydata.entity.RoleAssignmentEntity;
+import io.jmix.securityui.model.BaseRoleModel;
 import io.jmix.securityui.model.ResourceRoleModel;
 import io.jmix.securityui.model.RoleModelConverter;
 import io.jmix.securityui.screen.role.RemoveRoleConsumer;
@@ -52,6 +55,9 @@ public class ResourceRoleModelBrowse extends StandardLookup<ResourceRoleModel> {
 
     @Autowired
     private ResourceRoleRepository roleRepository;
+
+    @Autowired
+    private DataManager dataManager;
 
     @Autowired
     private GroupTable<ResourceRoleModel> roleModelsTable;
@@ -111,6 +117,15 @@ public class ResourceRoleModelBrowse extends StandardLookup<ResourceRoleModel> {
         removeOperation.builder(roleModelsTable)
                 .withConfirmation(true)
                 .beforeActionPerformed(new RemoveRoleConsumer<>(roleRepository, notifications, messages))
+                .afterActionPerformed((afterActionConsumer) -> {
+                    List<RoleAssignmentEntity> roleAssignmentEntities = dataManager.load(RoleAssignmentEntity.class)
+                            .query("e.roleCode IN :codes")
+                            .parameter("codes", afterActionConsumer.getItems().stream()
+                                    .map(BaseRoleModel::getCode)
+                                    .collect(Collectors.toList()))
+                            .list();
+                    dataManager.remove(roleAssignmentEntities);
+                })
                 .remove();
     }
 

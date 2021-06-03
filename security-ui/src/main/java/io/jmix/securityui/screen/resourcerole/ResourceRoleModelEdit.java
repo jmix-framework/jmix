@@ -169,6 +169,10 @@ public class ResourceRoleModelEdit extends StandardEditor<ResourceRoleModel> {
         initScopesField();
 
         forRemove = new HashSet<>();
+
+        if (!Strings.isNullOrEmpty(getEditedEntity().getCode())) {
+            codeField.setEnabled(false);
+        }
     }
 
     @Subscribe

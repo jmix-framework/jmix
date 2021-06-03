@@ -162,6 +162,10 @@ public class RowLevelRoleModelEdit extends StandardEditor<RowLevelRoleModel> {
         });
 
         forRemove = new HashSet<>();
+
+        if (!Strings.isNullOrEmpty(getEditedEntity().getCode())) {
+            codeField.setEnabled(false);
+        }
     }
 
     @Install(to = "rowLevelPoliciesTable.create", subject = "initializer")

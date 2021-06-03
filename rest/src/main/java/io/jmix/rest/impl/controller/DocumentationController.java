@@ -64,7 +64,7 @@ public class DocumentationController {
         }
     }
 
-    @RequestMapping(value = "/openApiDetailed.yaml", method = RequestMethod.GET, produces = "application/yaml")
+    @RequestMapping(value = "/openapiDetailed.yaml", method = RequestMethod.GET, produces = "application/yaml")
     public String getProjectOpenApiYaml() {
         try {
             OpenAPI openAPI = openAPIGenerator.generateOpenAPI();

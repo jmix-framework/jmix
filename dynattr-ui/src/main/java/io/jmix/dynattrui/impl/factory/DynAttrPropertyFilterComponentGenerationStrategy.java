@@ -35,10 +35,9 @@ import io.jmix.ui.Actions;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.WindowConfig;
 import io.jmix.ui.action.entitypicker.EntityLookupAction;
-import io.jmix.ui.action.propertyfilter.DateIntervalAction;
+import io.jmix.ui.app.propertyfilter.dateinterval.action.DateIntervalAction;
 import io.jmix.ui.action.valuepicker.ValueClearAction;
 import io.jmix.ui.app.propertyfilter.dateinterval.model.BaseDateInterval;
-import io.jmix.ui.app.propertyfilter.dateinterval.DateIntervalUtils;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.data.DataAwareComponentsTools;
 import io.jmix.ui.component.factory.PropertyFilterComponentGenerationContext;
@@ -150,7 +149,7 @@ public class DynAttrPropertyFilterComponentGenerationStrategy extends DynAttrCom
 
     protected Field createIntervalField(ComponentGenerationContext context) {
         ValuePicker<BaseDateInterval> valuePicker = uiComponents.create(ValuePicker.NAME);
-        valuePicker.addAction(actions.create(DateIntervalAction.ID));
+        valuePicker.addAction(applicationContext.getBean(DateIntervalAction.class));
         valuePicker.addAction(actions.create(ValueClearAction.ID));
         return valuePicker;
     }

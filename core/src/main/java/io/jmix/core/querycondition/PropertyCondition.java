@@ -23,6 +23,7 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Condition for filtering by entity property.
@@ -246,6 +247,30 @@ public class PropertyCondition implements Condition {
         pc.setParameterName(this.parameterName);
         pc.setParameterValue(this.parameterValue);
         return pc;
+    }
+
+    @Override
+    public Set<String> getExcludedParameters(Set<String> actualParameters) {
+        Set<String> excludedParameters = new TreeSet<>();
+        if (actualParameters.containsAll(getParameters())) {
+            return excludedParameters;
+        }
+
+        if (parameterValue != null) {
+            if (parameterValue instanceof String) {
+                if (!Strings.isNullOrEmpty((String) parameterValue)) {
+                    return excludedParameters;
+                }
+            } else if (parameterValue instanceof Collection) {
+                if (CollectionUtils.isNotEmpty((Collection<?>) parameterValue)) {
+                    return excludedParameters;
+                }
+            } else {
+                return excludedParameters;
+            }
+        }
+        excludedParameters.add(parameterName);
+        return excludedParameters;
     }
 
     public static class Operation {

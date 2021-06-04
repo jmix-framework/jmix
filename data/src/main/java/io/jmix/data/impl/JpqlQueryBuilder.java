@@ -222,12 +222,17 @@ public class JpqlQueryBuilder<Q extends JmixQuery> {
                     .collect(Collectors.toSet());
 
             Condition actualized = condition.actualize(nonNullParamNames);
+
+            Set<String> excludedParameters = condition.getExcludedParameters(nonNullParamNames);
+            resultParameters.entrySet().removeIf(e -> excludedParameters.contains(e.getKey()));
+
             if (actualized != null) {
-                resultParameters = conditionParameterJpqlGenerator.processParameters(resultParameters, queryParameters,
-                        actualized);
+                resultParameters = conditionParameterJpqlGenerator
+                        .processParameters(resultParameters, queryParameters, actualized);
             }
 
-            resultQuery = conditionJpqlGenerator.processQuery(resultQuery, createConditionGenerationContext(actualized));
+            resultQuery = conditionJpqlGenerator
+                    .processQuery(resultQuery, createConditionGenerationContext(actualized));
         }
     }
 

@@ -19,10 +19,6 @@ package io.jmix.search.index;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.security.Authenticated;
 import io.jmix.search.SearchProperties;
-import io.jmix.search.index.ESIndexManager;
-import io.jmix.search.index.EntityReindexer;
-import io.jmix.search.index.IndexConfiguration;
-import io.jmix.search.index.IndexSynchronizationResult;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.index.queue.IndexingQueueManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,15 +85,42 @@ public class EntityIndexingManagementFacade {
     }
 
     @Authenticated
+    @ManagedOperation(description = "Validates schemas of all search indexes defined in application.")
+    public String validateIndexes() {
+        Collection<IndexValidationResult> indexValidationResults = esIndexManager.validateIndexes();
+        StringBuilder sb = new StringBuilder("Validation result:");
+        indexValidationResults.forEach(result -> sb.append(System.lineSeparator()).append("\t")
+                .append(formatValidationResult(result))
+        );
+        return sb.toString();
+    }
+
+    @Authenticated
+    @ManagedOperation(description = "Validates schema of search index related to provided entity.")
+    @ManagedOperationParameters({
+            @ManagedOperationParameter(name = "entityName", description = "Name of entity configured for indexing, e.g. demo_Order")
+    })
+    public String validateIndex(String entityName) {
+        Optional<IndexConfiguration> indexConfigurationOpt = indexConfigurationManager.getIndexConfigurationByEntityNameOpt(entityName);
+        String result;
+        if (indexConfigurationOpt.isPresent()) {
+            IndexConfiguration indexConfiguration = indexConfigurationOpt.get();
+            IndexValidationResult indexValidationResult = esIndexManager.validateIndex(indexConfiguration);
+            result = "Validation result: " + formatValidationResult(indexValidationResult);
+        } else {
+            result = String.format("Entity '%s' is not indexed", entityName);
+        }
+        return result;
+    }
+
+    @Authenticated
     @ManagedOperation(description = "Synchronize schemas of all search indexes defined in application. " +
             "This may cause deletion of indexes with all their data - depends on schema management strategy")
     public String synchronizeIndexSchemas() {
         Collection<IndexSynchronizationResult> results = esIndexManager.synchronizeIndexSchemas();
         StringBuilder sb = new StringBuilder("Synchronization result:");
         results.forEach(result -> sb.append(System.lineSeparator()).append("\t")
-                .append("Entity=").append(result.getIndexConfiguration().getEntityName())
-                .append(" Index=").append(result.getIndexConfiguration().getIndexName())
-                .append(" Status=").append(result.getSchemaStatus()));
+                .append(formatSynchronizationResult(result)));
         return sb.toString();
     }
 
@@ -117,7 +140,27 @@ public class EntityIndexingManagementFacade {
         IndexSynchronizationResult result = esIndexManager.synchronizeIndexSchema(indexConfigurationOpt.get());
         return String.format(
                 "Synchronization result: Entity=%s Index=%s Status=%s",
-                entityName, result.getIndexConfiguration().getIndexName(), result.getSchemaStatus()
+                entityName, result.getIndexConfiguration().getIndexName(), result.getIndexSynchronizationStatus()
         );
+    }
+
+    protected String formatValidationResult(IndexValidationResult result) {
+        return formatSingleStatusString(
+                result.getIndexConfiguration().getEntityName(),
+                result.getIndexConfiguration().getIndexName(),
+                result.getIndexValidationStatus().name()
+        );
+    }
+
+    protected String formatSynchronizationResult(IndexSynchronizationResult result) {
+        return formatSingleStatusString(
+                result.getIndexConfiguration().getEntityName(),
+                result.getIndexConfiguration().getIndexName(),
+                result.getIndexSynchronizationStatus().name()
+        );
+    }
+
+    protected String formatSingleStatusString(String entityName, String indexName, String status) {
+        return String.format("Entity=%s, Index=%s, Status=%s", entityName, indexName, status);
     }
 }

@@ -58,7 +58,7 @@ public class ESIndexManagerImpl implements ESIndexManager {
     protected ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public boolean createIndex(IndexConfiguration indexConfiguration) throws IOException {
+    public boolean createIndex(IndexConfiguration indexConfiguration) {
         Preconditions.checkNotNullArgument(indexConfiguration);
 
         CreateIndexRequest request = new CreateIndexRequest(indexConfiguration.getIndexName());
@@ -70,23 +70,33 @@ public class ESIndexManagerImpl implements ESIndexManager {
         }
         request.mapping(mappingBody, XContentType.JSON);
         log.info("Create index '{}' with mapping {}", indexConfiguration.getIndexName(), mappingBody);
-        CreateIndexResponse response = esClient.indices().create(request, RequestOptions.DEFAULT);
+        CreateIndexResponse response;
+        try {
+            response = esClient.indices().create(request, RequestOptions.DEFAULT);
+        } catch (IOException e) {
+            throw new RuntimeException("Unable to create index '" + indexConfiguration.getIndexName() + "': Request failed", e);
+        }
         log.info("Result of index '{}' creation: {}", indexConfiguration.getIndexName(), response.isAcknowledged() ? "Success" : "Failure");
         return response.isAcknowledged();
     }
 
     @Override
-    public boolean dropIndex(String indexName) throws IOException {
+    public boolean dropIndex(String indexName) {
         Preconditions.checkNotNullArgument(indexName);
 
         DeleteIndexRequest request = new DeleteIndexRequest(indexName);
-        AcknowledgedResponse response = esClient.indices().delete(request, RequestOptions.DEFAULT);
+        AcknowledgedResponse response;
+        try {
+            response = esClient.indices().delete(request, RequestOptions.DEFAULT);
+        } catch (IOException e) {
+            throw new RuntimeException("Unable to delete index '" + indexName + "': Request failed", e);
+        }
         log.info("Result of index '{}' deletion: {}", indexName, response.isAcknowledged() ? "Success" : "Failure");
         return response.isAcknowledged();
     }
 
     @Override
-    public boolean recreateIndex(IndexConfiguration indexConfiguration) throws IOException {
+    public boolean recreateIndex(IndexConfiguration indexConfiguration) {
         Preconditions.checkNotNullArgument(indexConfiguration);
 
         String indexName = indexConfiguration.getIndexName();
@@ -97,15 +107,19 @@ public class ESIndexManagerImpl implements ESIndexManager {
     }
 
     @Override
-    public boolean isIndexExist(String indexName) throws IOException {
+    public boolean isIndexExist(String indexName) {
         Preconditions.checkNotNullArgument(indexName);
 
         GetIndexRequest request = new GetIndexRequest(indexName);
-        return esClient.indices().exists(request, RequestOptions.DEFAULT);
+        try {
+            return esClient.indices().exists(request, RequestOptions.DEFAULT);
+        } catch (IOException e) {
+            throw new RuntimeException("Unable to check existence of index '" + indexName + "': Request failed", e);
+        }
     }
 
     @Override
-    public boolean isIndexActual(IndexConfiguration indexConfiguration) throws IOException {
+    public boolean isIndexActual(IndexConfiguration indexConfiguration) {
         Preconditions.checkNotNullArgument(indexConfiguration);
 
         GetIndexResponse index = getIndex(indexConfiguration.getIndexName());
@@ -122,11 +136,47 @@ public class ESIndexManagerImpl implements ESIndexManager {
     }
 
     @Override
-    public GetIndexResponse getIndex(String indexName) throws IOException {
+    public Collection<IndexValidationResult> validateIndexes() {
+        Collection<IndexConfiguration> indexConfigurations = indexConfigurationManager.getAllIndexConfigurations();
+        return validateIndexes(indexConfigurations);
+    }
+
+    @Override
+    public Collection<IndexValidationResult> validateIndexes(Collection<IndexConfiguration> indexConfigurations) {
+        Preconditions.checkNotNullArgument(indexConfigurations);
+        return indexConfigurations.stream()
+                .map(this::validateIndex)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public IndexValidationResult validateIndex(IndexConfiguration indexConfiguration) {
+        Preconditions.checkNotNullArgument(indexConfiguration);
+
+        IndexValidationStatus status;
+        if (isIndexExist(indexConfiguration.getIndexName())) {
+            if (isIndexActual(indexConfiguration)) {
+                status = IndexValidationStatus.ACTUAL;
+            } else {
+                status = IndexValidationStatus.IRRELEVANT;
+            }
+        } else {
+            status = IndexValidationStatus.MISSING;
+        }
+
+        return new IndexValidationResult(indexConfiguration, status);
+    }
+
+    @Override
+    public GetIndexResponse getIndex(String indexName) {
         Preconditions.checkNotNullArgument(indexName);
 
         GetIndexRequest request = new GetIndexRequest(indexName);
-        return esClient.indices().get(request, RequestOptions.DEFAULT);
+        try {
+            return esClient.indices().get(request, RequestOptions.DEFAULT);
+        } catch (IOException e) {
+            throw new RuntimeException("Unable to get info of index '" + indexName + "': Request failed", e);
+        }
     }
 
     @Override
@@ -137,6 +187,7 @@ public class ESIndexManagerImpl implements ESIndexManager {
 
     @Override
     public Collection<IndexSynchronizationResult> synchronizeIndexSchemas(Collection<IndexConfiguration> indexConfigurations) {
+        Preconditions.checkNotNullArgument(indexConfigurations);
         return indexConfigurations.stream()
                 .map(this::synchronizeIndexSchema)
                 .collect(Collectors.toList());
@@ -144,61 +195,56 @@ public class ESIndexManagerImpl implements ESIndexManager {
 
     @Override
     public IndexSynchronizationResult synchronizeIndexSchema(IndexConfiguration indexConfiguration) {
+        Preconditions.checkNotNullArgument(indexConfiguration);
         IndexSchemaManagementStrategy strategy = searchProperties.getIndexSchemaManagementStrategy();
         return synchronizeIndexSchema(indexConfiguration, strategy);
     }
 
     protected IndexSynchronizationResult synchronizeIndexSchema(IndexConfiguration indexConfiguration, IndexSchemaManagementStrategy strategy) {
-        Preconditions.checkNotNullArgument(indexConfiguration);
-
         log.info("Synchronize search index '{}' according to strategy '{}'", indexConfiguration.getIndexName(), strategy);
         IndexSynchronizationResult result;
-        try {
-            boolean indexExist = isIndexExist(indexConfiguration.getIndexName());
-            if (indexExist) {
-                log.info("Index '{}' already exists", indexConfiguration.getIndexName());
-                boolean indexActual = isIndexActual(indexConfiguration);
-                if (indexActual) {
-                    log.info("Index '{}' has actual configuration", indexConfiguration.getIndexName());
-                    result = new IndexSynchronizationResult(indexConfiguration, IndexSchemaStatus.ACTUAL);
-                } else {
-                    log.info("Index '{}' has irrelevant configuration", indexConfiguration.getIndexName());
-                    result = handleIrrelevantIndex(indexConfiguration, strategy);
-                }
+        boolean indexExist = isIndexExist(indexConfiguration.getIndexName());
+        if (indexExist) {
+            log.info("Index '{}' already exists", indexConfiguration.getIndexName());
+            boolean indexActual = isIndexActual(indexConfiguration);
+            if (indexActual) {
+                log.info("Index '{}' has actual configuration", indexConfiguration.getIndexName());
+                result = new IndexSynchronizationResult(indexConfiguration, IndexSynchronizationStatus.ACTUAL);
             } else {
-                log.info("Index '{}' does not exists. Create", indexConfiguration.getIndexName());
-                result = handleMissingIndex(indexConfiguration, strategy);
+                log.info("Index '{}' has irrelevant configuration", indexConfiguration.getIndexName());
+                result = handleIrrelevantIndex(indexConfiguration, strategy);
             }
-        } catch (IOException e) {
-            throw new RuntimeException("Unable to prepare index '" + indexConfiguration.getIndexName() + "'", e);
+        } else {
+            log.info("Index '{}' does not exists. Create", indexConfiguration.getIndexName());
+            result = handleMissingIndex(indexConfiguration, strategy);
         }
         return result;
     }
 
-    protected IndexSynchronizationResult handleIrrelevantIndex(IndexConfiguration indexConfiguration, IndexSchemaManagementStrategy strategy) throws IOException {
-        IndexSynchronizationResult result;
+    protected IndexSynchronizationResult handleIrrelevantIndex(IndexConfiguration indexConfiguration, IndexSchemaManagementStrategy strategy) {
+        IndexSynchronizationStatus status;
         if (IndexSchemaManagementStrategy.CREATE_OR_RECREATE.equals(strategy)) {
             boolean created = recreateIndex(indexConfiguration);
             if (created) {
-                result = new IndexSynchronizationResult(indexConfiguration, IndexSchemaStatus.CREATED);
+                status = IndexSynchronizationStatus.RECREATED;
             } else {
-                result = new IndexSynchronizationResult(indexConfiguration, IndexSchemaStatus.IRRELEVANT);
+                status = IndexSynchronizationStatus.IRRELEVANT;
             }
         } else {
-            result = new IndexSynchronizationResult(indexConfiguration, IndexSchemaStatus.IRRELEVANT);
+            status = IndexSynchronizationStatus.IRRELEVANT;
         }
-        return result;
+        return new IndexSynchronizationResult(indexConfiguration, status);
     }
 
-    protected IndexSynchronizationResult handleMissingIndex(IndexConfiguration indexConfiguration, IndexSchemaManagementStrategy strategy) throws IOException {
-        IndexSynchronizationResult result;
+    protected IndexSynchronizationResult handleMissingIndex(IndexConfiguration indexConfiguration, IndexSchemaManagementStrategy strategy) {
+        IndexSynchronizationStatus status;
         boolean created = createIndex(indexConfiguration);
         if (created) {
-            result = new IndexSynchronizationResult(indexConfiguration, IndexSchemaStatus.CREATED);
+            status = IndexSynchronizationStatus.CREATED;
         } else {
-            result = new IndexSynchronizationResult(indexConfiguration, IndexSchemaStatus.MISSING);
+            status = IndexSynchronizationStatus.MISSING;
         }
-        return result;
+        return new IndexSynchronizationResult(indexConfiguration, status);
     }
 
 }

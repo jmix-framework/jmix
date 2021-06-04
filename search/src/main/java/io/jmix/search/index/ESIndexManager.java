@@ -18,7 +18,6 @@ package io.jmix.search.index;
 
 import org.elasticsearch.client.indices.GetIndexResponse;
 
-import java.io.IOException;
 import java.util.Collection;
 
 /**
@@ -31,54 +30,54 @@ public interface ESIndexManager {
      *
      * @param indexConfiguration index configuration
      * @return true if index was successfully created, false otherwise
-     * @throws IOException if there is a problem with request/response processing
      */
-    boolean createIndex(IndexConfiguration indexConfiguration) throws IOException;
+    boolean createIndex(IndexConfiguration indexConfiguration);
 
     /**
      * Drops index by name.
      *
      * @param indexName index name
      * @return true if index was successfully dropped, false otherwise
-     * @throws IOException if there is a problem with request/response processing
      */
-    boolean dropIndex(String indexName) throws IOException;
+    boolean dropIndex(String indexName);
 
     /**
      * Drops (if exists) and creates index using provided {@link IndexConfiguration}.
      *
      * @param indexConfiguration index configuration
      * @return true if index was successfully recreated, false otherwise
-     * @throws IOException if there is a problem with request/response processing
      */
-    boolean recreateIndex(IndexConfiguration indexConfiguration) throws IOException;
+    boolean recreateIndex(IndexConfiguration indexConfiguration);
 
     /**
      * Checks if index exists.
      *
      * @param indexName index name
      * @return true if index exists, false otherwise
-     * @throws IOException in case of request failure
      */
-    boolean isIndexExist(String indexName) throws IOException;
+    boolean isIndexExist(String indexName);
 
     /**
      * Checks if index has actual configuration.
      *
      * @param indexConfiguration actual configuration
      * @return true if existing index has the same configuration as the provided one, false otherwise
-     * @throws IOException in case of request failure
      */
-    boolean isIndexActual(IndexConfiguration indexConfiguration) throws IOException;
+    boolean isIndexActual(IndexConfiguration indexConfiguration);
+
+    Collection<IndexValidationResult> validateIndexes();
+
+    Collection<IndexValidationResult> validateIndexes(Collection<IndexConfiguration> indexConfigurations);
+
+    IndexValidationResult validateIndex(IndexConfiguration indexConfiguration);
 
     /**
      * Requests info about index from ES cluster.
      *
      * @param indexName index name
      * @return response
-     * @throws IOException in case of request failure
      */
-    GetIndexResponse getIndex(String indexName) throws IOException;
+    GetIndexResponse getIndex(String indexName);
 
     /**
      * Synchronizes schemas of all search indices defined in application.

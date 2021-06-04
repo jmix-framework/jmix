@@ -29,7 +29,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 @Component("search_EntityReindexer")
@@ -92,8 +91,6 @@ public class EntityReindexerImpl implements EntityReindexer {
                     locker.unlockQueueProcessing();
                     queueProcessingLocked = false;
                     return indexingQueueManager.enqueueIndexAll(entityName);
-                } catch (IOException e) {
-                    throw new RuntimeException("Unable to recreate index '" + indexConfiguration.getIndexName() + "'", e);
                 } finally {
                     authenticator.end();
                     if (queueProcessingLocked) {

@@ -16,21 +16,21 @@
 
 package io.jmix.search.index;
 
-public class IndexSynchronizationResult {
+public class IndexValidationResult {
 
     protected IndexConfiguration indexConfiguration;
-    protected IndexSynchronizationStatus indexSynchronizationStatus;
+    protected IndexValidationStatus indexValidationStatus;
 
-    public IndexSynchronizationResult(IndexConfiguration indexConfiguration, IndexSynchronizationStatus indexSynchronizationStatus) {
+    public IndexValidationResult(IndexConfiguration indexConfiguration, IndexValidationStatus indexValidationStatus) {
         this.indexConfiguration = indexConfiguration;
-        this.indexSynchronizationStatus = indexSynchronizationStatus;
+        this.indexValidationStatus = indexValidationStatus;
     }
 
     public IndexConfiguration getIndexConfiguration() {
         return indexConfiguration;
     }
 
-    public IndexSynchronizationStatus getIndexSynchronizationStatus() {
-        return indexSynchronizationStatus;
+    public IndexValidationStatus getIndexValidationStatus() {
+        return indexValidationStatus;
     }
 }

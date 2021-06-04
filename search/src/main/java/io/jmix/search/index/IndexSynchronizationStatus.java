@@ -16,9 +16,10 @@
 
 package io.jmix.search.index;
 
-public enum IndexSchemaStatus {
+public enum IndexSynchronizationStatus {
     MISSING,
     IRRELEVANT,
     CREATED,
+    RECREATED,
     ACTUAL
 }

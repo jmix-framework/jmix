@@ -44,10 +44,10 @@ public class StartupIndexSynchronizer {
     protected void postConstruct() {
         try {
             Collection<IndexSynchronizationResult> indexSynchronizationResults = esIndexManager.synchronizeIndexSchemas();
-            indexSynchronizationResults.forEach(result -> log.info("Synchronization Result: entity={}, index={}, status={}",
+            indexSynchronizationResults.forEach(result -> log.info("Synchronization Result: Entity={}, Index={}, Status={}",
                     result.getIndexConfiguration().getEntityName(),
                     result.getIndexConfiguration().getIndexName(),
-                    result.getSchemaStatus()));
+                    result.getIndexSynchronizationStatus()));
         } catch (Exception e) {
             log.error("Failed to synchronize indexes", e);
         }

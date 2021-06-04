@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package io.jmix.ui.action.propertyfilter;
+package io.jmix.ui.app.propertyfilter.dateinterval.action;
 
 import io.jmix.core.Messages;
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.ScreenBuilders;
-import io.jmix.ui.action.ActionType;
 import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.app.propertyfilter.dateinterval.DateIntervalDialog;
 import io.jmix.ui.builder.AfterScreenCloseEvent;
@@ -38,10 +38,14 @@ import io.jmix.ui.screen.OpenMode;
 import io.jmix.ui.screen.StandardOutcome;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
 
 import javax.annotation.Nullable;
 
-@ActionType(DateIntervalAction.ID)
+@Internal
+@org.springframework.stereotype.Component("ui_DateIntervalAction")
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class DateIntervalAction extends BaseAction implements ValuePicker.ValuePickerAction, InitializingBean {
 
     public static final String ID = "value_dateInterval";

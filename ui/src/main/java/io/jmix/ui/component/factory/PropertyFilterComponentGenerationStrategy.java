@@ -29,16 +29,16 @@ import io.jmix.ui.Actions;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.action.entitypicker.EntityClearAction;
 import io.jmix.ui.action.entitypicker.EntityLookupAction;
-import io.jmix.ui.action.propertyfilter.DateIntervalAction;
+import io.jmix.ui.app.propertyfilter.dateinterval.action.DateIntervalAction;
 import io.jmix.ui.action.valuepicker.ValueClearAction;
 import io.jmix.ui.app.propertyfilter.dateinterval.model.BaseDateInterval;
-import io.jmix.ui.app.propertyfilter.dateinterval.DateIntervalUtils;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.data.DataAwareComponentsTools;
 import io.jmix.ui.component.impl.EntityFieldCreationSupport;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.screen.OpenMode;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
 
 import javax.annotation.Nullable;
@@ -53,6 +53,7 @@ public class PropertyFilterComponentGenerationStrategy extends AbstractComponent
     public static final String UNARY_FIELD_STYLENAME = "unary-field";
 
     protected DataAwareComponentsTools dataAwareComponentsTools;
+    protected ApplicationContext applicationContext;
 
     @Autowired
     public PropertyFilterComponentGenerationStrategy(Messages messages,
@@ -62,9 +63,11 @@ public class PropertyFilterComponentGenerationStrategy extends AbstractComponent
                                                      MetadataTools metadataTools,
                                                      Icons icons,
                                                      Actions actions,
-                                                     DataAwareComponentsTools dataAwareComponentsTools) {
+                                                     DataAwareComponentsTools dataAwareComponentsTools,
+                                                     ApplicationContext applicationContext) {
         super(messages, uiComponents, entityFieldCreationSupport, metadata, metadataTools, icons, actions);
         this.dataAwareComponentsTools = dataAwareComponentsTools;
+        this.applicationContext = applicationContext;
     }
 
     @Override
@@ -193,7 +196,7 @@ public class PropertyFilterComponentGenerationStrategy extends AbstractComponent
     protected Field createIntervalField(ComponentGenerationContext context, MetaPropertyPath mpp) {
         ValuePicker<BaseDateInterval> valuePicker = uiComponents.create(ValuePicker.NAME);
 
-        DateIntervalAction intervalAction = (DateIntervalAction) actions.create(DateIntervalAction.ID);
+        DateIntervalAction intervalAction = applicationContext.getBean(DateIntervalAction.class);
         intervalAction.setMetaPropertyPath(mpp);
 
         valuePicker.addAction(intervalAction);

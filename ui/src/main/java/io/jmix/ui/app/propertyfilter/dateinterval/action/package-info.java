@@ -15,6 +15,6 @@
  */
 
 @NonNullApi
-package io.jmix.ui.action.propertyfilter;
+package io.jmix.ui.app.propertyfilter.dateinterval.action;
 
 import org.springframework.lang.NonNullApi;

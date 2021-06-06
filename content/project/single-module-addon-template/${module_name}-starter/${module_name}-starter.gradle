@@ -1,0 +1,16 @@
+archivesBaseName = '${module_name}-starter'
+
+jmix {
+    entitiesEnhancing {
+        enabled = false
+    }
+}
+
+dependencies {
+    api project(':${module_name}')
+
+    implementation 'io.jmix.core:jmix-core'
+    implementation 'io.jmix.data:jmix-data'
+
+    implementation 'org.springframework.boot:spring-boot-autoconfigure'
+}

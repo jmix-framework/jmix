@@ -23,6 +23,7 @@ import io.jmix.core.annotation.Internal;
 import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.core.security.CurrentAuthentication;
+import io.jmix.core.security.event.UserRemovedEvent;
 import io.jmix.ui.Fragments;
 import io.jmix.ui.action.filter.FilterAction;
 import io.jmix.ui.action.filter.FilterClearValuesAction;
@@ -48,7 +49,12 @@ import io.jmix.uidata.app.filter.configuration.UiDataFilterConfigurationModelFra
 import io.jmix.uidata.entity.FilterConfiguration;
 import io.jmix.ui.settings.ScreenSettings;
 import io.jmix.ui.settings.facet.ScreenSettingsFacet;
+import io.jmix.uidata.entity.UiSetting;
+import io.jmix.uidata.entity.UiTablePresentation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -194,6 +200,16 @@ public class UiDataFilterSupport extends FilterSupport {
         }
 
         return configurationModel;
+    }
+
+    @Transactional
+    @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT, fallbackExecution = true)
+    private void onUserRemove(UserRemovedEvent event) {
+        List<FilterConfiguration> configurations = dataManager.load(FilterConfiguration.class)
+                .query("e.username = :username")
+                .parameter("username", event.getUsername())
+                .list();
+        dataManager.remove(configurations.toArray());
     }
 
     protected boolean isDefaultForMeFieldVisible(Filter.Configuration currentConfiguration,

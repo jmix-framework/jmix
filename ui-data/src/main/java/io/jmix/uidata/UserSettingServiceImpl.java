@@ -26,6 +26,7 @@ import io.jmix.core.common.xmlparsing.Dom4jTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.AccessDeniedException;
 import io.jmix.core.security.CurrentAuthentication;
+import io.jmix.core.security.event.UserRemovedEvent;
 import io.jmix.ui.settings.UserSettingService;
 import io.jmix.uidata.entity.UiSetting;
 import io.jmix.uidata.entity.UiTablePresentation;
@@ -36,6 +37,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.Nullable;
@@ -233,6 +237,30 @@ public class UserSettingServiceImpl implements UserSettingService {
         });
 
         return resultMap == null ? Collections.emptyMap() : resultMap;
+    }
+
+    @Transactional
+    @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT, fallbackExecution = true)
+    private void onUserRemove(UserRemovedEvent event) {
+        String username = event.getUsername();
+
+        List<UiSetting> settings = entityManager.createQuery(
+                "select s from ui_Setting s where s.username = ?1", UiSetting.class)
+                .setParameter(1, username)
+                .getResultList();
+
+        for (UiSetting setting : settings) {
+            entityManager.remove(setting);
+        }
+
+        List<UiTablePresentation> presentations = entityManager.createQuery(
+                "select p from ui_TablePresentation p where p.username = ?1", UiTablePresentation.class)
+                .setParameter(1, username)
+                .getResultList();
+
+        for (UiTablePresentation presentation : presentations) {
+            entityManager.remove(presentation);
+        }
     }
 }
 

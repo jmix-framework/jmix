@@ -61,4 +61,12 @@ public @interface StudioElementsGroup {
      * @return the maximum number of times a group of elements can occur
      */
     MaxOccurNumber maxOccurs() default MaxOccurNumber.ONE;
+
+    /**
+     * Specifies FQN of base element class. If not specified, then it will be automatically defined as a type of
+     * the method parameter.
+     *
+     * @return FQN of base element class
+     */
+    String elementClass() default "";
 }

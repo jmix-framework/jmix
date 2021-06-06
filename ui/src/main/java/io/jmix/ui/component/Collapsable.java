@@ -33,7 +33,7 @@ public interface Collapsable extends Component {
 
     boolean isCollapsable();
 
-    @StudioProperty(defaultValue = "true")
+    @StudioProperty(defaultValue = "false")
     void setCollapsable(boolean collapsable);
 
     Subscription addExpandedStateChangeListener(Consumer<ExpandedStateChangeEvent> listener);

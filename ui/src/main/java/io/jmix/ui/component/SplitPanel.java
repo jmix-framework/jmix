@@ -16,6 +16,7 @@
 package io.jmix.ui.component;
 
 import io.jmix.core.common.event.Subscription;
+import io.jmix.ui.meta.*;
 
 import java.util.EventObject;
 import java.util.function.Consumer;
@@ -23,6 +24,22 @@ import java.util.function.Consumer;
 /**
  * A split panel contains two components and lays them vertically or horizontally.
  */
+@StudioComponent(
+        caption = "VerticalSplitPanel",
+        category = "Containers",
+        xmlElement = "split",
+        icon = "io/jmix/ui/icon/container/verticalSplitPanel.svg",
+        canvasBehaviour = CanvasBehaviour.CONTAINER,
+        containerType = ContainerType.SPLIT,
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/containers/split-panel.html"
+)
+@StudioProperties(
+        properties = {
+                @StudioProperty(name = "reversePosition", type = PropertyType.BOOLEAN, defaultValue = "false"),
+                @StudioProperty(name = "width", type = PropertyType.SIZE, defaultValue = "-1px", initialValue = "200px"),
+                @StudioProperty(name = "height", type = PropertyType.SIZE, defaultValue = "-1px", initialValue = "100px")
+        }
+)
 public interface SplitPanel extends ComponentContainer, Component.BelongToFrame, Component.HasIcon,
         Component.HasCaption, HasContextHelp, HasHtmlCaption, HasHtmlDescription, HasHtmlSanitizer {
 
@@ -68,6 +85,7 @@ public interface SplitPanel extends ComponentContainer, Component.BelongToFrame,
      * @param pos  the new size of the first region.
      * @param unit the unit (from {@link SizeUnit}) in which the size is given.
      */
+    @StudioProperty(name = "pos", type = PropertyType.STRING, defaultValue = "50")
     void setSplitPosition(int pos, SizeUnit unit);
 
     /**
@@ -105,6 +123,7 @@ public interface SplitPanel extends ComponentContainer, Component.BelongToFrame,
      * @param pos  the new size of the first region.
      * @param unit the unit (from {@link SizeUnit}) in which the size is given.
      */
+    @StudioProperty(name = "minSplitPosition", type = PropertyType.STRING)
     void setMinSplitPosition(int pos, SizeUnit unit);
 
     /**
@@ -128,6 +147,7 @@ public interface SplitPanel extends ComponentContainer, Component.BelongToFrame,
      * @param pos  the new size of the first region.
      * @param unit the unit (from {@link SizeUnit}) in which the size is given.
      */
+    @StudioProperty(name = "maxSplitPosition", type = PropertyType.STRING)
     void setMaxSplitPosition(int pos, SizeUnit unit);
 
     /**
@@ -149,6 +169,7 @@ public interface SplitPanel extends ComponentContainer, Component.BelongToFrame,
      *
      * @param locked locked
      */
+    @StudioProperty(defaultValue = "false")
     void setLocked(boolean locked);
 
     /**
@@ -161,6 +182,7 @@ public interface SplitPanel extends ComponentContainer, Component.BelongToFrame,
      *
      * @param dockable dockable
      */
+    @StudioProperty(defaultValue = "false")
     void setDockable(boolean dockable);
 
     /**

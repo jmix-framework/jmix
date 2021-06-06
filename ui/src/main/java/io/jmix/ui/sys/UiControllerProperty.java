@@ -28,8 +28,14 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
  * @see UiControllerPropertyInjector
  */
 @StudioElement(caption = "Controller Property", xmlElement = "property")
-@StudioProperties(properties = @StudioProperty(name = "ref", type = PropertyType.STRING),
-        groups = @PropertiesGroup(properties = {"value", "ref"}, constraint = PropertiesConstraint.ONE_OF))
+@StudioProperties(
+        properties = {
+                @StudioProperty(name = "ref", type = PropertyType.STRING)
+        },
+        groups = {
+                @PropertiesGroup(properties = {"value", "ref"}, constraint = PropertiesConstraint.ONE_OF)
+        }
+)
 public class UiControllerProperty {
 
     protected final String name;

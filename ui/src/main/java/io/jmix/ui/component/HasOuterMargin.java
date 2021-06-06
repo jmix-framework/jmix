@@ -16,6 +16,9 @@
 
 package io.jmix.ui.component;
 
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioProperty;
+
 /**
  * A class that implements this interface can have indentation outside the border.
  */
@@ -25,6 +28,7 @@ public interface HasOuterMargin {
      *
      * @param enable if true, enables margins on all sides. If false, disables margins on all sides.
      */
+    @StudioProperty(name = "outerMargin", type = PropertyType.MARGIN, defaultValue = "false")
     default void setOuterMargin(boolean enable) {
         setOuterMargin(new MarginInfo(enable, enable, enable, enable));
     }

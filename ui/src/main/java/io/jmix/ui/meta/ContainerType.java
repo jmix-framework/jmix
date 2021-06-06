@@ -18,7 +18,10 @@ package io.jmix.ui.meta;
 
 import io.jmix.ui.component.Accordion;
 import io.jmix.ui.component.FlowBoxLayout;
+import io.jmix.ui.component.GroupBoxLayout;
 import io.jmix.ui.component.HBoxLayout;
+import io.jmix.ui.component.ScrollBoxLayout;
+import io.jmix.ui.component.SplitPanel;
 import io.jmix.ui.component.TabSheet;
 import io.jmix.ui.component.VBoxLayout;
 
@@ -42,11 +45,32 @@ public enum ContainerType {
     FLOW,
 
     /**
+     * GroupBox layout.
+     *
+     * @see GroupBoxLayout
+     */
+    GROUP_BOX,
+
+    /**
      * Horizontal layout.
      *
      * @see HBoxLayout
      */
     HORIZONTAL,
+
+    /**
+     * ScrollBox layout.
+     *
+     * @see ScrollBoxLayout
+     */
+    SCROLL_BOX,
+
+    /**
+     * Split layout.
+     *
+     * @see SplitPanel
+     */
+    SPLIT,
 
     /**
      * TabSheet component.

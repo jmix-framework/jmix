@@ -19,6 +19,7 @@ import io.jmix.ui.meta.CanvasBehaviour;
 import io.jmix.ui.meta.ContainerType;
 import io.jmix.ui.meta.PropertyType;
 import io.jmix.ui.meta.StudioComponent;
+import io.jmix.ui.meta.StudioProperties;
 import io.jmix.ui.meta.StudioProperty;
 
 import javax.annotation.Nullable;
@@ -27,13 +28,20 @@ import javax.annotation.Nullable;
  * Component container that shows scrollbars if its content does not fit the viewport.
  */
 @StudioComponent(
-        caption = "ScrollBox",
+        caption = "VerticalScrollBox",
         category = "Containers",
         xmlElement = "scrollBox",
-        icon = "io/jmix/ui/icon/container/scrollBox.svg",
+        icon = "io/jmix/ui/icon/container/verticalScrollBox.svg",
         canvasBehaviour = CanvasBehaviour.CONTAINER,
-        containerType = ContainerType.VERTICAL,
+        containerType = ContainerType.SCROLL_BOX,
+        unsupportedProperties = {"orientation"},
         documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/containers/scroll-box-layout.html"
+)
+@StudioProperties(
+        properties = {
+                @StudioProperty(name = "height", type = PropertyType.SIZE, defaultValue = "-1px", initialValue = "100px"),
+                @StudioProperty(name = "width", type = PropertyType.SIZE, defaultValue = "100%")
+        }
 )
 public interface ScrollBoxLayout
         extends OrderedContainer, Component.BelongToFrame, HasMargin, HasSpacing, HasOrientation,
@@ -44,8 +52,6 @@ public interface ScrollBoxLayout
 
     ScrollBarPolicy getScrollBarPolicy();
 
-    @StudioProperty(name = "scrollBars", type = PropertyType.ENUMERATION, defaultValue = "vertical",
-            options = {"vertical", "horizontal", "both", "none"})
     void setScrollBarPolicy(ScrollBarPolicy scrollBarPolicy);
 
     /**

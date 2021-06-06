@@ -15,6 +15,8 @@ import io.jmix.ui.navigation.Route;
 import io.jmix.ui.screen.*;
 import io.jmix.ui.security.UiLoginProperties;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
@@ -56,6 +58,8 @@ public class LoginScreen extends Screen {
 
     @Autowired
     private UiLoginProperties loginProperties;
+
+    private final Logger log = LoggerFactory.getLogger(LoginScreen.class);
 
     @Subscribe
     private void onInit(InitEvent event) {
@@ -107,6 +111,7 @@ public class LoginScreen extends Screen {
                             .withLocale(localesField.getValue())
                             .withRememberMe(rememberMeCheckBox.isChecked()), this);
         } catch (BadCredentialsException | DisabledException | LockedException e) {
+            log.info("Login failed", e);
             notifications.create(Notifications.NotificationType.ERROR)
                     .withCaption(messages.getMessage(getClass(), "loginFailed"))
                     .withDescription(messages.getMessage(getClass(), "badCredentials"))

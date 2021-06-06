@@ -3,10 +3,7 @@ package query_conditions;
 import io.jmix.core.querycondition.Condition;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -50,6 +47,11 @@ public class SampleRestCondition implements Condition {
     @Override
     public Condition copy() {
         return SampleRestCondition.create(param);
+    }
+
+    @Override
+    public Set<String> getExcludedParameters(Set<String> actualParameters) {
+        return Collections.emptySet();
     }
 
     protected void parseParameters(String value) {

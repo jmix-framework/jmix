@@ -27,4 +27,6 @@ dependencies {
     api project(':security')
     implementation 'org.springframework:spring-tx'
     implementation 'org.springframework.security.oauth:spring-security-oauth2'
+    implementation 'jakarta.xml.bind:jakarta.xml.bind-api'
+    runtimeOnly 'org.glassfish.jaxb:jaxb-runtime'
 }

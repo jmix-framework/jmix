@@ -45,9 +45,6 @@ dependencies {
     implementation 'io.swagger.core.v3:swagger-models'
     implementation 'io.swagger.core.v3:swagger-core'
 
-    implementation 'jakarta.xml.bind:jakarta.xml.bind-api:2.3.2' // TODO move to BOM
-    runtimeOnly 'org.glassfish.jaxb:jaxb-runtime:2.3.2'
-
     testImplementation 'org.junit.jupiter:junit-jupiter-api'
     testImplementation 'org.springframework:spring-test'
     testImplementation "org.spockframework:spock-core"

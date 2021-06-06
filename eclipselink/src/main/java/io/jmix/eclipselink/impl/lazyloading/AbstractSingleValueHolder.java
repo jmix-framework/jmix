@@ -17,6 +17,7 @@
 package io.jmix.eclipselink.impl.lazyloading;
 
 import io.jmix.core.EntityAttributeVisitor;
+import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.data.PersistenceHints;
 import org.eclipse.persistence.indirection.ValueHolderInterface;
@@ -42,13 +43,16 @@ public abstract class AbstractSingleValueHolder extends AbstractValueHolder {
     protected class SingleValuePropertyVisitor implements EntityAttributeVisitor {
         @Override
         public void visit(Object entity, MetaProperty property) {
-            if (property.getRange().asClass().getJavaClass().isAssignableFrom(getOwner().getClass())) {
-                replaceToExistingReferences(entity, property, getOwner());
-            }
+            if (getMetadataTools().isJpa(property)) {
+                MetaClass propertyClass = property.getRange().asClass();
+                if (propertyClass.getJavaClass().isAssignableFrom(getOwner().getClass())) {
+                    replaceToExistingReferences(entity, property, getOwner());
+                }
 
-            Object value = getLoadOptions().getHints().get(PersistenceHints.SOFT_DELETION);
-            if (value == null || Boolean.TRUE.equals(value)) {
-                replaceLoadOptions(entity, property);
+                Object value = getLoadOptions().getHints().get(PersistenceHints.SOFT_DELETION);
+                if (value == null || Boolean.TRUE.equals(value)) {
+                    replaceLoadOptions(entity, property);
+                }
             }
         }
 

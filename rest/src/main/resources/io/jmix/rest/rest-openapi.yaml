@@ -29,7 +29,7 @@ info:
     The `/oauth/token` endpoint is protected with the basic authentication. The request must contain an `Authorization` header for basic
     authentication with REST API client credentials. Please note that client credentials are not the same as platform user credentials.
     By client we mean an application that uses the REST API. The default client credentials are defined by the following
-    application properties: `jmix.rest.client.id` and `jmix.rest.client.secret`. User credentials must be passed in the request body.
+    application properties: `jmix.security.oauth2.clientId` and `jmix.security.oauth2.clientSecret`. User credentials must be passed in the request body.
     The request format must be `application/x-www-form-urlencoded`.
 
     See the `/oauth/token` endpoint documentation for more details.
@@ -43,17 +43,17 @@ info:
     ```
 
     Access token can also placed to the request URL using the `access_token` parameter. This may be useful when you, for example, need to build
-    a link for downloading a file, like this: `http://localhost:8080/rest/files/cedd218e-aaed-bafa-fc78-7c6ea5e32a61?access_token=acefdad0-d728-4279-aae3-6b42620f7ef9`.
+    a link for downloading a file, like this: `http://localhost:8080/rest/files?fileRef=fs://2021/03/12/2266c97c-cf23-c202-481d-04d972e185b4.jpg?name=cat-via-direct-request.jpg?access_token=acefdad0-d728-4279-aae3-6b42620f7ef9`.
 
     ### Anonymous access
 
     If the request to protected resource doesn't contain the `Authentication` header then the user will be authenticated with the anonymous session.
-    By default, anonymous access is forbidden. To enable it, set the `jmix.rest.anonymousEnabled` application property to `true`.
+    By default, anonymous access is forbidden. To enable it for a specific URL, add the URL pattern to the `jmix.rest.anonymousUrlPatterns` application property.
     Read more about the anonymous sessions in the Jmix Developer's Manual.
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  version: 1.0.0
+  version: 1.0
 servers:
   - url: /rest
 security:
@@ -1748,33 +1748,11 @@ components:
     userInfo:
       type: object
       properties:
-        id:
+        username:
           type: string
-        login:
-          type: string
-        name:
-          type: string
-        firstName:
-          type: string
-        middleName:
-          type: string
-        lastName:
-          type: string
-        position:
-          type: string
-        email:
-          type: string
-        timeZone:
-          type: string
-          example: Europe/London
-        language:
-          type: string
-          example: en
         locale:
           type: string
           example: en_US
-        _instanceName:
-          type: string
     fileInfo:
       type: object
       properties:

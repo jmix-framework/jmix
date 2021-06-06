@@ -17,7 +17,17 @@
 package io.jmix.ui.component.mainwindow;
 
 import io.jmix.ui.component.Component;
+import io.jmix.ui.meta.CanvasBehaviour;
+import io.jmix.ui.meta.StudioComponent;
 
+@StudioComponent(
+        caption = "NewWindowButton",
+        category = "Main window",
+        xmlElement = "newWindowButton",
+        icon = "io/jmix/ui/icon/mainwindow/newWindowButton.svg",
+        unsupportedProperties = {"box.expandRatio", "css", "responsive"},
+        canvasBehaviour = CanvasBehaviour.BUTTON
+)
 public interface NewWindowButton extends Component.BelongToFrame, Component.HasIcon, Component.HasCaption {
 
     String NAME = "newWindowButton";

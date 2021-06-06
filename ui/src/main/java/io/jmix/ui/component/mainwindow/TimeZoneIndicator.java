@@ -17,7 +17,19 @@
 package io.jmix.ui.component.mainwindow;
 
 import io.jmix.ui.component.Component;
+import io.jmix.ui.meta.CanvasBehaviour;
+import io.jmix.ui.meta.StudioComponent;
 
+@StudioComponent(
+        caption = "TimeIndicator",
+        category = "Main window",
+        xmlElement = "timeZoneIndicator",
+        icon = "io/jmix/ui/icon/mainwindow/timeZoneIndicator.svg",
+        canvasBehaviour = CanvasBehaviour.LABEL,
+        canvasTextProperty = "caption",
+        canvasText = "Time Zone",
+        unsupportedProperties = {"box.expandRatio", "css", "responsive"}
+)
 public interface TimeZoneIndicator extends Component.BelongToFrame, Component.HasIcon, Component.HasCaption {
 
     String NAME = "timeZoneIndicator";

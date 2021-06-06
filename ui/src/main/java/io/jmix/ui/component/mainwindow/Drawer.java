@@ -18,6 +18,10 @@ package io.jmix.ui.component.mainwindow;
 
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.OrderedContainer;
+import io.jmix.ui.meta.CanvasBehaviour;
+import io.jmix.ui.meta.ContainerType;
+import io.jmix.ui.meta.StudioComponent;
+import io.jmix.ui.meta.StudioProperty;
 
 
 /**
@@ -25,6 +29,16 @@ import io.jmix.ui.component.OrderedContainer;
  * <p>
  * Typically used as a side menu container.
  */
+@StudioComponent(
+        caption = "Drawer",
+        category = "Main window",
+        xmlElement = "drawer",
+        canvasBehaviour = CanvasBehaviour.CONTAINER,
+        containerType = ContainerType.VERTICAL,
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/containers/drawer.html",
+        unsupportedProperties = {"align", "enable", "expand", "responsive", "width", "height", "visible"},
+        icon = "io/jmix/ui/icon/mainwindow/drawer.svg"
+)
 public interface Drawer extends OrderedContainer, Component.BelongToFrame {
 
     String NAME = "drawer";
@@ -51,6 +65,7 @@ public interface Drawer extends OrderedContainer, Component.BelongToFrame {
      *
      * @param expandOnHover a boolean value specifying if drawer should be expanded on hover.
      */
+    @StudioProperty(defaultValue = "false")
     void setExpandOnHover(boolean expandOnHover);
 
     /**

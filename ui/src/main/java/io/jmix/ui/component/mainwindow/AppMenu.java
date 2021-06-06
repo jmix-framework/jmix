@@ -18,11 +18,25 @@ package io.jmix.ui.component.mainwindow;
 
 import io.jmix.ui.component.Component;
 import io.jmix.ui.menu.MenuConfig;
+import io.jmix.ui.meta.CanvasBehaviour;
+import io.jmix.ui.meta.CanvasIconSize;
+import io.jmix.ui.meta.StudioComponent;
 
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.function.Consumer;
 
+@StudioComponent(
+        caption = "Menu",
+        category = "Main window",
+        xmlElement = "menu",
+        icon = "io/jmix/ui/icon/mainwindow/menu.svg",
+        canvasBehaviour = CanvasBehaviour.BOX,
+        canvasIconSize = CanvasIconSize.LARGE,
+        canvasTextProperty = "id",
+        canvasText = "Main Menu",
+        unsupportedProperties = {"box.expandRatio", "css", "responsive"}
+)
 public interface AppMenu extends Component.BelongToFrame, Component.Focusable {
 
     String NAME = "menu";

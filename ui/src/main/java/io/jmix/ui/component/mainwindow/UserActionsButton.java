@@ -17,6 +17,8 @@
 package io.jmix.ui.component.mainwindow;
 
 import io.jmix.ui.component.Component;
+import io.jmix.ui.meta.CanvasBehaviour;
+import io.jmix.ui.meta.StudioComponent;
 
 import javax.annotation.Nullable;
 import java.util.function.Consumer;
@@ -24,6 +26,14 @@ import java.util.function.Consumer;
 /**
  * A component that combines link to Login screen and authenticated user menu.
  */
+@StudioComponent(
+        caption = "UserActionsButton",
+        category = "Main window",
+        xmlElement = "userActionsButton",
+        icon = "io/jmix/ui/icon/mainwindow/userActionsButton.svg",
+        canvasBehaviour = CanvasBehaviour.BUTTON,
+        unsupportedProperties = {"box.expandRatio", "css", "responsive"}
+)
 public interface UserActionsButton extends Component.BelongToFrame, Component.HasIcon, Component.HasCaption {
 
     String NAME = "userActionsButton";

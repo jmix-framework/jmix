@@ -19,6 +19,13 @@ package io.jmix.ui.component;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.ui.Screens;
+import io.jmix.ui.meta.CanvasBehaviour;
+import io.jmix.ui.meta.ContainerType;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioComponent;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioProperties;
+import io.jmix.ui.meta.StudioProperty;
 import io.jmix.ui.screen.OpenMode;
 import io.jmix.ui.screen.Screen;
 
@@ -28,6 +35,21 @@ import java.util.EventObject;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
+@StudioComponent(
+        caption = "WorkArea",
+        category = "Main window",
+        xmlElement = "workArea",
+        icon = "io/jmix/ui/icon/mainwindow/workArea.svg",
+        canvasBehaviour = CanvasBehaviour.CONTAINER,
+        containerType = ContainerType.VERTICAL,
+        unsupportedProperties = {"box.expandRatio", "css", "expand", "responsive"}
+)
+@StudioProperties(
+        properties = {
+                @StudioProperty(name = "width", type = PropertyType.SIZE, defaultValue = "100%"),
+                @StudioProperty(name = "height", type = PropertyType.SIZE, defaultValue = "100%")
+        }
+)
 public interface AppWorkArea extends Component.BelongToFrame {
 
     String NAME = "workArea";
@@ -75,6 +97,7 @@ public interface AppWorkArea extends Component.BelongToFrame {
      * @param initialLayout an initial layout
      * @see VBoxLayout
      */
+    @StudioElement
     void setInitialLayout(VBoxLayout initialLayout);
 
     /**

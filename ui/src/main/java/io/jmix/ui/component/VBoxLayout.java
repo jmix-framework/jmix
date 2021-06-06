@@ -20,6 +20,7 @@ import io.jmix.ui.meta.CanvasBehaviour;
 import io.jmix.ui.meta.ContainerType;
 import io.jmix.ui.meta.PropertyType;
 import io.jmix.ui.meta.StudioComponent;
+import io.jmix.ui.meta.StudioElement;
 import io.jmix.ui.meta.StudioProperties;
 import io.jmix.ui.meta.StudioProperty;
 
@@ -39,6 +40,14 @@ import io.jmix.ui.meta.StudioProperty;
         properties = {
                 @StudioProperty(name = "width", type = PropertyType.SIZE, defaultValue = "100%")
         }
+)
+@StudioElement(
+        caption = "InitialLayout",
+        xmlElement = "initialLayout",
+        icon = "io/jmix/ui/icon/element/initialLayout.svg",
+        unsupportedProperties = {"box.expandRatio", "align", "caption", "captionAsHtml", "contextHelpText",
+                "contextHelpTextHtmlEnabled", "css", "description", "descriptionAsHtml", "height",
+                "htmlSanitizerEnabled", "icon", "requiredIndicatorVisible", "responsive", "width"}
 )
 public interface VBoxLayout extends BoxLayout {
     String NAME = "vbox";

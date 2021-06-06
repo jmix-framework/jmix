@@ -18,8 +18,20 @@ package io.jmix.ui.component.mainwindow;
 
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.HasFormatter;
+import io.jmix.ui.meta.CanvasBehaviour;
+import io.jmix.ui.meta.StudioComponent;
 import org.springframework.security.core.userdetails.UserDetails;
 
+@StudioComponent(
+        caption = "UserIndicator",
+        category = "Main window",
+        xmlElement = "userIndicator",
+        icon = "io/jmix/ui/icon/mainwindow/userIndicator.svg",
+        canvasBehaviour = CanvasBehaviour.LABEL,
+        canvasTextProperty = "id",
+        canvasText = "User",
+        unsupportedProperties = {"css", "caption", "captionAsHtml", "description", "descriptionAsHtml", "responsive"}
+)
 public interface UserIndicator extends Component.BelongToFrame, HasFormatter<UserDetails> {
 
     String NAME = "userIndicator";

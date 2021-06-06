@@ -20,6 +20,11 @@ import io.jmix.core.common.event.Subscription;
 import io.jmix.ui.component.Button;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.menu.MenuConfig;
+import io.jmix.ui.meta.CanvasBehaviour;
+import io.jmix.ui.meta.CanvasIconSize;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioComponent;
+import io.jmix.ui.meta.StudioProperty;
 
 import javax.annotation.Nullable;
 import java.util.EventObject;
@@ -29,6 +34,17 @@ import java.util.function.Consumer;
 /**
  * Side menu component that shows items as collapsible multi level list.
  */
+@StudioComponent(
+        caption = "SideMenu",
+        category = "Main window",
+        xmlElement = "sideMenu",
+        icon = "io/jmix/ui/icon/mainwindow/sideMenu.svg",
+        canvasBehaviour = CanvasBehaviour.BOX,
+        canvasIconSize = CanvasIconSize.LARGE,
+        canvasTextProperty = "id",
+        canvasText = "Side Menu",
+        unsupportedProperties = {"box.expandRatio", "css", "responsive"}
+)
 public interface SideMenu extends Component.BelongToFrame, Component.Focusable {
 
     String NAME = "sideMenu";
@@ -36,6 +52,7 @@ public interface SideMenu extends Component.BelongToFrame, Component.Focusable {
     /**
      * Load menu structure from {@link MenuConfig}
      */
+    @StudioProperty(name = "loadMenuConfig", type = PropertyType.BOOLEAN, defaultValue = "true")
     void loadMenuConfig();
 
     /**
@@ -43,6 +60,7 @@ public interface SideMenu extends Component.BelongToFrame, Component.Focusable {
      *
      * @param button button that should trigger show/hide of side panel
      */
+    @StudioProperty(type = PropertyType.COMPONENT_REF, options = {"io.jmix.ui.component.Button"})
     void setSidePanelToggleButton(@Nullable Button button);
     /**
      * @return side panel toggle button
@@ -55,6 +73,7 @@ public interface SideMenu extends Component.BelongToFrame, Component.Focusable {
      *
      * @param sidePanel side panel
      */
+    @StudioProperty(type = PropertyType.COMPONENT_REF)
     void setSidePanel(@Nullable Component sidePanel);
     /**
      * @return side panel
@@ -71,6 +90,7 @@ public interface SideMenu extends Component.BelongToFrame, Component.Focusable {
      *
      * @param selectOnClick enable/disable option
      */
+    @StudioProperty(defaultValue = "false")
     void setSelectOnClick(boolean selectOnClick);
 
     /**
@@ -176,6 +196,7 @@ public interface SideMenu extends Component.BelongToFrame, Component.Focusable {
      *
      * @param singleExpandedMenu
      */
+    @StudioProperty(name = "showSingleExpandedMenu", defaultValue = "false")
     void setShowSingleExpandedMenu(boolean singleExpandedMenu);
 
     /**

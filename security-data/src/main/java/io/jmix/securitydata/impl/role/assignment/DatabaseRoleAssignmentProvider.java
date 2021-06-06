@@ -65,7 +65,7 @@ public class DatabaseRoleAssignmentProvider implements RoleAssignmentProvider {
 
     @Transactional
     @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT, fallbackExecution = true)
-    private void onUserInvalidation(UserRemovedEvent event) {
+    private void onUserRemove(UserRemovedEvent event) {
         List<RoleAssignmentEntity> assignments = dataManager.load(RoleAssignmentEntity.class)
                 .query("e.username = :username")
                 .parameter("username", event.getUsername())

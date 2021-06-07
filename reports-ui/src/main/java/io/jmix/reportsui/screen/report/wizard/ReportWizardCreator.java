@@ -40,6 +40,7 @@ import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.DataContext;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.screen.*;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
@@ -207,14 +208,14 @@ public class ReportWizardCreator extends Screen implements WizardScreen {
             stepFragmentManager.validateCurrentFragment();
         } catch (ValidationException e) {
             notifications.create(Notifications.NotificationType.TRAY)
-                    .withCaption(messages.getMessage(getClass(), "validationFail.caption"))
+                    .withCaption(messages.getMessage("validationFail.caption"))
                     .withDescription(e.getMessage())
                     .show();
             return;
         }
         if (reportDataDc.getItem().getReportRegions().isEmpty()) {
             dialogs.createOptionDialog()
-                    .withCaption(messages.getMessage(getClass(), "dialogs.Confirmation"))
+                    .withCaption(messages.getMessage("dialogs.Confirmation"))
                     .withMessage(messages.getMessage(getClass(), "confirmSaveWithoutRegions"))
                     .withActions(
                             new DialogAction(DialogAction.Type.OK).withHandler(handle ->
@@ -263,6 +264,27 @@ public class ReportWizardCreator extends Screen implements WizardScreen {
         Report report = reportWizard.toReport(reportData, temporary);
         reportData.setGeneratedReport(report);
         return report;
+    }
+
+    @Subscribe
+    public void onBeforeClose(BeforeCloseEvent event) {
+        CloseAction closeAction = event.getCloseAction();
+        boolean checkUnsavedChanges = closeAction instanceof ChangeTrackerCloseAction
+                && ((ChangeTrackerCloseAction) closeAction).isCheckForUnsavedChanges();
+
+        if (!event.closedWith(StandardOutcome.COMMIT) && checkUnsavedChanges
+                && CollectionUtils.isNotEmpty(reportRegionsDc.getItems())) {
+            dialogs.createOptionDialog()
+                    .withCaption(messages.getMessage("dialogs.Confirmation"))
+                    .withMessage(messages.getMessage(getClass(), "interruptConfirm"))
+                    .withActions(
+                            new DialogAction(DialogAction.Type.OK).withHandler(handle ->
+                                    close(WINDOW_DISCARD_AND_CLOSE_ACTION)
+                            ),
+                            new DialogAction(DialogAction.Type.NO)
+                    ).show();
+            event.preventWindowClose();
+        }
     }
 
     public ReportData getItem() {

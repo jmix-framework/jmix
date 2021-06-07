@@ -18,6 +18,7 @@ package io.jmix.ui.meta;
 
 import io.jmix.ui.component.Accordion;
 import io.jmix.ui.component.FlowBoxLayout;
+import io.jmix.ui.component.GridLayout;
 import io.jmix.ui.component.GroupBoxLayout;
 import io.jmix.ui.component.HBoxLayout;
 import io.jmix.ui.component.ScrollBoxLayout;
@@ -43,6 +44,13 @@ public enum ContainerType {
      * @see FlowBoxLayout
      */
     FLOW,
+
+    /**
+     * Grid layout.
+     *
+     * @see GridLayout
+     */
+    GRID,
 
     /**
      * GroupBox layout.

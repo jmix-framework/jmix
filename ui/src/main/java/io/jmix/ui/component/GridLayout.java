@@ -16,11 +16,24 @@
 
 package io.jmix.ui.component;
 
+import io.jmix.ui.meta.CanvasBehaviour;
+import io.jmix.ui.meta.ContainerType;
+import io.jmix.ui.meta.StudioComponent;
+
 import javax.annotation.Nullable;
 
 /**
  * A layout where the components are laid out on a grid using cell coordinates.
  */
+@StudioComponent(
+        caption = "GridLayout",
+        category = "Containers",
+        xmlElement = "gridLayout",
+        icon = "io/jmix/ui/icon/container/gridLayout.svg",
+        canvasBehaviour = CanvasBehaviour.CONTAINER,
+        containerType = ContainerType.GRID,
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/containers/grid-layout.html"
+)
 public interface GridLayout extends ComponentContainer, HasSpacing, HasMargin, Component.BelongToFrame,
         Component.HasIcon, Component.HasCaption, HasContextHelp, LayoutClickNotifier, ShortcutNotifier,
         HasHtmlCaption, HasHtmlDescription, HasRequiredIndicator, HasHtmlSanitizer {

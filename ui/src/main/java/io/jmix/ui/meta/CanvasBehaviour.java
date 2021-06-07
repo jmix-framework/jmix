@@ -103,6 +103,11 @@ public enum CanvasBehaviour {
     SLIDER,
 
     /**
+     * Component is shown on canvas as a sourceCodeEditor.
+     */
+    SOURCE_CODE_EDITOR,
+
+    /**
      * Component is shown on canvas as a table.
      */
     TABLE,

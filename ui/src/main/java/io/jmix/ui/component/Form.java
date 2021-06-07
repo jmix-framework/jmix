@@ -17,12 +17,32 @@
 package io.jmix.ui.component;
 
 import io.jmix.ui.component.data.HasValueSourceProvider;
+import io.jmix.ui.meta.CanvasBehaviour;
+import io.jmix.ui.meta.ContainerType;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioComponent;
+import io.jmix.ui.meta.StudioProperties;
+import io.jmix.ui.meta.StudioProperty;
 
 import java.util.Collection;
 
 /**
  * A multi-column form component.
  */
+@StudioComponent(
+        caption = "Form",
+        category = "Components",
+        xmlElement = "form",
+        icon = "io/jmix/ui/icon/component/form.svg",
+        canvasBehaviour = CanvasBehaviour.CONTAINER,
+        containerType = ContainerType.GRID,
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/containers/form.html"
+)
+@StudioProperties(
+        properties = {
+                @StudioProperty(name = "dataContainer", type = PropertyType.DATACONTAINER_REF)
+        }
+)
 public interface Form extends Component, Component.BelongToFrame, Component.HasCaption, Component.HasIcon,
         ComponentContainer, Component.Editable, EditableChangeNotifier, HasContextHelp, ChildEditableController,
         HasValueSourceProvider, HasHtmlCaption, HasHtmlDescription, HasHtmlSanitizer, SupportsCaptionPosition {
@@ -129,6 +149,7 @@ public interface Form extends Component, Component.BelongToFrame, Component.HasC
      *
      * @param width fixed caption width
      */
+    @StudioProperty(type = PropertyType.STRING)
     void setChildrenCaptionWidth(int width);
 
     /**
@@ -143,6 +164,7 @@ public interface Form extends Component, Component.BelongToFrame, Component.HasC
      *
      * @param alignment captions alignment
      */
+    @StudioProperty(type = PropertyType.ENUMERATION, defaultValue = "LEFT", options = {"LEFT", "RIGHT"})
     void setChildrenCaptionAlignment(CaptionAlignment alignment);
 
     /**
@@ -175,6 +197,7 @@ public interface Form extends Component, Component.BelongToFrame, Component.HasC
      * @param column a column index
      * @param width  fixed caption width for column with a given index
      */
+    @StudioProperty(name = "childrenCaptionWidth", type = PropertyType.SIZE, defaultValue = "-1px")
     void setChildrenCaptionWidth(int column, int width);
 
     /**

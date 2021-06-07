@@ -37,7 +37,7 @@ public interface SupportsCaptionPosition {
      *
      * @param position component caption position
      */
-    @StudioProperty(name = "captionPosition", defaultValue = "LEFT", options = {"LEFT, TOP"})
+    @StudioProperty(name = "captionPosition", defaultValue = "LEFT", options = {"LEFT", "TOP"})
     void setCaptionPosition(CaptionPosition position);
 
     /**

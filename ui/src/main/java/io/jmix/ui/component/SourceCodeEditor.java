@@ -18,6 +18,13 @@ package io.jmix.ui.component;
 
 import io.jmix.ui.component.autocomplete.AutoCompleteSupport;
 import io.jmix.ui.component.autocomplete.Suggester;
+import io.jmix.ui.meta.CanvasBehaviour;
+import io.jmix.ui.meta.PropertiesConstraint;
+import io.jmix.ui.meta.PropertiesGroup;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioComponent;
+import io.jmix.ui.meta.StudioProperties;
+import io.jmix.ui.meta.StudioProperty;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
@@ -25,6 +32,26 @@ import javax.annotation.Nullable;
 /**
  * Text area component with source code highlighting support.
  */
+@StudioComponent(
+        caption = "SourceCodeEditor",
+        category = "Components",
+        xmlElement = "sourceCodeEditor",
+        icon = "io/jmix/ui/icon/component/sourceCodeEditor.svg",
+        canvasBehaviour = CanvasBehaviour.SOURCE_CODE_EDITOR,
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/source-code-editor.html"
+)
+@StudioProperties(
+        properties = {
+                @StudioProperty(name = "property", type = PropertyType.PROPERTY_PATH_REF, options = "string"),
+                @StudioProperty(name = "dataContainer", type = PropertyType.DATACONTAINER_REF),
+                @StudioProperty(name = "width", type = PropertyType.SIZE, defaultValue = "300px"),
+                @StudioProperty(name = "height", type = PropertyType.SIZE, defaultValue = "200px")
+        },
+        groups = {
+                @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                        properties = {"dataContainer", "property"})
+        }
+)
 public interface SourceCodeEditor extends Field<String>, Component.Focusable {
     String NAME = "sourceCodeEditor";
 
@@ -66,18 +93,26 @@ public interface SourceCodeEditor extends Field<String>, Component.Focusable {
     }
 
     HighlightMode getMode();
+
+    @StudioProperty(type = PropertyType.ENUMERATION, defaultValue = "Text",
+            options = {"Java", "HTML", "CSS", "SCSS", "XML", "Groovy", "SQL", "JavaScript", "Properties", "Text"})
     void setMode(HighlightMode mode);
 
     @Nullable
     Suggester getSuggester();
+
     void setSuggester(@Nullable Suggester suggester);
 
     AutoCompleteSupport getAutoCompleteSupport();
 
+    @StudioProperty(defaultValue = "true")
     void setShowGutter(boolean showGutter);
+
     boolean isShowGutter();
 
+    @StudioProperty(name = "printMargin", defaultValue = "true")
     void setShowPrintMargin(boolean showPrintMargin);
+
     boolean isShowPrintMargin();
 
     /**
@@ -85,20 +120,26 @@ public interface SourceCodeEditor extends Field<String>, Component.Focusable {
      *
      * @param printMarginColumn print margin position in symbols
      */
+    @StudioProperty(defaultValue = "80")
     void setPrintMarginColumn(int printMarginColumn);
+
     /**
      * @return print margin position in symbols
      */
     int getPrintMarginColumn();
 
+    @StudioProperty(defaultValue = "true")
     void setHighlightActiveLine(boolean highlightActiveLine);
+
     boolean isHighlightActiveLine();
 
     /**
      * Enables Tab key handling as tab symbol.
      * If handleTabKey is false then Tab/Shift-Tab key press will change focus to next/previous field.
      */
+    @StudioProperty(defaultValue = "true")
     void setHandleTabKey(boolean handleTabKey);
+
     /**
      * @return if Tab key handling is enabled
      */
@@ -128,5 +169,6 @@ public interface SourceCodeEditor extends Field<String>, Component.Focusable {
      *
      * @param suggest suggest option
      */
+    @StudioProperty(name = "suggestOnDot", defaultValue = "true")
     void setSuggestOnDot(boolean suggest);
 }

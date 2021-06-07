@@ -16,19 +16,27 @@
 
 package test_support.repository;
 
+import io.jmix.core.FetchPlan;
+import io.jmix.core.repository.ApplyConstraints;
 import io.jmix.core.repository.JmixDataRepository;
-import io.jmix.core.repository.UnsafeDataRepository;
+import org.jetbrains.annotations.Nullable;
+import org.springframework.data.domain.Sort;
 import test_support.entity.TestOrder;
 
 import java.util.List;
 import java.util.UUID;
 
-@UnsafeDataRepository
-public interface ParentUnsafeRepository extends JmixDataRepository<TestOrder, UUID> {
+public interface FirstRepository extends JmixDataRepository<TestOrder, UUID> {
 
-    List<TestOrder> findOrdersByNumberNotNull();
+    @Override
+    Iterable<TestOrder> findAll(Sort sort, @Nullable FetchPlan fetchPlan);
 
+    @Override
+    @ApplyConstraints(false)
+    Iterable<TestOrder> findAll(FetchPlan fetchPlan);
 
-    List<TestOrder> findOrdersByIdNotNull();
+    @ApplyConstraints(false)
+    List<TestOrder> findByIdNotNull();
 
+    List<TestOrder> searchByNumberNotNull();
 }

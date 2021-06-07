@@ -16,6 +16,23 @@
 
 package test_support.repository;
 
-public interface ChildSafeRepository extends ParentUnsafeRepository {
+import io.jmix.core.FetchPlan;
+import org.jetbrains.annotations.Nullable;
+import org.springframework.data.domain.Sort;
+import test_support.entity.TestOrder;
 
+import java.util.List;
+
+public interface ThirdRepository extends SecondRepository {
+
+    @Override
+    Iterable<TestOrder> findAll(Sort sort, @Nullable FetchPlan fetchPlan);
+
+    List<TestOrder> findByNumberNotNull();
+
+    @Override
+    List<TestOrder> findByIdNotNull();
+
+    @Override
+    List<TestOrder> searchByIdNotNull();
 }

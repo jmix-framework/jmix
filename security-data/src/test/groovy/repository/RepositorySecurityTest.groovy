@@ -17,6 +17,8 @@
 package repository
 
 
+import io.jmix.core.FetchPlan
+import io.jmix.core.FetchPlanRepository
 import io.jmix.core.Metadata
 import io.jmix.core.UnconstrainedDataManager
 import io.jmix.core.security.InMemoryUserRepository
@@ -25,6 +27,9 @@ import io.jmix.security.authentication.RoleGrantedAuthority
 import io.jmix.security.role.ResourceRoleRepository
 import io.jmix.security.role.RowLevelRoleRepository
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -33,24 +38,14 @@ import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
 import test_support.SecurityDataSpecification
 import test_support.entity.TestOrder
-import test_support.repository.ChildSafeRepository
-import test_support.repository.ChildUnsafeRepository
-import test_support.repository.ParentUnsafeRepository
-import test_support.repository.SafeRepository
+import test_support.repository.FirstRepository
+import test_support.repository.SecondRepository
+import test_support.repository.ThirdRepository
 import test_support.role.TestDataManagerReadQueryRole
 
 import javax.sql.DataSource
 
 class RepositorySecurityTest extends SecurityDataSpecification {
-
-    @Autowired
-    SafeRepository safeRepository
-    @Autowired
-    ParentUnsafeRepository parentUnsafeRepository
-    @Autowired
-    ChildUnsafeRepository childUnsafeRepository
-    @Autowired
-    ChildSafeRepository childSafeRepository
 
     @Autowired
     Metadata metadata
@@ -66,6 +61,14 @@ class RepositorySecurityTest extends SecurityDataSpecification {
     UnconstrainedDataManager unsafeDataManager
     @Autowired
     ResourceRoleRepository resourceRoleRepository
+    @Autowired
+    FetchPlanRepository fetchPlanRepository
+    @Autowired
+    FirstRepository firstRepository
+    @Autowired
+    SecondRepository secondRepository
+    @Autowired
+    ThirdRepository thirdRepository
 
     public static final String PASSWORD = "123"
     Authentication systemAuthentication
@@ -98,6 +101,8 @@ class RepositorySecurityTest extends SecurityDataSpecification {
         unsafeDataManager.save(orderAllowed, orderDenied1, orderDenied2)
 
         systemAuthentication = SecurityContextHelper.getAuthentication()
+
+        authenticate('user1')
     }
 
     def cleanup() {
@@ -107,37 +112,49 @@ class RepositorySecurityTest extends SecurityDataSpecification {
     }
 
 
-    def "@UnsafeDataRepository works"() {
+    def "test CRUD method constraints"() {
         setup:
-        authenticate('user1')
+        FetchPlan plan = fetchPlanRepository.findFetchPlan(metadata.getClass(TestOrder), "_local")
 
-        when:
-        def secure = safeRepository.findAll();
-        def secureCustomMethod = safeRepository.findOrdersByNumberNotNull()
+        when: "constraints..."
+        Page enabledOnInterface = firstRepository.findAll(Pageable.ofSize(10))
+        def disabledOnMethod = firstRepository.findAll(plan)
+        def enabledOnParentInterface = firstRepository.findAll(Sort.by("id"), plan)
+        def disabledOnInterface = secondRepository.findAll(Sort.by("id"), plan)
+        def disabledOnParentMethod = thirdRepository.findAll(plan)
+        def disabledOnParentInterface = thirdRepository.findAll(Sort.by("id"), plan)
+        Page enabledOnMethod = secondRepository.findAll(Pageable.ofSize(10))
 
-        def unsecure = parentUnsafeRepository.findAll()
-        def inheritedUnsecure = childUnsafeRepository.findAll()
-        def inheritedUnsecureCustomMethod = childUnsafeRepository.findOrdersByNumberNotNull()
+        then: "2 of 3 orders filtered out by constraints when them works"
+        enabledOnInterface.content.size() == 1
+        disabledOnMethod.size() == 3
+        enabledOnParentInterface.size() == 1
+        disabledOnInterface.size() == 3
+        disabledOnParentMethod.size() == 3
+        disabledOnParentInterface.size() == 3
+        enabledOnMethod.content.size() == 1
+    }
 
-        def inheritedSecure = childSafeRepository.findAll()
-        def inheritedSecureCustomMethod = childSafeRepository.findOrdersByIdNotNull()
-        def inheritedSecureOverridden = childSafeRepository.findOrdersByNumberNotNull()
+    def "test custom query method constraints"() {
+        when: "constraints..."
+        def disabledOnMethod = firstRepository.findByIdNotNull()
+        def disabledOnInterface = secondRepository.getByIdNotNull()
+        def disabledOnParentInterface = thirdRepository.findByIdNotNull()
+        def disabledOnParentMethod = thirdRepository.findByIdNotNull()
 
-        then:
-        secure.size() == 1
-        secure[0] == orderAllowed
-        secureCustomMethod.size() == 1
+        def enabledOnMethod = secondRepository.searchByIdNotNull()
+        def enabledOnParentMethod = thirdRepository.searchByIdNotNull()
+        def enabledOnParentInterface = firstRepository.searchByNumberNotNull()
 
-        unsecure.size() == 3
-        unsecure.contains(orderDenied1)
-        unsecure.contains(orderAllowed)
-        unsecure.contains(orderDenied2)
-        inheritedUnsecure.size() == 3
-        inheritedUnsecureCustomMethod.size() == 3
+        then: "2 of 3 orders filtered out by constraints when them works"
+        disabledOnMethod.size() == 3
+        disabledOnInterface.size() == 3
+        disabledOnParentInterface.size() == 3
+        disabledOnParentMethod.size() == 3
 
-        inheritedSecure.size() == 1
-        inheritedSecureCustomMethod.size() == 1
-        inheritedSecureOverridden.size() == 1
+        enabledOnMethod.size() == 1
+        enabledOnParentMethod.size() == 1
+        enabledOnParentInterface.size() == 1
     }
 
     protected void authenticate(String username) {

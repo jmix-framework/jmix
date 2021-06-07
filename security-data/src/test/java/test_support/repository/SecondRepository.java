@@ -16,16 +16,27 @@
 
 package test_support.repository;
 
-import io.jmix.core.repository.UnsafeDataRepository;
+import io.jmix.core.FetchPlan;
+import io.jmix.core.repository.ApplyConstraints;
+import org.jetbrains.annotations.Nullable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import test_support.entity.TestOrder;
 
 import java.util.List;
 
-@UnsafeDataRepository
-public interface ChildUnsafeRepository extends ParentUnsafeRepository {
+@ApplyConstraints(false)
+public interface SecondRepository extends FirstRepository {
+    @Override
+    Iterable<TestOrder> findAll(Sort sort, @Nullable FetchPlan fetchPlan);
 
     @Override
-    List<TestOrder> findOrdersByNumberNotNull();
+    @ApplyConstraints
+    Page<TestOrder> findAll(Pageable pageable);
 
-    List<TestOrder> findAll();
+    List<TestOrder> getByIdNotNull();
+
+    @ApplyConstraints
+    List<TestOrder> searchByIdNotNull();
 }

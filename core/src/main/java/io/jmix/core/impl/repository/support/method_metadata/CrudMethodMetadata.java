@@ -14,22 +14,26 @@
  * limitations under the License.
  */
 
-package io.jmix.core.repository;
+package io.jmix.core.impl.repository.support.method_metadata;
 
-import io.jmix.core.UnconstrainedDataManager;
+public class CrudMethodMetadata {
+    private final boolean applyConstraints;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+    public CrudMethodMetadata(boolean applyConstraints) {
+        this.applyConstraints = applyConstraints;
+    }
 
-/**
- * Disables CRUD and row level {@link io.jmix.core.constraint.AccessConstraint}s for {@link JmixDataRepository}.
- * <p>
- * {@link UnconstrainedDataManager} will be used instead of DataManager when this annotation present.
- * <p>
- */
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface UnsafeDataRepository {
+    public boolean isApplyConstraints() {
+        return applyConstraints;
+    }
+
+
+    @Override
+    public String toString() {
+        return String.format("[ApplyConstraints:%s]", applyConstraints);
+    }
+
+    public interface Accessor {
+        CrudMethodMetadata getCrudMethodMetadata();
+    }
 }

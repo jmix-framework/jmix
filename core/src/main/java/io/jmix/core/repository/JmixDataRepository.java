@@ -37,6 +37,7 @@ import java.util.Optional;
  * @see PagingAndSortingRepository
  */
 @NoRepositoryBean
+@ApplyConstraints
 public interface JmixDataRepository<T, ID> extends PagingAndSortingRepository<T, ID> {
 
     /**
@@ -52,7 +53,7 @@ public interface JmixDataRepository<T, ID> extends PagingAndSortingRepository<T,
      * @param id must not be {@literal null}.
      * @return the entity with the given id or {@literal Optional#empty()} if none found.
      */
-    Optional<T> findOne(ID id, io.jmix.core.FetchPlan fetchPlan);
+    Optional<T> findOne(ID id, FetchPlan fetchPlan);
 
     /**
      * Returns all instances of the type loaded according to {@code fetchPlan}

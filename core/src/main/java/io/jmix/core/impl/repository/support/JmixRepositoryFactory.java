@@ -18,7 +18,8 @@ package io.jmix.core.impl.repository.support;
 
 import io.jmix.core.*;
 import io.jmix.core.impl.repository.query.utils.JmixQueryLookupStrategy;
-import io.jmix.core.repository.UnsafeDataRepository;
+import io.jmix.core.impl.repository.support.method_metadata.CrudMethodMetadataAccessingPostProcessor;
+import io.jmix.core.repository.JmixDataRepository;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.repository.core.EntityInformation;
 import org.springframework.data.repository.core.RepositoryInformation;
@@ -33,9 +34,12 @@ import java.util.Optional;
 public class JmixRepositoryFactory extends RepositoryFactorySupport {
 
     private ApplicationContext ctx;
+    private final CrudMethodMetadataAccessingPostProcessor crudMethodPostProcessor;
 
     public JmixRepositoryFactory(ApplicationContext ctx) {
         this.ctx = ctx;
+        this.crudMethodPostProcessor = new CrudMethodMetadataAccessingPostProcessor();
+        addRepositoryProxyPostProcessor(crudMethodPostProcessor);
     }
 
     @Override
@@ -46,15 +50,13 @@ public class JmixRepositoryFactory extends RepositoryFactorySupport {
     @Override
     protected Object getTargetRepository(RepositoryInformation metadata) {
         Object domainClass = metadata.getDomainType();
-        UnconstrainedDataManager repositoryDataManager = getAppropriateDataManager(metadata);
-
-        return getTargetRepositoryViaReflection(metadata, domainClass, repositoryDataManager, ctx.getBean(Metadata.class));
-    }
-
-    protected UnconstrainedDataManager getAppropriateDataManager(RepositoryInformation metadata) {
-        return metadata.getRepositoryInterface().isAnnotationPresent(UnsafeDataRepository.class)
-                ? ctx.getBean(UnconstrainedDataManager.class)
-                : ctx.getBean(DataManager.class);
+        JmixDataRepository<?, ?> repository = getTargetRepositoryViaReflection(
+                metadata,
+                domainClass,
+                ctx.getBean(DataManager.class),
+                ctx.getBean(Metadata.class),
+                crudMethodPostProcessor);
+        return repository;
     }
 
     @Override

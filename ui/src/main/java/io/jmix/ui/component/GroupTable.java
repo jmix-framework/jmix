@@ -17,6 +17,9 @@ package io.jmix.ui.component;
 
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.component.data.GroupInfo;
+import io.jmix.ui.meta.CanvasBehaviour;
+import io.jmix.ui.meta.StudioComponent;
+import io.jmix.ui.meta.StudioProperty;
 import org.springframework.core.ParameterizedTypeReference;
 
 import javax.annotation.Nullable;
@@ -29,6 +32,14 @@ import java.util.Map;
  *
  * @param <E> row item type
  */
+@StudioComponent(
+        caption = "GroupTable",
+        category = "Components",
+        xmlElement = "groupTable",
+        icon = "io/jmix/ui/icon/component/groupTable.svg",
+        canvasBehaviour = CanvasBehaviour.TABLE,
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/group-table.html"
+)
 public interface GroupTable<E> extends Table<E> {
 
     String NAME = "groupTable";
@@ -85,6 +96,7 @@ public interface GroupTable<E> extends Table<E> {
 
     boolean isFixedGrouping();
 
+    @StudioProperty(defaultValue = "false")
     void setFixedGrouping(boolean fixedGrouping);
 
     /**

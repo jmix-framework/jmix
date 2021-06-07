@@ -21,6 +21,11 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.data.TableItems;
+import io.jmix.ui.meta.CanvasBehaviour;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioComponent;
+import io.jmix.ui.meta.StudioProperties;
+import io.jmix.ui.meta.StudioProperty;
 import io.jmix.ui.model.InstanceContainer;
 import org.springframework.core.ParameterizedTypeReference;
 
@@ -39,6 +44,22 @@ import java.util.function.Function;
  *
  * @param <E> row item type
  */
+@StudioComponent(
+        caption = "Table",
+        category = "Components",
+        xmlElement = "table",
+        icon = "io/jmix/ui/icon/component/table.svg",
+        canvasBehaviour = CanvasBehaviour.TABLE,
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/table.html"
+)
+@StudioProperties(
+        properties = {
+                @StudioProperty(name = "dataContainer", type = PropertyType.COLLECTION_DATACONTAINER_REF),
+                @StudioProperty(name = "metaClass", type = PropertyType.ENTITY_NAME),
+                @StudioProperty(name = "width", type = PropertyType.SIZE, defaultValue = "-1px", initialValue = "200px"),
+                @StudioProperty(name = "height", type = PropertyType.SIZE, defaultValue = "-1px", initialValue = "100px")
+        }
+)
 public interface Table<E>
         extends
         ListComponent<E>, Component.Editable, HasButtonsPanel, HasTablePresentations, Component.HasCaption,
@@ -162,6 +183,7 @@ public interface Table<E>
      *
      * @param textSelectionEnabled whether text selection in Table cells is enabled
      */
+    @StudioProperty(defaultValue = "false")
     void setTextSelectionEnabled(boolean textSelectionEnabled);
 
     /**
@@ -220,6 +242,7 @@ public interface Table<E>
      * @param sortable {@code true} if individual column sortable
      *                 attribute can be set to {@code true}, {@code false} otherwise
      */
+    @StudioProperty(defaultValue = "true")
     void setSortable(boolean sortable);
 
     /**
@@ -233,6 +256,7 @@ public interface Table<E>
      *
      * @param aggregatable whether aggregation is enabled.
      */
+    @StudioProperty(defaultValue = "false")
     void setAggregatable(boolean aggregatable);
 
     /**
@@ -247,6 +271,7 @@ public interface Table<E>
      *                        changes in total aggregation, {@code false} if in
      *                        the group aggregation
      */
+    @StudioProperty(defaultValue = "true")
     void setShowTotalAggregation(boolean showAggregation);
 
     /**
@@ -260,6 +285,7 @@ public interface Table<E>
      *
      * @param columnReorderingAllowed specifies whether column reordering is allowed
      */
+    @StudioProperty(defaultValue = "true")
     void setColumnReorderingAllowed(boolean columnReorderingAllowed);
 
     /**
@@ -285,6 +311,7 @@ public interface Table<E>
      *                             columnControlButton dropdown on the right side
      *                             of the table header
      */
+    @StudioProperty(defaultValue = "true")
     void setColumnControlVisible(boolean columnControlVisible);
 
     /**
@@ -339,6 +366,7 @@ public interface Table<E>
      * @param multiLineCells whether multi-line display is enabled for cells containing several
      *                       lines of text
      */
+    @StudioProperty(defaultValue = "false")
     void setMultiLineCells(boolean multiLineCells);
 
     /**
@@ -351,6 +379,7 @@ public interface Table<E>
      *
      * @param contextMenuEnabled whether context menu is enabled
      */
+    @StudioProperty(defaultValue = "true")
     void setContextMenuEnabled(boolean contextMenuEnabled);
 
     /**
@@ -370,6 +399,7 @@ public interface Table<E>
      *
      * @param multiselect whether multiple selection mode is enabled
      */
+    @StudioProperty(name = "multiselect", defaultValue = "false")
     void setMultiSelect(boolean multiselect);
 
     /**
@@ -393,6 +423,7 @@ public interface Table<E>
      *
      * @param message message that appears when Table is empty
      */
+    @StudioProperty(name = "emptyStateMessage", type = PropertyType.LOCALIZED_STRING)
     void setEmptyStateMessage(@Nullable String message);
 
     /**
@@ -407,6 +438,7 @@ public interface Table<E>
      * @param linkMessage message that appears when Table is empty
      * @see #setEmptyStateLinkClickHandler(Consumer)
      */
+    @StudioProperty(name = "emptyStateLinkMessage", type = PropertyType.LOCALIZED_STRING)
     void setEmptyStateLinkMessage(@Nullable String linkMessage);
 
     /**
@@ -442,6 +474,7 @@ public interface Table<E>
      *
      * @param mode row header mode
      */
+    @StudioProperty(type = PropertyType.ENUMERATION, defaultValue = "NONE", options = {"NONE", "ICON"})
     void setRowHeaderMode(RowHeaderMode mode);
 
     /**
@@ -449,6 +482,7 @@ public interface Table<E>
      *
      * @param aggregationStyle the location of the aggregation row
      */
+    @StudioProperty(type = PropertyType.ENUMERATION, defaultValue = "TOP", options = {"TOP", "BOTTOM"})
     void setAggregationStyle(AggregationStyle aggregationStyle);
 
     /**
@@ -634,6 +668,7 @@ public interface Table<E>
      *
      * @param columnHeaderVisible whether table header is displayed
      */
+    @StudioProperty(defaultValue = "true")
     void setColumnHeaderVisible(boolean columnHeaderVisible);
 
     /**
@@ -646,6 +681,7 @@ public interface Table<E>
      *
      * @param showSelection whether a current row is highlighted
      */
+    @StudioProperty(defaultValue = "true")
     void setShowSelection(boolean showSelection);
 
     /**

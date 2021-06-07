@@ -18,6 +18,13 @@ package io.jmix.ui.component;
 
 import io.jmix.core.common.event.Subscription;
 import io.jmix.ui.component.data.TreeDataGridItems;
+import io.jmix.ui.meta.CanvasBehaviour;
+import io.jmix.ui.meta.PropertiesConstraint;
+import io.jmix.ui.meta.PropertiesGroup;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioComponent;
+import io.jmix.ui.meta.StudioProperties;
+import io.jmix.ui.meta.StudioProperty;
 import org.springframework.core.ParameterizedTypeReference;
 
 import javax.annotation.Nullable;
@@ -33,6 +40,25 @@ import java.util.stream.Stream;
  *
  * @param <E> row item type
  */
+@StudioComponent(
+        caption = "TreeDataGrid",
+        category = "Components",
+        xmlElement = "treeDataGrid",
+        icon = "io/jmix/ui/icon/component/treeDataGrid.svg",
+        canvasBehaviour = CanvasBehaviour.TABLE,
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/tree-data-grid.html"
+)
+@StudioProperties(
+        properties = {
+                @StudioProperty(name = "hierarchyProperty", type = PropertyType.PROPERTY_PATH_REF, typeParameter = "E",
+                        required = true),
+                @StudioProperty(name = "showOrphans", type = PropertyType.BOOLEAN, defaultValue = "true")
+        },
+        groups = {
+                @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                        properties = {"dataContainer", "hierarchyProperty"})
+        }
+)
 public interface TreeDataGrid<E> extends DataGrid<E> {
 
     String NAME = "treeDataGrid";

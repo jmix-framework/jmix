@@ -24,10 +24,16 @@ import io.jmix.ui.action.Action;
 import io.jmix.ui.component.data.DataGridItems;
 import io.jmix.ui.component.data.ValueSourceProvider;
 import io.jmix.ui.icon.JmixIcon;
+import io.jmix.ui.meta.CanvasBehaviour;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioComponent;
+import io.jmix.ui.meta.StudioProperties;
+import io.jmix.ui.meta.StudioProperty;
 import io.jmix.ui.model.InstanceContainer;
 import org.springframework.core.ParameterizedTypeReference;
 
 import javax.annotation.Nullable;
+import javax.validation.constraints.Min;
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.NumberFormat;
@@ -43,6 +49,22 @@ import static io.jmix.ui.component.MouseEventDetails.MouseButton;
  *
  * @param <E> row item type
  */
+@StudioComponent(
+        caption = "DataGrid",
+        category = "Components",
+        xmlElement = "dataGrid",
+        icon = "io/jmix/ui/icon/component/dataGrid.svg",
+        canvasBehaviour = CanvasBehaviour.TABLE,
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/data-grid.html"
+)
+@StudioProperties(
+        properties = {
+                @StudioProperty(name = "dataContainer", type = PropertyType.COLLECTION_DATACONTAINER_REF),
+                @StudioProperty(name = "metaClass", type = PropertyType.ENTITY_NAME),
+                @StudioProperty(name = "width", type = PropertyType.SIZE, defaultValue = "-1px", initialValue = "200px"),
+                @StudioProperty(name = "height", type = PropertyType.SIZE, defaultValue = "-1px", initialValue = "100px")
+        }
+)
 public interface DataGrid<E> extends ListComponent<E>, HasButtonsPanel, Component.HasCaption,
         Component.HasIcon, HasContextHelp, HasHtmlCaption, HasHtmlDescription, LookupComponent<E>,
         Component.Focusable, HasSubParts, HasHtmlSanitizer, HasPagination {
@@ -209,6 +231,7 @@ public interface DataGrid<E> extends ListComponent<E>, HasButtonsPanel, Componen
      *
      * @param textSelectionEnabled specifies whether text selection in DataGrid cells is enabled
      */
+    @StudioProperty(defaultValue = "false")
     void setTextSelectionEnabled(boolean textSelectionEnabled);
 
     /**
@@ -223,6 +246,7 @@ public interface DataGrid<E> extends ListComponent<E>, HasButtonsPanel, Componen
      *
      * @param columnReorderingAllowed specifies whether column reordering is allowed
      */
+    @StudioProperty(name = "reorderingAllowed", defaultValue = "true")
     void setColumnReorderingAllowed(boolean columnReorderingAllowed);
 
     /**
@@ -237,6 +261,7 @@ public interface DataGrid<E> extends ListComponent<E>, HasButtonsPanel, Componen
      *
      * @param headerVisible {@code true} to show the header section, {@code false} to hide
      */
+    @StudioProperty(defaultValue = "true")
     void setHeaderVisible(boolean headerVisible);
 
     /**
@@ -251,6 +276,7 @@ public interface DataGrid<E> extends ListComponent<E>, HasButtonsPanel, Componen
      *
      * @param footerVisible {@code true} to show the footer section, {@code false} to hide
      */
+    @StudioProperty(defaultValue = "true")
     void setFooterVisible(boolean footerVisible);
 
     /**
@@ -267,6 +293,8 @@ public interface DataGrid<E> extends ListComponent<E>, HasButtonsPanel, Componen
      *
      * @param rowHeight the height of a row in pixels or -1 for AUTO
      */
+    @StudioProperty(name = "bodyRowHeight", defaultValue = "-1.0")
+    @Min(-1)
     void setBodyRowHeight(double rowHeight);
 
     /**
@@ -283,6 +311,8 @@ public interface DataGrid<E> extends ListComponent<E>, HasButtonsPanel, Componen
      *
      * @param rowHeight the height of a row in pixels or -1 for AUTO
      */
+    @StudioProperty(name = "headerRowHeight", defaultValue = "-1.0")
+    @Min(-1)
     void setHeaderRowHeight(double rowHeight);
 
     /**
@@ -299,6 +329,8 @@ public interface DataGrid<E> extends ListComponent<E>, HasButtonsPanel, Componen
      *
      * @param rowHeight the height of a row in pixels or -1 for AUTO
      */
+    @StudioProperty(name = "footerRowHeight", defaultValue = "-1.0")
+    @Min(-1)
     void setFooterRowHeight(double rowHeight);
 
     /**
@@ -389,6 +421,8 @@ public interface DataGrid<E> extends ListComponent<E>, HasButtonsPanel, Componen
      * @param numberOfColumns the number of columns that should be frozen
      * @throws IllegalArgumentException if the column count is &lt; 0 or &gt; the number of visible columns
      */
+    @StudioProperty(name = "frozenColumnCount", defaultValue = "0")
+    @Min(-1)
     void setFrozenColumnCount(int numberOfColumns);
 
     /**
@@ -403,6 +437,7 @@ public interface DataGrid<E> extends ListComponent<E>, HasButtonsPanel, Componen
      * @param sortable {@code true} if individual column sortable
      *                 attribute can be set to {@code true}, {@code false} otherwise
      */
+    @StudioProperty(defaultValue = "true")
     void setSortable(boolean sortable);
 
     /**
@@ -418,6 +453,7 @@ public interface DataGrid<E> extends ListComponent<E>, HasButtonsPanel, Componen
      * @param columnsCollapsingAllowed {@code true} if individual column collapsible attribute
      *                                 can be set to {@code true}, {@code false} otherwise
      */
+    @StudioProperty(defaultValue = "true")
     void setColumnsCollapsingAllowed(boolean columnsCollapsingAllowed);
 
     /**
@@ -438,6 +474,7 @@ public interface DataGrid<E> extends ListComponent<E>, HasButtonsPanel, Componen
      * @param isEnabled {@code true} to enable the feature, {@code false} otherwise
      * @see #getEditedItem()
      */
+    @StudioProperty(defaultValue = "false")
     void setEditorEnabled(boolean isEnabled);
 
     /**
@@ -452,6 +489,7 @@ public interface DataGrid<E> extends ListComponent<E>, HasButtonsPanel, Componen
      *
      * @param editorBuffered {@code true} to enable buffered editor, {@code false} to disable it
      */
+    @StudioProperty(defaultValue = "true")
     void setEditorBuffered(boolean editorBuffered);
 
     /**
@@ -466,6 +504,7 @@ public interface DataGrid<E> extends ListComponent<E>, HasButtonsPanel, Componen
      *
      * @param saveCaption the caption to set
      */
+    @StudioProperty(type = PropertyType.LOCALIZED_STRING)
     void setEditorSaveCaption(String saveCaption);
 
     /**
@@ -480,6 +519,7 @@ public interface DataGrid<E> extends ListComponent<E>, HasButtonsPanel, Componen
      *
      * @param cancelCaption the caption to set
      */
+    @StudioProperty(type = PropertyType.LOCALIZED_STRING)
     void setEditorCancelCaption(String cancelCaption);
 
     /**
@@ -514,6 +554,7 @@ public interface DataGrid<E> extends ListComponent<E>, HasButtonsPanel, Componen
      *
      * @param validate validate option, true if an editor should validate cross field rules
      */
+    @StudioProperty(name = "editorCrossFieldValidate", defaultValue = "true")
     void setEditorCrossFieldValidate(boolean validate);
 
     /**
@@ -812,6 +853,7 @@ public interface DataGrid<E> extends ListComponent<E>, HasButtonsPanel, Componen
      *
      * @param mode a ColumnResizeMode value
      */
+    @StudioProperty(type = PropertyType.ENUMERATION, defaultValue = "ANIMATED", options = {"ANIMATED", "SIMPLE"})
     void setColumnResizeMode(ColumnResizeMode mode);
 
     enum SelectionMode {
@@ -847,6 +889,8 @@ public interface DataGrid<E> extends ListComponent<E>, HasButtonsPanel, Componen
      *
      * @param selectionMode the selection mode to use
      */
+    @StudioProperty(type = PropertyType.ENUMERATION, defaultValue = "SINGLE", options = {"SINGLE", "MULTI",
+            "MULTI_CHECK", "NONE"})
     void setSelectionMode(SelectionMode selectionMode);
 
     /**
@@ -2226,6 +2270,7 @@ public interface DataGrid<E> extends ListComponent<E>, HasButtonsPanel, Componen
      *
      * @param aggregatable aggregatable option
      */
+    @StudioProperty(defaultValue = "false")
     void setAggregatable(boolean aggregatable);
 
     /**
@@ -2238,6 +2283,7 @@ public interface DataGrid<E> extends ListComponent<E>, HasButtonsPanel, Componen
      *
      * @param position position: {@link AggregationPosition#TOP} or {@link AggregationPosition#BOTTOM}
      */
+    @StudioProperty(type = PropertyType.ENUMERATION, defaultValue = "TOP", options = {"TOP", "BOTTOM"})
     void setAggregationPosition(AggregationPosition position);
 
     /**

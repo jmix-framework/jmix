@@ -103,6 +103,11 @@ public enum CanvasBehaviour {
     SLIDER,
 
     /**
+     * Component is shown on canvas as a table.
+     */
+    TABLE,
+
+    /**
      * Component is shown on canvas as a textArea.
      */
     TEXT_AREA,
@@ -111,6 +116,11 @@ public enum CanvasBehaviour {
      * Component is shown on canvas as a timeField.
      */
     TIME_FIELD,
+
+    /**
+     * Component is shown on canvas as a tree.
+     */
+    TREE,
 
     /**
      * Component is shown on canvas as a twinColumn.

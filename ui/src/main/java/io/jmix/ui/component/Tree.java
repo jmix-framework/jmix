@@ -19,9 +19,17 @@ import io.jmix.core.common.event.Subscription;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.data.DataUnit;
 import io.jmix.ui.component.data.TreeItems;
+import io.jmix.ui.meta.CanvasBehaviour;
+import io.jmix.ui.meta.PropertiesConstraint;
+import io.jmix.ui.meta.PropertiesGroup;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioComponent;
+import io.jmix.ui.meta.StudioProperties;
+import io.jmix.ui.meta.StudioProperty;
 import org.springframework.core.ParameterizedTypeReference;
 
 import javax.annotation.Nullable;
+import javax.validation.constraints.Min;
 import java.util.EventObject;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -33,6 +41,32 @@ import java.util.function.Function;
  *
  * @param <E> an entity type
  */
+@StudioComponent(
+        caption = "Tree",
+        category = "Components",
+        xmlElement = "tree",
+        icon = "io/jmix/ui/icon/component/tree.svg",
+        canvasBehaviour = CanvasBehaviour.TREE,
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/tree.html"
+)
+@StudioProperties(
+        properties = {
+                @StudioProperty(name = "width", type = PropertyType.SIZE, defaultValue = "-1px", initialValue = "100px"),
+                @StudioProperty(name = "height", type = PropertyType.SIZE, defaultValue = "-1px", initialValue = "200px"),
+                @StudioProperty(name = "dataContainer", type = PropertyType.COLLECTION_DATACONTAINER_REF, required = true),
+                @StudioProperty(name = "captionProperty", type = PropertyType.PROPERTY_PATH_REF),
+                @StudioProperty(name = "hierarchyProperty", type = PropertyType.PROPERTY_PATH_REF, typeParameter = "E",
+                        required = true),
+                @StudioProperty(name = "multiselect", type = PropertyType.BOOLEAN, defaultValue = "false"),
+                @StudioProperty(name = "showOrphans", type = PropertyType.BOOLEAN, defaultValue = "true")
+        },
+        groups = {
+                @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                        properties = {"dataContainer", "captionProperty"}),
+                @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                        properties = {"dataContainer", "hierarchyProperty"})
+        }
+)
 public interface Tree<E> extends ListComponent<E>, HasButtonsPanel,
         Component.HasCaption, Component.HasIcon, LookupComponent<E>,
         Component.Focusable, HasContextHelp, HasItemCaptionProvider<E>,
@@ -174,6 +208,7 @@ public interface Tree<E> extends ListComponent<E>, HasButtonsPanel,
      *
      * @param selectionMode the selection mode to use
      */
+    @StudioProperty(type = PropertyType.ENUMERATION, defaultValue = "SINGLE", options = {"SINGLE", "MULTI", "NONE"})
     void setSelectionMode(SelectionMode selectionMode);
 
     /**
@@ -266,6 +301,8 @@ public interface Tree<E> extends ListComponent<E>, HasButtonsPanel,
      *
      * @param rowHeight The height of a row in pixels or -1 for automatic calculation
      */
+    @StudioProperty(defaultValue = "-1.0")
+    @Min(value = -1)
     void setRowHeight(double rowHeight);
 
     /**
@@ -278,6 +315,7 @@ public interface Tree<E> extends ListComponent<E>, HasButtonsPanel,
      *
      * @param contentMode the content mode
      */
+    @StudioProperty(type = PropertyType.ENUMERATION, defaultValue = "TEXT", options = {"TEXT", "PREFORMATTED", "HTML"})
     void setContentMode(ContentMode contentMode);
 
     /**

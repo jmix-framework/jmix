@@ -15,6 +15,13 @@
  */
 package io.jmix.ui.component;
 
+import io.jmix.ui.meta.CanvasBehaviour;
+import io.jmix.ui.meta.PropertiesConstraint;
+import io.jmix.ui.meta.PropertiesGroup;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioComponent;
+import io.jmix.ui.meta.StudioProperties;
+import io.jmix.ui.meta.StudioProperty;
 import org.springframework.core.ParameterizedTypeReference;
 
 /**
@@ -23,6 +30,25 @@ import org.springframework.core.ParameterizedTypeReference;
  *
  * @param <E> row item type
  */
+@StudioComponent(
+        caption = "TreeTable",
+        category = "Components",
+        xmlElement = "treeTable",
+        icon = "io/jmix/ui/icon/component/treeTable.svg",
+        canvasBehaviour = CanvasBehaviour.TABLE,
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/tree-table.html"
+)
+@StudioProperties(
+        properties = {
+                @StudioProperty(name = "hierarchyProperty", type = PropertyType.PROPERTY_PATH_REF, typeParameter = "E",
+                        required = true),
+                @StudioProperty(name = "showOrphans", type = PropertyType.BOOLEAN, defaultValue = "true")
+        },
+        groups = {
+                @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                        properties = {"dataContainer", "hierarchyProperty"})
+        }
+)
 public interface TreeTable<E> extends Table<E> {
 
     String NAME = "treeTable";

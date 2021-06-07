@@ -444,7 +444,8 @@ public class JpaDataStore extends AbstractDataStore implements DataSortingOption
     }
 
     protected Query createLoadQuery(EntityManager em, ValueLoadContext context, boolean count) {
-        JpqlQueryBuilder queryBuilder = jpqlQueryBuilderProvider.getObject();
+        //noinspection unchecked
+        JpqlQueryBuilder<JmixEclipseLinkQuery<?>> queryBuilder = jpqlQueryBuilderProvider.getObject();
 
         ValueLoadContext.Query contextQuery = context.getQuery();
 
@@ -459,12 +460,17 @@ public class JpaDataStore extends AbstractDataStore implements DataSortingOption
             queryBuilder.setCountQuery();
         }
 
-        Query query = queryBuilder.getQuery(em);
+        JmixEclipseLinkQuery<?> query = queryBuilder.getQuery(em);
 
         if (contextQuery.getFirstResult() != 0)
             query.setFirstResult(contextQuery.getFirstResult());
         if (contextQuery.getMaxResults() != 0)
             query.setMaxResults(contextQuery.getMaxResults());
+
+        ReadEntityQueryContext queryContext = new ReadEntityQueryContext(query, queryTransformerFactory, metadata);
+        accessManager.applyConstraints(queryContext, context.getAccessConstraints());
+
+        query = (JmixEclipseLinkQuery<?>) queryContext.getResultQuery();
 
         return query;
     }

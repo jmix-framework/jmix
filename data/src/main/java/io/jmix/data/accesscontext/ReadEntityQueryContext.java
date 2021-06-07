@@ -2,6 +2,8 @@ package io.jmix.data.accesscontext;
 
 
 import com.google.common.base.Strings;
+import io.jmix.core.Metadata;
+import io.jmix.data.QueryParser;
 import io.jmix.data.QueryTransformer;
 import io.jmix.data.QueryTransformerFactory;
 import io.jmix.core.accesscontext.AccessContext;
@@ -48,6 +50,17 @@ public class ReadEntityQueryContext implements AccessContext {
         this.entityClass = entityClass;
         this.queryTransformerFactory = transformerFactory;
         this.singleResult = false;
+    }
+
+    public ReadEntityQueryContext(@SuppressWarnings("rawtypes") JmixQuery originalQuery,
+                                  QueryTransformerFactory transformerFactory,
+                                  Metadata metadata) {
+        this.originalQuery = originalQuery;
+        this.queryTransformerFactory = transformerFactory;
+        this.singleResult = false;
+
+        QueryParser parser = transformerFactory.parser(originalQuery.getQueryString());
+        this.entityClass = metadata.getClass(parser.getEntityName());
     }
 
     public MetaClass getEntityClass() {

@@ -58,6 +58,12 @@ public class AttributeLocalizationFragment extends ScreenFragment {
 
     protected boolean descriptionColumnVisible = false;
 
+    protected boolean isEnabled;
+
+    public void setEnabled(boolean enabled) {
+        isEnabled = enabled;
+    }
+
     public void setNameMsgBundle(@Nullable String nameMsgBundle) {
         localizedValues.clear();
         loadLocalizedValues();
@@ -82,6 +88,7 @@ public class AttributeLocalizationFragment extends ScreenFragment {
     protected void onInit(InitEvent event) {
         loadLocalizedValues();
         initLocalizedValuesDataGrid();
+        setupFieldsLock();
     }
 
     @Install(to = "localizedValuesDl", target = Target.DATA_LOADER)
@@ -102,6 +109,12 @@ public class AttributeLocalizationFragment extends ScreenFragment {
 
     protected void initLocalizedValuesDataGrid() {
         localizedValuesDataGrid.getColumn(DESCRIPTION_PROPERTY).setVisible(descriptionColumnVisible);
+    }
+
+    protected void setupFieldsLock() {
+        if (!this.isEnabled) {
+            localizedValuesDataGrid.setEnabled(false);
+        }
     }
 
     protected void loadLocalizedValues() {

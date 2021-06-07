@@ -159,9 +159,13 @@ public class CategoryEdit extends StandardEditor<Category> {
             TabSheet.Tab localizationTab = tabSheet.getTab("localizationTab");
             localizationTab.setVisible(true);
 
+            CrudEntityContext crudEntityContext = new CrudEntityContext(categoryDc.getEntityMetaClass());
+            accessManager.applyRegisteredConstraints(crudEntityContext);
+
             VBoxLayout localizationTabComponent = (VBoxLayout) tabSheet.getTabComponent("localizationTab");
             localizationFragment = fragments.create(this, AttributeLocalizationFragment.class);
             localizationFragment.setNameMsgBundle(getEditedEntity().getLocaleNames());
+            localizationFragment.setEnabled(crudEntityContext.isUpdatePermitted());
 
             Fragment fragment = localizationFragment.getFragment();
             fragment.setWidth(Component.FULL_SIZE);

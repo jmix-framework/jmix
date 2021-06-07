@@ -16,10 +16,8 @@
 
 package io.jmix.dynattrui.screen.category;
 
-import io.jmix.core.MessageTools;
-import io.jmix.core.Messages;
-import io.jmix.core.Metadata;
-import io.jmix.core.Sort;
+import io.jmix.core.*;
+import io.jmix.core.accesscontext.CrudEntityContext;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.dynattr.AttributeType;
 import io.jmix.dynattr.DynAttrMetadata;
@@ -28,6 +26,7 @@ import io.jmix.dynattr.model.CategoryAttribute;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.action.Action;
+import io.jmix.ui.component.Button;
 import io.jmix.ui.component.Label;
 import io.jmix.ui.component.Table;
 import io.jmix.ui.model.CollectionContainer;
@@ -64,10 +63,15 @@ public class CategoryBrowse extends StandardLookup<Category> {
     protected InstanceLoader<Category> categoryDl;
     @Autowired
     private CollectionLoader<Category> categoriesDl;
+    @Autowired
+    private AccessManager accessManager;
+    @Autowired
+    private Button applyChangesBtn;
 
     @Subscribe
     protected void onBeforeShow(BeforeShowEvent event) {
         attributesDc.getSorter().sort(Sort.by(Sort.Direction.ASC, "orderNo"));
+        setupFieldsLock();
     }
 
     @Subscribe("categoriesTable.applyChanges")
@@ -124,6 +128,14 @@ public class CategoryBrowse extends StandardLookup<Category> {
             categoryDl.load();
         } else {
             categoryDc.setItem(null);
+        }
+    }
+
+    protected void setupFieldsLock() {
+        CrudEntityContext crudEntityContext = new CrudEntityContext(categoryDc.getEntityMetaClass());
+        accessManager.applyRegisteredConstraints(crudEntityContext);
+        if (!crudEntityContext.isUpdatePermitted()) {
+            applyChangesBtn.setEnabled(false);
         }
     }
 }

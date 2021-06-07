@@ -99,15 +99,6 @@ public class InputParametersDialog extends Screen {
         this.parameters = parameters;
     }
 
-    @Subscribe
-    protected void onInit(InitEvent event) {
-        if (bulkPrint) {
-            Preconditions.checkNotNullArgument(inputParameter, String.format("%s is null for bulk print", INPUT_PARAMETER));
-            //noinspection unchecked
-            selectedEntities = (Collection) parameters.get(inputParameter.getAlias());
-        }
-    }
-
     @Subscribe("printReportButton")
     public void onPrintReportButtonClick(Button.ClickEvent event) {
         if (inputParametersFragment.getReport() != null) {
@@ -133,6 +124,12 @@ public class InputParametersDialog extends Screen {
 
     @Subscribe
     protected void onBeforeShow(BeforeShowEvent event) {
+        if (bulkPrint) {
+            Preconditions.checkNotNullArgument(inputParameter, String.format("%s is null for bulk print", INPUT_PARAMETER));
+            //noinspection unchecked
+            selectedEntities = (Collection) parameters.get(inputParameter.getAlias());
+        }
+
         if (report != null) {
             inputParametersFragment.setReport(report);
             inputParametersFragment.setInputParameter(inputParameter);

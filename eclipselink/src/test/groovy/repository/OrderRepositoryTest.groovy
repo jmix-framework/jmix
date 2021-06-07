@@ -386,7 +386,7 @@ class OrderRepositoryTest extends DataSpec {
 
     void 'sorting by two properties works'() {
         when:
-        List<SalesOrder> ordersAsc = orderRepository.findSalesOrderByCustomerNotNullOrderByCustomerAddressCityAscDateAsc()
+        List<SalesOrder> ordersAsc = orderRepository.findByCustomerNotNullOrderByCustomerAddressCityAscDateAsc()
         then:
         ordersAsc != null
         ordersAsc[0] == order1 && ordersAsc[0].customer.address.city == "Samara"//[Samara - Fri Jan 01 00:00:00 SAMT 2010]
@@ -396,7 +396,7 @@ class OrderRepositoryTest extends DataSpec {
         ordersAsc[4] == order4 && ordersAsc[4].customer.address.city == "Springfield"//[Springfield - Sun Aug 19 00:00:00 SAMT 2018]
 
         when:
-        List<SalesOrder> ordersDesc = orderRepository.findSalesOrderByCustomerNotNullOrderByCustomerAddressCityDescDateDesc()
+        List<SalesOrder> ordersDesc = orderRepository.findByCustomerNotNullOrderByCustomerAddressCityDescDateDesc()
 
         then:
         ordersDesc[0] == order5 && ordersDesc[0].customer.address.city == "Springfield"//[Springfield - null]

@@ -80,9 +80,9 @@ public interface OrderRepository extends JmixDataRepository<SalesOrder, UUID> {
     long countByNumberInOrDateIsNull(List<String> numbers);
 
     @FetchPlan("SalesOrder.full")
-    List<SalesOrder> findSalesOrderByCustomerNotNullOrderByCustomerAddressCityAscDateAsc();
+    List<SalesOrder> findByCustomerNotNullOrderByCustomerAddressCityAscDateAsc();
 
     @FetchPlan("SalesOrder.full")
-    List<SalesOrder> findSalesOrderByCustomerNotNullOrderByCustomerAddressCityDescDateDesc();
+    List<SalesOrder> findByCustomerNotNullOrderByCustomerAddressCityDescDateDesc();
 
 }

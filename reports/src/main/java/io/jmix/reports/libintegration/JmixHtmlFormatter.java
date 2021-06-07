@@ -19,10 +19,10 @@ package io.jmix.reports.libintegration;
 import com.haulmont.yarg.exception.ReportFormattingException;
 import com.haulmont.yarg.formatters.factory.FormatterFactoryInput;
 import com.haulmont.yarg.formatters.impl.HtmlFormatter;
+import com.haulmont.yarg.formatters.impl.pdf.HtmlToPdfConverter;
+import com.haulmont.yarg.formatters.impl.pdf.ITextPdfConverter;
 import com.haulmont.yarg.structure.BandData;
-import com.lowagie.text.DocumentException;
 import com.lowagie.text.Image;
-import com.lowagie.text.pdf.BaseFont;
 import freemarker.ext.util.WrapperTemplateModel;
 import freemarker.template.TemplateMethodModelEx;
 import freemarker.template.TemplateModelException;
@@ -32,8 +32,6 @@ import io.jmix.reports.ReportsProperties;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -59,12 +57,9 @@ import static java.lang.String.format;
 @Component("report_JmixHtmlFormatter")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class JmixHtmlFormatter extends HtmlFormatter {
-    //todo
     protected static final String JMIX_FONTS_DIR = "/jmix/fonts";
 
     public static final String RESOURCE_PREFIX = "resource://";
-
-    private static final Logger log = LoggerFactory.getLogger(JmixHtmlFormatter.class);
 
     @Autowired
     protected Messages messages;
@@ -99,10 +94,8 @@ public class JmixHtmlFormatter extends HtmlFormatter {
             dataOutputStream.write(htmlContent.getBytes(StandardCharsets.UTF_8));
             dataOutputStream.close();
 
-            loadFonts(renderer);
-
-            String url = tmpFile.toURI().toURL().toString();
-            renderer.setDocument(url);
+            HtmlToPdfConverter converter = new ITextPdfConverter(renderer);
+            loadFonts(converter);
 
             ResourcesITextUserAgentCallback userAgentCallback =
                     new ResourcesITextUserAgentCallback(renderer.getOutputDevice());
@@ -110,8 +103,8 @@ public class JmixHtmlFormatter extends HtmlFormatter {
 
             renderer.getSharedContext().setUserAgentCallback(userAgentCallback);
 
-            renderer.layout();
-            renderer.createPDF(outputStream);
+            String url = tmpFile.toURI().toURL().toString();
+            converter.convert(url, outputStream);
 
             FileUtils.deleteQuietly(tmpFile);
         } catch (Exception e) {
@@ -119,46 +112,17 @@ public class JmixHtmlFormatter extends HtmlFormatter {
         }
     }
 
-    protected void loadFonts(ITextRenderer renderer) {
+    @Override
+    protected void loadFonts(HtmlToPdfConverter converter) {
         String fontsPath = coreProperties.getConfDir() + JMIX_FONTS_DIR;
 
         File fontsDir = new File(fontsPath);
 
-        loadFontsFromDirectory(renderer, fontsDir);
-
+        loadFontsFromDirectory(converter, fontsDir);
 
         if (StringUtils.isNotBlank(reportsProperties.getPdfFontsDirectory())) {
             File systemFontsDir = new File(reportsProperties.getPdfFontsDirectory());
-            loadFontsFromDirectory(renderer, systemFontsDir);
-        }
-    }
-
-    protected void loadFontsFromDirectory(ITextRenderer renderer, File fontsDir) {
-        if (fontsDir.exists()) {
-            if (fontsDir.isDirectory()) {
-                File[] files = fontsDir.listFiles(new FilenameFilter() {
-                    @Override
-                    public boolean accept(File dir, String name) {
-                        String lower = name.toLowerCase();
-                        return lower.endsWith(".otf") || lower.endsWith(".ttf");
-                    }
-                });
-                for (File file : files) {
-                    try {
-                        // Usage of some fonts may be not permitted
-                        renderer.getFontResolver().addFont(file.getAbsolutePath(), BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
-                    } catch (IOException | DocumentException e) {
-                        if (StringUtils.contains(e.getMessage(), "cannot be embedded due to licensing restrictions")) {
-                            log.debug(e.getMessage());
-                        } else {
-                            log.warn(e.getMessage());
-                        }
-                    }
-                }
-            } else
-                log.warn(format("File %s is not a directory", fontsDir.getAbsolutePath()));
-        } else {
-            log.debug("Fonts directory does not exist: " + fontsDir.getPath());
+            loadFontsFromDirectory(converter, systemFontsDir);
         }
     }
 

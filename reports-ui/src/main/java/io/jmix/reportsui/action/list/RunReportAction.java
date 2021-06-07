@@ -21,19 +21,16 @@ import io.jmix.core.DataManager;
 import io.jmix.core.Id;
 import io.jmix.core.Messages;
 import io.jmix.core.common.util.ParamsMap;
-import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.reports.entity.Report;
 import io.jmix.reportsui.screen.ReportGuiManager;
-import io.jmix.reportsui.screen.report.run.InputParametersFragment;
 import io.jmix.reportsui.screen.report.run.InputParametersDialog;
+import io.jmix.reportsui.screen.report.run.InputParametersFragment;
 import io.jmix.reportsui.screen.report.run.ReportRun;
 import io.jmix.ui.ScreenBuilders;
 import io.jmix.ui.action.ActionType;
 import io.jmix.ui.action.ListAction;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.ComponentsHelper;
-import io.jmix.ui.component.data.DataUnit;
-import io.jmix.ui.component.data.meta.EntityDataUnit;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.meta.StudioAction;
@@ -101,22 +98,16 @@ public class RunReportAction extends ListAction {
     @Override
     public void actionPerform(Component component) {
         if (target != null && target.getFrame() != null) {
-            MetaClass metaClass = null;
-            DataUnit items = target.getItems();
-            if (items instanceof EntityDataUnit) {
-                metaClass = ((EntityDataUnit) items).getEntityMetaClass();
-            }
-
-            openLookup(target.getFrame().getFrameOwner(), metaClass);
+            openLookup(target.getFrame().getFrameOwner());
         } else if (component instanceof Component.BelongToFrame) {
             FrameOwner screen = ComponentsHelper.getWindowNN((Component.BelongToFrame) component).getFrameOwner();
-            openLookup(screen, null);
+            openLookup(screen);
         } else {
             throw new IllegalStateException("No target screen or component found for 'RunReportAction'");
         }
     }
 
-    protected void openLookup(FrameOwner screen, MetaClass metaClass) {
+    protected void openLookup(FrameOwner screen) {
         Screen hostScreen;
         if (screen instanceof Screen) {
             hostScreen = (Screen) screen;
@@ -129,7 +120,6 @@ public class RunReportAction extends ListAction {
                 .withOpenMode(OpenMode.DIALOG)
                 .withSelectHandler(reports -> runReports(reports, screen))
                 .build();
-        reportRunScreen.setMetaClass(metaClass);
         reportRunScreen.setScreen(hostScreen.getId());
         reportRunScreen.show();
     }

@@ -139,6 +139,8 @@ class JmixPlugin implements Plugin<Project> {
         def compileWidgetsTask = project.tasks.create(COMPILE_WIDGETS_TASK_NAME, WidgetsCompile.class)
         compileWidgetsTask.enabled = false
         project.afterEvaluate {
+            compileWidgetsTask.dependsOn(project.tasks.findByName('compileJava'))
+
             if (widgetsConfiguration.size() > 1) {
                 project.sourceSets.main.output.dir(compileWidgetsTask.outputDirectory, builtBy: compileWidgetsTask)
                 compileWidgetsTask.enabled = true

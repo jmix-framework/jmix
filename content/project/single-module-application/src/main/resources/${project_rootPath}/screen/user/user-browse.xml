@@ -25,6 +25,7 @@
     </actions>
     <facets>
         <dataLoadCoordinator auto="true"/>
+        <screenSettings auto="true"/>
         <presentations auto="true"/>
     </facets>
     <dialogMode height="600"

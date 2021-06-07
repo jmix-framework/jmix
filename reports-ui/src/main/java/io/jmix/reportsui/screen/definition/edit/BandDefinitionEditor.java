@@ -40,6 +40,7 @@ import io.jmix.ui.component.autocomplete.Suggester;
 import io.jmix.ui.component.autocomplete.Suggestion;
 import io.jmix.ui.component.data.options.MapOptions;
 import io.jmix.ui.model.CollectionContainer;
+import io.jmix.ui.model.DataContext;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.screen.*;
 import org.apache.commons.lang3.ObjectUtils;
@@ -150,7 +151,12 @@ public class BandDefinitionEditor extends ScreenFragment implements Suggester {
     @Autowired
     protected Actions actions;
 
+    @Autowired
+    protected DataContext dataContext;
+
     protected SourceCodeEditor.Mode dataSetScriptFieldMode = SourceCodeEditor.Mode.Text;
+
+    protected EditFetchPlanAction editFetchPlanAction;
 
     @Subscribe("jsonSourceGroovyCodeLinkBtn")
     protected void showJsonScriptEditorDialog(Button.ClickEvent event) {
@@ -323,7 +329,7 @@ public class BandDefinitionEditor extends ScreenFragment implements Suggester {
     }
 
     protected void initActions() {
-        EditFetchPlanAction editFetchPlanAction = (EditFetchPlanAction) actions.create(EditFetchPlanAction.ID);
+        editFetchPlanAction = (EditFetchPlanAction) actions.create(EditFetchPlanAction.ID);
         editFetchPlanAction.setDataSetsTable(dataSetsTable);
         editFetchPlanAction.setBandsDc(bandsDc);
         fetchPlanEditButton.setAction(editFetchPlanAction);
@@ -333,6 +339,10 @@ public class BandDefinitionEditor extends ScreenFragment implements Suggester {
         entitiesParamField.setEnterPressHandler(LinkedWithPropertyNewOptionHandler.handler(dataSetsDc, "listEntitiesParamName"));
         entityParamField.setEnterPressHandler(LinkedWithPropertyNewOptionHandler.handler(dataSetsDc, "entityParamName"));
         fetchPlanNameField.setEnterPressHandler(LinkedWithPropertyNewOptionHandler.handler(dataSetsDc, "fetchPlanName"));
+    }
+
+    public void setFetchPlans(Map<UUID, FetchPlan> fetchPlansByDataSet) {
+        editFetchPlanAction.setFetchPlansByDataSet(fetchPlansByDataSet);
     }
 
     @Subscribe(id = "parametersDc", target = Target.DATA_CONTAINER)

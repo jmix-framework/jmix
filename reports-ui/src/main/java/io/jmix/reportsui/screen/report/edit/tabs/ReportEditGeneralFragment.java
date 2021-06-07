@@ -32,10 +32,7 @@ import io.jmix.ui.component.*;
 import io.jmix.ui.download.ByteArrayDataProvider;
 import io.jmix.ui.download.DownloadFormat;
 import io.jmix.ui.download.Downloader;
-import io.jmix.ui.model.CollectionContainer;
-import io.jmix.ui.model.CollectionPropertyContainer;
-import io.jmix.ui.model.InstanceContainer;
-import io.jmix.ui.model.InstanceLoader;
+import io.jmix.ui.model.*;
 import io.jmix.ui.screen.*;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -120,6 +117,9 @@ public class ReportEditGeneralFragment extends ScreenFragment {
 
     @Autowired
     protected EntityComboBox<ReportTemplate> defaultTemplateField;
+
+    @Autowired
+    protected DataContext dataContext;
 
     @Subscribe("invisibleFileUpload")
     protected void onInvisibleFileUploadFileUploadSucceed(SingleFileUploadField.FileUploadSucceedEvent event) {
@@ -349,7 +349,7 @@ public class ReportEditGeneralFragment extends ScreenFragment {
 
         orderBandDefinitions(parentDefinition);
 
-        BandDefinition newBandDefinition = metadata.create(BandDefinition.class);
+        BandDefinition newBandDefinition = dataContext.create(BandDefinition.class);
         newBandDefinition.setName("newBand" + (parentDefinition.getChildrenBandDefinitions().size() + 1));
         newBandDefinition.setOrientation(Orientation.HORIZONTAL);
         newBandDefinition.setParentBandDefinition(parentDefinition);

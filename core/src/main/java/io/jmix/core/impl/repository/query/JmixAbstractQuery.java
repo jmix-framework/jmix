@@ -16,9 +16,12 @@
 
 package io.jmix.core.impl.repository.query;
 
+import io.jmix.core.DataManager;
 import io.jmix.core.Metadata;
 import io.jmix.core.UnconstrainedDataManager;
 import io.jmix.core.impl.repository.query.utils.JmixQueryLookupStrategy;
+import io.jmix.core.impl.repository.support.method_metadata.MethodMetadataHelper;
+import io.jmix.core.repository.ApplyConstraints;
 import io.jmix.core.repository.FetchPlan;
 import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.data.repository.core.RepositoryMetadata;
@@ -42,6 +45,9 @@ public abstract class JmixAbstractQuery implements RepositoryQuery {
     protected final RepositoryMetadata metadata;
     protected final ProjectionFactory factory;
     protected final QueryMethod queryMethod;
+    /**
+     * {@link UnconstraintedDataManager} or {@link DataManager} will be chosen depending on {@link @ApplyConstraints} annotation on method/repository or ancestor method/repository
+     */
     protected UnconstrainedDataManager dataManager;
 
     protected Metadata jmixMetadata;
@@ -53,14 +59,18 @@ public abstract class JmixAbstractQuery implements RepositoryQuery {
     protected int pageableIndex;
 
     protected String fetchPlan = io.jmix.core.FetchPlan.LOCAL;
+    protected boolean applyConstraints;
 
-    public JmixAbstractQuery(UnconstrainedDataManager dataManager, Metadata jmixMetadata, Method method, RepositoryMetadata metadata, ProjectionFactory factory) {
+    public JmixAbstractQuery(DataManager dataManager, Metadata jmixMetadata, Method method, RepositoryMetadata metadata, ProjectionFactory factory) {
         this.method = method;
         this.metadata = metadata;
         this.factory = factory;
-        this.dataManager = dataManager;
         this.queryMethod = getQueryMethod();
         this.jmixMetadata = jmixMetadata;
+
+        ApplyConstraints applyConstraintsAnnotation = MethodMetadataHelper.determineApplyConstraints(method, metadata.getRepositoryInterface());
+        this.dataManager = applyConstraintsAnnotation.value() ? dataManager : dataManager.unconstrained();
+
         setFetchPlan(method);
         processSpecialParameters();
     }
@@ -79,6 +89,7 @@ public abstract class JmixAbstractQuery implements RepositoryQuery {
         if (fetchPlanAnnotation != null) {
             fetchPlan = fetchPlanAnnotation.value();
         }
+
     }
 
     protected Map<String, Object> buildNamedParametersMap(Object[] values) {

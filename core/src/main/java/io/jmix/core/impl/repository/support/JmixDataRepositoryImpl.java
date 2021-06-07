@@ -18,6 +18,7 @@ package io.jmix.core.impl.repository.support;
 
 import io.jmix.core.*;
 import io.jmix.core.impl.repository.query.utils.LoaderHelper;
+import io.jmix.core.impl.repository.support.method_metadata.CrudMethodMetadata;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.repository.JmixDataRepository;
 import org.springframework.data.domain.Page;
@@ -37,31 +38,39 @@ public class JmixDataRepositoryImpl<T, ID> implements JmixDataRepository<T, ID> 
 
     protected Metadata metadata;
 
-    protected UnconstrainedDataManager dataManager;
+    protected UnconstrainedDataManager unconstrainedDataManager;
+    protected DataManager dataManager;
+
+    protected CrudMethodMetadata.Accessor methodMetadataAccessor;
 
 
     private Class<T> domainClass;
 
-    public JmixDataRepositoryImpl(Class<T> domainClass, UnconstrainedDataManager dataManager, Metadata metadata) {
+    public JmixDataRepositoryImpl(Class<T> domainClass,
+                                  DataManager dataManager,
+                                  Metadata metadata,
+                                  CrudMethodMetadata.Accessor methodMetadataAccessor) {
         this.domainClass = domainClass;
+        this.unconstrainedDataManager = dataManager.unconstrained();
         this.dataManager = dataManager;
         this.metadata = metadata;
+        this.methodMetadataAccessor = methodMetadataAccessor;
     }
 
     @Override
     public T newOne() {
-        return dataManager.create(domainClass);
+        return getDataManager().create(domainClass);
     }
 
 
     @Override
     public Optional<T> findOne(ID id, FetchPlan fetchPlan) {
-        return dataManager.load(domainClass).id(id).fetchPlan(fetchPlan).optional();
+        return getDataManager().load(domainClass).id(id).fetchPlan(fetchPlan).optional();
     }
 
     @Override
     public Iterable<T> findAll(FetchPlan fetchPlan) {
-        return dataManager.load(domainClass).all().fetchPlan(fetchPlan).list();
+        return getDataManager().load(domainClass).all().fetchPlan(fetchPlan).list();
     }
 
     @Override
@@ -70,12 +79,12 @@ public class JmixDataRepositoryImpl<T, ID> implements JmixDataRepository<T, ID> 
             return Collections.emptyList();
         }
 
-        return dataManager.load(domainClass).ids(toCollection(ids)).fetchPlan(fetchPlan).list();
+        return getDataManager().load(domainClass).ids(toCollection(ids)).fetchPlan(fetchPlan).list();
     }
 
     @Override
     public <S extends T> S save(S entity) {
-        return dataManager.save(entity);
+        return getDataManager().save(entity);
     }
 
 
@@ -90,17 +99,17 @@ public class JmixDataRepositoryImpl<T, ID> implements JmixDataRepository<T, ID> 
 
     @Override
     public Optional<T> findById(ID id) {
-        return Optional.of(dataManager.load(domainClass).id(id).one());
+        return Optional.of(getDataManager().load(domainClass).id(id).one());
     }
 
     @Override
     public boolean existsById(ID id) {
-        return dataManager.load(domainClass).id(id).optional().isPresent();
+        return getDataManager().load(domainClass).id(id).optional().isPresent();
     }
 
     @Override
     public Iterable<T> findAll() {
-        return dataManager.load(domainClass).all().list();
+        return getDataManager().load(domainClass).all().list();
     }
 
     @Override
@@ -111,22 +120,22 @@ public class JmixDataRepositoryImpl<T, ID> implements JmixDataRepository<T, ID> 
 
     @Override
     public long count() {
-        return dataManager.getCount(new LoadContext<>(metadata.getClass(domainClass)));
+        return getDataManager().getCount(new LoadContext<>(metadata.getClass(domainClass)));
     }
 
     @Override
     public void deleteById(ID id) {
-        dataManager.remove(Id.of(id, domainClass));
+        getDataManager().remove(Id.of(id, domainClass));
     }
 
     @Override
     public void delete(T entity) {
-        dataManager.remove(entity);
+        getDataManager().remove(entity);
     }
 
     @Override
     public void deleteAll(Iterable<? extends T> entities) {
-        entities.forEach(dataManager::remove);
+        entities.forEach(getDataManager()::remove);
     }
 
     @Override
@@ -138,13 +147,13 @@ public class JmixDataRepositoryImpl<T, ID> implements JmixDataRepository<T, ID> 
         ids.forEach(idList::add);
 
         Iterable<T> entities = findAllById(idList);
-        entities.forEach(dataManager::remove);
+        entities.forEach(getDataManager()::remove);
     }
 
     @Override
     public void deleteAll() {
-        Iterable<T> entities = dataManager.load(domainClass).all().fetchPlan(FetchPlan.INSTANCE_NAME).list();
-        entities.forEach(dataManager::remove);
+        Iterable<T> entities = getDataManager().load(domainClass).all().fetchPlan(FetchPlan.INSTANCE_NAME).list();
+        entities.forEach(getDataManager()::remove);
     }
 
     public Class<T> getDomainClass() {
@@ -167,12 +176,12 @@ public class JmixDataRepositoryImpl<T, ID> implements JmixDataRepository<T, ID> 
 
     @Override
     public Iterable<T> findAll(Sort sort, @Nullable FetchPlan fetchPlan) {
-        return dataManager.load(domainClass).all().sort(springToJmixSort(sort)).fetchPlan(fetchPlan).list();
+        return getDataManager().load(domainClass).all().sort(springToJmixSort(sort)).fetchPlan(fetchPlan).list();
     }
 
     @Override
     public Page<T> findAll(Pageable pageable, @Nullable FetchPlan fetchPlan) {
-        FluentLoader.ByCondition<T> loader = dataManager.load(domainClass)
+        FluentLoader.ByCondition<T> loader = getDataManager().load(domainClass)
                 .all()
                 .fetchPlan(fetchPlan);
 
@@ -185,8 +194,12 @@ public class JmixDataRepositoryImpl<T, ID> implements JmixDataRepository<T, ID> 
         LoadContext context = new LoadContext(metaClass)
                 .setQuery(new LoadContext.Query(String.format("select e from %s e", metaClass.getName())));
 
-        long total = dataManager.getCount(context);
+        long total = getDataManager().getCount(context);
         return new PageImpl<>(results, pageable, total);
+    }
+
+    protected UnconstrainedDataManager getDataManager() {
+        return methodMetadataAccessor.getCrudMethodMetadata().isApplyConstraints() ? dataManager : unconstrainedDataManager;
     }
 
     protected Collection<ID> toCollection(Iterable<ID> ids) {

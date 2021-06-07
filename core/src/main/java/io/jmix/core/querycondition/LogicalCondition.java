@@ -138,6 +138,15 @@ public class LogicalCondition implements Condition {
     }
 
     @Override
+    public Set<String> getExcludedParameters(Set<String> actualParameters) {
+        Set<String> excludedParameters = new TreeSet<>();
+        for (Condition condition : conditions) {
+            excludedParameters.addAll(condition.getExcludedParameters(actualParameters));
+        }
+        return excludedParameters;
+    }
+
+    @Override
     public String toString() {
         StringBuilder result = new StringBuilder();
         result.append("(");

@@ -42,4 +42,6 @@ public interface Condition extends Serializable {
      * Returns a deep copy of this condition.
      */
     Condition copy();
+
+    Set<String> getExcludedParameters(Set<String> actualParameters);
 }

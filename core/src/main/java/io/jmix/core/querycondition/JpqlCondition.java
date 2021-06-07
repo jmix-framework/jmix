@@ -19,12 +19,7 @@ package io.jmix.core.querycondition;
 import org.apache.commons.collections4.CollectionUtils;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -128,6 +123,21 @@ public class JpqlCondition implements Condition {
         copy.setJoin(this.join);
         copy.setParameterValuesMap(this.parameterValuesMap);
         return copy;
+    }
+
+    @Override
+    public Set<String> getExcludedParameters(Set<String> actualParameters) {
+        Set<String> excludedParameters = new TreeSet<>();
+        for (Map.Entry<String, Object> parameter : parameterValuesMap.entrySet()) {
+            if (!actualParameters.contains(parameter.getKey())
+                    && (parameter.getValue() == null
+                    || (parameter.getValue() instanceof Collection
+                    && CollectionUtils.isEmpty((Collection<?>) parameter.getValue())))) {
+                excludedParameters.addAll(this.getParameters());
+                return excludedParameters;
+            }
+        }
+        return excludedParameters;
     }
 
     protected void parseParameters(String value) {

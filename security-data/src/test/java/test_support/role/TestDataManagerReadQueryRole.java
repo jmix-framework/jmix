@@ -16,11 +16,9 @@
 
 package test_support.role;
 
+import io.jmix.security.model.EntityAttributePolicyAction;
 import io.jmix.security.model.EntityPolicyAction;
-import io.jmix.security.role.annotation.EntityPolicy;
-import io.jmix.security.role.annotation.JpqlRowLevelPolicy;
-import io.jmix.security.role.annotation.ResourceRole;
-import io.jmix.security.role.annotation.RowLevelRole;
+import io.jmix.security.role.annotation.*;
 import test_support.entity.TestOrder;
 
 @ResourceRole(name = TestDataManagerReadQueryRole.NAME, code = TestDataManagerReadQueryRole.NAME)
@@ -30,6 +28,8 @@ public interface TestDataManagerReadQueryRole {
 
     @EntityPolicy(entityClass = TestOrder.class,
             actions = {EntityPolicyAction.READ})
+    @EntityAttributePolicy(entityClass = TestOrder.class, attributes = "*",
+           action = EntityAttributePolicyAction.MODIFY)
     @JpqlRowLevelPolicy(entityClass = TestOrder.class, where = "{E}.number like 'allowed_%'")
     void order();
 }

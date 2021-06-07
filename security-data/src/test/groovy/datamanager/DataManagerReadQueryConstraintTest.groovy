@@ -17,6 +17,7 @@
 package datamanager
 
 import io.jmix.core.*
+import io.jmix.core.entity.KeyValueEntity
 import io.jmix.core.security.InMemoryUserRepository
 import io.jmix.core.security.SecurityContextHelper
 import io.jmix.security.authentication.RoleGrantedAuthority
@@ -144,6 +145,23 @@ class DataManagerReadQueryConstraintTest extends SecurityDataSpecification {
         result.contains(orderAllowed)
     }
 
+    def "load values with constraints"() {
+        setup:
+
+        authenticate('user1')
+
+        when:
+        def valueLoader = unsafeDataManager.loadValues('select e.number from test_Order e')
+                .property('number')
+                .accessConstraints(accessConstraintsRegistry.getConstraints())
+
+        List<KeyValueEntity> result = ((FluentValuesLoader) valueLoader).list()
+
+        then:
+        result.size() == 1
+        result.get(0).getValue('number') == 'allowed_3'
+    }
+
     def "load with constraints by ids"() {
         setup:
 
@@ -193,6 +211,21 @@ class DataManagerReadQueryConstraintTest extends SecurityDataSpecification {
         then:
 
         thrown EntityAccessException
+    }
+
+    def "load values with secured"() {
+        setup:
+
+        authenticate('user1')
+
+        when:
+        List<KeyValueEntity> result = dataManager.loadValues('select e.number from test_Order e')
+                .property('number')
+                .list()
+
+        then:
+        result.size() == 1
+        result.get(0).getValue('number') == 'allowed_3'
     }
 
     protected void authenticate(String username) {

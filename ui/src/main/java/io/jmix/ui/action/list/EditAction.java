@@ -17,9 +17,11 @@
 package io.jmix.ui.action.list;
 
 import io.jmix.core.Messages;
+import io.jmix.core.accesscontext.InMemoryCrudEntityContext;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.EntityOp;
 import io.jmix.ui.ScreenBuilders;
+import io.jmix.ui.UiComponentProperties;
 import io.jmix.ui.accesscontext.UiEntityContext;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.ActionType;
@@ -30,7 +32,6 @@ import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.meta.StudioAction;
 import io.jmix.ui.meta.StudioPropertiesItem;
-import io.jmix.ui.UiComponentProperties;
 import io.jmix.ui.screen.*;
 import io.jmix.ui.sys.ActionScreenInitializer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,7 +71,6 @@ public class EditAction<E> extends SecuredListAction
 
     protected Function<E, E> transformation;
 
-    // Set default caption only once
     protected boolean captionInitialized = false;
     protected Messages messages;
 
@@ -239,7 +239,6 @@ public class EditAction<E> extends SecuredListAction
     @Override
     public void setCaption(@Nullable String caption) {
         super.setCaption(caption);
-
         this.captionInitialized = true;
     }
 
@@ -256,9 +255,21 @@ public class EditAction<E> extends SecuredListAction
 
         UiEntityContext entityContext = new UiEntityContext(metaClass);
         accessManager.applyRegisteredConstraints(entityContext);
+        InMemoryCrudEntityContext context = new InMemoryCrudEntityContext(metaClass);
+        accessManager.applyRegisteredConstraints(context);
 
-        if (!entityContext.isViewPermitted()) {
+        if (!entityContext.isViewPermitted() || !entityContext.isEditPermitted()) {
             return false;
+        }
+
+        Object entity = target.getSingleSelected();
+
+        if (entity == null) {
+            return false;
+        }
+
+        if (context.updatePredicate() != null) {
+            return true;
         }
 
         return super.isPermitted();
@@ -271,20 +282,22 @@ public class EditAction<E> extends SecuredListAction
         if (!(target.getItems() instanceof EntityDataUnit)) {
             return;
         }
-
         if (!captionInitialized) {
             MetaClass metaClass = ((EntityDataUnit) target.getItems()).getEntityMetaClass();
 
             UiEntityContext entityContext = new UiEntityContext(metaClass);
             accessManager.applyRegisteredConstraints(entityContext);
+            InMemoryCrudEntityContext inMemoryContext = new InMemoryCrudEntityContext(metaClass);
+            accessManager.applyRegisteredConstraints(inMemoryContext);
 
             if (metaClass != null) {
-                if (entityContext.isEditPermitted()) {
-                    setCaption(messages.getMessage("actions.Edit"));
-                    super.setConstraintEntityOp(EntityOp.UPDATE);
+                Object entity = target.getSingleSelected();
+                if (entityContext.isEditPermitted()
+                        && (inMemoryContext.updatePredicate() == null
+                        || entity != null && inMemoryContext.isUpdatePermitted(entity))) {
+                    super.setCaption(messages.getMessage("actions.Edit"));
                 } else {
-                    setCaption(messages.getMessage("actions.View"));
-                    super.setConstraintEntityOp(EntityOp.READ);
+                    super.setCaption(messages.getMessage("actions.View"));
                 }
             }
         }

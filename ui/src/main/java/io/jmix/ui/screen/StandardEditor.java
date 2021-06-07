@@ -18,6 +18,7 @@ package io.jmix.ui.screen;
 
 import com.google.common.base.Strings;
 import io.jmix.core.*;
+import io.jmix.core.accesscontext.InMemoryCrudEntityContext;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.common.event.TriggerOnce;
 import io.jmix.core.common.util.Preconditions;
@@ -25,6 +26,7 @@ import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.ui.Notifications.NotificationType;
+import io.jmix.ui.UiScreenProperties;
 import io.jmix.ui.accesscontext.UiEntityContext;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.BaseAction;
@@ -34,7 +36,6 @@ import io.jmix.ui.component.ValidationErrors;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.model.*;
-import io.jmix.ui.UiScreenProperties;
 import io.jmix.ui.util.OperationResult;
 import io.jmix.ui.util.UnknownOperationResult;
 
@@ -231,10 +232,14 @@ public abstract class StandardEditor<T> extends Screen
         if (!getEntityStates().isNew(entityToEdit) && entityId != null) {
 
             AccessManager accessManager = getApplicationContext().getBean(AccessManager.class);
-            UiEntityContext entityContext = new UiEntityContext(getEditedEntityContainer().getEntityMetaClass());
-            accessManager.applyRegisteredConstraints(entityContext);
+            MetaClass metaClass = getEditedEntityContainer().getEntityMetaClass();
 
-            if (entityContext.isEditPermitted()) {
+            UiEntityContext entityContext = new UiEntityContext(metaClass);
+            accessManager.applyRegisteredConstraints(entityContext);
+            InMemoryCrudEntityContext inMemoryContext = new InMemoryCrudEntityContext(metaClass);
+            accessManager.applyRegisteredConstraints(inMemoryContext);
+
+            if (entityContext.isEditPermitted() && (inMemoryContext.updatePredicate() == null || inMemoryContext.isUpdatePermitted(getEditedEntity()))) {
                 readOnlyDueToLock = false;
                 PessimisticLockStatus lockStatus = getLockingSupport().lock(entityId);
                 if (lockStatus == PessimisticLockStatus.LOCKED) {

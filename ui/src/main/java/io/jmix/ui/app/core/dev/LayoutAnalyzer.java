@@ -141,7 +141,9 @@ public class LayoutAnalyzer {
 
         @Override
         public List<LayoutTip> analyze(Component c, String path) {
-            if (c instanceof HasComponents) {
+            if (c instanceof HasComponents
+                    // ResponsiveGridLayout doesn't support width manipulation
+                    && !(c instanceof ResponsiveGridLayout)) {
                 List<LayoutTip> tips = null;
 
                 HasComponents container = (HasComponents) c;
@@ -183,7 +185,9 @@ public class LayoutAnalyzer {
 
         @Override
         public List<LayoutTip> analyze(Component c, String path) {
-            if (c instanceof HasComponents) {
+            if (c instanceof HasComponents
+                    // ResponsiveGridLayout doesn't support width manipulation
+                    && !(c instanceof ResponsiveGridLayout)) {
                 if (c.getWidth() < 0 && c.getHeight() < 0) {
                     List<LayoutTip> tips = null;
 
@@ -247,6 +251,9 @@ public class LayoutAnalyzer {
 
                 HasComponents container = (HasComponents) c;
                 for (Component component : container.getOwnComponents()) {
+                    // ResponsiveGridLayout doesn't support width manipulation
+                    if (component instanceof ResponsiveGridLayout) continue;
+
                     if (tips == null) {
                         tips = new ArrayList<>();
                     }

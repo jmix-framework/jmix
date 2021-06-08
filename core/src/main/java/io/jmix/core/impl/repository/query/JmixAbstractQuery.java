@@ -59,7 +59,6 @@ public abstract class JmixAbstractQuery implements RepositoryQuery {
     protected int pageableIndex;
 
     protected String fetchPlan = io.jmix.core.FetchPlan.LOCAL;
-    protected boolean applyConstraints;
 
     public JmixAbstractQuery(DataManager dataManager, Metadata jmixMetadata, Method method, RepositoryMetadata metadata, ProjectionFactory factory) {
         this.method = method;

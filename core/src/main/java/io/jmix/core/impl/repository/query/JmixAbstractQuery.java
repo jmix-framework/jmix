@@ -46,7 +46,7 @@ public abstract class JmixAbstractQuery implements RepositoryQuery {
     protected final ProjectionFactory factory;
     protected final QueryMethod queryMethod;
     /**
-     * {@link UnconstraintedDataManager} or {@link DataManager} will be chosen depending on {@link @ApplyConstraints} annotation on method/repository or ancestor method/repository
+     * {@link UnconstrainedDataManager} or {@link DataManager} will be chosen depending on {@link ApplyConstraints} annotation on method/repository or ancestor method/repository
      */
     protected UnconstrainedDataManager dataManager;
 

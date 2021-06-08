@@ -25,9 +25,13 @@ import javax.annotation.Nullable;
 /**
  * Component shows if CapsLock key is enabled when user inputs password.
  */
-@StudioComponent(icon = "io/jmix/ui/icon/facet/capsLockIndicator.svg",
-        unsupportedProperties = {"enable", "responsive"},
-        category = "Components")
+@StudioComponent(
+        caption = "CapsLockIndicator",
+        xmlElement = "capsLockIndicator",
+        category = "Components",
+        icon = "io/jmix/ui/icon/component/capsLockIndicator.svg",
+        unsupportedProperties = {"enable", "responsive"}
+)
 public interface CapsLockIndicator extends Component {
     String NAME = "capsLockIndicator";
 

@@ -24,6 +24,7 @@ import io.jmix.reportsui.screen.ReportGuiManager;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.action.ActionType;
 import io.jmix.ui.component.Component;
+import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.screen.EditorScreen;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.Screen;
@@ -51,7 +52,7 @@ public class EditorPrintFormAction extends AbstractPrintFormAction {
 
     public EditorPrintFormAction(String id) {
         super(id);
-        this.icon = "icons/reports-print.png";
+        this.icon = JmixIcon.PRINT.source();
     }
 
     @Autowired

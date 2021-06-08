@@ -398,7 +398,13 @@ public class EntitiesControllerManager {
                                      String responseView,
                                      String modelVersion,
                                      HttpServletRequest request) {
-        JsonElement jsonElement = new JsonParser().parse(entityJson);
+
+        JsonElement jsonElement;
+        try {
+            jsonElement = new JsonParser().parse(entityJson);
+        } catch (JsonSyntaxException e) {
+            throw new RestAPIException("Malformed request JSON data structure", "", HttpStatus.BAD_REQUEST, e);
+        }
 
         ResponseInfo responseInfo;
         if (jsonElement.isJsonArray()) {

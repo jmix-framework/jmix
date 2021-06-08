@@ -46,7 +46,7 @@ public class StandardSecurityConfiguration extends WebSecurityConfigurerAdapter 
     private PostAuthenticationChecks postAuthenticationChecks;
 
     @Override
-    protected void configure(AuthenticationManagerBuilder auth) {
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.authenticationProvider(new SystemAuthenticationProvider(userRepository));
 
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();

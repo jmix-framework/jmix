@@ -27,7 +27,7 @@ import org.springframework.stereotype.Component;
 
 @StudioElement(
         caption = "Loader Provider",
-        xmlElement = "containerProvider"
+        xmlElement = "loaderProvider"
 )
 @StudioProperties(
         properties = {

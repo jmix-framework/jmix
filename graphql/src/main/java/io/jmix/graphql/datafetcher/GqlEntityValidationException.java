@@ -20,24 +20,30 @@ import graphql.ErrorClassification;
 import graphql.ErrorType;
 import graphql.GraphQLError;
 import graphql.language.SourceLocation;
+import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.validation.EntityValidationException;
 
+import javax.validation.ConstraintViolation;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-public class GqlEntityValidationException extends RuntimeException implements GraphQLError  {
+public class GqlEntityValidationException extends RuntimeException implements GraphQLError {
 
     public static final String EXTENSION_CONSTRAINT_VIOLATIONS = "constraintViolations";
 
     public static final String EXTENSION_PERSISTENCE_ERROR_NAME = "persistenceError";
 
     private String clientMessage;
+    private MetaClass parentClass;
 
-    public GqlEntityValidationException(EntityValidationException ex) {
+    public GqlEntityValidationException(EntityValidationException ex, MetaClass parentClass) {
         super(ex.getMessage(), ex);
+        this.parentClass = parentClass;
     }
 
     public GqlEntityValidationException(String clientMessage) {
@@ -64,7 +70,7 @@ public class GqlEntityValidationException extends RuntimeException implements Gr
     @Override
     public Map<String, Object> getExtensions() {
         Throwable cause = getCause();
-        if (cause == null) return  Collections.emptyMap();
+        if (cause == null) return Collections.emptyMap();
 
         Class<? extends Throwable> causeClass = cause.getClass();
 
@@ -73,9 +79,8 @@ public class GqlEntityValidationException extends RuntimeException implements Gr
 
             EntityValidationException eve = (EntityValidationException) cause;
             List<Map<String, Object>> constraintViolationList = eve.getConstraintViolations().stream()
-                    .map(cv -> composeErrorExtension(
-                            cv.getMessageTemplate(), cv.getMessage(), "" + cv.getPropertyPath(), "" + cv.getInvalidValue())
-                    ).collect(Collectors.toList());
+                    .map(this::composeErrorExtension)
+                    .collect(Collectors.toList());
 
             return Collections.singletonMap(EXTENSION_CONSTRAINT_VIOLATIONS, constraintViolationList);
         }
@@ -88,13 +93,42 @@ public class GqlEntityValidationException extends RuntimeException implements Gr
         return Collections.emptyMap();
     }
 
+    protected Map<String, Object> composeErrorExtension(ConstraintViolation<?> cv) {
+        String pathStr = composeErrorExtension(parentClass, cv, "")
+                .findAny()
+                .orElseGet(() -> "" + cv.getPropertyPath());
 
-    protected Map<String, Object> composeErrorExtension(String messageTemplate, String message, String path, String invalidValue) {
-        Map<String, Object> cv = new HashMap<>();
-        cv.put("messageTemplate", messageTemplate);
-        cv.put("message", message);
-        cv.put("path", path);
-        cv.put("invalidValue", invalidValue);
-        return cv;
+        Map<String, Object> errorMap = new HashMap<>();
+        errorMap.put("messageTemplate", cv.getMessageTemplate());
+        errorMap.put("message", cv.getMessage());
+        errorMap.put("path", pathStr);
+        errorMap.put("invalidValue", "" + cv.getInvalidValue());
+        return errorMap;
     }
+
+    protected Stream<String> composeErrorExtension(MetaClass metaClass, ConstraintViolation<?> cv, String path) {
+        if (metaClass == null) {
+            return Stream.empty();
+        }
+        String finalProperty = "" + cv.getPropertyPath();
+        Class<?> rootBeanClass = cv.getRootBeanClass();
+
+        return metaClass.getProperties().stream()
+                .flatMap(property -> {
+                    if (property.getDomain().getJavaClass().equals(rootBeanClass)
+                            && finalProperty.equals(property.getName())) {
+                        return Stream.of(path + "." + property.getName());
+                    }
+
+                    if (MetaProperty.Type.COMPOSITION.equals(property.getType())) {
+                        return composeErrorExtension(
+                                property.getRange().asClass(),
+                                cv,
+                                path.isEmpty() ? property.getName() : path + "." + property.getName()
+                        );
+                    }
+                    return Stream.empty();
+                });
+    }
+
 }

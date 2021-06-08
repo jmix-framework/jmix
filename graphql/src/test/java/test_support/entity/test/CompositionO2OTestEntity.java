@@ -8,6 +8,7 @@ import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.*;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.UUID;
 
 @Table(name = "SCR_COMPOSITION_O2O_TEST_ENTITY")
@@ -31,6 +32,7 @@ public class CompositionO2OTestEntity {
     @Column(name = "NAME")
     protected String name;
 
+    @PositiveOrZero
     @Column(name = "QUANTITY")
     private Integer quantity;
 

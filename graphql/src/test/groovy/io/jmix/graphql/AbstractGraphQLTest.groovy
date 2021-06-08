@@ -114,6 +114,10 @@ class AbstractGraphQLTest extends Specification {
         jsonObject.get("message").getAsString()
     }
 
+    static String getPath(JsonObject jsonObject) {
+        jsonObject.get("path").getAsString()
+    }
+
     static JsonArray getErrors(GraphQLResponse response) {
         JsonParser.parseString(response.rawResponse.body).getAsJsonArray("errors")
     }

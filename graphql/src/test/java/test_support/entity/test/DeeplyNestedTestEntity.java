@@ -3,6 +3,7 @@ package test_support.entity.test;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
 import java.util.UUID;
@@ -23,6 +24,8 @@ public class DeeplyNestedTestEntity {
     public void setId(UUID id) {
         this.id = id;
     }
+
+    @Length(message = "{msg://test_support.entity.test/DeeplyNestedTestEntity.name.validation.Length}", min = 6)
     @InstanceName
     @Column(name = "NAME")
     protected String name;

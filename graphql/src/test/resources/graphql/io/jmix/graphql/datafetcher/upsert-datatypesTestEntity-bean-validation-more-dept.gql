@@ -1,0 +1,21 @@
+mutation {
+    upsert_scr_DatatypesTestEntity(datatypesTestEntity:{
+        bigDecimalAttr: 1234
+        compositionO2Oattr: {
+            name: "test"
+            quantity: 10
+            nestedComposition: {
+                name: "test"
+            }
+        }
+    }){
+        id
+        compositionO2Oattr{
+            name
+            quantity
+            nestedComposition {
+                name
+            }
+        }
+    }
+}

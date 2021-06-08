@@ -67,7 +67,7 @@ public class EntityMutationDataFetcher {
             try {
                 objects = entityImportExport.importEntities(Collections.singletonList(entity), entityImportPlan, true);
             } catch (EntityValidationException ex) {
-                throw new GqlEntityValidationException(ex);
+                throw new GqlEntityValidationException(ex, metaClass);
             } catch (PersistenceException ex) {
                 throw new GqlEntityValidationException(ex, "Can't save entity to database");
             } catch (AccessDeniedException ex) {

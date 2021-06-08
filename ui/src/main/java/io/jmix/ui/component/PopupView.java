@@ -18,7 +18,6 @@ package io.jmix.ui.component;
 
 import io.jmix.core.common.event.Subscription;
 import io.jmix.ui.meta.CanvasBehaviour;
-import io.jmix.ui.meta.ContainerType;
 import io.jmix.ui.meta.PropertyType;
 import io.jmix.ui.meta.StudioComponent;
 import io.jmix.ui.meta.StudioProperty;
@@ -51,6 +50,7 @@ public interface PopupView extends Component.HasCaption, Component.BelongToFrame
      * @param popupVisible popup visibility.
      */
     void setPopupVisible(boolean popupVisible);
+
     /**
      * @return true if popup is visible.
      */
@@ -63,6 +63,7 @@ public interface PopupView extends Component.HasCaption, Component.BelongToFrame
      */
     @StudioProperty(type = PropertyType.LOCALIZED_STRING)
     void setMinimizedValue(String minimizedValue);
+
     /**
      * @return value of the label of component.
      */
@@ -74,6 +75,7 @@ public interface PopupView extends Component.HasCaption, Component.BelongToFrame
      * @param popupContent popup component.
      */
     void setPopupContent(@Nullable Component popupContent);
+
     /**
      * @return popup content component.
      */
@@ -87,6 +89,7 @@ public interface PopupView extends Component.HasCaption, Component.BelongToFrame
      */
     @StudioProperty(defaultValue = "true", initialValue = "false")
     void setHideOnMouseOut(boolean hideOnMouseOut);
+
     /**
      * @return true if popup window closes on cursor out.
      */
@@ -98,6 +101,7 @@ public interface PopupView extends Component.HasCaption, Component.BelongToFrame
      * @param captionAsHtml true if we want to show caption as HTML.
      */
     void setCaptionAsHtml(boolean captionAsHtml);
+
     /**
      * @return true if caption is shown as HTML.
      */
@@ -116,6 +120,7 @@ public interface PopupView extends Component.HasCaption, Component.BelongToFrame
      *
      * @param top the top popup position in pixels
      */
+    @StudioProperty(name = "popupTop", defaultValue = "-1")
     void setPopupPositionTop(int top);
 
     /**
@@ -128,6 +133,7 @@ public interface PopupView extends Component.HasCaption, Component.BelongToFrame
      *
      * @param left the left popup position in pixels
      */
+    @StudioProperty(name = "popupLeft", defaultValue = "-1")
     void setPopupPositionLeft(int left);
 
     /**
@@ -140,6 +146,9 @@ public interface PopupView extends Component.HasCaption, Component.BelongToFrame
      *
      * @param position the popup position
      */
+    @StudioProperty(type = PropertyType.ENUMERATION, defaultValue = "DEFAULT", options = {"DEFAULT", "TOP_LEFT",
+            "TOP_CENTER", "TOP_RIGHT", "MIDDLE_LEFT", "MIDDLE_CENTER", "MIDDLE_RIGHT", "BOTTOM_LEFT", "BOTTOM_CENTER",
+            "BOTTOM_RIGHT"})
     void setPopupPosition(@Nullable PopupPosition position);
 
     /**

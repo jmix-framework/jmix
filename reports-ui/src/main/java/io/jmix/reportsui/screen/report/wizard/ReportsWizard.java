@@ -396,6 +396,7 @@ public class ReportsWizard {
      * Search for fetch plan for parent node
      * If does not exists - createDataSet it and add property to parent of parent fetch plan
      */
+    @Nullable
     protected FetchPlanBuilder ensureParentFetchPlansExist(EntityTreeNode entityTreeNode, Map<EntityTreeNode, FetchPlanBuilder> fetchPlansForNodes) {
         EntityTreeNode parentNode = entityTreeNode.getParent();
         FetchPlanBuilder parentFetchPlanBuilder = fetchPlansForNodes.get(parentNode);
@@ -414,7 +415,11 @@ public class ReportsWizard {
     }
 
 
-    protected void iterateFetchPlanAndCreatePropertiesForRegion(final boolean scalarOnly, final FetchPlan parentFetchPlan, final Map<String, EntityTreeNode> allNodesAndHierarchicalPathsMap, final List<RegionProperty> regionProperties, String pathFromParentFetchPlan, long propertyOrderNum) {
+    protected void iterateFetchPlanAndCreatePropertiesForRegion(final boolean scalarOnly, final FetchPlan parentFetchPlan,
+                                                                final Map<String, EntityTreeNode> allNodesAndHierarchicalPathsMap,
+                                                                final List<RegionProperty> regionProperties,
+                                                                @Nullable String pathFromParentFetchPlan,
+                                                                long propertyOrderNum) {
         if (pathFromParentFetchPlan == null) {
             pathFromParentFetchPlan = "";
         }
@@ -422,7 +427,7 @@ public class ReportsWizard {
 
             if (scalarOnly) {
                 MetaClass metaClass = metadata.getClass(parentFetchPlan.getEntityClass());
-                MetaProperty metaProperty = metaClass.getProperty(fetchPlanProperty.getName());
+                MetaProperty metaProperty = metaClass.findProperty(fetchPlanProperty.getName());
                 if (metaProperty != null && metaProperty.getRange().getCardinality().isMany()) {
                     continue;
                 }

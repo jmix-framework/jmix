@@ -34,6 +34,8 @@ import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.InstanceContainer;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.Nullable;
+
 /**
  * Class presents decorator been for add some extra behavior on report band orientation change
  *
@@ -109,6 +111,7 @@ public class CrossTabTableDecorator {
         initListeners(dataSetsDc, bandDefinitionDc);
     }
 
+    @Nullable
     protected DataSet getCrossDataSet(CollectionContainer<DataSet> dataSetsDc, Orientation orientation) {
         for (DataSet dataSet : dataSetsDc.getItems()) {
             if (orientation == Orientation.HORIZONTAL) {

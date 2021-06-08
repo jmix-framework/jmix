@@ -24,6 +24,8 @@ import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.security.CurrentAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.Nullable;
+
 public class JmixFieldFormatProvider implements DefaultFormatProvider {
 
     @Autowired
@@ -39,7 +41,8 @@ public class JmixFieldFormatProvider implements DefaultFormatProvider {
     protected DatatypeRegistry datatypeRegistry;
 
     @Override
-    public String format(Object o) {
+    @Nullable
+    public String format(@Nullable Object o) {
         if (o != null) {
             Datatype datatype = datatypeRegistry.find(o.getClass());
             if (datatype != null) {

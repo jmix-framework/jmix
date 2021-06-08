@@ -36,6 +36,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -104,7 +105,7 @@ public class JmixReporting extends com.haulmont.yarg.reporting.Reporting {
         return handledParams;
     }
 
-    protected void handleDateTimeRelatedParameterAsNow(String paramName, Object paramValue, ParameterType parameterType,
+    protected void handleDateTimeRelatedParameterAsNow(String paramName, @Nullable Object paramValue, ParameterType parameterType,
                                                        Map<String, Object> handledParams) {
         if (Objects.isNull(paramValue)) {
             paramValue = reports.currentDateOrTime(parameterType);

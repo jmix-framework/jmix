@@ -26,6 +26,7 @@ import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.regex.Pattern;
 
@@ -71,6 +72,7 @@ public class FileStorageContentInliner extends AbstractInliner {
         return new byte[0];
     }
 
+    @Nullable
     protected FileRef getFileRef(String uri) {
         try {
             return FileRef.fromString(uri);

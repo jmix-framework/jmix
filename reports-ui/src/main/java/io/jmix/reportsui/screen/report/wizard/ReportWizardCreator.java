@@ -43,6 +43,7 @@ import io.jmix.ui.screen.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -240,6 +241,7 @@ public class ReportWizardCreator extends Screen implements WizardScreen {
         }
     }
 
+    @Nullable
     public Report buildReport(boolean temporary) {
         ReportData reportData = reportDataDc.getItem();
 

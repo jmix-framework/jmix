@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  io.jmix.autoconfigure.reports.ReportsUiAutoConfiguration
+  io.jmix.autoconfigure.reportsui.ReportsUiAutoConfiguration

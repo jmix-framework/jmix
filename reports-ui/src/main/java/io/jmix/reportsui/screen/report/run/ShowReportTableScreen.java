@@ -48,6 +48,7 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -136,7 +137,7 @@ public class ShowReportTableScreen extends Screen {
         openReportParameters(null);
     }
 
-    private void openReportParameters(Map<String, Object> reportParameters) {
+    private void openReportParameters(@Nullable Map<String, Object> reportParameters) {
         parametersFrameHolder.removeAll();
 
         if (report != null) {
@@ -175,6 +176,7 @@ public class ShowReportTableScreen extends Screen {
         }
     }
 
+    @Nullable
     protected String findTableCode(Report report) {
         for (ReportTemplate reportTemplate : report.getTemplates()) {
             if (ReportOutputType.TABLE.equals(reportTemplate.getReportOutputType()))

@@ -44,6 +44,7 @@ import io.jmix.ui.screen.StandardOutcome;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -130,7 +131,6 @@ public class EditFetchPlanAction extends ListAction {
                                     .withDescription(getNameForEntityParameter(dataSet))
                                     .show();
                             //without that root node region editor form will not initialized correctly and became empty. just return
-                            return;
                         } else {
                             //Open editor and convert saved in editor ReportRegion item to Fetch plan
                             reportRegion.setReportData(dataManager.create(ReportData.class));
@@ -166,6 +166,7 @@ public class EditFetchPlanAction extends ListAction {
     }
 
     //Detect metaclass by an alias and parameter
+    @Nullable
     protected MetaClass findMetaClassByAlias(DataSet dataSet) {
         String dataSetAlias = getNameForEntityParameter(dataSet);
         if (dataSetAlias == null) {
@@ -200,6 +201,7 @@ public class EditFetchPlanAction extends ListAction {
         }
     }
 
+    @Nullable
     protected ReportRegion dataSetToReportRegion(DataSet dataSet, EntityTree entityTree) {
         boolean isTabulatedRegion;
         FetchPlan fetchPlan = null;
@@ -254,7 +256,8 @@ public class EditFetchPlanAction extends ListAction {
         return reportsWizard.createFetchPlanByReportRegions(entityTree.getEntityTreeRootNode(), Collections.singletonList(reportRegion));
     }
 
-    public FetchPlan findSubFetchPlanByCollectionPropertyName(FetchPlan fetchPlan, final String propertyName) {
+    @Nullable
+    public FetchPlan findSubFetchPlanByCollectionPropertyName(@Nullable FetchPlan fetchPlan, final String propertyName) {
         if (fetchPlan == null) {
             return null;
         }
@@ -275,6 +278,7 @@ public class EditFetchPlanAction extends ListAction {
         return null;
     }
 
+    @Nullable
     protected String getNameForEntityParameter(DataSet dataSet) {
         String dataSetAlias = null;
         switch (dataSet.getType()) {

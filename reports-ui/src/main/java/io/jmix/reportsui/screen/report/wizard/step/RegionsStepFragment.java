@@ -37,6 +37,7 @@ import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -108,6 +109,7 @@ public class RegionsStepFragment extends StepFragment {
         this.entityTreeHasSimpleAttrs = entityTreeHasSimpleAttrs;
     }
 
+    @Nullable
     protected ReportTypeGenerate getReportTypeGenerate() {
         return reportDataDc.getItem().getReportTypeGenerate();
     }
@@ -213,7 +215,7 @@ public class RegionsStepFragment extends StepFragment {
 
     protected void showAddRegion() {
         if (reportRegionsDc.getItems().isEmpty()) {
-            if (getReportTypeGenerate().isList()) {
+            if (getReportTypeGenerate() != null && getReportTypeGenerate().isList()) {
                 if (entityTreeHasSimpleAttrs) {
                     openTabulatedRegionEditor(createReportRegion(true));
                 }

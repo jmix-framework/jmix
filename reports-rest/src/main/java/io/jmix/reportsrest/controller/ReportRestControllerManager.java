@@ -35,6 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -202,6 +203,7 @@ public class ReportRestControllerManager {
     }
 
 
+    @Nullable
     protected Object prepareValue(ReportInputParameter inputParam, ParameterValueInfo paramValue) {
         ParameterType parameterType = inputParam.getType();
         if (parameterType == ParameterType.ENTITY) {
@@ -349,7 +351,7 @@ public class ReportRestControllerManager {
         }
     }
 
-    protected void checkEntityIsNotNull(String entityName, String entityId, Entity entity) {
+    protected void checkEntityIsNotNull(String entityName, String entityId, @Nullable Object entity) {
         if (entity == null) {
             throw new RestAPIException("Entity not found",
                     String.format("Entity %s with id %s not found", entityName, entityId),

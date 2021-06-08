@@ -43,6 +43,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -130,7 +131,7 @@ public class DetailsStepFragment extends StepFragment {
         }
     }
 
-    protected void updateReportTypeGenerate(ReportData reportData, ReportTypeGenerate reportTypeGenerate) {
+    protected void updateReportTypeGenerate(ReportData reportData, @Nullable ReportTypeGenerate reportTypeGenerate) {
         reportData.setReportTypeGenerate(reportTypeGenerate);
         reportRegionsDc.getMutableItems().clear();
 
@@ -156,7 +157,7 @@ public class DetailsStepFragment extends StepFragment {
         }
     }
 
-    protected void updateReportEntity(MetaClass prevValue, MetaClass value, ReportData reportData) {
+    protected void updateReportEntity(@Nullable MetaClass prevValue, MetaClass value, ReportData reportData) {
         needUpdateEntityModel = true;
         setReportName(reportData, prevValue, value);
 
@@ -166,7 +167,7 @@ public class DetailsStepFragment extends StepFragment {
         clearQuery();
     }
 
-    protected void setReportName(ReportData reportData, MetaClass prevValue, MetaClass value) {
+    protected void setReportName(ReportData reportData, @Nullable MetaClass prevValue, MetaClass value) {
         String oldName = reportData.getName();
         if (StringUtils.isBlank(oldName)) {
             reportData.setName(messages.formatMessage(getClass(), "reportNamePattern", messageTools.getEntityCaption(value)));

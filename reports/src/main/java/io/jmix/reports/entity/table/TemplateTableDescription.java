@@ -21,7 +21,7 @@ import com.google.gson.JsonSyntaxException;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
-import io.jmix.reports.app.MetadataFieldsIgnoringGson;
+import io.jmix.reports.converter.MetadataFieldsIgnoringGson;
 
 import javax.persistence.Id;
 import java.util.LinkedList;

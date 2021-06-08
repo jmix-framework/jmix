@@ -38,7 +38,7 @@ import java.util.Collections;
 @ConfigurationPropertiesScan
 @JmixModule(dependsOn = {UiConfiguration.class, ReportsConfiguration.class})
 @PropertySource(name = "io.jmix.reportsui", value = "classpath:/io/jmix/reportsui/module.properties")
-public class ReportsUIConfiguration {
+public class ReportsUiConfiguration {
 
     @Bean("report_ReportsUiControllers")
     public UiControllersConfiguration screens(ApplicationContext applicationContext,

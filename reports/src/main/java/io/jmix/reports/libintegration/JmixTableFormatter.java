@@ -36,6 +36,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.*;
 
@@ -280,7 +281,7 @@ public class JmixTableFormatter extends AbstractFormatter {
         return bandName + "." + parameterName;
     }
 
-    private boolean checkAddHeader(String pkName, boolean pkInFetchPlan, String name) {
+    private boolean checkAddHeader(@Nullable String pkName, boolean pkInFetchPlan, String name) {
         return pkName == null || !pkName.equals(name) || pkInFetchPlan;
     }
 

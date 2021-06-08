@@ -32,6 +32,7 @@ import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.screen.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -155,7 +156,7 @@ public class ValueFormatEditor extends StandardEditor<ReportValueFormat> {
         formatField.setEditable(secureOperations.isEntityUpdatePermitted(metadata.getClass(ReportValueFormat.class), policyStore));
     }
 
-    protected boolean isClickTrueGroovyScript(Boolean visible, Boolean prevVisible, Boolean userOriginated) {
+    protected boolean isClickTrueGroovyScript(@Nullable Boolean visible, @Nullable Boolean prevVisible, Boolean userOriginated) {
         return Boolean.TRUE.equals(userOriginated) && Boolean.TRUE.equals(visible) && Boolean.FALSE.equals(prevVisible);
     }
 

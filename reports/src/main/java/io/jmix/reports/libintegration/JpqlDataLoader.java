@@ -30,6 +30,7 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import javax.annotation.Nullable;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.util.ArrayList;
@@ -102,6 +103,7 @@ public class JpqlDataLoader extends AbstractDbDataLoader implements ReportDataLo
         }
     }
 
+    @Nullable
     protected List executeQuery(BandData parentBand, Map<String, Object> params, String storeName, String query) {
         return storeAwareLocator.getTransactionTemplate(storeName).execute(transactionStatus -> {
             Query select = insertParameters(trimQuery(query), storeName, parentBand, params);

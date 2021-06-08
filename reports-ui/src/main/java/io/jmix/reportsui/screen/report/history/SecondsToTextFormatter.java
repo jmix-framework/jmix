@@ -20,6 +20,7 @@ import io.jmix.core.Messages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
@@ -34,7 +35,8 @@ public class SecondsToTextFormatter implements Function<Long, String> {
     protected Messages messages;
 
     @Override
-    public String apply(Long value) {
+    @Nullable
+    public String apply(@Nullable Long value) {
         if (value == null) {
             return null;
         }

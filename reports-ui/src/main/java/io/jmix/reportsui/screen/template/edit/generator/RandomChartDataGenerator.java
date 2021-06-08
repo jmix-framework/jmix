@@ -33,7 +33,7 @@ public class RandomChartDataGenerator {
     protected Messages messages;
 
     @Nullable
-    public List<Map<String, Object>> generateRandomChartData(AbstractChartDescription abstractChartDescription) {
+    public List<Map<String, Object>> generateRandomChartData(@Nullable AbstractChartDescription abstractChartDescription) {
         List<Map<String, Object>> data = null;
         if (abstractChartDescription == null) {
             return null;

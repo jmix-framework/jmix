@@ -24,6 +24,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.reports.app.ParameterPrototype;
 import io.jmix.reports.entity.*;
 
+import javax.annotation.Nullable;
 import java.util.*;
 
 /**
@@ -182,7 +183,7 @@ public interface Reports {
      * @param importOptions report - import options
      * @return import result - collection of updated, created reports
      */
-    ReportImportResult importReportsWithResult(byte[] zipBytes, EnumSet<ReportImportOption> importOptions);
+    ReportImportResult importReportsWithResult(byte[] zipBytes, @Nullable EnumSet<ReportImportOption> importOptions);
 
     String convertToString(Report report);
 
@@ -202,6 +203,7 @@ public interface Reports {
 
     <T> T reloadEntity(T entity, FetchPlan fetchPlan);
 
+    @Nullable
     MetaClass findMetaClassByDataSetEntityAlias(String alias, DataSetType dataSetType, List<ReportInputParameter> reportInputParameters);
 
     String generateReportName(String sourceName);

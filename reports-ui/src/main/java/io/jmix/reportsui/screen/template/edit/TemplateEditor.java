@@ -42,6 +42,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.Nullable;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
@@ -256,7 +257,7 @@ public class TemplateEditor extends StandardEditor<ReportTemplate> {
         return reportOutputType == ReportOutputType.PDF;
     }
 
-    protected boolean hasHtmlCsvTemplateOutput(ReportOutputType reportOutputType) {
+    protected boolean hasHtmlCsvTemplateOutput(@Nullable ReportOutputType reportOutputType) {
         return reportOutputType == ReportOutputType.CSV || reportOutputType == ReportOutputType.HTML;
     }
 
@@ -414,7 +415,7 @@ public class TemplateEditor extends StandardEditor<ReportTemplate> {
         templateFileEditor.setEditable(secureOperations.isEntityUpdatePermitted(metadata.getClass(reportTemplate), policyStore));
     }
 
-    protected void visibleTemplateEditor(ReportOutputType outputType) {
+    protected void visibleTemplateEditor(@Nullable ReportOutputType outputType) {
         String extension = FilenameUtils.getExtension(templateUploadField.getFileName());
         if (extension == null) {
             templateFileEditor.setVisible(false);

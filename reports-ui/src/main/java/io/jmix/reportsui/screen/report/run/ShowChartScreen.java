@@ -34,6 +34,7 @@ import io.jmix.ui.screen.*;
 import io.jmix.ui.theme.ThemeConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.Nullable;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -176,12 +177,12 @@ public class ShowChartScreen extends Screen {
         reportTemplateComboBox.setValue(null);
     }
 
-    protected void initFragments(String chartJson, Map<String, Object> reportParameters) {
+    protected void initFragments(@Nullable String chartJson, @Nullable Map<String, Object> reportParameters) {
         openChart(chartJson);
         openReportParameters(reportParameters);
     }
 
-    private void openReportParameters(Map<String, Object> reportParameters) {
+    private void openReportParameters(@Nullable Map<String, Object> reportParameters) {
         parametersFragmentHolder.removeAll();
 
         if (report != null) {
@@ -202,7 +203,7 @@ public class ShowChartScreen extends Screen {
         }
     }
 
-    protected void openChart(String chartJson) {
+    protected void openChart(@Nullable String chartJson) {
         chartBox.removeAll();
         if (chartJson != null) {
             Map<String, Object> params = ParamsMap.of(

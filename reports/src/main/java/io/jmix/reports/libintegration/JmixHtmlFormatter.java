@@ -42,6 +42,7 @@ import org.xhtmlrenderer.pdf.ITextRenderer;
 import org.xhtmlrenderer.pdf.ITextUserAgent;
 import org.xhtmlrenderer.resource.ImageResource;
 
+import javax.annotation.Nullable;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.net.MalformedURLException;
@@ -176,6 +177,7 @@ public class JmixHtmlFormatter extends HtmlFormatter {
             return super.getImageResource(uri);
         }
 
+        @Nullable
         protected ImageResource createImageResource(String uri) {
             ImageResource resource = null;
             InputStream is = resolveAndOpenStream(uri);
@@ -202,6 +204,7 @@ public class JmixHtmlFormatter extends HtmlFormatter {
         }
 
         @Override
+        @Nullable
         protected InputStream resolveAndOpenStream(String uri) {
             FileRef fileRef = getFileRef(uri);
             if (fileRef != null) {
@@ -219,6 +222,7 @@ public class JmixHtmlFormatter extends HtmlFormatter {
             }
         }
 
+        @Nullable
         protected FileRef getFileRef(String uri) {
             try {
                 return FileRef.fromString(uri);
@@ -323,7 +327,7 @@ public class JmixHtmlFormatter extends HtmlFormatter {
         return model;
     }
 
-    protected void checkArgsCount(String methodName, List arguments, int... count) throws TemplateModelException {
+    protected void checkArgsCount(String methodName, @Nullable List arguments, int... count) throws TemplateModelException {
         if ((arguments == null || arguments.size() == 0) && Arrays.binarySearch(count, 0) == -1)
             throw new TemplateModelException(format("Arguments not specified for method: %s", methodName));
         if (arguments != null && Arrays.binarySearch(count, arguments.size()) == -1) {

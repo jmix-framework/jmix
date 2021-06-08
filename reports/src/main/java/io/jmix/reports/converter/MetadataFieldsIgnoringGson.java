@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.reports.app;
+package io.jmix.reports.converter;
 
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;

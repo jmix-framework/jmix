@@ -33,6 +33,7 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Range;
 import org.springframework.beans.factory.BeanFactory;
 
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 import java.io.IOException;
 import java.text.ParseException;
@@ -177,6 +178,7 @@ public class GsonSerializationSupport {
         in.skipValue();
     }
 
+    @Nullable
     protected Object readSimpleProperty(JsonReader in, Class<?> propertyType) throws IOException {
         String value = in.nextString();
         Object parsedValue = null;

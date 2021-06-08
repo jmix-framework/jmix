@@ -228,7 +228,7 @@ public class ReportGuiManager {
      * @param screen         - caller window
      */
     public void printReport(Report report, Map<String, Object> params, @Nullable String templateCode,
-                            @Nullable String outputFileName, @Nullable ReportOutputType outputType, FrameOwner screen) {
+                            @Nullable String outputFileName, @Nullable ReportOutputType outputType, @Nullable FrameOwner screen) {
 
         if (screen != null && reportingClientConfig.getUseBackgroundReportProcessing()) {
             printReportBackground(report, params, templateCode, outputFileName, outputType, screen);

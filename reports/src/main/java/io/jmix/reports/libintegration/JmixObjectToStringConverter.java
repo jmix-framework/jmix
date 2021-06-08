@@ -25,6 +25,7 @@ import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.Nullable;
 import java.text.ParseException;
 import java.util.UUID;
 
@@ -37,7 +38,8 @@ public class JmixObjectToStringConverter extends AbstractObjectToStringConverter
     protected DatatypeRegistry datatypeRegistry;
 
     @Override
-    public String convertToString(Class parameterClass, Object paramValue) {
+    @Nullable
+    public String convertToString(Class parameterClass, @Nullable Object paramValue) {
         if (paramValue == null) {
             return null;
         } else if (String.class.isAssignableFrom(parameterClass)) {
@@ -56,7 +58,8 @@ public class JmixObjectToStringConverter extends AbstractObjectToStringConverter
     }
 
     @Override
-    public Object convertFromString(Class parameterClass, String paramValueStr) {
+    @Nullable
+    public Object convertFromString(Class parameterClass, @Nullable String paramValueStr) {
         if (paramValueStr == null) {
             return null;
         } else if (String.class.isAssignableFrom(parameterClass)) {

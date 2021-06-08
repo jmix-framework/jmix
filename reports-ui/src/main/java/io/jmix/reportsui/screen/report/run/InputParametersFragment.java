@@ -37,6 +37,7 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
+import javax.annotation.Nullable;
 import java.util.*;
 
 @UiController("report_InputParameters.fragment")
@@ -259,6 +260,7 @@ public class InputParametersFragment extends ScreenFragment {
         return report;
     }
 
+    @Nullable
     public ReportTemplate getReportTemplate() {
         return templateComboBox.getValue();
     }

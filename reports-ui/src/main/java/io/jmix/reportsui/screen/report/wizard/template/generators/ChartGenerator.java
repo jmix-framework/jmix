@@ -71,7 +71,7 @@ public class ChartGenerator implements Generator {
                     MetaProperty metaProperty = parentMetaClass.getProperty(regionProperty.getEntityTreeNode().getMetaPropertyName());
                     Class<?> javaType = metaProperty.getJavaType();
                     if (Number.class.isAssignableFrom(javaType)) {
-                        ChartSeries chartSeries = new ChartSeries();
+                        ChartSeries chartSeries = metadata.create(ChartSeries.class);
                         chartSeries.setName(regionProperty.getLocalizedName());
                         chartSeries.setValueField(metaProperty.getName());
                         chartSeries.setType(SeriesType.COLUMN);

@@ -26,20 +26,20 @@ import java.util.function.Consumer;
  *
  */
 class LinkedWithPropertyNewOptionHandler implements Consumer<EnterPressEvent> {
-    protected InstanceContainer datasource;
+    protected InstanceContainer instanceContainer;
     protected String fieldName;
 
-    public static LinkedWithPropertyNewOptionHandler handler(InstanceContainer datasource, String fieldName) {
-        return new LinkedWithPropertyNewOptionHandler(datasource, fieldName);
+    public static LinkedWithPropertyNewOptionHandler handler(InstanceContainer instanceContainer, String fieldName) {
+        return new LinkedWithPropertyNewOptionHandler(instanceContainer, fieldName);
     }
 
-    public LinkedWithPropertyNewOptionHandler(InstanceContainer datasource, String fieldName) {
-        this.datasource = datasource;
+    public LinkedWithPropertyNewOptionHandler(InstanceContainer instanceContainer, String fieldName) {
+        this.instanceContainer = instanceContainer;
         this.fieldName = fieldName;
     }
 
     @Override
     public void accept(EnterPressEvent event) {
-        EntityValues.setValue(datasource.getItem(), fieldName, event.getText());
+        EntityValues.setValue(instanceContainer.getItem(), fieldName, event.getText());
     }
 }

@@ -18,6 +18,7 @@ package io.jmix.reportsui.screen.template.edit;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
+import io.jmix.core.DataManager;
 import io.jmix.core.Messages;
 import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.entity.KeyValueEntity;
@@ -94,10 +95,13 @@ public class PivotTableEditFragment extends DescriptionEditFragment {
     protected RandomPivotTableDataGenerator dataGenerator;
 
     @Autowired
-    private Fragments fragments;
+    protected Fragments fragments;
 
     @Autowired
-    private ScreenValidation screenValidation;
+    protected ScreenValidation screenValidation;
+
+    @Autowired
+    protected DataManager dataManager;
 
     @Subscribe
     @SuppressWarnings("IncorrectCreateEntity")
@@ -147,7 +151,7 @@ public class PivotTableEditFragment extends DescriptionEditFragment {
     }
 
     protected PivotTableDescription createDefaultPivotTableDescription() {
-        PivotTableDescription description = new PivotTableDescription();
+        PivotTableDescription description = dataManager.create(PivotTableDescription.class);
         if (description.getDefaultRenderer() == null) {
             description.setDefaultRenderer(RendererType.TABLE);
             description.setRenderers(Sets.newHashSet(RendererType.TABLE));

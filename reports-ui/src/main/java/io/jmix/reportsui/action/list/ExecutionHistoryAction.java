@@ -31,8 +31,10 @@ import io.jmix.ui.component.data.DataUnit;
 import io.jmix.ui.component.data.meta.EntityDataUnit;
 import io.jmix.ui.meta.StudioAction;
 import io.jmix.ui.screen.*;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -86,7 +88,7 @@ public class ExecutionHistoryAction extends ListAction {
         }
     }
 
-    protected void openLookup(FrameOwner screen, MetaClass metaClass) {
+    protected void openLookup(FrameOwner screen, @Nullable MetaClass metaClass) {
         Screen hostScreen;
         if (screen instanceof Screen) {
             hostScreen = (Screen) screen;
@@ -105,7 +107,7 @@ public class ExecutionHistoryAction extends ListAction {
     }
 
     protected void openExecutionBrowser(Collection<Report> reports, FrameOwner screen) {
-        if (reports != null && reports.size() > 0) {
+        if (CollectionUtils.isNotEmpty(reports)) {
             screenBuilders.screen(screen)
                     .withScreenClass(ReportExecutionBrowser.class)
                     .withOptions(new MapScreenOptions(ParamsMap.of(

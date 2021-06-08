@@ -34,6 +34,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
 @UiController("report_ScriptEditor.dialog")
@@ -137,6 +138,7 @@ public class ScriptEditorDialog extends Screen {
         }
     }
 
+    @Nullable
     public String getValue() {
         return editor.getValue();
     }

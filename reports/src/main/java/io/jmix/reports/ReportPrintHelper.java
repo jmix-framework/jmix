@@ -18,6 +18,7 @@ package io.jmix.reports;
 
 import com.haulmont.yarg.structure.ReportOutputType;
 
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -53,6 +54,7 @@ public class ReportPrintHelper {
         mimeTypes.put(ReportOutputType.csv, "application/csv");
     }
 
+    @Nullable
     public static String getMimeType(ReportOutputType outputType) {
         return mimeTypes.get(outputType);
     }

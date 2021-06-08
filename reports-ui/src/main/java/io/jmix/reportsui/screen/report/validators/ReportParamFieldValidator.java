@@ -27,6 +27,8 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
+
 @Component("report_ReportParamFieldValidator")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ReportParamFieldValidator extends AbstractValidator<Object> {
@@ -45,7 +47,7 @@ public class ReportParamFieldValidator extends AbstractValidator<Object> {
     }
 
     @Override
-    public void accept(Object o) {
+    public void accept(@Nullable Object o) {
         if (o != null) {
             try {
                 reportParameterValidator.validateParameterValue(inputParameter, o);

@@ -95,7 +95,7 @@ public class ReportImportExportImpl implements ReportImportExport {
         return new ArrayList<>(importResult.getImportedReports());
     }
 
-    public ReportImportResult importReportsWithResult(byte[] zipBytes, EnumSet<ReportImportOption> importOptions) {
+    public ReportImportResult importReportsWithResult(byte[] zipBytes, @Nullable EnumSet<ReportImportOption> importOptions) {
         log.info("Import started...");
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(zipBytes);
         ReportImportResult importResult = new ReportImportResult();
@@ -211,7 +211,7 @@ public class ReportImportExportImpl implements ReportImportExport {
     }
 
 
-    protected void importReport(byte[] zipBytes, EnumSet<ReportImportOption> importOptions, ReportImportResult importResult) throws IOException {
+    protected void importReport(byte[] zipBytes, @Nullable EnumSet<ReportImportOption> importOptions, ReportImportResult importResult) throws IOException {
         Report report = fromByteArray(zipBytes);
 
         if (report == null) {
@@ -294,7 +294,7 @@ public class ReportImportExportImpl implements ReportImportExport {
         }
     }
 
-    protected void withReportOptions(Report report, EnumSet<ReportImportOption> importOptions) {
+    protected void withReportOptions(Report report, @Nullable EnumSet<ReportImportOption> importOptions) {
         if (importOptions != null) {
             for (ReportImportOption option : importOptions) {
                 if (ReportImportOption.DO_NOT_IMPORT_ROLES == option) {

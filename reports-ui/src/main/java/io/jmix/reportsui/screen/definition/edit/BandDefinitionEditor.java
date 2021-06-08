@@ -416,7 +416,7 @@ public class BandDefinitionEditor extends ScreenFragment implements Suggester {
         return secureOperations.isEntityUpdatePermitted(metadata.getClass(Report.class), policyStore);
     }
 
-    protected void updateRequiredIndicators(BandDefinition item) {
+    protected void updateRequiredIndicators(@Nullable BandDefinition item) {
         boolean required = !(item == null || reportDc.getItem().getRootBandDefinition().equals(item));
         parentBandField.setRequired(required);
         parentBandField.setNullOptionVisible(!required);

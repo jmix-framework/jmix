@@ -36,6 +36,7 @@ import io.jmix.ui.screen.*;
 import io.jmix.ui.theme.ThemeConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -149,12 +150,12 @@ public class ShowPivotTableScreen extends Screen {
 
     }
 
-    protected void initFragments(String pivotTableJson, List<KeyValueEntity> values, Map<String, Object> reportParameters) {
+    protected void initFragments(@Nullable String pivotTableJson, @Nullable List<KeyValueEntity> values, @Nullable Map<String, Object> reportParameters) {
         openPivotTable(pivotTableJson, values);
         openReportParameters(reportParameters);
     }
 
-    protected void openReportParameters(Map<String, Object> reportParameters) {
+    protected void openReportParameters(@Nullable Map<String, Object> reportParameters) {
         parametersFragmentHolder.removeAll();
         if (report != null) {
             Map<String, Object> params = ParamsMap.of(
@@ -203,7 +204,7 @@ public class ShowPivotTableScreen extends Screen {
         }
     }
 
-    protected void openPivotTable(String pivotTableJson, List<KeyValueEntity> values) {
+    protected void openPivotTable(@Nullable String pivotTableJson, @Nullable List<KeyValueEntity> values) {
         reportBox.removeAll();
         if (pivotTableJson != null) {
             Map<String, Object> screenParams = ParamsMap.of(
@@ -243,7 +244,7 @@ public class ShowPivotTableScreen extends Screen {
 
     protected void showStubText() {
         if (reportBox.getOwnComponents().isEmpty()) {
-            Label<String> label = uiComponents.create(Label.class);
+            Label<String> label = uiComponents.create(Label.TYPE_STRING);
             label.setValue(messages.getMessage(getClass(), "showPivotTable.caption"));
             label.setAlignment(Component.Alignment.MIDDLE_CENTER);
             label.setStyleName("h1");

@@ -35,6 +35,7 @@ import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.meta.StudioAction;
 import io.jmix.ui.screen.*;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collection;
@@ -125,7 +126,7 @@ public class RunReportAction extends ListAction {
     }
 
     protected void runReports(Collection<Report> reports, FrameOwner screen) {
-        if (reports != null && reports.size() > 0) {
+        if (CollectionUtils.isNotEmpty(reports)) {
             Report report = reports.iterator().next();
 
             report = dataManager.load(Id.of(report))

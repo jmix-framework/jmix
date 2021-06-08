@@ -28,11 +28,10 @@ import org.docx4j.openpackaging.parts.PartName;
 import org.docx4j.openpackaging.parts.Parts;
 import org.docx4j.openpackaging.parts.SpreadsheetML.Styles;
 import org.docx4j.openpackaging.parts.SpreadsheetML.WorksheetPart;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.xlsx4j.sml.*;
 
+import javax.annotation.Nullable;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import java.util.List;
@@ -150,7 +149,7 @@ public class XlsxGenerator extends AbstractOfficeGenerator {
         return border;
     }
 
-    protected CTXf generateCTXf(Long borderId, Long XfId, Long numFmtId, Long fontId, Long fillId, CTCellAlignment alignment, Boolean applyBorder) {
+    protected CTXf generateCTXf(@Nullable Long borderId, @Nullable Long XfId, @Nullable Long numFmtId, @Nullable Long fontId, @Nullable Long fillId, @Nullable CTCellAlignment alignment, @Nullable Boolean applyBorder) {
         CTXf xf = new CTXf();
         if (applyBorder != null) xf.setApplyBorder(applyBorder);
         if (borderId != null) xf.setBorderId(borderId);
@@ -168,7 +167,7 @@ public class XlsxGenerator extends AbstractOfficeGenerator {
         CTBorderPr borderPr = factory.createCTBorderPr();
         borderPr.setStyle(STBorderStyle.THIN);
         CTColor borderColor = new CTColor();
-        borderColor.setIndexed(64l);
+        borderColor.setIndexed(64L);
         borderPr.setColor(borderColor);
         borders.getBorder().add(generateBorder(factory, factory.createCTBorderPr()));
         borders.getBorder().add(generateBorder(factory, borderPr));
@@ -182,8 +181,8 @@ public class XlsxGenerator extends AbstractOfficeGenerator {
         cellAlignment.setHorizontal(STHorizontalAlignment.JUSTIFY);
         cellAlignment.setVertical(STVerticalAlignment.JUSTIFY);
 
-        stylesheet.getCellXfs().getXf().add(generateCTXf(0l, 0l, null, 0l, 0l, cellAlignment, null));
-        stylesheet.getCellXfs().getXf().add(generateCTXf(1l, 0l, null, 0l, 0l, cellAlignment, true));
+        stylesheet.getCellXfs().getXf().add(generateCTXf(0L, 0L, null, 0L, 0L, cellAlignment, null));
+        stylesheet.getCellXfs().getXf().add(generateCTXf(1L, 0L, null, 0L, 0L, cellAlignment, true));
         stylesheet.setCellStyles(new CTCellStyles());
         stylesheet.getCellStyles().setCount(1L);
         CTCellStyle cellStyle = new CTCellStyle();
@@ -195,7 +194,7 @@ public class XlsxGenerator extends AbstractOfficeGenerator {
         stylesheet.setCellStyleXfs(new CTCellStyleXfs());
         stylesheet.getCellStyleXfs().setCount(1L);
 
-        stylesheet.getCellStyleXfs().getXf().add(generateCTXf(0l, null, null, 0l, 0l, null, null));
+        stylesheet.getCellStyleXfs().getXf().add(generateCTXf(0L, null, null, 0L, 0L, null, null));
 
         stylesheet.setFills(factory.createCTFills());
         CTFill fill = factory.createCTFill();

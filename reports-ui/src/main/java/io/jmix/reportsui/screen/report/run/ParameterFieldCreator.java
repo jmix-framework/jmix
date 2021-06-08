@@ -93,7 +93,7 @@ public class ParameterFieldCreator {
             .build();
 
     public Label<String> createLabel(ReportInputParameter parameter, Field field) {
-        Label<String> label = uiComponents.create(Label.class);
+        Label<String> label = uiComponents.create(Label.TYPE_STRING);
         label.setAlignment(field instanceof TagPicker ? Component.Alignment.TOP_LEFT : Component.Alignment.MIDDLE_LEFT);
         label.setWidth(Component.AUTO_SIZE);
         label.setValue(metadataTools.getInstanceName(parameter));
@@ -195,7 +195,7 @@ public class ParameterFieldCreator {
             ComboBox lookupField = uiComponents.create(ComboBox.class);
             String enumClassName = parameter.getEnumerationClass();
             if (StringUtils.isNotBlank(enumClassName)) {
-                Class enumClass = classManager.loadClass(enumClassName);
+                Class enumClass = classManager.findClass(enumClassName);
 
                 if (enumClass != null) {
                     Object[] constants = enumClass.getEnumConstants();

@@ -32,6 +32,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.util.EnumSet;
@@ -126,6 +127,7 @@ public class ReportImportDialog extends Screen {
     }
 
 
+    @Nullable
     protected EnumSet<ReportImportOption> getImportOptions() {
         if (BooleanUtils.isNotTrue(importRoles.getValue())) {
             return EnumSet.of(ReportImportOption.DO_NOT_IMPORT_ROLES);

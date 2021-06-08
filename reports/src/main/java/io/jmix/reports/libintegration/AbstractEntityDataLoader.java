@@ -26,6 +26,8 @@ import io.jmix.reports.entity.DataSet;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.Nullable;
+
 public abstract class AbstractEntityDataLoader implements ReportDataLoader {
 
     @Autowired
@@ -37,6 +39,7 @@ public abstract class AbstractEntityDataLoader implements ReportDataLoader {
     @Autowired
     protected FetchPlanRepository fetchPlanRepository;
 
+    @Nullable
     protected Entity reloadEntityByDataSetFetchPlan(ReportQuery reportQuery, Object inputObject) {
         Entity entity = null;
         if (inputObject instanceof Entity && reportQuery instanceof DataSet) {
@@ -51,6 +54,7 @@ public abstract class AbstractEntityDataLoader implements ReportDataLoader {
         return entity;
     }
 
+    @Nullable
     protected FetchPlan getFetchPlan(Entity entity, DataSet dataSet) {
         FetchPlan fetchPlan;
         if (Boolean.TRUE.equals(dataSet.getUseExistingFetchPLan())) {

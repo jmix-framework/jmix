@@ -36,4 +36,9 @@ public enum DashboardIcon implements Icons.Icon {
     public String source() {
         return source;
     }
+
+    @Override
+    public String iconName() {
+        return name();
+    }
 }

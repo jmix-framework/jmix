@@ -21,13 +21,14 @@ import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.Composition;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
-import io.jmix.reports.entity.*;
+import io.jmix.reports.entity.Report;
+import io.jmix.reports.entity.ReportGroup;
+import io.jmix.reports.entity.ReportOutputType;
 import io.jmix.reports.entity.charts.ChartType;
 
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -35,9 +36,6 @@ import java.util.UUID;
 @JmixEntity(name = "report_WizardReportData", annotatedPropertiesOnly = true)
 @SystemLevel
 public class ReportData {
-
-    private static final long serialVersionUID = -1649648403032678085L;
-
     @Id
     @JmixProperty
     @JmixGeneratedValue
@@ -82,7 +80,7 @@ public class ReportData {
     @JmixProperty
     @Composition
     @Transient
-    @OneToMany(targetEntity = RegionProperty.class)
+    @OneToMany
     protected List<ReportRegion> reportRegions = new ArrayList<>();
 
     @JmixProperty

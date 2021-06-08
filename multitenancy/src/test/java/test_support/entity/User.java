@@ -16,11 +16,13 @@
 
 package test_support.entity;
 
+import io.jmix.core.annotation.TenantId;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.DependsOnProperties;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.multitenancy.core.TenantSupport;
 import io.jmix.security.authentication.JmixUserDetails;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -35,7 +37,7 @@ import java.util.UUID;
 @Table(name = "SCR_USER", indexes = {
         @Index(name = "IDX_SCR_USER_ON_USERNAME", columnList = "USERNAME", unique = true)
 })
-public class User implements JmixUserDetails {
+public class User implements JmixUserDetails, TenantSupport {
 
     @Id
     @Column(name = "ID", nullable = false)
@@ -68,6 +70,10 @@ public class User implements JmixUserDetails {
 
     @Column(name = "PHONE")
     private String phone;
+
+    @TenantId
+    @Column(name = "TENAN_ID")
+    private String tenantId;
 
     @Transient
     protected Collection<? extends GrantedAuthority> authorities;
@@ -180,5 +186,14 @@ public class User implements JmixUserDetails {
     @Override
     public void setAuthorities(Collection<? extends GrantedAuthority> authorities) {
         this.authorities = authorities;
+    }
+
+    @Override
+    public String getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
     }
 }

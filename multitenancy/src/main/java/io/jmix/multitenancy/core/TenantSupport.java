@@ -14,6 +14,18 @@
  * limitations under the License.
  */
 
-INSERT INTO MTEN_TENANT (id, name, tenantId, adminUsername)
-VALUES ('d99d468e-3cc0-01da-295e-595e48fec620', 'Tenant A', 'tenant-a', 'userA'),
-       ('d99d468e-3cc0-01da-295e-595e48fec620', 'Tenant B', 'tenant-b', 'userB');
+package io.jmix.multitenancy.core;
+
+/**
+ * Needs for implement in user entity for setting tenant id into current authentication
+ */
+public interface TenantSupport {
+
+    /**
+     * Provides the user tenant id.
+     *
+     * @return the tenant id for user.
+     */
+    String getTenantId();
+
+}

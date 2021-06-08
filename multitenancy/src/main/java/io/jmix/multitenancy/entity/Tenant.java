@@ -30,7 +30,9 @@ import java.util.Date;
 import java.util.UUID;
 
 @JmixEntity
-@Table(name = "MTEN_TENANT")
+@Table(name = "MTEN_TENANT", indexes = {
+        @Index(name = "IDX_MTENSMP_USER_ON_USERNAME", columnList = "USERNAME", unique = true)
+})
 @Entity(name = "mten_Tenant")
 public class Tenant {
 
@@ -71,7 +73,7 @@ public class Tenant {
     @Column(name = "TENANT_ID")
     private String tenantId;
 
-    @Column(name = "NAME", nullable = false, unique = true)
+    @Column(name = "NAME", nullable = false)
     private String name;
 
     @Column(name = "ADMIN_USERNAME", nullable = false)

@@ -27,9 +27,9 @@ public interface TenantProvider {
     String NO_TENANT = "no_tenant";
 
     /**
-     * Provides the current tenant id for save to user session.
+     * Provides the tenant id from current authentication.
      *
-     * @return the current tenant id.
+     * @return the current tenant id, if tenant id is not set then return NO_TENANT constant
      */
     String getCurrentUserTenantId();
 }

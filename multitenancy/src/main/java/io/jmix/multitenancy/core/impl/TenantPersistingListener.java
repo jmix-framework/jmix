@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2008-2019 Haulmont.
+ * Copyright 2021 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.multitenancy.listener;
+package io.jmix.multitenancy.core.impl;
 
 import io.jmix.core.event.EntitySavingEvent;
 import io.jmix.multitenancy.core.TenantEntityOperation;
@@ -38,7 +38,7 @@ public class TenantPersistingListener {
     public void beforePersist(EntitySavingEvent event) {
         Object entity = event.getEntity();
         String tenantId = tenantProvider.getCurrentUserTenantId();
-        if (tenantEntityOperation.getTenantMetaProperty(entity.getClass()) != null && !TenantProvider.NO_TENANT.equals(tenantId)) {
+        if (tenantEntityOperation.findTenantProperty(entity.getClass()) != null && !TenantProvider.NO_TENANT.equals(tenantId)) {
             tenantEntityOperation.setTenant(entity, tenantId);
         }
     }

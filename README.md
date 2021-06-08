@@ -46,13 +46,12 @@ Entities from CUBA compatibility modules also have special attributes for multit
 * ScheduledTask
 * FilterEntity
 
-**Note**. Tenants don't have write access to entities without the `tenantId` attribute. It is also true for Jmix system
-entities.
+**Note**. Tenants don't have write access to entities without the attribute with @TenantId. It is also true for Jmix
+system entities.
 
 # Predefined Roles
 
 - **tenant-admin-role** - allows user to configure tenants.
-- **default-tenant-role** - default tenant user role. By default tenant role.
 
 # Managing Tenants
 
@@ -66,12 +65,6 @@ Each tenant must have a unique *Tenant Id* and a default administrator assigned.
 
 Tenant permissions are compiled at runtime during the user logs in and stored in the user session. For implementation,
 see `MultiTenancyAttributeConstraint` and `MultiTenancyNonTenantEntityConstraint`.
-
-All tenants are implicitly assigned the *Tenant Default Role*. The purpose of the role is to hide system functionality
-which should not be accessible to other tenants (JMX console, Server log and so on).
-
-The default tenant role is specified in `MultitenanctProperties` (`jmix.multitenancy.defaultTenantRoleCode`). It is
-assigned to all tenant users automatically in `TenantAssignmentEntityEventListener`.
 
 If a user has read-only access to an entity, so the user can't permit other users to modify it, but can prohibit users
 to read the entity.
@@ -94,9 +87,4 @@ omitted.
 
 **There is no automatic filtering for native SQL, so tenants should not have access to any functionality that provides
 access to writing native SQL or Groovy code (JMX Console, SQL/Groovy bands in reports etc.)**.
-
-There is no need to assign a tenant ID to entities manually - it is being handled automatically. During login, the
-tenant user session receives the tenant ID from the tenant entity. Whenever a tenant user creates a tenant-specific
-entity, the system assigns the tenant ID to the newly created entity automatically. For implementation,
-see `TenantEntityPersistingListener`.
 

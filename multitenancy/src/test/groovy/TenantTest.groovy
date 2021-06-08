@@ -15,20 +15,28 @@
  */
 
 
+import io.jmix.core.AccessConstraintsRegistry
+import io.jmix.core.DataManager
 import io.jmix.core.Metadata
 import io.jmix.core.UnconstrainedDataManager
+import io.jmix.core.metamodel.model.MetaProperty
 import io.jmix.core.security.InMemoryUserRepository
 import io.jmix.eclipselink.EclipselinkConfiguration
 import io.jmix.multitenancy.MultitenancyConfiguration
-import io.jmix.security.role.ResourceRoleRepository
+import io.jmix.multitenancy.core.TenantEntityOperation
+import io.jmix.multitenancy.core.TenantProvider
+import io.jmix.multitenancy.entity.Tenant
 import io.jmix.securitydata.SecurityDataConfiguration
 import io.jmix.securityui.SecurityUiConfiguration
-import io.jmix.securityui.authentication.LoginScreenAuthenticationSupport
 import io.jmix.ui.UiConfiguration
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.Authentication
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
 import test_support.MultitenancyTestConfiguration
+import test_support.entity.TestTenantEntity
 import test_support.entity.User
 
 /*
@@ -49,11 +57,16 @@ import test_support.entity.User
 
 @ContextConfiguration(classes = [SecurityUiConfiguration.class,
         UiConfiguration.class, SecurityDataConfiguration, EclipselinkConfiguration, MultitenancyTestConfiguration, MultitenancyConfiguration])
-//@OverrideAutoConfiguration(enabled = false)
 class TenantTest extends Specification {
 
     @Autowired
     private UnconstrainedDataManager unconstrainedDataManager
+
+    @Autowired
+    private DataManager dataManager
+
+    @Autowired
+    private AccessConstraintsRegistry accessConstraintsRegistry
 
     @Autowired
     private InMemoryUserRepository userRepository;
@@ -62,99 +75,142 @@ class TenantTest extends Specification {
     private Metadata metadata
 
     @Autowired
-    private LoginScreenAuthenticationSupport authenticatorSupport
+    private AuthenticationManager authenticationManager
 
     @Autowired
-    private ResourceRoleRepository resourceRoleRepository
+    private TenantEntityOperation tenantEntityOperation
 
-    private User userA
-    private User userB
-    private User admin
-
+    User admin
+    User tenantAdminA
+    User tenantAdminB
+    Tenant tenantA
+    Tenant tenantB
+    User tenantUserA
+    User tenantUserB
+    TestTenantEntity testTenantEntityA
+    TestTenantEntity testTenantEntityB
+    TestTenantEntity testTenantEntity
 
     void setup() {
+
         admin = metadata.create(User.class)
-        admin.setFirstName("Admin")
         admin.setUsername("admin")
-        admin.setPassword("{noop}admin123")
+        admin.setPassword("{noop}admin")
+        userRepository.addUser(admin)
 
-        userRepository.addUser(admin);
+        tenantAdminA = metadata.create(User.class)
+        tenantAdminA.setUsername("tenantAdminA")
+        tenantAdminA.setPassword("{noop}tenantAdminA")
+        userRepository.addUser(tenantAdminA)
 
-        userA = metadata.create(User.class)
-        userA.setFirstName("User A")
-        userA.setUsername("userA")
-        userA.setPassword("{noop}123123")
+        tenantAdminB = metadata.create(User.class)
+        tenantAdminB.setUsername("tenantAdminB")
+        tenantAdminB.setPassword("{noop}tenantAdminB")
+        userRepository.addUser(tenantAdminB)
 
-        userRepository.addUser(userA)
+        tenantA = metadata.create(Tenant.class)
+        tenantA.setTenantId("tenantA")
+        tenantA.setName("tenantA")
+        tenantA.setAdminUsername("tenantAdminA")
+        unconstrainedDataManager.save(tenantA)
 
-        userB = metadata.create(User.class)
-        userB.setFirstName("User B")
-        userB.setUsername("userB")
-        userB.setPassword("{noop}123123")
+        tenantB = metadata.create(Tenant.class)
+        tenantB.setTenantId("tenantB")
+        tenantB.setName("tenantB")
+        tenantB.setAdminUsername("tenantAdminB")
+        unconstrainedDataManager.save(tenantB)
 
-        userRepository.addUser(userB)
+        tenantUserA = metadata.create(User.class)
+        tenantUserA.setUsername("tenantA")
+        tenantUserA.setPassword("{noop}tenantA")
+        tenantUserA.setTenantId("tenantA")
+
+        userRepository.addUser(tenantUserA)
+
+        tenantUserB = metadata.create(User.class)
+        tenantUserB.setUsername("tenantB")
+        tenantUserB.setPassword("{noop}tenantB")
+        tenantUserB.setTenantId("tenantB")
+        userRepository.addUser(tenantUserB)
+
+        testTenantEntityA = metadata.create(TestTenantEntity.class)
+        testTenantEntityA.setIdForTenant("tenantA")
+        testTenantEntityA.setName("A")
+        unconstrainedDataManager.save(testTenantEntityA)
+
+        testTenantEntityB = metadata.create(TestTenantEntity.class)
+        testTenantEntityB.setIdForTenant("tenantB")
+        testTenantEntityB.setName("B")
+        unconstrainedDataManager.save(testTenantEntityB)
+
+        testTenantEntity = metadata.create(TestTenantEntity.class)
+        testTenantEntity.setName("without tenant")
+        unconstrainedDataManager.save(testTenantEntity)
     }
 
-    def "authentication with tenant id in url param"() {
-//        tenantConfig.setLoginByTenantParamEnabled(true);
-//
-//        AuthenticationManager lw = AppBeans.get(AuthenticationManager.NAME);
-//        Credentials credentials = new LoginPasswordCredentials("userA", PASSWORD, Locale.ENGLISH);
-//        try {
-//            lw.login(credentials);
-//            fail();
-//        } catch (LoginException e) {
-//            assertThat(e.getMessage(), containsString("Unknown login name or bad password 'userA'"));
-//        }
-//
-//        tenantConfig.setLoginByTenantParamEnabled(false);
-    }
-
-    def "test authentication without tenant id in url param"() {
-//        tenantConfig.setLoginByTenantParamEnabled(false);
-//
-//        AuthenticationManager lw = AppBeans.get(AuthenticationManager.NAME);
-//        Credentials credentials = new LoginPasswordCredentials("userA", PASSWORD, Locale.ENGLISH);
-//        UserSession userSession = lw.login(credentials).getSession();
-//
-//        assertNotNull(userSession);
-//
-//        tenantConfig.setLoginByTenantParamEnabled(true);
+    void cleanup() {
+        unconstrainedDataManager.remove(admin,
+                tenantUserA,
+                tenantUserB,
+                tenantAdminA,
+                tenantAdminB,
+                tenantA,
+                tenantB,
+                testTenantEntity,
+                testTenantEntityA,
+                testTenantEntityB
+        )
     }
 
     def "test user login without tenant"() {
-//        when:
-//        Authentication authentication = authenticatorSupport.authenticate( AuthDetails.of("admin", "admin123").withRememberMe(false), null)
-//
-//        then:
-//        authentication != null
-//        int i = 0;
+        when:
+
+        UsernamePasswordAuthenticationToken authenticationToken =
+                new UsernamePasswordAuthenticationToken("admin", "admin");
+        Authentication authentication = authenticationManager.authenticate(authenticationToken)
+
+        then:
+        authentication != null
+        User user = authentication.getPrincipal() as User
+        user != null
+        user.getTenantId() == null
     }
 
-//    @Test
-//    public void testUserLoginWithTenant() throws LoginException {
-//        AuthenticationManager lw = AppBeans.get(AuthenticationManager.NAME);
-//        Credentials credentials = new LoginPasswordCredentials("userA", PASSWORD, Locale.getDefault(),
-//                ParamsMap.of(tenantConfig.getTenantIdUrlParamName(), "tenant-a"));
-//        UserSession userSession = lw.login(credentials).getSession();
-//
-//        assertNotNull(userSession);
-//
-//        UserSessionSource uss = AppBeans.get(UserSessionSource.class);
-//        UserSession savedUserSession = uss.getUserSession();
-//        ((MultiTenancyUserSessionSource) uss).setUserSession(userSession);
-//        try {
-//            DataManager dm = AppBeans.get(DataManager.NAME);
-//            LoadContext<Group> loadContext = LoadContext.create(Group.class)
-//                    .setQuery(new LoadContext.Query("select g from sec$Group g"));
-//            List<Group> list = dm.loadList(loadContext);
-//            assertEquals(1, list.size());
-//
-//            Group group = list.get(0);
-//            assertEquals(group, groupA);
-//        } finally {
-//            ((MultiTenancyUserSessionSource) uss).setUserSession(savedUserSession);
-//        }
-//    }
+    def "test user login with tenant"() {
+        when:
+
+        UsernamePasswordAuthenticationToken authenticationToken =
+                new UsernamePasswordAuthenticationToken("tenantA", "tenantA");
+        Authentication authentication = authenticationManager.authenticate(authenticationToken)
+
+        then:
+        authentication != null
+        User userFromAuthentication = authentication.getPrincipal() as User
+        userFromAuthentication != null
+        userFromAuthentication.getTenantId() != null
+        tenantA.getTenantId() == userFromAuthentication.getTenantId()
+    }
+
+    def "get tenant property for user entity"() {
+        when:
+        MetaProperty metaProperty = tenantEntityOperation.findTenantProperty(User.class);
+        then:
+        "tenantId" == metaProperty.getName()
+    }
+
+    def "get tenant property for tenant entity"() {
+        when:
+        MetaProperty metaProperty = tenantEntityOperation.findTenantProperty(Tenant.class);
+        then:
+        "tenantId" == metaProperty.getName()
+    }
+
+    def "set tenant property for user entity"() {
+        when:
+        tenantEntityOperation.setTenant(tenantUserB, TenantProvider.NO_TENANT);
+        then:
+        TenantProvider.NO_TENANT == tenantUserB.getTenantId()
+    }
+
 
 }

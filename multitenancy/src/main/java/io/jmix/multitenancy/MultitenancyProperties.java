@@ -24,27 +24,13 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 @ConstructorBinding
 public class MultitenancyProperties {
 
-    private final String adminUser;
-    private final String anonymousUser;
     private final boolean authenticationByTenantParamEnabled;
     private final String tenantIdUrlParamName;
 
-    public MultitenancyProperties(String adminUser,
-                                  String anonymousUser,
-                                  @DefaultValue("false") boolean authenticationByTenantParamEnabled,
+    public MultitenancyProperties(@DefaultValue("false") boolean authenticationByTenantParamEnabled,
                                   @DefaultValue("tenantId") String tenantIdUrlParamName) {
-        this.adminUser = adminUser;
-        this.anonymousUser = anonymousUser;
         this.authenticationByTenantParamEnabled = authenticationByTenantParamEnabled;
         this.tenantIdUrlParamName = tenantIdUrlParamName;
-    }
-
-    public String getAdminUser() {
-        return adminUser;
-    }
-
-    public String getAnonymousUser() {
-        return anonymousUser;
     }
 
     public boolean isAuthenticationByTenantParamEnabled() {

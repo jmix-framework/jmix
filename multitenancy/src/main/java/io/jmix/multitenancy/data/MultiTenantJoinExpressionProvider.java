@@ -16,8 +16,11 @@
 
 package io.jmix.multitenancy.data;
 
+import io.jmix.core.annotation.TenantId;
+import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.eclipselink.impl.mapping.AbstractJoinExpressionProvider;
 import io.jmix.multitenancy.core.TenantEntityOperation;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.eclipse.persistence.descriptors.ClassDescriptor;
 import org.eclipse.persistence.expressions.Expression;
 import org.eclipse.persistence.expressions.ExpressionBuilder;
@@ -29,6 +32,7 @@ import org.springframework.stereotype.Component;
 
 import javax.persistence.Column;
 import java.lang.reflect.Field;
+import java.util.Arrays;
 
 @Component("mten_MultiTenantJoinExpressionProvider")
 public class MultiTenantJoinExpressionProvider extends AbstractJoinExpressionProvider {
@@ -63,13 +67,13 @@ public class MultiTenantJoinExpressionProvider extends AbstractJoinExpressionPro
         ClassDescriptor descriptor = oneToOneMapping.getDescriptor();
         Class<?> referenceClass = oneToOneMapping.getReferenceClass();
         if (isMultiTenant(referenceClass) && isMultiTenant(descriptor.getJavaClass())) {
-            Field tenantIdField = tenantEntityOperation.getTenantField(referenceClass);
-            Field parentTenantId = tenantEntityOperation.getTenantField(descriptor.getJavaClass());
+            MetaProperty tenantIdField = tenantEntityOperation.findTenantProperty(referenceClass);
+            Field parentTenantId = findTenantField(descriptor.getJavaClass());
             if (tenantIdField != null && parentTenantId != null) {
                 String columnName = tenantIdField.getName();
                 ExpressionBuilder builder = new ExpressionBuilder();
-                Expression tenantColumExpression = builder.get(columnName);
-                return tenantColumExpression.equal(
+                Expression tenantColumnExpression = builder.get(columnName);
+                return tenantColumnExpression.equal(
                         builder.getParameter(
                                 parentTenantId.getAnnotation(Column.class).name()));
             }
@@ -77,8 +81,14 @@ public class MultiTenantJoinExpressionProvider extends AbstractJoinExpressionPro
         return null;
     }
 
+    private Field findTenantField(Class<?> entityClass) {
+        return Arrays.stream(FieldUtils.getAllFields(entityClass))
+                .filter(f -> f.isAnnotationPresent(TenantId.class))
+                .findFirst().orElse(null);
+    }
+
     private boolean isMultiTenant(Class<?> referenceClass) {
-        return tenantEntityOperation.getTenantMetaProperty(referenceClass) != null;
+        return tenantEntityOperation.findTenantProperty(referenceClass) != null;
     }
 
 }

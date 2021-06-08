@@ -18,13 +18,11 @@ package io.jmix.multitenancy.security;
 
 import io.jmix.core.constraint.EntityOperationConstraint;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.multitenancy.core.TenantEntityOperation;
 import io.jmix.multitenancy.core.TenantProvider;
 import io.jmix.ui.accesscontext.UiEntityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -35,14 +33,11 @@ public class MultitenancyNonTenantEntityConstraint implements EntityOperationCon
 
     private static final Logger log = LoggerFactory.getLogger(MultitenancyNonTenantEntityConstraint.class);
 
-    private final BeanFactory beanFactory;
     private final TenantProvider tenantProvider;
     private final TenantEntityOperation tenantEntityOperation;
 
-    public MultitenancyNonTenantEntityConstraint(BeanFactory beanFactory,
-                                                 TenantProvider tenantProvider,
+    public MultitenancyNonTenantEntityConstraint(TenantProvider tenantProvider,
                                                  TenantEntityOperation tenantEntityOperation) {
-        this.beanFactory = beanFactory;
         this.tenantProvider = tenantProvider;
         this.tenantEntityOperation = tenantEntityOperation;
     }
@@ -54,23 +49,14 @@ public class MultitenancyNonTenantEntityConstraint implements EntityOperationCon
 
     @Override
     public void applyTo(UiEntityContext context) {
-        try {
-            CurrentAuthentication authentication = beanFactory.getBean(CurrentAuthentication.class);
-            if (authentication.getAuthentication() == null || authentication.getAuthentication().getDetails() == null) {
-                return;
-            }
             if (TenantProvider.NO_TENANT.equals(tenantProvider.getCurrentUserTenantId())) {
                 return;
             }
             createReadOnlyPermitForNonTenantEntity(context);
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-        }
-
     }
 
     private void createReadOnlyPermitForNonTenantEntity(UiEntityContext context) {
-        MetaProperty tenantMetaProperty = tenantEntityOperation.getTenantMetaProperty(context.getEntityClass().getJavaClass());
+        MetaProperty tenantMetaProperty = tenantEntityOperation.findTenantProperty(context.getEntityClass().getJavaClass());
         if (tenantMetaProperty == null) {
             context.setCreateDenied();
             context.setDeleteDenied();

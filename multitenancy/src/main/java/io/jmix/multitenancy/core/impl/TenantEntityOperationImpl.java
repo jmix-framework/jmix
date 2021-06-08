@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package io.jmix.multitenancy.core;
+package io.jmix.multitenancy.core.impl;
 
 import io.jmix.core.Metadata;
 import io.jmix.core.annotation.TenantId;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.multitenancy.core.TenantEntityOperation;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,18 +50,18 @@ public class TenantEntityOperationImpl implements TenantEntityOperation {
      * @param entityClass entity class
      * @return MetaProperty instance. Return if not found.
      */
-    public MetaProperty getTenantMetaProperty(Class<?> entityClass) {
+    public MetaProperty findTenantProperty(Class<?> entityClass) {
         MetaClass metaClass = metadata.getClass(entityClass);
-        Field tenantField = getTenantField(entityClass);
+        Field tenantField = findTenantField(entityClass);
         if (tenantField == null) {
-            log.warn("Entity {} does not have an field marked @TenantId annotation", metaClass.getName());
+            log.trace("Entity {} does not have an field marked @TenantId annotation", metaClass.getName());
             return null;
         }
         return metaClass.getProperty(tenantField.getName());
 
     }
 
-    public Field getTenantField(Class<?> entityClass) {
+    private Field findTenantField(Class<?> entityClass) {
         return Arrays.stream(FieldUtils.getAllFields(entityClass))
                 .filter(f -> f.isAnnotationPresent(TenantId.class))
                 .findFirst().orElse(null);
@@ -74,7 +75,7 @@ public class TenantEntityOperationImpl implements TenantEntityOperation {
      * @param tenantId tenant id
      */
     public void setTenant(Object entity, String tenantId) {
-        MetaProperty property = getTenantMetaProperty(entity.getClass());
+        MetaProperty property = findTenantProperty(entity.getClass());
         if (property != null) {
             EntityValues.setValue(entity, property.getName(), tenantId);
         }

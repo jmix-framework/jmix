@@ -52,7 +52,7 @@ public class HasTenantAdditionalCriteriaProvider implements AdditionalCriteriaPr
     public boolean requiresAdditionalCriteria(Class<?> entityClass) {
         MetaClass metaClass = metadata.getClass(entityClass);
         if (entityClass.equals(metaClass.getJavaClass())) {
-            return tenantEntityOperation.getTenantMetaProperty(entityClass) != null;
+            return tenantEntityOperation.findTenantProperty(entityClass) != null;
         } else {
             return false;
         }
@@ -60,7 +60,7 @@ public class HasTenantAdditionalCriteriaProvider implements AdditionalCriteriaPr
 
     @Override
     public String getAdditionalCriteria(Class<?> entityClass) {
-        MetaProperty metaProperty = tenantEntityOperation.getTenantMetaProperty(entityClass);
+        MetaProperty metaProperty = tenantEntityOperation.findTenantProperty(entityClass);
         return String.format("(:tenantId = '%s' or this.%s = :tenantId)", TenantProvider.NO_TENANT, metaProperty.getName());
     }
 

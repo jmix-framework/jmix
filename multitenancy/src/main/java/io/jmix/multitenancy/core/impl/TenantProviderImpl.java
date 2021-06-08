@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package io.jmix.multitenancy.core;
+package io.jmix.multitenancy.core.impl;
 
 import io.jmix.core.security.CurrentAuthentication;
-import io.jmix.multitenancy.security.TenantSupport;
+import io.jmix.multitenancy.core.TenantProvider;
+import io.jmix.multitenancy.core.TenantSupport;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 

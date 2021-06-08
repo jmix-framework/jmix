@@ -19,15 +19,11 @@ package io.jmix.multitenancy.core;
 import io.jmix.core.metamodel.model.MetaProperty;
 
 import javax.annotation.Nullable;
-import java.lang.reflect.Field;
 
 public interface TenantEntityOperation {
 
     @Nullable
-    MetaProperty getTenantMetaProperty(Class<?> entityClass);
-
-    @Nullable
-    Field getTenantField(Class<?> entityClass);
+    MetaProperty findTenantProperty(Class<?> entityClass);
 
     void setTenant(Object entity, String tenantId);
 

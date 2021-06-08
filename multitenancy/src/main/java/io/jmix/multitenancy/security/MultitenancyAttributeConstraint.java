@@ -18,13 +18,9 @@ package io.jmix.multitenancy.security;
 
 import io.jmix.core.constraint.EntityOperationConstraint;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.multitenancy.core.TenantEntityOperation;
 import io.jmix.multitenancy.core.TenantProvider;
 import io.jmix.ui.accesscontext.UiEntityAttributeContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -33,16 +29,11 @@ import org.springframework.stereotype.Component;
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class MultitenancyAttributeConstraint implements EntityOperationConstraint<UiEntityAttributeContext> {
 
-    private static final Logger log = LoggerFactory.getLogger(MultitenancyAttributeConstraint.class);
-
-    private final BeanFactory beanFactory;
     private final TenantProvider tenantProvider;
     private final TenantEntityOperation tenantEntityOperation;
 
-    public MultitenancyAttributeConstraint(BeanFactory beanFactory,
-                                           TenantProvider tenantProvider,
+    public MultitenancyAttributeConstraint(TenantProvider tenantProvider,
                                            TenantEntityOperation tenantEntityOperation) {
-        this.beanFactory = beanFactory;
         this.tenantProvider = tenantProvider;
         this.tenantEntityOperation = tenantEntityOperation;
     }
@@ -54,22 +45,14 @@ public class MultitenancyAttributeConstraint implements EntityOperationConstrain
 
     @Override
     public void applyTo(UiEntityAttributeContext context) {
-        try {
-            CurrentAuthentication authentication = beanFactory.getBean(CurrentAuthentication.class);
-            if (authentication.getAuthentication() == null || authentication.getAuthentication().getDetails() == null) {
-                return;
-            }
-            if (TenantProvider.NO_TENANT.equals(tenantProvider.getCurrentUserTenantId())) {
-                return;
-            }
-            addHideTenantIdPermission(context);
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
+        if (TenantProvider.NO_TENANT.equals(tenantProvider.getCurrentUserTenantId())) {
+            return;
         }
+        addHideTenantIdPermission(context);
     }
 
     private void addHideTenantIdPermission(UiEntityAttributeContext context) {
-        MetaProperty tenantMetaProperty = tenantEntityOperation.getTenantMetaProperty(context.getPropertyPath().getMetaClass().getJavaClass());
+        MetaProperty tenantMetaProperty = tenantEntityOperation.findTenantProperty(context.getPropertyPath().getMetaClass().getJavaClass());
         if (tenantMetaProperty != null && context.getPropertyPath().getMetaProperty().getName().equals(tenantMetaProperty.getName())) {
             context.setViewDenied();
             context.setModifyDenied();

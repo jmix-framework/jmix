@@ -53,6 +53,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.*;
 
 import static io.jmix.dynattr.AttributeType.*;
@@ -351,7 +352,7 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
                 selectAction.setResolution(DateField.Resolution.MIN);
                 break;
             case DATE_WITHOUT_TIME:
-                selectAction.setJavaClass(Date.class);
+                selectAction.setJavaClass(LocalDate.class);
                 selectAction.setResolution(DateField.Resolution.DAY);
                 break;
             case STRING:

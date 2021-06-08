@@ -859,4 +859,9 @@ public enum JmixIcon implements Icons.Icon {
     public String source() {
         return source;
     }
+
+    @Override
+    public String iconName() {
+        return name();
+    }
 }

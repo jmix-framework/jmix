@@ -76,9 +76,7 @@ public class OnComponentValueChangedLoadTrigger implements DataLoadCoordinator.T
                 }
             }
         }
-        if (value != null) {
-            loader.setParameter(param, value);
-        }
+        loader.setParameter(param, value);
         loader.load();
     }
 

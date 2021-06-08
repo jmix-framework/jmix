@@ -18,7 +18,6 @@ package io.jmix.core.impl.repository.query.utils;
 
 import io.jmix.core.DataManager;
 import io.jmix.core.Metadata;
-import io.jmix.core.UnconstrainedDataManager;
 import io.jmix.core.impl.repository.query.*;
 import io.jmix.core.repository.Query;
 import org.slf4j.Logger;
@@ -37,13 +36,11 @@ public class JmixQueryLookupStrategy implements QueryLookupStrategy {
     private static final Logger log = LoggerFactory.getLogger(QueryLookupStrategy.class);
 
     private DataManager dataManager;
-    private UnconstrainedDataManager unconstrainedDataManager;
     private Metadata jmixMetadata;
 
-    public JmixQueryLookupStrategy(DataManager dataManager, UnconstrainedDataManager unconstrainedDataManager, Metadata jmixMetadata) {
+    public JmixQueryLookupStrategy(DataManager dataManager, Metadata jmixMetadata) {
         this.dataManager = dataManager;
         this.jmixMetadata = jmixMetadata;
-        this.unconstrainedDataManager = unconstrainedDataManager;
     }
 
     @Override

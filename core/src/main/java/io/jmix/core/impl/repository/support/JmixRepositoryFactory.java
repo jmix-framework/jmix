@@ -16,7 +16,10 @@
 
 package io.jmix.core.impl.repository.support;
 
-import io.jmix.core.*;
+import io.jmix.core.DataManager;
+import io.jmix.core.EntityStates;
+import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.impl.repository.query.utils.JmixQueryLookupStrategy;
 import io.jmix.core.impl.repository.support.method_metadata.CrudMethodMetadataAccessingPostProcessor;
 import io.jmix.core.repository.JmixDataRepository;
@@ -68,6 +71,6 @@ public class JmixRepositoryFactory extends RepositoryFactorySupport {
     @Override
     protected Optional<QueryLookupStrategy> getQueryLookupStrategy(@Nullable QueryLookupStrategy.Key key,
                                                                    QueryMethodEvaluationContextProvider evaluationContextProvider) {
-        return Optional.of(new JmixQueryLookupStrategy(ctx.getBean(DataManager.class), ctx.getBean(UnconstrainedDataManager.class), ctx.getBean(Metadata.class)));
+        return Optional.of(new JmixQueryLookupStrategy(ctx.getBean(DataManager.class), ctx.getBean(Metadata.class)));
     }
 }

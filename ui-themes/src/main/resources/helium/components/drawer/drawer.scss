@@ -16,8 +16,8 @@
 
 @mixin he-drawer($primary-stylename: jmix-drawer) {
   .#{$primary-stylename} {
-    background: var(--app-background-color);
-    color: var(--text-main-color);
+    background: var(--drawer-background-color);
+    color: var(--drawer-text-color);
 
     .jmix-drawer-header {
       color: var(--sidemenu-title-color);
@@ -40,7 +40,7 @@
       }
 
       .jmix-sidemenu-submenu.jmix-sidemenu-submenu-open {
-        background: var(--app-background-color);
+        background: var(--drawer-sidemenu-submenu-background-color);
       }
     }
 

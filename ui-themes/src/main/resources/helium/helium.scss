@@ -492,6 +492,13 @@
   --sidemenu-collapsible-collapse-button-hover-background-color: var(--sidemenu-collapsible-controls-panel-background-color);
   --sidemenu-collapsible-collapse-button-active-background-color: #A7A7A7;
 
+  /* Drawer */
+
+  --drawer-background-color: var(--app-background-color);
+  --drawer-text-color: var(--text-main-color);
+
+  --drawer-sidemenu-submenu-background-color: var(--drawer-background-color);
+
   /* AppMenu */
 
   --menubar-background-color: #374D66;

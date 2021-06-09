@@ -29,6 +29,7 @@ import io.jmix.security.role.ResourceRoleRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
+import org.springframework.http.HttpHeaders
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.transaction.PlatformTransactionManager
@@ -37,6 +38,7 @@ import org.springframework.transaction.support.TransactionTemplate
 import spock.lang.Specification
 import test_support.App
 import test_support.RestTestUtils
+
 
 @SpringBootTest(classes = App, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class AbstractGraphQLTest extends Specification {
@@ -84,6 +86,13 @@ class AbstractGraphQLTest extends Specification {
 
     protected query(String queryFilePath) {
         return graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .postForResource("graphql/io/jmix/graphql/" + queryFilePath)
+    }
+
+    protected query(String queryFilePath, HttpHeaders httpHeaders) {
+        return graphQLTestTemplate
+                .withHeaders(httpHeaders)
                 .withBearerAuth(adminToken)
                 .postForResource("graphql/io/jmix/graphql/" + queryFilePath)
     }

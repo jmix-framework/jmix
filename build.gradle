@@ -88,6 +88,7 @@ dependencies {
     def graphqlVersion = baseVersion
     def imapVersion = baseVersion
     def localfsVersion = baseVersion
+    def multitenancyVersion = baseVersion
     def mapsVersion = baseVersion
     def reportsVersion = baseVersion
     def restVersion = baseVersion
@@ -187,8 +188,11 @@ dependencies {
         api "io.jmix.maps:jmix-maps-starter:${snapshotOr(mapsVersion)}"
         api "io.jmix.maps:jmix-maps-ui-starter:${snapshotOr(mapsVersion)}"
 
-        api "io.jmix.multitenancy:jmix-multitenancy:${snapshotOr(localfsVersion)}"
-        api "io.jmix.multitenancy:jmix-multitenancy-starter:${snapshotOr(localfsVersion)}"
+        api "io.jmix.multitenancy:jmix-multitenancy:${snapshotOr(multitenancyVersion)}"
+        api "io.jmix.multitenancy:jmix-multitenancy-ui:${snapshotOr(multitenancyVersion)}"
+        api "io.jmix.multitenancy:jmix-multitenancy-starter:${snapshotOr(multitenancyVersion)}"
+        api "io.jmix.multitenancy:jmix-multitenancy-ui-starter:${snapshotOr(multitenancyVersion)}"
+
 
         api "io.jmix.reports:jmix-reports:${snapshotOr(reportsVersion)}"
         api "io.jmix.reports:jmix-reports-ui:${snapshotOr(reportsVersion)}"

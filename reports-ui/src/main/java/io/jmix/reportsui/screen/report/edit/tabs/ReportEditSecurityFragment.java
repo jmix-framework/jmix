@@ -132,13 +132,9 @@ public class ReportEditSecurityFragment extends ScreenFragment {
         if (rolesField.getValue() != null) {
             BaseRole role = rolesField.getValue();
 
-            boolean exists = false;
-            for (ReportRole item : reportRolesDc.getItems()) {
-                if (role.getCode().equalsIgnoreCase(item.getRoleCode())) {
-                    exists = true;
-                    break;
-                }
-            }
+            boolean exists = reportRolesDc.getItems()
+                    .stream()
+                    .anyMatch(reportRole -> role.getCode().equalsIgnoreCase(reportRole.getRoleCode()));
 
             if (!exists) {
                 ReportRole reportRole = metadata.create(ReportRole.class);
@@ -154,13 +150,9 @@ public class ReportEditSecurityFragment extends ScreenFragment {
         if (screenIdField.getValue() != null) {
             String screenId = screenIdField.getValue();
 
-            boolean exists = false;
-            for (ReportScreen item : reportScreensDc.getItems()) {
-                if (screenId.equalsIgnoreCase(item.getScreenId())) {
-                    exists = true;
-                    break;
-                }
-            }
+            boolean exists = reportScreensDc.getItems()
+                    .stream()
+                    .anyMatch(reportScreen -> screenId.equalsIgnoreCase(reportScreen.getScreenId()));
 
             if (!exists) {
                 ReportScreen reportScreen = metadata.create(ReportScreen.class);

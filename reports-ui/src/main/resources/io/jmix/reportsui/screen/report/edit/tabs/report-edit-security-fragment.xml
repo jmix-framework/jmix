@@ -46,8 +46,8 @@
                                 icon="font-icon:REMOVE"/>
                     </buttonsPanel>
                     <columns>
-                        <column id="roleName" caption="msg://roles.roleName"/>
-                        <column id="roleCode" caption="msg://roles.roleName"/>
+                        <column id="roleName"/>
+                        <column id="roleCode"/>
                     </columns>
                 </table>
             </vbox>
@@ -62,7 +62,7 @@
                 <table id="screenTable" width="100%" multiselect="true" dataContainer="reportScreensDc"
                        reorderingAllowed="false" columnControlVisible="false">
                     <actions>
-                        <action id="add"/>
+                        <action id="add" type="add"/>
                         <action id="remove" type="remove"/>
                     </actions>
                     <buttonsPanel>

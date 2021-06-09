@@ -19,6 +19,7 @@ import com.haulmont.yarg.structure.ReportBand;
 import com.haulmont.yarg.structure.ReportFieldFormat;
 import io.jmix.core.annotation.DeletedBy;
 import io.jmix.core.annotation.DeletedDate;
+import io.jmix.core.annotation.TenantId;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.Listeners;
 import io.jmix.core.entity.annotation.SystemLevel;
@@ -123,6 +124,7 @@ public class Report implements com.haulmont.yarg.structure.Report {
 
     @SystemLevel
     @Column(name = "SYS_TENANT_ID")
+    @TenantId
     protected String sysTenantId;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "report")

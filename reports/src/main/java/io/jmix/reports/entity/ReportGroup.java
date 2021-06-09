@@ -18,6 +18,7 @@ package io.jmix.reports.entity;
 
 import io.jmix.core.annotation.DeletedBy;
 import io.jmix.core.annotation.DeletedDate;
+import io.jmix.core.annotation.TenantId;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.DependsOnProperties;
@@ -87,6 +88,7 @@ public class ReportGroup {
 
     @SystemLevel
     @Column(name = "SYS_TENANT_ID")
+    @TenantId
     private String sysTenantId;
 
     public UUID getId() {

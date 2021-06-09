@@ -23,44 +23,48 @@ import javax.persistence.Parameter;
 import javax.persistence.Query;
 import java.io.Serializable;
 import java.util.*;
+import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class QueryKey implements Serializable {
-
+    protected final String originalQueryString;
     protected final String queryString;
     protected final int firstRow;
     protected final int maxRows;
     protected final boolean softDeletion;
     protected final boolean singleResult;
+    protected final Map<String, Object> originalNamedParameters;
     protected final Map<String, Object> namedParameters;
     protected final Object[] positionalParameters;
 
     protected final int hashCode;
     protected final transient UUID id;
 
-    public static QueryKey create(String queryString, boolean softDeletion, Query jpaQuery) {
-        return new QueryKey(queryString, jpaQuery.getFirstResult(), jpaQuery.getMaxResults(), softDeletion, false, getNamedParameters(jpaQuery), getPositionalParameters(jpaQuery));
-    }
+    protected static final Pattern PARAMETER_TEMPLATE_PATTERN = Pattern.compile("(:[\\w_$]+)");
 
     public static QueryKey create(String queryString, boolean softDeletion, boolean singleResult, Query jpaQuery) {
-        return new QueryKey(queryString, jpaQuery.getFirstResult(), jpaQuery.getMaxResults(), softDeletion, singleResult, getNamedParameters(jpaQuery), getPositionalParameters(jpaQuery));
+        return new QueryKey(queryString, jpaQuery.getFirstResult(), jpaQuery.getMaxResults(), softDeletion, singleResult,
+                getNamedParameters(jpaQuery), getPositionalParameters(jpaQuery));
     }
 
     private static Map<String, Object> getNamedParameters(Query jpaQuery) {
         if (jpaQuery.getParameters() == null) return null;
 
-        List<String> names = new ArrayList<>();
-        Map<String, Object> namedParameters = new LinkedHashMap<>();
-
-        jpaQuery.getParameters().stream()
-                .filter(parameter -> parameter.getName() != null)
-                .forEach(parameter -> names.add(parameter.getName()));
+        List<String> names = jpaQuery.getParameters().stream()
+                .map(Parameter::getName)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
 
         if (names.isEmpty()) return null;
 
-        names.stream()
+        return names.stream()
                 .sorted()
-                .forEach(name -> namedParameters.put(name, jpaQuery.getParameterValue(name)));
-        return namedParameters;
+                .collect(Collectors.toMap(Function.identity(),
+                        jpaQuery::getParameterValue,
+                        (o, o2) -> o,
+                        LinkedHashMap::new));
     }
 
     private static Object[] getPositionalParameters(Query jpaQuery) {
@@ -89,14 +93,36 @@ public class QueryKey implements Serializable {
                        Map<String, Object> namedParameters,
                        Object[] positionalParameters) {
         this.id = UuidProvider.createUuid();
-        this.queryString = queryString;
+        this.originalQueryString = queryString;
         this.firstRow = firstRow;
         this.maxRows = maxRows;
         this.softDeletion = softDeletion;
         this.singleResult = singleResult;
-        this.hashCode = generateHashCode();
-        this.namedParameters = namedParameters;
+
+        this.originalNamedParameters = namedParameters;
+        if (this.originalNamedParameters != null) {
+            this.namedParameters = new LinkedHashMap<>(originalNamedParameters);
+            StringBuffer queryBuilder = new StringBuffer();
+            int i = 0;
+            Matcher m = PARAMETER_TEMPLATE_PATTERN.matcher(originalQueryString);
+            while (m.find()) {
+                String parameterName = m.group().substring(1);
+                String newParameterName = "normalized_param_" + i;
+                this.namedParameters.remove(parameterName);
+                this.namedParameters.put(newParameterName, originalNamedParameters.get(parameterName));
+                m.appendReplacement(queryBuilder, String.format(":%s", newParameterName));
+                i++;
+            }
+            m.appendTail(queryBuilder);
+            this.queryString = queryBuilder.toString();
+        } else {
+            this.queryString = this.originalQueryString;
+            this.namedParameters = null;
+        }
+
         this.positionalParameters = positionalParameters;
+
+        this.hashCode = generateHashCode();
     }
 
     public UUID getId() {
@@ -189,7 +215,7 @@ public class QueryKey implements Serializable {
             if (aValue.getClass() != bValue.getClass()) return false;
 
             if (aValue.getClass().isArray()) {
-                if (!Arrays.deepEquals((Object[])aValue, (Object[])bValue)) return false;
+                if (!Arrays.deepEquals((Object[]) aValue, (Object[]) bValue)) return false;
             } else {
                 if (!aValue.equals(bValue)) return false;
             }

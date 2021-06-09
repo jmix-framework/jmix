@@ -118,4 +118,8 @@
     <service name="jmix_OtherRestTestService">
         <method name="testMethod"/>
     </service>
+
+    <service name="jmix_RestTestServiceWithoutInterfaces">
+        <method name="emptyMethod"/>
+    </service>
 </services>

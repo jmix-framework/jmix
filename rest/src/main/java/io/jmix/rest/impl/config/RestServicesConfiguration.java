@@ -31,6 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.util.ClassUtils;
 
 import javax.annotation.Nullable;
@@ -190,25 +191,22 @@ public class RestServicesConfiguration {
         Class<?> serviceClass = AopUtils.isAopProxy(service) ? AopUtils.getTargetClass(service) : service.getClass();
         Method serviceMethod = null;
         //the service object we get here is proxy. To get methods with type information
-        //we need tp know actual interfaces implemented by the service (this is required when parameterized
+        //we need to know actual interfaces implemented by the service (this is required when parameterized
         //collection of entities is passed as an argument)
-        Class<?>[] serviceInterfaces = serviceClass.getInterfaces();
-        if (serviceInterfaces.length == 0) {
-            log.error("Service {} doesn't implement any interface. It cannot be user for the REST API", serviceName);
+        Method[] methods = serviceClass.getMethods();
+
+        if (!serviceClass.isAnnotationPresent(Service.class)) {
+            log.error("Bean {} does not have @Service annotation", serviceName);
             return null;
         }
 
         if (paramTypes.isEmpty()) {
             List<Method> appropriateMethods = new ArrayList<>();
-            for (Class<?> serviceInterface : serviceInterfaces) {
-                //trying to guess which method to invoke
-                Method[] methods = serviceInterface.getMethods();
                 for (Method method : methods) {
                     if (methodName.equals(method.getName()) && method.getParameterTypes().length == paramInfos.size()) {
                         appropriateMethods.add(method);
                     }
                 }
-            }
             if (appropriateMethods.size() == 1) {
                 serviceMethod = appropriateMethods.get(0);
             } else if (appropriateMethods.size() > 1) {
@@ -220,12 +218,10 @@ public class RestServicesConfiguration {
                 return null;
             }
         } else {
-            for (Class<?> serviceInterface : serviceInterfaces) {
                 try {
-                    serviceMethod = serviceInterface.getMethod(methodName, paramTypes.toArray(new Class[0]));
+                    serviceMethod = serviceClass.getMethod(methodName, paramTypes.toArray(new Class[0]));
                 } catch (NoSuchMethodException ignored) {
                 }
-            }
             if (serviceMethod == null) {
                 log.error("Method not found. Service: {}, method: {}, argument types: {}", serviceName, methodName, paramTypes);
                 return null;

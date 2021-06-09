@@ -240,7 +240,7 @@ public class TableEditFragment extends DescriptionEditFragment {
         for (TemplateTableBand band : tableBandsDc.getItems()) {
             if (band.getBandName() == null) {
                 notifications.create(Notifications.NotificationType.TRAY)
-                        .withCaption(messages.getMessage("template.bandTableOrColumnTableRequired"))
+                        .withCaption(messages.getMessage(getClass(), "template.bandTableOrColumnTableRequired"))
                         .show();
                 return false;
             }
@@ -248,7 +248,7 @@ public class TableEditFragment extends DescriptionEditFragment {
             for (TemplateTableColumn column : band.getColumns()) {
                 if (column.getKey() == null || column.getCaption() == null) {
                     notifications.create(Notifications.NotificationType.TRAY)
-                            .withCaption(messages.getMessage("template.bandTableOrColumnTableRequired"))
+                            .withCaption(messages.getMessage(getClass(), "template.bandTableOrColumnTableRequired"))
                             .show();
                     return false;
                 }

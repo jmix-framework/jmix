@@ -208,14 +208,6 @@ public class BandDefinitionEditor extends ScreenFragment implements Suggester {
         editorDialog.show();
     }
 
-    public void setBandDefinition(BandDefinition bandDefinition) {
-        if (bandDefinition != null) {
-            bandsDc.setItem(bandDefinition);
-        }
-        nameField.setEditable((bandDefinition == null || bandDefinition.getParent() != null)
-                && isUpdatePermitted());
-    }
-
     public InstanceContainer<BandDefinition> getBandDefinitionDc() {
         return bandsDc;
     }
@@ -370,7 +362,9 @@ public class BandDefinitionEditor extends ScreenFragment implements Suggester {
 
     @Subscribe(id = "bandsDc", target = Target.DATA_CONTAINER)
     protected void onBandsDcItemChange(InstanceContainer.ItemChangeEvent<BandDefinition> event) {
-        updateRequiredIndicators(event.getItem());
+        BandDefinition item = event.getItem();
+        nameField.setEditable((item == null || item.getParent() != null) && isUpdatePermitted());
+        updateRequiredIndicators(item);
         selectFirstDataSet();
     }
 

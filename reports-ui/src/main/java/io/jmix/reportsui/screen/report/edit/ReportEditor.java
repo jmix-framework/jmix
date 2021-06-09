@@ -319,7 +319,7 @@ public class ReportEditor extends StandardEditor<Report> {
         for (String name : names.keySet()) {
             Collection<BandDefinition> bandDefinitionsWithsSameNames = names.get(name);
             if (bandDefinitionsWithsSameNames != null && bandDefinitionsWithsSameNames.size() > 1) {
-                errors.add(messages.formatMessage("error.bandNamesDuplicated", name));
+                errors.add(messages.formatMessage(getClass(), "error.bandNamesDuplicated", name));
             }
         }
     }

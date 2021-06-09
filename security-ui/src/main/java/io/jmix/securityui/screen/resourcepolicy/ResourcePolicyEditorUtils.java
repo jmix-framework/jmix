@@ -108,6 +108,7 @@ public class ResourcePolicyEditorUtils {
         Map<String, String> result = new LinkedHashMap<>();
         result.put(messages.getMessage(ResourcePolicyEditorUtils.class, "allScreens"), "*");
         TreeMap<String, String> map = windowConfig.getWindows().stream()
+                .filter(windowInfo -> windowInfo.getType() == WindowInfo.Type.SCREEN)
                 .collect(Collectors.toMap(
                         this::getDetailedScreenCaption,
                         WindowInfo::getId,

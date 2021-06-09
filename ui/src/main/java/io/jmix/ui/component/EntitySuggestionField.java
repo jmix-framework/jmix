@@ -34,7 +34,8 @@ import javax.annotation.Nullable;
         xmlElement = "entitySuggestionField",
         icon = "io/jmix/ui/icon/component/entitySuggestionField.svg",
         canvasBehaviour = CanvasBehaviour.VALUE_PICKER,
-        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/entity-suggestion-field.html"
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/entity-suggestion-field.html",
+        unsupportedProperties = {"buffered", "fieldEditable"}
 )
 public interface EntitySuggestionField<V> extends SuggestionField<V>, EntityPicker<V> {
 

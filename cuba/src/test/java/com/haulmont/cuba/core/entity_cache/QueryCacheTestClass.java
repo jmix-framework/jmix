@@ -27,6 +27,8 @@ import com.haulmont.cuba.core.testsupport.TestAppender;
 import com.haulmont.cuba.core.testsupport.TestNamePrinter;
 import com.haulmont.cuba.core.testsupport.TestSupport;
 import io.jmix.core.FetchPlan;
+import io.jmix.core.querycondition.LogicalCondition;
+import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.eclipselink.impl.entitycache.QueryCache;
 import org.eclipse.persistence.descriptors.ClassDescriptor;
 import org.eclipse.persistence.internal.jpa.EntityManagerFactoryDelegate;
@@ -308,6 +310,54 @@ public class QueryCacheTestClass {
         appender.clearMessages();
 
         u = dataManager_getResultListUserByLoginNamed();
+        assertNotNull(u);
+        assertEquals(this.user.getLogin(), u.getLogin());
+        assertEquals(this.group, u.getGroup());
+        assertEquals(1, queryCache.size());
+
+        assertEquals(0, appender.filterMessages(m -> m.contains("> SELECT")).count());
+    }
+
+    @Test
+    public void testDataManagerWithSingleCondition() throws Exception {
+        appender.clearMessages();
+        User u;
+        assertEquals(0, queryCache.size());
+
+        u = dataManager_getResultListUserByLoginCondition();
+        assertNotNull(u);
+        assertEquals(this.user.getLogin(), u.getLogin());
+        assertEquals(this.group, u.getGroup());
+        assertEquals(1, queryCache.size());
+
+        assertEquals(2, appender.filterMessages(m -> m.contains("> SELECT")).count()); // User, Group
+        appender.clearMessages();
+
+        u = dataManager_getResultListUserByLoginCondition();
+        assertNotNull(u);
+        assertEquals(this.user.getLogin(), u.getLogin());
+        assertEquals(this.group, u.getGroup());
+        assertEquals(1, queryCache.size());
+
+        assertEquals(0, appender.filterMessages(m -> m.contains("> SELECT")).count());
+    }
+
+    @Test
+    public void testDataManagerWithMultipleCondition() throws Exception {
+        appender.clearMessages();
+        User u;
+        assertEquals(0, queryCache.size());
+
+        u = dataManager_getResultListUserByLoginAndNameCondition();
+        assertNotNull(u);
+        assertEquals(this.user.getLogin(), u.getLogin());
+        assertEquals(this.group, u.getGroup());
+        assertEquals(1, queryCache.size());
+
+        assertEquals(2, appender.filterMessages(m -> m.contains("> SELECT")).count()); // User, Group
+        appender.clearMessages();
+
+        u = dataManager_getResultListUserByLoginAndNameCondition();
         assertNotNull(u);
         assertEquals(this.user.getLogin(), u.getLogin());
         assertEquals(this.group, u.getGroup());
@@ -1239,6 +1289,26 @@ public class QueryCacheTestClass {
         LoadContext<User> loadContext = new LoadContext<>(User.class).setFetchPlan("user.browse");
         loadContext.setQueryString("select u from test$User u where u.login = :login")
                 .setParameter("login", "ECTest-" + this.user.getId())
+                .setCacheable(true);
+        return dataManager.load(loadContext);
+    }
+
+    protected User dataManager_getResultListUserByLoginCondition() {
+        DataManager dataManager = AppBeans.get(DataManager.NAME);
+        LoadContext<User> loadContext = new LoadContext<>(User.class).setFetchPlan("user.browse");
+        loadContext.setQueryString("select u from test$User u")
+                .setCondition(PropertyCondition.equal("login", "ECTest-" + this.user.getId()))
+                .setCacheable(true);
+        return dataManager.load(loadContext);
+    }
+
+    protected User dataManager_getResultListUserByLoginAndNameCondition() {
+        DataManager dataManager = AppBeans.get(DataManager.NAME);
+        LoadContext<User> loadContext = new LoadContext<>(User.class).setFetchPlan("user.browse");
+        loadContext.setQueryString("select u from test$User u")
+                .setCondition(LogicalCondition.and(
+                        PropertyCondition.equal("login", "ECTest-" + this.user.getId()),
+                        PropertyCondition.equal("name", this.user.getName())))
                 .setCacheable(true);
         return dataManager.load(loadContext);
     }

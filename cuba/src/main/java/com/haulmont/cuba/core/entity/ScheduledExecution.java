@@ -18,6 +18,7 @@
 package com.haulmont.cuba.core.entity;
 
 
+import io.jmix.core.annotation.TenantId;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 
@@ -43,6 +44,7 @@ public class ScheduledExecution extends BaseUuidEntity implements Creatable {
 
     @SystemLevel
     @Column(name = "SYS_TENANT_ID")
+    @TenantId
     protected String sysTenantId;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -18,6 +18,7 @@ package com.haulmont.cuba.core.model.common;
 import com.haulmont.chile.core.annotations.NamePattern;
 import com.haulmont.cuba.core.entity.StandardEntity;
 import io.jmix.core.DeletePolicy;
+import io.jmix.core.annotation.TenantId;
 import io.jmix.core.entity.annotation.Listeners;
 import io.jmix.core.entity.annotation.OnDeleteInverse;
 import io.jmix.core.entity.annotation.SystemLevel;
@@ -115,6 +116,7 @@ public class User extends StandardEntity implements UserDetails {
     protected String ipMask;
 
     @Column(name = "SYS_TENANT_ID")
+    @TenantId
     protected String sysTenantId;
 
     @Transient

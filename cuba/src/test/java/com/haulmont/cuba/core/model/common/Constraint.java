@@ -17,6 +17,7 @@ package com.haulmont.cuba.core.model.common;
 
 import com.haulmont.cuba.core.entity.StandardEntity;
 import com.haulmont.cuba.security.entity.ConstraintOperationType;
+import io.jmix.core.annotation.TenantId;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 
@@ -70,6 +71,7 @@ public class Constraint extends StandardEntity {
     protected boolean predefined;
 
     @Column(name = "SYS_TENANT_ID")
+    @TenantId
     protected String sysTenantId;
 
     public String getCode() {

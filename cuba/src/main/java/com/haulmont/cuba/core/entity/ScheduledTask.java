@@ -20,6 +20,7 @@ package com.haulmont.cuba.core.entity;
 import com.google.common.base.MoreObjects;
 import com.haulmont.chile.core.annotations.NamePattern;
 import com.haulmont.cuba.core.app.scheduled.MethodParameterInfo;
+import io.jmix.core.annotation.TenantId;
 import io.jmix.core.common.util.Dom4j;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.JmixEntity;
@@ -77,6 +78,7 @@ public class ScheduledTask extends BaseUuidEntity implements Creatable, Updatabl
 
     @SystemLevel
     @Column(name = "SYS_TENANT_ID")
+    @TenantId
     protected String sysTenantId;
 
     @Column(name = "BEAN_NAME")

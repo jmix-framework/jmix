@@ -18,6 +18,7 @@ package com.haulmont.cuba.core.model.common;
 
 import com.haulmont.cuba.core.entity.BaseUuidEntity;
 import com.haulmont.cuba.core.entity.Creatable;
+import io.jmix.core.annotation.TenantId;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 
@@ -42,6 +43,7 @@ public class GroupHierarchy extends BaseUuidEntity implements Creatable {
     private String createdBy;
 
     @Column(name = "SYS_TENANT_ID")
+    @TenantId
     protected String sysTenantId;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)

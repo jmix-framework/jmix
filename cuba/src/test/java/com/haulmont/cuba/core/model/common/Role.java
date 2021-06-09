@@ -19,6 +19,7 @@ package com.haulmont.cuba.core.model.common;
 import com.haulmont.chile.core.annotations.NamePattern;
 import com.haulmont.cuba.core.entity.StandardEntity;
 import io.jmix.core.DeletePolicy;
+import io.jmix.core.annotation.TenantId;
 import io.jmix.core.entity.annotation.OnDelete;
 import io.jmix.core.metamodel.annotation.Composition;
 import io.jmix.core.metamodel.annotation.JmixEntity;
@@ -53,6 +54,7 @@ public class Role extends StandardEntity {
     private Boolean defaultRole;
 
     @Column(name = "SYS_TENANT_ID")
+    @TenantId
     protected String sysTenantId;
 
     @OneToMany(mappedBy = "role")

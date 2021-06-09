@@ -181,7 +181,10 @@ public interface TabSheet extends ComponentContainer, Component.BelongToFrame, C
     @StudioProperties(
             properties = {
                     @StudioProperty(name = "id", type = PropertyType.COMPONENT_ID, required = true),
-                    @StudioProperty(name = "lazy", type = PropertyType.BOOLEAN, defaultValue = "false")
+                    @StudioProperty(name = "lazy", type = PropertyType.BOOLEAN, defaultValue = "false"),
+                    @StudioProperty(name = "spacing", type = PropertyType.BOOLEAN, defaultValue = "false",
+                            initialValue = "true"),
+                    @StudioProperty(name = "margin", type = PropertyType.MARGIN, defaultValue = "false")
             }
     )
     interface Tab extends Component.HasIcon, Component.HasCaption {

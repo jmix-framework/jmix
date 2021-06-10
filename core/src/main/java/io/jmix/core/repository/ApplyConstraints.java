@@ -16,6 +16,7 @@
 
 package io.jmix.core.repository;
 
+import io.jmix.core.DataManager;
 import io.jmix.core.UnconstrainedDataManager;
 import io.jmix.core.constraint.AccessConstraint;
 import io.jmix.core.impl.repository.support.method_metadata.MethodMetadataHelper;
@@ -23,10 +24,9 @@ import io.jmix.core.impl.repository.support.method_metadata.MethodMetadataHelper
 import java.lang.annotation.*;
 
 /**
- * Disables CRUD and row level {@link AccessConstraint}s for {@link JmixDataRepository}.
+ * Controls how {@link AccessConstraint}s are used by {@link JmixDataRepository}.
  * <p>
- * {@link UnconstrainedDataManager} will be used instead of DataManager when this annotation present.
- * <p>
+ * If the value of the annotation is false, the repository uses {@link UnconstrainedDataManager} instead of {@link DataManager}.
  *
  * @see MethodMetadataHelper#determineApplyConstraints
  */

@@ -36,7 +36,7 @@ import java.util.TimeZone;
  * }
  * </pre>
  *
- * @see LoginScreenAuthenticationSupport
+ * @see LoginScreenSupport
  */
 public class AuthDetails {
 

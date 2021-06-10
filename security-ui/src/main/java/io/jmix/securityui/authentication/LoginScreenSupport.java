@@ -24,12 +24,14 @@ import io.jmix.core.security.ClientDetails;
 import io.jmix.core.security.SecurityContextHelper;
 import io.jmix.security.model.SecurityScope;
 import io.jmix.securityui.accesscontext.UiLoginToUiContext;
+import io.jmix.ui.JmixApp;
 import io.jmix.ui.ScreenBuilders;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.deviceinfo.DeviceInfo;
 import io.jmix.ui.deviceinfo.DeviceInfoProvider;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.OpenMode;
+import io.jmix.ui.sys.AppCookies;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +47,7 @@ import org.springframework.security.web.authentication.session.SessionAuthentica
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import java.util.Collection;
+import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -70,10 +72,10 @@ import static org.springframework.security.web.authentication.rememberme.Abstrac
  *
  * @see AuthDetails
  */
-@Component("ui_LoginScreenAuthenticationSupport")
-public class LoginScreenAuthenticationSupport {
+@Component("ui_LoginScreenSupport")
+public class LoginScreenSupport {
 
-    private static final Logger log = LoggerFactory.getLogger(LoginScreenAuthenticationSupport.class);
+    private static final Logger log = LoggerFactory.getLogger(LoginScreenSupport.class);
 
     protected AuthenticationManager authenticationManager;
 
@@ -85,6 +87,8 @@ public class LoginScreenAuthenticationSupport {
     protected DeviceInfoProvider deviceInfoProvider;
     protected RememberMeServices rememberMeServices;
     protected ApplicationEventPublisher applicationEventPublisher;
+
+    protected AppCookies cookies;
 
     private SessionAuthenticationStrategy authenticationStrategy;
 
@@ -184,10 +188,22 @@ public class LoginScreenAuthenticationSupport {
 
         SecurityContextHelper.setAuthentication(authentication);
         rememberMeServices.loginSuccess(request, response, authentication);
+
+        saveCookies(authDetails);
+
         applicationEventPublisher.publishEvent(
                 new InteractiveAuthenticationSuccessEvent(authentication, this.getClass()));
 
         showMainScreen(frameOwner);
+    }
+
+    protected void saveCookies(AuthDetails authDetails) {
+        Locale locale = authDetails.getLocale();
+        if (locale != null) {
+            getCookies().addCookie(JmixApp.COOKIE_LOCALE, locale.toLanguageTag());
+        } else {
+            getCookies().removeCookie(JmixApp.COOKIE_LOCALE);
+        }
     }
 
     protected void checkLoginToUi(AuthDetails authDetails, Authentication authentication) {
@@ -204,7 +220,7 @@ public class LoginScreenAuthenticationSupport {
         if (!loginToUiContext.isPermitted()) {
             log.warn("Attempt of login to UI for user '{}' without '{}' permission", authDetails.getUsername(),
                     loginToUiContext.getName());
-            throw new BadCredentialsException(messages.getMessage(LoginScreenAuthenticationSupport.class,
+            throw new BadCredentialsException(messages.getMessage(LoginScreenSupport.class,
                     "badCredentials"));
         }
     }
@@ -238,13 +254,21 @@ public class LoginScreenAuthenticationSupport {
     }
 
     protected Locale getDefaultLocale() {
-        Collection<Locale> localeMap = coreProperties.getAvailableLocales();
-        return localeMap.iterator().next();
+        List<Locale> locales = coreProperties.getAvailableLocales();
+        return locales.get(0);
     }
 
     @Nullable
     protected TimeZone getDeviceTimeZone() {
         DeviceInfo deviceInfo = deviceInfoProvider.getDeviceInfo();
         return deviceInfo != null ? deviceInfo.getTimeZone() : null;
+    }
+
+    protected AppCookies getCookies() {
+        if (cookies == null) {
+            cookies = new AppCookies();
+        }
+
+        return cookies;
     }
 }

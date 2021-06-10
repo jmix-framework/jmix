@@ -2376,6 +2376,20 @@ class EntitiesControllerFT extends AbstractRestControllerFT {
         }
     }
 
+    @Test
+    public void jsonNullSearchFilterCondition() throws Exception {
+
+        String json = getFileContent("invalidNullFilterCondition.json", null);
+
+        String url = baseUrl + "/entities/ref$Colour/search";
+        try (CloseableHttpResponse response = sendPost(url, oauthToken, json, null)) {
+            assertEquals(HttpStatus.SC_BAD_REQUEST, statusCode(response));
+            ReadContext ctx = parseResponse(response);
+            assertEquals("Malformed request JSON data structure", ctx.read("$.error"));
+            assertEquals("JSON array element null is not a valid JSON object literal", ctx.read("$.details"));
+        }
+    }
+
     private void executePrepared(String sql, Object... params) throws SQLException {
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             for (int i = 0; i < params.length; i++) {

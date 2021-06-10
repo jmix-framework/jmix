@@ -17,10 +17,7 @@
 package io.jmix.rest.impl.service.filter;
 
 import com.google.common.base.Strings;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import io.jmix.core.Entity;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
@@ -28,8 +25,10 @@ import io.jmix.core.QueryUtils;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.rest.exception.RestAPIException;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import java.text.ParseException;
@@ -90,11 +89,21 @@ public class RestFilterParser {
 
         JsonObject filterObject = new JsonParser().parse(filterJson).getAsJsonObject();
         JsonElement conditions = filterObject.get("conditions");
+
         if (conditions != null && conditions.isJsonArray()) {
             JsonArray conditionsJsonArray = conditions.getAsJsonArray();
+
             if (conditionsJsonArray.size() != 0) {
                 for (JsonElement conditionElement : conditionsJsonArray) {
-                    JsonObject conditionObject = conditionElement.getAsJsonObject();
+                    JsonObject conditionObject;
+                    try {
+                        conditionObject = conditionElement.getAsJsonObject();
+                    } catch (IllegalStateException e) {
+                        throw new RestAPIException("Malformed request JSON data structure",
+                                "JSON array element " + conditionElement +
+                                        " is not a valid JSON object literal",
+                                HttpStatus.BAD_REQUEST);
+                    }
                     RestFilterCondition restFilterCondition = parseConditionObject(conditionObject, metaClass);
                     rootCondition.getConditions().add(restFilterCondition);
                 }

@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <window xmlns="http://jmix.io/schema/ui/window"
-        caption="msg://${api.evaluateScript('screen/findOriginalCaptionKey.groovy',
-        ['content': extendScreen.originalDescriptorText,
-        'messages': messageKeys])}"
+        caption="${caption}"
         extends="${extendScreen.reference}">
     <layout/>
 </window>

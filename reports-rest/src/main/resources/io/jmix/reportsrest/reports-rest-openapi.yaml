@@ -259,6 +259,8 @@ components:
                   - XLSX
                   - CUSTOM
                   - CSV
+              default:
+                  type: boolean
     runObject:
       type: object
       properties:

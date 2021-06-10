@@ -625,11 +625,19 @@ public class ServicesControllerFT extends AbstractRestControllerFT {
         try (CloseableHttpResponse response = sendGet(baseUrl + "/services", oauthToken, null)) {
             assertEquals(HttpStatus.SC_OK, statusCode(response));
             ReadContext readContext = parseResponse(response);
-            assertEquals(2, readContext.<Collection>read("$").size());
-            Object firstServiceName = readContext.read("$.[0].name");
-            assertTrue("jmix_OtherRestTestService".equals(firstServiceName) || "jmix_RestTestService".equals(firstServiceName));
-            Object secondServiceName = readContext.read("$.[1].name");
-            assertTrue("jmix_OtherRestTestService".equals(secondServiceName) || "jmix_RestTestService".equals(secondServiceName));
+
+            String[] serviceNames = {"jmix_OtherRestTestService", "jmix_RestTestService",
+                    "jmix_RestTestServiceWithoutInterfaces"};
+
+            assertEquals(serviceNames.length, readContext.<Collection>read("$").size());
+
+            HashSet<String> servicesSet = new HashSet<>();
+            Collections.addAll(servicesSet, serviceNames);
+
+            for (int i = 0; i < serviceNames.length; i++) {
+                String serviceName = readContext.read("$.[" + i + "].name", String.class);
+                assertTrue(servicesSet.contains(serviceName));
+            }
         }
     }
 

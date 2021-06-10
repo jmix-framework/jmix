@@ -26,7 +26,7 @@ import io.jmix.ui.*;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.ThemeResource;
 import io.jmix.securityui.authentication.AuthDetails;
-import io.jmix.securityui.authentication.LoginScreenAuthenticationSupport;
+import io.jmix.securityui.authentication.LoginScreenSupport;
 import io.jmix.ui.security.UiLoginProperties;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -56,7 +56,7 @@ public class AppLoginWindow extends AbstractWindow implements Window.TopLevelWin
     protected UiProperties uiProperties;
 
     @Inject
-    protected LoginScreenAuthenticationSupport authenticationSupport;
+    protected LoginScreenSupport loginScreenSupport;
 
     @Inject
     protected JmixApp app;
@@ -199,7 +199,7 @@ public class AppLoginWindow extends AbstractWindow implements Window.TopLevelWin
             Locale selectedLocale = localesSelect.getValue();
             app.setLocale(selectedLocale);
 
-            Authentication authentication = authenticationSupport.authenticate(
+            Authentication authentication = loginScreenSupport.authenticate(
                     AuthDetails.of(login, password)
                             .withLocale(selectedLocale)
                             .withRememberMe(rememberMeCheckBox.isChecked()), this);

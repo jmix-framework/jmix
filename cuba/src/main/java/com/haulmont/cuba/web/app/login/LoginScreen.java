@@ -24,7 +24,7 @@ import io.jmix.core.CoreProperties;
 import io.jmix.core.MessageTools;
 import io.jmix.core.security.ClientDetails;
 import io.jmix.securityui.authentication.AuthDetails;
-import io.jmix.securityui.authentication.LoginScreenAuthenticationSupport;
+import io.jmix.securityui.authentication.LoginScreenSupport;
 import io.jmix.ui.App;
 import io.jmix.ui.JmixApp;
 import io.jmix.ui.Notifications;
@@ -70,7 +70,7 @@ public class LoginScreen extends Screen {
     protected JmixApp app;
 
     @Inject
-    protected LoginScreenAuthenticationSupport authenticatorSupport;
+    protected LoginScreenSupport loginScreenSupport;
 
     @Inject
     protected Image logoImage;
@@ -202,7 +202,7 @@ public class LoginScreen extends Screen {
             Locale selectedLocale = localesSelect.getValue();
             app.setLocale(selectedLocale);
 
-            Authentication authentication = authenticatorSupport.authenticate(
+            Authentication authentication = loginScreenSupport.authenticate(
                     AuthDetails.of(username, password)
                             .withLocale(selectedLocale)
                             .withRememberMe(rememberMeCheckBox.isChecked()), this);

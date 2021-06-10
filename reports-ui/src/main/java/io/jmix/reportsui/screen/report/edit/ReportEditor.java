@@ -53,8 +53,8 @@ public class ReportEditor extends StandardEditor<Report> {
     @Named("generalFragment.bandEditor")
     protected BandDefinitionEditor bandEditor;
 
-    @Named("generalFragment.serviceTree")
-    protected Tree<BandDefinition> bandTree;
+    @Named("generalFragment.bandsTree")
+    protected Tree<BandDefinition> bandsTree;
 
     @Named("parametersFragment.validationScriptGroupBox")
     protected GroupBoxLayout validationScriptGroupBox;
@@ -178,8 +178,8 @@ public class ReportEditor extends StandardEditor<Report> {
 
     @Subscribe
     public void onAfterShow(AfterShowEvent event) {
-        bandTree.expandTree();
-        bandTree.setSelected(getEditedEntity().getRootBandDefinition());
+        bandsTree.expandTree();
+        bandsTree.setSelected(getEditedEntity().getRootBandDefinition());
 
         generalFragment.setupDropZoneForTemplate();
         generalFragment.sortBandDefinitionsTableByPosition();
@@ -201,9 +201,9 @@ public class ReportEditor extends StandardEditor<Report> {
 
     @Subscribe
     protected void onAfterInit(AfterInitEvent event) {
-        bandTree.expandTree();
+        bandsTree.expandTree();
 
-        if (bandTree.getSingleSelected() == null) {
+        if (bandsTree.getSingleSelected() == null) {
             bandEditor.setEnabled(false);
         }
 
@@ -242,7 +242,7 @@ public class ReportEditor extends StandardEditor<Report> {
                         .withOpenMode(OpenMode.DIALOG)
                         .withOptions(new MapScreenOptions(params))
                         .build();
-                screen.addAfterCloseListener(e -> bandTree.focus());
+                screen.addAfterCloseListener(e -> bandsTree.focus());
                 screen.show();
             }
         } else {

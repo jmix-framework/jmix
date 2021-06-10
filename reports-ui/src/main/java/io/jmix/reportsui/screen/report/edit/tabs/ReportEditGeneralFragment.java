@@ -46,8 +46,8 @@ import java.util.*;
 @UiDescriptor("report-edit-general-fragment.xml")
 public class ReportEditGeneralFragment extends ScreenFragment {
 
-    @Named("serviceTree")
-    protected Tree<BandDefinition> bandTree;
+    @Autowired
+    protected Tree<BandDefinition> bandsTree;
 
     @Autowired
     protected InstanceLoader<Report> reportDl;
@@ -320,13 +320,13 @@ public class ReportEditGeneralFragment extends ScreenFragment {
     }
 
 
-    @Install(to = "serviceTree.upAction", subject = "enabledRule")
-    protected boolean serviceTreeUpActionEnabledRule() {
+    @Install(to = "bandsTree.upAction", subject = "enabledRule")
+    protected boolean bandsTreeUpActionEnabledRule() {
         return isUpButtonEnabled();
     }
 
-    @Install(to = "serviceTree.downAction", subject = "enabledRule")
-    protected boolean serviceTreeDownActionEnabledRule() {
+    @Install(to = "bandsTree.downAction", subject = "enabledRule")
+    protected boolean bandsTreeDownActionEnabledRule() {
         return isDownButtonEnabled();
     }
 
@@ -334,8 +334,8 @@ public class ReportEditGeneralFragment extends ScreenFragment {
         bandsDc.getSorter().sort(Sort.by(Sort.Direction.ASC, "position"));
     }
 
-    @Subscribe("serviceTree.create")
-    protected void onServiceTreeCreate(Action.ActionPerformedEvent event) {
+    @Subscribe("bandsTree.create")
+    protected void onBandsTreeCreate(Action.ActionPerformedEvent event) {
         BandDefinition parentDefinition = bandsDc.getItemOrNull();
         Report report = reportDc.getItem();
         // Use root band as parent if no items selected
@@ -363,20 +363,20 @@ public class ReportEditGeneralFragment extends ScreenFragment {
 
         bandsDc.getMutableItems().add(newBandDefinition);
 
-        bandTree.expandTree();
-        bandTree.setSelected(newBandDefinition);//let's try and see if it increases usability
+        bandsTree.expandTree();
+        bandsTree.setSelected(newBandDefinition);//let's try and see if it increases usability
 
-        bandTree.focus();
+        bandsTree.focus();
     }
 
-    @Install(to = "serviceTree.create", subject = "enabledRule")
-    protected boolean serviceTreeCreateEnabledRule() {
+    @Install(to = "bandsTree.create", subject = "enabledRule")
+    protected boolean bandsTreeCreateEnabledRule() {
         return isUpdatePermitted();
     }
 
-    @Subscribe("serviceTree.remove")
-    protected void onServiceTreeRemove(Action.ActionPerformedEvent event) {
-        Set<BandDefinition> selected = bandTree.getSelected();
+    @Subscribe("bandsTree.remove")
+    protected void onBandsTreeRemove(Action.ActionPerformedEvent event) {
+        Set<BandDefinition> selected = bandsTree.getSelected();
         removeChildrenCascade(selected);
         for (Object object : selected) {
             BandDefinition definition = (BandDefinition) object;
@@ -384,12 +384,12 @@ public class ReportEditGeneralFragment extends ScreenFragment {
                 orderBandDefinitions(((BandDefinition) object).getParentBandDefinition());
             }
         }
-        bandTree.focus();
+        bandsTree.focus();
     }
 
-    @Install(to = "serviceTree.remove", subject = "enabledRule")
-    protected boolean serviceTreeRemoveEnabledRule() {
-        Object selectedItem = bandTree.getSingleSelected();
+    @Install(to = "bandsTree.remove", subject = "enabledRule")
+    protected boolean bandsTreeRemoveEnabledRule() {
+        Object selectedItem = bandsTree.getSingleSelected();
         if (selectedItem != null) {
             return !Objects.equals(reportDc.getItem().getRootBandDefinition(), selectedItem);
         }
@@ -433,7 +433,7 @@ public class ReportEditGeneralFragment extends ScreenFragment {
 
     @Subscribe("up")
     protected void onUpClick(Button.ClickEvent event) {
-        BandDefinition definition = bandTree.getSingleSelected();
+        BandDefinition definition = bandsTree.getSingleSelected();
         if (definition != null && definition.getParentBandDefinition() != null) {
             BandDefinition parentDefinition = definition.getParentBandDefinition();
             List<BandDefinition> definitionsList = parentDefinition.getChildrenBandDefinitions();
@@ -452,8 +452,8 @@ public class ReportEditGeneralFragment extends ScreenFragment {
     }
 
     protected boolean isUpButtonEnabled() {
-        if (bandTree != null) {
-            BandDefinition selectedItem = bandTree.getSingleSelected();
+        if (bandsTree != null) {
+            BandDefinition selectedItem = bandsTree.getSingleSelected();
             return selectedItem != null && selectedItem.getPosition() > 0 && isUpdatePermitted();
         }
         return false;
@@ -461,7 +461,7 @@ public class ReportEditGeneralFragment extends ScreenFragment {
 
     @Subscribe("down")
     protected void onDownClick(Button.ClickEvent event) {
-        BandDefinition definition = bandTree.getSingleSelected();
+        BandDefinition definition = bandsTree.getSingleSelected();
         if (definition != null && definition.getParentBandDefinition() != null) {
             BandDefinition parentDefinition = definition.getParentBandDefinition();
             List<BandDefinition> definitionsList = parentDefinition.getChildrenBandDefinitions();
@@ -481,8 +481,8 @@ public class ReportEditGeneralFragment extends ScreenFragment {
 
 
     protected boolean isDownButtonEnabled() {
-        if (bandTree != null) {
-            BandDefinition bandDefinition = bandTree.getSingleSelected();
+        if (bandsTree != null) {
+            BandDefinition bandDefinition = bandsTree.getSingleSelected();
             if (bandDefinition != null) {
                 BandDefinition parent = bandDefinition.getParentBandDefinition();
                 return parent != null &&

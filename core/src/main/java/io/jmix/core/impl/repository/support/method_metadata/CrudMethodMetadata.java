@@ -16,6 +16,15 @@
 
 package io.jmix.core.impl.repository.support.method_metadata;
 
+import io.jmix.core.repository.JmixDataRepository;
+
+/**
+ * Stores metadata for {@link JmixDataRepository} methods.
+ * <p>
+ * These methods may be overridden in application repositories in order to add Jmix-specific annotations to them.
+ *
+ * @see io.jmix.core.repository.ApplyConstraints
+ */
 public class CrudMethodMetadata {
     private final boolean applyConstraints;
 
@@ -33,6 +42,9 @@ public class CrudMethodMetadata {
         return String.format("[ApplyConstraints:%s]", applyConstraints);
     }
 
+    /**
+     * Provides {@code CrudMethodMetadata} for current invoked method
+     */
     public interface Accessor {
         CrudMethodMetadata getCrudMethodMetadata();
     }

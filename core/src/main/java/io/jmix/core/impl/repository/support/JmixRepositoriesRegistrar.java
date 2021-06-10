@@ -17,11 +17,15 @@
 package io.jmix.core.impl.repository.support;
 
 import io.jmix.core.repository.EnableJmixDataRepositories;
+import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.data.repository.config.RepositoryBeanDefinitionRegistrarSupport;
 import org.springframework.data.repository.config.RepositoryConfigurationExtension;
 
 import java.lang.annotation.Annotation;
 
+/**
+ * {@link ImportBeanDefinitionRegistrar} for Jmix data repositories.
+ */
 public class JmixRepositoriesRegistrar extends RepositoryBeanDefinitionRegistrarSupport {
 
     @Override

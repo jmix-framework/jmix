@@ -24,6 +24,9 @@ import javax.annotation.Nullable;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * Utility class contains common methods to apply Spring Data repositories special query parameters on {@code FluentLoader}.
+ */
 public class LoaderHelper {
     public static <T> FluentLoader.ByCondition<T> applyPageableForConditionLoader(FluentLoader.ByCondition<T> loader, Pageable pageable) {
         if (pageable.isPaged()) {

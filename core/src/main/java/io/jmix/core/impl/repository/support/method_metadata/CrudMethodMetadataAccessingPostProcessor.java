@@ -16,6 +16,7 @@
 
 package io.jmix.core.impl.repository.support.method_metadata;
 
+import io.jmix.core.repository.JmixDataRepository;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.jetbrains.annotations.NotNull;
@@ -35,7 +36,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 /**
- * based on {code org.springframework.data.jpa.repository.support.CrudMethodMetatdataPostProcessor} logic
+ * {@link RepositoryProxyPostProcessor} to add interceptor designated for determining and storing {@link CrudMethodMetadata}
+ * information for currently invoked {@link JmixDataRepository} method.
+ * Implements {@link CrudMethodMetadata.Accessor} to access stored metadata.
+ * <p>
+ * Based on {@code org.springframework.data.jpa.repository.support.CrudMethodMetatdataPostProcessor} logic.
  */
 public class CrudMethodMetadataAccessingPostProcessor implements RepositoryProxyPostProcessor, CrudMethodMetadata.Accessor {
     private static final Logger log = LoggerFactory.getLogger(QueryLookupStrategy.class);

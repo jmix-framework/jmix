@@ -25,6 +25,9 @@ import org.springframework.data.repository.query.parser.PartTree;
 import javax.annotation.Nullable;
 import java.util.List;
 
+/**
+ * Utility class to build {@link Condition} by Spring Data repositories {@link PartTree}
+ */
 public class ConditionTransformer {
 
     /**

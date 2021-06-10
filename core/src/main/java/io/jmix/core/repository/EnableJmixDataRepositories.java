@@ -28,6 +28,10 @@ import java.lang.annotation.*;
 
 import static org.springframework.context.annotation.ComponentScan.Filter;
 
+/**
+ * Annotation to enable data repositories. Will scan the package of the annotated configuration class for Jmix data
+ * repositories by default.
+ */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

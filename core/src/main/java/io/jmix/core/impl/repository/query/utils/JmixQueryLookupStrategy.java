@@ -31,6 +31,9 @@ import org.springframework.data.repository.query.parser.PartTree;
 
 import java.lang.reflect.Method;
 
+/**
+ * Determines query type and creates {@link RepositoryQuery RepositoryQueries} for Jmix data repositories
+ */
 public class JmixQueryLookupStrategy implements QueryLookupStrategy {
 
     private static final Logger log = LoggerFactory.getLogger(QueryLookupStrategy.class);

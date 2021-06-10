@@ -56,7 +56,7 @@ public interface JmixDataRepository<T, ID> extends PagingAndSortingRepository<T,
     Optional<T> findOne(ID id, FetchPlan fetchPlan);
 
     /**
-     * Returns all instances of the type loaded according to {@code fetchPlan}
+     * Returns all instances of the type {@code T} loaded according to {@code fetchPlan}
      *
      * @return all entities
      */

@@ -32,6 +32,12 @@ import java.util.*;
 
 import static io.jmix.core.impl.repository.query.utils.LoaderHelper.springToJmixSort;
 
+/**
+ * Implementation of base repository methods used by application repository beans.
+ *
+ * @param <T>
+ * @param <ID>
+ */
 @NoRepositoryBean
 public class JmixDataRepositoryImpl<T, ID> implements JmixDataRepository<T, ID> {
 

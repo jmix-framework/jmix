@@ -24,12 +24,16 @@ import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.data.repository.core.RepositoryMetadata;
 import org.springframework.data.repository.query.Parameter;
 import org.springframework.data.repository.query.Parameters;
+import org.springframework.data.repository.query.RepositoryQuery;
 import org.springframework.data.repository.query.parser.PartTree;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Base {@link RepositoryQuery} class for repository queries constructed by method name.
+ */
 public abstract class JmixStructuredQuery extends JmixAbstractQuery {
     protected Condition conditions;
     protected boolean distinct;

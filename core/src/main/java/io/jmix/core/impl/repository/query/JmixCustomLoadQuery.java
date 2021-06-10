@@ -18,12 +18,14 @@ package io.jmix.core.impl.repository.query;
 
 import io.jmix.core.*;
 import io.jmix.core.impl.repository.query.utils.LoaderHelper;
+import io.jmix.core.repository.Query;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.*;
 import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.data.repository.core.RepositoryMetadata;
 import org.springframework.data.repository.query.Parameter;
 import org.springframework.data.repository.query.Parameters;
+import org.springframework.data.repository.query.RepositoryQuery;
 
 import java.lang.reflect.Method;
 import java.util.HashSet;
@@ -32,6 +34,9 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * {@link RepositoryQuery} for query methods annotated with {@link Query @Query}.
+ */
 public class JmixCustomLoadQuery extends JmixAbstractQuery {
 
     protected static final String PARAMETER_TEMPLATE = "([:?][a-zA-Z0-9_$]+)";

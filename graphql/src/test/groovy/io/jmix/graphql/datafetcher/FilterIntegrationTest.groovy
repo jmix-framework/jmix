@@ -1981,4 +1981,28 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
                 '{"id":"db9faa31-dfa3-4b97-943c-ba268888cdc3"}' +
                 ']}}'
     }
+
+    def "garage count query without filter"() {
+        when:
+        def response = query(
+                "datafetcher/query-garage-count.graphql"
+        )
+
+        then:
+        getBody(response) == '{"data":{"scr_GarageCount":"10"}}'
+    }
+
+    def "garage count query filtered by capacity"() {
+        when:
+        //capacity = 50
+        def response = query(
+                "datafetcher/query-garage-count-with-filter.graphql",
+                asObjectNode('{"filter": {"AND": [' +
+                        '{"capacity": {"_eq": "50"}}' +
+                        ']}}')
+        )
+
+        then:
+        getBody(response) == '{"data":{"scr_GarageCount":"2"}}'
+    }
 }

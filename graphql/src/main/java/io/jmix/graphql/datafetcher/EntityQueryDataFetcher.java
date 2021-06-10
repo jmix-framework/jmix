@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
+import javax.validation.constraints.NotNull;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -74,29 +75,12 @@ public class EntityQueryDataFetcher {
             log.debug("loadEntities: metClass:{}, filter:{}, limit:{}, offset:{}, orderBy: {}",
                     metaClass, filter, limit, offset, orderBy);
 
-            // build filter condition
-
-            LogicalCondition condition = null;
-            if (filter != null && Collection.class.isAssignableFrom(filter.getClass())) {
-                /*
-                root conditions always aggregated by 'and', 'or' - could be achieved to add the only one 'or' condition in next level
-                carList (filter: {OR: [
-                      {manufacturer: {EQ: "TESLA"}}
-                      {manufacturer: {EQ: "TATA"}}
-                    ]})
-                 */
-                condition = LogicalCondition.and(
-                        filterConditionBuilder.buildCollectionOfConditions("", (Collection<Map<String, Object>>) filter)
-                                .toArray(new Condition[0]));
-            }
-
             // fetch plan
             FetchPlan fetchPan = dataFetcherPlanBuilder.buildFetchPlan(metaClass.getJavaClass(), environment);
 
-            LoadContext.Query query = new LoadContext.Query("select e from " + metaClass.getName() + " e");
-            if (condition != null) {
-                query.setCondition(condition);
-            }
+            // build filter condition
+            LogicalCondition condition = createCondition(filter);
+            LoadContext.Query query = generateQuery(metaClass, condition);
             query.setMaxResults(limit != null ? limit : DEFAULT_MAX_RESULTS);
             query.setFirstResult(offset == null ? 0 : offset);
 
@@ -176,7 +160,14 @@ public class EntityQueryDataFetcher {
 
             checkCanReadEntity(metaClass);
 
+            Object filter = environment.getArgument(NamingUtils.FILTER);
+            log.debug("countEntities: metClass:{}, filter:{}", metaClass, filter);
+
+            LogicalCondition condition = createCondition(filter);
+            LoadContext.Query query = generateQuery(metaClass, condition);
+
             LoadContext<? extends Entity> lc = new LoadContext<>(metaClass);
+            lc.setQuery(query);
             long count = dataManager.getCount(lc);
             log.debug("countEntities return {} for {}", count, metaClass.getName());
             return count;
@@ -199,4 +190,32 @@ public class EntityQueryDataFetcher {
         return entityContext;
     }
 
+    @Nullable
+    protected LogicalCondition createCondition(Object filter) {
+        LogicalCondition condition = null;
+        if (filter != null && Collection.class.isAssignableFrom(filter.getClass())) {
+                /*
+                root conditions always aggregated by 'and', 'or' - could be achieved to add the only one 'or' condition in next level
+                carList (filter: {OR: [
+                      {manufacturer: {EQ: "TESLA"}}
+                      {manufacturer: {EQ: "TATA"}}
+                    ]})
+                 */
+            condition = LogicalCondition.and(
+                    filterConditionBuilder.buildCollectionOfConditions("", (Collection<Map<String, Object>>) filter)
+                            .toArray(new Condition[0]));
+        }
+
+        return condition;
+    }
+
+    @NotNull
+    protected LoadContext.Query generateQuery(MetaClass metaClass, LogicalCondition condition) {
+        LoadContext.Query query = new LoadContext.Query("select e from " + metaClass.getName() + " e");
+        if (condition != null) {
+            query.setCondition(condition);
+        }
+
+        return query;
+    }
 }

@@ -82,6 +82,9 @@ public class GenericSchemaGenerator {
                     GraphQLFieldDefinition.newFieldDefinition()
                             .name(NamingUtils.composeCountQueryName(metaClass))
                             .type(new GraphQLTypeReference(CustomScalars.GraphQLLong.getName()))
+                            .argument(listArg(NamingUtils.FILTER,
+                                    FilterTypesGenerator.composeFilterConditionTypeName(metaClass),
+                                    filterDesc))
                             .build());
 
         });

@@ -77,8 +77,11 @@ type scr_Car {
 
 type Query {
   scr_CarById(id: String): scr_Car
-  
-  scr_CarCount: Long
+
+   scr_CarCount(
+      "expressions to compare scr_Car objects, all items are combined with logical 'AND'"
+      filter: [inp_scr_CarFilterCondition]
+   ): Long
   
   scr_CarList(
     "expressions to compare scr_Car objects, all items are combined with logical 'AND'"

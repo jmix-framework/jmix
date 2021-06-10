@@ -70,7 +70,10 @@ type Query {
   enumMessages(className: String, locale: String): [gql_MessageDetail]
   permissions: sec_PermissionConfig
   scr_AssociationM2MTestEntityById(id: String): scr_AssociationM2MTestEntity
-  scr_AssociationM2MTestEntityCount: Long
+  scr_AssociationM2MTestEntityCount(
+    "expressions to compare scr_AssociationM2MTestEntity objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_AssociationM2MTestEntityFilterCondition]
+  ): Long
   scr_AssociationM2MTestEntityList(
     "expressions to compare scr_AssociationM2MTestEntity objects, all items are combined with logical 'AND'"
     filter: [inp_scr_AssociationM2MTestEntityFilterCondition],
@@ -82,7 +85,10 @@ type Query {
     orderBy: inp_scr_AssociationM2MTestEntityOrderBy
   ): [scr_AssociationM2MTestEntity]
   scr_AssociationM2OTestEntityById(id: String): scr_AssociationM2OTestEntity
-  scr_AssociationM2OTestEntityCount: Long
+  scr_AssociationM2OTestEntityCount(
+    "expressions to compare scr_AssociationM2OTestEntity objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_AssociationM2OTestEntityFilterCondition]
+  ): Long
   scr_AssociationM2OTestEntityList(
     "expressions to compare scr_AssociationM2OTestEntity objects, all items are combined with logical 'AND'"
     filter: [inp_scr_AssociationM2OTestEntityFilterCondition],
@@ -94,7 +100,10 @@ type Query {
     orderBy: inp_scr_AssociationM2OTestEntityOrderBy
   ): [scr_AssociationM2OTestEntity]
   scr_AssociationO2MTestEntityById(id: String): scr_AssociationO2MTestEntity
-  scr_AssociationO2MTestEntityCount: Long
+  scr_AssociationO2MTestEntityCount(
+    "expressions to compare scr_AssociationO2MTestEntity objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_AssociationO2MTestEntityFilterCondition]
+  ): Long
   scr_AssociationO2MTestEntityList(
     "expressions to compare scr_AssociationO2MTestEntity objects, all items are combined with logical 'AND'"
     filter: [inp_scr_AssociationO2MTestEntityFilterCondition],
@@ -106,7 +115,10 @@ type Query {
     orderBy: inp_scr_AssociationO2MTestEntityOrderBy
   ): [scr_AssociationO2MTestEntity]
   scr_AssociationO2OTestEntityById(id: String): scr_AssociationO2OTestEntity
-  scr_AssociationO2OTestEntityCount: Long
+  scr_AssociationO2OTestEntityCount(
+    "expressions to compare scr_AssociationO2OTestEntity objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_AssociationO2OTestEntityFilterCondition]
+  ): Long
   scr_AssociationO2OTestEntityList(
     "expressions to compare scr_AssociationO2OTestEntity objects, all items are combined with logical 'AND'"
     filter: [inp_scr_AssociationO2OTestEntityFilterCondition],
@@ -118,7 +130,10 @@ type Query {
     orderBy: inp_scr_AssociationO2OTestEntityOrderBy
   ): [scr_AssociationO2OTestEntity]
   scr_BoringStringIdTestEntityById(id: String): scr_BoringStringIdTestEntity
-  scr_BoringStringIdTestEntityCount: Long
+  scr_BoringStringIdTestEntityCount(
+    "expressions to compare scr_BoringStringIdTestEntity objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_BoringStringIdTestEntityFilterCondition]
+  ): Long
   scr_BoringStringIdTestEntityList(
     "expressions to compare scr_BoringStringIdTestEntity objects, all items are combined with logical 'AND'"
     filter: [inp_scr_BoringStringIdTestEntityFilterCondition],
@@ -130,7 +145,10 @@ type Query {
     orderBy: inp_scr_BoringStringIdTestEntityOrderBy
   ): [scr_BoringStringIdTestEntity]
   scr_CarById(id: String): scr_Car
-  scr_CarCount: Long
+  scr_CarCount(
+    "expressions to compare scr_Car objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_CarFilterCondition]
+  ): Long
   scr_CarList(
     "expressions to compare scr_Car objects, all items are combined with logical 'AND'"
     filter: [inp_scr_CarFilterCondition],
@@ -142,7 +160,10 @@ type Query {
     orderBy: inp_scr_CarOrderBy
   ): [scr_Car]
   scr_CarRentById(id: String): scr_CarRent
-  scr_CarRentCount: Long
+  scr_CarRentCount(
+    "expressions to compare scr_CarRent objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_CarRentFilterCondition]
+  ): Long
   scr_CarRentList(
     "expressions to compare scr_CarRent objects, all items are combined with logical 'AND'"
     filter: [inp_scr_CarRentFilterCondition],
@@ -154,7 +175,10 @@ type Query {
     orderBy: inp_scr_CarRentOrderBy
   ): [scr_CarRent]
   scr_CompositionO2MTestEntityById(id: String): scr_CompositionO2MTestEntity
-  scr_CompositionO2MTestEntityCount: Long
+  scr_CompositionO2MTestEntityCount(
+    "expressions to compare scr_CompositionO2MTestEntity objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_CompositionO2MTestEntityFilterCondition]
+  ): Long
   scr_CompositionO2MTestEntityList(
     "expressions to compare scr_CompositionO2MTestEntity objects, all items are combined with logical 'AND'"
     filter: [inp_scr_CompositionO2MTestEntityFilterCondition],
@@ -166,7 +190,10 @@ type Query {
     orderBy: inp_scr_CompositionO2MTestEntityOrderBy
   ): [scr_CompositionO2MTestEntity]
   scr_CompositionO2OTestEntityById(id: String): scr_CompositionO2OTestEntity
-  scr_CompositionO2OTestEntityCount: Long
+  scr_CompositionO2OTestEntityCount(
+    "expressions to compare scr_CompositionO2OTestEntity objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_CompositionO2OTestEntityFilterCondition]
+  ): Long
   scr_CompositionO2OTestEntityList(
     "expressions to compare scr_CompositionO2OTestEntity objects, all items are combined with logical 'AND'"
     filter: [inp_scr_CompositionO2OTestEntityFilterCondition],
@@ -178,7 +205,10 @@ type Query {
     orderBy: inp_scr_CompositionO2OTestEntityOrderBy
   ): [scr_CompositionO2OTestEntity]
   scr_CustomerById(id: String): scr_Customer
-  scr_CustomerCount: Long
+  scr_CustomerCount(
+    "expressions to compare scr_Customer objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_CustomerFilterCondition]
+  ): Long
   scr_CustomerList(
     "expressions to compare scr_Customer objects, all items are combined with logical 'AND'"
     filter: [inp_scr_CustomerFilterCondition],
@@ -190,7 +220,10 @@ type Query {
     orderBy: inp_scr_CustomerOrderBy
   ): [scr_Customer]
   scr_DatatypesTestEntity2ById(id: String): scr_DatatypesTestEntity2
-  scr_DatatypesTestEntity2Count: Long
+  scr_DatatypesTestEntity2Count(
+    "expressions to compare scr_DatatypesTestEntity2 objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_DatatypesTestEntity2FilterCondition]
+  ): Long
   scr_DatatypesTestEntity2List(
     "expressions to compare scr_DatatypesTestEntity2 objects, all items are combined with logical 'AND'"
     filter: [inp_scr_DatatypesTestEntity2FilterCondition],
@@ -202,7 +235,10 @@ type Query {
     orderBy: inp_scr_DatatypesTestEntity2OrderBy
   ): [scr_DatatypesTestEntity2]
   scr_DatatypesTestEntity3ById(id: String): scr_DatatypesTestEntity3
-  scr_DatatypesTestEntity3Count: Long
+  scr_DatatypesTestEntity3Count(
+    "expressions to compare scr_DatatypesTestEntity3 objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_DatatypesTestEntity3FilterCondition]
+  ): Long
   scr_DatatypesTestEntity3List(
     "expressions to compare scr_DatatypesTestEntity3 objects, all items are combined with logical 'AND'"
     filter: [inp_scr_DatatypesTestEntity3FilterCondition],
@@ -214,7 +250,10 @@ type Query {
     orderBy: inp_scr_DatatypesTestEntity3OrderBy
   ): [scr_DatatypesTestEntity3]
   scr_DatatypesTestEntityById(id: String): scr_DatatypesTestEntity
-  scr_DatatypesTestEntityCount: Long
+  scr_DatatypesTestEntityCount(
+    "expressions to compare scr_DatatypesTestEntity objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_DatatypesTestEntityFilterCondition]
+  ): Long
   scr_DatatypesTestEntityList(
     "expressions to compare scr_DatatypesTestEntity objects, all items are combined with logical 'AND'"
     filter: [inp_scr_DatatypesTestEntityFilterCondition],
@@ -226,7 +265,10 @@ type Query {
     orderBy: inp_scr_DatatypesTestEntityOrderBy
   ): [scr_DatatypesTestEntity]
   scr_DeeplyNestedTestEntityById(id: String): scr_DeeplyNestedTestEntity
-  scr_DeeplyNestedTestEntityCount: Long
+  scr_DeeplyNestedTestEntityCount(
+    "expressions to compare scr_DeeplyNestedTestEntity objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_DeeplyNestedTestEntityFilterCondition]
+  ): Long
   scr_DeeplyNestedTestEntityList(
     "expressions to compare scr_DeeplyNestedTestEntity objects, all items are combined with logical 'AND'"
     filter: [inp_scr_DeeplyNestedTestEntityFilterCondition],
@@ -238,7 +280,10 @@ type Query {
     orderBy: inp_scr_DeeplyNestedTestEntityOrderBy
   ): [scr_DeeplyNestedTestEntity]
   scr_FavoriteCarById(id: String): scr_FavoriteCar
-  scr_FavoriteCarCount: Long
+  scr_FavoriteCarCount(
+    "expressions to compare scr_FavoriteCar objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_FavoriteCarFilterCondition]
+  ): Long
   scr_FavoriteCarList(
     "expressions to compare scr_FavoriteCar objects, all items are combined with logical 'AND'"
     filter: [inp_scr_FavoriteCarFilterCondition],
@@ -250,7 +295,10 @@ type Query {
     orderBy: inp_scr_FavoriteCarOrderBy
   ): [scr_FavoriteCar]
   scr_GarageById(id: String): scr_Garage
-  scr_GarageCount: Long
+  scr_GarageCount(
+    "expressions to compare scr_Garage objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_GarageFilterCondition]
+  ): Long
   scr_GarageList(
     "expressions to compare scr_Garage objects, all items are combined with logical 'AND'"
     filter: [inp_scr_GarageFilterCondition],
@@ -262,7 +310,10 @@ type Query {
     orderBy: inp_scr_GarageOrderBy
   ): [scr_Garage]
   scr_IntIdentityIdTestEntityById(id: String): scr_IntIdentityIdTestEntity
-  scr_IntIdentityIdTestEntityCount: Long
+  scr_IntIdentityIdTestEntityCount(
+    "expressions to compare scr_IntIdentityIdTestEntity objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_IntIdentityIdTestEntityFilterCondition]
+  ): Long
   scr_IntIdentityIdTestEntityList(
     "expressions to compare scr_IntIdentityIdTestEntity objects, all items are combined with logical 'AND'"
     filter: [inp_scr_IntIdentityIdTestEntityFilterCondition],
@@ -274,7 +325,10 @@ type Query {
     orderBy: inp_scr_IntIdentityIdTestEntityOrderBy
   ): [scr_IntIdentityIdTestEntity]
   scr_IntegerIdTestEntityById(id: String): scr_IntegerIdTestEntity
-  scr_IntegerIdTestEntityCount: Long
+  scr_IntegerIdTestEntityCount(
+    "expressions to compare scr_IntegerIdTestEntity objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_IntegerIdTestEntityFilterCondition]
+  ): Long
   scr_IntegerIdTestEntityList(
     "expressions to compare scr_IntegerIdTestEntity objects, all items are combined with logical 'AND'"
     filter: [inp_scr_IntegerIdTestEntityFilterCondition],
@@ -286,9 +340,15 @@ type Query {
     orderBy: inp_scr_IntegerIdTestEntityOrderBy
   ): [scr_IntegerIdTestEntity]
   scr_OrderById(id: String): scr_Order
-  scr_OrderCount: Long
+  scr_OrderCount(
+    "expressions to compare scr_Order objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_OrderFilterCondition]
+  ): Long
   scr_OrderLineById(id: String): scr_OrderLine
-  scr_OrderLineCount: Long
+  scr_OrderLineCount(
+    "expressions to compare scr_OrderLine objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_OrderLineFilterCondition]
+  ): Long
   scr_OrderLineList(
     "expressions to compare scr_OrderLine objects, all items are combined with logical 'AND'"
     filter: [inp_scr_OrderLineFilterCondition],
@@ -310,7 +370,10 @@ type Query {
     orderBy: inp_scr_OrderOrderBy
   ): [scr_Order]
   scr_ProductById(id: String): scr_Product
-  scr_ProductCount: Long
+  scr_ProductCount(
+    "expressions to compare scr_Product objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_ProductFilterCondition]
+  ): Long
   scr_ProductList(
     "expressions to compare scr_Product objects, all items are combined with logical 'AND'"
     filter: [inp_scr_ProductFilterCondition],
@@ -322,7 +385,10 @@ type Query {
     orderBy: inp_scr_ProductOrderBy
   ): [scr_Product]
   scr_SparePartById(id: String): scr_SparePart
-  scr_SparePartCount: Long
+  scr_SparePartCount(
+    "expressions to compare scr_SparePart objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_SparePartFilterCondition]
+  ): Long
   scr_SparePartList(
     "expressions to compare scr_SparePart objects, all items are combined with logical 'AND'"
     filter: [inp_scr_SparePartFilterCondition],
@@ -334,7 +400,10 @@ type Query {
     orderBy: inp_scr_SparePartOrderBy
   ): [scr_SparePart]
   scr_StringIdTestEntityById(id: String): scr_StringIdTestEntity
-  scr_StringIdTestEntityCount: Long
+  scr_StringIdTestEntityCount(
+    "expressions to compare scr_StringIdTestEntity objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_StringIdTestEntityFilterCondition]
+  ): Long
   scr_StringIdTestEntityList(
     "expressions to compare scr_StringIdTestEntity objects, all items are combined with logical 'AND'"
     filter: [inp_scr_StringIdTestEntityFilterCondition],
@@ -346,7 +415,10 @@ type Query {
     orderBy: inp_scr_StringIdTestEntityOrderBy
   ): [scr_StringIdTestEntity]
   scr_TechnicalCertificateById(id: String): scr_TechnicalCertificate
-  scr_TechnicalCertificateCount: Long
+  scr_TechnicalCertificateCount(
+    "expressions to compare scr_TechnicalCertificate objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_TechnicalCertificateFilterCondition]
+  ): Long
   scr_TechnicalCertificateList(
     "expressions to compare scr_TechnicalCertificate objects, all items are combined with logical 'AND'"
     filter: [inp_scr_TechnicalCertificateFilterCondition],
@@ -358,7 +430,10 @@ type Query {
     orderBy: inp_scr_TechnicalCertificateOrderBy
   ): [scr_TechnicalCertificate]
   scr_UserById(id: String): scr_User
-  scr_UserCount: Long
+  scr_UserCount(
+    "expressions to compare scr_User objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_UserFilterCondition]
+  ): Long
   scr_UserList(
     "expressions to compare scr_User objects, all items are combined with logical 'AND'"
     filter: [inp_scr_UserFilterCondition],
@@ -370,7 +445,10 @@ type Query {
     orderBy: inp_scr_UserOrderBy
   ): [scr_User]
   scr_WeirdStringIdTestEntityById(id: String): scr_WeirdStringIdTestEntity
-  scr_WeirdStringIdTestEntityCount: Long
+  scr_WeirdStringIdTestEntityCount(
+    "expressions to compare scr_WeirdStringIdTestEntity objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_WeirdStringIdTestEntityFilterCondition]
+  ): Long
   scr_WeirdStringIdTestEntityList(
     "expressions to compare scr_WeirdStringIdTestEntity objects, all items are combined with logical 'AND'"
     filter: [inp_scr_WeirdStringIdTestEntityFilterCondition],
@@ -382,7 +460,10 @@ type Query {
     orderBy: inp_scr_WeirdStringIdTestEntityOrderBy
   ): [scr_WeirdStringIdTestEntity]
   sec_ResourcePolicyEntityById(id: String): sec_ResourcePolicyEntity
-  sec_ResourcePolicyEntityCount: Long
+  sec_ResourcePolicyEntityCount(
+    "expressions to compare sec_ResourcePolicyEntity objects, all items are combined with logical 'AND'"
+    filter: [inp_sec_ResourcePolicyEntityFilterCondition]
+  ): Long
   sec_ResourcePolicyEntityList(
     "expressions to compare sec_ResourcePolicyEntity objects, all items are combined with logical 'AND'"
     filter: [inp_sec_ResourcePolicyEntityFilterCondition],
@@ -394,7 +475,10 @@ type Query {
     orderBy: inp_sec_ResourcePolicyEntityOrderBy
   ): [sec_ResourcePolicyEntity]
   sec_ResourceRoleEntityById(id: String): sec_ResourceRoleEntity
-  sec_ResourceRoleEntityCount: Long
+  sec_ResourceRoleEntityCount(
+    "expressions to compare sec_ResourceRoleEntity objects, all items are combined with logical 'AND'"
+    filter: [inp_sec_ResourceRoleEntityFilterCondition]
+  ): Long
   sec_ResourceRoleEntityList(
     "expressions to compare sec_ResourceRoleEntity objects, all items are combined with logical 'AND'"
     filter: [inp_sec_ResourceRoleEntityFilterCondition],
@@ -406,7 +490,10 @@ type Query {
     orderBy: inp_sec_ResourceRoleEntityOrderBy
   ): [sec_ResourceRoleEntity]
   sec_RoleAssignmentEntityById(id: String): sec_RoleAssignmentEntity
-  sec_RoleAssignmentEntityCount: Long
+  sec_RoleAssignmentEntityCount(
+    "expressions to compare sec_RoleAssignmentEntity objects, all items are combined with logical 'AND'"
+    filter: [inp_sec_RoleAssignmentEntityFilterCondition]
+  ): Long
   sec_RoleAssignmentEntityList(
     "expressions to compare sec_RoleAssignmentEntity objects, all items are combined with logical 'AND'"
     filter: [inp_sec_RoleAssignmentEntityFilterCondition],
@@ -418,7 +505,10 @@ type Query {
     orderBy: inp_sec_RoleAssignmentEntityOrderBy
   ): [sec_RoleAssignmentEntity]
   sec_RowLevelPolicyEntityById(id: String): sec_RowLevelPolicyEntity
-  sec_RowLevelPolicyEntityCount: Long
+  sec_RowLevelPolicyEntityCount(
+    "expressions to compare sec_RowLevelPolicyEntity objects, all items are combined with logical 'AND'"
+    filter: [inp_sec_RowLevelPolicyEntityFilterCondition]
+  ): Long
   sec_RowLevelPolicyEntityList(
     "expressions to compare sec_RowLevelPolicyEntity objects, all items are combined with logical 'AND'"
     filter: [inp_sec_RowLevelPolicyEntityFilterCondition],
@@ -430,7 +520,10 @@ type Query {
     orderBy: inp_sec_RowLevelPolicyEntityOrderBy
   ): [sec_RowLevelPolicyEntity]
   sec_RowLevelRoleEntityById(id: String): sec_RowLevelRoleEntity
-  sec_RowLevelRoleEntityCount: Long
+  sec_RowLevelRoleEntityCount(
+    "expressions to compare sec_RowLevelRoleEntity objects, all items are combined with logical 'AND'"
+    filter: [inp_sec_RowLevelRoleEntityFilterCondition]
+  ): Long
   sec_RowLevelRoleEntityList(
     "expressions to compare sec_RowLevelRoleEntity objects, all items are combined with logical 'AND'"
     filter: [inp_sec_RowLevelRoleEntityFilterCondition],

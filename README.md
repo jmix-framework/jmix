@@ -25,4 +25,5 @@ Publish only Russian translation to `.m2`:
 implementation 'io.jmix.translations:jmix-translations-de'
 implementation 'io.jmix.translations:jmix-translations-fr'
 implementation 'io.jmix.translations:jmix-translations-ru'
+implementation 'io.jmix.translations:jmix-translations-zh-cn'
 ```

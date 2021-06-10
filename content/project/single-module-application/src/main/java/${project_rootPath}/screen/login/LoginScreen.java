@@ -5,6 +5,7 @@ import io.jmix.core.MessageTools;
 import io.jmix.core.Messages;
 import io.jmix.securityui.authentication.AuthDetails;
 import io.jmix.securityui.authentication.LoginScreenAuthenticationSupport;
+import io.jmix.ui.JmixApp;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.CheckBox;
@@ -59,6 +60,9 @@ public class LoginScreen extends Screen {
     @Autowired
     private UiLoginProperties loginProperties;
 
+    @Autowired
+    private JmixApp app;
+
     private final Logger log = LoggerFactory.getLogger(LoginScreen.class);
 
     @Subscribe
@@ -70,7 +74,7 @@ public class LoginScreen extends Screen {
 
     private void initLocalesField() {
         localesField.setOptionsMap(messageTools.getAvailableLocalesMap());
-        localesField.setValue(coreProperties.getAvailableLocales().get(0));
+        localesField.setValue(app.getLocale());
     }
 
     private void initDefaultCredentials() {
@@ -96,7 +100,7 @@ public class LoginScreen extends Screen {
 
     private void login() {
         String username = usernameField.getValue();
-        String password = passwordField.getValue() != null ? passwordField.getValue() : "";
+        String password = passwordField.getValue();
 
         if (StringUtils.isEmpty(username) || StringUtils.isEmpty(password)) {
             notifications.create(Notifications.NotificationType.WARNING)

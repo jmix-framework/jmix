@@ -25,6 +25,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Component("search_SearchStrategyManager")
@@ -84,6 +85,13 @@ public class SearchStrategyManager {
      */
     public SearchStrategy getDefaultSearchStrategy() {
         return getSearchStrategyByName(defaultStrategyName);
+    }
+
+    /**
+     * Returns all registered search strategies.
+     */
+    public Collection<SearchStrategy> getAllSearchStrategies() {
+        return registry.values();
     }
 
     @Nullable

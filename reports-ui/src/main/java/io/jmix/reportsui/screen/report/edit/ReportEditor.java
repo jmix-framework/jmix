@@ -182,7 +182,7 @@ public class ReportEditor extends StandardEditor<Report> {
         bandsTree.setSelected(getEditedEntity().getRootBandDefinition());
 
         generalFragment.setupDropZoneForTemplate();
-        generalFragment.sortBandDefinitionsTableByPosition();
+        generalFragment.sortBandDefinitionsByPosition();
 
         setScreenCaption();
     }

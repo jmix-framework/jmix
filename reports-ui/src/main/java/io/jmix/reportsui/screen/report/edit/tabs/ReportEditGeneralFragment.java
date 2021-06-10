@@ -37,7 +37,6 @@ import io.jmix.ui.screen.*;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.inject.Named;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
@@ -166,6 +165,8 @@ public class ReportEditGeneralFragment extends ScreenFragment {
             } else {
                 previousParent.getChildrenBandDefinitions().remove(event.getItem());
                 parent.getChildrenBandDefinitions().add(event.getItem());
+                bandsDc.replaceItem(previousParent);
+                bandsDc.replaceItem(parent);
             }
 
             if (event.getPrevValue() != null) {
@@ -330,7 +331,7 @@ public class ReportEditGeneralFragment extends ScreenFragment {
         return isDownButtonEnabled();
     }
 
-    public void sortBandDefinitionsTableByPosition() {
+    public void sortBandDefinitionsByPosition() {
         bandsDc.getSorter().sort(Sort.by(Sort.Direction.ASC, "position"));
     }
 
@@ -428,6 +429,7 @@ public class ReportEditGeneralFragment extends ScreenFragment {
                 BandDefinition bandDefinition = childrenBandDefinitions.get(i);
                 bandDefinition.setPosition(i);
             }
+            sortBandDefinitionsByPosition();
         }
     }
 
@@ -446,7 +448,7 @@ public class ReportEditGeneralFragment extends ScreenFragment {
                 definitionsList.set(index, previousDefinition);
                 definitionsList.set(index - 1, definition);
 
-                sortBandDefinitionsTableByPosition();
+                sortBandDefinitionsByPosition();
             }
         }
     }
@@ -474,7 +476,7 @@ public class ReportEditGeneralFragment extends ScreenFragment {
                 definitionsList.set(index, nextDefinition);
                 definitionsList.set(index + 1, definition);
 
-                sortBandDefinitionsTableByPosition();
+                sortBandDefinitionsByPosition();
             }
         }
     }

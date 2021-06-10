@@ -19,10 +19,14 @@ package io.jmix.autoconfigure.data;
 import io.jmix.core.impl.repository.support.JmixRepositoryConfigurationExtension;
 import io.jmix.core.repository.EnableJmixDataRepositories;
 import org.springframework.boot.autoconfigure.data.AbstractRepositoryConfigurationSourceSupport;
+import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.data.repository.config.RepositoryConfigurationExtension;
 
 import java.lang.annotation.Annotation;
 
+/**
+ * {@link ImportBeanDefinitionRegistrar} for Jmix data repositories autoconfiguration
+ */
 public class BootJmixRepositoriesRegistrar extends AbstractRepositoryConfigurationSourceSupport {
     @Override
     protected Class<? extends Annotation> getAnnotation() {

@@ -19,8 +19,10 @@ package io.jmix.autoconfigure.data;
 import io.jmix.core.DataManager;
 import io.jmix.core.impl.repository.support.JmixRepositoryConfigurationExtension;
 import io.jmix.core.impl.repository.support.JmixRepositoryFactoryBean;
+import io.jmix.core.repository.EnableJmixDataRepositories;
 import io.jmix.core.repository.JmixDataRepository;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -28,6 +30,22 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+
+/**
+ * {@link EnableAutoConfiguration Auto-configuration} for Jmix data repositories.
+ * <p>
+ * Activates when:
+ * <ul>
+ *     <li>there is a bean of type {@link DataManager} configured in the context,</li>
+ *     <li>{@link JmixDataRepository} type is on the classpath,</li>
+ *     <li>no other {@link JmixDataRepository} configured,</li>
+ *     <li>"{@code jmix.data.repositories.enabled}" property missing or having value: "true".</li>
+ * </ul>
+ * <p>
+ * <p>
+ * Once in effect, the auto-configuration is the equivalent of enabling Jmix repositories
+ * using the {@link EnableJmixDataRepositories @EnableJmixDataRepositories} annotation.
+ */
 
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnBean(DataManager.class)

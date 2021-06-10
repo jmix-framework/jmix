@@ -1,10 +1,9 @@
 package ${project_rootPackage}.screen.login;
 
-import io.jmix.core.CoreProperties;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Messages;
 import io.jmix.securityui.authentication.AuthDetails;
-import io.jmix.securityui.authentication.LoginScreenAuthenticationSupport;
+import io.jmix.securityui.authentication.LoginScreenSupport;
 import io.jmix.ui.JmixApp;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.action.Action;
@@ -52,10 +51,7 @@ public class LoginScreen extends Screen {
     private MessageTools messageTools;
 
     @Autowired
-    private LoginScreenAuthenticationSupport authenticationSupport;
-
-    @Autowired
-    private CoreProperties coreProperties;
+    private LoginScreenSupport loginScreenSupport;
 
     @Autowired
     private UiLoginProperties loginProperties;
@@ -110,7 +106,7 @@ public class LoginScreen extends Screen {
         }
 
         try {
-            authenticationSupport.authenticate(
+            loginScreenSupport.authenticate(
                     AuthDetails.of(username, password)
                             .withLocale(localesField.getValue())
                             .withRememberMe(rememberMeCheckBox.isChecked()), this);

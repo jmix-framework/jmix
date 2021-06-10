@@ -62,6 +62,22 @@ public class CorsTest extends AbstractRestControllerFT {
     }
 
     @Test
+    public void testCorsAuthAllowed() throws Exception {
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("grant_type", "password");
+        params.add("username", "admin");
+        params.add("password", "admin123");
+
+        mockMvc.perform(post("/oauth/token")
+                .params(params)
+                .header("Origin", "http://www.allowed1.com")
+                .with(httpBasic("client", "secret"))
+                .accept("application/json;charset=UTF-8"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json;charset=UTF-8"));
+    }
+
+    @Test
     public void testCorsForbidden() throws Exception {
         String accessToken = obtainAccessToken("admin", "admin123", this.mockMvc);
         this.mockMvc.perform(options("/rest/entities/ref_Car")

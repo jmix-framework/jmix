@@ -66,8 +66,15 @@ public class RestConfiguration implements WebMvcConfigurer {
                 .allowedMethods("*")
                 .exposedHeaders("X-Total-Count", "Content-Disposition");
 
+        CorsRegistration corsAuthRegistration = registry.addMapping("oauth/token")
+                .allowedOrigins(allowedOrigins)
+                .allowedHeaders("*")
+                .allowedMethods("*")
+                .exposedHeaders("X-Total-Count", "Content-Disposition");
+
         if (!Arrays.asList(allowedOrigins).contains(CorsConfiguration.ALL)) {
             corsRegistration.allowCredentials(true);
+            corsAuthRegistration.allowCredentials(true);
         }
     }
 }

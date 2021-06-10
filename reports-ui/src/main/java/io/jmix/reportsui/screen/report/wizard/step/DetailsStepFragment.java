@@ -30,7 +30,6 @@ import io.jmix.reportsui.screen.report.wizard.ReportsWizard;
 import io.jmix.ui.Dialogs;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.WindowConfig;
-import io.jmix.ui.action.DialogAction;
 import io.jmix.ui.component.ComboBox;
 import io.jmix.ui.component.HasValue;
 import io.jmix.ui.component.RadioButtonGroup;
@@ -39,7 +38,6 @@ import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.screen.Subscribe;
 import io.jmix.ui.screen.UiController;
 import io.jmix.ui.screen.UiDescriptor;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -117,18 +115,7 @@ public class DetailsStepFragment extends StepFragment {
     public void onReportTypeGenerateValueChange(HasValue.ValueChangeEvent<ReportTypeGenerate> event) {
         ReportData reportData = reportDataDc.getItem();
         ReportTypeGenerate currentType = event.getValue();
-
-        if (CollectionUtils.isNotEmpty(reportRegionsDc.getItems())) {
-            dialogs.createOptionDialog()
-                    .withCaption(messages.getMessage("dialogs.Confirmation"))
-                    .withMessage(messages.getMessage(getClass(), "regionsClearConfirm"))
-                    .withActions(
-                            new DialogAction(DialogAction.Type.OK).withHandler(e -> updateReportTypeGenerate(reportData, currentType)),
-                            new DialogAction(DialogAction.Type.CANCEL))
-                    .show();
-        } else {
-            updateReportTypeGenerate(reportData, currentType);
-        }
+        updateReportTypeGenerate(reportData, currentType);
     }
 
     protected void updateReportTypeGenerate(ReportData reportData, @Nullable ReportTypeGenerate reportTypeGenerate) {
@@ -141,20 +128,7 @@ public class DetailsStepFragment extends StepFragment {
     @Subscribe("entityField")
     public void onEntityValueChange(HasValue.ValueChangeEvent<MetaClass> event) {
         ReportData reportData = reportDataDc.getItem();
-        MetaClass currentMetaClass = event.getValue();
-        MetaClass prevMetaClass = event.getPrevValue();
-
-        if (CollectionUtils.isNotEmpty(reportRegionsDc.getItems())) {
-            dialogs.createOptionDialog()
-                    .withCaption(messages.getMessage("dialogs.Confirmation"))
-                    .withMessage(messages.getMessage(getClass(), "regionsClearConfirm"))
-                    .withActions(
-                            new DialogAction(DialogAction.Type.OK).withHandler(e -> updateReportEntity(prevMetaClass, currentMetaClass, reportData)),
-                            new DialogAction(DialogAction.Type.CANCEL))
-                    .show();
-        } else {
-            updateReportEntity(event.getPrevValue(), event.getValue(), reportData);
-        }
+        updateReportEntity(event.getPrevValue(), event.getValue(), reportData);
     }
 
     protected void updateReportEntity(@Nullable MetaClass prevValue, MetaClass value, ReportData reportData) {

@@ -42,6 +42,15 @@
     <locMessages key="rememberMe">
         <message lang="default">Remember me</message>
     </locMessages>
+    <locMessages key="emptyUsernameOrPassword">
+        <message lang="default">Please enter user name and password</message>
+    </locMessages>
+    <locMessages key="loginFailed">
+        <message lang="default">Login failed</message>
+    </locMessages>
+    <locMessages key="badCredentials">
+        <message lang="default">Unknown login name or bad password</message>
+    </locMessages>
 
     <property caption="Descriptor name"
               code="descriptorName"

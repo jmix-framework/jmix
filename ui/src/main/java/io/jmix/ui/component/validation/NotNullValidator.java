@@ -43,7 +43,10 @@ import org.springframework.stereotype.Component;
  */
 @StudioElement(
         caption = "NotNullValidator",
-        xmlElement = "notNull"
+        xmlElement = "notNull",
+        unsupportedTarget = {"io.jmix.ui.component.CheckBox", "io.jmix.ui.component.ColorPicker",
+                "io.jmix.ui.component.CurrencyField", "io.jmix.ui.component.DatePicker",
+                "io.jmix.ui.component.SingleFileUploadField", "io.jmix.ui.component.Slider"}
 )
 @Component("ui_NotNullValidator")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)

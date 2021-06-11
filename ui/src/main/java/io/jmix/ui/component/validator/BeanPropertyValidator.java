@@ -37,7 +37,10 @@ import javax.validation.Validator;
  */
 @StudioElement(
         caption = "CustomValidator",
-        xmlElement = "custom"
+        xmlElement = "custom",
+        unsupportedTarget = {"io.jmix.ui.component.CheckBox", "io.jmix.ui.component.ColorPicker",
+                "io.jmix.ui.component.CurrencyField", "io.jmix.ui.component.DatePicker",
+                "io.jmix.ui.component.SingleFileUploadField", "io.jmix.ui.component.Slider"}
 )
 @StudioProperties(
         properties = {

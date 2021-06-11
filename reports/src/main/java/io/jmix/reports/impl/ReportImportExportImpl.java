@@ -13,9 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jmix.reports;
+package io.jmix.reports.impl;
 
 import io.jmix.core.*;
+import io.jmix.reports.ReportImportExport;
+import io.jmix.reports.Reports;
 import io.jmix.reports.converter.XStreamConverter;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportImportOption;

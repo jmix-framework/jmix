@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.reports;
+package io.jmix.reports.impl;
 
 import com.google.common.collect.Sets;
 import com.haulmont.yarg.reporting.ReportOutputDocument;
@@ -23,6 +23,8 @@ import io.jmix.core.*;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.core.security.SystemAuthenticator;
 import io.jmix.data.PersistenceHints;
+import io.jmix.reports.ReportExecutionHistoryRecorder;
+import io.jmix.reports.ReportsProperties;
 import io.jmix.reports.entity.JmixReportOutputType;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportExecution;

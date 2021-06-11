@@ -20,7 +20,7 @@ import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.reports.Reports;
-import io.jmix.reports.ReportsImpl;
+import io.jmix.reports.impl.ReportsImpl;
 import io.jmix.reports.ReportsProperties;
 import io.jmix.reports.app.EntityTree;
 import io.jmix.reports.entity.*;

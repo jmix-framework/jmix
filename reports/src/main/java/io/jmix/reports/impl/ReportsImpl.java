@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.reports;
+package io.jmix.reports.impl;
 
 import com.haulmont.yarg.formatters.impl.doc.connector.NoFreePortsException;
 import com.haulmont.yarg.reporting.ReportOutputDocument;
@@ -31,6 +31,7 @@ import io.jmix.data.PersistenceHints;
 import io.jmix.data.exception.UniqueConstraintViolationException;
 import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.dynattr.DynAttrQueryHints;
+import io.jmix.reports.*;
 import io.jmix.reports.app.ParameterPrototype;
 import io.jmix.reports.converter.GsonConverter;
 import io.jmix.reports.converter.XStreamConverter;

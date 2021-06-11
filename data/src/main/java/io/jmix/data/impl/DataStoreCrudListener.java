@@ -25,6 +25,8 @@ import io.jmix.core.datastore.DataStoreBeforeEntitySaveEvent;
 import io.jmix.core.datastore.DataStoreEventListener;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.AccessDeniedException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -34,6 +36,8 @@ import java.util.Map;
 
 @Component
 public class DataStoreCrudListener implements DataStoreEventListener {
+
+    private static final Logger log = LoggerFactory.getLogger(DataStoreCrudListener.class);
 
     @Autowired
     protected AccessManager accessManager;
@@ -53,6 +57,7 @@ public class DataStoreCrudListener implements DataStoreEventListener {
         accessManager.applyConstraints(entityContext, context.getAccessConstraints());
 
         if (!entityContext.isReadPermitted()) {
+            log.debug("Reading entity {} is not permitted by access constraints", metaClass);
             event.setLoadPrevented();
         }
     }
@@ -66,6 +71,7 @@ public class DataStoreCrudListener implements DataStoreEventListener {
         accessManager.applyConstraints(entityContext, context.getAccessConstraints());
 
         if (!entityContext.isReadPermitted()) {
+            log.debug("Reading entity {} is not permitted by access constraints", metaClass);
             event.setCountPrevented();
         }
     }

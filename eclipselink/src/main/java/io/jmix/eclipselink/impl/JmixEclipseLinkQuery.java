@@ -122,8 +122,7 @@ public class JmixEclipseLinkQuery<E> implements JmixQuery<E> {
 
     @Override
     public List<E> getResultList() {
-        if (log.isDebugEnabled())
-            log.debug(queryString.replaceAll("[\\t\\n\\x0B\\f\\r]", " "));
+        logQueryString();
 
         singleResultExpected = false;
 
@@ -145,8 +144,7 @@ public class JmixEclipseLinkQuery<E> implements JmixQuery<E> {
 
     @Override
     public E getSingleResult() {
-        if (log.isDebugEnabled())
-            log.debug(queryString.replaceAll("[\\t\\n\\x0B\\f\\r]", " "));
+        logQueryString();
 
         singleResultExpected = true;
 
@@ -391,8 +389,7 @@ public class JmixEclipseLinkQuery<E> implements JmixQuery<E> {
 
     @Nullable
     public E getSingleResultOrNull() {
-        if (log.isDebugEnabled())
-            log.debug(queryString.replaceAll("[\\t\\n\\x0B\\f\\r]", " "));
+        logQueryString();
 
         Integer saveMaxResults = maxResults;
         maxResults = 1;
@@ -421,26 +418,22 @@ public class JmixEclipseLinkQuery<E> implements JmixQuery<E> {
         }
     }
 
-    /**
-     * INTERNAL
-     */
     public String getQueryString() {
         return queryString;
     }
 
-    /**
-     * INTERNAL
-     */
     public void setQueryString(String queryString) {
         checkState();
         this.queryString = queryString;
     }
 
-    /**
-     * INTERNAL
-     */
     public void setSingleResultExpected(boolean singleResultExpected) {
         this.singleResultExpected = singleResultExpected;
+    }
+
+    private void logQueryString() {
+        if (log.isDebugEnabled())
+            log.debug(queryString.replaceAll("[\\t\\n\\x0B\\f\\r]", " "));
     }
 
     private JpaQuery<E> getQuery() {

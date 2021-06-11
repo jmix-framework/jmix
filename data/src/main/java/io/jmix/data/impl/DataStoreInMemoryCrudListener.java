@@ -21,6 +21,8 @@ import io.jmix.core.accesscontext.InMemoryCrudEntityContext;
 import io.jmix.core.datastore.*;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.AccessDeniedException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -28,6 +30,8 @@ import java.util.*;
 
 @Component
 public class DataStoreInMemoryCrudListener implements DataStoreEventListener {
+
+    private static final Logger log = LoggerFactory.getLogger(DataStoreInMemoryCrudListener.class);
 
     @Autowired
     protected AccessManager accessManager;
@@ -87,6 +91,7 @@ public class DataStoreInMemoryCrudListener implements DataStoreEventListener {
 
         for (Object entity : event.getResultEntities()) {
             if (!crudContext.isReadPermitted(entity)) {
+                log.debug("Reading entity {} is not permitted by access constraints", entity);
                 event.excludeEntity(entity);
             } else {
                 entities.add(entity);
@@ -98,7 +103,11 @@ public class DataStoreInMemoryCrudListener implements DataStoreEventListener {
                     InMemoryCrudEntityContext childCrudContext =
                             new InMemoryCrudEntityContext(metadata.getClass(entity.getClass()));
                     accessManager.applyConstraints(childCrudContext, context.getAccessConstraints());
-                    return childCrudContext.isReadPermitted(entity);
+                    boolean readPermitted = childCrudContext.isReadPermitted(entity);
+                    if (!readPermitted) {
+                        log.debug("Reading entity {} is not permitted by access constraints", entity);
+                    }
+                    return readPermitted;
                 });
         event.getEventState().setValue("erasedReferences", references);
     }

@@ -74,30 +74,22 @@ public abstract class AbstractPrintFormAction extends AbstractAction {
 
         if (reports.size() > 1) {
             if (CollectionUtils.isNotEmpty(reports)) {
-                Report report = reports.iterator().next();
-                Report reloadedReport = reloadReport(report);
-                ReportInputParameter parameter = getParameterAlias(reloadedReport, inputValueMetaClass);
-
-                ReportRun reportRunScreen = screenBuilder.screen(screen)
+                ReportRun reportRunScreen = screenBuilder.lookup(Report.class, screen)
                         .withScreenClass(ReportRun.class)
                         .withOpenMode(OpenMode.DIALOG)
+                        .withSelectHandler(selectedReports -> {
+                            if (CollectionUtils.isNotEmpty(selectedReports)) {
+                                Report report = selectedReports.iterator().next();
+                                runReport(report, screen, selectedValue, inputValueMetaClass, outputFileName);
+                            }
+                        })
                         .build();
                 reportRunScreen.setReports(reports);
-                reportRunScreen.addAfterCloseListener(afterCloseEvent ->
-                        reportGuiManager.runReport(reloadedReport, screen, parameter, selectedValue, null, outputFileName)
-                );
                 reportRunScreen.show();
             }
-
-
         } else if (reports.size() == 1) {
             Report report = reports.get(0);
-            Report reloadedReport = reloadReport(report);
-            ReportInputParameter parameter = getParameterAlias(reloadedReport, inputValueMetaClass);
-            if (selectedValue instanceof ParameterPrototype) {
-                ((ParameterPrototype) selectedValue).setParamName(parameter.getAlias());
-            }
-            reportGuiManager.runReport(reloadedReport, screen, parameter, selectedValue, null, outputFileName);
+            runReport(report, screen, selectedValue, inputValueMetaClass, outputFileName);
         } else {
             Notifications notifications = screenContext.getNotifications();
 
@@ -105,6 +97,15 @@ public abstract class AbstractPrintFormAction extends AbstractAction {
                     .withCaption(messages.getMessage(ReportGuiManager.class, "report.notFoundReports"))
                     .show();
         }
+    }
+
+    protected void runReport(Report report, Screen screen, Object selectedValue, MetaClass inputValueMetaClass, @Nullable String outputFileName) {
+        Report reloadedReport = reloadReport(report);
+        ReportInputParameter parameter = getParameterAlias(reloadedReport, inputValueMetaClass);
+        if (selectedValue instanceof ParameterPrototype) {
+            ((ParameterPrototype) selectedValue).setParamName(parameter.getAlias());
+        }
+        reportGuiManager.runReport(reloadedReport, screen, parameter, selectedValue, null, outputFileName);
     }
 
     protected ReportInputParameter getParameterAlias(Report report, MetaClass inputValueMetaClass) {

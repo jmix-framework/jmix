@@ -26,6 +26,7 @@ import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportGroup;
 import io.jmix.reportsui.screen.ReportGuiManager;
 import io.jmix.ui.action.Action;
+import io.jmix.ui.action.ItemTrackingAction;
 import io.jmix.ui.component.*;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.screen.LookupComponent;
@@ -33,6 +34,7 @@ import io.jmix.ui.screen.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.inject.Named;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -79,6 +81,9 @@ public class ReportRun extends StandardLookup<Report> {
     @Autowired
     protected MetadataTools metadataTools;
 
+    @Named("reportsTable.runReport")
+    protected ItemTrackingAction reportsTableRunReport;
+
     protected List<Report> reports;
 
     protected MetaClass metaClassParameter;
@@ -95,6 +100,11 @@ public class ReportRun extends StandardLookup<Report> {
 
     public void setScreen(String screenParameter) {
         this.screenParameter = screenParameter;
+    }
+
+    @Subscribe
+    public void onInit(InitEvent event) {
+        reportsTable.setItemClickAction(reportsTableRunReport);
     }
 
     @Subscribe

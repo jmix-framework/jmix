@@ -16,17 +16,18 @@
 
 package io.jmix.ui.component.validation;
 
+import io.jmix.core.Messages;
 import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.common.util.Preconditions;
-
-import io.jmix.core.Messages;
 import io.jmix.ui.component.ValidationException;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioProperty;
 import io.jmix.ui.substitutor.StringSubstitutor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import java.util.regex.Pattern;
 
 /**
@@ -46,9 +47,16 @@ import java.util.regex.Pattern;
  *          return new CustomRegexpValidator(regexp);
  *     }
  * </pre>
-*
+ *
  * @see Pattern
  */
+@StudioElement(
+        caption = "RegexpValidator",
+        xmlElement = "regexp",
+        target = {"io.jmix.ui.component.ComboBox", "io.jmix.ui.component.TextInputField",
+                "io.jmix.ui.component.SourceCodeEditor"},
+        unsupportedTarget = {"io.jmix.ui.component.EntityComboBox"}
+)
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 @Component("ui_RegexpValidator")
 public class RegexpValidator extends AbstractValidator<String> {
@@ -83,6 +91,23 @@ public class RegexpValidator extends AbstractValidator<String> {
     @Autowired
     public void setStringSubstitutor(StringSubstitutor substitutor) {
         this.substitutor = substitutor;
+    }
+
+    /**
+     * Sets regexp pattern value.
+     *
+     * @param regexp a regexp pattern value
+     */
+    @StudioProperty(required = true)
+    public void setRegexp(String regexp) {
+        this.pattern = Pattern.compile(regexp);
+    }
+
+    /**
+     * @return a regexp pattern value
+     */
+    public String getRegexp() {
+        return pattern.pattern();
     }
 
     @Override

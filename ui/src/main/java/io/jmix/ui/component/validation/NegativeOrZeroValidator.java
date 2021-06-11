@@ -23,6 +23,7 @@ import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.component.ValidationException;
 import io.jmix.ui.component.validation.number.NumberConstraint;
+import io.jmix.ui.meta.StudioElement;
 import io.jmix.ui.substitutor.StringSubstitutor;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -50,6 +51,13 @@ import static io.jmix.ui.component.validation.ValidatorHelper.getNumberConstrain
 *
  * @param <T> BigDecimal, BigInteger, Long, Integer, Double, Float
  */
+@StudioElement(
+        caption = "NegativeOrZeroValidator",
+        xmlElement = "negativeOrZero",
+        target = {"io.jmix.ui.component.ComboBox", "io.jmix.ui.component.MaskedField",
+                "io.jmix.ui.component.TextArea", "io.jmix.ui.component.TextField"},
+        unsupportedTarget = {"io.jmix.ui.component.EntityComboBox"}
+)
 @Component("ui_NegativeOrZeroValidator")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class NegativeOrZeroValidator<T extends Number> extends AbstractValidator<T> {

@@ -20,6 +20,10 @@ import io.jmix.core.MessageTools;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import io.jmix.ui.component.HasValue;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioProperties;
+import io.jmix.ui.meta.StudioProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -31,6 +35,17 @@ import javax.validation.Validator;
  * Validator that applies JSR 303 rules for {@link HasValue} instance. <br>
  * Automatically added on data binding if property enclosing class has validation constraints.
  */
+@StudioElement(
+        caption = "CustomValidator",
+        xmlElement = "custom"
+)
+@StudioProperties(
+        properties = {
+                @StudioProperty(name = "bean", type = PropertyType.BEAN_REF, required = true,
+                        options = "io.jmix.ui.component.validation.Validator"),
+                @StudioProperty(name = "message", type = PropertyType.LOCALIZED_STRING)
+        }
+)
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 @Component("ui_BeanPropertyValidator")
 public class BeanPropertyValidator extends AbstractBeanValidator {

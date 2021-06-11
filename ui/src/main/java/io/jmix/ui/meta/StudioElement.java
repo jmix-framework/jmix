@@ -16,12 +16,14 @@
 
 package io.jmix.ui.meta;
 
-import java.lang.annotation.*;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Target;
 
 /**
  * Indicates that the annotated interface should be available in Studio Screen Designer as a part of UI Component,
  * e.g. column, action, field, etc. Provides metadata for Component Inspector of Screen Designer.
- *
+ * <p>
  * When used on the getter or setter method, indicates that the annotated method should be shown in
  * Studio Screen Designer as a nested element of UI component, e.g. validator, formatter.
  * Method return type or parameter type will be used to determine element type.
@@ -42,6 +44,7 @@ public @interface StudioElement {
     /**
      * Specifies path to the component icon, SVG or PNG. Relative to the component module root.
      * The icon used in the Component Hierarchy.
+     *
      * @return relative path to the SVG or PNG icon file.
      */
     String icon() default "";
@@ -84,4 +87,18 @@ public @interface StudioElement {
      * @return URL of the documentation page
      */
     String documentationURL() default "";
+
+    /**
+     * Fully-qualified class names of the components to which the element can be applied.
+     * Some base interface is expected in most cases.
+     * E.g. "io.jmix.ui.component.ListComponent"
+     */
+    String[] target() default {};
+
+    /**
+     * Fully-qualified class names of the components to which the element cannot be applied.
+     * Some base interface is expected in most cases.
+     * E.g. "io.jmix.ui.component.ListComponent"
+     */
+    String[] unsupportedTarget() default {};
 }

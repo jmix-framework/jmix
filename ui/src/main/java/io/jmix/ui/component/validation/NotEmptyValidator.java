@@ -19,11 +19,12 @@ package io.jmix.ui.component.validation;
 
 import io.jmix.core.Messages;
 import io.jmix.ui.component.ValidationException;
+import io.jmix.ui.meta.StudioElement;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Collection;
 
 /**
@@ -43,9 +44,17 @@ import java.util.Collection;
  *          return new CustomNotEmptyValidator();
  *     }
  * </pre>
-*
+ *
  * @param <T> Collection or String
  */
+@StudioElement(
+        caption = "NotEmptyValidator",
+        xmlElement = "notEmpty",
+        target = {"io.jmix.ui.component.OptionsField", "io.jmix.ui.component.TextInputField",
+                "io.jmix.ui.component.SourceCodeEditor", "io.jmix.ui.component.TagField",
+                "io.jmix.ui.component.ValuesPicker"},
+        unsupportedTarget = {"io.jmix.ui.component.EntityComboBox"}
+)
 @Component("ui_NotEmptyValidator")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class NotEmptyValidator<T> extends AbstractValidator<T> {

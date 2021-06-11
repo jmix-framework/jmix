@@ -19,12 +19,12 @@ package io.jmix.ui.component.validation;
 
 import io.jmix.core.Messages;
 import io.jmix.ui.component.ValidationException;
+import io.jmix.ui.meta.StudioElement;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * NotBlank validator checks that value contains at least one non-whitespace character.
@@ -39,7 +39,14 @@ import org.springframework.beans.factory.annotation.Autowired;
  *          return new CustomNotBlankValidator();
  *     }
  * </pre>
-*/
+ */
+@StudioElement(
+        caption = "NotBlankValidator",
+        xmlElement = "notBlank",
+        target = {"io.jmix.ui.component.ComboBox", "io.jmix.ui.component.TextInputField",
+                "io.jmix.ui.component.SourceCodeEditor"},
+        unsupportedTarget = {"io.jmix.ui.component.EntityComboBox"}
+)
 @Component("ui_NotBlankValidator")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class NotBlankValidator extends AbstractValidator<String> {

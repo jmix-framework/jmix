@@ -22,12 +22,18 @@ import io.jmix.core.Messages;
 import io.jmix.core.TimeSource;
 import io.jmix.ui.component.ValidationException;
 import io.jmix.ui.component.validation.time.TimeValidator;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.time.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.OffsetDateTime;
+import java.time.OffsetTime;
 import java.util.Date;
 
 /**
@@ -45,10 +51,15 @@ import java.util.Date;
  *          return new CustomFutureValidator();
  *     }
  * </pre>
-*
+ *
  * @param <T> {@link Date}, {@link LocalDate}, {@link LocalDateTime}, {@link LocalTime}, {@link OffsetDateTime},
  *            {@link OffsetTime}
  */
+@StudioElement(
+        caption = "FutureValidator",
+        xmlElement = "future",
+        target = {"io.jmix.ui.component.DateField", "io.jmix.ui.component.TimeField"}
+)
 @Component("ui_FutureValidator")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class FutureValidator<T> extends AbstractValidator<T> {
@@ -84,6 +95,7 @@ public class FutureValidator<T> extends AbstractValidator<T> {
      *
      * @param checkSeconds check seconds
      */
+    @StudioProperty
     public void setCheckSeconds(boolean checkSeconds) {
         this.checkSeconds = checkSeconds;
     }

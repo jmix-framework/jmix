@@ -17,6 +17,7 @@
 package io.jmix.ui.component;
 
 import io.jmix.ui.component.validation.Validator;
+import io.jmix.ui.meta.StudioElementsGroup;
 
 import java.util.Collection;
 
@@ -34,6 +35,8 @@ public interface HasValidator<V> {
      * @param validator a validator to add
      * @see ValidationException
      */
+    @StudioElementsGroup(caption = "Validators",
+            xmlElement = "validators")
     void addValidator(Validator<? super V> validator);
 
     /**

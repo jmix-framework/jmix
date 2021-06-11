@@ -22,6 +22,8 @@ import io.jmix.core.Messages;
 import io.jmix.core.TimeSource;
 import io.jmix.ui.component.ValidationException;
 import io.jmix.ui.component.validation.time.TimeValidator;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -49,6 +51,11 @@ import java.util.Date;
  * @param <T> {@link Date}, {@link LocalDate}, {@link LocalDateTime}, {@link LocalTime}, {@link OffsetDateTime},
  *            {@link OffsetTime}
  */
+@StudioElement(
+        caption = "PastOrPresentValidator",
+        xmlElement = "pastOrPresent",
+        target = {"io.jmix.ui.component.DateField", "io.jmix.ui.component.TimeField"}
+)
 @Component("ui_PastOrPresentValidator")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class PastOrPresentValidator<T> extends AbstractValidator<T> {
@@ -84,6 +91,7 @@ public class PastOrPresentValidator<T> extends AbstractValidator<T> {
      *
      * @param checkSeconds check seconds
      */
+    @StudioProperty
     public void setCheckSeconds(boolean checkSeconds) {
         this.checkSeconds = checkSeconds;
     }

@@ -24,6 +24,8 @@ import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.component.ValidationException;
 import io.jmix.ui.component.validation.number.NumberConstraint;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioProperty;
 import io.jmix.ui.substitutor.StringSubstitutor;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -54,6 +56,13 @@ import static io.jmix.ui.component.validation.ValidatorHelper.getNumberConstrain
 *
  * @param <T> Double and String that represents BigDouble value with current locale
  */
+@StudioElement(
+        caption = "DoubleMinValidator",
+        xmlElement = "doubleMin",
+        target = {"io.jmix.ui.component.ComboBox", "io.jmix.ui.component.MaskedField",
+                "io.jmix.ui.component.TextArea", "io.jmix.ui.component.TextField"},
+        unsupportedTarget = {"io.jmix.ui.component.EntityComboBox"}
+)
 @Component("ui_DoubleMinValidator")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class DoubleMinValidator<T> extends AbstractValidator<T> {
@@ -108,6 +117,7 @@ public class DoubleMinValidator<T> extends AbstractValidator<T> {
      *
      * @param min min value
      */
+    @StudioProperty(name = "value", required = true)
     public void setMin(Double min) {
         this.min = min;
     }
@@ -135,6 +145,7 @@ public class DoubleMinValidator<T> extends AbstractValidator<T> {
      *
      * @param inclusive inclusive option
      */
+    @StudioProperty
     public void setInclusive(boolean inclusive) {
         this.inclusive = inclusive;
     }

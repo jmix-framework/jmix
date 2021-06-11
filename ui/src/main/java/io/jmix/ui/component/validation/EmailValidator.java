@@ -18,6 +18,7 @@ package io.jmix.ui.component.validation;
 
 import io.jmix.core.Messages;
 import io.jmix.ui.component.ValidationException;
+import io.jmix.ui.meta.StudioElement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -42,6 +43,13 @@ import java.util.List;
  *     }
  * </pre>
  */
+@StudioElement(
+        caption = "EmailValidator",
+        xmlElement = "email",
+        target = {"io.jmix.ui.component.ComboBox", "io.jmix.ui.component.TextInputField",
+                "io.jmix.ui.component.SourceCodeEditor"},
+        unsupportedTarget = {"io.jmix.ui.component.EntityComboBox"}
+)
 @Component("ui_EmailValidator")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class EmailValidator extends AbstractValidator<String> {

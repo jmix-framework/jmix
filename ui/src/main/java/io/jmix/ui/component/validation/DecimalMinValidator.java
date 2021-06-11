@@ -24,6 +24,8 @@ import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.component.ValidationException;
 import io.jmix.ui.component.validation.number.NumberConstraint;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioProperty;
 import io.jmix.ui.substitutor.StringSubstitutor;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -54,6 +56,13 @@ import static io.jmix.ui.component.validation.ValidatorHelper.getNumberConstrain
 *
  * @param <T> BigDecimal, BigInteger, Long, Integer and String that represents BigDecimal value with current locale
  */
+@StudioElement(
+        caption = "DecimalMinValidator",
+        xmlElement = "decimalMin",
+        target = {"io.jmix.ui.component.ComboBox", "io.jmix.ui.component.MaskedField",
+                "io.jmix.ui.component.TextArea", "io.jmix.ui.component.TextField"},
+        unsupportedTarget = {"io.jmix.ui.component.EntityComboBox"}
+)
 @Component("ui_DecimalMinValidator")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class DecimalMinValidator<T> extends AbstractValidator<T> {
@@ -108,6 +117,7 @@ public class DecimalMinValidator<T> extends AbstractValidator<T> {
      *
      * @param min min value
      */
+    @StudioProperty(name = "value", required = true)
     public void setMin(BigDecimal min) {
         this.min = min;
     }
@@ -135,6 +145,7 @@ public class DecimalMinValidator<T> extends AbstractValidator<T> {
      *
      * @param inclusive inclusive option
      */
+    @StudioProperty
     public void setInclusive(boolean inclusive) {
         this.inclusive = inclusive;
     }

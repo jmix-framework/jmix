@@ -21,6 +21,8 @@ import io.jmix.core.Messages;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.security.CurrentAuthentication;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioProperty;
 import io.jmix.ui.substitutor.StringSubstitutor;
 
 import javax.annotation.Nullable;
@@ -55,6 +57,7 @@ public abstract class AbstractValidator<T> implements Validator<T> {
      *
      * @param message error message
      */
+    @StudioProperty(type = PropertyType.LOCALIZED_STRING)
     public void setMessage(@Nullable String message) {
         this.message = message;
     }
@@ -71,12 +74,11 @@ public abstract class AbstractValidator<T> implements Validator<T> {
     }
 
     protected String formatValue(Object value) {
-        Datatype datatype = datatypeRegistry.find(value.getClass());
+        Datatype<?> datatype = datatypeRegistry.find(value.getClass());
         if (datatype == null) {
             return value.toString();
         }
 
-        String formattedValue = datatype.format(value, currentAuthentication.getLocale());
-        return formattedValue == null ? value.toString() : formattedValue;
+        return datatype.format(value, currentAuthentication.getLocale());
     }
 }

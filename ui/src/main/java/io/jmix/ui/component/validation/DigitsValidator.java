@@ -24,6 +24,8 @@ import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.component.ValidationException;
 import io.jmix.ui.component.validation.number.NumberConstraint;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioProperty;
 import io.jmix.ui.substitutor.StringSubstitutor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -52,9 +54,16 @@ import static io.jmix.ui.component.validation.ValidatorHelper.getNumberConstrain
  *          return new CustomDigitsValidator(integer, fraction);
  *     }
  * </pre>
-*
+ *
  * @param <T> BigDecimal, BigInteger, Long, Integer and String that represents BigDecimal value with current locale
  */
+@StudioElement(
+        caption = "DigitsValidator",
+        xmlElement = "digits",
+        target = {"io.jmix.ui.component.ComboBox", "io.jmix.ui.component.MaskedField",
+                "io.jmix.ui.component.TextArea", "io.jmix.ui.component.TextField"},
+        unsupportedTarget = {"io.jmix.ui.component.EntityComboBox"}
+)
 @Component("ui_DigitsValidator")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class DigitsValidator<T> extends AbstractValidator<T> {
@@ -115,7 +124,8 @@ public class DigitsValidator<T> extends AbstractValidator<T> {
      *
      * @param integer maximum number of integral digits
      */
-    public void setIntger(int integer) {
+    @StudioProperty(required = true)
+    public void setInteger(int integer) {
         this.integer = integer;
     }
 
@@ -124,6 +134,7 @@ public class DigitsValidator<T> extends AbstractValidator<T> {
      *
      * @param fraction maximum number of fractional digits
      */
+    @StudioProperty(required = true)
     public void setFraction(int fraction) {
         this.fraction = fraction;
     }
@@ -131,7 +142,7 @@ public class DigitsValidator<T> extends AbstractValidator<T> {
     /**
      * @return maximum number of integral digits
      */
-    public int getIntger() {
+    public int getInteger() {
         return integer;
     }
 
@@ -187,8 +198,8 @@ public class DigitsValidator<T> extends AbstractValidator<T> {
         String formattedValue = formatValue(value);
         String formattedMessage = getTemplateErrorMessage(message,
                 ParamsMap.of("value", formattedValue,
-                             "integer", integer,
-                             "fraction", fraction));
+                        "integer", integer,
+                        "fraction", fraction));
 
         throw new ValidationException(formattedMessage);
     }

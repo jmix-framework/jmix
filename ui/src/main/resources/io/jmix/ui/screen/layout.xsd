@@ -1426,6 +1426,7 @@
     <xs:complexType name="baseValidatorType">
         <xs:all>
             <xs:element name="notNull" minOccurs="0" type="messageValidatorType"/>
+            <xs:element name="custom" minOccurs="0" type="customValidatorType"/>
         </xs:all>
     </xs:complexType>
 
@@ -1453,14 +1454,22 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="constraintValidatorType">
+    <xs:complexType name="stringValidatorType">
         <xs:complexContent>
-            <xs:extension base="baseValidatorType">
+            <xs:extension base="collectionValidatorType">
                 <xs:sequence>
-                    <xs:element name="notEmpty" minOccurs="0" type="messageValidatorType"/>
                     <xs:element name="notBlank" minOccurs="0" type="messageValidatorType"/>
                     <xs:element name="regexp" minOccurs="0" type="regexpValidatorType"/>
-                    <xs:element name="size" minOccurs="0" type="sizeValidatorType"/>
+                    <xs:element name="email" minOccurs="0" type="messageValidatorType"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="constraintValidatorType">
+        <xs:complexContent>
+            <xs:extension base="stringValidatorType">
+                <xs:sequence>
                     <xs:element name="digits" minOccurs="0" type="digitsValidatorType"/>
                     <xs:element name="decimalMin" minOccurs="0" type="decimalMaxMinValidatorType"/>
                     <xs:element name="decimalMax" minOccurs="0" type="decimalMaxMinValidatorType"/>
@@ -1472,8 +1481,6 @@
                     <xs:element name="positive" minOccurs="0" type="messageValidatorType"/>
                     <xs:element name="max" minOccurs="0" type="maxMinValidatorType"/>
                     <xs:element name="min" minOccurs="0" type="maxMinValidatorType"/>
-                    <xs:element name="email" minOccurs="0" type="messageValidatorType"/>
-                    <xs:element name="custom" minOccurs="0" type="customValidatorType"/>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
@@ -1846,10 +1853,6 @@
     <xs:complexType name="baseTextComponent">
         <xs:complexContent>
             <xs:extension base="baseFieldComponent">
-                <xs:sequence>
-                    <xs:element name="validators" minOccurs="0" type="constraintValidatorType"/>
-                </xs:sequence>
-
                 <xs:attributeGroup ref="hasTabIndex"/>
                 <xs:attributeGroup ref="hasContextHelp"/>
             </xs:extension>
@@ -1897,9 +1900,10 @@
     <xs:complexType name="textFieldComponent">
         <xs:complexContent>
             <xs:extension base="baseTextComponent">
-                <xs:all>
+                <xs:sequence>
                     <xs:element name="formatter" minOccurs="0" type="formatterType"/>
-                </xs:all>
+                    <xs:element name="validators" minOccurs="0" type="constraintValidatorType"/>
+                </xs:sequence>
 
                 <xs:attributeGroup ref="hasBuffered"/>
                 <xs:attributeGroup ref="hasDatatype"/>
@@ -1944,6 +1948,9 @@
     <xs:complexType name="textAreaComponent">
         <xs:complexContent>
             <xs:extension base="baseTextComponent">
+                <xs:sequence>
+                    <xs:element name="validators" minOccurs="0" type="constraintValidatorType"/>
+                </xs:sequence>
                 <xs:attribute name="rows" type="xs:int"/>
 
                 <xs:attribute name="caseConversion" type="caseConversion"/>
@@ -1972,10 +1979,13 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <!-- TextArea -->
+    <!-- SourceCodeEditor -->
     <xs:complexType name="sourceCodeEditorComponent">
         <xs:complexContent>
             <xs:extension base="baseTextComponent">
+                <xs:sequence>
+                    <xs:element name="validators" minOccurs="0" type="stringValidatorType"/>
+                </xs:sequence>
                 <xs:attribute name="mode" type="sourceCodeEditorMode"/>
                 <xs:attribute name="printMargin" type="xs:boolean"/>
                 <xs:attribute name="printMarginColumn" type="xs:integer"/>
@@ -1991,6 +2001,9 @@
     <xs:complexType name="maskedFieldComponent">
         <xs:complexContent>
             <xs:extension base="baseTextComponent">
+                <xs:sequence>
+                    <xs:element name="validators" minOccurs="0" type="constraintValidatorType"/>
+                </xs:sequence>
                 <xs:attribute name="mask" type="xs:string" use="required"/>
                 <xs:attribute name="valueMode" type="maskedFieldValueMode"/>
 
@@ -2004,6 +2017,9 @@
     <xs:complexType name="passwordFieldComponent">
         <xs:complexContent>
             <xs:extension base="baseTextComponent">
+                <xs:sequence>
+                    <xs:element name="validators" minOccurs="0" type="stringValidatorType"/>
+                </xs:sequence>
                 <xs:attribute name="maxLength" type="xs:int"/>
                 <xs:attribute name="autocomplete" type="xs:boolean"/>
                 <xs:attribute name="capsLockIndicator" type="xs:string"/>
@@ -2019,6 +2035,9 @@
     <xs:complexType name="richTextAreaComponent">
         <xs:complexContent>
             <xs:extension base="baseTextComponent">
+                <xs:sequence>
+                    <xs:element name="validators" minOccurs="0" type="stringValidatorType"/>
+                </xs:sequence>
                 <xs:attributeGroup ref="hasBuffered"/>
             </xs:extension>
         </xs:complexContent>
@@ -2200,13 +2219,11 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <!-- ValuePicker -->
-    <xs:complexType name="valuePickerComponent">
+    <xs:complexType name="baseValuePickerComponent">
         <xs:complexContent>
             <xs:extension base="baseFieldComponent">
                 <xs:sequence>
                     <xs:element name="actions" minOccurs="0" type="componentActions"/>
-                    <xs:element name="validators" minOccurs="0" type="baseValidatorType"/>
                     <xs:element name="formatter" minOccurs="0" type="formatterType"/>
                 </xs:sequence>
 
@@ -2219,10 +2236,24 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <!-- ValuePicker -->
+    <xs:complexType name="valuePickerComponent">
+        <xs:complexContent>
+            <xs:extension base="baseValuePickerComponent">
+                <xs:sequence>
+                    <xs:element name="validators" minOccurs="0" type="baseValidatorType"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
     <!-- ValuesPicker -->
     <xs:complexType name="valuesPickerComponent">
         <xs:complexContent>
-            <xs:extension base="valuePickerComponent">
+            <xs:extension base="baseValuePickerComponent">
+                <xs:sequence>
+                    <xs:element name="validators" minOccurs="0" type="collectionValidatorType"/>
+                </xs:sequence>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

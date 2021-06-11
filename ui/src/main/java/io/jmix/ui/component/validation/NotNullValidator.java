@@ -19,11 +19,11 @@ package io.jmix.ui.component.validation;
 
 import io.jmix.core.Messages;
 import io.jmix.ui.component.ValidationException;
+import io.jmix.ui.meta.StudioElement;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * NotNull validator checks that value is not null.
@@ -38,9 +38,13 @@ import org.springframework.beans.factory.annotation.Autowired;
  *          return new CustomNotNullValidator();
  *     }
  * </pre>
-*
+ *
  * @param <T> value type
  */
+@StudioElement(
+        caption = "NotNullValidator",
+        xmlElement = "notNull"
+)
 @Component("ui_NotNullValidator")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class NotNullValidator<T> extends AbstractValidator<T> {

@@ -16,16 +16,17 @@
 
 package io.jmix.ui.component.validation;
 
-import io.jmix.core.common.util.ParamsMap;
-
 import io.jmix.core.Messages;
+import io.jmix.core.common.util.ParamsMap;
 import io.jmix.ui.component.ValidationException;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioProperty;
 import io.jmix.ui.substitutor.StringSubstitutor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Collection;
 import java.util.Map;
 
@@ -47,9 +48,17 @@ import java.util.Map;
  *          return new CustomSizeValidator();
  *     }
  * </pre>
-*
+ *
  * @param <T> Collection or String
  */
+@StudioElement(
+        caption = "SizeValidator",
+        xmlElement = "size",
+        target = {"io.jmix.ui.component.OptionsField", "io.jmix.ui.component.TextInputField",
+                "io.jmix.ui.component.SourceCodeEditor", "io.jmix.ui.component.TagField",
+                "io.jmix.ui.component.ValuesPicker"},
+        unsupportedTarget = {"io.jmix.ui.component.EntityComboBox"}
+)
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 @Component("ui_SizeValidator")
 public class SizeValidator<T> extends AbstractValidator<T> {
@@ -98,6 +107,7 @@ public class SizeValidator<T> extends AbstractValidator<T> {
      *
      * @param min min value
      */
+    @StudioProperty
     public void setMin(int min) {
         checkPositiveValue(min, "Min value cannot be less then 0");
         checkRange(min, max);
@@ -121,6 +131,7 @@ public class SizeValidator<T> extends AbstractValidator<T> {
      *
      * @param max max value
      */
+    @StudioProperty
     public void setMax(int max) {
         checkPositiveValue(max, "Max value cannot be less then 0");
         checkRange(min, max);

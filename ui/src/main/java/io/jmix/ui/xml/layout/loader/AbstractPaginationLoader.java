@@ -22,10 +22,8 @@ import io.jmix.ui.component.PaginationComponent;
 import io.jmix.ui.component.pagination.data.PaginationContainerBinder;
 import io.jmix.ui.component.pagination.data.PaginationDataBinder;
 import io.jmix.ui.component.pagination.data.PaginationLoaderBinder;
-import io.jmix.ui.model.BaseCollectionLoader;
-import io.jmix.ui.model.CollectionContainer;
-import io.jmix.ui.model.DataLoader;
-import io.jmix.ui.model.InstanceContainer;
+import io.jmix.ui.model.*;
+import io.jmix.ui.screen.UiControllerUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 
@@ -75,43 +73,45 @@ public abstract class AbstractPaginationLoader<T extends PaginationComponent> ex
         }
 
         if (loaderProvider != null) {
-            getComponentContext().addPostInitTask((context1, window) -> {
-                String loaderId = loaderProvider.attributeValue("loaderId");
-                if (StringUtils.isEmpty(loaderId)) {
-                    throw new GuiDevelopmentException("Specify 'loaderId' attribute of `loaderProvider` element",
-                            getContext());
-                }
-
-                DataLoader loader = context1.getScreenData().getLoader(loaderId);
+            loadString(loaderProvider, "loaderId", id -> {
+                ScreenData screenData = UiControllerUtils.getScreenData(getComponentContext().getFrame().getFrameOwner());
+                DataLoader loader = screenData.getLoader(id);
                 if (loader instanceof BaseCollectionLoader) {
                     PaginationDataBinder dataSourceProvider =
                             applicationContext.getBean(PaginationLoaderBinder.class, loader);
                     resultComponent.setDataBinder(dataSourceProvider);
                 } else {
-                    throw new GuiDevelopmentException(String.format("PaginationDataSourceProvider does not support %s loader type",
-                            loader.getClass().getCanonicalName()), context1);
+                    throw new GuiDevelopmentException(
+                            String.format("PaginationDataSourceProvider does not support %s loader type",
+                                    loader.getClass().getCanonicalName()), getContext());
                 }
             });
+
+            if (resultComponent.getDataBinder() == null) {
+                throw new GuiDevelopmentException("Specify 'loaderId' attribute of `loaderProvider` element",
+                        getContext());
+            }
         }
 
         if (containerProvider != null) {
-            getComponentContext().addPostInitTask((context1, window) -> {
-                String containerId = containerProvider.attributeValue("dataContainer");
-                if (StringUtils.isEmpty(containerId)) {
-                    throw new GuiDevelopmentException("Specify 'dataContainer' attribute of `containerProvider` element",
-                            getContext());
-                }
-
-                InstanceContainer container = context1.getScreenData().getContainer(containerId);
+            loadString(containerProvider, "dataContainer", containerId -> {
+                ScreenData screenData = UiControllerUtils.getScreenData(getComponentContext().getFrame().getFrameOwner());
+                InstanceContainer container = screenData.getContainer(containerId);
                 if (container instanceof CollectionContainer) {
                     PaginationDataBinder dataSourceProvider = applicationContext
                             .getBean(PaginationContainerBinder.class, container);
                     resultComponent.setDataBinder(dataSourceProvider);
                 } else {
-                    throw new GuiDevelopmentException(String.format("PaginationDataSourceProvider does not support %s container type",
-                            container.getClass().getCanonicalName()), context1);
+                    throw new GuiDevelopmentException(
+                            String.format("PaginationDataSourceProvider does not support %s container type",
+                                    container.getClass().getCanonicalName()), getContext());
                 }
             });
+
+            if (resultComponent.getDataBinder() == null) {
+                throw new GuiDevelopmentException("Specify 'dataContainer' attribute of `containerProvider` element",
+                        getContext());
+            }
         }
     }
 

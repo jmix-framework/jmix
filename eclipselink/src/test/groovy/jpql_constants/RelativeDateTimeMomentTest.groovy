@@ -48,6 +48,7 @@ class RelativeDateTimeMomentTest extends DataSpec {
     private TestDateTimeEntity previousDayEntity
     private TestDateTimeEntity previousHourEntity
     private TestDateTimeEntity previousMinuteEntity
+    private LoadContext<TestDateTimeEntity> loadContext
 
 
     void setup() {
@@ -58,6 +59,8 @@ class RelativeDateTimeMomentTest extends DataSpec {
         previousDayEntity = dataManager.save(createPreviousDayEntity())
         previousHourEntity = dataManager.save(createPreviousHourEntity())
         previousMinuteEntity = dataManager.save(createPreviousMinuteEntity())
+
+        loadContext = new LoadContext(metadata.getClass(TestDateTimeEntity.class))
     }
 
     TestDateTimeEntity createCurrentMomentEntity() {
@@ -147,12 +150,8 @@ class RelativeDateTimeMomentTest extends DataSpec {
         !e.isEmpty()
     }
 
-    def "constants with java.util.Date"() {
-
-        //----------YEAR--------
-
+    def "interaction of constants FIRST_DAY_OF_CURRENT_YEAR and LAST_DAY_OF_CURRENT_YEAR with java.util.Date type"() {
         when:
-        def loadContext = new LoadContext(metadata.getClass(TestDateTimeEntity.class))
         loadContext.setQueryString("select e from test_TestDateTimeEntity e where e.nowDate > FIRST_DAY_OF_CURRENT_YEAR and e.nowDate < LAST_DAY_OF_CURRENT_YEAR")
         def e = dataManager.loadList(loadContext)
 
@@ -168,13 +167,13 @@ class RelativeDateTimeMomentTest extends DataSpec {
         then:
         !e.contains(now)
         e.contains(previousYearEntity)
+    }
 
-        //----------MONTH--------
-
+    def "interaction of constants FIRST_DAY_OF_CURRENT_MONTH and LAST_DAY_OF_CURRENT_MONTH with java.util.Date type"() {
         when:
         loadContext = new LoadContext(metadata.getClass(TestDateTimeEntity.class))
         loadContext.setQueryString("select e from test_TestDateTimeEntity e where e.nowDate >= FIRST_DAY_OF_CURRENT_MONTH and e.nowDate <= LAST_DAY_OF_CURRENT_MONTH")
-        e = dataManager.loadList(loadContext)
+        def e = dataManager.loadList(loadContext)
 
         then:
         e.contains(now)
@@ -189,13 +188,13 @@ class RelativeDateTimeMomentTest extends DataSpec {
         !e.contains(now)
         e.contains(previousMonthEntity)
         e.contains(previousYearEntity)
+    }
 
-        //----------WEEK--------
-
+    def "interaction of constants FIRST_DAY_OF_CURRENT_WEEK and LAST_DAY_OF_CURRENT_WEEK with java.util.Date type"() {
         when:
         loadContext = new LoadContext(metadata.getClass(TestDateTimeEntity.class))
         loadContext.setQueryString("select e from test_TestDateTimeEntity e where e.nowDate > FIRST_DAY_OF_CURRENT_WEEK and e.nowDate < LAST_DAY_OF_CURRENT_WEEK")
-        e = dataManager.loadList(loadContext)
+        def e = dataManager.loadList(loadContext)
 
         then:
         e.contains(now)
@@ -211,13 +210,13 @@ class RelativeDateTimeMomentTest extends DataSpec {
         e.contains(previousWeekEntity)
         e.contains(previousMonthEntity)
         e.contains(previousYearEntity)
+    }
 
-        //----------DAY--------
-
+    def "interaction of constants START_OF_CURRENT_DAY and END_OF_CURRENT_DAY with java.util.Date type"() {
         when:
         loadContext = new LoadContext(metadata.getClass(TestDateTimeEntity.class))
         loadContext.setQueryString("select e from test_TestDateTimeEntity e where e.nowDate > START_OF_CURRENT_DAY and e.nowDate < END_OF_CURRENT_DAY")
-        e = dataManager.loadList(loadContext)
+        def e = dataManager.loadList(loadContext)
 
         then:
         e.contains(now)
@@ -234,13 +233,13 @@ class RelativeDateTimeMomentTest extends DataSpec {
         e.contains(previousWeekEntity)
         e.contains(previousMonthEntity)
         e.contains(previousYearEntity)
+    }
 
-        //----------TOMORROW AND YESTERDAY--------
-
+    def "interaction of constants START_OF_TOMORROW and START_OF_YESTERDAY with java.util.Date type"() {
         when:
         loadContext = new LoadContext(metadata.getClass(TestDateTimeEntity.class))
         loadContext.setQueryString("select e from test_TestDateTimeEntity e where e.nowDate < START_OF_TOMORROW and e.nowDate > START_OF_YESTERDAY")
-        e = dataManager.loadList(loadContext)
+        def e = dataManager.loadList(loadContext)
 
         then:
         e.contains(now)
@@ -261,12 +260,13 @@ class RelativeDateTimeMomentTest extends DataSpec {
         e.contains(previousMonthEntity)
         e.contains(previousYearEntity)
 
-        //----------HOUR--------
+    }
 
+    def "interaction of constants START_OF_CURRENT_HOUR and END_OF_CURRENT_HOUR with java.util.Date type"() {
         when:
         loadContext = new LoadContext(metadata.getClass(TestDateTimeEntity.class))
         loadContext.setQueryString("select e from test_TestDateTimeEntity e where e.nowDate > START_OF_CURRENT_HOUR and e.nowDate < END_OF_CURRENT_HOUR")
-        e = dataManager.loadList(loadContext)
+        def e = dataManager.loadList(loadContext)
 
         then:
         e.contains(now)
@@ -284,13 +284,13 @@ class RelativeDateTimeMomentTest extends DataSpec {
         e.contains(previousWeekEntity)
         e.contains(previousMonthEntity)
         e.contains(previousYearEntity)
+    }
 
-        //----------MINUTE--------
-
+    def "interaction of constants START_OF_CURRENT_MINUTE and END_OF_CURRENT_MINUTE with java.util.Date type"() {
         when:
         loadContext = new LoadContext(metadata.getClass(TestDateTimeEntity.class))
         loadContext.setQueryString("select e from test_TestDateTimeEntity e where e.nowDate > START_OF_CURRENT_MINUTE and e.nowDate < END_OF_CURRENT_MINUTE")
-        e = dataManager.loadList(loadContext)
+        def e = dataManager.loadList(loadContext)
 
         then:
         e.contains(now)
@@ -309,13 +309,9 @@ class RelativeDateTimeMomentTest extends DataSpec {
         e.contains(previousWeekEntity)
         e.contains(previousMonthEntity)
         e.contains(previousYearEntity)
-
-
     }
 
-    def "constants with java.time.LocalDate"() {
-        //----------YEAR--------
-
+    def "interaction of constants FIRST_DAY_OF_CURRENT_YEAR and LAST_DAY_OF_CURRENT_YEAR with java.time.LocalDate type"() {
         when:
         def loadContext = new LoadContext(metadata.getClass(TestDateTimeEntity.class))
         loadContext.setQueryString("select e from test_TestDateTimeEntity e where e.localDate >= FIRST_DAY_OF_CURRENT_YEAR and e.localDate <= LAST_DAY_OF_CURRENT_YEAR")
@@ -333,13 +329,13 @@ class RelativeDateTimeMomentTest extends DataSpec {
         then:
         !e.contains(now)
         e.contains(previousYearEntity)
+    }
 
-        //----------MONTH--------
-
+    def "interaction of constants FIRST_DAY_OF_CURRENT_MONTH and LAST_DAY_OF_CURRENT_MONTH with java.time.LocalDate type"() {
         when:
         loadContext = new LoadContext(metadata.getClass(TestDateTimeEntity.class))
         loadContext.setQueryString("select e from test_TestDateTimeEntity e where e.localDate >= FIRST_DAY_OF_CURRENT_MONTH and e.localDate <= LAST_DAY_OF_CURRENT_MONTH")
-        e = dataManager.loadList(loadContext)
+        def e = dataManager.loadList(loadContext)
 
         then:
         e.contains(now)
@@ -354,13 +350,13 @@ class RelativeDateTimeMomentTest extends DataSpec {
         !e.contains(now)
         e.contains(previousMonthEntity)
         e.contains(previousYearEntity)
+    }
 
-        //----------WEEK--------
-
+    def "interaction of constants FIRST_DAY_OF_CURRENT_WEEK and LAST_DAY_OF_CURRENT_WEEK with java.time.LocalDate type"() {
         when:
         loadContext = new LoadContext(metadata.getClass(TestDateTimeEntity.class))
         loadContext.setQueryString("select e from test_TestDateTimeEntity e where e.localDate >= FIRST_DAY_OF_CURRENT_WEEK and e.localDate <= LAST_DAY_OF_CURRENT_WEEK")
-        e = dataManager.loadList(loadContext)
+        def e = dataManager.loadList(loadContext)
 
         then:
         e.contains(now)
@@ -376,13 +372,13 @@ class RelativeDateTimeMomentTest extends DataSpec {
         e.contains(previousWeekEntity)
         e.contains(previousMonthEntity)
         e.contains(previousYearEntity)
+    }
 
-        //----------DAY--------
-
+    def "interaction of constants START_OF_CURRENT_DAY and END_OF_CURRENT_DAY with java.time.LocalDate type"() {
         when:
         loadContext = new LoadContext(metadata.getClass(TestDateTimeEntity.class))
         loadContext.setQueryString("select e from test_TestDateTimeEntity e where e.localDate >= START_OF_CURRENT_DAY and e.localDate <= END_OF_CURRENT_DAY")
-        e = dataManager.loadList(loadContext)
+        def e = dataManager.loadList(loadContext)
 
         then:
         e.contains(now)
@@ -399,13 +395,13 @@ class RelativeDateTimeMomentTest extends DataSpec {
         e.contains(previousWeekEntity)
         e.contains(previousMonthEntity)
         e.contains(previousYearEntity)
+    }
 
-        //----------TOMORROW AND YESTERDAY--------
-
+    def "interaction of constants START_OF_TOMORROW and START_OF_YESTERDAY with java.time.LocalDate type"() {
         when:
         loadContext = new LoadContext(metadata.getClass(TestDateTimeEntity.class))
         loadContext.setQueryString("select e from test_TestDateTimeEntity e where e.localDate < START_OF_TOMORROW and e.localDate >= START_OF_YESTERDAY")
-        e = dataManager.loadList(loadContext)
+        def e = dataManager.loadList(loadContext)
 
         then:
         e.contains(now)
@@ -425,12 +421,9 @@ class RelativeDateTimeMomentTest extends DataSpec {
         e.contains(previousWeekEntity)
         e.contains(previousMonthEntity)
         e.contains(previousYearEntity)
-
     }
 
-    def "constants with java.time.LocalDateTime"() {
-        //----------YEAR--------
-
+    def "interaction of constants FIRST_DAY_OF_CURRENT_YEAR and LAST_DAY_OF_CURRENT_YEAR with java.time.LocalDateTime type"() {
         when:
         def loadContext = new LoadContext(metadata.getClass(TestDateTimeEntity.class))
         loadContext.setQueryString("select e from test_TestDateTimeEntity e where e.localDateTime > FIRST_DAY_OF_CURRENT_YEAR and e.localDateTime < LAST_DAY_OF_CURRENT_YEAR")
@@ -448,13 +441,13 @@ class RelativeDateTimeMomentTest extends DataSpec {
         then:
         !e.contains(now)
         e.contains(previousYearEntity)
+    }
 
-        //----------MONTH--------
-
+    def "interaction of constants FIRST_DAY_OF_CURRENT_MONTH and LAST_DAY_OF_CURRENT_MONTH with java.time.LocalDateTime type"() {
         when:
         loadContext = new LoadContext(metadata.getClass(TestDateTimeEntity.class))
         loadContext.setQueryString("select e from test_TestDateTimeEntity e where e.localDateTime >= FIRST_DAY_OF_CURRENT_MONTH and e.localDateTime <= LAST_DAY_OF_CURRENT_MONTH")
-        e = dataManager.loadList(loadContext)
+        def e = dataManager.loadList(loadContext)
 
         then:
         e.contains(now)
@@ -469,13 +462,13 @@ class RelativeDateTimeMomentTest extends DataSpec {
         !e.contains(now)
         e.contains(previousMonthEntity)
         e.contains(previousYearEntity)
+    }
 
-        //----------WEEK--------
-
+    def "interaction of constants FIRST_DAY_OF_CURRENT_WEEK and LAST_DAY_OF_CURRENT_WEEK with java.time.LocalDateTime type"() {
         when:
         loadContext = new LoadContext(metadata.getClass(TestDateTimeEntity.class))
         loadContext.setQueryString("select e from test_TestDateTimeEntity e where e.localDateTime > FIRST_DAY_OF_CURRENT_WEEK and e.localDateTime < LAST_DAY_OF_CURRENT_WEEK")
-        e = dataManager.loadList(loadContext)
+        def e = dataManager.loadList(loadContext)
 
         then:
         e.contains(now)
@@ -491,13 +484,13 @@ class RelativeDateTimeMomentTest extends DataSpec {
         e.contains(previousWeekEntity)
         e.contains(previousMonthEntity)
         e.contains(previousYearEntity)
+    }
 
-        //----------DAY--------
-
+    def "interaction of constants START_OF_CURRENT_DAY and END_OF_CURRENT_DAY with java.time.LocalDateTime type"() {
         when:
         loadContext = new LoadContext(metadata.getClass(TestDateTimeEntity.class))
         loadContext.setQueryString("select e from test_TestDateTimeEntity e where e.localDateTime > START_OF_CURRENT_DAY and e.localDateTime < END_OF_CURRENT_DAY")
-        e = dataManager.loadList(loadContext)
+        def e = dataManager.loadList(loadContext)
 
         then:
         e.contains(now)
@@ -514,13 +507,13 @@ class RelativeDateTimeMomentTest extends DataSpec {
         e.contains(previousWeekEntity)
         e.contains(previousMonthEntity)
         e.contains(previousYearEntity)
+    }
 
-        //----------TOMORROW AND YESTERDAY--------
-
+    def "interaction of constants START_OF_TOMORROW and START_OF_YESTERDAY with java.time.LocalDateTime type"() {
         when:
         loadContext = new LoadContext(metadata.getClass(TestDateTimeEntity.class))
         loadContext.setQueryString("select e from test_TestDateTimeEntity e where e.localDateTime < START_OF_TOMORROW and e.localDateTime > START_OF_YESTERDAY")
-        e = dataManager.loadList(loadContext)
+        def e = dataManager.loadList(loadContext)
 
         then:
         e.contains(now)
@@ -540,13 +533,13 @@ class RelativeDateTimeMomentTest extends DataSpec {
         e.contains(previousWeekEntity)
         e.contains(previousMonthEntity)
         e.contains(previousYearEntity)
+    }
 
-        //----------HOUR--------
-
+    def "interaction of constants START_OF_CURRENT_HOUR and END_OF_CURRENT_HOUR with java.time.LocalDateTime type"() {
         when:
         loadContext = new LoadContext(metadata.getClass(TestDateTimeEntity.class))
         loadContext.setQueryString("select e from test_TestDateTimeEntity e where e.localDateTime > START_OF_CURRENT_HOUR and e.localDateTime < END_OF_CURRENT_HOUR")
-        e = dataManager.loadList(loadContext)
+        def e = dataManager.loadList(loadContext)
 
         then:
         e.contains(now)
@@ -564,13 +557,13 @@ class RelativeDateTimeMomentTest extends DataSpec {
         e.contains(previousWeekEntity)
         e.contains(previousMonthEntity)
         e.contains(previousYearEntity)
+    }
 
-        //----------MINUTE--------
-
+    def "interaction of constants START_OF_CURRENT_MINUTE and END_OF_CURRENT_MINUTE with java.time.LocalDateTime type"() {
         when:
         loadContext = new LoadContext(metadata.getClass(TestDateTimeEntity.class))
         loadContext.setQueryString("select e from test_TestDateTimeEntity e where e.localDateTime > START_OF_CURRENT_MINUTE and e.localDateTime < END_OF_CURRENT_MINUTE")
-        e = dataManager.loadList(loadContext)
+        def e = dataManager.loadList(loadContext)
 
         then:
         e.contains(now)
@@ -592,9 +585,7 @@ class RelativeDateTimeMomentTest extends DataSpec {
 
     }
 
-    def "constants with java.time.OffsetDateTime"() {
-        //----------YEAR--------
-
+    def "interaction of constants FIRST_DAY_OF_CURRENT_YEAR and LAST_DAY_OF_CURRENT_YEAR with java.time.OffsetDateTime type"() {
         when:
         def loadContext = new LoadContext(metadata.getClass(TestDateTimeEntity.class))
         loadContext.setQueryString("select e from test_TestDateTimeEntity e where e.offsetDateTime > FIRST_DAY_OF_CURRENT_YEAR and e.offsetDateTime < LAST_DAY_OF_CURRENT_YEAR")
@@ -612,13 +603,13 @@ class RelativeDateTimeMomentTest extends DataSpec {
         then:
         !e.contains(now)
         e.contains(previousYearEntity)
+    }
 
-        //----------MONTH--------
-
+    def "interaction of constants FIRST_DAY_OF_CURRENT_MONTH and LAST_DAY_OF_CURRENT_MONTH with java.time.OffsetDateTime type"() {
         when:
         loadContext = new LoadContext(metadata.getClass(TestDateTimeEntity.class))
         loadContext.setQueryString("select e from test_TestDateTimeEntity e where e.offsetDateTime >= FIRST_DAY_OF_CURRENT_MONTH and e.offsetDateTime <= LAST_DAY_OF_CURRENT_MONTH")
-        e = dataManager.loadList(loadContext)
+        def e = dataManager.loadList(loadContext)
 
         then:
         e.contains(now)
@@ -633,13 +624,13 @@ class RelativeDateTimeMomentTest extends DataSpec {
         !e.contains(now)
         e.contains(previousMonthEntity)
         e.contains(previousYearEntity)
+    }
 
-        //----------WEEK--------
-
+    def "interaction of constants FIRST_DAY_OF_CURRENT_WEEK and LAST_DAY_OF_CURRENT_WEEK with java.time.OffsetDateTime type"() {
         when:
         loadContext = new LoadContext(metadata.getClass(TestDateTimeEntity.class))
         loadContext.setQueryString("select e from test_TestDateTimeEntity e where e.offsetDateTime > FIRST_DAY_OF_CURRENT_WEEK and e.offsetDateTime < LAST_DAY_OF_CURRENT_WEEK")
-        e = dataManager.loadList(loadContext)
+        def e = dataManager.loadList(loadContext)
 
         then:
         e.contains(now)
@@ -655,13 +646,13 @@ class RelativeDateTimeMomentTest extends DataSpec {
         e.contains(previousWeekEntity)
         e.contains(previousMonthEntity)
         e.contains(previousYearEntity)
+    }
 
-        //----------DAY--------
-
+    def "interaction of constants START_OF_CURRENT_DAY and END_OF_CURRENT_DAY with java.time.OffsetDateTime type"() {
         when:
         loadContext = new LoadContext(metadata.getClass(TestDateTimeEntity.class))
         loadContext.setQueryString("select e from test_TestDateTimeEntity e where e.offsetDateTime > START_OF_CURRENT_DAY and e.offsetDateTime < END_OF_CURRENT_DAY")
-        e = dataManager.loadList(loadContext)
+        def e = dataManager.loadList(loadContext)
 
         then:
         e.contains(now)
@@ -678,13 +669,13 @@ class RelativeDateTimeMomentTest extends DataSpec {
         e.contains(previousWeekEntity)
         e.contains(previousMonthEntity)
         e.contains(previousYearEntity)
+    }
 
-        //----------TOMORROW AND YESTERDAY--------
-
+    def "interaction of constants START_OF_TOMORROW and START_OF_YESTERDAY with java.time.OffsetDateTime type"() {
         when:
         loadContext = new LoadContext(metadata.getClass(TestDateTimeEntity.class))
         loadContext.setQueryString("select e from test_TestDateTimeEntity e where e.offsetDateTime < START_OF_TOMORROW and e.offsetDateTime > START_OF_YESTERDAY")
-        e = dataManager.loadList(loadContext)
+        def e = dataManager.loadList(loadContext)
 
         then:
         e.contains(now)
@@ -704,13 +695,13 @@ class RelativeDateTimeMomentTest extends DataSpec {
         e.contains(previousWeekEntity)
         e.contains(previousMonthEntity)
         e.contains(previousYearEntity)
+    }
 
-        //----------HOUR--------
-
+    def "interaction of constants START_OF_CURRENT_HOUR and END_OF_CURRENT_HOUR with java.time.OffsetDateTime type"() {
         when:
         loadContext = new LoadContext(metadata.getClass(TestDateTimeEntity.class))
         loadContext.setQueryString("select e from test_TestDateTimeEntity e where e.offsetDateTime > START_OF_CURRENT_HOUR and e.offsetDateTime < END_OF_CURRENT_HOUR")
-        e = dataManager.loadList(loadContext)
+        def e = dataManager.loadList(loadContext)
 
         then:
         e.contains(now)
@@ -728,13 +719,13 @@ class RelativeDateTimeMomentTest extends DataSpec {
         e.contains(previousWeekEntity)
         e.contains(previousMonthEntity)
         e.contains(previousYearEntity)
+    }
 
-        //----------MINUTE--------
-
+    def "interaction of constants START_OF_CURRENT_MINUTE and END_OF_CURRENT_MINUTE with java.time.OffsetDateTime type"() {
         when:
         loadContext = new LoadContext(metadata.getClass(TestDateTimeEntity.class))
         loadContext.setQueryString("select e from test_TestDateTimeEntity e where e.offsetDateTime > START_OF_CURRENT_MINUTE and e.offsetDateTime < END_OF_CURRENT_MINUTE")
-        e = dataManager.loadList(loadContext)
+        def e = dataManager.loadList(loadContext)
 
         then:
         e.contains(now)

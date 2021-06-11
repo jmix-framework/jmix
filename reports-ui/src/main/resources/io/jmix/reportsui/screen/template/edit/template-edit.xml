@@ -26,6 +26,10 @@
         </instance>
     </data>
 
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+
     <dialogMode width="AUTO"
                 forceDialog="true"/>
 

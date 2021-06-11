@@ -46,6 +46,27 @@ class MutationValidationTest extends AbstractGraphQLTest {
                 "Modifying read-only attributes is forbidden [readOnlyStringAttr]"
     }
 
+    def "should show bean validation message without parent attribute"() {
+        when:
+        def response = query(
+                "datafetcher/upsert-car-with-bean-validation-errors.graphql")
+        def error = getErrors(response)[0].getAsJsonObject()
+        def extensions = getExtensions(error).getAsJsonArray("constraintViolations")
+        List messages = new ArrayList()
+        extensions.forEach(extension -> {
+            if (getPath(extension.getAsJsonObject()) == "regNumber") {
+                messages.add(getMessage(extension.getAsJsonObject()))
+                messages.add(getPath(extension.getAsJsonObject()))
+            }
+        })
+        messages.sort()
+
+        then:
+        getMessage(error) == "Exception while fetching data (/upsert_scr_Car) : Entity validation failed"
+        messages.get(0) == "must match \"[a-zA-Z]{2}\\d{3}\""
+        messages.get(1) == "regNumber"
+    }
+
     def "should show bean validation message with parent attribute"() {
         when:
         def response = query(

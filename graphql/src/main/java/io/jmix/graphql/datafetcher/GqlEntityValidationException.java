@@ -117,7 +117,7 @@ public class GqlEntityValidationException extends RuntimeException implements Gr
                 .flatMap(property -> {
                     if (property.getDomain().getJavaClass().equals(rootBeanClass)
                             && finalProperty.equals(property.getName())) {
-                        return Stream.of(path + "." + property.getName());
+                        return Stream.of(path.isEmpty() ? property.getName() : path + "." + property.getName());
                     }
 
                     if (MetaProperty.Type.COMPOSITION.equals(property.getType())) {

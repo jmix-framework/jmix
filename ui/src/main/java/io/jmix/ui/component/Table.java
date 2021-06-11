@@ -285,7 +285,7 @@ public interface Table<E>
      *
      * @param columnReorderingAllowed specifies whether column reordering is allowed
      */
-    @StudioProperty(defaultValue = "true")
+    @StudioProperty(name = "reorderingAllowed", defaultValue = "true")
     void setColumnReorderingAllowed(boolean columnReorderingAllowed);
 
     /**

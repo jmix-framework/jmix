@@ -703,8 +703,8 @@ public class EntityImportExportImpl implements EntityImportExport {
             result = dataManager.load(ctx);
             if (result == null) {
                 if (importPlanProperty.getReferenceImportBehaviour() == ReferenceImportBehaviour.ERROR_ON_MISSING) {
-                    throw new EntityImportException(String.format("Referenced entity for property '%s' with id = %s is missing",
-                            importPlanProperty.getName(), EntityValues.getId(entity)));
+                    throw new EntityImportException(String.format("Referenced entity for property '%s' is missing",
+                            importPlanProperty.getName()));
                 }
             } else {
                 loadedEntities.add(result);

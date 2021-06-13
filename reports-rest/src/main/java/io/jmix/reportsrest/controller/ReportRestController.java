@@ -37,7 +37,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 @RestController("report_ReportRestController")
-@RequestMapping("/reports/api")
+@RequestMapping("/rest/reports/")
 public class ReportRestController {
 
     private static final Logger log = LoggerFactory.getLogger(ReportRestController.class);

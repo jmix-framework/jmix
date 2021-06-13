@@ -18,7 +18,6 @@ package io.jmix.reportsrest.security.event;
 
 import io.jmix.core.AccessManager;
 import io.jmix.core.security.SecurityContextHelper;
-import io.jmix.reportsrest.security.ReportsAuthorizedUrlsProvider;
 import io.jmix.reportsrest.security.accesscontext.ReportRestAccessContext;
 import io.jmix.securityoauth2.event.BeforeInvocationEvent;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,20 +28,17 @@ import org.springframework.util.AntPathMatcher;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Collection;
 
 public class ReportBeforeInvocationEventListener {
 
-    @Autowired
-    protected ReportsAuthorizedUrlsProvider reportsAuthorizedUrlsProvider;
+    private static final String REPORT_AUTHORIZED_URL = "/rest/reports/**";
 
     @Autowired
     protected AccessManager accessManager;
 
     @EventListener(BeforeInvocationEvent.class)
     public void doListen(BeforeInvocationEvent event) {
-        Collection<String> authenticatedUrlPatterns = reportsAuthorizedUrlsProvider.getAuthenticatedUrlPatterns();
-        if (shouldCheckRequest(event.getRequest(), authenticatedUrlPatterns)) {
+        if (shouldCheckRequest(event.getRequest())) {
             ReportRestAccessContext reportRestAccessContext = new ReportRestAccessContext();
             Authentication currentAuthentication = SecurityContextHelper.getAuthentication();
             try {
@@ -59,15 +55,9 @@ public class ReportBeforeInvocationEventListener {
         }
     }
 
-    protected boolean shouldCheckRequest(ServletRequest request, Collection<String> authenticatedUrlPatterns) {
+    protected boolean shouldCheckRequest(ServletRequest request) {
         String requestURI = ((HttpServletRequest) request).getRequestURI();
         AntPathMatcher antPathMatcher = new AntPathMatcher();
-        for (String authenticatedUrlPattern : authenticatedUrlPatterns) {
-            if (antPathMatcher.match(authenticatedUrlPattern, requestURI)) {
-                return true;
-            }
-        }
-
-        return false;
+        return antPathMatcher.match(REPORT_AUTHORIZED_URL, requestURI);
     }
 }

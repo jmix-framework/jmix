@@ -33,6 +33,7 @@ public class BeforeInvocationEvent extends ApplicationEvent {
     private final ServletResponse response;
     private boolean invocationPrevented = false;
     private int errorCode;
+    private String errorMessage;
 
     public BeforeInvocationEvent(Authentication authentication,
                                  ServletRequest request,
@@ -73,5 +74,13 @@ public class BeforeInvocationEvent extends ApplicationEvent {
 
     public void setErrorCode(int errorCode) {
         this.errorCode = errorCode;
+    }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
     }
 }

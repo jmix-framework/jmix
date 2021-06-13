@@ -100,7 +100,7 @@ public class UserPasswordTokenGranter extends ResourceOwnerPasswordTokenGranter 
 
     protected io.jmix.core.security.ClientDetails buildClientDetails() {
         return io.jmix.core.security.ClientDetails.builder()
-                .clientType("REST")
+                .clientType("API")
                 .scope(SecurityScope.API)
                 .locale(requestLocale())
                 .build();

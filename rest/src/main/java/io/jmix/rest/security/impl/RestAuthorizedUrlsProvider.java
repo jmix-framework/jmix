@@ -19,7 +19,6 @@ package io.jmix.rest.security.impl;
 import io.jmix.core.JmixModules;
 import io.jmix.core.security.AuthorizedUrlsProvider;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;

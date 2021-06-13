@@ -16,28 +16,13 @@
 
 package io.jmix.samples.rest.controller;
 
-import io.jmix.core.security.CurrentAuthentication;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Objects;
-
 @RestController
-@RequestMapping(value = "/rest/sample")
-public class SampleTestController {
-
-    @Autowired
-    protected CurrentAuthentication currentAuthentication;
-
-    @GetMapping(value = "/protectedMethod")
-    public String protectedMethod() {
-        Objects.requireNonNull(currentAuthentication.getUser());
-        return "protectedMethod";
-    }
-
+@RequestMapping(value = "/rest/public/another_sample")
+public class AnotherSampleTestController {
     @GetMapping(value = "/unprotectedMethod")
     public String unprotectedMethod() {
         return "unprotectedMethod";

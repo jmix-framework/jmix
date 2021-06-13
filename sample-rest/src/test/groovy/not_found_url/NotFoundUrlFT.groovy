@@ -34,12 +34,12 @@ class NotFoundUrlFT extends RestSpec {
         response.statusCode() == 404
     }
 
-    def "REST-API returns 404 for incorrect URL if unauthorized"() {
+    def "REST-API returns 401 for incorrect URL if unauthorized"() {
         when:
         def request = createRequest()
         def response = request.with().get("/not-found-error-url")
 
         then:
-        response.statusCode() == 404
+        response.statusCode() == 401
     }
 }

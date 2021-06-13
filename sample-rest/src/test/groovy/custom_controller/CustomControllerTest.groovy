@@ -23,14 +23,24 @@ import test_support.RestSpec
 import static test_support.RestSpecsUtils.createRequest
 
 @TestPropertySource(properties =
-        "jmix.rest.authenticatedUrlPatterns=/myapi/sample/protectedMethod"
+        "jmix.rest.anonymousUrlPatterns=/rest/sample/unprotectedMethod"
 )
 class CustomControllerTest extends RestSpec {
 
     def "Unprotected custom controller access"() {
         when:
         def request = createRequest()
-        def response = request.with().get("http://localhost:" + port + "/myapi/sample/unprotectedMethod")
+        def response = request.with().get("http://localhost:" + port + "/rest/sample/unprotectedMethod")
+
+        then:
+        response.statusCode() == 200
+        response.body.asString() == 'unprotectedMethod'
+    }
+
+    def "Unprotected custom controller access from public path"() {
+        when:
+        def request = createRequest()
+        def response = request.with().get("http://localhost:" + port + "/rest/public/another_sample/unprotectedMethod")
 
         then:
         response.statusCode() == 200
@@ -40,7 +50,7 @@ class CustomControllerTest extends RestSpec {
     def "Protected custom controller access without token"() {
         when:
         def request = createRequest()
-        def response = request.with().get("http://localhost:" + port + "/myapi/sample/protectedMethod")
+        def response = request.with().get("http://localhost:" + port + "/rest/sample/protectedMethod")
 
         then:
         response.statusCode() == 401
@@ -49,7 +59,7 @@ class CustomControllerTest extends RestSpec {
     def "Protected custom controller access with token"() {
         when:
         def request = createRequest(userToken)
-        def response = request.with().get("http://localhost:" + port + "/myapi/sample/protectedMethod")
+        def response = request.with().get("http://localhost:" + port + "/rest/sample/protectedMethod")
 
         then:
         response.statusCode() == 200

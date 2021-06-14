@@ -33,10 +33,12 @@ public class SearchProperties {
     protected final int reindexEntityEnqueueBatchSize;
 
     protected final boolean changedEntitiesIndexingEnabled;
+    protected final boolean useDefaultIndexingQueueProcessingQuartzConfiguration;
 
     protected final Elasticsearch elasticsearch;
 
     protected final String defaultSearchStrategy;
+    protected final String defaultIndexingQueueProcessingQuartzConfigurationCron;
 
     protected final IndexSchemaManagementStrategy indexSchemaManagementStrategy;
 
@@ -48,8 +50,10 @@ public class SearchProperties {
             @DefaultValue("1000") int maxProcessedQueueItemsPerExecution,
             @DefaultValue("100") int reindexEntityEnqueueBatchSize,
             @DefaultValue("true") boolean changedEntitiesIndexingEnabled,
+            @DefaultValue("true") boolean useDefaultIndexingQueueProcessingQuartzConfiguration,
             @DefaultValue("anyTermAnyField") String defaultSearchStrategy,
             @DefaultValue("create-or-recreate") String indexSchemaManagementStrategy,
+            @DefaultValue("0/5 * * * * ?") String defaultIndexingQueueProcessingQuartzConfigurationCron,
             @DefaultValue Elasticsearch elasticsearch) {
         this.searchResultPageSize = searchResultPageSize;
         this.maxSearchPageCount = maxSearchPageCount;
@@ -58,6 +62,8 @@ public class SearchProperties {
         this.maxProcessedQueueItemsPerExecution = maxProcessedQueueItemsPerExecution;
         this.reindexEntityEnqueueBatchSize = reindexEntityEnqueueBatchSize;
         this.changedEntitiesIndexingEnabled = changedEntitiesIndexingEnabled;
+        this.useDefaultIndexingQueueProcessingQuartzConfiguration = useDefaultIndexingQueueProcessingQuartzConfiguration;
+        this.defaultIndexingQueueProcessingQuartzConfigurationCron = defaultIndexingQueueProcessingQuartzConfigurationCron;
         this.defaultSearchStrategy = defaultSearchStrategy;
         this.indexSchemaManagementStrategy = IndexSchemaManagementStrategy.getByKey(indexSchemaManagementStrategy);
         this.elasticsearch = elasticsearch;
@@ -110,6 +116,20 @@ public class SearchProperties {
      */
     public boolean isChangedEntitiesIndexingEnabled() {
         return changedEntitiesIndexingEnabled;
+    }
+
+    /**
+     * @return true if default Indexing Queue processing quartz scheduling configuration is used. False otherwise
+     */
+    public boolean isUseDefaultIndexingQueueProcessingQuartzConfiguration() {
+        return useDefaultIndexingQueueProcessingQuartzConfiguration;
+    }
+
+    /**
+     * @return CRON expression that is used by default Indexing Queue processing quartz scheduling configuration
+     */
+    public String getDefaultIndexingQueueProcessingQuartzConfigurationCron() {
+        return defaultIndexingQueueProcessingQuartzConfigurationCron;
     }
 
     /**

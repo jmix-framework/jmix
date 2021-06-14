@@ -21,4 +21,6 @@ dependencies {
     api project(':search')
 
     api 'org.springframework.boot:spring-boot-autoconfigure'
+
+    compileOnly 'org.springframework.boot:spring-boot-starter-quartz'
 }

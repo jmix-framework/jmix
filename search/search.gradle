@@ -59,5 +59,6 @@ dependencies {
         exclude (group: 'com.googlecode.mp4parser', module: 'isoparser')
         exclude (group: 'org.bouncycastle', module: 'bcmail-jdk15on')
         exclude (group: 'org.bouncycastle', module: 'bcprov-jdk15on')
+        exclude (group: 'org.quartz-scheduler', module: 'quartz')
     }
 }

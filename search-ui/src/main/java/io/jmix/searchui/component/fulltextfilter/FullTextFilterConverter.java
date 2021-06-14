@@ -18,6 +18,7 @@ package io.jmix.searchui.component.fulltextfilter;
 
 import io.jmix.core.Metadata;
 import io.jmix.core.annotation.Internal;
+import io.jmix.search.searching.SearchStrategy;
 import io.jmix.search.searching.SearchStrategyManager;
 import io.jmix.searchui.component.FullTextFilter;
 import io.jmix.searchui.entity.FullTextFilterCondition;
@@ -26,6 +27,7 @@ import io.jmix.ui.component.Filter;
 import io.jmix.ui.component.HasValue;
 import io.jmix.ui.component.TextField;
 import io.jmix.ui.component.filter.converter.AbstractFilterComponentConverter;
+import org.elasticsearch.common.Strings;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -73,8 +75,11 @@ public class FullTextFilterConverter extends AbstractFilterComponentConverter<Fu
         fullTextFilter.setCaptionPosition(model.getCaptionPosition());
         fullTextFilter.setRequired(model.getRequired());
         fullTextFilter.setParameterName(model.getParameterName());
-        fullTextFilter.setSearchStrategy(searchStrategyManager.getSearchStrategyByName(model.getSearchStrategyName()));
-
+        String searchStrategyName = model.getSearchStrategyName();
+        SearchStrategy searchStrategy = !Strings.isNullOrEmpty(searchStrategyName) ?
+                searchStrategyManager.findSearchStrategyByName(searchStrategyName) :
+                null;
+        fullTextFilter.setSearchStrategy(searchStrategy);
         HasValue<String> valueComponent = uiComponents.create(TextField.TYPE_STRING);
         fullTextFilter.setValueComponent(valueComponent);
         return fullTextFilter;
@@ -88,7 +93,9 @@ public class FullTextFilterConverter extends AbstractFilterComponentConverter<Fu
         condition.setCaptionPosition(fullTextFilter.getCaptionPosition());
         condition.setRequired(fullTextFilter.isRequired());
         condition.setParameterName(fullTextFilter.getParameterName());
-        condition.setSearchStrategyName(fullTextFilter.getSearchStrategy().getName());
+        if (fullTextFilter.getSearchStrategy() != null) {
+            condition.setSearchStrategyName(fullTextFilter.getSearchStrategy().getName());
+        }
         return condition;
     }
 }

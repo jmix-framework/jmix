@@ -62,7 +62,6 @@ public class FullTextFilterConditionEdit extends FilterConditionEdit<FullTextFil
         FullTextFilterCondition condition = event.getEntity();
         condition.setParameterName(FullTextFilterUtils.generateParameterName());
         condition.setCaption(messageBundle.getMessage("defaultCaption"));
-        condition.setSearchStrategyName(searchStrategyManager.getDefaultSearchStrategy().getName());
     }
 
     @Subscribe

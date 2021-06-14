@@ -54,6 +54,7 @@ public class FullTextFilterImpl extends AbstractSingleFilterComponent<String> im
 
     protected String correctWhere;
 
+
     @Autowired
     public void setJpqlFilterSupport(JpqlFilterSupport jpqlFilterSupport) {
         this.jpqlFilterSupport = jpqlFilterSupport;
@@ -146,8 +147,8 @@ public class FullTextFilterImpl extends AbstractSingleFilterComponent<String> im
 
     private List<Id> performFullTextSearch(String searchTerm) {
         SearchContext searchContext = new SearchContext(searchTerm);
-        //todo limit size?
-//        searchContext.setSize(getDataLoader().getMaxResults());
+//        todo limit size?
+        searchContext.setSize(getDataLoader().getMaxResults());
         searchContext.setEntities(getDataLoader().getContainer().getEntityMetaClass().getName());
         SearchResult searchResult = entitySearcher.search(searchContext,
                 searchStrategy != null ? searchStrategy : searchStrategyManager.getDefaultSearchStrategy());
@@ -193,7 +194,7 @@ public class FullTextFilterImpl extends AbstractSingleFilterComponent<String> im
     }
 
     @Override
-    public void setSearchStrategy(SearchStrategy searchStrategy) {
+    public void setSearchStrategy(@Nullable SearchStrategy searchStrategy) {
         this.searchStrategy = searchStrategy;
     }
 }

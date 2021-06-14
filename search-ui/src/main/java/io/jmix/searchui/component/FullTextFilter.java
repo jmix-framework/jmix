@@ -17,7 +17,10 @@
 package io.jmix.searchui.component;
 
 import io.jmix.search.searching.SearchStrategy;
+import io.jmix.search.searching.SearchStrategyManager;
 import io.jmix.ui.component.SingleFilterComponent;
+
+import javax.annotation.Nullable;
 
 /**
  * FullTextFilter is a UI component used for filtering entities returned by the {@link io.jmix.ui.model.DataLoader} by
@@ -28,7 +31,16 @@ public interface FullTextFilter extends SingleFilterComponent<String> {
 
     String NAME = "fullTextFilter";
 
+    /**
+     * Returns a {@link SearchStrategy} that will be used for searching using this component. If no explicit strategy is
+     * set to the full-text filter then a default strategy will be used.
+     *
+     * @return a {@link SearchStrategy} or null if the strategy is not explicitly set
+     *
+     * @see SearchStrategyManager#getDefaultSearchStrategy()
+     */
+    @Nullable
     SearchStrategy getSearchStrategy();
 
-    void setSearchStrategy(SearchStrategy searchStrategy);
+    void setSearchStrategy(@Nullable SearchStrategy searchStrategy);
 }

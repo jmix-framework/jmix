@@ -25,7 +25,6 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Component("search_SearchStrategyManager")
@@ -64,14 +63,14 @@ public class SearchStrategyManager {
     }
 
     /**
-     * Gets {@link SearchStrategy} by provided name.
-     * Throws exception if there is no strategy with such name.
+     * Gets {@link SearchStrategy} by provided name. Throws exception if there is no strategy with such name.
+     *
      * @param strategyName strategy name
      * @return {@link SearchStrategy}
      * @throws IllegalStateException if strategy with provided name not found
      */
     public SearchStrategy getSearchStrategyByName(String strategyName) {
-        SearchStrategy searchStrategy = findSearchStrategy(strategyName);
+        SearchStrategy searchStrategy = findSearchStrategyByName(strategyName);
         if (searchStrategy == null) {
             throw new IllegalArgumentException(String.format("Search strategy with the name '%s' not found", strategyName));
         }
@@ -81,6 +80,7 @@ public class SearchStrategyManager {
 
     /**
      * Gets default search strategy.
+     *
      * @return {@link SearchStrategy}
      */
     public SearchStrategy getDefaultSearchStrategy() {
@@ -94,8 +94,14 @@ public class SearchStrategyManager {
         return registry.values();
     }
 
+    /**
+     * Returns a {@link SearchStrategy} by provided name. Returns null if there is no strategy with such name.
+     *
+     * @param strategyName strategy name
+     * @return {@link SearchStrategy} or null if no strategy was found
+     */
     @Nullable
-    protected SearchStrategy findSearchStrategy(String strategyName) {
+    public SearchStrategy findSearchStrategyByName(String strategyName) {
         return registry.get(strategyName.toLowerCase());
     }
 }

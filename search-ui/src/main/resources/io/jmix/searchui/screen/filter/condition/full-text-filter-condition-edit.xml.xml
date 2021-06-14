@@ -31,12 +31,11 @@
     <facets>
         <dataLoadCoordinator auto="true"/>
     </facets>
-
     <layout spacing="true" expand="editActions">
         <form id="form" dataContainer="filterConditionDc" width="100%" height="100%">
             <column width="100%">
                 <textField id="captionField" property="caption"/>
-                <comboBox id="searchStrategyNameField" property="searchStrategyName"/>
+                <comboBox id="searchStrategyNameField" property="searchStrategyName" contextHelpText="msg://io.jmix.searchui.screen.filter.condition/searchStrategyNameField.contextHelp"/>
             </column>
         </form>
         <hbox id="editActions" spacing="true">

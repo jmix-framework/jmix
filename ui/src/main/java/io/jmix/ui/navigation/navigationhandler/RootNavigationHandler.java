@@ -140,7 +140,7 @@ public class RootNavigationHandler implements NavigationHandler {
         } else {
             ui.getNotifications()
                     .create(Notifications.NotificationType.TRAY)
-                    .withCaption(messages.formatMessage("navigation.screenNotFound", route))
+                    .withCaption(messages.formatMessage("", "navigation.screenNotFound", route))
                     .show();
         }
     }

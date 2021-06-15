@@ -110,7 +110,7 @@ public class AbstractBeanValidator implements io.jmix.ui.component.validation.Va
     public String getDefaultErrorMessage() {
         MetaClass metaClass = metadata.getClass(beanClass);
 
-        return messages.formatMessage("validation.defaultMsg",
+        return messages.formatMessage("", "validation.defaultMsg",
                 messageTools.getPropertyCaption(metaClass, beanProperty));
     }
 

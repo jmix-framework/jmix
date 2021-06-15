@@ -62,7 +62,7 @@ public class PessimisticLockSupport {
             UiControllerUtils.getScreenContext(screen).getNotifications().create(Notifications.NotificationType.HUMANIZED)
                     .withCaption(messages.getMessage("entityLocked.msg"))
                     .withDescription(
-                            messages.formatMessage("entityLocked.desc",
+                            messages.formatMessage("", "entityLocked.desc",
                                     lockInfo.getUsername(),
                                     datatypeFormatter.formatDateTime(lockInfo.getSince())
                             ))

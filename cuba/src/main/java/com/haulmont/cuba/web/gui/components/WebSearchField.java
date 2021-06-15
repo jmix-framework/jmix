@@ -68,7 +68,7 @@ public class WebSearchField<V extends Entity> extends WebLookupField<V> implemen
 
             @Override
             public void notFoundSuggestions(String filterString) {
-                String message = messages.formatMessage("searchSelect.notFound", filterString);
+                String message = messages.formatMessage("", "searchSelect.notFound", filterString);
                 // TODO: legacy-ui
                 // App.getInstance().getWindowManager().showNotification(message, defaultNotificationType);
             }

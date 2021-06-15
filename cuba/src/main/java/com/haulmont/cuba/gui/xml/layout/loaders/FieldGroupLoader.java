@@ -238,7 +238,7 @@ public class FieldGroupLoader extends AbstractComponentLoader<FieldGroup> {
                             getMessageBundleTools().getLocalizedValue(attribute.getDescriptionsMsgBundle(), attribute.getDescription()));
                     field.setDatasource(ds);
                     field.setRequired(attribute.isRequired());
-                    field.setRequiredMessage(getMessages().formatMessage(
+                    field.setRequiredMessage(getMessages().formatMessage("",
                             "validation.required.defaultMsg",
                             getMessageBundleTools().getLocalizedValue(attribute.getNameMsgBundle(), attribute.getName())));
                     loadWidth(field, attribute.getConfiguration().getFormWidth());

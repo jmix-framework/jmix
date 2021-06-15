@@ -172,7 +172,7 @@ public class WebSearchPickerField<V extends Entity> extends WebPickerField<V>
             public void notFoundSuggestions(String filterString) {
                 Messages messages = applicationContext.getBean(Messages.class);
 
-                String message = messages.formatMessage("searchSelect.notFound", filterString);
+                String message = messages.formatMessage("", "searchSelect.notFound", filterString);
                 // TODO: legacy-ui
                 // App.getInstance().getWindowManager().showNotification(message, defaultNotificationType);
             }

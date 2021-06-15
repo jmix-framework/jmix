@@ -279,7 +279,8 @@ public class RuntimePropertiesFrame extends AbstractFrame {
     protected void loadRequired(FieldGroup fieldGroup, FieldGroup.FieldConfig field) {
         getAttributeByPropertyName(rds.resolveCategorizedEntityClass(), field.getId())
                 .ifPresent(attribute -> {
-                    String requiredMessage = messages.formatMessage("validation.required.defaultMsg", attribute.getName());
+                    String requiredMessage = messages.formatMessage("",
+                            "validation.required.defaultMsg", attribute.getName());
                     field.setRequired(attribute.isRequired() && requiredControlEnabled);
                     field.setRequiredMessage(requiredMessage);
                 });

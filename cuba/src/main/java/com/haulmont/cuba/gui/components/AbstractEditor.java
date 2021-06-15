@@ -581,8 +581,7 @@ public class AbstractEditor<T extends Entity> extends AbstractWindow
                 MetadataTools metadataTools = getApplicationContext().getBean(MetadataTools.class);
 
                 showNotification(
-                        // todo main message
-                        messages.formatMessage("info.EntitySave",
+                        messages.formatMessage("", "info.EntitySave",
                                 messageTools.getEntityCaption(metadata.getClass(entity)),
                                 metadataTools.getInstanceName(entity)),
                         NotificationType.TRAY);

@@ -16,7 +16,12 @@
 
 package io.jmix.ui.sys;
 
-import io.jmix.ui.meta.*;
+import io.jmix.ui.meta.PropertiesConstraint;
+import io.jmix.ui.meta.PropertiesGroup;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioProperties;
+import io.jmix.ui.meta.StudioProperty;
 
 import static io.jmix.core.common.util.Preconditions.checkNotEmptyString;
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
@@ -27,7 +32,9 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
  *
  * @see UiControllerPropertyInjector
  */
-@StudioElement(caption = "Controller Property", xmlElement = "property")
+@StudioElement(caption = "Controller Property",
+        xmlElement = "property",
+        icon = "io/jmix/ui/icon/element/property.svg")
 @StudioProperties(
         properties = {
                 @StudioProperty(name = "ref", type = PropertyType.STRING)

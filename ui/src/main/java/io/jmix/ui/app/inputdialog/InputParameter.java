@@ -256,7 +256,8 @@ public class InputParameter {
      */
     @StudioElement(
             caption = "String Parameter",
-            xmlElement = "stringParameter"
+            xmlElement = "stringParameter",
+            icon = "io/jmix/ui/icon/element/parameter.svg"
     )
     @StudioProperties(
             properties = {
@@ -278,7 +279,8 @@ public class InputParameter {
      */
     @StudioElement(
             caption = "Integer Parameter",
-            xmlElement = "intParameter"
+            xmlElement = "intParameter",
+            icon = "io/jmix/ui/icon/element/parameter.svg"
     )
     @StudioProperties(
             properties = {
@@ -300,7 +302,8 @@ public class InputParameter {
      */
     @StudioElement(
             caption = "Double Parameter",
-            xmlElement = "doubleParameter"
+            xmlElement = "doubleParameter",
+            icon = "io/jmix/ui/icon/element/parameter.svg"
     )
     @StudioProperties(
             properties = {
@@ -322,7 +325,8 @@ public class InputParameter {
      */
     @StudioElement(
             caption = "BigDecimal Parameter",
-            xmlElement = "bigDecimalParameter"
+            xmlElement = "bigDecimalParameter",
+            icon = "io/jmix/ui/icon/element/parameter.svg"
     )
     @StudioProperties(
             properties = {
@@ -344,7 +348,8 @@ public class InputParameter {
      */
     @StudioElement(
             caption = "Long Parameter",
-            xmlElement = "longParameter"
+            xmlElement = "longParameter",
+            icon = "io/jmix/ui/icon/element/parameter.svg"
     )
     @StudioProperties(
             properties = {
@@ -366,7 +371,8 @@ public class InputParameter {
      */
     @StudioElement(
             caption = "Date Parameter",
-            xmlElement = "dateParameter"
+            xmlElement = "dateParameter",
+            icon = "io/jmix/ui/icon/element/parameter.svg"
     )
     @StudioProperties(
             properties = {
@@ -388,7 +394,8 @@ public class InputParameter {
      */
     @StudioElement(
             caption = "Time Parameter",
-            xmlElement = "timeParameter"
+            xmlElement = "timeParameter",
+            icon = "io/jmix/ui/icon/element/parameter.svg"
     )
     @StudioProperties(
             properties = {
@@ -410,7 +417,8 @@ public class InputParameter {
      */
     @StudioElement(
             caption = "DateTime Parameter",
-            xmlElement = "dateTimeParameter"
+            xmlElement = "dateTimeParameter",
+            icon = "io/jmix/ui/icon/element/parameter.svg"
     )
     @StudioProperties(
             properties = {
@@ -433,7 +441,8 @@ public class InputParameter {
      */
     @StudioElement(
             caption = "Entity Parameter",
-            xmlElement = "entityParameter"
+            xmlElement = "entityParameter",
+            icon = "io/jmix/ui/icon/element/parameter.svg"
     )
     @StudioProperties(
             properties = {
@@ -455,7 +464,8 @@ public class InputParameter {
      */
     @StudioElement(
             caption = "Boolean Parameter",
-            xmlElement = "booleanParameter"
+            xmlElement = "booleanParameter",
+            icon = "io/jmix/ui/icon/element/parameter.svg"
     )
     @StudioProperties(
             properties = {
@@ -498,7 +508,8 @@ public class InputParameter {
      */
     @StudioElement(
             caption = "Enum Parameter",
-            xmlElement = "enumParameter"
+            xmlElement = "enumParameter",
+            icon = "io/jmix/ui/icon/element/parameter.svg"
     )
     @StudioProperties(
             properties = {

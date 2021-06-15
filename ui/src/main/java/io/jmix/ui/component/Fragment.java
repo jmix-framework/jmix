@@ -61,7 +61,8 @@ public interface Fragment extends Frame {
     @StudioElementsGroup(
             caption = "Properties",
             xmlElement = "properties",
-            elementClass = "io.jmix.ui.sys.UiControllerProperty"
+            elementClass = "io.jmix.ui.sys.UiControllerProperty",
+            icon = "io/jmix/ui/icon/element/properties.svg"
     )
     @Override
     FrameContext getContext();

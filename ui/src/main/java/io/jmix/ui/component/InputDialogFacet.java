@@ -20,7 +20,11 @@ import io.jmix.core.common.event.Subscription;
 import io.jmix.ui.app.inputdialog.DialogActions;
 import io.jmix.ui.app.inputdialog.InputDialog;
 import io.jmix.ui.app.inputdialog.InputParameter;
-import io.jmix.ui.meta.*;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioElementsGroup;
+import io.jmix.ui.meta.StudioFacet;
+import io.jmix.ui.meta.StudioProperties;
+import io.jmix.ui.meta.StudioProperty;
 
 import javax.annotation.Nullable;
 import java.util.function.Consumer;
@@ -168,7 +172,9 @@ public interface InputDialogFacet extends Facet, ActionsAwareDialogFacet<InputDi
      *
      * @param parameters set of {@link InputParameter}
      */
-    @StudioElementsGroup(xmlElement = "parameters", caption = "Parameters")
+    @StudioElementsGroup(xmlElement = "parameters",
+            caption = "Parameters",
+            icon = "io/jmix/ui/icon/element/parameters.svg")
     void setParameters(InputParameter... parameters);
 
     /**

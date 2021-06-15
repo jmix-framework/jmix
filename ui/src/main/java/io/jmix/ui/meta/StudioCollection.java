@@ -31,9 +31,25 @@ public @interface StudioCollection {
     String xmlElement() default "";
 
     /**
+     * Specifies path to the collection icon, SVG or PNG. Relative to the component module root.
+     * The icon used in the Component Hierarchy.
+     *
+     * @return relative path to the SVG or PNG icon file.
+     */
+    String icon() default "";
+
+    /**
      * @return XML tag of the collection elements
      */
     String itemXmlElement() default "";
+
+    /**
+     * Specifies path to the collection item icon, SVG or PNG. Relative to the component module root.
+     * The icon used in the Component Hierarchy.
+     *
+     * @return relative path to the SVG or PNG icon file.
+     */
+    String itemIcon() default "";
 
     /**
      * @return caption of the collection elements in Studio Screen Designer Palette

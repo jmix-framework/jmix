@@ -115,7 +115,9 @@ public interface ScreenFacet<S extends Screen> extends Facet, ApplicationContext
      *
      * @param properties screen properties
      */
-    @StudioElementsGroup(caption = "Properties", xmlElement = "properties")
+    @StudioElementsGroup(caption = "Properties",
+            xmlElement = "properties",
+            icon = "io/jmix/ui/icon/element/properties.svg")
     void setProperties(Collection<UiControllerProperty> properties);
 
     /**

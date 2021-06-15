@@ -339,7 +339,7 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
 
     protected void setRequired(Field<?> field, AttributeDefinition attribute) {
         field.setRequired(attribute.isRequired());
-        field.setRequiredMessage(messages.formatMessage(
+        field.setRequiredMessage(messages.formatMessage("",
                 "validation.required.defaultMsg",
                 msgBundleTools.getLocalizedValue(attribute.getNameMsgBundle(), attribute.getName())));
     }

@@ -211,4 +211,27 @@
         <Class name="io.jmix.charts.widget.client.amcharts.JmixAmchartsJsOverlay"/>
     </Match>
 
+    <Match>
+        <Bug pattern="URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD"/>
+        <Class name="~io\.jmix\.reportsrest\.controller\.ReportRestControllerManager\$.*"/>
+    </Match>
+
+    <Match>
+        <Bug pattern="UWF_UNWRITTEN_PUBLIC_OR_PROTECTED_FIELD"/>
+        <Class name="~io\.jmix\.reportsrest\.controller\.ReportRestControllerManager\$.*"/>
+    </Match>
+
+    <Match>
+        <Bug pattern="NM_SAME_SIMPLE_NAME_AS_INTERFACE"/>
+        <Or>
+            <Class name="io.jmix.reports.entity.Report"/>
+            <Class name="io.jmix.reports.entity.ReportTemplate"/>
+        </Or>
+    </Match>
+
+    <Match>
+        <Bug pattern="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE"/>
+        <Class name="io.jmix.reports.impl.ReportsImpl"/>
+        <Method name="storeReportEntity"/>
+    </Match>
 </FindBugsFilter>

@@ -18,16 +18,32 @@ package com.haulmont.cuba.gui.components.formatters;
 
 import com.haulmont.cuba.core.global.AppBeans;
 import io.jmix.core.Messages;
+import io.jmix.ui.component.formatter.Formatter;
+
+import javax.annotation.Nullable;
 
 /**
- * @deprecated Use {@link io.jmix.ui.component.formatter.ClassNameFormatter} instead
+ * Class name formatter to be used in screen descriptors and controllers.
+ * <p>
+ * The formatter formats the string that contains the class path, where the packages are separated by dots,
+ * into a string that is the class name.
  */
-@Deprecated
-public class ClassNameFormatter extends io.jmix.ui.component.formatter.ClassNameFormatter {
+public class ClassNameFormatter implements Formatter<String> {
 
+    protected Messages messages = AppBeans.get(Messages.class);
+
+    @Nullable
     @Override
-    public String apply(String value) {
-        messages = AppBeans.get(Messages.class);
-        return super.apply(value);
+    public String apply(@Nullable String value) {
+        if (value == null) {
+            return null;
+        }
+
+        int i = value.lastIndexOf(".");
+        if (i < 0) {
+            return value;
+        } else {
+            return messages.getMessage(value.substring(0, i), value.substring(i + 1));
+        }
     }
 }

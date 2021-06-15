@@ -1,10 +1,7 @@
 package io.jmix.graphql.spqr;
 
 import graphql.relay.Relay;
-import graphql.schema.GraphQLFieldDefinition;
-import graphql.schema.GraphQLObjectType;
-import graphql.schema.GraphQLSchema;
-import graphql.schema.GraphQLType;
+import graphql.schema.*;
 import io.jmix.graphql.schema.GenericSchemaGenerator;
 import io.leangen.geantyref.GenericTypeReflector;
 import io.leangen.geantyref.TypeFactory;
@@ -13,6 +10,7 @@ import io.leangen.graphql.execution.GlobalEnvironment;
 import io.leangen.graphql.execution.ResolverInterceptorFactory;
 import io.leangen.graphql.generator.*;
 import io.leangen.graphql.generator.mapping.*;
+import io.leangen.graphql.generator.mapping.SchemaTransformer;
 import io.leangen.graphql.generator.mapping.common.*;
 import io.leangen.graphql.generator.mapping.core.CompletableFutureAdapter;
 import io.leangen.graphql.generator.mapping.core.DataFetcherResultMapper;
@@ -33,8 +31,15 @@ import static graphql.schema.GraphQLObjectType.newObject;
 
 public class SpqrSchemaGenerator extends BaseSpqrSchemaGenerator {
 
+    protected final GenericSchemaGenerator genericGenerator;
+
     public SpqrSchemaGenerator(GenericSchemaGenerator genericGenerator) {
-        super(genericGenerator);
+        this.genericGenerator = genericGenerator;
+    }
+
+    public SpqrSchemaGenerator withDataFetchers(GraphQLCodeRegistry dataFetchers) {
+        this.codeRegistry.dataFetchers(dataFetchers);
+        return this;
     }
 
     public GraphQLSchema generate() {
@@ -92,7 +97,7 @@ public class SpqrSchemaGenerator extends BaseSpqrSchemaGenerator {
         return schemaBuilder.build();
     }
 
-    private void init() {
+    protected void init() {
         GeneratorConfiguration configuration = new SpqrGeneratorConfiguration(interfaceStrategy, scalarStrategy, typeTransformer, basePackages, javaDeprecationConfig);
 
         //Modules must go first to get a chance to change other settings

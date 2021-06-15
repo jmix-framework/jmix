@@ -39,7 +39,7 @@ import org.springframework.context.annotation.Import;
  *     <li>there is a bean of type {@link DataManager} configured in the context,</li>
  *     <li>{@link JmixDataRepository} type is on the classpath,</li>
  *     <li>no other {@link JmixDataRepository} configured,</li>
- *     <li>"{@code jmix.data.repositories.enabled}" property missing or having value: "true".</li>
+ *     <li>"{@code jmix.core.dataRepositories.enabled}" property is missing or having value: "true".</li>
  * </ul>
  * <p>
  * <p>

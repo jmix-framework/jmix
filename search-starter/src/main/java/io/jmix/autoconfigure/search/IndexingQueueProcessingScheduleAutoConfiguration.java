@@ -51,7 +51,7 @@ public class IndexingQueueProcessingScheduleAutoConfiguration {
 
     @Bean("search_IndexingQueueProcessingTrigger")
     Trigger indexingQueueProcessingTrigger() {
-        String cron = searchProperties.getDefaultIndexingQueueProcessingQuartzConfigurationCron();
+        String cron = searchProperties.getIndexingQueueProcessingCron();
         log.info("Schedule Indexing Queue processing using default configuration with CRON expression '{}'", cron);
         return TriggerBuilder.newTrigger()
                 .forJob(indexingQueueProcessingJob())

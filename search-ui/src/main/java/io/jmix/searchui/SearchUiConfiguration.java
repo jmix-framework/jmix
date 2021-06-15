@@ -19,10 +19,17 @@ package io.jmix.searchui;
 import io.jmix.core.CoreConfiguration;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
+import io.jmix.searchui.component.FullTextFilter;
+import io.jmix.searchui.component.fulltextfilter.FullTextFilterConverter;
 import io.jmix.searchui.component.SearchField;
+import io.jmix.searchui.entity.FullTextFilterCondition;
+import io.jmix.searchui.component.impl.FullTextFilterImpl;
 import io.jmix.searchui.component.impl.SearchFieldImpl;
+import io.jmix.searchui.component.loader.FullTextFilterLoader;
 import io.jmix.searchui.component.loader.SearchFieldLoader;
 import io.jmix.ui.UiConfiguration;
+import io.jmix.ui.component.filter.registration.FilterComponentRegistration;
+import io.jmix.ui.component.filter.registration.FilterComponentRegistrationBuilder;
 import io.jmix.ui.sys.UiControllersConfiguration;
 import io.jmix.ui.sys.registration.ComponentRegistration;
 import io.jmix.ui.sys.registration.ComponentRegistrationBuilder;
@@ -32,6 +39,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.util.Collections;
@@ -58,6 +67,25 @@ public class SearchUiConfiguration {
         return ComponentRegistrationBuilder.create(SearchField.NAME)
                 .withComponentClass(SearchFieldImpl.class)
                 .withComponentLoaderClass(SearchFieldLoader.class)
+                .build();
+    }
+
+    @Bean
+    public ComponentRegistration fullTextFilter() {
+        return ComponentRegistrationBuilder.create(FullTextFilter.NAME)
+                .withComponentClass(FullTextFilterImpl.class)
+                .withComponentLoaderClass(FullTextFilterLoader.class)
+                .build();
+    }
+
+    /**
+     * Registers a full-text filter and condition for using in the {@link io.jmix.ui.component.Filter} UI component.
+     */
+    @Bean("search_FullTextFilterRegistration")
+    public FilterComponentRegistration registerFullTextFilter() {
+        return FilterComponentRegistrationBuilder.create(FullTextFilter.class,
+                FullTextFilterCondition.class,
+                FullTextFilterConverter.class)
                 .build();
     }
 }

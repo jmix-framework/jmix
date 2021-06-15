@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
  * An editor that is displayed when a FullTextCondition is added to the {@link Filter} component.
  */
 @UiController("search_FullTextFilterCondition.edit")
-@UiDescriptor("full-text-filter-condition-edit.xml.xml")
+@UiDescriptor("full-text-filter-condition-edit.xml")
 @EditedEntityContainer("filterConditionDc")
 public class FullTextFilterConditionEdit extends FilterConditionEdit<FullTextFilterCondition> {
 

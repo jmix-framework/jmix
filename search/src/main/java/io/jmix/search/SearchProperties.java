@@ -38,7 +38,7 @@ public class SearchProperties {
     protected final Elasticsearch elasticsearch;
 
     protected final String defaultSearchStrategy;
-    protected final String defaultIndexingQueueProcessingQuartzConfigurationCron;
+    protected final String indexingQueueProcessingCron;
 
     protected final IndexSchemaManagementStrategy indexSchemaManagementStrategy;
 
@@ -53,7 +53,7 @@ public class SearchProperties {
             @DefaultValue("true") boolean useDefaultIndexingQueueProcessingQuartzConfiguration,
             @DefaultValue("anyTermAnyField") String defaultSearchStrategy,
             @DefaultValue("create-or-recreate") String indexSchemaManagementStrategy,
-            @DefaultValue("0/5 * * * * ?") String defaultIndexingQueueProcessingQuartzConfigurationCron,
+            @DefaultValue("0/5 * * * * ?") String indexingQueueProcessingCron,
             @DefaultValue Elasticsearch elasticsearch) {
         this.searchResultPageSize = searchResultPageSize;
         this.maxSearchPageCount = maxSearchPageCount;
@@ -63,7 +63,7 @@ public class SearchProperties {
         this.reindexEntityEnqueueBatchSize = reindexEntityEnqueueBatchSize;
         this.changedEntitiesIndexingEnabled = changedEntitiesIndexingEnabled;
         this.useDefaultIndexingQueueProcessingQuartzConfiguration = useDefaultIndexingQueueProcessingQuartzConfiguration;
-        this.defaultIndexingQueueProcessingQuartzConfigurationCron = defaultIndexingQueueProcessingQuartzConfigurationCron;
+        this.indexingQueueProcessingCron = indexingQueueProcessingCron;
         this.defaultSearchStrategy = defaultSearchStrategy;
         this.indexSchemaManagementStrategy = IndexSchemaManagementStrategy.getByKey(indexSchemaManagementStrategy);
         this.elasticsearch = elasticsearch;
@@ -128,8 +128,8 @@ public class SearchProperties {
     /**
      * @return CRON expression that is used by default Indexing Queue processing quartz scheduling configuration
      */
-    public String getDefaultIndexingQueueProcessingQuartzConfigurationCron() {
-        return defaultIndexingQueueProcessingQuartzConfigurationCron;
+    public String getIndexingQueueProcessingCron() {
+        return indexingQueueProcessingCron;
     }
 
     /**

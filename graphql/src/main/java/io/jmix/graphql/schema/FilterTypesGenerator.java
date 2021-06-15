@@ -31,6 +31,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static graphql.Scalars.*;
+import static io.jmix.graphql.NamingUtils.INPUT_TYPE_PREFIX;
 import static io.jmix.graphql.schema.BaseTypesGenerator.inpObjectField;
 import static io.jmix.graphql.schema.BaseTypesGenerator.listInpObjectField;
 import static io.jmix.graphql.schema.Types.FilterOperation.*;
@@ -209,7 +210,7 @@ public class FilterTypesGenerator {
 
     protected static String composeFilterTypeName(String name, String suffix) {
         // verify that name is normalized
-        if (!name.startsWith("inp_")) {
+        if (!name.startsWith(INPUT_TYPE_PREFIX)) {
             name = NamingUtils.normalizeInpTypeName(name);
         }
         return name + suffix;

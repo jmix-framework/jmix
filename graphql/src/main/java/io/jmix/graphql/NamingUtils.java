@@ -42,6 +42,7 @@ public class NamingUtils {
     public static final String ORDER_BY = "orderBy";
 
     public static final String ID_ATTR_NAME = "id";
+    public static final String INPUT_TYPE_PREFIX = "inp_";
 
     /**
      * Replace all symbols that we can't use in graphql types, such '$', add input type prefix
@@ -49,7 +50,7 @@ public class NamingUtils {
      * @return normalized name
      */
     public static String normalizeInpTypeName(String name) {
-        return "inp_" + name.replaceAll("\\$", "_");
+        return INPUT_TYPE_PREFIX + name.replaceAll("\\$", "_");
     }
 
     public static String normalizeName(String name) {

@@ -103,7 +103,10 @@ public class GraphQLConfiguration {
     @Autowired
     protected LimitationProperties limitationProperties;
     @Autowired
-    Messages messages;
+    protected Messages messages;
+    @Autowired
+    protected JmixTypeInfoGenerator jmixTypeInfoGenerator;
+
 
     @Bean
     public List<Instrumentation> instrumentationList() {
@@ -149,6 +152,7 @@ public class GraphQLConfiguration {
                 messagesDataFetcher.loadEnumMessages());
 
         generator.withDataFetchers(codeRegistryBuilder.build());
+        generator.withTypeInfoGenerator(jmixTypeInfoGenerator);
         return generator.generate();
     }
 

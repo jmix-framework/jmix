@@ -281,7 +281,7 @@ public class MessageTools {
             }
         }
 
-        return messages.formatMessage(
+        return messages.formatMessage("",
                 "validation.required.defaultMsg", getPropertyCaption(metaClass, propertyName));
     }
 

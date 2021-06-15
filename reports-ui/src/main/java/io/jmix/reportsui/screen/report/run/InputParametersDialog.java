@@ -31,6 +31,7 @@ import io.jmix.ui.screen.*;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Map;
 
@@ -75,11 +76,11 @@ public class InputParametersDialog extends Screen {
     @Autowired
     protected UiProperties properties;
 
-    public void setTemplateCode(String templateCode) {
+    public void setTemplateCode(@Nullable String templateCode) {
         this.templateCode = templateCode;
     }
 
-    public void setOutputFileName(String outputFileName) {
+    public void setOutputFileName(@Nullable String outputFileName) {
         this.outputFileName = outputFileName;
     }
 
@@ -91,11 +92,11 @@ public class InputParametersDialog extends Screen {
         this.report = report;
     }
 
-    public void setInputParameter(ReportInputParameter inputParameter) {
+    public void setInputParameter(@Nullable ReportInputParameter inputParameter) {
         this.inputParameter = inputParameter;
     }
 
-    public void setParameters(Map<String, Object> parameters) {
+    public void setParameters(@Nullable Map<String, Object> parameters) {
         this.parameters = parameters;
     }
 

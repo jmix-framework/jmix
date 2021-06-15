@@ -29,6 +29,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -69,6 +70,6 @@ public class TableGenerator implements Generator {
 
         templateTableDescription.setTemplateTableBands(bands);
 
-        return TemplateTableDescription.toJsonString(templateTableDescription).getBytes();
+        return TemplateTableDescription.toJsonString(templateTableDescription).getBytes(StandardCharsets.UTF_8);
     }
 }

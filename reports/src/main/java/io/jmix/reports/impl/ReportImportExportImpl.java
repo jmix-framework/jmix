@@ -92,7 +92,7 @@ public class ReportImportExportImpl implements ReportImportExport {
     }
 
     @Override
-    public Collection<Report> importReports(byte[] zipBytes, EnumSet<ReportImportOption> importOptions) {
+    public Collection<Report> importReports(byte[] zipBytes, @Nullable EnumSet<ReportImportOption> importOptions) {
         ReportImportResult importResult = importReportsWithResult(zipBytes, importOptions);
         return new ArrayList<>(importResult.getImportedReports());
     }

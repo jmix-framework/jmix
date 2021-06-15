@@ -550,7 +550,7 @@ public class ReportGuiManager {
      * @param additionalParameters - user-defined parameters
      */
     public void bulkPrintSync(Report report, String alias, Collection selectedEntities, @Nullable FrameOwner screen,
-                              Map<String, Object> additionalParameters) {
+                              @Nullable Map<String, Object> additionalParameters) {
         bulkPrintSync(report, null, null, alias, selectedEntities, screen, additionalParameters);
     }
 
@@ -569,7 +569,7 @@ public class ReportGuiManager {
      */
     public void bulkPrintSync(Report report, @Nullable String templateCode, @Nullable ReportOutputType outputType,
                               String alias, Collection selectedEntities, @Nullable FrameOwner screen,
-                              Map<String, Object> additionalParameters) {
+                              @Nullable Map<String, Object> additionalParameters) {
         List<Map<String, Object>> paramsList = new ArrayList<>();
         for (Object selectedEntity : selectedEntities) {
             Map<String, Object> map = new HashMap<>();
@@ -612,7 +612,7 @@ public class ReportGuiManager {
      * @param additionalParameters - user-defined parameters
      */
     public void bulkPrintBackground(Report report, String alias, Collection selectedEntities, FrameOwner window,
-                                    Map<String, Object> additionalParameters) {
+                                    @Nullable Map<String, Object> additionalParameters) {
         bulkPrintBackground(report, null, null, alias, selectedEntities, window, additionalParameters);
     }
 
@@ -631,7 +631,7 @@ public class ReportGuiManager {
      */
     public void bulkPrintBackground(Report report, @Nullable String templateCode, @Nullable ReportOutputType outputType,
                                     String alias, Collection selectedEntities, FrameOwner screen,
-                                    Map<String, Object> additionalParameters) {
+                                    @Nullable Map<String, Object> additionalParameters) {
         Report targetReport = getReportForPrinting(report);
 
         long timeout = reportingClientConfig.getBackgroundReportProcessingTimeoutMs();

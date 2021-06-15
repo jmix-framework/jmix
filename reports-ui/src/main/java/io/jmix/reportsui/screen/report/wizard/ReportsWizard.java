@@ -297,6 +297,9 @@ public class ReportsWizard {
                             case DATE:
                                 rvf.setFormatString(messages.getMessage("dateFormat"));
                                 break;
+                            default:
+                                // no action
+                                break;
                         }
                     }
                     formats.add(rvf);

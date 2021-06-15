@@ -17,7 +17,6 @@
 package io.jmix.reports;
 
 import com.haulmont.yarg.reporting.ReportOutputDocument;
-import io.jmix.core.Entity;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.FileRef;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -58,7 +57,7 @@ public interface Reports {
      * @param outputType desired report output type
      * @return report output
      */
-    ReportOutputDocument createReport(Report report, Map<String, Object> params, ReportOutputType outputType);
+    ReportOutputDocument createReport(Report report, Map<String, Object> params, @Nullable ReportOutputType outputType);
 
     /**
      * Generates a report.
@@ -199,7 +198,7 @@ public interface Reports {
     /**
      * Prints the report several times for each parameter map in the paramsList. Put the result files to zip archive.
      */
-    ReportOutputDocument bulkPrint(Report report, String templateCode, ReportOutputType outputType, List<Map<String, Object>> paramsList);
+    ReportOutputDocument bulkPrint(Report report, @Nullable String templateCode,  @Nullable ReportOutputType outputType, List<Map<String, Object>> paramsList);
 
     <T> T reloadEntity(T entity, FetchPlan fetchPlan);
 

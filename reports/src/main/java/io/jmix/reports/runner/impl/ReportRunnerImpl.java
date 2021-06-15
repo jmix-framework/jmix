@@ -44,6 +44,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -74,7 +75,10 @@ public class ReportRunnerImpl implements ReportRunner {
     protected ReportingAPI reportingApi;
 
     @Autowired
-    private DataManager dataManager;
+    protected DataManager dataManager;
+
+    @Autowired
+    protected ApplicationContext applicationContext;
 
     private Report report;
     private String reportCode;
@@ -210,7 +214,7 @@ public class ReportRunnerImpl implements ReportRunner {
         MDC.put("user", SecurityContextHolder.getContext().getAuthentication().getName());
         //TODO web context name
 //        MDC.put("webContextName", globalConfig.getWebContextName());
-        //TODO executions
+        //todo https://github.com/Haulmont/jmix-reports/issues/22
 //        executions.startExecution(report.getId().toString(), "Reporting");
         try {
             //TODO Slf4JStopWatch
@@ -229,7 +233,7 @@ public class ReportRunnerImpl implements ReportRunner {
             }
 
             if (template.isCustom()) {
-                CustomFormatter customFormatter = new CustomFormatter(report, template);
+                CustomFormatter customFormatter = applicationContext.getBean(CustomFormatter.class, report, template);
                 template.setCustomReport(customFormatter);
             }
 
@@ -247,8 +251,8 @@ public class ReportRunnerImpl implements ReportRunner {
         } catch (ReportingInterruptedException ie) {
             throw new ReportCanceledException(String.format("Report is canceled. %s", ie.getMessage()));
         } catch (com.haulmont.yarg.exception.ReportingException re) {
-            Throwable rootCause = ExceptionUtils.getRootCause(re);
-            //TODO cancelled exception
+//            todo https://github.com/Haulmont/jmix-reports/issues/22
+//            Throwable rootCause = ExceptionUtils.getRootCause(re);
 //            if (rootCause instanceof ResourceCanceledException) {
 //                throw new ReportCanceledException(String.format("Report is canceled. %s", rootCause.getMessage()));
 //            }
@@ -264,7 +268,7 @@ public class ReportRunnerImpl implements ReportRunner {
 
             throw new ReportingException(sb.toString());
         } finally {
-            //TODO executions
+            //todo https://github.com/Haulmont/jmix-reports/issues/22
 //            executions.endExecution();
             MDC.remove("user");
             MDC.remove("webContextName");

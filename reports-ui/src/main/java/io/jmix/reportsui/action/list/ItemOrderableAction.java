@@ -16,7 +16,6 @@
 
 package io.jmix.reportsui.action.list;
 
-import io.jmix.core.Sort;
 import io.jmix.reports.entity.wizard.OrderableEntity;
 import io.jmix.ui.action.ActionType;
 import io.jmix.ui.action.list.SecuredListAction;
@@ -25,6 +24,7 @@ import io.jmix.ui.component.data.DataUnit;
 import io.jmix.ui.component.data.meta.ContainerDataUnit;
 import io.jmix.ui.model.CollectionContainer;
 
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -106,6 +106,7 @@ public class ItemOrderableAction<E extends OrderableEntity> extends SecuredListA
         }
     }
 
+    @Nullable
     protected OrderableEntity getItemNeighbour(ListIterator<OrderableEntity> iterator) {
         OrderableEntity neighbourItem = null;
         switch (direction) {
@@ -192,10 +193,11 @@ public class ItemOrderableAction<E extends OrderableEntity> extends SecuredListA
     }
 
     private void updateItemOrderNums(long grpSize, Map<OrderableEntity, Long> itemAndIndexInGroup, int spreadKoef) {
-        for (OrderableEntity itemToChange : itemAndIndexInGroup.keySet()) {
+        for (Map.Entry<OrderableEntity, Long> entityLongEntry: itemAndIndexInGroup.entrySet()) {
+            OrderableEntity itemToChange = entityLongEntry.getKey();
             //System.out.print("*** before " + itemToChange.getOrderNum() + " |");
             long newValue = itemToChange.getOrderNum();
-            long itemIndexInGrp = itemAndIndexInGroup.get(itemToChange);
+            long itemIndexInGrp = entityLongEntry.getValue();
             switch (direction) {
                 case UP:
                     newValue = itemToChange.getOrderNum() + (grpSize - itemIndexInGrp) * spreadKoef - (grpSize - itemIndexInGrp + 1) - grpSize * spreadKoef;

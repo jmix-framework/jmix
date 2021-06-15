@@ -31,7 +31,7 @@ public interface ReportImportExport {
 
     Collection<Report> importReports(byte[] zipBytes);
 
-    Collection<Report> importReports(byte[] zipBytes, EnumSet<ReportImportOption> importOptions);
+    Collection<Report> importReports(byte[] zipBytes, @Nullable EnumSet<ReportImportOption> importOptions);
 
     ReportImportResult importReportsWithResult(byte[] zipBytes, @Nullable EnumSet<ReportImportOption> importOptions);
 

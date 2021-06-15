@@ -151,8 +151,6 @@ public class ParameterEditor extends StandardEditor<ReportInputParameter> {
     @Autowired
     protected MessageTools messageTools;
 
-    protected ReportInputParameter parameter;
-
     @Autowired
     protected ParameterFieldCreator parameterFieldCreator;
 

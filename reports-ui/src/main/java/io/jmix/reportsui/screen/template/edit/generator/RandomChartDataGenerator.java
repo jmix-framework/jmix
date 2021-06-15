@@ -27,7 +27,7 @@ import java.util.*;
 
 @Component("report_RandomChartDataGenerator")
 public class RandomChartDataGenerator {
-    public static final List<String> COLORS = Arrays.asList("red", "green", "blue", "yellow", "orange", "black", "magenta");
+    public static final List<String> COLORS = Collections.unmodifiableList(Arrays.asList("red", "green", "blue", "yellow", "orange", "black", "magenta"));
 
     @Autowired
     protected Messages messages;

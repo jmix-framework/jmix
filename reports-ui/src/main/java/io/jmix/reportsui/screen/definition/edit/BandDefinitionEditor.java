@@ -184,7 +184,7 @@ public class BandDefinitionEditor extends ScreenFragment implements Suggester {
         if (ObjectUtils.isNotEmpty(group) && ObjectUtils.isNotEmpty(report)) {
             return messages.formatMessage(getClass(), "scriptEditorDialog.captionFormat", report, bandsDc.getItem().getName());
         }
-        return null;
+        return StringUtils.EMPTY;
     }
 
     @Subscribe("dataSetTextLinkBtn")
@@ -463,6 +463,7 @@ public class BandDefinitionEditor extends ScreenFragment implements Suggester {
                 case JPQL:
                     textParamsBox.add(dataStoreField);
                     dataSetScriptBox.add(isProcessTemplateField);
+                    break;
                 case GROOVY:
                     editPane.add(dataSetScriptBox);
                     break;

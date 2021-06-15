@@ -288,6 +288,9 @@ public class EditFetchPlanAction extends ListAction {
             case MULTI:
                 dataSetAlias = dataSet.getListEntitiesParamName();
                 break;
+            default:
+                // no action
+                break;
         }
         return dataSetAlias;
     }

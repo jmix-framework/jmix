@@ -29,6 +29,7 @@ import io.jmix.reports.entity.JmixReportOutputType;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportExecution;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -191,7 +192,7 @@ public class ReportExecutionHistoryRecorderImpl implements ReportExecutionHistor
         deleted += deleteHistoryByDays();
         deleted += deleteHistoryGroupedByReport();
 
-        return deleted > 0 ? String.valueOf(deleted) : null;
+        return deleted > 0 ? String.valueOf(deleted) : StringUtils.EMPTY;
     }
 
     private int deleteHistoryByDays() {
@@ -205,7 +206,7 @@ public class ReportExecutionHistoryRecorderImpl implements ReportExecutionHistor
 
         List<FileRef> fileRefs = new ArrayList<>();
 
-        int deleted = transaction.execute(status -> {
+        Integer deleted = transaction.execute(status -> {
             try {
                 List<FileRef> fileRefs1 = entityManager.createQuery("select e.outputDocument from report_ReportExecution e"
                         + " where e.outputDocument is not null and e.startTime < :borderDate", FileRef.class)
@@ -223,7 +224,7 @@ public class ReportExecutionHistoryRecorderImpl implements ReportExecutionHistor
         });
 
         deleteFiles(fileRefs);
-        return deleted;
+        return Optional.ofNullable(deleted).orElse(0);
     }
 
     private void deleteFiles(List<FileRef> fileRefs) {
@@ -264,7 +265,7 @@ public class ReportExecutionHistoryRecorderImpl implements ReportExecutionHistor
 
     private int deleteForOneReport(UUID reportId, int maxItemsPerReport) {
         List<FileRef> fileRefs = new ArrayList<>();
-        int deleted = transaction.execute(status -> {
+        Integer deleted = transaction.execute(status -> {
             try {
                 entityManager.setProperty(PersistenceHints.SOFT_DELETION, false);
                 int rows = 0;
@@ -300,7 +301,7 @@ public class ReportExecutionHistoryRecorderImpl implements ReportExecutionHistor
             }
         });
         deleteFiles(fileRefs);
-        return deleted;
+        return Optional.ofNullable(deleted).orElse(0);
     }
 
     protected FileStorage getFileStorage() {

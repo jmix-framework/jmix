@@ -16,6 +16,8 @@
 
 package io.jmix.reports.impl;
 
+import com.haulmont.yarg.exception.OpenOfficeException;
+import com.haulmont.yarg.exception.ReportingInterruptedException;
 import com.haulmont.yarg.formatters.impl.doc.connector.NoFreePortsException;
 import com.haulmont.yarg.reporting.ReportOutputDocument;
 import com.haulmont.yarg.reporting.ReportOutputDocumentImpl;
@@ -23,6 +25,7 @@ import com.haulmont.yarg.reporting.ReportingAPI;
 import com.haulmont.yarg.reporting.RunParams;
 import com.haulmont.yarg.util.converter.ObjectToStringConverter;
 import io.jmix.core.*;
+import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.AccessDeniedException;
 import io.jmix.core.security.EntityOp;
@@ -50,6 +53,7 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -137,12 +141,17 @@ public class ReportsImpl implements Reports {
 
     protected FileStorage fileStorage;
 
+    @Autowired
+    protected ApplicationContext applicationContext;
+
     //todo eude try to simplify report save logic
     @Override
     public Report storeReportEntity(Report report) {
         checkPermission(report);
 
         Report savedReport = transaction.execute(action -> saveReport(report));
+
+        Preconditions.checkNotNullArgument(savedReport, "Saved report can not be null");
 
         FetchPlan reportEditFetchPlan = fetchPlanRepository.getFetchPlan(metadata.getClass(savedReport), REPORT_EDIT_FETCH_PLAN_NAME);
         return dataManager.load(Id.of(savedReport))
@@ -252,7 +261,7 @@ public class ReportsImpl implements Reports {
     }
 
     @Override
-    public ReportOutputDocument createReport(Report report, Map<String, Object> params, ReportOutputType outputType) {
+    public ReportOutputDocument createReport(Report report, Map<String, Object> params, @Nullable ReportOutputType outputType) {
         report = reloadEntity(report, REPORT_EDIT_FETCH_PLAN_NAME);
         ReportTemplate template = getDefaultTemplate(report);
         return createReportDocument(new ReportRunParams().setReport(report).setReportTemplate(template).setOutputType(outputType).setParams(params));
@@ -266,7 +275,7 @@ public class ReportsImpl implements Reports {
     }
 
     @Override
-    public ReportOutputDocument createReport(Report report, String templateCode, Map<String, Object> params, io.jmix.reports.entity.ReportOutputType outputType) {
+    public ReportOutputDocument createReport(Report report, String templateCode, Map<String, Object> params, ReportOutputType outputType) {
         report = reloadEntity(report, REPORT_EDIT_FETCH_PLAN_NAME);
         ReportTemplate template = report.getTemplateByCode(templateCode);
         return createReportDocument(new ReportRunParams().setReport(report).setReportTemplate(template).setOutputType(outputType).setParams(params));
@@ -286,7 +295,7 @@ public class ReportsImpl implements Reports {
     }
 
     @Override
-    public ReportOutputDocument bulkPrint(Report report, String templateCode, io.jmix.reports.entity.ReportOutputType outputType, List<Map<String, Object>> paramsList) {
+    public ReportOutputDocument bulkPrint(Report report, @Nullable String templateCode,  @Nullable ReportOutputType outputType, List<Map<String, Object>> paramsList) {
         try {
             report = reloadEntity(report, REPORT_EDIT_FETCH_PLAN_NAME);
 
@@ -385,7 +394,7 @@ public class ReportsImpl implements Reports {
     protected ReportOutputDocument createReportDocumentInternal(ReportRunParams reportRunParams) {
         Report report = reportRunParams.getReport();
         ReportTemplate template = reportRunParams.getReportTemplate();
-        io.jmix.reports.entity.ReportOutputType outputType = reportRunParams.getOutputType();
+        ReportOutputType outputType = reportRunParams.getOutputType();
         Map<String, Object> params = reportRunParams.getParams();
         String outputNamePattern = reportRunParams.getOutputNamePattern();
 
@@ -410,7 +419,7 @@ public class ReportsImpl implements Reports {
             }
 
             if (template.isCustom()) {
-                CustomFormatter customFormatter = new CustomFormatter(report, template);
+                CustomFormatter customFormatter = applicationContext.getBean(CustomFormatter.class, report, template);
                 template.setCustomReport(customFormatter);
             }
 
@@ -419,17 +428,17 @@ public class ReportsImpl implements Reports {
             return reportingApi.runReport(new RunParams(report).template(template).params(resultParams).output(resultOutputType).outputNamePattern(outputNamePattern));
         } catch (NoFreePortsException nfe) {
             throw new NoOpenOfficeFreePortsException(nfe.getMessage());
-        } catch (com.haulmont.yarg.exception.OpenOfficeException ooe) {
+        } catch (OpenOfficeException ooe) {
             throw new FailedToConnectToOpenOfficeException(ooe.getMessage());
         } catch (com.haulmont.yarg.exception.UnsupportedFormatException fe) {
             throw new UnsupportedFormatException(fe.getMessage());
         } catch (com.haulmont.yarg.exception.ValidationException ve) {
             throw new ValidationException(ve.getMessage());
-        } catch (com.haulmont.yarg.exception.ReportingInterruptedException ie) {
+        } catch (ReportingInterruptedException ie) {
             throw new ReportCanceledException(String.format("Report is canceled. %s", ie.getMessage()));
         } catch (com.haulmont.yarg.exception.ReportingException re) {
-            Throwable rootCause = ExceptionUtils.getRootCause(re);
             //todo https://github.com/Haulmont/jmix-reports/issues/22
+//            Throwable rootCause = ExceptionUtils.getRootCause(re);
 //            if (rootCause instanceof ResourceCanceledException) {
 //                throw new ReportCanceledException(String.format("Report is canceled. %s", rootCause.getMessage()));
 //            }
@@ -634,22 +643,24 @@ public class ReportsImpl implements Reports {
                     filterCandidateParameter = (ReportInputParameter) object;
                 }
 
-                if (realAlias.equals(filterCandidateParameter.getAlias())) {
-                    if (DataSetType.MULTI == dataSetType) {
-                        //find param that is matched for a MULTI dataset
-                        if (isCollectionAlias) {
+                if(filterCandidateParameter != null) {
+                    if (realAlias.equals(filterCandidateParameter.getAlias())) {
+                        if (DataSetType.MULTI == dataSetType) {
+                            //find param that is matched for a MULTI dataset
+                            if (isCollectionAlias) {
+                                if (ParameterType.ENTITY == filterCandidateParameter.getType()) {
+                                    return true;
+                                }
+                            } else {
+                                if (ParameterType.ENTITY_LIST == filterCandidateParameter.getType()) {
+                                    return true;
+                                }
+                            }
+                        } else if (DataSetType.SINGLE == dataSetType) {
+                            //find param that is matched for a SINGLE dataset
                             if (ParameterType.ENTITY == filterCandidateParameter.getType()) {
                                 return true;
                             }
-                        } else {
-                            if (ParameterType.ENTITY_LIST == filterCandidateParameter.getType()) {
-                                return true;
-                            }
-                        }
-                    } else if (DataSetType.SINGLE == dataSetType) {
-                        //find param that is matched for a SINGLE dataset
-                        if (ParameterType.ENTITY == filterCandidateParameter.getType()) {
-                            return true;
                         }
                     }
                 }
@@ -806,7 +817,7 @@ public class ReportsImpl implements Reports {
             constraintName = matcher.group(1);
         } else {
             for (int i = 1; i < matcher.groupCount(); i++) {
-                if (StringUtils.isNotBlank(matcher.group(i))) {
+                if (isNotBlank(matcher.group(i))) {
                     constraintName = matcher.group(i);
                     break;
                 }

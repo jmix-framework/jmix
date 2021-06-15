@@ -164,7 +164,6 @@ public class ReportWizardCreator extends Screen implements WizardScreen {
             regionsStepFragment.setEntityTreeHasSimpleAttrs(entityTree.getEntityTreeStructureInfo().isEntityTreeHasSimpleAttrs());
             regionsStepFragment.setEntityTreeHasCollections(entityTree.getEntityTreeStructureInfo().isEntityTreeRootHasCollections());
 
-            entityTree.getEntityTreeRootNode().getLocalizedName();
             getItem().setEntityTreeRootNode(entityTree.getEntityTreeRootNode());
             detailsFragment.setNeedUpdateEntityModel(false);
         }

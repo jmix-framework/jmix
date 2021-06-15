@@ -38,8 +38,6 @@ public class EditorPrintFormAction extends AbstractPrintFormAction {
 
     public static final String ID = "editorPrintForm";
 
-    protected Messages messages;
-
     @Autowired
     protected Metadata metadata;
 
@@ -57,7 +55,6 @@ public class EditorPrintFormAction extends AbstractPrintFormAction {
 
     @Autowired
     protected void setMessages(Messages messages) {
-        this.messages = messages;
         this.caption = messages.getMessage(getClass(), "actions.Report");
     }
 

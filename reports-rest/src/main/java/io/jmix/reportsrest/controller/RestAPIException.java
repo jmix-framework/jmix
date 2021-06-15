@@ -18,6 +18,8 @@ package io.jmix.reportsrest.controller;
 
 import org.springframework.http.HttpStatus;
 
+import javax.annotation.Nullable;
+
 public class RestAPIException extends RuntimeException {
 
     protected HttpStatus httpStatus;
@@ -28,7 +30,7 @@ public class RestAPIException extends RuntimeException {
         this(message, details, httpStatus, null);
     }
 
-    public RestAPIException(String message, String details, HttpStatus httpStatus, Throwable cause) {
+    public RestAPIException(String message, String details, HttpStatus httpStatus, @Nullable Throwable cause) {
         super(message, cause);
         this.details = details;
         this.httpStatus = httpStatus;

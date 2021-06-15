@@ -67,9 +67,6 @@ public class SaveStepFragment extends StepFragment {
     protected Dialogs dialogs;
 
     @Autowired
-    protected Messages messages;
-
-    @Autowired
     protected Fragments fragments;
 
     @Autowired
@@ -247,6 +244,7 @@ public class SaveStepFragment extends StepFragment {
         } else if (chartDescription instanceof SerialChartDescription) {
             chartJson = chartToJsonConverter.convertSerialChart((SerialChartDescription) chartDescription, randomChartData);
         }
+        chartJson = chartJson == null ? "{}" : chartJson;
 
         Fragment chartFragment = fragments.create(this, ShowChartScreen.JSON_CHART_SCREEN_ID,
                 new MapScreenOptions(ParamsMap.of(ShowChartScreen.CHART_JSON_PARAMETER, chartJson)))

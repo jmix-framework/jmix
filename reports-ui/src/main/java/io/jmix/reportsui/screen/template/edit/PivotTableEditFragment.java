@@ -45,12 +45,12 @@ import java.util.stream.Collectors;
 @UiDescriptor("pivot-table-edit-fragment.xml")
 public class PivotTableEditFragment extends DescriptionEditFragment {
 
-    public static final Set<RendererType> C3_RENDERER_TYPES = Sets.newHashSet(
+    public static final Set<RendererType> C3_RENDERER_TYPES = Collections.unmodifiableSet(Sets.newHashSet(
             RendererType.LINE_CHART, RendererType.BAR_CHART, RendererType.STACKED_BAR_CHART,
-            RendererType.AREA_CHART, RendererType.SCATTER_CHART);
+            RendererType.AREA_CHART, RendererType.SCATTER_CHART));
 
-    public static final Set<RendererType> HEATMAP_RENDERER_TYPES = Sets.newHashSet(
-            RendererType.HEATMAP, RendererType.COL_HEATMAP, RendererType.ROW_HEATMAP);
+    public static final Set<RendererType> HEATMAP_RENDERER_TYPES = Collections.unmodifiableSet(Sets.newHashSet(
+            RendererType.HEATMAP, RendererType.COL_HEATMAP, RendererType.ROW_HEATMAP));
 
     @Autowired
     protected InstanceContainer<PivotTableDescription> pivotTableDc;

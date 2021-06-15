@@ -64,8 +64,6 @@ public class ListPrintFormAction extends AbstractPrintFormAction implements Acti
 
     public static final String ID = "listPrintForm";
 
-    protected Messages messages;
-
     protected ListComponent target;
 
     public ListPrintFormAction() {
@@ -83,7 +81,6 @@ public class ListPrintFormAction extends AbstractPrintFormAction implements Acti
 
     @Autowired
     public void setMessages(Messages messages) {
-        this.messages = messages;
         this.caption = messages.getMessage(ListPrintFormAction.class, "actions.ListPrintForm");
     }
 

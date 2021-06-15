@@ -32,7 +32,9 @@ import org.springframework.stereotype.Component;
 public class OutputFileNameValidator extends AbstractValidator<String> {
 
     @Autowired
-    protected Messages messages;
+    protected void setMessages(Messages messages) {
+        this.messages = messages;
+    }
 
     @Override
     public void accept(String value) {

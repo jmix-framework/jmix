@@ -144,6 +144,12 @@ public class CustomFormatter implements CustomReport {
             result = scriptEvaluator.evaluate(new StaticScriptSource(customDefinition), scriptParams);
         }
 
+        if (result == null) {
+            throw new ReportingException(
+                    format("Result returned from custom report [%s] is null " +
+                            "but only byte[] and strings are supported", customDefinition));
+        }
+
         if (result instanceof byte[]) {
             return (byte[]) result;
         } else if (result instanceof CharSequence) {
@@ -167,8 +173,14 @@ public class CustomFormatter implements CustomReport {
 
         convertedParams.put(ROOT_BAND, rootBand);
 
-        String url = scriptEvaluator.evaluate(new StaticScriptSource("return \"" + customDefinition + "\""), convertedParams).toString();
+        Object scriptResult = scriptEvaluator.evaluate(new StaticScriptSource("return \"" + customDefinition + "\""), convertedParams);
 
+        if (scriptResult == null) {
+            throw new ReportingException(
+                    format("Can not get generated URL returned from custom report [%s]", customDefinition));
+        }
+
+        String url = scriptResult.toString();
         try {
             Future<byte[]> future = executor.submit(() ->
                     doReadBytesFromUrl(url)
@@ -188,7 +200,7 @@ public class CustomFormatter implements CustomReport {
 
     protected static class FormattedDate extends Date {
         private static final long serialVersionUID = 6328140953372636008L;
-        private static final SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss aaa");
+        private static final String DATE_FORMAT = "MM/dd/yyyy HH:mm:ss aaa";
 
         public FormattedDate(Date date) {
             super(date.getTime());
@@ -196,7 +208,7 @@ public class CustomFormatter implements CustomReport {
 
         @Override
         public String toString() {
-            return dateFormat.format(this);
+            return new SimpleDateFormat(DATE_FORMAT).format(this);
         }
     }
 

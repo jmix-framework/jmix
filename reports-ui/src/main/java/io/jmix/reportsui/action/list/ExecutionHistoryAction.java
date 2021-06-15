@@ -99,9 +99,10 @@ public class ExecutionHistoryAction extends ListAction {
         screenBuilders.lookup(Report.class, screen)
                 .withScreenClass(ReportExecutionDialog.class)
                 .withOpenMode(OpenMode.DIALOG)
-                .withOptions(new MapScreenOptions(ParamsMap.of(
-                        ReportExecutionDialog.SCREEN_PARAMETER, hostScreen.getId(),
-                        ReportExecutionDialog.META_CLASS_PARAMETER, metaClass)))
+                .withOptions(new MapScreenOptions(ParamsMap.of()
+                        .pair(ReportExecutionDialog.SCREEN_PARAMETER, hostScreen.getId())
+                        .pair(ReportExecutionDialog.META_CLASS_PARAMETER, metaClass)
+                        .create()))
                 .withSelectHandler(reports -> openExecutionBrowser(reports, screen))
                 .show();
     }

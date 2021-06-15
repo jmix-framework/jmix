@@ -17,8 +17,6 @@
 package io.jmix.reportsui.screen.report.wizard.step;
 
 import io.jmix.core.ExtendedEntities;
-import io.jmix.core.MessageTools;
-import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.reports.entity.wizard.ReportData;
@@ -61,16 +59,10 @@ public class DetailsStepFragment extends StepFragment {
     protected Dialogs dialogs;
 
     @Autowired
-    protected MessageTools messageTools;
-
-    @Autowired
     protected ComboBox<MetaClass> entityField;
 
     @Autowired
     protected ComboBox<TemplateFileType> templateFileTypeField;
-
-    @Autowired
-    protected Metadata metadata;
 
     @Autowired
     protected ExtendedEntities extendedEntities;

@@ -156,10 +156,10 @@ public class InputParametersFragment extends ScreenFragment {
 
     public Map<String, Object> collectParameters() {
         Map<String, Object> parameters = new HashMap<>();
-        for (String paramName : parameterComponents.keySet()) {
-            Field parameterField = parameterComponents.get(paramName);
+        for (Map.Entry<String, Field> parameterEntry : parameterComponents.entrySet()) {
+            Field parameterField = parameterEntry.getValue();
             Object value = parameterField.getValue();
-            parameters.put(paramName, value);
+            parameters.put(parameterEntry.getKey(), value);
         }
         return parameters;
     }

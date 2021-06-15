@@ -157,9 +157,11 @@ public class RunReportAction extends ListAction {
         screenBuilders.screen(screen)
                 .withScreenClass(InputParametersDialog.class)
                 .withOpenMode(OpenMode.DIALOG)
-                .withOptions(new MapScreenOptions(ParamsMap.of(
-                        InputParametersDialog.REPORT_PARAMETER, report,
-                        InputParametersFragment.PARAMETERS_PARAMETER, selectedItems)))
+                .withOptions(new MapScreenOptions(ParamsMap.of()
+                        .pair(InputParametersDialog.REPORT_PARAMETER, report)
+                        .pair(InputParametersFragment.PARAMETERS_PARAMETER, selectedItems)
+                        .create()
+                ))
                 .show();
     }
 }

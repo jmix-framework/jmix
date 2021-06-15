@@ -373,7 +373,7 @@ public class ReportRestControllerManager {
         }
     }
 
-    protected class ReportInfo {
+    protected static class ReportInfo {
         protected String id;
         protected String name;
         protected String code;

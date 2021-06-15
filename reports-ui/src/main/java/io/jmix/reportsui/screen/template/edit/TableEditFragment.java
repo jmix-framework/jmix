@@ -47,7 +47,6 @@ public class TableEditFragment extends DescriptionEditFragment {
     public static final int UP = 1;
     public static final int DOWN = -1;
 
-    protected ReportTemplate reportTemplate;
     protected TemplateTableDescription description;
 
     @Autowired
@@ -235,7 +234,7 @@ public class TableEditFragment extends DescriptionEditFragment {
 
     @Override
     public boolean applyChanges() {
-        reportTemplate.setTemplateTableDescription(templateTableDc.getItem());
+        getReportTemplate().setTemplateTableDescription(templateTableDc.getItem());
 
         for (TemplateTableBand band : tableBandsDc.getItems()) {
             if (band.getBandName() == null) {

@@ -82,9 +82,6 @@ public class RegionsStepFragment extends StepFragment {
     protected UiComponents uiComponents;
 
     @Autowired
-    protected MessageTools messageTools;
-
-    @Autowired
     protected ReportGuiManager reportGuiManager;
 
     @Autowired

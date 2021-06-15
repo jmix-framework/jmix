@@ -42,7 +42,6 @@ public class JsonConfigValidator extends AbstractValidator<String> {
     }
 
     protected Class caller;
-    protected Messages messages;
 
     public JsonConfigValidator(Class caller) {
         this.caller = caller;

@@ -231,7 +231,7 @@ public class QueryStepFragment extends StepFragment implements Suggester {
             }
         }
 
-        return null;
+        return StringUtils.EMPTY;
     }
 
     @Install(to = "reportParameterTable.edit", subject = "afterCommitHandler")

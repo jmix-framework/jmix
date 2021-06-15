@@ -26,6 +26,7 @@ import com.thoughtworks.xstream.io.HierarchicalStreamDriver;
 import com.thoughtworks.xstream.io.xml.XppDriver;
 import com.thoughtworks.xstream.mapper.Mapper;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,7 +35,7 @@ public class ReportsXStream extends XStream {
         this(null);
     }
 
-    public ReportsXStream(List<Class> excluded) {
+    public ReportsXStream(@Nullable List<Class> excluded) {
         this(null,
                 new XppDriver(),
                 new ClassLoaderReference(Thread.currentThread().getContextClassLoader()),
@@ -43,8 +44,8 @@ public class ReportsXStream extends XStream {
     }
 
     protected ReportsXStream(
-            ReflectionProvider reflectionProvider, HierarchicalStreamDriver driver, ClassLoaderReference classLoader,
-            Mapper mapper, final ReportsXStreamConverterLookup converterLookup) {
+            @Nullable ReflectionProvider reflectionProvider, HierarchicalStreamDriver driver, ClassLoaderReference classLoader,
+            @Nullable Mapper mapper, final ReportsXStreamConverterLookup converterLookup) {
         super(reflectionProvider, driver, classLoader, mapper,
                 converterLookup::lookupConverterForType,
                 converterLookup::registerConverter);
@@ -53,7 +54,7 @@ public class ReportsXStream extends XStream {
     public static class ReportsXStreamConverterLookup extends DefaultConverterLookup {
         protected List<Class> excluded;
 
-        public ReportsXStreamConverterLookup(List<Class> excluded) {
+        public ReportsXStreamConverterLookup(@Nullable List<Class> excluded) {
             super();
             this.excluded = new ArrayList<>();
             this.excluded.add(ExternalizableConverter.class);

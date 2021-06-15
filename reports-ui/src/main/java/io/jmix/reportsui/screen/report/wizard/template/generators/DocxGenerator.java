@@ -44,7 +44,7 @@ public class DocxGenerator extends AbstractOfficeGenerator {
                 mainDocumentPart.addParagraphOfText("");
                 int writableWidthTwips = wordMLPackage.getDocumentModel().getSections().get(0).getPageDimensions().getWritableWidthTwips();
                 int cols = reportRegion.getRegionProperties().size();
-                int cellWidthTwips = new Double(Math.floor((writableWidthTwips / cols))).intValue();
+                int cellWidthTwips = (int) Math.floor((writableWidthTwips / (double) cols));
                 Tbl table = TblFactory.createTable(2, reportRegion.getRegionProperties().size(), cellWidthTwips);
                 boolean isFirstHeaderCellFounded = false; //for adding band name in table header row
                 List<String> tableHeaderRowData = new ArrayList<>(reportRegion.getRegionProperties().size());

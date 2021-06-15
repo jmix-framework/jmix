@@ -112,6 +112,6 @@ public abstract class StepFragment extends ScreenFragment {
     }
 
     protected String getDefaultRequiredMessage(String name) {
-        return messages.formatMessage("validation.required.defaultMsg", name);
+        return messages.formatMessage("", "validation.required.defaultMsg", name);
     }
 }

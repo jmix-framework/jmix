@@ -161,7 +161,8 @@ public class SaveStepFragment extends StepFragment {
         if (StringUtils.isBlank(reportData.getName())) {
             MetaClass entityMetaClass = metadata.findClass(reportData.getEntityName());
             return entityMetaClass != null ?
-                    messages.formatMessage("downloadOutputFileNamePattern", messageTools.getEntityCaption(entityMetaClass), fileExtension) :
+                    messages.formatMessage(SaveStepFragment.class,
+                            "downloadOutputFileNamePattern", messageTools.getEntityCaption(entityMetaClass), fileExtension) :
                     "";
         } else {
             return reportData.getName() + "." + fileExtension;

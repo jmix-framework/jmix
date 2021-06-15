@@ -37,7 +37,6 @@ public class FormatterLoadFactory {
 
     protected final Map<String, Function<Element, ? extends Formatter>> FORMATTERS_MAP =
             ImmutableMap.<String, Function<Element, ? extends Formatter>>builder()
-                    .put("className", this::loadClassNameFormatter)
                     .put("collection", this::loadCollectionFormatter)
                     .put("custom", this::loadCustomFormatter)
                     .put("date", this::loadDateFormatter)
@@ -72,10 +71,6 @@ public class FormatterLoadFactory {
      */
     public boolean isFormatter(Element element) {
         return FORMATTERS_MAP.get(element.getName()) != null;
-    }
-
-    protected ClassNameFormatter loadClassNameFormatter(Element element) {
-        return applicationContext.getBean(ClassNameFormatter.class);
     }
 
     protected CollectionFormatter loadCollectionFormatter(Element element) {

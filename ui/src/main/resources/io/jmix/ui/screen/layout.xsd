@@ -1362,7 +1362,6 @@
 
     <xs:complexType name="formatterType">
         <xs:choice minOccurs="0">
-            <xs:element name="className" minOccurs="0"/>
             <xs:element name="collection" minOccurs="0"/>
             <xs:element name="custom" minOccurs="0" type="customFormatterType"/>
             <xs:element name="date" minOccurs="0" type="dateFormatterType"/>

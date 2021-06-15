@@ -21,7 +21,7 @@ import io.jmix.ui.meta.CanvasBehaviour;
 import io.jmix.ui.meta.StudioComponent;
 
 @StudioComponent(
-        caption = "TimeIndicator",
+        caption = "TimeZoneIndicator",
         category = "Main window",
         xmlElement = "timeZoneIndicator",
         icon = "io/jmix/ui/icon/mainwindow/timeZoneIndicator.svg",

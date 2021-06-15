@@ -228,7 +228,7 @@ public class EntityImportExportImpl implements EntityImportExport {
                 .setAccessConstraints(accessConstraintsRegistry.getConstraints());
         Object dstEntity = dataManager.load(ctx);
 
-        importEntity(srcEntity, dstEntity, importPlan, fetchPlan, saveContext, referenceInfoList, optimisticLocking);
+        importEntity(srcEntity, dstEntity, importPlan, fetchPlan, saveContext, referenceInfoList, optimisticLocking, false);
 
         Set<Object> loadedEntities = new HashSet<>();
         for (ReferenceInfo referenceInfo : referenceInfoList) {
@@ -261,6 +261,11 @@ public class EntityImportExportImpl implements EntityImportExport {
 
     @Override
     public Collection importEntities(Collection entities, EntityImportPlan importPlan, boolean validate, boolean optimisticLocking) {
+        return importEntities(entities, importPlan, validate, optimisticLocking, false);
+    }
+
+    @Override
+    public Collection<Object> importEntities(Collection<Object> entities, EntityImportPlan importPlan, boolean validate, boolean optimisticLocking, boolean additionComposition) {
         List<ReferenceInfo> referenceInfoList = new ArrayList<>();
         SaveContext saveContext = new SaveContext();
         saveContext.setHint("jmix.softDeletion", false);
@@ -283,7 +288,7 @@ public class EntityImportExportImpl implements EntityImportExport {
                     .setAccessConstraints(accessConstraintsRegistry.getConstraints());
             Object dstEntity = dataManager.load(ctx);
 
-            importEntity(srcEntity, dstEntity, importPlan, fetchPlan, saveContext, referenceInfoList, optimisticLocking);
+            importEntity(srcEntity, dstEntity, importPlan, fetchPlan, saveContext, referenceInfoList, optimisticLocking, additionComposition);
         }
 
         //2. references to existing entities are processed
@@ -340,7 +345,8 @@ public class EntityImportExportImpl implements EntityImportExport {
                                   FetchPlan fetchPlan,
                                   SaveContext saveContext,
                                   Collection<ReferenceInfo> referenceInfoList,
-                                  boolean optimisticLocking) {
+                                  boolean optimisticLocking,
+                                  boolean additionComposition) {
         MetaClass metaClass = metadata.getClass(srcEntity);
         boolean createOp = false;
         if (dstEntity == null) {
@@ -384,7 +390,8 @@ public class EntityImportExportImpl implements EntityImportExport {
                             break;
                         case ONE_TO_MANY:
                             importOneToManyCollectionAttribute(srcEntity, dstEntity,
-                                    importPlanProperty, propertyFetchPlan, saveContext, referenceInfoList, optimisticLocking);
+                                    importPlanProperty, propertyFetchPlan, saveContext, referenceInfoList,
+                                    optimisticLocking, additionComposition);
                             break;
                         default:
                             importReference(srcEntity, dstEntity, importPlanProperty, propertyFetchPlan, saveContext, referenceInfoList, optimisticLocking);
@@ -416,7 +423,7 @@ public class EntityImportExportImpl implements EntityImportExport {
         } else {
             dstPropertyValue = srcPropertyValue != null ?
                     importEntity(srcPropertyValue, dstPropertyValue, importPlanProperty.getPlan(), fetchPlan, saveContext, referenceInfoList,
-                            optimisticLocking) :
+                            optimisticLocking, false) :
                     null;
             EntityValues.setValue(dstEntity, importPlanProperty.getName(), dstPropertyValue);
         }
@@ -428,7 +435,8 @@ public class EntityImportExportImpl implements EntityImportExport {
                                                       @Nullable FetchPlan fetchPlan,
                                                       SaveContext saveContext,
                                                       Collection<ReferenceInfo> referenceInfoList,
-                                                      boolean optimisticLocking) {
+                                                      boolean optimisticLocking,
+                                                      boolean additionalComposition) {
         Collection<Object> collectionValue = EntityValues.getValue(srcEntity, importPlanProperty.getName());
         Collection<Object> prevCollectionValue = EntityValues.getValue(dstEntity, importPlanProperty.getName());
 
@@ -443,7 +451,7 @@ public class EntityImportExportImpl implements EntityImportExport {
                 .onCreate(e -> {
                     if (!dstFilteredIds.contains(referenceToEntitySupport.getReferenceId(e))) {
                         Object result = importEntity(e, null, importPlanProperty.getPlan(), fetchPlan,
-                                saveContext, referenceInfoList, optimisticLocking);
+                                saveContext, referenceInfoList, optimisticLocking, additionalComposition);
                         if (inverseMetaProperty != null) {
                             EntityValues.setValue(result, inverseMetaProperty.getName(), dstEntity);
                         }
@@ -453,7 +461,7 @@ public class EntityImportExportImpl implements EntityImportExport {
                 .onUpdate((src, dst) -> {
                     if (!dstFilteredIds.contains(referenceToEntitySupport.getReferenceId(src))) {
                         Object result = importEntity(src, dst, importPlanProperty.getPlan(), fetchPlan,
-                                saveContext, referenceInfoList, optimisticLocking);
+                                saveContext, referenceInfoList, optimisticLocking, additionalComposition);
                         if (inverseMetaProperty != null) {
                             EntityValues.setValue(result, inverseMetaProperty.getName(), dstEntity);
                         }
@@ -461,14 +469,16 @@ public class EntityImportExportImpl implements EntityImportExport {
                     }
                 })
                 .onDelete(e -> {
-                    Object refId = referenceToEntitySupport.getReferenceId(e);
-                    if (importPlanProperty.getCollectionImportPolicy() == CollectionImportPolicy.REMOVE_ABSENT_ITEMS) {
-                        if (!dstFilteredIds.contains(refId) && !srcFilteredIds.contains(refId)) {
-                            saveContext.removing(e);
+                    if (!additionalComposition) {
+                        Object refId = referenceToEntitySupport.getReferenceId(e);
+                        if (importPlanProperty.getCollectionImportPolicy() == CollectionImportPolicy.REMOVE_ABSENT_ITEMS) {
+                            if (!dstFilteredIds.contains(refId) && !srcFilteredIds.contains(refId)) {
+                                saveContext.removing(e);
+                            }
                         }
-                    }
-                    if (srcFilteredIds.contains(refId)) {
-                        newCollectionValue.add(e);
+                        if (srcFilteredIds.contains(refId)) {
+                            newCollectionValue.add(e);
+                        }
                     }
                 })
                 .compare(collectionValue, prevCollectionValue);
@@ -495,14 +505,14 @@ public class EntityImportExportImpl implements EntityImportExport {
                     .onCreate(e -> {
                         if (!dstFilteredIds.contains(referenceToEntitySupport.getReferenceId(e))) {
                             Object result = importEntity(e, null, importPlanProperty.getPlan(), fetchPlan,
-                                    saveContext, referenceInfoList, optimisticLocking);
+                                    saveContext, referenceInfoList, optimisticLocking, false);
                             newCollectionValue.add(result);
                         }
                     })
                     .onUpdate((src, dst) -> {
                         if (!dstFilteredIds.contains(referenceToEntitySupport.getReferenceId(src))) {
                             Object result = importEntity(src, dst, importPlanProperty.getPlan(), fetchPlan,
-                                    saveContext, referenceInfoList, optimisticLocking);
+                                    saveContext, referenceInfoList, optimisticLocking, false);
                             newCollectionValue.add(result);
                         }
                     })
@@ -557,7 +567,7 @@ public class EntityImportExportImpl implements EntityImportExport {
                 FetchPlan fetchPlanProperty = fetchPlan.getProperty(propertyName) != null ? fetchPlan.getProperty(propertyName).getFetchPlan() : null;
                 if (metaProperty.getRange().getCardinality() == Range.Cardinality.ONE_TO_MANY) {
                     importOneToManyCollectionAttribute(srcEmbeddedEntity, dstEmbeddedEntity,
-                            vp, fetchPlanProperty, saveContext, referenceInfoList, optimisticLock);
+                            vp, fetchPlanProperty, saveContext, referenceInfoList, optimisticLock, false);
                 } else if (metaProperty.getRange().getCardinality() == Range.Cardinality.MANY_TO_MANY) {
                     importManyToManyCollectionAttribute(srcEmbeddedEntity, dstEmbeddedEntity,
                             vp, fetchPlanProperty, saveContext, referenceInfoList, optimisticLock);

@@ -19,6 +19,7 @@ package io.jmix.ui.app.themesettings;
 import com.vaadin.server.Page;
 import io.jmix.core.annotation.Internal;
 import io.jmix.ui.Notifications;
+import io.jmix.ui.UiComponents;
 import io.jmix.ui.UiThemeProperties;
 import io.jmix.ui.component.*;
 import io.jmix.ui.navigation.Route;
@@ -56,14 +57,21 @@ public class ThemeSettingsScreen extends Screen {
     protected CheckBoxGroup<String> checkBoxGroup;
 
     @Autowired
+    protected TabSheet tabSheet;
+    @Autowired
+    protected TabSheet tabSheetFramed;
+
+    @Autowired
     protected ThemeVariantsManager variantsManager;
 
     @Autowired
-    protected UiThemeProperties uiThemeProperties;
+    protected UiComponents uiComponents;
     @Autowired
     protected MessageBundle messageBundle;
     @Autowired
     protected Notifications notifications;
+    @Autowired
+    protected UiThemeProperties uiThemeProperties;
 
     protected String appWindowTheme;
     protected boolean settingsAvailable;
@@ -78,6 +86,7 @@ public class ThemeSettingsScreen extends Screen {
             initModeField();
             initSizeField();
             initOptions();
+            initTabSheets();
         }
     }
 
@@ -85,7 +94,7 @@ public class ThemeSettingsScreen extends Screen {
     public void onAfterShow(AfterShowEvent event) {
         if (!settingsAvailable) {
             notifications.create()
-                    .withCaption(messageBundle.getMessage("noSettingsAvailable"))
+                    .withCaption(messageBundle.getMessage("themeSettings.noSettingsAvailable"))
                     .withType(Notifications.NotificationType.WARNING)
                     .show();
 
@@ -110,7 +119,11 @@ public class ThemeSettingsScreen extends Screen {
     }
 
     protected List<String> generateSampleOptions() {
-        return Arrays.asList("Option 1", "Options 2", "Option 3");
+        return Arrays.asList(
+                messageBundle.formatMessage("themeSettings.option", 1),
+                messageBundle.formatMessage("themeSettings.option", 2),
+                messageBundle.formatMessage("themeSettings.option", 3)
+        );
     }
 
     protected void initModeField() {
@@ -118,9 +131,30 @@ public class ThemeSettingsScreen extends Screen {
         modeField.setValue(variantsManager.getThemeModeUserSettingOrDefault());
     }
 
+    @Install(to = "modeField", subject = "optionCaptionProvider")
+    private String modeFieldOptionCaptionProvider(String mode) {
+        return messageBundle.getMessage("themeSettings.mode." + mode);
+    }
+
     protected void initSizeField() {
         sizeField.setOptionsList(variantsManager.getThemeSizeList());
         sizeField.setValue(variantsManager.getThemeSizeUserSettingOrDefault());
+    }
+
+    @Install(to = "sizeField", subject = "optionCaptionProvider")
+    private String sizeFieldOptionCaptionProvider(String size) {
+        return messageBundle.getMessage("themeSettings.size." + size);
+    }
+
+    protected void initTabSheets() {
+        for (int i = 1; i <= 3; i++) {
+            tabSheet.addTab(
+                    messageBundle.formatMessage("themeSettings.tab", i),
+                    uiComponents.create(VBoxLayout.class));
+            tabSheetFramed.addTab(
+                    messageBundle.formatMessage("themeSettings.tab", i),
+                    uiComponents.create(VBoxLayout.class));
+        }
     }
 
     @Subscribe("applyBtn")

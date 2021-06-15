@@ -47,20 +47,21 @@
                     <vbox id="buttonsBox" margin="true" stylename="card" width="450px" height="250px">
                         <vbox spacing="true" align="MIDDLE_CENTER" width="AUTO">
                             <hbox spacing="true">
-                                <button caption="OK" icon="OK" stylename="primary" description="Primary"/>
-                                <button caption="Cancel" icon="CANCEL" description="Default"/>
+                                <button caption="msg:///actions.Ok" icon="OK" stylename="primary" description="Primary"/>
+                                <button caption="msg:///actions.Cancel" icon="CANCEL" description="Default"/>
                             </hbox>
                             <hbox spacing="true">
-                                <button caption="Save" icon="SAVE" stylename="friendly" description="Friendly"/>
-                                <button caption="Remove" icon="REMOVE" stylename="danger" description="Danger"/>
-                                <button caption="Secondary" stylename="secondary" description="Secondary"/>
+                                <button caption="msg:///actions.Save" icon="SAVE" stylename="friendly" description="Friendly"/>
+                                <button caption="msg:///actions.Remove" icon="REMOVE" stylename="danger" description="Danger"/>
+                                <button caption="msg:///actions.Edit" stylename="secondary" description="Secondary"/>
                             </hbox>
                         </vbox>
                     </vbox>
                     <vbox id="textFieldsBox" margin="true" stylename="card" width="350px" height="250px">
                         <vbox spacing="true" align="MIDDLE_CENTER" width="AUTO">
-                            <textField caption="TextField" inputPrompt="Placeholder"/>
-                            <textField caption="TextField | Required" required="true"/>
+                            <textField caption="msg://themeSettings.textField.caption"
+                                       inputPrompt="msg://themeSettings.placeholder"/>
+                            <textField caption="msg://themeSettings.textFieldRequired.caption" required="true"/>
                         </vbox>
                     </vbox>
                     <vbox id="checkBoxGroupBox" margin="true" stylename="card" width="250px" height="250px">
@@ -69,10 +70,10 @@
                     <vbox id="lookupFieldsBox" margin="true" stylename="card" width="350px" height="250px">
                         <vbox spacing="true" align="MIDDLE_CENTER" width="AUTO">
                             <comboBox id="comboBox"
-                                         caption="ComboBox"
-                                         inputPrompt="Placeholder"/>
+                                         caption="msg://themeSettings.comboBox.caption"
+                                         inputPrompt="msg://themeSettings.placeholder"/>
                             <comboBox id="requiredComboBox"
-                                         caption="ComboBox | Required"
+                                         caption="msg://themeSettings.comboBoxRequired.caption"
                                          required="true"/>
                         </vbox>
                     </vbox>
@@ -81,31 +82,17 @@
                     </vbox>
                     <vbox id="tabSheetsBox" margin="true" stylename="card" width="300px" height="300px">
                         <vbox spacing="true" align="MIDDLE_CENTER">
-                            <tabSheet height="100px" width="100%">
-                                <tab id="tab11"
-                                     caption="Tab 1"/>
-                                <tab id="tab12"
-                                     caption="Tab 2"/>
-                                <tab id="tab13"
-                                     caption="Tab 3"/>
-                            </tabSheet>
-                            <tabSheet height="100px" width="100%" stylename="framed">
-                                <tab id="tab21"
-                                     caption="Tab 1"/>
-                                <tab id="tab22"
-                                     caption="Tab 2"/>
-                                <tab id="tab23"
-                                     caption="Tab 3"/>
-                            </tabSheet>
+                            <tabSheet id="tabSheet" height="100px" width="100%"/>
+                            <tabSheet id="tabSheetFramed" height="100px" width="100%" stylename="framed"/>
                         </vbox>
                     </vbox>
                     <vbox id="labelsBox" margin="true" stylename="card" width="300px" height="350px">
                         <vbox spacing="true" align="MIDDLE_CENTER">
-                            <label value="Header 1" stylename="h1"/>
-                            <label value="Header 2" stylename="h2"/>
-                            <label value="Header 3" stylename="h3"/>
-                            <label value="Header 4" stylename="h4"/>
-                            <label value="Lorem ipsum dolor sit amet, consectetur adipisicing elit." width="100%"/>
+                            <label value="msg://themeSettings.header1" stylename="h1"/>
+                            <label value="msg://themeSettings.header2" stylename="h2"/>
+                            <label value="msg://themeSettings.header3" stylename="h3"/>
+                            <label value="msg://themeSettings.header4" stylename="h4"/>
+                            <label value="msg://themeSettings.loremIpsum" width="100%"/>
                         </vbox>
                     </vbox>
                 </flowBox>

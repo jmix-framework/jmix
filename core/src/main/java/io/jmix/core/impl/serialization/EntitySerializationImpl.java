@@ -541,6 +541,12 @@ public class EntitySerializationImpl implements EntitySerialization {
                         }
                     } else if (propertyRange.isClass()) {
                         if (Entity.class.isAssignableFrom(propertyType)) {
+
+                            if (!propertyValue.isJsonObject()) {
+                                throw new EntitySerializationException("Attribute '" + propertyName + "' refers to an entity. " +
+                                        "Property value must be a JSON object literal");
+                            }
+
                             if (metadataTools.isEmbedded(metaProperty)) {
                                 EntityValues.setValue(entity, propertyName, readEmbeddedEntity(propertyValue.getAsJsonObject(), metaProperty));
                             } else {
@@ -556,6 +562,11 @@ public class EntitySerializationImpl implements EntitySerialization {
                                 EntityValues.setValue(entity, propertyName, readEntity(propertyValue.getAsJsonObject(), propertyRange.asClass()));
                             }
                         } else if (Collection.class.isAssignableFrom(propertyType)) {
+                            if (!propertyValue.isJsonArray()) {
+                                throw new EntitySerializationException("Attribute '" + propertyName + "' refers to a collection. " +
+                                        "Property value must be a JSON array literal");
+                            }
+
                             Collection entities = readCollection(propertyValue.getAsJsonArray(), metaProperty);
                             EntityValues.setValue(entity, propertyName, entities);
                         }

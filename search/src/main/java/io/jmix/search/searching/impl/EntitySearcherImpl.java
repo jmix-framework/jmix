@@ -86,7 +86,12 @@ public class EntitySearcherImpl implements EntitySearcher {
     public SearchResult search(SearchContext searchContext, SearchStrategy searchStrategy) {
         log.debug("Perform search by context '{}'", searchContext);
         SearchResultImpl searchResult = initSearchResult(searchContext, searchStrategy);
-        SearchRequest searchRequest = createSearchRequest(searchContext, searchStrategy);
+        List<String> targetIndexes = resolveTargetIndexes(searchContext);
+        if (targetIndexes.isEmpty()) {
+            return searchResult;
+        }
+
+        SearchRequest searchRequest = createSearchRequest(targetIndexes, searchContext, searchStrategy);
         boolean moreDataAvailable;
         do {
             updateRequestOffset(searchRequest, searchResult);
@@ -117,16 +122,16 @@ public class EntitySearcherImpl implements EntitySearcher {
         return new SearchResultImpl(searchContext, searchStrategy);
     }
 
-    protected SearchRequest createSearchRequest(SearchContext searchContext, SearchStrategy searchStrategy) {
-        SearchRequest searchRequest = createBaseSearchRequest(searchContext);
+    protected SearchRequest createSearchRequest(List<String> targetIndexes, SearchContext searchContext, SearchStrategy searchStrategy) {
+        SearchRequest searchRequest = createBaseSearchRequest(targetIndexes);
         searchStrategy.configureRequest(searchRequest, searchContext);
         postStrategyConfiguration(searchRequest, searchContext);
         return searchRequest;
     }
 
-    protected SearchRequest createBaseSearchRequest(SearchContext searchContext) {
+    protected SearchRequest createBaseSearchRequest(List<String> targetIndexes) {
         SearchRequest searchRequest = new SearchRequest();
-        configureTargetIndices(searchRequest, searchContext);
+        searchRequest.indices(targetIndexes.toArray(targetIndexes.toArray(new String[0])));
         searchRequest.indicesOptions(IndicesOptions.lenientExpandOpen());
         return searchRequest;
     }
@@ -136,13 +141,13 @@ public class EntitySearcherImpl implements EntitySearcher {
         configureHighlight(searchRequest);
     }
 
-    protected void configureTargetIndices(SearchRequest searchRequest, SearchContext searchContext) {
+    protected List<String> resolveTargetIndexes(SearchContext searchContext) {
         Collection<String> requestedEntities = searchContext.getEntities();
         if (requestedEntities.isEmpty()) {
             requestedEntities = indexConfigurationManager.getAllIndexedEntities();
         }
 
-        List<String> targetIndices = requestedEntities.stream()
+        return requestedEntities.stream()
                 .map(metadata::getClass)
                 .filter(metaClass -> secureOperations.isEntityReadPermitted(metaClass, policyStore))
                 .map(metaClass -> indexConfigurationManager.getIndexConfigurationByEntityNameOpt(metaClass.getName()))
@@ -150,8 +155,6 @@ public class EntitySearcherImpl implements EntitySearcher {
                 .map(Optional::get)
                 .map(IndexConfiguration::getIndexName)
                 .collect(Collectors.toList());
-
-        searchRequest.indices(targetIndices.toArray(targetIndices.toArray(new String[0])));
     }
 
     protected void configureHighlight(SearchRequest searchRequest) {

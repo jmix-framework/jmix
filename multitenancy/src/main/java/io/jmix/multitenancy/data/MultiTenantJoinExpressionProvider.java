@@ -30,6 +30,7 @@ import org.eclipse.persistence.mappings.OneToManyMapping;
 import org.eclipse.persistence.mappings.OneToOneMapping;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import javax.persistence.Column;
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -63,6 +64,7 @@ public class MultiTenantJoinExpressionProvider extends AbstractJoinExpressionPro
         return null;
     }
 
+    @Nullable
     private Expression createToOneJoinExpression(OneToOneMapping oneToOneMapping) {
         ClassDescriptor descriptor = oneToOneMapping.getDescriptor();
         Class<?> referenceClass = oneToOneMapping.getReferenceClass();

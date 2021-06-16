@@ -307,7 +307,7 @@ public abstract class AbstractDatabaseUserRepository<T extends UserDetails> impl
     }
 
     protected boolean isUserDisabled(EntityChangedEvent<? extends UserDetails> event) {
-        return event.getChanges().isChanged("enabled")
-                && Boolean.TRUE.equals(event.getChanges().getOldValue("enabled"));
+        return event.getChanges().isChanged("active")
+                && Boolean.TRUE.equals(event.getChanges().getOldValue("active"));
     }
 }

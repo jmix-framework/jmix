@@ -40,7 +40,7 @@
             <column name="VERSION" value="1"/>
             <column name="USERNAME" value="admin"/>
             <column name="PASSWORD" value="{noop}admin"/>
-            <column name="ENABLED" valueBoolean="true"/>
+            <column name="ACTIVE" valueBoolean="true"/>
         </insert>
 
         <insert tableName="${userTable}" dbms="oracle, mysql, mariadb">
@@ -48,7 +48,7 @@
             <column name="VERSION" value="1"/>
             <column name="USERNAME" value="admin"/>
             <column name="PASSWORD" value="{noop}admin"/>
-            <column name="ENABLED" valueBoolean="true"/>
+            <column name="ACTIVE" valueBoolean="true"/>
         </insert>
 
     </changeSet>

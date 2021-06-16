@@ -1024,14 +1024,40 @@ class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    void createNewEntityWithInvalidJSON() throws Exception {
-        Map<String, String> replacements = new HashMap<>();
-        String json = getFileContent("invalidDriver.json", replacements);
+    void createNewEntityWithInvalidJsonEnumAttr() throws Exception {
+        String json = getFileContent("invalidDriverEnumAttr.json", null);
         String url = baseUrl + "/entities/ref$Driver";
         try (CloseableHttpResponse response = sendPost(url, oauthToken, json, null)) {
             assertEquals(HttpStatus.SC_BAD_REQUEST, statusCode(response));
             ReadContext ctx = parseResponse(response);
-            assertEquals("Cannot deserialize an entity from JSON", ctx.read("$.error"));
+            assertEquals("An error occurred while parsing enum. Class [class io.jmix.samples.rest.entity.driver.DriverStatus]." +
+                    " Value [10].", ctx.read("$.error"));
+            assertEquals("", ctx.read("$.details"));
+        }
+    }
+
+    @Test
+    void createNewEntityWithInvalidJsonEntityAttr() throws Exception {
+        String json = getFileContent("invalidInsuranceCaseEntityAttr.json", null);
+        String url = baseUrl + "/entities/ref$InsuranceCase";
+        try (CloseableHttpResponse response = sendPost(url, oauthToken, json, null)) {
+            assertEquals(HttpStatus.SC_BAD_REQUEST, statusCode(response));
+            ReadContext ctx = parseResponse(response);
+            assertEquals("Attribute 'repair' refers to an entity. " +
+                    "Property value must be a JSON object literal", ctx.read("$.error"));
+            assertEquals("", ctx.read("$.details"));
+        }
+    }
+
+    @Test
+    void createNewEntityWithInvalidJsonCollectionAttr() throws Exception {
+        String json = getFileContent("invalidCarCollectionAttr.json", null);
+        String url = baseUrl + "/entities/ref_Car";
+        try (CloseableHttpResponse response = sendPost(url, oauthToken, json, null)) {
+            assertEquals(HttpStatus.SC_BAD_REQUEST, statusCode(response));
+            ReadContext ctx = parseResponse(response);
+            assertEquals("Attribute 'repairs' refers to a collection. " +
+                    "Property value must be a JSON array literal", ctx.read("$.error"));
             assertEquals("", ctx.read("$.details"));
         }
     }
@@ -1661,7 +1687,7 @@ class EntitiesControllerFT extends AbstractRestControllerFT {
     @Test
     void updateEntityWithInvalidJson() throws Exception {
         Map<String, String> replacements = new HashMap<>();
-        String json = getFileContent("invalidDriver.json", replacements);
+        String json = getFileContent("invalidDriverEnumAttr.json", replacements);
         String url = baseUrl + "/entities/ref$Driver/" + driverUuidString;
         try (CloseableHttpResponse response = sendPut(url, oauthToken, json, null)) {
             assertEquals(HttpStatus.SC_BAD_REQUEST, statusCode(response));

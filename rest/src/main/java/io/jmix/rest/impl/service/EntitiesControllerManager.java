@@ -25,6 +25,7 @@ import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.impl.importexport.EntityImportException;
 import io.jmix.core.impl.importexport.EntityImportPlanJsonBuilder;
+import io.jmix.core.impl.serialization.EntitySerializationException;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
@@ -486,6 +487,8 @@ public class EntitiesControllerManager {
         Object entity;
         try {
             entity = entitySerialization.entityFromJson(entityJson, metaClass);
+        } catch (EntitySerializationException e) {
+            throw new RestAPIException(e.getMessage(), "", HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             throw new RestAPIException("Cannot deserialize an entity from JSON", "", HttpStatus.BAD_REQUEST, e);
         }

@@ -22,7 +22,7 @@ import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-@Component
+@Component("core_Dom4jToolsShutdownListener")
 public class Dom4jToolsShutdownListener {
 
     @Autowired

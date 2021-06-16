@@ -12,13 +12,13 @@ info:
     * Getting report group details
     * Execution of report
 
-    The Reports REST API is available at the URL `/reports/api`, e.g. `http://localhost:8080/reports/api/report`
+    The Reports REST API is available at the URL `/rest/reports`, e.g. `http://localhost:8080/rest/reports/report`
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   version: 1.0.0
 servers:
-  - url: /reports/api
+  - url: /rest/reports
 security:
   - oauth2:
       - rest-api

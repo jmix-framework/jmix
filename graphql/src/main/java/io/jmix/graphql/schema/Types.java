@@ -122,11 +122,6 @@ public class Types {
             GraphQLTime
     );
 
-    public static final List<GraphQLScalarType> stringTypes = ImmutableList.of(
-            GraphQLString,
-            GraphQLChar
-    );
-
     public enum ConditionUnionType {
         // todo need to investigate how to implement using jmix conditions
 //        NOT,

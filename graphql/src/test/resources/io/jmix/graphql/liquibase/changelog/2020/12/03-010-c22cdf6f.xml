@@ -142,6 +142,7 @@
             <column name="INTEGER_ATTR" type="INT"/>
             <column name="LONG_ATTR" type="BIGINT"/>
             <column name="STRING_ATTR" type="VARCHAR(255)"/>
+            <column name="CHAR_ATTR" type="char"/>
             <column name="TIME_ATTR" type="TIME"/>
             <column name="UUID_ATTR" type="UUID"/>
             <column name="LOCAL_DATE_TIME_ATTR" type="DATETIME"/>

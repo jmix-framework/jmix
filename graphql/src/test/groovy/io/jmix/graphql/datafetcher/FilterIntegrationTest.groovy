@@ -39,6 +39,21 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
                 ']}}'
     }
 
+    def "_eq for char"() {
+        when:
+        //where charAttr = 'c'
+        def response = query("datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                asObjectNode('{"filter": {"AND": [' +
+                        '{"charAttr": {"_eq": "c"}}' +
+                        ']}}')
+        )
+
+        then:
+        getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
+                '{"id":"032fd8a5-e042-4828-a802-36cbd2ce12de"}' +
+                ']}}'
+    }
+
     def "_eq for string with strict case"() {
         when:
         //where name = "Hillwood City"
@@ -252,6 +267,22 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
                 '{"id":"d881e37a-d28a-4e48-cb96-668d4a6fb57d"},' +
                 '{"id":"d99d468e-3cc0-01da-295e-595e48fec620"},' +
                 '{"id":"ff01c573-ebf3-c704-3ad0-fd582f7a2a12"}' +
+                ']}}'
+    }
+
+    def "_neq for char"() {
+        when:
+        //where charAttr <> 'c'
+        def response = query("datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                asObjectNode('{"filter": {"AND": [' +
+                        '{"charAttr": {"_neq": "c"}}' +
+                        ']}}')
+        )
+
+        then:
+        getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
+                '{"id":"b1a1f3c9-6076-4725-8c4a-65a4267d15e1"},' +
+                '{"id":"db9faa31-dfa3-4b97-943c-ba268888cdc3"}' +
                 ']}}'
     }
 
@@ -1352,6 +1383,22 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
 //                ']}}'
 //    }
 
+    def "_in for char"() {
+        when:
+        //where charAttr in ('c', 'b')
+        def response = query("datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                asObjectNode('{"filter": {"AND": [' +
+                        '{"charAttr": {"_in": ["c", "b"]}}' +
+                        ']}}')
+        )
+
+        then:
+        getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
+                '{"id":"032fd8a5-e042-4828-a802-36cbd2ce12de"},' +
+                '{"id":"b1a1f3c9-6076-4725-8c4a-65a4267d15e1"}' +
+                ']}}'
+    }
+
     def "_in for string with strict case"() {
         when:
         //where name in ("Hillwood City", "Chez Paris")
@@ -1502,6 +1549,21 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
 //                '{"id":"db9faa31-dfa3-4b97-943c-ba268888cdc3"}' +
 //                ']}}'
 //    }
+
+    def "_notIn for char"() {
+        when:
+        //where charAttr in ('c', 'b')
+        def response = query("datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                asObjectNode('{"filter": {"AND": [' +
+                        '{"charAttr": {"_notIn": ["c", "b"]}}' +
+                        ']}}')
+        )
+
+        then:
+        getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
+                '{"id":"db9faa31-dfa3-4b97-943c-ba268888cdc3"}' +
+                ']}}'
+    }
 
     def "_notIn for string with strict case"() {
         when:
@@ -1718,6 +1780,22 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
                 ']}}'
     }
 
+    def "_isNull (true) for char"() {
+        when:
+        //where charAttr is null
+        def response = query("datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                asObjectNode('{"filter": {"AND": [' +
+                        '{"charAttr": {"_isNull": "true"}}' +
+                        ']}}')
+        )
+
+        then:
+        getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
+                '{"id":"00000000-0000-0000-0000-000000000000"}' +
+                ']}}'
+    }
+
+
     def "_isNull (true) for string"() {
         when:
         //where stringAttr is null
@@ -1918,6 +1996,23 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
                 "datafetcher/query-datatypesTestEntity-with-filter.graphql",
                 asObjectNode('{"filter": {"AND": [' +
                         '{"offsetTimeAttr": {"_isNull": false}}' +
+                        ']}}')
+        )
+
+        then:
+        getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
+                '{"id":"032fd8a5-e042-4828-a802-36cbd2ce12de"},' +
+                '{"id":"b1a1f3c9-6076-4725-8c4a-65a4267d15e1"},' +
+                '{"id":"db9faa31-dfa3-4b97-943c-ba268888cdc3"}' +
+                ']}}'
+    }
+
+    def "_isNull (false) for char"() {
+        when:
+        //where charAttr is not null
+        def response = query("datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                asObjectNode('{"filter": {"AND": [' +
+                        '{"charAttr": {"_isNull": "false"}}' +
                         ']}}')
         )
 

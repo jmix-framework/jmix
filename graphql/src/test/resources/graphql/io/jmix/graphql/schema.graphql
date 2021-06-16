@@ -652,6 +652,7 @@ type scr_DatatypesTestEntity {
   associationO2Oattr: scr_AssociationO2OTestEntity
   bigDecimalAttr: BigDecimal
   booleanAttr: Boolean
+  charAttr: Char
   compositionO2Mattr: [scr_CompositionO2MTestEntity]
   compositionO2Oattr: scr_CompositionO2OTestEntity
   datatypesTestEntity3: scr_DatatypesTestEntity3
@@ -1078,10 +1079,6 @@ input inp_BooleanFilterCondition {
 
 "expression to compare columns of type Char. All fields are combined with logical 'AND'"
 input inp_CharFilterCondition {
-  "contains substring"
-  _contains: Char
-  "ends with substring"
-  _endsWith: Char
   "equals"
   _eq: Char
   "in list"
@@ -1090,12 +1087,8 @@ input inp_CharFilterCondition {
   _isNull: Boolean
   "not equals"
   _neq: Char
-  "not contains substring"
-  _notContains: Char
   "not in list"
   _notIn: [Char]
-  "starts with substring"
-  _startsWith: Char
 }
 
 "expression to compare columns of type Date. All fields are combined with logical 'AND'"
@@ -1692,6 +1685,7 @@ input inp_scr_DatatypesTestEntity {
   associationO2Oattr: inp_scr_AssociationO2OTestEntity
   bigDecimalAttr: BigDecimal
   booleanAttr: Boolean
+  charAttr: Char
   compositionO2Mattr: [inp_scr_CompositionO2MTestEntity]
   compositionO2Oattr: inp_scr_CompositionO2OTestEntity
   datatypesTestEntity3: inp_scr_DatatypesTestEntity3
@@ -1782,6 +1776,7 @@ input inp_scr_DatatypesTestEntityFilterCondition {
   associationO2Oattr: [inp_scr_AssociationO2OTestEntityFilterCondition]
   bigDecimalAttr: [inp_BigDecimalFilterCondition]
   booleanAttr: [inp_BooleanFilterCondition]
+  charAttr: [inp_CharFilterCondition]
   compositionO2Oattr: [inp_scr_CompositionO2OTestEntityFilterCondition]
   datatypesTestEntity3: [inp_scr_DatatypesTestEntity3FilterCondition]
   dateAttr: [inp_DateFilterCondition]
@@ -1811,6 +1806,7 @@ input inp_scr_DatatypesTestEntityOrderBy {
   associationO2Oattr: inp_scr_AssociationO2OTestEntityOrderBy
   bigDecimalAttr: SortOrder
   booleanAttr: SortOrder
+  charAttr: SortOrder
   compositionO2Oattr: inp_scr_CompositionO2OTestEntityOrderBy
   datatypesTestEntity3: inp_scr_DatatypesTestEntity3OrderBy
   dateAttr: SortOrder

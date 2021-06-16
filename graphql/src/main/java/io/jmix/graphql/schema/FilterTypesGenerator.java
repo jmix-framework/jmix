@@ -30,7 +30,7 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static graphql.Scalars.GraphQLBoolean;
+import static graphql.Scalars.*;
 import static io.jmix.graphql.schema.BaseTypesGenerator.inpObjectField;
 import static io.jmix.graphql.schema.BaseTypesGenerator.listInpObjectField;
 import static io.jmix.graphql.schema.Types.FilterOperation.*;
@@ -223,8 +223,11 @@ public class FilterTypesGenerator {
         if (Types.numberTypes.contains(scalarType)) {
             return EnumSet.of(EQ, NEQ, GT, GTE, LT, LTE, IN_LIST, NOT_IN_LIST, IS_NULL);
         }
-        if (Types.stringTypes.contains(scalarType)) {
+        if (scalarType.equals(GraphQLString)) {
             return EnumSet.of(EQ, NEQ, IN_LIST, NOT_IN_LIST, STARTS_WITH, ENDS_WITH, CONTAINS, NOT_CONTAINS, IS_NULL);
+        }
+        if (scalarType.equals(GraphQLChar)) {
+            return EnumSet.of(EQ, NEQ, IN_LIST, NOT_IN_LIST, IS_NULL);
         }
         if (Types.dateTimeTypes.contains(scalarType)) {
             return EnumSet.of(EQ, NEQ, IN_LIST, NOT_IN_LIST, GT, GTE, LT, LTE, IS_NULL);

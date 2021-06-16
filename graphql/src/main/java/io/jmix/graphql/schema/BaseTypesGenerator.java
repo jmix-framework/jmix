@@ -142,6 +142,8 @@ public class BaseTypesGenerator {
 
         if (String.class.isAssignableFrom(javaType))
             return Scalars.GraphQLString.getName();
+        if (Character.class.isAssignableFrom(javaType))
+            return Scalars.GraphQLChar.getName();
         if (Integer.class.isAssignableFrom(javaType) || int.class.isAssignableFrom(javaType)) {
             return Scalars.GraphQLInt.getName();
         }

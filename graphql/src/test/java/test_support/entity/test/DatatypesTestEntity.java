@@ -23,6 +23,9 @@ public class DatatypesTestEntity {
     @Column(name = "ID", nullable = false)
     private UUID id;
 
+    @Column(name = "CHAR_ATTR")
+    private Character charAttr;
+
     @Column(name = "BIG_DECIMAL_ATTR")
     protected BigDecimal bigDecimalAttr;
 
@@ -140,6 +143,14 @@ public class DatatypesTestEntity {
 
     @Column(name = "READ_ONLY_STRING_ATTR")
     protected String readOnlyStringAttr;
+
+    public Character getCharAttr() {
+        return charAttr;
+    }
+
+    public void setCharAttr(Character charAttr) {
+        this.charAttr = charAttr;
+    }
 
     public Time getTimeAttr() {
         return timeAttr;

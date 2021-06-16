@@ -16,24 +16,21 @@
 
 package io.jmix.search.index;
 
-import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.security.Authenticated;
 import io.jmix.search.SearchProperties;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.index.queue.IndexingQueueManager;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jmx.export.annotation.*;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
-import java.util.Optional;
+import java.util.Map;
 
 @ManagedResource(description = "Manages entity indexing for full text search", objectName = "jmix.search:type=EntityIndexing")
 @Component("search_EntityIndexingManagementFacade")
 public class EntityIndexingManagementFacade {
 
-    @Autowired
-    protected EntityReindexer entityReindexer;
     @Autowired
     protected IndexingQueueManager indexingQueueManager;
     @Autowired
@@ -49,37 +46,23 @@ public class EntityIndexingManagementFacade {
     }
 
     @Authenticated
-    @ManagedOperation(description = "Recreate indexes and enqueue all instances of all indexed entities")
-    public String reindexAll() {
-        int amount = entityReindexer.enqueueReindexAll();
-        return String.format("%d instances of all indexed entities have been enqueued", amount);
-    }
-
-    @Authenticated
-    @ManagedOperation(description = "Recreate index and enqueue all instances of provided indexed entity")
-    @ManagedOperationParameters({
-            @ManagedOperationParameter(name = "entityName", description = "Name of entity configured for indexing, e.g. demo_Order")
-    })
-    public String reindexAll(String entityName) {
-        Preconditions.checkNotEmptyString(entityName);
-        int amount = entityReindexer.enqueueReindexAll(entityName);
-        return String.format("%d instances of entity '%s' have been enqueued", amount, entityName);
-    }
-
-    @Authenticated
-    @ManagedOperation(description = "Enqueue all instances of all indexed entities")
+    @ManagedOperation(description = "Enqueues all instances of all indexed entities")
     public String enqueueIndexAll() {
         int amount = indexingQueueManager.enqueueIndexAll();
-        return String.format("%d instances of all indexed entities have been enqueued", amount);
+        return String.format("%d instances within all indexed entities have been enqueued", amount);
     }
 
     @Authenticated
-    @ManagedOperation(description = "Enqueue all instances of provided indexed entity")
+    @ManagedOperation(description = "Enqueues all instances of provided indexed entity")
     @ManagedOperationParameters({
             @ManagedOperationParameter(name = "entityName", description = "Name of entity configured for indexing, e.g. demo_Order")
     })
     public String enqueueIndexAll(String entityName) {
-        Preconditions.checkNotEmptyString(entityName);
+        InputValidationResult inputValidationResult = validateInputEntity(entityName);
+        if (!inputValidationResult.isValid()) {
+            return inputValidationResult.getMessage();
+        }
+
         int amount = indexingQueueManager.enqueueIndexAll(entityName);
         return String.format("%d instances of entity '%s' have been enqueued", amount, entityName);
     }
@@ -87,10 +70,16 @@ public class EntityIndexingManagementFacade {
     @Authenticated
     @ManagedOperation(description = "Validates schemas of all search indexes defined in application.")
     public String validateIndexes() {
-        Collection<IndexValidationResult> indexValidationResults = esIndexManager.validateIndexes();
+        Map<IndexConfiguration, IndexValidationStatus> validationResult = esIndexManager.validateIndexes();
         StringBuilder sb = new StringBuilder("Validation result:");
-        indexValidationResults.forEach(result -> sb.append(System.lineSeparator()).append("\t")
-                .append(formatValidationResult(result))
+        validationResult.forEach((config, status) -> sb.append(System.lineSeparator()).append("\t")
+                .append(
+                        formatSingleStatusString(
+                                config.getEntityName(),
+                                config.getIndexName(),
+                                status.name()
+                        )
+                )
         );
         return sb.toString();
     }
@@ -101,66 +90,149 @@ public class EntityIndexingManagementFacade {
             @ManagedOperationParameter(name = "entityName", description = "Name of entity configured for indexing, e.g. demo_Order")
     })
     public String validateIndex(String entityName) {
-        Optional<IndexConfiguration> indexConfigurationOpt = indexConfigurationManager.getIndexConfigurationByEntityNameOpt(entityName);
-        String result;
-        if (indexConfigurationOpt.isPresent()) {
-            IndexConfiguration indexConfiguration = indexConfigurationOpt.get();
-            IndexValidationResult indexValidationResult = esIndexManager.validateIndex(indexConfiguration);
-            result = "Validation result: " + formatValidationResult(indexValidationResult);
-        } else {
-            result = String.format("Entity '%s' is not indexed", entityName);
+        InputValidationResult inputValidationResult = validateInputEntity(entityName);
+        if (!inputValidationResult.isValid()) {
+            return inputValidationResult.getMessage();
         }
-        return result;
+
+        IndexConfiguration indexConfiguration = indexConfigurationManager.getIndexConfigurationByEntityName(entityName);
+        IndexValidationStatus status = esIndexManager.validateIndex(indexConfiguration);
+        return "Validation result: " + formatSingleStatusString(
+                indexConfiguration.getEntityName(),
+                indexConfiguration.getIndexName(),
+                status.name()
+        );
     }
 
     @Authenticated
-    @ManagedOperation(description = "Synchronize schemas of all search indexes defined in application. " +
+    @ManagedOperation(description = "Synchronizes schemas of all search indexes defined in application. " +
             "This may cause deletion of indexes with all their data - depends on schema management strategy")
     public String synchronizeIndexSchemas() {
-        Collection<IndexSynchronizationResult> results = esIndexManager.synchronizeIndexSchemas();
+        Map<IndexConfiguration, IndexSynchronizationStatus> synchronizationResult = esIndexManager.synchronizeIndexSchemas();
         StringBuilder sb = new StringBuilder("Synchronization result:");
-        results.forEach(result -> sb.append(System.lineSeparator()).append("\t")
-                .append(formatSynchronizationResult(result)));
+        synchronizationResult.forEach((config, status) -> sb.append(System.lineSeparator()).append("\t")
+                .append(
+                        formatSingleStatusString(
+                                config.getEntityName(),
+                                config.getIndexName(),
+                                status.name()
+                        )
+                )
+        );
         return sb.toString();
     }
 
     @Authenticated
-    @ManagedOperation(description = "Synchronize schema of index related to provided entity. " +
-            "This may cause deletion of this index with all its data - depends on schema management strategy")
+    @ManagedOperation(description = "Synchronizes schema of index related to provided entity. " +
+            "This may cause deletion of this index with all data - depends on schema management strategy")
     @ManagedOperationParameters({
             @ManagedOperationParameter(name = "entityName", description = "Name of entity configured for indexing, e.g. demo_Order")
     })
     public String synchronizeIndexSchema(String entityName) {
-        Preconditions.checkNotEmptyString(entityName);
-        Optional<IndexConfiguration> indexConfigurationOpt = indexConfigurationManager.getIndexConfigurationByEntityNameOpt(entityName);
-        if (!indexConfigurationOpt.isPresent()) {
-            return String.format("Entity '%s' is not configured for indexing", entityName);
+        InputValidationResult inputValidationResult = validateInputEntity(entityName);
+        if (!inputValidationResult.isValid()) {
+            return inputValidationResult.getMessage();
         }
 
-        IndexSynchronizationResult result = esIndexManager.synchronizeIndexSchema(indexConfigurationOpt.get());
-        return String.format(
-                "Synchronization result: Entity=%s Index=%s Status=%s",
-                entityName, result.getIndexConfiguration().getIndexName(), result.getIndexSynchronizationStatus()
+        IndexConfiguration indexConfiguration = indexConfigurationManager.getIndexConfigurationByEntityName(entityName);
+        IndexSynchronizationStatus status = esIndexManager.synchronizeIndexSchema(indexConfiguration);
+        return "Synchronization result: " + formatSingleStatusString(
+                indexConfiguration.getEntityName(),
+                indexConfiguration.getIndexName(),
+                status.name()
         );
     }
 
-    protected String formatValidationResult(IndexValidationResult result) {
-        return formatSingleStatusString(
-                result.getIndexConfiguration().getEntityName(),
-                result.getIndexConfiguration().getIndexName(),
-                result.getIndexValidationStatus().name()
+    @Authenticated
+    @ManagedOperation(description = "Drops and creates all search indexes defined in application. All data will be lost.")
+    public String recreateIndexes() {
+        Map<IndexConfiguration, Boolean> recreationResult = esIndexManager.recreateIndexes();
+        StringBuilder sb = new StringBuilder("Recreation result:");
+        recreationResult.forEach((config, created) -> sb.append(System.lineSeparator()).append("\t")
+                .append(
+                        formatSingleStatusString(
+                                config.getEntityName(),
+                                config.getIndexName(),
+                                created ? "SUCCESS" : "FAILURE"
+                        )
+                )
+        );
+        return sb.toString();
+    }
+
+    @Authenticated
+    @ManagedOperation(description = "Drops and creates index related to provided entity. All data will be lost.")
+    @ManagedOperationParameters({
+            @ManagedOperationParameter(name = "entityName", description = "Name of entity configured for indexing, e.g. demo_Order")
+    })
+    public String recreateIndex(String entityName) {
+        InputValidationResult inputValidationResult = validateInputEntity(entityName);
+        if (!inputValidationResult.isValid()) {
+            return inputValidationResult.getMessage();
+        }
+
+        IndexConfiguration indexConfiguration = indexConfigurationManager.getIndexConfigurationByEntityName(entityName);
+        boolean created = esIndexManager.recreateIndex(indexConfiguration);
+        return "Recreation result: " + formatSingleStatusString(
+                indexConfiguration.getEntityName(),
+                indexConfiguration.getIndexName(),
+                created ? "SUCCESS" : "FAILURE"
         );
     }
 
-    protected String formatSynchronizationResult(IndexSynchronizationResult result) {
-        return formatSingleStatusString(
-                result.getIndexConfiguration().getEntityName(),
-                result.getIndexConfiguration().getIndexName(),
-                result.getIndexSynchronizationStatus().name()
-        );
+    @Authenticated
+    @ManagedOperation(description = "Processes all items in Indexing Queue")
+    public String processEntireIndexingQueue() {
+        int processed = indexingQueueManager.processEntireQueue();
+        return String.format("Processed %d queue items", processed);
+    }
+
+    @Authenticated
+    @ManagedOperation(description = "Processes all items in Indexing Queue")
+    public String processIndexingQueueNextBatch() {
+        int processed = indexingQueueManager.processNextBatch();
+        return String.format("Processed %d queue items", processed);
     }
 
     protected String formatSingleStatusString(String entityName, String indexName, String status) {
         return String.format("Entity=%s, Index=%s, Status=%s", entityName, indexName, status);
+    }
+
+    protected InputValidationResult validateInputEntity(String entityName) {
+        if (StringUtils.isBlank(entityName)) {
+            return InputValidationResult.failWithMessage("Entity name is not specified");
+        }
+
+        if (!indexConfigurationManager.isDirectlyIndexed(entityName)) {
+            return InputValidationResult.failWithMessage(String.format("Entity '%s' is not configured for indexing", entityName));
+        }
+
+        return InputValidationResult.pass();
+    }
+
+    private static class InputValidationResult {
+        private final boolean valid;
+        private final String message;
+
+        private InputValidationResult(boolean valid, String message) {
+            this.valid = valid;
+            this.message = message;
+        }
+
+        private boolean isValid() {
+            return valid;
+        }
+
+        private String getMessage() {
+            return message;
+        }
+
+        private static InputValidationResult failWithMessage(String message) {
+            return new InputValidationResult(false, message);
+        }
+
+        private static InputValidationResult pass() {
+            return new InputValidationResult(true, "");
+        }
     }
 }

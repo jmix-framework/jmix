@@ -19,7 +19,6 @@ package io.jmix.search.index.impl;
 import io.jmix.search.SearchProperties;
 import io.jmix.search.index.ESIndexManager;
 import io.jmix.search.index.IndexConfiguration;
-import io.jmix.search.index.IndexSynchronizationResult;
 import io.jmix.search.index.IndexSynchronizationStatus;
 import io.jmix.search.index.queue.IndexingQueueManager;
 import org.slf4j.Logger;
@@ -28,8 +27,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
@@ -55,18 +54,18 @@ public class StartupIndexSynchronizer {
     protected void postConstruct() {
         try {
             log.info("Start initial index synchronization");
-            Collection<IndexSynchronizationResult> indexSynchronizationResults = esIndexManager.synchronizeIndexSchemas();
-            List<IndexConfiguration> indexConfigurationsToEnqueueAll = indexSynchronizationResults.stream()
-                    .peek(result -> log.info("Synchronization Result: Entity={}, Index={}, Status={}",
-                            result.getIndexConfiguration().getEntityName(),
-                            result.getIndexConfiguration().getIndexName(),
-                            result.getIndexSynchronizationStatus()))
-                    .filter(result -> searchProperties.isEnqueueIndexAllOnStartupIndexRecreationEnabled())
-                    .filter(result -> {
-                        IndexSynchronizationStatus status = result.getIndexSynchronizationStatus();
+            Map<IndexConfiguration, IndexSynchronizationStatus> indexSynchronizationResults = esIndexManager.synchronizeIndexSchemas();
+            List<IndexConfiguration> indexConfigurationsToEnqueueAll = indexSynchronizationResults.entrySet().stream()
+                    .peek(entry -> log.info("Synchronization Result: Entity={}, Index={}, Status={}",
+                            entry.getKey().getEntityName(),
+                            entry.getKey().getIndexName(),
+                            entry.getValue()))
+                    .filter(entry -> searchProperties.isEnqueueIndexAllOnStartupIndexRecreationEnabled())
+                    .filter(entry -> {
+                        IndexSynchronizationStatus status = entry.getValue();
                         return IndexSynchronizationStatus.CREATED.equals(status) || IndexSynchronizationStatus.RECREATED.equals(status);
                     })
-                    .map(IndexSynchronizationResult::getIndexConfiguration)
+                    .map(Map.Entry::getKey)
                     .filter(config -> {
                         List<String> entitiesAllowedToEnqueue = searchProperties.getEnqueueIndexAllOnStartupIndexRecreationEntities();
                         return entitiesAllowedToEnqueue.isEmpty() || entitiesAllowedToEnqueue.contains(config.getEntityName());

@@ -19,6 +19,7 @@ package io.jmix.search.index;
 import org.elasticsearch.client.indices.GetIndexResponse;
 
 import java.util.Collection;
+import java.util.Map;
 
 /**
  * Provides functionality for index management.
@@ -42,7 +43,22 @@ public interface ESIndexManager {
     boolean dropIndex(String indexName);
 
     /**
-     * Drops (if exists) and creates index using provided {@link IndexConfiguration}.
+     * Drops and creates all search indexes.
+     *
+     * @return Map with operation result per every index configuration
+     */
+    Map<IndexConfiguration, Boolean> recreateIndexes();
+
+    /**
+     * Drops and creates search indexes using provided collection of {@link IndexConfiguration}.
+     *
+     * @param indexConfigurations index configurations
+     * @return Map with operation result per every index configuration
+     */
+    Map<IndexConfiguration, Boolean> recreateIndexes(Collection<IndexConfiguration> indexConfigurations);
+
+    /**
+     * Drops and creates search index using provided {@link IndexConfiguration}.
      *
      * @param indexConfiguration index configuration
      * @return true if index was successfully recreated, false otherwise
@@ -65,11 +81,28 @@ public interface ESIndexManager {
      */
     boolean isIndexActual(IndexConfiguration indexConfiguration);
 
-    Collection<IndexValidationResult> validateIndexes();
+    /**
+     * Validates current state of schema of all search indexes defined in application.
+     *
+     * @return {@link IndexValidationStatus} per each {@link IndexConfiguration}
+     */
+    Map<IndexConfiguration, IndexValidationStatus> validateIndexes();
 
-    Collection<IndexValidationResult> validateIndexes(Collection<IndexConfiguration> indexConfigurations);
+    /**
+     * Validates current state of index schema related to provided collection of {@link IndexConfiguration}.
+     *
+     * @param indexConfigurations actual configurations
+     * @return {@link IndexValidationStatus} per each {@link IndexConfiguration}
+     */
+    Map<IndexConfiguration, IndexValidationStatus> validateIndexes(Collection<IndexConfiguration> indexConfigurations);
 
-    IndexValidationResult validateIndex(IndexConfiguration indexConfiguration);
+    /**
+     * Validates current state of index schema.
+     *
+     * @param indexConfiguration actual configuration
+     * @return {@link IndexValidationStatus}
+     */
+    IndexValidationStatus validateIndex(IndexConfiguration indexConfiguration);
 
     /**
      * Requests info about index from ES cluster.
@@ -84,9 +117,9 @@ public interface ESIndexManager {
      * <p>See {@link ESIndexManager#synchronizeIndexSchemas(Collection)}
      * <p>See {@link ESIndexManager#synchronizeIndexSchema(IndexConfiguration)}
      *
-     * @return Collection of {@link IndexSynchronizationResult} with details of synchronization
+     * @return {@link IndexSynchronizationStatus} per each {@link IndexConfiguration}
      */
-    Collection<IndexSynchronizationResult> synchronizeIndexSchemas();
+    Map<IndexConfiguration, IndexSynchronizationStatus> synchronizeIndexSchemas();
 
     /**
      * Synchronizes schemas of search indexes for provided collection of {@link IndexConfiguration}.
@@ -94,9 +127,9 @@ public interface ESIndexManager {
      * See {@link ESIndexManager#synchronizeIndexSchema(IndexConfiguration)}
      *
      * @param indexConfigurations actual index configurations
-     * @return Collection of {@link IndexSynchronizationResult} with details of synchronization
+     * @return {@link IndexSynchronizationStatus} per each {@link IndexConfiguration}
      */
-    Collection<IndexSynchronizationResult> synchronizeIndexSchemas(Collection<IndexConfiguration> indexConfigurations);
+    Map<IndexConfiguration, IndexSynchronizationStatus> synchronizeIndexSchemas(Collection<IndexConfiguration> indexConfigurations);
 
     /**
      * Synchronizes schema of search index for provided {@link IndexConfiguration}.
@@ -105,7 +138,7 @@ public interface ESIndexManager {
      * defined by 'jmix.search.indexSchemaManagementStrategy' application property.
      *
      * @param indexConfiguration actual index configuration
-     * @return {@link IndexSynchronizationResult} with details of synchronization
+     * @return {@link IndexSynchronizationStatus}
      */
-    IndexSynchronizationResult synchronizeIndexSchema(IndexConfiguration indexConfiguration);
+    IndexSynchronizationStatus synchronizeIndexSchema(IndexConfiguration indexConfiguration);
 }

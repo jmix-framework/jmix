@@ -40,8 +40,8 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Component("search_ESIndexManager")
 public class ESIndexManagerImpl implements ESIndexManager {
@@ -96,12 +96,33 @@ public class ESIndexManagerImpl implements ESIndexManager {
     }
 
     @Override
+    public Map<IndexConfiguration, Boolean> recreateIndexes() {
+        Collection<IndexConfiguration> indexConfigurations = indexConfigurationManager.getAllIndexConfigurations();
+        return recreateIndexes(indexConfigurations);
+    }
+
+    @Override
+    public Map<IndexConfiguration, Boolean> recreateIndexes(Collection<IndexConfiguration> indexConfigurations) {
+        Preconditions.checkNotNullArgument(indexConfigurations);
+
+        Map<IndexConfiguration, Boolean> result = new HashMap<>();
+        indexConfigurations.forEach(config -> {
+            boolean created = recreateIndex(config);
+            result.put(config, created);
+        });
+        return result;
+    }
+
+    @Override
     public boolean recreateIndex(IndexConfiguration indexConfiguration) {
         Preconditions.checkNotNullArgument(indexConfiguration);
 
         String indexName = indexConfiguration.getIndexName();
         if (isIndexExist(indexName)) {
-            dropIndex(indexName);
+            boolean dropped = dropIndex(indexName);
+            if (!dropped) {
+                return false;
+            }
         }
         return createIndex(indexConfiguration);
     }
@@ -136,21 +157,25 @@ public class ESIndexManagerImpl implements ESIndexManager {
     }
 
     @Override
-    public Collection<IndexValidationResult> validateIndexes() {
+    public Map<IndexConfiguration, IndexValidationStatus> validateIndexes() {
         Collection<IndexConfiguration> indexConfigurations = indexConfigurationManager.getAllIndexConfigurations();
         return validateIndexes(indexConfigurations);
     }
 
     @Override
-    public Collection<IndexValidationResult> validateIndexes(Collection<IndexConfiguration> indexConfigurations) {
+    public Map<IndexConfiguration, IndexValidationStatus> validateIndexes(Collection<IndexConfiguration> indexConfigurations) {
         Preconditions.checkNotNullArgument(indexConfigurations);
-        return indexConfigurations.stream()
-                .map(this::validateIndex)
-                .collect(Collectors.toList());
+
+        Map<IndexConfiguration, IndexValidationStatus> result = new HashMap<>();
+        indexConfigurations.forEach(config -> {
+            IndexValidationStatus status = validateIndex(config);
+            result.put(config, status);
+        });
+        return result;
     }
 
     @Override
-    public IndexValidationResult validateIndex(IndexConfiguration indexConfiguration) {
+    public IndexValidationStatus validateIndex(IndexConfiguration indexConfiguration) {
         Preconditions.checkNotNullArgument(indexConfiguration);
 
         IndexValidationStatus status;
@@ -164,7 +189,7 @@ public class ESIndexManagerImpl implements ESIndexManager {
             status = IndexValidationStatus.MISSING;
         }
 
-        return new IndexValidationResult(indexConfiguration, status);
+        return status;
     }
 
     @Override
@@ -180,36 +205,41 @@ public class ESIndexManagerImpl implements ESIndexManager {
     }
 
     @Override
-    public Collection<IndexSynchronizationResult> synchronizeIndexSchemas() {
+    public Map<IndexConfiguration, IndexSynchronizationStatus> synchronizeIndexSchemas() {
         Collection<IndexConfiguration> indexConfigurations = indexConfigurationManager.getAllIndexConfigurations();
         return synchronizeIndexSchemas(indexConfigurations);
     }
 
     @Override
-    public Collection<IndexSynchronizationResult> synchronizeIndexSchemas(Collection<IndexConfiguration> indexConfigurations) {
+    public Map<IndexConfiguration, IndexSynchronizationStatus> synchronizeIndexSchemas(Collection<IndexConfiguration> indexConfigurations) {
         Preconditions.checkNotNullArgument(indexConfigurations);
-        return indexConfigurations.stream()
-                .map(this::synchronizeIndexSchema)
-                .collect(Collectors.toList());
+
+        Map<IndexConfiguration, IndexSynchronizationStatus> result = new HashMap<>();
+        indexConfigurations.forEach(config -> {
+            IndexSynchronizationStatus status = synchronizeIndexSchema(config);
+            result.put(config, status);
+        });
+        return result;
     }
 
     @Override
-    public IndexSynchronizationResult synchronizeIndexSchema(IndexConfiguration indexConfiguration) {
+    public IndexSynchronizationStatus synchronizeIndexSchema(IndexConfiguration indexConfiguration) {
         Preconditions.checkNotNullArgument(indexConfiguration);
+
         IndexSchemaManagementStrategy strategy = searchProperties.getIndexSchemaManagementStrategy();
         return synchronizeIndexSchema(indexConfiguration, strategy);
     }
 
-    protected IndexSynchronizationResult synchronizeIndexSchema(IndexConfiguration indexConfiguration, IndexSchemaManagementStrategy strategy) {
+    protected IndexSynchronizationStatus synchronizeIndexSchema(IndexConfiguration indexConfiguration, IndexSchemaManagementStrategy strategy) {
         log.info("Synchronize search index '{}' according to strategy '{}'", indexConfiguration.getIndexName(), strategy);
-        IndexSynchronizationResult result;
+        IndexSynchronizationStatus result;
         boolean indexExist = isIndexExist(indexConfiguration.getIndexName());
         if (indexExist) {
             log.info("Index '{}' already exists", indexConfiguration.getIndexName());
             boolean indexActual = isIndexActual(indexConfiguration);
             if (indexActual) {
                 log.info("Index '{}' has actual configuration", indexConfiguration.getIndexName());
-                result = new IndexSynchronizationResult(indexConfiguration, IndexSynchronizationStatus.ACTUAL);
+                result = IndexSynchronizationStatus.ACTUAL;
             } else {
                 log.info("Index '{}' has irrelevant configuration", indexConfiguration.getIndexName());
                 result = handleIrrelevantIndex(indexConfiguration, strategy);
@@ -221,7 +251,7 @@ public class ESIndexManagerImpl implements ESIndexManager {
         return result;
     }
 
-    protected IndexSynchronizationResult handleIrrelevantIndex(IndexConfiguration indexConfiguration, IndexSchemaManagementStrategy strategy) {
+    protected IndexSynchronizationStatus handleIrrelevantIndex(IndexConfiguration indexConfiguration, IndexSchemaManagementStrategy strategy) {
         IndexSynchronizationStatus status;
         if (IndexSchemaManagementStrategy.CREATE_OR_RECREATE.equals(strategy)) {
             boolean created = recreateIndex(indexConfiguration);
@@ -233,10 +263,10 @@ public class ESIndexManagerImpl implements ESIndexManager {
         } else {
             status = IndexSynchronizationStatus.IRRELEVANT;
         }
-        return new IndexSynchronizationResult(indexConfiguration, status);
+        return status;
     }
 
-    protected IndexSynchronizationResult handleMissingIndex(IndexConfiguration indexConfiguration, IndexSchemaManagementStrategy strategy) {
+    protected IndexSynchronizationStatus handleMissingIndex(IndexConfiguration indexConfiguration, IndexSchemaManagementStrategy strategy) {
         IndexSynchronizationStatus status;
         boolean created = createIndex(indexConfiguration);
         if (created) {
@@ -244,7 +274,6 @@ public class ESIndexManagerImpl implements ESIndexManager {
         } else {
             status = IndexSynchronizationStatus.MISSING;
         }
-        return new IndexSynchronizationResult(indexConfiguration, status);
+        return status;
     }
-
 }

@@ -28,7 +28,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-@Component
+@Component("core_FileStorageLocatorImpl")
 public class FileStorageLocatorImpl implements FileStorageLocator {
 
     @Autowired(required = false)

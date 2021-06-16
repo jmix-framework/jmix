@@ -28,7 +28,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-@Component
+@Component("ui_NoopNavigationHandler")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 @Order(JmixOrder.LOWEST_PRECEDENCE - 10)
 public class NoopNavigationHandler implements NavigationHandler {

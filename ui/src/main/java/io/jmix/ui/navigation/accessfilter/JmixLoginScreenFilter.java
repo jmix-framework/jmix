@@ -28,7 +28,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Objects;
 
-@Component
+@Component("ui_JmixLoginScreenFilter")
 @Order(JmixOrder.LOWEST_PRECEDENCE)
 public class JmixLoginScreenFilter implements NavigationFilter {
 

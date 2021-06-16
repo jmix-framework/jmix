@@ -46,7 +46,7 @@ import org.springframework.stereotype.Component;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-@Component
+@Component("ui_RootNavigationHandler")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 @Order(JmixOrder.LOWEST_PRECEDENCE - 40)
 public class RootNavigationHandler implements NavigationHandler {

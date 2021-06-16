@@ -26,7 +26,7 @@ import javax.annotation.Nullable;
 
 import static io.jmix.core.common.util.Preconditions.checkNotEmptyString;
 
-@Component
+@Component("ui_ThemeIconProvider")
 @Order(JmixOrder.LOWEST_PRECEDENCE - 20)
 public class ThemeIconProvider implements IconProvider {
 

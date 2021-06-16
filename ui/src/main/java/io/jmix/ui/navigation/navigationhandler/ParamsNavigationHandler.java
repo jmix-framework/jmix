@@ -35,7 +35,7 @@ import org.springframework.stereotype.Component;
 import java.util.Collections;
 import java.util.Map;
 
-@Component
+@Component("ui_ParamsNavigationHandler")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 @Order(JmixOrder.LOWEST_PRECEDENCE - 20)
 public class ParamsNavigationHandler implements NavigationHandler {

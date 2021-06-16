@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Nullable;
 import java.io.File;
 
-@Component
+@Component("ui_FileIconProvider")
 @Order(JmixOrder.LOWEST_PRECEDENCE - 30)
 public class FileIconProvider implements IconProvider {
 

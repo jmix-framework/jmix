@@ -46,7 +46,7 @@ import java.util.stream.Collectors;
 
 import static io.jmix.ui.navigation.WebUrlRouting.NEW_ENTITY_ID;
 
-@Component
+@Component("ui_ScreenNavigationHandler")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 @Order(JmixOrder.LOWEST_PRECEDENCE - 30)
 public class ScreenNavigationHandler implements NavigationHandler {

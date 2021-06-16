@@ -27,7 +27,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Objects;
 
-@Component
+@Component("ui_JmixNotFoundScreenFilter")
 @Order(JmixOrder.LOWEST_PRECEDENCE - 10)
 public class JmixNotFoundScreenFilter implements NavigationFilter {
 

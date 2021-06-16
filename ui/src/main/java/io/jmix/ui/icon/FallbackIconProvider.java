@@ -25,7 +25,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 
-@Component
+@Component("ui_FallbackIconProvider")
 @Order(JmixOrder.LOWEST_PRECEDENCE - 10)
 public class FallbackIconProvider implements IconProvider {
 

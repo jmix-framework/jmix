@@ -38,7 +38,7 @@ import java.util.List;
 
 import static io.jmix.core.common.util.Preconditions.checkNotEmptyString;
 
-@Component
+@Component("ui_FontAwesomeIconProvider")
 @Order(JmixOrder.LOWEST_PRECEDENCE - 40)
 public class FontAwesomeIconProvider implements IconProvider {
 

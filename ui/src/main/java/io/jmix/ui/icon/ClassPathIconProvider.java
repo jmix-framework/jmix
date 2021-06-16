@@ -25,7 +25,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 
-@Component
+@Component("ui_ClassPathIconProvider")
 @Order(JmixOrder.LOWEST_PRECEDENCE - 50)
 public class ClassPathIconProvider implements IconProvider {
 

@@ -24,7 +24,7 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 
-@Component
+@Component("ui_TestScreenDependencyInjector")
 public class TestScreenDependencyInjector implements ControllerDependencyInjector {
 
     public static final String STR_VALUE = "strValue";

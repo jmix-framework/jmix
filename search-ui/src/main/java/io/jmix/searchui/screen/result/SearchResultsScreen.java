@@ -46,10 +46,10 @@ import static io.jmix.ui.Notifications.NotificationType.HUMANIZED;
 import static io.jmix.ui.component.Component.Alignment.MIDDLE_LEFT;
 
 @UiController(SearchResultsScreen.SCREEN_ID)
-@UiDescriptor("search-results.xml")
+@UiDescriptor("search-results-screen.xml")
 public class SearchResultsScreen extends Screen {
 
-    public static final String SCREEN_ID = "searchResultsScreen";
+    public static final String SCREEN_ID = "search_SearchResults.screen";
 
     private static final Map<String, String> systemFieldLabels = ImmutableMap.<String, String>builder()
             .put("_file_name", "fileName")

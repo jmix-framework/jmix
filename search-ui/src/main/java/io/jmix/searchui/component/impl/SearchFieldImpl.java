@@ -49,8 +49,6 @@ public class SearchFieldImpl extends CompositeComponent<CssLayout> implements Se
         CompositeWithCaption, CompositeWithHtmlCaption, CompositeWithHtmlDescription,
         CompositeWithIcon, CompositeWithContextHelp {
 
-    public static final String NAME = "searchField";
-
     @Autowired
     protected Messages messages;
     @Autowired
@@ -64,6 +62,7 @@ public class SearchFieldImpl extends CompositeComponent<CssLayout> implements Se
     protected Button searchButton;
     protected SearchStrategy searchStrategy;
     protected List<String> entities;
+    protected Consumer<SearchCompletedEvent> searchCompletedHandler;
 
     public SearchFieldImpl() {
         addCreateListener(this::onCreate);
@@ -75,6 +74,30 @@ public class SearchFieldImpl extends CompositeComponent<CssLayout> implements Se
 
         inputField.addEnterPressListener(enterPressEvent -> performSearch());
         searchButton.addClickListener(clickEvent -> performSearch());
+        searchCompletedHandler = (event -> {
+            SearchResult searchResult = event.getSearchResult();
+            if (searchResult.isEmpty()) {
+                Screen frameOwner = ComponentsHelper.getWindowNN(this).getFrameOwner();
+                ScreenContext screenContext = getScreenContext(frameOwner);
+                Notifications notifications = screenContext.getNotifications();
+                notifications.create(HUMANIZED)
+                        .withCaption(messages.getMessage("io.jmix.searchui.noResults"))
+                        .show();
+            } else {
+                openSearchResultsWindow(event.getSearchResult());
+            }
+
+        });
+    }
+
+    protected void openSearchResultsWindow(SearchResult searchResult) {
+        Screen frameOwner = ComponentsHelper.getWindowNN(this).getFrameOwner();
+        screenBuilders.screen(frameOwner)
+                .withScreenClass(SearchResultsScreen.class)
+                .withOpenMode(OpenMode.NEW_TAB)
+                .build()
+                .setSearchResult(searchResult)
+                .show();
     }
 
     public void performSearch() {
@@ -92,20 +115,8 @@ public class SearchFieldImpl extends CompositeComponent<CssLayout> implements Se
                     .setSize(searchProperties.getSearchResultPageSize())
                     .setEntities(getEntities());
             SearchResult searchResult = entitySearcher.search(searchContext, searchStrategy);
-
-            if (searchResult.isEmpty()) {
-                Notifications notifications = screenContext.getNotifications();
-
-                notifications.create(HUMANIZED)
-                        .withCaption(messages.getMessage("io.jmix.searchui.noResults"))
-                        .show();
-            } else {
-                screenBuilders.screen(frameOwner)
-                        .withScreenClass(SearchResultsScreen.class)
-                        .withOpenMode(OpenMode.NEW_TAB)
-                        .build()
-                        .setSearchResult(searchResult)
-                        .show();
+            if (searchCompletedHandler != null) {
+                searchCompletedHandler.accept(new SearchCompletedEvent(this, searchResult));
             }
         }
     }
@@ -214,5 +225,16 @@ public class SearchFieldImpl extends CompositeComponent<CssLayout> implements Se
     @Override
     public void setEntities(List<String> entities) {
         this.entities = entities;
+    }
+
+    @Override
+    public void setSearchCompletedHandler(Consumer<SearchCompletedEvent> handler) {
+        this.searchCompletedHandler = handler;
+    }
+
+    @Override
+    @Nullable
+    public Consumer<SearchCompletedEvent> getSearchCompletedHandler() {
+        return searchCompletedHandler;
     }
 }

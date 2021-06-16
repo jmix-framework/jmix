@@ -16,10 +16,13 @@
 
 package io.jmix.searchui.component;
 
+import io.jmix.search.searching.SearchResult;
 import io.jmix.search.searching.SearchStrategy;
 import io.jmix.ui.component.Field;
+import io.jmix.ui.screen.Install;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * UI component that performs full text search
@@ -56,4 +59,41 @@ public interface SearchField extends Field<String> {
      * Performs search.
      */
     void performSearch();
+
+    /**
+     * Sets the handler to be invoked when the search is successfully completed.
+     * <p>
+     * The preferred way to set the handler is using a controller method annotated with {@link Install}, e.g.:
+     * <pre>
+     * &#64;Install(to = "mySearchField", subject = "searchCompletedHandler")
+     * public void mySearchFieldSearchCompletedHandler(SearchField.SearchCompletedEvent event) {
+     *     SearchResult searchResult = event.getSearchResult();
+     *     //...
+     * }
+     * </pre>
+     */
+    void setSearchCompletedHandler(Consumer<SearchCompletedEvent> handler);
+
+    /**
+     * Returnes the handler to be invoked when the search is successfully completed.
+     */
+    Consumer<SearchCompletedEvent> getSearchCompletedHandler();
+
+    class SearchCompletedEvent {
+        protected SearchField source;
+        protected SearchResult searchResult;
+
+        public SearchCompletedEvent(SearchField source, SearchResult searchResult) {
+            this.source = source;
+            this.searchResult = searchResult;
+        }
+
+        public SearchResult getSearchResult() {
+            return searchResult;
+        }
+
+        public SearchField getSource() {
+            return source;
+        }
+    }
 }

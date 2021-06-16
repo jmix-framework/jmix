@@ -15,8 +15,8 @@
   -->
 
 <composite xmlns="http://jmix.io/schema/ui/composite">
-    <cssLayout id="rootBox" width="100%" stylename="v-component-group">
+    <cssLayout id="rootBox" width="100%" stylename="jmix-pickerfield-layout">
         <textField id="inputField"/>
-        <button id="searchButton" icon="SEARCH"/>
+        <button id="searchButton" icon="SEARCH" stylename="jmix-pickerfield-button"/>
     </cssLayout>
 </composite>

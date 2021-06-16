@@ -3026,6 +3026,8 @@
 
                 <xs:attribute name="rows" type="xs:string"/>
                 <xs:attribute name="addAllBtnEnabled" type="xs:boolean"/>
+
+                <xs:attribute name="reorderable" type="xs:boolean"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

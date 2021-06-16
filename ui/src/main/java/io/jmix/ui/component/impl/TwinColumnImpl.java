@@ -23,6 +23,7 @@ import io.jmix.ui.component.data.meta.EntityValueSource;
 import io.jmix.ui.component.data.meta.OptionsBinding;
 import io.jmix.ui.component.data.options.OptionsBinder;
 import io.jmix.ui.icon.IconResolver;
+import io.jmix.ui.meta.StudioProperty;
 import io.jmix.ui.widget.JmixTwinColSelect;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.InitializingBean;
@@ -228,6 +229,7 @@ public class TwinColumnImpl<V> extends AbstractField<JmixTwinColSelect<V>, Set<V
         return component.isAddAllBtnEnabled();
     }
 
+    @StudioProperty(defaultValue = "true")
     @Override
     public void setReorderable(boolean reorderable) {
         component.setReorderable(reorderable);

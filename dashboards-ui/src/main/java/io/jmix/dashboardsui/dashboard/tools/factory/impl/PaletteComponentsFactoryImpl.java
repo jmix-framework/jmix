@@ -35,7 +35,7 @@ import io.jmix.ui.widget.JmixButton;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-@Component
+@Component("dshbrd_PaletteComponentsFactory")
 public class PaletteComponentsFactoryImpl implements PaletteComponentsFactory {
 
     @Autowired

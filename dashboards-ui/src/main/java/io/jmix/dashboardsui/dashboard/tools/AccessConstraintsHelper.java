@@ -24,7 +24,7 @@ import org.springframework.stereotype.Component;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
-@Component
+@Component("dshbrd_AccessConstraintsHelper")
 public class AccessConstraintsHelper {
     @Autowired
     protected CurrentAuthentication currentAuthentication;

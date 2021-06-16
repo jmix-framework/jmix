@@ -30,7 +30,7 @@ import java.util.Optional;
 
 import static java.lang.String.format;
 
-@Component
+@Component("dshbrd_WidgetUtils")
 public class WidgetUtils {
 
     @Autowired

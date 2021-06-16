@@ -43,7 +43,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@Component
+@Component("emltmp_EmailTemplateBuilder")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class EmailTemplateBuilderImpl implements EmailTemplateBuilder {
 

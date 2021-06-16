@@ -18,6 +18,7 @@ package io.jmix.search.index.queue.impl;
 
 import io.jmix.core.*;
 import io.jmix.core.common.util.Preconditions;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.SystemAuthenticator;
 import io.jmix.data.StoreAwareLocator;
@@ -43,6 +44,8 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static java.lang.String.format;
+
 @Component("search_JpaIndexingQueueManager")
 public class JpaIndexingQueueManager implements IndexingQueueManager {
 
@@ -52,6 +55,8 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
     protected UnconstrainedDataManager dataManager;
     @Autowired
     protected Metadata metadata;
+    @Autowired
+    protected MetadataTools metadataTools;
     @Autowired
     protected EntityIndexer entityIndexer;
     @Autowired
@@ -169,34 +174,93 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
             throw new IllegalArgumentException(String.format("Unable to enqueue instances of entity '%s' - entity is not configured for indexing", entityName));
         }
 
-        MetaClass metaClass = metadata.getClass(entityName);
-        int batchOffset = 0;
-        int batchLoaded;
-        int total = 0;
-        do {
-            List<Object> instances = dataManager.load(metaClass.getJavaClass())
+        if (!locker.tryLockEntityForEnqueueIndexAll(entityName)) {
+            log.info("Unable to enqueue all instances of entity '{}' for indexing: 'Enqueue all' process is active", entityName);
+            return 0;
+        }
+
+        try {
+            MetaClass metaClass = metadata.getClass(entityName);
+            List<?> rawIds = loadRawIds(metaClass);
+            return processRawIds(rawIds, metaClass, batchSize);
+        } finally {
+            locker.unlockEntityForEnqueueIndexAll(entityName);
+        }
+    }
+
+    protected List<?> loadRawIds(MetaClass metaClass) {
+        String entityName = metaClass.getName();
+        String primaryKeyName = metadataTools.getPrimaryKeyName(metaClass);
+        log.debug("Primary key of entity '{}': '{}'", entityName, primaryKeyName);
+        if (primaryKeyName == null) {
+            throw new IllegalArgumentException(String.format("Unable to enqueue instances of entity '%s' - entity doesn't have primary key", entityName));
+        }
+
+        List<?> rawIds;
+        if (metadataTools.hasCompositePrimaryKey(metaClass)) {
+            //TODO Load EmbeddedId objects when https://github.com/Haulmont/jmix-data/issues/76 is done
+            rawIds = dataManager.load(metaClass.getJavaClass())
                     .all()
-                    .firstResult(batchOffset)
-                    .maxResults(batchSize)
-                    .list();
-
-            List<IndexingQueueItem> queueItems = instances.stream()
-                    .map(instance -> idSerialization.idToString(Id.of(instance)))
-                    .map(id -> createQueueItem(entityName, id, IndexingOperation.INDEX))
+                    .fetchPlanProperties(primaryKeyName)
+                    .list()
+                    .stream()
+                    .map(EntityValues::getId)
                     .collect(Collectors.toList());
+        } else {
+            TransactionTemplate transactionTemplate = storeAwareLocator.getTransactionTemplate(metaClass.getStore().getName());
+            transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+            rawIds = transactionTemplate.execute(status -> {
+                EntityManager em = storeAwareLocator.getEntityManager(metaClass.getStore().getName());
+                Query query = em.createQuery(format("select e.%s from %s e", primaryKeyName, entityName));
+                return query.getResultList();
+            });
+            if (rawIds == null) {
+                rawIds = Collections.emptyList();
+            }
+        }
+        return rawIds;
+    }
 
-            int enqueued = enqueue(queueItems);
-            total += enqueued;
+    protected int processRawIds(List<?> rawIds, MetaClass metaClass, int batchSize) {
+        Class<Object> entityClass = metaClass.getJavaClass();
+        String entityName = metaClass.getName();
+        int totalSize = rawIds.size();
+        int processedBatchSize = 0;
+        int totalEnqueued = 0;
+        int start = 0;
+        int end = batchSize;
+        do {
+            end = Math.min(end, totalSize);
+            List<?> rawIdsBatch = rawIds.subList(start, end);
+            log.trace("Start process raw ids sublist [{}:{}) of entity '{}'", start, end, entityName);
 
-            batchLoaded = instances.size();
-            batchOffset += batchLoaded;
-        } while (batchLoaded == batchSize);
+            if (rawIdsBatch.isEmpty()) {
+                processedBatchSize = 0;
+            } else {
+                List<IndexingQueueItem> queueItems = rawIdsBatch.stream()
+                        .map(id -> idSerialization.idToString(Id.of(id, entityClass)))
+                        .map(id -> createQueueItem(entityName, id, IndexingOperation.INDEX))
+                        .collect(Collectors.toList());
 
-        return total;
+                int enqueued = enqueue(queueItems);
+                totalEnqueued += enqueued;
+
+                log.debug("Enqueued next {} instances of entity '{}': Total enqueued = {}/{}", enqueued, entityName, totalEnqueued, totalSize);
+
+                processedBatchSize = rawIdsBatch.size();
+                start += processedBatchSize;
+                end += processedBatchSize;
+            }
+        } while (processedBatchSize == batchSize);
+
+        return totalEnqueued;
     }
 
     protected int processQueue(int batchSize, int maxProcessedPerExecution) {
-        log.debug("Start processing queue");
+        if (batchSize <= 0) {
+            throw new IllegalArgumentException("Size of queue processing batch must be positive");
+        }
+
         int count = 0;
         boolean locked = locker.tryLockQueueProcessing();
         if (!locked) {
@@ -204,11 +268,9 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
             return count;
         }
 
+        log.debug("Start processing queue");
         try {
             authenticator.begin();
-            if (batchSize <= 0) {
-                throw new IllegalArgumentException("Size of batch during queue processing must be positive");
-            }
 
             List<IndexingQueueItem> queueItems;
             do {

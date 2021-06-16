@@ -16,8 +16,12 @@
 
 package io.jmix.search.index.impl;
 
+import io.jmix.search.index.mapping.IndexConfigurationManager;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -26,6 +30,19 @@ public class IndexingLocker {
 
     protected final ReentrantLock indexingQueueProcessingLock = new ReentrantLock();
     protected final ReentrantLock reindexingLock = new ReentrantLock();
+    protected final Map<String, ReentrantLock> enqueueAllLocks;
+
+    protected final IndexConfigurationManager indexConfigurationManager;
+
+    @Autowired
+    public IndexingLocker(IndexConfigurationManager indexConfigurationManager) {
+        Map<String, ReentrantLock> tmpEnqueueAllLocks = new ConcurrentHashMap<>();
+        indexConfigurationManager.getAllIndexedEntities().forEach(entity -> {
+            tmpEnqueueAllLocks.put(entity, new ReentrantLock());
+        });
+        this.enqueueAllLocks = tmpEnqueueAllLocks;
+        this.indexConfigurationManager = indexConfigurationManager;
+    }
 
     public boolean tryLockQueueProcessing() {
         return indexingQueueProcessingLock.tryLock();
@@ -57,5 +74,25 @@ public class IndexingLocker {
 
     public boolean isReindexingLocked() {
         return reindexingLock.isLocked();
+    }
+
+    public boolean tryLockEntityForEnqueueIndexAll(String entityName) {
+        checkEntityInIndexingScope(entityName);
+        ReentrantLock lock = enqueueAllLocks.computeIfAbsent(entityName, key -> new ReentrantLock());
+        return lock.tryLock();
+    }
+
+    public void unlockEntityForEnqueueIndexAll(String entityName) {
+        checkEntityInIndexingScope(entityName);
+        ReentrantLock lock = enqueueAllLocks.get(entityName);
+        if (lock != null) {
+            lock.unlock();
+        }
+    }
+
+    protected void checkEntityInIndexingScope(String entityName) {
+        if (!indexConfigurationManager.isDirectlyIndexed(entityName)) {
+            throw new IllegalArgumentException(String.format("Entity '%s' is not configured for indexing", entityName));
+        }
     }
 }

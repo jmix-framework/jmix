@@ -17,9 +17,14 @@
 package io.jmix.search;
 
 import io.jmix.search.index.IndexSchemaManagementStrategy;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;
 import org.springframework.boot.context.properties.bind.DefaultValue;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 @ConfigurationProperties(prefix = "jmix.search")
 @ConstructorBinding
@@ -34,6 +39,7 @@ public class SearchProperties {
 
     protected final boolean changedEntitiesIndexingEnabled;
     protected final boolean useDefaultIndexingQueueProcessingQuartzConfiguration;
+    protected final boolean enqueueIndexAllOnStartupIndexRecreationEnabled;
 
     protected final Elasticsearch elasticsearch;
 
@@ -41,6 +47,8 @@ public class SearchProperties {
     protected final String indexingQueueProcessingCron;
 
     protected final IndexSchemaManagementStrategy indexSchemaManagementStrategy;
+
+    protected final List<String> enqueueIndexAllOnStartupIndexRecreationEntities;
 
     public SearchProperties(
             @DefaultValue("100") int searchResultPageSize,
@@ -51,6 +59,8 @@ public class SearchProperties {
             @DefaultValue("100") int reindexEntityEnqueueBatchSize,
             @DefaultValue("true") boolean changedEntitiesIndexingEnabled,
             @DefaultValue("true") boolean useDefaultIndexingQueueProcessingQuartzConfiguration,
+            @DefaultValue("true") boolean enqueueIndexAllOnStartupIndexRecreationEnabled,
+            @DefaultValue("") String enqueueIndexAllOnStartupIndexRecreationEntities,
             @DefaultValue("anyTermAnyField") String defaultSearchStrategy,
             @DefaultValue("create-or-recreate") String indexSchemaManagementStrategy,
             @DefaultValue("0/5 * * * * ?") String indexingQueueProcessingCron,
@@ -67,6 +77,8 @@ public class SearchProperties {
         this.defaultSearchStrategy = defaultSearchStrategy;
         this.indexSchemaManagementStrategy = IndexSchemaManagementStrategy.getByKey(indexSchemaManagementStrategy);
         this.elasticsearch = elasticsearch;
+        this.enqueueIndexAllOnStartupIndexRecreationEnabled = enqueueIndexAllOnStartupIndexRecreationEnabled;
+        this.enqueueIndexAllOnStartupIndexRecreationEntities = prepareStartupEnqueueingEntities(enqueueIndexAllOnStartupIndexRecreationEntities);
     }
 
     /**
@@ -133,6 +145,22 @@ public class SearchProperties {
     }
 
     /**
+     * @return true if all entity instances related to indexes created or recreated on startup should be enqueued automatically.
+     * False otherwise
+     */
+    public boolean isEnqueueIndexAllOnStartupIndexRecreationEnabled() {
+        return enqueueIndexAllOnStartupIndexRecreationEnabled;
+    }
+
+    /**
+     * @return list of entities that should be automatically enqueued on startup in case of index recreation.
+     * Empty list means all indexed entities
+     */
+    public List<String> getEnqueueIndexAllOnStartupIndexRecreationEntities() {
+        return enqueueIndexAllOnStartupIndexRecreationEntities;
+    }
+
+    /**
      * @return name of default search strategy
      */
     public String getDefaultSearchStrategy() {
@@ -165,6 +193,16 @@ public class SearchProperties {
      */
     public IndexSchemaManagementStrategy getIndexSchemaManagementStrategy() {
         return indexSchemaManagementStrategy;
+    }
+
+    protected List<String> prepareStartupEnqueueingEntities(String enqueueIndexAllOnStartupIndexRecreationEntities) {
+        List<String> result;
+        if (StringUtils.isBlank(enqueueIndexAllOnStartupIndexRecreationEntities)) {
+            result = Collections.emptyList();
+        } else {
+            result = Arrays.asList(enqueueIndexAllOnStartupIndexRecreationEntities.split(","));
+        }
+        return result;
     }
 
     protected static class Elasticsearch {

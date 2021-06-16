@@ -50,7 +50,7 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.Properties;
 
-@Component
+@Component("imap_ImapStoreBuilder")
 public class ImapStoreBuilder {
 
     private final static Logger log = LoggerFactory.getLogger(ImapStoreBuilder.class);

@@ -32,7 +32,7 @@ import java.util.stream.Stream;
 import static io.jmix.graphql.NamingUtils.normalizeInpTypeName;
 import static io.jmix.graphql.NamingUtils.normalizeName;
 
-@Component
+@Component("gql_ClassTypesGenerator")
 public class ClassTypesGenerator {
 
     @Autowired

@@ -37,7 +37,7 @@ import java.util.Set;
 import static io.jmix.graphql.accesscontext.GraphqlAccessContext.GRAPHQL_FILE_DOWNLOAD_ENABLED;
 import static io.jmix.graphql.accesscontext.GraphqlAccessContext.GRAPHQL_FILE_UPLOAD_ENABLED;
 
-@Component
+@Component("gql_PermissionDataFetcher")
 public class PermissionDataFetcher {
 
     protected static final int ALLOWED_CRUD_PERMISSION = 1;

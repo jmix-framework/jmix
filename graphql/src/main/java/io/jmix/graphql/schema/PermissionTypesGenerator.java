@@ -29,7 +29,7 @@ import java.util.List;
 
 import static io.jmix.graphql.schema.BaseTypesGenerator.listType;
 
-@Component
+@Component("gql_PermissionTypesGenerator")
 public class PermissionTypesGenerator {
 
     public List<GraphQLType> generatePermissionTypes() {

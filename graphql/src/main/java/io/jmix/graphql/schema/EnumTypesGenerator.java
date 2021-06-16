@@ -32,7 +32,7 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@Component
+@Component("gql_EnumTypesGenerator")
 public class EnumTypesGenerator {
 
     @Autowired

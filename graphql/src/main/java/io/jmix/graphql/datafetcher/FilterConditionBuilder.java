@@ -17,7 +17,7 @@ import java.util.Map;
 
 import static io.jmix.graphql.schema.Types.FilterOperation.*;
 
-@Component
+@Component("gql_FilterConditionBuilder")
 public class FilterConditionBuilder {
 
     private final Logger log = LoggerFactory.getLogger(getClass());

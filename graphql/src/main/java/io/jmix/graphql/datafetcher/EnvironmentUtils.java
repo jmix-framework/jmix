@@ -37,7 +37,7 @@ import java.util.stream.Stream;
 
 import static io.jmix.graphql.NamingUtils.SYS_ATTR_INSTANCE_NAME;
 
-@Component
+@Component("gql_EnvironmentUtils")
 public class EnvironmentUtils {
 
     @Autowired

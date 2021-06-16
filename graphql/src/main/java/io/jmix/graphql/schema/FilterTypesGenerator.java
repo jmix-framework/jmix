@@ -36,7 +36,7 @@ import static io.jmix.graphql.schema.BaseTypesGenerator.listInpObjectField;
 import static io.jmix.graphql.schema.Types.FilterOperation.*;
 import static io.jmix.graphql.schema.scalar.CustomScalars.GraphQLUUID;
 
-@Component
+@Component("gql_FilterTypesGenerator")
 public class FilterTypesGenerator {
 
     protected static final GraphQLEnumType enumSortOrder = EnumTypesGenerator.generateEnumType(Types.SortOrder.class);

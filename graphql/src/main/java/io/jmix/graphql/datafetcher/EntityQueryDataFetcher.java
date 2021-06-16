@@ -21,7 +21,7 @@ import javax.validation.constraints.NotNull;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Component
+@Component("gql_EntityQueryDataFetcher")
 public class EntityQueryDataFetcher {
 
     public static final int DEFAULT_MAX_RESULTS = 100;

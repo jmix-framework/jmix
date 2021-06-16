@@ -16,7 +16,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Component
+@Component("gql_DataFetcherPlanBuilder")
 public class DataFetcherPlanBuilder {
 
     @Autowired

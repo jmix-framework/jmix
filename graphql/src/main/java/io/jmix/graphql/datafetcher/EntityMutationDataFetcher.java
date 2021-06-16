@@ -20,7 +20,7 @@ import javax.persistence.PersistenceException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Component
+@Component("gql_EntityMutationDataFetcher")
 public class EntityMutationDataFetcher {
 
     private final Logger log = LoggerFactory.getLogger(EntityMutationDataFetcher.class);

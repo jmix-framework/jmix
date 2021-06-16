@@ -38,7 +38,7 @@ import java.time.*;
 import java.util.Date;
 import java.util.UUID;
 
-@Component
+@Component("gql_BaseTypesGenerator")
 public class BaseTypesGenerator {
 
     @Autowired

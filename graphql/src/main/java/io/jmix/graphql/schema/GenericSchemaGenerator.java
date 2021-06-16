@@ -33,7 +33,7 @@ import java.util.List;
 
 import static io.jmix.graphql.schema.BaseTypesGenerator.*;
 
-@Component
+@Component("gql_GenericSchemaGenerator")
 public class GenericSchemaGenerator {
 
     @Autowired

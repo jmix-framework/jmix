@@ -38,7 +38,7 @@ import static io.jmix.graphql.NamingUtils.ID_ATTR_NAME;
 /**
  * Converts entities to Map&lt;String, Object&gt; response format.
  */
-@Component
+@Component("gql_ResponseBuilder")
 public class ResponseBuilder {
 
     private final Logger log = LoggerFactory.getLogger(getClass());

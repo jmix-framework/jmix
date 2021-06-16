@@ -27,7 +27,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
+@Component("gql_MessageTypesGenerator")
 public class MessageTypesGenerator {
 
     @SuppressWarnings("rawtypes")

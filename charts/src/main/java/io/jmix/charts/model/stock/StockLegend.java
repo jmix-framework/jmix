@@ -19,6 +19,8 @@ package io.jmix.charts.model.stock;
 
 import io.jmix.charts.model.chart.impl.StockPanel;
 import io.jmix.charts.model.legend.AbstractLegend;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioProperty;
 
 /**
  * StockLegend is a legend of {@link StockPanel}.
@@ -27,6 +29,11 @@ import io.jmix.charts.model.legend.AbstractLegend;
  *
  * <a href="http://docs.amcharts.com/3/javascriptstockchart/StockLegend">http://docs.amcharts.com/3/javascriptstockchart/StockLegend</a>
  */
+@StudioElement(
+        caption = "StockLegend",
+        xmlElement = "stockLegend",
+        xmlns = "http://jmix.io/schema/ui/charts",
+        xmlnsAlias = "chart")
 public class StockLegend extends AbstractLegend<StockLegend> {
 
     private static final long serialVersionUID = -5155850515331784520L;
@@ -58,6 +65,7 @@ public class StockLegend extends AbstractLegend<StockLegend> {
      * @param periodValueTextComparing period value text comparing
      * @return stock legend
      */
+    @StudioProperty
     public StockLegend setPeriodValueTextComparing(String periodValueTextComparing) {
         this.periodValueTextComparing = periodValueTextComparing;
         return this;
@@ -79,6 +87,7 @@ public class StockLegend extends AbstractLegend<StockLegend> {
      * @param periodValueTextRegular period value text regular
      * @return stock legend
      */
+    @StudioProperty
     public StockLegend setPeriodValueTextRegular(String periodValueTextRegular) {
         this.periodValueTextRegular = periodValueTextRegular;
         return this;
@@ -99,6 +108,7 @@ public class StockLegend extends AbstractLegend<StockLegend> {
      * @param valueTextComparing value text comparing
      * @return stock legend
      */
+    @StudioProperty(defaultValue = "[[percents.value]]%")
     public StockLegend setValueTextComparing(String valueTextComparing) {
         this.valueTextComparing = valueTextComparing;
         return this;
@@ -119,6 +129,7 @@ public class StockLegend extends AbstractLegend<StockLegend> {
      * @param valueTextRegular value text regular
      * @return stock legend
      */
+    @StudioProperty(defaultValue = "[[value]]")
     public StockLegend setValueTextRegular(String valueTextRegular) {
         this.valueTextRegular = valueTextRegular;
         return this;

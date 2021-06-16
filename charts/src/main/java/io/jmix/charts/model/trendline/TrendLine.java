@@ -21,7 +21,12 @@ import io.jmix.charts.model.AbstractChartObject;
 import io.jmix.charts.model.Color;
 import io.jmix.charts.model.chart.impl.SerialChartModelImpl;
 import io.jmix.charts.model.chart.impl.XYChartModelImpl;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioProperty;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.util.Date;
 
 /**
@@ -32,6 +37,11 @@ import java.util.Date;
  *
  * <a href="http://docs.amcharts.com/3/javascriptcharts/TrendLine">http://docs.amcharts.com/3/javascriptcharts/TrendLine</a>
  */
+@StudioElement(
+        caption = "TrendLine",
+        xmlElement = "trendLine",
+        xmlns = "http://jmix.io/schema/ui/charts",
+        xmlnsAlias = "chart")
 public class TrendLine extends AbstractChartObject {
 
     private static final long serialVersionUID = -6846712713867338160L;
@@ -87,6 +97,7 @@ public class TrendLine extends AbstractChartObject {
      * @param balloonText balloon text
      * @return trend line
      */
+    @StudioProperty
     public TrendLine setBalloonText(String balloonText) {
         this.balloonText = balloonText;
         return this;
@@ -105,6 +116,7 @@ public class TrendLine extends AbstractChartObject {
      * @param dashLength dash length
      * @return trend line
      */
+    @StudioProperty(defaultValue = "0")
     public TrendLine setDashLength(Integer dashLength) {
         this.dashLength = dashLength;
         return this;
@@ -124,6 +136,7 @@ public class TrendLine extends AbstractChartObject {
      * @param finalCategory final category string
      * @return trend line
      */
+    @StudioProperty
     public TrendLine setFinalCategory(String finalCategory) {
         this.finalCategory = finalCategory;
         return this;
@@ -142,6 +155,7 @@ public class TrendLine extends AbstractChartObject {
      * @param finalDate final date
      * @return trend line
      */
+    @StudioProperty
     public TrendLine setFinalDate(Date finalDate) {
         this.finalDate = finalDate;
         return this;
@@ -160,6 +174,7 @@ public class TrendLine extends AbstractChartObject {
      * @param finalValue final value
      * @return trend line
      */
+    @StudioProperty
     public TrendLine setFinalValue(Double finalValue) {
         this.finalValue = finalValue;
         return this;
@@ -178,6 +193,7 @@ public class TrendLine extends AbstractChartObject {
      * @param finalXValue final X value
      * @return trend line
      */
+    @StudioProperty
     public TrendLine setFinalXValue(Double finalXValue) {
         this.finalXValue = finalXValue;
         return this;
@@ -197,6 +213,7 @@ public class TrendLine extends AbstractChartObject {
      * @param initialCategory initial category
      * @return trend line
      */
+    @StudioProperty
     public TrendLine setInitialCategory(String initialCategory) {
         this.initialCategory = initialCategory;
         return this;
@@ -215,6 +232,7 @@ public class TrendLine extends AbstractChartObject {
      * @param initialDate initial date
      * @return trend line
      */
+    @StudioProperty
     public TrendLine setInitialDate(Date initialDate) {
         this.initialDate = initialDate;
         return this;
@@ -233,6 +251,7 @@ public class TrendLine extends AbstractChartObject {
      * @param initialValue initial value
      * @return trend line
      */
+    @StudioProperty
     public TrendLine setInitialValue(Double initialValue) {
         this.initialValue = initialValue;
         return this;
@@ -251,6 +270,7 @@ public class TrendLine extends AbstractChartObject {
      * @param initialXValue initial X value
      * @return trend line
      */
+    @StudioProperty
     public TrendLine setInitialXValue(Double initialXValue) {
         this.initialXValue = initialXValue;
         return this;
@@ -270,6 +290,7 @@ public class TrendLine extends AbstractChartObject {
      * @param aProtected isProtected option
      * @return trend line
      */
+    @StudioProperty(defaultValue = "false")
     public TrendLine setProtected(Boolean aProtected) {
         isProtected = aProtected;
         return this;
@@ -288,6 +309,9 @@ public class TrendLine extends AbstractChartObject {
      * @param lineAlpha opacity
      * @return trend line
      */
+    @StudioProperty(defaultValue = "1")
+    @Max(1)
+    @Min(0)
     public TrendLine setLineAlpha(Double lineAlpha) {
         this.lineAlpha = lineAlpha;
         return this;
@@ -306,6 +330,7 @@ public class TrendLine extends AbstractChartObject {
      * @param lineColor color
      * @return trend line
      */
+    @StudioProperty(type = PropertyType.OPTIONS, defaultValue = "#00CC00")
     public TrendLine setLineColor(Color lineColor) {
         this.lineColor = lineColor;
         return this;
@@ -324,6 +349,7 @@ public class TrendLine extends AbstractChartObject {
      * @param lineThickness thickness
      * @return trend line
      */
+    @StudioProperty(defaultValue = "1")
     public TrendLine setLineThickness(Integer lineThickness) {
         this.lineThickness = lineThickness;
         return this;
@@ -342,6 +368,7 @@ public class TrendLine extends AbstractChartObject {
      * @param valueAxis value axis id
      * @return trend line
      */
+    @StudioProperty
     public TrendLine setValueAxis(String valueAxis) {
         this.valueAxis = valueAxis;
         return this;
@@ -360,6 +387,7 @@ public class TrendLine extends AbstractChartObject {
      * @param valueAxisX value axis X id
      * @return trend line
      */
+    @StudioProperty
     public TrendLine setValueAxisX(String valueAxisX) {
         this.valueAxisX = valueAxisX;
         return this;
@@ -378,6 +406,7 @@ public class TrendLine extends AbstractChartObject {
      * @param id id
      * @return trend line
      */
+    @StudioProperty
     public TrendLine setId(String id) {
         this.id = id;
         return this;
@@ -396,6 +425,7 @@ public class TrendLine extends AbstractChartObject {
      * @param finalImage final image
      * @return trend line
      */
+    @StudioElement(caption = "Final Image", xmlElement = "finalImage")
     public TrendLine setFinalImage(Image finalImage) {
         this.finalImage = finalImage;
         return this;
@@ -414,6 +444,7 @@ public class TrendLine extends AbstractChartObject {
      * @param initialImage initial image
      * @return trend line
      */
+    @StudioElement(caption = "Initial Image", xmlElement = "initialImage")
     public TrendLine setInitialImage(Image initialImage) {
         this.initialImage = initialImage;
         return this;

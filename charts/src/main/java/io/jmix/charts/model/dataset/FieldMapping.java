@@ -17,7 +17,14 @@
 package io.jmix.charts.model.dataset;
 
 import io.jmix.charts.model.AbstractChartObject;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioProperty;
 
+@StudioElement(
+        caption = "FieldMapping",
+        xmlElement = "fieldMapping",
+        xmlns = "http://jmix.io/schema/ui/charts",
+        xmlnsAlias = "chart")
 public class FieldMapping extends AbstractChartObject {
 
     private static final long serialVersionUID = 2656776286364228750L;
@@ -30,6 +37,7 @@ public class FieldMapping extends AbstractChartObject {
         return fromField;
     }
 
+    @StudioProperty
     public FieldMapping setFromField(String fromField) {
         this.fromField = fromField;
         return this;
@@ -39,6 +47,7 @@ public class FieldMapping extends AbstractChartObject {
         return toField;
     }
 
+    @StudioProperty
     public FieldMapping setToField(String toField) {
         this.toField = toField;
         return this;

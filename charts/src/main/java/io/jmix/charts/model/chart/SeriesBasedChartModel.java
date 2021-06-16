@@ -20,7 +20,15 @@ package io.jmix.charts.model.chart;
 import io.jmix.charts.model.Scrollbar;
 import io.jmix.charts.model.axis.CategoryAxis;
 import io.jmix.charts.model.cursor.Cursor;
+import io.jmix.ui.meta.*;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+
+@StudioProperties(groups = {
+        @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                properties = {"dataContainer", "categoryField"})
+})
 public interface SeriesBasedChartModel<T extends SeriesBasedChartModel> extends RectangularChartModel<T> {
     /**
      * @return category axis
@@ -33,6 +41,7 @@ public interface SeriesBasedChartModel<T extends SeriesBasedChartModel> extends 
      * @param categoryAxis the category axis
      * @return  chart model
      */
+    @StudioElement
     T setCategoryAxis(CategoryAxis categoryAxis);
 
     /**
@@ -47,6 +56,7 @@ public interface SeriesBasedChartModel<T extends SeriesBasedChartModel> extends 
      * @param categoryField category field name string
      * @return  chart model
      */
+    @StudioProperty(type = PropertyType.PROPERTY_PATH_REF)
     T setCategoryField(String categoryField);
 
     /**
@@ -61,6 +71,7 @@ public interface SeriesBasedChartModel<T extends SeriesBasedChartModel> extends 
      * @param balloonDateFormat the balloon date format
      * @return  chart model
      */
+    @StudioProperty(defaultValue = "MMM DD, YYYY")
     T setBalloonDateFormat(String balloonDateFormat);
 
     /**
@@ -74,6 +85,7 @@ public interface SeriesBasedChartModel<T extends SeriesBasedChartModel> extends 
      * @param columnSpacing3D space between 3D stacked columns
      * @return  chart model
      */
+    @StudioProperty(defaultValue = "0")
     T setColumnSpacing3D(Integer columnSpacing3D);
 
     /**
@@ -87,6 +99,7 @@ public interface SeriesBasedChartModel<T extends SeriesBasedChartModel> extends 
      * @param columnSpacing column spacing in pixels
      * @return  chart model
      */
+    @StudioProperty(defaultValue = "5")
     T setColumnSpacing(Integer columnSpacing);
 
     /**
@@ -100,6 +113,9 @@ public interface SeriesBasedChartModel<T extends SeriesBasedChartModel> extends 
      * @param columnWidth relative width of columns
      * @return  chart model
      */
+    @StudioProperty(defaultValue = "0.8")
+    @Max(1)
+    @Min(0)
     T setColumnWidth(Double columnWidth);
 
     /**
@@ -115,6 +131,7 @@ public interface SeriesBasedChartModel<T extends SeriesBasedChartModel> extends 
      * @param dataDateFormat data date format string
      * @return  chart model
      */
+    @StudioProperty
     T setDataDateFormat(String dataDateFormat);
 
     /**
@@ -128,6 +145,7 @@ public interface SeriesBasedChartModel<T extends SeriesBasedChartModel> extends 
      * @param maxSelectedSeries the maximum number of selected series
      * @return  chart model
      */
+    @StudioProperty
     T setMaxSelectedSeries(Integer maxSelectedSeries);
 
     /**
@@ -142,6 +160,7 @@ public interface SeriesBasedChartModel<T extends SeriesBasedChartModel> extends 
      * @param maxSelectedTime the maximum selected time in milliseconds
      * @return  chart model
      */
+    @StudioProperty
     T setMaxSelectedTime(Long maxSelectedTime);
 
     /**
@@ -156,6 +175,7 @@ public interface SeriesBasedChartModel<T extends SeriesBasedChartModel> extends 
      * @param minSelectedTime the minimum selected time in milliseconds
      * @return  chart model
      */
+    @StudioProperty(defaultValue = "0")
     T setMinSelectedTime(Long minSelectedTime);
 
     /**
@@ -170,6 +190,7 @@ public interface SeriesBasedChartModel<T extends SeriesBasedChartModel> extends 
      * @param mouseWheelScrollEnabled mouse wheel scroll option
      * @return  chart model
      */
+    @StudioProperty(defaultValue = "false")
     T setMouseWheelScrollEnabled(Boolean mouseWheelScrollEnabled);
 
     /**
@@ -184,6 +205,7 @@ public interface SeriesBasedChartModel<T extends SeriesBasedChartModel> extends 
      * @param rotate rotate option
      * @return  chart model
      */
+    @StudioProperty(defaultValue = "false")
     T setRotate(Boolean rotate);
 
     /**
@@ -198,6 +220,7 @@ public interface SeriesBasedChartModel<T extends SeriesBasedChartModel> extends 
      * @param zoomOutOnDataUpdate zoomOutOnDataUpdate option
      * @return  chart model
      */
+    @StudioProperty(defaultValue = "true")
     T setZoomOutOnDataUpdate(Boolean zoomOutOnDataUpdate);
 
     /**
@@ -212,6 +235,7 @@ public interface SeriesBasedChartModel<T extends SeriesBasedChartModel> extends 
      * @param mouseWheelZoomEnabled mouseWheelZoomEnabled option
      * @return  chart model
      */
+    @StudioProperty(defaultValue = "false")
     T setMouseWheelZoomEnabled(Boolean mouseWheelZoomEnabled);
 
     /**
@@ -225,6 +249,7 @@ public interface SeriesBasedChartModel<T extends SeriesBasedChartModel> extends 
      * @param valueScrollbar the value scrollbar
      * @return  chart model
      */
+    @StudioElement(caption = "Value Scrollbar", xmlElement = "valueScrollbar")
     T setValueScrollbar(Scrollbar valueScrollbar);
 
     /**
@@ -239,5 +264,6 @@ public interface SeriesBasedChartModel<T extends SeriesBasedChartModel> extends 
      * @param synchronizeGrid synchronized grid option
      * @return  chart model
      */
+    @StudioProperty
     T setSynchronizeGrid(Boolean synchronizeGrid);
 }

@@ -18,6 +18,8 @@ package io.jmix.charts.component;
 
 
 import io.jmix.charts.model.chart.PieChartModel;
+import io.jmix.ui.meta.CanvasIconSize;
+import io.jmix.ui.meta.StudioComponent;
 
 /**
  * Pie / donut chart component.
@@ -26,6 +28,16 @@ import io.jmix.charts.model.chart.PieChartModel;
  * <br>
  * <a href="http://docs.amcharts.com/3/javascriptcharts/AmPieChart">http://docs.amcharts.com/3/javascriptcharts/AmPieChart</a>
  */
+@StudioComponent(
+        caption = "PieChart",
+        category = "Charts",
+        xmlElement = "pieChart",
+        xmlns = "http://jmix.io/schema/ui/charts",
+        xmlnsAlias = "chart",
+        icon = "io/jmix/charts/icon/component/pieChart.svg",
+        canvasIcon = "io/jmix/charts/icon/component/pieChart.svg",
+        canvasIconSize = CanvasIconSize.LARGE
+)
 public interface PieChart extends SlicedChart<PieChart>, PieChartModel<PieChart> {
     String NAME = "pieChart";
 }

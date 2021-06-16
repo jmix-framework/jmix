@@ -243,9 +243,8 @@ public interface Calendar<V> extends Component.BelongToFrame, Component.HasCapti
             itemXmlElement = "day",
             itemCaption = "Day Name",
             itemProperties = {
-                    @StudioProperty(name = "dayOfWeek", type = PropertyType.ENUMERATION, options = {
-                            "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY",
-                    }, required = true),
+                    @StudioProperty(name = "dayOfWeek", type = PropertyType.ENUMERATION,
+                            options = {"@link java.time.DayOfWeek"}, required = true),
                     @StudioProperty(name = "value", type = PropertyType.LOCALIZED_STRING, required = true)
             }
     )
@@ -265,10 +264,8 @@ public interface Calendar<V> extends Component.BelongToFrame, Component.HasCapti
             itemXmlElement = "month",
             itemCaption = "Month Name",
             itemProperties = {
-                    @StudioProperty(name = "month", type = PropertyType.ENUMERATION, options = {
-                            "JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER",
-                            "OCTOBER", "NOVEMBER", "DECEMBER"
-                    }, required = true),
+                    @StudioProperty(name = "month", type = PropertyType.ENUMERATION,
+                            options = {"@link java.time.Month"}, required = true),
                     @StudioProperty(name = "value", type = PropertyType.LOCALIZED_STRING, required = true)
             }
     )

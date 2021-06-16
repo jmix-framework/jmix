@@ -19,6 +19,12 @@ package io.jmix.charts.model.axis;
 import io.jmix.charts.model.*;
 import io.jmix.charts.model.label.Label;
 import io.jmix.charts.model.settings.PanelsSettings;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioProperty;
+
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 
 /**
  * Defines set of properties for all {@link ValueAxis}. If there is no default value specified, default value of
@@ -28,6 +34,11 @@ import io.jmix.charts.model.settings.PanelsSettings;
  *
  * <a href="http://docs.amcharts.com/3/javascriptstockchart/ValueAxesSettings">http://docs.amcharts.com/3/javascriptstockchart/ValueAxesSettings</a>
  */
+@StudioElement(
+        caption = "ValueAxesSettings",
+        xmlElement = "valueAxesSettings",
+        xmlns = "http://jmix.io/schema/ui/charts",
+        xmlnsAlias = "chart")
 public class ValueAxesSettings extends AbstractChartObject {
 
     private static final long serialVersionUID = 5770922216765077570L;
@@ -120,6 +131,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * @param autoGridCount autoGridCount option
      * @return value axes settings
      */
+    @StudioProperty(defaultValue = "true")
     public ValueAxesSettings setAutoGridCount(Boolean autoGridCount) {
         this.autoGridCount = autoGridCount;
         return this;
@@ -138,6 +150,9 @@ public class ValueAxesSettings extends AbstractChartObject {
      * @param axisAlpha opacity
      * @return value axes settings
      */
+    @StudioProperty(defaultValue = "0")
+    @Max(1)
+    @Min(0)
     public ValueAxesSettings setAxisAlpha(Double axisAlpha) {
         this.axisAlpha = axisAlpha;
         return this;
@@ -156,6 +171,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * @param axisColor color
      * @return value axes settings
      */
+    @StudioProperty(type = PropertyType.OPTIONS)
     public ValueAxesSettings setAxisColor(Color axisColor) {
         this.axisColor = axisColor;
         return this;
@@ -174,6 +190,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * @param axisThickness thickness
      * @return value axes settings
      */
+    @StudioProperty
     public ValueAxesSettings setAxisThickness(Integer axisThickness) {
         this.axisThickness = axisThickness;
         return this;
@@ -192,6 +209,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * @param color color
      * @return value axes settings
      */
+    @StudioProperty(type = PropertyType.OPTIONS)
     public ValueAxesSettings setColor(Color color) {
         this.color = color;
         return this;
@@ -210,6 +228,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * @param dashLength dash length
      * @return value axes settings
      */
+    @StudioProperty
     public ValueAxesSettings setDashLength(Integer dashLength) {
         this.dashLength = dashLength;
         return this;
@@ -228,6 +247,9 @@ public class ValueAxesSettings extends AbstractChartObject {
      * @param fillAlpha opacity
      * @return value axes settings
      */
+    @StudioProperty
+    @Max(1)
+    @Min(0)
     public ValueAxesSettings setFillAlpha(Double fillAlpha) {
         this.fillAlpha = fillAlpha;
         return this;
@@ -247,6 +269,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * @param fillColor color
      * @return value axes settings
      */
+    @StudioProperty(type = PropertyType.OPTIONS)
     public ValueAxesSettings setFillColor(Color fillColor) {
         this.fillColor = fillColor;
         return this;
@@ -265,6 +288,9 @@ public class ValueAxesSettings extends AbstractChartObject {
      * @param gridAlpha opacity
      * @return value axes settings
      */
+    @StudioProperty
+    @Max(1)
+    @Min(0)
     public ValueAxesSettings setGridAlpha(Double gridAlpha) {
         this.gridAlpha = gridAlpha;
         return this;
@@ -283,6 +309,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * @param gridColor color
      * @return value axes settings
      */
+    @StudioProperty(type = PropertyType.OPTIONS)
     public ValueAxesSettings setGridColor(Color gridColor) {
         this.gridColor = gridColor;
         return this;
@@ -301,6 +328,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * @param gridThickness thickness
      * @return value axes settings
      */
+    @StudioProperty
     public ValueAxesSettings setGridThickness(Integer gridThickness) {
         this.gridThickness = gridThickness;
         return this;
@@ -319,6 +347,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * @param includeGuidesInMinMax includeGuidesInMinMax option
      * @return value axes settings
      */
+    @StudioProperty
     public ValueAxesSettings setIncludeGuidesInMinMax(Boolean includeGuidesInMinMax) {
         this.includeGuidesInMinMax = includeGuidesInMinMax;
         return this;
@@ -337,6 +366,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * @param includeHidden includeHidden option
      * @return value axes settings
      */
+    @StudioProperty
     public ValueAxesSettings setIncludeHidden(Boolean includeHidden) {
         this.includeHidden = includeHidden;
         return this;
@@ -358,6 +388,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * @param inside inside option
      * @return value axes settings
      */
+    @StudioProperty(defaultValue = "true")
     public ValueAxesSettings setInside(Boolean inside) {
         this.inside = inside;
         return this;
@@ -376,6 +407,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * @param integersOnly integersOnly option
      * @return value axes settings
      */
+    @StudioProperty
     public ValueAxesSettings setIntegersOnly(Boolean integersOnly) {
         this.integersOnly = integersOnly;
         return this;
@@ -394,6 +426,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * @param labelFrequency label frequency
      * @return value axes settings
      */
+    @StudioProperty
     public ValueAxesSettings setLabelFrequency(Double labelFrequency) {
         this.labelFrequency = labelFrequency;
         return this;
@@ -412,6 +445,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * @param labelOffset label offset
      * @return value axes settings
      */
+    @StudioProperty(defaultValue = "0")
     public ValueAxesSettings setLabelOffset(Integer labelOffset) {
         this.labelOffset = labelOffset;
         return this;
@@ -430,6 +464,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * @param labelsEnabled labelsEnabled option
      * @return value axes settings
      */
+    @StudioProperty
     public ValueAxesSettings setLabelsEnabled(Boolean labelsEnabled) {
         this.labelsEnabled = labelsEnabled;
         return this;
@@ -448,6 +483,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * @param logarithmic logarithmic option
      * @return value axes settings
      */
+    @StudioProperty
     public ValueAxesSettings setLogarithmic(Boolean logarithmic) {
         this.logarithmic = logarithmic;
         return this;
@@ -467,6 +503,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * @param maximum maximum value
      * @return value axes settings
      */
+    @StudioProperty
     public ValueAxesSettings setMaximum(Double maximum) {
         this.maximum = maximum;
         return this;
@@ -486,6 +523,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * @param minimum minimum value
      * @return value axes settings
      */
+    @StudioProperty
     public ValueAxesSettings setMinimum(Double minimum) {
         this.minimum = minimum;
         return this;
@@ -505,6 +543,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * @param minMaxMultiplier minimum and maximum multiplier
      * @return value axes settings
      */
+    @StudioProperty
     public ValueAxesSettings setMinMaxMultiplier(Double minMaxMultiplier) {
         this.minMaxMultiplier = minMaxMultiplier;
         return this;
@@ -524,6 +563,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * @param offset offset
      * @return value axes settings
      */
+    @StudioProperty
     public ValueAxesSettings setOffset(Integer offset) {
         this.offset = offset;
         return this;
@@ -542,6 +582,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * @param position position
      * @return value axes settings
      */
+    @StudioProperty(type = PropertyType.ENUMERATION)
     public ValueAxesSettings setPosition(ValueAxisPosition position) {
         this.position = position;
         return this;
@@ -560,6 +601,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * @param reversed reversed option
      * @return value axes settings
      */
+    @StudioProperty
     public ValueAxesSettings setReversed(Boolean reversed) {
         this.reversed = reversed;
         return this;
@@ -579,6 +621,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * @param showFirstLabel showFirstLabel option
      * @return value axes settings
      */
+    @StudioProperty(defaultValue = "true")
     public ValueAxesSettings setShowFirstLabel(Boolean showFirstLabel) {
         this.showFirstLabel = showFirstLabel;
         return this;
@@ -597,6 +640,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * @param showLastLabel showLastLabel option
      * @return value axes settings
      */
+    @StudioProperty(defaultValue = "false")
     public ValueAxesSettings setShowLastLabel(Boolean showLastLabel) {
         this.showLastLabel = showLastLabel;
         return this;
@@ -615,6 +659,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * @param stackType stack type
      * @return value axes settings
      */
+    @StudioProperty(type = PropertyType.ENUMERATION)
     public ValueAxesSettings setStackType(StackType stackType) {
         this.stackType = stackType;
         return this;
@@ -633,6 +678,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * @param tickLength tick length
      * @return value axes settings
      */
+    @StudioProperty(defaultValue = "0")
     public ValueAxesSettings setTickLength(Integer tickLength) {
         this.tickLength = tickLength;
         return this;
@@ -651,6 +697,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * @param unit unit
      * @return value axes settings
      */
+    @StudioProperty
     public ValueAxesSettings setUnit(String unit) {
         this.unit = unit;
         return this;
@@ -669,6 +716,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * @param unitPosition unit position
      * @return value axes settings
      */
+    @StudioProperty(type = PropertyType.ENUMERATION)
     public ValueAxesSettings setUnitPosition(UnitPosition unitPosition) {
         this.unitPosition = unitPosition;
         return this;
@@ -688,6 +736,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * @param gridCount grid count
      * @return value axes settings
      */
+    @StudioProperty
     public ValueAxesSettings setGridCount(Integer gridCount) {
         this.gridCount = gridCount;
         return this;
@@ -706,6 +755,9 @@ public class ValueAxesSettings extends AbstractChartObject {
      * @param minorGridAlpha opacity
      * @return value axes settings
      */
+    @StudioProperty
+    @Max(1)
+    @Min(0)
     public ValueAxesSettings setMinorGridAlpha(Double minorGridAlpha) {
         this.minorGridAlpha = minorGridAlpha;
         return this;
@@ -724,6 +776,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * @param minorGridEnabled minorGridEnabled option
      * @return value axes settings
      */
+    @StudioProperty
     public ValueAxesSettings setMinorGridEnabled(Boolean minorGridEnabled) {
         this.minorGridEnabled = minorGridEnabled;
         return this;
@@ -743,6 +796,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * @param minVerticalGap minimum vertical gap
      * @return value axes settings
      */
+    @StudioProperty
     public ValueAxesSettings setMinVerticalGap(Integer minVerticalGap) {
         this.minVerticalGap = minVerticalGap;
         return this;
@@ -761,6 +815,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * @param precision precision
      * @return value axes settings
      */
+    @StudioProperty
     public ValueAxesSettings setPrecision(Integer precision) {
         this.precision = precision;
         return this;
@@ -781,6 +836,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * @param strictMinMax strictMinMax option
      * @return value axes settings
      */
+    @StudioProperty
     public ValueAxesSettings setStrictMinMax(Boolean strictMinMax) {
         this.strictMinMax = strictMinMax;
         return this;

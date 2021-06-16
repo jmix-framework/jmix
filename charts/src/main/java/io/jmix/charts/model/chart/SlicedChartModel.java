@@ -22,9 +22,43 @@ import io.jmix.charts.model.animation.HasStartEffect;
 import io.jmix.charts.model.chart.impl.AbstractChart;
 import io.jmix.charts.model.chart.impl.SlicedChartModelImpl;
 import io.jmix.charts.model.label.Label;
+import io.jmix.ui.meta.*;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.util.List;
 
+@StudioProperties(properties = {
+        @StudioProperty(name = "marginBottom", type = PropertyType.INTEGER, defaultValue = "0"),
+        @StudioProperty(name = "marginLeft", type = PropertyType.INTEGER, defaultValue = "0"),
+        @StudioProperty(name = "marginRight", type = PropertyType.INTEGER, defaultValue = "0"),
+        @StudioProperty(name = "marginTop", type = PropertyType.INTEGER, defaultValue = "0"),
+        @StudioProperty(name = "startEffect", type = PropertyType.ENUMERATION,
+                options = {"@link io.jmix.charts.model.animation.AnimationEffect"}, defaultValue = "BOUNCE"),
+        @StudioProperty(name = "startDuration", type = PropertyType.DOUBLE, defaultValue = "1")
+},
+        groups = {
+                @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                        properties = {"dataContainer", "alphaField"}),
+                @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                        properties = {"dataContainer", "colorField"}),
+                @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                        properties = {"dataContainer", "descriptionField"}),
+                @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                        properties = {"dataContainer", "patternField"}),
+                @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                        properties = {"dataContainer", "pulledField"}),
+                @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                        properties = {"dataContainer", "titleField"}),
+                @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                        properties = {"dataContainer", "urlField"}),
+                @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                        properties = {"dataContainer", "valueField"}),
+                @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                        properties = {"dataContainer", "visibleInLegendField"}),
+                @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                        properties = {"dataContainer", "classNameField"})
+        })
 public interface SlicedChartModel<T extends SlicedChartModel>
         extends ChartModel<T>, HasMargins<T>, HasStartEffect<T>, HasColors<T> {
     /**
@@ -38,6 +72,9 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * @param alpha opacity of all slices
      * @return sliced chart model
      */
+    @StudioProperty(defaultValue = "1")
+    @Max(1)
+    @Min(0)
     T setAlpha(Double alpha);
 
     /**
@@ -51,6 +88,7 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * @param alphaField alpha field string
      * @return sliced chart model
      */
+    @StudioProperty(type = PropertyType.PROPERTY_PATH_REF)
     T setAlphaField(String alphaField);
 
     /**
@@ -65,6 +103,7 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * @param baseColor color of the first slice
      * @return sliced chart model
      */
+    @StudioProperty(type = PropertyType.OPTIONS)
     T setBaseColor(Color baseColor);
 
     /**
@@ -78,6 +117,7 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * @param colorField color field string
      * @return sliced chart model
      */
+    @StudioProperty(type = PropertyType.PROPERTY_PATH_REF)
     T setColorField(String colorField);
 
     /**
@@ -91,6 +131,7 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * @param descriptionField description field string
      * @return sliced chart model
      */
+    @StudioProperty(type = PropertyType.PROPERTY_PATH_REF)
     T setDescriptionField(String descriptionField);
 
     /**
@@ -105,6 +146,13 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * @param gradientRatio list of gradient ratio
      * @return sliced chart model
      */
+    @StudioCollection(xmlElement = "gradientRatios",
+            itemXmlElement = "ratio",
+            itemCaption = "Gradient Ratio",
+            itemProperties = {
+                    @StudioProperty(name = "value", type = PropertyType.DOUBLE)
+            },
+            documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/charts.html")
     T setGradientRatio(List<Double> gradientRatio);
 
     /**
@@ -126,6 +174,9 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * @param groupedAlpha opacity of the group slice
      * @return sliced chart model
      */
+    @StudioProperty(defaultValue = "1")
+    @Max(1)
+    @Min(0)
     T setGroupedAlpha(Double groupedAlpha);
 
     /**
@@ -140,6 +191,7 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * @param groupedColor grouped color
      * @return sliced chart model
      */
+    @StudioProperty(type = PropertyType.OPTIONS)
     T setGroupedColor(Color groupedColor);
 
     /**
@@ -153,6 +205,7 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * @param groupedDescription grouped description string
      * @return sliced chart model
      */
+    @StudioProperty
     T setGroupedDescription(String groupedDescription);
 
     /**
@@ -167,6 +220,7 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * @param groupedPulled grouped pulled option
      * @return sliced chart model
      */
+    @StudioProperty(defaultValue = "false")
     T setGroupedPulled(Boolean groupedPulled);
 
     /**
@@ -180,6 +234,7 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * @param groupedTitle grouped title string
      * @return sliced chart model
      */
+    @StudioProperty(defaultValue = "Other")
     T setGroupedTitle(String groupedTitle);
 
     Double getGroupPercent();
@@ -192,6 +247,7 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * @param groupPercent the group percent
      * @return sliced chart model
      */
+    @StudioProperty(defaultValue = "0")
     T setGroupPercent(Double groupPercent);
 
     /**
@@ -207,6 +263,7 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * @param hideLabelsPercent the hide labels percent
      * @return sliced chart model
      */
+    @StudioProperty(defaultValue = "0")
     T setHideLabelsPercent(Double hideLabelsPercent);
 
     /**
@@ -220,6 +277,9 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * @param hoverAlpha opacity of a hovered slice
      * @return sliced chart model
      */
+    @StudioProperty(defaultValue = "1")
+    @Max(1)
+    @Min(0)
     T setHoverAlpha(Double hoverAlpha);
 
     /**
@@ -233,6 +293,7 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * @param labelsEnabled labels enabled option
      * @return sliced chart model
      */
+    @StudioProperty(defaultValue = "true")
     T setLabelsEnabled(Boolean labelsEnabled);
 
     /**
@@ -246,6 +307,9 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * @param labelTickAlpha label tick opacity
      * @return sliced chart model
      */
+    @StudioProperty(defaultValue = "0.2")
+    @Max(1)
+    @Min(0)
     T setLabelTickAlpha(Double labelTickAlpha);
 
     /**
@@ -259,6 +323,7 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * @param labelTickColor label tick color
      * @return sliced chart model
      */
+    @StudioProperty(type = PropertyType.OPTIONS, defaultValue = "#000000")
     T setLabelTickColor(Color labelTickColor);
 
     /**
@@ -272,6 +337,9 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * @param outlineAlpha outline opacity
      * @return sliced chart model
      */
+    @StudioProperty(defaultValue = "0")
+    @Max(1)
+    @Min(0)
     T setOutlineAlpha(Double outlineAlpha);
 
     /**
@@ -285,6 +353,7 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * @param outlineColor the outline color
      * @return sliced chart model
      */
+    @StudioProperty(type = PropertyType.OPTIONS, defaultValue = "#FFFFFF")
     T setOutlineColor(Color outlineColor);
 
     /**
@@ -298,6 +367,7 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * @param outlineThickness the outline thickness
      * @return sliced chart model
      */
+    @StudioProperty(defaultValue = "1")
     T setOutlineThickness(Integer outlineThickness);
 
     /**
@@ -311,6 +381,7 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * @param patternField pattern field string
      * @return sliced chart model
      */
+    @StudioProperty(type = PropertyType.PROPERTY_PATH_REF)
     T setPatternField(String patternField);
 
     /**
@@ -325,6 +396,7 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * @param pulledField pulled field string
      * @return sliced chart model
      */
+    @StudioProperty(type = PropertyType.PROPERTY_PATH_REF, options = "boolean")
     T setPulledField(String pulledField);
 
     /**
@@ -338,6 +410,7 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * @param pullOutDuration pull out duration in seconds
      * @return sliced chart model
      */
+    @StudioProperty(defaultValue = "1")
     T setPullOutDuration(Integer pullOutDuration);
 
     /**
@@ -366,6 +439,7 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * @param pullOutOnlyOne pull out only one option
      * @return sliced chart model
      */
+    @StudioProperty(defaultValue = "false")
     T setPullOutOnlyOne(Boolean pullOutOnlyOne);
 
     /**
@@ -380,6 +454,7 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * @param sequencedAnimation sequenced animation option
      * @return sliced chart model
      */
+    @StudioProperty(defaultValue = "true")
     T setSequencedAnimation(Boolean sequencedAnimation);
 
     /**
@@ -393,6 +468,7 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * @param startAlpha initial opacity of all slices
      * @return sliced chart model
      */
+    @StudioProperty(defaultValue = "0")
     T setStartAlpha(Double startAlpha);
 
     /**
@@ -406,6 +482,7 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * @param titleField title field string
      * @return sliced chart model
      */
+    @StudioProperty(type = PropertyType.PROPERTY_PATH_REF)
     T setTitleField(String titleField);
 
     /**
@@ -419,6 +496,7 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * @param urlField the URL field string
      * @return sliced chart model
      */
+    @StudioProperty(type = PropertyType.PROPERTY_PATH_REF)
     T setUrlField(String urlField);
 
     /**
@@ -433,6 +511,8 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * @param urlTarget the URL target string
      * @return sliced chart model
      */
+    @StudioProperty(type = PropertyType.OPTIONS, options = {"_blank", "_parent", "_self", "_top"},
+            defaultValue = "_self")
     T setUrlTarget(String urlTarget);
 
     /**
@@ -446,6 +526,7 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * @param valueField value field string
      * @return sliced chart model
      */
+    @StudioProperty(type = PropertyType.PROPERTY_PATH_REF)
     T setValueField(String valueField);
 
     /**
@@ -461,6 +542,7 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * @param visibleInLegendField visible in legend field string
      * @return sliced chart model
      */
+    @StudioProperty(type = PropertyType.PROPERTY_PATH_REF, options = "boolean")
     T setVisibleInLegendField(String visibleInLegendField);
 
     /**
@@ -490,6 +572,7 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * @param maxLabelWidth maximum label width
      * @return sliced chart model
      */
+    @StudioProperty(defaultValue = "200")
     T setMaxLabelWidth(Integer maxLabelWidth);
 
     /**
@@ -504,6 +587,7 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * @param classNameField class name field string
      * @return sliced chart model
      */
+    @StudioProperty(type = PropertyType.PROPERTY_PATH_REF)
     T setClassNameField(String classNameField);
 
     /**
@@ -518,6 +602,7 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * @param showZeroSlices show zero slices option
      * @return sliced chart model
      */
+    @StudioProperty(defaultValue = "false")
     T setShowZeroSlices(Boolean showZeroSlices);
 
     /**
@@ -534,6 +619,8 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * @param accessibleLabel accessible label text
      * @return sliced chart model
      */
+    @StudioProperty(type = PropertyType.LOCALIZED_STRING,
+            defaultValue = "[[title]]: [[percents]]% [[value]] [[description]]")
     T setAccessibleLabel(String accessibleLabel);
 
     /**
@@ -548,6 +635,7 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * @param labelColorField label color field string
      * @return sliced chart model
      */
+    @StudioProperty(type = PropertyType.OPTIONS, defaultValue = "#000000")
     T setLabelColorField(Color labelColorField);
 
     /**
@@ -563,5 +651,6 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * @param tabIndex the tab index
      * @return sliced chart model
      */
+    @StudioProperty
     T setTabIndex(Integer tabIndex);
 }

@@ -17,7 +17,14 @@
 package io.jmix.charts.model.export;
 
 import io.jmix.charts.model.AbstractChartObject;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioProperty;
 
+@StudioElement(
+        caption = "ExportLibs",
+        xmlElement = "libs",
+        xmlns = "http://jmix.io/schema/ui/charts",
+        xmlnsAlias = "chart")
 public class ExportLibs extends AbstractChartObject {
 
     private static final long serialVersionUID = -729310699528694421L;
@@ -28,6 +35,7 @@ public class ExportLibs extends AbstractChartObject {
         return path;
     }
 
+    @StudioProperty
     public ExportLibs setPath(String path) {
         this.path = path;
         return this;

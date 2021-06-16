@@ -18,6 +18,12 @@ package io.jmix.charts.model.stock;
 
 import io.jmix.charts.model.AbstractChartObject;
 import io.jmix.charts.model.Color;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioProperty;
+
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 
 /**
  * Defines set of properties for all StockEvents.
@@ -26,6 +32,11 @@ import io.jmix.charts.model.Color;
  *
  * <a href="http://docs.amcharts.com/3/javascriptstockchart/StockEventsSettings">http://docs.amcharts.com/3/javascriptstockchart/StockEventsSettings</a>
  */
+@StudioElement(
+        caption = "StockEventsSettings",
+        xmlElement = "stockEventsSettings",
+        xmlns = "http://jmix.io/schema/ui/charts",
+        xmlnsAlias = "chart")
 public class StockEventsSettings extends AbstractChartObject {
 
     private static final long serialVersionUID = 6413770909562353029L;
@@ -59,6 +70,9 @@ public class StockEventsSettings extends AbstractChartObject {
      * @param backgroundAlpha opacity
      * @return stock event settings
      */
+    @StudioProperty(defaultValue = "1")
+    @Max(1)
+    @Min(0)
     public StockEventsSettings setBackgroundAlpha(Double backgroundAlpha) {
         this.backgroundAlpha = backgroundAlpha;
         return this;
@@ -77,6 +91,7 @@ public class StockEventsSettings extends AbstractChartObject {
      * @param backgroundColor color
      * @return stock event settings
      */
+    @StudioProperty(type = PropertyType.OPTIONS, defaultValue = "#DADADA")
     public StockEventsSettings setBackgroundColor(Color backgroundColor) {
         this.backgroundColor = backgroundColor;
         return this;
@@ -95,6 +110,7 @@ public class StockEventsSettings extends AbstractChartObject {
      * @param balloonColor balloon color
      * @return stock event settings
      */
+    @StudioProperty(type = PropertyType.OPTIONS, defaultValue = "#CC0000")
     public StockEventsSettings setBalloonColor(Color balloonColor) {
         this.balloonColor = balloonColor;
         return this;
@@ -113,6 +129,9 @@ public class StockEventsSettings extends AbstractChartObject {
      * @param borderAlpha opacity
      * @return stock event settings
      */
+    @StudioProperty(defaultValue = "1")
+    @Max(1)
+    @Min(0)
     public StockEventsSettings setBorderAlpha(Double borderAlpha) {
         this.borderAlpha = borderAlpha;
         return this;
@@ -131,6 +150,7 @@ public class StockEventsSettings extends AbstractChartObject {
      * @param borderColor color
      * @return stock event settings
      */
+    @StudioProperty(type = PropertyType.OPTIONS, defaultValue = "#888888")
     public StockEventsSettings setBorderColor(Color borderColor) {
         this.borderColor = borderColor;
         return this;
@@ -149,6 +169,7 @@ public class StockEventsSettings extends AbstractChartObject {
      * @param rollOverColor color
      * @return stock event settings
      */
+    @StudioProperty(type = PropertyType.OPTIONS, defaultValue = "#CC0000")
     public StockEventsSettings setRollOverColor(Color rollOverColor) {
         this.rollOverColor = rollOverColor;
         return this;
@@ -167,6 +188,7 @@ public class StockEventsSettings extends AbstractChartObject {
      * @param showAt showAt string
      * @return stock event settings
      */
+    @StudioProperty(type = PropertyType.OPTIONS, options = {"open", "close", "low", "high"}, defaultValue = "close")
     public StockEventsSettings setShowAt(String showAt) {
         this.showAt = showAt;
         return this;
@@ -185,6 +207,7 @@ public class StockEventsSettings extends AbstractChartObject {
      * @param type type
      * @return stock event settings
      */
+    @StudioProperty(type = PropertyType.ENUMERATION, defaultValue = "SIGN")
     public StockEventsSettings setType(StockEventType type) {
         this.type = type;
         return this;

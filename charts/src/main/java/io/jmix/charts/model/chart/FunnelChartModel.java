@@ -19,6 +19,8 @@ package io.jmix.charts.model.chart;
 
 import io.jmix.charts.model.FunnelValueRepresentation;
 import io.jmix.charts.model.label.LabelPosition;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioProperty;
 
 public interface FunnelChartModel<T extends FunnelChartModel> extends SlicedChartModel<T> {
     /**
@@ -35,6 +37,7 @@ public interface FunnelChartModel<T extends FunnelChartModel> extends SlicedChar
      * @param balloonText balloon text string
      * @return funnel chart model
      */
+    @StudioProperty(defaultValue = "[[title]]:[[value]]\n[[description]]")
     T setBalloonText(String balloonText);
 
     /**
@@ -49,6 +52,7 @@ public interface FunnelChartModel<T extends FunnelChartModel> extends SlicedChar
      * @param baseWidth the base width
      * @return funnel chart model
      */
+    @StudioProperty(defaultValue = "100%")
     T setBaseWidth(String baseWidth);
 
     /**
@@ -63,6 +67,7 @@ public interface FunnelChartModel<T extends FunnelChartModel> extends SlicedChar
      * @param labelPosition the label position
      * @return funnel chart model
      */
+    @StudioProperty(type = PropertyType.ENUMERATION, defaultValue = "CENTER")
     T setLabelPosition(LabelPosition labelPosition);
 
     /**
@@ -78,6 +83,7 @@ public interface FunnelChartModel<T extends FunnelChartModel> extends SlicedChar
      * @param labelText label text string
      * @return funnel chart model
      */
+    @StudioProperty(defaultValue = "[[title]]: [[value]]")
     T setLabelText(String labelText);
 
     /**
@@ -92,6 +98,7 @@ public interface FunnelChartModel<T extends FunnelChartModel> extends SlicedChar
      * @param neckHeight the neck height
      * @return funnel chart model
      */
+    @StudioProperty(defaultValue = "0")
     T setNeckHeight(String neckHeight);
 
     /**
@@ -106,6 +113,7 @@ public interface FunnelChartModel<T extends FunnelChartModel> extends SlicedChar
      * @param neckWidth the neck width
      * @return funnel chart model
      */
+    @StudioProperty(defaultValue = "0")
     T setNeckWidth(String neckWidth);
 
     /**
@@ -119,6 +127,7 @@ public interface FunnelChartModel<T extends FunnelChartModel> extends SlicedChar
      * @param pullDistance the pull distance
      * @return funnel chart model
      */
+    @StudioProperty(defaultValue = "30")
     T setPullDistance(String pullDistance);
 
     /**
@@ -133,6 +142,7 @@ public interface FunnelChartModel<T extends FunnelChartModel> extends SlicedChar
      * @param startX the start X
      * @return funnel chart model
      */
+    @StudioProperty(defaultValue = "0")
     T setStartX(Integer startX);
 
     /**
@@ -147,6 +157,7 @@ public interface FunnelChartModel<T extends FunnelChartModel> extends SlicedChar
      * @param startY the start Y
      * @return funnel chart model
      */
+    @StudioProperty(defaultValue = "0")
     T setStartY(Integer startY);
 
     /**
@@ -161,6 +172,7 @@ public interface FunnelChartModel<T extends FunnelChartModel> extends SlicedChar
      * @param valueRepresents the value represents
      * @return funnel chart model
      */
+    @StudioProperty(type = PropertyType.ENUMERATION, defaultValue = "HEIGHT")
     T setValueRepresents(FunnelValueRepresentation valueRepresents);
 
     /**
@@ -175,6 +187,7 @@ public interface FunnelChartModel<T extends FunnelChartModel> extends SlicedChar
      * @param rotate rotate option
      * @return funnel chart model
      */
+    @StudioProperty(defaultValue = "false")
     T setRotate(Boolean rotate);
 
     /**
@@ -189,6 +202,7 @@ public interface FunnelChartModel<T extends FunnelChartModel> extends SlicedChar
      * @param angle the angle
      * @return funnel chart model
      */
+    @StudioProperty(defaultValue = "0")
     T setAngle(Integer angle);
 
     /**
@@ -203,5 +217,6 @@ public interface FunnelChartModel<T extends FunnelChartModel> extends SlicedChar
      * @param depth3D the depth 3D
      * @return funnel chart model
      */
+    @StudioProperty
     T setDepth3D(Integer depth3D);
 }

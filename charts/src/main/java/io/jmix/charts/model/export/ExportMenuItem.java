@@ -19,7 +19,18 @@ package io.jmix.charts.model.export;
 
 import io.jmix.charts.model.AbstractChartObject;
 import io.jmix.charts.model.axis.CategoryAxis;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioProperty;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+
+@StudioElement(
+        caption = "ExportMenuItem",
+        xmlElement = "item",
+        xmlns = "http://jmix.io/schema/ui/charts",
+        xmlnsAlias = "chart")
 public class ExportMenuItem extends AbstractChartObject {
 
     private static final long serialVersionUID = 7821740492043242236L;
@@ -62,6 +73,7 @@ public class ExportMenuItem extends AbstractChartObject {
         return format;
     }
 
+    @StudioProperty(type = PropertyType.ENUMERATION)
     public ExportMenuItem setFormat(ExportFormat format) {
         this.format = format;
         return this;
@@ -71,6 +83,7 @@ public class ExportMenuItem extends AbstractChartObject {
         return label;
     }
 
+    @StudioProperty
     public ExportMenuItem setLabel(String label) {
         this.label = label;
         return this;
@@ -80,6 +93,7 @@ public class ExportMenuItem extends AbstractChartObject {
         return title;
     }
 
+    @StudioProperty
     public ExportMenuItem setTitle(String title) {
         this.title = title;
         return this;
@@ -98,6 +112,7 @@ public class ExportMenuItem extends AbstractChartObject {
      * @param fileName file name
      * @return export menu item
      */
+    @StudioProperty
     public ExportMenuItem setFileName(String fileName) {
         this.fileName = fileName;
         return this;
@@ -116,6 +131,7 @@ public class ExportMenuItem extends AbstractChartObject {
      * @param pageOrientation page orientation
      * @return export menu item
      */
+    @StudioProperty(type = PropertyType.ENUMERATION, defaultValue = "PORTRAIT")
     public ExportMenuItem setPageOrientation(PageOrientation pageOrientation) {
         this.pageOrientation = pageOrientation;
         return this;
@@ -134,6 +150,7 @@ public class ExportMenuItem extends AbstractChartObject {
      * @param pageOrigin pageOrigin option
      * @return export menu item
      */
+    @StudioProperty
     public ExportMenuItem setPageOrigin(Boolean pageOrigin) {
         this.pageOrigin = pageOrigin;
         return this;
@@ -152,6 +169,7 @@ public class ExportMenuItem extends AbstractChartObject {
      * @param pageSize page size
      * @return export menu item
      */
+    @StudioProperty(type = PropertyType.ENUMERATION, defaultValue = "A4")
     public ExportMenuItem setPageSize(PageSize pageSize) {
         this.pageSize = pageSize;
         return this;
@@ -170,6 +188,9 @@ public class ExportMenuItem extends AbstractChartObject {
      * @param quality quality
      * @return export menu item
      */
+    @StudioProperty(defaultValue = "1")
+    @Max(1)
+    @Min(0)
     public ExportMenuItem setQuality(Double quality) {
         this.quality = quality;
         return this;
@@ -188,6 +209,7 @@ public class ExportMenuItem extends AbstractChartObject {
      * @param multiplier multiplier
      * @return export menu item
      */
+    @StudioProperty
     public ExportMenuItem setMultiplier(Double multiplier) {
         this.multiplier = multiplier;
         return this;
@@ -206,6 +228,7 @@ public class ExportMenuItem extends AbstractChartObject {
      * @param delay delay
      * @return export menu item
      */
+    @StudioProperty
     public ExportMenuItem setDelay(Double delay) {
         this.delay = delay;
         return this;
@@ -224,6 +247,7 @@ public class ExportMenuItem extends AbstractChartObject {
      * @param lossless lossless option
      * @return export menu item
      */
+    @StudioProperty
     public ExportMenuItem setLossless(Boolean lossless) {
         this.lossless = lossless;
         return this;
@@ -242,6 +266,7 @@ public class ExportMenuItem extends AbstractChartObject {
      * @param delimiter delimiter
      * @return export menu item
      */
+    @StudioProperty(defaultValue = ",")
     public ExportMenuItem setDelimiter(String delimiter) {
         this.delimiter = delimiter;
         return this;
@@ -260,6 +285,7 @@ public class ExportMenuItem extends AbstractChartObject {
      * @param quotes quotes option
      * @return export menu item
      */
+    @StudioProperty
     public ExportMenuItem setQuotes(Boolean quotes) {
         this.quotes = quotes;
         return this;
@@ -278,6 +304,7 @@ public class ExportMenuItem extends AbstractChartObject {
      * @param escape escape option
      * @return export menu item
      */
+    @StudioProperty
     public ExportMenuItem setEscape(Boolean escape) {
         this.escape = escape;
         return this;
@@ -296,6 +323,7 @@ public class ExportMenuItem extends AbstractChartObject {
      * @param withHeader withHeader option
      * @return export menu item
      */
+    @StudioProperty
     public ExportMenuItem setWithHeader(Boolean withHeader) {
         this.withHeader = withHeader;
         return this;
@@ -314,6 +342,7 @@ public class ExportMenuItem extends AbstractChartObject {
      * @param dateFormat date format
      * @return export menu item
      */
+    @StudioProperty
     public ExportMenuItem setDateFormat(String dateFormat) {
         this.dateFormat = dateFormat;
         return this;
@@ -332,6 +361,7 @@ public class ExportMenuItem extends AbstractChartObject {
      * @param stringify stringify option
      * @return export menu item
      */
+    @StudioProperty
     public ExportMenuItem setStringify(Boolean stringify) {
         this.stringify = stringify;
         return this;

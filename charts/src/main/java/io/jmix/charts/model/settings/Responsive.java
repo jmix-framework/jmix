@@ -17,6 +17,9 @@
 package io.jmix.charts.model.settings;
 
 import io.jmix.charts.model.AbstractChartObject;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioElementsGroup;
+import io.jmix.ui.meta.StudioProperty;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,6 +30,11 @@ import java.util.List;
  *
  * <a href="https://github.com/amcharts/responsive">https://github.com/amcharts/responsive</a>
  */
+@StudioElement(
+        caption = "Responsive",
+        xmlElement = "responsive",
+        xmlns = "http://jmix.io/schema/ui/charts",
+        xmlnsAlias = "chart")
 public class Responsive extends AbstractChartObject {
 
     private static final long serialVersionUID = -7360797549413731632L;
@@ -38,6 +46,7 @@ public class Responsive extends AbstractChartObject {
         return enabled;
     }
 
+    @StudioProperty
     public Responsive setEnabled(Boolean enabled) {
         this.enabled = enabled;
         return this;
@@ -47,6 +56,7 @@ public class Responsive extends AbstractChartObject {
         return rules;
     }
 
+    @StudioElementsGroup(caption = "Rules", xmlElement = "rules")
     public Responsive setRules(List<Rule> rules) {
         this.rules = rules;
         return this;

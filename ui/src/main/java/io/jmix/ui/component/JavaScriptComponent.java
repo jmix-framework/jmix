@@ -22,7 +22,6 @@ import io.jmix.ui.meta.CanvasBehaviour;
 import io.jmix.ui.meta.PropertyType;
 import io.jmix.ui.meta.StudioCollection;
 import io.jmix.ui.meta.StudioComponent;
-import io.jmix.ui.meta.StudioElement;
 import io.jmix.ui.meta.StudioProperty;
 
 import javax.annotation.Nullable;
@@ -70,7 +69,7 @@ public interface JavaScriptComponent extends Component,
             itemProperties = {
                     @StudioProperty(name = "path", type = PropertyType.STRING, required = true),
                     @StudioProperty(name = "type", type = PropertyType.ENUMERATION,
-                            options = {"JAVASCRIPT", "STYLESHEET"})
+                            options = {"@link io.jmix.ui.component.JavaScriptComponent.DependencyType"})
             }
     )
     void setDependencies(List<ClientDependency> dependencies);

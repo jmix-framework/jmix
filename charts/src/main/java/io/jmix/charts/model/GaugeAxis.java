@@ -18,7 +18,13 @@ package io.jmix.charts.model;
 
 import io.jmix.charts.component.AngularGaugeChart;
 import io.jmix.charts.model.axis.UnitPosition;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioElementsGroup;
+import io.jmix.ui.meta.StudioProperty;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -30,6 +36,11 @@ import java.util.List;
  *
  * <a href="http://docs.amcharts.com/3/javascriptcharts/GaugeAxis">http://docs.amcharts.com/3/javascriptcharts/GaugeAxis</a>
  */
+@StudioElement(
+        caption = "GaugeAxis",
+        xmlElement = "axis",
+        xmlns = "http://jmix.io/schema/ui/charts",
+        xmlnsAlias = "chart")
 public class GaugeAxis extends AbstractChartObject {
 
     private static final long serialVersionUID = -27560253244597238L;
@@ -143,6 +154,9 @@ public class GaugeAxis extends AbstractChartObject {
      * @param axisAlpha opacity
      * @return gauge axis
      */
+    @StudioProperty(defaultValue = "1")
+    @Max(1)
+    @Min(0)
     public GaugeAxis setAxisAlpha(Double axisAlpha) {
         this.axisAlpha = axisAlpha;
         return this;
@@ -161,6 +175,7 @@ public class GaugeAxis extends AbstractChartObject {
      * @param axisColor color
      * @return gauge axis
      */
+    @StudioProperty(type = PropertyType.OPTIONS, defaultValue = "#000000")
     public GaugeAxis setAxisColor(Color axisColor) {
         this.axisColor = axisColor;
         return this;
@@ -179,6 +194,7 @@ public class GaugeAxis extends AbstractChartObject {
      * @param axisThickness axis thickness
      * @return gauge axis
      */
+    @StudioProperty(defaultValue = "1")
     public GaugeAxis setAxisThickness(Integer axisThickness) {
         this.axisThickness = axisThickness;
         return this;
@@ -197,6 +213,9 @@ public class GaugeAxis extends AbstractChartObject {
      * @param bandAlpha opacity
      * @return gauge axis
      */
+    @StudioProperty(defaultValue = "1")
+    @Max(1)
+    @Min(0)
     public GaugeAxis setBandAlpha(Double bandAlpha) {
         this.bandAlpha = bandAlpha;
         return this;
@@ -215,6 +234,9 @@ public class GaugeAxis extends AbstractChartObject {
      * @param bandOutlineAlpha opacity
      * @return gauge axis
      */
+    @StudioProperty(defaultValue = "0")
+    @Max(1)
+    @Min(0)
     public GaugeAxis setBandOutlineAlpha(Double bandOutlineAlpha) {
         this.bandOutlineAlpha = bandOutlineAlpha;
         return this;
@@ -233,6 +255,7 @@ public class GaugeAxis extends AbstractChartObject {
      * @param bandOutlineColor color
      * @return gauge axis
      */
+    @StudioProperty(type = PropertyType.OPTIONS, defaultValue = "#000000")
     public GaugeAxis setBandOutlineColor(Color bandOutlineColor) {
         this.bandOutlineColor = bandOutlineColor;
         return this;
@@ -251,6 +274,7 @@ public class GaugeAxis extends AbstractChartObject {
      * @param bandOutlineThickness thickness
      * @return gauge axis
      */
+    @StudioProperty(defaultValue = "0")
     public GaugeAxis setBandOutlineThickness(Integer bandOutlineThickness) {
         this.bandOutlineThickness = bandOutlineThickness;
         return this;
@@ -269,6 +293,7 @@ public class GaugeAxis extends AbstractChartObject {
      * @param bottomText bottom text
      * @return gauge axis
      */
+    @StudioProperty
     public GaugeAxis setBottomText(String bottomText) {
         this.bottomText = bottomText;
         return this;
@@ -287,6 +312,7 @@ public class GaugeAxis extends AbstractChartObject {
      * @param bottomTextBold bottomTextBold option
      * @return gauge axis
      */
+    @StudioProperty(defaultValue = "true")
     public GaugeAxis setBottomTextBold(Boolean bottomTextBold) {
         this.bottomTextBold = bottomTextBold;
         return this;
@@ -305,6 +331,7 @@ public class GaugeAxis extends AbstractChartObject {
      * @param bottomTextColor color
      * @return gauge axis
      */
+    @StudioProperty(type = PropertyType.OPTIONS)
     public GaugeAxis setBottomTextColor(Color bottomTextColor) {
         this.bottomTextColor = bottomTextColor;
         return this;
@@ -323,6 +350,7 @@ public class GaugeAxis extends AbstractChartObject {
      * @param bottomTextFontSize font size
      * @return gauge axis
      */
+    @StudioProperty
     public GaugeAxis setBottomTextFontSize(Integer bottomTextFontSize) {
         this.bottomTextFontSize = bottomTextFontSize;
         return this;
@@ -341,6 +369,7 @@ public class GaugeAxis extends AbstractChartObject {
      * @param bottomTextYOffset Y offset
      * @return gauge axis
      */
+    @StudioProperty(defaultValue = "0")
     public GaugeAxis setBottomTextYOffset(Integer bottomTextYOffset) {
         this.bottomTextYOffset = bottomTextYOffset;
         return this;
@@ -359,6 +388,7 @@ public class GaugeAxis extends AbstractChartObject {
      * @param centerX X position of the axis
      * @return gauge axis
      */
+    @StudioProperty(defaultValue = "0%")
     public GaugeAxis setCenterX(String centerX) {
         this.centerX = centerX;
         return this;
@@ -377,6 +407,7 @@ public class GaugeAxis extends AbstractChartObject {
      * @param centerY Y position of the axis
      * @return gauge axis
      */
+    @StudioProperty(defaultValue = "0%")
     public GaugeAxis setCenterY(String centerY) {
         this.centerY = centerY;
         return this;
@@ -395,6 +426,9 @@ public class GaugeAxis extends AbstractChartObject {
      * @param endAngle angle
      * @return gauge axis
      */
+    @StudioProperty(defaultValue = "120")
+    @Max(180)
+    @Min(-180)
     public GaugeAxis setEndAngle(Integer endAngle) {
         this.endAngle = endAngle;
         return this;
@@ -413,6 +447,7 @@ public class GaugeAxis extends AbstractChartObject {
      * @param endValue end value
      * @return gauge axis
      */
+    @StudioProperty
     public GaugeAxis setEndValue(Double endValue) {
         this.endValue = endValue;
         return this;
@@ -431,6 +466,7 @@ public class GaugeAxis extends AbstractChartObject {
      * @param gridInside gridInside option
      * @return gauge axis
      */
+    @StudioProperty(defaultValue = "true")
     public GaugeAxis setGridInside(Boolean gridInside) {
         this.gridInside = gridInside;
         return this;
@@ -449,6 +485,7 @@ public class GaugeAxis extends AbstractChartObject {
      * @param inside inside option
      * @return gauge axis
      */
+    @StudioProperty(defaultValue = "true")
     public GaugeAxis setInside(Boolean inside) {
         this.inside = inside;
         return this;
@@ -467,6 +504,7 @@ public class GaugeAxis extends AbstractChartObject {
      * @param labelFrequency frequency
      * @return gauge axis
      */
+    @StudioProperty(defaultValue = "1")
     public GaugeAxis setLabelFrequency(Double labelFrequency) {
         this.labelFrequency = labelFrequency;
         return this;
@@ -485,6 +523,7 @@ public class GaugeAxis extends AbstractChartObject {
      * @param labelOffset label offset
      * @return gauge axis
      */
+    @StudioProperty(defaultValue = "15")
     public GaugeAxis setLabelOffset(Integer labelOffset) {
         this.labelOffset = labelOffset;
         return this;
@@ -503,6 +542,7 @@ public class GaugeAxis extends AbstractChartObject {
      * @param minorTickInterval minor tick interval
      * @return gauge axis
      */
+    @StudioProperty
     public GaugeAxis setMinorTickInterval(Double minorTickInterval) {
         this.minorTickInterval = minorTickInterval;
         return this;
@@ -521,6 +561,7 @@ public class GaugeAxis extends AbstractChartObject {
      * @param minorTickLength length
      * @return gauge axis
      */
+    @StudioProperty(defaultValue = "5")
     public GaugeAxis setMinorTickLength(Integer minorTickLength) {
         this.minorTickLength = minorTickLength;
         return this;
@@ -539,6 +580,7 @@ public class GaugeAxis extends AbstractChartObject {
      * @param radius radius
      * @return gauge axis
      */
+    @StudioProperty(defaultValue = "95%")
     public GaugeAxis setRadius(String radius) {
         this.radius = radius;
         return this;
@@ -557,6 +599,7 @@ public class GaugeAxis extends AbstractChartObject {
      * @param showFirstLabel showFirstLabel option
      * @return gauge axis
      */
+    @StudioProperty(defaultValue = "true")
     public GaugeAxis setShowFirstLabel(Boolean showFirstLabel) {
         this.showFirstLabel = showFirstLabel;
         return this;
@@ -575,6 +618,7 @@ public class GaugeAxis extends AbstractChartObject {
      * @param showLastLabel showLastLabel option
      * @return gauge axis
      */
+    @StudioProperty(defaultValue = "true")
     public GaugeAxis setShowLastLabel(Boolean showLastLabel) {
         this.showLastLabel = showLastLabel;
         return this;
@@ -593,6 +637,9 @@ public class GaugeAxis extends AbstractChartObject {
      * @param startAngle start angle
      * @return gauge axis
      */
+    @StudioProperty(defaultValue = "-120")
+    @Max(180)
+    @Min(-180)
     public GaugeAxis setStartAngle(Integer startAngle) {
         this.startAngle = startAngle;
         return this;
@@ -611,6 +658,7 @@ public class GaugeAxis extends AbstractChartObject {
      * @param startValue start value
      * @return gauge axis
      */
+    @StudioProperty(defaultValue = "0")
     public GaugeAxis setStartValue(Double startValue) {
         this.startValue = startValue;
         return this;
@@ -629,6 +677,9 @@ public class GaugeAxis extends AbstractChartObject {
      * @param tickAlpha opacity
      * @return gauge axis
      */
+    @StudioProperty(defaultValue = "1")
+    @Max(1)
+    @Min(0)
     public GaugeAxis setTickAlpha(Double tickAlpha) {
         this.tickAlpha = tickAlpha;
         return this;
@@ -647,6 +698,7 @@ public class GaugeAxis extends AbstractChartObject {
      * @param tickColor tick color
      * @return gauge axis
      */
+    @StudioProperty(type = PropertyType.OPTIONS, defaultValue = "#555555")
     public GaugeAxis setTickColor(Color tickColor) {
         this.tickColor = tickColor;
         return this;
@@ -665,6 +717,7 @@ public class GaugeAxis extends AbstractChartObject {
      * @param tickLength tick length
      * @return gauge axis
      */
+    @StudioProperty(defaultValue = "10")
     public GaugeAxis setTickLength(Integer tickLength) {
         this.tickLength = tickLength;
         return this;
@@ -683,6 +736,7 @@ public class GaugeAxis extends AbstractChartObject {
      * @param tickThickness tick thickness
      * @return gauge axis
      */
+    @StudioProperty(defaultValue = "1")
     public GaugeAxis setTickThickness(Integer tickThickness) {
         this.tickThickness = tickThickness;
         return this;
@@ -701,6 +755,7 @@ public class GaugeAxis extends AbstractChartObject {
      * @param topText top text
      * @return gauge axis
      */
+    @StudioProperty
     public GaugeAxis setTopText(String topText) {
         this.topText = topText;
         return this;
@@ -719,6 +774,7 @@ public class GaugeAxis extends AbstractChartObject {
      * @param topTextBold topTextBold option
      * @return gauge axis
      */
+    @StudioProperty(defaultValue = "true")
     public GaugeAxis setTopTextBold(Boolean topTextBold) {
         this.topTextBold = topTextBold;
         return this;
@@ -737,6 +793,7 @@ public class GaugeAxis extends AbstractChartObject {
      * @param topTextColor color
      * @return gauge axis
      */
+    @StudioProperty(type = PropertyType.OPTIONS)
     public GaugeAxis setTopTextColor(Color topTextColor) {
         this.topTextColor = topTextColor;
         return this;
@@ -755,6 +812,7 @@ public class GaugeAxis extends AbstractChartObject {
      * @param topTextFontSize font size
      * @return gauge axis
      */
+    @StudioProperty
     public GaugeAxis setTopTextFontSize(Integer topTextFontSize) {
         this.topTextFontSize = topTextFontSize;
         return this;
@@ -773,6 +831,7 @@ public class GaugeAxis extends AbstractChartObject {
      * @param topTextYOffset Y offset
      * @return gauge axis
      */
+    @StudioProperty(defaultValue = "0")
     public GaugeAxis setTopTextYOffset(Integer topTextYOffset) {
         this.topTextYOffset = topTextYOffset;
         return this;
@@ -791,6 +850,7 @@ public class GaugeAxis extends AbstractChartObject {
      * @param unit unit string
      * @return gauge axis
      */
+    @StudioProperty
     public GaugeAxis setUnit(String unit) {
         this.unit = unit;
         return this;
@@ -809,6 +869,7 @@ public class GaugeAxis extends AbstractChartObject {
      * @param unitPosition unit position
      * @return gauge axis
      */
+    @StudioProperty(type = PropertyType.ENUMERATION, defaultValue = "RIGHT")
     public GaugeAxis setUnitPosition(UnitPosition unitPosition) {
         this.unitPosition = unitPosition;
         return this;
@@ -827,6 +888,7 @@ public class GaugeAxis extends AbstractChartObject {
      * @param valueInterval value interval
      * @return gauge axis
      */
+    @StudioProperty
     public GaugeAxis setValueInterval(Integer valueInterval) {
         this.valueInterval = valueInterval;
         return this;
@@ -845,6 +907,7 @@ public class GaugeAxis extends AbstractChartObject {
      * @param bands list of bands
      * @return gauge axis
      */
+    @StudioElementsGroup(caption = "Bands", xmlElement = "bands")
     public GaugeAxis setBands(List<GaugeBand> bands) {
         this.bands = bands;
         return this;
@@ -880,6 +943,7 @@ public class GaugeAxis extends AbstractChartObject {
      * @param gridCount number of grid lines
      * @return gauge axis
      */
+    @StudioProperty(defaultValue = "5")
     public GaugeAxis setGridCount(Integer gridCount) {
         this.gridCount = gridCount;
         return this;
@@ -898,6 +962,7 @@ public class GaugeAxis extends AbstractChartObject {
      * @param id id
      * @return gauge axis
      */
+    @StudioProperty
     public GaugeAxis setId(String id) {
         this.id = id;
         return this;
@@ -916,6 +981,7 @@ public class GaugeAxis extends AbstractChartObject {
      * @param labelsEnabled labelsEnabled option
      * @return gauge axis
      */
+    @StudioProperty(defaultValue = "true")
     public GaugeAxis setLabelsEnabled(Boolean labelsEnabled) {
         this.labelsEnabled = labelsEnabled;
         return this;
@@ -935,6 +1001,7 @@ public class GaugeAxis extends AbstractChartObject {
      * @param usePrefixes usePrefixes option
      * @return gauge axis
      */
+    @StudioProperty(defaultValue = "false")
     public GaugeAxis setUsePrefixes(Boolean usePrefixes) {
         this.usePrefixes = usePrefixes;
         return this;
@@ -972,6 +1039,7 @@ public class GaugeAxis extends AbstractChartObject {
      * @param color color
      * @return gauge axis
      */
+    @StudioProperty(type = PropertyType.OPTIONS)
     public GaugeAxis setColor(Color color) {
         this.color = color;
         return this;
@@ -990,6 +1058,7 @@ public class GaugeAxis extends AbstractChartObject {
      * @param fontSize font size
      * @return gauge axis
      */
+    @StudioProperty
     public GaugeAxis setFontSize(Integer fontSize) {
         this.fontSize = fontSize;
         return this;
@@ -1009,6 +1078,7 @@ public class GaugeAxis extends AbstractChartObject {
      * @param bandGradientRatio list gradient ratios
      * @return gauge axis
      */
+    @StudioProperty(type = PropertyType.STRING)
     public GaugeAxis setBandGradientRatio(List<Float> bandGradientRatio) {
         this.bandGradientRatio = bandGradientRatio;
         return this;

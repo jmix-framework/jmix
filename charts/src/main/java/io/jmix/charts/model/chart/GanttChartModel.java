@@ -21,10 +21,31 @@ import io.jmix.charts.model.axis.ValueAxis;
 import io.jmix.charts.model.chart.impl.AbstractChart;
 import io.jmix.charts.model.date.DatePeriod;
 import io.jmix.charts.model.graph.Graph;
+import io.jmix.ui.meta.*;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.util.Date;
 import java.util.List;
 
+@StudioProperties(groups = {
+        @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                properties = {"dataContainer", "colorField"}),
+        @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                properties = {"dataContainer", "columnWidthField"}),
+        @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                properties = {"dataContainer", "durationField"}),
+        @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                properties = {"dataContainer", "endDateField"}),
+        @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                properties = {"dataContainer", "endField"}),
+        @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                properties = {"dataContainer", "segmentsField"}),
+        @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                properties = {"dataContainer", "startDateField"}),
+        @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                properties = {"dataContainer", "startField"})
+})
 public interface GanttChartModel<T extends GanttChartModel> extends SeriesBasedChartModel<T> {
     /**
      * @return brightness step
@@ -37,6 +58,9 @@ public interface GanttChartModel<T extends GanttChartModel> extends SeriesBasedC
      * @param brightnessStep brightness step
      * @return  gantt chart model
      */
+    @StudioProperty
+    @Max(255)
+    @Min(-255)
     T setBrightnessStep(Integer brightnessStep);
 
     /**
@@ -50,6 +74,7 @@ public interface GanttChartModel<T extends GanttChartModel> extends SeriesBasedC
      * @param colorField color field string
      * @return  gantt chart model
      */
+    @StudioProperty(type = PropertyType.PROPERTY_PATH_REF)
     T setColorField(String colorField);
 
     /**
@@ -63,6 +88,7 @@ public interface GanttChartModel<T extends GanttChartModel> extends SeriesBasedC
      * @param columnWidthField column width field string
      * @return  gantt chart model
      */
+    @StudioProperty(type = PropertyType.PROPERTY_PATH_REF)
     T setColumnWidthField(String columnWidthField);
 
     /**
@@ -77,6 +103,7 @@ public interface GanttChartModel<T extends GanttChartModel> extends SeriesBasedC
      * @param durationField duration field string
      * @return  gantt chart model
      */
+    @StudioProperty(type = PropertyType.PROPERTY_PATH_REF)
     T setDurationField(String durationField);
 
     /**
@@ -90,6 +117,7 @@ public interface GanttChartModel<T extends GanttChartModel> extends SeriesBasedC
      * @param endDateField end date field string
      * @return  gantt chart model
      */
+    @StudioProperty(type = PropertyType.PROPERTY_PATH_REF)
     T setEndDateField(String endDateField);
 
     /**
@@ -105,6 +133,7 @@ public interface GanttChartModel<T extends GanttChartModel> extends SeriesBasedC
      * @param endField end field string
      * @return  gantt chart model
      */
+    @StudioProperty(type = PropertyType.PROPERTY_PATH_REF)
     T setEndField(String endField);
 
     /**
@@ -120,6 +149,7 @@ public interface GanttChartModel<T extends GanttChartModel> extends SeriesBasedC
      * @param graph the graph
      * @return  gantt chart model
      */
+    @StudioElement
     T setGraph(Graph graph);
 
     /**
@@ -146,6 +176,7 @@ public interface GanttChartModel<T extends GanttChartModel> extends SeriesBasedC
      * @param segmentsField segments field string
      * @return  gantt chart model
      */
+    @StudioProperty(type = PropertyType.PROPERTY_PATH_REF)
     T setSegmentsField(String segmentsField);
 
     /**
@@ -160,6 +191,7 @@ public interface GanttChartModel<T extends GanttChartModel> extends SeriesBasedC
      * @param startDate the start date
      * @return  gantt chart model
      */
+    @StudioProperty
     T setStartDate(Date startDate);
 
     /**
@@ -173,6 +205,7 @@ public interface GanttChartModel<T extends GanttChartModel> extends SeriesBasedC
      * @param startDateField start date field string
      * @return  gantt chart model
      */
+    @StudioProperty(type = PropertyType.PROPERTY_PATH_REF)
     T setStartDateField(String startDateField);
 
     /**
@@ -188,6 +221,7 @@ public interface GanttChartModel<T extends GanttChartModel> extends SeriesBasedC
      * @param startField start field string
      * @return  gantt chart model
      */
+    @StudioProperty(type = PropertyType.PROPERTY_PATH_REF)
     T setStartField(String startField);
 
     /**
@@ -201,6 +235,7 @@ public interface GanttChartModel<T extends GanttChartModel> extends SeriesBasedC
      * @param valueAxis the value axis
      * @return  gantt chart model
      */
+    @StudioElement
     T setValueAxis(ValueAxis valueAxis);
 
     /**
@@ -215,6 +250,7 @@ public interface GanttChartModel<T extends GanttChartModel> extends SeriesBasedC
      * @param additionalSegmentFields list of additional segment fields
      * @return  gantt chart model
      */
+    @StudioProperty(type = PropertyType.STRING)
     T setAdditionalSegmentFields(List<String> additionalSegmentFields);
 
     /**

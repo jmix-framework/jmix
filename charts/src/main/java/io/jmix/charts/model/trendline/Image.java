@@ -18,6 +18,9 @@ package io.jmix.charts.model.trendline;
 
 import io.jmix.charts.model.AbstractChartObject;
 import io.jmix.charts.model.Color;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioProperty;
 
 /**
  * Image is used to add images to the end/start of trend lines. Allows you to display image anywhere on chart's plot
@@ -27,6 +30,7 @@ import io.jmix.charts.model.Color;
  *
  * <a href="https://docs.amcharts.com/3/javascriptstockchart/Image">https://docs.amcharts.com/3/javascriptstockchart/Image</a>
  */
+@StudioElement
 public class Image extends AbstractChartObject {
 
     private static final long serialVersionUID = -1259965238248274458L;
@@ -56,6 +60,7 @@ public class Image extends AbstractChartObject {
      * @param balloonColor color
      * @return image
      */
+    @StudioProperty(type = PropertyType.OPTIONS, defaultValue = "#000000")
     public Image setBalloonColor(Color balloonColor) {
         this.balloonColor = balloonColor;
         return this;
@@ -74,6 +79,7 @@ public class Image extends AbstractChartObject {
      * @param balloonText text
      * @return image
      */
+    @StudioProperty
     public Image setBalloonText(String balloonText) {
         this.balloonText = balloonText;
         return this;
@@ -93,6 +99,7 @@ public class Image extends AbstractChartObject {
      * @param color color
      * @return image
      */
+    @StudioProperty(type = PropertyType.OPTIONS, defaultValue = "#000000")
     public Image setColor(Color color) {
         this.color = color;
         return this;
@@ -111,6 +118,7 @@ public class Image extends AbstractChartObject {
      * @param height height
      * @return image
      */
+    @StudioProperty(defaultValue = "20")
     public Image setHeight(Integer height) {
         this.height = height;
         return this;
@@ -129,6 +137,7 @@ public class Image extends AbstractChartObject {
      * @param offsetX X offset
      * @return image
      */
+    @StudioProperty(defaultValue = "0")
     public Image setOffsetX(Integer offsetX) {
         this.offsetX = offsetX;
         return this;
@@ -147,6 +156,7 @@ public class Image extends AbstractChartObject {
      * @param offsetY Y offset
      * @return image
      */
+    @StudioProperty(defaultValue = "0")
     public Image setOffsetY(Integer offsetY) {
         this.offsetY = offsetY;
         return this;
@@ -165,6 +175,7 @@ public class Image extends AbstractChartObject {
      * @param outlineColor color
      * @return image
      */
+    @StudioProperty(type = PropertyType.OPTIONS)
     public Image setOutlineColor(Color outlineColor) {
         this.outlineColor = outlineColor;
         return this;
@@ -183,6 +194,7 @@ public class Image extends AbstractChartObject {
      * @param rotation rotation
      * @return image
      */
+    @StudioProperty(defaultValue = "0")
     public Image setRotation(Integer rotation) {
         this.rotation = rotation;
         return this;
@@ -201,6 +213,7 @@ public class Image extends AbstractChartObject {
      * @param svgPath svg path
      * @return image
      */
+    @StudioProperty
     public Image setSvgPath(String svgPath) {
         this.svgPath = svgPath;
         return this;
@@ -219,6 +232,7 @@ public class Image extends AbstractChartObject {
      * @param url the URL
      * @return image
      */
+    @StudioProperty
     public Image setUrl(String url) {
         this.url = url;
         return this;
@@ -237,6 +251,7 @@ public class Image extends AbstractChartObject {
      * @param width width
      * @return image
      */
+    @StudioProperty(defaultValue = "20")
     public Image setWidth(Integer width) {
         this.width = width;
         return this;

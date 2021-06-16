@@ -76,9 +76,15 @@ public enum PropertyType {
     TIME,
 
     /**
-     * Value from the property options.
+     * Value from a strict list of property options.
      */
     ENUMERATION,
+
+    /**
+     * Arbitrary value represented by string with a list of possible options.
+     * Similar to {@link PropertyType#ENUMERATION}, but allows text input.
+     */
+    OPTIONS,
 
     /**
      * Identifier of a component, action or sub part. Must be a valid Java identifier.

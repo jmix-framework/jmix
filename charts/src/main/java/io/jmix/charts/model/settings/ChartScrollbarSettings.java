@@ -21,6 +21,12 @@ import io.jmix.charts.model.Color;
 import io.jmix.charts.model.Scrollbar;
 import io.jmix.charts.model.axis.CategoryAxesSettings;
 import io.jmix.charts.model.graph.GraphType;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioProperty;
+
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 
 /**
  * Defines set of properties for chart scrollbar. If there is no default value specified, default value of
@@ -30,6 +36,11 @@ import io.jmix.charts.model.graph.GraphType;
  *
  * <a href="http://docs.amcharts.com/3/javascriptstockchart/ChartScrollbarSettings">http://docs.amcharts.com/3/javascriptstockchart/ChartScrollbarSettings</a>
  */
+@StudioElement(
+        caption = "ChartScrollbarSettings",
+        xmlElement = "chartScrollbarSettings",
+        xmlns = "http://jmix.io/schema/ui/charts",
+        xmlnsAlias = "chart")
 public class ChartScrollbarSettings extends AbstractChartObject {
 
     private static final long serialVersionUID = -6544903589207480657L;
@@ -110,6 +121,7 @@ public class ChartScrollbarSettings extends AbstractChartObject {
      * @param autoGridCount autoGridCount option
      * @return chart scrollbar settings
      */
+    @StudioProperty(defaultValue = "true")
     public ChartScrollbarSettings setAutoGridCount(Boolean autoGridCount) {
         this.autoGridCount = autoGridCount;
         return this;
@@ -128,6 +140,9 @@ public class ChartScrollbarSettings extends AbstractChartObject {
      * @param backgroundAlpha background opacity
      * @return chart scrollbar settings
      */
+    @StudioProperty
+    @Max(1)
+    @Min(0)
     public ChartScrollbarSettings setBackgroundAlpha(Double backgroundAlpha) {
         this.backgroundAlpha = backgroundAlpha;
         return this;
@@ -146,6 +161,7 @@ public class ChartScrollbarSettings extends AbstractChartObject {
      * @param backgroundColor background color
      * @return chart scrollbar settings
      */
+    @StudioProperty(type = PropertyType.OPTIONS)
     public ChartScrollbarSettings setBackgroundColor(Color backgroundColor) {
         this.backgroundColor = backgroundColor;
         return this;
@@ -164,6 +180,7 @@ public class ChartScrollbarSettings extends AbstractChartObject {
      * @param color text color
      * @return chart scrollbar settings
      */
+    @StudioProperty(type = PropertyType.OPTIONS)
     public ChartScrollbarSettings setColor(Color color) {
         this.color = color;
         return this;
@@ -183,6 +200,7 @@ public class ChartScrollbarSettings extends AbstractChartObject {
      * @param dragIconHeight icon height
      * @return chart scrollbar settings
      */
+    @StudioProperty(defaultValue = "18")
     public ChartScrollbarSettings setDragIconHeight(Integer dragIconHeight) {
         this.dragIconHeight = dragIconHeight;
         return this;
@@ -202,6 +220,7 @@ public class ChartScrollbarSettings extends AbstractChartObject {
      * @param dragIconWidth icon width
      * @return chart scrollbar settings
      */
+    @StudioProperty(defaultValue = "11")
     public ChartScrollbarSettings setDragIconWidth(Integer dragIconWidth) {
         this.dragIconWidth = dragIconWidth;
         return this;
@@ -220,6 +239,7 @@ public class ChartScrollbarSettings extends AbstractChartObject {
      * @param enabled enabled option
      * @return chart scrollbar settings
      */
+    @StudioProperty(defaultValue = "true")
     public ChartScrollbarSettings setEnabled(Boolean enabled) {
         this.enabled = enabled;
         return this;
@@ -238,6 +258,7 @@ public class ChartScrollbarSettings extends AbstractChartObject {
      * @param fontSize font size
      * @return chart scrollbar settings
      */
+    @StudioProperty
     public ChartScrollbarSettings setFontSize(Integer fontSize) {
         this.fontSize = fontSize;
         return this;
@@ -256,6 +277,7 @@ public class ChartScrollbarSettings extends AbstractChartObject {
      * @param graph graph id
      * @return chart scrollbar settings
      */
+    @StudioProperty
     public ChartScrollbarSettings setGraph(String graph) {
         this.graph = graph;
         return this;
@@ -274,6 +296,9 @@ public class ChartScrollbarSettings extends AbstractChartObject {
      * @param graphFillAlpha graph fill opacity
      * @return chart scrollbar settings
      */
+    @StudioProperty
+    @Max(1)
+    @Min(0)
     public ChartScrollbarSettings setGraphFillAlpha(Double graphFillAlpha) {
         this.graphFillAlpha = graphFillAlpha;
         return this;
@@ -292,6 +317,7 @@ public class ChartScrollbarSettings extends AbstractChartObject {
      * @param graphFillColor graph fill color
      * @return chart scrollbar settings
      */
+    @StudioProperty(type = PropertyType.OPTIONS)
     public ChartScrollbarSettings setGraphFillColor(Color graphFillColor) {
         this.graphFillColor = graphFillColor;
         return this;
@@ -310,6 +336,9 @@ public class ChartScrollbarSettings extends AbstractChartObject {
      * @param graphLineAlpha graph line opacity
      * @return chart scrollbar settings
      */
+    @StudioProperty
+    @Max(1)
+    @Min(0)
     public ChartScrollbarSettings setGraphLineAlpha(Double graphLineAlpha) {
         this.graphLineAlpha = graphLineAlpha;
         return this;
@@ -328,6 +357,7 @@ public class ChartScrollbarSettings extends AbstractChartObject {
      * @param graphLineColor graph line color
      * @return chart scrollbar settings
      */
+    @StudioProperty(type = PropertyType.OPTIONS)
     public ChartScrollbarSettings setGraphLineColor(Color graphLineColor) {
         this.graphLineColor = graphLineColor;
         return this;
@@ -348,6 +378,7 @@ public class ChartScrollbarSettings extends AbstractChartObject {
      * @param graphType graph type
      * @return chart scrollbar settings
      */
+    @StudioProperty(type = PropertyType.ENUMERATION)
     public ChartScrollbarSettings setGraphType(GraphType graphType) {
         this.graphType = graphType;
         return this;
@@ -366,6 +397,9 @@ public class ChartScrollbarSettings extends AbstractChartObject {
      * @param gridAlpha grid opacity
      * @return chart scrollbar settings
      */
+    @StudioProperty
+    @Max(1)
+    @Min(0)
     public ChartScrollbarSettings setGridAlpha(Double gridAlpha) {
         this.gridAlpha = gridAlpha;
         return this;
@@ -384,6 +418,7 @@ public class ChartScrollbarSettings extends AbstractChartObject {
      * @param gridColor grid color
      * @return chart scrollbar settings
      */
+    @StudioProperty(type = PropertyType.OPTIONS)
     public ChartScrollbarSettings setGridColor(Color gridColor) {
         this.gridColor = gridColor;
         return this;
@@ -402,6 +437,7 @@ public class ChartScrollbarSettings extends AbstractChartObject {
      * @param gridCount grid count
      * @return chart scrollbar settings
      */
+    @StudioProperty
     public ChartScrollbarSettings setGridCount(Integer gridCount) {
         this.gridCount = gridCount;
         return this;
@@ -420,6 +456,7 @@ public class ChartScrollbarSettings extends AbstractChartObject {
      * @param height height, in pixels
      * @return chart scrollbar settings
      */
+    @StudioProperty(defaultValue = "40")
     public ChartScrollbarSettings setHeight(Integer height) {
         this.height = height;
         return this;
@@ -439,6 +476,7 @@ public class ChartScrollbarSettings extends AbstractChartObject {
      * @param hideResizeGrips hideResizeGrips option
      * @return chart scrollbar settings
      */
+    @StudioProperty(defaultValue = "false")
     public ChartScrollbarSettings setHideResizeGrips(Boolean hideResizeGrips) {
         this.hideResizeGrips = hideResizeGrips;
         return this;
@@ -457,6 +495,7 @@ public class ChartScrollbarSettings extends AbstractChartObject {
      * @param markPeriodChange markPeriodChange option
      * @return chart scrollbar settings
      */
+    @StudioProperty
     public ChartScrollbarSettings setMarkPeriodChange(Boolean markPeriodChange) {
         this.markPeriodChange = markPeriodChange;
         return this;
@@ -475,6 +514,7 @@ public class ChartScrollbarSettings extends AbstractChartObject {
      * @param position position of a scrollbar
      * @return chart scrollbar settings
      */
+    @StudioProperty(type = PropertyType.ENUMERATION, defaultValue = "BOTTOM")
     public ChartScrollbarSettings setPosition(ChartScrollbarPosition position) {
         this.position = position;
         return this;
@@ -493,6 +533,7 @@ public class ChartScrollbarSettings extends AbstractChartObject {
      * @param resizeEnabled resizeEnabled option
      * @return chart scrollbar settings
      */
+    @StudioProperty(defaultValue = "true")
     public ChartScrollbarSettings setResizeEnabled(Boolean resizeEnabled) {
         this.resizeEnabled = resizeEnabled;
         return this;
@@ -512,6 +553,7 @@ public class ChartScrollbarSettings extends AbstractChartObject {
      * @param scrollDuration duration of scrolling, in seconds
      * @return chart scrollbar settings
      */
+    @StudioProperty(defaultValue = "true")
     public ChartScrollbarSettings setScrollDuration(Double scrollDuration) {
         this.scrollDuration = scrollDuration;
         return this;
@@ -530,6 +572,9 @@ public class ChartScrollbarSettings extends AbstractChartObject {
      * @param selectedBackgroundAlpha opacity
      * @return chart scrollbar settings
      */
+    @StudioProperty
+    @Max(1)
+    @Min(0)
     public ChartScrollbarSettings setSelectedBackgroundAlpha(Double selectedBackgroundAlpha) {
         this.selectedBackgroundAlpha = selectedBackgroundAlpha;
         return this;
@@ -548,6 +593,7 @@ public class ChartScrollbarSettings extends AbstractChartObject {
      * @param selectedBackgroundColor color
      * @return chart scrollbar settings
      */
+    @StudioProperty(type = PropertyType.OPTIONS)
     public ChartScrollbarSettings setSelectedBackgroundColor(Color selectedBackgroundColor) {
         this.selectedBackgroundColor = selectedBackgroundColor;
         return this;
@@ -566,6 +612,9 @@ public class ChartScrollbarSettings extends AbstractChartObject {
      * @param selectedGraphFillAlpha opacity
      * @return chart scrollbar settings
      */
+    @StudioProperty
+    @Max(1)
+    @Min(0)
     public ChartScrollbarSettings setSelectedGraphFillAlpha(Double selectedGraphFillAlpha) {
         this.selectedGraphFillAlpha = selectedGraphFillAlpha;
         return this;
@@ -584,6 +633,7 @@ public class ChartScrollbarSettings extends AbstractChartObject {
      * @param selectedGraphFillColor color
      * @return chart scrollbar settings
      */
+    @StudioProperty(type = PropertyType.OPTIONS)
     public ChartScrollbarSettings setSelectedGraphFillColor(Color selectedGraphFillColor) {
         this.selectedGraphFillColor = selectedGraphFillColor;
         return this;
@@ -602,6 +652,9 @@ public class ChartScrollbarSettings extends AbstractChartObject {
      * @param selectedGraphLineAlpha opacity
      * @return chart scrollbar settings
      */
+    @StudioProperty
+    @Max(1)
+    @Min(0)
     public ChartScrollbarSettings setSelectedGraphLineAlpha(Double selectedGraphLineAlpha) {
         this.selectedGraphLineAlpha = selectedGraphLineAlpha;
         return this;
@@ -620,6 +673,7 @@ public class ChartScrollbarSettings extends AbstractChartObject {
      * @param selectedGraphLineColor color
      * @return chart scrollbar settings
      */
+    @StudioProperty(type = PropertyType.OPTIONS)
     public ChartScrollbarSettings setSelectedGraphLineColor(Color selectedGraphLineColor) {
         this.selectedGraphLineColor = selectedGraphLineColor;
         return this;
@@ -639,6 +693,7 @@ public class ChartScrollbarSettings extends AbstractChartObject {
      * @param updateOnReleaseOnly updateOnReleaseOnly option
      * @return chart scrollbar settings
      */
+    @StudioProperty
     public ChartScrollbarSettings setUpdateOnReleaseOnly(Boolean updateOnReleaseOnly) {
         this.updateOnReleaseOnly = updateOnReleaseOnly;
         return this;
@@ -661,6 +716,7 @@ public class ChartScrollbarSettings extends AbstractChartObject {
      * @param usePeriod date period
      * @return chart scrollbar settings
      */
+    @StudioProperty
     public ChartScrollbarSettings setUsePeriod(String usePeriod) {
         this.usePeriod = usePeriod;
         return this;

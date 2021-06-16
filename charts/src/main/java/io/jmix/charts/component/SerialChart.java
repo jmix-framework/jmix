@@ -16,6 +16,12 @@
 
 package io.jmix.charts.component;
 
+import io.jmix.ui.meta.CanvasIconSize;
+import io.jmix.ui.meta.StudioComponent;
+import io.jmix.ui.meta.StudioProperty;
+
+import javax.validation.constraints.Min;
+
 /**
  * Serial chart component. It can represent line, area, column, bar, step line, smoothed line, candlestick and OHLC
  * charts. The charts support multiple axes with simple or logarithmic scales, the data points can be displayed at
@@ -25,6 +31,16 @@ package io.jmix.charts.component;
  * <br>
  * <a href="http://docs.amcharts.com/3/javascriptcharts/AmSerialChart">http://docs.amcharts.com/3/javascriptcharts/AmSerialChart</a>
  */
+@StudioComponent(
+        caption = "SerialChart",
+        category = "Charts",
+        xmlElement = "serialChart",
+        xmlns = "http://jmix.io/schema/ui/charts",
+        xmlnsAlias = "chart",
+        icon = "io/jmix/charts/icon/component/serialChart.svg",
+        canvasIcon = "io/jmix/charts/icon/component/serialChart.svg",
+        canvasIconSize = CanvasIconSize.LARGE
+)
 public interface SerialChart extends SeriesBasedChart<SerialChart> {
     String NAME = "serialChart";
 
@@ -39,6 +55,8 @@ public interface SerialChart extends SeriesBasedChart<SerialChart> {
      *
      * @param bezierX horizontal tension of bezier
      */
+    @StudioProperty
+    @Min(1)
     void setBezierX(Integer bezierX);
 
     /**
@@ -52,5 +70,7 @@ public interface SerialChart extends SeriesBasedChart<SerialChart> {
      *
      * @param bezierY vertical tension of bezier
      */
+    @StudioProperty
+    @Min(1)
     void setBezierY(Integer bezierY);
 }

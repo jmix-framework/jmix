@@ -23,6 +23,12 @@ import io.jmix.charts.model.JsFunction;
 import io.jmix.charts.model.axis.CategoryAxis;
 import io.jmix.charts.model.chart.impl.SerialChartModelImpl;
 import io.jmix.charts.model.graph.AbstractGraph;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioProperty;
+
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 
 /**
  * Creates a cursor for the chart which follows the mouse movements. In case of {@link SerialChartModelImpl} charts it shows
@@ -32,6 +38,11 @@ import io.jmix.charts.model.graph.AbstractGraph;
  *
  * <a href="http://docs.amcharts.com/3/javascriptcharts/ChartCursor">http://docs.amcharts.com/3/javascriptcharts/ChartCursor</a>
  */
+@StudioElement(
+        caption = "Cursor",
+        xmlElement = "chartCursor",
+        xmlns = "http://jmix.io/schema/ui/charts",
+        xmlnsAlias = "chart")
 public class Cursor extends AbstractChartObject {
 
     private static final long serialVersionUID = 4196605135301917493L;
@@ -122,6 +133,7 @@ public class Cursor extends AbstractChartObject {
      * @param adjustment adjustment
      * @return cursor
      */
+    @StudioProperty(defaultValue = "0")
     public Cursor setAdjustment(Integer adjustment) {
         this.adjustment = adjustment;
         return this;
@@ -141,6 +153,7 @@ public class Cursor extends AbstractChartObject {
      * @param avoidBalloonOverlapping avoidBalloonOverlapping option
      * @return cursor
      */
+    @StudioProperty(defaultValue = "true")
     public Cursor setAvoidBalloonOverlapping(Boolean avoidBalloonOverlapping) {
         this.avoidBalloonOverlapping = avoidBalloonOverlapping;
         return this;
@@ -160,6 +173,7 @@ public class Cursor extends AbstractChartObject {
      * @param balloonPointerOrientation balloon pointer orientation
      * @return cursor
      */
+    @StudioProperty(defaultValue = "horizontal")
     public Cursor setBalloonPointerOrientation(String balloonPointerOrientation) {
         this.balloonPointerOrientation = balloonPointerOrientation;
         return this;
@@ -178,6 +192,7 @@ public class Cursor extends AbstractChartObject {
      * @param animationDuration duration of animation of a line, in seconds
      * @return cursor
      */
+    @StudioProperty(defaultValue = "0.3")
     public Cursor setAnimationDuration(Double animationDuration) {
         this.animationDuration = animationDuration;
         return this;
@@ -197,6 +212,7 @@ public class Cursor extends AbstractChartObject {
      * @param bulletsEnabled bulletsEnabled option
      * @return cursor
      */
+    @StudioProperty(defaultValue = "false")
     public Cursor setBulletsEnabled(Boolean bulletsEnabled) {
         this.bulletsEnabled = bulletsEnabled;
         return this;
@@ -215,6 +231,7 @@ public class Cursor extends AbstractChartObject {
      * @param bulletSize bullet size
      * @return cursor
      */
+    @StudioProperty(defaultValue = "8")
     public Cursor setBulletSize(Integer bulletSize) {
         this.bulletSize = bulletSize;
         return this;
@@ -233,6 +250,9 @@ public class Cursor extends AbstractChartObject {
      * @param categoryBalloonAlpha opacity of the category balloon
      * @return cursor
      */
+    @StudioProperty(defaultValue = "1")
+    @Max(1)
+    @Min(0)
     public Cursor setCategoryBalloonAlpha(Double categoryBalloonAlpha) {
         this.categoryBalloonAlpha = categoryBalloonAlpha;
         return this;
@@ -251,6 +271,7 @@ public class Cursor extends AbstractChartObject {
      * @param categoryBalloonColor category balloon color
      * @return cursor
      */
+    @StudioProperty(type = PropertyType.OPTIONS)
     public Cursor setCategoryBalloonColor(Color categoryBalloonColor) {
         this.categoryBalloonColor = categoryBalloonColor;
         return this;
@@ -270,6 +291,7 @@ public class Cursor extends AbstractChartObject {
      * @param categoryBalloonDateFormat category balloon date format string
      * @return cursor
      */
+    @StudioProperty(defaultValue = "MMM DD, YYYY")
     public Cursor setCategoryBalloonDateFormat(String categoryBalloonDateFormat) {
         this.categoryBalloonDateFormat = categoryBalloonDateFormat;
         return this;
@@ -289,6 +311,7 @@ public class Cursor extends AbstractChartObject {
      * @param categoryBalloonEnabled categoryBalloonEnabled option
      * @return cursor
      */
+    @StudioProperty(defaultValue = "true")
     public Cursor setCategoryBalloonEnabled(Boolean categoryBalloonEnabled) {
         this.categoryBalloonEnabled = categoryBalloonEnabled;
         return this;
@@ -307,6 +330,7 @@ public class Cursor extends AbstractChartObject {
      * @param color text color
      * @return cursor
      */
+    @StudioProperty(type = PropertyType.OPTIONS, defaultValue = "#FFFFFF")
     public Cursor setColor(Color color) {
         this.color = color;
         return this;
@@ -325,6 +349,9 @@ public class Cursor extends AbstractChartObject {
      * @param cursorAlpha opacity
      * @return cursor
      */
+    @StudioProperty(defaultValue = "1")
+    @Max(1)
+    @Min(0)
     public Cursor setCursorAlpha(Double cursorAlpha) {
         this.cursorAlpha = cursorAlpha;
         return this;
@@ -343,6 +370,7 @@ public class Cursor extends AbstractChartObject {
      * @param cursorColor color
      * @return cursor
      */
+    @StudioProperty(type = PropertyType.OPTIONS, defaultValue = "#CC0000")
     public Cursor setCursorColor(Color cursorColor) {
         this.cursorColor = cursorColor;
         return this;
@@ -364,6 +392,7 @@ public class Cursor extends AbstractChartObject {
      * @param cursorPosition cursor position
      * @return cursor
      */
+    @StudioProperty(type = PropertyType.ENUMERATION, defaultValue = "MIDDLE")
     public Cursor setCursorPosition(CursorPosition cursorPosition) {
         this.cursorPosition = cursorPosition;
         return this;
@@ -382,6 +411,7 @@ public class Cursor extends AbstractChartObject {
      * @param enabled enabled option
      * @return cursor
      */
+    @StudioProperty(defaultValue = "true")
     public Cursor setEnabled(Boolean enabled) {
         this.enabled = enabled;
         return this;
@@ -401,6 +431,7 @@ public class Cursor extends AbstractChartObject {
      * @param graphBulletSize graph bullet size
      * @return cursor
      */
+    @StudioProperty(defaultValue = "1.7")
     public Cursor setGraphBulletSize(Double graphBulletSize) {
         this.graphBulletSize = graphBulletSize;
         return this;
@@ -420,6 +451,7 @@ public class Cursor extends AbstractChartObject {
      * @param oneBalloonOnly oneBalloonOnly option
      * @return cursor
      */
+    @StudioProperty(defaultValue = "false")
     public Cursor setOneBalloonOnly(Boolean oneBalloonOnly) {
         this.oneBalloonOnly = oneBalloonOnly;
         return this;
@@ -439,6 +471,7 @@ public class Cursor extends AbstractChartObject {
      * @param pan pan option
      * @return cursor
      */
+    @StudioProperty(defaultValue = "false")
     public Cursor setPan(Boolean pan) {
         this.pan = pan;
         return this;
@@ -457,6 +490,9 @@ public class Cursor extends AbstractChartObject {
      * @param selectionAlpha opacity
      * @return cursor
      */
+    @StudioProperty(defaultValue = "0.2")
+    @Max(1)
+    @Min(0)
     public Cursor setSelectionAlpha(Double selectionAlpha) {
         this.selectionAlpha = selectionAlpha;
         return this;
@@ -476,6 +512,7 @@ public class Cursor extends AbstractChartObject {
      * @param selectWithoutZooming selectWithoutZooming option
      * @return cursor
      */
+    @StudioProperty(defaultValue = "false")
     public Cursor setSelectWithoutZooming(Boolean selectWithoutZooming) {
         this.selectWithoutZooming = selectWithoutZooming;
         return this;
@@ -496,6 +533,7 @@ public class Cursor extends AbstractChartObject {
      * @param showNextAvailable showNextAvailable option
      * @return cursor
      */
+    @StudioProperty
     public Cursor setShowNextAvailable(Boolean showNextAvailable) {
         this.showNextAvailable = showNextAvailable;
         return this;
@@ -516,6 +554,7 @@ public class Cursor extends AbstractChartObject {
      * @param valueBalloonsEnabled valueBalloonsEnabled option
      * @return cursor
      */
+    @StudioProperty(defaultValue = "true")
     public Cursor setValueBalloonsEnabled(Boolean valueBalloonsEnabled) {
         this.valueBalloonsEnabled = valueBalloonsEnabled;
         return this;
@@ -535,6 +574,7 @@ public class Cursor extends AbstractChartObject {
      * @param zoomable zoomable option
      * @return cursor
      */
+    @StudioProperty(defaultValue = "true")
     public Cursor setZoomable(Boolean zoomable) {
         this.zoomable = zoomable;
         return this;
@@ -576,6 +616,7 @@ public class Cursor extends AbstractChartObject {
      * @param fullWidth fullWidth option
      * @return cursor
      */
+    @StudioProperty(defaultValue = "false")
     public Cursor setFullWidth(Boolean fullWidth) {
         this.fullWidth = fullWidth;
         return this;
@@ -596,6 +637,9 @@ public class Cursor extends AbstractChartObject {
      * @param graphBulletAlpha opacity of graph bullet
      * @return cursor
      */
+    @StudioProperty
+    @Max(1)
+    @Min(0)
     public Cursor setGraphBulletAlpha(Double graphBulletAlpha) {
         this.graphBulletAlpha = graphBulletAlpha;
         return this;
@@ -614,6 +658,9 @@ public class Cursor extends AbstractChartObject {
      * @param valueLineAlpha opacity of value line.
      * @return cursor
      */
+    @StudioProperty
+    @Max(1)
+    @Min(0)
     public Cursor setValueLineAlpha(Double valueLineAlpha) {
         this.valueLineAlpha = valueLineAlpha;
         return this;
@@ -632,6 +679,7 @@ public class Cursor extends AbstractChartObject {
      * @param valueLineAxis value line axis id
      * @return cursor
      */
+    @StudioProperty
     public Cursor setValueLineAxis(String valueLineAxis) {
         this.valueLineAxis = valueLineAxis;
         return this;
@@ -651,6 +699,7 @@ public class Cursor extends AbstractChartObject {
      * @param valueLineBalloonEnabled valueLineBalloonEnabled option
      * @return cursor
      */
+    @StudioProperty(defaultValue = "false")
     public Cursor setValueLineBalloonEnabled(Boolean valueLineBalloonEnabled) {
         this.valueLineBalloonEnabled = valueLineBalloonEnabled;
         return this;
@@ -671,6 +720,7 @@ public class Cursor extends AbstractChartObject {
      * @param valueLineEnabled valueLineEnabled option
      * @return cursor
      */
+    @StudioProperty(defaultValue = "false")
     public Cursor setValueLineEnabled(Boolean valueLineEnabled) {
         this.valueLineEnabled = valueLineEnabled;
         return this;
@@ -690,6 +740,7 @@ public class Cursor extends AbstractChartObject {
      * @param categoryBalloonText category balloon text
      * @return cursor
      */
+    @StudioProperty(defaultValue = "[[category]]")
     public Cursor setCategoryBalloonText(String categoryBalloonText) {
         this.categoryBalloonText = categoryBalloonText;
         return this;
@@ -709,6 +760,7 @@ public class Cursor extends AbstractChartObject {
      * @param leaveAfterTouch leaveAfterTouch option
      * @return cursor
      */
+    @StudioProperty(defaultValue = "true")
     public Cursor setLeaveAfterTouch(Boolean leaveAfterTouch) {
         this.leaveAfterTouch = leaveAfterTouch;
         return this;
@@ -728,6 +780,7 @@ public class Cursor extends AbstractChartObject {
      * @param leaveCursor leaveCursor option
      * @return cursor
      */
+    @StudioProperty(defaultValue = "false")
     public Cursor setLeaveCursor(Boolean leaveCursor) {
         this.leaveCursor = leaveCursor;
         return this;
@@ -748,6 +801,7 @@ public class Cursor extends AbstractChartObject {
      * @param limitToGraph id of a graph
      * @return cursor
      */
+    @StudioProperty
     public Cursor setLimitToGraph(String limitToGraph) {
         this.limitToGraph = limitToGraph;
         return this;
@@ -767,6 +821,7 @@ public class Cursor extends AbstractChartObject {
      * @param valueZoomable valueZoomable option
      * @return cursor
      */
+    @StudioProperty(defaultValue = "false")
     public Cursor setValueZoomable(Boolean valueZoomable) {
         this.valueZoomable = valueZoomable;
         return this;
@@ -786,6 +841,7 @@ public class Cursor extends AbstractChartObject {
      *
      * @param tabIndex tab index
      */
+    @StudioProperty
     public void setTabIndex(Integer tabIndex) {
         this.tabIndex = tabIndex;
     }

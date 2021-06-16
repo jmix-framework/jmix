@@ -20,6 +20,9 @@ package io.jmix.charts.model;
 import io.jmix.charts.model.chart.StockChartModel;
 import io.jmix.charts.model.chart.impl.CoordinateChartModelImpl;
 import io.jmix.charts.model.chart.impl.SlicedChartModelImpl;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioCollection;
+import io.jmix.ui.meta.StudioProperty;
 
 import java.util.List;
 
@@ -64,6 +67,13 @@ public interface HasColors<T> {
      * @param colors list of colors
      * @return chart
      */
+    @StudioCollection(xmlElement = "colors",
+            itemXmlElement = "color",
+            itemCaption = "Color",
+            itemProperties = {
+                    @StudioProperty(name = "value", type = PropertyType.ENUMERATION,
+                            options = {"@link io.jmix.charts.model.Color"})
+            })
     T setColors(List<Color> colors);
 
     /**

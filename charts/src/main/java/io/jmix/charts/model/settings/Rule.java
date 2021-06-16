@@ -19,12 +19,19 @@ package io.jmix.charts.model.settings;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import io.jmix.charts.model.AbstractChartObject;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioProperty;
 
 /**
  * Responsive rule for chart. See documentation for responsive plugin.<br>
  *
  * <a href="https://github.com/amcharts/responsive">https://github.com/amcharts/responsive</a>
  */
+@StudioElement(
+        caption = "Rule",
+        xmlElement = "rule",
+        xmlns = "http://jmix.io/schema/ui/charts",
+        xmlnsAlias = "chart")
 public class Rule extends AbstractChartObject {
 
     private static final long serialVersionUID = -7360797549434731632L;
@@ -41,6 +48,7 @@ public class Rule extends AbstractChartObject {
         return minWidth;
     }
 
+    @StudioProperty
     public Rule setMinWidth(Integer minWidth) {
         this.minWidth = minWidth;
         return this;
@@ -50,6 +58,7 @@ public class Rule extends AbstractChartObject {
         return maxWidth;
     }
 
+    @StudioProperty
     public Rule setMaxWidth(Integer maxWidth) {
         this.maxWidth = maxWidth;
         return this;
@@ -59,6 +68,7 @@ public class Rule extends AbstractChartObject {
         return minHeight;
     }
 
+    @StudioProperty
     public Rule setMinHeight(Integer minHeight) {
         this.minHeight = minHeight;
         return this;
@@ -68,6 +78,7 @@ public class Rule extends AbstractChartObject {
         return maxHeight;
     }
 
+    @StudioProperty
     public Rule setMaxHeight(Integer maxHeight) {
         this.maxHeight = maxHeight;
         return this;

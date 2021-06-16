@@ -25,8 +25,11 @@ import io.jmix.charts.model.date.DateFormat;
 import io.jmix.charts.model.legend.AbstractLegend;
 import io.jmix.charts.model.legend.Legend;
 import io.jmix.ui.data.DataItem;
+import io.jmix.ui.meta.*;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +42,52 @@ import java.util.List;
  * <a href="http://docs.amcharts.com/3/javascriptcharts/AmGraph">http://docs.amcharts.com/3/javascriptcharts/AmGraph</a>
  */
 @SuppressWarnings("unchecked")
+@StudioProperties(groups = {
+        @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                properties = {"dataContainer", "alphaField"}),
+        @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                properties = {"dataContainer", "bulletField"}),
+        @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                properties = {"dataContainer", "bulletSizeField"}),
+        @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                properties = {"dataContainer", "classNameField"}),
+        @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                properties = {"dataContainer", "closeField"}),
+        @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                properties = {"dataContainer", "colorField"}),
+        @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                properties = {"dataContainer", "customBulletField"}),
+        @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                properties = {"dataContainer", "dashLengthField"}),
+        @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                properties = {"dataContainer", "descriptionField"}),
+        @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                properties = {"dataContainer", "errorField"}),
+        @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                properties = {"dataContainer", "fillColorsField"}),
+        @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                properties = {"dataContainer", "gapField"}),
+        @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                properties = {"dataContainer", "highField"}),
+        @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                properties = {"dataContainer", "labelColorField"}),
+        @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                properties = {"dataContainer", "lineColorField"}),
+        @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                properties = {"dataContainer", "lowField"}),
+        @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                properties = {"dataContainer", "openField"}),
+        @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                properties = {"dataContainer", "patternField"}),
+        @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                properties = {"dataContainer", "urlField"}),
+        @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                properties = {"dataContainer", "valueField"}),
+        @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                properties = {"dataContainer", "xField"}),
+        @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                properties = {"dataContainer", "yField"})
+})
 public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject {
 
     private static final long serialVersionUID = 3973480345155361978L;
@@ -283,6 +332,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param animationPlayed animation played option
      * @return graph
      */
+    @StudioProperty(defaultValue = "false")
     public T setAnimationPlayed(Boolean animationPlayed) {
         this.animationPlayed = animationPlayed;
         return (T) this;
@@ -301,6 +351,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param title graph title string
      * @return graph
      */
+    @StudioProperty
     public T setTitle(String title) {
         this.title = title;
         return (T) this;
@@ -320,6 +371,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param type graph type
      * @return graph
      */
+    @StudioProperty(type = PropertyType.ENUMERATION, defaultValue = "LINE")
     public T setType(GraphType type) {
         this.type = type;
         return (T) this;
@@ -338,6 +390,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param valueField value field string
      * @return graph
      */
+    @StudioProperty(type = PropertyType.PROPERTY_PATH_REF)
     public T setValueField(String valueField) {
         this.valueField = valueField;
         return (T) this;
@@ -356,6 +409,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param xField X field string
      * @return graph
      */
+    @StudioProperty(type = PropertyType.PROPERTY_PATH_REF)
     public T setXField(String xField) {
         this.xField = xField;
         return (T) this;
@@ -374,6 +428,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param yField name of the Y field
      * @return graph
      */
+    @StudioProperty(type = PropertyType.PROPERTY_PATH_REF)
     public T setYField(String yField) {
         this.yField = yField;
         return (T) this;
@@ -392,6 +447,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param alphaField alpha field string
      * @return graph
      */
+    @StudioProperty(type = PropertyType.PROPERTY_PATH_REF)
     public T setAlphaField(String alphaField) {
         this.alphaField = alphaField;
         return (T) this;
@@ -410,6 +466,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param balloonColor value balloon color
      * @return graph
      */
+    @StudioProperty(type = PropertyType.OPTIONS)
     public T setBalloonColor(Color balloonColor) {
         this.balloonColor = balloonColor;
         return (T) this;
@@ -430,6 +487,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param balloonText balloon text
      * @return graph
      */
+    @StudioProperty(defaultValue = "[[value]]")
     public T setBalloonText(String balloonText) {
         this.balloonText = balloonText;
         return (T) this;
@@ -449,6 +507,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param behindColumns behind columns option
      * @return graph
      */
+    @StudioProperty(defaultValue = "false")
     public T setBehindColumns(Boolean behindColumns) {
         this.behindColumns = behindColumns;
         return (T) this;
@@ -467,6 +526,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param bullet bullet type
      * @return graph
      */
+    @StudioProperty(type = PropertyType.ENUMERATION, defaultValue = "NONE")
     public T setBullet(BulletType bullet) {
         this.bullet = bullet;
         return (T) this;
@@ -485,6 +545,9 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param bulletAlpha opacity of bullets
      * @return graph
      */
+    @StudioProperty(defaultValue = "1")
+    @Max(1)
+    @Min(0)
     public T setBulletAlpha(Double bulletAlpha) {
         this.bulletAlpha = bulletAlpha;
         return (T) this;
@@ -503,6 +566,9 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param bulletBorderAlpha bullet border opacity
      * @return graph
      */
+    @StudioProperty(defaultValue = "0")
+    @Max(1)
+    @Min(0)
     public T setBulletBorderAlpha(Double bulletBorderAlpha) {
         this.bulletBorderAlpha = bulletBorderAlpha;
         return (T) this;
@@ -521,6 +587,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param bulletBorderColor bullet border color
      * @return graph
      */
+    @StudioProperty(type = PropertyType.OPTIONS)
     public T setBulletBorderColor(Color bulletBorderColor) {
         this.bulletBorderColor = bulletBorderColor;
         return (T) this;
@@ -539,6 +606,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param bulletBorderThickness bullet border thickness
      * @return graph
      */
+    @StudioProperty(defaultValue = "2")
     public T setBulletBorderThickness(Integer bulletBorderThickness) {
         this.bulletBorderThickness = bulletBorderThickness;
         return (T) this;
@@ -557,6 +625,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param bulletColor bullet color
      * @return graph
      */
+    @StudioProperty(type = PropertyType.OPTIONS)
     public T setBulletColor(Color bulletColor) {
         this.bulletColor = bulletColor;
         return (T) this;
@@ -575,6 +644,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param bulletField bullet field string
      * @return graph
      */
+    @StudioProperty(type = PropertyType.PROPERTY_PATH_REF)
     public T setBulletField(String bulletField) {
         this.bulletField = bulletField;
         return (T) this;
@@ -594,6 +664,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param bulletOffset bullet offset
      * @return graph
      */
+    @StudioProperty(defaultValue = "0")
     public T setBulletOffset(Integer bulletOffset) {
         this.bulletOffset = bulletOffset;
         return (T) this;
@@ -612,6 +683,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param bulletSize bullet size
      * @return graph
      */
+    @StudioProperty(defaultValue = "8")
     public T setBulletSize(Integer bulletSize) {
         this.bulletSize = bulletSize;
         return (T) this;
@@ -630,6 +702,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param bulletSizeField bullet size field string
      * @return graph
      */
+    @StudioProperty(type = PropertyType.PROPERTY_PATH_REF)
     public T setBulletSizeField(String bulletSizeField) {
         this.bulletSizeField = bulletSizeField;
         return (T) this;
@@ -648,6 +721,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param closeField close field string
      * @return graph
      */
+    @StudioProperty(type = PropertyType.PROPERTY_PATH_REF)
     public T setCloseField(String closeField) {
         this.closeField = closeField;
         return (T) this;
@@ -668,6 +742,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param clustered clustered option
      * @return graph
      */
+    @StudioProperty(defaultValue = "true")
     public T setClustered(Boolean clustered) {
         this.clustered = clustered;
         return (T) this;
@@ -686,6 +761,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param color color of value labels
      * @return graph
      */
+    @StudioProperty(type = PropertyType.OPTIONS)
     public T setColor(Color color) {
         this.color = color;
         return (T) this;
@@ -704,6 +780,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param colorField color field string
      * @return graph
      */
+    @StudioProperty(type = PropertyType.PROPERTY_PATH_REF)
     public T setColorField(String colorField) {
         this.colorField = colorField;
         return (T) this;
@@ -722,6 +799,9 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param columnWidth column relative width
      * @return graph
      */
+    @StudioProperty
+    @Max(1)
+    @Min(0)
     public T setColumnWidth(Double columnWidth) {
         this.columnWidth = columnWidth;
         return (T) this;
@@ -741,6 +821,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param connect connect option
      * @return graph
      */
+    @StudioProperty(defaultValue = "true")
     public T setConnect(Boolean connect) {
         this.connect = connect;
         return (T) this;
@@ -761,6 +842,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param cornerRadiusTop corner radius
      * @return graph
      */
+    @StudioProperty(defaultValue = "0")
     public T setCornerRadiusTop(Integer cornerRadiusTop) {
         this.cornerRadiusTop = cornerRadiusTop;
         return (T) this;
@@ -781,6 +863,9 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param cursorBulletAlpha opacity of each graphs bullet
      * @return graph
      */
+    @StudioProperty(defaultValue = "1")
+    @Max(1)
+    @Min(0)
     public T setCursorBulletAlpha(Double cursorBulletAlpha) {
         this.cursorBulletAlpha = cursorBulletAlpha;
         return (T) this;
@@ -799,6 +884,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param customBullet path to image of custom bullet
      * @return graph
      */
+    @StudioProperty
     public T setCustomBullet(String customBullet) {
         this.customBullet = customBullet;
         return (T) this;
@@ -817,6 +903,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param customBulletField custom bullet field string
      * @return graph
      */
+    @StudioProperty(type = PropertyType.PROPERTY_PATH_REF)
     public T setCustomBulletField(String customBulletField) {
         this.customBulletField = customBulletField;
         return (T) this;
@@ -835,6 +922,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param customMarker path to the image
      * @return graph
      */
+    @StudioProperty
     public T setCustomMarker(String customMarker) {
         this.customMarker = customMarker;
         return (T) this;
@@ -854,6 +942,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param dashLength dash length
      * @return graph
      */
+    @StudioProperty(defaultValue = "0")
     public T setDashLength(Integer dashLength) {
         this.dashLength = dashLength;
         return (T) this;
@@ -874,6 +963,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param dashLengthField dash length field
      * @return graph
      */
+    @StudioProperty(type = PropertyType.PROPERTY_PATH_REF)
     public T setDashLengthField(String dashLengthField) {
         this.dashLengthField = dashLengthField;
         return (T) this;
@@ -892,6 +982,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param descriptionField description field string
      * @return graph
      */
+    @StudioProperty(type = PropertyType.PROPERTY_PATH_REF)
     public T setDescriptionField(String descriptionField) {
         this.descriptionField = descriptionField;
         return (T) this;
@@ -910,6 +1001,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param errorField error field string
      * @return graph
      */
+    @StudioProperty(type = PropertyType.PROPERTY_PATH_REF)
     public T setErrorField(String errorField) {
         this.errorField = errorField;
         return (T) this;
@@ -928,6 +1020,9 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param fillAlphas opacity of fill
      * @return graph
      */
+    @StudioProperty
+    @Max(1)
+    @Min(0)
     public T setFillAlphas(Double fillAlphas) {
         this.fillAlphas = fillAlphas;
         return (T) this;
@@ -946,6 +1041,13 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param fillColors list of fill colors
      * @return graph
      */
+    @StudioCollection(xmlElement = "fillColors",
+            itemXmlElement = "color",
+            itemCaption = "Fill Color",
+            itemProperties = {
+                    @StudioProperty(name = "value", type = PropertyType.ENUMERATION,
+                            options = {"@link io.jmix.charts.model.Color"})
+            })
     public T setFillColors(List<Color> fillColors) {
         this.fillColors = fillColors;
         return (T) this;
@@ -966,6 +1068,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param fillColorsField name of the fill colors field
      * @return graph
      */
+    @StudioProperty(type = PropertyType.PROPERTY_PATH_REF)
     public T setFillColorsField(String fillColorsField) {
         this.fillColorsField = fillColorsField;
         return (T) this;
@@ -984,6 +1087,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param fontSize font size
      * @return graph
      */
+    @StudioProperty
     public T setFontSize(Integer fontSize) {
         this.fontSize = fontSize;
         return (T) this;
@@ -1004,6 +1108,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param forceGap force gap
      * @return graph
      */
+    @StudioProperty(defaultValue = "false")
     public T setForceGap(Boolean forceGap) {
         this.forceGap = forceGap;
         return (T) this;
@@ -1023,6 +1128,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param gradientOrientation gradient orientation
      * @return graph
      */
+    @StudioProperty(type = PropertyType.ENUMERATION, defaultValue = "VERTICAL")
     public T setGradientOrientation(GradientOrientation gradientOrientation) {
         this.gradientOrientation = gradientOrientation;
         return (T) this;
@@ -1041,6 +1147,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param hidden hidden option
      * @return graph
      */
+    @StudioProperty(defaultValue = "false")
     public T setHidden(Boolean hidden) {
         this.hidden = hidden;
         return (T) this;
@@ -1060,6 +1167,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param hideBulletsCount hide bullets count
      * @return graph
      */
+    @StudioProperty(defaultValue = "0")
     public T setHideBulletsCount(Integer hideBulletsCount) {
         this.hideBulletsCount = hideBulletsCount;
         return (T) this;
@@ -1078,6 +1186,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param highField high field string
      * @return graph
      */
+    @StudioProperty(type = PropertyType.PROPERTY_PATH_REF)
     public T setHighField(String highField) {
         this.highField = highField;
         return (T) this;
@@ -1097,6 +1206,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param id id of the graph
      * @return graph
      */
+    @StudioProperty
     public T setId(String id) {
         this.id = id;
         return (T) this;
@@ -1116,6 +1226,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param includeInMinMax include in min max option
      * @return graph
      */
+    @StudioProperty(defaultValue = "true")
     public T setIncludeInMinMax(Boolean includeInMinMax) {
         this.includeInMinMax = includeInMinMax;
         return (T) this;
@@ -1134,6 +1245,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param labelColorField label color field string
      * @return graph
      */
+    @StudioProperty(type = PropertyType.PROPERTY_PATH_REF)
     public T setLabelColorField(String labelColorField) {
         this.labelColorField = labelColorField;
         return (T) this;
@@ -1154,6 +1266,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param labelPosition value label position
      * @return graph
      */
+    @StudioProperty(type = PropertyType.ENUMERATION, defaultValue = "TOP")
     public T setLabelPosition(ValueLabelPosition labelPosition) {
         this.labelPosition = labelPosition;
         return (T) this;
@@ -1172,6 +1285,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param labelText value label text
      * @return graph
      */
+    @StudioProperty
     public T setLabelText(String labelText) {
         this.labelText = labelText;
         return (T) this;
@@ -1191,6 +1305,9 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param legendAlpha legend marker opacity
      * @return graph
      */
+    @StudioProperty(defaultValue = "1")
+    @Max(1)
+    @Min(0)
     public T setLegendAlpha(Double legendAlpha) {
         this.legendAlpha = legendAlpha;
         return (T) this;
@@ -1209,6 +1326,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param legendColor legend marker color
      * @return graph
      */
+    @StudioProperty(type = PropertyType.OPTIONS)
     public T setLegendColor(Color legendColor) {
         this.legendColor = legendColor;
         return (T) this;
@@ -1230,6 +1348,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param legendPeriodValueText legend period value text
      * @return graph
      */
+    @StudioProperty
     public T setLegendPeriodValueText(String legendPeriodValueText) {
         this.legendPeriodValueText = legendPeriodValueText;
         return (T) this;
@@ -1249,6 +1368,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param legendValueText legend value text
      * @return graph
      */
+    @StudioProperty
     public T setLegendValueText(String legendValueText) {
         this.legendValueText = legendValueText;
         return (T) this;
@@ -1267,6 +1387,9 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param lineAlpha opacity of the line (or column border)
      * @return graph
      */
+    @StudioProperty
+    @Max(1)
+    @Min(0)
     public T setLineAlpha(Double lineAlpha) {
         this.lineAlpha = lineAlpha;
         return (T) this;
@@ -1286,6 +1409,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param lineColor color of the line (or column border)
      * @return graph
      */
+    @StudioProperty(type = PropertyType.OPTIONS)
     public T setLineColor(Color lineColor) {
         this.lineColor = lineColor;
         return (T) this;
@@ -1306,6 +1430,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param lineColorField name of the line color field
      * @return graph
      */
+    @StudioProperty(type = PropertyType.PROPERTY_PATH_REF)
     public T setLineColorField(String lineColorField) {
         this.lineColorField = lineColorField;
         return (T) this;
@@ -1324,6 +1449,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param lineThickness thickness of the graph line (or column border)
      * @return graph
      */
+    @StudioProperty(defaultValue = "1")
     public T setLineThickness(Integer lineThickness) {
         this.lineThickness = lineThickness;
         return (T) this;
@@ -1342,6 +1468,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param lowField low field string
      * @return graph
      */
+    @StudioProperty(type = PropertyType.PROPERTY_PATH_REF)
     public T setLowField(String lowField) {
         this.lowField = lowField;
         return (T) this;
@@ -1361,6 +1488,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param markerType legend marker type
      * @return graph
      */
+    @StudioProperty(type = PropertyType.ENUMERATION)
     public T setMarkerType(MarkerType markerType) {
         this.markerType = markerType;
         return (T) this;
@@ -1379,6 +1507,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param maxBulletSize maximum bullet size
      * @return graph
      */
+    @StudioProperty(defaultValue = "50")
     public T setMaxBulletSize(Integer maxBulletSize) {
         this.maxBulletSize = maxBulletSize;
         return (T) this;
@@ -1397,6 +1526,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param minBulletSize minimum bullet size
      * @return graph
      */
+    @StudioProperty(defaultValue = "4")
     public T setMinBulletSize(Integer minBulletSize) {
         this.minBulletSize = minBulletSize;
         return (T) this;
@@ -1416,6 +1546,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param negativeBase negative base
      * @return graph
      */
+    @StudioProperty(defaultValue = "0")
     public T setNegativeBase(Double negativeBase) {
         this.negativeBase = negativeBase;
         return (T) this;
@@ -1434,6 +1565,9 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param negativeFillAlphas negative fill alphas
      * @return graph
      */
+    @StudioProperty
+    @Max(1)
+    @Min(0)
     public T setNegativeFillAlphas(Double negativeFillAlphas) {
         this.negativeFillAlphas = negativeFillAlphas;
         return (T) this;
@@ -1452,6 +1586,13 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param negativeFillColors negative fill colors
      * @return graph
      */
+    @StudioCollection(xmlElement = "negativeFillColors",
+            itemXmlElement = "color",
+            itemCaption = "Negative Fill Color",
+            itemProperties = {
+                    @StudioProperty(name = "value", type = PropertyType.ENUMERATION,
+                            options = {"@link io.jmix.charts.model.Color"})
+            })
     public T setNegativeFillColors(List<Color> negativeFillColors) {
         this.negativeFillColors = negativeFillColors;
         return (T) this;
@@ -1471,6 +1612,9 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param negativeLineAlpha opacity
      * @return graph
      */
+    @StudioProperty(defaultValue = "1")
+    @Max(1)
+    @Min(0)
     public T setNegativeLineAlpha(Double negativeLineAlpha) {
         this.negativeLineAlpha = negativeLineAlpha;
         return (T) this;
@@ -1490,6 +1634,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param negativeLineColor color
      * @return graph
      */
+    @StudioProperty(type = PropertyType.OPTIONS)
     public T setNegativeLineColor(Color negativeLineColor) {
         this.negativeLineColor = negativeLineColor;
         return (T) this;
@@ -1509,6 +1654,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param noStepRisers noStepRisers option
      * @return graph
      */
+    @StudioProperty(defaultValue = "false")
     public T setNoStepRisers(Boolean noStepRisers) {
         this.noStepRisers = noStepRisers;
         return (T) this;
@@ -1527,6 +1673,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param openField open field string
      * @return graph
      */
+    @StudioProperty(type = PropertyType.PROPERTY_PATH_REF)
     public T setOpenField(String openField) {
         this.openField = openField;
         return (T) this;
@@ -1547,6 +1694,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param pattern pattern
      * @return graph
      */
+    @StudioElement
     public T setPattern(Pattern pattern) {
         this.pattern = pattern;
         return (T) this;
@@ -1567,6 +1715,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param patternField pattern field string
      * @return graph
      */
+    @StudioProperty(type = PropertyType.PROPERTY_PATH_REF)
     public T setPatternField(String patternField) {
         this.patternField = patternField;
         return (T) this;
@@ -1586,6 +1735,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param periodSpan period span
      * @return graph
      */
+    @StudioProperty(defaultValue = "1")
     public T setPeriodSpan(Integer periodSpan) {
         this.periodSpan = periodSpan;
         return (T) this;
@@ -1606,6 +1756,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param pointPosition point position
      * @return graph
      */
+    @StudioProperty(type = PropertyType.ENUMERATION, defaultValue = "MIDDLE")
     public T setPointPosition(PointPosition pointPosition) {
         this.pointPosition = pointPosition;
         return (T) this;
@@ -1626,6 +1777,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param showAllValueLabels show all value labels option
      * @return graph
      */
+    @StudioProperty(defaultValue = "false")
     public T setShowAllValueLabels(Boolean showAllValueLabels) {
         this.showAllValueLabels = showAllValueLabels;
         return (T) this;
@@ -1645,6 +1797,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param showBalloon show balloon option
      * @return graph
      */
+    @StudioProperty(defaultValue = "true")
     public T setShowBalloon(Boolean showBalloon) {
         this.showBalloon = showBalloon;
         return (T) this;
@@ -1665,6 +1818,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param showBalloonAt graphs value at which cursor is shown
      * @return graph
      */
+    @StudioProperty(type = PropertyType.ENUMERATION, defaultValue = "CLOSE")
     public T setShowBalloonAt(ShowPositionOnCandle showBalloonAt) {
         this.showBalloonAt = showBalloonAt;
         return (T) this;
@@ -1684,6 +1838,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param showHandOnHover showHandOnHover option
      * @return graph
      */
+    @StudioProperty(defaultValue = "false")
     public T setShowHandOnHover(Boolean showHandOnHover) {
         this.showHandOnHover = showHandOnHover;
         return (T) this;
@@ -1703,6 +1858,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param stackable stackable option
      * @return graph
      */
+    @StudioProperty(defaultValue = "true")
     public T setStackable(Boolean stackable) {
         this.stackable = stackable;
         return (T) this;
@@ -1721,6 +1877,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param stepDirection step direction
      * @return graph
      */
+    @StudioProperty(type = PropertyType.ENUMERATION, defaultValue = "RIGHT")
     public T setStepDirection(StepDirection stepDirection) {
         this.stepDirection = stepDirection;
         return (T) this;
@@ -1739,6 +1896,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param urlField the URL field string
      * @return graph
      */
+    @StudioProperty(type = PropertyType.PROPERTY_PATH_REF)
     public T setUrlField(String urlField) {
         this.urlField = urlField;
         return (T) this;
@@ -1757,6 +1915,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param urlTarget the URL target
      * @return graph
      */
+    @StudioProperty(type = PropertyType.OPTIONS, options = {"_blank", "_parent", "_self", "_top"})
     public T setUrlTarget(String urlTarget) {
         this.urlTarget = urlTarget;
         return (T) this;
@@ -1779,6 +1938,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param useNegativeColorIfDown useNegativeColorIfDown option
      * @return graph
      */
+    @StudioProperty(defaultValue = "false")
     public T setUseNegativeColorIfDown(Boolean useNegativeColorIfDown) {
         this.useNegativeColorIfDown = useNegativeColorIfDown;
         return (T) this;
@@ -1798,6 +1958,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param visibleInLegend visible in legend option
      * @return graph
      */
+    @StudioProperty(defaultValue = "true")
     public T setVisibleInLegend(Boolean visibleInLegend) {
         this.visibleInLegend = visibleInLegend;
         return (T) this;
@@ -1820,6 +1981,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param bulletAxis bullet axis
      * @return graph
      */
+    @StudioProperty
     public T setBulletAxis(String bulletAxis) {
         this.bulletAxis = bulletAxis;
         return (T) this;
@@ -1839,6 +2001,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param valueAxis value axis id
      * @return graph
      */
+    @StudioProperty
     public T setValueAxis(String valueAxis) {
         this.valueAxis = valueAxis;
         return (T) this;
@@ -1857,6 +2020,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param xAxis horizontal value axis id
      * @return graph
      */
+    @StudioProperty
     public T setXAxis(String xAxis) {
         this.xAxis = xAxis;
         return (T) this;
@@ -1875,6 +2039,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param yAxis vertical value axis id
      * @return graph
      */
+    @StudioProperty
     public T setYAxis(String yAxis) {
         this.yAxis = yAxis;
         return (T) this;
@@ -1914,6 +2079,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param fillToGraph fill to graph
      * @return graph
      */
+    @StudioProperty
     public T setFillToGraph(String fillToGraph) {
         this.fillToGraph = fillToGraph;
         return (T) this;
@@ -1933,6 +2099,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param fillToAxis id of axis
      * @return graph
      */
+    @StudioProperty
     public T setFillToAxis(String fillToAxis) {
         this.fillToAxis = fillToAxis;
         return (T) this;
@@ -1952,6 +2119,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param fixedColumnWidth column width
      * @return graph
      */
+    @StudioProperty
     public T setFixedColumnWidth(Integer fixedColumnWidth) {
         this.fixedColumnWidth = fixedColumnWidth;
         return (T) this;
@@ -1971,6 +2139,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param gapField gap field string
      * @return graph
      */
+    @StudioProperty(type = PropertyType.PROPERTY_PATH_REF)
     public T setGapField(String gapField) {
         this.gapField = gapField;
         return (T) this;
@@ -1991,6 +2160,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param gapPeriod gap period
      * @return graph
      */
+    @StudioProperty(defaultValue = "1.1")
     public T setGapPeriod(Double gapPeriod) {
         this.gapPeriod = gapPeriod;
         return (T) this;
@@ -2009,6 +2179,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param labelAnchor label anchor string
      * @return graph
      */
+    @StudioProperty(defaultValue = "auto")
     public T setLabelAnchor(String labelAnchor) {
         this.labelAnchor = labelAnchor;
         return (T) this;
@@ -2044,6 +2215,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param labelOffset label offset
      * @return graph
      */
+    @StudioProperty(defaultValue = "0")
     public T setLabelOffset(Integer labelOffset) {
         this.labelOffset = labelOffset;
         return (T) this;
@@ -2066,6 +2238,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param minDistance minimum distance, in pixels
      * @return graph
      */
+    @StudioProperty(defaultValue = "1")
     public T setMinDistance(Integer minDistance) {
         this.minDistance = minDistance;
         return (T) this;
@@ -2085,6 +2258,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param newStack newStack option
      * @return graph
      */
+    @StudioProperty(defaultValue = "false")
     public T setNewStack(Boolean newStack) {
         this.newStack = newStack;
         return (T) this;
@@ -2104,6 +2278,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param showBulletsAt position on candle
      * @return graph
      */
+    @StudioProperty(type = PropertyType.ENUMERATION, defaultValue = "CLOSE")
     public T setShowBulletsAt(ShowPositionOnCandle showBulletsAt) {
         this.showBulletsAt = showBulletsAt;
         return (T) this;
@@ -2124,6 +2299,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param showOnAxis showOnAxis option
      * @return graph
      */
+    @StudioProperty(defaultValue = "false")
     public T setShowOnAxis(Boolean showOnAxis) {
         this.showOnAxis = showOnAxis;
         return (T) this;
@@ -2143,6 +2319,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param switchable switchable option
      * @return graph
      */
+    @StudioProperty(defaultValue = "true")
     public T setSwitchable(Boolean switchable) {
         this.switchable = switchable;
         return (T) this;
@@ -2164,6 +2341,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param topRadius top radius
      * @return graph
      */
+    @StudioProperty
     public T setTopRadius(Integer topRadius) {
         this.topRadius = topRadius;
         return (T) this;
@@ -2201,6 +2379,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param labelRotation label rotation
      * @return graph
      */
+    @StudioProperty(defaultValue = "0")
     public T setLabelRotation(Integer labelRotation) {
         this.labelRotation = labelRotation;
         return (T) this;
@@ -2219,6 +2398,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param precision precision
      * @return graph
      */
+    @StudioProperty
     public T setPrecision(Integer precision) {
         this.precision = precision;
         return (T) this;
@@ -2240,6 +2420,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param proCandlesticks proCandlesticks option
      * @return graph
      */
+    @StudioProperty(defaultValue = "false")
     public T setProCandlesticks(Boolean proCandlesticks) {
         this.proCandlesticks = proCandlesticks;
         return (T) this;
@@ -2258,6 +2439,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param useLineColorForBulletBorder useLineColorForBulletBorder option
      * @return graph
      */
+    @StudioProperty(defaultValue = "false")
     public T setUseLineColorForBulletBorder(Boolean useLineColorForBulletBorder) {
         this.useLineColorForBulletBorder = useLineColorForBulletBorder;
         return (T) this;
@@ -2279,6 +2461,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param accessibleLabel accessible label string
      * @return graph
      */
+    @StudioProperty(defaultValue = "[[title]] [[category]] [[value]]")
     public T setAccessibleLabel(String accessibleLabel) {
         this.accessibleLabel = accessibleLabel;
         return (T) this;
@@ -2298,6 +2481,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param balloon balloon
      * @return graph
      */
+    @StudioElement
     public T setBalloon(Balloon balloon) {
         this.balloon = balloon;
         return (T) this;
@@ -2318,6 +2502,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param bulletHitAreaSize bullet hit area size
      * @return graph
      */
+    @StudioProperty
     public T setBulletHitAreaSize(Integer bulletHitAreaSize) {
         this.bulletHitAreaSize = bulletHitAreaSize;
         return (T) this;
@@ -2338,6 +2523,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param classNameField class name field string
      * @return graph
      */
+    @StudioProperty(type = PropertyType.PROPERTY_PATH_REF)
     public T setClassNameField(String classNameField) {
         this.classNameField = classNameField;
         return (T) this;
@@ -2475,6 +2661,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param tabIndex tab index
      * @return graph
      */
+    @StudioProperty
     public T setTabIndex(Integer tabIndex) {
         this.tabIndex = tabIndex;
         return (T) this;
@@ -2495,6 +2682,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * @param columnIndexField column index field string
      * @return graph
      */
+    @StudioProperty
     public T setColumnIndexField(String columnIndexField) {
         this.columnIndexField = columnIndexField;
         return (T) this;

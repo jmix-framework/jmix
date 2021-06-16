@@ -20,6 +20,9 @@ package io.jmix.charts.model.axis;
 import io.jmix.charts.model.JsFunction;
 import io.jmix.charts.model.chart.impl.AbstractChart;
 import io.jmix.charts.model.date.DatePeriod;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioProperty;
 
 /**
  * Defines category axis in chart. <br>
@@ -28,6 +31,11 @@ import io.jmix.charts.model.date.DatePeriod;
  *
  * <a href="http://docs.amcharts.com/3/javascriptcharts/CategoryAxis">http://docs.amcharts.com/3/javascriptcharts/CategoryAxis</a>
  */
+@StudioElement(
+        caption = "CategoryAxis",
+        xmlElement = "categoryAxis",
+        xmlns = "http://jmix.io/schema/ui/charts",
+        xmlnsAlias = "chart")
 public class CategoryAxis extends AbstractAxis<CategoryAxis> {
 
     private static final long serialVersionUID = -8181114623535627249L;
@@ -75,6 +83,7 @@ public class CategoryAxis extends AbstractAxis<CategoryAxis> {
      * @param autoWrap autoWrap option
      * @return category axis
      */
+    @StudioProperty(defaultValue = "false")
     public CategoryAxis setAutoWrap(Boolean autoWrap) {
         this.autoWrap = autoWrap;
         return this;
@@ -95,6 +104,7 @@ public class CategoryAxis extends AbstractAxis<CategoryAxis> {
      * @param equalSpacing equalSpacing option
      * @return category axis
      */
+    @StudioProperty(defaultValue = "false")
     public CategoryAxis setEqualSpacing(Boolean equalSpacing) {
         this.equalSpacing = equalSpacing;
         return this;
@@ -115,6 +125,7 @@ public class CategoryAxis extends AbstractAxis<CategoryAxis> {
      * @param forceShowField force show field string
      * @return category axis
      */
+    @StudioProperty
     public CategoryAxis setForceShowField(String forceShowField) {
         this.forceShowField = forceShowField;
         return this;
@@ -135,6 +146,7 @@ public class CategoryAxis extends AbstractAxis<CategoryAxis> {
      * @param gridPosition grid position
      * @return category axis
      */
+    @StudioProperty(type = PropertyType.ENUMERATION, defaultValue = "MIDDLE")
     public CategoryAxis setGridPosition(GridPosition gridPosition) {
         this.gridPosition = gridPosition;
         return this;
@@ -154,6 +166,7 @@ public class CategoryAxis extends AbstractAxis<CategoryAxis> {
      * @param minPeriod the shortest period of your data
      * @return category axis
      */
+    @StudioProperty(type = PropertyType.ENUMERATION, defaultValue = "DAYS")
     public CategoryAxis setMinPeriod(DatePeriod minPeriod) {
         this.minPeriod = minPeriod;
         return this;
@@ -182,6 +195,7 @@ public class CategoryAxis extends AbstractAxis<CategoryAxis> {
      * @param parseDates parseDates option
      * @return category axis
      */
+    @StudioProperty(defaultValue = "false")
     public CategoryAxis setParseDates(Boolean parseDates) {
         this.parseDates = parseDates;
         return this;
@@ -202,6 +216,7 @@ public class CategoryAxis extends AbstractAxis<CategoryAxis> {
      * @param startOnAxis startOnAxis option
      * @return category axis
      */
+    @StudioProperty
     public CategoryAxis setStartOnAxis(Boolean startOnAxis) {
         this.startOnAxis = startOnAxis;
         return this;
@@ -242,6 +257,7 @@ public class CategoryAxis extends AbstractAxis<CategoryAxis> {
      * @param labelColorField label color field string
      * @return category axis
      */
+    @StudioProperty(type = PropertyType.PROPERTY_PATH_REF)
     public CategoryAxis setLabelColorField(String labelColorField) {
         this.labelColorField = labelColorField;
         return this;
@@ -261,6 +277,7 @@ public class CategoryAxis extends AbstractAxis<CategoryAxis> {
      * @param tickPosition tick position string
      * @return category axis
      */
+    @StudioProperty(type = PropertyType.OPTIONS, options = {"middle", "start"}, defaultValue = "middle")
     public CategoryAxis setTickPosition(String tickPosition) {
         this.tickPosition = tickPosition;
         return this;
@@ -280,6 +297,7 @@ public class CategoryAxis extends AbstractAxis<CategoryAxis> {
      *
      * @param twoLineMode twoLineMode option
      */
+    @StudioProperty(defaultValue = "false")
     public void setTwoLineMode(Boolean twoLineMode) {
         this.twoLineMode = twoLineMode;
     }
@@ -318,6 +336,7 @@ public class CategoryAxis extends AbstractAxis<CategoryAxis> {
      * @param widthField width field name
      * @return category axis
      */
+    @StudioProperty(type = PropertyType.PROPERTY_PATH_REF)
     public CategoryAxis setWidthField(String widthField) {
         this.widthField = widthField;
         return this;
@@ -339,6 +358,7 @@ public class CategoryAxis extends AbstractAxis<CategoryAxis> {
      * @param classNameField class name field string
      * @return category axis
      */
+    @StudioProperty(type = PropertyType.PROPERTY_PATH_REF)
     public CategoryAxis setClassNameField(String classNameField) {
         this.classNameField = classNameField;
         return this;

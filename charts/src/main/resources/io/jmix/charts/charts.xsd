@@ -1075,17 +1075,20 @@
     </xs:complexType>
 
     <xs:complexType name="trendLine">
+        <xs:all>
+            <xs:element name="finalImage" minOccurs="0" type="image"/>
+            <xs:element name="initialImage" minOccurs="0" type="image"/>
+        </xs:all>
+
         <xs:attribute name="balloonText" type="xs:string"/>
         <xs:attribute name="dashLength" type="xs:integer"/>
         <xs:attribute name="finalCategory" type="xs:string"/>
         <xs:attribute name="finalDate" type="xs:date"/>
-        <xs:attribute name="finalImage" type="image"/>
         <xs:attribute name="finalValue" type="xs:double"/>
         <xs:attribute name="finalXValue" type="xs:double"/>
         <xs:attribute name="id" type="xs:string"/>
         <xs:attribute name="initialCategory" type="xs:string"/>
         <xs:attribute name="initialDate" type="xs:date"/>
-        <xs:attribute name="initialImage" type="image"/>
         <xs:attribute name="initialValue" type="xs:double"/>
         <xs:attribute name="initialXValue" type="xs:double"/>
         <xs:attribute name="isProtected" type="xs:boolean"/>
@@ -2113,7 +2116,11 @@
             <xs:element name="plotAreaFillColors" minOccurs="0">
                 <xs:complexType>
                     <xs:sequence minOccurs="0">
-                        <xs:element name="color" minOccurs="0" maxOccurs="unbounded" type="color"/>
+                        <xs:element name="color" minOccurs="0" maxOccurs="unbounded">
+                            <xs:complexType>
+                                <xs:attribute name="value" type="color"/>
+                            </xs:complexType>
+                        </xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>

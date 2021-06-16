@@ -20,7 +20,12 @@ package io.jmix.charts.model.stock;
 import io.jmix.charts.model.AbstractChartObject;
 import io.jmix.charts.model.Color;
 import io.jmix.charts.model.chart.StockChartModel;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioProperty;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.util.Date;
 import java.util.UUID;
 
@@ -33,6 +38,11 @@ import java.util.UUID;
  *
  * <a href="http://docs.amcharts.com/3/javascriptstockchart/StockEvent">http://docs.amcharts.com/3/javascriptstockchart/StockEvent</a>
  */
+@StudioElement(
+        caption = "StockEvent",
+        xmlElement = "stockEvent",
+        xmlns = "http://jmix.io/schema/ui/charts",
+        xmlnsAlias = "chart")
 public class StockEvent extends AbstractChartObject {
 
     private static final long serialVersionUID = -145705259976870942L;
@@ -96,6 +106,9 @@ public class StockEvent extends AbstractChartObject {
      * @param backgroundAlpha opacity
      * @return stock event
      */
+    @StudioProperty(defaultValue = "1")
+    @Max(1)
+    @Min(0)
     public StockEvent setBackgroundAlpha(Double backgroundAlpha) {
         this.backgroundAlpha = backgroundAlpha;
         return this;
@@ -114,6 +127,7 @@ public class StockEvent extends AbstractChartObject {
      * @param backgroundColor color
      * @return stock event
      */
+    @StudioProperty(type = PropertyType.OPTIONS, defaultValue = "#DADADA")
     public StockEvent setBackgroundColor(Color backgroundColor) {
         this.backgroundColor = backgroundColor;
         return this;
@@ -132,6 +146,9 @@ public class StockEvent extends AbstractChartObject {
      * @param borderAlpha opacity
      * @return stock event
      */
+    @StudioProperty(defaultValue = "1")
+    @Max(1)
+    @Min(0)
     public StockEvent setBorderAlpha(Double borderAlpha) {
         this.borderAlpha = borderAlpha;
         return this;
@@ -150,6 +167,7 @@ public class StockEvent extends AbstractChartObject {
      * @param borderColor color
      * @return stock event
      */
+    @StudioProperty(type = PropertyType.OPTIONS, defaultValue = "#888888")
     public StockEvent setBorderColor(Color borderColor) {
         this.borderColor = borderColor;
         return this;
@@ -168,6 +186,7 @@ public class StockEvent extends AbstractChartObject {
      * @param color color
      * @return stock event
      */
+    @StudioProperty(type = PropertyType.OPTIONS, defaultValue = "#000000")
     public StockEvent setColor(Color color) {
         this.color = color;
         return this;
@@ -186,6 +205,7 @@ public class StockEvent extends AbstractChartObject {
      * @param date date
      * @return stock event
      */
+    @StudioProperty
     public StockEvent setDate(Date date) {
         this.date = date;
         return this;
@@ -204,6 +224,7 @@ public class StockEvent extends AbstractChartObject {
      * @param description description
      * @return stock event
      */
+    @StudioProperty
     public StockEvent setDescription(String description) {
         this.description = description;
         return this;
@@ -222,6 +243,7 @@ public class StockEvent extends AbstractChartObject {
      * @param fontSize font size
      * @return stock event
      */
+    @StudioProperty
     public StockEvent setFontSize(Integer fontSize) {
         this.fontSize = fontSize;
         return this;
@@ -240,6 +262,7 @@ public class StockEvent extends AbstractChartObject {
      * @param graph graph id
      * @return stock event
      */
+    @StudioProperty
     public StockEvent setGraph(String graph) {
         this.graph = graph;
         return this;
@@ -258,6 +281,7 @@ public class StockEvent extends AbstractChartObject {
      * @param rollOverColor color
      * @return stock event
      */
+    @StudioProperty(type = PropertyType.OPTIONS, defaultValue = "#CC0000")
     public StockEvent setRollOverColor(Color rollOverColor) {
         this.rollOverColor = rollOverColor;
         return this;
@@ -276,6 +300,7 @@ public class StockEvent extends AbstractChartObject {
      * @param showAt showAt string
      * @return stock event
      */
+    @StudioProperty(type = PropertyType.OPTIONS, options = {"open", "close", "low", "high"})
     public StockEvent setShowAt(String showAt) {
         this.showAt = showAt;
         return this;
@@ -295,6 +320,7 @@ public class StockEvent extends AbstractChartObject {
      * @param showBullet showBullet option
      * @return stock event
      */
+    @StudioProperty(defaultValue = "false")
     public StockEvent setShowBullet(Boolean showBullet) {
         this.showBullet = showBullet;
         return this;
@@ -314,6 +340,7 @@ public class StockEvent extends AbstractChartObject {
      * @param showOnAxis showOnAxis option
      * @return stock event
      */
+    @StudioProperty(defaultValue = "false")
     public StockEvent setShowOnAxis(Boolean showOnAxis) {
         this.showOnAxis = showOnAxis;
         return this;
@@ -333,6 +360,7 @@ public class StockEvent extends AbstractChartObject {
      * @param text text
      * @return stock event
      */
+    @StudioProperty
     public StockEvent setText(String text) {
         this.text = text;
         return this;
@@ -351,6 +379,7 @@ public class StockEvent extends AbstractChartObject {
      * @param type type
      * @return stock event
      */
+    @StudioProperty(type = PropertyType.ENUMERATION, defaultValue = "SIGN")
     public StockEvent setType(StockEventType type) {
         this.type = type;
         return this;
@@ -369,6 +398,7 @@ public class StockEvent extends AbstractChartObject {
      * @param url the URL
      * @return stock event
      */
+    @StudioProperty
     public StockEvent setUrl(String url) {
         this.url = url;
         return this;
@@ -387,6 +417,7 @@ public class StockEvent extends AbstractChartObject {
      * @param urlTarget URL target
      * @return stock event
      */
+    @StudioProperty(type = PropertyType.OPTIONS, options = {"_blank", "_parent", "_self", "_top"})
     public StockEvent setUrlTarget(String urlTarget) {
         this.urlTarget = urlTarget;
         return this;
@@ -405,6 +436,7 @@ public class StockEvent extends AbstractChartObject {
      * @param value value
      * @return stock event
      */
+    @StudioProperty
     public StockEvent setValue(Double value) {
         this.value = value;
         return this;

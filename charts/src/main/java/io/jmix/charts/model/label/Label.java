@@ -19,6 +19,12 @@ package io.jmix.charts.model.label;
 import io.jmix.charts.model.AbstractChartObject;
 import io.jmix.charts.model.Align;
 import io.jmix.charts.model.Color;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioProperty;
+
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 
 /**
  * Creates a label on the chart which can be placed anywhere, multiple can be assigned.
@@ -27,6 +33,11 @@ import io.jmix.charts.model.Color;
  *
  * <a href="http://docs.amcharts.com/3/javascriptcharts/Label">http://docs.amcharts.com/3/javascriptcharts/Label</a>
  */
+@StudioElement(
+        caption = "Label",
+        xmlElement = "label",
+        xmlns = "http://jmix.io/schema/ui/charts",
+        xmlnsAlias = "chart")
 public class Label extends AbstractChartObject {
 
     private static final long serialVersionUID = 3973480345155361978L;
@@ -68,6 +79,7 @@ public class Label extends AbstractChartObject {
      * @param align align
      * @return label
      */
+    @StudioProperty(type = PropertyType.ENUMERATION, defaultValue = "LEFT")
     public Label setAlign(Align align) {
         this.align = align;
         return this;
@@ -86,6 +98,9 @@ public class Label extends AbstractChartObject {
      * @param alpha opacity
      * @return label
      */
+    @StudioProperty(defaultValue = "1")
+    @Max(1)
+    @Min(0)
     public Label setAlpha(Double alpha) {
         this.alpha = alpha;
         return this;
@@ -104,6 +119,7 @@ public class Label extends AbstractChartObject {
      * @param bold bold option
      * @return label
      */
+    @StudioProperty(defaultValue = "false")
     public Label setBold(Boolean bold) {
         this.bold = bold;
         return this;
@@ -122,6 +138,7 @@ public class Label extends AbstractChartObject {
      * @param color color
      * @return label
      */
+    @StudioProperty(type = PropertyType.OPTIONS)
     public Label setColor(Color color) {
         this.color = color;
         return this;
@@ -140,6 +157,7 @@ public class Label extends AbstractChartObject {
      * @param rotation angle
      * @return label
      */
+    @StudioProperty(defaultValue = "0")
     public Label setRotation(Integer rotation) {
         this.rotation = rotation;
         return this;
@@ -158,6 +176,7 @@ public class Label extends AbstractChartObject {
      * @param size size
      * @return label
      */
+    @StudioProperty
     public Label setSize(Integer size) {
         this.size = size;
         return this;
@@ -176,6 +195,7 @@ public class Label extends AbstractChartObject {
      * @param text text
      * @return label
      */
+    @StudioProperty
     public Label setText(String text) {
         this.text = text;
         return this;
@@ -194,6 +214,7 @@ public class Label extends AbstractChartObject {
      * @param url the URL
      * @return label
      */
+    @StudioProperty
     public Label setUrl(String url) {
         this.url = url;
         return this;
@@ -215,6 +236,7 @@ public class Label extends AbstractChartObject {
      * @param x double or double with "%"
      * @return label
      */
+    @StudioProperty
     public Label setX(String x) {
         checkCorrectInputFormat(x);
 
@@ -238,6 +260,7 @@ public class Label extends AbstractChartObject {
      * @param y double or double with "%"
      * @return label
      */
+    @StudioProperty
     public Label setY(String y) {
         checkCorrectInputFormat(y);
 
@@ -258,6 +281,7 @@ public class Label extends AbstractChartObject {
      * @param id id
      * @return label
      */
+    @StudioProperty
     public Label setId(String id) {
         this.id = id;
         return this;
@@ -278,6 +302,7 @@ public class Label extends AbstractChartObject {
      * @param tabIndex tab index
      * @return label
      */
+    @StudioProperty
     public Label setTabIndex(Integer tabIndex) {
         this.tabIndex = tabIndex;
         return this;

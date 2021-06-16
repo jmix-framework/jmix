@@ -16,11 +16,18 @@
 
 package io.jmix.charts.model.legend;
 
+import io.jmix.ui.meta.StudioElement;
+
 /**
  * See documentation for properties of AmLegend JS Object. <br>
  *
  * <a href="http://docs.amcharts.com/3/javascriptcharts/AmLegend">http://docs.amcharts.com/3/javascriptcharts/AmLegend</a>
  */
+@StudioElement(
+        caption = "Legend",
+        xmlElement = "legend",
+        xmlns = "http://jmix.io/schema/ui/charts",
+        xmlnsAlias = "chart")
 public class Legend extends AbstractLegend<Legend> {
 
     private static final long serialVersionUID = 120277626796190884L;

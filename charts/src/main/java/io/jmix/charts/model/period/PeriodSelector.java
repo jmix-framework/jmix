@@ -18,6 +18,10 @@ package io.jmix.charts.model.period;
 
 import io.jmix.charts.model.AbstractChartObject;
 import io.jmix.charts.model.Position;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioElementsGroup;
+import io.jmix.ui.meta.StudioProperty;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,6 +34,11 @@ import java.util.List;
  *
  * <a href="http://docs.amcharts.com/3/javascriptstockchart/PeriodSelector">http://docs.amcharts.com/3/javascriptstockchart/PeriodSelector</a>
  */
+@StudioElement(
+        caption = "PeriodSelector",
+        xmlElement = "periodSelector",
+        xmlns = "http://jmix.io/schema/ui/charts",
+        xmlnsAlias = "chart")
 public class PeriodSelector extends AbstractChartObject {
 
     private static final long serialVersionUID = 1614139299608700421L;
@@ -71,6 +80,7 @@ public class PeriodSelector extends AbstractChartObject {
      * @param dateFormat date format string
      * @return period selector
      */
+    @StudioProperty(defaultValue = "DD-MM-YYYY")
     public PeriodSelector setDateFormat(String dateFormat) {
         this.dateFormat = dateFormat;
         return this;
@@ -89,6 +99,7 @@ public class PeriodSelector extends AbstractChartObject {
      * @param fromText from text
      * @return period selector
      */
+    @StudioProperty(defaultValue = "From:")
     public PeriodSelector setFromText(String fromText) {
         this.fromText = fromText;
         return this;
@@ -108,6 +119,7 @@ public class PeriodSelector extends AbstractChartObject {
      * @param hideOutOfScopePeriods hideOutOfScopePeriods option
      * @return period selector
      */
+    @StudioProperty(defaultValue = "true")
     public PeriodSelector setHideOutOfScopePeriods(Boolean hideOutOfScopePeriods) {
         this.hideOutOfScopePeriods = hideOutOfScopePeriods;
         return this;
@@ -127,6 +139,7 @@ public class PeriodSelector extends AbstractChartObject {
      * @param inputFieldsEnabled inputFieldsEnabled option
      * @return period selector
      */
+    @StudioProperty(defaultValue = "true")
     public PeriodSelector setInputFieldsEnabled(Boolean inputFieldsEnabled) {
         this.inputFieldsEnabled = inputFieldsEnabled;
         return this;
@@ -146,6 +159,7 @@ public class PeriodSelector extends AbstractChartObject {
      * @param inputFieldWidth width
      * @return period selector
      */
+    @StudioProperty(defaultValue = "100")
     public PeriodSelector setInputFieldWidth(Integer inputFieldWidth) {
         this.inputFieldWidth = inputFieldWidth;
         return this;
@@ -164,6 +178,7 @@ public class PeriodSelector extends AbstractChartObject {
      * @param periods list of periods
      * @return period selector
      */
+    @StudioElementsGroup(caption = "Periods", xmlElement = "periods")
     public PeriodSelector setPeriods(List<Period> periods) {
         this.periods = periods;
         return this;
@@ -198,6 +213,7 @@ public class PeriodSelector extends AbstractChartObject {
      * @param periodsText periods text
      * @return period selector
      */
+    @StudioProperty(defaultValue = "Zoom:")
     public PeriodSelector setPeriodsText(String periodsText) {
         this.periodsText = periodsText;
         return this;
@@ -216,6 +232,7 @@ public class PeriodSelector extends AbstractChartObject {
      * @param position position
      * @return period selector
      */
+    @StudioProperty(type = PropertyType.ENUMERATION, defaultValue = "BOTTOM")
     public PeriodSelector setPosition(Position position) {
         this.position = position;
         return this;
@@ -235,6 +252,7 @@ public class PeriodSelector extends AbstractChartObject {
      * @param selectFromStart selectFromStart option
      * @return period selector
      */
+    @StudioProperty(defaultValue = "false")
     public PeriodSelector setSelectFromStart(Boolean selectFromStart) {
         this.selectFromStart = selectFromStart;
         return this;
@@ -253,6 +271,7 @@ public class PeriodSelector extends AbstractChartObject {
      * @param toText text
      * @return period selector
      */
+    @StudioProperty(defaultValue = "To:")
     public PeriodSelector setToText(String toText) {
         this.toText = toText;
         return this;
@@ -271,6 +290,7 @@ public class PeriodSelector extends AbstractChartObject {
      * @param width width
      * @return period selector
      */
+    @StudioProperty(defaultValue = "180")
     public PeriodSelector setWidth(Integer width) {
         this.width = width;
         return this;

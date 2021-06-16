@@ -16,6 +16,8 @@
 
 package io.jmix.charts.model.chart;
 
+import io.jmix.ui.meta.StudioProperty;
+
 public interface XYChartModel<T extends XYChartModel> extends RectangularChartModel<T> {
     /**
      * @return true if scrollbar of X axis (horizontal) is hidden
@@ -29,6 +31,7 @@ public interface XYChartModel<T extends XYChartModel> extends RectangularChartMo
      * @param hideXScrollbar hide X scrollbar option
      * @return XY chart model
      */
+    @StudioProperty(defaultValue = "false")
     T setHideXScrollbar(Boolean hideXScrollbar);
 
     /**
@@ -43,6 +46,7 @@ public interface XYChartModel<T extends XYChartModel> extends RectangularChartMo
      * @param hideYScrollbar hide Y scrollbar option
      * @return XY chart model
      */
+    @StudioProperty(defaultValue = "false")
     T setHideYScrollbar(Boolean hideYScrollbar);
 
     /**
@@ -57,6 +61,7 @@ public interface XYChartModel<T extends XYChartModel> extends RectangularChartMo
      * @param dataDateFormat data date format string
      * @return XY chart model
      */
+    @StudioProperty
     T setDataDateFormat(String dataDateFormat);
 
     /**
@@ -73,6 +78,7 @@ public interface XYChartModel<T extends XYChartModel> extends RectangularChartMo
      * @param maxValue maximum value of the size/scale of bubbles
      * @return XY chart model
      */
+    @StudioProperty
     T setMaxValue(Integer maxValue);
 
     /**
@@ -89,5 +95,6 @@ public interface XYChartModel<T extends XYChartModel> extends RectangularChartMo
      * @param minValue minimum value of the size/scale of bubbles
      * @return XY chart model
      */
+    @StudioProperty
     T setMinValue(Integer minValue);
 }

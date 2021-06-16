@@ -19,7 +19,15 @@ package io.jmix.charts.model.legend;
 import io.jmix.charts.model.AbstractChartObject;
 import io.jmix.charts.model.Color;
 import io.jmix.charts.model.MarkerType;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioProperty;
 
+@StudioElement(
+        caption = "Legend Item",
+        xmlElement = "item",
+        xmlns = "http://jmix.io/schema/ui/charts",
+        xmlnsAlias = "chart")
 public class LegendItem extends AbstractChartObject {
 
     private static final long serialVersionUID = 8563526782768492986L;
@@ -34,6 +42,7 @@ public class LegendItem extends AbstractChartObject {
         return color;
     }
 
+    @StudioProperty(type = PropertyType.OPTIONS)
     public LegendItem setColor(Color color) {
         this.color = color;
         return this;
@@ -43,6 +52,7 @@ public class LegendItem extends AbstractChartObject {
         return markerType;
     }
 
+    @StudioProperty(type = PropertyType.ENUMERATION)
     public LegendItem setMarkerType(MarkerType markerType) {
         this.markerType = markerType;
         return this;
@@ -52,6 +62,7 @@ public class LegendItem extends AbstractChartObject {
         return title;
     }
 
+    @StudioProperty
     public LegendItem setTitle(String title) {
         this.title = title;
         return this;

@@ -18,6 +18,12 @@ package io.jmix.charts.model.settings;
 
 import io.jmix.charts.model.*;
 import io.jmix.charts.model.stock.StockLegend;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioProperty;
+
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 
 /**
  * Common settings of legends. If there is no default value specified, default value of {@link StockLegend} class
@@ -27,6 +33,11 @@ import io.jmix.charts.model.stock.StockLegend;
  *
  * <a href="http://docs.amcharts.com/3/javascriptstockchart/LegendSettings">http://docs.amcharts.com/3/javascriptstockchart/LegendSettings</a>
  */
+@StudioElement(
+        caption = "LegendSettings",
+        xmlElement = "legendSettings",
+        xmlns = "http://jmix.io/schema/ui/charts",
+        xmlnsAlias = "chart")
 public class LegendSettings extends AbstractChartObject {
 
     private static final long serialVersionUID = 7958786618547667346L;
@@ -96,6 +107,7 @@ public class LegendSettings extends AbstractChartObject {
      * @param align alignment of legend entries
      * @return legend settings
      */
+    @StudioProperty(type = PropertyType.ENUMERATION)
     public LegendSettings setAlign(Align align) {
         this.align = align;
         return this;
@@ -115,6 +127,7 @@ public class LegendSettings extends AbstractChartObject {
      * @param equalWidths equalWidths option
      * @return legend settings
      */
+    @StudioProperty(defaultValue = "false")
     public LegendSettings setEqualWidths(Boolean equalWidths) {
         this.equalWidths = equalWidths;
         return this;
@@ -133,6 +146,7 @@ public class LegendSettings extends AbstractChartObject {
      * @param horizontalGap horizontal gap
      * @return legend settings
      */
+    @StudioProperty
     public LegendSettings setHorizontalGap(Integer horizontalGap) {
         this.horizontalGap = horizontalGap;
         return this;
@@ -151,6 +165,7 @@ public class LegendSettings extends AbstractChartObject {
      * @param labelText text
      * @return legend settings
      */
+    @StudioProperty
     public LegendSettings setLabelText(String labelText) {
         this.labelText = labelText;
         return this;
@@ -169,6 +184,7 @@ public class LegendSettings extends AbstractChartObject {
      * @param marginBottom margin bottom
      * @return legend settings
      */
+    @StudioProperty(defaultValue = "0")
     public LegendSettings setMarginBottom(Integer marginBottom) {
         this.marginBottom = marginBottom;
         return this;
@@ -187,6 +203,7 @@ public class LegendSettings extends AbstractChartObject {
      * @param marginTop margin top
      * @return legend settings
      */
+    @StudioProperty(defaultValue = "0")
     public LegendSettings setMarginTop(Integer marginTop) {
         this.marginTop = marginTop;
         return this;
@@ -205,6 +222,9 @@ public class LegendSettings extends AbstractChartObject {
      * @param markerBorderAlpha opacity
      * @return legend settings
      */
+    @StudioProperty
+    @Max(1)
+    @Min(0)
     public LegendSettings setMarkerBorderAlpha(Double markerBorderAlpha) {
         this.markerBorderAlpha = markerBorderAlpha;
         return this;
@@ -223,6 +243,7 @@ public class LegendSettings extends AbstractChartObject {
      * @param markerBorderColor color
      * @return legend settings
      */
+    @StudioProperty(type = PropertyType.OPTIONS)
     public LegendSettings setMarkerBorderColor(Color markerBorderColor) {
         this.markerBorderColor = markerBorderColor;
         return this;
@@ -241,6 +262,7 @@ public class LegendSettings extends AbstractChartObject {
      * @param markerBorderThickness thickness
      * @return legend settings
      */
+    @StudioProperty
     public LegendSettings setMarkerBorderThickness(Integer markerBorderThickness) {
         this.markerBorderThickness = markerBorderThickness;
         return this;
@@ -259,6 +281,7 @@ public class LegendSettings extends AbstractChartObject {
      * @param markerDisabledColor color
      * @return legend settings
      */
+    @StudioProperty(type = PropertyType.OPTIONS)
     public LegendSettings setMarkerDisabledColor(Color markerDisabledColor) {
         this.markerDisabledColor = markerDisabledColor;
         return this;
@@ -277,6 +300,7 @@ public class LegendSettings extends AbstractChartObject {
      * @param markerLabelGap marker label gap
      * @return legend settings
      */
+    @StudioProperty
     public LegendSettings setMarkerLabelGap(Integer markerLabelGap) {
         this.markerLabelGap = markerLabelGap;
         return this;
@@ -295,6 +319,7 @@ public class LegendSettings extends AbstractChartObject {
      * @param markerSize marker size
      * @return legend settings
      */
+    @StudioProperty
     public LegendSettings setMarkerSize(Integer markerSize) {
         this.markerSize = markerSize;
         return this;
@@ -314,6 +339,7 @@ public class LegendSettings extends AbstractChartObject {
      * @param markerType marker type
      * @return legend settings
      */
+    @StudioProperty(type = PropertyType.ENUMERATION)
     public LegendSettings setMarkerType(MarkerType markerType) {
         this.markerType = markerType;
         return this;
@@ -332,6 +358,7 @@ public class LegendSettings extends AbstractChartObject {
      * @param reversedOrder reversedOrder option
      * @return legend settings
      */
+    @StudioProperty
     public LegendSettings setReversedOrder(Boolean reversedOrder) {
         this.reversedOrder = reversedOrder;
         return this;
@@ -350,6 +377,7 @@ public class LegendSettings extends AbstractChartObject {
      * @param rollOverColor color
      * @return legend settings
      */
+    @StudioProperty(type = PropertyType.OPTIONS)
     public LegendSettings setRollOverColor(Color rollOverColor) {
         this.rollOverColor = rollOverColor;
         return this;
@@ -369,6 +397,7 @@ public class LegendSettings extends AbstractChartObject {
      * @param rollOverGraphAlpha opacity
      * @return legend settings
      */
+    @StudioProperty
     public LegendSettings setRollOverGraphAlpha(Double rollOverGraphAlpha) {
         this.rollOverGraphAlpha = rollOverGraphAlpha;
         return this;
@@ -387,6 +416,7 @@ public class LegendSettings extends AbstractChartObject {
      * @param switchable switchable option
      * @return legend settings
      */
+    @StudioProperty
     public LegendSettings setSwitchable(Boolean switchable) {
         this.switchable = switchable;
         return this;
@@ -405,6 +435,7 @@ public class LegendSettings extends AbstractChartObject {
      * @param switchColor color
      * @return legend settings
      */
+    @StudioProperty(type = PropertyType.OPTIONS)
     public LegendSettings setSwitchColor(Color switchColor) {
         this.switchColor = switchColor;
         return this;
@@ -423,6 +454,7 @@ public class LegendSettings extends AbstractChartObject {
      * @param switchType switch type
      * @return legend settings
      */
+    @StudioProperty(type = PropertyType.ENUMERATION)
     public LegendSettings setSwitchType(SwitchType switchType) {
         this.switchType = switchType;
         return this;
@@ -442,6 +474,7 @@ public class LegendSettings extends AbstractChartObject {
      * @param textClickEnabled textClickEnabled option
      * @return legend settings
      */
+    @StudioProperty(defaultValue = "false")
     public LegendSettings setTextClickEnabled(Boolean textClickEnabled) {
         this.textClickEnabled = textClickEnabled;
         return this;
@@ -460,6 +493,7 @@ public class LegendSettings extends AbstractChartObject {
      * @param useMarkerColorForLabels useMarkerColorForLabels option
      * @return legend settings
      */
+    @StudioProperty
     public LegendSettings setUseMarkerColorForLabels(Boolean useMarkerColorForLabels) {
         this.useMarkerColorForLabels = useMarkerColorForLabels;
         return this;
@@ -480,6 +514,7 @@ public class LegendSettings extends AbstractChartObject {
      * @param valueTextComparing value text comparing
      * @return legend settings
      */
+    @StudioProperty
     public LegendSettings setValueTextComparing(String valueTextComparing) {
         this.valueTextComparing = valueTextComparing;
         return this;
@@ -499,6 +534,7 @@ public class LegendSettings extends AbstractChartObject {
      * @param valueTextRegular value text regular
      * @return legend settings
      */
+    @StudioProperty
     public LegendSettings setValueTextRegular(String valueTextRegular) {
         this.valueTextRegular = valueTextRegular;
         return this;
@@ -517,6 +553,7 @@ public class LegendSettings extends AbstractChartObject {
      * @param valueWidth width
      * @return legend settings
      */
+    @StudioProperty
     public LegendSettings setValueWidth(Integer valueWidth) {
         this.valueWidth = valueWidth;
         return this;
@@ -535,6 +572,7 @@ public class LegendSettings extends AbstractChartObject {
      * @param verticalGap vertical gap
      * @return legend settings
      */
+    @StudioProperty
     public LegendSettings setVerticalGap(Integer verticalGap) {
         this.verticalGap = verticalGap;
         return this;
@@ -553,6 +591,7 @@ public class LegendSettings extends AbstractChartObject {
      * @param position position
      * @return legend settings
      */
+    @StudioProperty(type = PropertyType.ENUMERATION)
     public LegendSettings setPosition(LegendSettingsPosition position) {
         this.position = position;
         return this;

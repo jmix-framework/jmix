@@ -21,7 +21,13 @@ import io.jmix.charts.model.AbstractChartObject;
 import io.jmix.charts.model.Color;
 import io.jmix.charts.model.chart.impl.StockPanel;
 import io.jmix.charts.model.date.DateFormat;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioElementsGroup;
+import io.jmix.ui.meta.StudioProperty;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -34,6 +40,11 @@ import java.util.List;
  *
  * <a href="http://docs.amcharts.com/3/javascriptstockchart/CategoryAxesSettings">http://docs.amcharts.com/3/javascriptstockchart/CategoryAxesSettings</a>
  */
+@StudioElement(
+        caption = "CategoryAxesSettings",
+        xmlElement = "categoryAxesSettings",
+        xmlns = "http://jmix.io/schema/ui/charts",
+        xmlnsAlias = "chart")
 public class CategoryAxesSettings extends AbstractChartObject {
 
     private static final long serialVersionUID = -4456035547141357578L;
@@ -120,6 +131,7 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * @param alwaysGroup alwaysGroup option
      * @return category axes settings
      */
+    @StudioProperty(defaultValue = "false")
     public CategoryAxesSettings setAlwaysGroup(Boolean alwaysGroup) {
         this.alwaysGroup = alwaysGroup;
         return this;
@@ -139,6 +151,7 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * @param autoGridCount autoGridCount option
      * @return category axes settings
      */
+    @StudioProperty(defaultValue = "true")
     public CategoryAxesSettings setAutoGridCount(Boolean autoGridCount) {
         this.autoGridCount = autoGridCount;
         return this;
@@ -157,6 +170,9 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * @param axisAlpha axis opacity
      * @return category axes settings
      */
+    @StudioProperty(defaultValue = "0")
+    @Max(1)
+    @Min(0)
     public CategoryAxesSettings setAxisAlpha(Double axisAlpha) {
         this.axisAlpha = axisAlpha;
         return this;
@@ -175,6 +191,7 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * @param axisColor axis color
      * @return category axes settings
      */
+    @StudioProperty(type = PropertyType.OPTIONS)
     public CategoryAxesSettings setAxisColor(Color axisColor) {
         this.axisColor = axisColor;
         return this;
@@ -193,6 +210,7 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * @param axisHeight height of category axes
      * @return category axes settings
      */
+    @StudioProperty(defaultValue = "28")
     public CategoryAxesSettings setAxisHeight(Integer axisHeight) {
         this.axisHeight = axisHeight;
         return this;
@@ -211,6 +229,7 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * @param axisThickness thickness of the axis
      * @return category axes settings
      */
+    @StudioProperty
     public CategoryAxesSettings setAxisThickness(Integer axisThickness) {
         this.axisThickness = axisThickness;
         return this;
@@ -230,6 +249,7 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * @param boldPeriodBeginning bold period beginning option
      * @return category axes settings
      */
+    @StudioProperty(defaultValue = "true")
     public CategoryAxesSettings setBoldPeriodBeginning(Boolean boldPeriodBeginning) {
         this.boldPeriodBeginning = boldPeriodBeginning;
         return this;
@@ -248,6 +268,7 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * @param color text color
      * @return category axes settings
      */
+    @StudioProperty(type = PropertyType.OPTIONS)
     public CategoryAxesSettings setColor(Color color) {
         this.color = color;
         return this;
@@ -266,6 +287,7 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * @param dashLength length of a dash
      * @return category axes settings
      */
+    @StudioProperty
     public CategoryAxesSettings setDashLength(Integer dashLength) {
         this.dashLength = dashLength;
         return this;
@@ -285,6 +307,7 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * @param dateFormats list of date formats
      * @return category axes settings
      */
+    @StudioElementsGroup(caption = "Date Formats", xmlElement = "dateFormats")
     public CategoryAxesSettings setDateFormats(List<DateFormat> dateFormats) {
         this.dateFormats = dateFormats;
         return this;
@@ -320,6 +343,7 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * @param equalSpacing equalSpacing option
      * @return category axes settings
      */
+    @StudioProperty(defaultValue = "false")
     public CategoryAxesSettings setEqualSpacing(Boolean equalSpacing) {
         this.equalSpacing = equalSpacing;
         return this;
@@ -338,6 +362,9 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * @param fillAlpha fill opacity
      * @return category axes settings
      */
+    @StudioProperty
+    @Max(1)
+    @Min(0)
     public CategoryAxesSettings setFillAlpha(Double fillAlpha) {
         this.fillAlpha = fillAlpha;
         return this;
@@ -357,6 +384,7 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * @param fillColor fill color
      * @return category axes settings
      */
+    @StudioProperty(type = PropertyType.OPTIONS)
     public CategoryAxesSettings setFillColor(Color fillColor) {
         this.fillColor = fillColor;
         return this;
@@ -375,6 +403,7 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * @param fontSize text size
      * @return category axes settings
      */
+    @StudioProperty
     public CategoryAxesSettings setFontSize(Integer fontSize) {
         this.fontSize = fontSize;
         return this;
@@ -393,6 +422,9 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * @param gridAlpha opacity of grid lines
      * @return category axes settings
      */
+    @StudioProperty
+    @Max(1)
+    @Min(0)
     public CategoryAxesSettings setGridAlpha(Double gridAlpha) {
         this.gridAlpha = gridAlpha;
         return this;
@@ -411,6 +443,7 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * @param gridColor color of grid lines
      * @return category axes settings
      */
+    @StudioProperty(type = PropertyType.OPTIONS)
     public CategoryAxesSettings setGridColor(Color gridColor) {
         this.gridColor = gridColor;
         return this;
@@ -430,6 +463,7 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * @param gridCount number of grid lines
      * @return category axes settings
      */
+    @StudioProperty(defaultValue = "10")
     public CategoryAxesSettings setGridCount(Integer gridCount) {
         this.gridCount = gridCount;
         return this;
@@ -448,6 +482,7 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * @param gridThickness grid thickness
      * @return category axes settings
      */
+    @StudioProperty
     public CategoryAxesSettings setGridThickness(Integer gridThickness) {
         this.gridThickness = gridThickness;
         return this;
@@ -475,6 +510,7 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * @param groupToPeriods list of groupToPeriods strings
      * @return category axes settings
      */
+    @StudioProperty(type = PropertyType.STRING, defaultValue = "ss,10ss,30ss,mm,10mm,30mm,hh,DD,WW,MM,YYYYY")
     public CategoryAxesSettings setGroupToPeriods(List<String> groupToPeriods) {
         this.groupToPeriods = groupToPeriods;
         return this;
@@ -509,6 +545,7 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * @param inside inside option
      * @return category axes settings
      */
+    @StudioProperty(defaultValue = "false")
     public CategoryAxesSettings setInside(Boolean inside) {
         this.inside = inside;
         return this;
@@ -527,6 +564,7 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * @param labelOffset offset of axis labels
      * @return category axes settings
      */
+    @StudioProperty(defaultValue = "0")
     public CategoryAxesSettings setLabelOffset(Integer labelOffset) {
         this.labelOffset = labelOffset;
         return this;
@@ -545,6 +583,7 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * @param labelRotation rotation angle of a label
      * @return category axes settings
      */
+    @StudioProperty
     public CategoryAxesSettings setLabelRotation(Integer labelRotation) {
         this.labelRotation = labelRotation;
         return this;
@@ -564,6 +603,7 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * @param labelsEnabled labelsEnabled option
      * @return category axes settings
      */
+    @StudioProperty(defaultValue = "true")
     public CategoryAxesSettings setLabelsEnabled(Boolean labelsEnabled) {
         this.labelsEnabled = labelsEnabled;
         return this;
@@ -583,6 +623,7 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * @param markPeriodChange markPeriodChange option
      * @return category axes settings
      */
+    @StudioProperty(defaultValue = "true")
     public CategoryAxesSettings setMarkPeriodChange(Boolean markPeriodChange) {
         this.markPeriodChange = markPeriodChange;
         return this;
@@ -603,6 +644,7 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * @param maxSeries maximum series shown at a time
      * @return category axes settings
      */
+    @StudioProperty(defaultValue = "150")
     public CategoryAxesSettings setMaxSeries(Integer maxSeries) {
         this.maxSeries = maxSeries;
         return this;
@@ -622,6 +664,7 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * @param minHorizontalGap minimum cell width
      * @return category axes settings
      */
+    @StudioProperty(defaultValue = "75")
     public CategoryAxesSettings setMinHorizontalGap(Integer minHorizontalGap) {
         this.minHorizontalGap = minHorizontalGap;
         return this;
@@ -642,6 +685,8 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * @param minPeriod the shortest period
      * @return category axes settings
      */
+    @StudioProperty(type = PropertyType.OPTIONS, options = {"fff", "ss", "mm", "hh", "DD", "MM", "YYYY"},
+            defaultValue = "DD")
     public CategoryAxesSettings setMinPeriod(String minPeriod) {
         this.minPeriod = minPeriod;
         return this;
@@ -660,6 +705,7 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * @param position position of category axes
      * @return category axes settings
      */
+    @StudioProperty(type = PropertyType.ENUMERATION)
     public CategoryAxesSettings setPosition(CategoryAxesPosition position) {
         this.position = position;
         return this;
@@ -680,6 +726,7 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * @param startOnAxis startOnAxis option
      * @return category axes settings
      */
+    @StudioProperty(defaultValue = "false")
     public CategoryAxesSettings setStartOnAxis(Boolean startOnAxis) {
         this.startOnAxis = startOnAxis;
         return this;
@@ -698,6 +745,7 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * @param tickLength tick length
      * @return category axes settings
      */
+    @StudioProperty(defaultValue = "0")
     public CategoryAxesSettings setTickLength(Integer tickLength) {
         this.tickLength = tickLength;
         return this;
@@ -718,6 +766,7 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * @param twoLineMode twoLineMode option
      * @return category axes settings
      */
+    @StudioProperty(defaultValue = "false")
     public CategoryAxesSettings setTwoLineMode(Boolean twoLineMode) {
         this.twoLineMode = twoLineMode;
         return this;
@@ -736,6 +785,7 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * @param boldLabels boldLabels option
      * @return category axes settings
      */
+    @StudioProperty
     public CategoryAxesSettings setBoldLabels(Boolean boldLabels) {
         this.boldLabels = boldLabels;
         return this;
@@ -754,6 +804,9 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * @param minorGridAlpha opacity of minor grid
      * @return category axes settings
      */
+    @StudioProperty
+    @Max(1)
+    @Min(0)
     public CategoryAxesSettings setMinorGridAlpha(Double minorGridAlpha) {
         this.minorGridAlpha = minorGridAlpha;
         return this;
@@ -773,6 +826,7 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * @param minorGridEnabled minorGridEnabled option
      * @return category axes settings
      */
+    @StudioProperty
     public CategoryAxesSettings setMinorGridEnabled(Boolean minorGridEnabled) {
         this.minorGridEnabled = minorGridEnabled;
         return this;

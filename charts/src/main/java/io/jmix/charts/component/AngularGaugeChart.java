@@ -18,6 +18,8 @@ package io.jmix.charts.component;
 
 
 import io.jmix.charts.model.chart.AngularGaugeChartModel;
+import io.jmix.ui.meta.CanvasIconSize;
+import io.jmix.ui.meta.StudioComponent;
 
 /**
  * Gauge chart component.
@@ -26,6 +28,16 @@ import io.jmix.charts.model.chart.AngularGaugeChartModel;
  * <br>
  * <a href="http://docs.amcharts.com/3/javascriptcharts/AmAngularGauge">http://docs.amcharts.com/3/javascriptcharts/AmAngularGauge</a>
  */
+@StudioComponent(
+        caption = "GaugeChart",
+        category = "Charts",
+        xmlElement = "gaugeChart",
+        xmlns = "http://jmix.io/schema/ui/charts",
+        xmlnsAlias = "chart",
+        icon = "io/jmix/charts/icon/component/gaugeChart.svg",
+        canvasIcon = "io/jmix/charts/icon/component/gaugeChart.svg",
+        canvasIconSize = CanvasIconSize.LARGE
+)
 public interface AngularGaugeChart extends Chart<AngularGaugeChart>, AngularGaugeChartModel<AngularGaugeChart> {
     String NAME = "gaugeChart";
 }

@@ -21,7 +21,10 @@ import io.jmix.charts.model.GaugeArrow;
 import io.jmix.charts.model.GaugeAxis;
 import io.jmix.charts.model.animation.HasStartEffect;
 import io.jmix.charts.model.graph.Pattern;
+import io.jmix.ui.meta.*;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.util.List;
 
 public interface AngularGaugeChartModel<T extends AngularGaugeChartModel>
@@ -37,6 +40,7 @@ public interface AngularGaugeChartModel<T extends AngularGaugeChartModel>
      * @param adjustSize adjust size option
      * @return chart model
      */
+    @StudioProperty(defaultValue = "true")
     T setAdjustSize(Boolean adjustSize);
 
     /**
@@ -51,6 +55,7 @@ public interface AngularGaugeChartModel<T extends AngularGaugeChartModel>
      * @param arrows the arrows
      * @return chart model
      */
+    @StudioElementsGroup(caption = "Arrows", xmlElement = "arrows")
     T setArrows(List<GaugeArrow> arrows);
 
     /**
@@ -72,6 +77,7 @@ public interface AngularGaugeChartModel<T extends AngularGaugeChartModel>
      * @param axes the axes
      * @return chart model
      */
+    @StudioElementsGroup(caption = "Axes", xmlElement = "axes")
     T setAxes(List<GaugeAxis> axes);
 
     /**
@@ -93,6 +99,7 @@ public interface AngularGaugeChartModel<T extends AngularGaugeChartModel>
      * @param clockWiseOnly clock wise only option
      * @return chart model
      */
+    @StudioProperty(defaultValue = "false")
     T setClockWiseOnly(Boolean clockWiseOnly);
 
     /**
@@ -106,6 +113,9 @@ public interface AngularGaugeChartModel<T extends AngularGaugeChartModel>
      * @param faceAlpha the face alpha
      * @return chart model
      */
+    @StudioProperty(defaultValue = "0")
+    @Max(1)
+    @Min(0)
     T setFaceAlpha(Double faceAlpha);
 
     /**
@@ -119,6 +129,9 @@ public interface AngularGaugeChartModel<T extends AngularGaugeChartModel>
      * @param faceBorderAlpha the face border alpha
      * @return chart model
      */
+    @StudioProperty(defaultValue = "0")
+    @Max(1)
+    @Min(0)
     T setFaceBorderAlpha(Double faceBorderAlpha);
 
     /**
@@ -132,6 +145,7 @@ public interface AngularGaugeChartModel<T extends AngularGaugeChartModel>
      * @param faceBorderColor the face border color
      * @return chart model
      */
+    @StudioProperty(type = PropertyType.OPTIONS, defaultValue = "#555555")
     T setFaceBorderColor(Color faceBorderColor);
 
     /**
@@ -145,6 +159,7 @@ public interface AngularGaugeChartModel<T extends AngularGaugeChartModel>
      * @param faceBorderWidth the face border width
      * @return chart model
      */
+    @StudioProperty(defaultValue = "1")
     T setFaceBorderWidth(Integer faceBorderWidth);
 
     /**
@@ -158,6 +173,7 @@ public interface AngularGaugeChartModel<T extends AngularGaugeChartModel>
      * @param faceColor the face color
      * @return chart model
      */
+    @StudioProperty(type = PropertyType.OPTIONS, defaultValue = "#FAFAFA")
     T setFaceColor(Color faceColor);
 
     /**
@@ -171,6 +187,7 @@ public interface AngularGaugeChartModel<T extends AngularGaugeChartModel>
      * @param facePattern the face pattern
      * @return chart model
      */
+    @StudioElement(caption = "Face Pattern", xmlElement = "facePattern")
     T setFacePattern(Pattern facePattern);
 
     /**
@@ -184,6 +201,7 @@ public interface AngularGaugeChartModel<T extends AngularGaugeChartModel>
      * @param gaugeX horizontal position in pixel
      * @return chart model
      */
+    @StudioProperty
     T setGaugeX(String gaugeX);
 
     /**
@@ -197,6 +215,7 @@ public interface AngularGaugeChartModel<T extends AngularGaugeChartModel>
      * @param gaugeY vertical position in pixel
      * @return chart model
      */
+    @StudioProperty
     T setGaugeY(String gaugeY);
 
     /**
@@ -210,5 +229,6 @@ public interface AngularGaugeChartModel<T extends AngularGaugeChartModel>
      * @param minRadius minimum radius
      * @return chart model
      */
+    @StudioProperty(defaultValue = "10")
     T setMinRadius(Integer minRadius);
 }

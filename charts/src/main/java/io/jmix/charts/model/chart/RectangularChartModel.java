@@ -21,9 +21,18 @@ package io.jmix.charts.model.chart;
 import io.jmix.charts.model.*;
 import io.jmix.charts.model.cursor.Cursor;
 import io.jmix.charts.model.trendline.TrendLine;
+import io.jmix.ui.meta.*;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.util.List;
 
+@StudioProperties(properties = {
+        @StudioProperty(name = "marginBottom", type = PropertyType.INTEGER, defaultValue = "20"),
+        @StudioProperty(name = "marginLeft", type = PropertyType.INTEGER, defaultValue = "20"),
+        @StudioProperty(name = "marginRight", type = PropertyType.INTEGER, defaultValue = "20"),
+        @StudioProperty(name = "marginTop", type = PropertyType.INTEGER, defaultValue = "20")
+})
 public interface RectangularChartModel<T extends RectangularChartModel>
         extends CoordinateChartModel<T>, HasMargins<T> {
     /**
@@ -37,6 +46,7 @@ public interface RectangularChartModel<T extends RectangularChartModel>
      * @param chartCursor the chart cursor
      * @return  rectangular chart model
      */
+    @StudioElement
     T setChartCursor(Cursor chartCursor);
 
     /**
@@ -50,6 +60,7 @@ public interface RectangularChartModel<T extends RectangularChartModel>
      * @param chartScrollbar the chart scrollbar
      * @return  rectangular chart model
      */
+    @StudioElement(caption = "Chart Scrollbar", xmlElement = "chartScrollbar")
     T setChartScrollbar(Scrollbar chartScrollbar);
 
     /**
@@ -63,6 +74,7 @@ public interface RectangularChartModel<T extends RectangularChartModel>
      * @param trendLines list of trend lines
      * @return  rectangular chart model
      */
+    @StudioElementsGroup(caption = "Trend Lines", xmlElement = "trendLines")
     T setTrendLines(List<TrendLine> trendLines);
 
     /**
@@ -85,6 +97,7 @@ public interface RectangularChartModel<T extends RectangularChartModel>
      * @param angle the angle
      * @return  rectangular chart model
      */
+    @StudioProperty(defaultValue = "0")
     T setAngle(Integer angle);
 
     /**
@@ -99,6 +112,7 @@ public interface RectangularChartModel<T extends RectangularChartModel>
      * @param autoMarginOffset the auto margin offset
      * @return  rectangular chart model
      */
+    @StudioProperty(defaultValue = "10")
     T setAutoMarginOffset(Integer autoMarginOffset);
 
     /**
@@ -114,6 +128,7 @@ public interface RectangularChartModel<T extends RectangularChartModel>
      * @param autoMargins auto margins option
      * @return  rectangular chart model
      */
+    @StudioProperty(defaultValue = "true")
     T setAutoMargins(Boolean autoMargins);
 
     /**
@@ -128,6 +143,7 @@ public interface RectangularChartModel<T extends RectangularChartModel>
      * @param depth3D the depth 3D
      * @return  rectangular chart model
      */
+    @StudioProperty(defaultValue = "0")
     T setDepth3D(Integer depth3D);
 
     /**
@@ -143,6 +159,7 @@ public interface RectangularChartModel<T extends RectangularChartModel>
      * @param marginsUpdated the margin update option
      * @return  rectangular chart model
      */
+    @StudioProperty(defaultValue = "false")
     T setMarginsUpdated(Boolean marginsUpdated);
 
     /**
@@ -156,6 +173,9 @@ public interface RectangularChartModel<T extends RectangularChartModel>
      * @param plotAreaBorderAlpha opacity of plot area's border
      * @return  rectangular chart model
      */
+    @StudioProperty(defaultValue = "0")
+    @Max(1)
+    @Min(0)
     T setPlotAreaBorderAlpha(Double plotAreaBorderAlpha);
 
     /**
@@ -170,6 +190,7 @@ public interface RectangularChartModel<T extends RectangularChartModel>
      * @param plotAreaBorderColor the plot area border color
      * @return  rectangular chart model
      */
+    @StudioProperty(type = PropertyType.OPTIONS, defaultValue = "#000000")
     T setPlotAreaBorderColor(Color plotAreaBorderColor);
 
     /**
@@ -183,6 +204,9 @@ public interface RectangularChartModel<T extends RectangularChartModel>
      * @param plotAreaFillAlphas opacity
      * @return  rectangular chart model
      */
+    @StudioProperty(defaultValue = "0")
+    @Max(1)
+    @Min(0)
     T setPlotAreaFillAlphas(Double plotAreaFillAlphas);
 
     /**
@@ -197,6 +221,13 @@ public interface RectangularChartModel<T extends RectangularChartModel>
      * @param plotAreaFillColors list of plot area colors
      * @return  rectangular chart model
      */
+    @StudioCollection(xmlElement = "plotAreaFillColors",
+            itemXmlElement = "color",
+            itemCaption = "Plot Area Fill Color",
+            itemProperties = {
+                    @StudioProperty(name = "value", type = PropertyType.ENUMERATION,
+                            options = {"@link io.jmix.charts.model.Color"})
+            })
     T setPlotAreaFillColors(List<Color> plotAreaFillColors);
 
     /**
@@ -211,6 +242,7 @@ public interface RectangularChartModel<T extends RectangularChartModel>
      * @param plotAreaGradientAngle the plot area gradient angle
      * @return  rectangular chart model
      */
+    @StudioProperty(type = PropertyType.ENUMERATION, options = {"0", "90", "180", "270"}, defaultValue = "0")
     T setPlotAreaGradientAngle(Integer plotAreaGradientAngle);
 
     /**
@@ -224,6 +256,9 @@ public interface RectangularChartModel<T extends RectangularChartModel>
      * @param zoomOutButtonAlpha opacity of zoom-out button background
      * @return  rectangular chart model
      */
+    @StudioProperty(defaultValue = "0")
+    @Max(1)
+    @Min(0)
     T setZoomOutButtonAlpha(Double zoomOutButtonAlpha);
 
     /**
@@ -237,6 +272,7 @@ public interface RectangularChartModel<T extends RectangularChartModel>
      * @param zoomOutButtonColor zoom-out button background color
      * @return  rectangular chart model
      */
+    @StudioProperty(type = PropertyType.OPTIONS, defaultValue = "#E5E5E5")
     T setZoomOutButtonColor(Color zoomOutButtonColor);
 
     /**
@@ -252,6 +288,7 @@ public interface RectangularChartModel<T extends RectangularChartModel>
      * @param zoomOutButtonImage zoom out button image name string
      * @return  rectangular chart model
      */
+    @StudioProperty(defaultValue = "lens")
     T setZoomOutButtonImage(String zoomOutButtonImage);
 
     /**
@@ -265,6 +302,7 @@ public interface RectangularChartModel<T extends RectangularChartModel>
      * @param zoomOutButtonImageSize the zoom out button image size
      * @return  rectangular chart model
      */
+    @StudioProperty(defaultValue = "17")
     T setZoomOutButtonImageSize(Integer zoomOutButtonImageSize);
 
     /**
@@ -278,6 +316,7 @@ public interface RectangularChartModel<T extends RectangularChartModel>
      * @param zoomOutButtonPadding the zoom out button padding
      * @return  rectangular chart model
      */
+    @StudioProperty(defaultValue = "8")
     T setZoomOutButtonPadding(Integer zoomOutButtonPadding);
 
     /**
@@ -291,6 +330,9 @@ public interface RectangularChartModel<T extends RectangularChartModel>
      * @param zoomOutButtonRollOverAlpha opacity of zoom-out button background
      * @return  rectangular chart model
      */
+    @StudioProperty(defaultValue = "1")
+    @Max(1)
+    @Min(0)
     T setZoomOutButtonRollOverAlpha(Double zoomOutButtonRollOverAlpha);
 
     /**
@@ -304,6 +346,7 @@ public interface RectangularChartModel<T extends RectangularChartModel>
      * @param zoomOutText zoom out text string
      * @return  rectangular chart model
      */
+    @StudioProperty(defaultValue = "Show all")
     T setZoomOutText(String zoomOutText);
 
     /**
@@ -317,6 +360,7 @@ public interface RectangularChartModel<T extends RectangularChartModel>
      * @param maxZoomFactor maximum zoom factor
      * @return  rectangular chart model
      */
+    @StudioProperty(defaultValue = "20")
     T setMaxZoomFactor(Integer maxZoomFactor);
 
     /**
@@ -331,6 +375,7 @@ public interface RectangularChartModel<T extends RectangularChartModel>
      * @param minMarginBottom the minimum margin bottom
      * @return  rectangular chart model
      */
+    @StudioProperty
     T setMinMarginBottom(Integer minMarginBottom);
 
     /**
@@ -345,6 +390,7 @@ public interface RectangularChartModel<T extends RectangularChartModel>
      * @param minMarginLeft the minimum margin left
      * @return  rectangular chart model
      */
+    @StudioProperty
     T setMinMarginLeft(Integer minMarginLeft);
 
     /**
@@ -359,6 +405,7 @@ public interface RectangularChartModel<T extends RectangularChartModel>
      * @param minMarginRight the minimum margin right
      * @return  rectangular chart model
      */
+    @StudioProperty
     T setMinMarginRight(Integer minMarginRight);
 
     /**
@@ -373,6 +420,7 @@ public interface RectangularChartModel<T extends RectangularChartModel>
      * @param minMarginTop the minimum margin top
      * @return  rectangular chart model
      */
+    @StudioProperty
     T setMinMarginTop(Integer minMarginTop);
 
     /**
@@ -388,5 +436,6 @@ public interface RectangularChartModel<T extends RectangularChartModel>
      * @param zoomOutButtonTabIndex the zoom out button tab index
      * @return  rectangular chart model
      */
+    @StudioProperty
     T setZoomOutButtonTabIndex(Integer zoomOutButtonTabIndex);
 }

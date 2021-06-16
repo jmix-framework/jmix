@@ -18,7 +18,18 @@ package io.jmix.charts.model.chart;
 
 
 import io.jmix.charts.model.HasMargins;
+import io.jmix.ui.meta.*;
 
+@StudioProperties(properties = {
+        @StudioProperty(name = "marginBottom", type = PropertyType.INTEGER, defaultValue = "0"),
+        @StudioProperty(name = "marginLeft", type = PropertyType.INTEGER, defaultValue = "0"),
+        @StudioProperty(name = "marginRight", type = PropertyType.INTEGER, defaultValue = "0"),
+        @StudioProperty(name = "marginTop", type = PropertyType.INTEGER, defaultValue = "0")
+},
+        groups = {
+                @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                        properties = {"dataContainer", "categoryField"})
+        })
 public interface RadarChartModel<T extends RadarChartModel> extends CoordinateChartModel<T>, HasMargins<T> {
     /**
      * @return category field
@@ -31,6 +42,7 @@ public interface RadarChartModel<T extends RadarChartModel> extends CoordinateCh
      * @param categoryField category field string
      * @return radar chart model
      */
+    @StudioProperty(type = PropertyType.PROPERTY_PATH_REF)
     T setCategoryField(String categoryField);
 
     /**
@@ -44,5 +56,6 @@ public interface RadarChartModel<T extends RadarChartModel> extends CoordinateCh
      * @param radius the radius
      * @return radar chart model
      */
+    @StudioProperty(defaultValue = "35%")
     T setRadius(String radius);
 }

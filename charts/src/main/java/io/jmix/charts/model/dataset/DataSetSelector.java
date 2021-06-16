@@ -18,6 +18,9 @@ package io.jmix.charts.model.dataset;
 
 import io.jmix.charts.model.AbstractChartObject;
 import io.jmix.charts.model.Position;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioProperty;
 
 /**
  * DataSetSelector is a tool for selecting data set's as main and for comparing with main data set
@@ -26,6 +29,11 @@ import io.jmix.charts.model.Position;
  * <br>
  * <a href="http://docs.amcharts.com/3/javascriptstockchart/DataSetSelector">http://docs.amcharts.com/3/javascriptstockchart/DataSetSelector</a>
  */
+@StudioElement(
+        caption = "DataSetSelector",
+        xmlElement = "dataSetSelector",
+        xmlns = "http://jmix.io/schema/ui/charts",
+        xmlnsAlias = "chart")
 public class DataSetSelector extends AbstractChartObject {
 
     private static final long serialVersionUID = 3890644574314511185L;
@@ -56,6 +64,7 @@ public class DataSetSelector extends AbstractChartObject {
      * @param comboBoxSelectText text
      * @return data set selector
      */
+    @StudioProperty(defaultValue = "Select...")
     public DataSetSelector setComboBoxSelectText(String comboBoxSelectText) {
         this.comboBoxSelectText = comboBoxSelectText;
         return this;
@@ -74,6 +83,7 @@ public class DataSetSelector extends AbstractChartObject {
      * @param compareText compare text
      * @return data set selector
      */
+    @StudioProperty(defaultValue = "Compare to:")
     public DataSetSelector setCompareText(String compareText) {
         this.compareText = compareText;
         return this;
@@ -92,6 +102,7 @@ public class DataSetSelector extends AbstractChartObject {
      * @param listHeight list height
      * @return data set selector
      */
+    @StudioProperty(defaultValue = "150")
     public DataSetSelector setListHeight(Integer listHeight) {
         this.listHeight = listHeight;
         return this;
@@ -112,6 +123,7 @@ public class DataSetSelector extends AbstractChartObject {
      * @param position position
      * @return data set selector
      */
+    @StudioProperty(type = PropertyType.ENUMERATION)
     public DataSetSelector setPosition(Position position) {
         this.position = position;
         return this;
@@ -130,6 +142,7 @@ public class DataSetSelector extends AbstractChartObject {
      * @param selectText select text
      * @return data set selector
      */
+    @StudioProperty(defaultValue = "Select:")
     public DataSetSelector setSelectText(String selectText) {
         this.selectText = selectText;
         return this;
@@ -148,6 +161,7 @@ public class DataSetSelector extends AbstractChartObject {
      * @param width width
      * @return data set selector
      */
+    @StudioProperty(defaultValue = "180")
     public DataSetSelector setWidth(Integer width) {
         this.width = width;
         return this;

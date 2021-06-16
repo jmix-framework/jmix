@@ -16,6 +16,12 @@
 
 package io.jmix.charts.model;
 
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioProperty;
+
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.util.List;
 
 /**
@@ -26,6 +32,11 @@ import java.util.List;
  *
  * <a href="http://docs.amcharts.com/3/javascriptcharts/GaugeBand">http://docs.amcharts.com/3/javascriptcharts/GaugeBand</a>
  */
+@StudioElement(
+        caption = "GaugeBand",
+        xmlElement = "band",
+        xmlns = "http://jmix.io/schema/ui/charts",
+        xmlnsAlias = "chart")
 public class GaugeBand extends AbstractChartObject {
 
     private static final long serialVersionUID = 6480625092225201700L;
@@ -66,6 +77,9 @@ public class GaugeBand extends AbstractChartObject {
      * @param alpha opacity
      * @return gauge band
      */
+    @StudioProperty
+    @Max(1)
+    @Min(0)
     public GaugeBand setAlpha(Double alpha) {
         this.alpha = alpha;
         return this;
@@ -84,6 +98,7 @@ public class GaugeBand extends AbstractChartObject {
      * @param color color
      * @return gauge band
      */
+    @StudioProperty(type = PropertyType.OPTIONS)
     public GaugeBand setColor(Color color) {
         this.color = color;
         return this;
@@ -102,6 +117,7 @@ public class GaugeBand extends AbstractChartObject {
      * @param endValue end value
      * @return gauge band
      */
+    @StudioProperty
     public GaugeBand setEndValue(Double endValue) {
         this.endValue = endValue;
         return this;
@@ -121,6 +137,7 @@ public class GaugeBand extends AbstractChartObject {
      * @param innerRadius inner radius
      * @return gauge band
      */
+    @StudioProperty
     public GaugeBand setInnerRadius(String innerRadius) {
         this.innerRadius = innerRadius;
         return this;
@@ -139,6 +156,7 @@ public class GaugeBand extends AbstractChartObject {
      * @param radius band radius
      * @return gauge band
      */
+    @StudioProperty
     public GaugeBand setRadius(String radius) {
         this.radius = radius;
         return this;
@@ -157,6 +175,7 @@ public class GaugeBand extends AbstractChartObject {
      * @param startValue start value
      * @return gauge band
      */
+    @StudioProperty
     public GaugeBand setStartValue(Double startValue) {
         this.startValue = startValue;
         return this;
@@ -175,6 +194,7 @@ public class GaugeBand extends AbstractChartObject {
      * @param balloonText balloon text
      * @return gauge band
      */
+    @StudioProperty
     public GaugeBand setBalloonText(String balloonText) {
         this.balloonText = balloonText;
         return this;
@@ -193,6 +213,7 @@ public class GaugeBand extends AbstractChartObject {
      * @param id id
      * @return gauge band
      */
+    @StudioProperty
     public GaugeBand setId(String id) {
         this.id = id;
         return this;
@@ -211,6 +232,7 @@ public class GaugeBand extends AbstractChartObject {
      * @param url the URL
      * @return gauge band
      */
+    @StudioProperty
     public GaugeBand setUrl(String url) {
         this.url = url;
         return this;
@@ -230,6 +252,7 @@ public class GaugeBand extends AbstractChartObject {
      * @param gradientRatio list of gradient ratio
      * @return gauge band
      */
+    @StudioProperty(type = PropertyType.STRING)
     public GaugeBand setGradientRatio(List<Float> gradientRatio) {
         this.gradientRatio = gradientRatio;
         return this;

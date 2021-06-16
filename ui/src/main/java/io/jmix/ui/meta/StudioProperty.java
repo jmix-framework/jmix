@@ -69,9 +69,14 @@ public @interface StudioProperty {
 
     /**
      * Context dependent list of options for the component property.<p>
-     * {@link PropertyType#ENUMERATION}: enumeration options
-     * {@link PropertyType#BEAN_REF}: list of the allowed Spring bean base classes
-     * {@link PropertyType#COMPONENT_REF}: list of the allowed component base classes
+     * {@link PropertyType#ENUMERATION}: enumeration options.
+     * {@link PropertyType#OPTIONS}: non-strict list of possible options. <br>
+     * For the property types above: qualified name of the enum class can be specified
+     * with the <i>"@link "</i> prefix as a single option.
+     * In case it can't be inferred from method's parameter or return type. Example:
+     * <pre>options = {"@link java.time.DayOfWeek"}</pre>
+     * {@link PropertyType#BEAN_REF}: list of the allowed Spring bean base classes.
+     * {@link PropertyType#COMPONENT_REF}: list of the allowed component base classes.
      * {@link PropertyType#PROPERTY_PATH_REF}: list of the allowed types for the property.
      * Use registered {@link io.jmix.core.metamodel.datatype.Datatype} names for the datatype properties
      * or <i>"to_one"</i> and <i>"to_many"</i> for the association properties.

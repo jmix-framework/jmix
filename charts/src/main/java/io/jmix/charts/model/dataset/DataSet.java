@@ -22,6 +22,7 @@ import io.jmix.charts.model.*;
 import io.jmix.charts.model.chart.impl.StockChartGroup;
 import io.jmix.charts.model.stock.StockEvent;
 import io.jmix.charts.model.stock.StockGraph;
+import io.jmix.ui.meta.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -37,6 +38,15 @@ import java.util.UUID;
  * <br>
  * <a href="http://docs.amcharts.com/3/javascriptstockchart/DataSet">http://docs.amcharts.com/3/javascriptstockchart/DataSet</a>
  */
+@StudioElement(
+        caption = "DataSet",
+        xmlElement = "dataSet",
+        xmlns = "http://jmix.io/schema/ui/charts",
+        xmlnsAlias = "chart")
+@StudioProperties(groups = {
+        @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                properties = {"dataContainer", "categoryField"})
+})
 public class DataSet extends AbstractChartObject {
 
     private static final long serialVersionUID = -5376050190482065219L;
@@ -72,6 +82,7 @@ public class DataSet extends AbstractChartObject {
         return id;
     }
 
+    @StudioProperty
     public DataSet setId(String id) {
         this.id = id;
         return this;
@@ -91,6 +102,7 @@ public class DataSet extends AbstractChartObject {
      * @param categoryField category field name
      * @return data set
      */
+    @StudioProperty(type = PropertyType.PROPERTY_PATH_REF)
     public DataSet setCategoryField(String categoryField) {
         this.categoryField = categoryField;
         return this;
@@ -110,6 +122,7 @@ public class DataSet extends AbstractChartObject {
      * @param color color
      * @return data set
      */
+    @StudioProperty(type = PropertyType.OPTIONS)
     public DataSet setColor(Color color) {
         this.color = color;
         return this;
@@ -128,6 +141,7 @@ public class DataSet extends AbstractChartObject {
      * @param compared compared option
      * @return data set
      */
+    @StudioProperty(defaultValue = "false")
     public DataSet setCompared(Boolean compared) {
         this.compared = compared;
         return this;
@@ -148,6 +162,7 @@ public class DataSet extends AbstractChartObject {
      * @param dataProvider data provider
      * @return data set
      */
+    @StudioProperty(name = "dataContainer", type = PropertyType.DATACONTAINER_REF)
     public DataSet setDataProvider(DataProvider dataProvider) {
         this.dataProvider = dataProvider;
         fireDataProviderChanged();
@@ -178,6 +193,7 @@ public class DataSet extends AbstractChartObject {
      * @param fieldMappings list of field mappings
      * @return data set
      */
+    @StudioElementsGroup(caption = "Field Mappings", xmlElement = "fieldMappings")
     public DataSet setFieldMappings(List<FieldMapping> fieldMappings) {
         this.fieldMappings = fieldMappings;
         return this;
@@ -213,6 +229,7 @@ public class DataSet extends AbstractChartObject {
      * @param showInCompare showInCompare option
      * @return data set
      */
+    @StudioProperty(defaultValue = "true")
     public DataSet setShowInCompare(Boolean showInCompare) {
         this.showInCompare = showInCompare;
         return this;
@@ -232,6 +249,7 @@ public class DataSet extends AbstractChartObject {
      * @param showInSelect showInSelect option
      * @return data set
      */
+    @StudioProperty(defaultValue = "true")
     public DataSet setShowInSelect(Boolean showInSelect) {
         this.showInSelect = showInSelect;
         return this;
@@ -250,6 +268,7 @@ public class DataSet extends AbstractChartObject {
      * @param stockEvents list of stock events
      * @return data set
      */
+    @StudioElementsGroup(caption = "Stock Events", xmlElement = "stockEvents")
     public DataSet setStockEvents(List<StockEvent> stockEvents) {
         this.stockEvents = stockEvents;
         return this;
@@ -284,6 +303,7 @@ public class DataSet extends AbstractChartObject {
      * @param title title
      * @return data set
      */
+    @StudioProperty
     public DataSet setTitle(String title) {
         this.title = title;
         return this;

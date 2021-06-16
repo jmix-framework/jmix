@@ -18,6 +18,12 @@ package io.jmix.charts.model;
 
 
 import io.jmix.charts.component.AngularGaugeChart;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioProperty;
+
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 
 /**
  * Creates an arrow for {@link AngularGaugeChart} chart, multiple can be assigned.
@@ -26,6 +32,11 @@ import io.jmix.charts.component.AngularGaugeChart;
  *
  * <a href="http://docs.amcharts.com/3/javascriptcharts/GaugeArrow">http://docs.amcharts.com/3/javascriptcharts/GaugeArrow</a>
  */
+@StudioElement(
+        caption = "GaugeArrow",
+        xmlElement = "arrow",
+        xmlns = "http://jmix.io/schema/ui/charts",
+        xmlnsAlias = "chart")
 public class GaugeArrow extends AbstractChartObject {
 
     private static final long serialVersionUID = -9054603815401102787L;
@@ -71,6 +82,9 @@ public class GaugeArrow extends AbstractChartObject {
      * @param alpha opacity
      * @return gauge arrow
      */
+    @StudioProperty(defaultValue = "1")
+    @Max(1)
+    @Min(0)
     public GaugeArrow setAlpha(Double alpha) {
         this.alpha = alpha;
         return this;
@@ -89,6 +103,9 @@ public class GaugeArrow extends AbstractChartObject {
      * @param borderAlpha border opacity
      * @return gauge arrow
      */
+    @StudioProperty(defaultValue = "1")
+    @Max(1)
+    @Min(0)
     public GaugeArrow setBorderAlpha(Double borderAlpha) {
         this.borderAlpha = borderAlpha;
         return this;
@@ -107,6 +124,7 @@ public class GaugeArrow extends AbstractChartObject {
      * @param clockWiseOnly clockWiseOnly option
      * @return gauge arrow
      */
+    @StudioProperty(defaultValue = "false")
     public GaugeArrow setClockWiseOnly(Boolean clockWiseOnly) {
         this.clockWiseOnly = clockWiseOnly;
         return this;
@@ -125,6 +143,7 @@ public class GaugeArrow extends AbstractChartObject {
      * @param color color
      * @return gauge arrow
      */
+    @StudioProperty(type = PropertyType.OPTIONS, defaultValue = "#000000")
     public GaugeArrow setColor(Color color) {
         this.color = color;
         return this;
@@ -143,6 +162,7 @@ public class GaugeArrow extends AbstractChartObject {
      * @param innerRadius inner radius
      * @return gauge arrow
      */
+    @StudioProperty(defaultValue = "0")
     public GaugeArrow setInnerRadius(String innerRadius) {
         this.innerRadius = innerRadius;
         return this;
@@ -161,6 +181,9 @@ public class GaugeArrow extends AbstractChartObject {
      * @param nailAlpha opacity
      * @return gauge arrow
      */
+    @StudioProperty(defaultValue = "1")
+    @Max(1)
+    @Min(0)
     public GaugeArrow setNailAlpha(Double nailAlpha) {
         this.nailAlpha = nailAlpha;
         return this;
@@ -179,6 +202,9 @@ public class GaugeArrow extends AbstractChartObject {
      * @param nailBorderAlpha opacity
      * @return gauge arrow
      */
+    @StudioProperty(defaultValue = "0")
+    @Max(1)
+    @Min(0)
     public GaugeArrow setNailBorderAlpha(Double nailBorderAlpha) {
         this.nailBorderAlpha = nailBorderAlpha;
         return this;
@@ -197,6 +223,7 @@ public class GaugeArrow extends AbstractChartObject {
      * @param nailBorderThickness thickness
      * @return gauge arrow
      */
+    @StudioProperty(defaultValue = "1")
     public GaugeArrow setNailBorderThickness(Integer nailBorderThickness) {
         this.nailBorderThickness = nailBorderThickness;
         return this;
@@ -215,6 +242,7 @@ public class GaugeArrow extends AbstractChartObject {
      * @param nailRadius radius
      * @return gauge arrow
      */
+    @StudioProperty(defaultValue = "8")
     public GaugeArrow setNailRadius(Integer nailRadius) {
         this.nailRadius = nailRadius;
         return this;
@@ -233,6 +261,7 @@ public class GaugeArrow extends AbstractChartObject {
      * @param radius radius
      * @return gauge arrow
      */
+    @StudioProperty(defaultValue = "90%")
     public GaugeArrow setRadius(String radius) {
         this.radius = radius;
         return this;
@@ -251,6 +280,7 @@ public class GaugeArrow extends AbstractChartObject {
      * @param startWidth width
      * @return gauge arrow
      */
+    @StudioProperty(defaultValue = "8")
     public GaugeArrow setStartWidth(Integer startWidth) {
         this.startWidth = startWidth;
         return this;
@@ -269,6 +299,7 @@ public class GaugeArrow extends AbstractChartObject {
      * @param axis axis id
      * @return gauge arrow
      */
+    @StudioProperty
     public GaugeArrow setAxis(String axis) {
         this.axis = axis;
         return this;
@@ -286,6 +317,7 @@ public class GaugeArrow extends AbstractChartObject {
      * @param id unique id of an arrow
      * @return gauge arrow
      */
+    @StudioProperty
     public GaugeArrow setId(String id) {
         this.id = id;
         return this;
@@ -304,6 +336,7 @@ public class GaugeArrow extends AbstractChartObject {
      * @param value value
      * @return gauge arrow
      */
+    @StudioProperty
     public GaugeArrow setValue(Double value) {
         this.value = value;
         return this;

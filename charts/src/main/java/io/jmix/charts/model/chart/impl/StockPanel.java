@@ -22,7 +22,13 @@ import io.jmix.charts.model.chart.SeriesBasedChartModel;
 import io.jmix.charts.model.chart.StockChartModel;
 import io.jmix.charts.model.stock.StockGraph;
 import io.jmix.charts.model.stock.StockLegend;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioElementsGroup;
+import io.jmix.ui.meta.StudioProperty;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.util.*;
 
 /**
@@ -32,6 +38,11 @@ import java.util.*;
  * <br>
  * <a href="http://docs.amcharts.com/3/javascriptstockchart/StockPanel">http://docs.amcharts.com/3/javascriptstockchart/StockPanel</a>
  */
+@StudioElement(
+        caption = "StockPanel",
+        xmlElement = "panel",
+        xmlns = "http://jmix.io/schema/ui/charts",
+        xmlnsAlias = "chart")
 public class StockPanel extends AbstractSerialChart<StockPanel> implements SeriesBasedChartModel<StockPanel> {
 
     private static final long serialVersionUID = 3129940127141352054L;
@@ -100,6 +111,7 @@ public class StockPanel extends AbstractSerialChart<StockPanel> implements Serie
      * @param allowTurningOff allowTurningOff option
      * @return stock panel
      */
+    @StudioProperty(defaultValue = "false")
     public StockPanel setAllowTurningOff(Boolean allowTurningOff) {
         this.allowTurningOff = allowTurningOff;
         return this;
@@ -119,6 +131,7 @@ public class StockPanel extends AbstractSerialChart<StockPanel> implements Serie
      * @param drawingIconsEnabled drawingIconsEnabled option
      * @return stock panel
      */
+    @StudioProperty(defaultValue = "false")
     public StockPanel setDrawingIconsEnabled(Boolean drawingIconsEnabled) {
         this.drawingIconsEnabled = drawingIconsEnabled;
         return this;
@@ -139,6 +152,7 @@ public class StockPanel extends AbstractSerialChart<StockPanel> implements Serie
      * @param drawOnAxis value axis
      * @return stock panel
      */
+    @StudioElement(caption = "Draw on Axis", xmlElement = "drawOnAxis")
     public StockPanel setDrawOnAxis(ValueAxis drawOnAxis) {
         this.drawOnAxis = drawOnAxis;
         return this;
@@ -158,6 +172,7 @@ public class StockPanel extends AbstractSerialChart<StockPanel> implements Serie
      * @param eraseAll eraseAll option
      * @return stock panel
      */
+    @StudioProperty(defaultValue = "false")
     public StockPanel setEraseAll(Boolean eraseAll) {
         this.eraseAll = eraseAll;
         return this;
@@ -177,6 +192,7 @@ public class StockPanel extends AbstractSerialChart<StockPanel> implements Serie
      * @param iconSize icon size
      * @return stock panel
      */
+    @StudioProperty(defaultValue = "18")
     public StockPanel setIconSize(Integer iconSize) {
         this.iconSize = iconSize;
         return this;
@@ -195,6 +211,9 @@ public class StockPanel extends AbstractSerialChart<StockPanel> implements Serie
      * @param percentHeight percent height
      * @return stock panel
      */
+    @StudioProperty
+    @Max(100)
+    @Min(0)
     public StockPanel setPercentHeight(Integer percentHeight) {
         this.percentHeight = percentHeight;
         return this;
@@ -213,6 +232,7 @@ public class StockPanel extends AbstractSerialChart<StockPanel> implements Serie
      * @param recalculateFromDate date
      * @return stock panel
      */
+    @StudioProperty
     public StockPanel setRecalculateFromDate(Date recalculateFromDate) {
         this.recalculateFromDate = recalculateFromDate;
         return this;
@@ -232,6 +252,8 @@ public class StockPanel extends AbstractSerialChart<StockPanel> implements Serie
      * @param recalculateToPercents recalculate to percents value
      * @return stock panel
      */
+    @StudioProperty(type = PropertyType.OPTIONS, options = {"never", "always", "whenComparing"},
+            defaultValue = "whenComparing")
     public StockPanel setRecalculateToPercents(String recalculateToPercents) {
         this.recalculateToPercents = recalculateToPercents;
         return this;
@@ -250,6 +272,7 @@ public class StockPanel extends AbstractSerialChart<StockPanel> implements Serie
      * @param showCategoryAxis showCategoryAxis option
      * @return stock panel
      */
+    @StudioProperty(defaultValue = "true")
     public StockPanel setShowCategoryAxis(Boolean showCategoryAxis) {
         this.showCategoryAxis = showCategoryAxis;
         return this;
@@ -269,6 +292,7 @@ public class StockPanel extends AbstractSerialChart<StockPanel> implements Serie
      * @param showComparedOnTop showComparedOnTop option
      * @return stock panel
      */
+    @StudioProperty(defaultValue = "true")
     public StockPanel setShowComparedOnTop(Boolean showComparedOnTop) {
         this.showComparedOnTop = showComparedOnTop;
         return this;
@@ -287,6 +311,7 @@ public class StockPanel extends AbstractSerialChart<StockPanel> implements Serie
      * @param stockGraphs list of stock graphs
      * @return stock panel
      */
+    @StudioElementsGroup(caption = "Stock Graphs", xmlElement = "stockGraphs")
     public StockPanel setStockGraphs(List<StockGraph> stockGraphs) {
         this.stockGraphs = stockGraphs;
         return this;
@@ -321,6 +346,7 @@ public class StockPanel extends AbstractSerialChart<StockPanel> implements Serie
      * @param stockLegend stock legend
      * @return stock panel
      */
+    @StudioElement
     public StockPanel setStockLegend(StockLegend stockLegend) {
         this.stockLegend = stockLegend;
         return this;
@@ -339,6 +365,7 @@ public class StockPanel extends AbstractSerialChart<StockPanel> implements Serie
      * @param title title
      * @return stock panel
      */
+    @StudioProperty
     public StockPanel setTitle(String title) {
         this.title = title;
         return this;
@@ -357,6 +384,9 @@ public class StockPanel extends AbstractSerialChart<StockPanel> implements Serie
      * @param trendLineAlpha opacity
      * @return stock panel
      */
+    @StudioProperty(defaultValue = "1")
+    @Max(1)
+    @Min(0)
     public StockPanel setTrendLineAlpha(Double trendLineAlpha) {
         this.trendLineAlpha = trendLineAlpha;
         return this;
@@ -375,6 +405,7 @@ public class StockPanel extends AbstractSerialChart<StockPanel> implements Serie
      * @param trendLineColor color
      * @return stock panel
      */
+    @StudioProperty(type = PropertyType.OPTIONS, defaultValue = "#00CC00")
     public StockPanel setTrendLineColor(Color trendLineColor) {
         this.trendLineColor = trendLineColor;
         return this;
@@ -393,6 +424,7 @@ public class StockPanel extends AbstractSerialChart<StockPanel> implements Serie
      * @param trendLineDashLength dash length
      * @return stock panel
      */
+    @StudioProperty(defaultValue = "0")
     public StockPanel setTrendLineDashLength(Integer trendLineDashLength) {
         this.trendLineDashLength = trendLineDashLength;
         return this;
@@ -411,6 +443,7 @@ public class StockPanel extends AbstractSerialChart<StockPanel> implements Serie
      * @param trendLineThickness thickness
      * @return stock panel
      */
+    @StudioProperty(defaultValue = "2")
     public StockPanel setTrendLineThickness(Integer trendLineThickness) {
         this.trendLineThickness = trendLineThickness;
         return this;

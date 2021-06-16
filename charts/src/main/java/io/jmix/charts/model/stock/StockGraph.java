@@ -22,8 +22,14 @@ import io.jmix.charts.model.graph.AbstractGraph;
 import io.jmix.charts.model.graph.Graph;
 import io.jmix.charts.model.graph.GraphType;
 import io.jmix.charts.model.JsFunction;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioCollection;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioProperty;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +40,11 @@ import java.util.List;
  *
  * <a href="http://docs.amcharts.com/3/javascriptstockchart/StockGraph">http://docs.amcharts.com/3/javascriptstockchart/StockGraph</a>
  */
+@StudioElement(
+        caption = "StockGraph",
+        xmlElement = "stockGraph",
+        xmlns = "http://jmix.io/schema/ui/charts",
+        xmlnsAlias = "chart")
 public class StockGraph extends AbstractGraph<StockGraph> {
 
     private static final long serialVersionUID = -1746419165781920815L;
@@ -104,6 +115,7 @@ public class StockGraph extends AbstractGraph<StockGraph> {
      * @param comparable comparable option
      * @return stock graph
      */
+    @StudioProperty(defaultValue = "false")
     public StockGraph setComparable(Boolean comparable) {
         this.comparable = comparable;
         return this;
@@ -123,6 +135,7 @@ public class StockGraph extends AbstractGraph<StockGraph> {
      * @param compareField compare field
      * @return stock graph
      */
+    @StudioProperty
     public StockGraph setCompareField(String compareField) {
         this.compareField = compareField;
         return this;
@@ -142,6 +155,7 @@ public class StockGraph extends AbstractGraph<StockGraph> {
      * @param compareFromStart compareFromStart option
      * @return stock graph
      */
+    @StudioProperty(defaultValue = "false")
     public StockGraph setCompareFromStart(Boolean compareFromStart) {
         this.compareFromStart = compareFromStart;
         return this;
@@ -161,6 +175,7 @@ public class StockGraph extends AbstractGraph<StockGraph> {
      * @param compareGraph graph
      * @return stock graph
      */
+    @StudioElement(caption = "Compare Graph", xmlElement = "compareGraph")
     public StockGraph setCompareGraph(Graph compareGraph) {
         this.compareGraph = compareGraph;
         return this;
@@ -179,6 +194,7 @@ public class StockGraph extends AbstractGraph<StockGraph> {
      * @param compareGraphBalloonColor color
      * @return stock graph
      */
+    @StudioProperty(type = PropertyType.OPTIONS)
     public StockGraph setCompareGraphBalloonColor(Color compareGraphBalloonColor) {
         this.compareGraphBalloonColor = compareGraphBalloonColor;
         return this;
@@ -217,6 +233,7 @@ public class StockGraph extends AbstractGraph<StockGraph> {
      * @param compareGraphBalloonText text
      * @return stock graph
      */
+    @StudioProperty
     public StockGraph setCompareGraphBalloonText(String compareGraphBalloonText) {
         this.compareGraphBalloonText = compareGraphBalloonText;
         return this;
@@ -236,6 +253,9 @@ public class StockGraph extends AbstractGraph<StockGraph> {
      * @param compareGraphBullet compare graph bullet string
      * @return stock graph
      */
+    @StudioProperty(type = PropertyType.OPTIONS, options = {
+            "round", "square", "diamond", "triangleUp", "triangleDown", "triangleLeft", "triangleRight", "bubble"
+    })
     public StockGraph setCompareGraphBullet(String compareGraphBullet) {
         this.compareGraphBullet = compareGraphBullet;
         return this;
@@ -254,6 +274,9 @@ public class StockGraph extends AbstractGraph<StockGraph> {
      * @param compareGraphBulletBorderAlpha opacity
      * @return stock graph
      */
+    @StudioProperty
+    @Max(1)
+    @Min(0)
     public StockGraph setCompareGraphBulletBorderAlpha(Double compareGraphBulletBorderAlpha) {
         this.compareGraphBulletBorderAlpha = compareGraphBulletBorderAlpha;
         return this;
@@ -272,6 +295,7 @@ public class StockGraph extends AbstractGraph<StockGraph> {
      * @param compareGraphBulletBorderColor color
      * @return stock graph
      */
+    @StudioProperty(type = PropertyType.OPTIONS)
     public StockGraph setCompareGraphBulletBorderColor(Color compareGraphBulletBorderColor) {
         this.compareGraphBulletBorderColor = compareGraphBulletBorderColor;
         return this;
@@ -290,6 +314,7 @@ public class StockGraph extends AbstractGraph<StockGraph> {
      * @param compareGraphBulletBorderThickness thickness
      * @return stock graph
      */
+    @StudioProperty
     public StockGraph setCompareGraphBulletBorderThickness(Integer compareGraphBulletBorderThickness) {
         this.compareGraphBulletBorderThickness = compareGraphBulletBorderThickness;
         return this;
@@ -308,6 +333,7 @@ public class StockGraph extends AbstractGraph<StockGraph> {
      * @param compareGraphBulletColor color
      * @return stock graph
      */
+    @StudioProperty(type = PropertyType.OPTIONS)
     public StockGraph setCompareGraphBulletColor(Color compareGraphBulletColor) {
         this.compareGraphBulletColor = compareGraphBulletColor;
         return this;
@@ -326,6 +352,7 @@ public class StockGraph extends AbstractGraph<StockGraph> {
      * @param compareGraphBulletSize bullet size
      * @return stock graph
      */
+    @StudioProperty
     public StockGraph setCompareGraphBulletSize(Integer compareGraphBulletSize) {
         this.compareGraphBulletSize = compareGraphBulletSize;
         return this;
@@ -344,6 +371,7 @@ public class StockGraph extends AbstractGraph<StockGraph> {
      * @param compareGraphCornerRadiusTop corner radius
      * @return stock graph
      */
+    @StudioProperty
     public StockGraph setCompareGraphCornerRadiusTop(Integer compareGraphCornerRadiusTop) {
         this.compareGraphCornerRadiusTop = compareGraphCornerRadiusTop;
         return this;
@@ -362,6 +390,7 @@ public class StockGraph extends AbstractGraph<StockGraph> {
      * @param compareGraphDashLength dash length
      * @return stock graph
      */
+    @StudioProperty
     public StockGraph setCompareGraphDashLength(Integer compareGraphDashLength) {
         this.compareGraphDashLength = compareGraphDashLength;
         return this;
@@ -380,6 +409,9 @@ public class StockGraph extends AbstractGraph<StockGraph> {
      * @param compareGraphFillAlphas fill alpha
      * @return stock graph
      */
+    @StudioProperty
+    @Max(1)
+    @Min(0)
     public StockGraph setCompareGraphFillAlphas(Double compareGraphFillAlphas) {
         this.compareGraphFillAlphas = compareGraphFillAlphas;
         return this;
@@ -398,6 +430,13 @@ public class StockGraph extends AbstractGraph<StockGraph> {
      * @param compareGraphFillColors list of fill colors
      * @return stock graph
      */
+    @StudioCollection(xmlElement = "compareGraphFillColors",
+            itemXmlElement = "color",
+            itemCaption = "Compare Graph Fill Color",
+            itemProperties = {
+                    @StudioProperty(name = "value", type = PropertyType.ENUMERATION,
+                            options = {"@link io.jmix.charts.model.Color"})
+            })
     public StockGraph setCompareGraphFillColors(List<Color> compareGraphFillColors) {
         this.compareGraphFillColors = compareGraphFillColors;
         return this;
@@ -416,6 +455,9 @@ public class StockGraph extends AbstractGraph<StockGraph> {
      * @param compareGraphLineAlpha opacity
      * @return stock graph
      */
+    @StudioProperty
+    @Max(1)
+    @Min(0)
     public StockGraph setCompareGraphLineAlpha(Double compareGraphLineAlpha) {
         this.compareGraphLineAlpha = compareGraphLineAlpha;
         return this;
@@ -434,6 +476,7 @@ public class StockGraph extends AbstractGraph<StockGraph> {
      * @param compareGraphLineColor color
      * @return stock graph
      */
+    @StudioProperty(type = PropertyType.OPTIONS)
     public StockGraph setCompareGraphLineColor(Color compareGraphLineColor) {
         this.compareGraphLineColor = compareGraphLineColor;
         return this;
@@ -452,6 +495,7 @@ public class StockGraph extends AbstractGraph<StockGraph> {
      * @param compareGraphLineThickness thickness
      * @return stock graph
      */
+    @StudioProperty
     public StockGraph setCompareGraphLineThickness(Integer compareGraphLineThickness) {
         this.compareGraphLineThickness = compareGraphLineThickness;
         return this;
@@ -471,6 +515,7 @@ public class StockGraph extends AbstractGraph<StockGraph> {
      * @param compareGraphType type
      * @return stock graph
      */
+    @StudioProperty(type = PropertyType.ENUMERATION, defaultValue = "LINE")
     public StockGraph setCompareGraphType(GraphType compareGraphType) {
         this.compareGraphType = compareGraphType;
         return this;
@@ -490,6 +535,7 @@ public class StockGraph extends AbstractGraph<StockGraph> {
      * @param compareGraphVisibleInLegend compareGraphVisibleInLegend option
      * @return stock graph
      */
+    @StudioProperty(defaultValue = "true")
     public StockGraph setCompareGraphVisibleInLegend(Boolean compareGraphVisibleInLegend) {
         this.compareGraphVisibleInLegend = compareGraphVisibleInLegend;
         return this;
@@ -508,6 +554,7 @@ public class StockGraph extends AbstractGraph<StockGraph> {
      * @param periodValue period value
      * @return stock graph
      */
+    @StudioProperty(type = PropertyType.ENUMERATION)
     public StockGraph setPeriodValue(StockGraphValue periodValue) {
         this.periodValue = periodValue;
         return this;
@@ -531,6 +578,7 @@ public class StockGraph extends AbstractGraph<StockGraph> {
      * @param recalculateValue recalculate value
      * @return stock graph
      */
+    @StudioProperty(type = PropertyType.ENUMERATION)
     public StockGraph setRecalculateValue(StockGraphValue recalculateValue) {
         this.recalculateValue = recalculateValue;
         return this;
@@ -550,6 +598,7 @@ public class StockGraph extends AbstractGraph<StockGraph> {
      * @param showEventsOnComparedGraphs showEventsOnComparedGraphs option
      * @return stock graph
      */
+    @StudioProperty(defaultValue = "false")
     public StockGraph setShowEventsOnComparedGraphs(Boolean showEventsOnComparedGraphs) {
         this.showEventsOnComparedGraphs = showEventsOnComparedGraphs;
         return this;
@@ -572,6 +621,7 @@ public class StockGraph extends AbstractGraph<StockGraph> {
      * @param useDataSetColors useDataSetColors option
      * @return stock graph
      */
+    @StudioProperty(defaultValue = "true")
     public StockGraph setUseDataSetColors(Boolean useDataSetColors) {
         this.useDataSetColors = useDataSetColors;
         return this;

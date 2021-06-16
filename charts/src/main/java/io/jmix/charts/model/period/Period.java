@@ -17,7 +17,15 @@
 package io.jmix.charts.model.period;
 
 import io.jmix.charts.model.AbstractChartObject;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioProperty;
 
+@StudioElement(
+        caption = "Period",
+        xmlElement = "period",
+        xmlns = "http://jmix.io/schema/ui/charts",
+        xmlnsAlias = "chart")
 public class Period extends AbstractChartObject {
 
     private static final long serialVersionUID = 1078558318840294205L;
@@ -34,6 +42,7 @@ public class Period extends AbstractChartObject {
         return period;
     }
 
+    @StudioProperty(type = PropertyType.ENUMERATION)
     public Period setPeriod(PeriodType period) {
         this.period = period;
         return this;
@@ -52,6 +61,7 @@ public class Period extends AbstractChartObject {
      * @param count count
      * @return period
      */
+    @StudioProperty
     public Period setCount(Integer count) {
         this.count = count;
         return this;
@@ -70,6 +80,7 @@ public class Period extends AbstractChartObject {
      * @param label label string
      * @return period
      */
+    @StudioProperty
     public Period setLabel(String label) {
         this.label = label;
         return this;
@@ -88,6 +99,7 @@ public class Period extends AbstractChartObject {
      * @param selected selected option
      * @return period
      */
+    @StudioProperty
     public Period setSelected(Boolean selected) {
         this.selected = selected;
         return this;

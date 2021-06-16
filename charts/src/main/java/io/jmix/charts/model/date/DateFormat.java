@@ -17,7 +17,15 @@
 package io.jmix.charts.model.date;
 
 import io.jmix.charts.model.AbstractChartObject;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioProperty;
 
+@StudioElement(
+        caption = "DateFormat",
+        xmlElement = "dateFormat",
+        xmlns = "http://jmix.io/schema/ui/charts",
+        xmlnsAlias = "chart")
 public class DateFormat extends AbstractChartObject {
 
     private static final long serialVersionUID = 2962826142162852907L;
@@ -30,6 +38,7 @@ public class DateFormat extends AbstractChartObject {
         return format;
     }
 
+    @StudioProperty
     public DateFormat setFormat(String format) {
         this.format = format;
         return this;
@@ -39,6 +48,7 @@ public class DateFormat extends AbstractChartObject {
         return period;
     }
 
+    @StudioProperty(type = PropertyType.ENUMERATION)
     public DateFormat setPeriod(DatePeriod period) {
         this.period = period;
         return this;

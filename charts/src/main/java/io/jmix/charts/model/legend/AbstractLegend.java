@@ -19,7 +19,12 @@ package io.jmix.charts.model.legend;
 import io.jmix.charts.model.*;
 import io.jmix.charts.model.cursor.Cursor;
 import io.jmix.charts.model.label.Label;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioElementsGroup;
+import io.jmix.ui.meta.StudioProperty;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -162,6 +167,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * @param align align
      * @return legend
      */
+    @StudioProperty(type = PropertyType.ENUMERATION, defaultValue = "LEFT")
     public T setAlign(Align align) {
         this.align = align;
         return (T) this;
@@ -181,6 +187,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * @param autoMargins autoMargins option
      * @return legend
      */
+    @StudioProperty(defaultValue = "true")
     public T setAutoMargins(Boolean autoMargins) {
         this.autoMargins = autoMargins;
         return (T) this;
@@ -199,6 +206,9 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * @param backgroundAlpha opacity
      * @return legend
      */
+    @StudioProperty(defaultValue = "0")
+    @Max(1)
+    @Min(0)
     public T setBackgroundAlpha(Double backgroundAlpha) {
         this.backgroundAlpha = backgroundAlpha;
         return (T) this;
@@ -218,6 +228,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * @param backgroundColor background color
      * @return legend
      */
+    @StudioProperty(type = PropertyType.OPTIONS, defaultValue = "#FFFFFF")
     public T setBackgroundColor(Color backgroundColor) {
         this.backgroundColor = backgroundColor;
         return (T) this;
@@ -236,6 +247,9 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * @param borderAlpha opacity
      * @return legend
      */
+    @StudioProperty(defaultValue = "0")
+    @Max(1)
+    @Min(0)
     public T setBorderAlpha(Double borderAlpha) {
         this.borderAlpha = borderAlpha;
         return (T) this;
@@ -255,6 +269,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * @param borderColor border color
      * @return legend
      */
+    @StudioProperty(type = PropertyType.OPTIONS, defaultValue = "#000000")
     public T setBorderColor(Color borderColor) {
         this.borderColor = borderColor;
         return (T) this;
@@ -273,6 +288,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * @param bottom bottom
      * @return legend
      */
+    @StudioProperty
     public T setBottom(Integer bottom) {
         this.bottom = bottom;
         return (T) this;
@@ -291,6 +307,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * @param color text color
      * @return legend
      */
+    @StudioProperty(type = PropertyType.OPTIONS, defaultValue = "#000000")
     public T setColor(Color color) {
         this.color = color;
         return (T) this;
@@ -309,6 +326,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * @param data list of legend items
      * @return legend
      */
+    @StudioElementsGroup(caption = "Data", xmlElement = "data")
     public T setData(List<LegendItem> data) {
         this.data = data;
         return (T) this;
@@ -344,6 +362,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * @param equalWidths equals widths option
      * @return legend
      */
+    @StudioProperty(defaultValue = "true")
     public T setEqualWidths(Boolean equalWidths) {
         this.equalWidths = equalWidths;
         return (T) this;
@@ -362,6 +381,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * @param fontSize font size
      * @return legend
      */
+    @StudioProperty(defaultValue = "11")
     public T setFontSize(Integer fontSize) {
         this.fontSize = fontSize;
         return (T) this;
@@ -380,6 +400,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * @param horizontalGap horizontal gap
      * @return legend
      */
+    @StudioProperty(defaultValue = "0")
     public T setHorizontalGap(Integer horizontalGap) {
         this.horizontalGap = horizontalGap;
         return (T) this;
@@ -399,6 +420,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * @param labelText label text
      * @return legend
      */
+    @StudioProperty(defaultValue = "[[title]]")
     public T setLabelText(String labelText) {
         this.labelText = labelText;
         return (T) this;
@@ -417,6 +439,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * @param left distance from left side of the chart, in pixels
      * @return legend
      */
+    @StudioProperty
     public T setLeft(Integer left) {
         this.left = left;
         return (T) this;
@@ -428,6 +451,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
     }
 
     @Override
+    @StudioProperty(defaultValue = "0")
     public T setMarginBottom(Integer marginBottom) {
         this.marginBottom = marginBottom;
         return (T) this;
@@ -439,6 +463,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
     }
 
     @Override
+    @StudioProperty(defaultValue = "20")
     public T setMarginLeft(Integer marginLeft) {
         this.marginLeft = marginLeft;
         return (T) this;
@@ -450,6 +475,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
     }
 
     @Override
+    @StudioProperty(defaultValue = "20")
     public T setMarginRight(Integer marginRight) {
         this.marginRight = marginRight;
         return (T) this;
@@ -461,6 +487,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
     }
 
     @Override
+    @StudioProperty(defaultValue = "0")
     public T setMarginTop(Integer marginTop) {
         this.marginTop = marginTop;
         return (T) this;
@@ -479,6 +506,9 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * 	@param markerBorderAlpha marker border opacity
      *  @return legend
      */
+    @StudioProperty(defaultValue = "1")
+    @Max(1)
+    @Min(0)
     public T setMarkerBorderAlpha(Double markerBorderAlpha) {
         this.markerBorderAlpha = markerBorderAlpha;
         return (T) this;
@@ -497,6 +527,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * @param markerBorderColor marker border color
      * @return legend
      */
+    @StudioProperty(type = PropertyType.OPTIONS)
     public T setMarkerBorderColor(Color markerBorderColor) {
         this.markerBorderColor = markerBorderColor;
         return (T) this;
@@ -516,6 +547,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * @param markerBorderThickness marker border thickness
      * @return legend
      */
+    @StudioProperty(defaultValue = "1")
     public T setMarkerBorderThickness(Integer markerBorderThickness) {
         this.markerBorderThickness = markerBorderThickness;
         return (T) this;
@@ -534,6 +566,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * @param markerDisabledColor marker disabled color
      * @return legend
      */
+    @StudioProperty(type = PropertyType.OPTIONS, defaultValue = "#AAB3B3")
     public T setMarkerDisabledColor(Color markerDisabledColor) {
         this.markerDisabledColor = markerDisabledColor;
         return (T) this;
@@ -552,6 +585,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * @param markerLabelGap marker label gap
      * @return legend
      */
+    @StudioProperty(defaultValue = "5")
     public T setMarkerLabelGap(Integer markerLabelGap) {
         this.markerLabelGap = markerLabelGap;
         return (T) this;
@@ -570,6 +604,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * @param markerSize marker size
      * @return legend
      */
+    @StudioProperty(defaultValue = "16")
     public T setMarkerSize(Integer markerSize) {
         this.markerSize = markerSize;
         return (T) this;
@@ -589,6 +624,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * @param markerType marker type
      * @return legend
      */
+    @StudioProperty(type = PropertyType.ENUMERATION, defaultValue = "SQUARE")
     public T setMarkerType(MarkerType markerType) {
         this.markerType = markerType;
         return (T) this;
@@ -608,6 +644,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * @param maxColumns maximum number of columns
      * @return legend
      */
+    @StudioProperty
     public T setMaxColumns(Integer maxColumns) {
         this.maxColumns = maxColumns;
         return (T) this;
@@ -630,6 +667,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * @param periodValueText period value text
      * @return legend
      */
+    @StudioProperty
     public T setPeriodValueText(String periodValueText) {
         this.periodValueText = periodValueText;
         return (T) this;
@@ -649,6 +687,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * @param position position
      * @return legend
      */
+    @StudioProperty(type = PropertyType.ENUMERATION, defaultValue = "BOTTOM")
     public T setPosition(LegendPosition position) {
         this.position = position;
         return (T) this;
@@ -668,6 +707,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * @param reversedOrder reversed order option
      * @return legend
      */
+    @StudioProperty(defaultValue = "false")
     public T setReversedOrder(Boolean reversedOrder) {
         this.reversedOrder = reversedOrder;
         return (T) this;
@@ -686,6 +726,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * @param right distance from right side of the chart, in pixels
      * @return legend
      */
+    @StudioProperty
     public T setRight(Integer right) {
         this.right = right;
         return (T) this;
@@ -704,6 +745,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * @param rollOverColor roll over color
      * @return legend
      */
+    @StudioProperty(type = PropertyType.OPTIONS, defaultValue = "#CC0000")
     public T setRollOverColor(Color rollOverColor) {
         this.rollOverColor = rollOverColor;
         return (T) this;
@@ -723,6 +765,9 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * @param rollOverGraphAlpha roll over graph alpha
      * @return legend
      */
+    @StudioProperty(defaultValue = "1")
+    @Max(1)
+    @Min(0)
     public T setRollOverGraphAlpha(Double rollOverGraphAlpha) {
         this.rollOverGraphAlpha = rollOverGraphAlpha;
         return (T) this;
@@ -741,6 +786,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * @param showEntries showEntries option
      * @return legend
      */
+    @StudioProperty(defaultValue = "true")
     public T setShowEntries(Boolean showEntries) {
         this.showEntries = showEntries;
         return (T) this;
@@ -759,6 +805,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * @param spacing horizontal space between legend items, in pixels
      * @return legend
      */
+    @StudioProperty(defaultValue = "10")
     public T setSpacing(Integer spacing) {
         this.spacing = spacing;
         return (T) this;
@@ -778,6 +825,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * @param switchable switchable option
      * @return legend
      */
+    @StudioProperty(defaultValue = "true")
     public T setSwitchable(Boolean switchable) {
         this.switchable = switchable;
         return (T) this;
@@ -796,6 +844,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * @param switchColor switch color
      * @return legend
      */
+    @StudioProperty(type = PropertyType.OPTIONS, defaultValue = "#FFFFFF")
     public T setSwitchColor(Color switchColor) {
         this.switchColor = switchColor;
         return (T) this;
@@ -815,6 +864,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * @param switchType legend switch type
      * @return legend
      */
+    @StudioProperty(type = PropertyType.ENUMERATION, defaultValue = "X")
     public T setSwitchType(LegendSwitch switchType) {
         this.switchType = switchType;
         return (T) this;
@@ -833,6 +883,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * @param textClickEnabled textClickEnabled
      * @return legend
      */
+    @StudioProperty(defaultValue = "false")
     public T setTextClickEnabled(Boolean textClickEnabled) {
         this.textClickEnabled = textClickEnabled;
         return (T) this;
@@ -851,6 +902,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * @param top distance from top of the chart, in pixels
      * @return legend
      */
+    @StudioProperty
     public T setTop(Integer top) {
         this.top = top;
         return (T) this;
@@ -871,6 +923,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * @param useGraphSettings use graph settings option
      * @return legend
      */
+    @StudioProperty(defaultValue = "false")
     public T setUseGraphSettings(Boolean useGraphSettings) {
         this.useGraphSettings = useGraphSettings;
         return (T) this;
@@ -890,6 +943,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * @param useMarkerColorForLabels useMarkerColorForLabels option
      * @return legend
      */
+    @StudioProperty(defaultValue = "false")
     public T setUseMarkerColorForLabels(Boolean useMarkerColorForLabels) {
         this.useMarkerColorForLabels = useMarkerColorForLabels;
         return (T) this;
@@ -909,6 +963,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * @param useMarkerColorForValues useMarkerColorForValues option
      * @return legend
      */
+    @StudioProperty(defaultValue = "false")
     public T setUseMarkerColorForValues(Boolean useMarkerColorForValues) {
         this.useMarkerColorForValues = useMarkerColorForValues;
         return (T) this;
@@ -927,6 +982,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * @param valueAlign alignment of the value text
      * @return legend
      */
+    @StudioProperty(type = PropertyType.ENUMERATION, defaultValue = "RIGHT")
     public T setValueAlign(ValueAlign valueAlign) {
         this.valueAlign = valueAlign;
         return (T) this;
@@ -947,6 +1003,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * @param valueText value text
      * @return legend
      */
+    @StudioProperty(defaultValue = "[[value]]")
     public T setValueText(String valueText) {
         this.valueText = valueText;
         return (T) this;
@@ -965,6 +1022,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * @param valueWidth value width
      * @return legend
      */
+    @StudioProperty(defaultValue = "50")
     public T setValueWidth(Integer valueWidth) {
         this.valueWidth = valueWidth;
         return (T) this;
@@ -984,6 +1042,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * @param verticalGap vertical space
      * @return legend
      */
+    @StudioProperty(defaultValue = "10")
     public T setVerticalGap(Integer verticalGap) {
         this.verticalGap = verticalGap;
         return (T) this;
@@ -1002,6 +1061,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * @param divId id of a div
      * @return legend
      */
+    @StudioProperty
     public T setDivId(String divId) {
         this.divId = divId;
         return (T) this;
@@ -1020,6 +1080,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * @param enabled enabled option
      * @return legend
      */
+    @StudioProperty(defaultValue = "true")
     public T setEnabled(Boolean enabled) {
         this.enabled = enabled;
         return (T) this;
@@ -1038,6 +1099,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * @param labelWidth label width
      * @return legend
      */
+    @StudioProperty
     public T setLabelWidth(Integer labelWidth) {
         this.labelWidth = labelWidth;
         return (T) this;
@@ -1076,6 +1138,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * @param width width of a legend
      * @return legend
      */
+    @StudioProperty
     public T setWidth(Integer width) {
         this.width = width;
         return (T) this;
@@ -1095,6 +1158,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * @param forceWidth force width option
      * @return legend
      */
+    @StudioProperty(defaultValue = "false")
     public T setForceWidth(Boolean forceWidth) {
         this.forceWidth = forceWidth;
         return (T) this;
@@ -1113,6 +1177,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * @param gradientRotation gradient rotation of the legend
      * @return legend
      */
+    @StudioProperty(type = PropertyType.ENUMERATION, options = {"0", "90", "180", "270"})
     public T setGradientRotation(Integer gradientRotation) {
         this.gradientRotation = gradientRotation;
         return (T) this;
@@ -1134,6 +1199,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * @param tabIndex tab index
      * @return legend
      */
+    @StudioProperty
     public T setTabIndex(Integer tabIndex) {
         this.tabIndex = tabIndex;
         return (T) this;
@@ -1154,6 +1220,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * @param accessibleLabel accessible label text
      * @return legend
      */
+    @StudioProperty(type = PropertyType.LOCALIZED_STRING, defaultValue = "[[title]]")
     public T setAccessibleLabel(String accessibleLabel) {
         this.accessibleLabel = accessibleLabel;
         return (T) this;
@@ -1172,6 +1239,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      *
      * @param combineLegend combineLegend option
      */
+    @StudioProperty(defaultValue = "false")
     public void setCombineLegend(Boolean combineLegend) {
         this.combineLegend = combineLegend;
     }

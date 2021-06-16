@@ -18,6 +18,8 @@ package io.jmix.charts.component;
 
 
 import io.jmix.charts.model.chart.RadarChartModel;
+import io.jmix.ui.meta.CanvasIconSize;
+import io.jmix.ui.meta.StudioComponent;
 
 /**
  * Radar / polar chart component.
@@ -26,6 +28,16 @@ import io.jmix.charts.model.chart.RadarChartModel;
  * <br>
  * <a href="http://docs.amcharts.com/3/javascriptcharts/AmRadarChart">http://docs.amcharts.com/3/javascriptcharts/AmRadarChart</a>
  */
+@StudioComponent(
+        caption = "RadarChart",
+        category = "Charts",
+        xmlElement = "radarChart",
+        xmlns = "http://jmix.io/schema/ui/charts",
+        xmlnsAlias = "chart",
+        icon = "io/jmix/charts/icon/component/radarChart.svg",
+        canvasIcon = "io/jmix/charts/icon/component/radarChart.svg",
+        canvasIconSize = CanvasIconSize.LARGE
+)
 public interface RadarChart extends CoordinateChart<RadarChart>, RadarChartModel<RadarChart> {
     String NAME = "radarChart";
 }

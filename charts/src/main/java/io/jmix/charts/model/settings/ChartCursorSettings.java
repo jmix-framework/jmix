@@ -22,7 +22,13 @@ import io.jmix.charts.model.balloon.BalloonPointerOrientation;
 import io.jmix.charts.model.cursor.Cursor;
 import io.jmix.charts.model.cursor.CursorPosition;
 import io.jmix.charts.model.date.DateFormat;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioElementsGroup;
+import io.jmix.ui.meta.StudioProperty;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -35,6 +41,11 @@ import java.util.List;
  *
  * <a href="http://docs.amcharts.com/3/javascriptstockchart/ChartCursorSettings">http://docs.amcharts.com/3/javascriptstockchart/ChartCursorSettings</a>
  */
+@StudioElement(
+        caption = "ChartCursorSettings",
+        xmlElement = "chartCursorSettings",
+        xmlns = "http://jmix.io/schema/ui/charts",
+        xmlnsAlias = "chart")
 public class ChartCursorSettings extends AbstractChartObject {
 
     private static final long serialVersionUID = 3106275318894887204L;
@@ -104,6 +115,7 @@ public class ChartCursorSettings extends AbstractChartObject {
      * @param balloonPointerOrientation orientation of value balloon pointer
      * @return chart cursor settings
      */
+    @StudioProperty(type = PropertyType.ENUMERATION, defaultValue = "HORIZONTAL")
     public ChartCursorSettings setBalloonPointerOrientation(BalloonPointerOrientation balloonPointerOrientation) {
         this.balloonPointerOrientation = balloonPointerOrientation;
         return this;
@@ -122,6 +134,7 @@ public class ChartCursorSettings extends AbstractChartObject {
      * @param bulletsEnabled bulletsEnabled option
      * @return chart cursor settings
      */
+    @StudioProperty
     public ChartCursorSettings setBulletsEnabled(Boolean bulletsEnabled) {
         this.bulletsEnabled = bulletsEnabled;
         return this;
@@ -140,6 +153,7 @@ public class ChartCursorSettings extends AbstractChartObject {
      * @param bulletSize bullet size
      * @return chart cursor settings
      */
+    @StudioProperty
     public ChartCursorSettings setBulletSize(Integer bulletSize) {
         this.bulletSize = bulletSize;
         return this;
@@ -158,6 +172,9 @@ public class ChartCursorSettings extends AbstractChartObject {
      * @param categoryBalloonAlpha opacity of the category balloon
      * @return chart cursor settings
      */
+    @StudioProperty
+    @Max(1)
+    @Min(0)
     public ChartCursorSettings setCategoryBalloonAlpha(Double categoryBalloonAlpha) {
         this.categoryBalloonAlpha = categoryBalloonAlpha;
         return this;
@@ -176,6 +193,7 @@ public class ChartCursorSettings extends AbstractChartObject {
      * @param categoryBalloonColor color of the category balloon
      * @return chart cursor settings
      */
+    @StudioProperty(type = PropertyType.OPTIONS)
     public ChartCursorSettings setCategoryBalloonColor(Color categoryBalloonColor) {
         this.categoryBalloonColor = categoryBalloonColor;
         return this;
@@ -204,6 +222,7 @@ public class ChartCursorSettings extends AbstractChartObject {
      * @param categoryBalloonDateFormats list of date formats
      * @return chart cursor settings
      */
+    @StudioElementsGroup(caption = "Category Ballon Date Formats", xmlElement = "categoryBalloonDateFormats")
     public ChartCursorSettings setCategoryBalloonDateFormats(List<DateFormat> categoryBalloonDateFormats) {
         this.categoryBalloonDateFormats = categoryBalloonDateFormats;
         return this;
@@ -238,6 +257,7 @@ public class ChartCursorSettings extends AbstractChartObject {
      * @param categoryBalloonEnabled categoryBalloonEnabled option
      * @return chart cursor settings
      */
+    @StudioProperty
     public ChartCursorSettings setCategoryBalloonEnabled(Boolean categoryBalloonEnabled) {
         this.categoryBalloonEnabled = categoryBalloonEnabled;
         return this;
@@ -257,6 +277,7 @@ public class ChartCursorSettings extends AbstractChartObject {
      * @param categoryBalloonText category balloon text
      * @return chart cursor settings
      */
+    @StudioProperty(defaultValue = "[[category]]")
     public ChartCursorSettings setCategoryBalloonText(String categoryBalloonText) {
         this.categoryBalloonText = categoryBalloonText;
         return this;
@@ -275,6 +296,9 @@ public class ChartCursorSettings extends AbstractChartObject {
      * @param cursorAlpha opacity of the cursor line
      * @return chart cursor settings
      */
+    @StudioProperty
+    @Max(1)
+    @Min(0)
     public ChartCursorSettings setCursorAlpha(Double cursorAlpha) {
         this.cursorAlpha = cursorAlpha;
         return this;
@@ -293,6 +317,7 @@ public class ChartCursorSettings extends AbstractChartObject {
      * @param cursorColor color of the cursor line
      * @return chart cursor settings
      */
+    @StudioProperty(type = PropertyType.OPTIONS, defaultValue = "#FFFFFF")
     public ChartCursorSettings setCursorColor(Color cursorColor) {
         this.cursorColor = cursorColor;
         return this;
@@ -311,6 +336,7 @@ public class ChartCursorSettings extends AbstractChartObject {
      * @param cursorPosition cursor position
      * @return chart cursor settings
      */
+    @StudioProperty(type = PropertyType.ENUMERATION)
     public ChartCursorSettings setCursorPosition(CursorPosition cursorPosition) {
         this.cursorPosition = cursorPosition;
         return this;
@@ -330,6 +356,7 @@ public class ChartCursorSettings extends AbstractChartObject {
      * @param enabled enabled option
      * @return chart cursor settings
      */
+    @StudioProperty(defaultValue = "true")
     public ChartCursorSettings setEnabled(Boolean enabled) {
         this.enabled = enabled;
         return this;
@@ -350,6 +377,7 @@ public class ChartCursorSettings extends AbstractChartObject {
      * @param fullWidth fullWidth option
      * @return chart cursor settings
      */
+    @StudioProperty(defaultValue = "false")
     public ChartCursorSettings setFullWidth(Boolean fullWidth) {
         this.fullWidth = fullWidth;
         return this;
@@ -369,6 +397,7 @@ public class ChartCursorSettings extends AbstractChartObject {
      * @param graphBulletSize size of a graph's bullet
      * @return chart cursor settings
      */
+    @StudioProperty(defaultValue = "1.7")
     public ChartCursorSettings setGraphBulletSize(Double graphBulletSize) {
         this.graphBulletSize = graphBulletSize;
         return this;
@@ -388,6 +417,7 @@ public class ChartCursorSettings extends AbstractChartObject {
      * @param leaveAfterTouch leaveAfterTouch option
      * @return chart cursor settings
      */
+    @StudioProperty(defaultValue = "true")
     public ChartCursorSettings setLeaveAfterTouch(Boolean leaveAfterTouch) {
         this.leaveAfterTouch = leaveAfterTouch;
         return this;
@@ -407,6 +437,7 @@ public class ChartCursorSettings extends AbstractChartObject {
      * @param leaveCursor leaveCursor option
      * @return chart cursor settings
      */
+    @StudioProperty(defaultValue = "false")
     public ChartCursorSettings setLeaveCursor(Boolean leaveCursor) {
         this.leaveCursor = leaveCursor;
         return this;
@@ -426,6 +457,7 @@ public class ChartCursorSettings extends AbstractChartObject {
      * @param onePanelOnly onePanelOnly option
      * @return chart cursor settings
      */
+    @StudioProperty(defaultValue = "false")
     public ChartCursorSettings setOnePanelOnly(Boolean onePanelOnly) {
         this.onePanelOnly = onePanelOnly;
         return this;
@@ -444,6 +476,7 @@ public class ChartCursorSettings extends AbstractChartObject {
      * @param pan pan option
      * @return chart cursor settings
      */
+    @StudioProperty
     public ChartCursorSettings setPan(Boolean pan) {
         this.pan = pan;
         return this;
@@ -463,6 +496,7 @@ public class ChartCursorSettings extends AbstractChartObject {
      * @param valueBalloonsEnabled valueBalloonsEnabled option
      * @return chart cursor settings
      */
+    @StudioProperty(defaultValue = "false")
     public ChartCursorSettings setValueBalloonsEnabled(Boolean valueBalloonsEnabled) {
         this.valueBalloonsEnabled = valueBalloonsEnabled;
         return this;
@@ -481,6 +515,9 @@ public class ChartCursorSettings extends AbstractChartObject {
      * @param valueLineAlpha opacity of value line
      * @return chart cursor settings
      */
+    @StudioProperty
+    @Max(1)
+    @Min(0)
     public ChartCursorSettings setValueLineAlpha(Double valueLineAlpha) {
         this.valueLineAlpha = valueLineAlpha;
         return this;
@@ -501,6 +538,7 @@ public class ChartCursorSettings extends AbstractChartObject {
      * @param valueLineBalloonEnabled valueLineBalloonEnabled option
      * @return chart cursor settings
      */
+    @StudioProperty(defaultValue = "false")
     public ChartCursorSettings setValueLineBalloonEnabled(Boolean valueLineBalloonEnabled) {
         this.valueLineBalloonEnabled = valueLineBalloonEnabled;
         return this;
@@ -521,6 +559,7 @@ public class ChartCursorSettings extends AbstractChartObject {
      * @param valueLineEnabled valueLineEnabled option
      * @return chart cursor settings
      */
+    @StudioProperty(defaultValue = "false")
     public ChartCursorSettings setValueLineEnabled(Boolean valueLineEnabled) {
         this.valueLineEnabled = valueLineEnabled;
         return this;
@@ -540,6 +579,7 @@ public class ChartCursorSettings extends AbstractChartObject {
      * @param zoomable zoomable option
      * @return chart cursor settings
      */
+    @StudioProperty
     public ChartCursorSettings setZoomable(Boolean zoomable) {
         this.zoomable = zoomable;
         return this;
@@ -558,6 +598,7 @@ public class ChartCursorSettings extends AbstractChartObject {
      * @param color text color
      * @return chart cursor settings
      */
+    @StudioProperty(type = PropertyType.OPTIONS)
     public ChartCursorSettings setColor(Color color) {
         this.color = color;
         return this;
@@ -576,6 +617,7 @@ public class ChartCursorSettings extends AbstractChartObject {
      *
      * @param selectWithoutZooming selectWithoutZooming option
      */
+    @StudioProperty(defaultValue = "false")
     public void setSelectWithoutZooming(Boolean selectWithoutZooming) {
         this.selectWithoutZooming = selectWithoutZooming;
     }
@@ -594,6 +636,7 @@ public class ChartCursorSettings extends AbstractChartObject {
      *
      * @param showNextAvailable showNextAvailable option
      */
+    @StudioProperty(defaultValue = "false")
     public void setShowNextAvailable(Boolean showNextAvailable) {
         this.showNextAvailable = showNextAvailable;
     }

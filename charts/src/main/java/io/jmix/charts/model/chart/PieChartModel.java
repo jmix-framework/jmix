@@ -19,7 +19,16 @@ package io.jmix.charts.model.chart;
 
 import io.jmix.charts.model.GradientType;
 import io.jmix.charts.model.JsFunction;
+import io.jmix.ui.meta.*;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.PositiveOrZero;
+
+@StudioProperties(groups = {
+        @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                properties = {"dataContainer", "labelRadiusField"})
+})
 public interface PieChartModel<T extends PieChartModel> extends SlicedChartModel<T> {
     /**
      * @return angle
@@ -32,6 +41,9 @@ public interface PieChartModel<T extends PieChartModel> extends SlicedChartModel
      * @param angle the angle
      * @return pie chart model
      */
+    @StudioProperty(defaultValue = "0")
+    @Max(90)
+    @Min(0)
     T setAngle(Integer angle);
 
     /**
@@ -48,6 +60,7 @@ public interface PieChartModel<T extends PieChartModel> extends SlicedChartModel
      * @param balloonText balloon text string
      * @return pie chart model
      */
+    @StudioProperty(defaultValue = "[[title]]: [[percents]]% ([[value]])\n[[description]]")
     T setBalloonText(String balloonText);
 
     /**
@@ -61,6 +74,7 @@ public interface PieChartModel<T extends PieChartModel> extends SlicedChartModel
      * @param depth3D the depth 3D
      * @return pie chart model
      */
+    @StudioProperty(defaultValue = "0")
     T setDepth3D(Integer depth3D);
 
     /**
@@ -74,6 +88,7 @@ public interface PieChartModel<T extends PieChartModel> extends SlicedChartModel
      * @param innerRadius inner radius in pixels or percents
      * @return pie chart model
      */
+    @StudioProperty(defaultValue = "0")
     T setInnerRadius(String innerRadius);
 
     /**
@@ -88,6 +103,7 @@ public interface PieChartModel<T extends PieChartModel> extends SlicedChartModel
      * @param labelRadius distance between the label and the slice, in pixels
      * @return pie chart model
      */
+    @StudioProperty(defaultValue = "20")
     T setLabelRadius(Integer labelRadius);
 
     /**
@@ -102,6 +118,7 @@ public interface PieChartModel<T extends PieChartModel> extends SlicedChartModel
      * @param labelRadiusField label radius field string
      * @return pie chart model
      */
+    @StudioProperty(type = PropertyType.PROPERTY_PATH_REF)
     T setLabelRadiusField(String labelRadiusField);
 
     /**
@@ -117,6 +134,7 @@ public interface PieChartModel<T extends PieChartModel> extends SlicedChartModel
      * @param labelText label text string
      * @return pie chart model
      */
+    @StudioProperty(defaultValue = "[[title]]: [[percents]]%")
     T setLabelText(String labelText);
 
     /**
@@ -130,6 +148,8 @@ public interface PieChartModel<T extends PieChartModel> extends SlicedChartModel
      * @param minRadius the minimum radius
      * @return pie chart model
      */
+    @StudioProperty(defaultValue = "10")
+    @PositiveOrZero
     T setMinRadius(Integer minRadius);
 
     /**
@@ -143,6 +163,7 @@ public interface PieChartModel<T extends PieChartModel> extends SlicedChartModel
      * @param pieAlpha the pie alpha
      * @return pie chart model
      */
+    @StudioProperty
     T setPieAlpha(Double pieAlpha);
 
     /**
@@ -156,6 +177,7 @@ public interface PieChartModel<T extends PieChartModel> extends SlicedChartModel
      * @param pieX X position of a pie center
      * @return pie chart model
      */
+    @StudioProperty
     T setPieX(String pieX);
 
     /**
@@ -169,6 +191,7 @@ public interface PieChartModel<T extends PieChartModel> extends SlicedChartModel
      * @param pieY Y position of a pie center
      * @return pie chart model
      */
+    @StudioProperty
     T setPieY(String pieY);
 
     /**
@@ -182,6 +205,7 @@ public interface PieChartModel<T extends PieChartModel> extends SlicedChartModel
      * @param pullOutRadius pull out radius
      * @return pie chart model
      */
+    @StudioProperty(defaultValue = "20%")
     T setPullOutRadius(String pullOutRadius);
 
     /**
@@ -195,6 +219,7 @@ public interface PieChartModel<T extends PieChartModel> extends SlicedChartModel
      * @param radius the radius of a pie
      * @return pie chart model
      */
+    @StudioProperty
     T setRadius(String radius);
 
     /**
@@ -210,6 +235,9 @@ public interface PieChartModel<T extends PieChartModel> extends SlicedChartModel
      * @param startAngle angle of the first slice in degree
      * @return pie chart model
      */
+    @StudioProperty(defaultValue = "90")
+    @Max(360)
+    @Min(0)
     T setStartAngle(Integer startAngle);
 
     /**
@@ -223,6 +251,7 @@ public interface PieChartModel<T extends PieChartModel> extends SlicedChartModel
      * @param startRadius the start radius
      * @return pie chart model
      */
+    @StudioProperty(defaultValue = "500%")
     T setStartRadius(String startRadius);
 
     /**
@@ -238,6 +267,7 @@ public interface PieChartModel<T extends PieChartModel> extends SlicedChartModel
      * @param adjustPrecision adjust precision option
      * @return pie chart model
      */
+    @StudioProperty(defaultValue = "false")
     T setAdjustPrecision(Boolean adjustPrecision);
 
     /**

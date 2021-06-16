@@ -23,7 +23,13 @@ import io.jmix.charts.model.Position;
 import io.jmix.charts.model.balloon.Balloon;
 import io.jmix.charts.model.date.DateFormat;
 import io.jmix.charts.model.date.DayOfWeek;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioElementsGroup;
+import io.jmix.ui.meta.StudioProperty;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -146,6 +152,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * @param autoGridCount auto grid count option
      * @return axis
      */
+    @StudioProperty(defaultValue = "true")
     public T setAutoGridCount(Boolean autoGridCount) {
         this.autoGridCount = autoGridCount;
         return (T) this;
@@ -164,6 +171,9 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * @param axisAlpha axis opacity
      * @return axis
      */
+    @StudioProperty(defaultValue = "1")
+    @Max(1)
+    @Min(0)
     public T setAxisAlpha(Double axisAlpha) {
         this.axisAlpha = axisAlpha;
         return (T) this;
@@ -182,6 +192,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * @param axisColor axis color
      * @return axis
      */
+    @StudioProperty(type = PropertyType.OPTIONS, defaultValue = "#000000")
     public T setAxisColor(Color axisColor) {
         this.axisColor = axisColor;
         return (T) this;
@@ -200,6 +211,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * @param axisThickness thickness of the axis
      * @return axis
      */
+    @StudioProperty(defaultValue = "1")
     public T setAxisThickness(Integer axisThickness) {
         this.axisThickness = axisThickness;
         return (T) this;
@@ -218,6 +230,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * @param color color of axis value labels
      * @return axis
      */
+    @StudioProperty(type = PropertyType.OPTIONS)
     public T setColor(Color color) {
         this.color = color;
         return (T) this;
@@ -236,6 +249,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * @param dashLength length of a dash
      * @return axis
      */
+    @StudioProperty(defaultValue = "0")
     public T setDashLength(Integer dashLength) {
         this.dashLength = dashLength;
         return (T) this;
@@ -255,6 +269,9 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * @param fillAlpha fill opacity
      * @return axis
      */
+    @StudioProperty
+    @Max(1)
+    @Min(0)
     public T setFillAlpha(Double fillAlpha) {
         this.fillAlpha = fillAlpha;
         return (T) this;
@@ -274,6 +291,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * @param fillColor fill color
      * @return axis
      */
+    @StudioProperty(type = PropertyType.OPTIONS, defaultValue = "#FFFFFF")
     public T setFillColor(Color fillColor) {
         this.fillColor = fillColor;
         return (T) this;
@@ -292,6 +310,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * @param fontSize size of value labels text
      * @return axis
      */
+    @StudioProperty
     public T setFontSize(Integer fontSize) {
         this.fontSize = fontSize;
         return (T) this;
@@ -310,6 +329,9 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * @param gridAlpha opacity of grid lines
      * @return axis
      */
+    @StudioProperty(defaultValue = "0.15")
+    @Max(1)
+    @Min(0)
     public T setGridAlpha(Double gridAlpha) {
         this.gridAlpha = gridAlpha;
         return (T) this;
@@ -328,6 +350,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * @param gridColor color of grid lines
      * @return axis
      */
+    @StudioProperty(type = PropertyType.OPTIONS, defaultValue = "#000000")
     public T setGridColor(Color gridColor) {
         this.gridColor = gridColor;
         return (T) this;
@@ -348,6 +371,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * @param gridCount grid count
      * @return axis
      */
+    @StudioProperty(defaultValue = "5")
     public T setGridCount(Integer gridCount) {
         this.gridCount = gridCount;
         return (T) this;
@@ -366,6 +390,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * @param gridThickness thickness of grid lines
      * @return axis
      */
+    @StudioProperty(defaultValue = "1")
     public T setGridThickness(Integer gridThickness) {
         this.gridThickness = gridThickness;
         return (T) this;
@@ -384,6 +409,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * @param guides list of guides
      * @return axis
      */
+    @StudioElementsGroup(caption = "Guides", xmlElement = "guides")
     public T setGuides(List<Guide> guides) {
         this.guides = guides;
         return (T) this;
@@ -419,6 +445,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * @param ignoreAxisWidth ignoreAxisWidth option
      * @return axis
      */
+    @StudioProperty(defaultValue = "false")
     public T setIgnoreAxisWidth(Boolean ignoreAxisWidth) {
         this.ignoreAxisWidth = ignoreAxisWidth;
         return (T) this;
@@ -437,6 +464,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * @param inside inside option
      * @return axis
      */
+    @StudioProperty(defaultValue = "false")
     public T setInside(Boolean inside) {
         this.inside = inside;
         return (T) this;
@@ -456,6 +484,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * @param labelFrequency frequency at which labels should be placed
      * @return axis
      */
+    @StudioProperty(defaultValue = "1")
     public T setLabelFrequency(Double labelFrequency) {
         this.labelFrequency = labelFrequency;
         return (T) this;
@@ -475,6 +504,9 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * @param labelRotation rotation angle of a label
      * @return axis
      */
+    @StudioProperty(defaultValue = "0")
+    @Max(90)
+    @Min(-90)
     public T setLabelRotation(Integer labelRotation) {
         this.labelRotation = labelRotation;
         return (T) this;
@@ -494,6 +526,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * @param labelsEnabled labelsEnabled option
      * @return axis
      */
+    @StudioProperty(defaultValue = "true")
     public T setLabelsEnabled(Boolean labelsEnabled) {
         this.labelsEnabled = labelsEnabled;
         return (T) this;
@@ -513,6 +546,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * @param minHorizontalGap minimum cell width required for one span between grid lines
      * @return axis
      */
+    @StudioProperty(defaultValue = "75")
     public T setMinHorizontalGap(Integer minHorizontalGap) {
         this.minHorizontalGap = minHorizontalGap;
         return (T) this;
@@ -532,6 +566,9 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * @param minorGridAlpha opacity of minor grid
      * @return axis
      */
+    @StudioProperty(defaultValue = "0.07")
+    @Max(1)
+    @Min(0)
     public T setMinorGridAlpha(Double minorGridAlpha) {
         this.minorGridAlpha = minorGridAlpha;
         return (T) this;
@@ -551,6 +588,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * @param minorGridEnabled minorGridEnabled option
      * @return axis
      */
+    @StudioProperty(defaultValue = "false")
     public T setMinorGridEnabled(Boolean minorGridEnabled) {
         this.minorGridEnabled = minorGridEnabled;
         return (T) this;
@@ -570,6 +608,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * @param minVerticalGap minimum cell height required for one span between grid lines
      * @return axis
      */
+    @StudioProperty(defaultValue = "35")
     public T setMinVerticalGap(Integer minVerticalGap) {
         this.minVerticalGap = minVerticalGap;
         return (T) this;
@@ -589,6 +628,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * @param offset the distance of the axis to the plot area, in pixels
      * @return axis
      */
+    @StudioProperty(defaultValue = "0")
     public T setOffset(Integer offset) {
         this.offset = offset;
         return (T) this;
@@ -608,6 +648,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * @param position position
      * @return axis
      */
+    @StudioProperty(type = PropertyType.ENUMERATION, defaultValue = "BOTTOM")
     public T setPosition(Position position) {
         this.position = position;
         return (T) this;
@@ -629,6 +670,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * @param showFirstLabel showFirstLabel option
      * @return axis
      */
+    @StudioProperty(defaultValue = "true")
     public T setShowFirstLabel(Boolean showFirstLabel) {
         this.showFirstLabel = showFirstLabel;
         return (T) this;
@@ -650,6 +692,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * @param showLastLabel showLastLabel option
      * @return axis
      */
+    @StudioProperty(defaultValue = "true")
     public T setShowLastLabel(Boolean showLastLabel) {
         this.showLastLabel = showLastLabel;
         return (T) this;
@@ -668,6 +711,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * @param tickLength length of the tick marks
      * @return axis
      */
+    @StudioProperty(defaultValue = "5")
     public T setTickLength(Integer tickLength) {
         this.tickLength = tickLength;
         return (T) this;
@@ -686,6 +730,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * @param title title of the axis
      * @return axis
      */
+    @StudioProperty
     public T setTitle(String title) {
         this.title = title;
         return (T) this;
@@ -704,6 +749,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * @param titleBold titleBold option
      * @return axis
      */
+    @StudioProperty(defaultValue = "true")
     public T setTitleBold(Boolean titleBold) {
         this.titleBold = titleBold;
         return (T) this;
@@ -722,6 +768,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * @param titleColor color of axis title
      * @return axis
      */
+    @StudioProperty(type = PropertyType.OPTIONS)
     public T setTitleColor(Color titleColor) {
         this.titleColor = titleColor;
         return (T) this;
@@ -740,6 +787,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * @param titleFontSize font size of axis title
      * @return axis
      */
+    @StudioProperty
     public T setTitleFontSize(Integer titleFontSize) {
         this.titleFontSize = titleFontSize;
         return (T) this;
@@ -758,6 +806,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * @param boldLabels bold labels option
      * @return axis
      */
+    @StudioProperty(defaultValue = "false")
     public T setBoldLabels(Boolean boldLabels) {
         this.boldLabels = boldLabels;
         return (T) this;
@@ -778,6 +827,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * @param autoRotateAngle angle of label rotation
      * @return axis
      */
+    @StudioProperty
     public T setAutoRotateAngle(Integer autoRotateAngle) {
         this.autoRotateAngle = autoRotateAngle;
         return (T) this;
@@ -798,6 +848,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * @param autoRotateCount auto rotate count
      * @return axis
      */
+    @StudioProperty
     public T setAutoRotateCount(Integer autoRotateCount) {
         this.autoRotateCount = autoRotateCount;
         return (T) this;
@@ -817,6 +868,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * @param centerLabels center labels option
      * @return axis
      */
+    @StudioProperty(defaultValue = "false")
     public T setCenterLabels(Boolean centerLabels) {
         this.centerLabels = centerLabels;
         return (T) this;
@@ -882,6 +934,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * @param minorTickLength length of minor grid tick
      * @return axis
      */
+    @StudioProperty(defaultValue = "0")
     public T setMinorTickLength(Integer minorTickLength) {
         this.minorTickLength = minorTickLength;
         return (T) this;
@@ -900,6 +953,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * @param titleRotation rotation of axis title
      * @return axis
      */
+    @StudioProperty
     public T setTitleRotation(Integer titleRotation) {
         this.titleRotation = titleRotation;
         return (T) this;
@@ -918,6 +972,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * @param balloon balloon
      * @return axis
      */
+    @StudioElement
     public T setBalloon(Balloon balloon) {
         this.balloon = balloon;
         return (T) this;
@@ -937,6 +992,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * @param boldPeriodBeginning boldPeriodBeginning option
      * @return axis
      */
+    @StudioProperty(defaultValue = "true")
     public T setBoldPeriodBeginning(Boolean boldPeriodBeginning) {
         this.boldPeriodBeginning = boldPeriodBeginning;
         return (T) this;
@@ -957,6 +1013,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * @param centerLabelOnFullPeriod centerLabelOnFullPeriod option
      * @return axis
      */
+    @StudioProperty(defaultValue = "true")
     public T setCenterLabelOnFullPeriod(Boolean centerLabelOnFullPeriod) {
         this.centerLabelOnFullPeriod = centerLabelOnFullPeriod;
         return (T) this;
@@ -994,6 +1051,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * @param labelOffset offset of axes labels
      * @return axis
      */
+    @StudioProperty(defaultValue = "0")
     public T setLabelOffset(Integer labelOffset) {
         this.labelOffset = labelOffset;
         return (T) this;
@@ -1013,6 +1071,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * @param markPeriodChange markPeriodChange option
      * @return axis
      */
+    @StudioProperty(defaultValue = "true")
     public T setMarkPeriodChange(Boolean markPeriodChange) {
         this.markPeriodChange = markPeriodChange;
         return (T) this;
@@ -1031,6 +1090,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      *
      * @param centerRotatedLabels centerRotatedLabels option
      */
+    @StudioProperty(defaultValue = "false")
     public void setCenterRotatedLabels(Boolean centerRotatedLabels) {
         this.centerRotatedLabels = centerRotatedLabels;
     }

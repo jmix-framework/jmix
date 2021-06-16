@@ -18,6 +18,8 @@ package io.jmix.charts.component;
 
 
 import io.jmix.charts.model.chart.GanttChartModel;
+import io.jmix.ui.meta.CanvasIconSize;
+import io.jmix.ui.meta.StudioComponent;
 
 /**
  * Gantt chart component. It displays multiple bars on one series where value axis displays date/time and is horizontal.
@@ -26,6 +28,16 @@ import io.jmix.charts.model.chart.GanttChartModel;
  * <br>
  * <a href="http://docs.amcharts.com/3/javascriptcharts/AmGanttChart">http://docs.amcharts.com/3/javascriptcharts/AmGanttChart</a>
  */
+@StudioComponent(
+        caption = "GanttChart",
+        category = "Charts",
+        xmlElement = "ganttChart",
+        xmlns = "http://jmix.io/schema/ui/charts",
+        xmlnsAlias = "chart",
+        icon = "io/jmix/charts/icon/component/ganttChart.svg",
+        canvasIcon = "io/jmix/charts/icon/component/ganttChart.svg",
+        canvasIconSize = CanvasIconSize.LARGE
+)
 public interface GanttChart extends SeriesBasedChart<GanttChart>, GanttChartModel<GanttChart> {
     String NAME = "ganttChart";
 }

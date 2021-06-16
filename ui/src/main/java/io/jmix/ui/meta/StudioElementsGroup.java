@@ -69,4 +69,10 @@ public @interface StudioElementsGroup {
      * @return FQN of base element class
      */
     String elementClass() default "";
+
+    /**
+     * @return XML tag of the element in the group if it differs from the xmlElement specified
+     * in the element definition class.
+     */
+    String elementXmlName() default "";
 }

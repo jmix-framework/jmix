@@ -20,6 +20,12 @@ import io.jmix.charts.model.AbstractChartObject;
 import io.jmix.charts.model.Align;
 import io.jmix.charts.model.Color;
 import io.jmix.charts.model.cursor.Cursor;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioProperty;
+
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 
 /**
  * Creates the balloons (tooltips) of the chart, It follows the mouse cursor when you roll-over the data items.
@@ -28,6 +34,11 @@ import io.jmix.charts.model.cursor.Cursor;
  *
  * <a href="http://docs.amcharts.com/3/javascriptcharts/AmBalloon">http://docs.amcharts.com/3/javascriptcharts/AmBalloon</a>
  */
+@StudioElement(
+        caption = "Balloon",
+        xmlElement = "balloon",
+        xmlns = "http://jmix.io/schema/ui/charts",
+        xmlnsAlias = "chart")
 public class Balloon extends AbstractChartObject {
 
     private static final long serialVersionUID = -4143720120608274912L;
@@ -99,6 +110,7 @@ public class Balloon extends AbstractChartObject {
      * @param adjustBorderColor adjust border color option
      * @return balloon
      */
+    @StudioProperty(defaultValue = "true")
     public Balloon setAdjustBorderColor(Boolean adjustBorderColor) {
         this.adjustBorderColor = adjustBorderColor;
         return this;
@@ -118,6 +130,7 @@ public class Balloon extends AbstractChartObject {
      * @param animationDuration animation duration in seconds
      * @return balloon
      */
+    @StudioProperty(defaultValue = "0.3")
     public Balloon setAnimationDuration(Double animationDuration) {
         this.animationDuration = animationDuration;
         return this;
@@ -136,6 +149,9 @@ public class Balloon extends AbstractChartObject {
      * @param borderAlpha border opacity
      * @return balloon
      */
+    @StudioProperty(defaultValue = "1")
+    @Max(1)
+    @Min(0)
     public Balloon setBorderAlpha(Double borderAlpha) {
         this.borderAlpha = borderAlpha;
         return this;
@@ -155,6 +171,7 @@ public class Balloon extends AbstractChartObject {
      * @param borderColor border color
      * @return balloon
      */
+    @StudioProperty(type = PropertyType.OPTIONS, defaultValue = "#FFFFFF")
     public Balloon setBorderColor(Color borderColor) {
         this.borderColor = borderColor;
         return this;
@@ -173,6 +190,7 @@ public class Balloon extends AbstractChartObject {
      * @param borderThickness border thickness
      * @return balloon
      */
+    @StudioProperty(defaultValue = "2")
     public Balloon setBorderThickness(Integer borderThickness) {
         this.borderThickness = borderThickness;
         return this;
@@ -191,6 +209,7 @@ public class Balloon extends AbstractChartObject {
      * @param color color of the text
      * @return balloon
      */
+    @StudioProperty(type = PropertyType.OPTIONS, defaultValue = "#000000")
     public Balloon setColor(Color color) {
         this.color = color;
         return this;
@@ -209,6 +228,7 @@ public class Balloon extends AbstractChartObject {
      * @param cornerRadius corner radius
      * @return balloon
      */
+    @StudioProperty(defaultValue = "0")
     public Balloon setCornerRadius(Integer cornerRadius) {
         this.cornerRadius = cornerRadius;
         return this;
@@ -227,6 +247,7 @@ public class Balloon extends AbstractChartObject {
      * @param fadeOutDuration duration in seconds
      * @return balloon
      */
+    @StudioProperty(defaultValue = "0.3")
     public Balloon setFadeOutDuration(Double fadeOutDuration) {
         this.fadeOutDuration = fadeOutDuration;
         return this;
@@ -245,6 +266,9 @@ public class Balloon extends AbstractChartObject {
      * @param fillAlpha background opacity
      * @return balloon
      */
+    @StudioProperty(defaultValue = "0.8")
+    @Max(1)
+    @Min(0)
     public Balloon setFillAlpha(Double fillAlpha) {
         this.fillAlpha = fillAlpha;
         return this;
@@ -264,6 +288,7 @@ public class Balloon extends AbstractChartObject {
      * @param fillColor background color
      * @return balloon
      */
+    @StudioProperty(type = PropertyType.OPTIONS, defaultValue = "#FFFFFF")
     public Balloon setFillColor(Color fillColor) {
         this.fillColor = fillColor;
         return this;
@@ -283,6 +308,7 @@ public class Balloon extends AbstractChartObject {
      * @param fixedPosition fixed position option
      * @return balloon
      */
+    @StudioProperty(defaultValue = "true")
     public Balloon setFixedPosition(Boolean fixedPosition) {
         this.fixedPosition = fixedPosition;
         return this;
@@ -301,6 +327,7 @@ public class Balloon extends AbstractChartObject {
      * @param fontSize font size
      * @return balloon
      */
+    @StudioProperty
     public Balloon setFontSize(Integer fontSize) {
         this.fontSize = fontSize;
         return this;
@@ -319,6 +346,7 @@ public class Balloon extends AbstractChartObject {
      * @param horizontalPadding horizontal padding
      * @return balloon
      */
+    @StudioProperty(defaultValue = "8")
     public Balloon setHorizontalPadding(Integer horizontalPadding) {
         this.horizontalPadding = horizontalPadding;
         return this;
@@ -337,6 +365,7 @@ public class Balloon extends AbstractChartObject {
      * @param maxWidth maximum width
      * @return balloon
      */
+    @StudioProperty
     public Balloon setMaxWidth(Integer maxWidth) {
         this.maxWidth = maxWidth;
         return this;
@@ -357,6 +386,7 @@ public class Balloon extends AbstractChartObject {
      * @param offsetX horizontal distance from mouse pointer to balloon pointer
      * @return balloon
      */
+    @StudioProperty(defaultValue = "1")
     public Balloon setOffsetX(Integer offsetX) {
         this.offsetX = offsetX;
         return this;
@@ -377,6 +407,7 @@ public class Balloon extends AbstractChartObject {
      * @param offsetY vertical distance from mouse pointer to balloon pointer
      * @return balloon
      */
+    @StudioProperty(defaultValue = "6")
     public Balloon setOffsetY(Integer offsetY) {
         this.offsetY = offsetY;
         return this;
@@ -395,6 +426,7 @@ public class Balloon extends AbstractChartObject {
      * @param pointerWidth pointer width
      * @return balloon
      */
+    @StudioProperty(defaultValue = "6")
     public Balloon setPointerWidth(Integer pointerWidth) {
         this.pointerWidth = pointerWidth;
         return this;
@@ -413,6 +445,9 @@ public class Balloon extends AbstractChartObject {
      * @param shadowAlpha opacity of a shadow
      * @return balloon
      */
+    @StudioProperty(defaultValue = "0.4")
+    @Max(1)
+    @Min(0)
     public Balloon setShadowAlpha(Double shadowAlpha) {
         this.shadowAlpha = shadowAlpha;
         return this;
@@ -431,6 +466,7 @@ public class Balloon extends AbstractChartObject {
      * @param shadowColor shadow color
      * @return balloon
      */
+    @StudioProperty(type = PropertyType.OPTIONS, defaultValue = "#000000")
     public Balloon setShadowColor(Color shadowColor) {
         this.shadowColor = shadowColor;
         return this;
@@ -450,6 +486,7 @@ public class Balloon extends AbstractChartObject {
      * @param showBullet show bullet option
      * @return balloon
      */
+    @StudioProperty(defaultValue = "false")
     public Balloon setShowBullet(Boolean showBullet) {
         this.showBullet = showBullet;
         return this;
@@ -468,6 +505,7 @@ public class Balloon extends AbstractChartObject {
      * @param textAlign text alignment
      * @return balloon
      */
+    @StudioProperty(type = PropertyType.ENUMERATION, defaultValue = "CENTER")
     public Balloon setTextAlign(Align textAlign) {
         this.textAlign = textAlign;
         return this;
@@ -486,6 +524,7 @@ public class Balloon extends AbstractChartObject {
      * @param verticalPadding vertical padding
      * @return balloon
      */
+    @StudioProperty(defaultValue = "4")
     public Balloon setVerticalPadding(Integer verticalPadding) {
         this.verticalPadding = verticalPadding;
         return this;
@@ -505,6 +544,7 @@ public class Balloon extends AbstractChartObject {
      * @param disableMouseEvents disable mouse eventes option
      * @return balloon
      */
+    @StudioProperty(defaultValue = "true")
     public Balloon setDisableMouseEvents(Boolean disableMouseEvents) {
         this.disableMouseEvents = disableMouseEvents;
         return this;
@@ -526,6 +566,7 @@ public class Balloon extends AbstractChartObject {
      * @param drop drop option
      * @return balloon
      */
+    @StudioProperty(defaultValue = "false")
     public Balloon setDrop(Boolean drop) {
         this.drop = drop;
         return this;
@@ -545,6 +586,7 @@ public class Balloon extends AbstractChartObject {
      * @param enabled enabled option
      * @return balloon
      */
+    @StudioProperty(defaultValue = "true")
     public Balloon setEnabled(Boolean enabled) {
         this.enabled = enabled;
         return this;
@@ -564,6 +606,7 @@ public class Balloon extends AbstractChartObject {
      * @param pointerOrientation pointer orientation
      * @return balloon
      */
+    @StudioProperty(type = PropertyType.ENUMERATION, defaultValue = "DOWN")
     public Balloon setPointerOrientation(PointerOrientation pointerOrientation) {
         this.pointerOrientation = pointerOrientation;
         return this;

@@ -18,10 +18,19 @@ package io.jmix.charts.model.export;
 
 import io.jmix.charts.model.AbstractChartObject;
 import io.jmix.charts.model.Color;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioElementsGroup;
+import io.jmix.ui.meta.StudioProperty;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@StudioElement(
+        caption = "Export",
+        xmlElement = "export",
+        xmlns = "http://jmix.io/schema/ui/charts",
+        xmlnsAlias = "chart")
 public class Export extends AbstractChartObject {
 
     private static final long serialVersionUID = -8908356283007782587L;
@@ -67,6 +76,7 @@ public class Export extends AbstractChartObject {
      * @param enabled enabled option
      * @return export
      */
+    @StudioProperty
     public Export setEnabled(Boolean enabled) {
         this.enabled = enabled;
         return this;
@@ -85,6 +95,7 @@ public class Export extends AbstractChartObject {
      * @param libs export libs
      * @return export
      */
+    @StudioElement
     public Export setLibs(ExportLibs libs) {
         this.libs = libs;
         return this;
@@ -103,6 +114,7 @@ public class Export extends AbstractChartObject {
      * @param menu list of menu
      * @return export
      */
+    @StudioElementsGroup(caption = "Menu", xmlElement = "menu")
     public Export setMenu(List<ExportMenuItem> menu) {
         this.menu = menu;
         return this;
@@ -135,6 +147,7 @@ public class Export extends AbstractChartObject {
      * @param backgroundColor color
      * @return export
      */
+    @StudioProperty(type = PropertyType.OPTIONS)
     public Export setBackgroundColor(Color backgroundColor) {
         this.backgroundColor = backgroundColor;
         return this;
@@ -154,6 +167,7 @@ public class Export extends AbstractChartObject {
      * @param fileName file name
      * @return export
      */
+    @StudioProperty
     public Export setFileName(String fileName) {
         this.fileName = fileName;
         return this;
@@ -173,6 +187,7 @@ public class Export extends AbstractChartObject {
      * @param position position
      * @return export
      */
+    @StudioProperty(type = PropertyType.ENUMERATION)
     public Export setPosition(ExportPosition position) {
         this.position = position;
         return this;
@@ -191,6 +206,7 @@ public class Export extends AbstractChartObject {
      * @param removeImages removeImages option
      * @return export
      */
+    @StudioProperty
     public Export setRemoveImages(Boolean removeImages) {
         this.removeImages = removeImages;
         return this;
@@ -209,6 +225,7 @@ public class Export extends AbstractChartObject {
      * @param exportTitles exportTitles option
      * @return export
      */
+    @StudioProperty
     public Export setExportTitles(Boolean exportTitles) {
         this.exportTitles = exportTitles;
         return this;
@@ -227,6 +244,7 @@ public class Export extends AbstractChartObject {
      * @param exportSelection exportSelection option
      * @return export
      */
+    @StudioProperty
     public Export setExportSelection(Boolean exportSelection) {
         this.exportSelection = exportSelection;
         return this;
@@ -246,6 +264,7 @@ public class Export extends AbstractChartObject {
      * @param dataDateFormat data date format
      * @return export
      */
+    @StudioProperty
     public Export setDataDateFormat(String dataDateFormat) {
         this.dataDateFormat = dataDateFormat;
         return this;
@@ -264,6 +283,7 @@ public class Export extends AbstractChartObject {
      * @param dateFormat date format
      * @return export
      */
+    @StudioProperty
     public Export setDateFormat(String dateFormat) {
         this.dateFormat = dateFormat;
         return this;
@@ -282,6 +302,7 @@ public class Export extends AbstractChartObject {
      * @param keyListener keyListener option
      * @return export
      */
+    @StudioProperty
     public Export setKeyListener(Boolean keyListener) {
         this.keyListener = keyListener;
         return this;
@@ -300,6 +321,7 @@ public class Export extends AbstractChartObject {
      * @param fileListener fileListener option
      * @return export
      */
+    @StudioProperty
     public Export setFileListener(Boolean fileListener) {
         this.fileListener = fileListener;
         return this;

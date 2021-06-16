@@ -23,7 +23,13 @@ import io.jmix.charts.model.animation.HasStartEffect;
 import io.jmix.charts.model.axis.CategoryAxesSettings;
 import io.jmix.charts.model.chart.impl.StockPanel;
 import io.jmix.charts.model.period.PeriodSelector;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioCollection;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioProperty;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -36,6 +42,11 @@ import java.util.List;
  *
  * <a href="http://docs.amcharts.com/3/javascriptstockchart/PanelsSettings">http://docs.amcharts.com/3/javascriptstockchart/PanelsSettings</a>
  */
+@StudioElement(
+        caption = "PanelsSettings",
+        xmlElement = "panelsSettings",
+        xmlns = "http://jmix.io/schema/ui/charts",
+        xmlnsAlias = "chart")
 public class PanelsSettings extends AbstractChartObject implements HasMargins<PanelsSettings>,
         HasStartEffect<PanelsSettings> {
 
@@ -122,6 +133,7 @@ public class PanelsSettings extends AbstractChartObject implements HasMargins<Pa
      * @param angle angle
      * @return panels settings
      */
+    @StudioProperty
     public PanelsSettings setAngle(Integer angle) {
         this.angle = angle;
         return this;
@@ -141,6 +153,9 @@ public class PanelsSettings extends AbstractChartObject implements HasMargins<Pa
      * @param backgroundAlpha opacity
      * @return panels settings
      */
+    @StudioProperty(defaultValue = "0")
+    @Max(1)
+    @Min(0)
     public PanelsSettings setBackgroundAlpha(Double backgroundAlpha) {
         this.backgroundAlpha = backgroundAlpha;
         return this;
@@ -160,6 +175,7 @@ public class PanelsSettings extends AbstractChartObject implements HasMargins<Pa
      * @param backgroundColor color
      * @return panels settings
      */
+    @StudioProperty(type = PropertyType.ENUMERATION, defaultValue = "FFFFFF")
     public PanelsSettings setBackgroundColor(Color backgroundColor) {
         this.backgroundColor = backgroundColor;
         return this;
@@ -178,6 +194,7 @@ public class PanelsSettings extends AbstractChartObject implements HasMargins<Pa
      * @param columnSpacing column spacing
      * @return panels settings
      */
+    @StudioProperty
     public PanelsSettings setColumnSpacing(Integer columnSpacing) {
         this.columnSpacing = columnSpacing;
         return this;
@@ -196,6 +213,7 @@ public class PanelsSettings extends AbstractChartObject implements HasMargins<Pa
      * @param columnWidth column relative width
      * @return panels settings
      */
+    @StudioProperty
     public PanelsSettings setColumnWidth(Integer columnWidth) {
         this.columnWidth = columnWidth;
         return this;
@@ -216,6 +234,7 @@ public class PanelsSettings extends AbstractChartObject implements HasMargins<Pa
      * @param creditsPosition credits position
      * @return panels settings
      */
+    @StudioProperty(type = PropertyType.ENUMERATION, defaultValue = "TOP_RIGHT")
     public PanelsSettings setCreditsPosition(CreditsPosition creditsPosition) {
         this.creditsPosition = creditsPosition;
         return this;
@@ -234,6 +253,7 @@ public class PanelsSettings extends AbstractChartObject implements HasMargins<Pa
      * @param decimalSeparator decimal separator
      * @return panels settings
      */
+    @StudioProperty
     public PanelsSettings setDecimalSeparator(String decimalSeparator) {
         this.decimalSeparator = decimalSeparator;
         return this;
@@ -252,6 +272,7 @@ public class PanelsSettings extends AbstractChartObject implements HasMargins<Pa
      * @param depth3D depth 3D
      * @return panels settings
      */
+    @StudioProperty
     public PanelsSettings setDepth3D(Integer depth3D) {
         this.depth3D = depth3D;
         return this;
@@ -270,6 +291,7 @@ public class PanelsSettings extends AbstractChartObject implements HasMargins<Pa
      * @param fontFamily font family
      * @return panels settings
      */
+    @StudioProperty
     public PanelsSettings setFontFamily(String fontFamily) {
         this.fontFamily = fontFamily;
         return this;
@@ -288,6 +310,7 @@ public class PanelsSettings extends AbstractChartObject implements HasMargins<Pa
      * @param fontSize font size
      * @return panels settings
      */
+    @StudioProperty
     public PanelsSettings setFontSize(Integer fontSize) {
         this.fontSize = fontSize;
         return this;
@@ -299,6 +322,7 @@ public class PanelsSettings extends AbstractChartObject implements HasMargins<Pa
     }
 
     @Override
+    @StudioProperty(defaultValue = "0")
     public PanelsSettings setMarginBottom(Integer marginBottom) {
         this.marginBottom = marginBottom;
         return this;
@@ -310,6 +334,7 @@ public class PanelsSettings extends AbstractChartObject implements HasMargins<Pa
     }
 
     @Override
+    @StudioProperty(defaultValue = "0")
     public PanelsSettings setMarginLeft(Integer marginLeft) {
         this.marginLeft = marginLeft;
         return this;
@@ -321,6 +346,7 @@ public class PanelsSettings extends AbstractChartObject implements HasMargins<Pa
     }
 
     @Override
+    @StudioProperty(defaultValue = "0")
     public PanelsSettings setMarginRight(Integer marginRight) {
         this.marginRight = marginRight;
         return this;
@@ -332,6 +358,7 @@ public class PanelsSettings extends AbstractChartObject implements HasMargins<Pa
     }
 
     @Override
+    @StudioProperty(defaultValue = "0")
     public PanelsSettings setMarginTop(Integer marginTop) {
         this.marginTop = marginTop;
         return this;
@@ -351,6 +378,7 @@ public class PanelsSettings extends AbstractChartObject implements HasMargins<Pa
      * @param maxSelectedTime maximum selected time
      * @return panels settings
      */
+    @StudioProperty
     public PanelsSettings setMaxSelectedTime(Long maxSelectedTime) {
         this.maxSelectedTime = maxSelectedTime;
         return this;
@@ -370,6 +398,7 @@ public class PanelsSettings extends AbstractChartObject implements HasMargins<Pa
      * @param minSelectedTime minimum selected time
      * @return panels settings
      */
+    @StudioProperty(defaultValue = "0")
     public PanelsSettings setMinSelectedTime(Long minSelectedTime) {
         this.minSelectedTime = minSelectedTime;
         return this;
@@ -388,6 +417,7 @@ public class PanelsSettings extends AbstractChartObject implements HasMargins<Pa
      * @param panelSpacing panel spacing
      * @return panels settings
      */
+    @StudioProperty(defaultValue = "8")
     public PanelsSettings setPanelSpacing(Integer panelSpacing) {
         this.panelSpacing = panelSpacing;
         return this;
@@ -410,6 +440,7 @@ public class PanelsSettings extends AbstractChartObject implements HasMargins<Pa
      * @param panEventsEnabled panEventsEnabled option
      * @return panels settings
      */
+    @StudioProperty(defaultValue = "false")
     public PanelsSettings setPanEventsEnabled(Boolean panEventsEnabled) {
         this.panEventsEnabled = panEventsEnabled;
         return this;
@@ -428,6 +459,7 @@ public class PanelsSettings extends AbstractChartObject implements HasMargins<Pa
      * @param percentPrecision percent precision
      * @return panels settings
      */
+    @StudioProperty
     public PanelsSettings setPercentPrecision(Double percentPrecision) {
         this.percentPrecision = percentPrecision;
         return this;
@@ -446,6 +478,9 @@ public class PanelsSettings extends AbstractChartObject implements HasMargins<Pa
      * @param plotAreaBorderAlpha opacity
      * @return panels settings
      */
+    @StudioProperty
+    @Max(1)
+    @Min(0)
     public PanelsSettings setPlotAreaBorderAlpha(Double plotAreaBorderAlpha) {
         this.plotAreaBorderAlpha = plotAreaBorderAlpha;
         return this;
@@ -464,6 +499,7 @@ public class PanelsSettings extends AbstractChartObject implements HasMargins<Pa
      * @param plotAreaBorderColor color
      * @return panels settings
      */
+    @StudioProperty(type = PropertyType.OPTIONS)
     public PanelsSettings setPlotAreaBorderColor(Color plotAreaBorderColor) {
         this.plotAreaBorderColor = plotAreaBorderColor;
         return this;
@@ -482,6 +518,9 @@ public class PanelsSettings extends AbstractChartObject implements HasMargins<Pa
      * @param plotAreaFillAlphas opacity
      * @return panels settings
      */
+    @StudioProperty
+    @Max(1)
+    @Min(0)
     public PanelsSettings setPlotAreaFillAlphas(Double plotAreaFillAlphas) {
         this.plotAreaFillAlphas = plotAreaFillAlphas;
         return this;
@@ -500,6 +539,13 @@ public class PanelsSettings extends AbstractChartObject implements HasMargins<Pa
      * @param plotAreaFillColors list of colors
      * @return panels settings
      */
+    @StudioCollection(xmlElement = "plotAreaFillColors",
+            itemXmlElement = "color",
+            itemCaption = "Plot Area Fill Color",
+            itemProperties = {
+                    @StudioProperty(name = "value", type = PropertyType.ENUMERATION,
+                            options = {"@link io.jmix.charts.model.Color"})
+            })
     public PanelsSettings setPlotAreaFillColors(List<Color> plotAreaFillColors) {
         this.plotAreaFillColors = plotAreaFillColors;
         return this;
@@ -534,6 +580,7 @@ public class PanelsSettings extends AbstractChartObject implements HasMargins<Pa
      * @param precision precision
      * @return panels settings
      */
+    @StudioProperty
     public PanelsSettings setPrecision(Double precision) {
         this.precision = precision;
         return this;
@@ -613,6 +660,7 @@ public class PanelsSettings extends AbstractChartObject implements HasMargins<Pa
      * @param recalculateToPercents recalculate to percents
      * @return panels settings
      */
+    @StudioProperty(type = PropertyType.ENUMERATION, defaultValue = "whenComparing")
     public PanelsSettings setRecalculateToPercents(RecalculateToPercents recalculateToPercents) {
         this.recalculateToPercents = recalculateToPercents;
         return this;
@@ -631,6 +679,7 @@ public class PanelsSettings extends AbstractChartObject implements HasMargins<Pa
      * @param sequencedAnimation sequencedAnimation option
      * @return panels settings
      */
+    @StudioProperty
     public PanelsSettings setSequencedAnimation(Boolean sequencedAnimation) {
         this.sequencedAnimation = sequencedAnimation;
         return this;
@@ -650,6 +699,9 @@ public class PanelsSettings extends AbstractChartObject implements HasMargins<Pa
      * @param startAlpha initial opacity
      * @return panels settings
      */
+    @StudioProperty
+    @Max(1)
+    @Min(0)
     public PanelsSettings setStartAlpha(Double startAlpha) {
         this.startAlpha = startAlpha;
         return this;
@@ -661,6 +713,7 @@ public class PanelsSettings extends AbstractChartObject implements HasMargins<Pa
     }
 
     @Override
+    @StudioProperty
     public PanelsSettings setStartDuration(Double startDuration) {
         this.startDuration = startDuration;
         return this;
@@ -672,6 +725,7 @@ public class PanelsSettings extends AbstractChartObject implements HasMargins<Pa
     }
 
     @Override
+    @StudioProperty(type = PropertyType.ENUMERATION)
     public PanelsSettings setStartEffect(AnimationEffect startEffect) {
         this.startEffect = startEffect;
         return this;
@@ -690,6 +744,7 @@ public class PanelsSettings extends AbstractChartObject implements HasMargins<Pa
      * @param thousandsSeparator thousands separator
      * @return panels settings
      */
+    @StudioProperty
     public PanelsSettings setThousandsSeparator(String thousandsSeparator) {
         this.thousandsSeparator = thousandsSeparator;
         return this;
@@ -708,6 +763,7 @@ public class PanelsSettings extends AbstractChartObject implements HasMargins<Pa
      * @param usePrefixes usePrefixes option
      * @return panels settings
      */
+    @StudioProperty
     public PanelsSettings setUsePrefixes(Boolean usePrefixes) {
         this.usePrefixes = usePrefixes;
         return this;
@@ -727,6 +783,7 @@ public class PanelsSettings extends AbstractChartObject implements HasMargins<Pa
      * @param zoomOutAxes zoomOutAxes option
      * @return panels settings
      */
+    @StudioProperty(defaultValue = "true")
     public PanelsSettings setZoomOutAxes(Boolean zoomOutAxes) {
         this.zoomOutAxes = zoomOutAxes;
         return this;

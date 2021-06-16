@@ -28,7 +28,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.*;
 
-@Component
+@Component("data_DataStoreInMemoryCrudListener")
 public class DataStoreInMemoryCrudListener implements DataStoreEventListener {
 
     private static final Logger log = LoggerFactory.getLogger(DataStoreInMemoryCrudListener.class);

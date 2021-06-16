@@ -26,7 +26,7 @@ import io.jmix.data.accesscontext.LoadValuesAccessContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-@Component
+@Component("data_DataStoreCrudValuesListener")
 public class DataStoreCrudValuesListener implements DataStoreEventListener {
     @Autowired
     protected QueryTransformerFactory queryTransformerFactory;

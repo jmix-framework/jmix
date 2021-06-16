@@ -28,7 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-@Component
+@Component("data_JpaDataStoreCustomizer")
 @Order(JmixOrder.HIGHEST_PRECEDENCE)
 public class JpaDataStoreCustomizer implements DataStoreCustomizer {
     @Autowired

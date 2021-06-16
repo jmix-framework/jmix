@@ -34,7 +34,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-@Component
+@Component("data_DataStoreCrudListener")
 public class DataStoreCrudListener implements DataStoreEventListener {
 
     private static final Logger log = LoggerFactory.getLogger(DataStoreCrudListener.class);

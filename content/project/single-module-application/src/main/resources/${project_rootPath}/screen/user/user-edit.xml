@@ -39,7 +39,7 @@
                 <textField id="firstNameField" property="firstName"/>
                 <textField id="lastNameField" property="lastName"/>
                 <textField id="emailField" property="email"/>
-                <checkBox id="enabledField" property="enabled"/>
+                <checkBox id="activeField" property="active"/>
             </column>
         </form>
         <hbox id="editActions" spacing="true">

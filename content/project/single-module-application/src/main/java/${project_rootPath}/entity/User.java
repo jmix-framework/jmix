@@ -47,8 +47,8 @@ public class User implements JmixUserDetails {
     @Column(name = "EMAIL")
     protected String email;
 
-    @Column(name = "ENABLED")
-    protected Boolean enabled = true;
+    @Column(name = "ACTIVE")
+    protected Boolean active = true;
 
     @Transient
     protected Collection<? extends GrantedAuthority> authorities;
@@ -82,12 +82,12 @@ public class User implements JmixUserDetails {
         this.username = username;
     }
 
-    public Boolean getEnabled() {
-        return enabled;
+    public Boolean getActive() {
+        return active;
     }
 
-    public void setEnabled(Boolean enabled) {
-        this.enabled = enabled;
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 
     public void setPassword(String password) {
@@ -145,7 +145,7 @@ public class User implements JmixUserDetails {
 
     @Override
     public boolean isEnabled() {
-        return enabled;
+        return Boolean.TRUE.equals(active);
     }
 
     @InstanceName

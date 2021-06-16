@@ -21,7 +21,7 @@
             <column name="LAST_NAME" type="varchar(255)"/>
             <column name="PASSWORD" type="varchar(255)"/>
             <column name="EMAIL" type="varchar(255)"/>
-            <column name="ENABLED" type="boolean"/>
+            <column name="ACTIVE" type="boolean"/>
         </createTable>
 
     </changeSet>

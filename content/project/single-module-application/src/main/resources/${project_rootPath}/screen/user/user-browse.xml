@@ -52,7 +52,7 @@
                 <column id="firstName"/>
                 <column id="lastName"/>
                 <column id="email"/>
-                <column id="enabled"/>
+                <column id="active"/>
             </columns>
             <simplePagination/>
             <buttonsPanel id="buttonsPanel"

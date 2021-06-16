@@ -51,7 +51,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.*;
 
-@Component
+@Component("report_ReportRunner")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ReportRunnerImpl implements ReportRunner {
 

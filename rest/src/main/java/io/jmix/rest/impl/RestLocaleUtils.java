@@ -32,7 +32,7 @@ import java.util.Locale;
 /**
  * REST API authentication utility class
  */
-@Component
+@Component("rest_RestLocaleUtils")
 public class RestLocaleUtils {
 
     @Autowired

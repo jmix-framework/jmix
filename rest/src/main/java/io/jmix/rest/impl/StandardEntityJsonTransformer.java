@@ -27,7 +27,7 @@ import org.springframework.stereotype.Component;
  * Standard implementation of the {@link EntityJsonTransformer}. Instances of this class are created and registered
  * automatically by the {@link io.jmix.rest.impl.config.RestJsonTransformations} class.
  */
-@Component
+@Component("rest_StandardEntityJsonTransformer")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class StandardEntityJsonTransformer extends AbstractEntityJsonTransformer {
     public StandardEntityJsonTransformer(String fromEntityName, String toEntityName, String version, JsonTransformationDirection direction) {

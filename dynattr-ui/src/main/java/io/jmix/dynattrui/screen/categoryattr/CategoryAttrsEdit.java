@@ -458,10 +458,14 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
             TabSheet.Tab localizationTab = tabSheet.getTab("localizationTab");
             localizationTab.setVisible(true);
 
+            CrudEntityContext crudEntityContext = new CrudEntityContext(configurationDc.getEntityMetaClass());
+            accessManager.applyRegisteredConstraints(crudEntityContext);
+
             VBoxLayout localizationTabComponent = (VBoxLayout) tabSheet.getTabComponent("localizationTab");
             localizationFragment = fragments.create(this, AttributeLocalizationFragment.class);
             localizationFragment.setNameMsgBundle(getEditedEntity().getNameMsgBundle());
             localizationFragment.setDescriptionMsgBundle(getEditedEntity().getDescriptionsMsgBundle());
+            localizationFragment.setEnabled(crudEntityContext.isUpdatePermitted());
 
             Fragment fragment = localizationFragment.getFragment();
             fragment.setWidth(Component.FULL_SIZE);

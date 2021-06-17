@@ -16,15 +16,50 @@
 
 package io.jmix.graphql.schema;
 
+import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
+import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.graphql.NamingUtils;
 import io.leangen.graphql.metadata.messages.MessageBundle;
 import io.leangen.graphql.metadata.strategy.type.DefaultTypeInfoGenerator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.AnnotatedType;
 
 @Component
 public class JmixTypeInfoGenerator extends DefaultTypeInfoGenerator {
+
+    static final Logger log = LoggerFactory.getLogger(DefaultTypeInfoGenerator.class);
+
+    @Autowired
+    MetadataTools metadataTools;
+    @Autowired
+    Metadata metadata;
+
+    @Override
+    public String generateTypeName(AnnotatedType type, MessageBundle messageBundle) {
+        String typeName = type.getType().getTypeName();
+
+        Class<?> typeClass;
+        try {
+            typeClass = Class.forName(typeName);
+        } catch (ClassNotFoundException e) {
+            log.warn(String.format(
+                    "Class not found for %s, fallback to DefaultTypeInfoGenerator.generateTypeName", typeName),
+                    e);
+            return super.generateTypeName(type, messageBundle);
+        }
+
+        MetaClass metaClass = metadata.findClass(typeClass);
+        if (metaClass != null && metadataTools.isJpaEntity(metaClass)) {
+            return NamingUtils.normalizeName(metaClass.getName());
+        }
+
+        return super.generateTypeName(type, messageBundle);
+    }
 
     @Override
     public String generateInputTypeName(AnnotatedType type, MessageBundle messageBundle) {

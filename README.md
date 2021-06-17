@@ -142,7 +142,19 @@ type Query {
    userInfo: UserInfo
 }
 ```
+#### Input Types Generation in Custom Resolver 
+By default, SPQR creates input types with `Input` suffix:
+```graphql
+input CarInput
+```
+In `jmix-graphql` schema will be generated this type with `inp_` prefix, as in generic types:
+```graphql
+input inp_Car
+```
+
+#### Work with SPQR
 More about how to work with SPQR could be found [in this article](https://www.howtographql.com/graphql-java/11-alternative-approaches/).
+
 
 ### Permission Query
 

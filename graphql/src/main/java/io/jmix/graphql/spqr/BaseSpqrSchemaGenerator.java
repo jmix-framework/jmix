@@ -163,9 +163,13 @@ public class BaseSpqrSchemaGenerator extends GraphQLSchemaGenerator {
 
     /**
      * Constructor which allows to customize names of root types.
+     *
      * @param queryRoot name of query root type
+     * @param queryRootDescription  query root description
      * @param mutationRoot name of mutation root type
+     * @param mutationRootDescription mutation root description
      * @param subscriptionRoot name of subscription root type
+     * @param subscriptionRootDescription subscription root description
      */
     public BaseSpqrSchemaGenerator(String queryRoot, String queryRootDescription, String mutationRoot, String mutationRootDescription, String subscriptionRoot, String subscriptionRootDescription) {
         this.queryRoot = queryRoot;
@@ -185,7 +189,7 @@ public class BaseSpqrSchemaGenerator extends GraphQLSchemaGenerator {
      * in query resolution time, invoked on this specific instance (hence the 'singleton' in the method name).
      * Instances of stateless service classes are commonly registered this way.
      *
-     * @implNote Injection containers (like Spring or CDI) will often wrap managed bean instances into proxies,
+     * implNote: Injection containers (like Spring or CDI) will often wrap managed bean instances into proxies,
      * making it difficult to reliably detect their type. For this reason, it is recommended in such cases to use
      * a different overload of this method and provide the type explicitly.
      *

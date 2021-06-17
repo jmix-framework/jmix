@@ -34,7 +34,7 @@ import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 /**
- * Synchronizes search indices on application startup.
+ * Synchronizes search indexes on application startup.
  */
 @Component("search_StartupIndexSynchronizer")
 public class StartupIndexSynchronizer {

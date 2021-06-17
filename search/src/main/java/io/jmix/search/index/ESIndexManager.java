@@ -113,7 +113,7 @@ public interface ESIndexManager {
     GetIndexResponse getIndex(String indexName);
 
     /**
-     * Synchronizes schemas of all search indices defined in application.
+     * Synchronizes schemas of all search indexes defined in application.
      * <p>See {@link ESIndexManager#synchronizeIndexSchemas(Collection)}
      * <p>See {@link ESIndexManager#synchronizeIndexSchema(IndexConfiguration)}
      *

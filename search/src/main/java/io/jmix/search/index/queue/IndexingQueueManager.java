@@ -112,14 +112,14 @@ public interface IndexingQueueManager {
     int enqueueDeleteCollectionByEntityIds(Collection<Id<?>> entityIds);
 
     /**
-     * Retrieves next batch of items from indexing queue and process them - store/remove related documents in index.
+     * Retrieves next batch of items from indexing queue and processes them - store/remove related documents in index.
      *
      * @return amount of processed queue items
      */
     int processNextBatch();
 
     /**
-     * Retrieves next batch of items from indexing queue and process them - store/remove related documents in index.
+     * Retrieves next batch of items from indexing queue and processes them - store/remove related documents in index.
      *
      * @param batchSize amount of queue items to process
      * @return amount of processed queue items
@@ -127,7 +127,7 @@ public interface IndexingQueueManager {
     int processNextBatch(int batchSize);
 
     /**
-     * Retrieves items from indexing queue and process them - store/remove related documents in index.
+     * Retrieves items from indexing queue and processes them - store/remove related documents in index.
      *
      * @return amount of processed queue items
      */

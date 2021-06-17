@@ -27,7 +27,7 @@ import java.util.Map;
 public interface EntitySearcher {
 
     /**
-     * Performs search in search indices according to provided {@link SearchContext} and default {@link SearchStrategy}.
+     * Performs search in search indexes according to provided {@link SearchContext} and default {@link SearchStrategy}.
      * <p>See {@link EntitySearcher#search(SearchContext, SearchStrategy)}
      *
      * @param searchContext runtime settings of specific search
@@ -36,7 +36,7 @@ public interface EntitySearcher {
     SearchResult search(SearchContext searchContext);
 
     /**
-     * Performs search in search indices according to provided {@link SearchContext} and {@link SearchStrategy}.
+     * Performs search in search indexes according to provided {@link SearchContext} and {@link SearchStrategy}.
      *
      * @param searchContext  runtime settings of specific search
      * @param searchStrategy the way incoming search text should be processed

@@ -188,7 +188,7 @@ public class EntityIndexingManagementFacade {
     }
 
     @Authenticated
-    @ManagedOperation(description = "Processes all items in Indexing Queue")
+    @ManagedOperation(description = "Processes next batch of items in Indexing Queue")
     public String processIndexingQueueNextBatch() {
         int processed = indexingQueueManager.processNextBatch();
         return String.format("Processed %d queue items", processed);

@@ -428,7 +428,7 @@ public class DateFieldImpl<V extends Comparable<V>>
                     metaProperty.getRange().asDatatype().getJavaClass());
         }
 
-        return (V) convertFromLocalDateTime(localDateTime, ZoneId.systemDefault(),
+        return (V) convertFromLocalDateTime(localDateTime, zoneId,
                 datatype == null ? Date.class : datatype.getJavaClass());
     }
 

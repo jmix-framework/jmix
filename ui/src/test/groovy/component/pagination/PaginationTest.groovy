@@ -27,7 +27,6 @@ import io.jmix.ui.UiConfiguration
 import io.jmix.ui.testassist.spec.ScreenSpecification
 import io.jmix.ui.widget.JmixPagination
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.ContextConfiguration
 import test_support.UiTestConfiguration
 import test_support.entity.sales.Customer
@@ -39,26 +38,26 @@ import java.util.stream.Collectors
 class PaginationTest extends ScreenSpecification {
 
     @Autowired
-    JdbcTemplate jdbc
-
-    @Autowired
     DataManager dataManager
+
+    List<Customer> customers;
 
     @Override
     void setup() {
         exportScreensPackages(["component.pagination"])
 
-        def customers = []
+        customers = new ArrayList<>(10);
         10.times { customers.add(dataManager.create(Customer)) }
         dataManager.save(customers.toArray())
     }
 
     @Override
     void cleanup() {
-        jdbc.update('delete from TEST_CUSTOMER')
+        dataManager.remove(customers)
+        customers.clear()
     }
 
-    def "pagination clicks on: last, previous, first, next"() {
+    def "pagination clicks on last, previous, first, next"() {
         given: "We have 5 pages"
         showTestMainScreen()
 

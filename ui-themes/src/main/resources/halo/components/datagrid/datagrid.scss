@@ -135,7 +135,7 @@ $jmix-datagrid-aggregation-background-color: $jmix-aggregation-background-color-
 
     &.no-stripes {
       .#{$primary-stylename}-body .#{$primary-stylename}-row > td,
-        .#{$primary-stylename}-body .#{$primary-stylename}-row-stripes > td {
+        .#{$primary-stylename}-body .#{$primary-stylename}-row-stripe > td {
           background: $background-color;
       }
 

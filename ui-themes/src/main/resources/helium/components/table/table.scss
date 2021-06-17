@@ -22,6 +22,16 @@ $he-table-header-row-height-scale: 1.5 !default;
   }
 
   .jmix-table-composition {
+    &.no-stripes {
+      .#{$primary-stylename} [class*="-row"].v-selected {
+        @include he-table-selected-row-style($primary-stylename: $primary-stylename);
+      }
+
+      @if $jmix-table-highlight-hover-row {
+        @include he-table-row-hover-style($primary-stylename: $primary-stylename);
+      }
+    }
+
     @include he-table-composition-size-style();
   }
 
@@ -257,6 +267,10 @@ $he-table-header-row-height-scale: 1.5 !default;
     padding-left: $v-table-border-width;
   }
 
+  .#{$primary-stylename}-table {
+    background: var(--table-background-color);
+  }
+
   .#{$primary-stylename}-table td {
     border-top: none;
   }
@@ -271,34 +285,7 @@ $he-table-header-row-height-scale: 1.5 !default;
   }
 
   [class*="-row"].v-selected {
-    background: var(--table-selected-row-background-color);
-    color: var(--table-selected-row-text-color);
-    text-shadow: none;
-
-    + .v-selected {
-      background: var(--table-selected-row-background-color);
-
-      td {
-        border-top-color: var(--table-selected-row-border-color);
-      }
-    }
-
-    .#{$primary-stylename}-cell-content {
-      border-left-color: var(--table-selected-row-border-color);
-    }
-
-    .jmix-table-cell-link .jmix-table-clickable-cell,
-    .jmix-table-cell-textcut .jmix-table-clickable-cell,
-    .v-popupview,
-    .v-button-link,
-    .v-link,
-    .v-link > a:visited {
-      color: var(--table-selected-row-text-color);
-    }
-
-    .jmix-table-cell-textcut .jmix-table-clickable-cell {
-      border-bottom-color: var(--table-selected-row-text-color);
-    }
+    @include he-table-selected-row-style($primary-stylename: $primary-stylename);
   }
 
   .#{$primary-stylename}-focus {
@@ -310,31 +297,7 @@ $he-table-header-row-height-scale: 1.5 !default;
   }
 
   @if $jmix-table-highlight-hover-row {
-    .#{$primary-stylename}-row:hover,
-    .#{$primary-stylename}-row-odd:hover {
-      background-color: var(--table-hovered-row-background-color);
-      color: var(--table-hovered-row-text-color);
-
-      .#{$primary-stylename}-cell-content.boolean-cell-true .#{$primary-stylename}-cell-wrapper,
-      .#{$primary-stylename}-cell-content.boolean-cell-false .#{$primary-stylename}-cell-wrapper {
-        &:before {
-          color: var(--table-hovered-row-text-color);
-        }
-      }
-    }
-
-    .#{$primary-stylename}-row.v-selected:hover,
-    .#{$primary-stylename}-row-odd.v-selected:hover {
-      background: var(--table-selected-row-background-color);
-      color: var(--table-selected-row-text-color);
-
-      .#{$primary-stylename}-cell-content.boolean-cell-true .#{$primary-stylename}-cell-wrapper,
-      .#{$primary-stylename}-cell-content.boolean-cell-false .#{$primary-stylename}-cell-wrapper {
-        &:before {
-          color: var(--table-selected-row-text-color);
-        }
-      }
-    }
+    @include he-table-row-hover-style($primary-stylename: $primary-stylename);
   }
 
   .#{$primary-stylename}-arow {
@@ -596,6 +559,65 @@ $he-table-header-row-height-scale: 1.5 !default;
     .jmix-table-top {
       min-height: $unit-size;
       margin-top: -1 * ($unit-size + ceil($v-layout-spacing-vertical));
+    }
+  }
+}
+
+@mixin he-table-selected-row-style($primary-stylename: v-table) {
+  background: var(--table-selected-row-background-color);
+  color: var(--table-selected-row-text-color);
+  text-shadow: none;
+
+  + .v-selected {
+    background: var(--table-selected-row-background-color);
+
+    td {
+      border-top-color: var(--table-selected-row-border-color);
+    }
+  }
+
+  .#{$primary-stylename}-cell-content {
+    border-left-color: var(--table-selected-row-border-color);
+  }
+
+  .jmix-table-cell-link .jmix-table-clickable-cell,
+  .jmix-table-cell-textcut .jmix-table-clickable-cell,
+  .v-popupview,
+  .v-button-link,
+  .v-link,
+  .v-link > a:visited {
+    color: var(--table-selected-row-text-color);
+  }
+
+  .jmix-table-cell-textcut .jmix-table-clickable-cell {
+    border-bottom-color: var(--table-selected-row-text-color);
+  }
+}
+
+@mixin he-table-row-hover-style($primary-stylename: v-table) {
+  .#{$primary-stylename}-row:hover,
+  .#{$primary-stylename}-row-odd:hover {
+    background-color: var(--table-hovered-row-background-color);
+    color: var(--table-hovered-row-text-color);
+
+    .#{$primary-stylename}-cell-content.boolean-cell-true .#{$primary-stylename}-cell-wrapper,
+    .#{$primary-stylename}-cell-content.boolean-cell-false .#{$primary-stylename}-cell-wrapper {
+      &:before {
+        color: var(--table-hovered-row-text-color);
+      }
+    }
+  }
+
+  .#{$primary-stylename}-row.v-selected:hover,
+  .#{$primary-stylename}-row-odd.v-selected:hover {
+    background: var(--table-selected-row-background-color);
+    color: var(--table-selected-row-text-color);
+
+    .#{$primary-stylename}-cell-content.boolean-cell-true .#{$primary-stylename}-cell-wrapper,
+    .#{$primary-stylename}-cell-content.boolean-cell-false .#{$primary-stylename}-cell-wrapper {
+      &:before {
+        color: var(--table-selected-row-text-color);
+      }
     }
   }
 }

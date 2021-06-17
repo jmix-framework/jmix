@@ -35,6 +35,23 @@
   }
 
   .jmix-data-grid-composition {
+    &.no-stripes {
+      .#{$primary-stylename} .#{$primary-stylename}-body {
+        .#{$primary-stylename}-row,
+        .#{$primary-stylename}-row-stripe {
+          > td {
+            background-color: var(--grid-row-color);
+          }
+        }
+
+        @include he-grid-selected-row-style($primary-stylename: $primary-stylename);
+
+        @if $jmix-datagrid-highlight-hover-row {
+          @include he-grid-row-hover-style($primary-stylename: $primary-stylename);
+        }
+      }
+    }
+
     @include he-grid-composition-size-style()
   }
 
@@ -136,40 +153,11 @@
 
   // Selected
 
-  .#{$primary-stylename}-row-selected {
-    > .#{$primary-stylename}-cell {
-      background: var(--grid-selected-row-background-color);
-      color: var(--grid-selected-row-text-color);
-      border-color: var(--grid-selected-row-border-color);
-      text-shadow: none;
-
-      .v-link,
-      .v-link > a:visited,
-      .v-button-link,
-      .boolean-value:before {
-        color: var(--grid-selected-row-text-color);
-      }
-
-      .v-button-link:focus,
-      .v-button:focus:after {
-        border-color: var(--grid-selected-row-text-color);
-      }
-    }
-
-    > .#{$primary-stylename}-cell-focused:before {
-      border-color: var(--grid-selected-row-focus-ring-color);
-    }
-  }
+  @include he-grid-selected-row-style($primary-stylename: $primary-stylename);
 
   @if $jmix-datagrid-highlight-hover-row {
-    .#{$primary-stylename}-body .#{$primary-stylename}-row:hover > td {
-      background-color: var(--grid-hovered-row-background-color);
-      color: var(--grid-hovered-row-text-color);
-    }
-
-    .#{$primary-stylename}-body .#{$primary-stylename}-row-selected:hover > td {
-      background: var(--grid-selected-row-background-color);
-      color: var(--grid-selected-row-text-color);
+    .#{$primary-stylename}-body {
+      @include he-grid-row-hover-style($primary-stylename: $primary-stylename);
     }
   }
 
@@ -289,6 +277,45 @@
 
   .#{$primary-stylename}-spacer.stripe > td {
     background-color: var(--grid-row-stripe-color);
+  }
+}
+
+@mixin he-grid-selected-row-style($primary-stylename: v-grid) {
+  .#{$primary-stylename}-row-selected {
+    > .#{$primary-stylename}-cell {
+      background: var(--grid-selected-row-background-color);
+      color: var(--grid-selected-row-text-color);
+      border-color: var(--grid-selected-row-border-color);
+      text-shadow: none;
+
+      .v-link,
+      .v-link > a:visited,
+      .v-button-link,
+      .boolean-value:before {
+        color: var(--grid-selected-row-text-color);
+      }
+
+      .v-button-link:focus,
+      .v-button:focus:after {
+        border-color: var(--grid-selected-row-text-color);
+      }
+    }
+
+    > .#{$primary-stylename}-cell-focused:before {
+      border-color: var(--grid-selected-row-focus-ring-color);
+    }
+  }
+}
+
+@mixin he-grid-row-hover-style($primary-stylename: v-grid) {
+  .#{$primary-stylename}-row:hover > td {
+    background-color: var(--grid-hovered-row-background-color);
+    color: var(--grid-hovered-row-text-color);
+  }
+
+  .#{$primary-stylename}-row-selected:hover > td {
+    background: var(--grid-selected-row-background-color);
+    color: var(--grid-selected-row-text-color);
   }
 }
 

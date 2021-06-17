@@ -66,6 +66,10 @@ public class LoadValuesConstraint implements EntityOperationConstraint<LoadValue
         }
 
         for (MetaPropertyPath propertyPath : context.getSelectedPropertyPaths()) {
+            if (propertyPath == null) {
+                return;
+            }
+
             if (!secureOperations.isEntityAttrReadPermitted(propertyPath, policyStore)) {
                 for (Integer index : context.getSelectedIndexes(propertyPath)) {
                     context.addDeniedSelectedIndex(index);

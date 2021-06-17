@@ -21,6 +21,9 @@ import io.jmix.core.Messages;
 import io.jmix.core.metamodel.datatype.FormatStrings;
 import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import io.jmix.core.security.CurrentAuthentication;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioProperty;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -36,7 +39,12 @@ import java.util.Date;
  * {@link Date} formatter to be used in screen descriptors and controllers.
  * <p>
  * This formatter formats the {@link Date} value into a string depending on the format string.
-*/
+ */
+@StudioElement(
+        caption = "DateFormatter",
+        xmlElement = "date",
+        unsupportedTarget = {"io.jmix.ui.component.EntityComboBox", "io.jmix.ui.component.mainwindow.UserIndicator"}
+)
 @Component("ui_DateFormatter")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class DateFormatter implements Formatter<Date> {
@@ -58,6 +66,7 @@ public class DateFormatter implements Formatter<Date> {
      *
      * @param format a format string or a key in message group
      */
+    @StudioProperty(type = PropertyType.LOCALIZED_STRING)
     public void setFormat(String format) {
         this.format = format;
     }
@@ -68,6 +77,7 @@ public class DateFormatter implements Formatter<Date> {
      *
      * @param type a formatter type
      */
+    @StudioProperty(type = PropertyType.ENUMERATION, options = {"DATE", "DATETIME"})
     public void setType(String type) {
         this.type = type;
     }
@@ -78,6 +88,7 @@ public class DateFormatter implements Formatter<Date> {
      * @param useUserTimezone {@code true} if the formatter displays the date and time in the current user's timezone,
      *                        {@code false} otherwise
      */
+    @StudioProperty(defaultValue = "false")
     public void setUseUserTimezone(boolean useUserTimezone) {
         this.useUserTimezone = useUserTimezone;
     }

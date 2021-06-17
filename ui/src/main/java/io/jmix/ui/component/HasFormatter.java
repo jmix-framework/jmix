@@ -17,6 +17,7 @@
 package io.jmix.ui.component;
 
 import io.jmix.ui.component.formatter.Formatter;
+import io.jmix.ui.meta.StudioElementsGroup;
 
 import javax.annotation.Nullable;
 
@@ -27,5 +28,9 @@ public interface HasFormatter<V> {
     @Nullable
     Formatter<V> getFormatter();
 
+    @StudioElementsGroup(
+            xmlElement = "formatter",
+            caption = "Formatter"
+    )
     void setFormatter(@Nullable Formatter<? super V> formatter);
 }

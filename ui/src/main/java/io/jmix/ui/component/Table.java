@@ -24,12 +24,15 @@ import io.jmix.ui.component.data.TableItems;
 import io.jmix.ui.meta.CanvasBehaviour;
 import io.jmix.ui.meta.PropertyType;
 import io.jmix.ui.meta.StudioComponent;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioElementsGroup;
 import io.jmix.ui.meta.StudioProperties;
 import io.jmix.ui.meta.StudioProperty;
 import io.jmix.ui.model.InstanceContainer;
 import org.springframework.core.ParameterizedTypeReference;
 
 import javax.annotation.Nullable;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.Collection;
 import java.util.EventObject;
 import java.util.List;
@@ -80,6 +83,11 @@ public interface Table<E>
      * @return unmodifiable copy of current columns
      * @see #getNotCollapsedColumns()
      */
+    @StudioElementsGroup(
+            xmlElement = "columns",
+            caption = "Columns",
+            icon = "io/jmix/ui/icon/element/columns.svg"
+    )
     List<Column<E>> getColumns();
 
     /**
@@ -706,6 +714,30 @@ public interface Table<E>
      *
      * @param <E> row item type
      */
+    @StudioElement(
+            xmlElement = "column",
+            caption = "Column",
+            icon = "io/jmix/ui/icon/element/column.svg",
+            unsupportedTarget = {"io.jmix.ui.component.GroupTable"}
+    )
+    @StudioProperties(
+            properties = {
+                    @StudioProperty(name = "id", type = PropertyType.COLUMN_ID, required = true),
+                    @StudioProperty(name = "dateFormat", type = PropertyType.DATE_FORMAT),
+                    @StudioProperty(name = "link", type = PropertyType.BOOLEAN, defaultValue = "false"),
+                    @StudioProperty(name = "linkScreenId", type = PropertyType.SCREEN_ID,
+                            options = {"io.jmix.ui.screen.EditorScreen"}),
+                    @StudioProperty(name = "linkScreenOpenMode", type = PropertyType.SCREEN_OPEN_MODE),
+                    @StudioProperty(name = "required", type = PropertyType.BOOLEAN, defaultValue = "false"),
+                    @StudioProperty(name = "requiredMessage", type = PropertyType.LOCALIZED_STRING),
+                    @StudioProperty(name = "resolution", type = PropertyType.ENUMERATION,
+                            options = {"SEC", "MIN", "HOUR", "DAY", "MONTH", "YEAR"}),
+                    @StudioProperty(name = "sort", type = PropertyType.ENUMERATION,
+                            options = {"ASCENDING", "DESCENDING"}),
+                    @StudioProperty(name = "visible", type = PropertyType.BOOLEAN, defaultValue = "true"),
+                    @StudioProperty(name = "optionsContainer", type = PropertyType.COLLECTION_DATACONTAINER_REF)
+            }
+    )
     interface Column<E> extends HasXmlDescriptor, HasHtmlCaption, HasFormatter {
 
         /**
@@ -804,6 +836,7 @@ public interface Table<E>
          *
          * @param editable whether editing is allowed for the corresponding column in the table
          */
+        @StudioProperty(defaultValue = "false")
         void setEditable(boolean editable);
 
         /**
@@ -817,6 +850,8 @@ public interface Table<E>
          *
          * @param alignment a text alignment of column cells
          */
+        @StudioProperty(name = "align", type = PropertyType.ENUMERATION, defaultValue = "LEFT",
+                options = {"LEFT", "CENTER", "RIGHT"})
         void setAlignment(@Nullable ColumnAlignment alignment);
 
         /**
@@ -832,6 +867,8 @@ public interface Table<E>
          *
          * @param width default column width
          */
+        @StudioProperty(defaultValue = "0")
+        @PositiveOrZero
         void setWidth(@Nullable Integer width);
 
         /**
@@ -845,6 +882,7 @@ public interface Table<E>
          *
          * @param collapsed {@code true} to hide the column, {@code false} to show
          */
+        @StudioProperty(defaultValue = "false")
         void setCollapsed(boolean collapsed);
 
         /**
@@ -863,6 +901,7 @@ public interface Table<E>
          *                 column, {@code false} otherwise
          * @see Table#setSortable(boolean)
          */
+        @StudioProperty(defaultValue = "true")
         void setSortable(boolean sortable);
 
         /**
@@ -879,6 +918,7 @@ public interface Table<E>
          * @param maxTextLength the maximum number of characters in a cell
          * @see io.jmix.ui.component.table.AbbreviatedCellClickListener
          */
+        @StudioProperty(defaultValue = "0")
         void setMaxTextLength(@Nullable Integer maxTextLength);
 
         /**
@@ -892,6 +932,7 @@ public interface Table<E>
          *
          * @param aggregation aggregation info
          */
+        @StudioElement
         void setAggregation(@Nullable AggregationInfo aggregation);
 
         /**
@@ -913,6 +954,7 @@ public interface Table<E>
          *              expand at all. A negative number to clear the expand
          *              value.
          */
+        @StudioProperty(name = "expandRatio", defaultValue = "-1.0")
         void setExpandRatio(float ratio);
 
         /**

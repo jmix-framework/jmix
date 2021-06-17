@@ -90,6 +90,12 @@ public enum PropertyType {
      * Identifier of a component, action or sub part. Must be a valid Java identifier.
      */
     COMPONENT_ID,
+
+    /**
+     * Identifier of a column. Must be a valid Java identifier.
+     */
+    COLUMN_ID,
+
     /**
      * Icon path or ID of icon from predefined Jmix icons.
      *

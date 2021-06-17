@@ -18,6 +18,7 @@ package io.jmix.ui.component.formatter;
 
 
 import io.jmix.core.MetadataTools;
+import io.jmix.ui.meta.StudioElement;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -33,6 +34,11 @@ import java.util.stream.Collectors;
  * <p>
  * This formatter formats collection into a string where the elements of the collection are separated by commas.
 */
+@StudioElement(
+        caption = "CollectionFormatter",
+        xmlElement = "collection",
+        unsupportedTarget = {"io.jmix.ui.component.EntityComboBox", "io.jmix.ui.component.mainwindow.UserIndicator"}
+)
 @Component("ui_CollectionFormatter")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class CollectionFormatter implements Formatter<Collection> {

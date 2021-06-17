@@ -19,6 +19,8 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.component.data.GroupInfo;
 import io.jmix.ui.meta.CanvasBehaviour;
 import io.jmix.ui.meta.StudioComponent;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioElementsGroup;
 import io.jmix.ui.meta.StudioProperty;
 import org.springframework.core.ParameterizedTypeReference;
 
@@ -48,6 +50,15 @@ public interface GroupTable<E> extends Table<E> {
         return new ParameterizedTypeReference<GroupTable<T>>() {
         };
     }
+
+    @StudioElementsGroup(
+            xmlElement = "group",
+            caption = "Group",
+            icon = "io/jmix/ui/icon/element/group.svg",
+            elementXmlName = "column"
+    )
+    @Override
+    List<Column<E>> getColumns();
 
     /**
      * Performs grouping by the given {@code properties}.
@@ -124,6 +135,12 @@ public interface GroupTable<E> extends Table<E> {
      *
      * @param <E> row item type
      */
+    @StudioElement(
+            xmlElement = "column",
+            caption = "Column",
+            icon = "io/jmix/ui/icon/element/column.svg",
+            target = {"io.jmix.ui.component.GroupTable"}
+    )
     interface GroupColumn<E> extends Column<E> {
 
         /**
@@ -136,6 +153,7 @@ public interface GroupTable<E> extends Table<E> {
          *
          * @param groupAllowed whether a user can group by this column
          */
+        @StudioProperty(defaultValue = "true")
         void setGroupAllowed(boolean groupAllowed);
     }
 

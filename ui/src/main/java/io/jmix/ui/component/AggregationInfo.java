@@ -18,9 +18,23 @@ package io.jmix.ui.component;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.component.data.aggregation.AggregationStrategy;
 import io.jmix.ui.component.formatter.Formatter;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioElementsGroup;
+import io.jmix.ui.meta.StudioProperties;
+import io.jmix.ui.meta.StudioProperty;
 
 import javax.annotation.Nullable;
 
+@StudioElement(
+        caption = "Aggregation",
+        xmlElement = "aggregation"
+)
+@StudioProperties(
+        properties = {
+                @StudioProperty(name = "valueDescription", type = PropertyType.LOCALIZED_STRING)
+        }
+)
 public class AggregationInfo {
 
     public enum Type {
@@ -56,6 +70,7 @@ public class AggregationInfo {
         return type;
     }
 
+    @StudioProperty(type = PropertyType.ENUMERATION, options = {"SUM", "COUNT", "AVG", "MIN", "MAX"})
     public void setType(Type type) {
         this.type = type;
     }
@@ -65,6 +80,10 @@ public class AggregationInfo {
         return formatter;
     }
 
+    @StudioElementsGroup(
+            xmlElement = "formatter",
+            caption = "Formatter"
+    )
     public void setFormatter(Formatter<Object> formatter) {
         this.formatter = formatter;
     }
@@ -74,6 +93,7 @@ public class AggregationInfo {
         return strategy;
     }
 
+    @StudioProperty(name = "strategy", type = PropertyType.JAVA_CLASS_NAME)
     public void setStrategy(@Nullable AggregationStrategy strategy) {
         if (strategy != null) {
             setType(Type.CUSTOM);
@@ -85,6 +105,7 @@ public class AggregationInfo {
         return editable;
     }
 
+    @StudioProperty(defaultValue = "false")
     public void setEditable(boolean editable) {
         this.editable = editable;
     }

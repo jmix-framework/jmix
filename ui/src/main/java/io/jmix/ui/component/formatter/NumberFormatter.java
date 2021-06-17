@@ -23,6 +23,9 @@ import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.datatype.FormatStrings;
 import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import io.jmix.core.security.CurrentAuthentication;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -36,6 +39,11 @@ import java.text.DecimalFormat;
  * <p>
  * This formatter formats the {@link Number} value into a string depending on the format string.
 */
+@StudioElement(
+        caption = "NumberFormatter",
+        xmlElement = "number",
+        unsupportedTarget = {"io.jmix.ui.component.mainwindow.UserIndicator"}
+)
 @Component("ui_NumberFormatter")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class NumberFormatter implements Formatter<Number> {
@@ -57,6 +65,7 @@ public class NumberFormatter implements Formatter<Number> {
      *
      * @param format a format string or a key in message group
      */
+    @StudioProperty(type = PropertyType.LOCALIZED_STRING)
     public void setFormat(String format) {
         this.format = format;
     }

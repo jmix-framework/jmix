@@ -27,6 +27,8 @@ import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.meta.CanvasBehaviour;
 import io.jmix.ui.meta.PropertyType;
 import io.jmix.ui.meta.StudioComponent;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioElementsGroup;
 import io.jmix.ui.meta.StudioProperties;
 import io.jmix.ui.meta.StudioProperty;
 import io.jmix.ui.model.InstanceContainer;
@@ -34,6 +36,7 @@ import org.springframework.core.ParameterizedTypeReference;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.PositiveOrZero;
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.NumberFormat;
@@ -82,6 +85,11 @@ public interface DataGrid<E> extends ListComponent<E>, HasButtonsPanel, Componen
      * @return unmodifiable copy of current columns
      * @see #getVisibleColumns()
      */
+    @StudioElementsGroup(
+            xmlElement = "columns",
+            caption = "Columns",
+            icon = "io/jmix/ui/icon/element/columns.svg"
+    )
     List<Column<E>> getColumns();
 
     /**
@@ -2335,6 +2343,22 @@ public interface DataGrid<E> extends ListComponent<E>, HasButtonsPanel, Componen
     /**
      * A column in the DataGrid.
      */
+    @StudioElement(
+            xmlElement = "column",
+            caption = "Column",
+            icon = "io/jmix/ui/icon/element/column.svg",
+            unsupportedTarget = {"io.jmix.ui.component.GroupTable"}
+    )
+    @StudioProperties(
+            properties = {
+                    @StudioProperty(name = "id", type = PropertyType.COLUMN_ID),
+                    @StudioProperty(name = "property", type = PropertyType.COLUMN_ID, required = true),
+                    @StudioProperty(name = "box.expandRatio", type = PropertyType.FLOAT, defaultValue = "0.0"),
+                    @StudioProperty(name = "sort", type = PropertyType.ENUMERATION,
+                            options = {"ASCENDING", "DESCENDING"}),
+                    @StudioProperty(name = "optionsContainer", type = PropertyType.COLLECTION_DATACONTAINER_REF)
+            }
+    )
     interface Column<E> extends Serializable {
 
         /**
@@ -2362,6 +2386,7 @@ public interface DataGrid<E> extends ListComponent<E>, HasButtonsPanel, Componen
          *
          * @param caption the text to show in the caption
          */
+        @StudioProperty(type = PropertyType.LOCALIZED_STRING)
         void setCaption(String caption);
 
         /**
@@ -2383,6 +2408,7 @@ public interface DataGrid<E> extends ListComponent<E>, HasButtonsPanel, Componen
          *
          * @param collapsingToggleCaption the text to show in the column hiding toggle
          */
+        @StudioProperty(type = PropertyType.LOCALIZED_STRING)
         void setCollapsingToggleCaption(@Nullable String collapsingToggleCaption);
 
         /**
@@ -2399,6 +2425,8 @@ public interface DataGrid<E> extends ListComponent<E>, HasButtonsPanel, Componen
          *
          * @param width the new pixel width of the column
          */
+        @StudioProperty(defaultValue = "0")
+        @PositiveOrZero
         void setWidth(double width);
 
         /**
@@ -2444,6 +2472,7 @@ public interface DataGrid<E> extends ListComponent<E>, HasButtonsPanel, Componen
          *                    value.
          * @see #setWidth(double)
          */
+        @StudioProperty(name = "expandRatio", defaultValue = "0")
         void setExpandRatio(int expandRatio);
 
         /**
@@ -2469,6 +2498,8 @@ public interface DataGrid<E> extends ListComponent<E>, HasButtonsPanel, Componen
          * @see #setWidth(double)
          * @see #setExpandRatio(int)
          */
+        @StudioProperty(name = "minimumWidth", defaultValue = "0")
+        @PositiveOrZero
         void setMinimumWidth(double pixels);
 
         /**
@@ -2487,6 +2518,8 @@ public interface DataGrid<E> extends ListComponent<E>, HasButtonsPanel, Componen
          * @see #setWidth(double)
          * @see #setExpandRatio(int)
          */
+        @StudioProperty(name = "maximumWidth", defaultValue = "0")
+        @PositiveOrZero
         void setMaximumWidth(double pixels);
 
         /**
@@ -2514,6 +2547,7 @@ public interface DataGrid<E> extends ListComponent<E>, HasButtonsPanel, Componen
          *
          * @param collapsed {@code true} to hide the column, {@code false} to show
          */
+        @StudioProperty(defaultValue = "false")
         void setCollapsed(boolean collapsed);
 
         /**
@@ -2536,6 +2570,7 @@ public interface DataGrid<E> extends ListComponent<E>, HasButtonsPanel, Componen
          * @see DataGrid#isColumnsCollapsingAllowed()
          * @see DataGrid#setColumnsCollapsingAllowed(boolean)
          */
+        @StudioProperty(defaultValue = "true")
         void setCollapsible(boolean collapsible);
 
         /**
@@ -2554,6 +2589,7 @@ public interface DataGrid<E> extends ListComponent<E>, HasButtonsPanel, Componen
          *                 column, {@code false} otherwise
          * @see DataGrid#setSortable(boolean)
          */
+        @StudioProperty(defaultValue = "true")
         void setSortable(boolean sortable);
 
         /**
@@ -2573,6 +2609,7 @@ public interface DataGrid<E> extends ListComponent<E>, HasButtonsPanel, Componen
          *
          * @param resizable {@code true} if this column should be resizable, {@code false} otherwise
          */
+        @StudioProperty(defaultValue = "true")
         void setResizable(boolean resizable);
 
         /**
@@ -2638,6 +2675,7 @@ public interface DataGrid<E> extends ListComponent<E>, HasButtonsPanel, Componen
          * @see DataGrid#edit(Object)
          * @see DataGrid#isEditorActive()
          */
+        @StudioProperty(defaultValue = "true")
         void setEditable(boolean editable);
 
         /**
@@ -2732,6 +2770,7 @@ public interface DataGrid<E> extends ListComponent<E>, HasButtonsPanel, Componen
          * @param info aggregation info
          * @see DataGrid#setAggregatable(boolean)
          */
+        @StudioElement
         void setAggregation(@Nullable AggregationInfo info);
 
         /**

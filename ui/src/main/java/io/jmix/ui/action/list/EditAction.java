@@ -244,7 +244,7 @@ public class EditAction<E> extends SecuredListAction
 
     @Override
     protected boolean isPermitted() {
-        if (target == null || !(target.getItems() instanceof EntityDataUnit)) {
+        if (target == null || target.getSingleSelected() == null || !(target.getItems() instanceof EntityDataUnit)) {
             return false;
         }
 
@@ -255,20 +255,14 @@ public class EditAction<E> extends SecuredListAction
 
         UiEntityContext entityContext = new UiEntityContext(metaClass);
         accessManager.applyRegisteredConstraints(entityContext);
-        InMemoryCrudEntityContext context = new InMemoryCrudEntityContext(metaClass);
-        accessManager.applyRegisteredConstraints(context);
+        InMemoryCrudEntityContext inMemoryCrudEntityContext = new InMemoryCrudEntityContext(metaClass);
+        accessManager.applyRegisteredConstraints(inMemoryCrudEntityContext);
 
-        if (!entityContext.isViewPermitted() || !entityContext.isEditPermitted()) {
+        if (!entityContext.isViewPermitted() && !entityContext.isEditPermitted()) {
             return false;
         }
 
-        Object entity = target.getSingleSelected();
-
-        if (entity == null) {
-            return false;
-        }
-
-        if (context.updatePredicate() != null) {
+        if (inMemoryCrudEntityContext.updatePredicate() != null) {
             return true;
         }
 

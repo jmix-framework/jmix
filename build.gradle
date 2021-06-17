@@ -1,3 +1,5 @@
+// test 2
+
 buildscript {
     repositories {
         if (rootProject.hasProperty('jmixRepoUrl')) {

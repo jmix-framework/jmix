@@ -595,12 +595,14 @@ public class JmixEclipseLinkQuery<E> implements JmixQuery<E> {
             if (parser.isCollectionOriginalEntitySelect()) {
                 throw new IllegalStateException(String.format("Collection attributes are not supported in select clause: %s", nestedEntityPath));
             }
-            QueryTransformer transformer = queryTransformerFactory.transformer(result);
-            transformer.replaceWithSelectEntityVariable("tempEntityAlias");
-            transformer.addFirstSelectionSource(String.format("%s tempEntityAlias", nestedEntityName));
-            transformer.addWhereAsIs(String.format("tempEntityAlias.id = %s.id", nestedEntityPath));
-            transformer.addEntityInGroupBy("tempEntityAlias");
-            result = transformer.getResult();
+            if (!metadataTools.isJpaEmbeddable(metadata.getClass(nestedEntityName))) {
+                QueryTransformer transformer = queryTransformerFactory.transformer(result);
+                transformer.replaceWithSelectEntityVariable("tempEntityAlias");
+                transformer.addFirstSelectionSource(String.format("%s tempEntityAlias", nestedEntityName));
+                transformer.addWhereAsIs(String.format("tempEntityAlias.id = %s.id", nestedEntityPath));
+                transformer.addEntityInGroupBy("tempEntityAlias");
+                result = transformer.getResult();
+            }
         }
 
         result = replaceIsNullAndIsNotNullStatements(result);

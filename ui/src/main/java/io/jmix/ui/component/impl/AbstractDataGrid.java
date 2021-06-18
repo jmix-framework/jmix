@@ -59,6 +59,7 @@ import io.jmix.ui.component.data.DataUnit;
 import io.jmix.ui.component.data.ValueSourceProvider;
 import io.jmix.ui.component.data.aggregation.Aggregation;
 import io.jmix.ui.component.data.aggregation.Aggregations;
+import io.jmix.ui.component.data.aggregation.impl.AggregatableDelegate;
 import io.jmix.ui.component.data.meta.ContainerDataUnit;
 import io.jmix.ui.component.data.meta.EmptyDataUnit;
 import io.jmix.ui.component.data.meta.EntityDataGridItems;
@@ -77,7 +78,6 @@ import io.jmix.ui.component.valueprovider.EntityValueProvider;
 import io.jmix.ui.component.valueprovider.FormatterBasedValueProvider;
 import io.jmix.ui.component.valueprovider.StringPresentationValueProvider;
 import io.jmix.ui.component.valueprovider.YesNoIconPresentationValueProvider;
-import io.jmix.ui.component.data.aggregation.impl.AggregatableDelegate;
 import io.jmix.ui.icon.IconResolver;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.DataComponents;
@@ -3542,12 +3542,8 @@ public abstract class AbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E>, 
 
         protected boolean isEditingPermitted() {
             if (propertyPath != null) {
-                MetaClass metaClass = propertyPath.getMetaClass();
-
-                UiEntityAttributeContext attributeContext =
-                        new UiEntityAttributeContext(metaClass, propertyPath.toString());
+                UiEntityAttributeContext attributeContext = new UiEntityAttributeContext(propertyPath);
                 owner.accessManager.applyRegisteredConstraints(attributeContext);
-
                 return attributeContext.canModify();
             }
             return true;

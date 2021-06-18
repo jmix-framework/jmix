@@ -463,6 +463,7 @@ public class BandDefinitionEditor extends ScreenFragment implements Suggester {
                 case JPQL:
                     textParamsBox.add(dataStoreField);
                     dataSetScriptBox.add(isProcessTemplateField);
+                    editPane.add(dataSetScriptBox);
                     break;
                 case GROOVY:
                     editPane.add(dataSetScriptBox);

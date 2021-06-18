@@ -20,6 +20,9 @@ import io.jmix.ui.component.ActionOwner;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.KeyCombination;
 import io.jmix.ui.component.ListComponent;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioCollection;
+import io.jmix.ui.meta.StudioProperty;
 import io.jmix.ui.screen.Install;
 import io.jmix.ui.screen.OpenMode;
 import io.jmix.ui.screen.Screen;
@@ -111,6 +114,17 @@ public interface Action {
      * data. At this moment the action can find out what entity it is connected to and change its state
      * according to the user permissions.
      */
+    @StudioCollection(
+            xmlElement = "properties",
+            itemXmlElement = "property",
+            itemCaption = "Property",
+            icon = "io/jmix/ui/icon/element/properties.svg",
+            itemIcon = "io/jmix/ui/icon/element/property.svg",
+            itemProperties = {
+                    @StudioProperty(name = "name", type = PropertyType.STRING, required = true),
+                    @StudioProperty(name = "value", type = PropertyType.STRING)
+            }
+    )
     void refreshState();
 
     /**

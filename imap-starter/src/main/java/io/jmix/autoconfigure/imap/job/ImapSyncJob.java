@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Haulmont.
+ * Copyright 2021 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,21 @@
  * limitations under the License.
  */
 
-group = 'io.jmix.imap'
-archivesBaseName = 'jmix-imap-starter'
+package io.jmix.autoconfigure.imap.job;
 
+import io.jmix.imap.ImapScheduler;
+import org.quartz.Job;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
+import org.springframework.beans.factory.annotation.Autowired;
 
-dependencies {
-    api project(':imap')
+public class ImapSyncJob implements Job {
 
-    compileOnly 'org.springframework.boot:spring-boot-starter-quartz'
-    implementation 'org.springframework.boot:spring-boot-autoconfigure'
+    @Autowired
+    private ImapScheduler imapScheduler;
 
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testRuntimeOnly 'org.hsqldb:hsqldb'
+    @Override
+    public void execute(JobExecutionContext context) throws JobExecutionException {
+        imapScheduler.syncImap();
+    }
 }

@@ -29,19 +29,23 @@ public class ImapProperties {
     boolean debug;
     int timeoutSeconds;
     int eventsBatchSize;
+    String useDefaultQuartzConfiguration;
+    String imapSyncCron;
 
     public ImapProperties(@DefaultValue("false") boolean trustAllCertificates,
                           @DefaultValue("100") int updateBatchSize,
                           @DefaultValue("false") boolean clearCustomFlags,
                           @DefaultValue("false") boolean debug,
                           @DefaultValue("5") int timeoutSeconds,
-                          @DefaultValue("20") int eventsBatchSize) {
+                          @DefaultValue("20") int eventsBatchSize,
+                          @DefaultValue("0 * * * * ?") String imapSyncCron) {
         this.trustAllCertificates = trustAllCertificates;
         this.updateBatchSize = updateBatchSize;
         this.clearCustomFlags = clearCustomFlags;
         this.debug = debug;
         this.timeoutSeconds = timeoutSeconds;
         this.eventsBatchSize = eventsBatchSize;
+        this.imapSyncCron = imapSyncCron;
     }
 
     public boolean isTrustAllCertificates() {
@@ -66,5 +70,19 @@ public class ImapProperties {
 
     public int getEventsBatchSize() {
         return eventsBatchSize;
+    }
+
+    /**
+     * @return true if default Imap Sync quartz scheduling configuration is used. False otherwise
+     */
+    public String getUseDefaultQuartzConfiguration() {
+        return useDefaultQuartzConfiguration;
+    }
+
+    /**
+     * @return CRON expression that is used by default Imap Sync quartz scheduling configuration
+     */
+    public String getImapSyncCron() {
+        return imapSyncCron;
     }
 }

@@ -54,6 +54,8 @@ public class ESIndexManagerImpl implements ESIndexManager {
     protected IndexConfigurationManager indexConfigurationManager;
     @Autowired
     protected SearchProperties searchProperties;
+    @Autowired
+    protected IndexStateRegistry indexStateRegistry;
 
     protected ObjectMapper objectMapper = new ObjectMapper();
 
@@ -77,6 +79,9 @@ public class ESIndexManagerImpl implements ESIndexManager {
             throw new RuntimeException("Unable to create index '" + indexConfiguration.getIndexName() + "': Request failed", e);
         }
         log.info("Result of index '{}' creation: {}", indexConfiguration.getIndexName(), response.isAcknowledged() ? "Success" : "Failure");
+        if (response.isAcknowledged()) {
+            indexStateRegistry.markIndexAsAvailable(indexConfiguration.getEntityName());
+        }
         return response.isAcknowledged();
     }
 
@@ -84,9 +89,11 @@ public class ESIndexManagerImpl implements ESIndexManager {
     public boolean dropIndex(String indexName) {
         Preconditions.checkNotNullArgument(indexName);
 
+        IndexConfiguration indexConfiguration = indexConfigurationManager.getIndexConfigurationByIndexName(indexName);
         DeleteIndexRequest request = new DeleteIndexRequest(indexName);
         AcknowledgedResponse response;
         try {
+            indexStateRegistry.markIndexAsUnavailable(indexConfiguration.getEntityName());
             response = esClient.indices().delete(request, RequestOptions.DEFAULT);
         } catch (IOException e) {
             throw new RuntimeException("Unable to delete index '" + indexName + "': Request failed", e);
@@ -182,13 +189,18 @@ public class ESIndexManagerImpl implements ESIndexManager {
         if (isIndexExist(indexConfiguration.getIndexName())) {
             if (isIndexActual(indexConfiguration)) {
                 status = IndexValidationStatus.ACTUAL;
+                indexStateRegistry.markIndexAsAvailable(indexConfiguration.getEntityName());
             } else {
                 status = IndexValidationStatus.IRRELEVANT;
+                indexStateRegistry.markIndexAsUnavailable(indexConfiguration.getEntityName());
             }
         } else {
             status = IndexValidationStatus.MISSING;
+            indexStateRegistry.markIndexAsUnavailable(indexConfiguration.getEntityName());
         }
 
+        log.info("Validation status of search index '{}' (entity '{}'): {}",
+                indexConfiguration.getIndexName(), indexConfiguration.getEntityName(), status);
         return status;
     }
 
@@ -231,24 +243,24 @@ public class ESIndexManagerImpl implements ESIndexManager {
     }
 
     protected IndexSynchronizationStatus synchronizeIndexSchema(IndexConfiguration indexConfiguration, IndexSchemaManagementStrategy strategy) {
-        log.info("Synchronize search index '{}' according to strategy '{}'", indexConfiguration.getIndexName(), strategy);
-        IndexSynchronizationStatus result;
+        log.info("Synchronize search index '{}' (entity '{}') according to strategy '{}'",
+                indexConfiguration.getIndexName(), indexConfiguration.getEntityName(), strategy);
+        IndexSynchronizationStatus status;
         boolean indexExist = isIndexExist(indexConfiguration.getIndexName());
         if (indexExist) {
-            log.info("Index '{}' already exists", indexConfiguration.getIndexName());
             boolean indexActual = isIndexActual(indexConfiguration);
             if (indexActual) {
-                log.info("Index '{}' has actual configuration", indexConfiguration.getIndexName());
-                result = IndexSynchronizationStatus.ACTUAL;
+                status = IndexSynchronizationStatus.ACTUAL;
+                indexStateRegistry.markIndexAsAvailable(indexConfiguration.getEntityName());
             } else {
-                log.info("Index '{}' has irrelevant configuration", indexConfiguration.getIndexName());
-                result = handleIrrelevantIndex(indexConfiguration, strategy);
+                status = handleIrrelevantIndex(indexConfiguration, strategy);
             }
         } else {
-            log.info("Index '{}' does not exists. Create", indexConfiguration.getIndexName());
-            result = handleMissingIndex(indexConfiguration, strategy);
+            status = handleMissingIndex(indexConfiguration, strategy);
         }
-        return result;
+        log.info("Synchronization status of search index '{}' (entity '{}'): {}",
+                indexConfiguration.getIndexName(), indexConfiguration.getEntityName(), status);
+        return status;
     }
 
     protected IndexSynchronizationStatus handleIrrelevantIndex(IndexConfiguration indexConfiguration, IndexSchemaManagementStrategy strategy) {
@@ -257,22 +269,32 @@ public class ESIndexManagerImpl implements ESIndexManager {
             boolean created = recreateIndex(indexConfiguration);
             if (created) {
                 status = IndexSynchronizationStatus.RECREATED;
+                indexStateRegistry.markIndexAsAvailable(indexConfiguration.getEntityName());
             } else {
                 status = IndexSynchronizationStatus.IRRELEVANT;
+                indexStateRegistry.markIndexAsUnavailable(indexConfiguration.getEntityName());
             }
         } else {
             status = IndexSynchronizationStatus.IRRELEVANT;
+            indexStateRegistry.markIndexAsUnavailable(indexConfiguration.getEntityName());
         }
         return status;
     }
 
     protected IndexSynchronizationStatus handleMissingIndex(IndexConfiguration indexConfiguration, IndexSchemaManagementStrategy strategy) {
         IndexSynchronizationStatus status;
-        boolean created = createIndex(indexConfiguration);
-        if (created) {
-            status = IndexSynchronizationStatus.CREATED;
-        } else {
+
+        if (IndexSchemaManagementStrategy.NONE.equals(strategy)) {
             status = IndexSynchronizationStatus.MISSING;
+        } else {
+            boolean created = createIndex(indexConfiguration);
+            if (created) {
+                status = IndexSynchronizationStatus.CREATED;
+                indexStateRegistry.markIndexAsAvailable(indexConfiguration.getEntityName());
+            } else {
+                status = IndexSynchronizationStatus.MISSING;
+                indexStateRegistry.markIndexAsUnavailable(indexConfiguration.getEntityName());
+            }
         }
         return status;
     }

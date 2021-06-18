@@ -22,6 +22,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum IndexSchemaManagementStrategy {
+
+    /**
+     * Does nothing.
+     */
+    NONE("none"),
     /**
      * Creates missing but skips existent indexes.
      */

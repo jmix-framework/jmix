@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -47,6 +48,8 @@ public class StartupIndexSynchronizer {
     protected IndexingQueueManager indexingQueueManager;
     @Autowired
     protected SearchProperties searchProperties;
+    @Autowired
+    protected IndexStateRegistry indexStateRegistry;
 
     protected final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
@@ -55,25 +58,44 @@ public class StartupIndexSynchronizer {
         try {
             log.info("Start initial index synchronization");
             Map<IndexConfiguration, IndexSynchronizationStatus> indexSynchronizationResults = esIndexManager.synchronizeIndexSchemas();
-            List<IndexConfiguration> indexConfigurationsToEnqueueAll = indexSynchronizationResults.entrySet().stream()
-                    .peek(entry -> log.info("Synchronization Result: Entity={}, Index={}, Status={}",
-                            entry.getKey().getEntityName(),
-                            entry.getKey().getIndexName(),
-                            entry.getValue()))
-                    .filter(entry -> searchProperties.isEnqueueIndexAllOnStartupIndexRecreationEnabled())
-                    .filter(entry -> {
-                        IndexSynchronizationStatus status = entry.getValue();
-                        return IndexSynchronizationStatus.CREATED.equals(status) || IndexSynchronizationStatus.RECREATED.equals(status);
-                    })
-                    .map(Map.Entry::getKey)
-                    .filter(config -> {
-                        List<String> entitiesAllowedToEnqueue = searchProperties.getEnqueueIndexAllOnStartupIndexRecreationEntities();
-                        return entitiesAllowedToEnqueue.isEmpty() || entitiesAllowedToEnqueue.contains(config.getEntityName());
-                    })
-                    .collect(Collectors.toList());
-            executorService.submit(() -> indexConfigurationsToEnqueueAll.forEach(config -> enqueueEntity(config.getEntityName())));
-            log.info("Finish initial index synchronization");
 
+            List<IndexConfiguration> enqueueAllCandidates = new ArrayList<>();
+            List<IndexConfiguration> available = new ArrayList<>();
+            List<IndexConfiguration> unavailable = new ArrayList<>();
+            indexSynchronizationResults.forEach((config, status) -> {
+                log.info("Synchronization Result: Entity={}, Index={}, Status={}",
+                        config.getEntityName(),
+                        config.getIndexName(),
+                        status);
+                switch (status) {
+                    case CREATED:
+                    case RECREATED:
+                        enqueueAllCandidates.add(config);
+                        available.add(config);
+                        break;
+                    case IRRELEVANT:
+                    case MISSING:
+                        unavailable.add(config);
+                        break;
+                    default:
+                        available.add(config);
+                }
+            });
+
+            available.forEach(config -> indexStateRegistry.markIndexAsAvailable(config.getEntityName()));
+            unavailable.forEach(config -> indexStateRegistry.markIndexAsUnavailable(config.getEntityName()));
+
+            if (searchProperties.isEnqueueIndexAllOnStartupIndexRecreationEnabled()) {
+                List<IndexConfiguration> indexConfigurationsToEnqueueAll = enqueueAllCandidates.stream()
+                        .filter(config -> {
+                            List<String> entitiesAllowedToEnqueue = searchProperties.getEnqueueIndexAllOnStartupIndexRecreationEntities();
+                            return entitiesAllowedToEnqueue.isEmpty() || entitiesAllowedToEnqueue.contains(config.getEntityName());
+                        })
+                        .collect(Collectors.toList());
+                executorService.submit(() -> indexConfigurationsToEnqueueAll.forEach(config -> enqueueEntity(config.getEntityName())));
+            }
+
+            log.info("Finish initial index synchronization");
         } catch (Exception e) {
             log.error("Failed to synchronize indexes", e);
         }

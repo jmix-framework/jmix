@@ -26,6 +26,7 @@ import io.jmix.search.SearchProperties;
 import io.jmix.search.index.EntityIndexer;
 import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.IndexResult;
+import io.jmix.search.index.impl.IndexStateRegistry;
 import io.jmix.search.index.impl.IndexingLocker;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.index.queue.IndexingQueueManager;
@@ -71,6 +72,8 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
     protected IndexingLocker locker;
     @Autowired
     protected SearchProperties searchProperties;
+    @Autowired
+    protected IndexStateRegistry indexStateRegistry;
 
     @Override
     public void emptyQueue(String entityName) {
@@ -274,10 +277,10 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
 
             List<IndexingQueueItem> queueItems;
             do {
-                queueItems = dataManager.load(IndexingQueueItem.class)
-                        .query("select q from search_IndexingQueue q order by q.createdDate asc")
-                        .maxResults(batchSize)
-                        .list();
+                List<String> unavailableEntities = indexStateRegistry.getAllUnavailableIndexedEntities();
+                LoadContext<IndexingQueueItem> loadContext = createDequeueLoadContext(unavailableEntities, batchSize);
+                log.trace("Dequeue items by load context: {}", loadContext);
+                queueItems = dataManager.loadList(loadContext);
                 log.debug("Dequeued {} items: {}", queueItems.size(), queueItems);
 
                 if (queueItems.isEmpty()) {
@@ -298,6 +301,20 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
 
         log.debug("{} queue items have been successfully processed", count);
         return count;
+    }
+
+    protected LoadContext<IndexingQueueItem> createDequeueLoadContext(List<String> unavailableEntities, int batchSize) {
+        LoadContext.Query query = new LoadContext.Query("");
+        StringBuilder sb = new StringBuilder("select q from search_IndexingQueue q");
+        if (!unavailableEntities.isEmpty()) {
+            sb.append(" where q.entityName not in :unavailableEntities");
+            query.setParameter("unavailableEntities", unavailableEntities);
+        }
+        sb.append(" order by q.createdDate asc");
+        query.setQueryString(sb.toString());
+        query.setMaxResults(batchSize);
+
+        return new LoadContext<IndexingQueueItem>(metadata.getClass(IndexingQueueItem.class)).setQuery(query);
     }
 
     protected List<IndexingQueueItem> processQueueItems(List<IndexingQueueItem> queueItems) {

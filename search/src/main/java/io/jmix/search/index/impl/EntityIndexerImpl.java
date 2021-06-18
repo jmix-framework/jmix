@@ -63,6 +63,8 @@ public class EntityIndexerImpl implements EntityIndexer {
     protected Metadata metadata;
     @Autowired
     protected IdSerialization idSerialization;
+    @Autowired
+    protected IndexStateRegistry indexStateRegistry;
 
     protected ObjectMapper objectMapper = new ObjectMapper();
 
@@ -122,8 +124,10 @@ public class EntityIndexerImpl implements EntityIndexer {
         BulkRequest request = new BulkRequest();
         for (Map.Entry<IndexConfiguration, Collection<Object>> entry : groupedInstancesForIndexing.entrySet()) {
             IndexConfiguration indexConfiguration = entry.getKey();
-            for (Object instance : entry.getValue()) {
-                addIndexActionToBulkRequest(request, indexConfiguration, instance);
+            if (indexStateRegistry.isIndexAvailable(indexConfiguration.getEntityName())) {
+                for (Object instance : entry.getValue()) {
+                    addIndexActionToBulkRequest(request, indexConfiguration, instance);
+                }
             }
         }
 

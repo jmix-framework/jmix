@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Haulmont.
+ * Copyright 2021 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +14,21 @@
  * limitations under the License.
  */
 
-group = 'io.jmix.email'
-archivesBaseName = 'jmix-email-starter'
+package io.jmix.autoconfigure.email.job;
 
-dependencies {
-    api project(':email')
+import io.jmix.email.Emailer;
+import org.quartz.Job;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
+import org.springframework.beans.factory.annotation.Autowired;
 
-    implementation 'org.springframework.boot:spring-boot-autoconfigure'
+public class EmailSendingJob implements Job {
 
-    compileOnly 'org.springframework.boot:spring-boot-starter-quartz'
-    implementation 'org.springframework.boot:spring-boot-starter-mail'
+    @Autowired
+    private Emailer emailer;
 
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testRuntimeOnly 'org.hsqldb:hsqldb'
+    @Override
+    public void execute(JobExecutionContext context) throws JobExecutionException {
+        emailer.processQueuedEmails();
+    }
 }

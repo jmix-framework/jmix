@@ -35,6 +35,8 @@ public class EmailerProperties {
     boolean sendAllToAdmin;
     boolean useFileStorage;
     String asyncSendingUsername;
+    String useDefaultQuartzConfiguration;
+    String emailSendingCron;
 
     public EmailerProperties(@DefaultValue("DoNotReply@localhost") String fromAddress,
                              @DefaultValue("2") int scheduledSendingDelayCallCount,
@@ -44,7 +46,8 @@ public class EmailerProperties {
                              @DefaultValue("admin@localhost") String adminAddress,
                              @DefaultValue("false") boolean sendAllToAdmin,
                              @DefaultValue("false") boolean useFileStorage,
-                             @DefaultValue("admin") String asyncSendingUsername) {
+                             @DefaultValue("admin") String asyncSendingUsername,
+                             @DefaultValue("0 * * * * ?") String emailSendingCron) {
         this.fromAddress = fromAddress;
         this.scheduledSendingDelayCallCount = scheduledSendingDelayCallCount;
         this.messageQueueCapacity = messageQueueCapacity;
@@ -54,6 +57,7 @@ public class EmailerProperties {
         this.sendAllToAdmin = sendAllToAdmin;
         this.useFileStorage = useFileStorage;
         this.asyncSendingUsername = asyncSendingUsername;
+        this.emailSendingCron = emailSendingCron;
     }
 
     /**
@@ -136,5 +140,21 @@ public class EmailerProperties {
      */
     public String getAsyncSendingUsername() {
         return asyncSendingUsername;
+    }
+
+    /**
+     *
+     * @return true if default Email Sending quartz scheduling configuration is used. False otherwise
+     */
+    public String getUseDefaultQuartzConfiguration() {
+        return useDefaultQuartzConfiguration;
+    }
+
+    /**
+     *
+     * @return CRON expression that is used by default Email Sending quartz scheduling configuration
+     */
+    public String getEmailSendingCron() {
+        return emailSendingCron;
     }
 }

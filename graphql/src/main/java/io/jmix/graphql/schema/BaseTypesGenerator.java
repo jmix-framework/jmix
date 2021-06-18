@@ -17,10 +17,7 @@
 package io.jmix.graphql.schema;
 
 import graphql.Scalars;
-import graphql.schema.GraphQLArgument;
-import graphql.schema.GraphQLInputObjectField;
-import graphql.schema.GraphQLList;
-import graphql.schema.GraphQLTypeReference;
+import graphql.schema.*;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.graphql.MetadataUtils;
@@ -77,7 +74,7 @@ public class BaseTypesGenerator {
     public static GraphQLArgument argNonNull(String id, String type) {
         return GraphQLArgument.newArgument()
                 .name(id)
-                .type(new GraphQLTypeReference(type))
+                .type(GraphQLNonNull.nonNull(new GraphQLTypeReference(type)))
                 .build();
     }
 

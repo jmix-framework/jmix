@@ -76,7 +76,7 @@ type scr_Car {
 }
 
 type Query {
-  scr_CarById(id: String): scr_Car
+  scr_CarById(id: String!): scr_Car
 
    scr_CarCount(
       "expressions to compare scr_Car objects, all items are combined with logical 'AND'"
@@ -97,8 +97,8 @@ type Query {
 }
 
 type Mutation {
-  upsert_scr_Car(car: inp_scr_Car): scr_Car
-   delete_scr_Car(id: String): Void
+  upsert_scr_Car(car: inp_scr_Car!): scr_Car
+   delete_scr_Car(id: String!): Void
 }
 ```
 More schema details and additional types such as filter types and scalars could be found in 

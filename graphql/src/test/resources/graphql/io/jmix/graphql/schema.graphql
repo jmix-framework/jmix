@@ -1,67 +1,67 @@
 "Mutation root"
 type Mutation {
-  delete_scr_AssociationM2MTestEntity(id: String): Void
-  delete_scr_AssociationM2OTestEntity(id: String): Void
-  delete_scr_AssociationO2MTestEntity(id: String): Void
-  delete_scr_AssociationO2OTestEntity(id: String): Void
-  delete_scr_BoringStringIdTestEntity(id: String): Void
-  delete_scr_Car(id: String): Void
-  delete_scr_CarRent(id: String): Void
-  delete_scr_CompositionO2MTestEntity(id: String): Void
-  delete_scr_CompositionO2OTestEntity(id: String): Void
-  delete_scr_Customer(id: String): Void
-  delete_scr_DatatypesTestEntity(id: String): Void
-  delete_scr_DatatypesTestEntity2(id: String): Void
-  delete_scr_DatatypesTestEntity3(id: String): Void
-  delete_scr_DeeplyNestedTestEntity(id: String): Void
-  delete_scr_FavoriteCar(id: String): Void
-  delete_scr_Garage(id: String): Void
-  delete_scr_IntIdentityIdTestEntity(id: String): Void
-  delete_scr_IntegerIdTestEntity(id: String): Void
-  delete_scr_Order(id: String): Void
-  delete_scr_OrderLine(id: String): Void
-  delete_scr_Product(id: String): Void
-  delete_scr_SparePart(id: String): Void
-  delete_scr_StringIdTestEntity(id: String): Void
-  delete_scr_TechnicalCertificate(id: String): Void
-  delete_scr_User(id: String): Void
-  delete_scr_WeirdStringIdTestEntity(id: String): Void
-  delete_sec_ResourcePolicyEntity(id: String): Void
-  delete_sec_ResourceRoleEntity(id: String): Void
-  delete_sec_RoleAssignmentEntity(id: String): Void
-  delete_sec_RowLevelPolicyEntity(id: String): Void
-  delete_sec_RowLevelRoleEntity(id: String): Void
-  upsert_scr_AssociationM2MTestEntity(associationM2MTestEntity: inp_scr_AssociationM2MTestEntity): scr_AssociationM2MTestEntity
-  upsert_scr_AssociationM2OTestEntity(associationM2OTestEntity: inp_scr_AssociationM2OTestEntity): scr_AssociationM2OTestEntity
-  upsert_scr_AssociationO2MTestEntity(associationO2MTestEntity: inp_scr_AssociationO2MTestEntity): scr_AssociationO2MTestEntity
-  upsert_scr_AssociationO2OTestEntity(associationO2OTestEntity: inp_scr_AssociationO2OTestEntity): scr_AssociationO2OTestEntity
-  upsert_scr_BoringStringIdTestEntity(boringStringIdTestEntity: inp_scr_BoringStringIdTestEntity): scr_BoringStringIdTestEntity
-  upsert_scr_Car(car: inp_scr_Car): scr_Car
-  upsert_scr_CarRent(carRent: inp_scr_CarRent): scr_CarRent
-  upsert_scr_CompositionO2MTestEntity(compositionO2MTestEntity: inp_scr_CompositionO2MTestEntity): scr_CompositionO2MTestEntity
-  upsert_scr_CompositionO2OTestEntity(compositionO2OTestEntity: inp_scr_CompositionO2OTestEntity): scr_CompositionO2OTestEntity
-  upsert_scr_Customer(customer: inp_scr_Customer): scr_Customer
-  upsert_scr_DatatypesTestEntity(datatypesTestEntity: inp_scr_DatatypesTestEntity): scr_DatatypesTestEntity
-  upsert_scr_DatatypesTestEntity2(datatypesTestEntity2: inp_scr_DatatypesTestEntity2): scr_DatatypesTestEntity2
-  upsert_scr_DatatypesTestEntity3(datatypesTestEntity3: inp_scr_DatatypesTestEntity3): scr_DatatypesTestEntity3
-  upsert_scr_DeeplyNestedTestEntity(deeplyNestedTestEntity: inp_scr_DeeplyNestedTestEntity): scr_DeeplyNestedTestEntity
-  upsert_scr_FavoriteCar(favoriteCar: inp_scr_FavoriteCar): scr_FavoriteCar
-  upsert_scr_Garage(garage: inp_scr_Garage): scr_Garage
-  upsert_scr_IntIdentityIdTestEntity(intIdentityIdTestEntity: inp_scr_IntIdentityIdTestEntity): scr_IntIdentityIdTestEntity
-  upsert_scr_IntegerIdTestEntity(integerIdTestEntity: inp_scr_IntegerIdTestEntity): scr_IntegerIdTestEntity
-  upsert_scr_Order(order: inp_scr_Order): scr_Order
-  upsert_scr_OrderLine(orderLine: inp_scr_OrderLine): scr_OrderLine
-  upsert_scr_Product(product: inp_scr_Product): scr_Product
-  upsert_scr_SparePart(sparePart: inp_scr_SparePart): scr_SparePart
-  upsert_scr_StringIdTestEntity(stringIdTestEntity: inp_scr_StringIdTestEntity): scr_StringIdTestEntity
-  upsert_scr_TechnicalCertificate(technicalCertificate: inp_scr_TechnicalCertificate): scr_TechnicalCertificate
-  upsert_scr_User(user: inp_scr_User): scr_User
-  upsert_scr_WeirdStringIdTestEntity(weirdStringIdTestEntity: inp_scr_WeirdStringIdTestEntity): scr_WeirdStringIdTestEntity
-  upsert_sec_ResourcePolicyEntity(resourcePolicyEntity: inp_sec_ResourcePolicyEntity): sec_ResourcePolicyEntity
-  upsert_sec_ResourceRoleEntity(resourceRoleEntity: inp_sec_ResourceRoleEntity): sec_ResourceRoleEntity
-  upsert_sec_RoleAssignmentEntity(roleAssignmentEntity: inp_sec_RoleAssignmentEntity): sec_RoleAssignmentEntity
-  upsert_sec_RowLevelPolicyEntity(rowLevelPolicyEntity: inp_sec_RowLevelPolicyEntity): sec_RowLevelPolicyEntity
-  upsert_sec_RowLevelRoleEntity(rowLevelRoleEntity: inp_sec_RowLevelRoleEntity): sec_RowLevelRoleEntity
+  delete_scr_AssociationM2MTestEntity(id: String!): Void
+  delete_scr_AssociationM2OTestEntity(id: String!): Void
+  delete_scr_AssociationO2MTestEntity(id: String!): Void
+  delete_scr_AssociationO2OTestEntity(id: String!): Void
+  delete_scr_BoringStringIdTestEntity(id: String!): Void
+  delete_scr_Car(id: String!): Void
+  delete_scr_CarRent(id: String!): Void
+  delete_scr_CompositionO2MTestEntity(id: String!): Void
+  delete_scr_CompositionO2OTestEntity(id: String!): Void
+  delete_scr_Customer(id: String!): Void
+  delete_scr_DatatypesTestEntity(id: String!): Void
+  delete_scr_DatatypesTestEntity2(id: String!): Void
+  delete_scr_DatatypesTestEntity3(id: String!): Void
+  delete_scr_DeeplyNestedTestEntity(id: String!): Void
+  delete_scr_FavoriteCar(id: String!): Void
+  delete_scr_Garage(id: String!): Void
+  delete_scr_IntIdentityIdTestEntity(id: String!): Void
+  delete_scr_IntegerIdTestEntity(id: String!): Void
+  delete_scr_Order(id: String!): Void
+  delete_scr_OrderLine(id: String!): Void
+  delete_scr_Product(id: String!): Void
+  delete_scr_SparePart(id: String!): Void
+  delete_scr_StringIdTestEntity(id: String!): Void
+  delete_scr_TechnicalCertificate(id: String!): Void
+  delete_scr_User(id: String!): Void
+  delete_scr_WeirdStringIdTestEntity(id: String!): Void
+  delete_sec_ResourcePolicyEntity(id: String!): Void
+  delete_sec_ResourceRoleEntity(id: String!): Void
+  delete_sec_RoleAssignmentEntity(id: String!): Void
+  delete_sec_RowLevelPolicyEntity(id: String!): Void
+  delete_sec_RowLevelRoleEntity(id: String!): Void
+  upsert_scr_AssociationM2MTestEntity(associationM2MTestEntity: inp_scr_AssociationM2MTestEntity!): scr_AssociationM2MTestEntity
+  upsert_scr_AssociationM2OTestEntity(associationM2OTestEntity: inp_scr_AssociationM2OTestEntity!): scr_AssociationM2OTestEntity
+  upsert_scr_AssociationO2MTestEntity(associationO2MTestEntity: inp_scr_AssociationO2MTestEntity!): scr_AssociationO2MTestEntity
+  upsert_scr_AssociationO2OTestEntity(associationO2OTestEntity: inp_scr_AssociationO2OTestEntity!): scr_AssociationO2OTestEntity
+  upsert_scr_BoringStringIdTestEntity(boringStringIdTestEntity: inp_scr_BoringStringIdTestEntity!): scr_BoringStringIdTestEntity
+  upsert_scr_Car(car: inp_scr_Car!): scr_Car
+  upsert_scr_CarRent(carRent: inp_scr_CarRent!): scr_CarRent
+  upsert_scr_CompositionO2MTestEntity(compositionO2MTestEntity: inp_scr_CompositionO2MTestEntity!): scr_CompositionO2MTestEntity
+  upsert_scr_CompositionO2OTestEntity(compositionO2OTestEntity: inp_scr_CompositionO2OTestEntity!): scr_CompositionO2OTestEntity
+  upsert_scr_Customer(customer: inp_scr_Customer!): scr_Customer
+  upsert_scr_DatatypesTestEntity(datatypesTestEntity: inp_scr_DatatypesTestEntity!): scr_DatatypesTestEntity
+  upsert_scr_DatatypesTestEntity2(datatypesTestEntity2: inp_scr_DatatypesTestEntity2!): scr_DatatypesTestEntity2
+  upsert_scr_DatatypesTestEntity3(datatypesTestEntity3: inp_scr_DatatypesTestEntity3!): scr_DatatypesTestEntity3
+  upsert_scr_DeeplyNestedTestEntity(deeplyNestedTestEntity: inp_scr_DeeplyNestedTestEntity!): scr_DeeplyNestedTestEntity
+  upsert_scr_FavoriteCar(favoriteCar: inp_scr_FavoriteCar!): scr_FavoriteCar
+  upsert_scr_Garage(garage: inp_scr_Garage!): scr_Garage
+  upsert_scr_IntIdentityIdTestEntity(intIdentityIdTestEntity: inp_scr_IntIdentityIdTestEntity!): scr_IntIdentityIdTestEntity
+  upsert_scr_IntegerIdTestEntity(integerIdTestEntity: inp_scr_IntegerIdTestEntity!): scr_IntegerIdTestEntity
+  upsert_scr_Order(order: inp_scr_Order!): scr_Order
+  upsert_scr_OrderLine(orderLine: inp_scr_OrderLine!): scr_OrderLine
+  upsert_scr_Product(product: inp_scr_Product!): scr_Product
+  upsert_scr_SparePart(sparePart: inp_scr_SparePart!): scr_SparePart
+  upsert_scr_StringIdTestEntity(stringIdTestEntity: inp_scr_StringIdTestEntity!): scr_StringIdTestEntity
+  upsert_scr_TechnicalCertificate(technicalCertificate: inp_scr_TechnicalCertificate!): scr_TechnicalCertificate
+  upsert_scr_User(user: inp_scr_User!): scr_User
+  upsert_scr_WeirdStringIdTestEntity(weirdStringIdTestEntity: inp_scr_WeirdStringIdTestEntity!): scr_WeirdStringIdTestEntity
+  upsert_sec_ResourcePolicyEntity(resourcePolicyEntity: inp_sec_ResourcePolicyEntity!): sec_ResourcePolicyEntity
+  upsert_sec_ResourceRoleEntity(resourceRoleEntity: inp_sec_ResourceRoleEntity!): sec_ResourceRoleEntity
+  upsert_sec_RoleAssignmentEntity(roleAssignmentEntity: inp_sec_RoleAssignmentEntity!): sec_RoleAssignmentEntity
+  upsert_sec_RowLevelPolicyEntity(rowLevelPolicyEntity: inp_sec_RowLevelPolicyEntity!): sec_RowLevelPolicyEntity
+  upsert_sec_RowLevelRoleEntity(rowLevelRoleEntity: inp_sec_RowLevelRoleEntity!): sec_RowLevelRoleEntity
 }
 
 "Query root"
@@ -69,7 +69,7 @@ type Query {
   entityMessages(className: String, locale: String): [gql_MessageDetail]
   enumMessages(className: String, locale: String): [gql_MessageDetail]
   permissions: sec_PermissionConfig
-  scr_AssociationM2MTestEntityById(id: String): scr_AssociationM2MTestEntity
+  scr_AssociationM2MTestEntityById(id: String!): scr_AssociationM2MTestEntity
   scr_AssociationM2MTestEntityCount(
     "expressions to compare scr_AssociationM2MTestEntity objects, all items are combined with logical 'AND'"
     filter: [inp_scr_AssociationM2MTestEntityFilterCondition]
@@ -84,7 +84,7 @@ type Query {
     "sort the items by one or more fields"
     orderBy: inp_scr_AssociationM2MTestEntityOrderBy
   ): [scr_AssociationM2MTestEntity]
-  scr_AssociationM2OTestEntityById(id: String): scr_AssociationM2OTestEntity
+  scr_AssociationM2OTestEntityById(id: String!): scr_AssociationM2OTestEntity
   scr_AssociationM2OTestEntityCount(
     "expressions to compare scr_AssociationM2OTestEntity objects, all items are combined with logical 'AND'"
     filter: [inp_scr_AssociationM2OTestEntityFilterCondition]
@@ -99,7 +99,7 @@ type Query {
     "sort the items by one or more fields"
     orderBy: inp_scr_AssociationM2OTestEntityOrderBy
   ): [scr_AssociationM2OTestEntity]
-  scr_AssociationO2MTestEntityById(id: String): scr_AssociationO2MTestEntity
+  scr_AssociationO2MTestEntityById(id: String!): scr_AssociationO2MTestEntity
   scr_AssociationO2MTestEntityCount(
     "expressions to compare scr_AssociationO2MTestEntity objects, all items are combined with logical 'AND'"
     filter: [inp_scr_AssociationO2MTestEntityFilterCondition]
@@ -114,7 +114,7 @@ type Query {
     "sort the items by one or more fields"
     orderBy: inp_scr_AssociationO2MTestEntityOrderBy
   ): [scr_AssociationO2MTestEntity]
-  scr_AssociationO2OTestEntityById(id: String): scr_AssociationO2OTestEntity
+  scr_AssociationO2OTestEntityById(id: String!): scr_AssociationO2OTestEntity
   scr_AssociationO2OTestEntityCount(
     "expressions to compare scr_AssociationO2OTestEntity objects, all items are combined with logical 'AND'"
     filter: [inp_scr_AssociationO2OTestEntityFilterCondition]
@@ -129,7 +129,7 @@ type Query {
     "sort the items by one or more fields"
     orderBy: inp_scr_AssociationO2OTestEntityOrderBy
   ): [scr_AssociationO2OTestEntity]
-  scr_BoringStringIdTestEntityById(id: String): scr_BoringStringIdTestEntity
+  scr_BoringStringIdTestEntityById(id: String!): scr_BoringStringIdTestEntity
   scr_BoringStringIdTestEntityCount(
     "expressions to compare scr_BoringStringIdTestEntity objects, all items are combined with logical 'AND'"
     filter: [inp_scr_BoringStringIdTestEntityFilterCondition]
@@ -144,7 +144,7 @@ type Query {
     "sort the items by one or more fields"
     orderBy: inp_scr_BoringStringIdTestEntityOrderBy
   ): [scr_BoringStringIdTestEntity]
-  scr_CarById(id: String): scr_Car
+  scr_CarById(id: String!): scr_Car
   scr_CarCount(
     "expressions to compare scr_Car objects, all items are combined with logical 'AND'"
     filter: [inp_scr_CarFilterCondition]
@@ -159,7 +159,7 @@ type Query {
     "sort the items by one or more fields"
     orderBy: inp_scr_CarOrderBy
   ): [scr_Car]
-  scr_CarRentById(id: String): scr_CarRent
+  scr_CarRentById(id: String!): scr_CarRent
   scr_CarRentCount(
     "expressions to compare scr_CarRent objects, all items are combined with logical 'AND'"
     filter: [inp_scr_CarRentFilterCondition]
@@ -174,7 +174,7 @@ type Query {
     "sort the items by one or more fields"
     orderBy: inp_scr_CarRentOrderBy
   ): [scr_CarRent]
-  scr_CompositionO2MTestEntityById(id: String): scr_CompositionO2MTestEntity
+  scr_CompositionO2MTestEntityById(id: String!): scr_CompositionO2MTestEntity
   scr_CompositionO2MTestEntityCount(
     "expressions to compare scr_CompositionO2MTestEntity objects, all items are combined with logical 'AND'"
     filter: [inp_scr_CompositionO2MTestEntityFilterCondition]
@@ -189,7 +189,7 @@ type Query {
     "sort the items by one or more fields"
     orderBy: inp_scr_CompositionO2MTestEntityOrderBy
   ): [scr_CompositionO2MTestEntity]
-  scr_CompositionO2OTestEntityById(id: String): scr_CompositionO2OTestEntity
+  scr_CompositionO2OTestEntityById(id: String!): scr_CompositionO2OTestEntity
   scr_CompositionO2OTestEntityCount(
     "expressions to compare scr_CompositionO2OTestEntity objects, all items are combined with logical 'AND'"
     filter: [inp_scr_CompositionO2OTestEntityFilterCondition]
@@ -204,7 +204,7 @@ type Query {
     "sort the items by one or more fields"
     orderBy: inp_scr_CompositionO2OTestEntityOrderBy
   ): [scr_CompositionO2OTestEntity]
-  scr_CustomerById(id: String): scr_Customer
+  scr_CustomerById(id: String!): scr_Customer
   scr_CustomerCount(
     "expressions to compare scr_Customer objects, all items are combined with logical 'AND'"
     filter: [inp_scr_CustomerFilterCondition]
@@ -219,7 +219,7 @@ type Query {
     "sort the items by one or more fields"
     orderBy: inp_scr_CustomerOrderBy
   ): [scr_Customer]
-  scr_DatatypesTestEntity2ById(id: String): scr_DatatypesTestEntity2
+  scr_DatatypesTestEntity2ById(id: String!): scr_DatatypesTestEntity2
   scr_DatatypesTestEntity2Count(
     "expressions to compare scr_DatatypesTestEntity2 objects, all items are combined with logical 'AND'"
     filter: [inp_scr_DatatypesTestEntity2FilterCondition]
@@ -234,7 +234,7 @@ type Query {
     "sort the items by one or more fields"
     orderBy: inp_scr_DatatypesTestEntity2OrderBy
   ): [scr_DatatypesTestEntity2]
-  scr_DatatypesTestEntity3ById(id: String): scr_DatatypesTestEntity3
+  scr_DatatypesTestEntity3ById(id: String!): scr_DatatypesTestEntity3
   scr_DatatypesTestEntity3Count(
     "expressions to compare scr_DatatypesTestEntity3 objects, all items are combined with logical 'AND'"
     filter: [inp_scr_DatatypesTestEntity3FilterCondition]
@@ -249,7 +249,7 @@ type Query {
     "sort the items by one or more fields"
     orderBy: inp_scr_DatatypesTestEntity3OrderBy
   ): [scr_DatatypesTestEntity3]
-  scr_DatatypesTestEntityById(id: String): scr_DatatypesTestEntity
+  scr_DatatypesTestEntityById(id: String!): scr_DatatypesTestEntity
   scr_DatatypesTestEntityCount(
     "expressions to compare scr_DatatypesTestEntity objects, all items are combined with logical 'AND'"
     filter: [inp_scr_DatatypesTestEntityFilterCondition]
@@ -264,7 +264,7 @@ type Query {
     "sort the items by one or more fields"
     orderBy: inp_scr_DatatypesTestEntityOrderBy
   ): [scr_DatatypesTestEntity]
-  scr_DeeplyNestedTestEntityById(id: String): scr_DeeplyNestedTestEntity
+  scr_DeeplyNestedTestEntityById(id: String!): scr_DeeplyNestedTestEntity
   scr_DeeplyNestedTestEntityCount(
     "expressions to compare scr_DeeplyNestedTestEntity objects, all items are combined with logical 'AND'"
     filter: [inp_scr_DeeplyNestedTestEntityFilterCondition]
@@ -279,7 +279,7 @@ type Query {
     "sort the items by one or more fields"
     orderBy: inp_scr_DeeplyNestedTestEntityOrderBy
   ): [scr_DeeplyNestedTestEntity]
-  scr_FavoriteCarById(id: String): scr_FavoriteCar
+  scr_FavoriteCarById(id: String!): scr_FavoriteCar
   scr_FavoriteCarCount(
     "expressions to compare scr_FavoriteCar objects, all items are combined with logical 'AND'"
     filter: [inp_scr_FavoriteCarFilterCondition]
@@ -294,7 +294,7 @@ type Query {
     "sort the items by one or more fields"
     orderBy: inp_scr_FavoriteCarOrderBy
   ): [scr_FavoriteCar]
-  scr_GarageById(id: String): scr_Garage
+  scr_GarageById(id: String!): scr_Garage
   scr_GarageCount(
     "expressions to compare scr_Garage objects, all items are combined with logical 'AND'"
     filter: [inp_scr_GarageFilterCondition]
@@ -309,7 +309,7 @@ type Query {
     "sort the items by one or more fields"
     orderBy: inp_scr_GarageOrderBy
   ): [scr_Garage]
-  scr_IntIdentityIdTestEntityById(id: String): scr_IntIdentityIdTestEntity
+  scr_IntIdentityIdTestEntityById(id: String!): scr_IntIdentityIdTestEntity
   scr_IntIdentityIdTestEntityCount(
     "expressions to compare scr_IntIdentityIdTestEntity objects, all items are combined with logical 'AND'"
     filter: [inp_scr_IntIdentityIdTestEntityFilterCondition]
@@ -324,7 +324,7 @@ type Query {
     "sort the items by one or more fields"
     orderBy: inp_scr_IntIdentityIdTestEntityOrderBy
   ): [scr_IntIdentityIdTestEntity]
-  scr_IntegerIdTestEntityById(id: String): scr_IntegerIdTestEntity
+  scr_IntegerIdTestEntityById(id: String!): scr_IntegerIdTestEntity
   scr_IntegerIdTestEntityCount(
     "expressions to compare scr_IntegerIdTestEntity objects, all items are combined with logical 'AND'"
     filter: [inp_scr_IntegerIdTestEntityFilterCondition]
@@ -339,12 +339,12 @@ type Query {
     "sort the items by one or more fields"
     orderBy: inp_scr_IntegerIdTestEntityOrderBy
   ): [scr_IntegerIdTestEntity]
-  scr_OrderById(id: String): scr_Order
+  scr_OrderById(id: String!): scr_Order
   scr_OrderCount(
     "expressions to compare scr_Order objects, all items are combined with logical 'AND'"
     filter: [inp_scr_OrderFilterCondition]
   ): Long
-  scr_OrderLineById(id: String): scr_OrderLine
+  scr_OrderLineById(id: String!): scr_OrderLine
   scr_OrderLineCount(
     "expressions to compare scr_OrderLine objects, all items are combined with logical 'AND'"
     filter: [inp_scr_OrderLineFilterCondition]
@@ -369,7 +369,7 @@ type Query {
     "sort the items by one or more fields"
     orderBy: inp_scr_OrderOrderBy
   ): [scr_Order]
-  scr_ProductById(id: String): scr_Product
+  scr_ProductById(id: String!): scr_Product
   scr_ProductCount(
     "expressions to compare scr_Product objects, all items are combined with logical 'AND'"
     filter: [inp_scr_ProductFilterCondition]
@@ -384,7 +384,7 @@ type Query {
     "sort the items by one or more fields"
     orderBy: inp_scr_ProductOrderBy
   ): [scr_Product]
-  scr_SparePartById(id: String): scr_SparePart
+  scr_SparePartById(id: String!): scr_SparePart
   scr_SparePartCount(
     "expressions to compare scr_SparePart objects, all items are combined with logical 'AND'"
     filter: [inp_scr_SparePartFilterCondition]
@@ -399,7 +399,7 @@ type Query {
     "sort the items by one or more fields"
     orderBy: inp_scr_SparePartOrderBy
   ): [scr_SparePart]
-  scr_StringIdTestEntityById(id: String): scr_StringIdTestEntity
+  scr_StringIdTestEntityById(id: String!): scr_StringIdTestEntity
   scr_StringIdTestEntityCount(
     "expressions to compare scr_StringIdTestEntity objects, all items are combined with logical 'AND'"
     filter: [inp_scr_StringIdTestEntityFilterCondition]
@@ -414,7 +414,7 @@ type Query {
     "sort the items by one or more fields"
     orderBy: inp_scr_StringIdTestEntityOrderBy
   ): [scr_StringIdTestEntity]
-  scr_TechnicalCertificateById(id: String): scr_TechnicalCertificate
+  scr_TechnicalCertificateById(id: String!): scr_TechnicalCertificate
   scr_TechnicalCertificateCount(
     "expressions to compare scr_TechnicalCertificate objects, all items are combined with logical 'AND'"
     filter: [inp_scr_TechnicalCertificateFilterCondition]
@@ -429,7 +429,7 @@ type Query {
     "sort the items by one or more fields"
     orderBy: inp_scr_TechnicalCertificateOrderBy
   ): [scr_TechnicalCertificate]
-  scr_UserById(id: String): scr_User
+  scr_UserById(id: String!): scr_User
   scr_UserCount(
     "expressions to compare scr_User objects, all items are combined with logical 'AND'"
     filter: [inp_scr_UserFilterCondition]
@@ -444,7 +444,7 @@ type Query {
     "sort the items by one or more fields"
     orderBy: inp_scr_UserOrderBy
   ): [scr_User]
-  scr_WeirdStringIdTestEntityById(id: String): scr_WeirdStringIdTestEntity
+  scr_WeirdStringIdTestEntityById(id: String!): scr_WeirdStringIdTestEntity
   scr_WeirdStringIdTestEntityCount(
     "expressions to compare scr_WeirdStringIdTestEntity objects, all items are combined with logical 'AND'"
     filter: [inp_scr_WeirdStringIdTestEntityFilterCondition]
@@ -459,7 +459,7 @@ type Query {
     "sort the items by one or more fields"
     orderBy: inp_scr_WeirdStringIdTestEntityOrderBy
   ): [scr_WeirdStringIdTestEntity]
-  sec_ResourcePolicyEntityById(id: String): sec_ResourcePolicyEntity
+  sec_ResourcePolicyEntityById(id: String!): sec_ResourcePolicyEntity
   sec_ResourcePolicyEntityCount(
     "expressions to compare sec_ResourcePolicyEntity objects, all items are combined with logical 'AND'"
     filter: [inp_sec_ResourcePolicyEntityFilterCondition]
@@ -474,7 +474,7 @@ type Query {
     "sort the items by one or more fields"
     orderBy: inp_sec_ResourcePolicyEntityOrderBy
   ): [sec_ResourcePolicyEntity]
-  sec_ResourceRoleEntityById(id: String): sec_ResourceRoleEntity
+  sec_ResourceRoleEntityById(id: String!): sec_ResourceRoleEntity
   sec_ResourceRoleEntityCount(
     "expressions to compare sec_ResourceRoleEntity objects, all items are combined with logical 'AND'"
     filter: [inp_sec_ResourceRoleEntityFilterCondition]
@@ -489,7 +489,7 @@ type Query {
     "sort the items by one or more fields"
     orderBy: inp_sec_ResourceRoleEntityOrderBy
   ): [sec_ResourceRoleEntity]
-  sec_RoleAssignmentEntityById(id: String): sec_RoleAssignmentEntity
+  sec_RoleAssignmentEntityById(id: String!): sec_RoleAssignmentEntity
   sec_RoleAssignmentEntityCount(
     "expressions to compare sec_RoleAssignmentEntity objects, all items are combined with logical 'AND'"
     filter: [inp_sec_RoleAssignmentEntityFilterCondition]
@@ -504,7 +504,7 @@ type Query {
     "sort the items by one or more fields"
     orderBy: inp_sec_RoleAssignmentEntityOrderBy
   ): [sec_RoleAssignmentEntity]
-  sec_RowLevelPolicyEntityById(id: String): sec_RowLevelPolicyEntity
+  sec_RowLevelPolicyEntityById(id: String!): sec_RowLevelPolicyEntity
   sec_RowLevelPolicyEntityCount(
     "expressions to compare sec_RowLevelPolicyEntity objects, all items are combined with logical 'AND'"
     filter: [inp_sec_RowLevelPolicyEntityFilterCondition]
@@ -519,7 +519,7 @@ type Query {
     "sort the items by one or more fields"
     orderBy: inp_sec_RowLevelPolicyEntityOrderBy
   ): [sec_RowLevelPolicyEntity]
-  sec_RowLevelRoleEntityById(id: String): sec_RowLevelRoleEntity
+  sec_RowLevelRoleEntityById(id: String!): sec_RowLevelRoleEntity
   sec_RowLevelRoleEntityCount(
     "expressions to compare sec_RowLevelRoleEntity objects, all items are combined with logical 'AND'"
     filter: [inp_sec_RowLevelRoleEntityFilterCondition]

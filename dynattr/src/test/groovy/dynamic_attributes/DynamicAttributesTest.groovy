@@ -16,10 +16,7 @@
 
 package dynamic_attributes
 
-import io.jmix.core.CoreConfiguration
-import io.jmix.core.DataManager
-import io.jmix.core.FetchPlan
-import io.jmix.core.Metadata
+import io.jmix.core.*
 import io.jmix.core.entity.EntityValues
 import io.jmix.data.DataConfiguration
 import io.jmix.data.entity.ReferenceToEntity
@@ -35,6 +32,7 @@ import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
 import test_support.JmixDynAttrTestConfiguration
 import test_support.TestContextInititalizer
+import test_support.UserRepository
 import test_support.entity.Group
 import test_support.entity.Role
 import test_support.entity.User
@@ -56,6 +54,8 @@ class DynamicAttributesTest extends Specification {
     protected Metadata metadata
     @Autowired
     protected DataSource dataSource;
+    @Autowired
+    protected UserRepository repository;
 
     protected io.jmix.dynattr.model.Category userCategory, userRoleCategory, roleCategory
 
@@ -410,5 +410,31 @@ class DynamicAttributesTest extends Specification {
 
         then:
         EntityValues.getValue(user, '+userEnumAttribute') == 'option2'
+    }
+
+    def "load dynamic attributes through data repository"() {
+        setup:
+        String login = 'dynTestUser'
+        def user = metadata.create(User)
+        user.login = login
+
+        EntityValues.setValue(user, '+userAttribute', 'userName')
+        dataManager.save(user)
+        when:
+        user = repository.findById(user.id).get()
+        then:
+        EntityValues.getValue(user, '+userAttribute') == 'userName'
+
+        when:
+        user = repository.findByLogin(login)[0]
+        EntityValues.getValue(user, '+userAttribute')
+        then:
+        thrown(EntityValueAccessException.class)
+
+        when:
+        user = repository.loadByLoginWithExplicitlyDisabledDynamicAttributes(login)[0]
+        EntityValues.getValue(user, '+userAttribute')
+        then:
+        thrown(EntityValueAccessException.class)
     }
 }

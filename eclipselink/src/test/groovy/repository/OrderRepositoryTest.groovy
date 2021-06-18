@@ -41,7 +41,7 @@ class OrderRepositoryTest extends DataSpec {
     @Autowired
     private DataManager dataManager;
     @Autowired
-    JdbcTemplate jdbcTemplate
+    private JdbcTemplate jdbcTemplate
 
 
     private Customer customer1, customer2, customer3;

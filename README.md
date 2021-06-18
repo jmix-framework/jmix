@@ -37,10 +37,10 @@ Jmix is a set of libraries and tools to speed up Spring Boot data-centric applic
 ## Using Jmix
 To get started, [download Jmix Studio](https://www.jmix.io/tools) - a plugin for IntelliJ IDEA. It helps you at all stages of the application development: creating and configuring a project, defining data model, generating database migration scripts, developing UI screens in a visual editor. It provides advanced navigation, code completion and inspections specific to Jmix projects.
 
-Follow the [Quick Start](https://docs.jmix.io/jmix/0.x/quick-start/) guide to get up and running in 15 minutes. The guide will show some necessary things for creating any web application: how to design a data model, how to manipulate data, how to create business logic, and, finally, how to create a user interface.
+Follow the [Quick Start](https://docs.jmix.io/jmix/1.0/quick-start/) guide to get up and running in 15 minutes. The guide will show some necessary things for creating any web application: how to design a data model, how to manipulate data, how to create business logic, and, finally, how to create a user interface.
 
 ## Building From Source
-This repository contains the core project of the framework. Other parts of the framework are located in [separate repositories](https://github.com/Haulmont?q=jmix). The recommended way of working with the Jmix codebase is to use the [jmix-all](https://github.com/Haulmont/jmix-all) aggregator project. See its README for instructions.
+This repository contains the core project of the framework. Other parts of the framework are located in [separate repositories](https://github.com/Haulmont?q=jmix). If you want to investigate the Jmix codebase and play with it locally, we recommend using the [jmix-all](https://github.com/Haulmont/jmix-all) aggregator project. If you want to contribute your changes to Jmix, see [CONTRIBUTING](CONTRIBUTING.md).
 
 ## License
 Jmix is an open-source project distributed under the [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0) license. The same licensing is applied to most of the framework’s add-ons.

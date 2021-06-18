@@ -18,6 +18,11 @@ package io.jmix.core.impl.repository.support.method_metadata;
 
 import io.jmix.core.repository.JmixDataRepository;
 
+import java.io.Serializable;
+import java.lang.reflect.Method;
+import java.util.Collections;
+import java.util.Map;
+
 /**
  * Stores metadata for {@link JmixDataRepository} methods.
  * <p>
@@ -27,13 +32,24 @@ import io.jmix.core.repository.JmixDataRepository;
  */
 public class CrudMethodMetadata {
     private final boolean applyConstraints;
+    private final Map<String, Serializable> queryHints;
 
-    public CrudMethodMetadata(boolean applyConstraints) {
+
+    public CrudMethodMetadata(boolean applyConstraints, Map<String, Serializable> queryHints) {
         this.applyConstraints = applyConstraints;
+        this.queryHints = Collections.unmodifiableMap(queryHints);
     }
 
     public boolean isApplyConstraints() {
         return applyConstraints;
+    }
+
+    /**
+     * @return unmodifiable map of query hints
+     * @see MethodMetadataHelper#determineQueryHints(Method)
+     */
+    public Map<String, Serializable> getQueryHints() {
+        return queryHints;
     }
 
 

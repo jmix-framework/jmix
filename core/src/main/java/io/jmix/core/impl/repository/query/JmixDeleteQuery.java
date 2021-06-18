@@ -18,6 +18,7 @@ package io.jmix.core.impl.repository.query;
 
 import io.jmix.core.DataManager;
 import io.jmix.core.Metadata;
+import io.jmix.core.SaveContext;
 import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.data.repository.core.RepositoryMetadata;
 import org.springframework.data.repository.query.parser.PartTree;
@@ -34,7 +35,7 @@ public class JmixDeleteQuery extends JmixListQuery {
     @Override
     public Object execute(Object[] parameters) {
         List<Object> loaded = (List<Object>) super.execute(parameters);
-        dataManager.remove(loaded);
+        dataManager.save(new SaveContext().removing(loaded).setHints(queryHints));
         return loaded;
     }
 }

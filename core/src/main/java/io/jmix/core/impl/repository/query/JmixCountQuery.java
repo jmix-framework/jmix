@@ -40,11 +40,11 @@ public class JmixCountQuery extends JmixStructuredQuery {
 
         String queryString = String.format("select %s e from %s e", distinct ? "distinct" : "", entityName);
 
-        LoadContext<?> context = new LoadContext<>(jmixMetadata.getClass(metadata.getDomainType())).setQuery(
-                new LoadContext.Query(queryString)
+        LoadContext<?> context = new LoadContext<>(jmixMetadata.getClass(metadata.getDomainType()))
+                .setQuery(new LoadContext.Query(queryString)
                         .setCondition(conditions)
-                        .setParameters(buildNamedParametersMap(parameters))
-        );
+                        .setParameters(buildNamedParametersMap(parameters)))
+                .setHints(queryHints);
 
         return dataManager.getCount(context);
     }

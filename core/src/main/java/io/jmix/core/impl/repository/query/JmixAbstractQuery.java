@@ -23,13 +23,16 @@ import io.jmix.core.impl.repository.query.utils.JmixQueryLookupStrategy;
 import io.jmix.core.impl.repository.support.method_metadata.MethodMetadataHelper;
 import io.jmix.core.repository.ApplyConstraints;
 import io.jmix.core.repository.FetchPlan;
+import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.data.repository.core.RepositoryMetadata;
 import org.springframework.data.repository.query.Parameters;
 import org.springframework.data.repository.query.QueryMethod;
 import org.springframework.data.repository.query.RepositoryQuery;
 
+import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,6 +48,7 @@ public abstract class JmixAbstractQuery implements RepositoryQuery {
     protected final RepositoryMetadata metadata;
     protected final ProjectionFactory factory;
     protected final QueryMethod queryMethod;
+
     /**
      * {@link UnconstrainedDataManager} or {@link DataManager} will be chosen depending on {@link ApplyConstraints} annotation on method/repository or ancestor method/repository
      */
@@ -58,6 +62,7 @@ public abstract class JmixAbstractQuery implements RepositoryQuery {
     protected int sortIndex;
     protected int pageableIndex;
 
+    protected Map<String, Serializable> queryHints;
     protected String fetchPlan = io.jmix.core.FetchPlan.LOCAL;
 
     public JmixAbstractQuery(DataManager dataManager, Metadata jmixMetadata, Method method, RepositoryMetadata metadata, ProjectionFactory factory) {
@@ -69,6 +74,7 @@ public abstract class JmixAbstractQuery implements RepositoryQuery {
 
         ApplyConstraints applyConstraintsAnnotation = MethodMetadataHelper.determineApplyConstraints(method, metadata.getRepositoryInterface());
         this.dataManager = applyConstraintsAnnotation.value() ? dataManager : dataManager.unconstrained();
+        this.queryHints = Collections.unmodifiableMap(MethodMetadataHelper.determineQueryHints(method));
 
         setFetchPlan(method);
         processSpecialParameters();
@@ -84,7 +90,7 @@ public abstract class JmixAbstractQuery implements RepositoryQuery {
     }
 
     private void setFetchPlan(Method method) {
-        FetchPlan fetchPlanAnnotation = method.getDeclaredAnnotation(FetchPlan.class);
+        FetchPlan fetchPlanAnnotation = AnnotatedElementUtils.findMergedAnnotation(method, FetchPlan.class);
         if (fetchPlanAnnotation != null) {
             fetchPlan = fetchPlanAnnotation.value();
         }

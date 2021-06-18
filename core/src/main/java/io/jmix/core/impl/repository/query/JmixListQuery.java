@@ -47,6 +47,7 @@ public class JmixListQuery extends JmixStructuredQuery {
         FluentLoader.ByCondition<?> loader = dataManager.load(metadata.getDomainType())
                 .condition(conditions)
                 .fetchPlan(fetchPlan)
+                .hints(queryHints)
                 .parameters(buildNamedParametersMap(parameters));
 
         if (maxResults != null) {
@@ -91,11 +92,11 @@ public class JmixListQuery extends JmixStructuredQuery {
 
                 String queryString = String.format("select e from %s e", entityName);
 
-                LoadContext<?> context = new LoadContext<>(jmixMetadata.getClass(metadata.getDomainType())).setQuery(
-                        new LoadContext.Query(queryString)
+                LoadContext<?> context = new LoadContext<>(jmixMetadata.getClass(metadata.getDomainType()))
+                        .setQuery(new LoadContext.Query(queryString)
                                 .setCondition(conditions)
-                                .setParameters(buildNamedParametersMap(parameters))
-                );
+                                .setParameters(buildNamedParametersMap(parameters)))
+                        .setHints(queryHints);
 
                 long count = dataManager.getCount(context);
 

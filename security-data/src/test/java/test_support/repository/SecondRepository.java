@@ -25,6 +25,7 @@ import org.springframework.data.domain.Sort;
 import test_support.entity.TestOrder;
 
 import java.util.List;
+import java.util.UUID;
 
 @ApplyConstraints(false)
 public interface SecondRepository extends FirstRepository {
@@ -39,4 +40,7 @@ public interface SecondRepository extends FirstRepository {
 
     @ApplyConstraints
     List<TestOrder> searchByIdNotNull();
+
+    @Override
+    List<TestOrder> searchById(UUID id);
 }

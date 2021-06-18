@@ -39,4 +39,7 @@ public interface FirstRepository extends JmixDataRepository<TestOrder, UUID> {
     List<TestOrder> findByIdNotNull();
 
     List<TestOrder> searchByNumberNotNull();
+
+    @io.jmix.core.repository.FetchPlan("_instance_name")
+    List<TestOrder> searchById(UUID id);
 }

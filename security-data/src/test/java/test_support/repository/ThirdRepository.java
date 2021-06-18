@@ -22,6 +22,7 @@ import org.springframework.data.domain.Sort;
 import test_support.entity.TestOrder;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface ThirdRepository extends SecondRepository {
 
@@ -35,4 +36,8 @@ public interface ThirdRepository extends SecondRepository {
 
     @Override
     List<TestOrder> searchByIdNotNull();
+
+    @Override
+    @io.jmix.core.repository.FetchPlan("_base")
+    List<TestOrder> searchById(UUID id);
 }

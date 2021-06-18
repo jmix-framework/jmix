@@ -157,6 +157,26 @@ class RepositorySecurityTest extends SecurityDataSpecification {
         enabledOnParentInterface.size() == 1
     }
 
+    def "test @FetchPlan inheritance"() {
+        when: "current method annotated with @FetchPlan"
+        TestOrder order = firstRepository.searchById(orderAllowed.id)[0]
+        order.getNumber()
+        then: "fetch plan applied, 'number' attribute is not in '_instance_name' fetch plan"
+        thrown(IllegalStateException)
+
+        when: "parent method annotated with @FetchPlan"
+        order = secondRepository.searchById(orderAllowed.id)[0]
+        order.getNumber()
+        then: "fetch plan applied, 'number' attribute is not in '_instance_name' fetch plan"
+        thrown(IllegalStateException)
+
+        when: "inherited method also annotaded with @FetchPlan"
+        order = thirdRepository.searchById(orderAllowed.id)[0]
+        String number = order.getNumber()
+        then: "current method annotation overrides parent method annotation"
+        number == "allowed_3"
+    }
+
     protected void authenticate(String username) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(username, PASSWORD))

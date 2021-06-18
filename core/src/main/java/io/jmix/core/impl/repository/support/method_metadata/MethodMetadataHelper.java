@@ -18,11 +18,17 @@ package io.jmix.core.impl.repository.support.method_metadata;
 
 import io.jmix.core.repository.ApplyConstraints;
 import io.jmix.core.repository.JmixDataRepository;
+import io.jmix.core.repository.QueryHints;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.core.type.MethodMetadata;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.QueryHint;
+import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Contains {@link MethodMetadata} analyse logic such as {@link ApplyConstraints} determination.
@@ -31,7 +37,8 @@ public class MethodMetadataHelper {
 
     public static CrudMethodMetadata collectMethodMetadata(Method method, Class<?> repositoryInterface) {
         ApplyConstraints applyConstraints = determineApplyConstraints(method, repositoryInterface);
-        return new CrudMethodMetadata(applyConstraints.value());
+        Map<String, Serializable> queryHints = determineQueryHints(method);
+        return new CrudMethodMetadata(applyConstraints.value(), queryHints);
     }
 
     /**
@@ -61,5 +68,29 @@ public class MethodMetadataHelper {
             return annotation;
 
         throw new RuntimeException("Internal error: @ApplyConstraints should have been found at least on JmixDataRepository");
+    }
+
+
+    public static Map<String, Serializable> determineQueryHints(Method method) {
+        QueryHints hints = AnnotatedElementUtils.findMergedAnnotation(method, QueryHints.class);
+        if (hints != null) {
+            Map<String, Serializable> result = new HashMap<>();
+            for (QueryHint hint : hints.value()) {
+                Serializable value;
+                switch (hint.name()) {
+                    case "jmix.softDeletion":
+                    case "jmix.dynattr":
+                    case "jmix.cacheable":
+                        value = Boolean.parseBoolean(hint.value());
+                        break;
+                    default:
+                        value = hint.value();
+                }
+                result.put(hint.name(), value);
+            }
+            return result;
+        } else {
+            return Collections.emptyMap();
+        }
     }
 }

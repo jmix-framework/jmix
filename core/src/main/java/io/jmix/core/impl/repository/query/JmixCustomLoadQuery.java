@@ -90,7 +90,8 @@ public class JmixCustomLoadQuery extends JmixAbstractQuery {
                 .load(metadata.getDomainType())
                 .query(this.query)
                 .parameters(buildNamedParametersMap(parameters))
-                .fetchPlan(fetchPlan);
+                .fetchPlan(fetchPlan)
+                .hints(queryHints);
 
         if (sortIndex != -1) {
             query.sort(LoaderHelper.springToJmixSort((Sort) parameters[sortIndex]));
@@ -111,10 +112,10 @@ public class JmixCustomLoadQuery extends JmixAbstractQuery {
             LoaderHelper.applyPageableForQueryLoader(loader, pageable);
 
             if (Page.class.isAssignableFrom(returnType)) {
-                LoadContext<?> context = new LoadContext<>(jmixMetadata.getClass(metadata.getDomainType())).setQuery(
-                        new LoadContext.Query(query)
-                                .setParameters(buildNamedParametersMap(parameters))
-                );
+                LoadContext<?> context = new LoadContext<>(jmixMetadata.getClass(metadata.getDomainType()))
+                        .setQuery(new LoadContext.Query(query)
+                                .setParameters(buildNamedParametersMap(parameters)))
+                        .setHints(queryHints);
                 long count = dataManager.getCount(context);
                 return new PageImpl(loader.list(), pageable, count);
             } else {

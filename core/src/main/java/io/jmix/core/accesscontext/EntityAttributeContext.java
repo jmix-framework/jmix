@@ -20,6 +20,9 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 
+/**
+ * An access context to check permissions on entity attributes.
+ */
 public class EntityAttributeContext implements AccessContext {
     protected final MetaPropertyPath propertyPath;
 

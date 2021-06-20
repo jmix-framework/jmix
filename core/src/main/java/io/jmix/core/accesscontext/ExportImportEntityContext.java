@@ -21,6 +21,9 @@ import io.jmix.core.metamodel.model.MetaClass;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * An access context to check permissions on entity attributes when serializing entities to/from JSON.
+ */
 public class ExportImportEntityContext implements AccessContext {
     protected final MetaClass entityClass;
     protected Set<String> notImported;

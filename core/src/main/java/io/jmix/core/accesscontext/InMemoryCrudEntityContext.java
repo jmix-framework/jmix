@@ -16,11 +16,13 @@
 
 package io.jmix.core.accesscontext;
 
-import io.jmix.core.accesscontext.AccessContext;
 import io.jmix.core.metamodel.model.MetaClass;
 
 import java.util.function.Predicate;
 
+/**
+ * An access context to check permissions on CRUD operations by testing predicates.
+ */
 public class InMemoryCrudEntityContext implements AccessContext {
     protected final MetaClass entityClass;
 

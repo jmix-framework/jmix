@@ -18,6 +18,9 @@ package io.jmix.core.accesscontext;
 
 import io.jmix.core.metamodel.model.MetaClass;
 
+/**
+ * An access context to check permissions on entity operations.
+ */
 public class CrudEntityContext implements AccessContext {
 
     protected final MetaClass entityClass;

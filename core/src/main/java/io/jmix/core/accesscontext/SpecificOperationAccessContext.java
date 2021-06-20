@@ -16,6 +16,9 @@
 
 package io.jmix.core.accesscontext;
 
+/**
+ * An access context to check permissions on arbitrary named functionality.
+ */
 public class SpecificOperationAccessContext implements AccessContext {
     protected boolean permitted = true;
     protected final String name;

@@ -64,16 +64,11 @@ public class CoreProperties {
             @DefaultValue("1000") int dom4jMaxBorrowWaitMillis,
             @DefaultValue("de72c623-6d3d-458c-a187-c526de515ecd") String anonymousAuthenticationTokenKey,
             String defaultFileStorage,
-            @DefaultValue("false")
-                    boolean entitySerializationTokenRequired,
-            @DefaultValue("KEY")
-                    String entitySerializationTokenEncryptionKey,
-            @DefaultValue("false")
-                    boolean fetchPlanSerializationUseView,
-            @DefaultValue("true")
-                    boolean triggerFilesEnabled,
-            @DefaultValue("5000")
-            Duration triggerFilesProcessInterval) {
+            @DefaultValue("false") boolean entitySerializationTokenRequired,
+            @DefaultValue("KEY") String entitySerializationTokenEncryptionKey,
+            @DefaultValue("false") boolean fetchPlanSerializationUseView,
+            @DefaultValue("true") boolean triggerFilesEnabled,
+            @DefaultValue("5000") Duration triggerFilesProcessInterval) {
         this.webHostName = webHostName;
         this.webPort = webPort;
         this.confDir = confDir;

@@ -16,9 +16,12 @@
 
 package io.jmix.core.entity;
 
+import io.jmix.core.annotation.Internal;
+
 /**
  * Interface to be implemented by optimistically locked entities.
  */
+@Internal
 public interface EntityEntryVersioned {
 
     Object getVersion();

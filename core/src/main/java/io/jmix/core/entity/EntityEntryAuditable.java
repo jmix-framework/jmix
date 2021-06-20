@@ -16,8 +16,11 @@
 
 package io.jmix.core.entity;
 
+import io.jmix.core.annotation.Internal;
+
 import javax.annotation.Nullable;
 
+@Internal
 public interface EntityEntryAuditable {
 
     Object getCreatedDate();

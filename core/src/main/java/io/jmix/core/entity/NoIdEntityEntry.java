@@ -18,6 +18,7 @@ package io.jmix.core.entity;
 
 import io.jmix.core.Entity;
 import io.jmix.core.EntityEntry;
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.annotation.Nullable;
@@ -35,6 +36,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * Such entities should not be saved in any persistent storage.
  */
 @SuppressWarnings("unused")
+@Internal
 public class NoIdEntityEntry extends BaseEntityEntry {
 
     private long generatedId;

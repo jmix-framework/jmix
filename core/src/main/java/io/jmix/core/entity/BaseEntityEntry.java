@@ -20,6 +20,7 @@ import io.jmix.core.Entity;
 import io.jmix.core.EntityEntry;
 import io.jmix.core.EntityEntryExtraState;
 import io.jmix.core.EntityValuesProvider;
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.JmixId;
@@ -40,6 +41,7 @@ import java.util.function.BiConsumer;
  * has primary key (an attribute annotated with {@link Id}, {@link EmbeddedId} or {@link JmixId}) and this primary key
  * annotated with {@link JmixGeneratedValue}
  */
+@Internal
 public abstract class BaseEntityEntry implements EntityEntry, Cloneable {
     protected byte state = NEW;
     protected SecurityState securityState = new SecurityState();

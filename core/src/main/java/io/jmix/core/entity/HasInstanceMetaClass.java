@@ -16,8 +16,10 @@
 
 package io.jmix.core.entity;
 
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.metamodel.model.MetaClass;
 
+@Internal
 public interface HasInstanceMetaClass {
 
     MetaClass getInstanceMetaClass();

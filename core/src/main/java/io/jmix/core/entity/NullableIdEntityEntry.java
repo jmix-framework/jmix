@@ -18,6 +18,7 @@ package io.jmix.core.entity;
 
 import io.jmix.core.Entity;
 import io.jmix.core.EntityEntry;
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.JmixId;
 
@@ -35,6 +36,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * </ul>
  */
 @SuppressWarnings("unused")
+@Internal
 public abstract class NullableIdEntityEntry extends BaseEntityEntry {
 
     private static final long serialVersionUID = 472062751374259587L;

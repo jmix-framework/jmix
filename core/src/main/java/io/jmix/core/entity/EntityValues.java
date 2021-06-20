@@ -17,6 +17,7 @@
 package io.jmix.core.entity;
 
 import io.jmix.core.Entity;
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.metamodel.model.PropertyPath;
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -29,6 +30,7 @@ import static io.jmix.core.entity.EntitySystemAccess.getUncheckedEntityEntry;
 import static io.jmix.core.metamodel.model.utils.ObjectPathUtils.formatValuePath;
 import static io.jmix.core.metamodel.model.utils.ObjectPathUtils.parseValuePath;
 
+@Internal
 public class EntityValues {
 
     public static boolean isEntity(Object entity) {

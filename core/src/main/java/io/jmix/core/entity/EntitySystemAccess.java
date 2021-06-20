@@ -19,12 +19,14 @@ package io.jmix.core.entity;
 import io.jmix.core.Entity;
 import io.jmix.core.EntityEntry;
 import io.jmix.core.EntityEntryExtraState;
+import io.jmix.core.annotation.Internal;
 
 import javax.annotation.Nullable;
 
 import static io.jmix.core.entity.EntityValues.isAuditSupported;
 import static io.jmix.core.entity.EntityValues.isSoftDeletionSupported;
 
+@Internal
 public class EntitySystemAccess {
 
     public static <T extends EntityEntry> T getEntityEntry(Object entity) {

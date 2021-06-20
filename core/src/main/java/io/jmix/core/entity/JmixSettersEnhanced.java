@@ -16,9 +16,8 @@
 
 package io.jmix.core.entity;
 
-/**
- * Marker interface to be implemented by entities that should not be enhanced.
- *
- */
+import io.jmix.core.annotation.Internal;
+
+@Internal
 public interface JmixSettersEnhanced {
 }

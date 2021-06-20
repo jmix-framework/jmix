@@ -17,6 +17,7 @@
 package io.jmix.core.entity;
 
 import io.jmix.core.Id;
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 
 import java.util.UUID;
@@ -31,6 +32,7 @@ import java.util.UUID;
  * </ol>
  */
 
+@Internal
 public interface EntityEntryHasUuid {
 
     UUID getUuid();

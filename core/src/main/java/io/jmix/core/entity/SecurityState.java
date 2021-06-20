@@ -17,6 +17,7 @@ package io.jmix.core.entity;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.util.Preconditions;
 
 import javax.annotation.Nullable;
@@ -30,6 +31,7 @@ import java.util.Collections;
  *   <li>data that has been filtered by row level security;
  * </ul>
  */
+@Internal
 public class SecurityState implements Serializable {
     public enum RestoreState {
         RESTORED_FROM_TOKEN,

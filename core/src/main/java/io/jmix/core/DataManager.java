@@ -17,14 +17,13 @@
 package io.jmix.core;
 
 /**
- * Similar to {@link UnconstrainedDataManager} but applies registered
- * CRUD and row level {@link io.jmix.core.constraint.AccessConstraint} for all operation
+ * Same as {@link UnconstrainedDataManager} but performs authorization of all operations by applying registered
+ * access constraints.
  */
 public interface DataManager extends UnconstrainedDataManager {
+
     /**
-     * By default, {@link DataManager} applies CRUD and row level security constraints.
-     * <p>
-     * This method returns the {@code UnconstrainedDataManager} implementation that doesn't applies CRUD and row level security constraints.
+     * A convenience method that returns {@code UnconstrainedDataManager} that doesn't perform authorization.
      */
     UnconstrainedDataManager unconstrained();
 }

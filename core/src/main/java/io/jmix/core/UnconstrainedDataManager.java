@@ -25,10 +25,12 @@ import java.util.List;
  * Central interface to provide CRUD functionality for entities.
  * <p>
  * Delegates to {@link DataStore} implementations, handles references between entities from different stores.
- * Perform some operations without security constraints.
- * Use this bean to perform some operations without security constraints.
+ * <p>
+ * Does not apply registered access constraints. If you want to perform CRUD operations with authorization,
+ * use {@link DataManager} instead.
  */
 public interface UnconstrainedDataManager {
+
     /**
      * Loads a single entity instance.
      * <p>The depth of object graphs, starting from loaded instances, defined by {@link FetchPlan}
@@ -105,10 +107,10 @@ public interface UnconstrainedDataManager {
     List<KeyValueEntity> loadValues(ValueLoadContext context);
 
     /**
-     * Returns the number of key-value pairs for the given query passed in the {@link ValueLoadContext}.
+     * Returns the number of records for the given query passed in the {@link ValueLoadContext}.
      *
      * @param context defines the query
-     * @return number of key-value pairs in the data store
+     * @return number of records
      */
     long getCount(ValueLoadContext context);
 

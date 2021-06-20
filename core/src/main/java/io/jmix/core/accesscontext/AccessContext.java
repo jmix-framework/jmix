@@ -16,6 +16,8 @@
 
 package io.jmix.core.accesscontext;
 
-
+/**
+ * Marker interface for classes defining authorization points.
+ */
 public interface AccessContext {
 }

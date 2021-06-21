@@ -171,6 +171,7 @@ $jmix-datagrid-aggregation-background-color: $jmix-aggregation-background-color-
     }
 
     .jmix-simplepagination {
+      margin-bottom: $v-layout-spacing-vertical;
       padding-left: round($v-layout-spacing-horizontal/2);
       text-align: right;
       flex-grow: 1;

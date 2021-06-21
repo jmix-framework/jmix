@@ -26,12 +26,6 @@ $jmix-simplepagination-button-margin-right: round($v-layout-spacing-horizontal/2
  */
 $jmix-simplepagination-layout-margin-right: $v-layout-spacing-horizontal !default;
 
-/*
- * Defines margin-bottom for elements in simplepagination like navigation buttons layout and items per page layout.
- * @group simplepagination
- */
-$jmix-simplepagination-layout-margin-bottom: $v-layout-spacing-vertical !default;
-
 @mixin halo-simplepagination($primary-stylename: jmix-simplepagination) {
 
  .#{$primary-stylename} {
@@ -42,7 +36,6 @@ $jmix-simplepagination-layout-margin-bottom: $v-layout-spacing-vertical !default
 
    & > * {
      vertical-align: middle;
-     margin-bottom: $jmix-simplepagination-layout-margin-bottom;
    }
 
    .#{$primary-stylename}-count {

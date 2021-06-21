@@ -74,14 +74,6 @@ public interface ESIndexManager {
     boolean isIndexExist(String indexName);
 
     /**
-     * Checks if index has actual configuration.
-     *
-     * @param indexConfiguration actual configuration
-     * @return true if existing index has the same configuration as the provided one, false otherwise
-     */
-    boolean isIndexActual(IndexConfiguration indexConfiguration);
-
-    /**
      * Validates current state of schema of all search indexes defined in application.
      *
      * @return {@link IndexValidationStatus} per each {@link IndexConfiguration}

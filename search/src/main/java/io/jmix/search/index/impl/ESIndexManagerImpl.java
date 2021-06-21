@@ -147,23 +147,6 @@ public class ESIndexManagerImpl implements ESIndexManager {
     }
 
     @Override
-    public boolean isIndexActual(IndexConfiguration indexConfiguration) {
-        Preconditions.checkNotNullArgument(indexConfiguration);
-
-        GetIndexResponse index = getIndex(indexConfiguration.getIndexName());
-        Map<String, MappingMetadata> mappings = index.getMappings();
-        MappingMetadata mappingMetadata = mappings.get(indexConfiguration.getIndexName());
-        Map<String, Object> currentMapping = mappingMetadata.getSourceAsMap();
-        log.debug("Current mapping of index '{}': {}", indexConfiguration.getIndexName(), currentMapping);
-
-        Map<String, Object> actualMapping = objectMapper.convertValue(indexConfiguration.getMapping(), new TypeReference<Map<String, Object>>() {
-        });
-        log.debug("Actual mapping of index '{}': {}", indexConfiguration.getIndexName(), actualMapping);
-
-        return actualMapping.equals(currentMapping);
-    }
-
-    @Override
     public Map<IndexConfiguration, IndexValidationStatus> validateIndexes() {
         Collection<IndexConfiguration> indexConfigurations = indexConfigurationManager.getAllIndexConfigurations();
         return validateIndexes(indexConfigurations);
@@ -297,5 +280,21 @@ public class ESIndexManagerImpl implements ESIndexManager {
             }
         }
         return status;
+    }
+
+    protected boolean isIndexActual(IndexConfiguration indexConfiguration) {
+        Preconditions.checkNotNullArgument(indexConfiguration);
+
+        GetIndexResponse index = getIndex(indexConfiguration.getIndexName());
+        Map<String, MappingMetadata> mappings = index.getMappings();
+        MappingMetadata mappingMetadata = mappings.get(indexConfiguration.getIndexName());
+        Map<String, Object> currentMapping = mappingMetadata.getSourceAsMap();
+        log.debug("Current mapping of index '{}': {}", indexConfiguration.getIndexName(), currentMapping);
+
+        Map<String, Object> actualMapping = objectMapper.convertValue(indexConfiguration.getMapping(), new TypeReference<Map<String, Object>>() {
+        });
+        log.debug("Actual mapping of index '{}': {}", indexConfiguration.getIndexName(), actualMapping);
+
+        return actualMapping.equals(currentMapping);
     }
 }

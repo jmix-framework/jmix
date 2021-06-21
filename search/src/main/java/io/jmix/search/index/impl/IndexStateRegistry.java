@@ -26,6 +26,14 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+/**
+ * Holds markers of search indexes availability.
+ * Only entities with available indexes can be used in index-modification operations
+ * (to prevent storing data into incorrect indexes or automatic creation of them by ES).
+ * <p>Doesn't affect searching.
+ * <p>Every action that makes or detects index is valid (creation or successful synchronization\validation) marks it as available.
+ * <p>Every action that makes or detects index is invalid (drop or unsuccessful synchronization\validation) marks it as unavailable.
+ */
 @Component("search_IndexStateRegistry")
 public class IndexStateRegistry {
 

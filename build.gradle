@@ -87,6 +87,7 @@ dependencies {
     def grapesJsVersion = baseVersion
     def graphqlVersion = baseVersion
     def imapVersion = baseVersion
+    def ldapVersion = baseVersion
     def localfsVersion = baseVersion
     def multitenancyVersion = baseVersion
     def mapsVersion = baseVersion
@@ -178,6 +179,9 @@ dependencies {
         api "io.jmix.imap:jmix-imap-ui:${snapshotOr(imapVersion)}"
         api "io.jmix.imap:jmix-imap-starter:${snapshotOr(imapVersion)}"
         api "io.jmix.imap:jmix-imap-ui-starter:${snapshotOr(imapVersion)}"
+
+        api "io.jmix.ldap:jmix-ldap:${snapshotOr(ldapVersion)}"
+        api "io.jmix.ldap:jmix-ldap-starter:${snapshotOr(ldapVersion)}"
 
         api "io.jmix.localfs:jmix-localfs:${snapshotOr(localfsVersion)}"
         api "io.jmix.localfs:jmix-localfs-starter:${snapshotOr(localfsVersion)}"

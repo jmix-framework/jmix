@@ -16,7 +16,7 @@
 
 @Internal
 @NonNullApi
-package io.jmix.search.listener;
+package io.jmix.search.index.queue.entity;
 
 import io.jmix.core.annotation.Internal;
 import org.springframework.lang.NonNullApi;

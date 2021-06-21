@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
+@Internal
 @NonNullApi
 package io.jmix.searchui.component.loader;
 
+import io.jmix.core.annotation.Internal;
 import org.springframework.lang.NonNullApi;

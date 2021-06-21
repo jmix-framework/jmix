@@ -15,8 +15,6 @@
  */
 
 @Internal
-@NonNullApi
-package io.jmix.search.listener;
+package io.jmix.autoconfigure.searchui;
 
 import io.jmix.core.annotation.Internal;
-import org.springframework.lang.NonNullApi;

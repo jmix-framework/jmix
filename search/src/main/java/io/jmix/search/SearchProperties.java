@@ -45,6 +45,7 @@ public class SearchProperties {
 
     protected final String defaultSearchStrategy;
     protected final String indexingQueueProcessingCron;
+    protected final String searchIndexNamePrefix;
 
     protected final IndexSchemaManagementStrategy indexSchemaManagementStrategy;
 
@@ -61,6 +62,7 @@ public class SearchProperties {
             @DefaultValue("true") boolean useDefaultIndexingQueueProcessingQuartzConfiguration,
             @DefaultValue("true") boolean enqueueIndexAllOnStartupIndexRecreationEnabled,
             @DefaultValue("") String enqueueIndexAllOnStartupIndexRecreationEntities,
+            @DefaultValue("search_index_") String searchIndexNamePrefix,
             @DefaultValue("anyTermAnyField") String defaultSearchStrategy,
             @DefaultValue("create-or-recreate") String indexSchemaManagementStrategy,
             @DefaultValue("0/5 * * * * ?") String indexingQueueProcessingCron,
@@ -79,6 +81,7 @@ public class SearchProperties {
         this.elasticsearch = elasticsearch;
         this.enqueueIndexAllOnStartupIndexRecreationEnabled = enqueueIndexAllOnStartupIndexRecreationEnabled;
         this.enqueueIndexAllOnStartupIndexRecreationEntities = prepareStartupEnqueueingEntities(enqueueIndexAllOnStartupIndexRecreationEntities);
+        this.searchIndexNamePrefix = searchIndexNamePrefix;
     }
 
     /**
@@ -142,6 +145,13 @@ public class SearchProperties {
      */
     public String getIndexingQueueProcessingCron() {
         return indexingQueueProcessingCron;
+    }
+
+    /**
+     * @return prefix for search index name. Index naming template: &lt;prefix&gt;&lt;entity_name&gt;. Default prefix is 'search_index_'.
+     */
+    public String getSearchIndexNamePrefix() {
+        return searchIndexNamePrefix;
     }
 
     /**

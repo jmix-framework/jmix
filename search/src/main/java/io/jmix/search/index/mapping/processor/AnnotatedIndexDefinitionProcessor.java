@@ -23,6 +23,7 @@ import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.search.SearchProperties;
 import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.annotation.JmixEntitySearchIndex;
 import io.jmix.search.index.mapping.DisplayedNameDescriptor;
@@ -74,6 +75,8 @@ public class AnnotatedIndexDefinitionProcessor {
     protected InstanceNameProvider instanceNameProvider;
     @Autowired
     protected PropertyValueExtractorProvider propertyValueExtractorProvider;
+    @Autowired
+    protected SearchProperties searchProperties;
 
     /**
      * Processes index definition interface marked with {@link JmixEntitySearchIndex} annotation
@@ -113,7 +116,7 @@ public class AnnotatedIndexDefinitionProcessor {
     }
 
     protected String createIndexName(MetaClass entityMetaClass) {
-        return "search_index_" + entityMetaClass.getName().toLowerCase();
+        return searchProperties.getSearchIndexNamePrefix() + entityMetaClass.getName().toLowerCase();
     }
 
     protected IndexMappingConfiguration createIndexMappingConfig(MetaClass entityMetaClass, Class<?> indexDefClass) {

@@ -34,7 +34,7 @@
     <layout spacing="true" expand="editActions">
         <form id="form" dataContainer="filterConditionDc" width="100%" height="100%">
             <column width="100%">
-                <textField id="captionField" property="caption"/>
+                <textField id="captionField" property="caption" required="true"/>
                 <comboBox id="searchStrategyNameField" property="searchStrategyName" contextHelpText="msg://io.jmix.searchui.screen.filter.condition/searchStrategyNameField.contextHelp"/>
             </column>
         </form>

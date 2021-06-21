@@ -26,6 +26,7 @@ import io.jmix.ui.component.Filter;
 import io.jmix.ui.component.data.options.ListOptions;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.screen.*;
+import org.elasticsearch.common.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collection;
@@ -58,18 +59,23 @@ public class FullTextFilterConditionEdit extends FilterConditionEdit<FullTextFil
     }
 
     @Subscribe
-    public void onInitEntity(InitEntityEvent<FullTextFilterCondition> event) {
-        FullTextFilterCondition condition = event.getEntity();
-        condition.setParameterName(FullTextFilterUtils.generateParameterName());
-        condition.setCaption(messageBundle.getMessage("defaultCaption"));
-    }
-
-    @Subscribe
     public void onBeforeShow(BeforeShowEvent event) {
         Collection<SearchStrategy> searchStrategies = searchStrategyManager.getAllSearchStrategies();
         List<String> searchStrategyNames = searchStrategies.stream()
                 .map(SearchStrategy::getName)
                 .collect(Collectors.toList());
         searchStrategyNameField.setOptions(new ListOptions<>(searchStrategyNames));
+
+        if (Strings.isNullOrEmpty(getEditedEntity().getCaption())) {
+            getEditedEntity().setCaption(messageBundle.getMessage("defaultCaption"));
+        }
+        if (Strings.isNullOrEmpty(getEditedEntity().getParameterName())) {
+            getEditedEntity().setParameterName(FullTextFilterUtils.generateParameterName());
+        }
+    }
+
+    @Subscribe
+    public void onBeforeCommitChanges(BeforeCommitChangesEvent event) {
+        getEditedEntity().setLocalizedCaption(getEditedEntity().getCaption());
     }
 }

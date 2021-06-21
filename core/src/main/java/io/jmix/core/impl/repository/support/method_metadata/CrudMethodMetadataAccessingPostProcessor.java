@@ -81,10 +81,13 @@ public class CrudMethodMetadataAccessingPostProcessor implements RepositoryProxy
 
             if (methodMetadata == null) {
                 methodMetadata = MethodMetadataHelper.collectMethodMetadata(method, repositoryInformation.getRepositoryInterface());
-                metadataCache.putIfAbsent(method, methodMetadata);
-                log.debug("Metadata for '{}.{}' cached: '{}' ",
-                        repositoryInformation.getRepositoryInterface().getName(), method.getName(), methodMetadata);
-
+                CrudMethodMetadata contained = metadataCache.putIfAbsent(method, methodMetadata);
+                if (contained != null) {
+                    methodMetadata = contained;
+                } else {
+                    log.debug("Metadata for '{}.{}' cached: '{}' ",
+                            repositoryInformation.getRepositoryInterface().getName(), method.getName(), methodMetadata);
+                }
             }
 
             CrudMethodMetadata oldMetadata = currentMetadata.get();

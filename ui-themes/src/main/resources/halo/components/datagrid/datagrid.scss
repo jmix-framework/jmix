@@ -160,6 +160,7 @@ $jmix-datagrid-aggregation-background-color: $jmix-aggregation-background-color-
       min-height: $v-unit-size;
 
       .jmix-buttons-panel {
+        flex-basis: 100%;
         flex-grow: 1;
       }
     }
@@ -172,6 +173,7 @@ $jmix-datagrid-aggregation-background-color: $jmix-aggregation-background-color-
     .jmix-simplepagination {
       padding-left: round($v-layout-spacing-horizontal/2);
       text-align: right;
+      flex-grow: 1;
       flex-shrink: 0;
     }
 

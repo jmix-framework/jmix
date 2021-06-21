@@ -269,6 +269,7 @@ $jmix-table-drag-indicator-color: $v-focus-color;
       min-height: $v-unit-size;
 
       .jmix-buttons-panel {
+        flex-basis: 100%;
         flex-grow: 1;
       }
     }
@@ -281,6 +282,7 @@ $jmix-table-drag-indicator-color: $v-focus-color;
     .jmix-simplepagination {
       padding-left: round($v-layout-spacing-horizontal/2);
       text-align: right;
+      flex-grow: 1;
       flex-shrink: 0;
     }
 

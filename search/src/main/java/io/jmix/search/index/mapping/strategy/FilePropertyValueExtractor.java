@@ -27,6 +27,7 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.search.exception.FileParseException;
 import io.jmix.search.index.mapping.ParameterKeys;
 import io.jmix.search.utils.FileProcessor;
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,7 +73,8 @@ public class FilePropertyValueExtractor extends AbstractPropertyValueExtractor {
 
     protected ObjectNode processFileRef(FileRef fileRef, Map<String, Object> parameters) {
         ObjectNode result = JsonNodeFactory.instance.objectNode();
-        result.put("_file_name", fileRef.getFileName());
+        String fileName = FilenameUtils.removeExtension(fileRef.getFileName());
+        result.put("_file_name", fileName);
         if (isIndexFileContent(parameters)) {
             addFileContent(result, fileRef);
         }

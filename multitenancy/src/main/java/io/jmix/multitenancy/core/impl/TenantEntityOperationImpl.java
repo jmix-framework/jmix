@@ -27,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 
@@ -61,6 +62,7 @@ public class TenantEntityOperationImpl implements TenantEntityOperation {
 
     }
 
+    @Nullable
     private Field findTenantField(Class<?> entityClass) {
         return Arrays.stream(FieldUtils.getAllFields(entityClass))
                 .filter(f -> f.isAnnotationPresent(TenantId.class))

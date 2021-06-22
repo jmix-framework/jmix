@@ -16,6 +16,7 @@
 
 package io.jmix.autoconfigure.imap.job;
 
+import io.jmix.core.security.SystemAuthenticator;
 import io.jmix.imap.ImapScheduler;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
@@ -27,8 +28,16 @@ public class ImapSyncJob implements Job {
     @Autowired
     private ImapScheduler imapScheduler;
 
+    @Autowired
+    private SystemAuthenticator authenticator;
+
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
-        imapScheduler.syncImap();
+        authenticator.begin();
+        try {
+            imapScheduler.syncImap();
+        } finally {
+            authenticator.end();
+        }
     }
 }

@@ -143,7 +143,7 @@ access to writing native SQL or Groovy code (JMX Console, SQL/Groovy bands in th
 7. Add combobox for tenant in `user-edit.xml`
 
 ```xml
-    <comboBox id="tenantIdField" property="tenantId"/>
+    <comboBox id="tenantIdField" property="tenantId" editable="false"/>
 ```
 
 8. Add code in `UserEdit` class
@@ -154,6 +154,11 @@ access to writing native SQL or Groovy code (JMX Console, SQL/Groovy bands in th
 
     @Autowired
     private MultitenancyUiSupport multitenancyUiSupport;
+
+    @Subscribe
+    public void onInitEntity(InitEntityEvent<User> event) {
+        tenantIdField.setEditable(true);
+    }
     
     @Subscribe
     public void onInit(InitEvent event){

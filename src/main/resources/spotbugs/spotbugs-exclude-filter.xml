@@ -231,7 +231,7 @@
 
     <Match>
         <Bug pattern="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE"/>
-        <Class name="io.jmix.reports.impl.ReportsImpl"/>
-        <Method name="storeReportEntity"/>
+        <Class name="io.jmix.reports.impl.ReportsPersistenceImpl"/>
+        <Method name="save"/>
     </Match>
 </FindBugsFilter>

@@ -16,11 +16,13 @@
 
 package io.jmix.searchui.role;
 
-
 import io.jmix.security.model.SecurityScope;
 import io.jmix.security.role.annotation.ResourceRole;
 import io.jmix.securityui.role.annotation.ScreenPolicy;
 
+/**
+ * Grants permissions to view Search Results screen
+ */
 @ResourceRole(name = "Search: view search results", code = "search-view-search-results", scope = SecurityScope.UI)
 public interface ViewSearchResultRole {
 

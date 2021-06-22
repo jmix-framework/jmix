@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@Experimental
+@Internal
 package io.jmix.searchui.entity;
 
-import io.jmix.core.annotation.Experimental;
+import io.jmix.core.annotation.Internal;

@@ -15,6 +15,8 @@
  */
 
 @NonNullApi
+@Experimental
 package io.jmix.searchui.screen.result;
 
+import io.jmix.core.annotation.Experimental;
 import org.springframework.lang.NonNullApi;

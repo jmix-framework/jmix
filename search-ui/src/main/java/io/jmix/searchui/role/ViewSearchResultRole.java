@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Haulmont.
+ * Copyright 2021 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,16 @@
  * limitations under the License.
  */
 
-apply plugin: 'groovy'
-apply plugin: 'io.jmix'
+package io.jmix.searchui.role;
 
-group = 'io.jmix.search'
-archivesBaseName = 'jmix-search-ui'
 
-dependencies {
-    api platform("io.jmix.bom:jmix-bom:$bomVersion")
+import io.jmix.security.model.SecurityScope;
+import io.jmix.security.role.annotation.ResourceRole;
+import io.jmix.securityui.role.annotation.ScreenPolicy;
 
-    api project(':search')
+@ResourceRole(name = "Search: view search results", code = "search-view-search-results", scope = SecurityScope.UI)
+public interface ViewSearchResultRole {
 
-    api 'io.jmix.ui:jmix-ui'
-
-    implementation 'io.jmix.security:jmix-security'
-    implementation 'io.jmix.security:jmix-security-ui'
+    @ScreenPolicy(screenIds = "search_SearchResults.screen")
+    void viewSearchResults();
 }

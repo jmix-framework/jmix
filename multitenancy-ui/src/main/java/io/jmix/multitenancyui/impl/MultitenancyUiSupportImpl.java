@@ -65,14 +65,16 @@ public class MultitenancyUiSupportImpl implements MultitenancyUiSupport {
     }
 
     @Override
-    public String getUsernameByTenant(String username, String newTenantId) {
-        username = username != null ? username : "";
-        newTenantId = newTenantId != null ? newTenantId : "";
-        if (username.contains(TENANT_USERNAME_SEPARATOR)) {
-            username = username.substring(username.indexOf(TENANT_USERNAME_SEPARATOR) + 1);
-            return username;
+    public String getUsernameByTenant(String username, String tenantId) {
+        String newUsername = username != null ? username : "";
+        if (newUsername.contains(TENANT_USERNAME_SEPARATOR)) {
+            newUsername = newUsername.substring(username.indexOf(TENANT_USERNAME_SEPARATOR) + 1);
         }
-        return concatUsername(username, newTenantId);
+        if (Strings.isNullOrEmpty(tenantId)) {
+            return newUsername;
+        } else {
+            return concatUsername(newUsername, tenantId);
+        }
     }
 
     private String concatUsername(String username, String tenantId) {

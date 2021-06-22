@@ -43,8 +43,7 @@ public class AutoMappedFieldAnnotationProcessor extends AbstractFieldAnnotationP
                 .excludeProperties(annotation.excludeProperties())
                 .usingFieldMappingStrategyClass(getFieldMappingStrategyClass())
                 .withParameters(createParameters(annotation))
-                .buildElement()
-                .buildMappingDefinition();
+                .buildElement();
     }
 
     @Override

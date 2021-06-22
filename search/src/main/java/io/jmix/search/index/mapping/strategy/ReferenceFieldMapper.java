@@ -24,13 +24,16 @@ import io.jmix.search.index.mapping.ParameterKeys;
 import io.jmix.search.utils.Constants;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
 @Component("search_ReferenceFieldMapper")
 public class ReferenceFieldMapper extends AbstractFieldMapper {
 
-    protected static final Set<String> supportedParameters = Sets.newHashSet(ParameterKeys.ANALYZER);
+    protected static final Set<String> supportedParameters = Collections.unmodifiableSet(
+            Sets.newHashSet(ParameterKeys.ANALYZER)
+    );
 
     @Override
     public Set<String> getSupportedMappingParameters() {

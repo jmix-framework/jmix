@@ -27,6 +27,7 @@ import io.jmix.search.utils.Constants;
 import io.jmix.security.constraint.PolicyStore;
 import io.jmix.security.constraint.SecureOperations;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.lucene.search.TotalHits;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.support.IndicesOptions;
@@ -106,8 +107,9 @@ public class EntitySearcherImpl implements EntitySearcher {
             Map<MetaClass, List<SearchHit>> hitsByEntityName = groupSearchHitsByEntity(searchHits);
             fillSearchResult(searchResult, hitsByEntityName);
 
-            long totalHits = searchResponse.getHits().getTotalHits().value;
-            moreDataAvailable = (totalHits - searchResult.getEffectiveOffset()) > 0;
+            TotalHits totalHits = searchHits.getTotalHits();
+            long totalHitsValue = totalHits == null ? 0 : totalHits.value;
+            moreDataAvailable = (totalHitsValue - searchResult.getEffectiveOffset()) > 0;
         } while (moreDataAvailable && !isResultFull(searchResult, searchContext));
         searchResult.setMoreDataAvailable(moreDataAvailable);
         return searchResult;

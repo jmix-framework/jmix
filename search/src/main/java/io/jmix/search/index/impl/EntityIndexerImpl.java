@@ -367,6 +367,9 @@ public class EntityIndexerImpl implements EntityIndexer {
                     break;
                 case BOOLEAN:
                     valueNode = BooleanNode.valueOf(incomingValueNode.booleanValue());
+                    break;
+                default:
+                    break;
             }
             if (valueNode != null) {
                 updateObject(mergedInTo, valueNode, incomingEntry);

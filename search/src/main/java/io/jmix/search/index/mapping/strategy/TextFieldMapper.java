@@ -20,6 +20,7 @@ import com.google.common.collect.Sets;
 import io.jmix.search.index.mapping.ParameterKeys;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.Set;
 
 /**
@@ -28,7 +29,9 @@ import java.util.Set;
 @Component("search_TextFieldMapper")
 public class TextFieldMapper extends SimpleFieldMapper {
 
-    protected static final Set<String> supportedParameters = Sets.newHashSet(ParameterKeys.ANALYZER);
+    protected static final Set<String> supportedParameters = Collections.unmodifiableSet(
+            Sets.newHashSet(ParameterKeys.ANALYZER)
+    );
 
     @Override
     public Set<String> getSupportedMappingParameters() {

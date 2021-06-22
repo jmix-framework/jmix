@@ -18,6 +18,8 @@ package io.jmix.search.exception;
 
 import org.apache.commons.lang3.StringUtils;
 
+import javax.annotation.Nullable;
+
 public class FileParseException extends Exception {
 
     private static final long serialVersionUID = 984427696757522707L;
@@ -32,15 +34,15 @@ public class FileParseException extends Exception {
         super(createMessage(fileName, null));
     }
 
-    public FileParseException(String fileName, String details) {
+    public FileParseException(String fileName, @Nullable String details) {
         super(createMessage(fileName, details));
     }
 
-    public FileParseException(String fileName, String details, Throwable cause) {
+    public FileParseException(String fileName, @Nullable String details, Throwable cause) {
         super(createMessage(fileName, details), cause);
     }
 
-    private static String createMessage(String fileName, String details) {
+    private static String createMessage(String fileName, @Nullable String details) {
         details = StringUtils.isNotBlank(details) ? ": " + details : "";
         return String.format(template, fileName, details);
     }

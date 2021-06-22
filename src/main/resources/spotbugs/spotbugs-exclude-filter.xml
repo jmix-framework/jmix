@@ -234,4 +234,10 @@
         <Class name="io.jmix.reports.impl.ReportsPersistenceImpl"/>
         <Method name="save"/>
     </Match>
+
+    <Match>
+        <Bug pattern="RV_RETURN_VALUE_IGNORED"/>
+        <Class name="io.jmix.emailtemplatesui.screen.emailtemplate.report.ReportEmailTemplateEdit"/>
+        <Method name="onPreCommit"/>
+    </Match>
 </FindBugsFilter>

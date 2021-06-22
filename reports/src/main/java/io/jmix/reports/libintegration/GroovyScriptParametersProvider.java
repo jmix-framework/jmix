@@ -29,6 +29,8 @@ import java.util.Map;
 public interface GroovyScriptParametersProvider {
     /**
      * Prepares and return the map of objects
+     * @param reportQuery report query
+     * @param parentBand parent band
      * @param reportParameters - parameters to include into the map of parameters
      * @return map of objects
      */

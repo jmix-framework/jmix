@@ -46,7 +46,7 @@ import java.util.Optional;
  *     <li>Output name pattern</li>
  *     <li>Input parameters</li>
  * </ul>
- * <br/>
+ * <br>
  * Use the {@link ReportRunner} bean to obtain an instance of the {@link FluentReportRunner}.
  */
 @Component("report_FluentReportRunner")
@@ -143,9 +143,9 @@ public class FluentReportRunner {
     }
 
     /**
-     * Sets a name of output document.
+     * Sets a name pattern of an output document.
      *
-     * @param outputNamePattern name of an output document
+     * @param outputNamePattern name pattern of an output document
      * @return current instance of fluent runner
      */
     public FluentReportRunner withOutputNamePattern(@Nullable String outputNamePattern) {

@@ -36,7 +36,7 @@ public interface UiReportRunner {
      * Runs a report for each object from the specified collection. Objects in the collection should have the same type as an input parameter with specified alias.
      * If the report has other parameters besides the specified one, values for these parameters are copied for each report run.
      * As result, the ZIP archive with executed reports is downloaded.
-     * <p/>
+     * <br>
      * For example, a report has an input parameter with alias "name" and the String type:
      * <pre>
      *  UiReportRunContext context = new UiReportRunContext(report)
@@ -53,7 +53,7 @@ public interface UiReportRunner {
 
     /**
      * Creates an instance of {@link FluentUiReportRunner} for a report with specified code.
-     * <p/>
+     * <br>
      * Usage examples:
      * <pre>
      * UiReportRunContext context = uiReportRunner.byReportCode("orders-report")
@@ -70,7 +70,6 @@ public interface UiReportRunner {
      *
      * uiReportRunner.byReportCode("orders-report")
      *                 .addParam("orders", ordersList)
-     *                 .withOriginFrameOwner(screen)
      *                 .withParametersDialogShowMode(ParametersDialogShowMode.YES)
      *                 .runAndShow();
      *
@@ -88,7 +87,7 @@ public interface UiReportRunner {
 
     /**
      * Creates an instance of {@link FluentUiReportRunner} for specified report.
-     * <p/>
+     * <br>
      * Usage examples:
      * <pre>
      * UiReportRunContext context = uiReportRunner.byReportEntity(report)
@@ -106,7 +105,6 @@ public interface UiReportRunner {
      * uiReportRunner.byReportEntity(report)
      *                 .withTemplate(template)
      *                 .addParam("orders", ordersList)
-     *                 .withOriginFrameOwner(screen)
      *                 .withParametersDialogShowMode(ParametersDialogShowMode.YES)
      *                 .runAndShow();
      *

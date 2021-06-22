@@ -177,7 +177,7 @@ public class ReportsProperties {
 
     /**
      * Return entities that will not be available for report wizard.
-     * Note that if {@code reporting.wizardEntitiesWhiteList} is not empty, this list will be ignored
+     * Note that if {@code jmix.reports.wizardEntitiesWhiteList} is not empty, this list will be ignored
      *
      * @return list of ignored entities
      */
@@ -208,7 +208,7 @@ public class ReportsProperties {
     }
 
     /**
-     * Entity properties that will not to be excluded by {@code reporting.wizardPropertiesBlackList} setting
+     * @return Entity properties that will not to be excluded by {@code jmix.reports.wizardPropertiesBlackList} setting
      *
      * @see ReportsProperties#getWizardPropertiesBlackList()
      */
@@ -217,7 +217,7 @@ public class ReportsProperties {
     }
 
     /**
-     * Maximum depth of entity model that is used in report wizard and report dataset fetchPlan editor.
+     * @return Maximum depth of entity model that is used in report wizard and report dataset fetchPlan editor.
      */
     public Integer getEntityTreeModelMaxDepth() {
         return entityTreeModelMaxDepth;
@@ -229,14 +229,16 @@ public class ReportsProperties {
     }
 
     /**
-     * Reporting uses CURL tool to generate reports from URL. This is the system path to the tool.
+     * Reporting uses cURL tool to generate reports from URL. This is the system path to the tool.
+     * @return path to the cURL tool to generate report from URL
      */
     public String getCurlPath() {
         return curlPath;
     }
 
     /**
-     * Reporting uses CURL tool to generate reports from URL. This the string with parameters used while calling CURL.
+     * Reporting uses cURL tool to generate reports from URL. This the string with parameters used while calling cURL.
+     * @return parameters used while calling cURL to generate reports from URL
      */
     public String getCurlParams() {
         return curlParams;
@@ -247,14 +249,7 @@ public class ReportsProperties {
     }
 
     /**
-     * Toggle for Groovy dataset's transactions. If true, transactions are read-only.
-     */
-    public Boolean getUseReadOnlyTransactionForGroovy() {
-        return useReadOnlyTransactionForGroovy;
-    }
-
-    /**
-     * Flag to enable execution history recording.
+     * @return Flag to enable execution history recording.
      */
     public boolean isHistoryRecordingEnabled() {
         return historyRecordingEnabled;
@@ -262,7 +257,7 @@ public class ReportsProperties {
 
     /**
      * If enabled - then save all output documents to file storage, so they can be downloaded later.
-     * Note that ReportExecution stores file that is independent from the one created by ReportingApi#createAndSaveReport methods.
+     * @return if enabled - then save all output documents to file storage
      */
     public boolean isSaveOutputDocumentsToHistory() {
         return saveOutputDocumentsToHistory;
@@ -271,6 +266,7 @@ public class ReportsProperties {
     /**
      * Report execution history deletes all history items older than this number of days.
      * Value == 0 means no cleanup by this criteria.
+     * @return max available number of days for execution history
      */
     public int getHistoryCleanupMaxDays() {
         return historyCleanupMaxDays;
@@ -280,6 +276,7 @@ public class ReportsProperties {
      * Report execution cleanup leaves only this number of execution history items for each report,
      * deleting all older items.
      * Value == 0 means no cleanup by this criteria.
+     * @return max available number of execution history items per report
      */
     public int getHistoryCleanupMaxItemsPerReport() {
         return historyCleanupMaxItemsPerReport;

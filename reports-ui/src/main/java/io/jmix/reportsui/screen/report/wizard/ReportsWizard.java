@@ -405,6 +405,9 @@ public class ReportsWizard {
     /**
      * Search for fetch plan for parent node
      * If does not exists - createDataSet it and add property to parent of parent fetch plan
+     * @param entityTreeNode entity tree node
+     * @param fetchPlansForNodes fetch plans for previous nodes
+     * @return fetch plan builder
      */
     @Nullable
     protected FetchPlanBuilder ensureParentFetchPlansExist(EntityTreeNode entityTreeNode, Map<EntityTreeNode, FetchPlanBuilder> fetchPlansForNodes) {

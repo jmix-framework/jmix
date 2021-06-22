@@ -27,17 +27,17 @@ import java.util.Map;
 /**
  * Class stores the information required for report running from UI. The instance of the class may be created using the
  * constructor or using the {@link FluentUiReportRunner} bean.
- * <p/>
+ * <br>
  * In addition to options required to run a report, it is possible to control the following ones:
  * <ul>
  *     <li>Show dialog to input the report parameters before a run or not</li>
  *     <li>Execute report generation synchronously or in the background</li>
  * </ul>
- * <p/>
+ * <br>
  *
  * <b>Note:</b> if a report runs in the background, the screen (or screen fragment) from which the report runs should be specified as well.
  *
- * <p/>
+ * <br>
  * Creation examples:
  * <pre>
  *  UiReportRunContext context = new UiReportRunContext(report)

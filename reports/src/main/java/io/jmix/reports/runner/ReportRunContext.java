@@ -33,11 +33,11 @@ import java.util.Map;
  *     <li>Type of output document</li>
  *     <li>Output name pattern</li>
  * </ul>
- * <br/>
+ * <br>
  * The instance of the class may be created using the
  * constructor or using the {@link ReportRunner} bean.
  *
- * <p/>
+ * <br>
  * Creation examples:
  * <pre>
  * ReportRunContext context = new ReportRunContext(report)

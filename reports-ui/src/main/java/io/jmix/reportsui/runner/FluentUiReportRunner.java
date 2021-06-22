@@ -43,7 +43,7 @@ import java.util.Map;
  *     <li>Show a dialog to input the report parameters (defined by {@link ParametersDialogShowMode})</li>
  *     <li>Run a report synchronously or in the background (by default, a report runs synchronously)</li>
  * </ul>
- * <br/>
+ * <br>
  * Use the {@link UiReportRunner} bean to obtain an instance of the {@link FluentUiReportRunner}.
  */
 @Component("report_FluentUiReportRunner")
@@ -131,9 +131,9 @@ public class FluentUiReportRunner {
     }
 
     /**
-     * Sets a name of output document.
+     * Sets a name pattern of an output document.
      *
-     * @param outputNamePattern name of an output document
+     * @param outputNamePattern name pattern of an output document
      * @return current instance of fluent runner
      */
     public FluentUiReportRunner withOutputNamePattern(@Nullable String outputNamePattern) {

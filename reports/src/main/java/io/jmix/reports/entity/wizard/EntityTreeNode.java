@@ -80,7 +80,7 @@ public class EntityTreeNode {
     /**
      * Calculates depth of child nodes. Can to be used in sorting
      *
-     * @return
+     * @return depth of child nodes
      */
     @JmixProperty
     @Transient

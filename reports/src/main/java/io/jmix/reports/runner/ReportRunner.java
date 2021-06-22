@@ -35,7 +35,7 @@ public interface ReportRunner {
 
     /**
      * Creates an instance of {@link FluentReportRunner} for a report with specified code.
-     * <p/>
+     * <br>
      * Usage examples:
      * <pre>
      * ReportRunContext context = reportRunner.byReportCode("orders-report")
@@ -56,7 +56,7 @@ public interface ReportRunner {
 
     /**
      * Creates an instance of {@link FluentReportRunner} for specified report.
-     * <p/>
+     * <br>
      *
      * Usage examples:
      * <pre>

@@ -34,6 +34,7 @@ public interface ReportExecutionHistoryRecorder {
 
     /**
      * Should be invoked as scheduled task.
+     * @return count of deleted {@link ReportExecution} entities
      */
     String cleanupHistory();
 }

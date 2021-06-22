@@ -56,6 +56,10 @@ public class ReportSecurityManager {
 
     /**
      * Apply security constraints for query to select reports available by roles and screen restrictions
+     *
+     * @param lc load context
+     * @param screen screen id
+     * @param userDetails user details
      */
     public void applySecurityPolicies(LoadContext lc, @Nullable String screen, @Nullable UserDetails userDetails) {
         QueryTransformer transformer = queryTransformerFactory.transformer(lc.getQuery().getQueryString());
@@ -83,6 +87,8 @@ public class ReportSecurityManager {
 
     /**
      * Apply constraints for query to select reports which have input parameter with class matching inputValueMetaClass
+     * @param lc load context
+     * @param inputValueMetaClass meta class of input parameter value
      */
     public void applyPoliciesByEntityParameters(LoadContext lc, @Nullable MetaClass inputValueMetaClass) {
         if (inputValueMetaClass != null) {

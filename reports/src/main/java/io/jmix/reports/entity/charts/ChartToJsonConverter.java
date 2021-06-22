@@ -51,7 +51,7 @@ public class ChartToJsonConverter {
     }
 
     /**
-     * Returns default GSON builder for configuration serializer.
+     * @return default GSON builder for configuration serializer.
      */
     public static GsonBuilder createGsonBuilder() {
         GsonBuilder builder = new GsonBuilder();

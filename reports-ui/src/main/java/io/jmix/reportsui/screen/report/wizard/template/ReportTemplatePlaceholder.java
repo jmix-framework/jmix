@@ -51,6 +51,9 @@ public class ReportTemplatePlaceholder {
 
     /**
      * used in doc table fields and sheet reports
+     * @param value string to remove root node name
+     * @param reportRegion report region
+     * @return string without root node name
      */
     public String getPlaceholderValue(String value, ReportRegion reportRegion) {
         return String.format(TABLE_MASK, StringUtils.removeStart(value, reportRegion.getRegionPropertiesRootNode().getName() + "."));
@@ -58,6 +61,9 @@ public class ReportTemplatePlaceholder {
 
     /**
      * used in common fields
+     * @param value string to remove root node name
+     * @param reportRegion report region
+     * @return string that contains name for band and specified value without root node name
      */
     public String getPlaceholderValueWithBandName(String value, ReportRegion reportRegion) {
         return String.format(COMMON_MASK, reportRegion.getNameForBand(), StringUtils.removeStart(value,

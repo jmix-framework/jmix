@@ -46,7 +46,7 @@ public class CoreProperties {
     int dom4jMaxBorrowWaitMillis;
     boolean entitySerializationTokenRequired;
     String entitySerializationTokenEncryptionKey;
-    boolean fetchPlanSerializationUseView;
+    boolean legacyFetchPlanSerializationAttributeName;
     boolean triggerFilesEnabled;
     Duration triggerFilesProcessInterval;
 
@@ -66,7 +66,7 @@ public class CoreProperties {
             String defaultFileStorage,
             @DefaultValue("false") boolean entitySerializationTokenRequired,
             @DefaultValue("KEY") String entitySerializationTokenEncryptionKey,
-            @DefaultValue("false") boolean fetchPlanSerializationUseView,
+            @DefaultValue("false") boolean legacyFetchPlanSerializationAttributeName,
             @DefaultValue("true") boolean triggerFilesEnabled,
             @DefaultValue("5000") Duration triggerFilesProcessInterval) {
         this.webHostName = webHostName;
@@ -93,7 +93,7 @@ public class CoreProperties {
 
         this.entitySerializationTokenRequired = entitySerializationTokenRequired;
         this.entitySerializationTokenEncryptionKey = entitySerializationTokenEncryptionKey;
-        this.fetchPlanSerializationUseView = fetchPlanSerializationUseView;
+        this.legacyFetchPlanSerializationAttributeName = legacyFetchPlanSerializationAttributeName;
         this.triggerFilesEnabled = triggerFilesEnabled;
         this.triggerFilesProcessInterval = triggerFilesProcessInterval;
     }
@@ -186,8 +186,8 @@ public class CoreProperties {
         return entitySerializationTokenEncryptionKey;
     }
 
-    public boolean isFetchPlanSerializationUseView() {
-        return fetchPlanSerializationUseView;
+    public boolean isLegacyFetchPlanSerializationAttributeName() {
+        return legacyFetchPlanSerializationAttributeName;
     }
 
     /**

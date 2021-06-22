@@ -60,11 +60,13 @@ import java.util.function.Consumer;
                 @StudioProperty(name = "stylenameProperty", type = PropertyType.PROPERTY_PATH_REF, options = "string"),
                 @StudioProperty(name = "isAllDayProperty", type = PropertyType.PROPERTY_PATH_REF, options = "boolean"),
                 @StudioProperty(name = "startDateProperty", type = PropertyType.PROPERTY_PATH_REF,
-                        options = {"date", "dateTime", "localDate", "localDateTime", "offsetDateTime"}),
+                        options = {"date", "dateTime", "localDate", "localDateTime", "offsetDateTime"},
+                        typeParameter = "V"),
                 @StudioProperty(name = "endDateProperty", type = PropertyType.PROPERTY_PATH_REF,
-                        options = {"date", "dateTime", "localDate", "localDateTime", "offsetDateTime"}),
+                        options = {"date", "dateTime", "localDate", "localDateTime", "offsetDateTime"},
+                        typeParameter = "V"),
                 @StudioProperty(name = "datatype", type = PropertyType.DATATYPE_ID, options = {"date", "dateTime",
-                        "localDate", "localDateTime", "offsetDateTime"})
+                        "localDate", "localDateTime", "offsetDateTime"}, typeParameter = "V")
         },
         groups = {
                 @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,

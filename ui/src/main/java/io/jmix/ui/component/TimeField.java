@@ -45,10 +45,10 @@ import java.time.OffsetTime;
 @StudioProperties(
         properties = {
                 @StudioProperty(name = "property", type = PropertyType.PROPERTY_PATH_REF,
-                        options = {"time", "localTime", "offsetTime"}),
+                        options = {"time", "localTime", "offsetTime"}, typeParameter = "V"),
                 @StudioProperty(name = "dataContainer", type = PropertyType.DATACONTAINER_REF),
                 @StudioProperty(name = "datatype", type = PropertyType.DATATYPE_ID,
-                        options = {"time", "localTime", "offsetTime"})
+                        options = {"time", "localTime", "offsetTime"}, typeParameter = "V")
         },
         groups = {
                 @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,

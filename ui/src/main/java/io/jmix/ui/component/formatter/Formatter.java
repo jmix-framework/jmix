@@ -22,4 +22,13 @@ import java.util.function.Function;
  * Marker interface to indicate that the implementing class can be used as a formatter.
  */
 public interface Formatter<V> extends Function<V, String> {
+
+    /**
+     * Formats a value to a string.
+     *
+     * @param value a value
+     * @return formatted string
+     */
+    @Override
+    String apply(V value);
 }

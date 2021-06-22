@@ -42,10 +42,10 @@ import java.math.BigDecimal;
 )
 @StudioProperties(
         properties = {
-                @StudioProperty(name = "property", type = PropertyType.PROPERTY_PATH_REF),
+                @StudioProperty(name = "property", type = PropertyType.PROPERTY_PATH_REF, typeParameter = "V"),
                 @StudioProperty(name = "dataContainer", type = PropertyType.DATACONTAINER_REF),
                 @StudioProperty(name = "datatype", type = PropertyType.DATATYPE_ID, options = {"decimal", "int",
-                        "long", "double", "float"})
+                        "long", "double", "float"}, typeParameter = "V")
         },
         groups = {
                 @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,

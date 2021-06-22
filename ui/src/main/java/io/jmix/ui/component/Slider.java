@@ -35,7 +35,7 @@ import io.jmix.ui.meta.StudioProperty;
         properties = {
                 @StudioProperty(name = "dataContainer", type = PropertyType.DATACONTAINER_REF),
                 @StudioProperty(name = "property", type = PropertyType.PROPERTY_PATH_REF,
-                        options = {"decimal", "double", "int", "long", "float"}),
+                        options = {"decimal", "double", "int", "long", "float"}, typeParameter = "V"),
                 @StudioProperty(name = "orientation", type = PropertyType.ENUMERATION,
                         defaultValue = "horizontal", options = {"vertical", "horizontal"})
         },

@@ -24,4 +24,12 @@ import java.util.function.Consumer;
  * @param <T> value type
  */
 public interface Validator<T> extends Consumer<T> {
+
+    /**
+     * Checks a value.
+     *
+     * @param value a value
+     */
+    @Override
+    void accept(T value);
 }

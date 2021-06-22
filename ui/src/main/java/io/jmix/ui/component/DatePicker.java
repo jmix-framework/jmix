@@ -47,10 +47,11 @@ import java.time.OffsetDateTime;
 @StudioProperties(
         properties = {
                 @StudioProperty(name = "property", type = PropertyType.PROPERTY_PATH_REF,
-                        options = {"date", "dateTime", "localDate", "localDateTime", "offsetDateTime"}),
+                        options = {"date", "dateTime", "localDate", "localDateTime", "offsetDateTime"},
+                        typeParameter = "V"),
                 @StudioProperty(name = "dataContainer", type = PropertyType.DATACONTAINER_REF),
                 @StudioProperty(name = "datatype", type = PropertyType.DATATYPE_ID, options = {"date", "dateTime",
-                        "localDate", "localDateTime", "offsetDateTime"})
+                        "localDate", "localDateTime", "offsetDateTime"}, typeParameter = "V")
         },
         groups = {
                 @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,

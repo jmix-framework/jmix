@@ -53,7 +53,8 @@ import java.util.function.Function;
         properties = {
                 @StudioProperty(name = "width", type = PropertyType.SIZE, defaultValue = "-1px", initialValue = "100px"),
                 @StudioProperty(name = "height", type = PropertyType.SIZE, defaultValue = "-1px", initialValue = "200px"),
-                @StudioProperty(name = "dataContainer", type = PropertyType.COLLECTION_DATACONTAINER_REF, required = true),
+                @StudioProperty(name = "dataContainer", type = PropertyType.COLLECTION_DATACONTAINER_REF,
+                        required = true, typeParameter = "E"),
                 @StudioProperty(name = "captionProperty", type = PropertyType.PROPERTY_PATH_REF),
                 @StudioProperty(name = "hierarchyProperty", type = PropertyType.PROPERTY_PATH_REF, typeParameter = "E",
                         required = true),

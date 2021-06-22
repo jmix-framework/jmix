@@ -27,7 +27,6 @@ import org.springframework.core.ParameterizedTypeReference;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.PositiveOrZero;
-import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 /**
@@ -45,7 +44,7 @@ import java.util.function.Predicate;
 )
 @StudioProperties(
         properties = {
-                @StudioProperty(name = "property", type = PropertyType.PROPERTY_PATH_REF),
+                @StudioProperty(name = "property", type = PropertyType.PROPERTY_PATH_REF, typeParameter = "V"),
                 @StudioProperty(name = "dataContainer", type = PropertyType.DATACONTAINER_REF)
         },
         groups = {

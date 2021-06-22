@@ -49,7 +49,8 @@ import java.util.function.Function;
 )
 @StudioProperties(
         properties = {
-                @StudioProperty(name = "optionsContainer", type = PropertyType.COLLECTION_DATACONTAINER_REF)
+                @StudioProperty(name = "optionsContainer", type = PropertyType.COLLECTION_DATACONTAINER_REF,
+                        typeParameter = "V")
         }
 )
 public interface TagPicker<V> extends ValuesPicker<V>, OptionsField<Collection<V>, V>, HasInputPrompt, HasFilterMode {
@@ -180,7 +181,7 @@ public interface TagPicker<V> extends ValuesPicker<V>, OptionsField<Collection<V
      *
      * @param metaClass entity meta class
      */
-    @StudioProperty(name = "metaClass", type = PropertyType.ENTITY_NAME)
+    @StudioProperty(name = "metaClass", type = PropertyType.ENTITY_NAME, typeParameter = "V")
     void setMetaClass(MetaClass metaClass);
 
     /**

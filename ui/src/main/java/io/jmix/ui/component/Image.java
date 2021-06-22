@@ -46,7 +46,7 @@ import java.util.function.Consumer;
                 @StudioProperty(name = "required", type = PropertyType.BOOLEAN),
                 @StudioProperty(name = "requiredMessage", type = PropertyType.STRING),
                 @StudioProperty(name = "property", type = PropertyType.PROPERTY_PATH_REF,
-                        options = {"byteArray", "fileRef"}),
+                        options = {"byteArray", "fileRef"}, typeParameter = "T"),
                 @StudioProperty(name = "dataContainer", type = PropertyType.DATACONTAINER_REF)
         },
         groups = {

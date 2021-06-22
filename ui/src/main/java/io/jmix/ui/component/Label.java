@@ -49,7 +49,7 @@ import java.time.OffsetTime;
 @StudioProperties(
         properties = {
                 @StudioProperty(name = "dataContainer", type = PropertyType.DATACONTAINER_REF),
-                @StudioProperty(name = "property", type = PropertyType.PROPERTY_PATH_REF),
+                @StudioProperty(name = "property", type = PropertyType.PROPERTY_PATH_REF, typeParameter = "V"),
                 @StudioProperty(name = "value", type = PropertyType.LOCALIZED_STRING)
         },
         groups = {

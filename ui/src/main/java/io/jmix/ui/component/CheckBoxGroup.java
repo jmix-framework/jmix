@@ -43,8 +43,9 @@ import java.util.Collection;
 @StudioProperties(
         properties = {
                 @StudioProperty(name = "dataContainer", type = PropertyType.DATACONTAINER_REF),
-                @StudioProperty(name = "property", type = PropertyType.PROPERTY_PATH_REF),
-                @StudioProperty(name = "optionsContainer", type = PropertyType.COLLECTION_DATACONTAINER_REF),
+                @StudioProperty(name = "property", type = PropertyType.PROPERTY_PATH_REF, typeParameter = "I"),
+                @StudioProperty(name = "optionsContainer", type = PropertyType.COLLECTION_DATACONTAINER_REF,
+                        typeParameter = "I"),
                 @StudioProperty(name = "captionProperty", type = PropertyType.PROPERTY_PATH_REF)
         },
         groups = {

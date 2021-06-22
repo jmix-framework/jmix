@@ -57,8 +57,9 @@ import java.util.function.Function;
 )
 @StudioProperties(
         properties = {
-                @StudioProperty(name = "dataContainer", type = PropertyType.COLLECTION_DATACONTAINER_REF),
-                @StudioProperty(name = "metaClass", type = PropertyType.ENTITY_NAME),
+                @StudioProperty(name = "dataContainer", type = PropertyType.COLLECTION_DATACONTAINER_REF,
+                        typeParameter = "E"),
+                @StudioProperty(name = "metaClass", type = PropertyType.ENTITY_NAME, typeParameter = "E"),
                 @StudioProperty(name = "width", type = PropertyType.SIZE, defaultValue = "-1px", initialValue = "200px"),
                 @StudioProperty(name = "height", type = PropertyType.SIZE, defaultValue = "-1px", initialValue = "100px")
         }
@@ -735,7 +736,8 @@ public interface Table<E>
                     @StudioProperty(name = "sort", type = PropertyType.ENUMERATION,
                             options = {"ASCENDING", "DESCENDING"}),
                     @StudioProperty(name = "visible", type = PropertyType.BOOLEAN, defaultValue = "true"),
-                    @StudioProperty(name = "optionsContainer", type = PropertyType.COLLECTION_DATACONTAINER_REF)
+                    @StudioProperty(name = "optionsContainer", type = PropertyType.COLLECTION_DATACONTAINER_REF,
+                            typeParameter = "E")
             }
     )
     interface Column<E> extends HasXmlDescriptor, HasHtmlCaption, HasFormatter {

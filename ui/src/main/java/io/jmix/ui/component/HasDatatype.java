@@ -29,7 +29,7 @@ public interface HasDatatype<V> {
      *
      * @param datatype {@link Datatype} instance
      */
-    @StudioProperty(type = PropertyType.DATATYPE_ID)
+    @StudioProperty(type = PropertyType.DATATYPE_ID, typeParameter = "V")
     void setDatatype(@Nullable Datatype<V> datatype);
 
     /**

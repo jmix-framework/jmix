@@ -52,7 +52,7 @@ import java.util.UUID;
 )
 @StudioProperties(
         properties = {
-                @StudioProperty(name = "property", type = PropertyType.PROPERTY_PATH_REF),
+                @StudioProperty(name = "property", type = PropertyType.PROPERTY_PATH_REF, typeParameter = "V"),
                 @StudioProperty(name = "dataContainer", type = PropertyType.DATACONTAINER_REF)
         },
         groups = {

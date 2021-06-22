@@ -61,7 +61,7 @@ public interface EntityPicker<V> extends ValuePicker<V>, LookupComponent<V> {
     @Nullable
     MetaClass getMetaClass();
 
-    @StudioProperty(name = "metaClass", type = PropertyType.ENTITY_NAME)
+    @StudioProperty(name = "metaClass", type = PropertyType.ENTITY_NAME, typeParameter = "V")
     void setMetaClass(@Nullable MetaClass metaClass);
 
     interface EntityPickerAction extends ValuePickerAction {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Haulmont.
+ * Copyright 2021 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  */
 
 @NonNullApi
+@Experimental
 package io.jmix.ldap;
 
+import io.jmix.core.annotation.Experimental;
 import org.springframework.lang.NonNullApi;

@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
+@NonNullApi
 @Internal
-package io.jmix.autoconfigure.ldap;
+package io.jmix.ldap.search;
 
 import io.jmix.core.annotation.Internal;
+import org.springframework.lang.NonNullApi;

@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-@Internal
-package io.jmix.autoconfigure.ldap;
+@NonNullApi
+@Experimental
+package io.jmix.ldap.userdetails;
 
-import io.jmix.core.annotation.Internal;
+import io.jmix.core.annotation.Experimental;
+import org.springframework.lang.NonNullApi;

@@ -55,8 +55,8 @@ public class LdapAutoConfiguration {
         static class ldapEnabled {
         }
 
-        @ConditionalOnProperty(prefix = "jmix.ldap", name = "activeDirectoryMode", havingValue = "false", matchIfMissing = true)
-        static class activeDirectoryModeDisabled {
+        @ConditionalOnProperty(prefix = "jmix.ldap", name = "useActiveDirectoryConfiguration", havingValue = "false", matchIfMissing = true)
+        static class useActiveDirectoryConfiguration {
         }
     }
 
@@ -70,8 +70,8 @@ public class LdapAutoConfiguration {
         static class ldapEnabled {
         }
 
-        @ConditionalOnProperty(prefix = "jmix.ldap", name = "activeDirectoryMode", havingValue = "true")
-        static class activeDirectoryModeDisabled {
+        @ConditionalOnProperty(prefix = "jmix.ldap", name = "useActiveDirectoryConfiguration", havingValue = "true")
+        static class useActiveDirectoryConfiguration {
         }
     }
 }

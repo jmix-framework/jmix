@@ -78,7 +78,7 @@ public class LdapConfiguration {
 
     @Bean
     public LdapAuthoritiesPopulator ldapAuthoritiesPopulator() {
-        if (ldapProperties.getActiveDirectoryMode()) {
+        if (ldapProperties.getUseActiveDirectoryConfiguration()) {
             return new ActiveDirectoryLdapAuthoritiesPopulator();
         } else {
             DefaultLdapAuthoritiesPopulator authoritiesPopulator =

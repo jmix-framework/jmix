@@ -22,17 +22,18 @@ archivesBaseName = 'jmix-graphql'
 
 dependencies {
     api platform("io.jmix.bom:jmix-bom:$bomVersion")
-    api 'io.leangen.graphql:graphql-spqr-spring-boot-starter:0.0.6'
-
+    api 'io.leangen.graphql:graphql-spqr-spring-boot-starter'
     api 'io.jmix.core:jmix-core'
-    compileOnly 'io.jmix.security:jmix-security'
 
-    // todo move to bom
-    implementation 'com.graphql-java:graphql-java:16.2'
-
-    implementation ('com.graphql-java-kickstart:graphql-java-servlet:11.1.0') {
+    implementation 'com.graphql-java:graphql-java'
+    // todo rewrite EnvironmentUtils.getRemoteIPAddress and then remove graphql-java-servlet dependency
+    implementation ('com.graphql-java-kickstart:graphql-java-servlet') {
         exclude group: 'javax.websocket', module: 'javax.websocket-api'
     }
+
+    compileOnly 'io.jmix.security:jmix-security'
+
+    /* test */
 
     testImplementation 'org.spockframework:spock-core'
     testImplementation 'org.spockframework:spock-spring'
@@ -53,6 +54,8 @@ dependencies {
     testImplementation 'io.jmix.security:jmix-security-data-starter'
     testImplementation 'io.jmix.security:jmix-security-oauth2-starter'
 
+    testImplementation 'io.leangen.graphql:graphql-spqr-spring-boot-starter:0.0.6'
+
     testImplementation 'com.google.code.gson:gson:2.8.6'
 
     testImplementation 'org.springframework:spring-test'
@@ -69,7 +72,5 @@ dependencies {
     testRuntimeOnly 'org.hsqldb:hsqldb'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
     testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'
-
-    testImplementation 'io.leangen.graphql:graphql-spqr-spring-boot-starter:0.0.6'
 
 }

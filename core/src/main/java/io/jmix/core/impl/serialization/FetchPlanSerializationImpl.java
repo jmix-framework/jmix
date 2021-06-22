@@ -87,7 +87,7 @@ public class FetchPlanSerializationImpl implements FetchPlanSerialization {
                     includeFetchMode = true;
                 }
             }
-            if (coreProperties.isFetchPlanSerializationUseView()) {
+            if (coreProperties.isLegacyFetchPlanSerializationAttributeName()) {
                 fetchPlanAttributeName = "view";
             }
         }

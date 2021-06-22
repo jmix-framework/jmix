@@ -27,6 +27,6 @@ dependencies {
 
     api 'io.jmix.ui:jmix-ui'
 
-    implementation 'io.jmix.security:jmix-security'
-    implementation 'io.jmix.security:jmix-security-ui'
+    compileOnly 'io.jmix.security:jmix-security'
+    compileOnly 'io.jmix.security:jmix-security-ui'
 }

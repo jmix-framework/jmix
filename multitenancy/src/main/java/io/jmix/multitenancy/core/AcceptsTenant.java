@@ -19,7 +19,7 @@ package io.jmix.multitenancy.core;
 /**
  * Needs for implement in user entity for setting tenant id into current authentication
  */
-public interface TenantSupport {
+public interface AcceptsTenant {
 
     /**
      * Provides the user tenant id.
@@ -27,5 +27,4 @@ public interface TenantSupport {
      * @return the tenant id for user.
      */
     String getTenantId();
-
 }

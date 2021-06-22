@@ -15,6 +15,6 @@
  */
 
 @Internal
-package io.jmix.multitenancyui.helper.impl;
+package io.jmix.multitenancyui.impl;
 
 import io.jmix.core.annotation.Internal;

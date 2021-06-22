@@ -14,14 +14,17 @@
  * limitations under the License.
  */
 
-package io.jmix.multitenancyui.helper;
+package io.jmix.multitenancyui;
 
-import java.util.Map;
+import io.jmix.ui.navigation.UrlRouting;
 
-public interface MultitenancyUsernameSupport {
+import java.util.List;
 
-    String getMultitenancyUsername(String username, Map<String, String> params);
+public interface MultitenancyUiSupport {
 
-    String getMultitenancyUsername(String username, String newTenantId);
+    String getUsernameByUrl(String username, UrlRouting urlRouting);
 
+    String getUsernameByTenant(String username, String tenantId);
+
+    List<String> getTenantOptions();
 }

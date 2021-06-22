@@ -18,7 +18,7 @@ package io.jmix.multitenancy.core.impl;
 
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.multitenancy.core.TenantProvider;
-import io.jmix.multitenancy.core.TenantSupport;
+import io.jmix.multitenancy.core.AcceptsTenant;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -45,10 +45,10 @@ public class TenantProviderImpl implements TenantProvider {
             return TenantProvider.NO_TENANT;
         }
         UserDetails userDetails = currentAuthentication.getUser();
-        if (!(userDetails instanceof TenantSupport)) {
+        if (!(userDetails instanceof AcceptsTenant)) {
             return TenantProvider.NO_TENANT;
         }
-        String tenantId = ((TenantSupport) userDetails).getTenantId();
+        String tenantId = ((AcceptsTenant) userDetails).getTenantId();
         return tenantId != null ? tenantId : TenantProvider.NO_TENANT;
     }
 }

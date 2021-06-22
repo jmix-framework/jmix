@@ -22,7 +22,7 @@ import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.DependsOnProperties;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
-import io.jmix.multitenancy.core.TenantSupport;
+import io.jmix.multitenancy.core.AcceptsTenant;
 import io.jmix.security.authentication.JmixUserDetails;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -37,7 +37,7 @@ import java.util.UUID;
 @Table(name = "SCR_USER", indexes = {
         @Index(name = "IDX_SCR_USER_ON_USERNAME", columnList = "USERNAME", unique = true)
 })
-public class User implements JmixUserDetails, TenantSupport {
+public class User implements JmixUserDetails, AcceptsTenant {
 
     @Id
     @Column(name = "ID", nullable = false)

@@ -80,8 +80,7 @@ public class ImapDataProvider {
     }
 
     public Integer findLastMessageNumber(ImapFolder imapFolder) {
-        return dataManager.load(Integer.class)
-                .query("select max(m.msgNum) from imap_Message m where m.folder.id = :folderId")
+        return dataManager.loadValue("select max(m.msgNum) from imap_Message m where m.folder.id = :folderId", Integer.class)
                 .parameter("folderId", imapFolder.getId())
                 .optional()
                 .orElse(null);

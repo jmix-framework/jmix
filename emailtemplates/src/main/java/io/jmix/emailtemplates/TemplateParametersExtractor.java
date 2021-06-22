@@ -26,7 +26,7 @@ import io.jmix.emailtemplates.entity.EmailTemplate;
 import io.jmix.emailtemplates.entity.ParameterValue;
 import io.jmix.emailtemplates.entity.TemplateReport;
 import io.jmix.emailtemplates.exception.ReportParameterTypeChangedException;
-import io.jmix.reports.Reports;
+import io.jmix.reports.ReportsSerialization;
 import io.jmix.reports.entity.ParameterType;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportInputParameter;
@@ -61,7 +61,7 @@ public class TemplateParametersExtractor {
     protected EmailTemplates emailTemplates;
 
     @Autowired
-    protected Reports reports;
+    protected ReportsSerialization reportsSerialization;
 
     @Autowired
     protected ObjectToStringConverter objectToStringConverter;
@@ -96,7 +96,7 @@ public class TemplateParametersExtractor {
         ReportWithParams paramsData = new ReportWithParams(report);
         List<String> exceptionMessages = new ArrayList<>();
         if (parameterValues != null) {
-            Report reportFromXml = reports.convertToReport(report.getXml());
+            Report reportFromXml = reportsSerialization.convertToReport(report.getXml());
             for (ParameterValue paramValue : parameterValues) {
                 String alias = paramValue.getAlias();
                 String stringValue = paramValue.getDefaultValue();

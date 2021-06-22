@@ -30,9 +30,10 @@ import io.jmix.emailtemplates.dto.ReportWithParams;
 import io.jmix.emailtemplates.entity.*;
 import io.jmix.emailtemplates.exception.ReportParameterTypeChangedException;
 import io.jmix.emailtemplates.exception.TemplateNotFoundException;
-import io.jmix.reports.Reports;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportInputParameter;
+import io.jmix.reports.runner.ReportRunContext;
+import io.jmix.reports.runner.ReportRunner;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.io.IOUtils;
@@ -58,7 +59,7 @@ public class EmailTemplatesImpl implements EmailTemplates {
     private DataManager dataManager;
 
     @Autowired
-    protected Reports reports;
+    protected ReportRunner reportRunner;
 
     @Autowired
     private Messages messages;
@@ -232,9 +233,7 @@ public class EmailTemplatesImpl implements EmailTemplates {
         String body = "";
         String subject = "";
         if (reportWithParams != null && reportWithParams.getReport() != null) {
-            ReportOutputDocument outputDocument = reports.createReport(
-                    reportWithParams.getReport(),
-                    reportWithParams.getParams());
+            ReportOutputDocument outputDocument = reportRunner.run(new ReportRunContext(reportWithParams.getReport()).setParams(reportWithParams.getParams()));
             body = new String(outputDocument.getContent(), UTF_8);
             subject = outputDocument.getDocumentName();
         }
@@ -258,7 +257,7 @@ public class EmailTemplatesImpl implements EmailTemplates {
     }
 
     protected EmailAttachment createEmailAttachment(String templateName, ReportWithParams reportWithParams) {
-        ReportOutputDocument outputDocument = reports.createReport(reportWithParams.getReport(), reportWithParams.getParams());
+        ReportOutputDocument outputDocument = reportRunner.run(new ReportRunContext(reportWithParams.getReport()).setParams(reportWithParams.getParams()));
         String fileName = outputDocument.getDocumentName();
         if (StringUtils.isNotBlank(templateName)) {
             String extension = Files.getFileExtension(templateName);

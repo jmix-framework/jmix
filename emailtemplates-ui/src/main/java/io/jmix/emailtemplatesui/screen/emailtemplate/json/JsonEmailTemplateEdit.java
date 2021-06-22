@@ -25,8 +25,10 @@ import io.jmix.emailtemplates.entity.TemplateBlock;
 import io.jmix.emailtemplatesui.screen.html.HtmlSourceCodeScreen;
 import io.jmix.grapesjs.component.GjsBlock;
 import io.jmix.grapesjs.component.GrapesJsHtmlEditor;
-import io.jmix.reports.Reports;
-import io.jmix.reports.entity.*;
+import io.jmix.reports.ReportsSerialization;
+import io.jmix.reports.entity.Report;
+import io.jmix.reports.entity.ReportInputParameter;
+import io.jmix.reports.entity.ReportTemplate;
 import io.jmix.ui.ScreenBuilders;
 import io.jmix.ui.Screens;
 import io.jmix.ui.UiProperties;
@@ -92,7 +94,7 @@ public class JsonEmailTemplateEdit extends StandardEditor<JsonEmailTemplate> {
     protected CoreProperties coreProperties;
 
     @Autowired
-    protected Reports reports;
+    protected ReportsSerialization reportsSerialization;
 
     @Subscribe
     public void onBeforeShow(BeforeShowEvent event) {
@@ -210,6 +212,6 @@ public class JsonEmailTemplateEdit extends StandardEditor<JsonEmailTemplate> {
     }
 
     protected String getReportJson(Report report) {
-        return reports.convertToString(report);
+        return reportsSerialization.convertToString(report);
     }
 }

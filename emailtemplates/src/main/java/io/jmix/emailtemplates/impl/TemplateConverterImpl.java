@@ -20,7 +20,7 @@ import io.jmix.core.Metadata;
 import io.jmix.emailtemplates.TemplateConverter;
 import io.jmix.emailtemplates.entity.JsonEmailTemplate;
 import io.jmix.emailtemplates.utils.HtmlTemplateUtils;
-import io.jmix.reports.Reports;
+import io.jmix.reports.ReportsSerialization;
 import io.jmix.reports.entity.*;
 import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.collections4.Predicate;
@@ -41,14 +41,14 @@ public class TemplateConverterImpl implements TemplateConverter {
     private Metadata metadata;
 
     @Autowired
-    private Reports reports;
+    private ReportsSerialization reportsSerialization;
 
     @Override
     public Report convertToReport(JsonEmailTemplate template) {
         String reportJson = template.getReportJson();
         Report report = null;
         if (StringUtils.isNotBlank(reportJson)) {
-            report = reports.convertToReport(reportJson);
+            report = reportsSerialization.convertToReport(reportJson);
             report.setXml(reportJson);
         } else {
             report = initReport(template);
@@ -107,7 +107,7 @@ public class TemplateConverterImpl implements TemplateConverter {
         report.setReportType(ReportType.SIMPLE);
         report.setIsTmp(true);
 
-        report.setXml(reports.convertToString(report));
+        report.setXml(reportsSerialization.convertToString(report));
         return report;
     }
 

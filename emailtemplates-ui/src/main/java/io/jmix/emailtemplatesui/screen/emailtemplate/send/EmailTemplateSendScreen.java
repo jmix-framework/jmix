@@ -17,6 +17,7 @@
 package io.jmix.emailtemplatesui.screen.emailtemplate.send;
 
 
+import com.haulmont.yarg.util.converter.ObjectToStringConverter;
 import io.jmix.core.CoreProperties;
 import io.jmix.core.DataManager;
 import io.jmix.core.Messages;
@@ -33,20 +34,15 @@ import io.jmix.emailtemplates.exception.ReportParameterTypeChangedException;
 import io.jmix.emailtemplates.exception.TemplateNotFoundException;
 import io.jmix.emailtemplatesui.screen.emailtemplate.parameters.EmailTemplateParametersFragment;
 import io.jmix.reports.ParameterClassResolver;
-import io.jmix.reports.Reports;
 import io.jmix.reports.entity.ParameterType;
 import io.jmix.reports.entity.ReportInputParameter;
 import io.jmix.reports.exception.ReportParametersValidationException;
 import io.jmix.reportsui.screen.ReportParameterValidator;
-import io.jmix.ui.Fragments;
-import io.jmix.ui.Notifications;
-import io.jmix.ui.UiProperties;
-import io.jmix.ui.WindowParam;
+import io.jmix.ui.*;
 import io.jmix.ui.component.*;
 import io.jmix.ui.download.ByteArrayDataProvider;
 import io.jmix.ui.download.Downloader;
 import io.jmix.ui.model.InstanceContainer;
-import io.jmix.ui.UiScreenProperties;
 import io.jmix.ui.screen.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -114,7 +110,7 @@ public class EmailTemplateSendScreen extends Screen {
     private Messages messages;
 
     @Autowired
-    protected Reports reports;
+    protected ObjectToStringConverter objectToStringConverter;
 
     @Autowired
     protected ParameterClassResolver classResolver;
@@ -210,7 +206,7 @@ public class EmailTemplateSendScreen extends Screen {
                 }
                 Class parameterClass = classResolver.resolveClass(inputParameter);
                 if (!ParameterType.ENTITY_LIST.equals(inputParameter.getType())) {
-                    String stringValue = reports.convertToString(parameterClass, value);
+                    String stringValue = objectToStringConverter.convertToString(parameterClass, value);
                     parameterValue.setDefaultValue(stringValue);
                 }
             }

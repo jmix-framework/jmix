@@ -1,0 +1,110 @@
+<!--
+  ~ Copyright 2020 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<window xmlns="http://jmix.io/schema/ui/window">
+    <data>
+        <collection id="customersDc1"
+                    class="test_support.entity.sales.Customer">
+            <loader id="customersLd1">
+                <query><![CDATA[select e from test_Customer e]]></query>
+            </loader>
+        </collection>
+        <collection id="customersDc2"
+                    class="test_support.entity.sales.Customer">
+            <loader id="customersLd2">
+                <query><![CDATA[select e from test_Customer e]]></query>
+            </loader>
+        </collection>
+        <collection id="customersDc3"
+                    class="test_support.entity.sales.Customer">
+            <loader id="customersLd3">
+                <query><![CDATA[select e from test_Customer e]]></query>
+            </loader>
+        </collection>
+        <collection id="customersDc4"
+                    class="test_support.entity.sales.Customer">
+            <loader id="customersLd4">
+                <query><![CDATA[select e from test_Customer e]]></query>
+            </loader>
+        </collection>
+        <collection id="customersDc5"
+                    class="test_support.entity.sales.Customer">
+            <loader id="customersLd5">
+                <query><![CDATA[select e from test_Customer e]]></query>
+            </loader>
+        </collection>
+        <collection id="customersDc6"
+                    class="test_support.entity.sales.Customer">
+            <loader id="customersLd6">
+                <query><![CDATA[select e from test_Customer e]]></query>
+            </loader>
+        </collection>
+        <collection id="customersDc7"
+                    class="test_support.entity.sales.Customer">
+            <loader id="customersLd7">
+                <query><![CDATA[select e from test_Customer e]]></query>
+            </loader>
+        </collection>
+        <collection id="customersDc8"
+                    class="test_support.entity.sales.Customer">
+            <loader id="customersLd8">
+                <query><![CDATA[select e from test_Customer e]]></query>
+            </loader>
+        </collection>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <layout>
+        <pagination id="pagination1"
+                    itemsPerPageDefaultValue="1">
+            <loaderProvider loaderId="customersLd1"/>
+        </pagination>
+        <pagination id="pagination2"
+                    itemsPerPageDefaultValue="1"
+                    itemsPerPageOptions="2, 3, 4">
+            <loaderProvider loaderId="customersLd2"/>
+        </pagination>
+        <pagination id="pagination3"
+                    itemsPerPageDefaultValue="1"
+                    itemsPerPageVisible="true">
+            <loaderProvider loaderId="customersLd3"/>
+        </pagination>
+        <pagination id="pagination4"
+                    itemsPerPageDefaultValue="1"
+                    itemsPerPageOptions="2, 3, 4"
+                    itemsPerPageVisible="true">
+            <loaderProvider loaderId="customersLd4"/>
+        </pagination>
+
+        <pagination id="pagination5">
+            <loaderProvider loaderId="customersLd5"/>
+        </pagination>
+        <pagination id="pagination6"
+                    itemsPerPageOptions="2, 3, 4">
+            <loaderProvider loaderId="customersLd6"/>
+        </pagination>
+        <pagination id="pagination7"
+                    itemsPerPageVisible="true">
+            <loaderProvider loaderId="customersLd7"/>
+        </pagination>
+        <pagination id="pagination8"
+                    itemsPerPageOptions="2, 3, 4"
+                    itemsPerPageVisible="true">
+            <loaderProvider loaderId="customersLd8"/>
+        </pagination>
+    </layout>
+</window>

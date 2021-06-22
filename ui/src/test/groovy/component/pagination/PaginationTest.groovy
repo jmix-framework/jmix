@@ -18,6 +18,7 @@ package component.pagination
 
 import com.vaadin.data.provider.Query
 import component.pagination.screen.PaginationConsistenceTestScreen
+import component.pagination.screen.PaginationDefaultValueTestScreen
 import component.pagination.screen.PaginationTestScreen
 import io.jmix.core.CoreConfiguration
 import io.jmix.core.DataManager
@@ -122,29 +123,38 @@ class PaginationTest extends ScreenSpecification {
         showTestMainScreen()
 
         when: "Show screen"
-        def screen = (PaginationTestScreen) getScreens().create(PaginationTestScreen)
+        def screen = (PaginationDefaultValueTestScreen) getScreens().create(PaginationDefaultValueTestScreen)
         screen.show()
 
         then: """
-              Pagination should have fetch size equal to itemsPerPageDefaultValue if it is defined.
-              If it is not, fetch size will be got from UiProperties entityPageSize.
+              Pagination should have fetch size equal to computed value based on default value, options and
+              visibility of ItemsPerPage ComboBox.
               """
+        // takes value from itemsPerPageDefaultValue
+        screen.pagination1.dataBinder.maxResults == 1
 
-        // If itemsPerPageDefaultValue is defined and itemsPerPageOptions is not set explicitly
-        screen.paginationItemsPerPageDefaultValue.dataBinder.maxResults == 2
+        // takes closest value from options
+        screen.pagination2.dataBinder.maxResults == 2
 
-        // itemsPerPageDefaultValue is not defined get value from jmix.ui.entityPageSize
-        // or from jmix.ui.defaultPageSize
-        screen.paginationEntityPageSize.dataBinder.maxResults == 50
+        // takes closest value from 'jmix.ui.component.paginationItemsPerPageOptions' as options were not explicitly set
+        // and 'itemsPerPageVisible = true'
+        screen.pagination3.dataBinder.maxResults == 20
 
-        // if ItemsPerPage is visible and default options do not contain itemsPerPageDefaultValue
-        // the nearest value will be set
-        screen.paginationItemsPerPageDefaultValueCB.dataBinder.maxResults == 20
-        screen.getComboBoxFromDefaultValueCB().getValue() == 20
+        // takes closest value from options
+        screen.pagination4.dataBinder.maxResults == 2
 
-        // if ItemsPerPageOptions explicitly set and contains itemsPerPageDefaultValue it will be selected
-        screen.paginationItemsPerPageDefaultValueCBandCO.dataBinder.maxResults == 6
-        screen.getComboBoxFromDefaultValueCBandCO().getValue() == 6
+        // takes value from entityPageSize (or defaultPageSize)
+        screen.pagination5.dataBinder.maxResults == 50
+
+        // takes closest value from options
+        screen.pagination6.dataBinder.maxResults == 4
+
+        // takes closest value from 'jmix.ui.component.paginationItemsPerPageOptions' as options were not explicitly set
+        // and 'itemsPerPageVisible = true'
+        screen.pagination7.dataBinder.maxResults == 50
+
+        // takes closest value from options
+        screen.pagination8.dataBinder.maxResults == 4
     }
 
     def "pagination changes affect another pagination with the same loader"() {

@@ -370,23 +370,15 @@ public abstract class AbstractPagination<T extends JmixAbstractPagination>
     }
 
     protected Integer getDefaultOptionValue(List<Integer> options, MetaClass metaClass) {
-        // if options are not explicitly set and they are not shown
-        if (CollectionUtils.isEmpty(itemsPerPageOptions) && !isItemsPerPageVisible()) {
-            if (itemsPerPageDefaultValue != null) {
-                return itemsPerPageDefaultValue;
-            }
-        }
+        int defaultValue = itemsPerPageDefaultValue != null
+                ? itemsPerPageDefaultValue
+                : getEntityPageSize(metaClass);
 
-        if (itemsPerPageDefaultValue != null) {
-            if (options.contains(itemsPerPageDefaultValue)) {
-                return itemsPerPageDefaultValue;
-            } else {
-                return findClosestValue(itemsPerPageDefaultValue, options);
-            }
-        } else {
-            int defaultEntityPageSize = getEntityPageSize(metaClass);
-            return findClosestValue(defaultEntityPageSize, options);
-        }
+        boolean shouldFindInOptions = isItemsPerPageVisible()
+                || CollectionUtils.isNotEmpty(itemsPerPageOptions); // options are explicitly set
+        return shouldFindInOptions
+                ? findClosestValue(defaultValue, options)
+                : defaultValue;
     }
 
     protected int findClosestValue(int maxResults, List<Integer> optionsList) {

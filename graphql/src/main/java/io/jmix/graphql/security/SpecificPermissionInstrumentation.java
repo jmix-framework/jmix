@@ -23,9 +23,9 @@ import graphql.execution.instrumentation.parameters.InstrumentationCreateStatePa
 import io.jmix.core.AccessManager;
 import io.jmix.core.Messages;
 import io.jmix.graphql.InstrumentationUtils;
-import io.jmix.graphql.accesscontext.GraphqlAccessContext;
+import io.jmix.graphql.accesscontext.GraphQLAccessContext;
 
-import static io.jmix.graphql.accesscontext.GraphqlAccessContext.GRAPHQL_ENABLED;
+import static io.jmix.graphql.accesscontext.GraphQLAccessContext.GRAPHQL_ENABLED;
 
 public class SpecificPermissionInstrumentation extends SimpleInstrumentation {
 
@@ -39,7 +39,7 @@ public class SpecificPermissionInstrumentation extends SimpleInstrumentation {
 
     @Override
     public InstrumentationState createState(InstrumentationCreateStateParameters parameters) {
-        GraphqlAccessContext accessContext = new GraphqlAccessContext(GRAPHQL_ENABLED);
+        GraphQLAccessContext accessContext = new GraphQLAccessContext(GRAPHQL_ENABLED);
         accessManager.applyRegisteredConstraints(accessContext);
 
         if (!InstrumentationUtils.isIntrospectionQuery(parameters.getExecutionInput()) && !accessContext.isPermitted()) {

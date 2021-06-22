@@ -24,7 +24,7 @@ import io.jmix.core.accesscontext.EntityAttributeContext;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.graphql.NamingUtils;
-import io.jmix.graphql.accesscontext.GraphqlAccessContext;
+import io.jmix.graphql.accesscontext.GraphQLAccessContext;
 import io.jmix.graphql.schema.permission.PermissionConfig;
 import io.jmix.graphql.schema.permission.ShortPermissionInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,8 +34,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import static io.jmix.graphql.accesscontext.GraphqlAccessContext.GRAPHQL_FILE_DOWNLOAD_ENABLED;
-import static io.jmix.graphql.accesscontext.GraphqlAccessContext.GRAPHQL_FILE_UPLOAD_ENABLED;
+import static io.jmix.graphql.accesscontext.GraphQLAccessContext.GRAPHQL_FILE_DOWNLOAD_ENABLED;
+import static io.jmix.graphql.accesscontext.GraphQLAccessContext.GRAPHQL_FILE_UPLOAD_ENABLED;
 
 @Component("gql_PermissionDataFetcher")
 public class PermissionDataFetcher {
@@ -112,7 +112,7 @@ public class PermissionDataFetcher {
         }
 
         if (specifics) {
-            GraphqlAccessContext downloadContext = new GraphqlAccessContext(GRAPHQL_FILE_DOWNLOAD_ENABLED);
+            GraphQLAccessContext downloadContext = new GraphQLAccessContext(GRAPHQL_FILE_DOWNLOAD_ENABLED);
             accessManager.applyRegisteredConstraints(downloadContext);
 
             if (downloadContext.isPermitted()) {
@@ -121,7 +121,7 @@ public class PermissionDataFetcher {
                 specificPermissions.add(new ShortPermissionInfo(downloadContext.getName(), 0));
             }
 
-            GraphqlAccessContext uploadContext = new GraphqlAccessContext(GRAPHQL_FILE_UPLOAD_ENABLED);
+            GraphQLAccessContext uploadContext = new GraphQLAccessContext(GRAPHQL_FILE_UPLOAD_ENABLED);
             accessManager.applyRegisteredConstraints(uploadContext);
 
             if (uploadContext.isPermitted()) {

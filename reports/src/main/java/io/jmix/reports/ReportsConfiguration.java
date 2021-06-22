@@ -68,15 +68,13 @@ public class ReportsConfiguration {
                                    JmixFormatterFactory formatterFactory,
                                    JmixDataExtractor dataExtractor,
                                    JmixObjectToStringConverter converter,
-                                   Scripting scripting,
-                                   Reports reports) {
+                                   Scripting scripting) {
         JmixReporting jmixReporting = new JmixReporting();
         jmixReporting.setLoaderFactory(loaderFactory);
         jmixReporting.setFormatterFactory(formatterFactory);
         jmixReporting.setDataExtractor(dataExtractor);
         jmixReporting.setObjectToStringConverter(converter);
         jmixReporting.setScripting(scripting);
-        jmixReporting.setReports(reports);
         return jmixReporting;
     }
 

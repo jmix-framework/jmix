@@ -18,14 +18,15 @@ package io.jmix.reportsui.screen.report.run;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
+import com.haulmont.yarg.util.converter.ObjectToStringConverter;
 import io.jmix.core.*;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.data.QueryTransformer;
 import io.jmix.data.QueryTransformerFactory;
-import io.jmix.reports.Reports;
 import io.jmix.reports.entity.ParameterType;
 import io.jmix.reports.entity.ReportInputParameter;
+import io.jmix.reports.util.ReportsUtils;
 import io.jmix.ui.Actions;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.action.Action;
@@ -60,7 +61,7 @@ public class ParameterFieldCreator {
     protected ClassManager classManager;
 
     @Autowired
-    protected Reports reports;
+    protected ReportsUtils reportsUtils;
 
     @Autowired
     protected QueryTransformerFactory queryTransformerFactory;
@@ -79,6 +80,9 @@ public class ParameterFieldCreator {
 
     @Autowired
     protected MetadataTools metadataTools;
+
+    @Autowired
+    protected ObjectToStringConverter objectToStringConverter;
 
     protected Map<ParameterType, FieldCreator> fieldCreationMapping = new ImmutableMap.Builder<ParameterType, FieldCreator>()
             .put(ParameterType.BOOLEAN, new CheckBoxCreator())
@@ -113,9 +117,9 @@ public class ParameterFieldCreator {
     }
 
     protected void setCurrentDateAsNow(ReportInputParameter parameter, Field dateField) {
-        Date now = reports.currentDateOrTime(parameter.getType());
+        Date now = reportsUtils.currentDateOrTime(parameter.getType());
         dateField.setValue(now);
-        parameter.setDefaultValue(reports.convertToString(now.getClass(), now));
+        parameter.setDefaultValue(objectToStringConverter.convertToString(now.getClass(), now));
     }
 
     protected interface FieldCreator {

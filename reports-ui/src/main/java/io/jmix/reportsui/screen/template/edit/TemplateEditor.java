@@ -20,7 +20,6 @@ import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import io.jmix.core.common.util.ParamsMap;
 import io.jmix.reports.ReportPrintHelper;
-import io.jmix.reports.Reports;
 import io.jmix.reports.entity.CustomTemplateDefinedBy;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportOutputType;
@@ -180,7 +179,7 @@ public class TemplateEditor extends StandardEditor<ReportTemplate> {
             Report report = template.getReport();
             if (report != null) {
                 if (report.getTemplates() == null || report.getTemplates().isEmpty()) {
-                    template.setCode(Reports.DEFAULT_TEMPLATE_CODE);
+                    template.setCode(ReportTemplate.DEFAULT_TEMPLATE_CODE);
                 } else {
                     template.setCode("Template_" + report.getTemplates().size());
                 }

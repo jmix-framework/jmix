@@ -17,7 +17,8 @@ package io.jmix.reports.impl;
 
 import io.jmix.core.*;
 import io.jmix.reports.ReportImportExport;
-import io.jmix.reports.Reports;
+import io.jmix.reports.ReportsPersistence;
+import io.jmix.reports.ReportsSerialization;
 import io.jmix.reports.converter.XStreamConverter;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportImportOption;
@@ -52,7 +53,10 @@ public class ReportImportExportImpl implements ReportImportExport {
     private static final Logger log = LoggerFactory.getLogger(ReportImportExportImpl.class);
 
     @Autowired
-    protected Reports reports;
+    protected ReportsPersistence reportsPersistence;
+
+    @Autowired
+    protected ReportsSerialization reportsSerialization;
 
     @Autowired
     protected DataManager dataManager;
@@ -116,23 +120,6 @@ public class ReportImportExportImpl implements ReportImportExport {
         return importResult;
     }
 
-
-    /**
-     * Import all reports from the specified folder.
-     * Folder should have the following structure, in other cases RuntimeException will be thrown
-     * <p>
-     * folder
-     * sub-folder1
-     * report.structure
-     * template.doc
-     * sub-folder2
-     * report.structure
-     * template.docx
-     *
-     * @param path to folder with reports
-     * @return collection of imported reports
-     * @throws IOException
-     */
     @Override
     public Collection<Report> importReportsFromPath(String path) throws IOException {
         File directory = new File(path);
@@ -168,7 +155,7 @@ public class ReportImportExportImpl implements ReportImportExport {
      *
      * @param report Report object that must be exported.
      * @return ZIP archive as a byte array.
-     * @throws IOException
+     * @throws IOException if any I/O error occurs
      */
     protected byte[] exportReport(Report report) throws IOException {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -185,7 +172,7 @@ public class ReportImportExportImpl implements ReportImportExport {
             zipOutputStream.putArchiveEntry(zipEntryReportObject);
             zipOutputStream.write(xmlBytes);
 
-            Report xmlReport = reports.convertToReport(xml);
+            Report xmlReport = reportsSerialization.convertToReport(xml);
             if (report.getTemplates() != null && xmlReport.getTemplates() != null) {
                 for (int i = 0; i < report.getTemplates().size(); i++) {
                     ReportTemplate xmlTemplate = xmlReport.getTemplates().get(i);
@@ -230,7 +217,7 @@ public class ReportImportExportImpl implements ReportImportExport {
                 .fetchPlan(FetchPlan.INSTANCE_NAME)
                 .optional();
 
-        report = saveReport(report);
+        report = reportsPersistence.save(report);
         importResult.addImportedReport(report);
         if (existingReport.isPresent()) {
             importResult.addUpdatedReport(report);
@@ -241,6 +228,7 @@ public class ReportImportExportImpl implements ReportImportExport {
         }
     }
 
+    @Nullable
     protected Report fromByteArray(byte[] zipBytes) throws IOException {
         Report report = null;
 
@@ -255,7 +243,7 @@ public class ReportImportExportImpl implements ReportImportExport {
                         XStreamConverter xStreamConverter = new XStreamConverter();
                         report = xStreamConverter.convertToReport(xml);
                     } else {//current json structure
-                        report = reports.convertToReport(xml);
+                        report = reportsSerialization.convertToReport(xml);
                     }
                     report.setXml(xml);
                 }
@@ -311,14 +299,10 @@ public class ReportImportExportImpl implements ReportImportExport {
                     } else {
                         report.setReportRoles(Collections.emptySet());
                     }
-                    report.setXml(reports.convertToString(report));
+                    report.setXml(reportsSerialization.convertToString(report));
                 }
             }
         }
-    }
-
-    protected Report saveReport(Report report) {
-        return reports.storeReportEntity(report);
     }
 
     protected byte[] zipSingleReportFiles(File[] files) throws IOException {
@@ -380,7 +364,7 @@ public class ReportImportExportImpl implements ReportImportExport {
     @Nullable
     protected Report reloadReport(Report report) {
         return dataManager.load(Id.of(report))
-                .fetchPlan(ReportsImpl.REPORT_EDIT_FETCH_PLAN_NAME)
+                .fetchPlan("report.edit")
                 .optional()
                 .orElse(null);
     }

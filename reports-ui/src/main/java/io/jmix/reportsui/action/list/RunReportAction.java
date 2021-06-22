@@ -22,7 +22,10 @@ import io.jmix.core.Id;
 import io.jmix.core.Messages;
 import io.jmix.core.common.util.ParamsMap;
 import io.jmix.reports.entity.Report;
-import io.jmix.reportsui.screen.ReportGuiManager;
+import io.jmix.reportsui.runner.ParametersDialogShowMode;
+import io.jmix.reportsui.runner.UiReportRunContext;
+import io.jmix.reportsui.runner.UiReportRunner;
+import io.jmix.reportsui.screen.ReportsClientProperties;
 import io.jmix.reportsui.screen.report.run.InputParametersDialog;
 import io.jmix.reportsui.screen.report.run.InputParametersFragment;
 import io.jmix.reportsui.screen.report.run.ReportRun;
@@ -43,6 +46,8 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
+import static io.jmix.reports.util.ReportTemplateUtils.inputParametersRequiredByTemplates;
+
 /**
  * Standard action for running the reports associated with current screen or list component.
  * <p>
@@ -61,7 +66,8 @@ public class RunReportAction extends ListAction {
 
     protected DataManager dataManager;
     protected ScreenBuilders screenBuilders;
-    protected ReportGuiManager reportGuiManager;
+    protected UiReportRunner uiReportRunner;
+    protected ReportsClientProperties reportsClientProperties;
 
     public RunReportAction() {
         this(ID);
@@ -92,8 +98,13 @@ public class RunReportAction extends ListAction {
     }
 
     @Autowired
-    public void setReportGuiManager(ReportGuiManager reportGuiManager) {
-        this.reportGuiManager = reportGuiManager;
+    public void setUiReportRunner(UiReportRunner uiReportRunner) {
+        this.uiReportRunner = uiReportRunner;
+    }
+
+    @Autowired
+    public void setReportsClientProperties(ReportsClientProperties reportsClientProperties) {
+        this.reportsClientProperties = reportsClientProperties;
     }
 
     @Override
@@ -135,10 +146,14 @@ public class RunReportAction extends ListAction {
 
             if (report.getInputParameters() != null
                     && report.getInputParameters().size() > 0
-                    || reportGuiManager.inputParametersRequiredByTemplates(report)) {
+                    || inputParametersRequiredByTemplates(report)) {
                 openReportParamsDialog(report, screen);
             } else {
-                reportGuiManager.printReport(report, Collections.emptyMap(), screen);
+                uiReportRunner.runAndShow(new UiReportRunContext(report)
+                        .setInBackground(reportsClientProperties.getUseBackgroundReportProcessing())
+                        .setOriginFrameOwner(screen)
+                        .setParametersDialogShowMode(ParametersDialogShowMode.NO)
+                        .setParams(Collections.emptyMap()));
             }
         }
     }
@@ -154,7 +169,7 @@ public class RunReportAction extends ListAction {
             }
         }
 
-        screenBuilders.screen(screen)
+        InputParametersDialog inputParametersDialog = screenBuilders.screen(screen)
                 .withScreenClass(InputParametersDialog.class)
                 .withOpenMode(OpenMode.DIALOG)
                 .withOptions(new MapScreenOptions(ParamsMap.of()
@@ -162,6 +177,8 @@ public class RunReportAction extends ListAction {
                         .pair(InputParametersFragment.PARAMETERS_PARAMETER, selectedItems)
                         .create()
                 ))
-                .show();
+                .build();
+        inputParametersDialog.setInBackground(reportsClientProperties.getUseBackgroundReportProcessing());
+        inputParametersDialog.show();
     }
 }

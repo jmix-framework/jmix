@@ -19,14 +19,15 @@ package io.jmix.reportsui.screen.report.wizard;
 import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.reports.Reports;
-import io.jmix.reports.impl.ReportsImpl;
+import io.jmix.reports.ReportsPersistence;
 import io.jmix.reports.ReportsProperties;
+import io.jmix.reports.ReportsSerialization;
 import io.jmix.reports.app.EntityTree;
 import io.jmix.reports.entity.*;
 import io.jmix.reports.entity.wizard.*;
 import io.jmix.reports.exception.TemplateGenerationException;
 import io.jmix.reports.util.DataSetFactory;
+import io.jmix.reports.util.ReportsUtils;
 import io.jmix.reportsui.screen.report.wizard.query.JpqlQueryBuilder;
 import io.jmix.reportsui.screen.report.wizard.template.TemplateGenerator;
 import org.apache.commons.collections4.CollectionUtils;
@@ -53,13 +54,19 @@ public class ReportsWizard {
     protected static final String DEFAULT_SINGLE_ENTITY_ALIAS = "entity";//cause Thesis used it for running reports from screens without selection input params
     protected static final String DEFAULT_LIST_OF_ENTITIES_ALIAS = "entities";//cause Thesis will use it for running reports from screens without selection input params
 
-    private static final Logger log = LoggerFactory.getLogger(ReportsImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(ReportsWizard.class);
 
     @Autowired
     protected Metadata metadata;
 
     @Autowired
-    protected Reports reports;
+    protected ReportsPersistence reportsPersistence;
+
+    @Autowired
+    protected ReportsUtils reportsUtils;
+
+    @Autowired
+    protected ReportsSerialization reportsSerialization;
 
     @Autowired
     protected ReportsProperties reportsProperties;
@@ -96,12 +103,12 @@ public class ReportsWizard {
         HashSet<BandDefinition> childrenBandsDefinitionForRoot = new HashSet<>(bands);
         childrenBandsDefinitionForRoot.remove(rootReportBandDefinition);
         rootReportBandDefinition.getChildrenBandDefinitions().addAll(childrenBandsDefinitionForRoot);
-        report.setName(reports.generateReportName(reportData.getName()));
-        String xml = reports.convertToString(report);
+        report.setName(reportsUtils.generateReportName(reportData.getName()));
+        String xml = reportsSerialization.convertToString(report);
         report.setXml(xml);
 
         if (!temporary) {
-            report = reports.storeReportEntity(report);
+            report = reportsPersistence.save(report);
         }
 
         return report;
@@ -249,7 +256,7 @@ public class ReportsWizard {
     protected ReportTemplate createDefaultTemplate(Report report, ReportData reportData) {
         ReportTemplate reportTemplate = metadata.create(ReportTemplate.class);
         reportTemplate.setReport(report);
-        reportTemplate.setCode(Reports.DEFAULT_TEMPLATE_CODE);
+        reportTemplate.setCode(ReportTemplate.DEFAULT_TEMPLATE_CODE);
 
         reportTemplate.setName(reportData.getTemplateFileName());
         reportTemplate.setContent(reportData.getTemplateContent());

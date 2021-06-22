@@ -14,22 +14,19 @@
  * limitations under the License.
  */
 
-package io.jmix.reports.runner;
+package io.jmix.reports;
 
 import io.jmix.reports.entity.Report;
 
-/**
- * Interface is used for building {@link ReportRunner} instances
- */
-public interface ReportRunners {
+
+public interface ReportsPersistence {
 
     /**
-     * Builds a report runner that uses a given {@code reportEntity} to run a report
+     * Saves Report entity to the database.
+     *
+     * @param report report entity instance
+     * @return saved instance
      */
-    ReportRunner byReportEntity(Report reportEntity);
+    Report save(Report report);
 
-    /**
-     * Builds a report runner that uses a given {@code reportCode} to find a report to run
-     */
-    ReportRunner byReportCode(String reportCode);
 }

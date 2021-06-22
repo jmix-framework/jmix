@@ -17,10 +17,8 @@
 package io.jmix.reportsui.action.list;
 
 import io.jmix.core.Messages;
-import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.reportsui.action.AbstractPrintFormAction;
-import io.jmix.reportsui.screen.ReportGuiManager;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.action.ActionType;
 import io.jmix.ui.component.Component;
@@ -37,9 +35,6 @@ import javax.annotation.Nullable;
 public class EditorPrintFormAction extends AbstractPrintFormAction {
 
     public static final String ID = "editorPrintForm";
-
-    @Autowired
-    protected Metadata metadata;
 
     protected EditorScreen editor;
     protected String reportOutputName;
@@ -76,7 +71,7 @@ public class EditorPrintFormAction extends AbstractPrintFormAction {
             Notifications notifications = UiControllerUtils.getScreenContext((FrameOwner) editor).getNotifications();
 
             notifications.create()
-                    .withCaption(messages.getMessage(ReportGuiManager.class, "notifications.noSelectedEntity"))
+                    .withCaption(messages.getMessage(getClass(), "notifications.noSelectedEntity"))
                     .show();
         }
     }

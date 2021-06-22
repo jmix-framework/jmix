@@ -20,12 +20,15 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.annotations.SerializedName;
+import com.haulmont.yarg.reporting.ReportOutputDocument;
+import com.haulmont.yarg.util.converter.ObjectToStringConverter;
 import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.reports.ParameterClassResolver;
 import io.jmix.reports.ReportSecurityManager;
-import io.jmix.reports.Reports;
+import io.jmix.reports.runner.ReportRunContext;
+import io.jmix.reports.runner.ReportRunner;
 import io.jmix.reports.entity.*;
 import io.jmix.reports.exception.FailedToConnectToOpenOfficeException;
 import io.jmix.reports.exception.NoOpenOfficeFreePortsException;
@@ -46,7 +49,9 @@ public class ReportRestControllerManager {
     @Autowired
     protected DataManager dataManager;
     @Autowired
-    protected Reports reports;
+    protected ReportRunner reportRunner;
+    @Autowired
+    protected ObjectToStringConverter objectToStringConverter;
     @Autowired
     protected Metadata metadata;
     @Autowired
@@ -143,7 +148,11 @@ public class ReportRestControllerManager {
         Map<String, Object> preparedValues = prepareValues(report, body.parameters);
         if (body.template != null) {
             try {
-                return new ReportRestResult(reports.createReport(report, body.template, preparedValues), body.attachment);
+                ReportOutputDocument document = reportRunner.byReportEntity(report)
+                        .withTemplateCode(body.template)
+                        .withParams(preparedValues)
+                        .run();
+                return new ReportRestResult(document, body.attachment);
             } catch (FailedToConnectToOpenOfficeException e) {
                 throw new RestAPIException("Run report error", "Couldn't find LibreOffice instance",
                         HttpStatus.INTERNAL_SERVER_ERROR);
@@ -156,7 +165,7 @@ public class ReportRestControllerManager {
             }
         } else {
             try {
-                return new ReportRestResult(reports.createReport(report, preparedValues), body.attachment);
+                return new ReportRestResult(reportRunner.run(new ReportRunContext(report).setParams(preparedValues)), body.attachment);
             } catch (FailedToConnectToOpenOfficeException e) {
                 throw new RestAPIException("Run report error", "Couldn't find LibreOffice instance",
                         HttpStatus.INTERNAL_SERVER_ERROR);
@@ -203,7 +212,6 @@ public class ReportRestControllerManager {
         return new GsonBuilder().create();
     }
 
-
     @Nullable
     protected Object prepareValue(ReportInputParameter inputParam, ParameterValueInfo paramValue) {
         ParameterType parameterType = inputParam.getType();
@@ -239,7 +247,7 @@ public class ReportRestControllerManager {
             }
         } else if (paramValue.value != null) {
             Class paramClass = resolveDatatypeActualClass(inputParam);
-            return reports.convertFromString(paramClass, paramValue.value);
+            return objectToStringConverter.convertFromString(paramClass, paramValue.value);
         }
         return null;
     }
@@ -314,8 +322,8 @@ public class ReportRestControllerManager {
         switch (parameter.getType()) {
             case DATE:
             case TIME:
-                Object defParamValue = reports.convertFromString(parameter.getParameterClass(), parameter.getDefaultValue());
-                return reports.convertToString(resolveDatatypeActualClass(parameter), defParamValue);
+                Object defParamValue = objectToStringConverter.convertFromString(parameter.getParameterClass(), parameter.getDefaultValue());
+                return objectToStringConverter.convertToString(resolveDatatypeActualClass(parameter), defParamValue);
         }
         return parameter.getDefaultValue();
     }

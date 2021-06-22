@@ -38,6 +38,9 @@ public class ReportsClientProperties {
         this.enableTabSymbolInDataSetEditor = enableTabSymbolInDataSetEditor;
     }
 
+    /**
+     * @return if true, the reports will be run in the background from the screens and actions defined by the Reports add-on
+     */
     public boolean getUseBackgroundReportProcessing() {
         return useBackgroundReportProcessing;
     }

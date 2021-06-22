@@ -21,7 +21,9 @@ import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportInputParameter;
 import io.jmix.reports.entity.ReportTemplate;
 import io.jmix.reports.exception.ReportParametersValidationException;
-import io.jmix.reportsui.screen.ReportGuiManager;
+import io.jmix.reportsui.runner.FluentUiReportRunner;
+import io.jmix.reportsui.runner.ParametersDialogShowMode;
+import io.jmix.reportsui.runner.UiReportRunner;
 import io.jmix.reportsui.screen.ReportParameterValidator;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.UiProperties;
@@ -56,7 +58,7 @@ public class InputParametersDialog extends Screen {
     protected Collection selectedEntities;
 
     @Autowired
-    protected ReportGuiManager reportGuiManager;
+    protected UiReportRunner uiReportRunner;
 
     @Autowired
     protected InputParametersFragment inputParametersFragment;
@@ -75,6 +77,8 @@ public class InputParametersDialog extends Screen {
 
     @Autowired
     protected UiProperties properties;
+
+    protected boolean inBackground;
 
     public void setTemplateCode(@Nullable String templateCode) {
         this.templateCode = templateCode;
@@ -100,6 +104,10 @@ public class InputParametersDialog extends Screen {
         this.parameters = parameters;
     }
 
+    public void setInBackground(boolean inBackground) {
+        this.inBackground = inBackground;
+    }
+
     @Subscribe("printReportButton")
     public void onPrintReportButtonClick(Button.ClickEvent event) {
         if (inputParametersFragment.getReport() != null) {
@@ -112,10 +120,20 @@ public class InputParametersDialog extends Screen {
                 }
                 Report report = inputParametersFragment.getReport();
                 Map<String, Object> parameters = inputParametersFragment.collectParameters();
+                FluentUiReportRunner fluentRunner = uiReportRunner.byReportEntity(report)
+                        .withParams(parameters)
+                        .withTemplateCode(templateCode)
+                        .withOutputNamePattern(outputFileName)
+                        .withOutputType(inputParametersFragment.getOutputType())
+                        .withParametersDialogShowMode(ParametersDialogShowMode.NO);
+                if (inBackground) {
+                    fluentRunner.inBackground(this);
+                }
+
                 if (bulkPrint) {
-                    reportGuiManager.bulkPrint(report, templateCode, inputParametersFragment.getOutputType(), inputParameter.getAlias(), selectedEntities, this, parameters);
+                    fluentRunner.runMultipleReports(inputParameter.getAlias(), selectedEntities);
                 } else {
-                    reportGuiManager.printReport(report, parameters, templateCode, outputFileName, inputParametersFragment.getOutputType(), this);
+                    fluentRunner.runAndShow();
                 }
             } else {
                 screenValidation.showValidationErrors(this, validationErrors);

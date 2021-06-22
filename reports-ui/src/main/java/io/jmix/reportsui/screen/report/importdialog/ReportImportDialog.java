@@ -17,7 +17,7 @@
 package io.jmix.reportsui.screen.report.importdialog;
 
 import io.jmix.core.Messages;
-import io.jmix.reports.Reports;
+import io.jmix.reports.ReportImportExport;
 import io.jmix.reports.entity.ReportImportOption;
 import io.jmix.reports.entity.ReportImportResult;
 import io.jmix.ui.Notifications;
@@ -52,7 +52,7 @@ public class ReportImportDialog extends Screen {
     @Autowired
     protected TemporaryStorage temporaryStorage;
     @Autowired
-    protected Reports reports;
+    protected ReportImportExport reportImportExport;
     @Autowired
     protected HBoxLayout dropZone;
     @Autowired
@@ -123,7 +123,7 @@ public class ReportImportDialog extends Screen {
         }
 
         temporaryStorage.deleteFile(fileId);
-        return reports.importReportsWithResult(bytes, getImportOptions());
+        return reportImportExport.importReportsWithResult(bytes, getImportOptions());
     }
 
 

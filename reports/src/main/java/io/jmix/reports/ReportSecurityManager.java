@@ -16,11 +16,12 @@
 
 package io.jmix.reports;
 
-import io.jmix.core.LoadContext;
+import io.jmix.core.*;
 import io.jmix.data.QueryTransformer;
 import io.jmix.data.QueryTransformerFactory;
-import io.jmix.core.QueryUtils;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.dynattr.DynAttrQueryHints;
+import io.jmix.reports.entity.Report;
 import io.jmix.security.model.BaseRole;
 import io.jmix.security.role.ResourceRoleRepository;
 import io.jmix.security.role.assignment.RoleAssignmentRepository;
@@ -43,6 +44,15 @@ public class ReportSecurityManager {
 
     @Autowired
     protected RoleAssignmentRepository roleAssignmentRepository;
+
+    @Autowired
+    protected FetchPlans fetchPlans;
+
+    @Autowired
+    protected Metadata metadata;
+
+    @Autowired
+    protected DataManager dataManager;
 
     /**
      * Apply security constraints for query to select reports available by roles and screen restrictions
@@ -89,6 +99,35 @@ public class ReportSecurityManager {
             transformer.addWhereAsIs(String.format("(%s)", parameterTypeCondition.toString()));
             lc.getQuery().setQueryString(transformer.getResult());
         }
+    }
+
+    /**
+     * Returns a list of reports, available for certain screen, user and input parameter
+     *
+     * @param screenId            - id of the screen
+     * @param user                - caller user
+     * @param inputValueMetaClass - meta class of report input parameter
+     *
+     * @return list of available reports
+     */
+    public List<Report> getAvailableReports(@Nullable String screenId, @Nullable UserDetails user, @Nullable MetaClass inputValueMetaClass) {
+        MetaClass metaClass = metadata.getClass(Report.class);
+        LoadContext<Report> lc = new LoadContext<>(metaClass);
+        lc.setHint(DynAttrQueryHints.LOAD_DYN_ATTR, true);
+        FetchPlan fetchPlan = fetchPlans.builder(Report.class)
+                .add("name")
+                .add("localeNames")
+                .add("description")
+                .add("code")
+                .add("group", FetchPlan.LOCAL)
+                .add("updateTs")
+                .build();
+
+        lc.setFetchPlan(fetchPlan);
+        lc.setQueryString("select r from report_Report r where r.system <> true");
+        applySecurityPolicies(lc, screenId, user);
+        applyPoliciesByEntityParameters(lc, inputValueMetaClass);
+        return dataManager.loadList(lc);
     }
 
     protected String wrapCodeParameterForSearch(String value) {

@@ -27,10 +27,10 @@ import io.jmix.core.DataManager;
 import io.jmix.core.Metadata;
 import io.jmix.core.QueryUtils;
 import io.jmix.core.Resources;
-import io.jmix.reports.Reports;
 import io.jmix.reports.entity.ParameterType;
 import io.jmix.reports.entity.PredefinedTransformation;
 import io.jmix.reports.entity.ReportInputParameter;
+import io.jmix.reports.util.ReportsUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +47,8 @@ public class JmixReporting extends com.haulmont.yarg.reporting.Reporting {
 
     protected Scripting scripting;
 
-    protected Reports reports;
+    @Autowired
+    protected ReportsUtils reportsUtils;
 
     @Autowired
     protected Resources resources;
@@ -63,10 +64,6 @@ public class JmixReporting extends com.haulmont.yarg.reporting.Reporting {
 
     public void setScripting(Scripting scripting) {
         this.scripting = scripting;
-    }
-
-    public void setReports(Reports reports) {
-        this.reports = reports;
     }
 
     @Override
@@ -108,7 +105,7 @@ public class JmixReporting extends com.haulmont.yarg.reporting.Reporting {
     protected void handleDateTimeRelatedParameterAsNow(String paramName, @Nullable Object paramValue, ParameterType parameterType,
                                                        Map<String, Object> handledParams) {
         if (Objects.isNull(paramValue)) {
-            paramValue = reports.currentDateOrTime(parameterType);
+            paramValue = reportsUtils.currentDateOrTime(parameterType);
             handledParams.put(paramName, paramValue);
         }
     }

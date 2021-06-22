@@ -17,7 +17,7 @@ package io.jmix.reports.listener;
 
 import io.jmix.core.EntityStates;
 import io.jmix.data.listener.BeforeDetachEntityListener;
-import io.jmix.reports.Reports;
+import io.jmix.reports.ReportsSerialization;
 import io.jmix.reports.entity.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -33,7 +33,7 @@ import java.util.List;
 public class ReportDetachListener implements BeforeDetachEntityListener<Report> {
 
     @Autowired
-    protected Reports reports;
+    protected ReportsSerialization reportsSerialization;
 
     @Autowired
     protected EntityStates entityStates;
@@ -41,7 +41,7 @@ public class ReportDetachListener implements BeforeDetachEntityListener<Report> 
     @Override
     public void onBeforeDetach(Report entity) {
         if (entityStates.isLoaded(entity, "xml") && StringUtils.isNotBlank(entity.getXml())) {
-            Report reportFromXml = reports.convertToReport(entity.getXml());
+            Report reportFromXml = reportsSerialization.convertToReport(entity.getXml());
             entity.setBands(reportFromXml.getBands());
             entity.setInputParameters(reportFromXml.getInputParameters());
             entity.setReportScreens(reportFromXml.getReportScreens());

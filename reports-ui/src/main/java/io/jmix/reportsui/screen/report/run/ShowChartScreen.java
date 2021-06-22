@@ -20,10 +20,11 @@ import com.haulmont.yarg.reporting.ReportOutputDocument;
 import io.jmix.core.Messages;
 import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.security.CurrentAuthentication;
+import io.jmix.reports.ReportSecurityManager;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportOutputType;
 import io.jmix.reports.entity.ReportTemplate;
-import io.jmix.reportsui.screen.ReportGuiManager;
+import io.jmix.reports.runner.ReportRunner;
 import io.jmix.ui.Fragments;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.WindowConfig;
@@ -55,7 +56,7 @@ public class ShowChartScreen extends Screen {
     protected GroupBoxLayout chartBox;
 
     @Autowired
-    protected ReportGuiManager reportGuiManager;
+    protected ReportSecurityManager reportSecurityManager;
 
     @Autowired
     protected ThemeConstants themeConstants;
@@ -101,6 +102,9 @@ public class ShowChartScreen extends Screen {
     @Autowired
     private CollectionContainer<Report> reportsDc;
 
+    @Autowired
+    protected ReportRunner reportRunner;
+
     protected Report report;
 
     protected String templateCode;
@@ -117,7 +121,7 @@ public class ShowChartScreen extends Screen {
         this.report = report;
     }
 
-    public void setTemplateCode(String templateCode) {
+    public void setTemplateCode(@Nullable String templateCode) {
         this.templateCode = templateCode;
     }
 
@@ -149,7 +153,7 @@ public class ShowChartScreen extends Screen {
     @Subscribe(id = "reportsDl", target = Target.DATA_LOADER)
     public void onReportsDlPostLoad(CollectionLoader.PostLoadEvent<Report> event) {
         List<Report> entities = event.getLoadedEntities();
-        List<Report> availableReports = reportGuiManager.getAvailableReports(null, currentAuthentication.getUser(), null);
+        List<Report> availableReports = reportSecurityManager.getAvailableReports(null, currentAuthentication.getUser(), null);
         entities.retainAll(availableReports);
         reportsDc.setItems(entities);
     }
@@ -258,7 +262,10 @@ public class ShowChartScreen extends Screen {
                     }
                 }
 
-                ReportOutputDocument reportResult = reportGuiManager.getReportResult(report, parameters, resultTemplateCode);
+                ReportOutputDocument reportResult = reportRunner.byReportEntity(report)
+                        .withParams(parameters)
+                        .withTemplateCode(resultTemplateCode)
+                        .run();
                 openChart(new String(reportResult.getContent(), StandardCharsets.UTF_8));
             } else {
                 screenValidation.showValidationErrors(this, validationErrors);

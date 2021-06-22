@@ -18,11 +18,9 @@ package io.jmix.reports.libintegration;
 
 import com.haulmont.yarg.loaders.ReportDataLoader;
 import com.haulmont.yarg.structure.ReportQuery;
-import io.jmix.core.FetchPlan;
-import io.jmix.core.FetchPlanRepository;
-import io.jmix.core.Entity;
-import io.jmix.reports.Reports;
+import io.jmix.core.*;
 import io.jmix.reports.entity.DataSet;
+import io.jmix.reports.entity.Report;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -34,7 +32,7 @@ public abstract class AbstractEntityDataLoader implements ReportDataLoader {
     protected BeanFactory beanFactory;
 
     @Autowired
-    protected Reports reports;
+    protected DataManager dataManager;
 
     @Autowired
     protected FetchPlanRepository fetchPlanRepository;
@@ -47,11 +45,20 @@ public abstract class AbstractEntityDataLoader implements ReportDataLoader {
             DataSet dataSet = (DataSet) reportQuery;
             FetchPlan fetchPlan = getFetchPlan(entity, dataSet);
             if (fetchPlan != null) {
-                entity = reports.reloadEntity(entity, fetchPlan);
+                entity = reloadEntity(entity, fetchPlan);
             }
         }
 
         return entity;
+    }
+    protected  <T> T reloadEntity(T entity, FetchPlan fetchPlan) {
+        if (entity instanceof Report && ((Report) entity).getIsTmp()) {
+            return entity;
+        }
+        return (T) dataManager.load(entity.getClass())
+                .id(Id.of(entity))
+                .fetchPlan(fetchPlan)
+                .one();
     }
 
     @Nullable

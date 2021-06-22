@@ -16,7 +16,6 @@
 
 package io.jmix.reports.runner.impl;
 
-import com.google.common.base.Strings;
 import com.haulmont.yarg.exception.OpenOfficeException;
 import com.haulmont.yarg.exception.ReportingInterruptedException;
 import com.haulmont.yarg.formatters.impl.doc.connector.NoFreePortsException;
@@ -36,160 +35,65 @@ import io.jmix.reports.entity.ReportOutputType;
 import io.jmix.reports.entity.ReportTemplate;
 import io.jmix.reports.exception.*;
 import io.jmix.reports.libintegration.CustomFormatter;
+import io.jmix.reports.runner.FluentReportRunner;
+import io.jmix.reports.runner.ReportRunContext;
 import io.jmix.reports.runner.ReportRunner;
+import io.jmix.reports.util.ReportsUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.lang3.time.StopWatch;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Scope;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 @Component("report_ReportRunner")
-@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ReportRunnerImpl implements ReportRunner {
-
-    private static final Logger log = LoggerFactory.getLogger(ReportRunnerImpl.class);
-
-    private static final String REPORT_RUN_FETCH_PLAN = "report.run";
-
-    @Autowired
-    private EntityStates entityStates;
-
-    @Autowired
-    private ReportExecutionHistoryRecorder executionHistoryRecorder;
-
-    @Autowired
-    private ReportsProperties reportsProperties;
 
     @Autowired
     protected PrototypesLoader prototypesLoader;
 
     @Autowired
-    protected ReportingAPI reportingApi;
+    protected ReportingAPI reportingAPI;
+
+    @Autowired
+    protected ObjectProvider<FluentReportRunner> fluentReportRunners;
+
+    @Autowired
+    protected EntityStates entityStates;
 
     @Autowired
     protected DataManager dataManager;
 
     @Autowired
+    protected ReportsProperties reportsProperties;
+
+    @Autowired
+    protected ReportExecutionHistoryRecorder executionHistoryRecorder;
+
+    @Autowired
+    protected ReportsUtils reportsUtils;
+
+    @Autowired
     protected ApplicationContext applicationContext;
 
-    private Report report;
-    private String reportCode;
-    private Map<String, Object> params = new HashMap<>();
-    private String templateCode;
-    private ReportTemplate template;
-    private ReportOutputType outputType;
-    private String outputNamePattern;
-
-    public ReportRunnerImpl(Report report) {
-        this.report = report;
-    }
-
-    public ReportRunnerImpl(String reportCode) {
-        this.reportCode = reportCode;
-    }
-
     @Override
-    public ReportRunnerImpl withParams(Map<String, Object> params) {
-        this.params = params;
-        return this;
-    }
-
-    @Override
-    public ReportRunnerImpl addParam(String name, Object value) {
-        params.put(name, value);
-        return this;
-    }
-
-    @Override
-    public ReportRunnerImpl withTemplateCode(String templateCode) {
-        this.templateCode = templateCode;
-        return this;
-    }
-
-    @Override
-    public ReportRunnerImpl withTemplate(ReportTemplate template) {
-        this.template = template;
-        return this;
-    }
-
-    @Override
-    public ReportRunnerImpl withOutputType(ReportOutputType outputType) {
-        this.outputType = outputType;
-        return this;
-    }
-
-    @Override
-    public ReportRunnerImpl withOutputNamePattern(String outputNamePattern) {
-        this.outputNamePattern = outputNamePattern;
-        return this;
-    }
-
-    private Optional<Report> loadReportByCode(String reportCode) {
-        return dataManager.load(Report.class)
-                .query("e.code = :code")
-                .parameter("code", reportCode)
-                .fetchPlan(REPORT_RUN_FETCH_PLAN)
-                .optional();
-    }
-
-    private Report getReportToUse() {
-        if (this.report != null) {
-            if (!entityStates.isLoadedWithFetchPlan(this.report, "report.run")) {
-                return dataManager.load(Id.of(report))
-                        .fetchPlan("report.run")
-                        .one();
-            } else {
-                return this.report;
-            }
-        }
-        if (!Strings.isNullOrEmpty(reportCode)) {
-            Optional<Report> reportOpt = loadReportByCode(this.reportCode);
-            if (reportOpt.isPresent()) {
-                return reportOpt.get();
-            }
-        }
-        log.error("Cannot evaluate report to run. report param: {}, reportCode param: {}", report, reportCode);
-        throw new IllegalStateException("Cannot evaluate a report to run");
-    }
-
-    private ReportTemplate getReportTemplateToUse() {
-        if (this.template != null) {
-            return template;
-        }
-        if (!Strings.isNullOrEmpty(templateCode)) {
-            ReportTemplate templateByCode = report.getTemplateByCode(templateCode);
-            if (templateByCode == null) {
-                throw new RuntimeException(String.format("Cannot find report template with code %s in report %s", templateCode, report.getCode()));
-            }
-            return templateByCode;
-        }
-        ReportTemplate defaultTemplate = report.getDefaultTemplate();
-        if (defaultTemplate == null)
-            throw new ReportingException(String.format("No default template specified for report [%s]", report.getName()));
-        return defaultTemplate;
-    }
-
-    @Override
-    public ReportOutputDocument run() {
-        report = getReportToUse();
-        template = getReportTemplateToUse();
-
+    public ReportOutputDocument run(ReportRunContext context) {
+        prepareContext(context);
         if (!reportsProperties.isHistoryRecordingEnabled()) {
-            return runReport();
+            return createReportDocumentInternal(context);
         }
 
         ReportExecution reportExecution =
-                executionHistoryRecorder.startExecution(report, params);
+                executionHistoryRecorder.startExecution(context.getReport(), context.getParams());
         try {
-            ReportOutputDocument document = runReport();
+            ReportOutputDocument document = createReportDocumentInternal(context);
             executionHistoryRecorder.markAsSuccess(reportExecution, document);
             return document;
         } catch (ReportCanceledException e) {
@@ -201,36 +105,32 @@ public class ReportRunnerImpl implements ReportRunner {
         }
     }
 
-
-    private ReportOutputDocument runReport() {
-//            Report report = reportRunParams.getReport();
-//            ReportTemplate template = reportRunParams.getReportTemplate();
-//            io.jmix.reports.entity.ReportOutputType outputType = reportRunParams.getOutputType();
-//            Map<String, Object> params = reportRunParams.getParams();
-//            String outputNamePattern = reportRunParams.getOutputNamePattern();
-
+    protected ReportOutputDocument createReportDocumentInternal(ReportRunContext context) {
+        Report report = context.getReport();
+        ReportTemplate template = context.getReportTemplate();
+        ReportOutputType outputType = context.getOutputType();
+        Map<String, Object> params = context.getParams();
+        String outputNamePattern = context.getOutputNamePattern();
 
         StopWatch stopWatch = null;
         MDC.put("user", SecurityContextHolder.getContext().getAuthentication().getName());
         //TODO web context name
 //        MDC.put("webContextName", globalConfig.getWebContextName());
-        //todo https://github.com/Haulmont/jmix-reports/issues/22
+//        todo https://github.com/Haulmont/jmix-reports/issues/22
 //        executions.startExecution(report.getId().toString(), "Reporting");
         try {
             //TODO Slf4JStopWatch
 //            stopWatch = new Slf4JStopWatch("Reporting#" + report.getName());
-            List<String> prototypes = new LinkedList<>();
-            for (Map.Entry<String, Object> param : params.entrySet()) {
-                if (param.getValue() instanceof ParameterPrototype)
-                    prototypes.add(param.getKey());
-            }
             Map<String, Object> resultParams = new HashMap<>(params);
 
-            for (String paramName : prototypes) {
-                ParameterPrototype prototype = (ParameterPrototype) params.get(paramName);
-                List data = loadDataForParameterPrototype(prototype);
-                resultParams.put(paramName, data);
-            }
+            params.entrySet()
+                    .stream()
+                    .filter(param -> param.getValue() instanceof ParameterPrototype)
+                    .forEach(param -> {
+                        ParameterPrototype prototype = (ParameterPrototype) param.getValue();
+                        List data = prototypesLoader.loadData(prototype);
+                        resultParams.put(param.getKey(), data);
+                    });
 
             if (template.isCustom()) {
                 CustomFormatter customFormatter = applicationContext.getBean(CustomFormatter.class, report, template);
@@ -239,7 +139,7 @@ public class ReportRunnerImpl implements ReportRunner {
 
             com.haulmont.yarg.structure.ReportOutputType resultOutputType = (outputType != null) ? outputType.getOutputType() : template.getOutputType();
 
-            return reportingApi.runReport(new RunParams(report).template(template).params(resultParams).output(resultOutputType).outputNamePattern(outputNamePattern));
+            return reportingAPI.runReport(new RunParams(report).template(template).params(resultParams).output(resultOutputType).outputNamePattern(outputNamePattern));
         } catch (NoFreePortsException nfe) {
             throw new NoOpenOfficeFreePortsException(nfe.getMessage());
         } catch (OpenOfficeException ooe) {
@@ -268,7 +168,7 @@ public class ReportRunnerImpl implements ReportRunner {
 
             throw new ReportingException(sb.toString());
         } finally {
-            //todo https://github.com/Haulmont/jmix-reports/issues/22
+//            todo https://github.com/Haulmont/jmix-reports/issues/22
 //            executions.endExecution();
             MDC.remove("user");
             MDC.remove("webContextName");
@@ -278,7 +178,38 @@ public class ReportRunnerImpl implements ReportRunner {
         }
     }
 
-    public List loadDataForParameterPrototype(ParameterPrototype prototype) {
-        return prototypesLoader.loadData(prototype);
+    protected void prepareContext(ReportRunContext context) {
+        Report report = context.getReport();
+        context.setReport(reportsUtils.reloadReportIfNeeded(report, "report.edit"));
+
+        ReportTemplate template = context.getReportTemplate();
+        if (template == null) {
+            template = getDefaultTemplate(report);
+            context.setReportTemplate(template);
+        }
+
+        if (!entityStates.isLoadedWithFetchPlan(template, "template.edit")) {
+            template = dataManager.load(Id.of(template))
+                    .fetchPlan("template.edit")
+                    .one();
+            context.setReportTemplate(template);
+        }
+    }
+
+    protected ReportTemplate getDefaultTemplate(Report report) {
+        ReportTemplate defaultTemplate = report.getDefaultTemplate();
+        if (defaultTemplate == null)
+            throw new ReportingException(String.format("No default template specified for report [%s]", report.getName()));
+        return defaultTemplate;
+    }
+
+    @Override
+    public FluentReportRunner byReportCode(String reportCode) {
+        return fluentReportRunners.getObject(reportCode);
+    }
+
+    @Override
+    public FluentReportRunner byReportEntity(Report report) {
+        return fluentReportRunners.getObject(report);
     }
 }

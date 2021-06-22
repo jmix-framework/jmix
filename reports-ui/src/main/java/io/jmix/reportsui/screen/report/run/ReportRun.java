@@ -22,9 +22,13 @@ import io.jmix.core.Messages;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.CurrentAuthentication;
+import io.jmix.reports.ReportSecurityManager;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportGroup;
-import io.jmix.reportsui.screen.ReportGuiManager;
+import io.jmix.reportsui.runner.FluentUiReportRunner;
+import io.jmix.reportsui.runner.ParametersDialogShowMode;
+import io.jmix.reportsui.runner.UiReportRunner;
+import io.jmix.reportsui.screen.ReportsClientProperties;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.ItemTrackingAction;
 import io.jmix.ui.component.*;
@@ -49,7 +53,7 @@ public class ReportRun extends StandardLookup<Report> {
     protected Table<Report> reportsTable;
 
     @Autowired
-    protected ReportGuiManager reportGuiManager;
+    protected ReportSecurityManager reportSecurityManager;
 
     @Autowired
     protected CollectionContainer<Report> reportsDc;
@@ -84,6 +88,12 @@ public class ReportRun extends StandardLookup<Report> {
     @Named("reportsTable.runReport")
     protected ItemTrackingAction reportsTableRunReport;
 
+    @Autowired
+    protected UiReportRunner uiReportRunner;
+
+    @Autowired
+    protected ReportsClientProperties reportsClientProperties;
+
     protected List<Report> reports;
 
     protected MetaClass metaClassParameter;
@@ -111,7 +121,7 @@ public class ReportRun extends StandardLookup<Report> {
     protected void onBeforeShow(BeforeShowEvent event) {
         List<Report> reports = this.reports;
         if (reports == null) {
-            reports = reportGuiManager.getAvailableReports(screenParameter, currentAuthentication.getUser(),
+            reports = reportSecurityManager.getAvailableReports(screenParameter, currentAuthentication.getUser(),
                     metaClassParameter);
         }
 
@@ -131,7 +141,13 @@ public class ReportRun extends StandardLookup<Report> {
             report = dataManager.load(Id.of(report))
                     .fetchPlan("report.edit")
                     .one();
-            reportGuiManager.runReport(report, ReportRun.this);
+            FluentUiReportRunner fluentRunner = uiReportRunner.byReportEntity(report)
+                    .withParametersDialogShowMode(ParametersDialogShowMode.IF_REQUIRED);
+            if (reportsClientProperties.getUseBackgroundReportProcessing()) {
+                fluentRunner.inBackground(ReportRun.this);
+            }
+            fluentRunner.runAndShow();
+
         }
     }
 
@@ -157,7 +173,7 @@ public class ReportRun extends StandardLookup<Report> {
         Date dateFilterValue = updatedDateFilter.getValue();
 
         List<Report> reports =
-                reportGuiManager.getAvailableReports(screenParameter, currentAuthentication.getUser(),
+                reportSecurityManager.getAvailableReports(screenParameter, currentAuthentication.getUser(),
                         metaClassParameter)
                         .stream()
                         .filter(report -> {

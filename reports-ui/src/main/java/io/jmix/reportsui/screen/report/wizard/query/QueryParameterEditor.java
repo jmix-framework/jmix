@@ -16,6 +16,7 @@
 
 package io.jmix.reportsui.screen.report.wizard.query;
 
+import com.haulmont.yarg.util.converter.ObjectToStringConverter;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
@@ -23,7 +24,6 @@ import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.reports.Reports;
 import io.jmix.reports.entity.ParameterType;
 import io.jmix.reports.entity.wizard.QueryParameter;
 import io.jmix.ui.Actions;
@@ -70,7 +70,7 @@ public class QueryParameterEditor extends StandardEditor<QueryParameter> {
     @Autowired
     protected Messages messages;
     @Autowired
-    protected Reports reports;
+    protected ObjectToStringConverter objectToStringConverter;
     @Autowired
     protected DatatypeRegistry datatypeRegistry;
     @Autowired
@@ -162,7 +162,7 @@ public class QueryParameterEditor extends StandardEditor<QueryParameter> {
         if (defaultValueField != null) {
             if (StringUtils.isNotEmpty(getEditedEntity().getJavaClassName())) {
                 try {
-                    Object value = reports.convertFromString(Class.forName(getEditedEntity().getJavaClassName()), getEditedEntity().getDefaultValueString());
+                    Object value = objectToStringConverter.convertFromString(Class.forName(getEditedEntity().getJavaClassName()), getEditedEntity().getDefaultValueString());
                     defaultValueField.setValue(value);
                 } catch (ClassNotFoundException e) {
 
@@ -172,7 +172,7 @@ public class QueryParameterEditor extends StandardEditor<QueryParameter> {
             defaultValueField.setWidth("100%");
             defaultValueField.addValueChangeListener(e -> {
                 if (e.getValue() != null) {
-                    getEditedEntity().setDefaultValueString(reports.convertToString(e.getValue().getClass(), e.getValue()));
+                    getEditedEntity().setDefaultValueString(objectToStringConverter.convertToString(e.getValue().getClass(), e.getValue()));
                 } else {
                     getEditedEntity().setDefaultValueString(null);
                 }

@@ -20,9 +20,9 @@ import io.jmix.core.LoadContext;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.CurrentAuthentication;
+import io.jmix.reports.ReportSecurityManager;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportGroup;
-import io.jmix.reportsui.screen.ReportGuiManager;
 import io.jmix.ui.WindowParam;
 import io.jmix.ui.component.*;
 import io.jmix.ui.model.CollectionContainer;
@@ -45,7 +45,7 @@ public class ReportExecutionDialog extends StandardLookup<Report> {
     public static final String SCREEN_PARAMETER = "screen";
 
     @Autowired
-    protected ReportGuiManager reportGuiManager;
+    protected ReportSecurityManager reportSecurityManager;
 
     @Autowired
     protected CollectionContainer<Report> reportsDc;
@@ -75,7 +75,7 @@ public class ReportExecutionDialog extends StandardLookup<Report> {
 
     @Install(to = "reportsDl", target = Target.DATA_LOADER)
     protected List<Report> reportsDlLoadDelegate(LoadContext<Report> loadContext) {
-        return reportGuiManager.getAvailableReports(screenParameter,
+        return reportSecurityManager.getAvailableReports(screenParameter,
                 currentAuthentication.getUser(),
                 metaClassParameter);
     }
@@ -95,7 +95,7 @@ public class ReportExecutionDialog extends StandardLookup<Report> {
     }
 
     protected void filterReports() {
-        List<Report> reports = reportGuiManager.getAvailableReports(screenParameter,
+        List<Report> reports = reportSecurityManager.getAvailableReports(screenParameter,
                 currentAuthentication.getUser(),
                 metaClassParameter)
                 .stream()

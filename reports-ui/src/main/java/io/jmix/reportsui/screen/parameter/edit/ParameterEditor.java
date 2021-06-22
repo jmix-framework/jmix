@@ -15,10 +15,10 @@
  */
 package io.jmix.reportsui.screen.parameter.edit;
 
+import com.haulmont.yarg.util.converter.ObjectToStringConverter;
 import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.reports.ParameterClassResolver;
-import io.jmix.reports.Reports;
 import io.jmix.reports.entity.ParameterType;
 import io.jmix.reports.entity.PredefinedTransformation;
 import io.jmix.reports.entity.ReportInputParameter;
@@ -122,7 +122,7 @@ public class ParameterEditor extends StandardEditor<ReportInputParameter> {
     protected PolicyStore policyStore;
 
     @Autowired
-    protected Reports reports;
+    protected ObjectToStringConverter objectToStringConverter;
 
     @Autowired
     protected InstanceContainer<ReportInputParameter> parameterDc;
@@ -325,14 +325,14 @@ public class ParameterEditor extends StandardEditor<ReportInputParameter> {
 
             field.addValueChangeListener(e -> {
                 if (e.getValue() != null) {
-                    parameter.setDefaultValue(reports.convertToString(e.getValue().getClass(), e.getValue()));
+                    parameter.setDefaultValue(objectToStringConverter.convertToString(e.getValue().getClass(), e.getValue()));
                 } else {
                     parameter.setDefaultValue(null);
                 }
             });
 
             if (parameter.getParameterClass() != null) {
-                field.setValue(reports.convertFromString(parameter.getParameterClass(), parameter.getDefaultValue()));
+                field.setValue(objectToStringConverter.convertFromString(parameter.getParameterClass(), parameter.getDefaultValue()));
             }
             field.setRequired(false);
 

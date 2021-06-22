@@ -22,11 +22,12 @@ import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.impl.StandardSerialization;
 import io.jmix.core.security.CurrentAuthentication;
+import io.jmix.reports.ReportSecurityManager;
 import io.jmix.reports.entity.PivotTableData;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportOutputType;
 import io.jmix.reports.entity.ReportTemplate;
-import io.jmix.reportsui.screen.ReportGuiManager;
+import io.jmix.reports.runner.ReportRunner;
 import io.jmix.ui.Fragments;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.component.*;
@@ -49,7 +50,7 @@ public class ShowPivotTableScreen extends Screen {
     public static final String PIVOT_TABLE_SCREEN_ID = "ui_PivotTableFragment";
 
     @Autowired
-    protected ReportGuiManager reportGuiManager;
+    protected ReportSecurityManager reportSecurityManager;
 
     @Autowired
     protected UiComponents uiComponents;
@@ -106,6 +107,9 @@ public class ShowPivotTableScreen extends Screen {
 
     protected InputParametersFragment inputParametersFragment;
 
+    @Autowired
+    protected ReportRunner reportRunner;
+
     public void setReport(Report report) {
         this.report = report;
     }
@@ -114,7 +118,7 @@ public class ShowPivotTableScreen extends Screen {
         this.params = params;
     }
 
-    public void setTemplateCode(String templateCode) {
+    public void setTemplateCode(@Nullable String templateCode) {
         this.templateCode = templateCode;
     }
 
@@ -125,7 +129,7 @@ public class ShowPivotTableScreen extends Screen {
     @Subscribe(id = "reportsDl", target = Target.DATA_LOADER)
     public void onReportsDlPostLoad(CollectionLoader.PostLoadEvent<Report> event) {
         List<Report> entities = event.getLoadedEntities();
-        List<Report> availableReports = reportGuiManager.getAvailableReports(null, currentAuthentication.getUser(), null);
+        List<Report> availableReports = reportSecurityManager.getAvailableReports(null, currentAuthentication.getUser(), null);
         entities.retainAll(availableReports);
         reportsDc.setItems(entities);
     }
@@ -195,7 +199,10 @@ public class ShowPivotTableScreen extends Screen {
                     }
                 }
 
-                ReportOutputDocument document = reportGuiManager.getReportResult(report, parameters, resultTemplateCode);
+                ReportOutputDocument document = reportRunner.byReportEntity(report)
+                        .withParams(parameters)
+                        .withTemplateCode(resultTemplateCode)
+                        .run();
                 PivotTableData result = (PivotTableData) serialization.deserialize(document.getContent());
                 openPivotTable(result.getPivotTableJson(), result.getValues());
             } else {

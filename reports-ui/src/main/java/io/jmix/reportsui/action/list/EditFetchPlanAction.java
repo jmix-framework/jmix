@@ -19,12 +19,8 @@ package io.jmix.reportsui.action.list;
 import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.reports.Reports;
 import io.jmix.reports.app.EntityTree;
-import io.jmix.reports.entity.BandDefinition;
-import io.jmix.reports.entity.DataSet;
-import io.jmix.reports.entity.DataSetType;
-import io.jmix.reports.entity.Report;
+import io.jmix.reports.entity.*;
 import io.jmix.reports.entity.wizard.ReportData;
 import io.jmix.reports.entity.wizard.ReportRegion;
 import io.jmix.reportsui.screen.report.wizard.ReportsWizard;
@@ -45,10 +41,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @ActionType(EditFetchPlanAction.ID)
 public class EditFetchPlanAction extends ListAction {
@@ -66,9 +59,6 @@ public class EditFetchPlanAction extends ListAction {
 
     @Autowired
     protected Messages messages;
-
-    @Autowired
-    protected Reports reports;
 
     @Autowired
     protected ReportsWizard reportsWizard;
@@ -175,7 +165,7 @@ public class EditFetchPlanAction extends ListAction {
                     .show();
             return null;
         }
-        MetaClass byAliasMetaClass = reports.findMetaClassByDataSetEntityAlias(dataSetAlias, dataSet.getType(),
+        MetaClass byAliasMetaClass = findMetaClassByDataSetEntityAlias(dataSetAlias, dataSet.getType(),
                 bandsDc.getItem().getReport().getInputParameters());
 
         //Lets return some value
@@ -199,6 +189,39 @@ public class EditFetchPlanAction extends ListAction {
             }
             return byAliasMetaClass;
         }
+    }
+
+    @Nullable
+    public MetaClass findMetaClassByDataSetEntityAlias(final String alias, final DataSetType dataSetType, final List<ReportInputParameter> reportInputParameters) {
+        if (reportInputParameters.isEmpty() || StringUtils.isBlank(alias)) {
+            return null;
+        }
+
+        String realAlias = DataSetType.MULTI == dataSetType ? StringUtils.substringBefore(alias, "#") : alias;
+        boolean isCollectionAlias = !alias.equals(realAlias);
+
+        ReportInputParameter reportInputParameter = reportInputParameters.stream()
+                .filter(inputParameter -> realAlias.equals(inputParameter.getAlias()))
+                .filter(inputParameter -> suitableByDataSetType(dataSetType, isCollectionAlias, inputParameter.getType()))
+                .findFirst()
+                .orElse(null);
+
+        return reportInputParameter != null ? metadata.getClass(reportInputParameter) : null;
+    }
+
+    protected boolean suitableByDataSetType(DataSetType dataSetType, boolean isCollectionAlias, ParameterType type) {
+        if (DataSetType.MULTI == dataSetType) {
+            //find param that is matched for a MULTI dataset
+            if (isCollectionAlias) {
+                return ParameterType.ENTITY == type;
+            } else {
+                return ParameterType.ENTITY_LIST == type;
+            }
+        } else if (DataSetType.SINGLE == dataSetType) {
+            //find param that is matched for a SINGLE dataset
+            return ParameterType.ENTITY == type;
+        }
+        return false;
     }
 
     @Nullable

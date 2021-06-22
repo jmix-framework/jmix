@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-@NonNullApi
 @Experimental
-package io.jmix.searchui.component;
+package io.jmix.searchui.entity;
 
 import io.jmix.core.annotation.Experimental;
-import org.springframework.lang.NonNullApi;

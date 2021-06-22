@@ -29,7 +29,7 @@ import io.jmix.dashboardsui.widget.RefreshableWidget;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportOutputType;
 import io.jmix.reports.entity.ReportTemplate;
-import io.jmix.reportsui.screen.ReportGuiManager;
+import io.jmix.reports.runner.ReportRunner;
 import io.jmix.ui.WindowParam;
 import io.jmix.ui.component.Label;
 import io.jmix.ui.screen.ScreenFragment;
@@ -54,7 +54,7 @@ public class ChartWidget extends ScreenFragment implements RefreshableWidget {
     protected DataManager dataManager;
 
     @Autowired
-    protected ReportGuiManager reportGuiManager;
+    protected ReportRunner reportRunner;
 
     @Autowired
     protected WidgetRepository widgetRepository;
@@ -115,7 +115,10 @@ public class ChartWidget extends ScreenFragment implements RefreshableWidget {
         }
 
         Map<String, Object> widgetParams = widgetRepository.getWidgetParams(widget);
-        ReportOutputDocument document = reportGuiManager.getReportResult(report, widgetParams, reportTemplate.getCode());
+        ReportOutputDocument document = reportRunner.byReportEntity(report)
+                .withParams(widgetParams)
+                .withTemplate(reportTemplate)
+                .run();
 
         if (document.getContent() != null) {
             reportJsonChart.setVisible(true);

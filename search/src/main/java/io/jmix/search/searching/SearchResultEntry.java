@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.search.searching.impl;
+package io.jmix.search.searching;
 
 import java.util.List;
 

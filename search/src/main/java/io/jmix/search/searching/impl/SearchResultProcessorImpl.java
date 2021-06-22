@@ -21,6 +21,7 @@ import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.search.SearchProperties;
 import io.jmix.search.searching.SearchResult;
+import io.jmix.search.searching.SearchResultEntry;
 import io.jmix.search.searching.SearchResultProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

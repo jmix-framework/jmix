@@ -16,8 +16,6 @@
 
 package io.jmix.search.searching;
 
-import io.jmix.search.searching.impl.SearchResultEntry;
-
 import java.util.Collection;
 
 /**

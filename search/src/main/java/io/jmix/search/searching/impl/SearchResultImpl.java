@@ -18,6 +18,7 @@ package io.jmix.search.searching.impl;
 
 import io.jmix.search.searching.SearchContext;
 import io.jmix.search.searching.SearchResult;
+import io.jmix.search.searching.SearchResultEntry;
 import io.jmix.search.searching.SearchStrategy;
 
 import java.util.*;

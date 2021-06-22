@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static test_support.RestTestUtils.parseResponse;
 import static test_support.RestTestUtils.sendGet;
 
-@TestPropertySource(properties = "jmix.core.fetchPlanSerializationUseView=true")
+@TestPropertySource(properties = "jmix.core.legacyFetchPlanSerializationAttributeName=true")
 public class MetadataControllerFTWithCustomProperties extends AbstractRestControllerFT {
 
     @Test

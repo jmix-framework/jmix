@@ -54,8 +54,6 @@ dependencies {
     testImplementation 'io.jmix.security:jmix-security-data-starter'
     testImplementation 'io.jmix.security:jmix-security-oauth2-starter'
 
-    testImplementation 'io.leangen.graphql:graphql-spqr-spring-boot-starter:0.0.6'
-
     testImplementation 'com.google.code.gson:gson:2.8.6'
 
     testImplementation 'org.springframework:spring-test'

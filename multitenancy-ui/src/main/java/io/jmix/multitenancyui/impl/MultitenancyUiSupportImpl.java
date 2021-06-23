@@ -39,7 +39,7 @@ public class MultitenancyUiSupportImpl implements MultitenancyUiSupport {
     @Autowired
     private DataManager dataManager;
 
-    private static final String TENANT_USERNAME_SEPARATOR = "\\";
+    private static final String TENANT_USERNAME_SEPARATOR = "|";
 
     @Override
     public String getUsernameByUrl(String username, UrlRouting urlRouting) {

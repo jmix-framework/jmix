@@ -130,7 +130,7 @@ public class FilterTypesGenerator {
 
                     // todo support enums
                     if (metaProperty.getType().equals(MetaProperty.Type.ENUM)) {
-                        return listInpObjectField(metaProperty.getName(), "String", null);
+                        return inpObjectField(metaProperty.getName(), "String", null);
                     }
 
                     // todo "-to-many" relations are not supported now
@@ -139,7 +139,7 @@ public class FilterTypesGenerator {
                     }
 
                     if (metaProperty.getJavaType().getSimpleName().equals("String")) {
-                        return listInpObjectField(metaProperty.getName(), "SortOrder", null);
+                        return inpObjectField(metaProperty.getName(), "SortOrder", null);
                     }
 
                     if (metaProperty.getRange().isClass()) {

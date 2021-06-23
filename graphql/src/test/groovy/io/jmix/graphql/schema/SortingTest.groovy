@@ -17,6 +17,9 @@
 package io.jmix.graphql.schema
 
 import io.jmix.graphql.AbstractGraphQLTest
+import test_support.entity.Garage
+
+import java.util.stream.Collectors
 
 class SortingTest extends AbstractGraphQLTest {
 
@@ -78,6 +81,15 @@ class SortingTest extends AbstractGraphQLTest {
                 '{"id":"3da61043-aaad-7e30-c7f5-c1f1328d3980","lastModifiedDate":"2021-01-03"},' +
                 '{"id":"5f14d58d-6f24-4590-eef9-4b5885ed3e34","lastModifiedDate":"2021-01-21"}' +
                 ']}}'
+    }
+
+    def "garages are sorted by capacity"() {
+        when:
+        def response = query("schema/garages-with-sorting-by-capacity.graphql")
+        then:
+        List<Garage> garages = response.getList('$.data.scr_GarageList', Garage)
+        def capacities = garages.stream().map(gar -> gar.getCapacity()).collect(Collectors.toList());
+        capacities == [7, 9, 20, 20, 21, 50, 50, 56, 63, 71]
     }
 
 }

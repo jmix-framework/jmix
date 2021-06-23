@@ -139,6 +139,10 @@ public class EntityQueryDataFetcher {
 
         String propertyPath = StringUtils.isBlank(path) ? key : path + "." + key;
 
+        if (Types.SortOrder.class.isAssignableFrom(valueObj.getClass())) {
+            return new ImmutablePair<>(propertyPath, ((Types.SortOrder) valueObj));
+        }
+
         if (String.class.isAssignableFrom(valueClass)) {
             String value = (String) valueObj;
             return new ImmutablePair<>(propertyPath, Types.SortOrder.valueOf(value));

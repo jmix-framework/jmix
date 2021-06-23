@@ -1,0 +1,5 @@
+{
+  scr_GarageList(orderBy: {capacity: ASC}){
+    capacity
+  }
+}

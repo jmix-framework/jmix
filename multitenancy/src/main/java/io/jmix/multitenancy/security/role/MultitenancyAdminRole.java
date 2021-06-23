@@ -35,7 +35,7 @@ public interface MultitenancyAdminRole {
 
     String CODE = "multitenancy-admin-role";
 
-    @EntityPolicy(entityClass = Tenant.class, actions = {EntityPolicyAction.ALL})
+    @EntityPolicy(entityClass = Tenant.class, actions = {EntityPolicyAction.READ})
     @EntityPolicy(entityClass = BaseRoleModel.class, actions = {EntityPolicyAction.ALL})
     @EntityPolicy(entityClass = ResourcePolicyEntity.class, actions = {EntityPolicyAction.ALL})
     @EntityPolicy(entityClass = ResourceRoleEntity.class, actions = {EntityPolicyAction.ALL})
@@ -45,7 +45,7 @@ public interface MultitenancyAdminRole {
     @EntityPolicy(entityClass = ResourceRoleModel.class, actions = {EntityPolicyAction.ALL})
     @EntityPolicy(entityClass = RowLevelRoleModel.class, actions = {EntityPolicyAction.ALL})
     @EntityPolicy(entityClass = RowLevelPolicyModel.class, actions = {EntityPolicyAction.ALL})
-    @EntityAttributePolicy(entityClass = Tenant.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)
+    @EntityAttributePolicy(entityClass = Tenant.class, attributes = "*", action = EntityAttributePolicyAction.VIEW)
     @EntityAttributePolicy(entityClass = BaseRoleModel.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)
     @EntityAttributePolicy(entityClass = ResourcePolicyEntity.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)
     @EntityAttributePolicy(entityClass = ResourceRoleEntity.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)

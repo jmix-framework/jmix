@@ -42,7 +42,7 @@
     <layout spacing="true" expand="editActions">
         <form id="form" dataContainer="tenantDc">
             <column width="350px">
-                <textField id="tenantIdField" property="tenantId"/>
+                <textField id="tenantIdField" property="tenantId" required="true"/>
                 <textField id="nameField" property="name"/>
             </column>
         </form>

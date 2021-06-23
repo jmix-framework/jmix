@@ -675,8 +675,4 @@ To add **request headers** tab configure application property:
 ```graphiql.props.variables.headerEditorEnabled=true```
 
 ## Schema Download
-Schema could be downloaded using `graphqurl`
-```
-npm install -g graphqurl
-gq http://localhost:8080/graphql --introspect > schema.graphql
-```
+Schema could be downloaded using [JS GraphQL IDEA Plugin](https://plugins.jetbrains.com/plugin/8097-js-graphql).

@@ -31,7 +31,7 @@ public class LdapActiveDirectorySecurityConfiguration extends StandardSecurityCo
         auth.authenticationProvider(activeDirectoryLdapAuthenticationProvider());
     }
 
-    AuthenticationProvider activeDirectoryLdapAuthenticationProvider() {
+    protected AuthenticationProvider activeDirectoryLdapAuthenticationProvider() {
         String urls = StringUtils.join(ldapProperties.getUrls(), StringUtils.SPACE);
         ActiveDirectoryLdapAuthenticationProvider authenticationProvider =
                 new ActiveDirectoryLdapAuthenticationProvider(ldapProperties.getActiveDirectoryDomain(), urls,

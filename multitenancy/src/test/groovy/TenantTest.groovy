@@ -111,13 +111,11 @@ class TenantTest extends Specification {
         tenantA = metadata.create(Tenant.class)
         tenantA.setTenantId("tenantA")
         tenantA.setName("tenantA")
-        tenantA.setAdminUsername("tenantAdminA")
         unconstrainedDataManager.save(tenantA)
 
         tenantB = metadata.create(Tenant.class)
         tenantB.setTenantId("tenantB")
         tenantB.setName("tenantB")
-        tenantB.setAdminUsername("tenantAdminB")
         unconstrainedDataManager.save(tenantB)
 
         tenantUserA = metadata.create(User.class)

@@ -44,7 +44,6 @@
             <column width="350px">
                 <textField id="tenantIdField" property="tenantId"/>
                 <textField id="nameField" property="name"/>
-                <suggestionField id="adminUsernameField" property="adminUsername"/>
             </column>
         </form>
         <hbox id="editActions" spacing="true">

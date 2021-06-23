@@ -16,36 +16,15 @@
 
 package io.jmix.multitenancyui.screen.tenant;
 
-import io.jmix.core.security.UserRepository;
 import io.jmix.multitenancy.entity.Tenant;
-import io.jmix.ui.component.SuggestionField;
-import io.jmix.ui.screen.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
-
-import java.util.List;
-import java.util.stream.Collectors;
+import io.jmix.ui.screen.EditedEntityContainer;
+import io.jmix.ui.screen.StandardEditor;
+import io.jmix.ui.screen.UiController;
+import io.jmix.ui.screen.UiDescriptor;
 
 @UiController("mten_Tenant.edit")
 @UiDescriptor("tenant-edit.xml")
 @EditedEntityContainer("tenantDc")
 public class TenantEdit extends StandardEditor<Tenant> {
-
-    @Autowired
-    protected SuggestionField<String> adminUsernameField;
-
-    @Autowired
-    protected UserRepository userRepository;
-
-    @Subscribe
-    public void onInit(InitEvent event) {
-        adminUsernameField.setSearchExecutor((searchString, searchParams) -> {
-            List<? extends UserDetails> users = userRepository.getByUsernameLike(searchString);
-            return users.stream()
-                    .map(UserDetails::getUsername)
-                    .collect(Collectors.toList());
-        });
-    }
-
 
 }

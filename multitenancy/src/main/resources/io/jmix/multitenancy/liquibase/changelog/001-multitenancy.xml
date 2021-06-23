@@ -40,9 +40,6 @@
             <column name="NAME" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="ADMIN_USERNAME" type="varchar(255)">
-                <constraints nullable="false"/>
-            </column>
         </createTable>
 
     </changeSet>
@@ -89,29 +86,6 @@
     <changeSet author="multitenancy" id="2-another-db" context="!cuba" dbms="mssql, hsqldb">
         <createIndex tableName="MTEN_TENANT" indexName="IDX_MTEN_TENANT_UNIQ_TENANT_ID" unique="true">
             <column name="TENANT_ID"/>
-            <column name="DELETE_TS"/>
-        </createIndex>
-    </changeSet>
-
-    <changeSet author="multitenancy" id="3-postgresql" context="!cuba" dbms="postgresql">
-        <createIndex tableName="MTEN_TENANT" indexName="IDX_MTEN_TENANT_UK_ADMIN_ID" unique="true">
-            <column name="ADMIN_USERNAME"/>
-        </createIndex>
-        <modifySql>
-            <append value="where DELETE_TS is null"/>
-        </modifySql>
-    </changeSet>
-
-    <changeSet author="multitenancy" id="3-mysql" context="!cuba" dbms="mysql, mariadb">
-        <createIndex tableName="MTEN_TENANT" indexName="IDX_MTEN_TENANT_UK_ADMIN_ID" unique="true">
-            <column name="ADMIN_USERNAME"/>
-            <column name="DELETE_TS_NN"/>
-        </createIndex>
-    </changeSet>
-
-    <changeSet author="multitenancy" id="3-another-db" context="!cuba" dbms="mssql, hsqldb">
-        <createIndex tableName="MTEN_TENANT" indexName="IDX_MTEN_TENANT_UK_ADMIN_ID" unique="true">
-            <column name="ADMIN_USERNAME"/>
             <column name="DELETE_TS"/>
         </createIndex>
     </changeSet>

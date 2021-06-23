@@ -24,7 +24,6 @@
             <fetchPlan extends="_instance_name">
                 <property name="tenantId"/>
                 <property name="name"/>
-                <property name="adminUsername"/>
             </fetchPlan>
             <loader id="tenantsDl">
                 <query>
@@ -64,7 +63,6 @@
             <columns>
                 <column id="tenantId"/>
                 <column id="name"/>
-                <column id="adminUsername"/>
             </columns>
             <simplePagination/>
             <buttonsPanel id="buttonsPanel"

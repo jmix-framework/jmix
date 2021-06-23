@@ -76,9 +76,6 @@ public class Tenant {
     @Column(name = "NAME", nullable = false)
     private String name;
 
-    @Column(name = "ADMIN_USERNAME", nullable = false)
-    private String adminUsername;
-
     public UUID getId() {
         return id;
     }
@@ -157,13 +154,5 @@ public class Tenant {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getAdminUsername() {
-        return adminUsername;
-    }
-
-    public void setAdminUsername(String adminUsername) {
-        this.adminUsername = adminUsername;
     }
 }

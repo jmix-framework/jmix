@@ -21,7 +21,6 @@ import graphql.execution.instrumentation.InstrumentationContext;
 import graphql.execution.instrumentation.SimpleInstrumentationContext;
 import graphql.execution.instrumentation.parameters.InstrumentationValidationParameters;
 import graphql.validation.ValidationError;
-import io.jmix.graphql.InstrumentationUtils;
 
 import java.util.List;
 
@@ -36,9 +35,8 @@ public class JmixMaxQueryDepthInstrumentation extends MaxQueryDepthInstrumentati
 
     @Override
     public InstrumentationContext<List<ValidationError>> beginValidation(InstrumentationValidationParameters parameters) {
-        // skip validation for introspection query
-        // also skip for maxDepth == 0
-        if (InstrumentationUtils.isIntrospectionQuery(parameters.getExecutionInput()) || maxDepth == 0) {
+        // skip validation for maxDepth == 0
+        if (maxDepth == 0) {
             return new SimpleInstrumentationContext<>();
         }
 

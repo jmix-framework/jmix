@@ -20,6 +20,7 @@ import io.jmix.core.constraint.EntityOperationConstraint;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.multitenancy.core.TenantEntityOperation;
 import io.jmix.multitenancy.core.TenantProvider;
+import io.jmix.multitenancy.entity.Tenant;
 import io.jmix.ui.accesscontext.UiEntityAttributeContext;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -46,6 +47,10 @@ public class MultitenancyAttributeConstraint implements EntityOperationConstrain
     @Override
     public void applyTo(UiEntityAttributeContext context) {
         if (TenantProvider.NO_TENANT.equals(tenantProvider.getCurrentUserTenantId())) {
+            return;
+        }
+        Class<Object> entityClass = context.getPropertyPath().getMetaClass().getJavaClass();
+        if (Tenant.class.equals(entityClass) || Tenant.class.isAssignableFrom(entityClass)) {
             return;
         }
         addHideTenantIdPermission(context);

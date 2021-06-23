@@ -66,7 +66,7 @@ Each tenant must have a unique *Tenant Id* and a default administrator assigned.
 # Authentication
 You can create users with equal usernames for different tenants.
 For each user which belongs to a tenant will be added suffix with tenant id into the username.
-For example, you will create a user with username - `user1` also it has tenant id - `tenant1`. It means that the user will be saved with username as `tenant1\user1`.
+For example, you will create a user with username - `user1` also it has tenant id - `tenant1`. It means that the user will be saved with username as `tenant1|user1`.
 
 In order to authenticate into an application you can choose one approach for login:
 1. You can use the URL parameter when you open the login screen. 
@@ -74,7 +74,7 @@ In order to authenticate into an application you can choose one approach for log
    Default parameter value `tenantId`.
    Then add the `tenantId` parameter to the URL when log in, for example: `http://localhos:8080/#login?tenantId=some_tenant`
    Now, you can use a username without a tenant suffix. Using the example above you can log in as `user1`.
-2. You can log in with a full username without a URL parameter. For that, you should use a username with a tenant id. For the example above that, we should use `tenant1\user1` for login.
+2. You can log in with a full username without a URL parameter. For that, you should use a username with a tenant id. For the example above that, we should use `tenant1|user1` for login.
 
 # Common and Tenant-Specific Data
 

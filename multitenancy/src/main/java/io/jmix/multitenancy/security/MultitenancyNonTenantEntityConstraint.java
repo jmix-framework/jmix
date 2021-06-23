@@ -20,6 +20,7 @@ import io.jmix.core.constraint.EntityOperationConstraint;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.multitenancy.core.TenantEntityOperation;
 import io.jmix.multitenancy.core.TenantProvider;
+import io.jmix.multitenancy.entity.Tenant;
 import io.jmix.ui.accesscontext.UiEntityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,10 +50,14 @@ public class MultitenancyNonTenantEntityConstraint implements EntityOperationCon
 
     @Override
     public void applyTo(UiEntityContext context) {
-            if (TenantProvider.NO_TENANT.equals(tenantProvider.getCurrentUserTenantId())) {
-                return;
-            }
-            createReadOnlyPermitForNonTenantEntity(context);
+        if (TenantProvider.NO_TENANT.equals(tenantProvider.getCurrentUserTenantId())) {
+            return;
+        }
+        Class<Object> entityClass = context.getEntityClass().getJavaClass();
+        if (Tenant.class.equals(entityClass) || Tenant.class.isAssignableFrom(entityClass)) {
+            return;
+        }
+        createReadOnlyPermitForNonTenantEntity(context);
     }
 
     private void createReadOnlyPermitForNonTenantEntity(UiEntityContext context) {

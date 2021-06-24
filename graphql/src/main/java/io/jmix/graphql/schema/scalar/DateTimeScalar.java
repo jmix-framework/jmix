@@ -6,13 +6,13 @@ import io.jmix.graphql.schema.scalar.coercing.BaseDateCoercing;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
-
-import static io.jmix.graphql.schema.scalar.CustomScalars.SERIALIZATION_DATETIME_FORMAT;
 
 
 public class DateTimeScalar extends GraphQLScalarType {
@@ -29,9 +29,9 @@ public class DateTimeScalar extends GraphQLScalarType {
                 if (input instanceof Date) {
                     Date date = (Date) input;
 
-                    return DateTimeFormatter.ISO_LOCAL_DATE_TIME
-                            .withZone(ZoneId.systemDefault())
-                            .format(Instant.ofEpochMilli(date.getTime()));
+                    // todo move formats to constant class
+                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+                    return format.format(date);
                 }
                 throw new CoercingSerializeException(
                         "Expected type 'Date' but was '" + input.getClass().getSimpleName() + "'.");
@@ -40,16 +40,14 @@ public class DateTimeScalar extends GraphQLScalarType {
 
             protected Object parseString(String value) {
                 if (value.isEmpty()) {
-                    return Date.from(Instant.EPOCH);
+                    return new Timestamp(Date.from(Instant.EPOCH).getTime());
                 }
-                Instant temporalAccessor = LocalDateTime.parse(value)
-                        .atZone(ZoneId.systemDefault())
-                        .toInstant();
-                Date date = Date.from(temporalAccessor);
 
-                String dateString = SERIALIZATION_DATETIME_FORMAT.format(date);
-                log.debug("parseLiteral return {}", dateString);
-                return date;
+                LocalDateTime localDateTime = DateTimeFormatter.ISO_DATE_TIME.parse(value.trim(), LocalDateTime::from);
+
+                log.debug("parseLiteral return {}", localDateTime);
+                
+                return Timestamp.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
             }
         });
     }

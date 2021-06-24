@@ -45,6 +45,8 @@ public class EntityMutationDataFetcher {
     private EnvironmentUtils environmentUtils;
     @Autowired
     private AccessManager accessManager;
+    @Autowired
+    private ObjectMapper objectMapper;
 
 
     // todo batch commit with association not supported now (not transferred from cuba-graphql)
@@ -55,7 +57,7 @@ public class EntityMutationDataFetcher {
             Map<String, String> input = environment.getArgument(NamingUtils.uncapitalizedSimpleName(javaClass));
             log.debug("upsertEntity: input {}", input);
 
-            String entityJson = new ObjectMapper().writeValueAsString(input);
+            String entityJson = objectMapper.writeValueAsString(input);
             log.debug("upsertEntity: json {}", entityJson);
 
             Object entity = entitySerialization.entityFromJson(entityJson, metaClass);

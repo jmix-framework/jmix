@@ -16,6 +16,7 @@
 
 package io.jmix.graphql;
 
+import com.fasterxml.jackson.databind.ser.std.DateSerializer;
 import graphql.execution.instrumentation.Instrumentation;
 import graphql.schema.FieldCoordinates;
 import graphql.schema.GraphQLCodeRegistry;
@@ -50,6 +51,7 @@ import org.springframework.beans.factory.annotation.BeanFactoryAnnotationUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -63,6 +65,8 @@ import org.springframework.core.type.StandardMethodMetadata;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedType;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -80,6 +84,7 @@ public class GraphQLConfiguration {
     public GraphQLConfiguration(ConfigurableApplicationContext context) {
         this.context = context;
     }
+
     @Autowired
     EnumTypesGenerator enumTypesGenerator;
     @Autowired
@@ -115,6 +120,14 @@ public class GraphQLConfiguration {
                 new SpecificPermissionInstrumentation(accessManager, messages),
                 new JmixMaxQueryDepthInstrumentation(limitationProperties.getMaxQueryDepth())
         );
+    }
+
+    @Bean
+    public Jackson2ObjectMapperBuilderCustomizer jacksonCustomizer() {
+        return builder -> {
+            builder.serializerByType(Timestamp.class,
+                    new DateSerializer(false, new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")));
+        };
     }
 
     @Bean

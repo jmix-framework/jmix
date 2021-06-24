@@ -39,16 +39,18 @@ public class DateScalar extends GraphQLScalarType {
 
             protected Object parseString(String value) {
                 if (value.isEmpty()) {
-                    return Date.from(Instant.EPOCH);
+                    return new java.sql.Date(Date.from(Instant.EPOCH).getTime());
                 }
                 Instant temporalAccessor = LocalDate.parse(value)
                         .atStartOfDay(ZoneId.systemDefault())
                         .toInstant();
                 Date date = Date.from(temporalAccessor);
 
+                java.sql.Date sqlDate = java.sql.Date.valueOf(value);
+
                 String dateString = SERIALIZATION_DATE_FORMAT.format(date);
                 log.debug("parseLiteral return {}", dateString);
-                return date;
+                return sqlDate;
             }
         });
     }

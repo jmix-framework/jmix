@@ -60,6 +60,10 @@ public class RelativeDateTimeMomentQueryHandler implements QueryConstantHandler 
         String result = "'%s'";
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
         LocalDate now = LocalDate.now();
+        Locale userLocale = Locale.getDefault();
+        if (currentAuthentication.isSet()) {
+            userLocale = currentAuthentication.getLocale();
+        }
         int currentYear = LocalDate.now().getYear();
         switch (moment) {
             case FIRST_DAY_OF_CURRENT_YEAR:
@@ -71,10 +75,10 @@ public class RelativeDateTimeMomentQueryHandler implements QueryConstantHandler 
             case LAST_DAY_OF_CURRENT_MONTH:
                 return String.format(result, convertToApplicationTimeZone(LocalDateTime.of(LocalDate.of(currentYear, now.getMonth(), now.getMonth().length(now.isLeapYear())), LocalTime.MAX)).format(dateTimeFormatter));
             case FIRST_DAY_OF_CURRENT_WEEK:
-                TemporalField fieldISO = WeekFields.of(Locale.getDefault()).dayOfWeek();
+                TemporalField fieldISO = WeekFields.of(userLocale).dayOfWeek();
                 return String.format(result, convertToApplicationTimeZone(LocalDateTime.of(now.with(fieldISO, 1), LocalTime.MIDNIGHT)).format(dateTimeFormatter));
             case LAST_DAY_OF_CURRENT_WEEK:
-                fieldISO = WeekFields.of(Locale.getDefault()).dayOfWeek();
+                fieldISO = WeekFields.of(userLocale).dayOfWeek();
                 return String.format(result, convertToApplicationTimeZone(LocalDateTime.of(now.with(fieldISO, 7), LocalTime.MAX)).format(dateTimeFormatter));
             case START_OF_CURRENT_DAY:
                 return String.format(result, convertToApplicationTimeZone(LocalDateTime.of(now, LocalTime.MIDNIGHT)).format(dateTimeFormatter));

@@ -16,6 +16,7 @@
 
 package io.jmix.graphql.datafetcher;
 
+import graphql.GraphQLContext;
 import graphql.kickstart.servlet.context.DefaultGraphQLServletContext;
 import graphql.schema.DataFetchingEnvironment;
 import graphql.schema.DataFetchingFieldSelectionSet;
@@ -23,11 +24,15 @@ import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.graphql.NamingUtils;
+import io.leangen.graphql.spqr.spring.autoconfigure.DefaultGlobalContext;
+import io.leangen.graphql.util.ContextUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.ServletWebRequest;
 
 import javax.annotation.Nullable;
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -135,11 +140,22 @@ public class EnvironmentUtils {
 
     @Nullable
     public static String getRemoteIPAddress(Object context) {
+        if (context instanceof GraphQLContext) {
+            context = ContextUtils.unwrapContext(context);
+        }
+
+        HttpServletRequest httpServletRequest = null;
+        if (context instanceof DefaultGlobalContext) {
+            DefaultGlobalContext<ServletWebRequest> defaultCtx = (DefaultGlobalContext<ServletWebRequest>) context;
+            httpServletRequest = defaultCtx.getNativeRequest().getNativeRequest(HttpServletRequest.class);
+        }
+
         if (context instanceof DefaultGraphQLServletContext) {
             DefaultGraphQLServletContext gqlContext = (DefaultGraphQLServletContext) context;
-            return gqlContext.getHttpServletRequest().getRemoteAddr();
+            httpServletRequest = gqlContext.getHttpServletRequest();
         }
-        return null;
+
+        return httpServletRequest == null ? null : httpServletRequest.getRemoteAddr();
     }
 
     protected MetaClass findMetaClassByOutTypeName(String outTypeName) {

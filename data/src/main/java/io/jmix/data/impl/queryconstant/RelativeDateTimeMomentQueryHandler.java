@@ -18,6 +18,7 @@ package io.jmix.data.impl.queryconstant;
 
 import io.jmix.core.TimeSource;
 import io.jmix.core.security.CurrentAuthentication;
+import io.jmix.data.DataProperties;
 import io.jmix.data.impl.QueryConstantHandler;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -38,10 +39,12 @@ public class RelativeDateTimeMomentQueryHandler implements QueryConstantHandler 
 
     private final CurrentAuthentication currentAuthentication;
     private final TimeSource timeSource;
+    private final DataProperties dataProperties;
 
-    public RelativeDateTimeMomentQueryHandler(CurrentAuthentication currentAuthentication, TimeSource timeSource) {
+    public RelativeDateTimeMomentQueryHandler(CurrentAuthentication currentAuthentication, TimeSource timeSource, DataProperties dataProperties) {
         this.currentAuthentication = currentAuthentication;
         this.timeSource = timeSource;
+        this.dataProperties = dataProperties;
     }
 
     @Override
@@ -60,9 +63,11 @@ public class RelativeDateTimeMomentQueryHandler implements QueryConstantHandler 
         String result = "'%s'";
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
         LocalDate now = LocalDate.now();
-        Locale userLocale = Locale.getDefault();
-        if (currentAuthentication.isSet()) {
-            userLocale = currentAuthentication.getLocale();
+        Locale locale = Locale.getDefault();
+        if (dataProperties.isUseUserLocaleForRelativeDateTimeMoments()) {
+            if (currentAuthentication.isSet()) {
+                locale = currentAuthentication.getLocale();
+            }
         }
         int currentYear = LocalDate.now().getYear();
         switch (moment) {
@@ -75,10 +80,10 @@ public class RelativeDateTimeMomentQueryHandler implements QueryConstantHandler 
             case LAST_DAY_OF_CURRENT_MONTH:
                 return String.format(result, convertToApplicationTimeZone(LocalDateTime.of(LocalDate.of(currentYear, now.getMonth(), now.getMonth().length(now.isLeapYear())), LocalTime.MAX)).format(dateTimeFormatter));
             case FIRST_DAY_OF_CURRENT_WEEK:
-                TemporalField fieldISO = WeekFields.of(userLocale).dayOfWeek();
+                TemporalField fieldISO = WeekFields.of(locale).dayOfWeek();
                 return String.format(result, convertToApplicationTimeZone(LocalDateTime.of(now.with(fieldISO, 1), LocalTime.MIDNIGHT)).format(dateTimeFormatter));
             case LAST_DAY_OF_CURRENT_WEEK:
-                fieldISO = WeekFields.of(userLocale).dayOfWeek();
+                fieldISO = WeekFields.of(locale).dayOfWeek();
                 return String.format(result, convertToApplicationTimeZone(LocalDateTime.of(now.with(fieldISO, 7), LocalTime.MAX)).format(dateTimeFormatter));
             case START_OF_CURRENT_DAY:
                 return String.format(result, convertToApplicationTimeZone(LocalDateTime.of(now, LocalTime.MIDNIGHT)).format(dateTimeFormatter));

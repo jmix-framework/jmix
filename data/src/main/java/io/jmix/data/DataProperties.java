@@ -30,16 +30,19 @@ public class DataProperties {
     int numberIdCacheSize;
     boolean useEntityDataStoreForIdSequence;
     String uniqueConstraintViolationPattern;
+    boolean useUserLocaleForRelativeDateTimeMoments;
 
     public DataProperties(
             @DefaultValue("true") boolean useReadOnlyTransactionForLoad,
             @DefaultValue("100") int numberIdCacheSize,
             boolean useEntityDataStoreForIdSequence,
-            @Nullable String uniqueConstraintViolationPattern) {
+            @Nullable String uniqueConstraintViolationPattern,
+            @DefaultValue("true") boolean useUserLocaleForRelativeDateTimeMoments) {
         this.useReadOnlyTransactionForLoad = useReadOnlyTransactionForLoad;
         this.numberIdCacheSize = numberIdCacheSize;
         this.useEntityDataStoreForIdSequence = useEntityDataStoreForIdSequence;
         this.uniqueConstraintViolationPattern = uniqueConstraintViolationPattern;
+        this.useUserLocaleForRelativeDateTimeMoments = useUserLocaleForRelativeDateTimeMoments;
     }
 
     public boolean isUseReadOnlyTransactionForLoad() {
@@ -60,5 +63,9 @@ public class DataProperties {
     @Nullable
     public String getUniqueConstraintViolationPattern() {
         return uniqueConstraintViolationPattern;
+    }
+
+    public boolean isUseUserLocaleForRelativeDateTimeMoments() {
+        return useUserLocaleForRelativeDateTimeMoments;
     }
 }

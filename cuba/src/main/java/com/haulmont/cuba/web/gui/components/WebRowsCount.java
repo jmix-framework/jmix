@@ -16,6 +16,7 @@
 
 package com.haulmont.cuba.web.gui.components;
 
+import com.haulmont.cuba.core.global.UserSessionSource;
 import com.haulmont.cuba.gui.components.RowsCount;
 import com.haulmont.cuba.gui.components.data.meta.DatasourceDataUnit;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
@@ -24,6 +25,8 @@ import com.haulmont.cuba.gui.data.impl.WeakCollectionChangeListener;
 import com.vaadin.shared.Registration;
 import io.jmix.core.*;
 import io.jmix.core.common.event.Subscription;
+import io.jmix.core.metamodel.datatype.Datatype;
+import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.data.QueryTransformerFactory;
 import io.jmix.ui.component.ListComponent;
 import io.jmix.ui.component.Table;
@@ -69,6 +72,7 @@ public class WebRowsCount extends AbstractComponent<JmixRowsCount> implements Ro
     protected BackgroundWorker backgroundWorker;
     protected Icons icons;
     protected IconResolver iconResolver;
+    protected UserSessionSource userSessionSource;
 
     protected WebRowsCount.Adapter adapter;
 
@@ -95,6 +99,7 @@ public class WebRowsCount extends AbstractComponent<JmixRowsCount> implements Ro
     protected Registration onFirstClickRegistration;
     protected Registration onLastClickRegistration;
     protected Function<DataLoadContext, Long> totalCountDelegate;
+    protected Datatype countDatatype;
 
     public WebRowsCount() {
         component = new JmixRowsCount();
@@ -126,6 +131,16 @@ public class WebRowsCount extends AbstractComponent<JmixRowsCount> implements Ro
     @Autowired
     public void setBackgroundWorker(BackgroundWorker backgroundWorker) {
         this.backgroundWorker = backgroundWorker;
+    }
+
+    @Autowired
+    public void setDatatypeRegistry(DatatypeRegistry datatypeRegistry) {
+        countDatatype = datatypeRegistry.get(Integer.class);
+    }
+
+    @Autowired
+    public void setUserSessionSource(UserSessionSource userSessionSource) {
+        this.userSessionSource = userSessionSource;
     }
 
     @Override
@@ -372,7 +387,7 @@ public class WebRowsCount extends AbstractComponent<JmixRowsCount> implements Ro
     }
 
     protected void showRowsCountValue(int count) {
-        component.getCountButton().setCaption(String.valueOf(count)); // todo rework with datatype
+        component.getCountButton().setCaption(countDatatype.format(count, userSessionSource.getLocale()));
         component.getCountButton().addStyleName(PAGING_COUNT_NUMBER_STYLENAME);
         component.getCountButton().setEnabled(false);
     }

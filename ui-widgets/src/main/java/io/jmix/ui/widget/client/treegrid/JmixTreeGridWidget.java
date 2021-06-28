@@ -309,7 +309,7 @@ public class JmixTreeGridWidget extends TreeGrid {
             return () -> {
                 for (Column column : getColumns()) {
                     if (column.isHidden()) {
-                        column.setHidden(false);
+                        column.setHiddenInternal(false, true);
                     }
                 }
             };
@@ -325,7 +325,7 @@ public class JmixTreeGridWidget extends TreeGrid {
             return () -> {
                 for (Column column : getColumns()) {
                     if (column.isHidable() && !column.isHidden()) {
-                        column.setHidden(true);
+                        column.setHiddenInternal(true, true);
                     }
                 }
             };

@@ -847,7 +847,7 @@ public class JmixTable extends com.vaadin.v7.ui.Table implements TableSortableCo
         updateAggregatableTooltips();
         updateHtmlCaptionColumns();
 
-        if (isAggregatable()) {
+        if (isAggregatable() && isShowTotalAggregation()) {
             if (AggregationStyle.BOTTOM.equals(getAggregationStyle())) {
                 updateFooterAggregation();
             }

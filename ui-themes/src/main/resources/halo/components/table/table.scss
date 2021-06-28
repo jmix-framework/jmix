@@ -372,6 +372,11 @@ $jmix-table-drag-indicator-color: $v-focus-color;
       .v-table {
         @include valo-table-no-vertical-lines-style;
       }
+
+      .v-table-caption-container,
+      .v-table-footer td {
+        border-left-color: transparent;
+      }
     }
 
     &.no-horizontal-lines {
@@ -389,6 +394,12 @@ $jmix-table-drag-indicator-color: $v-focus-color;
     &.borderless {
       .v-table {
         @include valo-table-borderless-style;
+      }
+
+      .v-table-header table,
+      .v-table-footer table,
+      .v-table-table {
+        @include box-shadow(none);
       }
     }
 

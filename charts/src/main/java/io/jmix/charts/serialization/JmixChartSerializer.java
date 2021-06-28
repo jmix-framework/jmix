@@ -22,6 +22,7 @@ import io.jmix.charts.model.Color;
 import io.jmix.charts.model.JsFunction;
 import io.jmix.charts.model.JsonEnum;
 import io.jmix.charts.model.chart.impl.AbstractChart;
+import io.jmix.charts.model.chart.impl.GanttChartModelImpl;
 import io.jmix.charts.model.settings.Rule;
 import io.jmix.charts.widget.amcharts.serialization.*;
 import io.jmix.ui.data.DataItem;
@@ -85,10 +86,9 @@ public class JmixChartSerializer implements ChartSerializer {
     public String serialize(AbstractChart chart) {
         JsonElement jsonTree = chartGson.toJsonTree(chart);
 
+        ChartJsonSerializationContext context = createChartJsonSerializationContext(chart);
         DataProvider dataProvider = chart.getDataProvider();
         if (dataProvider != null) {
-            ChartJsonSerializationContext context = createChartJsonSerializationContext(chart);
-
             JsonArray dataProviderElement = itemsSerializer.serialize(dataProvider.getItems(), context);
 
             // Prevent errors on client for empty data provider
@@ -99,7 +99,30 @@ public class JmixChartSerializer implements ChartSerializer {
             jsonTree.getAsJsonObject().add("dataProvider", dataProviderElement);
         }
 
+        beforeConvertToJson(jsonTree, context);
+
         return chartGson.toJson(jsonTree);
+    }
+
+    protected void beforeConvertToJson(JsonElement jsonTree, ChartJsonSerializationContext context) {
+        // By default, export plugin exports all data fields.
+        // We need to exclude service fields like '$k' and '$i'.
+        if (jsonTree.getAsJsonObject().has("export")) {
+            JsonObject export = jsonTree.getAsJsonObject().getAsJsonObject("export");
+            JsonArray exportFields = new JsonArray();
+
+            for (String property : context.getProperties()) {
+                exportFields.add(property);
+            }
+
+            if (context.getChartModel() instanceof GanttChartModelImpl) {
+                for (String field : context.getSegmentFields()) {
+                    exportFields.add(field);
+                }
+            }
+
+            export.add("exportFields", exportFields);
+        }
     }
 
     @Override

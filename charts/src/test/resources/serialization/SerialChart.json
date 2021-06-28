@@ -34,7 +34,11 @@
   ],
   "export": {
     "enabled": true,
-    "fileName": "chart"
+    "fileName": "chart",
+    "exportFields": [
+      "value",
+      "date"
+    ]
   },
   "type": "serial",
   "dataProvider": [

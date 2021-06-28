@@ -33,7 +33,15 @@
   "marginRight": 70,
   "export": {
     "enabled": true,
-    "fileName": "chart"
+    "fileName": "chart",
+    "exportFields": [
+      "category",
+      "start",
+      "duration",
+      "color",
+      "end",
+      "task"
+    ]
   },
   "theme": "light",
   "type": "gantt",

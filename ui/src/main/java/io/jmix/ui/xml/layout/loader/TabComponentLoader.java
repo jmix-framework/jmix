@@ -30,4 +30,9 @@ public class TabComponentLoader extends VBoxLayoutLoader {
     protected void loadVisible(Component component, Element element) {
         // tab component always visible
     }
+
+    @Override
+    protected void loadDescription(Component.HasDescription component, Element element) {
+        // only tab itself must have description
+    }
 }

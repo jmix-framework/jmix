@@ -100,7 +100,7 @@ public class RelatedEntitiesLoader extends AbstractComponentLoader<RelatedEntiti
             }
         }
 
-        resultComponent.addPropertyOption(new PropertyOption(property, screen, caption, configurationName));
+        resultComponent.addPropertyOption(new PropertyOption(property, caption, configurationName, screen));
     }
 
     protected WindowConfig getWindowConfig() {

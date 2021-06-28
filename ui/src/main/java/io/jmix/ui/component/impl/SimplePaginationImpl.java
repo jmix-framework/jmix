@@ -21,6 +21,9 @@ import com.vaadin.shared.Registration;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Label;
 import io.jmix.core.common.event.Subscription;
+import io.jmix.core.metamodel.datatype.Datatype;
+import io.jmix.core.metamodel.datatype.DatatypeRegistry;
+import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.component.SimplePagination;
 import io.jmix.ui.component.VisibilityChangeNotifier;
 import io.jmix.ui.component.pagination.data.PaginationDataBinder;
@@ -48,6 +51,7 @@ public class SimplePaginationImpl extends AbstractPagination<JmixSimplePaginatio
     private static final Logger log = LoggerFactory.getLogger(SimplePaginationImpl.class);
 
     protected BackgroundWorker backgroundWorker;
+    protected CurrentAuthentication currentAuthentication;
 
     protected boolean autoLoad;
 
@@ -57,6 +61,7 @@ public class SimplePaginationImpl extends AbstractPagination<JmixSimplePaginatio
     protected Registration onFirstClickRegistration;
     protected Registration onLastClickRegistration;
 
+    protected Datatype countDatatype;
     protected boolean lastPage = false;
     protected boolean samePage;
     protected boolean refreshing;
@@ -78,6 +83,16 @@ public class SimplePaginationImpl extends AbstractPagination<JmixSimplePaginatio
     @Autowired
     public void setBackgroundWorker(BackgroundWorker backgroundWorker) {
         this.backgroundWorker = backgroundWorker;
+    }
+
+    @Autowired
+    public void setCurrentAuthentication(CurrentAuthentication currentAuthentication) {
+        this.currentAuthentication = currentAuthentication;
+    }
+
+    @Autowired
+    public void setDatatypeRegistry(DatatypeRegistry datatypeRegistry) {
+        countDatatype = datatypeRegistry.get(Integer.class);
     }
 
     @Override
@@ -496,7 +511,7 @@ public class SimplePaginationImpl extends AbstractPagination<JmixSimplePaginatio
     }
 
     protected void showItemsCountValue(int count) {
-        getCountButton().setCaption(String.valueOf(count));
+        getCountButton().setCaption(countDatatype.format(count, currentAuthentication.getLocale()));
         getCountButton().addStyleName(PAGINATION_COUNT_NUMBER_STYLENAME);
         getCountButton().setEnabled(false);
     }

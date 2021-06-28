@@ -100,8 +100,8 @@ public class SplitPanelImpl extends AbstractComponent<AbstractSplitPanel> implem
     }
 
     protected void fireSplitPositionChangeListener(AbstractSplitPanel.SplitPositionChangeEvent event) {
-        SplitPositionChangeEvent jmixEvent = new SplitPositionChangeEvent(this, currentPosition,
-                event.getSplitPosition(), event.isUserOriginated());
+        SplitPositionChangeEvent jmixEvent = new SplitPositionChangeEvent(this,
+                event.getOldSplitPosition(), event.getSplitPosition(), event.isUserOriginated());
         publish(SplitPositionChangeEvent.class, jmixEvent);
     }
 

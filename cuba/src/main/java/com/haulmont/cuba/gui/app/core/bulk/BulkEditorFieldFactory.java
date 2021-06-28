@@ -16,12 +16,23 @@
 
 package com.haulmont.cuba.gui.app.core.bulk;
 
+import com.haulmont.cuba.core.entity.annotation.Lookup;
+import com.haulmont.cuba.core.entity.annotation.LookupType;
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.Messages;
+import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.gui.UiComponents;
 import com.haulmont.cuba.gui.components.*;
+import com.haulmont.cuba.gui.components.actions.GuiActionSupport;
 import com.haulmont.cuba.gui.data.Datasource;
+import io.jmix.core.Entity;
+import io.jmix.core.FetchPlan;
+import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.ui.component.data.options.ContainerOptions;
+import io.jmix.ui.model.CollectionContainer;
+import io.jmix.ui.model.CollectionLoader;
+import io.jmix.ui.model.DataComponents;
 
 import javax.annotation.Nullable;
 import java.sql.Time;
@@ -148,11 +159,39 @@ public class BulkEditorFieldFactory {
     }
 
     protected Field createEntityField(Datasource datasource, MetaProperty property) {
-        PickerField pickerField = componentsFactory.create(PickerField.class);
-        pickerField.addLookupAction();
-        pickerField.addClearAction();
+        Lookup lookup = property.getAnnotatedElement().getAnnotation(Lookup.class);
+        if (lookup != null && lookup.type() == LookupType.DROPDOWN) {
+            DataComponents dataComponents = AppBeans.get(DataComponents.class);
+            Metadata metadata = AppBeans.get(Metadata.class);
 
+            MetaClass metaClass = metadata.getClassNN(property.getJavaType());
+            CollectionContainer<Entity> container = dataComponents.createCollectionContainer(metaClass.getJavaClass());
+            CollectionLoader<Entity> loader = dataComponents.createCollectionLoader();
+            loader.setQuery("select e from " + metaClass.getName() + " e");
+            loader.setFetchPlan(FetchPlan.INSTANCE_NAME);
+            loader.setContainer(container);
+            loader.load();
+
+            LookupPickerField<Entity> lookupPickerField = componentsFactory.create(LookupPickerField.NAME);
+            lookupPickerField.setDatasource(datasource, property.getName());
+            lookupPickerField.setOptions(new ContainerOptions(container));
+
+            GuiActionSupport guiActionSupport = AppBeans.get(GuiActionSupport.NAME);
+            if (!guiActionSupport.createActionsByMetaAnnotations(lookupPickerField)) {
+                lookupPickerField.addLookupAction();
+                lookupPickerField.addClearAction();
+            }
+
+            return lookupPickerField;
+        }
+
+        PickerField<Entity> pickerField = componentsFactory.create(PickerField.NAME);
         pickerField.setDatasource(datasource, property.getName());
+        GuiActionSupport guiActionSupport = AppBeans.get(GuiActionSupport.NAME);
+        if (lookup == null || !guiActionSupport.createActionsByMetaAnnotations(pickerField)) {
+            pickerField.addLookupAction();
+            pickerField.addClearAction();
+        }
 
         return pickerField;
     }

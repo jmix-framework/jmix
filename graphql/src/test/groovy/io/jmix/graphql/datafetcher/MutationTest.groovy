@@ -16,7 +16,6 @@
 
 package io.jmix.graphql.datafetcher
 
-
 import io.jmix.graphql.AbstractGraphQLTest
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.TestPropertySource

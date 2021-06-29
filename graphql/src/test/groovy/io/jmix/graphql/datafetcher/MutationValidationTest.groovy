@@ -38,7 +38,10 @@ class MutationValidationTest extends AbstractGraphQLTest {
     def "should throw exception while creating new DatatypesTestEntity with read-only attributes"() {
         when:
         def response = query(
-                "datafetcher/upsert-datatypes-test-entity.graphql")
+                "datafetcher/upsert-datatypes-test-entity.graphql",
+                asObjectNode('{"entity":{' +
+                        '"readOnlyStringAttr":"read-only",' +
+                        '"id":"6a538099-9dfd-8761-fa32-b496c236dbe8"}}'))
         def error = getErrors(response)[0].getAsJsonObject()
 
         then:

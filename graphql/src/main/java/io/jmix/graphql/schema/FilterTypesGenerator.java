@@ -72,10 +72,8 @@ public class FilterTypesGenerator {
         // order by
         types.add(enumSortOrder);
 
-        // filter order by types
+        // filter order by classes types
         allPersistentMetaClasses.forEach(metaClass -> types.add(generateFilterOrderByType(metaClass)));
-
-
         return types;
     }
 
@@ -128,9 +126,8 @@ public class FilterTypesGenerator {
         List<GraphQLInputObjectField> fields = metaClass.getProperties().stream()
                 .map(metaProperty -> {
 
-                    // todo support enums
                     if (metaProperty.getType().equals(MetaProperty.Type.ENUM)) {
-                        return inpObjectField(metaProperty.getName(), "String", null);
+                        return inpObjectField(metaProperty.getName(), Types.SortOrder.class.getSimpleName(), null);
                     }
 
                     // todo "-to-many" relations are not supported now
@@ -139,7 +136,7 @@ public class FilterTypesGenerator {
                     }
 
                     if (metaProperty.getJavaType().getSimpleName().equals("String")) {
-                        return inpObjectField(metaProperty.getName(), "SortOrder", null);
+                        return inpObjectField(metaProperty.getName(), enumSortOrder.getName(), null);
                     }
 
                     if (metaProperty.getRange().isClass()) {
@@ -198,6 +195,10 @@ public class FilterTypesGenerator {
 
     protected static String composeFilterOrderByTypeName(String name) {
         return composeFilterTypeName(name, "OrderBy");
+    }
+
+    protected String composeFilterOrderByEnumTypeName(Class<?> enumClass) {
+        return  composeFilterOrderByTypeName(enumClass.getSimpleName());
     }
 
     protected static String composeFilterConditionTypeName(MetaClass metaClass) {

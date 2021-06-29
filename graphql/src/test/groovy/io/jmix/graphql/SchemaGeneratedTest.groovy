@@ -25,6 +25,8 @@ class SchemaGeneratedTest extends AbstractGraphQLTest {
     @Autowired
     GraphQLSchema graphQLSchema
 
+    //  update schema script
+    //  new File("src/test/resources/graphql/io/jmix/graphql/schema.graphql").write(new SchemaPrinter(opts).print(graphQLSchema))
     def "graphql schema generated"() {
         when:
         def opts = SchemaPrinter.Options.defaultOptions().includeDirectives(false)

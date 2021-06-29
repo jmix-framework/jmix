@@ -19,14 +19,10 @@ package io.jmix.graphql.schema;
 import graphql.schema.GraphQLEnumType;
 import graphql.schema.GraphQLEnumValueDefinition;
 import graphql.schema.GraphQLType;
-import io.jmix.core.MetadataTools;
-import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.graphql.MetadataUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -36,33 +32,19 @@ import java.util.stream.Stream;
 public class EnumTypesGenerator {
 
     @Autowired
-    private MetadataTools metadataTools;
+    private MetadataUtils metadataUtils;
 
     public Collection<GraphQLType> generateEnumTypes() {
-        Collection<GraphQLType> types = new ArrayList<>();
-        Collection<MetaClass> allPersistentMetaClasses = metadataTools.getAllJpaEntityMetaClasses()
-                // todo need to be fixed later - ReferenceToEntity is not persistent but returned in 'metadataTools.getAllPersistentMetaClasses'
-                .stream()
-                .filter(metaClass -> !metaClass.getJavaClass().getSimpleName().equals("ReferenceToEntity"))
-                .collect(Collectors.toList());
-
         // find enums used in properties and create type definitions for enums
-        allPersistentMetaClasses.stream()
-                .flatMap(metaClass -> metaClass.getProperties().stream())
-                .filter(metaProperty -> metaProperty.getType() == MetaProperty.Type.ENUM)
-                .distinct()
-                .forEach(metaProperty -> types.add(generateEnumType(metaProperty.getJavaType())));
-        return types;
+        return metadataUtils.allEnumJavaClasses().stream()
+                .map(EnumTypesGenerator::generateEnumType)
+                .collect(Collectors.toList());
     }
 
     public static GraphQLEnumType generateEnumType(Class<?> javaType)  {
         String enumClassName = javaType.getSimpleName();
         Enum<?>[] enumValues;
-        try {
-            enumValues = (Enum<?>[]) javaType.getDeclaredMethod("values").invoke(null);
-        } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-            throw new UnsupportedOperationException("Can't build enum type definition for java type " + enumClassName, e);
-        }
+        enumValues = MetadataUtils.getEnumValues(javaType);
 //		log.debug("buildEnumTypeDef: for class {} values {}", enumClassName, enumValues);
         return GraphQLEnumType.newEnum()
                 .name(enumClassName)

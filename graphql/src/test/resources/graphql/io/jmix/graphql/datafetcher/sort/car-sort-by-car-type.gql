@@ -1,0 +1,7 @@
+{
+  scr_CarList(
+    orderBy: {carType: ASC }
+  ) {
+    carType
+  }
+}

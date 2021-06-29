@@ -84,7 +84,7 @@ public class EntityQueryDataFetcher {
             query.setMaxResults(limit != null ? limit : DEFAULT_MAX_RESULTS);
             query.setFirstResult(offset == null ? 0 : offset);
 
-            // orderBy and sort
+            // orderBy
             Pair<String, Types.SortOrder> orderByPathAndOrder = buildOrderBy("", orderBy);
             if (orderByPathAndOrder != null) {
                 String path = orderByPathAndOrder.getKey();

@@ -1557,10 +1557,10 @@ input inp_scr_CarFilterCondition {
 }
 
 input inp_scr_CarOrderBy {
-  carType: String
+  carType: SortOrder
   createdBy: SortOrder
   createdDate: SortOrder
-  ecoRank: String
+  ecoRank: SortOrder
   garage: inp_scr_GarageOrderBy
   id: SortOrder
   lastModifiedBy: SortOrder
@@ -1812,7 +1812,7 @@ input inp_scr_DatatypesTestEntityOrderBy {
   dateAttr: SortOrder
   dateTimeAttr: SortOrder
   doubleAttr: SortOrder
-  enumAttr: String
+  enumAttr: SortOrder
   id: SortOrder
   intIdentityIdTestEntityAssociationO2OAttr: inp_scr_IntIdentityIdTestEntityOrderBy
   integerAttr: SortOrder
@@ -2458,7 +2458,7 @@ input inp_sec_RowLevelPolicyEntityFilterCondition {
 }
 
 input inp_sec_RowLevelPolicyEntityOrderBy {
-  action: String
+  action: SortOrder
   createTs: SortOrder
   createdBy: SortOrder
   deleteTs: SortOrder
@@ -2468,7 +2468,7 @@ input inp_sec_RowLevelPolicyEntityOrderBy {
   joinClause: SortOrder
   role: inp_sec_RowLevelRoleEntityOrderBy
   script: SortOrder
-  type: String
+  type: SortOrder
   updateTs: SortOrder
   updatedBy: SortOrder
   version: SortOrder

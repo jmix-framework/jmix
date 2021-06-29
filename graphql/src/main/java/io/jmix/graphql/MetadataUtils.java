@@ -22,6 +22,7 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -59,7 +60,27 @@ public class MetadataUtils {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * @return enums java classes used in generic model
+     */
+    public List<Class<?>> allEnumJavaClasses() {
+        return allSupportedMetaClasses().stream()
+                .flatMap(metaClass -> metaClass.getProperties().stream())
+                .filter(metaProperty -> metaProperty.getType() == MetaProperty.Type.ENUM)
+                .distinct()
+                .map(MetaProperty::getJavaType)
+                .collect(Collectors.toList());
+    }
 
+    public static Enum<?>[] getEnumValues(Class<?> javaType) {
+        Enum<?>[] enumValues;
+        try {
+            enumValues = (Enum<?>[]) javaType.getDeclaredMethod("values").invoke(null);
+        } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+            throw new UnsupportedOperationException("Can't build enum type definition for java type " + javaType.getName(), e);
+        }
+        return enumValues;
+    }
 
 
 }

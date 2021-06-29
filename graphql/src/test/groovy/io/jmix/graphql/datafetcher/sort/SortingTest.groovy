@@ -14,18 +14,31 @@
  * limitations under the License.
  */
 
-package io.jmix.graphql.schema
+package io.jmix.graphql.datafetcher.sort
 
 import io.jmix.graphql.AbstractGraphQLTest
+import test_support.entity.Car
+import test_support.entity.CarType
 import test_support.entity.Garage
 
 import java.util.stream.Collectors
 
 class SortingTest extends AbstractGraphQLTest {
 
+    def "cars are sorted by enum field - carType"() {
+        when:
+        def response = query("datafetcher/sort/car-sort-by-car-type.gql")
+        then:
+        List<Car> cars = response.getList('$.data.scr_CarList', Car)
+        for (int i = 0; i < cars.size(); i++) {
+            CarType expected = i < 5 ? CarType.HATCHBACK : CarType.SEDAN
+            assert cars[i].carType == expected
+        }
+    }
+
     def "default sorting by lastModifiedDate is enabled without any sorting"() {
         when:
-        def response = query("schema/cars-without-sorting.graphql")
+        def response = query("datafetcher/sort/cars-without-sorting.graphql")
         then:
         response.rawResponse.body == '{"data":{"scr_CarList":[' +
                 '{"id":"c5a0c22e-a8ce-4c5a-9068-8fb142af26ae","lastModifiedDate":null},' +
@@ -55,7 +68,7 @@ class SortingTest extends AbstractGraphQLTest {
 
     def "default sorting by lastModifiedDate is disabled when it's already sorted"() {
         when:
-        def response = query("schema/cars-with-sorting-by-manufacturer.graphql")
+        def response = query("datafetcher/sort/cars-with-sorting-by-manufacturer.graphql")
         then:
         response.rawResponse.body == '{"data":{"scr_CarList":[' +
                 '{"id":"73c05bf0-ef67-4291-48a2-1481fc7f17e6","lastModifiedDate":"2020-10-01"},' +
@@ -85,7 +98,7 @@ class SortingTest extends AbstractGraphQLTest {
 
     def "garages are sorted by capacity"() {
         when:
-        def response = query("schema/garages-with-sorting-by-capacity.graphql")
+        def response = query("datafetcher/sort/garages-with-sorting-by-capacity.graphql")
         then:
         List<Garage> garages = response.getList('$.data.scr_GarageList', Garage)
         def capacities = garages.stream().map(gar -> gar.getCapacity()).collect(Collectors.toList());

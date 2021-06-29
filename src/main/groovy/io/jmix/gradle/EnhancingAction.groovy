@@ -91,9 +91,10 @@ class EnhancingAction implements Action<Task> {
 
         sourceSet.allJava.getSrcDirs().each { File srcDir ->
             project.fileTree(srcDir).each { File file ->
-                if (file.name.endsWith('.java')) {
+                if (file.name.endsWith('.java') || file.name.endsWith('.kt')) {
+                    String ext = file.name.endsWith('.java') ? '.java' : '.kt'
                     String pathStr = srcDir.toPath().relativize(file.toPath()).join('.')
-                    String className = pathStr.substring(0, pathStr.length() - '.java'.length())
+                    String className = pathStr.substring(0, pathStr.length() - ext.length())
 
                     try {
                         CtClass ctClass = classPool.get(className)

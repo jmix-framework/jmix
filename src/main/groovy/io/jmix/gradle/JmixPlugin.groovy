@@ -70,8 +70,6 @@ class JmixPlugin implements Plugin<Project> {
 
                 project.tasks.findByName('compileJava').doLast(new EnhancingAction('main'))
                 project.tasks.findByName('classes').doLast({ EnhancingAction.copyGeneratedFiles(project, 'main') })
-
-                project.tasks.findByName('compileTestJava').doLast(new EnhancingAction('test'))
                 project.tasks.findByName('testClasses').doLast({ EnhancingAction.copyGeneratedFiles(project, 'test') })
             }
 
@@ -94,6 +92,23 @@ class JmixPlugin implements Plugin<Project> {
         setupWidgetsCompile(project)
 
         project.task([type: ZipProject], 'zipProject')
+    }
+
+    /**
+     * Kotlin classes output dir should be the same as java output dir.
+     * Otherwise the current implementation of entities enhancing doesn't work properly
+     */
+    private void setupKotlinOutputDir(Project project) {
+        try {
+            project.tasks.getByName('compileKotlin', {
+                destinationDir = project.sourceSets.main.java.outputDir
+            })
+            project.tasks.getByName('compileTestKotlin', {
+                destinationDir = project.sourceSets.test.java.outputDir
+            })
+        } catch (UnknownTaskException ignored) {
+            project.logger.debug("Unable to setup output directory for Kotlin. " + ignored.message)
+        }
     }
 
     private boolean isJmixApp(Project project) {

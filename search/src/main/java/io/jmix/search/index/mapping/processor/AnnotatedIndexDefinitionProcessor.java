@@ -38,6 +38,8 @@ import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.MergedAnnotation;
+import org.springframework.core.annotation.MergedAnnotations;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
@@ -135,7 +137,10 @@ public class AnnotatedIndexDefinitionProcessor {
                         throw new RuntimeException("There can be only one method with body in Index Definition interface '" + indexDefClass + "'");
                     }
                 } else {
-                    fieldAnnotations.addAll(Arrays.asList(method.getAnnotations()));
+                    Set<Annotation> annotations = MergedAnnotations.from(method).stream()
+                            .map(MergedAnnotation::synthesize)
+                            .collect(Collectors.toSet());
+                    fieldAnnotations.addAll(annotations);
                 }
             }
 

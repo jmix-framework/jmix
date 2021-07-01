@@ -129,4 +129,6 @@ public interface EntityImportExport {
      * @return a collection of entities that have been imported
      */
     Collection<Object> importEntities(Collection<Object> entities, EntityImportPlan importPlan, boolean validate, boolean optimisticLocking);
+
+    Collection<Object> importEntities(Collection<Object> entities, EntityImportPlan importPlan, boolean validate, boolean optimisticLocking, boolean additionComposition);
 }

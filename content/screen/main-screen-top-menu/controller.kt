@@ -1,58 +1,29 @@
 package ${packageName}
 
-import com.haulmont.cuba.gui.components.SizeUnit
-import com.haulmont.cuba.gui.components.SplitPanel
-import com.haulmont.cuba.gui.components.Window
-import com.haulmont.cuba.gui.components.mainwindow.FoldersPane
-import com.haulmont.cuba.gui.screen.UiController
-import com.haulmont.cuba.gui.screen.UiDescriptor
-import com.haulmont.cuba.web.WebConfig
-import com.haulmont.cuba.web.app.main.MainScreen
-import com.haulmont.cuba.web.gui.components.WebComponentsHelper
-import com.haulmont.cuba.web.widgets.CubaHorizontalSplitPanel
-import com.vaadin.server.Sizeable
-
+import io.jmix.ui.component.Window.HasWorkArea
 import org.springframework.beans.factory.annotation.Autowired
-<%if (classComment) {%>
-${classComment}<%}%>
+import io.jmix.ui.ScreenTools
+import io.jmix.ui.component.AppWorkArea
+import io.jmix.ui.navigation.Route
+import io.jmix.ui.screen.*
 
-@UiController("${api.escapeKotlinDollar(id)}")
+@UiController("${id}")
 @UiDescriptor("${descriptorName}.xml")
-class ${controllerName} : MainScreen(), Window.HasFoldersPane {
+@Route(path = "main", root = true)
+class ${controllerName} : Screen(), HasWorkArea {
     @Autowired
-    private lateinit var foldersSplit: SplitPanel
+    private lateinit var screenTools: ScreenTools
+
     @Autowired
-    private lateinit var foldersPane: FoldersPane
-    @Autowired
-    private lateinit var webConfig: WebConfig
+    private lateinit var workArea: AppWorkArea
 
-    init {
-        addInitListener(this::initLayout)
-    }
+    override fun getWorkArea(): AppWorkArea = workArea
 
-    private fun initLayout(@SuppressWarnings("unused") event: InitEvent) {
-        if (webConfig.foldersPaneEnabled) {
-            if (webConfig.foldersPaneVisibleByDefault) {
-                foldersSplit.setSplitPosition(webConfig.foldersPaneDefaultWidth, SizeUnit.PIXELS)
-            } else {
-                foldersSplit.setSplitPosition(0)
-            }
-            val vSplitPanel = WebComponentsHelper.unwrap(foldersSplit) as CubaHorizontalSplitPanel
-            vSplitPanel.defaultPosition = "\${webConfig.foldersPaneDefaultWidth}px"
-            vSplitPanel.setMaxSplitPosition(50f, Sizeable.Unit.PERCENTAGE)
-            vSplitPanel.isDockable = true
-        } else {
-            foldersPane.isEnabled = false
-            foldersPane.isVisible = false
-            foldersSplit.remove(workArea)
-            val foldersSplitIndex: Int = window.indexOf(foldersSplit)
-            window.remove(foldersSplit)
-            window.add(workArea, foldersSplitIndex)
-            window.expand(workArea)
-        }
-    }
-
-    override fun getFoldersPane(): FoldersPane? {
-        return foldersPane
+    @Subscribe
+    fun onAfterShow(event: AfterShowEvent?) {
+        screenTools.openDefaultScreen(
+            UiControllerUtils.getScreenContext(this).screens
+        )
+        screenTools.handleRedirect()
     }
 }

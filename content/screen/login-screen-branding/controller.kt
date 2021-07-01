@@ -1,54 +1,138 @@
 package ${packageName}
 
-import com.haulmont.cuba.gui.Route
-import com.haulmont.cuba.gui.components.*
-import com.haulmont.cuba.gui.screen.*
-import com.haulmont.cuba.web.app.login.LoginScreen
-import com.haulmont.cuba.web.gui.screen.ScreenDependencyUtils
 import com.vaadin.ui.Dependency
 import org.springframework.beans.factory.annotation.Autowired
+import java.util.Locale
+import io.jmix.ui.Notifications
+import io.jmix.core.MessageTools
+import io.jmix.core.Messages
+import io.jmix.securityui.authentication.LoginScreenSupport
+import io.jmix.ui.security.UiLoginProperties
+import io.jmix.ui.JmixApp
+import io.jmix.securityui.authentication.AuthDetails
+import io.jmix.ui.action.Action
+import io.jmix.ui.component.*
+import org.springframework.security.authentication.BadCredentialsException
+import org.springframework.security.authentication.DisabledException
+import io.jmix.ui.navigation.Route
+import io.jmix.ui.screen.*
+import org.apache.commons.lang3.StringUtils
+import org.slf4j.LoggerFactory
+import org.springframework.security.authentication.LockedException
 
-<%if (classComment) {%>
-${classComment}<%}%>
-@Route(path = "login", root = true)
-@UiController("${api.escapeKotlinDollar(id)}")
+@UiController("${id}")
 @UiDescriptor("${descriptorName}.xml")
-class ${controllerName} : LoginScreen(){
+@Route(path = "login", root = true)
+open class ${controllerName} : Screen() {
+    @Autowired
+    private lateinit var logoImage: Image<*>
 
     @Autowired
-    private lateinit var bottomPanel: HBoxLayout
+    private lateinit var usernameField: TextField<String>
 
     @Autowired
-    private lateinit var poweredByLink: Label<String>
+    private lateinit var passwordField: PasswordField
+
+    @Autowired
+    private lateinit var rememberMeCheckBox: CheckBox
+
+    @Autowired
+    private lateinit var localesField: ComboBox<Locale>
+
+    @Autowired
+    private lateinit var notifications: Notifications
+
+    @Autowired
+    private lateinit var messages: Messages
+
+    @Autowired
+    private lateinit var messageTools: MessageTools
+
+    @Autowired
+    private lateinit var loginScreenSupport: LoginScreenSupport
+
+    @Autowired
+    private lateinit var loginProperties: UiLoginProperties
+
+    @Autowired
+    private lateinit var app: JmixApp
+
+    private val log = LoggerFactory.getLogger(javaClass)
 
     @Subscribe
-    fun onAppLoginScreenInit(event: Screen.InitEvent) {
+    private fun onInit(event: InitEvent) {
+        usernameField.focus()
+        initLogoImage()
+        initLocalesField()
+        initDefaultCredentials()
         loadStyles()
-        initBottomPanel()
+    }
+
+    private fun initLocalesField() {
+        localesField.setOptionsMap(messageTools.availableLocalesMap)
+        localesField.value = app.locale
+    }
+
+    private fun initDefaultCredentials() {
+        val defaultUsername = loginProperties.defaultUsername
+        if (defaultUsername.isNotBlank() && "<disabled>" != defaultUsername) {
+            usernameField.setValue(defaultUsername)
+        } else {
+            usernameField.setValue("")
+        }
+        val defaultPassword = loginProperties.defaultPassword
+        if (!StringUtils.isBlank(defaultPassword) && "<disabled>" != defaultPassword) {
+            passwordField.value = defaultPassword
+        } else {
+            passwordField.value = ""
+        }
     }
 
     @Subscribe("submit")
-    fun onSubmit(event: Action.ActionPerformedEvent) {
+    private fun onSubmitActionPerformed(event: Action.ActionPerformedEvent) {
         login()
     }
 
-    private fun loadStyles() {
-        ScreenDependencyUtils.addScreenDependency(this,
-                "vaadin://brand-login-screen/login.css", Dependency.Type.STYLESHEET)
-    }
-
-    private fun initBottomPanel() {
-        if (!globalConfig.getLocaleSelectVisible()) {
-            poweredByLink.setAlignment(Component.Alignment.MIDDLE_CENTER);
-
-            if (!webConfig.getLoginDialogPoweredByLinkVisible()) {
-                bottomPanel.setVisible(false)
+    private fun login() {
+        val username = usernameField.value
+        val password = passwordField.value
+        if (username.isNullOrBlank() || password.isNullOrBlank()) {
+            notifications.create(Notifications.NotificationType.WARNING)
+                .withCaption(messages.getMessage(javaClass, "emptyUsernameOrPassword"))
+                .show()
+            return
+        }
+        try {
+            loginScreenSupport.authenticate(
+                AuthDetails.of(username, password)
+                    .withLocale(localesField.value)
+                    .withRememberMe(rememberMeCheckBox.isChecked), this
+            )
+        } catch (e: Exception) {
+            when (e) {
+                is BadCredentialsException,
+                is DisabledException,
+                is LockedException -> {
+                    log.info("Login failed", e)
+                    notifications.create(Notifications.NotificationType.ERROR)
+                        .withCaption(messages.getMessage(javaClass, "loginFailed"))
+                        .withDescription(messages.getMessage(javaClass, "badCredentials"))
+                        .show()
+                }
+                else -> throw e
             }
         }
     }
 
-    override fun initLogoImage() {
-        logoImage.setSource(RelativePathResource::class.java)
-                .setPath("VAADIN/brand-login-screen/cuba-icon-login.svg")
+    private fun loadStyles() {
+        ScreenDependencyUtils.addScreenDependency(
+            this,
+            "vaadin://brand-login-screen/login.css", Dependency.Type.STYLESHEET
+        )
+    }
+
+    private fun initLogoImage() {
+        logoImage.setSource(RelativePathResource::class.java).path =
+            "VAADIN/brand-login-screen/jmix-icon-login.svg"
     }
 }

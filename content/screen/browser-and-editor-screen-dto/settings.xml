@@ -146,11 +146,17 @@
     <source fileExt="java"
             group="browse"
             name="../browser-dto/controller"/>
+    <source fileExt="kt"
+            group="browse"
+            name="../browser-dto/controller"/>
 
     <source fileExt="xml"
             group="editor"
             name="../editor-dto/descriptor"/>
     <source fileExt="java"
+            group="editor"
+            name="../editor-dto/controller"/>
+    <source fileExt="kt"
             group="editor"
             name="../editor-dto/controller"/>
 </template>

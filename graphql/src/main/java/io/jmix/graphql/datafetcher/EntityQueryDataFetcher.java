@@ -8,6 +8,8 @@ import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.graphql.NamingUtils;
 import io.jmix.graphql.schema.Types;
+import org.apache.commons.collections4.OrderedMap;
+import org.apache.commons.collections4.map.ListOrderedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -85,12 +87,14 @@ public class EntityQueryDataFetcher {
             query.setFirstResult(offset == null ? 0 : offset);
 
             // orderBy
-            Pair<String, Types.SortOrder> orderByPathAndOrder = buildOrderBy("", orderBy);
-            if (orderByPathAndOrder != null) {
-                String path = orderByPathAndOrder.getKey();
-                Types.SortOrder sortOrder = orderByPathAndOrder.getValue();
-                query.setSort(Sort.by(
-                        sortOrder == Types.SortOrder.ASC ? Sort.Order.asc(path) : Sort.Order.desc(path)));
+            OrderedMap<String, Types.SortOrder> orderByConditions = buildOrderByConditionSet(orderBy);
+            if (orderByConditions.size() > 0) {
+                List<Sort.Order> orders = orderByConditions.entrySet().stream().map(entry -> {
+                    String path = entry.getKey();
+                    Types.SortOrder sortOrder = entry.getValue();
+                    return (sortOrder == Types.SortOrder.ASC) ? Sort.Order.asc(path) : Sort.Order.desc(path);
+                }).collect(Collectors.toList());
+                query.setSort(Sort.by(orders));
             } else {
                 String lastModifiedDateProperty = metadataTools.findLastModifiedDateProperty(metaClass.getJavaClass());
 
@@ -118,15 +122,36 @@ public class EntityQueryDataFetcher {
     /**
      * Convert graphql orderBy object to jmix format.
      *
+     * @param orderBy - graphql orderBy object
+     * @return an ordered set of pairs that contains propertyPath as key ans SortOrder as value
+     */
+    protected OrderedMap<String, Types.SortOrder> buildOrderByConditionSet(@Nullable Object orderBy) {
+        OrderedMap<String, Types.SortOrder> result = new ListOrderedMap<>();
+        if (orderBy == null) {
+            return result;
+        }
+
+        String rootPath = "";
+        if (Collection.class.isAssignableFrom(orderBy.getClass())) {
+            ((Collection<?>) orderBy).forEach(ob -> {
+                Pair<String, Types.SortOrder> singleOrderByCondition = buildOrderBy(rootPath, ob);
+                result.put(singleOrderByCondition.getKey(), singleOrderByCondition.getValue());
+            });
+        } else {
+            Pair<String, Types.SortOrder> singleOrderByCondition = buildOrderBy(rootPath, orderBy);
+            result.put(singleOrderByCondition.getKey(), singleOrderByCondition.getValue());
+        }
+        return result;
+    }
+
+    /**
+     * Convert graphql orderBy object to jmix format.
+     *
      * @param path    - parent property path
      * @param orderBy - graphql orderBy object
      * @return pair that contains propertyPath as key ans SortOrder as value
      */
-    @Nullable
-    protected Pair<String, Types.SortOrder> buildOrderBy(String path, @Nullable Object orderBy) {
-        if (orderBy == null || !Map.class.isAssignableFrom(orderBy.getClass())) {
-            return null;
-        }
+    protected Pair<String, Types.SortOrder> buildOrderBy(String path, Object orderBy) {
 
         Map.Entry<String, Object> entry = ((Map<String, Object>) orderBy).entrySet().iterator().next();
         String key = entry.getKey();

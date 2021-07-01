@@ -20,16 +20,19 @@ import graphql.schema.GraphQLSchema
 import graphql.schema.idl.SchemaPrinter
 import org.springframework.beans.factory.annotation.Autowired
 
+import static graphql.schema.idl.SchemaPrinter.Options.defaultOptions
+
 class SchemaGeneratedTest extends AbstractGraphQLTest {
 
     @Autowired
     GraphQLSchema graphQLSchema
 
     //  update schema script
-    //  new File("src/test/resources/graphql/io/jmix/graphql/schema.graphql").write(new SchemaPrinter(opts).print(graphQLSchema))
+    //  new File("src/test/resources/graphql/io/jmix/graphql/schema.graphql")
+    //  .write(new SchemaPrinter(defaultOptions().includeDirectives(false)).print(graphQLSchema))
     def "graphql schema generated"() {
         when:
-        def opts = SchemaPrinter.Options.defaultOptions().includeDirectives(false)
+        def opts = defaultOptions().includeDirectives(false)
         def schemaLines = new SchemaPrinter(opts).print(graphQLSchema).split('\n')
         def expectSchemaLines = new File("src/test/resources/graphql/io/jmix/graphql/schema.graphql").readLines()
 

@@ -82,7 +82,7 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: inp_scr_AssociationM2MTestEntityOrderBy
+    orderBy: [inp_scr_AssociationM2MTestEntityOrderBy]
   ): [scr_AssociationM2MTestEntity]
   scr_AssociationM2OTestEntityById(id: String!): scr_AssociationM2OTestEntity
   scr_AssociationM2OTestEntityCount(
@@ -97,7 +97,7 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: inp_scr_AssociationM2OTestEntityOrderBy
+    orderBy: [inp_scr_AssociationM2OTestEntityOrderBy]
   ): [scr_AssociationM2OTestEntity]
   scr_AssociationO2MTestEntityById(id: String!): scr_AssociationO2MTestEntity
   scr_AssociationO2MTestEntityCount(
@@ -112,7 +112,7 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: inp_scr_AssociationO2MTestEntityOrderBy
+    orderBy: [inp_scr_AssociationO2MTestEntityOrderBy]
   ): [scr_AssociationO2MTestEntity]
   scr_AssociationO2OTestEntityById(id: String!): scr_AssociationO2OTestEntity
   scr_AssociationO2OTestEntityCount(
@@ -127,7 +127,7 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: inp_scr_AssociationO2OTestEntityOrderBy
+    orderBy: [inp_scr_AssociationO2OTestEntityOrderBy]
   ): [scr_AssociationO2OTestEntity]
   scr_BoringStringIdTestEntityById(id: String!): scr_BoringStringIdTestEntity
   scr_BoringStringIdTestEntityCount(
@@ -142,7 +142,7 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: inp_scr_BoringStringIdTestEntityOrderBy
+    orderBy: [inp_scr_BoringStringIdTestEntityOrderBy]
   ): [scr_BoringStringIdTestEntity]
   scr_CarById(id: String!): scr_Car
   scr_CarCount(
@@ -157,7 +157,7 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: inp_scr_CarOrderBy
+    orderBy: [inp_scr_CarOrderBy]
   ): [scr_Car]
   scr_CarRentById(id: String!): scr_CarRent
   scr_CarRentCount(
@@ -172,7 +172,7 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: inp_scr_CarRentOrderBy
+    orderBy: [inp_scr_CarRentOrderBy]
   ): [scr_CarRent]
   scr_CompositionO2MTestEntityById(id: String!): scr_CompositionO2MTestEntity
   scr_CompositionO2MTestEntityCount(
@@ -187,7 +187,7 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: inp_scr_CompositionO2MTestEntityOrderBy
+    orderBy: [inp_scr_CompositionO2MTestEntityOrderBy]
   ): [scr_CompositionO2MTestEntity]
   scr_CompositionO2OTestEntityById(id: String!): scr_CompositionO2OTestEntity
   scr_CompositionO2OTestEntityCount(
@@ -202,7 +202,7 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: inp_scr_CompositionO2OTestEntityOrderBy
+    orderBy: [inp_scr_CompositionO2OTestEntityOrderBy]
   ): [scr_CompositionO2OTestEntity]
   scr_CustomerById(id: String!): scr_Customer
   scr_CustomerCount(
@@ -217,7 +217,7 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: inp_scr_CustomerOrderBy
+    orderBy: [inp_scr_CustomerOrderBy]
   ): [scr_Customer]
   scr_DatatypesTestEntity2ById(id: String!): scr_DatatypesTestEntity2
   scr_DatatypesTestEntity2Count(
@@ -232,7 +232,7 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: inp_scr_DatatypesTestEntity2OrderBy
+    orderBy: [inp_scr_DatatypesTestEntity2OrderBy]
   ): [scr_DatatypesTestEntity2]
   scr_DatatypesTestEntity3ById(id: String!): scr_DatatypesTestEntity3
   scr_DatatypesTestEntity3Count(
@@ -247,7 +247,7 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: inp_scr_DatatypesTestEntity3OrderBy
+    orderBy: [inp_scr_DatatypesTestEntity3OrderBy]
   ): [scr_DatatypesTestEntity3]
   scr_DatatypesTestEntityById(id: String!): scr_DatatypesTestEntity
   scr_DatatypesTestEntityCount(
@@ -262,7 +262,7 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: inp_scr_DatatypesTestEntityOrderBy
+    orderBy: [inp_scr_DatatypesTestEntityOrderBy]
   ): [scr_DatatypesTestEntity]
   scr_DeeplyNestedTestEntityById(id: String!): scr_DeeplyNestedTestEntity
   scr_DeeplyNestedTestEntityCount(
@@ -277,7 +277,7 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: inp_scr_DeeplyNestedTestEntityOrderBy
+    orderBy: [inp_scr_DeeplyNestedTestEntityOrderBy]
   ): [scr_DeeplyNestedTestEntity]
   scr_FavoriteCarById(id: String!): scr_FavoriteCar
   scr_FavoriteCarCount(
@@ -292,7 +292,7 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: inp_scr_FavoriteCarOrderBy
+    orderBy: [inp_scr_FavoriteCarOrderBy]
   ): [scr_FavoriteCar]
   scr_GarageById(id: String!): scr_Garage
   scr_GarageCount(
@@ -307,7 +307,7 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: inp_scr_GarageOrderBy
+    orderBy: [inp_scr_GarageOrderBy]
   ): [scr_Garage]
   scr_IntIdentityIdTestEntityById(id: String!): scr_IntIdentityIdTestEntity
   scr_IntIdentityIdTestEntityCount(
@@ -322,7 +322,7 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: inp_scr_IntIdentityIdTestEntityOrderBy
+    orderBy: [inp_scr_IntIdentityIdTestEntityOrderBy]
   ): [scr_IntIdentityIdTestEntity]
   scr_IntegerIdTestEntityById(id: String!): scr_IntegerIdTestEntity
   scr_IntegerIdTestEntityCount(
@@ -337,7 +337,7 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: inp_scr_IntegerIdTestEntityOrderBy
+    orderBy: [inp_scr_IntegerIdTestEntityOrderBy]
   ): [scr_IntegerIdTestEntity]
   scr_OrderById(id: String!): scr_Order
   scr_OrderCount(
@@ -357,7 +357,7 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: inp_scr_OrderLineOrderBy
+    orderBy: [inp_scr_OrderLineOrderBy]
   ): [scr_OrderLine]
   scr_OrderList(
     "expressions to compare scr_Order objects, all items are combined with logical 'AND'"
@@ -367,7 +367,7 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: inp_scr_OrderOrderBy
+    orderBy: [inp_scr_OrderOrderBy]
   ): [scr_Order]
   scr_ProductById(id: String!): scr_Product
   scr_ProductCount(
@@ -382,7 +382,7 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: inp_scr_ProductOrderBy
+    orderBy: [inp_scr_ProductOrderBy]
   ): [scr_Product]
   scr_SparePartById(id: String!): scr_SparePart
   scr_SparePartCount(
@@ -397,7 +397,7 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: inp_scr_SparePartOrderBy
+    orderBy: [inp_scr_SparePartOrderBy]
   ): [scr_SparePart]
   scr_StringIdTestEntityById(id: String!): scr_StringIdTestEntity
   scr_StringIdTestEntityCount(
@@ -412,7 +412,7 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: inp_scr_StringIdTestEntityOrderBy
+    orderBy: [inp_scr_StringIdTestEntityOrderBy]
   ): [scr_StringIdTestEntity]
   scr_TechnicalCertificateById(id: String!): scr_TechnicalCertificate
   scr_TechnicalCertificateCount(
@@ -427,7 +427,7 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: inp_scr_TechnicalCertificateOrderBy
+    orderBy: [inp_scr_TechnicalCertificateOrderBy]
   ): [scr_TechnicalCertificate]
   scr_UserById(id: String!): scr_User
   scr_UserCount(
@@ -442,7 +442,7 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: inp_scr_UserOrderBy
+    orderBy: [inp_scr_UserOrderBy]
   ): [scr_User]
   scr_WeirdStringIdTestEntityById(id: String!): scr_WeirdStringIdTestEntity
   scr_WeirdStringIdTestEntityCount(
@@ -457,7 +457,7 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: inp_scr_WeirdStringIdTestEntityOrderBy
+    orderBy: [inp_scr_WeirdStringIdTestEntityOrderBy]
   ): [scr_WeirdStringIdTestEntity]
   sec_ResourcePolicyEntityById(id: String!): sec_ResourcePolicyEntity
   sec_ResourcePolicyEntityCount(
@@ -472,7 +472,7 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: inp_sec_ResourcePolicyEntityOrderBy
+    orderBy: [inp_sec_ResourcePolicyEntityOrderBy]
   ): [sec_ResourcePolicyEntity]
   sec_ResourceRoleEntityById(id: String!): sec_ResourceRoleEntity
   sec_ResourceRoleEntityCount(
@@ -487,7 +487,7 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: inp_sec_ResourceRoleEntityOrderBy
+    orderBy: [inp_sec_ResourceRoleEntityOrderBy]
   ): [sec_ResourceRoleEntity]
   sec_RoleAssignmentEntityById(id: String!): sec_RoleAssignmentEntity
   sec_RoleAssignmentEntityCount(
@@ -502,7 +502,7 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: inp_sec_RoleAssignmentEntityOrderBy
+    orderBy: [inp_sec_RoleAssignmentEntityOrderBy]
   ): [sec_RoleAssignmentEntity]
   sec_RowLevelPolicyEntityById(id: String!): sec_RowLevelPolicyEntity
   sec_RowLevelPolicyEntityCount(
@@ -517,7 +517,7 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: inp_sec_RowLevelPolicyEntityOrderBy
+    orderBy: [inp_sec_RowLevelPolicyEntityOrderBy]
   ): [sec_RowLevelPolicyEntity]
   sec_RowLevelRoleEntityById(id: String!): sec_RowLevelRoleEntity
   sec_RowLevelRoleEntityCount(
@@ -532,7 +532,7 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: inp_sec_RowLevelRoleEntityOrderBy
+    orderBy: [inp_sec_RowLevelRoleEntityOrderBy]
   ): [sec_RowLevelRoleEntity]
   userInfo: UserInfo
 }

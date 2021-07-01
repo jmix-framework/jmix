@@ -21,13 +21,15 @@ import test_support.entity.Car
 import test_support.entity.CarType
 import test_support.entity.Garage
 
+import java.text.SimpleDateFormat
 import java.util.stream.Collectors
 
 class SortingTest extends AbstractGraphQLTest {
 
     def "cars are sorted by enum field - carType"() {
         when:
-        def response = query("datafetcher/sort/car-sort-by-car-type.gql")
+        def response = query("datafetcher/sort/cars-with-sort.gql",
+                asObjectNode('{"orderBy": {"carType": "ASC" }}'))
         then:
         List<Car> cars = response.getList('$.data.scr_CarList', Car)
         for (int i = 0; i < cars.size(); i++) {
@@ -38,71 +40,90 @@ class SortingTest extends AbstractGraphQLTest {
 
     def "default sorting by lastModifiedDate is enabled without any sorting"() {
         when:
-        def response = query("datafetcher/sort/cars-without-sorting.graphql")
+        def response = query("datafetcher/sort/cars-with-sort.gql",
+                asObjectNode('{"orderBy": null}'))
         then:
-        response.rawResponse.body == '{"data":{"scr_CarList":[' +
-                '{"id":"c5a0c22e-a8ce-4c5a-9068-8fb142af26ae","lastModifiedDate":null},' +
-                '{"id":"aa595879-484f-4e7d-b19a-429cb2d84f79","lastModifiedDate":"2021-04-07"},' +
-                '{"id":"7db61cfc-1e50-4898-a76d-42347ffb763f","lastModifiedDate":"2021-03-31"},' +
-                '{"id":"8561ba7a-49c5-4683-9251-59f376018a89","lastModifiedDate":"2021-03-05"},' +
-                '{"id":"c7052489-3697-48f6-a0f3-8e874d732865","lastModifiedDate":"2021-03-01"},' +
-                '{"id":"b94eede4-c1da-43df-830d-36ef1414385b","lastModifiedDate":"2021-02-28"},' +
-                '{"id":"bc5b3371-7418-4c79-90e8-81b09c59d9a1","lastModifiedDate":"2021-02-21"},' +
-                '{"id":"6b853033-db8c-4d51-ab4c-4b3146796348","lastModifiedDate":"2021-02-14"},' +
-                '{"id":"2325c7af-9569-4f66-bcf7-bb52cba5388b","lastModifiedDate":"2021-02-11"},' +
-                '{"id":"bf6791e6-0e0a-8ca1-6a98-75b0a8971676","lastModifiedDate":"2021-01-31"},' +
-                '{"id":"5f14d58d-6f24-4590-eef9-4b5885ed3e34","lastModifiedDate":"2021-01-21"},' +
-                '{"id":"c4ef4c14-5be9-406a-8457-db0bc760913a","lastModifiedDate":"2021-01-18"},' +
-                '{"id":"c2a14bec-cd7d-a3e4-1581-db243cf704aa","lastModifiedDate":"2021-01-11"},' +
-                '{"id":"a64e6ef7-49d6-4ce5-8973-8c95ac1576e0","lastModifiedDate":"2021-01-09"},' +
-                '{"id":"50277e41-97d1-4af2-a122-1e87ae3011d9","lastModifiedDate":"2021-01-06"},' +
-                '{"id":"3da61043-aaad-7e30-c7f5-c1f1328d3980","lastModifiedDate":"2021-01-03"},' +
-                '{"id":"63e88502-3cf0-382c-8f5f-07a0c8a4d9b2","lastModifiedDate":"2021-01-01"},' +
-                '{"id":"fc63ccfc-e8e9-5486-5c38-98ae42f729da","lastModifiedDate":"2020-12-31"},' +
-                '{"id":"5db1dce7-ceee-42f8-a14b-ddb93c4ad999","lastModifiedDate":"2020-12-01"},' +
-                '{"id":"f44d486f-2fa3-4789-d02a-c1d2b2c67fc6","lastModifiedDate":"2020-11-01"},' +
-                '{"id":"73c05bf0-ef67-4291-48a2-1481fc7f17e6","lastModifiedDate":"2020-10-01"},' +
-                '{"id":"94505084-e12c-44c0-9e55-0ee9ef5f3a90","lastModifiedDate":"2020-06-12"}' +
-                ']}}'
+        List<Car> cars = response.getList('$.data.scr_CarList', Car)
+        def dates = [null,
+                     "2021-04-07",
+                     "2021-03-31",
+                     "2021-03-05",
+                     "2021-03-01",
+                     "2021-02-28",
+                     "2021-02-21",
+                     "2021-02-14",
+                     "2021-02-11",
+                     "2021-01-31",
+                     "2021-01-21",
+                     "2021-01-18",
+                     "2021-01-11",
+                     "2021-01-09",
+                     "2021-01-06",
+                     "2021-01-03",
+                     "2021-01-01",
+                     "2020-12-31",
+                     "2020-12-01",
+                     "2020-11-01",
+                     "2020-10-01",
+                     "2020-06-12"]
+
+        cars.get(0).lastModifiedDate == null;
+        for (int i = 1; i < cars.size(); i++) {
+            assert new SimpleDateFormat("yyyy-MM-dd").format(cars.get(i).lastModifiedDate) == dates[i];
+        }
     }
 
-    def "default sorting by lastModifiedDate is disabled when it's already sorted"() {
+    def "cars are sorted by nested object property - garage name"() {
         when:
-        def response = query("datafetcher/sort/cars-with-sorting-by-manufacturer.graphql")
+        def responseAsc = query("datafetcher/sort/cars-with-sort.gql",
+                asObjectNode('{"orderBy": {"garage": {"name": "ASC"}}}'))
+        def responseDesc = query("datafetcher/sort/cars-with-sort.gql",
+                asObjectNode('{"orderBy": {"garage": {"name": "DESC"}}}'))
+
+        List<String> garNameAsc = responseAsc.getList('$.data.scr_CarList', Car).stream()
+                .filter(car -> car.garage != null)
+                .map(car -> car.garage.name)
+                .collect(Collectors.toList())
+        List<String> garNameDesc = responseDesc.getList('$.data.scr_CarList', Car).stream()
+                .filter(car -> car.garage != null)
+                .map(car -> car.garage.name)
+                .collect(Collectors.toList())
+
         then:
-        response.rawResponse.body == '{"data":{"scr_CarList":[' +
-                '{"id":"73c05bf0-ef67-4291-48a2-1481fc7f17e6","lastModifiedDate":"2020-10-01"},' +
-                '{"id":"bf6791e6-0e0a-8ca1-6a98-75b0a8971676","lastModifiedDate":"2021-01-31"},' +
-                '{"id":"63e88502-3cf0-382c-8f5f-07a0c8a4d9b2","lastModifiedDate":"2021-01-01"},' +
-                '{"id":"2325c7af-9569-4f66-bcf7-bb52cba5388b","lastModifiedDate":"2021-02-11"},' +
-                '{"id":"50277e41-97d1-4af2-a122-1e87ae3011d9","lastModifiedDate":"2021-01-06"},' +
-                '{"id":"5db1dce7-ceee-42f8-a14b-ddb93c4ad999","lastModifiedDate":"2020-12-01"},' +
-                '{"id":"6b853033-db8c-4d51-ab4c-4b3146796348","lastModifiedDate":"2021-02-14"},' +
-                '{"id":"7db61cfc-1e50-4898-a76d-42347ffb763f","lastModifiedDate":"2021-03-31"},' +
-                '{"id":"8561ba7a-49c5-4683-9251-59f376018a89","lastModifiedDate":"2021-03-05"},' +
-                '{"id":"94505084-e12c-44c0-9e55-0ee9ef5f3a90","lastModifiedDate":"2020-06-12"},' +
-                '{"id":"a64e6ef7-49d6-4ce5-8973-8c95ac1576e0","lastModifiedDate":"2021-01-09"},' +
-                '{"id":"aa595879-484f-4e7d-b19a-429cb2d84f79","lastModifiedDate":"2021-04-07"},' +
-                '{"id":"b94eede4-c1da-43df-830d-36ef1414385b","lastModifiedDate":"2021-02-28"},' +
-                '{"id":"bc5b3371-7418-4c79-90e8-81b09c59d9a1","lastModifiedDate":"2021-02-21"},' +
-                '{"id":"c4ef4c14-5be9-406a-8457-db0bc760913a","lastModifiedDate":"2021-01-18"},' +
-                '{"id":"c5a0c22e-a8ce-4c5a-9068-8fb142af26ae","lastModifiedDate":null},' +
-                '{"id":"c7052489-3697-48f6-a0f3-8e874d732865","lastModifiedDate":"2021-03-01"},' +
-                '{"id":"fc63ccfc-e8e9-5486-5c38-98ae42f729da","lastModifiedDate":"2020-12-31"},' +
-                '{"id":"c2a14bec-cd7d-a3e4-1581-db243cf704aa","lastModifiedDate":"2021-01-11"},' +
-                '{"id":"f44d486f-2fa3-4789-d02a-c1d2b2c67fc6","lastModifiedDate":"2020-11-01"},' +
-                '{"id":"3da61043-aaad-7e30-c7f5-c1f1328d3980","lastModifiedDate":"2021-01-03"},' +
-                '{"id":"5f14d58d-6f24-4590-eef9-4b5885ed3e34","lastModifiedDate":"2021-01-21"}' +
-                ']}}'
+        garNameAsc == ["Big Bob's Beeper Emporium", "P.S. 118", "The Fudge Place", "Watch Repair"]
+        garNameDesc == ["Watch Repair", "The Fudge Place", "P.S. 118", "Big Bob's Beeper Emporium"]
     }
 
     def "garages are sorted by capacity"() {
         when:
-        def response = query("datafetcher/sort/garages-with-sorting-by-capacity.graphql")
+        def response = query("datafetcher/sort/garages-with-sort.gql",
+        asObjectNode('{"orderBy": {"capacity": "ASC"}}'))
         then:
         List<Garage> garages = response.getList('$.data.scr_GarageList', Garage)
         def capacities = garages.stream().map(gar -> gar.getCapacity()).collect(Collectors.toList());
         capacities == [7, 9, 20, 20, 21, 50, 50, 56, 63, 71]
+    }
+
+    def "cars are sorted by set of conditions"() {
+        when:
+        def response = query("datafetcher/sort/cars-with-sort.gql",
+                asObjectNode('{"orderBy": [{"manufacturer": "ASC"}, {"garage": {"name": "ASC"}}]}'))
+
+        List<Car> cars = response.getList('$.data.scr_CarList', Car)
+
+        List<String> garNames = cars.stream()
+                .filter(car -> car.garage != null)
+                .map(car -> car.garage.name)
+                .collect(Collectors.toList())
+
+        List<String> manufacturers = cars.stream()
+                .map(car -> car.manufacturer)
+                .distinct()
+                .collect(Collectors.toList())
+
+        then:
+        manufacturers == ["Acura", "Audi", "BMW", "GAZ", "Mercedes", "Porsche", "Tesla", "VAZ", "ZAZ"]
+        garNames == ["Big Bob's Beeper Emporium", "The Fudge Place", "Watch Repair", "P.S. 118"]
     }
 
 }

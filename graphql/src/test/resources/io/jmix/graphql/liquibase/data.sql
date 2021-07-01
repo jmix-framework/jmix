@@ -33,6 +33,6 @@ VALUES
 ('5db1dce7-ceee-42f8-a14b-ddb93c4ad999', 1, 'Mercedes', 'm09',      'tm009',  'SEDAN',      null, '2020-12-01', null),
 ('50277e41-97d1-4af2-a122-1e87ae3011d9', 1, 'Mercedes', 'm10',      'tm010',  'SEDAN',      null, '2021-01-06', null),
 ('a64e6ef7-49d6-4ce5-8973-8c95ac1576e0', 1, 'Mercedes', 'm11',      'tm011',  'SEDAN',      null, '2021-01-09', null),
-('c4ef4c14-5be9-406a-8457-db0bc760913a', 1, 'Mercedes', 'm12',      'tm012',  'SEDAN',      null, '2021-01-18', null),
-('6b853033-db8c-4d51-ab4c-4b3146796348', 1, 'Mercedes', 'm13',      'tm013',  'SEDAN',      null, '2021-02-14', null),
-('c5a0c22e-a8ce-4c5a-9068-8fb142af26ae', 1, 'Mercedes', 'm14',      'tm014',  'SEDAN',      null, null,         null);
+('c4ef4c14-5be9-406a-8457-db0bc760913a', 1, 'Acura',    'a01',      'ac012',  'SEDAN',      null, '2021-01-18', 'bfe41616-f03d-f287-1397-8619f5dde390'),
+('6b853033-db8c-4d51-ab4c-4b3146796348', 1, 'Acura',    'a01',      'ac013',  'SEDAN',      null, '2021-02-14', 'd881e37a-d28a-4e48-cb96-668d4a6fb57d'),
+('c5a0c22e-a8ce-4c5a-9068-8fb142af26ae', 1, 'Acura',    'a02',      'ac014',  'SEDAN',      null, null,         '4e0ba898-74e4-8ab7-58fc-044364221044');

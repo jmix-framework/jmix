@@ -1,6 +1,0 @@
-{
-  scr_CarList(orderBy: {manufacturer: ASC}){
-    id
-    lastModifiedDate
-  }
-}

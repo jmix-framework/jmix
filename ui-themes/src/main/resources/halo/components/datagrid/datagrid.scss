@@ -117,6 +117,11 @@ $jmix-datagrid-aggregation-background-color: $jmix-aggregation-background-color-
         border-left: none;
         padding-left: $v-grid-border-size + $v-grid-cell-padding-horizontal;
       }
+
+      .#{$primary-stylename}-header th,
+      .#{$primary-stylename}-footer td {
+        border-left-color: transparent;
+      }
     }
 
     &.no-horizontal-lines {

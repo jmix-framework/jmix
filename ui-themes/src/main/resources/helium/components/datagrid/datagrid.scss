@@ -52,6 +52,13 @@
       }
     }
 
+    &.no-vertical-lines {
+      .#{$primary-stylename}-header .#{$primary-stylename}-row.c-aggregation-row > th,
+      .#{$primary-stylename}-footer .#{$primary-stylename}-row.c-aggregation-row > td {
+        border-left-color: transparent;
+      }
+    }
+
     @include he-grid-composition-size-style()
   }
 

@@ -88,7 +88,7 @@ public class FileRef implements Serializable {
         }
         String storageName = fileRefUri.getScheme();
         String path = fileRefUri.getAuthority() + fileRefUri.getPath();
-        String query = fileRefUri.getQuery();
+        String query = fileRefUri.getRawQuery();
         if (StringUtils.isAnyBlank(storageName, path, query)) {
             throw new IllegalArgumentException("Cannot convert " + fileRefString + " to FileRef");
         }

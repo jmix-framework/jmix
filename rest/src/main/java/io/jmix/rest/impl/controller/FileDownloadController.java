@@ -62,7 +62,7 @@ public class FileDownloadController {
         checkFileDownloadPermission();
         FileRef fileReference;
         try {
-            fileReference = FileRef.fromString(URLEncodeUtils.decodeUtf8(fileRef));
+            fileReference = FileRef.fromString(fileRef);
         } catch (IllegalArgumentException e) {
             throw new RestAPIException("Invalid file reference",
                     String.format("Cannot convert '%s' into valid file reference", fileRef),

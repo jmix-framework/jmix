@@ -23,6 +23,7 @@ import io.jmix.core.FileStorage;
 import io.jmix.core.FileStorageException;
 import io.jmix.core.FileStorageLocator;
 import io.jmix.core.Metadata;
+import io.jmix.core.common.util.URLEncodeUtils;
 import io.jmix.rest.accesscontext.RestFileUploadContext;
 import io.jmix.rest.exception.RestAPIException;
 import io.jmix.rest.impl.service.filter.data.FileInfo;
@@ -44,6 +45,7 @@ import javax.annotation.Nullable;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.Objects;
 
 /**
@@ -153,11 +155,11 @@ public class FileUploadController {
         FileInfo fileInfo = new FileInfo(fileRef.toString(), filename, size);
 
         UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(request.getRequestURL().toString())
-                .queryParam("fileRef", fileRef.toString())
+                .queryParam("fileRef", URLEncodeUtils.encodeUtf8(fileRef.toString()))
                 .buildAndExpand();
 
         HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setLocation(uriComponents.toUri());
+        httpHeaders.setLocation(URI.create(uriComponents.toUriString()));
         return new ResponseEntity<>(fileInfo, httpHeaders, HttpStatus.CREATED);
     }
 

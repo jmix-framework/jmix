@@ -595,11 +595,17 @@ public class JmixEclipseLinkQuery<E> implements JmixQuery<E> {
             if (parser.isCollectionOriginalEntitySelect()) {
                 throw new IllegalStateException(String.format("Collection attributes are not supported in select clause: %s", nestedEntityPath));
             }
+
             if (!metadataTools.isJpaEmbeddable(metadata.getClass(nestedEntityName))) {
                 QueryTransformer transformer = queryTransformerFactory.transformer(result);
                 transformer.replaceWithSelectEntityVariable("tempEntityAlias");
                 transformer.addFirstSelectionSource(String.format("%s tempEntityAlias", nestedEntityName));
-                transformer.addWhereAsIs(String.format("tempEntityAlias.id = %s.id", nestedEntityPath));
+                MetaClass nestedMetaClass = metadata.getSession().getClass(nestedEntityName);
+                if (nestedMetaClass != null) {
+                    addIdConditions(nestedMetaClass, nestedEntityPath, transformer);
+                } else {
+                    log.info("MetaClass {} that is necessary for building JPQL query is not found", nestedMetaClass);
+                }
                 transformer.addEntityInGroupBy("tempEntityAlias");
                 result = transformer.getResult();
             }
@@ -618,6 +624,17 @@ public class JmixEclipseLinkQuery<E> implements JmixQuery<E> {
             }
         }
         return result;
+    }
+
+    private void addIdConditions(MetaClass nestedMetaClass, String nestedEntityPath, QueryTransformer transformer) {
+        String pkName = metadataTools.getPrimaryKeyName(nestedMetaClass);
+        if (pkName == null) {
+            throw new DevelopmentException(String.format("Entity %s does not have any primary key",
+                    nestedMetaClass));
+        } else {
+            transformer.addWhereAsIs(
+                    String.format("tempEntityAlias.%s = %s.%s", pkName, nestedEntityPath, pkName));
+        }
     }
 
     private String replaceConstants(String queryStr) {

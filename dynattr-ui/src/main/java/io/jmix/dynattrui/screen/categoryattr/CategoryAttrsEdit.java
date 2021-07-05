@@ -83,7 +83,7 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
     protected static final String WHERE_CLAUSE_PROPERTY = "whereClause";
 
     protected static final String MAIN_TAB_NAME = "mainTab";
-    protected static final String ONE_COLUMN_WIDTH = "610px";
+    protected static final String ONE_COLUMN_WIDTH = "630px";
     protected static final String TWO_COLUMNS_WIDTH = "854px";
     protected static final String MESSAGE_DIALOG_WIDTH = "560px";
 

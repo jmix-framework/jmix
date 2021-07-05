@@ -23,7 +23,7 @@
     @include he-button-primary-style();
   }
 
-  .#{$primary-stylename}.jmix-primary-action {
+  .#{$primary-stylename}.jmix-primary-action:not(.link) {
     @include he-button-default-style();
     @include he-button-primary-style();
   }

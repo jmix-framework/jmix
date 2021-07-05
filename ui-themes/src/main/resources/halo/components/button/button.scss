@@ -98,7 +98,7 @@ $jmix-link-button-caption-wrap: true !default;
   }
 
   @if $jmix-highlight-primary-action {
-    .#{$primary-stylename}.jmix-primary-action {
+    .#{$primary-stylename}.jmix-primary-action:not(.link) {
       @include valo-button-style($background-color: $v-focus-color, $unit-size: null);
     }
   }

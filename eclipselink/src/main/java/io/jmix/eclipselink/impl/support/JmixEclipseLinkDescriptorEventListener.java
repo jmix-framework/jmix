@@ -95,6 +95,7 @@ public class JmixEclipseLinkDescriptorEventListener implements DescriptorEventLi
     public void postBuild(DescriptorEvent event) {
         if (event.getObject() instanceof Entity) {
             getUncheckedEntityEntry(event.getObject()).setNew(false);
+            getUncheckedEntityEntry(event.getObject()).setDetached(false);
         }
         if (event.getObject() instanceof FetchGroupTracker) {
             FetchGroupTracker entity = (FetchGroupTracker) event.getObject();
@@ -110,6 +111,7 @@ public class JmixEclipseLinkDescriptorEventListener implements DescriptorEventLi
         if (event.getObject() instanceof Entity) {
             ((Entity) event.getObject()).__copyEntityEntry();
             getUncheckedEntityEntry(event.getObject()).setNew(false);
+            getUncheckedEntityEntry(event.getObject()).setDetached(false);
         }
         if (event.getObject() instanceof FetchGroupTracker) {
             FetchGroupTracker entity = (FetchGroupTracker) event.getObject();

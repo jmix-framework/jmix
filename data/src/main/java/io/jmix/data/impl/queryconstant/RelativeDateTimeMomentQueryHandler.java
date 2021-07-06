@@ -20,8 +20,8 @@ import io.jmix.core.TimeSource;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.data.DataProperties;
 import io.jmix.data.impl.QueryConstantHandler;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.context.annotation.Scope;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
 import java.time.*;
@@ -114,7 +114,7 @@ public class RelativeDateTimeMomentQueryHandler implements QueryConstantHandler 
         return ZonedDateTime.of(localDateTime, userTimeZone).withZoneSameInstant(applicationZoneId).toLocalDateTime();
     }
 
-    @NotNull
+    @NonNull
     private ZoneId getUserZoneId() {
         ZoneId userTimeZone = ZoneId.systemDefault();
         if (currentAuthentication.isSet()) {

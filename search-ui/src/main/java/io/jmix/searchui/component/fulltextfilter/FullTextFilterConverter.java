@@ -28,11 +28,12 @@ import io.jmix.ui.component.HasValue;
 import io.jmix.ui.component.TextField;
 import io.jmix.ui.component.filter.converter.AbstractFilterComponentConverter;
 import org.elasticsearch.common.Strings;
-import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.Nullable;
 
 @Internal
 @Component("search_FullTextFilterConverter")

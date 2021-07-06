@@ -28,9 +28,9 @@ import io.jmix.ui.model.CollectionLoader;
 import io.jmix.ui.model.DataLoader;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.common.Strings;
-import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;

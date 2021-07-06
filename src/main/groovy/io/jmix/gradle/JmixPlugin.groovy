@@ -21,7 +21,9 @@ import io.jmix.gradle.ui.WidgetsCompile
 import org.gradle.api.Action
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.UnknownTaskException
 import org.gradle.api.artifacts.*
+import org.gradle.api.plugins.JavaPlugin
 
 import java.util.jar.Manifest
 
@@ -64,11 +66,31 @@ class JmixPlugin implements Plugin<Project> {
                 }
             }
 
+            def kotlinPlugin = project.plugins.findPlugin("org.jetbrains.kotlin.jvm")
+            def javaPlugin = project.plugins.findPlugin(JavaPlugin.class)
+
+            if (kotlinPlugin) {
+                setupKotlinOutputDir(project)
+            }
+
             if (project.jmix.entitiesEnhancing.enabled) {
                 project.configurations.create('enhancing')
                 project.dependencies.add('enhancing', 'org.eclipse.persistence:org.eclipse.persistence.jpa:2.7.7-4-jmix')
 
-                project.tasks.findByName('compileJava').doLast(new EnhancingAction('main'))
+                if (javaPlugin) {
+                    project.tasks.findByName('compileJava').doLast(new EnhancingAction('main'))
+                    project.tasks.findByName('compileTestJava').doLast(new EnhancingAction('test'))
+                }
+
+                /**
+                 * If project 100% kotlin, compileJava will not execute and EnhancingAction will not run.
+                 * So we need run EnhancingAction after compileKotlin.
+                 */
+                if (kotlinPlugin) {
+                    project.tasks.findByName('compileKotlin').doLast(new EnhancingAction('main'))
+                    project.tasks.findByName('compileTestKotlin').doLast(new EnhancingAction('test'))
+                }
+
                 project.tasks.findByName('classes').doLast({ EnhancingAction.copyGeneratedFiles(project, 'main') })
                 project.tasks.findByName('testClasses').doLast({ EnhancingAction.copyGeneratedFiles(project, 'test') })
             }

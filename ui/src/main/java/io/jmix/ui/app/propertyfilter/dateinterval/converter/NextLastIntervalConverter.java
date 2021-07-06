@@ -21,10 +21,10 @@ import io.jmix.core.Messages;
 import io.jmix.core.annotation.Internal;
 import io.jmix.ui.app.propertyfilter.dateinterval.model.BaseDateInterval;
 import io.jmix.ui.app.propertyfilter.dateinterval.model.DateInterval;
-import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import java.util.regex.Pattern;
 
 @Internal

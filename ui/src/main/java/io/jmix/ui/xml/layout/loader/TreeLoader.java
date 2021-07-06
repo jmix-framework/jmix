@@ -32,7 +32,8 @@ import io.jmix.ui.screen.UiControllerUtils;
 import io.jmix.ui.xml.layout.ComponentLoader;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 
 public class TreeLoader extends ActionsHolderLoader<Tree> {
 

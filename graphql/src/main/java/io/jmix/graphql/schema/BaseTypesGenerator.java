@@ -25,8 +25,8 @@ import io.jmix.graphql.NamingUtils;
 import io.jmix.graphql.datafetcher.GqlEntityValidationException;
 import io.jmix.graphql.schema.scalar.CustomScalars;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
@@ -108,7 +108,7 @@ public class BaseTypesGenerator {
                 .build();
     }
 
-    @NotNull
+    @NonNull
     public static GraphQLList listType(String typeName) {
         return GraphQLList.list(new GraphQLTypeReference(typeName));
     }

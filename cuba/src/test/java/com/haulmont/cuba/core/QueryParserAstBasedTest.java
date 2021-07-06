@@ -265,6 +265,14 @@ public class QueryParserAstBasedTest {
     }
 
     @Test
+    public void testNewKeyword() {
+        DomainModel model = prepareDomainModel();
+        QueryParserAstBased parser = new QueryParserAstBased(model,
+                "select r from sec$Role r where r.type = @enum(com.haulmont.cuba.security.entity.RoleType.NEW)");
+        parser.getEntityName();
+    }
+
+    @Test
     public void testEnumMacro() {
         DomainModel model = prepareDomainModel();
         QueryParserAstBased parser = new QueryParserAstBased(model,

@@ -19,8 +19,6 @@ package io.jmix.core.impl.repository.support.method_metadata;
 import io.jmix.core.repository.JmixDataRepository;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.framework.ProxyFactory;
@@ -29,6 +27,8 @@ import org.springframework.data.repository.core.support.RepositoryProxyPostProce
 import org.springframework.data.repository.query.QueryLookupStrategy;
 import org.springframework.util.ReflectionUtils;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
@@ -71,7 +71,7 @@ public class CrudMethodMetadataAccessingPostProcessor implements RepositoryProxy
 
         @Nullable
         @Override
-        public Object invoke(@NotNull MethodInvocation invocation) throws Throwable {
+        public Object invoke(@Nonnull MethodInvocation invocation) throws Throwable {
             Method method = invocation.getMethod();
             if (!implementations.contains(method)) {
                 return invocation.proceed();

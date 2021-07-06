@@ -17,6 +17,7 @@
 package files;
 
 import com.jayway.jsonpath.ReadContext;
+import io.jmix.core.common.util.URLEncodeUtils;
 import test_support.AbstractRestControllerFT;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -212,7 +213,7 @@ public class FilesControllerFT extends AbstractRestControllerFT {
 
     protected void checkLocation(CloseableHttpResponse response, String fileRef) {
         Header location = response.getFirstHeader("Location");
-        assertEquals(baseUrl + "/files?fileRef=" + fileRef, location.getValue());
+        assertEquals(baseUrl + "/files?fileRef=" + URLEncodeUtils.encodeUtf8(fileRef), location.getValue());
     }
 
     protected HttpPost getHttpPost(URIBuilder uriBuilder, HttpEntity entity) throws URISyntaxException {

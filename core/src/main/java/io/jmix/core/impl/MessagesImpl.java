@@ -19,17 +19,15 @@ package io.jmix.core.impl;
 import com.google.common.base.Strings;
 import io.jmix.core.Messages;
 import io.jmix.core.security.CurrentAuthentication;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import java.util.IllegalFormatException;
 import java.util.Locale;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
@@ -41,8 +39,6 @@ public class MessagesImpl implements Messages {
 
     @Autowired
     protected CurrentAuthentication currentAuthentication;
-
-    protected static final Pattern ENUM_SUBCLASS_PATTERN = Pattern.compile("\\$[1-9]");
 
     @Override
     public String getMessage(String key) {
@@ -87,19 +83,14 @@ public class MessagesImpl implements Messages {
         checkNotNullArgument(caller, "caller is null");
         checkNotNullArgument(locale, "locale is null");
 
-        String className = caller.getClass().getName();
-        int i = className.lastIndexOf('.');
+        String declaringClassName = caller.getDeclaringClass().getName();
+        int i = declaringClassName.lastIndexOf('.');
         if (i > -1)
-            className = className.substring(i + 1);
-        // If enum has inner subclasses, its class name ends with "$1", "$2", ... suffixes. Cut them off.
-        Matcher matcher = ENUM_SUBCLASS_PATTERN.matcher(className);
-        if (matcher.find()) {
-            className = className.substring(0, matcher.start());
-        }
+            declaringClassName = declaringClassName.substring(i + 1);
 
         return getMessage(
                 getGroup(caller.getClass()),
-                className + "." + caller.name(),
+                declaringClassName + "." + caller.name(),
                 locale
         );
     }

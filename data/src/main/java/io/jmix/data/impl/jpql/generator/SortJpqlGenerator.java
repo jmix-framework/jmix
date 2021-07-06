@@ -25,10 +25,13 @@ import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import org.slf4j.Logger;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
+
 import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -47,6 +50,8 @@ public class SortJpqlGenerator {
     protected JpqlSortExpressionProvider jpqlSortExpressionProvider;
     @Autowired
     protected DbmsSpecifics dbmsSpecifics;
+
+    private static final Logger log = org.slf4j.LoggerFactory.getLogger(SortJpqlGenerator.class);
 
     public String processQuery(String entityName, List<String> valueProperties, String queryString, Sort sort) {
         List<Sort.Order> orders = sort.getOrders();
@@ -198,6 +203,23 @@ public class SortJpqlGenerator {
         int index = valueProperties.indexOf(property);
         if (index >= 0 && index < selectedExpressions.size()) {
             return Collections.singletonList(selectedExpressions.get(index));
+        }
+
+        if (property != null) {
+            String[] properties = property.split("\\.");
+            if (properties.length > 2) {
+                log.debug("The length of {} property path is greater than 2. Only direct property sorting is allowed.",
+                        property);
+                return Collections.emptyList();
+            }
+            for (String selectedExpression : selectedExpressions) {
+                //Checking equality between the JPQL query entity alias and the root of property path (one-level depth).
+                if (properties[0].equals(selectedExpression)) {
+                    return Collections.singletonList(property);
+                }
+            }
+            log.debug("The root of the {} value property path does not match any of the selected expressions.",
+                    property);
         }
 
         return Collections.emptyList();

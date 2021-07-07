@@ -37,7 +37,7 @@ import java.util.Collection;
  * Generates domain model for use in JPQL parser.
  */
 @Internal
-@Component("core_DomainModelBuilder")
+@Component("data_DomainModelBuilder")
 @Qualifier("regular")
 public class DomainModelBuilder {
 

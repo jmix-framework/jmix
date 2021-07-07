@@ -48,7 +48,7 @@ import static io.jmix.core.entity.EntityValues.getValue;
  * Utility class to provide common functionality related to persistence.
  * <br> Implemented as Spring bean to allow extension in application projects.
  */
-@Component("eclipse_EclipselinkReferenceIdProvider")
+@Component("eclipselink_EclipselinkReferenceIdProvider")
 public class EclipselinkReferenceIdProvider implements ReferenceIdProvider {
     @Autowired
     protected EntityStates entityStates;

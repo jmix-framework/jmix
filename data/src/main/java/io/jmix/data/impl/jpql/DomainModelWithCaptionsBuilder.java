@@ -25,7 +25,7 @@ import org.springframework.stereotype.Component;
  * Generates domain model for use in autocomplete fields.
  */
 @Internal
-@Component("core_DomainModelWithCaptionsBuilder")
+@Component("data_DomainModelWithCaptionsBuilder")
 @Qualifier("withCaptions")
 public class DomainModelWithCaptionsBuilder extends DomainModelBuilder {
 

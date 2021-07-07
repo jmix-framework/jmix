@@ -29,8 +29,8 @@ import io.jmix.ui.component.ActionsHolder;
 import io.jmix.ui.xml.layout.loader.TreeLoader;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
-import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nullable;
 import java.util.Optional;
 
 import static org.apache.commons.lang3.StringUtils.trimToNull;

@@ -28,6 +28,7 @@ dependencies {
     api 'io.jmix.data:jmix-data'
     api 'io.jmix.ui:jmix-ui'
 
+    api 'com.google.code.gson:gson'
     compileOnly 'io.jmix.security:jmix-security-ui'
 
     testImplementation 'org.springframework:spring-test'

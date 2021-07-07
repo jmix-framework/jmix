@@ -18,8 +18,11 @@ package io.jmix.datatoolsui.screen.entityinspector;
 
 import com.google.common.collect.Sets;
 import com.google.common.io.Files;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import io.jmix.core.*;
 import io.jmix.core.entity.EntityValues;
+import io.jmix.core.impl.importexport.EntityImportPlanJsonBuilder;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Range;
@@ -117,6 +120,9 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
 
     @Autowired
     protected EntityImportExport entityImportExport;
+
+    @Autowired
+    protected EntityImportPlanJsonBuilder importPlanJsonBuilder;
 
     @Autowired
     protected EntityImportPlans entityImportPlans;
@@ -373,7 +379,7 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
                 Collection<Object> importedEntities;
                 if (JSON.getFileExt().equals(Files.getFileExtension(fileName))) {
                     String content = new String(fileBytes, StandardCharsets.UTF_8);
-                    importedEntities = entityImportExport.importEntitiesFromJson(content, createEntityImportPlan(selectedMeta));
+                    importedEntities = entityImportExport.importEntitiesFromJson(content, createEntityImportPlan(content, selectedMeta));
                 } else {
                     importedEntities = entityImportExport.importEntitiesFromZIP(fileBytes, createEntityImportPlan(selectedMeta));
                 }
@@ -477,6 +483,28 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
                 );
         action.setTarget(table);
         return action;
+    }
+
+    protected EntityImportPlan createEntityImportPlan(String content, MetaClass metaClass) {
+        JsonElement rootElement = JsonParser.parseString(content);
+        EntityImportPlan entityImportPlan = importPlanJsonBuilder.buildFromJson(
+                rootElement.isJsonArray() ? rootElement.getAsJsonArray().get(0).toString() : rootElement.toString(), metaClass);
+        for (MetaProperty metaProperty : metaClass.getProperties()) {
+            if (!metadataTools.isJpa(metaProperty)) {
+                continue;
+            }
+
+            switch (metaProperty.getType()) {
+                case ASSOCIATION:
+                case EMBEDDED:
+                case COMPOSITION:
+                    EntityImportPlanProperty property = entityImportPlan.getProperty(metaProperty.getName());
+                    property.setReferenceImportBehaviour(ReferenceImportBehaviour.IGNORE_MISSING);
+                    break;
+                default:
+            }
+        }
+        return entityImportPlan;
     }
 
     protected EntityImportPlan createEntityImportPlan(MetaClass metaClass) {

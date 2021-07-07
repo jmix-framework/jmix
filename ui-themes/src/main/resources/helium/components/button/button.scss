@@ -77,40 +77,64 @@
 
   /* Global size */
 
-  &.small .#{$primary-stylename} {
-    @include he-button-size-style($unit-size: $v-unit-size--small, $font-size: $v-font-size--small);
+  &.small {
+    .#{$primary-stylename},
+    .#{$primary-stylename}.jmix-primary-action:not(.link) {
+      @include he-button-size-style($unit-size: $v-unit-size--small, $font-size: $v-font-size--small);
+    }
   }
 
-  &.large .#{$primary-stylename} {
-    @include he-button-size-style($unit-size: $v-unit-size--large, $font-size: $v-font-size--large);
+  &.large {
+    .#{$primary-stylename},
+    .#{$primary-stylename}.jmix-primary-action:not(.link) {
+      @include he-button-size-style($unit-size: $v-unit-size--large, $font-size: $v-font-size--large);
+    }
   }
 
   /* Size within a container */
 
-  .small .#{$primary-stylename} {
-    @include he-button-size-style($unit-size: $v-unit-size--small, $font-size: $v-font-size--small);
+  .small {
+    .#{$primary-stylename},
+    .#{$primary-stylename}.jmix-primary-action:not(.link) {
+      @include he-button-size-style($unit-size: $v-unit-size--small, $font-size: $v-font-size--small);
+    }
   }
 
-  .medium .#{$primary-stylename} {
-    @include he-button-size-style($unit-size: $v-unit-size, $font-size: $v-font-size);
+  .medium {
+    .#{$primary-stylename},
+    .#{$primary-stylename}.jmix-primary-action:not(.link) {
+      @include he-button-size-style($unit-size: $v-unit-size, $font-size: $v-font-size);
+    }
   }
 
-  .large .#{$primary-stylename} {
-    @include he-button-size-style($unit-size: $v-unit-size--large, $font-size: $v-font-size--large);
+  .large {
+    .#{$primary-stylename},
+    .#{$primary-stylename}.jmix-primary-action:not(.link) {
+      @include he-button-size-style($unit-size: $v-unit-size--large, $font-size: $v-font-size--large);
+    }
   }
 
   /* Own size */
 
-  .#{$primary-stylename}.small {
-    @include he-button-size-style($unit-size: $v-unit-size--small, $font-size: $v-font-size--small);
+  .#{$primary-stylename},
+  .#{$primary-stylename}.jmix-primary-action:not(.link) {
+    &.small {
+      @include he-button-size-style($unit-size: $v-unit-size--small, $font-size: $v-font-size--small);
+    }
   }
 
-  .#{$primary-stylename}.medium {
-    @include he-button-size-style($unit-size: $v-unit-size, $font-size: $v-font-size);
+  .#{$primary-stylename},
+  .#{$primary-stylename}.jmix-primary-action:not(.link) {
+    &.medium {
+      @include he-button-size-style($unit-size: $v-unit-size, $font-size: $v-font-size);
+    }
   }
 
-  .#{$primary-stylename}.large {
-    @include he-button-size-style($unit-size: $v-unit-size--large, $font-size: $v-font-size--large);
+  .#{$primary-stylename},
+  .#{$primary-stylename}.jmix-primary-action:not(.link) {
+    &.large {
+      @include he-button-size-style($unit-size: $v-unit-size--large, $font-size: $v-font-size--large);
+    }
   }
 }
 

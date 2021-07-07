@@ -177,10 +177,7 @@ public class BulkEditorFieldFactory {
             lookupPickerField.setOptions(new ContainerOptions(container));
 
             GuiActionSupport guiActionSupport = AppBeans.get(GuiActionSupport.NAME);
-            if (!guiActionSupport.createActionsByMetaAnnotations(lookupPickerField)) {
-                lookupPickerField.addLookupAction();
-                lookupPickerField.addClearAction();
-            }
+            guiActionSupport.createActionsByMetaAnnotations(lookupPickerField);
 
             return lookupPickerField;
         }
@@ -188,9 +185,9 @@ public class BulkEditorFieldFactory {
         PickerField<Entity> pickerField = componentsFactory.create(PickerField.NAME);
         pickerField.setDatasource(datasource, property.getName());
         GuiActionSupport guiActionSupport = AppBeans.get(GuiActionSupport.NAME);
+        guiActionSupport.createActionById(pickerField, PickerField.ActionType.LOOKUP.getId());
         if (lookup == null || !guiActionSupport.createActionsByMetaAnnotations(pickerField)) {
-            pickerField.addLookupAction();
-            pickerField.addClearAction();
+            guiActionSupport.createActionById(pickerField, PickerField.ActionType.CLEAR.getId());
         }
 
         return pickerField;

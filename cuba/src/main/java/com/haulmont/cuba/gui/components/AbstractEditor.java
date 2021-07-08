@@ -279,7 +279,7 @@ public class AbstractEditor<T extends Entity> extends AbstractWindow
                         getMetaClassForLocking(ds).getName(), EntityValues.getId(item).toString());
                 if (lockInfo == null) {
                     justLocked = true;
-                    addAfterCloseListener(afterCloseEvent -> {
+                    addAfterDetachListener(afterCloseEvent -> {
                         releaseLock();
                     });
                 } else if (!(lockInfo instanceof LockNotSupported)) {

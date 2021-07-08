@@ -49,6 +49,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.security.core.Authentication;
 
 import javax.annotation.Nullable;
 import javax.servlet.ServletContext;
@@ -445,10 +446,16 @@ public abstract class App {
      * Removes all windows from all UIs.
      */
     public void removeAllWindows() {
+        AppUI currentUI = AppUI.getCurrent();
+        Authentication auth = currentUI != null ? currentUI.currentAuthentication.getAuthentication() : null;
+
         List<AppUI> authenticatedUIs = getAppUIs()
                 .stream()
                 .filter(ui ->
-                        uiProperties.isForceRefreshAuthenticatedTabs())
+                        ui.hasAuthenticatedSession() &&
+                                (Objects.equals(auth, ui.currentAuthentication.getAuthentication())
+                                        || uiProperties.isForceRefreshAuthenticatedTabs())
+                )
                 .collect(Collectors.toList());
 
         removeAllWindows(authenticatedUIs);

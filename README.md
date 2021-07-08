@@ -24,9 +24,11 @@ jmix.ldap.baseDn = dc=example,dc=com
 jmix.ldap.managerDn = cn=read-only-admin,dc=example,dc=com
 jmix.ldap.managerPassword = password
 jmix.ldap.userSearchFilter = (uid={0})
+jmix.ldap.defaultRoles = ui-minimal
 ```
 
 You can find out more about the meaning of each property in the [Jmix LDAP properties](#jmix-ldap-properties) section.
+`jmix.ldap.defaultRoles` contains a list of roles that will be assigned to every user authenticated in LDAP. It is needed since user without any roles will not be able to login to the application.
 
 If you are going to set up integration with Active Directory, it is recommended to set the property `jmix.ldap.useActiveDirectoryConfiguration` = `true`, since the addon provides a separate Security Configuration special for this case. Find out more about usage with Active Directory [here](#usage-with-active-directory).
 

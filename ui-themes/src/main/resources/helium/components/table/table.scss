@@ -35,9 +35,7 @@ $he-table-header-row-height-scale: 1.5 !default;
     @include he-table-composition-size-style();
   }
 
-  .jmix-table-contextmenu {
-    @include he-selection-overlay-style($item-stylename: jmix-table-contextmenu-item);
-  }
+  @include he-contextmenu($primary-stylename: jmix-table-contextmenu, $item-stylename: jmix-table-contextmenu-item);
 
   .jmix-table-view-textcut {
     @include he-overlay-style();
@@ -79,13 +77,6 @@ $he-table-header-row-height-scale: 1.5 !default;
       @include he-table-composition-size-style($v-unit-size--small);
     }
 
-    .jmix-table-contextmenu {
-      @include he-selection-overlay-size-style(
-              $item-height: $v-selection-item-height--large,
-              $font-size: $v-font-size--large,
-              $item-stylename: jmix-table-contextmenu-item);
-    }
-
     @include he-table-empty-state-size-style($scaling-factor: $v-scaling-factor--small);
   }
 
@@ -100,13 +91,6 @@ $he-table-header-row-height-scale: 1.5 !default;
 
     .jmix-table-composition {
       @include he-table-composition-size-style($v-unit-size--large);
-    }
-
-    .jmix-table-contextmenu {
-      @include he-selection-overlay-size-style(
-              $item-height: $v-selection-item-height--large,
-              $font-size: $v-font-size--large,
-              $item-stylename: jmix-table-contextmenu-item);
     }
 
     @include he-table-empty-state-size-style($scaling-factor: $v-scaling-factor--large);

@@ -200,26 +200,15 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
         }
 
         List<?> rawIds;
-        if (metadataTools.hasCompositePrimaryKey(metaClass)) {
-            //TODO Load EmbeddedId objects when https://github.com/Haulmont/jmix-data/issues/76 is done
-            rawIds = dataManager.load(metaClass.getJavaClass())
-                    .all()
-                    .fetchPlanProperties(primaryKeyName)
-                    .list()
-                    .stream()
-                    .map(EntityValues::getId)
-                    .collect(Collectors.toList());
-        } else {
-            TransactionTemplate transactionTemplate = storeAwareLocator.getTransactionTemplate(metaClass.getStore().getName());
-            transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
-            rawIds = transactionTemplate.execute(status -> {
-                EntityManager em = storeAwareLocator.getEntityManager(metaClass.getStore().getName());
-                Query query = em.createQuery(format("select e.%s from %s e", primaryKeyName, entityName));
-                return query.getResultList();
-            });
-            if (rawIds == null) {
-                rawIds = Collections.emptyList();
-            }
+        TransactionTemplate transactionTemplate = storeAwareLocator.getTransactionTemplate(metaClass.getStore().getName());
+        transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+        rawIds = transactionTemplate.execute(status -> {
+            EntityManager em = storeAwareLocator.getEntityManager(metaClass.getStore().getName());
+            Query query = em.createQuery(format("select e.%s from %s e", primaryKeyName, entityName));
+            return query.getResultList();
+        });
+        if (rawIds == null) {
+            rawIds = Collections.emptyList();
         }
         return rawIds;
     }

@@ -29,11 +29,14 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.liquibase.LiquibaseDataSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import test_support.custom.service.CarEntityDataFetcher;
+import test_support.custom.service.CarModifier;
 
 import javax.sql.DataSource;
 
@@ -70,6 +73,20 @@ public class App {
                                                                 JpaVendorAdapter jpaVendorAdapter,
                                                                 Resources resources) {
         return new JmixEntityManagerFactoryBean(Stores.MAIN, dataSource, jpaVendorAdapter, dbmsSpecifics, jmixModules, resources);
+    }
+
+    @Bean
+    @Primary
+    @Profile("custom")
+    CarEntityDataFetcher carLoader() {
+        return new CarEntityDataFetcher();
+    }
+
+    @Bean
+    @Primary
+    @Profile("custom")
+    CarModifier carModifier() {
+        return new CarModifier();
     }
 
     @EnableWebSecurity

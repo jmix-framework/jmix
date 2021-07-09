@@ -37,6 +37,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -110,7 +111,7 @@ public class FilterComponents implements InitializingBean {
     @Autowired
     protected Metadata metadata;
 
-    protected Set<FilterComponentRegistration> registrations = new HashSet<>();
+    protected Set<FilterComponentRegistration> registrations = new LinkedHashSet<>();
 
     @Override
     public void afterPropertiesSet() {
@@ -193,7 +194,7 @@ public class FilterComponents implements InitializingBean {
     public Set<Class<? extends FilterCondition>> getRegisteredModelClasses() {
         return registrations.stream()
                 .map(FilterComponentRegistration::getModelClass)
-                .collect(Collectors.toSet());
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     /**

@@ -1,0 +1,5 @@
+{
+  "name": "Theme Add-On",
+  "order": 3,
+  "description": "<html>Template of a widgets add-on. Widgets add-on may provide UI components inherited from Vaadin components as well as their Jmix wrappers.</html>"
+}

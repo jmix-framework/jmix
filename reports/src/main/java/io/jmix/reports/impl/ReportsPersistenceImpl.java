@@ -39,6 +39,7 @@ import javax.persistence.PersistenceException;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -71,6 +72,8 @@ public class ReportsPersistenceImpl implements ReportsPersistence {
     protected DataProperties dataProperties;
     @PersistenceContext
     protected EntityManager em;
+    @Autowired
+    private MetadataTools metadataTools;
 
     @Override
     public Report save(Report report) {
@@ -94,17 +97,40 @@ public class ReportsPersistenceImpl implements ReportsPersistence {
         report.setDefaultTemplate(null);
         report.setTemplates(null);
 
-        if (report.getGroup() != null) {
-            FetchPlan fetchPlan = fetchPlanRepository.getFetchPlan(ReportGroup.class, FetchPlan.INSTANCE_NAME);
+        em.setProperty(PersistenceHints.SOFT_DELETION, false);
+        ReportGroup group = report.getGroup();
+        if (group != null) {
+            FetchPlan fetchPlan = fetchPlanRepository.getFetchPlan(ReportGroup.class, FetchPlan.LOCAL);
             ReportGroup existingGroup = em.find(ReportGroup.class, report.getGroup().getId(),
                     PersistenceHints.builder().withFetchPlan(fetchPlan).build());
+            if (existingGroup == null) {
+                em.setProperty(PersistenceHints.SOFT_DELETION, true);
+                existingGroup = em.createQuery(
+                        "select g from report_ReportGroup g where g.title = :title", ReportGroup.class)
+                        .setParameter("title", group.getTitle())
+                        .setHint(PersistenceHints.FETCH_PLAN, FetchPlan.LOCAL)
+                        .getSingleResult();
+                em.setProperty(PersistenceHints.SOFT_DELETION, false);
+            }
             if (existingGroup != null) {
-                report.setGroup(existingGroup);
+                if (!entityStates.isDeleted(existingGroup)) {
+                    report.setGroup(existingGroup);
+                }
+                else {
+                    group = dataManager.create(ReportGroup.class);
+                    UUID newId = group.getId();
+                    group = metadataTools.copy(existingGroup);
+                    group.setVersion(0);
+                    group.setDeleteTs(null);
+                    group.setDeletedBy(null);
+                    group.setId(newId);
+                    report.setGroup(group);
+                }
             } else {
-                em.persist(report.getGroup());
+                em.persist(group);
             }
         }
-        em.setProperty(PersistenceHints.SOFT_DELETION, false);
+
         Report existingReport;
         List<ReportTemplate> existingTemplates = null;
         try {
@@ -243,7 +269,7 @@ public class ReportsPersistenceImpl implements ReportsPersistence {
             constraintName = matcher.group(1);
         } else {
             for (int i = 1; i < matcher.groupCount(); i++) {
-                if (StringUtils.isNotBlank(matcher.group(i))) {
+                if (isNotBlank(matcher.group(i))) {
                     constraintName = matcher.group(i);
                     break;
                 }

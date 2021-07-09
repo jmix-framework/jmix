@@ -1,5 +1,0 @@
-{
-  "name": "Theme Add-On",
-  "order": 2,
-  "description": "<html>Template of a theme add-on. Theme add-on may provide SCSS files for a theme compilation.</html>"
-}

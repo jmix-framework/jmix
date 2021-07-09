@@ -44,8 +44,8 @@ public class BaseTypesGenerator {
     /**
      * Shortcut for input value definition that has list type
      *
-     * @param fieldName field name
-     * @param type input value type
+     * @param fieldName   field name
+     * @param type        input value type
      * @param description input value description
      * @return field
      */
@@ -59,8 +59,8 @@ public class BaseTypesGenerator {
     /**
      * Shortcut for input value definition
      *
-     * @param fieldName field name
-     * @param type input value type
+     * @param fieldName   field name
+     * @param type        input value type
      * @param description input value description
      * @return field
      */
@@ -174,7 +174,7 @@ public class BaseTypesGenerator {
                 return CustomScalars.GraphQLTime.getName();
             }
             if (MetadataUtils.isDateTime(metaProperty)) {
-                    return CustomScalars.GraphQLDateTime.getName();
+                return CustomScalars.GraphQLDateTime.getName();
             }
             throw new GqlEntityValidationException("Unsupported datatype mapping for date property " + metaProperty);
         }

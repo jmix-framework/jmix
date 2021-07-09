@@ -31,7 +31,7 @@ class PermissionsTest extends AbstractGraphQLTest {
         lowPermission = User.builder()
                 .username("perm")
                 .password("{noop}admin")
-                .authorities(RoleGrantedAuthority.ofResourceRole(resourceRoleRepository.getRoleByCode("test")))
+                .authorities(RoleGrantedAuthority.ofResourceRole(resourceRoleRepository.getRoleByCode("low-permissions")))
                 .build()
         userRepository.addUser(lowPermission)
 

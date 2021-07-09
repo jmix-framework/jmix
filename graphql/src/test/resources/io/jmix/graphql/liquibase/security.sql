@@ -10,14 +10,14 @@ INSERT INTO public.sec_resource_role (id, create_ts, created_by, name, code, sco
 VALUES
 ('23548523-3f0f-f96a-07ff-0d60b9cb5c1b', '2021-02-19 15:59:57.976', 'admin', 'Mechanics', 'mechanics',  '"API", "UI"'),
 ('91099ca3-194e-6ba5-7aa6-15b03bcef05a', '2021-02-19 16:00:16.377', 'admin', 'Managers',  'managers',   '"API", "UI"'),
-('91099ca3-194e-6ba5-7aa6-25b03bcef05a', '2021-02-19 16:00:16.377', 'admin', 'Test',  'test',   '"API", "UI"');
+('91099ca3-194e-6ba5-7aa6-25b03bcef05a', '2021-02-19 16:00:16.377', 'admin', 'Low permissions',  'low-permissions',   '"API", "UI"');
 
 -- users to roles
 INSERT INTO public.sec_role_assignment (id, create_ts, created_by, username, role_code, role_type)
 VALUES
 ('7c2d9b0b-0d11-ade7-5005-39748c488373', now(), 'admin', 'mechanic', 'mechanics', 'resource'),
 ('51e0b9a4-0437-ad73-eefe-b34438b27389', now(), 'admin', 'manager', 'managers', 'resource'),
-('51e0b9a4-0437-ad73-eefe-b34438b27349', now(), 'admin', 'perm', 'test', 'resource');
+('51e0b9a4-0437-ad73-eefe-b34438b27349', now(), 'admin', 'perm', 'low-permissions', 'resource');
 
 -- manager permissions
 INSERT INTO public.sec_resource_policy (id, create_ts, created_by, type_, policy_group, resource_, action_, effect, role_id)
@@ -53,7 +53,7 @@ VALUES
 ('a5d5adb1-2bc5-4599-b308-427892c54e92', '2021-02-19 16:24:59.947', 'admin', 'entityAttribute', 'scr$Car', 'scr$Car.model',         'modify', 'allow', '23548523-3f0f-f96a-07ff-0d60b9cb5c1b'),
 ('44c2e708-64d8-0045-6f5b-e33d6140f287', '2021-02-19 16:24:59.948', 'admin', 'entityAttribute', 'scr$Car', 'scr$Car.mileage',       'view',   'allow', '23548523-3f0f-f96a-07ff-0d60b9cb5c1b');
 
--- Test low permissions
+-- low permissions
 INSERT INTO public.sec_resource_policy (id, create_ts, created_by, type_, policy_group, resource_, action_, effect, role_id)
 VALUES
 ('35010e42-f9c1-dde3-655d-98c2956215a8', '2021-02-19 16:24:59.947', 'admin', 'specific',  NULL,       'rest.enabled',    'access', 'allow', '91099ca3-194e-6ba5-7aa6-25b03bcef05a'),

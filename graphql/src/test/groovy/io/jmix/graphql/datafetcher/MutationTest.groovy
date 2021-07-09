@@ -58,4 +58,17 @@ class MutationTest extends AbstractGraphQLTest {
         response.get('$.data.upsert_scr_Car.purchaseDate') == null
     }
 
+    def "should create and return datatypesTestEntity with a composition attribute"() {
+        when:
+        def response = query(
+                "datafetcher/upsert-datatypesTestEntity-composition.gql",
+                asObjectNode('{"parent": null}'))
+
+        then:
+        getBody(response) == '{"data":{"upsert_scr_DatatypesTestEntity":{' +
+                '"id":"f17652de-59f6-f2a5-9fd8-1ec69ffaa761",' +
+                '"compositionO2Mattr":[' +
+                '{"name":"llll"}' +
+                ']}}}'
+    }
 }

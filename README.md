@@ -329,6 +329,28 @@ If the parameter doesn't define, so the locale will be received from the current
 }
 ```
 
+### User Info Query
+Information about current user can be reached with `userInfo` query
+```
+{
+  userInfo {
+    locale
+    username
+  }
+}
+``` 
+The response will look like
+```
+{
+  "data": {
+    "userInfo": {
+      "locale": "en",
+      "username": "admin"
+    }
+  }
+}
+```
+
 ### Bean Validation
 
 Bean validation errors available in GraphQL response property `errors.extensions.constraintViolations`

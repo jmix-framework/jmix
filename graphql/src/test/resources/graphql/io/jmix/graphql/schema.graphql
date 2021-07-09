@@ -705,6 +705,7 @@ type scr_DeeplyNestedTestEntity {
   associationO2Oattr: scr_AssociationO2OTestEntity
   id: UUID
   name: String
+  parentO2Ocomposition: scr_CompositionO2OTestEntity
 }
 
 type scr_FavoriteCar {
@@ -1835,6 +1836,7 @@ input inp_scr_DeeplyNestedTestEntity {
   associationO2Oattr: inp_scr_AssociationO2OTestEntity
   id: UUID
   name: String
+  parentO2Ocomposition: inp_scr_CompositionO2OTestEntity
 }
 
 input inp_scr_DeeplyNestedTestEntityFilterCondition {
@@ -1845,12 +1847,14 @@ input inp_scr_DeeplyNestedTestEntityFilterCondition {
   associationO2Oattr: [inp_scr_AssociationO2OTestEntityFilterCondition]
   id: [inp_UUIDFilterCondition]
   name: [inp_StringFilterCondition]
+  parentO2Ocomposition: [inp_scr_CompositionO2OTestEntityFilterCondition]
 }
 
 input inp_scr_DeeplyNestedTestEntityOrderBy {
   associationO2Oattr: inp_scr_AssociationO2OTestEntityOrderBy
   id: SortOrder
   name: SortOrder
+  parentO2Ocomposition: inp_scr_CompositionO2OTestEntityOrderBy
 }
 
 input inp_scr_FavoriteCar {

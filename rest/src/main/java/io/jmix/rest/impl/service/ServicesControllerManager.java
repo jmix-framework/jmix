@@ -33,6 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
@@ -86,7 +87,7 @@ public class ServicesControllerManager {
         paramsMap.remove("modelVersion");
         List<String> paramNames = new ArrayList<>(paramsMap.keySet());
         List<String> paramValuesStr = new ArrayList<>(paramsMap.values());
-        return _invokeServiceMethod(serviceName, methodName, paramNames, paramValuesStr, modelVersion);
+        return _invokeServiceMethod(serviceName, methodName, HttpMethod.GET, paramNames, paramValuesStr, modelVersion);
     }
 
     @Nullable
@@ -97,7 +98,7 @@ public class ServicesControllerManager {
         Map<String, String> paramsMap = restParseUtils.parseParamsJson(paramsJson);
         List<String> paramNames = new ArrayList<>(paramsMap.keySet());
         List<String> paramValuesStr = new ArrayList<>(paramsMap.values());
-        return _invokeServiceMethod(serviceName, methodName, paramNames, paramValuesStr, modelVersion);
+        return _invokeServiceMethod(serviceName, methodName, HttpMethod.POST, paramNames, paramValuesStr, modelVersion);
     }
 
     public Collection<RestServicesConfiguration.RestServiceInfo> getServiceInfos() {
@@ -117,11 +118,13 @@ public class ServicesControllerManager {
     @Nullable
     protected ServiceCallResult _invokeServiceMethod(String serviceName,
                                                      String methodName,
+                                                     HttpMethod httpMethod,
                                                      List<String> paramNames,
                                                      List<String> paramValuesStr,
                                                      String modelVersion) throws Throwable {
         Object service = beanFactory.getBean(serviceName);
-        RestServicesConfiguration.RestMethodInfo restMethodInfo = restServicesConfiguration.getRestMethodInfo(serviceName, methodName, paramNames);
+        RestServicesConfiguration.RestMethodInfo restMethodInfo =
+                restServicesConfiguration.getRestMethodInfo(serviceName, methodName, httpMethod.name(), paramNames);
         if (restMethodInfo == null) {
             throw new RestAPIException("Service method not found",
                     serviceName + "." + methodName + "(" + paramNames.stream().collect(Collectors.joining(",")) + ")",

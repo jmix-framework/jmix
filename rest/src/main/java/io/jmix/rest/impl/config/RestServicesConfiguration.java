@@ -80,7 +80,7 @@ public class RestServicesConfiguration {
     protected BeanFactory beanFactory;
 
     @Nullable
-    public RestMethodInfo getRestMethodInfo(String serviceName, String methodName, List<String> methodParamNames) {
+    public RestMethodInfo getRestMethodInfo(String serviceName, String methodName, String httpMethod, List<String> methodParamNames) {
         lock.readLock().lock();
         try {
             checkInitialized();
@@ -88,12 +88,20 @@ public class RestServicesConfiguration {
             if (restServiceInfo == null) return null;
             return restServiceInfo.getMethods().stream()
                     .filter(restMethodInfo -> methodName.equals(restMethodInfo.getName())
+                            && httpMethodMatches(restMethodInfo.getHttpMethod(), httpMethod)
                             && paramsMatches(restMethodInfo.getParams(), methodParamNames))
                     .findFirst()
                     .orElse(null);
         } finally {
             lock.readLock().unlock();
         }
+    }
+
+    protected boolean httpMethodMatches(@Nullable String httpMethod1, @Nullable String httpMethod2) {
+        if (httpMethod1 == null || httpMethod2 == null) {
+            return true;
+        }
+        return httpMethod1.equalsIgnoreCase(httpMethod2);
     }
 
     protected boolean paramsMatches(List<RestMethodParamInfo> paramInfos, List<String> paramNames) {
@@ -148,6 +156,7 @@ public class RestServicesConfiguration {
 
             for (Element methodElem : serviceElem.elements("method")) {
                 String methodName = methodElem.attributeValue("name");
+                String httpMethod = methodElem.attributeValue("httpMethod");
                 boolean anonymousAllowed = Boolean.parseBoolean(methodElem.attributeValue("anonymousAllowed"));
                 List<RestMethodParamInfo> params = new ArrayList<>();
                 for (Element paramEl : methodElem.elements("param")) {
@@ -155,7 +164,7 @@ public class RestServicesConfiguration {
                 }
                 Method method = _findMethod(serviceName, methodName, params);
                 if (method != null) {
-                    methodInfos.add(new RestMethodInfo(methodName, params, method, anonymousAllowed));
+                    methodInfos.add(new RestMethodInfo(methodName, httpMethod, params, method));
                 }
             }
 
@@ -279,16 +288,16 @@ public class RestServicesConfiguration {
 
     public static class RestMethodInfo {
         protected String name;
+        protected String httpMethod;
         protected List<RestMethodParamInfo> params;
-        protected boolean anonymousAllowed;
         @JsonIgnore
         protected Method method;
 
-        public RestMethodInfo(String name, List<RestMethodParamInfo> params, Method method, boolean anonymousAllowed) {
+        public RestMethodInfo(String name, String httpMethod, List<RestMethodParamInfo> params, Method method) {
             this.name = name;
+            this.httpMethod = httpMethod;
             this.params = params;
             this.method = method;
-            this.anonymousAllowed = anonymousAllowed;
         }
 
         public String getName() {
@@ -297,6 +306,14 @@ public class RestServicesConfiguration {
 
         public void setName(String name) {
             this.name = name;
+        }
+
+        public String getHttpMethod() {
+            return httpMethod;
+        }
+
+        public void setHttpMethod(String httpMethod) {
+            this.httpMethod = httpMethod;
         }
 
         public List<RestMethodParamInfo> getParams() {
@@ -313,15 +330,6 @@ public class RestServicesConfiguration {
 
         public void setMethod(Method method) {
             this.method = method;
-
-        }
-
-        public boolean isAnonymousAllowed() {
-            return anonymousAllowed;
-        }
-
-        public void setAnonymousAllowed(boolean anonymousAllowed) {
-            this.anonymousAllowed = anonymousAllowed;
         }
     }
 

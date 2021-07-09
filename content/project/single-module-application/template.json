@@ -1,0 +1,11 @@
+{
+  "name": "Single Module Application",
+  "order": 0,
+  "description": "<html>Template of single module Jmix application.</html>",
+  "params": [
+    {
+      "name": "projectId",
+      "mandatory": false
+    }
+  ]
+}

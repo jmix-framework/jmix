@@ -45,7 +45,8 @@ import java.util.function.Predicate;
 @StudioProperties(
         properties = {
                 @StudioProperty(name = "property", type = PropertyType.PROPERTY_PATH_REF, typeParameter = "V"),
-                @StudioProperty(name = "dataContainer", type = PropertyType.DATACONTAINER_REF)
+                @StudioProperty(name = "dataContainer", type = PropertyType.DATACONTAINER_REF),
+                @StudioProperty(name = "optionsEnum", type = PropertyType.ENUM_CLASS, typeParameter = "V")
         },
         groups = {
                 @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,

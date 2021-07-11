@@ -83,7 +83,6 @@ public interface OptionsField<V, I> extends Field<V>, HasOptionCaptionProvider<I
      *
      * @param optionsEnum enum class
      */
-    @StudioProperty(name = "optionsEnum", type = PropertyType.ENUM_CLASS)
     @SuppressWarnings("unchecked")
     default void setOptionsEnum(Class<I> optionsEnum) {
         checkNotNullArgument(optionsEnum);

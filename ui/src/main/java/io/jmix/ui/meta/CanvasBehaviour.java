@@ -98,6 +98,11 @@ public enum CanvasBehaviour {
     RICH_TEXT_AREA,
 
     /**
+     * Component is shown on canvas as a list component.
+     */
+    SELECT_LIST,
+
+    /**
      * Component is shown on canvas as a slider.
      */
     SLIDER,

@@ -46,7 +46,8 @@ import java.util.Collection;
                 @StudioProperty(name = "property", type = PropertyType.PROPERTY_PATH_REF, typeParameter = "I"),
                 @StudioProperty(name = "optionsContainer", type = PropertyType.COLLECTION_DATACONTAINER_REF,
                         typeParameter = "I"),
-                @StudioProperty(name = "captionProperty", type = PropertyType.PROPERTY_PATH_REF)
+                @StudioProperty(name = "captionProperty", type = PropertyType.PROPERTY_PATH_REF),
+                @StudioProperty(name = "optionsEnum", type = PropertyType.ENUM_CLASS, typeParameter = "I")
         },
         groups = {
                 @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,

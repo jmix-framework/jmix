@@ -16,11 +16,43 @@
 
 package io.jmix.ui.component;
 
+import io.jmix.ui.meta.CanvasBehaviour;
+import io.jmix.ui.meta.PropertiesConstraint;
+import io.jmix.ui.meta.PropertiesGroup;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioComponent;
+import io.jmix.ui.meta.StudioProperties;
+import io.jmix.ui.meta.StudioProperty;
+
 /**
  * List select component. Allows select only one item.
  *
  * @param <V> value and options type
  */
+@StudioComponent(
+        caption = "SingleSelectList",
+        category = "Components",
+        xmlElement = "singleSelectList",
+        icon = "io/jmix/ui/icon/component/singleSelectList.svg",
+        canvasBehaviour = CanvasBehaviour.SELECT_LIST,
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/single-select-list.html"
+)
+@StudioProperties(
+        properties = {
+                @StudioProperty(name = "dataContainer", type = PropertyType.DATACONTAINER_REF),
+                @StudioProperty(name = "property", type = PropertyType.PROPERTY_PATH_REF, typeParameter = "V"),
+                @StudioProperty(name = "optionsContainer", type = PropertyType.COLLECTION_DATACONTAINER_REF,
+                        typeParameter = "V"),
+                @StudioProperty(name = "captionProperty", type = PropertyType.PROPERTY_PATH_REF),
+                @StudioProperty(name = "optionsEnum", type = PropertyType.ENUM_CLASS, typeParameter = "V")
+        },
+        groups = {
+                @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                        properties = {"dataContainer", "property"}),
+                @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,
+                        properties = {"optionsContainer", "captionProperty"})
+        }
+)
 public interface SingleSelectList<V> extends SelectList<V, V> {
     String NAME = "singleSelectList";
 
@@ -29,6 +61,7 @@ public interface SingleSelectList<V> extends SelectList<V, V> {
      *
      * @param nullOptionVisible whether null element should be visible
      */
+    @StudioProperty(defaultValue = "true")
     void setNullOptionVisible(boolean nullOptionVisible);
 
     /**

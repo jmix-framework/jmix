@@ -41,7 +41,7 @@ import org.springframework.core.ParameterizedTypeReference;
 @StudioProperties(
         properties = {
                 @StudioProperty(name = "hierarchyProperty", type = PropertyType.PROPERTY_PATH_REF, typeParameter = "E",
-                        required = true),
+                        required = true, options = {"to_one", "to_many"}),
                 @StudioProperty(name = "showOrphans", type = PropertyType.BOOLEAN, defaultValue = "true")
         },
         groups = {

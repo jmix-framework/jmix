@@ -57,7 +57,7 @@ import java.util.function.Function;
                         required = true, typeParameter = "E"),
                 @StudioProperty(name = "captionProperty", type = PropertyType.PROPERTY_PATH_REF),
                 @StudioProperty(name = "hierarchyProperty", type = PropertyType.PROPERTY_PATH_REF, typeParameter = "E",
-                        required = true),
+                        required = true, options = {"to_one", "to_many"}),
                 @StudioProperty(name = "multiselect", type = PropertyType.BOOLEAN, defaultValue = "false"),
                 @StudioProperty(name = "showOrphans", type = PropertyType.BOOLEAN, defaultValue = "true")
         },

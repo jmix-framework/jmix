@@ -22,7 +22,7 @@
             spacing="true">
         <button id="exportExcel"
                 caption="msg://exportExcel"
-                icon="icons/excel.png"/>
+                icon="FILE_EXCEL_O"/>
         <pivot:pivotTable id="pivotTable"
                           editable="true"
                           width="100%">

@@ -22,6 +22,7 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
     <changeSet author="dynattr" id="1" context="!cuba">
+        <validCheckSum>8:9add9d771caf284954327243ab783671</validCheckSum>
 
         <createTable tableName="DYNAT_CATEGORY">
             <column name="ID" type="${uuid.type}">
@@ -70,7 +71,7 @@
             </column>
             <column name="DESCRIPTION" type="varchar(1000)"/>
             <column name="CATEGORY_ID" type="${uuid.type}">
-                <constraints foreignKeyName="DYNAT_CATEGORY_ATTR_CATEGORY_ID" references="DYNAT_CATEGORY(ID)"
+                <constraints foreignKeyName="DYNAT_CATEGORY_ATTR_CAT_ID" references="DYNAT_CATEGORY(ID)"
                              nullable="false"/>
             </column>
             <column name="ENTITY_CLASS" type="varchar(1000)"/>

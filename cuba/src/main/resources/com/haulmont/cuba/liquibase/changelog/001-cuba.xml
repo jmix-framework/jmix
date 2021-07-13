@@ -107,6 +107,7 @@
     </changeSet>
 
     <changeSet id="3" author="cuba" context="!cuba">
+        <validCheckSum>8:de11723e05b1f36dddad8eaf0172f0ee</validCheckSum>
 
         <createTable tableName="SYS_SCHEDULED_TASK">
             <column name="ID" type="${uuid.type}">
@@ -122,7 +123,7 @@
 
             <column name="BEAN_NAME" type="varchar(50)"/>
             <column name="METHOD_NAME" type="varchar(50)"/>
-            <column name="METHOD_PARAMS" type="varchar(4000)"/>
+            <column name="METHOD_PARAMS" type="longvarchar"/>
             <column name="DEFINED_BY" type="varchar(1)" defaultValue="B"/>
             <column name="CLASS_NAME" type="varchar(500)"/>
             <column name="SCRIPT_NAME" type="varchar(500)"/>
@@ -134,7 +135,7 @@
             <column name="START_DATE" type="datetime"/>
             <column name="TIME_FRAME" type="integer"/>
             <column name="START_DELAY" type="integer"/>
-            <column name="PERMITTED_SERVERS" type="varchar(4096)"/>
+            <column name="PERMITTED_SERVERS" type="longvarchar"/>
             <column name="LOG_START" type="boolean"/>
             <column name="LOG_FINISH" type="boolean"/>
             <column name="LAST_START_TIME" type="datetime"/>
@@ -147,6 +148,7 @@
     </changeSet>
 
     <changeSet id="4-oracle-hsqldb" author="cuba" context="!cuba" dbms="oracle, hsqldb">
+        <validCheckSum>8:f3c8d9712cd86d430a7e588ab5736710</validCheckSum>
 
         <createTable tableName="SYS_SCHEDULED_EXECUTION">
             <column name="ID" type="${uuid.type}">
@@ -163,12 +165,12 @@
             <column name="RESULT" type="text"/>
         </createTable>
 
-        <createIndex tableName="SYS_SCHEDULED_EXECUTION" indexName="IDX_SYS_SCHEDULED_EXECUTION_TASK_START_TIME">
+        <createIndex tableName="SYS_SCHEDULED_EXECUTION" indexName="IDX_SYS_SCHED_EXEC_START_TIME">
             <column name="TASK_ID"/>
             <column name="START_TIME"/>
         </createIndex>
 
-        <createIndex tableName="SYS_SCHEDULED_EXECUTION" indexName="IDX_SYS_SCHEDULED_EXECUTION_TASK_FINISH_TIME">
+        <createIndex tableName="SYS_SCHEDULED_EXECUTION" indexName="IDX_SYS_SCHED_EXEC_FIN_TIME">
             <column name="TASK_ID"/>
             <column name="FINISH_TIME"/>
         </createIndex>

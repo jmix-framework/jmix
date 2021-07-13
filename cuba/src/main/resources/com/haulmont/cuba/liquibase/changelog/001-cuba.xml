@@ -22,6 +22,7 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
     <changeSet id="1" author="cuba" context="!cuba">
+        <validCheckSum>8:9119eaab121a2481afd14caee612281d</validCheckSum>
 
         <createTable tableName="SYS_FOLDER">
             <column name="ID" type="${uuid.type}">
@@ -55,7 +56,7 @@
                              references="SYS_FOLDER(ID)"/>
             </column>
             <column name="FILTER_COMPONENT" type="varchar(200)"/>
-            <column name="FILTER_XML" type="varchar(7000)"/>
+            <column name="FILTER_XML" type="longvarchar"/>
             <column name="VISIBILITY_SCRIPT" type="longvarchar"/>
             <column name="QUANTITY_SCRIPT" type="longvarchar"/>
             <column name="APPLY_DEFAULT" type="boolean"/>

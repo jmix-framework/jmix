@@ -69,7 +69,7 @@
                              references="SYS_FOLDER(ID)"/>
             </column>
             <column name="FILTER_COMPONENT" type="varchar(200)"/>
-            <column name="FILTER_XML" type="varchar(7000)"/>
+            <column name="FILTER_XML" type="longvarchar"/>
             <column name="USERNAME" type="varchar(255)"/>
             <column name="PRESENTATION_ID" type="${uuid.type}"/>
             <column name="APPLY_DEFAULT" type="boolean"/>

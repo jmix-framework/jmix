@@ -18,7 +18,8 @@ group = 'io.jmix.rest'
 archivesBaseName = 'jmix-rest-starter'
 
 dependencies {
-    api 'io.jmix.rest:jmix-rest'
+    api project(':rest')
+
     compileOnly 'io.jmix.security:jmix-security-oauth2'
 
     api 'org.springframework.boot:spring-boot-autoconfigure'

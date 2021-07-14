@@ -22,6 +22,8 @@ apply plugin: 'io.jmix'
 group = 'io.jmix.rest'
 
 dependencies {
+    implementation project(':rest-starter')
+
     implementation 'io.jmix.core:jmix-core-starter'
     implementation 'io.jmix.data:jmix-eclipselink-starter'
     implementation 'io.jmix.ui:jmix-ui-starter'
@@ -36,8 +38,6 @@ dependencies {
     implementation 'io.jmix.sessions:jmix-sessions-starter'
     implementation 'io.jmix.dynattr:jmix-dynattr-starter'
     implementation 'io.jmix.dynattr:jmix-dynattr-ui-starter'
-
-    implementation 'io.jmix.rest:jmix-rest-starter'
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
 

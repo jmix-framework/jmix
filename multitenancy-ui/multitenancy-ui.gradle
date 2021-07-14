@@ -21,9 +21,7 @@ group = 'io.jmix.multitenancy'
 archivesBaseName = 'jmix-multitenancy-ui'
 
 dependencies {
-    api platform("io.jmix.bom:jmix-bom:$bomVersion")
-
-    api project(':multitenancy')
+    api 'io.jmix.multitenancy:jmix-multitenancy'
 
     api 'io.jmix.ui:jmix-ui'
 

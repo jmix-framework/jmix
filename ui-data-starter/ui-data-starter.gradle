@@ -18,7 +18,7 @@ group = 'io.jmix.ui'
 archivesBaseName = 'jmix-ui-data-starter'
 
 dependencies {
-    api project(':ui-data')
+    api 'io.jmix.ui:jmix-ui-data'
 
     implementation 'org.springframework.boot:spring-boot-autoconfigure'
 }

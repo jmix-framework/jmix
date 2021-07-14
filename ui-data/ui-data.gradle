@@ -21,10 +21,8 @@ group = 'io.jmix.ui'
 archivesBaseName = 'jmix-ui-data'
 
 dependencies {
-    api platform("io.jmix.bom:jmix-bom:$bomVersion")
-
     api 'io.jmix.data:jmix-data'
-    api project(':ui')
+    api 'io.jmix.ui:jmix-ui'
 
     implementation 'com.google.code.gson:gson'
     implementation 'com.fasterxml.jackson.core:jackson-databind'

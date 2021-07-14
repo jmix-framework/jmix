@@ -21,8 +21,6 @@ group = 'io.jmix.ui'
 archivesBaseName = 'jmix-ui'
 
 dependencies {
-    api platform("io.jmix.bom:jmix-bom:$bomVersion")
-
     api 'io.jmix.core:jmix-core'
 
     api 'com.vaadin:vaadin-server'

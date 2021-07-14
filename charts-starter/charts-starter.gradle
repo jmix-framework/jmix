@@ -22,7 +22,7 @@ group = 'io.jmix.ui'
 archivesBaseName = 'jmix-charts-starter'
 
 dependencies {
-    api project(':charts')
+    api 'io.jmix.ui:jmix-charts'
 
     api 'org.springframework.boot:spring-boot-autoconfigure'
 }

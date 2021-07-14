@@ -21,9 +21,7 @@ group = 'io.jmix.ui'
 archivesBaseName = 'jmix-charts'
 
 dependencies {
-    api platform("io.jmix.bom:jmix-bom:$bomVersion")
-
-    api project(':ui')
+    api 'io.jmix.ui:jmix-ui'
 
     api 'org.webjars:amcharts'
 

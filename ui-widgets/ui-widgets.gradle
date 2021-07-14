@@ -22,8 +22,6 @@ archivesBaseName = 'jmix-ui-widgets'
 def jmixUi = project(':ui')
 
 dependencies {
-    api platform("io.jmix.bom:jmix-bom:$bomVersion")
-
     api(jmixUi) {
         exclude(group: 'org.hibernate.validator', module: 'hibernate-validator')
         exclude(group: 'javax.validation', module: 'validation-api')

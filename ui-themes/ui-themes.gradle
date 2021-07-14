@@ -24,7 +24,6 @@ configurations {
 }
 
 dependencies {
-    api platform("io.jmix.bom:jmix-bom:$bomVersion")
     themes platform("io.jmix.bom:jmix-bom:$bomVersion")
 
     implementation 'com.vaadin:vaadin-themes'

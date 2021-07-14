@@ -18,10 +18,8 @@ group = 'io.jmix.ui'
 archivesBaseName = 'jmix-charts-widgets'
 
 dependencies {
-    api platform("io.jmix.bom:jmix-bom:$bomVersion")
-
-    api project(':charts')
-    api project(':ui-widgets')
+    api 'io.jmix.ui:jmix-charts'
+    api 'io.jmix.ui:jmix-ui-widgets'
 
     implementation 'com.google.code.gson:gson'
 }

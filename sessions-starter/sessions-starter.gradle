@@ -18,7 +18,8 @@ group = 'io.jmix.sessions'
 archivesBaseName = 'jmix-sessions-starter'
 
 dependencies {
-    api project(':sessions')
+    api 'io.jmix.sessions:jmix-sessions'
+
     api 'org.springframework.boot:spring-boot-autoconfigure'
     compileOnly 'org.springframework.security.oauth:spring-security-oauth2'
 }

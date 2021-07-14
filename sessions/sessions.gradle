@@ -21,7 +21,6 @@ group = 'io.jmix.sessions'
 archivesBaseName = 'jmix-sessions'
 
 dependencies {
-    api platform("io.jmix.bom:jmix-bom:$bomVersion")
     api 'io.jmix.core:jmix-core'
 
     api 'org.springframework.session:spring-session-core'

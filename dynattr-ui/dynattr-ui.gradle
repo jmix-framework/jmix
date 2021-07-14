@@ -21,11 +21,9 @@ group = 'io.jmix.dynattr'
 archivesBaseName = 'jmix-dynattr-ui'
 
 dependencies {
-    api platform("io.jmix.bom:jmix-bom:$bomVersion")
-
     api 'io.jmix.ui:jmix-ui'
 
-    api project(':dynattr')
+    api 'io.jmix.dynattr:jmix-dynattr'
 
     implementation 'com.google.code.gson:gson'
 

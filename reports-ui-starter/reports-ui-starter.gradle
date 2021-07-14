@@ -18,7 +18,7 @@ group = 'io.jmix.reports'
 archivesBaseName = 'jmix-reports-ui-starter'
 
 dependencies {
-    api 'io.jmix.reports:jmix-reports-ui'
+    api project(':reports-ui')
 
     api 'org.springframework.boot:spring-boot-autoconfigure'
 }

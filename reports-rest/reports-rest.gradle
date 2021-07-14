@@ -21,9 +21,7 @@ group = 'io.jmix.reports'
 archivesBaseName = 'jmix-reports-rest'
 
 dependencies {
-    api 'io.jmix.reports:jmix-reports'
-
-    api 'io.jmix.core:jmix-core'
+    api project(':reports')
 
     compileOnly 'io.jmix.security:jmix-security-oauth2'
 

@@ -19,7 +19,7 @@ archivesBaseName = 'jmix-imap-starter'
 
 
 dependencies {
-    api 'io.jmix.imap:jmix-imap'
+    api project(':imap')
 
     compileOnly 'org.springframework.boot:spring-boot-starter-quartz'
     implementation 'org.springframework.boot:spring-boot-autoconfigure'

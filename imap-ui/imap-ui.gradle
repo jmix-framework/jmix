@@ -21,7 +21,7 @@ group = 'io.jmix.imap'
 archivesBaseName = 'jmix-imap-ui'
 
 dependencies {
-    api 'io.jmix.imap:jmix-imap'
+    api project(':imap')
 
     api 'io.jmix.ui:jmix-ui'
 

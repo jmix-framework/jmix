@@ -18,7 +18,7 @@ group = 'io.jmix.search'
 archivesBaseName = 'jmix-search-starter'
 
 dependencies {
-    api project(':search')
+    api 'io.jmix.search:jmix-search'
 
     api 'org.springframework.boot:spring-boot-autoconfigure'
 

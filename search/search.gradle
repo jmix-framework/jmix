@@ -21,8 +21,6 @@ group = 'io.jmix.search'
 archivesBaseName = 'jmix-search'
 
 dependencies {
-    api platform("io.jmix.bom:jmix-bom:$bomVersion")
-
     api 'io.jmix.data:jmix-data'
     implementation 'io.jmix.security:jmix-security'
 

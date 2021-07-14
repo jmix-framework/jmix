@@ -21,9 +21,7 @@ group = 'io.jmix.search'
 archivesBaseName = 'jmix-search-ui'
 
 dependencies {
-    api platform("io.jmix.bom:jmix-bom:$bomVersion")
-
-    api project(':search')
+    api 'io.jmix.search:jmix-search'
 
     api 'io.jmix.ui:jmix-ui'
 

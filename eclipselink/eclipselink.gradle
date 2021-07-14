@@ -21,7 +21,7 @@ group = 'io.jmix.data'
 archivesBaseName = 'jmix-eclipselink'
 
 dependencies {
-    api 'io.jmix.data:jmix-data'
+    api project(':data')
 
     api 'org.eclipse.persistence:org.eclipse.persistence.jpa'
     implementation 'org.eclipse.persistence:org.eclipse.persistence.extension'

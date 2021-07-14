@@ -2,8 +2,8 @@ group = 'io.jmix.data'
 archivesBaseName = 'jmix-eclipselink-starter'
 
 dependencies {
-    api 'io.jmix.data:jmix-eclipselink'
-    api 'io.jmix.data:jmix-data-autoconfigure'
+    api project(':eclipselink')
+    api project(':data-autoconfigure')
 
     implementation 'org.springframework:spring-messaging'
     implementation 'org.springframework.boot:spring-boot-autoconfigure'

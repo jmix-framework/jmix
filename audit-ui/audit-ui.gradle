@@ -21,7 +21,8 @@ group = 'io.jmix.audit'
 archivesBaseName = 'jmix-audit-ui'
 
 dependencies {
-    api 'io.jmix.audit:jmix-audit'
+    api project(':audit')
+
     api 'io.jmix.ui:jmix-ui'
 
     compileOnly 'io.jmix.security:jmix-security-ui'

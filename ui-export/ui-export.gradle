@@ -20,7 +20,7 @@ group = 'io.jmix.ui'
 archivesBaseName = 'jmix-ui-export'
 
 dependencies {
-    api 'io.jmix.ui:jmix-ui'
+    api project(':ui')
 
     implementation('org.apache.poi:poi:4.1.2')
     implementation('org.apache.poi:poi-ooxml:4.1.2')

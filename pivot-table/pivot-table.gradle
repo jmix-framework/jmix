@@ -21,8 +21,7 @@ group = 'io.jmix.ui'
 archivesBaseName = 'jmix-pivot-table'
 
 dependencies {
-    api 'io.jmix.ui:jmix-ui'
-    api 'io.jmix.ui:jmix-ui-export'
+    api project(':ui-export')
 
     api 'org.apache.poi:poi'
 

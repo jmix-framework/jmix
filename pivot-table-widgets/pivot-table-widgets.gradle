@@ -18,8 +18,8 @@ group = 'io.jmix.ui'
 archivesBaseName = 'jmix-pivot-table-widgets'
 
 dependencies {
-    api 'io.jmix.ui:jmix-pivot-table'
-    api 'io.jmix.ui:jmix-ui-widgets'
+    api project(':pivot-table')
+    api project(':ui-widgets')
 
     implementation 'com.google.code.gson:gson'
 }

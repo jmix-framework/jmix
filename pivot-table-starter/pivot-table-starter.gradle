@@ -18,7 +18,7 @@ group = 'io.jmix.ui'
 archivesBaseName = 'jmix-pivot-table-starter'
 
 dependencies {
-    api 'io.jmix.ui:jmix-pivot-table'
+    api project(':pivot-table')
 
     api 'org.springframework.boot:spring-boot-autoconfigure'
 

@@ -119,6 +119,11 @@ public class PivotTableExtensionImpl implements PivotTableExtension {
         pivotTableExtension.setTimeParseFormat(timeParseFormat);
     }
 
+    @Override
+    public boolean isRendererSupported(Renderer renderer) {
+        return supportedRenderers.contains(renderer);
+    }
+
     protected void setupParseFormats() {
         if (excelExporter != null) {
             excelExporter.setDateTimeParseFormat(getDateTimeParseFormat());

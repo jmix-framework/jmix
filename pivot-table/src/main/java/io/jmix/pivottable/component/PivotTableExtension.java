@@ -17,6 +17,7 @@
 package io.jmix.pivottable.component;
 
 
+import io.jmix.pivottable.model.Renderer;
 import io.jmix.ui.download.Downloader;
 import io.jmix.pivottable.model.extension.PivotData;
 
@@ -99,4 +100,11 @@ public interface PivotTableExtension {
      */
     void setTimeParseFormat(String timeParseFormat);
 
+    /**
+     * Checks whether renderer is supported by the exporter.
+     *
+     * @param renderer renderer to check
+     * @return {@code true} if renderer is supported by the exporter
+     */
+    boolean isRendererSupported(Renderer renderer);
 }

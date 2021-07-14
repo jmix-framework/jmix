@@ -45,6 +45,8 @@ public class PivotTableScreen extends Screen {
 
     @Autowired
     protected PivotTable pivotTable;
+    @Autowired
+    protected Button exportExcel;
 
     @WindowParam(name = DATA_ITEMS)
     protected List<DataItem> dataItems;
@@ -79,5 +81,10 @@ public class PivotTableScreen extends Screen {
     @Subscribe("exportExcel")
     public void exportExcel(Button.ClickEvent event) {
         pivotTableExtension.exportTableToXls();
+    }
+
+    @Subscribe("pivotTable")
+    protected void onPivotTableRefreshEvent(PivotTable.RefreshEvent event) {
+        exportExcel.setEnabled(pivotTableExtension.isRendererSupported(event.getRenderer()));
     }
 }

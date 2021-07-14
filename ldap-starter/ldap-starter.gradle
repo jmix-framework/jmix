@@ -18,7 +18,7 @@ group = 'io.jmix.ldap'
 archivesBaseName = 'jmix-ldap-starter'
 
 dependencies {
-    api project(':ldap')
+    api 'io.jmix.ldap:jmix-ldap'
 
     implementation 'org.springframework.boot:spring-boot-autoconfigure'
 

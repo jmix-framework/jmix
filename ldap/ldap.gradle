@@ -21,8 +21,6 @@ group = 'io.jmix.ldap'
 archivesBaseName = 'jmix-ldap'
 
 dependencies {
-    api platform("io.jmix.bom:jmix-bom:$bomVersion")
-
     api 'io.jmix.core:jmix-core'
     api 'io.jmix.security:jmix-security'
     api 'io.jmix.security:jmix-security-data'

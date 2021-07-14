@@ -18,7 +18,7 @@ group = 'io.jmix.dashboards'
 archivesBaseName = 'jmix-dashboards-chart-starter'
 
 dependencies {
-    api project(':dashboards-chart')
+    api 'io.jmix.dashboards:jmix-dashboards-chart'
 
     implementation 'org.springframework.boot:spring-boot-autoconfigure'
 }

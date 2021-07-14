@@ -21,8 +21,6 @@ group = 'io.jmix.dashboards'
 archivesBaseName = 'jmix-dashboards'
 
 dependencies {
-    api platform("io.jmix.bom:jmix-bom:$bomVersion")
-
     api 'io.jmix.core:jmix-core'
     api 'io.jmix.data:jmix-data'
 

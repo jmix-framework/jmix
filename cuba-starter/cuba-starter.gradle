@@ -18,7 +18,7 @@ group = 'io.jmix.cuba'
 archivesBaseName = 'jmix-cuba-starter'
 
 dependencies {
-    api project(':cuba')
+    api 'io.jmix.cuba:jmix-cuba'
 
     api 'org.springframework.boot:spring-boot-autoconfigure'
 }

@@ -21,8 +21,6 @@ group = 'io.jmix.cuba'
 archivesBaseName = 'jmix-cuba'
 
 dependencies {
-    api platform("io.jmix.bom:jmix-bom:$bomVersion")
-
     api 'io.jmix.core:jmix-core'
     api 'io.jmix.data:jmix-data'
     api 'io.jmix.data:jmix-eclipselink'

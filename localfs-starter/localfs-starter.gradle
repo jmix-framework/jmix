@@ -18,7 +18,7 @@ group = 'io.jmix.localfs'
 archivesBaseName = 'jmix-localfs-starter'
 
 dependencies {
-    api 'io.jmix.localfs:jmix-localfs'
+    api project(':localfs')
 
     implementation 'org.springframework.boot:spring-boot-autoconfigure'
 

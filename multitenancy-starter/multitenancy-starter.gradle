@@ -18,7 +18,7 @@ group = 'io.jmix.multitenancy'
 archivesBaseName = 'jmix-multitenancy-starter'
 
 dependencies {
-    api 'io.jmix.multitenancy:jmix-multitenancy'
+    api project(':multitenancy')
 
     api 'org.springframework.boot:spring-boot-autoconfigure'
 }

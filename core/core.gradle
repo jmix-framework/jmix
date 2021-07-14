@@ -21,8 +21,6 @@ group = 'io.jmix.core'
 archivesBaseName = 'jmix-core'
 
 dependencies {
-    api platform("io.jmix.bom:jmix-bom:$bomVersion")
-
     api 'org.springframework.boot:spring-boot'
     api 'org.springframework:spring-context'
     api 'org.springframework:spring-context-support'

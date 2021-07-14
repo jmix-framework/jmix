@@ -21,9 +21,7 @@ group = 'io.jmix.emailtemplates'
 archivesBaseName = 'jmix-emailtemplates-ui'
 
 dependencies {
-    api platform("io.jmix.bom:jmix-bom:$bomVersion")
-
-    api project(':emailtemplates')
+    api 'io.jmix.emailtemplates:jmix-emailtemplates'
 
     api 'io.jmix.ui:jmix-ui'
     api 'io.jmix.grapesjs:jmix-grapesjs'

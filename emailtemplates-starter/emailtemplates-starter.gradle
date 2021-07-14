@@ -18,7 +18,7 @@ group = 'io.jmix.emailtemplates'
 archivesBaseName = 'jmix-emailtemplates-starter'
 
 dependencies {
-    api project(':emailtemplates')
+    api 'io.jmix.emailtemplates:jmix-emailtemplates'
 
     implementation 'io.jmix.reports:jmix-reports-starter'
     implementation 'io.jmix.email:jmix-email-starter'

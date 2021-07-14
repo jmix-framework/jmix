@@ -18,7 +18,7 @@ group = 'io.jmix.imap'
 archivesBaseName = 'jmix-imap-ui-starter'
 
 dependencies {
-    api project(':imap-ui')
+    api 'io.jmix.imap:jmix-imap-ui'
 
     api 'org.springframework.boot:spring-boot-autoconfigure'
 }

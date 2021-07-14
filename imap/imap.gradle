@@ -21,8 +21,6 @@ group = 'io.jmix.imap'
 archivesBaseName = 'jmix-imap'
 
 dependencies {
-    api platform("io.jmix.bom:jmix-bom:$bomVersion")
-
     api 'io.jmix.core:jmix-core'
     api 'io.jmix.data:jmix-data'
 

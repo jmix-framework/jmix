@@ -18,7 +18,7 @@ group = 'io.jmix.graphql'
 archivesBaseName = 'jmix-graphql-starter'
 
 dependencies {
-    api project(':graphql')
+    api 'io.jmix.graphql:jmix-graphql'
 
     implementation 'org.springframework.boot:spring-boot-autoconfigure'
 

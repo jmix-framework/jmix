@@ -21,7 +21,6 @@ group = 'io.jmix.graphql'
 archivesBaseName = 'jmix-graphql'
 
 dependencies {
-    api platform("io.jmix.bom:jmix-bom:$bomVersion")
     api 'io.leangen.graphql:graphql-spqr-spring-boot-starter'
     api 'io.jmix.core:jmix-core'
 

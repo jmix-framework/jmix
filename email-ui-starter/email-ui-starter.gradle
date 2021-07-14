@@ -18,7 +18,7 @@ group = 'io.jmix.email'
 archivesBaseName = 'jmix-email-ui-starter'
 
 dependencies {
-    api project(':email-ui')
+    api 'io.jmix.email:jmix-email-ui'
 
     api 'org.springframework.boot:spring-boot-autoconfigure'
 }

@@ -21,7 +21,7 @@ group = 'io.jmix.dashboards'
 archivesBaseName = 'jmix-dashboards-ui'
 
 dependencies {
-    api 'io.jmix.dashboards:jmix-dashboards'
+    api project(':dashboards')
 
     api 'io.jmix.ui:jmix-ui'
 

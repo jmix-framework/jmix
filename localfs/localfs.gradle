@@ -21,8 +21,6 @@ group = 'io.jmix.localfs'
 archivesBaseName = 'jmix-localfs'
 
 dependencies {
-    api platform("io.jmix.bom:jmix-bom:$bomVersion")
-
     api 'io.jmix.core:jmix-core'
 
     testImplementation 'org.springframework:spring-test'

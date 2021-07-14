@@ -18,7 +18,7 @@ group = 'io.jmix.core'
 archivesBaseName = 'jmix-core-starter'
 
 dependencies {
-    api 'io.jmix.core:jmix-core'
+    api project(':core')
 
     implementation 'org.springframework.boot:spring-boot-autoconfigure'
 }

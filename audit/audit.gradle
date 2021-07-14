@@ -21,8 +21,6 @@ group = 'io.jmix.audit'
 archivesBaseName = 'jmix-audit'
 
 dependencies {
-    api platform("io.jmix.bom:jmix-bom:$bomVersion")
-
     api 'io.jmix.data:jmix-data'
 
     implementation 'org.springframework:spring-orm'

@@ -18,7 +18,7 @@ group = 'io.jmix.audit'
 archivesBaseName = 'jmix-audit-starter'
 
 dependencies {
-    api project(':audit')
+    api 'io.jmix.audit:jmix-audit'
 
     implementation 'org.springframework.boot:spring-boot-autoconfigure'
 

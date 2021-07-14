@@ -21,8 +21,6 @@ group = 'io.jmix.grapesjs'
 archivesBaseName = 'jmix-grapesjs'
 
 dependencies {
-    api platform("io.jmix.bom:jmix-bom:$bomVersion")
-
     api 'io.jmix.ui:jmix-ui'
 
     api ('org.webjars.npm:grapesjs') {

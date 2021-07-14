@@ -18,7 +18,7 @@ group = 'io.jmix.dynattr'
 archivesBaseName = 'jmix-dynattr-ui-starter'
 
 dependencies {
-    api 'io.jmix.dynattr:jmix-dynattr-ui'
+    api project(':dynattr-ui')
 
     implementation 'org.springframework.boot:spring-boot-autoconfigure'
 }

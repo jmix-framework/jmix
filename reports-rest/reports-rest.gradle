@@ -21,9 +21,7 @@ group = 'io.jmix.reports'
 archivesBaseName = 'jmix-reports-rest'
 
 dependencies {
-    api platform("io.jmix.bom:jmix-bom:$bomVersion")
-
-    api project(':reports')
+    api 'io.jmix.reports:jmix-reports'
 
     api 'io.jmix.core:jmix-core'
 

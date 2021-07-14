@@ -18,7 +18,7 @@ group = 'io.jmix.datatools'
 archivesBaseName = 'jmix-datatools-ui-starter'
 
 dependencies {
-    api project(':datatools-ui')
+    api 'io.jmix.datatools:jmix-datatools-ui'
 
     api 'org.springframework.boot:spring-boot-autoconfigure'
 }

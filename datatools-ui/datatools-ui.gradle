@@ -21,9 +21,7 @@ group = 'io.jmix.datatools'
 archivesBaseName = 'jmix-datatools-ui'
 
 dependencies {
-    api platform("io.jmix.bom:jmix-bom:$bomVersion")
-
-    api project(':datatools')
+    api 'io.jmix.datatools:jmix-datatools'
     api 'io.jmix.core:jmix-core'
     api 'io.jmix.data:jmix-data'
     api 'io.jmix.ui:jmix-ui'

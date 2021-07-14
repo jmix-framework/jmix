@@ -18,7 +18,7 @@ group = 'io.jmix.awsfs'
 archivesBaseName = 'jmix-awsfs-starter'
 
 dependencies {
-    api 'io.jmix.awsfs:jmix-awsfs'
+    api project(':awsfs')
 
     implementation 'org.springframework.boot:spring-boot-autoconfigure'
 

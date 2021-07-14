@@ -21,8 +21,7 @@ group = 'io.jmix.security'
 archivesBaseName = 'jmix-security-ui'
 
 dependencies {
-    api 'io.jmix.security:jmix-security'
-    api 'io.jmix.security:jmix-security-data'
+    api project(':security-data')
 
     api 'io.jmix.ui:jmix-ui'
 

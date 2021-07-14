@@ -19,7 +19,7 @@ group = 'io.jmix.security'
 archivesBaseName = 'jmix-security-starter'
 
 dependencies {
-    api 'io.jmix.security:jmix-security'
+    api project(':security')
 
     api 'org.springframework.boot:spring-boot-autoconfigure'
 

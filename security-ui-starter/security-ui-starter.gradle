@@ -19,7 +19,7 @@ group = 'io.jmix.security'
 archivesBaseName = 'jmix-security-ui-starter'
 
 dependencies {
-    api project(':security-ui')
+    api 'io.jmix.security:jmix-security-ui'
 
     api 'org.springframework.boot:spring-boot-autoconfigure'
 }

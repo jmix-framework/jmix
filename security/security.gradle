@@ -21,8 +21,6 @@ group = 'io.jmix.security'
 archivesBaseName = 'jmix-security'
 
 dependencies {
-    api platform("io.jmix.bom:jmix-bom:$bomVersion")
-
     api 'io.jmix.core:jmix-core'
     implementation 'org.springframework:spring-tx'
 

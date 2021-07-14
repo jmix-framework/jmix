@@ -21,7 +21,7 @@ group = 'io.jmix.grapesjs'
 archivesBaseName = 'jmix-grapesjs-starter'
 
 dependencies {
-    api 'io.jmix.grapesjs:jmix-grapesjs'
+    api project(':grapesjs')
 
     implementation 'org.springframework.boot:spring-boot-autoconfigure'
 }

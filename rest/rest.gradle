@@ -21,8 +21,6 @@ group = 'io.jmix.rest'
 archivesBaseName = 'jmix-rest'
 
 dependencies {
-    api platform("io.jmix.bom:jmix-bom:$bomVersion")
-
     api 'io.jmix.core:jmix-core'
     compileOnly 'io.jmix.security:jmix-security'
     compileOnly 'org.springframework.security.oauth:spring-security-oauth2'

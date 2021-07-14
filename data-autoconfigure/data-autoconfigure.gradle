@@ -2,7 +2,7 @@ group = 'io.jmix.data'
 archivesBaseName = 'jmix-data-autoconfigure'
 
 dependencies {
-    api project(':data')
+    api 'io.jmix.data:jmix-data'
 
     api 'com.zaxxer:HikariCP'
     api 'org.liquibase:liquibase-core'

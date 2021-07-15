@@ -11,12 +11,17 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.security.AccessDeniedException;
 import io.jmix.core.validation.EntityValidationException;
 import io.jmix.graphql.NamingUtils;
+import io.jmix.graphql.modifier.GraphQLRemoveEntityDataFetcher;
+import io.jmix.graphql.modifier.GraphQLRemoveEntityDataFetcherContext;
+import io.jmix.graphql.modifier.GraphQLUpsertEntityDataFetcher;
+import io.jmix.graphql.modifier.GraphQLUpsertEntityDataFetcherContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.PersistenceException;
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -49,12 +54,17 @@ public class EntityMutationDataFetcher {
     private AccessManager accessManager;
     @Autowired
     private ObjectMapper objectMapper;
+    @Autowired
+    private MutationDataFetcherLoader mutationDataFetcherLoader;
 
+    private static final String GRAPHQL_ENTITY_REMOVER_METHOD_NAME = GraphQLRemoveEntityDataFetcher.class.getDeclaredMethods()[0].getName();
+
+    private static final String GRAPHQL_ENTITIES_UPDATER_METHOD_NAME = GraphQLUpsertEntityDataFetcher.class.getDeclaredMethods()[0].getName();
 
     // todo batch commit with association not supported now (not transferred from cuba-graphql)
     public DataFetcher<?> upsertEntity(MetaClass metaClass) {
-        return environment -> {
 
+        return environment -> {
             Class<Object> javaClass = metaClass.getJavaClass();
             Map<String, String> input = environment.getArgument(NamingUtils.uncapitalizedSimpleName(javaClass));
             log.debug("upsertEntity: input {}", input);
@@ -68,31 +78,44 @@ public class EntityMutationDataFetcher {
             checkReadOnlyAttributeWrite(metaClass, entityImportPlan, entity);
             populateAndCheckComposition(entity, new HashSet<>());
 
-            Collection<Object> objects;
-            try {
-                objects = entityImportExport.importEntities(Collections.singletonList(entity), entityImportPlan, true);
-            } catch (EntityValidationException ex) {
-                throw new GqlEntityValidationException(ex, entity, metaClass);
-            } catch (PersistenceException ex) {
-                throw new GqlEntityValidationException(ex, "Can't save entity to database");
-            } catch (AccessDeniedException ex) {
-                throw new GqlEntityValidationException(ex, "Can't save entity to database. Access denied");
-            }
-            Object mainEntity = getMainEntity(objects, metaClass);
-
+            Object mainEntity;
             FetchPlan fetchPlan = dataFetcherPlanBuilder.buildFetchPlan(metaClass.getJavaClass(), environment);
-            // reload for response fetch plan, if required
-            if (!entityStates.isLoadedWithFetchPlan(mainEntity, fetchPlan)) {
-                LoadContext loadContext = new LoadContext(metaClass).setFetchPlan(fetchPlan);
-                loadContext.setId(EntityValues.getId(mainEntity));
-                mainEntity = dataManager.load(loadContext);
+            if (mutationDataFetcherLoader.getCustomEntityUpsert(metaClass.getJavaClass()) == null) {
+                Collection<Object> objects;
+                try {
+                    objects = entityImportExport.importEntities(Collections.singletonList(entity), entityImportPlan, true);
+                } catch (EntityValidationException ex) {
+                    throw new GqlEntityValidationException(ex, entity, metaClass);
+                } catch (PersistenceException ex) {
+                    throw new GqlEntityValidationException(ex, "Can't save entity to database");
+                } catch (AccessDeniedException ex) {
+                    throw new GqlEntityValidationException(ex, "Can't save entity to database. Access denied");
+                }
+
+                mainEntity = getMainEntity(objects, metaClass);
+
+                // reload for response fetch plan, if required
+                if (!entityStates.isLoadedWithFetchPlan(mainEntity, fetchPlan)) {
+                    LoadContext loadContext = new LoadContext(metaClass).setFetchPlan(fetchPlan);
+                    loadContext.setId(EntityValues.getId(mainEntity));
+                    mainEntity = dataManager.load(loadContext);
+                }
+
+            } else {
+                Object bean = mutationDataFetcherLoader.getCustomEntityUpsert(metaClass.getJavaClass());
+                Method method = bean.getClass().getDeclaredMethod(GRAPHQL_ENTITIES_UPDATER_METHOD_NAME,
+                        GraphQLUpsertEntityDataFetcherContext.class);
+                mainEntity = method.invoke(bean, new GraphQLUpsertEntityDataFetcherContext(metaClass,
+                        Collections.singletonList(entity), entityImportPlan));
             }
 
-            return responseBuilder.buildResponse((Entity) mainEntity, fetchPlan, metaClass, environmentUtils.getDotDelimitedProps(environment));
+            return responseBuilder.buildResponse((Entity) mainEntity, fetchPlan, metaClass,
+                    environmentUtils.getDotDelimitedProps(environment));
         };
     }
 
     public DataFetcher<?> deleteEntity(MetaClass metaClass) {
+
         return environment -> {
             try {
                 checkCanDeleteEntity(metaClass);
@@ -103,7 +126,14 @@ public class EntityMutationDataFetcher {
             UUID id = UUID.fromString(environment.getArgument("id"));
             log.debug("deleteEntity: id {}", id);
             Id<?> entityId = Id.of(id, metaClass.getJavaClass());
-            dataManager.remove(entityId);
+            if (mutationDataFetcherLoader.getCustomEntityRemover(metaClass.getJavaClass()) == null) {
+                dataManager.remove(entityId);
+            } else {
+                Object bean = mutationDataFetcherLoader.getCustomEntityRemover(metaClass.getJavaClass());
+                Method method = bean.getClass().getDeclaredMethod(GRAPHQL_ENTITY_REMOVER_METHOD_NAME,
+                        GraphQLRemoveEntityDataFetcherContext.class);
+                method.invoke(bean, new GraphQLRemoveEntityDataFetcherContext(metaClass, entityId));
+            }
             return null;
         };
     }
@@ -165,8 +195,8 @@ public class EntityMutationDataFetcher {
      * Walk through entity graph and check that all compositions have correct relations. If composition inverse value is
      * null - update it to correct value. If composition inverse value doesn't match parent - throw exception.
      *
-     * @param entity    entity to be checked
-     * @param visited   a set of entities that already be checked in graph
+     * @param entity  entity to be checked
+     * @param visited a set of entities that already be checked in graph
      */
     protected void populateAndCheckComposition(Object entity, Set<Object> visited) {
         if (visited.contains(entity)) {
@@ -187,7 +217,7 @@ public class EntityMutationDataFetcher {
 
                     childEntityStream.forEach(childElement -> {
                         //have to check a linking for retrieved composition with a parent it can be different
-                        assureCompositionInverseLink( entity, metaClass, metaProperty, childElement);
+                        assureCompositionInverseLink(entity, metaClass, metaProperty, childElement);
                         //digging deeper for child element to find any compositions inside
                         populateAndCheckComposition(childElement, visited);
                     });
@@ -197,10 +227,11 @@ public class EntityMutationDataFetcher {
     /**
      * Check that inverse link is set correctly in composition relation. If link is null - fix it (assign to parent).
      * If link point to different entity (not equals to parent) - throw exception.
-     * @param parent - parent entity
+     *
+     * @param parent          - parent entity
      * @param parentMetaClass - meta class of parent entity
-     * @param metaProperty - metadata of property which points to child in parent entity
-     * @param child - child entity
+     * @param metaProperty    - metadata of property which points to child in parent entity
+     * @param child           - child entity
      */
     protected void assureCompositionInverseLink(Object parent, MetaClass parentMetaClass, MetaProperty metaProperty, Object child) {
         MetaProperty inverseMetaProperty = metaProperty.getInverse();
@@ -226,4 +257,7 @@ public class EntityMutationDataFetcher {
             }
         }
     }
+
+
+
 }

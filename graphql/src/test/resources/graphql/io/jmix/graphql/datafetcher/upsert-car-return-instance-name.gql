@@ -7,6 +7,7 @@ mutation Upsert_scr_Car($id: UUID) {
         regNumber: "ab000"
     }) {
         id
+        price
         maxPassengers
         garage {
             name

@@ -129,7 +129,6 @@ public class UserInfoGraphQLService {
     }
 }
 ```
-
 leads to schema additional type and query generation 
 ```graphql
 
@@ -155,6 +154,78 @@ input inp_Car
 #### Work with SPQR
 More about how to work with SPQR could be found [in this article](https://www.howtographql.com/graphql-java/11-alternative-approaches/).
 
+### Create custom query/mutation data fetchers for entities
+In default behavior query/mutation data fetchers are working with default database of project 
+You can change default logic of query/mutation for entities using follow API:
+1) Set annotation GraphQLCustomQueryDataFetcher/GraphQLCustomMutationDataFetcher on yours Component
+2) Implement one or several interfaces for query data fetcher:
+	* GraphQLEntityCountDataFetcher
+	* GraphQLEntityListDataFetcher
+	* GraphQLEntityDataFetcher
+3) Implement one or several interfaces for mutation data fetcher:
+	* GraphQLRemoveEntityDataFetcher
+	* GraphQLUpsertEntityDataFetcher
+
+Example for query data fetcher:
+```java
+@Component("Test_CarLoader")
+public class CarEntityDataFetcher implements GraphQLEntityCountDataFetcher<Car>,
+		GraphQLEntityListDataFetcher<Car>, GraphQLEntityDataFetcher<Car> {
+
+	@Autowired
+	Metadata metadata;
+
+	@Override
+	public Long loadCount(GraphQLEntityCountDataFetcherContext<Car> context) {
+		return 999L;
+	}
+
+	@Override
+	public List<Car> loadEntityList(GraphQLEntityListDataFetcherContext<Car> context) {
+		Car car1 = metadata.create(Car.class);
+		car1.setManufacturer("BMW");
+		car1.setModel("M3");
+		car1.setPrice(BigDecimal.valueOf(10));
+		Car car2 = metadata.create(Car.class);
+		car2.setManufacturer("Lada");
+		car2.setModel("Vesta");
+		car2.setPrice(BigDecimal.valueOf(20));
+		return new ArrayList<>(Arrays.asList(car1, car2));
+	}
+
+	@Override
+	public Car loadEntity(GraphQLEntityDataFetcherContext<Car> context) {
+		Car car = metadata.create(Car.class);
+		car.setManufacturer("Lada");
+		car.setModel("Vesta");
+		car.setPrice(BigDecimal.valueOf(10));
+		return car;
+	}
+}
+```
+Example for query data fetcher:
+```java
+@Component("Test_CarModifier")
+public class CarModifier implements GraphQLRemoveEntityDataFetcher<Car>, GraphQLUpsertEntityDataFetcher<Car> {
+
+    @Autowired
+    Metadata metadata;
+
+    private static Logger log = LoggerFactory.getLogger(CarModifier.class);
+
+    @Override
+    public Car importEntities(GraphQLUpsertEntityDataFetcherContext<Car> context) {
+        Car car = context.getEntities().get(0);
+        car.setPrice(BigDecimal.valueOf(10));
+        return car;
+    }
+
+    @Override
+    public void deleteEntity(GraphQLRemoveEntityDataFetcherContext<Car> graphQLRemoveEntityDataFetcherContext) {
+        log.warn("Delete entity with id " + graphQLRemoveEntityDataFetcherContext.getId());
+    }
+}
+```
 
 ### Permission Query
 

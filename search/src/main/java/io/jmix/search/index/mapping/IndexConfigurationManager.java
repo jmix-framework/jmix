@@ -46,8 +46,10 @@ public class IndexConfigurationManager {
     @Autowired
     public IndexConfigurationManager(JmixModulesClasspathScanner classpathScanner,
                                      AnnotatedIndexDefinitionProcessor indexDefinitionProcessor,
-                                     InstanceNameProvider instanceNameProvider) {
-        Set<String> classNames = classpathScanner.getClassNames(IndexDefinitionDetector.class);
+                                     InstanceNameProvider instanceNameProvider,
+                                     IndexDefinitionDetector indexDefinitionDetector) {
+        Class<? extends IndexDefinitionDetector> detectorClass = indexDefinitionDetector.getClass();
+        Set<String> classNames = classpathScanner.getClassNames(detectorClass);
         log.debug("Create Index Configurations");
 
         Registry registry = new Registry(instanceNameProvider);

@@ -1,0 +1,90 @@
+{
+	"_instance_name": "rootEntity",
+	"oneToOneRef": {
+		"oneToOneRef": {
+			"embedded": {
+				"enumValue": [
+					"Open",
+					"ru_Open"
+				],
+				"textValue": "Embedded text value"
+			}
+		},
+		"oneToManyRef": {
+			"embedded": {
+				"textValue": [
+					"Embedded text value",
+					"Embedded text value"
+				],
+				"enumValue": [
+					"Open",
+					"ru_Open",
+					"Open",
+					"ru_Open"
+				]
+			}
+		},
+		"embedded": {
+			"enumValue": [
+				"Open",
+				"ru_Open"
+			],
+			"textValue": "Embedded text value"
+		}
+	},
+	"oneToManyRef": {
+		"oneToOneRef": {
+			"embedded": {
+				"textValue": [
+					"Embedded text value",
+					"Embedded text value"
+				],
+				"enumValue": [
+					"Open",
+					"ru_Open",
+					"Open",
+					"ru_Open"
+				]
+			}
+		},
+		"oneToManyRef": {
+			"embedded": {
+				"textValue": [
+					"Embedded text value",
+					"Embedded text value",
+					"Embedded text value",
+					"Embedded text value"
+				],
+				"enumValue": [
+					"Open",
+					"ru_Open",
+					"Open",
+					"ru_Open",
+					"Open",
+					"ru_Open",
+					"Open",
+					"ru_Open"
+				]
+			}
+		},
+		"embedded": {
+			"enumValue": [
+				"Open",
+				"ru_Open",
+				"Open",
+				"ru_Open"
+			],
+			"textValue": [
+				"Embedded text value",
+				"Embedded text value"
+			]
+		}
+	},
+	"embedded": {
+		"enumValue": [
+			"Open",
+			"ru_Open"
+		],
+		"textValue": "Embedded text value"
+	}
+}

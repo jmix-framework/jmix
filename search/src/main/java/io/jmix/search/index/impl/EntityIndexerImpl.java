@@ -131,12 +131,17 @@ public class EntityIndexerImpl implements EntityIndexer {
             }
         }
 
+        BulkResponse bulkResponse = executeBulkRequest(request);
+        return IndexResult.create(bulkResponse);
+    }
+
+    protected BulkResponse executeBulkRequest(BulkRequest request) {
         try {
             BulkResponse bulkResponse = esClient.bulk(request, RequestOptions.DEFAULT);
-            log.debug("Bulk Response (Index): Took {}, Status = {}, With Failures = {}{}",
+            log.debug("Bulk Response: Took {}, Status = {}, With Failures = {}{}",
                     bulkResponse.getTook(), bulkResponse.status(), bulkResponse.hasFailures(),
                     bulkResponse.hasFailures() ? ": " + bulkResponse.buildFailureMessage() : "");
-            return IndexResult.create(bulkResponse);
+            return bulkResponse;
         } catch (IOException e) {
             throw new RuntimeException("Bulk request failed", e);
         }
@@ -275,15 +280,8 @@ public class EntityIndexerImpl implements EntityIndexer {
             }
         }
 
-        try {
-            BulkResponse bulkResponse = esClient.bulk(request, RequestOptions.DEFAULT);
-            log.debug("Bulk Response (Delete): Took {}, Status = {}, With Failures = {}{}",
-                    bulkResponse.getTook(), bulkResponse.status(), bulkResponse.hasFailures(),
-                    bulkResponse.hasFailures() ? ": " + bulkResponse.buildFailureMessage() : "");
-            return IndexResult.create(bulkResponse);
-        } catch (IOException e) {
-            throw new RuntimeException("Bulk request failed", e);
-        }
+        BulkResponse bulkResponse = executeBulkRequest(request);
+        return IndexResult.create(bulkResponse);
     }
 
     protected void addDeleteActionToBulkRequest(BulkRequest request,

@@ -1,0 +1,73 @@
+{
+	"_instance_name": "rootEntity",
+	"oneToOneRef": {
+		"oneToOneRef": {
+			"fileValue": {
+				"_file_name": "testFile",
+				"_content": "Test file content\n"
+			}
+		},
+		"fileValue": {
+			"_file_name": "testFile"
+		},
+		"oneToManyRef": {
+			"fileValue": [
+				{
+					"_file_name": "testFile",
+					"_content": "Test file content\n"
+				},
+				{
+					"_file_name": "testFile",
+					"_content": "Test file content\n"
+				}
+			]
+		}
+	},
+	"fileValue": {
+		"_file_name": "testFile"
+	},
+	"oneToManyRef": {
+		"oneToOneRef": {
+			"fileValue": [
+				{
+					"_file_name": "testFile",
+					"_content": "Test file content\n"
+				},
+				{
+					"_file_name": "testFile",
+					"_content": "Test file content\n"
+				}
+			]
+		},
+		"fileValue": [
+			{
+				"_file_name": "testFile",
+				"_content": "Test file content\n"
+			},
+			{
+				"_file_name": "testFile",
+				"_content": "Test file content\n"
+			}
+		],
+		"oneToManyRef": {
+			"fileValue": [
+				{
+					"_file_name": "testFile",
+					"_content": "Test file content\n"
+				},
+				{
+					"_file_name": "testFile",
+					"_content": "Test file content\n"
+				},
+				{
+					"_file_name": "testFile",
+					"_content": "Test file content\n"
+				},
+				{
+					"_file_name": "testFile",
+					"_content": "Test file content\n"
+				}
+			]
+		}
+	}
+}

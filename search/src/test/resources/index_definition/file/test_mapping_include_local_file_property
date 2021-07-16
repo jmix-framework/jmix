@@ -1,0 +1,20 @@
+{
+	"properties": {
+		"fileValue": {
+			"properties": {
+				"_file_name": {
+					"type": "text"
+				},
+				"_content": {
+					"type": "text"
+				}
+			}
+		},
+		"name": {
+			"type": "text"
+		},
+		"_instance_name": {
+			"type": "text"
+		}
+	}
+}

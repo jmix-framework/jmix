@@ -47,4 +47,12 @@ public @interface JmixEntitySearchIndex {
      * @return entity class
      */
     Class<?> entity();
+
+    /**
+     * Provides explicitly defined name of the search index.
+     * <p>If it's not set index name will be based on 'searchIndexNamePrefix' property and entity name.
+     *
+     * @return custom index name
+     */
+    String indexName() default "";
 }

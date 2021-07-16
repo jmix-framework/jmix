@@ -17,9 +17,9 @@
 package index_definition;
 
 import org.junit.jupiter.params.provider.Arguments;
-import test_support.entity.TestSimpleFileRootEntity;
 import test_support.entity.TestRootEntity;
 import test_support.entity.TestSimpleEmbeddedRootEntity;
+import test_support.entity.TestSimpleFileRootEntity;
 import test_support.entity.TestSimpleRootEntity;
 import test_support.index_definition.common.*;
 import test_support.index_definition.embedded.TestIncludeAllEmbeddablePropertiesIndexDefinition;
@@ -89,6 +89,14 @@ public class AnnotatedIndexDefinitionTestCaseProvider {
                         .expectedIndexName("search_index_test_simplerootentity")
                         .expectedEntityClass(TestSimpleRootEntity.class)
                         .pathToFileWithExpectedMapping("index_definition/common/test_mapping_programmatic_with_annotations")
+                        .build()
+                ),
+                Arguments.of(AnnotatedIndexDefinitionProcessorTestCase.builder("Custom value can be used as index name")
+                        .indexDefinitionClass(TestCustomIndexNameIndexDefinition.class)
+                        .expectedEntityName("test_SimpleRootEntity")
+                        .expectedIndexName("custom_search_index_test_simple_root_entity")
+                        .expectedEntityClass(TestSimpleRootEntity.class)
+                        .pathToFileWithExpectedMapping("index_definition/common/test_mapping_custom_index_name")
                         .build()
                 )
         );

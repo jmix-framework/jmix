@@ -98,7 +98,7 @@ public class AnnotatedIndexDefinitionProcessor {
         if (entityMetaClass == null) {
             throw new RuntimeException("MetaClass for '" + entityJavaClass + "' not found");
         }
-        String indexName = createIndexName(entityMetaClass);
+        String indexName = createIndexName(indexAnnotation, entityMetaClass);
         log.debug("Index name for entity {}: {}", entityMetaClass, indexName);
 
         IndexMappingConfiguration indexMappingConfiguration = createIndexMappingConfig(entityMetaClass, indexDefClass);
@@ -117,8 +117,14 @@ public class AnnotatedIndexDefinitionProcessor {
         }
     }
 
-    protected String createIndexName(MetaClass entityMetaClass) {
-        return searchProperties.getSearchIndexNamePrefix() + entityMetaClass.getName().toLowerCase();
+    protected String createIndexName(JmixEntitySearchIndex indexAnnotation, MetaClass entityMetaClass) {
+        String indexName;
+        if (StringUtils.isNotEmpty(indexAnnotation.indexName())) {
+            indexName = indexAnnotation.indexName().toLowerCase();
+        } else {
+            indexName = searchProperties.getSearchIndexNamePrefix() + entityMetaClass.getName();
+        }
+        return indexName.toLowerCase();
     }
 
     protected IndexMappingConfiguration createIndexMappingConfig(MetaClass entityMetaClass, Class<?> indexDefClass) {

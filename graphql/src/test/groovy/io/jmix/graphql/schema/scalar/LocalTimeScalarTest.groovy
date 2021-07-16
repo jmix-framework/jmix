@@ -14,58 +14,65 @@
  * limitations under the License.
  */
 
-package io.jmix.graphql.schema.scalars
+package io.jmix.graphql.schema.scalar
 
 import graphql.language.StringValue
 import graphql.schema.Coercing
 import graphql.schema.CoercingParseLiteralException
 import graphql.schema.CoercingSerializeException
-import io.jmix.graphql.schema.scalar.LocalTimeScalar
-import spock.lang.Specification
+import io.jmix.graphql.AbstractGraphQLTest
+import org.springframework.beans.factory.annotation.Autowired
 
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
-class LocalTimeScalarTest extends Specification {
+class LocalTimeScalarTest extends AbstractGraphQLTest {
 
-    private final LocalTimeScalar scalar = new LocalTimeScalar()
-    private Coercing coercing
+    @Autowired
+    ScalarTypes scalarTypes
+    Coercing coercing
 
     @SuppressWarnings('unused')
     def setup() {
-        coercing = scalar.getCoercing()
+        coercing = scalarTypes.localTimeScalar.getCoercing()
     }
 
-    def "localTime scalar test"() {
-        given:
-        def stringDate = new StringValue("23:59:59")
-        def localTime = LocalTime.from(
-                DateTimeFormatter
-                        .ISO_LOCAL_TIME
-                        .parse(stringDate.getValue())
-        )
-        def parsedLiteral
-        def parsedValue
-        def serialized
-        def nullParsedLiteral
-        def nullParsedValue
-
+    def "localTime scalar should parse ISO time of format HH:mm" () {
         when:
-        parsedLiteral = (LocalTime) coercing.parseLiteral(stringDate)
-        parsedValue = (LocalTime) coercing.parseValue(stringDate.getValue())
-        serialized = coercing.serialize(localTime)
-        nullParsedLiteral = (LocalTime) coercing.parseLiteral(new StringValue(""))
-        nullParsedValue = (LocalTime) coercing.parseValue("")
+        def stringDate = new StringValue("11:12")
+        LocalTime time = (LocalTime) coercing.parseLiteral(stringDate)
 
         then:
-        parsedLiteral == localTime
-        parsedValue == localTime
-        serialized == stringDate.getValue()
-        nullParsedLiteral == LocalTime.MIN
-        nullParsedValue == LocalTime.MIN
+        time.toString() == "11:12"
     }
 
-    def "localTime scalar throws CoercingSerializeException"() {
+    def "localTime scalar should parse ISO time of format HH:mm:ss" () {
+        when:
+        def stringDate = new StringValue("11:12:13")
+        LocalTime time = (LocalTime) coercing.parseLiteral(stringDate)
+
+        then:
+        time.toString() == "11:12:13"
+    }
+
+    def "localTime scalar should return null on parse empty string" () {
+        when:
+        def stringDate = new StringValue("")
+        LocalTime time = (LocalTime) coercing.parseLiteral(stringDate)
+
+        then:
+        time == null
+    }
+
+    def "localTime scalar should serialize time"() {
+        when:
+        def localTime = LocalTime.from(DateTimeFormatter.ISO_LOCAL_TIME.parse("23:59:59"))
+        def serialized = coercing.serialize(localTime)
+        then:
+        serialized == "23:59:59"
+    }
+
+    def "localTime scalar should throws exception on serialize object of incorrect type"() {
         when:
         coercing.serialize("")
 
@@ -74,7 +81,7 @@ class LocalTimeScalarTest extends Specification {
         exception.message == "Expected type 'LocalTime' but was 'String'."
     }
 
-    def "localTime scalar throws CoercingParseLiteralException with parseLiteral"() {
+    def "parseLiteral throws exception on parse object of incorrect type"() {
         when:
         coercing.parseLiteral("")
 
@@ -83,7 +90,7 @@ class LocalTimeScalarTest extends Specification {
         exception.message == "Expected type 'StringValue' but was 'String'."
     }
 
-    def "localTime scalar throws CoercingParseLiteralException with parseValue"() {
+    def "parseValue throws exception on parse object of incorrect type"() {
         when:
         coercing.parseValue(new StringValue(""))
 
@@ -92,7 +99,7 @@ class LocalTimeScalarTest extends Specification {
         exception.message == "Expected type 'String' but was 'StringValue'."
     }
 
-    def "localTime scalar throws CoercingParseLiteralException with wrong value"() {
+    def "parseLiteral throws exception on call with wrong value"() {
         when:
         coercing.parseLiteral(new StringValue("1"))
 

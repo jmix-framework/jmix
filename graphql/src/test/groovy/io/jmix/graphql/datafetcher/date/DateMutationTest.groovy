@@ -21,6 +21,38 @@ import spock.lang.Ignore
 
 class DateMutationTest extends AbstractGraphQLTest {
 
+    def "should upsert time fields with seconds"() {
+        when:
+        def response = query(
+                "datafetcher/upsert-datatypes-test-entity.graphql",
+                asObjectNode(
+                        """{"entity":{
+                                    "timeAttr":"11:22:33",
+                                    "localTimeAttr":"22:11:01",
+                                    "offsetTimeAttr":"12:21:10+04:00"
+                            }}"""))
+        then:
+        response.get('$.data.upsert_scr_DatatypesTestEntity.timeAttr') == "11:22:33"
+        response.get('$.data.upsert_scr_DatatypesTestEntity.localTimeAttr') == "22:11:01"
+        response.get('$.data.upsert_scr_DatatypesTestEntity.offsetTimeAttr') == "12:21:10+04:00"
+    }
+
+    def "should upsert time fields without seconds"() {
+        when:
+        def response = query(
+                "datafetcher/upsert-datatypes-test-entity.graphql",
+                asObjectNode(
+                        """{"entity":{
+                                    "timeAttr":"11:22",
+                                    "localTimeAttr":"22:11",
+                                    "offsetTimeAttr":"12:21+04:00"
+                            }}"""))
+        then:
+        response.get('$.data.upsert_scr_DatatypesTestEntity.timeAttr') == "11:22:00"
+        response.get('$.data.upsert_scr_DatatypesTestEntity.localTimeAttr') == "22:11:00"
+        response.get('$.data.upsert_scr_DatatypesTestEntity.offsetTimeAttr') == "12:21:00+04:00"
+    }
+
     def "should create entity with date types"() {
         when:
         def response = query(
@@ -29,26 +61,17 @@ class DateMutationTest extends AbstractGraphQLTest {
                 "entity":{
                     "dateAttr": "2021-01-01",
                     "dateTimeAttr":"2011-12-03T10:15:30",
-                    "timeAttr":"10:33:12",
-                    "localDateTimeAttr":"2021-06-06T12:31:00",
                     "localDateAttr":"2021-01-01",
-                    "localTimeAttr":"10:33:12",
-                    "offsetTimeAttr":"10:33:12+04:00",
-                    "id":"6a538099-9dfd-8761-fa32-b496c236dbe9"
+                    "localDateTimeAttr":"2021-06-06T12:31:00"
                 }}"""))
 
         then:
-        getBody(response) == '{"data":{"upsert_scr_DatatypesTestEntity":{' +
-                '"id":"6a538099-9dfd-8761-fa32-b496c236dbe9",' +
-                '"dateAttr":"2021-01-01",' +
-                '"dateTimeAttr":"2011-12-03T10:15:30",' +
-                '"timeAttr":"10:33:12",' +
-                '"localDateTimeAttr":"2021-06-06T12:31:00",' +
-                '"offsetDateTimeAttr":null,' +
-                '"localDateAttr":"2021-01-01",' +
-                '"localTimeAttr":"10:33:12",' +
-                '"offsetTimeAttr":"10:33:12+04:00"' +
-                '}}}'
+        response.get('$.data.upsert_scr_DatatypesTestEntity.dateAttr') == "2021-01-01"
+        response.get('$.data.upsert_scr_DatatypesTestEntity.dateTimeAttr') == "2011-12-03T10:15:30"
+        response.get('$.data.upsert_scr_DatatypesTestEntity.localDateAttr') == "2021-01-01"
+        response.get('$.data.upsert_scr_DatatypesTestEntity.localDateTimeAttr') == "2021-06-06T12:31:00"
+        // OffsetDateTime is checked in test below
+        response.get('$.data.upsert_scr_DatatypesTestEntity.offsetDateTimeAttr') == null
     }
 
     @Ignore // todo https://github.com/Haulmont/jmix-graphql/issues/162
@@ -56,12 +79,7 @@ class DateMutationTest extends AbstractGraphQLTest {
         when:
         def response = query(
                 "datafetcher/upsert-datatypes-test-entity.graphql",
-                asObjectNode("""{
-                "entity":{
-                    "offsetDateTimeAttr": "2011-12-03T11:15:30+04:00",
-                    "id":"6a538099-9dfd-8761-fa32-b496c236dbe9"
-                }}"""))
-
+                asObjectNode("""{"entity":{"offsetDateTimeAttr": "2011-12-03T11:15:30+04:00"}}"""))
         then:
         response.get('$.data.upsert_scr_DatatypesTestEntity.offsetDateTimeAttr') == "2011-12-03T11:15:30+04:00"
     }

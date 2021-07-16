@@ -26,21 +26,17 @@ class DateQueryTest extends AbstractGraphQLTest {
         when:
         def response = query(
                 "datafetcher/date/testEntity-dates-with-filter.gql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"id": {"_eq": "032fd8a5-e042-4828-a802-36cbd2ce12de"}}' +
-                        ']}}'))
+                asObjectNode('{"filter": {"id": {"_eq": "032fd8a5-e042-4828-a802-36cbd2ce12de"}}}'))
 
         then:
-        getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[{' +
-                '"dateAttr":"2020-01-01",' +
-                '"timeAttr":"11:11:11",' +
-                '"dateTimeAttr":"2020-01-01T11:11:11",' +
-                '"localDateAttr":"2020-01-01",' +
-                '"localTimeAttr":"11:11:11",' +
-                '"localDateTimeAttr":"2020-01-01T11:11:11",' +
-                '"offsetDateTimeAttr":"2020-01-01T11:11:11+04:00",' +
-                '"offsetTimeAttr":"11:11:11+04:00"' +
-                '}]}}'
+        response.get('$.data.scr_DatatypesTestEntityList[0].dateAttr') == "2020-01-01"
+        response.get('$.data.scr_DatatypesTestEntityList[0].timeAttr') == "11:11:11"
+        response.get('$.data.scr_DatatypesTestEntityList[0].dateTimeAttr') == "2020-01-01T11:11:11"
+        response.get('$.data.scr_DatatypesTestEntityList[0].localDateAttr') == "2020-01-01"
+        response.get('$.data.scr_DatatypesTestEntityList[0].localTimeAttr') == "11:11:11"
+        response.get('$.data.scr_DatatypesTestEntityList[0].localDateTimeAttr') == "2020-01-01T11:11:11"
+        response.get('$.data.scr_DatatypesTestEntityList[0].offsetDateTimeAttr') == "2020-01-01T11:11:11+04:00"
+        response.get('$.data.scr_DatatypesTestEntityList[0].offsetTimeAttr') == "11:11:11+04:00"
     }
 
 }

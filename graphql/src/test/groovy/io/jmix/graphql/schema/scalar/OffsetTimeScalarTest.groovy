@@ -14,58 +14,65 @@
  * limitations under the License.
  */
 
-package io.jmix.graphql.schema.scalars
+package io.jmix.graphql.schema.scalar
 
 import graphql.language.StringValue
 import graphql.schema.Coercing
 import graphql.schema.CoercingParseLiteralException
 import graphql.schema.CoercingSerializeException
-import io.jmix.graphql.schema.scalar.OffsetTimeScalar
-import spock.lang.Specification
+import io.jmix.graphql.AbstractGraphQLTest
+import org.springframework.beans.factory.annotation.Autowired
 
 import java.time.OffsetTime
 import java.time.format.DateTimeFormatter
 
-class OffsetTimeScalarTest extends Specification {
+class OffsetTimeScalarTest extends AbstractGraphQLTest {
 
-    private final OffsetTimeScalar scalar = new OffsetTimeScalar()
-    private Coercing coercing
+    @Autowired
+    ScalarTypes scalarTypes
+    Coercing coercing
 
     @SuppressWarnings('unused')
     def setup() {
-        coercing = scalar.getCoercing()
+        coercing = scalarTypes.offsetTimeScalar.getCoercing()
     }
 
-    def "OffsetTime scalar test"() {
-        given:
-        def stringDate = new StringValue("23:59:59+04:00")
-        def offsetTime = OffsetTime.from(
-                DateTimeFormatter
-                        .ISO_OFFSET_TIME
-                        .parse(stringDate.getValue())
-        )
-        def parsedLiteral
-        def parsedValue
-        def serialized
-        def nullParsedLiteral
-        def nullParsedValue
-
+    def "offsetTime scalar should parse ISO time of format HH:mm+hh:mm" () {
         when:
-        parsedLiteral = (OffsetTime) coercing.parseLiteral(stringDate)
-        parsedValue = (OffsetTime) coercing.parseValue(stringDate.getValue())
-        serialized = coercing.serialize(offsetTime)
-        nullParsedLiteral = (OffsetTime) coercing.parseLiteral(new StringValue(""))
-        nullParsedValue = (OffsetTime) coercing.parseValue("")
+        def stringDate = new StringValue("11:12+04:00")
+        OffsetTime time = (OffsetTime) coercing.parseLiteral(stringDate)
 
         then:
-        parsedLiteral.isEqual(offsetTime)
-        parsedValue.isEqual(offsetTime)
-        serialized == stringDate.getValue()
-        nullParsedLiteral.isEqual(OffsetTime.MIN)
-        nullParsedValue.isEqual(OffsetTime.MIN)
+        time.toString() == "11:12+04:00"
     }
 
-    def "OffsetTime scalar throws CoercingSerializeException"() {
+    def "offsetTime scalar should parse ISO time of format HH:mm:ss+hh:mm" () {
+        when:
+        def stringDate = new StringValue("11:12:13+04:00")
+        OffsetTime time = (OffsetTime) coercing.parseLiteral(stringDate)
+
+        then:
+        time.toString() == "11:12:13+04:00"
+    }
+
+    def "offsetTime scalar should return null on parse empty string" () {
+        when:
+        def stringDate = new StringValue("")
+        OffsetTime time = (OffsetTime) coercing.parseLiteral(stringDate)
+
+        then:
+        time == null
+    }
+
+    def "offsetTime scalar should serialize time"() {
+        when:
+        OffsetTime time = OffsetTime.from(DateTimeFormatter.ISO_OFFSET_TIME.parse("23:59:59+04:00"))
+        def serialized = coercing.serialize(time)
+        then:
+        serialized == "23:59:59+04:00"
+    }
+
+    def "offsetTime scalar should throws exception on serialize object of incorrect type"() {
         when:
         coercing.serialize("")
 
@@ -74,7 +81,7 @@ class OffsetTimeScalarTest extends Specification {
         exception.message == "Expected type 'OffsetTime' but was 'String'."
     }
 
-    def "OffsetTime scalar throws CoercingParseLiteralException with parseLiteral"() {
+    def "parseLiteral throws exception on parse object of incorrect type"() {
         when:
         coercing.parseLiteral("")
 
@@ -83,7 +90,7 @@ class OffsetTimeScalarTest extends Specification {
         exception.message == "Expected type 'StringValue' but was 'String'."
     }
 
-    def "OffsetTime scalar throws CoercingParseLiteralException with parseValue"() {
+    def "parseValue throws exception on parse object of incorrect type"() {
         when:
         coercing.parseValue(new StringValue(""))
 
@@ -92,7 +99,7 @@ class OffsetTimeScalarTest extends Specification {
         exception.message == "Expected type 'String' but was 'StringValue'."
     }
 
-    def "OffsetTime scalar throws CoercingParseLiteralException with wrong value"() {
+    def "parseLiteral throws exception on call with wrong value"() {
         when:
         coercing.parseLiteral(new StringValue("1"))
 

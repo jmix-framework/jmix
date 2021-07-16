@@ -14,21 +14,22 @@
  * limitations under the License.
  */
 
-package io.jmix.graphql.schema.scalars
+package io.jmix.graphql.schema.scalar
 
 import graphql.language.StringValue
 import graphql.schema.Coercing
 import graphql.schema.CoercingParseLiteralException
 import graphql.schema.CoercingSerializeException
-import io.jmix.graphql.schema.scalar.LocalDateTimeScalar
+import org.apache.commons.lang3.time.DateUtils
 import spock.lang.Specification
 
+import java.time.Instant
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
+import java.time.ZoneId
 
-class LocalDateTimeScalarTest extends Specification {
+class DateTimeScalarTest extends Specification {
 
-    private final LocalDateTimeScalar scalar = new LocalDateTimeScalar()
+    private final DateTimeScalar scalar = new DateTimeScalar()
     private Coercing coercing
 
     @SuppressWarnings('unused')
@@ -36,45 +37,43 @@ class LocalDateTimeScalarTest extends Specification {
         coercing = scalar.getCoercing()
     }
 
-    def "localDateTime scalar test"() {
+    def "dateTime scalar test"() {
         given:
-        def stringDate = new StringValue("2021-01-01T23:59:59")
-        def localDateTime = LocalDateTime.from(
-                DateTimeFormatter
-                        .ISO_LOCAL_DATE_TIME
-                        .parse(stringDate.getValue())
-        )
+        def stringDate = "2021-01-01T23:59:59"
+        def temporalAccessor = LocalDateTime.parse(stringDate).atZone(ZoneId.systemDefault())
+        def date = Date.from(Instant.from(temporalAccessor))
         def parsedLiteral
         def parsedValue
         def serialized
-        def nullParsedLiteral
-        def nullParsedValue
 
         when:
-        parsedLiteral = (LocalDateTime) coercing.parseLiteral(stringDate)
-        parsedValue = (LocalDateTime) coercing.parseValue(stringDate.getValue())
-        serialized = coercing.serialize(localDateTime)
-        nullParsedLiteral = (LocalDateTime) coercing.parseLiteral(new StringValue(""))
-        nullParsedValue = (LocalDateTime) coercing.parseValue("")
+        parsedLiteral = (Date) this.coercing.parseLiteral(new StringValue(stringDate))
+        parsedValue = (Date) this.coercing.parseValue(stringDate)
+        serialized = this.coercing.serialize(date)
 
         then:
-        parsedLiteral.isEqual(localDateTime)
-        parsedValue.isEqual(localDateTime)
-        serialized == stringDate.getValue()
-        nullParsedLiteral.isEqual(LocalDateTime.MIN)
-        nullParsedValue.isEqual(LocalDateTime.MIN)
+        DateUtils.isSameDay(parsedLiteral, date)
+        DateUtils.isSameDay(parsedValue, date)
+        serialized == stringDate
     }
 
-    def "localDateTime scalar throws CoercingSerializeException"() {
+    def "datetime scalar should return null on parse empty string" () {
+        when:
+        def date = coercing.parseLiteral(new StringValue(""))
+        then:
+        date == null
+    }
+
+    def "dateTime scalar coercing throws CoercingSerializeException"() {
         when:
         coercing.serialize("")
 
         then:
         def exception = thrown(CoercingSerializeException)
-        exception.message == "Expected type 'LocalDateTime' but was 'String'."
+        exception.message == "Expected type 'Date' but was 'String'."
     }
 
-    def "localDateTime scalar throws CoercingParseLiteralException with parseLiteral"() {
+    def "dateTime scalar coercing throws CoercingParseLiteralException with parseLiteral"() {
         when:
         coercing.parseLiteral("")
 
@@ -83,7 +82,7 @@ class LocalDateTimeScalarTest extends Specification {
         exception.message == "Expected type 'StringValue' but was 'String'."
     }
 
-    def "localDateTime scalar throws CoercingParseLiteralException with parseValue"() {
+    def "dateTime scalar coercing throws CoercingParseLiteralException with parseValue"() {
         when:
         coercing.parseValue(new StringValue(""))
 
@@ -92,7 +91,7 @@ class LocalDateTimeScalarTest extends Specification {
         exception.message == "Expected type 'String' but was 'StringValue'."
     }
 
-    def "localDateTime scalar throws CoercingParseLiteralException with wrong value"() {
+    def "dateTime scalar throws CoercingParseLiteralException with wrong value"() {
         when:
         coercing.parseLiteral(new StringValue("1"))
 

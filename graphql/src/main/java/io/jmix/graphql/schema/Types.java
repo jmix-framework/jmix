@@ -1,10 +1,8 @@
 package io.jmix.graphql.schema;
 
 import com.google.common.collect.ImmutableList;
-import graphql.Scalars;
 import graphql.schema.GraphQLScalarType;
 import io.jmix.core.querycondition.PropertyCondition;
-import io.jmix.graphql.schema.scalar.CustomScalars;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -75,29 +73,6 @@ public class Types {
         }
     }
 
-    public static GraphQLScalarType[] scalars = {
-            Scalars.GraphQLInt,
-            Scalars.GraphQLBigInteger,
-            Scalars.GraphQLBoolean,
-            Scalars.GraphQLByte,
-            Scalars.GraphQLChar,
-            Scalars.GraphQLFloat,
-            Scalars.GraphQLShort,
-            Scalars.GraphQLString,
-            CustomScalars.GraphQLVoid,
-            CustomScalars.GraphQLLocalDateTime,
-            CustomScalars.GraphQLLocalDate,
-            CustomScalars.GraphQLLocalTime,
-            CustomScalars.GraphQLOffsetDateTime,
-            CustomScalars.GraphQLOffsetTime,
-            CustomScalars.GraphQLDate,
-            CustomScalars.GraphQLTime,
-            CustomScalars.GraphQLDateTime,
-            GraphQLBigDecimal,
-            GraphQLLong,
-            CustomScalars.GraphQLUUID,
-    };
-
     public static final List<GraphQLScalarType> numberTypes = ImmutableList.of(
             GraphQLBigDecimal,
             GraphQLLong,
@@ -114,12 +89,6 @@ public class Types {
             GraphQLOffsetDateTime,
             GraphQLDate,
             GraphQLDateTime
-    );
-
-    public static final List<GraphQLScalarType> timeTypes = ImmutableList.of(
-            GraphQLLocalTime,
-            GraphQLOffsetTime,
-            GraphQLTime
     );
 
     public enum ConditionUnionType {

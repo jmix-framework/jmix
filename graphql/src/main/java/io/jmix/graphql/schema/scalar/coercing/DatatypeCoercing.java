@@ -20,40 +20,40 @@ import graphql.language.StringValue;
 import graphql.schema.Coercing;
 import graphql.schema.CoercingParseLiteralException;
 import graphql.schema.CoercingSerializeException;
+import io.jmix.core.metamodel.datatype.Datatype;
 
 import java.text.ParseException;
 import java.time.format.DateTimeParseException;
 
-public abstract class BaseDateCoercing<I, O> implements Coercing<I, O> {
+public class DatatypeCoercing<I> implements Coercing<I, String> {
 
-    protected final String format;
-    protected final Class<I> type;
+    protected Class<I> type;
+    protected Datatype<I> datatype;
+    protected String incorrectFormatMessage;
 
-    public BaseDateCoercing(String format, Class<I> type) {
-        this.format = format;
+    public DatatypeCoercing(Class<I> type, Datatype<I> datatype, String incorrectFormatMessage) {
         this.type = type;
+        this.datatype = datatype;
+        this.incorrectFormatMessage = incorrectFormatMessage;
     }
 
     @Override
-    public O serialize(Object input) {
-        if (input.getClass().isAssignableFrom(type)) {
-            return doSerialize((I) input);
+    public String serialize(Object o) throws CoercingSerializeException {
+        if (!o.getClass().isAssignableFrom(type)) {
+            throw new CoercingSerializeException(
+                    "Expected type '" + type.getSimpleName() + "' but was '" + o.getClass().getSimpleName() + "'.");
         }
-        throw new CoercingSerializeException(
-                "Expected type '" + type.getSimpleName() + "' but was '" + input.getClass().getSimpleName() + "'.");
+        return datatype.format(o);
     }
 
     @Override
     public I parseValue(Object input) {
         if (input instanceof String) {
             String value = (String) input;
-            if (value.isEmpty()) {
-                return null;
-            }
             try {
-                return parseString(value);
-            } catch (DateTimeParseException | ParseException | IllegalArgumentException exception) {
-                throw new CoercingParseLiteralException("Please use the format " + format);
+                return datatype.parse(value);
+            } catch (DateTimeParseException | ParseException exception) {
+                throw new CoercingParseLiteralException(incorrectFormatMessage);
             }
         }
         throw new CoercingParseLiteralException(
@@ -69,9 +69,5 @@ public abstract class BaseDateCoercing<I, O> implements Coercing<I, O> {
                 "Expected type 'StringValue' but was '" + input.getClass().getSimpleName() + "'.");
 
     }
-
-    protected abstract O doSerialize(I input);
-
-    protected abstract I parseString(String value) throws ParseException;
 
 }

@@ -994,21 +994,21 @@ scalar Date
 "Date type with time"
 scalar DateTime
 
-"Date type"
+"Local date type"
 scalar LocalDate
 
-"Date type"
+"Local date type with time"
 scalar LocalDateTime
 
-"Date type"
+"Local time type"
 scalar LocalTime
 
 scalar Long
 
-"Date type"
+"Date type with offset"
 scalar OffsetDateTime
 
-"Date type"
+"Offset time type"
 scalar OffsetTime
 
 "Built-in Short as Int"

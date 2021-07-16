@@ -662,16 +662,16 @@ Finally, we can combine all this approaches in one query:
 ## Supported Date Datatypes
 The table below describes which scalar used for every date type and shows its string format:
 
-| Java type                                     | GQL scalar            | Date format           | Example|
+| Java type                                     | GraphQL type            | Date format           | Example|
 | :---                                          | :---                  | :---                  | :---|
-| ```@Temporal(TemporalType.DATE) Date```       | GraphQLDate           | [ISO_LOCAL_DATE](https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/time/format/DateTimeFormatter.html#ISO_LOCAL_DATE) | '2011-12-03'|
-| ```@Temporal(TemporalType.TIME) Date```       | GraphQLTime           | [ISO_TIME](https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/time/format/DateTimeFormatter.html#ISO_TIME) | '10:15', '10:15:30' or '10:15:30+01:00'|
-| ```@Temporal(TemporalType.TIMESTAMP) Date```  | GraphQLDateTime       | [ISO_LOCAL_DATE_TIME](https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/time/format/DateTimeFormatter.html#ISO_LOCAL_DATE_TIME) | '2011-12-03T10:15:30'|
-| ```LocalDate```                               | GraphQLLocalDate      | [ISO_LOCAL_DATE](https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/time/format/DateTimeFormatter.html#ISO_LOCAL_DATE) | '2011-12-03'|
-| ```LocalTime```                               | GraphQLLocalTime      | [ISO_LOCAL_TIME](https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/time/format/DateTimeFormatter.html#ISO_LOCAL_TIME) | '10:15', '10:15:30' or '10:15:30+01:00'|
-| ```LocalDateTime```                           | GraphQLLocalDateTime  | [ISO_LOCAL_DATE_TIME](https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/time/format/DateTimeFormatter.html#ISO_LOCAL_DATE_TIME) | '2011-12-03T10:15:30'|
-| ```OffsetTime```                              | GraphQLOffsetTime     | [ISO_OFFSET_TIME](https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/time/format/DateTimeFormatter.html#ISO_OFFSET_TIME) | '10:15+01:00' or '10:15:30+01:00'|
-| ```OffsetDateTime```                          | GraphQLOffsetDateTime | [ISO_OFFSET_DATE_TIME](https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/time/format/DateTimeFormatter.html#ISO_OFFSET_DATE_TIME) | '2011-12-03T10:15:30+01:00'|
+| ```@Temporal(TemporalType.DATE) Date```       | Date           | [ISO_LOCAL_DATE](https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/time/format/DateTimeFormatter.html#ISO_LOCAL_DATE) | '2011-12-03'|
+| ```@Temporal(TemporalType.TIME) Date```       | Time           | [ISO_LOCAL_TIME](https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/time/format/DateTimeFormatter.html#ISO_LOCAL_TIME) | '10:15', '10:15:30'|
+| ```@Temporal(TemporalType.TIMESTAMP) Date```  | DateTime       | [ISO_LOCAL_DATE_TIME](https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/time/format/DateTimeFormatter.html#ISO_LOCAL_DATE_TIME) | '2011-12-03T10:15:30'|
+| ```LocalDate```                               | LocalDate      | [ISO_LOCAL_DATE](https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/time/format/DateTimeFormatter.html#ISO_LOCAL_DATE) | '2011-12-03'|
+| ```LocalTime```                               | LocalTime      | [ISO_LOCAL_TIME](https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/time/format/DateTimeFormatter.html#ISO_LOCAL_TIME) | '10:15', '10:15:30'|
+| ```LocalDateTime```                           | LocalDateTime  | [ISO_LOCAL_DATE_TIME](https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/time/format/DateTimeFormatter.html#ISO_LOCAL_DATE_TIME) | '2011-12-03T10:15:30'|
+| ```OffsetTime```                              | OffsetTime     | [ISO_OFFSET_TIME](https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/time/format/DateTimeFormatter.html#ISO_OFFSET_TIME) | '10:15+01:00' or '10:15:30+01:00'|
+| ```OffsetDateTime```                          | OffsetDateTime | [ISO_OFFSET_DATE_TIME](https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/time/format/DateTimeFormatter.html#ISO_OFFSET_DATE_TIME) | '2011-12-03T10:15:30+01:00'|
 
 ## Query Limits
 

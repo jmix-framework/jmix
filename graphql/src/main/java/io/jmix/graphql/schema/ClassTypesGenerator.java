@@ -22,6 +22,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.graphql.MetadataUtils;
 import io.jmix.graphql.NamingUtils;
+import io.jmix.graphql.schema.scalar.ScalarTypes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -40,7 +41,9 @@ public class ClassTypesGenerator {
     @Autowired
     MetadataTools metadataTools;
     @Autowired
-    private BaseTypesGenerator baseTypesGenerator;
+    BaseTypesGenerator baseTypesGenerator;
+    @Autowired
+    ScalarTypes scalarTypes;
 
     public Collection<GraphQLType> generateInputTypes() {
         // input type definitions for jmix entities
@@ -109,7 +112,7 @@ public class ClassTypesGenerator {
 
     protected String getInpFieldTypeName(MetaProperty metaProperty) {
         if (metaProperty.getType() == MetaProperty.Type.DATATYPE) {
-            return BaseTypesGenerator.getScalarFieldTypeName(metaProperty);
+            return scalarTypes.getScalarFieldTypeName(metaProperty);
         }
 
         if (metaProperty.getType() == MetaProperty.Type.ENUM) {

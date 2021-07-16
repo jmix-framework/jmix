@@ -130,6 +130,12 @@ $jmix-login-form-width: 385px !default;
     }
   }
 
+  .jmix-login-caption {
+    max-width: $jmix-login-form-width;
+    white-space: normal;
+    text-align: center;
+  }
+
   .jmix-login-form {
     width: $jmix-login-form-width;
 

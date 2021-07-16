@@ -134,6 +134,10 @@ $jmix-login-form-width--large: $jmix-login-form-width * $v-scaling-factor--large
     width: $login-form-width;
   }
 
+  .jmix-login-caption {
+    max-width: $login-form-width;
+  }
+
   .jmix-login-panel {
     padding: $login-panel-padding;
   }

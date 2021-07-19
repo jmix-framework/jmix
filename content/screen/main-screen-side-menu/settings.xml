@@ -19,14 +19,27 @@
           icon="resource://template/template_side_menu.svg"
           name="Main screen with side menu"
           order="60"
-          enabled="false">
+          enabled="true">
     <description>
         <![CDATA[<html>A main screen with a side menu on left side.</html>]]>
     </description>
 
+    <locMessages key="application.caption">
+        <message lang="default"><![CDATA[${project.getName()} application]]></message>
+    </locMessages>
+    <locMessages key="application.logoLabel">
+        <message lang="default"><![CDATA[${project.getName()} application]]></message>
+    </locMessages>
+    <locMessages key="logoutBtnDescription">
+        <message lang="default">Logout</message>
+    </locMessages>
+    <locMessages key="sideMenuCollapse">
+        <message lang="default">Collapse menu</message>
+    </locMessages>
+
     <property caption="Descriptor name"
               code="descriptorName"
-              defaultValue="ext-main-screen"
+              defaultValue="main-screen-side-menu"
               propertyType="DESCRIPTOR_NAME"
               required="true"
               sourceName="descriptor"/>
@@ -34,14 +47,14 @@
     <property caption="Controller name"
               code="controllerName"
               propertyType="CLASS_NAME"
-              defaultValue="ExtMainScreen"
+              defaultValue="MainScreenSideMenu"
               required="true"
               sourceName="controller"/>
 
     <property caption="Screen id"
               code="screenId"
               propertyType="SCREEN_ID"
-              defaultValue="extMainScreen"
+              defaultValue="MainSide"
               required="true"/>
 
     <source fileExt="xml"

@@ -29,6 +29,7 @@ import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.stereotype.Component;
 
 import java.util.Locale;
@@ -58,8 +59,13 @@ public class UserSessionSourceImpl implements UserSessionSource {
     @Override
     public UserSession getUserSession() throws NoUserSessionException {
         Authentication authentication = SecurityContextHelper.getAuthentication();
-        UserRepository userRepository = beanFactory.getBean(UserRepository.class);
         UserSession session = new UserSession();
+        updateUserSessionFromAuthentication(authentication, session);
+        return session;
+    }
+
+    protected void updateUserSessionFromAuthentication(Authentication authentication, UserSession session) {
+        UserRepository userRepository = beanFactory.getBean(UserRepository.class);
         if (authentication instanceof UsernamePasswordAuthenticationToken) {
             session.setUser((UserDetails) authentication.getPrincipal());
             if (authentication.getDetails() instanceof ClientDetails) {
@@ -78,6 +84,11 @@ public class UserSessionSourceImpl implements UserSessionSource {
                 session.setUser(userRepository.getSystemUser());
                 session.setLocale(Locale.getDefault());
             }
+        } else if (authentication instanceof OAuth2Authentication) {
+            Authentication userAuthentication = ((OAuth2Authentication) authentication).getUserAuthentication();
+            if (userAuthentication != authentication) {
+                updateUserSessionFromAuthentication(userAuthentication, session);
+            }
         } else if (authentication == null) {
             //todo MG should null authentication be possible?
             //todo MG what user to return?
@@ -86,7 +97,6 @@ public class UserSessionSourceImpl implements UserSessionSource {
         } else {
             throw new RuntimeException("Authentication type is not supported: " + authentication.getClass().getCanonicalName());
         }
-        return session;
     }
 
     @Override

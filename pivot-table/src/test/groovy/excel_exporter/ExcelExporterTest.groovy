@@ -38,9 +38,9 @@ import io.jmix.pivottable.component.impl.PivotExcelExporter
 import io.jmix.pivottable.component.PivotTable
 import io.jmix.pivottable.component.impl.PivotTableImpl
 import io.jmix.pivottable.widget.serialization.PivotTableSerializer
-import org.apache.poi.hssf.usermodel.HSSFCell
-import org.apache.poi.hssf.usermodel.HSSFRow
+import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.ss.usermodel.CellType
+import org.apache.poi.ss.usermodel.Row
 import spock.lang.Specification
 
 class ExcelExporterTest extends Specification {
@@ -96,9 +96,9 @@ class ExcelExporterTest extends Specification {
         exporter.exportPivotTable(pivotData, null)
         then:
         for (int i = 0; i < 3; i++) {
-            HSSFRow row = exporter.sheet.getRow(i)
+            Row row = exporter.sheet.getRow(i)
             for (int j = 0; j < cellsCount; j++) {
-                HSSFCell cell = row.getCell(j)
+                Cell cell = row.getCell(j)
                 if ((i == 0 || i == 1) && (j == 0 || j == 1)
                         || (i == 2 && j == 2)) {
                     assert cell.getCellTypeEnum() == CellType.BLANK
@@ -106,7 +106,9 @@ class ExcelExporterTest extends Specification {
                 }
 
                 assert cell.getCellTypeEnum() == CellType.STRING
-                assert cell.getCellStyle().getFont(exporter.wb).bold
+
+                def cellStyleIndex = cell.cellStyle.fontIndexAsInt
+                assert exporter.wb.getFontAt(cellStyleIndex).bold
             }
         }
     }
@@ -119,12 +121,14 @@ class ExcelExporterTest extends Specification {
         exporter.exportPivotTable(pivotData, null)
         then:
         for (int i = 3; i < rowsCount; i++) {
-            HSSFRow row = exporter.sheet.getRow(i)
+            Row row = exporter.sheet.getRow(i)
             for (int j = 0; j < cellsCount; j++) {
-                HSSFCell cell = row.getCell(j)
+                Cell cell = row.getCell(j)
                 if (0 <= j && j < 3) {
                     assert cell.getCellTypeEnum() == CellType.STRING
-                    assert cell.getCellStyle().getFont(exporter.wb).bold
+
+                    def cellStyleIndex = cell.cellStyle.fontIndexAsInt
+                    assert exporter.wb.getFontAt(cellStyleIndex).bold
                     continue
                 }
 
@@ -135,7 +139,8 @@ class ExcelExporterTest extends Specification {
 
                 cell.getCellTypeEnum() == CellType.NUMERIC
                 if (j == 9 || i == 7) {
-                    assert cell.getCellStyle().getFont(exporter.wb).bold
+                    def cellStyleIndex = cell.cellStyle.fontIndexAsInt
+                    assert exporter.wb.getFontAt(cellStyleIndex).bold
                 }
             }
         }

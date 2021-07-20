@@ -17,6 +17,8 @@
 package io.jmix.pivottable.component;
 
 
+import io.jmix.pivottable.component.impl.PivotExcelExporter;
+import io.jmix.pivottable.component.impl.PivotExcelExporter.ExportFormat;
 import io.jmix.pivottable.model.Renderer;
 import io.jmix.ui.download.Downloader;
 import io.jmix.pivottable.model.extension.PivotData;
@@ -107,4 +109,16 @@ public interface PivotTableExtension {
      * @return {@code true} if renderer is supported by the exporter
      */
     boolean isRendererSupported(Renderer renderer);
+
+    /**
+     * @return export format {@code XLS} or {@code XLSX}
+     */
+    ExportFormat getExportFormat();
+
+    /**
+     * Sets export format {@code XLS} or {@code XLSX}. The default value is {@code XLSX}.
+     *
+     * @param exportFormat format that should have exported file
+     */
+    void setExportFormat(ExportFormat exportFormat);
 }

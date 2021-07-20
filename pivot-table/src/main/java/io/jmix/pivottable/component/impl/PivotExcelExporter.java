@@ -35,8 +35,9 @@ import io.jmix.pivottable.model.extension.PivotData;
 import io.jmix.pivottable.model.extension.PivotDataCell;
 import io.jmix.pivottable.model.extension.PivotDataSeparatedCell;
 import org.apache.poi.hssf.usermodel.*;
-import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -70,21 +71,27 @@ public class PivotExcelExporter {
 
     public static final String DEFAULT_FILE_NAME = "pivotData";
 
-    protected HSSFWorkbook wb;
-    protected HSSFSheet sheet;
+    public enum ExportFormat {
+        XLS, XLSX;
+    }
 
-    protected HSSFFont stdFont;
+    protected ExportFormat exportFormat = ExportFormat.XLSX;
 
-    protected HSSFCellStyle cellLabelBoldStyle;
+    protected Workbook wb;
+    protected Sheet sheet;
 
-    protected HSSFCellStyle cellDateTimeStyle;
-    protected HSSFCellStyle boldCellDateTimeStyle;
+    protected Font stdFont;
 
-    protected HSSFCellStyle cellDateStyle;
-    protected HSSFCellStyle boldCellDateStyle;
+    protected CellStyle cellLabelBoldStyle;
 
-    protected HSSFCellStyle cellTimeStyle;
-    protected HSSFCellStyle boldCellTimeStyle;
+    protected CellStyle cellDateTimeStyle;
+    protected CellStyle boldCellDateTimeStyle;
+
+    protected CellStyle cellDateStyle;
+    protected CellStyle boldCellDateStyle;
+
+    protected CellStyle cellTimeStyle;
+    protected CellStyle boldCellTimeStyle;
 
     protected String fileName;
     protected MetaClass entityMetaClass;
@@ -137,7 +144,8 @@ public class PivotExcelExporter {
     }
 
     /**
-     * Export to Xls.
+     * Exports pivot table data to the excel file. File format can be configured by
+     * {@link #setExportFormat(ExportFormat)}.
      *
      * @param pivotData pivot with aggregated data
      * @param fileName  file name
@@ -171,11 +179,12 @@ public class PivotExcelExporter {
     }
 
     /**
-     * Export to Xls.
+     * Exports pivot table data to the excel file. File format can be configured by
+     * {@link #setExportFormat(ExportFormat)}.
      *
      * @param pivotData  pivot with aggregated data
      * @param fileName   file name
-     * @param downloader ExportDisplay implementation
+     * @param downloader Downloader implementation
      */
     public void exportPivotTable(PivotData pivotData, String fileName, Downloader downloader) {
         checkNotNullArgument(pivotData);
@@ -234,34 +243,34 @@ public class PivotExcelExporter {
                 break;
             }
 
-            HSSFRow hssfRow = sheet.createRow(i);
+            Row excelRow = sheet.createRow(i);
             List<PivotDataSeparatedCell> row = dataRows.get(i);
             for (PivotDataSeparatedCell cell : row) {
-                HSSFCell hssfCell = hssfRow.createCell(cell.getIndexCol());
+                Cell excelCell = excelRow.createCell(cell.getIndexCol());
 
                 PivotDataCell.Type type = cell.getType();
                 switch (type) {
                     case NUMERIC:
-                        hssfCell.setCellType(CellType.NUMERIC);
-                        hssfCell.setCellValue(Double.parseDouble(cell.getValue()));
+                        excelCell.setCellType(CellType.NUMERIC);
+                        excelCell.setCellValue(Double.parseDouble(cell.getValue()));
                         if (cell.isBold()) {
-                            hssfCell.setCellStyle(cellLabelBoldStyle);
+                            excelCell.setCellStyle(cellLabelBoldStyle);
                         }
                         break;
                     case DATE_TIME:
-                        initDateTimeCell(hssfCell, cell, dateTimeFormatter, cellDateTimeStyle, boldCellDateTimeStyle);
+                        initDateTimeCell(excelCell, cell, dateTimeFormatter, cellDateTimeStyle, boldCellDateTimeStyle);
                         break;
                     case DATE:
-                        initDateTimeCell(hssfCell, cell, dateFormatter, cellDateStyle, boldCellDateStyle);
+                        initDateTimeCell(excelCell, cell, dateFormatter, cellDateStyle, boldCellDateStyle);
                         break;
                     case TIME:
-                        initDateTimeCell(hssfCell, cell, timeFormatter, cellTimeStyle, boldCellTimeStyle);
+                        initDateTimeCell(excelCell, cell, timeFormatter, cellTimeStyle, boldCellTimeStyle);
                         break;
                     case STRING:
-                        hssfCell.setCellType(CellType.STRING);
-                        hssfCell.setCellValue(cell.getValue());
+                        excelCell.setCellType(CellType.STRING);
+                        excelCell.setCellValue(cell.getValue());
                         if (cell.isBold()) {
-                            hssfCell.setCellStyle(cellLabelBoldStyle);
+                            excelCell.setCellStyle(cellLabelBoldStyle);
                         }
                         break;
                 }
@@ -313,15 +322,15 @@ public class PivotExcelExporter {
         }
     }
 
-    protected void initDateTimeCell(HSSFCell hssfCell, PivotDataSeparatedCell cell, SimpleDateFormat formatter,
-                                    HSSFCellStyle cellStyle, HSSFCellStyle boldCellStyle) {
+    protected void initDateTimeCell(Cell excelCell, PivotDataSeparatedCell cell, SimpleDateFormat formatter,
+                                    CellStyle cellStyle, CellStyle boldCellStyle) {
         if (formatter != null) {
             try {
-                hssfCell.setCellValue(formatter.parse(cell.getValue()));
+                excelCell.setCellValue(formatter.parse(cell.getValue()));
                 if (cell.isBold()) {
-                    hssfCell.setCellStyle(boldCellStyle);
+                    excelCell.setCellStyle(boldCellStyle);
                 } else {
-                    hssfCell.setCellStyle(cellStyle);
+                    excelCell.setCellStyle(cellStyle);
                 }
                 return;
             } catch (ParseException e) {
@@ -329,20 +338,24 @@ public class PivotExcelExporter {
             }
         }
         // set as string
-        hssfCell.setCellType(CellType.STRING);
-        hssfCell.setCellValue(cell.getValue());
+        excelCell.setCellType(CellType.STRING);
+        excelCell.setCellValue(cell.getValue());
         if (cell.isBold()) {
-            hssfCell.setCellStyle(cellLabelBoldStyle);
+            excelCell.setCellStyle(cellLabelBoldStyle);
         }
     }
 
     protected void createWorkbookWithSheet() {
-        wb = new HSSFWorkbook();
+        if (exportFormat == ExportFormat.XLS) {
+            wb = new HSSFWorkbook();
+        } else {
+            wb = new XSSFWorkbook();
+        }
         sheet = wb.createSheet("Export");
     }
 
     protected void createCellsStyle() {
-        HSSFFont boldFont = wb.createFont();
+        Font boldFont = wb.createFont();
         boldFont.setBold(true);
 
         stdFont = wb.createFont();
@@ -391,9 +404,17 @@ public class PivotExcelExporter {
             fileName = DEFAULT_FILE_NAME;
         }
 
-        downloader.download(new ByteArrayDataProvider(out.toByteArray(), uiProperties.getSaveExportedByteArrayDataThresholdBytes(),
+        DownloadFormat downloadFormat = exportFormat == ExportFormat.XLS
+                ? DownloadFormat.XLS
+                : DownloadFormat.XLSX;
+
+        downloader.download(
+                new ByteArrayDataProvider(
+                        out.toByteArray(),
+                        uiProperties.getSaveExportedByteArrayDataThresholdBytes(),
                         coreProperties.getTempDir()),
-                fileName + ".xls", DownloadFormat.XLS);
+                fileName + "." + downloadFormat.getFileExt(),
+                downloadFormat);
     }
 
     protected void showNoDataWarning() {
@@ -413,7 +434,7 @@ public class PivotExcelExporter {
      * @return true if exported table contains more than 65536 records
      */
     public boolean isXlsMaxRowNumberExceeded(PivotData pivotData) {
-        return MAX_ROW_INDEX < pivotData.getAllRows().size();
+        return exportFormat == ExportFormat.XLS && MAX_ROW_INDEX < pivotData.getAllRows().size();
     }
 
     /**
@@ -467,5 +488,21 @@ public class PivotExcelExporter {
      */
     public void setTimeParseFormat(String timeParseFormat) {
         this.timeParseFormat = timeParseFormat;
+    }
+
+    /**
+     * @return export format {@code XLS} or {@code XLSX}
+     */
+    public ExportFormat getExportFormat() {
+        return exportFormat;
+    }
+
+    /**
+     * Sets export format {@code XLS} or {@code XLSX}. The default value is {@code XLSX}.
+     *
+     * @param exportFormat format that should have exported file
+     */
+    public void setExportFormat(ExportFormat exportFormat) {
+        this.exportFormat = exportFormat;
     }
 }

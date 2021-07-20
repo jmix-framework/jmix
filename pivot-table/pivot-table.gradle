@@ -23,7 +23,8 @@ archivesBaseName = 'jmix-pivot-table'
 dependencies {
     api project(':ui-export')
 
-    api 'org.apache.poi:poi'
+    implementation 'org.apache.poi:poi'
+    implementation 'org.apache.poi:poi-ooxml'
 
     api 'org.webjars.bower:pivottable'
     api 'org.webjars:jquery-ui-touch-punch'

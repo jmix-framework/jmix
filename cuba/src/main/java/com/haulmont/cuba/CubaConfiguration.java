@@ -33,6 +33,7 @@ import com.haulmont.cuba.gui.model.impl.CubaScreenDataImpl;
 import com.haulmont.cuba.gui.model.impl.CubaScreenDataXmlLoader;
 import com.haulmont.cuba.gui.presentation.Presentations;
 import com.haulmont.cuba.gui.presentation.PresentationsImpl;
+import com.haulmont.cuba.gui.sys.CubaFragmentHelper;
 import com.haulmont.cuba.gui.xml.CubaPropertyShortcutLoader;
 import com.haulmont.cuba.security.app.UserSettingServiceBean;
 import com.haulmont.cuba.web.app.settings.UserSettingsToolsImpl;
@@ -325,6 +326,12 @@ public class CubaConfiguration {
     @Primary
     protected CubaDataComponents dataComponents() {
         return new CubaDataComponents();
+    }
+
+    @Bean("cuba_FragmentHelper")
+    @Primary
+    protected CubaFragmentHelper cubaFragmentHelper() {
+        return new CubaFragmentHelper();
     }
 
     @EventListener

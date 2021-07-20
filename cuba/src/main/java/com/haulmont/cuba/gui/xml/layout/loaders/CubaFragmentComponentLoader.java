@@ -17,9 +17,14 @@
 package com.haulmont.cuba.gui.xml.layout.loaders;
 
 import com.haulmont.cuba.gui.UiComponents;
+import com.haulmont.cuba.gui.components.AbstractWindow;
+import com.haulmont.cuba.gui.components.compatibility.LegacyFragmentAdapter;
 import com.haulmont.cuba.gui.sys.FrameHelper;
 import io.jmix.ui.WindowInfo;
 import io.jmix.ui.component.Fragment;
+import io.jmix.ui.screen.ScreenContext;
+import io.jmix.ui.screen.ScreenFragment;
+import io.jmix.ui.screen.UiControllerUtils;
 import io.jmix.ui.xml.layout.loader.FragmentComponentLoader;
 import org.dom4j.Element;
 
@@ -34,6 +39,16 @@ public class CubaFragmentComponentLoader extends FragmentComponentLoader {
     @Override
     protected ComponentLoaderContext createInnerContext() {
         return new ComponentLoaderContext(getComponentContext().getOptions());
+    }
+
+    @Override
+    protected void setupScreenContext(ScreenFragment controller, ScreenContext screenContext) {
+        super.setupScreenContext(controller, screenContext);
+
+        if (controller instanceof LegacyFragmentAdapter) {
+            AbstractWindow realScreen = ((LegacyFragmentAdapter) controller).getRealScreen();
+            UiControllerUtils.setScreenContext(realScreen, screenContext);
+        }
     }
 
     @Override

@@ -119,20 +119,11 @@ public class TimerImpl extends AbstractFacet implements Timer {
         addDetachListener(owner);
     }
 
-    private void addDetachListener(Frame owner) {
-        if (owner instanceof Window) {
-            Screen frameOwner = (Screen) owner.getFrameOwner();
-
-            UiControllerUtils.addAfterDetachListener(frameOwner,
-                    event -> detachTimerExtension()
-            );
-        } else if (owner instanceof Fragment) {
-            ScreenFragment fragment = ((Fragment) owner).getFrameOwner();
-
-            UiControllerUtils.addDetachListener(fragment,
-                    event -> detachTimerExtension()
-            );
-        }
+    protected void addDetachListener(Frame owner) {
+        Screen screen = UiControllerUtils.getScreen(owner.getFrameOwner());
+        UiControllerUtils.addAfterDetachListener(screen,
+                event -> detachTimerExtension()
+        );
     }
 
     protected void detachTimerExtension() {

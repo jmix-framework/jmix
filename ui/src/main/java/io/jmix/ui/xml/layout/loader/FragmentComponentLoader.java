@@ -24,6 +24,7 @@ import io.jmix.ui.component.impl.FrameImplementation;
 import io.jmix.ui.model.ScreenData;
 import io.jmix.ui.monitoring.ScreenLifeCycle;
 import io.jmix.ui.screen.FrameOwner;
+import io.jmix.ui.screen.ScreenContext;
 import io.jmix.ui.screen.ScreenFragment;
 import io.jmix.ui.screen.ScreenOptions;
 import io.jmix.ui.sys.*;
@@ -70,7 +71,7 @@ public class FragmentComponentLoader extends ContainerLoader<Fragment> {
         setHostController(controller, hostController);
         setWindowId(controller, windowInfo.getId());
         setFrame(controller, fragment);
-        setScreenContext(controller,
+        setupScreenContext(controller,
                 new ScreenContextImpl(windowInfo, parentContext.getOptions(), getScreenContext(hostController))
         );
         setScreenData(controller, applicationContext.getBean(ScreenData.class));
@@ -135,6 +136,10 @@ public class FragmentComponentLoader extends ContainerLoader<Fragment> {
 
     protected ComponentLoaderContext createInnerContext() {
         return new ComponentLoaderContext(getComponentContext().getOptions());
+    }
+
+    protected void setupScreenContext(ScreenFragment controller, ScreenContext screenContext) {
+        setScreenContext(controller, screenContext);
     }
 
     protected FragmentHelper getFragmentHelper() {

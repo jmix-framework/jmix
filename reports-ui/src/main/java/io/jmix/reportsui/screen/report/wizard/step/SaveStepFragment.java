@@ -94,9 +94,6 @@ public class SaveStepFragment extends StepFragment {
     protected ComboBox<ChartType> diagramType;
 
     @Autowired
-    protected Label diagramTypeLabel;
-
-    @Autowired
     protected RandomChartDataGenerator randomChartDataGenerator;
 
     @Subscribe("outputFileName")
@@ -180,7 +177,6 @@ public class SaveStepFragment extends StepFragment {
         boolean isChartTemplate = outputFileFormat.getValue() == ReportOutputType.CHART;
         chartPreviewBox.setVisible(isChartTemplate);
         diagramType.setVisible(isChartTemplate);
-        diagramTypeLabel.setVisible(isChartTemplate);
         if (isChartTemplate) {
             showChart();
 

@@ -25,40 +25,29 @@
     <layout expand="groupBox" width="100%">
         <groupBox id="groupBox" expand="props" width="100%">
             <vbox id="props" expand="chartPreviewBox">
-                <gridLayout width="100%" spacing="true">
-                    <columns>
-                        <column flex="0"/>
-                        <column flex="1"/>
-                    </columns>
-                    <rows>
-                        <row>
-                            <label value="msg://downloadTemplateFile"/>
+                <form width="100%">
+                    <column width="100%">
+                        <hbox caption="msg://downloadTemplateFile" width="100%">
                             <button id="downloadTemplateFile" stylename="link"
                                     description="msg://templateHintMsg" align="MIDDLE_LEFT"/>
-                        </row>
-                        <row>
-                            <label value="msg://outputFileName" align="MIDDLE_LEFT"/>
-                            <textField id="outputFileName" width="100%" required="true"
-                                       dataContainer="reportDataDc" property="outputNamePattern"
-                                       description="msg://outputFileNameHintMsg" maxLength="255">
-                                <validators>
-                                    <custom bean="report_OutputFileNameValidator"/>
-                                </validators>
-                            </textField>
-                        </row>
-                        <row>
-                            <label value="msg://outputFileFormat" align="MIDDLE_LEFT"/>
-                            <comboBox id="outputFileFormat" required="true" width="100%"
-                                      dataContainer="reportDataDc" property="outputFileType"
-                                      description="msg://outputFileTypeHintMsg"/>
-                        </row>
-                        <row>
-                            <label id="diagramTypeLabel" value="msg://diagramType" visible="false" align="MIDDLE_LEFT"/>
-                            <comboBox id="diagramType" required="true" width="100%" visible="false"
-                                      optionsEnum="io.jmix.reports.entity.charts.ChartType"/>
-                        </row>
-                    </rows>
-                </gridLayout>
+                        </hbox>
+                        <textField id="outputFileName" width="100%" required="true"
+                                   caption="msg://outputFileName"
+                                   dataContainer="reportDataDc" property="outputNamePattern"
+                                   description="msg://outputFileNameHintMsg" maxLength="255">
+                            <validators>
+                                <custom bean="report_OutputFileNameValidator"/>
+                            </validators>
+                        </textField>
+                        <comboBox id="outputFileFormat" required="true" width="100%"
+                                  caption="msg://outputFileFormat"
+                                  dataContainer="reportDataDc" property="outputFileType"
+                                  description="msg://outputFileTypeHintMsg"/>
+                        <comboBox id="diagramType" required="true" width="100%" visible="false"
+                                  caption="msg://diagramType"
+                                  optionsEnum="io.jmix.reports.entity.charts.ChartType"/>
+                    </column>
+                </form>
                 <vbox id="chartPreviewBox" visible="false" width="100%">
                 </vbox>
             </vbox>

@@ -174,7 +174,8 @@ public class ValuesSelectAction<V> extends BaseAction implements ValuePickerActi
      *
      * @param selectValueScreenId the id of {@link SelectValueController} screen
      */
-    @StudioPropertiesItem(type = PropertyType.STRING, defaultValue = DEFAULT_SELECT_VALUE_SCREEN)
+    @StudioPropertiesItem(type = PropertyType.SCREEN_ID, defaultValue = DEFAULT_SELECT_VALUE_SCREEN,
+            options = {"io.jmix.ui.app.valuespicker.selectvalue.SelectValueController"})
     public void setSelectValueScreenId(String selectValueScreenId) {
         screenInitializer.setScreenId(selectValueScreenId);
     }
@@ -213,7 +214,7 @@ public class ValuesSelectAction<V> extends BaseAction implements ValuePickerActi
      *
      * @param lookupScreenId the lookup screen id
      */
-    @StudioPropertiesItem(type = PropertyType.STRING)
+    @StudioPropertiesItem(type = PropertyType.SCREEN_ID, options = {"io.jmix.ui.screen.LookupScreen"})
     public void setLookupScreenId(@Nullable String lookupScreenId) {
         selectValueContext.setLookupScreenId(lookupScreenId);
     }

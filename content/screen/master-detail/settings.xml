@@ -32,7 +32,7 @@
             <![CDATA[${studioUtils.makeScreenNaturalCaption(entity.className.concat('.browse'), null)}]]>
         </message>
     </locMessages>
-    <locMessages key="browseMenu" expressionKey="${studioUtils.decapitalize(lookupControllerName)}.menu">
+    <locMessages key="browseMenu" expressionKey="${studioUtils.decapitalize(controllerName)}.menu">
         <message lang="default">
             <![CDATA[${studioUtils.makeScreenNaturalCaption(entity.className.concat('.browse'), null)}]]>
         </message>

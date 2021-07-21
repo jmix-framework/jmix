@@ -93,7 +93,12 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
     protected AccessManager accessManager;
     @Autowired
     protected DataComponents dataComponents;
-
+    @Autowired
+    private DataManager dataManager;
+    @Autowired
+    private FetchPlanRepository fetchPlanRepository;
+    @Autowired
+    FetchPlans fetchPlans;
     @Autowired
     protected UiComponents uiComponents;
     @Autowired
@@ -106,49 +111,33 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
     protected Icons icons;
     @Autowired
     protected Actions actions;
-
     @Autowired
     protected BoxLayout lookupBox;
     @Autowired
     protected BoxLayout tableBox;
-
     @Autowired
     protected ComboBox<MetaClass> entitiesLookup;
-
     @Autowired
     protected BoxLayout filterBox;
-
     @Autowired
     protected EntityImportExport entityImportExport;
-
     @Autowired
     protected EntityImportPlanJsonBuilder importPlanJsonBuilder;
-
     @Autowired
     protected EntityImportPlans entityImportPlans;
-
     @Autowired
     private Dialogs dialogs;
-
     @Autowired
     private EntityRestore entityRestore;
-
     @Autowired
     private ComboBox<ShowMode> showMode;
-
     @Autowired
     private CoreProperties coreProperties;
-
     @Autowired
     private Downloader downloader;
 
     protected Filter filter;
-    @Autowired
-    private DataManager dataManager;
-
-
     protected Table entitiesTable;
-
     protected MetaClass selectedMeta;
     private CollectionLoader entitiesDl;
     private CollectionContainer entitiesDc;
@@ -507,6 +496,26 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
         return entityImportPlan;
     }
 
+    protected FetchPlan createEntityExportPlan(MetaClass metaClass) {
+        FetchPlanBuilder fetchPlanBuilder = fetchPlans.builder(metaClass.getJavaClass());
+        for (MetaProperty metaProperty : metaClass.getProperties()) {
+            switch (metaProperty.getType()) {
+                case DATATYPE:
+                case ENUM:
+                    fetchPlanBuilder.add(metaProperty.getName());
+                    break;
+                case ASSOCIATION:
+                case COMPOSITION:
+                    FetchPlan local = fetchPlanRepository.getFetchPlan(metaProperty.getRange().asClass(), FetchPlan.LOCAL);
+                    fetchPlanBuilder.add(metaProperty.getName(), local.getName());
+                    break;
+                default:
+                    throw new IllegalStateException("unknown property type");
+            }
+        }
+        return fetchPlanBuilder.build();
+    }
+
     protected EntityImportPlan createEntityImportPlan(MetaClass metaClass) {
         EntityImportPlanBuilder planBuilder = entityImportPlans.builder(metaClass.getJavaClass());
 
@@ -527,6 +536,8 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
                     if (cardinality == Range.Cardinality.MANY_TO_ONE) {
                         planBuilder.addManyToOneProperty(metaProperty.getName(), ReferenceImportBehaviour.IGNORE_MISSING);
                     } else if (cardinality == Range.Cardinality.ONE_TO_ONE) {
+                        planBuilder.addOneToOneProperty(metaProperty.getName(), ReferenceImportBehaviour.IGNORE_MISSING);
+                    } else if (cardinality == Range.Cardinality.ONE_TO_MANY) {
                         planBuilder.addOneToOneProperty(metaProperty.getName(), ReferenceImportBehaviour.IGNORE_MISSING);
                     }
                     break;
@@ -646,12 +657,12 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
                 int saveExportedByteArrayDataThresholdBytes = uiProperties.getSaveExportedByteArrayDataThresholdBytes();
                 String tempDir = coreProperties.getTempDir();
                 if (format == ZIP) {
-                    byte[] data = entityImportExport.exportEntitiesToZIP(selected);
+                    byte[] data = entityImportExport.exportEntitiesToZIP(selected, createEntityExportPlan(selectedMeta));
                     String resourceName = metaClass.getJavaClass().getSimpleName() + ".zip";
                     downloader.download(
                             new ByteArrayDataProvider(data, saveExportedByteArrayDataThresholdBytes, tempDir), resourceName, ZIP);
                 } else if (format == JSON) {
-                    byte[] data = entityImportExport.exportEntitiesToJSON(selected)
+                    byte[] data = entityImportExport.exportEntitiesToJSON(selected, createEntityExportPlan(selectedMeta))
                             .getBytes(StandardCharsets.UTF_8);
                     String resourceName = metaClass.getJavaClass().getSimpleName() + ".json";
                     downloader.download(

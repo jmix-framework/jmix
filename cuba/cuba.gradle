@@ -42,6 +42,8 @@ dependencies {
 
     implementation 'org.springframework.security.oauth:spring-security-oauth2'
 
+    compileOnly 'io.jmix.rest:jmix-rest'
+
     testImplementation 'io.jmix.ui:jmix-ui-test-assist'
 
     testImplementation 'org.apache.commons:commons-dbcp2'

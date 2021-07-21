@@ -282,4 +282,32 @@
 
     </changeSet>
 
+    <changeSet id="7" author="cuba" context="!cuba">
+
+        <createTable tableName="SYS_FILE">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="UPDATE_TS" type="datetime"/>
+            <column name="UPDATED_BY" type="varchar(50)"/>
+            <column name="DELETE_TS" type="datetime"/>
+            <column name="DELETED_BY" type="varchar(50)"/>
+            <column name="VERSION" type="int" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="NAME" type="varchar(500)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="EXT" type="varchar(20)"/>
+            <column name="FILE_SIZE" type="bigint"/>
+            <column name="CREATE_DATE" type="timestamp"/>
+            <column name="SYS_TENANT_ID" type="varchar(255)"/>
+
+        </createTable>
+
+    </changeSet>
+
 </databaseChangeLog>

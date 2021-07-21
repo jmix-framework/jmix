@@ -83,5 +83,15 @@
     <screen id="sys$ScheduledExecution.browse"
             template="/com/haulmont/cuba/web/app/scheduled/scheduled-execution-browse.xml"/>
 
+    <screen id="appProperties"
+            template="com/haulmont/cuba/gui/app/core/appproperties/appproperties-browse.xml"
+            route="app-properties"/>
+
+    <screen id="appPropertyEditor"
+            template="com/haulmont/cuba/gui/app/core/appproperties/appproperties-edit.xml"/>
+
+    <screen id="appPropertiesExport"
+            template="com/haulmont/cuba/gui/app/core/appproperties/appproperties-export.xml"/>
+
 
 </screen-config>

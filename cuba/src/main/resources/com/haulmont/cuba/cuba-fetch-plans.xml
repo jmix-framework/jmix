@@ -28,4 +28,7 @@
     <fetchPlan class="com.haulmont.cuba.security.entity.SearchFolder" name="searchFolders" extends="_local">
         <property name="parent" fetchPlan="_local"/>
     </fetchPlan>
+
+    <fetchPlan class="com.haulmont.cuba.core.entity.Config" name="appProperties" extends="_local"/>
+
 </fetchPlans>

@@ -20,11 +20,7 @@ import com.haulmont.cuba.gui.DialogOptions;
 import com.haulmont.cuba.gui.UiComponents;
 import com.haulmont.cuba.gui.WindowContext;
 import com.haulmont.cuba.gui.WindowManager;
-import com.haulmont.cuba.gui.components.compatibility.AfterCloseListenerAdapter;
-import com.haulmont.cuba.gui.components.compatibility.BeforeCloseWithCloseButtonListenerAdapter;
-import com.haulmont.cuba.gui.components.compatibility.BeforeCloseWithShortcutListenerAdapter;
-import com.haulmont.cuba.gui.components.compatibility.SelectHandlerAdapter;
-import com.haulmont.cuba.gui.components.compatibility.SelectValidatorAdapter;
+import com.haulmont.cuba.gui.components.compatibility.*;
 import com.haulmont.cuba.gui.components.mainwindow.FoldersPane;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.DsContext;
@@ -36,15 +32,10 @@ import io.jmix.core.common.event.Subscription;
 import io.jmix.core.validation.group.UiCrossFieldChecks;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.Screens;
+import io.jmix.ui.UiScreenProperties;
 import io.jmix.ui.component.CloseOriginType;
 import io.jmix.ui.component.Component;
-import io.jmix.ui.UiScreenProperties;
-import io.jmix.ui.screen.CloseAction;
-import io.jmix.ui.screen.EditorScreen;
-import io.jmix.ui.screen.LookupScreen;
-import io.jmix.ui.screen.Screen;
-import io.jmix.ui.screen.StandardCloseAction;
-import io.jmix.ui.screen.UiControllerUtils;
+import io.jmix.ui.screen.*;
 import io.jmix.ui.util.OperationResult;
 
 import javax.annotation.Nullable;
@@ -154,6 +145,17 @@ public interface Window extends io.jmix.ui.component.Window, Frame {
     default void removeCloseListener(CloseListener listener) {
         EventHub eventHub = UiControllerUtils.getEventHub(getFrameOwner());
         eventHub.unsubscribe(Screen.AfterCloseEvent.class, new AfterCloseListenerAdapter(listener));
+    }
+
+    /**
+     * Add a listener that will be notified when this screen is closed with actionId {@link #COMMIT_ACTION_ID}.
+     *
+     * @param listener listener instance
+     * @deprecated Use {@link Screen#addAfterCloseListener(Consumer)} instead.
+     */
+    @Deprecated
+    default void addCloseWithCommitListener(CloseWithCommitListener listener) {
+        addCloseListener(new CloseListenerAdapter(listener));
     }
 
     /**

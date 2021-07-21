@@ -310,4 +310,12 @@
 
     </changeSet>
 
+    <changeSet id="8" author="cuba" context="!cuba">
+        <addColumn tableName="SYS_CONFIG">
+            <column name="VERSION" type="int" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

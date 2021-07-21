@@ -1,6 +1,5 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
-  ~ Copyright 2020 Haulmont.
+  ~ Copyright 2021 Haulmont.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -15,9 +14,15 @@
   ~ limitations under the License.
   -->
 
-<menu-config xmlns="http://jmix.io/schema/ui/menu">
-    <menu id="administration">
-        <item screen="sys$ScheduledTask.browse"/>
-        <item screen="appProperties"/>
-    </menu>
-</menu-config>
+<window
+        xmlns="http://schemas.haulmont.com/cuba/window.xsd"
+        class="com.haulmont.cuba.gui.app.core.appproperties.AppPropertiesExport"
+        messagesPack="com.haulmont.cuba.gui.app.core.appproperties"
+        caption="msg://exportCaption">
+
+    <dsContext/>
+
+    <layout expand="scriptArea" spacing="true">
+        <resizableTextArea id="scriptArea" width="100%"/>
+    </layout>
+</window>

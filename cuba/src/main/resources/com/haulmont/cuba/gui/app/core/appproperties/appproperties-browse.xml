@@ -1,0 +1,65 @@
+<!--
+  ~ Copyright 2021 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<window xmlns="http://schemas.haulmont.com/cuba/window.xsd"
+        class="com.haulmont.cuba.gui.app.core.appproperties.AppPropertiesBrowse"
+        messagesPack="com.haulmont.cuba.gui.app.core.appproperties"
+        caption="msg://browseCaption"
+        focusComponent="paramsTable">
+
+    <dsContext>
+        <hierarchicalDatasource id="paramsDs"
+                                class="com.haulmont.cuba.core.config.AppPropertyEntity"
+                                view="_local"
+                                hierarchyProperty="parent"
+                                allowCommit="false"
+                                datasourceClass="com.haulmont.cuba.gui.app.core.appproperties.AppPropertiesDatasource">
+        </hierarchicalDatasource>
+    </dsContext>
+
+    <dialogMode height="theme://cuba.gui.dialogSize.height.medium"
+                width="theme://cuba.gui.dialogSize.width.medium"
+                resizable="true"/>
+
+    <layout expand="paramsTable" spacing="true">
+        <hbox id="hintBox">
+            <label value="msg://hint" align="MIDDLE_LEFT"/>
+            <linkButton icon="icons/close.png" align="MIDDLE_LEFT" invoke="closeHint"/>
+        </hbox>
+        <treeTable id="paramsTable" editable="false" multiselect="true" width="100%">
+            <buttonsPanel>
+                <label value="msg://searchByName" align="MIDDLE_LEFT"/>
+                <textField id="searchField" />
+                <button action="paramsTable.refresh"/>
+                <button action="paramsTable.editValue"/>
+                <button id="exportBtn" enable="false" invoke="exportAsSql" icon="DOWNLOAD"
+                        description="msg://actions.Export"/>
+            </buttonsPanel>
+            <actions>
+                <action id="editValue" invoke="editValue" enable="false"
+                        caption="msg://actions.Edit" icon="EDIT_ACTION"/>
+                <action id="refresh"/>
+            </actions>
+            <columns>
+                <column id="name" caption="msg://name"/>
+                <column id="displayedCurrentValue" caption="msg://currentValue"/>
+                <column id="updateTs" caption="msg://lastUpdatedAt"/>
+                <column id="updatedBy" caption="msg://lastUpdatedBy"/>
+            </columns>
+            <rows datasource="paramsDs"/>
+        </treeTable>
+    </layout>
+</window>

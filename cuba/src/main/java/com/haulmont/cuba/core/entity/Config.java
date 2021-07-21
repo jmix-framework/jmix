@@ -18,10 +18,7 @@ package com.haulmont.cuba.core.entity;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 
-import javax.persistence.Column;
-import javax.persistence.Lob;
-import javax.persistence.Table;
-import javax.persistence.Version;
+import javax.persistence.*;
 import java.util.Date;
 
 /**
@@ -29,7 +26,7 @@ import java.util.Date;
  * Should not be used in application code.
  */
 @JmixEntity
-@javax.persistence.Entity(name = "sys$Config")
+@Entity(name = "sys$Config")
 @Table(name = "SYS_CONFIG")
 @SystemLevel
 public class Config extends BaseUuidEntity implements Versioned, Creatable, Updatable {
@@ -37,7 +34,7 @@ public class Config extends BaseUuidEntity implements Versioned, Creatable, Upda
     private static final long serialVersionUID = -2103060811330948816L;
 
     @Version
-    @Column(name = "VERSION")
+    @Column(name = "VERSION", nullable = false)
     private Integer version;
 
     @Column(name = "CREATE_TS")

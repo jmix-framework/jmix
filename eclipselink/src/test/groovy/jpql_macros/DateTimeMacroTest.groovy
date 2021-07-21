@@ -22,9 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import test_support.DataSpec
 import test_support.entity.TestDateTimeEntity
 
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.OffsetDateTime
+import java.time.*
 
 class DateTimeMacroTest extends DataSpec {
 
@@ -36,6 +34,8 @@ class DateTimeMacroTest extends DataSpec {
     private LocalDate localDate
     private LocalDateTime localDateTime
     private OffsetDateTime offsetDateTime
+    private LocalTime localTime;
+    private OffsetTime offsetTime;
     private Date nowDate
 
     void setup() {
@@ -43,6 +43,9 @@ class DateTimeMacroTest extends DataSpec {
         localDate = LocalDate.now()
         localDateTime = LocalDateTime.now()
         offsetDateTime = OffsetDateTime.now()
+        localTime = LocalTime.now()
+        offsetTime = OffsetTime.now()
+
         nowDate = new Date()
 
         entity = dataManager.create(TestDateTimeEntity)
@@ -51,6 +54,8 @@ class DateTimeMacroTest extends DataSpec {
         entity.localDateTime = localDateTime
         entity.offsetDateTime = offsetDateTime
         entity.nowDate = nowDate
+        entity.localTime = localTime
+        entity.offsetTime = offsetTime;
 
         dataManager.save(entity)
     }
@@ -109,6 +114,96 @@ class DateTimeMacroTest extends DataSpec {
                 .fetchPlan(FetchPlan.LOCAL).optional().orElse(null)
         then:
         e == null
+    }
+
+    def "@between for OffsetTime"() {
+
+        when:
+        def e = dataManager.load(TestDateTimeEntity)
+                .query('@between(e.offsetTime, now - 1, now, hour)')
+                .fetchPlan(FetchPlan.LOCAL).optional().orElse(null)
+        then:
+        e == null
+
+        when:
+        e = dataManager.load(TestDateTimeEntity)
+                .query('@between(e.offsetTime, now, now + 1, hour)')
+                .fetchPlan(FetchPlan.LOCAL).optional().orElse(null)
+        then:
+        e == entity
+
+        when:
+        e = dataManager.load(TestDateTimeEntity)
+                .query('@between(e.offsetTime, now - 1, now, minute)')
+                .fetchPlan(FetchPlan.LOCAL).optional().orElse(null)
+        then:
+        e == null
+
+        when:
+        e = dataManager.load(TestDateTimeEntity)
+                .query('@between(e.offsetTime, now, now + 1, minute)')
+                .fetchPlan(FetchPlan.LOCAL).optional().orElse(null)
+        then:
+        e == entity
+
+        when:
+        e = dataManager.load(TestDateTimeEntity)
+                .query('@between(e.offsetTime, now - 10, now - 5, second)')
+                .fetchPlan(FetchPlan.LOCAL).optional().orElse(null)
+        then:
+        e == null
+
+        when:
+        e = dataManager.load(TestDateTimeEntity)
+                .query('@between(e.offsetTime, now - 5, now + 5, second)')
+                .fetchPlan(FetchPlan.LOCAL).optional().orElse(null)
+        then:
+        e == entity
+    }
+
+    def "@between for LocalTime"() {
+
+        when:
+        def e = dataManager.load(TestDateTimeEntity)
+                .query('@between(e.localTime, now - 1, now, hour)')
+                .fetchPlan(FetchPlan.LOCAL).optional().orElse(null)
+        then:
+        e == null
+
+        when:
+        e = dataManager.load(TestDateTimeEntity)
+                .query('@between(e.localTime, now, now + 1, hour)')
+                .fetchPlan(FetchPlan.LOCAL).optional().orElse(null)
+        then:
+        e == entity
+
+        when:
+        e = dataManager.load(TestDateTimeEntity)
+                .query('@between(e.localTime, now - 1, now, minute)')
+                .fetchPlan(FetchPlan.LOCAL).optional().orElse(null)
+        then:
+        e == null
+
+        when:
+        e = dataManager.load(TestDateTimeEntity)
+                .query('@between(e.localTime, now, now + 1, minute)')
+                .fetchPlan(FetchPlan.LOCAL).optional().orElse(null)
+        then:
+        e == entity
+
+        when:
+        e = dataManager.load(TestDateTimeEntity)
+                .query('@between(e.localTime, now - 10, now - 5, second)')
+                .fetchPlan(FetchPlan.LOCAL).optional().orElse(null)
+        then:
+        e == null
+
+        when:
+        e = dataManager.load(TestDateTimeEntity)
+                .query('@between(e.localTime, now - 5, now + 5, second)')
+                .fetchPlan(FetchPlan.LOCAL).optional().orElse(null)
+        then:
+        e == entity
     }
 
     def "@between for LocalDateTime"() {

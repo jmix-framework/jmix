@@ -112,9 +112,7 @@ public class AttributeLocalizationFragment extends ScreenFragment {
     }
 
     protected void setupFieldsLock() {
-        if (!this.isEnabled) {
-            localizedValuesDataGrid.setEnabled(false);
-        }
+        localizedValuesDataGrid.setEnabled(this.isEnabled);
     }
 
     protected void loadLocalizedValues() {

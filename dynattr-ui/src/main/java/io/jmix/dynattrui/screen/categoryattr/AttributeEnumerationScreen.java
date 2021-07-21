@@ -19,9 +19,11 @@ package io.jmix.dynattrui.screen.categoryattr;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import io.jmix.core.AccessManager;
 import io.jmix.core.CoreProperties;
 import io.jmix.core.LoadContext;
 import io.jmix.core.Metadata;
+import io.jmix.core.accesscontext.CrudEntityContext;
 import io.jmix.dynattr.MsgBundleTools;
 import io.jmix.dynattrui.impl.model.AttributeLocalizedEnumValue;
 import io.jmix.dynattrui.screen.localization.AttributeLocalizationFragment;
@@ -75,6 +77,8 @@ public class AttributeEnumerationScreen extends Screen {
     protected String enumerationLocales;
     protected AttributeLocalizationFragment localizationFragment;
     protected List<AttributeLocalizedEnumValue> localizedEnumValues = new ArrayList<>();
+    @Autowired
+    private AccessManager accessManager;
 
     public void setEnumeration(String enumeration) {
         this.enumeration = enumeration;
@@ -199,7 +203,11 @@ public class AttributeEnumerationScreen extends Screen {
         if (coreProperties.getAvailableLocales().size() > 1) {
             localizationBox.setVisible(true);
 
+            CrudEntityContext crudEntityContext = new CrudEntityContext(localizedEnumValuesDc.getEntityMetaClass());
+            accessManager.applyRegisteredConstraints(crudEntityContext);
+
             localizationFragment = fragments.create(this, AttributeLocalizationFragment.class);
+            localizationFragment.setEnabled(crudEntityContext.isUpdatePermitted());
 
             Fragment fragment = localizationFragment.getFragment();
             fragment.setWidth(Component.FULL_SIZE);

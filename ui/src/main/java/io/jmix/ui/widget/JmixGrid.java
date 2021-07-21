@@ -16,7 +16,9 @@
 
 package io.jmix.ui.widget;
 
+import com.google.common.base.Strings;
 import com.vaadin.data.ValueProvider;
+import com.vaadin.server.SizeWithUnit;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.components.grid.Editor;
@@ -46,6 +48,8 @@ public class JmixGrid<T> extends Grid<T> implements JmixEnhancedGrid<T> {
     protected boolean aggregatable = false;
     protected AggregationPosition aggregationPosition = AggregationPosition.TOP;
     protected Collection<String> aggregationPropertyIds;
+
+    protected HtmlAttributesExtension htmlAttributesExtension;
 
     public JmixGrid() {
         registerRpc((JmixGridServerRpc) () -> {
@@ -244,5 +248,58 @@ public class JmixGrid<T> extends Grid<T> implements JmixEnhancedGrid<T> {
     @Override
     public ContentMode getRowDescriptionContentMode() {
         return getState(false).rowDescriptionContentMode;
+    }
+
+    @Nullable
+    @Override
+    public Float getMinHeight() {
+        String value = getHtmlAttributesExtension().getCssProperty("min-height");
+        return Strings.isNullOrEmpty(value) ? null : SizeWithUnit.parseStringSize(value).getSize();
+    }
+
+    @Nullable
+    @Override
+    public Unit getMinHeightSizeUnit() {
+        String value = getHtmlAttributesExtension().getCssProperty("min-height");
+        return Strings.isNullOrEmpty(value) ? null : SizeWithUnit.parseStringSize(value).getUnit();
+    }
+
+    @Override
+    public void setMinHeight(@Nullable String minHeight) {
+        if (Strings.isNullOrEmpty(minHeight)) {
+            getHtmlAttributesExtension().removeCssProperty("min-height");
+        } else {
+            getHtmlAttributesExtension().setCssProperty("min-height", minHeight);
+        }
+    }
+
+    @Nullable
+    @Override
+    public Float getMinWidth() {
+        String value = getHtmlAttributesExtension().getCssProperty("min-width");
+        return Strings.isNullOrEmpty(value) ? null : SizeWithUnit.parseStringSize(value).getSize();
+    }
+
+    @Nullable
+    @Override
+    public Unit getMinWidthSizeUnit() {
+        String value = getHtmlAttributesExtension().getCssProperty("min-width");
+        return Strings.isNullOrEmpty(value) ? null : SizeWithUnit.parseStringSize(value).getUnit();
+    }
+
+    @Override
+    public void setMinWidth(@Nullable String minWidth) {
+        if (Strings.isNullOrEmpty(minWidth)) {
+            getHtmlAttributesExtension().removeCssProperty("min-width");
+        } else {
+            getHtmlAttributesExtension().setCssProperty("min-width", minWidth);
+        }
+    }
+
+    protected HtmlAttributesExtension getHtmlAttributesExtension() {
+        if (htmlAttributesExtension == null) {
+            htmlAttributesExtension = HtmlAttributesExtension.get(this);
+        }
+        return htmlAttributesExtension;
     }
 }

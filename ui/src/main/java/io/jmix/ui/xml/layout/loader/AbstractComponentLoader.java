@@ -975,4 +975,22 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
         loadString(element, "metaClass", metaClassStr ->
                 setter.accept(applicationContext.getBean(Metadata.class).getClass(metaClassStr)));
     }
+
+    protected Optional<String> loadMinHeight(Element element) {
+        return loadString(element, "minHeight");
+    }
+
+    protected void loadMinHeight(Element element, Consumer<String> setter) {
+        loadMinHeight(element)
+                .ifPresent(setter);
+    }
+
+    protected Optional<String> loadMinWidth(Element element) {
+        return loadString(element, "minWidth");
+    }
+
+    protected void loadMinWidth(Element element, Consumer<String> setter) {
+        loadMinWidth(element)
+                .ifPresent(setter);
+    }
 }

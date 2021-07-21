@@ -17,6 +17,7 @@
 package io.jmix.ui.widget;
 
 import com.vaadin.server.Resource;
+import com.vaadin.server.Sizeable;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Layout;
 import com.vaadin.util.ReflectTools;
@@ -264,6 +265,18 @@ public interface JmixEnhancedTable extends AggregationContainer {
     String getEmptyStateLinkMessage();
 
     void setEmptyStateLinkClickHandler(Runnable handler);
+
+    @Nullable
+    Float getMinHeight();
+    @Nullable
+    Sizeable.Unit getMinHeightSizeUnit();
+    void setMinHeight(@Nullable String minHeight);
+
+    @Nullable
+    Float getMinWidth();
+    @Nullable
+    Sizeable.Unit getMinWidthSizeUnit();
+    void setMinWidth(@Nullable String minWidth);
 
     interface CellValueFormatter {
         String getFormattedValue(Object rowId, Object colId, Property<?> property);

@@ -22,6 +22,8 @@ import com.vaadin.server.Sizeable;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.*;
 import com.vaadin.ui.AbstractComponent;
+import com.vaadin.ui.Component;
+import com.vaadin.ui.CssLayout;
 import com.vaadin.v7.data.Property;
 import com.vaadin.v7.data.util.converter.Converter;
 import com.vaadin.v7.data.util.converter.ConverterUtil;
@@ -56,16 +58,8 @@ import io.jmix.ui.accesscontext.UiEntityAttributeContext;
 import io.jmix.ui.accesscontext.UiEntityContext;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.BaseAction;
-import io.jmix.ui.component.AggregationInfo;
-import io.jmix.ui.component.ButtonsPanel;
-import io.jmix.ui.component.HasInnerComponents;
-import io.jmix.ui.component.KeyCombination;
+import io.jmix.ui.component.*;
 import io.jmix.ui.component.LookupComponent.LookupSelectionChangeNotifier;
-import io.jmix.ui.component.PaginationComponent;
-import io.jmix.ui.component.SimplePagination;
-import io.jmix.ui.component.Table;
-import io.jmix.ui.component.UiComponentsGenerator;
-import io.jmix.ui.component.VisibilityChangeNotifier;
 import io.jmix.ui.component.data.BindingState;
 import io.jmix.ui.component.data.DataUnit;
 import io.jmix.ui.component.data.HasValueSource;
@@ -3439,6 +3433,52 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
     @Override
     public Consumer<EmptyStateClickEvent<E>> getEmptyStateLinkClickHandler() {
         return emptyStateClickLinkHandler;
+    }
+
+    @Nullable
+    @Override
+    public Float getMinHeight() {
+        return component.getMinHeight();
+    }
+
+    @Nullable
+    @Override
+    public SizeUnit getMinHeightSizeUnit() {
+        return component.getMinHeightSizeUnit() != null
+                ? WrapperUtils.toSizeUnit(component.getMinHeightSizeUnit())
+                : null;
+    }
+
+    @Override
+    public void setMinHeight(@Nullable String minHeight) {
+        if (minHeight != null) {
+            // validate size unit
+            SizeWithUnit.parseStringSize(minHeight);
+        }
+        component.setMinHeight(minHeight);
+    }
+
+    @Nullable
+    @Override
+    public Float getMinWidth() {
+        return component.getMinWidth();
+    }
+
+    @Nullable
+    @Override
+    public SizeUnit getMinWidthSizeUnit() {
+        return component.getMinWidthSizeUnit() != null
+                ? WrapperUtils.toSizeUnit(component.getMinWidthSizeUnit())
+                : null;
+    }
+
+    @Override
+    public void setMinWidth(@Nullable String minWidth) {
+        if (minWidth != null) {
+            // validate size unit
+            SizeWithUnit.parseStringSize(minWidth);
+        }
+        component.setMinWidth(minWidth);
     }
 
     protected static class InstalledStyleProvider implements StyleProvider {

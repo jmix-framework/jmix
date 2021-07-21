@@ -154,6 +154,9 @@ public abstract class AbstractDataGridLoader<T extends DataGrid> extends Actions
         loadSelectionMode(resultComponent, element);
         loadFrozenColumnCount(resultComponent, element);
         loadTabIndex(resultComponent, element);
+
+        loadMinHeight(element, resultComponent::setMinHeight);
+        loadMinWidth(element, resultComponent::setMinWidth);
     }
 
     protected void loadDataGridData() {

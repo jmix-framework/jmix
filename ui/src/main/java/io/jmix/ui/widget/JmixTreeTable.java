@@ -17,14 +17,12 @@
 package io.jmix.ui.widget;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.vaadin.event.Action;
 import com.vaadin.event.ActionManager;
 import com.vaadin.event.ShortcutListener;
-import com.vaadin.server.Page;
-import com.vaadin.server.PaintException;
-import com.vaadin.server.PaintTarget;
-import com.vaadin.server.Resource;
+import com.vaadin.server.*;
 import com.vaadin.shared.Registration;
 import com.vaadin.ui.AbstractComponent;
 import com.vaadin.ui.Component;
@@ -98,6 +96,8 @@ public class JmixTreeTable extends com.vaadin.v7.ui.TreeTable implements TreeTab
     protected Runnable beforeRefreshRowCacheHandler;
 
     protected Runnable emptyStateLinkClickHandler;
+
+    protected HtmlAttributesExtension htmlAttributesExtension;
 
     public JmixTreeTable() {
         registerRpc(new JmixTableServerRpc() {
@@ -1111,6 +1111,59 @@ public class JmixTreeTable extends com.vaadin.v7.ui.TreeTable implements TreeTab
     @Override
     public void setEmptyStateLinkClickHandler(Runnable handler) {
         this.emptyStateLinkClickHandler = handler;
+    }
+
+    @Nullable
+    @Override
+    public Float getMinHeight() {
+        String value = getHtmlAttributesExtension().getCssProperty("min-height");
+        return Strings.isNullOrEmpty(value) ? null : SizeWithUnit.parseStringSize(value).getSize();
+    }
+
+    @Nullable
+    @Override
+    public Unit getMinHeightSizeUnit() {
+        String value = getHtmlAttributesExtension().getCssProperty("min-height");
+        return Strings.isNullOrEmpty(value) ? null : SizeWithUnit.parseStringSize(value).getUnit();
+    }
+
+    @Override
+    public void setMinHeight(@Nullable String minHeight) {
+        if (Strings.isNullOrEmpty(minHeight)) {
+            getHtmlAttributesExtension().removeCssProperty("min-height");
+        } else {
+            getHtmlAttributesExtension().setCssProperty("min-height", minHeight);
+        }
+    }
+
+    @Nullable
+    @Override
+    public Float getMinWidth() {
+        String value = getHtmlAttributesExtension().getCssProperty("min-width");
+        return Strings.isNullOrEmpty(value) ? null : SizeWithUnit.parseStringSize(value).getSize();
+    }
+
+    @Nullable
+    @Override
+    public Unit getMinWidthSizeUnit() {
+        String value = getHtmlAttributesExtension().getCssProperty("min-width");
+        return Strings.isNullOrEmpty(value) ? null : SizeWithUnit.parseStringSize(value).getUnit();
+    }
+
+    @Override
+    public void setMinWidth(@Nullable String minWidth) {
+        if (Strings.isNullOrEmpty(minWidth)) {
+            getHtmlAttributesExtension().removeCssProperty("min-width");
+        } else {
+            getHtmlAttributesExtension().setCssProperty("min-width", minWidth);
+        }
+    }
+
+    protected HtmlAttributesExtension getHtmlAttributesExtension() {
+        if (htmlAttributesExtension == null) {
+            htmlAttributesExtension = HtmlAttributesExtension.get(this);
+        }
+        return htmlAttributesExtension;
     }
 
     public void expandAllHierarchical(List<Object> collapsedItemIds, List<Object> preOrder, List<Object> openItems) {

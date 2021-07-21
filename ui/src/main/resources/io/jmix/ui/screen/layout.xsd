@@ -1296,6 +1296,9 @@
         <xs:attribute name="multiLineCells" type="xs:boolean"/>
         <xs:attribute name="emptyStateMessage" type="resourceString"/>
         <xs:attribute name="emptyStateLinkMessage" type="resourceString"/>
+
+        <xs:attribute name="minHeight" type="xs:string"/>
+        <xs:attribute name="minWidth" type="xs:string"/>
     </xs:attributeGroup>
 
     <xs:attributeGroup name="isLayoutComponent">
@@ -2887,6 +2890,8 @@
                 <xs:attribute name="emptyStateLinkMessage" type="resourceString"/>
                 <xs:attribute name="aggregatable" type="xs:boolean"/>
                 <xs:attribute name="aggregationPosition" type="aggregationPosition"/>
+                <xs:attribute name="minHeight" type="xs:string"/>
+                <xs:attribute name="minWidth" type="xs:string"/>
 
                 <xs:attributeGroup ref="hasTabIndex"/>
                 <xs:attributeGroup ref="hasContextHelp"/>

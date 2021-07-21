@@ -16,6 +16,7 @@
 
 package io.jmix.ui.widget;
 
+import com.vaadin.server.Sizeable;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.components.grid.GridSelectionModel;
@@ -89,6 +90,22 @@ public interface JmixEnhancedGrid<T> {
     Collection<String> getAggregationPropertyIds();
 
     ContentMode getRowDescriptionContentMode();
+
+    @Nullable
+    Float getMinHeight();
+
+    @Nullable
+    Sizeable.Unit getMinHeightSizeUnit();
+
+    void setMinHeight(@Nullable String minHeight);
+
+    @Nullable
+    Float getMinWidth();
+
+    @Nullable
+    Sizeable.Unit getMinWidthSizeUnit();
+
+    void setMinWidth(@Nullable String minWidth);
 
     /**
      * Defines the position of aggregation row.

@@ -73,6 +73,9 @@ public class FilterTypesGenerator {
                 .collect(Collectors.toMap(GraphQLScalarType::getName, this::generateScalarFilterConditionType));
         types.addAll(scalarFilterConditionTypesMap.values());
 
+        // enum filter conditions
+        types.addAll(generateEnumFilterTypes());
+
         // order by
         types.add(enumSortOrder);
 
@@ -91,9 +94,9 @@ public class FilterTypesGenerator {
         List<GraphQLInputObjectField> valueDefs = metaClass.getProperties().stream()
                 .map(metaProperty -> {
 
-                    // todo support enums
                     if (metaProperty.getType().equals(MetaProperty.Type.ENUM)) {
-                        return listInpObjectField(metaProperty.getName(), "String", null);
+                        return listInpObjectField(metaProperty.getName(),
+                                composeFilterConditionTypeName(metaProperty.getJavaType().getSimpleName()), null);
                     }
 
                     // todo "-to-many" relations are not supported now
@@ -192,6 +195,29 @@ public class FilterTypesGenerator {
 
         return defBuilder.build();
     }
+
+    public Collection<GraphQLType> generateEnumFilterTypes() {
+        return metadataUtils.allEnumJavaClasses().stream()
+                .map(FilterTypesGenerator::generateEnumFilterType)
+                .collect(Collectors.toList());
+    }
+
+    public static GraphQLInputObjectType generateEnumFilterType(Class<?> javaType)  {
+        String className = composeFilterConditionTypeName(javaType.getSimpleName());
+        String enumTypeName = javaType.getSimpleName();
+
+        return GraphQLInputObjectType.newInputObject()
+                .name(className)
+                .field(listInpObjectField(IN_LIST.getId(), enumTypeName, IN_LIST.getDescription()))
+                .field(listInpObjectField(NOT_IN_LIST.getId(), enumTypeName, NOT_IN_LIST.getDescription()))
+                .field(inpObjectField(EQ.getId(), enumTypeName, EQ.getDescription()))
+                .field(inpObjectField(NEQ.getId(), enumTypeName, NEQ.getDescription()))
+                .field(inpObjectField(IS_NULL.getId(), GraphQLBoolean.getName(), IS_NULL.getDescription()))
+                .field(listInpObjectField(Types.ConditionUnionType.AND.name(), className, null))
+                .field(listInpObjectField(Types.ConditionUnionType.OR.name(), className, null))
+                .build();
+    }
+
 
     protected static String composeFilterOrderByTypeName(MetaClass metaClass) {
         return composeFilterOrderByTypeName(metaClass.getName());

@@ -2,5 +2,8 @@ query($filter: [inp_scr_CarFilterCondition]) {
     scr_CarList(filter: $filter) {
         _instanceName
         price
+        carType
+        ecoRank
+        regNumber
     }
 }

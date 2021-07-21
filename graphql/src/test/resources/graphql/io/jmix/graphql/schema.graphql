@@ -1078,6 +1078,21 @@ input inp_BooleanFilterCondition {
   _neq: Boolean
 }
 
+input inp_CarTypeFilterCondition {
+  AND: [inp_CarTypeFilterCondition]
+  OR: [inp_CarTypeFilterCondition]
+  "equals"
+  _eq: CarType
+  "in list"
+  _in: [CarType]
+  "is null"
+  _isNull: Boolean
+  "not equals"
+  _neq: CarType
+  "not in list"
+  _notIn: [CarType]
+}
+
 "expression to compare columns of type Char. All fields are combined with logical 'AND'"
 input inp_CharFilterCondition {
   "equals"
@@ -1134,6 +1149,21 @@ input inp_DateTimeFilterCondition {
   _neq: DateTime
   "not in list"
   _notIn: [DateTime]
+}
+
+input inp_EcoRankFilterCondition {
+  AND: [inp_EcoRankFilterCondition]
+  OR: [inp_EcoRankFilterCondition]
+  "equals"
+  _eq: EcoRank
+  "in list"
+  _in: [EcoRank]
+  "is null"
+  _isNull: Boolean
+  "not equals"
+  _neq: EcoRank
+  "not in list"
+  _notIn: [EcoRank]
 }
 
 "expression to compare columns of type Float. All fields are combined with logical 'AND'"
@@ -1304,6 +1334,36 @@ input inp_OffsetTimeFilterCondition {
   _neq: OffsetTime
 }
 
+input inp_RowLevelPolicyActionFilterCondition {
+  AND: [inp_RowLevelPolicyActionFilterCondition]
+  OR: [inp_RowLevelPolicyActionFilterCondition]
+  "equals"
+  _eq: RowLevelPolicyAction
+  "in list"
+  _in: [RowLevelPolicyAction]
+  "is null"
+  _isNull: Boolean
+  "not equals"
+  _neq: RowLevelPolicyAction
+  "not in list"
+  _notIn: [RowLevelPolicyAction]
+}
+
+input inp_RowLevelPolicyTypeFilterCondition {
+  AND: [inp_RowLevelPolicyTypeFilterCondition]
+  OR: [inp_RowLevelPolicyTypeFilterCondition]
+  "equals"
+  _eq: RowLevelPolicyType
+  "in list"
+  _in: [RowLevelPolicyType]
+  "is null"
+  _isNull: Boolean
+  "not equals"
+  _neq: RowLevelPolicyType
+  "not in list"
+  _notIn: [RowLevelPolicyType]
+}
+
 "expression to compare columns of type Short. All fields are combined with logical 'AND'"
 input inp_ShortFilterCondition {
   "equals"
@@ -1346,6 +1406,21 @@ input inp_StringFilterCondition {
   _notIn: [String]
   "starts with substring"
   _startsWith: String
+}
+
+input inp_TestEnumFilterCondition {
+  AND: [inp_TestEnumFilterCondition]
+  OR: [inp_TestEnumFilterCondition]
+  "equals"
+  _eq: TestEnum
+  "in list"
+  _in: [TestEnum]
+  "is null"
+  _isNull: Boolean
+  "not equals"
+  _neq: TestEnum
+  "not in list"
+  _notIn: [TestEnum]
 }
 
 "expression to compare columns of type Time. All fields are combined with logical 'AND'"
@@ -1536,10 +1611,10 @@ input inp_scr_CarFilterCondition {
   OR: [inp_scr_CarFilterCondition]
   "is null"
   _isNull: Boolean
-  carType: [String]
+  carType: [inp_CarTypeFilterCondition]
   createdBy: [inp_StringFilterCondition]
   createdDate: [inp_DateFilterCondition]
-  ecoRank: [String]
+  ecoRank: [inp_EcoRankFilterCondition]
   garage: [inp_scr_GarageFilterCondition]
   id: [inp_UUIDFilterCondition]
   lastModifiedBy: [inp_StringFilterCondition]
@@ -1783,7 +1858,7 @@ input inp_scr_DatatypesTestEntityFilterCondition {
   dateAttr: [inp_DateFilterCondition]
   dateTimeAttr: [inp_DateTimeFilterCondition]
   doubleAttr: [inp_FloatFilterCondition]
-  enumAttr: [String]
+  enumAttr: [inp_TestEnumFilterCondition]
   id: [inp_UUIDFilterCondition]
   intIdentityIdTestEntityAssociationO2OAttr: [inp_scr_IntIdentityIdTestEntityFilterCondition]
   integerAttr: [inp_IntFilterCondition]
@@ -2444,7 +2519,7 @@ input inp_sec_RowLevelPolicyEntityFilterCondition {
   OR: [inp_sec_RowLevelPolicyEntityFilterCondition]
   "is null"
   _isNull: Boolean
-  action: [String]
+  action: [inp_RowLevelPolicyActionFilterCondition]
   createTs: [inp_DateTimeFilterCondition]
   createdBy: [inp_StringFilterCondition]
   deleteTs: [inp_DateTimeFilterCondition]
@@ -2454,7 +2529,7 @@ input inp_sec_RowLevelPolicyEntityFilterCondition {
   joinClause: [inp_StringFilterCondition]
   role: [inp_sec_RowLevelRoleEntityFilterCondition]
   script: [inp_StringFilterCondition]
-  type: [String]
+  type: [inp_RowLevelPolicyTypeFilterCondition]
   updateTs: [inp_DateTimeFilterCondition]
   updatedBy: [inp_StringFilterCondition]
   version: [inp_IntFilterCondition]

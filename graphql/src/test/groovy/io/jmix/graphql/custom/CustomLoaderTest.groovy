@@ -50,7 +50,7 @@ class CustomLoaderTest extends AbstractGraphQLTest {
     def "Custom car loader"() {
         when:
         def response = query(
-                "datafetcher/query-car.gql",
+                "datafetcher/query-car-by-id.gql",
                 asObjectNode('{"id": "123e4567-e89b-12d3-a456-426655440000"}')
         )
         then:

@@ -38,6 +38,7 @@ import org.springframework.transaction.support.TransactionTemplate
 import spock.lang.Specification
 import test_support.App
 import test_support.RestTestUtils
+import test_support.entity.Car
 
 
 @SpringBootTest(classes = App, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -84,28 +85,38 @@ class AbstractGraphQLTest extends Specification {
         transaction.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW)
     }
 
-    protected query(String queryFilePath) {
+    protected GraphQLResponse query(String queryFilePath) {
         return graphQLTestTemplate
                 .withBearerAuth(adminToken)
                 .postForResource("graphql/io/jmix/graphql/" + queryFilePath)
     }
 
-    protected query(String queryFilePath, HttpHeaders httpHeaders) {
+    protected GraphQLResponse query(String queryFilePath, HttpHeaders httpHeaders) {
         return graphQLTestTemplate
                 .withHeaders(httpHeaders)
                 .withBearerAuth(adminToken)
                 .postForResource("graphql/io/jmix/graphql/" + queryFilePath)
     }
 
-    protected query(String queryFilePath, ObjectNode variables) {
+    protected GraphQLResponse query(String queryFilePath, ObjectNode variables) {
         return query(queryFilePath, variables, adminToken)
     }
 
-    protected query(String queryFilePath, ObjectNode variables, String token) {
+    protected GraphQLResponse query(String queryFilePath, String variables) {
+        return query(queryFilePath, asObjectNode(variables), adminToken)
+    }
+
+    protected GraphQLResponse query(String queryFilePath, ObjectNode variables, String token) {
         return graphQLTestTemplate
                 .withBearerAuth(token)
                 .perform("graphql/io/jmix/graphql/" + queryFilePath, variables)
     }
+
+    protected List<Car> queryCars(String variables) {
+        return query("datafetcher/query-cars.gql", variables)
+                .getList('$.data.scr_CarList', Car)
+    }
+
 
     static ObjectNode asObjectNode(String str) {
         return new ObjectMapper().readValue(str, ObjectNode.class)

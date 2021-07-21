@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package io.jmix.graphql.datafetcher
+package io.jmix.graphql.datafetcher.filter
 
 import io.jmix.graphql.AbstractGraphQLTest
 import org.springframework.test.context.TestPropertySource
+import spock.lang.Ignore
+import test_support.entity.Car
 
 @TestPropertySource(properties = ["eclipselink.logging.level.sql = FINE"])
 class FilterIntegrationTest extends AbstractGraphQLTest {
@@ -473,6 +475,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
         getBody(response) == '{"data":{"scr_GarageList":[' +
                 '{"id":"ff01c573-ebf3-c704-3ad0-fd582f7a2a12"}' +
                 ']}}'
+    }
+
+    @Ignore //todo https://github.com/Haulmont/jmix-core/issues/136
+    def "_in with empty array in condition"() {
+        when:
+        List<Car> cars = queryCars('{"filter": {"regNumber": {"_in": []}}}}')
+        then:
+        cars.stream().allMatch(car -> car.regNumber == null)
     }
 
     def "_in for numbers"() {

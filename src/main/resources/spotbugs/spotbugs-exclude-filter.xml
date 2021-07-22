@@ -243,6 +243,6 @@
 
     <Match>
         <Bug pattern="UWF_UNWRITTEN_FIELD"/>
-        <Package name="io.jmix.bpm.delegate"/>
+        <Class name="io.jmix.bpm.delegate.CreateEntityDelegate"/>
     </Match>
 </FindBugsFilter>

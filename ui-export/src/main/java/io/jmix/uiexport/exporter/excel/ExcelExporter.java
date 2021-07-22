@@ -761,6 +761,12 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
             if (sizers[sizersIndex].isNotificationRequired(notificationRequired)) {
                 sizers[sizersIndex].notifyCellValue(str, stdFont);
             }
+        } else if (cellValue instanceof byte[]) {
+            String str = messages.getMessage("excelExporter.bytes");
+            cell.setCellValue(createStringCellValue(str));
+            if (sizers[sizersIndex].isNotificationRequired(notificationRequired)) {
+                sizers[sizersIndex].notifyCellValue(str, stdFont);
+            }
         } else {
             String strValue = cellValue == null ? "" : cellValue.toString();
             String str = sizersIndex == 0 ? createSpaceString(level) + strValue : strValue;

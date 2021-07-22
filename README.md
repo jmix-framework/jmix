@@ -141,6 +141,123 @@ type Query {
    userInfo: UserInfo
 }
 ```
+
+#### Choosing which methods get exposed through the API
+To deduce which methods of each operation source class should be exposed as GraphQL queries/mutations/subscriptions, 
+SPQR uses the concept of a `ResolverBuilder` (since each exposed method acts as a resolver function for a 
+GraphQL operation). To cover the basic approaches `AutoConfiguration` registers a bean for each 
+of the three built-in `ResolverBuilder` implementations:
+- `AnnotatedResolverBuilder` - exposes only the methods annotated by `@GraphQLQuery`, `@GraphQLMutation` or `@GraphQLSubscription`
+- `PublicResolverBuilder` - exposes all `public` methods from the operations source class (methods returning `void` are considered mutations)
+- `BeanResolverBuilder` - exposes all getters as queries and setters as mutations (getters returning `Publisher<T>` are considered subscriptions)
+
+**It is also possible to implement custom resolver builders by implementing the `ResolverBuilder` interface.**
+
+Resolver builders can be declared both globally and on the operation source level.
+If not sticking to the defaults, it is generally safer to explicitly customize on
+the operation source level, unless the rules are absolutely uniform across all 
+operation sources. Customizing on both levels simultaneously will work but could 
+prove tricky to control as your API grows.
+
+At the moment SPQR's (v0.11.2) default resolver builder is `AnnotatedResolverBuilder`. 
+This starter follows that convention and will continue to do so if at some point SPQR's default changes.
+
+####Customizing resolver builders globally
+To change the default resolver builders globally, implement and register a bean of type 
+`ExtensionProvider<ResolverBuilder>`. A simplified example of this could be:
+```java
+   @Bean
+   public ExtensionProvider<GeneratorConfiguration, ResolverBuilder> resolverBuilderExtensionProvider() {
+      return (config, current) -> {
+         List<ResolverBuilder> resolverBuilders = new ArrayList<>();
+   
+         //add a custom subtype of PublicResolverBuilder that only exposes a method if it's called "greeting"
+         resolverBuilders.add(new PublicResolverBuilder() {
+            @Override
+            protected boolean isQuery(Method method) {
+               return super.isQuery(method) && method.getName().equals("greeting");
+            }
+         });
+         //add the default builder
+         resolverBuilders.add(new AnnotatedResolverBuilder());
+   
+         return resolverBuilders;
+      };
+   }
+```
+
+This would add two resolver builders that apply to *all* operation sources.
+The First one exposes all public methods named *greeting*. The second is 
+the inbuilt `AnnotatedResolverBuilder` (that exposes only the explicitly annotated 
+methods). A quicker way to achieve the same would be:
+
+```java
+    @Bean
+    public ExtensionProvider<GeneratorConfiguration, ResolverBuilder> resolverBuilderExtensionProvider() {
+        //prepend the custom builder to the provided list of defaults
+        return (config, current) -> current.prepend(new PublicResolverBuilder() {
+                @Override
+                protected boolean isQuery(Method method) {
+                    return super.isQuery(method) && method.getName().equals("greeting");
+                }
+            });
+    };
+```
+
+####Customizing the resolver builders for a specific operation source
+To attach a resolver builder to a specific source (bean), use 
+the `@WithResolverBuilder` annotation on it. This annotation also works both 
+on the beans registered by `@Component/@Service/@Repository` or `@Bean` annotations.
+
+As an example, we can expose the `greeting` query by using:
+```java
+    @Component
+    @GraphQLApi
+    @WithResolverBuilder(BeanResolverBuilder.class) //exposes all getters
+    private class MyOperationSource {
+        public String getGreeting(){
+            return "Hello world !";
+        }
+    }
+```
+
+or:
+```java
+    @Bean
+    @GraphQLApi
+    //No explicit resolver builders declared, so AnnotatedResolverBuilder is used
+    public MyOperationSource() {
+        @GraphQLQuery(name = "greeting")
+        public String getGreeting() {
+            return "Hello world !";
+        }
+    }
+```
+
+It is also entirely possible to use more than one resolver builder on the same
+operation source e.g.
+
+```java
+    @Component
+    @GraphQLApi
+    @WithResolverBuilder(BeanResolverBuilder.class)
+    @WithResolverBuilder(AnnotatedResolverBuilder.class)
+    private class MyOperationSource {
+        //Exposed by BeanResolverBuilder because it's a getter
+        public String getGreeting(){
+            return "Hello world !";
+        }
+
+        //Exposed by AnnotatedResolverBuilder because it's annotated
+        @GraphQLQuery
+        public String personalGreeting(String name){
+            return "Hello " + name + " !"; 
+        }
+    }
+```
+This way, both queries are exposed but in different ways. 
+The same would work on a bean registered using the `@Bean` annotation.
+
 #### Input Types Generation in Custom Resolver 
 By default, SPQR creates input types with `Input` suffix:
 ```graphql

@@ -40,7 +40,7 @@ public class ImapSyncScheduleAutoConfiguration {
     @Autowired
     private ImapProperties imapProperties;
 
-    @Bean
+    @Bean("imap_ImapSyncJob")
     JobDetail imapSyncJob() {
         return JobBuilder.newJob()
                 .ofType(ImapSyncJob.class)
@@ -49,7 +49,7 @@ public class ImapSyncScheduleAutoConfiguration {
                 .build();
     }
 
-    @Bean
+    @Bean("imap_EmailSendingTrigger")
     Trigger emailSendingTrigger() {
         String cron = imapProperties.getImapSyncCron();
         log.info("Schedule Imap Sync using default configuration with CRON expression '{}'", cron);

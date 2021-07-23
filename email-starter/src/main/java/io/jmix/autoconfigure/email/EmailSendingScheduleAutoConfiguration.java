@@ -40,7 +40,7 @@ public class EmailSendingScheduleAutoConfiguration {
     @Autowired
     private EmailerProperties emailerProperties;
 
-    @Bean
+    @Bean("email_EmailSendingJob")
     JobDetail emailSendingJob() {
         return JobBuilder.newJob()
                 .ofType(EmailSendingJob.class)
@@ -49,7 +49,7 @@ public class EmailSendingScheduleAutoConfiguration {
                 .build();
     }
 
-    @Bean
+    @Bean("email_EmailSendingTrigger")
     Trigger emailSendingTrigger() {
         String cron = emailerProperties.getEmailSendingCron();
         log.info("Schedule Email Sending using default configuration with CRON expression '{}'", cron);

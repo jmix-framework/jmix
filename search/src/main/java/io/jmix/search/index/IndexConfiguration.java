@@ -17,6 +17,7 @@
 package io.jmix.search.index;
 
 import io.jmix.search.index.mapping.IndexMappingConfiguration;
+import org.elasticsearch.common.settings.Settings;
 
 import java.util.Set;
 
@@ -35,13 +36,19 @@ public class IndexConfiguration {
 
     protected final IndexMappingConfiguration mapping;
 
-    //todo settings
+    protected final Settings settings;
 
-    public IndexConfiguration(String entityName, Class<?> entityClass, String indexName, IndexMappingConfiguration mapping, Set<Class<?>> affectedEntityClasses) {
+    public IndexConfiguration(String entityName,
+                              Class<?> entityClass,
+                              String indexName,
+                              IndexMappingConfiguration mapping,
+                              Settings settings,
+                              Set<Class<?>> affectedEntityClasses) {
         this.entityName = entityName;
         this.entityClass = entityClass;
         this.indexName = indexName;
         this.mapping = mapping;
+        this.settings = settings;
         this.affectedEntityClasses = affectedEntityClasses;
     }
 
@@ -79,6 +86,14 @@ public class IndexConfiguration {
      */
     public IndexMappingConfiguration getMapping() {
         return mapping;
+    }
+
+    /**
+     * Gets settings of this index
+     * @return settings
+     */
+    public Settings getSettings() {
+        return settings;
     }
 
     /**

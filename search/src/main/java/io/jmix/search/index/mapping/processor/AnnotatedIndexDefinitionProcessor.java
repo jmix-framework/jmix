@@ -25,6 +25,8 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.search.SearchProperties;
 import io.jmix.search.index.IndexConfiguration;
+import io.jmix.search.index.IndexSettingsConfigurationContext;
+import io.jmix.search.index.IndexSettingsConfigurer;
 import io.jmix.search.index.annotation.JmixEntitySearchIndex;
 import io.jmix.search.index.mapping.DisplayedNameDescriptor;
 import io.jmix.search.index.mapping.IndexMappingConfiguration;
@@ -35,6 +37,7 @@ import io.jmix.search.index.mapping.strategy.*;
 import io.jmix.search.utils.PropertyTools;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
+import org.elasticsearch.common.settings.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,6 +82,8 @@ public class AnnotatedIndexDefinitionProcessor {
     protected PropertyValueExtractorProvider propertyValueExtractorProvider;
     @Autowired
     protected SearchProperties searchProperties;
+    @Autowired
+    protected List<IndexSettingsConfigurer> indexSettingsConfigurers;
 
     /**
      * Processes index definition interface marked with {@link JmixEntitySearchIndex} annotation
@@ -93,20 +98,21 @@ public class AnnotatedIndexDefinitionProcessor {
         Class<?> indexDefClass = resolveClass(className);
 
         JmixEntitySearchIndex indexAnnotation = indexDefClass.getAnnotation(JmixEntitySearchIndex.class);
-        Class<?> entityJavaClass = indexAnnotation.entity();
-        MetaClass entityMetaClass = metadata.findClass(entityJavaClass);
-        if (entityMetaClass == null) {
-            throw new RuntimeException("MetaClass for '" + entityJavaClass + "' not found");
+        Class<?> entityClass = indexAnnotation.entity();
+        MetaClass metaClass = metadata.findClass(entityClass);
+        if (metaClass == null) {
+            throw new RuntimeException("MetaClass for '" + entityClass + "' not found");
         }
-        String indexName = createIndexName(indexAnnotation, entityMetaClass);
-        log.debug("Index name for entity {}: {}", entityMetaClass, indexName);
+        String indexName = createIndexName(indexAnnotation, metaClass);
+        log.debug("Index name for entity {}: {}", metaClass, indexName);
 
-        IndexMappingConfiguration indexMappingConfiguration = createIndexMappingConfig(entityMetaClass, indexDefClass);
+        IndexMappingConfiguration indexMappingConfiguration = createIndexMappingConfig(metaClass, indexDefClass);
         Set<Class<?>> affectedEntityClasses = getAffectedEntityClasses(indexMappingConfiguration);
 
         log.debug("Definition class {}. Affected entity classes = {}", className, affectedEntityClasses);
 
-        return new IndexConfiguration(entityMetaClass.getName(), entityJavaClass, indexName, indexMappingConfiguration, affectedEntityClasses);
+        Settings settings = configureIndexSettings(entityClass);
+        return new IndexConfiguration(metaClass.getName(), entityClass, indexName, indexMappingConfiguration, settings, affectedEntityClasses);
     }
 
     protected Class<?> resolveClass(String className) {
@@ -246,6 +252,18 @@ public class AnnotatedIndexDefinitionProcessor {
 
         affectedClasses.add(indexMappingConfiguration.getEntityMetaClass().getJavaClass());
         return affectedClasses;
+    }
+
+    protected Settings configureIndexSettings(Class<?> entityClass) {
+        IndexSettingsConfigurationContext context = new IndexSettingsConfigurationContext();
+        indexSettingsConfigurers.forEach(configurer -> configurer.configure(context));
+
+        Settings commonSettings = context.getCommonSettingsBuilder().build();
+        Settings entitySettings = context.getEntitySettingsBuilder(entityClass).build();
+        return Settings.builder()
+                .put(commonSettings)
+                .put(entitySettings)
+                .build();
     }
 
     protected Map<String, MappingFieldDescriptor> processMappingDefinition(MetaClass metaClass, MappingDefinition mappingDefinition) {

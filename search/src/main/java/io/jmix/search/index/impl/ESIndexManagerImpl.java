@@ -32,6 +32,7 @@ import org.elasticsearch.client.indices.CreateIndexResponse;
 import org.elasticsearch.client.indices.GetIndexRequest;
 import org.elasticsearch.client.indices.GetIndexResponse;
 import org.elasticsearch.cluster.metadata.MappingMetadata;
+import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,6 +72,7 @@ public class ESIndexManagerImpl implements ESIndexManager {
             throw new RuntimeException("Unable to create index '" + indexConfiguration.getIndexName() + "': Failed to parse index definition", e);
         }
         request.mapping(mappingBody, XContentType.JSON);
+        request.settings(indexConfiguration.getSettings());
         log.info("Create index '{}' with mapping {}", indexConfiguration.getIndexName(), mappingBody);
         CreateIndexResponse response;
         try {
@@ -285,16 +287,37 @@ public class ESIndexManagerImpl implements ESIndexManager {
     protected boolean isIndexActual(IndexConfiguration indexConfiguration) {
         Preconditions.checkNotNullArgument(indexConfiguration);
 
-        GetIndexResponse index = getIndex(indexConfiguration.getIndexName());
-        Map<String, MappingMetadata> mappings = index.getMappings();
-        MappingMetadata mappingMetadata = mappings.get(indexConfiguration.getIndexName());
-        Map<String, Object> currentMapping = mappingMetadata.getSourceAsMap();
-        log.debug("Current mapping of index '{}': {}", indexConfiguration.getIndexName(), currentMapping);
+        GetIndexResponse indexResponse = getIndex(indexConfiguration.getIndexName());
+        boolean indexMappingActual = isIndexMappingActual(indexConfiguration, indexResponse);
+        boolean indexSettingsActual = isIndexSettingsActual(indexConfiguration, indexResponse);
 
-        Map<String, Object> actualMapping = objectMapper.convertValue(indexConfiguration.getMapping(), new TypeReference<Map<String, Object>>() {
-        });
-        log.debug("Actual mapping of index '{}': {}", indexConfiguration.getIndexName(), actualMapping);
+        return indexMappingActual && indexSettingsActual;
+    }
 
+    protected boolean isIndexMappingActual(IndexConfiguration indexConfiguration, GetIndexResponse indexResponse) {
+        Map<String, MappingMetadata> mappings = indexResponse.getMappings();
+        MappingMetadata indexMappingMetadata = mappings.get(indexConfiguration.getIndexName());
+        Map<String, Object> currentMapping = indexMappingMetadata.getSourceAsMap();
+        Map<String, Object> actualMapping = objectMapper.convertValue(
+                indexConfiguration.getMapping(),
+                new TypeReference<Map<String, Object>>() {
+                }
+        );
+        log.debug("Mappings of index '{}':\nCurrent: {}\nActual: {}",
+                indexConfiguration.getIndexName(), currentMapping, actualMapping);
         return actualMapping.equals(currentMapping);
+    }
+
+    protected boolean isIndexSettingsActual(IndexConfiguration indexConfiguration, GetIndexResponse indexResponse) {
+        Map<String, Settings> settings = indexResponse.getSettings();
+        Settings currentSettings = settings.get(indexConfiguration.getIndexName());
+        Settings actualSettings = indexConfiguration.getSettings();
+        long unmatchedSettings = actualSettings.keySet().stream().filter(key -> {
+            String actualValue = actualSettings.get(key);
+            String currentValue = currentSettings.get(key);
+            return !actualValue.equals(currentValue);
+        }).count();
+
+        return unmatchedSettings == 0;
     }
 }

@@ -21,12 +21,11 @@ import com.haulmont.cuba.core.global.UserSessionSource
 import com.haulmont.cuba.core.sys.AppProperties
 import com.haulmont.cuba.gui.UiComponents
 import com.haulmont.cuba.web.testsupport.WebTest
-import io.jmix.core.security.SecurityContextHelper
+import io.jmix.core.security.SystemAuthenticator
 import io.jmix.ui.screen.OpenMode
 import io.jmix.ui.screen.Screen
 import io.jmix.ui.testassist.spec.ScreenSpecification
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.security.core.Authentication
 
 @SuppressWarnings(["GroovyAccessibility", "GroovyAssignabilityCheck"])
 @WebTest
@@ -44,16 +43,22 @@ class UiScreenSpec extends ScreenSpecification {
     @Autowired
     UiComponents cubaUiComponents;
 
+    @Autowired
+    SystemAuthenticator authenticator
+
     @Override
     void setup() {
         exportScreensPackages(['com.haulmont.cuba.web.app.main'])
     }
 
     @Override
-    void setupSecurityContext() {
-        // due to CUBA does not have any User and Role, use only CoreAuthentication
-        Authentication authentication = createCoreAuthentication()
-        SecurityContextHelper.setAuthentication(authentication)
+    protected void setupAuthentication() {
+        authenticator.begin()
+    }
+
+    @Override
+    protected void cleanupAuthentication() {
+        authenticator.end()
     }
 
     protected Screen showMainWindow() {

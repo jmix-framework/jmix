@@ -25,6 +25,13 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.util.function.Function;
+
+/**
+ * @see Table.Column#setColumnGenerator(Function)
+ * @deprecated Use installing instance from the controller instead.
+ */
+@Deprecated
 @Primary
 @Component("cuba_CubaDeclarativeColumnGenerator")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)

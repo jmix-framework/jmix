@@ -830,13 +830,19 @@ public interface Table<E>
         void setOwner(@Nullable Table<E> owner);
 
         /**
-         * INTERNAL
-         * <p>
-         * Intended to install declarative {@code columnGenerator} instance.
+         * Intended to install instance from screen controller. For instance:
+         * <pre>
+         *      &#64;Install(to = "filesTable.content", subject = "columnGenerator")
+         *      private Object filesTableContentColumnGenerator(DataGrid.ColumnGeneratorEvent&lt;File&gt; event) {
+         *          LinkButton linkButton = uiComponents.create(LinkButton.class);
+         *          linkButton.setCaption("Open content screen");
+         *          linkButton.addClickListener(this::onLinkClickListener);
+         *          return linkButton;
+         *      }
+         * </pre>
          *
          * @param columnGenerator column generator instance
          */
-        @Internal
         default void setColumnGenerator(Function<E, Component> columnGenerator) {
             if (getOwner() != null) {
                 getOwner().addGeneratedColumn(getStringId(), columnGenerator::apply);

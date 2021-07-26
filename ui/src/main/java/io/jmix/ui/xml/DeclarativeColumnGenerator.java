@@ -26,9 +26,15 @@ import org.springframework.context.annotation.Scope;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Method;
+import java.util.function.Function;
 
 import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_PROTOTYPE;
 
+/**
+ * @see Table.Column#setColumnGenerator(Function)
+ * @deprecated Use installing instance from the controller instead.
+ */
+@Deprecated
 @org.springframework.stereotype.Component("ui_DeclarativeColumnGenerator")
 @Scope(SCOPE_PROTOTYPE)
 public class DeclarativeColumnGenerator implements Table.ColumnGenerator {

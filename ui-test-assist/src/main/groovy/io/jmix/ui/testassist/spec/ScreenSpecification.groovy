@@ -16,12 +16,18 @@
 
 package io.jmix.ui.testassist.spec
 
-import io.jmix.ui.Screens
+import io.jmix.core.annotation.Internal
+import io.jmix.core.security.ClientDetails
+import io.jmix.core.security.SecurityContextHelper
 import io.jmix.ui.UiProperties
 import io.jmix.ui.screen.OpenMode
 import io.jmix.ui.screen.Screen
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.userdetails.User
+import org.springframework.security.core.userdetails.UserDetails
 
+@Internal
 @SuppressWarnings(["GroovyAccessibility", "GroovyAssignabilityCheck"])
 class ScreenSpecification extends UiTestAssistSpecification {
 
@@ -33,8 +39,24 @@ class ScreenSpecification extends UiTestAssistSpecification {
         exportScreensPackages(['io.jmix.ui.testassist.app.main'])
     }
 
-    protected Screens getScreens() {
-        vaadinUi.screens
+    @Override
+    protected void setupAuthentication() {
+        UserDetails user = User.builder()
+                .username("system")
+                .password("")
+                .authorities(Collections.emptyList())
+                .build()
+
+        UsernamePasswordAuthenticationToken authentication =
+                new UsernamePasswordAuthenticationToken(user, null, Collections.emptyList())
+        authentication.setDetails(ClientDetails.builder().locale(Locale.US).build())
+
+        SecurityContextHelper.setAuthentication(authentication)
+    }
+
+    @Override
+    protected void cleanupAuthentication() {
+        SecurityContextHelper.setAuthentication(null)
     }
 
     protected Screen showTestMainScreen() {

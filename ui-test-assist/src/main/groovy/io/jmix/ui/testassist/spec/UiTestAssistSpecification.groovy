@@ -24,25 +24,17 @@ import io.jmix.core.FetchPlanRepository
 import io.jmix.core.Metadata
 import io.jmix.core.MetadataTools
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory
-import io.jmix.core.security.ClientDetails
-import io.jmix.core.security.SecurityContextHelper
 import io.jmix.ui.*
 import io.jmix.ui.model.DataComponents
 import io.jmix.ui.sys.AppCookies
 import io.jmix.ui.sys.UiControllersConfiguration
 import io.jmix.ui.testassist.UiTest
-import io.jmix.ui.testassist.UiTestAssistProperties
 import io.jmix.ui.testassist.ui.TestConnectorTracker
 import io.jmix.ui.testassist.ui.TestVaadinRequest
 import io.jmix.ui.testassist.ui.TestVaadinSession
 import io.jmix.ui.theme.ThemeConstants
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationContext
-import org.springframework.security.authentication.AuthenticationManager
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
-import org.springframework.security.core.Authentication
-import org.springframework.security.core.userdetails.User
-import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes
 import spock.lang.Specification
@@ -52,7 +44,7 @@ import javax.servlet.http.HttpServletRequest
 import static org.apache.commons.lang3.reflect.FieldUtils.getDeclaredField
 
 @UiTest
-class UiTestAssistSpecification extends Specification {
+abstract class UiTestAssistSpecification extends Specification {
 
     @Autowired
     Metadata metadata
@@ -84,15 +76,9 @@ class UiTestAssistSpecification extends Specification {
     @Autowired
     AppUI vaadinUi
 
-    @Autowired
-    UiTestAssistProperties uiTestAssistProperties
-
-    @Autowired(required = false)
-    AuthenticationManager authenticationManager
-
     @SuppressWarnings("GroovyAccessibility")
     void setup() {
-        setupSecurityContext()
+        setupAuthentication()
 
         def injectFactory = applicationContext.getAutowireCapableBeanFactory()
 
@@ -135,36 +121,20 @@ class UiTestAssistSpecification extends Specification {
             vaadinUi.removeWindow(it)
         }
         UI.setCurrent(null)
+        cleanupAuthentication()
     }
 
-    void setupSecurityContext() {
-        Authentication authentication = authenticationManager == null
-                ? createCoreAuthentication()
-                : createSecurityAuthentication()
+    /**
+     * Implement to set up authentication before each test.
+     * For example, use {@code SystemAuthenticator.begin()}.
+     */
+    protected abstract void setupAuthentication()
 
-        SecurityContextHelper.setAuthentication(authentication)
-    }
-
-    Authentication createCoreAuthentication() {
-        UserDetails user = User.builder()
-                .username(uiTestAssistProperties.getUsername())
-                .password(uiTestAssistProperties.getPassword())
-                .authorities(Collections.emptyList())
-                .build()
-
-        UsernamePasswordAuthenticationToken authentication =
-                new UsernamePasswordAuthenticationToken(user, null, Collections.emptyList())
-        authentication.setDetails(ClientDetails.builder().locale(Locale.US).build())
-
-        return authentication
-    }
-
-    Authentication createSecurityAuthentication() {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        uiTestAssistProperties.getUsername(), uiTestAssistProperties.getPassword()))
-        return authentication
-    }
+    /**
+     * Implement to clean up authentication after each test.
+     * For example, use {@code SystemAuthenticator.end()}.
+     */
+    protected abstract void cleanupAuthentication()
 
     protected void exportScreensPackages(List<String> packages) {
         def configuration = new UiControllersConfiguration(applicationContext, metadataReaderFactory)
@@ -181,5 +151,9 @@ class UiTestAssistSpecification extends Specification {
     protected void resetScreensConfig() {
         windowConfig.configurations = []
         windowConfig.initialized = false
+    }
+
+    protected Screens getScreens() {
+        vaadinUi.screens
     }
 }

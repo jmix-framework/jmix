@@ -21,14 +21,14 @@ import io.jmix.data.DataConfiguration
 import io.jmix.eclipselink.EclipselinkConfiguration
 import io.jmix.ui.UiConfiguration
 import io.jmix.ui.component.*
-import io.jmix.ui.testassist.spec.UiTestAssistSpecification
+import io.jmix.ui.testassist.spec.ScreenSpecification
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Unroll
 import test_support.UiTestConfiguration
 
 @ContextConfiguration(classes = [CoreConfiguration, UiConfiguration, DataConfiguration,
         EclipselinkConfiguration, UiTestConfiguration])
-class CollectionValueComponentsTest extends UiTestAssistSpecification {
+class CollectionValueComponentsTest extends ScreenSpecification {
 
     @Unroll
     def "both null and empty collection must be considered as empty value by collection value components"() {

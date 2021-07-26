@@ -28,9 +28,11 @@ import io.jmix.dynattrui.DynAttrEmbeddingStrategies;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.ActionsHolder;
 import io.jmix.ui.component.Table;
+import io.jmix.ui.component.formatter.Formatter;
 import io.jmix.ui.xml.layout.loader.GroupTableLoader;
 import org.dom4j.Element;
 
+import javax.annotation.Nullable;
 import java.util.Optional;
 
 import static org.apache.commons.lang3.StringUtils.trimToNull;
@@ -144,6 +146,12 @@ public class CubaGroupTableLoader extends GroupTableLoader {
         }
 
         return column;
+    }
+
+    @Nullable
+    @Override
+    protected Formatter<?> loadFormatter(Element element) {
+        return ComponentLoaderHelper.loadFormatter(element, getClassManager(), getContext());
     }
 
     protected static class CubaGroupTableDataHolder extends TableDataHolder {

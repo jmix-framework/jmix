@@ -22,7 +22,6 @@ import io.jmix.multitenancy.MultitenancyProperties;
 import io.jmix.multitenancy.entity.Tenant;
 import io.jmix.multitenancyui.MultitenancyUiSupport;
 import io.jmix.ui.navigation.UrlRouting;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -34,12 +33,16 @@ import java.util.stream.Collectors;
  */
 @Component("mten_MultitenancyUiSupport")
 public class MultitenancyUiSupportImpl implements MultitenancyUiSupport {
-    @Autowired
-    private MultitenancyProperties multitenancyProperties;
-    @Autowired
-    private DataManager dataManager;
+    private final MultitenancyProperties multitenancyProperties;
+    private final DataManager dataManager;
 
     private static final String TENANT_USERNAME_SEPARATOR = "|";
+
+    public MultitenancyUiSupportImpl(MultitenancyProperties multitenancyProperties,
+                                     DataManager dataManager) {
+        this.multitenancyProperties = multitenancyProperties;
+        this.dataManager = dataManager;
+    }
 
     @Override
     public String getUsernameByUrl(String username, UrlRouting urlRouting) {

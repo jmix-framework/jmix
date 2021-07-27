@@ -22,18 +22,16 @@ import io.jmix.security.model.EntityPolicyAction;
 import io.jmix.security.role.annotation.EntityAttributePolicy;
 import io.jmix.security.role.annotation.EntityPolicy;
 import io.jmix.security.role.annotation.ResourceRole;
-import io.jmix.securitydata.entity.ResourcePolicyEntity;
-import io.jmix.securitydata.entity.ResourceRoleEntity;
-import io.jmix.securitydata.entity.RowLevelPolicyEntity;
-import io.jmix.securitydata.entity.RowLevelRoleEntity;
+import io.jmix.securitydata.entity.*;
 import io.jmix.securityui.model.*;
 import io.jmix.securityui.role.annotation.MenuPolicy;
 import io.jmix.securityui.role.annotation.ScreenPolicy;
+import io.jmix.securityui.screen.resourcepolicy.AttributeResourceModel;
 
-@ResourceRole(name = "Multitenancy: administration", code = MultitenancyAdminRole.CODE)
-public interface MultitenancyAdminRole {
+@ResourceRole(name = "Multitenancy: management", code = TenantManagementRole.CODE)
+public interface TenantManagementRole {
 
-    String CODE = "multitenancy-admin-role";
+    String CODE = "tenant-management-role";
 
     @EntityPolicy(entityClass = Tenant.class, actions = {EntityPolicyAction.READ})
     @EntityPolicy(entityClass = BaseRoleModel.class, actions = {EntityPolicyAction.ALL})
@@ -45,6 +43,8 @@ public interface MultitenancyAdminRole {
     @EntityPolicy(entityClass = ResourceRoleModel.class, actions = {EntityPolicyAction.ALL})
     @EntityPolicy(entityClass = RowLevelRoleModel.class, actions = {EntityPolicyAction.ALL})
     @EntityPolicy(entityClass = RowLevelPolicyModel.class, actions = {EntityPolicyAction.ALL})
+    @EntityPolicy(entityClass = AttributeResourceModel.class, actions = {EntityPolicyAction.ALL})
+    @EntityPolicy(entityClass = RoleAssignmentEntity.class, actions = {EntityPolicyAction.ALL})
     @EntityAttributePolicy(entityClass = Tenant.class, attributes = "*", action = EntityAttributePolicyAction.VIEW)
     @EntityAttributePolicy(entityClass = BaseRoleModel.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)
     @EntityAttributePolicy(entityClass = ResourcePolicyEntity.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)
@@ -55,17 +55,29 @@ public interface MultitenancyAdminRole {
     @EntityAttributePolicy(entityClass = ResourceRoleModel.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)
     @EntityAttributePolicy(entityClass = RowLevelRoleModel.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)
     @EntityAttributePolicy(entityClass = RowLevelPolicyModel.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)
+    @EntityAttributePolicy(entityClass = AttributeResourceModel.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)
+    @EntityAttributePolicy(entityClass = RoleAssignmentEntity.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)
 
     @ScreenPolicy(screenIds = {
             "mten_Tenant.browse",
             "mten_Tenant.edit",
+            "sec_RoleAssignmentScreen",
             "sec_ResourceRoleModel.browse",
             "sec_ResourceRoleModel.edit",
             "sec_ResourceRoleModel.lookup",
             "sec_RowLevelRoleModel.browse",
             "sec_RowLevelRoleModel.edit",
             "sec_RowLevelRoleModel.lookup",
-            "sec_RowLevelPolicyModel.edit"
+            "sec_RowLevelPolicyModel.edit",
+            "sec_MenuResourcePolicyModel.create",
+            "sec_MenuResourcePolicyModel.edit",
+            "sec_ScreenResourcePolicyModel.create",
+            "sec_ScreenResourcePolicyModel.edit",
+            "sec_EntityResourcePolicyModel.create",
+            "sec_EntityResourcePolicyModel.edit",
+            "sec_EntityAttributeResourcePolicyModel.create",
+            "sec_EntityAttributeResourcePolicyModel.edit",
+            "sec_SpecificResourcePolicyModel.edit"
     })
     @MenuPolicy(menuIds = {
             "mten_Tenant.browse",

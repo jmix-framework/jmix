@@ -54,6 +54,21 @@ system entities.
 # Predefined Roles
 
 - **tenant-admin-role** - allows user to configure tenants.
+  
+**Note**. The role does not allow manage users if you want you should create a role that  allows that. For example
+```java
+@ResourceRole(name = "Multitenancy: user management", code = TenantUserManagementRole.CODE)
+public interface TenantUserManagementRole extends TenantManagementRole {
+
+    String CODE = "tenant-user-management-role";
+
+    @EntityPolicy(entityClass = User.class, actions = {EntityPolicyAction.ALL})
+    @EntityAttributePolicy(entityClass = User.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)
+    @ScreenPolicy(screenIds = {"<UserBrowse_screen_id>", "UserEdit_screen_id"})
+    @MenuPolicy(menuIds = {"<UserBrowse_screen_id>"})
+    void createUserAccess();
+}
+```
 
 # Managing Tenants
 
@@ -153,6 +168,9 @@ access to writing native SQL or Groovy code (JMX Console, SQL/Groovy bands in th
     private ComboBox<String> tenantIdField;
 
     @Autowired
+    private TenantProvider tenantProvider;
+
+    @Autowired
     private MultitenancyUiSupport multitenancyUiSupport;
 
     @Subscribe
@@ -163,6 +181,15 @@ access to writing native SQL or Groovy code (JMX Console, SQL/Groovy bands in th
     @Subscribe
     public void onInit(InitEvent event){
         tenantIdField.setOptionsList(multitenancyUiSupport.getTenantOptions());
+    }
+
+    @Subscribe
+    public void onBeforeShow(BeforeShowEvent event) {
+        String currentTenantId = tenantProvider.getCurrentUserTenantId();
+        if (!currentTenantId.equals(TenantProvider.NO_TENANT) && Strings.isNullOrEmpty(tenantIdField.getValue())) {
+            tenantIdField.setEditable(false);
+            tenantIdField.setValue(currentTenantId);
+        }
     }
     
     @Subscribe("tenantIdField")

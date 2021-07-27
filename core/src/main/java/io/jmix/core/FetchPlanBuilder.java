@@ -258,6 +258,7 @@ public class FetchPlanBuilder {
 
     /**
      * Adds all properties from specified {@code fetchPlan}. Replaces existing nested fetchPlans.
+     *
      * @throws RuntimeException if FetchPlan has been already built
      */
     public FetchPlanBuilder addFetchPlan(FetchPlan fetchPlan) {
@@ -272,6 +273,7 @@ public class FetchPlanBuilder {
 
     /**
      * Adds all properties from specified by {@code fetchPlanName} FetchPlan. Replaces existing nested fetchPlans.
+     *
      * @throws RuntimeException if FetchPlan has been already built
      */
     public FetchPlanBuilder addFetchPlan(String fetchPlanName) {
@@ -323,6 +325,38 @@ public class FetchPlanBuilder {
 
         return this;
     }
+
+    /**
+     * Deep merges {@code fetchPlan} into direct or indirect property's fetchPlan by adding all properties recursively.
+     *
+     * @param propertyPath name of direct property or dot separated path to indirect property to merge {@code propFetchPlan} to
+     * @throws RuntimeException if FetchPlan has been already built
+     */
+    public FetchPlanBuilder mergeNestedProperty(String propertyPath, @Nullable FetchPlan fetchPlan) {
+        checkState();
+
+        String[] parts = propertyPath.split("\\.");
+        if (parts.length > 1) {
+            String propName = parts[0];
+            MetaProperty metaProperty = metaClass.getProperty(propName);
+            properties.add(propName);
+            if (metaProperty.getRange().isClass()) {
+                if (!builders.containsKey(propName)) {
+                    Class<?> refClass = metaProperty.getRange().asClass().getJavaClass();
+                    builders.put(propName, applicationContext.getBean(FetchPlanBuilder.class, refClass));
+                }
+            }
+            FetchPlanBuilder nestedBuilder = builders.get(propName);
+            if (nestedBuilder == null)
+                throw new IllegalStateException("Builder not found for property " + propName);
+            String nestedProp = Arrays.stream(parts).skip(1).collect(Collectors.joining("."));
+            nestedBuilder.mergeNestedProperty(nestedProp, fetchPlan);
+        } else {
+            mergeProperty(parts[0], fetchPlan, null);
+        }
+        return this;
+    }
+
 
     /**
      * Sets {@link FetchPlan#loadPartialEntities()} to true

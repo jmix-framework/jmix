@@ -17,11 +17,11 @@ package io.jmix.core;
 
 import javax.annotation.Nullable;
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * Defines a {@link FetchPlan} property. Each fetch plan property corresponds to a
  * {@link io.jmix.core.metamodel.model.MetaProperty} with the same name.
- *
  */
 public class FetchPlanProperty implements Serializable {
 
@@ -68,5 +68,18 @@ public class FetchPlanProperty implements Serializable {
     @Override
     public String toString() {
         return name;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof FetchPlanProperty)) return false;
+        FetchPlanProperty that = (FetchPlanProperty) o;
+        return name.equals(that.name) && Objects.equals(fetchPlan, that.fetchPlan) && fetchMode == that.fetchMode;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, fetchPlan, fetchMode);
     }
 }

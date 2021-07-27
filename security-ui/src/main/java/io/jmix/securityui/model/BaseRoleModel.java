@@ -16,6 +16,7 @@
 
 package io.jmix.securityui.model;
 
+import io.jmix.core.annotation.TenantId;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
@@ -51,6 +52,10 @@ public abstract class BaseRoleModel {
 
     @JmixProperty
     private Set<String> childRoles;
+
+    @JmixProperty
+    @TenantId
+    private String tenantId;
 
     public UUID getId() {
         return id;
@@ -106,5 +111,13 @@ public abstract class BaseRoleModel {
 
     public void setCustomProperties(Map<String, String> customProperties) {
         this.customProperties = customProperties;
+    }
+
+    public String getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
     }
 }

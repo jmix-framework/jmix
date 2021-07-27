@@ -58,7 +58,7 @@ public class DatabaseRowLevelRoleProvider extends BaseDatabaseRoleProvider<RowLe
     @Override
     protected void buildFetchPlan(FetchPlanBuilder fetchPlanBuilder) {
         fetchPlanBuilder
-                .addAll("name", "code", "description", "childRoles")
+                .addAll("name", "code", "description", "childRoles", "sysTenantId")
                 .add("rowLevelPolicies", FetchPlan.BASE);
     }
 
@@ -72,6 +72,7 @@ public class DatabaseRowLevelRoleProvider extends BaseDatabaseRoleProvider<RowLe
         role.setSource(RoleSource.DATABASE);
         role.setChildRoles(roleEntity.getChildRoles());
         role.getCustomProperties().put("databaseId", roleEntity.getId().toString());
+        role.setTenantId(roleEntity.getSysTenantId());
 
         List<RowLevelPolicyEntity> rowLevelPolicyEntities = roleEntity.getRowLevelPolicies();
         if (rowLevelPolicyEntities != null) {

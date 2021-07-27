@@ -28,6 +28,7 @@ public abstract class BaseRole {
     private String description;
     private Set<String> childRoles;
     private Map<String, String> customProperties = new HashMap<>();
+    private String tenantId;
 
     public String getName() {
         return name;
@@ -76,5 +77,13 @@ public abstract class BaseRole {
 
     public void setCustomProperties(Map<String, String> customProperties) {
         this.customProperties = customProperties;
+    }
+
+    public String getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
     }
 }

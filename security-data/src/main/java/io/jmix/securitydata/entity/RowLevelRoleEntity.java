@@ -101,7 +101,7 @@ public class RowLevelRoleEntity implements Serializable {
 
     @TenantId
     @Column(name = "SYS_TENANT_ID")
-    protected String sysTenantId;
+    private String sysTenantId;
 
     public UUID getId() {
         return id;

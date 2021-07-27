@@ -15,11 +15,8 @@
  */
 package io.jmix.core;
 
-import org.apache.commons.lang3.StringUtils;
-
 import javax.annotation.Nullable;
 import java.io.Serializable;
-import java.lang.reflect.Method;
 import java.util.*;
 
 /**
@@ -76,6 +73,7 @@ public class FetchPlan implements Serializable {
             this.properties.put(property.getName(), property);
         }
     }
+
     /**
      * @return entity class this fetchPlan belongs to
      */
@@ -104,7 +102,32 @@ public class FetchPlan implements Serializable {
 
         FetchPlan fetchPlan = (FetchPlan) o;
 
-        return entityClass.equals(fetchPlan.entityClass) && name.equals(fetchPlan.name);
+        if (!(entityClass.equals(fetchPlan.entityClass) && name.equals(fetchPlan.name)
+                && loadPartialEntities == fetchPlan.loadPartialEntities))
+            return false;
+
+        return properties.equals(fetchPlan.properties);
+    }
+
+    /**
+     * @return whether this fetch plan contains all attributes of {@code fetchPlan} including nested plans attributes
+     */
+    public boolean isSupersetOf(FetchPlan fetchPlan) {
+        if (!entityClass.equals(fetchPlan.entityClass))
+            return false;
+
+        for (FetchPlanProperty property : fetchPlan.getProperties()) {
+            String propertyName = property.getName();
+            if (!properties.containsKey(propertyName))
+                return false;
+
+            if (property.getFetchPlan() != null) {
+                FetchPlan currentPlan = properties.get(propertyName).getFetchPlan();
+                if ((currentPlan == null || !currentPlan.isSupersetOf(property.getFetchPlan())))
+                    return false;
+            }
+        }
+        return true;
     }
 
     @Override

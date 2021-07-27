@@ -61,6 +61,9 @@ public class FetchGroupManager {
     @Autowired
     private QueryTransformerFactory queryTransformerFactory;
 
+    @Autowired
+    private FetchPlans fetchPlans;
+
     public void setFetchPlan(JpaQuery query, String queryString, @Nullable FetchPlan fetchPlan, boolean singleResultExpected) {
         Preconditions.checkNotNullArgument(query, "query is null");
         if (fetchPlan != null) {
@@ -135,6 +138,9 @@ public class FetchGroupManager {
                                                      boolean singleResultExpected,
                                                      boolean useFetchGroup) {
         Set<FetchGroupField> fetchGroupFields = new LinkedHashSet<>();
+
+        fetchPlan = completeFetchPlan(fetchPlan);
+
         processFetchPlan(fetchPlan, null, fetchGroupFields, useFetchGroup);
 
         FetchGroupDescription description = new FetchGroupDescription();
@@ -372,6 +378,81 @@ public class FetchGroupManager {
         return result;
     }
 
+    /**
+     * Looks for similar fetch plans on different layers with the same first-layer properties but different 2-nd and further
+     * layer properties.
+     * Entities loaded by such fetch plans may have unfetched attributes because treated as equals and cached instead of
+     * loading with each {@link FetchGroup}.
+     * Replaces fetch plans using union of all similar plans for each such entity.
+     * <p>
+     * <p>
+     * see also: {@link org.eclipse.persistence.internal.descriptors.ObjectBuilder}#isObjectValidForFetchGroup,
+     * <p>
+     * {@link org.eclipse.persistence.internal.descriptors.ObjectBuilder}#buildWorkingCopyCloneFromRow,
+     * <p>
+     * {@link org.eclipse.persistence.internal.queries.EntityFetchGroup}
+     *
+     * @param original plan to analyze
+     * @return completed FetchPlan or original if no updates needed.
+     */
+    private FetchPlan completeFetchPlan(FetchPlan original) {
+        Map<MetaClass, List<OccurrenceDescription>> occurrences = new HashMap<>();
+        Map<String, List<FetchPlan>> absentProperties = new HashMap<>();
+
+        checkFetchPlan(original, occurrences, "", absentProperties);
+
+        if (absentProperties.isEmpty())
+            return original;
+
+        FetchPlanBuilder builder = fetchPlans.builder(original);
+
+        for (Map.Entry<String, List<FetchPlan>> entry : absentProperties.entrySet()) {
+
+            if (entry.getKey().isEmpty()) {
+                for (FetchPlan plan : entry.getValue()) {
+                    builder.merge(plan);
+                }
+            } else {
+                for (FetchPlan plan : entry.getValue()) {
+                    builder.mergeNestedProperty(entry.getKey(), plan);
+                }
+            }
+        }
+
+        return builder.build();
+
+    }
+
+    private void checkFetchPlan(FetchPlan subject, Map<MetaClass, List<OccurrenceDescription>> occurrences, String path, Map<String, List<FetchPlan>> absentProperties) {
+        MetaClass metaClass = metadata.getClass(subject.getEntityClass());
+        List<String> firstLayer = subject.getProperties().stream()
+                .map(FetchPlanProperty::getName)
+                .sorted()
+                .collect(Collectors.toList());
+
+        List<OccurrenceDescription> sameMetaclassOccurrences = occurrences.computeIfAbsent(metaClass, k -> new LinkedList<>());
+
+        for (OccurrenceDescription candidate : sameMetaclassOccurrences) {
+            if (candidate.firstLayer.containsAll(firstLayer)
+                    && !candidate.fetchPlan.isSupersetOf(subject)) {
+                absentProperties.computeIfAbsent(candidate.path, k -> new LinkedList<>()).add(subject);
+            }
+            if (firstLayer.containsAll(candidate.firstLayer)
+                    && !subject.isSupersetOf(candidate.fetchPlan)
+                    && !path.startsWith(candidate.path)) {//not need for wider child property - it will be initialized after parent anyway
+                absentProperties.computeIfAbsent(path, k -> new LinkedList<>()).add(candidate.fetchPlan);
+            }
+        }
+        sameMetaclassOccurrences.add(new OccurrenceDescription(subject, path, firstLayer));
+
+        for (FetchPlanProperty property : subject.getProperties()) {
+            if (property.getFetchPlan() != null) {
+                checkFetchPlan(property.getFetchPlan(), occurrences,
+                        (path.length() > 0 ? path + "." : "") + property.getName(), absentProperties);
+            }
+        }
+    }
+
     private void processFetchPlan(FetchPlan fetchPlan, @Nullable FetchGroupField parentField, Set<FetchGroupField> fetchGroupFields, boolean useFetchGroup) {
         Class<?> entityClass = fetchPlan.getEntityClass();
         MetaClass entityMetaClass = metadata.getClass(entityClass);
@@ -542,4 +623,18 @@ public class FetchGroupManager {
             return path();
         }
     }
+
+    private static class OccurrenceDescription {
+        private final FetchPlan fetchPlan;
+        private final String path;
+        private final List<String> firstLayer;
+
+        public OccurrenceDescription(FetchPlan fetchPlan, String path, List<String> firstLayer) {
+            this.fetchPlan = fetchPlan;
+            this.path = path;
+            this.firstLayer = firstLayer;
+        }
+
+    }
+
 }

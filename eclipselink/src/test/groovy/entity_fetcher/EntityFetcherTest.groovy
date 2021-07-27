@@ -25,7 +25,12 @@ import org.eclipse.persistence.queries.FetchGroupTracker
 import org.springframework.beans.factory.annotation.Autowired
 import test_support.DataSpec
 import test_support.entity.TestEntityWithNonPersistentRef
+import test_support.entity.complex_references.Employee
+import test_support.entity.complex_references.Position
+import test_support.entity.complex_references.Unit
 import test_support.entity.sales.Customer
+import test_support.entity.sales.Order
+import test_support.entity.sales.OrderLine
 import test_support.entity.sales.Status
 
 class EntityFetcherTest extends DataSpec {
@@ -36,6 +41,45 @@ class EntityFetcherTest extends DataSpec {
     DataManager dataManager
     @Autowired
     FetchPlans fetchPlans
+
+
+    private Order order;
+    private OrderLine orderLine;
+    private Employee selfSupervised;
+    private Position position;
+    private Unit unit;
+
+    def setup() {
+        order = dataManager.create(Order)
+        order.number = "1"
+        order.amount = BigDecimal.ONE
+        orderLine = dataManager.create(OrderLine)
+        orderLine.order = order
+        orderLine.quantity = 1
+        dataManager.save(orderLine, order)
+
+
+        unit = dataManager.create(Unit)
+        unit.title = "First"
+        unit.address = "561728"
+        dataManager.save(unit)
+        position = dataManager.create(Position)
+        position.title = "Main"
+        position.description = "-"
+        position.factor = 1d
+        position.defaultUnit = unit
+        dataManager.save(position)
+        selfSupervised = dataManager.create(Employee)
+        selfSupervised.name = "Twoflower"
+        selfSupervised.supervisor = selfSupervised
+        selfSupervised.position = position
+        selfSupervised.unit = unit
+        dataManager.save(selfSupervised)
+    }
+
+    def cleanup() {
+        dataManager.remove(order, orderLine, selfSupervised, position, unit)
+    }
 
     def "fetching entity with non-persistent reference"() {
         // setup the entity like it is stored in a custom datastore and linked as transient property
@@ -57,5 +101,71 @@ class EntityFetcherTest extends DataSpec {
         then:
         noExceptionThrown()
         committed == entity
+    }
+
+    def "different views on different layers: case 1"() {
+        when: "same entity with different fetchPlans appears on different layers of fetch plan"
+        OrderLine orderLine = dataManager.load(OrderLine.class).query("select ol from sales_OrderLine ol")
+                .fetchPlan(fetchPlans.builder(OrderLine.class)
+                        .add("order.orderLines.order.number")
+                        .add("order.amount")
+                        .build())
+                .one()
+
+        then: "each occurence of this entity loaded correctly and no 'Unfetched attribute' exception thrown"
+        orderLine.order.orderLines[0].order.number != null
+        orderLine.order.amount != null
+    }
+
+
+    def "different views on different layers: case 2 with self ref"() {
+        when: "same entity with different fetchPlans appears on different layers through self-reference"
+        Employee employee = dataManager.load(Employee.class)
+                .query("select e from test_Employee e")
+                .fetchPlan(fetchPlans.builder(Employee)
+                        .add("supervisor.position.description")
+                        .add("position.title")
+                        .add("name")
+                        .add("unit.title")
+                        .add("unit.address")
+                        .build())
+                .one()
+
+        then: "employee position loaded with description"
+        employee.supervisor.position.description != null
+        employee.name != null
+    }
+
+    def "different views on different layers: case 3 through different entities"() {
+        when: "same entity with different fetchPlans appears on different layers through other entity"
+        Employee employee = dataManager.load(Employee.class)
+                .query("select e from test_Employee e")
+                .fetchPlan(fetchPlans.builder(Employee)
+                        .add("supervisor.position.description")
+                        .add("unit.employees.position.title")
+                        .build())
+                .one()
+
+        then: "employee position loaded with both name and description"
+        employee.supervisor.position.title != null
+        employee.supervisor.position.description != null
+        employee.unit.employees[0].position.title != null
+        employee.unit.employees[0].position.description != null
+    }
+
+    def "different views on different layers: case 4 complex property"() {
+        when:
+        Employee employee = dataManager.load(Employee.class)
+                .query("select e from test_Employee e")
+                .fetchPlan(fetchPlans.builder(Employee)
+                        .add("supervisor.position.defaultUnit.title")
+                        .add("supervisor.position.defaultUnit.address")
+                        .add("position.title")
+                        .build())
+                .one()
+
+        then:
+        employee.position.defaultUnit.title != null
+        employee.position.defaultUnit.address != null
     }
 }

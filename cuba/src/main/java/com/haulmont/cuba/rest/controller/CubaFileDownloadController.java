@@ -30,6 +30,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,6 +44,7 @@ import java.util.UUID;
  * Legacy REST API controller that is used for downloading files by the {@link FileDescriptor} identifier
  */
 @RestController("rest_CubaFileDownloadController")
+@ConditionalOnClass(RestAPIException.class)
 @RequestMapping("rest/cuba/files")
 public class CubaFileDownloadController {
 

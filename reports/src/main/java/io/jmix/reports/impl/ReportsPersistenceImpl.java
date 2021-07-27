@@ -97,20 +97,19 @@ public class ReportsPersistenceImpl implements ReportsPersistence {
         report.setDefaultTemplate(null);
         report.setTemplates(null);
 
-        em.setProperty(PersistenceHints.SOFT_DELETION, false);
         ReportGroup group = report.getGroup();
         if (group != null) {
-            FetchPlan fetchPlan = fetchPlanRepository.getFetchPlan(ReportGroup.class, FetchPlan.LOCAL);
-            ReportGroup existingGroup = em.find(ReportGroup.class, report.getGroup().getId(),
-                    PersistenceHints.builder().withFetchPlan(fetchPlan).build());
+            ReportGroup existingGroup = em.createQuery(
+                    "select g from report_ReportGroup g where g.title = :title", ReportGroup.class)
+                    .setParameter("title", group.getTitle())
+                    .setHint(PersistenceHints.FETCH_PLAN, FetchPlan.LOCAL)
+                    .getSingleResult();
             if (existingGroup == null) {
-                em.setProperty(PersistenceHints.SOFT_DELETION, true);
-                existingGroup = em.createQuery(
-                        "select g from report_ReportGroup g where g.title = :title", ReportGroup.class)
-                        .setParameter("title", group.getTitle())
-                        .setHint(PersistenceHints.FETCH_PLAN, FetchPlan.LOCAL)
-                        .getSingleResult();
                 em.setProperty(PersistenceHints.SOFT_DELETION, false);
+                FetchPlan fetchPlan = fetchPlanRepository.getFetchPlan(ReportGroup.class, FetchPlan.LOCAL);
+                existingGroup = em.find(ReportGroup.class, report.getGroup().getId(),
+                        PersistenceHints.builder().withFetchPlan(fetchPlan).build());
+                em.setProperty(PersistenceHints.SOFT_DELETION, true);
             }
             if (existingGroup != null) {
                 if (!entityStates.isDeleted(existingGroup)) {
@@ -131,6 +130,7 @@ public class ReportsPersistenceImpl implements ReportsPersistence {
             }
         }
 
+        em.setProperty(PersistenceHints.SOFT_DELETION, false);
         Report existingReport;
         List<ReportTemplate> existingTemplates = null;
         try {

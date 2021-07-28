@@ -119,7 +119,9 @@ public class BaseTypesGenerator {
         }
 
         // todo no support for non-persistent jmix entities
-        if ((metaProperty.getType() == MetaProperty.Type.ASSOCIATION || metaProperty.getType() == MetaProperty.Type.COMPOSITION)) {
+        if ((metaProperty.getType() == MetaProperty.Type.ASSOCIATION
+                || metaProperty.getType() == MetaProperty.Type.COMPOSITION
+                || metaProperty.getType() == MetaProperty.Type.EMBEDDED)) {
             return getReferenceTypeName(metaProperty);
         }
 

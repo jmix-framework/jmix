@@ -5,7 +5,7 @@
 - [Add-on Configuration](#add-on-configuration)
 - [Usage](#usage)
   - [Predefined Roles](#predefined-roles)
-  - [Component Functionalities](#component-functionalities)
+  - [Add-on Functionalities](#add-on-functionalities)
     - [IMAP Configuration](#imap-configuration)
     - [IMAP Message Browser](#imap-message-browser)
   - [Registering EventListeners to Interact with IMAP Events](#registering-eventlisteners-to-interact-with-imap-events)
@@ -40,6 +40,7 @@ implementation 'io.jmix.imap:jmix-imap-ui-starter'
 
 # Add-on Configuration
 
+### Password Encryption
 There is an ability to override default values of properties required to encrypt a password for a mailbox:
 
 Open `application.properties` file of your application and configure the following application properties:
@@ -47,13 +48,25 @@ Open `application.properties` file of your application and configure the followi
 1. ```jmix.imap.encryption.key```
 2. ```jmix.imap.encryption.iv```
 
+### IMAP Messages Synchronization
+There is a default scheduled task for the IMAP message synchronization. The implementation of the scheduled task is based on [Quartz Job Scheduler](https://www.quartz-scheduler.org/).
+To use this task, add the dependency in the ```build.gradle```:
+```groovy
+implementation 'org.springframework.boot:spring-boot-starter-quartz'
+```
+
+There are the following properties to configure default scheduled task:
+1. ```jmix.imap.useDefaultQuartzConfiguration``` - allows enable/disable task. Default value: ```true```.
+2. ```jmix.imap.imapSyncCron``` - contains [CRON expression](http://www.quartz-scheduler.org/documentation/quartz-2.3.0/tutorials/crontrigger.html) for the task. 
+   Default value: ```0 * * * * ?``` which means "every minute".
+   
 # Usage
 
 ## Predefined Roles
 
 **IMAP Admin role** - allows user to configure IMAP events.
 
-## Component Functionalities
+## Add-on Functionalities
 
 ### IMAP Configuration
 
@@ -139,7 +152,8 @@ The *Attachments* tab comprises the table of attachments and the button to downl
 
 ## Registering EventListeners to Interact with IMAP Events
 
-In order to make your application react to IMAP events, you can register the `@Component` methods as Event listeners by using
+There are two ways to register an event listener for the IMAP event.
+1. You can register the `@Component` methods as Event listeners by using
 the `@EventListener` annotation. The example of how to set up an event listener is provided below.
 
 ```java
@@ -155,10 +169,13 @@ public class EmailReceiveServiceBean implements EmailReceiveService {
     }
 }
 ```
+In this case it is not required to add a handler for a particular folder and event in the IMAP Configuration Editor. 
+The ```receiveEmail``` method will be automatically invoked after ```NewEmailImapEvent``` occurs.
 
-Another option is to create `@Component` with a method having the required event type as the only parameter.
+2. Another option is to create `@Component` with a method having the required event type as the only parameter.
 
 ```java
+@Component(EmailReceiver.NAME)
 public class EmailReceiver {
     String NAME = "ceuia_EmailReceiver";
 
@@ -168,7 +185,7 @@ public class EmailReceiver {
 }
 ```
 
-Once it is done, the selected method (in the example, it is `receiveEmail`) should be registered on a particular folder
+Once it is done, the selected method (in the example, it is `receiveEmail`) should be registered on a particular folder and event type
 for a given IMAP connection. This should be done at runtime using the IMAP configuration UI (see [Creating Handlers for
 IMAP Events](#creating-handlers-for-imap-events)).
 After that, the method will be invoked every time, when the configured event occurs.

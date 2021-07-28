@@ -64,7 +64,7 @@ public interface TenantUserManagementRole extends TenantManagementRole {
 
     @EntityPolicy(entityClass = User.class, actions = {EntityPolicyAction.ALL})
     @EntityAttributePolicy(entityClass = User.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)
-    @ScreenPolicy(screenIds = {"<UserBrowse_screen_id>", "UserEdit_screen_id"})
+    @ScreenPolicy(screenIds = {"<UserBrowse_screen_id>", "<UserEdit_screen_id>"})
     @MenuPolicy(menuIds = {"<UserBrowse_screen_id>"})
     void createUserAccess();
 }

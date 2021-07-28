@@ -136,7 +136,8 @@
                                       width="100%">
                                     <label value="msg://emailBody" align="MIDDLE_LEFT"/>
                                     <entityComboBox id="emailBody"
-                                                    optionsContainer="emailBodiesDc"/>
+                                                    optionsContainer="emailBodiesDc"
+                                                    required="true"/>
                                 </hbox>
                                 <vbox spacing="true">
                                     <label value="msg://defaultParameters"/>

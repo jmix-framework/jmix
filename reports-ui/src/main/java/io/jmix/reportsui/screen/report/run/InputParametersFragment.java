@@ -206,6 +206,7 @@ public class InputParametersFragment extends ScreenFragment {
     public void initTemplateAndOutputSelect() {
         if (report != null) {
             if (report.getTemplates() != null && report.getTemplates().size() > 1) {
+                templateReportsDc.getMutableItems().addAll(report.getTemplates());
                 templateComboBox.setValue(report.getDefaultTemplate());
                 setTemplateVisible(true);
             }

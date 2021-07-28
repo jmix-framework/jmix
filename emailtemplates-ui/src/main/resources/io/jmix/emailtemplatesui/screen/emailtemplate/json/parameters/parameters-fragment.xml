@@ -49,7 +49,7 @@
                 <button id="moveDownBtn" action="inputParametersTable.down"/>
             </buttonsPanel>
             <columns>
-                <column id="locName" caption="msg://io.jmix.reportsui.screen.parameter.edit/parameters.caption"/>
+                <column id="name" caption="msg://io.jmix.reportsui.screen.parameter.edit/parameters.caption"/>
                 <column id="alias" caption="msg://io.jmix.reportsui.screen.parameter.edit/parameters.alias"/>
                 <column id="type" caption="msg://io.jmix.reportsui.screen.parameter.edit/parameters.type"/>
                 <column id="required" caption="msg://io.jmix.reportsui.screen.parameter.edit/parameters.required"/>

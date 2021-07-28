@@ -21,6 +21,7 @@ import io.jmix.core.DataManager;
 import io.jmix.core.EntityStates;
 import io.jmix.core.Metadata;
 import io.jmix.emailtemplates.entity.ReportEmailTemplate;
+import io.jmix.emailtemplates.entity.TemplateGroup;
 import io.jmix.emailtemplates.entity.TemplateReport;
 import io.jmix.emailtemplatesui.screen.emailtemplate.parameters.EmailTemplateParametersFragment;
 import io.jmix.reports.entity.Report;
@@ -31,10 +32,7 @@ import io.jmix.ui.component.EntityComboBox;
 import io.jmix.ui.component.HasValue;
 import io.jmix.ui.component.TextField;
 import io.jmix.ui.component.VBoxLayout;
-import io.jmix.ui.model.CollectionContainer;
-import io.jmix.ui.model.DataContext;
-import io.jmix.ui.model.DataLoader;
-import io.jmix.ui.model.InstanceContainer;
+import io.jmix.ui.model.*;
 import io.jmix.ui.screen.*;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,10 +87,14 @@ public class ReportEmailTemplateEdit extends StandardEditor<ReportEmailTemplate>
     @Autowired
     private EntityStates entityStates;
 
+    @Autowired
+    private CollectionLoader<TemplateGroup> groupDl;
+
     @Subscribe
     protected void onBeforeShow(BeforeShowEvent e) {
         emailBodiesDl.load();
         emailTemplateDl.load();
+        groupDl.load();
 
         bodyParametersFragment = fragments.create(this, EmailTemplateParametersFragment.class)
                 .setIsDefaultValues(true)

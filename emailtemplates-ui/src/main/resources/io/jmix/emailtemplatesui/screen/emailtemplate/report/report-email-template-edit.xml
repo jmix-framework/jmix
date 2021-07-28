@@ -134,7 +134,7 @@
                                 <hbox expand="emailBody"
                                       spacing="true"
                                       width="100%">
-                                    <label value="msg://emailBody"/>
+                                    <label value="msg://emailBody" align="MIDDLE_LEFT"/>
                                     <entityComboBox id="emailBody"
                                                     optionsContainer="emailBodiesDc"/>
                                 </hbox>

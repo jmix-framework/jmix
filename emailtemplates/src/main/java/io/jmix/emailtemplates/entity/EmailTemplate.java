@@ -22,6 +22,7 @@ import io.jmix.core.annotation.DeletedBy;
 import io.jmix.core.annotation.DeletedDate;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.OnDelete;
+import io.jmix.core.entity.annotation.OnDeleteInverse;
 import io.jmix.core.metamodel.annotation.Composition;
 import io.jmix.core.metamodel.annotation.DependsOnProperties;
 import io.jmix.core.metamodel.annotation.InstanceName;
@@ -86,6 +87,7 @@ public abstract class EmailTemplate {
     @Column(name = "NAME", nullable = false)
     protected String name;
 
+    @OnDeleteInverse(DeletePolicy.UNLINK)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "GROUP_ID")
     protected TemplateGroup group;

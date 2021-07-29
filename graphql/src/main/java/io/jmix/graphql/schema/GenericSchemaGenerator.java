@@ -66,6 +66,7 @@ public class GenericSchemaGenerator {
                             // todo array in order by, add ability to order by nested objects
                             .argument(listArg(NamingUtils.ORDER_BY, FilterTypesGenerator.composeFilterOrderByTypeName(metaClass),
                                     "sort the items by one or more fields"))
+                            .argument(arg(NamingUtils.SOFT_DELETION, "Boolean", "set false to load soft-deleted entities"))
                             .build());
 
             // query 'scr_CarById(id: UUID!)'
@@ -75,6 +76,7 @@ public class GenericSchemaGenerator {
                             .type(new GraphQLTypeReference(typeName))
                             // todo we need to define 'id' arg type depends on entity id type
                             .argument(argNonNull("id", "String"))
+                            .argument(arg(NamingUtils.SOFT_DELETION, "Boolean", "set false to load soft-deleted entity"))
                             .build());
 
             // query 'scr_CarCount(filter)'
@@ -85,6 +87,7 @@ public class GenericSchemaGenerator {
                             .argument(listArg(NamingUtils.FILTER,
                                     FilterTypesGenerator.composeFilterConditionTypeName(metaClass),
                                     filterDesc))
+                            .argument(arg(NamingUtils.SOFT_DELETION, "Boolean", "set false to include soft-deleted entities"))
                             .build());
 
         });

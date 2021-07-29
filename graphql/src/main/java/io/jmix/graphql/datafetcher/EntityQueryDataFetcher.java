@@ -7,12 +7,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.graphql.NamingUtils;
-import io.jmix.graphql.loader.GraphQLEntityCountDataFetcher;
-import io.jmix.graphql.loader.GraphQLEntityCountDataFetcherContext;
-import io.jmix.graphql.loader.GraphQLEntityListDataFetcher;
-import io.jmix.graphql.loader.GraphQLEntityDataFetcher;
-import io.jmix.graphql.loader.GraphQLEntityDataFetcherContext;
-import io.jmix.graphql.loader.GraphQLEntityListDataFetcherContext;
+import io.jmix.graphql.loader.*;
 import io.jmix.graphql.schema.Types;
 import org.apache.commons.collections4.OrderedMap;
 import org.apache.commons.collections4.map.ListOrderedMap;
@@ -72,6 +67,10 @@ public class EntityQueryDataFetcher {
             lc.setId(UUID.fromString(id));
             FetchPlan fetchPlan = dataFetcherPlanBuilder.buildFetchPlan(metaClass.getJavaClass(), environment);
             lc.setFetchPlan(fetchPlan);
+            Boolean softDeletion = environment.getArgument(NamingUtils.SOFT_DELETION);
+            if (softDeletion != null) {
+                lc.setHint("jmix.softDeletion", softDeletion);
+            }
 
             log.debug("loadEntity: with context {}", lc);
             if (queryDataFetcherLoader.getCustomEntityFetcher(metaClass.getJavaClass()) == null) {
@@ -98,8 +97,9 @@ public class EntityQueryDataFetcher {
             Object orderBy = environment.getArgument(NamingUtils.ORDER_BY);
             Integer limit = environment.getArgument(NamingUtils.LIMIT);
             Integer offset = environment.getArgument(NamingUtils.OFFSET);
-            log.debug("loadEntities: metClass:{}, filter:{}, limit:{}, offset:{}, orderBy: {}",
-                    metaClass, filter, limit, offset, orderBy);
+            Boolean softDeletion = environment.getArgument(NamingUtils.SOFT_DELETION);
+            log.debug("loadEntities: metClass:{}, filter:{}, limit:{}, offset:{}, orderBy: {}, softDelete: {}",
+                    metaClass, filter, limit, offset, orderBy, softDeletion);
 
             // fetch plan
             FetchPlan fetchPan = dataFetcherPlanBuilder.buildFetchPlan(metaClass.getJavaClass(), environment);
@@ -131,6 +131,9 @@ public class EntityQueryDataFetcher {
             LoadContext<Object> ctx = new LoadContext<>(metaClass);
             ctx.setQuery(query);
             ctx.setFetchPlan(fetchPan);
+            if (softDeletion != null) {
+                ctx.setHint("jmix.softDeletion", softDeletion);
+            }
             List<Object> objects;
             if (queryDataFetcherLoader.getCustomEntitiesFetcher(metaClass.getJavaClass()) == null) {
                 objects = dataManager.loadList(ctx);
@@ -223,13 +226,17 @@ public class EntityQueryDataFetcher {
             checkCanReadEntity(metaClass);
 
             Object filter = environment.getArgument(NamingUtils.FILTER);
-            log.debug("countEntities: metClass:{}, filter:{}", metaClass, filter);
+            Boolean softDeletion = environment.getArgument(NamingUtils.SOFT_DELETION);
+            log.debug("countEntities: metClass:{}, filter:{}, softDeletion: {}", metaClass, filter, softDeletion);
 
             LogicalCondition condition = createCondition(filter);
             LoadContext.Query query = generateQuery(metaClass, condition);
 
             LoadContext<? extends Entity> lc = new LoadContext<>(metaClass);
             lc.setQuery(query);
+            if (softDeletion != null) {
+                lc.setHint("jmix.softDeletion", softDeletion);
+            }
             long count;
             if (queryDataFetcherLoader.getCustomCountFetcher(metaClass.getJavaClass()) == null) {
                 count = dataManager.getCount(lc);

@@ -40,6 +40,7 @@ public class NamingUtils {
     public static final String LIMIT = "limit";
     public static final String OFFSET = "offset";
     public static final String ORDER_BY = "orderBy";
+    public static final String SOFT_DELETION = "softDeletion";
 
     public static final String ID_ATTR_NAME = "id";
     public static final String INPUT_TYPE_PREFIX = "inp_";

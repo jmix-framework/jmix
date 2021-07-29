@@ -18,6 +18,7 @@ package io.jmix.ui.component.impl;
 
 import io.jmix.core.common.event.Subscription;
 import io.jmix.ui.component.TagField;
+import io.jmix.ui.component.data.ConversionException;
 import io.jmix.ui.widget.JmixTagField;
 import org.apache.commons.collections4.CollectionUtils;
 
@@ -143,5 +144,22 @@ public class TagFieldImpl<V> extends AbstractSuggestionField<Collection<V>, V, J
     public boolean isEmpty() {
         return super.isEmpty()
                 || CollectionUtils.isEmpty(getValue());
+    }
+
+    @Override
+    protected Collection<V> convertToModel(@Nullable Collection<V> componentRawValue) throws ConversionException {
+        if (valueBinding != null) {
+            Class<?> collectionType = valueBinding.getSource().getType();
+
+            if (Set.class.isAssignableFrom(collectionType)) {
+                return CollectionUtils.isEmpty(componentRawValue)
+                        ? Collections.emptySet()
+                        : new LinkedHashSet<>(componentRawValue);
+            }
+        }
+
+        return CollectionUtils.isEmpty(componentRawValue)
+                ? Collections.emptyList()
+                : new ArrayList<>(componentRawValue);
     }
 }

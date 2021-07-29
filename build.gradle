@@ -265,7 +265,7 @@ dependencies {
         api 'org.eclipse.persistence:org.eclipse.persistence.extension:2.7.7'
         api 'org.glassfish:javax.el:3.0.1-b10'
 
-        api 'jakarta.xml.bind:jakarta.xml.bind-api:2.3.1'
+        api 'jakarta.xml.bind:jakarta.xml.bind-api:2.3.3'
         api 'org.glassfish.jaxb:jaxb-runtime:2.3.1'
 
         api "com.vaadin:vaadin-server:$vaadinVersion"

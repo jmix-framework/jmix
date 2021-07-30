@@ -66,24 +66,36 @@ public class AnnotatedIndexDefinitionProcessor {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotatedIndexDefinitionProcessor.class);
 
+    protected final Metadata metadata;
+    protected final MetadataTools metadataTools;
+    protected final MappingFieldAnnotationProcessorsRegistry mappingFieldAnnotationProcessorsRegistry;
+    protected final PropertyTools propertyTools;
+    protected final FieldMappingStrategyProvider fieldMappingStrategyProvider;
+    protected final InstanceNameProvider instanceNameProvider;
+    protected final PropertyValueExtractorProvider propertyValueExtractorProvider;
+    protected final SearchProperties searchProperties;
+    protected final List<IndexSettingsConfigurer> indexSettingsConfigurers;
+
     @Autowired
-    protected Metadata metadata;
-    @Autowired
-    protected MetadataTools metadataTools;
-    @Autowired
-    protected MappingFieldAnnotationProcessorsRegistry mappingFieldAnnotationProcessorsRegistry;
-    @Autowired
-    protected PropertyTools propertyTools;
-    @Autowired
-    protected FieldMappingStrategyProvider fieldMappingStrategyProvider;
-    @Autowired
-    protected InstanceNameProvider instanceNameProvider;
-    @Autowired
-    protected PropertyValueExtractorProvider propertyValueExtractorProvider;
-    @Autowired
-    protected SearchProperties searchProperties;
-    @Autowired
-    protected List<IndexSettingsConfigurer> indexSettingsConfigurers;
+    public AnnotatedIndexDefinitionProcessor(Metadata metadata,
+                                             MetadataTools metadataTools,
+                                             MappingFieldAnnotationProcessorsRegistry mappingFieldAnnotationProcessorsRegistry,
+                                             PropertyTools propertyTools,
+                                             FieldMappingStrategyProvider fieldMappingStrategyProvider,
+                                             InstanceNameProvider instanceNameProvider,
+                                             PropertyValueExtractorProvider propertyValueExtractorProvider,
+                                             SearchProperties searchProperties,
+                                             List<IndexSettingsConfigurer> indexSettingsConfigurers) {
+        this.metadata = metadata;
+        this.metadataTools = metadataTools;
+        this.mappingFieldAnnotationProcessorsRegistry = mappingFieldAnnotationProcessorsRegistry;
+        this.propertyTools = propertyTools;
+        this.fieldMappingStrategyProvider = fieldMappingStrategyProvider;
+        this.instanceNameProvider = instanceNameProvider;
+        this.propertyValueExtractorProvider = propertyValueExtractorProvider;
+        this.searchProperties = searchProperties;
+        this.indexSettingsConfigurers = indexSettingsConfigurers;
+    }
 
     /**
      * Processes index definition interface marked with {@link JmixEntitySearchIndex} annotation

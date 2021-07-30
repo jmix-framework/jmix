@@ -99,14 +99,14 @@ public class ReportsPersistenceImpl implements ReportsPersistence {
 
         ReportGroup group = report.getGroup();
         if (group != null) {
+            FetchPlan fetchPlan = fetchPlanRepository.getFetchPlan(ReportGroup.class, FetchPlan.LOCAL);
             ReportGroup existingGroup = em.createQuery(
                     "select g from report_ReportGroup g where g.title = :title", ReportGroup.class)
                     .setParameter("title", group.getTitle())
-                    .setHint(PersistenceHints.FETCH_PLAN, FetchPlan.LOCAL)
+                    .setHint(PersistenceHints.FETCH_PLAN, fetchPlan)
                     .getSingleResult();
             if (existingGroup == null) {
                 em.setProperty(PersistenceHints.SOFT_DELETION, false);
-                FetchPlan fetchPlan = fetchPlanRepository.getFetchPlan(ReportGroup.class, FetchPlan.LOCAL);
                 existingGroup = em.find(ReportGroup.class, report.getGroup().getId(),
                         PersistenceHints.builder().withFetchPlan(fetchPlan).build());
                 em.setProperty(PersistenceHints.SOFT_DELETION, true);

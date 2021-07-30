@@ -21,17 +21,20 @@ package io.jmix.search.index;
  * <p>
  * Create Spring Bean that implements this interface.
  * Index settings can be configured inside {@link IndexSettingsConfigurer#configure(IndexSettingsConfigurationContext)}.
- * <p>See {@link IndexSettingsConfigurationContext}.
- *
- * <p>Example:
- * <p>Settings of all search indexes will have common values "index.max_result_window"=15000 and "index.mapping.total_fields.limit"=1500
+ * <p>
+ * See {@link IndexSettingsConfigurationContext}.
+ * <p>
+ * Example:
+ * <p>
+ * Settings of all search indexes will have common values "index.max_result_window"=15000 and "index.mapping.total_fields.limit"=1500
  * but settings of index related to entity class 'DemoEntity' will have common value "index.max_result_window"=15000 and explicit value "index.mapping.total_fields.limit"=2000.
- * <p>Configurer:<pre>{@code
- * @Component("demo_IndexSettingsConfigurer")
+ * <p>
+ * Configurer:<pre>
+ * &#64;Component("demo_IndexSettingsConfigurer")
  * public class DemoIndexSettingsConfigurer implements IndexSettingsConfigurer {
  *
- *     @Override
- *     public void configure(@Nonnull IndexSettingsConfigurationContext context) {
+ *     &#64;Override
+ *     public void configure(&#64;Nonnull IndexSettingsConfigurationContext context) {
  *         context.getCommonSettingsBuilder()
  *                 .put("index.max_result_window", 15000)
  *                 .put("index.mapping.total_fields.limit", 1500);
@@ -39,7 +42,6 @@ package io.jmix.search.index;
  *         context.getEntitySettingsBuilder(DemoEntity.class)
  *                 .put("index.mapping.total_fields.limit", 2000);
  *     }
- * }
  * }
  * </pre>
  */

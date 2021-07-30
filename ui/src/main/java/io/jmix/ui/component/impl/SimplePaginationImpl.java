@@ -128,7 +128,7 @@ public class SimplePaginationImpl extends AbstractPagination<JmixSimplePaginatio
     }
 
     protected void updateItemsPerPageAvailability() {
-        getItemsPerPageComboBox().setEnabled(!isEmptyOrNullDataBinder());
+        getItemsPerPageComboBox().setEnabled(!isEmptyOrNullDataBinder() && dataBinderContainsItems());
     }
 
     @Override
@@ -176,8 +176,6 @@ public class SimplePaginationImpl extends AbstractPagination<JmixSimplePaginatio
                 onCollectionChanged();
             }
         }
-
-        updateItemsPerPageAvailability();
     }
 
     protected void initListeners() {
@@ -350,6 +348,7 @@ public class SimplePaginationImpl extends AbstractPagination<JmixSimplePaginatio
         }
 
         updateNavigationButtonsAvailability();
+        updateItemsPerPageAvailability();
 
         getLabel().setValue(messages.formatMessage("", getLabelMessageKey(), getLabelCountValue()));
 

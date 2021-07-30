@@ -217,7 +217,7 @@ public class JmixPagination extends JmixAbstractPagination {
             return;
         }
 
-        throw new IllegalStateException("PaginationDataSourceProvider has first result that is not applicable " +
+        throw new IllegalStateException("PaginationDataBinder has first result that is not applicable " +
                 "for the page ranges");
     }
 

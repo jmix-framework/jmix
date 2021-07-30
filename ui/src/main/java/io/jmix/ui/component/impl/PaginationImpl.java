@@ -46,6 +46,8 @@ public class PaginationImpl extends AbstractPagination<JmixPagination> implement
     protected Registration nextButtonClickRegistration;
     protected Registration lastButtonClickRegistration;
 
+    protected boolean refreshing = false;
+
     public PaginationImpl() {
         component = createComponent();
     }
@@ -84,6 +86,7 @@ public class PaginationImpl extends AbstractPagination<JmixPagination> implement
     public void setDataBinder(PaginationDataBinder dataBinder) {
         super.setDataBinder(dataBinder);
 
+        component.setDataBinder(dataBinder);
         dataBinder.setCollectionChangeListener(this::onCollectionChange);
 
         removeListeners();
@@ -93,20 +96,9 @@ public class PaginationImpl extends AbstractPagination<JmixPagination> implement
 
         initListeners();
 
-        createPageButtons();
-        component.setCurrentPageNumber(FIRST_PAGE);
-
         if (dataBinderContainsItems()) {
-            component.updatePageSelections();
-
-            // if items has already loaded we should reload
-            // them with maxResult from ComboBox
-            if (isItemsPerPageVisible()) {
-                dataBinder.refresh();
-            }
+            dataBinder.refresh();
         }
-
-        updateItemsPerPageAvailability();
     }
 
     protected void removeListeners() {
@@ -166,8 +158,6 @@ public class PaginationImpl extends AbstractPagination<JmixPagination> implement
             return;
         }
 
-        createPageButtons();
-
         Integer maxResult = event.getValue();
         if (maxResult == null) {
             maxResult = getEntityMaxFetchSize(dataBinder.getEntityMetaClass());
@@ -195,42 +185,45 @@ public class PaginationImpl extends AbstractPagination<JmixPagination> implement
     }
 
     protected void onCollectionChange(CollectionChangeType changeType) {
-        if (CollectionUtils.isEmpty(component.getPages())) {
-            createPageButtons();
-            component.setCurrentPageNumber(FIRST_PAGE);
-        }
-
         int firstResult = dataBinder.getFirstResult();
         int maxResult = dataBinder.getMaxResults();
 
-        if (component.isFirstResultInRanges(firstResult)) {
-            // if maxResult was changed not in this component try to adjust pages and ItemsPerPage value
-            if (component.getItemsToDisplay() != maxResult) {
-                if (isItemsPerPageVisible()) {
-                    Integer value = canSetUnlimitedValue(maxResult) ? null : maxResult;
-                    setSilentlyItemsPerPageValue(value);
-                }
-
-                createPageButtons(getTotalCount(), maxResult);
-
-                component.setCurrentPageNumberByFirstResult(firstResult);
-            } else {
-                // check if current page corresponds to the dataSourceProvider's firstResult
-                JmixPage currentPage = component.getCurrentPage();
-                if (currentPage != null
-                        && currentPage.getFirstResult() != firstResult) {
-                    component.setCurrentPageNumberByFirstResult(firstResult);
-                }
+        if (refreshing) {
+            if (CollectionUtils.isEmpty(component.getPages())) {
+                createPageButtons();
+                component.setCurrentPageNumber(FIRST_PAGE);
             }
 
-            component.updatePageNumbers();
-            component.updatePageSelections();
+            // check if current page corresponds to the dataSourceProvider's firstResult
+            JmixPage currentPage = component.getCurrentPage();
+            if (currentPage != null
+                    && currentPage.getFirstResult() != firstResult) {
+                component.setCurrentPageNumberByFirstResult(firstResult);
+            }
+        } else {
+            if (!component.isFirstResultInRanges(firstResult)) {
+                log.warn("Pagination component receives loader's first result ({}) that is out of last page range." +
+                        " Component may work incorrectly.", firstResult);
+                return;
+            }
+            // if maxResult was changed not in this component try to adjust pages and ItemsPerPage value
+            if (component.getItemsToDisplay() != maxResult && isItemsPerPageVisible()) {
+                Integer value = canSetUnlimitedValue(maxResult) ? null : maxResult;
+                setSilentlyItemsPerPageValue(value);
+            }
+            createPageButtons(getTotalCount(), maxResult);
 
-            updateState();
-            return;
+            if (CollectionUtils.isNotEmpty(component.getPages())) {
+                component.setCurrentPageNumberByFirstResult(firstResult);
+            }
         }
 
-        log.warn("Pagination component receives data that is out of page ranges. Component may work incorrectly.");
+        component.updatePageNumbers();
+        component.updatePageSelections();
+
+        updateState();
+
+        updateItemsPerPageAvailability();
     }
 
     protected boolean refreshData() {
@@ -239,7 +232,12 @@ public class PaginationImpl extends AbstractPagination<JmixPagination> implement
             return false;
         }
 
-        dataBinder.refresh();
+        refreshing = true;
+        try {
+            dataBinder.refresh();
+        } finally {
+            refreshing = false;
+        }
 
         return true;
     }
@@ -258,7 +256,6 @@ public class PaginationImpl extends AbstractPagination<JmixPagination> implement
 
         component.createPages(totalCount, itemsToDisplay);
 
-        component.setDataBinder(dataBinder);
         component.setOnAfterRefreshListener(this::fireAfterRefreshEvent);
         component.setPageChangeListener(this::firePageChangeEvent);
         component.setDataRefreshedProvider(this::refreshData);
@@ -305,6 +302,6 @@ public class PaginationImpl extends AbstractPagination<JmixPagination> implement
     }
 
     protected void updateItemsPerPageAvailability() {
-        getItemsPerPageComboBox().setEnabled(!isEmptyOrNullDataBinder());
+        getItemsPerPageComboBox().setEnabled(!isEmptyOrNullDataBinder() && dataBinderContainsItems());
     }
 }

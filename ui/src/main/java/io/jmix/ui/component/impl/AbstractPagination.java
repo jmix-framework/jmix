@@ -286,11 +286,6 @@ public abstract class AbstractPagination<T extends JmixAbstractPagination>
     protected void initMaxResultValue() {
         checkDataBound();
 
-        // do not init value when ItemsPerPage is disabled
-        if (isEmptyOrNullDataBinder()) {
-            return;
-        }
-
         Integer optionValue = getDefaultOptionValue(processedOptions, dataBinder.getEntityMetaClass());
 
         if (isItemsPerPageVisible()) {

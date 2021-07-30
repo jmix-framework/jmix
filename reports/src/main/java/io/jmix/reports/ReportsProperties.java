@@ -63,8 +63,6 @@ public class ReportsProperties {
 
     int curlTimeout;
 
-    boolean useReadOnlyTransactionForGroovy;
-
     boolean historyRecordingEnabled;
 
     boolean saveOutputDocumentsToHistory;
@@ -93,7 +91,6 @@ public class ReportsProperties {
                              @DefaultValue("curl") String curlPath,
                              @DefaultValue("") String curlParams,
                              @DefaultValue("10") int curlTimeout,
-                             @DefaultValue("true") boolean useReadOnlyTransactionForGroovy,
                              @DefaultValue("false") boolean historyRecordingEnabled,
                              @DefaultValue("false") boolean saveOutputDocumentsToHistory,
                              @DefaultValue("730") int historyCleanupMaxDays,
@@ -116,7 +113,6 @@ public class ReportsProperties {
         this.curlPath = curlPath;
         this.curlParams = curlParams;
         this.curlTimeout = curlTimeout;
-        this.useReadOnlyTransactionForGroovy = useReadOnlyTransactionForGroovy;
         this.historyRecordingEnabled = historyRecordingEnabled;
         this.saveOutputDocumentsToHistory = saveOutputDocumentsToHistory;
         this.historyCleanupMaxDays = historyCleanupMaxDays;

@@ -92,7 +92,11 @@ public class ValuePathHelper {
     }
 
     public static String pathPrefix(String[] elements) {
-        String[] subPath = ArrayUtils.subarray(elements, 0, elements.length - 1);
+        return pathPrefix(elements, 1);
+    }
+
+    public static String pathPrefix(String[] elements, int beforeLastElements) {
+        String[] subPath = ArrayUtils.subarray(elements, 0, elements.length - beforeLastElements);
         return ValuePathHelper.format(subPath);
     }
 }

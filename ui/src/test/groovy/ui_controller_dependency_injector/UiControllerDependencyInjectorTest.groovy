@@ -34,6 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationContext
 import org.springframework.test.context.ContextConfiguration
 import test_support.UiTestConfiguration
+import ui_controller_dependency_injector.screen.AutowireFacetDialogActionTestScreen
 import ui_controller_dependency_injector.screen.AutowireToFieldsTestScreen
 import ui_controller_dependency_injector.screen.AutowireToSettersTestScreen
 import ui_controller_dependency_injector.screen.WindowParamTestScreen
@@ -112,5 +113,24 @@ class UiControllerDependencyInjectorTest extends ScreenSpecification {
         screen.requiredParam == 'required'
         screen.optionalParam == null
         screen.namedParam == 'named'
+    }
+
+    def "Dependency injector supports ActionsAwareDialogFacet DialogAction"() {
+        showTestMainScreen()
+
+        when: "Show screen that contains facets and fragment with facets"
+        def screen = (AutowireFacetDialogActionTestScreen) screens.create(AutowireFacetDialogActionTestScreen)
+        screen.show()
+
+        then: "Actions should be injected to the controller of the screen and to the fragment"
+
+        screen.okInputDialog != null
+        screen.okOptionDialog != null
+
+        screen.okFragmentInputDialog != null
+        screen.okFragmentOptionDialog != null
+
+        screen.testFragment.okFragmentInputDialog != null
+        screen.testFragment.okFragmentOptionDialog != null
     }
 }

@@ -20,14 +20,7 @@ import com.google.common.base.Strings;
 import io.jmix.core.DevelopmentException;
 import io.jmix.ui.WindowParam;
 import io.jmix.ui.action.Action;
-import io.jmix.ui.component.Component;
-import io.jmix.ui.component.ComponentsHelper;
-import io.jmix.ui.component.Facet;
-import io.jmix.ui.component.Fragment;
-import io.jmix.ui.component.Frame;
-import io.jmix.ui.component.FrameContext;
-import io.jmix.ui.component.HasComponents;
-import io.jmix.ui.component.HasSubParts;
+import io.jmix.ui.component.*;
 import io.jmix.ui.download.Downloader;
 import io.jmix.ui.model.DataContext;
 import io.jmix.ui.model.DataLoader;
@@ -46,6 +39,7 @@ import io.jmix.ui.sys.delegate.InstalledSupplier;
 import io.jmix.ui.sys.event.UiEventListenerMethodAdapter;
 import io.jmix.ui.theme.ThemeConstants;
 import io.jmix.ui.theme.ThemeConstantsManager;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,6 +64,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
@@ -668,6 +663,46 @@ public class UiControllerDependencyInjector {
                 genericType = ((ParameterizedType) genericType).getRawType();
             }
             return applicationContext.getBeanProvider((Class<?>) genericType);
+        } else if (ActionsAwareDialogFacet.DialogAction.class.isAssignableFrom(type)) {
+            // facet's action
+
+            Facet facet;
+            String actionId;
+
+            String[] path = ValuePathHelper.parse(name);
+            if (path.length == 2) {
+                facet = frame.getFacet(path[0]);
+                actionId = path[1];
+            } else {
+                String prefix = ValuePathHelper.pathPrefix(path, 2);
+                Component component = frame.getComponent(prefix);
+                if (component == null) {
+                    return null;
+                }
+                if (!(component instanceof Fragment)) {
+                    throw new UnsupportedOperationException(
+                            String.format("Unable to inject dialog action with id '%s'. Component '%s' is not a fragment",
+                                    name, prefix)
+                    );
+                }
+                actionId = path[path.length - 1];
+                facet = ((Fragment) component).getFacet(path[path.length - 2]);
+            }
+
+            if (!(facet instanceof ActionsAwareDialogFacet)) {
+                return null;
+            }
+
+            //noinspection unchecked
+            Collection<ActionsAwareDialogFacet.DialogAction<Facet>> actions =
+                    ((ActionsAwareDialogFacet<Facet>) facet).getActions();
+
+            if (CollectionUtils.isNotEmpty(actions)) {
+                return actions.stream()
+                        .filter(action -> action.getId().equals(actionId))
+                        .findFirst()
+                        .orElse(null);
+            }
         } else {
             Object instance;
             // Try to find a Spring bean

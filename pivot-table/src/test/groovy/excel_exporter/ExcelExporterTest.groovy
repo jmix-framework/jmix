@@ -33,6 +33,8 @@
 
 package excel_exporter
 
+import io.jmix.core.Messages
+import io.jmix.pivottable.model.extension.PivotDataSeparatedCell
 import io.jmix.ui.download.Downloader
 import io.jmix.pivottable.component.impl.PivotExcelExporter
 import io.jmix.pivottable.component.PivotTable
@@ -49,6 +51,7 @@ class ExcelExporterTest extends Specification {
 
     def pivotData
     def pivotTable = new TestPivotTable()
+    def exporter
 
     def CUSTOM_FILENAME = "customFileName"
     def rowsCount = 8
@@ -58,12 +61,15 @@ class ExcelExporterTest extends Specification {
     void setup() {
         def json = PivotTableHelper.readFile('pivotDataJson.json')
         pivotData = PivotTableHelper.getPivotData(json)
+
+        exporter = new TestPivotExcelExporter(pivotTable)
+
+        Messages messages = Mock()
+        messages.getMessage("pivotExcelExporter.doubleFormat") >> {String key -> "#,##0.00##############"}
+        exporter.setMessages(messages)
     }
 
     def "test file name"() {
-        given: "create PivotExcelExporter"
-        TestPivotExcelExporter exporter = new TestPivotExcelExporter(pivotTable)
-
         when: "set custom file name"
         exporter.exportPivotTable(pivotData, CUSTOM_FILENAME)
         then:
@@ -78,9 +84,6 @@ class ExcelExporterTest extends Specification {
     }
 
     def "test generated sheet count values"() {
-        given: "created PivotExcelExporter"
-        TestPivotExcelExporter exporter = new TestPivotExcelExporter(pivotTable)
-
         when: "generate sheet"
         exporter.exportPivotTable(pivotData, null)
         then:
@@ -89,9 +92,6 @@ class ExcelExporterTest extends Specification {
     }
 
     def "test header cells type"() {
-        given: "created PivotExcelExporter"
-        TestPivotExcelExporter exporter = new TestPivotExcelExporter(pivotTable)
-
         when: "generate sheet"
         exporter.exportPivotTable(pivotData, null)
         then:
@@ -101,11 +101,11 @@ class ExcelExporterTest extends Specification {
                 Cell cell = row.getCell(j)
                 if ((i == 0 || i == 1) && (j == 0 || j == 1)
                         || (i == 2 && j == 2)) {
-                    assert cell.getCellTypeEnum() == CellType.BLANK
+                    assert cell.getCellType() == CellType.BLANK
                     continue
                 }
 
-                assert cell.getCellTypeEnum() == CellType.STRING
+                assert cell.getCellType() == CellType.STRING
 
                 def cellStyleIndex = cell.cellStyle.fontIndexAsInt
                 assert exporter.wb.getFontAt(cellStyleIndex).bold
@@ -114,9 +114,6 @@ class ExcelExporterTest extends Specification {
     }
 
     def "check body cells type"() {
-        given: "created PivotExcelExporter"
-        TestPivotExcelExporter exporter = new TestPivotExcelExporter(pivotTable)
-
         when: "generate sheet"
         exporter.exportPivotTable(pivotData, null)
         then:
@@ -125,7 +122,7 @@ class ExcelExporterTest extends Specification {
             for (int j = 0; j < cellsCount; j++) {
                 Cell cell = row.getCell(j)
                 if (0 <= j && j < 3) {
-                    assert cell.getCellTypeEnum() == CellType.STRING
+                    assert cell.getCellType() == CellType.STRING
 
                     def cellStyleIndex = cell.cellStyle.fontIndexAsInt
                     assert exporter.wb.getFontAt(cellStyleIndex).bold
@@ -133,11 +130,11 @@ class ExcelExporterTest extends Specification {
                 }
 
                 if (((3 < i && i < 7) && j == 3) || (i == 5 && j == 6)) {
-                    assert cell.getCellTypeEnum() == CellType.BLANK
+                    assert cell.getCellType() == CellType.BLANK
                     continue
                 }
 
-                cell.getCellTypeEnum() == CellType.NUMERIC
+                cell.getCellType() == CellType.NUMERIC
                 if (j == 9 || i == 7) {
                     def cellStyleIndex = cell.cellStyle.fontIndexAsInt
                     assert exporter.wb.getFontAt(cellStyleIndex).bold
@@ -155,6 +152,14 @@ class ExcelExporterTest extends Specification {
         @Override
         protected void export(Downloader downloader) {
             //do nothing
+        }
+
+        @Override
+        protected void initCell(Cell excelCell, PivotDataSeparatedCell cell) {
+            excelCell.setCellValue(cell.getValue());
+            if (cell.isBold()) {
+                excelCell.setCellStyle(cellLabelBoldStyle);
+            }
         }
 
         @Override

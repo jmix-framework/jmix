@@ -549,4 +549,32 @@ public class EntityIndexingTest {
         TestBulkRequestValidationResult result = TestBulkRequestValidator.validate(Collections.singletonList(expectedData), bulkRequests);
         Assert.assertFalse(result.toString(), result.hasFailures());
     }
+
+    @Test
+    @DisplayName("Indexing instances passed indexable predicate only")
+    public void indexWithIndexablePredicate() {
+        TestEntityForPredicate indexableInstance = metadata.create(TestEntityForPredicate.class);
+        indexableInstance.setName("Indexable");
+        indexableInstance.setEnumValue(TestEnum.OPEN);
+        TestEntityForPredicate notIndexableInstance = metadata.create(TestEntityForPredicate.class);
+        notIndexableInstance.setName("Not Indexable");
+        notIndexableInstance.setEnumValue(TestEnum.CLOSED);
+        dataManager.save(indexableInstance, notIndexableInstance);
+
+        JsonNode jsonNode = TestJsonUtils.readJsonFromFile("indexing/test_content_entity_for_predicate");
+        TestBulkRequestIndexActionValidationData expectedIndexAction = new TestBulkRequestIndexActionValidationData(
+                "search_index_test_entityforpredicate",
+                idSerialization.idToString(Id.of(indexableInstance)),
+                jsonNode
+        );
+        TestBulkRequestValidationData expectedData = new TestBulkRequestValidationData(
+                Collections.singletonList(expectedIndexAction),
+                Collections.emptyList());
+
+        entityIndexer.indexCollection(Arrays.asList(indexableInstance, notIndexableInstance));
+        List<BulkRequest> bulkRequests = bulkRequestsTracker.getBulkRequests();
+
+        TestBulkRequestValidationResult result = TestBulkRequestValidator.validate(Collections.singletonList(expectedData), bulkRequests);
+        Assert.assertFalse(result.toString(), result.hasFailures());
+    }
 }

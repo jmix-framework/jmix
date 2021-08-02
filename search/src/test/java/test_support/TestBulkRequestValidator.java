@@ -46,9 +46,10 @@ public class TestBulkRequestValidator {
                             actualBulkRequests.size(), expectedDataSet.size()
                     )
             ));
+            return validationResult;
         }
 
-        if (expectedDataSet.size() == 1 && actualBulkRequests.size() == 1) {
+        if (expectedDataSet.size() == 1) {
             TestBulkRequestValidationData expectedData = expectedDataSet.stream().findFirst().get();
             BulkRequest actualBulkRequest = actualBulkRequests.stream().findFirst().get();
             return validate(expectedData, actualBulkRequest);

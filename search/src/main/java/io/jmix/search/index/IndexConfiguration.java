@@ -20,6 +20,7 @@ import io.jmix.search.index.mapping.IndexMappingConfiguration;
 import org.elasticsearch.common.settings.Settings;
 
 import java.util.Set;
+import java.util.function.Predicate;
 
 /**
  * Contains configuration of index related to some entity
@@ -38,18 +39,22 @@ public class IndexConfiguration {
 
     protected final Settings settings;
 
+    protected final Predicate<Object> indexablePredicate;
+
     public IndexConfiguration(String entityName,
                               Class<?> entityClass,
                               String indexName,
                               IndexMappingConfiguration mapping,
                               Settings settings,
-                              Set<Class<?>> affectedEntityClasses) {
+                              Set<Class<?>> affectedEntityClasses,
+                              Predicate<Object> indexablePredicate) {
         this.entityName = entityName;
         this.entityClass = entityClass;
         this.indexName = indexName;
         this.mapping = mapping;
         this.settings = settings;
         this.affectedEntityClasses = affectedEntityClasses;
+        this.indexablePredicate = indexablePredicate;
     }
 
     /**
@@ -90,6 +95,7 @@ public class IndexConfiguration {
 
     /**
      * Gets settings of this index
+     *
      * @return settings
      */
     public Settings getSettings() {
@@ -103,5 +109,16 @@ public class IndexConfiguration {
      */
     public Set<Class<?>> getAffectedEntityClasses() {
         return affectedEntityClasses;
+    }
+
+    /**
+     * Gets {@link Predicate}&lt;{@link Object}&gt; that will be applied to every entity instance during indexing process.
+     * Only instances passed the predicate check will be indexed.
+     * Predicate is not used during deletion process.
+     *
+     * @return indexable predicate
+     */
+    public Predicate<Object> getIndexablePredicate() {
+        return indexablePredicate;
     }
 }

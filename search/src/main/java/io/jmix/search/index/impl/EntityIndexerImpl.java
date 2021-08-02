@@ -30,6 +30,7 @@ import io.jmix.search.index.mapping.DisplayedNameDescriptor;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.index.mapping.IndexMappingConfiguration;
 import io.jmix.search.index.mapping.MappingFieldDescriptor;
+import org.elasticsearch.action.bulk.BulkItemResponse;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.delete.DeleteRequest;
@@ -44,6 +45,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Component("search_EntityIndexer")
@@ -125,13 +127,18 @@ public class EntityIndexerImpl implements EntityIndexer {
         for (Map.Entry<IndexConfiguration, Collection<Object>> entry : groupedInstancesForIndexing.entrySet()) {
             IndexConfiguration indexConfiguration = entry.getKey();
             if (indexStateRegistry.isIndexAvailable(indexConfiguration.getEntityName())) {
+                Predicate<Object> indexablePredicate = indexConfiguration.getIndexablePredicate();
                 for (Object instance : entry.getValue()) {
-                    addIndexActionToBulkRequest(request, indexConfiguration, instance);
+                    if (indexablePredicate.test(instance)) {
+                        addIndexActionToBulkRequest(request, indexConfiguration, instance);
+                    }
                 }
             }
         }
 
-        BulkResponse bulkResponse = executeBulkRequest(request);
+        BulkResponse bulkResponse = request.requests().isEmpty()
+                ? createNoopBulkResponse()
+                : executeBulkRequest(request);
         return IndexResult.create(bulkResponse);
     }
 
@@ -280,7 +287,9 @@ public class EntityIndexerImpl implements EntityIndexer {
             }
         }
 
-        BulkResponse bulkResponse = executeBulkRequest(request);
+        BulkResponse bulkResponse = request.requests().isEmpty()
+                ? createNoopBulkResponse()
+                : executeBulkRequest(request);
         return IndexResult.create(bulkResponse);
     }
 
@@ -314,6 +323,10 @@ public class EntityIndexerImpl implements EntityIndexer {
             log.trace("Field value tree: {}", objectNodeForField);
             merge(objectNodeForField, entityIndexContent);
         }
+    }
+
+    protected BulkResponse createNoopBulkResponse() {
+        return new BulkResponse(new BulkItemResponse[]{}, 0L);
     }
 
     //todo move to tools?

@@ -20,6 +20,8 @@ import io.jmix.core.InstanceNameProvider;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.common.util.ReflectionHelper;
+import io.jmix.core.impl.method.ContextArgumentResolverComposite;
+import io.jmix.core.impl.method.MethodArgumentsProvider;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
@@ -49,12 +51,10 @@ import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
+import java.lang.reflect.*;
 import java.util.*;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -75,6 +75,7 @@ public class AnnotatedIndexDefinitionProcessor {
     protected final PropertyValueExtractorProvider propertyValueExtractorProvider;
     protected final SearchProperties searchProperties;
     protected final List<IndexSettingsConfigurer> indexSettingsConfigurers;
+    protected final MethodArgumentsProvider methodArgumentsProvider;
 
     @Autowired
     public AnnotatedIndexDefinitionProcessor(Metadata metadata,
@@ -85,7 +86,8 @@ public class AnnotatedIndexDefinitionProcessor {
                                              InstanceNameProvider instanceNameProvider,
                                              PropertyValueExtractorProvider propertyValueExtractorProvider,
                                              SearchProperties searchProperties,
-                                             List<IndexSettingsConfigurer> indexSettingsConfigurers) {
+                                             List<IndexSettingsConfigurer> indexSettingsConfigurers,
+                                             ContextArgumentResolverComposite resolvers) {
         this.metadata = metadata;
         this.metadataTools = metadataTools;
         this.mappingFieldAnnotationProcessorsRegistry = mappingFieldAnnotationProcessorsRegistry;
@@ -95,6 +97,7 @@ public class AnnotatedIndexDefinitionProcessor {
         this.propertyValueExtractorProvider = propertyValueExtractorProvider;
         this.searchProperties = searchProperties;
         this.indexSettingsConfigurers = indexSettingsConfigurers;
+        this.methodArgumentsProvider = new MethodArgumentsProvider(resolvers);
     }
 
     /**
@@ -108,23 +111,28 @@ public class AnnotatedIndexDefinitionProcessor {
         log.debug("Create Index Definition for class {}", className);
 
         Class<?> indexDefClass = resolveClass(className);
+        ParsedIndexDefinition indexDef = parseIndexDefinition(indexDefClass);
 
-        JmixEntitySearchIndex indexAnnotation = indexDefClass.getAnnotation(JmixEntitySearchIndex.class);
-        Class<?> entityClass = indexAnnotation.entity();
-        MetaClass metaClass = metadata.findClass(entityClass);
-        if (metaClass == null) {
-            throw new RuntimeException("MetaClass for '" + entityClass + "' not found");
-        }
-        String indexName = createIndexName(indexAnnotation, metaClass);
-        log.debug("Index name for entity {}: {}", metaClass, indexName);
+        String indexName = createIndexName(indexDef);
+        log.debug("Index name for entity {}: {}", indexDef.getMetaClass(), indexName);
 
-        IndexMappingConfiguration indexMappingConfiguration = createIndexMappingConfig(metaClass, indexDefClass);
+        IndexMappingConfiguration indexMappingConfiguration = createIndexMappingConfig(indexDef);
         Set<Class<?>> affectedEntityClasses = getAffectedEntityClasses(indexMappingConfiguration);
+        log.debug("Index Definition class {}. Affected entity classes = {}", className, affectedEntityClasses);
 
-        log.debug("Definition class {}. Affected entity classes = {}", className, affectedEntityClasses);
+        Settings settings = configureIndexSettings(indexDef.getEntityClass());
 
-        Settings settings = configureIndexSettings(entityClass);
-        return new IndexConfiguration(metaClass.getName(), entityClass, indexName, indexMappingConfiguration, settings, affectedEntityClasses);
+        Predicate<Object> indexablePredicate = createIndexablePredicate(indexDef);
+
+        return new IndexConfiguration(
+                indexDef.getMetaClass().getName(),
+                indexDef.getEntityClass(),
+                indexName,
+                indexMappingConfiguration,
+                settings,
+                affectedEntityClasses,
+                indexablePredicate
+        );
     }
 
     protected Class<?> resolveClass(String className) {
@@ -135,64 +143,112 @@ public class AnnotatedIndexDefinitionProcessor {
         }
     }
 
-    protected String createIndexName(JmixEntitySearchIndex indexAnnotation, MetaClass entityMetaClass) {
+    protected ParsedIndexDefinition parseIndexDefinition(Class<?> indexDefinitionClass) {
+        ParsedIndexDefinition result = new ParsedIndexDefinition(indexDefinitionClass);
+
+        JmixEntitySearchIndex indexAnnotation = indexDefinitionClass.getAnnotation(JmixEntitySearchIndex.class);
+        Class<?> entityClass = indexAnnotation.entity();
+        MetaClass metaClass = metadata.findClass(entityClass);
+        if (metaClass == null) {
+            throw new RuntimeException("MetaClass for '" + entityClass + "' not found");
+        }
+        result.setEntityClass(entityClass);
+        result.setMetaClass(metaClass);
+        result.setIndexName(indexAnnotation.indexName());
+
+        Method[] methods = indexDefinitionClass.getDeclaredMethods();
+        for (Method method : methods) {
+            if (isIndexablePredicateMethod(method)) {
+                result.addIndexablePredicateMethod(method);
+            } else if (isMappingDefinitionImplementationMethod(method)) {
+                if (result.getMappingDefinitionImplementationMethod() == null) {
+                    result.setMappingDefinitionImplementationMethod(method);
+                } else {
+                    throw new RuntimeException("There can be only one mapping method with body in Index Definition interface '" + indexDefinitionClass + "'");
+                }
+            } else {
+                Set<Annotation> annotations = MergedAnnotations.from(method).stream()
+                        .map(MergedAnnotation::synthesize)
+                        .collect(Collectors.toSet());
+                result.addFieldAnnotations(annotations);
+            }
+        }
+
+        return result;
+    }
+
+    protected String createIndexName(ParsedIndexDefinition parsedIndexDefinition) {
         String indexName;
-        if (StringUtils.isNotEmpty(indexAnnotation.indexName())) {
-            indexName = indexAnnotation.indexName().toLowerCase();
+        if (StringUtils.isNotEmpty(parsedIndexDefinition.getIndexName())) {
+            indexName = parsedIndexDefinition.getIndexName().toLowerCase();
         } else {
-            indexName = searchProperties.getSearchIndexNamePrefix() + entityMetaClass.getName();
+            indexName = searchProperties.getSearchIndexNamePrefix() + parsedIndexDefinition.getMetaClass().getName();
         }
         return indexName.toLowerCase();
     }
 
-    protected IndexMappingConfiguration createIndexMappingConfig(MetaClass entityMetaClass, Class<?> indexDefClass) {
-        Method[] methods = indexDefClass.getDeclaredMethods();
+    protected IndexMappingConfiguration createIndexMappingConfig(ParsedIndexDefinition parsedIndexDefinition) {
         IndexMappingConfiguration indexMappingConfiguration;
 
-        DisplayedNameDescriptor displayedNameDescriptor = createDisplayedNameDescriptor(entityMetaClass);
-        if (methods.length > 0) {
-            List<Annotation> fieldAnnotations = new ArrayList<>();
-            Method methodWithMappingDefinitionImplementation = null;
-            for (Method method : methods) {
-                if (isMappingDefinitionImplementationMethod(method)) {
-                    if (methodWithMappingDefinitionImplementation == null) {
-                        methodWithMappingDefinitionImplementation = method;
-                    } else {
-                        throw new RuntimeException("There can be only one method with body in Index Definition interface '" + indexDefClass + "'");
-                    }
-                } else {
-                    Set<Annotation> annotations = MergedAnnotations.from(method).stream()
-                            .map(MergedAnnotation::synthesize)
-                            .collect(Collectors.toSet());
-                    fieldAnnotations.addAll(annotations);
-                }
-            }
-
-            MappingDefinition mappingDefinition;
-            if (methodWithMappingDefinitionImplementation == null) {
-                MappingDefinitionBuilder builder = MappingDefinition.builder();
-                fieldAnnotations.forEach(annotation -> processAnnotation(builder, annotation, entityMetaClass));
-                mappingDefinition = builder.buildMappingDefinition();
-            } else {
-                try {
-                    Object proxy = createProxy(indexDefClass);
-                    mappingDefinition = (MappingDefinition) methodWithMappingDefinitionImplementation.invoke(proxy);
-                } catch (IllegalAccessException | InvocationTargetException e) {
-                    throw new RuntimeException("Failed to call method '" + methodWithMappingDefinitionImplementation + "'", e);
-                }
-            }
-            Map<String, MappingFieldDescriptor> fieldDescriptors = processMappingDefinition(entityMetaClass, mappingDefinition);
-            indexMappingConfiguration = new IndexMappingConfiguration(entityMetaClass, fieldDescriptors, displayedNameDescriptor);
+        DisplayedNameDescriptor displayedNameDescriptor = createDisplayedNameDescriptor(parsedIndexDefinition.getMetaClass());
+        MappingDefinition mappingDefinition;
+        Method mappingDefinitionImplementationMethod = parsedIndexDefinition.getMappingDefinitionImplementationMethod();
+        if (mappingDefinitionImplementationMethod == null) {
+            MappingDefinitionBuilder builder = MappingDefinition.builder();
+            parsedIndexDefinition.getFieldAnnotations().forEach(annotation -> processAnnotation(
+                    builder, annotation, parsedIndexDefinition.getMetaClass()
+            ));
+            mappingDefinition = builder.buildMappingDefinition();
         } else {
-            indexMappingConfiguration = new IndexMappingConfiguration(entityMetaClass, Collections.emptyMap(), displayedNameDescriptor);
+            try {
+                Object proxy = createProxy(parsedIndexDefinition.getIndexDefinitionClass());
+                mappingDefinition = (MappingDefinition) mappingDefinitionImplementationMethod.invoke(proxy);
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                throw new RuntimeException("Failed to call method '" + mappingDefinitionImplementationMethod + "'", e);
+            }
         }
+        Map<String, MappingFieldDescriptor> fieldDescriptors = processMappingDefinition(
+                parsedIndexDefinition.getMetaClass(), mappingDefinition
+        );
+        indexMappingConfiguration = new IndexMappingConfiguration(
+                parsedIndexDefinition.getMetaClass(), fieldDescriptors, displayedNameDescriptor
+        );
         return indexMappingConfiguration;
+    }
+
+    protected boolean isIndexablePredicateMethod(Method method) {
+        return method.isDefault()
+                && method.isAnnotationPresent(io.jmix.search.index.annotation.IndexablePredicate.class);
     }
 
     protected boolean isMappingDefinitionImplementationMethod(Method method) {
         return method.isDefault()
                 && MappingDefinition.class.equals(method.getReturnType())
                 && method.getParameterCount() == 0;
+    }
+
+    protected Predicate<Object> createIndexablePredicate(ParsedIndexDefinition parsedIndexDefinition) {
+        List<Predicate<Object>> predicates = new ArrayList<>();
+        for (Method method : parsedIndexDefinition.getIndexablePredicateMethods()) {
+            Class<?> returnType = method.getReturnType();
+            if (!Predicate.class.isAssignableFrom(returnType)) {
+                throw new RuntimeException("Indexable predicate method should return Predicate object");
+            }
+            Predicate<Object> predicate;
+            try {
+                Object proxyObject = null;
+                if (!Modifier.isStatic(method.getModifiers())) {
+                    proxyObject = createProxy(parsedIndexDefinition.getIndexDefinitionClass());
+                }
+                Object[] methodArgumentValues = methodArgumentsProvider.getMethodArgumentValues(method);
+                //noinspection unchecked
+                predicate = (Predicate<Object>) method.invoke(proxyObject, methodArgumentValues);
+                predicates.add(predicate);
+            } catch (Exception e) {
+                throw new RuntimeException("Cannot evaluate indexable predicate", e);
+            }
+        }
+        return predicates.stream().reduce(Predicate::and).orElseGet(() -> (obj) -> true);
     }
 
     protected Object createProxy(Class<?> ownerClass) {
@@ -410,5 +466,72 @@ public class AnnotatedIndexDefinitionProcessor {
 
     protected FieldMappingStrategy resolveFieldMappingStrategy(Class<? extends FieldMappingStrategy> strategyClass) {
         return fieldMappingStrategyProvider.getFieldMappingStrategyByClass(strategyClass);
+    }
+
+    private static class ParsedIndexDefinition {
+        private final Class<?> indexDefinitionClass;
+        private Class<?> entityClass;
+        private MetaClass metaClass;
+        private String indexName;
+        private final List<Annotation> fieldAnnotations = new ArrayList<>();
+        private final List<Method> indexablePredicateMethods = new ArrayList<>();
+        private Method mappingDefinitionImplementationMethod = null;
+
+        private ParsedIndexDefinition(Class<?> indexDefinitionClass) {
+            this.indexDefinitionClass = indexDefinitionClass;
+        }
+
+        private Class<?> getIndexDefinitionClass() {
+            return indexDefinitionClass;
+        }
+
+        private Class<?> getEntityClass() {
+            return entityClass;
+        }
+
+        private void setEntityClass(Class<?> entityClass) {
+            this.entityClass = entityClass;
+        }
+
+        public MetaClass getMetaClass() {
+            return metaClass;
+        }
+
+        public void setMetaClass(MetaClass metaClass) {
+            this.metaClass = metaClass;
+        }
+
+        private String getIndexName() {
+            return indexName;
+        }
+
+        private void setIndexName(String indexName) {
+            this.indexName = indexName;
+        }
+
+        private List<Annotation> getFieldAnnotations() {
+            return fieldAnnotations;
+        }
+
+        private void addFieldAnnotations(Collection<Annotation> fieldAnnotations) {
+            this.fieldAnnotations.addAll(fieldAnnotations);
+        }
+
+        private List<Method> getIndexablePredicateMethods() {
+            return indexablePredicateMethods;
+        }
+
+        private void addIndexablePredicateMethod(Method indexablePredicateMethod) {
+            this.indexablePredicateMethods.add(indexablePredicateMethod);
+        }
+
+        @Nullable
+        private Method getMappingDefinitionImplementationMethod() {
+            return mappingDefinitionImplementationMethod;
+        }
+
+        private void setMappingDefinitionImplementationMethod(@Nullable Method mappingDefinitionImplementationMethod) {
+            this.mappingDefinitionImplementationMethod = mappingDefinitionImplementationMethod;
+        }
     }
 }

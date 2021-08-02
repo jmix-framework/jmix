@@ -171,6 +171,17 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
         }
     }
 
+    //to handle the usage of entityName public setter
+    @Subscribe
+    public void onBeforeShow(BeforeShowEvent event) {
+        if (entityName != null) {
+            Session session = metadata.getSession();
+            selectedMeta = session.getClass(entityName);
+            createEntitiesTable(selectedMeta);
+            lookupBox.setVisible(false);
+        }
+    }
+
     @Override
     protected LookupComponent<Object> getLookupComponent() {
         return entitiesTable;

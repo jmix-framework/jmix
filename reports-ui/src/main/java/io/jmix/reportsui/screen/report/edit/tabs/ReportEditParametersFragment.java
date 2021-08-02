@@ -108,18 +108,18 @@ public class ReportEditParametersFragment extends ScreenFragment {
         replaceParameters(false);
     }
 
-    @Install(to = "inputParametersTable.create", subject = "initializer")
+    @Install(to = "inputParametersTable.createParameter", subject = "initializer")
     protected void inputParametersTableCreateInitializer(ReportInputParameter reportInputParameter) {
         reportInputParameter.setReport(reportDc.getItem());
         reportInputParameter.setPosition(parametersDc.getItems().size());
     }
 
-    @Install(to = "inputParametersTable.create", subject = "afterCommitHandler")
+    @Install(to = "inputParametersTable.createParameter", subject = "afterCommitHandler")
     protected void inputParametersTableCreateAfterCommitHandler(ReportInputParameter reportInputParameter) {
 
     }
 
-    @Install(to = "inputParametersTable.remove", subject = "afterActionPerformedHandler")
+    @Install(to = "inputParametersTable.removeParameter", subject = "afterActionPerformedHandler")
     protected void inputParametersTableRemoveAfterActionPerformedHandler(RemoveOperation.AfterActionPerformedEvent<ReportInputParameter> afterActionPerformedEvent) {
         orderParameters();
     }

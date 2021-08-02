@@ -30,14 +30,14 @@
                dataContainer="valuesFormatsDc"
                reorderingAllowed="false" columnControlVisible="false">
             <actions>
-                <action id="create" type="create"/>
-                <action id="edit" type="edit"/>
-                <action id="remove" type="remove"/>
+                <action id="createValueFormat" type="create"/>
+                <action id="editValueFormat" type="edit"/>
+                <action id="removeValueFormat" type="remove"/>
             </actions>
             <buttonsPanel>
-                <button action="valuesFormatsTable.create"/>
-                <button action="valuesFormatsTable.edit"/>
-                <button action="valuesFormatsTable.remove"/>
+                <button action="valuesFormatsTable.createValueFormat"/>
+                <button action="valuesFormatsTable.editValueFormat"/>
+                <button action="valuesFormatsTable.removeValueFormat"/>
             </buttonsPanel>
             <columns>
                 <column id="valueName"/>

@@ -32,7 +32,7 @@ public class ReportEditValueFormatsFragment extends ScreenFragment {
     @Autowired
     protected InstanceContainer<Report> reportDc;
 
-    @Install(to = "valuesFormatsTable.create", subject = "initializer")
+    @Install(to = "valuesFormatsTable.createValueFormat", subject = "initializer")
     protected void valuesFormatsTableCreateInitializer(ReportValueFormat reportValueFormat) {
         reportValueFormat.setReport(reportDc.getItem());
     }

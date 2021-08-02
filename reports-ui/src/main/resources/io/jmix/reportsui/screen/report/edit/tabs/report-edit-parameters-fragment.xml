@@ -30,16 +30,16 @@
                reorderingAllowed="false" columnControlVisible="false"
                dataContainer="parametersDc">
             <actions>
-                <action id="create" type="create"/>
-                <action id="remove" type="remove"/>
-                <action id="edit" type="edit"/>
+                <action id="createParameter" type="create"/>
+                <action id="removeParameter" type="remove"/>
+                <action id="editParameter" type="edit"/>
                 <action id="up"/>
                 <action id="down"/>
             </actions>
             <buttonsPanel>
-                <button action="inputParametersTable.create"/>
-                <button action="inputParametersTable.edit"/>
-                <button action="inputParametersTable.remove"/>
+                <button action="inputParametersTable.createParameter"/>
+                <button action="inputParametersTable.editParameter"/>
+                <button action="inputParametersTable.removeParameter"/>
                 <button id="upButton" action="inputParametersTable.up" icon="font-icon:CARET_UP"/>
                 <button id="downButton" action="inputParametersTable.down" icon="font-icon:CARET_DOWN"/>
             </buttonsPanel>

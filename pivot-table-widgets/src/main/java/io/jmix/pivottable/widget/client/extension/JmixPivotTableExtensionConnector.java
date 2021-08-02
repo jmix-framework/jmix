@@ -17,12 +17,18 @@
 package io.jmix.pivottable.widget.client.extension;
 
 
+import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.json.client.JSONParser;
 import com.vaadin.client.ComponentConnector;
 import com.vaadin.client.ServerConnector;
 import com.vaadin.client.extensions.AbstractExtensionConnector;
 import com.vaadin.shared.ui.Connect;
 import io.jmix.pivottable.widget.JmixPivotTableExtension;
+import io.jmix.pivottable.widget.client.JmixPivotTableSceneState;
 import io.jmix.pivottable.widget.client.JmixPivotTableSceneWidget;
+
+import java.util.Iterator;
+import java.util.Map;
 
 @Connect(JmixPivotTableExtension.class)
 public class JmixPivotTableExtensionConnector extends AbstractExtensionConnector {
@@ -30,16 +36,26 @@ public class JmixPivotTableExtensionConnector extends AbstractExtensionConnector
     @Override
     protected void extend(ServerConnector target) {
         final JmixPivotTableSceneWidget pivotWidget = (JmixPivotTableSceneWidget) ((ComponentConnector) target).getWidget();
+        JmixPivotTableSceneState pivotState = (JmixPivotTableSceneState) ((ComponentConnector) target).getState();
 
-        JmixPivotTableExtensionJsOverlay jsOverlay = new JmixPivotTableExtensionJsOverlay(pivotWidget.getElement());
+        JsPivotExtensionParser parser = JsPivotExtensionParser.create();
 
         pivotWidget.setRefreshHandler(jsRefreshEvent -> {
-            JsPivotExtensionOptions options = JsPivotExtensionOptions.get();
-            options.setDateTimeParseFormat(options, getState().dateTimeParseFormat);
-            options.setDateParseFormat(options, getState().dateParseFormat);
-            options.setTimeParseFormat(options, getState().timeParseFormat);
+            parser.setDateTimeParseFormat(parser, getState().dateTimeParseFormat);
+            parser.setDateParseFormat(parser, getState().dateParseFormat);
+            parser.setTimeParseFormat(parser, getState().timeParseFormat);
+            parser.setAggregation(parser, jsRefreshEvent.getAggregation());
 
-            String json = jsOverlay.convertPivotTableToJson(options);
+            // consider that map contains only current locale values
+            if (pivotState.localeMap != null) {
+                Iterator<Map.Entry<String, String>> iterator = pivotState.localeMap.entrySet().iterator();
+                if (iterator.hasNext()) {
+                    JavaScriptObject pivotMessages = getJsonAsObject(iterator.next().getValue());
+                    parser.setPivotMessages(parser, pivotMessages);
+                }
+            }
+
+            String json = parser.parsePivotTableToJson(parser, pivotWidget.getElement());
             getRpcProxy(JmixPivotTableExtensionServerRpc.class).updatePivotDataJSON(json);
 
             if (jsRefreshEvent != null) {
@@ -51,5 +67,9 @@ public class JmixPivotTableExtensionConnector extends AbstractExtensionConnector
     @Override
     public JmixPivotTableExtensionState getState() {
         return (JmixPivotTableExtensionState) super.getState();
+    }
+
+    protected JavaScriptObject getJsonAsObject(String json) {
+        return JSONParser.parseStrict(json).isObject().getJavaScriptObject();
     }
 }

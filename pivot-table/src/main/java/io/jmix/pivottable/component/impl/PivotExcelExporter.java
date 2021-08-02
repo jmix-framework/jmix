@@ -20,7 +20,10 @@ package io.jmix.pivottable.component.impl;
 import io.jmix.core.CoreProperties;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Messages;
+import io.jmix.core.metamodel.datatype.Datatype;
+import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.component.ComponentsHelper;
@@ -46,6 +49,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Nullable;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -93,6 +97,12 @@ public class PivotExcelExporter {
     protected CellStyle cellTimeStyle;
     protected CellStyle boldCellTimeStyle;
 
+    protected CellStyle cellIntegerStyle;
+    protected CellStyle boldCellIntegerStyle;
+
+    protected CellStyle cellDoubleStyle;
+    protected CellStyle boldCellDoubleStyle;
+
     protected String fileName;
     protected MetaClass entityMetaClass;
 
@@ -100,19 +110,24 @@ public class PivotExcelExporter {
     protected Downloader downloader;
 
     protected String dateTimeParseFormat;
+    protected SimpleDateFormat dateTimeFormatter;
     protected String dateParseFormat;
+    protected SimpleDateFormat dateFormatter;
     protected String timeParseFormat;
+    protected SimpleDateFormat timeFormatter;
 
     protected Notifications notifications;
 
     @Autowired
     protected CoreProperties coreProperties;
-
     @Autowired
     protected UiProperties uiProperties;
-
     @Autowired
     protected MessageTools messageTools;
+    @Autowired
+    protected DatatypeRegistry datatypeRegistry;
+    @Autowired
+    protected CurrentAuthentication currentAuthentication;
 
     public PivotExcelExporter(PivotTable pivotTable) {
         init(pivotTable);
@@ -222,19 +237,6 @@ public class PivotExcelExporter {
         PivotDataExcelHelper excelUtils = new PivotDataExcelHelper(pivotData);
         List<List<PivotDataSeparatedCell>> dataRows = excelUtils.getRows();
 
-        SimpleDateFormat dateTimeFormatter = null;
-        if (!isNullOrEmpty(dateTimeParseFormat)) {
-            dateTimeFormatter = new SimpleDateFormat(dateTimeParseFormat);
-        }
-        SimpleDateFormat dateFormatter = null;
-        if (!isNullOrEmpty(dateParseFormat)) {
-            dateFormatter = new SimpleDateFormat(dateParseFormat);
-        }
-        SimpleDateFormat timeFormatter = null;
-        if (!isNullOrEmpty(timeParseFormat)) {
-            timeFormatter = new SimpleDateFormat(timeParseFormat);
-        }
-
         int columns = excelUtils.getOriginColumnsNumber();
         ExcelAutoColumnSizer[] sizers = columns != -1 ? new ExcelAutoColumnSizer[columns] : null;
 
@@ -247,33 +249,7 @@ public class PivotExcelExporter {
             List<PivotDataSeparatedCell> row = dataRows.get(i);
             for (PivotDataSeparatedCell cell : row) {
                 Cell excelCell = excelRow.createCell(cell.getIndexCol());
-
-                PivotDataCell.Type type = cell.getType();
-                switch (type) {
-                    case NUMERIC:
-                        excelCell.setCellType(CellType.NUMERIC);
-                        excelCell.setCellValue(Double.parseDouble(cell.getValue()));
-                        if (cell.isBold()) {
-                            excelCell.setCellStyle(cellLabelBoldStyle);
-                        }
-                        break;
-                    case DATE_TIME:
-                        initDateTimeCell(excelCell, cell, dateTimeFormatter, cellDateTimeStyle, boldCellDateTimeStyle);
-                        break;
-                    case DATE:
-                        initDateTimeCell(excelCell, cell, dateFormatter, cellDateStyle, boldCellDateStyle);
-                        break;
-                    case TIME:
-                        initDateTimeCell(excelCell, cell, timeFormatter, cellTimeStyle, boldCellTimeStyle);
-                        break;
-                    case STRING:
-                        excelCell.setCellType(CellType.STRING);
-                        excelCell.setCellValue(cell.getValue());
-                        if (cell.isBold()) {
-                            excelCell.setCellStyle(cellLabelBoldStyle);
-                        }
-                        break;
-                }
+                initCell(excelCell, cell);
 
                 if (sizers != null) {
                     updateColumnSize(sizers, cell);
@@ -287,26 +263,55 @@ public class PivotExcelExporter {
             }
         }
 
-        for (String id : excelUtils.getCellIdsToMerged()) {
-            int firstRow = excelUtils.getFirstRowById(id);
-            int lastRow = excelUtils.getLastRowById(id);
-
-            if (firstRow >= MAX_ROW_INDEX) {
-                break;
-            }
-
-            if (lastRow > MAX_ROW_INDEX) {
-                lastRow = MAX_ROW_INDEX;
-            }
-
-            CellRangeAddress rangeAddress = new CellRangeAddress(
-                    firstRow,
-                    lastRow,
-                    excelUtils.getFirstColById(id),
-                    excelUtils.getLastColById(id)
-            );
-
+        for (CellRangeAddress rangeAddress : excelUtils.getCellRangeAddresses()) {
             sheet.addMergedRegion(rangeAddress);
+        }
+    }
+
+    protected void initCell(Cell excelCell, PivotDataSeparatedCell cell) {
+        PivotDataCell.Type type = cell.getType();
+        switch (type) {
+            case DECIMAL:
+                BigDecimal bigDecimal = new BigDecimal(cell.getValue());
+                Datatype<BigDecimal> bigDecimalDatatype = datatypeRegistry.get(BigDecimal.class);
+                String formattedValue = bigDecimalDatatype.format(bigDecimal, currentAuthentication.getLocale());
+                try {
+                    bigDecimal = bigDecimalDatatype.parse(formattedValue, currentAuthentication.getLocale());
+                } catch (ParseException e) {
+                    throw new RuntimeException("Unable to parse numeric value", e);
+                }
+                //noinspection ConstantConditions
+                excelCell.setCellValue(bigDecimal.doubleValue());
+                excelCell.setCellStyle(cell.isBold() ? boldCellDoubleStyle : cellDoubleStyle);
+                break;
+            case INTEGER:
+                Long longValue = Long.parseLong(cell.getValue());
+                Datatype<Long> longDatatype = datatypeRegistry.get(Long.class);
+                String formattedIntValue = longDatatype.format(longValue, currentAuthentication.getLocale());
+                try {
+                    longValue = longDatatype.parse(formattedIntValue, currentAuthentication.getLocale());
+                } catch (ParseException e) {
+                    throw new RuntimeException("Unable to parse numeric value", e);
+                }
+                //noinspection ConstantConditions
+                excelCell.setCellValue(longValue);
+                excelCell.setCellStyle(cell.isBold() ? boldCellIntegerStyle : cellIntegerStyle);
+                break;
+            case DATE_TIME:
+                initDateTimeCell(excelCell, cell, dateTimeFormatter, cellDateTimeStyle, boldCellDateTimeStyle);
+                break;
+            case DATE:
+                initDateTimeCell(excelCell, cell, dateFormatter, cellDateStyle, boldCellDateStyle);
+                break;
+            case TIME:
+                initDateTimeCell(excelCell, cell, timeFormatter, cellTimeStyle, boldCellTimeStyle);
+                break;
+            default:
+                excelCell.setCellValue(cell.getValue());
+                if (cell.isBold()) {
+                    excelCell.setCellStyle(cellLabelBoldStyle);
+                }
+                break;
         }
     }
 
@@ -338,7 +343,6 @@ public class PivotExcelExporter {
             }
         }
         // set as string
-        excelCell.setCellType(CellType.STRING);
         excelCell.setCellValue(cell.getValue());
         if (cell.isBold()) {
             excelCell.setCellStyle(cellLabelBoldStyle);
@@ -363,26 +367,45 @@ public class PivotExcelExporter {
         cellLabelBoldStyle = wb.createCellStyle();
         cellLabelBoldStyle.setFont(boldFont);
 
+        String dateTimeFormat = messages.getMessage("pivotExcelExporter.dateTimeFormat");
         cellDateTimeStyle = wb.createCellStyle();
-        cellDateTimeStyle.setDataFormat(HSSFDataFormat.getBuiltinFormat("m/d/yy h:mm"));
-
+        cellDateTimeStyle.setDataFormat(getBuiltinFormat(dateTimeFormat));
         boldCellDateTimeStyle = wb.createCellStyle();
-        boldCellDateTimeStyle.setDataFormat(HSSFDataFormat.getBuiltinFormat("m/d/yy h:mm"));
+        boldCellDateTimeStyle.setDataFormat(getBuiltinFormat(dateTimeFormat));
         boldCellDateTimeStyle.setFont(boldFont);
 
+        String dateFormat = messages.getMessage("pivotExcelExporter.timeFormat");
         cellDateStyle = wb.createCellStyle();
-        cellDateStyle.setDataFormat(HSSFDataFormat.getBuiltinFormat("m/d/yy"));
-
+        cellDateStyle.setDataFormat(getBuiltinFormat(dateFormat));
         boldCellDateStyle = wb.createCellStyle();
-        boldCellDateStyle.setDataFormat(HSSFDataFormat.getBuiltinFormat("m/d/yy"));
+        boldCellDateStyle.setDataFormat(HSSFDataFormat.getBuiltinFormat(dateFormat));
         boldCellDateStyle.setFont(boldFont);
 
+        String timeFormat = messages.getMessage("pivotExcelExporter.timeFormat");
         cellTimeStyle = wb.createCellStyle();
-        cellTimeStyle.setDataFormat(HSSFDataFormat.getBuiltinFormat("h:mm"));
-
+        cellTimeStyle.setDataFormat(getBuiltinFormat(timeFormat));
         boldCellTimeStyle = wb.createCellStyle();
-        boldCellTimeStyle.setDataFormat(HSSFDataFormat.getBuiltinFormat("h:mm"));
+        boldCellTimeStyle.setDataFormat(getBuiltinFormat(timeFormat));
         boldCellTimeStyle.setFont(boldFont);
+
+        String integerFormat = messages.getMessage("pivotExcelExporter.integerFormat");
+        cellIntegerStyle = wb.createCellStyle();
+        cellIntegerStyle.setDataFormat(getBuiltinFormat(integerFormat));
+        boldCellIntegerStyle = wb.createCellStyle();
+        boldCellIntegerStyle.setDataFormat(getBuiltinFormat(integerFormat));
+        boldCellIntegerStyle.setFont(boldFont);
+
+        DataFormat format = wb.createDataFormat();
+        String doubleFormat = messages.getMessage("pivotExcelExporter.doubleFormat");
+        cellDoubleStyle = wb.createCellStyle();
+        cellDoubleStyle.setDataFormat(format.getFormat(doubleFormat));
+        boldCellDoubleStyle = wb.createCellStyle();
+        boldCellDoubleStyle.setDataFormat(format.getFormat(doubleFormat));
+        boldCellDoubleStyle.setFont(boldFont);
+    }
+
+    protected short getBuiltinFormat(String format) {
+        return (short) BuiltinFormats.getBuiltinFormat(format);
     }
 
     protected void showWarnNotification() {
@@ -452,6 +475,10 @@ public class PivotExcelExporter {
      */
     public void setDateTimeParseFormat(String dateTimeParseFormat) {
         this.dateTimeParseFormat = dateTimeParseFormat;
+
+        if (!isNullOrEmpty(dateTimeParseFormat)) {
+            dateTimeFormatter = new SimpleDateFormat(dateTimeParseFormat);
+        }
     }
 
     /**
@@ -470,6 +497,10 @@ public class PivotExcelExporter {
      */
     public void setDateParseFormat(String dateParseFormat) {
         this.dateParseFormat = dateParseFormat;
+
+        if (!isNullOrEmpty(dateParseFormat)) {
+            dateFormatter = new SimpleDateFormat(dateParseFormat);
+        }
     }
 
     /**
@@ -488,6 +519,10 @@ public class PivotExcelExporter {
      */
     public void setTimeParseFormat(String timeParseFormat) {
         this.timeParseFormat = timeParseFormat;
+
+        if (!isNullOrEmpty(timeParseFormat)) {
+            timeFormatter = new SimpleDateFormat(timeParseFormat);
+        }
     }
 
     /**

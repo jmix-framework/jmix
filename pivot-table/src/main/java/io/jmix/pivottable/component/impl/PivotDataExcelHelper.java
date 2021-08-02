@@ -21,9 +21,14 @@ import io.jmix.pivottable.model.extension.PivotDataCell;
 import io.jmix.pivottable.model.extension.PivotDataRow;
 import io.jmix.pivottable.model.extension.PivotDataSeparatedCell;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.ss.util.CellRangeAddress;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+
+import static io.jmix.pivottable.component.impl.PivotExcelExporter.MAX_ROW_INDEX;
 
 /**
  * Helps to convert {@link PivotDataRow} to list with separated cells and provides methods for merging cells.
@@ -94,7 +99,7 @@ public class PivotDataExcelHelper {
      * @return first row index of all cells that should be merged by common id
      */
     public int getFirstRowById(String id) {
-        int firstRow = PivotExcelExporter.MAX_ROW_INDEX;
+        int firstRow = MAX_ROW_INDEX;
 
         for (PivotDataSeparatedCell cell : cellsToMerged) {
             if (cell.getId().equals(id) && firstRow > cell.getIndexRow()) {
@@ -151,6 +156,33 @@ public class PivotDataExcelHelper {
         }
 
         return lastCol;
+    }
+
+    /**
+     * @return a collection of cell range addresses that should be merged in the {@link HSSFSheet}
+     */
+    public List<CellRangeAddress> getCellRangeAddresses() {
+        List<String> ids = getCellIdsToMerged();
+        if (CollectionUtils.isEmpty(ids)) {
+            return Collections.emptyList();
+        }
+
+        List<CellRangeAddress> result = new ArrayList<>(ids.size());
+        for (String id : ids) {
+            int firstRow = getFirstRowById(id);
+            int lastRow = getLastRowById(id);
+
+            if (firstRow >= MAX_ROW_INDEX) {
+                break;
+            }
+            if (lastRow > MAX_ROW_INDEX) {
+                lastRow = MAX_ROW_INDEX;
+            }
+            result.add(
+                    new CellRangeAddress(firstRow, lastRow,
+                            getFirstColById(id), getLastColById(id)));
+        }
+        return result;
     }
 
     protected List<PivotDataSeparatedCell> createRow(PivotDataRow currentRow, List<PivotDataSeparatedCell> prevRow) {

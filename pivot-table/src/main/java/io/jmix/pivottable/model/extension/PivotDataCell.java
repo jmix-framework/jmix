@@ -20,7 +20,7 @@ import java.io.Serializable;
 
 public class PivotDataCell implements Serializable {
 
-    public enum Type {STRING, NUMERIC, DATE_TIME, DATE, TIME}
+    public enum Type {STRING, INTEGER, DECIMAL, DATE_TIME, DATE, TIME}
 
     protected Integer colSpan;
     protected Integer rowSpan;

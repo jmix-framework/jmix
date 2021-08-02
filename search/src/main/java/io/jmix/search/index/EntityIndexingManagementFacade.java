@@ -194,6 +194,28 @@ public class EntityIndexingManagementFacade {
         return String.format("Processed %d queue items", processed);
     }
 
+    @Authenticated
+    @ManagedOperation(description = "Removes all items from Indexing Queue")
+    public String emptyIndexingQueue() {
+        int deleted = indexingQueueManager.emptyQueue();
+        return String.format("%d items have been removed from Indexing Queue", deleted);
+    }
+
+    @Authenticated
+    @ManagedOperation(description = "Removes all items related to provided entity from Indexing Queue")
+    @ManagedOperationParameters({
+            @ManagedOperationParameter(name = "entityName", description = "Name of entity configured for indexing, e.g. demo_Order")
+    })
+    public String emptyIndexingQueue(String entityName) {
+        InputValidationResult inputValidationResult = validateInputEntity(entityName);
+        if (!inputValidationResult.isValid()) {
+            return inputValidationResult.getMessage();
+        }
+
+        int deleted = indexingQueueManager.emptyQueue(entityName);
+        return String.format("%d items for entity '%s' have been removed from Indexing Queue", deleted, entityName);
+    }
+
     protected String formatSingleStatusString(String entityName, String indexName, String status) {
         return String.format("Entity=%s, Index=%s, Status=%s", entityName, indexName, status);
     }

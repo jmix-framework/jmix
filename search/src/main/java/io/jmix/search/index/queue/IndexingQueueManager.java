@@ -26,11 +26,19 @@ import java.util.Collection;
 public interface IndexingQueueManager {
 
     /**
+     * Removes all queue items.
+     *
+     * @return amount of deleted items
+     */
+    int emptyQueue();
+
+    /**
      * Removes all queue items related to provided entity.
      *
      * @param entityName entity
+     * @return amount of deleted items
      */
-    void emptyQueue(String entityName);
+    int emptyQueue(String entityName);
 
     /**
      * Sends provided entity instance to indexing queue in order to store it to index.

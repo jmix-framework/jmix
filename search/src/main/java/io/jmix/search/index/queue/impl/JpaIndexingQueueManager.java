@@ -76,18 +76,35 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
     protected IndexStateRegistry indexStateRegistry;
 
     @Override
-    public void emptyQueue(String entityName) {
+    public int emptyQueue() {
+        TransactionTemplate transactionTemplate = storeAwareLocator.getTransactionTemplate(Stores.MAIN);
+        transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+        Integer result = transactionTemplate.execute(status -> {
+            log.debug("Empty Indexing queue");
+            EntityManager entityManager = storeAwareLocator.getEntityManager(Stores.MAIN);
+            Query query = entityManager.createQuery("delete from search_IndexingQueue q");
+            int deleted = query.executeUpdate();
+            log.debug("{} records have been deleted from queue", deleted);
+            return deleted;
+        });
+        return result == null ? 0 : result;
+    }
+
+    @Override
+    public int emptyQueue(String entityName) {
         Preconditions.checkNotEmptyString(entityName);
         TransactionTemplate transactionTemplate = storeAwareLocator.getTransactionTemplate(Stores.MAIN);
         transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-        transactionTemplate.executeWithoutResult(status -> {
+        Integer result = transactionTemplate.execute(status -> {
             log.debug("Empty queue for entity '{}'", entityName);
             EntityManager entityManager = storeAwareLocator.getEntityManager(Stores.MAIN);
             Query query = entityManager.createQuery("delete from search_IndexingQueue q where q.entityName = ?1");
             query.setParameter(1, entityName);
             int deleted = query.executeUpdate();
-            log.debug("{} records for entity '{}' have been deleted from queue", entityName, deleted);
+            log.debug("{} records for entity '{}' have been deleted from queue", deleted, entityName);
+            return deleted;
         });
+        return result == null ? 0 : result;
     }
 
     @Override

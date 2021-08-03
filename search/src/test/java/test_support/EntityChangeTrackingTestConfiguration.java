@@ -42,7 +42,6 @@ import liquibase.integration.spring.SpringLiquibase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.annotation.*;
-import test_support.change_tracking.TestRootEntityIndexDefinition;
 
 import javax.sql.DataSource;
 
@@ -58,7 +57,7 @@ public class EntityChangeTrackingTestConfiguration {
     @Bean
     public TestAutoDetectableIndexDefinitionScope testAutoDetectableIndexDefinitionScope() {
         return TestAutoDetectableIndexDefinitionScope.builder()
-                .classes(TestRootEntityIndexDefinition.class)
+                .packages("test_support.change_tracking")
                 .build();
     }
 
@@ -82,7 +81,7 @@ public class EntityChangeTrackingTestConfiguration {
     }
 
     @Bean
-    public TestEntityWrapperManager testEntityWrapperManager(Metadata metadata, DataManager dataManager) {
-        return new TestEntityWrapperManager(metadata, dataManager);
+    public TestCommonEntityWrapperManager testCommonEntityWrapperManager(Metadata metadata, DataManager dataManager) {
+        return new TestCommonEntityWrapperManager(metadata, dataManager);
     }
 }

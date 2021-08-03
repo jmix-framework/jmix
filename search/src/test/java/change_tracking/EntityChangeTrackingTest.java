@@ -26,11 +26,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import test_support.EntityChangeTrackingTestConfiguration;
-import test_support.TestEntityWrapperManager;
+import test_support.TestCommonEntityWrapperManager;
 import test_support.TestIndexingQueueItemsTracker;
-import test_support.entity.TestReferenceEntity;
-import test_support.entity.TestRootEntity;
-import test_support.entity.TestSubReferenceEntity;
+import test_support.entity.*;
 
 import java.util.Arrays;
 
@@ -43,7 +41,7 @@ public class EntityChangeTrackingTest {
     @Autowired
     TestIndexingQueueItemsTracker indexingQueueItemsTracker;
     @Autowired
-    TestEntityWrapperManager ewm;
+    TestCommonEntityWrapperManager ewm;
 
     @BeforeEach
     public void setUp() {
@@ -51,7 +49,7 @@ public class EntityChangeTrackingTest {
     }
 
     @Test
-    @DisplayName("Creation of indexed entity leads to queue item enqueueing")
+    @DisplayName("Creation of indexed entity leads to queue item enqueueing (Soft Delete)")
     public void createIndexedEntity() {
         TestRootEntity entity = ewm.createTestRootEntity().save();
         boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(entity, IndexingOperation.INDEX, 1);
@@ -59,7 +57,15 @@ public class EntityChangeTrackingTest {
     }
 
     @Test
-    @DisplayName("Update of indexed entity leads to queue item enqueueing")
+    @DisplayName("Creation of indexed entity leads to queue item enqueueing (Hard Delete)")
+    public void createIndexedEntityHardDelete() {
+        TestRootEntityHD entityHD = ewm.createTestRootEntityHD().save();
+        boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(entityHD, IndexingOperation.INDEX, 1);
+        Assert.assertTrue(enqueued);
+    }
+
+    @Test
+    @DisplayName("Update of indexed entity leads to queue item enqueueing (Soft Delete)")
     public void updateLocalPropertyOfIndexedEntity() {
         TestRootEntity entity = ewm.createTestRootEntity().save();
         indexingQueueItemsTracker.clear();
@@ -70,7 +76,18 @@ public class EntityChangeTrackingTest {
     }
 
     @Test
-    @DisplayName("Deletion of indexed entity leads to queue item enqueueing")
+    @DisplayName("Update of indexed entity leads to queue item enqueueing (Hard Delete)")
+    public void updateLocalPropertyOfIndexedEntityHardDelete() {
+        TestRootEntityHD entityHD = ewm.createTestRootEntityHD().save();
+        indexingQueueItemsTracker.clear();
+
+        ewm.wrap(entityHD).setTextValue("Some text value").save();
+        boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(entityHD, IndexingOperation.INDEX, 1);
+        Assert.assertTrue(enqueued);
+    }
+
+    @Test
+    @DisplayName("Deletion of indexed entity leads to queue item enqueueing (Soft Delete)")
     public void deleteIndexedEntity() {
         TestRootEntity entity = ewm.createTestRootEntity().save();
         indexingQueueItemsTracker.clear();
@@ -81,7 +98,18 @@ public class EntityChangeTrackingTest {
     }
 
     @Test
-    @DisplayName("Deletion of not-indexed entity doesn't lead to queue item enqueueing")
+    @DisplayName("Deletion of indexed entity leads to queue item enqueueing (Hard Delete)")
+    public void deleteIndexedEntityHardDelete() {
+        TestRootEntityHD entityHD = ewm.createTestRootEntityHD().save();
+        indexingQueueItemsTracker.clear();
+
+        ewm.remove(entityHD);
+        boolean enqueuedDelete = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(entityHD, IndexingOperation.DELETE, 1);
+        Assert.assertTrue(enqueuedDelete);
+    }
+
+    @Test
+    @DisplayName("Deletion of not-indexed entity doesn't lead to queue item enqueueing (Soft Delete)")
     public void deleteNotIndexedEntity() {
         TestReferenceEntity entity = ewm.createTestReferenceEntity().save();
         ewm.remove(entity);
@@ -90,7 +118,18 @@ public class EntityChangeTrackingTest {
     }
 
     @Test
-    @DisplayName("Creation of not-indexed doesn't lead to queue item enqueueing")
+    @DisplayName("Deletion of not-indexed entity doesn't lead to queue item enqueueing (Hard Delete)")
+    public void deleteNotIndexedEntityHardDelete() {
+        TestRootEntityHD entityHD = ewm.createTestRootEntityHD().save();
+        indexingQueueItemsTracker.clear();
+
+        ewm.remove(entityHD);
+        boolean enqueuedDelete = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(entityHD, IndexingOperation.DELETE, 1);
+        Assert.assertTrue(enqueuedDelete);
+    }
+
+    @Test
+    @DisplayName("Creation of not-indexed doesn't lead to queue item enqueueing (Soft Delete)")
     public void createNotIndexedEntity() {
         TestReferenceEntity entity = ewm.createTestReferenceEntity().save();
         boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(entity, IndexingOperation.INDEX, 0);
@@ -98,7 +137,15 @@ public class EntityChangeTrackingTest {
     }
 
     @Test
-    @DisplayName("Update of not-indexed entity doesn't lead to queue item enqueueing")
+    @DisplayName("Creation of not-indexed doesn't lead to queue item enqueueing (Hard Delete)")
+    public void createNotIndexedEntityHardDelete() {
+        TestReferenceEntityHD entityHD = ewm.createTestReferenceEntityHD().save();
+        boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(entityHD, IndexingOperation.INDEX, 0);
+        Assert.assertTrue(enqueued);
+    }
+
+    @Test
+    @DisplayName("Update of not-indexed entity doesn't lead to queue item enqueueing (Soft Delete)")
     public void updateLocalPropertyOfNotIndexedEntity() {
         TestReferenceEntity entity = ewm.createTestReferenceEntity().save();
 
@@ -108,7 +155,17 @@ public class EntityChangeTrackingTest {
     }
 
     @Test
-    @DisplayName("Adding of one-to-one reference leads to queue item enqueueing")
+    @DisplayName("Update of not-indexed entity doesn't lead to queue item enqueueing (Hard Delete)")
+    public void updateLocalPropertyOfNotIndexedEntityHardDelete() {
+        TestReferenceEntityHD entityHD = ewm.createTestReferenceEntityHD().save();
+
+        ewm.wrap(entityHD).setTextValue("Some text value").save();
+        boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(entityHD, IndexingOperation.INDEX, 0);
+        Assert.assertTrue(enqueued);
+    }
+
+    @Test
+    @DisplayName("Adding of one-to-one reference leads to queue item enqueueing (Soft Delete)")
     public void addOneToOneReference() {
         TestReferenceEntity reference = ewm.createTestReferenceEntity().save();
         TestRootEntity rootEntity = ewm.createTestRootEntity().save();
@@ -120,7 +177,19 @@ public class EntityChangeTrackingTest {
     }
 
     @Test
-    @DisplayName("Changing of one-to-one reference leads to queue item enqueueing")
+    @DisplayName("Adding of one-to-one reference leads to queue item enqueueing (Hard Delete)")
+    public void addOneToOneReferenceHardDelete() {
+        TestReferenceEntityHD referenceHD = ewm.createTestReferenceEntityHD().save();
+        TestRootEntityHD rootEntityHD = ewm.createTestRootEntityHD().save();
+        indexingQueueItemsTracker.clear();
+
+        ewm.wrap(rootEntityHD).setOneToOneAssociation(referenceHD).save();
+        boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(rootEntityHD, IndexingOperation.INDEX, 1);
+        Assert.assertTrue(enqueued);
+    }
+
+    @Test
+    @DisplayName("Changing of one-to-one reference leads to queue item enqueueing (Soft Delete)")
     public void changeOneToOneReference() {
         TestReferenceEntity firstReference = ewm.createTestReferenceEntity().save();
         TestReferenceEntity secondReference = ewm.createTestReferenceEntity().save();
@@ -133,7 +202,20 @@ public class EntityChangeTrackingTest {
     }
 
     @Test
-    @DisplayName("Clearing of one-to-one reference leads to queue item enqueueing")
+    @DisplayName("Changing of one-to-one reference leads to queue item enqueueing (Hard Delete)")
+    public void changeOneToOneReferenceHardDelete() {
+        TestReferenceEntityHD firstReferenceHD = ewm.createTestReferenceEntityHD().save();
+        TestReferenceEntityHD secondReferenceHD = ewm.createTestReferenceEntityHD().save();
+        TestRootEntityHD rootEntityHD = ewm.createTestRootEntityHD().setOneToOneAssociation(firstReferenceHD).save();
+        indexingQueueItemsTracker.clear();
+
+        ewm.wrap(rootEntityHD).setOneToOneAssociation(secondReferenceHD).save();
+        boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(rootEntityHD, IndexingOperation.INDEX, 1);
+        Assert.assertTrue(enqueued);
+    }
+
+    @Test
+    @DisplayName("Clearing of one-to-one reference leads to queue item enqueueing (Soft Delete)")
     public void clearOneToOneReference() {
         TestReferenceEntity reference = ewm.createTestReferenceEntity().save();
         TestRootEntity rootEntity = ewm.createTestRootEntity().setOneToOneAssociation(reference).save();
@@ -145,7 +227,19 @@ public class EntityChangeTrackingTest {
     }
 
     @Test
-    @DisplayName("Deletion of one-to-one reference leads to queue item enqueueing")
+    @DisplayName("Clearing of one-to-one reference leads to queue item enqueueing (Hard Delete)")
+    public void clearOneToOneReferenceHardDelete() {
+        TestReferenceEntityHD referenceHD = ewm.createTestReferenceEntityHD().save();
+        TestRootEntityHD rootEntityHD = ewm.createTestRootEntityHD().setOneToOneAssociation(referenceHD).save();
+        indexingQueueItemsTracker.clear();
+
+        ewm.wrap(rootEntityHD).setOneToOneAssociation(null).save();
+        boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(rootEntityHD, IndexingOperation.INDEX, 1);
+        Assert.assertTrue(enqueued);
+    }
+
+    @Test
+    @DisplayName("Deletion of one-to-one reference leads to queue item enqueueing (Soft Delete)")
     public void deleteOneToOneReference() {
         TestReferenceEntity reference = ewm.createTestReferenceEntity().save();
         TestRootEntity rootEntity = ewm.createTestRootEntity().setOneToOneAssociation(reference).save();
@@ -157,7 +251,19 @@ public class EntityChangeTrackingTest {
     }
 
     @Test
-    @DisplayName("Update of indexed local property of one-to-one reference leads to queue item enqueueing")
+    @DisplayName("Deletion of one-to-one reference leads to queue item enqueueing (Hard Delete)")
+    public void deleteOneToOneReferenceHardDelete() {
+        TestReferenceEntityHD referenceHD = ewm.createTestReferenceEntityHD().save();
+        TestRootEntityHD rootEntityHD = ewm.createTestRootEntityHD().setOneToOneAssociation(referenceHD).save();
+        indexingQueueItemsTracker.clear();
+
+        ewm.remove(referenceHD);
+        boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(rootEntityHD, IndexingOperation.INDEX, 1);
+        Assert.assertTrue(enqueued);
+    }
+
+    @Test
+    @DisplayName("Update of indexed local property of one-to-one reference leads to queue item enqueueing (Soft Delete)")
     public void updateIndexedLocalPropertyOfOneToOneReference() {
         TestReferenceEntity reference = ewm.createTestReferenceEntity().save();
         TestRootEntity rootEntity = ewm.createTestRootEntity().setOneToOneAssociation(reference).save();
@@ -169,7 +275,19 @@ public class EntityChangeTrackingTest {
     }
 
     @Test
-    @DisplayName("Update of not-indexed local property of one-to-one reference doesn't lead to queue item enqueueing")
+    @DisplayName("Update of indexed local property of one-to-one reference leads to queue item enqueueing (Hard Delete)")
+    public void updateIndexedLocalPropertyOfOneToOneReferenceHardDelete() {
+        TestReferenceEntityHD referenceHD = ewm.createTestReferenceEntityHD().save();
+        TestRootEntityHD rootEntityHD = ewm.createTestRootEntityHD().setOneToOneAssociation(referenceHD).save();
+        indexingQueueItemsTracker.clear();
+
+        ewm.wrap(referenceHD).setTextValue("Some text value").save();
+        boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(rootEntityHD, IndexingOperation.INDEX, 1);
+        Assert.assertTrue(enqueued);
+    }
+
+    @Test
+    @DisplayName("Update of not-indexed local property of one-to-one reference doesn't lead to queue item enqueueing (Soft Delete)")
     public void updateNotIndexedLocalPropertyOfOneToOneReference() {
         TestReferenceEntity reference = ewm.createTestReferenceEntity().save();
         TestRootEntity rootEntity = ewm.createTestRootEntity().setOneToOneAssociation(reference).save();
@@ -181,7 +299,19 @@ public class EntityChangeTrackingTest {
     }
 
     @Test
-    @DisplayName("Adding of one-to-one sub-reference leads to queue item enqueueing")
+    @DisplayName("Update of not-indexed local property of one-to-one reference doesn't lead to queue item enqueueing (Hard Delete)")
+    public void updateNotIndexedLocalPropertyOfOneToOneReferenceHardDelete() {
+        TestReferenceEntityHD referenceHD = ewm.createTestReferenceEntityHD().save();
+        TestRootEntityHD rootEntityHD = ewm.createTestRootEntityHD().setOneToOneAssociation(referenceHD).save();
+        indexingQueueItemsTracker.clear();
+
+        ewm.wrap(referenceHD).setName("New Name").save();
+        boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(rootEntityHD, IndexingOperation.INDEX, 0);
+        Assert.assertTrue(enqueued);
+    }
+
+    @Test
+    @DisplayName("Adding of one-to-one sub-reference leads to queue item enqueueing (Soft Delete)")
     public void addOneToOneSubReference() {
         TestReferenceEntity reference = ewm.createTestReferenceEntity().save();
         TestRootEntity rootEntity = ewm.createTestRootEntity().setOneToOneAssociation(reference).save();
@@ -194,7 +324,20 @@ public class EntityChangeTrackingTest {
     }
 
     @Test
-    @DisplayName("Changing of one-to-one sub-reference leads to queue item enqueueing")
+    @DisplayName("Adding of one-to-one sub-reference leads to queue item enqueueing (Hard Delete)")
+    public void addOneToOneSubReferenceHardDelete() {
+        TestReferenceEntityHD referenceHD = ewm.createTestReferenceEntityHD().save();
+        TestRootEntityHD rootEntityHD = ewm.createTestRootEntityHD().setOneToOneAssociation(referenceHD).save();
+        TestSubReferenceEntityHD subReferenceHD = ewm.createTestSubReferenceEntityHD().save();
+        indexingQueueItemsTracker.clear();
+
+        ewm.wrap(referenceHD).setOneToOneAssociation(subReferenceHD).save();
+        boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(rootEntityHD, IndexingOperation.INDEX, 1);
+        Assert.assertTrue(enqueued);
+    }
+
+    @Test
+    @DisplayName("Changing of one-to-one sub-reference leads to queue item enqueueing (Soft Delete)")
     public void changeOneToOneSubReference() {
         TestSubReferenceEntity firstSubReference = ewm.createTestSubReferenceEntity().save();
         TestSubReferenceEntity secondSubReference = ewm.createTestSubReferenceEntity().save();
@@ -208,7 +351,21 @@ public class EntityChangeTrackingTest {
     }
 
     @Test
-    @DisplayName("Clearing of one-to-one sub-reference leads to queue item enqueueing")
+    @DisplayName("Changing of one-to-one sub-reference leads to queue item enqueueing (Hard Delete)")
+    public void changeOneToOneSubReferenceHardDelete() {
+        TestSubReferenceEntityHD firstSubReferenceHD = ewm.createTestSubReferenceEntityHD().save();
+        TestSubReferenceEntityHD secondSubReferenceHD = ewm.createTestSubReferenceEntityHD().save();
+        TestReferenceEntityHD referenceHD = ewm.createTestReferenceEntityHD().setOneToOneAssociation(firstSubReferenceHD).save();
+        TestRootEntityHD rootEntityHD = ewm.createTestRootEntityHD().setOneToOneAssociation(referenceHD).save();
+        indexingQueueItemsTracker.clear();
+
+        ewm.wrap(referenceHD).setOneToOneAssociation(secondSubReferenceHD).save();
+        boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(rootEntityHD, IndexingOperation.INDEX, 1);
+        Assert.assertTrue(enqueued);
+    }
+
+    @Test
+    @DisplayName("Clearing of one-to-one sub-reference leads to queue item enqueueing (Soft Delete)")
     public void clearOneToOneSubReference() {
         TestSubReferenceEntity subReference = ewm.createTestSubReferenceEntity().save();
         TestReferenceEntity reference = ewm.createTestReferenceEntity().setOneToOneAssociation(subReference).save();
@@ -221,7 +378,20 @@ public class EntityChangeTrackingTest {
     }
 
     @Test
-    @DisplayName("Deletion of one-to-one sub-reference leads to queue item enqueueing")
+    @DisplayName("Clearing of one-to-one sub-reference leads to queue item enqueueing (Hard Delete)")
+    public void clearOneToOneSubReferenceHardDelete() {
+        TestSubReferenceEntityHD subReferenceHD = ewm.createTestSubReferenceEntityHD().save();
+        TestReferenceEntityHD referenceHD = ewm.createTestReferenceEntityHD().setOneToOneAssociation(subReferenceHD).save();
+        TestRootEntityHD rootEntityHD = ewm.createTestRootEntityHD().setOneToOneAssociation(referenceHD).save();
+        indexingQueueItemsTracker.clear();
+
+        ewm.wrap(referenceHD).setOneToOneAssociation(null).save();
+        boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(rootEntityHD, IndexingOperation.INDEX, 1);
+        Assert.assertTrue(enqueued);
+    }
+
+    @Test
+    @DisplayName("Deletion of one-to-one sub-reference leads to queue item enqueueing (Soft Delete)")
     public void deleteOneToOneSubReference() {
         TestSubReferenceEntity subReference = ewm.createTestSubReferenceEntity().save();
         TestReferenceEntity reference = ewm.createTestReferenceEntity().setOneToOneAssociation(subReference).save();
@@ -234,7 +404,20 @@ public class EntityChangeTrackingTest {
     }
 
     @Test
-    @DisplayName("Update of indexed local property of one-to-one sub-reference leads to queue item enqueueing")
+    @DisplayName("Deletion of one-to-one sub-reference leads to queue item enqueueing (Hard Delete)")
+    public void deleteOneToOneSubReferenceHardDelete() {
+        TestSubReferenceEntityHD subReferenceHD = ewm.createTestSubReferenceEntityHD().save();
+        TestReferenceEntityHD referenceHD = ewm.createTestReferenceEntityHD().setOneToOneAssociation(subReferenceHD).save();
+        TestRootEntityHD rootEntityHD = ewm.createTestRootEntityHD().setOneToOneAssociation(referenceHD).save();
+        indexingQueueItemsTracker.clear();
+
+        ewm.remove(subReferenceHD);
+        boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(rootEntityHD, IndexingOperation.INDEX, 1);
+        Assert.assertTrue(enqueued);
+    }
+
+    @Test
+    @DisplayName("Update of indexed local property of one-to-one sub-reference leads to queue item enqueueing (Soft Delete)")
     public void updateIndexedLocalPropertyOfOneToOneSubReference() {
         TestSubReferenceEntity subReference = ewm.createTestSubReferenceEntity().save();
         TestReferenceEntity reference = ewm.createTestReferenceEntity().setOneToOneAssociation(subReference).save();
@@ -247,7 +430,20 @@ public class EntityChangeTrackingTest {
     }
 
     @Test
-    @DisplayName("Update of not-indexed local property of one-to-one sub-reference doesn't lead to queue item enqueueing")
+    @DisplayName("Update of indexed local property of one-to-one sub-reference leads to queue item enqueueing (Hard Delete)")
+    public void updateIndexedLocalPropertyOfOneToOneSubReferenceHardDelete() {
+        TestSubReferenceEntityHD subReferenceHD = ewm.createTestSubReferenceEntityHD().save();
+        TestReferenceEntityHD referenceHD = ewm.createTestReferenceEntityHD().setOneToOneAssociation(subReferenceHD).save();
+        TestRootEntityHD rootEntityHD = ewm.createTestRootEntityHD().setOneToOneAssociation(referenceHD).save();
+        indexingQueueItemsTracker.clear();
+
+        ewm.wrap(subReferenceHD).setTextValue("Some text value").save();
+        boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(rootEntityHD, IndexingOperation.INDEX, 1);
+        Assert.assertTrue(enqueued);
+    }
+
+    @Test
+    @DisplayName("Update of not-indexed local property of one-to-one sub-reference doesn't lead to queue item enqueueing (Soft Delete)")
     public void updateNotIndexedLocalPropertyOfOneToOneSubReference() {
         TestSubReferenceEntity subReference = ewm.createTestSubReferenceEntity().save();
         TestReferenceEntity reference = ewm.createTestReferenceEntity().setOneToOneAssociation(subReference).save();
@@ -260,7 +456,20 @@ public class EntityChangeTrackingTest {
     }
 
     @Test
-    @DisplayName("Adding of one-to-many references leads to queue item enqueueing")
+    @DisplayName("Update of not-indexed local property of one-to-one sub-reference doesn't lead to queue item enqueueing (Hard Delete)")
+    public void updateNotIndexedLocalPropertyOfOneToOneSubReferenceHardDelete() {
+        TestSubReferenceEntityHD subReferenceHD = ewm.createTestSubReferenceEntityHD().save();
+        TestReferenceEntityHD referenceHD = ewm.createTestReferenceEntityHD().setOneToOneAssociation(subReferenceHD).save();
+        TestRootEntityHD rootEntityHD = ewm.createTestRootEntityHD().setOneToOneAssociation(referenceHD).save();
+        indexingQueueItemsTracker.clear();
+
+        ewm.wrap(subReferenceHD).setName("New Name").save();
+        boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(rootEntityHD, IndexingOperation.INDEX, 0);
+        Assert.assertTrue(enqueued);
+    }
+
+    @Test
+    @DisplayName("Adding of one-to-many references leads to queue item enqueueing (Soft Delete)")
     public void addOneToManyReferences() {
         TestReferenceEntity firstReference = ewm.createTestReferenceEntity().save();
         TestReferenceEntity secondReference = ewm.createTestReferenceEntity().save();
@@ -273,7 +482,20 @@ public class EntityChangeTrackingTest {
     }
 
     @Test
-    @DisplayName("Changing of one-to-many references leads to queue item enqueueing")
+    @DisplayName("Adding of one-to-many references leads to queue item enqueueing (Hard Delete)")
+    public void addOneToManyReferencesHardDelete() {
+        TestReferenceEntityHD firstReferenceHD = ewm.createTestReferenceEntityHD().save();
+        TestReferenceEntityHD secondReferenceHD = ewm.createTestReferenceEntityHD().save();
+        TestRootEntityHD rootEntityHD = ewm.createTestRootEntityHD().save();
+        indexingQueueItemsTracker.clear();
+
+        ewm.wrap(rootEntityHD).setOneToManyAssociation(Arrays.asList(firstReferenceHD, secondReferenceHD)).save();
+        boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(rootEntityHD, IndexingOperation.INDEX, 1);
+        Assert.assertTrue(enqueued);
+    }
+
+    @Test
+    @DisplayName("Changing of one-to-many references leads to queue item enqueueing (Soft Delete)")
     public void changeOneToManyReferences() {
         TestReferenceEntity firstReference = ewm.createTestReferenceEntity().save();
         TestReferenceEntity secondReference = ewm.createTestReferenceEntity().save();
@@ -286,7 +508,20 @@ public class EntityChangeTrackingTest {
     }
 
     @Test
-    @DisplayName("Clearing of one-to-many references leads to queue item enqueueing")
+    @DisplayName("Changing of one-to-many references leads to queue item enqueueing (Hard Delete)")
+    public void changeOneToManyReferencesHardDelete() {
+        TestReferenceEntityHD firstReferenceHD = ewm.createTestReferenceEntityHD().save();
+        TestReferenceEntityHD secondReferenceHD = ewm.createTestReferenceEntityHD().save();
+        TestRootEntityHD rootEntityHD = ewm.createTestRootEntityHD().setOneToManyAssociation(firstReferenceHD).save();
+        indexingQueueItemsTracker.clear();
+
+        ewm.wrap(rootEntityHD).setOneToManyAssociation(secondReferenceHD).save();
+        boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(rootEntityHD, IndexingOperation.INDEX, 1);
+        Assert.assertTrue(enqueued);
+    }
+
+    @Test
+    @DisplayName("Clearing of one-to-many references leads to queue item enqueueing (Soft Delete)")
     public void clearOneToManyReferences() {
         TestReferenceEntity firstReference = ewm.createTestReferenceEntity().save();
         TestReferenceEntity secondReference = ewm.createTestReferenceEntity().save();
@@ -299,7 +534,20 @@ public class EntityChangeTrackingTest {
     }
 
     @Test
-    @DisplayName("Deletion of some one-to-many reference from collection leads to queue item enqueueing")
+    @DisplayName("Clearing of one-to-many references leads to queue item enqueueing (Hard Delete)")
+    public void clearOneToManyReferencesHardDelete() {
+        TestReferenceEntityHD firstReferenceHD = ewm.createTestReferenceEntityHD().save();
+        TestReferenceEntityHD secondReferenceHD = ewm.createTestReferenceEntityHD().save();
+        TestRootEntityHD rootEntityHD = ewm.createTestRootEntityHD().setOneToManyAssociation(firstReferenceHD, secondReferenceHD).save();
+        indexingQueueItemsTracker.clear();
+
+        ewm.wrap(rootEntityHD).setOneToManyAssociation().save();
+        boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(rootEntityHD, IndexingOperation.INDEX, 1);
+        Assert.assertTrue(enqueued);
+    }
+
+    @Test
+    @DisplayName("Deletion of some one-to-many reference from collection leads to queue item enqueueing (Soft Delete)")
     public void deleteOneToManyReference() {
         TestReferenceEntity firstReference = ewm.createTestReferenceEntity().save();
         TestReferenceEntity secondReference = ewm.createTestReferenceEntity().save();
@@ -312,7 +560,20 @@ public class EntityChangeTrackingTest {
     }
 
     @Test
-    @DisplayName("Update of indexed local property of one-to-many reference leads to queue item enqueueing")
+    @DisplayName("Deletion of some one-to-many reference from collection leads to queue item enqueueing (Hard Delete)")
+    public void deleteOneToManyReferenceHardDelete() {
+        TestReferenceEntityHD firstReferenceHD = ewm.createTestReferenceEntityHD().save();
+        TestReferenceEntityHD secondReferenceHD = ewm.createTestReferenceEntityHD().save();
+        TestRootEntityHD rootEntityHD = ewm.createTestRootEntityHD().setOneToManyAssociation(firstReferenceHD, secondReferenceHD).save();
+        indexingQueueItemsTracker.clear();
+
+        ewm.remove(firstReferenceHD);
+        boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(rootEntityHD, IndexingOperation.INDEX, 1);
+        Assert.assertTrue(enqueued);
+    }
+
+    @Test
+    @DisplayName("Update of indexed local property of one-to-many reference leads to queue item enqueueing (Soft Delete)")
     public void updateIndexedLocalPropertyOfOneToManyReference() {
         TestReferenceEntity firstReference = ewm.createTestReferenceEntity().save();
         TestReferenceEntity secondReference = ewm.createTestReferenceEntity().save();
@@ -325,7 +586,20 @@ public class EntityChangeTrackingTest {
     }
 
     @Test
-    @DisplayName("Update of not-indexed local property of one-to-many reference doesn't lead to queue item enqueueing")
+    @DisplayName("Update of indexed local property of one-to-many reference leads to queue item enqueueing (Hard Delete)")
+    public void updateIndexedLocalPropertyOfOneToManyReferenceHardDelete() {
+        TestReferenceEntityHD firstReferenceHD = ewm.createTestReferenceEntityHD().save();
+        TestReferenceEntityHD secondReferenceHD = ewm.createTestReferenceEntityHD().save();
+        TestRootEntityHD rootEntityHD = ewm.createTestRootEntityHD().setOneToManyAssociation(firstReferenceHD, secondReferenceHD).save();
+        indexingQueueItemsTracker.clear();
+
+        ewm.wrap(firstReferenceHD).setTextValue("Some text value").save();
+        boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(rootEntityHD, IndexingOperation.INDEX, 1);
+        Assert.assertTrue(enqueued);
+    }
+
+    @Test
+    @DisplayName("Update of not-indexed local property of one-to-many reference doesn't lead to queue item enqueueing (Soft Delete)")
     public void updateNotIndexedLocalPropertyOfOneToManyReference() {
         TestReferenceEntity firstReference = ewm.createTestReferenceEntity().save();
         TestReferenceEntity secondReference = ewm.createTestReferenceEntity().save();
@@ -338,7 +612,20 @@ public class EntityChangeTrackingTest {
     }
 
     @Test
-    @DisplayName("Adding of one-to-many sub-references leads to queue item enqueueing")
+    @DisplayName("Update of not-indexed local property of one-to-many reference doesn't lead to queue item enqueueing (Hard Delete)")
+    public void updateNotIndexedLocalPropertyOfOneToManyReferenceHardDelete() {
+        TestReferenceEntityHD firstReferenceHD = ewm.createTestReferenceEntityHD().save();
+        TestReferenceEntityHD secondReferenceHD = ewm.createTestReferenceEntityHD().save();
+        TestRootEntityHD rootEntityHD = ewm.createTestRootEntityHD().setOneToManyAssociation(firstReferenceHD, secondReferenceHD).save();
+        indexingQueueItemsTracker.clear();
+
+        ewm.wrap(firstReferenceHD).setName("New name").save();
+        boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(rootEntityHD, IndexingOperation.INDEX, 0);
+        Assert.assertTrue(enqueued);
+    }
+
+    @Test
+    @DisplayName("Adding of one-to-many sub-references leads to queue item enqueueing (Soft Delete)")
     public void addOneToManySubReferences() {
         TestSubReferenceEntity firstSubReference = ewm.createTestSubReferenceEntity().save();
         TestSubReferenceEntity secondSubReference = ewm.createTestSubReferenceEntity().save();
@@ -352,7 +639,21 @@ public class EntityChangeTrackingTest {
     }
 
     @Test
-    @DisplayName("Changing of one-to-many sub-references leads to queue item enqueueing")
+    @DisplayName("Adding of one-to-many sub-references leads to queue item enqueueing (Hard Delete)")
+    public void addOneToManySubReferencesHardDelete() {
+        TestSubReferenceEntityHD firstSubReferenceHD = ewm.createTestSubReferenceEntityHD().save();
+        TestSubReferenceEntityHD secondSubReferenceHD = ewm.createTestSubReferenceEntityHD().save();
+        TestReferenceEntityHD referenceHD = ewm.createTestReferenceEntityHD().save();
+        TestRootEntityHD rootEntityHD = ewm.createTestRootEntityHD().setOneToManyAssociation(referenceHD).save();
+        indexingQueueItemsTracker.clear();
+
+        ewm.wrap(referenceHD).setOneToManyAssociation(firstSubReferenceHD, secondSubReferenceHD).save();
+        boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(rootEntityHD, IndexingOperation.INDEX, 1);
+        Assert.assertTrue(enqueued);
+    }
+
+    @Test
+    @DisplayName("Changing of one-to-many sub-references leads to queue item enqueueing (Soft Delete)")
     public void changeOneToManySubReferences() {
         TestSubReferenceEntity firstSubReference = ewm.createTestSubReferenceEntity().save();
         TestSubReferenceEntity secondSubReference = ewm.createTestSubReferenceEntity().save();
@@ -366,7 +667,21 @@ public class EntityChangeTrackingTest {
     }
 
     @Test
-    @DisplayName("Clearing of one-to-many sub-references leads to queue item enqueueing")
+    @DisplayName("Changing of one-to-many sub-references leads to queue item enqueueing (Hard Delete)")
+    public void changeOneToManySubReferencesHardDelete() {
+        TestSubReferenceEntityHD firstSubReferenceHD = ewm.createTestSubReferenceEntityHD().save();
+        TestSubReferenceEntityHD secondSubReferenceHD = ewm.createTestSubReferenceEntityHD().save();
+        TestReferenceEntityHD referenceHD = ewm.createTestReferenceEntityHD().setOneToManyAssociation(firstSubReferenceHD).save();
+        TestRootEntityHD rootEntityHD = ewm.createTestRootEntityHD().setOneToManyAssociation(referenceHD).save();
+        indexingQueueItemsTracker.clear();
+
+        ewm.wrap(referenceHD).setOneToManyAssociation(secondSubReferenceHD).save();
+        boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(rootEntityHD, IndexingOperation.INDEX, 1);
+        Assert.assertTrue(enqueued);
+    }
+
+    @Test
+    @DisplayName("Clearing of one-to-many sub-references leads to queue item enqueueing (Soft Delete)")
     public void clearOneToManySubReference() {
         TestSubReferenceEntity firstSubReference = ewm.createTestSubReferenceEntity().save();
         TestSubReferenceEntity secondSubReference = ewm.createTestSubReferenceEntity().save();
@@ -380,7 +695,21 @@ public class EntityChangeTrackingTest {
     }
 
     @Test
-    @DisplayName("Deletion of some one-to-many sub-reference from collection leads to queue item enqueueing")
+    @DisplayName("Clearing of one-to-many sub-references leads to queue item enqueueing (Hard Delete)")
+    public void clearOneToManySubReferenceHardDelete() {
+        TestSubReferenceEntityHD firstSubReferenceHD = ewm.createTestSubReferenceEntityHD().save();
+        TestSubReferenceEntityHD secondSubReferenceHD = ewm.createTestSubReferenceEntityHD().save();
+        TestReferenceEntityHD referenceHD = ewm.createTestReferenceEntityHD().setOneToManyAssociation(firstSubReferenceHD, secondSubReferenceHD).save();
+        TestRootEntityHD rootEntityHD = ewm.createTestRootEntityHD().setOneToManyAssociation(referenceHD).save();
+        indexingQueueItemsTracker.clear();
+
+        ewm.wrap(referenceHD).setOneToManyAssociation().save();
+        boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(rootEntityHD, IndexingOperation.INDEX, 1);
+        Assert.assertTrue(enqueued);
+    }
+
+    @Test
+    @DisplayName("Deletion of some one-to-many sub-reference from collection leads to queue item enqueueing (Soft Delete)")
     public void deleteOneToManySubReference() {
         TestSubReferenceEntity firstSubReference = ewm.createTestSubReferenceEntity().save();
         TestSubReferenceEntity secondSubReference = ewm.createTestSubReferenceEntity().save();
@@ -394,7 +723,21 @@ public class EntityChangeTrackingTest {
     }
 
     @Test
-    @DisplayName("Update of indexed local property of one-to-many sub-reference leads to queue item enqueueing")
+    @DisplayName("Deletion of some one-to-many sub-reference from collection leads to queue item enqueueing (Hard Delete)")
+    public void deleteOneToManySubReferenceHardDelete() {
+        TestSubReferenceEntityHD firstSubReferenceHD = ewm.createTestSubReferenceEntityHD().save();
+        TestSubReferenceEntityHD secondSubReferenceHD = ewm.createTestSubReferenceEntityHD().save();
+        TestReferenceEntityHD referenceHD = ewm.createTestReferenceEntityHD().setOneToManyAssociation(firstSubReferenceHD, secondSubReferenceHD).save();
+        TestRootEntityHD rootEntityHD = ewm.createTestRootEntityHD().setOneToManyAssociation(referenceHD).save();
+        indexingQueueItemsTracker.clear();
+
+        ewm.remove(firstSubReferenceHD);
+        boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(rootEntityHD, IndexingOperation.INDEX, 1);
+        Assert.assertTrue(enqueued);
+    }
+
+    @Test
+    @DisplayName("Update of indexed local property of one-to-many sub-reference leads to queue item enqueueing (Soft Delete)")
     public void updateIndexedLocalPropertyOfOneToManySubReference() {
         TestSubReferenceEntity firstSubReference = ewm.createTestSubReferenceEntity().save();
         TestSubReferenceEntity secondSubReference = ewm.createTestSubReferenceEntity().save();
@@ -408,7 +751,21 @@ public class EntityChangeTrackingTest {
     }
 
     @Test
-    @DisplayName("Update of not-indexed local property of one-to-many sub-reference doesn't lead to queue item enqueueing")
+    @DisplayName("Update of indexed local property of one-to-many sub-reference leads to queue item enqueueing (Hard Delete)")
+    public void updateIndexedLocalPropertyOfOneToManySubReferenceHardDelete() {
+        TestSubReferenceEntityHD firstSubReferenceHD = ewm.createTestSubReferenceEntityHD().save();
+        TestSubReferenceEntityHD secondSubReferenceHD = ewm.createTestSubReferenceEntityHD().save();
+        TestReferenceEntityHD referenceHD = ewm.createTestReferenceEntityHD().setOneToManyAssociation(firstSubReferenceHD, secondSubReferenceHD).save();
+        TestRootEntityHD rootEntityHD = ewm.createTestRootEntityHD().setOneToManyAssociation(referenceHD).save();
+        indexingQueueItemsTracker.clear();
+
+        ewm.wrap(firstSubReferenceHD).setTextValue("Some text value").save();
+        boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(rootEntityHD, IndexingOperation.INDEX, 1);
+        Assert.assertTrue(enqueued);
+    }
+
+    @Test
+    @DisplayName("Update of not-indexed local property of one-to-many sub-reference doesn't lead to queue item enqueueing (Soft Delete)")
     public void updateNotIndexedLocalPropertyOfOneToManySubReference() {
         TestSubReferenceEntity firstSubReference = ewm.createTestSubReferenceEntity().save();
         TestSubReferenceEntity secondSubReference = ewm.createTestSubReferenceEntity().save();
@@ -418,6 +775,20 @@ public class EntityChangeTrackingTest {
 
         ewm.wrap(firstSubReference).setName("New name").save();
         boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(rootEntity, IndexingOperation.INDEX, 0);
+        Assert.assertTrue(enqueued);
+    }
+
+    @Test
+    @DisplayName("Update of not-indexed local property of one-to-many sub-reference doesn't lead to queue item enqueueing (Hard Delete)")
+    public void updateNotIndexedLocalPropertyOfOneToManySubReferenceHardDelete() {
+        TestSubReferenceEntityHD firstSubReferenceHD = ewm.createTestSubReferenceEntityHD().save();
+        TestSubReferenceEntityHD secondSubReferenceHD = ewm.createTestSubReferenceEntityHD().save();
+        TestReferenceEntityHD referenceHD = ewm.createTestReferenceEntityHD().setOneToManyAssociation(firstSubReferenceHD, secondSubReferenceHD).save();
+        TestRootEntityHD rootEntityHD = ewm.createTestRootEntityHD().setOneToManyAssociation(referenceHD).save();
+        indexingQueueItemsTracker.clear();
+
+        ewm.wrap(firstSubReferenceHD).setName("New name").save();
+        boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(rootEntityHD, IndexingOperation.INDEX, 0);
         Assert.assertTrue(enqueued);
     }
 }

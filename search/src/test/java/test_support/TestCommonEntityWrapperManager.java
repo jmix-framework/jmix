@@ -17,10 +17,7 @@
 package test_support;
 
 import io.jmix.core.*;
-import test_support.entity.TestEnum;
-import test_support.entity.TestReferenceEntity;
-import test_support.entity.TestRootEntity;
-import test_support.entity.TestSubReferenceEntity;
+import test_support.entity.*;
 
 import java.util.*;
 import java.util.stream.Stream;
@@ -28,12 +25,12 @@ import java.util.stream.Stream;
 /**
  * Allows to create and modify test entities
  */
-public class TestEntityWrapperManager {
+public class TestCommonEntityWrapperManager {
 
     protected final Metadata metadata;
     protected final DataManager dataManager;
 
-    public TestEntityWrapperManager(Metadata metadata, DataManager dataManager) {
+    public TestCommonEntityWrapperManager(Metadata metadata, DataManager dataManager) {
         this.metadata = metadata;
         this.dataManager = dataManager;
     }
@@ -61,6 +58,31 @@ public class TestEntityWrapperManager {
 
     public TestSubReferenceEntityWrapper wrap(TestSubReferenceEntity instance) {
         return new TestSubReferenceEntityWrapper(reload(instance));
+    }
+
+    public TestRootEntityHDWrapper createTestRootEntityHD() {
+        return new TestRootEntityHDWrapper();
+    }
+
+
+    public TestRootEntityHDWrapper wrap(TestRootEntityHD instance) {
+        return new TestRootEntityHDWrapper(reload(instance));
+    }
+
+    public TestReferenceEntityHDWrapper createTestReferenceEntityHD() {
+        return new TestReferenceEntityHDWrapper();
+    }
+
+    public TestReferenceEntityHDWrapper wrap(TestReferenceEntityHD instance) {
+        return new TestReferenceEntityHDWrapper(reload(instance));
+    }
+
+    public TestSubReferenceEntityHDWrapper createTestSubReferenceEntityHD() {
+        return new TestSubReferenceEntityHDWrapper();
+    }
+
+    public TestSubReferenceEntityHDWrapper wrap(TestSubReferenceEntityHD instance) {
+        return new TestSubReferenceEntityHDWrapper(reload(instance));
     }
 
     public void save(Object... instances) {
@@ -251,6 +273,159 @@ public class TestEntityWrapperManager {
         }
 
         public TestSubReferenceEntityWrapper setDateValue(Date dateValue) {
+            this.instance.setDateValue(dateValue);
+            return this;
+        }
+    }
+
+    public class TestRootEntityHDWrapper extends AbstractEntityWrapper<TestRootEntityHD> {
+
+        private TestRootEntityHDWrapper() {
+            super(TestRootEntityHD.class);
+            instance.setName("Test Root Entity Hard Delete");
+        }
+
+        private TestRootEntityHDWrapper(TestRootEntityHD instance) {
+            super(instance);
+        }
+
+        public TestRootEntityHDWrapper setName(String name) {
+            this.instance.setName(name);
+            return this;
+        }
+
+        public TestRootEntityHDWrapper setTextValue(String textValue) {
+            this.instance.setTextValue(textValue);
+            return this;
+        }
+
+        public TestRootEntityHDWrapper setEnumValue(TestEnum enumValue) {
+            this.instance.setEnumValue(enumValue);
+            return this;
+        }
+
+        public TestRootEntityHDWrapper setIntValue(Integer intValue) {
+            this.instance.setIntValue(intValue);
+            return this;
+        }
+
+        public TestRootEntityHDWrapper setDateValue(Date dateValue) {
+            this.instance.setDateValue(dateValue);
+            return this;
+        }
+
+        public TestRootEntityHDWrapper setOneToOneAssociation(TestReferenceEntityHD reference) {
+            this.instance.setOneToOneAssociation(reference);
+            return this;
+        }
+
+        public TestRootEntityHDWrapper setOneToManyAssociation(TestReferenceEntityHD... references) {
+            return setOneToManyAssociation(Arrays.asList(references));
+        }
+
+        public TestRootEntityHDWrapper setOneToManyAssociation(List<TestReferenceEntityHD> references) {
+            List<TestReferenceEntityHD> currentOneToMany = this.instance.getOneToManyAssociation();
+            if (currentOneToMany != null) {
+                currentOneToMany.forEach(ref -> ref.setTestRootEntityManyToOne(null));
+                affectedInstances.addAll(currentOneToMany);
+            }
+            this.instance.setOneToManyAssociation(references);
+            references.stream().filter(Objects::nonNull).forEach(ref -> ref.setTestRootEntityManyToOne(instance));
+            affectedInstances.addAll(references);
+            return this;
+        }
+    }
+
+    public class TestReferenceEntityHDWrapper extends AbstractEntityWrapper<TestReferenceEntityHD> {
+
+        private TestReferenceEntityHDWrapper() {
+            super(TestReferenceEntityHD.class);
+            instance.setName("Test Reference Entity Hard Delete");
+        }
+
+        private TestReferenceEntityHDWrapper(TestReferenceEntityHD instance) {
+            super(instance);
+        }
+
+        public TestReferenceEntityHDWrapper setName(String name) {
+            this.instance.setName(name);
+            return this;
+        }
+
+        public TestReferenceEntityHDWrapper setTextValue(String textValue) {
+            this.instance.setTextValue(textValue);
+            return this;
+        }
+
+        public TestReferenceEntityHDWrapper setEnumValue(TestEnum enumValue) {
+            this.instance.setEnumValue(enumValue);
+            return this;
+        }
+
+        public TestReferenceEntityHDWrapper setIntValue(Integer intValue) {
+            this.instance.setIntValue(intValue);
+            return this;
+        }
+
+        public TestReferenceEntityHDWrapper setDateValue(Date dateValue) {
+            this.instance.setDateValue(dateValue);
+            return this;
+        }
+
+        public TestReferenceEntityHDWrapper setOneToOneAssociation(TestSubReferenceEntityHD reference) {
+            this.instance.setOneToOneAssociation(reference);
+            return this;
+        }
+
+        public TestReferenceEntityHDWrapper setOneToManyAssociation(TestSubReferenceEntityHD... references) {
+            return setOneToManyAssociation(Arrays.asList(references));
+        }
+
+        public TestReferenceEntityHDWrapper setOneToManyAssociation(List<TestSubReferenceEntityHD> references) {
+            List<TestSubReferenceEntityHD> currentOneToMany = this.instance.getOneToManyAssociation();
+            if (currentOneToMany != null) {
+                currentOneToMany.forEach(ref -> ref.setTestReferenceEntityManyToOne(null));
+                affectedInstances.addAll(currentOneToMany);
+            }
+            this.instance.setOneToManyAssociation(references);
+            references.stream().filter(Objects::nonNull).forEach(ref -> ref.setTestReferenceEntityManyToOne(instance));
+            affectedInstances.addAll(references);
+            return this;
+        }
+    }
+
+    public class TestSubReferenceEntityHDWrapper extends AbstractEntityWrapper<TestSubReferenceEntityHD> {
+
+        private TestSubReferenceEntityHDWrapper() {
+            super(TestSubReferenceEntityHD.class);
+            instance.setName("Test Sub-Reference Entity Hard Delete");
+        }
+
+        private TestSubReferenceEntityHDWrapper(TestSubReferenceEntityHD instance) {
+            super(instance);
+        }
+
+        public TestSubReferenceEntityHDWrapper setName(String name) {
+            this.instance.setName(name);
+            return this;
+        }
+
+        public TestSubReferenceEntityHDWrapper setTextValue(String textValue) {
+            this.instance.setTextValue(textValue);
+            return this;
+        }
+
+        public TestSubReferenceEntityHDWrapper setEnumValue(TestEnum enumValue) {
+            this.instance.setEnumValue(enumValue);
+            return this;
+        }
+
+        public TestSubReferenceEntityHDWrapper setIntValue(Integer intValue) {
+            this.instance.setIntValue(intValue);
+            return this;
+        }
+
+        public TestSubReferenceEntityHDWrapper setDateValue(Date dateValue) {
             this.instance.setDateValue(dateValue);
             return this;
         }

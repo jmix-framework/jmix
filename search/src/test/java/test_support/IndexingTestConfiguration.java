@@ -68,8 +68,8 @@ public class IndexingTestConfiguration extends CoreSecurityConfiguration {
     }
 
     @Bean
-    public TestEntityWrapperManager testEntityWrapperManager(Metadata metadata, DataManager dataManager) {
-        return new TestEntityWrapperManager(metadata, dataManager);
+    public TestCommonEntityWrapperManager testCommonEntityWrapperManager(Metadata metadata, DataManager dataManager) {
+        return new TestCommonEntityWrapperManager(metadata, dataManager);
     }
 
     @Bean

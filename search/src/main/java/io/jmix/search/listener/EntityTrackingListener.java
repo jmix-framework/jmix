@@ -97,9 +97,7 @@ public class EntityTrackingListener {
             }
         }
 
-        Object entityInstance = dataManager.load(entityId)
-                .hint(PersistenceHints.SOFT_DELETION, false)
-                .one();
+        Object entityInstance = loadInstance(entityId, eventType);
 
         AttributeChanges changes = event.getChanges();
         Set<Id<?>> dependentEntityIds = getDependentEntityIds(entityInstance, entityClass, changes, eventType);
@@ -116,6 +114,16 @@ public class EntityTrackingListener {
 
         Class<?> entityClass = event.getEntityId().getEntityClass();
         return !IndexingQueueItem.class.equals(entityClass) && indexConfigurationManager.isAffectedEntityClass(entityClass);
+    }
+
+    protected Object loadInstance(Id<?> entityId, EntityChangedEvent.Type eventType) {
+        // Load last instance state if it has been deleted or actual state otherwise
+        // instance will be used in dependencies search later
+        boolean joinTransaction = !EntityChangedEvent.Type.DELETED.equals(eventType);
+        return dataManager.load(entityId)
+                .joinTransaction(joinTransaction)
+                .hint(PersistenceHints.SOFT_DELETION, false)
+                .one();
     }
 
     protected Set<Id<?>> getDependentEntityIds(Object entity, Class<?> entityClass, AttributeChanges changes, EntityChangedEvent.Type eventType) {

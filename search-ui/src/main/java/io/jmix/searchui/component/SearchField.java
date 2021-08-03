@@ -71,11 +71,15 @@ public interface SearchField extends Field<String> {
      *     //...
      * }
      * </pre>
+     *
+     * @param handler handler
      */
     void setSearchCompletedHandler(Consumer<SearchCompletedEvent> handler);
 
     /**
-     * Returnes the handler to be invoked when the search is successfully completed.
+     * Returns the handler to be invoked when the search is successfully completed.
+     *
+     * @return handler
      */
     Consumer<SearchCompletedEvent> getSearchCompletedHandler();
 

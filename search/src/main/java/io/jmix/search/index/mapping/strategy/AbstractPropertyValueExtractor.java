@@ -51,8 +51,9 @@ public abstract class AbstractPropertyValueExtractor implements PropertyValueExt
     /**
      * Checks if this value mapper supports value extraction of provided property.
      *
-     * @param entity       instance
+     * @param entity instance
      * @param propertyPath property
+     * @param parameters parameters
      * @return true if value mapper supports this property, false otherwise
      */
     protected abstract boolean isSupported(Object entity, MetaPropertyPath propertyPath, Map<String, Object> parameters);
@@ -61,6 +62,7 @@ public abstract class AbstractPropertyValueExtractor implements PropertyValueExt
      * Transform extracted value of single-value property into result json.
      *
      * @param value value of single-value property
+     * @param parameters parameters
      * @return value as json
      */
     protected abstract JsonNode transformSingleValue(Object value, Map<String, Object> parameters);
@@ -69,6 +71,7 @@ public abstract class AbstractPropertyValueExtractor implements PropertyValueExt
      * Transform extracted value of multi-value property into result json.
      *
      * @param values values of multi-value property
+     * @param parameters parameters
      * @return value as json
      */
     protected abstract JsonNode transformMultipleValues(Iterable<?> values, Map<String, Object> parameters);

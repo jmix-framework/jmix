@@ -86,7 +86,7 @@ import java.util.function.Predicate;
  *
  *     &#64;IndexablePredicate
  *     default Predicate&lt;MyEntity&gt; indexOpenOnlyPredicate(DataManager dataManager) {
- *         return (instance) -> {
+ *         return (instance) -&gt; {
  *             Id&lt;MyEntity&gt; id = Id.of(instance);
  *             MyEntity reloadedInstance = dataManager.load(id)
  *                     .fetchPlanProperties("status")

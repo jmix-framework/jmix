@@ -89,6 +89,7 @@ public class SearchStrategyManager {
 
     /**
      * Returns all registered search strategies.
+     * @return all {@link SearchStrategy}
      */
     public Collection<SearchStrategy> getAllSearchStrategies() {
         return registry.values();

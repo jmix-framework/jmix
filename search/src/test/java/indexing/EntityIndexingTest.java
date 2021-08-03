@@ -33,6 +33,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import test_support.*;
 import test_support.entity.TestEmbeddableEntity;
 import test_support.entity.TestEnum;
+import test_support.entity.TestRootEntity;
+import test_support.entity.TestRootEntityHD;
 import test_support.entity.indexing.*;
 
 import java.io.ByteArrayInputStream;
@@ -576,5 +578,33 @@ public class EntityIndexingTest {
 
         TestBulkRequestValidationResult result = TestBulkRequestValidator.validate(Collections.singletonList(expectedData), bulkRequests);
         Assert.assertFalse(result.toString(), result.hasFailures());
+    }
+
+    @Test
+    @DisplayName("Indexing already deleted instance (Soft Delete)")
+    public void indexDeletedInstance() {
+        TestRootEntity instance = metadata.create(TestRootEntity.class);
+        instance.setName("Deleted");
+
+        dataManager.save(instance);
+        dataManager.remove(instance);
+
+        entityIndexer.index(instance);
+        List<BulkRequest> bulkRequests = bulkRequestsTracker.getBulkRequests();
+        Assert.assertTrue(bulkRequests.isEmpty());
+    }
+
+    @Test
+    @DisplayName("Indexing already deleted instance (Hard Delete)")
+    public void indexDeletedInstanceHardDelete() {
+        TestRootEntityHD instance = metadata.create(TestRootEntityHD.class);
+        instance.setName("Deleted");
+
+        dataManager.save(instance);
+        dataManager.remove(instance);
+
+        entityIndexer.index(instance);
+        List<BulkRequest> bulkRequests = bulkRequestsTracker.getBulkRequests();
+        Assert.assertTrue(bulkRequests.isEmpty());
     }
 }

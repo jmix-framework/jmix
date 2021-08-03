@@ -67,6 +67,8 @@ public class EntityIndexerImpl implements EntityIndexer {
     protected IdSerialization idSerialization;
     @Autowired
     protected IndexStateRegistry indexStateRegistry;
+    @Autowired
+    protected MetadataTools metadataTools;
 
     protected ObjectMapper objectMapper = new ObjectMapper();
 
@@ -184,10 +186,26 @@ public class EntityIndexerImpl implements EntityIndexer {
             if (indexConfigurationOpt.isPresent()) {
                 IndexConfiguration indexConfiguration = indexConfigurationOpt.get();
                 FetchPlan fetchPlan = fetchPlanLocalCache.computeIfAbsent(indexConfiguration, this::createFetchPlan);
-                List<Object> loaded = dataManager.load(metaClass.getJavaClass())
-                        .ids(entityIds)
-                        .fetchPlan(fetchPlan)
-                        .list();
+                List<Object> loaded;
+                if (metadataTools.hasCompositePrimaryKey(metaClass)) {
+                    loaded = entityIds.stream()
+                            .map(id -> dataManager
+                                    .load(metaClass.getJavaClass())
+                                    .id(id)
+                                    .fetchPlan(fetchPlan)
+                                    .optional())
+                            .filter(Optional::isPresent)
+                            .map(Optional::get)
+                            .collect(Collectors.toList());
+                } else {
+                    String primaryKeyName = metadataTools.getPrimaryKeyName(metaClass);
+                    loaded = dataManager
+                            .load(metaClass.getJavaClass())
+                            .query("select e from " + metaClass.getName() + " e where e." + primaryKeyName + " in :ids")
+                            .parameter("ids", entityIds)
+                            .fetchPlan(fetchPlan)
+                            .list();
+                }
                 result.put(indexConfiguration, loaded);
             }
         });

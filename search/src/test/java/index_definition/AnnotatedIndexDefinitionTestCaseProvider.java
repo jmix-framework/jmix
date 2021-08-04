@@ -98,6 +98,14 @@ public class AnnotatedIndexDefinitionTestCaseProvider {
                         .expectedEntityClass(TestSimpleRootEntity.class)
                         .pathToFileWithExpectedMapping("index_definition/common/test_mapping_custom_index_name")
                         .build()
+                ),
+                Arguments.of(AnnotatedIndexDefinitionProcessorTestCase.builder("Non field-mapping annotation doesn't corrupt mapping")
+                        .indexDefinitionClass(TestExtraAnnotationIndexDefinition.class)
+                        .expectedEntityName("test_SimpleRootEntity")
+                        .expectedIndexName("search_index_test_simplerootentity")
+                        .expectedEntityClass(TestSimpleRootEntity.class)
+                        .pathToFileWithExpectedMapping("index_definition/common/test_mapping_extra_annotation")
+                        .build()
                 )
         );
     }

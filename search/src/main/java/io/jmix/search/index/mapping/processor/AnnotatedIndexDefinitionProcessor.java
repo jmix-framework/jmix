@@ -29,6 +29,7 @@ import io.jmix.search.SearchProperties;
 import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.IndexSettingsConfigurationContext;
 import io.jmix.search.index.IndexSettingsConfigurer;
+import io.jmix.search.index.annotation.FieldMappingAnnotation;
 import io.jmix.search.index.annotation.JmixEntitySearchIndex;
 import io.jmix.search.index.mapping.DisplayedNameDescriptor;
 import io.jmix.search.index.mapping.IndexMappingConfiguration;
@@ -169,6 +170,7 @@ public class AnnotatedIndexDefinitionProcessor {
             } else {
                 Set<Annotation> annotations = MergedAnnotations.from(method).stream()
                         .map(MergedAnnotation::synthesize)
+                        .filter(this::isFieldMappingAnnotation)
                         .collect(Collectors.toSet());
                 result.addFieldAnnotations(annotations);
             }
@@ -225,6 +227,10 @@ public class AnnotatedIndexDefinitionProcessor {
         return method.isDefault()
                 && MappingDefinition.class.equals(method.getReturnType())
                 && method.getParameterCount() == 0;
+    }
+
+    protected boolean isFieldMappingAnnotation(Annotation annotation) {
+        return annotation.annotationType().isAnnotationPresent(FieldMappingAnnotation.class);
     }
 
     protected Predicate<Object> createIndexablePredicate(ParsedIndexDefinition parsedIndexDefinition) {

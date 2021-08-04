@@ -25,6 +25,7 @@ import java.lang.annotation.*;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @Repeatable(AutoMappedField.Container.class)
+@FieldMappingAnnotation
 public @interface AutoMappedField {
 
     /**

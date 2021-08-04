@@ -69,10 +69,16 @@ type Query {
   entityMessages(className: String, locale: String): [gql_MessageDetail]
   enumMessages(className: String, locale: String): [gql_MessageDetail]
   permissions: sec_PermissionConfig
-  scr_AssociationM2MTestEntityById(id: String!): scr_AssociationM2MTestEntity
+  scr_AssociationM2MTestEntityById(
+    id: String!, 
+    "set false to load soft-deleted entity"
+    softDeletion: Boolean
+  ): scr_AssociationM2MTestEntity
   scr_AssociationM2MTestEntityCount(
     "expressions to compare scr_AssociationM2MTestEntity objects, all items are combined with logical 'AND'"
-    filter: [inp_scr_AssociationM2MTestEntityFilterCondition]
+    filter: [inp_scr_AssociationM2MTestEntityFilterCondition], 
+    "set false to include soft-deleted entities"
+    softDeletion: Boolean
   ): Long
   scr_AssociationM2MTestEntityList(
     "expressions to compare scr_AssociationM2MTestEntity objects, all items are combined with logical 'AND'"
@@ -82,12 +88,20 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: [inp_scr_AssociationM2MTestEntityOrderBy]
+    orderBy: [inp_scr_AssociationM2MTestEntityOrderBy], 
+    "set false to load soft-deleted entities"
+    softDeletion: Boolean
   ): [scr_AssociationM2MTestEntity]
-  scr_AssociationM2OTestEntityById(id: String!): scr_AssociationM2OTestEntity
+  scr_AssociationM2OTestEntityById(
+    id: String!, 
+    "set false to load soft-deleted entity"
+    softDeletion: Boolean
+  ): scr_AssociationM2OTestEntity
   scr_AssociationM2OTestEntityCount(
     "expressions to compare scr_AssociationM2OTestEntity objects, all items are combined with logical 'AND'"
-    filter: [inp_scr_AssociationM2OTestEntityFilterCondition]
+    filter: [inp_scr_AssociationM2OTestEntityFilterCondition], 
+    "set false to include soft-deleted entities"
+    softDeletion: Boolean
   ): Long
   scr_AssociationM2OTestEntityList(
     "expressions to compare scr_AssociationM2OTestEntity objects, all items are combined with logical 'AND'"
@@ -97,12 +111,20 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: [inp_scr_AssociationM2OTestEntityOrderBy]
+    orderBy: [inp_scr_AssociationM2OTestEntityOrderBy], 
+    "set false to load soft-deleted entities"
+    softDeletion: Boolean
   ): [scr_AssociationM2OTestEntity]
-  scr_AssociationO2MTestEntityById(id: String!): scr_AssociationO2MTestEntity
+  scr_AssociationO2MTestEntityById(
+    id: String!, 
+    "set false to load soft-deleted entity"
+    softDeletion: Boolean
+  ): scr_AssociationO2MTestEntity
   scr_AssociationO2MTestEntityCount(
     "expressions to compare scr_AssociationO2MTestEntity objects, all items are combined with logical 'AND'"
-    filter: [inp_scr_AssociationO2MTestEntityFilterCondition]
+    filter: [inp_scr_AssociationO2MTestEntityFilterCondition], 
+    "set false to include soft-deleted entities"
+    softDeletion: Boolean
   ): Long
   scr_AssociationO2MTestEntityList(
     "expressions to compare scr_AssociationO2MTestEntity objects, all items are combined with logical 'AND'"
@@ -112,12 +134,20 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: [inp_scr_AssociationO2MTestEntityOrderBy]
+    orderBy: [inp_scr_AssociationO2MTestEntityOrderBy], 
+    "set false to load soft-deleted entities"
+    softDeletion: Boolean
   ): [scr_AssociationO2MTestEntity]
-  scr_AssociationO2OTestEntityById(id: String!): scr_AssociationO2OTestEntity
+  scr_AssociationO2OTestEntityById(
+    id: String!, 
+    "set false to load soft-deleted entity"
+    softDeletion: Boolean
+  ): scr_AssociationO2OTestEntity
   scr_AssociationO2OTestEntityCount(
     "expressions to compare scr_AssociationO2OTestEntity objects, all items are combined with logical 'AND'"
-    filter: [inp_scr_AssociationO2OTestEntityFilterCondition]
+    filter: [inp_scr_AssociationO2OTestEntityFilterCondition], 
+    "set false to include soft-deleted entities"
+    softDeletion: Boolean
   ): Long
   scr_AssociationO2OTestEntityList(
     "expressions to compare scr_AssociationO2OTestEntity objects, all items are combined with logical 'AND'"
@@ -127,12 +157,20 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: [inp_scr_AssociationO2OTestEntityOrderBy]
+    orderBy: [inp_scr_AssociationO2OTestEntityOrderBy], 
+    "set false to load soft-deleted entities"
+    softDeletion: Boolean
   ): [scr_AssociationO2OTestEntity]
-  scr_BoringStringIdTestEntityById(id: String!): scr_BoringStringIdTestEntity
+  scr_BoringStringIdTestEntityById(
+    id: String!, 
+    "set false to load soft-deleted entity"
+    softDeletion: Boolean
+  ): scr_BoringStringIdTestEntity
   scr_BoringStringIdTestEntityCount(
     "expressions to compare scr_BoringStringIdTestEntity objects, all items are combined with logical 'AND'"
-    filter: [inp_scr_BoringStringIdTestEntityFilterCondition]
+    filter: [inp_scr_BoringStringIdTestEntityFilterCondition], 
+    "set false to include soft-deleted entities"
+    softDeletion: Boolean
   ): Long
   scr_BoringStringIdTestEntityList(
     "expressions to compare scr_BoringStringIdTestEntity objects, all items are combined with logical 'AND'"
@@ -142,12 +180,20 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: [inp_scr_BoringStringIdTestEntityOrderBy]
+    orderBy: [inp_scr_BoringStringIdTestEntityOrderBy], 
+    "set false to load soft-deleted entities"
+    softDeletion: Boolean
   ): [scr_BoringStringIdTestEntity]
-  scr_CarById(id: String!): scr_Car
+  scr_CarById(
+    id: String!, 
+    "set false to load soft-deleted entity"
+    softDeletion: Boolean
+  ): scr_Car
   scr_CarCount(
     "expressions to compare scr_Car objects, all items are combined with logical 'AND'"
-    filter: [inp_scr_CarFilterCondition]
+    filter: [inp_scr_CarFilterCondition], 
+    "set false to include soft-deleted entities"
+    softDeletion: Boolean
   ): Long
   scr_CarList(
     "expressions to compare scr_Car objects, all items are combined with logical 'AND'"
@@ -157,12 +203,20 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: [inp_scr_CarOrderBy]
+    orderBy: [inp_scr_CarOrderBy], 
+    "set false to load soft-deleted entities"
+    softDeletion: Boolean
   ): [scr_Car]
-  scr_CarRentById(id: String!): scr_CarRent
+  scr_CarRentById(
+    id: String!, 
+    "set false to load soft-deleted entity"
+    softDeletion: Boolean
+  ): scr_CarRent
   scr_CarRentCount(
     "expressions to compare scr_CarRent objects, all items are combined with logical 'AND'"
-    filter: [inp_scr_CarRentFilterCondition]
+    filter: [inp_scr_CarRentFilterCondition], 
+    "set false to include soft-deleted entities"
+    softDeletion: Boolean
   ): Long
   scr_CarRentList(
     "expressions to compare scr_CarRent objects, all items are combined with logical 'AND'"
@@ -172,12 +226,20 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: [inp_scr_CarRentOrderBy]
+    orderBy: [inp_scr_CarRentOrderBy], 
+    "set false to load soft-deleted entities"
+    softDeletion: Boolean
   ): [scr_CarRent]
-  scr_CompositionO2MTestEntityById(id: String!): scr_CompositionO2MTestEntity
+  scr_CompositionO2MTestEntityById(
+    id: String!, 
+    "set false to load soft-deleted entity"
+    softDeletion: Boolean
+  ): scr_CompositionO2MTestEntity
   scr_CompositionO2MTestEntityCount(
     "expressions to compare scr_CompositionO2MTestEntity objects, all items are combined with logical 'AND'"
-    filter: [inp_scr_CompositionO2MTestEntityFilterCondition]
+    filter: [inp_scr_CompositionO2MTestEntityFilterCondition], 
+    "set false to include soft-deleted entities"
+    softDeletion: Boolean
   ): Long
   scr_CompositionO2MTestEntityList(
     "expressions to compare scr_CompositionO2MTestEntity objects, all items are combined with logical 'AND'"
@@ -187,12 +249,20 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: [inp_scr_CompositionO2MTestEntityOrderBy]
+    orderBy: [inp_scr_CompositionO2MTestEntityOrderBy], 
+    "set false to load soft-deleted entities"
+    softDeletion: Boolean
   ): [scr_CompositionO2MTestEntity]
-  scr_CompositionO2OTestEntityById(id: String!): scr_CompositionO2OTestEntity
+  scr_CompositionO2OTestEntityById(
+    id: String!, 
+    "set false to load soft-deleted entity"
+    softDeletion: Boolean
+  ): scr_CompositionO2OTestEntity
   scr_CompositionO2OTestEntityCount(
     "expressions to compare scr_CompositionO2OTestEntity objects, all items are combined with logical 'AND'"
-    filter: [inp_scr_CompositionO2OTestEntityFilterCondition]
+    filter: [inp_scr_CompositionO2OTestEntityFilterCondition], 
+    "set false to include soft-deleted entities"
+    softDeletion: Boolean
   ): Long
   scr_CompositionO2OTestEntityList(
     "expressions to compare scr_CompositionO2OTestEntity objects, all items are combined with logical 'AND'"
@@ -202,12 +272,20 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: [inp_scr_CompositionO2OTestEntityOrderBy]
+    orderBy: [inp_scr_CompositionO2OTestEntityOrderBy], 
+    "set false to load soft-deleted entities"
+    softDeletion: Boolean
   ): [scr_CompositionO2OTestEntity]
-  scr_CustomerById(id: String!): scr_Customer
+  scr_CustomerById(
+    id: String!, 
+    "set false to load soft-deleted entity"
+    softDeletion: Boolean
+  ): scr_Customer
   scr_CustomerCount(
     "expressions to compare scr_Customer objects, all items are combined with logical 'AND'"
-    filter: [inp_scr_CustomerFilterCondition]
+    filter: [inp_scr_CustomerFilterCondition], 
+    "set false to include soft-deleted entities"
+    softDeletion: Boolean
   ): Long
   scr_CustomerList(
     "expressions to compare scr_Customer objects, all items are combined with logical 'AND'"
@@ -217,12 +295,20 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: [inp_scr_CustomerOrderBy]
+    orderBy: [inp_scr_CustomerOrderBy], 
+    "set false to load soft-deleted entities"
+    softDeletion: Boolean
   ): [scr_Customer]
-  scr_DatatypesTestEntity2ById(id: String!): scr_DatatypesTestEntity2
+  scr_DatatypesTestEntity2ById(
+    id: String!, 
+    "set false to load soft-deleted entity"
+    softDeletion: Boolean
+  ): scr_DatatypesTestEntity2
   scr_DatatypesTestEntity2Count(
     "expressions to compare scr_DatatypesTestEntity2 objects, all items are combined with logical 'AND'"
-    filter: [inp_scr_DatatypesTestEntity2FilterCondition]
+    filter: [inp_scr_DatatypesTestEntity2FilterCondition], 
+    "set false to include soft-deleted entities"
+    softDeletion: Boolean
   ): Long
   scr_DatatypesTestEntity2List(
     "expressions to compare scr_DatatypesTestEntity2 objects, all items are combined with logical 'AND'"
@@ -232,12 +318,20 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: [inp_scr_DatatypesTestEntity2OrderBy]
+    orderBy: [inp_scr_DatatypesTestEntity2OrderBy], 
+    "set false to load soft-deleted entities"
+    softDeletion: Boolean
   ): [scr_DatatypesTestEntity2]
-  scr_DatatypesTestEntity3ById(id: String!): scr_DatatypesTestEntity3
+  scr_DatatypesTestEntity3ById(
+    id: String!, 
+    "set false to load soft-deleted entity"
+    softDeletion: Boolean
+  ): scr_DatatypesTestEntity3
   scr_DatatypesTestEntity3Count(
     "expressions to compare scr_DatatypesTestEntity3 objects, all items are combined with logical 'AND'"
-    filter: [inp_scr_DatatypesTestEntity3FilterCondition]
+    filter: [inp_scr_DatatypesTestEntity3FilterCondition], 
+    "set false to include soft-deleted entities"
+    softDeletion: Boolean
   ): Long
   scr_DatatypesTestEntity3List(
     "expressions to compare scr_DatatypesTestEntity3 objects, all items are combined with logical 'AND'"
@@ -247,12 +341,20 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: [inp_scr_DatatypesTestEntity3OrderBy]
+    orderBy: [inp_scr_DatatypesTestEntity3OrderBy], 
+    "set false to load soft-deleted entities"
+    softDeletion: Boolean
   ): [scr_DatatypesTestEntity3]
-  scr_DatatypesTestEntityById(id: String!): scr_DatatypesTestEntity
+  scr_DatatypesTestEntityById(
+    id: String!, 
+    "set false to load soft-deleted entity"
+    softDeletion: Boolean
+  ): scr_DatatypesTestEntity
   scr_DatatypesTestEntityCount(
     "expressions to compare scr_DatatypesTestEntity objects, all items are combined with logical 'AND'"
-    filter: [inp_scr_DatatypesTestEntityFilterCondition]
+    filter: [inp_scr_DatatypesTestEntityFilterCondition], 
+    "set false to include soft-deleted entities"
+    softDeletion: Boolean
   ): Long
   scr_DatatypesTestEntityList(
     "expressions to compare scr_DatatypesTestEntity objects, all items are combined with logical 'AND'"
@@ -262,12 +364,20 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: [inp_scr_DatatypesTestEntityOrderBy]
+    orderBy: [inp_scr_DatatypesTestEntityOrderBy], 
+    "set false to load soft-deleted entities"
+    softDeletion: Boolean
   ): [scr_DatatypesTestEntity]
-  scr_DeeplyNestedTestEntityById(id: String!): scr_DeeplyNestedTestEntity
+  scr_DeeplyNestedTestEntityById(
+    id: String!, 
+    "set false to load soft-deleted entity"
+    softDeletion: Boolean
+  ): scr_DeeplyNestedTestEntity
   scr_DeeplyNestedTestEntityCount(
     "expressions to compare scr_DeeplyNestedTestEntity objects, all items are combined with logical 'AND'"
-    filter: [inp_scr_DeeplyNestedTestEntityFilterCondition]
+    filter: [inp_scr_DeeplyNestedTestEntityFilterCondition], 
+    "set false to include soft-deleted entities"
+    softDeletion: Boolean
   ): Long
   scr_DeeplyNestedTestEntityList(
     "expressions to compare scr_DeeplyNestedTestEntity objects, all items are combined with logical 'AND'"
@@ -277,12 +387,20 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: [inp_scr_DeeplyNestedTestEntityOrderBy]
+    orderBy: [inp_scr_DeeplyNestedTestEntityOrderBy], 
+    "set false to load soft-deleted entities"
+    softDeletion: Boolean
   ): [scr_DeeplyNestedTestEntity]
-  scr_FavoriteCarById(id: String!): scr_FavoriteCar
+  scr_FavoriteCarById(
+    id: String!, 
+    "set false to load soft-deleted entity"
+    softDeletion: Boolean
+  ): scr_FavoriteCar
   scr_FavoriteCarCount(
     "expressions to compare scr_FavoriteCar objects, all items are combined with logical 'AND'"
-    filter: [inp_scr_FavoriteCarFilterCondition]
+    filter: [inp_scr_FavoriteCarFilterCondition], 
+    "set false to include soft-deleted entities"
+    softDeletion: Boolean
   ): Long
   scr_FavoriteCarList(
     "expressions to compare scr_FavoriteCar objects, all items are combined with logical 'AND'"
@@ -292,12 +410,20 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: [inp_scr_FavoriteCarOrderBy]
+    orderBy: [inp_scr_FavoriteCarOrderBy], 
+    "set false to load soft-deleted entities"
+    softDeletion: Boolean
   ): [scr_FavoriteCar]
-  scr_GarageById(id: String!): scr_Garage
+  scr_GarageById(
+    id: String!, 
+    "set false to load soft-deleted entity"
+    softDeletion: Boolean
+  ): scr_Garage
   scr_GarageCount(
     "expressions to compare scr_Garage objects, all items are combined with logical 'AND'"
-    filter: [inp_scr_GarageFilterCondition]
+    filter: [inp_scr_GarageFilterCondition], 
+    "set false to include soft-deleted entities"
+    softDeletion: Boolean
   ): Long
   scr_GarageList(
     "expressions to compare scr_Garage objects, all items are combined with logical 'AND'"
@@ -307,12 +433,20 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: [inp_scr_GarageOrderBy]
+    orderBy: [inp_scr_GarageOrderBy], 
+    "set false to load soft-deleted entities"
+    softDeletion: Boolean
   ): [scr_Garage]
-  scr_IntIdentityIdTestEntityById(id: String!): scr_IntIdentityIdTestEntity
+  scr_IntIdentityIdTestEntityById(
+    id: String!, 
+    "set false to load soft-deleted entity"
+    softDeletion: Boolean
+  ): scr_IntIdentityIdTestEntity
   scr_IntIdentityIdTestEntityCount(
     "expressions to compare scr_IntIdentityIdTestEntity objects, all items are combined with logical 'AND'"
-    filter: [inp_scr_IntIdentityIdTestEntityFilterCondition]
+    filter: [inp_scr_IntIdentityIdTestEntityFilterCondition], 
+    "set false to include soft-deleted entities"
+    softDeletion: Boolean
   ): Long
   scr_IntIdentityIdTestEntityList(
     "expressions to compare scr_IntIdentityIdTestEntity objects, all items are combined with logical 'AND'"
@@ -322,12 +456,20 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: [inp_scr_IntIdentityIdTestEntityOrderBy]
+    orderBy: [inp_scr_IntIdentityIdTestEntityOrderBy], 
+    "set false to load soft-deleted entities"
+    softDeletion: Boolean
   ): [scr_IntIdentityIdTestEntity]
-  scr_IntegerIdTestEntityById(id: String!): scr_IntegerIdTestEntity
+  scr_IntegerIdTestEntityById(
+    id: String!, 
+    "set false to load soft-deleted entity"
+    softDeletion: Boolean
+  ): scr_IntegerIdTestEntity
   scr_IntegerIdTestEntityCount(
     "expressions to compare scr_IntegerIdTestEntity objects, all items are combined with logical 'AND'"
-    filter: [inp_scr_IntegerIdTestEntityFilterCondition]
+    filter: [inp_scr_IntegerIdTestEntityFilterCondition], 
+    "set false to include soft-deleted entities"
+    softDeletion: Boolean
   ): Long
   scr_IntegerIdTestEntityList(
     "expressions to compare scr_IntegerIdTestEntity objects, all items are combined with logical 'AND'"
@@ -337,17 +479,31 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: [inp_scr_IntegerIdTestEntityOrderBy]
+    orderBy: [inp_scr_IntegerIdTestEntityOrderBy], 
+    "set false to load soft-deleted entities"
+    softDeletion: Boolean
   ): [scr_IntegerIdTestEntity]
-  scr_OrderById(id: String!): scr_Order
+  scr_OrderById(
+    id: String!, 
+    "set false to load soft-deleted entity"
+    softDeletion: Boolean
+  ): scr_Order
   scr_OrderCount(
     "expressions to compare scr_Order objects, all items are combined with logical 'AND'"
-    filter: [inp_scr_OrderFilterCondition]
+    filter: [inp_scr_OrderFilterCondition], 
+    "set false to include soft-deleted entities"
+    softDeletion: Boolean
   ): Long
-  scr_OrderLineById(id: String!): scr_OrderLine
+  scr_OrderLineById(
+    id: String!, 
+    "set false to load soft-deleted entity"
+    softDeletion: Boolean
+  ): scr_OrderLine
   scr_OrderLineCount(
     "expressions to compare scr_OrderLine objects, all items are combined with logical 'AND'"
-    filter: [inp_scr_OrderLineFilterCondition]
+    filter: [inp_scr_OrderLineFilterCondition], 
+    "set false to include soft-deleted entities"
+    softDeletion: Boolean
   ): Long
   scr_OrderLineList(
     "expressions to compare scr_OrderLine objects, all items are combined with logical 'AND'"
@@ -357,7 +513,9 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: [inp_scr_OrderLineOrderBy]
+    orderBy: [inp_scr_OrderLineOrderBy], 
+    "set false to load soft-deleted entities"
+    softDeletion: Boolean
   ): [scr_OrderLine]
   scr_OrderList(
     "expressions to compare scr_Order objects, all items are combined with logical 'AND'"
@@ -367,12 +525,20 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: [inp_scr_OrderOrderBy]
+    orderBy: [inp_scr_OrderOrderBy], 
+    "set false to load soft-deleted entities"
+    softDeletion: Boolean
   ): [scr_Order]
-  scr_ProductById(id: String!): scr_Product
+  scr_ProductById(
+    id: String!, 
+    "set false to load soft-deleted entity"
+    softDeletion: Boolean
+  ): scr_Product
   scr_ProductCount(
     "expressions to compare scr_Product objects, all items are combined with logical 'AND'"
-    filter: [inp_scr_ProductFilterCondition]
+    filter: [inp_scr_ProductFilterCondition], 
+    "set false to include soft-deleted entities"
+    softDeletion: Boolean
   ): Long
   scr_ProductList(
     "expressions to compare scr_Product objects, all items are combined with logical 'AND'"
@@ -382,12 +548,20 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: [inp_scr_ProductOrderBy]
+    orderBy: [inp_scr_ProductOrderBy], 
+    "set false to load soft-deleted entities"
+    softDeletion: Boolean
   ): [scr_Product]
-  scr_SparePartById(id: String!): scr_SparePart
+  scr_SparePartById(
+    id: String!, 
+    "set false to load soft-deleted entity"
+    softDeletion: Boolean
+  ): scr_SparePart
   scr_SparePartCount(
     "expressions to compare scr_SparePart objects, all items are combined with logical 'AND'"
-    filter: [inp_scr_SparePartFilterCondition]
+    filter: [inp_scr_SparePartFilterCondition], 
+    "set false to include soft-deleted entities"
+    softDeletion: Boolean
   ): Long
   scr_SparePartList(
     "expressions to compare scr_SparePart objects, all items are combined with logical 'AND'"
@@ -397,12 +571,20 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: [inp_scr_SparePartOrderBy]
+    orderBy: [inp_scr_SparePartOrderBy], 
+    "set false to load soft-deleted entities"
+    softDeletion: Boolean
   ): [scr_SparePart]
-  scr_StringIdTestEntityById(id: String!): scr_StringIdTestEntity
+  scr_StringIdTestEntityById(
+    id: String!, 
+    "set false to load soft-deleted entity"
+    softDeletion: Boolean
+  ): scr_StringIdTestEntity
   scr_StringIdTestEntityCount(
     "expressions to compare scr_StringIdTestEntity objects, all items are combined with logical 'AND'"
-    filter: [inp_scr_StringIdTestEntityFilterCondition]
+    filter: [inp_scr_StringIdTestEntityFilterCondition], 
+    "set false to include soft-deleted entities"
+    softDeletion: Boolean
   ): Long
   scr_StringIdTestEntityList(
     "expressions to compare scr_StringIdTestEntity objects, all items are combined with logical 'AND'"
@@ -412,12 +594,20 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: [inp_scr_StringIdTestEntityOrderBy]
+    orderBy: [inp_scr_StringIdTestEntityOrderBy], 
+    "set false to load soft-deleted entities"
+    softDeletion: Boolean
   ): [scr_StringIdTestEntity]
-  scr_TechnicalCertificateById(id: String!): scr_TechnicalCertificate
+  scr_TechnicalCertificateById(
+    id: String!, 
+    "set false to load soft-deleted entity"
+    softDeletion: Boolean
+  ): scr_TechnicalCertificate
   scr_TechnicalCertificateCount(
     "expressions to compare scr_TechnicalCertificate objects, all items are combined with logical 'AND'"
-    filter: [inp_scr_TechnicalCertificateFilterCondition]
+    filter: [inp_scr_TechnicalCertificateFilterCondition], 
+    "set false to include soft-deleted entities"
+    softDeletion: Boolean
   ): Long
   scr_TechnicalCertificateList(
     "expressions to compare scr_TechnicalCertificate objects, all items are combined with logical 'AND'"
@@ -427,12 +617,20 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: [inp_scr_TechnicalCertificateOrderBy]
+    orderBy: [inp_scr_TechnicalCertificateOrderBy], 
+    "set false to load soft-deleted entities"
+    softDeletion: Boolean
   ): [scr_TechnicalCertificate]
-  scr_UserById(id: String!): scr_User
+  scr_UserById(
+    id: String!, 
+    "set false to load soft-deleted entity"
+    softDeletion: Boolean
+  ): scr_User
   scr_UserCount(
     "expressions to compare scr_User objects, all items are combined with logical 'AND'"
-    filter: [inp_scr_UserFilterCondition]
+    filter: [inp_scr_UserFilterCondition], 
+    "set false to include soft-deleted entities"
+    softDeletion: Boolean
   ): Long
   scr_UserList(
     "expressions to compare scr_User objects, all items are combined with logical 'AND'"
@@ -442,12 +640,20 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: [inp_scr_UserOrderBy]
+    orderBy: [inp_scr_UserOrderBy], 
+    "set false to load soft-deleted entities"
+    softDeletion: Boolean
   ): [scr_User]
-  scr_WeirdStringIdTestEntityById(id: String!): scr_WeirdStringIdTestEntity
+  scr_WeirdStringIdTestEntityById(
+    id: String!, 
+    "set false to load soft-deleted entity"
+    softDeletion: Boolean
+  ): scr_WeirdStringIdTestEntity
   scr_WeirdStringIdTestEntityCount(
     "expressions to compare scr_WeirdStringIdTestEntity objects, all items are combined with logical 'AND'"
-    filter: [inp_scr_WeirdStringIdTestEntityFilterCondition]
+    filter: [inp_scr_WeirdStringIdTestEntityFilterCondition], 
+    "set false to include soft-deleted entities"
+    softDeletion: Boolean
   ): Long
   scr_WeirdStringIdTestEntityList(
     "expressions to compare scr_WeirdStringIdTestEntity objects, all items are combined with logical 'AND'"
@@ -457,12 +663,20 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: [inp_scr_WeirdStringIdTestEntityOrderBy]
+    orderBy: [inp_scr_WeirdStringIdTestEntityOrderBy], 
+    "set false to load soft-deleted entities"
+    softDeletion: Boolean
   ): [scr_WeirdStringIdTestEntity]
-  sec_ResourcePolicyEntityById(id: String!): sec_ResourcePolicyEntity
+  sec_ResourcePolicyEntityById(
+    id: String!, 
+    "set false to load soft-deleted entity"
+    softDeletion: Boolean
+  ): sec_ResourcePolicyEntity
   sec_ResourcePolicyEntityCount(
     "expressions to compare sec_ResourcePolicyEntity objects, all items are combined with logical 'AND'"
-    filter: [inp_sec_ResourcePolicyEntityFilterCondition]
+    filter: [inp_sec_ResourcePolicyEntityFilterCondition], 
+    "set false to include soft-deleted entities"
+    softDeletion: Boolean
   ): Long
   sec_ResourcePolicyEntityList(
     "expressions to compare sec_ResourcePolicyEntity objects, all items are combined with logical 'AND'"
@@ -472,12 +686,20 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: [inp_sec_ResourcePolicyEntityOrderBy]
+    orderBy: [inp_sec_ResourcePolicyEntityOrderBy], 
+    "set false to load soft-deleted entities"
+    softDeletion: Boolean
   ): [sec_ResourcePolicyEntity]
-  sec_ResourceRoleEntityById(id: String!): sec_ResourceRoleEntity
+  sec_ResourceRoleEntityById(
+    id: String!, 
+    "set false to load soft-deleted entity"
+    softDeletion: Boolean
+  ): sec_ResourceRoleEntity
   sec_ResourceRoleEntityCount(
     "expressions to compare sec_ResourceRoleEntity objects, all items are combined with logical 'AND'"
-    filter: [inp_sec_ResourceRoleEntityFilterCondition]
+    filter: [inp_sec_ResourceRoleEntityFilterCondition], 
+    "set false to include soft-deleted entities"
+    softDeletion: Boolean
   ): Long
   sec_ResourceRoleEntityList(
     "expressions to compare sec_ResourceRoleEntity objects, all items are combined with logical 'AND'"
@@ -487,12 +709,20 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: [inp_sec_ResourceRoleEntityOrderBy]
+    orderBy: [inp_sec_ResourceRoleEntityOrderBy], 
+    "set false to load soft-deleted entities"
+    softDeletion: Boolean
   ): [sec_ResourceRoleEntity]
-  sec_RoleAssignmentEntityById(id: String!): sec_RoleAssignmentEntity
+  sec_RoleAssignmentEntityById(
+    id: String!, 
+    "set false to load soft-deleted entity"
+    softDeletion: Boolean
+  ): sec_RoleAssignmentEntity
   sec_RoleAssignmentEntityCount(
     "expressions to compare sec_RoleAssignmentEntity objects, all items are combined with logical 'AND'"
-    filter: [inp_sec_RoleAssignmentEntityFilterCondition]
+    filter: [inp_sec_RoleAssignmentEntityFilterCondition], 
+    "set false to include soft-deleted entities"
+    softDeletion: Boolean
   ): Long
   sec_RoleAssignmentEntityList(
     "expressions to compare sec_RoleAssignmentEntity objects, all items are combined with logical 'AND'"
@@ -502,12 +732,20 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: [inp_sec_RoleAssignmentEntityOrderBy]
+    orderBy: [inp_sec_RoleAssignmentEntityOrderBy], 
+    "set false to load soft-deleted entities"
+    softDeletion: Boolean
   ): [sec_RoleAssignmentEntity]
-  sec_RowLevelPolicyEntityById(id: String!): sec_RowLevelPolicyEntity
+  sec_RowLevelPolicyEntityById(
+    id: String!, 
+    "set false to load soft-deleted entity"
+    softDeletion: Boolean
+  ): sec_RowLevelPolicyEntity
   sec_RowLevelPolicyEntityCount(
     "expressions to compare sec_RowLevelPolicyEntity objects, all items are combined with logical 'AND'"
-    filter: [inp_sec_RowLevelPolicyEntityFilterCondition]
+    filter: [inp_sec_RowLevelPolicyEntityFilterCondition], 
+    "set false to include soft-deleted entities"
+    softDeletion: Boolean
   ): Long
   sec_RowLevelPolicyEntityList(
     "expressions to compare sec_RowLevelPolicyEntity objects, all items are combined with logical 'AND'"
@@ -517,12 +755,20 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: [inp_sec_RowLevelPolicyEntityOrderBy]
+    orderBy: [inp_sec_RowLevelPolicyEntityOrderBy], 
+    "set false to load soft-deleted entities"
+    softDeletion: Boolean
   ): [sec_RowLevelPolicyEntity]
-  sec_RowLevelRoleEntityById(id: String!): sec_RowLevelRoleEntity
+  sec_RowLevelRoleEntityById(
+    id: String!, 
+    "set false to load soft-deleted entity"
+    softDeletion: Boolean
+  ): sec_RowLevelRoleEntity
   sec_RowLevelRoleEntityCount(
     "expressions to compare sec_RowLevelRoleEntity objects, all items are combined with logical 'AND'"
-    filter: [inp_sec_RowLevelRoleEntityFilterCondition]
+    filter: [inp_sec_RowLevelRoleEntityFilterCondition], 
+    "set false to include soft-deleted entities"
+    softDeletion: Boolean
   ): Long
   sec_RowLevelRoleEntityList(
     "expressions to compare sec_RowLevelRoleEntity objects, all items are combined with logical 'AND'"
@@ -532,7 +778,9 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: [inp_sec_RowLevelRoleEntityOrderBy]
+    orderBy: [inp_sec_RowLevelRoleEntityOrderBy], 
+    "set false to load soft-deleted entities"
+    softDeletion: Boolean
   ): [sec_RowLevelRoleEntity]
   userInfo: UserInfo
 }

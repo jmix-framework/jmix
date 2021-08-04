@@ -33,10 +33,10 @@ public class ValueFormatsFragment extends ScreenFragment {
     protected InstanceContainer<Report> reportDc;
 
     @Autowired
-    @Qualifier("valuesFormatsTable.create")
+    @Qualifier("valuesFormatsTable.createValueFormat")
     protected CreateAction<ReportValueFormat> createAction;
     @Autowired
-    @Qualifier("valuesFormatsTable.edit")
+    @Qualifier("valuesFormatsTable.editValueFormat")
     protected EditAction<ReportValueFormat> editAction;
 
     @Subscribe

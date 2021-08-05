@@ -67,8 +67,8 @@ public class MetadataUtils {
         return allSupportedMetaClasses().stream()
                 .flatMap(metaClass -> metaClass.getProperties().stream())
                 .filter(metaProperty -> metaProperty.getType() == MetaProperty.Type.ENUM)
-                .distinct()
                 .map(MetaProperty::getJavaType)
+                .distinct()
                 .collect(Collectors.toList());
     }
 

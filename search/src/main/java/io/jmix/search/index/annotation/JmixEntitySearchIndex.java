@@ -47,7 +47,7 @@ import java.util.function.Predicate;
  *     <li>With default modifier</li>
  *     <li>With any name</li>
  *     <li>With return type - {@link MappingDefinition}</li>
- *     <li>Without parameters</li>
+ *     <li>With Spring beans required for custom user configuration as parameters</li>
  * </ul>
  * Use {@link MappingDefinition#builder()} within method body to build {@link MappingDefinition}.
  * <p>

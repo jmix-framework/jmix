@@ -106,6 +106,15 @@ public class AnnotatedIndexDefinitionTestCaseProvider {
                         .expectedEntityClass(TestSimpleRootEntity.class)
                         .pathToFileWithExpectedMapping("index_definition/common/test_mapping_extra_annotation")
                         .build()
+                ),
+                Arguments.of(AnnotatedIndexDefinitionProcessorTestCase.builder("Provide bean-arguments to programmatic mapping method")
+                        .indexDefinitionClass(TestProgrammaticMappingWithArgumentsIndexDefinition.class)
+                        .expectedEntityName("test_SimpleRootEntity")
+                        .expectedIndexName("search_index_test_simplerootentity")
+                        .expectedEntityClass(TestSimpleRootEntity.class)
+                        .pathToFileWithExpectedMapping("index_definition/common/test_mapping_programmatic_with_argument")
+                        .build()
+
                 )
         );
     }

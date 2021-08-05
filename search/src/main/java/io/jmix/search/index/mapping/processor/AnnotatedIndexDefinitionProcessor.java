@@ -52,7 +52,10 @@ import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
-import java.lang.reflect.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.Proxy;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -203,9 +206,8 @@ public class AnnotatedIndexDefinitionProcessor {
             mappingDefinition = builder.buildMappingDefinition();
         } else {
             try {
-                Object proxy = createProxy(parsedIndexDefinition.getIndexDefinitionClass());
-                mappingDefinition = (MappingDefinition) mappingDefinitionImplementationMethod.invoke(proxy);
-            } catch (IllegalAccessException | InvocationTargetException e) {
+                mappingDefinition = callMethod(parsedIndexDefinition.getIndexDefinitionClass(), mappingDefinitionImplementationMethod);
+            } catch (Exception e) {
                 throw new RuntimeException("Failed to call method '" + mappingDefinitionImplementationMethod + "'", e);
             }
         }
@@ -225,8 +227,7 @@ public class AnnotatedIndexDefinitionProcessor {
 
     protected boolean isMappingDefinitionImplementationMethod(Method method) {
         return method.isDefault()
-                && MappingDefinition.class.equals(method.getReturnType())
-                && method.getParameterCount() == 0;
+                && MappingDefinition.class.equals(method.getReturnType());
     }
 
     protected boolean isFieldMappingAnnotation(Annotation annotation) {
@@ -242,19 +243,23 @@ public class AnnotatedIndexDefinitionProcessor {
             }
             Predicate<Object> predicate;
             try {
-                Object proxyObject = null;
-                if (!Modifier.isStatic(method.getModifiers())) {
-                    proxyObject = createProxy(parsedIndexDefinition.getIndexDefinitionClass());
-                }
-                Object[] methodArgumentValues = methodArgumentsProvider.getMethodArgumentValues(method);
-                //noinspection unchecked
-                predicate = (Predicate<Object>) method.invoke(proxyObject, methodArgumentValues);
+                predicate = callMethod(parsedIndexDefinition.getIndexDefinitionClass(), method);
                 predicates.add(predicate);
             } catch (Exception e) {
                 throw new RuntimeException("Cannot evaluate indexable predicate", e);
             }
         }
         return predicates.stream().reduce(Predicate::and).orElseGet(() -> (obj) -> true);
+    }
+
+    protected <T> T callMethod(Class<?> ownerClass, Method method) throws Exception {
+        Object proxyObject = null;
+        if (!Modifier.isStatic(method.getModifiers())) {
+            proxyObject = createProxy(ownerClass);
+        }
+        Object[] methodArgumentValues = methodArgumentsProvider.getMethodArgumentValues(method);
+        //noinspection unchecked
+        return (T) method.invoke(proxyObject, methodArgumentValues);
     }
 
     protected Object createProxy(Class<?> ownerClass) {

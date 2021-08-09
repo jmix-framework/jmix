@@ -22,6 +22,7 @@ import io.jmix.core.accesscontext.CrudEntityContext;
 import io.jmix.core.accesscontext.EntityAttributeContext;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.rest.accesscontext.RestFileDownloadContext;
 import io.jmix.rest.accesscontext.RestFileUploadContext;
 import io.jmix.rest.impl.controller.PermissionsController;
@@ -32,6 +33,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Class is used for getting current user permissions for the REST API. It contains a business logic required by the
@@ -43,6 +45,8 @@ public class PermissionsControllerManager {
     protected Metadata metadata;
     @Autowired
     protected AccessManager accessManager;
+    @Autowired
+    protected CurrentAuthentication currentAuthentication;
 
     protected static final int ALLOWED_CRUD_PERMISSION = 1;
     protected static final int VIEW_ATTRIBUTE_PERMISSION = 1;
@@ -50,6 +54,11 @@ public class PermissionsControllerManager {
 
     public PermissionsInfo getPermissions() {
         PermissionsInfo permissionsInfo = new PermissionsInfo();
+
+        List<String> authorities = currentAuthentication.getUser().getAuthorities().stream()
+                .map(grantedAuthority -> grantedAuthority.getAuthority())
+                .collect(Collectors.toList());
+        permissionsInfo.setAuthorities(authorities);
 
         List<ShortPermissionInfo> entityPermissions = new ArrayList<>();
         List<ShortPermissionInfo> entityAttributePermissions = new ArrayList<>();

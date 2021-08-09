@@ -1471,9 +1471,10 @@ paths:
     get:
       tags:
         - Permissions
-      summary: Get a list of current user security permissions (entities, entity attributes)
+      summary: Get an information about current user security permissions
       description: |
-        Gets a list of current user security permissions (entities, entity attributes)
+        Returns an object that contains lists of current user authorites (i.e. roles),
+        permissions on CRUD operations with entities, entity attributes, specific permissions
       responses:
         200:
           description: Success

@@ -70,6 +70,17 @@ public class PermissionsControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
+    public void getAuthorities() throws Exception {
+        String url = baseUrl + "/permissions";
+        try (CloseableHttpResponse response = sendGet(url, oauthToken, null)) {
+            assertEquals(HttpStatus.SC_OK, statusCode(response));
+            ReadContext ctx = parseResponse(response);
+            assertEquals(1, ctx.read("$.authorities", Collection.class).size());
+            assertEquals("permission-role", ctx.read("$.authorities[0]", String.class));
+        }
+    }
+
+    @Test
     public void getEntitiesPermissions() throws Exception {
         String url = baseUrl + "/permissions";
         try (CloseableHttpResponse response = sendGet(url, oauthToken, null)) {

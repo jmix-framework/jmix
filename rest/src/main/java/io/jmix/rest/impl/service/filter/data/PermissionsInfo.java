@@ -24,11 +24,21 @@ import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PermissionsInfo {
+    private List<String> authorities;
     private List<ShortPermissionInfo> entities;
     private List<ShortPermissionInfo> entityAttributes;
     private List<ShortPermissionInfo> specifics;
 
     public PermissionsInfo() {
+    }
+
+    @Nullable
+    public List<String> getAuthorities() {
+        return authorities;
+    }
+
+    public void setAuthorities(List<String> authorities) {
+        this.authorities = authorities;
     }
 
     @Nullable

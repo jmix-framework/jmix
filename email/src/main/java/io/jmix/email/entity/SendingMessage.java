@@ -16,12 +16,15 @@
 
 package io.jmix.email.entity;
 
+import io.jmix.core.DeletePolicy;
 import io.jmix.core.FileRef;
 import io.jmix.core.annotation.DeletedBy;
 import io.jmix.core.annotation.DeletedDate;
 import io.jmix.core.annotation.TenantId;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
+import io.jmix.core.entity.annotation.OnDelete;
 import io.jmix.core.entity.annotation.SystemLevel;
+import io.jmix.core.metamodel.annotation.Composition;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.PropertyDatatype;
 import io.jmix.email.SendingStatus;
@@ -129,6 +132,8 @@ public class SendingMessage implements Serializable {
     @Column(name = "ATTEMPTS_MADE")
     protected Integer attemptsMade;
 
+    @Composition
+    @OnDelete(DeletePolicy.CASCADE)
     @OneToMany(mappedBy = "message")
     protected List<SendingAttachment> attachments;
 

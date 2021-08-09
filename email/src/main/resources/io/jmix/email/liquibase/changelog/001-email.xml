@@ -65,7 +65,7 @@
             <column name="DISPOSITION" type="varchar(50)"/>
             <column name="TEXT_ENCODING" type="varchar(50)"/>
         </createTable>
-        
+
         <createIndex tableName="EMAIL_SENDING_ATTACHMENT" indexName="EMAIL_ATTACHMENT_MESSAGE_IDX">
             <column name="MESSAGE_ID"/>
         </createIndex>
@@ -85,5 +85,17 @@
                       columnDataType="int"
                       oldColumnName="ATTEMPTS_COUNT"
                       newColumnName="ATTEMPTS_LIMIT"/>
+    </changeSet>
+
+    <changeSet id="5" author="email" context="!cuba">
+        <dropForeignKeyConstraint baseTableName="EMAIL_SENDING_ATTACHMENT"
+                                  constraintName="FK_EMAIL_ATTACHMENT_MESSAGE"/>
+
+        <addForeignKeyConstraint baseTableName="EMAIL_SENDING_ATTACHMENT"
+                                 baseColumnNames="MESSAGE_ID"
+                                 onDelete="CASCADE"
+                                 constraintName="FK_EMAIL_ATTACHMENT_MESSAGE"
+                                 referencedTableName="EMAIL_SENDING_MESSAGE"
+                                 referencedColumnNames="ID"/>
     </changeSet>
 </databaseChangeLog>

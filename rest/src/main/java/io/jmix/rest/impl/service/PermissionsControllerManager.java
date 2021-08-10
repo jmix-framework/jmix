@@ -29,10 +29,12 @@ import io.jmix.rest.impl.controller.PermissionsController;
 import io.jmix.rest.impl.service.filter.data.PermissionsInfo;
 import io.jmix.rest.impl.service.filter.data.ShortPermissionInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -56,7 +58,8 @@ public class PermissionsControllerManager {
         PermissionsInfo permissionsInfo = new PermissionsInfo();
 
         List<String> authorities = currentAuthentication.getUser().getAuthorities().stream()
-                .map(grantedAuthority -> grantedAuthority.getAuthority())
+                .map(GrantedAuthority::getAuthority)
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
         permissionsInfo.setAuthorities(authorities);
 

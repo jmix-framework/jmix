@@ -87,6 +87,23 @@ class MutationValidationTest extends AbstractGraphQLTest {
         messages.get(1) == "must be greater than or equal to 0"
     }
 
+    def "should show correct message for one-to-many composition validation"() {
+        when:
+        def response = query(
+                "datafetcher/upsert-datatypesTestEntity-O2M-bean-validation.gql")
+        def error = getErrors(response)[0].getAsJsonObject()
+        def extensions = getExtensions(error).getAsJsonArray("constraintViolations")
+        List messages = new ArrayList()
+        messages.add(getMessage(extensions[0].getAsJsonObject()))
+        messages.add(getPath(extensions[0].getAsJsonObject()))
+        messages.sort()
+
+        then:
+        getMessage(error) == "Exception while fetching data (/upsert_scr_DatatypesTestEntity) : Entity validation failed"
+        messages.get(0) == "compositionO2Mattr.quantity"
+        messages.get(1) == "must be greater than or equal to 0"
+    }
+
     def "should show bean validation message with parent attribute and nested composition"() {
         when:
         def response = query(

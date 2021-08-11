@@ -112,11 +112,11 @@ public class GqlEntityValidationException extends RuntimeException implements Gr
      * For better user experience we need to define and return full path of validated property. In example above it's mean
      * that method will return "car.garage.name" instead of "name".
      *
-     * @param entity - validated entity
+     * @param entity    - validated entity
      * @param metaClass - validated entity meta class
-     * @param cv - current constraint violation
-     * @param path already composed part of path
-     * @param visited entities in object graph that already visited due to recursion
+     * @param cv        - current constraint violation
+     * @param path      already composed part of path
+     * @param visited   entities in object graph that already visited due to recursion
      * @return full property path
      */
     protected Stream<String> buildFullPath(Object entity, MetaClass metaClass, ConstraintViolation<?> cv, String path, Set<Object> visited) {
@@ -137,13 +137,19 @@ public class GqlEntityValidationException extends RuntimeException implements Gr
                     }
 
                     if (MetaProperty.Type.COMPOSITION.equals(property.getType())) {
-                        return buildFullPath(
-                                EntityValues.getValue(entity, property.getName()),
-                                property.getRange().asClass(),
-                                cv,
-                                path.isEmpty() ? property.getName() : path + "." + property.getName(),
-                                visited
-                        );
+                        Object propertyValue = EntityValues.getValue(entity, property.getName());
+                        Collection<Object> propertyEntities = propertyValue instanceof Collection
+                                ? ((Collection) propertyValue)
+                                : Collections.singletonList(propertyValue);
+
+                        return propertyEntities.stream()
+                                .flatMap(propertyEntity -> buildFullPath(
+                                        propertyEntity,
+                                        property.getRange().asClass(),
+                                        cv,
+                                        path.isEmpty() ? property.getName() : path + "." + property.getName(),
+                                        visited
+                                ));
                     }
                     return Stream.empty();
                 });

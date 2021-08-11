@@ -5,6 +5,7 @@ import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.*;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.UUID;
 
 @Table(name = "SCR_COMPOSITION_O2M_TEST_ENTITY")
@@ -27,6 +28,7 @@ public class CompositionO2MTestEntity {
     @JoinColumn(name = "DATATYPES_TEST_ENTITY_ID")
     protected DatatypesTestEntity datatypesTestEntity;
 
+    @PositiveOrZero
     @Column(name = "QUANTITY")
     private Integer quantity;
 

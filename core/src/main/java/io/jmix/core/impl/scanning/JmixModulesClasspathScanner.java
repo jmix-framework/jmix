@@ -20,6 +20,7 @@ import io.jmix.core.JmixModuleDescriptor;
 import io.jmix.core.JmixModules;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ResourceLoader;
@@ -27,7 +28,6 @@ import org.springframework.core.type.classreading.MetadataReaderFactory;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -92,6 +92,21 @@ public class JmixModulesClasspathScanner extends AbstractClasspathScanner {
      */
     public Set<String> getClassNames(Class<? extends ClasspathScanCandidateDetector> detectorType) {
         return detectedClasses.getOrDefault(detectorType, new HashSet<>());
+    }
+
+    /**
+     * Refreshes the set of class names corresponding to a detector passed.
+     */
+    public void refreshClassNames(ClasspathScanCandidateDetector detector) {
+        basePackages.stream()
+                .flatMap(this::scanPackage)
+                .forEach(metadataReader -> {
+                    if (detector.isCandidate(metadataReader)) {
+                        Set<String> classNames = detectedClasses.computeIfAbsent(
+                                detector.getClass(), aClass -> new HashSet<>());
+                        classNames.add(metadataReader.getClassMetadata().getClassName());
+                    }
+                });
     }
 
     @Override

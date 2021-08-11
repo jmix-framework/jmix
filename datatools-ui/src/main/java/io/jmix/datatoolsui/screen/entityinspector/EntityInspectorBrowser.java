@@ -54,6 +54,7 @@ import io.jmix.ui.model.CollectionLoader;
 import io.jmix.ui.model.DataComponents;
 import io.jmix.ui.navigation.Route;
 import io.jmix.ui.screen.*;
+import io.jmix.uiexport.action.ExcelExportAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -337,12 +338,10 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
         removeButton.setIcon(icons.get(JmixIcon.REMOVE_ACTION));
         removeButton.setFrame(getWindow().getFrame());
 
-        //TODO excel action
-//        excelButton = uiComponents.create(Button.class);
-//        excelButton.setCaption(messages.getMessage(com.haulmont.cuba.gui.app.core.entityinspector.EntityInspectorBrowse.class, "excel"));
-//        excelButton.setAction(new ExcelAction(entitiesTable));
-//        excelButton.setIcon(icons.get(CubaIcon.EXCEL_ACTION));
-//        excelButton.setFrame(frame);
+        Button excelButton = uiComponents.create(Button.class);
+        ExcelExportAction excelExportAction = createExcelExportAction(table);
+        excelButton.setAction(excelExportAction);
+        excelButton.setFrame(getWindow().getFrame());
 
         Button refreshButton = uiComponents.create(Button.class);
         RefreshAction refreshAction = createRefreshAction(table);
@@ -418,14 +417,20 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
         buttonsPanel.add(createButton);
         buttonsPanel.add(editButton);
         buttonsPanel.add(removeButton);
-//        buttonsPanel.add(excelButton);
         buttonsPanel.add(refreshButton);
+        buttonsPanel.add(excelButton);
         buttonsPanel.add(exportPopupButton);
         buttonsPanel.add(importUpload);
         buttonsPanel.add(restoreButton);
         if (wipeOutButton != null) {
             buttonsPanel.add(wipeOutButton);
         }
+    }
+
+    private ExcelExportAction createExcelExportAction(Table table) {
+        ExcelExportAction excelExportAction = actions.create(ExcelExportAction.class);
+        excelExportAction.setTarget(table);
+        return excelExportAction;
     }
 
     private ShowEntityInfoAction createShowEntityInfoAction(Table table) {

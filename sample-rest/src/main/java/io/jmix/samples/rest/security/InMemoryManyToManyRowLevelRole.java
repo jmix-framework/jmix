@@ -18,10 +18,9 @@ package io.jmix.samples.rest.security;
 
 import io.jmix.samples.rest.entity.driver.Model;
 import io.jmix.security.model.RowLevelPolicyAction;
+import io.jmix.security.model.RowLevelPredicate;
 import io.jmix.security.role.annotation.PredicateRowLevelPolicy;
 import io.jmix.security.role.annotation.RowLevelRole;
-
-import java.util.function.Predicate;
 
 @RowLevelRole(name = InMemoryManyToManyRowLevelRole.NAME, code = InMemoryManyToManyRowLevelRole.NAME)
 public interface InMemoryManyToManyRowLevelRole {
@@ -30,7 +29,7 @@ public interface InMemoryManyToManyRowLevelRole {
 
     @PredicateRowLevelPolicy(entityClass = Model.class,
             actions = RowLevelPolicyAction.READ)
-    static Predicate<Model> model() {
+    static RowLevelPredicate<Model> model() {
         return entity -> !entity.getName().startsWith("Model#2_")
                 && !entity.getName().startsWith("Model#5_");
     }

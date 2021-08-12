@@ -19,10 +19,9 @@ package io.jmix.samples.rest.security;
 import io.jmix.samples.rest.entity.driver.InsuranceCase;
 import io.jmix.samples.rest.entity.driver.Model;
 import io.jmix.security.model.RowLevelPolicyAction;
+import io.jmix.security.model.RowLevelPredicate;
 import io.jmix.security.role.annotation.PredicateRowLevelPolicy;
 import io.jmix.security.role.annotation.RowLevelRole;
-
-import java.util.function.Predicate;
 
 @RowLevelRole(name = InMemoryRowLevelRole.NAME, code = InMemoryRowLevelRole.NAME)
 public interface InMemoryRowLevelRole {
@@ -31,13 +30,13 @@ public interface InMemoryRowLevelRole {
 
     @PredicateRowLevelPolicy(entityClass = InsuranceCase.class,
             actions = RowLevelPolicyAction.READ)
-    static Predicate<InsuranceCase> insuranceCase() {
+    static RowLevelPredicate<InsuranceCase> insuranceCase() {
         return entity -> entity.getDescription().startsWith("A");
     }
 
     @PredicateRowLevelPolicy(entityClass = Model.class,
             actions = RowLevelPolicyAction.READ)
-    static Predicate<Model> model() {
+    static RowLevelPredicate<Model> model() {
         return entity -> entity.getName().startsWith("A");
     }
 }

@@ -16,6 +16,7 @@
 
 package entities
 
+
 import test_support.RestSpec
 
 import static test_support.DataUtils.createGroup
@@ -29,6 +30,8 @@ class EntitiesControllerTest extends RestSpec {
 
         createUser(dirtyData, sql, "admin", groupId)
         createUser(dirtyData, sql, "anonymous", groupId)
+        createUser(dirtyData, sql, "login1", "testFirstName", groupId)
+        createUser(dirtyData, sql, "login2", "testFirstName", groupId)
     }
 
     def "GET-request with filter for obtaining the count of entities"() {
@@ -70,5 +73,46 @@ class EntitiesControllerTest extends RestSpec {
         then:
         response.statusCode() == 200
         response.body.as(Integer) == 1
+    }
+
+    def "PUT-request to bulk update (handling case of body containing one object instead of array)"() {
+        def body =
+                [
+                        'firstName': 'Some name'
+                ]
+
+        when:
+        def request = createRequest(userToken).body(body)
+        def response = request.with().put(baseUrl + "/entities/sec\$User")
+
+        then:
+        noExceptionThrown()
+        response.statusCode == 400
+    }
+
+    def "PUT-request to bulk update"() {
+        def userRows = sql.rows("select * from SAMPLE_REST_SEC_USER where FIRST_NAME = 'testFirstName'")
+        def body =
+                [
+                        [
+                                'id'       : userRows[0].id,
+                                'firstName': 'Some name'
+                        ],
+                        [
+
+                                'id'       : userRows[1].id,
+                                'firstName': 'Some name'
+
+                        ]
+                ]
+
+        when:
+        def request = createRequest(userToken).body(body)
+        def response = request.with().put(baseUrl + "/entities/sec\$User")
+
+        then:
+        response.statusCode == 200
+        sql.rows("select * from SAMPLE_REST_SEC_USER where FIRST_NAME = 'testFirstName'").size() == 0
+        sql.rows("select * from SAMPLE_REST_SEC_USER where FIRST_NAME = 'Some name'").size() == 2
     }
 }

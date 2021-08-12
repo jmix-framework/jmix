@@ -68,6 +68,22 @@ class DataUtils {
         return userId
     }
 
+    static UUID createUser(DataSet dataSet, Sql sql,
+                           String login,
+                           String firstName,
+                           UUID groupId) {
+        def userId = dataSet.createUserUuid()
+        sql.dataSet('sample_rest_sec_user').add(
+                id: userId,
+                version: 1,
+                login: login,
+                login_lc: login.toLowerCase(),
+                first_name: firstName,
+                group_id: groupId
+        )
+        return userId
+    }
+
     static UUID createRole(DataSet dataSet, Sql sql, String name, String securityScope) {
         def roleId = dataSet.createRoleUuid()
         sql.dataSet('sample_rest_sec_role').add(

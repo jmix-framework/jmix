@@ -574,7 +574,14 @@ public class EntitiesControllerManager {
             responseFetchPlan = restControllerUtils.getView(metaClass, responseView);
         }
 
-        JsonArray entitiesJsonArray = new JsonParser().parse(entitiesJson).getAsJsonArray();
+        JsonElement entitiesJsonElement = new JsonParser().parse(entitiesJson);
+        if (!entitiesJsonElement.isJsonArray()) {
+            throw new RestAPIException("The body of bulk update request should be an array",
+                    "The body of bulk update request should be an array",
+                    HttpStatus.BAD_REQUEST);
+        }
+
+        JsonArray entitiesJsonArray = entitiesJsonElement.getAsJsonArray();
         Collection<Object> entities = new ArrayList<>();
         if (restProperties.isResponseFetchPlanEnabled() && responseFetchPlan != null) {
             for (JsonElement jsonElement : entitiesJsonArray) {

@@ -16,7 +16,6 @@
 
 package test_support;
 
-import test_support.RestTestUtils;
 import io.restassured.RestAssured;
 import io.restassured.specification.RequestSpecification;
 

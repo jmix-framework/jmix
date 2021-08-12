@@ -50,7 +50,7 @@ class EntitiesControllerTest extends RestSpec {
 
         then:
         response.statusCode() == 200
-        response.body.as(Integer) == 2
+        response.body.as(Integer) == 4
     }
 
     def "POST-request with filter for obtaining the count of entities"() {

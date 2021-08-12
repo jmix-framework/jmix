@@ -21,11 +21,13 @@ import io.jmix.security.SecurityConfiguration;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 
 
 @Configuration
 @JmixModule(dependsOn = SecurityConfiguration.class)
 @ComponentScan
 @ConfigurationPropertiesScan
+@PropertySource(name = "io.jmix.securityoauth2", value = "classpath:/io/jmix/securityoauth2/module.properties")
 public class SecurityOAuth2Configuration {
 }

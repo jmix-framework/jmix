@@ -25,6 +25,7 @@ import io.jmix.securityoauth2.configurer.OAuth2AuthorizationServerConfigurer;
 import io.jmix.securityoauth2.configurer.OAuth2ResourceServerConfigurer;
 import io.jmix.securityoauth2.impl.UniqueAuthenticationKeyGenerator;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,16 +35,40 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore;
+import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
+
+import javax.sql.DataSource;
 
 @Configuration
-@Import({CoreConfiguration.class, SecurityConfiguration.class, SecurityOAuth2Configuration.class})
+@Import({CoreConfiguration.class, SecurityConfiguration.class, SecurityOAuth2Configuration.class,
+        SecurityOAuth2AutoConfiguration.JdbcTokenStoreConfiguration.class,
+        SecurityOAuth2AutoConfiguration.InMemoryTokenStoreConfiguration.class})
 public class SecurityOAuth2AutoConfiguration {
-    @Bean(name = "sec_TokenStore")
-    @ConditionalOnMissingBean(TokenStore.class)
-    protected TokenStore tokenStore() {
-        InMemoryTokenStore tokenStore = new InMemoryTokenStore();
-        tokenStore.setAuthenticationKeyGenerator(new UniqueAuthenticationKeyGenerator());
-        return tokenStore;
+
+    @Configuration(proxyBeanMethods = false)
+    @ConditionalOnClass(DataSource.class)
+    @ConditionalOnBean(DataSource.class)
+    @Order(JmixOrder.HIGHEST_PRECEDENCE)
+    public static class JdbcTokenStoreConfiguration {
+        @Bean(name = "sec_TokenStore")
+        @ConditionalOnMissingBean(TokenStore.class)
+        public TokenStore tokenStore(DataSource dataSource) {
+            JdbcTokenStore tokenStore = new JdbcTokenStore(dataSource);
+            tokenStore.setAuthenticationKeyGenerator(new UniqueAuthenticationKeyGenerator());
+            return tokenStore;
+        }
+    }
+
+    @Configuration(proxyBeanMethods = false)
+    @Order(JmixOrder.LOWEST_PRECEDENCE)
+    public static class InMemoryTokenStoreConfiguration {
+        @Bean(name = "sec_TokenStore")
+        @ConditionalOnMissingBean(TokenStore.class)
+        public TokenStore tokenStore(DataSource dataSource) {
+            InMemoryTokenStore tokenStore = new InMemoryTokenStore();
+            tokenStore.setAuthenticationKeyGenerator(new UniqueAuthenticationKeyGenerator());
+            return tokenStore;
+        }
     }
 
     @Configuration(proxyBeanMethods = false)

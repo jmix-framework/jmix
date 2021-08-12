@@ -75,7 +75,7 @@ public class EntitySqlGenerator {
     @PostConstruct
     public void init() {
         metaClass = metadata.getClass(clazz);
-        collectTableMetadata(metaClass, new Table(null));
+        collectTableMetadata(metaClass, new Table());
 
         if (tables.isEmpty()) {
             throw new IllegalStateException(
@@ -175,7 +175,7 @@ public class EntitySqlGenerator {
         return where;
     }
 
-    protected String convertValue(Object entity, String fieldName, @Nullable Object value) {
+    protected String convertValue(@Nullable Object entity, @Nullable String fieldName, @Nullable Object value) {
         try {
             String valueStr;
             if (EntityValues.isEntity(value)) {
@@ -261,6 +261,9 @@ public class EntitySqlGenerator {
         protected String discriminatorColumn;
         protected DiscriminatorType discriminatorType;
         protected Map<String, FieldEntry> fieldToColumnMapping = new LinkedHashMap<>();
+
+        public Table() {
+        }
 
         public Table(String name) {
             this.name = name;

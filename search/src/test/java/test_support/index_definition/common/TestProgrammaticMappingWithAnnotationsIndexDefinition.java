@@ -18,6 +18,7 @@ package test_support.index_definition.common;
 
 import io.jmix.search.index.annotation.AutoMappedField;
 import io.jmix.search.index.annotation.JmixEntitySearchIndex;
+import io.jmix.search.index.annotation.ManualMappingDefinition;
 import io.jmix.search.index.mapping.processor.MappingDefinition;
 import io.jmix.search.index.mapping.strategy.AutoMappingStrategy;
 import test_support.entity.TestSimpleRootEntity;
@@ -26,6 +27,7 @@ import test_support.entity.TestSimpleRootEntity;
 public interface TestProgrammaticMappingWithAnnotationsIndexDefinition {
 
     @AutoMappedField(includeProperties = "firstTextValue")
+    @ManualMappingDefinition
     default MappingDefinition programmaticMapping() {
         return MappingDefinition.builder()
                 .newElement()

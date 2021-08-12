@@ -17,6 +17,7 @@
 package test_support.index_definition.common;
 
 import io.jmix.search.index.annotation.JmixEntitySearchIndex;
+import io.jmix.search.index.annotation.ManualMappingDefinition;
 import io.jmix.search.index.mapping.processor.MappingDefinition;
 import io.jmix.search.index.mapping.strategy.AutoMappingStrategy;
 import test_support.entity.TestSimpleRootEntity;
@@ -24,6 +25,7 @@ import test_support.entity.TestSimpleRootEntity;
 @JmixEntitySearchIndex(entity = TestSimpleRootEntity.class)
 public interface TestProgrammaticMappingIndexDefinition {
 
+    @ManualMappingDefinition
     default MappingDefinition mapping() {
         return MappingDefinition.builder()
                 .newElement()

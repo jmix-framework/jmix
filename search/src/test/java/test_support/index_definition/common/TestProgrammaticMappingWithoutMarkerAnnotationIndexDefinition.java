@@ -16,21 +16,15 @@
 
 package test_support.index_definition.common;
 
-import io.jmix.search.SearchProperties;
 import io.jmix.search.index.annotation.JmixEntitySearchIndex;
-import io.jmix.search.index.annotation.ManualMappingDefinition;
 import io.jmix.search.index.mapping.processor.MappingDefinition;
 import io.jmix.search.index.mapping.strategy.AutoMappingStrategy;
 import test_support.entity.TestSimpleRootEntity;
 
 @JmixEntitySearchIndex(entity = TestSimpleRootEntity.class)
-public interface TestProgrammaticMappingWithArgumentsIndexDefinition {
+public interface TestProgrammaticMappingWithoutMarkerAnnotationIndexDefinition {
 
-    @ManualMappingDefinition
-    default MappingDefinition mapping(SearchProperties properties) {
-        if (properties == null) {
-            throw new IllegalStateException("SearchProperties bean should be provided");
-        }
+    default MappingDefinition mapping() {
         return MappingDefinition.builder()
                 .newElement()
                 .includeProperties("name")

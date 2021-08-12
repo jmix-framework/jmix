@@ -114,7 +114,14 @@ public class AnnotatedIndexDefinitionTestCaseProvider {
                         .expectedEntityClass(TestSimpleRootEntity.class)
                         .pathToFileWithExpectedMapping("index_definition/common/test_mapping_programmatic_with_argument")
                         .build()
-
+                ),
+                Arguments.of(AnnotatedIndexDefinitionProcessorTestCase.builder("Programmatic mapping method doesn't work without marker annotation")
+                        .indexDefinitionClass(TestProgrammaticMappingWithoutMarkerAnnotationIndexDefinition.class)
+                        .expectedEntityName("test_SimpleRootEntity")
+                        .expectedIndexName("search_index_test_simplerootentity")
+                        .expectedEntityClass(TestSimpleRootEntity.class)
+                        .pathToFileWithExpectedMapping("index_definition/common/test_mapping_programmatic_without_marker_annotation")
+                        .build()
                 )
         );
     }

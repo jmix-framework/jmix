@@ -31,6 +31,7 @@ import io.jmix.search.index.IndexSettingsConfigurationContext;
 import io.jmix.search.index.IndexSettingsConfigurer;
 import io.jmix.search.index.annotation.FieldMappingAnnotation;
 import io.jmix.search.index.annotation.JmixEntitySearchIndex;
+import io.jmix.search.index.annotation.ManualMappingDefinition;
 import io.jmix.search.index.mapping.DisplayedNameDescriptor;
 import io.jmix.search.index.mapping.IndexMappingConfiguration;
 import io.jmix.search.index.mapping.MappingFieldDescriptor;
@@ -205,6 +206,10 @@ public class AnnotatedIndexDefinitionProcessor {
             ));
             mappingDefinition = builder.buildMappingDefinition();
         } else {
+            Class<?> returnType = mappingDefinitionImplementationMethod.getReturnType();
+            if (!MappingDefinition.class.equals(returnType)) {
+                throw new RuntimeException("Method with manual mapping building should return MappingDefinition");
+            }
             try {
                 mappingDefinition = callMethod(parsedIndexDefinition.getIndexDefinitionClass(), mappingDefinitionImplementationMethod);
             } catch (Exception e) {
@@ -227,7 +232,7 @@ public class AnnotatedIndexDefinitionProcessor {
 
     protected boolean isMappingDefinitionImplementationMethod(Method method) {
         return method.isDefault()
-                && MappingDefinition.class.equals(method.getReturnType());
+                && method.isAnnotationPresent(ManualMappingDefinition.class);
     }
 
     protected boolean isFieldMappingAnnotation(Annotation annotation) {

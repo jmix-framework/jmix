@@ -245,4 +245,16 @@
         <Bug pattern="UWF_UNWRITTEN_FIELD"/>
         <Package name="io.jmix.bpm.delegate"/>
     </Match>
+
+    <Match>
+        <Bug pattern="RV_RETURN_VALUE_IGNORED"/>
+        <Class name="io.jmix.datatoolsui.screen.entityinspector.EntityInspectorEditor"/>
+        <Method name="afterCommit"/>
+    </Match>
+
+    <Match>
+        <Bug pattern="SF_SWITCH_NO_DEFAULT"/>
+        <Class name="io.jmix.datatoolsui.screen.entityinspector.assistant.InspectorFetchPlanBuilder"/>
+        <Method name="build"/>
+    </Match>
 </FindBugsFilter>

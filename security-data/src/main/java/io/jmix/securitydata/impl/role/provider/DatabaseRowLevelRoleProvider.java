@@ -20,6 +20,7 @@ import io.jmix.core.FetchPlan;
 import io.jmix.core.FetchPlanBuilder;
 import io.jmix.security.model.RoleSource;
 import io.jmix.security.model.RowLevelPolicy;
+import io.jmix.security.model.RowLevelPredicate;
 import io.jmix.security.model.RowLevelRole;
 import io.jmix.security.role.RowLevelRoleProvider;
 import io.jmix.securitydata.entity.RowLevelPolicyEntity;
@@ -104,7 +105,7 @@ public class DatabaseRowLevelRoleProvider extends BaseDatabaseRoleProvider<RowLe
         return role;
     }
 
-    protected Predicate<Object> createPredicateFromScript(String script) {
+    protected RowLevelPredicate<Object> createPredicateFromScript(String script) {
         return entity -> {
             String modifiedScript = script.replace("{E}", "__entity__");
             Map<String, Object> arguments = new HashMap<>();

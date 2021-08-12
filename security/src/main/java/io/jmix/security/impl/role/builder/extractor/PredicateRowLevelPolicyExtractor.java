@@ -23,6 +23,7 @@ import io.jmix.core.impl.method.MethodArgumentsProvider;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.security.model.RowLevelPolicy;
 import io.jmix.security.model.RowLevelPolicyAction;
+import io.jmix.security.model.RowLevelPredicate;
 import io.jmix.security.role.annotation.PredicateRowLevelPolicy;
 import org.apache.commons.lang3.SystemUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +39,6 @@ import java.lang.reflect.Proxy;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.function.Predicate;
 
 @Component("sec_InMemoryRowLevelPolicyExtractor")
 public class PredicateRowLevelPolicyExtractor implements RowLevelPolicyExtractor {
@@ -62,14 +62,14 @@ public class PredicateRowLevelPolicyExtractor implements RowLevelPolicyExtractor
             for (RowLevelPolicyAction action : annotation.actions()) {
                 Class<?> entityClass = annotation.entityClass();
                 MetaClass metaClass = metadata.getClass(entityClass);
-                Predicate<Object> predicate;
+                RowLevelPredicate<Object> predicate;
                 try {
                     Object proxyObject = null;
                     if (!Modifier.isStatic(method.getModifiers())) {
                         proxyObject = proxyCache.computeIfAbsent(method.getDeclaringClass(), this::createProxy);
                     }
                     //noinspection unchecked
-                    predicate = (Predicate<Object>) method.invoke(proxyObject, methodArgumentsProvider.getMethodArgumentValues(method));
+                    predicate = (RowLevelPredicate<Object>) method.invoke(proxyObject, methodArgumentsProvider.getMethodArgumentValues(method));
                 } catch (Exception e) {
                     throw new RuntimeException("Cannot evaluate row level policy predicate", e);
                 }

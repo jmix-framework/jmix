@@ -34,7 +34,7 @@ public class RowLevelPolicy implements Serializable {
 
     private RowLevelPolicyAction action;
 
-    private transient Predicate<Object> predicate;
+    private RowLevelPredicate<Object> predicate;
 
     private String whereClause;
 
@@ -60,11 +60,11 @@ public class RowLevelPolicy implements Serializable {
         this.customProperties = customProperties;
     }
 
-    public RowLevelPolicy(String entityName, RowLevelPolicyAction action, String script, Predicate<Object> predicate) {
+    public RowLevelPolicy(String entityName, RowLevelPolicyAction action, String script, RowLevelPredicate<Object> predicate) {
         this(entityName, action, script, predicate, Collections.emptyMap());
     }
 
-    public RowLevelPolicy(String entityName, RowLevelPolicyAction action, String script, Predicate<Object> predicate,
+    public RowLevelPolicy(String entityName, RowLevelPolicyAction action, String script, RowLevelPredicate<Object> predicate,
                           Map<String, String> customProperties) {
         this.entityName = entityName;
         this.action = action;
@@ -74,7 +74,7 @@ public class RowLevelPolicy implements Serializable {
         this.customProperties = customProperties;
     }
 
-    public RowLevelPolicy(String entityName, RowLevelPolicyAction action, Predicate<Object> predicate,
+    public RowLevelPolicy(String entityName, RowLevelPolicyAction action, RowLevelPredicate<Object> predicate,
                           Map<String, String> customProperties) {
         this.entityName = entityName;
         this.action = action;
@@ -105,7 +105,7 @@ public class RowLevelPolicy implements Serializable {
      * @return a predicate
      */
     @Nullable
-    public Predicate<Object> getPredicate() {
+    public RowLevelPredicate<Object> getPredicate() {
         return predicate;
     }
 

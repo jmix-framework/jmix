@@ -18,6 +18,7 @@ package test_support.role;
 
 import io.jmix.security.model.EntityPolicyAction;
 import io.jmix.security.model.RowLevelPolicyAction;
+import io.jmix.security.model.RowLevelPredicate;
 import io.jmix.security.role.annotation.*;
 import test_support.entity.ManyToOneEntity;
 import test_support.entity.OneToManyEntity;
@@ -37,14 +38,14 @@ public interface TestDefaultConstraintsRole {
     @EntityPolicy(entityClass = OneToManyEntity.class, actions = EntityPolicyAction.READ)
     @PredicateRowLevelPolicy(entityClass = OneToManyEntity.class,
             actions = RowLevelPolicyAction.READ)
-    static Predicate<OneToManyEntity> testOneToMany() {
+    static RowLevelPredicate<OneToManyEntity> testOneToMany() {
         return oneToManyEntity -> oneToManyEntity.getName().contains("a");
     }
 
     @EntityPolicy(entityClass = ManyToOneEntity.class, actions = EntityPolicyAction.READ)
     @PredicateRowLevelPolicy(entityClass = ManyToOneEntity.class,
             actions = RowLevelPolicyAction.READ)
-    static Predicate<ManyToOneEntity> testManyToOne() {
+    static RowLevelPredicate<ManyToOneEntity> testManyToOne() {
         return manyToOneEntity -> manyToOneEntity.getName().contains("a");
     }
 }

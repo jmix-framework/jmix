@@ -75,6 +75,7 @@
                         <column id="attemptsLimit"/>
                         <column id="deadline"/>
                         <column id="attemptsMade"/>
+                        <column id="important"/>
                     </columns>
                     <simplePagination/>
                     <buttonsPanel id="buttonsPanel">
@@ -103,6 +104,7 @@
                             <field id="deadline" property="deadline"/>
                             <field id="attemptsLimit" property="attemptsLimit"/>
                             <field id="attemptsMade" property="attemptsMade"/>
+                            <field id="important" property="important"/>
                         </column>
                     </form>
                 </scrollBox>

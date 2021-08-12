@@ -26,9 +26,12 @@ dependencies {
 
     api 'com.sun.mail:jakarta.mail'
 
+    testImplementation 'org.spockframework:spock-core'
+    testImplementation 'org.spockframework:spock-spring'
     testImplementation 'org.junit.jupiter:junit-jupiter-engine'
     testImplementation 'org.junit.vintage:junit-vintage-engine'
     testImplementation 'org.springframework:spring-test'
+    testImplementation 'org.liquibase:liquibase-core'
     testImplementation 'io.jmix.data:jmix-eclipselink'
     testRuntimeOnly 'org.slf4j:slf4j-simple'
     testRuntimeOnly 'org.hsqldb:hsqldb'

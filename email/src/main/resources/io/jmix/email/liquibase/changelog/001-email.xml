@@ -87,6 +87,12 @@
                       newColumnName="ATTEMPTS_LIMIT"/>
     </changeSet>
 
+    <changeSet author="email" id="4" context="!cuba">
+        <addColumn tableName="EMAIL_SENDING_MESSAGE">
+            <column name="IMPORTANT" type="bool"/>
+        </addColumn>
+    </changeSet>
+
     <changeSet id="5" author="email" context="!cuba">
         <dropForeignKeyConstraint baseTableName="EMAIL_SENDING_ATTACHMENT"
                                   constraintName="FK_EMAIL_ATTACHMENT_MESSAGE"/>

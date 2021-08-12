@@ -28,4 +28,11 @@
     <fetchPlan class="io.jmix.email.entity.SendingAttachment" name="sendingAttachment.loadFromQueue"
                extends="_local"/>
 
+    <fetchPlan entity="email_SendingMessage" name="sendingMessage.deleteFile" extends="_instance_name">
+        <property name="contentTextFile"/>
+        <property name="attachments" fetchPlan="_instance_name">
+            <property name="contentFile"/>
+        </property>
+    </fetchPlan>
+
 </fetchPlans>

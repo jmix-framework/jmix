@@ -35,4 +35,16 @@ public class EmailerConfigPropertiesAccess {
     public static void setAdminAddress(EmailerProperties properties, String adminAddress) {
         properties.adminAddress = adminAddress;
     }
+
+    public static void setMaxAgeOfImportantMessages(EmailerProperties properties, int maxAgeOfImportantMessages) {
+        properties.maxAgeOfImportantMessages = maxAgeOfImportantMessages;
+    }
+
+    public static void setMaxAgeOfNonImportantMessages(EmailerProperties properties, int maxAgeOfNonImportantMessages) {
+        properties.maxAgeOfNonImportantMessages = maxAgeOfNonImportantMessages;
+    }
+
+    public static void setCleanFileStorage(EmailerProperties properties, boolean cleanFileStorage) {
+        properties.cleanFileStorage = cleanFileStorage;
+    }
 }

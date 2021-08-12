@@ -21,6 +21,7 @@
     </fetchPlan>
 
     <fetchPlan class="io.jmix.email.entity.SendingMessage" name="sendingMessage.browse">
+        <property name="important"/>
         <property name="address"/>
         <property name="cc"/>
         <property name="bcc"/>

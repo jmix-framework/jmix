@@ -26,14 +26,18 @@ import io.jmix.core.security.UserRepository;
 import io.jmix.data.DataConfiguration;
 import io.jmix.data.impl.JmixEntityManagerFactoryBean;
 import io.jmix.data.impl.JmixTransactionManager;
+import io.jmix.data.impl.liquibase.JmixLiquibase;
+import io.jmix.data.impl.liquibase.LiquibaseChangeLogProcessor;
 import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.eclipselink.EclipselinkConfiguration;
 import io.jmix.email.EmailConfiguration;
+import liquibase.integration.spring.SpringLiquibase;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.annotation.*;
 import org.springframework.core.task.SyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -67,6 +71,12 @@ public class EmailTestConfiguration extends CoreSecurityConfiguration {
 
     @Bean
     @Primary
+    JdbcTemplate jdbcTemplate() {
+        return new JdbcTemplate(dataSource());
+    }
+
+    @Bean
+    @Primary
     protected LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource,
                                                                           JpaVendorAdapter jpaVendorAdapter,
                                                                           DbmsSpecifics dbmsSpecifics,
@@ -79,6 +89,14 @@ public class EmailTestConfiguration extends CoreSecurityConfiguration {
     @Primary
     PlatformTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {
         return new JmixTransactionManager(Stores.MAIN, entityManagerFactory);
+    }
+
+    @Bean
+    public SpringLiquibase liquibase(DataSource dataSource, LiquibaseChangeLogProcessor processor) {
+        JmixLiquibase liquibase = new JmixLiquibase();
+        liquibase.setDataSource(dataSource);
+        liquibase.setChangeLogContent(processor.createMasterChangeLog(Stores.MAIN));
+        return liquibase;
     }
 
     @Bean

@@ -42,7 +42,8 @@ public interface Emailer {
      * @throws EmailException
      *          in case of any errors
      */
-    void sendEmail(String address, String subject, String body, String bodyContentType, EmailAttachment... attachment)
+    void sendEmail(String address, String subject, String body, String bodyContentType, Boolean important,
+                   EmailAttachment... attachment)
             throws EmailException;
 
     /**

@@ -41,6 +41,7 @@ public class EmailInfoBuilder {
     private String from;
     private String body;
     private String bodyContentType;
+    private boolean important;
     private List<EmailAttachment> attachments;
     private List<EmailHeader> headers;
 
@@ -165,6 +166,18 @@ public class EmailInfoBuilder {
         return this;
     }
 
+    /**
+     * @param important from {@link io.jmix.email.entity.SendingMessage}
+     */
+    public EmailInfoBuilder setImportant(boolean important) {
+        this.important = important;
+        return this;
+    }
+
+    public Boolean getImportant() {
+        return important;
+    }
+
     public List<EmailAttachment> getAttachments() {
         return attachments;
     }
@@ -209,6 +222,6 @@ public class EmailInfoBuilder {
     }
 
     public EmailInfo build() {
-        return new EmailInfo(addresses, cc, bcc, subject, from, body, bodyContentType, headers, attachments);
+        return new EmailInfo(addresses, cc, bcc, subject, from, body, bodyContentType, important, headers, attachments);
     }
 }

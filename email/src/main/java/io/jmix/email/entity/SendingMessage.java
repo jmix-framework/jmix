@@ -147,12 +147,23 @@ public class SendingMessage implements Serializable {
     @Column(name = "SYS_TENANT_ID")
     protected String sysTenantId;
 
+    @Column(name = "IMPORTANT")
+    protected Boolean important = false;
+
     @PrePersist
     protected void initLastAttemptTime() {
         if (getStatus() != null && getStatus() == SendingStatus.QUEUE && getAttemptsMade() == 0) {
             setUpdateTs(null);
             setUpdatedBy(null);
         }
+    }
+
+    public Boolean getImportant() {
+        return important;
+    }
+
+    public void setImportant(Boolean important) {
+        this.important = important;
     }
 
     public UUID getId() {

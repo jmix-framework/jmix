@@ -72,11 +72,15 @@ public class EmailerImpl implements Emailer {
     @Autowired
     protected ApplicationContext applicationContext;
 
+    @Autowired
+    protected EmailCleaner emailCleaner;
+
     @Override
-    public void sendEmail(String address, String subject, String body, String bodyContentType,
+    public void sendEmail(String address, String subject, String body, String bodyContentType, Boolean important,
                           EmailAttachment... attachment) throws EmailException {
         EmailInfo emailInfo = EmailInfoBuilder.create(address, subject, body)
                 .setBodyContentType(bodyContentType)
+                .setImportant(important)
                 .setAttachments(attachment)
                 .build();
         sendEmail(emailInfo);
@@ -129,6 +133,7 @@ public class EmailerImpl implements Emailer {
         sendingMessage.setAttemptsLimit(attemptsLimit);
         sendingMessage.setDeadline(deadline);
         sendingMessage.setAttemptsMade(0);
+        sendingMessage.setImportant(info.getImportant());
 
         String bodyContentType = info.getBodyContentType();
         if (Strings.isNullOrEmpty(bodyContentType)) {

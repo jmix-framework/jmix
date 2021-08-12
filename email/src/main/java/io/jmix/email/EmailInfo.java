@@ -46,6 +46,7 @@ public class EmailInfo implements Serializable {
     private String from;
     private String body;
     private String bodyContentType;
+    private boolean important;
     private List<EmailAttachment> attachments;
     private List<EmailHeader> headers;
 
@@ -60,6 +61,7 @@ public class EmailInfo implements Serializable {
               String from,
               String body,
               String bodyContentType,
+              boolean important,
               List<EmailHeader> headers,
               List<EmailAttachment> attachments) {
         this.addresses = addresses;
@@ -68,6 +70,7 @@ public class EmailInfo implements Serializable {
         this.subject = subject;
         this.from = from;
         this.body = body;
+        this.important = important;
         this.bodyContentType = bodyContentType;
         this.headers = headers;
         this.attachments = attachments;
@@ -150,5 +153,13 @@ public class EmailInfo implements Serializable {
 
     public void setBcc(String bcc) {
         this.bcc = bcc;
+    }
+
+    public Boolean getImportant() {
+        return important;
+    }
+
+    public void setImportant(Boolean important) {
+        this.important = important;
     }
 }

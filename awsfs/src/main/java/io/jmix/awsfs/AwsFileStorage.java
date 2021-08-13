@@ -240,6 +240,7 @@ public class AwsFileStorage implements FileStorage {
             s3Client.completeMultipartUpload(completeMultipartUploadRequest);
             return new FileRef(getStorageName(), fileKey, fileName);
         } catch (IOException | SdkException e) {
+            log.error("Error saving file to S3 storage", e);
             String message = String.format("Could not save file %s.", fileName);
             throw new FileStorageException(FileStorageException.Type.IO_EXCEPTION, message);
         }
@@ -262,6 +263,7 @@ public class AwsFileStorage implements FileStorage {
                     .build();
             is = s3Client.getObject(getObjectRequest, ResponseTransformer.toInputStream());
         } catch (SdkException e) {
+            log.error("Error loading file from S3 storage", e);
             String message = String.format("Could not load file %s.", reference.getFileName());
             throw new FileStorageException(FileStorageException.Type.IO_EXCEPTION, message);
         }
@@ -278,6 +280,7 @@ public class AwsFileStorage implements FileStorage {
                     .build();
             s3Client.deleteObject(deleteObjectRequest);
         } catch (SdkException e) {
+            log.error("Error removing file from S3 storage", e);
             String message = String.format("Could not delete file %s.", reference.getFileName());
             throw new FileStorageException(FileStorageException.Type.IO_EXCEPTION, message);
         }

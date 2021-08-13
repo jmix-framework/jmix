@@ -41,6 +41,7 @@ import org.springframework.security.web.authentication.session.CompositeSessionA
 import org.springframework.security.web.authentication.session.ConcurrentSessionControlAuthenticationStrategy;
 import org.springframework.security.web.authentication.session.RegisterSessionAuthenticationStrategy;
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
+import org.springframework.security.web.session.HttpSessionEventPublisher;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -125,6 +126,11 @@ public class SecurityConfiguration {
     @Bean(name = "sec_SessionRegistry")
     public SessionRegistry sessionRegistry() {
         return new SessionRegistryImpl();
+    }
+
+    @Bean(name = "sec_HttpSessionEventPublisher")
+    public HttpSessionEventPublisher httpSessionEventPublisher() {
+        return new HttpSessionEventPublisher();
     }
 
     @Bean(name = "sec_PreAuthenticationChecks")

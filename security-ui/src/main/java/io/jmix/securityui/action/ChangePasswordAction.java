@@ -35,7 +35,6 @@ import io.jmix.ui.component.Component;
 import io.jmix.ui.component.PasswordField;
 import io.jmix.ui.component.ValidationErrors;
 import io.jmix.ui.component.data.meta.EntityDataUnit;
-import io.jmix.ui.UiComponentProperties;
 import io.jmix.ui.screen.UiControllerUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -71,11 +70,6 @@ public class ChangePasswordAction extends SecuredListAction implements Action.Ex
     @Autowired
     public void setNotifications(Notifications notifications) {
         this.notifications = notifications;
-    }
-
-    @Autowired
-    protected void setUiComponentProperties(UiComponentProperties componentProperties) {
-        setShortcut(componentProperties.getTableEditShortcut());
     }
 
     @Autowired

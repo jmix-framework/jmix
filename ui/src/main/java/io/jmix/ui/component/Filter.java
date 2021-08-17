@@ -23,9 +23,11 @@ import io.jmix.ui.UiComponentProperties;
 import io.jmix.ui.app.filter.condition.AddConditionScreen;
 import io.jmix.ui.component.filter.configuration.DesignTimeConfiguration;
 import io.jmix.ui.component.filter.configuration.RunTimeConfiguration;
+import io.jmix.ui.meta.CanvasBehaviour;
 import io.jmix.ui.meta.CanvasIconSize;
 import io.jmix.ui.meta.PropertyType;
 import io.jmix.ui.meta.StudioComponent;
+import io.jmix.ui.meta.StudioElementsGroup;
 import io.jmix.ui.meta.StudioProperties;
 import io.jmix.ui.meta.StudioProperty;
 import io.jmix.ui.model.DataLoader;
@@ -46,13 +48,14 @@ import java.util.function.Predicate;
         category = "Components",
         xmlElement = "filter",
         icon = "io/jmix/ui/icon/component/filter.svg",
-        canvasIconSize = CanvasIconSize.LARGE,
+        canvasBehaviour = CanvasBehaviour.FILTER,
         documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/filter.html"
 )
 @StudioProperties(
         properties = {
                 @StudioProperty(name = "id", type = PropertyType.COMPONENT_ID, required = true),
-                @StudioProperty(name = "width", type = PropertyType.SIZE, defaultValue = "100%")
+                @StudioProperty(name = "width", type = PropertyType.SIZE, defaultValue = "100%"),
+                @StudioProperty(name = "caption", type = PropertyType.LOCALIZED_STRING, defaultValue = "Filter")
         }
 )
 public interface Filter extends Component, Component.BelongToFrame, Component.HasDescription, Component.HasCaption,
@@ -201,6 +204,11 @@ public interface Filter extends Component, Component.BelongToFrame, Component.Ha
      * @see DesignTimeConfiguration
      * @see RunTimeConfiguration
      */
+    @StudioElementsGroup(
+            xmlElement = "configurations",
+            caption = "Configurations",
+            documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/filter.html#configuration"
+    )
     void addConfiguration(Configuration configuration);
 
     /**
@@ -258,6 +266,11 @@ public interface Filter extends Component, Component.BelongToFrame, Component.Ha
      * @see AddConditionScreen
      * @see RunTimeConfiguration
      */
+    @StudioElementsGroup(
+            xmlElement = "conditions",
+            caption = "Conditions",
+            documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/filter.html#add-condition"
+    )
     void addCondition(FilterComponent filterComponent);
 
     /**

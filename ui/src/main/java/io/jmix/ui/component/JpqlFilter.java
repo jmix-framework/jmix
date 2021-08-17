@@ -17,6 +17,9 @@
 package io.jmix.ui.component;
 
 import io.jmix.core.querycondition.JpqlCondition;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioProperty;
 import io.jmix.ui.model.DataLoader;
 
 import javax.annotation.Nullable;
@@ -30,6 +33,13 @@ import javax.annotation.Nullable;
  *
  * @param <V> value type
  */
+@StudioElement(
+        caption = "JPQLFilter",
+        xmlElement = "jpqlFilter",
+        defaultProperty = "parameterClass",
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/filter-components.html#jpql-filter",
+        unsupportedProperties = {"dataLoader", "captionWidth", "autoApply", "captionPosition",}
+)
 public interface JpqlFilter<V> extends SingleFilterComponent<V> {
 
     String NAME = "jpqlFilter";
@@ -50,6 +60,7 @@ public interface JpqlFilter<V> extends SingleFilterComponent<V> {
      *
      * @param parameterClass a Java class of the associated query parameter
      */
+    @StudioProperty(type = PropertyType.JAVA_CLASS_NAME, required = true, typeParameter = "V")
     void setParameterClass(Class parameterClass);
 
     /**
@@ -106,6 +117,7 @@ public interface JpqlFilter<V> extends SingleFilterComponent<V> {
      *
      * @param hasInExpression whether the query condition has an IN expression
      */
+    @StudioProperty(defaultValue = "false")
     void setHasInExpression(boolean hasInExpression);
 
     /**

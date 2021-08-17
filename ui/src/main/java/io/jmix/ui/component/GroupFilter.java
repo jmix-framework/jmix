@@ -16,6 +16,7 @@
 
 package io.jmix.ui.component;
 
+import io.jmix.ui.meta.StudioElement;
 import io.jmix.ui.model.DataLoader;
 import io.jmix.ui.UiComponentProperties;
 
@@ -24,6 +25,14 @@ import io.jmix.ui.UiComponentProperties;
  * as its root element. This component can contain {@link FilterComponent}s and can be used for filtering entities
  * returned by the {@link DataLoader}.
  */
+@StudioElement(
+        caption = "GroupFilter",
+        xmlElement = "groupFilter",
+        defaultProperty = "operation",
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/filter-components.html#group-filter",
+        unsupportedProperties = {"dataLoader", "autoApply", "captionPosition", "columnsCount", "contextHelpText",
+                "contextHelpTextHtmlEnabled", "width"}
+)
 public interface GroupFilter extends LogicalFilterComponent, Component.BelongToFrame, CompositeWithHtmlCaption,
         CompositeWithHtmlDescription, CompositeWithIcon, CompositeWithContextHelp, HasHtmlSanitizer,
         SupportsCaptionPosition, SupportsColumnsCount {

@@ -22,11 +22,27 @@ import io.jmix.ui.component.Filter;
 import io.jmix.ui.component.FilterComponent;
 import io.jmix.ui.component.LogicalFilterComponent;
 import io.jmix.ui.component.SingleFilterComponent;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioProperties;
+import io.jmix.ui.meta.StudioProperty;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
+@StudioElement(
+        xmlElement = "configuration",
+        caption = "Design-time Configuration",
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/filter.html#design-time-configuration"
+)
+@StudioProperties(
+        properties = {
+                @StudioProperty(name = "default", type = PropertyType.BOOLEAN, defaultValue = "false"),
+                @StudioProperty(name = "operation", type = PropertyType.ENUMERATION, defaultValue = "AND",
+                        options = {"AND", "OR"})
+        }
+)
 public class DesignTimeConfiguration implements Filter.Configuration {
 
     protected final String id;
@@ -51,6 +67,7 @@ public class DesignTimeConfiguration implements Filter.Configuration {
         return owner;
     }
 
+    @StudioProperty(name = "id", type = PropertyType.STRING, required = true)
     @Override
     public String getId() {
         return id;
@@ -62,6 +79,7 @@ public class DesignTimeConfiguration implements Filter.Configuration {
         return name;
     }
 
+    @StudioProperty(name = "name", type = PropertyType.LOCALIZED_STRING)
     @Override
     public void setName(@Nullable String name) {
         throw new UnsupportedOperationException("You cannot set name attribute for design-time configuration. " +
@@ -95,6 +113,7 @@ public class DesignTimeConfiguration implements Filter.Configuration {
                 "Use FilterCopyAction to create a modifiable copy of configuration");
     }
 
+    @StudioElement
     @Override
     public boolean isFilterComponentModified(FilterComponent filterComponent) {
         return false;

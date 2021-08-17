@@ -16,6 +16,9 @@
 
 package io.jmix.ui.component;
 
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioProperties;
+import io.jmix.ui.meta.StudioProperty;
 import io.jmix.ui.model.DataLoader;
 
 /**
@@ -27,6 +30,11 @@ import io.jmix.ui.model.DataLoader;
  * @see JpqlFilter
  * @see LogicalFilterComponent
  */
+@StudioProperties(
+        properties = {
+                @StudioProperty(name = "defaultValue", type = PropertyType.STRING)
+        }
+)
 public interface SingleFilterComponent<V> extends FilterComponent, Component.BelongToFrame, HasValue<V>,
         Component.HasCaption, Component.HasIcon, Component.Focusable, Component.Editable, HasHtmlCaption,
         HasHtmlDescription, HasHtmlSanitizer, SupportsCaptionPosition, Requirable, Validatable,
@@ -42,6 +50,7 @@ public interface SingleFilterComponent<V> extends FilterComponent, Component.Bel
      *
      * @param parameterName a name of the associated query parameter name
      */
+    @StudioProperty(type = PropertyType.STRING)
     void setParameterName(String parameterName);
 
     /**
@@ -71,5 +80,6 @@ public interface SingleFilterComponent<V> extends FilterComponent, Component.Bel
      *
      * @param captionWidth a string width representation
      */
+    @StudioProperty(type = PropertyType.SIZE, defaultValue = "100%")
     void setCaptionWidth(String captionWidth);
 }

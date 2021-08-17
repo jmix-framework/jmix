@@ -19,6 +19,9 @@ package io.jmix.ui.component;
 import io.jmix.core.metamodel.datatype.impl.EnumClass;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.LogicalCondition;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioProperty;
 import io.jmix.ui.model.DataLoader;
 
 import javax.annotation.Nullable;
@@ -45,6 +48,7 @@ public interface LogicalFilterComponent extends FilterComponent {
      * @param filterComponent a {@link FilterComponent} to add
      * @see FilterComponent#getQueryCondition()
      */
+    @StudioElement
     void add(FilterComponent filterComponent);
 
     /**
@@ -80,6 +84,7 @@ public interface LogicalFilterComponent extends FilterComponent {
      *
      * @param operation a filtering operation
      */
+    @StudioProperty(type = PropertyType.ENUMERATION, initialValue = "AND", options = {"AND", "OR"}, required = true)
     void setOperation(Operation operation);
 
     /**
@@ -92,6 +97,7 @@ public interface LogicalFilterComponent extends FilterComponent {
      *
      * @param operationCaptionVisible whether to show operation caption
      */
+    @StudioProperty(defaultValue = "true")
     void setOperationCaptionVisible(boolean operationCaptionVisible);
 
     /**

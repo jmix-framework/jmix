@@ -68,6 +68,11 @@ public enum CanvasBehaviour {
     DATE_PICKER,
 
     /**
+     * Component is shown on canvas as a filter.
+     */
+    FILTER,
+
+    /**
      * Component is shown on canvas as an input field.
      */
     INPUT_FIELD,
@@ -91,6 +96,11 @@ public enum CanvasBehaviour {
      * Component is shown on canvas as a popupButton.
      */
     POPUP_BUTTON,
+
+    /**
+     * Component is shown on canvas as a propertyFilter.
+     */
+    PROPERTY_FILTER,
 
     /**
      * Component is shown on canvas as a richTextArea.

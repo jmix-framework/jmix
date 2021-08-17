@@ -18,6 +18,8 @@ package io.jmix.ui.component;
 
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.querycondition.Condition;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioProperty;
 import io.jmix.ui.model.DataLoader;
 
 /**
@@ -37,6 +39,7 @@ public interface FilterComponent extends Component {
      *
      * @param dataLoader a {@link DataLoader} to set
      */
+    @StudioProperty(type = PropertyType.DATALOADER_REF, required = true)
     void setDataLoader(DataLoader dataLoader);
 
     /**
@@ -53,6 +56,7 @@ public interface FilterComponent extends Component {
      *                  applied to the {@link DataLoader} when the value component
      *                  value is changed
      */
+    @StudioProperty(defaultValue = "true")
     void setAutoApply(boolean autoApply);
 
     /**

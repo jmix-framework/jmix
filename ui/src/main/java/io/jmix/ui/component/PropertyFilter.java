@@ -19,6 +19,14 @@ package io.jmix.ui.component;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.metamodel.datatype.impl.EnumClass;
 import io.jmix.core.querycondition.PropertyCondition;
+import io.jmix.ui.meta.CanvasBehaviour;
+import io.jmix.ui.meta.PropertiesConstraint;
+import io.jmix.ui.meta.PropertiesGroup;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioComponent;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioProperties;
+import io.jmix.ui.meta.StudioProperty;
 import io.jmix.ui.model.DataLoader;
 
 import javax.annotation.Nullable;
@@ -34,6 +42,25 @@ import java.util.function.Consumer;
  *
  * @param <V> value type
  */
+@StudioComponent(
+        caption = "PropertyFilter",
+        category = "Components",
+        xmlElement = "propertyFilter",
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/filter-components.html#property-filter",
+        canvasBehaviour = CanvasBehaviour.PROPERTY_FILTER
+)
+@StudioElement(
+        caption = "PropertyFilter",
+        xmlElement = "propertyFilter",
+        defaultProperty = "property",
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/filter-components.html#property-filter",
+        unsupportedProperties = {"dataLoader", "captionWidth", "autoApply", "captionPosition"}
+)
+@StudioProperties(
+        groups = {
+                @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING, properties = {"dataLoader", "property"})
+        }
+)
 public interface PropertyFilter<V> extends SingleFilterComponent<V> {
 
     String NAME = "propertyFilter";
@@ -54,6 +81,7 @@ public interface PropertyFilter<V> extends SingleFilterComponent<V> {
      *
      * @param property entity property name
      */
+    @StudioProperty(type = PropertyType.PROPERTY_PATH_REF, required = true, typeParameter = "V")
     void setProperty(String property);
 
     /**
@@ -78,6 +106,7 @@ public interface PropertyFilter<V> extends SingleFilterComponent<V> {
      *
      * @param operationEditable whether an operation selector is visible
      */
+    @StudioProperty(defaultValue = "false")
     void setOperationEditable(boolean operationEditable);
 
     /**
@@ -90,6 +119,7 @@ public interface PropertyFilter<V> extends SingleFilterComponent<V> {
      *
      * @param operationCaptionVisible whether to show operation caption
      */
+    @StudioProperty(defaultValue = "true")
     void setOperationCaptionVisible(boolean operationCaptionVisible);
 
     /**

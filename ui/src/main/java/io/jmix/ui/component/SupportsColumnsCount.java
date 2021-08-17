@@ -16,6 +16,8 @@
 
 package io.jmix.ui.component;
 
+import io.jmix.ui.meta.StudioProperty;
+
 /**
  * Interface to be implemented by a component that supports different values of the number of columns
  * that will be displayed in one row.
@@ -34,5 +36,6 @@ public interface SupportsColumnsCount {
      *
      * @param columnsCount the number of columns to be displayed on one row
      */
+    @StudioProperty(defaultValue = "3")
     void setColumnsCount(int columnsCount);
 }

@@ -34,6 +34,7 @@
 package excel_exporter
 
 import io.jmix.core.Messages
+import io.jmix.pivottable.model.extension.PivotDataCell
 import io.jmix.pivottable.model.extension.PivotDataSeparatedCell
 import io.jmix.ui.download.Downloader
 import io.jmix.pivottable.component.impl.PivotExcelExporter
@@ -65,7 +66,7 @@ class ExcelExporterTest extends Specification {
         exporter = new TestPivotExcelExporter(pivotTable)
 
         Messages messages = Mock()
-        messages.getMessage("pivotExcelExporter.doubleFormat") >> {String key -> "#,##0.00##############"}
+        messages.getMessage("pivotExcelExporter.doubleFormat") >> { String key -> "#,##0.00##############" }
         exporter.setMessages(messages)
     }
 
@@ -134,7 +135,7 @@ class ExcelExporterTest extends Specification {
                     continue
                 }
 
-                cell.getCellType() == CellType.NUMERIC
+                assert cell.getCellType() == CellType.NUMERIC
                 if (j == 9 || i == 7) {
                     def cellStyleIndex = cell.cellStyle.fontIndexAsInt
                     assert exporter.wb.getFontAt(cellStyleIndex).bold
@@ -156,7 +157,11 @@ class ExcelExporterTest extends Specification {
 
         @Override
         protected void initCell(Cell excelCell, PivotDataSeparatedCell cell) {
-            excelCell.setCellValue(cell.getValue());
+            Object cellValue = cell.getType() == PivotDataCell.Type.DECIMAL
+                    ? Double.parseDouble(cell.getValue())
+                    : cell.getValue()
+            excelCell.setCellValue(cellValue);
+
             if (cell.isBold()) {
                 excelCell.setCellStyle(cellLabelBoldStyle);
             }

@@ -53,9 +53,9 @@ public class JmixPivotTableSceneWidget extends Widget implements HasEnabled {
                 refreshHandler, events.getCellClickHandler(), enabled);
         setShowEmptyDataMessage(!config.hasData());
 
-        // as non editable pivotTable doesn't send refresh event, we send it manually
+        // as non-editable pivotTable doesn't send refresh event, we send it manually
         if (refreshHandlerSubscriber != null && !isEditable(config)) {
-            refreshHandlerSubscriber.accept(null);
+            firePivotTableRefreshEvent(refreshHandlerSubscriber, config);
         }
     }
 
@@ -83,5 +83,10 @@ public class JmixPivotTableSceneWidget extends Widget implements HasEnabled {
 
     protected native boolean isEditable(PivotTableConfig config) /*-{
         return config.options.editable;
+    }-*/;
+
+    protected native void firePivotTableRefreshEvent(Consumer<JsRefreshEvent> refreshHandler,
+                                                     PivotTableConfig config) /*-{
+        refreshHandler.@java.util.function.Consumer::accept(*)(config.options);
     }-*/;
 }

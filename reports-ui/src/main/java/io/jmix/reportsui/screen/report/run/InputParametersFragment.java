@@ -29,7 +29,6 @@ import io.jmix.reportsui.screen.report.validators.ReportCollectionValidator;
 import io.jmix.reportsui.screen.report.validators.ReportParamFieldValidator;
 import io.jmix.ui.component.*;
 import io.jmix.ui.model.CollectionContainer;
-import io.jmix.ui.model.CollectionLoader;
 import io.jmix.ui.screen.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -70,9 +69,6 @@ public class InputParametersFragment extends ScreenFragment {
 
     @Autowired
     protected CollectionContainer<ReportTemplate> templateReportsDc;
-
-    @Autowired
-    protected CollectionLoader<ReportTemplate> templateReportsDl;
 
     @Autowired
     protected ObjectToStringConverter objectToStringConverter;
@@ -145,10 +141,7 @@ public class InputParametersFragment extends ScreenFragment {
                 }
             }
             if (report.getTemplates() != null && report.getTemplates().size() > 1) {
-                if (!report.getIsTmp()) {
-                    templateReportsDl.setParameter("reportId", report.getId());
-                    templateReportsDl.load();
-                }
+                templateReportsDc.getMutableItems().addAll(report.getTemplates());
             }
         }
     }
@@ -190,7 +183,7 @@ public class InputParametersFragment extends ScreenFragment {
         label.setStyleName("jmix-report-parameter-caption");
 
         if (currentGridRow == 2) {
-            if(field instanceof Component.Focusable) {
+            if (field instanceof Component.Focusable) {
                 ((Component.Focusable) field).focus();
             }
         }
@@ -206,7 +199,6 @@ public class InputParametersFragment extends ScreenFragment {
     public void initTemplateAndOutputSelect() {
         if (report != null) {
             if (report.getTemplates() != null && report.getTemplates().size() > 1) {
-                templateReportsDc.getMutableItems().addAll(report.getTemplates());
                 templateComboBox.setValue(report.getDefaultTemplate());
                 setTemplateVisible(true);
             }

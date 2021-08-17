@@ -18,11 +18,7 @@
 
     <data>
         <collection id="templateReportsDc"
-                    class="io.jmix.reports.entity.ReportTemplate"
-                    fetchPlan="_local">
-            <loader id="templateReportsDl">
-                <query>select e from report_ReportTemplate e where e.report.id = :reportId</query>
-            </loader>
+                    class="io.jmix.reports.entity.ReportTemplate">
         </collection>
     </data>
 

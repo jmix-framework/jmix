@@ -45,7 +45,8 @@ import org.springframework.stereotype.Component;
         xmlElement = "notBlank",
         target = {"io.jmix.ui.component.ComboBox", "io.jmix.ui.component.TextInputField",
                 "io.jmix.ui.component.SourceCodeEditor"},
-        unsupportedTarget = {"io.jmix.ui.component.EntityComboBox"}
+        unsupportedTarget = {"io.jmix.ui.component.EntityComboBox"},
+        icon = "io/jmix/ui/icon/element/validator.svg"
 )
 @Component("ui_NotBlankValidator")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)

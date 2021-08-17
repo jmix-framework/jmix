@@ -55,7 +55,8 @@ import static io.jmix.ui.component.validation.ValidatorHelper.getNumberConstrain
         xmlElement = "positive",
         target = {"io.jmix.ui.component.ComboBox", "io.jmix.ui.component.MaskedField",
                 "io.jmix.ui.component.TextArea", "io.jmix.ui.component.TextField"},
-        unsupportedTarget = {"io.jmix.ui.component.EntityComboBox"}
+        unsupportedTarget = {"io.jmix.ui.component.EntityComboBox"},
+        icon = "io/jmix/ui/icon/element/validator.svg"
 )
 @Component("ui_PositiveValidator")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)

@@ -35,7 +35,8 @@ import java.util.Set;
         caption = "Presentations",
         category = "Facets",
         description = "Provides the ability to apply and save presentations for components",
-        defaultProperty = "auto"
+        defaultProperty = "auto",
+        icon = "io/jmix/ui/icon/facet/presentations.svg"
 )
 public interface PresentationsFacet extends Facet {
 
@@ -62,6 +63,8 @@ public interface PresentationsFacet extends Facet {
      * @param ids component ids
      */
     @StudioCollection(xmlElement = "components",
+            icon = "io/jmix/ui/icon/element/components.svg",
+            itemIcon = "io/jmix/ui/icon/element/component.svg",
             itemXmlElement = "component",
             itemCaption = "Component Id",
             itemProperties = {

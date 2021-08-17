@@ -25,7 +25,8 @@ import io.jmix.ui.meta.StudioProperty;
  */
 @StudioElement(
         caption = "RelativePath Resource",
-        xmlElement = "relativePath"
+        xmlElement = "relativePath",
+        icon = "io/jmix/ui/icon/element/resource.svg"
 )
 public interface RelativePathResource extends Resource, ResourceView.HasMimeType {
 

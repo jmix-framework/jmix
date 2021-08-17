@@ -27,7 +27,8 @@ import org.springframework.stereotype.Component;
 
 @StudioElement(
         caption = "Loader Provider",
-        xmlElement = "loaderProvider"
+        xmlElement = "loaderProvider",
+        icon = "io/jmix/ui/icon/element/provider.svg"
 )
 @StudioProperties(
         properties = {

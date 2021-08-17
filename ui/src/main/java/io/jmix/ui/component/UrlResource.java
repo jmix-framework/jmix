@@ -27,7 +27,8 @@ import java.net.URL;
  */
 @StudioElement(
         caption = "URL Resource",
-        xmlElement = "url"
+        xmlElement = "url",
+        icon = "io/jmix/ui/icon/element/resource.svg"
 )
 public interface UrlResource extends Resource, ResourceView.HasMimeType {
 

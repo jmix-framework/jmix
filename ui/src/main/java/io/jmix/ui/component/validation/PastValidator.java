@@ -54,7 +54,8 @@ import java.util.Date;
 @StudioElement(
         caption = "PastValidator",
         xmlElement = "past",
-        target = {"io.jmix.ui.component.DateField", "io.jmix.ui.component.TimeField"}
+        target = {"io.jmix.ui.component.DateField", "io.jmix.ui.component.TimeField"},
+        icon = "io/jmix/ui/icon/element/validator.svg"
 )
 @Component("ui_PastValidator")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)

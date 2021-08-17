@@ -24,7 +24,8 @@ import io.jmix.ui.meta.StudioProperty;
  */
 @StudioElement(
         caption = "Theme Resource",
-        xmlElement = "theme"
+        xmlElement = "theme",
+        icon = "io/jmix/ui/icon/element/resource.svg"
 )
 public interface ThemeResource extends Resource {
 

@@ -36,7 +36,8 @@ public interface HasValidator<V> {
      * @see ValidationException
      */
     @StudioElementsGroup(caption = "Validators",
-            xmlElement = "validators")
+            xmlElement = "validators",
+            icon = "io/jmix/ui/icon/element/validators.svg")
     void addValidator(Validator<? super V> validator);
 
     /**

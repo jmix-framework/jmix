@@ -58,7 +58,8 @@ import java.util.Date;
 @StudioElement(
         caption = "FutureValidator",
         xmlElement = "future",
-        target = {"io.jmix.ui.component.DateField", "io.jmix.ui.component.TimeField"}
+        target = {"io.jmix.ui.component.DateField", "io.jmix.ui.component.TimeField"},
+        icon = "io/jmix/ui/icon/element/validator.svg"
 )
 @Component("ui_FutureValidator")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)

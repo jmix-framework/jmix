@@ -55,7 +55,8 @@ import java.util.regex.Pattern;
         xmlElement = "regexp",
         target = {"io.jmix.ui.component.ComboBox", "io.jmix.ui.component.TextInputField",
                 "io.jmix.ui.component.SourceCodeEditor"},
-        unsupportedTarget = {"io.jmix.ui.component.EntityComboBox"}
+        unsupportedTarget = {"io.jmix.ui.component.EntityComboBox"},
+        icon = "io/jmix/ui/icon/element/validator.svg"
 )
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 @Component("ui_RegexpValidator")

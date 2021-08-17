@@ -30,7 +30,8 @@ import org.springframework.stereotype.Component;
 
 @StudioElement(
         caption = "Container Provider",
-        xmlElement = "containerProvider"
+        xmlElement = "containerProvider",
+        icon = "io/jmix/ui/icon/element/provider.svg"
 )
 @StudioProperties(
         properties = {

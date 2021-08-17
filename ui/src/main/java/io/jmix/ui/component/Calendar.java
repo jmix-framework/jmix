@@ -248,7 +248,9 @@ public interface Calendar<V> extends Component.BelongToFrame, Component.HasCapti
                     @StudioProperty(name = "dayOfWeek", type = PropertyType.ENUMERATION,
                             options = {"@link java.time.DayOfWeek"}, required = true),
                     @StudioProperty(name = "value", type = PropertyType.LOCALIZED_STRING, required = true)
-            }
+            },
+            icon = "io/jmix/ui/icon/element/dayNames.svg",
+            itemIcon = "io/jmix/ui/icon/element/dayName.svg"
     )
     void setDayNames(Map<DayOfWeek, String> dayNames);
 
@@ -269,7 +271,9 @@ public interface Calendar<V> extends Component.BelongToFrame, Component.HasCapti
                     @StudioProperty(name = "month", type = PropertyType.ENUMERATION,
                             options = {"@link java.time.Month"}, required = true),
                     @StudioProperty(name = "value", type = PropertyType.LOCALIZED_STRING, required = true)
-            }
+            },
+            icon = "io/jmix/ui/icon/element/monthNames.svg",
+            itemIcon = "io/jmix/ui/icon/element/monthName.svg"
     )
     void setMonthNames(Map<Month, String> monthNames);
 

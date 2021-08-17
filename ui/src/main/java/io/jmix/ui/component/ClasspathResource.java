@@ -29,7 +29,8 @@ import io.jmix.ui.meta.StudioProperty;
  */
 @StudioElement(
         caption = "Classpath Resource",
-        xmlElement = "classpath"
+        xmlElement = "classpath",
+        icon = "io/jmix/ui/icon/element/resource.svg"
 )
 public interface ClasspathResource extends Resource, ResourceView.HasMimeType, ResourceView.HasStreamSettings {
 

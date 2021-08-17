@@ -27,7 +27,8 @@ import java.io.File;
  */
 @StudioElement(
         caption = "File Resource",
-        xmlElement = "file"
+        xmlElement = "file",
+        icon = "io/jmix/ui/icon/element/resource.svg"
 )
 public interface FileResource extends Resource, ResourceView.HasStreamSettings {
 

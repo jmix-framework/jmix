@@ -43,7 +43,8 @@ public interface ResourceView extends Component, Component.HasCaption, HasContex
      *
      * @param resource Resource instance
      */
-    @StudioElementsGroup(caption = "Resource", xmlElement = "resource")
+    @StudioElementsGroup(caption = "Resource", xmlElement = "resource",
+            icon = "io/jmix/ui/icon/element/resource.svg")
     void setSource(@Nullable Resource resource);
 
     /**

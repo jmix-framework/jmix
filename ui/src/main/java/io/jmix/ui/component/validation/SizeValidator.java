@@ -57,7 +57,8 @@ import java.util.Map;
         target = {"io.jmix.ui.component.OptionsField", "io.jmix.ui.component.TextInputField",
                 "io.jmix.ui.component.SourceCodeEditor", "io.jmix.ui.component.TagField",
                 "io.jmix.ui.component.ValuesPicker"},
-        unsupportedTarget = {"io.jmix.ui.component.EntityComboBox"}
+        unsupportedTarget = {"io.jmix.ui.component.EntityComboBox"},
+        icon = "io/jmix/ui/icon/element/validator.svg"
 )
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 @Component("ui_SizeValidator")

@@ -53,7 +53,14 @@ task contentJarZhCn(type: Jar) {
     }
 }
 
-assemble.dependsOn(contentJarRu, contentJarFr, contentJarDe, contentJarZhCn)
+task contentJarRo(type: Jar) {
+    archiveBaseName = 'jmix-translations-ro'
+    includeEmptyDirs = false
+    from("content") {
+        include("**/messages_ro.properties")
+    }
+}
+assemble.dependsOn(contentJarRu, contentJarFr, contentJarDe, contentJarZhCn, contentJarRo)
 
 publishing {
     publications {
@@ -72,6 +79,10 @@ publishing {
         ZhCn(MavenPublication) {
             artifactId = 'jmix-translations-zh-cn'
             artifact(contentJarZhCn)
+        }
+        Ro(MavenPublication) {
+            artifactId = 'jmix-translations-ro'
+            artifact(contentJarRo)
         }
     }
     if (rootProject.hasProperty('jmixUploadUrl')) {

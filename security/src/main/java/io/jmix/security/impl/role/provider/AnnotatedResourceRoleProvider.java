@@ -16,7 +16,9 @@
 
 package io.jmix.security.impl.role.provider;
 
+import io.jmix.core.DevelopmentException;
 import io.jmix.core.impl.scanning.JmixModulesClasspathScanner;
+import io.jmix.security.SecurityProperties;
 import io.jmix.security.impl.role.builder.AnnotatedRoleBuilder;
 import io.jmix.security.model.ResourceRole;
 import io.jmix.security.role.ResourceRoleProvider;
@@ -37,15 +39,26 @@ import java.util.stream.Collectors;
 @Component("sec_AnnotatedResourceRoleProvider")
 public class AnnotatedResourceRoleProvider implements ResourceRoleProvider {
 
+    private final JmixModulesClasspathScanner classpathScanner;
+
+    private final ResourceRoleDetector detector;
+
+    private final AnnotatedRoleBuilder annotatedRoleBuilder;
+
     protected Map<String, ResourceRole> roles;
 
     @Autowired
+    private SecurityProperties securityProperties;
+
+    @Autowired
     public AnnotatedResourceRoleProvider(JmixModulesClasspathScanner classpathScanner,
-                                         AnnotatedRoleBuilder annotatedRoleBuilder) {
-        Set<String> classNames = classpathScanner.getClassNames(ResourceRoleDetector.class);
-        roles = classNames.stream()
-                .map(annotatedRoleBuilder::createResourceRole)
-                .collect(Collectors.toMap(ResourceRole::getCode, Function.identity()));
+                                         AnnotatedRoleBuilder annotatedRoleBuilder,
+                                         ResourceRoleDetector detector) {
+        this.classpathScanner = classpathScanner;
+        this.annotatedRoleBuilder = annotatedRoleBuilder;
+        this.detector = detector;
+
+        buildRolesCache();
     }
 
     @Override
@@ -63,4 +76,22 @@ public class AnnotatedResourceRoleProvider implements ResourceRoleProvider {
     public boolean deleteRole(ResourceRole role) {
         throw new UnsupportedOperationException("Annotated role cannot be deleted");
     }
+
+    public void refreshRoles() {
+        if (securityProperties.isAnnotatedRolesHotDeployEnabled()) {
+            classpathScanner.refreshClassNames(detector);
+            buildRolesCache();
+            return;
+        }
+        throw new DevelopmentException("Annotated roles hot deploy is forbidden");
+    }
+
+    private void buildRolesCache() {
+        Set<String> classNames = classpathScanner.getClassNames(ResourceRoleDetector.class);
+
+        roles = classNames.stream()
+                .map(annotatedRoleBuilder::createResourceRole)
+                .collect(Collectors.toMap(ResourceRole::getCode, Function.identity()));
+    }
+
 }

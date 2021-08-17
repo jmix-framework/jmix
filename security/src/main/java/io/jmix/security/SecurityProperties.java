@@ -19,14 +19,21 @@ package io.jmix.security;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;
 import org.springframework.boot.context.properties.bind.DefaultValue;
-import org.springframework.boot.convert.DurationUnit;
-
-import java.time.Duration;
-import java.time.temporal.ChronoUnit;
 
 @ConfigurationProperties(prefix = "jmix.security")
 @ConstructorBinding
 public class SecurityProperties {
-    public SecurityProperties() {
+
+    boolean annotatedRolesHotDeployEnabled;
+
+    public SecurityProperties(@DefaultValue("true") boolean annotatedRolesHotDeployEnabled) {
+        this.annotatedRolesHotDeployEnabled = annotatedRolesHotDeployEnabled;
+    }
+
+    /**
+     * @return true if hot deploy of annotated (i.e., design-time) roles is enabled. Default value: true
+     */
+    public boolean isAnnotatedRolesHotDeployEnabled() {
+        return annotatedRolesHotDeployEnabled;
     }
 }

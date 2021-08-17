@@ -16,7 +16,9 @@
 
 package io.jmix.security.impl.role.provider;
 
+import io.jmix.core.DevelopmentException;
 import io.jmix.core.impl.scanning.JmixModulesClasspathScanner;
+import io.jmix.security.SecurityProperties;
 import io.jmix.security.impl.role.builder.AnnotatedRoleBuilder;
 import io.jmix.security.model.RowLevelRole;
 import io.jmix.security.role.RowLevelRoleProvider;
@@ -37,15 +39,26 @@ import java.util.stream.Collectors;
 @Component("sec_AnnotatedRowLevelRoleProvider")
 public class AnnotatedRowLevelRoleProvider implements RowLevelRoleProvider {
 
+    private final JmixModulesClasspathScanner classpathScanner;
+
+    private final RowLevelRoleDetector detector;
+
+    private final AnnotatedRoleBuilder annotatedRoleBuilder;
+
     protected Map<String, RowLevelRole> roles;
 
     @Autowired
+    private SecurityProperties securityProperties;
+
+    @Autowired
     public AnnotatedRowLevelRoleProvider(JmixModulesClasspathScanner classpathScanner,
-                                         AnnotatedRoleBuilder annotatedRoleBuilder) {
-        Set<String> classNames = classpathScanner.getClassNames(RowLevelRoleDetector.class);
-        roles = classNames.stream()
-                .map(annotatedRoleBuilder::createRowLevelRole)
-                .collect(Collectors.toMap(RowLevelRole::getCode, Function.identity()));
+                                         AnnotatedRoleBuilder annotatedRoleBuilder,
+                                         RowLevelRoleDetector detector) {
+        this.classpathScanner = classpathScanner;
+        this.annotatedRoleBuilder = annotatedRoleBuilder;
+        this.detector = detector;
+
+        buildRolesCache();
     }
 
     @Override
@@ -62,5 +75,23 @@ public class AnnotatedRowLevelRoleProvider implements RowLevelRoleProvider {
     @Override
     public boolean deleteRole(RowLevelRole role) {
         throw new UnsupportedOperationException("Annotated RowLevelRole cannot be deleted");
+    }
+
+    public void refreshRoles() {
+        if (securityProperties.isAnnotatedRolesHotDeployEnabled()) {
+            classpathScanner.refreshClassNames(detector);
+            buildRolesCache();
+            return;
+        }
+
+        throw new DevelopmentException("Annotated roles hot deploy is forbidden");
+    }
+
+    private void buildRolesCache() {
+        Set<String> classNames = classpathScanner.getClassNames(RowLevelRoleDetector.class);
+
+        roles = classNames.stream()
+                .map(annotatedRoleBuilder::createRowLevelRole)
+                .collect(Collectors.toMap(RowLevelRole::getCode, Function.identity()));
     }
 }

@@ -17,7 +17,7 @@
 package io.jmix.security.impl.role.builder;
 
 import com.google.common.collect.Sets;
-import io.jmix.core.common.util.ReflectionHelper;
+import io.jmix.core.ClassManager;
 import io.jmix.security.impl.role.builder.extractor.ResourcePolicyExtractor;
 import io.jmix.security.impl.role.builder.extractor.RowLevelPolicyExtractor;
 import io.jmix.security.model.*;
@@ -28,18 +28,22 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 @Component("sec_AnnotatedRoleBuilder")
 public class AnnotatedRoleBuilderImpl implements AnnotatedRoleBuilder {
 
     private final Collection<ResourcePolicyExtractor> resourcePolicyExtractors;
     private final Collection<RowLevelPolicyExtractor> rowLevelPolicyExtractors;
+    private final ClassManager classManager;
 
     @Autowired
     public AnnotatedRoleBuilderImpl(Collection<ResourcePolicyExtractor> resourcePolicyExtractors,
-                                    Collection<RowLevelPolicyExtractor> rowLevelPolicyExtractors) {
+                                    Collection<RowLevelPolicyExtractor> rowLevelPolicyExtractors,
+                                    ClassManager classManager) {
         this.resourcePolicyExtractors = resourcePolicyExtractors;
         this.rowLevelPolicyExtractors = rowLevelPolicyExtractors;
+        this.classManager = classManager;
     }
 
     @Override
@@ -72,13 +76,7 @@ public class AnnotatedRoleBuilderImpl implements AnnotatedRoleBuilder {
     }
 
     protected Class<?> loadClass(String className) {
-        Class<?> clazz;
-        try {
-            clazz = ReflectionHelper.loadClass(className);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(String.format("Cannot find role class: %s", className));
-        }
-        return clazz;
+        return Objects.requireNonNull(classManager.findClass(className), "Class " + className + " is not found");
     }
 
     protected void initBaseParameters(BaseRole role, String name, String code, String description) {

@@ -17,6 +17,13 @@
 package io.jmix.ui.component;
 
 import com.google.common.base.Preconditions;
+import io.jmix.ui.meta.CanvasBehaviour;
+import io.jmix.ui.meta.ContainerType;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioComponent;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioProperties;
+import io.jmix.ui.meta.StudioProperty;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
@@ -29,6 +36,21 @@ import java.util.Objects;
  * <p>
  * Each component must be located in the corresponding {@link Column}.
  */
+@StudioComponent(
+        caption = "ResponsiveGridLayout",
+        category = "Containers",
+        xmlElement = "responsiveGridLayout",
+        icon = "io/jmix/ui/icon/container/responsiveGridLayout.svg",
+        canvasBehaviour = CanvasBehaviour.CONTAINER,
+        containerType = ContainerType.RESPONSIVE_GRID,
+        unsupportedProperties = {"responsive", "width"},
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/containers/responsive-grid-layout.html"
+)
+@StudioProperties(
+        properties = {
+                @StudioProperty(name = "height", type = PropertyType.SIZE, defaultValue = "-1px", initialValue = "100px")
+        }
+)
 public interface ResponsiveGridLayout extends Component, Component.BelongToFrame, HasComponents,
         LayoutClickNotifier, HasHtmlSanitizer {
 
@@ -70,6 +92,7 @@ public interface ResponsiveGridLayout extends Component, Component.BelongToFrame
     /**
      * @return a list of contained rows
      */
+    @StudioElement
     List<Row> getRows();
 
     /**
@@ -91,6 +114,7 @@ public interface ResponsiveGridLayout extends Component, Component.BelongToFrame
      * @param containerType the container type to switch to, not {@code null}
      * @throws IllegalStateException if this responsive grid layout has been shown on a screen
      */
+    @StudioProperty(type = PropertyType.ENUMERATION, defaultValue = "FLUID", options = {"FLUID", "FIXED"})
     void setContainerType(ContainerType containerType);
 
     /**
@@ -180,6 +204,36 @@ public interface ResponsiveGridLayout extends Component, Component.BelongToFrame
      * <p>
      * Corresponds to the {@code <div class="row">} element.
      */
+    @StudioElement(
+            xmlElement = "row",
+            caption = "Row",
+            icon = "io/jmix/ui/icon/element/row.svg",
+            documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/containers/responsive-grid-layout.html#row-element"
+    )
+    @StudioProperties(
+            properties = {
+                    @StudioProperty(name = "alignItemsLg", type = PropertyType.ENUMERATION,
+                            options = {"START", "CENTER", "END", "BASELINE", "STRETCH"}),
+                    @StudioProperty(name = "alignItemsMd", type = PropertyType.ENUMERATION,
+                            options = {"START", "CENTER", "END", "BASELINE", "STRETCH"}),
+                    @StudioProperty(name = "alignItemsSm", type = PropertyType.ENUMERATION,
+                            options = {"START", "CENTER", "END", "BASELINE", "STRETCH"}),
+                    @StudioProperty(name = "alignItemsXl", type = PropertyType.ENUMERATION,
+                            options = {"START", "CENTER", "END", "BASELINE", "STRETCH"}),
+                    @StudioProperty(name = "colsLg", type = PropertyType.INTEGER),
+                    @StudioProperty(name = "colsMd", type = PropertyType.INTEGER),
+                    @StudioProperty(name = "colsSm", type = PropertyType.INTEGER),
+                    @StudioProperty(name = "colsXl", type = PropertyType.INTEGER),
+                    @StudioProperty(name = "justifyContentLg", type = PropertyType.ENUMERATION,
+                            options = {"AROUND", "BETWEEN", "CENTER", "END", "START"}),
+                    @StudioProperty(name = "justifyContentMd", type = PropertyType.ENUMERATION,
+                            options = {"AROUND", "BETWEEN", "CENTER", "END", "START"}),
+                    @StudioProperty(name = "justifyContentSm", type = PropertyType.ENUMERATION,
+                            options = {"AROUND", "BETWEEN", "CENTER", "END", "START"}),
+                    @StudioProperty(name = "justifyContentXl", type = PropertyType.ENUMERATION,
+                            options = {"AROUND", "BETWEEN", "CENTER", "END", "START"})
+            }
+    )
     interface Row extends GridElement {
 
         /**
@@ -218,6 +272,7 @@ public interface ResponsiveGridLayout extends Component, Component.BelongToFrame
         /**
          * @return a list of contained columns
          */
+        @StudioElement
         List<Column> getColumns();
 
         /**
@@ -235,6 +290,7 @@ public interface ResponsiveGridLayout extends Component, Component.BelongToFrame
          * @param guttersEnabled a boolean value specifying if the row should have gutters or not
          * @throws IllegalStateException if parent responsive grid layout has been shown on a screen
          */
+        @StudioProperty(defaultValue = "true")
         void setGuttersEnabled(boolean guttersEnabled);
 
         /**
@@ -262,6 +318,7 @@ public interface ResponsiveGridLayout extends Component, Component.BelongToFrame
          * @param height the height to be set
          * @throws IllegalStateException if parent responsive grid layout has been shown on a screen
          */
+        @StudioProperty(name = "height", type = PropertyType.SIZE, defaultValue = "-1px")
         void setHeight(String height);
 
         /**
@@ -302,6 +359,7 @@ public interface ResponsiveGridLayout extends Component, Component.BelongToFrame
          * @throws IllegalStateException if parent responsive grid layout has been shown on a screen
          * @see Row#setRowColumns(Map)
          */
+        @StudioProperty(name = "cols", type = PropertyType.INTEGER)
         default void setRowColumns(RowColumnsValue columnsValue) {
             setRowColumns(Breakpoint.XS, columnsValue);
         }
@@ -374,6 +432,7 @@ public interface ResponsiveGridLayout extends Component, Component.BelongToFrame
          * @throws IllegalStateException if parent responsive grid layout has been shown on a screen
          * @see Row#setAlignItems(Map)
          */
+        @StudioProperty(type = PropertyType.ENUMERATION, options = {"START", "CENTER", "END", "BASELINE", "STRETCH"})
         default void setAlignItems(AlignItems alignItems) {
             setAlignItems(Breakpoint.XS, alignItems);
         }
@@ -448,6 +507,7 @@ public interface ResponsiveGridLayout extends Component, Component.BelongToFrame
          * @throws IllegalStateException if parent responsive grid layout has been shown on a screen
          * @see Row#setJustifyContent(Map)
          */
+        @StudioProperty(type = PropertyType.ENUMERATION, options = {"AROUND", "BETWEEN", "CENTER", "END", "START"})
         default void setJustifyContent(JustifyContent justifyContent) {
             setJustifyContent(Breakpoint.XS, justifyContent);
         }
@@ -656,6 +716,37 @@ public interface ResponsiveGridLayout extends Component, Component.BelongToFrame
      * <p>
      * Corresponds to the {@code <div class="col">} element.
      */
+    @StudioElement(
+            xmlElement = "col",
+            caption = "Column",
+            icon = "io/jmix/ui/icon/element/col.svg",
+            documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/containers/responsive-grid-layout.html#col-element"
+    )
+    @StudioProperties(
+            properties = {
+                    @StudioProperty(name = "alignSelfLg", type = PropertyType.ENUMERATION,
+                            options = {"AUTO", "BASELINE", "CENTER", "END", "START", "STRETCH"}),
+                    @StudioProperty(name = "alignSelfMd", type = PropertyType.ENUMERATION,
+                            options = {"AUTO", "BASELINE", "CENTER", "END", "START", "STRETCH"}),
+                    @StudioProperty(name = "alignSelfSm", type = PropertyType.ENUMERATION,
+                            options = {"AUTO", "BASELINE", "CENTER", "END", "START", "STRETCH"}),
+                    @StudioProperty(name = "alignSelfXl", type = PropertyType.ENUMERATION,
+                            options = {"AUTO", "BASELINE", "CENTER", "END", "START", "STRETCH"}),
+                    @StudioProperty(name = "xs", type = PropertyType.STRING, options = {"AUTO", "DEFAULT"}),
+                    @StudioProperty(name = "sm", type = PropertyType.STRING, options = {"AUTO", "DEFAULT"}),
+                    @StudioProperty(name = "md", type = PropertyType.STRING, options = {"AUTO", "DEFAULT"}),
+                    @StudioProperty(name = "lg", type = PropertyType.STRING, options = {"AUTO", "DEFAULT"}),
+                    @StudioProperty(name = "xl", type = PropertyType.STRING, options = {"AUTO", "DEFAULT"}),
+                    @StudioProperty(name = "offsetLg", type = PropertyType.INTEGER),
+                    @StudioProperty(name = "offsetMd", type = PropertyType.INTEGER),
+                    @StudioProperty(name = "offsetSm", type = PropertyType.INTEGER),
+                    @StudioProperty(name = "offsetXl", type = PropertyType.INTEGER),
+                    @StudioProperty(name = "orderLg", type = PropertyType.STRING, options = {"FIRST", "LAST"}),
+                    @StudioProperty(name = "orderMd", type = PropertyType.STRING, options = {"FIRST", "LAST"}),
+                    @StudioProperty(name = "orderSm", type = PropertyType.STRING, options = {"FIRST", "LAST"}),
+                    @StudioProperty(name = "orderXl", type = PropertyType.STRING, options = {"FIRST", "LAST"})
+            }
+    )
     interface Column extends GridElement {
 
         /**
@@ -763,6 +854,8 @@ public interface ResponsiveGridLayout extends Component, Component.BelongToFrame
          * @throws IllegalStateException if parent responsive grid layout has been shown on a screen
          * @see Column#setAlignSelf(Map)
          */
+        @StudioProperty(type = PropertyType.ENUMERATION,
+                options = {"AUTO", "BASELINE", "CENTER", "END", "START", "STRETCH"})
         default void setAlignSelf(AlignSelf alignSelf) {
             setAlignSelf(Breakpoint.XS, alignSelf);
         }
@@ -836,6 +929,7 @@ public interface ResponsiveGridLayout extends Component, Component.BelongToFrame
          * @throws IllegalStateException if parent responsive grid layout has been shown on a screen
          * @see Column#setOrder(Map)
          */
+        @StudioProperty(name = "order", type = PropertyType.STRING, options = {"FIRST", "LAST"})
         default void setOrder(OrderValue orderValue) {
             setOrder(Breakpoint.XS, orderValue);
         }
@@ -909,6 +1003,7 @@ public interface ResponsiveGridLayout extends Component, Component.BelongToFrame
          * @throws IllegalStateException if parent responsive grid layout has been shown on a screen
          * @see Column#setOffset(Map)
          */
+        @StudioProperty(name = "offset", type = PropertyType.INTEGER)
         default void setOffset(OffsetValue offsetValue) {
             setOffset(Breakpoint.XS, offsetValue);
         }
@@ -1272,6 +1367,7 @@ public interface ResponsiveGridLayout extends Component, Component.BelongToFrame
          * @param id an alphanumeric id
          * @throws IllegalStateException if parent responsive grid layout has been shown on a screen
          */
+        @StudioProperty(name = "id", type = PropertyType.COMPONENT_ID)
         void setId(String id);
 
         /**
@@ -1291,6 +1387,7 @@ public interface ResponsiveGridLayout extends Component, Component.BelongToFrame
          * @param styleName one or more style names separated by space
          * @throws IllegalStateException if parent responsive grid layout has been shown on a screen
          */
+        @StudioProperty(name = "stylename", type = PropertyType.CSS_CLASSNAME_LIST)
         void setStyleName(String styleName);
 
         /**

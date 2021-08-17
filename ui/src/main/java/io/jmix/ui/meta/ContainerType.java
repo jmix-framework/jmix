@@ -21,6 +21,7 @@ import io.jmix.ui.component.FlowBoxLayout;
 import io.jmix.ui.component.GridLayout;
 import io.jmix.ui.component.GroupBoxLayout;
 import io.jmix.ui.component.HBoxLayout;
+import io.jmix.ui.component.ResponsiveGridLayout;
 import io.jmix.ui.component.ScrollBoxLayout;
 import io.jmix.ui.component.SplitPanel;
 import io.jmix.ui.component.TabSheet;
@@ -65,6 +66,13 @@ public enum ContainerType {
      * @see HBoxLayout
      */
     HORIZONTAL,
+
+    /**
+     * Responsive grid layout.
+     *
+     * @see ResponsiveGridLayout
+     */
+    RESPONSIVE_GRID,
 
     /**
      * ScrollBox layout.

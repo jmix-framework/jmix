@@ -54,7 +54,7 @@
     <property caption="Screen id"
               code="screenId"
               propertyType="SCREEN_ID"
-              defaultValue="MainSide"
+              defaultValue="MainScreenSideMenu"
               required="true"/>
 
     <source fileExt="xml"

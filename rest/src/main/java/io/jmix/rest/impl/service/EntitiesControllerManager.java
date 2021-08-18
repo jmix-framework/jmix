@@ -628,10 +628,7 @@ public class EntitiesControllerManager {
         MetaClass metaClass = restControllerUtils.getMetaClass(transformedEntityName);
         checkCanUpdateEntity(metaClass);
 
-        FetchPlan responseFetchPlan = null;
-        if (responseView != null) {
-            responseFetchPlan = restControllerUtils.getView(metaClass, responseView);
-        }
+        FetchPlan responseFetchPlan = responseView == null ? null : restControllerUtils.getView(metaClass, responseView);
 
         JsonElement entitiesJsonElement = new JsonParser().parse(entitiesJson);
         if (!entitiesJsonElement.isJsonArray()) {
@@ -641,27 +638,64 @@ public class EntitiesControllerManager {
         }
 
         JsonArray entitiesJsonArray = entitiesJsonElement.getAsJsonArray();
-        Collection<Object> entities = new ArrayList<>();
+        Collection<Object> updatedEntities = getUpdatedEntities(entityName, modelVersion, transformedEntityName,
+                metaClass, entitiesJsonArray);
         if (restProperties.isResponseFetchPlanEnabled() && responseFetchPlan != null) {
-            for (JsonElement jsonElement : entitiesJsonArray) {
-                String entityId = jsonElement.getAsJsonObject().get("id").getAsString();
-                Object entity = getUpdatedEntity(entityName, modelVersion, transformedEntityName, metaClass, jsonElement.toString(), entityId);
+            updatedEntities = updatedEntities.stream().map(entity -> {
                 if (!entityStates.isLoadedWithFetchPlan(entity, responseFetchPlan)) {
-                    LoadContext loadContext = new LoadContext<>(metaClass).setFetchPlan(responseFetchPlan);
+                    LoadContext<?> loadContext = new LoadContext<>(metaClass).setFetchPlan(responseFetchPlan);
                     loadContext.setId(EntityValues.getId(entity));
-                    entity = dataManager.load(loadContext);
+                    return dataManager.load(loadContext);
+                } else {
+                    return entity;
                 }
-                entities.add(entity);
-            }
-        } else {
-            for (JsonElement jsonElement : entitiesJsonArray) {
-                String entityId = jsonElement.getAsJsonObject().get("id").getAsString();
-                Object entity = getUpdatedEntity(entityName, modelVersion, transformedEntityName, metaClass, jsonElement.toString(), entityId);
-                entities.add(entity);
-            }
+            }).collect(Collectors.toList());
         }
-        String bodyJson = createEntitiesJson(entities, metaClass, responseView, modelVersion);
+        String bodyJson = createEntitiesJson(updatedEntities, metaClass, responseView, modelVersion);
         return new ResponseInfo(null, bodyJson);
+    }
+
+    protected Collection<Object> getUpdatedEntities(String entityName,
+                                                    String modelVersion,
+                                                    String transformedEntityName,
+                                                    MetaClass metaClass,
+                                                    JsonArray entitiesJsonArray) {
+        Map<Object, EntityImportPlan> objectEntityImportPlanMap = new HashMap<>();
+        Object entity;
+        EntityImportPlan entityImportPlan;
+        for (JsonElement element : entitiesJsonArray) {
+            String entityJson = element.toString();
+            String idString = element.getAsJsonObject().get("id").getAsString();
+            Object id = getIdFromString(idString, metaClass);
+            LoadContext<Object> loadContext = new LoadContext<>(metaClass).setId(id);
+            Object existingEntity = dataManager.load(loadContext);
+
+            checkEntityIsNotNull(transformedEntityName, idString, existingEntity);
+            entityJson = restControllerUtils.transformJsonIfRequired(entityName, modelVersion,
+                    JsonTransformationDirection.FROM_VERSION, entityJson);
+            try {
+                entity = entitySerialization.entityFromJson(entityJson, metaClass);
+            } catch (Exception e) {
+                throw new RestAPIException("Cannot deserialize an entity from JSON", "", HttpStatus.BAD_REQUEST, e);
+            }
+
+            EntityValues.setId(entity, id);
+            entityImportPlan = entityImportPlanJsonBuilder.buildFromJson(entityJson, metaClass);
+            objectEntityImportPlanMap.put(entity, entityImportPlan);
+        }
+
+        Collection<Object> importedEntities;
+        SaveContext saveContext = new SaveContext();
+        try {
+            for (Map.Entry<Object, EntityImportPlan> entry : objectEntityImportPlanMap.entrySet()) {
+                entityImportExport.importEntityIntoSaveContext(saveContext, entry.getKey(), entry.getValue(),
+                        true, true);
+            }
+            importedEntities = dataManager.save(saveContext);
+        } catch (Exception e) {
+            throw new RestAPIException("Entity update failed", e.getMessage(), HttpStatus.BAD_REQUEST, e);
+        }
+        return importedEntities.stream().filter(e -> isMainEntity(e, metaClass)).collect(Collectors.toList());
     }
 
     protected Object getUpdatedEntity(String entityName,

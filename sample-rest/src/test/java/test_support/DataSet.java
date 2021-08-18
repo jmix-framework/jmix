@@ -53,6 +53,7 @@ public class DataSet {
     private Set<UUID> categoryAttributeValueIds = new HashSet<>();
     private Set<UUID> constraintIds = new HashSet<>();
     private Set<UUID> plantIds = new HashSet<>();
+    private Set<UUID> validatedEntityIds = new HashSet<>();
     private Set<String> currencyIds = new HashSet<>();
     private Set<Long> compositeKeyEntityIds = new HashSet<>();
     private Set<Integer> compositeKeyEntityTenantIds = new HashSet<>();
@@ -197,6 +198,7 @@ public class DataSet {
 //        deleteInstances(conn, "SEC_CONSTRAINT", constraintIds);
         deleteInstances(conn, "SAMPLE_REST_SEC_GROUP", groupIds);
         deleteInstances(conn, "REF_PLANT", plantIds);
+        deleteInstances(conn, "REST_VALIDATED_ENTITY", validatedEntityIds);
         deleteStringInstances(conn, "REF_CURRENCY", "CODE", currencyIds);
     }
 
@@ -639,6 +641,12 @@ public class DataSet {
     public Integer createCompositeKeyEntityTenantId() {
         Integer result = compositeKeyEntityTenantIdGen.incrementAndGet();
         compositeKeyEntityTenantIds.add(result);
+        return result;
+    }
+
+    public UUID createValidatedEntityId() {
+        UUID result = UUID.randomUUID();
+        validatedEntityIds.add(result);
         return result;
     }
 }

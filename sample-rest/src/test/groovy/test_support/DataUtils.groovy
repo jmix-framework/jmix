@@ -185,6 +185,15 @@ class DataUtils {
         return colorId
     }
 
+    static UUID createValidatedEntity(DataSet dataSet, Sql sql, String name) {
+        def validatedEntityId = dataSet.createValidatedEntityId()
+        sql.dataSet('rest_validated_entity').add(
+                id: validatedEntityId,
+                name: name
+        )
+        return validatedEntityId
+    }
+
     static void createPlantModelLink(Sql sql, UUID plantId, UUID modelId) {
         sql.dataSet('ref_plant_model_link').add(
                 plant_id: plantId,

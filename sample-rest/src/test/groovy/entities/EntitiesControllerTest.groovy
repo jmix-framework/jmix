@@ -16,11 +16,9 @@
 
 package entities
 
-
 import test_support.RestSpec
 
-import static test_support.DataUtils.createGroup
-import static test_support.DataUtils.createUser
+import static test_support.DataUtils.*
 import static test_support.RestSpecsUtils.createRequest
 
 class EntitiesControllerTest extends RestSpec {
@@ -32,6 +30,8 @@ class EntitiesControllerTest extends RestSpec {
         createUser(dirtyData, sql, "anonymous", groupId)
         createUser(dirtyData, sql, "login1", "testFirstName", groupId)
         createUser(dirtyData, sql, "login2", "testFirstName", groupId)
+        createValidatedEntity(dirtyData, sql, "name1")
+        createValidatedEntity(dirtyData, sql, "name2")
     }
 
     def "GET-request with filter for obtaining the count of entities"() {
@@ -114,5 +114,30 @@ class EntitiesControllerTest extends RestSpec {
         response.statusCode == 200
         sql.rows("select * from SAMPLE_REST_SEC_USER where FIRST_NAME = 'testFirstName'").size() == 0
         sql.rows("select * from SAMPLE_REST_SEC_USER where FIRST_NAME = 'Some name'").size() == 2
+    }
+
+
+    def "PUT-request to bulk update should save entities in single transaction"() {
+        def validatedEntityRows = sql.rows("select id from REST_VALIDATED_ENTITY")
+        def namesBeforeUpdate = ['name1', 'name2']
+        def body =
+                [
+                        [
+                                'id'  : validatedEntityRows[0].id,
+                                'name': 'name3'
+                        ],
+                        [
+                                'id'  : validatedEntityRows[1].id,
+                                'name': null
+                        ]
+                ]
+
+        when:
+        def request = createRequest(userToken).body(body)
+        def response = request.with().put(baseUrl + "/entities/rest_ValidatedEntity")
+
+        then:
+        response.statusCode == 400
+        sql.rows("select name from REST_VALIDATED_ENTITY").collect { it.name }.sort() == namesBeforeUpdate
     }
 }

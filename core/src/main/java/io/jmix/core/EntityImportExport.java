@@ -111,8 +111,6 @@ public interface EntityImportExport {
      */
     Collection<Object> importEntities(Collection<Object> entities, EntityImportPlan importPlan, boolean validate);
 
-    void importEntityIntoSaveContext(SaveContext saveContext, Object srcEntity, EntityImportPlan importPlan, boolean validate);
-
     /**
      * Persists entities according to the rules, described by the {@code importPlan} parameter. If the entity is not
      * present in the database, it will be saved. Otherwise the fields of the existing entity that are in the {@code
@@ -131,4 +129,10 @@ public interface EntityImportExport {
     Collection<Object> importEntities(Collection<Object> entities, EntityImportPlan importPlan, boolean validate, boolean optimisticLocking);
 
     Collection<Object> importEntities(Collection<Object> entities, EntityImportPlan importPlan, boolean validate, boolean optimisticLocking, boolean additionComposition);
+
+    void importEntityIntoSaveContext(SaveContext saveContext, Object srcEntity, EntityImportPlan importPlan, boolean validate);
+
+    void importEntityIntoSaveContext(SaveContext saveContext, Object srcEntity, EntityImportPlan importPlan, boolean validate, boolean optimisticLocking);
+
+    void importEntityIntoSaveContext(SaveContext saveContext, Object srcEntity, EntityImportPlan importPlan, boolean validate, boolean optimisticLocking, boolean additionComposition);
 }

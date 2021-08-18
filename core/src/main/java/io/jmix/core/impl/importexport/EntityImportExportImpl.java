@@ -209,57 +209,6 @@ public class EntityImportExportImpl implements EntityImportExport {
     }
 
     @Override
-    public void importEntityIntoSaveContext(SaveContext saveContext, Object srcEntity, EntityImportPlan importPlan, boolean validate) {
-        boolean optimisticLocking = false;
-        List<ReferenceInfo> referenceInfoList = new ArrayList<>();
-        if (saveContext == null) {
-            return;
-        }
-        saveContext.setHint("jmix.softDeletion", false);
-
-        EntityPreconditions.checkEntityType(srcEntity);
-        FetchPlan fetchPlan = constructFetchPlanFromImportPlan(importPlan).build();
-
-        LoadContext<?> ctx = new LoadContext<>(metadata.getClass(srcEntity.getClass()))
-                .setFetchPlan(fetchPlan)
-                .setHint("jmix.dynattr", true)
-                .setHint("jmix.softDeletion", false)
-                .setId(EntityValues.getId(srcEntity))
-                .setAccessConstraints(accessConstraintsRegistry.getConstraints());
-        Object dstEntity = dataManager.load(ctx);
-
-        importEntity(srcEntity, dstEntity, importPlan, fetchPlan, saveContext, referenceInfoList, optimisticLocking, false);
-
-        Set<Object> loadedEntities = new HashSet<>();
-        for (ReferenceInfo referenceInfo : referenceInfoList) {
-            processReferenceInfo(referenceInfo, saveContext, loadedEntities);
-        }
-
-        for (Object instance : saveContext.getEntitiesToSave()) {
-            if (!entityStates.isNew(instance)) {
-                if (EntityValues.isSoftDeleted(instance)) {
-                    EntityValues.setDeletedDate(instance, null);
-                }
-            }
-        }
-
-        if (validate) {
-            for (Object entity : saveContext.getEntitiesToSave()) {
-                Set<ConstraintViolation<Object>> violations = validator.validate(entity, Default.class, RestApiChecks.class);
-                if (!violations.isEmpty()) {
-                    throw new EntityValidationException("Entity validation failed", violations);
-                }
-            }
-        }
-
-        if (!saveContext.getEntitiesToRemove().isEmpty()) {
-            saveContext.setHint("jmix.softDeletion", true);
-        }
-
-        saveContext.setAccessConstraints(accessConstraintsRegistry.getConstraints());
-    }
-
-    @Override
     public Collection importEntities(Collection entities, EntityImportPlan importPlan, boolean validate, boolean optimisticLocking) {
         return importEntities(entities, importPlan, validate, optimisticLocking, false);
     }
@@ -325,6 +274,66 @@ public class EntityImportExportImpl implements EntityImportExport {
         saveContext.setAccessConstraints(accessConstraintsRegistry.getConstraints());
 
         return dataManager.save(saveContext);
+    }
+
+    @Override
+    public void importEntityIntoSaveContext(SaveContext saveContext, Object srcEntity, EntityImportPlan importPlan, boolean validate) {
+        importEntityIntoSaveContext(saveContext, srcEntity, importPlan, validate, false);
+    }
+
+    @Override
+    public void importEntityIntoSaveContext(SaveContext saveContext, Object srcEntity, EntityImportPlan importPlan, boolean validate, boolean optimisticLocking) {
+        importEntityIntoSaveContext(saveContext, srcEntity, importPlan, validate, optimisticLocking, false);
+    }
+
+    @Override
+    public void importEntityIntoSaveContext(SaveContext saveContext, Object srcEntity, EntityImportPlan importPlan, boolean validate, boolean optimisticLocking, boolean additionComposition) {
+        List<ReferenceInfo> referenceInfoList = new ArrayList<>();
+        if (saveContext == null) {
+            return;
+        }
+        saveContext.setHint("jmix.softDeletion", false);
+
+        EntityPreconditions.checkEntityType(srcEntity);
+        FetchPlan fetchPlan = constructFetchPlanFromImportPlan(importPlan).build();
+
+        LoadContext<?> ctx = new LoadContext<>(metadata.getClass(srcEntity.getClass()))
+                .setFetchPlan(fetchPlan)
+                .setHint("jmix.dynattr", true)
+                .setHint("jmix.softDeletion", false)
+                .setId(EntityValues.getId(srcEntity))
+                .setAccessConstraints(accessConstraintsRegistry.getConstraints());
+        Object dstEntity = dataManager.load(ctx);
+
+        importEntity(srcEntity, dstEntity, importPlan, fetchPlan, saveContext, referenceInfoList, optimisticLocking, additionComposition);
+
+        Set<Object> loadedEntities = new HashSet<>();
+        for (ReferenceInfo referenceInfo : referenceInfoList) {
+            processReferenceInfo(referenceInfo, saveContext, loadedEntities);
+        }
+
+        for (Object instance : saveContext.getEntitiesToSave()) {
+            if (!entityStates.isNew(instance)) {
+                if (EntityValues.isSoftDeleted(instance)) {
+                    EntityValues.setDeletedDate(instance, null);
+                }
+            }
+        }
+
+        if (validate) {
+            for (Object entity : saveContext.getEntitiesToSave()) {
+                Set<ConstraintViolation<Object>> violations = validator.validate(entity, Default.class, RestApiChecks.class);
+                if (!violations.isEmpty()) {
+                    throw new EntityValidationException("Entity validation failed", violations);
+                }
+            }
+        }
+
+        if (!saveContext.getEntitiesToRemove().isEmpty()) {
+            saveContext.setHint("jmix.softDeletion", true);
+        }
+
+        saveContext.setAccessConstraints(accessConstraintsRegistry.getConstraints());
     }
 
     /**

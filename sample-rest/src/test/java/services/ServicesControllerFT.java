@@ -145,7 +145,7 @@ public class ServicesControllerFT extends AbstractRestControllerFT {
         params.put("arg1", "1");
         try (CloseableHttpResponse response = sendGet(baseUrl + "/services/" + RestTestService.NAME + "/overloadedMethodWithOptionalArgs", oauthToken, params)) {
             assertEquals(HttpStatus.SC_BAD_REQUEST, statusCode(response));
-            assertTrue(responseToString(response).contains("Can not determine the service method"));
+            assertTrue(responseToString(response).contains("Cannot determine the service method to call"));
         }
     }
 
@@ -721,7 +721,7 @@ public class ServicesControllerFT extends AbstractRestControllerFT {
             assertEquals(HttpStatus.SC_OK, statusCode(response));
             ReadContext readContext = parseResponse(response);
             assertEquals("jmix_RestTestService", readContext.read("$.name"));
-            assertEquals(29, readContext.<Collection>read("$.methods").size());
+            assertEquals(32, readContext.<Collection>read("$.methods").size());
             assertEquals(2, readContext.read("$.methods[?(@.name == 'sum')].params.length()", List.class).get(0));
 
             assertEquals("number1", readContext.read("$.methods[?(@.name == 'sum')].params[0].name", List.class).get(0));

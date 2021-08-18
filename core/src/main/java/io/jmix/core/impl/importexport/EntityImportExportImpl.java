@@ -18,6 +18,7 @@ package io.jmix.core.impl.importexport;
 
 import io.jmix.core.*;
 import io.jmix.core.accesscontext.InMemoryCrudEntityContext;
+import io.jmix.core.common.datastruct.Pair;
 import io.jmix.core.entity.EntityPreconditions;
 import io.jmix.core.entity.EntitySystemAccess;
 import io.jmix.core.entity.EntityValues;
@@ -39,6 +40,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import javax.validation.ConstraintViolation;
+import javax.validation.Valid;
 import javax.validation.Validator;
 import javax.validation.groups.Default;
 import java.io.ByteArrayInputStream;
@@ -46,6 +48,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.CRC32;
 
@@ -258,12 +261,7 @@ public class EntityImportExportImpl implements EntityImportExport {
         }
 
         if (validate) {
-            for (Object entity : saveContext.getEntitiesToSave()) {
-                Set<ConstraintViolation<Object>> violations = validator.validate(entity, Default.class, RestApiChecks.class);
-                if (!violations.isEmpty()) {
-                    throw new EntityValidationException("Entity validation failed", violations);
-                }
-            }
+            validateEntities(new LinkedHashSet<>(saveContext.getEntitiesToSave()));
         }
 
         //we shouldn't remove entities with the softDeletion = false
@@ -321,12 +319,7 @@ public class EntityImportExportImpl implements EntityImportExport {
         }
 
         if (validate) {
-            for (Object entity : saveContext.getEntitiesToSave()) {
-                Set<ConstraintViolation<Object>> violations = validator.validate(entity, Default.class, RestApiChecks.class);
-                if (!violations.isEmpty()) {
-                    throw new EntityValidationException("Entity validation failed", violations);
-                }
-            }
+            validateEntities(new LinkedHashSet<>(saveContext.getEntitiesToSave()));
         }
 
         if (!saveContext.getEntitiesToRemove().isEmpty()) {
@@ -334,6 +327,37 @@ public class EntityImportExportImpl implements EntityImportExport {
         }
 
         saveContext.setAccessConstraints(accessConstraintsRegistry.getConstraints());
+    }
+
+    @SuppressWarnings("unchecked")
+    protected void validateEntities(Collection<Object> entitiesToValidate) {
+        Collection<Pair<Object, Object>> referencesToExclude = new ArrayList<>();
+        for (Object entity : entitiesToValidate) {
+            for (MetaProperty metaProperty : metadata.getClass(entity).getProperties()) {
+                //we need to exclude entities marked as @Valid starting checking the references of the root entity
+                if (metaProperty.getRange().isClass()
+                        && metadataTools.isAnnotationPresent(entity, metaProperty.getName(), Valid.class)) {
+                    Object validated = EntityValues.getValue(entity, metaProperty.getName());
+                    if (validated != null && !(validated instanceof Collection)) {
+                        validated = Collections.singletonList(validated);
+                    }
+                    //to handle one-to-many composition
+                    if (validated != null) {
+                        ((Collection<Object>) validated).stream()
+                                .filter(x -> !referencesToExclude.contains(new Pair<>(x, entity)))
+                                .forEach(x -> referencesToExclude.add(new Pair<>(entity, x)));
+                    }
+                }
+            }
+        }
+        entitiesToValidate.removeAll(referencesToExclude.stream().map(Pair::getSecond).collect(Collectors.toList()));
+
+        Set<ConstraintViolation<Object>> violations = new LinkedHashSet<>();
+        entitiesToValidate.forEach(entity ->
+                violations.addAll(validator.validate(entity, Default.class, RestApiChecks.class)));
+        if (!violations.isEmpty()) {
+            throw new EntityValidationException("Entity validation failed", violations);
+        }
     }
 
     /**

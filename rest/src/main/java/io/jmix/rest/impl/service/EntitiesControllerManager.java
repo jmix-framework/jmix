@@ -883,7 +883,7 @@ public class EntitiesControllerManager {
         return view;
     }
 
-    protected class ValidatedList {
+    protected static class ValidatedList {
         @Valid
         protected Collection<Object> entities;
 

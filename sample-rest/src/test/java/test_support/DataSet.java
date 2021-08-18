@@ -19,6 +19,7 @@ package test_support;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -187,6 +188,9 @@ public class DataSet {
         //deleteInstances(conn, "DEBT_CASE", caseIds);
         //deleteInstances(conn, "DEBT_DEBTOR", debtorIds);
         deleteSellers(conn);
+        deleteRecursiveEntities(conn);
+        deleteProducts(conn);
+        deleteOrders(conn);
         deleteInstances(conn, "DYNAT_ATTR_VALUE", categoryAttributeValueIds);
         deleteInstances(conn, "DYNAT_CATEGORY_ATTR", categoryAttributeIds);
         deleteInstances(conn, "DYNAT_CATEGORY", categoryIds);
@@ -429,6 +433,33 @@ public class DataSet {
                 stmt.setInt(1, tenant);
                 stmt.executeUpdate();
             }
+        } finally {
+            stmt.close();
+        }
+    }
+
+    private void deleteRecursiveEntities(Connection conn) throws SQLException {
+        Statement stmt = conn.createStatement();
+        try {
+            stmt.executeUpdate("delete from rest_recursive_entity");
+        } finally {
+            stmt.close();
+        }
+    }
+
+    private void deleteOrders(Connection conn) throws SQLException {
+        Statement stmt = conn.createStatement();
+        try {
+            stmt.executeUpdate("delete from rest_order");
+        } finally {
+            stmt.close();
+        }
+    }
+
+    private void deleteProducts(Connection conn) throws SQLException {
+        Statement stmt = conn.createStatement();
+        try {
+            stmt.executeUpdate("delete from rest_product");
         } finally {
             stmt.close();
         }

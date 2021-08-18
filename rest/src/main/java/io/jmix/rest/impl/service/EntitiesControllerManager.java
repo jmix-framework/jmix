@@ -21,6 +21,7 @@ import com.google.common.base.Strings;
 import com.google.gson.*;
 import io.jmix.core.*;
 import io.jmix.core.accesscontext.CrudEntityContext;
+import io.jmix.core.common.datastruct.Pair;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.impl.importexport.EntityImportException;
@@ -29,6 +30,8 @@ import io.jmix.core.impl.serialization.EntitySerializationException;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.core.validation.EntityValidationException;
+import io.jmix.core.validation.group.RestApiChecks;
 import io.jmix.rest.RestProperties;
 import io.jmix.rest.exception.RestAPIException;
 import io.jmix.rest.impl.RestControllerUtils;
@@ -38,6 +41,7 @@ import io.jmix.rest.impl.service.filter.RestFilterParser;
 import io.jmix.rest.impl.service.filter.data.EntitiesSearchResult;
 import io.jmix.rest.impl.service.filter.data.ResponseInfo;
 import io.jmix.rest.transform.JsonTransformationDirection;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +52,10 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.ConstraintViolation;
+import javax.validation.Valid;
+import javax.validation.Validator;
+import javax.validation.groups.Default;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -100,6 +108,9 @@ public class EntitiesControllerManager {
 
     @Autowired
     protected FetchPlans fetchPlans;
+
+    @Autowired
+    protected Validator validator;
 
     public String loadEntity(String entityName,
                              String entityId,
@@ -483,6 +494,52 @@ public class EntitiesControllerManager {
         return new ResponseInfo(uriComponents.toUri(), bodyJson);
     }
 
+    /**
+     * Validates entities using {@link ValidatedList}.
+     * If validate the collection of entities using the "n validation for n objects" approach we can not handle
+     * the information about which entity failed validation. To achieve that we collect the root entities
+     * (what entities should be saved, except composition references, etc) and validate the {@link ValidatedList} with
+     * list of root entities.
+     * Also if the root object has the reference entity annotated as {@link Valid} we should exclude that entity from the validation.
+     *
+     * @param rootEntities collection of main entity
+     * @param entities  collection of entities to validate
+     * @param metaClass metaClass of root entity
+     */
+    @SuppressWarnings("unchecked")
+    protected void validateEntities(Collection<Object> rootEntities, Collection<Object> entities, MetaClass metaClass) {
+        Collection<Pair<Object, Object>> referencesToExclude = new ArrayList<>();
+        for (Object entity : entities) {
+            for (MetaProperty metaProperty : metadata.getClass(entity).getProperties()) {
+                if (metaProperty.getRange().isClass()) {
+                    Object reference = EntityValues.getValue(entity, metaProperty.getName());
+                    if (reference != null && !(reference instanceof Collection)) {
+                        reference = Collections.singletonList(reference);
+                    }
+                    //to handle composition references marked as @Valid
+                    if (reference != null && metadataTools.isAnnotationPresent(entity, metaProperty.getName(), Valid.class)) {
+                        ((Collection<Object>) reference).stream()
+                                //to handle one-to-many composition. when the composition collection objects has a reference to the root entity
+                                .filter(x -> !referencesToExclude.contains(new Pair<>(x, entity)))
+                                .forEach(x -> referencesToExclude.add(new Pair<>(entity, x)));
+                    }
+                }
+            }
+        }
+        entities.removeAll(referencesToExclude.stream().map(Pair::getSecond).collect(Collectors.toList()));
+
+        rootEntities = CollectionUtils.retainAll(entities, rootEntities);
+        entities.removeAll(rootEntities);
+        entities.add(new ValidatedList(rootEntities));
+
+        Set<ConstraintViolation<Object>> violations = new LinkedHashSet<>();
+        entities.forEach(entity ->
+                violations.addAll(validator.validate(entity, Default.class, RestApiChecks.class)));
+        if (!violations.isEmpty()) {
+            throw new EntityValidationException("Entity validation failed", violations);
+        }
+    }
+
     protected Object createEntityFromJson(MetaClass metaClass, String entityJson) {
         Object entity;
         try {
@@ -507,7 +564,7 @@ public class EntitiesControllerManager {
     }
 
     protected List<Object> createEntitiesFromJson(MetaClass metaClass, JsonArray entitiesJsonArray) {
-        Map<Object, EntityImportPlan> objectEntityImportPlanMap = new HashMap<>();
+        Map<Object, EntityImportPlan> objectEntityImportPlanMap = new LinkedHashMap<>();
         Object entity;
         EntityImportPlan entityImportPlan;
         try {
@@ -526,9 +583,11 @@ public class EntitiesControllerManager {
             for (Map.Entry<Object, EntityImportPlan> entry : objectEntityImportPlanMap.entrySet()) {
                 entityImportExport.importEntityIntoSaveContext(saveContext, entry.getKey(), entry.getValue(), false);
             }
+
+            validateEntities(objectEntityImportPlanMap.keySet(), new LinkedHashSet<>(saveContext.getEntitiesToSave()), metaClass);
             importedEntities = dataManager.save(saveContext);
 
-        } catch (Exception e) {
+        } catch (EntityImportException e) {
             throw new RestAPIException("Entity creation failed", e.getMessage(), HttpStatus.BAD_REQUEST, e);
         }
 
@@ -824,6 +883,22 @@ public class EntitiesControllerManager {
         return view;
     }
 
+    protected class ValidatedList {
+        @Valid
+        protected Collection<Object> entities;
+
+        public ValidatedList(Collection<Object> entities) {
+            this.entities = entities;
+        }
+
+        public Collection<Object> getEntities() {
+            return entities;
+        }
+
+        public void setEntities(Collection<Object> entities) {
+            this.entities = entities;
+        }
+    }
 
     protected class SearchEntitiesRequestDTO {
         protected JsonObject filter;

@@ -18,21 +18,21 @@ package bean_validation;
 
 import com.jayway.jsonpath.ReadContext;
 import io.jmix.samples.rest.service.RestTestService;
-import test_support.AbstractRestControllerFT;
 import org.apache.http.Header;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import test_support.AbstractRestControllerFT;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import static test_support.RestTestUtils.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static test_support.RestTestUtils.*;
 
 public class BeanValidationFT extends AbstractRestControllerFT {
 
@@ -78,6 +78,45 @@ public class BeanValidationFT extends AbstractRestControllerFT {
 
             assertEquals("may not be null", ctx.read("$[0].message"));
             assertEquals("name", ctx.read("$[0].path"));
+        }
+    }
+
+    @Test
+    public void commitInvalidRecursiveWithOneToManyEntities() throws Exception {
+        String json = getFileContent("recursiveEntities.json", null);
+        String url = baseUrl + "/entities/rest_RecursiveEntity";
+
+        try (CloseableHttpResponse response = sendPost(url, oauthToken, json, null)) {
+            assertEquals(HttpStatus.SC_BAD_REQUEST, statusCode(response));
+
+            ReadContext ctx = parseResponse(response);
+
+            List<LinkedHashMap<String, String>> jsonArray = ctx.json();
+
+            assertEquals(3, jsonArray.size());
+            assertTrue(jsonArray.stream().allMatch(obj -> obj.get("message").equals("may not be null")));
+            assertEquals(1, jsonArray.stream().filter(obj -> obj.get("path").equals("entities[0].children[1].name")).count());
+            assertEquals(1, jsonArray.stream().filter(obj -> obj.get("path").equals("entities[1].children[0].name")).count());
+            assertEquals(1, jsonArray.stream().filter(obj -> obj.get("path").equals("entities[1].name")).count());
+        }
+    }
+
+    @Test
+    public void commitInvalidWithOneToManyEntities() throws Exception {
+        String json = getFileContent("order.json", null);
+        String url = baseUrl + "/entities/rest_Order";
+
+        try (CloseableHttpResponse response = sendPost(url, oauthToken, json, null)) {
+            assertEquals(HttpStatus.SC_BAD_REQUEST, statusCode(response));
+
+            ReadContext ctx = parseResponse(response);
+
+            List<LinkedHashMap<String, String>> jsonArray = ctx.json();
+
+            assertEquals(2, jsonArray.size());
+            assertTrue(jsonArray.stream().allMatch(obj -> obj.get("message").equals("may not be null")));
+            assertEquals(1, jsonArray.stream().filter(obj -> obj.get("path").equals("entities[0].products[0].name")).count());
+            assertEquals(1, jsonArray.stream().filter(obj -> obj.get("path").equals("entities[0].name")).count());
         }
     }
 

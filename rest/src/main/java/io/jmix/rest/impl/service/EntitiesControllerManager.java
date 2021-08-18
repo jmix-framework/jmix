@@ -503,11 +503,10 @@ public class EntitiesControllerManager {
      * Also if the root object has the reference entity annotated as {@link Valid} we should exclude that entity from the validation.
      *
      * @param rootEntities collection of main entity
-     * @param entities  collection of entities to validate
-     * @param metaClass metaClass of root entity
+     * @param entities     collection of entities to validate
      */
     @SuppressWarnings("unchecked")
-    protected void validateEntities(Collection<Object> rootEntities, Collection<Object> entities, MetaClass metaClass) {
+    protected void validateEntities(Collection<Object> rootEntities, Collection<Object> entities) {
         Collection<Pair<Object, Object>> referencesToExclude = new ArrayList<>();
         for (Object entity : entities) {
             for (MetaProperty metaProperty : metadata.getClass(entity).getProperties()) {
@@ -576,7 +575,7 @@ public class EntitiesControllerManager {
         } catch (Exception e) {
             throw new RestAPIException("Cannot deserialize an entity from JSON", "", HttpStatus.BAD_REQUEST, e);
         }
-        Collection<Object> importedEntities;
+        Collection<Object> mainEntities = objectEntityImportPlanMap.keySet();
         SaveContext saveContext = new SaveContext();
 
         try {
@@ -584,14 +583,14 @@ public class EntitiesControllerManager {
                 entityImportExport.importEntityIntoSaveContext(saveContext, entry.getKey(), entry.getValue(), false);
             }
 
-            validateEntities(objectEntityImportPlanMap.keySet(), new LinkedHashSet<>(saveContext.getEntitiesToSave()), metaClass);
-            importedEntities = dataManager.save(saveContext);
+            validateEntities(mainEntities, new LinkedHashSet<>(saveContext.getEntitiesToSave()));
+            mainEntities = CollectionUtils.retainAll(dataManager.save(saveContext), mainEntities);
 
         } catch (EntityImportException e) {
             throw new RestAPIException("Entity creation failed", e.getMessage(), HttpStatus.BAD_REQUEST, e);
         }
 
-        return importedEntities.stream().filter(e -> isMainEntity(e, metaClass)).collect(Collectors.toList());
+        return new ArrayList<>(mainEntities);
     }
 
     public ResponseInfo updateEntity(String entityJson,
@@ -660,7 +659,7 @@ public class EntitiesControllerManager {
                                                     String transformedEntityName,
                                                     MetaClass metaClass,
                                                     JsonArray entitiesJsonArray) {
-        Map<Object, EntityImportPlan> objectEntityImportPlanMap = new HashMap<>();
+        Map<Object, EntityImportPlan> objectEntityImportPlanMap = new LinkedHashMap<>();
         Object entity;
         EntityImportPlan entityImportPlan;
         for (JsonElement element : entitiesJsonArray) {
@@ -684,18 +683,20 @@ public class EntitiesControllerManager {
             objectEntityImportPlanMap.put(entity, entityImportPlan);
         }
 
-        Collection<Object> importedEntities;
+        Collection<Object> mainEntities = objectEntityImportPlanMap.keySet();
         SaveContext saveContext = new SaveContext();
         try {
             for (Map.Entry<Object, EntityImportPlan> entry : objectEntityImportPlanMap.entrySet()) {
                 entityImportExport.importEntityIntoSaveContext(saveContext, entry.getKey(), entry.getValue(),
-                        true, true);
+                        false, restProperties.isOptimisticLockingEnabled());
             }
-            importedEntities = dataManager.save(saveContext);
-        } catch (Exception e) {
+
+            validateEntities(mainEntities, new LinkedHashSet<>(saveContext.getEntitiesToSave()));
+            mainEntities = CollectionUtils.retainAll(dataManager.save(saveContext), mainEntities);
+        } catch (EntityImportException e) {
             throw new RestAPIException("Entity update failed", e.getMessage(), HttpStatus.BAD_REQUEST, e);
         }
-        return importedEntities.stream().filter(e -> isMainEntity(e, metaClass)).collect(Collectors.toList());
+        return mainEntities;
     }
 
     protected Object getUpdatedEntity(String entityName,
@@ -857,13 +858,6 @@ public class EntitiesControllerManager {
             mainEntity = importedEntities.iterator().next();
         }
         return mainEntity;
-    }
-
-    protected boolean isMainEntity(Object entity, MetaClass metaClass) {
-        if (entity == null || metaClass == null) {
-            return false;
-        }
-        return metadata.getClass(entity).equals(metaClass);
     }
 
     /**

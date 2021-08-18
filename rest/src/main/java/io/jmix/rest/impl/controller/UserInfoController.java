@@ -16,14 +16,13 @@
 
 package io.jmix.rest.impl.controller;
 
-import io.jmix.rest.impl.service.filter.data.UserInfo;
 import io.jmix.rest.impl.service.UserInfoControllerManager;
+import io.jmix.rest.impl.service.filter.data.UserInfo;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * REST controller that is used for getting an information about the current user

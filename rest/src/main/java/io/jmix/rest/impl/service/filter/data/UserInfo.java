@@ -18,9 +18,13 @@ package io.jmix.rest.impl.service.filter.data;
 
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 public class UserInfo {
-    public String username;
-    public String locale;
+    protected String username;
+    protected String locale;
+    protected Map<String, Object> attributes = new LinkedHashMap<>();
 
     public UserInfo(UserDetails user) {
         this.username = user.getUsername();
@@ -36,5 +40,13 @@ public class UserInfo {
 
     public void setLocale(String locale) {
         this.locale = locale;
+    }
+
+    public Map<String, Object> getAttributes() {
+        return attributes;
+    }
+
+    public void setAttributes(Map<String, Object> attributes) {
+        this.attributes = attributes;
     }
 }

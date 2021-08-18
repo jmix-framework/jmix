@@ -16,15 +16,29 @@
 
 package io.jmix.core.security.event;
 
+import org.springframework.context.ApplicationEvent;
+
 import java.util.Map;
+import java.util.Set;
 
 /**
- * Class for user password reset event. It includes user names and new passwords.
+ * Base class for user password changed event. It includes user names and new passwords.
  */
-public class UserPasswordResetEvent extends UserPasswordChangedEvent {
-    private static final long serialVersionUID = -5109995742911792935L;
+public class UserPasswordChangedEvent extends ApplicationEvent {
+    private static final long serialVersionUID = -3492496743097384401L;
 
-    public UserPasswordResetEvent(Map<String, String> passwordByUser) {
+    private final Map<String, String> passwordByUser;
+
+    public UserPasswordChangedEvent(Map<String, String> passwordByUser) {
         super(passwordByUser);
+        this.passwordByUser = passwordByUser;
+    }
+
+    public Set<String> getUsernames() {
+        return passwordByUser.keySet();
+    }
+
+    public String getPasswordByUsername(String userName) {
+        return passwordByUser.get(userName);
     }
 }

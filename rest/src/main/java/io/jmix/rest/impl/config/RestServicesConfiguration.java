@@ -19,7 +19,7 @@ package io.jmix.rest.impl.config;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.jmix.core.Resources;
 import io.jmix.core.common.util.Dom4j;
-import org.apache.commons.collections4.CollectionUtils;
+import io.jmix.rest.exception.RestAPIException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringTokenizer;
 import org.dom4j.Element;
@@ -30,6 +30,7 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ClassUtils;
@@ -86,12 +87,17 @@ public class RestServicesConfiguration {
             checkInitialized();
             RestServiceInfo restServiceInfo = serviceInfosMap.get(serviceName);
             if (restServiceInfo == null) return null;
-            return restServiceInfo.getMethods().stream()
+            List<RestMethodInfo> restMethodInfos = restServiceInfo.getMethods().stream()
                     .filter(restMethodInfo -> methodName.equals(restMethodInfo.getName())
                             && httpMethodMatches(restMethodInfo.getHttpMethod(), httpMethod)
                             && paramsMatches(restMethodInfo.getParams(), methodParamNames))
-                    .findFirst()
-                    .orElse(null);
+                    .collect(Collectors.toList());
+            if (restMethodInfos.size() > 1) {
+                String errorMsg = String.format("Cannot determine the service method to call. %d suitable methods have been found",
+                        restMethodInfos.size());
+                throw new RestAPIException(errorMsg, errorMsg, HttpStatus.BAD_REQUEST);
+            }
+            return restMethodInfos.size() == 1 ? restMethodInfos.get(0) : null;
         } finally {
             lock.readLock().unlock();
         }
@@ -105,11 +111,12 @@ public class RestServicesConfiguration {
     }
 
     protected boolean paramsMatches(List<RestMethodParamInfo> paramInfos, List<String> paramNames) {
-        if (paramInfos.size() != paramNames.size()) return false;
-        List<String> paramInfosNames = paramInfos.stream()
-                .map(RestMethodParamInfo::getName)
-                .collect(Collectors.toList());
-        return CollectionUtils.isEqualCollection(paramInfosNames, paramNames);
+        if (paramNames.size() > paramInfos.size()) {
+            return false;
+        }
+
+        return paramInfos.stream()
+                .noneMatch(paramInfo -> paramInfo.required && !paramNames.contains(paramInfo.name));
     }
 
     protected void checkInitialized() {
@@ -160,7 +167,9 @@ public class RestServicesConfiguration {
                 boolean anonymousAllowed = Boolean.parseBoolean(methodElem.attributeValue("anonymousAllowed"));
                 List<RestMethodParamInfo> params = new ArrayList<>();
                 for (Element paramEl : methodElem.elements("param")) {
-                    params.add(new RestMethodParamInfo(paramEl.attributeValue("name"), paramEl.attributeValue("type")));
+                    params.add(new RestMethodParamInfo(paramEl.attributeValue("name"),
+                            paramEl.attributeValue("type"),
+                            Boolean.parseBoolean(paramEl.attributeValue("required", "true"))));
                 }
                 Method method = _findMethod(serviceName, methodName, params);
                 if (method != null) {
@@ -211,11 +220,11 @@ public class RestServicesConfiguration {
 
         if (paramTypes.isEmpty()) {
             List<Method> appropriateMethods = new ArrayList<>();
-                for (Method method : methods) {
-                    if (methodName.equals(method.getName()) && method.getParameterTypes().length == paramInfos.size()) {
-                        appropriateMethods.add(method);
-                    }
+            for (Method method : methods) {
+                if (methodName.equals(method.getName()) && method.getParameterTypes().length == paramInfos.size()) {
+                    appropriateMethods.add(method);
                 }
+            }
             if (appropriateMethods.size() == 1) {
                 serviceMethod = appropriateMethods.get(0);
             } else if (appropriateMethods.size() > 1) {
@@ -227,10 +236,10 @@ public class RestServicesConfiguration {
                 return null;
             }
         } else {
-                try {
-                    serviceMethod = serviceClass.getMethod(methodName, paramTypes.toArray(new Class[0]));
-                } catch (NoSuchMethodException ignored) {
-                }
+            try {
+                serviceMethod = serviceClass.getMethod(methodName, paramTypes.toArray(new Class[0]));
+            } catch (NoSuchMethodException ignored) {
+            }
             if (serviceMethod == null) {
                 log.error("Method not found. Service: {}, method: {}, argument types: {}", serviceName, methodName, paramTypes);
                 return null;
@@ -336,10 +345,12 @@ public class RestServicesConfiguration {
     public static class RestMethodParamInfo {
         protected String name;
         protected String type;
+        protected boolean required;
 
-        public RestMethodParamInfo(String name, String type) {
+        public RestMethodParamInfo(String name, String type, boolean required) {
             this.name = name;
             this.type = type;
+            this.required = required;
         }
 
         public String getName() {
@@ -356,6 +367,14 @@ public class RestServicesConfiguration {
 
         public void setType(String type) {
             this.type = type;
+        }
+
+        public boolean isRequired() {
+            return required;
+        }
+
+        public void setRequired(boolean required) {
+            this.required = required;
         }
     }
 }

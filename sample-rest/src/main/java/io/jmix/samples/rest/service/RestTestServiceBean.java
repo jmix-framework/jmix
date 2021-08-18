@@ -275,4 +275,23 @@ public class RestTestServiceBean implements RestTestService {
         notPersistentStringIdEntity.setName("Bob");
         return notPersistentStringIdEntity;
     }
+
+    @Override
+    public Map<String, String> methodWithOptionalArgs(String arg1, String arg2, String arg3) {
+        Map<String, String> stringMap = new LinkedHashMap<>();
+        stringMap.put("arg1", arg1);
+        stringMap.put("arg2", arg2);
+        stringMap.put("arg3", arg3);
+        return stringMap;
+    }
+
+    @Override
+    public String overloadedMethodWithOptionalArgs(String arg1) {
+        return "one arg";
+    }
+
+    @Override
+    public String overloadedMethodWithOptionalArgs(String arg1, String arg2) {
+        return "two args";
+    }
 }

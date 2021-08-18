@@ -31,7 +31,7 @@
 
     <xs:complexType name="serviceType">
         <xs:sequence>
-            <xs:element name="method" type="methodType"  maxOccurs="unbounded" minOccurs="0"/>
+            <xs:element name="method" type="methodType" maxOccurs="unbounded" minOccurs="0"/>
         </xs:sequence>
         <xs:attribute name="name" type="xs:string" use="required"/>
     </xs:complexType>
@@ -47,5 +47,6 @@
     <xs:complexType name="methodParamType">
         <xs:attribute name="name" type="xs:string" use="required"/>
         <xs:attribute name="type" type="xs:string"/>
+        <xs:attribute name="required" type="xs:boolean" default="true"/>
     </xs:complexType>
 </xs:schema>

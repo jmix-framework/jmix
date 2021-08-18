@@ -16,19 +16,6 @@
 
 package io.jmix.samples.rest.service;
 
-import io.jmix.samples.rest.entity.driver.Car;
-import io.jmix.samples.rest.entity.driver.NotPersistentStringIdEntity;
-import org.springframework.validation.annotation.Validated;
-
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
 /**
  * Service is used in functional tests
  */

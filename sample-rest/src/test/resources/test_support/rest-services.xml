@@ -113,6 +113,21 @@
         <method name="getNotPersistentStringIdEntity"/>
 
         <method name="methodReturnsListOfMap"/>
+
+        <method name="methodWithOptionalArgs">
+            <param name="arg1"/>
+            <param name="arg2" required="false"/>
+            <param name="arg3" required="false"/>
+        </method>
+
+        <method name="overloadedMethodWithOptionalArgs">
+            <param name="arg1"/>
+            <param name="arg2" required="false"/>
+        </method>
+
+        <method name="overloadedMethodWithOptionalArgs">
+            <param name="arg1"/>
+        </method>
     </service>
 
     <service name="jmix_OtherRestTestService">

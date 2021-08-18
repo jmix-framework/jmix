@@ -76,6 +76,80 @@ public class ServicesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
+    public void serviceWithOptionalParamsGET() throws Exception {
+        //with 1 required
+        Map<String, String> params = new LinkedHashMap<>();
+        params.put("arg1", "1");
+        try (CloseableHttpResponse response = sendGet(baseUrl + "/services/" + RestTestService.NAME + "/methodWithOptionalArgs", oauthToken, params)) {
+            assertEquals(HttpStatus.SC_OK, statusCode(response));
+            ReadContext readContext = parseResponse(response);
+            assertEquals("1", readContext.read("$.arg1"));
+            assertThrows(PathNotFoundException.class, () -> readContext.read("$.arg2"));
+            assertThrows(PathNotFoundException.class, () -> readContext.read("$.arg3"));
+        }
+
+        //with 1 required and 1 optional
+        params.clear();
+        params.put("arg1", "1");
+        params.put("arg2", "2");
+        try (CloseableHttpResponse response = sendGet(baseUrl + "/services/" + RestTestService.NAME + "/methodWithOptionalArgs", oauthToken, params)) {
+            assertEquals(HttpStatus.SC_OK, statusCode(response));
+            ReadContext readContext = parseResponse(response);
+            assertEquals("1", readContext.read("$.arg1"));
+            assertEquals("2", readContext.read("$.arg2"));
+            assertThrows(PathNotFoundException.class, () -> readContext.read("$.arg3"));
+        }
+
+        //with 1 required and 1 optional
+        params.clear();
+        params.put("arg1", "1");
+        params.put("arg3", "3");
+        try (CloseableHttpResponse response = sendGet(baseUrl + "/services/" + RestTestService.NAME + "/methodWithOptionalArgs", oauthToken, params)) {
+            assertEquals(HttpStatus.SC_OK, statusCode(response));
+            ReadContext readContext = parseResponse(response);
+            assertEquals("1", readContext.read("$.arg1"));
+            assertThrows(PathNotFoundException.class, () -> readContext.read("$.arg2"));
+            assertEquals("3", readContext.read("$.arg3"));
+        }
+
+        //with 1 required and 2 optional
+        params.clear();
+        params.put("arg1", "1");
+        params.put("arg2", "2");
+        params.put("arg3", "3");
+        try (CloseableHttpResponse response = sendGet(baseUrl + "/services/" + RestTestService.NAME + "/methodWithOptionalArgs", oauthToken, params)) {
+            assertEquals(HttpStatus.SC_OK, statusCode(response));
+            ReadContext readContext = parseResponse(response);
+            assertEquals("1", readContext.read("$.arg1"));
+            assertEquals("2", readContext.read("$.arg2"));
+            assertEquals("3", readContext.read("$.arg3"));
+        }
+
+        //without params
+        params.clear();
+        try (CloseableHttpResponse response = sendGet(baseUrl + "/services/" + RestTestService.NAME + "/methodWithOptionalArgs", oauthToken, params)) {
+            assertEquals(HttpStatus.SC_NOT_FOUND, statusCode(response));
+            assertTrue(responseToString(response).contains("Service method not found"));
+        }
+
+        //1 suitable method
+        params.put("arg1", "1");
+        params.put("arg2", "2");
+        try (CloseableHttpResponse response = sendGet(baseUrl + "/services/" + RestTestService.NAME + "/overloadedMethodWithOptionalArgs", oauthToken, params)) {
+            assertEquals(HttpStatus.SC_OK, statusCode(response));
+            assertEquals("two args", responseToString(response));
+        }
+
+        //more than 1 suitable method
+        params.clear();
+        params.put("arg1", "1");
+        try (CloseableHttpResponse response = sendGet(baseUrl + "/services/" + RestTestService.NAME + "/overloadedMethodWithOptionalArgs", oauthToken, params)) {
+            assertEquals(HttpStatus.SC_BAD_REQUEST, statusCode(response));
+            assertTrue(responseToString(response).contains("Can not determine the service method"));
+        }
+    }
+
+    @Test
     public void serviceWithJavaTimeParams() throws Exception {
         String requestBody = getFileContent("serviceWithJavaTimeParams.json", null);
         try (CloseableHttpResponse response = sendPost(baseUrl + "/services/" + RestTestService.NAME + "/testJavaTimeParam", oauthToken, requestBody, null)) {

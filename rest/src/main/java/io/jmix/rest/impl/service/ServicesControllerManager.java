@@ -16,18 +16,18 @@
 
 package io.jmix.rest.impl.service;
 
+import io.jmix.core.Entity;
 import io.jmix.core.EntitySerialization;
 import io.jmix.core.EntitySerializationOption;
-import io.jmix.core.Entity;
 import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.rest.exception.RestAPIException;
 import io.jmix.rest.impl.RestControllerUtils;
 import io.jmix.rest.impl.RestParseUtils;
 import io.jmix.rest.impl.config.RestServicesConfiguration;
 import io.jmix.rest.impl.controller.ServicesController;
-import io.jmix.rest.exception.RestAPIException;
 import io.jmix.rest.transform.JsonTransformationDirection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -137,7 +137,8 @@ public class ServicesControllerManager {
             int idx = i;
             try {
                 idx = paramNames.indexOf(restMethodInfo.getParams().get(i).getName());
-                paramValues.add(restParseUtils.toObject(types[i], paramValuesStr.get(idx), modelVersion));
+                String valueStr = idx == -1 ? null : paramValuesStr.get(idx);
+                paramValues.add(restParseUtils.toObject(types[i], valueStr, modelVersion));
             } catch (Exception e) {
                 log.error("Error on parsing service param value", e);
                 throw new RestAPIException("Invalid parameter value",

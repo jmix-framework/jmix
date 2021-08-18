@@ -100,4 +100,10 @@ public interface RestTestService {
     List<Map<String, Object>> methodReturnsListOfMap();
 
     NotPersistentStringIdEntity getNotPersistentStringIdEntity();
+
+    Map<String, String> methodWithOptionalArgs(String arg1, String arg2, String arg3);
+
+    String overloadedMethodWithOptionalArgs(String arg1);
+
+    String overloadedMethodWithOptionalArgs(String arg1, String arg2);
 }

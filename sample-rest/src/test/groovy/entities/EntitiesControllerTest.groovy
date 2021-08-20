@@ -32,6 +32,10 @@ class EntitiesControllerTest extends RestSpec {
         createUser(dirtyData, sql, "login2", "testFirstName", groupId)
         createValidatedEntity(dirtyData, sql, "name1")
         createValidatedEntity(dirtyData, sql, "name2")
+        createUser(dirtyData, sql, "toDeleteByObject1", groupId)
+        createUser(dirtyData, sql, "toDeleteByObject2", groupId)
+        createUser(dirtyData, sql, "toDeleteById1", groupId)
+        createUser(dirtyData, sql, "toDeleteById2", groupId)
     }
 
     def "GET-request with filter for obtaining the count of entities"() {
@@ -50,7 +54,7 @@ class EntitiesControllerTest extends RestSpec {
 
         then:
         response.statusCode() == 200
-        response.body.as(Integer) == 4
+        response.body.as(Integer) == 8
     }
 
     def "POST-request with filter for obtaining the count of entities"() {
@@ -139,5 +143,41 @@ class EntitiesControllerTest extends RestSpec {
         then:
         response.statusCode == 400
         sql.rows("select name from REST_VALIDATED_ENTITY").collect { it.name }.sort() == namesBeforeUpdate
+    }
+
+    def "DELETE-request bulk deletion with body containing entities array representation"() {
+        def users = sql.rows("select * from SAMPLE_REST_SEC_USER where LOGIN like 'toDeleteByObject_'")
+        def body =
+                [
+                        [
+                                'id': users[0].id
+                        ],
+                        [
+                                'id': users[1].id
+                        ]
+                ]
+
+        when:
+        def request = createRequest(userToken).body(body)
+        def response = request.with().delete(baseUrl + "/entities/sec\$User")
+
+        then:
+        response.statusCode == 200
+        sql.rows("select * from SAMPLE_REST_SEC_USER where LOGIN like 'toDeleteByObject_'")
+                .every { it.delete_ts != null }
+    }
+
+    def "DELETE-request bulk deletion with body containing array of ids"() {
+        def users = sql.rows("select * from SAMPLE_REST_SEC_USER where LOGIN like 'toDeleteById_'")
+        def body = users.collect { it.id }
+
+        when:
+        def request = createRequest(userToken).body(body)
+        def response = request.with().delete(baseUrl + "/entities/sec\$User")
+
+        then:
+        response.statusCode == 200
+        sql.rows("select * from SAMPLE_REST_SEC_USER where LOGIN like 'toDeleteById_'")
+                .every { it.delete_ts != null }
     }
 }

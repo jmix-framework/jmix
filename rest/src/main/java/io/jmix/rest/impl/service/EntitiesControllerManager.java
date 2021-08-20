@@ -757,11 +757,21 @@ public class EntitiesControllerManager {
         MetaClass metaClass = restControllerUtils.getMetaClass(entityName);
         checkCanDeleteEntity(metaClass);
 
-        JsonArray entitiesJsonArray = new JsonParser().parse(entitiesIdJson).getAsJsonArray();
+        JsonArray entitiesJsonArray = JsonParser.parseString(entitiesIdJson).getAsJsonArray();
 
         for (int i = 0; i < entitiesJsonArray.size(); i++) {
-            String entityId = entitiesJsonArray.get(i).getAsString();
+            JsonElement element = entitiesJsonArray.get(i);
 
+            if (element.isJsonObject()) {
+                element = element.getAsJsonObject().get("id");
+                if (element == null) {
+                    throw new RestAPIException("Required attribute id is not presented",
+                            "Required attribute id is not presented",
+                            HttpStatus.BAD_REQUEST);
+                }
+            }
+
+            String entityId = element.getAsString();
             Object id = getIdFromString(entityId, metaClass);
             Object entity = dataManager.load(new LoadContext<>(metaClass).setId(id));
             checkEntityIsNotNull(entityName, entityId, entity);

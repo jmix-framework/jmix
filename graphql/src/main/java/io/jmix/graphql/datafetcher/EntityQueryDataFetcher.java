@@ -6,6 +6,7 @@ import io.jmix.core.accesscontext.CrudEntityContext;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.LogicalCondition;
+import io.jmix.graphql.service.IdentifierService;
 import io.jmix.graphql.NamingUtils;
 import io.jmix.graphql.loader.*;
 import io.jmix.graphql.schema.Types;
@@ -48,7 +49,8 @@ public class EntityQueryDataFetcher {
     protected MetadataTools metadataTools;
     @Autowired
     protected QueryDataFetcherLoader queryDataFetcherLoader;
-
+    @Autowired
+    protected IdentifierService identifierService;
 
     private static final String GRAPHQL_ENTITY_LOADER_METHOD_NAME = GraphQLEntityDataFetcher.class.getDeclaredMethods()[0].getName();
 
@@ -63,8 +65,7 @@ public class EntityQueryDataFetcher {
 
             String id = environment.getArgument("id");
             LoadContext<?> lc = new LoadContext<>(metaClass);
-            // todo support not only UUID types of id
-            lc.setId(UUID.fromString(id));
+            lc.setId(identifierService.parse(id, metaClass));
             FetchPlan fetchPlan = dataFetcherPlanBuilder.buildFetchPlan(metaClass.getJavaClass(), environment);
             lc.setFetchPlan(fetchPlan);
             Boolean softDeletion = environment.getArgument(NamingUtils.SOFT_DELETION);

@@ -10,6 +10,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.security.AccessDeniedException;
 import io.jmix.core.validation.EntityValidationException;
+import io.jmix.graphql.service.IdentifierService;
 import io.jmix.graphql.NamingUtils;
 import io.jmix.graphql.modifier.GraphQLRemoveEntityDataFetcher;
 import io.jmix.graphql.modifier.GraphQLRemoveEntityDataFetcherContext;
@@ -48,6 +49,8 @@ public class EntityMutationDataFetcher {
     protected DataFetcherPlanBuilder dataFetcherPlanBuilder;
     @Autowired
     protected EntityStates entityStates;
+    @Autowired
+    protected IdentifierService identifierService;
     @Autowired
     private EnvironmentUtils environmentUtils;
     @Autowired
@@ -122,8 +125,7 @@ public class EntityMutationDataFetcher {
             } catch (PersistenceException ex) {
                 throw new GqlEntityValidationException(ex, ex.getMessage());
             }
-            // todo support not only UUID types of id
-            UUID id = UUID.fromString(environment.getArgument("id"));
+            Object id = identifierService.parse(environment.getArgument("id"), metaClass);
             log.debug("deleteEntity: id {}", id);
             Id<?> entityId = Id.of(id, metaClass.getJavaClass());
             if (mutationDataFetcherLoader.getCustomEntityRemover(metaClass.getJavaClass()) == null) {

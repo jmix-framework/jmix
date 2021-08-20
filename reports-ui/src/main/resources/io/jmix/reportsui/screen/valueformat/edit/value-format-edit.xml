@@ -36,6 +36,7 @@
                     <form id="formatForm" dataContainer="valuesFormatsDc" width="100%">
                         <column>
                             <textField id="valueNameField" property="valueName" required="true" width="100%"
+                                       description="msg://valueNameDescription"
                                        requiredMessage="msg://valueNameMsg"/>
                             <comboBox id="formatField" required="true"
                                       width="100%"

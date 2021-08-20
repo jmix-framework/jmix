@@ -25,6 +25,7 @@ import io.jmix.core.security.PasswordNotMatchException;
 import io.jmix.core.security.UserManager;
 import io.jmix.core.security.UserRepository;
 import io.jmix.core.security.event.UserDisabledEvent;
+import io.jmix.core.security.event.SingleUserPasswordChangeEvent;
 import io.jmix.core.security.event.UserPasswordResetEvent;
 import io.jmix.core.security.event.UserRemovedEvent;
 import io.jmix.security.authentication.AcceptsGrantedAuthorities;
@@ -202,6 +203,7 @@ public abstract class AbstractDatabaseUserRepository<T extends UserDetails> impl
         Preconditions.checkNotNullArgument(newPassword, "Null new password");
         T userDetails = loadUserByUsername(userName);
         changePassword(userDetails, oldPassword, newPassword);
+        eventPublisher.publishEvent(new SingleUserPasswordChangeEvent(userName, newPassword));
     }
 
     private void changePassword(T userDetails, @Nullable String oldPassword, @Nullable String newPassword) throws PasswordNotMatchException {
@@ -227,7 +229,7 @@ public abstract class AbstractDatabaseUserRepository<T extends UserDetails> impl
             do {
                 newPassword = generateRandomPassword();
                 try {
-                    changePassword(user.getUsername(), null, newPassword);
+                    changePassword(loadUserByUsername(user.getUsername()), null, newPassword);
                 } catch (PasswordNotMatchException e) {
                     continue;
                 }

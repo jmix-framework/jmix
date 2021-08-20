@@ -1754,6 +1754,17 @@ components:
         locale:
           type: string
           example: en_US
+        attributes:
+          type: object
+          example:
+            id: 232678a5-bb0b-4a7d-9132-18bbe79e013a
+            username: admin
+            firstName: Bob
+            lastName: Martin
+            email: bob.martin@test.com
+            active: true
+          description: All user local attributes in case of user implements the UserDetails, except attributes annotated
+          as @Secret.
     fileInfo:
       type: object
       properties:

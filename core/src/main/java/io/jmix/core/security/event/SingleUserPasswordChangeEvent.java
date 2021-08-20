@@ -16,6 +16,7 @@
 
 package io.jmix.core.security.event;
 
+import javax.annotation.Nullable;
 import java.util.Collections;
 
 /**
@@ -31,7 +32,7 @@ public class SingleUserPasswordChangeEvent extends UserPasswordChangedEvent {
     private final String username;
     private final String newPassword;
 
-    public SingleUserPasswordChangeEvent(String username, String newPassword) {
+    public SingleUserPasswordChangeEvent(String username, @Nullable String newPassword) {
         super(Collections.singletonMap(username, newPassword));
         this.username = username;
         this.newPassword = newPassword;
@@ -41,6 +42,7 @@ public class SingleUserPasswordChangeEvent extends UserPasswordChangedEvent {
         return username;
     }
 
+    @Nullable
     public String getNewPassword() {
         return newPassword;
     }

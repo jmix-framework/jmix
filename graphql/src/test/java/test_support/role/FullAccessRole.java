@@ -18,10 +18,7 @@ package test_support.role;
 
 import io.jmix.security.model.EntityAttributePolicyAction;
 import io.jmix.security.model.EntityPolicyAction;
-import io.jmix.security.role.annotation.EntityAttributePolicy;
-import io.jmix.security.role.annotation.EntityPolicy;
-import io.jmix.security.role.annotation.ResourceRole;
-import io.jmix.security.role.annotation.SpecificPolicy;
+import io.jmix.security.role.annotation.*;
 
 @ResourceRole(name = FullAccessRole.ROLE_NAME, code = FullAccessRole.ROLE_NAME)
 public interface FullAccessRole {
@@ -30,5 +27,6 @@ public interface FullAccessRole {
     @EntityPolicy(entityName = "*", actions = {EntityPolicyAction.ALL})
     @EntityAttributePolicy(entityName = "*", attributes = "*", action = EntityAttributePolicyAction.MODIFY)
     @SpecificPolicy(resources = "*")
+    @GraphQLPolicy(operations = "*")
     void fullAccess();
 }

@@ -47,6 +47,7 @@ public class NamingUtils {
 
     /**
      * Replace all symbols that we can't use in graphql types, such '$', add input type prefix
+     *
      * @param name name to be normalized
      * @return normalized name
      */

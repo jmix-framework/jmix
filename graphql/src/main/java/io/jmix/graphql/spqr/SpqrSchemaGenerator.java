@@ -9,8 +9,8 @@ import io.leangen.graphql.*;
 import io.leangen.graphql.execution.GlobalEnvironment;
 import io.leangen.graphql.execution.ResolverInterceptorFactory;
 import io.leangen.graphql.generator.*;
-import io.leangen.graphql.generator.mapping.*;
 import io.leangen.graphql.generator.mapping.SchemaTransformer;
+import io.leangen.graphql.generator.mapping.*;
 import io.leangen.graphql.generator.mapping.common.*;
 import io.leangen.graphql.generator.mapping.core.CompletableFutureAdapter;
 import io.leangen.graphql.generator.mapping.core.DataFetcherResultMapper;
@@ -22,6 +22,7 @@ import io.leangen.graphql.metadata.strategy.query.ResolverBuilder;
 import io.leangen.graphql.metadata.strategy.value.*;
 import io.leangen.graphql.module.Module;
 import io.leangen.graphql.util.Defaults;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.lang.reflect.AnnotatedType;
 import java.lang.reflect.Type;
@@ -32,6 +33,9 @@ import static graphql.schema.GraphQLObjectType.newObject;
 public class SpqrSchemaGenerator extends BaseSpqrSchemaGenerator {
 
     protected final GenericSchemaGenerator genericGenerator;
+
+    @Autowired
+    private SpqrCustomSchemeRegistry schemeRegistry;
 
     public SpqrSchemaGenerator(GenericSchemaGenerator genericGenerator) {
         this.genericGenerator = genericGenerator;
@@ -57,6 +61,9 @@ public class SpqrSchemaGenerator extends BaseSpqrSchemaGenerator {
                 interceptorFactory, directiveBuilder, inclusionStrategy, relayMappingConfig, additionalTypes.values(),
                 additionalDirectiveTypes, typeComparator, implDiscoveryStrategy, codeRegistry);
         OperationMapper operationMapper = new OperationMapper(queryRootName, mutationRootName, subscriptionRootName, buildContext);
+
+        schemeRegistry.addOperations(operationMapper.getQueries());
+        schemeRegistry.addOperations(operationMapper.getMutations());
 
         GraphQLSchema.Builder schemaBuilder = GraphQLSchema.newSchema();
         GraphQLObjectType.Builder fields = newObject()

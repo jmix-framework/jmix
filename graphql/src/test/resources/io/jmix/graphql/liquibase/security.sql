@@ -41,6 +41,7 @@ INSERT INTO public.sec_resource_policy (id, create_ts, created_by, type_, policy
 VALUES
 ('35010e42-f9c1-dde3-655d-98c2956225a8', '2021-02-19 16:24:59.947', 'admin', 'specific',  NULL,       'rest.enabled',    'access', 'allow', '23548523-3f0f-f96a-07ff-0d60b9cb5c1b'),
 ('35010e42-f9c1-dde1-655d-98c2956225a8', '2021-02-19 16:24:59.947', 'admin', 'specific',  NULL,       'graphql.enabled', 'access', 'allow', '23548523-3f0f-f96a-07ff-0d60b9cb5c1b'),
+('35010e42-f9c1-dde2-655d-98c2956225a8', '2021-02-19 16:24:59.947', 'admin', 'graphQL',  NULL,       'userInfo', 'access', 'allow', '23548523-3f0f-f96a-07ff-0d60b9cb5c1b'),
 ('bb818629-a6d6-4aaa-ad65-b431e054fd9e', '2021-02-19 16:24:59.947', 'admin', 'screen',    NULL,       '*',               'access', 'allow', '23548523-3f0f-f96a-07ff-0d60b9cb5c1b'),
 ('173308a1-1ff4-4edb-a559-872c8b239283', '2021-02-19 16:24:59.947', 'admin', 'menu',      NULL,       '*',               'access', 'allow', '23548523-3f0f-f96a-07ff-0d60b9cb5c1b'),
 

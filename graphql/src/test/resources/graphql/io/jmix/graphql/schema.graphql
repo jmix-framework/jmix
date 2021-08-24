@@ -68,6 +68,7 @@ type Mutation {
 type Query {
   entityMessages(className: String, locale: String): [gql_MessageDetail]
   enumMessages(className: String, locale: String): [gql_MessageDetail]
+  inaccessibleQuery: String
   permissions: sec_PermissionConfig
   scr_AssociationM2MTestEntityById(
     id: String!, 

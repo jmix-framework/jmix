@@ -17,6 +17,7 @@
 package io.jmix.graphql.security.role;
 
 import io.jmix.security.model.SecurityScope;
+import io.jmix.security.role.annotation.GraphQLPolicy;
 import io.jmix.security.role.annotation.ResourceRole;
 import io.jmix.security.role.annotation.SpecificPolicy;
 
@@ -25,6 +26,7 @@ public interface GraphQLMinimalRole {
     String CODE = "graphql-minimal";
 
     @SpecificPolicy(resources = "graphql.enabled")
+    @GraphQLPolicy(operations = "userInfo")
     void graphqlAccess();
 }
 

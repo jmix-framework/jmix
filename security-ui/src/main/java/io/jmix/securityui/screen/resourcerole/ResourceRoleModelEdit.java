@@ -30,6 +30,7 @@ import io.jmix.securityui.screen.resourcepolicy.*;
 import io.jmix.ui.RemoveOperation;
 import io.jmix.ui.ScreenBuilders;
 import io.jmix.ui.action.Action;
+import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.action.list.AddAction;
 import io.jmix.ui.action.list.EditAction;
 import io.jmix.ui.action.list.RemoveAction;
@@ -47,6 +48,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import javax.inject.Named;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -125,6 +127,8 @@ public class ResourceRoleModelEdit extends StandardEditor<ResourceRoleModel> {
     private Set<UUID> forRemove;
 
     private boolean resourcePoliciesTableExpanded = true;
+    @Named("resourcePoliciesTable.createGraphQLPolicy")
+    private BaseAction resourcePoliciesTableCreateGraphQLPolicy;
 
     public void setOpenedByCreateAction(boolean openedByCreateAction) {
         this.openedByCreateAction = openedByCreateAction;
@@ -173,6 +177,8 @@ public class ResourceRoleModelEdit extends StandardEditor<ResourceRoleModel> {
         if (!Strings.isNullOrEmpty(getEditedEntity().getCode())) {
             codeField.setEnabled(false);
         }
+
+        resourcePoliciesTableCreateGraphQLPolicy.setVisible(isGraphQLEnabled());
     }
 
     @Subscribe
@@ -232,6 +238,20 @@ public class ResourceRoleModelEdit extends StandardEditor<ResourceRoleModel> {
                 }
             }
         }
+    }
+
+    @Subscribe("resourcePoliciesTable.createGraphQLPolicy")
+    public void onGraphQLPoliciesTableCreateGraphQLPolicy(Action.ActionPerformedEvent event) {
+        screenBuilders.editor(resourcePoliciesTable)
+                .withScreenClass(GraphQLResourcePolicyModelEdit.class)
+                .newEntity()
+                .withInitializer(resourcePolicyModel -> {
+                    resourcePolicyModel.setType(ResourcePolicyType.GRAPHQL);
+                    resourcePolicyModel.setAction(ResourcePolicy.DEFAULT_ACTION);
+                    resourcePolicyModel.setEffect(ResourcePolicyEffect.ALLOW);
+                })
+                .build()
+                .show();
     }
 
     @Subscribe("resourcePoliciesTable.createSpecificPolicy")
@@ -449,5 +469,14 @@ public class ResourceRoleModelEdit extends StandardEditor<ResourceRoleModel> {
                 throw new ValidationException(messages.getMessage("io.jmix.securityui.screen.role/RoleModelEdit.uniqueCode"));
             }
         });
+    }
+
+    private boolean isGraphQLEnabled(){
+        try {
+            Class.forName("io.jmix.graphql.security.GraphQLAuthorizedUrlsProvider");
+            return true;
+        } catch (ClassNotFoundException e) {
+        }
+        return false;
     }
 }

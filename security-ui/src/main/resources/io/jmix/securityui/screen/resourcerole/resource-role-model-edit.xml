@@ -54,6 +54,7 @@
                         <action id="createEntityPolicy" caption="msg://ResourceRoleModelEdit.entityPolicy"/>
                         <action id="createEntityAttributePolicy"
                                 caption="msg://ResourceRoleModelEdit.entityAttributePolicy"/>
+                        <action id="createGraphQLPolicy" caption="msg://ResourceRoleModelEdit.graphQLPolicy"/>
                         <action id="createSpecificPolicy" caption="msg://ResourceRoleModelEdit.specificPolicy"/>
                         <action id="edit" type="edit"/>
                         <action id="view" type="view"/>
@@ -81,6 +82,8 @@
                                         caption="msg://ResourceRoleModelEdit.entityPolicy"/>
                                 <action id="resourcePoliciesTable.createEntityAttributePolicy"
                                         caption="msg://ResourceRoleModelEdit.entityAttributePolicy"/>
+                                <action id="resourcePoliciesTable.createGraphQLPolicy"
+                                        caption="msg://ResourceRoleModelEdit.graphQLPolicy"/>
                                 <action id="resourcePoliciesTable.createSpecificPolicy"
                                         caption="msg://ResourceRoleModelEdit.specificPolicy"/>
                             </actions>

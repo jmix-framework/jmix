@@ -36,5 +36,6 @@ public class SecurityConstraintsRegistration {
         accessConstraintsRegistry.register(beanFactory.getBean(ExportImportEntityConstraint.class));
         accessConstraintsRegistry.register(beanFactory.getBean(SpecificConstraintImpl.class));
         accessConstraintsRegistry.register(beanFactory.getBean(EntityAttributeConstraint.class));
+        accessConstraintsRegistry.register(beanFactory.getBean(GraphQLOperationConstraintImpl.class));
     }
 }

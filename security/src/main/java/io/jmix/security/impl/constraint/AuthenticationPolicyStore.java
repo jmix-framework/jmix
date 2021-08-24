@@ -95,6 +95,12 @@ public class AuthenticationPolicyStore implements PolicyStore {
                 authority.getResourcePoliciesByIndex(SpecificResourcePolicyByNameIndex.class, index -> index.getPolicies(resourceName)));
     }
 
+    @Override
+    public Stream<ResourcePolicy> getGraphQLResourcePolicies(String resourceName) {
+        return extractFromAuthenticationByScope(authority -> authority
+                .getResourcePoliciesByIndex(GraphQLResourcePolicyByNameIndex.class, index -> index.getPolicies(resourceName)));
+    }
+
     protected <T> Stream<T> extractFromAuthenticationByScope(Function<PolicyAwareGrantedAuthority, Stream<T>> extractor) {
         Stream<T> stream = Stream.empty();
 
@@ -208,6 +214,22 @@ public class AuthenticationPolicyStore implements PolicyStore {
         public void indexAll(Collection<ResourcePolicy> resourcePolicies) {
             policyByName = resourcePolicies.stream()
                     .filter(p -> Objects.equals(p.getType(), ResourcePolicyType.SPECIFIC))
+                    .collect(Collectors.groupingBy(ResourcePolicy::getResource));
+        }
+
+        public Stream<ResourcePolicy> getPolicies(String name) {
+            return policyByName.getOrDefault(name, Collections.emptyList()).stream();
+        }
+    }
+
+    public static class GraphQLResourcePolicyByNameIndex implements ResourcePolicyIndex {
+
+        protected Map<String, List<ResourcePolicy>> policyByName;
+
+        @Override
+        public void indexAll(Collection<ResourcePolicy> resourcePolicies) {
+            policyByName = resourcePolicies.stream()
+                    .filter(p -> Objects.equals(p.getType(), ResourcePolicyType.GRAPHQL))
                     .collect(Collectors.groupingBy(ResourcePolicy::getResource));
         }
 

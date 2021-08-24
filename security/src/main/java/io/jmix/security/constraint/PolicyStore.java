@@ -35,4 +35,6 @@ public interface PolicyStore {
     Stream<ResourcePolicy> getEntityAttributesResourcePoliciesByWildcard(String entityWildcard, String attributeWildcard);
 
     Stream<ResourcePolicy> getSpecificResourcePolicies(String resourceName);
+
+    Stream<ResourcePolicy> getGraphQLResourcePolicies(String resourceName);
 }

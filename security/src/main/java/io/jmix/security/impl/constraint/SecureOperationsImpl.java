@@ -138,4 +138,17 @@ public class SecureOperationsImpl implements SecureOperations {
 
         return result;
     }
+
+    @Override
+    public boolean isGraphQLPermitted(String resourceName, PolicyStore policyStore) {
+        boolean result = policyStore.getGraphQLResourcePolicies(resourceName)
+                .anyMatch(policy -> Objects.equals(policy.getEffect(), ResourcePolicyEffect.ALLOW));
+
+        if (!result) {
+            result = policyStore.getGraphQLResourcePolicies("*")
+                    .anyMatch(policy -> Objects.equals(policy.getEffect(), ResourcePolicyEffect.ALLOW));
+        }
+
+        return result;
+    }
 }

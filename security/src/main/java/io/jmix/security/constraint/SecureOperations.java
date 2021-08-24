@@ -34,4 +34,6 @@ public interface SecureOperations {
     boolean isEntityAttrUpdatePermitted(MetaPropertyPath propertyPath, PolicyStore policyStore);
 
     boolean isSpecificPermitted(String resourceName, PolicyStore policyStore);
+
+    boolean isGraphQLPermitted(String resourceName, PolicyStore policyStore);
 }

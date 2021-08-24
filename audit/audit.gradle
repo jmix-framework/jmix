@@ -22,6 +22,7 @@ archivesBaseName = 'jmix-audit'
 
 dependencies {
     api 'io.jmix.data:jmix-data'
+    api 'com.thoughtworks.xstream:xstream'
 
     implementation 'org.springframework:spring-orm'
     implementation 'org.springframework:spring-tx'

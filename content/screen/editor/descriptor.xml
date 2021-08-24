@@ -3,6 +3,7 @@ dcId = "${entity.uncapitalizedClassName}Dc"
 def nestedDatasourceProperties = api.evaluateScript('screen/nestedDatasourceProperties.groovy', ['view': editView, 'embeddable': false])
 def nestedCollectionDatasourceProperties = api.evaluateScript('screen/nestedCollectionDatasourceProperties.groovy', ['view': editView])
 def createScrollBox = editView.allProperties.size() > 10 || (editorActionBottom && !modalDialog)
+def createModalVbox = modalDialog && editorActionBottom && !createScrollBox
 def collectionAttributesTable = []
 nestedCollectionDatasourceProperties.each { prop ->
     def binding = [
@@ -23,6 +24,12 @@ def formXml = api.processSnippet('screen/form.xml',
 def optionsDatasourceXml = api.processSnippet('screen/optionsDsSource.xml',
         ['view': editView,
         'api': api])
+def expandId = "editActions"
+if (createModalVbox) {
+    expandId = "formBox"
+} else if (createScrollBox) {
+    expandId = "scrollBox"
+}
 %><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <window xmlns="http://jmix.io/schema/ui/window"
         <%if(jmixDynattrUiStarter) {%>xmlns:dynattr="http://jmix.io/schema/dynattr/ui"<%}%>
@@ -73,16 +80,19 @@ def optionsDatasourceXml = api.processSnippet('screen/optionsDsSource.xml',
     <%} else {%>
     <dialogMode height="600"
                 width="800"/><%}%>
-<layout spacing="true" expand=<%if (editorActionBottom) {%>"scrollBox"<%} else {%>"editActions"<%}%>>
-    <%if (createScrollBox) {
+<layout spacing="true" expand="$expandId">
+    <%if (createModalVbox) {
+        print('<vbox id="formBox" spacing="true">')}
+    else if (createScrollBox) {
         print('<scrollBox id="scrollBox" spacing="true">')}%>
         ${formXml}
         <%collectionAttributesTable.each{table ->%>
             ${table}
         <%}%>
-        <%if (createScrollBox) {
-        print('</scrollBox>')
-        }%>
+    <%if (createModalVbox) {
+        print('</vbox>')}
+    else if (createScrollBox) {
+        print('</scrollBox>')}%>
         <hbox id="editActions" spacing="true">
             <button id="commitAndCloseBtn" action="windowCommitAndClose"/><%if(extendedWindowActions) {%>
             <button id="commitBtn" action="windowCommit"/><%}%>

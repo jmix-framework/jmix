@@ -2,6 +2,7 @@
 dcId = "${entity.uncapitalizedClassName}Dc"
 
 def createScrollBox = entity.attributes.size() > 10 || (editorActionBottom && !modalDialog)
+def createModalVbox = modalDialog && editorActionBottom && !createScrollBox
 
 def formXml = api.processSnippet('screen/dto_form.xml',
         ['entity': entity,
@@ -9,6 +10,13 @@ def formXml = api.processSnippet('screen/dto_form.xml',
         'dcId': dcId,
         'columnWidth': fieldColumnWidth,
         'formId': 'form'])
+
+def expandId = "editActions"
+if (createModalVbox) {
+    expandId = "formBox"
+} else if (createScrollBox) {
+    expandId = "scrollBox"
+}
 
 %><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <window xmlns="http://jmix.io/schema/ui/window"
@@ -44,13 +52,16 @@ def formXml = api.processSnippet('screen/dto_form.xml',
     <%} else {%>
     <dialogMode height="600"
                 width="800"/><%}%>
-    <layout spacing="true" expand=<%if (editorActionBottom) {%>"scrollBox"<%} else {%>"editActions"<%}%>>
-        <%if (createScrollBox) {
-        print('<scrollBox id="scrollBox" spacing="true">')}%>
+    <layout spacing="true" expand="$expandId">
+        <%if (createModalVbox) {
+            print('<vbox id="formBox" spacing="true">')}
+        else if (createScrollBox) {
+            print('<scrollBox id="scrollBox" spacing="true">')}%>
         ${formXml}
-        <%if (createScrollBox) {
-        print('</scrollBox>')
-        }%>
+        <%if (createModalVbox) {
+            print('</vbox>')}
+        else if (createScrollBox) {
+            print('</scrollBox>')}%>
         <hbox id="editActions" spacing="true">
             <button id="commitAndCloseBtn" action="windowCommitAndClose"/><%if(extendedWindowActions) {%>
             <button id="commitBtn" action="windowCommit"/><%}%>

@@ -17,9 +17,9 @@
 
 package com.haulmont.cuba.core.global;
 
+import com.haulmont.cuba.security.entity.EntityAttrAccess;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-import com.haulmont.cuba.security.entity.EntityAttrAccess;
 import io.jmix.core.security.EntityOp;
 
 /**
@@ -142,7 +142,6 @@ public interface Security {
      * @param name specific permission id
      */
     boolean isSpecificPermitted(String name);
-
     /**
      * Check if current user has a specific permission.
      *

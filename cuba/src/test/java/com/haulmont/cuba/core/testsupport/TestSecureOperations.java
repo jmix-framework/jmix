@@ -57,4 +57,9 @@ public class TestSecureOperations implements SecureOperations {
     public boolean isSpecificPermitted(String resourceName, PolicyStore policyStore) {
         return true;
     }
+
+    @Override
+    public boolean isGraphQLPermitted(String resourceName, PolicyStore policyStore) {
+        return true;
+    }
 }

@@ -17,13 +17,13 @@
 package com.haulmont.cuba.core.global.impl;
 
 import com.haulmont.cuba.core.global.Security;
+import com.haulmont.cuba.security.entity.EntityAttrAccess;
 import io.jmix.core.ExtendedEntities;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.security.AccessDeniedException;
-import com.haulmont.cuba.security.entity.EntityAttrAccess;
 import io.jmix.core.security.EntityOp;
 import io.jmix.security.constraint.PolicyStore;
 import io.jmix.security.constraint.SecureOperations;

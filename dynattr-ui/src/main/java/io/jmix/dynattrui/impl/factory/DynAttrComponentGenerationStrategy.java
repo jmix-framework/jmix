@@ -24,11 +24,7 @@ import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import io.jmix.core.metamodel.datatype.impl.AdaptiveNumberDatatype;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.dynattr.AttributeDefinition;
-import io.jmix.dynattr.AttributeType;
-import io.jmix.dynattr.DynAttrMetadata;
-import io.jmix.dynattr.DynAttrUtils;
-import io.jmix.dynattr.MsgBundleTools;
+import io.jmix.dynattr.*;
 import io.jmix.dynattrui.impl.AttributeDependencies;
 import io.jmix.dynattrui.impl.AttributeOptionsLoader;
 import io.jmix.dynattrui.impl.AttributeRecalculationListener;
@@ -356,6 +352,8 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
                 selectAction.setResolution(DateField.Resolution.DAY);
                 break;
             case STRING:
+                selectAction.setJavaClass(String.class);
+                break;
             case ENUMERATION:
                 selectAction.setJavaClass(String.class);
                 selectAction.setOptions(new MapOptions(getLocalizedEnumerationMap(attribute)));

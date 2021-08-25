@@ -171,11 +171,28 @@ public interface GroupTable<E> extends Table<E> {
         String getStyleName(GroupInfo info);
     }
 
+    /**
+     * Interface defining method for formatting cell value of group columns.
+     *
+     * @param <E> row item type
+     */
     @FunctionalInterface
     interface GroupCellValueFormatter<E> {
+
+        /**
+         * Formats cell value of group column.
+         *
+         * @param context group cell context
+         * @return formatted cell value of group column
+         */
         String format(GroupCellContext<E> context);
     }
 
+    /**
+     * Class describes information about group columns for the current row.
+     *
+     * @param <E> row item type
+     */
     class GroupCellContext<E> {
         private GroupInfo groupInfo;
         private Object value;
@@ -189,18 +206,30 @@ public interface GroupTable<E> extends Table<E> {
             this.groupItems = groupItems;
         }
 
+        /**
+         * @return group info
+         */
         public GroupInfo getGroupInfo() {
             return groupInfo;
         }
 
+        /**
+         * @return cell value of group column
+         */
         public Object getValue() {
             return value;
         }
 
+        /**
+         * @return items that are included in the group
+         */
         public List<E> getGroupItems() {
             return groupItems;
         }
 
+        /**
+         * @return formatted string representation of group cell value
+         */
         public String getFormattedValue() {
             return formattedValue;
         }

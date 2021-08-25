@@ -17,6 +17,11 @@ package io.jmix.ui.component.data;
 
 import org.apache.commons.collections4.map.LinkedMap;
 
+/**
+ * Class contains information about current cell value and cell value of parent group columns.
+ *
+ * @param <P> type of group property
+ */
 public class GroupInfo<P> {
 
     private LinkedMap groupingValues;

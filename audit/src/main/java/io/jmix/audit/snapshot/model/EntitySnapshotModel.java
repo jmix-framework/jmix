@@ -28,13 +28,16 @@ import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.Id;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 @JmixEntity(name = "audit_EntitySnapshotModel")
-public class EntitySnapshotModel {
+public class EntitySnapshotModel implements Serializable {
+    private static final long serialVersionUID = -8135122262155535927L;
+
     @JmixGeneratedValue
     @Id
     private UUID id;

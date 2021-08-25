@@ -61,7 +61,7 @@ public class EntityDifferenceManagerImpl implements EntityDifferenceManager {
     }
 
     @Override
-    public EntityDifferenceModel getDifference(@Nullable EntitySnapshotModel first, EntitySnapshotModel second) {
+    public EntityDifferenceModel getDifference(@Nullable EntitySnapshotModel first, @Nullable EntitySnapshotModel second) {
         // Sort snapshots by date, first - old, second - new
         long firstTime = 0;
         if (first != null && first.getSnapshotDate() != null)
@@ -95,7 +95,9 @@ public class EntityDifferenceManagerImpl implements EntityDifferenceManager {
         return getDifferenceByFetchPlan(first, second, diffFetchPlan);
     }
 
-    private EntityDifferenceModel getDifferenceByFetchPlan(EntitySnapshotModel first, EntitySnapshotModel second, FetchPlan diffFetchPlan) {
+    private EntityDifferenceModel getDifferenceByFetchPlan(
+            @Nullable EntitySnapshotModel first,
+            @Nullable EntitySnapshotModel second, FetchPlan diffFetchPlan) {
         EntityDifferenceModel result = metadata.create(EntityDifferenceModel.class);
         result.setDiffFetchPlan(diffFetchPlan);
         result.setBeforeSnapshot(first);
@@ -128,8 +130,10 @@ public class EntityDifferenceManagerImpl implements EntityDifferenceManager {
      * @param diffBranch    Diff branch
      * @return Diff list
      */
-    private List<EntityPropertyDifferenceModel> getPropertyDiffs(FetchPlan diffFetchPlan, Object firstEntity, Object secondEntity,
-                                                      Stack<Object> diffBranch) {
+    private List<EntityPropertyDifferenceModel> getPropertyDiffs(FetchPlan diffFetchPlan,
+                                                                 @Nullable Object firstEntity,
+                                                                 @Nullable Object secondEntity,
+                                                                 Stack<Object> diffBranch) {
         List<EntityPropertyDifferenceModel> propertyDiffs = new LinkedList<>();
 
         MetaClass fetchPlanMetaClass = metadata.getSession().getClass(diffFetchPlan.getEntityClass());
@@ -161,16 +165,17 @@ public class EntityDifferenceManagerImpl implements EntityDifferenceManager {
     /**
      * Return difference between property values
      *
-     * @param firstValue   First value
-     * @param secondValue  Second value
-     * @param metaProperty Meta Property
+     * @param firstValue        First value
+     * @param secondValue       Second value
+     * @param metaProperty      Meta Property
      * @param fetchPlanProperty FetchPlan property
-     * @param diffBranch   Branch with passed diffs
+     * @param diffBranch        Branch with passed diffs
      * @return Diff
      */
-    private EntityPropertyDifferenceModel getPropertyDifference(Object firstValue, Object secondValue,
-                                                       MetaProperty metaProperty, FetchPlanProperty fetchPlanProperty,
-                                                       Stack<Object> diffBranch) {
+    @Nullable
+    private EntityPropertyDifferenceModel getPropertyDifference(@Nullable Object firstValue, @Nullable Object secondValue,
+                                                                MetaProperty metaProperty, FetchPlanProperty fetchPlanProperty,
+                                                                Stack<Object> diffBranch) {
         EntityPropertyDifferenceModel propertyDiff = null;
 
         Range range = metaProperty.getRange();
@@ -191,9 +196,10 @@ public class EntityDifferenceManagerImpl implements EntityDifferenceManager {
         return propertyDiff;
     }
 
-    private EntityPropertyDifferenceModel getCollectionDiff(Object firstValue, Object secondValue,
-                                                   FetchPlanProperty fetchPlanProperty, MetaProperty metaProperty,
-                                                   Stack<Object> diffBranch) {
+    @Nullable
+    private EntityPropertyDifferenceModel getCollectionDiff(@Nullable Object firstValue, @Nullable Object secondValue,
+                                                            FetchPlanProperty fetchPlanProperty, MetaProperty metaProperty,
+                                                            Stack<Object> diffBranch) {
         EntityPropertyDifferenceModel propertyDiff = null;
 
         Collection<Entity> addedEntities = new LinkedList<>();
@@ -264,6 +270,7 @@ public class EntityDifferenceManagerImpl implements EntityDifferenceManager {
         return propertyDiff;
     }
 
+    @Nullable
     private EntityPropertyDifferenceModel getClassDiff(@Nullable Object firstValue, @Nullable Object secondValue,
                                               FetchPlanProperty fetchPlanProperty, MetaProperty metaProperty,
                                               Stack<Object> diffBranch) {
@@ -292,6 +299,7 @@ public class EntityDifferenceManagerImpl implements EntityDifferenceManager {
         return propertyDiff;
     }
 
+    @Nullable
     private Entity getRelatedItem(Collection collection, Entity entity) {
         for (Object item : collection) {
             Entity itemEntity = (Entity) item;
@@ -313,10 +321,11 @@ public class EntityDifferenceManagerImpl implements EntityDifferenceManager {
      * @param diffBranch   Diff branch
      * @return Property difference
      */
+    @Nullable
     private EntityPropertyDifferenceModel generateClassDiffFor(Object diffObject,
-                                                      @Nullable Object firstValue, @Nullable Object secondValue,
-                                                      FetchPlanProperty fetchPlanProperty, MetaProperty metaProperty,
-                                                      Stack<Object> diffBranch) {
+                                                               @Nullable Object firstValue, @Nullable Object secondValue,
+                                                               FetchPlanProperty fetchPlanProperty, MetaProperty metaProperty,
+                                                               Stack<Object> diffBranch) {
         // link
         boolean isLinkChange = !Objects.equals(firstValue, secondValue);
         isLinkChange = !(EntitySystemAccess.isEmbeddable(diffObject)) && isLinkChange;
@@ -358,16 +367,11 @@ public class EntityDifferenceManagerImpl implements EntityDifferenceManager {
 
         for (FetchPlanProperty firstProperty : firstProps) {
             if (second.containsProperty(firstProperty.getName())) {
-                FetchPlan resultPropertyFetchPlan = null;
                 FetchPlanProperty secondProperty = second.getProperty(firstProperty.getName());
                 if ((firstProperty.getFetchPlan() != null) && (secondProperty.getFetchPlan() != null)) {
-                    resultPropertyFetchPlan = intersectFetchPlans(firstProperty.getFetchPlan(), secondProperty.getFetchPlan());
+                    intersectFetchPlans(firstProperty.getFetchPlan(), secondProperty.getFetchPlan());
                 }
-                if (resultPropertyFetchPlan == null) {
-                    builder.add(firstProperty.getName());
-                } else {
-                    builder.add(firstProperty.getName());
-                }
+                builder.add(firstProperty.getName());
             }
         }
 

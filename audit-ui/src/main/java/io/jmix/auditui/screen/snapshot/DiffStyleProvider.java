@@ -21,9 +21,12 @@ import io.jmix.audit.snapshot.model.EntityCollectionPropertyDifferenceModel;
 import io.jmix.audit.snapshot.model.EntityPropertyDifferenceModel;
 import io.jmix.ui.component.Table;
 
+import javax.annotation.Nullable;
+
 public class DiffStyleProvider implements Table.StyleProvider<EntityPropertyDifferenceModel> {
 
     @Override
+    @Nullable
     public String getStyleName(EntityPropertyDifferenceModel entity, String property) {
         if (property != null) {
             if ("name".equals(property)) {

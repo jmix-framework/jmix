@@ -27,7 +27,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.core.userdetails.User
 import test_support.testmodel.IdentityEntity
-import test_support.testmodel.NonPersistEntity
 
 import javax.persistence.TypedQuery
 
@@ -119,9 +118,9 @@ class EntitySnapshotApiTest extends AbstractEntityLogTest {
         given:
         FetchPlan fetchPlan = fetchPlanRepository.getFetchPlan(IdentityEntity.class, FetchPlan.LOCAL)
         Date snapshotDate = new Date(100)
-        def entity = new NonPersistEntity()
+        def entity = metadata.create(IdentityEntity.class)
         entity.setName('testRole')
-        def nonPersistEntityMetaClass = metadata.findClass(entity.getClass())
+        def entityMetaClass = metadata.findClass(entity.getClass())
         saveEntity(entity)
 
         when:
@@ -141,7 +140,7 @@ class EntitySnapshotApiTest extends AbstractEntityLogTest {
         }
         snapshot2.getSnapshotXml().contains('testRole') == true
         then:
-        def snapshots2 = snapshotApi.getSnapshots(nonPersistEntityMetaClass, entity.getId())
+        def snapshots2 = snapshotApi.getSnapshots(entityMetaClass, entity.getId())
 
         snapshots2.size() == 0
         snapshot2.getSnapshotDate() == snapshotDate
@@ -153,7 +152,7 @@ class EntitySnapshotApiTest extends AbstractEntityLogTest {
         }
         snapshot3.getSnapshotXml().contains('testRole') == true
         then:
-        def snapshots3 = snapshotApi.getSnapshots(nonPersistEntityMetaClass, entity.getId())
+        def snapshots3 = snapshotApi.getSnapshots(entityMetaClass, entity.getId())
 
         snapshots3.size() == 0
         snapshot3.getAuthorUsername() == "admin"

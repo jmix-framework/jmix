@@ -124,8 +124,7 @@ public class PivotTableDataItemsSerializer {
         } else if (value instanceof Enum) {
             formattedValue = messages.getMessage((Enum) value);
         } else if (value instanceof Date
-                || value instanceof Temporal
-                || value instanceof Number) {
+                || value instanceof Temporal) {
             formattedValue = getFormattedValueByEntityDatatype(item, property, value)
                     .orElse(getFormattedValueByClassDatatype(value, getUserLocale()));
         } else if (value instanceof Boolean) {

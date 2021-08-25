@@ -32,7 +32,6 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.Range;
 import io.jmix.core.metamodel.model.impl.DatatypeRange;
 import io.jmix.core.querycondition.PropertyCondition;
-import io.jmix.ui.app.propertyfilter.dateinterval.RelativeDateTimeMomentProvider;
 import io.jmix.ui.app.propertyfilter.dateinterval.model.BaseDateInterval;
 import io.jmix.ui.app.propertyfilter.dateinterval.DateIntervalUtils;
 import io.jmix.ui.component.PropertyFilter;
@@ -79,7 +78,6 @@ public class PropertyFilterSupport {
     protected DataManager dataManager;
     protected DatatypeRegistry datatypeRegistry;
     protected DateIntervalUtils dateIntervalUtils;
-    protected RelativeDateTimeMomentProvider dateTimeMomentProvider;
 
     @Autowired
     public PropertyFilterSupport(Messages messages,
@@ -87,15 +85,13 @@ public class PropertyFilterSupport {
                                  MetadataTools metadataTools,
                                  DataManager dataManager,
                                  DatatypeRegistry datatypeRegistry,
-                                 DateIntervalUtils dateIntervalUtils,
-                                 @Nullable RelativeDateTimeMomentProvider dateTimeMomentProvider) {
+                                 DateIntervalUtils dateIntervalUtils) {
         this.messages = messages;
         this.messageTools = messageTools;
         this.metadataTools = metadataTools;
         this.dataManager = dataManager;
         this.datatypeRegistry = datatypeRegistry;
         this.dateIntervalUtils = dateIntervalUtils;
-        this.dateTimeMomentProvider = dateTimeMomentProvider;
     }
 
     public String getOperationCaption(Operation operation) {
@@ -197,12 +193,8 @@ public class PropertyFilterSupport {
                 return EnumSet.of(EQUAL, NOT_EQUAL, GREATER, GREATER_OR_EQUAL, LESS, LESS_OR_EQUAL, IS_SET, IN_LIST,
                         NOT_IN_LIST, DATE_INTERVAL);
             } else if (timeClasses.contains(type)) {
-                EnumSet<Operation> enumSet = EnumSet.of(EQUAL, NOT_EQUAL, GREATER, GREATER_OR_EQUAL, LESS, LESS_OR_EQUAL,
-                        IS_SET);
-                if (java.sql.Time.class.equals(type) || dateTimeMomentProvider != null) {
-                    enumSet.add(DATE_INTERVAL);
-                }
-                return enumSet;
+                return EnumSet.of(EQUAL, NOT_EQUAL, GREATER, GREATER_OR_EQUAL, LESS, LESS_OR_EQUAL, IS_SET,
+                        DATE_INTERVAL);
             } else if (Number.class.isAssignableFrom(type)) {
                 return EnumSet.of(EQUAL, NOT_EQUAL, GREATER, GREATER_OR_EQUAL, LESS, LESS_OR_EQUAL, IS_SET, IN_LIST,
                         NOT_IN_LIST);

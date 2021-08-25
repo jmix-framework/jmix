@@ -187,7 +187,7 @@ public class DateIntervalDialog extends Screen {
     }
 
     protected void filterOptionsByPropertyType(@Nullable MetaPropertyPath mpp) {
-        // If property is Dynamic Attribute mpp can be null.
+        // If property is Dynamic Attribute, mpp can be null.
         // DynAttr contains only Date or DateTime attributes.
         if (mpp == null) {
             return;
@@ -199,35 +199,17 @@ public class DateIntervalDialog extends Screen {
         }
 
         Class<?> javaClass = range.asDatatype().getJavaClass();
-        if (!timeClasses.contains(javaClass)) {
-            return;
-        }
+        if (timeClasses.contains(javaClass)) {
+            timeUnitComboBox.setOptionsMap(getLocalizedEnumMap(Arrays.asList(TimeUnit.HOUR, TimeUnit.MINUTE)));
 
-        timeUnitComboBox.setOptionsMap(getLocalizedEnumMap(Arrays.asList(TimeUnit.HOUR, TimeUnit.MINUTE)));
-
-        if (relativeMomentProvider != null) {
-            relativeDateTimeComboBox.setOptionsMap(
-                    getLocalizedEnumMap(relativeMomentProvider.getRelativeTimeMoments()));
-        }
-
-        if (java.sql.Time.class.equals(javaClass)) {
             List<Type> availableTypes = new ArrayList<>(Arrays.asList(Type.LAST, Type.NEXT));
+
             if (relativeMomentProvider != null) {
                 availableTypes.add(Type.RELATIVE);
+                relativeDateTimeComboBox.setOptionsMap(
+                        getLocalizedEnumMap(relativeMomentProvider.getRelativeTimeMoments()));
             }
             typeRadioButtonGroup.setOptionsMap(getLocalizedEnumMap(availableTypes));
-            return;
-        }
-
-        if (LocalTime.class.equals(javaClass)
-                || OffsetTime.class.equals(javaClass)) {
-            if (relativeMomentProvider != null) {
-                typeRadioButtonGroup.setOptionsMap(
-                        getLocalizedEnumMap(Collections.singletonList(Type.RELATIVE)));
-            } else {
-                throw new IllegalStateException("There is no available options in Date interval dialog for: '"
-                        + javaClass.getName() + "' type");
-            }
         }
     }
 

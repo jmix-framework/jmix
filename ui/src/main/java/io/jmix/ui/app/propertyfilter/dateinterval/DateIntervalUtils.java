@@ -17,7 +17,6 @@
 package io.jmix.ui.app.propertyfilter.dateinterval;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
@@ -31,8 +30,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import java.time.LocalTime;
-import java.time.OffsetTime;
 import java.util.List;
 
 /**
@@ -44,9 +41,6 @@ import java.util.List;
 @Internal
 @Component("ui_DateIntervalUtils")
 public class DateIntervalUtils {
-
-    protected static final List<Class<?>> partlySupportedTimeClasses =
-            ImmutableList.of(LocalTime.class, OffsetTime.class);
 
     protected List<DateIntervalConverter> dateIntervalConverters;
 
@@ -132,14 +126,6 @@ public class DateIntervalUtils {
         Preconditions.checkNotNullArgument(value);
 
         Range range = mpp.getRange();
-        if (!range.isDatatype()) {
-            return false;
-        }
-
-        Class<?> javaClass = range.asDatatype().getJavaClass();
-        if (partlySupportedTimeClasses.contains(javaClass)) {
-            return value instanceof RelativeDateInterval;
-        }
-        return true;
+        return range.isDatatype();
     }
 }

@@ -30,6 +30,10 @@
     height: $v-unit-size;
   }
 
+  .jmix-paging-wrap {
+    white-space: nowrap;
+  }
+
   .jmix-paging-wrap > * {
     vertical-align: middle;
     margin-right: round($v-layout-spacing-horizontal/2);

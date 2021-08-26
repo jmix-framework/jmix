@@ -16,6 +16,7 @@
 
 package io.jmix.search.index.mapping.processor;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import io.jmix.core.InstanceNameProvider;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
@@ -35,6 +36,8 @@ import io.jmix.search.index.annotation.ManualMappingDefinition;
 import io.jmix.search.index.mapping.DisplayedNameDescriptor;
 import io.jmix.search.index.mapping.IndexMappingConfiguration;
 import io.jmix.search.index.mapping.MappingFieldDescriptor;
+import io.jmix.search.index.mapping.analysis.impl.AnalysisElementConfiguration;
+import io.jmix.search.index.mapping.analysis.impl.IndexAnalysisElementsRegistry;
 import io.jmix.search.index.mapping.processor.MappingDefinition.MappingDefinitionBuilder;
 import io.jmix.search.index.mapping.processor.MappingDefinition.MappingDefinitionElement;
 import io.jmix.search.index.mapping.strategy.*;
@@ -81,6 +84,7 @@ public class AnnotatedIndexDefinitionProcessor {
     protected final SearchProperties searchProperties;
     protected final List<IndexSettingsConfigurer> indexSettingsConfigurers;
     protected final MethodArgumentsProvider methodArgumentsProvider;
+    protected final IndexAnalysisElementsRegistry indexAnalysisElementsRegistry;
 
     @Autowired
     public AnnotatedIndexDefinitionProcessor(Metadata metadata,
@@ -92,7 +96,8 @@ public class AnnotatedIndexDefinitionProcessor {
                                              PropertyValueExtractorProvider propertyValueExtractorProvider,
                                              SearchProperties searchProperties,
                                              List<IndexSettingsConfigurer> indexSettingsConfigurers,
-                                             ContextArgumentResolverComposite resolvers) {
+                                             ContextArgumentResolverComposite resolvers,
+                                             IndexAnalysisElementsRegistry indexAnalysisElementsRegistry) {
         this.metadata = metadata;
         this.metadataTools = metadataTools;
         this.mappingFieldAnnotationProcessorsRegistry = mappingFieldAnnotationProcessorsRegistry;
@@ -103,6 +108,7 @@ public class AnnotatedIndexDefinitionProcessor {
         this.searchProperties = searchProperties;
         this.indexSettingsConfigurers = indexSettingsConfigurers;
         this.methodArgumentsProvider = new MethodArgumentsProvider(resolvers);
+        this.indexAnalysisElementsRegistry = indexAnalysisElementsRegistry;
     }
 
     /**
@@ -125,7 +131,7 @@ public class AnnotatedIndexDefinitionProcessor {
         Set<Class<?>> affectedEntityClasses = getAffectedEntityClasses(indexMappingConfiguration);
         log.debug("Index Definition class {}. Affected entity classes = {}", className, affectedEntityClasses);
 
-        Settings settings = configureIndexSettings(indexDef.getEntityClass());
+        Settings settings = configureSettings(indexDef.getEntityClass(), indexMappingConfiguration);
 
         Predicate<Object> indexablePredicate = createIndexablePredicate(indexDef);
 
@@ -338,16 +344,45 @@ public class AnnotatedIndexDefinitionProcessor {
         return affectedClasses;
     }
 
-    protected Settings configureIndexSettings(Class<?> entityClass) {
+    protected Settings configureSettings(Class<?> entityClass, IndexMappingConfiguration mappingConfiguration) {
+        Settings.Builder settingsBuilder = Settings.builder();
+        configureAnalysisSettings(settingsBuilder, mappingConfiguration);
+        configureIndexSettings(settingsBuilder, entityClass);
+        return settingsBuilder.build();
+    }
+
+    protected void configureAnalysisSettings(Settings.Builder settingsBuilder, IndexMappingConfiguration mappingConfiguration) {
+        FieldAnalysisDetailsAggregator aggregator = new FieldAnalysisDetailsAggregator();
+        Map<String, MappingFieldDescriptor> fields = mappingConfiguration.getFields();
+        fields.values().stream()
+                .map(MappingFieldDescriptor::getFieldConfiguration)
+                .map(FieldConfiguration::asJson)
+                .forEach(aggregator::process);
+
+        Set<AnalysisElementConfiguration> analysisElementConfigurations = new HashSet<>();
+
+        Set<String> analyzers = aggregator.getAnalyzers();
+        for (String analyzerName : analyzers) {
+            Set<AnalysisElementConfiguration> configs = indexAnalysisElementsRegistry.resolveAllUsedCustomElementsForAnalyzer(analyzerName);
+            analysisElementConfigurations.addAll(configs);
+        }
+
+        Set<String> normalizers = aggregator.getNormalizers();
+        for (String normalizerName : normalizers) {
+            Set<AnalysisElementConfiguration> configs = indexAnalysisElementsRegistry.resolveAllUsedCustomElementsForNormalizer(normalizerName);
+            analysisElementConfigurations.addAll(configs);
+        }
+
+        analysisElementConfigurations.forEach(analysisElementConfig -> settingsBuilder.put(analysisElementConfig.getSettings()));
+    }
+
+    protected void configureIndexSettings(Settings.Builder settingsBuilder, Class<?> entityClass) {
         IndexSettingsConfigurationContext context = new IndexSettingsConfigurationContext();
         indexSettingsConfigurers.forEach(configurer -> configurer.configure(context));
 
         Settings commonSettings = context.getCommonSettingsBuilder().build();
         Settings entitySettings = context.getEntitySettingsBuilder(entityClass).build();
-        return Settings.builder()
-                .put(commonSettings)
-                .put(entitySettings)
-                .build();
+        settingsBuilder.put(commonSettings).put(entitySettings);
     }
 
     protected Map<String, MappingFieldDescriptor> processMappingDefinition(MetaClass metaClass, MappingDefinition mappingDefinition) {
@@ -548,6 +583,34 @@ public class AnnotatedIndexDefinitionProcessor {
 
         private void setMappingDefinitionImplementationMethod(@Nullable Method mappingDefinitionImplementationMethod) {
             this.mappingDefinitionImplementationMethod = mappingDefinitionImplementationMethod;
+        }
+    }
+
+    private static class FieldAnalysisDetailsAggregator {
+
+        private final Set<String> analyzers = new HashSet<>();
+        private final Set<String> normalizers = new HashSet<>();
+
+        private void process(JsonNode json) {
+            if (json.isObject()) {
+                JsonNode analyzerNode = json.path("analyzer");
+                JsonNode normalizerNode = json.path("normalizer");
+                if (analyzerNode.isTextual()) {
+                    analyzers.add(analyzerNode.textValue());
+                }
+                if (normalizerNode.isTextual()) {
+                    normalizers.add(normalizerNode.textValue());
+                }
+                json.forEach(this::process);
+            }
+        }
+
+        private Set<String> getAnalyzers() {
+            return analyzers;
+        }
+
+        private Set<String> getNormalizers() {
+            return normalizers;
         }
     }
 }

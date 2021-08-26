@@ -35,7 +35,10 @@ public enum OpenMode {
     DIALOG,
     /**
      * In Desktop Client open a screen in new main window, in Web Client the same as new {@link #NEW_TAB}
+     *
+     * @deprecated Use {@link #NEW_TAB} instead
      */
+    @Deprecated
     NEW_WINDOW,
     /**
      * In Web Client opens a screen as main

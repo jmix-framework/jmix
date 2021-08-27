@@ -16,9 +16,13 @@
 
 package io.jmix.search.listener;
 
-import io.jmix.core.Id;
-import io.jmix.core.Metadata;
-import io.jmix.core.UnconstrainedDataManager;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import io.jmix.core.*;
+import io.jmix.core.datastore.AbstractDataStore;
+import io.jmix.core.datastore.DataStoreBeforeEntitySaveEvent;
+import io.jmix.core.datastore.DataStoreCustomizer;
+import io.jmix.core.datastore.DataStoreEventListener;
 import io.jmix.core.event.AttributeChanges;
 import io.jmix.core.event.EntityChangedEvent;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -30,6 +34,7 @@ import io.jmix.search.SearchProperties;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.index.queue.IndexingQueueManager;
 import io.jmix.search.index.queue.entity.IndexingQueueItem;
+import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,10 +44,12 @@ import org.springframework.stereotype.Component;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Component("search_EntityTrackingListener")
-public class EntityTrackingListener {
+public class EntityTrackingListener implements DataStoreEventListener, DataStoreCustomizer {
 
     private static final Logger log = LoggerFactory.getLogger(EntityTrackingListener.class);
 
@@ -58,25 +65,79 @@ public class EntityTrackingListener {
     protected StoreAwareLocator storeAwareLocator;
     @Autowired
     protected SearchProperties searchProperties;
+    @Autowired
+    protected MetadataTools metadataTools;
+
+    protected Cache<Id<?>, Set<Id<?>>> removalDependencies = CacheBuilder.newBuilder()
+            .expireAfterWrite(1, TimeUnit.MINUTES)
+            .build();
 
     protected enum CheckState {
         OLD,
         NEW
     }
 
-    @EventListener
-    public void onEntityChangedBeforeCommit(EntityChangedEvent<?> event) {
-        try {
-            if (isProcessingRequired(event)) {
-                log.trace("Process event: {}", event);
-                processEvent(event);
-            }
-        } catch (Exception e) {
-            log.error("Failed to process event {}", event, e);
+    @Override
+    public void customize(DataStore dataStore) {
+        if (dataStore instanceof AbstractDataStore) {
+            AbstractDataStore abstractStore = (AbstractDataStore) dataStore;
+            abstractStore.registerInterceptor(this);
         }
     }
 
-    protected void processEvent(EntityChangedEvent<?> event) {
+    @Override
+    public void beforeEntitySave(DataStoreBeforeEntitySaveEvent event) {
+        /*
+            This event is used only for resolving indexing entity instances dependent on some removed entity instance.
+            Dependencies are found before performing removal because it's required to keep all links between
+            instances involved in affected relationship.
+
+            Attempt to load dependencies within processing of EntityChangedEvent requires another transaction to access
+            before-removal database state, but it can lead to deadlock on some databases (like MSSQL, HyperSQL) without
+            additional configuration.
+
+            Found dependencies are stored into short-term in-memory cache from which they will be retrieved and enqueued
+            within processing of EntityChangedEvent.
+         */
+        if (isChangeTrackingEnabled()) {
+            SaveContext saveContext = event.getSaveContext();
+            Collection<Object> entitiesToRemove = saveContext.getEntitiesToRemove();
+            for (Object entity : entitiesToRemove) {
+                if (isRemovedEntityProcessingRequired(entity)) {
+                    try {
+                        log.trace("Process entity: {}", entity);
+                        processRemovedEntity(entity);
+                    } catch (Exception e) {
+                        log.error("Failed to process entity {}", entity, e);
+                    }
+                }
+            }
+        }
+    }
+
+    @EventListener
+    public void onEntityChangedBeforeCommit(EntityChangedEvent<?> event) {
+        if (isEntityChangedEventProcessingRequired(event)) {
+            try {
+                log.trace("Process event: {}", event);
+                processEntityChangedEvent(event);
+            } catch (Exception e) {
+                log.error("Failed to process event {}", event, e);
+            }
+        }
+    }
+
+    protected void processRemovedEntity(Object removedEntity) {
+        Id<?> removedEntityId = Id.of(removedEntity);
+        MetaClass metaClass = metadata.getClass(removedEntity);
+
+        Set<Id<?>> dependentEntityIds = getEntityIdsDependentOnRemovedEntity(removedEntityId, metaClass);
+        if (!dependentEntityIds.isEmpty()) {
+            removalDependencies.put(removedEntityId, dependentEntityIds);
+        }
+    }
+
+    protected void processEntityChangedEvent(EntityChangedEvent<?> event) {
         Id<?> entityId = event.getEntityId();
         Class<?> entityClass = entityId.getEntityClass();
         MetaClass metaClass = metadata.getClass(entityClass);
@@ -97,56 +158,62 @@ public class EntityTrackingListener {
             }
         }
 
-        Object entityInstance = loadInstance(entityId, eventType);
-
         AttributeChanges changes = event.getChanges();
-        Set<Id<?>> dependentEntityIds = getDependentEntityIds(entityInstance, entityClass, changes, eventType);
+        if (EntityChangedEvent.Type.UPDATED.equals(eventType)) {
+            Set<Id<?>> dependentEntityIds = getEntityIdsDependentOnUpdatedEntity(entityId, metaClass, changes);
 
-        if (!dependentEntityIds.isEmpty()) {
-            indexingQueueManager.enqueueIndexCollectionByEntityIds(dependentEntityIds);
+            if (!dependentEntityIds.isEmpty()) {
+                indexingQueueManager.enqueueIndexCollectionByEntityIds(dependentEntityIds);
+            }
+        } else if (EntityChangedEvent.Type.DELETED.equals(eventType)) {
+            Set<Id<?>> dependentEntityIds = removalDependencies.getIfPresent(entityId);
+            if (CollectionUtils.isNotEmpty(dependentEntityIds)) {
+                indexingQueueManager.enqueueIndexCollectionByEntityIds(dependentEntityIds);
+                removalDependencies.invalidate(entityId);
+            }
         }
     }
 
-    protected boolean isProcessingRequired(EntityChangedEvent<?> event) {
-        if (!searchProperties.isChangedEntitiesIndexingEnabled()) {
+    protected boolean isChangeTrackingEnabled() {
+        return searchProperties.isChangedEntitiesIndexingEnabled();
+    }
+
+    protected boolean isRemovedEntityProcessingRequired(Object entity) {
+        MetaClass metaClass = metadata.getClass(entity);
+        Class<?> entityClass = metaClass.getJavaClass();
+        return isEntityClassCanBeProcessed(entityClass);
+    }
+
+    protected boolean isEntityChangedEventProcessingRequired(EntityChangedEvent<?> event) {
+        if (!isChangeTrackingEnabled()) {
             return false;
         }
-
         Class<?> entityClass = event.getEntityId().getEntityClass();
+        return isEntityClassCanBeProcessed(entityClass);
+    }
+
+    protected boolean isEntityClassCanBeProcessed(Class<?> entityClass) {
         return !IndexingQueueItem.class.equals(entityClass) && indexConfigurationManager.isAffectedEntityClass(entityClass);
     }
 
-    protected Object loadInstance(Id<?> entityId, EntityChangedEvent.Type eventType) {
-        // Load last instance state if it has been deleted or actual state otherwise
-        // instance will be used in dependencies search later
-        boolean joinTransaction = !EntityChangedEvent.Type.DELETED.equals(eventType);
-        return dataManager.load(entityId)
-                .joinTransaction(joinTransaction)
-                .hint(PersistenceHints.SOFT_DELETION, false)
-                .one();
-    }
-
-    protected Set<Id<?>> getDependentEntityIds(Object entity, Class<?> entityClass, AttributeChanges changes, EntityChangedEvent.Type eventType) {
-        Set<Id<?>> dependentEntityIds;
+    protected Set<Id<?>> getEntityIdsDependentOnUpdatedEntity(Id<?> updatedEntityId, MetaClass metaClass, AttributeChanges changes) {
+        Class<?> entityClass = updatedEntityId.getEntityClass();
         Map<MetaClass, Set<MetaPropertyPath>> dependenciesMetaData;
-        switch (eventType) {
-            case CREATED:
-            case UPDATED:
-                dependenciesMetaData = indexConfigurationManager.getDependenciesMetaDataForUpdate(entityClass, changes.getAttributes());
-                return loadDependentEntityIds(entity, dependenciesMetaData, CheckState.NEW);
-            case DELETED:
-                dependenciesMetaData = indexConfigurationManager.getDependenciesMetaDataForDelete(entityClass);
-                return loadDependentEntityIds(entity, dependenciesMetaData, CheckState.OLD);
-            default:
-                dependentEntityIds = Collections.emptySet();
-                break;
-        }
-
-        return dependentEntityIds;
+        dependenciesMetaData = indexConfigurationManager.getDependenciesMetaDataForUpdate(entityClass, changes.getAttributes());
+        return loadDependentEntityIds(updatedEntityId, metaClass, dependenciesMetaData);
     }
 
-    protected Set<Id<?>> loadDependentEntityIds(Object targetInstance, Map<MetaClass, Set<MetaPropertyPath>> dependencyMetaData, CheckState checkState) {
-        log.debug("Load dependent entity pks for entity {}: {}", targetInstance, dependencyMetaData);
+    protected Set<Id<?>> getEntityIdsDependentOnRemovedEntity(Id<?> removedEntityId, MetaClass metaClass) {
+        Class<?> entityClass = removedEntityId.getEntityClass();
+        Map<MetaClass, Set<MetaPropertyPath>> dependenciesMetaData;
+        dependenciesMetaData = indexConfigurationManager.getDependenciesMetaDataForDelete(entityClass);
+        return loadDependentEntityIds(removedEntityId, metaClass, dependenciesMetaData);
+    }
+
+    protected Set<Id<?>> loadDependentEntityIds(Id<?> targetEntityId,
+                                                MetaClass targetMetaClass,
+                                                Map<MetaClass, Set<MetaPropertyPath>> dependencyMetaData) {
+        log.debug("Load dependent entity pks for entity {}: {}", targetEntityId, dependencyMetaData);
 
         Set<Id<?>> result = new HashSet<>();
         for (Map.Entry<MetaClass, Set<MetaPropertyPath>> entry : dependencyMetaData.entrySet()) {
@@ -154,68 +221,169 @@ public class EntityTrackingListener {
             if (properties.isEmpty()) {
                 continue;
             }
-            String entityName = entry.getKey().getName();
+
+            MetaClass metaClass = entry.getKey();
+            String entityName = metaClass.getName();
             for (MetaPropertyPath propertyPath : properties) {
                 log.debug("Load entities '{}' dependent via property '{}'", entityName, propertyPath);
-                MetaProperty[] metaProperties = propertyPath.getMetaProperties();
-                int currentEntityIndex = 1;
-                String currentEntityAlias = "e1";
-                StringBuilder currentPropertyPathSb = new StringBuilder(currentEntityAlias);
-                StringBuilder querySb = new StringBuilder("select ")
-                        .append(currentEntityAlias)
-                        .append(" from ")
-                        .append(entityName)
-                        .append(' ')
-                        .append(currentEntityAlias);
-                for (int i = 0; i < metaProperties.length; i++) {
-                    MetaProperty property = metaProperties[i];
-                    currentPropertyPathSb.append('.').append(property.getName());
-                    if (i == metaProperties.length - 1) {
-                        querySb.append(" where ").append(currentPropertyPathSb).append(" = :ref");
-                    } else {
-                        boolean oneToMany = property.getAnnotatedElement().isAnnotationPresent(OneToMany.class);
-                        boolean manyToMany = property.getAnnotatedElement().isAnnotationPresent(ManyToMany.class);
-                        if (oneToMany || manyToMany) {
-                            currentEntityIndex++;
-                            currentEntityAlias = "e" + currentEntityIndex;
-                            querySb.append(" join ").append(currentPropertyPathSb).append(' ').append(currentEntityAlias);
-                            currentPropertyPathSb = new StringBuilder(currentEntityAlias);
-                        }
-                    }
-                }
-                String queryString = querySb.toString();
-                log.debug("Query String: {}", queryString);
 
-                MetaClass metaClass = entry.getKey();
+                DependentEntitiesQuery dependentEntitiesQuery = new DependentEntitiesQueryBuilder()
+                        .loadEntity(entityName)
+                        .byProperty(propertyPath)
+                        .dependedOn(targetMetaClass, targetEntityId)
+                        .buildQuery();
+                log.debug("{}", dependentEntitiesQuery);
 
-                List<Id<?>> refObjectIds;
-                switch (checkState) {
-                    case OLD:
-                        refObjectIds = loadDependentEntityIds(metaClass, queryString, targetInstance, false);
-                        break;
-                    case NEW:
-                        refObjectIds = loadDependentEntityIds(metaClass, queryString, targetInstance, true);
-                        break;
-                    default:
-                        refObjectIds = Collections.emptyList();
-                }
-
+                List<Id<?>> refObjectIds = performLoadingDependentEntityIds(metaClass, dependentEntitiesQuery);
                 log.debug("Loaded primary keys of dependent references ({}): {}", refObjectIds.size(), refObjectIds);
                 result.addAll(refObjectIds);
             }
         }
+
         return result;
     }
 
-    protected List<Id<?>> loadDependentEntityIds(MetaClass loadedEntity, String queryString, Object targetInstance, boolean joinTransaction) {
-        return dataManager.load(loadedEntity.getJavaClass())
-                .query(queryString)
-                .parameter("ref", targetInstance)
+    protected List<Id<?>> performLoadingDependentEntityIds(MetaClass metaClass, DependentEntitiesQuery dependentEntitiesQuery) {
+        return dataManager.load(metaClass.getJavaClass())
+                .query(dependentEntitiesQuery.getQuery())
+                .parameters(dependentEntitiesQuery.getParameters())
                 .hint(PersistenceHints.SOFT_DELETION, false)
-                .joinTransaction(joinTransaction)
+                .joinTransaction(true)
                 .list()
                 .stream()
                 .map(Id::of)
                 .collect(Collectors.toList());
+    }
+
+    private class DependentEntitiesQueryBuilder {
+
+        private String entityName;
+        private MetaPropertyPath propertyPath;
+        private MetaClass targetMetaClass;
+        private Id<?> targetEntityId;
+
+        private int currentEntityIndex;
+        private String currentEntityAlias;
+        private StringBuilder currentPropertyPathSb;
+        private StringBuilder querySb;
+        private int propertiesLevels;
+        private MetaProperty currentLevelProperty;
+        private int currentLevelPropertyIndex;
+        private String targetPrimaryKeyName;
+
+        private Map<String, Object> parameters;
+
+        protected DependentEntitiesQueryBuilder loadEntity(String entityName) {
+            this.entityName = entityName;
+            return this;
+        }
+
+        protected DependentEntitiesQueryBuilder byProperty(MetaPropertyPath propertyPath) {
+            this.propertyPath = propertyPath;
+            return this;
+        }
+
+        protected DependentEntitiesQueryBuilder dependedOn(MetaClass metaClass, Id<?> entityId) {
+            this.targetMetaClass = metaClass;
+            this.targetEntityId = entityId;
+            return this;
+        }
+
+        protected DependentEntitiesQuery buildQuery() {
+            initQuery();
+            processProperties();
+            return new DependentEntitiesQuery(querySb.toString(), parameters);
+        }
+
+        private void initQuery() {
+            parameters = new HashMap<>();
+            currentEntityIndex = 1;
+            currentEntityAlias = "e1";
+            initPropertyPathStringBuilderForCurrentEntity();
+            querySb = new StringBuilder("select ")
+                    .append(currentEntityAlias)
+                    .append(" from ")
+                    .append(entityName)
+                    .append(' ')
+                    .append(currentEntityAlias);
+        }
+
+        private void processProperties() {
+            targetPrimaryKeyName = metadataTools.getPrimaryKeyName(targetMetaClass);
+            MetaProperty[] metaProperties = propertyPath.getMetaProperties();
+            propertiesLevels = metaProperties.length;
+            currentLevelPropertyIndex = 0;
+            Stream.of(metaProperties).forEach(this::processPropertyLevel);
+        }
+
+        private void processPropertyLevel(MetaProperty property) {
+            currentLevelProperty = property;
+
+            appendCurrentLevelProperty();
+            if (isJoinRequired(property)) {
+                joinWithNextEntity();
+                initPropertyPathStringBuilderForCurrentEntity();
+            }
+            if (isLastLevelProperty()) {
+                appendWhereBlock();
+            }
+
+            currentLevelPropertyIndex++;
+        }
+
+        private boolean isLastLevelProperty() {
+            return currentLevelPropertyIndex == propertiesLevels - 1;
+        }
+
+        private boolean isJoinRequired(MetaProperty property) {
+            boolean oneToMany = property.getAnnotatedElement().isAnnotationPresent(OneToMany.class);
+            boolean manyToMany = property.getAnnotatedElement().isAnnotationPresent(ManyToMany.class);
+            return oneToMany || manyToMany;
+        }
+
+        private void appendCurrentLevelProperty() {
+            currentPropertyPathSb.append('.').append(currentLevelProperty.getName());
+        }
+
+        private void joinWithNextEntity() {
+            currentEntityIndex++;
+            currentEntityAlias = "e" + currentEntityIndex;
+            querySb.append(" join ").append(currentPropertyPathSb).append(' ').append(currentEntityAlias);
+        }
+
+        private void initPropertyPathStringBuilderForCurrentEntity() {
+            currentPropertyPathSb = new StringBuilder(currentEntityAlias);
+        }
+
+        private void appendWhereBlock() {
+            querySb.append(" where ").append(currentPropertyPathSb).append('.').append(targetPrimaryKeyName).append(" = :ref");
+            parameters.put("ref", targetEntityId.getValue());
+        }
+    }
+
+    private static class DependentEntitiesQuery {
+        private final String query;
+        private final Map<String, Object> parameters;
+
+        private DependentEntitiesQuery(String query, Map<String, Object> parameters) {
+            this.query = query;
+            this.parameters = parameters;
+        }
+
+        public String getQuery() {
+            return query;
+        }
+
+        public Map<String, Object> getParameters() {
+            return parameters;
+        }
+
+        @Override
+        public String toString() {
+            return "DependentEntitiesQuery{" +
+                    "query='" + query + '\'' +
+                    ", parameters=" + parameters +
+                    '}';
+        }
     }
 }

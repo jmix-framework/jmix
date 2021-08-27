@@ -791,4 +791,328 @@ public class EntityChangeTrackingTest {
         boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(rootEntityHD, IndexingOperation.INDEX, 0);
         Assert.assertTrue(enqueued);
     }
+
+    @Test
+    @DisplayName("Adding of many-to-many references leads to queue item enqueueing (Soft Delete)")
+    public void addManyToManyReference() {
+        TestReferenceEntity firstReference = ewm.createTestReferenceEntity().save();
+        TestReferenceEntity secondReference = ewm.createTestReferenceEntity().save();
+        TestRootEntity rootEntity = ewm.createTestRootEntity().save();
+        indexingQueueItemsTracker.clear();
+
+        ewm.wrap(rootEntity).setManyToManyAssociation(Arrays.asList(firstReference, secondReference)).save();
+        boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(rootEntity, IndexingOperation.INDEX, 1);
+        Assert.assertTrue(enqueued);
+    }
+
+    @Test
+    @DisplayName("Adding of many-to-many references leads to queue item enqueueing (Hard Delete)")
+    public void addManyToManyReferenceHardDelete() {
+        TestReferenceEntityHD firstReference = ewm.createTestReferenceEntityHD().save();
+        TestReferenceEntityHD secondReference = ewm.createTestReferenceEntityHD().save();
+        TestRootEntityHD rootEntity = ewm.createTestRootEntityHD().save();
+        indexingQueueItemsTracker.clear();
+
+        ewm.wrap(rootEntity).setManyToManyAssociation(Arrays.asList(firstReference, secondReference)).save();
+        boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(rootEntity, IndexingOperation.INDEX, 1);
+        Assert.assertTrue(enqueued);
+    }
+
+    @Test
+    @DisplayName("Changing of many-to-many references leads to queue item enqueueing (Soft Delete)")
+    public void changeManyToManyReference() {
+        TestReferenceEntity firstReference = ewm.createTestReferenceEntity().save();
+        TestReferenceEntity secondReference = ewm.createTestReferenceEntity().save();
+        TestRootEntity rootEntity = ewm.createTestRootEntity().setManyToManyAssociation(firstReference).save();
+        indexingQueueItemsTracker.clear();
+
+        ewm.wrap(rootEntity).setManyToManyAssociation(secondReference).save();
+        boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(rootEntity, IndexingOperation.INDEX, 1);
+        Assert.assertTrue(enqueued);
+    }
+
+    @Test
+    @DisplayName("Changing of many-to-many references leads to queue item enqueueing (Hard Delete)")
+    public void changeManyToManyReferenceHardDelete() {
+        TestReferenceEntityHD firstReference = ewm.createTestReferenceEntityHD().save();
+        TestReferenceEntityHD secondReference = ewm.createTestReferenceEntityHD().save();
+        TestRootEntityHD rootEntity = ewm.createTestRootEntityHD().setManyToManyAssociation(firstReference).save();
+        indexingQueueItemsTracker.clear();
+
+        ewm.wrap(rootEntity).setManyToManyAssociation(secondReference).save();
+        boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(rootEntity, IndexingOperation.INDEX, 1);
+        Assert.assertTrue(enqueued);
+    }
+
+    @Test
+    @DisplayName("Clearing of many-to-many references leads to queue item enqueueing (Soft Delete)")
+    public void clearManyToManyReference() {
+        TestReferenceEntity firstReference = ewm.createTestReferenceEntity().save();
+        TestReferenceEntity secondReference = ewm.createTestReferenceEntity().save();
+        TestRootEntity rootEntity = ewm.createTestRootEntity().setManyToManyAssociation(firstReference, secondReference).save();
+        indexingQueueItemsTracker.clear();
+
+        ewm.wrap(rootEntity).setManyToManyAssociation().save();
+        boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(rootEntity, IndexingOperation.INDEX, 1);
+        Assert.assertTrue(enqueued);
+    }
+
+    @Test
+    @DisplayName("Clearing of many-to-many references leads to queue item enqueueing (Hard Delete)")
+    public void clearManyToManyReferenceHardDelete() {
+        TestReferenceEntityHD firstReference = ewm.createTestReferenceEntityHD().save();
+        TestReferenceEntityHD secondReference = ewm.createTestReferenceEntityHD().save();
+        TestRootEntityHD rootEntity = ewm.createTestRootEntityHD().setManyToManyAssociation(firstReference, secondReference).save();
+        indexingQueueItemsTracker.clear();
+
+        ewm.wrap(rootEntity).setManyToManyAssociation().save();
+        boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(rootEntity, IndexingOperation.INDEX, 1);
+        Assert.assertTrue(enqueued);
+    }
+
+    @Test
+    @DisplayName("Deletion of some many-to-many reference from collection leads to queue item enqueueing (Soft Delete)")
+    public void deleteManyToManyReference() {
+        TestReferenceEntity firstReference = ewm.createTestReferenceEntity().save();
+        TestReferenceEntity secondReference = ewm.createTestReferenceEntity().save();
+        TestRootEntity rootEntity = ewm.createTestRootEntity().setManyToManyAssociation(firstReference, secondReference).save();
+        indexingQueueItemsTracker.clear();
+
+        ewm.remove(firstReference);
+        boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(rootEntity, IndexingOperation.INDEX, 1);
+        Assert.assertTrue(enqueued);
+    }
+
+    @Test
+    @DisplayName("Deletion of some many-to-many reference from collection leads to queue item enqueueing (Hard Delete)")
+    public void deleteManyToManyReferenceHardDelete() {
+        TestReferenceEntityHD firstReference = ewm.createTestReferenceEntityHD().save();
+        TestReferenceEntityHD secondReference = ewm.createTestReferenceEntityHD().save();
+        TestRootEntityHD rootEntity = ewm.createTestRootEntityHD().setManyToManyAssociation(firstReference, secondReference).save();
+        indexingQueueItemsTracker.clear();
+
+        ewm.remove(firstReference);
+        boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(rootEntity, IndexingOperation.INDEX, 1);
+        Assert.assertTrue(enqueued);
+    }
+
+    @Test
+    @DisplayName("Update of indexed local property of many-to-many reference leads to queue item enqueueing (Soft Delete)")
+    public void updateIndexedLocalPropertyOfManyToManyReference() {
+        TestReferenceEntity firstReference = ewm.createTestReferenceEntity().save();
+        TestReferenceEntity secondReference = ewm.createTestReferenceEntity().save();
+        TestRootEntity rootEntity = ewm.createTestRootEntity().setManyToManyAssociation(firstReference, secondReference).save();
+        indexingQueueItemsTracker.clear();
+
+        ewm.wrap(firstReference).setTextValue("Some text value").save();
+        boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(rootEntity, IndexingOperation.INDEX, 1);
+        Assert.assertTrue(enqueued);
+    }
+
+    @Test
+    @DisplayName("Update of indexed local property of many-to-many reference leads to queue item enqueueing (Hard Delete)")
+    public void updateIndexedLocalPropertyOfManyToManyReferenceHardDelete() {
+        TestReferenceEntityHD firstReference = ewm.createTestReferenceEntityHD().save();
+        TestReferenceEntityHD secondReference = ewm.createTestReferenceEntityHD().save();
+        TestRootEntityHD rootEntity = ewm.createTestRootEntityHD().setManyToManyAssociation(firstReference, secondReference).save();
+        indexingQueueItemsTracker.clear();
+
+        ewm.wrap(firstReference).setTextValue("Some text value").save();
+        boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(rootEntity, IndexingOperation.INDEX, 1);
+        Assert.assertTrue(enqueued);
+    }
+
+    @Test
+    @DisplayName("Update of not-indexed local property of many-to-many reference doesn't lead to queue item enqueueing (Soft Delete)")
+    public void updateNotIndexedLocalPropertyOfManyToManyReference() {
+        TestReferenceEntity firstReference = ewm.createTestReferenceEntity().save();
+        TestReferenceEntity secondReference = ewm.createTestReferenceEntity().save();
+        TestRootEntity rootEntity = ewm.createTestRootEntity().setManyToManyAssociation(firstReference, secondReference).save();
+        indexingQueueItemsTracker.clear();
+
+        ewm.wrap(firstReference).setName("New name").save();
+        boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(rootEntity, IndexingOperation.INDEX, 0);
+        Assert.assertTrue(enqueued);
+    }
+
+    @Test
+    @DisplayName("Update of not-indexed local property of many-to-many reference doesn't lead to queue item enqueueing (Hard Delete)")
+    public void updateNotIndexedLocalPropertyOfManyToManyReferenceHardDelete() {
+        TestReferenceEntityHD firstReference = ewm.createTestReferenceEntityHD().save();
+        TestReferenceEntityHD secondReference = ewm.createTestReferenceEntityHD().save();
+        TestRootEntityHD rootEntity = ewm.createTestRootEntityHD().setManyToManyAssociation(firstReference, secondReference).save();
+        indexingQueueItemsTracker.clear();
+
+        ewm.wrap(firstReference).setName("New name").save();
+        boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(rootEntity, IndexingOperation.INDEX, 0);
+        Assert.assertTrue(enqueued);
+    }
+
+    @Test
+    @DisplayName("Adding of many-to-many-many-to-many sub-references leads to queue item enqueueing (Soft Delete)")
+    public void addManyToManyManyToManySubReferences() {
+        TestSubReferenceEntity firstSubReference = ewm.createTestSubReferenceEntity().save();
+        TestSubReferenceEntity secondSubReference = ewm.createTestSubReferenceEntity().save();
+        TestReferenceEntity reference = ewm.createTestReferenceEntity().save();
+        TestRootEntity rootEntity = ewm.createTestRootEntity().setManyToManyAssociation(reference).save();
+        indexingQueueItemsTracker.clear();
+
+        ewm.wrap(reference).setManyToManyAssociation(firstSubReference, secondSubReference).save();
+        boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(rootEntity, IndexingOperation.INDEX, 1);
+        Assert.assertTrue(enqueued);
+    }
+
+    @Test
+    @DisplayName("Adding of many-to-many-many-to-many sub-references leads to queue item enqueueing (Hard Delete)")
+    public void addManyToManyManyToManySubReferencesHardDelete() {
+        TestSubReferenceEntityHD firstSubReference = ewm.createTestSubReferenceEntityHD().save();
+        TestSubReferenceEntityHD secondSubReference = ewm.createTestSubReferenceEntityHD().save();
+        TestReferenceEntityHD reference = ewm.createTestReferenceEntityHD().save();
+        TestRootEntityHD rootEntity = ewm.createTestRootEntityHD().setManyToManyAssociation(reference).save();
+        indexingQueueItemsTracker.clear();
+
+        ewm.wrap(reference).setManyToManyAssociation(firstSubReference, secondSubReference).save();
+        boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(rootEntity, IndexingOperation.INDEX, 1);
+        Assert.assertTrue(enqueued);
+    }
+
+    @Test
+    @DisplayName("Changing of many-to-many-many-to-many sub-references leads to queue item enqueueing (Soft Delete)")
+    public void changeManyToManyManyToManySubReferences() {
+        TestSubReferenceEntity firstSubReference = ewm.createTestSubReferenceEntity().save();
+        TestSubReferenceEntity secondSubReference = ewm.createTestSubReferenceEntity().save();
+        TestReferenceEntity reference = ewm.createTestReferenceEntity().setManyToManyAssociation(firstSubReference).save();
+        TestRootEntity rootEntity = ewm.createTestRootEntity().setManyToManyAssociation(reference).save();
+        indexingQueueItemsTracker.clear();
+
+        ewm.wrap(reference).setManyToManyAssociation(secondSubReference).save();
+        boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(rootEntity, IndexingOperation.INDEX, 1);
+        Assert.assertTrue(enqueued);
+    }
+
+    @Test
+    @DisplayName("Changing of many-to-many-many-to-many sub-references leads to queue item enqueueing (Hard Delete)")
+    public void changeManyToManyManyToManySubReferencesHardDelete() {
+        TestSubReferenceEntityHD firstSubReference = ewm.createTestSubReferenceEntityHD().save();
+        TestSubReferenceEntityHD secondSubReference = ewm.createTestSubReferenceEntityHD().save();
+        TestReferenceEntityHD reference = ewm.createTestReferenceEntityHD().setManyToManyAssociation(firstSubReference).save();
+        TestRootEntityHD rootEntity = ewm.createTestRootEntityHD().setManyToManyAssociation(reference).save();
+        indexingQueueItemsTracker.clear();
+
+        ewm.wrap(reference).setManyToManyAssociation(secondSubReference).save();
+        boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(rootEntity, IndexingOperation.INDEX, 1);
+        Assert.assertTrue(enqueued);
+    }
+
+    @Test
+    @DisplayName("Clearing of many-to-many-many-to-many sub-references leads to queue item enqueueing (Soft Delete)")
+    public void clearManyToManyManyToManySubReference() {
+        TestSubReferenceEntity firstSubReference = ewm.createTestSubReferenceEntity().save();
+        TestSubReferenceEntity secondSubReference = ewm.createTestSubReferenceEntity().save();
+        TestReferenceEntity reference = ewm.createTestReferenceEntity().setManyToManyAssociation(firstSubReference, secondSubReference).save();
+        TestRootEntity rootEntity = ewm.createTestRootEntity().setManyToManyAssociation(reference).save();
+        indexingQueueItemsTracker.clear();
+
+        ewm.wrap(reference).setManyToManyAssociation().save();
+        boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(rootEntity, IndexingOperation.INDEX, 1);
+        Assert.assertTrue(enqueued);
+    }
+
+    @Test
+    @DisplayName("Clearing of many-to-many-many-to-many sub-references leads to queue item enqueueing (Hard Delete)")
+    public void clearManyToManyManyToManySubReferenceHardDelete() {
+        TestSubReferenceEntityHD firstSubReference = ewm.createTestSubReferenceEntityHD().save();
+        TestSubReferenceEntityHD secondSubReference = ewm.createTestSubReferenceEntityHD().save();
+        TestReferenceEntityHD reference = ewm.createTestReferenceEntityHD().setManyToManyAssociation(firstSubReference, secondSubReference).save();
+        TestRootEntityHD rootEntity = ewm.createTestRootEntityHD().setManyToManyAssociation(reference).save();
+        indexingQueueItemsTracker.clear();
+
+        ewm.wrap(reference).setManyToManyAssociation().save();
+        boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(rootEntity, IndexingOperation.INDEX, 1);
+        Assert.assertTrue(enqueued);
+    }
+
+    @Test
+    @DisplayName("Deletion of some many-to-many-many-to-many sub-reference from collection leads to queue item enqueueing (Soft Delete)")
+    public void deleteManyToManyManyToManySubReference() {
+        TestSubReferenceEntity firstSubReference = ewm.createTestSubReferenceEntity().save();
+        TestSubReferenceEntity secondSubReference = ewm.createTestSubReferenceEntity().save();
+        TestReferenceEntity reference = ewm.createTestReferenceEntity().setManyToManyAssociation(firstSubReference, secondSubReference).save();
+        TestRootEntity rootEntity = ewm.createTestRootEntity().setManyToManyAssociation(reference).save();
+        indexingQueueItemsTracker.clear();
+
+        ewm.remove(firstSubReference);
+        boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(rootEntity, IndexingOperation.INDEX, 1);
+        Assert.assertTrue(enqueued);
+    }
+
+    @Test
+    @DisplayName("Deletion of some many-to-many-many-to-many sub-reference from collection leads to queue item enqueueing (Hard Delete)")
+    public void deleteManyToManyManyToManySubReferenceHardDelete() {
+        TestSubReferenceEntityHD firstSubReference = ewm.createTestSubReferenceEntityHD().save();
+        TestSubReferenceEntityHD secondSubReference = ewm.createTestSubReferenceEntityHD().save();
+        TestReferenceEntityHD reference = ewm.createTestReferenceEntityHD().setManyToManyAssociation(firstSubReference, secondSubReference).save();
+        TestRootEntityHD rootEntity = ewm.createTestRootEntityHD().setManyToManyAssociation(reference).save();
+        indexingQueueItemsTracker.clear();
+
+        ewm.remove(firstSubReference);
+        boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(rootEntity, IndexingOperation.INDEX, 1);
+        Assert.assertTrue(enqueued);
+    }
+
+    @Test
+    @DisplayName("Update of indexed local property of many-to-many-many-to-many sub-reference leads to queue item enqueueing (Soft Delete)")
+    public void updateIndexedLocalPropertyOfManyToManyManyToManySubReference() {
+        TestSubReferenceEntity firstSubReference = ewm.createTestSubReferenceEntity().save();
+        TestSubReferenceEntity secondSubReference = ewm.createTestSubReferenceEntity().save();
+        TestReferenceEntity reference = ewm.createTestReferenceEntity().setManyToManyAssociation(firstSubReference, secondSubReference).save();
+        TestRootEntity rootEntity = ewm.createTestRootEntity().setManyToManyAssociation(reference).save();
+        indexingQueueItemsTracker.clear();
+
+        ewm.wrap(firstSubReference).setTextValue("Some text value").save();
+        boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(rootEntity, IndexingOperation.INDEX, 1);
+        Assert.assertTrue(enqueued);
+    }
+
+    @Test
+    @DisplayName("Update of indexed local property of many-to-many-many-to-many sub-reference leads to queue item enqueueing (Hard Delete)")
+    public void updateIndexedLocalPropertyOfManyToManyManyToManySubReferenceHardDelete() {
+        TestSubReferenceEntityHD firstSubReference = ewm.createTestSubReferenceEntityHD().save();
+        TestSubReferenceEntityHD secondSubReference = ewm.createTestSubReferenceEntityHD().save();
+        TestReferenceEntityHD reference = ewm.createTestReferenceEntityHD().setManyToManyAssociation(firstSubReference, secondSubReference).save();
+        TestRootEntityHD rootEntity = ewm.createTestRootEntityHD().setManyToManyAssociation(reference).save();
+        indexingQueueItemsTracker.clear();
+
+        ewm.wrap(firstSubReference).setTextValue("Some text value").save();
+        boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(rootEntity, IndexingOperation.INDEX, 1);
+        Assert.assertTrue(enqueued);
+    }
+
+    @Test
+    @DisplayName("Update of not-indexed local property of many-to-many-many-to-many sub-reference doesn't lead to queue item enqueueing (Soft Delete)")
+    public void updateNotIndexedLocalPropertyOfManyToManyManyToManySubReference() {
+        TestSubReferenceEntity firstSubReference = ewm.createTestSubReferenceEntity().save();
+        TestSubReferenceEntity secondSubReference = ewm.createTestSubReferenceEntity().save();
+        TestReferenceEntity reference = ewm.createTestReferenceEntity().setManyToManyAssociation(firstSubReference, secondSubReference).save();
+        TestRootEntity rootEntity = ewm.createTestRootEntity().setManyToManyAssociation(reference).save();
+        indexingQueueItemsTracker.clear();
+
+        ewm.wrap(firstSubReference).setName("New name").save();
+        boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(rootEntity, IndexingOperation.INDEX, 0);
+        Assert.assertTrue(enqueued);
+    }
+
+    @Test
+    @DisplayName("Update of not-indexed local property of many-to-many-many-to-many sub-reference doesn't lead to queue item enqueueing (Hard Delete)")
+    public void updateNotIndexedLocalPropertyOfManyToManyManyToManySubReferenceHardDelete() {
+        TestSubReferenceEntityHD firstSubReference = ewm.createTestSubReferenceEntityHD().save();
+        TestSubReferenceEntityHD secondSubReference = ewm.createTestSubReferenceEntityHD().save();
+        TestReferenceEntityHD reference = ewm.createTestReferenceEntityHD().setManyToManyAssociation(firstSubReference, secondSubReference).save();
+        TestRootEntityHD rootEntity = ewm.createTestRootEntityHD().setManyToManyAssociation(reference).save();
+        indexingQueueItemsTracker.clear();
+
+        ewm.wrap(firstSubReference).setName("New name").save();
+        boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(rootEntity, IndexingOperation.INDEX, 0);
+        Assert.assertTrue(enqueued);
+    }
 }

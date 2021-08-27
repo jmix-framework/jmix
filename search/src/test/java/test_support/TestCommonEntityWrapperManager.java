@@ -181,6 +181,16 @@ public class TestCommonEntityWrapperManager {
             affectedInstances.addAll(references);
             return this;
         }
+
+        public TestRootEntityWrapper setManyToManyAssociation(TestReferenceEntity... references) {
+            return setManyToManyAssociation(Arrays.asList(references));
+        }
+
+        public TestRootEntityWrapper setManyToManyAssociation(List<TestReferenceEntity> references) {
+            this.instance.setManyToManyAssociation(references);
+            this.affectedInstances.addAll(references);
+            return this;
+        }
     }
 
     public class TestReferenceEntityWrapper extends AbstractEntityWrapper<TestReferenceEntity> {
@@ -237,6 +247,16 @@ public class TestCommonEntityWrapperManager {
             this.instance.setOneToManyAssociation(references);
             references.stream().filter(Objects::nonNull).forEach(ref -> ref.setTestReferenceEntityManyToOne(instance));
             affectedInstances.addAll(references);
+            return this;
+        }
+
+        public TestReferenceEntityWrapper setManyToManyAssociation(TestSubReferenceEntity... references) {
+            return setManyToManyAssociation(Arrays.asList(references));
+        }
+
+        public TestReferenceEntityWrapper setManyToManyAssociation(List<TestSubReferenceEntity> references) {
+            this.instance.setManyToManyAssociation(references);
+            this.affectedInstances.addAll(references);
             return this;
         }
     }
@@ -334,6 +354,16 @@ public class TestCommonEntityWrapperManager {
             affectedInstances.addAll(references);
             return this;
         }
+
+        public TestRootEntityHDWrapper setManyToManyAssociation(TestReferenceEntityHD... references) {
+            return setManyToManyAssociation(Arrays.asList(references));
+        }
+
+        public TestRootEntityHDWrapper setManyToManyAssociation(List<TestReferenceEntityHD> references) {
+            this.instance.setManyToManyAssociation(references);
+            this.affectedInstances.addAll(references);
+            return this;
+        }
     }
 
     public class TestReferenceEntityHDWrapper extends AbstractEntityWrapper<TestReferenceEntityHD> {
@@ -390,6 +420,16 @@ public class TestCommonEntityWrapperManager {
             this.instance.setOneToManyAssociation(references);
             references.stream().filter(Objects::nonNull).forEach(ref -> ref.setTestReferenceEntityManyToOne(instance));
             affectedInstances.addAll(references);
+            return this;
+        }
+
+        public TestReferenceEntityHDWrapper setManyToManyAssociation(TestSubReferenceEntityHD... references) {
+            return setManyToManyAssociation(Arrays.asList(references));
+        }
+
+        public TestReferenceEntityHDWrapper setManyToManyAssociation(List<TestSubReferenceEntityHD> references) {
+            this.instance.setManyToManyAssociation(references);
+            this.affectedInstances.addAll(references);
             return this;
         }
     }

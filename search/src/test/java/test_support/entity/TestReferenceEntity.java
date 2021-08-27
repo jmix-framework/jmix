@@ -66,6 +66,22 @@ public class TestReferenceEntity extends BaseEntity {
     @OneToMany(mappedBy = "testReferenceEntityManyToOne")
     private List<TestSubReferenceEntity> oneToManyAssociation;
 
+    @OnDeleteInverse(DeletePolicy.UNLINK)
+    @OnDelete(DeletePolicy.UNLINK)
+    @JoinTable(name = "TEST_REF_E_SREF_E_LINK",
+            joinColumns = @JoinColumn(name = "TEST_REFERENCE_ENTITY_ID"),
+            inverseJoinColumns = @JoinColumn(name = "TEST_SUB_REFERENCE_ENTITY_ID"))
+    @ManyToMany
+    private List<TestSubReferenceEntity> manyToManyAssociation;
+
+    public List<TestSubReferenceEntity> getManyToManyAssociation() {
+        return manyToManyAssociation;
+    }
+
+    public void setManyToManyAssociation(List<TestSubReferenceEntity> manyToManyAssociation) {
+        this.manyToManyAssociation = manyToManyAssociation;
+    }
+
     public List<TestSubReferenceEntity> getOneToManyAssociation() {
         return oneToManyAssociation;
     }

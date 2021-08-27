@@ -29,6 +29,9 @@ public interface TestRootEntityHDIndexDefinition {
             "oneToOneAssociation.textValue",
             "oneToOneAssociation.oneToOneAssociation.textValue",
             "oneToManyAssociation.textValue",
-            "oneToManyAssociation.oneToManyAssociation.textValue"})
+            "oneToManyAssociation.oneToManyAssociation.textValue",
+            "manyToManyAssociation.textValue",
+            "manyToManyAssociation.manyToManyAssociation.textValue"
+    })
     void mapping();
 }

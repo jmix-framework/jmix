@@ -66,6 +66,20 @@ public class TestReferenceEntityHD extends BaseEntityHD {
     @OneToMany(mappedBy = "testReferenceEntityManyToOne")
     private List<TestSubReferenceEntityHD> oneToManyAssociation;
 
+    @JoinTable(name = "TEST_REF_E_SREF_E_HD_LINK",
+            joinColumns = @JoinColumn(name = "TEST_REF_ENTITY_HD_ID"),
+            inverseJoinColumns = @JoinColumn(name = "TEST_SUB_REF_ENTITY_HD_ID"))
+    @ManyToMany
+    private List<TestSubReferenceEntityHD> manyToManyAssociation;
+
+    public List<TestSubReferenceEntityHD> getManyToManyAssociation() {
+        return manyToManyAssociation;
+    }
+
+    public void setManyToManyAssociation(List<TestSubReferenceEntityHD> manyToManyAssociation) {
+        this.manyToManyAssociation = manyToManyAssociation;
+    }
+
     public List<TestSubReferenceEntityHD> getOneToManyAssociation() {
         return oneToManyAssociation;
     }

@@ -55,23 +55,68 @@
         </createTable>
     </changeSet>
     <changeSet id="4" author="test">
+        <createTable tableName="TEST_ROOT_ENT_REF_ENT_HD_LINK">
+            <column name="TEST_REFERENCE_ENTITY_HD_ID" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_TEST_ROOT_REF_ENT_HD_LINK"/>
+            </column>
+            <column name="TEST_ROOT_ENTITY_HD_ID" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_TEST_ROOT_REF_ENT_HD_LINK"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="5" author="test">
+        <createTable tableName="TEST_REF_E_SREF_E_HD_LINK">
+            <column name="TEST_REF_ENTITY_HD_ID" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_TEST_REF_E_SREF_E_HD_LINK"/>
+            </column>
+            <column name="TEST_SUB_REF_ENTITY_HD_ID" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_TEST_REF_E_SREF_E_HD_LINK"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="6" author="test">
         <addForeignKeyConstraint baseColumnNames="ONE_TO_ONE_ASSOCIATION_ID" baseTableName="TEST_REFERENCE_ENTITY_HD"
                                  constraintName="FK_TESTREFENHD_ON_ONETOONEASS" onDelete="SET NULL"
                                  referencedColumnNames="ID" referencedTableName="TEST_SUB_REFERENCE_ENTITY_HD"/>
     </changeSet>
-    <changeSet id="5" author="test">
+    <changeSet id="7" author="test">
         <addForeignKeyConstraint baseColumnNames="TEST_ROOT_ENTITY_M_TO_O_ID" baseTableName="TEST_REFERENCE_ENTITY_HD"
                                  constraintName="FK_TESTREFENHD_ON_TESTROOTENHD" referencedColumnNames="ID"
                                  referencedTableName="TEST_ROOT_ENTITY_HD"/>
     </changeSet>
-    <changeSet id="6" author="test">
+    <changeSet id="8" author="test">
         <addForeignKeyConstraint baseColumnNames="ONE_TO_ONE_ASSOCIATION_ID" baseTableName="TEST_ROOT_ENTITY_HD"
                                  constraintName="FK_TESTROOTENHD_ON_ONETOONEASS" onDelete="SET NULL"
                                  referencedColumnNames="ID" referencedTableName="TEST_REFERENCE_ENTITY_HD"/>
     </changeSet>
-    <changeSet id="7" author="test">
+    <changeSet id="9" author="test">
         <addForeignKeyConstraint baseColumnNames="TEST_REF_ENTITY_M_TO_O_ID" baseTableName="TEST_SUB_REFERENCE_ENTITY_HD"
                                  constraintName="FK_TESTSREFENHD_ON_TESTREFENHD" referencedColumnNames="ID"
                                  referencedTableName="TEST_REFERENCE_ENTITY_HD"/>
+    </changeSet>
+    <changeSet id="10" author="test">
+        <addForeignKeyConstraint baseColumnNames="TEST_REFERENCE_ENTITY_HD_ID"
+                                 baseTableName="TEST_ROOT_ENT_REF_ENT_HD_LINK"
+                                 constraintName="FK_ROOT_REF_LINK_ON_REFENTHD" referencedColumnNames="ID"
+                                 onDelete="CASCADE"
+                                 referencedTableName="TEST_REFERENCE_ENTITY_HD"/>
+    </changeSet>
+    <changeSet id="11" author="test">
+        <addForeignKeyConstraint baseColumnNames="TEST_ROOT_ENTITY_HD_ID" baseTableName="TEST_ROOT_ENT_REF_ENT_HD_LINK"
+                                 constraintName="FK_ROOT_REF_LINK_ON_ROOTENTHD" referencedColumnNames="ID"
+                                 onDelete="CASCADE"
+                                 referencedTableName="TEST_ROOT_ENTITY_HD"/>
+    </changeSet>
+    <changeSet id="12" author="test">
+        <addForeignKeyConstraint baseColumnNames="TEST_REF_ENTITY_HD_ID" baseTableName="TEST_REF_E_SREF_E_HD_LINK"
+                                 constraintName="FK_REF_SREF_LINK_ON_REFENTHD" referencedColumnNames="ID"
+                                 onDelete="CASCADE"
+                                 referencedTableName="TEST_REFERENCE_ENTITY_HD"/>
+    </changeSet>
+    <changeSet id="13" author="test">
+        <addForeignKeyConstraint baseColumnNames="TEST_SUB_REF_ENTITY_HD_ID" baseTableName="TEST_REF_E_SREF_E_HD_LINK"
+                                 constraintName="FK_REF_SREF_LINK_ON_SREFENTHD" referencedColumnNames="ID"
+                                 onDelete="CASCADE"
+                                 referencedTableName="TEST_SUB_REFERENCE_ENTITY_HD"/>
     </changeSet>
 </databaseChangeLog>

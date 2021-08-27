@@ -27,9 +27,9 @@ dependencies {
     api 'io.jmix.data:jmix-data'
 
     api 'org.apache.poi:poi'
-    api 'org.apache.poi:poi-ooxml:4.1.2'  //todo move to bom
+    api 'org.apache.poi:poi-ooxml'
 
-    api 'com.opencsv:opencsv:4.6' //todo move to bom
+    api 'com.opencsv:opencsv'
 
     implementation 'com.fasterxml.jackson.core:jackson-databind'
     implementation 'com.fasterxml.jackson.core:jackson-annotations'

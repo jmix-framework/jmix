@@ -1,0 +1,21 @@
+[
+  {
+    "name": "Parker Leighton",
+    "email": "leighton@mail.com",
+    "defaultAddress": {}
+  },
+  {
+    "name": "Shelby Robinson",
+    "email": "robinson@mail.com",
+    "defaultAddress":
+      {
+        "fullAddress": "Samara",
+        "name": "Home"
+      }
+  },
+  {
+    "name": "Hildred Ellis",
+    "email": null,
+    "defaultAddress": null
+  }
+]

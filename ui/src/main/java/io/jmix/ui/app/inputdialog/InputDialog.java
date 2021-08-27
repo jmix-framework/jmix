@@ -322,6 +322,7 @@ public class InputDialog extends Screen {
                 field.setCaption(parameter.getCaption());
                 field.setValue(parameter.getDefaultValue());
                 field.setRequired(parameter.isRequired());
+                field.setRequiredMessage(parameter.getRequiredMessage());
             }
             field.setId(parameter.getId());
 

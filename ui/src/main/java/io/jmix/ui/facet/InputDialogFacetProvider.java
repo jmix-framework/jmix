@@ -254,6 +254,7 @@ public class InputDialogFacetProvider implements FacetProvider<InputDialogFacet>
             inputParameter = InputParameter.bigDecimalParameter(paramId)
                     .withCaption(loadParamCaption(paramEl, context))
                     .withRequired(loadParamRequired(paramEl))
+                    .withRequiredMessage(loadRequiredMessage(paramEl, context))
                     .withDefaultValue(
                             loadDefaultValue(paramEl, datatypeRegistry.get(BigDecimal.class), context));
         } else {
@@ -262,6 +263,7 @@ public class InputDialogFacetProvider implements FacetProvider<InputDialogFacet>
             inputParameter = InputParameter.parameter(paramId)
                     .withCaption(loadParamCaption(paramEl, context))
                     .withRequired(loadParamRequired(paramEl))
+                    .withRequiredMessage(loadRequiredMessage(paramEl, context))
                     .withDatatype(datatype)
                     .withDefaultValue(
                             loadDefaultValue(paramEl, datatype, context));
@@ -284,7 +286,8 @@ public class InputDialogFacetProvider implements FacetProvider<InputDialogFacet>
         if (entityClass != null) {
             parameter = InputParameter.entityParameter(paramId, clazz)
                     .withCaption(loadParamCaption(paramEl, context))
-                    .withRequired(loadParamRequired(paramEl));
+                    .withRequired(loadParamRequired(paramEl))
+                    .withRequiredMessage(loadRequiredMessage(paramEl, context));
         } else {
             throw new GuiDevelopmentException(
                     String.format(
@@ -309,7 +312,8 @@ public class InputDialogFacetProvider implements FacetProvider<InputDialogFacet>
         if (EnumClass.class.isAssignableFrom(clazz)) {
             parameter = InputParameter.enumParameter(paramId, clazz)
                     .withCaption(loadParamCaption(paramEl, context))
-                    .withRequired(loadParamRequired(paramEl));
+                    .withRequired(loadParamRequired(paramEl))
+                    .withRequiredMessage(loadRequiredMessage(paramEl, context));
         } else {
             throw new GuiDevelopmentException(
                     String.format(
@@ -352,6 +356,16 @@ public class InputDialogFacetProvider implements FacetProvider<InputDialogFacet>
             return Boolean.parseBoolean(required);
         }
         return false;
+    }
+
+    @Nullable
+    protected String loadRequiredMessage(Element paramEl,
+                                         ComponentLoader.ComponentContext context) {
+        String requiredMessage = paramEl.attributeValue("requiredMessage");
+        if (isNotEmpty(requiredMessage)) {
+            return loadResourceString(context, requiredMessage);
+        }
+        return null;
     }
 
     @Nullable

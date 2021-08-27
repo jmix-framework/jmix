@@ -3559,11 +3559,12 @@
             <xs:choice minOccurs="0" maxOccurs="unbounded">
                 <xs:element name="stringParameter" type="inputDialogPrimitiveParam"/>
 
-                <xs:element name="booleanParameter" type="inputDialogPrimitiveParam"/>
                 <xs:element name="intParameter" type="inputDialogPrimitiveParam"/>
                 <xs:element name="doubleParameter" type="inputDialogPrimitiveParam"/>
                 <xs:element name="longParameter" type="inputDialogPrimitiveParam"/>
                 <xs:element name="bigDecimalParameter" type="inputDialogPrimitiveParam"/>
+
+                <xs:element name="booleanParameter" type="inputDialogParameter"/>
 
                 <xs:element name="dateParameter" type="inputDialogPrimitiveParam"/>
                 <xs:element name="timeParameter" type="inputDialogPrimitiveParam"/>
@@ -3578,13 +3579,15 @@
     <xs:complexType name="inputDialogParameter">
         <xs:attribute name="id" type="xs:string" use="required"/>
         <xs:attribute name="caption" type="resourceString"/>
-        <xs:attribute name="required" type="xs:boolean"/>
     </xs:complexType>
 
     <xs:complexType name="inputDialogPrimitiveParam">
         <xs:complexContent>
             <xs:extension base="inputDialogParameter">
                 <xs:attribute name="defaultValue"/>
+
+                <xs:attribute name="required" type="xs:boolean"/>
+                <xs:attribute name="requiredMessage" type="resourceString"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -3593,6 +3596,9 @@
         <xs:complexContent>
             <xs:extension base="inputDialogParameter">
                 <xs:attribute name="entityClass" use="required" type="xs:string"/>
+
+                <xs:attribute name="required" type="xs:boolean"/>
+                <xs:attribute name="requiredMessage" type="resourceString"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -3601,6 +3607,9 @@
         <xs:complexContent>
             <xs:extension base="inputDialogParameter">
                 <xs:attribute name="enumClass" use="required" type="xs:string"/>
+
+                <xs:attribute name="required" type="xs:boolean"/>
+                <xs:attribute name="requiredMessage" type="resourceString"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

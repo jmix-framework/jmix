@@ -23,9 +23,11 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -39,13 +41,17 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.Objects;
 
-public class FileClientUtils {
+@Component("core_FileClientManager")
+public class FileClientManager {
 
-    private static final Logger log = LoggerFactory.getLogger(FileClientUtils.class);
+    private static final Logger log = LoggerFactory.getLogger(FileClientManager.class);
 
-    public static void downloadAndWriteResponse(FileRef fileReference, FileStorage fileStorage,
+    @Autowired
+    FileStorageLocator fileStorageLocator;
+
+    public void downloadAndWriteResponse(FileRef fileReference, String fileStorageName,
                                                 Boolean attachment, HttpServletResponse response) throws FileStorageException {
-
+        FileStorage fileStorage = getFileStorageByNameOrDefault(fileStorageName);
         //check if a file by the given reference exists
         if (!fileStorage.fileExists(fileReference)) {
             throw new FileClientException("File not found", "File not found. File reference: " +
@@ -76,7 +82,7 @@ public class FileClientUtils {
         }
     }
 
-    public static FileStorage getFileStorageByNameOrDefault(FileStorageLocator fileStorageLocator, @Nullable String storageName, String fileName) {
+    protected FileStorage getFileStorageByNameOrDefault(@Nullable String storageName) {
         if (Strings.isNullOrEmpty(storageName)) {
             return fileStorageLocator.getDefault();
         } else {
@@ -91,7 +97,7 @@ public class FileClientUtils {
         }
     }
 
-    protected static FileRef uploadToFileStorage(FileStorage fileStorage, InputStream is, String fileName) {
+    protected FileRef uploadToFileStorage(FileStorage fileStorage, InputStream is, String fileName) {
         try {
             return fileStorage.saveStream(fileName, is);
         } catch (FileStorageException e) {
@@ -102,7 +108,7 @@ public class FileClientUtils {
         }
     }
 
-    protected static ResponseEntity<FileInfoResponse> createFileInfoResponseEntity(HttpServletRequest request,
+    protected ResponseEntity<FileInfoResponse> createFileInfoResponseEntity(HttpServletRequest request,
                                                                                    FileRef fileRef, String filename, long size) {
         FileInfoResponse fileInfo = new FileInfoResponse(fileRef.toString(), filename, size);
 
@@ -115,8 +121,8 @@ public class FileClientUtils {
         return new ResponseEntity<>(fileInfo, httpHeaders, HttpStatus.CREATED);
     }
 
-    public static ResponseEntity<FileInfoResponse> multipartFileUpload(MultipartFile file, String name,
-                                                                       FileStorage fileStorage, HttpServletRequest request) {
+    public ResponseEntity<FileInfoResponse> multipartFileUpload(MultipartFile file, String name,
+                                                                       String fileStorageName, HttpServletRequest request) {
         try {
             if (Strings.isNullOrEmpty(name)) {
                 name = file.getOriginalFilename();
@@ -126,6 +132,7 @@ public class FileClientUtils {
             long size = file.getSize();
 
             InputStream is = file.getInputStream();
+            FileStorage fileStorage = getFileStorageByNameOrDefault(fileStorageName);
             FileRef fileRef = uploadToFileStorage(fileStorage, is, name);
 
             return createFileInfoResponseEntity(request, fileRef, name, size);
@@ -135,7 +142,7 @@ public class FileClientUtils {
         }
     }
 
-    public static ResponseEntity<FileInfoResponse> fileUpload(String name, FileStorage fileStorage,
+    public ResponseEntity<FileInfoResponse> fileUpload(String name, String fileStorageName,
                                                               HttpServletRequest request) {
         try {
             String contentLength = request.getHeader("Content-Length");
@@ -148,6 +155,7 @@ public class FileClientUtils {
 
             ServletInputStream is = request.getInputStream();
             name = Objects.toString(name, "");
+            FileStorage fileStorage = getFileStorageByNameOrDefault(fileStorageName);
             FileRef fileRef = uploadToFileStorage(fileStorage, is, name);
 
             return createFileInfoResponseEntity(request, fileRef, name, size);

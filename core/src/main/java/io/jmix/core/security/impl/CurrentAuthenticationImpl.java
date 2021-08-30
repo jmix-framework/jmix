@@ -16,6 +16,7 @@
 
 package io.jmix.core.security.impl;
 
+import io.jmix.core.HasTimeZone;
 import io.jmix.core.MessageTools;
 import io.jmix.core.security.AuthenticationResolver;
 import io.jmix.core.security.ClientDetails;
@@ -86,8 +87,11 @@ public class CurrentAuthenticationImpl implements CurrentAuthentication {
         Authentication authentication = getAuthentication();
         if (authentication != null) {
             Object details = authentication.getDetails();
+            Object principal = authentication.getPrincipal();
             TimeZone timeZone = null;
-            if (details instanceof ClientDetails) {
+            if (principal instanceof HasTimeZone) {
+                timeZone = ((HasTimeZone) principal).getTimeZone();
+            } else if (details instanceof ClientDetails) {
                 timeZone = ((ClientDetails) details).getTimeZone();
             }
             return timeZone == null ? TimeZone.getDefault() : timeZone;

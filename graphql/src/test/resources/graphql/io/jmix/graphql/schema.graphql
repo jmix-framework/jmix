@@ -1271,6 +1271,9 @@ scalar UNREPRESENTABLE
 
 scalar UUID
 
+"Type for file uploading"
+scalar Upload
+
 scalar Void
 
 "expression to compare columns of type BigDecimal. All fields are combined with logical 'AND'"
@@ -1702,6 +1705,20 @@ input inp_UUIDFilterCondition {
   _neq: UUID
   "not in list"
   _notIn: [UUID]
+}
+
+"expression to compare columns of type Upload. All fields are combined with logical 'AND'"
+input inp_UploadFilterCondition {
+"equals"
+_eq: Upload
+"in list"
+_in: [Upload]
+"is null"
+_isNull: Boolean
+"not equals"
+_neq: Upload
+"not in list"
+_notIn: [Upload]
 }
 
 input inp_scr_AssociationM2MTestEntity {

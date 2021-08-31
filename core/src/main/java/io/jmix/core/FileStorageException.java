@@ -24,7 +24,8 @@ public class FileStorageException extends RuntimeException {
         FILE_ALREADY_EXISTS("File already exists", 500),
         FILE_NOT_FOUND("File not found", 404),
         MORE_THAN_ONE_FILE("More than one file with this name exists", 500),
-        STORAGE_INACCESSIBLE("Can not get access to the storage", 503);
+        STORAGE_INACCESSIBLE("Can not get access to the storage", 503),
+        FILE_STORAGE_NOT_FOUND("FileStorage not found", 404);
 
         private String message;
 

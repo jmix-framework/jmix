@@ -1,5 +1,6 @@
 package ${project_rootPackage}.entity;
 
+import io.jmix.core.HasTimeZone;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.DependsOnProperties;
@@ -19,7 +20,7 @@ import java.util.UUID;
 @Table(name = "${userTable}", indexes = {
         @Index(name = "IDX_${userTable}_ON_USERNAME", columnList = "USERNAME", unique = true)
 })
-public class User implements JmixUserDetails {
+public class User implements JmixUserDetails, HasTimeZone {
 
     @Id
     @Column(name = "ID")
@@ -49,6 +50,9 @@ public class User implements JmixUserDetails {
 
     @Column(name = "ACTIVE")
     protected Boolean active = true;
+
+    @Column(name = "USER_TIME_ZONE")
+    protected String userTimeZone;
 
     @Transient
     protected Collection<? extends GrantedAuthority> authorities;
@@ -153,5 +157,21 @@ public class User implements JmixUserDetails {
     public String getDisplayName() {
         return String.format("%s %s [%s]", (firstName != null ? firstName : ""),
                 (lastName != null ? lastName : ""), username).trim();
+    }
+
+    @Override
+    public TimeZone getTimeZone() {
+        if (userTimeZone == null) {
+            return null;
+        }
+        return TimeZone.getTimeZone(userTimeZone);
+    }
+
+    public String getUserTimeZone() {
+        return userTimeZone;
+    }
+
+    public void setUserTimeZone(String userTimeZone) {
+        this.userTimeZone = userTimeZone;
     }
 }

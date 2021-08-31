@@ -37,6 +37,9 @@ open class UserEdit : StandardEditor<User>() {
     @Autowired
     private lateinit var messageBundle: MessageBundle
 
+    @Autowired
+    private lateinit var timeZoneField: ComboBox<String>
+
     @Subscribe
     fun onInitEntity(event: InitEntityEvent<User>?) {
         usernameField.isEditable = true
@@ -62,5 +65,10 @@ open class UserEdit : StandardEditor<User>() {
             }
             editedEntity.password = passwordEncoder.encode(passwordField.value)
         }
+    }
+
+    @Subscribe
+    open fun onInit(event: InitEvent?) {
+        timeZoneField.setOptionsList(listOf(*TimeZone.getAvailableIDs()))
     }
 }

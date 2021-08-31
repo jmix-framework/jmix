@@ -39,6 +39,9 @@ public class UserEdit extends StandardEditor<User> {
     @Autowired
     private MessageBundle messageBundle;
 
+    @Autowired
+    private ComboBox<String> timeZoneField;
+
     @Subscribe
     public void onInitEntity(InitEntityEvent<User> event) {
         usernameField.setEditable(true);
@@ -64,5 +67,10 @@ public class UserEdit extends StandardEditor<User> {
             }
             getEditedEntity().setPassword(passwordEncoder.encode(passwordField.getValue()));
         }
+    }
+
+    @Subscribe
+    public void onInit(InitEvent event) {
+        timeZoneField.setOptionsList(Arrays.asList(TimeZone.getAvailableIDs()));
     }
 }

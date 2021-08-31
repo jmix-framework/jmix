@@ -22,6 +22,7 @@
             <column name="PASSWORD" type="varchar(255)"/>
             <column name="EMAIL" type="varchar(255)"/>
             <column name="ACTIVE" type="boolean"/>
+            <column name="USER_TIME_ZONE" type="VARCHAR(255)"/>
         </createTable>
 
     </changeSet>

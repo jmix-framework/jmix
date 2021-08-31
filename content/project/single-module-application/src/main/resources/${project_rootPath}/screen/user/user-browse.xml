@@ -52,6 +52,7 @@
                 <column id="firstName"/>
                 <column id="lastName"/>
                 <column id="email"/>
+                <column id="userTimeZone"/>
                 <column id="active"/>
             </columns>
             <simplePagination/>

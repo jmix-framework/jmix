@@ -1,5 +1,6 @@
 package ${project_rootPackage}.entity
 
+import io.jmix.core.HasTimeZone
 import io.jmix.core.entity.annotation.JmixGeneratedValue
 import io.jmix.core.entity.annotation.SystemLevel
 import io.jmix.core.metamodel.annotation.DependsOnProperties
@@ -17,7 +18,7 @@ import javax.validation.constraints.Email
     name = "${userTable}",
     indexes = [Index(name = "IDX_${userTable}_ON_USERNAME", columnList = "USERNAME", unique = true)]
 )
-open class User : JmixUserDetails {
+open class User : JmixUserDetails, HasTimeZone {
 
     @Id
     @Column(name = "ID", nullable = false)
@@ -49,6 +50,9 @@ open class User : JmixUserDetails {
     @Column(name = "ACTIVE")
     var active: Boolean? = true
 
+    @Column(name = "USER_TIME_ZONE")
+    var userTimeZone: String? = null;
+
     @Transient
     protected var userAuthorities: Collection<GrantedAuthority?>? = null
 
@@ -75,4 +79,11 @@ open class User : JmixUserDetails {
     @get:InstanceName
     val displayName: String
         get() = "\${firstName ?: ""} \${lastName ?: ""} [\${username ?: ""}]".trim()
+
+    override fun getTimeZone(): TimeZone? {
+        if (userTimeZone == null) {
+            return null
+        }
+        return TimeZone.getTimeZone(userTimeZone)
+    }
 }

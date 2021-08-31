@@ -17,6 +17,7 @@
 package io.jmix.core;
 
 import io.jmix.core.common.util.URLEncodeUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
@@ -125,6 +126,14 @@ public class FileRef implements Serializable {
                     uriStringBuilder.append("&").append(key).append("=").append(URLEncodeUtils.encodeUtf8(value)));
         }
         return uriStringBuilder.toString();
+    }
+
+    public String getContentType() {
+        String extension = FilenameUtils.getExtension(this.getFileName());
+        if (StringUtils.isEmpty(extension)) {
+            return FileTypesHelper.DEFAULT_MIME_TYPE;
+        }
+        return FileTypesHelper.getMIMEType("." + extension.toLowerCase());
     }
 
     @Override

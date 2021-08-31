@@ -1,7 +1,13 @@
 package io.jmix.graphql.datafetcher;
 
 import graphql.schema.DataFetcher;
-import io.jmix.core.*;
+import io.jmix.core.AccessManager;
+import io.jmix.core.DataManager;
+import io.jmix.core.Entity;
+import io.jmix.core.FetchPlan;
+import io.jmix.core.LoadContext;
+import io.jmix.core.MetadataTools;
+import io.jmix.core.Sort;
 import io.jmix.core.accesscontext.CrudEntityContext;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.querycondition.Condition;

@@ -17,7 +17,11 @@
 package io.jmix.graphql.datafetcher;
 
 import graphql.schema.DataFetcher;
-import io.jmix.core.*;
+import io.jmix.core.AccessManager;
+import io.jmix.core.MessageTools;
+import io.jmix.core.Messages;
+import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.accesscontext.CrudEntityContext;
 import io.jmix.core.accesscontext.EntityAttributeContext;
 import io.jmix.core.metamodel.model.MetaClass;

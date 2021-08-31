@@ -2,9 +2,16 @@ package io.jmix.graphql.schema.scalar;
 
 import graphql.schema.GraphQLScalarType;
 import io.jmix.graphql.schema.scalar.coercing.BigDecimalCoercing;
+import io.jmix.graphql.schema.scalar.coercing.FileRefCoercing;
 import io.jmix.graphql.schema.scalar.coercing.LongCoercing;
 import io.jmix.graphql.schema.scalar.coercing.UUIDCoercing;
 import io.jmix.graphql.schema.scalar.coercing.VoidCoercing;
+import io.jmix.graphql.service.FileService;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
 

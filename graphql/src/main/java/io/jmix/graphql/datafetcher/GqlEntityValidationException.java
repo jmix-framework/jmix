@@ -26,7 +26,13 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.validation.EntityValidationException;
 
 import javax.validation.ConstraintViolation;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 

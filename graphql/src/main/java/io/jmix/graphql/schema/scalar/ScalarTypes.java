@@ -18,10 +18,12 @@ package io.jmix.graphql.schema.scalar;
 
 import graphql.Scalars;
 import graphql.schema.GraphQLScalarType;
+import io.jmix.core.FileRef;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.graphql.MetadataUtils;
 import io.jmix.graphql.datafetcher.GqlEntityValidationException;
+import io.jmix.graphql.service.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -38,12 +40,17 @@ public class ScalarTypes {
     protected GraphQLScalarType localTimeScalar;
     protected GraphQLScalarType timeScalar;
     protected GraphQLScalarType offsetTimeScalar;
+    protected GraphQLScalarType fileRefScalar;
+
+    final FileService fileService;
 
     @Autowired
-    public ScalarTypes(DatatypeRegistry datatypeRegistry) {
+    public ScalarTypes(DatatypeRegistry datatypeRegistry, FileService fileService) {
         this.localTimeScalar = new LocalTimeScalar(datatypeRegistry.get(LocalTime.class));
         this.timeScalar = new TimeScalar(datatypeRegistry.get(LocalTime.class), datatypeRegistry.get(Time.class));
         this.offsetTimeScalar = new OffsetTimeScalar(datatypeRegistry.get(OffsetTime.class));
+        this.fileService = fileService;
+        this.fileRefScalar = new FileRefScalar(fileService);
     }
 
     protected static GraphQLScalarType[] scalars = {
@@ -100,6 +107,9 @@ public class ScalarTypes {
         if (BigDecimal.class.isAssignableFrom(javaType)) {
             return CustomScalars.GraphQLBigDecimal.getName();
         }
+        if (FileRef.class.isAssignableFrom(javaType)) {
+            return fileRefScalar.getName();
+        }
         if (Date.class.isAssignableFrom(javaType)) {
             if (MetadataUtils.isDate(metaProperty)) {
                 return CustomScalars.GraphQLDate.getName();
@@ -137,6 +147,7 @@ public class ScalarTypes {
     public List<GraphQLScalarType> scalars() {
         List<GraphQLScalarType> scalarTypes = new ArrayList<>(Arrays.asList(scalars));
         scalarTypes.addAll(timeScalars());
+        scalarTypes.add(fileRefScalar);
         return scalarTypes;
     }
 
@@ -146,6 +157,10 @@ public class ScalarTypes {
         scalars.add(timeScalar);
         scalars.add(offsetTimeScalar);
         return scalars;
+    }
+
+    public boolean isFileRefType(GraphQLScalarType scalar) {
+        return fileRefScalar.getName().equals(scalar.getName());
     }
 
     public boolean isTimeType(GraphQLScalarType scalar) {

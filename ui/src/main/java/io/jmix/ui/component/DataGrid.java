@@ -700,14 +700,39 @@ public interface DataGrid<E> extends ListComponent<E>, HasButtonsPanel, Componen
      * giving the possibility to use their values programmatically.
      */
     class EditorCloseEvent<E> extends AbstractDataGridEditorEvent<E> {
+
+        protected boolean isCancelled;
+
         /**
          * Constructor for a DataGrid editor close event.
          *
          * @param component the DataGrid from which this event originates
          * @param item      the edited item
+         * @param fields    fields that correspond to column ids
          */
         public EditorCloseEvent(DataGrid component, E item, Map<String, Field> fields) {
+            this(component, item, fields, true);
+        }
+
+        /**
+         * Constructor for a DataGrid editor close event.
+         *
+         * @param component   the DataGrid from which this event originates
+         * @param item        the edited item
+         * @param fields      fields that correspond to column ids
+         * @param isCancelled whether editor was closed by cancel button
+         */
+        public EditorCloseEvent(DataGrid component, E item, Map<String, Field> fields, boolean isCancelled) {
             super(component, item, fields);
+
+            this.isCancelled = isCancelled;
+        }
+
+        /**
+         * @return {@code true} if editor was closed by cancel button
+         */
+        public boolean isCancelled() {
+            return isCancelled;
         }
     }
 

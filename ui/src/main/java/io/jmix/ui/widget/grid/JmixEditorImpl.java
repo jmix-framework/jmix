@@ -143,10 +143,9 @@ public class JmixEditorImpl<T> extends EditorImpl<T> {
         // As columnFields is cleared in doClose, we need to make a copy of it
         Map<Grid.Column<T, ?>, Component> usedColumnFields = ImmutableMap.copyOf(columnFields);
         doClose();
-        if (!afterBeingSaved) {
-            eventRouter.fireEvent(
-                    new JmixEditorCancelEvent<>(this, editedBean, usedColumnFields));
-        }
+
+        eventRouter.fireEvent(
+                new JmixEditorCancelEvent<>(this, editedBean, usedColumnFields, !afterBeingSaved));
     }
 
     protected boolean isEditorFieldsValid() {

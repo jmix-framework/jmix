@@ -27,15 +27,19 @@ public class JmixEditorCancelEvent<T> extends EditorCancelEvent<T> {
 
     protected Map<Grid.Column<T, ?>, Component> columnFieldMap;
 
+    protected boolean isCancelled;
+
     /**
      * Constructor for a editor cancel event.
      *
      * @param editor the source of the event
      * @param bean   the bean being edited
      */
-    public JmixEditorCancelEvent(Editor<T> editor, T bean, Map<Grid.Column<T, ?>, Component> columnFieldMap) {
+    public JmixEditorCancelEvent(Editor<T> editor, T bean, Map<Grid.Column<T, ?>, Component> columnFieldMap,
+                                 boolean isCancelled) {
         super(editor, bean);
         this.columnFieldMap = columnFieldMap;
+        this.isCancelled = isCancelled;
     }
 
     /**
@@ -43,5 +47,12 @@ public class JmixEditorCancelEvent<T> extends EditorCancelEvent<T> {
      */
     public Map<Grid.Column<T, ?>, Component> getColumnFieldMap() {
         return columnFieldMap;
+    }
+
+    /**
+     * @return {@code true} if editor was closed by cancel button
+     */
+    public boolean isCancelled() {
+        return isCancelled;
     }
 }

@@ -1290,7 +1290,7 @@ public abstract class AbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E>, 
         JmixEditorCancelEvent<E> event = ((JmixEditorCancelEvent) cancelEvent);
         Map<String, Field> fields = convertToJmixFields(event.getColumnFieldMap());
 
-        EditorCloseEvent<E> e = new EditorCloseEvent<>(this, event.getBean(), fields);
+        EditorCloseEvent<E> e = new EditorCloseEvent<>(this, event.getBean(), fields, event.isCancelled());
         publish(EditorCloseEvent.class, e);
     }
 

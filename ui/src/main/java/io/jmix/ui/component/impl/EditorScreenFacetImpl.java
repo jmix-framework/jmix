@@ -160,7 +160,7 @@ public class EditorScreenFacetImpl<E, S extends Screen & EditorScreen<E>>
         }
 
         if (editMode == EditMode.CREATE) {
-            builder.newEntity(entityToEdit);
+            builder.newEntity(entityProvider != null ? entityToEdit : null);
         } else {
             if (entityToEdit != null) {
                 builder.editEntity(entityToEdit);

@@ -32,6 +32,7 @@ import com.haulmont.cuba.settings.converter.LegacyDataGridSettingsConverter;
 import com.haulmont.cuba.web.gui.components.datagrid.DataGridDelegate;
 import com.vaadin.data.ValueProvider;
 import com.vaadin.ui.Grid;
+import com.vaadin.ui.components.grid.EditorCancelEvent;
 import io.jmix.core.DevelopmentException;
 import io.jmix.core.Entity;
 import io.jmix.core.common.util.Preconditions;
@@ -58,6 +59,7 @@ import io.jmix.ui.component.valueprovider.YesNoIconPresentationValueProvider;
 import io.jmix.ui.settings.ComponentSettingsRegistry;
 import io.jmix.ui.settings.component.binder.ComponentSettingsBinder;
 import io.jmix.ui.widget.JmixGridEditorFieldFactory;
+import io.jmix.ui.widget.grid.JmixEditorCancelEvent;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -598,6 +600,20 @@ public class WebDataGrid<E extends Entity> extends DataGridImpl<E>
         }
 
         return super.getAutowiredProperties(entityDataGridSource);
+    }
+
+    @Override
+    protected void onEditorCancel(EditorCancelEvent<E> cancelEvent) {
+        //noinspection unchecked
+        JmixEditorCancelEvent<E> event = ((JmixEditorCancelEvent) cancelEvent);
+        if (!event.isCancelled()) {
+            return;
+        }
+
+        Map<String, Field> fields = convertToJmixFields(event.getColumnFieldMap());
+
+        CubaEditorCloseEvent<E> e = new CubaEditorCloseEvent<>(this, event.getBean(), fields);
+        publish(EditorCloseEvent.class, e);
     }
 
     @Override

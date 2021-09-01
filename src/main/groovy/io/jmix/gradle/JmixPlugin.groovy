@@ -95,16 +95,20 @@ class JmixPlugin implements Plugin<Project> {
                 project.tasks.findByName('testClasses').doLast({ EnhancingAction.copyGeneratedFiles(project, 'test') })
             }
 
-            // Exclude client-side logger for each configuration except 'widgets'
-            project.configurations.collect {
-                if (it.getName() != 'widgets') {
-                    it.exclude(group: 'ru.finam', module: 'slf4j-gwt')
-                }
-            }
-
-            // Exclude second logger to prevent collisions with Logback
             if (isJmixApp(project)) {
-                project.configurations.collect {
+                def configurations = project.configurations.collect()
+
+                // Exclude client-side logger for each configuration except 'widgets' if it's added
+                if (configurations.any { it.getName() == WIDGETS_CONFIGURATION_NAME }) {
+                    configurations.each {
+                        if (it.getName() != WIDGETS_CONFIGURATION_NAME) {
+                            it.exclude(group: 'ru.finam', module: 'slf4j-gwt')
+                        }
+                    }
+                }
+
+                // Exclude second logger to prevent collisions with Logback
+                configurations.each {
                     it.exclude(group: 'org.slf4j', module: 'slf4j-jdk14')
                 }
             }

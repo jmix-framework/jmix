@@ -16,12 +16,14 @@
 
 package io.jmix.ui.app.propertyfilter.dateinterval;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimap;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.Range;
+import io.jmix.ui.Dialogs;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.app.propertyfilter.dateinterval.model.BaseDateInterval;
 import io.jmix.ui.app.propertyfilter.dateinterval.model.BaseDateInterval.Type;
@@ -52,6 +54,8 @@ public class DateIntervalDialog extends Screen {
 
     @Autowired
     protected Messages messages;
+    @Autowired
+    protected Dialogs dialogs;
     @Autowired
     protected Notifications notifications;
     @Autowired
@@ -266,6 +270,17 @@ public class DateIntervalDialog extends Screen {
             map.put(messages.getMessage(enumConst), enumConst);
         }
         return map;
+    }
+
+    @Install(to = "includingCurrentCheckBox", subject = "contextHelpIconClickHandler")
+    protected void textFieldContextHelpIconClickHandler(HasContextHelp.ContextHelpIconClickEvent event) {
+        dialogs.createMessageDialog()
+                .withCaption(
+                        messages.getMessage(this.getClass(),
+                                "dateIntervalDialog.includingCurrentCheckBox.contextHelp.title"))
+                .withContentMode(ContentMode.HTML)
+                .withMessage(Strings.nullToEmpty(event.getSource().getContextHelpText()))
+                .show();
     }
 
     @Subscribe("typeRadioButtonGroup")

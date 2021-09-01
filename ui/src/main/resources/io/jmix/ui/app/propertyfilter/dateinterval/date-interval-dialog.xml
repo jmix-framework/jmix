@@ -39,6 +39,7 @@
                           width="130px"/>
                 <checkBox id="includingCurrentCheckBox"
                           align="MIDDLE_LEFT"
+                          contextHelpText="msg://io.jmix.ui.app.propertyfilter.dateinterval/dateIntervalDialog.includingCurrentCheckBox.contextHelp.message"
                           caption="msg://dateIntervalDialog.includingCurrentCheckBox.caption"/>
                 <comboBox id="relativeDateTimeOperationComboBox"
                           nullOptionVisible="false"

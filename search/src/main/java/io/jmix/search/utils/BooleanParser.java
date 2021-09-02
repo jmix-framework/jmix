@@ -23,9 +23,9 @@ public class BooleanParser {
     /**
      * Parses object value as boolean:
      * <ul>
-     *     <li>null value -> false</li>
-     *     <li>Boolean value -> as is</li>
-     *     <li>String value -> according to {@link Boolean#parseBoolean(String)}</li>
+     *     <li>null value -&gt; false</li>
+     *     <li>Boolean value -&gt; as is</li>
+     *     <li>String value -&gt; according to {@link Boolean#parseBoolean(String)}</li>
      * </ul>
      * @param value input value
      * @return parsed boolean value

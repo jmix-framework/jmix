@@ -19,8 +19,9 @@ package io.jmix.autoconfigure.search;
 import com.google.common.base.Strings;
 import io.jmix.core.CoreConfiguration;
 import io.jmix.data.DataConfiguration;
-import io.jmix.search.SearchProperties;
 import io.jmix.search.SearchConfiguration;
+import io.jmix.search.SearchProperties;
+import io.jmix.search.utils.ElasticsearchSslConfigurer;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -37,6 +38,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
+import javax.annotation.Nullable;
+import javax.net.ssl.SSLContext;
+
 @Configuration
 @Import({CoreConfiguration.class, DataConfiguration.class, SearchConfiguration.class})
 public class SearchAutoConfiguration {
@@ -45,6 +49,8 @@ public class SearchAutoConfiguration {
 
     @Autowired
     protected SearchProperties searchProperties;
+    @Autowired
+    protected ElasticsearchSslConfigurer elasticsearchSslConfigurer;
 
     @Bean("search_RestHighLevelClient")
     @ConditionalOnMissingBean(RestHighLevelClient.class)
@@ -55,14 +61,34 @@ public class SearchAutoConfiguration {
         HttpHost esHttpHost = HttpHost.create(esUrl);
         RestClientBuilder restClientBuilder = RestClient.builder(esHttpHost);
 
-        if (!Strings.isNullOrEmpty(searchProperties.getElasticsearchLogin())) {
-            CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-            credentialsProvider.setCredentials(AuthScope.ANY,
-                    new UsernamePasswordCredentials(searchProperties.getElasticsearchLogin(), searchProperties.getElasticsearchPassword())
-            );
-            restClientBuilder.setHttpClientConfigCallback(httpClientBuilder -> httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider));
-        }
+        CredentialsProvider credentialsProvider = createCredentialsProvider();
+        SSLContext sslContext = elasticsearchSslConfigurer.createSslContext();
+
+        restClientBuilder.setHttpClientConfigCallback(httpClientBuilder -> {
+            if (credentialsProvider != null) {
+                httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
+            }
+            if (sslContext != null) {
+                httpClientBuilder.setSSLContext(sslContext);
+            }
+            return httpClientBuilder;
+        });
 
         return new RestHighLevelClient(restClientBuilder);
+    }
+
+    @Nullable
+    protected CredentialsProvider createCredentialsProvider() {
+        CredentialsProvider credentialsProvider = null;
+        if (!Strings.isNullOrEmpty(searchProperties.getElasticsearchLogin())) {
+            credentialsProvider = new BasicCredentialsProvider();
+            credentialsProvider.setCredentials(AuthScope.ANY,
+                    new UsernamePasswordCredentials(
+                            searchProperties.getElasticsearchLogin(),
+                            searchProperties.getElasticsearchPassword()
+                    )
+            );
+        }
+        return credentialsProvider;
     }
 }

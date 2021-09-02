@@ -16,6 +16,7 @@
 
 package io.jmix.search;
 
+import io.jmix.core.Resources;
 import io.jmix.search.index.IndexSchemaManagementStrategy;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -199,6 +200,35 @@ public class SearchProperties {
     }
 
     /**
+     * @return location of CA certificate for connection to Elasticsearch service.
+     * Location is handled according to the rules of {@link Resources}
+     */
+    public String getElasticsearchSslCertificateLocation() {
+        return elasticsearch.ssl.certificateLocation;
+    }
+
+    /**
+     * @return alias what will be used to store certificate to Key Store. "es_client_ca" by default
+     */
+    public String getElasticsearchSslCertificateAlias() {
+        return elasticsearch.ssl.certificateAlias;
+    }
+
+    /**
+     * @return type of Certificate Factory. "X.509" by default
+     */
+    public String getElasticsearchSslCertificateFactoryType() {
+        return elasticsearch.ssl.certificateFactoryType;
+    }
+
+    /**
+     * @return type of Key Store. "pkcs12" by default
+     */
+    public String getElasticsearchSslKeyStoreType() {
+        return elasticsearch.ssl.keyStoreType;
+    }
+
+    /**
      * @return The way of index schema synchronization
      */
     public IndexSchemaManagementStrategy getIndexSchemaManagementStrategy() {
@@ -219,14 +249,35 @@ public class SearchProperties {
         protected final String url;
         protected final String login;
         protected final String password;
+        protected final SSL ssl;
 
         public Elasticsearch(
                 @DefaultValue("localhost:9200") String url,
                 String login,
-                String password) {
+                String password,
+                @DefaultValue SSL ssl) {
             this.url = url;
             this.login = login;
             this.password = password;
+            this.ssl = ssl;
+        }
+    }
+
+    protected static class SSL {
+        protected final String certificateLocation;
+        protected final String certificateAlias;
+        protected final String certificateFactoryType;
+        protected final String keyStoreType;
+
+        public SSL(
+                String certificateLocation,
+                @DefaultValue("es_client_ca") String certificateAlias,
+                @DefaultValue("X.509") String certificateFactoryType,
+                @DefaultValue("pkcs12") String keyStoreType) {
+            this.certificateLocation = certificateLocation;
+            this.certificateAlias = certificateAlias;
+            this.certificateFactoryType = certificateFactoryType;
+            this.keyStoreType = keyStoreType;
         }
     }
 }

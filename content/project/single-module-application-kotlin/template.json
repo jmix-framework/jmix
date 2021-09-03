@@ -1,0 +1,11 @@
+{
+  "name": "Single Module Application (Kotlin)",
+  "order": 1,
+  "description": "<html>Template of single module Jmix application on Kotlin.</html>",
+  "params": [
+    {
+      "name": "projectId",
+      "mandatory": false
+    }
+  ]
+}

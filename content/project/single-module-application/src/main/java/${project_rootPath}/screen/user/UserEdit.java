@@ -3,6 +3,7 @@ package ${project_rootPackage}.screen.user;
 import ${project_rootPackage}.entity.User;
 import io.jmix.core.EntityStates;
 import io.jmix.ui.Notifications;
+import io.jmix.ui.component.ComboBox;
 import io.jmix.ui.component.PasswordField;
 import io.jmix.ui.component.TextField;
 import io.jmix.ui.navigation.Route;
@@ -10,7 +11,9 @@ import io.jmix.ui.screen.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.Arrays;
 import java.util.Objects;
+import java.util.TimeZone;
 
 @UiController("${normalizedPrefix_underscore}User.edit")
 @UiDescriptor("user-edit.xml")

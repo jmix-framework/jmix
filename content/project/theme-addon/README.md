@@ -1,27 +1,23 @@
-## Theme add-on
+## Jmix UI Theme Add-on
 
-Theme add-on may provide SCSS files for a theme compilation. See the [documentation](https://docs.jmix.io/jmix/0.x/backoffice-ui/themes/theme_addon.html) for more details.
+A theme add-on provides SCSS files for a theme compilation. See the [documentation](https://docs.jmix.io/jmix/backoffice-ui/themes/theme_addon.html) for details.
 
-### Using the Theme add-on
+### Using the Theme Add-on
 
-* Build publish add-on to `.m2`:
+* Build and publish the add-on to local Maven repository (`~/.m2`):
 
-_Windows:_
-```
-gradlew clean assemble publishToMavenLocal
-```
+  ```
+  ./gradlew clean publishToMavenLocal
+  ```
 
-_Linux & macOS:_
-```
-./gradlew clean assemble publishToMavenLocal
-```
-
-* Open the project you want to apply the theme add-on.
-* Create a [custom theme](https://docs.jmix.io/jmix/0.x/backoffice-ui/themes/custom_theme.html).
+* Open the project where you want to apply the theme add-on.
+* Create a [custom theme](https://docs.jmix.io/jmix/backoffice-ui/themes/custom_theme.html).
 * Open the `build.gradle` file and make the following changes:
   * add `mavenLocal()` to repositories
-  * include add-on dependency to the project:
-```
-implementation 'com.company:${project_name}:0.0.1-SNAPSHOT'
-```
-* Reload the project.
+  * include the add-on dependency to the project, for example:
+
+    ```
+    implementation 'com.company:mythemeaddon:0.0.1-SNAPSHOT'
+    ```
+    
+* Reload the Gradle project.

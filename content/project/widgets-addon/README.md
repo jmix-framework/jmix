@@ -1,27 +1,21 @@
-## Widgets add-on
+## Jmix UI Widgets Add-on
 
-Widgets add-on may provide UI components inherited from Vaadin components as well as their Jmix wrappers.
+A widgets add-on provides custom UI components to reuse them in different applications.
 
-### Using the Widgets add-on
+### Using the Widgets Add-on
 
-* Build publish add-on to `.m2`:
+* Build and publish the add-on to local Maven repository (`~/.m2`):
 
-_Windows:_
-```
-gradlew clean assemble publishToMavenLocal
-```
+  ```
+  ./gradlew clean publishToMavenLocal
+  ```
 
-_Linux & macOS:_
-```
-./gradlew clean assemble publishToMavenLocal
-```
-
-* Open the project you want to apply the widgets add-on.
+* Open the project where you want to apply the widgets add-on.
 * Open the `build.gradle` file and make the following changes:
     * add `mavenLocal()` to repositories
-    * include add-on dependency to the project:
-```
-implementation 'com.company:${project_name}:0.0.1-SNAPSHOT'
-widgets 'com.company:${project_name}:0.0.1-SNAPSHOT'
-```
-* Reload the project.
+    * include the add-on dependency to the project's `implementation` and `widgets` configurations, for example:
+      ```
+      implementation 'com.company:mywidgetsaddon:0.0.1-SNAPSHOT'
+      widgets 'com.company:mywidgetsaddon:0.0.1-SNAPSHOT'
+      ```
+* Reload the Gradle project.

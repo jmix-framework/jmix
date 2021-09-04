@@ -1,5 +1,11 @@
 {
   "name": "UI Theme Add-On",
   "order": 3,
-  "description": "<html>Jmix UI theme add-ons allow you to reuse custom UI themes in different applications.</html>"
+  "description": "<html>Jmix UI theme add-ons allow you to reuse custom UI themes in different applications.</html>",
+  "params": [
+    {
+      "name": "projectId",
+      "mandatory": false
+    }
+  ]
 }

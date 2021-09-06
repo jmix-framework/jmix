@@ -163,7 +163,7 @@ public class User implements JmixUserDetails, HasTimeZone {
         return timeZoneId;
     }
 
-    public void setUserTimeZone(String timeZoneId) {
+    public void setTimeZoneId(String timeZoneId) {
         this.timeZoneId = timeZoneId;
     }
 }

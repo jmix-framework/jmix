@@ -16,6 +16,7 @@
 
 package io.jmix.rest.impl.controller;
 
+import io.jmix.core.FileClientException;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.impl.serialization.EntityTokenException;
@@ -75,6 +76,18 @@ public class RestControllerExceptionHandler {
             log.info("RestAPIException: {}, {}", e.getMessage(), e.getDetails());
         } else {
             log.error("RestAPIException: {}, {}", e.getMessage(), e.getDetails(), e.getCause());
+        }
+        ErrorInfo errorInfo = new ErrorInfo(e.getMessage(), e.getDetails());
+        return new ResponseEntity<>(errorInfo, e.getHttpStatus());
+    }
+
+    @ExceptionHandler(FileClientException.class)
+    @ResponseBody
+    public ResponseEntity<ErrorInfo> handleFileClientException(FileClientException e) {
+        if (e.getCause() == null) {
+            log.info("FileClientException: {}, {}", e.getMessage(), e.getDetails());
+        } else {
+            log.error("FileClientException: {}, {}", e.getMessage(), e.getDetails(), e.getCause());
         }
         ErrorInfo errorInfo = new ErrorInfo(e.getMessage(), e.getDetails());
         return new ResponseEntity<>(errorInfo, e.getHttpStatus());

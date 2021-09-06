@@ -241,10 +241,12 @@ public class LoginScreenSupport {
                                                        @Nullable TimeZone timeZone) {
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(username, password);
+        VaadinServletRequest request = VaadinServletRequest.getCurrent();
 
         ClientDetails clientDetails = ClientDetails.builder()
                 .locale(locale != null ? locale : getDefaultLocale())
                 .scope(SecurityScope.UI)
+                .sessionId(request.getSession().getId())
                 .timeZone(timeZone == null ? getDeviceTimeZone() : timeZone)
                 .build();
 

@@ -8,7 +8,6 @@ import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.security.authentication.JmixUserDetails;
 import org.springframework.security.core.GrantedAuthority;
-import java.util.TimeZone;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import java.util.Collection;
@@ -51,8 +50,8 @@ public class User implements JmixUserDetails, HasTimeZone {
     @Column(name = "ACTIVE")
     protected Boolean active = true;
 
-    @Column(name = "USER_TIME_ZONE")
-    protected String userTimeZone;
+    @Column(name = "TIME_ZONE_ID")
+    protected String timeZoneId;
 
     @Transient
     protected Collection<? extends GrantedAuthority> authorities;
@@ -160,18 +159,11 @@ public class User implements JmixUserDetails, HasTimeZone {
     }
 
     @Override
-    public TimeZone getTimeZone() {
-        if (userTimeZone == null) {
-            return null;
-        }
-        return TimeZone.getTimeZone(userTimeZone);
+    public String getTimeZoneId() {
+        return timeZoneId;
     }
 
-    public String getUserTimeZone() {
-        return userTimeZone;
-    }
-
-    public void setUserTimeZone(String userTimeZone) {
-        this.userTimeZone = userTimeZone;
+    public void setUserTimeZone(String timeZoneId) {
+        this.timeZoneId = timeZoneId;
     }
 }

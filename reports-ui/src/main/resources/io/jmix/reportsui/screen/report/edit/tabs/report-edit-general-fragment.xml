@@ -37,50 +37,53 @@
     </data>
 
     <layout expand="bands" spacing="true" margin="true;true;false;true">
-        <hbox id="reportFields" spacing="true" width="100%" expand="spacer">
-            <form id="propertiesForm" dataContainer="reportDc">
-                <column width="380px">
-                    <textField id="name" required="true" property="name"
-                               requiredMessage="msg://report.nameMsg"/>
-                    <entityComboBox id="defaultTemplateField" property="defaultTemplate" optionsContainer="templatesDc"
-                                    required="true">
-                        <actions>
-                            <action id="create" description="msg://description.createTemplate" icon="PLUS"/>
-                            <action id="download" description="msg://description.downloadTemplate" icon="DOWNLOAD"/>
-                            <action id="upload" description="msg://description.uploadTemplate" icon="UPLOAD"/>
-                            <action id="edit" description="msg://description.editTemplate" icon="EDIT"/>
-                        </actions>
-                    </entityComboBox>
-                </column>
-                <column width="250px">
-                    <entityComboBox id="group" required="true" property="group" optionsContainer="groupsDc"
-                                    requiredMessage="msg://report.reportTypeMsg"/>
-                    <textField id="code" property="code"/>
-                </column>
-            </form>
+        <scrollBox id="scrollBox" scrollBars="horizontal" margin="true" spacing="true" contentWidth="100%">
+            <hbox id="reportFields" spacing="true" width="100%" expand="spacer">
+                <form id="propertiesForm" dataContainer="reportDc">
+                    <column width="380px">
+                        <textField id="name" required="true" property="name"
+                                   requiredMessage="msg://report.nameMsg"/>
+                        <entityComboBox id="defaultTemplateField" property="defaultTemplate"
+                                        optionsContainer="templatesDc"
+                                        required="true">
+                            <actions>
+                                <action id="create" description="msg://description.createTemplate" icon="PLUS"/>
+                                <action id="download" description="msg://description.downloadTemplate" icon="DOWNLOAD"/>
+                                <action id="upload" description="msg://description.uploadTemplate" icon="UPLOAD"/>
+                                <action id="edit" description="msg://description.editTemplate" icon="EDIT"/>
+                            </actions>
+                        </entityComboBox>
+                    </column>
+                    <column width="250px">
+                        <entityComboBox id="group" required="true" property="group" optionsContainer="groupsDc"
+                                        requiredMessage="msg://report.reportTypeMsg"/>
+                        <textField id="code" property="code"/>
+                    </column>
+                </form>
 
-            <form id="descriptionFieldGroup" dataContainer="reportDc">
-                <column width="265px">
-                    <textArea id="description" property="description" rows="3"/>
-                </column>
-            </form>
+                <form id="descriptionFieldGroup" dataContainer="reportDc">
+                    <column width="265px">
+                        <textArea id="description" property="description" rows="3"/>
+                    </column>
+                </form>
 
-            <gridLayout id="settingsGrid" spacing="true">
-                <columns count="2"/>
-                <rows>
-                    <row>
-                        <label value="msg://report.restAccess"/>
-                        <checkBox dataContainer="reportDc" property="restAccess"/>
-                    </row>
-                    <row>
-                        <label value="msg://report.system"/>
-                        <checkBox dataContainer="reportDc" property="system"/>
-                    </row>
-                </rows>
-            </gridLayout>
-            <fileUpload id="invisibleFileUpload" dropZone="reportFields" stylename="jmix-report-upload-invisible"/>
-            <label id="spacer"/>
-        </hbox>
+                <gridLayout id="settingsGrid" spacing="true">
+                    <columns count="2"/>
+                    <rows>
+                        <row>
+                            <label value="msg://report.restAccess"/>
+                            <checkBox dataContainer="reportDc" property="restAccess"/>
+                        </row>
+                        <row>
+                            <label value="msg://report.system"/>
+                            <checkBox dataContainer="reportDc" property="system"/>
+                        </row>
+                    </rows>
+                </gridLayout>
+                <fileUpload id="invisibleFileUpload" dropZone="reportFields" stylename="jmix-report-upload-invisible"/>
+                <label id="spacer"/>
+            </hbox>
+        </scrollBox>
 
         <vbox id="bands" width="100%">
             <split orientation="horizontal" id="hSplit" pos="30" width="100%" height="100%">

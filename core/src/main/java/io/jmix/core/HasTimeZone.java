@@ -16,8 +16,6 @@
 
 package io.jmix.core;
 
-import java.util.TimeZone;
-
 /**
  * Provides user time zone information.
  * If User entity implements HasTimeZone, {@link io.jmix.core.security.CurrentAuthentication#getTimeZone} should use timezone from a User entity for all datetime operations.
@@ -25,7 +23,7 @@ import java.util.TimeZone;
 public interface HasTimeZone {
 
     /**
-     * @return time zone of the user
+     * @return time zone id of the user
      */
-    TimeZone getTimeZone();
+    String getTimeZoneId();
 }

@@ -100,7 +100,7 @@ public interface ScreenSettingsFacet extends Facet {
     Collection<Component> getComponents();
 
     /**
-     * @return screen settings or null if facet is not attached to the screen
+     * @return screen settings or {@code null} if facet is not attached to the screen
      */
     @Nullable
     ScreenSettings getSettings();
@@ -145,7 +145,7 @@ public interface ScreenSettingsFacet extends Facet {
     void saveSettings(Collection<Component> components);
 
     /**
-     * @return apply settings delegate or null if not set
+     * @return apply settings delegate or {@code null} if not set
      */
     @Nullable
     Consumer<SettingsContext> getApplySettingsDelegate();
@@ -158,10 +158,10 @@ public interface ScreenSettingsFacet extends Facet {
      * <p>
      * For instance:
      * <pre>
-     *      &#64;Install(to = "settingsFacet", subject = "applySettingsDelegate")
-     *      private void onApplySetting(SettingsSet settings) {
-     *          settingsFacet.applySettings(settings);
-     *      }
+     * &#64;Install(to = "settingsFacet", subject = "applySettingsDelegate")
+     * private void onApplySettings(ScreenSettingsFacet.SettingsContext settingsContext) {
+     *     settingsFacet.applySettings();
+     * }
      * </pre>
      *
      * @param delegate apply settings delegate
@@ -169,7 +169,7 @@ public interface ScreenSettingsFacet extends Facet {
     void setApplySettingsDelegate(Consumer<SettingsContext> delegate);
 
     /**
-     * @return apply data loading settings delegate or null if not set
+     * @return apply data loading settings delegate or {@code null} if not set
      */
     @Nullable
     Consumer<SettingsContext> getApplyDataLoadingSettingsDelegate();
@@ -180,10 +180,10 @@ public interface ScreenSettingsFacet extends Facet {
      * <p>
      * For instance:
      * <pre>
-     *      &#64;Install(to = "settingsFacet", subject = "applyDataLoadingSettingsDelegate")
-     *      private void onApplyDataLoadingSetting(SettingsSet settings) {
-     *          settingsFacet.applyDataLoadingSettings(settings);
-     *      }
+     * &#64;Install(to = "settingsFacet", subject = "applyDataLoadingSettingsDelegate")
+     * private void onApplyDataLoadingSettings(ScreenSettingsFacet.SettingsContext settingsContext) {
+     *     settingsFacet.applyDataLoadingSettings();
+     * }
      * </pre>
      *
      * @param delegate apply settings delegate
@@ -191,7 +191,7 @@ public interface ScreenSettingsFacet extends Facet {
     void setApplyDataLoadingSettingsDelegate(Consumer<SettingsContext> delegate);
 
     /**
-     * @return save settings delegate or null if not set
+     * @return save settings delegate or {@code null} if not set
      */
     @Nullable
     Consumer<SettingsContext> getSaveSettingsDelegate();
@@ -202,10 +202,10 @@ public interface ScreenSettingsFacet extends Facet {
      * <p>
      * For instance:
      * <pre>
-     *      &#64;Install(to = "settingsFacet", subject = "saveSettingsDelegate")
-     *      private void onSaveSetting(SettingsSet settings) {
-     *          settingsFacet.saveSettings(settings);
-     *      }
+     * &#64;Install(to = "settingsFacet", subject = "saveSettingsDelegate")
+     * private void onSaveSettings(ScreenSettingsFacet.SettingsContext settingsContext) {
+     *     settingsFacet.saveSettings();
+     * }
      * </pre>
      *
      * @param delegate save settings delegate

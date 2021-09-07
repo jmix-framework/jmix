@@ -51,6 +51,7 @@ open class User : JmixUserDetails, HasTimeZone {
     var active: Boolean? = true
 
     @Column(name = "TIME_ZONE_ID")
+    @get:JvmName("getTimeZoneId_")
     var timeZoneId: String? = null;
 
     @Transient
@@ -80,4 +81,7 @@ open class User : JmixUserDetails, HasTimeZone {
     val displayName: String
         get() = "\${firstName ?: ""} \${lastName ?: ""} [\${username ?: ""}]".trim()
 
+    override fun getTimeZoneId(): String? {
+        return timeZoneId
+    }
 }

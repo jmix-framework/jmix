@@ -285,7 +285,7 @@ public class InputParameter {
                     @StudioProperty(name = "id", type = PropertyType.COMPONENT_ID, required = true),
                     @StudioProperty(name = "caption", type = PropertyType.LOCALIZED_STRING),
                     @StudioProperty(name = "required", type = PropertyType.BOOLEAN),
-                    @StudioProperty(name = "requiredMessage", type = PropertyType.STRING),
+                    @StudioProperty(name = "requiredMessage", type = PropertyType.LOCALIZED_STRING),
                     @StudioProperty(name = "defaultValue", type = PropertyType.STRING)
             }
     )

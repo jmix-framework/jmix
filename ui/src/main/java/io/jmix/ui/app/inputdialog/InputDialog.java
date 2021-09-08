@@ -375,8 +375,7 @@ public class InputDialog extends Screen {
             return timeField;
         } else if (datatype instanceof BooleanDatatype) {
             return uiComponents.create(CheckBox.NAME);
-        } else if (datatype instanceof UriDatatype
-                || datatype instanceof FileRefDatatype) {
+        } else if (datatype instanceof FileRefDatatype) {
             FileStorageUploadField fileUploadField = uiComponents.create(FileStorageUploadField.class);
             fileUploadField.setShowFileName(true);
             fileUploadField.setShowClearButton(true);

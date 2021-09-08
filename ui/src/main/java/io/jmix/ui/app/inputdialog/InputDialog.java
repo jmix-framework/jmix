@@ -311,7 +311,8 @@ public class InputDialog extends Screen {
 
         for (InputParameter parameter : parameters) {
             if (fieldIds.contains(parameter.getId())) {
-                throw new IllegalArgumentException("InputDialog cannot contain parameters with the same id: '" + parameter.getId() + "'");
+                throw new IllegalArgumentException(
+                        "InputDialog cannot contain parameters with the same id: '" + parameter.getId() + "'");
             }
 
             Field field;
@@ -374,7 +375,8 @@ public class InputDialog extends Screen {
             return timeField;
         } else if (datatype instanceof BooleanDatatype) {
             return uiComponents.create(CheckBox.NAME);
-        } else if (datatype instanceof UriDatatype) {
+        } else if (datatype instanceof UriDatatype
+                || datatype instanceof FileRefDatatype) {
             FileStorageUploadField fileUploadField = uiComponents.create(FileStorageUploadField.class);
             fileUploadField.setShowFileName(true);
             fileUploadField.setShowClearButton(true);

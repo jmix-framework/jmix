@@ -88,7 +88,9 @@ class InputDialogTest extends ScreenSpecification {
                         InputParameter.entityParameter("entity", GoodInfoObject),
                         InputParameter.timeParameter("time"),
                         InputParameter.dateParameter("date"),
-                        InputParameter.dateTimeParameter("dateTime"))
+                        InputParameter.dateTimeParameter("dateTime"),
+                        InputParameter.fileParameter("fileRef"),
+                        InputParameter.byteArrayParameter("byteArray"))
                 .show()
         then:
         def form = (Form) dialog.getWindow().getComponentNN("form")
@@ -119,6 +121,9 @@ class InputDialogTest extends ScreenSpecification {
 
         def dateTimeField = (DateField) form.getComponentNN("dateTime")
         dateTimeField.getDatatype().getClass() == DateTimeDatatype
+
+        (FileStorageUploadField) form.getComponentNN("fileRef")
+        (FileUploadField) form.getComponentNN("byteArray")
     }
 
     def "default actions are created"() {

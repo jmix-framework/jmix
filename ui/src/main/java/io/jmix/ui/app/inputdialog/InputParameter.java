@@ -309,7 +309,7 @@ public class InputParameter {
                     @StudioProperty(name = "id", type = PropertyType.COMPONENT_ID, required = true),
                     @StudioProperty(name = "caption", type = PropertyType.LOCALIZED_STRING),
                     @StudioProperty(name = "required", type = PropertyType.BOOLEAN),
-                    @StudioProperty(name = "requiredMessage", type = PropertyType.STRING),
+                    @StudioProperty(name = "requiredMessage", type = PropertyType.LOCALIZED_STRING),
                     @StudioProperty(name = "defaultValue", type = PropertyType.INTEGER)
             }
     )
@@ -333,7 +333,7 @@ public class InputParameter {
                     @StudioProperty(name = "id", type = PropertyType.COMPONENT_ID, required = true),
                     @StudioProperty(name = "caption", type = PropertyType.LOCALIZED_STRING),
                     @StudioProperty(name = "required", type = PropertyType.BOOLEAN),
-                    @StudioProperty(name = "requiredMessage", type = PropertyType.STRING),
+                    @StudioProperty(name = "requiredMessage", type = PropertyType.LOCALIZED_STRING),
                     @StudioProperty(name = "defaultValue", type = PropertyType.DOUBLE)
             }
     )
@@ -357,7 +357,7 @@ public class InputParameter {
                     @StudioProperty(name = "id", type = PropertyType.COMPONENT_ID, required = true),
                     @StudioProperty(name = "caption", type = PropertyType.LOCALIZED_STRING),
                     @StudioProperty(name = "required", type = PropertyType.BOOLEAN),
-                    @StudioProperty(name = "requiredMessage", type = PropertyType.STRING),
+                    @StudioProperty(name = "requiredMessage", type = PropertyType.LOCALIZED_STRING),
                     @StudioProperty(name = "defaultValue", type = PropertyType.BIG_DECIMAL)
             }
     )
@@ -381,7 +381,7 @@ public class InputParameter {
                     @StudioProperty(name = "id", type = PropertyType.COMPONENT_ID, required = true),
                     @StudioProperty(name = "caption", type = PropertyType.LOCALIZED_STRING),
                     @StudioProperty(name = "required", type = PropertyType.BOOLEAN),
-                    @StudioProperty(name = "requiredMessage", type = PropertyType.STRING),
+                    @StudioProperty(name = "requiredMessage", type = PropertyType.LOCALIZED_STRING),
                     @StudioProperty(name = "defaultValue", type = PropertyType.LONG)
             }
     )
@@ -405,7 +405,7 @@ public class InputParameter {
                     @StudioProperty(name = "id", type = PropertyType.COMPONENT_ID, required = true),
                     @StudioProperty(name = "caption", type = PropertyType.LOCALIZED_STRING),
                     @StudioProperty(name = "required", type = PropertyType.BOOLEAN),
-                    @StudioProperty(name = "requiredMessage", type = PropertyType.STRING),
+                    @StudioProperty(name = "requiredMessage", type = PropertyType.LOCALIZED_STRING),
                     @StudioProperty(name = "defaultValue", type = PropertyType.DATE)
             }
     )
@@ -429,7 +429,7 @@ public class InputParameter {
                     @StudioProperty(name = "id", type = PropertyType.COMPONENT_ID, required = true),
                     @StudioProperty(name = "caption", type = PropertyType.LOCALIZED_STRING),
                     @StudioProperty(name = "required", type = PropertyType.BOOLEAN),
-                    @StudioProperty(name = "requiredMessage", type = PropertyType.STRING),
+                    @StudioProperty(name = "requiredMessage", type = PropertyType.LOCALIZED_STRING),
                     @StudioProperty(name = "defaultValue", type = PropertyType.TIME)
             }
     )
@@ -453,7 +453,7 @@ public class InputParameter {
                     @StudioProperty(name = "id", type = PropertyType.COMPONENT_ID, required = true),
                     @StudioProperty(name = "caption", type = PropertyType.LOCALIZED_STRING),
                     @StudioProperty(name = "required", type = PropertyType.BOOLEAN),
-                    @StudioProperty(name = "requiredMessage", type = PropertyType.STRING),
+                    @StudioProperty(name = "requiredMessage", type = PropertyType.LOCALIZED_STRING),
                     @StudioProperty(name = "defaultValue", type = PropertyType.DATE_TIME)
             }
     )
@@ -478,7 +478,7 @@ public class InputParameter {
                     @StudioProperty(name = "id", type = PropertyType.COMPONENT_ID, required = true),
                     @StudioProperty(name = "caption", type = PropertyType.LOCALIZED_STRING),
                     @StudioProperty(name = "required", type = PropertyType.BOOLEAN),
-                    @StudioProperty(name = "requiredMessage", type = PropertyType.STRING),
+                    @StudioProperty(name = "requiredMessage", type = PropertyType.LOCALIZED_STRING),
                     @StudioProperty(name = "entityClass", type = PropertyType.ENTITY_CLASS, required = true)
             }
     )
@@ -545,7 +545,7 @@ public class InputParameter {
                     @StudioProperty(name = "id", type = PropertyType.COMPONENT_ID, required = true),
                     @StudioProperty(name = "caption", type = PropertyType.LOCALIZED_STRING),
                     @StudioProperty(name = "required", type = PropertyType.BOOLEAN),
-                    @StudioProperty(name = "requiredMessage", type = PropertyType.STRING),
+                    @StudioProperty(name = "requiredMessage", type = PropertyType.LOCALIZED_STRING),
                     @StudioProperty(name = "enumClass", type = PropertyType.ENUM_CLASS, required = true)
             }
     )

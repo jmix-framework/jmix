@@ -434,6 +434,30 @@ public class WindowConfig {
     }
 
     /**
+     * Loads hot-deployed {@link UiController} screens and registers
+     * {@link UiControllersConfiguration} containing new {@link UiControllerDefinition}.
+     *
+     * @param className the fully qualified name of the screen class to load
+     */
+    public void loadScreenClass(String className) {
+        Class screenClass = classManager.loadClass(className);
+
+        UiControllerMeta controllerMeta = new UiControllerMeta(metadataReaderFactory, screenClass);
+
+        UiControllerDefinition uiControllerDefinition = new UiControllerDefinition(
+                controllerMeta.getId(), controllerMeta.getControllerClass(), controllerMeta.getRouteDefinition());
+
+        UiControllersConfiguration controllersConfiguration =
+                new UiControllersConfiguration(applicationContext, metadataReaderFactory);
+
+        controllersConfiguration.setExplicitDefinitions(Collections.singletonList(uiControllerDefinition));
+
+        configurations.add(controllersConfiguration);
+
+        reset();
+    }
+
+    /**
      * Make the config to reload screens on next request.
      */
     public void reset() {

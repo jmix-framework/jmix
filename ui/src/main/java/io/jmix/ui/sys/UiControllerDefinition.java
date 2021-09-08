@@ -35,12 +35,12 @@ public final class UiControllerDefinition {
         this.routeDefinition = routeDefinition;
     }
 
-    // todo
-    /*public UiControllerDefinition(String id, String controllerClass, RouteDefinition routeDefinition) {
+    public UiControllerDefinition(String id, String controllerClass, @Nullable RouteDefinition routeDefinition) {
         this.id = id;
         this.controllerClass = controllerClass;
         this.routeDefinition = routeDefinition;
-    }*/
+        this.resource = null;
+    }
 
     public String getId() {
         return id;
@@ -55,6 +55,7 @@ public final class UiControllerDefinition {
         return routeDefinition;
     }
 
+    @Nullable
     public Resource getResource() {
         return resource;
     }

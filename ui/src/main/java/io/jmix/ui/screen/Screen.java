@@ -451,7 +451,7 @@ public abstract class Screen implements FrameOwner {
 
     /**
      * Event sent right before the screen is shown, i.e. it is not added to the application UI yet.
-     * Security restrictions are applied to UI components. Saved component settings are not yet applied to UI components.
+     * Security restrictions are applied to UI components.
      * Data is not loaded yet for screens annotated with {@code @LoadDataBeforeShow}.
      * <p>
      * In this event listener, you can load data, check permissions and modify UI components. For example:
@@ -481,7 +481,6 @@ public abstract class Screen implements FrameOwner {
 
     /**
      * Event sent right after the screen is shown, i.e. when it is added to the application UI.
-     * Saved component settings are applied to UI components.
      * <p>
      * In this event listener, you can show notifications, dialogs or other screens. For example:
      * <pre>
@@ -507,7 +506,7 @@ public abstract class Screen implements FrameOwner {
 
     /**
      * Event sent right before the screen is closed by its {@link #close(CloseAction)} method. The screen is still
-     * displayed and fully functional. Component settings are not saved yet.
+     * displayed and fully functional.
      * <p>
      * In this event listener, you can check any conditions and prevent screen closing using the
      * {@link #preventWindowClose()} method of the event, for example:
@@ -589,7 +588,6 @@ public abstract class Screen implements FrameOwner {
 
     /**
      * Event sent after the screen is closed by its {@link #close(CloseAction)} method and after {@link AfterDetachEvent}.
-     * Component settings are saved.
      * <p>
      * In this event listener, you can show notifications or dialogs after closing the screen, for example:
      * <pre>

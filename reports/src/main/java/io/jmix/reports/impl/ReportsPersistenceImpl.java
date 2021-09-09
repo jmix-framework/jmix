@@ -28,6 +28,7 @@ import io.jmix.reports.ReportsPersistence;
 import io.jmix.reports.entity.*;
 import io.jmix.security.constraint.PolicyStore;
 import io.jmix.security.constraint.SecureOperations;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -100,22 +101,24 @@ public class ReportsPersistenceImpl implements ReportsPersistence {
         ReportGroup group = report.getGroup();
         if (group != null) {
             FetchPlan fetchPlan = fetchPlanRepository.getFetchPlan(ReportGroup.class, FetchPlan.LOCAL);
-            ReportGroup existingGroup = em.createQuery(
+            ReportGroup existingGroup;
+            List<ReportGroup> existingGroups = em.createQuery(
                     "select g from report_ReportGroup g where g.title = :title", ReportGroup.class)
                     .setParameter("title", group.getTitle())
                     .setHint(PersistenceHints.FETCH_PLAN, fetchPlan)
-                    .getSingleResult();
-            if (existingGroup == null) {
+                    .getResultList();
+            if (CollectionUtils.isEmpty(existingGroups)) {
                 em.setProperty(PersistenceHints.SOFT_DELETION, false);
                 existingGroup = em.find(ReportGroup.class, report.getGroup().getId(),
                         PersistenceHints.builder().withFetchPlan(fetchPlan).build());
                 em.setProperty(PersistenceHints.SOFT_DELETION, true);
+            } else {
+                existingGroup = existingGroups.get(0);
             }
             if (existingGroup != null) {
                 if (!entityStates.isDeleted(existingGroup)) {
                     report.setGroup(existingGroup);
-                }
-                else {
+                } else {
                     group = dataManager.create(ReportGroup.class);
                     UUID newId = group.getId();
                     group = metadataTools.copy(existingGroup);

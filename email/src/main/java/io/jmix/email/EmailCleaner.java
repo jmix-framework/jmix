@@ -22,7 +22,7 @@ package io.jmix.email;
 public interface EmailCleaner {
     /**
      * Deletes old email messages and attachments.
-     * <p/>
+     * <p>
      * Uses the settings of emails age ({@code jmix.email.maxAgeOfImportantMessages},
      * {@code jmix.email.maxAgeOfNonImportantMessages}) which are configurable by {@code application.properties}.
      * @return count of messages and attachments, that has been deleted

@@ -17,13 +17,21 @@
 package com.haulmont.cuba.gui.components;
 
 import com.google.common.reflect.TypeToken;
+import com.haulmont.cuba.core.entity.SoftDelete;
 import com.haulmont.cuba.core.global.AppBeans;
+import com.haulmont.cuba.core.global.Messages;
+import com.haulmont.cuba.core.global.View;
+import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.WindowManager.OpenType;
+import com.haulmont.cuba.gui.WindowManagerProvider;
 import com.haulmont.cuba.gui.components.compatibility.PickerFieldFieldListenerWrapper;
+import com.haulmont.cuba.gui.components.data.value.DatasourceValueSource;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
+import com.haulmont.cuba.gui.data.DsContext;
 import com.haulmont.cuba.gui.data.NestedDatasource;
 import com.haulmont.cuba.gui.data.impl.DatasourceImplementation;
+import com.haulmont.cuba.gui.screen.compatibility.LegacyFrame;
 import io.jmix.core.DevelopmentException;
 import io.jmix.core.Entity;
 import io.jmix.core.Metadata;
@@ -36,7 +44,6 @@ import io.jmix.ui.action.Action;
 import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.Component;
-import io.jmix.ui.component.Window;
 import io.jmix.ui.component.data.Options;
 import io.jmix.ui.component.data.meta.EntityOptions;
 import io.jmix.ui.component.data.meta.EntityValueSource;
@@ -44,6 +51,7 @@ import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.UiComponentProperties;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 
 import javax.annotation.Nonnull;
@@ -297,7 +305,7 @@ public interface PickerField<V extends Entity> extends Field<V>, EntityPicker<V>
         }
 
         /**
-         * How to open the lookup screen. By default it is opened in {@code OpenType#THIS_TAB} TODO: legacy-ui
+         * How to open the lookup screen. By default it is opened in {@code OpenType#THIS_TAB}
          * mode.
          *
          * @param lookupScreenOpenType open type
@@ -333,10 +341,8 @@ public interface PickerField<V extends Entity> extends Field<V>, EntityPicker<V>
                     windowAlias = windowConfig.getAvailableLookupScreenId(metaClass);
                 }
 
-                /*
-                TODO: legacy-ui
                 WindowManager wm;
-                Window window = ComponentsHelper.getWindow(pickerField);
+                Window window = (Window) ComponentsHelper.getWindow(pickerField);
                 if (window == null) {
                     LoggerFactory.getLogger(PickerField.class).warn("Please specify Frame for PickerField");
 
@@ -376,7 +382,7 @@ public interface PickerField<V extends Entity> extends Field<V>, EntityPicker<V>
                         afterLookupCloseHandler.onClose(lookupWindow, actionId);
                     }
                 });
-                afterLookupWindowOpened(lookupWindow);*/
+                afterLookupWindowOpened(lookupWindow);
             }
         }
 
@@ -599,7 +605,7 @@ public interface PickerField<V extends Entity> extends Field<V>, EntityPicker<V>
         }
 
         /**
-         * How to open the edit screen. By default it is opened in {@code OpenType#THIS_TAB} TODO: legacy-ui
+         * How to open the edit screen. By default it is opened in {@code OpenType#THIS_TAB}
          * mode.
          *
          * @param editScreenOpenType open type
@@ -650,12 +656,10 @@ public interface PickerField<V extends Entity> extends Field<V>, EntityPicker<V>
                 return;
             }
 
-            Window window = ComponentsHelper.getWindow(pickerField);
+            Window window = (Window) ComponentsHelper.getWindow(pickerField);
             if (window == null) {
                 throw new IllegalStateException("Please specify Frame for EntityLinkField");
             }
-            /*
-            TODO: legacy-ui
             WindowManager wm = window.getWindowManager();
 
             OpenType openType = getEditScreenOpenType();
@@ -681,7 +685,7 @@ public interface PickerField<V extends Entity> extends Field<V>, EntityPicker<V>
                 windowAlias = windowConfig.getEditorScreenId(metadata.getClass(entity));
             }
 
-            Window.Editor editor = wm.openEditor(
+            Window.Editor<Entity> editor = wm.openEditor(
                     windowConfig.getWindowInfo(windowAlias),
                     entity,
                     openType,
@@ -698,7 +702,7 @@ public interface PickerField<V extends Entity> extends Field<V>, EntityPicker<V>
                 pickerField.focus();
 
                 afterWindowClosed(editor);
-            });*/
+            });
         }
 
         @Nonnull
@@ -743,8 +747,6 @@ public interface PickerField<V extends Entity> extends Field<V>, EntityPicker<V>
 
         @SuppressWarnings("unchecked")
         protected void afterCommitOpenedEntity(Entity item) {
-            /*
-            TODO: legacy-ui
             if (pickerField instanceof LookupField) {
                 LookupField lookupPickerField = ((LookupField) pickerField);
 
@@ -765,7 +767,7 @@ public interface PickerField<V extends Entity> extends Field<V>, EntityPicker<V>
                 datasourceValueSource.setModified(modified);
             } else {
                 pickerField.setValue(item);
-            }*/
+            }
         }
 
         /**

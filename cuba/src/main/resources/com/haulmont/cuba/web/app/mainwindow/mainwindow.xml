@@ -17,7 +17,7 @@
 
 <window xmlns="http://schemas.haulmont.com/cuba/window.xsd"
         class="com.haulmont.cuba.web.app.mainwindow.AppMainWindow"
-        caption="msg://application.caption">
+        caption="mainMsg://application.caption">
 
     <layout expand="foldersSplit">
         <hbox id="titleBar"
@@ -49,11 +49,11 @@
                   align="MIDDLE_LEFT">
                 <newWindowButton id="newWindowButton"
                                  icon="TH_LARGE"
-                                 description="msg://newWindowBtnDescription"/>
+                                 description="mainMsg://newWindowBtnDescription"/>
 
                 <logoutButton id="logoutButton"
                               icon="SIGN_OUT"
-                              description="msg://logoutBtnDescription"/>
+                              description="mainMsg://logoutBtnDescription"/>
             </hbox>
         </hbox>
 

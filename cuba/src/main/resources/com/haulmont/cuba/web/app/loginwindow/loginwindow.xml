@@ -16,11 +16,11 @@
 
 <window xmlns="http://schemas.haulmont.com/cuba/window.xsd"
         class="com.haulmont.cuba.web.app.loginwindow.AppLoginWindow"
-        caption="msg://loginWindow.caption">
+        caption="mainMsg://loginWindow.caption">
 
     <actions>
         <action id="submit" shortcut="ENTER" invoke="login"
-                caption="msg://loginWindow.okButton"
+                caption="mainMsg://loginWindow.okButton"
                 icon="CHECK"/>
     </actions>
 
@@ -45,7 +45,7 @@
                     <label id="welcomeLabel"
                            align="MIDDLE_LEFT"
                            stylename="jmix-login-caption"
-                           value="msg://loginWindow.welcomeLabel"/>
+                           value="mainMsg://loginWindow.welcomeLabel"/>
                 </hbox>
 
                 <capsLockIndicator id="capsLockIndicator"
@@ -59,19 +59,19 @@
                                stylename="jmix-login-credentials">
                         <textField id="loginField"
                                    htmlName="loginField"
-                                   inputPrompt="msg://loginWindow.loginPlaceholder"
+                                   inputPrompt="mainMsg://loginWindow.loginPlaceholder"
                                    stylename="jmix-login-username"/>
                         <passwordField id="passwordField"
                                        autocomplete="true"
                                        htmlName="passwordField"
-                                       inputPrompt="msg://loginWindow.passwordPlaceholder"
+                                       inputPrompt="mainMsg://loginWindow.passwordPlaceholder"
                                        capsLockIndicator="capsLockIndicator"
                                        stylename="jmix-login-password"/>
                     </cssLayout>
                     <hbox id="rememberLocalesBox"
                           stylename="jmix-login-remember-locales">
                         <checkBox id="rememberMeCheckBox"
-                                  caption="msg://loginWindow.rememberMe"
+                                  caption="mainMsg://loginWindow.rememberMe"
                                   stylename="jmix-login-remember-me"/>
                         <lookupField id="localesSelect"
                                      nullOptionVisible="false"
@@ -90,6 +90,6 @@
                align="MIDDLE_CENTER"
                htmlEnabled="true"
                stylename="jmix-powered-by"
-               value="msg://cuba.poweredBy"/>
+               value="mainMsg://cuba.poweredBy"/>
     </layout>
 </window>

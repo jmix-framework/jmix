@@ -59,10 +59,10 @@
                                 stylename="jmix-settings-button"/>
                         <logoutButton id="logoutButton"
                                       icon="SIGN_OUT"
-                                      description="msg://logoutBtnDescription"/>
+                                      description="mainMsg://logoutBtnDescription"/>
                         <button id="loginButton"
                                 icon="SIGN_IN"
-                                description="msg://loginBtnDescription"
+                                description="mainMsg://loginBtnDescription"
                                 stylename="jmix-login-button"/>
                     </cssLayout>
                 </cssLayout>

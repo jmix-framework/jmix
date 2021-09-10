@@ -47,9 +47,12 @@ public final class DownloadFormat implements Serializable {
     public static final DownloadFormat JSON = new DownloadFormat(" application/json", "json");
     public static final DownloadFormat OCTET_STREAM = new DownloadFormat("application/octet-stream", "");
     public static final DownloadFormat TEXT = new DownloadFormat("text/plain", "");
+    public static final DownloadFormat PPT = new DownloadFormat("application/vnd.ms-powerpoint", "ppt");
+    public static final DownloadFormat PPTX = new DownloadFormat("application/vnd.openxmlformats-officedocument.presentationml.presentation", "pptx");
 
     public static final List<DownloadFormat> DEFAULT_FORMATS = Collections.unmodifiableList(
-            Arrays.asList(HTML, HTM, PDF, XLS, XLSX, RTF, DOC, DOCX, XML, CSV, JPEG, JPG, PNG, RAR, GZ, ZIP, OCTET_STREAM, JSON));
+            Arrays.asList(HTML, HTM, PDF, XLS, XLSX, RTF, DOC, DOCX, XML, CSV, JPEG, JPG, PNG, RAR, GZ, ZIP, OCTET_STREAM,
+                    JSON, PPT, PPTX));
 
     protected final String contentType;
     protected final String fileExt;

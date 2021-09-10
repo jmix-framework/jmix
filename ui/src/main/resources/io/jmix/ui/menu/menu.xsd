@@ -65,7 +65,6 @@
 
     <xs:complexType name="itemType">
         <xs:sequence>
-            <xs:element type="paramType" name="param" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="properties" type="screenProperties" minOccurs="0"/>
         </xs:sequence>
         <xs:attribute type="xs:string" name="id"/>
@@ -110,15 +109,6 @@
         <xs:attribute type="xs:string" name="insertBefore"/>
         <xs:attribute type="xs:string" name="insertAfter"/>
     </xs:attributeGroup>
-
-    <xs:complexType name="paramType">
-        <xs:simpleContent>
-            <xs:extension base="xs:string">
-                <xs:attribute type="xs:string" name="name"/>
-                <xs:attribute type="xs:string" name="value"/>
-            </xs:extension>
-        </xs:simpleContent>
-    </xs:complexType>
 
     <xs:simpleType name="openModeType">
         <xs:restriction base="xs:string">

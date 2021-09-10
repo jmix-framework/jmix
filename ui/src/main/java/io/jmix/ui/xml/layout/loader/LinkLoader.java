@@ -42,7 +42,7 @@ public class LinkLoader extends AbstractComponentLoader<Link> {
 
         String url = element.attributeValue("url");
         if (StringUtils.isNotEmpty(url)) {
-            resultComponent.setUrl(url);
+            resultComponent.setUrl(loadResourceString(url));
         }
 
         String target = element.attributeValue("target");

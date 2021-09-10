@@ -17,6 +17,7 @@
 package io.jmix.ui.component;
 
 import io.jmix.ui.meta.CanvasBehaviour;
+import io.jmix.ui.meta.PropertyType;
 import io.jmix.ui.meta.StudioComponent;
 import io.jmix.ui.meta.StudioProperty;
 
@@ -40,7 +41,7 @@ public interface Link extends Component, Component.HasCaption, Component.BelongT
 
     String NAME = "link";
 
-    @StudioProperty
+    @StudioProperty(type = PropertyType.LOCALIZED_STRING)
     void setUrl(String url);
 
     @Nullable

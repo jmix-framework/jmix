@@ -24,6 +24,7 @@ import io.jmix.reportsui.screen.definition.edit.crosstab.CrossTabTableDecorator;
 import io.jmix.ui.UiConfiguration;
 import io.jmix.ui.sys.ActionsConfiguration;
 import io.jmix.ui.sys.UiControllersConfiguration;
+import io.jmix.uidata.UiDataConfiguration;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -36,7 +37,7 @@ import java.util.Collections;
 @Configuration
 @ComponentScan
 @ConfigurationPropertiesScan
-@JmixModule(dependsOn = {UiConfiguration.class, ReportsConfiguration.class})
+@JmixModule(dependsOn = {UiConfiguration.class, UiDataConfiguration.class, ReportsConfiguration.class})
 @PropertySource(name = "io.jmix.reportsui", value = "classpath:/io/jmix/reportsui/module.properties")
 public class ReportsUiConfiguration {
 

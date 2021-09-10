@@ -75,7 +75,7 @@ public interface Image<T> extends ResourceView, HasValueSource<T> {
      * @param scaleMode scale mode
      */
     @StudioProperty(type = PropertyType.ENUMERATION, defaultValue = "NONE",
-            options = {"NONE", "FILL", "CONTAIN", "COVER", "SCALE_MODE"})
+            options = {"NONE", "FILL", "CONTAIN", "COVER", "SCALE_DOWN"})
     void setScaleMode(ScaleMode scaleMode);
 
     /**

@@ -59,7 +59,7 @@ public class PermissionsControllerManager {
     public PermissionsInfo getPermissions() {
         PermissionsInfo permissionsInfo = new PermissionsInfo();
 
-        List<String> authorities = currentAuthentication.getUser().getAuthorities().stream()
+        List<String> authorities = currentAuthentication.getCurrentOrSubstitutedUser().getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());

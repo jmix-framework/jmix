@@ -48,7 +48,7 @@ public class PredefinedQueryParameters {
         if (paramName.startsWith(CURRENT_USER_PREFIX)) {
             String attrName = paramName.substring(CURRENT_USER_PREFIX.length());
 
-            UserDetails user = currentAuthentication.getUser();
+            UserDetails user = currentAuthentication.getCurrentOrSubstitutedUser();
             BeanInfo info;
             try {
                 info = Introspector.getBeanInfo(user.getClass());

@@ -38,7 +38,9 @@ import io.jmix.ui.meta.StudioProperty;
                 @StudioProperty(name = "property", type = PropertyType.PROPERTY_PATH_REF,
                         options = {"decimal", "double", "int", "long", "float"}, typeParameter = "V"),
                 @StudioProperty(name = "orientation", type = PropertyType.ENUMERATION,
-                        defaultValue = "horizontal", options = {"vertical", "horizontal"})
+                        defaultValue = "horizontal", options = {"vertical", "horizontal"}),
+                @StudioProperty(name = "datatype", type = PropertyType.DATATYPE_ID,
+                        options = {"decimal", "double", "int", "long"}, typeParameter = "V")
         },
         groups = {
                 @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING,

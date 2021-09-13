@@ -121,7 +121,7 @@ public class ReportRun extends StandardLookup<Report> {
     protected void onBeforeShow(BeforeShowEvent event) {
         List<Report> reports = this.reports;
         if (reports == null) {
-            reports = reportSecurityManager.getAvailableReports(screenParameter, currentAuthentication.getUser(),
+            reports = reportSecurityManager.getAvailableReports(screenParameter, currentAuthentication.getCurrentOrSubstitutedUser(),
                     metaClassParameter);
         }
 
@@ -173,7 +173,7 @@ public class ReportRun extends StandardLookup<Report> {
         Date dateFilterValue = updatedDateFilter.getValue();
 
         List<Report> reports =
-                reportSecurityManager.getAvailableReports(screenParameter, currentAuthentication.getUser(),
+                reportSecurityManager.getAvailableReports(screenParameter, currentAuthentication.getCurrentOrSubstitutedUser(),
                         metaClassParameter)
                         .stream()
                         .filter(report -> {

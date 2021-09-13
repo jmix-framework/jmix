@@ -27,12 +27,12 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.reports.ParameterClassResolver;
 import io.jmix.reports.ReportSecurityManager;
-import io.jmix.reports.runner.ReportRunContext;
-import io.jmix.reports.runner.ReportRunner;
 import io.jmix.reports.entity.*;
 import io.jmix.reports.exception.FailedToConnectToOpenOfficeException;
 import io.jmix.reports.exception.NoOpenOfficeFreePortsException;
 import io.jmix.reports.exception.ReportingException;
+import io.jmix.reports.runner.ReportRunContext;
+import io.jmix.reports.runner.ReportRunner;
 import io.jmix.security.constraint.PolicyStore;
 import io.jmix.security.constraint.SecureOperations;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -109,7 +109,10 @@ public class ReportRestControllerManager {
 
         loadContext.setFetchPlan(fetchPlan)
                 .setQueryString("select r from report_Report r where r.restAccess = true");
-        reportSecurityManager.applySecurityPolicies(loadContext, null, currentAuthentication.getUser());
+        reportSecurityManager.applySecurityPolicies(
+                loadContext,
+                null,
+                currentAuthentication.getCurrentOrSubstitutedUser());
         List<Report> reports = dataManager.loadList(loadContext);
 
         List<ReportInfo> objects = reports.stream()
@@ -188,7 +191,7 @@ public class ReportRestControllerManager {
                 .setQueryString("select r from report_Report r where r.id = :id and r.restAccess = true")
                 .setParameter("id", getReportIdFromString(entityId));
 
-        reportSecurityManager.applySecurityPolicies(loadContext, null, currentAuthentication.getUser());
+        reportSecurityManager.applySecurityPolicies(loadContext, null, currentAuthentication.getCurrentOrSubstitutedUser());
 
         Report report = dataManager.load(loadContext);
 

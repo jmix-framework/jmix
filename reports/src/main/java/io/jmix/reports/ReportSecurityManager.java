@@ -17,9 +17,9 @@
 package io.jmix.reports;
 
 import io.jmix.core.*;
+import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.data.QueryTransformer;
 import io.jmix.data.QueryTransformerFactory;
-import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.dynattr.DynAttrQueryHints;
 import io.jmix.reports.entity.Report;
 import io.jmix.security.model.BaseRole;

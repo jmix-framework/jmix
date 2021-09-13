@@ -76,7 +76,7 @@ public class ReportExecutionDialog extends StandardLookup<Report> {
     @Install(to = "reportsDl", target = Target.DATA_LOADER)
     protected List<Report> reportsDlLoadDelegate(LoadContext<Report> loadContext) {
         return reportSecurityManager.getAvailableReports(screenParameter,
-                currentAuthentication.getUser(),
+                currentAuthentication.getCurrentOrSubstitutedUser(),
                 metaClassParameter);
     }
 
@@ -96,7 +96,7 @@ public class ReportExecutionDialog extends StandardLookup<Report> {
 
     protected void filterReports() {
         List<Report> reports = reportSecurityManager.getAvailableReports(screenParameter,
-                currentAuthentication.getUser(),
+                currentAuthentication.getCurrentOrSubstitutedUser(),
                 metaClassParameter)
                 .stream()
                 .filter(this::filterReport)

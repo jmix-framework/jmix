@@ -129,7 +129,10 @@ public class ShowPivotTableScreen extends Screen {
     @Subscribe(id = "reportsDl", target = Target.DATA_LOADER)
     public void onReportsDlPostLoad(CollectionLoader.PostLoadEvent<Report> event) {
         List<Report> entities = event.getLoadedEntities();
-        List<Report> availableReports = reportSecurityManager.getAvailableReports(null, currentAuthentication.getUser(), null);
+        List<Report> availableReports = reportSecurityManager.getAvailableReports(
+                null,
+                currentAuthentication.getCurrentOrSubstitutedUser(),
+                null);
         entities.retainAll(availableReports);
         reportsDc.setItems(entities);
     }

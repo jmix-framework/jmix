@@ -95,7 +95,10 @@ public abstract class AbstractPrintFormAction extends AbstractAction {
 
     protected void openRunReportScreen(Screen screen, Object selectedValue, MetaClass inputValueMetaClass,
                                        @Nullable String outputFileName) {
-        List<Report> reports = reportSecurityManager.getAvailableReports(screen.getId(), currentAuthentication.getUser(), inputValueMetaClass);
+        List<Report> reports = reportSecurityManager.getAvailableReports(
+                screen.getId(),
+                currentAuthentication.getCurrentOrSubstitutedUser(),
+                inputValueMetaClass);
 
         ScreenContext screenContext = UiControllerUtils.getScreenContext(screen);
 

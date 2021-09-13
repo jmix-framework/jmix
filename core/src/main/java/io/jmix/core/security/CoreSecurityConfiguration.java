@@ -17,6 +17,7 @@
 package io.jmix.core.security;
 
 import io.jmix.core.CoreProperties;
+import io.jmix.core.security.impl.SubstitutitutedUserAuthenticationProvider;
 import io.jmix.core.security.impl.SystemAuthenticationProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -54,7 +55,7 @@ public class CoreSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.authenticationProvider(new SystemAuthenticationProvider(userRepository()));
-
+        auth.authenticationProvider(new SubstitutitutedUserAuthenticationProvider(userRepository()));
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
         daoAuthenticationProvider.setUserDetailsService(userRepository());
         daoAuthenticationProvider.setPreAuthenticationChecks(preAuthenticationChecks());

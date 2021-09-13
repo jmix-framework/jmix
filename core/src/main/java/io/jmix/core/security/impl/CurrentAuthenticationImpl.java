@@ -63,8 +63,25 @@ public class CurrentAuthenticationImpl implements CurrentAuthentication {
             if (principal instanceof UserDetails) {
                 return (UserDetails) principal;
             } else {
-                throw new RuntimeException("Authentication principal must be BaseUser");
+                throw new RuntimeException("Authentication principal must be UserDetails");
             }
+        }
+        throw new IllegalStateException("Authentication is not set");
+    }
+
+    @Override
+    public UserDetails getCurrentOrSubstitutedUser() {
+        Authentication authentication = getAuthentication();
+        if (authentication != null) {
+            if (SubstitutedUserAuthenticationToken.class.isAssignableFrom(authentication.getClass())) {
+                Object substitutedPrincipal = ((SubstitutedUserAuthenticationToken) authentication).getSubstitutedPrincipal();
+                if (substitutedPrincipal instanceof UserDetails) {
+                    return (UserDetails) substitutedPrincipal;
+                } else {
+                    throw new RuntimeException("Substituted principal must be UserDetails");
+                }
+            } else
+                return getUser();
         }
         throw new IllegalStateException("Authentication is not set");
     }

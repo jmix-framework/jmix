@@ -31,7 +31,6 @@ import io.jmix.ui.presentation.TablePresentations;
 import io.jmix.ui.presentation.model.TablePresentation;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.settings.SettingsHelper;
-import io.jmix.ui.settings.UserSettingsTools;
 import io.jmix.ui.settings.component.ComponentSettings;
 import io.jmix.ui.settings.component.SettingsWrapperImpl;
 import io.jmix.ui.settings.component.binder.ComponentSettingsBinder;
@@ -204,7 +203,7 @@ public class PresentationEditor extends JmixWindow implements InitializingBean {
         presentation.setAutoSave(autoSaveField.getValue());
         presentation.setIsDefault(defaultField.getValue());
 
-        // todo user substitution
+        // todo [to discuss] user substitution
         UserDetails user = currentAuthentication.getUser();
 
         boolean userOnly = !allowGlobalPresentations || !BooleanUtils.isTrue(globalField.getValue());

@@ -16,12 +16,16 @@
 
 package io.jmix.ui.component.mainwindow;
 
+import io.jmix.ui.component.ComboBox;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.HasFormatter;
+import io.jmix.ui.component.Label;
+import io.jmix.ui.component.mainwindow.impl.SubstituteUserAction;
 import io.jmix.ui.meta.CanvasBehaviour;
 import io.jmix.ui.meta.StudioComponent;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Collection;
 @StudioComponent(
         caption = "UserIndicator",
         category = "Main window",
@@ -40,4 +44,23 @@ public interface UserIndicator extends Component.BelongToFrame, HasFormatter<Use
      * Informs this component that the current user may be changed and refresh is needed.
      */
     void refreshUser();
+
+    /**
+     * Allows to set additional users that can be substituted.
+     * <br>
+     * {@link ComboBox} will be created instead of {@link Label} if {@code additionalUsers} is not empty.
+     * <br>
+     * <b> {@link UserIndicator#refreshUser()} must be invoked after this method to apply changes</b>,
+     */
+    void setAdditionalUsers(Collection<UserDetails> additionalUsers);
+
+    /**
+     * Allows to set callback that performs user substitution. Substituted user will be passed as parameter
+     * <br>
+     * <b> {@link UserIndicator#refreshUser()} must be invoked after this method to apply changes</b>,
+     *
+     * @param step
+     */
+    void addSubstituteStep(SubstituteUserAction.SubstituteStep step);
+
 }

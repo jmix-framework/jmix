@@ -16,8 +16,12 @@
 package io.jmix.ui.component.impl;
 
 import com.vaadin.ui.Button;
+import io.jmix.core.metamodel.datatype.Datatype;
+import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.component.FileUploadField;
 import io.jmix.ui.component.data.ConversionException;
+import io.jmix.ui.component.data.ValueSource;
+import io.jmix.ui.component.data.meta.EntityValueSource;
 import io.jmix.ui.widget.JmixFileUpload;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -34,6 +38,23 @@ public class FileUploadFieldImpl extends AbstractSingleFileUploadField<byte[]>
     private static final String DEFAULT_FILENAME = "attachment";
 
     protected ByteArrayOutputStream outputStream;
+
+    @Override
+    protected void valueBindingConnected(ValueSource<byte[]> valueSource) {
+        super.valueBindingConnected(valueSource);
+
+        if (valueSource instanceof EntityValueSource) {
+            MetaPropertyPath metaPropertyPath = ((EntityValueSource) valueSource).getMetaPropertyPath();
+            if (metaPropertyPath.getRange().isDatatype()) {
+                Datatype datatype = metaPropertyPath.getRange().asDatatype();
+                if (!byte[].class.isAssignableFrom(datatype.getJavaClass())) {
+                    throw new IllegalArgumentException("FileUploadField doesn't support Datatype with class: " + datatype.getJavaClass());
+                }
+            } else {
+                throw new IllegalArgumentException("FileUploadField doesn't support properties with association");
+            }
+        }
+    }
 
     @Override
     protected void onFileNameClick(Button.ClickEvent e) {

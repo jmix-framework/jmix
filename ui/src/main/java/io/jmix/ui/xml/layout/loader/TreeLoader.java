@@ -70,6 +70,7 @@ public class TreeLoader extends ActionsHolderLoader<Tree> {
 
         loadButtonsPanel(resultComponent);
 
+        // The multiselect attribute was deleted from "layout.xsd", this code is for backward compatibility.
         String multiselect = element.attributeValue("multiselect");
         if (StringUtils.isNotEmpty(multiselect)) {
             resultComponent.setSelectionMode(Tree.SelectionMode.MULTI);

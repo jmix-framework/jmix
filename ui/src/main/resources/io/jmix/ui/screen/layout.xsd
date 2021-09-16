@@ -2530,7 +2530,6 @@
                 <xs:attribute name="showOrphans" type="xs:boolean"/>
                 <xs:attributeGroup ref="hasCaptionSource"/>
 
-                <xs:attribute name="multiselect" type="xs:boolean"/>
                 <xs:attribute name="selectionMode" type="treeSelectionMode"/>
 
                 <xs:attribute name="contentMode" type="contentMode"/>

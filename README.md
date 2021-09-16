@@ -1,7 +1,9 @@
 # Dashboards
 
 - [Overview](#overview)
+  -[Chart widget](#chart-widget-overview)
 - [Installation](#installation)
+  -[Chart widget](#chart-widget-installation)
 - [Configuration](#configuration)
     - [Extending Application Theme](#extending-application-theme)
     - [Adding Widget Types](#adding-widget-types)
@@ -23,33 +25,64 @@
 - [Integration of the Component Dashboard-UI](#integration-of-the-dashboard-ui-component)
     - [Loading a dashboard from JSON file](#loading-a-dashboard-from-json-file)
 - [Predefined Roles](#predefined-roles)
+- [Chart widget restrictions](#chart-widget-restrictions)
 
 # 1. Overview <a name="overview"></a>
 
-This component enables creating and embedding dashboards into your application screens. Dashboards allow visualizing
+This add-on enables creating and embedding dashboards into your application screens. Dashboards allow visualizing
 summarized information, data sets, charts and can be accessible only by authorized users.
 
 A dashboard consists of widgets — individual elements based on a fragment. An integrated set of layouts allows positioning
 widgets on a dashboard according to your needs. Use responsive layouts to adapt your dashboards to different displays.
 
+## 1.1 Chart widget <a name="chart-widget-overview"></a>
 You can add your widgets or use the ```dashboards-chart``` module that provides an additional chart widget.
-Chart widget is based on the report which has a template with output type Chart.
+This module depends on the Reports and Charts add-ons. The Reports add-on with the dependency on the Charts add-on provides an ability 
+to create and run reports having a chart as a result of execution. This result can be shown on the Chart widget.
+The Chart widget is based on a report which has a template with the Chart output type.
 
 # 2. Installation <a name="installation"></a>
 
-The add-on can be added to your project using dependencies :
+The add-on can be added to your project using dependencies in ```build.gradle```:
 
 ```groovy
     implementation 'io.jmix.dashboards:jmix-dashboards-starter'
     implementation 'io.jmix.dashboards:jmix-dashboards-ui-starter'
 ```
 
-Add the following dependency to use the Chart widget from ```dashboards-chart``` module:
+## 2.1 Chart widget <a name="chart-widget-installation"></a>
+1. Add the following dependencies to use the Chart widget from ```dashboards-chart``` module:
 ```groovy
+    implementation 'io.jmix.ui:jmix-ui-widgets'
+    widgets 'io.jmix.ui:jmix-ui-widgets'
+
+    implementation 'io.jmix.ui:jmix-charts-starter'
+    widgets 'io.jmix.ui:jmix-charts-widgets'
+
     implementation 'io.jmix.dashboards:jmix-dashboards-chart-starter'
+
+    implementation 'io.jmix.reports:jmix-reports-starter'
+    implementation 'io.jmix.reports:jmix-reports-ui-starter'
+    
 ```
 
-# 3.Configuration <a name="configuration"></a>
+2. Configure custom widget set compilation:
+    a) Add the following task in your ```build.gradle``` to compile widgets:
+    ```groovy
+    compileWidgets {
+        generate 'com.company.sample.widgets.CustomWidgetSet'
+    }
+    ```
+    b) Set value for the ```jmix.ui.widgetSet``` property in ```application.properties```:
+    ```groovy
+    jmix.ui.widgetSet = com.company.sample.widgets.CustomWidgetSet
+    ```
+**Note:** If the ```dashboards-chart``` module is used in the project, remove the following dependency:
+```groovy
+    implementation 'io.jmix.ui:jmix-ui-widgets-compiled'
+```
+
+# 3. Configuration <a name="configuration"></a>
 
 Before starting working with dashboard editor in your application you should do some configuration setting: extend
 application theme and add widgets.
@@ -93,6 +126,11 @@ dependencies {
     themes 'io.jmix.dashboards:jmix-dashboards-ui'
     //...
 }
+```
+**Note:**
+Because custom theme should be used, it is required to remove the following dependency:
+```groovy
+    implementation 'io.jmix.ui:jmix-ui-themes-compiled'
 ```
 
 ## 3.2. Adding Widget Types <a name='adding-widget-types'></a>
@@ -497,3 +535,9 @@ Predefined security roles:
 - **dashboards-admin**, **dashboards-admin-ui** - allows user to create and edit dashboards and widget templates.
 - **dashboards-view**, **dashboards-view-ui** - allows user to see embedded dashboards.
 - **dashboards-browse**, **dashboards-browse-ui** - allows user to view a list of available dashboards.
+
+
+## 4.6 Chart widget restrictions <a name='chart-widget-restrictions'></a>
+For successful execution of the report on which chart widget is based, it is required:
+1. Grant user access to entities from the Reports add-on.
+2. If any entity is used in the report (for example, as an input parameter), grant user access to this entity.

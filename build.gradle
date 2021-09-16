@@ -99,10 +99,12 @@ dependencies {
     def sessionsVersion = baseVersion
     def translationsVersion = baseVersion
     def uiVersion = baseVersion
+    def webdavVersion = baseVersion
 
     if (isTrialBuild()) {
         mapsVersion = mapsVersion + '.trial'
         bpmVersion = bpmVersion + '.trial'
+        webdavVersion = webdavVersion + '.trial'
 
         version = version + '.trial'
     }
@@ -254,6 +256,13 @@ dependencies {
         api "io.jmix.ui:jmix-pivot-table-starter:${snapshotOr(uiVersion)}"
         api "io.jmix.ui:jmix-pivot-table-widgets:${snapshotOr(uiVersion)}"
 
+        api "io.jmix.webdav:jmix-webdav:${snapshotOr(webdavVersion)}"
+        api "io.jmix.webdav:jmix-webdav-ui:${snapshotOr(webdavVersion)}"
+        api "io.jmix.webdav:jmix-webdav-rest:${snapshotOr(webdavVersion)}"
+        api "io.jmix.webdav:jmix-webdav-starter:${snapshotOr(webdavVersion)}"
+        api "io.jmix.webdav:jmix-webdav-ui-starter:${snapshotOr(webdavVersion)}"
+        api "io.jmix.webdav:jmix-webdav-rest-starter:${snapshotOr(webdavVersion)}"
+
         api 'com.google.guava:guava:30.1.1-jre'
         api 'commons-io:commons-io:2.8.0'
         api 'commons-fileupload:commons-fileupload:1.4'
@@ -366,6 +375,10 @@ dependencies {
         api 'com.graphql-java:graphql-java:16.2'
 
         api 'com.opencsv:opencsv:4.6'
+
+        api 'io.vavr:vavr:0.9.0'
+        api 'org.jetbrains:annotations:15.0'
+        api 'commons-codec:commons-codec:1.13'
 
         runtime 'org.hsqldb:hsqldb:2.4.1'
     }

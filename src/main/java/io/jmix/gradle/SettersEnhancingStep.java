@@ -57,7 +57,7 @@ public class SettersEnhancingStep extends BaseEnhancingStep {
 
             CtField field = findDeclaredFieldByAccessor(ctClass, ctMethod.getName());
 
-            if (field == null || isPersistentEntity && isTransientField(ctClass, field.getName())) {
+            if (field == null || isPersistentEntity && isTransientField(ctClass, field.getName()) && !isJmixProperty(ctClass, field.getName())) {
                 continue;
             }
 

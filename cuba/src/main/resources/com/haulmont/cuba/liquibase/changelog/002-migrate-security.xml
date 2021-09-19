@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2021 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd"
+        context="cuba">
+
+    <changeSet id="10" author="migrator" context="cuba">
+        <addColumn tableName="SEC_USER">
+            <column name="USERNAME" type="varchar(255)"/>
+            <column name="ENABLED" type="boolean"/>
+        </addColumn>
+        <renameColumn tableName="SEC_USER" oldColumnName="TIME_ZONE" newColumnName="TIME_ZONE_ID"/>
+    </changeSet>
+
+    <changeSet id="15" author="migrator" context="cuba">
+        <modifyDataType tableName="SEC_USER" columnName="EMAIL" newDataType="VARCHAR(255)"/>
+        <modifyDataType tableName="SEC_USER" columnName="TIME_ZONE_ID" newDataType="VARCHAR(255)"/>
+    </changeSet>
+
+    <changeSet id="20" author="migrator" context="cuba">
+        <update tableName="SEC_USER">
+            <column name="PASSWORD_ENCRYPTION" valueComputed="'noop'"/>
+            <column name="PASSWORD" valueComputed="'1'"/>
+            <where>PASSWORD_ENCRYPTION is null</where>
+        </update>
+    </changeSet>
+
+    <changeSet id="30" author="migrator" context="cuba">
+        <update tableName="SEC_USER">
+            <column name="USERNAME" valueComputed="LOGIN_LC"/>
+            <column name="ENABLED" valueComputed="ACTIVE"/>
+            <column name="PASSWORD" valueComputed="CONCAT('{',PASSWORD_ENCRYPTION,'}',PASSWORD)"/>
+        </update>
+    </changeSet>
+
+    <changeSet id="40" author="migrator" context="cuba">
+        <dropNotNullConstraint columnName="LOGIN" columnDataType="varchar(50)" tableName="SEC_USER"/>
+        <dropNotNullConstraint columnName="LOGIN_LC" columnDataType="varchar(50)" tableName="SEC_USER"/>
+        <addNotNullConstraint columnDataType="VARCHAR(255)" columnName="USERNAME" tableName="SEC_USER" validate="true"/>
+    </changeSet>
+
+    <changeSet id="50" author="migrator" context="cuba">
+        <insert tableName="SEC_ROLE_ASSIGNMENT" dbms="postgresql, mssql, hsqldb">
+            <column name="ID" value="b44d6d0f-98ce-4e15-806f-f0062d5d49ad"/>
+            <column name="VERSION" value="1"/>
+            <column name="USERNAME" value="admin"/>
+            <column name="ROLE_CODE" value="system-full-access"/>
+            <column name="ROLE_TYPE" value="resource"/>
+        </insert>
+
+        <insert tableName="SEC_ROLE_ASSIGNMENT" dbms="oracle, mysql, mariadb">
+            <column name="ID" value="b44d6d0f98ce4e15806ff0062d5d49ad"/>
+            <column name="VERSION" value="1"/>
+            <column name="USERNAME" value="admin"/>
+            <column name="ROLE_CODE" value="system-full-access"/>
+            <column name="ROLE_TYPE" value="resource"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>

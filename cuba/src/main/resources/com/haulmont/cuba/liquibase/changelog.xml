@@ -25,5 +25,12 @@
     <property name="uuid.type" dbms="!oracle" value="uuid"/>
 
     <include file="/com/haulmont/cuba/liquibase/changelog/001-cuba.xml"/>
+    <include file="/com/haulmont/cuba/liquibase/changelog/002-migrate-security.xml"/>
+    <include file="/com/haulmont/cuba/liquibase/changelog/003-migrate-audit.xml"/>
+    <include file="/com/haulmont/cuba/liquibase/changelog/003-migrate-dynattr.xml"/>
+    <include file="/com/haulmont/cuba/liquibase/changelog/003-migrate-email.xml"/>
+    <include file="/com/haulmont/cuba/liquibase/changelog/003-migrate-ui-data.xml"/>
+    <include file="/com/haulmont/cuba/liquibase/changelog/004-migrate-reports.xml"/>
+    <include file="/com/haulmont/cuba/liquibase/changelog/004-migrate-bpm.xml"/>
 
 </databaseChangeLog>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2021 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd"
+        context="cuba">
+
+    <changeSet id="10" author="migrator">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="REPORT_REPORT"/>
+        </preConditions>
+
+        <update tableName="REPORT_REPORT">
+            <column name="XML"
+                    valueComputed="REPLACE(XML, '&quot;metaClass&quot;:&quot;report$', '&quot;metaClass&quot;:&quot;report_')"/>
+        </update>
+    </changeSet>
+
+    <changeSet id="20" author="migrator">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="REPORT_REPORT"/>
+        </preConditions>
+
+        <addColumn tableName="REPORT_EXECUTION">
+            <column name="PRINCIPAL" type="varchar(255)"/>
+            <column name="OUTPUT_DOCUMENT" type="varchar(255)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="30" author="migrator">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="REPORT_REPORT"/>
+        </preConditions>
+
+        <update tableName="REPORT_EXECUTION">
+            <column name="PRINCIPAL" valueComputed="(select u.USERNAME from SEC_USER u where u.ID = USER_ID)"/>
+        </update>
+    </changeSet>
+
+    <changeSet id="40-mysql" author="migrator" dbms="mysql,mariadb">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="REPORT_REPORT"/>
+        </preConditions>
+
+        <dropNotNullConstraint tableName="REPORT_EXECUTION" columnDataType="varchar(32)" columnName="USER_ID"/>
+    </changeSet>
+
+    <changeSet id="40-mssql" author="migrator" dbms="mssql">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="REPORT_REPORT"/>
+        </preConditions>
+
+        <dropNotNullConstraint tableName="REPORT_EXECUTION" columnDataType="${uuid.type}" columnName="USER_ID"/>
+    </changeSet>
+
+    <changeSet id="40-other" author="migrator" dbms="postgresql,hsqldb,oracle">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="REPORT_REPORT"/>
+        </preConditions>
+
+        <dropNotNullConstraint tableName="REPORT_EXECUTION" columnName="USER_ID"/>
+    </changeSet>
+
+</databaseChangeLog>

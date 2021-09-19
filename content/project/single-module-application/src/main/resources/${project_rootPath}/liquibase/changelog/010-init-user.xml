@@ -5,7 +5,7 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <changeSet id="1" author="${project_name}">
+    <changeSet id="1" author="${project_name}" context="!cuba">
 
         <createTable tableName="${userTable}">
             <column name="ID" type="\${uuid.type}">
@@ -27,14 +27,14 @@
 
     </changeSet>
 
-    <changeSet id="2" author="${project_name}">
+    <changeSet id="2" author="${project_name}" context="!cuba">
         <createIndex indexName="IDX_${userTable}_ON_USERNAME"
                      tableName="${userTable}" unique="true">
             <column name="USERNAME"/>
         </createIndex>
     </changeSet>
 
-    <changeSet id="3" author="${project_name}">
+    <changeSet id="3" author="${project_name}" context="!cuba">
 
         <insert tableName="${userTable}" dbms="postgresql, mssql, hsqldb">
             <column name="ID" value="60885987-1b61-4247-94c7-dff348347f93"/>
@@ -54,7 +54,7 @@
 
     </changeSet>
 
-    <changeSet id="4" author="${project_name}">
+    <changeSet id="4" author="${project_name}" context="!cuba">
 
         <insert tableName="SEC_ROLE_ASSIGNMENT" dbms="postgresql, mssql, hsqldb">
             <column name="ID" value="6c9e420a-2b7a-4c42-8654-a9027ee14083"/>

@@ -19,10 +19,7 @@ package io.jmix.core.security.impl;
 import com.google.common.base.Strings;
 import io.jmix.core.HasTimeZone;
 import io.jmix.core.MessageTools;
-import io.jmix.core.security.AuthenticationResolver;
-import io.jmix.core.security.ClientDetails;
-import io.jmix.core.security.CurrentAuthentication;
-import io.jmix.core.security.SecurityContextHelper;
+import io.jmix.core.security.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -38,6 +35,8 @@ public class CurrentAuthenticationImpl implements CurrentAuthentication {
 
     @Autowired(required = false)
     protected List<AuthenticationResolver> authenticationResolvers;
+    @Autowired(required = false)
+    protected List<AuthenticationLocaleResolver> localeResolvers;
     @Autowired
     protected MessageTools messagesTools;
 
@@ -77,6 +76,13 @@ public class CurrentAuthenticationImpl implements CurrentAuthentication {
             Locale locale = null;
             if (details instanceof ClientDetails) {
                 locale = ((ClientDetails) details).getLocale();
+            }
+            if (locale == null && localeResolvers != null) {
+                locale = localeResolvers.stream()
+                        .filter(resolver -> resolver.supports(authentication))
+                        .findFirst()
+                        .map(resolver -> resolver.getLocale(authentication))
+                        .orElse(null);
             }
             return locale == null ? messagesTools.getDefaultLocale() : locale;
         }

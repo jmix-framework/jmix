@@ -16,7 +16,9 @@
 
 package io.jmix.uidata.filter;
 
+import com.google.common.base.Strings;
 import io.jmix.core.AccessManager;
+import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -41,13 +43,18 @@ public class UiDataFilterMetadataTools extends FilterMetadataTools {
     public UiDataFilterMetadataTools(MetadataTools metadataTools,
                                      UiComponentProperties uiComponentProperties,
                                      AccessManager accessManager,
-                                     QueryTransformerFactory queryTransformerFactory) {
-        super(metadataTools, uiComponentProperties, accessManager);
+                                     QueryTransformerFactory queryTransformerFactory,
+                                     Metadata metadata) {
+        super(metadataTools, uiComponentProperties, accessManager, metadata);
         this.queryTransformerFactory = queryTransformerFactory;
     }
 
     @Override
     protected boolean isAggregateFunction(MetaPropertyPath propertyPath, String query) {
+        if (Strings.isNullOrEmpty(query)) {
+            return false;
+        }
+
         MetaClass filterMetaClass = propertyPath.getMetaClass();
         int index = new ArrayList<>(filterMetaClass.getProperties()).indexOf(propertyPath.getMetaProperty());
 

@@ -17,6 +17,7 @@
 package io.jmix.uidata;
 
 import io.jmix.core.AccessManager;
+import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
@@ -111,8 +112,10 @@ public class UiDataConfiguration {
     public FilterMetadataTools filterMetadataTools(MetadataTools metadataTools,
                                                    UiComponentProperties uiComponentProperties,
                                                    AccessManager accessManager,
-                                                   QueryTransformerFactory queryTransformerFactory) {
-        return new UiDataFilterMetadataTools(metadataTools, uiComponentProperties, accessManager, queryTransformerFactory);
+                                                   QueryTransformerFactory queryTransformerFactory,
+                                                   Metadata metadata) {
+        return new UiDataFilterMetadataTools(metadataTools, uiComponentProperties, accessManager,
+                queryTransformerFactory, metadata);
     }
 
     @Bean("ui_RelativeDateTimeMomentProvider")

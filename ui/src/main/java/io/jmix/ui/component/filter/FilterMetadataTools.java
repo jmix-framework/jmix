@@ -18,6 +18,7 @@ package io.jmix.ui.component.filter;
 
 import com.google.common.base.Strings;
 import io.jmix.core.AccessManager;
+import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.impl.keyvalue.KeyValueMetaClass;
@@ -39,16 +40,19 @@ import java.util.function.Predicate;
 public class FilterMetadataTools {
 
     protected MetadataTools metadataTools;
+    protected Metadata metadata;
     protected UiComponentProperties uiComponentProperties;
     protected AccessManager accessManager;
 
     @Autowired
     public FilterMetadataTools(MetadataTools metadataTools,
                                UiComponentProperties uiComponentProperties,
-                               AccessManager accessManager) {
+                               AccessManager accessManager,
+                               Metadata metadata) {
         this.metadataTools = metadataTools;
         this.uiComponentProperties = uiComponentProperties;
         this.accessManager = accessManager;
+        this.metadata = metadata;
     }
 
     public List<MetaPropertyPath> getPropertyPaths(MetaClass filterMetaClass,
@@ -97,10 +101,15 @@ public class FilterMetadataTools {
     protected boolean isMetaPropertyPathAllowed(MetaPropertyPath propertyPath, String query) {
         UiEntityAttributeContext context = new UiEntityAttributeContext(propertyPath);
         accessManager.applyRegisteredConstraints(context);
+
         return context.canView()
                 && !metadataTools.isSystemLevel(propertyPath.getMetaProperty())
-                && (metadataTools.isJpa(propertyPath)
-                || (propertyPath.getMetaClass() instanceof KeyValueMetaClass && !isAggregateFunction(propertyPath, query)))
+                && ((metadataTools.isJpa(propertyPath)
+                    || (propertyPath.getMetaClass() instanceof KeyValueMetaClass
+                        && !isAggregateFunction(propertyPath, query)
+                        && isKeyValueCrossDataStoreReferenceAllowed(propertyPath, query)))
+                    || (isCrossDataStoreReference(propertyPath.getMetaProperty())
+                        && !(propertyPath.getMetaClass() instanceof KeyValueMetaClass)))
                 && !propertyPath.getMetaProperty().getRange().getCardinality().isMany()
                 && !(byte[].class.equals(propertyPath.getMetaProperty().getJavaType()));
     }
@@ -108,5 +117,38 @@ public class FilterMetadataTools {
     @SuppressWarnings("unused")
     protected boolean isAggregateFunction(MetaPropertyPath propertyPath, String query) {
         return false;
+    }
+
+    protected boolean isCrossDataStoreReference(MetaProperty metaProperty) {
+        return metadataTools.getCrossDataStoreReferenceIdProperty(
+                metaProperty.getDomain().getStore().getName(),
+                metaProperty) != null;
+    }
+
+    protected boolean isKeyValueCrossDataStoreReferenceAllowed(MetaPropertyPath propertyPath, String query) {
+        MetaClass filterMetaClass = propertyPath.getMetaClass();
+        if (!(filterMetaClass instanceof KeyValueMetaClass) || Strings.isNullOrEmpty(query)) {
+            return true;
+        }
+
+        MetaClass domainMetaClass = propertyPath.getMetaProperty().getDomain();
+        MetaClass propertyMetaClass = propertyPath.getMetaProperty().getRange().isClass()
+                ? propertyPath.getMetaProperty().getRange().asClass()
+                : null;
+
+        if (!domainMetaClass.equals(filterMetaClass)) {
+            return propertyMetaClass == null
+                    || domainMetaClass.getStore().getName().equals(propertyMetaClass.getStore().getName());
+        } else if (propertyMetaClass != null) {
+            String entityName = query.substring(query.indexOf("from") + 4)
+                    .trim()
+                    .split(" ")[0];
+
+            MetaClass mainFromMetaClass = metadata.getClass(entityName);
+            return mainFromMetaClass.getStore().getName().equals(propertyMetaClass.getStore().getName())
+                    || propertyMetaClass instanceof KeyValueMetaClass;
+        } else {
+            return true;
+        }
     }
 }

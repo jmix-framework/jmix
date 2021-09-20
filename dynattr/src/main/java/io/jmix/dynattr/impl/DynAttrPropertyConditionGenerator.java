@@ -49,18 +49,15 @@ public class DynAttrPropertyConditionGenerator extends PropertyConditionGenerato
 
     protected ReferenceToEntitySupport referenceToEntitySupport;
     protected DynAttrMetadata dynAttrMetadata;
-    protected MetadataTools metadataTools;
-    protected Metadata metadata;
 
     @Autowired
     public DynAttrPropertyConditionGenerator(ReferenceToEntitySupport referenceToEntitySupport,
                                              DynAttrMetadata dynAttrMetadata,
                                              MetadataTools metadataTools,
                                              Metadata metadata) {
+        super(metadataTools, metadata);
         this.referenceToEntitySupport = referenceToEntitySupport;
         this.dynAttrMetadata = dynAttrMetadata;
-        this.metadataTools = metadataTools;
-        this.metadata = metadata;
     }
 
     @Override

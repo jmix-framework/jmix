@@ -16,11 +16,18 @@
 
 package io.jmix.data.impl.jpql.generator;
 
+import com.google.common.base.Strings;
 import io.jmix.core.JmixOrder;
+import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.QueryUtils;
+import io.jmix.core.entity.EntityValues;
+import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.core.querycondition.PropertyConditionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -29,6 +36,11 @@ import javax.annotation.Nullable;
 @Component("data_PropertyConditionGenerator")
 @Order(JmixOrder.LOWEST_PRECEDENCE)
 public class PropertyConditionGenerator implements ConditionGenerator {
+
+    @Autowired
+    protected Metadata metadata;
+    @Autowired
+    protected MetadataTools metadataTools;
 
     @Override
     public boolean supports(ConditionGenerationContext context) {
@@ -48,14 +60,15 @@ public class PropertyConditionGenerator implements ConditionGenerator {
         }
 
         String entityAlias = context.getEntityAlias();
-        String property = propertyCondition.getProperty();
+        String property = getProperty(propertyCondition, context.getEntityName());
 
         return generateWhere(propertyCondition, entityAlias, property);
     }
 
     @Nullable
     @Override
-    public Object generateParameterValue(@Nullable Condition condition, @Nullable Object parameterValue) {
+    public Object generateParameterValue(@Nullable Condition condition, @Nullable Object parameterValue,
+                                         @Nullable String entityName) {
         PropertyCondition propertyCondition = (PropertyCondition) condition;
         if (propertyCondition == null || parameterValue == null) {
             return null;
@@ -71,6 +84,9 @@ public class PropertyConditionGenerator implements ConditionGenerator {
                 case PropertyCondition.Operation.ENDS_WITH:
                     return QueryUtils.CASE_INSENSITIVE_MARKER + "%" + parameterValue;
             }
+        } else if (EntityValues.isEntity(parameterValue)
+                && isCrossDataStoreReference(propertyCondition.getProperty(), entityName)) {
+            return EntityValues.getId(parameterValue);
         }
         return parameterValue;
     }
@@ -90,5 +106,43 @@ public class PropertyConditionGenerator implements ConditionGenerator {
                     PropertyConditionUtils.getJpqlOperation(propertyCondition),
                     propertyCondition.getParameterName());
         }
+    }
+
+    protected String getProperty(PropertyCondition propertyCondition, @Nullable String entityName) {
+        String property = propertyCondition.getProperty();
+        if (Strings.isNullOrEmpty(entityName)
+                || !isCrossDataStoreReference(property, entityName)) {
+            return property;
+        }
+
+        MetaClass metaClass = metadata.getClass(entityName);
+        MetaPropertyPath mpp = metaClass.getPropertyPath(property);
+        if (mpp == null) {
+            return property;
+        }
+
+        String referenceIdProperty = metadataTools.getCrossDataStoreReferenceIdProperty(
+                metaClass.getStore().getName(),
+                mpp.getMetaProperty());
+
+        //noinspection ConstantConditions
+        return property.lastIndexOf(".") > 0
+                ? property.substring(0, property.lastIndexOf(".") + 1) + referenceIdProperty
+                : referenceIdProperty;
+    }
+
+    protected boolean isCrossDataStoreReference(String property, @Nullable String entityName) {
+        if (Strings.isNullOrEmpty(entityName)) {
+            return false;
+        }
+
+        MetaClass metaClass = metadata.getClass(entityName);
+        MetaPropertyPath mpp = metaClass.getPropertyPath(property);
+        if (mpp == null) {
+            return false;
+        }
+
+        return metadataTools.getCrossDataStoreReferenceIdProperty(
+                metaClass.getStore().getName(), mpp.getMetaProperty()) != null;
     }
 }

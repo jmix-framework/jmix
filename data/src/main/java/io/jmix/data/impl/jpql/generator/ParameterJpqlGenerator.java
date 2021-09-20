@@ -51,7 +51,7 @@ public class ParameterJpqlGenerator {
      * @return modified parameters
      */
     public Map<String, Object> processParameters(Map<String, Object> parameters, Map<String, Object> queryParameters,
-                                                 Condition actualized) {
+                                                 Condition actualized, @Nullable String entityName) {
         List<PropertyCondition> propertyConditions = collectNestedPropertyConditions(actualized);
         for (PropertyCondition propertyCondition : propertyConditions) {
             String parameterName = propertyCondition.getParameterName();
@@ -64,11 +64,11 @@ public class ParameterJpqlGenerator {
                 //PropertyCondition.parameterValue attribute. queryParameters has higher priority.
                 Object parameterValue;
                 if (!queryParameters.containsKey(parameterName) || queryParameters.get(parameterName) == null) {
-                    parameterValue = generateParameterValue(propertyCondition, propertyCondition.getParameterValue());
+                    parameterValue = generateParameterValue(propertyCondition, propertyCondition.getParameterValue(), entityName);
                 } else {
                     //modify the query parameter value (e.g. wrap value for "contains" jpql operation)
                     Object queryParameterValue = queryParameters.get(parameterName);
-                    parameterValue = generateParameterValue(propertyCondition, queryParameterValue);
+                    parameterValue = generateParameterValue(propertyCondition, queryParameterValue, entityName);
                 }
                 parameters.put(parameterName, parameterValue);
             }
@@ -84,7 +84,7 @@ public class ParameterJpqlGenerator {
                 if (!queryParameters.containsKey(parameterName) || queryParameters.get(parameterName) == null) {
                     // Modify the query parameter value (e.g. wrap value from JpqlFilter for "contains"
                     // jpql operation)
-                    parameterValue = generateParameterValue(jpqlCondition, parameter.getValue());
+                    parameterValue = generateParameterValue(jpqlCondition, parameter.getValue(), entityName);
                 } else {
                     // In other cases, it is assumed that the value has already been modified
                     // (e.g. wrapped value from DataLoadCoordinator)
@@ -120,8 +120,8 @@ public class ParameterJpqlGenerator {
     }
 
     @Nullable
-    protected Object generateParameterValue(Condition condition, @Nullable Object parameterValue) {
+    protected Object generateParameterValue(Condition condition, @Nullable Object parameterValue, @Nullable String entityName) {
         ConditionGenerator conditionGenerator = resolver.getConditionGenerator(new ConditionGenerationContext(condition));
-        return conditionGenerator.generateParameterValue(condition, parameterValue);
+        return conditionGenerator.generateParameterValue(condition, parameterValue, entityName);
     }
 }

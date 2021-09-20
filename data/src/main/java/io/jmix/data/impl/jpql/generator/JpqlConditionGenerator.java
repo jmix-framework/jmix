@@ -62,7 +62,8 @@ public class JpqlConditionGenerator implements ConditionGenerator {
 
     @Nullable
     @Override
-    public Object generateParameterValue(@Nullable Condition condition, @Nullable Object parameterValue) {
+    public Object generateParameterValue(@Nullable Condition condition, @Nullable Object parameterValue,
+                                         @Nullable String entityName) {
         JpqlCondition jpqlCondition = (JpqlCondition) condition;
         if (jpqlCondition == null || parameterValue == null) {
             return null;

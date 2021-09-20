@@ -228,7 +228,7 @@ public class JpqlQueryBuilder<Q extends JmixQuery> {
 
             if (actualized != null) {
                 resultParameters = conditionParameterJpqlGenerator
-                        .processParameters(resultParameters, queryParameters, actualized);
+                        .processParameters(resultParameters, queryParameters, actualized, entityName);
             }
 
             resultQuery = conditionJpqlGenerator

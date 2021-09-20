@@ -52,10 +52,11 @@ public interface ConditionGenerator {
     /**
      * Returns a parameter value modified according to the given condition.
      *
-     * @param condition a condition
+     * @param condition      a condition
      * @param parameterValue parameter value
+     * @param entityName     entity name
      * @return a modified parameter value
      */
     @Nullable
-    Object generateParameterValue(@Nullable Condition condition, @Nullable Object parameterValue);
+    Object generateParameterValue(@Nullable Condition condition, @Nullable Object parameterValue, @Nullable String entityName);
 }

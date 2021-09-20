@@ -88,7 +88,8 @@ public class LogicalConditionGenerator implements ConditionGenerator {
 
     @Nullable
     @Override
-    public Object generateParameterValue(@Nullable Condition condition, @Nullable Object parameterValue) {
+    public Object generateParameterValue(@Nullable Condition condition, @Nullable Object parameterValue,
+                                         @Nullable String entityName) {
         return null;
     }
 

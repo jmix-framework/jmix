@@ -20,6 +20,7 @@ import com.google.common.base.Strings;
 import io.jmix.core.HasTimeZone;
 import io.jmix.core.MessageTools;
 import io.jmix.core.security.*;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -77,7 +78,7 @@ public class CurrentAuthenticationImpl implements CurrentAuthentication {
             if (details instanceof ClientDetails) {
                 locale = ((ClientDetails) details).getLocale();
             }
-            if (locale == null && localeResolvers != null) {
+            if (locale == null && CollectionUtils.isNotEmpty(localeResolvers)) {
                 locale = localeResolvers.stream()
                         .filter(resolver -> resolver.supports(authentication))
                         .findFirst()

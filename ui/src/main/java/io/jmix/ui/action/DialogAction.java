@@ -16,8 +16,12 @@
 package io.jmix.ui.action;
 
 import io.jmix.ui.Dialogs;
+import io.jmix.ui.component.KeyCombination;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.icon.Icons;
+
+import javax.annotation.Nullable;
+import java.util.function.Consumer;
 
 /**
  * Standard action for option dialogs.
@@ -35,6 +39,7 @@ import io.jmix.ui.icon.Icons;
  *                     new DialogAction(Type.NO)
  *                             .withCaption("Print selected")
  *                             .withIcon(JmixIcon.PRINT.source())
+ *                             .withStyleName("print-selected")
  *                             .withHandler(event -> {
  *                         // add action logic here
  *                     }),
@@ -77,6 +82,11 @@ public class DialogAction extends BaseAction {
     }
 
     protected Type type;
+    protected String styleName;
+
+    public DialogAction(String id) {
+        super(id);
+    }
 
     public DialogAction(Type type) {
         super(type.id);
@@ -94,7 +104,95 @@ public class DialogAction extends BaseAction {
         this.primary = status == Status.PRIMARY;
     }
 
+    @Nullable
     public Type getType() {
         return type;
+    }
+
+    /**
+     * @return style name or {@code null} if not set
+     */
+    @Nullable
+    public String getStyleName() {
+        return styleName;
+    }
+
+    /**
+     * Sets style name that will be used in the corresponding button of the dialog.
+     *
+     * @param styleName style name
+     * @return current instance of action
+     */
+    public DialogAction withStyleName(@Nullable String styleName) {
+        this.styleName = styleName;
+        return this;
+    }
+
+    /**
+     * Set caption using fluent API method.
+     *
+     * @param caption caption
+     * @return current instance of action
+     */
+    public DialogAction withCaption(@Nullable String caption) {
+        this.caption = caption;
+        return this;
+    }
+
+    /**
+     * Set description using fluent API method.
+     *
+     * @param description description
+     * @return current instance of action
+     */
+    public DialogAction withDescription(@Nullable String description) {
+        this.description = description;
+        return this;
+    }
+
+    /**
+     * Set icon using fluent API method.
+     *
+     * @param icon icon
+     * @return current instance of action
+     */
+    public DialogAction withIcon(@Nullable String icon) {
+        this.icon = icon;
+        return this;
+    }
+
+    /**
+     * Set shortcut using fluent API method.
+     *
+     * @param shortcut shortcut
+     * @return current instance of action
+     */
+    public DialogAction withShortcut(@Nullable String shortcut) {
+        if (shortcut != null) {
+            this.shortcut = KeyCombination.create(shortcut);
+        }
+        return this;
+    }
+
+    /**
+     * Set action performed event handler using fluent API method. Can be used instead of subclassing BaseAction class.
+     *
+     * @param handler action performed handler
+     * @return current instance of action
+     */
+    public DialogAction withHandler(Consumer<ActionPerformedEvent> handler) {
+        getEventHub().subscribe(ActionPerformedEvent.class, handler);
+        return this;
+    }
+
+    /**
+     * Set whether this action is primary using fluent API method. Can be used instead of subclassing BaseAction class.
+     *
+     * @param primary primary
+     * @return current instance of action
+     */
+    public DialogAction withPrimary(boolean primary) {
+        this.primary = primary;
+        return this;
     }
 }

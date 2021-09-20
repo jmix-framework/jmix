@@ -131,10 +131,12 @@ public class DialogsImpl implements Dialogs {
 
         if (action instanceof DialogAction) {
             DialogAction.Type type = ((DialogAction) action).getType();
-
-            button.setCaption(messages.getMessage(type.getMsgKey()));
-            String iconPath = icons.get(type.getIconKey());
-            button.setIcon(iconResolver.getIconResource(iconPath));
+            if (type != null) {
+                button.setCaption(messages.getMessage(type.getMsgKey()));
+                String iconPath = icons.get(type.getIconKey());
+                button.setIcon(iconResolver.getIconResource(iconPath));
+            }
+            button.setStyleName(((DialogAction) action).getStyleName());
         }
 
         button.setEnabled(action.isEnabled());

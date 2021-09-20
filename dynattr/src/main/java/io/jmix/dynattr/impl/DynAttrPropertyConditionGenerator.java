@@ -176,7 +176,8 @@ public class DynAttrPropertyConditionGenerator extends PropertyConditionGenerato
 
     @Nullable
     @Override
-    public Object generateParameterValue(@Nullable Condition condition, @Nullable Object parameterValue) {
+    public Object generateParameterValue(@Nullable Condition condition, @Nullable Object parameterValue,
+                                         @Nullable String entityName) {
         PropertyCondition propertyCondition = (PropertyCondition) condition;
         if (propertyCondition == null || parameterValue == null) {
             return null;
@@ -185,7 +186,7 @@ public class DynAttrPropertyConditionGenerator extends PropertyConditionGenerato
         if (EntityValues.isEntity(parameterValue)) {
             return EntityValues.getIdOrEntity(parameterValue);
         } else {
-            return super.generateParameterValue(condition, parameterValue);
+            return super.generateParameterValue(condition, parameterValue, entityName);
         }
     }
 }

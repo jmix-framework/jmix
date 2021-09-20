@@ -7,10 +7,7 @@ import io.jmix.securityui.authentication.LoginScreenSupport
 import io.jmix.ui.JmixApp
 import io.jmix.ui.Notifications
 import io.jmix.ui.action.Action.ActionPerformedEvent
-import io.jmix.ui.component.CheckBox
-import io.jmix.ui.component.ComboBox
-import io.jmix.ui.component.PasswordField
-import io.jmix.ui.component.TextField
+import io.jmix.ui.component.*
 import io.jmix.ui.navigation.Route
 import io.jmix.ui.screen.Screen
 import io.jmix.ui.screen.Subscribe
@@ -72,7 +69,16 @@ open class LoginScreen : Screen() {
         localesField.apply {
             setOptionsMap(messageTools.availableLocalesMap)
             value = app.locale
+            addValueChangeListener(this@LoginScreen::onLocalesFieldValueChangeEvent)
         }
+    }
+
+    private fun onLocalesFieldValueChangeEvent(event: HasValue.ValueChangeEvent<Locale>) {
+        @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+        app.locale = event.value
+        UiControllerUtils.getScreenContext(this).screens
+                .create(this.javaClass, OpenMode.ROOT)
+                .show()
     }
 
     private fun initDefaultCredentials() {

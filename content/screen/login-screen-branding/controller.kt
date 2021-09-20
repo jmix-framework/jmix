@@ -69,8 +69,19 @@ open class ${controllerName} : Screen() {
     }
 
     private fun initLocalesField() {
-        localesField.setOptionsMap(messageTools.availableLocalesMap)
-        localesField.value = app.locale
+        localesField.apply {
+            setOptionsMap(messageTools.availableLocalesMap)
+            value = app.locale
+            addValueChangeListener(this@LoginScreen::onLocalesFieldValueChangeEvent)
+        }
+    }
+
+    private fun onLocalesFieldValueChangeEvent(event: HasValue.ValueChangeEvent<Locale>) {
+        @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+        app.locale = event.value
+        UiControllerUtils.getScreenContext(this).screens
+                .create(this.javaClass, OpenMode.ROOT)
+                .show()
     }
 
     private fun initDefaultCredentials() {

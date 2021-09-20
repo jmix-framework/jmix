@@ -7,10 +7,7 @@ import io.jmix.securityui.authentication.LoginScreenSupport;
 import io.jmix.ui.JmixApp;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.action.Action;
-import io.jmix.ui.component.CheckBox;
-import io.jmix.ui.component.ComboBox;
-import io.jmix.ui.component.PasswordField;
-import io.jmix.ui.component.TextField;
+import io.jmix.ui.component.*;
 import io.jmix.ui.navigation.Route;
 import io.jmix.ui.screen.*;
 import io.jmix.ui.security.UiLoginProperties;
@@ -71,6 +68,15 @@ public class LoginScreen extends Screen {
     private void initLocalesField() {
         localesField.setOptionsMap(messageTools.getAvailableLocalesMap());
         localesField.setValue(app.getLocale());
+        localesField.addValueChangeListener(this::onLocalesFieldValueChangeEvent);
+    }
+
+    private void onLocalesFieldValueChangeEvent(HasValue.ValueChangeEvent<Locale> event) {
+        //noinspection ConstantConditions
+        app.setLocale(event.getValue());
+        UiControllerUtils.getScreenContext(this).getScreens()
+                .create(this.getClass(), OpenMode.ROOT)
+                .show();
     }
 
     private void initDefaultCredentials() {

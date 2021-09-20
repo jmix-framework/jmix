@@ -73,6 +73,15 @@ public class ${controllerName} extends Screen {
     private void initLocalesField() {
         localesField.setOptionsMap(messageTools.getAvailableLocalesMap());
         localesField.setValue(app.getLocale());
+        localesField.addValueChangeListener(this::onLocalesFieldValueChangeEvent);
+    }
+
+    private void onLocalesFieldValueChangeEvent(HasValue.ValueChangeEvent<Locale> event) {
+        //noinspection ConstantConditions
+        app.setLocale(event.getValue());
+        UiControllerUtils.getScreenContext(this).getScreens()
+                .create(this.getClass(), OpenMode.ROOT)
+                .show();
     }
 
     private void initDefaultCredentials() {

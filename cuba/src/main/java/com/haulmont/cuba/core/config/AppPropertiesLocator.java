@@ -206,13 +206,13 @@ public class AppPropertiesLocator {
     }
 
     protected void assignLastUpdated(AppPropertyEntity entity, List<com.haulmont.cuba.core.entity.Config> dbContent) {
-        dbContent.stream()
-                .filter(config -> config.getName().equals(entity.getName()))
-                .findFirst()
-                .ifPresent(config -> {
-                    entity.setUpdateTs(config.getUpdateTs() != null ? config.getUpdateTs() : config.getCreateTs());
-                    entity.setUpdatedBy(config.getUpdatedBy() != null ? config.getUpdatedBy() : config.getCreatedBy());
-                });
+//        dbContent.stream()
+//                .filter(config -> config.getName().equals(entity.getName()))
+//                .findFirst()
+//                .ifPresent(config -> {
+//                    entity.setUpdateTs(config.getUpdateTs() != null ? config.getUpdateTs() : config.getCreateTs());
+//                    entity.setUpdatedBy(config.getUpdatedBy() != null ? config.getUpdatedBy() : config.getCreatedBy());
+//                });   TODO: support audit fields (e.g., updateTs)
     }
 
     protected String getCurrentValue(Method method, Object config) {

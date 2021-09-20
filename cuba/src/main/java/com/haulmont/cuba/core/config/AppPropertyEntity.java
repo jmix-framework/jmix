@@ -18,10 +18,12 @@ package com.haulmont.cuba.core.config;
 
 import com.google.common.base.Strings;
 import com.haulmont.chile.core.datatypes.Datatypes;
-import com.haulmont.cuba.core.entity.BaseUuidEntity;
-import com.haulmont.cuba.core.entity.Updatable;
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.Messages;
+import io.jmix.core.Entity;
+import io.jmix.core.UuidProvider;
+import io.jmix.core.entity.annotation.JmixGeneratedValue;
+import io.jmix.core.entity.annotation.JmixId;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
@@ -29,17 +31,22 @@ import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.impl.NumberDatatype;
 import io.jmix.core.metamodel.datatype.impl.StringDatatype;
 
-import java.util.Date;
+import java.util.UUID;
 
 @SystemLevel
 @JmixEntity(name = "sys$AppPropertyEntity")
-public class AppPropertyEntity extends BaseUuidEntity implements Updatable, Comparable<AppPropertyEntity> {
+public class AppPropertyEntity implements Entity, Comparable<AppPropertyEntity> {
 
     private static final long serialVersionUID = 546387295440108557L;
 
-    private Date updateTs;
+    @JmixGeneratedValue
+    @JmixProperty(mandatory = true)
+    @JmixId
+    protected UUID id;
 
-    private String updatedBy;
+    public AppPropertyEntity() {
+        this.id =  UuidProvider.createUuid();
+    }
 
     private AppPropertyEntity parent;
 
@@ -59,24 +66,13 @@ public class AppPropertyEntity extends BaseUuidEntity implements Updatable, Comp
 
     private Boolean secret = false;
 
-    @Override
-    public Date getUpdateTs() {
-        return updateTs;
+
+    public UUID getId() {
+        return id;
     }
 
-    @Override
-    public void setUpdateTs(Date updateTs) {
-        this.updateTs = updateTs;
-    }
-
-    @Override
-    public String getUpdatedBy() {
-        return updatedBy;
-    }
-
-    @Override
-    public void setUpdatedBy(String updatedBy) {
-        this.updatedBy = updatedBy;
+    public void setId(UUID id) {
+        this.id = id;
     }
 
     public AppPropertyEntity getParent() {

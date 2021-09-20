@@ -22,6 +22,9 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 
+/**
+ * Loads classes taking into account hot-deploy feature.
+ */
 @Component("core_ClassManager")
 public class ClassManager {
 

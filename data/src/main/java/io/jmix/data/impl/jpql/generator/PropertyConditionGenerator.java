@@ -37,10 +37,14 @@ import javax.annotation.Nullable;
 @Order(JmixOrder.LOWEST_PRECEDENCE)
 public class PropertyConditionGenerator implements ConditionGenerator {
 
-    @Autowired
-    protected Metadata metadata;
-    @Autowired
     protected MetadataTools metadataTools;
+    protected Metadata metadata;
+
+    @Autowired
+    public PropertyConditionGenerator(MetadataTools metadataTools, Metadata metadata) {
+        this.metadataTools = metadataTools;
+        this.metadata = metadata;
+    }
 
     @Override
     public boolean supports(ConditionGenerationContext context) {

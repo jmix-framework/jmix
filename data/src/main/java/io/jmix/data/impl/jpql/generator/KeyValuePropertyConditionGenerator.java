@@ -17,8 +17,11 @@
 package io.jmix.data.impl.jpql.generator;
 
 import io.jmix.core.JmixOrder;
+import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.core.querycondition.PropertyConditionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -27,6 +30,11 @@ import java.util.List;
 @Component("data_KeyValuePropertyConditionGenerator")
 @Order(JmixOrder.LOWEST_PRECEDENCE - 10)
 public class KeyValuePropertyConditionGenerator extends PropertyConditionGenerator {
+
+    @Autowired
+    public KeyValuePropertyConditionGenerator(MetadataTools metadataTools, Metadata metadata) {
+        super(metadataTools, metadata);
+    }
 
     @Override
     public boolean supports(ConditionGenerationContext context) {

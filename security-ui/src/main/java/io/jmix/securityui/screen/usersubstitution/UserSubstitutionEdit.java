@@ -21,6 +21,7 @@ import io.jmix.core.MetadataTools;
 import io.jmix.core.security.UserRepository;
 import io.jmix.securitydata.entity.UserSubstitution;
 import io.jmix.ui.component.ComboBox;
+import io.jmix.ui.model.DataContext;
 import io.jmix.ui.screen.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -34,6 +35,7 @@ import java.util.Map;
 @UiDescriptor("user-substitution-edit.xml")
 @EditedEntityContainer("userSubstitutionDc")
 public class UserSubstitutionEdit extends StandardEditor<UserSubstitution> {
+
     @Autowired
     protected EntityStates entityStates;
     @Autowired
@@ -45,6 +47,12 @@ public class UserSubstitutionEdit extends StandardEditor<UserSubstitution> {
     protected ComboBox<String> substitutedNameField;
     @Autowired
     protected ComboBox<String> nameField;
+    @Autowired
+    private DataContext dataContext;
+
+    public void setParentDataContext(DataContext parentDataContext) {
+        dataContext.setParent(parentDataContext);
+    }
 
     @Subscribe
     public void onBeforeShow(BeforeShowEvent event) {

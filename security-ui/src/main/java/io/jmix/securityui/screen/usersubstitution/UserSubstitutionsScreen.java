@@ -19,10 +19,9 @@ import io.jmix.core.Messages;
 import io.jmix.core.MetadataTools;
 import io.jmix.ui.UiScreenProperties;
 import io.jmix.ui.action.Action;
-import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.component.Window;
 import io.jmix.ui.icon.Icons;
-import io.jmix.ui.icon.JmixIcon;
+import io.jmix.ui.model.DataContext;
 import io.jmix.ui.screen.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -39,17 +38,16 @@ public class UserSubstitutionsScreen extends Screen {
     protected Messages messages;
     @Autowired
     protected Icons icons;
+    @Autowired
+    protected UiScreenProperties uiScreenProperties;
+    @Autowired
+    protected DataContext dataContext;
 
     @Autowired
     private UserSubstitutionsFragment userSubstitutionsFragment;
 
 
     private UserDetails user;
-
-    @Subscribe
-    public void onInit(InitEvent event) {
-        initScreenActions();
-    }
 
     @Subscribe
     public void onAfterShow(AfterShowEvent event) {
@@ -63,29 +61,14 @@ public class UserSubstitutionsScreen extends Screen {
         return this;
     }
 
-    protected void initScreenActions() {
-        Window window = getWindow();
+    @Subscribe("commit")
+    public void commit(Action.ActionPerformedEvent event) {
+        dataContext.commit();
+        close(new StandardCloseAction(Window.COMMIT_ACTION_ID));
+    }
 
-        String commitShortcut = getApplicationContext().getBean(UiScreenProperties.class).getCommitShortcut();
-
-        Action commitAndCloseAction = new BaseAction(Window.COMMIT_ACTION_ID)
-                .withCaption(messages.getMessage("actions.Ok"))
-                .withIcon(icons.get(JmixIcon.EDITOR_OK))
-                .withPrimary(true)
-                .withShortcut(commitShortcut)
-                .withHandler(actionPerformedEvent -> {
-                    //noinspection ConstantConditions
-                    getScreenData().getDataContext().commit();
-                    close(new StandardCloseAction(Window.COMMIT_ACTION_ID));
-                });
-
-        window.addAction(commitAndCloseAction);
-
-        Action closeAction = new BaseAction(Window.CLOSE_ACTION_ID)
-                .withIcon(icons.get(JmixIcon.EDITOR_CANCEL))
-                .withCaption(messages.getMessage("actions.Cancel"))
-                .withHandler(actionPerformedEvent -> close(new StandardCloseAction(Window.CLOSE_ACTION_ID)));
-
-        window.addAction(closeAction);
+    @Subscribe("close")
+    public void close(Action.ActionPerformedEvent event) {
+        close(new StandardCloseAction(Window.CLOSE_ACTION_ID));
     }
 }

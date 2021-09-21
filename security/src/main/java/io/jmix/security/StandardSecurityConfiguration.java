@@ -20,7 +20,7 @@ import io.jmix.core.JmixOrder;
 import io.jmix.core.security.PostAuthenticationChecks;
 import io.jmix.core.security.PreAuthenticationChecks;
 import io.jmix.core.security.UserRepository;
-import io.jmix.core.security.impl.SubstitutitutedUserAuthenticationProvider;
+import io.jmix.core.security.impl.SubstitutedUserAuthenticationProvider;
 import io.jmix.core.security.impl.SystemAuthenticationProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -49,7 +49,7 @@ public class StandardSecurityConfiguration extends WebSecurityConfigurerAdapter 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.authenticationProvider(new SystemAuthenticationProvider(userRepository));
-        auth.authenticationProvider(new SubstitutitutedUserAuthenticationProvider(userRepository));
+        auth.authenticationProvider(new SubstitutedUserAuthenticationProvider(userRepository));
 
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
         daoAuthenticationProvider.setUserDetailsService(userRepository);

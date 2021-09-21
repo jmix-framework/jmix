@@ -13,22 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+@Internal
+@NonNullApi
+package io.jmix.securitydata.impl;
 
-package io.jmix.security;
-
-import io.jmix.core.security.event.UserSubstitutedEvent;
-import org.springframework.context.event.EventListener;
-import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
-import java.util.Collection;
-
-@Component
-public class UserSubstitutionEventListener {
-    public Collection<UserSubstitutedEvent> events = new ArrayList<>();
-
-    @EventListener
-    public void handle(UserSubstitutedEvent event) {
-        events.add(event);
-    }
-}
+import io.jmix.core.annotation.Internal;
+import org.springframework.lang.NonNullApi;

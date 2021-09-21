@@ -32,10 +32,15 @@ import java.util.Objects;
 
 @ActionType(ShowUserSubstitutionsAction.ID)
 public class ShowUserSubstitutionsAction extends SecuredListAction implements Action.ExecutableAction, Action.AdjustWhenScreenReadOnly {
+
     public static final String ID = "showUserSubstitutions";
 
-    @Autowired
     protected ScreenBuilders screenBuilders;
+
+    @Autowired
+    protected void setScreenBuilders(ScreenBuilders screenBuilders) {
+        this.screenBuilders = screenBuilders;
+    }
 
     @Autowired
     protected void setMessages(Messages messages) {

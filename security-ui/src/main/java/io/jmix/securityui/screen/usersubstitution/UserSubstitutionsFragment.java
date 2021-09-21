@@ -24,6 +24,7 @@ import io.jmix.ui.action.list.CreateAction;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.Table;
 import io.jmix.ui.model.CollectionLoader;
+import io.jmix.ui.model.DataContext;
 import io.jmix.ui.screen.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -47,6 +48,10 @@ public class UserSubstitutionsFragment extends ScreenFragment {
     @Autowired
     protected CollectionLoader<UserSubstitution> userSubstitutionsDl;
 
+    @Autowired
+    protected DataContext dataContext;
+
+
     @Named("substitutionTable.create")
     protected CreateAction<UserSubstitution> createAction;
 
@@ -58,6 +63,7 @@ public class UserSubstitutionsFragment extends ScreenFragment {
             UserSubstitution substitution = metadata.create(UserSubstitution.class);
             substitution.setUserName(user.getUsername());
             ((UserSubstitutionEdit) screen).setEntityToEdit(substitution);
+            ((UserSubstitutionEdit) screen).setParentDataContext(dataContext);
         });
     }
 

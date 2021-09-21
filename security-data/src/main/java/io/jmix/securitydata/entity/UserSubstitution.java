@@ -19,6 +19,7 @@ package io.jmix.securitydata.entity;
 import io.jmix.core.annotation.DeletedBy;
 import io.jmix.core.annotation.DeletedDate;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
+import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -32,7 +33,9 @@ import java.util.UUID;
 @JmixEntity(name = "sec_UserSubstitution")
 @Table(name = "SEC_USER_SUBSTITUTION")
 @Entity(name = "sec_UserSubstitution")
+@SystemLevel
 public class UserSubstitution {
+
     @JmixGeneratedValue
     @Column(name = "ID", nullable = false)
     @Id
@@ -66,10 +69,10 @@ public class UserSubstitution {
     @Column(name = "DELETED_BY", length = 50)
     protected String deletedBy;
 
-    @Column(name = "USER_NAME")
+    @Column(name = "USERNAME")
     private String userName;
 
-    @Column(name = "SUBSTITUTED_USER_NAME")
+    @Column(name = "SUBSTITUTED_USERNAME")
     private String substitutedUserName;
 
     @Column(name = "START_DATE")

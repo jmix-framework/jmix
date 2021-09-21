@@ -16,6 +16,18 @@
 
 <window xmlns="http://jmix.io/schema/ui/window">
     <data/>
+    <actions>
+        <action id="commit"
+                caption="msg:///actions.Ok"
+                icon="CHECK"
+                primary="true"
+                shortcut="${COMMIT_SHORTCUT}"/>
+        <action id="close"
+                icon="BAN"
+                caption="msg:///actions.Cancel"
+                shortcut="${CLOSE_SHORTCUT}"/>
+    </actions>
+
     <layout spacing="true" expand="userSubstitutionsFragment">
         <fragment id="userSubstitutionsFragment" screen="sec_UserSubstitutionsFragment" width="100%"/>
         <hbox id="editActions" spacing="true">

@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package io.jmix.securitydata.impl.substitution;
+package io.jmix.securitydata.impl;
 
 import io.jmix.core.TimeSource;
 import io.jmix.core.UnconstrainedDataManager;
-import io.jmix.core.security.AccessDeniedException;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.core.security.SecurityContextHelper;
 import io.jmix.core.security.UserRepository;
+import io.jmix.core.security.UserSubstitutionManager;
 import io.jmix.core.security.event.UserSubstitutedEvent;
 import io.jmix.core.security.impl.SubstitutedUserAuthenticationToken;
 import io.jmix.securitydata.entity.UserSubstitution;
@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Component("sec_UserSubstitutionManager")
-public class UserSubstitutionManager {
+public class UserSubstitutionManagerImpl implements UserSubstitutionManager {
 
     @Autowired
     private UnconstrainedDataManager dataManager;
@@ -51,17 +51,13 @@ public class UserSubstitutionManager {
     @Autowired
     protected ApplicationEventPublisher eventPublisher;
 
-    /**
-     * @return users which can be substituted by current authenticated user
-     */
+    @Override
     public List<UserDetails> getCurrentSubstitutedUsers() {
         return getSubstitutedUsers(currentAuthentication.getUser().getUsername());
     }
 
 
-    /**
-     * @return users which can be substituted by user with specified {@code userName}
-     */
+    @Override
     public List<UserDetails> getSubstitutedUsers(String userName) {
 
         List<UserSubstitution> userSubstitutions = dataManager.load(UserSubstitution.class)
@@ -81,12 +77,12 @@ public class UserSubstitutionManager {
     /**
      * Check {@link UserSubstitution} records and performs user substitution
      *
-     * @throws AccessDeniedException if current user isn't allowed to substitute user with specified name
+     * @throws IllegalArgumentException if current user isn't allowed to substitute user with specified name
      */
     public void substituteUser(String substitutedUserName) {
 
         if (!canSubstitute(currentAuthentication.getUser().getUsername(), substitutedUserName)) {
-            throw new AccessDeniedException("user_substitution",
+            throw new IllegalArgumentException(
                     String.format("User '%s' cannot substitute '%s'",
                             currentAuthentication.getUser().getUsername(),
                             substitutedUserName));
@@ -101,7 +97,9 @@ public class UserSubstitutionManager {
     }
 
     protected boolean canSubstitute(String userName, String substitutedUserName) {
-        return getSubstitutedUsers(userName).stream().anyMatch(userDetails -> userDetails.getUsername().equals(substitutedUserName));
+        return userName.equals(substitutedUserName)
+                || getSubstitutedUsers(userName).stream()
+                .anyMatch(userDetails -> userDetails.getUsername().equals(substitutedUserName));
     }
 
 

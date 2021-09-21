@@ -18,16 +18,15 @@ package user_substitution
 
 import io.jmix.core.DataManager
 import io.jmix.core.Metadata
-import io.jmix.core.security.AccessDeniedException
 import io.jmix.core.security.CurrentAuthentication
 import io.jmix.core.security.InMemoryUserRepository
 import io.jmix.core.security.SecurityContextHelper
+import io.jmix.core.security.UserSubstitutionManager
 import io.jmix.core.security.impl.SubstitutedUserAuthenticationToken
-import io.jmix.security.UserSubstitutionEventListener
+import io.jmix.security.TestUserSubstitutionEventListener
 import io.jmix.security.authentication.RoleGrantedAuthority
 import io.jmix.security.role.ResourceRoleRepository
 import io.jmix.securitydata.entity.UserSubstitution
-import io.jmix.securitydata.impl.substitution.UserSubstitutionManager
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.security.authentication.AuthenticationManager
@@ -42,6 +41,7 @@ import test_support.role.TestDataManagerReadQueryRole
 import javax.sql.DataSource
 
 class UserSubstitutionsTest extends SecurityDataSpecification {
+
     public static final String PASSWORD = "test"
     public static final String USER_DETAILS = "DETAILS"
 
@@ -63,7 +63,7 @@ class UserSubstitutionsTest extends SecurityDataSpecification {
     DataManager dataManager
 
     @Autowired
-    UserSubstitutionEventListener eventListener;
+    TestUserSubstitutionEventListener eventListener;
 
     UserDetails user1, user2, user3
     Authentication systemAuthentication
@@ -148,7 +148,7 @@ class UserSubstitutionsTest extends SecurityDataSpecification {
         authenticate(user1.username)
         substitutionManager.substituteUser(user3.username)
         then:
-        thrown(AccessDeniedException)
+        thrown(IllegalArgumentException)
     }
 
 

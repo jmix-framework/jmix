@@ -41,6 +41,8 @@
                     <action id="create" type="create">
                         <properties>
                             <property name="openMode" value="DIALOG"/>
+                            <property name="screenClass"
+                                      value="io.jmix.securityui.screen.usersubstitution.UserSubstitutionEdit"/>
                         </properties>
                     </action>
                     <action id="edit" type="edit">

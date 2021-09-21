@@ -43,6 +43,7 @@
                 <action id="edit" type="edit"/>
                 <action id="remove" type="remove"/>
                 <action id="showRoleAssignments" type="showRoleAssignments"/>
+                <action id="showUserSubstitutions" type="showUserSubstitutions"/>
                 <action id="changePassword" type="changePassword"/>
                 <action id="resetPassword" type="resetPassword"/>
                 <action id="resetRememberMeToken" type="resetRememberMeToken"/>
@@ -67,6 +68,7 @@
                         <action id="usersTable.changePassword"/>
                         <action id="usersTable.resetPassword"/>
                         <action id="usersTable.resetRememberMeToken"/>
+                        <action id="usersTable.showUserSubstitutions"/>
                     </actions>
                 </popupButton>
             </buttonsPanel>

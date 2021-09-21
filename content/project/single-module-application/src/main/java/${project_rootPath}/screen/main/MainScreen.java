@@ -5,7 +5,6 @@ import io.jmix.ui.component.AppWorkArea;
 import io.jmix.ui.component.Button;
 import io.jmix.ui.component.Window;
 import io.jmix.ui.component.mainwindow.Drawer;
-import io.jmix.ui.component.mainwindow.UserIndicator;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.navigation.Route;
 import io.jmix.ui.screen.Screen;
@@ -14,7 +13,6 @@ import io.jmix.ui.screen.UiController;
 import io.jmix.ui.screen.UiControllerUtils;
 import io.jmix.ui.screen.UiDescriptor;
 import org.springframework.beans.factory.annotation.Autowired;
-import io.jmix.securitydata.impl.substitution.UserSubstitutionManager;
 
 @UiController("${normalizedPrefix_underscore}MainScreen")
 @UiDescriptor("main-screen.xml")
@@ -23,8 +21,6 @@ public class MainScreen extends Screen implements Window.HasWorkArea {
 
     @Autowired
     private ScreenTools screenTools;
-    @Autowired
-    private UserSubstitutionManager userSubstitutionManager;
 
     @Autowired
     private AppWorkArea workArea;
@@ -32,8 +28,6 @@ public class MainScreen extends Screen implements Window.HasWorkArea {
     private Drawer drawer;
     @Autowired
     private Button collapseDrawerButton;
-    @Autowired
-    private UserIndicator userIndicator;
 
 
     @Override
@@ -49,15 +43,6 @@ public class MainScreen extends Screen implements Window.HasWorkArea {
         } else {
             collapseDrawerButton.setIconFromSet(JmixIcon.CHEVRON_LEFT);
         }
-    }
-
-    @Subscribe
-    public void onAfterInit(AfterInitEvent afterInitEvent) {
-        userIndicator.setAdditionalUsers(userSubstitutionManager.getCurrentSubstitutedUsers());
-        userIndicator.addSubstituteStep(user->{
-            userSubstitutionManager.substituteUser(user.getUsername());
-        });
-        userIndicator.refreshUser();
     }
 
     @Subscribe

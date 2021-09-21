@@ -22,11 +22,11 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
-public class SubstitutitutedUserAuthenticationProvider implements AuthenticationProvider {
+public class SubstitutedUserAuthenticationProvider implements AuthenticationProvider {
 
     private UserDetailsService userDetailsService;
 
-    public SubstitutitutedUserAuthenticationProvider(UserDetailsService userDetailsService) {
+    public SubstitutedUserAuthenticationProvider(UserDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;
     }
 

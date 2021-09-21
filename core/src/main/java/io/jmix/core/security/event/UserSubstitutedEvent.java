@@ -25,6 +25,7 @@ import org.springframework.security.core.userdetails.UserDetails;
  * Event published after user substituted and new {@link Authentication} is set to current {@link SecurityContext}.
  */
 public class UserSubstitutedEvent extends ApplicationEvent {
+
     private static final long serialVersionUID = 1782141271679862065L;
 
     private final UserDetails originalUser;

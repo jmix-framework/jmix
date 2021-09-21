@@ -19,12 +19,12 @@ package io.jmix.core.security.impl;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.util.Assert;
 
 import java.util.Collection;
 import java.util.Objects;
 
 public class SubstitutedUserAuthenticationToken extends AbstractAuthenticationToken {
+
     private static final long serialVersionUID = 8888961947349593368L;
 
     private final Object principal;
@@ -53,7 +53,7 @@ public class SubstitutedUserAuthenticationToken extends AbstractAuthenticationTo
      * authentication token.
      *
      * @param originalToken        to take current principal and details from
-     * @param substitutedPrincipal principal whosу aгthorities are used
+     * @param substitutedPrincipal principal whose authorities are used
      * @param authorities          authorities
      */
     public SubstitutedUserAuthenticationToken(Authentication originalToken,
@@ -79,8 +79,9 @@ public class SubstitutedUserAuthenticationToken extends AbstractAuthenticationTo
 
     @Override
     public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
-        Assert.isTrue(!isAuthenticated,
-                "Cannot set this token to trusted - use constructor which takes a GrantedAuthority list instead");
+        if (isAuthenticated) {
+            throw new IllegalArgumentException("Cannot set this token to trusted - use constructor which takes a GrantedAuthority list instead");
+        }
         super.setAuthenticated(false);
     }
 

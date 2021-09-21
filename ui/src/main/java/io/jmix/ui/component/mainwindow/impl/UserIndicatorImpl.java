@@ -21,14 +21,13 @@ import io.jmix.core.Messages;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.security.CurrentAuthentication;
+import io.jmix.core.security.UserSubstitutionManager;
 import io.jmix.ui.AppUI;
+import io.jmix.ui.Dialogs;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.DialogAction;
-import io.jmix.ui.component.ComboBox;
-import io.jmix.ui.component.CompositeComponent;
-import io.jmix.ui.component.CssLayout;
-import io.jmix.ui.component.Label;
+import io.jmix.ui.component.*;
 import io.jmix.ui.component.formatter.Formatter;
 import io.jmix.ui.component.mainwindow.UserIndicator;
 import io.jmix.ui.icon.Icons;
@@ -36,7 +35,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
 
 public class UserIndicatorImpl extends CompositeComponent<CssLayout> implements UserIndicator {
 
@@ -46,15 +48,10 @@ public class UserIndicatorImpl extends CompositeComponent<CssLayout> implements 
     protected UiComponents uiComponents;
     protected Messages messages;
     protected Icons icons;
+    protected UserSubstitutionManager substitutionManager;
+    protected Dialogs dialogs;
 
-
-    protected Label<UserDetails> userNameLabel;
-    protected ComboBox<UserDetails> userCombobox;
-
-
-    protected List<UserDetails> additionalUsers = new LinkedList<>();
-    protected List<SubstituteUserAction.SubstituteStep> substituteSteps = new LinkedList<>();
-
+    protected HasValue<UserDetails> userComponent;
 
     protected Formatter<? super UserDetails> userNameFormatter;
 
@@ -95,6 +92,16 @@ public class UserIndicatorImpl extends CompositeComponent<CssLayout> implements 
         this.icons = icons;
     }
 
+    @Autowired(required = false)
+    public void setSubstitutionManager(UserSubstitutionManager substitutionManager) {
+        this.substitutionManager = substitutionManager;
+    }
+
+    @Autowired
+    public void setDialogs(Dialogs dialogs) {
+        this.dialogs = dialogs;
+    }
+
     @Override
     public void refreshUser() {
         root.removeAll();
@@ -104,79 +111,77 @@ public class UserIndicatorImpl extends CompositeComponent<CssLayout> implements 
 
         List<UserDetails> currentAndSubstitutedUsers = new LinkedList<>();
         currentAndSubstitutedUsers.add(user);
+
+        List<UserDetails> additionalUsers = substitutionManager != null
+                ? substitutionManager.getSubstitutedUsers(user.getUsername()) : Collections.emptyList();
+
         currentAndSubstitutedUsers.addAll(additionalUsers);
 
         if (additionalUsers.size() > 0) {
-            userNameLabel = null;
-            userCombobox = uiComponents.create(ComboBox.of(UserDetails.class));
-            userCombobox.setOptionsList(currentAndSubstitutedUsers);
-            userCombobox.setStyleName("jmix-user-select-label");
-            userCombobox.setWidth("150px");
-            userCombobox.setOptionCaptionProvider(this::generateUserCaption);
-            userCombobox.setNullOptionVisible(false);
-            userCombobox.setValue(user);
-
-            userCombobox.addValueChangeListener(valueChangedEvent -> {
-                Objects.requireNonNull(valueChangedEvent.getPrevValue());
-                Objects.requireNonNull(valueChangedEvent.getValue());
-
-                if (authentication.getCurrentOrSubstitutedUser().equals(valueChangedEvent.getValue())) {
-                    return;
-                }
-
-                SubstituteUserAction substituteUserAction = new SubstituteUserAction(valueChangedEvent.getValue(),
-                        valueChangedEvent.getPrevValue(),
-                        messages,
-                        icons)
-                        .withCancelStep(this::revertSelection);
-
-                substituteSteps.forEach(substituteUserAction::withSubstituteStep);
-
-                AppUI.getCurrent().getDialogs().createOptionDialog()
-                        .withCaption(messages.getMessage("substitutionConfirmation.caption"))
-                        .withMessage(messages.formatMessage("", "substitutionConfirmation.message",
-                                generateUserCaption(valueChangedEvent.getValue())))
-                        .withActions(
-                                substituteUserAction,
-                                new DialogAction(DialogAction.Type.CANCEL, Action.Status.PRIMARY)
-                                        .withHandler(event -> revertSelection(valueChangedEvent.getPrevValue()))
-                        )
-                        .show();
-            });
-
-            root.add(userCombobox);
+            userComponent = createUserSelectionField(authentication, currentAndSubstitutedUsers);
         } else {
-            userCombobox = null;
-            userNameLabel = uiComponents.create(Label.of(UserDetails.class));
-            userNameLabel.setStyleName("jmix-user-select-label");
-            userNameLabel.setFormatter(this::generateUserCaption);
-            userNameLabel.setValue(user);
-
-            AppUI ui = AppUI.getCurrent();
-            if (ui != null && ui.isTestMode()) {
-                userNameLabel.unwrap(Component.class).setJTestId("currentUserLabel");
-            }
-
-            root.add(userNameLabel);
+            userComponent = createUserIndicator(authentication.getUser());
         }
+        root.add(userComponent);
         root.setDescription(generateUserCaption(user));
 
         adjustWidth();
         adjustHeight();
     }
 
+    protected HasValue<UserDetails> createUserSelectionField(CurrentAuthentication authentication, List<UserDetails> currentAndSubstitutedUsers) {
+        ComboBox<UserDetails> userCombobox = uiComponents.create(ComboBox.of(UserDetails.class));
+        userCombobox.setOptionsList(currentAndSubstitutedUsers);
+        userCombobox.setStyleName("jmix-user-select-combobox");
+        userCombobox.setOptionCaptionProvider(this::generateUserCaption);
+        userCombobox.setNullOptionVisible(false);
+        userCombobox.setValue(authentication.getCurrentOrSubstitutedUser());
+
+        userCombobox.addValueChangeListener(valueChangedEvent -> {
+            Objects.requireNonNull(valueChangedEvent.getPrevValue());
+            Objects.requireNonNull(valueChangedEvent.getValue());
+
+            if (authentication.getCurrentOrSubstitutedUser().equals(valueChangedEvent.getValue())) {
+                return;
+            }
+
+            SubstituteUserAction substituteUserAction = new SubstituteUserAction(valueChangedEvent.getValue(),
+                    valueChangedEvent.getPrevValue(),
+                    messages,
+                    icons,
+                    substitutionManager)
+                    .withCancelAction(this::revertSelection);
+
+            dialogs.createOptionDialog()
+                    .withCaption(messages.getMessage("substitutionConfirmation.caption"))
+                    .withMessage(messages.formatMessage("", "substitutionConfirmation.message",
+                            generateUserCaption(valueChangedEvent.getValue())))
+                    .withActions(
+                            substituteUserAction,
+                            new DialogAction(DialogAction.Type.CANCEL, Action.Status.PRIMARY)
+                                    .withHandler(event -> revertSelection(valueChangedEvent.getPrevValue()))
+                    )
+                    .show();
+        });
+
+        return userCombobox;
+    }
+
+    protected HasValue<UserDetails> createUserIndicator(UserDetails user) {
+        Label<UserDetails> userNameLabel = uiComponents.create(Label.of(UserDetails.class));
+        userNameLabel.setStyleName("jmix-user-select-label");
+        userNameLabel.setFormatter(this::generateUserCaption);
+        userNameLabel.setValue(user);
+
+        AppUI ui = AppUI.getCurrent();
+        if (ui != null && ui.isTestMode()) {
+            userNameLabel.unwrap(Component.class).setJTestId("currentUserLabel");
+        }
+        return userNameLabel;
+    }
+
     protected void revertSelection(UserDetails oldUser) {
-        userCombobox.setValue(oldUser);
-    }
-
-    @Override
-    public void setAdditionalUsers(Collection<UserDetails> additionalUsers) {
-        this.additionalUsers = new ArrayList<>(additionalUsers);
-    }
-
-    @Override
-    public void addSubstituteStep(SubstituteUserAction.SubstituteStep step) {
-        substituteSteps.add(step);
+        userComponent.setValue(oldUser);
     }
 
     protected String generateUserCaption(UserDetails user) {
@@ -205,24 +210,24 @@ public class UserIndicatorImpl extends CompositeComponent<CssLayout> implements 
 
     protected void adjustWidth() {
         if (getWidth() < 0) {
-            if (userNameLabel != null) {
-                userNameLabel.setWidthAuto();
+            if (userComponent != null) {
+                userComponent.setWidthAuto();
             }
         } else {
-            if (userNameLabel != null) {
-                userNameLabel.setWidthFull();
+            if (userComponent != null) {
+                userComponent.setWidthFull();
             }
         }
     }
 
     protected void adjustHeight() {
         if (getHeight() < 0) {
-            if (userNameLabel != null) {
-                userNameLabel.setHeightAuto();
+            if (userComponent != null) {
+                userComponent.setHeightAuto();
             }
         } else {
-            if (userNameLabel != null) {
-                userNameLabel.setHeightFull();
+            if (userComponent != null) {
+                userComponent.setHeightFull();
             }
         }
     }

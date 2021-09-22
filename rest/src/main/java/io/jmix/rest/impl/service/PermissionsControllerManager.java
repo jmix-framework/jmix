@@ -20,11 +20,11 @@ import io.jmix.core.AccessManager;
 import io.jmix.core.Metadata;
 import io.jmix.core.accesscontext.CrudEntityContext;
 import io.jmix.core.accesscontext.EntityAttributeContext;
+import io.jmix.core.accesscontext.SpecificOperationAccessContext;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.security.CurrentAuthentication;
-import io.jmix.rest.accesscontext.RestFileDownloadContext;
-import io.jmix.rest.accesscontext.RestFileUploadContext;
+import io.jmix.core.security.SpecificPolicyInfoRegistry;
 import io.jmix.rest.impl.controller.PermissionsController;
 import io.jmix.rest.impl.service.filter.data.PermissionsInfo;
 import io.jmix.rest.impl.service.filter.data.ShortPermissionInfo;
@@ -49,6 +49,8 @@ public class PermissionsControllerManager {
     protected AccessManager accessManager;
     @Autowired
     protected CurrentAuthentication currentAuthentication;
+    @Autowired
+    protected SpecificPolicyInfoRegistry specificPolicyInfoRegistry;
 
     protected static final int ALLOWED_CRUD_PERMISSION = 1;
     protected static final int VIEW_ATTRIBUTE_PERMISSION = 1;
@@ -65,11 +67,9 @@ public class PermissionsControllerManager {
 
         List<ShortPermissionInfo> entityPermissions = new ArrayList<>();
         List<ShortPermissionInfo> entityAttributePermissions = new ArrayList<>();
-        List<ShortPermissionInfo> specificPermissions = new ArrayList<>();
 
         permissionsInfo.setEntities(entityPermissions);
         permissionsInfo.setEntityAttributes(entityAttributePermissions);
-        permissionsInfo.setSpecifics(specificPermissions);
 
         for (MetaClass metaClass : metadata.getSession().getClasses()) {
             CrudEntityContext entityContext = new CrudEntityContext(metaClass);
@@ -109,23 +109,16 @@ public class PermissionsControllerManager {
             }
         }
 
-        RestFileDownloadContext downloadContext = new RestFileDownloadContext();
-        accessManager.applyRegisteredConstraints(downloadContext);
-
-        if (downloadContext.isPermitted()) {
-            specificPermissions.add(new ShortPermissionInfo(downloadContext.getName(), 1));
-        } else {
-            specificPermissions.add(new ShortPermissionInfo(downloadContext.getName(), 0));
-        }
-
-        RestFileUploadContext uploadContext = new RestFileUploadContext();
-        accessManager.applyRegisteredConstraints(uploadContext);
-
-        if (uploadContext.isPermitted()) {
-            specificPermissions.add(new ShortPermissionInfo(uploadContext.getName(), 1));
-        } else {
-            specificPermissions.add(new ShortPermissionInfo(uploadContext.getName(), 0));
-        }
+        List<ShortPermissionInfo> grantedSpecificPolicies = specificPolicyInfoRegistry.getSpecificPolicyInfos().stream()
+                .map(SpecificPolicyInfoRegistry.SpecificPolicyInfo::getName)
+                .filter(specificPolicyName -> {
+                    SpecificOperationAccessContext accessContext = new SpecificOperationAccessContext(specificPolicyName);
+                    accessManager.applyRegisteredConstraints(accessContext);
+                    return accessContext.isPermitted();
+                })
+                .map(specificPolicyName -> new ShortPermissionInfo(specificPolicyName, 1))
+                .collect(Collectors.toList());
+        permissionsInfo.setSpecifics(grantedSpecificPolicies);
 
         return permissionsInfo;
     }

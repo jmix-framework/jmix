@@ -38,11 +38,10 @@
 
     <layout expand="imapMessagesTable"
             spacing="true">
-       <!-- todo: <filter id="filter"
-                applyTo="imapMessagesTable"
+        <filter id="filter"
                 dataLoader="imapMessageLoader">
             <properties include=".*"/>
-        </filter>-->
+        </filter>
         <groupTable id="imapMessagesTable"
                     width="100%"
                     dataContainer="imapMessagesDc">

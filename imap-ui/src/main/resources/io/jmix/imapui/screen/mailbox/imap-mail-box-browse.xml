@@ -20,8 +20,8 @@
         focusComponent="mailBoxesTable">
     <data>
         <collection id="mailBoxesDc"
-                         class="io.jmix.imap.entity.ImapMailBox"
-                         fetchPlan="imapMailBox-browse">
+                    class="io.jmix.imap.entity.ImapMailBox"
+                    fetchPlan="imapMailBox-browse">
             <loader id="mailBoxesLoader">
                 <query>
                     <![CDATA[select e from imap_MailBox e]]>
@@ -40,13 +40,12 @@
 
     <layout expand="mailBoxesTable"
             spacing="true">
-       <!-- todo: <filter id="filter"
-                applyTo="mailBoxesTable"
+        <filter id="filter"
                 dataLoader="mailBoxesLoader">
             <properties include=".*"/>
-        </filter>-->
+        </filter>
         <groupTable id="mailBoxesTable"
-                    width="100%" dataContainer="mailBoxesDc" >
+                    width="100%" dataContainer="mailBoxesDc">
             <actions>
                 <action id="create" type="create"/>
                 <action id="edit" type="edit"/>

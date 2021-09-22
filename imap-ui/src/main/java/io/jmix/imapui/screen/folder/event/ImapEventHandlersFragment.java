@@ -111,6 +111,8 @@ public class ImapEventHandlersFragment extends ScreenFragment {
 
             removeAction.setConfirmation(false);
             removeAction.setAfterActionPerformedHandler(e -> updateHandlingOrders());
+        } else {
+            addHandlerBtn.setEnabled(false);
         }
     }
 

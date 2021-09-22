@@ -161,6 +161,8 @@ public class ImapMailBoxEdit extends StandardEditor<ImapMailBox> {
             checkConnectionBtn.setVisible(false);
             setEnableForButtons(true);
         }
+
+        handlersFragment.refresh();
     }
 
     @Subscribe

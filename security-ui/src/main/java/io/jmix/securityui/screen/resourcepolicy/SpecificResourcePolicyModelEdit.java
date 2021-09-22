@@ -16,14 +16,38 @@
 
 package io.jmix.securityui.screen.resourcepolicy;
 
+import io.jmix.core.security.SpecificPolicyInfoRegistry;
 import io.jmix.securityui.model.ResourcePolicyModel;
-import io.jmix.ui.screen.EditedEntityContainer;
-import io.jmix.ui.screen.StandardEditor;
-import io.jmix.ui.screen.UiController;
-import io.jmix.ui.screen.UiDescriptor;
+import io.jmix.ui.component.ComboBox;
+import io.jmix.ui.component.HasEnterPressHandler;
+import io.jmix.ui.screen.*;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @UiController("sec_SpecificResourcePolicyModel.edit")
 @UiDescriptor("specific-resource-policy-model-edit.xml")
 @EditedEntityContainer("resourcePolicyModelDc")
 public class SpecificResourcePolicyModelEdit extends StandardEditor<ResourcePolicyModel> {
+
+    @Autowired
+    private ComboBox<String> resourceField;
+
+    @Autowired
+    private SpecificPolicyInfoRegistry specificPolicyInfoRegistry;
+
+    @Subscribe
+    public void onBeforeShow(BeforeShowEvent event) {
+        List<String> specificPolicyNames = specificPolicyInfoRegistry.getSpecificPolicyInfos().stream()
+                .map(SpecificPolicyInfoRegistry.SpecificPolicyInfo::getName)
+                .sorted()
+                .collect(Collectors.toList());
+        resourceField.setOptionsList(specificPolicyNames);
+    }
+
+    @Install(to = "resourceField", subject = "enterPressHandler")
+    private void resourceFieldEnterPressHandler(HasEnterPressHandler.EnterPressEvent enterPressEvent) {
+        resourceField.setValue(enterPressEvent.getText());
+    }
 }

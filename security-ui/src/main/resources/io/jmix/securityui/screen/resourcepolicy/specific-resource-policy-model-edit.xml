@@ -29,7 +29,7 @@
     <layout spacing="true">
         <form id="form" dataContainer="resourcePolicyModelDc">
             <column width="350px">
-                <textField id="resourceField" property="resource"/>
+                <comboBox id="resourceField" property="resource" textInputAllowed="true"/>
                 <textField id="policyGroupField" property="policyGroup"/>
             </column>
         </form>

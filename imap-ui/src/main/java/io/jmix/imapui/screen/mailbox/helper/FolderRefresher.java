@@ -101,6 +101,9 @@ public class FolderRefresher {
             if (parentName != null) {
                 folder.setParent(foldersByNames.get(parentName));
             }
+            if (Boolean.TRUE.equals(folder.getCanHoldMessages())) {
+                enableCompletely(folder);
+            }
         });
         List<ImapFolder> deletedFolders = resultList.stream()
                 .filter(folder -> !dtosByNames.containsKey(folder.getName()))

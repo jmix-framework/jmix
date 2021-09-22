@@ -84,7 +84,6 @@
                   fetchPlan="_instance_name"/>
         <property name="eventHandlers"
                   fetchPlan="imap-event-handler-edit"/>
-        <property name="event"/>
     </fetchPlan>
 
     <fetchPlan class="io.jmix.imap.entity.ImapEventHandler"

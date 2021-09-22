@@ -72,7 +72,7 @@ open class ${controllerName} : Screen() {
         localesField.apply {
             setOptionsMap(messageTools.availableLocalesMap)
             value = app.locale
-            addValueChangeListener(this@LoginScreen::onLocalesFieldValueChangeEvent)
+            addValueChangeListener(this@${controllerName}::onLocalesFieldValueChangeEvent)
         }
     }
 

@@ -9,10 +9,7 @@ import io.jmix.ui.Notifications
 import io.jmix.ui.action.Action.ActionPerformedEvent
 import io.jmix.ui.component.*
 import io.jmix.ui.navigation.Route
-import io.jmix.ui.screen.Screen
-import io.jmix.ui.screen.Subscribe
-import io.jmix.ui.screen.UiController
-import io.jmix.ui.screen.UiDescriptor
+import io.jmix.ui.screen.*
 import io.jmix.ui.security.UiLoginProperties
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired

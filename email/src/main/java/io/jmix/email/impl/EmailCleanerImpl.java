@@ -50,12 +50,8 @@ public class EmailCleanerImpl implements EmailCleaner {
     @Autowired
     private FetchPlanRepository fetchPlanRepository;
 
-    private FileStorage fileStorage;
-
     @Autowired
-    public void setFileStorage(FileStorageLocator fileStorageLocator) {
-        this.fileStorage = fileStorageLocator.getDefault();
-    }
+    private FileStorageLocator fileStorageLocator;
 
     @Transactional
     @Override
@@ -77,6 +73,7 @@ public class EmailCleanerImpl implements EmailCleaner {
     }
 
     private int deleteMessages(int ageOfMessage, boolean important) {
+        FileStorage fileStorage = fileStorageLocator.getDefault();
         List<SendingMessage> messagesToDelete = entityManager.createQuery("select msg from email_SendingMessage msg" +
                 " where msg.important = :important and msg.createTs < :date", SendingMessage.class)
                 .setParameter("important", important)

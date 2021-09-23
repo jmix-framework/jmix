@@ -70,12 +70,17 @@ public class ImapStandardEventsGenerator extends ImapEventsBatchedGenerator {
 
     @Override
     public void init(ImapMailBox imapMailBox) {
-        batchSize = imapProperties.getEventsBatchSize();
+
     }
 
     @Override
     public void shutdown(ImapMailBox imapMailBox) {
 
+    }
+
+    @Override
+    protected int getBatchSize() {
+        return imapProperties.getEventsBatchSize();
     }
 
     @Override

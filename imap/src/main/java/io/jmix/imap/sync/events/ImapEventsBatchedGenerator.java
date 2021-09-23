@@ -24,23 +24,22 @@ import java.util.Collection;
 
 public abstract class ImapEventsBatchedGenerator implements ImapEventsGenerator {
 
-    protected int batchSize;
-
     @Override
     public final Collection<? extends BaseImapEvent> generateForNewMessages(ImapFolder jmixFolder) {
-        return generateForNewMessages(jmixFolder, batchSize);
+        return generateForNewMessages(jmixFolder, getBatchSize());
     }
 
     @Override
     public final Collection<? extends BaseImapEvent> generateForChangedMessages(ImapFolder jmixFolder) {
-        return generateForChangedMessages(jmixFolder, batchSize);
+        return generateForChangedMessages(jmixFolder, getBatchSize());
     }
 
     @Override
     public final Collection<? extends BaseImapEvent> generateForMissedMessages(ImapFolder jmixFolder) {
-        return generateForMissedMessages(jmixFolder, batchSize);
+        return generateForMissedMessages(jmixFolder, getBatchSize());
     }
 
+    protected abstract int getBatchSize();
     protected abstract Collection<? extends BaseImapEvent> generateForNewMessages(ImapFolder jmixFolder, int batchSize);
     protected abstract Collection<? extends BaseImapEvent> generateForChangedMessages(ImapFolder jmixFolder, int batchSize);
     protected abstract Collection<? extends BaseImapEvent> generateForMissedMessages(ImapFolder jmixFolder, int batchSize);

@@ -26,6 +26,8 @@ dependencies {
 
     implementation 'org.springframework.boot:spring-boot-autoconfigure'
     implementation 'com.graphql-java:graphql-java'
+    implementation 'com.jayway.jsonpath:json-path'
+
     // todo rewrite EnvironmentUtils.getRemoteIPAddress and then remove graphql-java-servlet dependency
     implementation ('com.graphql-java-kickstart:graphql-java-servlet') {
         exclude group: 'javax.websocket', module: 'javax.websocket-api'

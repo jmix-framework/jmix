@@ -17,6 +17,8 @@
 package io.jmix.graphql.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.PathNotFoundException;
 import graphql.GraphQL;
 import io.jmix.core.AccessManager;
 import io.jmix.core.FileClientManager;
@@ -77,7 +79,7 @@ public class GraphQLFilesUploadController extends GraphQLController<NativeWebReq
      */
     @PostMapping(
             value = "${graphql.spqr.http.endpoint:/graphql}",
-            consumes = {MediaType.ALL_VALUE}
+            consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}
     )
     @ResponseBody
     public Object executeMultipartPost(@RequestPart("operations") String operations,
@@ -101,16 +103,36 @@ public class GraphQLFilesUploadController extends GraphQLController<NativeWebReq
     private void mapRequestFilesToVariables(MultipartHttpServletRequest multiPartRequest, GraphQLRequest graphQLRequest,
                                             Map<String, ArrayList<String>> fileMap, String storage) {
         for (Map.Entry<String, ArrayList<String>> pair : fileMap.entrySet()) {
-            String targetVariable = pair.getValue().get(0).replace("variables.", "");
-            if (graphQLRequest.getVariables().containsKey(targetVariable)) {
+            String targetVariable = pair.getValue().get(0);//.replace("variables.", "");
+            try {
+                JsonPath.read(multiPartRequest.getParameter("operations"), "$."+targetVariable);
                 MultipartFile correspondingFile = multiPartRequest.getFileMap().get(pair.getKey());
                 if (correspondingFile == null) {
-                    throw new GraphQLControllerException("File upload failed",  "Field with name " + pair.getKey() + " of multipart request is absent",
+                    throw new GraphQLControllerException("File upload failed",  "Field with name " + pair.getKey() +
+                            " of multipart request is absent",
                             HttpStatus.BAD_REQUEST);
                 }
-                graphQLRequest.getVariables().put(targetVariable,
+                putValueIntoNestedMap(graphQLRequest.getVariables(), targetVariable.replace("variables.", ""),
                         new AbstractMap.SimpleEntry<>(storage, correspondingFile));
+            } catch (PathNotFoundException e) {
+                throw new GraphQLControllerException("Target file-variable not found", "Variable " + targetVariable +" not found",
+                        HttpStatus.BAD_REQUEST);
             }
+        }
+    }
+
+    private void putValueIntoNestedMap(Map map, String complexKey, Object value) {
+        String key = complexKey.substring(0, complexKey.contains(".") ? complexKey.indexOf(".") : complexKey.length());
+        String lastPart = complexKey.substring(complexKey.indexOf(".") + 1);
+
+        if( !map.containsKey(key)) {
+            throw new PathNotFoundException();
+        }
+        Object valueMap = map.get(key);
+        if (valueMap instanceof Map){
+            putValueIntoNestedMap((Map) valueMap, lastPart, value);
+        } else {
+            map.put(key, value);
         }
     }
 

@@ -18,11 +18,13 @@ package com.haulmont.cuba.web.gui;
 
 import com.haulmont.cuba.core.config.Config;
 import com.haulmont.cuba.core.global.Configuration;
+import com.haulmont.cuba.core.global.UserSessionSource;
 import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.data.DataSupplier;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.DsContext;
 import com.haulmont.cuba.gui.screen.compatibility.LegacyFrame;
+import com.haulmont.cuba.security.global.UserSession;
 import io.jmix.core.DevelopmentException;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.Frame;
@@ -55,7 +57,10 @@ public class CubaUiControllerDependencyInjector extends UiControllerDependencyIn
                                          ScreenOptions options) {
         AnnotatedElement element = injectElement.getElement();
 
-        if (Config.class.isAssignableFrom(type)) {
+        if (UserSession.class.isAssignableFrom(type)) {
+            UserSessionSource userSessionSource = applicationContext.getBean(UserSessionSource.class);
+            return userSessionSource.getUserSession();
+        } else if (Config.class.isAssignableFrom(type)) {
             Configuration configuration = (Configuration) applicationContext.getBean(Configuration.NAME);
             //noinspection unchecked
             return configuration.getConfig((Class<? extends Config>) type);

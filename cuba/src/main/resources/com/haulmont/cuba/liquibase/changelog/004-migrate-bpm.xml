@@ -20,7 +20,7 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd"
-        context="cuba">
+        context="cuba and !migrated">
 
     <changeSet id="10" author="migrator">
         <preConditions onFail="MARK_RAN">

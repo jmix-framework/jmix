@@ -17,6 +17,7 @@
 package io.jmix.graphql.datafetcher.sort
 
 import io.jmix.graphql.AbstractGraphQLTest
+import spock.lang.Ignore
 import test_support.entity.Car
 import test_support.entity.CarType
 import test_support.entity.Garage
@@ -104,6 +105,7 @@ class SortingTest extends AbstractGraphQLTest {
         capacities == [7, 9, 20, 20, 21, 50, 50, 56, 63, 71]
     }
 
+    @Ignore // todo get back after https://github.com/Haulmont/jmix-graphql/issues/157
     def "cars are sorted by set of conditions"() {
         when:
         def response = query("datafetcher/sort/cars-with-sort.gql",

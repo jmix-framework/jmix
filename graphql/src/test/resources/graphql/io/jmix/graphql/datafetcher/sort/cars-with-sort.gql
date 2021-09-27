@@ -1,4 +1,4 @@
-query ($orderBy: [inp_scr_CarOrderBy]){
+query ($orderBy: inp_scr_CarOrderBy){
   scr_CarList(
     orderBy: $orderBy
   ) {

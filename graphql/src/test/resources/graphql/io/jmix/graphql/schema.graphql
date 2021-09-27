@@ -89,7 +89,7 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: [inp_scr_AssociationM2MTestEntityOrderBy], 
+    orderBy: inp_scr_AssociationM2MTestEntityOrderBy, 
     "set false to load soft-deleted entities"
     softDeletion: Boolean
   ): [scr_AssociationM2MTestEntity]
@@ -112,7 +112,7 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: [inp_scr_AssociationM2OTestEntityOrderBy], 
+    orderBy: inp_scr_AssociationM2OTestEntityOrderBy, 
     "set false to load soft-deleted entities"
     softDeletion: Boolean
   ): [scr_AssociationM2OTestEntity]
@@ -135,7 +135,7 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: [inp_scr_AssociationO2MTestEntityOrderBy], 
+    orderBy: inp_scr_AssociationO2MTestEntityOrderBy, 
     "set false to load soft-deleted entities"
     softDeletion: Boolean
   ): [scr_AssociationO2MTestEntity]
@@ -158,7 +158,7 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: [inp_scr_AssociationO2OTestEntityOrderBy], 
+    orderBy: inp_scr_AssociationO2OTestEntityOrderBy, 
     "set false to load soft-deleted entities"
     softDeletion: Boolean
   ): [scr_AssociationO2OTestEntity]
@@ -181,7 +181,7 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: [inp_scr_BoringStringIdTestEntityOrderBy], 
+    orderBy: inp_scr_BoringStringIdTestEntityOrderBy, 
     "set false to load soft-deleted entities"
     softDeletion: Boolean
   ): [scr_BoringStringIdTestEntity]
@@ -204,7 +204,7 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: [inp_scr_CarOrderBy], 
+    orderBy: inp_scr_CarOrderBy, 
     "set false to load soft-deleted entities"
     softDeletion: Boolean
   ): [scr_Car]
@@ -227,7 +227,7 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: [inp_scr_CarRentOrderBy], 
+    orderBy: inp_scr_CarRentOrderBy, 
     "set false to load soft-deleted entities"
     softDeletion: Boolean
   ): [scr_CarRent]
@@ -250,7 +250,7 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: [inp_scr_CompositionO2MTestEntityOrderBy], 
+    orderBy: inp_scr_CompositionO2MTestEntityOrderBy, 
     "set false to load soft-deleted entities"
     softDeletion: Boolean
   ): [scr_CompositionO2MTestEntity]
@@ -273,7 +273,7 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: [inp_scr_CompositionO2OTestEntityOrderBy], 
+    orderBy: inp_scr_CompositionO2OTestEntityOrderBy, 
     "set false to load soft-deleted entities"
     softDeletion: Boolean
   ): [scr_CompositionO2OTestEntity]
@@ -296,7 +296,7 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: [inp_scr_CustomerOrderBy], 
+    orderBy: inp_scr_CustomerOrderBy, 
     "set false to load soft-deleted entities"
     softDeletion: Boolean
   ): [scr_Customer]
@@ -319,7 +319,7 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: [inp_scr_DatatypesTestEntity2OrderBy], 
+    orderBy: inp_scr_DatatypesTestEntity2OrderBy, 
     "set false to load soft-deleted entities"
     softDeletion: Boolean
   ): [scr_DatatypesTestEntity2]
@@ -342,7 +342,7 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: [inp_scr_DatatypesTestEntity3OrderBy], 
+    orderBy: inp_scr_DatatypesTestEntity3OrderBy, 
     "set false to load soft-deleted entities"
     softDeletion: Boolean
   ): [scr_DatatypesTestEntity3]
@@ -365,7 +365,7 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: [inp_scr_DatatypesTestEntityOrderBy], 
+    orderBy: inp_scr_DatatypesTestEntityOrderBy, 
     "set false to load soft-deleted entities"
     softDeletion: Boolean
   ): [scr_DatatypesTestEntity]
@@ -388,7 +388,7 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: [inp_scr_DeeplyNestedTestEntityOrderBy], 
+    orderBy: inp_scr_DeeplyNestedTestEntityOrderBy, 
     "set false to load soft-deleted entities"
     softDeletion: Boolean
   ): [scr_DeeplyNestedTestEntity]
@@ -411,7 +411,7 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: [inp_scr_FavoriteCarOrderBy], 
+    orderBy: inp_scr_FavoriteCarOrderBy, 
     "set false to load soft-deleted entities"
     softDeletion: Boolean
   ): [scr_FavoriteCar]
@@ -434,7 +434,7 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: [inp_scr_GarageOrderBy], 
+    orderBy: inp_scr_GarageOrderBy, 
     "set false to load soft-deleted entities"
     softDeletion: Boolean
   ): [scr_Garage]
@@ -457,7 +457,7 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: [inp_scr_IntIdentityIdTestEntityOrderBy], 
+    orderBy: inp_scr_IntIdentityIdTestEntityOrderBy, 
     "set false to load soft-deleted entities"
     softDeletion: Boolean
   ): [scr_IntIdentityIdTestEntity]
@@ -480,7 +480,7 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: [inp_scr_IntegerIdTestEntityOrderBy], 
+    orderBy: inp_scr_IntegerIdTestEntityOrderBy, 
     "set false to load soft-deleted entities"
     softDeletion: Boolean
   ): [scr_IntegerIdTestEntity]
@@ -514,7 +514,7 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: [inp_scr_OrderLineOrderBy], 
+    orderBy: inp_scr_OrderLineOrderBy, 
     "set false to load soft-deleted entities"
     softDeletion: Boolean
   ): [scr_OrderLine]
@@ -526,7 +526,7 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: [inp_scr_OrderOrderBy], 
+    orderBy: inp_scr_OrderOrderBy, 
     "set false to load soft-deleted entities"
     softDeletion: Boolean
   ): [scr_Order]
@@ -549,7 +549,7 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: [inp_scr_ProductOrderBy], 
+    orderBy: inp_scr_ProductOrderBy, 
     "set false to load soft-deleted entities"
     softDeletion: Boolean
   ): [scr_Product]
@@ -572,7 +572,7 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: [inp_scr_SparePartOrderBy], 
+    orderBy: inp_scr_SparePartOrderBy, 
     "set false to load soft-deleted entities"
     softDeletion: Boolean
   ): [scr_SparePart]
@@ -595,7 +595,7 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: [inp_scr_StringIdTestEntityOrderBy], 
+    orderBy: inp_scr_StringIdTestEntityOrderBy, 
     "set false to load soft-deleted entities"
     softDeletion: Boolean
   ): [scr_StringIdTestEntity]
@@ -618,7 +618,7 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: [inp_scr_TechnicalCertificateOrderBy], 
+    orderBy: inp_scr_TechnicalCertificateOrderBy, 
     "set false to load soft-deleted entities"
     softDeletion: Boolean
   ): [scr_TechnicalCertificate]
@@ -641,7 +641,7 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: [inp_scr_UserOrderBy], 
+    orderBy: inp_scr_UserOrderBy, 
     "set false to load soft-deleted entities"
     softDeletion: Boolean
   ): [scr_User]
@@ -664,7 +664,7 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: [inp_scr_WeirdStringIdTestEntityOrderBy], 
+    orderBy: inp_scr_WeirdStringIdTestEntityOrderBy, 
     "set false to load soft-deleted entities"
     softDeletion: Boolean
   ): [scr_WeirdStringIdTestEntity]
@@ -687,7 +687,7 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: [inp_sec_ResourcePolicyEntityOrderBy], 
+    orderBy: inp_sec_ResourcePolicyEntityOrderBy, 
     "set false to load soft-deleted entities"
     softDeletion: Boolean
   ): [sec_ResourcePolicyEntity]
@@ -710,7 +710,7 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: [inp_sec_ResourceRoleEntityOrderBy], 
+    orderBy: inp_sec_ResourceRoleEntityOrderBy, 
     "set false to load soft-deleted entities"
     softDeletion: Boolean
   ): [sec_ResourceRoleEntity]
@@ -733,7 +733,7 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: [inp_sec_RoleAssignmentEntityOrderBy], 
+    orderBy: inp_sec_RoleAssignmentEntityOrderBy, 
     "set false to load soft-deleted entities"
     softDeletion: Boolean
   ): [sec_RoleAssignmentEntity]
@@ -756,7 +756,7 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: [inp_sec_RowLevelPolicyEntityOrderBy], 
+    orderBy: inp_sec_RowLevelPolicyEntityOrderBy, 
     "set false to load soft-deleted entities"
     softDeletion: Boolean
   ): [sec_RowLevelPolicyEntity]
@@ -779,7 +779,7 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: [inp_sec_RowLevelRoleEntityOrderBy], 
+    orderBy: inp_sec_RowLevelRoleEntityOrderBy, 
     "set false to load soft-deleted entities"
     softDeletion: Boolean
   ): [sec_RowLevelRoleEntity]

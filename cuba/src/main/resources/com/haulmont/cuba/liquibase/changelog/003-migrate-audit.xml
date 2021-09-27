@@ -25,18 +25,21 @@
     <!--  EntityLog  -->
 
     <changeSet id="10" author="migrator" context="cuba and !migrated">
+        <validCheckSum>1:any</validCheckSum>
         <renameTable oldTableName="SEC_LOGGED_ENTITY" newTableName="AUDIT_LOGGED_ENTITY"/>
         <renameTable oldTableName="SEC_LOGGED_ATTR" newTableName="AUDIT_LOGGED_ATTR"/>
         <renameTable oldTableName="SEC_ENTITY_LOG" newTableName="AUDIT_ENTITY_LOG"/>
     </changeSet>
 
     <changeSet id="20" author="migrator" context="cuba and !migrated">
+        <validCheckSum>1:any</validCheckSum>
         <addColumn tableName="AUDIT_ENTITY_LOG">
             <column name="USERNAME" type="varchar(255)"/>
         </addColumn>
     </changeSet>
 
     <changeSet id="30" author="migrator" context="cuba and !migrated">
+        <validCheckSum>1:any</validCheckSum>
         <update tableName="AUDIT_ENTITY_LOG">
             <column name="USERNAME" valueComputed="(select u.USERNAME from SEC_USER u where u.ID = USER_ID)"/>
         </update>
@@ -45,10 +48,12 @@
     <!--  Entity Snapshots  -->
 
     <changeSet id="40" author="migrator" context="cuba and !migrated">
+        <validCheckSum>1:any</validCheckSum>
         <renameTable oldTableName="SYS_ENTITY_SNAPSHOT" newTableName="AUDIT_ENTITY_SNAPSHOT"/>
     </changeSet>
 
     <changeSet id="50" author="migrator" context="cuba and !migrated">
+        <validCheckSum>1:any</validCheckSum>
         <addColumn tableName="AUDIT_ENTITY_SNAPSHOT">
             <column name="AUTHOR_USERNAME" type="varchar(255)"/>
         </addColumn>
@@ -57,6 +62,7 @@
     </changeSet>
 
     <changeSet id="60" author="migrator" context="cuba and !migrated">
+        <validCheckSum>1:any</validCheckSum>
         <update tableName="AUDIT_ENTITY_SNAPSHOT">
             <column name="AUTHOR_USERNAME" valueComputed="(select u.USERNAME from SEC_USER u where u.ID = AUTHOR_ID)"/>
         </update>

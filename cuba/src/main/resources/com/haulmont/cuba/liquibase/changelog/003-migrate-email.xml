@@ -23,11 +23,13 @@
         context="cuba and !migrated">
 
     <changeSet id="10" author="migrator">
+        <validCheckSum>1:any</validCheckSum>
         <renameTable oldTableName="SYS_SENDING_MESSAGE" newTableName="EMAIL_SENDING_MESSAGE"/>
         <renameTable oldTableName="SYS_SENDING_ATTACHMENT" newTableName="EMAIL_SENDING_ATTACHMENT"/>
     </changeSet>
 
     <changeSet id="20" author="migrator">
+        <validCheckSum>1:any</validCheckSum>
         <renameColumn tableName="EMAIL_SENDING_MESSAGE"
                       columnDataType="varchar(500)"
                       oldColumnName="CAPTION"

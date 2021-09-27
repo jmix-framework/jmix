@@ -23,6 +23,7 @@
         context="cuba and !migrated">
 
     <changeSet id="10" author="migrator">
+        <validCheckSum>1:any</validCheckSum>
         <preConditions onFail="MARK_RAN">
             <tableExists tableName="BPROC_CONTENT_STORAGE"/>
         </preConditions>
@@ -43,6 +44,7 @@
     </changeSet>
 
     <changeSet id="15" author="migrator">
+        <validCheckSum>1:any</validCheckSum>
         <preConditions onFail="MARK_RAN">
             <tableExists tableName="BPROC_USER_GROUP_ROLE"/>
         </preConditions>
@@ -58,6 +60,7 @@
     </changeSet>
 
     <changeSet id="20" author="migrator">
+        <validCheckSum>1:any</validCheckSum>
         <preConditions onFail="MARK_RAN">
             <tableExists tableName="BPROC_USER_GROUP_USER_LINK"/>
         </preConditions>
@@ -92,6 +95,7 @@
     </changeSet>
 
     <changeSet id="21-pg" author="migrator" dbms="postgresql">
+        <validCheckSum>1:any</validCheckSum>
         <preConditions onFail="MARK_RAN">
             <tableExists tableName="BPROC_USER_GROUP_USER_LINK"/>
         </preConditions>
@@ -104,6 +108,7 @@
     </changeSet>
 
     <changeSet id="21-mssql" author="migrator" dbms="mssql">
+        <validCheckSum>1:any</validCheckSum>
         <preConditions onFail="MARK_RAN">
             <tableExists tableName="BPROC_USER_GROUP_USER_LINK"/>
         </preConditions>
@@ -116,6 +121,7 @@
     </changeSet>
 
     <changeSet id="21-mysql" author="migrator" dbms="mysql">
+        <validCheckSum>1:any</validCheckSum>
         <preConditions onFail="MARK_RAN">
             <tableExists tableName="BPROC_USER_GROUP_USER_LINK"/>
         </preConditions>
@@ -128,6 +134,7 @@
     </changeSet>
 
     <changeSet id="22" author="migrator">
+        <validCheckSum>1:any</validCheckSum>
         <preConditions onFail="MARK_RAN">
             <tableExists tableName="BPROC_USER_GROUP_USER_LINK"/>
         </preConditions>
@@ -164,6 +171,7 @@
     </changeSet>
 
     <changeSet id="23" author="migrator">
+        <validCheckSum>1:any</validCheckSum>
         <preConditions onFail="MARK_RAN">
             <tableExists tableName="BPROC_USER_GROUP_ROLE_LINK"/>
         </preConditions>
@@ -172,6 +180,7 @@
     </changeSet>
 
     <changeSet id="24" author="migrator">
+        <validCheckSum>1:any</validCheckSum>
         <preConditions onFail="MARK_RAN">
             <tableExists tableName="BPROC_USER_GROUP"/>
         </preConditions>

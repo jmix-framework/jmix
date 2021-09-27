@@ -25,6 +25,7 @@
     <!-- Dynamic Attributes -->
 
     <changeSet id="10" author="migrator">
+        <validCheckSum>1:any</validCheckSum>
         <renameTable oldTableName="SYS_CATEGORY" newTableName="DYNAT_CATEGORY"/>
         <renameTable oldTableName="SYS_CATEGORY_ATTR" newTableName="DYNAT_CATEGORY_ATTR"/>
         <renameTable oldTableName="SYS_ATTR_VALUE" newTableName="DYNAT_ATTR_VALUE"/>

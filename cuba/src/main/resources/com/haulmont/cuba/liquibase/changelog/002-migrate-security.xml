@@ -23,6 +23,7 @@
         context="cuba and !migrated">
 
     <changeSet id="10" author="migrator" context="cuba and !migrated">
+        <validCheckSum>1:any</validCheckSum>
         <addColumn tableName="SEC_USER">
             <column name="USERNAME" type="varchar(255)"/>
             <column name="ENABLED" type="boolean"/>
@@ -31,11 +32,13 @@
     </changeSet>
 
     <changeSet id="15" author="migrator" context="cuba and !migrated">
+        <validCheckSum>1:any</validCheckSum>
         <modifyDataType tableName="SEC_USER" columnName="EMAIL" newDataType="VARCHAR(255)"/>
         <modifyDataType tableName="SEC_USER" columnName="TIME_ZONE_ID" newDataType="VARCHAR(255)"/>
     </changeSet>
 
     <changeSet id="20" author="migrator" context="cuba and !migrated">
+        <validCheckSum>1:any</validCheckSum>
         <update tableName="SEC_USER">
             <column name="PASSWORD_ENCRYPTION" valueComputed="'noop'"/>
             <column name="PASSWORD" valueComputed="'1'"/>
@@ -44,6 +47,7 @@
     </changeSet>
 
     <changeSet id="30" author="migrator" context="cuba and !migrated">
+        <validCheckSum>1:any</validCheckSum>
         <update tableName="SEC_USER">
             <column name="USERNAME" valueComputed="LOGIN_LC"/>
             <column name="ENABLED" valueComputed="ACTIVE"/>
@@ -52,12 +56,14 @@
     </changeSet>
 
     <changeSet id="40" author="migrator" context="cuba and !migrated">
+        <validCheckSum>1:any</validCheckSum>
         <dropNotNullConstraint columnName="LOGIN" columnDataType="varchar(50)" tableName="SEC_USER"/>
         <dropNotNullConstraint columnName="LOGIN_LC" columnDataType="varchar(50)" tableName="SEC_USER"/>
         <addNotNullConstraint columnDataType="VARCHAR(255)" columnName="USERNAME" tableName="SEC_USER" validate="true"/>
     </changeSet>
 
     <changeSet id="50" author="migrator" context="cuba and !migrated">
+        <validCheckSum>1:any</validCheckSum>
         <insert tableName="SEC_ROLE_ASSIGNMENT" dbms="postgresql, mssql, hsqldb">
             <column name="ID" value="b44d6d0f-98ce-4e15-806f-f0062d5d49ad"/>
             <column name="VERSION" value="1"/>

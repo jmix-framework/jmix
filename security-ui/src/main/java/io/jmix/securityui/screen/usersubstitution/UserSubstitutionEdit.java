@@ -59,12 +59,13 @@ public class UserSubstitutionEdit extends StandardEditor<UserSubstitution> {
         List<? extends UserDetails> users = userRepository.getByUsernameLike("");
         Map<String, String> optionsMap = new HashMap<>();
 
-        users.forEach(userDetails -> {
+        for (UserDetails userDetails : users) {
+            String instanceName = metadataTools.getInstanceName(userDetails);
             if (userDetails.getUsername().equals(getEditedEntity().getUserName()))
-                nameField.setOptionsMap(Collections.singletonMap(metadataTools.getInstanceName(userDetails), userDetails.getUsername()));
+                nameField.setOptionsMap(Collections.singletonMap(instanceName, userDetails.getUsername()));
             else
-                optionsMap.put(metadataTools.getInstanceName(userDetails), userDetails.getUsername());
-        });
+                optionsMap.put(instanceName, userDetails.getUsername());
+        }
 
         substitutedNameField.setOptionsMap(optionsMap);
         substitutedNameField.setNullOptionVisible(false);

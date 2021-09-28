@@ -31,6 +31,7 @@ type Mutation {
   delete_sec_RoleAssignmentEntity(id: String!): Void
   delete_sec_RowLevelPolicyEntity(id: String!): Void
   delete_sec_RowLevelRoleEntity(id: String!): Void
+  delete_sec_UserSubstitution(id: String!): Void
   upsert_scr_AssociationM2MTestEntity(associationM2MTestEntity: inp_scr_AssociationM2MTestEntity!): scr_AssociationM2MTestEntity
   upsert_scr_AssociationM2OTestEntity(associationM2OTestEntity: inp_scr_AssociationM2OTestEntity!): scr_AssociationM2OTestEntity
   upsert_scr_AssociationO2MTestEntity(associationO2MTestEntity: inp_scr_AssociationO2MTestEntity!): scr_AssociationO2MTestEntity
@@ -62,6 +63,7 @@ type Mutation {
   upsert_sec_RoleAssignmentEntity(roleAssignmentEntity: inp_sec_RoleAssignmentEntity!): sec_RoleAssignmentEntity
   upsert_sec_RowLevelPolicyEntity(rowLevelPolicyEntity: inp_sec_RowLevelPolicyEntity!): sec_RowLevelPolicyEntity
   upsert_sec_RowLevelRoleEntity(rowLevelRoleEntity: inp_sec_RowLevelRoleEntity!): sec_RowLevelRoleEntity
+  upsert_sec_UserSubstitution(userSubstitution: inp_sec_UserSubstitution!): sec_UserSubstitution
 }
 
 "Query root"
@@ -783,6 +785,29 @@ type Query {
     "set false to load soft-deleted entities"
     softDeletion: Boolean
   ): [sec_RowLevelRoleEntity]
+  sec_UserSubstitutionById(
+    id: String!, 
+    "set false to load soft-deleted entity"
+    softDeletion: Boolean
+  ): sec_UserSubstitution
+  sec_UserSubstitutionCount(
+    "expressions to compare sec_UserSubstitution objects, all items are combined with logical 'AND'"
+    filter: [inp_sec_UserSubstitutionFilterCondition], 
+    "set false to include soft-deleted entities"
+    softDeletion: Boolean
+  ): Long
+  sec_UserSubstitutionList(
+    "expressions to compare sec_UserSubstitution objects, all items are combined with logical 'AND'"
+    filter: [inp_sec_UserSubstitutionFilterCondition], 
+    "limit the number of items returned"
+    limit: Int, 
+    "skip the first n items"
+    offset: Int, 
+    "sort the items by one or more fields"
+    orderBy: [inp_sec_UserSubstitutionOrderBy], 
+    "set false to load soft-deleted entities"
+    softDeletion: Boolean
+  ): [sec_UserSubstitution]
   userInfo: UserInfo
 }
 
@@ -1189,6 +1214,22 @@ type sec_RowLevelRoleEntity {
   sysTenantId: String
   updateTs: DateTime
   updatedBy: String
+  version: Int
+}
+
+type sec_UserSubstitution {
+  _instanceName: String
+  createTs: DateTime
+  createdBy: String
+  deleteTs: DateTime
+  deletedBy: String
+  endDate: Date
+  id: UUID
+  startDate: Date
+  substitutedUserName: String
+  updateTs: DateTime
+  updatedBy: String
+  userName: String
   version: Int
 }
 
@@ -1709,16 +1750,16 @@ input inp_UUIDFilterCondition {
 
 "expression to compare columns of type Upload. All fields are combined with logical 'AND'"
 input inp_UploadFilterCondition {
-"equals"
-_eq: Upload
-"in list"
-_in: [Upload]
-"is null"
-_isNull: Boolean
-"not equals"
-_neq: Upload
-"not in list"
-_notIn: [Upload]
+  "equals"
+  _eq: Upload
+  "in list"
+  _in: [Upload]
+  "is null"
+  _isNull: Boolean
+  "not equals"
+  _neq: Upload
+  "not in list"
+  _notIn: [Upload]
 }
 
 input inp_scr_AssociationM2MTestEntity {
@@ -2870,5 +2911,54 @@ input inp_sec_RowLevelRoleEntityOrderBy {
   sysTenantId: SortOrder
   updateTs: SortOrder
   updatedBy: SortOrder
+  version: SortOrder
+}
+
+input inp_sec_UserSubstitution {
+  createTs: DateTime
+  createdBy: String
+  deleteTs: DateTime
+  deletedBy: String
+  endDate: Date
+  id: UUID
+  startDate: Date
+  substitutedUserName: String
+  updateTs: DateTime
+  updatedBy: String
+  userName: String
+  version: Int
+}
+
+input inp_sec_UserSubstitutionFilterCondition {
+  AND: [inp_sec_UserSubstitutionFilterCondition]
+  OR: [inp_sec_UserSubstitutionFilterCondition]
+  "is null"
+  _isNull: Boolean
+  createTs: [inp_DateTimeFilterCondition]
+  createdBy: [inp_StringFilterCondition]
+  deleteTs: [inp_DateTimeFilterCondition]
+  deletedBy: [inp_StringFilterCondition]
+  endDate: [inp_DateFilterCondition]
+  id: [inp_UUIDFilterCondition]
+  startDate: [inp_DateFilterCondition]
+  substitutedUserName: [inp_StringFilterCondition]
+  updateTs: [inp_DateTimeFilterCondition]
+  updatedBy: [inp_StringFilterCondition]
+  userName: [inp_StringFilterCondition]
+  version: [inp_IntFilterCondition]
+}
+
+input inp_sec_UserSubstitutionOrderBy {
+  createTs: SortOrder
+  createdBy: SortOrder
+  deleteTs: SortOrder
+  deletedBy: SortOrder
+  endDate: SortOrder
+  id: SortOrder
+  startDate: SortOrder
+  substitutedUserName: SortOrder
+  updateTs: SortOrder
+  updatedBy: SortOrder
+  userName: SortOrder
   version: SortOrder
 }

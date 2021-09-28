@@ -804,7 +804,7 @@ type Query {
     "skip the first n items"
     offset: Int, 
     "sort the items by one or more fields"
-    orderBy: [inp_sec_UserSubstitutionOrderBy], 
+    orderBy: inp_sec_UserSubstitutionOrderBy, 
     "set false to load soft-deleted entities"
     softDeletion: Boolean
   ): [sec_UserSubstitution]

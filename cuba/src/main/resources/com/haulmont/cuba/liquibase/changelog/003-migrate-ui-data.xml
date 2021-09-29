@@ -49,6 +49,7 @@
         <validCheckSum>1:any</validCheckSum>
         <addColumn tableName="UI_TABLE_PRESENTATION">
             <column name="USERNAME" type="varchar(255)"/>
+            <column name="IS_DEFAULT" type="boolean"/>
         </addColumn>
         <renameColumn tableName="UI_TABLE_PRESENTATION" oldColumnName="XML" newColumnName="SETTINGS"/>
     </changeSet>

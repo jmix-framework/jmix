@@ -20,7 +20,7 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <changeSet id="1" author="security-data">
+    <changeSet id="1" author="security-data" context="!cuba">
         <createTable tableName="SEC_USER_SUBSTITUTION">
             <column name="ID" type="${uuid.type}">
                 <constraints primaryKey="true" nullable="false"/>

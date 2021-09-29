@@ -960,6 +960,7 @@ public class MetadataTools {
      * @param source source instance
      * @param dest   destination instance
      */
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public void copy(Object source, Object dest) {
         checkNotNullArgument(source, "source is null");
         checkNotNullArgument(dest, "dest is null");
@@ -984,6 +985,10 @@ public class MetadataTools {
                     }
                 }
             }
+        }
+
+        if (dest instanceof CopyingSystemState && dest.getClass().isAssignableFrom(source.getClass())) {
+            ((CopyingSystemState) dest).copyFrom(source);
         }
 
         // todo dynamic attributes
@@ -1076,6 +1081,7 @@ public class MetadataTools {
     /**
      * Copies all property values from source to destination excluding null values.
      */
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public void deepCopy(Object source, Object destination, EntitiesHolder entitiesHolder) {
         EntityPreconditions.checkEntityType(source);
         EntityPreconditions.checkEntityType(destination);
@@ -1119,6 +1125,11 @@ public class MetadataTools {
                 EntityValues.setValue(destination, name, value);
             }
         }
+
+        if (destination instanceof CopyingSystemState && destination.getClass().isAssignableFrom(source.getClass())) {
+            ((CopyingSystemState) destination).copyFrom(source);
+        }
+
 
         // todo dynamic attributes
 //        if (source instanceof BaseGenericIdEntity && destination instanceof BaseGenericIdEntity) {

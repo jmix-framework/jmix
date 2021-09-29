@@ -25,12 +25,20 @@ import java.util.function.Function;
 @Component("core_EntitySystemStateSupport")
 public class EntitySystemStateSupport {
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public void copySystemState(Entity src, Entity dst) {
         dst.__getEntityEntry().copy(src.__getEntityEntry());
+        if (dst instanceof CopyingSystemState) {
+            ((CopyingSystemState) dst).copyFrom(src);
+        }
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public void mergeSystemState(Entity src, Entity dst) {
         dst.__getEntityEntry().copy(src.__getEntityEntry());
+        if (dst instanceof CopyingSystemState) {
+            ((CopyingSystemState) dst).copyFrom(src);
+        }
     }
 
     public void mergeLazyLoadingState(Entity src, Entity dst, MetaProperty metaProperty,

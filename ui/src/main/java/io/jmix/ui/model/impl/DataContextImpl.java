@@ -47,7 +47,7 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
  * Standard implementation of {@link DataContext} which commits data to {@link DataManager}.
  */
 @SuppressWarnings("rawtypes")
-public class DataContextImpl implements DataContext {
+public class DataContextImpl implements DataContextInternal {
 
     private static final Logger log = LoggerFactory.getLogger(DataContextImpl.class);
 
@@ -84,7 +84,7 @@ public class DataContextImpl implements DataContext {
 
     protected boolean disableListeners;
 
-    protected DataContextImpl parentContext;
+    protected DataContextInternal parentContext;
 
     protected Function<SaveContext, Set<Object>> commitDelegate;
 
@@ -101,10 +101,12 @@ public class DataContextImpl implements DataContext {
     @Override
     public void setParent(DataContext parentContext) {
         checkNotNullArgument(parentContext, "parentContext is null");
-        if (!(parentContext instanceof DataContextImpl)) {
-            throw new IllegalArgumentException("Unsupported DataContext type: " + parentContext.getClass().getName());
+        if (!(parentContext instanceof DataContextInternal)) {
+            throw new IllegalArgumentException(String.format(
+                    "Unsupported DataContext type: %s. Parent DataContext must implement DataContextInternal",
+                    parentContext.getClass().getName()));
         }
-        this.parentContext = (DataContextImpl) parentContext;
+        this.parentContext = (DataContextInternal) parentContext;
     }
 
     @Override
@@ -735,7 +737,7 @@ public class DataContextImpl implements DataContext {
         Set<Object> committedEntities = new HashSet<>();
         for (Object entity : modifiedInstances) {
             Object merged = parentContext.merge(entity);
-            parentContext.modifiedInstances.add(merged);
+            parentContext.getModifiedInstances().add(merged);
             committedEntities.add(merged);
         }
         for (Object entity : removedInstances) {
@@ -745,9 +747,9 @@ public class DataContextImpl implements DataContext {
         return committedEntities;
     }
 
-    protected void cleanupContextAfterRemoveEntity(DataContextImpl context, Object removedEntity) {
+    protected void cleanupContextAfterRemoveEntity(DataContextInternal context, Object removedEntity) {
         if (entityStates.isNew(removedEntity)) {
-            context.modifiedInstances.removeIf(modifiedInstance ->
+            context.getModifiedInstances().removeIf(modifiedInstance ->
                     entityStates.isNew(modifiedInstance) && entityHasReference(modifiedInstance, removedEntity));
         }
     }
@@ -835,6 +837,11 @@ public class DataContextImpl implements DataContext {
 
     protected String printObject(Object object) {
         return "{" + object.getClass().getSimpleName() + "@" + Integer.toHexString(System.identityHashCode(object)) + "}";
+    }
+
+    @Override
+    public Set<Object> getModifiedInstances() {
+        return modifiedInstances;
     }
 
     protected class PropertyChangeListener implements EntityPropertyChangeListener {

@@ -25,6 +25,7 @@ import io.jmix.ui.model.impl.NoopDataContext
 import org.eclipse.persistence.queries.FetchGroupTracker
 import org.springframework.beans.factory.annotation.Autowired
 import test_support.DataContextSpec
+import test_support.entity.TestCopyingSystemStateEntity
 import test_support.entity.TestNotGeneratedIdEntity
 import test_support.entity.sales.*
 import test_support.entity.sec.Role
@@ -718,5 +719,19 @@ class DataContextTest extends DataContextSpec {
         then:
         ((TestNotGeneratedIdEntity) context.getModified().iterator().next()).uuid != null
 
+    }
+
+    def "copy system state"() {
+        DataContext context = factory.createDataContext()
+        TestCopyingSystemStateEntity entity = metadata.create(TestCopyingSystemStateEntity)
+        entity.setName('abc')
+        entity.setFoo('foo')
+
+        when:
+        def mergedEntity = context.merge(entity)
+
+        then:
+        mergedEntity.getName() == 'abc'
+        mergedEntity.getFoo() == 'foo'
     }
 }

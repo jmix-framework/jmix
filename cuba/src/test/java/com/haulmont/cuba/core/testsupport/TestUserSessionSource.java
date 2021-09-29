@@ -20,12 +20,12 @@ package com.haulmont.cuba.core.testsupport;
 import com.haulmont.cuba.core.global.impl.UserSessionSourceImpl;
 import com.haulmont.cuba.security.global.NoUserSessionException;
 import com.haulmont.cuba.security.global.UserSession;
+import io.jmix.core.session.SessionData;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collections;
-import java.util.Locale;
-import java.util.UUID;
+import java.util.*;
 
 public class TestUserSessionSource extends UserSessionSourceImpl {
 
@@ -33,6 +33,7 @@ public class TestUserSessionSource extends UserSessionSourceImpl {
 
     private UserSession session;
     private boolean exceptionOnGetUserSession;
+    private TestSessionData sessionData = new TestSessionData();
 
     @Override
     public boolean checkCurrentUserSession() {
@@ -54,7 +55,10 @@ public class TestUserSessionSource extends UserSessionSourceImpl {
                     .password("test_admin")
                     .authorities(Collections.emptyList())
                     .build();
-            session = new UserSession();
+            session = new UserSession(
+                    new UsernamePasswordAuthenticationToken(user, "test_admin"),
+                    sessionData
+            );
             session.setUser(user);
             session.setLocale(Locale.ENGLISH);
         }
@@ -63,5 +67,30 @@ public class TestUserSessionSource extends UserSessionSourceImpl {
 
     public void setUserSession(UserSession session) {
         this.session = session;
+    }
+
+    static class TestSessionData implements SessionData {
+
+        Map<String, Object> attributes = new HashMap<>();
+
+        @Override
+        public Collection<String> getAttributeNames() {
+            return attributes.keySet();
+        }
+
+        @Override
+        public Object getAttribute(String name) {
+            return attributes.get(name);
+        }
+
+        @Override
+        public void setAttribute(String name, Object attribute) {
+            attributes.put(name, attribute);
+        }
+
+        @Override
+        public String getSessionId() {
+            return "test-session";
+        }
     }
 }

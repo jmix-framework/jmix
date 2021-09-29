@@ -76,7 +76,7 @@ public abstract class AbstractCollectionDatasource<T extends Entity, K>
     protected boolean listenersSuspended;
     protected final LinkedList<CollectionChangeEvent<T, K>> suspendedEvents = new LinkedList<>();
     protected RefreshMode refreshMode = RefreshMode.ALWAYS;
-    protected UserSession userSession = AppBeans.<UserSessionSource>get(UserSessionSource.NAME).getUserSession();
+    protected UserSession userSession = AppBeans.get(UserSessionSource.class).getUserSession();
 
     @Override
     public T getItemNN(K id) {

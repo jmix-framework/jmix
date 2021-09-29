@@ -23,6 +23,7 @@ import io.jmix.core.security.ClientDetails;
 import io.jmix.core.security.SecurityContextHelper;
 import io.jmix.core.security.SystemAuthenticationToken;
 import io.jmix.core.security.UserRepository;
+import io.jmix.core.session.SessionData;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -59,7 +60,7 @@ public class UserSessionSourceImpl implements UserSessionSource {
     @Override
     public UserSession getUserSession() throws NoUserSessionException {
         Authentication authentication = SecurityContextHelper.getAuthentication();
-        UserSession session = new UserSession();
+        UserSession session = new UserSession(authentication, beanFactory.getBean(SessionData.class));
         updateUserSessionFromAuthentication(authentication, session);
         return session;
     }

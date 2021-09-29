@@ -18,6 +18,7 @@ package com.haulmont.cuba.security.global;
 
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.security.ClientDetails;
+import io.jmix.core.session.SessionData;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -37,6 +38,8 @@ public class UserSession implements Authentication {
 
     protected Authentication authentication;
 
+    protected SessionData sessionData;
+
     protected ClientDetails clientDetails = ClientDetails.UNKNOWN;
 
     protected Locale locale = Locale.getDefault(); // todo user locale
@@ -47,17 +50,15 @@ public class UserSession implements Authentication {
 
     protected Map<String, Serializable> attributes = new ConcurrentHashMap<>();
 
-    public UserSession(Authentication authentication) {
+    public UserSession(Authentication authentication, SessionData sessionData) {
         this.authentication = authentication;
+        this.sessionData = sessionData;
         if (authentication.getPrincipal() instanceof UserDetails) {
             user = (UserDetails) authentication.getPrincipal();
         } else {
             throw new UnsupportedOperationException("UserSession does not support principal of type "
                     + authentication.getPrincipal().getClass().getName());
         }
-    }
-
-    public UserSession() {
     }
 
     public Authentication getAuthentication() {
@@ -98,19 +99,19 @@ public class UserSession implements Authentication {
 
     @SuppressWarnings("unchecked")
     public <T> T getAttribute(String name) {
-        return (T) attributes.get(name);
+        return (T) sessionData.getAttribute(name);
     }
 
     public void setAttribute(String name, Serializable value) {
-        attributes.put(name, value);
+        sessionData.setAttribute(name, value);
     }
 
     public Collection<String> getAttributeNames() {
-        return new ArrayList<>(attributes.keySet());
+        return sessionData.getAttributeNames();
     }
 
     public void removeAttribute(String name) {
-        attributes.remove(name);
+        sessionData.setAttribute(name, null);
     }
 
     @Override

@@ -31,7 +31,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static test_support.RestTestUtils.*;
 
-@TestPropertySource(properties = "jmix.rest.optimisticLockingEnabled=true")
+@TestPropertySource(properties = "jmix.rest.optimistic-locking-enabled=true")
 class EntitiesControllerWithOptimisticLockingFT extends EntitiesControllerFT {
     @Test
     void updateCarWithVersion() throws Exception {

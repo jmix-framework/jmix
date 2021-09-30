@@ -33,7 +33,7 @@ public class RestAuthorizedUrlsProvider implements AuthorizedUrlsProvider {
 
     @Override
     public Collection<String> getAuthenticatedUrlPatterns() {
-        List<String> urlPatterns = jmixModules.getPropertyValues("jmix.rest.authenticatedUrlPatterns");
+        List<String> urlPatterns = jmixModules.getPropertyValues("jmix.rest.authenticated-url-patterns");
         return urlPatterns.stream()
                 .flatMap(s -> Arrays.stream(s.split(",")))
                 .collect(Collectors.toList());
@@ -41,7 +41,7 @@ public class RestAuthorizedUrlsProvider implements AuthorizedUrlsProvider {
 
     @Override
     public Collection<String> getAnonymousUrlPatterns() {
-        List<String> urlPatterns = jmixModules.getPropertyValues("jmix.rest.anonymousUrlPatterns");
+        List<String> urlPatterns = jmixModules.getPropertyValues("jmix.rest.anonymous-url-patterns");
         return urlPatterns.stream()
                 .flatMap(s -> Arrays.stream(s.split(",")))
                 .collect(Collectors.toList());

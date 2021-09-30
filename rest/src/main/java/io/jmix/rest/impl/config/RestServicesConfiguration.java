@@ -63,7 +63,7 @@ public class RestServicesConfiguration {
 
     private static final Logger log = LoggerFactory.getLogger(RestServicesConfiguration.class);
 
-    public static final String JMIX_REST_SERVICES_CONFIG_PROP_NAME = "jmix.rest.servicesConfig";
+    public static final String JMIX_REST_SERVICES_CONFIG_PROP_NAME = "jmix.rest.services-config";
 
     protected Map<String, RestServiceInfo> serviceInfosMap = new ConcurrentHashMap<>();
 

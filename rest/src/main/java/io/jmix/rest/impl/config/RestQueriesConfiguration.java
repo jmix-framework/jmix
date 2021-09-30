@@ -51,7 +51,7 @@ import java.util.stream.Collectors;
 @Component("rest_RestQueriesConfiguration")
 public class RestQueriesConfiguration {
 
-    protected static final String JMIX_REST_QUERIES_CONFIG_PROP_NAME = "jmix.rest.queriesConfig";
+    protected static final String JMIX_REST_QUERIES_CONFIG_PROP_NAME = "jmix.rest.queries-config";
 
     private final Logger log = LoggerFactory.getLogger(RestQueriesConfiguration.class);
 

@@ -45,7 +45,7 @@ import static test_support.RestTestUtils.*;
  *
  */
 @TestPropertySource(properties = {
-        "jmix.core.entitySerializationTokenRequired = true"
+        "jmix.core.entity-serialization-token-required = true"
 })
 public class RowLevelSecurityFT extends AbstractRestControllerFT {
 

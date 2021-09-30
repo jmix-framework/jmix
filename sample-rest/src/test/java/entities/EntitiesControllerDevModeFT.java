@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 import static test_support.RestTestUtils.*;
 
-@TestPropertySource(properties = {"jmix.security.oauth2.devMode=true", "jmix.security.oauth2.devUsername=admin"})
+@TestPropertySource(properties = {"jmix.security.oauth2.dev-mode=true", "jmix.security.oauth2.dev-username=admin"})
 public class EntitiesControllerDevModeFT extends AbstractRestControllerFT {
     protected String carUuidString;
     protected String colourUuidString;

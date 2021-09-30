@@ -54,7 +54,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 @Component("rest_RestJsonTransformations")
 public class RestJsonTransformations {
 
-    protected static final String JMIX_REST_JSON_TRANSFORMATION_CONFIG_PROP_NAME = "jmix.rest.jsonTransformationConfig";
+    protected static final String JMIX_REST_JSON_TRANSFORMATION_CONFIG_PROP_NAME = "jmix.rest.json-transformation-config";
 
     private static final Logger log = LoggerFactory.getLogger(RestJsonTransformations.class);
 

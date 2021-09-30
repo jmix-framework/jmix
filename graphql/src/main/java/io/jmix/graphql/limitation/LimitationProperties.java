@@ -24,8 +24,14 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 @ConstructorBinding
 public class LimitationProperties {
 
+    /**
+     * Max allowed depth for query. Default value 0 means the client has no limit.
+     */
     int maxQueryDepth;
 
+    /**
+     * Number of rate-limit per minute from one client IP address. Default value 0 means the client has no limit.
+     */
     int operationRateLimitPerMinute;
 
     public LimitationProperties(@DefaultValue("0") int operationRateLimitPerMinute, @DefaultValue("0") int maxQueryDepth) {
@@ -34,16 +40,14 @@ public class LimitationProperties {
     }
 
     /**
-     * @return number of rate-limit per minute from one client IP address
-     * Default value 0 means the client has no limit
+     * @see #operationRateLimitPerMinute
      */
     public int getOperationRateLimitPerMinute() {
         return operationRateLimitPerMinute;
     }
 
     /**
-     * @return max allowed depth for query
-     * Default value 0 means the client has no limit
+     * @see #maxQueryDepth
      */
     public int getMaxQueryDepth() {
         return maxQueryDepth;

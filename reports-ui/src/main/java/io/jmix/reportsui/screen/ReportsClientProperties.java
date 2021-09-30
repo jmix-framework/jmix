@@ -24,10 +24,18 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 @ConstructorBinding
 public class ReportsClientProperties {
 
+    /**
+     * Whether reports will be run in the background from the screens and actions defined by the Reports add-on.
+     */
     boolean useBackgroundReportProcessing;
 
     long backgroundReportProcessingTimeoutMs;
 
+    /**
+     * Whether Script fields in report editor should handle TAB key as \t symbol instead of focus navigation.
+     *
+     * @see io.jmix.reportsui.screen.definition.edit.BandDefinitionEditor
+     */
     boolean enableTabSymbolInDataSetEditor;
 
     public ReportsClientProperties(@DefaultValue("false") boolean useBackgroundReportProcessing,
@@ -39,7 +47,7 @@ public class ReportsClientProperties {
     }
 
     /**
-     * @return if true, the reports will be run in the background from the screens and actions defined by the Reports add-on
+     * @see #useBackgroundReportProcessing
      */
     public boolean getUseBackgroundReportProcessing() {
         return useBackgroundReportProcessing;
@@ -50,8 +58,7 @@ public class ReportsClientProperties {
     }
 
     /**
-     * @return true if Script fields in report editor should handle TAB key as \t symbol instead of focus navigation
-     * @see io.jmix.reportsui.screen.definition.edit.BandDefinitionEditor
+     * @see #enableTabSymbolInDataSetEditor
      */
     public boolean getEnableTabSymbolInDataSetEditor() {
         return enableTabSymbolInDataSetEditor;

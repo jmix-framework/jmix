@@ -31,44 +31,109 @@ import java.util.List;
 @ConstructorBinding
 public class ReportsProperties {
 
+    /**
+     * Path to the installed OpenOffice
+     */
     String officePath;
 
+    /**
+     * List of ports to start OpenOffice on.
+     */
     List<Integer> officePorts;
 
+    /**
+     * Request to OpenOffice timeout in seconds.
+     */
     int docFormatterTimeout;
 
+    /**
+     * Has to be false if using OpenOffice reporting formatter on a *nix server without X server running.
+     */
     boolean displayDeviceAvailable;
 
+    /**
+     * Directory with fonts for generate PDF from HTML
+     */
     String pdfFontsDirectory;
 
+    /**
+     * The option which enforces standard data extractor to put empty row in each band if no data has been selected In
+     * summary this option says - would table linked with empty band have at least one empty row or not.
+     */
     boolean putEmptyRowIfNoDataSelected;
 
+    /**
+     * Default limit used if parameter prototype object does not specify limit itself.
+     */
     int parameterPrototypeQueryLimit;
 
+    /**
+     * Entities that will not be available for report wizard. Note that if {@code jmix.reports.wizardEntitiesWhiteList}
+     * is not empty, this list will be ignored.
+     */
     List<String> wizardEntitiesBlackList;
 
+    /**
+     * Entities that will be available for report wizard. All others entities will be ignored. Note that even if {@code
+     * jmix.reports.wizardEntitiesBlackList} is not empty, this list will be used anyway.
+     */
     List<String> wizardEntitiesWhiteList;
 
+    /**
+     * Entity properties that will not be available for report creation wizard. Format is like {@code
+     * BaseUuidEntity.id,BaseUuidEntity.createTs,ref$Car.id,...}. Properties support inheritance, i.e. {@code
+     * BaseUuidEntity.id} will filter that field for all descendants, e.g. {@code ref$Car}. To allow selection of a
+     * field for a concrete descendant (e.g. {@code ref$Car}), use {@code reporting.wizardPropertiesExcludedBlackList}
+     * setting with value {@code ref$Car.id}.
+     */
     List<String> wizardPropertiesBlackList;
 
+    /**
+     * Entity properties that will not to be excluded by {@code jmix.reports.wizardPropertiesBlackList} setting
+     *
+     * @see ReportsProperties#getWizardPropertiesBlackList()
+     */
     List<String> wizardPropertiesExcludedBlackList;
 
+    /**
+     * Maximum depth of entity model that is used in report wizard and report dataset fetchPlan editor.
+     */
     int entityTreeModelMaxDepth;
 
     int htmlExternalResourcesTimeoutSec;
 
+    /**
+     * The path to the cURL tool. Reporting uses cURL tool to generate reports from URL.
+     */
     String curlPath;
 
+    /**
+     * String with parameters used while calling cURL. Reporting uses cURL tool to generate reports from URL.
+     */
     String curlParams;
 
     int curlTimeout;
 
+    /**
+     * Flag to enable execution history recording.
+     */
     boolean historyRecordingEnabled;
-
+    /**
+     * If enabled - then save all output documents to file storage, so they can be downloaded later. if enabled - then
+     * save all output documents to file storage
+     */
     boolean saveOutputDocumentsToHistory;
 
-    int historyCleanupMaxDays;
+    /**
+     * Report execution history deletes all history items older than this number of days. Value == 0 means no cleanup by
+     * this criteria. max available number of days for execution history
+     */
 
+    int historyCleanupMaxDays;
+    /**
+     * Report execution cleanup leaves only this number of execution history items for each report, deleting all older
+     * items. Value == 0 means no cleanup by this criteria. max available number of execution history items per report
+     */
     int historyCleanupMaxItemsPerReport;
 
     int countOfRetry;
@@ -122,119 +187,105 @@ public class ReportsProperties {
     }
 
     /**
-     * @return Path to the installed OpenOffice
+     * @see #officePath
      */
     public String getOfficePath() {
         return officePath;
     }
 
     /**
-     * @return The list of ports to start OpenOffice on.
+     * @see #officePorts
      */
     public List<Integer> getOfficePorts() {
         return officePorts;
     }
 
     /**
-     * @return Request to OpenOffice timeout in seconds.
+     * @see #docFormatterTimeout
      */
     public Integer getDocFormatterTimeout() {
         return docFormatterTimeout;
     }
 
     /**
-     * @return Has to be false if using OpenOffice reporting formatter on a *nix server without X server running
+     * @see #displayDeviceAvailable
      */
     public boolean getDisplayDeviceAvailable() {
         return displayDeviceAvailable;
     }
 
     /**
-     * @return Directory with fonts for generate PDF from HTML
+     * @see #pdfFontsDirectory
      */
     public String getPdfFontsDirectory() {
         return pdfFontsDirectory;
     }
 
     /**
-     * @return The option which enforces standard data extractor to put empty row in each band if no data has been selected
-     * In summary this option says - would table linked with empty band have at least one empty row or not.
+     * @see #putEmptyRowIfNoDataSelected
      */
     public Boolean getPutEmptyRowIfNoDataSelected() {
         return putEmptyRowIfNoDataSelected;
     }
 
     /**
-     * @return Default limit used if parameter prototype object does not specify limit itself
+     * @see #parameterPrototypeQueryLimit
      */
     public Integer getParameterPrototypeQueryLimit() {
         return parameterPrototypeQueryLimit;
     }
 
     /**
-     * Return entities that will not be available for report wizard.
-     * Note that if {@code jmix.reports.wizardEntitiesWhiteList} is not empty, this list will be ignored
-     *
-     * @return list of ignored entities
+     * @see #wizardEntitiesBlackList
      */
     public List<String> getWizardEntitiesBlackList() {
         return wizardEntitiesBlackList;
     }
 
     /**
-     * Entities that will be available for report wizard. All others entities will be ignored.
-     * Note that even if {@code jmix.reports.wizardEntitiesBlackList} is not empty, this list will be used anyway.
-     *
-     * @return list of entities that available for reportWizard
+     * @see #wizardEntitiesWhiteList
      */
     public List<String> getWizardEntitiesWhiteList() {
         return wizardEntitiesWhiteList;
     }
 
     /**
-     * Entity properties that will not be available for report creation wizard. Format is like {@code BaseUuidEntity.id,BaseUuidEntity.createTs,ref$Car.id,...}<br>
-     * Properties support inheritance, i.e. {@code BaseUuidEntity.id} will filter that field for all descendants, e.g. {@code ref$Car}.
-     * To allow selection of a field for a concrete descendant (e.g. {@code ref$Car}), use
-     * {@code reporting.wizardPropertiesExcludedBlackList} setting with value {@code ref$Car.id}.
-     *
-     * @return blacklisted properties that is not available
+     * @see #wizardPropertiesBlackList
      */
     public List<String> getWizardPropertiesBlackList() {
         return wizardPropertiesBlackList;
     }
 
     /**
-     * @return Entity properties that will not to be excluded by {@code jmix.reports.wizardPropertiesBlackList} setting
-     *
-     * @see ReportsProperties#getWizardPropertiesBlackList()
+     * @see #wizardPropertiesExcludedBlackList
      */
     public List<String> getWizardPropertiesExcludedBlackList() {
         return wizardPropertiesExcludedBlackList;
     }
 
     /**
-     * @return Maximum depth of entity model that is used in report wizard and report dataset fetchPlan editor.
+     * @see #entityTreeModelMaxDepth
      */
     public Integer getEntityTreeModelMaxDepth() {
         return entityTreeModelMaxDepth;
     }
 
-
+    /**
+     * @see #htmlExternalResourcesTimeoutSec
+     */
     public Integer getHtmlExternalResourcesTimeoutSec() {
         return htmlExternalResourcesTimeoutSec;
     }
 
     /**
-     * Reporting uses cURL tool to generate reports from URL. This is the system path to the tool.
-     * @return path to the cURL tool to generate report from URL
+     * @see #curlPath
      */
     public String getCurlPath() {
         return curlPath;
     }
 
     /**
-     * Reporting uses cURL tool to generate reports from URL. This the string with parameters used while calling cURL.
-     * @return parameters used while calling cURL to generate reports from URL
+     * @see #curlParams
      */
     public String getCurlParams() {
         return curlParams;
@@ -245,34 +296,28 @@ public class ReportsProperties {
     }
 
     /**
-     * @return Flag to enable execution history recording.
+     * @see #historyRecordingEnabled
      */
     public boolean isHistoryRecordingEnabled() {
         return historyRecordingEnabled;
     }
 
     /**
-     * If enabled - then save all output documents to file storage, so they can be downloaded later.
-     * @return if enabled - then save all output documents to file storage
+     * @see #saveOutputDocumentsToHistory
      */
     public boolean isSaveOutputDocumentsToHistory() {
         return saveOutputDocumentsToHistory;
     }
 
     /**
-     * Report execution history deletes all history items older than this number of days.
-     * Value == 0 means no cleanup by this criteria.
-     * @return max available number of days for execution history
+     * @see #historyCleanupMaxDays
      */
     public int getHistoryCleanupMaxDays() {
         return historyCleanupMaxDays;
     }
 
     /**
-     * Report execution cleanup leaves only this number of execution history items for each report,
-     * deleting all older items.
-     * Value == 0 means no cleanup by this criteria.
-     * @return max available number of execution history items per report
+     * @see #historyCleanupMaxItemsPerReport
      */
     public int getHistoryCleanupMaxItemsPerReport() {
         return historyCleanupMaxItemsPerReport;

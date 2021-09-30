@@ -27,9 +27,25 @@ import java.util.Map;
 @ConfigurationProperties(prefix = "jmix.rest")
 @ConstructorBinding
 public class RestProperties {
+
+    /**
+     * Allowed origins for cross-domain requests.
+     */
     private final String[] allowedOrigins;
+
+    /**
+     * Maximum size of the file that may be uploaded with REST API in bytes.
+     */
     private final int maxUploadSize;
+
+    /**
+     * Whether the passed entities versions should be validated before entities are persisted.
+     */
     private final boolean optimisticLockingEnabled;
+
+    /**
+     * Whether "responseView" param is required.
+     */
     private final boolean responseFetchPlanEnabled;
     private final int defaultMaxFetchSize;
     private final Map<String, Integer> entityMaxFetchSize;
@@ -51,28 +67,28 @@ public class RestProperties {
     }
 
     /**
-     * @return whether the passed entities versions should be validated before entities are persisted
+     * @see #optimisticLockingEnabled
      */
     public boolean isOptimisticLockingEnabled() {
         return optimisticLockingEnabled;
     }
 
     /**
-     * @return whether "responseView" param is required
+     * @see #responseFetchPlanEnabled
      */
     public boolean isResponseFetchPlanEnabled() {
         return responseFetchPlanEnabled;
     }
 
     /**
-     * @return allowed origins for cross-domain requests
+     * @see #allowedOrigins
      */
     public String[] getAllowedOrigins() {
         return allowedOrigins;
     }
 
     /**
-     * @return maximum size of the file that may be uploaded with REST API in bytes
+     * @see #maxUploadSize
      */
     public int getMaxUploadSize() {
         return maxUploadSize;

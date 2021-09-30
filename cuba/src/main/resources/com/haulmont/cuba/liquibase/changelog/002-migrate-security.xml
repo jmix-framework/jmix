@@ -51,7 +51,7 @@
         <update tableName="SEC_USER">
             <column name="USERNAME" valueComputed="LOGIN_LC"/>
             <column name="ENABLED" valueComputed="ACTIVE"/>
-            <column name="PASSWORD" valueComputed="CONCAT('{',PASSWORD_ENCRYPTION,'}',PASSWORD)"/>
+            <column name="PASSWORD" valueComputed="CONCAT(CONCAT('{',PASSWORD_ENCRYPTION), CONCAT('}',PASSWORD))"/>
         </update>
     </changeSet>
 

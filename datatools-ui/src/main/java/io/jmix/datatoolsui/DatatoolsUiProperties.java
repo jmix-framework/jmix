@@ -24,6 +24,10 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 @ConstructorBinding
 public class DatatoolsUiProperties {
 
+    /**
+     * Whether the controls to display SQL-scripts for creating / updating / retrieving an entity instance in the Entity
+     * Information window is visible
+     */
     boolean entityInfoScriptsEnabled;
 
     public DatatoolsUiProperties(@DefaultValue("true") boolean entityInfoScriptsEnabled) {
@@ -31,8 +35,7 @@ public class DatatoolsUiProperties {
     }
 
     /**
-     * @return whether the controls to display SQL-scripts for creating / updating / retrieving
-     * an entity instance in the Entity Information window is visible
+     * @see #entityInfoScriptsEnabled
      */
     public boolean isEntityInfoScriptsEnabled() {
         return entityInfoScriptsEnabled;

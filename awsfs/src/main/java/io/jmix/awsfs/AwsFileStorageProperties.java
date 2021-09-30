@@ -7,11 +7,35 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 @ConfigurationProperties(prefix = "jmix.awsfs")
 @ConstructorBinding
 public class AwsFileStorageProperties {
+
+    /**
+     * Amazon S3 access key.
+     */
     String accessKey;
+
+    /**
+     * Amazon S3 secret access key.
+     */
     String secretAccessKey;
+
+    /**
+     * Amazon S3 region.
+     */
     String region;
+
+    /**
+     * Amazon S3 bucket name.
+     */
     String bucket;
+
+    /**
+     * Amazon S3 chunk size (kB).
+     */
     int chunkSize;
+
+    /**
+     * Custom S3 storage endpoint URL.
+     */
     String endpointUrl;
 
     public AwsFileStorageProperties(
@@ -30,42 +54,42 @@ public class AwsFileStorageProperties {
     }
 
     /**
-     * Amazon S3 access key.
+     * @see #accessKey
      */
     public String getAccessKey() {
         return accessKey;
     }
 
     /**
-     * Amazon S3 secret access key.
+     * @see #secretAccessKey
      */
     public String getSecretAccessKey() {
         return secretAccessKey;
     }
 
     /**
-     * Amazon S3 region.
+     * @see #region
      */
     public String getRegion() {
         return region;
     }
 
     /**
-     * Amazon S3 bucket name.
+     * @see #bucket
      */
     public String getBucket() {
         return bucket;
     }
 
     /**
-     * Amazon S3 chunk size (kB).
+     * @see #chunkSize
      */
     public int getChunkSize() {
         return chunkSize;
     }
 
     /**
-     * Return custom S3 storage endpoint URL.
+     * @see #endpointUrl
      */
     public String getEndpointUrl() {
         return endpointUrl;

@@ -142,18 +142,6 @@ public class ReportEditor extends StandardEditor<Report> {
     @Autowired
     protected DataContext dataContext;
 
-    protected Map<UUID, FetchPlan> fetchPlansByDataSet = new HashMap<>();
-
-    @Subscribe(id = "reportDl", target = Target.DATA_LOADER)
-    public void onReportDlPostLoad(InstanceLoader.PostLoadEvent<Report> event) {
-        Report report = reportsSerialization.convertToReport(event.getLoadedEntity().getXml());
-        report.getBands().stream()
-                .flatMap(bandDefinition -> bandDefinition.getDataSets().stream())
-                .filter(dataSet -> dataSet.getFetchPlan() != null)
-                .forEach(dataSet -> fetchPlansByDataSet.put(dataSet.getId(), dataSet.getFetchPlan()));
-        fillFetchPlans();
-    }
-
     @Subscribe
     protected void initNewItem(InitEntityEvent<Report> event) {
         Report report = event.getEntity();
@@ -214,8 +202,6 @@ public class ReportEditor extends StandardEditor<Report> {
         if (bandsTree.getSingleSelected() == null) {
             bandEditor.setEnabled(false);
         }
-
-        bandEditor.setFetchPlans(fetchPlansByDataSet);
     }
 
     @Install(target = Target.DATA_CONTEXT)
@@ -309,19 +295,8 @@ public class ReportEditor extends StandardEditor<Report> {
     }
 
     protected void addCommitListeners() {
-        fillFetchPlans();
         String xml = reportsSerialization.convertToString(getEditedEntity());
         getEditedEntity().setXml(xml);
-    }
-
-    protected void fillFetchPlans() {
-        if (!fetchPlansByDataSet.isEmpty()) {
-            bandsDc.getItems()
-                    .stream()
-                    .flatMap(bandDefinition -> bandDefinition.getDataSets().stream())
-                    .filter(dataSet -> fetchPlansByDataSet.containsKey(dataSet.getId()))
-                    .forEach(dataSet -> dataSet.setFetchPlan(fetchPlansByDataSet.get(dataSet.getId())));
-        }
     }
 
     protected void checkForNameDuplication(ValidationErrors errors, Multimap<String, BandDefinition> names) {

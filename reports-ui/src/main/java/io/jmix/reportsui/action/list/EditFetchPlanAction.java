@@ -41,7 +41,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @ActionType(EditFetchPlanAction.ID)
 public class EditFetchPlanAction extends ListAction {
@@ -77,7 +80,6 @@ public class EditFetchPlanAction extends ListAction {
 
     protected Table<DataSet> dataSetsTable;
     protected CollectionContainer<BandDefinition> bandsDc;
-    protected Map<UUID, FetchPlan> fetchPlansByDataSet = new HashMap<>();
 
     public EditFetchPlanAction() {
         this(ID);
@@ -93,14 +95,6 @@ public class EditFetchPlanAction extends ListAction {
 
     public void setBandsDc(CollectionContainer<BandDefinition> bandsDc) {
         this.bandsDc = bandsDc;
-    }
-
-    public Map<UUID, FetchPlan> getFetchPlansByDataSet() {
-        return fetchPlansByDataSet;
-    }
-
-    public void setFetchPlansByDataSet(Map<UUID, FetchPlan> fetchPlansByDataSet) {
-        this.fetchPlansByDataSet = fetchPlansByDataSet;
     }
 
     @Override
@@ -144,7 +138,6 @@ public class EditFetchPlanAction extends ListAction {
                                     RegionEditor editor = (RegionEditor) afterCloseEvent.getSource();
                                     reportRegion.setRegionProperties(editor.getEditedEntity().getRegionProperties());
                                     dataSet.setFetchPlan(reportRegionToFetchPlan(entityTree, reportRegion));
-                                    fetchPlansByDataSet.put(dataSet.getId(), dataSet.getFetchPlan());
                                 }
                             });
                             screen.show();

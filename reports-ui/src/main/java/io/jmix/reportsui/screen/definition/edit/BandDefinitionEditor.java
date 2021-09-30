@@ -333,10 +333,6 @@ public class BandDefinitionEditor extends ScreenFragment implements Suggester {
         fetchPlanNameField.setEnterPressHandler(LinkedWithPropertyNewOptionHandler.handler(dataSetsDc, "fetchPlanName"));
     }
 
-    public void setFetchPlans(Map<UUID, FetchPlan> fetchPlansByDataSet) {
-        editFetchPlanAction.setFetchPlansByDataSet(fetchPlansByDataSet);
-    }
-
     @Subscribe(id = "parametersDc", target = Target.DATA_CONTAINER)
     protected void onParametersDcCollectionChange(CollectionContainer.CollectionChangeEvent<ReportInputParameter> event) {
         Map<String, String> paramAliases = new HashMap<>();

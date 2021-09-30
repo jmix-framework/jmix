@@ -16,6 +16,7 @@
 package io.jmix.reports.entity;
 
 import com.haulmont.yarg.structure.ReportQuery;
+import io.jmix.core.CopyingSystemState;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
@@ -29,7 +30,7 @@ import java.util.UUID;
 
 @JmixEntity(name = "report_DataSet", annotatedPropertiesOnly = true)
 @SystemLevel
-public class DataSet implements ReportQuery {
+public class DataSet implements ReportQuery, CopyingSystemState<DataSet> {
 
     public static final String ENTITY_PARAM_NAME = "entityParamName";
     public static final String LIST_ENTITIES_PARAM_NAME = "listEntitiesParamName";
@@ -238,5 +239,10 @@ public class DataSet implements ReportQuery {
         params.put(JSON_INPUT_PARAMETER, jsonSourceInputParameter);
 
         return params;
+    }
+
+    @Override
+    public void copyFrom(DataSet source) {
+        this.fetchPlan = source.fetchPlan;
     }
 }

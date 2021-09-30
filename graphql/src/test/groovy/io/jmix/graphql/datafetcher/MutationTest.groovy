@@ -23,8 +23,8 @@ import test_support.entity.CarType
 
 @DirtiesContext
 @TestPropertySource(properties = [
-        "jmix.security.oauth2.devMode=true",
-        "jmix.security.oauth2.devUsername=admin"
+        "jmix.security.oauth2.dev-mode=true",
+        "jmix.security.oauth2.dev-username=admin"
 ])
 class MutationTest extends AbstractGraphQLTest {
 

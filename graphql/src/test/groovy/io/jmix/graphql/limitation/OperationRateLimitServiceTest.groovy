@@ -22,7 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.TestPropertySource
 import test_support.entity.CarType
 
-@TestPropertySource(properties = ["jmix.graphql.operationRateLimitPerMinute=3"])
+@TestPropertySource(properties = ["jmix.graphql.operation-rate-limit-per-minute=3"])
 class OperationRateLimitServiceTest extends AbstractGraphQLTest {
 
     @Autowired

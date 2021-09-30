@@ -31,23 +31,68 @@ import java.util.stream.Collectors;
 @ConstructorBinding
 public class CoreProperties {
 
+    /**
+     * This web application host name.
+     */
     String webHostName;
+
+    /**
+     * This web application port.
+     */
     String webPort;
     String confDir;
     String workDir;
     String tempDir;
     String dbDir;
     String defaultFileStorage;
+
+    /**
+     * Key that is used in {@link org.springframework.security.authentication.AnonymousAuthenticationProvider} and
+     * {@link org.springframework.security.web.authentication.AnonymousAuthenticationFilter}
+     */
     String anonymousAuthenticationTokenKey;
+
+    /**
+     * List of locales supported by the application. If not specified, contains the single {@code Locale.ENGLISH}
+     * element.
+     */
     List<Locale> availableLocales;
     int crossDataStoreReferenceLoadingBatchSize;
+
+    /**
+     * Whether to generate identifiers for entities located in additional data stores.
+     */
     boolean idGenerationForEntitiesInAdditionalDataStoresEnabled;
+
+    /**
+     * Maximum number of SAXParser instances available for concurrent use.
+     */
     int dom4jMaxPoolSize;
+
+    /**
+     * Timeout to borrow SAXParser instance from object pool.
+     */
     int dom4jMaxBorrowWaitMillis;
+
+    /**
+     * Whether entity serialization uses security token data for deserialization entities with row level security
+     */
     boolean entitySerializationTokenRequired;
     String entitySerializationTokenEncryptionKey;
     boolean legacyFetchPlanSerializationAttributeName;
+
+    /**
+     * Whether the processing of bean invocation trigger files is enabled. Default value: true The trigger file is a
+     * file that is placed in the triggers subdirectory of the application's temporary directory. The file name consists
+     * of two parts separated with a #: the first part is the bean class, the second part is the method name of the bean
+     * to invoke. For example: io.jmix.core.Messages#clearCache. The trigger files handler monitors the folder for new
+     * trigger files, invokes the appropriate methods and then removes the files.
+     */
     boolean triggerFilesEnabled;
+
+    /**
+     * Period in milliseconds of trigger files processing.
+     */
     Duration triggerFilesProcessInterval;
 
     public CoreProperties(
@@ -98,16 +143,10 @@ public class CoreProperties {
         this.triggerFilesProcessInterval = triggerFilesProcessInterval;
     }
 
-    /**
-     * This web application host name.
-     */
     public String getWebHostName() {
         return webHostName;
     }
 
-    /**
-     * This web application port.
-     */
     public String getWebPort() {
         return webPort;
     }
@@ -133,10 +172,6 @@ public class CoreProperties {
         return defaultFileStorage;
     }
 
-    /**
-     * List of locales supported by the application.
-     * If not specified, contains the single {@code Locale.ENGLISH} element.
-     */
     public List<Locale> getAvailableLocales() {
         return availableLocales;
     }
@@ -146,37 +181,35 @@ public class CoreProperties {
     }
 
     /**
-     * Whether to generate identifiers for entities located in additional data stores.
-     * Default is true.
+     * @see #idGenerationForEntitiesInAdditionalDataStoresEnabled
      */
     public boolean isIdGenerationForEntitiesInAdditionalDataStoresEnabled() {
         return idGenerationForEntitiesInAdditionalDataStoresEnabled;
     }
 
     /**
-     * Maximum number of SAXParser instances available for concurrent use.
+     * @see #dom4jMaxPoolSize
      */
     public int getDom4jMaxPoolSize() {
         return dom4jMaxPoolSize;
     }
 
     /**
-     * Timeout to borrow SAXParser instance from object pool.
+     * @see #dom4jMaxBorrowWaitMillis
      */
     public int getDom4jMaxBorrowWaitMillis() {
         return dom4jMaxBorrowWaitMillis;
     }
 
     /**
-     * @return a key that is used in {@link org.springframework.security.authentication.AnonymousAuthenticationProvider}
-     * and {@link org.springframework.security.web.authentication.AnonymousAuthenticationFilter}
+     * @see #anonymousAuthenticationTokenKey
      */
     public String getAnonymousAuthenticationTokenKey() {
         return anonymousAuthenticationTokenKey;
     }
 
     /**
-     * @return true if entity serialization uses security token data for deserialization entities with row level security
+     * @see #entitySerializationTokenRequired
      */
     public boolean isEntitySerializationTokenRequired() {
         return entitySerializationTokenRequired;
@@ -191,18 +224,14 @@ public class CoreProperties {
     }
 
     /**
-     * @return true if enables the processing of bean invocation trigger files. Default value: true
-     * The trigger file is a file that is placed in the triggers subdirectory of the application's temporary directory.
-     * The file name consists of two parts separated with a #: the first part is the bean class, the second part is the method name
-     * of the bean to invoke. For example: io.jmix.core.Messages#clearCache.
-     * The trigger files handler monitors the folder for new trigger files, invokes the appropriate methods and then removes the files.
+     * @see #triggerFilesEnabled
      */
     public boolean isTriggerFilesEnabled() {
         return triggerFilesEnabled;
     }
 
     /**
-     * Defines the period in milliseconds of trigger files processing
+     * @see #triggerFilesProcessInterval
      */
     public Duration getTriggerFilesProcessInterval() {
         return triggerFilesProcessInterval;

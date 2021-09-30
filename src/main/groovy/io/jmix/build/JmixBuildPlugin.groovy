@@ -27,6 +27,7 @@ class JmixBuildPlugin implements Plugin<Project> {
         setupPublishing(project)
         setupDependencyManagement(project)
         setupSpotbugs(project)
+        setupConfigurationMetadataGeneration(project)
     }
 
     private void setupRepositories(Project project) {
@@ -271,8 +272,15 @@ class JmixBuildPlugin implements Plugin<Project> {
         project.with {
             dependencies {
                 api platform("io.jmix.bom:jmix-bom:$bomVersion")
+                //to be able to add the annotationProcessor dependency without defining its version
+                annotationProcessor platform("io.jmix.bom:jmix-bom:$bomVersion")
             }
         }
     }
 
+    private void setupConfigurationMetadataGeneration(Project project) {
+        project.dependencies.add('annotationProcessor', 'org.springframework.boot:spring-boot-configuration-processor')
+        //to be able to use additional-spring-configuration-metadata.json in jmix modules
+//        project.tasks.named('compileJava').get().dependsOn('processResources')
+    }
 }

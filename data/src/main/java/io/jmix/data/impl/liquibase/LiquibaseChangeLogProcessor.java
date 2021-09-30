@@ -79,7 +79,7 @@ public class LiquibaseChangeLogProcessor {
 
     protected String getOutputFileName(String storeName) {
         String prefix = Stores.isMain(storeName) ? "" : storeName + "-";
-        return environment.getProperty("jmix.core.workDir") + "/" + prefix + "liquibase-changelog.xml";
+        return environment.getProperty("jmix.core.work-dir") + "/" + prefix + "liquibase-changelog.xml";
     }
 
     protected String getModuleFileName(JmixModuleDescriptor module, String storeName) {

@@ -277,7 +277,7 @@ public class JmixEclipseLinkQuery<E> implements JmixQuery<E> {
         Class referenceClass = databaseQuery.getReferenceClass();
         boolean isDeleteQuery = databaseQuery.isDeleteObjectQuery() || databaseQuery.isDeleteAllQuery();
         boolean enableDeleteInSoftDeleteMode =
-                Boolean.parseBoolean(environment.getProperty("jmix.data.enableDeleteStatementInSoftDeleteMode"));
+                Boolean.parseBoolean(environment.getProperty("jmix.data.enable-delete-statement-in-soft-delete-mode"));
         if (!enableDeleteInSoftDeleteMode && PersistenceHints.isSoftDeletion(entityManager) && isDeleteQuery) {
             if (metadataTools.isSoftDeletable(referenceClass)) {
                 throw new UnsupportedOperationException("Delete queries are not supported with enabled soft deletion. " +

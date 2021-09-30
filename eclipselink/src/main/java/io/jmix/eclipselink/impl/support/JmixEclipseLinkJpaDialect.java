@@ -58,7 +58,7 @@ public class JmixEclipseLinkJpaDialect extends EclipseLinkJpaDialect {
 
         // Read default timeout every time - may be somebody wants to change it on the fly
         int defaultTimeout = 0;
-        String defaultTimeoutProp = environment.getProperty("jmix.defaultQueryTimeoutSec");
+        String defaultTimeoutProp = environment.getProperty("jmix.default-query-timeout-sec");
         if (!"0".equals(defaultTimeoutProp) && !StringUtils.isBlank(defaultTimeoutProp)) {
             try {
                 defaultTimeout = Integer.parseInt(defaultTimeoutProp);

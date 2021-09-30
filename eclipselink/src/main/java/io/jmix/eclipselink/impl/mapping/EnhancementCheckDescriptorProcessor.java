@@ -71,7 +71,7 @@ public class EnhancementCheckDescriptorProcessor implements DescriptorProcessor 
                     "\nProblems with entity enhancement detected:\n{}" +
                     "\n=================================================================", message);
 
-            if (!Boolean.parseBoolean(environment.getProperty("jmix.data.disableEntityEnhancementCheck"))) {
+            if (!Boolean.parseBoolean(environment.getProperty("jmix.data.disable-entity-enhancement-check"))) {
                 throw new EntityNotEnhancedException(message);
             }
         }

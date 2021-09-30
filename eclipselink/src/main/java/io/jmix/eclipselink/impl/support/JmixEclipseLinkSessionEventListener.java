@@ -105,13 +105,13 @@ public class JmixEclipseLinkSessionEventListener extends SessionEventAdapter {
     }
 
     protected boolean hasMultipleTableConstraintDependency() {
-        String value = environment.getProperty("jmix.data.hasMultipleTableConstraintDependency");
+        String value = environment.getProperty("jmix.data.has-multiple-table-constraint-dependency");
         return value == null || BooleanUtils.toBoolean(value);
     }
 
     protected void setPrintInnerJoinOnClause(Session session) {
         boolean useInnerJoinOnClause = BooleanUtils.toBoolean(
-                environment.getProperty("jmix.data.useInnerJoinOnClause"));
+                environment.getProperty("jmix.data.use-inner-join-on-clause"));
         session.getPlatform().setPrintInnerJoinInWhereClause(!useInnerJoinOnClause);
     }
 

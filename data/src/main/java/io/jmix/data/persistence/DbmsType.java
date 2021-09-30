@@ -82,9 +82,9 @@ public class DbmsType {
                 return database.name();
             }
 
-            String propName = "jmix.data.dbmsType";
+            String propName = "jmix.data.dbms-type";
             if (!Stores.isMain(storeName))
-                propName = propName + "_" + storeName;
+                propName = propName + "-" + storeName;
 
             String id = environment.getProperty(propName);
             if (StringUtils.isBlank(id))
@@ -98,7 +98,7 @@ public class DbmsType {
     }
 
     public String getVersion(String storeName) {
-        String propName = "jmix.data.dbmsVersion";
+        String propName = "jmix.data.dbms-version";
         if (!Stores.isMain(storeName))
             propName = propName + "_" + storeName;
 

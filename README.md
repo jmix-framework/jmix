@@ -61,7 +61,7 @@ A custom theme can be created and configured using the following rules:
 Example for the theme with the name ```custom-theme```:
 ```
 jmix.ui.theme = custom-theme
-jmix.ui.themeConfig=com/company/sample/theme/custom-theme-theme.properties
+jmix.ui.theme-config=com/company/sample/theme/custom-theme-theme.properties
 ```
 
 After the theme is added and configured, add the following dependencies: 

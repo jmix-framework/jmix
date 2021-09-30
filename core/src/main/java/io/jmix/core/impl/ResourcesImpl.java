@@ -92,7 +92,7 @@ public class ResourcesImpl implements Resources, ResourceLoaderAware {
         } else {
             if (location.startsWith("/"))
                 location = location.substring(1);
-            File file = new File(environment.getProperty("jmix.core.confDir"), location);
+            File file = new File(environment.getProperty("jmix.core.conf-dir"), location);
             if (file.exists()) {
                 location = file.toURI().toString();
             } else {

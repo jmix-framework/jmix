@@ -98,7 +98,7 @@ class MessageSourceTest extends Specification {
         properties.load(new InputStreamReader(getClass().getResourceAsStream(configurationFile), 'UTF-8'))
 
         properties.setProperty(overrideAttribute , overrideValue)
-        def dir = new File(environment.getProperty('jmix.core.confDir'), 'test_support/app')
+        def dir = new File(environment.getProperty('jmix.core.conf-dir'), 'test_support/app')
         dir.mkdirs()
         def file = new File(dir, 'messages.properties')
         def stream = new FileOutputStream(file)

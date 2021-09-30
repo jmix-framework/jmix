@@ -82,7 +82,7 @@ public class Stores {
 
     @Nullable
     protected StoreDescriptor getStoreDescriptor(String storeName) {
-        String descriptorName = environment.getProperty("jmix.core.storeDescriptor_" + storeName);
+        String descriptorName = environment.getProperty("jmix.core.store-descriptor-" + storeName);
         if (descriptorName != null) {
             StoreDescriptor descriptor = descriptors.get(descriptorName);
             if (descriptor != null) {
@@ -122,10 +122,10 @@ public class Stores {
     }
 
     /**
-     * @return the list of additional data store names registered in the {@code jmix.core.additionalStores} property
+     * @return the list of additional data store names registered in the {@code jmix.core.additional-stores} property
      */
     public List<String> getAdditional() {
-        String property = environment.getProperty("jmix.core.additionalStores");
+        String property = environment.getProperty("jmix.core.additional-stores");
         if (!Strings.isNullOrEmpty(property))
             return SPLITTER.splitToList(property);
         else

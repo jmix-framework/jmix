@@ -108,7 +108,7 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
 
         Element rootElem = DocumentHelper.createDocument().addElement("fetchPlans");
 
-        for (String location : modules.getPropertyValues("jmix.core.fetchPlansConfig")) {
+        for (String location : modules.getPropertyValues("jmix.core.fetch-plans-config")) {
             addFile(rootElem, location);
         }
 

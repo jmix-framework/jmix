@@ -52,7 +52,7 @@ public class BeanExclusionProcessor implements BeanDefinitionRegistryPostProcess
 
     @Override
     public void setEnvironment(Environment environment) {
-        String property = environment.getProperty("jmix.core.excludeBeans");
+        String property = environment.getProperty("jmix.core.exclude-beans");
         if (property != null) {
             beansToExclude = Splitter.on(",").trimResults().omitEmptyStrings().splitToList(property);
         }

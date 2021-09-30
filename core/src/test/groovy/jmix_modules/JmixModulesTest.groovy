@@ -60,28 +60,28 @@ class JmixModulesTest extends Specification {
         def addon1 = modules.get('test_support.addon1')
         def app = modules.get('test_support.app')
 
-        base.getProperty('jmix.core.fetchPlansConfig') == 'test_support/base/fetch-plans.xml'
+        base.getProperty('jmix.core.fetch-plans-config') == 'test_support/base/fetch-plans.xml'
 
-        addon1.getProperty('jmix.core.fetchPlansConfig') == 'test_support/addon1/fetch-plans.xml'
+        addon1.getProperty('jmix.core.fetch-plans-config') == 'test_support/addon1/fetch-plans.xml'
         addon1.getProperty('prop1') == 'addon1_prop1'
         addon1.getProperty('prop2') == 'addon1_prop2'
 
         // because @PropertySource has no name in TestAppConfiguration
-        app.getProperty('jmix.core.fetchPlansConfig') == null
+        app.getProperty('jmix.core.fetch-plans-config') == null
         app.getProperty('prop2') == null
         // app values
-        environment.getProperty('jmix.core.fetchPlansConfig') == 'test_support/app/fetch-plans.xml'
+        environment.getProperty('jmix.core.fetch-plans-config') == 'test_support/app/fetch-plans.xml'
         environment.getProperty('prop2') == 'app_prop2'
     }
 
     def "resulting properties"() {
         expect:
 
-        environment.getProperty('jmix.core.fetchPlansConfig') == 'test_support/app/fetch-plans.xml'
+        environment.getProperty('jmix.core.fetch-plans-config') == 'test_support/app/fetch-plans.xml'
         environment.getProperty('prop1') == 'addon1_prop1'
         environment.getProperty('prop2') == 'app_prop2'
 
-        modules.getPropertyValues('jmix.core.fetchPlansConfig') == [
+        modules.getPropertyValues('jmix.core.fetch-plans-config') == [
                 'test_support/base/fetch-plans.xml', 'test_support/addon1/fetch-plans.xml', 'test_support/app/fetch-plans.xml'
         ]
     }

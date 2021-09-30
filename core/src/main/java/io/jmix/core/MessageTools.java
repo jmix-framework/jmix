@@ -348,11 +348,11 @@ public class MessageTools {
     }
 
     /**
-     * Returns the first locale from the list defined in {@code jmix.core.availableLocales} app property.
+     * Returns the first locale from the list defined in {@code jmix.core.available-locales} app property.
      */
     public Locale getDefaultLocale() {
         if (properties.getAvailableLocales().isEmpty())
-            throw new DevelopmentException("Invalid jmix.core.availableLocales application property");
+            throw new DevelopmentException("Invalid jmix.core.available-locales application property");
         return properties.getAvailableLocales().get(0);
     }
 
@@ -368,7 +368,7 @@ public class MessageTools {
     }
 
     /**
-     * Returns locales set in the {@code jmix.core.availableLocales} property as a map of the locale display name
+     * Returns locales set in the {@code jmix.core.available-locales} property as a map of the locale display name
      * to the locale object.
      */
     public Map<String, Locale> getAvailableLocalesMap() {

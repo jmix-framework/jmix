@@ -51,7 +51,7 @@ import org.springframework.context.annotation.Import;
 @ConditionalOnBean(DataManager.class)
 @ConditionalOnClass(JmixDataRepository.class)
 @ConditionalOnMissingBean({JmixRepositoryFactoryBean.class, JmixRepositoryConfigurationExtension.class})
-@ConditionalOnProperty(prefix = "jmix.core.dataRepositories", name = "enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "jmix.core.data-repositories", name = "enabled", havingValue = "true", matchIfMissing = true)
 @Import(BootJmixRepositoriesRegistrar.class)
 @AutoConfigureAfter(DataSourceAutoConfiguration.class)
 public class JmixDataRepositoryAutoConfiguration {

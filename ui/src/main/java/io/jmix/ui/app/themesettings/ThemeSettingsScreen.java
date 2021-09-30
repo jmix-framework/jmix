@@ -132,7 +132,7 @@ public class ThemeSettingsScreen extends Screen {
     }
 
     @Install(to = "modeField", subject = "optionCaptionProvider")
-    private String modeFieldOptionCaptionProvider(String mode) {
+    protected String modeFieldOptionCaptionProvider(String mode) {
         return messageBundle.getMessage("themeSettings.mode." + mode);
     }
 
@@ -142,7 +142,7 @@ public class ThemeSettingsScreen extends Screen {
     }
 
     @Install(to = "sizeField", subject = "optionCaptionProvider")
-    private String sizeFieldOptionCaptionProvider(String size) {
+    protected String sizeFieldOptionCaptionProvider(String size) {
         return messageBundle.getMessage("themeSettings.size." + size);
     }
 

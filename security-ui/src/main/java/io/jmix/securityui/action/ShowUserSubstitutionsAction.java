@@ -17,8 +17,11 @@
 package io.jmix.securityui.action;
 
 import io.jmix.core.Messages;
+import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.securitydata.entity.UserSubstitution;
 import io.jmix.securityui.screen.usersubstitution.UserSubstitutionsScreen;
 import io.jmix.ui.ScreenBuilders;
+import io.jmix.ui.accesscontext.UiEntityContext;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.ActionType;
 import io.jmix.ui.action.list.SecuredListAction;
@@ -53,6 +56,34 @@ public class ShowUserSubstitutionsAction extends SecuredListAction implements Ac
 
     public ShowUserSubstitutionsAction(String id) {
         super(id);
+    }
+
+    @Override
+    protected boolean isPermitted() {
+        if (target == null || !(target.getItems() instanceof EntityDataUnit)) {
+            return false;
+        }
+
+        MetaClass metaClass = ((EntityDataUnit) target.getItems()).getEntityMetaClass();
+        if (metaClass == null) {
+            return true;
+        }
+
+        UiEntityContext entityContext = new UiEntityContext(metaClass);
+        accessManager.applyRegisteredConstraints(entityContext);
+
+        if (!entityContext.isViewPermitted()) {
+            return false;
+        }
+
+        UiEntityContext userSubstitutionContext = new UiEntityContext(metadata.getClass(UserSubstitution.class));
+        accessManager.applyRegisteredConstraints(userSubstitutionContext);
+
+        if (!userSubstitutionContext.isViewPermitted()) {
+            return false;
+        }
+
+        return super.isPermitted();
     }
 
     @Override

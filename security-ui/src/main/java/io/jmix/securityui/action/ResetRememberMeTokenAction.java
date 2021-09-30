@@ -16,11 +16,13 @@
 
 package io.jmix.securityui.action;
 
+import io.jmix.core.AccessManager;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.UserManager;
 import io.jmix.ui.Dialogs;
 import io.jmix.ui.Notifications;
+import io.jmix.ui.accesscontext.UiEntityContext;
 import io.jmix.ui.action.*;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.data.DataUnit;
@@ -40,6 +42,7 @@ public class ResetRememberMeTokenAction extends ListAction implements Action.Exe
     protected Messages messages;
     protected Notifications notifications;
     protected UserManager userManager;
+    protected AccessManager accessManager;
 
     public ResetRememberMeTokenAction() {
         super(ID);
@@ -63,6 +66,32 @@ public class ResetRememberMeTokenAction extends ListAction implements Action.Exe
     public void setMessages(Messages messages) {
         this.messages = messages;
         this.caption = messages.getMessage("actions.resetRememberMeToken");
+    }
+
+    @Autowired
+    protected void setAccessManager(AccessManager accessManager) {
+        this.accessManager = accessManager;
+    }
+
+    @Override
+    protected boolean isPermitted() {
+        if (target == null || !(target.getItems() instanceof EntityDataUnit)) {
+            return false;
+        }
+
+        MetaClass metaClass = ((EntityDataUnit) target.getItems()).getEntityMetaClass();
+        if (metaClass == null) {
+            return true;
+        }
+
+        UiEntityContext entityContext = new UiEntityContext(metaClass);
+        accessManager.applyRegisteredConstraints(entityContext);
+
+        if (!entityContext.isEditPermitted()) {
+            return false;
+        }
+
+        return super.isPermitted();
     }
 
     @Override

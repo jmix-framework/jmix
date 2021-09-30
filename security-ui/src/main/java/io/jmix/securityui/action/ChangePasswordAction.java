@@ -100,7 +100,7 @@ public class ChangePasswordAction extends SecuredListAction implements Action.Ex
         UiEntityContext entityContext = new UiEntityContext(metaClass);
         accessManager.applyRegisteredConstraints(entityContext);
 
-        if (!entityContext.isViewPermitted()) {
+        if (!entityContext.isEditPermitted()) {
             return false;
         }
 

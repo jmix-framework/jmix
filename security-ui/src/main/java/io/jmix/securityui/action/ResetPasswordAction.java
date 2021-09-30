@@ -73,7 +73,7 @@ public class ResetPasswordAction extends SecuredListAction implements Action.Exe
         UiEntityContext entityContext = new UiEntityContext(metaClass);
         accessManager.applyRegisteredConstraints(entityContext);
 
-        if (!entityContext.isViewPermitted()) {
+        if (!entityContext.isEditPermitted()) {
             return false;
         }
 

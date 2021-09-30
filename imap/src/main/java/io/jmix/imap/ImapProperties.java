@@ -29,7 +29,15 @@ public class ImapProperties {
     boolean debug;
     int timeoutSeconds;
     int eventsBatchSize;
+
+    /**
+     * Whether the default Imap Sync quartz scheduling configuration is used.
+     */
     String useDefaultQuartzConfiguration;
+
+    /**
+     * CRON expression that is used by default Imap Sync quartz scheduling configuration
+     */
     String imapSyncCron;
 
     public ImapProperties(@DefaultValue("false") boolean trustAllCertificates,
@@ -73,14 +81,14 @@ public class ImapProperties {
     }
 
     /**
-     * @return true if default Imap Sync quartz scheduling configuration is used. False otherwise
+     * @see #useDefaultQuartzConfiguration
      */
     public String getUseDefaultQuartzConfiguration() {
         return useDefaultQuartzConfiguration;
     }
 
     /**
-     * @return CRON expression that is used by default Imap Sync quartz scheduling configuration
+     * @see #imapSyncCron
      */
     public String getImapSyncCron() {
         return imapSyncCron;

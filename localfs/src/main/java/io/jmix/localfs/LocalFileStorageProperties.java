@@ -22,6 +22,10 @@ import org.springframework.boot.context.properties.ConstructorBinding;
 @ConfigurationProperties(prefix = "jmix.localfs")
 @ConstructorBinding
 public class LocalFileStorageProperties {
+
+    /**
+     * {@link LocalFileStorage} storage directory. If not set, {@code jmix.core.work-dir/filestorage} will be used.
+     */
     String storageDir;
 
     public LocalFileStorageProperties(
@@ -30,7 +34,7 @@ public class LocalFileStorageProperties {
     }
 
     /**
-     * {@link LocalFileStorage} storage directory. If not set, {@code jmix.core.workDir/filestorage} will be used.
+     * @see #storageDir
      */
     public String getStorageDir() {
         return storageDir;

@@ -29,6 +29,10 @@ public class DataProperties {
     boolean useReadOnlyTransactionForLoad;
     int numberIdCacheSize;
     boolean useEntityDataStoreForIdSequence;
+
+    /**
+     * Overridden pattern to parse Unique Constraint Violation exception
+     */
     String uniqueConstraintViolationPattern;
     boolean useUserLocaleForRelativeDateTimeMoments;
 
@@ -58,7 +62,7 @@ public class DataProperties {
     }
 
     /**
-     * @return Overridden pattern to parse Unique Constraint Violation exception
+     * @see #uniqueConstraintViolationPattern
      */
     @Nullable
     public String getUniqueConstraintViolationPattern() {

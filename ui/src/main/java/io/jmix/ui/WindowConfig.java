@@ -57,7 +57,7 @@ import java.util.regex.Pattern;
 @Component("ui_WindowConfig")
 public class WindowConfig {
 
-    public static final String WINDOW_CONFIG_XML_PROP = "jmix.ui.windowConfig";
+    public static final String WINDOW_CONFIG_XML_PROP = "jmix.ui.window-config";
 
     public static final Pattern ENTITY_SCREEN_PATTERN = Pattern.compile("([A-Za-z0-9]+[$_][A-Z][_A-Za-z0-9]*)\\..+");
 

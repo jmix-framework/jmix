@@ -63,7 +63,7 @@ public class ThemeConstantsRepository {
     }
 
     protected void init() {
-        String configName = environment.getProperty("jmix.ui.themeConfig");
+        String configName = environment.getProperty("jmix.ui.theme-config");
         if (!StringUtils.isBlank(configName)) {
             Map<String, Map<String, String>> themeProperties = new HashMap<>();
 

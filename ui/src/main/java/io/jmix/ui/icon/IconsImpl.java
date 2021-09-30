@@ -63,7 +63,7 @@ public class IconsImpl implements Icons {
     @EventListener(ContextRefreshedEvent.class)
     @Order(JmixOrder.HIGHEST_PRECEDENCE + 100)
     public void init() {
-        String iconSetsProp = String.join(" ", modules.getPropertyValues("jmix.ui.iconsConfig"));
+        String iconSetsProp = String.join(" ", modules.getPropertyValues("jmix.ui.icons-config"));
 
         if (StringUtils.isEmpty(iconSetsProp)) {
             return;

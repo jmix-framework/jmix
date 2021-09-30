@@ -59,7 +59,7 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Widgetset("${jmix.ui.widgetSet:io.jmix.ui.widget.WidgetSet}")
+@Widgetset("${jmix.ui.widget-set:io.jmix.ui.widget.WidgetSet}")
 @Theme("${jmix.ui.theme.name:helium}")
 @Push(transport = Transport.WEBSOCKET_XHR)
 @SpringUI

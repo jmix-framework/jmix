@@ -54,7 +54,7 @@ public class MenuConfig {
 
     private final Logger log = LoggerFactory.getLogger(MenuConfig.class);
 
-    public static final String MENU_CONFIG_XML_PROP = "jmix.ui.menuConfig";
+    public static final String MENU_CONFIG_XML_PROP = "jmix.ui.menu-config";
 
     protected List<MenuItem> rootItems = new ArrayList<>();
 

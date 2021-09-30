@@ -32,7 +32,7 @@ import org.springframework.context.annotation.Import;
 @Configuration
 @Import(ImapConfiguration.class)
 @ConditionalOnClass(Job.class)
-@ConditionalOnProperty(name = "jmix.imap.useDefaultQuartzConfiguration", matchIfMissing = true)
+@ConditionalOnProperty(name = "jmix.imap.use-default-quartz-configuration", matchIfMissing = true)
 public class ImapSyncScheduleAutoConfiguration {
 
     private static final Logger log = LoggerFactory.getLogger(ImapSyncScheduleAutoConfiguration.class);

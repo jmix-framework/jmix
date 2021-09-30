@@ -47,7 +47,7 @@ public class HotDeployTestScreen extends Screen {
 
         showMainScreen()
 
-        def confDirLocation = environment.getProperty('jmix.core.confDir')
+        def confDirLocation = environment.getProperty('jmix.core.conf-dir')
         def confDir = new File(confDirLocation)
         if (!confDir.exists()) {
             confDir.mkdirs()

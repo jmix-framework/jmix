@@ -607,12 +607,12 @@ public class QueryTest {
             }
 
             try {
-                AppContext.setProperty("jmix.data.enableDeleteStatementInSoftDeleteMode", "true");
+                AppContext.setProperty("jmix.data.enable-delete-statement-in-soft-delete-mode", "true");
                 em.createQuery("delete from test$FileDescriptor f").executeUpdate();
             } catch (javax.persistence.PersistenceException e) {
                 //It's OK integrity constraint violation
             } finally {
-                AppContext.setProperty("jmix.data.enableDeleteStatementInSoftDeleteMode", "false");
+                AppContext.setProperty("jmix.data.enable-delete-statement-in-soft-delete-mode", "false");
             }
         } finally {
             try {

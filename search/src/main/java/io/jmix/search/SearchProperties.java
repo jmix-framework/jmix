@@ -31,25 +31,79 @@ import java.util.List;
 @ConstructorBinding
 public class SearchProperties {
 
+    /**
+     * Max amount of objects displayed on single page of search result.
+     */
     protected final int searchResultPageSize;
+
+    /**
+     * Max amount of result pages.
+     */
     protected final int maxSearchPageCount;
+
+    /**
+     * Batch size for post-search entity processing.
+     */
     protected final int searchReloadEntitiesBatchSize;
+
+    /**
+     * Amount of queue items processed in single batch.
+     */
     protected final int processQueueBatchSize;
+
+    /**
+     * Max amount of items can be processed during single execution.
+     */
     protected final int maxProcessedQueueItemsPerExecution;
+
+    /**
+     * Amount of entity instances enqueued in single batch during entity reindex process.
+     */
     protected final int reindexEntityEnqueueBatchSize;
 
+    /**
+     * Whether automatic indexing of changed entities is enabled.
+     */
     protected final boolean changedEntitiesIndexingEnabled;
+
+    /**
+     * Whether the default Indexing Queue processing quartz scheduling configuration is used.
+     */
     protected final boolean useDefaultIndexingQueueProcessingQuartzConfiguration;
+
+    /**
+     * Whether all entity instances related to indexes created or recreated on startup should be enqueued
+     * automatically.
+     */
     protected final boolean enqueueIndexAllOnStartupIndexRecreationEnabled;
 
     protected final Elasticsearch elasticsearch;
 
+    /**
+     * Name of default search strategy
+     */
     protected final String defaultSearchStrategy;
+
+    /**
+     * CRON expression that is used by default Indexing Queue processing quartz scheduling configuration.
+     */
     protected final String indexingQueueProcessingCron;
+
+    /**
+     * Prefix for search index name. Index naming template: &lt;prefix&gt;&lt;entity_name&gt;. Default prefix is
+     * 'search_index_'.
+     */
     protected final String searchIndexNamePrefix;
 
+    /**
+     * The way of index schema synchronization.
+     */
     protected final IndexSchemaManagementStrategy indexSchemaManagementStrategy;
 
+    /**
+     * List of entities that should be automatically enqueued on startup in case of index recreation. Empty list means
+     * all indexed entities.
+     */
     protected final List<String> enqueueIndexAllOnStartupIndexRecreationEntities;
 
     public SearchProperties(
@@ -86,150 +140,147 @@ public class SearchProperties {
     }
 
     /**
-     * @return max amount of objects displayed on single page of search result
+     * @see #searchResultPageSize
      */
     public int getSearchResultPageSize() {
         return searchResultPageSize;
     }
 
     /**
-     * @return max amount of result pages
+     * @see #maxSearchPageCount
      */
     public int getMaxSearchPageCount() {
         return maxSearchPageCount;
     }
 
     /**
-     * @return batch size for post-search entity processing
+     * @see #searchReloadEntitiesBatchSize
      */
     public int getSearchReloadEntitiesBatchSize() {
         return searchReloadEntitiesBatchSize;
     }
 
     /**
-     * @return amount of queue items processed in single batch
+     * @see #processQueueBatchSize
      */
     public int getProcessQueueBatchSize() {
         return processQueueBatchSize;
     }
 
     /**
-     * @return max amount of items can be processed during single execution
+     * @see #maxProcessedQueueItemsPerExecution
      */
     public int getMaxProcessedQueueItemsPerExecution() {
         return maxProcessedQueueItemsPerExecution;
     }
 
     /**
-     * @return amount of entity instances enqueued in single batch during entity reindex process
+     * @see #reindexEntityEnqueueBatchSize
      */
     public int getReindexEntityEnqueueBatchSize() {
         return reindexEntityEnqueueBatchSize;
     }
 
     /**
-     * @return true if automatic indexing of changed entities is enabled. False otherwise
+     * @see #changedEntitiesIndexingEnabled
      */
     public boolean isChangedEntitiesIndexingEnabled() {
         return changedEntitiesIndexingEnabled;
     }
 
     /**
-     * @return true if default Indexing Queue processing quartz scheduling configuration is used. False otherwise
+     * @see #useDefaultIndexingQueueProcessingQuartzConfiguration
      */
     public boolean isUseDefaultIndexingQueueProcessingQuartzConfiguration() {
         return useDefaultIndexingQueueProcessingQuartzConfiguration;
     }
 
     /**
-     * @return CRON expression that is used by default Indexing Queue processing quartz scheduling configuration
+     * @see #indexingQueueProcessingCron
      */
     public String getIndexingQueueProcessingCron() {
         return indexingQueueProcessingCron;
     }
 
     /**
-     * @return prefix for search index name. Index naming template: &lt;prefix&gt;&lt;entity_name&gt;. Default prefix is 'search_index_'.
+     * @see #searchIndexNamePrefix
      */
     public String getSearchIndexNamePrefix() {
         return searchIndexNamePrefix;
     }
 
     /**
-     * @return true if all entity instances related to indexes created or recreated on startup should be enqueued automatically.
-     * False otherwise
+     * @see #enqueueIndexAllOnStartupIndexRecreationEnabled
      */
     public boolean isEnqueueIndexAllOnStartupIndexRecreationEnabled() {
         return enqueueIndexAllOnStartupIndexRecreationEnabled;
     }
 
     /**
-     * @return list of entities that should be automatically enqueued on startup in case of index recreation.
-     * Empty list means all indexed entities
+     * @see #enqueueIndexAllOnStartupIndexRecreationEntities
      */
     public List<String> getEnqueueIndexAllOnStartupIndexRecreationEntities() {
         return enqueueIndexAllOnStartupIndexRecreationEntities;
     }
 
     /**
-     * @return name of default search strategy
+     * @see #defaultSearchStrategy
      */
     public String getDefaultSearchStrategy() {
         return defaultSearchStrategy;
     }
 
     /**
-     * @return Elasticsearch URL
+     * @see Elasticsearch#url
      */
     public String getElasticsearchUrl() {
         return elasticsearch.url;
     }
 
     /**
-     * @return Elasticsearch login for common base authentication
+     * @see Elasticsearch#login
      */
     public String getElasticsearchLogin() {
         return elasticsearch.login;
     }
 
     /**
-     * @return Elasticsearch password for common base authentication
+     * @see Elasticsearch#password
      */
     public String getElasticsearchPassword() {
         return elasticsearch.password;
     }
 
     /**
-     * @return location of CA certificate for connection to Elasticsearch service.
-     * Location is handled according to the rules of {@link Resources}
+     * @see SSL#certificateLocation
      */
     public String getElasticsearchSslCertificateLocation() {
         return elasticsearch.ssl.certificateLocation;
     }
 
     /**
-     * @return alias what will be used to store certificate to Key Store. "es_client_ca" by default
+     * @see SSL#certificateAlias
      */
     public String getElasticsearchSslCertificateAlias() {
         return elasticsearch.ssl.certificateAlias;
     }
 
     /**
-     * @return type of Certificate Factory. "X.509" by default
+     * @see SSL#certificateFactoryType
      */
     public String getElasticsearchSslCertificateFactoryType() {
         return elasticsearch.ssl.certificateFactoryType;
     }
 
     /**
-     * @return type of Key Store. "pkcs12" by default
+     * @see SSL#keyStoreType
      */
     public String getElasticsearchSslKeyStoreType() {
         return elasticsearch.ssl.keyStoreType;
     }
 
     /**
-     * @return The way of index schema synchronization
+     * @see #indexSchemaManagementStrategy
      */
     public IndexSchemaManagementStrategy getIndexSchemaManagementStrategy() {
         return indexSchemaManagementStrategy;
@@ -246,9 +297,22 @@ public class SearchProperties {
     }
 
     protected static class Elasticsearch {
+
+        /**
+         * Elasticsearch URL.
+         */
         protected final String url;
+
+        /**
+         * Elasticsearch login for common base authentication.
+         */
         protected final String login;
+
+        /**
+         * Elasticsearch password for common base authentication.
+         */
         protected final String password;
+
         protected final SSL ssl;
 
         public Elasticsearch(
@@ -264,9 +328,26 @@ public class SearchProperties {
     }
 
     protected static class SSL {
+
+        /**
+         * Location of CA certificate for connection to Elasticsearch service. Location is handled according to the
+         * rules of {@link Resources}
+         */
         protected final String certificateLocation;
+
+        /**
+         * Alias what will be used to store certificate to Key Store. "es_client_ca" by default.
+         */
         protected final String certificateAlias;
+
+        /**
+         * Type of Certificate Factory. "X.509" by default.
+         */
         protected final String certificateFactoryType;
+
+        /**
+         * Type of Key Store. "pkcs12" by default.
+         */
         protected final String keyStoreType;
 
         public SSL(

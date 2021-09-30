@@ -24,10 +24,29 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 @ConstructorBinding
 public class SearchAwsProperties {
 
+    /**
+     * Whether AWS IAM user is used to access to Elasticsearch service, false if common base authentication is used.
+     */
     protected final boolean iamAuth;
+
+    /**
+     * AWS Elasticsearch region. It's used to sign requests if IAM authentication is enabled.
+     */
     protected final String region;
+
+    /**
+     * AWS Elasticsearch service name. It's used to sign requests if IAM authentication is enabled.
+     */
     protected final String serviceName;
+
+    /**
+     * Access Key of AWS IAM user that is used to access to Elasticsearch service if IAM authentication is enabled.
+     */
     protected final String accessKey;
+
+    /**
+     * Secret Key of AWS IAM user that is used to access to Elasticsearch service if IAM authentication is enabled.
+     */
     protected final String secretKey;
 
     public SearchAwsProperties(
@@ -44,35 +63,35 @@ public class SearchAwsProperties {
     }
 
     /**
-     * @return true if AWS IAM user is used to access to Elasticsearch service, false if common base authentication is used
+     * @see #iamAuth
      */
     public boolean isElasticsearchAwsIamAuthentication() {
         return iamAuth;
     }
 
     /**
-     * @return AWS Elasticsearch region. It's used to sign requests if IAM authentication is enabled
+     * @see #region
      */
     public String getElasticsearchAwsRegion() {
         return region;
     }
 
     /**
-     * @return AWS Elasticsearch service name. It's used to sign requests if IAM authentication is enabled
+     * @see #serviceName
      */
     public String getElasticsearchAwsServiceName() {
         return serviceName;
     }
 
     /**
-     * @return Access Key of AWS IAM user that is used to access to Elasticsearch service if IAM authentication is enabled
+     * @see #accessKey
      */
     public String getElasticsearchAwsAccessKey() {
         return accessKey;
     }
 
     /**
-     * @return Secret Key of AWS IAM user that is used to access to Elasticsearch service if IAM authentication is enabled
+     * @see #secretKey
      */
     public String getElasticsearchAwsSecretKey() {
         return secretKey;

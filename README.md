@@ -115,7 +115,7 @@ Here ```addons``` is a special file that is generated automatically based on use
    Example for the theme with the name ```custom-theme```:
 ```
 jmix.ui.theme = custom-theme
-jmix.ui.themeConfig=com/company/sample/theme/custom-theme-theme.properties
+jmix.ui.theme-config=com/company/sample/theme/custom-theme-theme.properties
 ```
 
 After the theme is added and configured, add the following dependencies in ```build.gradle```:

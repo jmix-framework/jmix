@@ -32,7 +32,7 @@ import org.springframework.context.annotation.Import;
 @Configuration
 @Import(SearchConfiguration.class)
 @ConditionalOnClass(Job.class)
-@ConditionalOnProperty(name = "jmix.search.useDefaultIndexingQueueProcessingQuartzConfiguration", matchIfMissing = true)
+@ConditionalOnProperty(name = "jmix.search.use-default-indexing-queue-processing-quartz-configuration", matchIfMissing = true)
 public class IndexingQueueProcessingScheduleAutoConfiguration {
 
     private static final Logger log = LoggerFactory.getLogger(IndexingQueueProcessingScheduleAutoConfiguration.class);

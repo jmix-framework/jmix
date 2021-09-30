@@ -53,7 +53,7 @@ public class SearchAwsAutoConfiguration {
     protected ElasticsearchSslConfigurer elasticsearchSslConfigurer;
 
     @Bean("search_RestHighLevelClient")
-    @ConditionalOnProperty(name = "jmix.search.elasticsearch.aws.iamAuth", matchIfMissing = true)
+    @ConditionalOnProperty(name = "jmix.search.elasticsearch.aws.iam-auth", matchIfMissing = true)
     public RestHighLevelClient elasticSearchClient() {
         log.debug("Create ES Client with AWS IAM Authentication");
         String esUrl = searchProperties.getElasticsearchUrl();

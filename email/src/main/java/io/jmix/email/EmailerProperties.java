@@ -30,23 +30,95 @@ import javax.validation.constraints.PositiveOrZero;
 @ConstructorBinding
 public class EmailerProperties {
 
+    /**
+     * Default "from" address
+     */
     String fromAddress;
+
+    /**
+     * How many scheduler ticks to skip after server startup. Actual sending will start with the next call. This reduces
+     * the server load on startup.
+     */
     int scheduledSendingDelayCallCount;
+
+    /**
+     * Number of queued messages per every scheduler tick. Scheduler will process no more than given number of queued
+     * messages per every scheduler tick.
+     */
     int messageQueueCapacity;
+
+    /**
+     * Max number of attempts to send a message, after which the message's status is set to NOT_SENT.
+     */
     int defaultSendingAttemptsLimit;
+
+    /**
+     * Timeout in seconds for message in {@link SendingStatus#SENDING} status to be successfully sent or failed. After
+     * this time passes, emailer will try to resend email again.
+     */
     int sendingTimeoutSec;
+
+    /**
+     * All emails go to this address if {@link #sendAllToAdmin} is enabled, regardless of actual recipient.
+     */
     String adminAddress;
+
+    /**
+     * Whether all email messages go to {@link #adminAddress}.
+     */
     boolean sendAllToAdmin;
+
+    /**
+     * Whether email body text and attachments are stored in file storage instead of BLOB columns in database. Should be
+     * used if application stores lots of emails and/or email attachments.
+     *
+     * @see SendingMessage#getContentText()
+     * @see SendingAttachment#getContentFile()
+     */
     boolean useFileStorage;
+
+    /**
+     * Username used by asynchronous sending mechanism to be able to store information in the database.
+     */
     String asyncSendingUsername;
+
+    /**
+     * Whether the default Email Sending quartz scheduling configuration is used.
+     */
     boolean useDefaultQuartzConfiguration;
+
+    /**
+     * CRON expression that is used by default Email Sending quartz scheduling configuration.
+     */
     String emailSendingCron;
+
+    /**
+     * Whether the default Email Cleaning quartz scheduling configuration is used.
+     */
     boolean useDefaultEmailCleaningQuartzConfiguration;
+
+    /**
+     * Maximum age (in days) of important messages after which they must be deleted. Zero value (0) means that messages
+     * won't be removed.
+     */
     @PositiveOrZero
     int maxAgeOfImportantMessages;
+
+    /**
+     * Maximum age (in days) of messages after which they must be deleted. Zero value (0) means that messages won't be
+     * removed.
+     */
     @PositiveOrZero
     int maxAgeOfNonImportantMessages;
+
+    /**
+     * CRON expression that is used by default Email Cleaning quartz scheduling configuration.
+     */
     String emailCleaningCron;
+
+    /**
+     * Whether the file storage cleaning should be performed while the cleaning scheduler is working.
+     */
     boolean cleanFileStorage;
 
     public EmailerProperties(@DefaultValue("DoNotReply@localhost") String fromAddress,
@@ -80,127 +152,112 @@ public class EmailerProperties {
     }
 
     /**
-     * @return Default "from" address
+     * @see #fromAddress
      */
     public String getFromAddress() {
         return fromAddress;
     }
 
     /**
-     * How many scheduler ticks to skip after server startup.
-     * Actual sending will start with the next call.
-     * <br> This reduces the server load on startup.
-     *
-     * @return Number of scheduler ticks to skip after server startup
+     * @see #scheduledSendingDelayCallCount
      */
     public int getScheduledSendingDelayCallCount() {
         return scheduledSendingDelayCallCount;
     }
 
     /**
-     * Scheduler will process no more than given number of queued messages per every scheduler tick.
-     *
-     * @return Number of queued messages per every scheduler tick
+     * @see #messageQueueCapacity
      */
     public int getMessageQueueCapacity() {
         return messageQueueCapacity;
     }
 
     /**
-     * @return Max number of attempts to send a message, after which the message's status is set to NOT_SENT.
+     * @see #defaultSendingAttemptsLimit
      */
     public int getDefaultSendingAttemptsLimit() {
         return defaultSendingAttemptsLimit;
     }
 
     /**
-     * Timeout in seconds for message in {@link SendingStatus#SENDING} status
-     * to be successfully sent or failed. After this time passes, emailer will try to resend email again.
+     * @see #sendingTimeoutSec
      */
     public int getSendingTimeoutSec() {
         return sendingTimeoutSec;
     }
 
     /**
-     * All emails go to this address if {@link #isSendAllToAdmin()} ()} is enabled, regardless of actual recipient.
+     * @see #adminAddress
      */
     public String getAdminAddress() {
         return adminAddress;
     }
 
     /**
-     * @return true if all email messages go to {@link #getAdminAddress()}.
+     * @see #sendAllToAdmin
      */
     public boolean isSendAllToAdmin() {
         return sendAllToAdmin;
     }
 
     /**
-     * When turned on, email body text and attachments will be stored in file storage
-     * instead of BLOB columns in database.
-     * Should be used if application stores lots of emails and/or email attachments.
-     *
-     * @return true if email body text and attachments are stored in file storage instead of BLOB columns in database.
-     * @see SendingMessage#getContentText()
-     * @see SendingAttachment#getContentFile()
+     * @see #useFileStorage
      */
     public boolean isUseFileStorage() {
         return useFileStorage;
     }
 
     /**
-     * @return Username used by asynchronous sending mechanism to be able to store information in the database.
+     * @see #asyncSendingUsername
      */
     public String getAsyncSendingUsername() {
         return asyncSendingUsername;
     }
 
     /**
-     * @return true if default Email Sending quartz scheduling configuration is used. False otherwise
+     * @see #useDefaultQuartzConfiguration
      */
     public boolean getUseDefaultQuartzConfiguration() {
         return useDefaultQuartzConfiguration;
     }
 
     /**
-     * @return CRON expression that is used by default Email Sending quartz scheduling configuration
+     * @see #emailSendingCron
      */
     public String getEmailSendingCron() {
         return emailSendingCron;
     }
 
     /**
-     * @return true if default Email Cleaning quartz scheduling configuration is used. False otherwise
+     * @see #useDefaultEmailCleaningQuartzConfiguration
      */
     public boolean getUseDefaultEmailCleaningQuartzConfiguration() {
         return useDefaultEmailCleaningQuartzConfiguration;
     }
 
     /**
-     * @return the maximum age (in days) of important messages after which they must be deleted.
-     * Zero value (0) means that messages won't be removed
+     * @see #maxAgeOfImportantMessages
      */
     public int getMaxAgeOfImportantMessages() {
         return maxAgeOfImportantMessages;
     }
 
     /**
-     * @return the maximum age (in days) of messages after which they must be deleted.
-     * Zero value (0) means that messages won't be removed
+     * @see #maxAgeOfNonImportantMessages
      */
     public int getMaxAgeOfNonImportantMessages() {
         return maxAgeOfNonImportantMessages;
     }
 
     /**
-     * @return CRON expression that is used by default Email Cleaning quartz scheduling configuration
+     * @see #emailCleaningCron
      */
     public String getEmailCleaningCron() {
         return emailCleaningCron;
     }
 
     /**
-     * @return true if deleted from file storage is performed while the cleaning scheduler is working
+     * @see #cleanFileStorage
      */
     public boolean getCleanFileStorage() {
         return cleanFileStorage;

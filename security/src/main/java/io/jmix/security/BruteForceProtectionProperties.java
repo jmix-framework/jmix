@@ -27,8 +27,21 @@ import java.time.temporal.ChronoUnit;
 @ConfigurationProperties(prefix = "jmix.security.bruteforceprotection")
 @ConstructorBinding
 public class BruteForceProtectionProperties {
+
+    /**
+     * Whether the brute-force protection on user authentication is enabled.
+     */
     private final boolean enabled;
+
+    /**
+     * Time interval for which a user is blocked after a series of
+     * unsuccessful login attempts.
+     */
     private final Duration blockInterval;
+
+    /**
+     * Maximum number of unsuccessful authentication attempts.
+     */
     private final int maxLoginAttemptsNumber;
 
     public BruteForceProtectionProperties(
@@ -42,22 +55,21 @@ public class BruteForceProtectionProperties {
     }
 
     /**
-     * @return a time interval for which a user is blocked after a series of
-     * unsuccessful login attempts.
+     * @see #blockInterval
      */
     public Duration getBlockInterval() {
         return blockInterval;
     }
 
     /**
-     * Whether the brute-force protection on user authentication is enabled.
+     * @see #enabled
      */
     public boolean isEnabled() {
         return enabled;
     }
 
     /**
-     * @return a maximum number of unsuccessful authentication attempts.
+     * @see #maxLoginAttemptsNumber
      */
     public int getMaxLoginAttemptsNumber() {
         return maxLoginAttemptsNumber;

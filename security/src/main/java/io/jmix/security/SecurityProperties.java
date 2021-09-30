@@ -24,6 +24,9 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 @ConstructorBinding
 public class SecurityProperties {
 
+    /**
+     * Whether hot deploy of annotated (i.e., design-time) roles is enabled.
+     */
     boolean annotatedRolesHotDeployEnabled;
 
     public SecurityProperties(@DefaultValue("true") boolean annotatedRolesHotDeployEnabled) {
@@ -31,7 +34,7 @@ public class SecurityProperties {
     }
 
     /**
-     * @return true if hot deploy of annotated (i.e., design-time) roles is enabled. Default value: true
+     * @see #annotatedRolesHotDeployEnabled
      */
     public boolean isAnnotatedRolesHotDeployEnabled() {
         return annotatedRolesHotDeployEnabled;

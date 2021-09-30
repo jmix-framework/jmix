@@ -28,7 +28,16 @@ public class UiScreenProperties {
     String commitShortcut;
     boolean createActionAddsFirst;
     boolean useSaveConfirmation;
+
+    /**
+     * Standard Window validation error notification type as one of Notifications.NotificationType values.
+     */
     String validationNotificationType;
+
+    /**
+     * Whether LookupBuilder will reload entity after it is selected from lookup window if the selected entity
+     * doesn't contain all required entity attributes.
+     */
     boolean reloadUnfetchedAttributesFromLookupScreens;
     boolean layoutAnalyzerEnabled;
 
@@ -67,15 +76,14 @@ public class UiScreenProperties {
     }
 
     /**
-     * Standard Window validation error notification type as one of Notifications.NotificationType values.
+     * @see #validationNotificationType
      */
     public String getValidationNotificationType() {
         return validationNotificationType;
     }
 
     /**
-     * If true, then LookupBuilder will reload entity after it is selected from lookup window if the selected entity doesn't contain all
-     * required entity attributes
+     * @see #reloadUnfetchedAttributesFromLookupScreens
      */
     public boolean isReloadUnfetchedAttributesFromLookupScreens() {
         return reloadUnfetchedAttributesFromLookupScreens;

@@ -24,7 +24,14 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 @ConstructorBinding
 public class UiBackgroundTaskProperties {
 
+    /**
+     * Number of background task threads.
+     */
     int threadsCount;
+
+    /**
+     * Tasks that do not update their status are killed after the timeout.
+     */
     int timeoutSeconds;
 
     public UiBackgroundTaskProperties(
@@ -36,14 +43,14 @@ public class UiBackgroundTaskProperties {
     }
 
     /**
-     * Number of background task threads.
+     * @see #threadsCount
      */
     public int getThreadsCount() {
         return threadsCount;
     }
 
     /**
-     * Tasks that do not update their status are killed after the timeout.
+     * @see #timeoutSeconds
      */
     public int getTimeoutSeconds() {
         return timeoutSeconds;

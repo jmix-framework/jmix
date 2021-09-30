@@ -34,16 +34,35 @@ public class UiProperties {
     boolean performanceTestMode;
     boolean productionMode;
 
+    /**
+     * Default main window mode.
+     */
     String appWindowMode;
     boolean compositeMenu;
     boolean allowAnonymousAccess;
+
+    /**
+     * Timeout (in seconds) for MBean operation invoked in JMX consoleю
+     */
     int jmxConsoleMBeanOperationTimeoutSec;
+
+    /**
+     * HTTP session expiration timeout in seconds. Should be equal or less than user session timeout.
+     */
     int httpSessionExpirationTimeoutSec;
     UrlHandlingMode urlHandlingMode;
     List<String> linkHandlerActions;
     List<String> viewFileExtensions;
     int saveExportedByteArrayDataThresholdBytes;
+
+    /**
+     * WebJar resources cache time in seconds. Zero cache time disables caching at all.
+     */
     long webJarResourcesCacheTime;
+
+    /**
+     * Interval for checking timeout of a BackgroundTask in ms.
+     */
     long backgroundTaskTimeoutCheckInterval;
 
     Integer defaultMaxFetchSize;
@@ -52,15 +71,54 @@ public class UiProperties {
     Integer defaultPageSize;
     Map<String, Integer> entityPageSize;
 
+    /**
+     * Maximum number of opened tabs. 0 for unlimited.
+     */
     int maxTabCount;
+
+    /**
+     * Whether WindowBreadCrumbs is shown in screens.
+     */
     boolean showBreadCrumbs;
+
+    /**
+     * Whether default screen can be closed or not when TABBED work area mode is used.
+     */
     boolean defaultScreenCanBeClosed;
+
+    /**
+     * What screen should be opened after login. This setting will be applied to all users.
+     */
     String defaultScreenId;
+
+    /**
+     * Screen that will be used as Login screen.
+     */
     String loginScreenId;
+
+    /**
+     * Screen that will be used as Main screen.
+     */
     String mainScreenId;
+
+    /**
+     * Screen that will be open for non-authenticated user when an application opened.
+     */
     String initialScreenId;
+
+    /**
+     * Whether the locale select field is shown on login screen.
+     */
     boolean localeSelectVisible;
+
+    /**
+     * Whether the  app should perform force refresh for browser tabs with authenticated sessions.
+     */
     boolean forceRefreshAuthenticatedTabs;
+
+    /**
+     * Maximum number of symbols in main tabs captions.
+     */
     int mainTabCaptionLength;
 
     public UiProperties(
@@ -134,15 +192,14 @@ public class UiProperties {
     }
 
     /**
-     * @return Default main window mode.
+     * @see #appWindowMode
      */
     public String getAppWindowMode() {
         return appWindowMode;
     }
 
     /**
-     * HTTP session expiration timeout in seconds.<br>
-     * Should be equal or less than user session timeout.
+     * @see #httpSessionExpirationTimeoutSec
      */
     public int getHttpSessionExpirationTimeoutSec() {
         return httpSessionExpirationTimeoutSec;
@@ -173,11 +230,7 @@ public class UiProperties {
     }
 
     /**
-     * Enables to configure whether WebJar resources should be cached or not.
-     * <p>
-     * Zero cache time disables caching at all.
-     *
-     * @return WebJar resources cache time in seconds
+     * @see #webJarResourcesCacheTime
      */
     public long getWebJarResourcesCacheTime() {
         return webJarResourcesCacheTime;
@@ -188,16 +241,14 @@ public class UiProperties {
     }
 
     /**
-     * @return Timeout (in seconds) for MBean operation invoked in JMX console
+     * @see #jmxConsoleMBeanOperationTimeoutSec
      */
     public int getJmxConsoleMBeanOperationTimeoutSec() {
         return jmxConsoleMBeanOperationTimeoutSec;
     }
 
     /**
-     * Interval for checking timeout of a BackgroundTask.
-     *
-     * @return timeout in ms
+     * @see #backgroundTaskTimeoutCheckInterval
      */
     public long getBackgroundTaskTimeoutCheckInterval() {
         return backgroundTaskTimeoutCheckInterval;
@@ -226,77 +277,70 @@ public class UiProperties {
     }
 
     /**
-     * Maximum number of opened tabs. 0 for unlimited.
+     * @see #maxTabCount
      */
     public int getMaxTabCount() {
         return maxTabCount;
     }
 
     /**
-     * @return true if WindowBreadCrumbs is shown in screens, false - otherwise
+     * @see #showBreadCrumbs
      */
     public boolean isShowBreadCrumbs() {
         return showBreadCrumbs;
     }
 
     /**
-     * Defines whether default screen can be closed or not when TABBED work area mode is used.
+     * @see #defaultScreenCanBeClosed
      */
     public boolean isDefaultScreenCanBeClosed() {
         return defaultScreenCanBeClosed;
     }
 
     /**
-     * Defines which screen should be opened after login. This setting will be applied to all users.
+     * @see #defaultScreenId
      */
     public String getDefaultScreenId() {
         return defaultScreenId;
     }
 
     /**
-     * Defines the screen that will be used as Login screen.
-     *
-     * @return the login screen id
+     * @see #loginScreenId
      */
     public String getLoginScreenId() {
         return loginScreenId;
     }
 
     /**
-     * Defines the screen that will be used as Main screen.
-     *
-     * @return the main screen id
+     * @see #mainScreenId
      */
     public String getMainScreenId() {
         return mainScreenId;
     }
 
     /**
-     * Defines the screen that will be open for non-authenticated user when an application opened.
-     *
-     * @return initial screen id
+     * @see #initialScreenId
      */
     public String getInitialScreenId() {
         return initialScreenId;
     }
 
     /**
-     * @return true if app should perform force refresh for browser tabs with authenticated sessions
-     * or false otherwise
+     * @see #forceRefreshAuthenticatedTabs
      */
     public boolean isForceRefreshAuthenticatedTabs() {
         return forceRefreshAuthenticatedTabs;
     }
 
     /**
-     * Maximum number of symbols in main tabs captions.
+     * @see #mainTabCaptionLength
      */
     public int getMainTabCaptionLength() {
         return mainTabCaptionLength;
     }
 
     /**
-     * Whether the locale select field is shown on login screen.
+     * @see #localeSelectVisible
      */
     public boolean isLocaleSelectVisible() {
         return localeSelectVisible;

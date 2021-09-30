@@ -35,6 +35,10 @@ import java.util.Map;
 @ConstructorBinding
 public class UiComponentProperties {
 
+    /**
+     * Whether to sanitize the value of components using {@link HtmlSanitizer} to prevent Cross-site Scripting (XSS) in
+     * HTML context.
+     */
     boolean htmlSanitizerEnabled;
 
     int uploadFieldMaxUploadSizeMb;
@@ -44,7 +48,24 @@ public class UiComponentProperties {
     String tableRemoveShortcut;
     String tableEditShortcut;
     String tableViewShortcut;
+
+    /**
+     * Page length for Table implementation - count of rows for first rendering of Table. After first partial rendering
+     * Table will request rest of rows from the server. Setting page length 0 disables paging. If Table has fixed height
+     * the client side may update the page length automatically the correct value.
+     */
     int tablePageLength;
+
+    /**
+     * This property adjusts a possible caching mechanism of table implementation.
+     * <br>
+     * Table component may fetch and render some rows outside visible area. With complex tables (for example containing
+     * layouts and components), the client side may become unresponsive. Setting the value lower, UI will become more
+     * responsive. With higher values scrolling in client will hit server less frequently.
+     * <br>
+     * The amount of cached rows will be cacheRate multiplied with pageLength {@link #getTablePageLength()} both below
+     * and above visible area.
+     */
     double tableCacheRate;
 
     String pickerShortcutModifiers;
@@ -52,22 +73,52 @@ public class UiComponentProperties {
     String pickerOpenShortcut;
     String pickerClearShortcut;
 
+    /**
+     * Page length for the suggestion popup of {@link ComboBox} component. Setting the page length to {@code 0} will
+     * disable suggestion popup paging (all items visible).
+     */
     int comboBoxPageLength;
 
     String mainTabSheetNextTabShortcut;
     String mainTabSheetPreviousTabShortcut;
+
+    /**
+     * Whether default {@link JmixMainTabSheet} or {@link JmixManagedTabSheet} will be used in AppWorkArea.
+     */
     MainTabSheetMode mainTabSheetMode;
 
+    /**
+     * How the managed main TabSheet switches its tabs: hides or unloads them.
+     */
     ManagedMainTabSheetMode managedMainTabSheetMode;
 
+    /**
+     * Options for rows per page ComboBox.
+     */
     List<Integer> paginationItemsPerPageOptions;
 
     Map<String, String> entityFieldType;
     Map<String, List<String>> entityFieldActions;
 
+    /**
+     * Default value for the autoApply attribute of the {@link Filter} component
+     */
     boolean filterAutoApply;
+
+    /**
+     * Number of nested properties in the {@link AddConditionScreen}. I.e. if the depth is 2, then you'll be able to
+     * select a property "contractor.city.country", if the value is 3, then "contractor.city.country.name", etc.
+     */
     int filterPropertiesHierarchyDepth;
+
+    /**
+     * Number of columns to be displayed on one row in {@link Filter}.
+     */
     int filterColumnsCount;
+
+    /**
+     * Whether field for filter configuration id should be visible in the filter configuration edit screens.
+     */
     boolean filterShowConfigurationIdField;
 
     public UiComponentProperties(
@@ -173,64 +224,49 @@ public class UiComponentProperties {
     }
 
     /**
-     * @return the page length for the suggestion popup of {@link ComboBox} component.
-     * Setting the page length to {@code 0} will disable suggestion popup paging (all items visible)
+     * @see #comboBoxPageLength
      */
     public int getComboBoxPageLength() {
         return comboBoxPageLength;
     }
 
     /**
-     * Sets the page length for Table implementation - count of rows for first rendering of Table. After first partial
-     * rendering Table will request rest of rows from the server.
-     * <br>
-     * Setting page length 0 disables paging.
-     * <br>
-     * If Table has fixed height the client side may update the page length automatically the correct value.
+     * @see #tablePageLength
      */
     public int getTablePageLength() {
         return tablePageLength;
     }
 
     /**
-     * This property adjusts a possible caching mechanism of table implementation.
-     * <br>
-     * Table component may fetch and render some rows outside visible area. With complex tables (for example containing
-     * layouts and components), the client side may become unresponsive. Setting the value lower, UI will become more
-     * responsive. With higher values scrolling in client will hit server less frequently.
-     * <br>
-     * The amount of cached rows will be cacheRate multiplied with pageLength {@link #getTablePageLength()} both below
-     * and above visible area.
+     * @see #tableCacheRate
      */
     public double getTableCacheRate() {
         return tableCacheRate;
     }
 
     /**
-     * Sets whether default {@link JmixMainTabSheet} or
-     * {@link JmixManagedTabSheet} will be used in AppWorkArea.
+     * @see #mainTabSheetMode
      */
     public MainTabSheetMode getMainTabSheetMode() {
         return mainTabSheetMode;
     }
 
     /**
-     * Sets how the managed main TabSheet switches its tabs: hides or unloads them.
+     * @see #managedMainTabSheetMode
      */
     public ManagedMainTabSheetMode getManagedMainTabSheetMode() {
         return managedMainTabSheetMode;
     }
 
     /**
-     * Defines whether to sanitize the value of components using {@link HtmlSanitizer}
-     * to prevent Cross-site Scripting (XSS) in HTML context.
+     * @see #htmlSanitizerEnabled
      */
     public boolean isHtmlSanitizerEnabled() {
         return htmlSanitizerEnabled;
     }
 
     /**
-     * @return options for rows per page ComboBox.
+     * @see #paginationItemsPerPageOptions
      */
     public List<Integer> getPaginationItemsPerPageOptions() {
         return paginationItemsPerPageOptions;
@@ -245,30 +281,28 @@ public class UiComponentProperties {
     }
 
     /**
-     * @return default value for the autoApply attribute of the {@link Filter} component
+     * @see #filterAutoApply
      */
     public boolean isFilterAutoApply() {
         return filterAutoApply;
     }
 
     /**
-     * @return a number of nested properties in the {@link AddConditionScreen}.
-     * I.e. if the depth is 2, then you'll be able to select a property "contractor.city.country",
-     * if the value is 3, then "contractor.city.country.name", etc.
+     * @see #filterPropertiesHierarchyDepth
      */
     public int getFilterPropertiesHierarchyDepth() {
         return filterPropertiesHierarchyDepth;
     }
 
     /**
-     * @return the number of columns to be displayed on one row in {@link Filter}
+     * @see #filterColumnsCount
      */
     public int getFilterColumnsCount() {
         return filterColumnsCount;
     }
 
     /**
-     * @return whether field for filter configuration id should be visible in the filter configuration edit screens
+     * @see #filterShowConfigurationIdField
      */
     public boolean isFilterShowConfigurationIdField() {
         return filterShowConfigurationIdField;

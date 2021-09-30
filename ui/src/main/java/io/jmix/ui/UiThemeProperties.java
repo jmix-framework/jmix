@@ -31,14 +31,47 @@ import java.util.List;
 @ConstructorBinding
 public class UiThemeProperties {
 
+    /**
+     * Name of the currently used UI theme.
+     */
     String name;
 
+    /**
+     * List of available theme modes, i.e. color presets.
+     */
     List<String> modes;
+
+    /**
+     * Name of color preset that has no additional style class name.
+     * <p>
+     * <strong>Note:</strong> can’t be changed without corresponding changes in styles.
+     */
     String defaultMode;
+
+    /**
+     * Name of color preset to be used if no other settings are available.
+     * <p>
+     * Either cookie or user settings obtained from {@link UserSettingService} have precedence over this value.
+     */
     String defaultModeToUse;
 
+    /**
+     * List of available theme size presets.
+     */
     List<String> sizes;
+
+    /**
+     * Name of size preset that has no additional style class name.
+     * <p>
+     * <strong>Note:</strong> can’t be changed without corresponding changes in styles.
+     */
     String defaultSize;
+
+    /**
+     * Name of size preset to be used if no other settings are available.
+     * <p>
+     * Either cookie or user settings obtained from {@link UserSettingService} have precedence over this value.
+     */
     String defaultSizeToUse;
 
     public UiThemeProperties(
@@ -64,37 +97,28 @@ public class UiThemeProperties {
     }
 
     /**
-     * @return the name of the currently used UI theme
+     * @see #name
      */
     public String getName() {
         return name;
     }
 
     /**
-     * @return the list of available theme modes, i.e. color presets
+     * @see #modes
      */
     public List<String> getModes() {
         return modes;
     }
 
     /**
-     * Returns the name of color preset that has no additional style class name.
-     * <p>
-     * <strong>Note:</strong> can’t be changed without corresponding changes in styles.
-     *
-     * @return the name of color preset that has no additional style class name
+     * @see #defaultMode
      */
     public String getDefaultMode() {
         return defaultMode;
     }
 
     /**
-     * Returns the name of color preset to be used if no other settings are available.
-     * <p>
-     * Either cookie or user settings obtained from {@link UserSettingService}
-     * have precedence over this value.
-     *
-     * @return the name of color preset to be used if no other settings are available
+     * @see #defaultModeToUse
      */
     @Nullable
     public String getDefaultModeToUse() {
@@ -102,30 +126,21 @@ public class UiThemeProperties {
     }
 
     /**
-     * @return the list of available theme size presets
+     * @see #sizes
      */
     public List<String> getSizes() {
         return sizes;
     }
 
     /**
-     * Returns the name of size preset that has no additional style class name.
-     * <p>
-     * <strong>Note:</strong> can’t be changed without corresponding changes in styles.
-     *
-     * @return the name of size preset that has no additional style class name
+     * @see #defaultSize
      */
     public String getDefaultSize() {
         return defaultSize;
     }
 
     /**
-     * Returns the name of size preset to be used if no other settings are available.
-     * <p>
-     * Either cookie or user settings obtained from {@link UserSettingService}
-     * have precedence over this value.
-     *
-     * @return the name of size preset to be used if no other settings are available
+     * @see #defaultSizeToUse
      */
     @Nullable
     public String getDefaultSizeToUse() {

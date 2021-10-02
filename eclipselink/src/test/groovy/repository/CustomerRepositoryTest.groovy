@@ -188,24 +188,6 @@ class CustomerRepositoryTest extends DataSpec {
         deleted == null
     }
 
-/*
-    @Test//todo make separae test(s?) for softDelition when considering of it will be implemented
-    public void testDeleteCustomer() throws SQLException {
-        try (Transaction tx = persistence.getTransaction()) {
-            persistence.setSoftDeletion(false)
-            Customer customer = customerRepository.findOne(customer3.getId())
-            customerRepository.delete(customer)
-            tx.commit()
-        }
-
-        QueryRunner runner = new QueryRunner(persistence.getDataSource())
-        Map<String, Object> row = runner.query("select * from REPOSITORY_CUSTOMER where ID = '" + customer3.getId() + "'",
-                new MapHandler())
-        assertNull(row)
-    }
-*/
-
-
     void testSoftDeleteCustomerById() {
         when:
         customerRepository.deleteById(customer3.getId())

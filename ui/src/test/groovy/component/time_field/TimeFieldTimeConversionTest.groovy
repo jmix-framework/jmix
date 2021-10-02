@@ -87,6 +87,6 @@ class TimeFieldTimeConversionTest extends Specification {
     }
 
     def timeOf(int hours) {
-        return new LocalTime(hours, 0, 0, 0)
+        return LocalTime.of(hours, 0, 0, 0)
     }
 }

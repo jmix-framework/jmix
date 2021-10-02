@@ -40,8 +40,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
 
-import static jdk.nashorn.internal.runtime.ECMAErrors.getMessage;
-
 @UiController("imap_MailBox.edit")
 @UiDescriptor("imap-mail-box-edit.xml")
 @EditedEntityContainer("mailBoxDc")
@@ -208,7 +206,7 @@ public class ImapMailBoxEdit extends StandardEditor<ImapMailBox> {
     protected void onBeforeCommit(BeforeCommitChangesEvent event) {
         if (!connectionEstablished) {
             notifications.create(Notifications.NotificationType.TRAY)
-                    .withCaption(getMessage("saveWithoutConnectionWarning"))
+                    .withCaption(messages.getMessage("saveWithoutConnectionWarning"))
                     .show();
             event.preventCommit();
         }

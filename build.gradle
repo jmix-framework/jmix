@@ -67,7 +67,7 @@ javaPlatform {
 }
 
 dependencies {
-    api platform("org.springframework.boot:spring-boot-dependencies:2.5.2")
+    api platform("org.springframework.boot:spring-boot-dependencies:2.5.5")
     api platform('software.amazon.awssdk:bom:2.16.69')
 
     def baseVersion = '1.0.0'

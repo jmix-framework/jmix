@@ -16,7 +16,9 @@
 package io.jmix.core.metamodel.model.utils;
 
 import com.google.common.collect.ImmutableMap;
+import org.apache.commons.lang3.JavaVersion;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.springframework.cglib.core.ReflectUtils;
 import org.springframework.util.ReflectionUtils;
 
@@ -64,7 +66,7 @@ public class MethodsCache {
         return methodCacheMap.computeIfAbsent(clazz, MethodsCache::new);
     }
 
-    protected MethodsCache(Class clazz) {
+    private MethodsCache(Class clazz) {
         final Method[] methods = clazz.getMethods();
         for (Method method : methods) {
             String name = method.getName();
@@ -111,17 +113,12 @@ public class MethodsCache {
         className = clazz.toString();
     }
 
-    protected Function createGetter(Class clazz, Method method) {
+    private Function createGetter(Class clazz, Method method) {
         Function getter;
         try {
-            Class gimmeLookup;
-            //This code needed to classloader of clazz and classloader of lambda function be same
-            try {
-                gimmeLookup = ReflectUtils.defineClass("GimmeLookup", gimmeLookupClassDef(), clazz.getClassLoader());
-            } catch (Exception e) {
-                gimmeLookup = clazz.getClassLoader().loadClass("GimmeLookup");
-            }
-            MethodHandles.Lookup caller = (MethodHandles.Lookup) gimmeLookup.getField("lookup").get(null);
+            MethodHandles.Lookup caller = SystemUtils.isJavaVersionAtMost(JavaVersion.JAVA_11) ?
+                    getLookup(clazz) :
+                    MethodHandles.lookup();
             CallSite site = LambdaMetafactory.metafactory(caller,
                     "apply",
                     MethodType.methodType(Function.class),
@@ -137,18 +134,13 @@ public class MethodsCache {
         return getter;
     }
 
-    protected BiConsumer createSetter(Class clazz, Method method) {
+    private BiConsumer createSetter(Class clazz, Method method) {
         Class valueType = method.getParameterTypes()[0];
         BiConsumer setter;
         try {
-            Class gimmeLookup;
-            //This code needed to classloader of clazz and classloader of lambda function be same
-            try {
-                gimmeLookup = ReflectUtils.defineClass("GimmeLookup", gimmeLookupClassDef(), clazz.getClassLoader());
-            } catch (Exception e) {
-                gimmeLookup = clazz.getClassLoader().loadClass("GimmeLookup");
-            }
-            MethodHandles.Lookup caller = (MethodHandles.Lookup) gimmeLookup.getField("lookup").get(null);
+            MethodHandles.Lookup caller = SystemUtils.isJavaVersionAtMost(JavaVersion.JAVA_11) ?
+                    getLookup(clazz) :
+                    MethodHandles.lookup();
             CallSite site = LambdaMetafactory.metafactory(caller,
                     "accept",
                     MethodType.methodType(BiConsumer.class),
@@ -162,6 +154,17 @@ public class MethodsCache {
         }
 
         return setter;
+    }
+
+    private MethodHandles.Lookup getLookup(Class clazz) throws ClassNotFoundException, IllegalAccessException, NoSuchFieldException {
+        Class gimmeLookup;
+        //This code needed to classloader of clazz and classloader of lambda function be same
+        try {
+            gimmeLookup = ReflectUtils.defineClass("GimmeLookup", gimmeLookupClassDef(), clazz.getClassLoader());
+        } catch (Exception e) {
+            gimmeLookup = clazz.getClassLoader().loadClass("GimmeLookup");
+        }
+        return (MethodHandles.Lookup) gimmeLookup.getField("lookup").get(null);
     }
 
     /**
@@ -192,7 +195,7 @@ public class MethodsCache {
         return setter;
     }
 
-    protected class SettersHolder implements BiConsumer {
+    private class SettersHolder implements BiConsumer {
 
         protected Map<Class, BiConsumer> setters = new HashMap<>();
         protected BiConsumer defaultSetter;

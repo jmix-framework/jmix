@@ -75,7 +75,7 @@ class JmixPlugin implements Plugin<Project> {
 
             if (project.jmix.entitiesEnhancing.enabled) {
                 project.configurations.create('enhancing')
-                project.dependencies.add('enhancing', 'org.eclipse.persistence:org.eclipse.persistence.jpa:2.7.7-4-jmix')
+                project.dependencies.add('enhancing', 'org.eclipse.persistence:org.eclipse.persistence.jpa:2.7.9-4-jmix')
 
                 if (javaPlugin) {
                     project.tasks.findByName('compileJava').doLast(new EnhancingAction('main'))

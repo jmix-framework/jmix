@@ -3,7 +3,7 @@ buildscript {
         gradlePluginPortal()
     }
     dependencies {
-        classpath "io.jmix.gradle:jmix-gradle-plugin:1.1.0-M5"
+        classpath "io.jmix.gradle:jmix-gradle-plugin:1.1.0-M6"
     }
 }
 
@@ -33,8 +33,6 @@ subprojects {
     buildFile.withInputStream { props.load(it) }
     def subArchivesBaseName = props.getProperty('archivesBaseName')
     def archName = subArchivesBaseName.substring(1, subArchivesBaseName.length() - 1)
-
-    sourceCompatibility = '1.8'
 
     java {
         withSourcesJar()

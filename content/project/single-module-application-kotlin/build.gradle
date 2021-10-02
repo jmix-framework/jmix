@@ -1,5 +1,5 @@
 plugins {
-    id 'io.jmix' version '1.1.0-M5'
+    id 'io.jmix' version '1.1.0-M6'
     id 'org.jetbrains.kotlin.jvm' version '1.4.32'
     id 'java'
 }
@@ -13,7 +13,6 @@ jmix {
 
 group = 'com.company'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '1.8'
 
 repositories {
     mavenCentral() <%if (project_additionalRepositories) {

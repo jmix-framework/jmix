@@ -45,7 +45,7 @@ public interface JmixDataRepository<T, ID> extends PagingAndSortingRepository<T,
      *
      * @return new instance of {@code <T>}.
      */
-    T newOne();
+    T create();
 
     /**
      * Loads an entity by its {@code id} according to {@code fetchPlan}
@@ -53,7 +53,16 @@ public interface JmixDataRepository<T, ID> extends PagingAndSortingRepository<T,
      * @param id must not be {@literal null}.
      * @return the entity with the given id or {@literal Optional#empty()} if none found.
      */
-    Optional<T> findOne(ID id, FetchPlan fetchPlan);
+    Optional<T> findById(ID id, FetchPlan fetchPlan);
+
+    /**
+     * Loads an entity by its {@code id} according to {@code fetchPlan}
+     *
+     * @param id must not be {@literal null}.
+     * @return the entity with the given id
+     * @throws IllegalStateException if nothing was loaded
+     */
+    T getById(ID id, FetchPlan fetchPlan);
 
     /**
      * Returns all instances of the type {@code T} loaded according to {@code fetchPlan}

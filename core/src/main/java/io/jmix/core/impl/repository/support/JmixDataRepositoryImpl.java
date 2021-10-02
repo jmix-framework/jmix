@@ -65,14 +65,19 @@ public class JmixDataRepositoryImpl<T, ID> implements JmixDataRepository<T, ID> 
     }
 
     @Override
-    public T newOne() {
+    public T create() {
         return getDataManager().create(domainClass);
     }
 
 
     @Override
-    public Optional<T> findOne(ID id, FetchPlan fetchPlan) {
+    public Optional<T> findById(ID id, FetchPlan fetchPlan) {
         return idLoader(id).fetchPlan(fetchPlan).optional();
+    }
+
+    @Override
+    public T getById(ID id, FetchPlan fetchPlan) {
+        return idLoader(id).fetchPlan(fetchPlan).one();
     }
 
     @Override

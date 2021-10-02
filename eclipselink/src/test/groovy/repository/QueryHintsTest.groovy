@@ -94,7 +94,7 @@ class QueryHintsTest extends DataSpec {
 
         expect:
         featuredOrderRepository.findAll().size() == 2
-        featuredOrderRepository.findOne(order2.id, plan).isPresent()
+        featuredOrderRepository.findById(order2.id, plan).isPresent()
         featuredOrderRepository.findAll(plan).size() == 2
         featuredOrderRepository.findAll(Sort.unsorted(), plan).size() == 2
         featuredOrderRepository.findAll(Pageable.ofSize(10), plan).totalElements == 2
@@ -109,7 +109,7 @@ class QueryHintsTest extends DataSpec {
         featuredOrderRepository.count() == 2
 
         orderRepository.findAll().size() == 1
-        !orderRepository.findOne(order2.id, plan).isPresent()
+        !orderRepository.findById(order2.id, plan).isPresent()
         orderRepository.findAll(plan).size() == 1
         orderRepository.findAll(Sort.unsorted(), plan).size() == 1
         orderRepository.findAll(Pageable.ofSize(10), plan).totalElements == 1

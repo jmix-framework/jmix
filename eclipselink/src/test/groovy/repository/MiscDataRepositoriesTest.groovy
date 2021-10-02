@@ -62,7 +62,7 @@ class MiscDataRepositoriesTest extends DataSpec {
     JdbcTemplate jdbcTemplate
 
     void setup() {
-        Customer customer = customerRepository.newOne();
+        Customer customer = customerRepository.create();
         customer.name = "first"
         customer.address = new Address()
         customer.address.street = "Shadows"
@@ -130,7 +130,7 @@ class MiscDataRepositoriesTest extends DataSpec {
 
     void "test parameter names do not clash"() {
         setup:
-        Employee e1 = employeeRepository.newOne();
+        Employee e1 = employeeRepository.create();
         e1.name = "First"
         e1.homeAddress.city = "Moscow"
         e1.homeAddress.street = "Arbat"
@@ -139,7 +139,7 @@ class MiscDataRepositoriesTest extends DataSpec {
         e1.registrationAddress.city = "Moscow"
         e1.registrationAddress.street = "Sharikopodshipnikovskaya"
 
-        Employee e2 = employeeRepository.newOne();
+        Employee e2 = employeeRepository.create();
         e2.name = "Second"
         e2.homeAddress.city = "St. Petersburg"
         e2.homeAddress.street = "Nevskiy pr."
@@ -148,7 +148,7 @@ class MiscDataRepositoriesTest extends DataSpec {
         e2.registrationAddress.city = "St. Petersburg"
         e2.registrationAddress.street = "Rabochaya"
 
-        Employee e3 = employeeRepository.newOne();
+        Employee e3 = employeeRepository.create();
         e3.name = "Third"
         e3.homeAddress.city = "Samara"
         e3.homeAddress.street = "Molodogvardeyskaya"
@@ -172,32 +172,32 @@ class MiscDataRepositoriesTest extends DataSpec {
 
     void 'check sort priority'() {
         setup:
-        Employee e1 = employeeRepository.newOne();
+        Employee e1 = employeeRepository.create();
         e1.name = "1"
         e1.secondName = "1"
         e1.lastName = "2"
 
-        Employee e2 = employeeRepository.newOne();
+        Employee e2 = employeeRepository.create();
         e2.name = "1"
         e2.secondName = "2"
         e2.lastName = "1"
 
-        Employee e3 = employeeRepository.newOne();
+        Employee e3 = employeeRepository.create();
         e3.name = "2"
         e3.secondName = "1"
         e3.lastName = "2"
 
-        Employee e4 = employeeRepository.newOne();
+        Employee e4 = employeeRepository.create();
         e4.name = "2"
         e4.secondName = "2"
         e4.lastName = "1"
 
-        Employee e5 = employeeRepository.newOne()
+        Employee e5 = employeeRepository.create()
         e5.name = "3"
         e5.secondName = "1"
         e5.lastName = "2"
 
-        Employee e6 = employeeRepository.newOne();
+        Employee e6 = employeeRepository.create();
         e6.name = "3"
         e6.secondName = "2"
         e6.lastName = "1"
@@ -258,22 +258,22 @@ class MiscDataRepositoriesTest extends DataSpec {
 
     void "check repeated parameters in query"() {
         setup:
-        Employee e1 = employeeRepository.newOne();
+        Employee e1 = employeeRepository.create();
         e1.name = "R."
         e1.secondName = "B."
         e1.lastName = "F."
 
-        Employee e2 = employeeRepository.newOne();
+        Employee e2 = employeeRepository.create();
         e2.name = "John"
         e2.secondName = "R."
         e2.lastName = "Smith"
 
-        Employee e3 = employeeRepository.newOne();
+        Employee e3 = employeeRepository.create();
         e3.name = "Helen"
         e3.secondName = "N."
         e3.lastName = "Phillips"
 
-        Employee e4 = employeeRepository.newOne();
+        Employee e4 = employeeRepository.create();
         e4.name = "Howard"
         e4.secondName = "Phillips"
         e4.lastName = "Lovecraft"

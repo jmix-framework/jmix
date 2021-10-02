@@ -71,17 +71,17 @@ class CustomerRepositoryTest extends DataSpec {
                 .authorities(Collections.emptyList())
                 .build()
         userRepository.addUser(admin)
-        customer1 = customerRepository.newOne()
+        customer1 = customerRepository.create()
         customer1.setName("cust1")
         customer1.setAddress(new Address())
         customer1.getAddress().setCity("Samara")
 
-        customer2 = customerRepository.newOne()
+        customer2 = customerRepository.create()
         customer2.setName("some cust 2")
         customer2.setAddress(new Address())
         customer2.getAddress().setCity("Springfield")
 
-        customer3 = customerRepository.newOne()
+        customer3 = customerRepository.create()
         customer3.setName("another cust 3")
         customer3.setAddress(new Address())
         customer3.getAddress().setCity("Springfield")
@@ -105,7 +105,7 @@ class CustomerRepositoryTest extends DataSpec {
         setup:
         authenticator.begin()
         when:
-        Customer customer = customerRepository.newOne()
+        Customer customer = customerRepository.create()
         customer.setName("customer")
 
 

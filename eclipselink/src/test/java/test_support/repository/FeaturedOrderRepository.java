@@ -41,7 +41,7 @@ public interface FeaturedOrderRepository extends JmixDataRepository<SalesOrder, 
 
     @Override
     @QueryHints({@QueryHint(name = PersistenceHints.SOFT_DELETION, value = "false")})
-    Optional<SalesOrder> findOne(UUID uuid, FetchPlan fetchPlan);
+    Optional<SalesOrder> findById(UUID uuid, FetchPlan fetchPlan);
 
     @Override
     @QueryHints({@QueryHint(name = PersistenceHints.SOFT_DELETION, value = "false")})

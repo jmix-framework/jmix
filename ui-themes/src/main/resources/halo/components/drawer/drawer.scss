@@ -14,6 +14,20 @@
  * limitations under the License.
  */
 
+/**
+ * The background color of the selected item in sidemenu that is placed in drawer. For the selected sidemenu item that
+ * is not placed in drawer see $jmix-sidemenu-item-selected-background.
+ * @group drawer
+ */
+$jmix-drawer-sidemenu-item-selected-background: halo-sidemenu-item-selected-background($jmix-sidemenu-background-color) !default;
+
+/**
+ * The color of the selected item in sidemenu that is placed in drawer. For the selected sidemenu item that is not
+ * placed in drawer see $jmix-sidemenu-item-selected-color.
+ * @group drawer
+ */
+$jmix-drawer-sidemenu-item-selected-color: valo-font-color($jmix-drawer-sidemenu-item-selected-background, 1) !default;
+
 @mixin halo-drawer($primary-stylename: jmix-drawer) {
 
   .#{$primary-stylename}-layout {
@@ -225,6 +239,11 @@
 
       &:hover {
         color: valo-font-color($bg, 1);
+      }
+
+      &.jmix-sidemenu-item-selected {
+        color: $jmix-drawer-sidemenu-item-selected-color;
+        background: $jmix-drawer-sidemenu-item-selected-background;
       }
     }
 

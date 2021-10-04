@@ -29,6 +29,10 @@
 
       .jmix-sidemenu-item {
         @include he-sidemenu-item-style();
+
+        &.jmix-sidemenu-item-selected {
+          @include he-sidemenu-item-selected-style();
+        }
       }
 
       .jmix-sidemenu-item-header {

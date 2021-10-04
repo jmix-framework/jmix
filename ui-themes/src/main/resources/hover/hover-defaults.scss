@@ -156,6 +156,8 @@ $jmix-window-modal-header-height: ceil($v-unit-size * 1.4);
 $jmix-window-modal-header-buttons-line-height: $jmix-window-modal-header-height;
 $jmix-window-modal-header-line-height: $jmix-window-modal-header-height;
 
+$jmix-drawer-sidemenu-item-selected-background: halo-sidemenu-item-selected-background($jmix-sidemenu-background-color, 3%, 7%, true);
+
 /**
  * Whether to enable show/hide animations for dialog windows.
  * @group window

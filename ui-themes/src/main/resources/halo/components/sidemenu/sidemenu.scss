@@ -252,6 +252,20 @@ $jmix-sidemenu-top-height: $v-unit-size + 2 * $jmix-sidemenu-top-offset;
  */
 $jmix-sidemenu-userindicator-font-weight: $v-font-weight !default;
 
+/*
+ * The background color of the selected sidemenu item. For the selected sidemenu item in the drawer, see
+ * $jmix-drawer-sidemenu-item-selected-background.
+ * @group sidemenu
+ */
+$jmix-sidemenu-item-selected-background: halo-sidemenu-item-selected-background() !default;
+
+/*
+ * The color of the selected sidemenu item. For the selected sidemenu item in the drawer, see
+ * $jmix-drawer-sidemenu-item-selected-color.
+ * @group sidemenu
+ */
+$jmix-sidemenu-item-selected-selected: valo-font-color($jmix-sidemenu-item-selected-background, 1) !default;
+
 @mixin halo-jmix-sidemenu($primary-stylename: jmix-sidemenu) {
   $bg: $v-app-background-color;
 
@@ -428,8 +442,8 @@ $jmix-sidemenu-userindicator-font-weight: $v-font-weight !default;
   .#{$primary-stylename}-item-selected {
     $active-color: $v-selection-color;
 
-    color: valo-font-color($bg, 1);
-    background: if(is-dark-color($bg), darken($bg, 3%), lighten($bg, 5%));
+    color: $jmix-sidemenu-item-selected-selected;
+    background: $jmix-sidemenu-item-selected-background;
 
     .v-icon {
       color: $active-color;
@@ -689,5 +703,22 @@ $jmix-sidemenu-userindicator-font-weight: $v-font-weight !default;
         color: valo-font-color($bg, 1);
       }
     }
+  }
+}
+
+/**
+ * Calculates new color based on input color, darken and lighten values.
+ *
+ * @param $bg             - background color that should be darken or lighten
+ * @param $darken         - percent value to make color darken
+ * @param $lighten        - percent value to make color lighten
+ * @param $reverse-darken - the option value, "true" if dark color should be lightened or light color - darkened.
+ * @return new color
+ */
+@function halo-sidemenu-item-selected-background($bg: $v-app-background-color, $darken: 3%, $lighten: 5%, $reverse-darken: false) {
+  @if(is-dark-color($bg)) {
+    @return if($reverse-darken, lighten($bg, $lighten), darken($bg, $darken));
+  } @else {
+    @return if($reverse-darken, darken($bg, $darken), lighten($bg, $lighten));
   }
 }

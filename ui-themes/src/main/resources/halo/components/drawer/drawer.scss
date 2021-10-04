@@ -159,6 +159,10 @@
         @if $jmix-sidemenu-layout-collapse-enabled == false {
           width: $jmix-sidemenu-layout-expanded-width - 2 * $v-unit-size;
         }
+
+        .jmix-user-select-combobox {
+          width: 100%;
+        }
       }
     }
 

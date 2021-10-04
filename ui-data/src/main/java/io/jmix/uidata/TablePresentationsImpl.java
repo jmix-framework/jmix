@@ -333,8 +333,7 @@ public class TablePresentationsImpl implements TablePresentations {
             ctx.setFetchPlan(fetchPlanRepository.getFetchPlan(
                     UiTablePresentation.class, "app"));
 
-//             todo [to discuss] user substitution
-            UserDetails user = authentication.getUser();
+            UserDetails user = authentication.getCurrentOrSubstitutedUser();
 
             ctx.setQueryString("select p from ui_TablePresentation p " +
                     "where p.componentId = :component and (p.username is null or p.username = :username)")

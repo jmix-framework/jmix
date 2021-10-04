@@ -203,8 +203,7 @@ public class PresentationEditor extends JmixWindow implements InitializingBean {
         presentation.setAutoSave(autoSaveField.getValue());
         presentation.setIsDefault(defaultField.getValue());
 
-        // todo [to discuss] user substitution
-        UserDetails user = currentAuthentication.getUser();
+        UserDetails user = currentAuthentication.getCurrentOrSubstitutedUser();
 
         boolean userOnly = !allowGlobalPresentations || !BooleanUtils.isTrue(globalField.getValue());
         presentation.setUsername(userOnly ? user.getUsername() : null);

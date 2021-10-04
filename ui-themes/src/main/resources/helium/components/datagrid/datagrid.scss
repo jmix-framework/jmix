@@ -59,45 +59,65 @@
       }
     }
 
-    @include he-grid-composition-size-style()
+    @include he-grid-composition-size-style();
   }
+
+  @include he-grid-empty-state-style();
 
   /* Global size */
 
-  &.small .jmix-data-grid-composition {
-    @include he-grid-composition-size-style($v-unit-size--small)
+  &.small {
+    .jmix-data-grid-composition {
+      @include he-grid-composition-size-style($v-unit-size--small);
+    }
+    @include he-grid-empty-state-size-style($scaling-factor: $v-scaling-factor--small);
   }
 
-  &.large .jmix-data-grid-composition {
-    @include he-grid-composition-size-style($v-unit-size--large)
+  &.large {
+    .jmix-data-grid-composition {
+      @include he-grid-composition-size-style($v-unit-size--large);
+    }
+    @include he-grid-empty-state-size-style($scaling-factor: $v-scaling-factor--large);
   }
 
   /* Size within a container */
 
-  .small .jmix-data-grid-composition {
-    @include he-grid-composition-size-style($v-unit-size--small)
+  .small {
+    .jmix-data-grid-composition {
+      @include he-grid-composition-size-style($v-unit-size--small);
+    }
+    @include he-grid-empty-state-size-style($scaling-factor: $v-scaling-factor--small);
   }
 
-  .medium .jmix-data-grid-composition {
-    @include he-grid-composition-size-style($v-unit-size)
+  .medium {
+    .jmix-data-grid-composition {
+      @include he-grid-composition-size-style($v-unit-size);
+    }
+    @include he-grid-empty-state-size-style();
   }
 
-  .large .jmix-data-grid-composition {
-    @include he-grid-composition-size-style($v-unit-size--large)
+  .large {
+    .jmix-data-grid-composition {
+      @include he-grid-composition-size-style($v-unit-size--large);
+    }
+    @include he-grid-empty-state-size-style($scaling-factor: $v-scaling-factor--large);
   }
 
   /* Own size */
 
   .jmix-data-grid-composition.small {
-    @include he-grid-composition-size-style($v-unit-size--small)
+    @include he-grid-composition-size-style($v-unit-size--small);
+    @include he-grid-empty-state-size-style($scaling-factor: $v-scaling-factor--small);
   }
 
   .jmix-data-grid-composition.medium {
-    @include he-grid-composition-size-style($v-unit-size)
+    @include he-grid-composition-size-style($v-unit-size);
+    @include he-grid-empty-state-size-style();
   }
 
   .jmix-data-grid-composition.large {
-    @include he-grid-composition-size-style($v-unit-size--large)
+    @include he-grid-composition-size-style($v-unit-size--large);
+    @include he-grid-empty-state-size-style($scaling-factor: $v-scaling-factor--large);
   }
 }
 
@@ -333,6 +353,32 @@
     .jmix-data-grid-top {
       min-height: $unit-size;
       margin-top: -1 * ($unit-size + ceil($v-layout-spacing-vertical));
+    }
+  }
+}
+
+@mixin he-grid-empty-state-style() {
+  @include he-grid-empty-state-size-style();
+
+  .jmix-datagrid-empty-state {
+    .jmix-datagrid-empty-state-link-message.v-button-link {
+      @include he-button-link-style();
+      border-radius: $v-border-radius;
+    }
+
+    .jmix-datagrid-empty-state-message {
+      color: var(--text-dim-color);
+    }
+  }
+}
+
+@mixin he-grid-empty-state-size-style($font-size         : $v-font-size--h2,
+                                      $scaling-factor    : 1) {
+  .jmix-datagrid-empty-state {
+    font-size: round($font-size * $scaling-factor);
+
+    .jmix-datagrid-empty-state-link-message.v-button-link {
+      @include he-button-link-size-style();
     }
   }
 }

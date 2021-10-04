@@ -32,6 +32,10 @@ public class UiProperties {
 
     boolean testMode;
     boolean performanceTestMode;
+
+    /**
+     * Whether application is in production mode
+     */
     boolean productionMode;
 
     /**
@@ -124,7 +128,7 @@ public class UiProperties {
     public UiProperties(
             boolean testMode,
             boolean performanceTestMode,
-            @DefaultValue("true") boolean productionMode,
+            @DefaultValue("false") boolean productionMode,
             @DefaultValue("TABBED") String appWindowMode,
             @DefaultValue("true") boolean compositeMenu,
             @DefaultValue("false") boolean allowAnonymousAccess,
@@ -236,6 +240,9 @@ public class UiProperties {
         return webJarResourcesCacheTime;
     }
 
+    /**
+     * @see #productionMode
+     */
     public boolean isProductionMode() {
         return productionMode;
     }

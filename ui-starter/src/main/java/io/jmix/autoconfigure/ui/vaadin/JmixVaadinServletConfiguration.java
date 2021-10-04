@@ -21,6 +21,7 @@ import com.vaadin.server.Constants;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.spring.server.SpringVaadinServlet;
+import io.jmix.ui.UiProperties;
 import io.jmix.ui.sys.vaadin.JmixVaadinServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,6 +90,8 @@ public class JmixVaadinServletConfiguration implements InitializingBean {
     protected ApplicationContext applicationContext;
     @Autowired
     protected VaadinServletConfigurationProperties configurationProperties;
+    @Autowired
+    protected UiProperties uiProperties;
 
     // forward the root of all @SpringUIs to the Vaadin servlet
     @Bean
@@ -282,7 +285,7 @@ public class JmixVaadinServletConfiguration implements InitializingBean {
 
         addInitParameter(servletRegistrationBean,
                 Constants.SERVLET_PARAMETER_PRODUCTION_MODE,
-                String.valueOf(configurationProperties.isProductionMode()));
+                String.valueOf(uiProperties.isProductionMode()));
         addInitParameter(servletRegistrationBean,
                 Constants.SERVLET_PARAMETER_RESOURCE_CACHE_TIME,
                 String.valueOf(configurationProperties.getResourceCacheTime()));

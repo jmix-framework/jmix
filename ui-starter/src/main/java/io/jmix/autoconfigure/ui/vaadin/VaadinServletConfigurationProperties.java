@@ -36,11 +36,6 @@ public class VaadinServletConfigurationProperties {
     // http://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#configuration-metadata-annotation-processor
 
     /**
-     * Whether Vaadin is in production mode.
-     */
-    private boolean productionMode = false;
-
-    /**
      * The time resources can be cached in the browser in seconds (default one
      * hour).
      */
@@ -72,10 +67,6 @@ public class VaadinServletConfigurationProperties {
      */
     private String urlMapping = null;
 
-    public boolean isProductionMode() {
-        return productionMode;
-    }
-
     public int getResourceCacheTime() {
         return resourceCacheTime;
     }
@@ -94,10 +85,6 @@ public class VaadinServletConfigurationProperties {
 
     public String getUrlMapping() {
         return urlMapping;
-    }
-
-    public void setProductionMode(boolean productionMode) {
-        this.productionMode = productionMode;
     }
 
     public void setResourceCacheTime(int resourceCacheTime) {

@@ -27,7 +27,8 @@ import org.springframework.stereotype.Component;
 @Aspect
 public class ManagedResourceAspect {
 
-    @AfterThrowing(pointcut = "@within(org.springframework.jmx.export.annotation.ManagedResource)", throwing = "throwable")
+    @AfterThrowing(pointcut = "@within(org.springframework.jmx.export.annotation.ManagedResource) && within(io.jmix..*)",
+            throwing = "throwable")
     public void writeToLog(JoinPoint joinPoint, Throwable throwable) {
         Logger logger = LoggerFactory.getLogger(joinPoint.getTarget().getClass());
         logger.error("Error executing MBean method", throwable);

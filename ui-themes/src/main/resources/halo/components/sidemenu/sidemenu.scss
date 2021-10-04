@@ -264,7 +264,7 @@ $jmix-sidemenu-item-selected-background: halo-sidemenu-item-selected-background(
  * $jmix-drawer-sidemenu-item-selected-color.
  * @group sidemenu
  */
-$jmix-sidemenu-item-selected-selected: valo-font-color($jmix-sidemenu-item-selected-background, 1) !default;
+$jmix-sidemenu-item-selected-color: valo-font-color($jmix-sidemenu-item-selected-background, 1) !default;
 
 @mixin halo-jmix-sidemenu($primary-stylename: jmix-sidemenu) {
   $bg: $v-app-background-color;
@@ -442,7 +442,7 @@ $jmix-sidemenu-item-selected-selected: valo-font-color($jmix-sidemenu-item-selec
   .#{$primary-stylename}-item-selected {
     $active-color: $v-selection-color;
 
-    color: $jmix-sidemenu-item-selected-selected;
+    color: $jmix-sidemenu-item-selected-color;
     background: $jmix-sidemenu-item-selected-background;
 
     .v-icon {

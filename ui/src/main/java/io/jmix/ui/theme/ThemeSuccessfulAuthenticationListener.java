@@ -1,8 +1,10 @@
 package io.jmix.ui.theme;
 
 import com.vaadin.server.Page;
+import io.jmix.ui.AppUI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.event.InteractiveAuthenticationSuccessEvent;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -18,7 +20,7 @@ public class ThemeSuccessfulAuthenticationListener {
     @EventListener
     public void onAuthenticationSuccess(InteractiveAuthenticationSuccessEvent event) {
         Authentication authentication = event.getAuthentication();
-        if (authentication.isAuthenticated()) {
+        if (AppUI.getCurrent() != null && authentication.isAuthenticated()) {
             String modeCookie = variantsManager.getThemeModeCookieValue();
             String mode = variantsManager.getThemeModeUserSetting();
 

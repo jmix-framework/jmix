@@ -30,6 +30,7 @@ public class LinkLoader extends AbstractComponentLoader<Link> {
         assignXmlDescriptor(resultComponent, element);
         assignFrame(resultComponent);
 
+        loadEnable(resultComponent, element);
         loadVisible(resultComponent, element);
         loadAlign(resultComponent, element);
         loadStyleName(resultComponent, element);

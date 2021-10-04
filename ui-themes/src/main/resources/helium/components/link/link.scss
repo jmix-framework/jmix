@@ -63,6 +63,10 @@
 
   color: var(--link-color);
 
+  &:hover:not(.v-disabled) {
+    color: var(--link-hover-color);
+  }
+
   > a {
     &:focus {
       border-color: var(--link-color);
@@ -78,7 +82,11 @@
   }
 
   &.v-disabled {
-    color: var(--text-dim-color);
+    color: var(--link-disabled-color);
+
+    > a {
+      color: var(--link-disabled-color);
+    }
   }
 }
 

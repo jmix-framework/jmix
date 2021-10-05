@@ -19,7 +19,9 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
-    <changeSet author="imap" id="1">
+    <changeSet author="imap" id="1" context="!cuba">
+        <validCheckSum>1:any</validCheckSum>
+
         <!-- IMAP_SIMPLE_AUTHENTICATION -->
         <createTable tableName="IMAP_SIMPLE_AUTHENTICATION">
             <column name="ID" type="${uuid.type}">

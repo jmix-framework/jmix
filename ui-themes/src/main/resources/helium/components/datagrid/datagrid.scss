@@ -160,8 +160,12 @@
 
   // Column drag and drop elements
 
-  .header-drag-table .#{$primary-stylename}-header > .#{$primary-stylename}-drop-marker {
-    background-color: var(--grid-drop-marker-color);
+  .header-drag-table .#{$primary-stylename}-header {
+    background: transparent;
+
+    > .#{$primary-stylename}-drop-marker {
+      background-color: var(--grid-drop-marker-color);
+    }
   }
 
   // Sidebar

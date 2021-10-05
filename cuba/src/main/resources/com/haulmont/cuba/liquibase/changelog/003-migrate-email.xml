@@ -42,6 +42,7 @@
 
         <addColumn tableName="EMAIL_SENDING_MESSAGE">
             <column name="CONTENT_TEXT_FILE" type="clob"/>
+            <column name="IMPORTANT" type="bool"/>
         </addColumn>
 
         <addColumn tableName="EMAIL_SENDING_ATTACHMENT">

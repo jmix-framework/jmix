@@ -17,7 +17,7 @@
 package io.jmix.ui.component.mainwindow.impl;
 
 import io.jmix.core.Messages;
-import io.jmix.core.security.UserSubstitutionManager;
+import io.jmix.core.usersubstitution.UserSubstitutionManager;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.BaseAction;

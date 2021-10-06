@@ -20,7 +20,7 @@ import io.jmix.core.*;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
-import io.jmix.core.security.CurrentAuthentication;
+import io.jmix.core.usersubstitution.CurrentUserSubstitution;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.ComponentsHelper;
 import io.jmix.ui.presentation.PresentationsChangeListener;
@@ -45,7 +45,7 @@ public class TablePresentationsImpl implements TablePresentations {
     @Autowired
     protected DataManager dataManager;
     @Autowired
-    protected CurrentAuthentication authentication;
+    protected CurrentUserSubstitution currentUserSubstitution;
     @Autowired
     protected EntityStates entityStates;
 
@@ -333,7 +333,7 @@ public class TablePresentationsImpl implements TablePresentations {
             ctx.setFetchPlan(fetchPlanRepository.getFetchPlan(
                     UiTablePresentation.class, "app"));
 
-            UserDetails user = authentication.getCurrentOrSubstitutedUser();
+            UserDetails user = currentUserSubstitution.getEffectiveUser();
 
             ctx.setQueryString("select p from ui_TablePresentation p " +
                     "where p.componentId = :component and (p.username is null or p.username = :username)")

@@ -20,7 +20,7 @@ import io.jmix.core.AccessManager;
 import io.jmix.core.EntityStates;
 import io.jmix.core.Messages;
 import io.jmix.core.entity.EntityValues;
-import io.jmix.core.security.CurrentAuthentication;
+import io.jmix.core.usersubstitution.CurrentUserSubstitution;
 import io.jmix.ui.App;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.Notifications;
@@ -74,7 +74,7 @@ public class PresentationEditor extends JmixWindow implements InitializingBean {
     @Autowired
     protected Messages messages;
     @Autowired
-    protected CurrentAuthentication currentAuthentication;
+    protected CurrentUserSubstitution currentUserSubstitution;
     @Autowired
     protected AccessManager accessManager;
     @Autowired
@@ -203,7 +203,7 @@ public class PresentationEditor extends JmixWindow implements InitializingBean {
         presentation.setAutoSave(autoSaveField.getValue());
         presentation.setIsDefault(defaultField.getValue());
 
-        UserDetails user = currentAuthentication.getCurrentOrSubstitutedUser();
+        UserDetails user = currentUserSubstitution.getEffectiveUser();
 
         boolean userOnly = !allowGlobalPresentations || !BooleanUtils.isTrue(globalField.getValue());
         presentation.setUsername(userOnly ? user.getUsername() : null);

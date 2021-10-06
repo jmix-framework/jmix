@@ -20,8 +20,8 @@ import com.vaadin.ui.Component;
 import io.jmix.core.Messages;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.EntityValues;
-import io.jmix.core.security.CurrentAuthentication;
-import io.jmix.core.security.UserSubstitutionManager;
+import io.jmix.core.usersubstitution.CurrentUserSubstitution;
+import io.jmix.core.usersubstitution.UserSubstitutionManager;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.Dialogs;
 import io.jmix.ui.UiComponents;
@@ -49,7 +49,7 @@ public class UserIndicatorImpl extends CompositeComponent<CssLayout> implements 
     protected Icons icons;
     protected UserSubstitutionManager substitutionManager;
     protected Dialogs dialogs;
-    protected CurrentAuthentication authentication;
+    protected CurrentUserSubstitution currentUserSubstitution;
 
     protected HasValue<UserDetails> userComponent;
 
@@ -93,8 +93,8 @@ public class UserIndicatorImpl extends CompositeComponent<CssLayout> implements 
     }
 
     @Autowired
-    public void setAuthentication(CurrentAuthentication authentication) {
-        this.authentication = authentication;
+    public void setCurrentUserSubstitution(CurrentUserSubstitution currentUserSubstitution) {
+        this.currentUserSubstitution = currentUserSubstitution;
     }
 
     @Autowired(required = false)
@@ -111,20 +111,20 @@ public class UserIndicatorImpl extends CompositeComponent<CssLayout> implements 
     public void refreshUser() {
         root.removeAll();
 
-        UserDetails user = authentication.getUser();
+        UserDetails user = currentUserSubstitution.getAuthenticatedUser();
 
         List<UserDetails> currentAndSubstitutedUsers = new LinkedList<>();
         currentAndSubstitutedUsers.add(user);
 
         List<UserDetails> additionalUsers = substitutionManager != null
-                ? substitutionManager.getSubstitutedUsers(user.getUsername()) : Collections.emptyList();
+                ? substitutionManager.getCurrentSubstitutedUsers() : Collections.emptyList();
 
         currentAndSubstitutedUsers.addAll(additionalUsers);
 
         if (additionalUsers.size() > 0) {
             userComponent = createUserSelectionField(currentAndSubstitutedUsers);
         } else {
-            userComponent = createUserIndicator(authentication.getUser());
+            userComponent = createUserIndicator(currentUserSubstitution.getAuthenticatedUser());
         }
         root.add(userComponent);
         root.setDescription(generateUserCaption(user));
@@ -139,7 +139,7 @@ public class UserIndicatorImpl extends CompositeComponent<CssLayout> implements 
         userCombobox.setStyleName("jmix-user-select-combobox");
         userCombobox.setOptionCaptionProvider(this::generateUserCaption);
         userCombobox.setNullOptionVisible(false);
-        userCombobox.setValue(authentication.getCurrentOrSubstitutedUser());
+        userCombobox.setValue(currentUserSubstitution.getEffectiveUser());
 
         userCombobox.addValueChangeListener(this::substituteUser);
 
@@ -154,8 +154,7 @@ public class UserIndicatorImpl extends CompositeComponent<CssLayout> implements 
             return;
         }
 
-
-        if (authentication.getCurrentOrSubstitutedUser().equals(newUser)) {
+        if (currentUserSubstitution.getEffectiveUser().equals(newUser)) {
             return;
         }
 
@@ -165,6 +164,7 @@ public class UserIndicatorImpl extends CompositeComponent<CssLayout> implements 
                 icons,
                 substitutionManager)
                 .withCancelAction(this::revertSelection);
+        substituteUserAction.setPrimary(true);
 
         dialogs.createOptionDialog()
                 .withCaption(messages.getMessage("substitutionConfirmation.caption"))
@@ -172,7 +172,7 @@ public class UserIndicatorImpl extends CompositeComponent<CssLayout> implements 
                         generateUserCaption(newUser)))
                 .withActions(
                         substituteUserAction,
-                        new DialogAction(DialogAction.Type.CANCEL, Action.Status.PRIMARY)
+                        new DialogAction(DialogAction.Type.CANCEL)
                                 .withHandler(event -> revertSelection(prevUser))
                 )
                 .show();

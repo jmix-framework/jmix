@@ -28,18 +28,18 @@ public class UserSubstitutedEvent extends ApplicationEvent {
 
     private static final long serialVersionUID = 1782141271679862065L;
 
-    private final UserDetails originalUser;
+    private final UserDetails authenticatedUser;
 
     private final UserDetails substitutedUser;
 
-    public UserSubstitutedEvent(UserDetails originalUser, UserDetails substitutedUser) {
-        super(originalUser);
-        this.originalUser = originalUser;
+    public UserSubstitutedEvent(UserDetails authenticatedUser, UserDetails substitutedUser) {
+        super(authenticatedUser);
+        this.authenticatedUser = authenticatedUser;
         this.substitutedUser = substitutedUser;
     }
 
-    public UserDetails getOriginalUser() {
-        return originalUser;
+    public UserDetails getAuthenticatedUser() {
+        return authenticatedUser;
     }
 
     public UserDetails getSubstitutedUser() {

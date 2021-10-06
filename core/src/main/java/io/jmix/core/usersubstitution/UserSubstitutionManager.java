@@ -14,23 +14,27 @@
  * limitations under the License.
  */
 
-package io.jmix.core.security;
+package io.jmix.core.usersubstitution;
 
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Date;
 import java.util.List;
 
+/**
+ * Interface is used for getting possible substituted users and for performing the substitution operation.
+ */
 public interface UserSubstitutionManager {
 
     /**
-     * @return users which can be substituted by current authenticated user
+     * @return users which can be substituted by the currently authenticated user at the current time
      */
     List<UserDetails> getCurrentSubstitutedUsers();
 
     /**
-     * @return users which can be substituted by user with specified {@code userName}
+     * @return users which can be substituted by user with specified {@code username} at the given {@code date}
      */
-    List<UserDetails> getSubstitutedUsers(String userName);
+    List<UserDetails> getSubstitutedUsers(String username, Date date);
 
     /**
      * Performs user substitution

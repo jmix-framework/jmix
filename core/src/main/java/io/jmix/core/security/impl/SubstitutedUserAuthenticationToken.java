@@ -23,6 +23,9 @@ import org.springframework.security.core.GrantedAuthority;
 import java.util.Collection;
 import java.util.Objects;
 
+/**
+ * Authentication object used by the user substitution mechanism.
+ */
 public class SubstitutedUserAuthenticationToken extends AbstractAuthenticationToken {
 
     private static final long serialVersionUID = 8888961947349593368L;

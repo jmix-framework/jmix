@@ -33,6 +33,9 @@ public interface CurrentAuthentication {
     Authentication getAuthentication();
 
     /**
+     * Method returns the authenticated user. If you need to get the user substitution information use the {@link
+     * io.jmix.core.usersubstitution.CurrentUserSubstitution}.
+     *
      * @return currently authenticated user
      * @throws RuntimeException if Authentication is not set to {@link org.springframework.security.core.context.SecurityContext}
      *                          or user information cannot be extracted from current authentication
@@ -41,8 +44,8 @@ public interface CurrentAuthentication {
 
 
     /**
-     * @return substituted user if current authentication token is instance of
-     * {@link SubstitutedUserAuthenticationToken}, logged-in user otherwise.
+     * @return substituted user if current authentication token is instance of {@link SubstitutedUserAuthenticationToken},
+     * logged-in user otherwise.
      * @throws RuntimeException if Authentication is not set to {@link org.springframework.security.core.context.SecurityContext}
      *                          or user information cannot be extracted from current authentication
      */

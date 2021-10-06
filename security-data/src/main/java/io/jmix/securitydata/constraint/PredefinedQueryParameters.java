@@ -17,7 +17,7 @@
 package io.jmix.securitydata.constraint;
 
 
-import io.jmix.core.security.CurrentAuthentication;
+import io.jmix.core.usersubstitution.CurrentUserSubstitution;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -35,7 +35,7 @@ public class PredefinedQueryParameters {
     public static final String CURRENT_USER_PREFIX = "current_user_";
 
     @Autowired
-    protected CurrentAuthentication currentAuthentication;
+    protected CurrentUserSubstitution currentUserSubstitution;
 
     /**
      * Get a value of the query parameter provided by security authentication.
@@ -48,7 +48,7 @@ public class PredefinedQueryParameters {
         if (paramName.startsWith(CURRENT_USER_PREFIX)) {
             String attrName = paramName.substring(CURRENT_USER_PREFIX.length());
 
-            UserDetails user = currentAuthentication.getCurrentOrSubstitutedUser();
+            UserDetails user = currentUserSubstitution.getEffectiveUser();
             BeanInfo info;
             try {
                 info = Introspector.getBeanInfo(user.getClass());

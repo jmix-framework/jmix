@@ -19,7 +19,7 @@ package io.jmix.securityui.screen.usersubstitution;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.security.UserRepository;
-import io.jmix.securitydata.entity.UserSubstitution;
+import io.jmix.securitydata.entity.UserSubstitutionEntity;
 import io.jmix.ui.action.list.CreateAction;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.Table;
@@ -46,22 +46,22 @@ public class UserSubstitutionsFragment extends ScreenFragment {
     protected UserRepository userRepository;
 
     @Autowired
-    protected CollectionLoader<UserSubstitution> userSubstitutionsDl;
+    protected CollectionLoader<UserSubstitutionEntity> userSubstitutionsDl;
 
     @Autowired
     protected DataContext dataContext;
 
 
     @Named("substitutionTable.create")
-    protected CreateAction<UserSubstitution> createAction;
+    protected CreateAction<UserSubstitutionEntity> createAction;
 
     protected UserDetails user;
 
     @Subscribe(target = Target.PARENT_CONTROLLER)
     public void onAfterInit(Screen.AfterInitEvent event) {
         createAction.setScreenConfigurer(screen -> {
-            UserSubstitution substitution = metadata.create(UserSubstitution.class);
-            substitution.setUserName(user.getUsername());
+            UserSubstitutionEntity substitution = metadata.create(UserSubstitutionEntity.class);
+            substitution.setUsername(user.getUsername());
             ((UserSubstitutionEdit) screen).setEntityToEdit(substitution);
             ((UserSubstitutionEdit) screen).setParentDataContext(dataContext);
         });
@@ -69,7 +69,7 @@ public class UserSubstitutionsFragment extends ScreenFragment {
 
     @Subscribe(target = Target.PARENT_CONTROLLER)
     public void onAfterShow(Screen.AfterShowEvent event) {
-        userSubstitutionsDl.setParameter("userName", user.getUsername());
+        userSubstitutionsDl.setParameter("username", user.getUsername());
         userSubstitutionsDl.load();
 
     }
@@ -78,16 +78,15 @@ public class UserSubstitutionsFragment extends ScreenFragment {
         this.user = user;
     }
 
-    @Install(to = "substitutionTable.substitutedUserName", subject = "columnGenerator")
-    public Component buildUserCaption(UserSubstitution substitution) {
+    @Install(to = "substitutionTable.substitutedUsername", subject = "columnGenerator")
+    public Component buildUserCaption(UserSubstitutionEntity substitution) {
         String userRepresentation;
         try {
-            userRepresentation = metadataTools.getInstanceName(userRepository.loadUserByUsername(substitution.getSubstitutedUserName()));
+            userRepresentation = metadataTools.getInstanceName(userRepository.loadUserByUsername(substitution.getSubstitutedUsername()));
         } catch (UsernameNotFoundException e) {
-            userRepresentation = substitution.getSubstitutedUserName();
+            userRepresentation = substitution.getSubstitutedUsername();
         }
 
         return new Table.PlainTextCell(userRepresentation);
     }
-
 }

@@ -21,12 +21,13 @@ import io.jmix.core.Metadata
 import io.jmix.core.security.CurrentAuthentication
 import io.jmix.core.security.InMemoryUserRepository
 import io.jmix.core.security.SecurityContextHelper
-import io.jmix.core.security.UserSubstitutionManager
+import io.jmix.core.usersubstitution.UserSubstitutionManager
 import io.jmix.core.security.impl.SubstitutedUserAuthenticationToken
 import io.jmix.security.TestUserSubstitutionEventListener
 import io.jmix.security.authentication.RoleGrantedAuthority
 import io.jmix.security.role.ResourceRoleRepository
-import io.jmix.securitydata.entity.UserSubstitution
+import io.jmix.core.usersubstitution.CurrentUserSubstitution
+import io.jmix.securitydata.entity.UserSubstitutionEntity
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.security.authentication.AuthenticationManager
@@ -46,7 +47,9 @@ class UserSubstitutionsTest extends SecurityDataSpecification {
     public static final String USER_DETAILS = "DETAILS"
 
     @Autowired
-    CurrentAuthentication currentAuthentication;
+    CurrentAuthentication currentAuthentication
+    @Autowired
+    CurrentUserSubstitution currentUserSubstitution
     @Autowired
     InMemoryUserRepository userRepository
     @Autowired
@@ -93,11 +96,10 @@ class UserSubstitutionsTest extends SecurityDataSpecification {
 
         systemAuthentication = SecurityContextHelper.getAuthentication()
 
-        UserSubstitution substitution = dataManager.unconstrained().create(UserSubstitution)
-        substitution.userName = user1.username
-        substitution.substitutedUserName = user2.username
+        UserSubstitutionEntity substitution = dataManager.unconstrained().create(UserSubstitutionEntity)
+        substitution.username = user1.username
+        substitution.substitutedUsername = user2.username
         dataManager.unconstrained().save(substitution)
-
     }
 
     def cleanup() {
@@ -122,7 +124,9 @@ class UserSubstitutionsTest extends SecurityDataSpecification {
         authToken.authorities.size() == 1
         authToken.authorities[0].authority == TestDataManagerReadQueryRole.NAME
 
-        currentAuthentication.getCurrentOrSubstitutedUser() == user1
+        currentUserSubstitution.getAuthenticatedUser() == user1
+        currentUserSubstitution.getSubstitutedUser() == null
+        currentUserSubstitution.getEffectiveUser() == user1
 
         when:
         substitutionManager.substituteUser(user2.username)
@@ -136,10 +140,12 @@ class UserSubstitutionsTest extends SecurityDataSpecification {
         substitutedToken.authorities[0].authority == TestDataManagerEntityOperationsRole.NAME
         substitutedToken.getDetails() == USER_DETAILS
 
-        currentAuthentication.getCurrentOrSubstitutedUser() == user2
+        currentUserSubstitution.getAuthenticatedUser() == user1
+        currentUserSubstitution.getSubstitutedUser() == user2
+        currentUserSubstitution.getEffectiveUser() == user2
 
         eventListener.events.size() == 1
-        eventListener.events[0].originalUser == user1
+        eventListener.events[0].authenticatedUser == user1
         eventListener.events[0].substitutedUser == user2
     }
 

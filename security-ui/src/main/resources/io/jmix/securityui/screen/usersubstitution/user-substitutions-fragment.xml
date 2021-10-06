@@ -18,10 +18,10 @@
 <fragment xmlns="http://jmix.io/schema/ui/fragment">
     <data>
         <collection id="userSubstitutionsDc"
-                    class="io.jmix.securitydata.entity.UserSubstitution">
+                    class="io.jmix.securitydata.entity.UserSubstitutionEntity">
             <loader id="userSubstitutionsDl">
                 <query>
-                    <![CDATA[select s from sec_UserSubstitution s where s.userName = :userName]]>
+                    <![CDATA[select s from sec_UserSubstitutionEntity s where s.username = :username]]>
                 </query>
             </loader>
         </collection>
@@ -53,7 +53,7 @@
                     <action id="remove" type="remove"/>
                 </actions>
                 <columns>
-                    <column id="substitutedUserName" generator="buildUserCaption" caption="msg://substitutedUser"/>
+                    <column id="substitutedUsername" generator="buildUserCaption" caption="msg://substitutedUser"/>
                     <column id="startDate"/>
                     <column id="endDate"/>
                 </columns>

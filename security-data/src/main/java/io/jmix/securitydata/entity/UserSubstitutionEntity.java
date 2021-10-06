@@ -30,11 +30,11 @@ import javax.persistence.*;
 import java.util.Date;
 import java.util.UUID;
 
-@JmixEntity(name = "sec_UserSubstitution")
+@JmixEntity
 @Table(name = "SEC_USER_SUBSTITUTION")
-@Entity(name = "sec_UserSubstitution")
+@Entity(name = "sec_UserSubstitutionEntity")
 @SystemLevel
-public class UserSubstitution {
+public class UserSubstitutionEntity {
 
     @JmixGeneratedValue
     @Column(name = "ID", nullable = false)
@@ -70,10 +70,10 @@ public class UserSubstitution {
     protected String deletedBy;
 
     @Column(name = "USERNAME")
-    private String userName;
+    private String username;
 
     @Column(name = "SUBSTITUTED_USERNAME")
-    private String substitutedUserName;
+    private String substitutedUsername;
 
     @Column(name = "START_DATE")
     @Temporal(TemporalType.DATE)
@@ -99,20 +99,20 @@ public class UserSubstitution {
         this.startDate = startDate;
     }
 
-    public String getSubstitutedUserName() {
-        return substitutedUserName;
+    public String getSubstitutedUsername() {
+        return substitutedUsername;
     }
 
-    public void setSubstitutedUserName(String substitutedUserName) {
-        this.substitutedUserName = substitutedUserName;
+    public void setSubstitutedUsername(String substitutedUsername) {
+        this.substitutedUsername = substitutedUsername;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public UUID getId() {

@@ -18,7 +18,7 @@ package io.jmix.securityui.action;
 
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.securitydata.entity.UserSubstitution;
+import io.jmix.securitydata.entity.UserSubstitutionEntity;
 import io.jmix.securityui.screen.usersubstitution.UserSubstitutionsScreen;
 import io.jmix.ui.ScreenBuilders;
 import io.jmix.ui.accesscontext.UiEntityContext;
@@ -76,7 +76,7 @@ public class ShowUserSubstitutionsAction extends SecuredListAction implements Ac
             return false;
         }
 
-        UiEntityContext userSubstitutionContext = new UiEntityContext(metadata.getClass(UserSubstitution.class));
+        UiEntityContext userSubstitutionContext = new UiEntityContext(metadata.getClass(UserSubstitutionEntity.class));
         accessManager.applyRegisteredConstraints(userSubstitutionContext);
 
         if (!userSubstitutionContext.isViewPermitted()) {

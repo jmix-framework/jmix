@@ -19,8 +19,10 @@ package io.jmix.securityui.screen.usersubstitution;
 import io.jmix.core.EntityStates;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.security.UserRepository;
-import io.jmix.securitydata.entity.UserSubstitution;
+import io.jmix.securitydata.entity.UserSubstitutionEntity;
 import io.jmix.ui.component.ComboBox;
+import io.jmix.ui.component.SuggestionField;
+import io.jmix.ui.component.TextField;
 import io.jmix.ui.model.DataContext;
 import io.jmix.ui.screen.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,23 +32,28 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-@UiController("sec_UserSubstitution.edit")
+@UiController("sec_UserSubstitutionEntity.edit")
 @UiDescriptor("user-substitution-edit.xml")
 @EditedEntityContainer("userSubstitutionDc")
-public class UserSubstitutionEdit extends StandardEditor<UserSubstitution> {
+public class UserSubstitutionEdit extends StandardEditor<UserSubstitutionEntity> {
 
     @Autowired
     protected EntityStates entityStates;
+
     @Autowired
     protected UserRepository userRepository;
+
     @Autowired
     protected MetadataTools metadataTools;
 
     @Autowired
-    protected ComboBox<String> substitutedNameField;
+    protected SuggestionField<String> substitutedUsernameField;
+
     @Autowired
-    protected ComboBox<String> nameField;
+    private TextField<String> usernameField;
+
     @Autowired
     private DataContext dataContext;
 
@@ -56,20 +63,13 @@ public class UserSubstitutionEdit extends StandardEditor<UserSubstitution> {
 
     @Subscribe
     public void onBeforeShow(BeforeShowEvent event) {
-        List<? extends UserDetails> users = userRepository.getByUsernameLike("");
-        Map<String, String> optionsMap = new HashMap<>();
-
-        for (UserDetails userDetails : users) {
-            String instanceName = metadataTools.getInstanceName(userDetails);
-            if (userDetails.getUsername().equals(getEditedEntity().getUserName()))
-                nameField.setOptionsMap(Collections.singletonMap(instanceName, userDetails.getUsername()));
-            else
-                optionsMap.put(instanceName, userDetails.getUsername());
-        }
-
-        substitutedNameField.setOptionsMap(optionsMap);
-        substitutedNameField.setNullOptionVisible(false);
-        substitutedNameField.setEditable(entityStates.isNew(getEditedEntity()));
+        usernameField.setValue(getEditedEntity().getUsername());
+        substitutedUsernameField.setSearchExecutor((searchString, searchParams) -> {
+            List<? extends UserDetails> users = userRepository.getByUsernameLike(searchString);
+            return users.stream()
+                    .map(UserDetails::getUsername)
+                    .collect(Collectors.toList());
+        });
+        substitutedUsernameField.setEditable(entityStates.isNew(getEditedEntity()));
     }
-
 }

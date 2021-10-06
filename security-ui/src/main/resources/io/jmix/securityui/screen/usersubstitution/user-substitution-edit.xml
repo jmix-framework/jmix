@@ -19,7 +19,7 @@
         focusComponent="form">
     <data>
         <instance id="userSubstitutionDc"
-                  class="io.jmix.securitydata.entity.UserSubstitution">
+                  class="io.jmix.securitydata.entity.UserSubstitutionEntity">
             <loader/>
         </instance>
     </data>
@@ -31,8 +31,9 @@
     <layout spacing="true" expand="form">
         <form id="form" dataContainer="userSubstitutionDc" width="100%">
             <column width="350px">
-                <comboBox id="nameField" property="userName" editable="false" caption="msg://user"/>
-                <comboBox id="substitutedNameField" property="substitutedUserName" caption="msg://substitutedUser"/>
+                <textField id="usernameField" property="username" editable="false" caption="msg://user"/>
+                <suggestionField id="substitutedUsernameField" inputPrompt="msg://substitutedUsernameField.inputPrompt"
+                                 property="substitutedUsername" caption="msg://substitutedUser"/>
                 <dateField id="startDateField" property="startDate"/>
                 <dateField id="endDateField" property="endDate"/>
             </column>

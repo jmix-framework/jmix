@@ -165,8 +165,6 @@ public class UiProperties {
         this.httpSessionExpirationTimeoutSec = httpSessionExpirationTimeoutSec;
         this.urlHandlingMode = urlHandlingMode;
         this.linkHandlerActions = linkHandlerActions;
-        this.allowAnonymousAccess = allowAnonymousAccess;
-        this.compositeMenu = compositeMenu;
         this.viewFileExtensions = viewFileExtensions;
         this.saveExportedByteArrayDataThresholdBytes = saveExportedByteArrayDataThresholdBytes;
         this.webJarResourcesCacheTime = webJarResourcesCacheTime;

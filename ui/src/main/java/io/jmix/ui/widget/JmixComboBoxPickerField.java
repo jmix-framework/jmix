@@ -56,6 +56,21 @@ public class JmixComboBoxPickerField<T> extends JmixPickerField<T> {
     }
 
     @Override
+    public void setStyleName(String style) {
+        super.setStyleName(COMBOBOX_PICKERFIELD_STYLENAME + " " + style);
+    }
+
+    @Override
+    public String getStyleName() {
+        return removeComponentStyles(super.getStyleName());
+    }
+
+    @Override
+    public void removeStyleName(String style) {
+        super.removeStyleName(removeComponentStyles(style));
+    }
+
+    @Override
     protected void doSetValue(T value) {
         getFieldInternal().setValue(value);
     }
@@ -172,5 +187,9 @@ public class JmixComboBoxPickerField<T> extends JmixPickerField<T> {
 
     public void setStyleGenerator(StyleGenerator<T> generateItemStylename) {
         getFieldInternal().setStyleGenerator(generateItemStylename);
+    }
+
+    protected String removeComponentStyles(String styleName) {
+        return styleName.replaceAll(COMBOBOX_PICKERFIELD_STYLENAME, "");
     }
 }

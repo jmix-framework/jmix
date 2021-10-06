@@ -19,7 +19,6 @@ package io.jmix.ui.widget;
 import com.vaadin.shared.Registration;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
-import com.vaadin.ui.ItemCaptionGenerator;
 import org.apache.commons.collections4.CollectionUtils;
 
 import javax.annotation.Nullable;
@@ -38,13 +37,12 @@ public class JmixTagPicker<V> extends JmixComboBoxPickerField<Collection<V>> {
     public static final String TAGS_BOTTOM_STYLENAME = "tags-bottom";
     public static final String TAGS_LEFT_STYLENAME = "tags-left";
 
+    public enum TagContainerPosition {
+        TOP, RIGHT, BOTTOM, LEFT;
+    }
+
     protected CssLayout composition;
     protected JmixTagContainer<V> tagContainer;
-
-    protected ItemCaptionGenerator<V> defaultOptionCaptionProvider;
-    protected ItemCaptionGenerator<V> optionCaptionProvider;
-    protected Function<? super V, String> tagStyleProvider;
-    protected Consumer<V> tagClickHandler;
 
     protected TagContainerPosition containerPosition = TagContainerPosition.BOTTOM;
 
@@ -141,6 +139,13 @@ public class JmixTagPicker<V> extends JmixComboBoxPickerField<Collection<V>> {
 
         tagContainer.setEditable(!readOnly);
         field.setVisible(!readOnly);
+    }
+
+    @Override
+    public void setStyleName(String style) {
+        super.setStyleName(TAGPICKER_STYLENAME
+                + " " + getTagContainerPositionStyle(getTagContainerPosition())
+                + " " + removeComponentStyles(style));
     }
 
     public boolean isInlineTags() {
@@ -247,7 +252,24 @@ public class JmixTagPicker<V> extends JmixComboBoxPickerField<Collection<V>> {
         return CollectionUtils.isEqualCollection(a, b);
     }
 
-    public enum TagContainerPosition {
-        TOP, RIGHT, BOTTOM, LEFT;
+    protected String getTagContainerPositionStyle(TagContainerPosition containerPosition) {
+        if (containerPosition == TagContainerPosition.TOP) {
+            return TAGS_TOP_STYLENAME;
+        } else if (containerPosition == TagContainerPosition.RIGHT) {
+            return TAGS_RIGHT_STYLENAME;
+        } else if (containerPosition == TagContainerPosition.LEFT) {
+            return TAGS_LEFT_STYLENAME;
+        } else {
+            return TAGS_BOTTOM_STYLENAME;
+        }
+    }
+
+    protected String removeComponentStyles(String styleName) {
+        String style = super.removeComponentStyles(styleName);
+        return style.replaceAll(TAGPICKER_STYLENAME
+                + "|" + TAGS_TOP_STYLENAME
+                + "|" + TAGS_RIGHT_STYLENAME
+                + "|" + TAGS_BOTTOM_STYLENAME
+                + "|" + TAGS_LEFT_STYLENAME, "");
     }
 }

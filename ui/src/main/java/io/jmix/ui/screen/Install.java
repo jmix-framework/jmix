@@ -48,7 +48,7 @@ public @interface Install {
     /**
      * @return type of functional interface, can be used instead of {@link #subject()}
      */
-    Class type() default Object.class;
+    Class<?> type() default Object.class;
 
     /**
      * @return property name that will be set using annotated method

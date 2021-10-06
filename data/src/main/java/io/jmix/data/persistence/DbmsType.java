@@ -100,7 +100,7 @@ public class DbmsType {
     public String getVersion(String storeName) {
         String propName = "jmix.data.dbms-version";
         if (!Stores.isMain(storeName))
-            propName = propName + "_" + storeName;
+            propName = propName + "-" + storeName;
 
         return StringUtils.trimToEmpty(environment.getProperty(propName));
     }

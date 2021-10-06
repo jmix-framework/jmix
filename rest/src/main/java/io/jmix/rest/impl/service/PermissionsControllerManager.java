@@ -23,7 +23,7 @@ import io.jmix.core.accesscontext.EntityAttributeContext;
 import io.jmix.core.accesscontext.SpecificOperationAccessContext;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.core.security.CurrentAuthentication;
+import io.jmix.core.usersubstitution.CurrentUserSubstitution;
 import io.jmix.core.security.SpecificPolicyInfoRegistry;
 import io.jmix.rest.impl.controller.PermissionsController;
 import io.jmix.rest.impl.service.filter.data.PermissionsInfo;
@@ -48,7 +48,7 @@ public class PermissionsControllerManager {
     @Autowired
     protected AccessManager accessManager;
     @Autowired
-    protected CurrentAuthentication currentAuthentication;
+    protected CurrentUserSubstitution currentUserSubstitution;
     @Autowired
     protected SpecificPolicyInfoRegistry specificPolicyInfoRegistry;
 
@@ -59,7 +59,7 @@ public class PermissionsControllerManager {
     public PermissionsInfo getPermissions() {
         PermissionsInfo permissionsInfo = new PermissionsInfo();
 
-        List<String> authorities = currentAuthentication.getCurrentOrSubstitutedUser().getAuthorities().stream()
+        List<String> authorities = currentUserSubstitution.getEffectiveUser().getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());

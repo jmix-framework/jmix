@@ -21,7 +21,7 @@ import io.jmix.core.Id;
 import io.jmix.core.Messages;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.security.CurrentAuthentication;
+import io.jmix.core.usersubstitution.CurrentUserSubstitution;
 import io.jmix.reports.ReportSecurityManager;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportGroup;
@@ -59,7 +59,7 @@ public class ReportRun extends StandardLookup<Report> {
     protected CollectionContainer<Report> reportsDc;
 
     @Autowired
-    protected CurrentAuthentication currentAuthentication;
+    protected CurrentUserSubstitution currentUserSubstitution;
 
     @Autowired
     protected TextField<String> nameFilter;
@@ -121,7 +121,7 @@ public class ReportRun extends StandardLookup<Report> {
     protected void onBeforeShow(BeforeShowEvent event) {
         List<Report> reports = this.reports;
         if (reports == null) {
-            reports = reportSecurityManager.getAvailableReports(screenParameter, currentAuthentication.getCurrentOrSubstitutedUser(),
+            reports = reportSecurityManager.getAvailableReports(screenParameter, currentUserSubstitution.getEffectiveUser(),
                     metaClassParameter);
         }
 
@@ -173,7 +173,7 @@ public class ReportRun extends StandardLookup<Report> {
         Date dateFilterValue = updatedDateFilter.getValue();
 
         List<Report> reports =
-                reportSecurityManager.getAvailableReports(screenParameter, currentAuthentication.getCurrentOrSubstitutedUser(),
+                reportSecurityManager.getAvailableReports(screenParameter, currentUserSubstitution.getEffectiveUser(),
                         metaClassParameter)
                         .stream()
                         .filter(report -> {

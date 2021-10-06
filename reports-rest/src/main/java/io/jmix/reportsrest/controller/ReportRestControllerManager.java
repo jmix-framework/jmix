@@ -24,7 +24,7 @@ import com.haulmont.yarg.reporting.ReportOutputDocument;
 import com.haulmont.yarg.util.converter.ObjectToStringConverter;
 import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.security.CurrentAuthentication;
+import io.jmix.core.usersubstitution.CurrentUserSubstitution;
 import io.jmix.reports.ParameterClassResolver;
 import io.jmix.reports.ReportSecurityManager;
 import io.jmix.reports.entity.*;
@@ -69,7 +69,7 @@ public class ReportRestControllerManager {
     @Autowired
     protected FetchPlanRepository fetchPlanRepository;
     @Autowired
-    protected CurrentAuthentication currentAuthentication;
+    protected CurrentUserSubstitution currentUserSubstitution;
 
     public String loadGroup(String entityId) {
         checkCanReadEntity(metadata.getClass(ReportGroup.class));
@@ -112,7 +112,7 @@ public class ReportRestControllerManager {
         reportSecurityManager.applySecurityPolicies(
                 loadContext,
                 null,
-                currentAuthentication.getCurrentOrSubstitutedUser());
+                currentUserSubstitution.getEffectiveUser());
         List<Report> reports = dataManager.loadList(loadContext);
 
         List<ReportInfo> objects = reports.stream()
@@ -191,7 +191,7 @@ public class ReportRestControllerManager {
                 .setQueryString("select r from report_Report r where r.id = :id and r.restAccess = true")
                 .setParameter("id", getReportIdFromString(entityId));
 
-        reportSecurityManager.applySecurityPolicies(loadContext, null, currentAuthentication.getCurrentOrSubstitutedUser());
+        reportSecurityManager.applySecurityPolicies(loadContext, null, currentUserSubstitution.getEffectiveUser());
 
         Report report = dataManager.load(loadContext);
 

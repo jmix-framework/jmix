@@ -21,7 +21,7 @@ import io.jmix.core.Messages;
 import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.impl.StandardSerialization;
-import io.jmix.core.security.CurrentAuthentication;
+import io.jmix.core.usersubstitution.CurrentUserSubstitution;
 import io.jmix.reports.ReportSecurityManager;
 import io.jmix.reports.entity.PivotTableData;
 import io.jmix.reports.entity.Report;
@@ -86,7 +86,7 @@ public class ShowPivotTableScreen extends Screen {
     protected ScreenValidation screenValidation;
 
     @Autowired
-    protected CurrentAuthentication currentAuthentication;
+    protected CurrentUserSubstitution currentUserSubstitution;
 
     @Autowired
     private CollectionContainer<Report> reportsDc;
@@ -131,7 +131,7 @@ public class ShowPivotTableScreen extends Screen {
         List<Report> entities = event.getLoadedEntities();
         List<Report> availableReports = reportSecurityManager.getAvailableReports(
                 null,
-                currentAuthentication.getCurrentOrSubstitutedUser(),
+                currentUserSubstitution.getEffectiveUser(),
                 null);
         entities.retainAll(availableReports);
         reportsDc.setItems(entities);

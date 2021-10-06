@@ -19,7 +19,7 @@ package io.jmix.reportsui.action;
 import io.jmix.core.*;
 import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.security.CurrentAuthentication;
+import io.jmix.core.usersubstitution.CurrentUserSubstitution;
 import io.jmix.reports.PrototypesLoader;
 import io.jmix.reports.ReportSecurityManager;
 import io.jmix.reports.app.ParameterPrototype;
@@ -68,7 +68,7 @@ public abstract class AbstractPrintFormAction extends AbstractAction {
     protected FetchPlanRepository fetchPlanRepository;
 
     @Autowired
-    protected CurrentAuthentication currentAuthentication;
+    protected CurrentUserSubstitution currentUserSubstitution;
 
     @Autowired
     protected UiReportRunner uiReportRunner;
@@ -97,7 +97,7 @@ public abstract class AbstractPrintFormAction extends AbstractAction {
                                        @Nullable String outputFileName) {
         List<Report> reports = reportSecurityManager.getAvailableReports(
                 screen.getId(),
-                currentAuthentication.getCurrentOrSubstitutedUser(),
+                currentUserSubstitution.getEffectiveUser(),
                 inputValueMetaClass);
 
         ScreenContext screenContext = UiControllerUtils.getScreenContext(screen);

@@ -19,7 +19,7 @@ package io.jmix.reportsui.screen.report.history;
 import io.jmix.core.LoadContext;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.security.CurrentAuthentication;
+import io.jmix.core.usersubstitution.CurrentUserSubstitution;
 import io.jmix.reports.ReportSecurityManager;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportGroup;
@@ -63,7 +63,7 @@ public class ReportExecutionDialog extends StandardLookup<Report> {
     @Autowired
     protected DateField<Date> filterUpdatedDate;
     @Autowired
-    protected CurrentAuthentication currentAuthentication;
+    protected CurrentUserSubstitution currentUserSubstitution;
 
     @Autowired
     protected MetadataTools metadataTools;
@@ -76,7 +76,7 @@ public class ReportExecutionDialog extends StandardLookup<Report> {
     @Install(to = "reportsDl", target = Target.DATA_LOADER)
     protected List<Report> reportsDlLoadDelegate(LoadContext<Report> loadContext) {
         return reportSecurityManager.getAvailableReports(screenParameter,
-                currentAuthentication.getCurrentOrSubstitutedUser(),
+                currentUserSubstitution.getEffectiveUser(),
                 metaClassParameter);
     }
 
@@ -96,7 +96,7 @@ public class ReportExecutionDialog extends StandardLookup<Report> {
 
     protected void filterReports() {
         List<Report> reports = reportSecurityManager.getAvailableReports(screenParameter,
-                currentAuthentication.getCurrentOrSubstitutedUser(),
+                currentUserSubstitution.getEffectiveUser(),
                 metaClassParameter)
                 .stream()
                 .filter(this::filterReport)

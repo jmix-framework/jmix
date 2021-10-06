@@ -19,7 +19,7 @@ package io.jmix.reportsui.screen.report.run;
 import com.haulmont.yarg.reporting.ReportOutputDocument;
 import io.jmix.core.Messages;
 import io.jmix.core.common.util.ParamsMap;
-import io.jmix.core.security.CurrentAuthentication;
+import io.jmix.core.usersubstitution.CurrentUserSubstitution;
 import io.jmix.reports.ReportSecurityManager;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportOutputType;
@@ -97,7 +97,7 @@ public class ShowChartScreen extends Screen {
     private EntityComboBox<ReportTemplate> reportTemplateComboBox;
 
     @Autowired
-    private CurrentAuthentication currentAuthentication;
+    private CurrentUserSubstitution currentUserSubstitution;
 
     @Autowired
     private CollectionContainer<Report> reportsDc;
@@ -155,7 +155,7 @@ public class ShowChartScreen extends Screen {
         List<Report> entities = event.getLoadedEntities();
         List<Report> availableReports = reportSecurityManager.getAvailableReports(
                 null,
-                currentAuthentication.getCurrentOrSubstitutedUser(),
+                currentUserSubstitution.getEffectiveUser(),
                 null);
         entities.retainAll(availableReports);
         reportsDc.setItems(entities);

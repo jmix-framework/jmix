@@ -60,7 +60,6 @@ public abstract class AbstractSelectList<V, I, T extends JmixAbstractListSelect<
 
     public AbstractSelectList() {
         component = createComponent();
-        initComponent(component);
     }
 
     @Autowired
@@ -156,6 +155,13 @@ public abstract class AbstractSelectList<V, I, T extends JmixAbstractListSelect<
     }
 
     protected abstract Collection<I> getCollectionValue();
+
+    @Override
+    protected void componentValueChanged(Set<I> prevComponentValue, Set<I> newComponentValue, boolean isUserOriginated) {
+        component.markAsDirty();
+
+        super.componentValueChanged(prevComponentValue, newComponentValue, isUserOriginated);
+    }
 
     @Override
     protected void valueBindingConnected(ValueSource<V> valueSource) {

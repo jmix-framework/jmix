@@ -18,9 +18,6 @@ package io.jmix.ui.widget.listselect;
 
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.data.provider.Query;
-import com.vaadin.server.AbstractErrorMessage;
-import com.vaadin.server.CompositeErrorMessage;
-import com.vaadin.server.ErrorMessage;
 import com.vaadin.ui.ListSelect;
 import io.jmix.ui.widget.client.listselect.JmixListSelectServerRpc;
 
@@ -64,18 +61,5 @@ public abstract class JmixAbstractListSelect<V> extends ListSelect<V> {
 
     public void setDoubleClickHandler(Consumer<V> doubleClickHandler) {
         this.doubleClickHandler = doubleClickHandler;
-    }
-
-    @Override
-    public ErrorMessage getErrorMessage() {
-        ErrorMessage superError = super.getErrorMessage();
-        if (!isReadOnly() && isRequiredIndicatorVisible() && isEmpty()) {
-            ErrorMessage error = AbstractErrorMessage.getErrorMessageForException(
-                    new com.vaadin.v7.data.Validator.EmptyValueException(getRequiredError()));
-            if (error != null) {
-                return new CompositeErrorMessage(superError, error);
-            }
-        }
-        return superError;
     }
 }

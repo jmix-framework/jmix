@@ -50,12 +50,6 @@ public abstract class JmixAbstractListSelectWidget extends VListSelect {
     }
 
     @Override
-    protected void updateEnabledState() {
-        select.setEnabled(isEnabled());
-        select.setStyleName("v-readonly", isReadOnly());
-    }
-
-    @Override
     protected void selectionEvent(Object source) {
         if (!isEnabled() || isReadOnly()) {
             return;

@@ -43,6 +43,7 @@ import com.haulmont.cuba.web.sys.*;
 import com.haulmont.cuba.web.sys.navigation.CubaUrlChangeHandler;
 import com.vaadin.spring.annotation.UIScope;
 import io.jmix.audit.AuditConfiguration;
+import io.jmix.auditui.AuditUiConfiguration;
 import io.jmix.core.*;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.impl.MetaModelLoader;
@@ -57,6 +58,7 @@ import io.jmix.dynattr.DynAttrConfiguration;
 import io.jmix.dynattrui.DynAttrUiConfiguration;
 import io.jmix.eclipselink.EclipselinkConfiguration;
 import io.jmix.email.EmailConfiguration;
+import io.jmix.emailui.EmailUiConfiguration;
 import io.jmix.localfs.LocalFileStorageConfiguration;
 import io.jmix.security.SecurityConfiguration;
 import io.jmix.securitydata.SecurityDataConfiguration;
@@ -97,8 +99,8 @@ import java.util.Collections;
 @JmixModule(dependsOn = {EclipselinkConfiguration.class, UiConfiguration.class, UiDataConfiguration.class,
         DynAttrConfiguration.class, DynAttrUiConfiguration.class, LocalFileStorageConfiguration.class,
         SecurityConfiguration.class, SecurityDataConfiguration.class, SecurityUiConfiguration.class,
-        DatatoolsConfiguration.class, DatatoolsUiConfiguration.class, EmailConfiguration.class, AuditConfiguration.class,
-        UiExportConfiguration.class
+        DatatoolsConfiguration.class, DatatoolsUiConfiguration.class, AuditConfiguration.class, AuditUiConfiguration.class,
+        UiExportConfiguration.class, EmailConfiguration.class, EmailUiConfiguration.class
 })
 @PropertySource(name = "com.haulmont.cuba", value = "classpath:/com/haulmont/cuba/module.properties")
 @EnableScheduling

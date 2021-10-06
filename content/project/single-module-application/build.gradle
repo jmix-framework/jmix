@@ -6,7 +6,7 @@ plugins {
 apply plugin: 'org.springframework.boot'
 
 jmix {
-    bomVersion = '@bomVersion@' <%if (project_id) {%>
+    bomVersion = '@bomVersion@'<%if (project_id) {%>
     projectId = '$project_id'<%}%>
 }
 
@@ -14,9 +14,9 @@ group = 'com.company'
 version = '0.0.1-SNAPSHOT'
 
 repositories {
-    mavenCentral() <%if (project_additionalRepositories) {
+    mavenCentral()<%if (project_additionalRepositories) {
     project_additionalRepositories.each { additionalRepository ->%>
-${additionalRepository} <%}}%>
+${additionalRepository}<%}}%>
 }
 
 dependencies {

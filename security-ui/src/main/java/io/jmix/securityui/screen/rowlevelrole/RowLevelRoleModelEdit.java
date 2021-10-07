@@ -32,6 +32,7 @@ import io.jmix.ui.component.GroupTable;
 import io.jmix.ui.component.TextField;
 import io.jmix.ui.component.ValidationException;
 import io.jmix.ui.model.CollectionContainer;
+import io.jmix.ui.model.CollectionPropertyContainer;
 import io.jmix.ui.model.DataContext;
 import io.jmix.ui.navigation.Route;
 import io.jmix.ui.screen.*;
@@ -103,6 +104,9 @@ public class RowLevelRoleModelEdit extends StandardEditor<RowLevelRoleModel> {
 
     @Autowired
     private Messages messages;
+
+    @Autowired
+    private CollectionPropertyContainer<RowLevelPolicyModel> rowLevelPoliciesDc;
 
     private boolean openedByCreateAction;
 
@@ -236,6 +240,8 @@ public class RowLevelRoleModelEdit extends StandardEditor<RowLevelRoleModel> {
         List<RowLevelPolicyModel> rowLevelPolicyModels = modifiedInstances.stream()
                 .filter(entity -> entity instanceof RowLevelPolicyModel)
                 .map(entity -> (RowLevelPolicyModel) entity)
+                //modifiedInstances may contain row level policies from just added child role. We should not analyze them here
+                .filter(entity -> rowLevelPoliciesDc.containsItem(entity.getId()))
                 .collect(Collectors.toList());
 
         for (RowLevelPolicyModel policyModel : rowLevelPolicyModels) {

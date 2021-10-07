@@ -377,6 +377,8 @@ public class ResourceRoleModelEdit extends StandardEditor<ResourceRoleModel> {
         List<ResourcePolicyModel> resourcePolicyModels = modifiedInstances.stream()
                 .filter(entity -> entity instanceof ResourcePolicyModel)
                 .map(entity -> (ResourcePolicyModel) entity)
+                //modifiedInstances may contain resource policies from just added child role. We should not analyze them here
+                .filter(entity -> resourcePoliciesDc.containsItem(entity.getId()))
                 .collect(Collectors.toList());
 
         for (ResourcePolicyModel policyModel : resourcePolicyModels) {

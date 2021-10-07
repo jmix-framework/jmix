@@ -27,7 +27,7 @@ public interface UserSubstitutionProvider {
 
     /**
      * Method returns a collection of {@link UserSubstitution} available for the given {@code username} and active at
-     * the given {@code date}. If {@link UserSubstitution#startDate} and {@link {@link UserSubstitution#endDate}} are
+     * the given {@code date}. If {@link UserSubstitution#startDate} and {@link UserSubstitution#endDate} are
      * null then this substitution is considered active.
      */
     Collection<UserSubstitution> getUserSubstitutions(String username, Date date);

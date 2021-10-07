@@ -16,6 +16,7 @@
 
 package io.jmix.reportsui.action.list;
 
+import com.google.common.base.Strings;
 import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -199,7 +200,9 @@ public class EditFetchPlanAction extends ListAction {
                 .findFirst()
                 .orElse(null);
 
-        return reportInputParameter != null ? metadata.getClass(reportInputParameter) : null;
+        return (reportInputParameter != null && !Strings.isNullOrEmpty(reportInputParameter.getEntityMetaClass())) ?
+                metadata.getClass(reportInputParameter.getEntityMetaClass()) :
+                null;
     }
 
     protected boolean suitableByDataSetType(DataSetType dataSetType, boolean isCollectionAlias, ParameterType type) {

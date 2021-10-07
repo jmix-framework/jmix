@@ -33,7 +33,7 @@
             <column width="350px">
                 <textField id="usernameField" property="username" editable="false" caption="msg://user"/>
                 <suggestionField id="substitutedUsernameField" inputPrompt="msg://substitutedUsernameField.inputPrompt"
-                                 property="substitutedUsername" caption="msg://substitutedUser"/>
+                                 property="substitutedUsername" caption="msg://substitutedUser" required="true"/>
                 <dateField id="startDateField" property="startDate"/>
                 <dateField id="endDateField" property="endDate"/>
             </column>

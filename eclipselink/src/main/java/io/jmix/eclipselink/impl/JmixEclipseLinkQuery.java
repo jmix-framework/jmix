@@ -753,8 +753,8 @@ public class JmixEclipseLinkQuery<E> implements JmixQuery<E> {
         if (jpaQuery.getFlushMode() == FlushModeType.AUTO
                 && (!isObjectLevelReadQuery || !((ObjectLevelReadQuery) elDbQuery).isReadOnly())) {
             // flush is expected
-            entityChangedEventManager.beforeFlush(support.getInstances(entityManager));
             support.processFlush(entityManager, true);
+            entityChangedEventManager.beforeFlush(support.getInstances(entityManager));
         }
     }
 

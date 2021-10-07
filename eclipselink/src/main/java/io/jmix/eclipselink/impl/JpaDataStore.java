@@ -344,7 +344,7 @@ public class JpaDataStore extends AbstractDataStore implements DataSortingOption
             List<Object> entities = new ArrayList<>(savedEntities);
             entities.addAll(removedEntities);
 
-            List<EntityChangedEventInfo> eventsInfo = entityChangedEventManager.collect(entities);
+            List<EntityChangedEventInfo> eventsInfo;
 
             EntityManager em = storeAwareLocator.getEntityManager(storeName);
 
@@ -352,6 +352,7 @@ public class JpaDataStore extends AbstractDataStore implements DataSortingOption
             try {
                 em.setProperty(PersistenceHints.SOFT_DELETION, context.getHints().get(PersistenceHints.SOFT_DELETION));
                 persistenceSupport.processFlush(em, false);
+                eventsInfo = entityChangedEventManager.collect( persistenceSupport.getInstances(em));
                 ((EntityManager) em.getDelegate()).flush();
             } catch (PersistenceException e) {
                 Pattern pattern = getUniqueConstraintViolationPattern();

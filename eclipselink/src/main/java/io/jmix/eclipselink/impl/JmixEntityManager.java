@@ -188,8 +188,8 @@ public class JmixEntityManager implements EntityManager {
 
     @Override
     public void flush() {
-        entityChangedEventManager.beforeFlush(support.getInstances(this));
         support.processFlush(this, false);
+        entityChangedEventManager.beforeFlush(support.getInstances(this));
         delegate.flush();
     }
 

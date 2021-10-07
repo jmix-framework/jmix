@@ -208,14 +208,21 @@ public abstract class AbstractField<T extends com.vaadin.ui.Component & com.vaad
         if (isEmpty() && isRequired()) {
             String requiredMessage = getRequiredMessage();
             if (requiredMessage == null) {
-                Messages messages = applicationContext.getBean(Messages.class);
-                requiredMessage = messages.getMessage("validationFail.defaultRequiredMessage");
+                requiredMessage = getDefaultRequiredMessage();
             }
             throw new RequiredValueMissingException(requiredMessage, this);
         }
 
         V value = getValue();
         triggerValidators(value);
+    }
+
+    protected String getDefaultRequiredMessage() {
+        Messages messages = applicationContext.getBean(Messages.class);
+        String caption = getCaption();
+        return Strings.isNullOrEmpty(caption)
+                ? messages.getMessage("validationFail.defaultRequiredMessage")
+                : messages.formatMessage("", "validationFail.defaultDetailedRequiredMessage", caption);
     }
 
     protected void triggerValidators(@Nullable V value) throws ValidationFailedException {

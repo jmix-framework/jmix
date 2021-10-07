@@ -121,6 +121,8 @@ public class JmixTagPicker<V> extends JmixComboBoxPickerField<Collection<V>> {
         refreshTags();
 
         updateTagContainerVisibility();
+
+        markAsDirty();
     }
 
     @Override

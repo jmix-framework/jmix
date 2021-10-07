@@ -24,6 +24,7 @@ import io.jmix.ui.component.Window;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.UiScreenProperties;
+import io.jmix.ui.model.DataContext;
 import io.jmix.ui.screen.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -42,7 +43,12 @@ public class RoleAssignmentScreen extends Screen {
     @Autowired
     private RoleAssignmentFragment roleAssignmentFragment;
 
+    @Autowired
+    private ScreenValidation screenValidation;
+
     private UserDetails user;
+    @Autowired
+    private DataContext dataContext;
 
     public RoleAssignmentScreen setUser(UserDetails user) {
         this.user = user;
@@ -85,8 +91,14 @@ public class RoleAssignmentScreen extends Screen {
         Action closeAction = new BaseAction(Window.CLOSE_ACTION_ID)
                 .withIcon(icons.get(JmixIcon.EDITOR_CANCEL))
                 .withCaption(messages.getMessage("actions.Cancel"))
-                .withHandler(actionPerformedEvent -> close(new StandardCloseAction(Window.CLOSE_ACTION_ID)));
-
+                .withHandler(actionPerformedEvent -> {
+                    if (dataContext.hasChanges()) {
+                        screenValidation.showUnsavedChangesDialog(this, WINDOW_CLOSE_ACTION)
+                                .onDiscard(() -> close(WINDOW_CLOSE_ACTION));
+                    } else {
+                        close(WINDOW_CLOSE_ACTION);
+                    }
+                });
         window.addAction(closeAction);
     }
 }

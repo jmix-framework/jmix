@@ -26,8 +26,10 @@ import io.jmix.securitydata.entity.RoleAssignmentEntity;
 import io.jmix.securityui.model.ResourceRoleModel;
 import io.jmix.securityui.model.RowLevelRoleModel;
 import io.jmix.ui.UiComponents;
+import io.jmix.ui.action.Action;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.Label;
+import io.jmix.ui.component.Table;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.CollectionLoader;
 import io.jmix.ui.model.DataContext;
@@ -36,6 +38,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @UiController("sec_RoleAssignmentFragment")
@@ -70,6 +73,15 @@ public class RoleAssignmentFragment extends ScreenFragment {
     private EntityStates entityStates;
 
     private UserDetails user;
+
+    @Autowired
+    private Table<RoleAssignmentEntity> resourceRoleAssignmentsTable;
+
+    @Autowired
+    private Table<RoleAssignmentEntity> rowLevelRoleAssignmentsTable;
+
+    @Autowired
+    private DataContext dataContext;
 
     @Install(to = "resourceRoleAssignmentsTable.roleName", subject = "columnGenerator")
     private Component resourceRoleAssignmentsTableRoleNameColumnGenerator(RoleAssignmentEntity roleAssignmentEntity) {
@@ -142,5 +154,21 @@ public class RoleAssignmentFragment extends ScreenFragment {
                     return roleAssignmentEntity;
                 })
                 .collect(Collectors.toList());
+    }
+
+    @Subscribe("resourceRoleAssignmentsTable.remove")
+    public void onResourceRoleAssignmentsTableRemove(Action.ActionPerformedEvent event) {
+        Set<RoleAssignmentEntity> selected = resourceRoleAssignmentsTable.getSelected();
+        resourceRoleAssignmentEntitiesDc.getMutableItems().removeAll(selected);
+        //do not immediately remove role assignments but do that only when role-assignment-screen is committed
+        selected.forEach(dataContext::remove);
+    }
+
+    @Subscribe("rowLevelRoleAssignmentsTable.remove")
+    public void onRowLevelRoleAssignmentsTableRemove(Action.ActionPerformedEvent event) {
+        Set<RoleAssignmentEntity> selected = rowLevelRoleAssignmentsTable.getSelected();
+        rowLevelRoleAssignmentEntitiesDc.getMutableItems().removeAll(selected);
+        //do not immediately remove role assignments but do that only when role-assignment-screen is committed
+        selected.forEach(dataContext::remove);
     }
 }

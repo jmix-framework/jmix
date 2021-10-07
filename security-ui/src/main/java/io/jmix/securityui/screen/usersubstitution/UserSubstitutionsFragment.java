@@ -20,9 +20,11 @@ import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.security.UserRepository;
 import io.jmix.securitydata.entity.UserSubstitutionEntity;
+import io.jmix.ui.action.Action;
 import io.jmix.ui.action.list.CreateAction;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.Table;
+import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.CollectionLoader;
 import io.jmix.ui.model.DataContext;
 import io.jmix.ui.screen.*;
@@ -31,6 +33,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import javax.inject.Named;
+import java.util.Set;
 
 @UiController("sec_UserSubstitutionsFragment")
 @UiDescriptor("user-substitutions-fragment.xml")
@@ -51,9 +54,14 @@ public class UserSubstitutionsFragment extends ScreenFragment {
     @Autowired
     protected DataContext dataContext;
 
-
     @Named("substitutionTable.create")
     protected CreateAction<UserSubstitutionEntity> createAction;
+
+    @Autowired
+    private Table<UserSubstitutionEntity> substitutionTable;
+
+    @Autowired
+    private CollectionContainer<UserSubstitutionEntity> userSubstitutionsDc;
 
     protected UserDetails user;
 
@@ -67,11 +75,22 @@ public class UserSubstitutionsFragment extends ScreenFragment {
         });
     }
 
+    @Install(to = "substitutionTable.edit", subject = "screenConfigurer")
+    private void substitutionTableEditScreenConfigurer(Screen screen) {
+        ((UserSubstitutionEdit) screen).setParentDataContext(dataContext);
+    }
+
+    @Subscribe("substitutionTable.remove")
+    public void onSubstitutionTableRemove(Action.ActionPerformedEvent event) {
+        Set<UserSubstitutionEntity> selected = substitutionTable.getSelected();
+        userSubstitutionsDc.getMutableItems().removeAll(selected);
+        selected.forEach(dataContext::remove);
+    }
+
     @Subscribe(target = Target.PARENT_CONTROLLER)
     public void onAfterShow(Screen.AfterShowEvent event) {
         userSubstitutionsDl.setParameter("username", user.getUsername());
         userSubstitutionsDl.load();
-
     }
 
     public void setUser(UserDetails user) {

@@ -42,10 +42,10 @@ public class UserSubstitutionsScreen extends Screen {
     protected UiScreenProperties uiScreenProperties;
     @Autowired
     protected DataContext dataContext;
-
     @Autowired
-    private UserSubstitutionsFragment userSubstitutionsFragment;
-
+    protected UserSubstitutionsFragment userSubstitutionsFragment;
+    @Autowired
+    protected ScreenValidation screenValidation;
 
     private UserDetails user;
 
@@ -69,6 +69,11 @@ public class UserSubstitutionsScreen extends Screen {
 
     @Subscribe("close")
     public void close(Action.ActionPerformedEvent event) {
-        close(new StandardCloseAction(Window.CLOSE_ACTION_ID));
+        if (dataContext.hasChanges()) {
+            screenValidation.showUnsavedChangesDialog(this, WINDOW_CLOSE_ACTION)
+                    .onDiscard(() -> close(WINDOW_CLOSE_ACTION));
+        } else {
+            close(WINDOW_CLOSE_ACTION);
+        }
     }
 }

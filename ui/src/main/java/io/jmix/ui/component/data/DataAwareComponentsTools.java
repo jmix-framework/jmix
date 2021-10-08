@@ -205,7 +205,9 @@ public class DataAwareComponentsTools {
      */
     public void checkValueSourceDatatypeMismatch(@Nullable Datatype datatype, @Nullable ValueSource valueSource) {
         if (valueSource != null && datatype != null) {
-            if (!valueSource.getType().equals(datatype.getJavaClass())) {
+            // `isAssignableFrom` is used instead of `equals` because
+            // in some cases types can be different, e.g. java.sql.Date and java.util.Date
+            if (!valueSource.getType().isAssignableFrom(datatype.getJavaClass())) {
                 throw new IllegalArgumentException("ValueSource and Datatype have different types. ValueSource:"
                         + valueSource.getType() + "; Datatype: " + datatype.getJavaClass());
             }

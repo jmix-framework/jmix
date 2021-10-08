@@ -1629,6 +1629,14 @@
         <xs:attribute name="constraintEntityOp" type="constraintEntityOp"/>
     </xs:complexType>
 
+    <xs:complexType name="listComponentComponentAction">
+        <xs:complexContent>
+            <xs:extension base="componentAction">
+                <xs:attribute name="primary" type="xs:boolean"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
     <xs:complexType name="actionProperties">
         <xs:sequence>
             <xs:element name="property" type="actionProperty" minOccurs="0"/>
@@ -2521,7 +2529,7 @@
         <xs:complexContent>
             <xs:extension base="baseComponent">
                 <xs:all>
-                    <xs:element name="actions" minOccurs="0" type="componentActions"/>
+                    <xs:element name="actions" minOccurs="0" type="listComponentComponentActions"/>
                     <xs:element name="buttonsPanel" minOccurs="0" type="buttonsPanelComponent"/>
                 </xs:all>
 
@@ -2762,7 +2770,7 @@
         <xs:complexContent>
             <xs:extension base="baseComponent">
                 <xs:all>
-                    <xs:element name="actions" minOccurs="0" type="componentActions"/>
+                    <xs:element name="actions" minOccurs="0" type="listComponentComponentActions"/>
                     <xs:element name="buttonsPanel" minOccurs="0" type="buttonsPanelComponent"/>
                     <xs:element name="simplePagination" minOccurs="0" type="listComponentSimplePaginationComponent"/>
                     <xs:element name="columns" type="tableColumnsList"/>
@@ -2781,7 +2789,7 @@
         <xs:complexContent>
             <xs:extension base="baseComponent">
                 <xs:all>
-                    <xs:element name="actions" minOccurs="0" type="componentActions"/>
+                    <xs:element name="actions" minOccurs="0" type="listComponentComponentActions"/>
                     <xs:element name="buttonsPanel" minOccurs="0" type="buttonsPanelComponent"/>
                     <xs:element name="simplePagination" minOccurs="0" type="listComponentSimplePaginationComponent"/>
                     <xs:element name="columns" type="tableColumnsList"/>
@@ -2802,7 +2810,7 @@
         <xs:complexContent>
             <xs:extension base="baseComponent">
                 <xs:all>
-                    <xs:element name="actions" minOccurs="0" type="componentActions"/>
+                    <xs:element name="actions" minOccurs="0" type="listComponentComponentActions"/>
                     <xs:element name="buttonsPanel" minOccurs="0" type="buttonsPanelComponent"/>
                     <xs:element name="simplePagination" minOccurs="0" type="listComponentSimplePaginationComponent"/>
                     <xs:element name="columns" type="groupTableColumnsType"/>
@@ -2859,7 +2867,7 @@
         <xs:complexContent>
             <xs:extension base="baseComponent">
                 <xs:all>
-                    <xs:element name="actions" minOccurs="0" type="componentActions"/>
+                    <xs:element name="actions" minOccurs="0" type="listComponentComponentActions"/>
                     <xs:element name="buttonsPanel" minOccurs="0" type="buttonsPanelComponent"/>
                     <xs:element name="simplePagination" minOccurs="0" type="listComponentSimplePaginationComponent"/>
                     <xs:element name="columns" type="dataGridColumnsList"/>
@@ -4070,6 +4078,14 @@
         <xs:sequence>
             <xs:choice maxOccurs="unbounded">
                 <xs:element name="action" type="componentAction"/>
+            </xs:choice>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="listComponentComponentActions">
+        <xs:sequence>
+            <xs:choice maxOccurs="unbounded">
+                <xs:element name="action" type="listComponentComponentAction"/>
             </xs:choice>
         </xs:sequence>
     </xs:complexType>

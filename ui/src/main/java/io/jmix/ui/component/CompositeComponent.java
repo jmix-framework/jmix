@@ -17,6 +17,7 @@
 package io.jmix.ui.component;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import com.vaadin.ui.AbstractComponent;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.event.EventHub;
@@ -42,6 +43,8 @@ public class CompositeComponent<T extends Component>
     protected String id;
     protected T root;
     protected Frame frame;
+
+    protected String prefixId;
 
     protected ApplicationContext applicationContext;
 
@@ -130,7 +133,9 @@ public class CompositeComponent<T extends Component>
         Preconditions.checkState(getComposition() instanceof HasComponents,
                 "Composition can't contain inner components");
 
-        return (Optional<C>) Optional.ofNullable(((HasComponents) getComposition()).getComponent(id));
+        String fullId = getFullId(id);
+        return (Optional<C>) Optional.ofNullable(((HasComponents) getComposition())
+                .getComponent(fullId));
     }
 
     /**
@@ -147,6 +152,37 @@ public class CompositeComponent<T extends Component>
             component.addAttachListener(event -> enableEventListeners());
             component.addDetachListener(event -> disableEventListeners());
         });
+
+        // Add id prefix to root and all nested component id to uniquely identify them
+        updateComponentIds();
+    }
+
+    protected void updateComponentIds() {
+        updateIdIfNeeded(root);
+
+        if (root instanceof HasComponents) {
+            for (Component component : ((HasComponents) root).getComponents()) {
+                updateIdIfNeeded(component);
+            }
+        }
+    }
+
+    protected void updateIdIfNeeded(Component component) {
+        final String id = component.getId();
+        if (!Strings.isNullOrEmpty(id)) {
+            component.setId(getFullId(id));
+        }
+    }
+
+    protected String getFullId(String id) {
+        return String.format("%s_%s", getPrefixId(), id);
+    }
+
+    protected String getPrefixId() {
+        if (prefixId == null) {
+            prefixId = UUID.randomUUID().toString();
+        }
+        return prefixId;
     }
 
     @Nullable

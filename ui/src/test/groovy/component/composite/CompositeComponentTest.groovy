@@ -22,6 +22,7 @@ import component.composite.component.TestProgrammaticCommentaryPanel
 import component.composite.component.TestStepperField
 import component.composite.screen.CommentaryPanelTestScreen
 import component.composite.screen.EventPanelTestScreen
+import component.composite.screen.MultipleStepperFieldsTestScreen
 import component.composite.screen.StepperFieldTestScreen
 import io.jmix.core.CoreConfiguration
 import io.jmix.data.DataConfiguration
@@ -30,6 +31,7 @@ import io.jmix.ui.AppUI
 import io.jmix.ui.ScreenBuilders
 import io.jmix.ui.UiConfiguration
 import io.jmix.ui.component.Button
+import io.jmix.ui.component.impl.WindowTestHelper
 import io.jmix.ui.model.InstanceContainer
 import io.jmix.ui.screen.StandardOutcome
 import io.jmix.ui.screen.UiControllerUtils
@@ -134,5 +136,21 @@ class CompositeComponentTest extends ScreenSpecification {
 
         then: "Component should unsubscribe and event should not be handled"
         screen.testEventPanel.eventCounter == 1
+    }
+    
+    def "Multiple composite components of the same type have unique id for nested components"() {
+        showTestMainScreen()
+
+        def screen = (MultipleStepperFieldsTestScreen) screens.create(MultipleStepperFieldsTestScreen)
+        screen.show()
+
+
+        def window = screen.getWindow();
+
+        expect: "2 StepperField"
+        window.getOwnComponents().size() == 2
+
+        and: "2 StepperField + 2 * (4 nested components) = 10"
+        WindowTestHelper.getAllComponents(window).size() == 10
     }
 }

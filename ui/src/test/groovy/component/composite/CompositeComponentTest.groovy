@@ -97,7 +97,7 @@ class CompositeComponentTest extends ScreenSpecification {
         commentaryPanel != null
 
         when:
-        Button sendBtn = commentaryPanel.getComposition().getComponentNN("sendBtn") as Button
+        Button sendBtn = commentaryPanel.getSendButton()
 
         then: "Button has caption"
         sendBtn.getCaption() == "Send"
@@ -112,7 +112,7 @@ class CompositeComponentTest extends ScreenSpecification {
         commentaryPanel != null
 
         when:
-        Button sendBtn = commentaryPanel.getComposition().getComponentNN("sendBtn") as Button
+        Button sendBtn = commentaryPanel.getSendButton()
 
         then: "Button has caption"
         sendBtn.caption == "Send"

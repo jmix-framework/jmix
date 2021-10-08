@@ -122,4 +122,8 @@ public class TestCommentaryPanel extends CompositeComponent<VBoxLayout> implemen
 
         container.addCollectionChangeListener(event -> commentsDataGrid.scrollToEnd());
     }
+
+    public Button getSendButton() {
+        return sendBtn;
+    }
 }

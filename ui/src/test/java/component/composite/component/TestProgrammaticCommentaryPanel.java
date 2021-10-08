@@ -169,4 +169,8 @@ public class TestProgrammaticCommentaryPanel extends CompositeComponent<VBoxLayo
 
         container.addCollectionChangeListener(event -> commentsDataGrid.scrollToEnd());
     }
+
+    public Button getSendButton() {
+        return sendBtn;
+    }
 }

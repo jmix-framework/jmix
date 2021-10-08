@@ -61,7 +61,8 @@ import java.util.function.Function;
                         typeParameter = "E"),
                 @StudioProperty(name = "metaClass", type = PropertyType.ENTITY_NAME, typeParameter = "E"),
                 @StudioProperty(name = "width", type = PropertyType.SIZE, defaultValue = "-1px", initialValue = "200px"),
-                @StudioProperty(name = "height", type = PropertyType.SIZE, defaultValue = "-1px", initialValue = "100px")
+                @StudioProperty(name = "height", type = PropertyType.SIZE, defaultValue = "-1px", initialValue = "100px"),
+                @StudioProperty(name = "editable", type = PropertyType.BOOLEAN, defaultValue = "false")
         }
 )
 public interface Table<E>

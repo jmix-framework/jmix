@@ -84,6 +84,7 @@ public class LookupScreenFacetImpl<E, S extends Screen & LookupScreen<E>>
 
         initScreenListeners(screen);
         injectScreenProperties(screen, properties);
+        applyScreenConfigurer(screen);
 
         return screen;
     }

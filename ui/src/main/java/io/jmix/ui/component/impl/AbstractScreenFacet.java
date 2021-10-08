@@ -49,6 +49,7 @@ public abstract class AbstractScreenFacet<S extends Screen> extends AbstractFace
 
     protected OpenMode openMode = OpenMode.NEW_TAB;
 
+    protected Consumer<S> screenConfigurer;
     protected Supplier<ScreenOptions> optionsProvider;
     protected Collection<UiControllerProperty> properties;
 
@@ -106,6 +107,17 @@ public abstract class AbstractScreenFacet<S extends Screen> extends AbstractFace
     @Override
     public Supplier<ScreenOptions> getOptionsProvider() {
         return optionsProvider;
+    }
+
+    @Nullable
+    @Override
+    public Consumer<S> getScreenConfigurer() {
+        return screenConfigurer;
+    }
+
+    @Override
+    public void setScreenConfigurer(Consumer<S> screenConfigurer) {
+        this.screenConfigurer = screenConfigurer;
     }
 
     @Override
@@ -231,6 +243,12 @@ public abstract class AbstractScreenFacet<S extends Screen> extends AbstractFace
                     screen, owner.getFrameOwner(), properties);
 
             injector.inject();
+        }
+    }
+
+    protected void applyScreenConfigurer(S screen) {
+        if (screenConfigurer != null) {
+            screenConfigurer.accept(screen);
         }
     }
 

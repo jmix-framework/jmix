@@ -116,6 +116,7 @@ public class EditorScreenFacetImpl<E, S extends Screen & EditorScreen<E>>
 
         initScreenListeners(screen);
         injectScreenProperties(screen, properties);
+        applyScreenConfigurer(screen);
 
         return screen;
     }

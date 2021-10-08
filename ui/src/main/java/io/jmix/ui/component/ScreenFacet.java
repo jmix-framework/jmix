@@ -24,6 +24,7 @@ import io.jmix.ui.meta.StudioElementsGroup;
 import io.jmix.ui.meta.StudioFacet;
 import io.jmix.ui.meta.StudioProperties;
 import io.jmix.ui.meta.StudioProperty;
+import io.jmix.ui.screen.Install;
 import io.jmix.ui.screen.OpenMode;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.ScreenOptions;
@@ -109,6 +110,29 @@ public interface ScreenFacet<S extends Screen> extends Facet, ApplicationContext
      */
     @Nullable
     Supplier<ScreenOptions> getOptionsProvider();
+
+    /**
+     * @return the screen configurer or {@code null} of not set
+     */
+    @Nullable
+    Consumer<S> getScreenConfigurer();
+
+    /**
+     * Sets the screen configurer. Use the configurer if you need to
+     * provide parameters to the opened screen through setters.
+     *
+     * The preferred way to set the configurer is using a controller
+     * method annotated with {@link Install}, e.g.:
+     * <pre>
+     * &#64;Install(to = "userBrowseFacet", subject = "screenConfigurer")
+     * private void userBrowseFacetScreenConfigurer(UserBrowse userBrowse) {
+     *     userBrowse.setSomeParameter(someValue);
+     * }
+     * </pre>
+     *
+     * @param screenConfigurer the configurer to set.
+     */
+    void setScreenConfigurer(Consumer<S> screenConfigurer);
 
     /**
      * Sets properties that will be injected into opened screen via public setters.

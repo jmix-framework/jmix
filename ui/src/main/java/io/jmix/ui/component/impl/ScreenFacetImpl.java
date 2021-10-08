@@ -37,6 +37,7 @@ public class ScreenFacetImpl<S extends Screen> extends AbstractScreenFacet<S> {
 
         initScreenListeners(screen);
         injectScreenProperties(screen, properties);
+        applyScreenConfigurer(screen);
 
         return screen;
     }

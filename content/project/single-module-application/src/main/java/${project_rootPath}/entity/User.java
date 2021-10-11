@@ -1,6 +1,7 @@
 package ${project_rootPackage}.entity;
 
 import io.jmix.core.HasTimeZone;
+import io.jmix.core.annotation.Secret;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.DependsOnProperties;
@@ -33,6 +34,7 @@ public class User implements JmixUserDetails, HasTimeZone {
     @Column(name = "USERNAME", nullable = false)
     protected String username;
 
+    @Secret
     @SystemLevel
     @Column(name = "PASSWORD")
     protected String password;

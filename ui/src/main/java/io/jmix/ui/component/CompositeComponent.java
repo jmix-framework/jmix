@@ -28,6 +28,7 @@ import io.jmix.ui.component.impl.FrameImplementation;
 import io.jmix.ui.sys.TestIdManager;
 import io.jmix.ui.sys.event.UiEventsMulticaster;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -180,7 +181,7 @@ public class CompositeComponent<T extends Component>
 
     protected String getPrefixId() {
         if (prefixId == null) {
-            prefixId = UUID.randomUUID().toString();
+            prefixId = RandomStringUtils.randomAlphabetic(10);
         }
         return prefixId;
     }

@@ -20,6 +20,7 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.Label;
+import org.apache.commons.lang3.StringUtils;
 
 public class JmixAbstractPagination extends CssLayout {
 
@@ -42,6 +43,23 @@ public class JmixAbstractPagination extends CssLayout {
         this.primaryStyleName = primaryStyleName;
 
         itemsPerPageLayout = createItemsPerPage();
+    }
+
+    @Override
+    public void setStyleName(String style) {
+        super.setStyleName(primaryStyleName + " " + style);
+    }
+
+    @Override
+    public String getStyleName() {
+        String style = super.getStyleName();
+        return removeComponentStyle(style, primaryStyleName);
+    }
+
+    @Override
+    public void removeStyleName(String style) {
+        style = removeComponentStyle(style, primaryStyleName);
+        super.removeStyleName(style);
     }
 
     public boolean isItemsPerPageVisible() {
@@ -104,6 +122,22 @@ public class JmixAbstractPagination extends CssLayout {
 
     public JmixItemsPerPageLayout getItemsPerPageLayout() {
         return itemsPerPageLayout;
+    }
+
+    protected String removeComponentStyle(String styleNames, String componentStyle) {
+        if (styleNames.equals(componentStyle)) {
+            return "";
+        }
+        if (styleNames.startsWith(componentStyle + " ")) {
+            styleNames = styleNames.substring(componentStyle.length());
+        }
+        if (styleNames.contains(" " + componentStyle + " ")) {
+            styleNames = styleNames.replaceAll(" " + componentStyle + " ", " ");
+        }
+        if (styleNames.endsWith(" " + componentStyle)) {
+            styleNames = styleNames.substring(0, styleNames.length() - componentStyle.length());
+        }
+        return StringUtils.normalizeSpace(styleNames);
     }
 
     protected class JmixItemsPerPageLayout extends CssLayout {

@@ -82,9 +82,4 @@ public class JmixSimplePagination extends JmixAbstractPagination {
     public Button getCountButton() {
         return countButton;
     }
-
-    @Override
-    public String getStyleName() {
-        return StringUtils.normalizeSpace(super.getStyleName().replace(PRIMARY_STYLENAME, ""));
-    }
 }

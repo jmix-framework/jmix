@@ -60,11 +60,6 @@ public class JmixPagination extends JmixAbstractPagination {
         addComponent(getItemsPerPageLayout());
     }
 
-    @Override
-    public String getStyleName() {
-        return StringUtils.normalizeSpace(super.getStyleName().replace(PRIMARY_STYLENAME, ""));
-    }
-
     /**
      * @return maximum number of visible pages
      */

@@ -69,6 +69,7 @@ public class LoadContext<E extends Entity> extends io.jmix.core.LoadContext<E> {
      * @param metaClass metaclass of the loaded entities
      */
     public LoadContext(MetaClass metaClass) {
+        this();
         Preconditions.checkNotNullArgument(metaClass, "metaClass is null");
         this.metaClass = metaClass;
     }
@@ -77,6 +78,7 @@ public class LoadContext<E extends Entity> extends io.jmix.core.LoadContext<E> {
      * @param javaClass class of the loaded entities
      */
     public LoadContext(Class<E> javaClass) {
+        this();
         Preconditions.checkNotNullArgument(javaClass, "javaClass is null");
         this.metaClass = AppBeans.get(Metadata.class).getClassNN(javaClass);
     }

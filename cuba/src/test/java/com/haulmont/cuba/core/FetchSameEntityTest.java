@@ -29,6 +29,7 @@ import io.jmix.core.FetchPlan;
 import io.jmix.core.Metadata;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -91,6 +92,7 @@ public class FetchSameEntityTest {
         testSupport.deleteRecord(linkB1, linkB2, linkA1, linkA2, mainEntity);
     }
 
+    @Disabled("until https://github.com/Haulmont/jmix-cuba/issues/94 is fixed")
     @Test
     public void testUnFetched() throws Exception {
         DataManager dataManager = AppBeans.get(DataManager.class);

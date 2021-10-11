@@ -23,10 +23,7 @@ import com.haulmont.cuba.core.testsupport.TestSupport;
 import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.global.LoadContext;
 import io.jmix.core.Metadata;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -115,6 +112,7 @@ public class SeveralFetchGroupsTest {
         testSupport.deleteRecord("TEST_SEVERAL_FETCH_GROUPS_TARIFF", tariffId4_2, tariffId3_1, tariffId2_1, tariffId1);
     }
 
+    @Disabled("until https://github.com/Haulmont/jmix-cuba/issues/94 is fixed")
     @Test
     public void testLoadTariffVersions() {
         LoadContext<SeveralFetchGroups_TariffVersion> loadContext = new LoadContext<>(SeveralFetchGroups_TariffVersion.class);

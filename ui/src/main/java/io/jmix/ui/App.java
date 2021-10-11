@@ -25,6 +25,7 @@ import com.vaadin.ui.Window;
 import io.jmix.core.CoreProperties;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Messages;
+import io.jmix.core.security.event.UserSubstitutedEvent;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.action.DialogAction;
@@ -49,6 +50,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.event.EventListener;
+import org.springframework.security.authentication.event.InteractiveAuthenticationSuccessEvent;
 import org.springframework.security.core.Authentication;
 
 import javax.annotation.Nullable;
@@ -453,8 +456,7 @@ public abstract class App {
                 .stream()
                 .filter(ui ->
                         ui.hasAuthenticatedSession() &&
-                                (Objects.equals(auth, ui.currentAuthentication.getAuthentication())
-                                        || uiProperties.isForceRefreshAuthenticatedTabs())
+                                (Objects.equals(auth, ui.currentAuthentication.getAuthentication()))
                 )
                 .collect(Collectors.toList());
 
@@ -611,6 +613,35 @@ public abstract class App {
     protected void clearSettingsCache() {
         if (settingsCache != null) {
             settingsCache.clear();
+        }
+    }
+
+    @EventListener
+    protected void onAuthenticationSuccess(InteractiveAuthenticationSuccessEvent event) {
+        forceRefreshUIsExceptCurrent();
+    }
+
+    @EventListener
+    protected void onUserSubstituted(UserSubstitutedEvent event) {
+        forceRefreshUIsExceptCurrent();
+    }
+
+    protected void forceRefreshUIsExceptCurrent() {
+        AppUI current = AppUI.getCurrent();
+        if (current == null) {
+            // The current AppUI may be null in case REST API auth token is requested
+            return;
+        }
+
+        List<AppUI> uis = getAppUIs()
+                .stream()
+                .filter(ui -> ui != current)
+                .collect(Collectors.toList());
+
+        removeAllWindows(uis);
+
+        for (AppUI ui : uis) {
+            ui.getSession().removeUI(ui);
         }
     }
 }

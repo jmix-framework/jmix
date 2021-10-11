@@ -195,6 +195,11 @@ The addon provides the `LdapUserSynchronizationManager` bean that synchronizes u
 
 * **Description:** the DN of the group containing users to be synchronized in the application.
 
+#### jmix.ldap.synchronizeUserOnLogin
+
+* **Description:** defines whether to synchronize user after successful LDAP authentication or not. The synchronization will be performed only if the corresponding strategy is declared (see the [Quick start](#quick-start)).
+* **Default value:** true
+
 #### jmix.ldap.synchronizeRoleAssignments
 
 * **Description:** defines whether to save role assignments during user synchronization or not.

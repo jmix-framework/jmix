@@ -257,4 +257,10 @@
         <Class name="io.jmix.datatoolsui.screen.entityinspector.assistant.InspectorFetchPlanBuilder"/>
         <Method name="build"/>
     </Match>
+
+    <Match>
+        <Bug pattern="STYLE"/>
+        <Class name="io.jmix.ui.widget.JmixAbstractPagination$JmixItemsPerPageLayout"/>
+        <Method name="JmixItemsPerPageLayout"/>
+    </Match>
 </FindBugsFilter>

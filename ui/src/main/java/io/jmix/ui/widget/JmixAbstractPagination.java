@@ -150,7 +150,7 @@ public class JmixAbstractPagination extends CssLayout {
         protected ComboBox<Integer> itemsPerPageComboBox;
 
         public JmixItemsPerPageLayout() {
-            this.setStyleName(primaryStyleName + "-" + ITEMS_PER_PAGE_LAYOUT_STYLENAME);
+            addStyleName(primaryStyleName + "-" + ITEMS_PER_PAGE_LAYOUT_STYLENAME);
 
             itemsPerPageLabel = new Label();
             itemsPerPageLabel.setStyleName(primaryStyleName + "-" + ITEMS_PER_PAGE_LABEL_STYLENAME);

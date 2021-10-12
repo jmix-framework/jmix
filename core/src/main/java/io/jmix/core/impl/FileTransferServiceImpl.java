@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package io.jmix.core;
+package io.jmix.core.impl;
 
 import com.google.common.base.Strings;
+import io.jmix.core.*;
 import io.jmix.core.common.util.URLEncodeUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -41,20 +42,23 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.Objects;
 
-@Component("core_FileClientManager")
-public class FileClientManager {
+@Component("core_FileTransferService")
+public class FileTransferServiceImpl implements FileTransferService {
 
-    private static final Logger log = LoggerFactory.getLogger(FileClientManager.class);
+    private static final Logger log = LoggerFactory.getLogger(FileTransferServiceImpl.class);
 
     @Autowired
-    FileStorageLocator fileStorageLocator;
+    private FileStorageLocator fileStorageLocator;
 
-    public void downloadAndWriteResponse(FileRef fileReference, String fileStorageName,
-                                                Boolean attachment, HttpServletResponse response) throws FileStorageException {
+    @Override
+    public void downloadAndWriteResponse(FileRef fileReference,
+                                         String fileStorageName,
+                                         Boolean attachment,
+                                         HttpServletResponse response) throws FileTransferException {
         FileStorage fileStorage = getFileStorageByNameOrDefault(fileStorageName);
-        //check if a file by the given reference exists
+
         if (!fileStorage.fileExists(fileReference)) {
-            throw new FileClientException("File not found", "File not found. File reference: " +
+            throw new FileTransferException("File not found", "File not found. File reference: " +
                     fileReference, HttpStatus.NOT_FOUND);
         }
 
@@ -78,18 +82,18 @@ public class FileClientManager {
 
         } catch (Exception e) {
             log.error("Error on downloading the file {}", fileReference, e);
-            throw new FileClientException("Error on downloading the file", "", HttpStatus.INTERNAL_SERVER_ERROR, e);
+            throw new FileTransferException("Error on downloading the file", "", HttpStatus.INTERNAL_SERVER_ERROR, e);
         }
     }
 
-    protected FileStorage getFileStorageByNameOrDefault(@Nullable String storageName) {
+    private FileStorage getFileStorageByNameOrDefault(@Nullable String storageName) {
         if (Strings.isNullOrEmpty(storageName)) {
             return fileStorageLocator.getDefault();
         } else {
             try {
                 return fileStorageLocator.getByName(storageName);
             } catch (IllegalArgumentException e) {
-                throw new FileClientException("Invalid file reference",
+                throw new FileTransferException("Invalid file reference",
                         String.format("Cannot find FileStorage with name: '%s'", storageName),
                         HttpStatus.BAD_REQUEST,
                         e);
@@ -97,19 +101,19 @@ public class FileClientManager {
         }
     }
 
-    protected FileRef uploadToFileStorage(FileStorage fileStorage, InputStream is, String fileName) {
+    private FileRef uploadToFileStorage(FileStorage fileStorage, InputStream is, String fileName) {
         try {
             return fileStorage.saveStream(fileName, is);
         } catch (FileStorageException e) {
-            throw new FileClientException("Unable to upload file to FileStorage",
+            throw new FileTransferException("Unable to upload file to FileStorage",
                     "Unable to upload file to FileStorage: " + fileName,
                     HttpStatus.INTERNAL_SERVER_ERROR,
                     e);
         }
     }
 
-    protected ResponseEntity<FileInfoResponse> createFileInfoResponseEntity(HttpServletRequest request,
-                                                                                   FileRef fileRef, String filename, long size) {
+    private ResponseEntity<FileInfoResponse> createFileInfoResponseEntity(HttpServletRequest request,
+                                                                            FileRef fileRef, String filename, long size) {
         FileInfoResponse fileInfo = new FileInfoResponse(fileRef.toString(), filename, size);
 
         UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(request.getRequestURL().toString())
@@ -121,8 +125,11 @@ public class FileClientManager {
         return new ResponseEntity<>(fileInfo, httpHeaders, HttpStatus.CREATED);
     }
 
-    public ResponseEntity<FileInfoResponse> multipartFileUpload(MultipartFile file, String name,
-                                                                       String fileStorageName, HttpServletRequest request) {
+    @Override
+    public ResponseEntity<FileInfoResponse> multipartFileUpload(MultipartFile file,
+                                                                String name,
+                                                                String fileStorageName,
+                                                                HttpServletRequest request) throws FileTransferException {
         try {
             if (Strings.isNullOrEmpty(name)) {
                 name = file.getOriginalFilename();
@@ -138,12 +145,14 @@ public class FileClientManager {
             return createFileInfoResponseEntity(request, fileRef, name, size);
         } catch (Exception e) {
             log.error("File upload failed", e);
-            throw new FileClientException("File upload failed", "File upload failed", HttpStatus.INTERNAL_SERVER_ERROR, e);
+            throw new FileTransferException("File upload failed", "File upload failed", HttpStatus.INTERNAL_SERVER_ERROR, e);
         }
     }
 
-    public ResponseEntity<FileInfoResponse> fileUpload(String name, String fileStorageName,
-                                                              HttpServletRequest request) {
+    @Override
+    public ResponseEntity<FileInfoResponse> fileUpload(String name,
+                                                       String fileStorageName,
+                                                       HttpServletRequest request) throws FileTransferException {
         try {
             String contentLength = request.getHeader("Content-Length");
 
@@ -161,7 +170,7 @@ public class FileClientManager {
             return createFileInfoResponseEntity(request, fileRef, name, size);
         } catch (Exception e) {
             log.error("File upload failed", e);
-            throw new FileClientException("File upload failed", "File upload failed", HttpStatus.INTERNAL_SERVER_ERROR, e);
+            throw new FileTransferException("File upload failed", "File upload failed", HttpStatus.INTERNAL_SERVER_ERROR, e);
         }
     }
 }

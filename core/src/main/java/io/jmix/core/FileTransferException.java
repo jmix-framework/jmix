@@ -19,16 +19,20 @@ package io.jmix.core;
 import io.micrometer.core.lang.Nullable;
 import org.springframework.http.HttpStatus;
 
-public class FileClientException extends RuntimeException {
+/**
+ * This exception can occur while uploading/downloading files using {@link FileTransferService}.
+ */
+public class FileTransferException extends RuntimeException {
+
     protected HttpStatus httpStatus;
 
     protected String details;
 
-    public FileClientException(String message, String details, HttpStatus httpStatus) {
+    public FileTransferException(String message, String details, HttpStatus httpStatus) {
         this(message, details, httpStatus, null);
     }
 
-    public FileClientException(String message, String details, HttpStatus httpStatus, @Nullable Throwable cause) {
+    public FileTransferException(String message, String details, HttpStatus httpStatus, @Nullable Throwable cause) {
         super(message, cause);
         this.details = details;
         this.httpStatus = httpStatus;

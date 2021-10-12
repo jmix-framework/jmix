@@ -17,10 +17,8 @@
 package io.jmix.rest.impl.controller;
 
 import io.jmix.core.AccessManager;
-import io.jmix.core.FileClientManager;
+import io.jmix.core.FileTransferService;
 import io.jmix.core.FileInfoResponse;
-import io.jmix.core.FileStorage;
-import io.jmix.core.FileStorageLocator;
 import io.jmix.core.Metadata;
 import io.jmix.rest.accesscontext.RestFileUploadContext;
 import io.jmix.rest.exception.RestAPIException;
@@ -50,7 +48,7 @@ public class FileUploadController {
     protected Metadata metadata;
 
     @Autowired
-    FileClientManager fileClientManager;
+    protected FileTransferService fileTransferService;
 
     @Autowired
     protected AccessManager accessManager;
@@ -63,7 +61,7 @@ public class FileUploadController {
                                                        @RequestParam(required = false) String name,
                                                        @RequestParam(required = false) String storageName) {
         checkFileUploadPermission();
-        return fileClientManager.fileUpload(name, storageName, request);
+        return fileTransferService.fileUpload(name, storageName, request);
     }
 
     /**
@@ -75,7 +73,7 @@ public class FileUploadController {
                                                        @RequestParam(required = false) String storageName,
                                                        HttpServletRequest request) {
         checkFileUploadPermission();
-        return fileClientManager.multipartFileUpload(file, name, storageName, request);
+        return fileTransferService.multipartFileUpload(file, name, storageName, request);
     }
 
     protected void checkFileUploadPermission() {

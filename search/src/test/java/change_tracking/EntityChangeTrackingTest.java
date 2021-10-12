@@ -879,7 +879,7 @@ public class EntityChangeTrackingTest {
         indexingQueueItemsTracker.clear();
 
         ewm.remove(firstReference);
-        boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(rootEntity, IndexingOperation.INDEX, 1);
+        boolean enqueued = indexingQueueItemsTracker.containsAnyQueueItemsForEntityAndOperation(rootEntity, IndexingOperation.INDEX);
         Assert.assertTrue(enqueued);
     }
 
@@ -1042,7 +1042,7 @@ public class EntityChangeTrackingTest {
         indexingQueueItemsTracker.clear();
 
         ewm.remove(firstSubReference);
-        boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(rootEntity, IndexingOperation.INDEX, 1);
+        boolean enqueued = indexingQueueItemsTracker.containsAnyQueueItemsForEntityAndOperation(rootEntity, IndexingOperation.INDEX);
         Assert.assertTrue(enqueued);
     }
 

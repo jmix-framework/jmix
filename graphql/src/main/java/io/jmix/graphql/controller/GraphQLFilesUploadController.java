@@ -21,7 +21,7 @@ import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
 import graphql.GraphQL;
 import io.jmix.core.AccessManager;
-import io.jmix.core.FileClientManager;
+import io.jmix.core.FileTransferService;
 import io.jmix.core.FileInfoResponse;
 import io.jmix.graphql.accesscontext.GraphQLAccessContext;
 import io.jmix.graphql.service.FilePermissionService;
@@ -66,7 +66,7 @@ public class GraphQLFilesUploadController extends GraphQLController<NativeWebReq
     protected AccessManager accessManager;
 
     @Autowired
-    protected FileClientManager fileClientManager;
+    protected FileTransferService fileTransferService;
 
     private static final Logger log = LoggerFactory.getLogger(GraphQLFilesUploadController.class);
 
@@ -155,7 +155,7 @@ public class GraphQLFilesUploadController extends GraphQLController<NativeWebReq
                                                @RequestParam(required = false) String name,
                                                @RequestParam(required = false) String storageName) {
         filePermissionService.checkFileUploadPermission();
-        return fileClientManager.fileUpload(name, storageName, request);
+        return fileTransferService.fileUpload(name, storageName, request);
     }
 
     /**
@@ -167,7 +167,7 @@ public class GraphQLFilesUploadController extends GraphQLController<NativeWebReq
                                                @RequestParam(required = false) String storageName,
                                                HttpServletRequest request) {
         filePermissionService.checkFileUploadPermission();
-        return  fileClientManager.multipartFileUpload(file, name, storageName, request);
+        return  fileTransferService.multipartFileUpload(file, name, storageName, request);
     }
 
 }

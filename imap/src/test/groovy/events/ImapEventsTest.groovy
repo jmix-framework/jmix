@@ -453,7 +453,7 @@ class ImapEventsTest extends Specification {
             message.setHeader(ImapOperations.MESSAGE_ID_HEADER, messageId)
         }
 
-        user.deliver(new StoredMessage.UidAwareMimeMessage(message, uid))
+        user.deliver(new StoredMessage.UidAwareMimeMessage(message, uid, new Date()))
     }
 
     @SuppressWarnings("GroovyAccessibility")

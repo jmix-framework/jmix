@@ -345,7 +345,7 @@ class ImapManagerTest extends Specification {
         message.subject = subject
         message.text = EMAIL_TEXT
         message.setFlag(Flags.Flag.FLAGGED, true)
-        actor.deliver(new StoredMessage.UidAwareMimeMessage(message, uid))
+        actor.deliver(new StoredMessage.UidAwareMimeMessage(message, uid, new Date()))
     }
 
     @SuppressWarnings("GroovyAccessibility")

@@ -146,7 +146,7 @@ class ImapAttachmentsTest extends Specification {
 
         message.content = mp
 
-        user.deliver(new StoredMessage.UidAwareMimeMessage(message, EMAIL_UID))
+        user.deliver(new StoredMessage.UidAwareMimeMessage(message, EMAIL_UID, new Date()))
     }
 
     @SuppressWarnings("GroovyAccessibility")

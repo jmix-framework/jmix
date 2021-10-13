@@ -24,7 +24,7 @@ public enum EntitySerializationOption {
 
     /**
      * If an entity occurs in object graph several times, then the second and next occurrences will be replaced just
-     * with a JSON object with the single field - entity identified.
+     * with a JSON object with the single field - entity identifier.
      */
     COMPACT_REPEATED_ENTITIES,
 
@@ -51,5 +51,11 @@ public enum EntitySerializationOption {
     /**
      * Specifies that not allowed properties should NOT be serialized.
      */
-    DO_NOT_SERIALIZE_DENIED_PROPERTY
+    DO_NOT_SERIALIZE_DENIED_PROPERTY,
+
+    /**
+     * Specifies that fields with {@code io.jmix.core.annotation.Secret} annotation should be serialized. By default,
+     * secret fields are not written to the result JSON.
+     */
+    SERIALIZE_SECRET_FIELDS
 }

@@ -24,6 +24,7 @@ import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import io.jmix.core.*;
 import io.jmix.core.accesscontext.ExportImportEntityContext;
+import io.jmix.core.annotation.Secret;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
@@ -189,6 +190,7 @@ public class EntitySerializationImpl implements EntitySerialization {
         protected boolean serializeInstanceName;
         protected boolean doNotSerializeReadOnlyProperties = false;
         protected boolean doNotSerializeDeniedProperties = false;
+        protected boolean serializeSecretFields = false;
         protected FetchPlan fetchPlan;
 
         public EntitySerializer(@Nullable FetchPlan fetchPlan, EntitySerializationOption... options) {
@@ -205,6 +207,9 @@ public class EntitySerializationImpl implements EntitySerialization {
                 }
                 if (ArrayUtils.contains(options, EntitySerializationOption.DO_NOT_SERIALIZE_DENIED_PROPERTY)) {
                     doNotSerializeDeniedProperties = true;
+                }
+                if (ArrayUtils.contains(options, EntitySerializationOption.SERIALIZE_SECRET_FIELDS)) {
+                    serializeSecretFields = true;
                 }
             }
         }
@@ -273,6 +278,9 @@ public class EntitySerializationImpl implements EntitySerialization {
         }
 
         protected boolean propertyWritingAllowed(MetaProperty metaProperty, Entity entity, ExportImportEntityContext exportImportContext) {
+            if (!serializeSecretFields && metaProperty.getAnnotatedElement().isAnnotationPresent(Secret.class)) {
+                return false;
+            }
             MetaClass metaClass = metadata.getClass(entity.getClass());
 
             String primaryKeyName = metadataTools.getPrimaryKeyName(metaClass);

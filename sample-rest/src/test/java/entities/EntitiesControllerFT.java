@@ -53,6 +53,7 @@ class EntitiesControllerFT extends AbstractRestControllerFT {
     private String plantUuidString;
     private String compositeKeyEntityIdString;
     private String compositeKeyEntityTenantIdString;
+    private String secretEntityIdString;
 
     private String modelName = "Audi A3";
     private String model2Name = "BMW X5";
@@ -220,6 +221,20 @@ class EntitiesControllerFT extends AbstractRestControllerFT {
             ReadContext ctx = parseResponse(response);
             assertEquals(driverUuidString, ctx.read("$.id"));
             assertEquals("The notes", ctx.read("$.notes"));
+        }
+    }
+
+    @Test
+    void loadEntityWithSecretField() throws Exception {
+        String url = baseUrl + "/entities/rest_SecretEntity/" + secretEntityIdString;
+        Map<String, String> params = new HashMap<>();
+        try (CloseableHttpResponse response = sendGet(url, oauthToken, params)) {
+            assertEquals(HttpStatus.SC_OK, statusCode(response));
+            ReadContext ctx = parseResponse(response);
+            assertEquals(secretEntityIdString, ctx.read("$.id"));
+            assertEquals("nameValue", ctx.read("$.name"));
+            //secret property is missing because field is annotated with @Secret
+            assertThrows(PathNotFoundException.class, () -> ctx.read("$.secretField"));
         }
     }
 
@@ -2575,6 +2590,14 @@ class EntitiesControllerFT extends AbstractRestControllerFT {
                 compositeKeyEntityId,
                 compositeKeyEntityTenantId,
                 "compositeEntity");
+
+        UUID secretEntityId = dirtyData.createSecretEntityId();
+        secretEntityIdString = secretEntityId.toString();
+        executePrepared("insert into REST_SECRET_ENTITY (id, name, secret_field) values (?, ?, ?)",
+                secretEntityId,
+                "nameValue",
+                "secret"
+        );
 
         dynAttrMetadata.reload();
     }

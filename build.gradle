@@ -73,9 +73,9 @@ dependencies {
     def baseVersion = '1.0.0'
     def auditVersion = baseVersion
     def awsfsVersion = baseVersion
-    def awsqueueVerion = baseVersion
     def awssecurityVerion = baseVersion
     def bpmVersion = baseVersion
+    def cloudqueueVerion = baseVersion
     def coreVersion = baseVersion
     def cubaVersion = baseVersion
     def dashboardsVersion = baseVersion
@@ -118,11 +118,6 @@ dependencies {
         api "io.jmix.awsfs:jmix-awsfs:${snapshotOr(awsfsVersion)}"
         api "io.jmix.awsfs:jmix-awsfs-starter:${snapshotOr(awsfsVersion)}"
 
-        api "io.jmix.awsqueue:jmix-awsqueue:${snapshotOr(awsqueueVerion)}"
-        api "io.jmix.awsqueue:jmix-awsqueue-starter:${snapshotOr(awsqueueVerion)}"
-        api "io.jmix.awsqueue:jmix-awsqueue-ui:${snapshotOr(awsqueueVerion)}"
-        api "io.jmix.awsqueue:jmix-awsqueue-ui-starter:${snapshotOr(awsqueueVerion)}"
-
         api "io.jmix.awssecurity:jmix-awssecurity:${snapshotOr(awssecurityVerion)}"
         api "io.jmix.awssecurity:jmix-awssecurity-starter:${snapshotOr(awssecurityVerion)}"
 
@@ -133,6 +128,12 @@ dependencies {
         api "io.jmix.bpm:jmix-bpm-ui-starter:${snapshotOr(bpmVersion)}"
         api "io.jmix.bpm:jmix-bpm-rest:${snapshotOr(bpmVersion)}"
         api "io.jmix.bpm:jmix-bpm-rest-starter:${snapshotOr(bpmVersion)}"
+
+        api "io.jmix.cloudqueue:jmix-cloudqueue-api:${snapshotOr(cloudqueueVerion)}"
+        api "io.jmix.cloudqueue:jmix-cloudqueue-aws-starter:${snapshotOr(cloudqueueVerion)}"
+        api "io.jmix.cloudqueue:jmix-cloudqueue-ui:${snapshotOr(cloudqueueVerion)}"
+        api "io.jmix.cloudqueue:jmix-cloudqueue-ui-starter:${snapshotOr(cloudqueueVerion)}"
+        api "io.jmix.cloudqueue:jmix-cloudqueue-yandex-starter:${snapshotOr(cloudqueueVerion)}"
 
         api "io.jmix.core:jmix-core:${snapshotOr(coreVersion)}"
         api "io.jmix.core:jmix-core-starter:${snapshotOr(coreVersion)}"

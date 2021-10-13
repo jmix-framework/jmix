@@ -17,6 +17,7 @@
 package io.jmix.dataimport.extractor.data.impl;
 
 import com.opencsv.CSVReader;
+import com.opencsv.exceptions.CsvException;
 import io.jmix.dataimport.InputDataFormat;
 import io.jmix.dataimport.configuration.ImportConfiguration;
 import io.jmix.dataimport.exception.ImportException;
@@ -64,7 +65,7 @@ public class CsvDataExtractor implements ImportedDataExtractor {
         List<String[]> strings;
         try {
             strings = csvReader.readAll();
-        } catch (IOException e) {
+        } catch (IOException | CsvException e) {
             throw new ImportException(e, "Unable to read lines from CSV: " + e.getMessage());
         }
         ImportedData importedData = new ImportedData();

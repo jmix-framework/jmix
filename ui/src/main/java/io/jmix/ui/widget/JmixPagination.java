@@ -52,8 +52,6 @@ public class JmixPagination extends JmixAbstractPagination {
     }
 
     protected void createContentLayout() {
-        setStyleName(PRIMARY_STYLENAME);
-
         addComponents(getFirstButton(), getPrevButton(), getNextButton(), getLastButton());
 
         getItemsPerPageLayout().setVisible(false);

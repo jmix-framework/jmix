@@ -42,6 +42,9 @@ public class JmixAbstractPagination extends CssLayout {
     public JmixAbstractPagination(String primaryStyleName) {
         this.primaryStyleName = primaryStyleName;
 
+        addStyleName(primaryStyleName);
+
+
         itemsPerPageLayout = createItemsPerPage();
     }
 
@@ -52,14 +55,7 @@ public class JmixAbstractPagination extends CssLayout {
 
     @Override
     public String getStyleName() {
-        String style = super.getStyleName();
-        return removeComponentStyle(style, primaryStyleName);
-    }
-
-    @Override
-    public void removeStyleName(String style) {
-        style = removeComponentStyle(style, primaryStyleName);
-        super.removeStyleName(style);
+        return StringUtils.normalizeSpace(super.getStyleName().replace(primaryStyleName, ""));
     }
 
     public boolean isItemsPerPageVisible() {
@@ -122,22 +118,6 @@ public class JmixAbstractPagination extends CssLayout {
 
     public JmixItemsPerPageLayout getItemsPerPageLayout() {
         return itemsPerPageLayout;
-    }
-
-    protected String removeComponentStyle(String styleNames, String componentStyle) {
-        if (styleNames.equals(componentStyle)) {
-            return "";
-        }
-        if (styleNames.startsWith(componentStyle + " ")) {
-            styleNames = styleNames.substring(componentStyle.length());
-        }
-        if (styleNames.contains(" " + componentStyle + " ")) {
-            styleNames = styleNames.replaceAll(" " + componentStyle + " ", " ");
-        }
-        if (styleNames.endsWith(" " + componentStyle)) {
-            styleNames = styleNames.substring(0, styleNames.length() - componentStyle.length());
-        }
-        return StringUtils.normalizeSpace(styleNames);
     }
 
     protected class JmixItemsPerPageLayout extends CssLayout {

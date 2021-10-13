@@ -44,8 +44,6 @@ public class JmixSimplePagination extends JmixAbstractPagination {
     }
 
     protected void createContentLayout() {
-        setStyleName(PRIMARY_STYLENAME);
-
         navigationLayout = createNavigationLayout();
         navigationLayout.setStyleName(NAVIGATION_LAYOUT_STYLENAME);
 

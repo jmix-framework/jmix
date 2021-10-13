@@ -114,7 +114,9 @@ public class EntityImportPlanBuilder {
     public EntityImportPlanBuilder addLocalProperties() {
         MetaClass metaClass = metadata.getClass(entityClass);
         metaClass.getProperties().stream()
-                .filter(property -> !property.getRange().isClass() && !metadataTools.isSystem(property))
+                .filter(property -> !property.getRange().isClass() &&
+                        !metadataTools.isSystem(property) &&
+                        metadataTools.isJpa(property))
                 .forEach(metaProperty -> addLocalProperty(metaProperty.getName()));
         return this;
     }

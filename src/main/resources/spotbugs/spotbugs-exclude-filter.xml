@@ -257,4 +257,10 @@
         <Class name="io.jmix.datatoolsui.screen.entityinspector.assistant.InspectorFetchPlanBuilder"/>
         <Method name="build"/>
     </Match>
+
+    <Match>
+        <Bug pattern="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE"/>
+        <Class name="io.jmix.ui.model.impl.ObservableList"/>
+        <Method name="sort"/>
+    </Match>
 </FindBugsFilter>

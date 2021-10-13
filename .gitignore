@@ -4,6 +4,6 @@ jmix-*/
 !.idea/copyright
 .vscode
 
-/build/
+build/
 .gradle/
 .jmix

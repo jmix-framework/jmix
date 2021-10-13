@@ -63,7 +63,7 @@ public abstract class StandardEditor<T> extends Screen
     protected boolean showEnableEditingBtn = true;
 
     // whether user has edited entity after screen opening
-    private boolean entityModified = false;
+    private boolean modifiedAfterOpen = false;
 
     protected StandardEditor() {
         addInitListener(this::initActions);
@@ -167,17 +167,17 @@ public abstract class StandardEditor<T> extends Screen
     protected void setupModifiedTracking() {
         DataContext dataContext = getScreenData().getDataContext();
         if (dataContext != null) {
-            dataContext.addChangeListener(this::editedEntityModified);
-            dataContext.addPostCommitListener(this::editedEntityCommitted);
+            dataContext.addChangeListener(this::onChangeEvent);
+            dataContext.addPostCommitListener(this::onPostCommitEvent);
         }
     }
 
-    protected void editedEntityModified(@SuppressWarnings("unused") DataContext.ChangeEvent event) {
-        setEntityModified(true);
+    protected void onChangeEvent(@SuppressWarnings("unused") DataContext.ChangeEvent event) {
+        setModifiedAfterOpen(true);
     }
 
-    protected void editedEntityCommitted(@SuppressWarnings("unused") DataContext.PostCommitEvent event) {
-        setEntityModified(false);
+    protected void onPostCommitEvent(@SuppressWarnings("unused") DataContext.PostCommitEvent event) {
+        setModifiedAfterOpen(false);
     }
 
     protected void preventUnsavedChanges(BeforeCloseEvent event) {
@@ -389,7 +389,24 @@ public abstract class StandardEditor<T> extends Screen
             return false;
         }
 
-        return isEntityModified() && getScreenData().getDataContext().hasChanges();
+        // The editor has to be saved if its edited entity was changed after merging into DataContext or if
+        // the DataContext contains other modified entities. If the editor is opened for a new instance and it wasn't
+        // modified after that, there is no unsaved changes from the user point of view, although DataContext considers
+        // this instance as modified.
+
+        DataContext dataContext = getScreenData().getDataContext();
+
+        if (!dataContext.getRemoved().isEmpty()) {
+            return true;
+        }
+        for (Object modified : dataContext.getModified()) {
+            if (!getEntityStates().isNew(modified)) {
+                return true;
+            }
+        }
+        // if only new entities are registered as modified in DataContext, check whether they were modified after
+        // opening the screen
+        return isModifiedAfterOpen();
     }
 
     /**
@@ -445,15 +462,15 @@ public abstract class StandardEditor<T> extends Screen
         return justLocked;
     }
 
-    protected void setEntityModified(boolean entityModified) {
-        this.entityModified = entityModified;
+    protected void setModifiedAfterOpen(boolean entityModified) {
+        this.modifiedAfterOpen = entityModified;
     }
 
     /**
-     * @return true if user has edited entity after screen opening
+     * @return true if data is modified after screen opening
      */
-    protected boolean isEntityModified() {
-        return entityModified;
+    protected boolean isModifiedAfterOpen() {
+        return modifiedAfterOpen;
     }
 
     /**

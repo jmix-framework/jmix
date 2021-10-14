@@ -15,7 +15,13 @@
  */
 package com.haulmont.cuba.core.entity;
 
+import io.jmix.core.annotation.DeletedBy;
+import io.jmix.core.annotation.DeletedDate;
 import io.jmix.core.metamodel.annotation.JmixEntity;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
@@ -36,21 +42,27 @@ public abstract class StandardEntity extends BaseUuidEntity implements Versioned
     @Column(name = "VERSION", nullable = false)
     protected Integer version;
 
+    @CreatedDate
     @Column(name = "CREATE_TS")
     protected Date createTs;
 
+    @CreatedBy
     @Column(name = "CREATED_BY", length = 50)
     protected String createdBy;
 
+    @LastModifiedDate
     @Column(name = "UPDATE_TS")
     protected Date updateTs;
 
+    @LastModifiedBy
     @Column(name = "UPDATED_BY", length = 50)
     protected String updatedBy;
 
+    @DeletedDate
     @Column(name = "DELETE_TS")
     protected Date deleteTs;
 
+    @DeletedBy
     @Column(name = "DELETED_BY", length = 50)
     protected String deletedBy;
 

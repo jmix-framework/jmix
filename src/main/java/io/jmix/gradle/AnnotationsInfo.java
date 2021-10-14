@@ -110,7 +110,8 @@ public class AnnotationsInfo {
 
     protected void putField(FieldAnnotation annotation, CtField field) {
         CtField alreadyAnnotated = getAnnotatedField(annotation);
-        if (alreadyAnnotated != null && annotation.unique) {
+        if (alreadyAnnotated != null && annotation.unique
+                && !isTheSameField(alreadyAnnotated, field)) {
             throw new RuntimeException(String.format("More than one @%s field in %s: %s#%s, %s#%s",
                     annotation.getSimpleName(),
                     entityClass.getName(),
@@ -124,6 +125,12 @@ public class AnnotationsInfo {
         } else {
             inheritedFields.put(annotation, field);
         }
+    }
+
+
+    private boolean isTheSameField(CtField first, CtField second) {
+        return Objects.equals(first.getName(), second.getName())
+                && Objects.equals(first.getDeclaringClass().getName(), second.getDeclaringClass().getName());
     }
 
     protected void putClassAnnotation(ClassAnnotation annotation, CtClass ctClass) {

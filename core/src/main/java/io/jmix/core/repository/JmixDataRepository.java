@@ -41,7 +41,8 @@ import java.util.Optional;
 public interface JmixDataRepository<T, ID> extends PagingAndSortingRepository<T, ID> {
 
     /**
-     * Invokes {@code metadata.create(<T>.class)}
+     * Instantiate an entity.
+     * Invokes {@link io.jmix.core.Metadata#create(Class)}
      *
      * @return new instance of {@code <T>}.
      */

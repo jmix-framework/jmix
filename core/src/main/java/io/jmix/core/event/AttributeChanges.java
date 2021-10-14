@@ -122,15 +122,16 @@ public class AttributeChanges {
     public Set<String> getAttributes() {
         Set<String> attributes = new HashSet<>();
         for (Change change : changes) {
-            AttributeChanges nestedChanges = embeddedChanges.get(change.name);
-            if (nestedChanges == null) {
-                attributes.add(change.name);
-            } else {
-                for (String attribute : nestedChanges.getAttributes()) {
-                    attributes.add(String.format("%s.%s", change.name, attribute));
-                }
+            attributes.add(change.name);
+        }
+
+        for (Map.Entry<String, AttributeChanges> entry : embeddedChanges.entrySet()) {
+            AttributeChanges nestedChanges = entry.getValue();
+            for (String attribute : nestedChanges.getAttributes()) {
+                attributes.add(String.format("%s.%s", entry.getKey(), attribute));
             }
         }
+
         return attributes;
     }
 

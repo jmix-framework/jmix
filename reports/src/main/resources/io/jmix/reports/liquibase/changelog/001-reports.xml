@@ -21,6 +21,7 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
     <changeSet author="reports" id="1" context="!cuba">
+        <validCheckSum>8:f5da7222d918810deb69ba452ee5560e</validCheckSum>
 
         <createTable tableName="REPORT_GROUP">
             <column name="ID" type="${uuid.type}">
@@ -169,9 +170,7 @@
             <column name="VERSION" value="0"/>
             <column name="TITLE" value="General"/>
             <column name="CODE" value="ReportGroup.default"/>
-            <column name="LOCALE_NAMES">
-                <![CDATA[en=General
-ru=Общие]]></column>
+            <column name="LOCALE_NAMES" value="en=General"/>
         </insert>
 
         <insert tableName="REPORT_GROUP" dbms="oracle, mysql, mariadb">
@@ -182,9 +181,7 @@ ru=Общие]]></column>
             <column name="VERSION" value="0"/>
             <column name="TITLE" value="General"/>
             <column name="CODE" value="ReportGroup.default"/>
-            <column name="LOCALE_NAMES">
-                <![CDATA[en=General
-ru=Общие]]></column>
+            <column name="LOCALE_NAMES" value="en=General"/>
         </insert>
     </changeSet>
 

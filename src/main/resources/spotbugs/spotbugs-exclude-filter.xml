@@ -263,4 +263,16 @@
         <Class name="io.jmix.ui.model.impl.ObservableList"/>
         <Method name="sort"/>
     </Match>
+
+    <Match>
+        <Bug pattern="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE"/>
+        <Class name="io.jmix.reportsui.screen.report.run.ParameterFieldCreator"/>
+        <Method name="createField"/>
+    </Match>
+
+    <Match>
+        <Bug pattern="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE"/>
+        <Class name="io.jmix.reportsui.screen.report.wizard.OutputFormatTools"/>
+        <Method name="getOutputAvailableFormats"/>
+    </Match>
 </FindBugsFilter>

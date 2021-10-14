@@ -19,14 +19,13 @@ package data_manager
 import io.jmix.core.DataManager
 import io.jmix.core.SaveContext
 import io.jmix.eclipselink.impl.JpaDataStore
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.transaction.PlatformTransactionManager
 import org.springframework.transaction.support.DefaultTransactionDefinition
 import org.springframework.transaction.support.TransactionSynchronizationManager
 import test_support.DataSpec
-import test_support.TestCustomerListener
 import test_support.entity.sales.Customer
-
-import org.springframework.beans.factory.annotation.Autowired
+import test_support.listeners.TestCustomerListener
 
 class DataManagerTxTest extends DataSpec {
 

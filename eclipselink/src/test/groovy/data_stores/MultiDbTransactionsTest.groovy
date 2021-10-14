@@ -13,13 +13,12 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.transaction.TransactionDefinition
 import org.springframework.transaction.support.TransactionTemplate
 import test_support.DataSpec
-import test_support.TestBeforeCommitTransactionListener
 import test_support.TestService
 import test_support.entity.cars.Colour
 import test_support.entity.multidb.Db1Customer
 import test_support.entity.multidb.Db1Order
 import test_support.entity.sec.User
-
+import test_support.listeners.TestBeforeCommitTransactionListener
 
 class MultiDbTransactionsTest extends DataSpec {
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2021 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,23 +14,26 @@
  * limitations under the License.
  */
 
-package test_support;
+package test_support.listeners;
 
-import io.jmix.data.impl.BeforeCommitTransactionListener;
+import io.jmix.core.event.EntityChangedEvent;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.event.TransactionalEventListener;
+import test_support.entity.petclinic.Owner;
 
-import java.util.Collection;
 import java.util.function.Consumer;
 
-@Component
-public class TestBeforeCommitTransactionListener implements BeforeCommitTransactionListener {
+@Component("test_TestComplexListener")
+public class TestComplexListener {
 
-    public Consumer<Collection<Object>> before;
+    private Consumer<EntityChangedEvent<?>> consumer;
 
-    @Override
-    public void beforeCommit(String storeName, Collection<Object> managedEntities) {
-        if (before != null) {
-            before.accept(managedEntities);
-        }
+    public void setConsumer(Consumer<EntityChangedEvent<?>> consumer) {
+        this.consumer = consumer;
+    }
+
+    @TransactionalEventListener
+    public void onOrderBeforeCommit(EntityChangedEvent<Owner> event) {
+        if (consumer != null) consumer.accept(event);
     }
 }

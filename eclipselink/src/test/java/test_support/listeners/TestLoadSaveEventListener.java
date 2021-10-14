@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package test_support;
+package test_support.listeners;
 
 import com.google.common.base.Strings;
 import io.jmix.core.event.EntityLoadingEvent;

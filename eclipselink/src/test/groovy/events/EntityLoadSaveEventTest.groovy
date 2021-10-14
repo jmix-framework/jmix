@@ -31,7 +31,7 @@ import javax.persistence.EntityManager
 import javax.persistence.PersistenceContext
 
 /**
- * @see test_support.TestLoadSaveEventListener
+ * @see test_support.listeners.TestLoadSaveEventListener
  */
 class EntityLoadSaveEventTest extends DataSpec {
 

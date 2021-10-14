@@ -17,10 +17,10 @@
 package entity_manager;
 
 import io.jmix.core.*;
-import io.jmix.data.DataConfiguration;
-import io.jmix.eclipselink.EclipselinkConfiguration;
-import io.jmix.data.PersistenceHints;
 import io.jmix.core.event.EntityChangedEvent;
+import io.jmix.data.DataConfiguration;
+import io.jmix.data.PersistenceHints;
+import io.jmix.eclipselink.EclipselinkConfiguration;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -35,8 +35,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.support.TransactionTemplate;
 import test_support.DataTestConfiguration;
 import test_support.TestContextInititalizer;
-import test_support.TestCustomerListener;
 import test_support.entity.sales.Customer;
+import test_support.listeners.TestCustomerListener;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;

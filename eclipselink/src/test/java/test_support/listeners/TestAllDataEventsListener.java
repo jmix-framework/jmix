@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package test_support;
+package test_support.listeners;
 
 import io.jmix.core.Id;
 import io.jmix.core.event.EntityChangedEvent;

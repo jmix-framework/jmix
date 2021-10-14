@@ -23,8 +23,8 @@ import org.springframework.transaction.PlatformTransactionManager
 import org.springframework.transaction.TransactionDefinition
 import org.springframework.transaction.support.DefaultTransactionDefinition
 import test_support.DataSpec
-import test_support.TestAllDataEventsListener
 import test_support.entity.events.Foo
+import test_support.listeners.TestAllDataEventsListener
 
 /**
  * @see TestAllDataEventsListener

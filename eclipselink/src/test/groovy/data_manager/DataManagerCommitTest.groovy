@@ -21,7 +21,6 @@ import io.jmix.data.PersistenceHints
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
 import test_support.DataSpec
-import test_support.TestOrderChangedEventListener
 import test_support.entity.TestAppEntity
 import test_support.entity.TestAppEntityItem
 import test_support.entity.TestSecondAppEntity
@@ -29,6 +28,7 @@ import test_support.entity.nullable_id.Foo
 import test_support.entity.nullable_id.FooPart
 import test_support.entity.sales.Customer
 import test_support.entity.sales.Order
+import test_support.listeners.TestOrderChangedEventListener
 
 class DataManagerCommitTest extends DataSpec {
 

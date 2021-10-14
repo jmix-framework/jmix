@@ -16,11 +16,18 @@
 package events
 
 import io.jmix.core.DataManager
+import io.jmix.core.Metadata
+import io.jmix.core.MetadataTools
+import io.jmix.core.event.EntityChangedEvent
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.jdbc.core.JdbcTemplate
 import test_support.DataSpec
-import test_support.TestCustomerListener
+import test_support.entity.petclinic.Address
+import test_support.entity.petclinic.Owner
 import test_support.entity.sales.Customer
 import test_support.entity.sales.Status
+import test_support.listeners.TestComplexListener
+import test_support.listeners.TestCustomerListener
 
 class EntityChangedEventTest extends DataSpec {
 
@@ -28,6 +35,19 @@ class EntityChangedEventTest extends DataSpec {
     private DataManager dataManager
     @Autowired
     TestCustomerListener listener
+    @Autowired
+    private TestComplexListener complexListener;
+    @Autowired
+    JdbcTemplate jdbc
+    @Autowired
+    MetadataTools metadataTools
+    @Autowired
+    Metadata metadata
+
+    void cleanup() {
+        complexListener.setConsumer(null)
+        jdbc.update("delete from SALES_CUSTOMER")
+    }
 
     def "EntityChangedEvent changes contains enum instead of enum's id"() {
         def customer = dataManager.create(Customer)
@@ -49,5 +69,44 @@ class EntityChangedEventTest extends DataSpec {
 
         cleanup:
         listener.changedEventConsumer = null
+    }
+
+    def "EntityChangeEvent changes contains embedded attribute changes"() {
+        setup:
+        def owner = dataManager.create(Owner)
+        owner.name = "name"
+        owner.address = new Address()
+        owner.address.city = "Khorinis"
+        owner.address.zip = "123"
+        owner = dataManager.save(owner)
+
+        println(metadataTools.getDatabaseTable(metadata.getClass(Owner)))
+
+        List<EntityChangedEvent<Owner>> events = []
+        complexListener.setConsumer(event -> {
+            events.add(event)
+        })
+
+        when:
+        owner.address.city = "Jarkendar"
+        owner = dataManager.save(owner)
+
+        then:
+        events.size() == 1
+        events[0].entityId.value == owner.id
+        events[0].changes.getAttributes().size() == 1
+        events[0].changes.getAttributes()[0] == "address.city"
+
+        when:
+        events.clear()
+        owner.name = "Mark"
+        owner.address.zip = "321"
+        owner = dataManager.save(owner)
+        then:
+        events.size() == 1
+        events[0].entityId.value == owner.id
+        events[0].changes.getAttributes().size() == 2
+        events[0].changes.getAttributes().contains("address.zip")
+        events[0].changes.getAttributes().contains("name")
     }
 }

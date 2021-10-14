@@ -20,7 +20,7 @@ import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.Listeners;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
-import test_support.TestAllDataEventsListener;
+import test_support.listeners.TestAllDataEventsListener;
 
 import javax.persistence.*;
 import java.util.UUID;

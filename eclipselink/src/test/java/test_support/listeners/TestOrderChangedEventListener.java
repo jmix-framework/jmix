@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2020 Haulmont.
+ * Copyright 2021 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +14,16 @@
  * limitations under the License.
  */
 
-package test_support;
+package test_support.listeners;
 
 import io.jmix.core.DataManager;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.event.EntityChangedEvent;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 import test_support.entity.sales.Order;
-
-import org.springframework.beans.factory.annotation.Autowired;
 
 @Component("test_TestOrderChangedEventListener")
 public class TestOrderChangedEventListener {

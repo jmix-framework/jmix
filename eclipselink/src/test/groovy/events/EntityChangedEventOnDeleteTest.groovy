@@ -21,9 +21,9 @@ import io.jmix.core.event.EntityChangedEvent
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
 import test_support.DataSpec
-import test_support.TestOrdersListener
 import test_support.entity.sales.Order
 import test_support.entity.sales.OrderLine
+import test_support.listeners.TestOrdersListener
 
 import static org.springframework.transaction.event.TransactionPhase.AFTER_COMMIT
 import static org.springframework.transaction.event.TransactionPhase.BEFORE_COMMIT

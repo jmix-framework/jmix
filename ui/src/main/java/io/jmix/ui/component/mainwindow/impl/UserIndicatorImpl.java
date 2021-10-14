@@ -22,22 +22,24 @@ import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.usersubstitution.CurrentUserSubstitution;
 import io.jmix.core.usersubstitution.UserSubstitutionManager;
+import io.jmix.core.usersubstitution.event.UiUserSubstitutionsChangedEvent;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.Dialogs;
 import io.jmix.ui.UiComponents;
-import io.jmix.ui.action.Action;
 import io.jmix.ui.action.DialogAction;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.formatter.Formatter;
 import io.jmix.ui.component.mainwindow.UserIndicator;
 import io.jmix.ui.icon.Icons;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.EventListener;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 public class UserIndicatorImpl extends CompositeComponent<CssLayout> implements UserIndicator {
 
@@ -60,7 +62,8 @@ public class UserIndicatorImpl extends CompositeComponent<CssLayout> implements 
     }
 
     protected void onCreate(CreateEvent createEvent) {
-        root = createRootComponent();
+        CssLayout root = createRootComponent();
+        setComposition(root);
         initRootComponent(root);
     }
 
@@ -254,5 +257,12 @@ public class UserIndicatorImpl extends CompositeComponent<CssLayout> implements 
     public void setFormatter(@Nullable Formatter<? super UserDetails> formatter) {
         this.userNameFormatter = formatter;
         refreshUser();
+    }
+
+    @EventListener
+    protected void onUserSubstitutionsChanged(UiUserSubstitutionsChangedEvent event) {
+        if (Objects.equals(currentUserSubstitution.getAuthenticatedUser(), event.getSource())) {
+            refreshUser();
+        }
     }
 }

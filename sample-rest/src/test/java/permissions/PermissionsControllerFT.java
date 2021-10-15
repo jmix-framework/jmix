@@ -31,6 +31,7 @@ import test_support.AbstractRestControllerFT;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static test_support.RestTestUtils.*;
@@ -111,8 +112,9 @@ public class PermissionsControllerFT extends AbstractRestControllerFT {
             assertEquals(HttpStatus.SC_OK, statusCode(response));
             ReadContext ctx = parseResponse(response);
             assertEquals(2, ctx.<Collection>read("$.specifics").size());
-            assertEquals("rest.fileDownload.enabled", ctx.read("$.specifics[0].target"));
-            assertEquals(1, (int) ctx.read("$.specifics[0].value"));
+            List<Map<String, Object>> specifics = ctx.read("$.specifics[?(@.target == 'rest.fileDownload.enabled')]", List.class);
+            assertEquals(1, specifics.size());
+            assertEquals(1, specifics.get(0).get("value"));
         }
     }
 }

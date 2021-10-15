@@ -15,7 +15,6 @@
  */
 package io.jmix.ui.component;
 
-import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
@@ -661,7 +660,9 @@ public interface Table<E>
      *
      * @param columnId  column id
      * @param printable printable representation
+     * @deprecated Use export action APIs instead.
      */
+    @Deprecated
     void addPrintable(String columnId, Printable<? super E, ?> printable);
 
     /**
@@ -669,7 +670,9 @@ public interface Table<E>
      * Unable to remove Printable representation inherited from generated column.
      *
      * @param columnId column id
+     * @deprecated Use export action APIs instead.
      */
+    @Deprecated
     void removePrintable(String columnId);
 
     /**
@@ -677,8 +680,10 @@ public interface Table<E>
      *
      * @param column table column
      * @return printable
+     * @deprecated Use export action APIs instead.
      */
     @Nullable
+    @Deprecated
     Printable getPrintable(Column column);
 
     /**
@@ -686,8 +691,10 @@ public interface Table<E>
      *
      * @param columnId column id
      * @return printable
+     * @deprecated Use export action APIs instead.
      */
     @Nullable
+    @Deprecated
     Printable getPrintable(String columnId);
 
     /**
@@ -1164,7 +1171,9 @@ public interface Table<E>
      *
      * @param <E> type of item
      * @param <P> type of printable value, e.g. String/Date/Integer/Double/BigDecimal
+     * @deprecated Use export action APIs instead.
      */
+    @Deprecated
     interface Printable<E, P> {
         P getValue(E item);
     }
@@ -1174,7 +1183,9 @@ public interface Table<E>
      *
      * @param <E> entity type
      * @param <P> printable value type
+     * @deprecated Use export action APIs instead.
      */
+    @Deprecated
     interface PrintableColumnGenerator<E, P> extends ColumnGenerator<E>, Printable<E, P> {
     }
 

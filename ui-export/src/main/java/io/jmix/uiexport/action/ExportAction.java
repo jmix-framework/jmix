@@ -22,10 +22,7 @@ import io.jmix.ui.action.AbstractAction;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.DialogAction;
 import io.jmix.ui.action.ListAction;
-import io.jmix.ui.component.Component;
-import io.jmix.ui.component.ComponentsHelper;
-import io.jmix.ui.component.DataGrid;
-import io.jmix.ui.component.Table;
+import io.jmix.ui.component.*;
 import io.jmix.ui.component.data.meta.ContainerDataUnit;
 import io.jmix.ui.download.Downloader;
 import io.jmix.ui.model.CollectionContainer;
@@ -36,6 +33,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 import javax.annotation.Nullable;
+import java.util.function.Function;
 
 /**
  * Base action for export table content with defined exporter.
@@ -89,6 +87,41 @@ public class ExportAction extends ListAction implements ApplicationContextAware 
     public <T> T withExporter(Class<T> exporterClass) {
         setTableExporter((TableExporter) applicationContext.getBean(exporterClass));
         return (T) tableExporter;
+    }
+
+    /**
+     * Adds a function to get value from the column.
+     *
+     * @param columnId       column id
+     * @param columnValueProvider column value provider function
+     */
+    public void addColumnValueProvider(String columnId,
+                                       Function<TableExporter.ColumnValueContext, Object> columnValueProvider) {
+        if (tableExporter != null) {
+            tableExporter.addColumnValueProvider(columnId, columnValueProvider);
+        }
+    }
+
+    /**
+     * Removes an column value provider function by column id.
+     *
+     * @param columnId column id
+     */
+    public void removeColumnValueProvider(String columnId) {
+        if (tableExporter != null) {
+            tableExporter.removeColumnValueProvider(columnId);
+        }
+    }
+
+    /**
+     * @param columnId column id
+     * @return column value provider function for the column id
+     */
+    @Nullable
+    public Function<TableExporter.ColumnValueContext, Object> getColumnValueProvider(String columnId) {
+        return tableExporter != null
+                ? tableExporter.getColumnValueProvider(columnId)
+                : null;
     }
 
     @Override

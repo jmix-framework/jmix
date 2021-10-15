@@ -29,15 +29,16 @@ import io.jmix.ui.component.DataGrid;
 import io.jmix.ui.component.Table;
 import io.jmix.ui.component.data.meta.EntityDataGridItems;
 import io.jmix.ui.component.data.table.ContainerTableItems;
-import io.jmix.ui.component.formatter.Formatter;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.uiexport.action.ExportAction;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
@@ -69,7 +70,7 @@ public abstract class AbstractTableExporter<T extends AbstractTableExporter> imp
 
     protected String fileName;
 
-    protected Map<String, Formatter> formatters;
+    protected Map<String, Function<ColumnValueContext, Object>> columnValueProviders;
 
     public String getFileName() {
         return fileName;
@@ -84,17 +85,28 @@ public abstract class AbstractTableExporter<T extends AbstractTableExporter> imp
         return (T) this;
     }
 
-    public Map<String, Formatter> getFormatters() {
-        return formatters;
+    @Override
+    public void addColumnValueProvider(String columnId, Function<ColumnValueContext, Object> columnValueProvider) {
+        if (columnValueProviders == null) {
+            columnValueProviders = new HashMap<>();
+        }
+
+        columnValueProviders.put(columnId, columnValueProvider);
     }
 
-    public void setFormatters(Map<String, Formatter> formatters) {
-        this.formatters = formatters;
+    @Override
+    public void removeColumnValueProvider(String columnId) {
+        if (MapUtils.isNotEmpty(columnValueProviders)) {
+            columnValueProviders.remove(columnId);
+        }
     }
 
-    public T withFormatters(Map<String, Formatter> formatters) {
-        setFormatters(formatters);
-        return (T) this;
+    @Nullable
+    @Override
+    public Function<ColumnValueContext, Object> getColumnValueProvider(String columnId) {
+        return MapUtils.isNotEmpty(columnValueProviders)
+                ? columnValueProviders.get(columnId)
+                : null;
     }
 
     protected String getMetaClassName(MetaClass metaClass) {
@@ -118,36 +130,45 @@ public abstract class AbstractTableExporter<T extends AbstractTableExporter> imp
     }
 
     protected Object getColumnValue(Table table, Table.Column column, Object instance) {
+        Function<ColumnValueContext, Object> columnValueProvider = MapUtils.isNotEmpty(columnValueProviders)
+                ? columnValueProviders.get(column.getStringId())
+                : null;
+        if (columnValueProvider != null) {
+            return columnValueProvider.apply(new ColumnValueContext(table, column, instance));
+        }
+
+        Table.Printable printable = table.getPrintable(column);
+        if (printable != null) {
+            return printable.getValue(instance);
+        }
+
         Object cellValue = null;
 
         if (column.getId() instanceof MetaPropertyPath) {
             MetaPropertyPath propertyPath = (MetaPropertyPath) column.getId();
-            Table.Printable printable = table.getPrintable(column);
-            if (printable != null) {
-                cellValue = printable.getValue(instance);
+
+            Element xmlDescriptor = column.getXmlDescriptor();
+            if (xmlDescriptor != null && StringUtils.isNotEmpty(xmlDescriptor.attributeValue("captionProperty"))) {
+                String captionProperty = xmlDescriptor.attributeValue("captionProperty");
+                cellValue = EntityValues.getValueEx(instance, captionProperty);
             } else {
-                Element xmlDescriptor = column.getXmlDescriptor();
-                if (xmlDescriptor != null && StringUtils.isNotEmpty(xmlDescriptor.attributeValue("captionProperty"))) {
-                    String captionProperty = xmlDescriptor.attributeValue("captionProperty");
-                    cellValue = EntityValues.getValueEx(instance, captionProperty);
-                } else {
-                    cellValue = EntityValues.getValueEx(instance, propertyPath.getPath());
-                }
-                if (column.getFormatter() != null)
-                    cellValue = column.getFormatter().apply(cellValue);
+                cellValue = EntityValues.getValueEx(instance, propertyPath.getPath());
             }
-        } else {
-            Table.Printable printable = table.getPrintable(column);
-            if (printable != null) {
-                cellValue = printable.getValue(instance);
-            } else if (column.getValueProvider() != null) {
-                cellValue = column.getValueProvider().apply(instance);
-            }
+            if (column.getFormatter() != null)
+                cellValue = column.getFormatter().apply(cellValue);
+        } else if (column.getValueProvider() != null) {
+            cellValue = column.getValueProvider().apply(instance);
         }
         return cellValue;
     }
 
     protected Object getColumnValue(DataGrid dataGrid, DataGrid.Column column, Object instance) {
+        Function<ColumnValueContext, Object> columnValueProvider = MapUtils.isNotEmpty(columnValueProviders)
+                ? columnValueProviders.get(column.getId())
+                : null;
+        if (columnValueProvider != null) {
+            return columnValueProvider.apply(new ColumnValueContext(dataGrid, column, instance));
+        }
 
         Object cellValue = null;
 
@@ -228,6 +249,5 @@ public abstract class AbstractTableExporter<T extends AbstractTableExporter> imp
         } else {
             return cellValue == null ? "" : cellValue.toString();
         }
-
     }
 }

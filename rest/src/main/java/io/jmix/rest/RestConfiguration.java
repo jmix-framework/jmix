@@ -20,19 +20,22 @@ import io.jmix.core.CoreConfiguration;
 import io.jmix.core.annotation.JmixModule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.Ordered;
 import org.springframework.http.MediaType;
 import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
-import org.springframework.web.servlet.config.annotation.CorsRegistration;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @ComponentScan
@@ -56,6 +59,9 @@ public class RestConfiguration implements WebMvcConfigurer {
         customizer.defaultContentType(MediaType.APPLICATION_JSON);
     }
 
+    //Commented the next code for a while, need to figure out why it doesn't work.
+    //It is replaced by customCorsFilter() (see below)
+    /*
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         String[] allowedOrigins = restProperties.getAllowedOrigins();
@@ -76,5 +82,31 @@ public class RestConfiguration implements WebMvcConfigurer {
             corsRegistration.allowCredentials(true);
             corsAuthRegistration.allowCredentials(true);
         }
+    }
+    */
+
+    /**
+     * Enable CORS for token endpoints and REST endpoints
+     */
+    //todo /oauth/** endpoint CORS configuration must be defined in the security-oauth2 module
+    @Bean
+    public FilterRegistrationBean<CorsFilter> customCorsFilter() {
+        List<String> allowedOrigins = Arrays.asList(restProperties.getAllowedOrigins());
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(true);
+        config.setAllowedOrigins(allowedOrigins);
+        config.addAllowedHeader("*");
+        config.addAllowedMethod("*");
+        source.registerCorsConfiguration("/oauth/**", config);
+        source.registerCorsConfiguration("/rest/**", config);
+
+        FilterRegistrationBean<CorsFilter> bean = new FilterRegistrationBean<>(new CorsFilter(source));
+        bean.setUrlPatterns(Arrays.asList("/oauth/*", "/rest/*"));
+
+        //The filter must be loaded before OAuth2 and REST security filters
+        bean.setOrder(Ordered.HIGHEST_PRECEDENCE + 100);
+        return bean;
     }
 }

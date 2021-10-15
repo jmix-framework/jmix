@@ -95,10 +95,12 @@ public class RestConfiguration implements WebMvcConfigurer {
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true);
         config.setAllowedOrigins(allowedOrigins);
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
+        if (!allowedOrigins.contains(CorsConfiguration.ALL)) {
+            config.setAllowCredentials(true);
+        }
         source.registerCorsConfiguration("/oauth/**", config);
         source.registerCorsConfiguration("/rest/**", config);
 

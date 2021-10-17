@@ -17,8 +17,7 @@ package io.jmix.securityui.screen.usersubstitution;
 
 import io.jmix.core.Messages;
 import io.jmix.core.MetadataTools;
-import io.jmix.core.usersubstitution.event.UiUserSubstitutionsChangedEvent;
-import io.jmix.ui.UiEventPublisher;
+import io.jmix.core.usersubstitution.event.UserSubstitutionsChangedEvent;
 import io.jmix.ui.UiScreenProperties;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.Window;
@@ -48,8 +47,6 @@ public class UserSubstitutionsScreen extends Screen {
     protected UserSubstitutionsFragment userSubstitutionsFragment;
     @Autowired
     protected ScreenValidation screenValidation;
-    @Autowired
-    protected UiEventPublisher uiEventPublisher;
 
     protected UserDetails user;
 
@@ -83,7 +80,7 @@ public class UserSubstitutionsScreen extends Screen {
 
     @Subscribe(target = Target.DATA_CONTEXT)
     public void onPostCommit(DataContext.PostCommitEvent postCommitEvent) {
-        UiUserSubstitutionsChangedEvent event = new UiUserSubstitutionsChangedEvent(user);
-        uiEventPublisher.publishEvent(event);
+        UserSubstitutionsChangedEvent event = new UserSubstitutionsChangedEvent(user.getUsername());
+        getApplicationContext().publishEvent(event);
     }
 }

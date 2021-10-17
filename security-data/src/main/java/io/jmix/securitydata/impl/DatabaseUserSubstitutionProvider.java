@@ -16,17 +16,20 @@
 
 package io.jmix.securitydata.impl;
 
-import io.jmix.core.DataManager;
-import io.jmix.core.TimeSource;
 import io.jmix.core.UnconstrainedDataManager;
-import io.jmix.core.impl.DataManagerImpl;
+import io.jmix.core.security.event.UserRemovedEvent;
 import io.jmix.core.usersubstitution.UserSubstitution;
 import io.jmix.core.usersubstitution.UserSubstitutionProvider;
+import io.jmix.core.usersubstitution.event.UserSubstitutionsChangedEvent;
 import io.jmix.securitydata.entity.UserSubstitutionEntity;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
 
-import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -40,6 +43,9 @@ public class DatabaseUserSubstitutionProvider implements UserSubstitutionProvide
 
     @Autowired
     private UnconstrainedDataManager dataManager;
+
+    @Autowired
+    protected ApplicationEventPublisher eventPublisher;
 
     @Override
     public Collection<UserSubstitution> getUserSubstitutions(String username, Date date) {
@@ -57,5 +63,28 @@ public class DatabaseUserSubstitutionProvider implements UserSubstitutionProvide
                         entity.getStartDate(),
                         entity.getEndDate()))
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT, fallbackExecution = true)
+    protected void onUserRemove(UserRemovedEvent event) {
+        List<UserSubstitutionEntity> substitutions = dataManager.load(UserSubstitutionEntity.class)
+                .query("e.username = :username or e.substitutedUsername = :username")
+                .parameter("username", event.getUsername())
+                .list();
+
+        if (CollectionUtils.isNotEmpty(substitutions)) {
+            dataManager.remove(substitutions.toArray());
+
+            substitutions.stream()
+                    .map(UserSubstitutionEntity::getUsername)
+                    .distinct()
+                    .forEach(this::fireUserSubstitutionsChanged);
+        }
+    }
+
+    protected void fireUserSubstitutionsChanged(String username) {
+        UserSubstitutionsChangedEvent changedEvent = new UserSubstitutionsChangedEvent(username);
+        eventPublisher.publishEvent(changedEvent);
     }
 }

@@ -21,9 +21,13 @@ import io.jmix.core.event.AttributeChanges;
 import javax.annotation.Nullable;
 import java.util.Set;
 
+/**
+ * Provides information about changes in entity attributes.
+ */
 public interface AttributeChangesProvider {
+
     /**
-     * Returns an object describing changes in entity attributes..
+     * Returns an object describing changes in entity attributes.
      *
      * @param entity entity instance
      * @return dirty attribute names

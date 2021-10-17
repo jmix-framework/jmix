@@ -21,7 +21,7 @@ import io.jmix.core.FetchPlan;
 import javax.annotation.Nullable;
 
 /**
- * Work with references to entities without loading them from DB
+ * Enables working with references to entities without loading them from the database.
  */
 public interface ReferenceIdProvider {
 

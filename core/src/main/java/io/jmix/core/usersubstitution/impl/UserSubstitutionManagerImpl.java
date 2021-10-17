@@ -20,10 +20,10 @@ import io.jmix.core.TimeSource;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.core.security.SecurityContextHelper;
 import io.jmix.core.security.UserRepository;
-import io.jmix.core.usersubstitution.UserSubstitutionManager;
 import io.jmix.core.security.event.UserSubstitutedEvent;
 import io.jmix.core.security.impl.SubstitutedUserAuthenticationToken;
 import io.jmix.core.usersubstitution.UserSubstitution;
+import io.jmix.core.usersubstitution.UserSubstitutionManager;
 import io.jmix.core.usersubstitution.UserSubstitutionProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -44,7 +44,7 @@ public class UserSubstitutionManagerImpl implements UserSubstitutionManager {
     protected UserRepository userRepository;
 
     @Autowired
-    private CurrentAuthentication currentAuthentication;
+    protected CurrentAuthentication currentAuthentication;
 
     @Autowired(required = false)
     protected AuthenticationManager authenticationManager;
@@ -56,7 +56,7 @@ public class UserSubstitutionManagerImpl implements UserSubstitutionManager {
     protected Collection<UserSubstitutionProvider> userSubstitutionProviders;
 
     @Autowired
-    private TimeSource timeSource;
+    protected TimeSource timeSource;
 
     @Override
     public List<UserDetails> getCurrentSubstitutedUsers() {
@@ -73,7 +73,7 @@ public class UserSubstitutionManagerImpl implements UserSubstitutionManager {
                 .collect(Collectors.toList());
     }
 
-    private Collection<UserSubstitution> getUserSubstitutions(String username, Date date) {
+    protected Collection<UserSubstitution> getUserSubstitutions(String username, Date date) {
         return userSubstitutionProviders.stream()
                 .flatMap(provider -> provider.getUserSubstitutions(username, date).stream())
                 .collect(Collectors.toList());
@@ -106,7 +106,7 @@ public class UserSubstitutionManagerImpl implements UserSubstitutionManager {
     }
 
     protected boolean canSubstitute(String userName, String substitutedUserName) {
-            return userName.equals(substitutedUserName)
+        return userName.equals(substitutedUserName)
                 || getUserSubstitutions(userName, timeSource.currentTimestamp()).stream()
                 .anyMatch(userSubstitution -> userSubstitution.getSubstitutedUsername().equals(substitutedUserName));
     }

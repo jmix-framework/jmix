@@ -18,10 +18,14 @@ package io.jmix.core.usersubstitution;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import io.jmix.core.security.event.UserRemovedEvent;
+import io.jmix.core.usersubstitution.event.UserSubstitutionsChangedEvent;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
-import java.util.Date;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -32,6 +36,9 @@ public class InMemoryUserSubstitutionProvider implements UserSubstitutionProvide
 
     //the key of the map is UserSubstitution.username
     protected Multimap<String, UserSubstitution> userSubstitutions = HashMultimap.create();
+
+    @Autowired
+    protected ApplicationEventPublisher eventPublisher;
 
     @Override
     public Collection<UserSubstitution> getUserSubstitutions(String username, Date date) {
@@ -47,5 +54,35 @@ public class InMemoryUserSubstitutionProvider implements UserSubstitutionProvide
 
     public void clear() {
         this.userSubstitutions.clear();
+    }
+
+    @EventListener
+    protected void onUserRemove(UserRemovedEvent event) {
+        String username = event.getUsername();
+        Set<String> usernames = new HashSet<>();
+
+        if (userSubstitutions.containsKey(username)) {
+            userSubstitutions.removeAll(username);
+            usernames.add(username);
+        }
+
+        List<UserSubstitution> substitutions = userSubstitutions.values().stream()
+                .filter(userSubstitution ->
+                        userSubstitution.getSubstitutedUsername().equals(username))
+                .collect(Collectors.toList());
+
+        for (UserSubstitution substitution : substitutions) {
+            userSubstitutions.remove(substitution.getUsername(), substitution);
+            usernames.add(substitution.getUsername());
+        }
+
+        for (String name : usernames) {
+            fireUserSubstitutionsChanged(name);
+        }
+    }
+
+    protected void fireUserSubstitutionsChanged(String username) {
+        UserSubstitutionsChangedEvent changedEvent = new UserSubstitutionsChangedEvent(username);
+        eventPublisher.publishEvent(changedEvent);
     }
 }

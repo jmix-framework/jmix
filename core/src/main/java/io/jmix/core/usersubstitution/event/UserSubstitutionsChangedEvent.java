@@ -20,11 +20,11 @@ import org.springframework.context.ApplicationEvent;
 import org.springframework.security.core.userdetails.UserDetails;
 
 /**
- * Event that is fired for UI when substitutions for a user are changed.
+ * Event that is fired when substitutions for a user are changed.
  */
-public class UiUserSubstitutionsChangedEvent extends ApplicationEvent {
+public class UserSubstitutionsChangedEvent extends ApplicationEvent {
 
-    public UiUserSubstitutionsChangedEvent(String source) {
+    public UserSubstitutionsChangedEvent(String source) {
         super(source);
     }
 

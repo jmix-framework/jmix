@@ -17,9 +17,11 @@
 package user_substitution_provider
 
 import io.jmix.core.CoreConfiguration
+import io.jmix.core.security.event.UserRemovedEvent
 import io.jmix.core.usersubstitution.InMemoryUserSubstitutionProvider
 import io.jmix.core.usersubstitution.UserSubstitution
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
 import test_support.base.TestBaseConfiguration
@@ -31,6 +33,9 @@ class InMemoryUserSubstitutionProviderTest extends Specification {
 
     @Autowired
     InMemoryUserSubstitutionProvider userSubstitutionProvider
+
+    @Autowired
+    ApplicationEventPublisher eventPublisher
 
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm")
 
@@ -101,5 +106,32 @@ class InMemoryUserSubstitutionProviderTest extends Specification {
 
         substitutions.size() == 1
         substitutions[0].username == 'orig1'
+    }
+
+    def "provider should remove substitutions for removed users"() {
+        userSubstitutionProvider.addUserSubstitution(new UserSubstitution("orig", "userToRemove"))
+        userSubstitutionProvider.addUserSubstitution(new UserSubstitution("orig", "subst1"))
+        userSubstitutionProvider.addUserSubstitution(new UserSubstitution("orig", "subst2"))
+
+        userSubstitutionProvider.addUserSubstitution(new UserSubstitution("userToRemove", "subst1"))
+
+        when:
+
+        eventPublisher.publishEvent(new UserRemovedEvent("userToRemove"))
+
+        def origSubstitutions =
+                userSubstitutionProvider.getUserSubstitutions("orig", sdf.parse("2021-01-15 09:00"))
+        def userToRemoveSubstitutions =
+                userSubstitutionProvider.getUserSubstitutions("userToRemove", sdf.parse("2021-01-15 09:00"))
+
+        then: "there is no substitution of 'userToRemove'"
+
+        origSubstitutions.size() == 2
+        origSubstitutions[0].substitutedUsername != "userToRemove"
+        origSubstitutions[1].substitutedUsername != "userToRemove"
+
+        and: "there are no userToRemove's substitutions"
+
+        userToRemoveSubstitutions.size() == 0
     }
 }

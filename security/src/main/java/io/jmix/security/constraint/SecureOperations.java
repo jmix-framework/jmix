@@ -19,21 +19,48 @@ package io.jmix.security.constraint;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 
+/**
+ * Provides methods to check permissions of the current user.
+ */
 public interface SecureOperations {
 
+    /**
+     * Check if the current user has a permission to create the entity specified by the given meta-class.
+     */
     boolean isEntityCreatePermitted(MetaClass metaClass, PolicyStore policyStore);
 
+    /**
+     * Check if the current user has a permission to read the entity specified by the given meta-class.
+     */
     boolean isEntityReadPermitted(MetaClass metaClass, PolicyStore policyStore);
 
+    /**
+     * Check if the current user has a permission to update the entity specified by the given meta-class.
+     */
     boolean isEntityUpdatePermitted(MetaClass metaClass, PolicyStore policyStore);
 
+    /**
+     * Check if the current user has a permission to delete the entity specified by the given meta-class.
+     */
     boolean isEntityDeletePermitted(MetaClass metaClass, PolicyStore policyStore);
 
+    /**
+     * Check if the current user has a permission to read the entity attribute specified by the given meta-property path.
+     */
     boolean isEntityAttrReadPermitted(MetaPropertyPath propertyPath, PolicyStore policyStore);
 
+    /**
+     * Check if the current user has a permission to update the entity attribute specified by the given meta-property path.
+     */
     boolean isEntityAttrUpdatePermitted(MetaPropertyPath propertyPath, PolicyStore policyStore);
 
+    /**
+     * Check if the current user has the given specific permission.
+     */
     boolean isSpecificPermitted(String resourceName, PolicyStore policyStore);
 
+    /**
+     * Check if the current user has a permission to the given GraphQL resource.
+     */
     boolean isGraphQLPermitted(String resourceName, PolicyStore policyStore);
 }

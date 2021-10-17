@@ -22,6 +22,9 @@ import io.jmix.security.model.RowLevelPolicy;
 
 import java.util.stream.Stream;
 
+/**
+ * Provides all security policies of the current user.
+ */
 public interface PolicyStore {
 
     Stream<RowLevelPolicy> getRowLevelPolicies(MetaClass entityClass);

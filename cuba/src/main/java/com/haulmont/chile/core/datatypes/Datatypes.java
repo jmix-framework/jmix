@@ -29,8 +29,11 @@ import java.util.Set;
 
 /**
  * Utility class for accessing datatypes and format strings.
- * Consider using {@link io.jmix.core.metamodel.datatype.DatatypeRegistry} and {@link FormatStringsRegistry} beans directly.
+ *
+ * @deprecated use only in legacy CUBA code. In new code, use {@link io.jmix.core.metamodel.datatype.DatatypeRegistry}
+ * and {@link FormatStringsRegistry} beans directly.
  */
+@Deprecated
 public class Datatypes {
 
     /**

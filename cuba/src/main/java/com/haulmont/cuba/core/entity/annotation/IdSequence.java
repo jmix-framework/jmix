@@ -16,6 +16,7 @@
 
 package com.haulmont.cuba.core.entity.annotation;
 
+import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.MetaAnnotation;
 
 import java.lang.annotation.ElementType;
@@ -26,7 +27,11 @@ import java.lang.annotation.Target;
 /**
  * Defines sequence name in the database for id generation for {@link com.haulmont.cuba.core.entity.BaseLongIdEntity}
  * and {@link com.haulmont.cuba.core.entity.BaseIntegerIdEntity}
+ *
+ * @deprecated use only in legacy CUBA code. In new code, use {@link JmixGeneratedValue#sequenceName()}
+ * and {@link JmixGeneratedValue#sequenceCache()} annotation parameters.
  */
+@Deprecated
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @MetaAnnotation

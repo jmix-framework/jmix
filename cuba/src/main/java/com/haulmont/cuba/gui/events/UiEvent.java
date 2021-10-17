@@ -27,7 +27,10 @@ import com.haulmont.cuba.core.global.Events;
  * @see Events
  * @see org.springframework.context.event.EventListener
  * @see org.springframework.core.annotation.Order
+ *
+ * @deprecated use only in legacy CUBA code. In new code, use {@link io.jmix.ui.UiEventPublisher}.
  */
+@Deprecated
 public interface UiEvent {
 
 }

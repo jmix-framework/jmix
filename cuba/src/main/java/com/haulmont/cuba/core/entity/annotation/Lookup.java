@@ -25,7 +25,11 @@ import java.lang.annotation.Target;
 
 /**
  * Defines a reference lookup type.
+ *
+ * @deprecated use only in legacy CUBA code. In new code, use {@code jmix.ui.component.entityFieldType}
+ * and {@code jmix.ui.component.entityFieldActions} application properties.
  */
+@Deprecated
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
 @MetaAnnotation

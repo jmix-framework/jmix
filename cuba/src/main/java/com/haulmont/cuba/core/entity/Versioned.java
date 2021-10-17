@@ -18,6 +18,7 @@ package com.haulmont.cuba.core.entity;
 /**
  * Interface to be implemented by optimistically locked entities.
  *
+ * @deprecated use only in legacy CUBA code. In new code, use {@link javax.persistence.Version} annotation.
  */
 @Deprecated
 public interface Versioned {

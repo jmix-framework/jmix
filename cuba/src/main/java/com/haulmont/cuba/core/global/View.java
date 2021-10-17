@@ -39,7 +39,7 @@ import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
  * <li>{@link #BASE}</li>
  * </ul>
  *
- * @deprecated Use {@link FetchPlans} to build {@link FetchPlan} instead
+ * @deprecated use only in legacy CUBA code. In new code, use {@link FetchPlans} to build {@link FetchPlan}.
  */
 @Deprecated
 public class View extends FetchPlan {

@@ -35,7 +35,10 @@ import java.util.UUID;
 
 /**
  * Builds {@link EntityLoadInfo} objects and provides additional methods for working with them.
+ *
+ * @deprecated use only in legacy CUBA code. In new code, use {@link io.jmix.core.IdSerialization}.
  */
+@Deprecated
 @Component(EntityLoadInfoBuilder.NAME)
 public class EntityLoadInfoBuilder {
 

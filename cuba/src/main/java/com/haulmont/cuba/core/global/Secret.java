@@ -22,7 +22,10 @@ import java.lang.annotation.RetentionPolicy;
 /**
  * Annotation that indicates that annotated element is secret. For example, if the Configuration interface property is
  * annotated with @Secret then a PasswordField will be used for this property in the UI.
+ *
+ * @deprecated use only in legacy CUBA code. In new code, use {@link io.jmix.core.annotation.Secret}.
  */
+@Deprecated
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Secret {
 }

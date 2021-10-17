@@ -24,7 +24,10 @@ import io.jmix.core.security.EntityOp;
 
 /**
  * Infrastructure interface providing methods to check permissions of the current user.
+ *
+ * @deprecated use only in legacy CUBA code. In new code, use {@link io.jmix.security.constraint.SecureOperations}.
  */
+@Deprecated
 public interface Security {
 
     String NAME = "cuba_Security";

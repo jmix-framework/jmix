@@ -22,7 +22,11 @@ import java.util.function.Supplier;
 
 /**
  * Interface to provide instances of {@link TransactionalAction}
+ *
+ * @deprecated use only in legacy CUBA code. In new code, use {@link org.springframework.transaction.support.TransactionTemplate}
+ * or {@link org.springframework.transaction.PlatformTransactionManager}.
  */
+@Deprecated
 public interface TransactionalActionFactory {
 
     String NAME = "cuba_TransactionalActionFactory";

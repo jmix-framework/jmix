@@ -22,7 +22,10 @@ import javax.annotation.Nullable;
 
 /**
  * Legacy meta-model entry point.
+ *
+ * @deprecated use only in legacy CUBA code. In new code, use {@link io.jmix.core.metamodel.model.Session}.
  */
+@Deprecated
 public interface Session extends io.jmix.core.metamodel.model.Session {
 
     @Nullable

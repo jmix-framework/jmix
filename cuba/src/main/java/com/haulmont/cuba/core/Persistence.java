@@ -22,7 +22,17 @@ import javax.sql.DataSource;
 
 /**
  * Central infrastructure interface to provide ORM persistence.
+ *
+ * @deprecated use only in legacy CUBA code. In new code, use
+ * <ul>
+ *     <li>{@link javax.persistence.EntityManager} injected
+ *     using {@link javax.persistence.PersistenceContext} annotation</li>
+ *     <li>{@link org.springframework.transaction.annotation.Transactional} annotation</li>
+ *     <li>{@link org.springframework.transaction.support.TransactionTemplate}</li>
+ *     <li>{@link io.jmix.data.persistence.DbmsSpecifics} bean</li>
+ * </ul>
  */
+@Deprecated
 public interface Persistence {
 
     String NAME = "cuba_Persistence";

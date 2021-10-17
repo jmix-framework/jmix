@@ -53,7 +53,10 @@ import java.util.Map;
  * <li>Shows Warning message if for background task specified owner window</li>
  * </ul>
  * <br>
+ *
+ * @deprecated use only in legacy CUBA code. In new code, use {@link io.jmix.ui.app.backgroundwork.BackgroundWorkDialog}.
  */
+@Deprecated
 public class BackgroundWorkWindow<T, V> extends AbstractWindow {
 
     @Autowired

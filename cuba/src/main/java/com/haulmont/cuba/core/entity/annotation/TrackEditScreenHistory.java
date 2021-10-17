@@ -24,12 +24,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Indicates whether to track an edit screen opening for this entity. If no such annotation present for an entity, or
- * value() is false, no tracking performed.
- *
- * <p>Can be overridden in <code>*-metadata.xml</code> file.</p>
- *
+ * @deprecated does not have any effect in Jmix apps
  */
+@Deprecated
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @MetaAnnotation

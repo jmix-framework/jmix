@@ -28,7 +28,10 @@ import java.util.List;
 
 /**
  * Type-safe extension of Query interface.
+ *
+ * @deprecated use only in legacy CUBA code. In new code, use {@link javax.persistence.TypedQuery}.
  */
+@Deprecated
 public interface TypedQuery<T> extends Query {
 
     @Override

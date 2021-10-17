@@ -16,7 +16,6 @@
 
 package com.haulmont.cuba.core.global;
 
-import com.haulmont.cuba.core.global.BeanLocator;
 import io.jmix.core.annotation.Internal;
 import org.springframework.context.ApplicationContext;
 
@@ -27,7 +26,9 @@ import java.util.Map;
  * Contains static methods for access to all managed beans of the application block.
  *
  * @see BeanLocator
+ * @deprecated use only in legacy CUBA code. In new code, use {@link ApplicationContext}.
  */
+@Deprecated
 public class AppBeans {
 
     private static ApplicationContext applicationContext;

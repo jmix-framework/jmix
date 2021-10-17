@@ -27,7 +27,9 @@ import java.util.Map;
  * <p>Scripting includes the ability to load dynamically compiled Java and Groovy classes from classpath
  * and <em>conf</em> directory, as well as running Groovy scripts and expressions.</p>
  *
+ * @deprecated use only in legacy CUBA code. In new code, use {@link org.springframework.scripting.ScriptEvaluator}.
  */
+@Deprecated
 public interface Scripting {
 
     String NAME = "jmix_Scripting";

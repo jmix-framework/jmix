@@ -30,7 +30,10 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
  * Helper class which represent a collection of {@link io.jmix.core.Id}
  *
  * @param <T> type of entity
+ *
+ * @deprecated use only in legacy CUBA code. In new code, use {@link io.jmix.core.Ids}.
  */
+@Deprecated
 public final class Ids<T extends Entity, K> extends ArrayList<Id<T, K>> {
 
     /**

@@ -18,7 +18,10 @@ package com.haulmont.cuba.core;
 
 /**
  * Factory for creating {@link Transaction}s.
+ *
+ * @deprecated use only in legacy CUBA code. In new code, use {@link org.springframework.transaction.support.TransactionTemplate}.
  */
+@Deprecated
 public interface Transactions {
 
     String NAME = "cuba_Transactions";

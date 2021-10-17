@@ -29,7 +29,10 @@ import java.util.stream.Collectors;
  * An object describing changes in entity attributes.
  *
  * @see EntityChangedEvent#getChanges()
+ *
+ * @deprecated use only in legacy CUBA code. In new code, use {@link io.jmix.core.event.AttributeChanges}.
  */
+@Deprecated
 public class AttributeChanges {
 
     protected final io.jmix.core.event.AttributeChanges changes;

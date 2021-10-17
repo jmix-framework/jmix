@@ -23,6 +23,10 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @deprecated use only in legacy CUBA code. In new code, use {@link io.jmix.core.ValueLoadContext}.
+ */
+@Deprecated
 public class ValueLoadContext extends io.jmix.core.ValueLoadContext {
     private static final long serialVersionUID = 2502274383837915002L;
 

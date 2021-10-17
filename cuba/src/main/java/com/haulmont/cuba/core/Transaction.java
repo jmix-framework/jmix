@@ -27,7 +27,10 @@ package com.haulmont.cuba.core;
  * </pre>
  *
  * @see Transactions
+ *
+ * @deprecated use only in legacy CUBA code. In new code, use {@link org.springframework.transaction.support.TransactionTemplate}.
  */
+@Deprecated
 public interface Transaction extends AutoCloseable {
 
     /**

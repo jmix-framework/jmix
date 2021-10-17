@@ -26,7 +26,10 @@ import java.util.List;
 
 /**
  * Service interface for pessimistic locking.
+ *
+ * @deprecated use only in legacy CUBA code. In new code, use {@link io.jmix.core.pessimisticlocking.LockManager}.
  */
+@Deprecated
 public interface LockService {
 
     String NAME = "cuba_LockService";

@@ -21,7 +21,9 @@ import java.util.UUID;
 /**
  * Global interface to create UUIDs.
  *
+ * @deprecated use only in legacy CUBA code. In new code, use {@link io.jmix.core.UuidProvider}.
  */
+@Deprecated
 public interface UuidSource {
 
     String NAME = "cuba_UuidSource";

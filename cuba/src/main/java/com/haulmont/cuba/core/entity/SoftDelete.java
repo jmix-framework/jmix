@@ -24,7 +24,7 @@ import java.util.Date;
 /**
  * Interface to be implemented by entities that support soft deletion.
  *
- * @deprecated use {@link DeletedDate} and {@link DeletedBy} annotations instead
+ * @deprecated use only in legacy CUBA code. In new code, use {@link DeletedDate} and {@link DeletedBy} annotations
  */
 @Deprecated
 public interface SoftDelete {

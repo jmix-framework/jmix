@@ -25,6 +25,10 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.function.Consumer;
 
+/**
+ * @deprecated use only in legacy CUBA code. In new code, use {@link FetchPlanBuilder}.
+ */
+@Deprecated
 @Component(ViewBuilder.NAME)
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 @Primary

@@ -25,7 +25,10 @@ import java.lang.annotation.*;
  * <p>
  * If you need to perform some actions after loading data but before the screen is shown, remove this annotation or
  * set its value to false and use {@code getScreenData().loadAll()} in a {@code BeforeShowEvent} listener.
+ *
+ * @deprecated use only in legacy CUBA code. In new code, use {@link io.jmix.ui.component.DataLoadCoordinator}.
  */
+@Deprecated
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited

@@ -51,7 +51,10 @@ import org.springframework.core.ResolvableTypeProvider;
  *
  * @param <E> entity type
  * @param <K> entity identifier type
+ *
+ * @deprecated use only in legacy CUBA code. In new code, use {@link io.jmix.core.event.EntityChangedEvent}.
  */
+@Deprecated
 public class EntityChangedEvent<E extends Entity, K> extends ApplicationEvent implements ResolvableTypeProvider {
 
     /**

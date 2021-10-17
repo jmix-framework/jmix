@@ -23,7 +23,9 @@ import io.jmix.core.Entity;
  * Defines the contract for handling of entities before they have been deleted or
  * marked as deleted in DB.
  *
+ * @deprecated use only in legacy CUBA code. In new code, use {@link io.jmix.data.listener.BeforeDeleteEntityListener}.
  */
+@Deprecated
 public interface BeforeDeleteEntityListener<T extends Entity> extends io.jmix.data.listener.BeforeDeleteEntityListener<T> {
 
     /**

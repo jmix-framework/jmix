@@ -28,7 +28,10 @@ import java.util.Collection;
  * <p>{@code BeforeCommitTransactionListener} must be implemented by managed beans. They can also implement
  * the {@code Ordered} interface to influence their execution order. A listener that does not implement the
  * {@code Ordered} interface is appended to the end of the invocation list.
+ *
+ * @deprecated use only in legacy CUBA code. In new code, use {@link io.jmix.data.impl.BeforeCommitTransactionListener}.
  */
+@Deprecated
 public interface BeforeCommitTransactionListener {
 
     /**

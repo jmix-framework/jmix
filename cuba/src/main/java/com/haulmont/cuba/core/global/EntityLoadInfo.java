@@ -39,7 +39,10 @@ import javax.annotation.Nullable;
  *     <li>For string keys: the key surrounded by curly brackets, e.g {mykey}</li>
  * </ul>
  * Use {@link EntityLoadInfoBuilder#parse(String)} and {@link #toString()} methods to convert from/to a string.
+ *
+ * @deprecated use only in legacy CUBA code. In new code, use {@link io.jmix.core.IdSerialization}.
  */
+@Deprecated
 public class EntityLoadInfo {
 
     public static final String NEW_PREFIX = "NEW-";

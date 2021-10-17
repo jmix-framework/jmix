@@ -50,7 +50,10 @@ import java.lang.annotation.Target;
  *     }
  * }
  * </pre>
+ *
+ * @deprecated use only in legacy CUBA code. In new code, use {@link io.jmix.core.metamodel.annotation.InstanceName}.
  */
+@Deprecated
 @Target({java.lang.annotation.ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @MetaAnnotation

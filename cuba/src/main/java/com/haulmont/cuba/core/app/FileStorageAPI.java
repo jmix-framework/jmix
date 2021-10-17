@@ -22,7 +22,10 @@ import java.io.InputStream;
 
 /**
  * Interface to store and load files defined by {@link FileDescriptor}s.
+ *
+ * @deprecated use only in legacy CUBA code. In new code, use {@link io.jmix.core.FileStorage}.
  */
+@Deprecated
 public interface FileStorageAPI {
     String NAME = "cuba_FileStorage";
 

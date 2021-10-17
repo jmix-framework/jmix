@@ -19,7 +19,9 @@ package com.haulmont.cuba.core.app;
 /**
  * Provides sequences of unique numbers based on database sequences.
  *
+ * @deprecated use only in legacy CUBA code. In new code, use {@link io.jmix.data.Sequences}.
  */
+@Deprecated
 public interface UniqueNumbersAPI {
 
     String NAME = "cuba_UniqueNumbers";

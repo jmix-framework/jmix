@@ -23,7 +23,7 @@ import java.util.Date;
 /**
  * Interface to be implemented by entities that contain information about who updated them and when.
  *
- * @deprecated use {@link LastModifiedBy} and {@link LastModifiedDate} on fields instead.
+ * @deprecated use only in legacy CUBA code. In new code, use {@link LastModifiedBy} and {@link LastModifiedDate} on fields.
  */
 @Deprecated
 public interface Updatable {

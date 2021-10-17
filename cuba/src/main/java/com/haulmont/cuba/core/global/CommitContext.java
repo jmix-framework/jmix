@@ -28,7 +28,10 @@ import java.util.stream.Collectors;
  * DTO that contains information about currently committed entities.
  * <p>
  * Used by {@link DataManager}.
+ *
+ * @deprecated use only in legacy CUBA code. In new code, use {@link SaveContext}.
  */
+@Deprecated
 @SuppressWarnings("unchecked")
 public class CommitContext extends SaveContext {
 

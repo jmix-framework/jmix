@@ -33,6 +33,17 @@ import javax.annotation.Nullable;
 import javax.sql.DataSource;
 import java.util.Set;
 
+/**
+ * @deprecated use only in legacy CUBA code. In new code, use:
+ * <ul>
+ *     <li>{@link EntityStates}</li>
+ *     <li>{@link AttributeChangesProvider}</li>
+ *     <li>{@link ReferenceIdProvider}</li>
+ *     <li>{@link MetadataTools#getDatabaseTable(MetaClass)} and {@link MetadataTools#getPrimaryKeyName(MetaClass)}</li>
+ * </ul>
+ *
+ */
+@Deprecated
 @Component("cuba_PersistenceTools")
 public class PersistenceTools {
 

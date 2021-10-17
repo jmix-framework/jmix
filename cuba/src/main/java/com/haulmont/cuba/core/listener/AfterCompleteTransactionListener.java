@@ -26,7 +26,10 @@ import java.util.Collection;
  * <p>{@code AfterCompleteTransactionListener} must be implemented by managed beans. They can also implement
  * the {@code Ordered} interface to influence their execution order. A listener that does not implement the
  * {@code Ordered} interface is appended to the end of the invocation list.
+ *
+ * @deprecated use only in legacy CUBA code. In new code, use {@link io.jmix.data.impl.AfterCompleteTransactionListener}.
  */
+@Deprecated
 public interface AfterCompleteTransactionListener {
 
     /**

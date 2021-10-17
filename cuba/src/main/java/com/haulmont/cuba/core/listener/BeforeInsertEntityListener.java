@@ -22,7 +22,9 @@ import com.haulmont.cuba.core.EntityManager;
 /**
  * Defines the contract for handling entities before they have been inserted into DB.
  *
+ * @deprecated use only in legacy CUBA code. In new code, use {@link io.jmix.data.listener.BeforeInsertEntityListener}.
  */
+@Deprecated
 public interface BeforeInsertEntityListener<T extends Entity> extends io.jmix.data.listener.BeforeInsertEntityListener<T> {
 
     /**

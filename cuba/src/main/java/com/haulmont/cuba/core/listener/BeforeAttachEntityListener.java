@@ -20,7 +20,9 @@ import io.jmix.core.Entity;
 /**
  * Defines the contract for handling entities right before they are attached to an EntityManager on merge operation.
  *
+ * @deprecated use only in legacy CUBA code. In new code, use {@link io.jmix.data.listener.BeforeAttachEntityListener}.
  */
+@Deprecated
 public interface BeforeAttachEntityListener<T extends Entity> extends io.jmix.data.listener.BeforeAttachEntityListener<T> {
 
     /**

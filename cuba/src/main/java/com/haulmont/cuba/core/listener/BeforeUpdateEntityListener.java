@@ -22,7 +22,9 @@ import io.jmix.core.Entity;
 /**
  * Defines the contract for handling of entities before they have been updated in DB.
  *
+ * @deprecated use only in legacy CUBA code. In new code, use {@link io.jmix.data.listener.BeforeUpdateEntityListener}.
  */
+@Deprecated
 public interface BeforeUpdateEntityListener<T extends Entity> extends io.jmix.data.listener.BeforeUpdateEntityListener<T> {
 
     /**

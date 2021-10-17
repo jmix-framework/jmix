@@ -23,7 +23,10 @@ import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 
 /**
  * Legacy interface to provide metadata-related functionality.
+ *
+ * @deprecated use only in legacy CUBA code. In new code, use {@link io.jmix.core.Metadata}.
  */
+@Deprecated
 public interface Metadata extends io.jmix.core.Metadata, Session {
 
     @Override

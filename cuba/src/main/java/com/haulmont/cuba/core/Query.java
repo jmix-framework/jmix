@@ -30,7 +30,10 @@ import java.util.List;
  * Interface used to control query execution.
  *
  * <br>Consider use of {@link TypedQuery} instead of this interface.
+ *
+ * @deprecated use only in legacy CUBA code. In new code, use {@link javax.persistence.Query}.
  */
+@Deprecated
 public interface Query {
 
     String NAME = "cuba_Query";

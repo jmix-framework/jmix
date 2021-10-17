@@ -29,7 +29,10 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
  * Convenient class for methods that receive Id of an entity as a parameter.
  *
  * @param <T> entity type
+ *
+ * @deprecated use only in legacy CUBA code. In new code, use {@link io.jmix.core.Id}.
  */
+@Deprecated
 public final class Id<T extends Entity, K> implements Serializable {
     private final K id;
     private final Class<T> entityClass;

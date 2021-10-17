@@ -20,7 +20,10 @@ import java.util.Map;
 
 /**
  * Provides access to all managed beans of the application block.
+ *
+ * @deprecated use only in legacy CUBA code. In new code, use {@link org.springframework.context.ApplicationContext}.
  */
+@Deprecated
 public interface BeanLocator {
 
     String NAME = "core_BeanLocator";

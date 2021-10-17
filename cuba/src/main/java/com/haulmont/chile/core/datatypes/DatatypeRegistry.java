@@ -23,7 +23,10 @@ import java.util.Set;
 
 /**
  * Registry for {@link Datatype}s
+ *
+ * @deprecated use only in legacy CUBA code. In new code, use {@link io.jmix.core.metamodel.datatype.DatatypeRegistry}.
  */
+@Deprecated
 public interface DatatypeRegistry {
 
     String NAME = "cuba_DatatypeRegistry";

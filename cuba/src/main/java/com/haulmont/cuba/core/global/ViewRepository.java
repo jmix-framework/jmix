@@ -26,7 +26,10 @@ import java.util.Collection;
 /**
  * Represents a repository of {@link FetchPlan} objects, accessible by names.
  * <br>Repository contains all views defined in XML and deployed at runtime.
+ *
+ * @deprecated use only in legacy CUBA code. In new code, use {@link io.jmix.core.FetchPlanRepository}.
  */
+@Deprecated
 public interface ViewRepository {
 
     String NAME = "cuba_ViewRepository";

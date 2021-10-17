@@ -24,7 +24,7 @@ import java.util.Date;
 /**
  * Interface to be implemented by entities that contain information about who created them and when.
  *
- * @deprecated use {@link CreatedBy} and {@link CreatedDate} on fields instead.
+ * @deprecated use only in legacy CUBA code. In new code, use {@link CreatedBy} and {@link CreatedDate} on fields.
  */
 @Deprecated
 public interface Creatable {

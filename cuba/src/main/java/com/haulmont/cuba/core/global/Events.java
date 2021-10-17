@@ -22,7 +22,10 @@ import org.springframework.context.ApplicationEventPublisher;
 /**
  * Interface that encapsulates application-scope event publication functionality.
  * Simple facade for {@link ApplicationEventPublisher}.
+ *
+ * @deprecated use only in legacy CUBA code. In new code, use {@link ApplicationEventPublisher} or {@link io.jmix.ui.UiEventPublisher}.
  */
+@Deprecated
 public interface Events {
     String NAME = "cuba_Events";
 

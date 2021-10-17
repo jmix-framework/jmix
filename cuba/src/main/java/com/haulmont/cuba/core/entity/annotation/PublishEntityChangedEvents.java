@@ -24,9 +24,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Indicates that {@code EntityChangedEvent}s must be published on the middle tier when the annotated entity is changed
- * in the data store.
+ * @deprecated this annotation is required only for sending legacy {@link com.haulmont.cuba.core.app.events.EntityChangedEvent}.
+ * The new {@link io.jmix.core.event.EntityChangedEvent} is sent for any entity without marking it with an annotation.
  */
+@Deprecated
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 @MetaAnnotation

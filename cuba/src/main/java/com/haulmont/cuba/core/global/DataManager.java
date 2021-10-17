@@ -35,7 +35,10 @@ import java.util.List;
  * When used on the client tier - always applies security restrictions. When used on the middleware - does not apply
  * security restrictions by default. If you want to apply security, get {@link #secure()} instance or set the
  * {@code cuba.dataManagerChecksSecurityOnMiddleware} application property to use it by default.
+ *
+ * @deprecated use only in legacy CUBA code. In new code, use {@link io.jmix.core.DataManager}.
  */
+@Deprecated
 @SuppressWarnings("rawtypes")
 public interface DataManager {
 

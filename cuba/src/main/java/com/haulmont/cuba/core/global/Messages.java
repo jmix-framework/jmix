@@ -20,6 +20,10 @@ import io.jmix.core.MessageTools;
 
 import java.util.Locale;
 
+/**
+ * @deprecated use only in legacy CUBA code. In new code, use {@link io.jmix.core.Messages}.
+ */
+@Deprecated
 public interface Messages extends io.jmix.core.Messages {
 
     /**

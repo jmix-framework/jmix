@@ -26,7 +26,10 @@ import io.jmix.data.PersistenceHints;
  *     query.setHint(QueryHints.SQL_HINT, "OPTION(RECOMPILE)");
  *     query.setHint(QueryHints.MSSQL_RECOMPILE_HINT, true);
  * </pre>
+ *
+ * @deprecated use only in legacy CUBA code. In new code, use {@link PersistenceHints}.
  */
+@Deprecated
 public interface QueryHints {
     /**
      * Adds an SQL hint string after the SQL statement.

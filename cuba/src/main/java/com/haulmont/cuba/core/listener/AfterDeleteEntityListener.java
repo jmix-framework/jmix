@@ -22,7 +22,10 @@ import java.sql.Connection;
 
 /**
  * Defines the contract for handling of entities after they have been deleted or marked as deleted in DB.
+ *
+ * @deprecated use only in legacy CUBA code. In new code, use {@link io.jmix.data.listener.AfterDeleteEntityListener}.
  */
+@Deprecated
 public interface AfterDeleteEntityListener<T extends Entity> extends io.jmix.data.listener.AfterDeleteEntityListener<T> {
 
     /**

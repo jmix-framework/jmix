@@ -35,7 +35,10 @@ import java.util.Set;
  * @see #get(Class, Object)
  * @see #optional(Object)
  * @see #optional(Class, Object)
+ *
+ * @deprecated use only in legacy CUBA code. In new code, use {@link io.jmix.core.EntitySet}.
  */
+@Deprecated
 public class EntitySet extends ForwardingSet<Entity> implements Serializable {
     private static final long serialVersionUID = 4239884277120360439L;
 

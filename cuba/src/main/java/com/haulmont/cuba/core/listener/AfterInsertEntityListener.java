@@ -22,7 +22,10 @@ import java.sql.Connection;
 
 /**
  * Defines the contract for handling entities after they have been inserted into DB.
+ *
+ * @deprecated use only in legacy CUBA code. In new code, use {@link io.jmix.data.listener.AfterInsertEntityListener}.
  */
+@Deprecated
 public interface AfterInsertEntityListener<T extends Entity> extends io.jmix.data.listener.AfterInsertEntityListener<T> {
 
     /**

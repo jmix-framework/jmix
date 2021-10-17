@@ -23,7 +23,9 @@ import io.jmix.core.Entity;
  * Defines the contract for handling entities right before they are detached from an EntityManager
  * on transaction commit.
  *
+ * @deprecated use only in legacy CUBA code. In new code, use {@link io.jmix.data.listener.BeforeDetachEntityListener}.
  */
+@Deprecated
 public interface BeforeDetachEntityListener<T extends Entity> extends io.jmix.data.listener.BeforeDetachEntityListener<T> {
 
     /**

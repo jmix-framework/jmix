@@ -27,7 +27,10 @@ import java.util.LinkedList;
 
 /**
  * Provides information about entities states.
+ *
+ * @deprecated use only in legacy CUBA code. In new code, use {@link io.jmix.core.EntityStates}.
  */
+@Deprecated
 public class EntityStates extends io.jmix.core.EntityStates {
 
     public static final String NAME = "cuba_EntityStates";

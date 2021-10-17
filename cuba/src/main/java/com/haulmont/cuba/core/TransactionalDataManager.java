@@ -49,7 +49,10 @@ import java.util.function.Supplier;
  * </pre>
  * Transactions can also be created/committed programmatically using the {@link Transactions} interface which is available
  * via {@link #transactions()} method.
+ *
+ * @deprecated use only in legacy CUBA code. In new code, use {@link io.jmix.core.DataManager}.
  */
+@Deprecated
 @SuppressWarnings("rawtypes")
 public interface TransactionalDataManager {
 

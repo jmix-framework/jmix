@@ -23,7 +23,11 @@ import java.util.function.Supplier;
 
 /**
  * Bean that contain {@link CommitContext} and set of actions to be performed before/after commit.
+ *
+ * @deprecated use only in legacy CUBA code. In new code, use {@link org.springframework.transaction.support.TransactionTemplate}
+ * or {@link org.springframework.transaction.PlatformTransactionManager}.
  */
+@Deprecated
 public interface TransactionalAction {
 
     String NAME = "cuba_TransactionalAction";

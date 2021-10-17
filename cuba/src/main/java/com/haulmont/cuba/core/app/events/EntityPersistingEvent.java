@@ -43,7 +43,10 @@ import org.springframework.core.ResolvableTypeProvider;
  * </pre>
  *
  * @param <E> entity type
+ *
+ * @deprecated use only in legacy CUBA code. In new code, use {@link io.jmix.core.event.EntitySavingEvent}.
  */
+@Deprecated
 public class EntityPersistingEvent<E> extends ApplicationEvent implements ResolvableTypeProvider {
 
     private final E entity;

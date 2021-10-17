@@ -27,7 +27,11 @@ import java.sql.Connection;
  *
  * <p>Mostly mimics the {@code javax.persistence.EntityManager} interface and adds methods for working with fetch plans and
  * soft deletion.</p>
+ *
+ * @deprecated use only in legacy CUBA code. In new code, use {@link javax.persistence.EntityManager} injected
+ * using {@link javax.persistence.PersistenceContext} annotation.
  */
+@Deprecated
 public interface EntityManager {
 
     String NAME = "cuba_EntityManager";

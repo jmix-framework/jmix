@@ -28,6 +28,11 @@ import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * @deprecated use only in legacy CUBA code. In new code, use {@link Authentication} obtained
+ * through the {@link io.jmix.core.security.CurrentAuthentication} bean.
+ */
+@Deprecated
 public class UserSession implements Authentication {
 
     private static final long serialVersionUID = -7134190493600163922L;

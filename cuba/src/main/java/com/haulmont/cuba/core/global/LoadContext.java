@@ -40,7 +40,10 @@ import java.util.stream.Collectors;
  * </pre>
  * <p>
  * Instead of using this class directly, consider fluent interface with the entry point in {@link DataManager#load(Class)}.
+ *
+ * @deprecated use only in legacy CUBA code. In new code, use {@link io.jmix.core.LoadContext}.
  */
+@Deprecated
 public class LoadContext<E extends Entity> extends io.jmix.core.LoadContext<E> {
 
     private static final long serialVersionUID = 6022448642011883513L;

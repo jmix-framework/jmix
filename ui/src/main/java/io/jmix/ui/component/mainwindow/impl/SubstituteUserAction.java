@@ -35,7 +35,8 @@ import java.util.function.Consumer;
  * Makes UI-specific preparations to user substitution and performs it using {@link UserSubstitutionManager}
  * Checks if there are screens that have unsaved changes and shows dialog window with options:
  * <ol>
- *     <li><b>Discard changes</b> (and close all windows, cleanups background tasks, then performs substitution and recreates main window)</li>
+ *     <li><b>Discard changes</b> (and close all windows, cleanups background tasks, then performs
+ *     substitution and recreates main window)</li>
  *     <li><b>Cancel</b> (invokes all {@code cancelAction}s)</li>
  * </ol>
  */
@@ -56,21 +57,19 @@ public class SubstituteUserAction extends BaseAction {
                                 Icons icons,
                                 UserSubstitutionManager substitutionManager) {
         super(ID);
+
         this.messages = messages;
         this.icons = icons;
         this.substitutionManager = substitutionManager;
-
-        setCaption(messages.getMessage("actions.Yes"));
-        setIcon(icons.get(JmixIcon.DIALOG_OK));
         this.newSubstitutedUser = newSubstitutedUser;
         this.prevSubstitutedUser = oldSubstitutedUser;
 
+        setCaption(messages.getMessage("actions.Yes"));
+        setIcon(icons.get(JmixIcon.DIALOG_OK));
     }
-
 
     @Override
     public void actionPerform(Component component) {
-
         AppUI currentUI = AppUI.getCurrent();
         if (currentUI == null)
             return;
@@ -83,9 +82,8 @@ public class SubstituteUserAction extends BaseAction {
                             new BaseAction("discardChanges")
                                     .withCaption(messages.getMessage("discardChanges"))
                                     .withIcon(icons.get(JmixIcon.DIALOG_OK))
-                                    .withHandler(event -> {
-                                        doSubstituteUser(currentUI);
-                                    }),
+                                    .withHandler(event ->
+                                            doSubstituteUser(currentUI)),
                             new DialogAction(DialogAction.Type.CANCEL, Action.Status.PRIMARY)
                                     .withHandler(event -> cancel())
                     )
@@ -96,9 +94,10 @@ public class SubstituteUserAction extends BaseAction {
     }
 
     protected void doSubstituteUser(AppUI currentUI) {
+        substitutionManager.substituteUser(newSubstitutedUser.getUsername());
+
         currentUI.getApp().removeAllWindows();
         currentUI.getApp().cleanupBackgroundTasks();
-        substitutionManager.substituteUser(newSubstitutedUser.getUsername());
         currentUI.getApp().createTopLevelWindow(currentUI);
     }
 

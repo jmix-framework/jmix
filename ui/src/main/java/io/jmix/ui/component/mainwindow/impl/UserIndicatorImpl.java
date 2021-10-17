@@ -261,7 +261,8 @@ public class UserIndicatorImpl extends CompositeComponent<CssLayout> implements 
 
     @EventListener
     protected void onUserSubstitutionsChanged(UiUserSubstitutionsChangedEvent event) {
-        if (Objects.equals(currentUserSubstitution.getAuthenticatedUser(), event.getSource())) {
+        UserDetails authenticatedUser = currentUserSubstitution.getAuthenticatedUser();
+        if (Objects.equals(authenticatedUser.getUsername(), event.getSource())) {
             refreshUser();
         }
     }

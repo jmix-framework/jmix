@@ -16,6 +16,7 @@
 
 package io.jmix.email;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -137,7 +138,7 @@ public class EmailInfoBuilder {
     /**
      * @param from "from" address. If null, a default provided by {@code jmix.email.fromAddress} app property is used.
      */
-    public EmailInfoBuilder setFrom(String from) {
+    public EmailInfoBuilder setFrom(@Nullable String from) {
         this.from = from;
         return this;
     }

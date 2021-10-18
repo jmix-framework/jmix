@@ -39,7 +39,7 @@ public interface ReportsRunApiRole {
     @EntityPolicy(entityClass = Report.class, actions = {EntityPolicyAction.READ})
     @EntityPolicy(entityClass = ReportGroup.class, actions = {EntityPolicyAction.READ})
     @EntityPolicy(entityClass = ReportTemplate.class, actions = {EntityPolicyAction.READ})
-    @EntityAttributePolicy(entityClass = Report.class, attributes = {"locName", "description", "code", "updateTs", "group"}, action = VIEW)
+    @EntityAttributePolicy(entityClass = Report.class, attributes = {"localeNames", "description", "code", "updateTs", "group"}, action = VIEW)
     @EntityAttributePolicy(entityClass = ReportGroup.class, attributes = {"title", "localeNames"}, action = VIEW)
     @EntityAttributePolicy(entityClass = ReportTemplate.class, attributes = {"code", "name", "customDefinition", "custom", "alterable"}, action = VIEW)
     @SpecificPolicy(resources = "reports.rest.enabled")

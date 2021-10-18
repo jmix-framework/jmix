@@ -167,7 +167,24 @@ class InputDialogTest extends ScreenSpecification {
         def defaultString = "default value"
 
         when: "dialog uses result handler"
-        InputDialog dialog = vaadinUi.dialogs.createInputDialog(mainScreen)
+        def dialog = showDialogWithResultHandler(mainScreen, defaultString, goodInfoObject)
+        def yesBtn = getButtonFromDialog(dialog, 1) // because 0 - spacer
+        yesBtn.getAction().actionPerform(yesBtn)
+
+        then:
+        !screens.getOpenedScreens().getActiveScreens().contains(dialog)
+
+        when:
+        dialog = showDialogWithResultHandler(mainScreen, defaultString, goodInfoObject)
+        def noBtn = getButtonFromDialog(dialog, 2)
+        noBtn.getAction().actionPerform(noBtn)
+
+        then:
+        !screens.getOpenedScreens().getActiveScreens().contains(dialog)
+    }
+
+    protected InputDialog showDialogWithResultHandler(Screen mainScreen, defaultString, goodInfoObject) {
+        vaadinUi.dialogs.createInputDialog(mainScreen)
                 .withParameters(
                         InputParameter.parameter("string").withDefaultValue(defaultString),
                         InputParameter.entityParameter("entity", GoodInfoObject).withDefaultValue(goodInfoObject))
@@ -184,17 +201,6 @@ class InputDialogTest extends ScreenSpecification {
                     }
                 })
                 .show()
-        then:
-        def yesBtn = getButtonFromDialog(dialog, 1) // because 0 - spacer
-        yesBtn.getAction().actionPerform(yesBtn)
-
-        !screens.getOpenedScreens().getActiveScreens().contains(dialog)
-
-        dialog.show() // we can show again because in this case we don't use code in Subscribe events
-        def noBtn = getButtonFromDialog(dialog, 2)
-        noBtn.getAction().actionPerform(noBtn)
-
-        !screens.getOpenedScreens().getActiveScreens().contains(dialog)
     }
 
     def "custom input dialog actions"() {

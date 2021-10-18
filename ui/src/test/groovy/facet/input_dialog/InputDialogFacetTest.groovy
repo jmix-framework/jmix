@@ -96,4 +96,27 @@ class InputDialogFacetTest extends ScreenSpecification {
         actions.find { action -> action.id == 'ok' } != null
         actions.find { action -> action.id == 'cancel' } != null
     }
+
+    def "InputDialog can be shown multiple times"() {
+        showTestMainScreen()
+
+        def inputDialogFacetScreen = screens.create(InputDialogFacetTestScreen)
+        inputDialogFacetScreen.show()
+
+        when: 'InputDialog is shown'
+
+        def inputDialog = inputDialogFacetScreen.inputDialog.show()
+        inputDialog.getWindow().getComponentNN("actionsLayout")
+
+        then:
+        noExceptionThrown()
+
+        when:
+        inputDialog.closeWithDefaultAction()
+        inputDialog = inputDialogFacetScreen.inputDialog.show()
+        inputDialog.getWindow().getComponentNN("actionsLayout")
+
+        then:
+        noExceptionThrown()
+    }
 }

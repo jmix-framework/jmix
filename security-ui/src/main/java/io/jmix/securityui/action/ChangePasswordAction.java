@@ -16,30 +16,20 @@
 
 package io.jmix.securityui.action;
 
-import com.google.common.base.Strings;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.security.PasswordNotMatchException;
 import io.jmix.core.security.UserManager;
-import io.jmix.ui.Dialogs;
-import io.jmix.ui.Notifications;
+import io.jmix.securityui.screen.changepassword.ChangePasswordDialog;
+import io.jmix.ui.Screens;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.accesscontext.UiEntityContext;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.ActionType;
 import io.jmix.ui.action.list.SecuredListAction;
-import io.jmix.ui.app.inputdialog.DialogActions;
-import io.jmix.ui.app.inputdialog.InputDialog;
-import io.jmix.ui.app.inputdialog.InputParameter;
 import io.jmix.ui.component.Component;
-import io.jmix.ui.component.PasswordField;
-import io.jmix.ui.component.ValidationErrors;
 import io.jmix.ui.component.data.meta.EntityDataUnit;
-import io.jmix.ui.screen.UiControllerUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
-
-import java.util.Objects;
 
 @ActionType(ChangePasswordAction.ID)
 public class ChangePasswordAction extends SecuredListAction implements Action.ExecutableAction, Action.AdjustWhenScreenReadOnly {
@@ -51,7 +41,7 @@ public class ChangePasswordAction extends SecuredListAction implements Action.Ex
     protected boolean currentPasswordRequired = false;
     protected Messages messages;
     protected UserManager userManager;
-    protected Notifications notifications;
+    protected Screens screens;
 
     public ChangePasswordAction() {
         super(ID);
@@ -68,8 +58,8 @@ public class ChangePasswordAction extends SecuredListAction implements Action.Ex
     }
 
     @Autowired
-    public void setNotifications(Notifications notifications) {
-        this.notifications = notifications;
+    public void setScreens(Screens screens) {
+        this.screens = screens;
     }
 
     @Autowired
@@ -145,83 +135,10 @@ public class ChangePasswordAction extends SecuredListAction implements Action.Ex
         buildAndShowChangePasswordDialog(user);
     }
 
-    private void buildAndShowChangePasswordDialog(UserDetails user) {
-        Dialogs.InputDialogBuilder builder = UiControllerUtils.getScreenContext(target.getFrame().getFrameOwner())
-                .getDialogs()
-                .createInputDialog(target.getFrame().getFrameOwner());
-
-        builder.withCaption(String.format(messages.getMessage("changePasswordDialog.captionWithUserName"), user.getUsername()));
-
-        PasswordField currentPasswField = uiComponents.create(PasswordField.class);
-        currentPasswField.setCaption(messages.getMessage("changePasswordDialog.currentPassword"));
-        currentPasswField.setWidthFull();
-
-        PasswordField passwField = uiComponents.create(PasswordField.class);
-        passwField.setCaption(messages.getMessage("changePasswordDialog.password"));
-        passwField.setWidthFull();
-
-        PasswordField confirmPasswField = uiComponents.create(PasswordField.class);
-        confirmPasswField.setCaption(messages.getMessage("changePasswordDialog.confirmPassword"));
-        confirmPasswField.setWidthFull();
-
-        builder.withParameters(
-                new InputParameter("password")
-                        .withField(() -> passwField),
-                new InputParameter("confirmPassword")
-                        .withField(() -> confirmPasswField));
-
-        if (currentPasswordRequired) {
-            builder.withParameter(new InputParameter("currentPassword").withField(() -> currentPasswField));
-        }
-
-        String userName = user.getUsername();
-        builder.withValidator(validationContext -> getValidationErrors(passwField, confirmPasswField, validationContext));
-        InputDialog inputDialog = builder.build();
-        builder.withActions(DialogActions.OK_CANCEL, result -> okButtonAction(userName, result));
-        inputDialog.show();
-    }
-
-    private ValidationErrors getValidationErrors(PasswordField passwField, PasswordField confirmPasswField, InputDialog.ValidationContext validationContext) {
-        String password = validationContext.getValue("password");
-        String confirmPassword = validationContext.getValue("confirmPassword");
-        ValidationErrors errors = new ValidationErrors();
-        if (!Objects.equals(password, confirmPassword)) {
-            errors.add(confirmPasswField, messages.getMessage("changePasswordDialog.passwordsDoNotMatch"));
-        }
-        if (Strings.isNullOrEmpty(password)) {
-            errors.add(passwField, messages.getMessage("changePasswordDialog.passwordRequired"));
-        }
-        if (errors.isEmpty()) {
-            return ValidationErrors.none();
-        }
-        return errors;
-    }
-
-    private void okButtonAction(String userName, InputDialog.InputDialogResult result) {
-        if (result.getCloseActionType() == InputDialog.InputDialogResult.ActionType.OK) {
-            String newPassword = result.getValue("password");
-            String oldPassword = result.getValue("currentPassword");
-            try {
-                userManager.changePassword(userName, oldPassword, newPassword);
-            } catch (PasswordNotMatchException e) {
-                if (currentPasswordRequired) {
-                    notifications.create()
-                            .withType(Notifications.NotificationType.ERROR)
-                            .withCaption(messages.getMessage("changePasswordDialog.wrongCurrentPassword"))
-                            .show();
-                } else {
-                    notifications.create()
-                            .withType(Notifications.NotificationType.WARNING)
-                            .withCaption(messages.getMessage("changePasswordDialog.currentPasswordWarning"))
-                            .show();
-
-                }
-                return;
-            }
-            notifications.create()
-                    .withType(Notifications.NotificationType.HUMANIZED)
-                    .withCaption(messages.getMessage("changePasswordDialog.passwordChanged"))
-                    .show();
-        }
+    protected void buildAndShowChangePasswordDialog(UserDetails user) {
+        screens.create(ChangePasswordDialog.class)
+                .withUser(user)
+                .withCurrentPasswordRequired(currentPasswordRequired)
+                .show();
     }
 }

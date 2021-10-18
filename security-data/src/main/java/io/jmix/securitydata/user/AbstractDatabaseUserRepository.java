@@ -207,14 +207,10 @@ public abstract class AbstractDatabaseUserRepository<T extends UserDetails> impl
     }
 
     private void changePassword(T userDetails, @Nullable String oldPassword, @Nullable String newPassword) throws PasswordNotMatchException {
-        if (oldPassword != null) {
-            if (!passwordEncoder.matches(oldPassword, userDetails.getPassword())) {
-                throw new PasswordNotMatchException();
-            }
-        } else {
-            if (passwordEncoder.matches(newPassword, userDetails.getPassword())) {
-                throw new PasswordNotMatchException();
-            }
+        if (passwordEncoder.matches(newPassword, userDetails.getPassword())
+                || (oldPassword != null
+                    && !passwordEncoder.matches(oldPassword, userDetails.getPassword()))) {
+            throw new PasswordNotMatchException();
         }
         EntityValues.setValue(userDetails, "password", passwordEncoder.encode(newPassword));
         dataManager.save(userDetails);

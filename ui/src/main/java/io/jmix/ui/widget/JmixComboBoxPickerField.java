@@ -22,6 +22,7 @@ import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.IconGenerator;
 import com.vaadin.ui.ItemCaptionGenerator;
 import com.vaadin.ui.StyleGenerator;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -62,12 +63,7 @@ public class JmixComboBoxPickerField<T> extends JmixPickerField<T> {
 
     @Override
     public String getStyleName() {
-        return removeComponentStyles(super.getStyleName());
-    }
-
-    @Override
-    public void removeStyleName(String style) {
-        super.removeStyleName(removeComponentStyles(style));
+        return StringUtils.normalizeSpace(super.getStyleName().replace(COMBOBOX_PICKERFIELD_STYLENAME, ""));
     }
 
     @Override
@@ -187,9 +183,5 @@ public class JmixComboBoxPickerField<T> extends JmixPickerField<T> {
 
     public void setStyleGenerator(StyleGenerator<T> generateItemStylename) {
         getFieldInternal().setStyleGenerator(generateItemStylename);
-    }
-
-    protected String removeComponentStyles(String styleName) {
-        return styleName.replaceAll(COMBOBOX_PICKERFIELD_STYLENAME, "");
     }
 }

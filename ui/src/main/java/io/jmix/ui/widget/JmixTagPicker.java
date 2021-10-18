@@ -20,6 +20,7 @@ import com.vaadin.shared.Registration;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -147,7 +148,14 @@ public class JmixTagPicker<V> extends JmixComboBoxPickerField<Collection<V>> {
     public void setStyleName(String style) {
         super.setStyleName(TAGPICKER_STYLENAME
                 + " " + getTagContainerPositionStyle(getTagContainerPosition())
-                + " " + removeComponentStyles(style));
+                + " " + style);
+    }
+
+    @Override
+    public String getStyleName() {
+        return StringUtils.normalizeSpace(super.getStyleName()
+                .replace(TAGPICKER_STYLENAME, "")
+                .replace(getTagContainerPositionStyle(getTagContainerPosition()), ""));
     }
 
     public boolean isInlineTags() {
@@ -264,14 +272,5 @@ public class JmixTagPicker<V> extends JmixComboBoxPickerField<Collection<V>> {
         } else {
             return TAGS_BOTTOM_STYLENAME;
         }
-    }
-
-    protected String removeComponentStyles(String styleName) {
-        String style = super.removeComponentStyles(styleName);
-        return style.replaceAll(TAGPICKER_STYLENAME
-                + "|" + TAGS_TOP_STYLENAME
-                + "|" + TAGS_RIGHT_STYLENAME
-                + "|" + TAGS_BOTTOM_STYLENAME
-                + "|" + TAGS_LEFT_STYLENAME, "");
     }
 }

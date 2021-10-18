@@ -37,8 +37,7 @@ public class TestEventPanel extends CompositeComponent<CssLayout> {
     }
 
     protected void onCreate(CreateEvent event) {
-        CssLayout layout = uiComponents.create(CssLayout.NAME);
-        setComposition(layout);
+        root = uiComponents.create(CssLayout.NAME);
     }
 
     public int getEventCounter() {

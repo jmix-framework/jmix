@@ -18,7 +18,6 @@ package io.jmix.ui.component;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
-import com.vaadin.ui.AbstractComponent;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
@@ -149,20 +148,15 @@ public class CompositeComponent<T extends Component>
         Preconditions.checkState(root == null, "Composition root has already been initialized");
         this.root = composition;
 
-        root.withUnwrapped(AbstractComponent.class, component -> {
-            component.addAttachListener(event -> enableEventListeners());
-            component.addDetachListener(event -> disableEventListeners());
-        });
-
         // Add id prefix to root and all nested component id to uniquely identify them
-        updateComponentIds();
+        updateComponentIds(composition);
     }
 
-    protected void updateComponentIds() {
-        updateIdIfNeeded(root);
+    protected void updateComponentIds(T composition) {
+        updateIdIfNeeded(composition);
 
-        if (root instanceof HasComponents) {
-            for (Component component : ((HasComponents) root).getComponents()) {
+        if (composition instanceof HasComponents) {
+            for (Component component : ((HasComponents) composition).getComponents()) {
                 updateIdIfNeeded(component);
             }
         }
@@ -289,6 +283,7 @@ public class CompositeComponent<T extends Component>
     @Override
     public void attached() {
         ((AttachNotifier) getComposition()).attached();
+        enableEventListeners();
 
         if (hasSubscriptions(AttachEvent.class)) {
             publish(AttachEvent.class, new AttachEvent(this));
@@ -298,6 +293,7 @@ public class CompositeComponent<T extends Component>
     @Override
     public void detached() {
         ((AttachNotifier) getComposition()).detached();
+        disableEventListeners();
 
         if (hasSubscriptions(DetachEvent.class)) {
             publish(DetachEvent.class, new DetachEvent(this));

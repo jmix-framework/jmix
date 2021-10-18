@@ -125,6 +125,10 @@ public enum PropertyType {
      */
     ENTITY_NAME,
     /**
+     * Names of Entities meta class.
+     */
+    ENTITY_NAMES,
+    /**
      * FQN of Entity class.
      */
     ENTITY_CLASS,

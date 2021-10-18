@@ -108,6 +108,11 @@ public enum CanvasBehaviour {
     RICH_TEXT_AREA,
 
     /**
+     * Component is shown on canvas as a searchField.
+     */
+    SEARCH_FIELD,
+
+    /**
      * Component is shown on canvas as a list component.
      */
     SELECT_LIST,

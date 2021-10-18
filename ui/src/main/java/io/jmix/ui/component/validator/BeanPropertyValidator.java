@@ -40,7 +40,8 @@ import javax.validation.Validator;
         xmlElement = "custom",
         unsupportedTarget = {"io.jmix.ui.component.CheckBox", "io.jmix.ui.component.ColorPicker",
                 "io.jmix.ui.component.CurrencyField", "io.jmix.ui.component.DatePicker",
-                "io.jmix.ui.component.SingleFileUploadField", "io.jmix.ui.component.Slider"},
+                "io.jmix.ui.component.SingleFileUploadField", "io.jmix.ui.component.Slider",
+                "io.jmix.searchui.component.SearchField"},
         icon = "io/jmix/ui/icon/element/validator.svg"
 )
 @StudioProperties(

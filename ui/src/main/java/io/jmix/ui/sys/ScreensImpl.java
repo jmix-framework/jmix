@@ -542,6 +542,9 @@ public class ScreensImpl implements Screens {
 
         fireScreenAfterDetachEvent(screen, AfterDetachEvent.class, new AfterDetachEvent(screen));
 
+        // Remove all components to trigger UI components detach event
+        screen.getWindow().removeAll();
+
         applicationContext.publishEvent(new ScreenClosedEvent(screen));
 
         afterScreenRemove(screen);

@@ -364,6 +364,24 @@ public class AppWorkAreaImpl extends AbstractComponent<CssLayout> implements App
         return Collections.emptyList();
     }
 
+    @Override
+    public void attached() {
+        super.attached();
+
+        for (io.jmix.ui.component.Component component : getInnerComponents()) {
+            ((AttachNotifier) component).attached();
+        }
+    }
+
+    @Override
+    public void detached() {
+        super.detached();
+
+        for (io.jmix.ui.component.Component component : getInnerComponents()) {
+            ((AttachNotifier) component).detached();
+        }
+    }
+
     public int getOpenedTabCount() {
         if (getMode() == Mode.TABBED) {
             TabSheetBehaviour tabSheetBehaviour = getTabbedWindowContainer().getTabSheetBehaviour();

@@ -3123,6 +3123,24 @@ public abstract class AbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E>, 
         return null;
     }
 
+    @Override
+    public void attached() {
+        super.attached();
+
+        for (io.jmix.ui.component.Component component : getInnerComponents()) {
+            ((AttachNotifier) component).attached();
+        }
+    }
+
+    @Override
+    public void detached() {
+        super.detached();
+
+        for (io.jmix.ui.component.Component component : getInnerComponents()) {
+            ((AttachNotifier) component).detached();
+        }
+    }
+
     public static abstract class AbstractRenderer<T, V> implements RendererWrapper<V> {
         protected com.vaadin.ui.renderers.Renderer<V> renderer;
         protected AbstractDataGrid<?, T> dataGrid;

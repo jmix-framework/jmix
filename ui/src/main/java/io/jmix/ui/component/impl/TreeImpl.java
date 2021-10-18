@@ -1181,6 +1181,24 @@ public class TreeImpl<E>
         component.focus();
     }
 
+    @Override
+    public void attached() {
+        super.attached();
+
+        for (io.jmix.ui.component.Component component : getInnerComponents()) {
+            ((AttachNotifier) component).attached();
+        }
+    }
+
+    @Override
+    public void detached() {
+        super.detached();
+
+        for (io.jmix.ui.component.Component component : getInnerComponents()) {
+            ((AttachNotifier) component).detached();
+        }
+    }
+
     protected class EmptyTreeDataProvider<T>
             extends com.vaadin.data.provider.TreeDataProvider<T>
             implements EnhancedTreeDataProvider<T> {

@@ -3481,6 +3481,24 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
         component.setMinWidth(minWidth);
     }
 
+    @Override
+    public void attached() {
+        super.attached();
+
+        for (io.jmix.ui.component.Component component : getInnerComponents()) {
+            ((AttachNotifier) component).attached();
+        }
+    }
+
+    @Override
+    public void detached() {
+        super.detached();
+
+        for (io.jmix.ui.component.Component component : getInnerComponents()) {
+            ((AttachNotifier) component).detached();
+        }
+    }
+
     protected static class InstalledStyleProvider implements StyleProvider {
         private final FrameOwner frameOwner;
         private final Method method;

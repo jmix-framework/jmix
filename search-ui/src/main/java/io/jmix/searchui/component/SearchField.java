@@ -19,6 +19,10 @@ package io.jmix.searchui.component;
 import io.jmix.search.searching.SearchResult;
 import io.jmix.search.searching.SearchStrategy;
 import io.jmix.ui.component.Field;
+import io.jmix.ui.meta.CanvasBehaviour;
+import io.jmix.ui.meta.StudioComponent;
+import io.jmix.ui.meta.StudioProperty;
+import io.jmix.ui.meta.PropertyType;
 import io.jmix.ui.screen.Install;
 
 import java.util.List;
@@ -27,6 +31,17 @@ import java.util.function.Consumer;
 /**
  * UI component that performs full text search
  */
+@StudioComponent(
+        caption = "SearchField",
+        category = "Search",
+        xmlElement = "searchField",
+        xmlns = "http://jmix.io/schema/search/ui",
+        xmlnsAlias = "search",
+        icon = "io/jmix/searchui/icon/searchField.svg",
+        canvasBehaviour = CanvasBehaviour.SEARCH_FIELD,
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/search/search-in-ui.html",
+        unsupportedProperties = {"colspan", "rowspan"}
+)
 public interface SearchField extends Field<String> {
 
     String NAME = "searchField";
@@ -41,6 +56,8 @@ public interface SearchField extends Field<String> {
      *
      * @param strategy {@link SearchStrategy}
      */
+    @StudioProperty(name = "strategy", type = PropertyType.STRING,
+            options = {"anyTermAnyField", "allTermsAnyField", "allTermsSingleField", "phrase"})
     void setSearchStrategy(SearchStrategy strategy);
 
     /**
@@ -53,6 +70,7 @@ public interface SearchField extends Field<String> {
      *
      * @param entities List of entity names
      */
+    @StudioProperty(name = "entities", type = PropertyType.ENTITY_NAMES)
     void setEntities(List<String> entities);
 
     /**

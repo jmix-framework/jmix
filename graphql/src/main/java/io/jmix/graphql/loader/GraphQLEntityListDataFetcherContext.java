@@ -84,4 +84,19 @@ public class GraphQLEntityListDataFetcherContext<E> {
         this.offset = offset;
     }
 
+    public LoadContext<E> getLoadContext() {
+        return ctx;
+    }
+
+    public void setLoadContext(LoadContext<E> loadContext) {
+        this.ctx = loadContext;
+    }
+
+    public FetchPlan getFetchPlan() {
+        return fetchPlan;
+    }
+
+    public void setFetchPlan(FetchPlan fetchPlan) {
+        this.fetchPlan = fetchPlan;
+    }
 }

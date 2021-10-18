@@ -36,11 +36,8 @@ public class ChangePasswordAction extends SecuredListAction implements Action.Ex
 
     public static final String ID = "changePassword";
 
-    protected UiComponents uiComponents;
     // Set default caption only once
     protected boolean currentPasswordRequired = false;
-    protected Messages messages;
-    protected UserManager userManager;
     protected Screens screens;
 
     public ChangePasswordAction() {
@@ -53,23 +50,12 @@ public class ChangePasswordAction extends SecuredListAction implements Action.Ex
 
     @Autowired
     protected void setMessages(Messages messages) {
-        this.messages = messages;
         this.caption = messages.getMessage("actions.changePassword");
     }
 
     @Autowired
     public void setScreens(Screens screens) {
         this.screens = screens;
-    }
-
-    @Autowired
-    public void setUiComponents(UiComponents uiComponents) {
-        this.uiComponents = uiComponents;
-    }
-
-    @Autowired
-    public void setUserManager(UserManager userManager) {
-        this.userManager = userManager;
     }
 
     public void setCurrentPasswordRequired(boolean currentPasswordRequired) {

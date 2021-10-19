@@ -70,23 +70,6 @@ public class CurrentAuthenticationImpl implements CurrentAuthentication {
     }
 
     @Override
-    public UserDetails getCurrentOrSubstitutedUser() {
-        Authentication authentication = getAuthentication();
-        if (authentication != null) {
-            if (SubstitutedUserAuthenticationToken.class.isAssignableFrom(authentication.getClass())) {
-                Object substitutedPrincipal = ((SubstitutedUserAuthenticationToken) authentication).getSubstitutedPrincipal();
-                if (substitutedPrincipal instanceof UserDetails) {
-                    return (UserDetails) substitutedPrincipal;
-                } else {
-                    throw new RuntimeException("Substituted principal must be UserDetails");
-                }
-            } else
-                return getUser();
-        }
-        throw new IllegalStateException("Authentication is not set");
-    }
-
-    @Override
     public Locale getLocale() {
         Authentication authentication = getAuthentication();
         if (authentication != null) {

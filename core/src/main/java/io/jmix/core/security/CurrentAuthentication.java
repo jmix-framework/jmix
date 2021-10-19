@@ -16,7 +16,6 @@
 
 package io.jmix.core.security;
 
-import io.jmix.core.security.impl.SubstitutedUserAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -41,15 +40,6 @@ public interface CurrentAuthentication {
      *                          or user information cannot be extracted from current authentication
      */
     UserDetails getUser();
-
-
-    /**
-     * @return substituted user if current authentication token is instance of {@link SubstitutedUserAuthenticationToken},
-     * logged-in user otherwise.
-     * @throws RuntimeException if Authentication is not set to {@link org.springframework.security.core.context.SecurityContext}
-     *                          or user information cannot be extracted from current authentication
-     */
-    UserDetails getCurrentOrSubstitutedUser();
 
     /**
      * @return locale of the current authentication or default locale if current authentication doesn't contain locale

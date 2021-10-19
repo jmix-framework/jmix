@@ -20,18 +20,17 @@ import com.google.common.base.Strings;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.security.PasswordNotMatchException;
 import io.jmix.core.security.UserManager;
+import io.jmix.core.security.UserRepository;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.component.*;
 import io.jmix.ui.screen.*;
 import io.jmix.ui.util.OperationResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.annotation.Nullable;
-import java.util.EventObject;
 import java.util.Objects;
-import java.util.function.Consumer;
-import java.util.function.Function;
 
 @UiController("ChangePasswordDialog")
 @UiDescriptor("change-password-dialog.xml")
@@ -45,6 +44,10 @@ public class ChangePasswordDialog extends Screen {
     protected Notifications notifications;
     @Autowired
     protected ScreenValidation screenValidation;
+    @Autowired
+    protected PasswordEncoder passwordEncoder;
+    @Autowired
+    protected UserRepository userRepository;
 
     @Autowired
     protected PasswordField passwordField;
@@ -53,23 +56,24 @@ public class ChangePasswordDialog extends Screen {
     @Autowired
     protected PasswordField currentPasswordField;
 
+    protected String username;
     protected UserDetails user;
 
     /**
-     * @return user for which should be changed password
+     * @return username for which should be changed password
      */
-    public UserDetails getUser() {
-        return user;
+    public String getUsername() {
+        return username;
     }
 
     /**
-     * Sets user for which should be changed password.
+     * Sets username for which should be changed password.
      *
-     * @param user user
+     * @param username username
      * @return current instance of dialog
      */
-    public ChangePasswordDialog withUser(UserDetails user) {
-        this.user = user;
+    public ChangePasswordDialog withUsername(String username) {
+        this.username = username;
         return this;
     }
 
@@ -95,10 +99,14 @@ public class ChangePasswordDialog extends Screen {
 
     @Subscribe
     protected void onAfterShow(AfterShowEvent event) {
-        Preconditions.checkNotNullArgument(user, "Dialog cannot be opened without user");
+        Preconditions.checkNotNullArgument(username, "Dialog cannot be opened without username");
 
         getWindow().setCaption(String.format(
-                messageBundle.getMessage("ChangePasswordDialog.captionWithUserName"), user.getUsername()));
+                messageBundle.getMessage("ChangePasswordDialog.captionWithUserName"), username));
+
+        user = userRepository.loadUserByUsername(username);
+
+        getWindow().focusFirstComponent();
     }
 
     @Subscribe("okBtn")
@@ -107,7 +115,7 @@ public class ChangePasswordDialog extends Screen {
             return;
         }
 
-        changePassword(user.getUsername(), getPassword(), getCurrentPassword())
+        changePassword(username, getPassword(), null)
                 .then(() -> {
                     notifications.create()
                             .withType(Notifications.NotificationType.HUMANIZED)
@@ -115,17 +123,10 @@ public class ChangePasswordDialog extends Screen {
                             .show();
                     close(StandardOutcome.COMMIT);
                 }).otherwise(() -> {
-                    if (currentPasswordField.isVisible()) {
-                        notifications.create()
-                                .withType(Notifications.NotificationType.ERROR)
-                                .withCaption(messageBundle.getMessage("ChangePasswordDialog.wrongCurrentPassword"))
-                                .show();
-                    } else {
-                        notifications.create()
-                                .withType(Notifications.NotificationType.WARNING)
-                                .withCaption(messageBundle.getMessage("ChangePasswordDialog.currentPasswordWarning"))
-                                .show();
-                    }
+                    notifications.create()
+                            .withType(Notifications.NotificationType.WARNING)
+                            .withCaption(messageBundle.getMessage("ChangePasswordDialog.currentPasswordWarning"))
+                            .show();
                 });
     }
 
@@ -154,6 +155,16 @@ public class ChangePasswordDialog extends Screen {
         String confirmPassword = confirmPasswordField.getValue();
         String currentPassword = currentPasswordField.getValue();
 
+        if (currentPasswordField.isVisible()) {
+            if (Strings.isNullOrEmpty(currentPassword)) {
+                errors.add(passwordField, messageBundle.getMessage("ChangePasswordDialog.currentPasswordRequired"));
+            } else if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+                // if current password is wrong
+                errors.add(currentPasswordField, messageBundle.getMessage("ChangePasswordDialog.wrongCurrentPassword"));
+            } else if (Objects.equals(password, currentPassword)) {
+                errors.add(passwordField, messageBundle.getMessage("ChangePasswordDialog.currentPasswordWarning"));
+            }
+        }
         if (Strings.isNullOrEmpty(password)) {
             errors.add(passwordField, messageBundle.getMessage("ChangePasswordDialog.passwordRequired"));
         }
@@ -164,13 +175,6 @@ public class ChangePasswordDialog extends Screen {
                 && !Strings.isNullOrEmpty(confirmPassword)
                 && !Objects.equals(password, confirmPassword)) {
             errors.add(confirmPasswordField, messageBundle.getMessage("ChangePasswordDialog.passwordsDoNotMatch"));
-        }
-        if (currentPasswordField.isVisible()) {
-            if (Strings.isNullOrEmpty(currentPassword)) {
-                errors.add(passwordField, messageBundle.getMessage("ChangePasswordDialog.currentPasswordRequired"));
-            } else if (Objects.equals(password, currentPassword)) {
-                errors.add(passwordField, messageBundle.getMessage("ChangePasswordDialog.currentPasswordWarning"));
-            }
         }
 
         if (errors.isEmpty()) {

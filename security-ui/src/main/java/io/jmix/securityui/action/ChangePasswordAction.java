@@ -18,10 +18,8 @@ package io.jmix.securityui.action;
 
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.security.UserManager;
 import io.jmix.securityui.screen.changepassword.ChangePasswordDialog;
 import io.jmix.ui.Screens;
-import io.jmix.ui.UiComponents;
 import io.jmix.ui.accesscontext.UiEntityContext;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.ActionType;
@@ -123,7 +121,7 @@ public class ChangePasswordAction extends SecuredListAction implements Action.Ex
 
     protected void buildAndShowChangePasswordDialog(UserDetails user) {
         screens.create(ChangePasswordDialog.class)
-                .withUser(user)
+                .withUsername(user.getUsername())
                 .withCurrentPasswordRequired(currentPasswordRequired)
                 .show();
     }

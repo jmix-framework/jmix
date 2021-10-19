@@ -82,9 +82,9 @@ public class GraphQLFilesUploadController extends GraphQLController<NativeWebReq
             consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}
     )
     @ResponseBody
-    public Object executeMultipartPost(@RequestPart("operations") String operations,
-                                       @RequestPart("map") String map,
-                                       @RequestPart(value = "storageName", required = false) String storageName,
+    public Object executeMultipartPost(@RequestParam("operations") String operations,
+                                       @RequestParam("map") String map,
+                                       @RequestParam(value = "storageName", required = false) String storageName,
                                        MultipartHttpServletRequest multiPartRequest,
                                        NativeWebRequest webRequest) throws Exception {
         checkFileUploadPermission();

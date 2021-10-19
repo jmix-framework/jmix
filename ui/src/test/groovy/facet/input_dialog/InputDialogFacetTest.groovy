@@ -21,6 +21,7 @@ import io.jmix.core.CoreConfiguration
 import io.jmix.data.DataConfiguration
 import io.jmix.eclipselink.EclipselinkConfiguration
 import io.jmix.ui.UiConfiguration
+import io.jmix.ui.component.TextArea
 import io.jmix.ui.testassist.spec.ScreenSpecification
 import org.springframework.test.context.ContextConfiguration
 import test_support.UiTestConfiguration
@@ -73,7 +74,7 @@ class InputDialogFacetTest extends ScreenSpecification {
 
         then:
 
-        !inputDialog.getValue('booleanParam')
+        inputDialog.getValue('booleanParam')
         inputDialog.getValue('intParam') == 42
         inputDialog.getValue('stringParam') == 'Hello world!'
         inputDialog.getValue('decimalParam') == 1234567890
@@ -118,5 +119,27 @@ class InputDialogFacetTest extends ScreenSpecification {
 
         then:
         noExceptionThrown()
+    }
+
+    def 'InputDialog parameter custom fields are set'() {
+        showTestMainScreen()
+
+        def inputDialogFacetScreen = screens.create(InputDialogFacetTestScreen)
+        inputDialogFacetScreen.show()
+
+        when: 'InputDialog is shown'
+
+        def inputDialog = inputDialogFacetScreen.inputDialogCustomFields.show()
+
+        def parameter = inputDialog.getParameters().get(0)
+        def field = parameter.getField().get()
+
+        then:
+
+        parameter.getId() == 'customStringParam'
+        field instanceof TextArea
+        field.getId() == 'customStringParam'
+        field.getCaption() == 'Custom string param'
+        field.isRequired()
     }
 }

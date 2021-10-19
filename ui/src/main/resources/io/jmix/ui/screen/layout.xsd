@@ -3571,7 +3571,7 @@
                 <xs:element name="longParameter" type="inputDialogPrimitiveParam"/>
                 <xs:element name="bigDecimalParameter" type="inputDialogPrimitiveParam"/>
 
-                <xs:element name="booleanParameter" type="inputDialogParameter"/>
+                <xs:element name="booleanParameter" type="inputDialogBooleanParam"/>
 
                 <xs:element name="dateParameter" type="inputDialogPrimitiveParam"/>
                 <xs:element name="timeParameter" type="inputDialogPrimitiveParam"/>
@@ -3584,6 +3584,10 @@
     </xs:complexType>
 
     <xs:complexType name="inputDialogParameter">
+        <xs:sequence>
+            <xs:group ref="singleLayoutOrComponent"/>
+        </xs:sequence>
+
         <xs:attribute name="id" type="xs:string" use="required"/>
         <xs:attribute name="caption" type="resourceString"/>
     </xs:complexType>
@@ -3595,6 +3599,14 @@
 
                 <xs:attribute name="required" type="xs:boolean"/>
                 <xs:attribute name="requiredMessage" type="resourceString"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="inputDialogBooleanParam">
+        <xs:complexContent>
+            <xs:extension base="inputDialogParameter">
+                <xs:attribute name="defaultValue"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

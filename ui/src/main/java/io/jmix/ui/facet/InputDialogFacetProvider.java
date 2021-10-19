@@ -27,6 +27,7 @@ import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.app.inputdialog.DialogActions;
 import io.jmix.ui.app.inputdialog.InputParameter;
 import io.jmix.ui.component.ActionsAwareDialogFacet;
+import io.jmix.ui.component.Field;
 import io.jmix.ui.component.InputDialogFacet;
 import io.jmix.ui.component.impl.InputDialogFacetImpl;
 import io.jmix.ui.icon.Icons;
@@ -34,7 +35,9 @@ import io.jmix.ui.theme.ThemeConstants;
 import io.jmix.ui.theme.ThemeConstantsManager;
 import io.jmix.ui.xml.FacetProvider;
 import io.jmix.ui.xml.layout.ComponentLoader;
+import io.jmix.ui.xml.layout.loader.LayoutLoader;
 import org.dom4j.Element;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
@@ -57,6 +60,8 @@ public class InputDialogFacetProvider implements FacetProvider<InputDialogFacet>
 
     protected static final Pattern PARAM_TYPE_REGEX = Pattern.compile("^(\\w+)Parameter$");
 
+    @Autowired
+    protected ApplicationContext applicationContext;
     @Autowired
     protected MessageTools messageTools;
     @Autowired
@@ -269,6 +274,11 @@ public class InputDialogFacetProvider implements FacetProvider<InputDialogFacet>
                             loadDefaultValue(paramEl, datatype, context));
         }
 
+        Field<?> field = loadField(paramId, paramEl, context);
+        if (field != null) {
+            inputParameter.withField(() -> field);
+        }
+
         return inputParameter;
     }
 
@@ -288,6 +298,11 @@ public class InputDialogFacetProvider implements FacetProvider<InputDialogFacet>
                     .withCaption(loadParamCaption(paramEl, context))
                     .withRequired(loadParamRequired(paramEl))
                     .withRequiredMessage(loadRequiredMessage(paramEl, context));
+
+            Field<?> field = loadField(paramId, paramEl, context);
+            if (field != null) {
+                parameter.withField(() -> field);
+            }
         } else {
             throw new GuiDevelopmentException(
                     String.format(
@@ -314,6 +329,11 @@ public class InputDialogFacetProvider implements FacetProvider<InputDialogFacet>
                     .withCaption(loadParamCaption(paramEl, context))
                     .withRequired(loadParamRequired(paramEl))
                     .withRequiredMessage(loadRequiredMessage(paramEl, context));
+
+            Field<?> field = loadField(paramId, paramEl, context);
+            if (field != null) {
+                parameter.withField(() -> field);
+            }
         } else {
             throw new GuiDevelopmentException(
                     String.format(
@@ -323,6 +343,36 @@ public class InputDialogFacetProvider implements FacetProvider<InputDialogFacet>
         }
 
         return parameter;
+    }
+
+    @Nullable
+    protected Field<?> loadField(String paramId, Element element, ComponentLoader.ComponentContext context) {
+        List<Element> elements = element.elements();
+        if (elements.size() == 0) {
+            return null;
+        } else if (elements.size() > 1) {
+            throw new GuiDevelopmentException(
+                    String.format("InputParameter '%s' element cannot contain " +
+                                    "two or more custom field definitions", paramId), context);
+        }
+
+        Element customFieldElement = elements.get(0);
+        ComponentLoader loader = getLayoutLoader(context).createComponent(customFieldElement);
+        io.jmix.ui.component.Component component = loader.getResultComponent();
+
+        // Check field type before loading attributes
+        if (!(component instanceof Field)) {
+            throw new GuiDevelopmentException(
+                    String.format("InputParameter '%s' custom field must implement " +
+                            "io.jmix.ui.component.Field", paramId), context);
+        }
+
+        loader.loadComponent();
+        return ((Field<?>) component);
+    }
+
+    protected LayoutLoader getLayoutLoader(ComponentLoader.Context context) {
+        return applicationContext.getBean(LayoutLoader.class, context);
     }
 
     protected Datatype loadDatatype(Element element,

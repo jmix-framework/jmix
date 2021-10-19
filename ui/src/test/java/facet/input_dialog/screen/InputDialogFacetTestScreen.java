@@ -39,6 +39,8 @@ public class InputDialogFacetTestScreen extends Screen {
     public InputDialogFacet inputDialog;
     @Autowired
     public InputDialogFacet inputDialogCustomActions;
+    @Autowired
+    public InputDialogFacet inputDialogCustomFields;
 
     @Install(to = "inputDialog", subject = "closeListener")
     public void onInputDialogClose(InputDialog.InputDialogCloseEvent closeEvent) {

@@ -66,12 +66,16 @@ $jmix-tagfield-tag-border-radius: $jmix-taglabel-border-radius !default;
   .#{$primary-stylename} {
     @include halo-tagfield-size-style();
 
-    display: flex;
-    flex-wrap: wrap;
     border: valo-border();
     border-radius: $v-border-radius;
     height: auto;
     width: $v-default-field-width;
+  }
+
+  .#{$primary-stylename}-layout {
+    display: flex;
+    flex-wrap: wrap;
+    height: 100%;
   }
 
   .#{$primary-stylename}.empty {
@@ -92,6 +96,14 @@ $jmix-tagfield-tag-border-radius: $jmix-taglabel-border-radius !default;
 
   .#{$primary-stylename}-focus {
     @include valo-textfield-focus-style;
+  }
+
+  .#{$primary-stylename}-error {
+    @include valo-textfield-error-style;
+
+    &.#{$primary-stylename}-focus {
+      @include valo-error-focus-style;
+    }
   }
 
   .#{$primary-stylename}-clear-all {
@@ -118,6 +130,10 @@ $jmix-tagfield-tag-border-radius: $jmix-taglabel-border-radius !default;
     min-width: $jmix-tagfield-field-min-width;
 
     @include valo-textfield-borderless-style;
+  }
+
+  .v-caption-on-right > .#{$primary-stylename} {
+    display: inline-block;
   }
 
   .#{$primary-stylename} .jmix-taglabel {

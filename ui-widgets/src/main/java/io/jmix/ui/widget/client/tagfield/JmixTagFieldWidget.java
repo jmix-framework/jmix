@@ -21,11 +21,11 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.*;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.client.ComputedStyle;
 import com.vaadin.client.StyleConstants;
 import com.vaadin.client.ui.VLabel;
-import com.vaadin.server.Page;
 import elemental.json.JsonObject;
 import io.jmix.ui.widget.client.suggestionfield.JmixSuggestionFieldWidget;
 import io.jmix.ui.widget.client.suggestionfield.menu.SuggestionsContainer;
@@ -41,6 +41,7 @@ import java.util.function.Consumer;
 public class JmixTagFieldWidget extends JmixSuggestionFieldWidget {
 
     public static final String CLASSNAME = "jmix-tagfield";
+    public static final String LAYOUT = CLASSNAME + "-layout";
     public static final String CLEAR_ALL_BUTTON = CLASSNAME + "-clear-all";
     public static final String FOCUS = "focus";
     public static final String EMPTY = "empty";
@@ -52,7 +53,8 @@ public class JmixTagFieldWidget extends JmixSuggestionFieldWidget {
     protected static final String TAG_STYLE_KEY = "style";
     protected static final String TAG_KEY = "key";
 
-    protected FocusableFlowPanel layout;
+    protected FocusableFlowPanel root;
+    protected FlowPanel layout;
     protected VLabel clearAllBtn;
 
     protected Map<JmixTagLabelWidget, String> tagKeyMap;
@@ -72,19 +74,26 @@ public class JmixTagFieldWidget extends JmixSuggestionFieldWidget {
 
     @Override
     protected void setupComposition() {
-        layout = GWT.create(FocusableFlowPanel.class);
+        root = GWT.create(FocusableFlowPanel.class);
 
         JmixTagFieldEvents handler = new JmixTagFieldEvents();
-        layout.addDomHandler(handler, FocusEvent.getType());
-        layout.addDomHandler(handler, BlurEvent.getType());
-        layout.addDomHandler(handler, ClickEvent.getType());
+        root.addDomHandler(handler, FocusEvent.getType());
+        root.addDomHandler(handler, BlurEvent.getType());
+        root.addDomHandler(handler, ClickEvent.getType());
+
+        layout = GWT.create(FocusableFlowPanel.class);
+        layout.getElement().removeAttribute("tabIndex");
+        layout.addDomHandler(new JmixLayoutTagFieldEvents(), ClickEvent.getType());
+        layout.setStyleName(StyleConstants.UI_WIDGET);
+        layout.addStyleName(LAYOUT);
 
         layout.add(textField);
+        root.add(layout);
 
-        layout.getElement().removeAttribute("tabIndex");
-        layout.setStyleName(CLASSNAME);
+        root.getElement().removeAttribute("tabIndex");
+        root.setStyleName(CLASSNAME);
 
-        initWidget(layout);
+        initWidget(root);
     }
 
     @Override
@@ -148,7 +157,7 @@ public class JmixTagFieldWidget extends JmixSuggestionFieldWidget {
 
         getElement().removeAttribute("tabIndex");
 
-        // if textField is not visible, layout should handle focus/blur
+        // if textField is not visible, root should handle focus/blur
         if (isEnabled() && isReadonly()) {
             getElement().setAttribute("tabIndex", String.valueOf(getTabIndex()));
         }
@@ -337,7 +346,7 @@ public class JmixTagFieldWidget extends JmixSuggestionFieldWidget {
     protected void handleOnBlur(BlurEvent event) {
         super.handleOnBlur(event);
 
-        layout.removeStyleDependentName(FOCUS);
+        root.removeStyleDependentName(FOCUS);
     }
 
     /**
@@ -349,7 +358,7 @@ public class JmixTagFieldWidget extends JmixSuggestionFieldWidget {
     protected void handleOnFocus(FocusEvent event) {
         super.handleOnFocus(event);
 
-        layout.addStyleDependentName(FOCUS);
+        root.addStyleDependentName(FOCUS);
     }
 
     /**
@@ -360,18 +369,29 @@ public class JmixTagFieldWidget extends JmixSuggestionFieldWidget {
 
         @Override
         public void onFocus(FocusEvent event) {
-            layout.addStyleDependentName(FOCUS);
+            root.addStyleDependentName(FOCUS);
         }
 
         @Override
         public void onBlur(BlurEvent event) {
-            layout.removeStyleDependentName(FOCUS);
+            root.removeStyleDependentName(FOCUS);
         }
 
         @Override
         public void onClick(ClickEvent event) {
             Element element = event.getNativeEvent().getEventTarget().cast();
             if (element.isOrHasChild(getElement())) {
+                textField.setFocus(true);
+            }
+        }
+    }
+
+    protected class JmixLayoutTagFieldEvents implements ClickHandler {
+
+        @Override
+        public void onClick(ClickEvent event) {
+            Element element = event.getNativeEvent().getEventTarget().cast();
+            if (element.isOrHasChild(layout.getElement())) {
                 textField.setFocus(true);
             }
         }
@@ -387,7 +407,7 @@ public class JmixTagFieldWidget extends JmixSuggestionFieldWidget {
 
         @Override
         protected Widget getRelativeWidget() {
-            return layout;
+            return root;
         }
     }
 }

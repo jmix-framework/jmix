@@ -123,10 +123,8 @@ public class ChangePasswordDialog extends Screen {
                             .show();
                     close(StandardOutcome.COMMIT);
                 }).otherwise(() -> {
-                    notifications.create()
-                            .withType(Notifications.NotificationType.WARNING)
-                            .withCaption(messageBundle.getMessage("ChangePasswordDialog.currentPasswordWarning"))
-                            .show();
+                    screenValidation.showValidationErrors(this, ValidationErrors.of(
+                            messageBundle.getMessage("ChangePasswordDialog.currentPasswordWarning")));
                 });
     }
 

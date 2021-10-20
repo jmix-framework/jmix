@@ -16,6 +16,9 @@
 
 package change_tracking;
 
+import io.jmix.core.DataManager;
+import io.jmix.core.Id;
+import io.jmix.core.Metadata;
 import io.jmix.search.index.queue.impl.IndexingOperation;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,6 +34,7 @@ import test_support.TestIndexingQueueItemsTracker;
 import test_support.entity.*;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(
@@ -42,6 +46,10 @@ public class EntityChangeTrackingTest {
     TestIndexingQueueItemsTracker indexingQueueItemsTracker;
     @Autowired
     TestCommonEntityWrapperManager ewm;
+    @Autowired
+    Metadata metadata;
+    @Autowired
+    DataManager dataManager;
 
     @BeforeEach
     public void setUp() {
@@ -1112,6 +1120,114 @@ public class EntityChangeTrackingTest {
         indexingQueueItemsTracker.clear();
 
         ewm.wrap(firstSubReference).setName("New name").save();
+        boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(rootEntity, IndexingOperation.INDEX, 0);
+        Assert.assertTrue(enqueued);
+    }
+
+    @Test
+    @DisplayName("Update of indexed value within embedded property of one-to-many reference leads to queue item enqueueing (Soft Delete)")
+    public void updateIndexedValueWithinEmbeddedPropertyOfOneToManyReference() {
+        TestEmbeddableEntity embedded = metadata.create(TestEmbeddableEntity.class);
+        embedded.setEnumValue(TestEnum.OPEN);
+        embedded.setTextValue("V1");
+        embedded.setIntValue(1);
+
+        TestEmbTrackRefEntity reference = metadata.create(TestEmbTrackRefEntity.class);
+        reference.setName("Name");
+        reference.setEmbedded(embedded);
+        TestEmbTrackRootEntity rootEntity = metadata.create(TestEmbTrackRootEntity.class);
+        reference.setRefToRoot(rootEntity);
+        rootEntity.setReferences(Collections.singletonList(reference));
+
+        dataManager.save(reference, rootEntity);
+
+        indexingQueueItemsTracker.clear();
+
+        reference = dataManager.load(Id.of(reference)).one();
+        reference.getEmbedded().setTextValue("V2");
+        dataManager.save(reference);
+
+        boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(rootEntity, IndexingOperation.INDEX, 1);
+        Assert.assertTrue(enqueued);
+    }
+
+    @Test
+    @DisplayName("Update of not-indexed value within embedded property of one-to-many reference doesn't lead to queue item enqueueing (Soft Delete)")
+    public void updateNotIndexedValueWithinEmbeddedPropertyOfOneToManyReference() {
+        TestEmbeddableEntity embedded = metadata.create(TestEmbeddableEntity.class);
+        embedded.setEnumValue(TestEnum.OPEN);
+        embedded.setTextValue("V1");
+        embedded.setIntValue(1);
+
+        TestEmbTrackRefEntity reference = metadata.create(TestEmbTrackRefEntity.class);
+        reference.setName("Name");
+        reference.setEmbedded(embedded);
+        TestEmbTrackRootEntity rootEntity = metadata.create(TestEmbTrackRootEntity.class);
+        reference.setRefToRoot(rootEntity);
+        rootEntity.setReferences(Collections.singletonList(reference));
+
+        dataManager.save(reference, rootEntity);
+
+        indexingQueueItemsTracker.clear();
+
+        reference = dataManager.load(Id.of(reference)).one();
+        reference.getEmbedded().setEnumValue(TestEnum.CLOSED);
+        dataManager.save(reference);
+
+        boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(rootEntity, IndexingOperation.INDEX, 0);
+        Assert.assertTrue(enqueued);
+    }
+
+    @Test
+    @DisplayName("Update of indexed value within embedded property of one-to-many reference leads to queue item enqueueing (Hard Delete)")
+    public void updateIndexedValueWithinEmbeddedPropertyOfOneToManyReferenceHardDelete() {
+        TestEmbeddableEntity embedded = metadata.create(TestEmbeddableEntity.class);
+        embedded.setEnumValue(TestEnum.OPEN);
+        embedded.setTextValue("V1");
+        embedded.setIntValue(1);
+
+        TestEmbTrackRefEntityHD reference = metadata.create(TestEmbTrackRefEntityHD.class);
+        reference.setName("Name");
+        reference.setEmbedded(embedded);
+        TestEmbTrackRootEntityHD rootEntity = metadata.create(TestEmbTrackRootEntityHD.class);
+        reference.setRefToRoot(rootEntity);
+        rootEntity.setReferences(Collections.singletonList(reference));
+
+        dataManager.save(reference, rootEntity);
+
+        indexingQueueItemsTracker.clear();
+
+        reference = dataManager.load(Id.of(reference)).one();
+        reference.setName("Name2");
+        dataManager.save(reference);
+
+        boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(rootEntity, IndexingOperation.INDEX, 1);
+        Assert.assertTrue(enqueued);
+    }
+
+    @Test
+    @DisplayName("Update of not-indexed value within embedded property of one-to-many reference doesn't lead to queue item enqueueing (Hard Delete)")
+    public void updateNotIndexedValueWithinEmbeddedPropertyOfOneToManyReferenceHardDelete() {
+        TestEmbeddableEntity embedded = metadata.create(TestEmbeddableEntity.class);
+        embedded.setEnumValue(TestEnum.OPEN);
+        embedded.setTextValue("V1");
+        embedded.setIntValue(1);
+
+        TestEmbTrackRefEntityHD reference = metadata.create(TestEmbTrackRefEntityHD.class);
+        reference.setName("Name");
+        reference.setEmbedded(embedded);
+        TestEmbTrackRootEntityHD rootEntity = metadata.create(TestEmbTrackRootEntityHD.class);
+        reference.setRefToRoot(rootEntity);
+        rootEntity.setReferences(Collections.singletonList(reference));
+
+        dataManager.save(reference, rootEntity);
+
+        indexingQueueItemsTracker.clear();
+
+        reference = dataManager.load(Id.of(reference)).one();
+        reference.getEmbedded().setEnumValue(TestEnum.CLOSED);
+        dataManager.save(reference);
+
         boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(rootEntity, IndexingOperation.INDEX, 0);
         Assert.assertTrue(enqueued);
     }

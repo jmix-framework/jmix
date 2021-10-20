@@ -17,6 +17,7 @@
 package io.jmix.search.index.mapping;
 
 import io.jmix.core.InstanceNameProvider;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.impl.scanning.JmixModulesClasspathScanner;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -47,12 +48,13 @@ public class IndexConfigurationManager {
     public IndexConfigurationManager(JmixModulesClasspathScanner classpathScanner,
                                      AnnotatedIndexDefinitionProcessor indexDefinitionProcessor,
                                      InstanceNameProvider instanceNameProvider,
-                                     IndexDefinitionDetector indexDefinitionDetector) {
+                                     IndexDefinitionDetector indexDefinitionDetector,
+                                     MetadataTools metadataTools) {
         Class<? extends IndexDefinitionDetector> detectorClass = indexDefinitionDetector.getClass();
         Set<String> classNames = classpathScanner.getClassNames(detectorClass);
         log.debug("Create Index Configurations");
 
-        Registry registry = new Registry(instanceNameProvider);
+        Registry registry = new Registry(instanceNameProvider, metadataTools);
         classNames.stream()
                 .map(indexDefinitionProcessor::createIndexConfiguration)
                 .forEach(registry::registerIndexConfiguration);
@@ -217,27 +219,6 @@ public class IndexConfigurationManager {
             this.backRefGlobalPropertyDelete = backRefGlobalPropertyDelete;
         }
 
-        public static PropertyTrackingInfo of(MetaClass rootClass, MetaPropertyPath propertyPath) {
-            Class<?> trackedClassUpdate = propertyPath.getMetaProperty().getDomain().getJavaClass();
-            Class<?> trackedClassDelete = propertyPath.getRange().isClass() ? propertyPath.getRangeJavaClass() : null;
-            String localPropertyName = propertyPath.getMetaProperty().getName();
-            MetaPropertyPath backRefGlobalPropertyDelete = propertyPath.getRange().isClass() ? propertyPath : null;
-            MetaPropertyPath backRefGlobalPropertyUpdate = null;
-
-            if (propertyPath.getMetaProperties().length > 1) {
-                MetaProperty[] metaProperties = propertyPath.getMetaProperties();
-                MetaProperty[] newProperties = Arrays.copyOf(metaProperties, metaProperties.length - 1);
-                backRefGlobalPropertyUpdate = new MetaPropertyPath(rootClass, newProperties);
-            }
-
-            return new PropertyTrackingInfo(trackedClassUpdate,
-                    trackedClassDelete,
-                    localPropertyName,
-                    backRefGlobalPropertyUpdate,
-                    backRefGlobalPropertyDelete
-            );
-        }
-
         public Class<?> getTrackedClassUpdate() {
             return trackedClassUpdate;
         }
@@ -275,6 +256,7 @@ public class IndexConfigurationManager {
 
     private static class Registry {
         private final InstanceNameProvider instanceNameProvider;
+        private final MetadataTools metadataTools;
 
         private final Map<String, IndexConfiguration> indexConfigurationsByEntityName = new HashMap<>();
         private final Map<String, IndexConfiguration> indexConfigurationsByIndexName = new HashMap<>();
@@ -282,8 +264,9 @@ public class IndexConfigurationManager {
         private final Map<Class<?>, Set<MetaPropertyPath>> referentiallyAffectedPropertiesForDelete = new HashMap<>();
         private final Set<Class<?>> registeredEntityClasses = new HashSet<>();
 
-        public Registry(InstanceNameProvider instanceNameProvider) {
+        public Registry(InstanceNameProvider instanceNameProvider, MetadataTools metadataTools) {
             this.instanceNameProvider = instanceNameProvider;
+            this.metadataTools = metadataTools;
         }
 
         void registerIndexConfiguration(IndexConfiguration indexConfiguration) {
@@ -424,15 +407,82 @@ public class IndexConfigurationManager {
         private List<PropertyTrackingInfo> createPropertyTrackingInfoList(MetaClass rootClass, MetaPropertyPath propertyPath) {
             log.debug("Process property for MetaClass={}: {}", rootClass, propertyPath);
             List<PropertyTrackingInfo> result = new ArrayList<>();
-            PropertyTrackingInfo propertyTrackingInfo = PropertyTrackingInfo.of(rootClass, propertyPath);
-            result.add(propertyTrackingInfo);
 
-            MetaPropertyPath refPropertyPath = propertyTrackingInfo.getBackRefGlobalPropertyUpdate();
-            if (refPropertyPath != null) {
-                result.addAll(createPropertyTrackingInfoList(rootClass, refPropertyPath));
+            String trackedLocalPropertyName;
+            MetaPropertyPath effectivePropertyPath;
+            if (isBelongToEmbedded(propertyPath)) {
+                /*
+                Skip nested value-property and continue to work with top-level embedded property.
+                Keep full name of nested value-property (started from the owner of top-level embedded property)
+                to match the changed in Entity Changed Event
+                */
+                effectivePropertyPath = createShiftedPropertyPath(propertyPath, 1);
+                trackedLocalPropertyName = createEmbeddedValuePropertyFullLocalName(propertyPath);
+            } else {
+                effectivePropertyPath = propertyPath;
+                trackedLocalPropertyName = propertyPath.getMetaProperty().getName();
+            }
+
+            Class<?> trackedClassUpdate = resolveTrackedClassForUpdateCase(effectivePropertyPath);
+            Class<?> trackedClassDelete = resolveTrackedClassForDeleteCase(effectivePropertyPath);
+            MetaPropertyPath backRefGlobalPropertyDelete = resolveBackRefPropertyForDeleteCase(propertyPath);
+            MetaPropertyPath backRefGlobalPropertyUpdate = resolveBackRefPropertyForUpdateCase(effectivePropertyPath);
+
+            PropertyTrackingInfo propertyTrackingInfo = new PropertyTrackingInfo(
+                    trackedClassUpdate,
+                    trackedClassDelete,
+                    trackedLocalPropertyName,
+                    backRefGlobalPropertyUpdate,
+                    backRefGlobalPropertyDelete
+            );
+            result.add(propertyTrackingInfo);
+            if (backRefGlobalPropertyUpdate != null) {
+                result.addAll(createPropertyTrackingInfoList(rootClass, backRefGlobalPropertyUpdate));
             }
 
             return result;
+        }
+
+        private boolean isBelongToEmbedded(MetaPropertyPath propertyPath) {
+            MetaProperty[] metaProperties = propertyPath.getMetaProperties();
+            boolean result = false;
+            if (metaProperties.length > 1) {
+                MetaProperty metaProperty = metaProperties[metaProperties.length - 2];
+                result = metadataTools.isEmbedded(metaProperty);
+            }
+            return result;
+        }
+
+        private MetaPropertyPath createShiftedPropertyPath(MetaPropertyPath sourcePropertyPath, int positions) {
+            MetaProperty[] metaProperties = sourcePropertyPath.getMetaProperties();
+            MetaProperty[] newProperties = Arrays.copyOf(metaProperties, metaProperties.length - positions);
+            return new MetaPropertyPath(sourcePropertyPath.getMetaClass(), newProperties);
+        }
+
+        private String createEmbeddedValuePropertyFullLocalName(MetaPropertyPath propertyPath) {
+            MetaProperty[] metaProperties = propertyPath.getMetaProperties();
+            return metaProperties[metaProperties.length - 2].getName() + "." + metaProperties[metaProperties.length - 1].getName();
+        }
+
+        private Class<?> resolveTrackedClassForUpdateCase(MetaPropertyPath propertyPath) {
+            return propertyPath.getMetaProperty().getDomain().getJavaClass();
+        }
+
+        @Nullable
+        private Class<?> resolveTrackedClassForDeleteCase(MetaPropertyPath propertyPath) {
+            return propertyPath.getRange().isClass() ? propertyPath.getRangeJavaClass() : null;
+        }
+
+        @Nullable
+        private MetaPropertyPath resolveBackRefPropertyForDeleteCase(MetaPropertyPath propertyPath) {
+            return propertyPath.getRange().isClass() ? propertyPath : null;
+        }
+
+        @Nullable
+        private MetaPropertyPath resolveBackRefPropertyForUpdateCase(MetaPropertyPath propertyPath) {
+            return propertyPath.getMetaProperties().length > 1
+                    ? createShiftedPropertyPath(propertyPath, 1)
+                    : null;
         }
     }
 }

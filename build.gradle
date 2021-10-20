@@ -70,7 +70,7 @@ dependencies {
     api platform("org.springframework.boot:spring-boot-dependencies:2.5.5")
     api platform('software.amazon.awssdk:bom:2.16.69')
 
-    def baseVersion = '1.0.0'
+    def baseVersion = '1.2.0'
     def auditVersion = baseVersion
     def awsfsVersion = baseVersion
     def awssecurityVerion = baseVersion

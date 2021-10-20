@@ -25,10 +25,10 @@ import javax.annotation.Nullable;
  * <p>
  * Example usage:
  * <pre>
- *     authenticator.withSystem(() -> {
+ *     authenticator.withSystem(() -&gt; {
  *         // valid current thread's authentication presents here
  *         return null;
- *     });;
+ *     });
  * </pre>
  * or
  * <pre>

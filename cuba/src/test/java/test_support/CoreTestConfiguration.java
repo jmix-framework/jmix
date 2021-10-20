@@ -25,6 +25,7 @@ import io.jmix.core.JmixModules;
 import io.jmix.core.Resources;
 import io.jmix.core.Stores;
 import io.jmix.core.impl.JmixMessageSource;
+import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.core.security.InMemoryUserRepository;
 import io.jmix.core.security.UserRepository;
 import io.jmix.data.DataConfiguration;
@@ -101,6 +102,12 @@ public class CoreTestConfiguration {
     @Primary
     PlatformTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {
         return new JmixTransactionManager(Stores.MAIN, entityManagerFactory);
+    }
+
+    @Bean(name = "test_CurrentAuthentication")
+    @Primary
+    CurrentAuthentication currentAuthentication() {
+        return new TestCurrentAuthentication();
     }
 
     @Bean(name = "test_UserEntityListener")

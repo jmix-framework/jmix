@@ -20,12 +20,8 @@ import com.haulmont.cuba.core.model.entity_annotations.LegacyAuditableEntity
 import io.jmix.core.DataManager
 import io.jmix.core.TimeSource
 import io.jmix.core.entity.EntityEntryAuditable
-import io.jmix.core.security.SystemAuthenticator
 import io.jmix.core.security.CurrentAuthentication
-import io.jmix.core.security.InMemoryUserRepository
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.security.core.userdetails.User
-import org.springframework.security.core.userdetails.UserDetails
 import spec.haulmont.cuba.core.CoreTestSpecification
 
 class LegacyAuditingTest extends CoreTestSpecification {
@@ -37,32 +33,9 @@ class LegacyAuditingTest extends CoreTestSpecification {
     TimeSource timeSource
 
     @Autowired
-    SystemAuthenticator authenticator
-
-    @Autowired
     private CurrentAuthentication currentAuthentication;
 
-    @Autowired
-    InMemoryUserRepository userRepository
-
-    UserDetails admin
-
-    def setup() {
-        admin = User.builder()
-                .username('admin')
-                .password('{noop}admin123')
-                .authorities(Collections.emptyList())
-                .build()
-        userRepository.addUser(admin)
-    }
-
-    def cleanup() {
-        userRepository.removeUser(admin)
-    }
-
     def "auditing should work for legacy entities"() {
-        setup:
-        authenticator.begin()
 
         expect:
         dataManager.create(LegacyAuditableEntity).__getEntityEntry() instanceof EntityEntryAuditable
@@ -74,9 +47,6 @@ class LegacyAuditingTest extends CoreTestSpecification {
         Date beforeCreate = timeSource.currentTimestamp()
         legacyAuditable = dataManager.save(legacyAuditable)
         Date afterCreate = timeSource.currentTimestamp()
-
-        authenticator.end()
-        authenticator.begin("admin")
 
         legacyAuditable.name = "Legacy"
 
@@ -94,16 +64,13 @@ class LegacyAuditingTest extends CoreTestSpecification {
         beforeOrEquals(beforeUpdate, legacyAuditable.updateTs)
         afterOrEquals(afterUpdate, legacyAuditable.updateTs)
 
-        !currentAuthentication.user.username.equals(legacyAuditable.createdBy)
+        currentAuthentication.user.username.equals(legacyAuditable.createdBy)
         currentAuthentication.user.username.equals(legacyAuditable.updatedBy)
 
         auditableEntityEntry.createdByClass.name.equals(String.class.name)
         auditableEntityEntry.createdDateClass.name.equals(Date.class.name)
         auditableEntityEntry.lastModifiedByClass.name.equals(String.class.name)
         auditableEntityEntry.lastModifiedDateClass.name.equals(Date.class.name)
-
-        cleanup:
-        authenticator.end()
     }
 
     static boolean beforeOrEquals(Date first, Date second) {

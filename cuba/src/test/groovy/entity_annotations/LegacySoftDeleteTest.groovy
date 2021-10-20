@@ -22,11 +22,7 @@ import io.jmix.core.DataManager
 import io.jmix.core.MetadataTools
 import io.jmix.core.entity.EntityEntrySoftDelete
 import io.jmix.core.entity.EntityValues
-import io.jmix.core.security.SystemAuthenticator
-import io.jmix.core.security.InMemoryUserRepository
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.security.core.userdetails.User
-import org.springframework.security.core.userdetails.UserDetails
 import spec.haulmont.cuba.core.CoreTestSpecification
 
 class LegacySoftDeleteTest extends CoreTestSpecification {
@@ -34,30 +30,7 @@ class LegacySoftDeleteTest extends CoreTestSpecification {
     DataManager dataManager
 
     @Autowired
-    SystemAuthenticator authenticator
-
-    @Autowired
-    InMemoryUserRepository userRepository
-
-    @Autowired
     MetadataTools metadataTools
-
-    UserDetails admin
-
-    def setup() {
-        admin = User.builder()
-                .username('admin')
-                .password('{noop}admin123')
-                .authorities(Collections.emptyList())
-                .build()
-        userRepository.addUser(admin)
-        authenticator.begin("admin")
-    }
-
-    def cleanup() {
-        authenticator.end()
-        userRepository.removeUser(admin)
-    }
 
     void "softDeletion should work for legacy entity and new entities"() {
         setup: "Legacy (implements SoftDelete) and new (annotated) entities"
@@ -99,17 +72,17 @@ class LegacySoftDeleteTest extends CoreTestSpecification {
 
         legacyEntity.isDeleted()
         legacyEntity.getDeleteTs() != null
-        legacyEntity.getDeletedBy() == "admin"
+        legacyEntity.getDeletedBy() == "test_admin"
 
         EntityEntrySoftDelete legacyEntityEntry = legacyEntity.__getEntityEntry() as EntityEntrySoftDelete
         legacyEntityEntry.isDeleted()
         legacyEntityEntry.getDeletedDate() != null
-        legacyEntityEntry.getDeletedBy() == "admin"
+        legacyEntityEntry.getDeletedBy() == "test_admin"
 
         EntityEntrySoftDelete newEntityEntry = newEntity.__getEntityEntry() as EntityEntrySoftDelete
         newEntityEntry.isDeleted()
         newEntityEntry.getDeletedDate() != null
-        newEntityEntry.getDeletedBy() == "admin"
+        newEntityEntry.getDeletedBy() == "test_admin"
 
         EntityValues.isSoftDeleted(legacyEntity)
         EntityValues.isSoftDeleted(newEntity)

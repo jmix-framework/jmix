@@ -26,7 +26,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -35,17 +34,22 @@ import java.util.TimeZone;
 public class CurrentAuthenticationImpl implements CurrentAuthentication {
 
     @Autowired(required = false)
-    protected List<AuthenticationResolver> authenticationResolvers;
-    @Autowired(required = false)
-    protected List<AuthenticationLocaleResolver> localeResolvers;
-    @Autowired
-    protected MessageTools messagesTools;
+    private List<AuthenticationResolver> authenticationResolvers;
 
-    @Nullable
+    @Autowired(required = false)
+    private List<AuthenticationLocaleResolver> localeResolvers;
+
+    @Autowired
+    private MessageTools messagesTools;
+
     @Override
     public Authentication getAuthentication() {
         Authentication authentication = SecurityContextHelper.getAuthentication();
-        if (authentication != null && authenticationResolvers != null) {
+        if (authentication == null) {
+            throw new IllegalStateException("Authentication is not set. " +
+                    "Use SystemAuthenticator in non-user requests like schedulers or asynchronous calls.");
+        }
+        if (authenticationResolvers != null) {
             return authenticationResolvers.stream()
                     .filter(resolver -> resolver.supports(authentication))
                     .findFirst()
@@ -58,60 +62,51 @@ public class CurrentAuthenticationImpl implements CurrentAuthentication {
     @Override
     public UserDetails getUser() {
         Authentication authentication = getAuthentication();
-        if (authentication != null) {
-            Object principal = authentication.getPrincipal();
-            if (principal instanceof UserDetails) {
-                return (UserDetails) principal;
-            } else {
-                throw new RuntimeException("Authentication principal must be UserDetails");
-            }
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof UserDetails) {
+            return (UserDetails) principal;
+        } else {
+            throw new RuntimeException("Authentication principal must be UserDetails");
         }
-        throw new IllegalStateException("Authentication is not set");
     }
 
     @Override
     public Locale getLocale() {
         Authentication authentication = getAuthentication();
-        if (authentication != null) {
-            Object details = authentication.getDetails();
-            Locale locale = null;
-            if (details instanceof ClientDetails) {
-                locale = ((ClientDetails) details).getLocale();
-            }
-            if (locale == null && CollectionUtils.isNotEmpty(localeResolvers)) {
-                locale = localeResolvers.stream()
-                        .filter(resolver -> resolver.supports(authentication))
-                        .findFirst()
-                        .map(resolver -> resolver.getLocale(authentication))
-                        .orElse(null);
-            }
-            return locale == null ? messagesTools.getDefaultLocale() : locale;
+        Object details = authentication.getDetails();
+        Locale locale = null;
+        if (details instanceof ClientDetails) {
+            locale = ((ClientDetails) details).getLocale();
         }
-        throw new IllegalStateException("Authentication is not set");
+        if (locale == null && CollectionUtils.isNotEmpty(localeResolvers)) {
+            locale = localeResolvers.stream()
+                    .filter(resolver -> resolver.supports(authentication))
+                    .findFirst()
+                    .map(resolver -> resolver.getLocale(authentication))
+                    .orElse(null);
+        }
+        return locale == null ? messagesTools.getDefaultLocale() : locale;
     }
 
     @Override
     public TimeZone getTimeZone() {
         Authentication authentication = getAuthentication();
-        if (authentication != null) {
-            Object details = authentication.getDetails();
-            Object principal = authentication.getPrincipal();
-            TimeZone timeZone = null;
-            if (principal instanceof HasTimeZone) {
-                String timeZoneId = ((HasTimeZone) principal).getTimeZoneId();
-                if (!Strings.isNullOrEmpty(timeZoneId)) {
-                    timeZone = TimeZone.getTimeZone(timeZoneId);
-                }
-            } else if (details instanceof ClientDetails) {
-                timeZone = ((ClientDetails) details).getTimeZone();
+        Object details = authentication.getDetails();
+        Object principal = authentication.getPrincipal();
+        TimeZone timeZone = null;
+        if (principal instanceof HasTimeZone) {
+            String timeZoneId = ((HasTimeZone) principal).getTimeZoneId();
+            if (!Strings.isNullOrEmpty(timeZoneId)) {
+                timeZone = TimeZone.getTimeZone(timeZoneId);
             }
-            return timeZone == null ? TimeZone.getDefault() : timeZone;
+        } else if (details instanceof ClientDetails) {
+            timeZone = ((ClientDetails) details).getTimeZone();
         }
-        throw new IllegalStateException("Authentication is not set");
+        return timeZone == null ? TimeZone.getDefault() : timeZone;
     }
 
     @Override
     public boolean isSet() {
-        return getAuthentication() != null;
+        return SecurityContextHelper.getAuthentication() != null;
     }
 }

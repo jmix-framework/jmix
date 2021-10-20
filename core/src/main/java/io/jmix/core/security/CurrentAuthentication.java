@@ -19,20 +19,22 @@ package io.jmix.core.security;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.annotation.Nullable;
 import java.util.Locale;
 import java.util.TimeZone;
 
 /**
- * Class that is used to get the information about the authenticated user.
+ * Provides information about the currently authenticated user.
  */
 public interface CurrentAuthentication {
 
-    @Nullable
+    /**
+     * Returns current authentication object.
+     * @throws IllegalStateException if Authentication is not set to {@link org.springframework.security.core.context.SecurityContext}
+     */
     Authentication getAuthentication();
 
     /**
-     * Method returns the authenticated user. If you need to get the user substitution information use the {@link
+     * Returns the authenticated user. If you need to get the user substitution information use the {@link
      * io.jmix.core.usersubstitution.CurrentUserSubstitution}.
      *
      * @return currently authenticated user

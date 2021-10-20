@@ -34,7 +34,6 @@ import org.springframework.stereotype.Component;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Component("core_UserSubstitutionManager")
@@ -98,8 +97,7 @@ public class UserSubstitutionManagerImpl implements UserSubstitutionManager {
         }
 
         SubstitutedUserAuthenticationToken authentication = (SubstitutedUserAuthenticationToken) authenticationManager.authenticate(
-                new SubstitutedUserAuthenticationToken(Objects.requireNonNull(currentAuthentication.getAuthentication()),
-                        substitutedUserName));
+                new SubstitutedUserAuthenticationToken(currentAuthentication.getAuthentication(), substitutedUserName));
 
         SecurityContextHelper.setAuthentication(authentication);
         eventPublisher.publishEvent(new UserSubstitutedEvent((UserDetails) authentication.getPrincipal(), (UserDetails) authentication.getSubstitutedPrincipal()));

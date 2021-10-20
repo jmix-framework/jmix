@@ -38,9 +38,11 @@ public class CurrentUserSubstitutionImpl implements CurrentUserSubstitution {
 
     @Override
     public UserDetails getSubstitutedUser() {
+        if (!currentAuthentication.isSet()) {
+            return null;
+        }
         Authentication authentication = currentAuthentication.getAuthentication();
-        if (authentication != null &&
-                SubstitutedUserAuthenticationToken.class.isAssignableFrom(authentication.getClass())) {
+        if (SubstitutedUserAuthenticationToken.class.isAssignableFrom(authentication.getClass())) {
             Object substitutedPrincipal = ((SubstitutedUserAuthenticationToken) authentication).getSubstitutedPrincipal();
             if (substitutedPrincipal instanceof UserDetails) {
                 return (UserDetails) substitutedPrincipal;

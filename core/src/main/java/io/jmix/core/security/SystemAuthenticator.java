@@ -21,9 +21,16 @@ import org.springframework.security.core.Authentication;
 import javax.annotation.Nullable;
 
 /**
- * Provides ad-hoc authentication.
+ * Provides ad-hoc authentication, i.e. allows you to execute code on behalf of the 'system' or a specified user.
  * <p>
  * Example usage:
+ * <pre>
+ *     authenticator.withSystem(() -> {
+ *         // valid current thread's authentication presents here
+ *         return null;
+ *     });;
+ * </pre>
+ * or
  * <pre>
  *     authenticator.begin();
  *     try {
@@ -33,6 +40,8 @@ import javax.annotation.Nullable;
  *     }
  * </pre>
  *
+ * @see #withSystem(AuthenticatedOperation)
+ * @see #withUser(String, AuthenticatedOperation)
  * @see #begin()
  * @see #begin(String)
  */

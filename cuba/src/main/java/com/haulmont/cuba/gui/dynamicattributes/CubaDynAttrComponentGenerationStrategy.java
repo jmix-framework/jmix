@@ -53,11 +53,7 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 
 @org.springframework.stereotype.Component("cuba_DynamicAttributeComponentGenerationStrategy")
@@ -141,10 +137,10 @@ public class CubaDynAttrComponentGenerationStrategy extends DynAttrComponentGene
             }
         }
 
-        setValueSource(listEditor, context);
-
         ListEditor.ItemType itemType = getListEditorItemType(attribute);
         listEditor.setItemType(itemType);
+
+        setValueSource(listEditor, context);
 
         Class<?> entityClass = attribute.getJavaType();
         if (entityClass != null && entityClass.isAssignableFrom(Entity.class)) {

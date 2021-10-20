@@ -95,6 +95,138 @@ public class EntityChangeTrackingTest {
     }
 
     @Test
+    @DisplayName("Update of indexed value within local embedded property leads to queue item enqueueing (Soft Delete)")
+    public void updateIndexedValueWithinLocalEmbeddedProperty() {
+        TestEmbeddableEntity embedded = metadata.create(TestEmbeddableEntity.class);
+        embedded.setEnumValue(TestEnum.OPEN);
+        embedded.setTextValue("V1");
+        embedded.setIntValue(1);
+
+        TestEmbTrackRootEntity rootEntity = metadata.create(TestEmbTrackRootEntity.class);
+        rootEntity.setTextValue("V1");
+        rootEntity.setEmbedded(embedded);
+
+        dataManager.save(rootEntity);
+
+        indexingQueueItemsTracker.clear();
+
+        rootEntity = dataManager.load(Id.of(rootEntity)).one();
+        rootEntity.getEmbedded().setTextValue("V2");
+        dataManager.save(rootEntity);
+
+        boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(rootEntity, IndexingOperation.INDEX, 1);
+        Assert.assertTrue(enqueued);
+    }
+
+    @Test
+    @DisplayName("Update of indexed value within local embedded property leads to queue item enqueueing (Hard Delete)")
+    public void updateIndexedValueWithinLocalEmbeddedPropertyHardDelete() {
+        TestEmbeddableEntity embedded = metadata.create(TestEmbeddableEntity.class);
+        embedded.setEnumValue(TestEnum.OPEN);
+        embedded.setTextValue("V1");
+        embedded.setIntValue(1);
+
+        TestEmbTrackRootEntityHD rootEntity = metadata.create(TestEmbTrackRootEntityHD.class);
+        rootEntity.setTextValue("V1");
+        rootEntity.setEmbedded(embedded);
+
+        dataManager.save(rootEntity);
+
+        indexingQueueItemsTracker.clear();
+
+        rootEntity = dataManager.load(Id.of(rootEntity)).one();
+        rootEntity.getEmbedded().setTextValue("V2");
+        dataManager.save(rootEntity);
+
+        boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(rootEntity, IndexingOperation.INDEX, 1);
+        Assert.assertTrue(enqueued);
+    }
+
+    @Test
+    @DisplayName("Update of not-indexed local property of indexed entity doesn't lead to queue item enqueueing (Soft Delete)")
+    public void updateNotIndexedLocalPropertyOfIndexedEntity() {
+        TestEmbTrackRootEntity rootEntity = metadata.create(TestEmbTrackRootEntity.class);
+        rootEntity.setTextValue("V1");
+
+        dataManager.save(rootEntity);
+
+        indexingQueueItemsTracker.clear();
+
+        rootEntity = dataManager.load(Id.of(rootEntity)).one();
+        rootEntity.setTextValue("V2");
+        dataManager.save(rootEntity);
+
+        boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(rootEntity, IndexingOperation.INDEX, 0);
+        Assert.assertTrue(enqueued);
+    }
+
+    @Test
+    @DisplayName("Update of not-indexed local property of indexed entity doesn't lead to queue item enqueueing (Hard Delete)")
+    public void updateNotIndexedLocalPropertyOfIndexedEntityHardDelete() {
+        TestEmbTrackRootEntityHD rootEntity = metadata.create(TestEmbTrackRootEntityHD.class);
+        rootEntity.setTextValue("V1");
+
+        dataManager.save(rootEntity);
+
+        indexingQueueItemsTracker.clear();
+
+        rootEntity = dataManager.load(Id.of(rootEntity)).one();
+        rootEntity.setTextValue("V2");
+        dataManager.save(rootEntity);
+
+        boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(rootEntity, IndexingOperation.INDEX, 0);
+        Assert.assertTrue(enqueued);
+    }
+
+    @Test
+    @DisplayName("Update of not-indexed value within local embedded property of indexed entity doesn't lead to queue item enqueueing (Soft Delete)")
+    public void updateNotIndexedValueWithinLocalEmbeddedPropertyOfIndexedEntity() {
+        TestEmbeddableEntity embedded = metadata.create(TestEmbeddableEntity.class);
+        embedded.setEnumValue(TestEnum.OPEN);
+        embedded.setTextValue("V1");
+        embedded.setIntValue(1);
+
+        TestEmbTrackRootEntity rootEntity = metadata.create(TestEmbTrackRootEntity.class);
+        rootEntity.setTextValue("V1");
+        rootEntity.setEmbedded(embedded);
+
+        dataManager.save(rootEntity);
+
+        indexingQueueItemsTracker.clear();
+
+        rootEntity = dataManager.load(Id.of(rootEntity)).one();
+        rootEntity.getEmbedded().setEnumValue(TestEnum.CLOSED);
+        dataManager.save(rootEntity);
+
+        boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(rootEntity, IndexingOperation.INDEX, 0);
+        Assert.assertTrue(enqueued);
+    }
+
+    @Test
+    @DisplayName("Update of not-indexed value within local embedded property of indexed entity doesn't lead to queue item enqueueing (Hard Delete)")
+    public void updateNotIndexedValueWithinLocalEmbeddedPropertyOfIndexedEntityHardDelete() {
+        TestEmbeddableEntity embedded = metadata.create(TestEmbeddableEntity.class);
+        embedded.setEnumValue(TestEnum.OPEN);
+        embedded.setTextValue("V1");
+        embedded.setIntValue(1);
+
+        TestEmbTrackRootEntityHD rootEntity = metadata.create(TestEmbTrackRootEntityHD.class);
+        rootEntity.setTextValue("V1");
+        rootEntity.setEmbedded(embedded);
+
+        dataManager.save(rootEntity);
+
+        indexingQueueItemsTracker.clear();
+
+        rootEntity = dataManager.load(Id.of(rootEntity)).one();
+        rootEntity.getEmbedded().setEnumValue(TestEnum.CLOSED);
+        dataManager.save(rootEntity);
+
+        boolean enqueued = indexingQueueItemsTracker.containsQueueItemsForEntityAndOperation(rootEntity, IndexingOperation.INDEX, 0);
+        Assert.assertTrue(enqueued);
+    }
+
+    @Test
     @DisplayName("Deletion of indexed entity leads to queue item enqueueing (Soft Delete)")
     public void deleteIndexedEntity() {
         TestRootEntity entity = ewm.createTestRootEntity().save();

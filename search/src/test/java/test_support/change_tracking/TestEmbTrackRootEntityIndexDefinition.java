@@ -26,7 +26,6 @@ public interface TestEmbTrackRootEntityIndexDefinition {
 
     @AutoMappedField(includeProperties = {
             "name",
-            "textValue",
             "embedded.textValue",
             "references.name",
             "references.textValue",

@@ -144,13 +144,18 @@ public class EntityTrackingListener implements DataStoreEventListener, DataStore
         EntityChangedEvent.Type eventType = event.getType();
         String entityName = metaClass.getName();
 
-        if (indexConfigurationManager.isDirectlyIndexed(entityName)) { //todo check dirty fields
+        AttributeChanges changes = event.getChanges();
+        if (indexConfigurationManager.isDirectlyIndexed(entityName)) {
             log.debug("{} is directly indexed", entityId);
 
             switch (eventType) {
                 case CREATED:
-                case UPDATED:
                     indexingQueueManager.enqueueIndexByEntityId(entityId);
+                    break;
+                case UPDATED:
+                    if (isUpdateRequired(entityClass, changes)) {
+                        indexingQueueManager.enqueueIndexByEntityId(entityId);
+                    }
                     break;
                 case DELETED:
                     indexingQueueManager.enqueueDeleteByEntityId(entityId);
@@ -158,7 +163,6 @@ public class EntityTrackingListener implements DataStoreEventListener, DataStore
             }
         }
 
-        AttributeChanges changes = event.getChanges();
         if (EntityChangedEvent.Type.UPDATED.equals(eventType)) {
             Set<Id<?>> dependentEntityIds = getEntityIdsDependentOnUpdatedEntity(entityId, metaClass, changes);
 
@@ -172,6 +176,13 @@ public class EntityTrackingListener implements DataStoreEventListener, DataStore
                 removalDependencies.invalidate(entityId);
             }
         }
+    }
+
+    protected boolean isUpdateRequired(Class<?> entityClass, AttributeChanges changes) {
+        Set<String> affectedLocalPropertyNames = indexConfigurationManager.getLocalPropertyNamesAffectedByUpdate(entityClass);
+        return changes.getAttributes()
+                .stream()
+                .anyMatch(affectedLocalPropertyNames::contains);
     }
 
     protected boolean isChangeTrackingEnabled() {

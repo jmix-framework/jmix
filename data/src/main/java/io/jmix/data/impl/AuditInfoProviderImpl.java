@@ -30,7 +30,7 @@ public class AuditInfoProviderImpl implements AuditInfoProvider {
 
     @Override
     public UserDetails getCurrentUser() {
-        return currentAuthentication.getAuthentication() != null ?
+        return currentAuthentication.isSet() ?
                 currentAuthentication.getUser() :
                 null;
     }

@@ -105,16 +105,14 @@ public class AuthenticationPolicyStore implements PolicyStore {
         Stream<T> stream = Stream.empty();
 
         Authentication authentication = currentAuthentication.getAuthentication();
-        if (authentication != null) {
-            String scope = getScope(authentication);
-            for (GrantedAuthority authority : authentication.getAuthorities()) {
-                if (authority instanceof PolicyAwareGrantedAuthority) {
-                    PolicyAwareGrantedAuthority policyAwareAuthority = (PolicyAwareGrantedAuthority) authority;
-                    if (isAppliedForScope(policyAwareAuthority, scope)) {
-                        Stream<T> extractedStream = extractor.apply(policyAwareAuthority);
-                        if (extractedStream != null) {
-                            stream = Stream.concat(stream, extractedStream);
-                        }
+        String scope = getScope(authentication);
+        for (GrantedAuthority authority : authentication.getAuthorities()) {
+            if (authority instanceof PolicyAwareGrantedAuthority) {
+                PolicyAwareGrantedAuthority policyAwareAuthority = (PolicyAwareGrantedAuthority) authority;
+                if (isAppliedForScope(policyAwareAuthority, scope)) {
+                    Stream<T> extractedStream = extractor.apply(policyAwareAuthority);
+                    if (extractedStream != null) {
+                        stream = Stream.concat(stream, extractedStream);
                     }
                 }
             }
@@ -127,14 +125,12 @@ public class AuthenticationPolicyStore implements PolicyStore {
         Stream<T> stream = Stream.empty();
 
         Authentication authentication = currentAuthentication.getAuthentication();
-        if (authentication != null) {
-            for (GrantedAuthority authority : authentication.getAuthorities()) {
-                if (authority instanceof PolicyAwareGrantedAuthority) {
-                    PolicyAwareGrantedAuthority policyAwareAuthority = (PolicyAwareGrantedAuthority) authority;
-                    Stream<T> extractedStream = extractor.apply(policyAwareAuthority);
-                    if (extractedStream != null) {
-                        stream = Stream.concat(stream, extractedStream);
-                    }
+        for (GrantedAuthority authority : authentication.getAuthorities()) {
+            if (authority instanceof PolicyAwareGrantedAuthority) {
+                PolicyAwareGrantedAuthority policyAwareAuthority = (PolicyAwareGrantedAuthority) authority;
+                Stream<T> extractedStream = extractor.apply(policyAwareAuthority);
+                if (extractedStream != null) {
+                    stream = Stream.concat(stream, extractedStream);
                 }
             }
         }

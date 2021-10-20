@@ -56,16 +56,14 @@ public class AuthenticationUiPolicyStore implements UiPolicyStore {
         Stream<T> stream = Stream.empty();
 
         Authentication authentication = currentAuthentication.getAuthentication();
-        if (authentication != null) {
-            String scope = getScope(authentication);
-            for (GrantedAuthority authority : authentication.getAuthorities()) {
-                if (authority instanceof PolicyAwareGrantedAuthority) {
-                    PolicyAwareGrantedAuthority policyAwareAuthority = (PolicyAwareGrantedAuthority) authority;
-                    if (isAppliedForScope(policyAwareAuthority, scope)) {
-                        Stream<T> extractedStream = extractor.apply(policyAwareAuthority);
-                        if (extractedStream != null) {
-                            stream = Stream.concat(stream, extractedStream);
-                        }
+        String scope = getScope(authentication);
+        for (GrantedAuthority authority : authentication.getAuthorities()) {
+            if (authority instanceof PolicyAwareGrantedAuthority) {
+                PolicyAwareGrantedAuthority policyAwareAuthority = (PolicyAwareGrantedAuthority) authority;
+                if (isAppliedForScope(policyAwareAuthority, scope)) {
+                    Stream<T> extractedStream = extractor.apply(policyAwareAuthority);
+                    if (extractedStream != null) {
+                        stream = Stream.concat(stream, extractedStream);
                     }
                 }
             }

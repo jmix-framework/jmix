@@ -24,11 +24,10 @@ import io.jmix.core.constraint.InMemoryConstraint;
 import io.jmix.core.constraint.RowLevelConstraint;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.CurrentAuthentication;
-import io.jmix.core.security.InMemoryUserRepository;
+import io.jmix.core.security.SystemAuthenticator;
 import io.jmix.data.DataConfiguration;
 import io.jmix.eclipselink.EclipselinkConfiguration;
 import io.jmix.security.SecurityConfiguration;
-import io.jmix.security.role.RowLevelRoleRepository;
 import io.jmix.securitydata.SecurityDataConfiguration;
 import io.jmix.securitydata.constraint.ReadEntityQueryConstraint;
 import org.junit.jupiter.api.Test;
@@ -37,13 +36,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import test_support.SecurityDataTestConfiguration;
 import test_support.entity.TestOrder;
 
-import java.time.LocalTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -61,15 +58,15 @@ public class DataManagerConstraintsUsageTest {
     @Autowired
     ApplicationContext applicationContext;
     @Autowired
-    InMemoryUserRepository userRepository;
-    @Autowired
-    RowLevelRoleRepository rowLevelRoleRepository;
-    @Autowired
     CurrentAuthentication currentAuthentication;
+    @Autowired
+    SystemAuthenticator systemAuthenticator;
 
     @Test
     void test() {
         List<TestOrder> list;
+
+        systemAuthenticator.begin();
 
         // all registered constraints
         list = dataManager.load(TestOrder.class)
@@ -95,6 +92,8 @@ public class DataManagerConstraintsUsageTest {
                 .all()
                 .accessConstraints(Collections.singleton(new TestConstraint(currentAuthentication.getAuthentication())))
                 .list();
+
+        systemAuthenticator.end();
     }
 
     public static class TestConstraint implements InMemoryConstraint<InMemoryCrudEntityContext>, RowLevelConstraint<InMemoryCrudEntityContext> {

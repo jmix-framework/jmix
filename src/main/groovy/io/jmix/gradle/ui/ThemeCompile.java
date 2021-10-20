@@ -225,7 +225,7 @@ public class ThemeCompile extends DefaultTask {
                 .filter(f -> f.exists() && f.isFile() && f.getName().endsWith(".jar"))
                 .forEach(jarFile -> {
                     try (InputStream is = new FileInputStream(jarFile);
-                            JarInputStream jarStream = new JarInputStream(is)) {
+                         JarInputStream jarStream = new JarInputStream(is)) {
 
                         String vaadinStylesheets = getVaadinStylesheets(jarStream);
 
@@ -502,8 +502,9 @@ public class ThemeCompile extends DefaultTask {
     protected void collectAddonIncludes(Configuration configuration, StringBuilder appComponentsIncludeBuilder,
                                         Set<ResolvedArtifact> addedArtifacts, List<String> includeMixins, Set<String> includedPaths) {
         Set<ResolvedDependency> dependencies = configuration.getResolvedConfiguration().getFirstLevelModuleDependencies();
+        Set<ResolvedDependency> visitedDependencies = new HashSet<>();
 
-        walkDependencies(dependencies, addedArtifacts, artifact -> {
+        walkDependencies(dependencies, visitedDependencies, addedArtifacts, artifact -> {
             File file = artifact.getFile();
 
             try (FileInputStream is = new FileInputStream(file);
@@ -552,20 +553,23 @@ public class ThemeCompile extends DefaultTask {
         }
     }
 
-    protected void walkDependencies(Set<ResolvedDependency> dependencies, Set<ResolvedArtifact> addedArtifacts,
+    protected void walkDependencies(Set<ResolvedDependency> dependencies, Set<ResolvedDependency> visitedDependencies, Set<ResolvedArtifact> addedArtifacts,
                                     Consumer<ResolvedArtifact> artifactAction) {
         for (ResolvedDependency dependency : dependencies) {
-            walkDependencies(dependency.getChildren(), addedArtifacts, artifactAction);
+            if (!visitedDependencies.contains(dependency)) {
+                visitedDependencies.add(dependency);
+                walkDependencies(dependency.getChildren(), visitedDependencies, addedArtifacts, artifactAction);
 
-            for (ResolvedArtifact artifact : dependency.getModuleArtifacts()) {
-                if (addedArtifacts.contains(artifact)) {
-                    continue;
-                }
+                for (ResolvedArtifact artifact : dependency.getModuleArtifacts()) {
+                    if (addedArtifacts.contains(artifact)) {
+                        continue;
+                    }
 
-                addedArtifacts.add(artifact);
+                    addedArtifacts.add(artifact);
 
-                if (artifact.getFile().getName().endsWith(".jar")) {
-                    artifactAction.accept(artifact);
+                    if (artifact.getFile().getName().endsWith(".jar")) {
+                        artifactAction.accept(artifact);
+                    }
                 }
             }
         }
@@ -591,7 +595,7 @@ public class ThemeCompile extends DefaultTask {
     }
 
     protected void removeEmptyDirs(File themesDestDir) {
-        recursiveVisitDir(themesDestDir,  f -> {
+        recursiveVisitDir(themesDestDir, f -> {
             String[] list = f.list();
             if (list == null) {
                 return;

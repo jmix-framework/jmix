@@ -56,7 +56,7 @@ public interface SearchField extends Field<String> {
      *
      * @param strategy {@link SearchStrategy}
      */
-    @StudioProperty(name = "strategy", type = PropertyType.STRING,
+    @StudioProperty(name = "strategy", type = PropertyType.STRING, defaultValue = "anyTermAnyField",
             options = {"anyTermAnyField", "allTermsAnyField", "allTermsSingleField", "phrase"})
     void setSearchStrategy(SearchStrategy strategy);
 

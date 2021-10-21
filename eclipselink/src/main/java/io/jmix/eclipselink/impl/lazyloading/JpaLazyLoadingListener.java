@@ -55,6 +55,8 @@ public class JpaLazyLoadingListener implements DataStoreEventListener {
     protected FetchPlanRepository fetchPlanRepository;
     @Autowired
     protected ExtendedEntities extendedEntities;
+    @Autowired
+    protected FetchPlans fetchPlans;
 
     @Override
     public void afterEntityLoad(DataStoreAfterEntityLoadEvent event) {
@@ -173,27 +175,32 @@ public class JpaLazyLoadingListener implements DataStoreEventListener {
     }
 
     protected void collectFetchPlans(Object instance, FetchPlan fetchPlan, Map<Object, Set<FetchPlan>> collectedFetchPlans) {
-        Set<FetchPlan> fetchPlans = collectedFetchPlans.get(instance);
-        if (fetchPlans == null) {
-            fetchPlans = new HashSet<>();
-            collectedFetchPlans.put(instance, fetchPlans);
-        } else if (fetchPlans.contains(fetchPlan)) {
+        Set<FetchPlan> instanceFetchPlans = collectedFetchPlans.get(instance);
+        if (instanceFetchPlans == null) {
+            instanceFetchPlans = new HashSet<>();
+            collectedFetchPlans.put(instance, instanceFetchPlans);
+        } else if (instanceFetchPlans.contains(fetchPlan)) {
             return;
         }
-        fetchPlans.add(fetchPlan);
+
+        FetchPlanBuilder actualBuilder = fetchPlans.builder(fetchPlan.getEntityClass());
 
         MetaClass metaClass = metadata.getClass(instance.getClass());
         for (FetchPlanProperty property : fetchPlan.getProperties()) {
             MetaProperty metaProperty = metaClass.getProperty(property.getName());
             if (!metaProperty.getRange().isClass() && !isLazyFetchedLocalAttribute(metaProperty)
                     || !metadataTools.isJpa(metaProperty)) {
+                actualBuilder.mergeProperty(property.getName(), property.getFetchPlan(), property.getFetchMode());
                 continue;
             }
 
-            if (metadataTools.isEmbedded(metaProperty) &&
-                    !entityStates.isLoaded(instance, property.getName())) {
+            //may be actually not loaded in complicated graph with several references to the same entity with different fetchPlans
+            if (!entityStates.isLoaded(instance, property.getName())) {
+                //so do not process this property and do not add it to collectedFetchPlans in order to create lazy loading ValueHolder for it
                 continue;
             }
+
+            actualBuilder.mergeProperty(property.getName(), property.getFetchPlan(), property.getFetchMode());
 
             Object value = EntityValues.getValue(instance, property.getName());
             FetchPlan propertyFetchPlan = property.getFetchPlan();
@@ -210,6 +217,9 @@ public class JpaLazyLoadingListener implements DataStoreEventListener {
                 }
             }
         }
+
+        actualBuilder.partial(fetchPlan.loadPartialEntities());
+        instanceFetchPlans.add(actualBuilder.build());
     }
 
     protected boolean isPropertyContainedInFetchPlans(MetaProperty metaProperty, Set<FetchPlan> fetchPlans) {

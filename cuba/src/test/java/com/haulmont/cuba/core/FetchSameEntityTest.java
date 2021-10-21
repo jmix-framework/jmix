@@ -33,6 +33,8 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 @CoreTest
 public class FetchSameEntityTest {
     @Autowired
@@ -92,7 +94,6 @@ public class FetchSameEntityTest {
         testSupport.deleteRecord(linkB1, linkB2, linkA1, linkA2, mainEntity);
     }
 
-    @Disabled("until https://github.com/Haulmont/jmix-cuba/issues/94 is fixed")
     @Test
     public void testUnFetched() throws Exception {
         DataManager dataManager = AppBeans.get(DataManager.class);
@@ -118,6 +119,8 @@ public class FetchSameEntityTest {
                 .setId(mainEntity.getId()).setView(mainView);
 
         FetchSameMainEntity reloaded = dataManager.load(lc);
-        reloaded.getLinkAEntities().size();
+        assertEquals(1, reloaded.getLinkAEntities().size());
+
+        reloaded.getLinkAEntities().get(0).getMainEntity();//no exception should be thrown
     }
 }

@@ -112,7 +112,6 @@ public class SeveralFetchGroupsTest {
         testSupport.deleteRecord("TEST_SEVERAL_FETCH_GROUPS_TARIFF", tariffId4_2, tariffId3_1, tariffId2_1, tariffId1);
     }
 
-    @Disabled("until https://github.com/Haulmont/jmix-cuba/issues/94 is fixed")
     @Test
     public void testLoadTariffVersions() {
         LoadContext<SeveralFetchGroups_TariffVersion> loadContext = new LoadContext<>(SeveralFetchGroups_TariffVersion.class);

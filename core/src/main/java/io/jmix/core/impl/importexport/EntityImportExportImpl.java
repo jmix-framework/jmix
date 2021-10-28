@@ -232,14 +232,17 @@ public class EntityImportExportImpl implements EntityImportExport {
             FetchPlan fetchPlan = constructFetchPlanFromImportPlan(importPlan).build();
             //set softDeletion to false because we can import deleted entity, so we'll restore it and update
 
-            LoadContext<?> ctx = new LoadContext<>(metadata.getClass(srcEntity.getClass()))
-                    .setFetchPlan(fetchPlan)
-                    .setHint("jmix.dynattr", true)
-                    .setHint("jmix.softDeletion", false)
-                    .setId(EntityValues.getId(srcEntity))
-                    .setAccessConstraints(accessConstraintsRegistry.getConstraints());
-            Object dstEntity = dataManager.load(ctx);
-
+            Object dstEntity = null;
+            Object entityId = EntityValues.getId(srcEntity);
+            if (entityId != null) {
+                LoadContext<?> ctx = new LoadContext<>(metadata.getClass(srcEntity.getClass()))
+                        .setFetchPlan(fetchPlan)
+                        .setHint("jmix.dynattr", true)
+                        .setHint("jmix.softDeletion", false)
+                        .setId(entityId)
+                        .setAccessConstraints(accessConstraintsRegistry.getConstraints());
+                dstEntity = dataManager.load(ctx);
+            }
             importEntity(srcEntity, dstEntity, importPlan, fetchPlan, saveContext, referenceInfoList, optimisticLocking, additionComposition);
         }
 

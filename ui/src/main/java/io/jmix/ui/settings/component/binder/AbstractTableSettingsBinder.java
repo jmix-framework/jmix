@@ -90,8 +90,10 @@ public abstract class AbstractTableSettingsBinder implements DataLoadingSettings
 
     @Override
     public void applyDataLoadingSettings(Table table, SettingsWrapper wrapper) {
-        if (table.isSortable() && isApplyDataLoadingSettings(table)) {
-            EntityTableItems entityTableSource = (EntityTableItems) table.getItems();
+        EntityTableItems entityTableSource = (EntityTableItems) table.getItems();
+        if (table.isSortable()
+                && isApplyDataLoadingSettings(table)
+                && entityTableSource != null) {
 
             TableSettings tableSettings = wrapper.getSettings();
             List<TableSettings.ColumnSettings> columns = tableSettings.getColumns();
@@ -103,7 +105,6 @@ public abstract class AbstractTableSettingsBinder implements DataLoadingSettings
 
                     MetaPropertyPath sortProperty = entityTableSource.getEntityMetaClass().getPropertyPath(sortProp);
                     if (visibleColumns.contains(sortProperty)) {
-                        boolean sortAscending = tableSettings.getSortAscending();
 
                         if (table.getItems() instanceof TableItems.Sortable) {
                             ((TableItems.Sortable) table.getItems()).suppressSorting();
@@ -111,7 +112,7 @@ public abstract class AbstractTableSettingsBinder implements DataLoadingSettings
                         try {
                             com.vaadin.v7.ui.Table vTable = getVTable(table);
                             vTable.setSortContainerPropertyId(null);
-                            vTable.setSortAscending(sortAscending);
+                            vTable.setSortAscending(Boolean.TRUE.equals(tableSettings.getSortAscending()));
                             vTable.setSortContainerPropertyId(sortProperty);
                         } finally {
                             if (table.getItems() instanceof TableItems.Sortable) {
@@ -201,7 +202,6 @@ public abstract class AbstractTableSettingsBinder implements DataLoadingSettings
         return new TableSettings();
     }
 
-    @SuppressWarnings("unchecked")
     protected List<TableSettings.ColumnSettings> getTableColumnSettings(Table table) {
         com.vaadin.v7.ui.Table vTable = getVTable(table);
 
@@ -226,7 +226,6 @@ public abstract class AbstractTableSettingsBinder implements DataLoadingSettings
         return columnsSettings;
     }
 
-    @SuppressWarnings("unchecked")
     protected boolean isCommonTableSettingsChanged(TableSettings tableSettings, Table table) {
         com.vaadin.v7.ui.Table vTable = getVTable(table);
 
@@ -290,11 +289,15 @@ public abstract class AbstractTableSettingsBinder implements DataLoadingSettings
     protected void applyColumnSettings(TableSettings tableSettings, Table table) {
         com.vaadin.v7.ui.Table vTable = getVTable(table);
 
+        List<TableSettings.ColumnSettings> settingsColumns = CollectionUtils.isEmpty(tableSettings.getColumns())
+                ? Collections.emptyList()
+                : tableSettings.getColumns();
+
         Object[] oldColumns = vTable.getVisibleColumns();
         List<Object> newColumns = new ArrayList<>();
 
         // add columns from saved settings
-        for (TableSettings.ColumnSettings columnSetting : tableSettings.getColumns()) {
+        for (TableSettings.ColumnSettings columnSetting : settingsColumns) {
             for (Object column : oldColumns) {
                 if (column.toString().equals(columnSetting.getId())) {
                     newColumns.add(column);
@@ -328,14 +331,15 @@ public abstract class AbstractTableSettingsBinder implements DataLoadingSettings
         vTable.setVisibleColumns(newColumns.toArray());
 
         EntityTableItems entityTableSource = (EntityTableItems) table.getItems();
-        if (table.isSortable() && !isApplyDataLoadingSettings(table)) {
+        if (table.isSortable()
+                && !isApplyDataLoadingSettings(table)
+                && entityTableSource != null) {
             String sortProp = tableSettings.getSortProperty();
             if (!StringUtils.isEmpty(sortProp)) {
                 MetaPropertyPath sortProperty = entityTableSource.getEntityMetaClass().getPropertyPath(sortProp);
                 if (newColumns.contains(sortProperty)) {
-                    boolean sortAscending = tableSettings.getSortAscending();
                     vTable.setSortContainerPropertyId(null);
-                    vTable.setSortAscending(sortAscending);
+                    vTable.setSortAscending(Boolean.TRUE.equals(tableSettings.getSortAscending()));
                     vTable.setSortContainerPropertyId(sortProperty);
                 }
             } else {

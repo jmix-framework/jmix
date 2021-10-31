@@ -32,6 +32,7 @@ import io.jmix.ui.settings.component.ComponentSettings;
 import io.jmix.ui.settings.component.DataGridSettings;
 import io.jmix.ui.settings.component.SettingsWrapper;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
@@ -192,7 +193,10 @@ public abstract class AbstractDataGridSettingsBinder implements DataLoadingSetti
 
     protected void applyColumnSettings(DataGrid dataGrid, DataGridSettings settings, Collection<DataGrid.Column> oldColumns) {
         Grid grid = getGrid(dataGrid);
-        List<DataGridSettings.ColumnSettings> columnsSettings = settings.getColumns();
+
+        List<DataGridSettings.ColumnSettings> columnsSettings = CollectionUtils.isEmpty(settings.getColumns())
+                ? Collections.emptyList()
+                : settings.getColumns();
 
         List<DataGrid.Column> newColumns = new ArrayList<>();
 
@@ -289,7 +293,7 @@ public abstract class AbstractDataGridSettingsBinder implements DataLoadingSetti
                     return true;
                 }
 
-                if (visibleColumns.get(i).isCollapsed() != settingsColumn.getCollapsed()) {
+                if (visibleColumns.get(i).isCollapsed() != BooleanUtils.toBoolean(settingsColumn.getCollapsed())) {
                     return true;
                 }
             } else {

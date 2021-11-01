@@ -75,7 +75,7 @@ public class JmixTreeTable extends com.vaadin.v7.ui.TreeTable implements TreeTab
 
     protected Set<Object> htmlCaptionColumns; // lazily initialized set
 
-    protected List<Object> clickableTableColumnIds; // lazily initialized list
+    protected Map<Object, TableCellClickListener> clickableTableColumnIds; // lazily initialized map
 
     protected Registration tableCellClickListenerRegistration;
 
@@ -747,14 +747,20 @@ public class JmixTreeTable extends com.vaadin.v7.ui.TreeTable implements TreeTab
     @Override
     public void addTableCellClickListener(Object propertyId, TableCellClickListener listener) {
         if (clickableTableColumnIds == null) {
-            clickableTableColumnIds = new ArrayList<>();
+            clickableTableColumnIds = new HashMap<>();
         }
-        clickableTableColumnIds.add(propertyId);
+        clickableTableColumnIds.put(propertyId, listener);
 
         // Register only one TableCellClickListener for all clickable table columns
         if (tableCellClickListenerRegistration == null) {
-            tableCellClickListenerRegistration = addListener(TableCellClickEvent.class, listener, TableCellClickListener.clickMethod);
+            TableCellClickListener clickListener = this::onTableCellClick;
+            tableCellClickListenerRegistration = addListener(TableCellClickEvent.class, clickListener, TableCellClickListener.clickMethod);
         }
+    }
+
+    protected void onTableCellClick(TableCellClickEvent event) {
+        clickableTableColumnIds.get(event.getColumnId())
+                .onClick(event);
     }
 
     @Override
@@ -889,7 +895,7 @@ public class JmixTreeTable extends com.vaadin.v7.ui.TreeTable implements TreeTab
 
     protected void updateClickableTableColumnKeys() {
         if (clickableTableColumnIds != null) {
-            getState().clickableTableColumnKeys = getClickableColumnKeys(clickableTableColumnIds);
+            getState().clickableTableColumnKeys = getClickableColumnKeys(clickableTableColumnIds.keySet());
         }
     }
 

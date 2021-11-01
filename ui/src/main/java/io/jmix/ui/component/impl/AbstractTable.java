@@ -2140,10 +2140,6 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
                 return;
             }
 
-            if (!Objects.equals(event.getColumnId(), id)) {
-                return;
-            }
-
             Column.ClickEvent<E> clickEvent = new Column.ClickEvent<>(this, item, event.isText());
             getEventHub().publish(Column.ClickEvent.class, clickEvent);
         }

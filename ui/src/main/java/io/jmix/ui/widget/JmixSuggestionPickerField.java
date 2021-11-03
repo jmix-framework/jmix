@@ -60,6 +60,13 @@ public class JmixSuggestionPickerField<T> extends JmixPickerField<T> {
     }
 
     @Override
+    protected void onFieldValueChange(ValueChangeEvent<?> event) {
+        super.onFieldValueChange(event);
+
+        updateIcon(getValue());
+    }
+
+    @Override
     public T getValue() {
         return getFieldInternal().getValue();
     }

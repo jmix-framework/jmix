@@ -161,6 +161,14 @@ public class FetchPlanSerializationImpl implements FetchPlanSerialization {
 
         protected List<FetchPlanBuilder> fetchPlanBuilders = new ArrayList<>();
 
+        protected String fetchPlanAttributeName = "fetchPlan";
+
+        public FetchPlanDeserializer() {
+            if (coreProperties.isLegacyFetchPlanSerializationAttributeName()) {
+                fetchPlanAttributeName = "view";
+            }
+        }
+
         @Override
         public FetchPlan deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             return deserializeFetchPlan(json.getAsJsonObject());
@@ -200,7 +208,7 @@ public class FetchPlanSerializationImpl implements FetchPlanSerialization {
                     }
 
                     String propertyName = fetchPlanPropertyObj.getAsJsonPrimitive("name").getAsString();
-                    JsonElement nestedPlanElement = fetchPlanPropertyObj.get("view");
+                    JsonElement nestedPlanElement = fetchPlanPropertyObj.get(fetchPlanAttributeName);
                     if (nestedPlanElement == null) {
                         builder.add(propertyName, b -> {
                         }, fetchMode);

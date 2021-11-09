@@ -101,7 +101,7 @@ public class SnapshotDiffViewer extends ScreenFragment {
         }
         List<EntityPropertyDifferenceModel> entityPropertyDifferenceModels = new ArrayList<>();
         for (EntityPropertyDifferenceModel childPropertyDiff : diff.getPropertyDiffs()) {
-            EntityPropertyDifferenceModel differenceModel = loadPropertyDiff(childPropertyDiff);
+            EntityPropertyDifferenceModel differenceModel = loadPropertyDiff(childPropertyDiff, entityPropertyDifferenceModels);
             if (differenceModel != null) {
                 entityPropertyDifferenceModels.add(differenceModel);
             }
@@ -109,7 +109,7 @@ public class SnapshotDiffViewer extends ScreenFragment {
         return entityPropertyDifferenceModels;
     }
 
-    private EntityPropertyDifferenceModel loadPropertyDiff(EntityPropertyDifferenceModel propertyDiff) {
+    private EntityPropertyDifferenceModel loadPropertyDiff(EntityPropertyDifferenceModel propertyDiff, List<EntityPropertyDifferenceModel> entityPropertyDifferenceModels) {
         if (propertyDiff == null) {
             return null;
         }
@@ -126,30 +126,34 @@ public class SnapshotDiffViewer extends ScreenFragment {
         if (propertyDiff instanceof EntityClassPropertyDifferenceModel) {
             EntityClassPropertyDifferenceModel classPropertyDiff = (EntityClassPropertyDifferenceModel) propertyDiff;
             for (EntityPropertyDifferenceModel childPropertyDiff : classPropertyDiff.getPropertyDiffs()) {
-                EntityPropertyDifferenceModel entityPropertyDifferenceModel = loadPropertyDiff(childPropertyDiff);
+                EntityPropertyDifferenceModel entityPropertyDifferenceModel = loadPropertyDiff(childPropertyDiff, entityPropertyDifferenceModels);
                 if (entityPropertyDifferenceModel != null) {
+                    entityPropertyDifferenceModels.add(entityPropertyDifferenceModel);
                     entityPropertyDifferenceModel.setParentProperty(propertyDiff);
                 }
             }
         } else if (propertyDiff instanceof EntityCollectionPropertyDifferenceModel) {
             EntityCollectionPropertyDifferenceModel collectionPropertyDiff = (EntityCollectionPropertyDifferenceModel) propertyDiff;
             for (EntityPropertyDifferenceModel childPropertyDiff : collectionPropertyDiff.getAddedEntities()) {
-                EntityPropertyDifferenceModel entityPropertyDifferenceModel = loadPropertyDiff(childPropertyDiff);
+                EntityPropertyDifferenceModel entityPropertyDifferenceModel = loadPropertyDiff(childPropertyDiff, entityPropertyDifferenceModels);
                 if (entityPropertyDifferenceModel != null) {
+                    entityPropertyDifferenceModels.add(entityPropertyDifferenceModel);
                     entityPropertyDifferenceModel.setParentProperty(propertyDiff);
                 }
             }
 
             for (EntityPropertyDifferenceModel childPropertyDiff : collectionPropertyDiff.getModifiedEntities()) {
-                EntityPropertyDifferenceModel entityPropertyDifferenceModel = loadPropertyDiff(childPropertyDiff);
+                EntityPropertyDifferenceModel entityPropertyDifferenceModel = loadPropertyDiff(childPropertyDiff, entityPropertyDifferenceModels);
                 if (entityPropertyDifferenceModel != null) {
+                    entityPropertyDifferenceModels.add(entityPropertyDifferenceModel);
                     entityPropertyDifferenceModel.setParentProperty(propertyDiff);
                 }
             }
 
             for (EntityPropertyDifferenceModel childPropertyDiff : collectionPropertyDiff.getRemovedEntities()) {
-                EntityPropertyDifferenceModel entityPropertyDifferenceModel = loadPropertyDiff(childPropertyDiff);
+                EntityPropertyDifferenceModel entityPropertyDifferenceModel = loadPropertyDiff(childPropertyDiff, entityPropertyDifferenceModels);
                 if (entityPropertyDifferenceModel != null) {
+                    entityPropertyDifferenceModels.add(entityPropertyDifferenceModel);
                     entityPropertyDifferenceModel.setParentProperty(propertyDiff);
                 }
             }

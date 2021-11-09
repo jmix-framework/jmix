@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package io.jmix.audit.snapshot.impl;
 
 import io.jmix.audit.snapshot.EntityDifferenceManager;
@@ -369,9 +368,12 @@ public class EntityDifferenceManagerImpl implements EntityDifferenceManager {
             if (second.containsProperty(firstProperty.getName())) {
                 FetchPlanProperty secondProperty = second.getProperty(firstProperty.getName());
                 if ((firstProperty.getFetchPlan() != null) && (secondProperty.getFetchPlan() != null)) {
-                    intersectFetchPlans(firstProperty.getFetchPlan(), secondProperty.getFetchPlan());
+                    FetchPlan fetchPlan = intersectFetchPlans(firstProperty.getFetchPlan(), secondProperty.getFetchPlan());
+                    builder.mergeProperty(firstProperty.getName(), fetchPlan, firstProperty.getFetchMode());
                 }
-                builder.add(firstProperty.getName());
+                else {
+                    builder.add(firstProperty.getName());
+                }
             }
         }
 

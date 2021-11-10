@@ -78,17 +78,27 @@ public class JmixUidlWriter extends UidlWriter {
                 String resourcePath = getResourceActualPath(resourceUri, overridePath);
 
                 Class<?> registeredConnector = manager.getDependencies().get(resourcePath);
-                if (registeredConnector == null
-                        || Objects.equals(registeredConnector, connectorClass)) {
-                    if (resourcePath.endsWith(JAVASCRIPT_EXTENSION)) {
-                        String url = manager.registerDependency(resourcePath, connectorClass);
-                        dependencies.add(new Dependency(Dependency.Type.JAVASCRIPT, url));
+
+                if (resourcePath.endsWith(JAVASCRIPT_EXTENSION)) {
+                    String url = resourcePath;
+                    if (registeredConnector == null) {
+                        url = manager.registerDependency(resourcePath, connectorClass);
                     }
 
-                    if (resourcePath.endsWith(CSS_EXTENSION)) {
-                        String url = manager.registerDependency(resourcePath, connectorClass);
-                        dependencies.add(new Dependency(Dependency.Type.STYLESHEET, url));
+                    // Vaadin does not append duplicate dependencies to the head,
+                    // see com.vaadin.client.ResourceLoader#loadScript()
+                    dependencies.add(new Dependency(Dependency.Type.JAVASCRIPT, url));
+                }
+
+                if (resourcePath.endsWith(CSS_EXTENSION)) {
+                    String url = resourcePath;
+                    if (registeredConnector == null) {
+                        url = manager.registerDependency(resourcePath, connectorClass);
                     }
+
+                    // Vaadin does not append duplicate dependencies to the head,
+                    // see com.vaadin.client.ResourceLoader#loadStylesheet()
+                    dependencies.add(new Dependency(Dependency.Type.STYLESHEET, url));
                 }
             }
         }

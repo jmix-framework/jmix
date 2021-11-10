@@ -120,6 +120,12 @@ public class MBeanInspectScreen extends StandardEditor<ManagedBeanInfo> {
     protected void preventUnsavedChanges(BeforeCloseEvent event) {
     }
 
+    @Install(to = "attributesTable.edit", subject = "enabledRule")
+    private boolean attributesTableEditEnabledRule() {
+        ManagedBeanAttribute mba = attributesTable.getSingleSelected();
+        return mba != null && mba.getWriteable();
+    }
+
     @Subscribe("attributesTable.edit")
     public void editAttribute(Action.ActionPerformedEvent event) {
         ManagedBeanAttribute mba = attributesTable.getSingleSelected();

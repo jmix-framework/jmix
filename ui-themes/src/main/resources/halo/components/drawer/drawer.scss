@@ -235,6 +235,8 @@ $jmix-drawer-sidemenu-item-selected-color: valo-font-color($jmix-drawer-sidemenu
     color: valo-font-color($bg, 0.5);
 
     .jmix-sidemenu-item {
+      @include valo-menu-item-style();
+
       font-weight: $jmix-sidemenu-item-font-weight;
 
       &:hover {

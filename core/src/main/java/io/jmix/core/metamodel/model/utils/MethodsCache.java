@@ -16,17 +16,13 @@
 package io.jmix.core.metamodel.model.utils;
 
 import com.google.common.collect.ImmutableMap;
-import org.apache.commons.lang3.JavaVersion;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.SystemUtils;
-import org.springframework.cglib.core.ReflectUtils;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.invoke.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -38,16 +34,6 @@ public class MethodsCache {
     private final Map<String, Function> getters = new HashMap<>();
     private final Map<String, BiConsumer> setters = new HashMap<>();
     private String className;
-
-    private static byte[] gimmeLookupClassDef() {
-        return ("\u00CA\u00FE\u00BA\u00BE\0\0\0001\0\21\1\0\13GimmeLookup\7\0\1\1\0\20"
-                + "java/lang/Object\7\0\3\1\0\10<clinit>\1\0\3()V\1\0\4Code\1\0\6lookup\1\0'Ljav"
-                + "a/lang/invoke/MethodHandles$Lookup;\14\0\10\0\11\11\0\2\0\12\1\0)()Ljava/lang"
-                + "/invoke/MethodHandles$Lookup;\1\0\36java/lang/invoke/MethodHandles\7\0\15\14\0"
-                + "\10\0\14\12\0\16\0\17\26\1\0\2\0\4\0\0\0\1\20\31\0\10\0\11\0\0\0\1\20\11\0\5\0"
-                + "\6\0\1\0\7\0\0\0\23\0\3\0\3\0\0\0\7\u00B8\0\20\u00B3\0\13\u00B1\0\0\0\0\0\0")
-                .getBytes(StandardCharsets.ISO_8859_1);
-    }
 
     private static final Map<Class, Class> primitivesToObjects = new ImmutableMap.Builder<Class, Class>()
             .put(byte.class, Byte.class)
@@ -116,9 +102,7 @@ public class MethodsCache {
     private Function createGetter(Class clazz, Method method) {
         Function getter;
         try {
-            MethodHandles.Lookup caller = SystemUtils.isJavaVersionAtMost(JavaVersion.JAVA_11) ?
-                    getLookup(clazz) :
-                    MethodHandles.lookup();
+            MethodHandles.Lookup caller = MethodHandles.lookup();
             CallSite site = LambdaMetafactory.metafactory(caller,
                     "apply",
                     MethodType.methodType(Function.class),
@@ -138,9 +122,7 @@ public class MethodsCache {
         Class valueType = method.getParameterTypes()[0];
         BiConsumer setter;
         try {
-            MethodHandles.Lookup caller = SystemUtils.isJavaVersionAtMost(JavaVersion.JAVA_11) ?
-                    getLookup(clazz) :
-                    MethodHandles.lookup();
+            MethodHandles.Lookup caller = MethodHandles.lookup();
             CallSite site = LambdaMetafactory.metafactory(caller,
                     "accept",
                     MethodType.methodType(BiConsumer.class),
@@ -154,17 +136,6 @@ public class MethodsCache {
         }
 
         return setter;
-    }
-
-    private MethodHandles.Lookup getLookup(Class clazz) throws ClassNotFoundException, IllegalAccessException, NoSuchFieldException {
-        Class gimmeLookup;
-        //This code needed to classloader of clazz and classloader of lambda function be same
-        try {
-            gimmeLookup = ReflectUtils.defineClass("GimmeLookup", gimmeLookupClassDef(), clazz.getClassLoader());
-        } catch (Exception e) {
-            gimmeLookup = clazz.getClassLoader().loadClass("GimmeLookup");
-        }
-        return (MethodHandles.Lookup) gimmeLookup.getField("lookup").get(null);
     }
 
     /**

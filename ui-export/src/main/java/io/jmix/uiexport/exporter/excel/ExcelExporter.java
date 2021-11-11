@@ -520,7 +520,7 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
                 Object val = groupInfo.getValue();
 
                 if (val == null) {
-                    val = messages.getMessage(getClass(), "excelExporter.empty");
+                    val = getMessage("excelExporter.empty");
                 }
 
                 Collection<?> children = groupTableSource.getGroupItemIds(groupInfo);

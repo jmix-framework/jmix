@@ -16,10 +16,12 @@
 
 package io.jmix.multitenancy.core;
 
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.metamodel.model.MetaProperty;
 
 import javax.annotation.Nullable;
 
+@Internal
 public interface TenantEntityOperation {
 
     @Nullable

@@ -22,14 +22,12 @@ package io.jmix.multitenancy.core;
 public interface TenantProvider {
 
     /**
-     * Constant attribute user session for global visibility of all objects, regardless of the value of tenant.
+     * Constant to be returned by {@link #getCurrentUserTenantId()} if tenant is currently not determined.
      */
     String NO_TENANT = "no_tenant";
 
     /**
-     * Provides the tenant id from current authentication.
-     *
-     * @return the current tenant id, if tenant id is not set then return NO_TENANT constant
+     * Returns the current tenant id, or {@link #NO_TENANT} constant if tenant is currently not determined.
      */
     String getCurrentUserTenantId();
 }

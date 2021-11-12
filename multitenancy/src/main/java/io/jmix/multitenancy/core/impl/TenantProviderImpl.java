@@ -23,7 +23,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 /**
- * The implementation {@link TenantProvider} for Multitenancy.
+ * Implementation of {@link TenantProvider} based on {@link CurrentAuthentication}.
  */
 @Component("mten_TenantProvider")
 public class TenantProviderImpl implements TenantProvider {

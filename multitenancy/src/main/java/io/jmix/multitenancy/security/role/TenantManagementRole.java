@@ -28,7 +28,8 @@ import io.jmix.securityui.role.annotation.MenuPolicy;
 import io.jmix.securityui.role.annotation.ScreenPolicy;
 import io.jmix.securityui.screen.resourcepolicy.AttributeResourceModel;
 
-@ResourceRole(name = "Multitenancy: management", code = TenantManagementRole.CODE)
+@Deprecated
+@ResourceRole(name = "Multitenancy: management (deprecated)", code = TenantManagementRole.CODE)
 public interface TenantManagementRole {
 
     String CODE = "tenant-management-role";

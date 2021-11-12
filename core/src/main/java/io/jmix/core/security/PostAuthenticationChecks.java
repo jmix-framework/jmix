@@ -36,7 +36,7 @@ public class PostAuthenticationChecks implements UserDetailsChecker {
     private ApplicationEventPublisher eventPublisher;
     private final MessageSourceAccessor messages = SpringSecurityMessageSource.getAccessor();
 
-    private static final Logger log = LoggerFactory.getLogger(PreAuthenticationChecks.class);
+    private static final Logger log = LoggerFactory.getLogger(PostAuthenticationChecks.class);
 
     @Autowired
     public void setEventPublisher(ApplicationEventPublisher eventPublisher) {

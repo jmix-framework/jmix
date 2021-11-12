@@ -163,7 +163,6 @@ public class JsPivotExtensionParser extends JavaScriptObject {
                     if (modelCell.value === 'Infinity') {
                         return "";
                     }
-
                 } else if (modelCell.type === 'INTEGER') {
                    var thousandSep = this.pivotMessages.integerFormat.thousandsSep;
                    return modelCell.value.replaceAll(thousandSep, "");
@@ -205,9 +204,13 @@ public class JsPivotExtensionParser extends JavaScriptObject {
     }-*/ ;
 
     public final native String parsePivotTableToJson(JsPivotExtensionParser parser, Element pivotElement) /*-{
-        var table = parser.getTable(pivotElement);
-
         var resultObject = {};
+
+        var table = parser.getTable(pivotElement);
+        if (!table) {
+            return JSON.stringify(resultObject);
+        }
+
         resultObject.dataNumRows = parser.getColsRowsNumber(table, 'data-numrows');
         resultObject.dataNumCols = parser.getColsRowsNumber(table, 'data-numcols');
 

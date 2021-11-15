@@ -2333,6 +2333,7 @@ public abstract class AbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E>, 
         column.setStyleProvider(existingColumn.getStyleProvider());
         column.setDescriptionProvider(existingColumn.getDescriptionProvider(),
                 ((ColumnImpl) existingColumn).getDescriptionContentMode());
+        column.setEditFieldGenerator(existingColumn.getEditFieldGenerator());
 
         // If the new column has propertyPath and it equals to propertyPath
         // of the existing column, then coping the Sortable state, as it seems

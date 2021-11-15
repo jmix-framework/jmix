@@ -18,11 +18,11 @@ package io.jmix.searchui.component;
 
 import io.jmix.search.searching.SearchResult;
 import io.jmix.search.searching.SearchStrategy;
-import io.jmix.ui.component.Field;
+import io.jmix.ui.component.*;
 import io.jmix.ui.meta.CanvasBehaviour;
+import io.jmix.ui.meta.PropertyType;
 import io.jmix.ui.meta.StudioComponent;
 import io.jmix.ui.meta.StudioProperty;
-import io.jmix.ui.meta.PropertyType;
 import io.jmix.ui.screen.Install;
 
 import java.util.List;
@@ -42,7 +42,17 @@ import java.util.function.Consumer;
         documentationURL = "https://docs.jmix.io/jmix/%VERSION%/search/search-in-ui.html",
         unsupportedProperties = {"colspan", "rowspan"}
 )
-public interface SearchField extends Field<String> {
+public interface SearchField extends
+        Component,
+        Component.BelongToFrame,
+        HasValue<String>,
+        Component.HasCaption,
+        HasHtmlCaption,
+        Component.HasIcon,
+        Component.HasDescription,
+        HasHtmlDescription,
+        HasContextHelp,
+        HasHtmlSanitizer {
 
     String NAME = "searchField";
 

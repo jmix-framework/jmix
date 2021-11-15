@@ -20,7 +20,7 @@ import com.google.common.base.Strings;
 import io.jmix.search.searching.SearchStrategy;
 import io.jmix.search.searching.SearchStrategyManager;
 import io.jmix.searchui.component.SearchField;
-import io.jmix.ui.xml.layout.loader.AbstractFieldLoader;
+import io.jmix.ui.xml.layout.loader.AbstractComponentLoader;
 import org.dom4j.Element;
 
 import java.util.Collections;
@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class SearchFieldLoader extends AbstractFieldLoader<SearchField> {
+public class SearchFieldLoader extends AbstractComponentLoader<SearchField> {
 
     @Override
     public void createComponent() {
@@ -38,7 +38,30 @@ public class SearchFieldLoader extends AbstractFieldLoader<SearchField> {
 
     @Override
     public void loadComponent() {
-        super.loadComponent();
+        assignFrame(resultComponent);
+        assignXmlDescriptor(resultComponent, element);
+
+        loadData(resultComponent, element);
+
+        loadVisible(resultComponent, element);
+        loadEnable(resultComponent, element);
+
+        loadStyleName(resultComponent, element);
+        loadCss(resultComponent, element);
+
+        loadHtmlSanitizerEnabled(resultComponent, element);
+
+        loadCaption(resultComponent, element);
+        loadCaptionAsHtml(resultComponent, element);
+        loadIcon(resultComponent, element);
+        loadDescription(resultComponent, element);
+        loadDescriptionAsHtml(resultComponent, element);
+        loadContextHelp(resultComponent, element);
+
+        loadHeight(resultComponent, element);
+        loadWidth(resultComponent, element);
+        loadAlign(resultComponent, element);
+        loadResponsive(resultComponent, element);
 
         loadStrategy(resultComponent, element);
         loadEntities(resultComponent, element);

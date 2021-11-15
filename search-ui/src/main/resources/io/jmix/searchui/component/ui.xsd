@@ -24,9 +24,10 @@
     <xs:element name="searchField">
         <xs:complexType>
             <xs:complexContent>
-                <xs:extension base="layout:baseFieldComponent">
+                <xs:extension base="layout:baseComponent">
                     <xs:attribute name="strategy" type="xs:string"/>
                     <xs:attribute name="entities" type="xs:string"/>
+                    <xs:attributeGroup ref="layout:hasContextHelp"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>

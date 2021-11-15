@@ -17,7 +17,6 @@
 package io.jmix.searchui.component.impl;
 
 import io.jmix.core.Messages;
-import io.jmix.core.common.event.Subscription;
 import io.jmix.search.SearchProperties;
 import io.jmix.search.searching.EntitySearcher;
 import io.jmix.search.searching.SearchContext;
@@ -27,27 +26,25 @@ import io.jmix.searchui.component.SearchField;
 import io.jmix.searchui.screen.result.SearchResultsScreen;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.ScreenBuilders;
-import io.jmix.ui.component.*;
-import io.jmix.ui.component.data.ValueSource;
-import io.jmix.ui.component.validation.Validator;
+import io.jmix.ui.action.BaseAction;
+import io.jmix.ui.component.ComponentsHelper;
+import io.jmix.ui.component.impl.ValuePickerImpl;
+import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.screen.OpenMode;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.ScreenContext;
+import io.jmix.ui.widget.JmixPickerField;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
-import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
 
 import static io.jmix.ui.Notifications.NotificationType.HUMANIZED;
 import static io.jmix.ui.screen.UiControllerUtils.getScreenContext;
 
-@CompositeDescriptor("/io/jmix/searchui/component/impl/search-field.xml")
-public class SearchFieldImpl extends CompositeComponent<CssLayout> implements SearchField,
-        CompositeWithCaption, CompositeWithHtmlCaption, CompositeWithHtmlDescription,
-        CompositeWithIcon, CompositeWithContextHelp {
+public class SearchFieldImpl extends ValuePickerImpl<String> implements SearchField {
 
     @Autowired
     protected Messages messages;
@@ -58,22 +55,28 @@ public class SearchFieldImpl extends CompositeComponent<CssLayout> implements Se
     @Autowired
     protected SearchProperties searchProperties;
 
-    protected TextField<String> inputField;
-    protected Button searchButton;
     protected SearchStrategy searchStrategy;
     protected List<String> entities;
     protected Consumer<SearchCompletedEvent> searchCompletedHandler;
 
     public SearchFieldImpl() {
-        addCreateListener(this::onCreate);
+        super();
+        addStyleName("jmix-search-field");
     }
 
-    protected void onCreate(CreateEvent createEvent) {
-        inputField = getInnerComponent("inputField");
-        searchButton = getInnerComponent("searchButton");
+    @Override
+    protected void initComponent(JmixPickerField<String> component) {
+        super.initComponent(component);
 
-        inputField.addEnterPressListener(enterPressEvent -> performSearch());
-        searchButton.addClickListener(clickEvent -> performSearch());
+        setFieldEditable(true);
+
+        initActions();
+
+        addFieldValueChangeListener(fieldValueChangeEvent -> {
+            String value = fieldValueChangeEvent.getText();
+            setValue(value);
+        });
+
         searchCompletedHandler = (event -> {
             SearchResult searchResult = event.getSearchResult();
             if (searchResult.isEmpty()) {
@@ -86,8 +89,16 @@ public class SearchFieldImpl extends CompositeComponent<CssLayout> implements Se
             } else {
                 openSearchResultsWindow(event.getSearchResult());
             }
-
         });
+    }
+
+    protected void initActions() {
+        removeAllActions();
+        BaseAction searchAction = new BaseAction("search")
+                .withHandler(actionPerformedEvent -> performSearch())
+                .withIcon(JmixIcon.SEARCH.source())
+                .withShortcut("ENTER");
+        addAction(searchAction);
     }
 
     protected void openSearchResultsWindow(SearchResult searchResult) {
@@ -102,7 +113,7 @@ public class SearchFieldImpl extends CompositeComponent<CssLayout> implements Se
 
     public void performSearch() {
         Screen frameOwner = ComponentsHelper.getWindowNN(this).getFrameOwner();
-        String searchText = inputField.getValue();
+        String searchText = getValue();
         ScreenContext screenContext = getScreenContext(frameOwner);
         if (StringUtils.isBlank(searchText)) {
             Notifications notifications = screenContext.getNotifications();
@@ -119,92 +130,6 @@ public class SearchFieldImpl extends CompositeComponent<CssLayout> implements Se
                 searchCompletedHandler.accept(new SearchCompletedEvent(this, searchResult));
             }
         }
-    }
-
-    @Override
-    public boolean isEditable() {
-        return inputField.isEditable();
-    }
-
-    @Override
-    public void setEditable(boolean editable) {
-        inputField.setEditable(editable);
-        searchButton.setEnabled(editable);
-    }
-
-    @Override
-    public void addValidator(Validator<? super String> validator) {
-        inputField.addValidator(validator);
-    }
-
-    @Override
-    public void removeValidator(Validator<String> validator) {
-        inputField.removeValidator(validator);
-    }
-
-    @Override
-    public Collection<Validator<String>> getValidators() {
-        return inputField.getValidators();
-    }
-
-    @Nullable
-    @Override
-    public String getValue() {
-        return inputField.getValue();
-    }
-
-    @Override
-    public void setValue(@Nullable String value) {
-        inputField.setValue(value);
-    }
-
-    @Override
-    public Subscription addValueChangeListener(Consumer<ValueChangeEvent<String>> listener) {
-        return inputField.addValueChangeListener(listener);
-    }
-
-    @Override
-    public boolean isRequired() {
-        return inputField.isRequired();
-    }
-
-    @Override
-    public void setRequired(boolean required) {
-        inputField.setRequired(required);
-        getComposition().setRequiredIndicatorVisible(required);
-    }
-
-    @Nullable
-    @Override
-    public String getRequiredMessage() {
-        return inputField.getRequiredMessage();
-    }
-
-    @Override
-    public void setRequiredMessage(@Nullable String msg) {
-        inputField.setRequiredMessage(msg);
-    }
-
-    @Override
-    public boolean isValid() {
-        return inputField.isValid();
-    }
-
-    @Override
-    public void validate() throws ValidationException {
-        inputField.validate();
-    }
-
-    @Override
-    public void setValueSource(@Nullable ValueSource<String> valueSource) {
-        inputField.setValueSource(valueSource);
-        getComposition().setRequiredIndicatorVisible(inputField.isRequired());
-    }
-
-    @Nullable
-    @Override
-    public ValueSource<String> getValueSource() {
-        return inputField.getValueSource();
     }
 
     @Override

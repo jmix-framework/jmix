@@ -42,6 +42,9 @@ public abstract class WidgetsTask extends DefaultTask {
     protected List<String> excludePaths = new ArrayList<>();
 
     @Internal
+    protected List<String> includePaths = new ArrayList<>();
+
+    @Internal
     protected Set<String> compilerJvmArgs = new LinkedHashSet<>(Collections.singleton("-Djava.awt.headless=true"));
 
     public void excludeJars(String... artifacts) {
@@ -64,6 +67,20 @@ public abstract class WidgetsTask extends DefaultTask {
      */
     public void excludePaths(String... excludes) {
         excludePaths.addAll(Arrays.asList(excludes));
+    }
+
+    public List<String> getIncludePaths() {
+        return includePaths;
+    }
+
+    /**
+     * Set the allowable include patterns.
+     *
+     * @param includes an Iterable providing new include patterns
+     * @see PatternFilterable Pattern Format
+     */
+    public void includePaths(String... includes) {
+        this.includePaths.addAll(Arrays.asList(includes));
     }
 
     public void jvmArgs(String... jvmArgs) {
@@ -158,6 +175,10 @@ public abstract class WidgetsTask extends DefaultTask {
                             excludes.addAll(excludePaths);
 
                             f.setExcludes(excludes);
+
+                            if (!includePaths.isEmpty()) {
+                                f.setIncludes(includePaths);
+                            }
                         })
                         .forEach(files::add);
             }

@@ -1213,6 +1213,13 @@ public abstract class AbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E>, 
     }
 
     @Override
+    public void closeEditor() {
+        if (isEditorActive()) {
+            component.getEditor().cancel();
+        }
+    }
+
+    @Override
     public void edit(E item) {
         checkNotNullArgument(item, "Entity must be non null");
 

@@ -548,6 +548,11 @@ public interface DataGrid<E> extends ListComponent<E>, HasButtonsPanel, Componen
     boolean isEditorActive();
 
     /**
+     * Closes editor if it's opened.
+     */
+    void closeEditor();
+
+    /**
      * Opens the editor interface for the provided entity. Scrolls the Grid to
      * bring the entity to view if it is not already visible.
      *

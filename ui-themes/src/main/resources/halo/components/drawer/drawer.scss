@@ -65,6 +65,10 @@ $jmix-drawer-sidemenu-item-selected-color: valo-font-color($jmix-drawer-sidemenu
       width: $jmix-sidemenu-layout-collapsed-width;
       overflow: hidden;
       @include jmix-sidemenu-collapsed(true);
+
+      .jmix-drawer-content.jmix-sidemenu > .jmix-sidemenu-item {
+        padding: 0;
+      }
     }
 
     &.collapsed.expand-on-hover:hover {
@@ -235,8 +239,7 @@ $jmix-drawer-sidemenu-item-selected-color: valo-font-color($jmix-drawer-sidemenu
     color: valo-font-color($bg, 0.5);
 
     .jmix-sidemenu-item {
-      @include valo-menu-item-style();
-
+      padding: 0 round($v-unit-size) 0 round($v-unit-size/2);
       font-weight: $jmix-sidemenu-item-font-weight;
 
       &:hover {

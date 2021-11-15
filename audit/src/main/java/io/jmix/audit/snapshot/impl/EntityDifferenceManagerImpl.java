@@ -147,7 +147,7 @@ public class EntityDifferenceManagerImpl implements EntityDifferenceManager {
                 FetchPlanProperty fetchPlanProperty = diffFetchPlan.getProperty(metaProperty.getName());
 
                 Object firstValue = firstEntity != null ? EntityValues.getValue(firstEntity,metaPropertyPath.toString()) : null;
-                Object secondValue = firstEntity != null ? EntityValues.getValue(secondEntity,metaPropertyPath.toString()) : null;
+                Object secondValue = secondEntity != null ? EntityValues.getValue(secondEntity,metaPropertyPath.toString()) : null;
 
                 EntityPropertyDifferenceModel diff = getPropertyDifference(firstValue, secondValue, metaProperty, fetchPlanProperty, diffBranch);
                 if (diff != null)

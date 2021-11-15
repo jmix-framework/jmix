@@ -34,7 +34,7 @@ public class BruteForceProtectionProperties {
     private final boolean enabled;
 
     /**
-     * Time interval for which a user is blocked after a series of
+     * Time interval in seconds for which a user is blocked after a series of
      * unsuccessful login attempts.
      */
     private final Duration blockInterval;

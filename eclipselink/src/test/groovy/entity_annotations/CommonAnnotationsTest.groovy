@@ -23,6 +23,7 @@ import io.jmix.core.entity.EntityEntryHasUuid
 import io.jmix.core.metamodel.model.MetaClass
 import org.springframework.beans.factory.annotation.Autowired
 import test_support.DataSpec
+import test_support.entity.TestLicense
 import test_support.entity.auditing.SoftDeleteAuditableEntity
 import test_support.entity.soft_delete.AnnotatedUuidEntity
 
@@ -88,6 +89,14 @@ class CommonAnnotationsTest extends DataSpec {
         !metadataTools.isSystem(checkingClass.getProperty("reason"))
 
         metadataSystem == mustBeSystem
+    }
+
+    def "@Transient @Temporal field test"() {
+        when:
+        TestLicense license = metadata.create(TestLicense)
+        license.setExpirationDate(new Date())
+        then:
+        noExceptionThrown()
     }
 
 }

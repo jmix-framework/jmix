@@ -3,7 +3,7 @@ buildscript {
         gradlePluginPortal()
     }
     dependencies {
-        classpath "io.jmix.gradle:jmix-gradle-plugin:1.1.0-M8"
+        classpath "io.jmix.gradle:jmix-gradle-plugin:1.1.0-M9"
     }
 }
 

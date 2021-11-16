@@ -27,8 +27,8 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.search.SearchProperties;
 import io.jmix.search.searching.EntitySearcher;
-import io.jmix.search.searching.SearchResult;
 import io.jmix.search.searching.FieldHit;
+import io.jmix.search.searching.SearchResult;
 import io.jmix.search.searching.SearchResultEntry;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.Notifications;
@@ -40,6 +40,7 @@ import io.jmix.ui.screen.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.Nullable;
 import java.util.*;
 
 import static io.jmix.ui.Notifications.NotificationType.HUMANIZED;
@@ -209,25 +210,28 @@ public class SearchResultsScreen extends Screen {
 
     protected void renderNavigationControls(Queue<Page> pages) {
         navigationBox.removeAll();
-        for (Page page : pages) {
-            LinkButton pageButton = uiComponents.create(LinkButton.class);
-            BaseAction action = new BaseAction("page_" + page.getPageNumber())
-                    .withCaption(page.getDisplayedPageNumber())
-                    .withHandler(e -> openPage(page));
-            pageButton.setAction(action);
-            if (page == currentPage) {
-                pageButton.setStyleName("jmix-fts-current-page");
-            } else {
-                pageButton.setStyleName("jmix-fts-page");
-            }
-            navigationBox.add(pageButton);
-        }
 
         boolean showNextPage = true;
         Page lastPage = getLastPage();
-        if (lastPage != null && lastPage.getSearchResult() != null) {
+        if (lastPage != null) {
             SearchResult lastSearchResult = lastPage.getSearchResult();
             showNextPage = lastSearchResult.isMoreDataAvailable();
+        }
+
+        if (pages.size() > 1 || showNextPage) {
+            for (Page page : pages) {
+                LinkButton pageButton = uiComponents.create(LinkButton.class);
+                BaseAction action = new BaseAction("page_" + page.getPageNumber())
+                        .withCaption(page.getDisplayedPageNumber())
+                        .withHandler(e -> openPage(page));
+                pageButton.setAction(action);
+                if (page == currentPage) {
+                    pageButton.setStyleName("jmix-fts-current-page");
+                } else {
+                    pageButton.setStyleName("jmix-fts-page");
+                }
+                navigationBox.add(pageButton);
+            }
         }
 
         if (showNextPage) {
@@ -268,6 +272,7 @@ public class SearchResultsScreen extends Screen {
         }
     }
 
+    @Nullable
     protected Page getLastPage() {
         Page lastPage = null;
         for (Page page : pages) {

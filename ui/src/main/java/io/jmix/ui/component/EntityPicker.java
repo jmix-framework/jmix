@@ -70,7 +70,7 @@ public interface EntityPicker<V> extends ValuePicker<V>, LookupComponent<V> {
 
         @Override
         default void setPicker(@Nullable ValuePicker valuePicker) {
-            if (!(valuePicker instanceof EntityPicker)) {
+            if (valuePicker != null && !(valuePicker instanceof EntityPicker)) {
                 throw new IllegalArgumentException("Incorrect component type. Must be " +
                         "'EntityPicker' or its inheritors");
             }

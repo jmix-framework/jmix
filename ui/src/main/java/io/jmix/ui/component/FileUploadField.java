@@ -47,6 +47,7 @@ public interface FileUploadField extends SingleFileUploadField, Field<byte[]> {
 
     /**
      * Sets caption to be shown in the file download link next to upload button.
+     * The file name of the newly uploaded file will rewrite the caption.
      * <p>
      * By default: "attachment (file_size Kb)".
      */

@@ -80,6 +80,7 @@ public class FileUploadFieldImpl extends AbstractSingleFileUploadField<byte[]>
 
     @Override
     protected void onUploadSucceeded(JmixFileUpload.SucceededEvent event) {
+        fileName = event.getFileName();
         setValue(outputStream.toByteArray());
         super.onUploadSucceeded(event);
     }

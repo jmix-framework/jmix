@@ -101,7 +101,7 @@ public class DataAwareComponentsTools {
         MetaProperty metaProperty = valueSource.getMetaPropertyPath().getMetaProperty();
         Map<String, Object> annotations = metaProperty.getAnnotations();
 
-        Integer maxLength = (Integer) annotations.get("length");
+        Integer maxLength = (Integer) annotations.get(MetadataTools.LENGTH_ANN_NAME);
         if (maxLength != null) {
             component.setMaxLength(maxLength);
         }

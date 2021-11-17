@@ -149,7 +149,6 @@ public interface Form extends Component, Component.BelongToFrame, Component.HasC
      *
      * @param width fixed caption width
      */
-    @StudioProperty(type = PropertyType.STRING)
     void setChildrenCaptionWidth(int width);
 
     /**

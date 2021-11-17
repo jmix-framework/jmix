@@ -17,9 +17,14 @@
 package io.jmix.ui.component.impl;
 
 import com.vaadin.ui.Button;
+import io.jmix.core.DevelopmentException;
 import io.jmix.core.FileRef;
+import io.jmix.core.metamodel.datatype.Datatype;
+import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.component.FileStorageUploadField;
 import io.jmix.ui.component.data.ConversionException;
+import io.jmix.ui.component.data.ValueSource;
+import io.jmix.ui.component.data.meta.EntityValueSource;
 import io.jmix.ui.widget.JmixFileUpload;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -80,6 +85,22 @@ public class FileStorageUploadFieldImpl extends AbstractFileStorageUploadField<F
                 }
                 downloader.download(this::getFileContent, value.getFileName());
                 break;
+        }
+    }
+
+    @Override
+    protected void valueBindingConnected(ValueSource<FileRef> valueSource) {
+        super.valueBindingConnected(valueSource);
+        if (valueSource instanceof EntityValueSource) {
+            MetaPropertyPath metaPropertyPath = ((EntityValueSource) valueSource).getMetaPropertyPath();
+            if (metaPropertyPath.getRange().isDatatype()) {
+                Datatype datatype = metaPropertyPath.getRange().asDatatype();
+                if (!FileRef.class.isAssignableFrom(datatype.getJavaClass())) {
+                    throw new DevelopmentException("FileStorageUploadField doesn't support Datatype with class: " + datatype.getJavaClass());
+                }
+            } else {
+                throw new DevelopmentException("FileStorageUploadField doesn't support properties with association");
+            }
         }
     }
 

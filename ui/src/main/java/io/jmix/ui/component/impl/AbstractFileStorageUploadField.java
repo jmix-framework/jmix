@@ -19,11 +19,8 @@ import io.jmix.core.FileRef;
 import io.jmix.core.FileStorage;
 import io.jmix.core.FileStorageException;
 import io.jmix.core.FileStorageLocator;
-import io.jmix.core.metamodel.datatype.Datatype;
-import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.component.FileStorageUploadField.FileStoragePutMode;
 import io.jmix.ui.component.data.ValueSource;
-import io.jmix.ui.component.data.meta.EntityValueSource;
 import io.jmix.ui.upload.TemporaryStorage;
 import io.jmix.ui.widget.JmixFileUpload;
 import org.apache.commons.lang3.StringUtils;
@@ -58,19 +55,6 @@ public abstract class AbstractFileStorageUploadField<T> extends AbstractSingleFi
     @Override
     protected void valueBindingConnected(ValueSource<T> valueSource) {
         super.valueBindingConnected(valueSource);
-
-        if (valueSource instanceof EntityValueSource) {
-            MetaPropertyPath metaPropertyPath = ((EntityValueSource) valueSource).getMetaPropertyPath();
-            if (metaPropertyPath.getRange().isDatatype()) {
-                Datatype datatype = metaPropertyPath.getRange().asDatatype();
-                if (!FileRef.class.isAssignableFrom(datatype.getJavaClass())) {
-                    throw new IllegalArgumentException("FileStorageUploadField doesn't support Datatype with class: " + datatype.getJavaClass());
-                }
-            } else {
-                throw new IllegalArgumentException("FileStorageUploadField doesn't support properties with association");
-            }
-        }
-
         setShowFileName(true);
     }
 

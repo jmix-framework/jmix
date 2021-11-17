@@ -115,7 +115,7 @@ def tableXml = api.processSnippet('screen/cuba_7_table.xml',
                             </scrollBox>
                         </tab>
                         <%collectionAttributesTable.each { t ->
-                            print("<tab id='${t.propertyName}Tab' caption='msg://${t.ownerEntity.packageName}/${t.ownerEntity.className}.${t.propertyName}' margin='true,false,false,false'>")
+                            print("<tab id="${t.propertyName}Tab" caption="msg://${t.ownerEntity.packageName}/${t.ownerEntity.className}.${t.propertyName}" margin="true,false,false,false">")
                             print("\n        ${t.xml}")
                             print('</tab>') }%>
                     </tabSheet>

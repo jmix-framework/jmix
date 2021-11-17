@@ -22,16 +22,28 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd"
         context="cuba and !migrated">
 
+    <changeSet id="5" author="migrator" dbms="mysql, mariadb">
+        <validCheckSum>1:any</validCheckSum>
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="BPROC_CONTENT_STORAGE"/>
+        </preConditions>
+
+        <dropForeignKeyConstraint baseTableName="BPROC_CONTENT_STORAGE" constraintName="FK_BPROC_CONTENT_STORAGE_AUTHOR"/>
+        <dropForeignKeyConstraint baseTableName="BPROC_USER_GROUP_ROLE" constraintName="FK_BPROC_USER_GROUP_ROLE_SEC_ROLE"/>
+        <dropForeignKeyConstraint baseTableName="BPROC_USER_GROUP_USER_LINK" constraintName="FK_USEGROUSE_USER"/>
+        <dropForeignKeyConstraint baseTableName="BPROC_USER_GROUP_USER_LINK" constraintName="FK_USEGROUSE_USER_GROUP"/>
+    </changeSet>
+
     <changeSet id="10" author="migrator">
         <validCheckSum>1:any</validCheckSum>
         <preConditions onFail="MARK_RAN">
             <tableExists tableName="BPROC_CONTENT_STORAGE"/>
         </preConditions>
 
-        <renameColumn tableName="BPROC_CONTENT_STORAGE" oldColumnName="CREATE_TS" newColumnName="CREATED_DATE"/>
-        <renameColumn tableName="BPROC_CONTENT_STORAGE" oldColumnName="UPDATE_TS" newColumnName="LAST_MODIFIED_DATE"/>
-        <renameColumn tableName="BPROC_CONTENT_STORAGE" oldColumnName="UPDATED_BY" newColumnName="LAST_MODIFIED_BY"/>
-        <renameColumn tableName="BPROC_CONTENT_STORAGE" oldColumnName="DELETE_TS" newColumnName="DELETED_DATE"/>
+        <renameColumn tableName="BPROC_CONTENT_STORAGE" oldColumnName="CREATE_TS" newColumnName="CREATED_DATE" columnDataType="datetime"/>
+        <renameColumn tableName="BPROC_CONTENT_STORAGE" oldColumnName="UPDATE_TS" newColumnName="LAST_MODIFIED_DATE" columnDataType="datetime"/>
+        <renameColumn tableName="BPROC_CONTENT_STORAGE" oldColumnName="UPDATED_BY" newColumnName="LAST_MODIFIED_BY" columnDataType="varchar(255)"/>
+        <renameColumn tableName="BPROC_CONTENT_STORAGE" oldColumnName="DELETE_TS" newColumnName="DELETED_DATE" columnDataType="datetime"/>
         <addColumn tableName="BPROC_CONTENT_STORAGE">
             <column name="AUTHOR_NAME" type="varchar(255)"/>
         </addColumn>
@@ -39,7 +51,7 @@
             <column name="AUTHOR_NAME" valueComputed="(select u.USERNAME from SEC_USER u where u.ID = AUTHOR_ID)"/>
         </update>
         <dropColumn tableName="BPROC_CONTENT_STORAGE" columnName="AUTHOR_ID"/>
-        <renameColumn tableName="BPROC_CONTENT_STORAGE" oldColumnName="AUTHOR_NAME" newColumnName="AUTHOR_ID"/>
+        <renameColumn tableName="BPROC_CONTENT_STORAGE" oldColumnName="AUTHOR_NAME" newColumnName="AUTHOR_ID" columnDataType="varchar(255)"/>
         <renameTable oldTableName="BPROC_CONTENT_STORAGE" newTableName="BPM_CONTENT_STORAGE"/>
     </changeSet>
 
@@ -51,11 +63,11 @@
 
         <delete tableName="BPROC_USER_GROUP_ROLE"/>
         <dropColumn tableName="BPROC_USER_GROUP_ROLE" columnName="ROLE_ID"/>
-        <renameColumn tableName="BPROC_USER_GROUP_ROLE" oldColumnName="CREATE_TS" newColumnName="CREATED_DATE"/>
-        <renameColumn tableName="BPROC_USER_GROUP_ROLE" oldColumnName="UPDATE_TS" newColumnName="LAST_MODIFIED_DATE"/>
-        <renameColumn tableName="BPROC_USER_GROUP_ROLE" oldColumnName="UPDATED_BY" newColumnName="LAST_MODIFIED_BY"/>
-        <renameColumn tableName="BPROC_USER_GROUP_ROLE" oldColumnName="DELETE_TS" newColumnName="DELETED_DATE"/>
-        <renameColumn tableName="BPROC_USER_GROUP_ROLE" oldColumnName="ROLE_NAME" newColumnName="ROLE_CODE"/>
+        <renameColumn tableName="BPROC_USER_GROUP_ROLE" oldColumnName="CREATE_TS" newColumnName="CREATED_DATE" columnDataType="datetime"/>
+        <renameColumn tableName="BPROC_USER_GROUP_ROLE" oldColumnName="UPDATE_TS" newColumnName="LAST_MODIFIED_DATE" columnDataType="datetime"/>
+        <renameColumn tableName="BPROC_USER_GROUP_ROLE" oldColumnName="UPDATED_BY" newColumnName="LAST_MODIFIED_BY" columnDataType="varchar(255)"/>
+        <renameColumn tableName="BPROC_USER_GROUP_ROLE" oldColumnName="DELETE_TS" newColumnName="DELETED_DATE" columnDataType="datetime"/>
+        <renameColumn tableName="BPROC_USER_GROUP_ROLE" oldColumnName="ROLE_NAME" newColumnName="ROLE_CODE" columnDataType="varchar(255)"/>
         <renameTable oldTableName="BPROC_USER_GROUP_ROLE" newTableName="BPM_USER_GROUP_ROLE"/>
     </changeSet>
 
@@ -127,10 +139,19 @@
         </preConditions>
 
         <addColumn tableName="BPROC_USER_GROUP_USER_LINK">
-            <column name="ID" type="${uuid.type}" defaultValueComputed="REPLACE(UUID(),'-','')">
+            <column name="ID" type="${uuid.type}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="PK_BPM_USER_GROUP_USER"/>
             </column>
         </addColumn>
+
+        <sql endDelimiter=";\ndelimiter $$">
+            <![CDATA[
+            CREATE TRIGGER BPM_USER_GROUP_USER_BEFORE_INSERT
+                BEFORE INSERT ON BPROC_USER_GROUP_USER_LINK
+                FOR EACH ROW
+                SET new.ID = REPLACE(UUID(),'-','');
+            ]]>
+        </sql>
     </changeSet>
 
     <changeSet id="22" author="migrator">
@@ -185,10 +206,10 @@
             <tableExists tableName="BPROC_USER_GROUP"/>
         </preConditions>
 
-        <renameColumn tableName="BPROC_USER_GROUP" oldColumnName="CREATE_TS" newColumnName="CREATED_DATE"/>
-        <renameColumn tableName="BPROC_USER_GROUP" oldColumnName="UPDATE_TS" newColumnName="LAST_MODIFIED_DATE"/>
-        <renameColumn tableName="BPROC_USER_GROUP" oldColumnName="UPDATED_BY" newColumnName="LAST_MODIFIED_BY"/>
-        <renameColumn tableName="BPROC_USER_GROUP" oldColumnName="DELETE_TS" newColumnName="DELETED_DATE"/>
+        <renameColumn tableName="BPROC_USER_GROUP" oldColumnName="CREATE_TS" newColumnName="CREATED_DATE" columnDataType="datetime"/>
+        <renameColumn tableName="BPROC_USER_GROUP" oldColumnName="UPDATE_TS" newColumnName="LAST_MODIFIED_DATE" columnDataType="datetime"/>
+        <renameColumn tableName="BPROC_USER_GROUP" oldColumnName="UPDATED_BY" newColumnName="LAST_MODIFIED_BY" columnDataType="varchar(255)"/>
+        <renameColumn tableName="BPROC_USER_GROUP" oldColumnName="DELETE_TS" newColumnName="DELETED_DATE" columnDataType="datetime"/>
         <renameTable oldTableName="BPROC_USER_GROUP" newTableName="BPM_USER_GROUP"/>
     </changeSet>
 

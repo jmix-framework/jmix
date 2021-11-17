@@ -51,7 +51,7 @@
             <column name="USERNAME" type="varchar(255)"/>
             <column name="IS_DEFAULT" type="boolean"/>
         </addColumn>
-        <renameColumn tableName="UI_TABLE_PRESENTATION" oldColumnName="XML" newColumnName="SETTINGS"/>
+        <renameColumn tableName="UI_TABLE_PRESENTATION" oldColumnName="XML" newColumnName="SETTINGS" columnDataType="varchar(4000)"/>
     </changeSet>
 
     <changeSet id="50" author="migrator" context="cuba and !migrated">

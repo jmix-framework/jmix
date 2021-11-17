@@ -57,8 +57,8 @@
         <addColumn tableName="AUDIT_ENTITY_SNAPSHOT">
             <column name="AUTHOR_USERNAME" type="varchar(255)"/>
         </addColumn>
-        <renameColumn tableName="AUDIT_ENTITY_SNAPSHOT" oldColumnName="CREATE_TS" newColumnName="CREATED_DATE"/>
-        <renameColumn tableName="AUDIT_ENTITY_SNAPSHOT" oldColumnName="VIEW_XML" newColumnName="FETCH_PLAN_XML"/>
+        <renameColumn tableName="AUDIT_ENTITY_SNAPSHOT" oldColumnName="CREATE_TS" newColumnName="CREATED_DATE" columnDataType="datetime"/>
+        <renameColumn tableName="AUDIT_ENTITY_SNAPSHOT" oldColumnName="VIEW_XML" newColumnName="FETCH_PLAN_XML" columnDataType="clob"/>
     </changeSet>
 
     <changeSet id="60" author="migrator" context="cuba and !migrated">

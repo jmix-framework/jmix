@@ -28,7 +28,7 @@
             <column name="USERNAME" type="varchar(255)"/>
             <column name="ENABLED" type="boolean"/>
         </addColumn>
-        <renameColumn tableName="SEC_USER" oldColumnName="TIME_ZONE" newColumnName="TIME_ZONE_ID"/>
+        <renameColumn tableName="SEC_USER" oldColumnName="TIME_ZONE" newColumnName="TIME_ZONE_ID" columnDataType="varchar(255)"/>
     </changeSet>
 
     <changeSet id="15" author="migrator" context="cuba and !migrated">

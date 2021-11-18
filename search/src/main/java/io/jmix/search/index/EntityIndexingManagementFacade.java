@@ -16,6 +16,8 @@
 
 package io.jmix.search.index;
 
+import io.jmix.core.Id;
+import io.jmix.core.IdSerialization;
 import io.jmix.core.security.Authenticated;
 import io.jmix.search.SearchProperties;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
@@ -33,6 +35,10 @@ public class EntityIndexingManagementFacade {
 
     @Autowired
     protected IndexingQueueManager indexingQueueManager;
+    @Autowired
+    protected EntityIndexer entityIndexer;
+    @Autowired
+    protected IdSerialization idSerialization;
     @Autowired
     protected ESIndexManager esIndexManager;
     @Autowired
@@ -65,6 +71,96 @@ public class EntityIndexingManagementFacade {
 
         int amount = indexingQueueManager.enqueueIndexAll(entityName);
         return String.format("%d instances of entity '%s' have been enqueued", amount, entityName);
+    }
+
+    @Authenticated
+    @ManagedOperation(description = "Index specific entity instance by its id")
+    @ManagedOperationParameters({
+            @ManagedOperationParameter(name = "entityName", description = "Name of entity configured for indexing, e.g. demo_Order"),
+            @ManagedOperationParameter(name = "id", description = "Id of target entity instance")
+    })
+    public String indexEntityInstance(String entityName, String id) {
+        String serializedId = entityName + "." + id;
+        Id<?> entityId = idSerialization.stringToId(serializedId);
+        IndexResult indexResult = entityIndexer.indexByEntityId(entityId);
+
+        String message;
+        if (indexResult.getTotalSize() == 0) {
+            message = "Entity instance not found or can't be processed";
+        } else if (indexResult.hasFailures()) {
+            IndexResult.Failure failure = indexResult.getFailures().iterator().next();
+            String errorMessage = failure.getCause().getLocalizedMessage();
+            message = String.format("Failed to index instance of entity '%s' with id '%s': %s",
+                    entityName, serializedId, errorMessage);
+        } else {
+            message = "Entity instance was successfully indexed";
+        }
+        return message;
+    }
+
+    @Authenticated
+    @ManagedOperation(description = "Enqueue indexing of specific entity instance by its id")
+    @ManagedOperationParameters({
+            @ManagedOperationParameter(name = "entityName", description = "Name of entity configured for indexing, e.g. demo_Order"),
+            @ManagedOperationParameter(name = "id", description = "Id of target entity instance")
+    })
+    public String enqueueIndexEntityInstance(String entityName, String id) {
+        String serializedId = entityName + "." + id;
+        Id<?> entityId = idSerialization.stringToId(serializedId);
+        int enqueued = indexingQueueManager.enqueueIndexByEntityId(entityId);
+
+        String message;
+        if (enqueued == 0) {
+            message = "Entity instance was not enqueued for indexing";
+        } else {
+            message = "Entity instance was successfully enqueued for indexing";
+        }
+        return message;
+    }
+
+    @Authenticated
+    @ManagedOperation(description = "Delete index document related to specific entity instance by its id")
+    @ManagedOperationParameters({
+            @ManagedOperationParameter(name = "entityName", description = "Name of entity configured for indexing, e.g. demo_Order"),
+            @ManagedOperationParameter(name = "id", description = "Idd of target entity instance")
+    })
+    public String deleteEntityInstanceFromIndex(String entityName, String id) {
+        String serializedId = entityName + "." + id;
+        Id<?> entityId = idSerialization.stringToId(serializedId);
+        IndexResult indexResult = entityIndexer.deleteByEntityId(entityId);
+
+        String message;
+        if (indexResult.getTotalSize() == 0) {
+            message = "Entity instance not found or can't be processed";
+        } else if (indexResult.hasFailures()) {
+            IndexResult.Failure failure = indexResult.getFailures().iterator().next();
+            String errorMessage = failure.getCause().getLocalizedMessage();
+            message = String.format("Failed to delete document related to instance of entity '%s' with id '%s': %s",
+                    entityName, serializedId, errorMessage);
+        } else {
+            message = "Index document was successfully deleted";
+        }
+        return message;
+    }
+
+    @Authenticated
+    @ManagedOperation(description = "Enqueue deletion of index document related to specific entity instance by its id")
+    @ManagedOperationParameters({
+            @ManagedOperationParameter(name = "entityName", description = "Name of entity configured for indexing, e.g. demo_Order"),
+            @ManagedOperationParameter(name = "id", description = "Id of target entity instance")
+    })
+    public String enqueueDeleteEntityInstanceFromIndex(String entityName, String id) {
+        String serializedId = entityName + "." + id;
+        Id<?> entityId = idSerialization.stringToId(serializedId);
+        int enqueued = indexingQueueManager.enqueueDeleteByEntityId(entityId);
+
+        String message;
+        if (enqueued == 0) {
+            message = "Entity instance was not enqueued for deletion";
+        } else {
+            message = "Entity instance was successfully enqueued for deletion";
+        }
+        return message;
     }
 
     @Authenticated

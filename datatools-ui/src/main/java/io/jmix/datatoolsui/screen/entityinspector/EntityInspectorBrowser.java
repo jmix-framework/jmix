@@ -157,7 +157,9 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
     public void onInit(InitEvent event) {
         showMode.setValue(ShowMode.NON_REMOVED);
         ScreenOptions screenOptions = event.getOptions();
-        String entityParam = (String) ((MapScreenOptions) screenOptions).getParams().get("entity");
+        String entityParam = screenOptions instanceof MapScreenOptions
+                ? (String) ((MapScreenOptions) screenOptions).getParams().get("entity")
+                : null;
 
         getScreenData().setDataContext(dataComponents.createDataContext());
         if (entityParam != null) {

@@ -537,7 +537,7 @@ public class BulkEditorWindow<E> extends Screen implements BulkEditorController<
 
     protected boolean isManagedAttribute(MetaClass metaClass, MetaProperty metaProperty) {
         if (metadataTools.isSystem(metaProperty)
-                || !metadataTools.isJpa(metaProperty)
+                || (!metadataTools.isJpa(metaProperty) && isCrossDataStoreReference(metaProperty))
                 || metadataTools.isSystemLevel(metaProperty)
                 || metaProperty.getRange().getCardinality().isMany()
                 || !isEntityAttributeModifyPermitted(metaClass, metaProperty)) {
@@ -559,6 +559,10 @@ public class BulkEditorWindow<E> extends Screen implements BulkEditorController<
         }
 
         return !(excludeRegex != null && excludeRegex.matcher(metaProperty.getName()).matches());
+    }
+
+    protected boolean isCrossDataStoreReference(MetaProperty metaProperty) {
+        return metadataTools.getCrossDataStoreReferenceIdProperty(metaProperty.getStore().getName(), metaProperty)==null;
     }
 
     protected boolean isEntityAttributeModifyPermitted(MetaClass metaClass, MetaProperty metaProperty) {

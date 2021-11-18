@@ -18,7 +18,6 @@ package io.jmix.search.index.queue.impl;
 
 import io.jmix.core.*;
 import io.jmix.core.common.util.Preconditions;
-import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.SystemAuthenticator;
 import io.jmix.data.StoreAwareLocator;
@@ -324,11 +323,10 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
     }
 
     protected List<IndexingQueueItem> processQueueItems(List<IndexingQueueItem> queueItems) {
-        Map<IndexingOperation, Map<Id<?>, List<IndexingQueueItem>>> groupedQueueItems = groupQueueItems(queueItems);
+        QueueItemsAggregator queueItemsAggregator = new QueueItemsAggregator(queueItems);
 
-        Map<Id<?>, List<IndexingQueueItem>> itemsForIndex = groupedQueueItems.get(IndexingOperation.INDEX);
-        Map<Id<?>, List<IndexingQueueItem>> itemsForDelete = groupedQueueItems.get(IndexingOperation.DELETE);
-        //todo check case update after delete (restore entity?)
+        Map<Id<?>, List<IndexingQueueItem>> itemsForIndex = queueItemsAggregator.getIndexItemsGroup();
+        Map<Id<?>, List<IndexingQueueItem>> itemsForDelete = queueItemsAggregator.getDeleteItemsGroup();
 
         List<IndexingQueueItem> successfullyProcessedQueueItems = new ArrayList<>(queueItems.size());
         if (MapUtils.isNotEmpty(itemsForIndex)) {
@@ -419,5 +417,94 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
         queueItem.setEntityId(entityId);
         queueItem.setEntityName(entityName);
         return queueItem;
+    }
+
+    /**
+     * Analyzes collection of {@link IndexingQueueItem}, determines unique entity ids
+     * and splits them among two disjoint groups: for index and for delete.
+     * <p>
+     * Group for specific id is determined by 'effective queue item' - the latest one for that id.
+     * <p>
+     * In case of multiple queue items related to single entity id
+     * it allows to perform only one actual operation on each id and remove all related queue items.
+     */
+    protected class QueueItemsAggregator {
+        Map<Id<?>, IndexingQueueItem> effectiveItemsForIds = new HashMap<>();
+        Map<Id<?>, List<IndexingQueueItem>> itemsForIds = new HashMap<>();
+        Map<IndexingOperation, Set<Id<?>>> idsForOperations = new HashMap<>();
+
+        protected QueueItemsAggregator(Collection<IndexingQueueItem> queueItems) {
+            groupQueueItems(queueItems);
+        }
+
+        /**
+         * Gets all entity ids that should be indexed.
+         * <p>
+         * Every entity id is mapped to all {@link IndexingQueueItem} related to this id.
+         *
+         * @return Map with entity ids as keys and lists of related queue items as values
+         */
+        protected Map<Id<?>, List<IndexingQueueItem>> getIndexItemsGroup() {
+            return getOperationItemsGroup(IndexingOperation.INDEX);
+        }
+
+        /**
+         * Gets all entity ids that should be deleted from index.
+         * <p>
+         * Every entity id is mapped to all {@link IndexingQueueItem} related to this id.
+         *
+         * @return Map with entity ids as keys and lists of related queue items as values
+         */
+        protected Map<Id<?>, List<IndexingQueueItem>> getDeleteItemsGroup() {
+            return getOperationItemsGroup(IndexingOperation.DELETE);
+        }
+
+        protected Map<Id<?>, List<IndexingQueueItem>> getOperationItemsGroup(IndexingOperation operation) {
+            return idsForOperations.getOrDefault(operation, Collections.emptySet())
+                    .stream()
+                    .collect(Collectors.toMap(
+                            Function.identity(),
+                            id -> itemsForIds.getOrDefault(id, Collections.emptyList())
+                    ));
+        }
+
+        protected void groupQueueItems(Collection<IndexingQueueItem> queueItems) {
+            queueItems.forEach(item -> {
+                Id<?> entityId = idSerialization.stringToId(item.getEntityId());
+
+                //Resolve effective queue item
+                IndexingQueueItem currentEffectiveItem = effectiveItemsForIds.get(entityId);
+                IndexingQueueItem previousEffectiveItem = null;
+                if (currentEffectiveItem == null) {
+                    currentEffectiveItem = item;
+                } else {
+                    if (currentEffectiveItem.getCreatedDate().before(item.getCreatedDate())) {
+                        previousEffectiveItem = currentEffectiveItem;
+                        currentEffectiveItem = item;
+                    }
+                }
+
+                //Bind processed item to entity id
+                List<IndexingQueueItem> itemsForId = itemsForIds.computeIfAbsent(entityId, k -> new ArrayList<>());
+                itemsForId.add(item);
+
+                //Bind effective item to entity id
+                effectiveItemsForIds.put(entityId, currentEffectiveItem);
+
+                //Add entity id to actual operation group
+                IndexingOperation currentEffectiveOperation = currentEffectiveItem.getOperation();
+                Set<Id<?>> idsForCurrentEffectiveOperation = idsForOperations.computeIfAbsent(currentEffectiveOperation, k -> new HashSet<>());
+                idsForCurrentEffectiveOperation.add(entityId);
+
+                //Remove entity id from irrelevant operation group (if necessary)
+                if (previousEffectiveItem != null) {
+                    IndexingOperation previousEffectiveOperation = previousEffectiveItem.getOperation();
+                    if (!previousEffectiveOperation.equals(currentEffectiveOperation)) {
+                        Set<Id<?>> idsForPreviousEffectiveOperation = idsForOperations.computeIfAbsent(previousEffectiveOperation, k -> new HashSet<>());
+                        idsForPreviousEffectiveOperation.remove(entityId);
+                    }
+                }
+            });
+        }
     }
 }

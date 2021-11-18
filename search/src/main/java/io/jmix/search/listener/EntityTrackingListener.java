@@ -179,7 +179,10 @@ public class EntityTrackingListener implements DataStoreEventListener, DataStore
     }
 
     protected boolean isUpdateRequired(Class<?> entityClass, AttributeChanges changes) {
-        Set<String> affectedLocalPropertyNames = indexConfigurationManager.getLocalPropertyNamesAffectedByUpdate(entityClass);
+        Set<String> affectedLocalPropertyNames = new HashSet<>(indexConfigurationManager.getLocalPropertyNamesAffectedByUpdate(entityClass));
+        if(metadataTools.isSoftDeletable(entityClass)) {
+            affectedLocalPropertyNames.add(metadataTools.findDeletedDateProperty(entityClass));
+        }
         return changes.getAttributes()
                 .stream()
                 .anyMatch(affectedLocalPropertyNames::contains);

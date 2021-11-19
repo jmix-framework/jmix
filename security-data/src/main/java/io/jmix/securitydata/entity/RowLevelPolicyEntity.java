@@ -91,7 +91,7 @@ public class RowLevelPolicyEntity implements Serializable {
     private String whereClause;
 
     @Lob
-    @Column(name = "JOiN_CLAUSE", length = 5000)
+    @Column(name = "JOIN_CLAUSE", length = 5000)
     private String joinClause;
 
     @Lob
@@ -99,7 +99,7 @@ public class RowLevelPolicyEntity implements Serializable {
     private String script;
 
     @NotNull
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "ROLE_ID")
     private RowLevelRoleEntity role;
 

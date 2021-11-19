@@ -90,7 +90,7 @@ public class ResourcePolicyEntity implements Serializable {
     private String policyGroup;
 
     @NotNull
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "ROLE_ID")
     private ResourceRoleEntity role;
 

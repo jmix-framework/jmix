@@ -16,6 +16,7 @@
 
 package io.jmix.ui.component.impl;
 
+import com.google.common.base.Strings;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.querycondition.Condition;
@@ -45,6 +46,8 @@ public abstract class AbstractSingleFilterComponent<V> extends CompositeComponen
     protected DataLoader dataLoader;
     protected boolean autoApply;
     protected Condition queryCondition;
+
+    protected boolean captionVisible = true;
 
     @Internal
     protected boolean conditionModificationDelegated = false;
@@ -216,9 +219,10 @@ public abstract class AbstractSingleFilterComponent<V> extends CompositeComponen
 
     protected void updateCaption(@Nullable String caption) {
         if (captionPosition == CaptionPosition.TOP) {
-            root.setCaption(caption);
+            root.setCaption(captionVisible ? caption : null);
         } else {
-            captionLabel.setValue(caption);
+            captionLabel.setValue(captionVisible ? caption : null);
+            captionLabel.setVisible(captionVisible || !Strings.isNullOrEmpty(icon));
         }
     }
 
@@ -247,6 +251,20 @@ public abstract class AbstractSingleFilterComponent<V> extends CompositeComponen
 
         if (captionLabel != null) {
             captionLabel.setWidth(captionWidth);
+        }
+    }
+
+    @Override
+    public boolean isCaptionVisible() {
+        return captionVisible;
+    }
+
+    @Override
+    public void setCaptionVisible(boolean captionVisible) {
+        if (this.captionVisible != captionVisible) {
+            this.captionVisible = captionVisible;
+
+            updateCaption(caption);
         }
     }
 
@@ -352,6 +370,8 @@ public abstract class AbstractSingleFilterComponent<V> extends CompositeComponen
         } else if (captionLabel != null) {
             captionLabel.setIcon(icon);
         }
+
+        updateCaption(caption);
     }
 
     @Override

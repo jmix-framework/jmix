@@ -82,4 +82,17 @@ public interface SingleFilterComponent<V> extends FilterComponent, Component.Bel
      */
     @StudioProperty(type = PropertyType.SIZE, defaultValue = "100%")
     void setCaptionWidth(String captionWidth);
+
+    /**
+     * @return {@code true} if caption is visible
+     */
+    boolean isCaptionVisible();
+
+    /**
+     * Sets caption visibility. Default value is {@code true}.
+     *
+     * @param captionVisible whether to show caption or not
+     */
+    @StudioProperty(type = PropertyType.BOOLEAN, defaultValue = "true")
+    void setCaptionVisible(boolean captionVisible);
 }

@@ -44,6 +44,7 @@ public abstract class AbstractSingleFilterComponentLoader<C extends SingleFilter
         loadBoolean(element, "autoApply", resultComponent::setAutoApply);
         loadValueComponent(resultComponent, element);
 
+        loadBoolean(element, "captionVisible", resultComponent::setCaptionVisible);
         loadCaption(resultComponent, element);
         loadEnum(element, SupportsCaptionPosition.CaptionPosition.class, "captionPosition",
                 resultComponent::setCaptionPosition);

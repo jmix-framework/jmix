@@ -27,6 +27,7 @@ import io.jmix.core.session.SessionData;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.authentication.RememberMeAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -67,7 +68,8 @@ public class UserSessionSourceImpl implements UserSessionSource {
 
     protected void updateUserSessionFromAuthentication(Authentication authentication, UserSession session) {
         UserRepository userRepository = beanFactory.getBean(UserRepository.class);
-        if (authentication instanceof UsernamePasswordAuthenticationToken) {
+        if (authentication instanceof UsernamePasswordAuthenticationToken
+                || authentication instanceof RememberMeAuthenticationToken) {
             session.setUser((UserDetails) authentication.getPrincipal());
             if (authentication.getDetails() instanceof ClientDetails) {
                 ClientDetails clientDetails = (ClientDetails) authentication.getDetails();

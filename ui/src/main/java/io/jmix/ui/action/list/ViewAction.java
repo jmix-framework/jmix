@@ -18,6 +18,7 @@ package io.jmix.ui.action.list;
 
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.security.EntityOp;
 import io.jmix.ui.ScreenBuilders;
 import io.jmix.ui.accesscontext.UiEntityContext;
@@ -25,12 +26,18 @@ import io.jmix.ui.action.Action;
 import io.jmix.ui.action.ActionType;
 import io.jmix.ui.builder.EditorBuilder;
 import io.jmix.ui.component.Component;
+import io.jmix.ui.component.Frame;
+import io.jmix.ui.component.data.DataUnit;
+import io.jmix.ui.component.data.meta.ContainerDataUnit;
 import io.jmix.ui.component.data.meta.EntityDataUnit;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.meta.StudioAction;
 import io.jmix.ui.meta.StudioPropertiesItem;
 import io.jmix.ui.UiComponentProperties;
+import io.jmix.ui.model.CollectionContainer;
+import io.jmix.ui.model.CollectionPropertyContainer;
+import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.screen.*;
 import io.jmix.ui.sys.ActionScreenInitializer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,6 +67,7 @@ public class ViewAction<E> extends SecuredListAction implements Action.ScreenOpe
     public static final String ID = "view";
 
     protected ScreenBuilders screenBuilders;
+    protected ReadOnlyScreensSupport readOnlyScreensSupport;
 
     protected ActionScreenInitializer screenInitializer = new ActionScreenInitializer();
 
@@ -229,6 +237,11 @@ public class ViewAction<E> extends SecuredListAction implements Action.ScreenOpe
         setShortcut(componentProperties.getTableViewShortcut());
     }
 
+    @Autowired
+    protected void setReadOnlyScreensSupport(ReadOnlyScreensSupport readOnlyScreensSupport) {
+        this.readOnlyScreensSupport = readOnlyScreensSupport;
+    }
+
     @Override
     protected boolean isPermitted() {
         if (target == null || !(target.getItems() instanceof EntityDataUnit)) {
@@ -309,11 +322,54 @@ public class ViewAction<E> extends SecuredListAction implements Action.ScreenOpe
 
         if (editor instanceof ReadOnlyAwareScreen) {
             ((ReadOnlyAwareScreen) editor).setReadOnly(true);
+
+            if (isReadOnlyCompositionEditor(editor)) {
+                readOnlyScreensSupport.setScreenReadOnly(editor, true, false);
+            }
         } else {
             throw new IllegalStateException(String.format("Screen '%s' does not implement ReadOnlyAwareScreen: %s",
                     editor.getId(), editor.getClass()));
         }
 
         editor.show();
+    }
+
+    /**
+     * In case of composition relation, editor for nested entities should be in read-only mode with hidden
+     * "enableEditing" action if master editor is in read-only mode too.
+     *
+     * @param editor editor to check
+     * @return {@code true} if the relation between entities is a composition
+     */
+    protected boolean isReadOnlyCompositionEditor(Screen editor) {
+        Frame frame = target.getFrame();
+        if (frame == null) {
+            throw new IllegalStateException("Component is not attached to the Frame");
+        }
+
+        FrameOwner origin = target.getFrame().getFrameOwner();
+        if (!(origin instanceof ReadOnlyAwareScreen)
+                || !((ReadOnlyAwareScreen) origin).isReadOnly()
+                || !(editor instanceof StandardEditor)) {
+            return false;
+        }
+
+        DataUnit items = target.getItems();
+        if (!(items instanceof ContainerDataUnit)) {
+            return false;
+        }
+
+        CollectionContainer container = ((ContainerDataUnit) target.getItems()).getContainer();
+        if (!(container instanceof CollectionPropertyContainer)) {
+            return false;
+        }
+
+        InstanceContainer masterContainer = ((CollectionPropertyContainer) container).getMaster();
+        String property = ((CollectionPropertyContainer) container).getProperty();
+
+        MetaClass metaClass = masterContainer.getEntityMetaClass();
+        MetaProperty metaProperty = metaClass.getProperty(property);
+
+        return metaProperty.getType() == MetaProperty.Type.COMPOSITION;
     }
 }

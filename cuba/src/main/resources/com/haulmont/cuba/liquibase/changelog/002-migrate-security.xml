@@ -97,4 +97,18 @@
         </update>
     </changeSet>
 
+    <changeSet id="80" author="migrator" context="cuba and !migrated">
+        <validCheckSum>1:any</validCheckSum>
+        <addColumn tableName="SEC_SEARCH_FOLDER">
+            <column name="USERNAME" type="varchar(255)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="90" author="migrator" context="cuba and !migrated">
+        <validCheckSum>1:any</validCheckSum>
+        <update tableName="SEC_SEARCH_FOLDER">
+            <column name="USERNAME" valueComputed="(select u.USERNAME from SEC_USER u where u.ID = USER_ID)"/>
+        </update>
+    </changeSet>
+
 </databaseChangeLog>

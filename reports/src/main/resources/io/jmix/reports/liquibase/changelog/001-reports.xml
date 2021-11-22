@@ -21,6 +21,7 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
     <changeSet author="reports" id="1" context="!cuba">
+        <validCheckSum>8:02c24e8ab208451a178bdd3722b8f4a9</validCheckSum>
         <validCheckSum>8:f5da7222d918810deb69ba452ee5560e</validCheckSum>
 
         <createTable tableName="REPORT_GROUP">
@@ -97,7 +98,7 @@
             <column name="REPORT_ID" type="${uuid.type}">
                 <constraints nullable="false"/>
             </column>
-          
+
             <column name="CODE" type="varchar(50)"/>
             <column name="OUTPUT_TYPE" type="integer" defaultValue="0">
                 <constraints nullable="false"/>
@@ -188,7 +189,7 @@
     <changeSet id="2" author="reports" context="!cuba">
         <dropColumn tableName="REPORT_EXECUTION" columnName="SERVER_ID"/>
     </changeSet>
-    
+
     <changeSet id="3" author="reports" context="!cuba">
         <renameColumn tableName="REPORT_EXECUTION"
                       oldColumnName="PRINCIPAL"

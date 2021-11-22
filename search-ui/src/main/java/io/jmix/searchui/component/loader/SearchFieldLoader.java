@@ -17,9 +17,12 @@
 package io.jmix.searchui.component.loader;
 
 import com.google.common.base.Strings;
+import com.vaadin.ui.Dependency;
 import io.jmix.search.searching.SearchStrategy;
 import io.jmix.search.searching.SearchStrategyManager;
 import io.jmix.searchui.component.SearchField;
+import io.jmix.ui.component.Frame;
+import io.jmix.ui.screen.ScreenDependencyUtils;
 import io.jmix.ui.xml.layout.loader.AbstractComponentLoader;
 import org.dom4j.Element;
 
@@ -65,6 +68,8 @@ public class SearchFieldLoader extends AbstractComponentLoader<SearchField> {
 
         loadStrategy(resultComponent, element);
         loadEntities(resultComponent, element);
+
+        loadStyles();
     }
 
     protected void loadStrategy(SearchField component, Element element) {
@@ -91,5 +96,13 @@ public class SearchFieldLoader extends AbstractComponentLoader<SearchField> {
                     .collect(Collectors.toList());
         }
         component.setEntities(entities);
+    }
+
+    protected void loadStyles() {
+        Frame frame = resultComponent.getFrame();
+        if (frame != null) {
+            ScreenDependencyUtils.addScreenDependency(frame.getFrameOwner(),
+                    "vaadin://search-addon/search-styles.css", Dependency.Type.STYLESHEET);
+        }
     }
 }

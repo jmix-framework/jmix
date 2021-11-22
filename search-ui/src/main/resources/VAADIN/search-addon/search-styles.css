@@ -1,0 +1,16 @@
+.jmix-search-field .jmix-pickerfield-layout .jmix-pickerfield-text {
+    border-right: none;
+}
+
+.jmix-drawer.jmix-drawer-collapsed.expand-on-hover:not(:hover) .jmix-search-field .jmix-pickerfield-layout .jmix-pickerfield-text {
+    display: none;
+}
+
+.jmix-drawer.jmix-drawer-collapsed.expand-on-hover:not(:hover) .jmix-search-field .jmix-pickerfield-layout .jmix-pickerfield-button {
+    border: none;
+}
+
+.jmix-drawer.jmix-drawer-collapsed.expand-on-hover:hover > .jmix-search-field,
+.jmix-drawer:not(.jmix-drawer-collapsed) > .jmix-search-field {
+    padding: 6px;
+}

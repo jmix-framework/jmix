@@ -46,6 +46,8 @@ import static io.jmix.ui.screen.UiControllerUtils.getScreenContext;
 
 public class SearchFieldImpl extends ValuePickerImpl<String> implements SearchField {
 
+    public static final String SEARCH_FIELD_STYLENAME = "jmix-search-field";
+
     @Autowired
     protected Messages messages;
     @Autowired
@@ -61,7 +63,7 @@ public class SearchFieldImpl extends ValuePickerImpl<String> implements SearchFi
 
     public SearchFieldImpl() {
         super();
-        addStyleName("jmix-search-field");
+        addStyleName(SEARCH_FIELD_STYLENAME);
     }
 
     @Override
@@ -130,6 +132,17 @@ public class SearchFieldImpl extends ValuePickerImpl<String> implements SearchFi
                 searchCompletedHandler.accept(new SearchCompletedEvent(this, searchResult));
             }
         }
+    }
+
+    @Override
+    public String getStyleName() {
+        return StringUtils.normalizeSpace(super.getStyleName().replace(SEARCH_FIELD_STYLENAME, ""));
+    }
+
+    @Override
+    public void setStyleName(@Nullable String name) {
+        super.setStyleName(name);
+        addStyleName(SEARCH_FIELD_STYLENAME);
     }
 
     @Override

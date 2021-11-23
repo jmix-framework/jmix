@@ -291,7 +291,6 @@ public class WidgetsCompile extends WidgetsTask {
     }
 
     @InputFiles
-    @SkipWhenEmpty
     public FileCollection getSourceFiles() {
         return super.getSourceFiles();
     }

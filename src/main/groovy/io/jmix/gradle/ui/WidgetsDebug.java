@@ -112,7 +112,6 @@ public class WidgetsDebug extends WidgetsTask {
     }
 
     @InputFiles
-    @SkipWhenEmpty
     public FileCollection getSourceFiles() {
         return super.getSourceFiles();
     }

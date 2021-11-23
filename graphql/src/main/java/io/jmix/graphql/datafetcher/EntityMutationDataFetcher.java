@@ -257,7 +257,7 @@ public class EntityMutationDataFetcher {
             //inverse value is null - update it to correct value
             EntityValues.setValue(child, inverseMetaProperty.getName(), parent);
         } else {
-            if (!parent.equals(child)) {
+            if (!parent.equals(inverseValue)) {
                 // parent id doesn't match parent in graph - throw exception
                 String message = String.format(
                         "Composition attribute '%s' in class '%s' doesn't contain the correct link to parent entity. " +

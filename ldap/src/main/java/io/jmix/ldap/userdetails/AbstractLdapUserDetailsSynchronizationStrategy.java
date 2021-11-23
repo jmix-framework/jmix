@@ -47,6 +47,8 @@ import java.util.Set;
 public abstract class AbstractLdapUserDetailsSynchronizationStrategy<T extends UserDetails>
         implements LdapUserDetailsSynchronizationStrategy {
 
+    protected static final String ROW_LEVEL_ROLE_PREFIX = "row_level_role:";
+
     private static final Logger log = LoggerFactory.getLogger(AbstractLdapUserDetailsSynchronizationStrategy.class);
 
     @Autowired
@@ -105,11 +107,15 @@ public abstract class AbstractLdapUserDetailsSynchronizationStrategy<T extends U
             if (grantedAuthority instanceof RoleGrantedAuthority) {
                 RoleGrantedAuthority roleGrantedAuthority = (RoleGrantedAuthority) grantedAuthority;
                 String roleCode = roleGrantedAuthority.getAuthority();
-                String roleType = roleCode.startsWith("row_level_role:")
-                        ? RoleAssignmentRoleType.ROW_LEVEL
-                        : RoleAssignmentRoleType.RESOURCE;
+                String roleType;
+                if(roleCode.startsWith(ROW_LEVEL_ROLE_PREFIX)) {
+                    roleType = RoleAssignmentRoleType.ROW_LEVEL;
+                    roleCode = roleCode.substring(ROW_LEVEL_ROLE_PREFIX.length());
+                } else {
+                    roleType = RoleAssignmentRoleType.RESOURCE;
+                }
                 RoleAssignmentEntity roleAssignmentEntity = dataManager.create(RoleAssignmentEntity.class);
-                roleAssignmentEntity.setRoleCode(grantedAuthority.getAuthority());
+                roleAssignmentEntity.setRoleCode(roleCode);
                 roleAssignmentEntity.setUsername(username);
                 roleAssignmentEntity.setRoleType(roleType);
                 roleAssignmentEntities.add(roleAssignmentEntity);

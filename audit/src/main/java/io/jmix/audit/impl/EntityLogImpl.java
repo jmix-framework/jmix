@@ -494,23 +494,23 @@ public class EntityLogImpl implements EntityLog, JpaLifecycleListener {
             attributes = filterRemovedAttributes(entity, attributes);
 
             String storeName = metaClass.getStore().getName();
+            EntityLogItem item;
             // Create a new transaction in main DB if we are saving an entity from additional data store
             if (!Stores.isMain(storeName)) {
                 Set<String> finalAttributes = attributes;
-                transaction.executeWithoutResult(status ->
+                item = transaction.execute(status ->
                         internalRegisterModify(entity, changes, metaClass, storeName, finalAttributes));
             } else {
-                internalRegisterModify(entity, changes, metaClass, storeName, attributes);
+                item = internalRegisterModify(entity, changes, metaClass, storeName, attributes);
             }
-
-//            }
+            enqueueItem(item, storeName);
         } catch (Exception e) {
             logError(entity, e);
         }
     }
 
-    protected void internalRegisterModify(Object entity, @Nullable AttributeChanges changes, MetaClass metaClass,
-                                          String storeName, Set<String> attributes) {
+    protected EntityLogItem internalRegisterModify(Object entity, @Nullable AttributeChanges changes, MetaClass metaClass,
+                                                   String storeName, Set<String> attributes) {
         EntityLogItem item = null;
 
         Date ts = timeSource.currentTimestamp();
@@ -557,9 +557,7 @@ public class EntityLogImpl implements EntityLog, JpaLifecycleListener {
             item.setAttributes(entityLogAttrs);
         }
 
-        if (item != null) {
-            enqueueItem(item, storeName);
-        }
+        return item;
     }
 
     protected Set<EntityLogAttr> createLogAttributes(Object entity, Set<String> attributes,

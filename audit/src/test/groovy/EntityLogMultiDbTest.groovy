@@ -2,6 +2,7 @@ import io.jmix.audit.entity.EntityLogItem
 import io.jmix.core.DataManager
 import io.jmix.core.EntitySet
 import io.jmix.core.security.SystemAuthenticator
+import io.jmix.data.StoreAwareLocator
 import org.springframework.beans.factory.annotation.Autowired
 import test_support.testmodel.Db1Entity
 import test_support.testmodel.UuidEntity
@@ -27,6 +28,8 @@ class EntityLogMultiDbTest extends AbstractEntityLogTest {
     DataManager dataManager
     @Autowired
     SystemAuthenticator authenticator
+    @Autowired
+    StoreAwareLocator locator
 
 
     void setup() {
@@ -138,8 +141,31 @@ class EntityLogMultiDbTest extends AbstractEntityLogTest {
         entityLogItems[0].type == EntityLogItem.Type.MODIFY
 
         cleanup:
-
+        locator.getJdbcTemplate('db1').update('delete from TEST_DB1_ENTITY')
         clearTable('TEST_UUID_ENTITY')
+        authenticator.end()
+    }
+
+    def "Additional datastore entity update logged"() {
+        given:
+        authenticator.begin()
+        def db1Entity = metadata.create(Db1Entity)
+        db1Entity.name = 'test1'
+        saveEntities(db1Entity)
+
+        when:
+        db1Entity.name = "test2"
+        saveEntities(db1Entity)
+
+        then:
+        def entityLogItems = getEntityLogItems('test_Db1Entity', db1Entity.id)
+        entityLogItems.size() == 2
+        entityLogItems[1].type == EntityLogItem.Type.CREATE
+        entityLogItems[0].type == EntityLogItem.Type.MODIFY
+        entityLogItems[0].changes.contains("name=test2\nname-oldVl=test1\n")
+
+        cleanup:
+        locator.getJdbcTemplate('db1').update('delete from TEST_DB1_ENTITY')
         authenticator.end()
     }
 

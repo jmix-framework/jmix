@@ -75,6 +75,7 @@ dependencies {
     def awsfsVersion = baseVersion
     def awssecurityVerion = baseVersion
     def bpmVersion = baseVersion
+    def businessCalendarVersion = baseVersion
     def cloudqueueVerion = baseVersion
     def coreVersion = baseVersion
     def cubaVersion = baseVersion
@@ -92,6 +93,7 @@ dependencies {
     def localfsVersion = baseVersion
     def multitenancyVersion = baseVersion
     def mapsVersion = baseVersion
+    def notificationsVersion = baseVersion
     def reportsVersion = baseVersion
     def restVersion = baseVersion
     def searchVersion = baseVersion
@@ -102,8 +104,10 @@ dependencies {
     def webdavVersion = baseVersion
 
     if (isTrialBuild()) {
-        mapsVersion = mapsVersion + '.trial'
         bpmVersion = bpmVersion + '.trial'
+        businessCalendarVersion = businessCalendarVersion + '.trial'
+        mapsVersion = mapsVersion + '.trial'
+        notificationsVersion = notificationsVersion + '.trial'
         webdavVersion = webdavVersion + '.trial'
 
         version = version + '.trial'
@@ -128,6 +132,11 @@ dependencies {
         api "io.jmix.bpm:jmix-bpm-ui-starter:${snapshotOr(bpmVersion)}"
         api "io.jmix.bpm:jmix-bpm-rest:${snapshotOr(bpmVersion)}"
         api "io.jmix.bpm:jmix-bpm-rest-starter:${snapshotOr(bpmVersion)}"
+
+        api "io.jmix.businesscalendar:jmix-businesscalendar:${snapshotOr(businessCalendarVersion)}"
+        api "io.jmix.businesscalendar:jmix-businesscalendar-starter:${snapshotOr(businessCalendarVersion)}"
+        api "io.jmix.businesscalendar:jmix-businesscalendar-ui:${snapshotOr(businessCalendarVersion)}"
+        api "io.jmix.businesscalendar:jmix-businesscalendar-ui-starter:${snapshotOr(businessCalendarVersion)}"
 
         api "io.jmix.cloudqueue:jmix-cloudqueue-api:${snapshotOr(cloudqueueVerion)}"
         api "io.jmix.cloudqueue:jmix-cloudqueue-aws-starter:${snapshotOr(cloudqueueVerion)}"
@@ -204,6 +213,10 @@ dependencies {
         api "io.jmix.multitenancy:jmix-multitenancy-starter:${snapshotOr(multitenancyVersion)}"
         api "io.jmix.multitenancy:jmix-multitenancy-ui-starter:${snapshotOr(multitenancyVersion)}"
 
+        api "io.jmix.notifications:jmix-notifications:${snapshotOr(notificationsVersion)}"
+        api "io.jmix.notifications:jmix-notifications-ui:${snapshotOr(notificationsVersion)}"
+        api "io.jmix.notifications:jmix-notifications-starter:${snapshotOr(notificationsVersion)}"
+        api "io.jmix.notifications:jmix-notifications-ui-starter:${snapshotOr(notificationsVersion)}"
 
         api "io.jmix.reports:jmix-reports:${snapshotOr(reportsVersion)}"
         api "io.jmix.reports:jmix-reports-ui:${snapshotOr(reportsVersion)}"

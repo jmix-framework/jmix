@@ -99,8 +99,8 @@ public class JpaLazyLoadingListener implements DataStoreEventListener {
             MetaClass metaClass = metadata.getClass(entry.getKey().getClass());
             for (MetaProperty property : metaClass.getProperties()) {
                 if (property.getRange().isClass() && !metadataTools.isEmbedded(property) &&
-                        metadataTools.getCrossDataStoreReferenceIdProperty(property.getStore().getName(), property)==null &&
-                        !isPropertyContainedInFetchPlans(property, entry.getValue())) {
+                        !isPropertyContainedInFetchPlans(property, entry.getValue()) &&
+                        metadataTools.getCrossDataStoreReferenceIdProperty(property.getStore().getName(), property) == null) {
                     if (!entityStates.isLoaded(entry.getKey(), property.getName())) {
                         if (property.getRange().getCardinality().isMany()) {
                             processCollectionValueHolder(entry.getKey(), property, loadOptions);

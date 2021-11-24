@@ -23,6 +23,7 @@
 
     <changeSet author="ui-data" id="1">
         <validCheckSum>8:eb9a995e63e9721e5c0d41ef59d75f53</validCheckSum>
+        <validCheckSum>8:7875b5f2c9af17245692c04425fe91e9</validCheckSum>
 
         <createTable tableName="UI_SETTING">
             <column name="ID" type="${uuid.type}">

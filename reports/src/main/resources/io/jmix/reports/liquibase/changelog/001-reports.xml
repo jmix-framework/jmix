@@ -23,6 +23,8 @@
     <changeSet author="reports" id="1" context="!cuba">
         <validCheckSum>8:02c24e8ab208451a178bdd3722b8f4a9</validCheckSum>
         <validCheckSum>8:f5da7222d918810deb69ba452ee5560e</validCheckSum>
+        <validCheckSum>8:ad41a1a258292fb61230c580d0aa3099</validCheckSum>
+        <validCheckSum>8:036402abfae5b9aeba6c51e965a62a74</validCheckSum>
 
         <createTable tableName="REPORT_GROUP">
             <column name="ID" type="${uuid.type}">

@@ -162,7 +162,8 @@ class EntityLogMultiDbTest extends AbstractEntityLogTest {
         entityLogItems.size() == 2
         entityLogItems[1].type == EntityLogItem.Type.CREATE
         entityLogItems[0].type == EntityLogItem.Type.MODIFY
-        entityLogItems[0].changes.contains("name=test2\nname-oldVl=test1\n")
+        entityLogItems[0].changes.contains("name=test2")
+        entityLogItems[0].changes.contains("name-oldVl=test1")
 
         cleanup:
         locator.getJdbcTemplate('db1').update('delete from TEST_DB1_ENTITY')

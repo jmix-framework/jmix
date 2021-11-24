@@ -16,7 +16,9 @@
 
 package test_support.entity.lazyloading;
 
+import io.jmix.core.metamodel.annotation.DependsOnProperties;
 import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 import test_support.entity.BaseEntity;
 
 import javax.persistence.*;
@@ -30,6 +32,11 @@ public class ManyToOneEntity extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "TEST_ONE_TO_MANY_ENTITY_ID")
     protected OneToManyEntity oneToManyEntity;
+
+    @Transient
+    @JmixProperty
+    @DependsOnProperties({"oneToManyEntity"})
+    private OneToManyEntity transientField;
 
     public OneToManyEntity getOneToManyEntity() {
         return oneToManyEntity;
@@ -45,5 +52,13 @@ public class ManyToOneEntity extends BaseEntity {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public OneToManyEntity getTransientField() {
+        return transientField;
+    }
+
+    public void setTransientField(OneToManyEntity transientField) {
+        this.transientField = transientField;
     }
 }

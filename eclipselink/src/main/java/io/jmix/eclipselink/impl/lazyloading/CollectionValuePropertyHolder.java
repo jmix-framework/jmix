@@ -19,6 +19,7 @@ package io.jmix.eclipselink.impl.lazyloading;
 import io.jmix.core.EntityAttributeVisitor;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.LoadContext;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.impl.SerializationContext;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -127,11 +128,15 @@ public class CollectionValuePropertyHolder extends AbstractValueHolder {
     }
 
     protected class CollectionValuePropertyVisitor implements EntityAttributeVisitor {
+
         @Override
         public void visit(Object entity, MetaProperty property) {
-            if (property.getRange().asClass().getJavaClass().isAssignableFrom(getOwner().getClass())) {
-                if (!Objects.equals(getRootEntity(), entity)) {
-                    replaceToExistingReferences(entity, property, getOwner());
+            MetadataTools metadataTools = getMetadataTools();
+            if (metadataTools.isJpa(property) && !metadataTools.isEmbedded(property)) {
+                if (property.getRange().asClass().getJavaClass().isAssignableFrom(getOwner().getClass())) {
+                    if (!Objects.equals(getRootEntity(), entity)) {
+                        replaceToExistingReferences(entity, property, getOwner());
+                    }
                 }
             }
         }

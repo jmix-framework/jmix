@@ -21,8 +21,8 @@ import io.jmix.core.FetchPlanRepository
 import io.jmix.core.LoadContext
 import io.jmix.core.Metadata
 import org.springframework.beans.factory.annotation.Autowired
-import spock.lang.Ignore
 import test_support.DataSpec
+import test_support.entity.entity_extension.Address
 import test_support.entity.lazyloading.*
 
 class LazyLoadingTest extends DataSpec {
@@ -248,6 +248,32 @@ class LazyLoadingTest extends DataSpec {
         then:
 
         checkManyToManyDuplicate(result)
+    }
+
+    def "Value holder should not be searched for transient or embedded entities"() {
+        setup: "This test checks embedded case. Transient case checked using ManyToOneEntity#transientField in other tests"
+        SelfReferencedEmployee supervisor = metadata.create(SelfReferencedEmployee)
+        supervisor.setHomeAddress(new Address())
+        supervisor.homeAddress.city = "Moskow"
+        supervisor.homeAddress.street = "Sharikopodshipnikovskaya"
+
+        SelfReferencedEmployee worker = metadata.create(SelfReferencedEmployee)
+        worker.setSupervisor(supervisor)
+
+        dataManager.save(supervisor, worker)
+
+        when: "Entity loaded by ValueHolder through reference on owning side"
+        SelfReferencedEmployee loadedWorker = dataManager.load(SelfReferencedEmployee)
+                .id(worker.id)
+                .one()
+        SelfReferencedEmployee loadedSupervisor = loadedWorker.getSupervisor()
+
+        then: "ValueHolder should not be searched for Embedded property"
+        noExceptionThrown()
+
+        cleanup:
+        if (worker != null) dataManager.remove(worker)
+        if (supervisor != null) dataManager.remove(supervisor)
     }
 
     boolean checkManyToManyDuplicate(ManyToManySecondEntity entity) {

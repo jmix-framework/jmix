@@ -30,17 +30,14 @@ import io.jmix.ui.screen.*;
 import io.jmix.ui.sys.UiControllerReflectionInspector.AnnotatedMethod;
 import io.jmix.ui.sys.UiControllerReflectionInspector.InjectElement;
 import io.jmix.ui.sys.UiControllerReflectionInspector.ScreenIntrospectionData;
-import io.jmix.ui.sys.delegate.InstalledBiFunction;
-import io.jmix.ui.sys.delegate.InstalledConsumer;
-import io.jmix.ui.sys.delegate.InstalledFunction;
-import io.jmix.ui.sys.delegate.InstalledProxyHandler;
-import io.jmix.ui.sys.delegate.InstalledRunnable;
-import io.jmix.ui.sys.delegate.InstalledSupplier;
+import io.jmix.ui.sys.delegate.*;
 import io.jmix.ui.sys.event.UiEventListenerMethodAdapter;
 import io.jmix.ui.theme.ThemeConstants;
 import io.jmix.ui.theme.ThemeConstantsManager;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.JavaVersion;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
@@ -56,14 +53,8 @@ import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.lang.invoke.MethodHandle;
-import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Member;
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
+import java.lang.reflect.*;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -362,14 +353,29 @@ public class UiControllerDependencyInjector {
             }
 
             Consumer listener;
-            MethodHandle consumerMethodFactory =
-                    reflectionInspector.getConsumerMethodFactory(clazz, annotatedMethod, eventType);
-            try {
-                listener = (Consumer) consumerMethodFactory.invoke(frameOwner);
-            } catch (Error e) {
-                throw e;
-            } catch (Throwable e) {
-                throw new RuntimeException("Unable to bind consumer handler", e);
+
+            //If screen controller class was hot-deployed, then it will be loaded by different class loader.
+            //This will make impossible to create lambda using LambdaMetaFactory for producing the listener method
+            //in Java 17+
+            if (SystemUtils.isJavaVersionAtMost(JavaVersion.JAVA_16) ||
+                    getClass().getClassLoader() == frameOwner.getClass().getClassLoader()) {
+                MethodHandle consumerMethodFactory =
+                        reflectionInspector.getConsumerMethodFactory(clazz, annotatedMethod, eventType);
+                try {
+                    listener = (Consumer) consumerMethodFactory.invoke(frameOwner);
+                } catch (Error e) {
+                    throw e;
+                } catch (Throwable e) {
+                    throw new RuntimeException("Unable to bind consumer handler", e);
+                }
+            } else {
+                listener = event -> {
+                    try {
+                        annotatedMethod.getMethodHandle().invoke(frameOwner, event);
+                    } catch (Throwable e) {
+                        throw new RuntimeException("Error subscribe listener method invocation", e);
+                    }
+                };
             }
 
             MethodHandle addListenerMethod = reflectionInspector.getAddListenerMethod(eventTarget.getClass(), eventType);

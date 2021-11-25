@@ -948,9 +948,9 @@ public class MetaModelLoader {
         if (genericType instanceof ParameterizedType) {
             Type[] types = ((ParameterizedType) genericType).getActualTypeArguments();
             if (Map.class.isAssignableFrom(field.getType()))
-                type = (Class<?>) types[1];
+                type = toClass(types[1]);
             else
-                type = (Class<?>) types[0];
+                type = toClass(types[0]);
         } else {
             type = getFieldTypeAccordingAnnotations(field);
         }
@@ -958,6 +958,13 @@ public class MetaModelLoader {
             throw new IllegalArgumentException("Field " + field
                     + " must either be of parametrized type or have a JPA annotation declaring a targetEntity");
         return type;
+    }
+
+    protected Class toClass(Type type) {
+        if (type instanceof WildcardType) {
+            return (Class<?>) ((WildcardType) type).getUpperBounds()[0];
+        }
+        return (Class<?>) type;
     }
 
     protected void assignInverse(MetaPropertyImpl property, Range range, String inverseField) {

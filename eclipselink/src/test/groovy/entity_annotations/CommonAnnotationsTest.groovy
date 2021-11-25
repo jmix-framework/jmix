@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import test_support.DataSpec
 import test_support.entity.TestLicense
 import test_support.entity.auditing.SoftDeleteAuditableEntity
+import test_support.entity.common.*
 import test_support.entity.soft_delete.AnnotatedUuidEntity
 
 class CommonAnnotationsTest extends DataSpec {
@@ -97,6 +98,84 @@ class CommonAnnotationsTest extends DataSpec {
         license.setExpirationDate(new Date())
         then:
         noExceptionThrown()
+    }
+
+    def "Wildcards in collections works for entities"() {
+
+        when:
+        WildBaseEntity base1 = metadata.create(WildBaseEntity)
+        base1.setName("base1")
+
+        WildBaseEntity base2 = metadata.create(WildBaseEntity)
+        base2.setName("base2")
+
+        WildExtEntity ext1 = metadata.create(WildExtEntity)
+        ext1.setName("ext1Name")
+        ext1.setExtName("ext1ExtName")
+
+        WildExtEntity ext2 = metadata.create(WildExtEntity)
+        ext2.setName("ext2Name")
+        ext2.setExtName("ext2ExtName")
+
+        WildParentEntity parent1 = metadata.create(WildParentEntity)
+        parent1.setChildren(new LinkedList<WildBaseEntity>())
+        parent1.getChildren().add(base1)
+        parent1.getChildren().add(ext1)
+
+        WildParentEntity parent2 = metadata.create(WildParentEntity)
+        parent2.setChildren(new LinkedList<WildExtEntity>())
+        parent2.getChildren().add(ext1)
+        parent2.getChildren().add(ext2)
+
+        dataManager.save(base1, base2, ext1, ext2, parent1, parent2)
+
+        then:
+        noExceptionThrown()
+        parent1.children.contains(base1)
+        parent1.children.contains(ext1)
+
+        parent2.children.contains(ext1)
+        parent2.children.contains(ext2)
+
+        cleanup:
+        dataManager.remove(parent1, parent2, base1, base2, ext1, ext2)
+
+    }
+
+    def "Wildcards in collections works for DTOs"() {
+
+        when:
+        WildBaseDTO base1 = metadata.create(WildBaseDTO)
+        base1.setName("base1")
+
+        WildBaseDTO base2 = metadata.create(WildBaseDTO)
+        base2.setName("base2")
+
+        WildExtDTO ext1 = metadata.create(WildExtDTO)
+        ext1.setName("ext1Name")
+        ext1.setExtName("ext1ExtName")
+
+        WildExtDTO ext2 = metadata.create(WildExtDTO)
+        ext2.setName("ext2Name")
+        ext2.setExtName("ext2ExtName")
+
+        WildParentDTO parent1 = metadata.create(WildParentDTO)
+        parent1.setChildren(new LinkedList<WildBaseDTO>())
+        parent1.getChildren().add(base1)
+        parent1.getChildren().add(ext1)
+
+        WildParentDTO parent2 = metadata.create(WildParentDTO)
+        parent2.setChildren(new LinkedList<WildExtDTO>())
+        parent2.getChildren().add(ext1)
+        parent2.getChildren().add(ext2)
+
+        then:
+        noExceptionThrown()
+        parent1.children.contains(base1)
+        parent1.children.contains(ext1)
+
+        parent2.children.contains(ext1)
+        parent2.children.contains(ext2)
     }
 
 }

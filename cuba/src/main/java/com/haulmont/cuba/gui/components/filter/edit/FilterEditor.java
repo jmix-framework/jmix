@@ -27,6 +27,7 @@ import com.haulmont.cuba.gui.components.filter.FilterHelper;
 import com.haulmont.cuba.gui.components.filter.GroupType;
 import com.haulmont.cuba.gui.components.filter.condition.*;
 import com.haulmont.cuba.gui.components.filter.descriptor.GroupConditionDescriptor;
+import com.haulmont.cuba.gui.screen.compatibility.LegacyFrame;
 import com.haulmont.cuba.security.entity.FilterEntity;
 import io.jmix.core.Entity;
 import io.jmix.core.FetchPlan;
@@ -36,6 +37,8 @@ import io.jmix.ui.WindowParam;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.DialogAction;
 import io.jmix.ui.component.*;
+import io.jmix.ui.screen.UiControllerUtils;
+import io.jmix.ui.settings.facet.ScreenSettingsFacet;
 import io.jmix.ui.theme.ThemeConstants;
 import org.apache.commons.lang3.BooleanUtils;
 import org.slf4j.Logger;
@@ -211,6 +214,14 @@ public class FilterEditor extends AbstractWindow {
         if (!manualApplyRequired) {
             applyDefaultCb.setVisible(manualApplyRequired);
             applyDefaultLabel.setVisible(manualApplyRequired);
+        }
+
+        if (!(filter.getFrame().getFrameOwner() instanceof LegacyFrame)) {
+            ScreenSettingsFacet settingsFacet = UiControllerUtils.getFacet(filter.getFrame(), ScreenSettingsFacet.class);
+            if (settingsFacet == null) {
+                defaultCb.setVisible(false);
+                defaultLabel.setVisible(false);
+            }
         }
 
         if (filterEntity.getFolder() != null) {

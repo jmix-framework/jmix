@@ -58,6 +58,7 @@ import com.haulmont.cuba.security.entity.FilterEntity;
 import com.haulmont.cuba.security.entity.SearchFolder;
 import com.haulmont.cuba.security.global.UserSession;
 import com.haulmont.cuba.settings.SettingsImpl;
+import com.haulmont.cuba.settings.component.CubaFilterSettings;
 import io.jmix.core.*;
 import io.jmix.data.QueryParser;
 import io.jmix.data.QueryTransformerFactory;
@@ -113,6 +114,8 @@ import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.presentation.TablePresentations;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.StandardCloseAction;
+import io.jmix.ui.screen.UiControllerUtils;
+import io.jmix.ui.settings.facet.ScreenSettingsFacet;
 import io.jmix.ui.sys.ValuePathHelper;
 import io.jmix.ui.theme.ThemeConstants;
 import io.jmix.ui.theme.ThemeConstantsManager;
@@ -792,7 +795,8 @@ public class FilterDelegateImpl implements FilterDelegate {
                 (!hasCode && !isFolder) &&
                 ((isGlobal && userCanEditGlobalFilter) || (!isGlobal && createdByCurrentUser)) &&
                 !isAdHocFilter && filterEditable && userCanEditFilters;
-        boolean makeDefaultActionEnabled = !isDefault && !isFolder && !isSet && !isAdHocFilter && (!isGlobal || userCanEditGlobalFilter);
+        boolean makeDefaultActionEnabled = !isDefault && !isFolder && !isSet && !isAdHocFilter && (!isGlobal || userCanEditGlobalFilter)
+                && isScreenSettingsEnabled();
         boolean pinAppliedActionEnabled = lastAppliedFilter != null
                 && !(lastAppliedFilter.getFilterEntity() == adHocFilter && lastAppliedFilter.getConditions().getRoots().size() == 0)
                 && (adapter == null || Stores.isMain(adapter.getMetaClass().getStore().getName()));
@@ -1286,6 +1290,27 @@ public class FilterDelegateImpl implements FilterDelegate {
         }
 
         // No 'filter' parameter found, load default filter
+        FilterEntity defaultFilter = filter.getFrame().getFrameOwner() instanceof LegacyFrame
+                ? getDefaultFilterFromCubaSettings(filters)
+                : getDefaultFilterFromScreenSettings(filters);
+        if (defaultFilter != null) {
+            return defaultFilter;
+        }
+
+        FilterEntity globalDefaultFilter = filters.stream()
+                .filter(filterEntity -> Boolean.TRUE.equals(filterEntity.getGlobalDefault()))
+                .findAny()
+                .orElse(null);
+        return globalDefaultFilter;
+    }
+
+    @Nullable
+    protected FilterEntity getDefaultFilterFromCubaSettings(List<FilterEntity> filters) {
+        Window window = CubaComponentsHelper.getWindowImplementation(filter);
+        if (window == null) {
+            throw new IllegalStateException("There is no window set for filter");
+        }
+
         SettingsImpl settings = new SettingsImpl(window.getId());
 
         String componentPath = CubaComponentsHelper.getFilterComponentPath(filter);
@@ -1314,12 +1339,52 @@ public class FilterDelegateImpl implements FilterDelegate {
                 }
             }
         }
+        return null;
+    }
 
-        FilterEntity globalDefaultFilter = filters.stream()
-                .filter(filterEntity -> Boolean.TRUE.equals(filterEntity.getGlobalDefault()))
-                .findAny()
-                .orElse(null);
-        return globalDefaultFilter;
+    @Nullable
+    protected FilterEntity getDefaultFilterFromScreenSettings(List<FilterEntity> filters) {
+        if (filter.getFrame() == null
+                || StringUtils.isBlank(filter.getId())) {
+            return null;
+        }
+
+        ScreenSettingsFacet settingsFacet = UiControllerUtils.getFacet(filter.getFrame(), ScreenSettingsFacet.class);
+        if (settingsFacet == null
+                || settingsFacet.getSettings() == null) {
+            return null;
+        }
+
+        CubaFilterSettings cubaFilterSettings =
+                settingsFacet.getSettings()
+                        .getSettings(filter.getId(), CubaFilterSettings.class)
+                        .orElse(null);
+
+        if (cubaFilterSettings == null) {
+            return null;
+        }
+
+        String settingsDefaultId = cubaFilterSettings.getDefaultFilterId();
+        if (StringUtils.isBlank(settingsDefaultId)) {
+            return null;
+        }
+
+        UUID defaultId = null;
+        try {
+            defaultId = UUID.fromString(settingsDefaultId);
+        } catch (IllegalArgumentException ex) {
+            // do nothing
+        }
+        if (defaultId != null) {
+            for (FilterEntity filter : filters) {
+                if (defaultId.equals(filter.getId())) {
+                    filter.setIsDefault(true);
+                    filter.setApplyDefault(cubaFilterSettings.getApplyDefault());
+                    return filter;
+                }
+            }
+        }
+        return null;
     }
 
     protected void initFiltersPopupButton() {
@@ -2995,6 +3060,20 @@ public class FilterDelegateImpl implements FilterDelegate {
     @Nullable
     protected WindowManager getWindowManager() {
         return (WindowManager) ComponentsHelper.getScreenContext(filter).getScreens();
+    }
+
+    protected boolean isScreenSettingsEnabled() {
+        Frame frame = filter.getFrame();
+        if (frame == null) {
+            return false;
+        }
+
+        if (frame.getFrameOwner() instanceof LegacyFrame) {
+            return true;
+        }
+
+        ScreenSettingsFacet settingsFacet = UiControllerUtils.getFacet(frame, ScreenSettingsFacet.class);
+        return settingsFacet != null;
     }
 
     protected Notifications getNotifications() {

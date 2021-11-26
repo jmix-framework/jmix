@@ -16,11 +16,21 @@
 
 package io.jmix.ui.component.impl;
 
+import io.jmix.core.annotation.Internal;
 import io.jmix.ui.component.DataGrid;
+import io.jmix.ui.settings.component.binder.AbstractDataGridSettingsBinder;
 import io.jmix.ui.settings.component.binder.DataGridSettingsBinder;
+import io.jmix.ui.settings.facet.ScreenSettingsFacet;
 
 import java.util.List;
 
+/**
+ * Class provides access to protected functionality from {@link DataGrid} to support
+ * restoring UI settings when the screen contains {@link ScreenSettingsFacet}.
+ *
+ * @see AbstractDataGridSettingsBinder
+ */
+@Internal
 public final class DataGridSettingsUtils {
 
     private DataGridSettingsUtils() {
@@ -33,6 +43,7 @@ public final class DataGridSettingsUtils {
      * @param columns  columns
      * @see DataGridSettingsBinder
      */
+    @Internal
     @SuppressWarnings({"unchecked", "rawtypes"})
     public static void restoreColumnsOrder(DataGrid dataGrid, List<DataGrid.Column> columns) {
         ((AbstractDataGrid) dataGrid).restoreColumnsOrderAndUpdate(columns);

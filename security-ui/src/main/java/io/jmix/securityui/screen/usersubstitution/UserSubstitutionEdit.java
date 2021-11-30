@@ -17,21 +17,20 @@
 package io.jmix.securityui.screen.usersubstitution;
 
 import io.jmix.core.EntityStates;
+import io.jmix.core.Messages;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.security.UserRepository;
 import io.jmix.securitydata.entity.UserSubstitutionEntity;
-import io.jmix.ui.component.ComboBox;
 import io.jmix.ui.component.SuggestionField;
 import io.jmix.ui.component.TextField;
+import io.jmix.ui.component.ValidationErrors;
 import io.jmix.ui.model.DataContext;
 import io.jmix.ui.screen.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collections;
-import java.util.HashMap;
+import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @UiController("sec_UserSubstitutionEntity.edit")
@@ -56,6 +55,8 @@ public class UserSubstitutionEdit extends StandardEditor<UserSubstitutionEntity>
 
     @Autowired
     private DataContext dataContext;
+    @Autowired
+    private Messages messages;
 
     public void setParentDataContext(DataContext parentDataContext) {
         dataContext.setParent(parentDataContext);
@@ -63,13 +64,27 @@ public class UserSubstitutionEdit extends StandardEditor<UserSubstitutionEntity>
 
     @Subscribe
     public void onBeforeShow(BeforeShowEvent event) {
-        usernameField.setValue(getEditedEntity().getUsername());
+        String ownerUserName = getEditedEntity().getUsername();
+        usernameField.setValue(ownerUserName);
         substitutedUsernameField.setSearchExecutor((searchString, searchParams) -> {
             List<? extends UserDetails> users = userRepository.getByUsernameLike(searchString);
             return users.stream()
                     .map(UserDetails::getUsername)
+                    .filter(name -> !name.equals(ownerUserName))
                     .collect(Collectors.toList());
         });
         substitutedUsernameField.setEditable(entityStates.isNew(getEditedEntity()));
+    }
+
+    @Override
+    protected void validateAdditionalRules(ValidationErrors errors) {
+        super.validateAdditionalRules(errors);
+        if (errors.isEmpty()) {
+            Date startDate = getEditedEntity().getStartDate();
+            Date endDate = getEditedEntity().getEndDate();
+            if (startDate != null && endDate != null && startDate.after(endDate)) {
+                errors.add(messages.getMessage(UserSubstitutionEdit.class, "UserSubstitutionsScreen.dateOrderError"));
+            }
+        }
     }
 }

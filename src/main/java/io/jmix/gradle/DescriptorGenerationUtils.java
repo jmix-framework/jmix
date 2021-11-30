@@ -344,6 +344,13 @@ public class DescriptorGenerationUtils {
             if (!Strings.isNullOrEmpty(mappedBy))
                 el.addAttribute("mapped-by", mappedBy);
 
+            // either
+            new JoinColumnHandler(getAnnotation(field, "javax.persistence.JoinColumn")).toXml(el);
+            // or
+            new OrderByHandler(getAnnotation(field, "javax.persistence.OrderBy")).toXml(el);
+            new JoinTableHandler(getAnnotation(field, "javax.persistence.JoinTable")).toXml(el);
+            new MapsIdHandler(getAnnotation(field, "javax.persistence.MapsId")).toXml(el);
+
             List<String> cascadeTypes = type.getCascade(field);
             if (cascadeTypes != null && cascadeTypes.size() > 0) {
                 Element cascadeTypeEl = el.addElement("cascade", ORM_XMLNS);
@@ -351,12 +358,6 @@ public class DescriptorGenerationUtils {
                     cascadeTypeEl.addElement("cascade-" + cascadeType.toLowerCase());
                 }
             }
-            // either
-            new JoinColumnHandler(getAnnotation(field, "javax.persistence.JoinColumn")).toXml(el);
-            // or
-            new OrderByHandler(getAnnotation(field, "javax.persistence.OrderBy")).toXml(el);
-            new JoinTableHandler(getAnnotation(field, "javax.persistence.JoinTable")).toXml(el);
-            new MapsIdHandler(getAnnotation(field, "javax.persistence.MapsId")).toXml(el);
 
             return el;
         }

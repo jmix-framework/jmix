@@ -1764,7 +1764,7 @@ components:
             email: bob.martin@test.com
             active: true
           description: All user local attributes in case of user implements the UserDetails, except attributes annotated
-          as @Secret.
+     as @Secret.
     fileInfo:
       type: object
       properties:

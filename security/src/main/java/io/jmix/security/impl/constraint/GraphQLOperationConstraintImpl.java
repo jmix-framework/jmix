@@ -16,6 +16,7 @@
 
 package io.jmix.security.impl.constraint;
 
+import com.google.common.collect.ImmutableSet;
 import io.jmix.core.accesscontext.GraphQLOperationAccessContext;
 import io.jmix.core.constraint.GraphQLOperationConstraint;
 import io.jmix.security.constraint.PolicyStore;
@@ -25,9 +26,14 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.util.Set;
+
 @Component("sec_GraphQLOperationConstraintImpl")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class GraphQLOperationConstraintImpl implements GraphQLOperationConstraint<GraphQLOperationAccessContext> {
+
+    protected static final Set<String> PERMANENTLY_ALLOWED_OPERATIONS = ImmutableSet.of("userInfo");
+
     protected SecureOperations secureOperations;
     protected PolicyStore policyStore;
 
@@ -48,7 +54,8 @@ public class GraphQLOperationConstraintImpl implements GraphQLOperationConstrain
 
     @Override
     public void applyTo(GraphQLOperationAccessContext context) {
-        if (!secureOperations.isGraphQLPermitted(context.getOperationName(), policyStore)) {
+        if (!PERMANENTLY_ALLOWED_OPERATIONS.contains(context.getOperationName()) &&
+                !secureOperations.isGraphQLPermitted(context.getOperationName(), policyStore)) {
             context.setDenied();
         }
     }

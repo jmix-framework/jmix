@@ -27,7 +27,7 @@ import java.lang.annotation.*;
  * &#064;ResourceRole(name = "My Role", code = "myRole")
  * public interface MyRole {
  *
- *     &#064;GraphQLPolicy(operationNames = {"userInfo", "testQuery"})
+ *     &#064;GraphQLPolicy(operations = {"userInfo", "testQuery"})
  *     void graphQL();
  * }
  * </pre>

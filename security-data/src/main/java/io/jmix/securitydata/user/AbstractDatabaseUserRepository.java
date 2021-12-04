@@ -16,6 +16,7 @@
 
 package io.jmix.securitydata.user;
 
+import com.google.common.base.Strings;
 import io.jmix.core.Metadata;
 import io.jmix.core.UnconstrainedDataManager;
 import io.jmix.core.common.util.Preconditions;
@@ -24,8 +25,8 @@ import io.jmix.core.event.EntityChangedEvent;
 import io.jmix.core.security.PasswordNotMatchException;
 import io.jmix.core.security.UserManager;
 import io.jmix.core.security.UserRepository;
-import io.jmix.core.security.event.UserDisabledEvent;
 import io.jmix.core.security.event.SingleUserPasswordChangeEvent;
+import io.jmix.core.security.event.UserDisabledEvent;
 import io.jmix.core.security.event.UserPasswordResetEvent;
 import io.jmix.core.security.event.UserRemovedEvent;
 import io.jmix.security.authentication.AcceptsGrantedAuthorities;
@@ -207,9 +208,8 @@ public abstract class AbstractDatabaseUserRepository<T extends UserDetails> impl
     }
 
     private void changePassword(T userDetails, @Nullable String oldPassword, @Nullable String newPassword) throws PasswordNotMatchException {
-        if (passwordEncoder.matches(newPassword, userDetails.getPassword())
-                || (oldPassword != null
-                    && !passwordEncoder.matches(oldPassword, userDetails.getPassword()))) {
+        if (!Strings.isNullOrEmpty(userDetails.getPassword()) && passwordEncoder.matches(newPassword, userDetails.getPassword())
+                || oldPassword != null && !passwordEncoder.matches(oldPassword, userDetails.getPassword())) {
             throw new PasswordNotMatchException();
         }
         EntityValues.setValue(userDetails, "password", passwordEncoder.encode(newPassword));

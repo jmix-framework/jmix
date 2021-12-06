@@ -17,6 +17,7 @@
 package com.haulmont.cuba.gui.xml;
 
 import com.haulmont.cuba.core.global.AppBeans;
+import com.haulmont.cuba.core.sys.AppContext;
 import com.haulmont.cuba.gui.components.compatibility.LegacyFragmentAdapter;
 import com.haulmont.cuba.security.entity.ConstraintOperationType;
 import io.jmix.core.AccessManager;
@@ -31,6 +32,7 @@ import io.jmix.ui.component.Component;
 import io.jmix.ui.component.Frame;
 import io.jmix.ui.screen.FrameOwner;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.ApplicationContext;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Method;
@@ -44,6 +46,7 @@ public class DeclarativeTrackingAction extends ListAction implements Action.HasT
     protected EntityOp constraintEntityOp;
     protected Metadata metadata = AppBeans.get(Metadata.class);
     protected AccessManager accessManager = AppBeans.get(AccessManager.class);
+    protected ApplicationContext applicationContext = AppContext.getApplicationContext();
 
     public DeclarativeTrackingAction(String id, String caption, String description, String icon, @Nullable String enable,
                                      @Nullable String visible, String methodName, @Nullable String shortcut, ActionsHolder holder) {
@@ -126,7 +129,7 @@ public class DeclarativeTrackingAction extends ListAction implements Action.HasT
 
         if (constraintEntityOp != null) {
             MetaClass metaClass = metadata.getClass(singleSelected.getClass());
-            InMemoryCrudEntityContext context = new InMemoryCrudEntityContext(metaClass);
+            InMemoryCrudEntityContext context = new InMemoryCrudEntityContext(metaClass, applicationContext);
             accessManager.applyRegisteredConstraints(context);
 
             if (constraintEntityOp == EntityOp.CREATE) {

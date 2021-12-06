@@ -18,6 +18,7 @@ package com.haulmont.cuba.gui.components.actions;
 
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.Security;
+import com.haulmont.cuba.core.sys.AppContext;
 import com.haulmont.cuba.gui.components.ListComponent;
 import com.haulmont.cuba.security.entity.ConstraintOperationType;
 import io.jmix.core.AccessManager;
@@ -26,6 +27,7 @@ import io.jmix.core.accesscontext.InMemoryCrudEntityContext;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.EntityOp;
 import io.jmix.ui.action.Action;
+import org.springframework.context.ApplicationContext;
 
 import javax.annotation.Nullable;
 
@@ -36,6 +38,7 @@ public class ItemTrackingAction extends ListAction
     protected Security security = AppBeans.get(Security.class);
     protected Metadata metadata = AppBeans.get(Metadata.class);
     protected AccessManager accessManager = AppBeans.get(AccessManager.class);
+    protected ApplicationContext applicationContext = AppContext.getApplicationContext();
 
     public ItemTrackingAction(String id) {
         super(id);
@@ -64,7 +67,7 @@ public class ItemTrackingAction extends ListAction
 
         if (constraintEntityOp != null) {
             MetaClass metaClass = metadata.getClass(singleSelected.getClass());
-            InMemoryCrudEntityContext context = new InMemoryCrudEntityContext(metaClass);
+            InMemoryCrudEntityContext context = new InMemoryCrudEntityContext(metaClass, applicationContext);
             accessManager.applyRegisteredConstraints(context);
 
             if (constraintEntityOp == EntityOp.CREATE) {

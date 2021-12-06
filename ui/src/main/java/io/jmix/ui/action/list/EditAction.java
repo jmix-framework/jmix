@@ -273,7 +273,7 @@ public class EditAction<E> extends SecuredListAction
     public void refreshState() {
         super.refreshState();
 
-        if (!(target.getItems() instanceof EntityDataUnit)) {
+        if (target == null || !(target.getItems() instanceof EntityDataUnit)) {
             return;
         }
         if (!captionInitialized) {

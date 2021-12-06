@@ -17,8 +17,9 @@
 package io.jmix.core.accesscontext;
 
 import io.jmix.core.metamodel.model.MetaClass;
+import org.springframework.context.ApplicationContext;
 
-import java.util.function.Predicate;
+import java.util.function.BiPredicate;
 
 /**
  * An access context to check permissions on CRUD operations by testing predicates.
@@ -26,13 +27,17 @@ import java.util.function.Predicate;
 public class InMemoryCrudEntityContext implements AccessContext {
     protected final MetaClass entityClass;
 
-    protected Predicate createPredicate;
-    protected Predicate readPredicate;
-    protected Predicate updatePredicate;
-    protected Predicate deletePredicate;
+    protected BiPredicate createPredicate;
+    protected BiPredicate readPredicate;
+    protected BiPredicate updatePredicate;
+    protected BiPredicate deletePredicate;
+    
+    protected ApplicationContext applicationContext;
 
-    public InMemoryCrudEntityContext(MetaClass entityClass) {
+    public InMemoryCrudEntityContext(MetaClass entityClass, ApplicationContext applicationContext) {
         this.entityClass = entityClass;
+        this.applicationContext = applicationContext;
+
     }
 
     public MetaClass getEntityClass() {
@@ -40,14 +45,14 @@ public class InMemoryCrudEntityContext implements AccessContext {
     }
 
     public boolean isCreatePermitted(Object entity) {
-        return createPredicate == null || createPredicate.test(entity);
+        return createPredicate == null || createPredicate.test(entity, applicationContext);
     }
 
-    public Predicate createPredicate() {
+    public BiPredicate createPredicate() {
         return createPredicate;
     }
 
-    public void addCreatePredicate(Predicate predicate) {
+    public void addCreatePredicate(BiPredicate predicate) {
         if (this.createPredicate == null) {
             this.createPredicate = predicate;
         } else {
@@ -56,14 +61,14 @@ public class InMemoryCrudEntityContext implements AccessContext {
     }
 
     public boolean isReadPermitted(Object entity) {
-        return readPredicate == null || readPredicate.test(entity);
+        return readPredicate == null || readPredicate.test(entity, applicationContext);
     }
 
-    public Predicate readPredicate() {
+    public BiPredicate readPredicate() {
         return readPredicate;
     }
 
-    public void addReadPredicate(Predicate predicate) {
+    public void addReadPredicate(BiPredicate predicate) {
         if (this.readPredicate == null) {
             this.readPredicate = predicate;
         } else {
@@ -72,14 +77,14 @@ public class InMemoryCrudEntityContext implements AccessContext {
     }
 
     public boolean isUpdatePermitted(Object entity) {
-        return updatePredicate == null || updatePredicate.test(entity);
+        return updatePredicate == null || updatePredicate.test(entity, applicationContext);
     }
 
-    public Predicate updatePredicate() {
+    public BiPredicate updatePredicate() {
         return updatePredicate;
     }
 
-    public void addUpdatePredicate(Predicate predicate) {
+    public void addUpdatePredicate(BiPredicate predicate) {
         if (this.updatePredicate == null) {
             this.updatePredicate = predicate;
         } else {
@@ -88,14 +93,14 @@ public class InMemoryCrudEntityContext implements AccessContext {
     }
 
     public boolean isDeletePermitted(Object entity) {
-        return deletePredicate == null || deletePredicate.test(entity);
+        return deletePredicate == null || deletePredicate.test(entity, applicationContext);
     }
 
-    public Predicate deletePredicate() {
+    public BiPredicate deletePredicate() {
         return deletePredicate;
     }
 
-    public void addDeletePredicate(Predicate predicate) {
+    public void addDeletePredicate(BiPredicate predicate) {
         if (this.deletePredicate == null) {
             this.deletePredicate = predicate;
         } else {

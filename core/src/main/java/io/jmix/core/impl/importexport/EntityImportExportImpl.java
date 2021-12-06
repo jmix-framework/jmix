@@ -770,7 +770,7 @@ public class EntityImportExportImpl implements EntityImportExport {
                             && fetchPlan.containsProperty(metaProperty.getName())) {
 
                         InMemoryCrudEntityContext inMemoryContext =
-                                new InMemoryCrudEntityContext(metaProperty.getRange().asClass());
+                                new InMemoryCrudEntityContext(metaProperty.getRange().asClass(), applicationContext);
                         accessManager.applyRegisteredConstraints(inMemoryContext);
 
                         if (inMemoryContext.readPredicate() != null) {

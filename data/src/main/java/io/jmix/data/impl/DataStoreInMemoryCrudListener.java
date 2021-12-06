@@ -24,6 +24,7 @@ import io.jmix.core.security.AccessDeniedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -47,6 +48,8 @@ public class DataStoreInMemoryCrudListener implements DataStoreEventListener {
     protected EntityAttributesEraser entityAttributesEraser;
     @Autowired
     protected EntityStates entityStates;
+    @Autowired
+    protected ApplicationContext applicationContext;
 
     public void beforeEntityLoad(DataStoreBeforeEntityLoadEvent event) {
         LoadContext<?> context = event.getLoadContext();
@@ -84,7 +87,7 @@ public class DataStoreInMemoryCrudListener implements DataStoreEventListener {
 
         MetaClass metaClass = extendedEntities.getEffectiveMetaClass(context.getEntityMetaClass());
 
-        InMemoryCrudEntityContext crudContext = new InMemoryCrudEntityContext(metaClass);
+        InMemoryCrudEntityContext crudContext = new InMemoryCrudEntityContext(metaClass, applicationContext);
         accessManager.applyConstraints(crudContext, context.getAccessConstraints());
 
         List<Object> entities = new ArrayList<>();
@@ -101,7 +104,7 @@ public class DataStoreInMemoryCrudListener implements DataStoreEventListener {
         EntityAttributesEraser.ReferencesCollector references = entityAttributesEraser.collectErasingReferences(entities,
                 entity -> {
                     InMemoryCrudEntityContext childCrudContext =
-                            new InMemoryCrudEntityContext(metadata.getClass(entity.getClass()));
+                            new InMemoryCrudEntityContext(metadata.getClass(entity.getClass()), applicationContext);
                     accessManager.applyConstraints(childCrudContext, context.getAccessConstraints());
                     boolean readPermitted = childCrudContext.isReadPermitted(entity);
                     if (!readPermitted) {
@@ -128,7 +131,7 @@ public class DataStoreInMemoryCrudListener implements DataStoreEventListener {
         for (Object entity : event.getEntities()) {
             MetaClass metaClass = metadata.getClass(entity);
 
-            InMemoryCrudEntityContext entityContext = new InMemoryCrudEntityContext(metaClass);
+            InMemoryCrudEntityContext entityContext = new InMemoryCrudEntityContext(metaClass, applicationContext);
             accessManager.applyConstraints(entityContext, context.getAccessConstraints());
 
             if (isNew(context, entity)) {
@@ -150,7 +153,7 @@ public class DataStoreInMemoryCrudListener implements DataStoreEventListener {
         for (Object entity : event.getEntities()) {
             MetaClass metaClass = metadata.getClass(entity);
 
-            InMemoryCrudEntityContext entityContext = new InMemoryCrudEntityContext(metaClass);
+            InMemoryCrudEntityContext entityContext = new InMemoryCrudEntityContext(metaClass, applicationContext);
             accessManager.applyConstraints(entityContext, context.getAccessConstraints());
 
             if (!entityContext.isDeletePermitted(entity)) {
@@ -167,7 +170,7 @@ public class DataStoreInMemoryCrudListener implements DataStoreEventListener {
     protected boolean hasInMemoryRead(LoadContext<?> context) {
         return collectEntityClasses(context).stream()
                 .anyMatch(entityClass -> {
-                    InMemoryCrudEntityContext crudContext = new InMemoryCrudEntityContext(entityClass);
+                    InMemoryCrudEntityContext crudContext = new InMemoryCrudEntityContext(entityClass, applicationContext);
                     accessManager.applyConstraints(crudContext, context.getAccessConstraints());
                     return crudContext.readPredicate() != null;
                 });

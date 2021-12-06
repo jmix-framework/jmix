@@ -26,9 +26,18 @@ import java.lang.annotation.Target;
 /**
  * Annotation must be put on a method of an interface that defines a row level role (see {@link RowLevelRole}).
  * <p>
- * Method annotated with {code @PredicateRowLevelPolicy} must be a static method should return a {@link
- * java.util.function.Predicate}. The input parameter of the predicate must be an instance of the class defined in the
- * {@link #entityClass()}.
+ * Method annotated with {@code PredicateRowLevelPolicy} must meet the following requirements:
+ * <ul>
+ *     <li>it must be a static or default method</li>
+ *     <li>must return a {@link io.jmix.security.model.RowLevelPredicate} or {@link io.jmix.security.model.RowLevelBiPredicate}</li>
+ *     <li>must have no arguments</li>
+ * </ul>
+ * <p>
+ * The input parameter of the {@code RowLevelPredicate} must be an instance of the class defined in the {@link #entityClass()}
+ * attribute of the annotation.
+ * <p>
+ * {@code RowLevelBiPredicate} must be used when you need to use Spring beans in the function. The second parameter of the
+ * bi-predicate is {@link org.springframework.context.ApplicationContext}.
  * <p>
  * Example:
  * <pre>
@@ -37,20 +46,26 @@ import java.lang.annotation.Target;
  *
  *     &#064;PredicateRowLevelPolicy(entityClass = TestOrder.class,
  *             actions = {RowLevelPolicyAction.CREATE, RowLevelPolicyAction.UPDATE})
- *     static Predicate&lt;TestOrder&gt; numberStartsWithA() {
+ *     static RowLevelPredicate&lt;TestOrder&gt; numberStartsWithA() {
  *         return testOrder -&gt; testOrder.getNumber().startsWith("a");
  *     }
  *
  *     &#064;PredicateRowLevelPolicy(entityClass = TestOrder.class,
  *             actions = {RowLevelPolicyAction.READ})
- *     default Predicate&lt;TestOrder&gt; numberStartsWithB() {
- *         return testOrder -&gt; testOrder.getNumber().startsWith("B");
+ *     default RowLevelBiPredicate&lt;TestOrder, ApplicationContext&gt; numberStartsWithB() {
+ *         return (testOrder, applicationContext) -&gt; {
+ *            CurrentAuthentication currentAuthentication = applicationContext.getBean(CurrentAuthentication.class);
+ *            User currentUser = (User) currentAuthentication.getUser();
+ *            return currentUser.equals(testOrder.getManager());
+ *         }
  *     }
  * }
  * </pre>
  *
- *  @see RowLevelRole
- *  @see io.jmix.security.model.RowLevelPolicy
+ * @see RowLevelRole
+ * @see io.jmix.security.model.RowLevelPolicy
+ * @see io.jmix.security.model.RowLevelPredicate
+ * @see io.jmix.security.model.RowLevelBiPredicate
  */
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)

@@ -113,7 +113,7 @@ public class DataManagerConstraintsUsageTest {
         public void applyTo(InMemoryCrudEntityContext context) {
             MetaClass entityClass = context.getEntityClass();
             if (entityClass.getJavaClass().equals(TestOrder.class)) {
-                context.addReadPredicate(entity -> authentication.getAuthorities().stream()
+                context.addReadPredicate((entity, applicationContext) -> authentication.getAuthorities().stream()
                         .map(GrantedAuthority::getAuthority)
                         .anyMatch(name -> name.equals("can-read-orders")));
             }

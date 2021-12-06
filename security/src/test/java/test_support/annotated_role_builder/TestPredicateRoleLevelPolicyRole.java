@@ -16,10 +16,12 @@
 
 package test_support.annotated_role_builder;
 
+import io.jmix.security.model.RowLevelBiPredicate;
 import io.jmix.security.model.RowLevelPolicyAction;
 import io.jmix.security.model.RowLevelPredicate;
 import io.jmix.security.role.annotation.PredicateRowLevelPolicy;
 import io.jmix.security.role.annotation.RowLevelRole;
+import org.springframework.context.ApplicationContext;
 import test_support.entity.Foo;
 import test_support.entity.TestOrder;
 
@@ -34,7 +36,7 @@ public interface TestPredicateRoleLevelPolicyRole {
 
     @PredicateRowLevelPolicy(entityClass = Foo.class,
             actions = {RowLevelPolicyAction.CREATE, RowLevelPolicyAction.UPDATE})
-    static RowLevelPredicate<Foo> nameStartsWithA() {
-        return foo -> foo.getName().startsWith("a");
+    static RowLevelBiPredicate<Foo, ApplicationContext> nameStartsWithA() {
+        return (foo, applicationContext) -> foo.getName().startsWith("a");
     }
 }

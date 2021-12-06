@@ -49,13 +49,13 @@ public class InMemoryCrudEntityConstraint
         policyStore.getRowLevelPolicies(context.getEntityClass()).forEach(policy -> {
             if (policy.getType() == RowLevelPolicyType.PREDICATE) {
                 if (policy.getAction() == RowLevelPolicyAction.CREATE) {
-                    context.addCreatePredicate(policy.getPredicate());
+                    context.addCreatePredicate(policy.getBiPredicate());
                 } else if (policy.getAction() == RowLevelPolicyAction.READ) {
-                    context.addReadPredicate(policy.getPredicate());
+                    context.addReadPredicate(policy.getBiPredicate());
                 } else if (policy.getAction() == RowLevelPolicyAction.UPDATE) {
-                    context.addUpdatePredicate(policy.getPredicate());
+                    context.addUpdatePredicate(policy.getBiPredicate());
                 } else if (policy.getAction() == RowLevelPolicyAction.DELETE) {
-                    context.addDeletePredicate(policy.getPredicate());
+                    context.addDeletePredicate(policy.getBiPredicate());
                 }
             }
         });

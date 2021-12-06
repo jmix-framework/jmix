@@ -19,6 +19,7 @@ package annotated_role_builder
 import io.jmix.security.impl.role.builder.AnnotatedRoleBuilder
 import io.jmix.security.model.*
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.ApplicationContext
 import test_support.SecuritySpecification
 import test_support.annotated_role_builder.*
 import test_support.entity.Foo
@@ -28,6 +29,9 @@ class AnnotatedRoleBuilderTest extends SecuritySpecification {
 
     @Autowired
     AnnotatedRoleBuilder annotatedRoleBuilder
+
+    @Autowired
+    ApplicationContext applicationContext
 
     def "different resource policies types defined in a single method"() {
 
@@ -101,14 +105,14 @@ class AnnotatedRoleBuilderTest extends SecuritySpecification {
 
         policies.find { it.action == RowLevelPolicyAction.UPDATE } != null
 
-        createOrderPolicy.predicate.test(order1) == true
-        createOrderPolicy.predicate.test(order2) == false
+        createOrderPolicy.biPredicate.test(order1, applicationContext) == true
+        createOrderPolicy.biPredicate.test(order2, applicationContext) == false
 
         def createFooPolicy = policies.find { it.action == RowLevelPolicyAction.CREATE && it.entityName == 'test_Foo' }
         createOrderPolicy != null
 
-        createFooPolicy.predicate.test(foo1) == true
-        createFooPolicy.predicate.test(foo2) == false
+        createFooPolicy.biPredicate.test(foo1, applicationContext) == true
+        createFooPolicy.biPredicate.test(foo2, applicationContext) == false
     }
 
     def "JPQL row-level policy"() {

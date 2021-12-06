@@ -16,12 +16,13 @@
 
 package io.jmix.security.model;
 
+import org.springframework.context.ApplicationContext;
+
 import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Predicate;
 
 /**
  * Defines a constraint that restricts data a user can read or modify. There are two row-level policy types: in-memory
@@ -34,7 +35,7 @@ public class RowLevelPolicy implements Serializable {
 
     private RowLevelPolicyAction action;
 
-    private RowLevelPredicate<Object> predicate;
+    private RowLevelBiPredicate<Object, ApplicationContext> biPredicate;
 
     private String whereClause;
 
@@ -60,25 +61,21 @@ public class RowLevelPolicy implements Serializable {
         this.customProperties = customProperties;
     }
 
-    public RowLevelPolicy(String entityName, RowLevelPolicyAction action, String script, RowLevelPredicate<Object> predicate) {
-        this(entityName, action, script, predicate, Collections.emptyMap());
-    }
-
-    public RowLevelPolicy(String entityName, RowLevelPolicyAction action, String script, RowLevelPredicate<Object> predicate,
+    public RowLevelPolicy(String entityName, RowLevelPolicyAction action, String script, RowLevelBiPredicate<Object, ApplicationContext> biPredicate,
                           Map<String, String> customProperties) {
         this.entityName = entityName;
         this.action = action;
         this.script = script;
-        this.predicate = predicate;
+        this.biPredicate = biPredicate;
         this.type = RowLevelPolicyType.PREDICATE;
         this.customProperties = customProperties;
     }
 
-    public RowLevelPolicy(String entityName, RowLevelPolicyAction action, RowLevelPredicate<Object> predicate,
+    public RowLevelPolicy(String entityName, RowLevelPolicyAction action, RowLevelBiPredicate<Object, ApplicationContext> biPredicate,
                           Map<String, String> customProperties) {
         this.entityName = entityName;
         this.action = action;
-        this.predicate = predicate;
+        this.biPredicate = biPredicate;
         this.type = RowLevelPolicyType.PREDICATE;
         this.customProperties = customProperties;
     }
@@ -105,8 +102,8 @@ public class RowLevelPolicy implements Serializable {
      * @return a predicate
      */
     @Nullable
-    public RowLevelPredicate<Object> getPredicate() {
-        return predicate;
+    public RowLevelBiPredicate<Object, ApplicationContext> getBiPredicate() {
+        return biPredicate;
     }
 
     /**

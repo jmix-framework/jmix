@@ -21,12 +21,16 @@ import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.impl.method.ContextArgumentResolverComposite;
 import io.jmix.core.impl.method.MethodArgumentsProvider;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.security.model.RowLevelBiPredicate;
 import io.jmix.security.model.RowLevelPolicy;
 import io.jmix.security.model.RowLevelPolicyAction;
 import io.jmix.security.model.RowLevelPredicate;
 import io.jmix.security.role.annotation.PredicateRowLevelPolicy;
 import org.apache.commons.lang3.SystemUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
@@ -39,9 +43,12 @@ import java.lang.reflect.Proxy;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.function.BiPredicate;
 
 @Component("sec_InMemoryRowLevelPolicyExtractor")
 public class PredicateRowLevelPolicyExtractor implements RowLevelPolicyExtractor {
+
+    private static final Logger log = LoggerFactory.getLogger(PredicateRowLevelPolicyExtractor.class);
 
     protected Metadata metadata;
     protected ConcurrentMap<Class<?>, Object> proxyCache = new ConcurrentHashMap<>();
@@ -62,22 +69,40 @@ public class PredicateRowLevelPolicyExtractor implements RowLevelPolicyExtractor
             for (RowLevelPolicyAction action : annotation.actions()) {
                 Class<?> entityClass = annotation.entityClass();
                 MetaClass metaClass = metadata.getClass(entityClass);
-                RowLevelPredicate<Object> predicate;
                 try {
                     Object proxyObject = null;
                     if (!Modifier.isStatic(method.getModifiers())) {
                         proxyObject = proxyCache.computeIfAbsent(method.getDeclaringClass(), this::createProxy);
                     }
-                    //noinspection unchecked
-                    predicate = (RowLevelPredicate<Object>) method.invoke(proxyObject, methodArgumentsProvider.getMethodArgumentValues(method));
+
+                    Object policyFunction;
+                    if (method.getParameterCount() == 0) {
+                        policyFunction = method.invoke(proxyObject);
+                    } else {
+                        policyFunction = method.invoke(proxyObject, methodArgumentsProvider.getMethodArgumentValues(method));
+                        log.warn("Methods with PredicateRowLevelPolicy annotation should not have any arguments. Role methods " +
+                                "with arguments will be unsupported in future releases. Use methods that return RowLevelBiPredicate " +
+                                "instead.");
+                    }
+
+                    RowLevelBiPredicate<Object, ApplicationContext> biPredicate;
+                    if (policyFunction instanceof RowLevelPredicate) {
+                        biPredicate = (entity, accessContext) -> ((RowLevelPredicate) policyFunction).test(entity);
+                    } else if (policyFunction instanceof RowLevelBiPredicate) {
+                        biPredicate = (RowLevelBiPredicate) policyFunction;
+                    } else {
+                        log.error("PredicateRowLevelPolicy method should return either RowLevelPredicate or RowLevelBiPredicate");
+                        continue;
+                    }
+
+                    RowLevelPolicy rowLevelPolicy = new RowLevelPolicy(metaClass.getName(),
+                            action,
+                            biPredicate,
+                            Collections.singletonMap("uniqueKey", UUID.randomUUID().toString()));
+                    policies.add(rowLevelPolicy);
                 } catch (Exception e) {
                     throw new RuntimeException("Cannot evaluate row level policy predicate", e);
                 }
-                RowLevelPolicy rowLevelPolicy = new RowLevelPolicy(metaClass.getName(),
-                        action,
-                        predicate,
-                        Collections.singletonMap("uniqueKey", UUID.randomUUID().toString()));
-                policies.add(rowLevelPolicy);
             }
         }
         return policies;

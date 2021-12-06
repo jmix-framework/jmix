@@ -28,6 +28,7 @@ import io.jmix.securitydata.entity.RowLevelRoleEntity
 import io.jmix.securitydata.impl.role.provider.DatabaseResourceRoleProvider
 import io.jmix.securitydata.impl.role.provider.DatabaseRowLevelRoleProvider
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.ApplicationContext
 import test_support.SecurityDataSpecification
 import test_support.entity.TestOrder
 
@@ -44,6 +45,9 @@ class DatabaseRoleProviderTest extends SecurityDataSpecification {
 
     @Autowired
     Metadata metadata
+
+    @Autowired
+    ApplicationContext applicationContext
 
     def setup() {
         prepareTestData()
@@ -137,7 +141,7 @@ class DatabaseRoleProviderTest extends SecurityDataSpecification {
 
         then:
 
-        rowLevelPolicy.predicate.test(testOrder) == false
+        rowLevelPolicy.biPredicate.test(testOrder, applicationContext) == false
 
         when:
 
@@ -145,7 +149,7 @@ class DatabaseRoleProviderTest extends SecurityDataSpecification {
 
         then:
 
-        rowLevelPolicy.predicate.test(testOrder) == true
+        rowLevelPolicy.biPredicate.test(testOrder, applicationContext) == true
 
     }
 

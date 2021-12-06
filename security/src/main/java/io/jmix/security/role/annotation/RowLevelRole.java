@@ -44,7 +44,7 @@ import java.lang.annotation.Target;
  *
  *     &#064;PredicateRowLevelPolicy(entityClass = Order.class,
  *         actions = {RowLevelPolicyAction.READ})
- *     static Predicate&lt;Order&gt; readZeroOrdersOnly() {
+ *     static RowLevelPredicate&lt;Order&gt; readZeroOrdersOnly() {
  *         return order -&gt; order.getNumber().startsWith("0");
  *     }
  * }

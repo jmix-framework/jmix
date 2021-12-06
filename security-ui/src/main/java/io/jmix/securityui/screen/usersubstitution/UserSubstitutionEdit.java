@@ -23,7 +23,6 @@ import io.jmix.core.security.UserRepository;
 import io.jmix.securitydata.entity.UserSubstitutionEntity;
 import io.jmix.ui.component.SuggestionField;
 import io.jmix.ui.component.TextField;
-import io.jmix.ui.component.ValidationErrors;
 import io.jmix.ui.model.DataContext;
 import io.jmix.ui.screen.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,15 +75,12 @@ public class UserSubstitutionEdit extends StandardEditor<UserSubstitutionEntity>
         substitutedUsernameField.setEditable(entityStates.isNew(getEditedEntity()));
     }
 
-    @Override
-    protected void validateAdditionalRules(ValidationErrors errors) {
-        super.validateAdditionalRules(errors);
-        if (errors.isEmpty()) {
-            Date startDate = getEditedEntity().getStartDate();
-            Date endDate = getEditedEntity().getEndDate();
-            if (startDate != null && endDate != null && startDate.after(endDate)) {
-                errors.add(messages.getMessage(UserSubstitutionEdit.class, "UserSubstitutionsScreen.dateOrderError"));
-            }
+    @Subscribe
+    protected void onValidation(ValidationEvent event) {
+        Date startDate = getEditedEntity().getStartDate();
+        Date endDate = getEditedEntity().getEndDate();
+        if (startDate != null && endDate != null && startDate.after(endDate)) {
+            event.getErrors().add(messages.getMessage(UserSubstitutionEdit.class, "UserSubstitutionsScreen.dateOrderError"));
         }
     }
 }

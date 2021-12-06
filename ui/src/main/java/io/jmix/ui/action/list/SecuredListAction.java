@@ -25,6 +25,7 @@ import io.jmix.ui.action.Action;
 import io.jmix.ui.action.ListAction;
 import io.jmix.ui.component.ListComponent;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 
 import javax.annotation.Nullable;
 
@@ -36,6 +37,7 @@ public abstract class SecuredListAction extends ListAction implements Action.Has
     protected EntityOp constraintEntityOp;
     protected AccessManager accessManager;
     protected Metadata metadata;
+    protected ApplicationContext applicationContext;
 
     protected SecuredListAction(String id) {
         super(id);
@@ -53,6 +55,11 @@ public abstract class SecuredListAction extends ListAction implements Action.Has
     @Autowired
     protected void setMetadata(Metadata metadata) {
         this.metadata = metadata;
+    }
+
+    @Autowired
+    protected void setApplicationContext(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
     }
 
     @Override
@@ -75,7 +82,7 @@ public abstract class SecuredListAction extends ListAction implements Action.Has
 
         if (constraintEntityOp != null) {
             MetaClass metaClass = metadata.getClass(singleSelected.getClass());
-            InMemoryCrudEntityContext context = new InMemoryCrudEntityContext(metaClass);
+            InMemoryCrudEntityContext context = new InMemoryCrudEntityContext(metaClass, applicationContext);
             accessManager.applyRegisteredConstraints(context);
 
             if (constraintEntityOp == EntityOp.CREATE) {

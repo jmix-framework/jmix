@@ -236,7 +236,7 @@ public abstract class StandardEditor<T> extends Screen
 
             UiEntityContext entityContext = new UiEntityContext(metaClass);
             accessManager.applyRegisteredConstraints(entityContext);
-            InMemoryCrudEntityContext inMemoryContext = new InMemoryCrudEntityContext(metaClass);
+            InMemoryCrudEntityContext inMemoryContext = new InMemoryCrudEntityContext(metaClass, getApplicationContext());
             accessManager.applyRegisteredConstraints(inMemoryContext);
 
             if (entityContext.isEditPermitted() && (inMemoryContext.updatePredicate() == null || inMemoryContext.isUpdatePermitted(getEditedEntity()))) {

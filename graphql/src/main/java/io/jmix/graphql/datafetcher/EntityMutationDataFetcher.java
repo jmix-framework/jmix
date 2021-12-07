@@ -29,6 +29,7 @@ import io.jmix.graphql.modifier.GraphQLUpsertEntityDataFetcher;
 import io.jmix.graphql.modifier.GraphQLUpsertEntityDataFetcherContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -67,7 +68,7 @@ public class EntityMutationDataFetcher {
     @Autowired
     private AccessManager accessManager;
     @Autowired
-    private ObjectMapper objectMapper;
+    private ObjectProvider<ObjectMapper> objectMapperProvider;
     @Autowired
     private MutationDataFetcherLoader mutationDataFetcherLoader;
 
@@ -83,7 +84,7 @@ public class EntityMutationDataFetcher {
             Map<String, String> input = environment.getArgument(NamingUtils.uncapitalizedSimpleName(javaClass));
             log.debug("upsertEntity: input {}", input);
 
-            String entityJson = objectMapper.writeValueAsString(input);
+            String entityJson = objectMapperProvider.getObject().writeValueAsString(input);
             log.debug("upsertEntity: json {}", entityJson);
 
             Object entity = entitySerialization.entityFromJson(entityJson, metaClass);

@@ -20,7 +20,7 @@ import com.google.common.base.Strings;
 import io.jmix.core.FileRef;
 import io.jmix.core.FileStorage;
 import io.jmix.core.FileStorageLocator;
-import org.springframework.beans.factory.InitializingBean;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -35,7 +35,14 @@ public class FileService {
     protected FileStorageLocator fileStorageLocator;
 
     public FileRef saveFileIntoStorage(MultipartFile multipartFile, FileStorage storage) throws IOException {
-        return storage.saveStream(multipartFile.getName(), multipartFile.getInputStream());
+        String filename = multipartFile.getOriginalFilename();
+        if (!Strings.isNullOrEmpty(filename)) {
+            //remove the path from the filename (if the path is there)
+            filename = FilenameUtils.getName(filename);
+        } else {
+            filename = multipartFile.getName();
+        }
+        return storage.saveStream(filename, multipartFile.getInputStream());
     }
 
     public FileStorage getFileStorage(@Nullable String storageName) throws Exception {

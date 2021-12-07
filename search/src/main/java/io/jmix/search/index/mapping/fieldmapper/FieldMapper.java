@@ -14,25 +14,22 @@
  * limitations under the License.
  */
 
-package io.jmix.search.index.mapping.strategy;
+package io.jmix.search.index.mapping.fieldmapper;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import io.jmix.core.metamodel.model.MetaPropertyPath;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.util.Map;
 
 /**
- * Provide functionality for value extraction from entity instance.
+ * Maps some metamodel property to configuration of index field.
  */
-public interface PropertyValueExtractor {
+public interface FieldMapper {
 
     /**
-     * Extracts value from entity instance.
+     * Creates field configuration as Elasticsearch-native json.
      *
-     * @param entity       instance
-     * @param propertyPath property
-     * @param parameters   runtime parameters
-     * @return extracted value as json
+     * @param parameters input parameters
+     * @return json object
      */
-    JsonNode getValue(Object entity, MetaPropertyPath propertyPath, Map<String, Object> parameters);
+    ObjectNode createJsonConfiguration(Map<String, Object> parameters);
 }

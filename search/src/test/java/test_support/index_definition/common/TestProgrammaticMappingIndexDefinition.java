@@ -18,8 +18,9 @@ package test_support.index_definition.common;
 
 import io.jmix.search.index.annotation.JmixEntitySearchIndex;
 import io.jmix.search.index.annotation.ManualMappingDefinition;
-import io.jmix.search.index.mapping.processor.MappingDefinition;
-import io.jmix.search.index.mapping.strategy.AutoMappingStrategy;
+import io.jmix.search.index.mapping.MappingDefinition;
+import io.jmix.search.index.mapping.MappingDefinitionElement;
+import io.jmix.search.index.mapping.strategy.impl.AutoMappingStrategy;
 import test_support.entity.TestSimpleRootEntity;
 
 @JmixEntitySearchIndex(entity = TestSimpleRootEntity.class)
@@ -28,16 +29,20 @@ public interface TestProgrammaticMappingIndexDefinition {
     @ManualMappingDefinition
     default MappingDefinition mapping() {
         return MappingDefinition.builder()
-                .newElement()
-                .includeProperties("name")
-                .usingFieldMappingStrategyClass(AutoMappingStrategy.class)
-                .buildElement()
-                .newElement()
-                .includeProperties("*")
-                .excludeProperties("name")
-                .usingFieldMappingStrategyClass(AutoMappingStrategy.class)
-                .withParameter("analyzer", "english")
-                .buildElement()
-                .buildMappingDefinition();
+                .addElement(
+                        MappingDefinitionElement.builder()
+                                .includeProperties("name")
+                                .withFieldMappingStrategyClass(AutoMappingStrategy.class)
+                                .build()
+                )
+                .addElement(
+                        MappingDefinitionElement.builder()
+                                .includeProperties("*")
+                                .excludeProperties("name")
+                                .withFieldMappingStrategyClass(AutoMappingStrategy.class)
+                                .addParameter("analyzer", "english")
+                                .build()
+                )
+                .build();
     }
 }

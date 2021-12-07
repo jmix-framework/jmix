@@ -14,18 +14,32 @@
  * limitations under the License.
  */
 
-package io.jmix.search.index.mapping.processor;
+package io.jmix.search.index.mapping.fieldmapper.impl;
 
-import io.jmix.core.impl.scanning.ClasspathScanCandidateDetector;
-import io.jmix.search.index.annotation.JmixEntitySearchIndex;
-import org.springframework.core.type.classreading.MetadataReader;
+import com.google.common.collect.Sets;
+import io.jmix.search.index.mapping.ParameterKeys;
 import org.springframework.stereotype.Component;
 
-@Component("search_IndexDefinitionDetector")
-public class IndexDefinitionDetector implements ClasspathScanCandidateDetector {
+import java.util.Collections;
+import java.util.Set;
+
+/**
+ * Maps field as analyzed text
+ */
+@Component("search_TextFieldMapper")
+public class TextFieldMapper extends SimpleFieldMapper {
+
+    protected static final Set<String> supportedParameters = Collections.unmodifiableSet(
+            Sets.newHashSet(ParameterKeys.ANALYZER)
+    );
 
     @Override
-    public boolean isCandidate(MetadataReader metadataReader) {
-        return metadataReader.getAnnotationMetadata().hasAnnotation(JmixEntitySearchIndex.class.getName());
+    public Set<String> getSupportedMappingParameters() {
+        return supportedParameters;
+    }
+
+    @Override
+    public String getElasticsearchDatatype() {
+        return "text";
     }
 }

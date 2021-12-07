@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Haulmont.
+ * Copyright 2021 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.search.index.mapping.strategy;
+package io.jmix.search.index.mapping.fieldmapper.impl;
 
 import com.google.common.collect.Sets;
 import io.jmix.search.index.mapping.ParameterKeys;
@@ -23,23 +23,20 @@ import org.springframework.stereotype.Component;
 import java.util.Collections;
 import java.util.Set;
 
-/**
- * Maps field as analyzed text
- */
-@Component("search_TextFieldMapper")
-public class TextFieldMapper extends SimpleFieldMapper {
+@Component("search_EnumFieldMapper")
+public class EnumFieldMapper extends SimpleFieldMapper {
 
     protected static final Set<String> supportedParameters = Collections.unmodifiableSet(
             Sets.newHashSet(ParameterKeys.ANALYZER)
     );
 
     @Override
-    public Set<String> getSupportedMappingParameters() {
-        return supportedParameters;
+    protected String getElasticsearchDatatype() {
+        return "text";
     }
 
     @Override
-    public String getElasticsearchDatatype() {
-        return "text";
+    public Set<String> getSupportedMappingParameters() {
+        return supportedParameters;
     }
 }

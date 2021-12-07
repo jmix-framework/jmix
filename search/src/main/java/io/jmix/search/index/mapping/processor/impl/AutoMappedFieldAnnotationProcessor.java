@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
-package io.jmix.search.index.mapping.processor;
+package io.jmix.search.index.mapping.processor.impl;
 
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.search.index.annotation.AutoMappedField;
+import io.jmix.search.index.mapping.MappingDefinition.MappingDefinitionBuilder;
+import io.jmix.search.index.mapping.MappingDefinitionElement;
 import io.jmix.search.index.mapping.ParameterKeys;
-import io.jmix.search.index.mapping.processor.MappingDefinition.MappingDefinitionBuilder;
-import io.jmix.search.index.mapping.strategy.AutoMappingStrategy;
+import io.jmix.search.index.mapping.processor.AbstractFieldAnnotationProcessor;
 import io.jmix.search.index.mapping.strategy.FieldMappingStrategy;
+import io.jmix.search.index.mapping.strategy.impl.AutoMappingStrategy;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
@@ -38,12 +40,14 @@ public class AutoMappedFieldAnnotationProcessor extends AbstractFieldAnnotationP
 
     @Override
     protected void processSpecificAnnotation(MappingDefinitionBuilder builder, MetaClass rootEntityMetaClass, AutoMappedField annotation) {
-        builder.newElement()
-                .includeProperties(annotation.includeProperties())
-                .excludeProperties(annotation.excludeProperties())
-                .usingFieldMappingStrategyClass(getFieldMappingStrategyClass())
-                .withParameters(createParameters(annotation))
-                .buildElement();
+        builder.addElement(
+                MappingDefinitionElement.builder()
+                        .includeProperties(annotation.includeProperties())
+                        .excludeProperties(annotation.excludeProperties())
+                        .withFieldMappingStrategyClass(getFieldMappingStrategyClass())
+                        .withParameters(createParameters(annotation))
+                        .build()
+        );
     }
 
     @Override

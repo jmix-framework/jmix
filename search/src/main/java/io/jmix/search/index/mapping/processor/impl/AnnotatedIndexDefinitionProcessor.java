@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package io.jmix.search.index.mapping.processor;
+package io.jmix.search.index.mapping.processor.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.jmix.core.InstanceNameProvider;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
@@ -33,14 +34,18 @@ import io.jmix.search.index.IndexSettingsConfigurer;
 import io.jmix.search.index.annotation.FieldMappingAnnotation;
 import io.jmix.search.index.annotation.JmixEntitySearchIndex;
 import io.jmix.search.index.annotation.ManualMappingDefinition;
-import io.jmix.search.index.mapping.DisplayedNameDescriptor;
-import io.jmix.search.index.mapping.IndexMappingConfiguration;
-import io.jmix.search.index.mapping.MappingFieldDescriptor;
+import io.jmix.search.index.mapping.*;
+import io.jmix.search.index.mapping.MappingDefinition.MappingDefinitionBuilder;
 import io.jmix.search.index.mapping.analysis.impl.AnalysisElementConfiguration;
 import io.jmix.search.index.mapping.analysis.impl.IndexAnalysisElementsRegistry;
-import io.jmix.search.index.mapping.processor.MappingDefinition.MappingDefinitionBuilder;
-import io.jmix.search.index.mapping.processor.MappingDefinition.MappingDefinitionElement;
-import io.jmix.search.index.mapping.strategy.*;
+import io.jmix.search.index.mapping.fieldmapper.impl.TextFieldMapper;
+import io.jmix.search.index.mapping.processor.FieldAnnotationProcessor;
+import io.jmix.search.index.mapping.processor.MappingFieldAnnotationProcessorsRegistry;
+import io.jmix.search.index.mapping.propertyvalue.PropertyValueExtractor;
+import io.jmix.search.index.mapping.propertyvalue.PropertyValueExtractorProvider;
+import io.jmix.search.index.mapping.propertyvalue.impl.DisplayedNameValueExtractor;
+import io.jmix.search.index.mapping.strategy.FieldMappingStrategy;
+import io.jmix.search.index.mapping.strategy.FieldMappingStrategyProvider;
 import io.jmix.search.utils.PropertyTools;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
@@ -210,7 +215,7 @@ public class AnnotatedIndexDefinitionProcessor {
             parsedIndexDefinition.getFieldAnnotations().forEach(annotation -> processAnnotation(
                     builder, annotation, parsedIndexDefinition.getMetaClass()
             ));
-            mappingDefinition = builder.buildMappingDefinition();
+            mappingDefinition = builder.build();
         } else {
             Class<?> returnType = mappingDefinitionImplementationMethod.getReturnType();
             if (!MappingDefinition.class.equals(returnType)) {
@@ -455,38 +460,91 @@ public class AnnotatedIndexDefinitionProcessor {
     }
 
     protected Optional<MappingFieldDescriptor> createMappingFieldDescriptor(MetaPropertyPath propertyPath, MappingDefinitionElement element) {
-        FieldMappingStrategy fieldMappingStrategy = resolveFieldMappingStrategy(element.getFieldMappingStrategyClass());
-        if (fieldMappingStrategy.isSupported(propertyPath)) {
-            List<MetaPropertyPath> instanceNameRelatedProperties;
-            if (propertyPath.getRange().isClass()) {
-                instanceNameRelatedProperties = resolveInstanceNameRelatedProperties(propertyPath.getRange().asClass(), propertyPath);
-                log.debug("Properties related to Instance Name ({}): {}", propertyPath, instanceNameRelatedProperties);
-            } else {
-                instanceNameRelatedProperties = Collections.emptyList();
-            }
+        Optional<FieldMappingStrategy> fieldMappingStrategyOpt = resolveFieldMappingStrategy(element);
+        FieldConfiguration explicitFieldConfiguration = element.getFieldConfiguration();
+        PropertyValueExtractor explicitPropertyValueExtractor = element.getPropertyValueExtractor();
 
-            MappingFieldDescriptor fieldDescriptor = new MappingFieldDescriptor();
-            fieldDescriptor.setEntityPropertyFullName(propertyPath.toPathString());
-            fieldDescriptor.setIndexPropertyFullName(propertyPath.toPathString());
-            fieldDescriptor.setMetaPropertyPath(propertyPath);
-            fieldDescriptor.setStandalone(false); //todo implement standalone properties
-            fieldDescriptor.setOrder(fieldMappingStrategy.getOrder());
-            fieldDescriptor.setPropertyValueExtractor(fieldMappingStrategy.getPropertyValueExtractor(propertyPath));
-            fieldDescriptor.setInstanceNameRelatedProperties(instanceNameRelatedProperties);
-            fieldDescriptor.setParameters(element.getParameters());
-
-            FieldConfiguration fieldConfiguration = fieldMappingStrategy.createFieldConfiguration(propertyPath, element.getParameters());
-            fieldDescriptor.setFieldConfiguration(fieldConfiguration);
-
-            return Optional.of(fieldDescriptor);
-        } else {
+        if (!fieldMappingStrategyOpt.isPresent() && explicitFieldConfiguration == null) {
+            log.error("Unable to create mapping field descriptor for property '{}': neither field mapping strategy nor explicit field configuration is specified", propertyPath);
             return Optional.empty();
         }
+
+        FieldConfiguration strategyFieldConfiguration = null;
+        PropertyValueExtractor strategyPropertyValueExtractor = null;
+        if (fieldMappingStrategyOpt.isPresent()) {
+            FieldMappingStrategy fieldMappingStrategy = fieldMappingStrategyOpt.get();
+            if (fieldMappingStrategy.isSupported(propertyPath)) {
+                strategyFieldConfiguration = fieldMappingStrategy.createFieldConfiguration(propertyPath, element.getParameters());
+                strategyPropertyValueExtractor = fieldMappingStrategy.getPropertyValueExtractor(propertyPath);
+            } else {
+                log.debug("Property '{}' ('{}') is not supported by field mapping strategy '{}'", propertyPath, propertyPath.getMetaClass(), fieldMappingStrategy);
+            }
+        }
+
+        if (strategyFieldConfiguration == null && explicitFieldConfiguration == null) {
+            log.debug("Property '{}' doesn't have any field mapping configuration", propertyPath);
+            return Optional.empty();
+        }
+
+        if (strategyPropertyValueExtractor == null & explicitPropertyValueExtractor == null) {
+            log.debug("Property '{}' doesn't have any property value extractor", propertyPath);
+            return Optional.empty();
+        }
+
+        FieldConfiguration effectiveFieldConfiguration = resolveEffectiveFieldConfiguration(
+                strategyFieldConfiguration, explicitFieldConfiguration
+        );
+
+        PropertyValueExtractor effectivePropertyValueExtractor = explicitPropertyValueExtractor == null
+                ? strategyPropertyValueExtractor
+                : explicitPropertyValueExtractor;
+
+        List<MetaPropertyPath> instanceNameRelatedProperties = resolveInstanceNameRelatedProperties(propertyPath);
+
+        int effectiveOrder = element.getOrder() == null
+                ? fieldMappingStrategyOpt.map(FieldMappingStrategy::getOrder).orElse(Integer.MIN_VALUE)
+                : element.getOrder();
+
+        MappingFieldDescriptor fieldDescriptor = new MappingFieldDescriptor();
+        fieldDescriptor.setEntityPropertyFullName(propertyPath.toPathString());
+        fieldDescriptor.setIndexPropertyFullName(propertyPath.toPathString());
+        fieldDescriptor.setMetaPropertyPath(propertyPath);
+        fieldDescriptor.setFieldConfiguration(effectiveFieldConfiguration);
+        fieldDescriptor.setOrder(effectiveOrder);
+        fieldDescriptor.setPropertyValueExtractor(effectivePropertyValueExtractor);
+        fieldDescriptor.setInstanceNameRelatedProperties(instanceNameRelatedProperties);
+        fieldDescriptor.setParameters(element.getParameters());
+        fieldDescriptor.setStandalone(false);
+
+        return Optional.of(fieldDescriptor);
+    }
+
+    protected FieldConfiguration resolveEffectiveFieldConfiguration(@Nullable FieldConfiguration strategyFieldConfiguration,
+                                                                    @Nullable FieldConfiguration explicitFieldConfiguration) {
+        FieldConfiguration effectiveFieldConfiguration;
+        if (strategyFieldConfiguration == null) {
+            if (explicitFieldConfiguration == null) {
+                throw new IllegalArgumentException("Strategy and explicit configurations are null");
+            } else {
+                effectiveFieldConfiguration = explicitFieldConfiguration;
+            }
+        } else {
+            if (explicitFieldConfiguration == null) {
+                effectiveFieldConfiguration = strategyFieldConfiguration;
+            } else {
+                ObjectNode strategyRoot = strategyFieldConfiguration.asJson().deepCopy();
+                ObjectNode explicitRoot = explicitFieldConfiguration.asJson().deepCopy();
+                strategyRoot.setAll(explicitRoot);
+
+                effectiveFieldConfiguration = FieldConfiguration.create(strategyRoot);
+            }
+        }
+        return effectiveFieldConfiguration;
     }
 
     protected DisplayedNameDescriptor createDisplayedNameDescriptor(MetaClass metaClass) {
         DisplayedNameDescriptor displayedNameDescriptor = new DisplayedNameDescriptor();
-        FieldConfiguration fieldConfiguration = new NativeFieldConfiguration(
+        FieldConfiguration fieldConfiguration = FieldConfiguration.create(
                 new TextFieldMapper().createJsonConfiguration(Collections.emptyMap())
         );
         displayedNameDescriptor.setFieldConfiguration(fieldConfiguration);
@@ -496,6 +554,17 @@ public class AnnotatedIndexDefinitionProcessor {
         displayedNameDescriptor.setValueExtractor(propertyValueExtractorProvider.getPropertyValueExtractor(DisplayedNameValueExtractor.class));
 
         return displayedNameDescriptor;
+    }
+
+    protected List<MetaPropertyPath> resolveInstanceNameRelatedProperties(MetaPropertyPath propertyPath) {
+        List<MetaPropertyPath> instanceNameRelatedProperties;
+        if (propertyPath.getRange().isClass()) {
+            instanceNameRelatedProperties = resolveInstanceNameRelatedProperties(propertyPath.getRange().asClass(), propertyPath);
+            log.debug("Properties related to Instance Name ({}): {}", propertyPath, instanceNameRelatedProperties);
+        } else {
+            instanceNameRelatedProperties = Collections.emptyList();
+        }
+        return instanceNameRelatedProperties;
     }
 
     protected List<MetaPropertyPath> resolveInstanceNameRelatedProperties(MetaClass metaClass, @Nullable MetaPropertyPath rootPropertyPath) {
@@ -515,8 +584,14 @@ public class AnnotatedIndexDefinitionProcessor {
                 .collect(Collectors.toList());
     }
 
-    protected FieldMappingStrategy resolveFieldMappingStrategy(Class<? extends FieldMappingStrategy> strategyClass) {
-        return fieldMappingStrategyProvider.getFieldMappingStrategyByClass(strategyClass);
+    protected Optional<FieldMappingStrategy> resolveFieldMappingStrategy(MappingDefinitionElement element) {
+        FieldMappingStrategy fieldMappingStrategy = element.getFieldMappingStrategy();
+        if (fieldMappingStrategy != null) {
+            return Optional.of(fieldMappingStrategy);
+        }
+
+        Class<? extends FieldMappingStrategy> fieldMappingStrategyClass = element.getFieldMappingStrategyClass();
+        return fieldMappingStrategyProvider.getFieldMappingStrategyByClass(fieldMappingStrategyClass);
     }
 
     private static class ParsedIndexDefinition {

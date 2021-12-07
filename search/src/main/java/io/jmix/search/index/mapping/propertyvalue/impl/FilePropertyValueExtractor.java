@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.search.index.mapping.strategy;
+package io.jmix.search.index.mapping.propertyvalue.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;

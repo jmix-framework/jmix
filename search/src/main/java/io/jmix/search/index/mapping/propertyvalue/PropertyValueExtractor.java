@@ -14,21 +14,25 @@
  * limitations under the License.
  */
 
-package io.jmix.search.index.mapping.strategy;
+package io.jmix.search.index.mapping.propertyvalue;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.JsonNode;
+import io.jmix.core.metamodel.model.MetaPropertyPath;
 
 import java.util.Map;
 
-public abstract class SimpleFieldMapper extends AbstractFieldMapper {
+/**
+ * Provide functionality for value extraction from entity instance.
+ */
+public interface PropertyValueExtractor {
 
-    @Override
-    public ObjectNode createJsonConfiguration(Map<String, Object> parameters) {
-        Map<String, Object> effectiveParameters = createEffectiveParameters(parameters);
-        effectiveParameters.put("type", getElasticsearchDatatype());
-
-        return objectMapper.convertValue(effectiveParameters, ObjectNode.class);
-    }
-
-    protected abstract String getElasticsearchDatatype();
+    /**
+     * Extracts value from entity instance.
+     *
+     * @param entity       instance
+     * @param propertyPath property
+     * @param parameters   runtime parameters
+     * @return extracted value as json
+     */
+    JsonNode getValue(Object entity, MetaPropertyPath propertyPath, Map<String, Object> parameters);
 }

@@ -14,13 +14,27 @@
  * limitations under the License.
  */
 
-package io.jmix.search.index.mapping.strategy;
+package io.jmix.search.index.mapping.strategy.impl;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.impl.FileRefDatatype;
 import io.jmix.core.metamodel.datatype.impl.StringDatatype;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.search.index.mapping.FieldConfiguration;
+import io.jmix.search.index.mapping.fieldmapper.FieldMapper;
+import io.jmix.search.index.mapping.fieldmapper.FieldMapperProvider;
+import io.jmix.search.index.mapping.fieldmapper.impl.EnumFieldMapper;
+import io.jmix.search.index.mapping.fieldmapper.impl.FileFieldMapper;
+import io.jmix.search.index.mapping.fieldmapper.impl.ReferenceFieldMapper;
+import io.jmix.search.index.mapping.fieldmapper.impl.TextFieldMapper;
+import io.jmix.search.index.mapping.propertyvalue.PropertyValueExtractor;
+import io.jmix.search.index.mapping.propertyvalue.PropertyValueExtractorProvider;
+import io.jmix.search.index.mapping.propertyvalue.impl.EnumPropertyValueExtractor;
+import io.jmix.search.index.mapping.propertyvalue.impl.FilePropertyValueExtractor;
+import io.jmix.search.index.mapping.propertyvalue.impl.ReferencePropertyValueExtractor;
+import io.jmix.search.index.mapping.propertyvalue.impl.SimplePropertyValueExtractor;
+import io.jmix.search.index.mapping.strategy.FieldMappingStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -58,7 +72,7 @@ public class AutoMappingStrategy implements FieldMappingStrategy {
         FieldMapper fieldMapper = resolveFieldMapper(propertyPath)
                 .orElseThrow(() -> new RuntimeException("Property '" + propertyPath + "' is not supported"));
         ObjectNode jsonConfig = fieldMapper.createJsonConfiguration(parameters);
-        return new NativeFieldConfiguration(jsonConfig);
+        return FieldConfiguration.create(jsonConfig);
     }
 
     @Override

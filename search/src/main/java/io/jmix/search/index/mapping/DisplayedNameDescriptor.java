@@ -18,8 +18,7 @@ package io.jmix.search.index.mapping;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.search.index.mapping.strategy.DisplayedNameValueExtractor;
-import io.jmix.search.index.mapping.strategy.FieldConfiguration;
+import io.jmix.search.index.mapping.propertyvalue.impl.DisplayedNameValueExtractor;
 import io.jmix.search.utils.Constants;
 
 import java.util.Collections;

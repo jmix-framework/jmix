@@ -17,6 +17,8 @@
 package io.jmix.search.index.mapping.strategy;
 
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.search.index.mapping.FieldConfiguration;
+import io.jmix.search.index.mapping.propertyvalue.PropertyValueExtractor;
 
 import java.util.Map;
 
@@ -32,7 +34,7 @@ public interface FieldMappingStrategy {
      *
      * @return order
      */
-    int getOrder(); //todo priority?
+    int getOrder();
 
     /**
      * Checks is provided {@link MetaPropertyPath} is supported by this mapping strategy

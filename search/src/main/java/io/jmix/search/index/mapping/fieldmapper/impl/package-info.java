@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Haulmont.
+ * Copyright 2021 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,9 @@
  * limitations under the License.
  */
 
-package io.jmix.search.index.mapping.strategy;
+@Internal
+@NonNullApi
+package io.jmix.search.index.mapping.fieldmapper.impl;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
-/**
- * Contains configuration of index field.
- */
-public interface FieldConfiguration {
-
-    /**
-     * Provides field configuration as Elasticsearch-native json.
-     *
-     * @return json with field configuration
-     */
-    ObjectNode asJson();
-}
+import io.jmix.core.annotation.Internal;
+import org.springframework.lang.NonNullApi;

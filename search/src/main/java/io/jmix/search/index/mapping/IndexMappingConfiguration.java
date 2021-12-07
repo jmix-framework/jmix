@@ -18,6 +18,7 @@ package io.jmix.search.index.mapping;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.search.index.mapping.impl.IndexMappingConfigurationSerializer;
 
 import java.util.Map;
 

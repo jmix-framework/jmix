@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Haulmont.
+ * Copyright 2021 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
+@Internal
 @NonNullApi
-@Experimental
-package io.jmix.search.index.mapping.analysis;
+package io.jmix.search.index.mapping.impl;
 
-import io.jmix.core.annotation.Experimental;
+import io.jmix.core.annotation.Internal;
 import org.springframework.lang.NonNullApi;

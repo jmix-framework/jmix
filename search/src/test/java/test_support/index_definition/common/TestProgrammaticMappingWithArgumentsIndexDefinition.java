@@ -19,8 +19,9 @@ package test_support.index_definition.common;
 import io.jmix.search.SearchProperties;
 import io.jmix.search.index.annotation.JmixEntitySearchIndex;
 import io.jmix.search.index.annotation.ManualMappingDefinition;
-import io.jmix.search.index.mapping.processor.MappingDefinition;
-import io.jmix.search.index.mapping.strategy.AutoMappingStrategy;
+import io.jmix.search.index.mapping.MappingDefinition;
+import io.jmix.search.index.mapping.MappingDefinitionElement;
+import io.jmix.search.index.mapping.strategy.impl.AutoMappingStrategy;
 import test_support.entity.TestSimpleRootEntity;
 
 @JmixEntitySearchIndex(entity = TestSimpleRootEntity.class)
@@ -32,10 +33,12 @@ public interface TestProgrammaticMappingWithArgumentsIndexDefinition {
             throw new IllegalStateException("SearchProperties bean should be provided");
         }
         return MappingDefinition.builder()
-                .newElement()
-                .includeProperties("name")
-                .usingFieldMappingStrategyClass(AutoMappingStrategy.class)
-                .buildElement()
-                .buildMappingDefinition();
+                .addElement(
+                        MappingDefinitionElement.builder()
+                                .includeProperties("name")
+                                .withFieldMappingStrategyClass(AutoMappingStrategy.class)
+                                .build()
+                )
+                .build();
     }
 }

@@ -19,7 +19,7 @@ package settings.analysis;
 import com.fasterxml.jackson.databind.JsonNode;
 import index_definition.AnnotatedIndexDefinitionProcessorTest;
 import io.jmix.search.index.IndexConfiguration;
-import io.jmix.search.index.mapping.processor.AnnotatedIndexDefinitionProcessor;
+import io.jmix.search.index.mapping.processor.impl.AnnotatedIndexDefinitionProcessor;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.hamcrest.Matcher;

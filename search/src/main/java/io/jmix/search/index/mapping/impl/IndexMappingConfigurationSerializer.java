@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.search.index.mapping;
+package io.jmix.search.index.mapping.impl;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -22,6 +22,9 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
+import io.jmix.search.index.mapping.DisplayedNameDescriptor;
+import io.jmix.search.index.mapping.IndexMappingConfiguration;
+import io.jmix.search.index.mapping.MappingFieldDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

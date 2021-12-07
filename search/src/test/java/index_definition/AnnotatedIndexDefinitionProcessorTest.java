@@ -18,7 +18,7 @@ package index_definition;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import io.jmix.search.index.IndexConfiguration;
-import io.jmix.search.index.mapping.processor.AnnotatedIndexDefinitionProcessor;
+import io.jmix.search.index.mapping.processor.impl.AnnotatedIndexDefinitionProcessor;
 import org.hamcrest.Matcher;
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.extension.ExtendWith;

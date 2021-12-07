@@ -19,8 +19,10 @@ package io.jmix.search.index.mapping.strategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -34,7 +36,10 @@ public class FieldMappingStrategyProvider {
         registry = fieldMappingStrategies.stream().collect(Collectors.toMap(FieldMappingStrategy::getClass, Function.identity()));
     }
 
-    public FieldMappingStrategy getFieldMappingStrategyByClass(Class<? extends FieldMappingStrategy> strategyClass) {
-        return registry.get(strategyClass);
+    public Optional<FieldMappingStrategy> getFieldMappingStrategyByClass(@Nullable Class<? extends FieldMappingStrategy> strategyClass) {
+        if (strategyClass == null) {
+            return Optional.empty();
+        }
+        return Optional.ofNullable(registry.get(strategyClass));
     }
 }

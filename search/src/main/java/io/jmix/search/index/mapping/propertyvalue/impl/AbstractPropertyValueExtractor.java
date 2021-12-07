@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.search.index.mapping.strategy;
+package io.jmix.search.index.mapping.propertyvalue.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.node.NullNode;
 import io.jmix.core.Entity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.search.index.mapping.propertyvalue.PropertyValueExtractor;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -51,9 +52,9 @@ public abstract class AbstractPropertyValueExtractor implements PropertyValueExt
     /**
      * Checks if this value mapper supports value extraction of provided property.
      *
-     * @param entity instance
+     * @param entity       instance
      * @param propertyPath property
-     * @param parameters parameters
+     * @param parameters   parameters
      * @return true if value mapper supports this property, false otherwise
      */
     protected abstract boolean isSupported(Object entity, MetaPropertyPath propertyPath, Map<String, Object> parameters);
@@ -61,7 +62,7 @@ public abstract class AbstractPropertyValueExtractor implements PropertyValueExt
     /**
      * Transform extracted value of single-value property into result json.
      *
-     * @param value value of single-value property
+     * @param value      value of single-value property
      * @param parameters parameters
      * @return value as json
      */
@@ -70,7 +71,7 @@ public abstract class AbstractPropertyValueExtractor implements PropertyValueExt
     /**
      * Transform extracted value of multi-value property into result json.
      *
-     * @param values values of multi-value property
+     * @param values     values of multi-value property
      * @param parameters parameters
      * @return value as json
      */

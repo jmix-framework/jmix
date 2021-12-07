@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Haulmont.
+ * Copyright 2021 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,9 @@
  * limitations under the License.
  */
 
-package io.jmix.search.index.mapping.strategy;
+@Experimental
+@NonNullApi
+package io.jmix.search.index.mapping.fieldmapper;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
-public class NativeFieldConfiguration implements FieldConfiguration {
-
-    protected ObjectNode config;
-
-    public NativeFieldConfiguration(ObjectNode config) {
-        this.config = config;
-    }
-
-    @Override
-    public ObjectNode asJson() {
-        return config.deepCopy();
-    }
-}
+import io.jmix.core.annotation.Experimental;
+import org.springframework.lang.NonNullApi;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.search.index.mapping.strategy;
+package io.jmix.search.index.mapping.propertyvalue;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -24,18 +24,18 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-@Component("search_FieldMapperProvider")
-public class FieldMapperProvider {
+@Component("search_PropertyValueExtractorProvider")
+public class PropertyValueExtractorProvider {
 
-    protected Map<Class<? extends FieldMapper>, FieldMapper> registry;
+    protected Map<Class<? extends PropertyValueExtractor>, PropertyValueExtractor> registry;
 
     @Autowired
-    public FieldMapperProvider(List<FieldMapper> fieldMappers) {
-        registry = fieldMappers.stream().collect(Collectors.toMap(FieldMapper::getClass, Function.identity()));
+    public PropertyValueExtractorProvider(List<PropertyValueExtractor> propertyValueExtractors) {
+        registry = propertyValueExtractors.stream().collect(Collectors.toMap(PropertyValueExtractor::getClass, Function.identity()));
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends FieldMapper> T getFieldMapper(Class<T> fieldMapperClass) {
-        return (T) registry.get(fieldMapperClass);
+    public <T extends PropertyValueExtractor> T getPropertyValueExtractor(Class<T> propertyValueExtractorClass) {
+        return (T) registry.get(propertyValueExtractorClass);
     }
 }

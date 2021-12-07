@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-package io.jmix.search.index.mapping.strategy;
+package io.jmix.search.index.mapping.fieldmapper.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jmix.search.index.mapping.fieldmapper.FieldMapper;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -27,6 +29,14 @@ import java.util.stream.Collectors;
 public abstract class AbstractFieldMapper implements FieldMapper {
 
     protected static final ObjectMapper objectMapper = new ObjectMapper();
+
+    /**
+     * Defines Elasticsearch-native parameters supported by this field mapper.
+     * They will be used to build field configuration.
+     *
+     * @return names of supported parameters
+     */
+    abstract Set<String> getSupportedMappingParameters();
 
     /**
      * Creates map of input parameters supported by this mapper.

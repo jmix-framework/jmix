@@ -321,9 +321,13 @@ public class SearchResultsScreen extends Screen {
             instancesLayout.add(instanceBtn);
 
             List<String> list = new ArrayList<>(entry.getFieldHits().size());
+            Set<String> uniqueCaptions = new HashSet<>();
             for (FieldHit fieldHit : entry.getFieldHits()) {
                 String fieldCaption = formatFieldCaption(entityName, fieldHit.getFieldName());
-                list.add(fieldCaption + " : " + fieldHit.getHighlights());
+                if(!uniqueCaptions.contains(fieldCaption)) {
+                    list.add(fieldCaption + " : " + fieldHit.getHighlights());
+                    uniqueCaptions.add(fieldCaption);
+                }
             }
             Collections.sort(list);
 

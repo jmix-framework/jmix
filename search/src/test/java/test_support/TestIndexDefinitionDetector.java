@@ -16,7 +16,7 @@
 
 package test_support;
 
-import io.jmix.search.index.mapping.processor.IndexDefinitionDetector;
+import io.jmix.search.index.mapping.processor.impl.IndexDefinitionDetector;
 import org.springframework.core.type.classreading.MetadataReader;
 
 import javax.annotation.Nonnull;

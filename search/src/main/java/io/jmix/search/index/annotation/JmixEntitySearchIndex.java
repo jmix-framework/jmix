@@ -16,7 +16,7 @@
 
 package io.jmix.search.index.annotation;
 
-import io.jmix.search.index.mapping.processor.MappingDefinition;
+import io.jmix.search.index.mapping.MappingDefinition;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

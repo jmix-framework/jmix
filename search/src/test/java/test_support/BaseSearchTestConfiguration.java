@@ -32,7 +32,7 @@ import io.jmix.eclipselink.EclipselinkConfiguration;
 import io.jmix.search.SearchConfiguration;
 import io.jmix.search.SearchProperties;
 import io.jmix.search.index.impl.StartupIndexSynchronizer;
-import io.jmix.search.index.mapping.processor.IndexDefinitionDetector;
+import io.jmix.search.index.mapping.processor.impl.IndexDefinitionDetector;
 import io.jmix.security.SecurityConfiguration;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.http.HttpHost;

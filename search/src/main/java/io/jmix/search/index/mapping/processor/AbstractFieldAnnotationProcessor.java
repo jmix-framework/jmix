@@ -17,7 +17,7 @@
 package io.jmix.search.index.mapping.processor;
 
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.search.index.mapping.processor.MappingDefinition.MappingDefinitionBuilder;
+import io.jmix.search.index.mapping.MappingDefinition.MappingDefinitionBuilder;
 import io.jmix.search.index.mapping.strategy.FieldMappingStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

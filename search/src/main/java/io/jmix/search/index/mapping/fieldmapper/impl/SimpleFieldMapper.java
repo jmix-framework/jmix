@@ -14,31 +14,21 @@
  * limitations under the License.
  */
 
-package io.jmix.search.index.mapping.strategy;
+package io.jmix.search.index.mapping.fieldmapper.impl;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.util.Map;
-import java.util.Set;
 
-/**
- * Maps some metamodel property to configuration of index field.
- */
-public interface FieldMapper {
+public abstract class SimpleFieldMapper extends AbstractFieldMapper {
 
-    /**
-     * Defines Elasticsearch-native parameters supported by this field mapper.
-     * They will be used to build field configuration.
-     *
-     * @return names of supported parameters
-     */
-    Set<String> getSupportedMappingParameters();
+    @Override
+    public ObjectNode createJsonConfiguration(Map<String, Object> parameters) {
+        Map<String, Object> effectiveParameters = createEffectiveParameters(parameters);
+        effectiveParameters.put("type", getElasticsearchDatatype());
 
-    /**
-     * Creates field configuration as Elasticsearch-native json.
-     *
-     * @param parameters input parameters
-     * @return json object
-     */
-    ObjectNode createJsonConfiguration(Map<String, Object> parameters);
+        return objectMapper.convertValue(effectiveParameters, ObjectNode.class);
+    }
+
+    protected abstract String getElasticsearchDatatype();
 }

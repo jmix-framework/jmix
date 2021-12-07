@@ -19,8 +19,7 @@ package io.jmix.search.index.mapping;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.search.index.mapping.strategy.FieldConfiguration;
-import io.jmix.search.index.mapping.strategy.PropertyValueExtractor;
+import io.jmix.search.index.mapping.propertyvalue.PropertyValueExtractor;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -32,7 +31,7 @@ import java.util.Map;
  */
 public class MappingFieldDescriptor {
 
-    protected String entityPropertyFullName; //TODO exclude this (have metaPropertyPath)?
+    protected String entityPropertyFullName;
 
     protected String indexPropertyFullName;
 

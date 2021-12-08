@@ -2697,7 +2697,6 @@
                     </xs:choice>
                 </xs:sequence>
 
-                <xs:attributeGroup ref="hasExpand"/>
                 <xs:attributeGroup ref="hasContextHelp"/>
                 <xs:attributeGroup ref="hasSpacingMargin"/>
 

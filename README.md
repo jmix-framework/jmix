@@ -1,5 +1,8 @@
 # Dashboards
 
+**CAUTION: The project is in EXPERIMENTAL status and may be removed or modified in any way without notice. Use at your own risk!**
+
+
 - [Overview](#overview)
   -[Chart widget](#chart-widget-overview)
 - [Installation](#installation)

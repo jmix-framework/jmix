@@ -1,5 +1,7 @@
 # Jmix Email Templates
 
+**CAUTION: The project is in EXPERIMENTAL status and may be removed or modified in any way without notice. Use at your own risk!**
+
 - [1. Overview](#Overview)
 - [2. Installation](#installation)
 - [3. Usage](#usage)  

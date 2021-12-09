@@ -262,7 +262,6 @@ public class DataContextImpl implements DataContextInternal {
     protected void mergeState(Object srcEntity, Object dstEntity, Map<Object, Object> mergedMap,
                               boolean isRoot, MergeOptions options) {
         boolean srcNew = entityStates.isNew(srcEntity);
-        boolean dstNew = entityStates.isNew(dstEntity);
 
         mergeSystemState(srcEntity, dstEntity, isRoot, options);
 
@@ -271,8 +270,7 @@ public class DataContextImpl implements DataContextInternal {
         for (MetaProperty property : metaClass.getProperties()) {
             String propertyName = property.getName();
             if (!property.getRange().isClass()                                             // local
-                    && (srcNew || entityStates.isLoaded(srcEntity, propertyName))          // loaded src
-                    && (dstNew || entityStates.isLoaded(dstEntity, propertyName))) {       // loaded dst
+                    && (srcNew || entityStates.isLoaded(srcEntity, propertyName))) {          // loaded src
 
                 Object value = EntityValues.getValue(srcEntity, propertyName);
 
@@ -288,8 +286,7 @@ public class DataContextImpl implements DataContextInternal {
         for (MetaProperty property : metaClass.getProperties()) {
             String propertyName = property.getName();
             if (property.getRange().isClass()                                               // refs and collections
-                    && (srcNew || entityStates.isLoaded(srcEntity, propertyName))           // loaded src
-                    && (dstNew || entityStates.isLoaded(dstEntity, propertyName))) {        // loaded dst
+                    && (srcNew || entityStates.isLoaded(srcEntity, propertyName))) {           // loaded src
                 Object value = EntityValues.getValue(srcEntity, propertyName);
 
                 // ignore null values in non-root source entities
@@ -297,8 +294,8 @@ public class DataContextImpl implements DataContextInternal {
                     continue;
                 }
 
-                if (value == null) {
-                    setPropertyValue(dstEntity, property, null);
+                if (value == null || !entityStates.isLoaded(dstEntity, propertyName)) {
+                    setPropertyValue(dstEntity, property, value);
                     continue;
                 }
 

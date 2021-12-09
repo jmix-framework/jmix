@@ -803,6 +803,32 @@ class DataContextMergeTest extends DataContextSpec {
         order.customer == customer0
     }
 
+    def "merge into entity with not loaded property"() {
+        DataContext context = factory.createDataContext()
+
+        Customer customer1 = dataManager.save(new Customer(name: 'c1', address: new Address()))
+        Order order1 = dataManager.save(new Order(number: '111', customer: customer1))
+
+        def order1l = dataManager.load(Id.of(order1)).fetchPlan { it.add('number') }.one()
+
+        when:
+        def order1t = context.merge(order1l)
+        order1t.number = '222'
+        context.commit()
+
+
+        def order2 = dataManager.load(Id.of(order1)).fetchPlan { it.addAll('number', 'customer.name') }.one()
+        def order2t = context.merge(order2)
+        order2t.number = '333'
+        context.commit()
+
+        then:
+        noExceptionThrown()
+
+        cleanup:
+        dataManager.remove(order2t, customer1)
+    }
+
 //    def "fetch group"() {
 //        DataContext context = factory.createDataContext()
 //

@@ -21,5 +21,6 @@
            elementFormDefault="qualified">
 
     <xs:element name="cubaFilter" type="layout:filterComponent"/>
+    <xs:element name="cubaUpload" type="layout:uploadComponent"/>
 
 </xs:schema>

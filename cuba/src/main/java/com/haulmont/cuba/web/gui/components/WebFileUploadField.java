@@ -35,6 +35,7 @@ import io.jmix.ui.component.ComponentsHelper;
 import io.jmix.ui.component.FileStorageUploadField;
 import io.jmix.ui.component.UploadField;
 import io.jmix.ui.component.Window;
+import io.jmix.ui.component.data.ConversionException;
 import io.jmix.ui.component.impl.AbstractFileStorageUploadField;
 import io.jmix.ui.upload.TemporaryStorage;
 import io.jmix.ui.widget.JmixFileUpload;
@@ -125,6 +126,12 @@ public class WebFileUploadField extends AbstractFileStorageUploadField<FileDescr
                 }
                 break;
         }
+    }
+
+    @Nullable
+    @Override
+    protected String convertToPresentation(@Nullable FileDescriptor modelValue) throws ConversionException {
+        return modelValue == null ? null : modelValue.getName();
     }
 
     @Nullable

@@ -126,6 +126,7 @@ public class CubaLoaderConfig extends BaseLoaderConfig implements LoaderConfig {
         loaders.put("fragment", CubaFragmentComponentLoader.class);
 
         loaders.put("cubaFilter", CubaFilterLoader.class);
+        loaders.put("cubaUpload", CubaFileUploadFieldLoader.class);
 
         loaders.put(Calendar.NAME, CubaCalendarLoader.class);
         loaders.put(Tree.NAME, CubaTreeLoader.class);

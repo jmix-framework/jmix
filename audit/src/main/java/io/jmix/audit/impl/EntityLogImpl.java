@@ -159,7 +159,9 @@ public class EntityLogImpl implements EntityLog, JpaLifecycleListener {
         List<EntityLogItem> items = holder.getItems(storeName);
         if (items == null || items.isEmpty())
             return;
-
+        items = items.stream()
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
         Set<EntityLogItem> saved = new LinkedHashSet<>();
         for (EntityLogItem item : items) {
             List<EntityLogItem> sameEntityList = items.stream()

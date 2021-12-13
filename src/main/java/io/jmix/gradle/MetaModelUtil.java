@@ -188,6 +188,23 @@ public class MetaModelUtil {
         return null;
     }
 
+    /**
+     * Handles a special case of Kotlin property with a name starting with "is*"
+     * if the Kotlin property name is "isApproved" then the generated getter will be "isApproved()" and the setter is "setApproved()"
+     * <p>
+     * Note that getter for field "isaField" will still be generated in common "get-" form: "getIsaField()"
+     */
+    public static CtField findDeclaredKotlinFieldByAccessor(CtClass ctClass, String accessorName) {
+
+        String kotlinPropertyName = "is" + StringUtils.capitalize(accessorName.substring(3));
+        for (CtField field : ctClass.getDeclaredFields()) {
+            if (field.getName().equals(kotlinPropertyName)) {
+                return field;
+            }
+        }
+        return null;
+    }
+
     public static CtField findDeclaredField(CtClass ctClass, String fieldName) {
         for (CtField field : ctClass.getDeclaredFields()) {
             if (field.getName().equals(fieldName)) {

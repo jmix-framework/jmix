@@ -57,6 +57,11 @@ public class SettersEnhancingStep extends BaseEnhancingStep {
 
             CtField field = findDeclaredFieldByAccessor(ctClass, ctMethod.getName());
 
+            if (field == null) {
+                //kotlin-generated accessors case: "'isProp' -> isProp(), setProp()"
+                field = findDeclaredKotlinFieldByAccessor(ctClass, ctMethod.getName());
+            }
+
             if (field == null || isPersistentEntity && isTransientField(ctClass, field.getName()) && !isJmixProperty(ctClass, field.getName())) {
                 continue;
             }
@@ -74,12 +79,19 @@ public class SettersEnhancingStep extends BaseEnhancingStep {
                 ctMethod.addLocalVariable("__prev", paramType);
                 ctMethod.addLocalVariable("__new", paramType);
 
+                String getterName = "get" + ctMethod.getName().substring(3);
+
+                CtMethod getter = findDeclaredMethod(ctClass, getterName);
+                if (getter == null) {//'isProp()' may be used instead of 'getProp()'
+                    getterName = "is" + ctMethod.getName().substring(3);
+                }
+
                 ctMethod.insertBefore(
-                        "__prev = this.get" + ctMethod.getName().substring(3) + "();"
+                        "__prev = this." + getterName + "();"
                 );
 
                 ctMethod.insertAfter(
-                        "__new = this.get" + ctMethod.getName().substring(3) + "();" +
+                        "__new = this." + getterName + "();" +
                                 "io.jmix.core.impl.EntityInternals.fireListeners(this, \"" + field.getName() + "\", __prev, __new);"
                 );
             }

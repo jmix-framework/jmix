@@ -77,6 +77,34 @@ class EntityLogTest extends AbstractEntityLogTest {
         clearEntityById(identityEntity, 'TEST_IDENTITY')
     }
 
+    def "No 'null' log items created"() {
+
+        given:
+
+        IdentityEntity identityEntity = new IdentityEntity(name: 'test1')
+
+        when: "not logged attribute changed"
+
+        saveEntity(identityEntity)
+
+        withTransaction {
+            IdentityEntity e = em.find(IdentityEntity, identityEntity.id)
+            e.email = "testEmail"
+        }
+
+        def entityLogItem = getLatestEntityLogItem('test$IdentityEntity', identityEntity)
+
+        then: "No exception and no new log item"
+        noExceptionThrown()
+        entityLogItem != null
+        entityLogItem.type == EntityLogItem.Type.CREATE//no additional log item created
+
+
+        cleanup:
+
+        clearEntityById(identityEntity, 'TEST_IDENTITY')
+    }
+
 
     def "Logging is working for an update of a BaseIdentityIdEntity"() {
 

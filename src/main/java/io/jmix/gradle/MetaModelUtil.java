@@ -194,7 +194,7 @@ public class MetaModelUtil {
      * <p>
      * Note that getter for field "isaField" will still be generated in common "get-" form: "getIsaField()"
      */
-    public static CtField findDeclaredKotlinFieldByAccessor(CtClass ctClass, String accessorName) {
+    public static CtField findDeclaredKotlinBooleanFieldByAccessor(CtClass ctClass, String accessorName) {
 
         String kotlinPropertyName = "is" + StringUtils.capitalize(accessorName.substring(3));
         for (CtField field : ctClass.getDeclaredFields()) {

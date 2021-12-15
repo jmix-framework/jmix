@@ -59,7 +59,7 @@ public class SettersEnhancingStep extends BaseEnhancingStep {
 
             if (field == null) {
                 //kotlin-generated accessors case: "'isProp' -> isProp(), setProp()"
-                field = findDeclaredKotlinFieldByAccessor(ctClass, ctMethod.getName());
+                field = findDeclaredKotlinBooleanFieldByAccessor(ctClass, ctMethod.getName());
             }
 
             if (field == null || isPersistentEntity && isTransientField(ctClass, field.getName()) && !isJmixProperty(ctClass, field.getName())) {

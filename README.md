@@ -1,7 +1,7 @@
 <h1 align="center"> <a href="https://www.jmix.io/"><img src="img/Jmix_logo.png" alt="Jmix" width="400" align="center"></a>
 </h1>
 
-<h4 align="center">An Open Source RAD Platform for Modern Web Applications</h4>
+<h4 align="center">A Full-Stack Framework for Business Applications</h4>
   
 <p align="center">
 <a href="http://www.apache.org/licenses/LICENSE-2.0"><img src="https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat" alt="license" title=""></a>
@@ -18,7 +18,7 @@
       Live Demo
     </a>
     <span> | </span>
-    <a href="https://docs.jmix.io/jmix/0.x/intro.html" target="_blank">
+    <a href="https://docs.jmix.io" target="_blank">
       Documentation
     </a>
   </h3>
@@ -37,7 +37,7 @@ Jmix is a set of libraries and tools to speed up Spring Boot data-centric applic
 ## Using Jmix
 To get started, [download Jmix Studio](https://www.jmix.io/tools) - a plugin for IntelliJ IDEA. It helps you at all stages of the application development: creating and configuring a project, defining data model, generating database migration scripts, developing UI screens in a visual editor. It provides advanced navigation, code completion and inspections specific to Jmix projects.
 
-Follow the [Quick Start](https://docs.jmix.io/jmix/1.0/quick-start/) guide to get up and running in 15 minutes. The guide will show some necessary things for creating any web application: how to design a data model, how to manipulate data, how to create business logic, and, finally, how to create a user interface.
+Follow the [Quick Start](https://www.jmix.io/learn/quickstart/) guide to get up and running in 15 minutes. The guide will show some necessary things for creating any web application: how to design a data model, how to manipulate data, how to create business logic, and, finally, how to create a user interface.
 
 ## Building From Source
 This repository contains the core project of the framework. Other parts of the framework are located in [separate repositories](https://github.com/Haulmont?q=jmix). If you want to investigate the Jmix codebase and play with it locally, we recommend using the [jmix-all](https://github.com/Haulmont/jmix-all) aggregator project. If you want to contribute your changes to Jmix, see [CONTRIBUTING](CONTRIBUTING.md).

@@ -28,13 +28,17 @@ import io.jmix.ui.*
 import io.jmix.ui.model.DataComponents
 import io.jmix.ui.sys.AppCookies
 import io.jmix.ui.sys.UiControllersConfiguration
-import io.jmix.ui.testassist.UiTest
+import io.jmix.ui.testassist.TestContextInititalizer
+import io.jmix.ui.testassist.UiTestAssistConfiguration
 import io.jmix.ui.testassist.ui.TestConnectorTracker
 import io.jmix.ui.testassist.ui.TestVaadinRequest
 import io.jmix.ui.testassist.ui.TestVaadinSession
 import io.jmix.ui.theme.ThemeConstants
+import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationContext
+import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes
 import spock.lang.Specification
@@ -43,7 +47,8 @@ import javax.servlet.http.HttpServletRequest
 
 import static org.apache.commons.lang3.reflect.FieldUtils.getDeclaredField
 
-@UiTest
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = [UiTestAssistConfiguration], initializers = [TestContextInititalizer])
 abstract class UiTestAssistSpecification extends Specification {
 
     @Autowired

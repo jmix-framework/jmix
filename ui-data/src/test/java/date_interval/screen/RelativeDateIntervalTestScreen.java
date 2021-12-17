@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uitest.date_interval.screen;
+package date_interval.screen;
 
 import io.jmix.ui.component.PropertyFilter;
 import io.jmix.ui.model.CollectionContainer;
@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import test_support.entity.Project;
 
 import java.util.Collection;
+import java.util.List;
 
 @UiController
 @UiDescriptor("relative-date-interval-test-screen.xml")
@@ -36,7 +37,7 @@ public class RelativeDateIntervalTestScreen extends Screen {
     @Autowired
     public PropertyFilter dateFilter;
 
-    public Collection<Project> getItems() {
+    public List<Project> getItems() {
         return projectsDc.getItems();
     }
 }

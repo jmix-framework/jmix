@@ -108,6 +108,17 @@ class JmixBuildPlugin implements Plugin<Project> {
                             javaMaven(MavenPublication) {
                                 artifactId = archivesBaseName
                                 from components.java
+                                pom {
+                                    name = 'Jmix'
+                                    description = 'A high-level full-stack framework for business applications'
+                                    url = 'http://jmix.io'
+                                    licenses {
+                                        license {
+                                            name = 'Apache License, Version 2.0'
+                                            url = 'https://www.apache.org/licenses/LICENSE-2.0'
+                                        }
+                                    }
+                                }
                             }
                         }
                     }

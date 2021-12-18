@@ -39,10 +39,12 @@ import java.util.Map;
 import java.util.function.Function;
 
 /**
- * Helper bean for XML parsing.
+ * Helper bean for XML parsing with DOM4J.
+ * <p>
  * Caches SAXParser instances in the pool.
- * Pool size and timeout to borrow can be configured
- * with the application properties {@code cuba.dom4j.maxPoolSize} and {@code cuba.dom4j.maxBorrowWaitMillis}
+ * <p>
+ * The pool size and timeout to borrow can be configured with the {@code jmix.core.dom4jMaxPoolSize}
+ * and {@code jmix.core.dom4jMaxBorrowWaitMillis} application properties.
  */
 @Component("core_Dom4jTools")
 public class Dom4jTools {

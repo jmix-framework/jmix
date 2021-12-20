@@ -1,0 +1,46 @@
+<!--
+  ~ Copyright 2021 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<credits xmlns="http://jmix.io/schema/core/credits">
+    <licenses>
+    </licenses>
+    <items>
+        <item name="Vaadin" url="https://vaadin.com/">
+            <license ref="apache-2.0"/>
+        </item>
+        <item name="OWASP Java HTML Sanitizer" url="https://github.com/OWASP/java-html-sanitizer">
+            <license ref="apache-2.0"/>
+        </item>
+        <item name="Ace" url="https://ace.c9.io/">
+            <license name="BSD-3-Clause" url="https://github.com/ajaxorg/ace/blob/master/LICENSE"/>
+        </item>
+        <item name="Bootstrap" url="https://getbootstrap.com/">
+            <license name="MIT License" url="https://github.com/twbs/bootstrap/blob/main/LICENSE"/>
+        </item>
+        <item name="Diff Match Patch" url="https://github.com/google/diff-match-patch">
+            <license ref="apache-2.0"/>
+        </item>
+        <item name="jQuery" url="https://jquery.com/">
+            <license name="MIT License" url="https://github.com/jquery/jquery/blob/main/LICENSE.txt"/>
+        </item>
+        <item name="object-fit-images" url="https://github.com/fregante/object-fit-images">
+            <license name="MIT License" url="https://github.com/fregante/object-fit-images/blob/master/license"/>
+        </item>
+        <item name="Jackson" url="https://github.com/FasterXML/jackson">
+            <license ref="apache-2.0"/>
+        </item>
+    </items>
+</credits>

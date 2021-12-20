@@ -1,0 +1,57 @@
+<!--
+  ~ Copyright 2021 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<credits xmlns="http://jmix.io/schema/core/credits">
+    <licenses>
+        <license id="apache-2.0" name="Apache License, Version 2.0" url="https://www.apache.org/licenses/LICENSE-2.0"/>
+        <license id="epl-2.0" name="Eclipse Public License - v 2.0" url="https://www.eclipse.org/legal/epl-2.0/"/>
+    </licenses>
+    <items>
+        <item name="Apache Commons" url="https://commons.apache.org/">
+            <license ref="apache-2.0"/>
+        </item>
+        <item name="DOM4J" url="https://dom4j.github.io/">
+            <license name="BSD 3-clause New License" url="https://github.com/dom4j/dom4j/blob/master/LICENSE"/>
+        </item>
+        <item name="Groovy" url="http://www.groovy-lang.org">
+            <license ref="apache-2.0"/>
+        </item>
+        <item name="Gson" url="https://github.com/google/gson">
+            <license ref="apache-2.0"/>
+        </item>
+        <item name="Guava" url="https://github.com/google/guava">
+            <license ref="apache-2.0"/>
+        </item>
+        <item name="Hibernate Validator" url="http://hibernate.org/validator">
+            <license ref="apache-2.0"/>
+        </item>
+        <item name="JUnit" url="http://junit.org/">
+            <license ref="epl-2.0"/>
+        </item>
+        <item name="Micrometer" url="https://micrometer.io/">
+            <license ref="apache-2.0"/>
+        </item>
+        <item name="SLF4J" url="http://www.slf4j.org/">
+            <license name="MIT" url="http://www.slf4j.org/license.html"/>
+        </item>
+        <item name="Spock" url="http://spockframework.org/">
+            <license ref="apache-2.0"/>
+        </item>
+        <item name="Spring" url="https://spring.io/">
+            <license ref="apache-2.0"/>
+        </item>
+    </items>
+</credits>

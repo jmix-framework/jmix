@@ -39,7 +39,7 @@ public class MigrationHelperManagementFacade {
 
     private static final String COUNT_TEMPLATE = "select count(*) from %s where (%s is null and %s is not null)";
     private static final String LOAD_TEMPLATE = "select t.ID as tid, f.create_date as file_date, f.id as file_id, " +
-            "f.ext as file_ext, f.name as file_name from %s t join sys_file f on t.%s = f.id " +
+            "f.ext as file_ext, f.name as file_name, f.file_size as file_size from %s t join sys_file f on t.%s = f.id " +
             "where(t.%s is null and t.%s is not null);";
     private static final String UPDATE_TEMPLATE = "update %s set %s = ? where ID = ?";
 
@@ -87,6 +87,27 @@ public class MigrationHelperManagementFacade {
         return builder.toString();
     }
 
+    @ManagedOperation(description = "Fills FileRef column value for migrated WebDAV entities")
+    @ManagedOperationParameters({
+            @ManagedOperationParameter(name = "storageName", description = "File Storage prefix. Leave empty to set default prefix \"fs\"")
+    })
+    public String convertCubaFileDescriptorsForWebdav(@Nullable String storageName) {
+        StringBuilder builder = new StringBuilder("Looking for modules with tables to migrate...\n");
+        for (JmixModuleDescriptor descriptor : jmixModules.getAll()) {
+
+            if ("io.jmix.webdav".equals(descriptor.getId())) {
+                builder.append("WebDAV module found. Processing...\n");
+
+                builder.append('\t')
+                        .append(migrateTableData("WEBDAV_WEBDAV_DOCUMENT_VERSION",
+                                "FILE_DESCRIPTOR_ID", "FILE_REFERENCE", storageName))
+                        .append('\n');
+            }
+        }
+        builder.append("Finished.");
+        return builder.toString();
+    }
+
     @ManagedOperation(description = "Fills FileRef column for custom table")
     @ManagedOperationParameters({
             @ManagedOperationParameter(name = "tableName", description = "Database table name"),
@@ -117,7 +138,8 @@ public class MigrationHelperManagementFacade {
                         (Date) record.get("file_date"),
                         getUUIDString(record.get("file_id")),
                         (String) record.get("file_ext"),
-                        (String) record.get("file_name"));
+                        (String) record.get("file_name"),
+                        String.valueOf(record.get("file_size")));
                 fileRefs.add(new Object[]{ref, record.get("tid")});
             }
 
@@ -132,7 +154,8 @@ public class MigrationHelperManagementFacade {
                 migrated, initial, tableName, refColumn, descriptorColumn);
     }
 
-    protected String buildFileRef(String storageName, Date createdDate, String uuid, String extension, String fileName) {
+    protected String buildFileRef(String storageName, Date createdDate, String uuid,
+                                  String extension, String fileName, String fileSize) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(createdDate);
         int year = cal.get(Calendar.YEAR);
@@ -148,7 +171,9 @@ public class MigrationHelperManagementFacade {
                 : StringUtils.EMPTY;
 
         String path = datePath + "/" + uuid + fileExtension;
-        return new FileRef(storageName, path, fileName).toString();
+        FileRef fileRef = new FileRef(storageName, path, fileName);
+        fileRef.addParameter("size", fileSize);
+        return fileRef.toString();
     }
 
     private String getUUIDString(Object dbValue) {

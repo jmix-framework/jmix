@@ -118,4 +118,13 @@
         <renameColumn tableName="WEBDAV_WEBDAV_CREDENTIALS" oldColumnName="DELETE_TS" newColumnName="DELETED_DATE" columnDataType="datetime"/>
     </changeSet>
 
+    <changeSet id="60" author="migrator">
+        <validCheckSum>1:any</validCheckSum>
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="WEBDAV_WEBDAV_CREDENTIALS"/>
+        </preConditions>
+
+        <dropNotNullConstraint tableName="WEBDAV_WEBDAV_CREDENTIALS" columnName="USER_ID" columnDataType="${uuid.type}"/>
+    </changeSet>
+    
 </databaseChangeLog>

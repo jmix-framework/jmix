@@ -27,12 +27,16 @@ import io.jmix.ui.action.ActionType;
 import io.jmix.ui.action.list.SecuredListAction;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.data.meta.EntityDataUnit;
+import io.jmix.ui.meta.StudioAction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Objects;
 
-
+@StudioAction(
+        target = "io.jmix.ui.component.ListComponent",
+        description = "Shows the user substitutions"
+)
 @ActionType(ShowUserSubstitutionsAction.ID)
 public class ShowUserSubstitutionsAction extends SecuredListAction implements Action.ExecutableAction, Action.AdjustWhenScreenReadOnly {
 

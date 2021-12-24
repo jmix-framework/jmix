@@ -28,6 +28,7 @@ import io.jmix.ui.component.Component;
 import io.jmix.ui.component.data.DataUnit;
 import io.jmix.ui.component.data.meta.ContainerDataUnit;
 import io.jmix.ui.component.data.meta.EntityDataUnit;
+import io.jmix.ui.meta.StudioAction;
 import io.jmix.ui.screen.UiControllerUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -35,6 +36,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.Set;
 
+@StudioAction(
+        target = "io.jmix.ui.component.ListComponent",
+        description = "Resets the remember me token for the UserDetails instance"
+)
 @ActionType(ResetRememberMeTokenAction.ID)
 public class ResetRememberMeTokenAction extends ListAction implements Action.ExecutableAction, Action.AdjustWhenScreenReadOnly {
 
@@ -119,6 +124,10 @@ public class ResetRememberMeTokenAction extends ListAction implements Action.Exe
             throw new IllegalStateException("Target is not bound to entity");
         }
 
+        if (!(metaClass.getJavaClass().isAssignableFrom(UserDetails.class))) {
+            throw new IllegalStateException("Target does not implement a UserDetails");
+        }
+
         buildAndShowChangePasswordDialog();
     }
 
@@ -160,6 +169,4 @@ public class ResetRememberMeTokenAction extends ListAction implements Action.Exe
                 .withType(Notifications.NotificationType.HUMANIZED)
                 .show();
     }
-
-
 }

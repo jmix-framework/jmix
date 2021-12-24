@@ -27,10 +27,16 @@ import io.jmix.ui.action.ActionType;
 import io.jmix.ui.action.list.SecuredListAction;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.data.meta.EntityDataUnit;
+import io.jmix.ui.meta.StudioAction;
 import io.jmix.ui.screen.MapScreenOptions;
 import io.jmix.ui.screen.OpenMode;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 
+@StudioAction(
+        target = "io.jmix.ui.component.ListComponent",
+        description = "Resets the password of the UserDetails instance"
+)
 @ActionType(ResetPasswordAction.ID)
 public class ResetPasswordAction extends SecuredListAction implements Action.ExecutableAction, Action.AdjustWhenScreenReadOnly {
 
@@ -115,6 +121,10 @@ public class ResetPasswordAction extends SecuredListAction implements Action.Exe
         Object editedEntity = target.getSingleSelected();
         if (editedEntity == null) {
             throw new IllegalStateException("There is not selected item in ResetPassword target");
+        }
+
+        if (!(editedEntity instanceof UserDetails)) {
+            throw new IllegalStateException("Target does not implement a UserDetails");
         }
 
         buildAndShowResetPasswordDialog();

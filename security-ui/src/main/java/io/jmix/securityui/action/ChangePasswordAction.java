@@ -26,9 +26,15 @@ import io.jmix.ui.action.ActionType;
 import io.jmix.ui.action.list.SecuredListAction;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.data.meta.EntityDataUnit;
+import io.jmix.ui.meta.StudioAction;
+import io.jmix.ui.meta.StudioPropertiesItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 
+@StudioAction(
+        target = "io.jmix.ui.component.ListComponent",
+        description = "Changes the password of the UserDetails instance"
+)
 @ActionType(ChangePasswordAction.ID)
 public class ChangePasswordAction extends SecuredListAction implements Action.ExecutableAction, Action.AdjustWhenScreenReadOnly {
 
@@ -56,6 +62,7 @@ public class ChangePasswordAction extends SecuredListAction implements Action.Ex
         this.screens = screens;
     }
 
+    @StudioPropertiesItem(defaultValue = "false")
     public void setCurrentPasswordRequired(boolean currentPasswordRequired) {
         this.currentPasswordRequired = currentPasswordRequired;
     }
@@ -112,6 +119,10 @@ public class ChangePasswordAction extends SecuredListAction implements Action.Ex
         Object editedEntity = target.getSingleSelected();
         if (editedEntity == null) {
             throw new IllegalStateException("There is not selected item in ChangePassword target");
+        }
+
+        if (!(editedEntity instanceof UserDetails)) {
+            throw new IllegalStateException("Target does not implement a UserDetails");
         }
 
         UserDetails user = (UserDetails) editedEntity;

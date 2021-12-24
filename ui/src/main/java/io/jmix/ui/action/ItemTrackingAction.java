@@ -18,6 +18,7 @@ package io.jmix.ui.action;
 
 import io.jmix.ui.action.list.SecuredListAction;
 import io.jmix.ui.component.ListComponent;
+import io.jmix.ui.meta.StudioAction;
 
 /**
  * Standard action that changes enabled property depending on selection of a bound {@link ListComponent}.
@@ -33,6 +34,10 @@ import io.jmix.ui.component.ListComponent;
  *     docsTable.addAction(action);
  * }</pre>
  */
+@StudioAction(
+        target = "io.jmix.ui.component.ListComponent",
+        description = "Tracks the selected item from the bound ListComponent"
+)
 @ActionType(ItemTrackingAction.ID)
 public class ItemTrackingAction extends SecuredListAction {
 

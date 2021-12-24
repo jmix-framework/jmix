@@ -34,7 +34,7 @@ import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
 
-public abstract class AbstractTemporalDatatype<T extends Temporal> implements Datatype<T>, ParameterizedDatatype {
+public abstract class AbstractTemporalDatatype<T extends TemporalAccessor> implements Datatype<T>, ParameterizedDatatype {
 
     @Autowired
     protected FormatStringsRegistry formatStringsRegistry;

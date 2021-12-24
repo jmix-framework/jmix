@@ -124,7 +124,7 @@ public class ResetRememberMeTokenAction extends ListAction implements Action.Exe
             throw new IllegalStateException("Target is not bound to entity");
         }
 
-        if (!(metaClass.getJavaClass().isAssignableFrom(UserDetails.class))) {
+        if (!(UserDetails.class.isAssignableFrom(metaClass.getJavaClass()))) {
             throw new IllegalStateException("Target does not implement a UserDetails");
         }
 

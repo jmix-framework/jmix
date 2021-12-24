@@ -3406,31 +3406,6 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="bulkEditorComponent">
-        <xs:complexContent>
-            <xs:extension base="baseComponent">
-                <xs:sequence>
-                    <xs:element name="validator" minOccurs="0" maxOccurs="unbounded">
-                        <xs:complexType>
-                            <xs:attribute name="field" type="xs:string"/>
-                            <xs:attribute name="class" type="xs:string"/>
-                            <xs:attribute name="script" type="xs:string"/>
-                        </xs:complexType>
-                    </xs:element>
-                </xs:sequence>
-
-                <xs:attribute name="openMode" type="openMode"/>
-                <xs:attribute name="for" type="xs:string" use="required"/>
-                <xs:attribute name="exclude" type="xs:string"/>
-                <xs:attribute name="includeProperties" type="xs:string"/>
-                <xs:attribute name="loadDynamicAttributes" type="xs:boolean"/>
-                <xs:attribute name="useConfirmDialog" type="xs:boolean"/>
-
-                <xs:attributeGroup ref="hasTabIndex"/>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
     <!-- JavaScriptComponent -->
     <xs:complexType name="javaScriptComponent">
         <xs:complexContent>
@@ -4029,7 +4004,6 @@
                 <xs:element name="tagField" type="tagFieldComponent"/>
                 <xs:element name="twinColumn" type="twinColumnComponent"/>
                 <xs:element name="relatedEntities" type="relatedComponent"/>
-                <xs:element name="bulkEditor" type="bulkEditorComponent"/>
 
                 <xs:element name="form" type="formComponent"/>
 

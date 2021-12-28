@@ -54,6 +54,7 @@ public class ImapSyncScheduleAutoConfiguration {
         String cron = imapProperties.getImapSyncCron();
         log.info("Schedule Imap Sync using default configuration with CRON expression '{}'", cron);
         return TriggerBuilder.newTrigger()
+                .withIdentity("imapSyncCronTrigger")
                 .forJob(imapSyncJob())
                 .startNow()
                 .withSchedule(CronScheduleBuilder.cronSchedule(cron))

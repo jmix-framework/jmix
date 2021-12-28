@@ -140,4 +140,12 @@ public interface IndexingQueueManager {
      * @return amount of processed queue items
      */
     int processEntireQueue();
+
+    /**
+     * Retrieves items from indexing queue and processes them - store/remove related documents in index.
+     *
+     * @param batchSize amount of queue items to process within single batch
+     * @return amount of processed queue items
+     */
+    int processEntireQueue(int batchSize);
 }

@@ -176,12 +176,17 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
 
     @Override
     public int processNextBatch(int batchSize) {
-        return processQueue(batchSize, batchSize);
+        return processQueue(batchSize, false);
     }
 
     @Override
     public int processEntireQueue() {
-        return processQueue(searchProperties.getProcessQueueBatchSize(), -1);
+        return processEntireQueue(searchProperties.getProcessQueueBatchSize());
+    }
+
+    @Override
+    public int processEntireQueue(int batchSize) {
+        return processQueue(batchSize, true);
     }
 
     protected int enqueueIndexAll(String entityName, int batchSize) {
@@ -264,7 +269,7 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
         return totalEnqueued;
     }
 
-    protected int processQueue(int batchSize, int maxProcessedPerExecution) {
+    protected int processQueue(int batchSize, boolean processEntireQueue) {
         if (batchSize <= 0) {
             throw new IllegalArgumentException("Size of queue processing batch must be positive");
         }
@@ -298,7 +303,7 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
                 dataManager.save(saveContext);
 
                 count += successfullyProcessedQueueItems.size();
-            } while (queueItems.size() == batchSize && (maxProcessedPerExecution <= 0 || queueItems.size() <= maxProcessedPerExecution));
+            } while (processEntireQueue && queueItems.size() == batchSize);
         } finally {
             locker.unlockQueueProcessing();
             authenticator.end();

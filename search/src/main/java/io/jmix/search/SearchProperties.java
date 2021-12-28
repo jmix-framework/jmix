@@ -52,11 +52,6 @@ public class SearchProperties {
     protected final int processQueueBatchSize;
 
     /**
-     * Max amount of items can be processed during single execution.
-     */
-    protected final int maxProcessedQueueItemsPerExecution;
-
-    /**
      * Amount of entity instances enqueued in single batch during entity reindex process.
      */
     protected final int reindexEntityEnqueueBatchSize;
@@ -111,7 +106,6 @@ public class SearchProperties {
             @DefaultValue("100") int maxSearchPageCount,
             @DefaultValue("100") int searchReloadEntitiesBatchSize,
             @DefaultValue("100") int processQueueBatchSize,
-            @DefaultValue("1000") int maxProcessedQueueItemsPerExecution,
             @DefaultValue("100") int reindexEntityEnqueueBatchSize,
             @DefaultValue("true") boolean changedEntitiesIndexingEnabled,
             @DefaultValue("true") boolean useDefaultIndexingQueueProcessingQuartzConfiguration,
@@ -126,7 +120,6 @@ public class SearchProperties {
         this.maxSearchPageCount = maxSearchPageCount;
         this.searchReloadEntitiesBatchSize = searchReloadEntitiesBatchSize;
         this.processQueueBatchSize = processQueueBatchSize;
-        this.maxProcessedQueueItemsPerExecution = maxProcessedQueueItemsPerExecution;
         this.reindexEntityEnqueueBatchSize = reindexEntityEnqueueBatchSize;
         this.changedEntitiesIndexingEnabled = changedEntitiesIndexingEnabled;
         this.useDefaultIndexingQueueProcessingQuartzConfiguration = useDefaultIndexingQueueProcessingQuartzConfiguration;
@@ -165,13 +158,6 @@ public class SearchProperties {
      */
     public int getProcessQueueBatchSize() {
         return processQueueBatchSize;
-    }
-
-    /**
-     * @see #maxProcessedQueueItemsPerExecution
-     */
-    public int getMaxProcessedQueueItemsPerExecution() {
-        return maxProcessedQueueItemsPerExecution;
     }
 
     /**

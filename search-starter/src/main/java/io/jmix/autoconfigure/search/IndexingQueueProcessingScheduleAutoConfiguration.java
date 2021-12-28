@@ -54,6 +54,7 @@ public class IndexingQueueProcessingScheduleAutoConfiguration {
         String cron = searchProperties.getIndexingQueueProcessingCron();
         log.info("Schedule Indexing Queue processing using default configuration with CRON expression '{}'", cron);
         return TriggerBuilder.newTrigger()
+                .withIdentity("IndexingQueueProcessingCronTrigger")
                 .forJob(indexingQueueProcessingJob())
                 .startNow()
                 .withSchedule(CronScheduleBuilder.cronSchedule(cron))

@@ -53,6 +53,7 @@ public class EmailCleaningScheduleAutoConfiguration {
         String cron = emailerProperties.getEmailCleaningCron();
         log.info("Schedule Email Cleaning using default configuration with CRON expression '{}'", cron);
         return TriggerBuilder.newTrigger()
+                .withIdentity("emailCleaningCronTrigger")
                 .forJob(emailCleaningJob())
                 .startNow()
                 .withSchedule(CronScheduleBuilder.cronSchedule(cron))

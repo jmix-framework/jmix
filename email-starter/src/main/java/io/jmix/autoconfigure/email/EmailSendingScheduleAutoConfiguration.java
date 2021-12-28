@@ -54,6 +54,7 @@ public class EmailSendingScheduleAutoConfiguration {
         String cron = emailerProperties.getEmailSendingCron();
         log.info("Schedule Email Sending using default configuration with CRON expression '{}'", cron);
         return TriggerBuilder.newTrigger()
+                .withIdentity("emailSendingCronTrigger")
                 .forJob(emailSendingJob())
                 .startNow()
                 .withSchedule(CronScheduleBuilder.cronSchedule(cron))

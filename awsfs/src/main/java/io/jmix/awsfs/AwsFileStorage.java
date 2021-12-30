@@ -25,7 +25,6 @@ import io.jmix.core.UuidProvider;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.util.Preconditions;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,6 +56,7 @@ import software.amazon.awssdk.services.s3.model.S3Object;
 import software.amazon.awssdk.services.s3.model.UploadPartRequest;
 
 import javax.annotation.Nullable;
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -192,16 +192,15 @@ public class AwsFileStorage implements FileStorage {
     @Override
     public FileRef saveStream(String fileName, InputStream inputStream) {
         String fileKey = createFileKey(fileName);
-        try {
-            byte[] data = IOUtils.toByteArray(inputStream);
+        int s3ChunkSizeBytes = this.chunkSize * 1024;
+        try (BufferedInputStream bos = new BufferedInputStream(inputStream, s3ChunkSizeBytes)) {
             S3Client s3Client = s3ClientReference.get();
-            int chunkSizeBytes = this.chunkSize * 1024;
-
-            if (data.length == 0) {
+            int totalSizeBytes = bos.available();
+            if (totalSizeBytes == 0) {
                 s3Client.putObject(PutObjectRequest.builder()
                         .bucket(bucket)
                         .key(fileKey)
-                        .build(), RequestBody.fromBytes(data));
+                        .build(), RequestBody.empty());
                 return new FileRef(getStorageName(), fileKey, fileName);
             }
 
@@ -212,16 +211,15 @@ public class AwsFileStorage implements FileStorage {
             CreateMultipartUploadResponse response = s3Client.createMultipartUpload(createMultipartUploadRequest);
 
             List<CompletedPart> completedParts = new ArrayList<>();
-            for (int i = 0; i * chunkSizeBytes < data.length; i++) {
-                int partNumber = i + 1;
+            for (int partNumber = 1, readBytes = 0; readBytes != totalSizeBytes; partNumber++) {
+                byte[] chunkBytes = new byte[Math.min(totalSizeBytes - readBytes, s3ChunkSizeBytes)];
+                readBytes += bos.read(chunkBytes);
                 UploadPartRequest uploadPartRequest = UploadPartRequest.builder()
                         .bucket(bucket)
                         .key(fileKey)
                         .uploadId(response.uploadId())
                         .partNumber(partNumber)
                         .build();
-                int endChunkPosition = Math.min(partNumber * chunkSizeBytes, data.length);
-                byte[] chunkBytes = getChunkBytes(data, i * chunkSizeBytes, endChunkPosition);
                 String eTag = s3Client.uploadPart(uploadPartRequest, RequestBody.fromBytes(chunkBytes)).eTag();
                 CompletedPart part = CompletedPart.builder()
                         .partNumber(partNumber)
@@ -230,7 +228,9 @@ public class AwsFileStorage implements FileStorage {
                 completedParts.add(part);
             }
 
-            CompletedMultipartUpload completedMultipartUpload = CompletedMultipartUpload.builder().parts(completedParts).build();
+            CompletedMultipartUpload completedMultipartUpload = CompletedMultipartUpload.builder()
+                    .parts(completedParts)
+                    .build();
             CompleteMultipartUploadRequest completeMultipartUploadRequest =
                     CompleteMultipartUploadRequest.builder()
                             .bucket(bucket)
@@ -244,12 +244,6 @@ public class AwsFileStorage implements FileStorage {
             String message = String.format("Could not save file %s.", fileName);
             throw new FileStorageException(FileStorageException.Type.IO_EXCEPTION, message);
         }
-    }
-
-    protected byte[] getChunkBytes(byte[] data, int start, int end) {
-        byte[] chunkBytes = new byte[end - start];
-        System.arraycopy(data, start, chunkBytes, 0, end - start);
-        return chunkBytes;
     }
 
     @Override

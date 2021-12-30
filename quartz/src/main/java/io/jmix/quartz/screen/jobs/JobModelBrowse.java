@@ -18,6 +18,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static java.util.Comparator.*;
+
 @UiController("JobModel.browse")
 @UiDescriptor("job-model-browse.xml")
 @LookupComponent("jobModelsTable")
@@ -50,10 +52,10 @@ public class JobModelBrowse extends StandardLookup<JobModel> {
     }
 
     private void loadJobsData() {
+        Comparator<JobModel> jobModelComparator = comparing(JobModel::getJobState, nullsLast(naturalOrder()))
+                .thenComparing(JobModel::getJobName);
         List<JobModel> sortedJobs = quartzService.getAllJobs().stream()
-                .sorted(
-                        Comparator.comparing(JobModel::getJobState)
-                                .thenComparing(JobModel::getJobName))
+                .sorted(jobModelComparator)
                 .collect(Collectors.toList());
 
         jobModelsDc.setItems(sortedJobs);

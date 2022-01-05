@@ -33,6 +33,8 @@ public class TestCustomerListener implements BeforeDetachEntityListener<Customer
 
     public Consumer<EntityChangedEvent<Customer>> changedEventConsumer;
 
+    public Consumer<EntityChangedEvent<Customer>> afterCommitEventConsumer;
+
     public Consumer<Customer> beforeDetachConsumer;
 
     public Consumer<EntityChangedEvent<Customer>> getChangedEventConsumer() {
@@ -55,6 +57,13 @@ public class TestCustomerListener implements BeforeDetachEntityListener<Customer
     public void onCustomerChanged(EntityChangedEvent<Customer> event) {
         if (changedEventConsumer != null) {
             changedEventConsumer.accept(event);
+        }
+    }
+
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void onAfterCommitCustomer(EntityChangedEvent<Customer> event) {
+        if (afterCommitEventConsumer != null) {
+            afterCommitEventConsumer.accept(event);
         }
     }
 

@@ -18,13 +18,17 @@ package data_manager
 
 import io.jmix.core.DataManager
 import io.jmix.core.SaveContext
+import io.jmix.core.event.EntityChangedEvent
 import io.jmix.eclipselink.impl.JpaDataStore
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.transaction.PlatformTransactionManager
+import org.springframework.transaction.TransactionDefinition
 import org.springframework.transaction.support.DefaultTransactionDefinition
 import org.springframework.transaction.support.TransactionSynchronizationManager
+import org.springframework.transaction.support.TransactionTemplate
 import test_support.DataSpec
 import test_support.entity.sales.Customer
+import test_support.entity.sales.Order
 import test_support.listeners.TestCustomerListener
 
 class DataManagerTxTest extends DataSpec {
@@ -135,4 +139,42 @@ class DataManagerTxTest extends DataSpec {
         cleanup:
         listener.beforeDetachConsumer = null
     }
+
+    def "needs new transaction if called on AfterCommit stage"() {
+        def error = null
+
+        def transactionDefinition = new DefaultTransactionDefinition(TransactionDefinition.PROPAGATION_REQUIRES_NEW)
+        TransactionTemplate transactionTemplate = new TransactionTemplate(txManager, transactionDefinition)
+
+        listener.afterCommitEventConsumer = { EntityChangedEvent<Customer> event ->
+            transactionTemplate.executeWithoutResult {
+                try {
+                    def cust1 = dataManager.load(Customer).id(event.entityId).one()
+                    def order = dataManager.create(Order)
+                    order.customer = cust1
+                    dataManager.save(order)
+                } catch (Exception e) {
+                    error = e.message // assert is not recognized by Spock here
+                }
+            }
+        }
+
+        when:
+        def txStatus = txManager.getTransaction(new DefaultTransactionDefinition())
+
+        def customer = dataManager.create(Customer)
+        customer.name = 'cust1'
+
+        dataManager.save(customer)
+
+        txManager.commit(txStatus)
+
+        then:
+        noExceptionThrown()
+        error == null
+
+        cleanup:
+        listener.afterCommitEventConsumer = null
+    }
+
 }

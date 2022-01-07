@@ -17,8 +17,8 @@ import java.util.Map;
  * Used to set into application properties required property '{@code org.quartz.jobStore.driverDelegateClass}' that
  * used by Quartz to understand the particular ‘dialects’ of varies database systems. It allows not to carry about setting that property into certain project.
  * <p>
- * Logic of proper choice for value of that property based on actual value of database connection URL property. This URL is specific for certain DBs,
- * so it allows to define which DB is used by the project and set up proper driver delegate class.
+ * Logic of proper choice for value of that property based on actual value of database connection URL property. This URL is specific for particular DBs,
+ * so it allows defining which DB is used by the project and setting up a proper driver delegate class.
  * <p>
  * Note, that for HSQLDB and MySQL we don't need to use specific driver delegate, standard one will be used.
  *

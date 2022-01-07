@@ -66,7 +66,7 @@ public class FileDescriptor extends StandardEntity {
     }
 
     @InstanceName
-    @DependsOnProperties("createDate")
+    @DependsOnProperties({"name", "createDate", "extension"})
     public String getCaption() {
         return String.format("%s (%s)", getName(), getCreateDate());
     }
@@ -74,8 +74,6 @@ public class FileDescriptor extends StandardEntity {
     /**
      * @return file name including extension
      */
-    @InstanceName
-    @DependsOnProperties("createDate")
     public String getName() {
         return name;
     }

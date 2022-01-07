@@ -17,13 +17,19 @@
 
 package com.haulmont.cuba.gui.export;
 
+import com.haulmont.cuba.core.global.AppBeans;
 import io.jmix.core.Resources;
 
 /**
  * DataProvider for application resources
  */
 public class ResourceDataProvider extends io.jmix.ui.download.ResourceDataProvider implements ExportDataProvider {
+
     public ResourceDataProvider(String resourcePath, Resources resources) {
         super(resourcePath, resources);
+    }
+
+    public ResourceDataProvider(String resourcePath) {
+        this(resourcePath, AppBeans.get(Resources.class));
     }
 }

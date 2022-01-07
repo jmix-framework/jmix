@@ -16,8 +16,19 @@
  */
 package com.haulmont.cuba.gui.export;
 
+import com.haulmont.cuba.core.global.AppBeans;
+import io.jmix.core.CoreProperties;
+import io.jmix.ui.UiProperties;
+
 public class ByteArrayDataProvider extends io.jmix.ui.download.ByteArrayDataProvider implements ExportDataProvider {
+
     public ByteArrayDataProvider(byte[] data, int saveExportedByteArrayDataThresholdBytes, String tempDir) {
         super(data, saveExportedByteArrayDataThresholdBytes, tempDir);
+    }
+
+    public ByteArrayDataProvider(byte[] data) {
+        this(data,
+                AppBeans.get(UiProperties.class).getSaveExportedByteArrayDataThresholdBytes(),
+                AppBeans.get(CoreProperties.class).getTempDir());
     }
 }

@@ -13,4 +13,4 @@ if (screen.descriptor != null && screen.descriptor.rootTag != null) {
         caption="${caption}"
         extends="${extendScreen.reference}">
     <layout/>
-</$rootTagName><%}%>
+</$rootTagName>

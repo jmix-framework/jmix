@@ -31,7 +31,7 @@ public class QuartzEnvironmentPostProcessor implements EnvironmentPostProcessor 
     private static final String QUARTZ_PROPERTY_SOURCE = "quartzPropertySource";
 
     /**
-     * Required Jmix property that contains URL for DB connection
+     * Required for any Jmix project property that contains URL for DB connection
      */
     private static final String JMIX_MAIN_DATASOURCE_URL_PROPERTY = "main.datasource.url";
 
@@ -44,18 +44,13 @@ public class QuartzEnvironmentPostProcessor implements EnvironmentPostProcessor 
      */
     private static final String SPRING_QUARTZ_PROPERTY_JOB_STORE_DRIVER_DELEGATE_CLASS =
             "spring.quartz.properties.org.quartz.jobStore.driverDelegateClass";
-
-    private static final String DRIVER_DELEGATE_CLASS_FOR_POSTGRES =
-            "org.quartz.impl.jdbcjobstore.PostgreSQLDelegate";
-
-    private static final String DRIVER_DELEGATE_CLASS_FOR_MS_SQL =
-            "org.quartz.impl.jdbcjobstore.MSSQLDelegate";
-
-    private static final String DRIVER_DELEGATE_CLASS_FOR_ORACLE =
-            "org.quartz.impl.jdbcjobstore.oracle.OracleDelegate";
+    private static final String QUARTZ_POSTGRES_DRIVER_DELEGATE_CLASS = "org.quartz.impl.jdbcjobstore.PostgreSQLDelegate";
+    private static final String QUARTZ_MS_SQL_DRIVER_DELEGATE_CLASS = "org.quartz.impl.jdbcjobstore.MSSQLDelegate";
+    private static final String QUARTZ_ORACLE_DRIVER_DELEGATE_CLASS = "org.quartz.impl.jdbcjobstore.oracle.OracleDelegate";
 
     @Override
     public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
+        //get value of 'main.datasource.url' application property
         MutablePropertySources propertySources = environment.getPropertySources();
         Object datasourceUrlObj = propertySources.stream()
                 .filter(propertySource -> propertySource.containsProperty(JMIX_MAIN_DATASOURCE_URL_PROPERTY))
@@ -67,20 +62,21 @@ public class QuartzEnvironmentPostProcessor implements EnvironmentPostProcessor 
             return;
         }
 
+        //define value for driverDelegateClass based on value of main datasource url
         String datasourceUrl = (String) datasourceUrlObj;
         String driverDelegateClass = null;
         if (datasourceUrl.startsWith(DATASOURCE_URL_POSTGRES_STARTS_WITH)) {
-            driverDelegateClass = DRIVER_DELEGATE_CLASS_FOR_POSTGRES;
+            driverDelegateClass = QUARTZ_POSTGRES_DRIVER_DELEGATE_CLASS;
         } else if (datasourceUrl.startsWith(DATASOURCE_URL_MS_SQL_STARTS_WITH)) {
-            driverDelegateClass = DRIVER_DELEGATE_CLASS_FOR_MS_SQL;
+            driverDelegateClass = QUARTZ_MS_SQL_DRIVER_DELEGATE_CLASS;
         } else if (datasourceUrl.startsWith(DATASOURCE_URL_ORACLE_STARTS_WITH)) {
-            driverDelegateClass = DRIVER_DELEGATE_CLASS_FOR_ORACLE;
+            driverDelegateClass = QUARTZ_ORACLE_DRIVER_DELEGATE_CLASS;
         }
 
+        //if driverDelegateClass is not defined 'org.quartz.impl.jdbcjobstore.StdJDBCDelegate' will be used by default
         if (!Strings.isNullOrEmpty(driverDelegateClass)) {
             log.debug("Property '{}' will have the value '{}'",
                     SPRING_QUARTZ_PROPERTY_JOB_STORE_DRIVER_DELEGATE_CLASS, driverDelegateClass);
-
             Map<String, Object> driverDelegatePropMap = new HashMap<>();
             driverDelegatePropMap.put(SPRING_QUARTZ_PROPERTY_JOB_STORE_DRIVER_DELEGATE_CLASS, driverDelegateClass);
             if (propertySources.contains(QUARTZ_PROPERTY_SOURCE)) {

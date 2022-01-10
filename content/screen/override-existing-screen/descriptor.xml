@@ -1,12 +1,20 @@
 <%if (overrideActionType == "COPY") {%>${api.evaluateScript('screen/process_copy.groovy',
         ['content': overrideScreen.originalDescriptorText,
-        'messages': messageKeys])}<%} else {%>
+        'messages': messageKeys])}<%} else {
+    def rootTagName = 'window'
+    def rootTagNamespace = 'http://jmix.io/schema/ui/window'
+    def screen = overrideScreen.screen
+    if (screen.descriptor != null && screen.descriptor.rootTag != null) {
+        def rootTag = screen.descriptor.rootTag
+        rootTagName = rootTag.name
+        rootTagNamespace = rootTag.namespace
+    }%>
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<window xmlns="http://jmix.io/schema/ui/window"
+<$rootTagName xmlns="$rootTagNamespace"
         caption="${caption}"<%if (overrideActionType == "EMPTY") {%>>
     <layout>
 
     </layout><%}%><%if (overrideActionType == "EXTEND") {%>
         extends="${overrideScreen.reference}">
     <layout/><%}%>
-</window><%}%>
+ </$rootTagName><%}%>

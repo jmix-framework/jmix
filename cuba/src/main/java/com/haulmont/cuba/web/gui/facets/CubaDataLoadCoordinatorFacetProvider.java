@@ -16,6 +16,7 @@
 
 package com.haulmont.cuba.web.gui.facets;
 
+import com.haulmont.cuba.gui.xml.layout.CubaLoaderConfig;
 import com.haulmont.cuba.web.gui.components.CubaDataLoadCoordinator;
 import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.component.DataLoadCoordinator;
@@ -49,6 +50,12 @@ public class CubaDataLoadCoordinatorFacetProvider extends DataLoadCoordinatorFac
 
     @Override
     protected void loadRefresh(DataLoadCoordinator facet, ComponentLoader.ComponentContext context, Element element) {
+        String schema = element.getNamespace().getStringValue();
+        if (!schema.startsWith(CubaLoaderConfig.CUBA_XSD_PREFIX)) {
+            super.loadRefresh(facet, context, element);
+            return;
+        }
+
         String loaderId = element.attributeValue("loader");
         if (loaderId == null) {
             throw new GuiDevelopmentException("'dataLoadCoordinator.loader' element has no 'ref' attribute", context);

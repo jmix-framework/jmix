@@ -30,11 +30,24 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Component("report_ChartToJsonConverter")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ChartToJsonConverter {
+
+    public static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd";
+    public static final String DEFAULT_TIME_FORMAT = "HH:mm:ss:S";
+    public static final String DEFAULT_DATE_TIME_FORMAT = DEFAULT_DATE_FORMAT + " " + DEFAULT_TIME_FORMAT;
+
+    protected static final DateTimeFormatter TEMPORAL_DATE_FORMATTER
+            = DateTimeFormatter.ofPattern(DEFAULT_DATE_FORMAT);
+
+    protected static final DateTimeFormatter TEMPORAL_DATE_TIME_FORMATTER
+            = DateTimeFormatter.ofPattern(DEFAULT_DATE_TIME_FORMAT);
 
     @Autowired
     protected InstanceNameProvider instanceNameProvider;
@@ -183,9 +196,10 @@ public class ChartToJsonConverter {
         if (CollectionUtils.isNotEmpty(data)) {
             Map<String, Object> map = data.get(0);
             Object categoryFieldValue = map.get(categoryField);
-            if (categoryFieldValue instanceof Date) {
-                return true;
-            }
+
+            return categoryFieldValue instanceof Date
+                    || categoryFieldValue instanceof LocalDate
+                    || categoryFieldValue instanceof LocalDateTime;
         }
 
         return false;
@@ -283,7 +297,11 @@ public class ChartToJsonConverter {
 
     protected void addProperty(JsonObject jsonObject, String property, Object value) {
         if (value instanceof Entity) {
-            value = instanceNameProvider.getInstanceName((Entity) value);
+            value = instanceNameProvider.getInstanceName(value);
+        } else if (value instanceof LocalDate) {
+            value = TEMPORAL_DATE_FORMATTER.format((LocalDate) value);
+        } else if (value instanceof LocalDateTime) {
+            value = TEMPORAL_DATE_TIME_FORMATTER.format((LocalDateTime) value);
         }
 
         jsonObject.add(property, gson.toJsonTree(value));

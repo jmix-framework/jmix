@@ -17,7 +17,6 @@ public class TriggerModel {
     @JmixId
     private UUID id;
 
-    @NotNull
     private String triggerName;
 
     private String triggerGroup;
@@ -37,6 +36,7 @@ public class TriggerModel {
 
     private Integer repeatCount;
 
+    @NotNull
     private Long repeatInterval;
 
     public UUID getId() {

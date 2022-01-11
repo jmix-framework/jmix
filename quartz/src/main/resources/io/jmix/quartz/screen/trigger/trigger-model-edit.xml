@@ -24,15 +24,15 @@
     <layout spacing="true" expand="editActions">
         <form id="form" dataContainer="triggerModelDc">
             <column width="350px">
-                <textField id="triggerNameField" property="triggerName"/>
-                <comboBox id="triggerGroupField" property="triggerGroup"/>
                 <comboBox id="scheduleTypeField" property="scheduleType" required="true" nullOptionVisible="false"/>
-                <dateField id="startDateField" property="startDate" datatype="dateTime"/>
-                <dateField id="endDateField" property="endDate" datatype="dateTime"/>
                 <textField id="cronExpressionField" property="cronExpression" required="true" visible="false"
                            contextHelpTextHtmlEnabled="true" contextHelpText="msg://cronExpressionHelpText"/>
                 <textField id="repeatCountField" property="repeatCount" visible="false"/>
                 <textField id="repeatIntervalField" property="repeatInterval" visible="false"/>
+                <dateField id="startDateField" property="startDate" datatype="dateTime"/>
+                <dateField id="endDateField" property="endDate" datatype="dateTime"/>
+                <textField id="triggerNameField" property="triggerName"/>
+                <comboBox id="triggerGroupField" property="triggerGroup"/>
             </column>
         </form>
         <hbox id="editActions" spacing="true">

@@ -60,7 +60,7 @@ public class JobModelEdit extends StandardEditor<JobModel> {
     @Named("triggerModelTable.view")
     private ViewAction<TriggerModel> triggerModelTableView;
 
-    private boolean isJobShouldBeRecreated = false;
+    private boolean isJobShouldBeReplaced = false;
     private String jobNameToDelete = null;
     private String jobGroupToDelete = null;
 
@@ -80,7 +80,7 @@ public class JobModelEdit extends StandardEditor<JobModel> {
             if (!Strings.isNullOrEmpty(jobNameToDelete)
                     && !Strings.isNullOrEmpty(currentValue)
                     && !jobNameToDelete.equals(currentValue)) {
-                isJobShouldBeRecreated = true;
+                isJobShouldBeReplaced = true;
             }
         });
 
@@ -97,7 +97,7 @@ public class JobModelEdit extends StandardEditor<JobModel> {
             if (!Strings.isNullOrEmpty(jobGroupToDelete)
                     && !Strings.isNullOrEmpty(newJobGroupName)
                     && !jobGroupToDelete.equals(newJobGroupName)) {
-                isJobShouldBeRecreated = true;
+                isJobShouldBeReplaced = true;
             }
         });
         jobGroupField.addValueChangeListener(e -> {
@@ -105,7 +105,7 @@ public class JobModelEdit extends StandardEditor<JobModel> {
             if (!Strings.isNullOrEmpty(jobGroupToDelete)
                     && !Strings.isNullOrEmpty(currentValue)
                     && !jobGroupToDelete.equals(currentValue)) {
-                isJobShouldBeRecreated = true;
+                isJobShouldBeReplaced = true;
             }
         });
 
@@ -138,10 +138,10 @@ public class JobModelEdit extends StandardEditor<JobModel> {
     @Subscribe("windowCommitAndClose")
     public void onWindowCommitAndClose(Action.ActionPerformedEvent event) {
         JobModel jobModel = getEditedEntity();
-        if (isJobShouldBeRecreated) {
+        if (isJobShouldBeReplaced) {
             quartzService.deleteJob(jobNameToDelete, jobGroupToDelete);
         }
-        quartzService.updateQuartzJob(jobModel, jobDataParamsDc.getItems(), triggerModelDc.getItems());
+        quartzService.updateQuartzJob(jobModel, jobDataParamsDc.getItems(), triggerModelDc.getItems(), isJobShouldBeReplaced);
     }
 
 }

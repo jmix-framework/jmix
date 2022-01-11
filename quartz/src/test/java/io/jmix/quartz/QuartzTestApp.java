@@ -127,7 +127,18 @@ public class QuartzTestApp {
         triggerModel.setStartDate(Date.from(LocalDateTime.now().plus(1, ChronoUnit.HOURS).atZone(ZoneId.systemDefault()).toInstant()));
         triggerModels.add(triggerModel);
 
-        quartzService.updateQuartzJob(jobModel, jobDataParameterModels, triggerModels);
+        quartzService.updateQuartzJob(jobModel, jobDataParameterModels, triggerModels, false);
+
+        triggerModel = dataManager.create(TriggerModel.class);
+        triggerModel.setTriggerName("testSimpleTriggerName");
+        triggerModel.setTriggerGroup("testTriggerGroup");
+        triggerModel.setScheduleType(ScheduleType.SIMPLE);
+        triggerModel.setRepeatCount(100);
+        triggerModel.setRepeatInterval(10000L);
+        triggerModel.setStartDate(Date.from(LocalDateTime.now().plus(1, ChronoUnit.HOURS).atZone(ZoneId.systemDefault()).toInstant()));
+        triggerModels.add(triggerModel);
+
+        Assertions.assertThrows(IllegalStateException.class, () -> quartzService.updateQuartzJob(jobModel, jobDataParameterModels, triggerModels, false));
 
         List<JobModel> allJobs = quartzService.getAllJobs();
         Assertions.assertEquals(1, allJobs.size());

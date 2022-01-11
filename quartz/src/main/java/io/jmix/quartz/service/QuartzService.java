@@ -154,16 +154,18 @@ public class QuartzService {
      * @param jobModel               job to edit
      * @param jobDataParameterModels parameters for job
      * @param triggerModels          triggers for job
+     * @param replaceJobIfExists     replace if job with the same name already exists
      */
     @SuppressWarnings("unchecked")
     public void updateQuartzJob(JobModel jobModel,
                                 List<JobDataParameterModel> jobDataParameterModels,
-                                List<TriggerModel> triggerModels) {
+                                List<TriggerModel> triggerModels,
+                                boolean replaceJobIfExists) {
         log.debug("updating job with name {} and group {}", jobModel.getJobName(), jobModel.getJobGroup());
         try {
             JobKey jobKey = JobKey.jobKey(jobModel.getJobName(), jobModel.getJobGroup());
             JobDetail jobDetail = buildJobDetail(jobModel, scheduler.getJobDetail(jobKey), jobDataParameterModels);
-            scheduler.addJob(jobDetail, true);
+            scheduler.addJob(jobDetail, replaceJobIfExists);
 
             if (!CollectionUtils.isEmpty(triggerModels)) {
                 //remove obsolete triggers
@@ -179,11 +181,11 @@ public class QuartzService {
             }
         } catch (SchedulerException e) {
             log.warn("Unable to update job with name {} and group {}", jobModel.getJobName(), jobModel.getJobGroup(), e);
+            throw new IllegalStateException(e.getMessage());
         } catch (ClassNotFoundException e) {
             log.warn("Unable to find job class {}", jobModel.getJobClass());
             throw new IllegalArgumentException("Job class " + jobModel.getJobClass() + " not found");
         }
-
     }
 
     @SuppressWarnings("unchecked")

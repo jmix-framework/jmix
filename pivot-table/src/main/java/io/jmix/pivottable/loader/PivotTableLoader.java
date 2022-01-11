@@ -218,7 +218,7 @@ public class PivotTableLoader extends AbstractComponentLoader<PivotTable> {
 
     protected void checkValidProperty(@Nullable MetaClass metaClass, String name) {
         if (metaClass != null) {
-            MetaProperty property = metaClass.getProperty(name);
+            MetaProperty property = metaClass.findProperty(name);
             if (property != null
                     && property.getRange().getCardinality() != null
                     && property.getRange().getCardinality().isMany()) {

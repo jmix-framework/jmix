@@ -17,10 +17,41 @@
         <action id="lookupCancelAction"
                 caption="msg:///actions.Cancel"
                 icon="LOOKUP_CANCEL"/>
+        <action id="applyFilter"
+                caption="msg:///actions.Apply"
+                icon="font-icon:SEARCH"/>
     </actions>
     <dialogMode height="600"
                 width="800"/>
     <layout expand="jobModelsTable" spacing="true">
+        <groupBox id="filter" spacing="true" caption="msg:///filter.emptyConfiguration.name" orientation="horizontal"
+                  collapsable="true">
+            <responsiveGridLayout>
+                <row stylename="mt-md-n2">
+                    <col md="AUTO" stylename="pl-0 pt-2">
+                        <hbox spacing="true" align="MIDDLE_LEFT">
+                            <label value="msg://nameContains" align="MIDDLE_LEFT"/>
+                            <textField id="nameField"/>
+                        </hbox>
+                    </col>
+                    <col md="AUTO" stylename="pl-0 pt-2">
+                        <hbox spacing="true" align="MIDDLE_LEFT">
+                            <label value="msg://groupContains" align="MIDDLE_LEFT"/>
+                            <textField id="groupField"/>
+                        </hbox>
+                    </col>
+                    <col md="AUTO" stylename="px-0 pt-2">
+                        <hbox spacing="true" align="MIDDLE_LEFT" height="100%">
+                            <label value="msg://jobState" align="MIDDLE_LEFT"/>
+                            <comboBox id="jobStateComboBox"/>
+                        </hbox>
+                    </col>
+                    <col stylename="w-100 pt-2">
+                        <button id="applyFilterBtn" action="applyFilter"/>
+                    </col>
+                </row>
+            </responsiveGridLayout>
+        </groupBox>
         <groupTable id="jobModelsTable"
                     width="100%"
                     dataContainer="jobModelsDc">

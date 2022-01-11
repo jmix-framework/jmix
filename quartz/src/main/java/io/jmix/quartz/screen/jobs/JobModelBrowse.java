@@ -1,5 +1,6 @@
 package io.jmix.quartz.screen.jobs;
 
+import com.google.common.base.Strings;
 import io.jmix.core.Messages;
 import io.jmix.quartz.model.JobModel;
 import io.jmix.quartz.model.JobState;
@@ -8,7 +9,9 @@ import io.jmix.quartz.util.QuartzJobClassFinder;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.RemoveOperation;
 import io.jmix.ui.action.Action;
+import io.jmix.ui.component.ComboBox;
 import io.jmix.ui.component.GroupTable;
+import io.jmix.ui.component.TextField;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.screen.*;
 import org.apache.commons.collections4.CollectionUtils;
@@ -17,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.Comparator.*;
 
@@ -46,16 +50,35 @@ public class JobModelBrowse extends StandardLookup<JobModel> {
     @Autowired
     private GroupTable<JobModel> jobModelsTable;
 
+    @Autowired
+    private TextField<String> nameField;
+
+    @Autowired
+    private TextField<String> groupField;
+
+    @Autowired
+    private ComboBox<JobState> jobStateComboBox;
+
     @Subscribe
     public void onBeforeShow(BeforeShowEvent event) {
+        jobStateComboBox.setOptionsEnum(JobState.class);
         loadJobsData();
     }
 
     private void loadJobsData() {
         Comparator<JobModel> jobModelComparator = comparing(JobModel::getJobState, nullsLast(naturalOrder()))
                 .thenComparing(JobModel::getJobName);
-        List<JobModel> sortedJobs = quartzService.getAllJobs().stream()
-                .sorted(jobModelComparator)
+        Stream<JobModel> stream = quartzService.getAllJobs().stream();
+        if (!Strings.isNullOrEmpty(nameField.getValue())) {
+            stream = stream.filter(jobModel -> jobModel.getJobName().contains(nameField.getValue()));
+        }
+        if (!Strings.isNullOrEmpty(groupField.getValue())) {
+            stream = stream.filter(jobModel -> jobModel.getJobGroup().contains(groupField.getValue()));
+        }
+        if (jobStateComboBox.getValue() != null) {
+            stream = stream.filter(jobModel -> jobStateComboBox.getValue().equals(jobModel.getJobState()));
+        }
+        List<JobModel> sortedJobs = stream.sorted(jobModelComparator)
                 .collect(Collectors.toList());
 
         jobModelsDc.setItems(sortedJobs);
@@ -162,6 +185,11 @@ public class JobModelBrowse extends StandardLookup<JobModel> {
 
     private boolean isJobActive(JobModel jobModel) {
         return jobModel != null && jobModel.getJobState() == JobState.NORMAL;
+    }
+
+    @Subscribe("applyFilter")
+    public void onApplyFilter(Action.ActionPerformedEvent event) {
+        loadJobsData();
     }
 
 }

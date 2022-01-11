@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static org.quartz.CronScheduleBuilder.cronSchedule;
 import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
@@ -64,8 +65,10 @@ public class QuartzService {
                             triggerModel.setCronExpression(((CronTrigger) trigger).getCronExpression());
                         } else if (trigger instanceof SimpleTrigger) {
                             SimpleTrigger simpleTrigger = (SimpleTrigger) trigger;
-                            //because org.quartz.SimpleScheduleBuilder.withRepeatCount
-                            triggerModel.setRepeatCount(simpleTrigger.getRepeatCount() + 1);
+                            if (simpleTrigger.getRepeatCount() > 0) {
+                                //because org.quartz.SimpleScheduleBuilder.withRepeatCount
+                                triggerModel.setRepeatCount(simpleTrigger.getRepeatCount() + 1);
+                            }
                             triggerModel.setRepeatInterval(simpleTrigger.getRepeatInterval());
                         }
 
@@ -218,9 +221,11 @@ public class QuartzService {
         } else {
             SimpleScheduleBuilder simpleScheduleBuilder = simpleSchedule()
                     .withIntervalInMilliseconds(triggerModel.getRepeatInterval());
-            if (triggerModel.getRepeatCount() > 0) {
+            if (Objects.nonNull(triggerModel.getRepeatCount()) && triggerModel.getRepeatCount() > 0) {
                 //required trick because actual number of firing will be + 1, see org.quartz.SimpleScheduleBuilder.withRepeatCount
                 simpleScheduleBuilder.withRepeatCount(triggerModel.getRepeatCount() - 1);
+            } else {
+                simpleScheduleBuilder.repeatForever();
             }
             triggerBuilder.withSchedule(simpleScheduleBuilder);
         }

@@ -7,7 +7,9 @@ import io.jmix.core.metamodel.annotation.JmixProperty;
 
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import java.util.Date;
+import java.util.Objects;
 import java.util.UUID;
 
 @JmixEntity
@@ -34,8 +36,10 @@ public class TriggerModel {
 
     private String cronExpression;
 
+    @Positive
     private Integer repeatCount;
 
+    @Positive
     @NotNull
     private Long repeatInterval;
 
@@ -130,9 +134,19 @@ public class TriggerModel {
     @Transient
     @JmixProperty
     public String getScheduleDescription() {
-        return getScheduleType() == ScheduleType.SIMPLE
-                ? String.format("Repeat %s times every %s seconds", repeatCount, repeatInterval / 1000)
-                : cronExpression;
+        if (getScheduleType() == null) {
+            return null;
+        }
+
+        if (getScheduleType() == ScheduleType.CRON_EXPRESSION) {
+            return cronExpression;
+        }
+
+        if (Objects.nonNull(repeatCount) && repeatCount > 0) {
+            return String.format("Repeat %s times every %s seconds", repeatCount, repeatInterval / 1000);
+        } else {
+            return String.format("Repeat forever every %s seconds", repeatInterval / 1000);
+        }
     }
 
 }

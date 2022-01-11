@@ -16,138 +16,43 @@
 
 package io.jmix.securityoauth2.configurer;
 
-import io.jmix.core.session.SessionData;
 import io.jmix.securityoauth2.SecurityOAuth2Properties;
-import io.jmix.securityoauth2.impl.RequestLocaleProvider;
-import io.jmix.securityoauth2.impl.SessionTokenEnhancer;
-import io.jmix.securityoauth2.impl.UserPasswordTokenGranter;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.oauth2.config.annotation.builders.ClientDetailsServiceBuilder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
-import org.springframework.security.oauth2.provider.CompositeTokenGranter;
-import org.springframework.security.oauth2.provider.OAuth2RequestFactory;
 import org.springframework.security.oauth2.provider.TokenGranter;
 import org.springframework.security.oauth2.provider.client.ClientDetailsUserDetailsService;
-import org.springframework.security.oauth2.provider.refresh.RefreshTokenGranter;
-import org.springframework.security.oauth2.provider.request.DefaultOAuth2RequestFactory;
 import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
-import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenEnhancer;
-import org.springframework.security.oauth2.provider.token.TokenStore;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class OAuth2AuthorizationServerConfigurer extends WebSecurityConfigurerAdapter
         implements AuthorizationServerConfigurer {
+
+    @Autowired
     private SecurityOAuth2Properties properties;
+
+    @Autowired
     private AuthenticationManager authenticationManager;
-    private TokenStore tokenStore;
-    private ObjectProvider<SessionData> sessionDataProvider;
-    private RequestLocaleProvider localeProvider;
-    private ApplicationEventPublisher eventPublisher;
 
+    @Autowired
     private TokenEnhancer tokenEnhancer;
-    private ClientDetailsService clientDetails;
+
+    @Autowired
+    private ClientDetailsService clientDetailsService;
+
+    @Autowired
     private AuthorizationServerTokenServices tokenServices;
-    private OAuth2RequestFactory oauth2RequestFactory;
+
+    @Autowired
     private TokenGranter tokenGranter;
-
-    @Autowired
-    public void setProperties(SecurityOAuth2Properties properties) {
-        this.properties = properties;
-    }
-
-    @Autowired
-    public void setAuthenticationManager(AuthenticationManager authenticationManager) {
-        this.authenticationManager = authenticationManager;
-    }
-
-    @Autowired
-    public void setTokenStore(TokenStore tokenStore) {
-        this.tokenStore = tokenStore;
-    }
-
-    @Autowired
-    public void setLocaleProvider(RequestLocaleProvider localeProvider) {
-        this.localeProvider = localeProvider;
-    }
-
-    @Autowired
-    public void setSessionDataProvider(ObjectProvider<SessionData> sessionDataProvider) {
-        this.sessionDataProvider = sessionDataProvider;
-    }
-
-    @Autowired
-    public void setEventPublisher(ApplicationEventPublisher eventPublisher) {
-        this.eventPublisher = eventPublisher;
-    }
-
-    public AuthenticationManager getAuthenticationManager() {
-        return authenticationManager;
-    }
-
-    public TokenStore getTokenStore() {
-        return tokenStore;
-    }
-
-    public ObjectProvider<SessionData> getSessionDataProvider() {
-        return sessionDataProvider;
-    }
-
-    public RequestLocaleProvider getLocaleProvider() {
-        return localeProvider;
-    }
-
-    public ApplicationEventPublisher getEventPublisher() {
-        return eventPublisher;
-    }
-
-    public TokenEnhancer getTokenEnhancer() {
-        if (tokenEnhancer == null) {
-            tokenEnhancer = getDefaultTokenEnhancer();
-        }
-        return tokenEnhancer;
-    }
-
-    public ClientDetailsService getClientDetails() {
-        if (clientDetails == null) {
-            clientDetails = getDefaultClientDetails();
-        }
-        return clientDetails;
-    }
-
-    public AuthorizationServerTokenServices getTokenServices() {
-        if (tokenServices == null) {
-            tokenServices = getDefaultTokenService();
-        }
-        return tokenServices;
-    }
-
-    public OAuth2RequestFactory getOAuth2RequestFactory() {
-        if (oauth2RequestFactory == null) {
-            oauth2RequestFactory = getDefaultOAuth2RequestFactory();
-        }
-        return oauth2RequestFactory;
-    }
-
-    public TokenGranter getTokenGranter() {
-        if (tokenGranter == null) {
-            tokenGranter = getDefaultTokenGranter();
-        }
-        return tokenGranter;
-    }
 
     @Override
     public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
@@ -155,15 +60,22 @@ public class OAuth2AuthorizationServerConfigurer extends WebSecurityConfigurerAd
 
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-        clients.withClientDetails(getClientDetails());
+        clients
+                .inMemory()
+                .withClient(properties.getClientId())
+                .secret(properties.getClientSecret())
+                .authorizedGrantTypes(properties.getClientAuthorizedGrantTypes())
+                .accessTokenValiditySeconds(properties.getClientTokenExpirationTimeSec())
+                .refreshTokenValiditySeconds(properties.getClientRefreshTokenExpirationTimeSec())
+                .scopes("api");
     }
 
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) {
-        endpoints.authenticationManager(getAuthenticationManager())
-                .tokenEnhancer(getTokenEnhancer())
-                .tokenServices(getTokenServices())
-                .tokenGranter(getTokenGranter());
+        endpoints.authenticationManager(authenticationManager)
+                .tokenEnhancer(tokenEnhancer)
+                .tokenServices(tokenServices)
+                .tokenGranter(tokenGranter);
     }
 
     @Override
@@ -180,55 +92,9 @@ public class OAuth2AuthorizationServerConfigurer extends WebSecurityConfigurerAd
                 .authenticationProvider(getAuthenticationProvider());
     }
 
-    private TokenEnhancer getDefaultTokenEnhancer() {
-        return new SessionTokenEnhancer(getSessionDataProvider());
-    }
-
-    private ClientDetailsService getDefaultClientDetails() {
-        try {
-            return new ClientDetailsServiceBuilder<>().inMemory()
-                    .withClient(properties.getClientId())
-                    .secret(properties.getClientSecret())
-                    .authorizedGrantTypes(properties.getClientAuthorizedGrantTypes())
-                    .accessTokenValiditySeconds(properties.getClientTokenExpirationTimeSec())
-                    .refreshTokenValiditySeconds(properties.getClientRefreshTokenExpirationTimeSec())
-                    .scopes("api")
-                    .and()
-                    .build();
-        } catch (Exception e) {
-            throw new RuntimeException("Error on building ClientDetailsService", e);
-        }
-    }
-
-    private AuthorizationServerTokenServices getDefaultTokenService() {
-        DefaultTokenServices defaultTokenServices = new DefaultTokenServices();
-        defaultTokenServices.setTokenStore(getTokenStore());
-        defaultTokenServices.setSupportRefreshToken(properties.isSupportRefreshToken());
-        defaultTokenServices.setReuseRefreshToken(properties.isReuseRefreshToken());
-        defaultTokenServices.setTokenEnhancer(getTokenEnhancer());
-        defaultTokenServices.setClientDetailsService(getClientDetails());
-        return defaultTokenServices;
-    }
-
-    private OAuth2RequestFactory getDefaultOAuth2RequestFactory() {
-        return new DefaultOAuth2RequestFactory(getClientDetails());
-    }
-
-    private TokenGranter getDefaultTokenGranter() {
-        List<TokenGranter> tokenGranters = new ArrayList<>();
-
-        tokenGranters.add(new RefreshTokenGranter(getTokenServices(), getClientDetails(), getOAuth2RequestFactory()));
-
-        if (getAuthenticationManager() != null) {
-            tokenGranters.add(new UserPasswordTokenGranter(getAuthenticationManager(), getTokenServices(), getClientDetails(),
-                    getOAuth2RequestFactory(), getSessionDataProvider(), getLocaleProvider(), getEventPublisher()));
-        }
-        return new CompositeTokenGranter(tokenGranters);
-    }
-
     private AuthenticationProvider getAuthenticationProvider() {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-        authenticationProvider.setUserDetailsService(new ClientDetailsUserDetailsService(getClientDetails()));
+        authenticationProvider.setUserDetailsService(new ClientDetailsUserDetailsService(clientDetailsService));
         return authenticationProvider;
     }
 }

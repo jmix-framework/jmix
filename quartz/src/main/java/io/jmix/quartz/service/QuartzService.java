@@ -1,5 +1,6 @@
 package io.jmix.quartz.service;
 
+import com.google.common.base.Strings;
 import io.jmix.core.UnconstrainedDataManager;
 import io.jmix.quartz.model.*;
 import org.apache.commons.collections4.CollectionUtils;
@@ -206,8 +207,11 @@ public class QuartzService {
 
     private Trigger buildTrigger(JobDetail jobDetail, TriggerModel triggerModel) {
         TriggerBuilder<Trigger> triggerBuilder = TriggerBuilder.newTrigger()
-                .withIdentity(TriggerKey.triggerKey(triggerModel.getTriggerName(), triggerModel.getTriggerGroup()))
                 .forJob(jobDetail);
+
+        if (!Strings.isNullOrEmpty(triggerModel.getTriggerName())) {
+            triggerBuilder.withIdentity(TriggerKey.triggerKey(triggerModel.getTriggerName(), triggerModel.getTriggerGroup()));
+        }
 
         if (triggerModel.getScheduleType() == ScheduleType.CRON_EXPRESSION) {
             triggerBuilder.withSchedule(cronSchedule(triggerModel.getCronExpression()));

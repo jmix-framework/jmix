@@ -4,6 +4,7 @@ import io.jmix.core.UnconstrainedDataManager;
 import io.jmix.quartz.model.*;
 import io.jmix.quartz.service.QuartzService;
 import io.jmix.quartz.util.QuartzJobClassFinder;
+import io.jmix.quartz.util.QuartzJobDetailsFinder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.quartz.*;
@@ -32,6 +33,9 @@ public class QuartzTestApp {
     private QuartzJobClassFinder quartzJobClassFinder;
 
     @Autowired
+    private QuartzJobDetailsFinder quartzJobDetailsFinder;
+
+    @Autowired
     private UnconstrainedDataManager dataManager;
 
     @Test
@@ -42,9 +46,18 @@ public class QuartzTestApp {
     }
 
     @Test
+    public void testFindQuartzJobDetailKeys() {
+        List<JobKey> jobKeys = quartzJobDetailsFinder.getJobDetailBeanKeys();
+        Assertions.assertEquals(1, jobKeys.size());
+        Assertions.assertEquals("testJob", jobKeys.get(0).getName());
+        Assertions.assertEquals("DEFAULT", jobKeys.get(0).getGroup());
+    }
+
+    @Test
     public void testGetAllJobs() throws Exception {
         List<JobModel> allJobs = quartzService.getAllJobs();
-        Assertions.assertEquals(0, allJobs.size());
+        Assertions.assertEquals(1, allJobs.size());
+        Assertions.assertEquals("testJob", allJobs.get(0).getJobName());
 
         JobDetail testJob = JobBuilder.newJob()
                 .withIdentity("testJobName", "testJobGroup")
@@ -55,12 +68,14 @@ public class QuartzTestApp {
         scheduler.addJob(testJob, true);
 
         List<String> jobGroupNames = quartzService.getJobGroupNames();
-        Assertions.assertEquals(1, jobGroupNames.size());
-        Assertions.assertEquals("testJobGroup", jobGroupNames.get(0));
+        Assertions.assertEquals(2, jobGroupNames.size());
+        Assertions.assertTrue(jobGroupNames.stream().anyMatch(jobGroupName -> jobGroupName.contains("testJobGroup")));
+        Assertions.assertTrue(jobGroupNames.stream().anyMatch(jobGroupName -> jobGroupName.contains("DEFAULT")));
 
         allJobs = quartzService.getAllJobs();
-        Assertions.assertEquals(1, allJobs.size());
-        JobModel jobModel = allJobs.get(0);
+        Assertions.assertEquals(2, allJobs.size());
+        JobModel jobModel = allJobs.stream().filter(jm -> "testJobName".equals(jm.getJobName())).findFirst().orElse(null);
+        Assertions.assertNotNull(jobModel);
         Assertions.assertEquals("testJobName", jobModel.getJobName());
         Assertions.assertEquals("testJobGroup", jobModel.getJobGroup());
         Assertions.assertEquals("io.jmix.quartz.TestConfiguration$MyQuartzJob", jobModel.getJobClass());
@@ -80,8 +95,9 @@ public class QuartzTestApp {
         scheduler.scheduleJob(testTrigger);
 
         allJobs = quartzService.getAllJobs();
-        Assertions.assertEquals(1, allJobs.size());
-        jobModel = allJobs.get(0);
+        Assertions.assertEquals(2, allJobs.size());
+        jobModel = allJobs.stream().filter(jm -> "testJobName".equals(jm.getJobName())).findFirst().orElse(null);
+        Assertions.assertNotNull(jobModel);
         Assertions.assertEquals(1, jobModel.getTriggers().size());
         TriggerModel triggerModel = jobModel.getTriggers().get(0);
         Assertions.assertEquals("testTriggerName", triggerModel.getTriggerName());
@@ -141,29 +157,39 @@ public class QuartzTestApp {
         Assertions.assertThrows(IllegalStateException.class, () -> quartzService.updateQuartzJob(jobModel, jobDataParameterModels, triggerModels, false));
 
         List<JobModel> allJobs = quartzService.getAllJobs();
-        Assertions.assertEquals(1, allJobs.size());
-        Assertions.assertEquals(JobState.NORMAL, allJobs.get(0).getJobState());
-        Assertions.assertEquals(1, allJobs.get(0).getJobDataParameters().size());
-        Assertions.assertEquals(2, allJobs.get(0).getTriggers().size());
-        Assertions.assertTrue(allJobs.get(0).getTriggers().stream()
+        Assertions.assertEquals(2, allJobs.size());
+        JobModel testJobModel = allJobs.stream()
+                .filter(jm -> "testJobName".equals(jm.getJobName()))
+                .findFirst().orElse(null);
+        Assertions.assertNotNull(testJobModel);
+        Assertions.assertEquals(JobState.NORMAL, testJobModel.getJobState());
+        Assertions.assertEquals(1, testJobModel.getJobDataParameters().size());
+        Assertions.assertEquals(2, testJobModel.getTriggers().size());
+        Assertions.assertTrue(testJobModel.getTriggers().stream()
                 .anyMatch(tm -> ScheduleType.SIMPLE.equals(tm.getScheduleType())));
-        Assertions.assertTrue(allJobs.get(0).getTriggers().stream()
+        Assertions.assertTrue(testJobModel.getTriggers().stream()
                 .anyMatch(tm -> ScheduleType.CRON_EXPRESSION.equals(tm.getScheduleType())));
 
         quartzService.pauseJob(jobModel.getJobName(), jobModel.getJobGroup());
-        allJobs = quartzService.getAllJobs();
-        Assertions.assertEquals(1, allJobs.size());
-        Assertions.assertEquals(JobState.PAUSED, allJobs.get(0).getJobState());
+        testJobModel = quartzService.getAllJobs().stream()
+                .filter(jm -> "testJobName".equals(jm.getJobName()))
+                .findFirst().orElse(null);
+        Assertions.assertNotNull(testJobModel);
+        Assertions.assertEquals(JobState.PAUSED, testJobModel.getJobState());
 
         quartzService.resumeJob(jobModel.getJobName(), jobModel.getJobGroup());
-        allJobs = quartzService.getAllJobs();
-        Assertions.assertEquals(1, allJobs.size());
-        Assertions.assertEquals(JobState.NORMAL, allJobs.get(0).getJobState());
+        testJobModel = quartzService.getAllJobs().stream()
+                .filter(jm -> "testJobName".equals(jm.getJobName()))
+                .findFirst().orElse(null);
+        Assertions.assertNotNull(testJobModel);
+        Assertions.assertEquals(JobState.NORMAL, testJobModel.getJobState());
 
         quartzService.pauseJob(jobModel.getJobName(), jobModel.getJobGroup());
         quartzService.deleteJob(jobModel.getJobName(), jobModel.getJobGroup());
-        allJobs = quartzService.getAllJobs();
-        Assertions.assertEquals(0, allJobs.size());
+        testJobModel = quartzService.getAllJobs().stream()
+                .filter(jm -> "testJobName".equals(jm.getJobName()))
+                .findFirst().orElse(null);
+        Assertions.assertNull(testJobModel);
     }
 
 }

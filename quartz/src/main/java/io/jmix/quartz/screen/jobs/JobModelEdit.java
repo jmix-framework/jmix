@@ -1,10 +1,7 @@
 package io.jmix.quartz.screen.jobs;
 
 import com.google.common.base.Strings;
-import io.jmix.quartz.model.JobDataParameterModel;
-import io.jmix.quartz.model.JobModel;
-import io.jmix.quartz.model.JobState;
-import io.jmix.quartz.model.TriggerModel;
+import io.jmix.quartz.model.*;
 import io.jmix.quartz.screen.trigger.TriggerModelEdit;
 import io.jmix.quartz.service.QuartzService;
 import io.jmix.quartz.util.QuartzJobClassFinder;
@@ -66,9 +63,13 @@ public class JobModelEdit extends StandardEditor<JobModel> {
 
     @Subscribe
     public void onBeforeShow(BeforeShowEvent event) {
-        //allow editing only not active job
-        boolean readOnly = getEditedEntity().getJobState() == JobState.NORMAL;
+        //allow editing only not active and user-defined jobs
+        boolean readOnly = JobState.NORMAL.equals(getEditedEntity().getJobState())
+                || JobSource.PREDEFINED.equals(getEditedEntity().getJobSource());
         setReadOnly(readOnly);
+        jobNameField.setEditable(!readOnly);
+        jobGroupField.setEditable(!readOnly);
+        jobClassField.setEditable(!readOnly);
         triggerModelTableEdit.setVisible(!readOnly);
         triggerModelTableView.setVisible(readOnly);
 
@@ -111,13 +112,6 @@ public class JobModelEdit extends StandardEditor<JobModel> {
 
         List<String> existedJobsClassNames = quartzJobClassFinder.getQuartzJobClassNames();
         jobClassField.setOptionsList(existedJobsClassNames);
-        String jobClass = getEditedEntity().getJobClass();
-        //name, group and class for internal Jmix job should not be editable
-        if (!Strings.isNullOrEmpty(jobClass) && !existedJobsClassNames.contains(jobClass)) {
-            jobNameField.setEditable(false);
-            jobGroupField.setEditable(false);
-            jobClassField.setEditable(false);
-        }
     }
 
     @Subscribe("triggerModelTable.view")
@@ -141,6 +135,7 @@ public class JobModelEdit extends StandardEditor<JobModel> {
         if (isJobShouldBeReplaced) {
             quartzService.deleteJob(jobNameToDelete, jobGroupToDelete);
         }
+
         quartzService.updateQuartzJob(jobModel, jobDataParamsDc.getItems(), triggerModelDc.getItems(), isJobShouldBeReplaced);
     }
 

@@ -9,9 +9,7 @@ import io.jmix.data.impl.liquibase.JmixLiquibase;
 import io.jmix.data.impl.liquibase.LiquibaseChangeLogProcessor;
 import io.jmix.data.persistence.DbmsSpecifics;
 import liquibase.integration.spring.SpringLiquibase;
-import org.quartz.Job;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
+import org.quartz.*;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
@@ -64,4 +62,14 @@ public class TestConfiguration {
             //do nothing
         }
     }
+
+    @Bean
+    public JobDetail testJob() {
+        return JobBuilder.newJob()
+                .withIdentity("testJob")
+                .ofType(MyQuartzJob.class)
+                .storeDurably()
+                .build();
+    }
+
 }

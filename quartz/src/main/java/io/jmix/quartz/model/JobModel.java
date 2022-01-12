@@ -31,6 +31,8 @@ public class JobModel {
 
     private JobState jobState;
 
+    private JobSource jobSource;
+
     private List<TriggerModel> triggers = new ArrayList<>();
 
     private List<JobDataParameterModel> jobDataParameters = new ArrayList<>();
@@ -73,6 +75,14 @@ public class JobModel {
 
     public void setJobState(JobState jobState) {
         this.jobState = jobState;
+    }
+
+    public JobSource getJobSource() {
+        return jobSource;
+    }
+
+    public void setJobSource(JobSource jobSource) {
+        this.jobSource = jobSource;
     }
 
     public List<TriggerModel> getTriggers() {

@@ -69,6 +69,7 @@
                 <column id="jobGroup" collapsed="true"/>
                 <column id="jobClass"/>
                 <column id="jobState"/>
+                <column id="jobSource"/>
                 <column id="triggerDescription"/>
                 <column id="lastFireDate">
                     <formatter>

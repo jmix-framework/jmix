@@ -3,6 +3,7 @@ package io.jmix.quartz.service;
 import com.google.common.base.Strings;
 import io.jmix.core.UnconstrainedDataManager;
 import io.jmix.quartz.model.*;
+import io.jmix.quartz.util.QuartzJobDetailsFinder;
 import org.apache.commons.collections4.CollectionUtils;
 import org.quartz.*;
 import org.quartz.impl.matchers.GroupMatcher;
@@ -30,6 +31,9 @@ public class QuartzService {
     private Scheduler scheduler;
 
     @Autowired
+    private QuartzJobDetailsFinder jobDetailsFinder;
+
+    @Autowired
     private UnconstrainedDataManager dataManager;
 
     /**
@@ -37,8 +41,9 @@ public class QuartzService {
      */
     public List<JobModel> getAllJobs() {
         List<JobModel> result = new ArrayList<>();
-
         try {
+            List<JobKey> jobDetailsKeys = jobDetailsFinder.getJobDetailBeanKeys();
+
             for (JobKey jobKey : scheduler.getJobKeys(GroupMatcher.anyJobGroup())) {
                 JobModel jobModel = dataManager.create(JobModel.class);
                 jobModel.setJobName(jobKey.getName());
@@ -47,6 +52,8 @@ public class QuartzService {
 
                 JobDetail jobDetail = scheduler.getJobDetail(jobKey);
                 jobModel.setJobClass(jobDetail.getJobClass().getName());
+
+                jobModel.setJobSource(jobDetailsKeys.contains(jobKey) ? JobSource.PREDEFINED : JobSource.USER_DEFINED);
 
                 List<TriggerModel> triggerModels = new ArrayList<>();
                 List<? extends Trigger> jobTriggers = scheduler.getTriggersOfJob(jobKey);

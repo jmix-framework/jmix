@@ -3,9 +3,9 @@ package io.jmix.quartz.screen.jobs;
 import com.google.common.base.Strings;
 import io.jmix.core.Messages;
 import io.jmix.quartz.model.JobModel;
+import io.jmix.quartz.model.JobSource;
 import io.jmix.quartz.model.JobState;
 import io.jmix.quartz.service.QuartzService;
-import io.jmix.quartz.util.QuartzJobClassFinder;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.RemoveOperation;
 import io.jmix.ui.action.Action;
@@ -31,9 +31,6 @@ public class JobModelBrowse extends StandardLookup<JobModel> {
 
     @Autowired
     private QuartzService quartzService;
-
-    @Autowired
-    private QuartzJobClassFinder quartzJobClassFinder;
 
     @Autowired
     private Notifications notifications;
@@ -113,12 +110,7 @@ public class JobModelBrowse extends StandardLookup<JobModel> {
         }
 
         JobModel selectedJobModel = jobModelsTable.getSelected().iterator().next();
-        if (isJobActive(selectedJobModel)) {
-            return false;
-        }
-
-        //it should be disabled to remove internal Jmix jobs
-        return quartzJobClassFinder.getQuartzJobClassNames().contains(selectedJobModel.getJobClass());
+        return !isJobActive(selectedJobModel) && JobSource.USER_DEFINED.equals(selectedJobModel.getJobSource());
     }
 
     @Subscribe("jobModelsTable.executeNow")

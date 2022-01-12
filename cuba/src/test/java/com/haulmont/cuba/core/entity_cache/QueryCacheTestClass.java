@@ -22,10 +22,7 @@ import com.haulmont.cuba.core.*;
 import com.haulmont.cuba.core.entity.AppFolder;
 import com.haulmont.cuba.core.global.*;
 import com.haulmont.cuba.core.model.common.*;
-import com.haulmont.cuba.core.testsupport.CoreTest;
-import com.haulmont.cuba.core.testsupport.TestAppender;
-import com.haulmont.cuba.core.testsupport.TestNamePrinter;
-import com.haulmont.cuba.core.testsupport.TestSupport;
+import com.haulmont.cuba.core.testsupport.*;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.core.querycondition.PropertyCondition;
@@ -70,6 +67,9 @@ public class QueryCacheTestClass {
     private TestSupport testSupport;
     @Autowired
     private io.jmix.core.DataManager dataManager;
+
+    @Autowired
+    private TestAdditionalCriteriaProvider testAdditionalCriteriaProvider;
 
     private JpaCache cache;
     private QueryCache queryCache;
@@ -1190,6 +1190,32 @@ public class QueryCacheTestClass {
         assertEquals(user.getGroup(), group);
         assertEquals(user.getGroup().getName(), group.getName());
         assertEquals(0, appender.filterMessages(m -> m.contains("> SELECT")).count());
+    }
+
+    @Test
+    public void testAdditionalCriteriaParametersInQueryKey() throws Exception {
+        try {
+            testAdditionalCriteriaProvider.setParam("ONE");
+
+            assertEquals(0, queryCache.size());
+
+            getSingleResultUserByLoginNamed(user, null);
+            assertEquals(1, queryCache.size());
+
+            getSingleResultUserByLoginNamed(user, null);
+            assertEquals(1, queryCache.size());//the same key for the same param
+
+            testAdditionalCriteriaProvider.setParam("TWO");
+
+            getSingleResultUserByLoginNamed(user, null);
+            assertEquals(2, queryCache.size());//another key for another param
+
+            getSingleResultUserByLoginNamed(user, null);
+            assertEquals(2, queryCache.size());//two keys for two different params
+
+        } finally {
+            testAdditionalCriteriaProvider.setParam(null);
+        }
     }
 
 

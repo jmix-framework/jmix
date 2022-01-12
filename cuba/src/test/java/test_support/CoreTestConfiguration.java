@@ -153,6 +153,11 @@ public class CoreTestConfiguration {
         return new TestSecureOperations();
     }
 
+    @Bean
+    public TestAdditionalCriteriaProvider testAdditionalCriteriaProvider() {
+        return new TestAdditionalCriteriaProvider();
+    }
+
     @EnableWebSecurity
     public static class TestStandardSecurityConfiguration extends StandardSecurityConfiguration {
     }

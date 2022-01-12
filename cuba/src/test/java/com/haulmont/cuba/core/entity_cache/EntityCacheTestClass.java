@@ -24,20 +24,20 @@ import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.global.LoadContext;
 import com.haulmont.cuba.core.global.View;
 import com.haulmont.cuba.core.model.common.*;
+import com.haulmont.cuba.core.model.entity_cache.ChildCachedEntity;
+import com.haulmont.cuba.core.model.entity_cache.ParentCachedEntity;
 import com.haulmont.cuba.core.model.entitycache_unfetched.CompositeOne;
 import com.haulmont.cuba.core.model.entitycache_unfetched.CompositePropertyOne;
 import com.haulmont.cuba.core.model.entitycache_unfetched.CompositePropertyTwo;
 import com.haulmont.cuba.core.model.entitycache_unfetched.CompositeTwo;
 import com.haulmont.cuba.core.sys.QueryImpl;
-import com.haulmont.cuba.core.testsupport.CoreTest;
-import com.haulmont.cuba.core.testsupport.TestAppender;
-import com.haulmont.cuba.core.testsupport.TestNamePrinter;
-import com.haulmont.cuba.core.testsupport.TestSupport;
+import com.haulmont.cuba.core.testsupport.*;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.FetchPlanRepository;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import org.eclipse.persistence.descriptors.ClassDescriptor;
+import org.eclipse.persistence.exceptions.QueryException;
 import org.eclipse.persistence.internal.jpa.EntityManagerFactoryDelegate;
 import org.eclipse.persistence.jpa.JpaCache;
 import org.eclipse.persistence.sessions.server.ServerSession;
@@ -46,6 +46,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.rules.TestRule;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 
@@ -74,7 +75,11 @@ public class EntityCacheTestClass {
     private MetadataTools metadataTools;
     @Autowired
     private TestSupport testSupport;
-    
+    @Autowired
+    private TestAdditionalCriteriaProvider provider;
+    @Autowired
+    private Environment env;
+
     private JpaCache cache;
 
     private final TestAppender appender;
@@ -90,6 +95,9 @@ public class EntityCacheTestClass {
     private CompositeTwo compositeTwo;
     private CompositePropertyOne compositePropertyOne;
     private CompositePropertyTwo compositePropertyTwo;
+    private ParentCachedEntity cachedParent;
+    private ChildCachedEntity cachedChild;
+
     private Predicate<String> selectsOnly = s -> s.contains("> SELECT");
 
     public EntityCacheTestClass() {
@@ -169,6 +177,17 @@ public class EntityCacheTestClass {
             compositePropertyTwo.setCompositeTwo(compositeTwo);
             persistence.getEntityManager().persist(compositePropertyTwo);
 
+            cachedParent = metadata.create(ParentCachedEntity.class);
+            cachedParent.setTitle("parent one");
+            cachedParent.setTestAdditional("ONE");
+            persistence.getEntityManager().persist(cachedParent);
+
+            cachedChild = metadata.create(ChildCachedEntity.class);
+            cachedChild.setSimpleProperty("simple value");
+            cachedChild.setTestAdditional("ONE");
+            cachedChild.setParent(cachedParent);
+            persistence.getEntityManager().persist(cachedChild);
+
             tx.commit();
         }
         cache.clear();
@@ -183,6 +202,7 @@ public class EntityCacheTestClass {
         if (user1 != null)
             testSupport.deleteRecord(user1);
         testSupport.deleteRecord(group);
+        testSupport.deleteRecord(cachedChild, cachedParent);
     }
 
     @Test
@@ -722,7 +742,7 @@ public class EntityCacheTestClass {
 
             tx.commit();
         }
-        user =testSupport.reserialize(user);
+        user = testSupport.reserialize(user);
         Group g = user.getGroup();
         assertEquals(this.group, g);
         assertNotNull(g.getName());
@@ -750,7 +770,7 @@ public class EntityCacheTestClass {
 
             tx.commit();
         }
-        user =testSupport.reserialize(user);
+        user = testSupport.reserialize(user);
         Group g = user.getGroup();
         assertEquals(this.group, g);
         assertNotNull(g.getName());
@@ -770,7 +790,7 @@ public class EntityCacheTestClass {
             assertNotNull(us);
             tx.commit();
         }
-        us =testSupport.reserialize(us);
+        us = testSupport.reserialize(us);
         assertEquals(userSetting, us);
         assertEquals(user, us.getUser());
         return us;
@@ -825,7 +845,7 @@ public class EntityCacheTestClass {
             assertNotNull(u);
             tx.commit();
         }
-        u =testSupport.reserialize(u);
+        u = testSupport.reserialize(u);
         Group g = u.getGroup();
         assertEquals(this.group, g);
         assertNotNull(g.getName());
@@ -949,5 +969,52 @@ public class EntityCacheTestClass {
             tx.commit();
         }
     }
+
+    @Test
+    public void testAdditionalParametersUsedDuringLazyLoading() {
+        //make sure that entity cache enabled for current entities
+        assertTrue(Boolean.parseBoolean(env.getProperty("eclipselink.cache.shared.test$ChildCachedEntity")));
+        assertTrue(Boolean.parseBoolean(env.getProperty("eclipselink.cache.shared.test$ParentCachedEntity")));
+
+
+        provider.setParam(null);
+        try (Transaction tx = persistence.createTransaction()) {
+            persistence.getEntityManager().find(ParentCachedEntity.class, cachedParent.getId());
+            fail("Query should throw exception without additional parameter");
+        } catch (QueryException e) {
+            assertTrue(e.getMessage().contains("No value was provided for the session property [testAdditional]"));
+        }
+
+        provider.setParam("ONE");
+        try (Transaction tx = persistence.createTransaction()) {
+
+            Query query = persistence
+                    .getEntityManager()
+                    .createQuery("select p from test$ParentCachedEntity p where p.id = :id");
+
+            query.setParameter("id", cachedParent.getId());
+            ParentCachedEntity parent = (ParentCachedEntity) query.getResultList().get(0);
+            javax.persistence.EntityManager em = persistence.getEntityManager().getDelegate();
+            assertNotNull(parent);
+            List<ChildCachedEntity> children = parent.getChildren();
+            assertNotNull(children);
+
+            /* Next line checks that changes from eclipselink 2.7.9-6-jmix (Haulmont/jmix-data#107) works:
+             * DatabaseValueHolder passes additional criteria parameters using CubaUtil.
+             * Entity in shared cache has no access to ClientSession with additional criteria parameters
+             * so they has to be passed using another way.
+             *
+             * otherwise it will be exception:
+             *   org.eclipse.persistence.exceptions.QueryException:
+             *   Exception Description: No value was provided for the session property [testAdditional]
+             */
+            assertEquals(1, children.size());
+
+            tx.commit();
+        } finally {
+            provider.setParam(null);
+        }
+    }
+
 
 }

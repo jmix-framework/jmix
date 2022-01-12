@@ -34,6 +34,7 @@ import io.jmix.data.persistence.DbmsFeatures;
 import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.eclipselink.impl.entitycache.QueryCacheManager;
 import io.jmix.eclipselink.impl.entitycache.QueryKey;
+import io.jmix.eclipselink.persistence.AdditionalCriteriaProvider;
 import org.eclipse.persistence.config.CascadePolicy;
 import org.eclipse.persistence.config.HintValues;
 import org.eclipse.persistence.config.QueryHints;
@@ -79,6 +80,7 @@ public class JmixEclipseLinkQuery<E> implements JmixQuery<E> {
     protected DbmsSpecifics dbmsSpecifics;
     protected Collection<QueryMacroHandler> macroHandlers;
     protected Collection<QueryConstantHandler> constantHandlers;
+    protected List<AdditionalCriteriaProvider> additionalCriteriaProviders;
 
     protected JpaQuery query;
     protected boolean isNative;
@@ -117,6 +119,7 @@ public class JmixEclipseLinkQuery<E> implements JmixQuery<E> {
         dbmsSpecifics = beanFactory.getBean(DbmsSpecifics.class);
         macroHandlers = beanFactory.getBeanProvider(QueryMacroHandler.class).stream().collect(Collectors.toList());
         constantHandlers = beanFactory.getBeanProvider(QueryConstantHandler.class).stream().collect(Collectors.toList());
+        additionalCriteriaProviders = beanFactory.getBeanProvider(AdditionalCriteriaProvider.class).stream().collect(Collectors.toList());
 
     }
 
@@ -768,7 +771,12 @@ public class JmixEclipseLinkQuery<E> implements JmixQuery<E> {
             useQueryCache = parser.isEntitySelect(entityName);
             QueryKey queryKey = null;
             if (useQueryCache) {
-                queryKey = QueryKey.create(transformedQueryString, PersistenceHints.isSoftDeletion(entityManager), singleResult, jpaQuery);
+                queryKey = QueryKey.create(
+                        transformedQueryString,
+                        PersistenceHints.isSoftDeletion(entityManager),
+                        singleResult,
+                        jpaQuery,
+                        getAdditionalCriteriaParameters());
                 result = singleResult ? queryCacheMgr.getSingleResultFromCache(queryKey, fetchPlans) :
                         queryCacheMgr.getResultListFromCache(queryKey, fetchPlans);
                 if (result != null) {
@@ -794,6 +802,18 @@ public class JmixEclipseLinkQuery<E> implements JmixQuery<E> {
             fetcher.accept(result);
         }
         return result;
+    }
+
+    private Map<String, Object> getAdditionalCriteriaParameters() {
+        Map<String, Object> parameters = new HashMap<>();
+        for (AdditionalCriteriaProvider acp : additionalCriteriaProviders) {
+            if (acp.getCriteriaParameters() != null) {
+                for (Map.Entry<String, Object> entry : acp.getCriteriaParameters().entrySet()) {
+                    parameters.put(entry.getKey(), entry.getValue());
+                }
+            }
+        }
+        return parameters;
     }
 
     private void checkState() {

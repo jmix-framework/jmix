@@ -37,6 +37,7 @@ public class QueryKey implements Serializable {
     protected final boolean singleResult;
     protected final Map<String, Object> originalNamedParameters;
     protected final Map<String, Object> namedParameters;
+    protected final Map<String, Object> additionalCriteriaParameters;
     protected final Object[] positionalParameters;
 
     protected final int hashCode;
@@ -44,9 +45,9 @@ public class QueryKey implements Serializable {
 
     protected static final Pattern PARAMETER_TEMPLATE_PATTERN = Pattern.compile("(:[\\w_$]+)");
 
-    public static QueryKey create(String queryString, boolean softDeletion, boolean singleResult, Query jpaQuery) {
+    public static QueryKey create(String queryString, boolean softDeletion, boolean singleResult, Query jpaQuery, Map<String, Object> additionalCriteriaParameters) {
         return new QueryKey(queryString, jpaQuery.getFirstResult(), jpaQuery.getMaxResults(), softDeletion, singleResult,
-                getNamedParameters(jpaQuery), getPositionalParameters(jpaQuery));
+                getNamedParameters(jpaQuery), getPositionalParameters(jpaQuery), additionalCriteriaParameters);
     }
 
     private static Map<String, Object> getNamedParameters(Query jpaQuery) {
@@ -91,7 +92,8 @@ public class QueryKey implements Serializable {
     protected QueryKey(String queryString, int firstRow, int maxRows,
                        boolean softDeletion, boolean singleResult,
                        Map<String, Object> namedParameters,
-                       Object[] positionalParameters) {
+                       Object[] positionalParameters,
+                       Map<String, Object> additionalCriteriaParameters) {
         this.id = UuidProvider.createUuid();
         this.originalQueryString = queryString;
         this.firstRow = firstRow;
@@ -120,6 +122,8 @@ public class QueryKey implements Serializable {
             this.namedParameters = null;
         }
 
+        this.additionalCriteriaParameters = additionalCriteriaParameters;
+
         this.positionalParameters = positionalParameters;
 
         this.hashCode = generateHashCode();
@@ -138,6 +142,7 @@ public class QueryKey implements Serializable {
                 .add("softDeletion", softDeletion)
                 .add("positionalParameters", Arrays.deepToString(positionalParameters))
                 .add("namedParameters", namedParameters)
+                .add("additionalCriteriaParameters", additionalCriteriaParameters)
                 .toString();
     }
 
@@ -160,7 +165,9 @@ public class QueryKey implements Serializable {
     }
 
     protected boolean equalsParams(QueryKey queryKey) {
-        return Arrays.deepEquals(positionalParameters, queryKey.positionalParameters) && mapEquals(namedParameters, queryKey.namedParameters);
+        return Arrays.deepEquals(positionalParameters, queryKey.positionalParameters)
+                && mapEquals(namedParameters, queryKey.namedParameters)
+                && mapEquals(additionalCriteriaParameters, queryKey.additionalCriteriaParameters);
     }
 
 
@@ -180,6 +187,7 @@ public class QueryKey implements Serializable {
         result = 31 * result + (positionalParameters == null ? 0 : Arrays.deepHashCode(positionalParameters));
 
         result = 31 * result + (namedParameters == null ? 0 : generateMapHashCode(namedParameters));
+        result = 31 * result + (additionalCriteriaParameters == null ? 0 : generateMapHashCode(additionalCriteriaParameters));
         return result;
     }
 

@@ -17,14 +17,13 @@
 package io.jmix.graphql.schema;
 
 import graphql.Scalars;
-import graphql.schema.GraphQLEnumType;
-import graphql.schema.GraphQLInputObjectField;
-import graphql.schema.GraphQLInputObjectType;
-import graphql.schema.GraphQLScalarType;
-import graphql.schema.GraphQLType;
+import graphql.schema.*;
 import io.jmix.core.MetadataTools;
+import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.core.metamodel.model.impl.DatatypeRange;
+import io.jmix.core.metamodel.model.impl.MetaPropertyImpl;
 import io.jmix.graphql.MetadataUtils;
 import io.jmix.graphql.NamingUtils;
 import io.jmix.graphql.schema.scalar.CustomScalars;
@@ -42,8 +41,9 @@ import java.util.stream.Collectors;
 
 import static graphql.Scalars.*;
 import static io.jmix.graphql.NamingUtils.INPUT_TYPE_PREFIX;
-import static io.jmix.graphql.schema.BaseTypesGenerator.inpObjectField;
-import static io.jmix.graphql.schema.BaseTypesGenerator.listInpObjectField;
+import static io.jmix.graphql.NamingUtils.SYS_ATTR_INSTANCE_NAME;
+import static io.jmix.graphql.schema.BaseTypesGenerator.*;
+import static io.jmix.graphql.schema.BaseTypesGenerator.arg;
 import static io.jmix.graphql.schema.Types.FilterOperation.*;
 //import static io.jmix.graphql.schema.scalar.CustomScalars.GraphQLFile;
 import static io.jmix.graphql.schema.scalar.CustomScalars.GraphQLUUID;
@@ -61,6 +61,8 @@ public class FilterTypesGenerator {
     private BaseTypesGenerator baseTypesGenerator;
     @Autowired
     ScalarTypes scalarTypes;
+    @Autowired
+    protected DatatypeRegistry datatypes;
 
     public Collection<GraphQLType> generateFilterTypes() {
         Collection<GraphQLType> types = new ArrayList<>();
@@ -162,7 +164,7 @@ public class FilterTypesGenerator {
                             return null;
                         }
                         String typeName = composeFilterOrderByTypeName(baseTypesGenerator.getFieldTypeName(metaProperty));
-                        return inpObjectField(metaProperty.getName(), typeName, null);
+                        return listInpObjectField(metaProperty.getName(), typeName, null);
                     }
 
                     // datatype attributes
@@ -171,6 +173,7 @@ public class FilterTypesGenerator {
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
+        fields.add(inpObjectField(SYS_ATTR_INSTANCE_NAME, Types.SortOrder.class.getSimpleName(), null));
         builder.fields(fields);
 
 //        log.debug("buildFilterOrderByType: for class {}", metaClass);

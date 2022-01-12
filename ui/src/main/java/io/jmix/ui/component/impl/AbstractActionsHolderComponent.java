@@ -208,7 +208,9 @@ public abstract class AbstractActionsHolderComponent<T extends com.vaadin.ui.Abs
             int visibleActionsIndex = 0;
             int i = 0;
             while (i < index && i < actionList.size()) {
-                if (StringUtils.isNotEmpty(actionList.get(i).getCaption())) {
+                Action componentAction = actionList.get(i);
+                if (StringUtils.isNotEmpty(componentAction.getCaption())
+                        && actionButtons.containsKey(componentAction)) {
                     visibleActionsIndex++;
                 }
 

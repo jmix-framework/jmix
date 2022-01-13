@@ -30,8 +30,6 @@ import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 /**
@@ -50,8 +48,6 @@ public class StartupIndexSynchronizer {
     protected SearchProperties searchProperties;
     @Autowired
     protected IndexStateRegistry indexStateRegistry;
-
-    protected final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     @PostConstruct
     protected void postConstruct() {
@@ -92,18 +88,11 @@ public class StartupIndexSynchronizer {
                             return entitiesAllowedToEnqueue.isEmpty() || entitiesAllowedToEnqueue.contains(config.getEntityName());
                         })
                         .collect(Collectors.toList());
-                executorService.submit(() -> indexConfigurationsToEnqueueAll.forEach(config -> enqueueEntity(config.getEntityName())));
+                indexConfigurationsToEnqueueAll.forEach(config -> indexingQueueManager.initAsyncEnqueueIndexAll(config.getEntityName()));
             }
-
             log.info("Finish initial index synchronization");
         } catch (Exception e) {
             log.error("Failed to synchronize indexes", e);
         }
-    }
-
-    protected void enqueueEntity(String entityName) {
-        log.info("Start initial enqueueing instances of entity '{}'", entityName);
-        indexingQueueManager.enqueueIndexAll(entityName);
-        log.info("Finish initial enqueueing instances of entity '{}'", entityName);
     }
 }

@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jmx.export.annotation.*;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Map;
 
 @ManagedResource(description = "Manages entity indexing for full text search", objectName = "jmix.search:type=EntityIndexing")
@@ -46,20 +47,26 @@ public class EntityIndexingManagementFacade {
     @Autowired
     protected SearchProperties searchProperties;
 
-    @ManagedAttribute(description = "Defines the way of index synchronization")
+    @ManagedAttribute(description = "Strategy of index synchronization")
     public String getIndexSchemaManagementStrategy() {
         return searchProperties.getIndexSchemaManagementStrategy().toString();
     }
 
+    @ManagedAttribute(description = "List of entities to be asynchronously enqueued")
+    public List<String> getEntityNamesOfAsyncEnqueueingSessions() {
+        return indexingQueueManager.getEntityNamesOfEnqueueingSessions();
+    }
+
     @Authenticated
-    @ManagedOperation(description = "Enqueues all instances of all indexed entities")
+    @ManagedOperation(description = "Synchronously enqueues all instances of all indexed entities. Don't use it on a huge amount of data")
     public String enqueueIndexAll() {
         int amount = indexingQueueManager.enqueueIndexAll();
         return String.format("%d instances within all indexed entities have been enqueued", amount);
     }
 
     @Authenticated
-    @ManagedOperation(description = "Enqueues all instances of provided indexed entity")
+    @ManagedOperation(description = "Synchronously enqueues all instances of provided indexed entity. " +
+            "Don't use it on a huge amount of data")
     @ManagedOperationParameters({
             @ManagedOperationParameter(name = "entityName", description = "Name of entity configured for indexing, e.g. demo_Order")
     })
@@ -71,6 +78,116 @@ public class EntityIndexingManagementFacade {
 
         int amount = indexingQueueManager.enqueueIndexAll(entityName);
         return String.format("%d instances of entity '%s' have been enqueued", amount, entityName);
+    }
+
+    @Authenticated
+    @ManagedOperation(description = "Init async enqueueing process for all indexed entities")
+    public String initAsyncEnqueueing() {
+        indexingQueueManager.initAsyncEnqueueIndexAll();
+        return "Async enqueueing process has been initialized for all indexed entities";
+    }
+
+    @Authenticated
+    @ManagedOperation(description = "Init async enqueueing process for provided entity")
+    @ManagedOperationParameters({
+            @ManagedOperationParameter(name = "entityName", description = "Name of entity configured for indexing, e.g. demo_Order")
+    })
+    public String initAsyncEnqueueing(String entityName) {
+        InputValidationResult inputValidationResult = validateInputEntity(entityName);
+        if (!inputValidationResult.isValid()) {
+            return inputValidationResult.getMessage();
+        }
+
+        indexingQueueManager.initAsyncEnqueueIndexAll(entityName);
+        return String.format("Async enqueueing process has been initialized for entity '%s'", entityName);
+    }
+
+    @Authenticated
+    @ManagedOperation(description = "Suspend async enqueueing process")
+    public String suspendAsyncEnqueueing() {
+        indexingQueueManager.suspendAsyncEnqueueIndexAll();
+        return "All async enqueueing processed has been suspended";
+    }
+
+    @Authenticated
+    @ManagedOperation(description = "Suspend async enqueueing process for provided entity")
+    @ManagedOperationParameters({
+            @ManagedOperationParameter(name = "entityName", description = "Name of entity configured for indexing, e.g. demo_Order")
+    })
+    public String suspendAsyncEnqueueing(String entityName) {
+        InputValidationResult inputValidationResult = validateInputEntity(entityName);
+        if (!inputValidationResult.isValid()) {
+            return inputValidationResult.getMessage();
+        }
+
+        indexingQueueManager.suspendAsyncEnqueueIndexAll(entityName);
+        return String.format("Async enqueueing process has been suspended for entity '%s'", entityName);
+    }
+
+    @Authenticated
+    @ManagedOperation(description = "Resume all previously suspended async enqueueing processes")
+    public String resumeAsyncEnqueueing() {
+        indexingQueueManager.resumeAsyncEnqueueIndexAll();
+        return "All async enqueueing processed has been resumed";
+    }
+
+    @Authenticated
+    @ManagedOperation(description = "Resume previously suspended async enqueueing process for provided entity")
+    @ManagedOperationParameters({
+            @ManagedOperationParameter(name = "entityName", description = "Name of entity configured for indexing, e.g. demo_Order")
+    })
+    public String resumeAsyncEnqueueing(String entityName) {
+        InputValidationResult inputValidationResult = validateInputEntity(entityName);
+        if (!inputValidationResult.isValid()) {
+            return inputValidationResult.getMessage();
+        }
+
+        indexingQueueManager.resumeAsyncEnqueueIndexAll(entityName);
+        return String.format("Async enqueueing process has been resumed for entity '%s'", entityName);
+    }
+
+    @Authenticated
+    @ManagedOperation(description = "Terminate async enqueueing process")
+    public String terminateAsyncEnqueueing() {
+        indexingQueueManager.terminateAsyncEnqueueIndexAll();
+        return "All async enqueueing processed has been terminated";
+    }
+
+    @Authenticated
+    @ManagedOperation(description = "Terminate async enqueueing process for provided entity")
+    @ManagedOperationParameters({
+            @ManagedOperationParameter(name = "entityName", description = "Name of entity configured for indexing, e.g. demo_Order")
+    })
+    public String terminateAsyncEnqueueing(String entityName) {
+        InputValidationResult inputValidationResult = validateInputEntity(entityName);
+        if (!inputValidationResult.isValid()) {
+            return inputValidationResult.getMessage();
+        }
+
+        indexingQueueManager.terminateAsyncEnqueueIndexAll(entityName);
+        return String.format("Async enqueueing process has been stopped for entity '%s'", entityName);
+    }
+
+    @Authenticated
+    @ManagedOperation(description = "Async enqueue next batch")
+    @ManagedOperationParameters({
+            @ManagedOperationParameter(name = "entityName", description = "Name of entity configured for indexing, e.g. demo_Order")
+    })
+    public String enqueueNextBatch(String entityName) {
+        InputValidationResult inputValidationResult = validateInputEntity(entityName);
+        if (!inputValidationResult.isValid()) {
+            return inputValidationResult.getMessage();
+        }
+
+        int processed = indexingQueueManager.processEnqueueingSession(entityName);
+        return String.format("Enqueued %d instances of entity '%s'", processed, entityName);
+    }
+
+    @Authenticated
+    @ManagedOperation(description = "Async enqueue next batch of next available session")
+    public String enqueueNextBatch() {
+        int processed = indexingQueueManager.processNextEnqueueingSession();
+        return String.format("Enqueued %d instances", processed);
     }
 
     @Authenticated

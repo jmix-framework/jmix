@@ -19,6 +19,7 @@ package io.jmix.search.index.queue;
 import io.jmix.core.Id;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Provides functionality for enqueuing entity instances and processing queue.
@@ -73,19 +74,125 @@ public interface IndexingQueueManager {
     int enqueueIndexCollectionByEntityIds(Collection<Id<?>> entityIds);
 
     /**
-     * Sends all instances of all index-configured entities to indexing queue.
+     * Synchronously sends all instances of all index-configured entities to indexing queue.
+     * <p>
+     * Don't use it on a huge amount of data - all ids (per entity) will be kept in memory during this process.
+     * Use {@link #initAsyncEnqueueIndexAll} methods instead.
      *
      * @return amount of enqueued instances
      */
     int enqueueIndexAll();
 
     /**
-     * Sends all instances of provided entity to indexing queue.
+     * Synchronously sends all instances of provided entity to indexing queue.
+     * <p>
+     * Don't use it on a huge amount of data - all ids will be kept in memory during this process.
+     * Use {@link #initAsyncEnqueueIndexAll} methods instead.
      *
      * @param entityName entity name
      * @return amount of enqueued instances
      */
     int enqueueIndexAll(String entityName);
+
+    /**
+     * Gets entity names of all existing enqueueing sessions.
+     *
+     * @return list of entity names
+     */
+    List<String> getEntityNamesOfEnqueueingSessions();
+
+    /**
+     * Initializes async enqueueing session for all indexed entities.
+     */
+    void initAsyncEnqueueIndexAll();
+
+    /**
+     * Initializes async enqueueing session for provided entity.
+     * Existing session will be removed and created again.
+     *
+     * @param entityName entity name
+     * @return true if operation was successfully performed, false otherwise
+     */
+    boolean initAsyncEnqueueIndexAll(String entityName);
+
+    /**
+     * Suspends all enqueueing sessions.
+     * Suspended sessions are ignored during session processing.
+     * Session can be resumed by {@link #resumeAsyncEnqueueIndexAll}
+     */
+    void suspendAsyncEnqueueIndexAll();
+
+    /**
+     * Suspends enqueueing session for provided entity.
+     * Suspended sessions are ignored during session processing.
+     * Session can be resumed by {@link #resumeAsyncEnqueueIndexAll}
+     *
+     * @param entityName entity name
+     * @return true if operation was successfully performed, false otherwise
+     */
+    boolean suspendAsyncEnqueueIndexAll(String entityName);
+
+    /**
+     * Resumes all previously suspended enqueueing sessions.
+     */
+    void resumeAsyncEnqueueIndexAll();
+
+    /**
+     * Resumes previously suspended enqueueing session for provided entity.
+     *
+     * @param entityName entity name
+     * @return true if operation was successfully performed, false otherwise
+     */
+    boolean resumeAsyncEnqueueIndexAll(String entityName);
+
+    /**
+     * Terminates all enqueueing sessions.
+     */
+    void terminateAsyncEnqueueIndexAll();
+
+    /**
+     * Terminates enqueueing session for provided entity.
+     *
+     * @param entityName entity name
+     * @return true if operation was successfully performed, false otherwise
+     */
+    boolean terminateAsyncEnqueueIndexAll(String entityName);
+
+    /**
+     * Processes next available enqueueing session - one batch (with default size) of entity instances
+     * will be enqueued.
+     *
+     * @return amount of processed entity instances
+     */
+    int processNextEnqueueingSession();
+
+    /**
+     * Processes next available enqueueing session - one batch (with provided size) of entity instances
+     * will be enqueued.
+     *
+     * @param batchSize batch size
+     * @return amount of processed entity instances
+     */
+    int processNextEnqueueingSession(int batchSize);
+
+    /**
+     * Processes enqueueing session for provided entity - one batch (with default size) of entity instances
+     * will be enqueued.
+     *
+     * @param entityName entity name
+     * @return amount of processed entity instances
+     */
+    int processEnqueueingSession(String entityName);
+
+    /**
+     * Processes enqueueing session for provided entity - one batch (with provided size) of entity instances
+     * will be enqueued.
+     *
+     * @param entityName entity name
+     * @param batchSize  batch size
+     * @return amount of processed entity instances
+     */
+    int processEnqueueingSession(String entityName, int batchSize);
 
     /**
      * Sends provided entity instance to indexing queue in order to delete it from index.

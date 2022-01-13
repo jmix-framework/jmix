@@ -67,6 +67,16 @@ public class TestIndexingQueueItemsTracker implements Consumer<Collection<Indexi
         return getItemsForEntityAndOperation(entity, operation).size();
     }
 
+    public int getAmountOfItemsForEntity(String entityName, IndexingOperation operation) {
+        Multimap<String, IndexingQueueItem> itemsForOperation = registry.get(operation);
+        if(itemsForOperation == null) {
+            return 0;
+        }
+        return (int)itemsForOperation.values().stream()
+                .filter(item -> entityName.equalsIgnoreCase(item.getEntityName()))
+                .count();
+    }
+
     public void clear() {
         registry = new ConcurrentHashMap<>();
     }

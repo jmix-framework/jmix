@@ -67,6 +67,11 @@ public class SearchProperties {
     protected final boolean useDefaultIndexingQueueProcessingQuartzConfiguration;
 
     /**
+     * Whether the default Enqueueing Session processing quartz scheduling configuration is used.
+     */
+    protected final boolean useDefaultEnqueueingSessionProcessingQuartzConfiguration;
+
+    /**
      * Whether all entity instances related to indexes created or recreated on startup should be enqueued
      * automatically.
      */
@@ -83,6 +88,11 @@ public class SearchProperties {
      * CRON expression that is used by default Indexing Queue processing quartz scheduling configuration.
      */
     protected final String indexingQueueProcessingCron;
+
+    /**
+     * CRON expression that is used by default Enqueueing Session processing quartz scheduling configuration.
+     */
+    protected final String enqueueingSessionProcessingCron;
 
     /**
      * Prefix for search index name. Index naming template: &lt;prefix&gt;&lt;entity_name&gt;. Default prefix is
@@ -109,12 +119,14 @@ public class SearchProperties {
             @DefaultValue("100") int reindexEntityEnqueueBatchSize,
             @DefaultValue("true") boolean changedEntitiesIndexingEnabled,
             @DefaultValue("true") boolean useDefaultIndexingQueueProcessingQuartzConfiguration,
+            @DefaultValue("true") boolean useDefaultEnqueueingSessionProcessingQuartzConfiguration,
             @DefaultValue("true") boolean enqueueIndexAllOnStartupIndexRecreationEnabled,
             @DefaultValue("") String enqueueIndexAllOnStartupIndexRecreationEntities,
             @DefaultValue("search_index_") String searchIndexNamePrefix,
             @DefaultValue("anyTermAnyField") String defaultSearchStrategy,
             @DefaultValue("create-or-recreate") String indexSchemaManagementStrategy,
             @DefaultValue("0/5 * * * * ?") String indexingQueueProcessingCron,
+            @DefaultValue("0/5 * * * * ?") String enqueueingSessionProcessingCron,
             @DefaultValue Elasticsearch elasticsearch) {
         this.searchResultPageSize = searchResultPageSize;
         this.maxSearchPageCount = maxSearchPageCount;
@@ -123,7 +135,9 @@ public class SearchProperties {
         this.reindexEntityEnqueueBatchSize = reindexEntityEnqueueBatchSize;
         this.changedEntitiesIndexingEnabled = changedEntitiesIndexingEnabled;
         this.useDefaultIndexingQueueProcessingQuartzConfiguration = useDefaultIndexingQueueProcessingQuartzConfiguration;
+        this.useDefaultEnqueueingSessionProcessingQuartzConfiguration = useDefaultEnqueueingSessionProcessingQuartzConfiguration;
         this.indexingQueueProcessingCron = indexingQueueProcessingCron;
+        this.enqueueingSessionProcessingCron = enqueueingSessionProcessingCron;
         this.defaultSearchStrategy = defaultSearchStrategy;
         this.indexSchemaManagementStrategy = IndexSchemaManagementStrategy.getByKey(indexSchemaManagementStrategy);
         this.elasticsearch = elasticsearch;
@@ -182,10 +196,24 @@ public class SearchProperties {
     }
 
     /**
+     * @see #useDefaultEnqueueingSessionProcessingQuartzConfiguration
+     */
+    public boolean isUseDefaultEnqueueingSessionProcessingQuartzConfiguration() {
+        return useDefaultEnqueueingSessionProcessingQuartzConfiguration;
+    }
+
+    /**
      * @see #indexingQueueProcessingCron
      */
     public String getIndexingQueueProcessingCron() {
         return indexingQueueProcessingCron;
+    }
+
+    /**
+     * @see #enqueueingSessionProcessingCron
+     */
+    public String getEnqueueingSessionProcessingCron() {
+        return enqueueingSessionProcessingCron;
     }
 
     /**

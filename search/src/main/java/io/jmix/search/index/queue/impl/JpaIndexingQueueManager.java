@@ -28,7 +28,10 @@ import io.jmix.search.index.IndexResult;
 import io.jmix.search.index.impl.IndexStateRegistry;
 import io.jmix.search.index.impl.IndexingLocker;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
+import io.jmix.search.index.queue.EntityIdsLoader;
+import io.jmix.search.index.queue.EntityIdsLoader.ResultHolder;
 import io.jmix.search.index.queue.IndexingQueueManager;
+import io.jmix.search.index.queue.entity.EnqueueingSession;
 import io.jmix.search.index.queue.entity.IndexingQueueItem;
 import org.apache.commons.collections4.MapUtils;
 import org.slf4j.Logger;
@@ -73,6 +76,10 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
     protected SearchProperties searchProperties;
     @Autowired
     protected IndexStateRegistry indexStateRegistry;
+    @Autowired
+    protected EnqueueingSessionManager enqueueingSessionManager;
+    @Autowired
+    protected EntityIdsLoaderProvider entityIdsLoaderProvider;
 
     @Override
     public int emptyQueue() {
@@ -146,6 +153,120 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
     }
 
     @Override
+    public List<String> getEntityNamesOfEnqueueingSessions() {
+        return enqueueingSessionManager.loadEntityNamesOfSessions();
+    }
+
+    @Override
+    public void initAsyncEnqueueIndexAll() {
+        indexConfigurationManager.getAllIndexConfigurations().stream()
+                .map(IndexConfiguration::getEntityName)
+                .forEach(this::initAsyncEnqueueIndexAll);
+    }
+
+    @Override
+    public boolean initAsyncEnqueueIndexAll(String entityName) {
+        return enqueueingSessionManager.initSession(entityName);
+    }
+
+    @Override
+    public void suspendAsyncEnqueueIndexAll() {
+        indexConfigurationManager.getAllIndexConfigurations().stream()
+                .map(IndexConfiguration::getEntityName)
+                .forEach(this::suspendAsyncEnqueueIndexAll);
+    }
+
+    @Override
+    public boolean suspendAsyncEnqueueIndexAll(String entityName) {
+        return enqueueingSessionManager.suspendSession(entityName);
+    }
+
+    @Override
+    public void resumeAsyncEnqueueIndexAll() {
+        indexConfigurationManager.getAllIndexConfigurations().stream()
+                .map(IndexConfiguration::getEntityName)
+                .forEach(this::resumeAsyncEnqueueIndexAll);
+    }
+
+    @Override
+    public boolean resumeAsyncEnqueueIndexAll(String entityName) {
+        return enqueueingSessionManager.resumeSession(entityName);
+    }
+
+    @Override
+    public void terminateAsyncEnqueueIndexAll() {
+        indexConfigurationManager.getAllIndexConfigurations().stream()
+                .map(IndexConfiguration::getEntityName)
+                .forEach(this::terminateAsyncEnqueueIndexAll);
+    }
+
+    @Override
+    public boolean terminateAsyncEnqueueIndexAll(String entityName) {
+        return enqueueingSessionManager.removeSession(entityName);
+    }
+
+    @Override
+    public int processNextEnqueueingSession() {
+        return processNextEnqueueingSession(searchProperties.getReindexEntityEnqueueBatchSize());
+    }
+
+    @Override
+    public int processNextEnqueueingSession(int batchSize) {
+        try {
+            authenticator.begin();
+            log.debug("Get next active enqueueing session");
+            EnqueueingSession session = enqueueingSessionManager.getNextActiveSession();
+            if (session == null) {
+                log.trace("Active enqueueing session not found");
+                return 0;
+            }
+            try {
+                if (!locker.tryLockEntityForEnqueueIndexAll(session.getEntityName())) {
+                    log.info("Unable to process enqueueing session for entity '{}': currently in progress", session.getEntityName());
+                    return 0;
+                }
+                return processEnqueueingSession(session, batchSize);
+            } finally {
+                locker.unlockEntityForEnqueueIndexAll(session.getEntityName());
+            }
+        } finally {
+            authenticator.end();
+        }
+    }
+
+    @Override
+    public int processEnqueueingSession(String entityName) {
+        return processEnqueueingSession(entityName, searchProperties.getReindexEntityEnqueueBatchSize());
+    }
+
+    @Override
+    public int processEnqueueingSession(String entityName, int batchSize) {
+        EnqueueingSession session = null;
+        try {
+            authenticator.begin();
+
+            log.debug("Get enqueueing session for entity '{}'", entityName);
+            session = enqueueingSessionManager.getSession(entityName);
+            if (session == null) {
+                log.trace("Enqueueing session not found");
+                return 0;
+            }
+
+            if (!locker.tryLockEntityForEnqueueIndexAll(session.getEntityName())) {
+                log.info("Unable to process enqueueing session for entity '{}': currently in progress", session.getEntityName());
+                return 0;
+            }
+
+            return processEnqueueingSession(session, batchSize);
+        } finally {
+            if (session != null) {
+                locker.unlockEntityForEnqueueIndexAll(session.getEntityName());
+            }
+            authenticator.end();
+        }
+    }
+
+    @Override
     public int enqueueDelete(Object entityInstance) {
         Preconditions.checkNotNullArgument(entityInstance);
         return enqueueDeleteCollection(Collections.singletonList(entityInstance));
@@ -187,6 +308,42 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
     @Override
     public int processEntireQueue(int batchSize) {
         return processQueue(batchSize, true);
+    }
+
+    protected int processEnqueueingSession(EnqueueingSession session, int batchSize) {
+        EnqueueingSessionStatus status = session.getStatus();
+        switch (status) {
+            case ACTIVE:
+                return enqueueNextBatchInternal(session, batchSize);
+            case SUSPENDED:
+                log.debug("Skip session for entity '{}'", session.getEntityName());
+            default:
+                return 0;
+        }
+    }
+
+    protected int enqueueNextBatchInternal(EnqueueingSession session, int batchSize) {
+        if (batchSize <= 0) {
+            throw new IllegalArgumentException("Size of enqueueing batch must be positive");
+        }
+
+        String entityName = session.getEntityName();
+        MetaClass entityClass = metadata.getClass(entityName);
+
+        EntityIdsLoader loader = entityIdsLoaderProvider.getLoader(entityName);
+        ResultHolder resultHolder = loader.loadNextIds(session, batchSize);
+        List<?> ids = resultHolder.getIds();
+        log.debug("Next {} enqueuing instances of entity '{}': {}", ids.size(), entityName, ids);
+        int processed = processRawIds(ids, entityClass, batchSize);
+        log.debug("Processed {} instances of entity '{}'", processed, entityName);
+        if (ids.size() < batchSize) {
+            log.debug("All instances of entity '{}' have been processed", entityName);
+            enqueueingSessionManager.removeSession(session);
+        } else {
+            Object lastOrderingValue = resultHolder.getLastOrderingValue();
+            enqueueingSessionManager.updateOrderingValue(session, lastOrderingValue);
+        }
+        return processed;
     }
 
     protected int enqueueIndexAll(String entityName, int batchSize) {

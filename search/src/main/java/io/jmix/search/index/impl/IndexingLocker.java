@@ -31,16 +31,24 @@ public class IndexingLocker {
     protected final ReentrantLock indexingQueueProcessingLock = new ReentrantLock();
     protected final ReentrantLock reindexingLock = new ReentrantLock();
     protected final Map<String, ReentrantLock> enqueueAllLocks;
+    protected final Map<String, ReentrantLock> enqueueingSessionOperationLocks;
 
     protected final IndexConfigurationManager indexConfigurationManager;
 
     @Autowired
     public IndexingLocker(IndexConfigurationManager indexConfigurationManager) {
         Map<String, ReentrantLock> tmpEnqueueAllLocks = new ConcurrentHashMap<>();
-        indexConfigurationManager.getAllIndexedEntities().forEach(entity -> {
-            tmpEnqueueAllLocks.put(entity, new ReentrantLock());
-        });
+        indexConfigurationManager.getAllIndexedEntities().forEach(
+                entity -> tmpEnqueueAllLocks.put(entity, new ReentrantLock())
+        );
         this.enqueueAllLocks = tmpEnqueueAllLocks;
+
+        Map<String, ReentrantLock> tmpEnqueueingSessionOperationLocks = new ConcurrentHashMap<>();
+        indexConfigurationManager.getAllIndexedEntities().forEach(
+                entity -> tmpEnqueueingSessionOperationLocks.put(entity, new ReentrantLock())
+        );
+        this.enqueueingSessionOperationLocks = tmpEnqueueingSessionOperationLocks;
+
         this.indexConfigurationManager = indexConfigurationManager;
     }
 
@@ -88,6 +96,33 @@ public class IndexingLocker {
         if (lock != null) {
             lock.unlock();
         }
+    }
+
+    public boolean tryLockEnqueueingSession(String entityName) {
+        ReentrantLock lock = acquireEnqueueingSessionLock(entityName);
+        return lock.tryLock();
+    }
+
+    public boolean tryLockEnqueueingSession(String entityName, long timeout, TimeUnit unit) {
+        ReentrantLock lock = acquireEnqueueingSessionLock(entityName);
+        try {
+            return lock.tryLock(timeout, unit);
+        } catch (InterruptedException e) {
+            throw new RuntimeException("Lock of enqueueing session failed", e);
+        }
+    }
+
+    public void unlockEnqueueingSession(String entityName) {
+        checkEntityInIndexingScope(entityName);
+        ReentrantLock lock = enqueueingSessionOperationLocks.get(entityName);
+        if (lock != null) {
+            lock.unlock();
+        }
+    }
+
+    protected ReentrantLock acquireEnqueueingSessionLock(String entityName) {
+        checkEntityInIndexingScope(entityName);
+        return enqueueingSessionOperationLocks.computeIfAbsent(entityName, key -> new ReentrantLock());
     }
 
     protected void checkEntityInIndexingScope(String entityName) {

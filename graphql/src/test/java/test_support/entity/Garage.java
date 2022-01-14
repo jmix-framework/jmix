@@ -3,6 +3,7 @@ package test_support.entity;
 import io.jmix.core.DeletePolicy;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.OnDelete;
+import io.jmix.core.metamodel.annotation.DependsOnProperties;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
@@ -33,7 +34,6 @@ public class Garage {
         this.id = id;
     }
 
-    @InstanceName
     @Column(name = "NAME", nullable = false)
     protected String name;
 
@@ -41,8 +41,8 @@ public class Garage {
     protected String address;
 
     @JoinTable(name = "SCR_GARAGE_USER_LINK",
-            joinColumns = @JoinColumn(name = "GARAGE_ID"),
-            inverseJoinColumns = @JoinColumn(name = "USER_ID"))
+            joinColumns = @JoinColumn(name = "GARAGE_ID", referencedColumnName = "ID"),
+            inverseJoinColumns = @JoinColumn(name = "USER_ID", referencedColumnName = "ID"))
     @OnDelete(DeletePolicy.CASCADE)
     @ManyToMany
     protected List<User> personnel;
@@ -136,4 +136,9 @@ public class Garage {
     }
 
 
+    @InstanceName
+    @DependsOnProperties({"name", "address"})
+    public String getInstanceName() {
+        return String.format("%s %s", name, address);
+    }
 }

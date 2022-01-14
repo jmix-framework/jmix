@@ -64,7 +64,7 @@ public class GenericSchemaGenerator {
                             .argument(arg(NamingUtils.LIMIT, "Int", "limit the number of items returned"))
                             .argument((arg(NamingUtils.OFFSET, "Int", "skip the first n items")))
                             // todo array in order by, add ability to order by nested objects
-                            .argument(arg(NamingUtils.ORDER_BY, FilterTypesGenerator.composeFilterOrderByTypeName(metaClass),
+                            .argument(listArg(NamingUtils.ORDER_BY, FilterTypesGenerator.composeFilterOrderByTypeName(metaClass),
                                     "sort the items by one or more fields"))
                             .argument(arg(NamingUtils.SOFT_DELETION, "Boolean", "set false to load soft-deleted entities"))
                             .build());

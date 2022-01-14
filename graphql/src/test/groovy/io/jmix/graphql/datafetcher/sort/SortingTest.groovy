@@ -98,18 +98,17 @@ class SortingTest extends AbstractGraphQLTest {
     def "garages are sorted by capacity"() {
         when:
         def response = query("datafetcher/sort/garages-with-sort.gql",
-        asObjectNode('{"orderBy": {"capacity": "ASC"}}'))
+                asObjectNode('{"orderBy": {"capacity": "ASC"}}'))
         then:
         List<Garage> garages = response.getList('$.data.scr_GarageList', Garage)
         def capacities = garages.stream().map(gar -> gar.getCapacity()).collect(Collectors.toList());
         capacities == [7, 9, 20, 20, 21, 50, 50, 56, 63, 71]
     }
 
-    @Ignore // todo get back after https://github.com/Haulmont/jmix-graphql/issues/157
     def "cars are sorted by set of conditions"() {
         when:
         def response = query("datafetcher/sort/cars-with-sort.gql",
-                asObjectNode('{"orderBy": [{"manufacturer": "ASC"}, {"garage": {"name": "ASC"}}]}'))
+                asObjectNode('{"orderBy": [{"manufacturer": "ASC"}, {"garage": [{"name": "ASC"},{"address": "ASC"}]}]}'))
 
         List<Car> cars = response.getList('$.data.scr_CarList', Car)
 
@@ -126,6 +125,38 @@ class SortingTest extends AbstractGraphQLTest {
         then:
         manufacturers == ["Acura", "Audi", "BMW", "GAZ", "Mercedes", "Porsche", "Tesla", "VAZ", "ZAZ"]
         garNames == ["Big Bob's Beeper Emporium", "The Fudge Place", "Watch Repair", "P.S. 118"]
+    }
+
+    def "cars are sorted by garage"() {
+        when:
+        def response = query("datafetcher/sort/cars-with-sort.gql",
+                asObjectNode('{"orderBy": {"garage": {"_instanceName": "ASC"}}}'))
+
+        List<Car> cars = response.getList('$.data.scr_CarList', Car)
+
+        List<String> garNames = cars.stream()
+                .filter(car -> car.garage != null)
+                .map(car -> car.garage.name)
+                .collect(Collectors.toList())
+
+        then:
+        garNames == ["Big Bob's Beeper Emporium", "P.S. 118", "The Fudge Place", "Watch Repair"]
+    }
+
+    def "cars are sorted by instance name"() {
+        when:
+        def response = query("datafetcher/sort/cars-with-sort.gql",
+                asObjectNode('{"orderBy": {"_instanceName": "ASC"}}'))
+
+        List<Car> cars = response.getList('$.data.scr_CarList', Car)
+
+        List<String> manufacturers = cars.stream()
+                .map(car -> car.manufacturer)
+                .distinct()
+                .collect(Collectors.toList())
+
+        then:
+        manufacturers == ["Acura", "Audi", "BMW", "GAZ", "Mercedes", "Porsche", "Tesla", "VAZ", "ZAZ"]
     }
 
 }

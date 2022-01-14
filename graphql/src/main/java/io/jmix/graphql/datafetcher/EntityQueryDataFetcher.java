@@ -10,6 +10,7 @@ import io.jmix.core.MetadataTools;
 import io.jmix.core.Sort;
 import io.jmix.core.accesscontext.CrudEntityContext;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.graphql.service.IdentifierService;
@@ -31,6 +32,8 @@ import javax.validation.constraints.NotNull;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static io.jmix.graphql.NamingUtils.SYS_ATTR_INSTANCE_NAME;
 
 @Component("gql_EntityQueryDataFetcher")
 public class EntityQueryDataFetcher {
@@ -89,7 +92,7 @@ public class EntityQueryDataFetcher {
                 Method method = bean.getClass().getDeclaredMethod(GRAPHQL_ENTITY_LOADER_METHOD_NAME,
                         GraphQLEntityDataFetcherContext.class);
                 return responseBuilder.buildResponse((Entity) method.invoke(bean,
-                        new GraphQLEntityDataFetcherContext(metaClass, id, lc, fetchPlan)), fetchPlan, metaClass,
+                                new GraphQLEntityDataFetcherContext(metaClass, id, lc, fetchPlan)), fetchPlan, metaClass,
                         environmentUtils.getDotDelimitedProps(environment));
             }
         };
@@ -118,7 +121,7 @@ public class EntityQueryDataFetcher {
             query.setFirstResult(offset == null ? 0 : offset);
 
             // orderBy
-            OrderedMap<String, Types.SortOrder> orderByConditions = buildOrderByConditionSet(orderBy);
+            OrderedMap<String, Types.SortOrder> orderByConditions = buildOrderByConditionSet(metaClass, orderBy);
             if (orderByConditions.size() > 0) {
                 List<Sort.Order> orders = orderByConditions.entrySet().stream().map(entry -> {
                     String path = entry.getKey();
@@ -165,10 +168,11 @@ public class EntityQueryDataFetcher {
     /**
      * Convert graphql orderBy object to jmix format.
      *
-     * @param orderBy - graphql orderBy object
+     * @param metaClass
+     * @param orderBy   - graphql orderBy object
      * @return an ordered set of pairs that contains propertyPath as key ans SortOrder as value
      */
-    protected OrderedMap<String, Types.SortOrder> buildOrderByConditionSet(@Nullable Object orderBy) {
+    protected OrderedMap<String, Types.SortOrder> buildOrderByConditionSet(MetaClass metaClass, @Nullable Object orderBy) {
         OrderedMap<String, Types.SortOrder> result = new ListOrderedMap<>();
         if (orderBy == null) {
             return result;
@@ -177,12 +181,16 @@ public class EntityQueryDataFetcher {
         String rootPath = "";
         if (Collection.class.isAssignableFrom(orderBy.getClass())) {
             ((Collection<?>) orderBy).forEach(ob -> {
-                Pair<String, Types.SortOrder> singleOrderByCondition = buildOrderBy(rootPath, ob);
-                result.put(singleOrderByCondition.getKey(), singleOrderByCondition.getValue());
+                List<Pair<String, Types.SortOrder>> singleOrderByConditions = buildOrderBy(metaClass, rootPath, ob);
+                singleOrderByConditions.forEach(singleOrderByCondition -> {
+                    result.put(singleOrderByCondition.getKey(), singleOrderByCondition.getValue());
+                });
             });
         } else {
-            Pair<String, Types.SortOrder> singleOrderByCondition = buildOrderBy(rootPath, orderBy);
-            result.put(singleOrderByCondition.getKey(), singleOrderByCondition.getValue());
+            List<Pair<String, Types.SortOrder>> singleOrderByConditions = buildOrderBy(metaClass, rootPath, orderBy);
+            singleOrderByConditions.forEach(singleOrderByCondition -> {
+                result.put(singleOrderByCondition.getKey(), singleOrderByCondition.getValue());
+            });
         }
         return result;
     }
@@ -190,41 +198,74 @@ public class EntityQueryDataFetcher {
     /**
      * Convert graphql orderBy object to jmix format.
      *
-     * @param path    - parent property path
-     * @param orderBy - graphql orderBy object
+     * @param metaClass
+     * @param path      - parent property path
+     * @param orderBy   - graphql orderBy object
      * @return pair that contains propertyPath as key ans SortOrder as value
      */
-    protected Pair<String, Types.SortOrder> buildOrderBy(String path, Object orderBy) {
-
-        Map.Entry<String, Object> entry = ((Map<String, Object>) orderBy).entrySet().iterator().next();
-        String key = entry.getKey();
-        Object valueObj = entry.getValue();
-        Class<?> valueClass = valueObj.getClass();
-
-        if (Map.class.isAssignableFrom(valueClass)) {
-            return buildOrderBy(key, valueObj);
+    protected List<Pair<String, Types.SortOrder>> buildOrderBy(MetaClass metaClass, String path, Object orderBy) {
+        if (orderBy instanceof Map) {
+            orderBy = processInnerOrderBy(metaClass, path, (Map<String, Object>) orderBy);
         }
+        for (Map.Entry<String, Object> entry : ((Map<String, Object>) orderBy).entrySet()) {
+            String key = entry.getKey();
+            Object valueObj = entry.getValue();
+            Class<?> valueClass = valueObj.getClass();
 
-        String propertyPath = StringUtils.isBlank(path) ? key : path + "." + key;
-
-        if (Types.SortOrder.class.isAssignableFrom(valueObj.getClass())) {
-            return new ImmutablePair<>(propertyPath, ((Types.SortOrder) valueObj));
-        }
-
-        if (String.class.isAssignableFrom(valueClass)) {
-            String value = (String) valueObj;
-            return new ImmutablePair<>(propertyPath, Types.SortOrder.valueOf(value));
-        }
-
-        if (Collection.class.isAssignableFrom(valueClass)) {
-            valueObj = ((Collection<?>) valueObj).iterator().next();
-            if (Types.SortOrder.class.isAssignableFrom(valueObj.getClass())) {
-                return new ImmutablePair<>(propertyPath, ((Types.SortOrder) valueObj));
+            if (valueObj instanceof List) {
+                List<Pair<String, Types.SortOrder>> sortOrder = new ArrayList<>();
+                MetaClass propertyMetaClass = metaClass.findProperty(key).getRange().asClass();
+                for (Object order : (List<?>) valueObj) {
+                    if (order instanceof Map) {
+                        order = processInnerOrderBy(propertyMetaClass, key, (Map<String, Object>) order);
+                    }
+                    sortOrder.addAll(buildOrderBy(propertyMetaClass, key, order));
+                }
+                return sortOrder;
             }
+
+            if (Map.class.isAssignableFrom(valueClass)) {
+                MetaClass propertyMetaClass = metaClass.findProperty(key).getRange().asClass();
+                Map<String, Object> innerOrderBy = processInnerOrderBy(propertyMetaClass, key, (Map<String, Object>) valueObj);
+                return buildOrderBy(metaClass, key, innerOrderBy);
+            }
+
+            String propertyPath = StringUtils.isBlank(path) ? key : path + "." + key;
+
+            if (Types.SortOrder.class.isAssignableFrom(valueObj.getClass())) {
+                return Collections.singletonList(new ImmutablePair<>(propertyPath, ((Types.SortOrder) valueObj)));
+            }
+
+            if (String.class.isAssignableFrom(valueClass)) {
+                String value = (String) valueObj;
+                return Collections.singletonList(new ImmutablePair<>(propertyPath, Types.SortOrder.valueOf(value)));
+            }
+
+            if (Collection.class.isAssignableFrom(valueClass)) {
+                valueObj = ((Collection<?>) valueObj).iterator().next();
+                if (Types.SortOrder.class.isAssignableFrom(valueObj.getClass())) {
+                    return Collections.singletonList(new ImmutablePair<>(propertyPath, ((Types.SortOrder) valueObj)));
+                }
+                throw new UnsupportedOperationException("Can't parse orderBy value from value class " + valueObj.getClass());
+            }
+
             throw new UnsupportedOperationException("Can't parse orderBy value from value class " + valueObj.getClass());
         }
+        return Collections.emptyList();
+    }
 
-        throw new UnsupportedOperationException("Can't parse orderBy value from value class " + valueObj.getClass());
+    private Map<String, Object> processInnerOrderBy(MetaClass metaClass, String property, Map<String, Object> valueObj) {
+        Map<String, Object> innerOrderBy = new LinkedHashMap<>();
+        for (String key : valueObj.keySet()) {
+            if (key.equals(SYS_ATTR_INSTANCE_NAME)) {
+                for (MetaProperty metaProperty : metadataTools.getInstanceNameRelatedProperties(metaClass)) {
+                    innerOrderBy.put(metaProperty.getName(), valueObj.get(key));
+                }
+            } else {
+                innerOrderBy.put(key, valueObj.get(key));
+            }
+        }
+        return innerOrderBy;
     }
 
     public DataFetcher<?> countEntities(MetaClass metaClass) {

@@ -143,4 +143,20 @@ class SortingTest extends AbstractGraphQLTest {
         garNames == ["Big Bob's Beeper Emporium", "P.S. 118", "The Fudge Place", "Watch Repair"]
     }
 
+    def "cars are sorted by instance name"() {
+        when:
+        def response = query("datafetcher/sort/cars-with-sort.gql",
+                asObjectNode('{"orderBy": {"_instanceName": "ASC"}}'))
+
+        List<Car> cars = response.getList('$.data.scr_CarList', Car)
+
+        List<String> manufacturers = cars.stream()
+                .map(car -> car.manufacturer)
+                .distinct()
+                .collect(Collectors.toList())
+
+        then:
+        manufacturers == ["Acura", "Audi", "BMW", "GAZ", "Mercedes", "Porsche", "Tesla", "VAZ", "ZAZ"]
+    }
+
 }

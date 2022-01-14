@@ -204,6 +204,9 @@ public class EntityQueryDataFetcher {
      * @return pair that contains propertyPath as key ans SortOrder as value
      */
     protected List<Pair<String, Types.SortOrder>> buildOrderBy(MetaClass metaClass, String path, Object orderBy) {
+        if (orderBy instanceof Map) {
+            orderBy = processInnerOrderBy(metaClass, path, (Map<String, Object>) orderBy);
+        }
         for (Map.Entry<String, Object> entry : ((Map<String, Object>) orderBy).entrySet()) {
             String key = entry.getKey();
             Object valueObj = entry.getValue();

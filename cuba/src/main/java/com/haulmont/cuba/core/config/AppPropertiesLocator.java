@@ -107,7 +107,7 @@ public class AppPropertiesLocator {
                     Set<String> cache = new HashSet<>();
                     List<JmixModuleDescriptor> allModules = jmixModulesProcessor.getJmixModules().getAll();
                     List<String> idList = allModules.stream()
-                            .map(JmixModuleDescriptor::getId)
+                            .map(JmixModuleDescriptor::getBasePackage)
                             .collect(Collectors.toList());
                     for (String rootPackage : idList) {
                         String packagePrefix = rootPackage.replace(".", "/") + "/**/*.class";

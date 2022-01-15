@@ -57,6 +57,11 @@ public class UiProperties {
     UrlHandlingMode urlHandlingMode;
     List<String> linkHandlerActions;
     List<String> viewFileExtensions;
+
+    /**
+     * Threshold in bytes on which downloaded through {@code ByteArrayDataProvider} byte arrays will be saved to
+     * temporary files to prevent HTTP session memory leaks. Default is 100 KB.
+     */
     int saveExportedByteArrayDataThresholdBytes;
 
     /**
@@ -220,6 +225,9 @@ public class UiProperties {
         return viewFileExtensions;
     }
 
+    /**
+     * @see #saveExportedByteArrayDataThresholdBytes
+     */
     public int getSaveExportedByteArrayDataThresholdBytes() {
         return saveExportedByteArrayDataThresholdBytes;
     }

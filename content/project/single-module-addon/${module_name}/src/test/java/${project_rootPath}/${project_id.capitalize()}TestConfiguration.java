@@ -14,7 +14,7 @@ import javax.sql.DataSource;
 @SpringBootConfiguration
 @EnableAutoConfiguration
 @Import(${project_id.capitalize()}Configuration.class)
-@JmixModule(dependsOn = ${project_id.capitalize()}Configuration.class)
+@JmixModule(id = "${project_rootPackage}.test", dependsOn = ${project_id.capitalize()}Configuration.class)
 public class ${project_id.capitalize()}TestConfiguration {
 
     @Bean

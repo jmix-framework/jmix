@@ -17,8 +17,8 @@ subprojects {
 
     repositories {
         mavenCentral()<%if (project_additionalRepositories) {
-            project_additionalRepositories.each { additionalRepository ->%>
-            ${additionalRepository}<%}}%>
+        project_additionalRepositories.each { additionalRepository ->%>
+    ${additionalRepository}<%}}%>
     }
 
     jmix {

@@ -107,7 +107,7 @@ public class CreditsLoader {
                     String id = licenseEl.attributeValue("id");
                     String name = licenseEl.attributeValue("name");
                     String url = licenseEl.attributeValue("url");
-                    licenses.computeIfAbsent(id, k -> new LicenseItem(name, url));
+                    licenses.putIfAbsent(id, new LicenseItem(name, url));
                 }
             }
 
@@ -138,7 +138,7 @@ public class CreditsLoader {
                         log.warn("Cannot resolve license for " + name);
                     }
                     CreditsItem creditsItem = new CreditsItem(name, url, licenseName, licenseUrl);
-                    creditsItems.compute(name, (k, v) -> creditsItem);
+                    creditsItems.put(name, creditsItem);
                 }
             }
 

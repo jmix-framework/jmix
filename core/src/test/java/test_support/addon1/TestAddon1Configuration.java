@@ -9,8 +9,8 @@ import test_support.base.TestBaseConfiguration;
 
 @Configuration
 @ComponentScan
-@JmixModule(dependsOn = TestBaseConfiguration.class)
-@PropertySource(name = "test_support.addon1", value = "test_support/addon1/addon1-module.properties")
+@JmixModule(id = "addon-1", dependsOn = TestBaseConfiguration.class)
+@PropertySource(name = "addon-1", value = "test_support/addon1/addon1-module.properties")
 public class TestAddon1Configuration {
 
     @Bean

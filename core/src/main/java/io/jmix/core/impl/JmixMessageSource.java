@@ -41,12 +41,12 @@ public class JmixMessageSource extends ReloadableResourceBundleMessageSource {
         ListIterator<JmixModuleDescriptor> iterator = modules.getAll().listIterator(modules.getAll().size());
         while (iterator.hasPrevious()) {
             JmixModuleDescriptor module = iterator.previous();
-            addBasenames(addModuleBasename(module.getId()));
+            addBasenames(addModuleBasename(module.getBasePackage()));
         }
     }
 
-    protected String addModuleBasename(String moduleId) {
-        return moduleId.replace('.', '/') + "/messages";
+    protected String addModuleBasename(String moduleBasePackage) {
+        return moduleBasePackage.replace('.', '/') + "/messages";
     }
 
     @Override

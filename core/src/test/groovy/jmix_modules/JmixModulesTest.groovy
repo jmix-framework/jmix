@@ -45,8 +45,12 @@ class JmixModulesTest extends Specification {
         modules.all[0].id == 'io.jmix.core'
 
         def jmixCore = modules.get('io.jmix.core')
-        def addon1 = modules.get('test_support.addon1')
+        def addon1 = modules.get('addon-1')
         def app = modules.get('test_support.app')
+
+        jmixCore.basePackage == 'io.jmix.core'
+        addon1.basePackage == 'test_support.addon1'
+        app.basePackage == 'test_support.app'
 
         addon1.dependsOn(jmixCore)
         app.dependsOn(addon1)
@@ -57,7 +61,7 @@ class JmixModulesTest extends Specification {
         expect:
 
         def base = modules.get('test_support.base')
-        def addon1 = modules.get('test_support.addon1')
+        def addon1 = modules.get('addon-1')
         def app = modules.get('test_support.app')
 
         base.getProperty('jmix.core.fetch-plans-config') == 'test_support/base/fetch-plans.xml'

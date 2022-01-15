@@ -30,11 +30,18 @@ import java.util.List;
 public class JmixModuleDescriptor {
 
     private final String id;
+    private final String basePackage;
     private final List<JmixModuleDescriptor> dependencies = new ArrayList<>();
     private PropertySource<?> propertySource;
 
+    public JmixModuleDescriptor(String id, String basePackage) {
+        this.id = id;
+        this.basePackage = basePackage;
+    }
+
     public JmixModuleDescriptor(String id) {
         this.id = id;
+        this.basePackage = id;
     }
 
     /**
@@ -45,10 +52,10 @@ public class JmixModuleDescriptor {
     }
 
     /**
-     * @return base package of the module. It is normally equal to {@link #getId()}
+     * @return base package of the module
      */
     public String getBasePackage() {
-        return id;
+        return basePackage;
     }
 
     /**

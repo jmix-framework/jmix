@@ -63,7 +63,7 @@ public class JmixModulesClasspathScanner extends AbstractClasspathScanner {
     @Autowired
     public void setJmixComponents(JmixModules jmixModules) {
         basePackages = jmixModules.getAll().stream()
-                .map(JmixModuleDescriptor::getId)
+                .map(JmixModuleDescriptor::getBasePackage)
                 .collect(Collectors.toList());
     }
 

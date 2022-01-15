@@ -38,7 +38,9 @@ import org.springframework.util.ClassUtils;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Internal
 public class JmixModulesProcessor implements BeanDefinitionRegistryPostProcessor, EnvironmentAware, PriorityOrdered {
@@ -54,7 +56,7 @@ public class JmixModulesProcessor implements BeanDefinitionRegistryPostProcessor
     @Override
     public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
         List<JmixModuleDescriptor> modules = new ArrayList<>();
-        List<String> moduleIds = new ArrayList<>();
+        Map<String, Class<?>> idToClassMap = new HashMap<>();
 
         List<JmixModuleDescriptor> leafModules = new ArrayList<>();
 
@@ -84,15 +86,21 @@ public class JmixModulesProcessor implements BeanDefinitionRegistryPostProcessor
             }
             JmixModule moduleAnnotation = beanClass.getAnnotation(JmixModule.class);
             String moduleId = getModuleId(moduleAnnotation, beanClass);
-            if (!moduleIds.contains(moduleId)) {
-                moduleIds.add(moduleId);
+
+            Class<?> aClass = idToClassMap.get(moduleId);
+            if (aClass != null && aClass != beanClass) {
+                throw new IllegalStateException(String.format(
+                        "Duplicated Jmix module id '%s' is provided by %s and %s. " +
+                        "Consider using @JmixModule.id attribute to specify a unique module id.",
+                        moduleId, aClass.getName(), beanClass.getName()));
             }
+            idToClassMap.put(moduleId, beanClass);
 
             JmixModuleDescriptor module = modules.stream()
                     .filter(descriptor -> descriptor.getId().equals(moduleId))
                     .findAny()
                     .orElseGet(() -> {
-                        JmixModuleDescriptor descriptor = new JmixModuleDescriptor(moduleId);
+                        JmixModuleDescriptor descriptor = new JmixModuleDescriptor(moduleId, beanClass.getPackage().getName());
                         load(descriptor, moduleAnnotation, modules);
                         return descriptor;
                     });
@@ -158,7 +166,7 @@ public class JmixModulesProcessor implements BeanDefinitionRegistryPostProcessor
                         .filter(descriptor -> descriptor.getId().equals(depModuleId))
                         .findAny()
                         .orElseGet(() -> {
-                            JmixModuleDescriptor descriptor = new JmixModuleDescriptor(depModuleId);
+                            JmixModuleDescriptor descriptor = new JmixModuleDescriptor(depModuleId, depClass.getPackage().getName());
                             load(descriptor, depModuleAnnotation, modules);
                             modules.add(descriptor);
                             return descriptor;

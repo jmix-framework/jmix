@@ -32,7 +32,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 
 @Configuration
-@JmixModule(dependsOn = RestConfiguration.class)
+@JmixModule(id = "rest-anonymous-tests", dependsOn = RestConfiguration.class)
 @PropertySource("classpath:/application.properties")
 public class JmixRestTestAnonymousConfiguration {
 

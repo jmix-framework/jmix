@@ -20,6 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.inject.Named;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @UiController("JobModel.edit")
 @UiDescriptor("job-model-edit.xml")
@@ -177,6 +179,17 @@ public class JobModelEdit extends StandardEditor<JobModel> {
                 }
             }
         }
+
+        //validate if job data param keys are not unique
+        boolean jobDataMapOverlapped = jobDataParamsDc.getItems().stream()
+                .map(JobDataParameterModel::getKey)
+                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
+                .entrySet()
+                .stream().anyMatch(entry -> entry.getValue() > 1);
+        if (jobDataMapOverlapped) {
+            throw new ValidationException(messages.getMessage(this.getClass(), "jobDataParamKeyAlreadyExistsValidationMessage"));
+        }
+
         quartzService.updateQuartzJob(jobModel, jobDataParamsDc.getItems(), triggerModelDc.getItems(), isJobShouldBeReplaced);
     }
 

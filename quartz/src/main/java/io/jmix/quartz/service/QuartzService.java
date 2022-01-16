@@ -4,6 +4,7 @@ import com.google.common.base.Strings;
 import io.jmix.core.UnconstrainedDataManager;
 import io.jmix.quartz.model.*;
 import io.jmix.quartz.util.QuartzJobDetailsFinder;
+import io.jmix.ui.component.ValidationException;
 import org.apache.commons.collections4.CollectionUtils;
 import org.quartz.*;
 import org.quartz.impl.matchers.GroupMatcher;
@@ -156,7 +157,7 @@ public class QuartzService {
     }
 
     /**
-     * Updates job in Quartz engine
+     * Updates job in the Quartz engine
      *
      * @param jobModel               job to edit
      * @param jobDataParameterModels parameters for job
@@ -179,7 +180,6 @@ public class QuartzService {
                 for (Trigger trigger : scheduler.getTriggersOfJob(jobKey)) {
                     scheduler.unscheduleJob(trigger.getKey());
                 }
-
                 //recreate triggers
                 for (TriggerModel triggerModel : triggerModels) {
                     Trigger trigger = buildTrigger(jobDetail, triggerModel);
@@ -188,10 +188,10 @@ public class QuartzService {
             }
         } catch (SchedulerException e) {
             log.warn("Unable to update job with name {} and group {}", jobModel.getJobName(), jobModel.getJobGroup(), e);
-            throw new IllegalStateException(e.getMessage());
+            throw new ValidationException(e.getMessage());
         } catch (ClassNotFoundException e) {
             log.warn("Unable to find job class {}", jobModel.getJobClass());
-            throw new IllegalArgumentException("Job class " + jobModel.getJobClass() + " not found");
+            throw new ValidationException("Job class " + jobModel.getJobClass() + " not found");
         }
     }
 
@@ -309,6 +309,39 @@ public class QuartzService {
             scheduler.deleteJob(JobKey.jobKey(jobName, jobGroup));
         } catch (SchedulerException e) {
             log.warn("Unable to delete job with name {} and group {}", jobName, jobGroup, e);
+        }
+
+    }
+
+    /**
+     * Delegates to the Quartz engine determination if the given job exists
+     *
+     * @param jobName  name of the job
+     * @param jobGroup group of the job
+     * @return true if job with provided name and group exists, false otherwise
+     */
+    public boolean checkJobExists(String jobName, String jobGroup) {
+        try {
+            return scheduler.checkExists(JobKey.jobKey(jobName, jobGroup));
+        } catch (SchedulerException e) {
+            log.warn("Unable to define if job with name {} and group {} exists", jobName, jobGroup, e);
+            return false;
+        }
+    }
+
+    /**
+     * Delegates to the Quartz engine determination if the given trigger exists
+     *
+     * @param triggerName  name of the trigger
+     * @param triggerGroup group of the trigger
+     * @return true if trigger with provided name and group exists, false otherwise
+     */
+    public boolean checkTriggerExists(String triggerName, String triggerGroup) {
+        try {
+            return scheduler.checkExists(TriggerKey.triggerKey(triggerName, triggerGroup));
+        } catch (SchedulerException e) {
+            log.warn("Unable to define if trigger with name {} and group {} exists", triggerName, triggerGroup, e);
+            return false;
         }
     }
 }

@@ -1,16 +1,21 @@
 package io.jmix.quartz;
 
+import io.jmix.core.CoreConfiguration;
 import io.jmix.core.UnconstrainedDataManager;
+import io.jmix.data.DataConfiguration;
+import io.jmix.eclipselink.EclipselinkConfiguration;
 import io.jmix.quartz.model.*;
 import io.jmix.quartz.service.QuartzService;
 import io.jmix.quartz.util.QuartzJobClassFinder;
 import io.jmix.quartz.util.QuartzJobDetailsFinder;
+import io.jmix.ui.component.ValidationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.quartz.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -19,9 +24,16 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-@SpringBootTest
-@ContextConfiguration(classes = TestConfiguration.class)
-public class QuartzTestApp {
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(
+        classes = {
+                CoreConfiguration.class,
+                DataConfiguration.class,
+                EclipselinkConfiguration.class,
+                QuartTestApplication.class
+        }
+)
+public class QuartzTest {
 
     @Autowired
     private Scheduler scheduler;
@@ -42,7 +54,7 @@ public class QuartzTestApp {
     public void testFindQuartzJobClasses() {
         List<String> classNames = quartzJobClassFinder.getQuartzJobClassNames();
         Assertions.assertEquals(1, classNames.size());
-        Assertions.assertEquals("io.jmix.quartz.TestConfiguration$MyQuartzJob", classNames.get(0));
+        Assertions.assertEquals("io.jmix.quartz.QuartTestApplication$MyQuartzJob", classNames.get(0));
     }
 
     @Test
@@ -61,7 +73,7 @@ public class QuartzTestApp {
 
         JobDetail testJob = JobBuilder.newJob()
                 .withIdentity("testJobName", "testJobGroup")
-                .ofType(TestConfiguration.MyQuartzJob.class)
+                .ofType(QuartTestApplication.MyQuartzJob.class)
                 .usingJobData("simpleJobParamKey", "simpleJobParamValue")
                 .storeDurably()
                 .build();
@@ -78,7 +90,7 @@ public class QuartzTestApp {
         Assertions.assertNotNull(jobModel);
         Assertions.assertEquals("testJobName", jobModel.getJobName());
         Assertions.assertEquals("testJobGroup", jobModel.getJobGroup());
-        Assertions.assertEquals("io.jmix.quartz.TestConfiguration$MyQuartzJob", jobModel.getJobClass());
+        Assertions.assertEquals("io.jmix.quartz.QuartTestApplication$MyQuartzJob", jobModel.getJobClass());
         Assertions.assertEquals(0, jobModel.getTriggers().size());
         Assertions.assertEquals(1, jobModel.getJobDataParameters().size());
         Assertions.assertEquals("simpleJobParamKey", jobModel.getJobDataParameters().get(0).getKey());
@@ -117,7 +129,7 @@ public class QuartzTestApp {
         JobModel jobModel = dataManager.create(JobModel.class);
         jobModel.setJobName("testJobName");
         jobModel.setJobGroup("testJobGroup");
-        jobModel.setJobClass(TestConfiguration.MyQuartzJob.class.getName());
+        jobModel.setJobClass(QuartTestApplication.MyQuartzJob.class.getName());
 
         List<JobDataParameterModel> jobDataParameterModels = new ArrayList<>();
         JobDataParameterModel jobDataParameterModel = dataManager.create(JobDataParameterModel.class);
@@ -154,7 +166,7 @@ public class QuartzTestApp {
         triggerModel.setStartDate(Date.from(LocalDateTime.now().plus(1, ChronoUnit.HOURS).atZone(ZoneId.systemDefault()).toInstant()));
         triggerModels.add(triggerModel);
 
-        Assertions.assertThrows(IllegalStateException.class, () -> quartzService.updateQuartzJob(jobModel, jobDataParameterModels, triggerModels, false));
+        Assertions.assertThrows(ValidationException.class, () -> quartzService.updateQuartzJob(jobModel, jobDataParameterModels, triggerModels, false));
 
         List<JobModel> allJobs = quartzService.getAllJobs();
         Assertions.assertEquals(2, allJobs.size());

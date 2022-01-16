@@ -168,11 +168,14 @@ public class JobModelBrowse extends StandardLookup<JobModel> {
         loadJobsData();
     }
 
-    @Install(to = "jobModelsTable.edit", subject = "afterCloseHandler")
-    private void jobModelsTableEditAfterCloseHandler(AfterCloseEvent event) {
-        if (event.closedWith(StandardOutcome.COMMIT)) {
-            loadJobsData();
-        }
+    @Install(to = "jobModelsTable.create", subject = "afterCommitHandler")
+    private void jobModelsTableCreateAfterCommitHandler(JobModel jobModel) {
+        loadJobsData();
+    }
+
+    @Install(to = "jobModelsTable.edit", subject = "afterCommitHandler")
+    private void jobModelsTableEditAfterCommitHandler(JobModel jobModel) {
+        loadJobsData();
     }
 
     private boolean isJobActive(JobModel jobModel) {

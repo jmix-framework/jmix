@@ -29,6 +29,7 @@
                 <textField id="jobNameField" property="jobName"/>
                 <comboBox id="jobGroupField" property="jobGroup"/>
                 <comboBox id="jobClassField" property="jobClass"/>
+                <textArea id="jobDescriptionField" property="description"/>
             </column>
         </form>
 

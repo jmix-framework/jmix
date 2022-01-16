@@ -53,6 +53,7 @@ public class QuartzService {
 
                 JobDetail jobDetail = scheduler.getJobDetail(jobKey);
                 jobModel.setJobClass(jobDetail.getJobClass().getName());
+                jobModel.setDescription(jobDetail.getDescription());
 
                 jobModel.setJobSource(jobDetailsKeys.contains(jobKey) ? JobSource.PREDEFINED : JobSource.USER_DEFINED);
 
@@ -208,6 +209,8 @@ public class QuartzService {
                     .ofType(jobClass)
                     .storeDurably();
         }
+
+        jobBuilder.withDescription(jobModel.getDescription());
 
         if (CollectionUtils.isNotEmpty(jobDataParameterModels)) {
             jobDataParameterModels.forEach(jobDataParameterModel ->

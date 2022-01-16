@@ -81,6 +81,7 @@
                         <date format="msg://dateTimeWithSeconds"/>
                     </formatter>
                 </column>
+                <column id="description"/>
             </columns>
             <simplePagination/>
             <buttonsPanel id="buttonsPanel"

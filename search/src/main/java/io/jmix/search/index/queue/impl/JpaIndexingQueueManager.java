@@ -382,7 +382,8 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
         transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
         rawIds = transactionTemplate.execute(status -> {
             EntityManager em = storeAwareLocator.getEntityManager(metaClass.getStore().getName());
-            Query query = em.createQuery(format("select e.%s from %s e", primaryKeyName, entityName));
+            String discriminatorCondition = metaClass.getDescendants().isEmpty() ? "" : "where TYPE(e) = " + entityName;
+            Query query = em.createQuery(format("select e.%s from %s e %s", primaryKeyName, entityName, discriminatorCondition));
             return query.getResultList();
         });
         if (rawIds == null) {

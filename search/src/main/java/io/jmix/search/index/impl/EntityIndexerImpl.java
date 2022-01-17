@@ -199,9 +199,11 @@ public class EntityIndexerImpl implements EntityIndexer {
                             .collect(Collectors.toList());
                 } else {
                     String primaryKeyName = metadataTools.getPrimaryKeyName(metaClass);
+                    String discriminatorCondition = metaClass.getDescendants().isEmpty() ? "" : " and TYPE(e) = " + metaClass.getName();
+                    String queryString = "select e from " + metaClass.getName() + " e where e." + primaryKeyName + " in :ids" + discriminatorCondition;
                     loaded = dataManager
                             .load(metaClass.getJavaClass())
-                            .query("select e from " + metaClass.getName() + " e where e." + primaryKeyName + " in :ids")
+                            .query(queryString)
                             .parameter("ids", entityIds)
                             .fetchPlan(fetchPlan)
                             .list();

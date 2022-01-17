@@ -106,11 +106,17 @@ public abstract class OrderBasedEntityIdsLoader implements EntityIdsLoader {
             resultProperties.add("orderingValue");
         }
 
-        String condition = initial
-                ? ""
-                : "where e." + orderingProperty + " > :value";
+        List<String> conditions = new ArrayList<>(2);
+        if (!entityClass.getDescendants().isEmpty()) {
+            conditions.add("TYPE(e) = " + entityName);
+        }
+        if (!initial) {
+            conditions.add("e." + orderingProperty + " > :value");
+        }
 
-        queryString = String.format("select %s from %s e %s order by e.%s", selection, entityName, condition, orderingProperty);
+        String where = conditions.isEmpty() ? "" : "where " + String.join(" and ", conditions);
+
+        queryString = String.format("select %s from %s e %s order by e.%s", selection, entityName, where, orderingProperty);
 
         ValueLoadContext.Query query = ValueLoadContext.createQuery(queryString).setMaxResults(batchSize);
         if (!initial) {
@@ -125,7 +131,7 @@ public abstract class OrderBasedEntityIdsLoader implements EntityIdsLoader {
 
     @Nullable
     protected Object resolveLastLoadedOrderingValue(List<KeyValueEntity> loadedValues, String primaryKeyProperty, String orderingProperty) {
-        if(loadedValues.isEmpty()) {
+        if (loadedValues.isEmpty()) {
             return null;
         }
         String effectiveProperty = primaryKeyProperty.equals(orderingProperty) ? "objectId" : "orderingValue";

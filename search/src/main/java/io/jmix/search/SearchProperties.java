@@ -19,6 +19,9 @@ package io.jmix.search;
 import io.jmix.core.Resources;
 import io.jmix.search.index.IndexSchemaManagementStrategy;
 import org.apache.commons.lang3.StringUtils;
+import org.elasticsearch.action.support.WriteRequest.RefreshPolicy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;
 import org.springframework.boot.context.properties.bind.DefaultValue;
@@ -30,6 +33,8 @@ import java.util.List;
 @ConfigurationProperties(prefix = "jmix.search")
 @ConstructorBinding
 public class SearchProperties {
+
+    private static final Logger log = LoggerFactory.getLogger(SearchProperties.class);
 
     /**
      * Max amount of objects displayed on single page of search result.
@@ -294,6 +299,13 @@ public class SearchProperties {
     }
 
     /**
+     * @see Elasticsearch#bulkRequestRefreshPolicy
+     */
+    public RefreshPolicy getElasticsearchBulkRequestRefreshPolicy() {
+        return elasticsearch.bulkRequestRefreshPolicy;
+    }
+
+    /**
      * @see #indexSchemaManagementStrategy
      */
     public IndexSchemaManagementStrategy getIndexSchemaManagementStrategy() {
@@ -329,15 +341,33 @@ public class SearchProperties {
 
         protected final SSL ssl;
 
+        /**
+         * Refresh policy that should be used with bulk requests to Elasticsearch: NONE (default), WAIT_UNTIL, IMMEDIATE
+         */
+        protected final RefreshPolicy bulkRequestRefreshPolicy;
+
         public Elasticsearch(
                 @DefaultValue("localhost:9200") String url,
                 String login,
                 String password,
-                @DefaultValue SSL ssl) {
+                @DefaultValue SSL ssl,
+                @DefaultValue("NONE") String bulkRequestRefreshPolicy) {
             this.url = url;
             this.login = login;
             this.password = password;
             this.ssl = ssl;
+            this.bulkRequestRefreshPolicy = resolveRefreshPolicy(bulkRequestRefreshPolicy.toUpperCase());
+        }
+
+        protected RefreshPolicy resolveRefreshPolicy(String propertyValue) {
+            RefreshPolicy refreshPolicy;
+            try {
+                refreshPolicy = RefreshPolicy.valueOf(propertyValue);
+            } catch (Exception e) {
+                refreshPolicy = RefreshPolicy.NONE;
+                log.warn("Unknown refresh policy '{}'. Default one ('{}') will be used.", propertyValue, refreshPolicy);
+            }
+            return refreshPolicy;
         }
     }
 

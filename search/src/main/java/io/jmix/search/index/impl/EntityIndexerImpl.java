@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.node.*;
 import io.jmix.core.*;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.search.SearchProperties;
 import io.jmix.search.index.EntityIndexer;
 import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.IndexResult;
@@ -35,6 +36,7 @@ import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.support.WriteRequest.RefreshPolicy;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.xcontent.XContentType;
@@ -69,6 +71,8 @@ public class EntityIndexerImpl implements EntityIndexer {
     protected IndexStateRegistry indexStateRegistry;
     @Autowired
     protected MetadataTools metadataTools;
+    @Autowired
+    protected SearchProperties searchProperties;
 
     protected ObjectMapper objectMapper = new ObjectMapper();
 
@@ -146,6 +150,9 @@ public class EntityIndexerImpl implements EntityIndexer {
 
     protected BulkResponse executeBulkRequest(BulkRequest request) {
         try {
+            RefreshPolicy refreshPolicy = searchProperties.getElasticsearchBulkRequestRefreshPolicy();
+            log.debug("Refresh policy: {}", refreshPolicy);
+            request.setRefreshPolicy(refreshPolicy);
             BulkResponse bulkResponse = esClient.bulk(request, RequestOptions.DEFAULT);
             log.debug("Bulk Response: Took {}, Status = {}, With Failures = {}{}",
                     bulkResponse.getTook(), bulkResponse.status(), bulkResponse.hasFailures(),

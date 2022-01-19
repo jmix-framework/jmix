@@ -326,7 +326,7 @@ public class RemoveAction extends ItemTrackingAction
     }
 
     protected void doRemove(Set<Entity> selected, boolean autocommit) {
-        CollectionDatasource datasource = null/*target.getDatasource() TODO: legac-ui*/;
+        CollectionDatasource datasource = target.getDatasource();
         for (Entity item : selected) {
             datasource.removeItem(item);
         }

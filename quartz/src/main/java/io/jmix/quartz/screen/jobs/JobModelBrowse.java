@@ -1,7 +1,6 @@
 package io.jmix.quartz.screen.jobs;
 
 import com.google.common.base.Strings;
-import io.jmix.core.Messages;
 import io.jmix.quartz.model.JobModel;
 import io.jmix.quartz.model.JobSource;
 import io.jmix.quartz.model.JobState;
@@ -36,7 +35,7 @@ public class JobModelBrowse extends StandardLookup<JobModel> {
     private Notifications notifications;
 
     @Autowired
-    private Messages messages;
+    private MessageBundle messageBundle;
 
     @Autowired
     private RemoveOperation removeOperation;
@@ -118,7 +117,7 @@ public class JobModelBrowse extends StandardLookup<JobModel> {
         JobModel selectedJobModel = jobModelsTable.getSelected().iterator().next();
         quartzService.executeNow(selectedJobModel.getJobName(), selectedJobModel.getJobGroup());
         notifications.create(Notifications.NotificationType.HUMANIZED)
-                .withDescription(String.format(messages.getMessage(JobModelBrowse.class, "jobExecuted"), selectedJobModel.getJobName()))
+                .withDescription(messageBundle.formatMessage("jobExecuted", selectedJobModel.getJobName()))
                 .show();
 
         loadJobsData();
@@ -129,7 +128,7 @@ public class JobModelBrowse extends StandardLookup<JobModel> {
         JobModel selectedJobModel = jobModelsTable.getSelected().iterator().next();
         quartzService.resumeJob(selectedJobModel.getJobName(), selectedJobModel.getJobGroup());
         notifications.create(Notifications.NotificationType.HUMANIZED)
-                .withDescription(String.format(messages.getMessage(JobModelBrowse.class, "jobResumed"), selectedJobModel.getJobName()))
+                .withDescription(messageBundle.formatMessage("jobResumed", selectedJobModel.getJobName()))
                 .show();
 
         loadJobsData();
@@ -140,7 +139,7 @@ public class JobModelBrowse extends StandardLookup<JobModel> {
         JobModel selectedJobModel = jobModelsTable.getSelected().iterator().next();
         quartzService.pauseJob(selectedJobModel.getJobName(), selectedJobModel.getJobGroup());
         notifications.create(Notifications.NotificationType.HUMANIZED)
-                .withDescription(String.format(messages.getMessage(JobModelBrowse.class, "jobPaused"), selectedJobModel.getJobName()))
+                .withDescription(messageBundle.formatMessage("jobPaused", selectedJobModel.getJobName()))
                 .show();
 
         loadJobsData();
@@ -155,7 +154,7 @@ public class JobModelBrowse extends StandardLookup<JobModel> {
                         JobModel jobToDelete = e.getItems().get(0);
                         quartzService.deleteJob(jobToDelete.getJobName(), jobToDelete.getJobGroup());
                         notifications.create(Notifications.NotificationType.HUMANIZED)
-                                .withDescription(String.format(messages.getMessage(JobModelBrowse.class, "jobDeleted"), jobToDelete.getJobName()))
+                                .withDescription(messageBundle.formatMessage("jobDeleted", jobToDelete.getJobName()))
                                 .show();
                         loadJobsData();
                     }

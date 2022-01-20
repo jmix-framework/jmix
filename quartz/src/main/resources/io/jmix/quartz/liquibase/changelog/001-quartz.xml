@@ -4,8 +4,12 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
 
-    <changeSet id="quartz-init" author="quartz">
-
+    <changeSet id="1" author="jmix-quartz">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="${table_prefix}LOCKS"/>
+            </not>
+        </preConditions>
         <createTable tableName="${table_prefix}LOCKS">
             <column name="SCHED_NAME" type="VARCHAR(120)">
                 <constraints nullable="false"/>
@@ -15,7 +19,14 @@
             </column>
         </createTable>
         <addPrimaryKey columnNames="SCHED_NAME, LOCK_NAME" tableName="${table_prefix}LOCKS"/>
+    </changeSet>
 
+    <changeSet id="2" author="jmix-quartz">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="${table_prefix}FIRED_TRIGGERS"/>
+            </not>
+        </preConditions>
         <createTable tableName="${table_prefix}FIRED_TRIGGERS">
             <column name="SCHED_NAME" type="VARCHAR(120)">
                 <constraints nullable="false"/>
@@ -83,7 +94,14 @@
             <column name="SCHED_NAME"/>
             <column name="INSTANCE_NAME"/>
         </createIndex>
+    </changeSet>
 
+    <changeSet id="3" author="jmix-quartz">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="${table_prefix}CALENDARS"/>
+            </not>
+        </preConditions>
         <createTable tableName="${table_prefix}CALENDARS">
             <column name="SCHED_NAME" type="VARCHAR(120)">
                 <constraints nullable="false"/>
@@ -96,7 +114,14 @@
             </column>
         </createTable>
         <addPrimaryKey columnNames="SCHED_NAME, CALENDAR_NAME" tableName="${table_prefix}CALENDARS"/>
+    </changeSet>
 
+    <changeSet id="4" author="jmix-quartz">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="${table_prefix}PAUSED_TRIGGER_GRPS"/>
+            </not>
+        </preConditions>
         <createTable tableName="${table_prefix}PAUSED_TRIGGER_GRPS">
             <column name="SCHED_NAME" type="VARCHAR(120)">
                 <constraints nullable="false"/>
@@ -106,7 +131,14 @@
             </column>
         </createTable>
         <addPrimaryKey columnNames="SCHED_NAME, TRIGGER_GROUP" tableName="${table_prefix}PAUSED_TRIGGER_GRPS"/>
+    </changeSet>
 
+    <changeSet id="5" author="jmix-quartz">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="${table_prefix}SCHEDULER_STATE"/>
+            </not>
+        </preConditions>
         <createTable tableName="${table_prefix}SCHEDULER_STATE">
             <column name="SCHED_NAME" type="VARCHAR(120)">
                 <constraints nullable="false"/>
@@ -122,7 +154,14 @@
             </column>
         </createTable>
         <addPrimaryKey columnNames="SCHED_NAME, INSTANCE_NAME" tableName="${table_prefix}SCHEDULER_STATE"/>
+    </changeSet>
 
+    <changeSet id="6" author="jmix-quartz">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="${table_prefix}JOB_DETAILS"/>
+            </not>
+        </preConditions>
         <createTable tableName="${table_prefix}JOB_DETAILS">
             <column name="SCHED_NAME" type="VARCHAR(120)">
                 <constraints nullable="false"/>
@@ -162,7 +201,14 @@
             <column name="SCHED_NAME"/>
             <column name="REQUESTS_RECOVERY"/>
         </createIndex>
+    </changeSet>
 
+    <changeSet id="7" author="jmix-quartz">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="${table_prefix}TRIGGERS"/>
+            </not>
+        </preConditions>
         <createTable tableName="${table_prefix}TRIGGERS">
             <column name="SCHED_NAME" type="VARCHAR(120)">
                 <constraints nullable="false"/>
@@ -263,7 +309,14 @@
             <column name="SCHED_NAME"/>
             <column name="TRIGGER_STATE"/>
         </createIndex>
+    </changeSet>
 
+    <changeSet id="8" author="jmix-quartz">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="${table_prefix}BLOB_TRIGGERS"/>
+            </not>
+        </preConditions>
         <createTable tableName="${table_prefix}BLOB_TRIGGERS">
             <column name="SCHED_NAME" type="VARCHAR(120)">
                 <constraints nullable="false"/>
@@ -277,7 +330,14 @@
             <column name="BLOB_DATA" type="${byte_array.type}"/>
         </createTable>
         <addPrimaryKey columnNames="SCHED_NAME, TRIGGER_NAME, TRIGGER_GROUP" tableName="${table_prefix}BLOB_TRIGGERS"/>
+    </changeSet>
 
+    <changeSet id="9" author="jmix-quartz">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="${table_prefix}SIMPROP_TRIGGERS"/>
+            </not>
+        </preConditions>
         <createTable tableName="${table_prefix}SIMPROP_TRIGGERS">
             <column name="SCHED_NAME" type="VARCHAR(120)">
                 <constraints nullable="false"/>
@@ -302,7 +362,14 @@
         </createTable>
         <addPrimaryKey columnNames="SCHED_NAME, TRIGGER_NAME, TRIGGER_GROUP"
                        tableName="${table_prefix}SIMPROP_TRIGGERS"/>
+    </changeSet>
 
+    <changeSet id="10" author="jmix-quartz">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="${table_prefix}CRON_TRIGGERS"/>
+            </not>
+        </preConditions>
         <createTable tableName="${table_prefix}CRON_TRIGGERS">
             <column name="SCHED_NAME" type="VARCHAR(120)">
                 <constraints nullable="false"/>
@@ -319,7 +386,14 @@
             <column name="TIME_ZONE_ID" type="VARCHAR(80)"/>
         </createTable>
         <addPrimaryKey columnNames="SCHED_NAME, TRIGGER_NAME, TRIGGER_GROUP" tableName="${table_prefix}CRON_TRIGGERS"/>
+    </changeSet>
 
+    <changeSet id="11" author="jmix-quartz">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="${table_prefix}SIMPLE_TRIGGERS"/>
+            </not>
+        </preConditions>
         <createTable tableName="${table_prefix}SIMPLE_TRIGGERS">
             <column name="SCHED_NAME" type="VARCHAR(120)">
                 <constraints nullable="false"/>

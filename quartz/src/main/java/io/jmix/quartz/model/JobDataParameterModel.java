@@ -6,7 +6,7 @@ import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import java.util.UUID;
 
-@JmixEntity
+@JmixEntity(name = "quartz_JobDataParameterModel")
 public class JobDataParameterModel {
 
     @JmixGeneratedValue

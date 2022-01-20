@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-@JmixEntity
+@JmixEntity(name = "quartz_JobModel")
 public class JobModel {
 
     @JmixGeneratedValue

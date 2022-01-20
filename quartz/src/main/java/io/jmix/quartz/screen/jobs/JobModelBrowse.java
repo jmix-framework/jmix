@@ -24,7 +24,7 @@ import java.util.stream.Stream;
 
 import static java.util.Comparator.*;
 
-@UiController("JobModel.browse")
+@UiController("quartz_JobModel.browse")
 @UiDescriptor("job-model-browse.xml")
 @LookupComponent("jobModelsTable")
 public class JobModelBrowse extends StandardLookup<JobModel> {

@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
-@UiController("TriggerModel.edit")
+@UiController("quartz_TriggerModel.edit")
 @UiDescriptor("trigger-model-edit.xml")
 @EditedEntityContainer("triggerModelDc")
 public class TriggerModelEdit extends StandardEditor<TriggerModel> {

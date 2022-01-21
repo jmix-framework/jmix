@@ -28,7 +28,7 @@
                 <textField id="cronExpressionField" property="cronExpression" required="true" visible="false"
                            contextHelpTextHtmlEnabled="true" contextHelpText="msg://cronExpressionHelpText"/>
                 <textField id="repeatCountField" property="repeatCount" visible="false"/>
-                <textField id="repeatIntervalField" property="repeatInterval" visible="false"/>
+                <textField id="repeatIntervalField" property="repeatInterval" required="true" visible="false"/>
                 <dateField id="startDateField" property="startDate" datatype="dateTime"/>
                 <dateField id="endDateField" property="endDate" datatype="dateTime"/>
                 <textField id="triggerNameField" property="triggerName"/>

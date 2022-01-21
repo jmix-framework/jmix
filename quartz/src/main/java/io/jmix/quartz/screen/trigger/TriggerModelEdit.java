@@ -34,6 +34,7 @@ public class TriggerModelEdit extends StandardEditor<TriggerModel> {
     @Autowired
     private ComboBox<ScheduleType> scheduleTypeField;
 
+    @SuppressWarnings("ConstantConditions")
     @Subscribe
     public void onBeforeShow(BeforeShowEvent event) {
         initTriggerGroupNames();

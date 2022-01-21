@@ -4,6 +4,7 @@ import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.JmixId;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 
+import javax.annotation.Nullable;
 import java.util.UUID;
 
 @JmixEntity(name = "quartz_JobDataParameterModel")
@@ -33,6 +34,7 @@ public class JobDataParameterModel {
         this.key = key;
     }
 
+    @Nullable
     public String getValue() {
         return value;
     }

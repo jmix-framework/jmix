@@ -6,6 +6,7 @@ import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
 import org.apache.commons.collections4.CollectionUtils;
 
+import javax.annotation.Nullable;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
@@ -87,6 +88,7 @@ public class JobModel {
         this.jobSource = jobSource;
     }
 
+    @Nullable
     public String getDescription() {
         return description;
     }
@@ -113,6 +115,7 @@ public class JobModel {
 
     @Transient
     @JmixProperty
+    @Nullable
     public String getTriggerDescription() {
         if (CollectionUtils.isEmpty(triggers)) {
             return null;
@@ -125,6 +128,7 @@ public class JobModel {
 
     @Transient
     @JmixProperty
+    @Nullable
     public Date getLastFireDate() {
         if (CollectionUtils.isEmpty(triggers)) {
             return null;
@@ -143,6 +147,7 @@ public class JobModel {
 
     @Transient
     @JmixProperty
+    @Nullable
     public Date getNextFireDate() {
         if (CollectionUtils.isEmpty(triggers)) {
             return null;

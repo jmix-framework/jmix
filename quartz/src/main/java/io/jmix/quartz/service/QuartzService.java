@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -200,7 +201,7 @@ public class QuartzService {
     }
 
     @SuppressWarnings("unchecked")
-    private JobDetail buildJobDetail(JobModel jobModel, JobDetail existedJobDetail, List<JobDataParameterModel> jobDataParameterModels)
+    private JobDetail buildJobDetail(JobModel jobModel, @Nullable JobDetail existedJobDetail, List<JobDataParameterModel> jobDataParameterModels)
             throws ClassNotFoundException {
         JobBuilder jobBuilder;
         if (existedJobDetail != null) {

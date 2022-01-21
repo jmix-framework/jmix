@@ -5,8 +5,8 @@ import io.jmix.core.entity.annotation.JmixId;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
 
+import javax.annotation.Nullable;
 import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.util.Date;
 import java.util.Objects;
@@ -23,7 +23,6 @@ public class TriggerModel {
 
     private String triggerGroup;
 
-    @NotNull
     private ScheduleType scheduleType;
 
     private Date startDate;
@@ -40,7 +39,6 @@ public class TriggerModel {
     private Integer repeatCount;
 
     @Positive
-    @NotNull
     private Long repeatInterval;
 
     public UUID getId() {
@@ -75,6 +73,7 @@ public class TriggerModel {
         return scheduleType;
     }
 
+    @Nullable
     public Date getStartDate() {
         return startDate;
     }
@@ -83,6 +82,7 @@ public class TriggerModel {
         this.startDate = startDate;
     }
 
+    @Nullable
     public Date getEndDate() {
         return endDate;
     }
@@ -91,6 +91,7 @@ public class TriggerModel {
         this.endDate = endDate;
     }
 
+    @Nullable
     public Date getLastFireDate() {
         return lastFireDate;
     }
@@ -99,6 +100,7 @@ public class TriggerModel {
         this.lastFireDate = lastFireDate;
     }
 
+    @Nullable
     public Date getNextFireDate() {
         return nextFireDate;
     }
@@ -107,6 +109,7 @@ public class TriggerModel {
         this.nextFireDate = nextFireDate;
     }
 
+    @Nullable
     public String getCronExpression() {
         return cronExpression;
     }
@@ -115,6 +118,7 @@ public class TriggerModel {
         this.cronExpression = cronExpression;
     }
 
+    @Nullable
     public Integer getRepeatCount() {
         return repeatCount;
     }
@@ -123,6 +127,7 @@ public class TriggerModel {
         this.repeatCount = repeatCount;
     }
 
+    @Nullable
     public Long getRepeatInterval() {
         return repeatInterval;
     }
@@ -131,8 +136,10 @@ public class TriggerModel {
         this.repeatInterval = repeatInterval;
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Transient
     @JmixProperty
+    @Nullable
     public String getScheduleDescription() {
         if (getScheduleType() == null) {
             return null;

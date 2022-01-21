@@ -31,7 +31,7 @@ public class JobModelEdit extends StandardEditor<JobModel> {
     private QuartzService quartzService;
 
     @Autowired
-    protected QuartzJobClassFinder quartzJobClassFinder;
+    private QuartzJobClassFinder quartzJobClassFinder;
 
     @Autowired
     private ScreenBuilders screenBuilders;
@@ -77,6 +77,7 @@ public class JobModelEdit extends StandardEditor<JobModel> {
     private String obsoleteJobName = null;
     private String obsoleteJobGroup = null;
 
+    @SuppressWarnings("ConstantConditions")
     @Subscribe
     public void onInitEntity(InitEntityEvent<JobModel> event) {
         JobModel entity = event.getEntity();
@@ -157,6 +158,7 @@ public class JobModelEdit extends StandardEditor<JobModel> {
     }
 
     @Subscribe
+    @SuppressWarnings("ConstantConditions")
     public void onValidation(ValidationEvent event) {
         ValidationErrors errors = event.getErrors();
 

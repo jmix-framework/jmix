@@ -14,12 +14,11 @@ import io.jmix.ui.component.TextField;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.screen.*;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static java.util.Comparator.*;
 
@@ -50,6 +49,9 @@ public class JobModelBrowse extends StandardLookup<JobModel> {
     private TextField<String> nameField;
 
     @Autowired
+    private TextField<String> classField;
+
+    @Autowired
     private TextField<String> groupField;
 
     @Autowired
@@ -62,19 +64,13 @@ public class JobModelBrowse extends StandardLookup<JobModel> {
     }
 
     private void loadJobsData() {
-        Comparator<JobModel> jobModelComparator = comparing(JobModel::getJobState, nullsLast(naturalOrder()))
-                .thenComparing(JobModel::getJobName);
-        Stream<JobModel> stream = quartzService.getAllJobs().stream();
-        if (!Strings.isNullOrEmpty(nameField.getValue())) {
-            stream = stream.filter(jobModel -> jobModel.getJobName().contains(nameField.getValue()));
-        }
-        if (!Strings.isNullOrEmpty(groupField.getValue())) {
-            stream = stream.filter(jobModel -> jobModel.getJobGroup().contains(groupField.getValue()));
-        }
-        if (jobStateComboBox.getValue() != null) {
-            stream = stream.filter(jobModel -> jobStateComboBox.getValue().equals(jobModel.getJobState()));
-        }
-        List<JobModel> sortedJobs = stream.sorted(jobModelComparator)
+        List<JobModel> sortedJobs = quartzService.getAllJobs().stream()
+                .filter(jobModel -> Strings.isNullOrEmpty(nameField.getValue()) || StringUtils.containsIgnoreCase(jobModel.getJobName(), nameField.getValue()))
+                .filter(jobModel -> Strings.isNullOrEmpty(classField.getValue()) || StringUtils.containsIgnoreCase(jobModel.getJobName(), classField.getValue()))
+                .filter(jobModel -> Strings.isNullOrEmpty(groupField.getValue()) || StringUtils.containsIgnoreCase(jobModel.getJobGroup(), groupField.getValue()))
+                .filter(jobModel -> jobStateComboBox.getValue() == null || jobStateComboBox.getValue().equals(jobModel.getJobState()))
+                .sorted(comparing(JobModel::getJobState, nullsLast(naturalOrder()))
+                        .thenComparing(JobModel::getJobName))
                 .collect(Collectors.toList());
 
         jobModelsDc.setItems(sortedJobs);

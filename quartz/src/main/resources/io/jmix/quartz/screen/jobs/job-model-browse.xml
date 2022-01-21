@@ -25,32 +25,26 @@
                 width="800"/>
     <layout expand="jobModelsTable" spacing="true">
         <groupBox id="filter" spacing="true" caption="msg:///filter.emptyConfiguration.name" orientation="horizontal"
-                  collapsable="true">
-            <responsiveGridLayout>
-                <row stylename="mt-md-n2">
-                    <col md="AUTO" stylename="pl-0 pt-2">
-                        <hbox spacing="true" align="MIDDLE_LEFT">
-                            <label value="msg://nameContains" align="MIDDLE_LEFT"/>
-                            <textField id="nameField"/>
-                        </hbox>
-                    </col>
-                    <col md="AUTO" stylename="pl-0 pt-2">
-                        <hbox spacing="true" align="MIDDLE_LEFT">
-                            <label value="msg://groupContains" align="MIDDLE_LEFT"/>
-                            <textField id="groupField"/>
-                        </hbox>
-                    </col>
-                    <col md="AUTO" stylename="px-0 pt-2">
-                        <hbox spacing="true" align="MIDDLE_LEFT" height="100%">
-                            <label value="msg://jobState" align="MIDDLE_LEFT"/>
-                            <comboBox id="jobStateComboBox"/>
-                        </hbox>
-                    </col>
-                    <col stylename="w-100 pt-2">
-                        <button id="applyFilterBtn" action="applyFilter"/>
-                    </col>
-                </row>
-            </responsiveGridLayout>
+                  collapsable="true" expand="spring" collapsed="true">
+            <gridLayout spacing="true">
+                <columns count="4"/>
+                <rows>
+                    <row>
+                        <label value="msg://nameContains" align="MIDDLE_LEFT"/>
+                        <textField id="nameField"/>
+                        <label value="msg://groupContains" align="MIDDLE_LEFT"/>
+                        <textField id="groupField"/>
+                    </row>
+                    <row>
+                        <label value="msg://classContains" align="MIDDLE_LEFT"/>
+                        <textField id="classField"/>
+                        <label value="msg://jobState" align="MIDDLE_LEFT"/>
+                        <comboBox id="jobStateComboBox"/>
+                    </row>
+                </rows>
+            </gridLayout>
+            <button id="applyFilterBtn" action="applyFilter"/>
+            <label id="spring"/>
         </groupBox>
         <groupTable id="jobModelsTable"
                     width="100%"

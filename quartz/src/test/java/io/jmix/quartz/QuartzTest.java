@@ -166,7 +166,7 @@ public class QuartzTest {
         triggerModel.setStartDate(Date.from(LocalDateTime.now().plus(1, ChronoUnit.HOURS).atZone(ZoneId.systemDefault()).toInstant()));
         triggerModels.add(triggerModel);
 
-        Assertions.assertThrows(ValidationException.class, () -> quartzService.updateQuartzJob(jobModel, jobDataParameterModels, triggerModels, false));
+        Assertions.assertThrows(IllegalStateException.class, () -> quartzService.updateQuartzJob(jobModel, jobDataParameterModels, triggerModels, false));
 
         List<JobModel> allJobs = quartzService.getAllJobs();
         Assertions.assertEquals(2, allJobs.size());

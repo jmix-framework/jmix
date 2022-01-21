@@ -27,9 +27,12 @@
         <form id="form" dataContainer="jobModelDc">
             <column width="400px">
                 <textField id="jobNameField" property="jobName"/>
-                <comboBox id="jobGroupField" property="jobGroup"/>
                 <comboBox id="jobClassField" property="jobClass"/>
                 <textArea id="jobDescriptionField" property="description"/>
+            </column>
+            <column width="400px">
+                <comboBox id="jobGroupField" property="jobGroup"/>
+                <comboBox id="jobSourceField" property="jobSource" editable="false"/>
             </column>
         </form>
 

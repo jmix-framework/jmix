@@ -1,7 +1,6 @@
 package io.jmix.quartz.screen.jobs;
 
 import com.google.common.base.Strings;
-import io.jmix.core.Messages;
 import io.jmix.quartz.model.*;
 import io.jmix.quartz.screen.trigger.TriggerModelEdit;
 import io.jmix.quartz.service.QuartzService;
@@ -13,7 +12,7 @@ import io.jmix.ui.action.list.ViewAction;
 import io.jmix.ui.component.ComboBox;
 import io.jmix.ui.component.Table;
 import io.jmix.ui.component.TextField;
-import io.jmix.ui.component.ValidationException;
+import io.jmix.ui.component.ValidationErrors;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.screen.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +37,7 @@ public class JobModelEdit extends StandardEditor<JobModel> {
     private ScreenBuilders screenBuilders;
 
     @Autowired
-    private Messages messages;
+    private MessageBundle messageBundle;
 
     @Autowired
     private CollectionContainer<JobDataParameterModel> jobDataParamsDc;
@@ -64,9 +63,19 @@ public class JobModelEdit extends StandardEditor<JobModel> {
     @Named("triggerModelTable.view")
     private ViewAction<TriggerModel> triggerModelTableView;
 
-    private boolean isJobShouldBeDeleted = false;
-    private String jobNameToDelete = null;
-    private String jobGroupToDelete = null;
+    private boolean replaceJobIfExists = true;
+    private boolean deleteObsoleteJob = false;
+    private String obsoleteJobName = null;
+    private String obsoleteJobGroup = null;
+
+    @Subscribe
+    public void onInitEntity(InitEntityEvent<JobModel> event) {
+        JobModel entity = event.getEntity();
+        if (entity.getJobSource() == null) {
+            entity.setJobSource(JobSource.USER_DEFINED);
+            replaceJobIfExists = false;
+        }
+    }
 
     @Subscribe
     public void onBeforeShow(BeforeShowEvent event) {
@@ -80,15 +89,15 @@ public class JobModelEdit extends StandardEditor<JobModel> {
         triggerModelTableEdit.setVisible(!readOnly);
         triggerModelTableView.setVisible(readOnly);
 
-        jobNameToDelete = getEditedEntity().getJobName();
-        jobGroupToDelete = getEditedEntity().getJobGroup();
+        obsoleteJobName = getEditedEntity().getJobName();
+        obsoleteJobGroup = getEditedEntity().getJobGroup();
 
         jobNameField.addValueChangeListener(e -> {
             String currentValue = e.getValue();
-            if (!Strings.isNullOrEmpty(jobNameToDelete)
+            if (!Strings.isNullOrEmpty(obsoleteJobName)
                     && !Strings.isNullOrEmpty(currentValue)
-                    && !jobNameToDelete.equals(currentValue)) {
-                isJobShouldBeDeleted = true;
+                    && !obsoleteJobName.equals(currentValue)) {
+                deleteObsoleteJob = true;
             }
         });
 
@@ -102,18 +111,18 @@ public class JobModelEdit extends StandardEditor<JobModel> {
                 jobGroupField.setOptionsList(jobGroupNames);
             }
 
-            if (!Strings.isNullOrEmpty(jobGroupToDelete)
+            if (!Strings.isNullOrEmpty(obsoleteJobGroup)
                     && !Strings.isNullOrEmpty(newJobGroupName)
-                    && !jobGroupToDelete.equals(newJobGroupName)) {
-                isJobShouldBeDeleted = true;
+                    && !obsoleteJobGroup.equals(newJobGroupName)) {
+                deleteObsoleteJob = true;
             }
         });
         jobGroupField.addValueChangeListener(e -> {
             String currentValue = e.getValue();
-            if (!Strings.isNullOrEmpty(jobGroupToDelete)
+            if (!Strings.isNullOrEmpty(obsoleteJobGroup)
                     && !Strings.isNullOrEmpty(currentValue)
-                    && !jobGroupToDelete.equals(currentValue)) {
-                isJobShouldBeDeleted = true;
+                    && !obsoleteJobGroup.equals(currentValue)) {
+                deleteObsoleteJob = true;
             }
         });
 
@@ -136,48 +145,34 @@ public class JobModelEdit extends StandardEditor<JobModel> {
         editor.show();
     }
 
-    @Subscribe("windowCommitAndClose")
-    public void onWindowCommitAndClose(Action.ActionPerformedEvent event) {
+    @Subscribe
+    public void onValidation(ValidationEvent event) {
+        ValidationErrors errors = event.getErrors();
+
         JobModel jobModel = getEditedEntity();
-        String jobName = jobModel.getJobName();
-        String jobGroup = jobModel.getJobGroup();
+        String currentJobName = jobModel.getJobName();
+        String currentJobGroup = jobModel.getJobGroup();
 
         //if jobKey is changed it is necessary to delete job by it old jobKey and create new one
-        if (isJobShouldBeDeleted) {
-            //job should be deleted only if it is possible to create new one
-            if (quartzService.checkJobExists(jobName, jobGroup)) {
-                String validationMessage = String.format(
-                        messages.getMessage(this.getClass(), "jobAlreadyExistsValidationMessage"),
-                        Strings.isNullOrEmpty(jobGroup) ? "DEFAULT" : jobGroup,
-                        jobName
-                );
-                throw new ValidationException(validationMessage);
-            }
-            quartzService.deleteJob(jobNameToDelete, jobGroupToDelete);
+        //job should be deleted only if it is possible to create new one
+        if (deleteObsoleteJob && quartzService.checkJobExists(currentJobName, currentJobGroup)) {
+            errors.add(messageBundle.formatMessage("jobAlreadyExistsValidationMessage", currentJobName, Strings.isNullOrEmpty(currentJobGroup) ? "DEFAULT" : currentJobGroup));
         }
 
-        //job without provided 'Source' considered as a new job, which means it should be checked for uniqueness
-        boolean isJobShouldBeReplaced = getEditedEntity().getJobSource() != null;
-        if (!isJobShouldBeReplaced) {
-            if (quartzService.checkJobExists(jobName, jobGroup)) {
-                String validationMessage = String.format(
-                        messages.getMessage(this.getClass(), "jobAlreadyExistsValidationMessage"),
-                        Strings.isNullOrEmpty(jobGroup) ? "DEFAULT" : jobGroup,
-                        jobName
-                );
-                throw new ValidationException(validationMessage);
+        if (!replaceJobIfExists) {
+            if (quartzService.checkJobExists(currentJobName, currentJobGroup)) {
+                errors.add(messageBundle.formatMessage("jobAlreadyExistsValidationMessage", currentJobName, Strings.isNullOrEmpty(currentJobGroup) ? "DEFAULT" : currentJobGroup));
             }
 
-            for (TriggerModel trigger : getEditedEntity().getTriggers()) {
-                if (quartzService.checkTriggerExists(trigger.getTriggerName(), trigger.getTriggerGroup())) {
-                    String validationMessage = String.format(
-                            messages.getMessage(this.getClass(), "triggerAlreadyExistsValidationMessage"),
-                            Strings.isNullOrEmpty(trigger.getTriggerGroup()) ? "DEFAULT" : trigger.getTriggerGroup(),
-                            trigger.getTriggerName()
-                    );
-                    throw new ValidationException(validationMessage);
-                }
-            }
+            getEditedEntity().getTriggers().stream()
+                    .filter(triggerModel -> !Strings.isNullOrEmpty(triggerModel.getTriggerName()))
+                    .filter(triggerModel -> quartzService.checkTriggerExists(triggerModel.getTriggerName(), triggerModel.getTriggerGroup()))
+                    .forEach(triggerModel -> errors.add(
+                            messageBundle.formatMessage(
+                                    "triggerAlreadyExistsValidationMessage",
+                                    triggerModel.getTriggerName(),
+                                    Strings.isNullOrEmpty(triggerModel.getTriggerGroup()) ? "DEFAULT" : triggerModel.getTriggerGroup())
+                    ));
         }
 
         //validate if job data param keys are not unique
@@ -187,10 +182,17 @@ public class JobModelEdit extends StandardEditor<JobModel> {
                 .entrySet()
                 .stream().anyMatch(entry -> entry.getValue() > 1);
         if (jobDataMapOverlapped) {
-            throw new ValidationException(messages.getMessage(this.getClass(), "jobDataParamKeyAlreadyExistsValidationMessage"));
+            errors.add(messageBundle.getMessage("jobDataParamKeyAlreadyExistsValidationMessage"));
+        }
+    }
+
+    @Subscribe
+    public void onBeforeCommitChanges(BeforeCommitChangesEvent event) {
+        if (deleteObsoleteJob) {
+            quartzService.deleteJob(obsoleteJobName, obsoleteJobGroup);
         }
 
-        quartzService.updateQuartzJob(jobModel, jobDataParamsDc.getItems(), triggerModelDc.getItems(), isJobShouldBeReplaced);
+        quartzService.updateQuartzJob(getEditedEntity(), jobDataParamsDc.getItems(), triggerModelDc.getItems(), replaceJobIfExists);
     }
 
 }

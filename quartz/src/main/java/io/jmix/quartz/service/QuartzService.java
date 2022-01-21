@@ -4,7 +4,6 @@ import com.google.common.base.Strings;
 import io.jmix.core.UnconstrainedDataManager;
 import io.jmix.quartz.model.*;
 import io.jmix.quartz.util.QuartzJobDetailsFinder;
-import io.jmix.ui.component.ValidationException;
 import org.apache.commons.collections4.CollectionUtils;
 import org.quartz.*;
 import org.quartz.impl.matchers.GroupMatcher;
@@ -70,6 +69,7 @@ public class QuartzService {
                         triggerModel.setLastFireDate(trigger.getPreviousFireTime());
                         triggerModel.setNextFireDate(trigger.getNextFireTime());
 
+                        boolean isTriggeredNow = false;
                         if (trigger instanceof CronTrigger) {
                             triggerModel.setCronExpression(((CronTrigger) trigger).getCronExpression());
                         } else if (trigger instanceof SimpleTrigger) {
@@ -79,13 +79,16 @@ public class QuartzService {
                                 triggerModel.setRepeatCount(simpleTrigger.getRepeatCount() + 1);
                             }
                             triggerModel.setRepeatInterval(simpleTrigger.getRepeatInterval());
+
+                            isTriggeredNow = simpleTrigger.getRepeatCount() == 0 && simpleTrigger.getRepeatInterval() == 0L;
                         }
 
-                        if (scheduler.getTriggerState(trigger.getKey()) == Trigger.TriggerState.NORMAL) {
-                            isActive = true;
+                        if (!isTriggeredNow) {
+                            triggerModels.add(triggerModel);
+                            if (scheduler.getTriggerState(trigger.getKey()) == Trigger.TriggerState.NORMAL) {
+                                isActive = true;
+                            }
                         }
-
-                        triggerModels.add(triggerModel);
                     }
 
                     jobModel.setTriggers(triggerModels);
@@ -189,10 +192,10 @@ public class QuartzService {
             }
         } catch (SchedulerException e) {
             log.warn("Unable to update job with name {} and group {}", jobModel.getJobName(), jobModel.getJobGroup(), e);
-            throw new ValidationException(e.getMessage());
+            throw new IllegalStateException(e.getMessage());
         } catch (ClassNotFoundException e) {
             log.warn("Unable to find job class {}", jobModel.getJobClass());
-            throw new ValidationException("Job class " + jobModel.getJobClass() + " not found");
+            throw new IllegalStateException("Job class " + jobModel.getJobClass() + " not found");
         }
     }
 

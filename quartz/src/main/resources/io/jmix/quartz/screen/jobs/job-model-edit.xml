@@ -81,26 +81,22 @@
             </tab>
             <tab id="jobDataParamsSheet" caption="msg://jobDataParamsTabCaption" spacing="true"
                  margin="true;false;false;false;">
-                <groupTable id="jobDataParamsTable" dataContainer="jobDataParamsDc" height="100%" width="100%">
+                <table id="jobDataParamsTable" dataContainer="jobDataParamsDc" height="100%" width="100%"
+                       editable="true">
                     <actions>
-                        <action id="create" type="create">
-                            <properties>
-                                <property name="openMode" value="DIALOG"/>
-                            </properties>
-                        </action>
-                        <action id="edit" type="edit"/>
+                        <action id="addNewDataParam" caption="msg://addNewDataParamCaption" icon="ADD_ACTION"
+                                primary="true"/>
                         <action id="remove" type="remove"/>
                     </actions>
                     <columns>
-                        <column id="key"/>
-                        <column id="value"/>
+                        <column id="key" editable="true" required="true"/>
+                        <column id="value" editable="true"/>
                     </columns>
                     <buttonsPanel>
-                        <button action="jobDataParamsTable.create"/>
-                        <button action="jobDataParamsTable.edit"/>
+                        <button id="addDataParamButton" action="jobDataParamsTable.addNewDataParam"/>
                         <button action="jobDataParamsTable.remove"/>
                     </buttonsPanel>
-                </groupTable>
+                </table>
             </tab>
         </tabSheet>
 

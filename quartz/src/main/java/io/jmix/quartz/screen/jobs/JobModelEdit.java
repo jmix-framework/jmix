@@ -1,6 +1,7 @@
 package io.jmix.quartz.screen.jobs;
 
 import com.google.common.base.Strings;
+import io.jmix.core.UnconstrainedDataManager;
 import io.jmix.quartz.model.*;
 import io.jmix.quartz.screen.trigger.TriggerModelEdit;
 import io.jmix.quartz.service.QuartzService;
@@ -9,16 +10,15 @@ import io.jmix.ui.ScreenBuilders;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.list.EditAction;
 import io.jmix.ui.action.list.ViewAction;
-import io.jmix.ui.component.ComboBox;
-import io.jmix.ui.component.Table;
-import io.jmix.ui.component.TextField;
-import io.jmix.ui.component.ValidationErrors;
+import io.jmix.ui.component.*;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.screen.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.inject.Named;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -38,6 +38,9 @@ public class JobModelEdit extends StandardEditor<JobModel> {
 
     @Autowired
     private MessageBundle messageBundle;
+
+    @Autowired
+    private UnconstrainedDataManager dataManager;
 
     @Autowired
     private CollectionContainer<JobDataParameterModel> jobDataParamsDc;
@@ -62,6 +65,12 @@ public class JobModelEdit extends StandardEditor<JobModel> {
 
     @Named("triggerModelTable.view")
     private ViewAction<TriggerModel> triggerModelTableView;
+
+    @Autowired
+    private Table<JobDataParameterModel> jobDataParamsTable;
+
+    @Autowired
+    private Button addDataParamButton;
 
     private boolean replaceJobIfExists = true;
     private boolean deleteObsoleteJob = false;
@@ -88,6 +97,8 @@ public class JobModelEdit extends StandardEditor<JobModel> {
         jobClassField.setEditable(!readOnly);
         triggerModelTableEdit.setVisible(!readOnly);
         triggerModelTableView.setVisible(readOnly);
+        addDataParamButton.setEnabled(!readOnly);
+        jobDataParamsTable.setEditable(!readOnly);
 
         obsoleteJobName = getEditedEntity().getJobName();
         obsoleteJobGroup = getEditedEntity().getJobGroup();
@@ -175,9 +186,15 @@ public class JobModelEdit extends StandardEditor<JobModel> {
                     ));
         }
 
-        //validate if job data param keys are not unique
+        if (jobDataParamsDc.getItems().stream()
+                .map(JobDataParameterModel::getKey)
+                .anyMatch(Objects::isNull)) {
+            errors.add(messageBundle.getMessage("jobDataParamKeyIsRequired"));
+        }
+
         boolean jobDataMapOverlapped = jobDataParamsDc.getItems().stream()
                 .map(JobDataParameterModel::getKey)
+                .filter(Objects::nonNull)
                 .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
                 .entrySet()
                 .stream().anyMatch(entry -> entry.getValue() > 1);
@@ -193,6 +210,17 @@ public class JobModelEdit extends StandardEditor<JobModel> {
         }
 
         quartzService.updateQuartzJob(getEditedEntity(), jobDataParamsDc.getItems(), triggerModelDc.getItems(), replaceJobIfExists);
+    }
+
+    @Subscribe("jobDataParamsTable.addNewDataParam")
+    public void onJobDataParamsTableCreate(Action.ActionPerformedEvent event) {
+        List<JobDataParameterModel> currentItems = new ArrayList<>(jobDataParamsDc.getItems());
+
+        JobDataParameterModel itemToAdd = dataManager.create(JobDataParameterModel.class);
+        currentItems.add(itemToAdd);
+        jobDataParamsDc.setItems(currentItems);
+        jobDataParamsTable.setSelected(itemToAdd);
+        jobDataParamsTable.requestFocus(itemToAdd, "key");
     }
 
 }

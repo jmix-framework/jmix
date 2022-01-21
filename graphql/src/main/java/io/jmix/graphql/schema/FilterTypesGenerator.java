@@ -22,8 +22,7 @@ import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.core.metamodel.model.impl.DatatypeRange;
-import io.jmix.core.metamodel.model.impl.MetaPropertyImpl;
+import io.jmix.graphql.GraphQlProperties;
 import io.jmix.graphql.MetadataUtils;
 import io.jmix.graphql.NamingUtils;
 import io.jmix.graphql.schema.scalar.CustomScalars;
@@ -43,7 +42,6 @@ import static graphql.Scalars.*;
 import static io.jmix.graphql.NamingUtils.INPUT_TYPE_PREFIX;
 import static io.jmix.graphql.NamingUtils.SYS_ATTR_INSTANCE_NAME;
 import static io.jmix.graphql.schema.BaseTypesGenerator.*;
-import static io.jmix.graphql.schema.BaseTypesGenerator.arg;
 import static io.jmix.graphql.schema.Types.FilterOperation.*;
 //import static io.jmix.graphql.schema.scalar.CustomScalars.GraphQLFile;
 import static io.jmix.graphql.schema.scalar.CustomScalars.GraphQLUUID;
@@ -63,6 +61,8 @@ public class FilterTypesGenerator {
     ScalarTypes scalarTypes;
     @Autowired
     protected DatatypeRegistry datatypes;
+    @Autowired
+    protected GraphQlProperties graphQlProperties;
 
     public Collection<GraphQLType> generateFilterTypes() {
         Collection<GraphQLType> types = new ArrayList<>();
@@ -164,7 +164,9 @@ public class FilterTypesGenerator {
                             return null;
                         }
                         String typeName = composeFilterOrderByTypeName(baseTypesGenerator.getFieldTypeName(metaProperty));
-                        return listInpObjectField(metaProperty.getName(), typeName, null);
+                        return graphQlProperties.isMultipleSortSupported()?
+                                listInpObjectField(metaProperty.getName(), typeName, null):
+                                inpObjectField(metaProperty.getName(), typeName, null);
                     }
 
                     // datatype attributes

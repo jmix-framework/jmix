@@ -65,10 +65,7 @@ import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilde
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.*;
 import org.springframework.core.ResolvableType;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.core.type.StandardMethodMetadata;
@@ -93,6 +90,7 @@ import java.util.stream.Collectors;
 @ComponentScan
 @ConfigurationPropertiesScan
 @JmixModule(dependsOn = CoreConfiguration.class)
+@PropertySource(name = "io.jmix.graphql", value = "classpath:/io/jmix/graphql/module.properties")
 public class GraphQLConfiguration {
 
     protected final ConfigurableApplicationContext context;

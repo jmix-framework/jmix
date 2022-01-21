@@ -20,6 +20,7 @@ import graphql.schema.FieldCoordinates;
 import graphql.schema.GraphQLCodeRegistry;
 import graphql.schema.GraphQLFieldDefinition;
 import graphql.schema.GraphQLTypeReference;
+import io.jmix.graphql.GraphQlProperties;
 import io.jmix.graphql.MetadataUtils;
 import io.jmix.graphql.NamingUtils;
 import io.jmix.graphql.datafetcher.EntityMutationDataFetcher;
@@ -42,6 +43,8 @@ public class GenericSchemaGenerator {
     private EntityQueryDataFetcher entityQueryDataFetcher;
     @Autowired
     private EntityMutationDataFetcher entityMutationDataFetcher;
+    @Autowired
+    private GraphQlProperties graphQlProperties;
 
     public List<GraphQLFieldDefinition> generateQueryFields() {
 
@@ -64,8 +67,10 @@ public class GenericSchemaGenerator {
                             .argument(arg(NamingUtils.LIMIT, "Int", "limit the number of items returned"))
                             .argument((arg(NamingUtils.OFFSET, "Int", "skip the first n items")))
                             // todo array in order by, add ability to order by nested objects
-                            .argument(listArg(NamingUtils.ORDER_BY, FilterTypesGenerator.composeFilterOrderByTypeName(metaClass),
-                                    "sort the items by one or more fields"))
+                            .argument(graphQlProperties.isMultipleSortSupported() ?
+                                    listArg(NamingUtils.ORDER_BY, FilterTypesGenerator.composeFilterOrderByTypeName(metaClass), "sort the items by one or more fields") :
+                                    arg(NamingUtils.ORDER_BY, FilterTypesGenerator.composeFilterOrderByTypeName(metaClass), "sort the items by one or more fields")
+                            )
                             .argument(arg(NamingUtils.SOFT_DELETION, "Boolean", "set false to load soft-deleted entities"))
                             .build());
 

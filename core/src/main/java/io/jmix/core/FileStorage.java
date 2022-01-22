@@ -19,7 +19,7 @@ package io.jmix.core;
 import java.io.InputStream;
 
 /**
- * Interface of a component to store and load files defined by file reference.
+ * Interface of a component to store and load files defined by file references.
  */
 public interface FileStorage {
 
@@ -31,18 +31,18 @@ public interface FileStorage {
     String getStorageName();
 
     /**
-     * Saves an InputStream contents into file storage.
+     * Saves an InputStream contents into the file storage.
      *
      * @param fileName    file name
      * @param inputStream input stream, must be closed in the calling code
-     * @return number of bytes saved
+     * @return file reference
      * @throws IllegalArgumentException if arguments are incorrect
      * @throws FileStorageException     if something goes wrong
      */
     FileRef saveStream(String fileName, InputStream inputStream);
 
     /**
-     * Return an input stream to load a file contents.
+     * Returns an input stream to load a file contents.
      *
      * @param reference file reference
      * @return input stream, must be closed after use

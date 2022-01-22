@@ -38,33 +38,54 @@ public class FileRef implements Serializable {
 
     private Map<String, String> parameters;
 
+    /**
+     * Creates file reference for the given storage name, path and file name.
+     */
     public static FileRef create(String storageName, String path, String fileName) {
         return new FileRef(storageName, path, fileName);
     }
 
+    /**
+     * Creates file reference for the given storage name, path, file name and parameters.
+     */
     public FileRef(String storageName, String path, String fileName, Map<String, String> parameters) {
         this(storageName, path, fileName);
         this.parameters = new LinkedHashMap<>(parameters);
     }
 
+    /**
+     * Creates file reference for the given storage name, path and file name.
+     */
     public FileRef(String storageName, String path, String fileName) {
         this.storageName = storageName;
         this.path = path;
         this.fileName = fileName;
     }
 
+    /**
+     * Returns storage name.
+     */
     public String getStorageName() {
         return storageName;
     }
 
+    /**
+     * Returns path inside storage.
+     */
     public String getPath() {
         return path;
     }
 
+    /**
+     * Returns file name.
+     */
     public String getFileName() {
         return fileName;
     }
 
+    /**
+     * Returns parameters.
+     */
     public Map<String, String> getParameters() {
         if (parameters == null) {
             return Collections.emptyMap();
@@ -73,6 +94,9 @@ public class FileRef implements Serializable {
         }
     }
 
+    /**
+     * Add a parameter.
+     */
     public void addParameter(String key, String value) {
         if (parameters == null) {
             parameters = new LinkedHashMap<>();
@@ -80,6 +104,9 @@ public class FileRef implements Serializable {
         parameters.put(key, value);
     }
 
+    /**
+     * Creates {@code FileRef} object from its string representation.
+     */
     public static FileRef fromString(String fileRefString) {
         URI fileRefUri;
         try {
@@ -128,6 +155,9 @@ public class FileRef implements Serializable {
         return uriStringBuilder.toString();
     }
 
+    /**
+     * Returns content type according to MIME standard.
+     */
     public String getContentType() {
         String extension = FilenameUtils.getExtension(this.getFileName());
         if (StringUtils.isEmpty(extension)) {

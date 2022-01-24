@@ -8,6 +8,6 @@
     <property name="uuid.type" dbms="oracle" value="varchar2(32)"/>
     <property name="uuid.type" dbms="!oracle" value="uuid"/>
 
-    <include file="/${project_rootPath}/liquibase/changelog/001-${project_name.toLowerCase()}.xml"/>
+    <includeAll path="/${project_rootPath}/liquibase/changelog"/>
 
 </databaseChangeLog>

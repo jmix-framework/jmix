@@ -25,7 +25,7 @@ import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
-import org.springframework.security.oauth2.provider.token.TokenStore;
+//import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.stereotype.Component;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,8 +37,8 @@ public class UserSessionControllerManager {
 
     @Autowired
     protected RestLocaleUtils restLocaleUtils;
-    @Autowired
-    protected TokenStore tokenStore;
+//    @Autowired
+//    protected TokenStore tokenStore;
 
     public void setSessionLocale(HttpServletRequest request) {
         Locale locale = restLocaleUtils.extractLocaleFromRequestHeader(request);

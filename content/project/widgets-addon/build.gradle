@@ -4,8 +4,8 @@ plugins {
     id 'maven-publish'
 }
 
-group = 'com.company'
-version = '0.0.1-SNAPSHOT'
+group = '${project_group}'
+version = '${project_version}'
 
 repositories {
     mavenCentral()<%if (project_additionalRepositories) {

@@ -142,8 +142,12 @@
                         <row>
                             <label value="msg://com.haulmont.cuba.core.entity/ScheduledTask.userName"
                                    align="MIDDLE_LEFT"/>
-                            <suggestionField id="userNameField" minSearchStringLength="1"
-                                             width="${fieldWidth}"/>
+                            <suggestionPickerField id="userNameField" minSearchStringLength="1"
+                                                   width="${fieldWidth}">
+                                <actions>
+                                    <action id="clear" type="picker_clear"/>
+                                </actions>
+                            </suggestionPickerField>
                         </row>
                         <row>
                             <label value="msg://com.haulmont.cuba.core.entity/ScheduledTask.singleton"

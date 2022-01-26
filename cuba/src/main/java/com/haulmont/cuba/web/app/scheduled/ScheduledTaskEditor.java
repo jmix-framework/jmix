@@ -25,7 +25,7 @@ import com.haulmont.cuba.core.entity.SchedulingType;
 import com.haulmont.cuba.gui.UiComponents;
 import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.data.Datasource;
-import com.haulmont.cuba.web.gui.components.WebSuggestionField;
+import com.haulmont.cuba.web.gui.components.WebSuggestionPickerField;
 import io.jmix.core.Entity;
 import io.jmix.core.security.UserRepository;
 import io.jmix.ui.component.ComponentContainer;
@@ -37,7 +37,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.inject.Inject;
 import java.util.*;
 
-public class ScheduledTaskEditor extends AbstractEditor<ScheduledTask> {
+public class ScheduledTaskEditor<T extends Entity & UserDetails> extends AbstractEditor<ScheduledTask> {
 
     @Inject
     protected LookupField<String> beanNameField;
@@ -46,7 +46,7 @@ public class ScheduledTaskEditor extends AbstractEditor<ScheduledTask> {
     protected LookupField<MethodInfo> methodNameField;
 
     @Inject
-    protected WebSuggestionField<UserDetails> userNameField;
+    protected WebSuggestionPickerField<T> userNameField;
 
     @Inject
     protected UserRepository userRepository;
@@ -218,10 +218,11 @@ public class ScheduledTaskEditor extends AbstractEditor<ScheduledTask> {
         });
     }
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
     private void initUserNameField() {
-        userNameField.setOptionStyleProvider(UserDetails::getUsername);
-        userNameField.addValueChangeListener(e -> taskDs.getItem().setUserName(e.getValue().getUsername()));
-        userNameField.setSearchExecutor((searchString, searchParams) -> new ArrayList<>(userRepository.getByUsernameLike(searchString)));
+        userNameField.setOptionStyleProvider(item -> item.getUsername());
+        userNameField.addValueChangeListener(e -> taskDs.getItem().setUserName(e.getValue() == null ? null : e.getValue().getUsername()));
+        userNameField.setSearchExecutor((searchString, searchParams) -> new ArrayList(userRepository.getByUsernameLike(searchString)));
     }
 
     protected void setSchedulingTypeField(SchedulingType value) {
@@ -243,6 +244,7 @@ public class ScheduledTaskEditor extends AbstractEditor<ScheduledTask> {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void setItem(Entity item) {
         super.setItem(item);
 
@@ -250,7 +252,7 @@ public class ScheduledTaskEditor extends AbstractEditor<ScheduledTask> {
             setInitialMethodNameValue(getItem());
         }
         if (StringUtils.isNotEmpty(getItem().getUserName())) {
-            userNameField.setValue(userRepository.loadUserByUsername(getItem().getUserName()));
+            userNameField.setValue((T) userRepository.loadUserByUsername(getItem().getUserName()));
         }
     }
 

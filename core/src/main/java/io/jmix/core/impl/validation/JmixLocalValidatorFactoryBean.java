@@ -26,6 +26,7 @@ import org.hibernate.validator.internal.constraintvalidators.bv.time.pastorprese
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 import javax.validation.ClockProvider;
+import javax.validation.MessageInterpolator;
 import javax.validation.constraints.Future;
 import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.Past;
@@ -35,9 +36,14 @@ import java.util.Date;
 
 public class JmixLocalValidatorFactoryBean extends LocalValidatorFactoryBean {
     protected ClockProvider clockProvider;
+    protected MessageInterpolator jmixMessageInterpolator;
 
     public void setClockProvider(ClockProvider clockProvider) {
         this.clockProvider = clockProvider;
+    }
+
+    public void setJmixMessageInterpolator(MessageInterpolator messageInterpolator) {
+        this.jmixMessageInterpolator = messageInterpolator;
     }
 
     @Override
@@ -46,6 +52,14 @@ public class JmixLocalValidatorFactoryBean extends LocalValidatorFactoryBean {
 
         if (clockProvider != null) {
             configuration.clockProvider(clockProvider);
+        }
+
+        // Set message interpolator explicitly as in the configuration
+        // it is wrapped by LocaleContextMessageInterpolator that return
+        // messages in a locale different from the locale of logged-in user
+
+        if (jmixMessageInterpolator != null) {
+            configuration.messageInterpolator(jmixMessageInterpolator);
         }
 
         ConstraintMapping constraintMapping = ((HibernateValidatorConfiguration) configuration).createConstraintMapping();

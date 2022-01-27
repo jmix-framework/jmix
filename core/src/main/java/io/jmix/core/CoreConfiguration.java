@@ -71,7 +71,7 @@ public class CoreConfiguration {
 
         validatorFactory.setClockProvider(clockProvider);
         validatorFactory.setTraversableResolver(traversableResolver);
-        validatorFactory.setMessageInterpolator(messageInterpolator);
+        validatorFactory.setJmixMessageInterpolator(messageInterpolator);
 
         return validatorFactory;
     }

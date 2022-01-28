@@ -216,6 +216,7 @@ public class QuartzService {
 
         jobBuilder.withDescription(jobModel.getDescription());
 
+        jobBuilder.setJobData(new JobDataMap());
         if (CollectionUtils.isNotEmpty(jobDataParameterModels)) {
             jobDataParameterModels.forEach(jobDataParameterModel ->
                     jobBuilder.usingJobData(jobDataParameterModel.getKey(), jobDataParameterModel.getValue()));

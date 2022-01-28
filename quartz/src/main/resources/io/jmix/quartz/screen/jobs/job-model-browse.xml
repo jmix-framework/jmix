@@ -25,7 +25,7 @@
                 width="800"/>
     <layout expand="jobModelsTable" spacing="true">
         <groupBox id="filter" spacing="true" caption="msg:///filter.emptyConfiguration.name" orientation="horizontal"
-                  collapsable="true" expand="spring" collapsed="true">
+                  collapsable="true" expand="spring">
             <gridLayout spacing="true">
                 <columns count="4"/>
                 <rows>

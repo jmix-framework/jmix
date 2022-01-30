@@ -49,7 +49,7 @@ public class PropertyCondition implements Condition {
      * calling {@link #setParameterValue(Object)} method.
      *
      * @param property      entity attribute name
-     * @param operation     comparison operation
+     * @param operation     comparison operation, see {@link Operation} constants
      * @param parameterName parameter name
      */
     public static PropertyCondition createWithParameterName(String property, String operation, String parameterName) {
@@ -65,7 +65,7 @@ public class PropertyCondition implements Condition {
      * on the property name.
      *
      * @param property       entity attribute name
-     * @param operation      comparison operation
+     * @param operation      comparison operation, see {@link Operation} constants.
      * @param parameterValue value to compare with
      */
     public static PropertyCondition createWithValue(String property, String operation, Object parameterValue) {
@@ -273,6 +273,9 @@ public class PropertyCondition implements Condition {
         return excludedParameters;
     }
 
+    /**
+     * String constants defining comparison operations.
+     */
     public static class Operation {
         public static final String EQUAL = "equal";
         public static final String NOT_EQUAL = "not_equal";

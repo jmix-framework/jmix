@@ -114,10 +114,30 @@ public class SystemAuthenticatorImpl extends SystemAuthenticatorSupport implemen
     }
 
     @Override
+    public void runWithUser(@Nullable String login, Runnable operation) {
+        begin(login);
+        try {
+            operation.run();
+        } finally {
+            end();
+        }
+    }
+
+    @Override
     public <T> T withSystem(AuthenticatedOperation<T> operation) {
         begin();
         try {
             return operation.call();
+        } finally {
+            end();
+        }
+    }
+
+    @Override
+    public void runWithSystem(Runnable operation) {
+        begin();
+        try {
+            operation.run();
         } finally {
             end();
         }

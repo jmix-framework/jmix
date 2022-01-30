@@ -74,7 +74,7 @@ public interface SystemAuthenticator {
     void end();
 
     /**
-     * Execute code on behalf of the specified user.
+     * Execute code on behalf of the specified user and return a result.
      *
      * @param login     user login. If null, the system session is used.
      * @param operation code to execute
@@ -83,12 +83,27 @@ public interface SystemAuthenticator {
     <T> T withUser(@Nullable String login, AuthenticatedOperation<T> operation);
 
     /**
-     * Execute code as the 'system' user.
+     * Execute code on behalf of the specified user.
+     *
+     * @param login     user login. If null, the system session is used.
+     * @param operation code to execute
+     */
+    void runWithUser(@Nullable String login, Runnable operation);
+
+    /**
+     * Execute code as the 'system' user and return a result.
      *
      * @param operation code to execute
      * @return result of the execution
      */
     <T> T withSystem(AuthenticatedOperation<T> operation);
+
+    /**
+     * Execute code as the 'system' user.
+     *
+     * @param operation code to execute
+     */
+    void runWithSystem(Runnable operation);
 
     interface AuthenticatedOperation<T> {
         @Nullable

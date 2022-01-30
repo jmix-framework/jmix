@@ -29,10 +29,10 @@ import com.haulmont.cuba.security.global.UserSession;
 import io.jmix.core.MessageTools;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.data.impl.QueryParamValuesManager;
 import io.jmix.data.impl.jpql.DomainModel;
 import io.jmix.data.impl.jpql.DomainModelBuilder;
 import io.jmix.data.impl.jpql.DomainModelWithCaptionsBuilder;
-import io.jmix.securitydata.constraint.PredefinedQueryParameters;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.autocomplete.JpqlUiSuggestionProvider;
 import io.jmix.ui.component.autocomplete.Suggestion;
@@ -90,6 +90,9 @@ public class CustomConditionFrame extends ConditionFrame<CustomCondition> {
 
     @Autowired
     protected JpqlUiSuggestionProvider jpqlUiSuggestionProvider;
+
+    @Autowired
+    protected QueryParamValuesManager queryParamValuesManager;
 
     protected boolean initializing;
 
@@ -338,8 +341,9 @@ public class CustomConditionFrame extends ConditionFrame<CustomCondition> {
             Matcher matcher = PARAM_PATTERN.matcher(res);
             StringBuffer sb = new StringBuffer();
             while (matcher.find()) {
-                if (!matcher.group().startsWith(":" + PredefinedQueryParameters.CURRENT_USER_PREFIX))
+                if (!queryParamValuesManager.supports(matcher.group(1))) {
                     matcher.appendReplacement(sb, "?");
+                }
             }
             matcher.appendTail(sb);
             return sb.toString();

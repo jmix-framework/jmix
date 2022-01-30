@@ -25,9 +25,8 @@ import javax.annotation.Nullable;
  * <p>
  * Example usage:
  * <pre>
- *     authenticator.withSystem(() -&gt; {
+ *     authenticator.runWithSystem(() -&gt; {
  *         // valid current thread's authentication presents here
- *         return null;
  *     });
  * </pre>
  * or
@@ -41,7 +40,9 @@ import javax.annotation.Nullable;
  * </pre>
  *
  * @see #withSystem(AuthenticatedOperation)
+ * @see #runWithSystem(Runnable)
  * @see #withUser(String, AuthenticatedOperation)
+ * @see #runWithUser(String, Runnable)
  * @see #begin()
  * @see #begin(String)
  */
@@ -105,6 +106,10 @@ public interface SystemAuthenticator {
      */
     void runWithSystem(Runnable operation);
 
+    /**
+     * Operation with a result to be used in {@link #withSystem(AuthenticatedOperation)}
+     * and {@link #withUser(String, AuthenticatedOperation)}.
+     */
     interface AuthenticatedOperation<T> {
         @Nullable
         T call();

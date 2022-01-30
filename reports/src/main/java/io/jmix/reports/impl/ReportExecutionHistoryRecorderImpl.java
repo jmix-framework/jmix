@@ -178,10 +178,7 @@ public class ReportExecutionHistoryRecorderImpl implements ReportExecutionHistor
             action.run();
         } else {
             log.debug("No valid user session, record history under system user");
-            systemAuthenticator.withSystem(() -> {
-                action.run();
-                return null;
-            });
+            systemAuthenticator.runWithSystem(action);
         }
     }
 

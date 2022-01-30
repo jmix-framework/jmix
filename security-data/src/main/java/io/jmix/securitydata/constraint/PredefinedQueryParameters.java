@@ -17,53 +17,28 @@
 package io.jmix.securitydata.constraint;
 
 
-import io.jmix.core.usersubstitution.CurrentUserSubstitution;
+import io.jmix.data.impl.QueryParamValuesManager;
+import io.jmix.data.impl.SessionQueryParamValueProvider;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import java.beans.BeanInfo;
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
 
+/**
+ * @deprecated
+ * The functionality of assigning predefined query parameters has been moved to {@link io.jmix.data.QueryParamValueProvider}s.
+ */
+@Deprecated
 @Component("sec_PredefinedQueryParameters")
 public class PredefinedQueryParameters {
 
-    public static final String CURRENT_USER_PREFIX = "current_user_";
+    public static final String CURRENT_USER_PREFIX = SessionQueryParamValueProvider.SESSION_PREFIX;
 
     @Autowired
-    protected CurrentUserSubstitution currentUserSubstitution;
+    private QueryParamValuesManager queryParamValuesManager;
 
-    /**
-     * Get a value of the query parameter provided by security authentication.
-     *
-     * @param paramName parameter to set in a query
-     * @return parameter value
-     */
-     @Nullable
-     public Object getParameterValue(String paramName) {
-        if (paramName.startsWith(CURRENT_USER_PREFIX)) {
-            String attrName = paramName.substring(CURRENT_USER_PREFIX.length());
-
-            UserDetails user = currentUserSubstitution.getEffectiveUser();
-            BeanInfo info;
-            try {
-                info = Introspector.getBeanInfo(user.getClass());
-                return Arrays.stream(info.getPropertyDescriptors())
-                        .filter(pd -> pd.getName().equals(attrName))
-                        .findAny()
-                        .orElseThrow(() ->
-                                new RuntimeException(String.format("Property %s not found in the user class", attrName)))
-                        .getReadMethod()
-                        .invoke(user);
-            } catch (IntrospectionException | IllegalAccessException | InvocationTargetException e) {
-                throw new RuntimeException(
-                        String.format("Error getting %s property from the current user object", attrName), e);
-            }
-        }
-        return null;
+    @Nullable
+    public Object getParameterValue(String paramName) {
+        return queryParamValuesManager.getValue(paramName);
     }
 }

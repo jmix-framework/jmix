@@ -17,7 +17,7 @@
 package query_parameters
 
 import io.jmix.core.security.SystemAuthenticator
-import io.jmix.securitydata.constraint.PredefinedQueryParameters
+import io.jmix.securitydata.impl.CurrentUserQueryParamValueProvider
 import org.springframework.beans.factory.annotation.Autowired
 import test_support.SecurityDataSpecification
 
@@ -27,12 +27,12 @@ class QueryParametersTest extends SecurityDataSpecification {
     SystemAuthenticator authenticator
 
     @Autowired
-    PredefinedQueryParameters predefinedQueryParameters
+    CurrentUserQueryParamValueProvider currentUserQueryParamValueProvider
 
     def "test UserDetails attributes"() {
         when:
         def value = authenticator.withSystem {
-            return predefinedQueryParameters.getParameterValue('current_user_username')
+            return currentUserQueryParamValueProvider.getValue('current_user_username')
         }
 
         then:
@@ -40,7 +40,7 @@ class QueryParametersTest extends SecurityDataSpecification {
 
         when:
         value = authenticator.withSystem {
-            return predefinedQueryParameters.getParameterValue('current_user_enabled')
+            return currentUserQueryParamValueProvider.getValue('current_user_enabled')
         }
 
         then:

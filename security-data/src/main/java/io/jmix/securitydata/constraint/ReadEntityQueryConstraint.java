@@ -31,16 +31,10 @@ import org.springframework.stereotype.Component;
 public class ReadEntityQueryConstraint implements RowLevelConstraint<ReadEntityQueryContext> {
 
     protected PolicyStore policyStore;
-    protected PredefinedQueryParameters predefinedQueryParameters;
 
     @Autowired
     public void setPolicyStore(PolicyStore policyStore) {
         this.policyStore = policyStore;
-    }
-
-    @Autowired
-    public void setPredefinedQueryParameters(PredefinedQueryParameters predefinedQueryParameters) {
-        this.predefinedQueryParameters = predefinedQueryParameters;
     }
 
     @Override
@@ -57,8 +51,5 @@ public class ReadEntityQueryConstraint implements RowLevelConstraint<ReadEntityQ
                 }
             }
         });
-        if (predefinedQueryParameters != null) {
-            context.setQueryParamsProvider(param -> predefinedQueryParameters.getParameterValue(param));
-        }
     }
 }

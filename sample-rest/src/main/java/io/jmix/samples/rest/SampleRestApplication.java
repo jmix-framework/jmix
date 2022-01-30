@@ -44,12 +44,10 @@ public class SampleRestApplication {
 
     @EventListener(ApplicationStartedEvent.class)
     private void onStartup() {
-        authenticator.withSystem(() -> {
+        authenticator.runWithSystem(() -> {
             Greeting greeting = dataManager.create(Greeting.class);
             greeting.setText("Hello");
             dataManager.save(greeting);
-
-            return null;
         });
     }
 

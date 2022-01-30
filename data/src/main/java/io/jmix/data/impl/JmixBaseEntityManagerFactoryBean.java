@@ -16,11 +16,16 @@
 
 package io.jmix.data.impl;
 
+import io.jmix.core.JmixModuleDescriptor;
 import io.jmix.core.JmixModules;
 import io.jmix.core.Resources;
 import io.jmix.core.Stores;
 import io.jmix.data.persistence.DbmsSpecifics;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+
+import java.util.List;
 
 public class JmixBaseEntityManagerFactoryBean extends LocalContainerEntityManagerFactoryBean {
     protected String storeName;
@@ -28,22 +33,26 @@ public class JmixBaseEntityManagerFactoryBean extends LocalContainerEntityManage
     protected JmixModules jmixModules;
     protected Resources resources;
 
+    private static final Logger log = LoggerFactory.getLogger(JmixBaseEntityManagerFactoryBean.class);
+
     protected void setupPersistenceUnit() {
-        String persistenceXmlPath = getPersistenceXmlPath(storeName);
-        if (resources.getResource("classpath:" + persistenceXmlPath).exists()) {
-            setPersistenceXmlLocation("classpath:" + persistenceXmlPath);
-        } else {
-            setPersistenceUnitName(storeName);
-            setPackagesToScan("");
-            logger.warn(String.format("Cannot find '%s'. Empty persistence unit with name '%s' will be created.",
-                    persistenceXmlPath,
-                    storeName));
+        List<JmixModuleDescriptor> modules = jmixModules.getAll();
+        for (int i = modules.size() - 1; i >= 0; i--) {
+            String path = getPersistenceXmlPath(modules.get(i), storeName);
+            if (resources.getResource("classpath:" + path).exists()) {
+                log.info("Using persistence.xml at {} for '{}' store", path, storeName);
+                setPersistenceXmlLocation("classpath:" + path);
+                return;
+            }
         }
+        log.warn("Cannot find persistence.xml for '{}' store. Falling back to classpath scan for entity classes.", storeName);
+        setPersistenceUnitName(storeName);
+        setPackagesToScan("");
     }
 
-    protected String getPersistenceXmlPath(String storeName) {
-        String modulePackage = jmixModules.getLast().getBasePackage().replace('.', '/');
-        return modulePackage + "/" + (Stores.isMain(storeName) ? "" : storeName + "-") + "persistence.xml";
+    protected String getPersistenceXmlPath(JmixModuleDescriptor module, String storeName) {
+        String dir = module.getBasePackage().replace('.', '/');
+        return dir + "/" + (Stores.isMain(storeName) ? "" : storeName + "-") + "persistence.xml";
     }
 
     protected void setupJpaProperties() {

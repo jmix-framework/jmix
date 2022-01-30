@@ -3,19 +3,18 @@ package io.jmix.data.accesscontext;
 
 import com.google.common.base.Strings;
 import io.jmix.core.Metadata;
-import io.jmix.data.QueryParser;
-import io.jmix.data.QueryTransformer;
-import io.jmix.data.QueryTransformerFactory;
 import io.jmix.core.accesscontext.AccessContext;
 import io.jmix.core.common.util.StringHelper;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.data.JmixQuery;
+import io.jmix.data.QueryParser;
+import io.jmix.data.QueryTransformer;
+import io.jmix.data.QueryTransformerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 
 /**
  * Modifies the query depending on current security constraints.
@@ -29,7 +28,6 @@ public class ReadEntityQueryContext implements AccessContext {
     protected final MetaClass entityClass;
     protected final boolean singleResult;
     protected List<Condition> conditions;
-    protected Function<String, Object> queryParamsProvider;
 
     private static final Logger log = LoggerFactory.getLogger(ReadEntityQueryContext.class);
 
@@ -74,10 +72,6 @@ public class ReadEntityQueryContext implements AccessContext {
         conditions.add(new Condition(join, where));
     }
 
-    public void setQueryParamsProvider(Function<String, Object> queryParamsProvider) {
-        this.queryParamsProvider = queryParamsProvider;
-    }
-
     @SuppressWarnings("rawtypes")
     public JmixQuery getResultQuery() {
         buildQuery();
@@ -110,12 +104,6 @@ public class ReadEntityQueryContext implements AccessContext {
                 transformer.addDistinct();
             }
             originalQuery.setQueryString(transformer.getResult());
-
-            if (queryParamsProvider != null) {
-                for (String param : transformer.getAddedParams()) {
-                    originalQuery.setParameter(param, queryParamsProvider.apply(param));
-                }
-            }
 
             if (log.isTraceEnabled()) {
                 log.trace("Query with row-level constraints applied: {}", printQuery(originalQuery.getQueryString()));

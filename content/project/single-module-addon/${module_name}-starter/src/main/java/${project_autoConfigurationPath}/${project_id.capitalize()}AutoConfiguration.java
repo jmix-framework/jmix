@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ${project_rootPackage}.autoconfigure;
+package ${project_autoConfigurationPackage};
 
 import ${project_rootPackage}.${project_id.capitalize()}Configuration;
 import org.springframework.context.annotation.Configuration;

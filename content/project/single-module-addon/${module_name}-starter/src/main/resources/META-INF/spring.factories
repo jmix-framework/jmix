@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  ${project_rootPackage}.autoconfigure.${project_id.capitalize()}AutoConfiguration
+  ${project_autoConfigurationPackage}.${project_id.capitalize()}AutoConfiguration

@@ -29,6 +29,7 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Range;
 import io.jmix.core.validation.EntityValidationException;
 import io.jmix.core.validation.group.RestApiChecks;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
@@ -391,8 +392,9 @@ public class EntityImportExportImpl implements EntityImportExport {
             createOp = true;
         }
 
-        //we must specify a fetchPlan here because otherwise we may get UnfetchedAttributeException during merge
-        saveContext.saving(dstEntity, fetchPlan);
+        if (hasChanges(srcEntity, dstEntity, importPlan)) {
+            saveContext.saving(dstEntity, fetchPlan);
+        }
 
         if (!createOp) {
             assertToken(srcEntity, fetchPlan);
@@ -442,6 +444,56 @@ public class EntityImportExportImpl implements EntityImportExport {
             }
         }
         return dstEntity;
+    }
+
+    private boolean hasChanges(Object srcEntity, Object dstEntity, EntityImportPlan importPlan) {
+        MetaClass metaClass = metadata.getClass(dstEntity);
+        for (EntityImportPlanProperty importPlanProperty : importPlan.getProperties()) {
+            String propertyName = importPlanProperty.getName();
+            MetaProperty metaProperty = metaClass.getProperty(propertyName);
+
+            if (Range.Cardinality.MANY_TO_MANY == metaProperty.getRange().getCardinality()) {
+                Collection<Object> collectionValue = EntityValues.getValue(srcEntity, importPlanProperty.getName());
+                Collection<Object> prevCollectionValue = EntityValues.getValue(dstEntity, importPlanProperty.getName());
+
+                Collection<Object> srcFilteredIds = getFilteredIds(getSecurityState(srcEntity), metaProperty.getName());
+                Collection<Object> dstFilteredIds = getFilteredIds(getSecurityState(dstEntity), metaProperty.getName());
+
+                Collection<Object> srcCollectionIds = filterIds(collectionValue, srcFilteredIds);
+                Collection<Object> dstCollectionIds = filterIds(prevCollectionValue, dstFilteredIds);
+
+                if (!CollectionUtils.isEqualCollection(srcCollectionIds, dstCollectionIds)) {
+                    return true;
+                }
+            } else if (!metaProperty.getRange().getCardinality().isMany()) {
+                if (!Objects.equals(
+                        EntityValues.getValue(srcEntity, propertyName),
+                        EntityValues.getValue(dstEntity, propertyName)
+                )) {
+                    return true;
+                }
+
+                if (metadataTools.isEmbedded(metaProperty)) {
+                    if (importPlanProperty.getPlan() != null) {
+                        if (hasChanges(
+                                EntityValues.getValue(srcEntity, propertyName),
+                                EntityValues.getValue(dstEntity, propertyName),
+                                importPlanProperty.getPlan())) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private Collection<Object> filterIds(@Nullable Collection<Object> collectionValue, Collection<Object> srcFilteredIds) {
+        if (collectionValue == null) return Collections.emptyList();
+        return collectionValue.stream()
+                .map(o -> Id.of(o).getValue())
+                .filter(id -> !srcFilteredIds.contains(id))
+                .collect(Collectors.toList());
     }
 
     protected void importReference(Object srcEntity,

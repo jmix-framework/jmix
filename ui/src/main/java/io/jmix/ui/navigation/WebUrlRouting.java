@@ -261,9 +261,7 @@ public class WebUrlRouting implements UrlRouting {
         if (isEditor(screen)) {
             Object editedEntity = ((EditorScreen) screen).getEditedEntity();
             if (editedEntity != null) {
-                if (entityStates.isNew(editedEntity)) {
-                    params.put("id", NEW_ENTITY_ID);
-                } else {
+                if (!entityStates.isNew(editedEntity)) {
                     Object entityId = EntityValues.getId(editedEntity);
                     if (entityId != null) {
                         String serializedId = UrlIdSerializer.serializeId(entityId);

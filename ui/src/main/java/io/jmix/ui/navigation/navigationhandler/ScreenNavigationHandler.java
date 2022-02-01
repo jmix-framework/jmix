@@ -313,7 +313,8 @@ public class ScreenNavigationHandler implements NavigationHandler {
         UrlChangeHandler urlChangeHandler = ui.getUrlChangeHandler();
 
         String idParam = MapUtils.isNotEmpty(requestedState.getParams())
-                ? requestedState.getParams().get("id")
+                // If no id was passed, open editor for creation
+                ? requestedState.getParams().getOrDefault("id", NEW_ENTITY_ID)
                 : NEW_ENTITY_ID;
 
         Class<?> entityClass = EditorTypeExtractor.extractEntityClass(windowInfo);

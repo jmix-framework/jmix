@@ -23,10 +23,13 @@ import io.jmix.core.MetadataTools;
 import io.jmix.core.QueryUtils;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.core.querycondition.PropertyConditionUtils;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -53,6 +56,26 @@ public class PropertyConditionGenerator implements ConditionGenerator {
 
     @Override
     public String generateJoin(ConditionGenerationContext context) {
+        PropertyCondition propertyCondition = (PropertyCondition) context.getCondition();
+        if (propertyCondition == null) {
+            return "";
+        }
+
+        String propertyName = propertyCondition.getProperty();
+        if (!propertyName.contains("."))
+            return "";
+
+        String basePropertyName = StringUtils.substringBefore(propertyName, ".");
+        String childProperty = StringUtils.substringAfter(propertyName, ".");
+        String baseEntityAlias = context.entityAlias;
+        MetaProperty metaProperty = metadata.getClass(context.getEntityName()).getProperty(basePropertyName);
+
+        if (metaProperty.getRange().getCardinality().isMany()) {
+            String joinAlias = basePropertyName.substring(0, 3) + RandomStringUtils.randomAlphabetic(3);
+            context.setEntityAlias(joinAlias);
+            propertyCondition.setProperty(childProperty);
+            return "join " + baseEntityAlias + "." + basePropertyName + " " + joinAlias;
+        }
         return "";
     }
 

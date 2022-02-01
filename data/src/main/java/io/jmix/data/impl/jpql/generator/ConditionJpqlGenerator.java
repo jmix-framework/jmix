@@ -17,6 +17,7 @@
 package io.jmix.data.impl.jpql.generator;
 
 import com.google.common.base.Strings;
+import io.jmix.core.querycondition.Condition;
 import io.jmix.data.QueryParser;
 import io.jmix.data.QueryTransformer;
 import io.jmix.data.QueryTransformerFactory;
@@ -54,6 +55,8 @@ public class ConditionJpqlGenerator {
             context.setSelectedExpressions(parser.getSelectedExpressionsList());
         }
 
+        copyGenerationContext(context);
+
         String joins = generateJoins(context);
         String where = generateWhere(context);
 
@@ -63,6 +66,16 @@ public class ConditionJpqlGenerator {
             transformer.addWhere(where);
         }
         return transformer.getResult();
+    }
+
+    private void copyGenerationContext(ConditionGenerationContext generationContext) {
+        for (Condition childCondition:generationContext.getChildContexts().keySet()){
+            ConditionGenerationContext childContext = generationContext.getChildContexts().get(childCondition);
+            childContext.setEntityAlias(generationContext.getEntityAlias());
+            childContext.setEntityName(generationContext.getEntityName());
+            childContext.setValueProperties(generationContext.getValueProperties());
+            copyGenerationContext(childContext);
+        }
     }
 
     protected String generateJoins(ConditionGenerationContext context) {

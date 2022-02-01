@@ -17,9 +17,13 @@
 package io.jmix.data.impl.jpql.generator;
 
 import io.jmix.core.querycondition.Condition;
+import io.jmix.core.querycondition.LogicalCondition;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ConditionGenerationContext {
 
@@ -29,8 +33,24 @@ public class ConditionGenerationContext {
     protected List<String> valueProperties;
     protected List<String> selectedExpressions;
 
+    protected Map<Condition, ConditionGenerationContext> childContexts = new HashMap<>();
+
     public ConditionGenerationContext(@Nullable Condition condition) {
         this.condition = condition;
+        if (condition instanceof LogicalCondition) {
+            createChildContexts((LogicalCondition) condition, this);
+        }
+    }
+
+    private void createChildContexts(LogicalCondition logicalCondition, ConditionGenerationContext context) {
+        for (Condition childCondition : logicalCondition.getConditions()) {
+            ConditionGenerationContext childContext = new ConditionGenerationContext(childCondition);
+            childContext.copy(context);
+            getChildContexts().put(childCondition, childContext);
+            if (childCondition instanceof LogicalCondition){
+                createChildContexts((LogicalCondition) childCondition,childContext);
+            }
+        }
     }
 
     @Nullable
@@ -70,6 +90,10 @@ public class ConditionGenerationContext {
 
     public void setSelectedExpressions(@Nullable List<String> selectedExpressions) {
         this.selectedExpressions = selectedExpressions;
+    }
+
+    public Map<Condition, ConditionGenerationContext> getChildContexts() {
+        return childContexts;
     }
 
     public void copy(ConditionGenerationContext context) {

@@ -63,6 +63,12 @@ io_jmix_grapesjs_widget_grapesjshtmleditorcomponent_GrapesJsHtmlEditorComponent 
     // Show borders by default
     pn.getButton('options', 'sw-visibility').set('active', 1);
 
+    // remove default buttons before we add custom ones
+    pn.removeButton('options', 'undo');
+    pn.removeButton('options', 'redo');
+    pn.removeButton('options', 'preview');
+    pn.removeButton('options', 'canvas-clear');
+
     pn.addButton('options', [{
         id: 'preview',
         className: 'fa fa-eye icon-blank',

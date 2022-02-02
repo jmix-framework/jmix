@@ -189,10 +189,10 @@ public class EntityMutationDataFetcher {
 
         Object id = EntityValues.getId(entity);
         List<String> excludedProperties = metaClass.getProperties().stream()
+                .filter(metaProperty -> !metaProperty.isReadOnly())
                 .filter(metaProperty -> {
                     Object value = EntityValues.getValue(entity, metaProperty.getName());
-                    return value != null
-                            && !value.equals(id);
+                    return value != null && !value.equals(id);
                 })
                 .map(MetaProperty::getName)
                 .filter(name -> !availableProperties.contains(name))

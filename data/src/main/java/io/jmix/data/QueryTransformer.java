@@ -15,6 +15,9 @@
  */
 package io.jmix.data;
 
+import io.jmix.core.Sort;
+
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -36,7 +39,7 @@ public interface QueryTransformer {
     void addJoinAndWhere(String join, String where);
 
     /** Adds or replaces 'order by' clause */
-    void replaceOrderByExpressions(boolean directionDesc, String... sortExpressions);
+    void replaceOrderByExpressions(Map<String, Sort.Direction> sortExpressions);
 
     /* Adds 'selection' to from clause. It will be inserted as first selection after FROM keyword*/
     void addFirstSelectionSource(String selection);

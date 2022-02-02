@@ -50,7 +50,7 @@ class QuerySortTest extends DataSpec {
 
         then:
 
-        queryBuilder.getResultQueryString() == 'select u from sec$User u order by u.name, u.id'
+        queryBuilder.getResultQueryString() == 'select u from sec$User u order by u.name asc, u.id asc'
 
         when: "by two properties"
 
@@ -61,7 +61,7 @@ class QuerySortTest extends DataSpec {
 
         then:
 
-        queryBuilder.getResultQueryString() == 'select u from sec$User u order by u.login, u.name, u.id'
+        queryBuilder.getResultQueryString() == 'select u from sec$User u order by u.login asc, u.name asc, u.id asc'
 
         when: "by two properties desc"
 
@@ -72,7 +72,7 @@ class QuerySortTest extends DataSpec {
 
         then:
 
-        queryBuilder.getResultQueryString() == 'select u from sec$User u order by u.login desc, u.name desc, u.id desc'
+        queryBuilder.getResultQueryString() == 'select u from sec$User u order by u.login desc, u.name desc, u.id asc'
 
         when: "by reference property"
 
@@ -83,7 +83,7 @@ class QuerySortTest extends DataSpec {
 
         then:
 
-        queryBuilder.getResultQueryString() == 'select u from sec$User u left join u.group u_group order by u_group.name, u.id'
+        queryBuilder.getResultQueryString() == 'select u from sec$User u left join u.group u_group order by u_group.name asc, u.id asc'
 
         when: "by reference property desc"
 
@@ -94,7 +94,7 @@ class QuerySortTest extends DataSpec {
 
         then:
 
-        queryBuilder.getResultQueryString() == 'select u from sec$User u left join u.group u_group order by u_group.name desc, u.id desc'
+        queryBuilder.getResultQueryString() == 'select u from sec$User u left join u.group u_group order by u_group.name desc, u.id asc'
     }
 
     def "sort by unique id property"() {
@@ -110,7 +110,7 @@ class QuerySortTest extends DataSpec {
 
         then:
 
-        queryBuilder.getResultQueryString() == 'select u from sec$User u order by u.login, u.id'
+        queryBuilder.getResultQueryString() == 'select u from sec$User u order by u.login asc, u.id asc'
     }
 
     def "sort by single property with order function and nulls first"() {
@@ -129,7 +129,7 @@ class QuerySortTest extends DataSpec {
 
         then:
 
-        queryBuilder.getResultQueryString() == 'select e from sales_Order e order by upper( e.number) asc nulls first, e.id'
+        queryBuilder.getResultQueryString() == 'select e from sales_Order e order by upper( e.number) asc nulls first, e.id asc'
 
         cleanup:
         ((TestJpqlSortExpressionProvider) sortExpressionProvider).resetToUpperPaths()
@@ -148,7 +148,10 @@ class QuerySortTest extends DataSpec {
 
         then:
 
-        thrown(UnsupportedOperationException)
+        queryBuilder.getResultQueryString() == 'select u from sec$User u order by u.login asc, u.name desc, u.id asc'
+
+        cleanup:
+        ((TestJpqlSortExpressionProvider) sortExpressionProvider).resetToUpperPaths()
     }
 
     def "sort by non-persistent property"() {
@@ -164,7 +167,7 @@ class QuerySortTest extends DataSpec {
 
         then:
 
-        queryBuilder.getResultQueryString() == 'select e from test_TestAppEntity e order by e.appDate, e.id'
+        queryBuilder.getResultQueryString() == 'select e from test_TestAppEntity e order by e.appDate asc, e.id asc'
 
         when: "by persistent and non-persistent property"
 
@@ -175,7 +178,7 @@ class QuerySortTest extends DataSpec {
 
         then:
 
-        queryBuilder.getResultQueryString() == 'select e from test_TestAppEntity e order by e.createTs, e.appDate, e.id'
+        queryBuilder.getResultQueryString() == 'select e from test_TestAppEntity e order by e.createTs asc, e.appDate asc, e.id asc'
 
         when: "by single non-persistent property desc"
 
@@ -186,7 +189,7 @@ class QuerySortTest extends DataSpec {
 
         then:
 
-        queryBuilder.getResultQueryString() == 'select e from test_TestAppEntity e order by e.appDate desc, e.id desc'
+        queryBuilder.getResultQueryString() == 'select e from test_TestAppEntity e order by e.appDate desc, e.id asc'
 
         when: "by non-persistent property related to two other properties"
 
@@ -197,7 +200,7 @@ class QuerySortTest extends DataSpec {
 
         then:
 
-        queryBuilder.getResultQueryString() == 'select e from test_TestAppEntity e left join e.author e_author order by e_author.login, e_author.name, e.number, e.id'
+        queryBuilder.getResultQueryString() == 'select e from test_TestAppEntity e left join e.author e_author order by e_author.login asc, e_author.name asc, e.number asc, e.id asc'
 
         when: "by non-persistent property related to two other properties desc"
 
@@ -208,7 +211,7 @@ class QuerySortTest extends DataSpec {
 
         then:
 
-        queryBuilder.getResultQueryString() == 'select e from test_TestAppEntity e left join e.author e_author order by e_author.login desc, e_author.name desc, e.number desc, e.id desc'
+        queryBuilder.getResultQueryString() == 'select e from test_TestAppEntity e left join e.author e_author order by e_author.login desc, e_author.name desc, e.number desc, e.id asc'
     }
 
     def "sort key-value entity"() {
@@ -224,7 +227,7 @@ class QuerySortTest extends DataSpec {
 
         then:
 
-        queryBuilder.getResultQueryString() == 'select e.name from test_TestAppEntity e order by e.name'
+        queryBuilder.getResultQueryString() == 'select e.name from test_TestAppEntity e order by e.name asc'
 
         when: "by aggregated single persistent property"
 
@@ -235,7 +238,7 @@ class QuerySortTest extends DataSpec {
 
         then:
 
-        queryBuilder.getResultQueryString() == 'select e.id, min(e.name) from test_TestAppEntity e group by e.id order by min(e.name)'
+        queryBuilder.getResultQueryString() == 'select e.id, min(e.name) from test_TestAppEntity e group by e.id order by min(e.name) asc'
     }
 
     def "sort by column of composite primary key"() {
@@ -251,6 +254,6 @@ class QuerySortTest extends DataSpec {
 
         then:
 
-        queryBuilder.getResultQueryString() == 'select e from test_TestCompositeKeyEntity e order by e.id.tenant desc, e.id.entityId desc'
+        queryBuilder.getResultQueryString() == 'select e from test_TestCompositeKeyEntity e order by e.id.tenant desc, e.id.entityId asc'
     }
 }

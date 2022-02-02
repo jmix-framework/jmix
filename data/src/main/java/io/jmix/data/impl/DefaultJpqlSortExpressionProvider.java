@@ -16,6 +16,7 @@
 
 package io.jmix.data.impl;
 
+import io.jmix.core.Sort;
 import io.jmix.data.persistence.JpqlSortExpressionProvider;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import org.springframework.stereotype.Component;
@@ -23,12 +24,12 @@ import org.springframework.stereotype.Component;
 @Component("data_JpqlSortExpressionProvider")
 public class DefaultJpqlSortExpressionProvider implements JpqlSortExpressionProvider {
     @Override
-    public String getDatatypeSortExpression(MetaPropertyPath metaPropertyPath, boolean sortDirectionAsc) {
-        return String.format("{E}.%s", metaPropertyPath.toString());
+    public String getDatatypeSortExpression(MetaPropertyPath metaPropertyPath, Sort.Direction sortDirection) {
+        return String.format("{E}.%s", metaPropertyPath);
     }
 
     @Override
-    public String getLobSortExpression(MetaPropertyPath metaPropertyPath, boolean sortDirectionAsc) {
-        return String.format("{E}.%s", metaPropertyPath.toString());
+    public String getLobSortExpression(MetaPropertyPath metaPropertyPath, Sort.Direction sortDirection) {
+        return String.format("{E}.%s", metaPropertyPath);
     }
 }

@@ -29,6 +29,7 @@ import io.jmix.ui.xml.layout.loader.ComponentLoaderContext;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
 import org.apache.commons.lang3.StringUtils;
+import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -73,6 +74,13 @@ public class FragmentHelper {
         }
 
         return controller;
+    }
+
+    public String findMessageGroup(Element element, String descriptorPath) {
+        String messagesGroup = element.attributeValue("messagesGroup");
+        return messagesGroup != null
+                ? messagesGroup
+                : getMessageGroup(descriptorPath);
     }
 
     public String getMessageGroup(String descriptorPath) {

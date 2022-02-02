@@ -321,7 +321,10 @@ public class ScreensImpl implements Screens {
 
     protected void findMessageGroup(Element element, String descriptorPath,
                                     ComponentLoaderContext componentLoaderContext) {
-        componentLoaderContext.setMessageGroup(getMessageGroup(descriptorPath));
+        String messagesGroup = element.attributeValue("messagesGroup");
+        componentLoaderContext.setMessageGroup(messagesGroup != null
+                ? messagesGroup
+                : getMessageGroup(descriptorPath));
     }
 
     protected String getMessageGroup(String descriptorPath) {

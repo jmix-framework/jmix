@@ -38,6 +38,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.JavaVersion;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
+import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
@@ -732,6 +733,17 @@ public class UiControllerDependencyInjector {
                                                 FrameOwner frameOwner,
                                                 Frame frame) {
         MessageBundle messageBundle = applicationContext.getBean(MessageBundle.class);
+
+        if (frame instanceof Component.HasXmlDescriptor) {
+            Element xmlDescriptor = ((Component.HasXmlDescriptor) frame).getXmlDescriptor();
+            if (xmlDescriptor != null) {
+                String messagesGroup = xmlDescriptor.attributeValue("messagesGroup");
+                if (messagesGroup != null) {
+                    messageBundle.setMessageGroup(messagesGroup);
+                    return messageBundle;
+                }
+            }
+        }
 
         Class<? extends FrameOwner> screenClass = frameOwner.getClass();
         String packageName = UiControllerUtils.getPackage(screenClass);

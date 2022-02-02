@@ -92,7 +92,6 @@ public class FragmentComponentLoader extends ContainerLoader<Fragment> {
             }
 
             innerContext = createInnerContext();
-            innerContext.setMessageGroup(fragmentHelper.getMessageGroup(windowInfo.getTemplate()));
             innerContext.setCurrentFrameId(fragmentId);
             innerContext.setFullFrameId(frameId);
             innerContext.setFrame(fragment);
@@ -105,6 +104,8 @@ public class FragmentComponentLoader extends ContainerLoader<Fragment> {
 
             Element rootElement = screenXmlLoader.load(windowInfo.getTemplate(), windowInfo.getId(),
                     getComponentContext().getParams());
+
+            innerContext.setMessageGroup(fragmentHelper.findMessageGroup(rootElement, windowInfo.getTemplate()));
 
             loadAdditionalData(rootElement);
 

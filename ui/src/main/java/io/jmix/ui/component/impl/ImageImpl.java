@@ -20,12 +20,9 @@ import com.vaadin.event.MouseEvents;
 import io.jmix.core.FileRef;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.common.util.Preconditions;
+import io.jmix.ui.component.*;
 import org.springframework.context.ApplicationContextAware;
 import io.jmix.ui.GuiDevelopmentException;
-import io.jmix.ui.component.FileStorageResource;
-import io.jmix.ui.component.Image;
-import io.jmix.ui.component.Resource;
-import io.jmix.ui.component.StreamResource;
 import io.jmix.ui.component.data.ValueSource;
 import io.jmix.ui.component.data.meta.EntityValueSource;
 import io.jmix.ui.widget.JmixImage;
@@ -33,6 +30,9 @@ import org.springframework.beans.factory.InitializingBean;
 
 import javax.annotation.Nullable;
 import java.io.ByteArrayInputStream;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
 import java.util.function.Consumer;
 
 public class ImageImpl<T> extends AbstractResourceView<JmixImage> implements Image<T>, InitializingBean {
@@ -137,6 +137,15 @@ public class ImageImpl<T> extends AbstractResourceView<JmixImage> implements Ima
         if (resourceObject instanceof FileRef) {
             return applicationContext.getBean(FileStorageResource.class)
                     .setFileReference((FileRef) resourceObject);
+        }
+        if (resourceObject instanceof URI) {
+            URI uri = (URI) resourceObject;
+            try {
+                URL url = uri.toURL();
+                return applicationContext.getBean(UrlResource.class).setUrl(url);
+            } catch (MalformedURLException e) {
+                throw new IllegalArgumentException("Cannot convert provided URI `" + uri + "' to URL", e);
+            }
         }
 
         throw new GuiDevelopmentException(

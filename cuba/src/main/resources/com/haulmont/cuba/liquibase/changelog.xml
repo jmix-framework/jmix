@@ -35,5 +35,6 @@
     <include file="/com/haulmont/cuba/liquibase/changelog/004-migrate-multitenancy.xml"/>
     <include file="/com/haulmont/cuba/liquibase/changelog/004-migrate-reports.xml"/>
     <include file="/com/haulmont/cuba/liquibase/changelog/004-migrate-webdav.xml"/>
+    <include file="/com/haulmont/cuba/liquibase/changelog/005-migrate-reports.xml"/>
 
 </databaseChangeLog>

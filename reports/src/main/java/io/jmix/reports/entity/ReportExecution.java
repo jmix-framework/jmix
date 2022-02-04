@@ -77,7 +77,7 @@ public class ReportExecution {
     @Column(name = "CANCELLED")
     private Boolean cancelled;
 
-    @Column(name = "OUTPUT_DOCUMENT")
+    @Column(name = "OUTPUT_DOCUMENT", length = 4000)
     private FileRef outputDocument;
 
     @Column(name = "PARAMS")

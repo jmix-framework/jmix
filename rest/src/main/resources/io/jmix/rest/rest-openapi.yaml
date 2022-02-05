@@ -1,59 +1,59 @@
 openapi: 3.0.1
 info:
-  title: Jmix Platform REST API
+  title: Jmix Generic REST API
   description: |2
 
-    ## General Overview
+    ## Overview
 
-    Jmix REST API provides the following functionality:
+    Jmix Generic REST API provides the following functionality:
 
     * Entities CRUD operations
     * Execution of predefined JPQL queries
-    * Execution of services methods
-    * Getting metadata (entities, fetch plans, views, enumerations, datatypes)
+    * Execution of exposed service methods
+    * Getting metadata (entities, fetch plans, enumerations, datatypes)
     * Getting localized messages
-    * Getting current user permissions (access to entities, attributes)
-    * Getting current user information (username)
+    * Getting current user permissions (roles, access to entities and attributes, specific policies)
+    * Getting attributes of the current user
     * Working with files
 
-    The REST API is available at the URL `/rest/` both in the web and the portal modules, e.g. `http://localhost:8080/rest/entities/sales$Order`
+    The REST API is available at the `/rest/` URL, e.g. `http://localhost:8080/rest/entities/Order`
 
     ## Authentication
 
     ### Authentication using the OAuth2 protocol
 
-    Jmix REST API uses an OAuth2 resource owner password credentials grant to protect the endpoints (https://tools.ietf.org/html/rfc6749#page-37).
+    Jmix REST API uses an OAuth2 resource owner password credentials grant to protect the endpoints (https://datatracker.ietf.org/doc/html/rfc6749#section-4.3).
 
     Before accessing a protected resource, a user must get an authentication token. The token can be obtained at the `/oauth/token` URL.
 
-    The `/oauth/token` endpoint is protected with the basic authentication. The request must contain an `Authorization` header for basic
-    authentication with REST API client credentials. Please note that client credentials are not the same as platform user credentials.
-    By client we mean an application that uses the REST API. The default client credentials are defined by the following
+    The `/oauth/token` endpoint is protected with the basic authentication. The request must contain the `Authorization` header for basic
+    authentication with REST API client credentials. Please note that client credentials are not the same as the user credentials.
+    Client means an application that uses the REST API. The default client credentials are defined by the following
     application properties: `jmix.security.oauth2.clientId` and `jmix.security.oauth2.clientSecret`. User credentials must be passed in the request body.
     The request format must be `application/x-www-form-urlencoded`.
 
     See the `/oauth/token` endpoint documentation for more details.
 
-    When the token is obtained it must be placed to the `Authorization` header with the `Bearer` type to all further requests, e.g.:
+    The obtained token must be provided with all subsequent requests in the `Authorization` header of the `Bearer` type, e.g.:
 
     ```
-    GET /rest/entities/sales$Order
+    GET /rest/entities/Order
          Host: example.com
          Authorization: Bearer 2YotnFZFEjr1zCsicMWpAA
     ```
 
-    Access token can also placed to the request URL using the `access_token` parameter. This may be useful when you, for example, need to build
+    Access token can also be provided in the request URL using the `access_token` parameter. This may be useful when you, for example, need to build
     a link for downloading a file, like this: `http://localhost:8080/rest/files?fileRef=fs://2021/03/12/2266c97c-cf23-c202-481d-04d972e185b4.jpg?name=cat-via-direct-request.jpg?access_token=acefdad0-d728-4279-aae3-6b42620f7ef9`.
 
     ### Anonymous access
 
-    If the request to protected resource doesn't contain the `Authentication` header then the user will be authenticated with the anonymous session.
-    By default, anonymous access is forbidden. To enable it for a specific URL, add the URL pattern to the `jmix.rest.anonymousUrlPatterns` application property.
-    Read more about the anonymous sessions in the Jmix Developer's Manual.
+    If the request to a protected resource doesn't contain the `Authentication` header then the user will be authenticated with the anonymous session.
+    By default, anonymous access is forbidden. To enable it for a specific URL, add the URL pattern to the `jmix.rest.anonymous-url-patterns` application property.
+    Read more about the anonymous sessions in the Jmix documentation.
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  version: 1.0
+  version: "1.1"
 servers:
   - url: /rest
 security:
@@ -63,11 +63,11 @@ tags:
   - name: OAuth
     description: Working with authentication tokens
   - name: Entities
-    description: CRUD entities operations
+    description: CRUD operations with entities
   - name: Queries
-    description: Predefined queries execution
+    description: Executing predefined JPQL queries
   - name: Services
-    description: Middleware services execution
+    description: Invoking exposed service methods
   - name: Files
     description: Working with files
   - name: Permissions
@@ -77,9 +77,9 @@ tags:
   - name: Messages
     description: Localized messages
   - name: UserInfo
-    description: User information
+    description: Current user information
   - name: Documentation
-    description: Swagger documentation
+    description: OpenAPI documentation
 paths:
   /oauth/token:
     post:
@@ -90,13 +90,13 @@ paths:
         Gets an authentication token.
 
         The endpoint is protected with the basic authentication. The request must contain an `Authorization`
-        header for basic authentication with REST API client credentials. Please note, that client credentials
-        is not the same as platform user credentials. By client we mean an application that uses the REST API.
+        header for basic authentication with REST API client credentials. Please note that client credentials 
+        are not the same as the user credentials. Client means an application that uses the REST API.
         The default client credentials are defined by the following application properties: `jmix.rest.client.id` and `jmix.rest.client.secret`.
         User credentials must be passed in the request body. The request format must be `application/x-www-form-urlencoded`.
 
-        To disable refresh tokens for the default client, remove the refresh_token type from the
-        `jmix.rest.client.authorizedGrantTypes` application property value.
+        To disable refresh tokens for the client, set `password,external` value to the
+        `jmix.security.oauth2.client-authorized-grant-types` application property.
       requestBody:
         content:
           application/x-www-form-urlencoded:
@@ -122,7 +122,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/token'
         400:
-          description: Authentication failed, e.g. because of invalid Jmix user username
+          description: Authentication failed, e.g. because of invalid username
             or password
           content:
             application/json:
@@ -154,7 +154,7 @@ paths:
               properties:
                 token:
                   type: string
-                  description: The token that the client wants to get revoked.
+                  description: The token to be revoked.
                 token_type_hint:
                   type: string
                   description: |
@@ -183,11 +183,6 @@ paths:
         - name: fetchPlan
           in: query
           description: Name of the fetch plan which is used for loading the entity
-          schema:
-            type: string
-        - name: view
-          in: query
-          description: Name of the view which is used for loading the entity
           schema:
             type: string
         - name: limit
@@ -331,11 +326,6 @@ paths:
         - name: fetchPlan
           in: query
           description: Name of the fetch plan which is used for loading the entity
-          schema:
-            type: string
-        - name: view
-          in: query
-          description: Name of the view which is used for loading the entity
           schema:
             type: string
         - name: returnNulls
@@ -545,11 +535,6 @@ paths:
           description: Name of the fetch plan which is used for loading the entity
           schema:
             type: string
-        - name: view
-          in: query
-          description: Name of the view which is used for loading the entity
-          schema:
-            type: string
         - name: limit
           in: query
           description: Number of extracted entities
@@ -754,13 +739,6 @@ paths:
           description: Position of the first result to retrieve
           schema:
             type: string
-        - name: view
-          in: query
-          description: |
-            Name of the view which is used for loading the entity. Specify this parameter if you want to extract entities with the view
-            other than it is defined in the REST queries configuration file.
-          schema:
-            type: string
         - name: fetchPlan
           in: query
           description: |
@@ -833,13 +811,6 @@ paths:
         - name: offset
           in: query
           description: Position of the first result to retrieve
-          schema:
-            type: string
-        - name: view
-          in: query
-          description: |
-            Name of the view which is used for loading the entity. Specify this parameter if you want to extract entities with the view
-            other than it is defined in the REST queries configuration file.
           schema:
             type: string
         - name: fetchPlan
@@ -1227,35 +1198,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error'
-  /metadata/entities/{entityName}/views:
-    get:
-      tags:
-        - Metadata
-      summary: Get all views for the entity
-      description: Gets all views for the entity
-      parameters:
-        - name: entityName
-          in: path
-          description: Entity name
-          required: true
-          schema:
-            type: string
-      responses:
-        200:
-          description: Success
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/fetchPlanInfo'
-        404:
-          description: |
-            MetaClass not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/error'
   /metadata/entities/{entityName}/fetchPlans/{fetchPlanName}:
     get:
       tags:
@@ -1285,39 +1227,6 @@ paths:
         404:
           description: |
             MetaClass not found or fetch plan with the given name not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/error'
-  /metadata/entities/{entityName}/views/{viewName}:
-    get:
-      tags:
-        - Metadata
-      summary: Get the view
-      description: Gets the view
-      parameters:
-        - name: entityName
-          in: path
-          description: Entity name
-          required: true
-          schema:
-            type: string
-        - name: viewName
-          in: path
-          description: View name
-          required: true
-          schema:
-            type: string
-      responses:
-        200:
-          description: Success
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/fetchPlanInfo'
-        404:
-          description: |
-            MetaClass not found or view with the given name not found
           content:
             application/json:
               schema:
@@ -1597,10 +1506,6 @@ components:
           type: string
           description: Entity name
           example: sec$User
-        viewName:
-          type: string
-          description: View name
-          example: user.edit
         fetchPlanName:
           type: string
           description: Fetch plan name
@@ -1788,8 +1693,8 @@ components:
         properties:
           type: array
           description: |
-            The array of properties may be of mixed type. If some of the properties is a reference to another entity then
-            a nested view object will be returned instead of the string with the proeprty name.
+            The array of properties may be of mixed type. If some property is a reference to another entity then
+            a nested fetch plan object will be returned instead of the string with the property name.
           example:
             - firstName
             - lastName
@@ -1837,12 +1742,6 @@ components:
       in: path
       description: Method name
       required: true
-      schema:
-        type: string
-    entityViewParam:
-      name: view
-      in: query
-      description: Name of the view which is used for loading the entity
       schema:
         type: string
     entityFetchPlanParam:

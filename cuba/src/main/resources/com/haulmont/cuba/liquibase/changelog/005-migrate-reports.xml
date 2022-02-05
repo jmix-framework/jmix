@@ -23,6 +23,10 @@
         context="cuba and !migrated">
 
     <changeSet id="1" author="migrator">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="REPORT_REPORT"/>
+        </preConditions>
+
         <modifyDataType tableName="REPORT_EXECUTION" columnName="OUTPUT_DOCUMENT" newDataType="varchar(4000)"/>
     </changeSet>
 

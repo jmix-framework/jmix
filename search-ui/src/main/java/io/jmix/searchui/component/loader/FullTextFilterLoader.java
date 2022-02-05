@@ -37,6 +37,7 @@ public class FullTextFilterLoader extends AbstractSingleFilterComponentLoader<Fu
     public void loadComponent() {
         super.loadComponent();
         loadSearchStrategy(resultComponent, element);
+        loadString(element, "defaultValue", resultComponent::setValue);
     }
 
     protected void loadSearchStrategy(FullTextFilter resultComponent, Element element) {

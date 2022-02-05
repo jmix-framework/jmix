@@ -39,7 +39,7 @@ import java.util.function.Consumer;
         xmlnsAlias = "search",
         icon = "io/jmix/searchui/icon/searchField.svg",
         canvasBehaviour = CanvasBehaviour.SEARCH_FIELD,
-        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/search/search-in-ui.html",
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/search/search-in-ui.html#search-fields",
         unsupportedProperties = {"colspan", "rowspan"}
 )
 public interface SearchField extends

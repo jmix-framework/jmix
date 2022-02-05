@@ -22,6 +22,8 @@
                   class="io.jmix.searchui.entity.FullTextFilterCondition">
             <fetchPlan extends="_local">
                 <property name="valueComponent" fetchPlan="_local"/>
+                <property name="searchStrategyName"/>
+                <property name="parameterName"/>
             </fetchPlan>
             <loader/>
             <instance id="valueComponentDc" property="valueComponent"/>
@@ -35,7 +37,12 @@
         <form id="form" dataContainer="filterConditionDc" width="100%" height="100%">
             <column width="100%">
                 <textField id="captionField" property="caption" required="true"/>
-                <comboBox id="searchStrategyNameField" property="searchStrategyName" contextHelpText="msg://io.jmix.searchui.screen.filter.condition/searchStrategyNameField.contextHelp"/>
+                <comboBox id="searchStrategyNameField" property="searchStrategyName"
+                          contextHelpText="msg://io.jmix.searchui.screen.filter.condition/searchStrategyNameField.contextHelp"/>
+                <textField id="parameterNameField" property="parameterName"
+                           contextHelpText="msg://io.jmix.searchui.screen.filter.condition/fullTextFilterConditionEdit.parameterNameFieldContextHelp"/>
+                <textField id="defaultValueField" property="valueComponent.defaultValue"/>
+                <checkBox id="visibleField" property="visible"/>
             </column>
         </form>
         <hbox id="editActions" spacing="true">

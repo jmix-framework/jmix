@@ -43,6 +43,12 @@
                 <xs:attribute name="captionWidth" type="xs:string"/>
                 <xs:attribute name="autoApply" type="xs:boolean"/>
                 <xs:attribute name="captionPosition" type="layout:captionPositionType"/>
+                <xs:attribute name="defaultValue" type="xs:string"/>
+                <xs:attribute name="parameterName" type="xs:string"/>
+                <xs:attributeGroup ref="layout:hasTabIndex"/>
+                <xs:attributeGroup ref="layout:hasContextHelp"/>
+                <xs:attributeGroup ref="layout:hasEditable"/>
+                <xs:attributeGroup ref="layout:hasRequirements"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

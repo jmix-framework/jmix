@@ -19,6 +19,11 @@ package io.jmix.searchui.component;
 import io.jmix.search.searching.SearchStrategy;
 import io.jmix.search.searching.SearchStrategyManager;
 import io.jmix.ui.component.SingleFilterComponent;
+import io.jmix.ui.meta.CanvasBehaviour;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioComponent;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioProperty;
 
 import javax.annotation.Nullable;
 
@@ -27,6 +32,24 @@ import javax.annotation.Nullable;
  * joining JPQL query results with the data returned from Elasticsearch. The component renders a {@link
  * io.jmix.ui.component.TextField} for entering full-text search criteria.
  */
+@StudioComponent(
+        caption = "FullTextFilter",
+        category = "Search",
+        xmlElement = "fullTextFilter",
+        xmlns = "http://jmix.io/schema/search/ui",
+        xmlnsAlias = "search",
+        canvasBehaviour = CanvasBehaviour.FULL_TEXT_FILTER,
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/search/search-in-ui.html#full-text-filter",
+        unsupportedProperties = {"captionVisible"}
+)
+@StudioElement(
+        caption = "FullTextFilter",
+        xmlElement = "fullTextFilter",
+        xmlns = "http://jmix.io/schema/search/ui",
+        xmlnsAlias = "search",
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/search/search-in-ui.html#full-text-filter",
+        unsupportedProperties = {"dataLoader", "captionWidth", "autoApply", "captionPosition", "captionVisible"}
+)
 public interface FullTextFilter extends SingleFilterComponent<String> {
 
     String NAME = "fullTextFilter";
@@ -36,11 +59,12 @@ public interface FullTextFilter extends SingleFilterComponent<String> {
      * set to the full-text filter then a default strategy will be used.
      *
      * @return a {@link SearchStrategy} or null if the strategy is not explicitly set
-     *
      * @see SearchStrategyManager#getDefaultSearchStrategy()
      */
     @Nullable
     SearchStrategy getSearchStrategy();
 
+    @StudioProperty(name = "strategy", type = PropertyType.STRING, defaultValue = "anyTermAnyField",
+            options = {"anyTermAnyField", "allTermsAnyField", "allTermsSingleField", "phrase"})
     void setSearchStrategy(@Nullable SearchStrategy searchStrategy);
 }

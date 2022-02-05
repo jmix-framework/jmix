@@ -27,6 +27,7 @@ import io.jmix.ui.component.Filter;
 import io.jmix.ui.component.HasValue;
 import io.jmix.ui.component.TextField;
 import io.jmix.ui.component.filter.converter.AbstractFilterComponentConverter;
+import io.jmix.ui.entity.FilterValueComponent;
 import org.elasticsearch.common.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -76,13 +77,18 @@ public class FullTextFilterConverter extends AbstractFilterComponentConverter<Fu
         fullTextFilter.setCaptionPosition(model.getCaptionPosition());
         fullTextFilter.setRequired(model.getRequired());
         fullTextFilter.setParameterName(model.getParameterName());
+
         String searchStrategyName = model.getSearchStrategyName();
         SearchStrategy searchStrategy = !Strings.isNullOrEmpty(searchStrategyName) ?
                 searchStrategyManager.findSearchStrategyByName(searchStrategyName) :
                 null;
         fullTextFilter.setSearchStrategy(searchStrategy);
-        HasValue<String> valueComponent = uiComponents.create(TextField.TYPE_STRING);
-        fullTextFilter.setValueComponent(valueComponent);
+
+        fullTextFilter.setValueComponent(convertValueComponentToComponent(model));
+        if (model.getValueComponent() != null) {
+            fullTextFilter.setValue(model.getValueComponent().getDefaultValue());
+        }
+
         return fullTextFilter;
     }
 
@@ -94,9 +100,36 @@ public class FullTextFilterConverter extends AbstractFilterComponentConverter<Fu
         condition.setCaptionPosition(fullTextFilter.getCaptionPosition());
         condition.setRequired(fullTextFilter.isRequired());
         condition.setParameterName(fullTextFilter.getParameterName());
+
         if (fullTextFilter.getSearchStrategy() != null) {
             condition.setSearchStrategyName(fullTextFilter.getSearchStrategy().getName());
         }
+
+        condition.setValueComponent(convertValueComponentToModel(fullTextFilter));
+
         return condition;
+    }
+
+    protected HasValue<String> convertValueComponentToComponent(FullTextFilterCondition model) {
+        HasValue<String> valueComponent = uiComponents.create(TextField.TYPE_STRING);
+        FilterValueComponent filterValueComponent = model.getValueComponent();
+        if (filterValueComponent != null) {
+            valueComponent.setId(filterValueComponent.getComponentId());
+            valueComponent.setStyleName(filterValueComponent.getStyleName());
+        }
+
+        return valueComponent;
+    }
+
+    protected FilterValueComponent convertValueComponentToModel(FullTextFilter component) {
+        HasValue<?> valueField = component.getValueComponent();
+
+        FilterValueComponent valueComponent = metadata.create(FilterValueComponent.class);
+        valueComponent.setComponentId(valueField.getId());
+        valueComponent.setStyleName(valueField.getStyleName());
+        valueComponent.setComponentName(TextField.NAME);
+        valueComponent.setDefaultValue(component.getValue());
+
+        return valueComponent;
     }
 }

@@ -51,7 +51,8 @@ public class RestLocaleUtils {
             Locale requestLocale = request.getLocale();
 
             List<Locale> availableLocales = coreProperties.getAvailableLocales();
-            if (availableLocales.contains(requestLocale)) {
+            if (availableLocales.contains(requestLocale)
+                    || availableLocales.stream().anyMatch(l -> l.getLanguage().equals(requestLocale.getLanguage()))) {
                 locale = requestLocale;
             } else {
                 log.warn("Locale {} passed in the Accept-Language header is not supported by the application. It was ignored.", requestLocale);

@@ -57,7 +57,7 @@ public class LdapConfiguration {
                 "LDAP manager user password should be specified");
         contextSource.setUserDn(ldapProperties.getManagerDn());
         contextSource.setPassword(ldapProperties.getManagerPassword());
-//        contextSource.setReferral("follow"); todo property?
+        contextSource.setReferral(ldapProperties.getManagerReferral());
         return contextSource;
     }
 

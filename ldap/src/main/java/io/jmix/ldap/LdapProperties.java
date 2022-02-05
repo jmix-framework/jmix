@@ -33,6 +33,7 @@ public class LdapProperties {
     String baseDn;
     String managerDn;
     String managerPassword;
+    String managerReferral;
     String userSearchBase;
     String userSearchFilter;
     String usernameAttribute;
@@ -73,7 +74,8 @@ public class LdapProperties {
                           @DefaultValue("true") Boolean synchronizeRoleAssignments,
                           @DefaultValue("true") Boolean synchronizeUserOnLogin,
                           @Nullable List<String> defaultRoles,
-                          @DefaultValue({"admin", "system"}) List<String> standardAuthenticationUsers) {
+                          @DefaultValue({"admin", "system"}) List<String> standardAuthenticationUsers,
+                          String managerReferral) {
         this.enabled = enabled;
         this.userDetailsSource = userDetailsSource;
         this.urls = urls;
@@ -95,6 +97,7 @@ public class LdapProperties {
         this.synchronizeUserOnLogin = synchronizeUserOnLogin;
         this.defaultRoles = defaultRoles == null ? Collections.emptyList() : defaultRoles;
         this.standardAuthenticationUsers = standardAuthenticationUsers;
+        this.managerReferral = managerReferral;
     }
 
     public boolean isEnabled() {
@@ -179,6 +182,10 @@ public class LdapProperties {
 
     public List<String> getStandardAuthenticationUsers() {
         return standardAuthenticationUsers;
+    }
+
+    public String getManagerReferral() {
+        return managerReferral;
     }
 }
 

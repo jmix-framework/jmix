@@ -38,7 +38,7 @@ import javax.annotation.Nullable;
         xmlElement = "jpqlFilter",
         defaultProperty = "parameterClass",
         documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/filter-components.html#jpql-filter",
-        unsupportedProperties = {"dataLoader", "captionWidth", "autoApply", "captionPosition",}
+        unsupportedProperties = {"dataLoader", "captionWidth", "autoApply", "captionPosition", "captionVisible"}
 )
 public interface JpqlFilter<V> extends SingleFilterComponent<V> {
 

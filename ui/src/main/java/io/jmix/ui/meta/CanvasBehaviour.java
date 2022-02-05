@@ -73,6 +73,11 @@ public enum CanvasBehaviour {
     FILTER,
 
     /**
+     * Component is shown on canvas as a textField with caption.
+     */
+    FULL_TEXT_FILTER,
+
+    /**
      * Component is shown on canvas as an input field.
      */
     INPUT_FIELD,

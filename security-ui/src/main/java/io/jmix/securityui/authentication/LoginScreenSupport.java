@@ -16,10 +16,12 @@
 
 package io.jmix.securityui.authentication;
 
-import com.vaadin.server.*;
+import com.vaadin.server.VaadinServletRequest;
+import com.vaadin.server.VaadinServletResponse;
 import io.jmix.core.AccessManager;
 import io.jmix.core.CoreProperties;
 import io.jmix.core.Messages;
+import io.jmix.core.security.AccessDeniedException;
 import io.jmix.core.security.ClientDetails;
 import io.jmix.core.security.SecurityContextHelper;
 import io.jmix.security.model.SecurityScope;
@@ -37,7 +39,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.event.InteractiveAuthenticationSuccessEvent;
 import org.springframework.security.core.Authentication;
@@ -220,8 +221,7 @@ public class LoginScreenSupport {
         if (!loginToUiContext.isPermitted()) {
             log.warn("Attempt of login to UI for user '{}' without '{}' permission", authDetails.getUsername(),
                     loginToUiContext.getName());
-            throw new BadCredentialsException(messages.getMessage(LoginScreenSupport.class,
-                    "badCredentials"));
+            throw new AccessDeniedException("specific", loginToUiContext.getName());
         }
     }
 

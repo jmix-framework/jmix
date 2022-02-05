@@ -117,7 +117,7 @@ public class LoginScreen extends Screen {
                             .withLocale(localesField.getValue())
                             .withRememberMe(rememberMeCheckBox.isChecked()), this);
         } catch (BadCredentialsException | DisabledException | LockedException e) {
-            log.info("Login failed", e);
+            log.warn("Login failed for user '{}': {}", username, e.toString());
             notifications.create(Notifications.NotificationType.ERROR)
                     .withCaption(messages.getMessage(getClass(), "loginFailed"))
                     .withDescription(messages.getMessage(getClass(), "badCredentials"))

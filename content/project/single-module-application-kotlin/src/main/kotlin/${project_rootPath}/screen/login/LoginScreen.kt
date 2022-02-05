@@ -121,7 +121,7 @@ open class LoginScreen : Screen() {
                 is BadCredentialsException,
                 is DisabledException,
                 is LockedException -> {
-                    log.info("Login failed", e)
+                    log.warn("Login failed for user '{}': {}", username, e.toString())
                     notifications.create(Notifications.NotificationType.ERROR)
                         .withCaption(getMessage("loginFailed"))
                         .withDescription(getMessage("badCredentials"))

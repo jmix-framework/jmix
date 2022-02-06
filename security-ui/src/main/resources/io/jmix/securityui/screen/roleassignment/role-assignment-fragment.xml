@@ -57,6 +57,7 @@
                     <columns>
                         <column id="roleName" caption="msg://roleName"/>
                         <column id="roleCode"/>
+                        <column id="roleScopes" caption="msg://io.jmix.securityui.model/ResourceRoleModel.scopes"/>
                     </columns>
                     <simplePagination/>
                     <buttonsPanel alwaysVisible="true">

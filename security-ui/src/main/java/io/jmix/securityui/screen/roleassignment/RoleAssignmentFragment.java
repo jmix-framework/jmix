@@ -19,6 +19,7 @@ package io.jmix.securityui.screen.roleassignment;
 import io.jmix.core.EntityStates;
 import io.jmix.core.Metadata;
 import io.jmix.security.model.BaseRole;
+import io.jmix.security.model.ResourceRole;
 import io.jmix.security.role.ResourceRoleRepository;
 import io.jmix.security.role.RowLevelRoleRepository;
 import io.jmix.security.role.assignment.RoleAssignmentRoleType;
@@ -28,7 +29,6 @@ import io.jmix.securityui.model.RowLevelRoleModel;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.Component;
-import io.jmix.ui.component.Label;
 import io.jmix.ui.component.Table;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.CollectionLoader;
@@ -86,21 +86,20 @@ public class RoleAssignmentFragment extends ScreenFragment {
     @Install(to = "resourceRoleAssignmentsTable.roleName", subject = "columnGenerator")
     private Component resourceRoleAssignmentsTableRoleNameColumnGenerator(RoleAssignmentEntity roleAssignmentEntity) {
         BaseRole role = resourceRoleRepository.findRoleByCode(roleAssignmentEntity.getRoleCode());
-        Label<String> label = uiComponents.create(Label.TYPE_DEFAULT);
-        if (role != null) {
-            label.setValue(role.getName());
-        }
-        return label;
+        return new Table.PlainTextCell(role != null ? role.getName() : "");
+    }
+
+    @Install(to = "resourceRoleAssignmentsTable.roleScopes", subject = "columnGenerator")
+    private Component resourceRoleAssignmentsTableRoleScopesColumnGenerator(RoleAssignmentEntity roleAssignmentEntity) {
+        ResourceRole role = resourceRoleRepository.findRoleByCode(roleAssignmentEntity.getRoleCode());
+        String text = role != null ? String.join(", ", role.getScopes()) : "";
+        return new Table.PlainTextCell(text);
     }
 
     @Install(to = "rowLevelRoleAssignmentsTable.roleName", subject = "columnGenerator")
     private Component rowLevelRoleAssignmentsTableRoleNameColumnGenerator(RoleAssignmentEntity roleAssignmentEntity) {
         BaseRole role = rowLevelRoleRepository.findRoleByCode(roleAssignmentEntity.getRoleCode());
-        Label<String> label = uiComponents.create(Label.TYPE_DEFAULT);
-        if (role != null) {
-            label.setValue(role.getName());
-        }
-        return label;
+        return new Table.PlainTextCell(role != null ? role.getName() : "");
     }
 
     @Subscribe(target = Target.PARENT_CONTROLLER)

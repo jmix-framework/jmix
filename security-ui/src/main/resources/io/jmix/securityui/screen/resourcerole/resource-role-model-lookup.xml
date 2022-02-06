@@ -36,6 +36,7 @@
             <columns>
                 <column id="name"/>
                 <column id="code"/>
+                <column id="scopes"/>
             </columns>
             <simplePagination/>
         </table>

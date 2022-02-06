@@ -333,7 +333,9 @@ public class EntityStates {
                 continue;
             if (property.getRange().isClass()) {
                 FetchPlanBuilder propertyBuilder = fetchPlans.builder(property.getRange().asClass().getJavaClass());
-                builder.add(property.getName(), propertyBuilder);
+                // The input object graph can be large, so we use FetchMode.UNDEFINED to avoid huge SQLs with
+                // unpredictably high number of joins
+                builder.add(property.getName(), propertyBuilder, FetchMode.UNDEFINED);
                 if (isLoaded(entity, property.getName())) {
                     Object value = EntityValues.getValue(entity, property.getName());
                     if (value != null) {

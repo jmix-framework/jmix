@@ -30,7 +30,8 @@ public interface HasFormatter<V> {
 
     @StudioElementsGroup(
             xmlElement = "formatter",
-            caption = "Formatter"
+            caption = "Formatter",
+            icon = "io/jmix/ui/icon/element/formatters.svg"
     )
     void setFormatter(@Nullable Formatter<? super V> formatter);
 }

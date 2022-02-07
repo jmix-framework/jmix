@@ -37,7 +37,8 @@ import java.util.stream.Collectors;
 @StudioElement(
         caption = "CollectionFormatter",
         xmlElement = "collection",
-        unsupportedTarget = {"io.jmix.ui.component.EntityComboBox", "io.jmix.ui.component.mainwindow.UserIndicator"}
+        unsupportedTarget = {"io.jmix.ui.component.EntityComboBox", "io.jmix.ui.component.mainwindow.UserIndicator"},
+        icon = "io/jmix/ui/icon/element/formatter.svg"
 )
 @Component("ui_CollectionFormatter")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)

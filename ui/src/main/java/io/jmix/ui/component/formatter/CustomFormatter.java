@@ -25,7 +25,8 @@ import io.jmix.ui.meta.StudioProperty;
 @StudioElement(
         caption = "CustomFormatter",
         xmlElement = "custom",
-        unsupportedTarget = {"io.jmix.ui.component.EntityComboBox", "io.jmix.ui.component.mainwindow.UserIndicator"}
+        unsupportedTarget = {"io.jmix.ui.component.EntityComboBox", "io.jmix.ui.component.mainwindow.UserIndicator"},
+        icon = "io/jmix/ui/icon/element/formatter.svg"
 )
 @StudioProperties(
         properties = {

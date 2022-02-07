@@ -67,7 +67,7 @@ javaPlatform {
 }
 
 dependencies {
-    api platform("org.springframework.boot:spring-boot-dependencies:2.5.7")
+    api platform("org.springframework.boot:spring-boot-dependencies:2.6.3")
     api platform('software.amazon.awssdk:bom:2.16.69')
 
     def baseVersion = '1.2.0'
@@ -94,8 +94,10 @@ dependencies {
     def multitenancyVersion = baseVersion
     def mapsVersion = baseVersion
     def notificationsVersion = baseVersion
+    def oidcVersion = baseVersion
     def reportsVersion = baseVersion
     def restVersion = baseVersion
+    def samlVersion = baseVersion
     def searchVersion = baseVersion
     def securityVersion = baseVersion
     def sessionsVersion = baseVersion
@@ -218,6 +220,9 @@ dependencies {
         api "io.jmix.notifications:jmix-notifications-starter:${snapshotOr(notificationsVersion)}"
         api "io.jmix.notifications:jmix-notifications-ui-starter:${snapshotOr(notificationsVersion)}"
 
+        api "io.jmix.oidc:jmix-oidc:${snapshotOr(oidcVersion)}"
+        api "io.jmix.oidc:jmix-oidc-starter:${snapshotOr(oidcVersion)}"
+
         api "io.jmix.reports:jmix-reports:${snapshotOr(reportsVersion)}"
         api "io.jmix.reports:jmix-reports-ui:${snapshotOr(reportsVersion)}"
         api "io.jmix.reports:jmix-reports-rest:${snapshotOr(reportsVersion)}"
@@ -227,6 +232,9 @@ dependencies {
 
         api "io.jmix.rest:jmix-rest:${snapshotOr(restVersion)}"
         api "io.jmix.rest:jmix-rest-starter:${snapshotOr(restVersion)}"
+
+        api "io.jmix.saml:jmix-saml:${snapshotOr(samlVersion)}"
+        api "io.jmix.saml:jmix-saml-starter:${snapshotOr(samlVersion)}"
 
         api "io.jmix.search:jmix-search:${snapshotOr(searchVersion)}"
         api "io.jmix.search:jmix-search-starter:${snapshotOr(searchVersion)}"

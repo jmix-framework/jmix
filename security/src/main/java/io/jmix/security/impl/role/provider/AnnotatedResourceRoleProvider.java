@@ -74,7 +74,7 @@ public class AnnotatedResourceRoleProvider implements ResourceRoleProvider {
 
     @Override
     public boolean deleteRole(ResourceRole role) {
-        throw new UnsupportedOperationException("Annotated role cannot be deleted");
+        return this.roles.remove(role.getCode()) != null;
     }
 
     public void refreshRoles() {

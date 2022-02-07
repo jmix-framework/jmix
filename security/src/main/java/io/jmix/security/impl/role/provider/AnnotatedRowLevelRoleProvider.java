@@ -74,7 +74,7 @@ public class AnnotatedRowLevelRoleProvider implements RowLevelRoleProvider {
 
     @Override
     public boolean deleteRole(RowLevelRole role) {
-        throw new UnsupportedOperationException("Annotated RowLevelRole cannot be deleted");
+        return roles.remove(role.getCode())!= null;
     }
 
     public void refreshRoles() {

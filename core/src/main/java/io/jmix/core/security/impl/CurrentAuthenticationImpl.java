@@ -74,18 +74,25 @@ public class CurrentAuthenticationImpl implements CurrentAuthentication {
     public Locale getLocale() {
         Authentication authentication = getAuthentication();
         Object details = authentication.getDetails();
-        Locale locale = null;
         if (details instanceof ClientDetails) {
-            locale = ((ClientDetails) details).getLocale();
+            Locale locale = ((ClientDetails) details).getLocale();
+            if (locale != null) {
+                return locale;
+            }
         }
-        if (locale == null && CollectionUtils.isNotEmpty(localeResolvers)) {
-            locale = localeResolvers.stream()
-                    .filter(resolver -> resolver.supports(authentication))
-                    .findFirst()
-                    .map(resolver -> resolver.getLocale(authentication))
-                    .orElse(null);
+
+        if (CollectionUtils.isNotEmpty(localeResolvers)) {
+            for (AuthenticationLocaleResolver resolver : localeResolvers) {
+                if (resolver.supports(authentication)) {
+                    Locale resolvedLocale = resolver.getLocale(authentication);
+                    if (resolvedLocale != null) {
+                        return resolvedLocale;
+                    }
+                }
+            }
         }
-        return locale == null ? messagesTools.getDefaultLocale() : locale;
+
+        return messagesTools.getDefaultLocale();
     }
 
     @Override

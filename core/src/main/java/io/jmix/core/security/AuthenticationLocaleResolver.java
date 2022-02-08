@@ -19,6 +19,7 @@ package io.jmix.core.security;
 import org.springframework.core.Ordered;
 import org.springframework.security.core.Authentication;
 
+import javax.annotation.Nullable;
 import java.util.Locale;
 
 /**
@@ -36,7 +37,8 @@ public interface AuthenticationLocaleResolver extends Ordered {
 
     /**
      * @param authentication authentication
-     * @return locale that should be used
+     * @return locale that should be used, or {@code null}
      */
+    @Nullable
     Locale getLocale(Authentication authentication);
 }

@@ -100,6 +100,9 @@ public class EntityImportExportImpl implements EntityImportExport {
     @Autowired
     protected CoreProperties coreProperties;
 
+    @Autowired
+    protected EntityAttributeImportExtensionResolver extensionResolver;
+
     @Override
     public byte[] exportEntitiesToZIP(Collection<Object> entities, FetchPlan fetchPlan) {
         return exportEntitiesToZIP(reloadEntities(entities, fetchPlan));
@@ -401,6 +404,12 @@ public class EntityImportExportImpl implements EntityImportExport {
         for (EntityImportPlanProperty importPlanProperty : importPlan.getProperties()) {
             String propertyName = importPlanProperty.getName();
             MetaProperty metaProperty = metaClass.getProperty(propertyName);
+
+            EntityAttributeImportExtension extension = extensionResolver.findExtension(metaProperty);
+            if (extension != null) {
+                extension.importEntityAttribute(metaProperty, srcEntity, dstEntity);
+                continue;
+            }
 
             if (metaProperty.getRange().isDatatype()) {
                 if (!"version".equals(metaProperty.getName())) {

@@ -73,6 +73,9 @@ public class EntitySerializationImpl implements EntitySerialization {
     @Autowired
     protected CoreProperties coreProperties;
 
+    @Autowired
+    protected EntityAttributeSerializationExtensionResolver extensionResolver;
+
     protected ThreadLocal<EntitySerializationContext> context =
             ThreadLocal.withInitial(EntitySerializationContext::new);
 
@@ -339,6 +342,12 @@ public class EntitySerializationImpl implements EntitySerialization {
                     continue;
                 }
 
+                EntityAttributeSerializationExtension extension = extensionResolver.findExtension(metaProperty);
+                if (extension != null) {
+                    jsonObject.add(metaProperty.getName(), extension.toJson(metaProperty, fieldValue));
+                    continue;
+                }
+
                 Range propertyRange = metaProperty.getRange();
                 if (propertyRange.isDatatype()) {
                     if (additionalProperties.contains(metaProperty) && fieldValue instanceof Collection) {
@@ -519,6 +528,13 @@ public class EntitySerializationImpl implements EntitySerialization {
                     if (metaProperty.isReadOnly()) {
                         continue;
                     }
+
+                    EntityAttributeSerializationExtension extension = extensionResolver.findExtension(metaProperty);
+                    if (extension != null) {
+                        EntityValues.setValue(entity, propertyName, extension.fromJson(metaProperty, propertyValue));
+                        continue;
+                    }
+
                     Class<?> propertyType = metaProperty.getJavaType();
                     Range propertyRange = metaProperty.getRange();
                     if (propertyRange.isDatatype()) {

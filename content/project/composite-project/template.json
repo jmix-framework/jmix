@@ -1,0 +1,13 @@
+{
+  "name": "Composite Project",
+  "order": 5,
+  "description": "<html>Allows to develop several projects in one workspace.</html>",
+  "params": [
+    {
+      "name": "projectId",
+      "mandatory": false
+    }
+  ],
+  "hideForSubproject": true,
+  "subFolder": "${project_name}-all"
+}

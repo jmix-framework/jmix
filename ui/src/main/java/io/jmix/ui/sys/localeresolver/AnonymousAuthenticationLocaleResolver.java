@@ -14,17 +14,19 @@
  * limitations under the License.
  */
 
-package io.jmix.ui;
+package io.jmix.ui.sys.localeresolver;
 
 import io.jmix.core.JmixOrder;
 import io.jmix.core.MessageTools;
 import io.jmix.core.security.AuthenticationLocaleResolver;
 import io.jmix.core.security.CurrentAuthentication;
+import io.jmix.ui.App;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import java.util.Locale;
 
 /**
@@ -43,12 +45,14 @@ public class AnonymousAuthenticationLocaleResolver implements AuthenticationLoca
         return authentication instanceof AnonymousAuthenticationToken;
     }
 
+    @Nullable
     @Override
     public Locale getLocale(Authentication authentication) {
         if (App.isBound()) {
             return App.getInstance().getLocale();
         }
-        return messageTools.getDefaultLocale();
+
+        return null;
     }
 
     @Override

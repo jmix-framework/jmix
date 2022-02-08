@@ -17,6 +17,7 @@
 package io.jmix.core;
 
 import io.jmix.core.annotation.JmixModule;
+import io.jmix.core.impl.CircularBeanReferencesEnabler;
 import io.jmix.core.impl.validation.JmixLocalValidatorFactoryBean;
 import io.jmix.core.impl.validation.ValidationClockProvider;
 import io.jmix.core.impl.validation.ValidationTraversableResolver;
@@ -74,5 +75,10 @@ public class CoreConfiguration {
         validatorFactory.setJmixMessageInterpolator(messageInterpolator);
 
         return validatorFactory;
+    }
+
+    @Bean("core_CircularBeanReferencesEnabler")
+    public static CircularBeanReferencesEnabler circularBeanReferencesEnabler() {
+        return new CircularBeanReferencesEnabler();
     }
 }

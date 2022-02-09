@@ -19,7 +19,9 @@ package io.jmix.ui.app.inputdialog;
 import io.jmix.core.FileRef;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.datatype.Datatype;
+import io.jmix.core.metamodel.datatype.impl.DateTimeDatatype;
 import io.jmix.core.metamodel.datatype.impl.EnumClass;
+import io.jmix.core.metamodel.datatype.impl.OffsetDateTimeDatatype;
 import io.jmix.ui.component.Field;
 import io.jmix.ui.meta.PropertyType;
 import io.jmix.ui.meta.StudioElement;
@@ -29,7 +31,9 @@ import io.jmix.ui.meta.StudioProperty;
 import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.sql.Time;
+import java.time.*;
 import java.util.Date;
+import java.util.TimeZone;
 import java.util.function.Supplier;
 
 /**
@@ -46,6 +50,9 @@ public class InputParameter {
     protected Object defaultValue;
     protected Class<?> entityClass;
     protected Class<? extends EnumClass> enumClass;
+
+    protected TimeZone timeZone;
+    protected boolean useUserTimeZone = false;
 
     protected Class datatypeJavaClass;
 
@@ -260,6 +267,56 @@ public class InputParameter {
     }
 
     /**
+     * @return time zone
+     */
+    @Nullable
+    public TimeZone getTimeZone() {
+        return timeZone;
+    }
+
+    /**
+     * Sets time zone to the parameter. InputDialog supports time zones for
+     * <ul>
+     *     <li>{@link OffsetDateTimeDatatype}</li>
+     *     <li>{@link DateTimeDatatype}</li>
+     * </ul>
+     * If time zone not set and {@link #isUseUserTimeZone()} is false, component will use system time zone.
+     *
+     * @param timeZone time zone to use
+     * @return input parameter
+     * @see #withUseUserTimeZone(boolean)
+     */
+    public InputParameter withTimeZone(@Nullable TimeZone timeZone) {
+        this.timeZone = timeZone;
+        return this;
+    }
+
+    /**
+     * @return {@code true} if the parameter uses user's {@link TimeZone}.
+     */
+    public boolean isUseUserTimeZone() {
+        return useUserTimeZone;
+    }
+
+    /**
+     * Sets to the parameter whether to use user's {@link TimeZone}. InputDialog supports time zones for
+     * <ul>
+     *     <li>{@link OffsetDateTimeDatatype}</li>
+     *     <li>{@link DateTimeDatatype}</li>
+     * </ul>
+     * Default value is {@code false}. If users' time zone is not used and time zone is not set, component will use
+     * system time zone.
+     *
+     * @param useUserTimeZone whether to use user's time zone or not
+     * @return input parameter
+     * @see #withTimeZone(TimeZone)
+     */
+    public InputParameter withUseUserTimeZone(boolean useUserTimeZone) {
+        this.useUserTimeZone = useUserTimeZone;
+        return this;
+    }
+
+    /**
      * Creates parameter with String type.
      *
      * @param id field id
@@ -438,7 +495,10 @@ public class InputParameter {
     }
 
     /**
-     * Creates parameter with DateTime type.
+     * Creates parameter with DateTime type. To enable time zones for the component use
+     * {@link #withUseUserTimeZone(boolean)} or {@link #withTimeZone(TimeZone)}.
+     * <p>
+     * If {@link #isUseUserTimeZone()} is false and time zone is not set, component will use system time zone.
      *
      * @param id field id
      * @return input parameter
@@ -454,7 +514,9 @@ public class InputParameter {
                     @StudioProperty(name = "caption", type = PropertyType.LOCALIZED_STRING),
                     @StudioProperty(name = "required", type = PropertyType.BOOLEAN),
                     @StudioProperty(name = "requiredMessage", type = PropertyType.LOCALIZED_STRING),
-                    @StudioProperty(name = "defaultValue", type = PropertyType.DATE_TIME)
+                    @StudioProperty(name = "defaultValue", type = PropertyType.DATE_TIME),
+                    @StudioProperty(name = "useUserTimeZone", type = PropertyType.BOOLEAN),
+                    @StudioProperty(name = "timeZoneId", type = PropertyType.LOCALIZED_STRING)
             }
     )
     public static InputParameter dateTimeParameter(String id) {
@@ -551,6 +613,131 @@ public class InputParameter {
     )
     public static InputParameter enumParameter(String id, Class<? extends EnumClass> enumClass) {
         return new InputParameter(id).withEnumClass(enumClass);
+    }
+
+    /**
+     * Creates parameter with {@link LocalDate} type.
+     *
+     * @param id field id
+     * @return input parameter
+     */
+    @StudioElement(
+            caption = "LocalDate Parameter",
+            xmlElement = "localDateParameter",
+            icon = "io/jmix/ui/icon/element/parameter.svg"
+    )
+    @StudioProperties(
+            properties = {
+                    @StudioProperty(name = "id", type = PropertyType.COMPONENT_ID, required = true),
+                    @StudioProperty(name = "caption", type = PropertyType.LOCALIZED_STRING),
+                    @StudioProperty(name = "required", type = PropertyType.BOOLEAN),
+                    @StudioProperty(name = "requiredMessage", type = PropertyType.LOCALIZED_STRING),
+                    @StudioProperty(name = "defaultValue", type = PropertyType.DATE)
+            }
+    )
+    public static InputParameter localDateParameter(String id) {
+        return new InputParameter(id).withDatatypeJavaClass(LocalDate.class);
+    }
+
+    /**
+     * Creates parameter with {@link LocalTime} type.
+     *
+     * @param id field id
+     * @return input parameter
+     */
+    @StudioElement(
+            caption = "LocalTime Parameter",
+            xmlElement = "localTimeParameter",
+            icon = "io/jmix/ui/icon/element/parameter.svg"
+    )
+    @StudioProperties(
+            properties = {
+                    @StudioProperty(name = "id", type = PropertyType.COMPONENT_ID, required = true),
+                    @StudioProperty(name = "caption", type = PropertyType.LOCALIZED_STRING),
+                    @StudioProperty(name = "required", type = PropertyType.BOOLEAN),
+                    @StudioProperty(name = "requiredMessage", type = PropertyType.LOCALIZED_STRING),
+                    @StudioProperty(name = "defaultValue", type = PropertyType.TIME)
+            }
+    )
+    public static InputParameter localTimeParameter(String id) {
+        return new InputParameter(id).withDatatypeJavaClass(LocalTime.class);
+    }
+
+    /**
+     * Creates parameter with {@link LocalDateTime} type.
+     *
+     * @param id field id
+     * @return input parameter
+     */
+    @StudioElement(
+            caption = "LocalDateTime Parameter",
+            xmlElement = "localDateTimeParameter",
+            icon = "io/jmix/ui/icon/element/parameter.svg"
+    )
+    @StudioProperties(
+            properties = {
+                    @StudioProperty(name = "id", type = PropertyType.COMPONENT_ID, required = true),
+                    @StudioProperty(name = "caption", type = PropertyType.LOCALIZED_STRING),
+                    @StudioProperty(name = "required", type = PropertyType.BOOLEAN),
+                    @StudioProperty(name = "requiredMessage", type = PropertyType.LOCALIZED_STRING),
+                    @StudioProperty(name = "defaultValue", type = PropertyType.DATE_TIME)
+            }
+    )
+    public static InputParameter localDateTimeParameter(String id) {
+        return new InputParameter(id).withDatatypeJavaClass(LocalDateTime.class);
+    }
+
+    /**
+     * Creates parameter with {@link OffsetDateTime} type. To enable time zones for the component use
+     * {@link #withUseUserTimeZone(boolean)} or {@link #withTimeZone(TimeZone)}.
+     * <p>
+     * If {@link #isUseUserTimeZone()} is false and time zone is not set, component will use system time zone.
+     *
+     * @param id field id
+     * @return input parameter
+     */
+    @StudioElement(
+            caption = "OffsetDateTime Parameter",
+            xmlElement = "offsetDateTimeParameter",
+            icon = "io/jmix/ui/icon/element/parameter.svg"
+    )
+    @StudioProperties(
+            properties = {
+                    @StudioProperty(name = "id", type = PropertyType.COMPONENT_ID, required = true),
+                    @StudioProperty(name = "caption", type = PropertyType.LOCALIZED_STRING),
+                    @StudioProperty(name = "required", type = PropertyType.BOOLEAN),
+                    @StudioProperty(name = "requiredMessage", type = PropertyType.LOCALIZED_STRING),
+                    @StudioProperty(name = "defaultValue", type = PropertyType.DATE_TIME),
+                    @StudioProperty(name = "useUserTimeZone", type = PropertyType.BOOLEAN),
+                    @StudioProperty(name = "timeZoneId", type = PropertyType.LOCALIZED_STRING)
+            }
+    )
+    public static InputParameter offsetDateTimeParameter(String id) {
+        return new InputParameter(id).withDatatypeJavaClass(OffsetDateTime.class);
+    }
+
+    /**
+     * Creates parameter with {@link OffsetTime} type.
+     *
+     * @param id field id
+     * @return input parameter
+     */
+    @StudioElement(
+            caption = "OffsetTime Parameter",
+            xmlElement = "offsetTimeParameter",
+            icon = "io/jmix/ui/icon/element/parameter.svg"
+    )
+    @StudioProperties(
+            properties = {
+                    @StudioProperty(name = "id", type = PropertyType.COMPONENT_ID, required = true),
+                    @StudioProperty(name = "caption", type = PropertyType.LOCALIZED_STRING),
+                    @StudioProperty(name = "required", type = PropertyType.BOOLEAN),
+                    @StudioProperty(name = "requiredMessage", type = PropertyType.LOCALIZED_STRING),
+                    @StudioProperty(name = "defaultValue", type = PropertyType.TIME)
+            }
+    )
+    public static InputParameter offsetTimeParameter(String id) {
+        return new InputParameter(id).withDatatypeJavaClass(OffsetTime.class);
     }
 
     protected void checkNullDatatype(String message) {

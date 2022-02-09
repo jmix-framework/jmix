@@ -3550,7 +3550,12 @@
 
                 <xs:element name="dateParameter" type="inputDialogPrimitiveParam"/>
                 <xs:element name="timeParameter" type="inputDialogPrimitiveParam"/>
-                <xs:element name="dateTimeParameter" type="inputDialogPrimitiveParam"/>
+                <xs:element name="dateTimeParameter" type="inputDialogDateTimeParam"/>
+                <xs:element name="localDateParameter" type="inputDialogPrimitiveParam"/>
+                <xs:element name="localTimeParameter" type="inputDialogPrimitiveParam"/>
+                <xs:element name="localDateTimeParameter" type="inputDialogPrimitiveParam"/>
+                <xs:element name="offsetDateTimeParameter" type="inputDialogOffsetDateTimeParam"/>
+                <xs:element name="offsetTimeParameter" type="inputDialogPrimitiveParam"/>
 
                 <xs:element name="entityParameter" type="inputDialogEntityParameter"/>
                 <xs:element name="enumParameter" type="inputDialogEnumParameter"/>
@@ -3586,6 +3591,22 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <xs:complexType name="inputDialogOffsetDateTimeParam">
+        <xs:complexContent>
+            <xs:extension base="inputDialogPrimitiveParam">
+                <xs:attributeGroup ref="inputDialogParameterHasTimeZone"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="inputDialogDateTimeParam">
+        <xs:complexContent>
+            <xs:extension base="inputDialogPrimitiveParam">
+                <xs:attributeGroup ref="inputDialogParameterHasTimeZone"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
     <xs:complexType name="inputDialogEntityParameter">
         <xs:complexContent>
             <xs:extension base="inputDialogParameter">
@@ -3607,6 +3628,11 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
+
+    <xs:attributeGroup name="inputDialogParameterHasTimeZone">
+        <xs:attribute name="useUserTimeZone" type="xs:boolean"/>
+        <xs:attribute name="timeZoneId" type="resourceString"/>
+    </xs:attributeGroup>
 
     <xs:complexType name="dialogActionType">
         <xs:attribute name="id" type="xs:string" use="required"/>

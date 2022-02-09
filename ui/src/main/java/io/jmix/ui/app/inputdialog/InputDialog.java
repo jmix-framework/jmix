@@ -16,6 +16,8 @@
 
 package io.jmix.ui.app.inputdialog;
 
+import com.google.common.collect.ImmutableList;
+import io.jmix.core.DateTimeTransformations;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import io.jmix.core.common.event.Subscription;
@@ -24,6 +26,7 @@ import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.datatype.impl.*;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.Actions;
 import io.jmix.ui.Dialogs;
 import io.jmix.ui.UiComponents;
@@ -40,11 +43,7 @@ import io.jmix.ui.theme.ThemeConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.EventObject;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -72,6 +71,14 @@ public class InputDialog extends Screen {
      */
     public static final CloseAction INPUT_DIALOG_NO_ACTION = new StandardCloseAction("inputDialogNo");
 
+    protected static final List<Class<?>> dateTimeDatatypes = ImmutableList.of(DateTimeDatatype.class,
+            LocalDateTimeDatatype.class, OffsetDateTimeDatatype.class);
+
+    protected static final List<Class<?>> dateDatatypes = ImmutableList.of(DateDatatype.class,
+            LocalDateDatatype.class);
+
+    protected static final List<Class<?>> timeDatatypes = ImmutableList.of(TimeDatatype.class, LocalTimeDatatype.class,
+            OffsetTimeDatatype.class);
 
     @Autowired
     protected UiComponents uiComponents;
@@ -111,6 +118,12 @@ public class InputDialog extends Screen {
 
     @Autowired
     protected HBoxLayout actionsLayout;
+
+    @Autowired
+    protected CurrentAuthentication currentAuthentication;
+
+    @Autowired
+    protected DateTimeTransformations dateTimeTransformations;
 
     protected List<InputParameter> parameters = new ArrayList<>(2);
     protected List<Action> actionsList = new ArrayList<>(2);
@@ -359,17 +372,22 @@ public class InputDialog extends Screen {
             field.setWidthFull();
             field.setDatatype(datatype);
             return field;
-        } else if (datatype instanceof DateDatatype) {
+        } else if (isDateBasedDatatype(datatype)) {
             DateField dateField = uiComponents.create(DateField.NAME);
             dateField.setDatatype(datatype);
             dateField.setResolution(DateField.Resolution.DAY);
             return dateField;
-        } else if (datatype instanceof DateTimeDatatype) {
+        } else if (isDateTimeBasedDatatype(datatype)) {
             DateField dateField = uiComponents.create(DateField.NAME);
             dateField.setDatatype(datatype);
             dateField.setResolution(DateField.Resolution.MIN);
+            if (dateTimeTransformations.isDateTypeSupportsTimeZones(datatype.getJavaClass())) {
+                dateField.setTimeZone(parameter.isUseUserTimeZone()
+                        ? currentAuthentication.getTimeZone()
+                        : parameter.getTimeZone());
+            }
             return dateField;
-        } else if (datatype instanceof TimeDatatype) {
+        } else if (isTimeBasedDatatype(datatype)) {
             TimeField timeField = uiComponents.create(TimeField.NAME);
             timeField.setDatatype(datatype);
             return timeField;
@@ -465,6 +483,21 @@ public class InputDialog extends Screen {
         if (resultHandler != null) {
             resultHandler.accept(new InputDialogResult(getValues(), closeAction));
         }
+    }
+
+    protected boolean isDateBasedDatatype(Datatype datatype) {
+        return dateDatatypes.stream()
+                .anyMatch(dateDatatype -> dateDatatype.isAssignableFrom(datatype.getClass()));
+    }
+
+    protected boolean isTimeBasedDatatype(Datatype datatype) {
+        return timeDatatypes.stream()
+                .anyMatch(dateDatatype -> dateDatatype.isAssignableFrom(datatype.getClass()));
+    }
+
+    protected boolean isDateTimeBasedDatatype(Datatype datatype) {
+        return dateTimeDatatypes.stream()
+                .anyMatch(dateDatatype -> dateDatatype.isAssignableFrom(datatype.getClass()));
     }
 
     /**

@@ -43,6 +43,16 @@
                 <entityParameter id="entityParam"
                                  caption="Order Entity param"
                                  entityClass="test_support.entity.sales.Order"/>
+                <dateTimeParameter id="dateTime"
+                                   useUserTimeZone="true"
+                                   timeZoneId="msg://input-dialog-facet-test-screen.timeZoneId"/>
+                <localTimeParameter id="localTime"/>
+                <localDateParameter id="localDate"/>
+                <localDateTimeParameter id="localDateTime"/>
+                <offsetDateTimeParameter id="offsetDateTime"
+                                         timeZoneId="msg://input-dialog-facet-test-screen.timeZoneId"
+                                         useUserTimeZone="true"/>
+                <offsetTimeParameter id="offsetTime"/>
             </parameters>
         </inputDialog>
 

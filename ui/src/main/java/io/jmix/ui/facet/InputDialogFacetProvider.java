@@ -44,10 +44,7 @@ import javax.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.math.BigDecimal;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -269,6 +266,8 @@ public class InputDialogFacetProvider implements FacetProvider<InputDialogFacet>
                     .withCaption(loadParamCaption(paramEl, context))
                     .withRequired(loadParamRequired(paramEl))
                     .withRequiredMessage(loadRequiredMessage(paramEl, context))
+                    .withUseUserTimeZone(loadUseUserTimeZone(paramEl))
+                    .withTimeZone(loadTimeZone(paramEl, context))
                     .withDatatype(datatype)
                     .withDefaultValue(
                             loadDefaultValue(paramEl, datatype, context));
@@ -446,6 +445,23 @@ public class InputDialogFacetProvider implements FacetProvider<InputDialogFacet>
                             paramEl.attributeValue("id"), classFqn),
                     context);
         }
+    }
+
+    protected Boolean loadUseUserTimeZone(Element paramEl) {
+        String useUserTimeZone = paramEl.attributeValue("useUserTimeZone");
+        if (isNotEmpty(useUserTimeZone)) {
+            return Boolean.parseBoolean(useUserTimeZone);
+        }
+        return false;
+    }
+
+    @Nullable
+    protected TimeZone loadTimeZone(Element paramEl, ComponentLoader.ComponentContext context) {
+        String timeZoneId = paramEl.attributeValue("timeZoneId");
+        if (isNotEmpty(timeZoneId)) {
+            return TimeZone.getTimeZone(loadResourceString(context, timeZoneId));
+        }
+        return null;
     }
 
     @Nullable

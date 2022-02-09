@@ -18,11 +18,13 @@ package facet.input_dialog
 
 import facet.input_dialog.screen.InputDialogFacetTestScreen
 import io.jmix.core.CoreConfiguration
+import io.jmix.core.Messages
 import io.jmix.data.DataConfiguration
 import io.jmix.eclipselink.EclipselinkConfiguration
 import io.jmix.ui.UiConfiguration
 import io.jmix.ui.component.TextArea
 import io.jmix.ui.testassist.spec.ScreenSpecification
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
 import test_support.UiTestConfiguration
 
@@ -31,6 +33,9 @@ import java.util.stream.Collectors
 @ContextConfiguration(classes = [CoreConfiguration, UiConfiguration, DataConfiguration,
         EclipselinkConfiguration, UiTestConfiguration])
 class InputDialogFacetTest extends ScreenSpecification {
+
+    @Autowired
+    Messages messages;
 
     @Override
     void setup() {
@@ -60,6 +65,34 @@ class InputDialogFacetTest extends ScreenSpecification {
         paramIds.contains('decimalParam')
         paramIds.contains('enumParam')
         paramIds.contains('entityParam')
+        paramIds.contains('dateTime')
+        paramIds.contains('localTime')
+        paramIds.contains('localDate')
+        paramIds.contains('localDateTime')
+        paramIds.contains('offsetDateTime')
+        paramIds.contains('offsetTime')
+    }
+
+    def "Specific parameters ara propagated"() {
+        showTestMainScreen()
+
+        def inputDialogFacetScreen = screens.create(InputDialogFacetTestScreen)
+        inputDialogFacetScreen.show()
+
+        when: 'InputDialog is shown'
+
+        def inputDialog = inputDialogFacetScreen.inputDialog.show()
+
+
+        then:
+
+        def dateTimeParam = inputDialog.getParameters().find { (it.getId() == "dateTime") }
+        dateTimeParam.getTimeZone().getID() == messages.getMessage("facet.input_dialog.screen/input-dialog-facet-test-screen.timeZoneId")
+        dateTimeParam.useUserTimeZone
+
+        def offsetDateTimeParam = inputDialog.getParameters().find { (it.getId() == "offsetDateTime") }
+        offsetDateTimeParam.getTimeZone().getID() == messages.getMessage("facet.input_dialog.screen/input-dialog-facet-test-screen.timeZoneId")
+        offsetDateTimeParam.useUserTimeZone
     }
 
     def 'InputDialog parameter default values are propagated'() {

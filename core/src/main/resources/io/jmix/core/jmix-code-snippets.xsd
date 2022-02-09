@@ -1,0 +1,150 @@
+<!--
+  ~ Copyright 2022 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://jmix.io/schema/core/code-snippets"
+            elementFormDefault="qualified">
+
+    <xsd:element name="jmixCodeSnippets">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="category" type="categoryType" minOccurs="0" maxOccurs="unbounded"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:complexType name="categoryType">
+        <xsd:sequence>
+            <xsd:element name="codeSnippet" type="codeSnippetType"/>
+        </xsd:sequence>
+        <xsd:attribute name="name" type="xsd:string" use="required"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="codeSnippetType">
+        <xsd:sequence>
+            <xsd:element name="staticInsertion" type="staticInsertionType"/>
+            <xsd:element name="inject" type="injectType"/>
+            <xsd:element name="text" type="textType"/>
+            <xsd:element name="description" type="xsd:string"/>
+            <xsd:element name="variableInputParameter" type="variableInputParameterType"/>
+            <xsd:element name="stringInputParameter" type="commonInputParameterType"/>
+            <xsd:element name="integerInputParameter" type="commonInputParameterType"/>
+            <xsd:element name="messageKeyInputParameter" type="commonInputParameterType"/>
+            <xsd:element name="urlInputParameter" type="commonInputParameterType"/>
+            <xsd:element name="classInputParameter" type="classInputParameterType"/>
+            <xsd:element name="optionsInputParameter" type="optionsInputParameterType"/>
+            <xsd:element name="jpqlQueryParameter" type="jpqlQueryParameterType"/>
+            <xsd:element name="graphQLInputParameter" type="graphQLInputParameterType"/>
+            <xsd:element name="reactScreenInputParameter" type="commonInputParameterType"/>
+            <xsd:element name="reactScreenRouteInputParameter" type="commonInputParameterType"/>
+        </xsd:sequence>
+        <xsd:attribute name="name" type="xsd:string" use="required"/>
+        <xsd:attribute name="contextTypes" type="xsd:string" use="required"/>
+        <xsd:attribute name="expressionResultType" type="xsd:string"/>
+        <xsd:attribute name="minJavaVersion" type="xsd:string"/>
+        <xsd:attribute name="icon" type="xsd:string"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="staticInsertionType">
+        <xsd:sequence>
+            <xsd:element name="expression" type="textType"/>
+        </xsd:sequence>
+        <xsd:attribute name="variable" type="xsd:string" use="required"/>
+        <xsd:attribute name="type" type="xsd:string" use="required"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="injectType">
+        <xsd:attribute name="variable" type="xsd:string" use="required"/>
+        <xsd:attribute name="classQualifiedName" type="xsd:string" use="required"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="textType">
+        <xsd:attribute name="language" use="required">
+            <xsd:simpleType>
+                <xsd:restriction base="xsd:string">
+                    <xsd:enumeration value="java"/>
+                    <xsd:enumeration value="kotlin"/>
+                    <xsd:enumeration value="TypeScript JSX"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+    </xsd:complexType>
+
+    <xsd:complexType name="commonInputParameterType">
+        <xsd:attribute name="code" type="xsd:string" use="required"/>
+        <xsd:attribute name="text" type="xsd:string" use="required"/>
+        <xsd:attribute name="optional" type="xsd:boolean"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="classInputParameterType">
+        <xsd:complexContent>
+            <xsd:extension base="commonInputParameterType">
+                <xsd:attribute name="superClass" type="xsd:string"/>
+                <xsd:attribute name="jmixEntity" type="xsd:boolean"/>
+                <xsd:attribute name="includeLibraries" type="xsd:boolean"/>
+                <xsd:attribute name="onlyName" type="xsd:boolean"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="graphQLInputParameter">
+        <xsd:complexContent>
+            <xsd:extension base="commonInputParameterType">
+                <xsd:attribute name="oneEntity" type="xsd:boolean"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="variableInputParameterType">
+        <xsd:complexContent>
+            <xsd:extension base="commonInputParameterType">
+                <xsd:attribute name="jmixEntity" type="xsd:boolean"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="optionsInputParameterType">
+        <xsd:complexContent>
+            <xsd:extension base="commonInputParameterType">
+                <xsd:sequence minOccurs="2">
+                    <xsd:element name="option">
+                        <xsd:complexType>
+                            <xsd:attribute name="name" type="xsd:string" use="required"/>
+                            <xsd:attribute name="value" type="xsd:string" use="required"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="jpqlQueryParameterType">
+        <xsd:complexContent>
+            <xsd:extension base="commonInputParameterType">
+                <xsd:attribute name="classCode" type="xsd:string" use="required"/>
+                <xsd:attribute name="paramsCode" type="xsd:string" use="required"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="graphQLInputParameterType">
+        <xsd:complexContent>
+            <xsd:extension base="commonInputParameterType">
+                <xsd:attribute name="oneEntity" type="xsd:boolean"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+</xsd:schema>

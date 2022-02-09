@@ -1,0 +1,547 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2022 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<jmixCodeSnippets xmlns="http://jmix.io/schema/core/code-snippets">
+
+    <category name="Data">
+        <codeSnippet name="Create entity" contextTypes="service,controller" expressionResultType="${entityClass}">
+            <inject variable="dataManager" classQualifiedName="io.jmix.core.DataManager"/>
+
+            <classInputParameter code="entityClass" text="Entity class" jmixEntity="true"/>
+
+            <text language="java">
+                dataManager.create(${entityClass}.class);
+            </text>
+            <text language="kotlin">
+                dataManager.create(${entityClass}::class.java)
+            </text>
+
+            <description>
+                &lt;a href="https://docs.jmix.io/jmix/data-model/entities.html#instantiation"&gt;Jmix Documentation&lt;/a&gt;
+            </description>
+        </codeSnippet>
+
+        <codeSnippet name="Create fetch plan" contextTypes="service,controller">
+            <inject variable="fetchPlans" classQualifiedName="io.jmix.core.FetchPlans"/>
+
+            <classInputParameter code="entityClass" text="Entity class" jmixEntity="true"/>
+
+            <text language="java">
+                io.jmix.core.FetchPlan fetchPlan = fetchPlans.builder(${entityClass}.class)
+                .addFetchPlan(io.jmix.core.FetchPlan.BASE)
+                .add("someProperty")
+                .build();
+            </text>
+            <text language="kotlin">
+                val fetchPlan = fetchPlans.builder(${entityClass}::class.java)
+                .addFetchPlan(io.jmix.core.FetchPlan.BASE)
+                .add("someProperty")
+                .build()
+            </text>
+
+            <description>
+                &lt;a href="https://docs.jmix.io/jmix/data-access/fetching.html#fetch-plan"&gt;Jmix Documentation&lt;/a&gt;
+            </description>
+        </codeSnippet>
+
+        <codeSnippet name="Check entity state" contextTypes="service,controller" expressionResultType="boolean">
+            <inject variable="entityStates" classQualifiedName="io.jmix.core.EntityStates"/>
+
+            <variableInputParameter code="entity" text="Entity" jmixEntity="true"/>
+            <optionsInputParameter code="state" text="State">
+                <option value="New" name="New"/>
+                <option value="Detached" name="Detached"/>
+                <option value="Managed" name="Managed"/>
+            </optionsInputParameter>
+
+            <text language="java">
+                entityStates.is${state}(${entity});
+            </text>
+            <text language="kotlin">
+                entityStates.is${state}(${entity})
+            </text>
+
+            <description>
+                Check if entity is in one of the lifecycle states
+            </description>
+        </codeSnippet>
+
+        <codeSnippet name="Save entity" contextTypes="service,controller" expressionResultType="var">
+            <inject variable="dataManager" classQualifiedName="io.jmix.core.DataManager"/>
+
+            <variableInputParameter code="entity" text="Entity" optional="true" jmixEntity="true"/>
+
+            <text language="java">
+                dataManager.save(${entity});
+            </text>
+            <text language="kotlin">
+                dataManager.save(${entity})
+            </text>
+
+            <description>
+                &lt;a href="https://docs.jmix.io/jmix/data-access/data-manager.html#save"&gt;Jmix Documentation&lt;/a&gt;
+            </description>
+        </codeSnippet>
+
+        <codeSnippet name="Save list of entities" contextTypes="service,controller"
+                     expressionResultType="io.jmix.core.EntitySet">
+            <inject variable="dataManager" classQualifiedName="io.jmix.core.DataManager"/>
+
+            <text language="java">
+                dataManager.save(new io.jmix.core.SaveContext().saving(entities));
+            </text>
+            <text language="kotlin">
+                dataManager.save(io.jmix.core.SaveContext().saving(entities))
+            </text>
+
+            <description>
+                &lt;a href="https://docs.jmix.io/jmix/data-access/data-manager.html#save"&gt;Jmix Documentation&lt;/a&gt;
+            </description>
+        </codeSnippet>
+
+        <codeSnippet name="Load one entity by id" contextTypes="service,controller" expressionResultType="${entityClass}">
+            <inject variable="dataManager" classQualifiedName="io.jmix.core.DataManager"/>
+
+            <classInputParameter code="entityClass" text="Entity class" jmixEntity="true"/>
+
+            <text language="java">
+                dataManager.load(${entityClass}.class).id(id).one();
+            </text>
+            <text language="kotlin">
+                dataManager.load(${entityClass}::class.java).id(id).one()
+            </text>
+
+            <description>
+                &lt;a href="https://docs.jmix.io/jmix/data-access/data-manager.html#load-by-id"&gt;Jmix Documentation&lt;/a&gt;
+            </description>
+        </codeSnippet>
+
+        <codeSnippet name="Load optional entity by id" contextTypes="service,controller" expressionResultType="java.util.Optional&lt;${entityClass}&gt;">
+            <inject variable="dataManager" classQualifiedName="io.jmix.core.DataManager"/>
+
+            <classInputParameter code="entityClass" text="Entity class" jmixEntity="true"/>
+
+            <text language="java">
+                dataManager.load(${entityClass}.class).id(id).optional();
+            </text>
+            <text language="kotlin">
+                dataManager.load(${entityClass}::class.java).id(id).optional()
+            </text>
+
+            <description>
+                &lt;a href="https://docs.jmix.io/jmix/data-access/data-manager.html#load-by-id"&gt;Jmix Documentation&lt;/a&gt;
+            </description>
+        </codeSnippet>
+
+    </category>
+
+    <category name="Authentication">
+
+        <codeSnippet name="Get current user" contextTypes="service,controller" expressionResultType="${userClass}">
+            <inject variable="currentAuthentication" classQualifiedName="io.jmix.core.security.CurrentAuthentication"/>
+
+            <text language="java">
+                (${userClass}) currentAuthentication.getUser();
+            </text>
+            <text language="kotlin">
+                currentAuthentication.user as ${userClass}
+            </text>
+
+            <description>
+                &lt;a href="https://docs.jmix.io/jmix/security/authentication.html#current"&gt;Jmix Documentation&lt;/a&gt;
+            </description>
+        </codeSnippet>
+
+        <codeSnippet name="Get effective user" contextTypes="service,controller" expressionResultType="${userClass}">
+            <inject variable="currentUserSubstitution"
+                    classQualifiedName="io.jmix.core.usersubstitution.CurrentUserSubstitution"/>
+
+            <text language="java">
+                (${userClass}) currentUserSubstitution.getEffectiveUser();
+            </text>
+            <text language="kotlin">
+                currentUserSubstitution.effectiveUser as ${userClass}
+            </text>
+
+            <description>
+                Get effective user
+            </description>
+        </codeSnippet>
+
+        <codeSnippet name="Get session attribute" contextTypes="service" expressionResultType="Object">
+            <inject variable="sessionDataProvider" classQualifiedName="org.springframework.beans.factory.ObjectProvider&lt;io.jmix.core.session.SessionData&gt;"/>
+
+            <stringInputParameter code="attrName" text="Attribute Name"/>
+
+            <text language="java">
+                sessionDataProvider.getObject().getAttribute("${attrName}");
+            </text>
+            <text language="kotlin">
+                sessionDataProvider.getObject().getAttribute("${attrName}")
+            </text>
+
+            <description>
+                Get session attribute
+            </description>
+        </codeSnippet>
+
+
+        <codeSnippet name="Get session attribute" contextTypes="controller" expressionResultType="Object">
+            <inject variable="sessionData" classQualifiedName="io.jmix.core.session.SessionData"/>
+
+            <stringInputParameter code="attrName" text="Attribute Name"/>
+
+            <text language="java">
+                sessionData.getAttribute("${attrName}");
+            </text>
+            <text language="kotlin">
+                sessionData.getAttribute("${attrName}")
+            </text>
+
+            <description>
+                Get session attribute
+            </description>
+        </codeSnippet>
+
+        <codeSnippet name="Change session attribute" contextTypes="service">
+            <inject variable="sessionDataProvider" classQualifiedName="org.springframework.beans.factory.ObjectProvider&lt;io.jmix.core.session.SessionData&gt;"/>
+
+            <stringInputParameter code="attrName" text="Attribute Name"/>
+
+            <text language="java">
+                sessionDataProvider.getObject().setAttribute("${attrName}", attributeValue);
+            </text>
+            <text language="kotlin">
+                sessionDataProvider.getObject().setAttribute("${attrName}", attributeValue)
+            </text>
+
+            <description>
+                Get session attribute
+            </description>
+        </codeSnippet>
+
+        <codeSnippet name="Change session attribute" contextTypes="controller">
+            <inject variable="sessionData" classQualifiedName="io.jmix.core.session.SessionData"/>
+
+            <stringInputParameter code="attrName" text="Attribute Name"/>
+
+            <text language="java">
+                sessionData.setAttribute("${attrName}", attributeValue);
+            </text>
+            <text language="kotlin">
+                sessionData.setAttribute("${attrName}", attributeValue)
+            </text>
+
+            <description>
+                Get session attribute
+            </description>
+        </codeSnippet>
+
+        <codeSnippet name="Get current user locale" contextTypes="service,controller" expressionResultType="java.util.Locale">
+            <inject variable="currentAuthentication" classQualifiedName="io.jmix.core.security.CurrentAuthentication"/>
+
+            <text language="java">
+                currentAuthentication.getLocale();
+            </text>
+            <text language="kotlin">
+                currentAuthentication.locale
+            </text>
+
+            <description>
+                &lt;a href="https://docs.jmix.io/jmix/security/authentication.html#current"&gt;Jmix Documentation&lt;/a&gt;
+            </description>
+        </codeSnippet>
+    </category>
+
+    <category name="Date and time">
+        <codeSnippet name="Get current date and time" contextTypes="service,controller"
+                     expressionResultType="java.time.ZonedDateTime">
+            <inject variable="timeSource" classQualifiedName="io.jmix.core.TimeSource"/>
+
+            <text language="java">
+                timeSource.now();
+            </text>
+            <text language="kotlin">
+                timeSource.now()
+            </text>
+
+            <description>
+                Get current date and time
+            </description>
+        </codeSnippet>
+
+        <codeSnippet name="Get relative date and time" contextTypes="service,controller"
+                     expressionResultType="java.time.ZonedDateTime">
+            <inject variable="timeSource" classQualifiedName="io.jmix.core.TimeSource"/>
+
+            <optionsInputParameter code="timeUnit" text="Time Unit">
+                <option value="Seconds" name="Seconds"/>
+                <option value="Minutes" name="Minutes"/>
+                <option value="Hours" name="Hours"/>
+                <option value="Days" name="Days"/>
+                <option value="Weeks" name="Weeks"/>
+                <option value="Months" name="Months"/>
+                <option value="Years" name="Years"/>
+            </optionsInputParameter>
+            <integerInputParameter code="amount" text="Amount"/>
+
+            <text language="java">
+                timeSource.now().&lt;% if (amount[0] == '-') print 'minus' else print 'plus' %&gt;${timeUnit}(&lt;% if (amount[0] == '-') print amount.substring(1) else print amount %&gt;);
+            </text>
+            <text language="kotlin">
+                timeSource.now().&lt;% if (amount[0] == '-') print 'minus' else print 'plus' %&gt;${timeUnit}(&lt;% if (amount[0] == '-') print amount.substring(1) else print amount %&gt;)
+            </text>
+
+            <description>
+                Get relative date and time
+            </description>
+        </codeSnippet>
+    </category>
+
+    <category name="Localization">
+        <codeSnippet name="Get localization message" contextTypes="service" expressionResultType="String">
+            <inject variable="messages" classQualifiedName="io.jmix.core.Messages"/>
+
+            <messageKeyInputParameter code="key" text="Message key" optional="true"/>
+
+            <text language="java">
+                messages.getMessage(getClass(), "${key}");
+            </text>
+            <text language="kotlin">
+                messages.getMessage(javaClass, "${key}")
+            </text>
+
+            <description>
+                &lt;a href="https://docs.jmix.io/jmix/localization/message-bundles.html#using-messages"&gt;Jmix Documentation&lt;/a&gt;
+            </description>
+        </codeSnippet>
+
+        <codeSnippet name="Get localization message" contextTypes="controller" expressionResultType="String">
+            <inject variable="messageBundle" classQualifiedName="io.jmix.ui.screen.MessageBundle"/>
+
+            <messageKeyInputParameter code="key" text="Message key" optional="true"/>
+
+            <text language="java">
+                messageBundle.getMessage("${key}");
+            </text>
+            <text language="kotlin">
+                messageBundle.getMessage("${key}")
+            </text>
+
+            <description>
+                &lt;a href="https://docs.jmix.io/jmix/localization/message-bundles.html#using-messages"&gt;Jmix Documentation&lt;/a&gt;
+            </description>
+        </codeSnippet>
+    </category>
+
+    <category name="Files">
+        <codeSnippet name="Upload to file storage" contextTypes="service,controller">
+            <inject variable="fileStorageLocator" classQualifiedName="io.jmix.core.FileStorageLocator"/>
+
+            <text language="java">
+                java.io.InputStream inputStream;
+                io.jmix.core.FileStorage fileStorage = fileStorageLocator.getDefault();
+                io.jmix.core.FileRef fileRef = fileStorage.saveStream("fileName.txt", inputStream);
+            </text>
+            <text language="kotlin">
+                val inputStream: java.io.InputStream
+                val fileStorage = fileStorageLocator.getDefault()
+                val fileRef = fileStorage.saveStream("fileName.txt", inputStream)
+            </text>
+
+            <description>
+                &lt;a href="https://docs.jmix.io/jmix/files/file-storage.html"&gt;Jmix Documentation&lt;/a&gt;
+            </description>
+        </codeSnippet>
+
+        <codeSnippet name="Download from file storage" contextTypes="service,controller">
+            <inject variable="fileStorageLocator" classQualifiedName="io.jmix.core.FileStorageLocator"/>
+
+            <text language="java">
+                io.jmix.core.FileRef fileRef;
+                io.jmix.core.FileStorage fileStorage = fileStorageLocator.getDefault();
+                try (java.io.InputStream inputStream = fileStorage.openStream(fileRef)) {
+                // use the stream
+                }
+            </text>
+            <text language="kotlin">
+                val fileRef: io.jmix.core.FileRef
+                val fileStorage = fileStorageLocator.getDefault()
+                fileStorage.openStream(fileRef).use {
+                // use the stream
+                }
+            </text>
+
+            <description>
+                &lt;a href="https://docs.jmix.io/jmix/files/file-storage.html"&gt;Jmix Documentation&lt;/a&gt;
+            </description>
+        </codeSnippet>
+    </category>
+
+    <category name="Events">
+
+        <codeSnippet name="Publish application event" contextTypes="service,controller">
+            <inject variable="applicationEventPublisher"
+                    classQualifiedName="org.springframework.context.ApplicationEventPublisher"/>
+
+            <classInputParameter code="eventClass" text="Event Class"
+                                 superClass="org.springframework.context.ApplicationEvent" includeLibraries="true"/>
+
+            <text language="java">
+                ${eventClass} event = new ${eventClass}();
+                applicationEventPublisher.publishEvent(event);
+            </text>
+            <text language="kotlin">
+                val event = ${eventClass}()
+                applicationEventPublisher.publishEvent(event)
+            </text>
+
+            <description>
+                &lt;a href="https://www.baeldung.com/spring-events#publisher"&gt;About Spring Application Publisher&lt;/a&gt;
+            </description>
+        </codeSnippet>
+
+    </category>
+
+    <category name="Logging">
+
+        <codeSnippet name="Log a message" contextTypes="service,controller">
+            <staticInsertion type="org.slf4j.Logger" variable="log">
+                <expression language="java">
+                    org.slf4j.LoggerFactory.getLogger(${currentClass}.class)
+                </expression>
+                <expression language="kotlin">
+                    org.slf4j.LoggerFactory.getLogger(${currentClass}::class.java)
+                </expression>
+            </staticInsertion>
+
+            <optionsInputParameter code="level" text="Level">
+                <option value="trace" name="TRACE"/>
+                <option value="debug" name="DEBUG"/>
+                <option value="info" name="INFO"/>
+                <option value="warn" name="WARN"/>
+                <option value="error" name="ERROR"/>
+            </optionsInputParameter>
+
+            <stringInputParameter code="message" text="Message"/>
+
+            <text language="java">
+                log.${level}("${message}");
+            </text>
+            <text language="kotlin">
+                log.${level}("${message}")
+            </text>
+
+            <description>
+                &lt;a href="http://www.slf4j.org/manual.html"&gt;SLF4J Manual&lt;/a&gt;
+            </description>
+        </codeSnippet>
+
+    </category>
+
+
+    <category name="Web Services">
+        <codeSnippet name="Call GET web service" contextTypes="service" minJavaVersion="11">
+            <urlInputParameter code="url" text="URL"/>
+            <classInputParameter code="returnType" text="Return type" optional="true"/>
+
+            <text language="java">
+                java.net.http.HttpClient client = HttpClient.newHttpClient();
+                java.net.http.HttpRequest request = HttpRequest.newBuilder()
+                .uri(java.net.URI.create(${url}))
+                .build();
+                try {
+                &lt;% if (returnType == null) print 'java.net.http.HttpResponse&lt;String&gt; response = client.send(request, HttpResponse.BodyHandlers.ofString());' else print 'java.net.http.HttpResponse&lt;java.io.InputStream&gt; response = client.send(request, HttpResponse.BodyHandlers.ofInputStream());' %&gt;
+                if (response.statusCode() == org.springframework.http.HttpStatus.OK.value()) {
+                &lt;% if (returnType == null) print 'String responseBody = response.body();' else print returnType + ' responseElement = new com.fasterxml.jackson.databind.ObjectMapper().readValue(response.body(), ' + returnType + '.class);' %&gt;
+                } else {
+                // process incorrect response
+                }
+                } catch (java.io.IOException e) {
+                // process error
+                } catch (InterruptedException e) {
+                // process error
+                }
+            </text>
+            <text language="kotlin">
+                val client = java.net.http.HttpClient.newHttpClient()
+                val request = java.net.http.HttpRequest.newBuilder()
+                .uri(java.net.URI.create(${url}))
+                .build()
+                try {
+                &lt;% if (returnType == null) print 'val response = client.send(request, java.net.http.HttpResponse.BodyHandlers.ofString())' else print 'val response = client.send(request, java.net.http.HttpResponse.BodyHandlers.ofInputStream())' %&gt;
+                if (response.statusCode() == org.springframework.http.HttpStatus.OK.value()) {
+                &lt;% if (returnType == null) print 'val responseBody = response.body()' else print 'val responseElement = com.fasterxml.jackson.databind.ObjectMapper().readValue(response.body(), ' + returnType + '::class.java);' %&gt;
+                } else {
+                // process incorrect response
+                }
+                } catch (e: java.io.IOException) {
+                // process error
+                } catch (e: InterruptedException) {
+                // process error
+                }
+            </text>
+        </codeSnippet>
+
+        <codeSnippet name="Call POST web service" contextTypes="service" minJavaVersion="11">
+            <urlInputParameter code="url" text="URL"/>
+            <variableInputParameter code="requestBodyObject" text="Request Body Object" optional="true"/>
+
+            <text language="java">
+                &lt;% if (requestBodyObject != '') print 'String requestBody = new com.fasterxml.jackson.databind.ObjectMapper().writeValueAsString(' + requestBodyObject + ');' %&gt;
+                java.net.http.HttpClient client = HttpClient.newHttpClient();
+                java.net.http.HttpRequest request = HttpRequest.newBuilder()
+                .uri(java.net.URI.create(${url}))
+                .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+                .build();
+                try {
+                java.net.http.HttpResponse&lt;String&gt; response = client.send(request, java.net.http.HttpResponse.BodyHandlers.ofString());
+                if (response.statusCode() == org.springframework.http.HttpStatus.OK.value()) {
+                String responseBody = response.body();
+                } else {
+                // process incorrect response
+                }
+                } catch (java.io.IOException e) {
+                // process error
+                } catch (InterruptedException e) {
+                // process error
+                }
+            </text>
+            <text language="kotlin">
+                &lt;% if (requestBodyObject != '') print 'val requestBody = com.fasterxml.jackson.databind.ObjectMapper().writeValueAsString(' + requestBodyObject + ')' %&gt;
+                val client = java.net.http.HttpClient.newHttpClient()
+                val request = java.net.http.HttpRequest.newBuilder()
+                .uri(java.net.URI.create(${url}))
+                .POST(java.net.http.HttpRequest.BodyPublishers.ofString(requestBody))
+                .build()
+                try {
+                val response = client.send(request, java.net.http.HttpResponse.BodyHandlers.ofString())
+                if (response.statusCode() == org.springframework.http.HttpStatus.OK.value()) {
+                val responseBody = response.body()
+                } else {
+                // process incorrect response
+                }
+                } catch (e: java.io.IOException) {
+                // process error
+                } catch (e: InterruptedException) {
+                // process error
+                }
+            </text>
+        </codeSnippet>
+
+    </category>
+
+</jmixCodeSnippets>

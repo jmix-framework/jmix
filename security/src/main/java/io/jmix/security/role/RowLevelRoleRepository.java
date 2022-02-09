@@ -18,11 +18,13 @@ package io.jmix.security.role;
 
 import io.jmix.security.model.RowLevelRole;
 
-import java.util.Objects;
-
 public interface RowLevelRoleRepository extends RoleRepository<RowLevelRole> {
 
     default RowLevelRole getRoleByCode(String code) {
-        return Objects.requireNonNull(findRoleByCode(code), String.format("RowLevelRole not found by code: %s", code));
+        RowLevelRole rowLevelRole = findRoleByCode(code);
+        if (rowLevelRole == null) {
+            throw new IllegalStateException(String.format("RowLevelRole not found by code: %s", code));
+        }
+        return rowLevelRole;
     }
 }

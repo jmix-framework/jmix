@@ -17,6 +17,8 @@
 package io.jmix.securityui.screen.resourcerole;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Sets;
 import io.jmix.core.*;
 import io.jmix.security.model.*;
 import io.jmix.security.role.ResourceRoleRepository;
@@ -42,6 +44,8 @@ import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.CollectionPropertyContainer;
 import io.jmix.ui.model.DataContext;
 import io.jmix.ui.navigation.Route;
+import io.jmix.ui.navigation.UrlParamsChangedEvent;
+import io.jmix.ui.navigation.UrlRouting;
 import io.jmix.ui.screen.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -124,6 +128,9 @@ public class ResourceRoleModelEdit extends StandardEditor<ResourceRoleModel> {
     @Autowired
     private ScreenBuilders screenBuilders;
 
+    @Autowired
+    private UrlRouting urlRouting;
+
     private Set<UUID> forRemove;
 
     private boolean resourcePoliciesTableExpanded = true;
@@ -185,6 +192,34 @@ public class ResourceRoleModelEdit extends StandardEditor<ResourceRoleModel> {
     public void onAfterShow(AfterShowEvent event) {
         resourcePoliciesTable.expandAll();
         resourcePoliciesTableExpanded = true;
+
+        if (!openedByCreateAction) {
+            // screen opened by URL for creating
+            if (getEditedEntity().getSource() == null) {
+                getEditedEntity().setSource(RoleSource.DATABASE);
+                getEditedEntity().setScopes(Sets.newHashSet(SecurityScope.UI));
+
+                sourceField.setValue(messages.getMessage("io.jmix.securityui.model/roleSource." + getEditedEntity().getSource()));
+                setupRoleViewMode();
+
+                // set to false because entity is initialized by default values
+                setModifiedAfterOpen(false);
+            } else {
+                urlRouting.replaceState(this, ImmutableMap.of("code", getEditedEntity().getCode()));
+            }
+        }
+    }
+
+    @Subscribe
+    public void onUrlParamsChanged(UrlParamsChangedEvent event) {
+        Map<String, String> params = event.getParams();
+        if (params.containsKey("code")) {
+            String resourceRoleCode = params.get("code");
+
+            ResourceRole resourceRole = roleRepository.getRoleByCode(resourceRoleCode);
+            ResourceRoleModel roleModel = roleModelConverter.createResourceRoleModel(resourceRole);
+            setEntityToEdit(roleModel);
+        }
     }
 
     @Subscribe("resourcePoliciesTable.createMenuPolicy")
@@ -473,7 +508,7 @@ public class ResourceRoleModelEdit extends StandardEditor<ResourceRoleModel> {
         });
     }
 
-    private boolean isGraphQLEnabled(){
+    private boolean isGraphQLEnabled() {
         try {
             Class.forName("io.jmix.graphql.security.GraphQLAuthorizedUrlsProvider");
             return true;

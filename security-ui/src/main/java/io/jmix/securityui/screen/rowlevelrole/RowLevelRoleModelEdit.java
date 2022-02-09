@@ -17,11 +17,9 @@
 package io.jmix.securityui.screen.rowlevelrole;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
 import io.jmix.core.*;
-import io.jmix.security.model.RoleSource;
-import io.jmix.security.model.RowLevelPolicyAction;
-import io.jmix.security.model.RowLevelPolicyType;
-import io.jmix.security.model.RowLevelRole;
+import io.jmix.security.model.*;
 import io.jmix.security.role.RowLevelRoleRepository;
 import io.jmix.securitydata.entity.RowLevelPolicyEntity;
 import io.jmix.securitydata.entity.RowLevelRoleEntity;
@@ -35,6 +33,8 @@ import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.CollectionPropertyContainer;
 import io.jmix.ui.model.DataContext;
 import io.jmix.ui.navigation.Route;
+import io.jmix.ui.navigation.UrlParamsChangedEvent;
+import io.jmix.ui.navigation.UrlRouting;
 import io.jmix.ui.screen.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -106,6 +106,9 @@ public class RowLevelRoleModelEdit extends StandardEditor<RowLevelRoleModel> {
     private Messages messages;
 
     @Autowired
+    private UrlRouting urlRouting;
+
+    @Autowired
     private CollectionPropertyContainer<RowLevelPolicyModel> rowLevelPoliciesDc;
 
     private boolean openedByCreateAction;
@@ -169,6 +172,37 @@ public class RowLevelRoleModelEdit extends StandardEditor<RowLevelRoleModel> {
 
         if (!Strings.isNullOrEmpty(getEditedEntity().getCode())) {
             codeField.setEnabled(false);
+        }
+    }
+
+    @Subscribe
+    public void onAfterShow(AfterShowEvent event) {
+        if (!openedByCreateAction) {
+            // screen opened by URL for creating
+            if (getEditedEntity().getSource() == null) {
+                getEditedEntity().setSource(RoleSource.DATABASE);
+
+                sourceField.setValue(messages.getMessage("io.jmix.securityui.model/roleSource." + getEditedEntity().getSource()));
+                setupRoleViewMode();
+
+                // set to false because entity is initialized by default values
+                setModifiedAfterOpen(false);
+            } else {
+                urlRouting.replaceState(this, ImmutableMap.of("code", getEditedEntity().getCode()));
+            }
+        }
+    }
+
+    @Subscribe
+    public void onUrlParamsChanged(UrlParamsChangedEvent event) {
+        Map<String, String> params = event.getParams();
+        if (params.containsKey("code")) {
+            String rowLevelCode = params.get("code");
+
+            RowLevelRole role = roleRepository.getRoleByCode(rowLevelCode);
+            RowLevelRoleModel roleModel = roleModelConverter.createRowLevelRoleModel(role);
+
+            setEntityToEdit(roleModel);
         }
     }
 

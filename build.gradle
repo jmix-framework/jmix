@@ -71,6 +71,7 @@ dependencies {
     api platform('software.amazon.awssdk:bom:2.16.69')
 
     def baseVersion = '1.2.0'
+    def appSettingsVersion = baseVersion
     def auditVersion = baseVersion
     def awsfsVersion = baseVersion
     def awssecurityVerion = baseVersion
@@ -95,6 +96,7 @@ dependencies {
     def mapsVersion = baseVersion
     def notificationsVersion = baseVersion
     def oidcVersion = baseVersion
+    def quartzVersion = baseVersion
     def reportsVersion = baseVersion
     def restVersion = baseVersion
     def samlVersion = baseVersion
@@ -116,6 +118,11 @@ dependencies {
     }
 
     constraints {
+        api "io.jmix.appsettings:jmix-appsettings:${snapshotOr(appSettingsVersion)}"
+        api "io.jmix.appsettings:jmix-appsettings-starter:${snapshotOr(appSettingsVersion)}"
+        api "io.jmix.appsettings:jmix-appsettings-ui:${snapshotOr(appSettingsVersion)}"
+        api "io.jmix.appsettings:jmix-appsettings-ui-starter:${snapshotOr(appSettingsVersion)}"
+
         api "io.jmix.audit:jmix-audit:${snapshotOr(auditVersion)}"
         api "io.jmix.audit:jmix-audit-ui:${snapshotOr(auditVersion)}"
         api "io.jmix.audit:jmix-audit-starter:${snapshotOr(auditVersion)}"
@@ -222,6 +229,9 @@ dependencies {
 
         api "io.jmix.oidc:jmix-oidc:${snapshotOr(oidcVersion)}"
         api "io.jmix.oidc:jmix-oidc-starter:${snapshotOr(oidcVersion)}"
+
+        api "io.jmix.quartz:jmix-quartz:${snapshotOr(quartzVersion)}"
+        api "io.jmix.quartz:jmix-quartz-starter:${snapshotOr(quartzVersion)}"
 
         api "io.jmix.reports:jmix-reports:${snapshotOr(reportsVersion)}"
         api "io.jmix.reports:jmix-reports-ui:${snapshotOr(reportsVersion)}"

@@ -13,8 +13,10 @@ import io.jmix.data.QueryTransformerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Modifies the query depending on current security constraints.
@@ -113,5 +115,28 @@ public class ReadEntityQueryContext implements AccessContext {
 
     protected static String printQuery(String query) {
         return query == null ? null : StringHelper.removeExtraSpaces(query.replace('\n', ' '));
+    }
+
+    @Nullable
+    @Override
+    public String explainConstraints() {
+        if (conditions != null && !conditions.isEmpty()) {
+            return entityClass.getName() + " " +
+                    conditions.stream()
+                            .map(c -> {
+                                String str = "";
+                                if (!Strings.isNullOrEmpty(c.join)) {
+                                    str += "join={" + c.join + "}";
+                                }
+                                if (!Strings.isNullOrEmpty(c.where)) {
+                                    if (!str.isEmpty())
+                                        str += ", ";
+                                    str += "where={" + c.where + "}";
+                                }
+                                return str;
+                            })
+                            .collect(Collectors.joining("; "));
+        }
+        return null;
     }
 }

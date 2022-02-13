@@ -19,6 +19,8 @@ package io.jmix.ui.accesscontext;
 import io.jmix.core.accesscontext.AccessContext;
 import io.jmix.ui.menu.MenuItem;
 
+import javax.annotation.Nullable;
+
 public class UiMenuContext implements AccessContext {
     protected final MenuItem menuItem;
     protected boolean permitted = true;
@@ -41,5 +43,11 @@ public class UiMenuContext implements AccessContext {
 
     public void setDenied() {
         this.permitted = false;
+    }
+
+    @Nullable
+    @Override
+    public String explainConstraints() {
+        return !permitted ? "menu item: " + menuItem.getId() : null;
     }
 }

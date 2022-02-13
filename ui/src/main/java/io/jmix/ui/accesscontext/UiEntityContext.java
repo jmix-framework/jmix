@@ -19,6 +19,10 @@ package io.jmix.ui.accesscontext;
 import io.jmix.core.accesscontext.AccessContext;
 import io.jmix.core.metamodel.model.MetaClass;
 
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
+
 public class UiEntityContext implements AccessContext {
     protected final MetaClass entityClass;
     protected boolean createPermitted = true;
@@ -64,5 +68,23 @@ public class UiEntityContext implements AccessContext {
 
     public void setDeleteDenied() {
         this.deletePermitted = false;
+    }
+
+    @Nullable
+    @Override
+    public String explainConstraints() {
+        List<String> deniedOperations = new ArrayList<>(4);
+        if (!createPermitted)
+            deniedOperations.add("create");
+        if (!viewPermitted)
+            deniedOperations.add("view");
+        if (!editPermitted)
+            deniedOperations.add("edit");
+        if (!deletePermitted)
+            deniedOperations.add("delete");
+        if (!deniedOperations.isEmpty()) {
+            return "entity '" + entityClass.getName() + "' " + String.join(", ", deniedOperations);
+        }
+        return null;
     }
 }

@@ -18,6 +18,8 @@ package io.jmix.ui.accesscontext;
 
 import io.jmix.core.accesscontext.AccessContext;
 
+import javax.annotation.Nullable;
+
 public class UiShowScreenContext implements AccessContext {
     protected final String screenId;
 
@@ -37,5 +39,11 @@ public class UiShowScreenContext implements AccessContext {
 
     public boolean isPermitted() {
         return permitted;
+    }
+
+    @Nullable
+    @Override
+    public String explainConstraints() {
+        return !permitted ? "screen: " + screenId : null;
     }
 }

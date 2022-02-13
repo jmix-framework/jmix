@@ -18,6 +18,7 @@ package io.jmix.core.accesscontext;
 
 import io.jmix.core.metamodel.model.MetaClass;
 
+import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -57,5 +58,21 @@ public class ExportImportEntityContext implements AccessContext {
             notExported = new HashSet<>();
         }
         notExported.add(name);
+    }
+
+    @Nullable
+    @Override
+    public String explainConstraints() {
+        if (!notImported.isEmpty() || !notExported.isEmpty()) {
+            String message = entityClass.getName();
+            if (!notExported.isEmpty()) {
+                message += " not exported attributes: " + String.join(", " , notExported);
+            }
+            if (!notImported.isEmpty()) {
+                message += " not imported attributes: " + String.join(", " , notImported);
+            }
+            return message;
+        }
+        return null;
     }
 }

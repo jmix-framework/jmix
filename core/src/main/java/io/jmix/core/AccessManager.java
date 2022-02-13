@@ -32,6 +32,9 @@ public class AccessManager {
     @Autowired
     protected AccessConstraintsRegistry registry;
 
+    @Autowired
+    protected AccessLogger logger;
+
     public class ConstraintsBuilder {
         protected final List<AccessConstraint<?>> constraints = new ArrayList<>();
 
@@ -69,7 +72,10 @@ public class AccessManager {
         constraints.stream()
                 .filter(constraint -> constraint.getContextType().isAssignableFrom(context.getClass()))
                 .map(constraint -> (AccessConstraint<T>) constraint)
-                .forEach(constraint -> constraint.applyTo(context));
+                .forEach(constraint -> {
+                    constraint.applyTo(context);
+                    logger.register(constraint, context);
+                });
     }
 
     public <T extends AccessContext> void applyRegisteredConstraints(T context) {

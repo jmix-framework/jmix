@@ -19,6 +19,9 @@ package io.jmix.core.accesscontext;
 import io.jmix.core.metamodel.model.MetaClass;
 import org.springframework.context.ApplicationContext;
 
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.BiPredicate;
 
 /**
@@ -106,5 +109,23 @@ public class InMemoryCrudEntityContext implements AccessContext {
         } else {
             this.deletePredicate = this.deletePredicate.and(predicate);
         }
+    }
+
+    @Nullable
+    @Override
+    public String explainConstraints() {
+        List<String> predicates = new ArrayList<>();
+        if (createPredicate != null)
+            predicates.add("create");
+        if (readPredicate != null)
+            predicates.add("read");
+        if (updatePredicate != null)
+            predicates.add("update");
+        if (deletePredicate != null)
+            predicates.add("delete");
+        if (!predicates.isEmpty()) {
+            return entityClass.getName() + " predicates: " + String.join(", ", predicates);
+        }
+        return null;
     }
 }

@@ -17,8 +17,9 @@
 package io.jmix.core.accesscontext;
 
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+
+import javax.annotation.Nullable;
 
 /**
  * An access context to check permissions on entity attributes.
@@ -55,5 +56,20 @@ public class EntityAttributeContext implements AccessContext {
 
     public void setViewDenied() {
         this.viewPermitted = false;
+    }
+
+    @Nullable
+    @Override
+    public String explainConstraints() {
+        if (!viewPermitted || !modifyPermitted) {
+            String denied = !modifyPermitted ? "modification" : "";
+            if (!viewPermitted) {
+                if (!denied.isEmpty())
+                    denied += ", ";
+                denied += "view";
+            }
+            return propertyPath.getMetaClass().getName() + "." + propertyPath.toString() + " " + denied;
+        }
+        return null;
     }
 }

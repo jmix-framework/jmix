@@ -16,6 +16,8 @@
 
 package io.jmix.core.accesscontext;
 
+import javax.annotation.Nullable;
+
 /**
  * An access context to check permissions on arbitrary named functionality.
  */
@@ -37,5 +39,11 @@ public class SpecificOperationAccessContext implements AccessContext {
 
     public boolean isPermitted() {
         return permitted;
+    }
+
+    @Nullable
+    @Override
+    public String explainConstraints() {
+        return !permitted ? name : null;
     }
 }

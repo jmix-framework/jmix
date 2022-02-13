@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,17 @@
  * limitations under the License.
  */
 
-package io.jmix.core.accesscontext;
+package io.jmix.core;
 
-import javax.annotation.Nullable;
+import io.jmix.core.accesscontext.AccessContext;
+import io.jmix.core.annotation.Internal;
+import io.jmix.core.constraint.AccessConstraint;
 
 /**
- * Marker interface for classes defining authorization points.
+ * Helps to track access control restrictions of the current user.
  */
-public interface AccessContext {
+@Internal
+public interface AccessLogger {
 
-    /**
-     * Returns a human-readable explanation of constraints applied to the current context instance for logging of
-     * authorization decisions. Null if the current context does not impose any constraints.
-     */
-    @Nullable
-    default String explainConstraints() {
-        return null;
-    }
+    <T extends AccessContext> void register(AccessConstraint<T> constraint, T accessContext);
 }

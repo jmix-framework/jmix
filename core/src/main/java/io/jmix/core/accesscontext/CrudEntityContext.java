@@ -18,6 +18,10 @@ package io.jmix.core.accesscontext;
 
 import io.jmix.core.metamodel.model.MetaClass;
 
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * An access context to check permissions on entity operations.
  */
@@ -67,5 +71,23 @@ public class CrudEntityContext implements AccessContext {
 
     public void setDeleteDenied() {
         this.deletePermitted = false;
+    }
+
+    @Nullable
+    @Override
+    public String explainConstraints() {
+        List<String> deniedOperations = new ArrayList<>(4);
+        if (!createPermitted)
+            deniedOperations.add("create");
+        if (!readPermitted)
+            deniedOperations.add("read");
+        if (!updatePermitted)
+            deniedOperations.add("update");
+        if (!deletePermitted)
+            deniedOperations.add("delete");
+        if (!deniedOperations.isEmpty()) {
+            return "entity '" + entityClass.getName() + "' " + String.join(", ", deniedOperations);
+        }
+        return null;
     }
 }

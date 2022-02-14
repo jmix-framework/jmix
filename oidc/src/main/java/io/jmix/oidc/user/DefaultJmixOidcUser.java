@@ -9,19 +9,14 @@ import java.util.Collection;
 import java.util.Map;
 
 /**
- * The implementation of {@link OidcUserDetails} that wraps the {@link OidcUser} provided by the
- * OpenID Connect 1.0 Provider and delegates some method invocations to the wrapped {@code OidcUser}.
+ * The default implementation of {@link JmixOidcUser} that wraps the {@link OidcUser} provided by the OpenID Connect 1.0
+ * Provider and delegates some method invocations to the wrapped {@code OidcUser}.
  */
-public class DefaultJmixOidcUser implements OidcUserDetails, HasOidcUserDelegate {
+public class DefaultJmixOidcUser implements JmixOidcUser, HasOidcUserDelegate {
 
     private OidcUser delegate;
 
     private Collection<? extends GrantedAuthority> authorities;
-
-    public DefaultJmixOidcUser(OidcUser delegate, Collection<? extends GrantedAuthority> authorities) {
-        this.delegate = delegate;
-        this.authorities = authorities;
-    }
 
     @Override
     public OidcUser getDelegate() {
@@ -35,8 +30,8 @@ public class DefaultJmixOidcUser implements OidcUserDetails, HasOidcUserDelegate
 
     @Override
     public String getPassword() {
-        //todo null password
-        return null;
+        //todo empty password?
+        return "";
     }
 
     @Override
@@ -93,5 +88,10 @@ public class DefaultJmixOidcUser implements OidcUserDetails, HasOidcUserDelegate
     @Override
     public String getName() {
         return delegate.getName();
+    }
+
+    @Override
+    public void setAuthorities(Collection<? extends GrantedAuthority> authorities) {
+        this.authorities = authorities;
     }
 }

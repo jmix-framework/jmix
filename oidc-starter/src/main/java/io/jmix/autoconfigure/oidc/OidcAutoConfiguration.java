@@ -19,13 +19,12 @@ package io.jmix.autoconfigure.oidc;
 import io.jmix.core.JmixOrder;
 import io.jmix.oidc.OidcConfiguration;
 import io.jmix.oidc.OidcProperties;
-import io.jmix.oidc.claimsmapper.DefaultOidcClaimsMapper;
-import io.jmix.oidc.claimsmapper.DefaultJmixOidcUserService;
-import io.jmix.oidc.claimsmapper.JmixOidcUserService;
-import io.jmix.oidc.claimsmapper.OidcClaimsMapper;
-import io.jmix.oidc.user.OidcUserDetails;
-import io.jmix.oidc.usermapper.OidcSimpleUserMapper;
+import io.jmix.oidc.claimsmapper.ClaimsRolesMapper;
+import io.jmix.oidc.claimsmapper.DefaultClaimsRolesMapper;
+import io.jmix.oidc.userinfo.DefaultJmixOidcUserService;
+import io.jmix.oidc.userinfo.JmixOidcUserService;
 import io.jmix.oidc.usermapper.OidcUserMapper;
+import io.jmix.oidc.usermapper.DefaultOidcUserMapper;
 import io.jmix.security.SecurityConfigurers;
 import io.jmix.security.role.ResourceRoleRepository;
 import io.jmix.security.role.RowLevelRoleRepository;
@@ -45,7 +44,8 @@ import org.springframework.security.oauth2.client.oidc.web.logout.OidcClientInit
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
 
 @Configuration
 @Import({OidcConfiguration.class})
@@ -59,18 +59,22 @@ public class OidcAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean(OidcClaimsMapper.class)
+    @ConditionalOnMissingBean(ClaimsRolesMapper.class)
     @ConditionalOnBean(ResourceRoleRepository.class)
-    public OidcClaimsMapper claimsToGrantedAuthoritiesMapper(ResourceRoleRepository resourceRoleRepository,
-                                                             RowLevelRoleRepository rowLevelRoleRepository,
-                                                             OidcProperties oidcProperties) {
-        return new DefaultOidcClaimsMapper(resourceRoleRepository, rowLevelRoleRepository, oidcProperties);
+    public ClaimsRolesMapper claimsRoleMapper(ResourceRoleRepository resourceRoleRepository,
+                                              RowLevelRoleRepository rowLevelRoleRepository,
+                                              OidcProperties oidcProperties) {
+        DefaultClaimsRolesMapper mapper = new DefaultClaimsRolesMapper(resourceRoleRepository, rowLevelRoleRepository);
+        mapper.setRolesClaimName(oidcProperties.getDefaultClaimsRolesMapper().getRolesClaimName());
+        mapper.setResourceRolePrefix(oidcProperties.getDefaultClaimsRolesMapper().getResourceRolePrefix());
+        mapper.setRowLevelRolePrefix(oidcProperties.getDefaultClaimsRolesMapper().getRowLevelRolePrefix());
+        return mapper;
     }
 
     @Bean
     @ConditionalOnMissingBean(OidcUserMapper.class)
-    public OidcUserMapper userMapper(OidcClaimsMapper claimsToGrantedAuthoritiesMapper) {
-        return new OidcSimpleUserMapper(claimsToGrantedAuthoritiesMapper);
+    public OidcUserMapper userMapper(ClaimsRolesMapper claimsRolesMapper) {
+        return new DefaultOidcUserMapper(claimsRolesMapper);
     }
 
     /**
@@ -128,12 +132,17 @@ public class OidcAutoConfiguration {
         }
     }
 
+    /**
+     * Configures extracting of roles information from JWT access token. This is required for REST API and custom MVC
+     * controllers protection.
+     */
     @Bean
     @ConditionalOnMissingBean(JwtAuthenticationConverter.class)
-    public JwtAuthenticationConverter jwtAuthenticationConverter(OidcClaimsMapper grantedAuthoritiesMapper) {
+    public JwtAuthenticationConverter jwtAuthenticationConverter(ClaimsRolesMapper claimsRolesMapper) {
         JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
+        //todo extract converter to a separate class
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwt -> {
-            Collection<? extends GrantedAuthority> mappedAuthorities = grantedAuthoritiesMapper.toGrantedAuthorities(jwt.getClaims());
+            Collection<? extends GrantedAuthority> mappedAuthorities = claimsRolesMapper.toGrantedAuthorities(jwt.getClaims());
             return new ArrayList<>(mappedAuthorities);
         });
         return jwtAuthenticationConverter;

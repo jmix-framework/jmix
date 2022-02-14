@@ -4,10 +4,8 @@ import io.jmix.core.SaveContext;
 import io.jmix.core.UnconstrainedDataManager;
 import io.jmix.core.security.UserRepository;
 import io.jmix.data.PersistenceHints;
-import io.jmix.oidc.claimsmapper.OidcClaimsMapper;
-import io.jmix.oidc.user.HasOidcUserDelegate;
-import io.jmix.oidc.user.OidcUserDetails;
-import io.jmix.security.authentication.AcceptsGrantedAuthorities;
+import io.jmix.oidc.claimsmapper.ClaimsRolesMapper;
+import io.jmix.oidc.user.JmixOidcUser;
 import io.jmix.security.authentication.RoleGrantedAuthority;
 import io.jmix.security.role.assignment.RoleAssignmentRoleType;
 import io.jmix.securitydata.entity.RoleAssignmentEntity;
@@ -23,12 +21,12 @@ import java.util.List;
 
 /**
  * Implementation of the {@link OidcUserMapper} that not only maps the external user object to the persistent user
- * entity, but also stores the user and optionally their role assignment in the database.
+ * entity, but also stores the user and optionally their role assignment to the database.
  *
  * @param <T>
  */
 //todo make the class generic and move it to jmix-security in order to share it with jmix-ldap, jmix-saml and jmix-oidc
-public abstract class SynchronizingOidcUserMapper<T extends OidcUserDetails> implements OidcUserMapper<T> {
+public abstract class SynchronizingOidcUserMapper<T extends JmixOidcUser> extends BaseOidcUserMapper<T> {
 
     private static final Logger log = LoggerFactory.getLogger(SynchronizingOidcUserMapper.class);
 
@@ -36,47 +34,60 @@ public abstract class SynchronizingOidcUserMapper<T extends OidcUserDetails> imp
 
     protected UserRepository userRepository;
 
-    protected OidcClaimsMapper oidcClaimsMapper;
+    protected ClaimsRolesMapper claimsRolesMapper;
 
     protected boolean synchronizeRoleAssignments;
 
     public SynchronizingOidcUserMapper(UnconstrainedDataManager dataManager,
                                        UserRepository userRepository,
-                                       OidcClaimsMapper oidcClaimsMapper) {
+                                       ClaimsRolesMapper claimsRolesMapper) {
         this.dataManager = dataManager;
         this.userRepository = userRepository;
-        this.oidcClaimsMapper = oidcClaimsMapper;
+        this.claimsRolesMapper = claimsRolesMapper;
     }
 
     /**
-     * Returns class of the user used by the application that is set to the security context.
+     * Returns a class of the user used by the application. This user is set to the security context.
      */
     protected abstract Class<T> getApplicationUserClass();
 
     /**
      * Extracts username from the {@code oidcUser}
      */
-    protected abstract String getUsername(OidcUser oidcUser);
-
-    /**
-     * Copies values from the {@code oidcUser} to the {@code userDetails}
-     * @param oidcUser the user object received fom the OpenID Connect provider
-     * @param userDetails the user object used by the Jmix application
-     */
-    protected abstract void copyUserDetailsAttributes(OidcUser oidcUser, T userDetails);
+    protected String getOidcUserUsername(OidcUser oidcUser) {
+        return oidcUser.getName();
+    }
 
     @Override
-    public T toJmixUser(OidcUser oidcUser) {
-        T jmixUserDetails = loadOrCreateJmixUser(oidcUser);
+    protected T initJmixUser(OidcUser oidcUser) {
+        String username = getOidcUserUsername(oidcUser);
+        T jmixUserDetails;
+        try {
+            jmixUserDetails = (T) userRepository.loadUserByUsername(username);
+        } catch (UsernameNotFoundException e) {
+            log.info("User with login {} wasn't found in user repository", username);
+            jmixUserDetails = dataManager.create(getApplicationUserClass());
+        }
+        return jmixUserDetails;
+    }
 
-        Collection<? extends GrantedAuthority> userAuthorities = obtainGrantedAuthorities(oidcUser);
+    @Override
+    protected void populateUserAuthorities(OidcUser oidcUser, T jmixUser) {
+        Collection<? extends GrantedAuthority> grantedAuthorities = claimsRolesMapper.toGrantedAuthorities(oidcUser.getClaims());
+        jmixUser.setAuthorities(grantedAuthorities);
+    }
 
-        populateUserDetails(jmixUserDetails, oidcUser, userAuthorities);
+    @Override
+    protected void performAdditionalModifications(OidcUser oidcUser, T jmixUser) {
+        super.performAdditionalModifications(oidcUser, jmixUser);
+        saveJmixUserAndRoleAssignments(oidcUser, jmixUser);
+    }
 
+    protected void saveJmixUserAndRoleAssignments(OidcUser oidcUser, T jmixUser) {
         SaveContext saveContext = new SaveContext();
 
         if (synchronizeRoleAssignments) {
-            String username = getUsername(oidcUser);
+            String username = getOidcUserUsername(oidcUser);
             //disable soft-deletion to completely remove role assignment records from the database
             saveContext.setHint(PersistenceHints.SOFT_DELETION, false);
             List<RoleAssignmentEntity> existingRoleAssignmentEntities = dataManager.load(RoleAssignmentEntity.class)
@@ -86,47 +97,14 @@ public abstract class SynchronizingOidcUserMapper<T extends OidcUserDetails> imp
             //todo do not remove all assignments but only assignments missing in new user authorities
             saveContext.removing(existingRoleAssignmentEntities);
 
-            Collection<RoleAssignmentEntity> newRoleAssignmentEntities = buildRoleAssignmentEntities(username, userAuthorities);
+            Collection<RoleAssignmentEntity> newRoleAssignmentEntities = buildRoleAssignmentEntities(username, jmixUser.getAuthorities());
             saveContext.saving(newRoleAssignmentEntities);
         }
-        saveContext.saving(jmixUserDetails);
+
+        saveContext.saving(jmixUser);
 
         //persist user details and roles if needed
         dataManager.save(saveContext);
-
-        return jmixUserDetails;
-    }
-
-    protected T loadOrCreateJmixUser(OidcUser userInfo) {
-        String username = getUsername(userInfo);
-        T jmixUserDetails;
-        try {
-            jmixUserDetails = (T) userRepository.loadUserByUsername(username);
-        } catch (UsernameNotFoundException e) {
-            log.info("User with login {} wasn't found in user repository", username);
-            jmixUserDetails = createUserDetails(userInfo);
-        }
-        return jmixUserDetails;
-    }
-
-    protected T createUserDetails(OidcUser oidcUser) {
-        T userDetails = dataManager.create(getApplicationUserClass());
-//        EntityValues.setValue(userDetails, "username", username);
-        return userDetails;
-    }
-
-    protected void populateUserDetails(T jmixUserDetails, OidcUser oidcUser, Collection<? extends GrantedAuthority> userAuthorities) {
-        copyUserDetailsAttributes(oidcUser, jmixUserDetails);
-        if (jmixUserDetails instanceof AcceptsGrantedAuthorities) {
-            ((AcceptsGrantedAuthorities) jmixUserDetails).setAuthorities(userAuthorities);
-        }
-        if (jmixUserDetails instanceof HasOidcUserDelegate) {
-            ((HasOidcUserDelegate) jmixUserDetails).setDelegate(oidcUser);
-        }
-    }
-
-    protected Collection<? extends GrantedAuthority> obtainGrantedAuthorities(OidcUser oidcUser) {
-        return oidcClaimsMapper.toGrantedAuthorities(oidcUser.getClaims());
     }
 
     protected Collection<RoleAssignmentEntity> buildRoleAssignmentEntities(String username, Collection<? extends GrantedAuthority> grantedAuthorities) {
@@ -153,6 +131,10 @@ public abstract class SynchronizingOidcUserMapper<T extends OidcUserDetails> imp
         return roleAssignmentEntities;
     }
 
+    /**
+     * Enables role assignment entities synchronization. If true then role assignment entities will be stored to the
+     * database.
+     */
     public void setSynchronizeRoleAssignments(boolean synchronizeRoleAssignments) {
         this.synchronizeRoleAssignments = synchronizeRoleAssignments;
     }

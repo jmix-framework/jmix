@@ -9,29 +9,32 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 public class OidcProperties {
 
     /**
-     * Whether default OIDC configuration should be used. Used by OidcAutoConfiguration.
+     * Whether default OIDC configuration should be used. The property is used by OidcAutoConfiguration.
      */
     boolean useDefaultConfiguration;
 
-    ClaimsMapper claimsMapper;
+    /**
+     * DefaultClaimsRolesMapper configuration.
+     */
+    DefaultClaimsRolesMapperConfig defaultClaimsRolesMapper;
 
     public OidcProperties(
             @DefaultValue("true") boolean useDefaultConfiguration,
-            ClaimsMapper claimsMapper
+            @DefaultValue DefaultClaimsRolesMapperConfig defaultClaimsRolesMapper
     ) {
         this.useDefaultConfiguration = useDefaultConfiguration;
-        this.claimsMapper = claimsMapper;
+        this.defaultClaimsRolesMapper = defaultClaimsRolesMapper;
     }
 
     public boolean isUseDefaultConfiguration() {
         return useDefaultConfiguration;
     }
 
-    public ClaimsMapper getClaimsMapper() {
-        return claimsMapper;
+    public DefaultClaimsRolesMapperConfig getDefaultClaimsRolesMapper() {
+        return defaultClaimsRolesMapper;
     }
 
-    public static class ClaimsMapper {
+    public static class DefaultClaimsRolesMapperConfig {
         /**
          * Prefix that can be used to recognize a resource role from the authorization server
          */
@@ -47,10 +50,10 @@ public class OidcProperties {
          */
         String rolesClaimName;
 
-        public ClaimsMapper(
-                @DefaultValue("resource$") String resourceRolePrefix,
-                @DefaultValue("row-level$") String rowLevelRolePrefix,
-                @DefaultValue("roles") String rolesClaimName
+        public DefaultClaimsRolesMapperConfig(
+                @DefaultValue("roles") String rolesClaimName,
+                @DefaultValue("") String resourceRolePrefix,
+                @DefaultValue("") String rowLevelRolePrefix
         ) {
             this.resourceRolePrefix = resourceRolePrefix;
             this.rowLevelRolePrefix = rowLevelRolePrefix;

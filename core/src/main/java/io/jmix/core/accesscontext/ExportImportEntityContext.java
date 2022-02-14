@@ -63,15 +63,15 @@ public class ExportImportEntityContext implements AccessContext {
     @Nullable
     @Override
     public String explainConstraints() {
-        if (!notImported.isEmpty() || !notExported.isEmpty()) {
-            String message = entityClass.getName();
-            if (!notExported.isEmpty()) {
-                message += " not exported attributes: " + String.join(", " , notExported);
-            }
-            if (!notImported.isEmpty()) {
-                message += " not imported attributes: " + String.join(", " , notImported);
-            }
-            return message;
+        String message = "";
+        if (notExported != null && !notExported.isEmpty()) {
+            message += " not exported = " + notExported;
+        }
+        if (notImported != null && !notImported.isEmpty()) {
+            message += " not imported = " + notImported;
+        }
+        if (!message.isEmpty()) {
+            return entityClass.getName() + ": " + message;
         }
         return null;
     }

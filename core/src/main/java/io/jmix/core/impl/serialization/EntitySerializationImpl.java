@@ -350,7 +350,7 @@ public class EntitySerializationImpl implements EntitySerialization {
 
                 Range propertyRange = metaProperty.getRange();
                 if (propertyRange.isDatatype()) {
-                    if (additionalProperties.contains(metaProperty) && fieldValue instanceof Collection) {
+                    if (fieldValue instanceof Collection) {
                         jsonObject.add(metaProperty.getName(),
                                 serializeSimpleCollection((Collection) fieldValue, metaProperty));
                     } else {

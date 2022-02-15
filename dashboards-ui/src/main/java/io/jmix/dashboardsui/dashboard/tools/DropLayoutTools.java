@@ -215,7 +215,7 @@ public class DropLayoutTools {
                     newChildren.add(childLayout);
                 }
             }
-            targetParent.setChildren(newChildren);
+            setChildren(targetParent, newChildren);
         }
     }
 
@@ -224,10 +224,12 @@ public class DropLayoutTools {
     }
 
     private boolean applyMoveAction(DashboardLayout layout, DashboardLayout target, DashboardLayout dashboardModel) {
+        // if was dropped to itself
         if (target.getId().equals(layout.getId())) {
             return false;
         }
 
+        // if parent was dropped to its children
         List<DashboardLayout> targetParents = findParentsLayout(dashboardModel, target.getId());
         if (targetParents.contains(layout)) {
             return false;

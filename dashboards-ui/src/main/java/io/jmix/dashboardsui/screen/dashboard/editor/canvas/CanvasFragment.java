@@ -26,7 +26,7 @@ import io.jmix.dashboardsui.widget.LookupWidget;
 import io.jmix.dashboardsui.widget.RefreshableWidget;
 import io.jmix.ui.WindowParam;
 import io.jmix.ui.component.Component;
-import io.jmix.ui.component.ComponentContainer;
+import io.jmix.ui.component.HasComponents;
 import io.jmix.ui.component.OrderedContainer;
 import io.jmix.ui.screen.ScreenFragment;
 import io.jmix.ui.screen.Subscribe;
@@ -97,7 +97,7 @@ public class CanvasFragment extends ScreenFragment {
         return result;
     }
 
-    protected <T> void searchWidgets(ComponentContainer layout, Class<T> widgetClass, List<T> wbList) {
+    protected <T> void searchWidgets(HasComponents layout, Class<T> widgetClass, List<T> wbList) {
         if (layout instanceof CanvasWidgetLayout) {
             ScreenFragment wb = getWidgetFragment((CanvasWidgetLayout) layout);
             if (wb != null && widgetClass.isAssignableFrom(wb.getClass())) {
@@ -105,8 +105,8 @@ public class CanvasFragment extends ScreenFragment {
             }
         } else {
             for (Component child : layout.getOwnComponents()) {
-                if (child instanceof ComponentContainer) {
-                    searchWidgets((ComponentContainer) child, widgetClass, wbList);
+                if (child instanceof HasComponents) {
+                    searchWidgets((HasComponents) child, widgetClass, wbList);
                 }
             }
         }

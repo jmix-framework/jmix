@@ -222,7 +222,7 @@ implementation("io.jmix.security:jmix-security-oauth2-starter")
 implementation("io.jmix.rest:jmix-rest-starter")
 ```
 
-If you are using an external OpenID Provider for issuing tokens, you don't longer need the `jmix-security-oauth2-starter`, and this dependency may be removed from thjr build.gradle.
+If you are using an external OpenID Provider for issuing tokens, you don't longer need the `jmix-security-oauth2-starter`, and this dependency may be removed from the build.gradle.
 
 For local keycloak instance access tokens may be obtained by in the following way:
 
@@ -242,7 +242,7 @@ curl -X POST http://localhost:8180/auth/realms/sample1/protocol/openid-connect/t
 -d "grant_type=password&&scope=openid&username=johndoe&password=mypass"
 ```
 
-Let's see how to protect custom MVC controllers. For example, you have the following controller in you application:
+Let's see how to protect custom MVC controllers. For example, you have the following controller in the application:
 
 ```java
 import org.springframework.web.bind.annotation.GetMapping;
@@ -263,7 +263,7 @@ public class GreetingController {
 }
 ```
 
-You want all URLs starting with `/authenticated/` be protected and all URLs starting with `/anonymous/` be available for anonymous access. To achieve this, in your application class or Spring configuration class, define a `AuthorizedUrlsProvider` bean:
+You want all URLs starting with `/authenticated/` to be protected and all URLs starting with `/anonymous/` to be available for anonymous access. To achieve this, in your application class or Spring configuration class, define a `AuthorizedUrlsProvider` bean:
 
 ```java
     @Bean

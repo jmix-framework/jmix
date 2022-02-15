@@ -29,13 +29,7 @@ To include the jmix-oidc add-on to the application, add the following dependency
 implementation 'io.jmix.oidc:jmix-oidc-starter'
 ```
 
-## Configuring Keycloak
-
-One of the most popular OpenID Providers is Keycloak (https://www.keycloak.org/). To get familiar with the jmix-openid add-on you may run Keycloak locally using Docker.
-
-TODO
-
-## Configuring Client
+## Client Configuration
 
 Before starting the application the client must be configured. "Client" is Jmix application that requires end-user authentication from the OpenID Provider. Standard Spring Security client configuration is used. One of the ways to configure the client is to add the following properties to the `application.properties` file:
 
@@ -50,7 +44,7 @@ spring.security.oauth2.resourceserver.jwt.issuer-uri=http://localhost:8180/auth/
 
 "keycloak" in the property key is the provider id. It may have any value, e.g. `spring.security.oauth2.client.registration.okta.client-id`. Client ID and client secret values must be taken from the OpenID provider. The *issuer-uri* property contains a path to the OpenID Provider [Configuration Endpoint](https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfig).
 
-## Using Default Configuration
+## Using Default Add-on Configuration
 
 After you added the dependency, set up the Keycloak and configured the client in `application.properties`, you may start the application. In this case, the default add-on configuration will do the following:
 
@@ -269,7 +263,7 @@ public class GreetingController {
 }
 ```
 
-You want all URLs starting with `/authenticated/' be protected and all URLs starting with `/anonymous/` be available for anonymous access. To achieve this, in your application class or Spring configuration class, define a `AuthorizedUrlsProvider` bean:
+You want all URLs starting with `/authenticated/` be protected and all URLs starting with `/anonymous/` be available for anonymous access. To achieve this, in your application class or Spring configuration class, define a `AuthorizedUrlsProvider` bean:
 
 ```java
     @Bean
@@ -294,3 +288,131 @@ You want all URLs starting with `/authenticated/' be protected and all URLs star
 `jmix.oidc.use-default-configuration=true` - whether to apply default auto-configuration. True by default, set this property to false in case you want to have access to add-on beans and interfaces but don't want to use predefined Spring security configuration for protecting endpoints. In this case, you'll have to write your own security configuration. 
 
 `jmix.oidc.default-claims-roles-mapper.roles-claim-name=roles` - name of the claim in ID Token that contains a collection of roles names. This property is used by `DefaultClaimsRolesMapper`.
+
+## Configuring Local Keycloak Instance
+
+One of the most popular OpenID Providers is Keycloak (https://www.keycloak.org/). To get familiar with the jmix-oidc add-on you may run Keycloak locally using Docker.
+
+### Starting Keycloak Using Docker Compose
+
+Use `docker-compose.yml` to launch Keycloak with Postgres database.
+
+```dockerfile
+version: '3'
+
+volumes:
+  postgres_data:
+    driver: local
+
+services:
+  postgres:
+    image: 'postgres:alpine'
+    volumes:
+      - ./postgres:/var/lib/postgresql/data
+#    restart: 'always'
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: keycloak
+      POSTGRES_HOST: postgres
+
+  keycloak:
+    image: jboss/keycloak:16.1.0
+    environment:
+      DB_VENDOR: postgres
+      DB_ADDR: postgres
+      DB_PORT: 5432
+      DB_DATABASE: keycloak
+      DB_USER: keycloak
+      DB_PASSWORD: password
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: admin
+      DEBUG: 'true'
+      DEBUG_PORT: 5005
+      JAVA_OPTS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
+    volumes:
+      - ./kk_data/data:/opt/jboss/keycloak/standalone/data
+      - ./kk_data/export:/opt/jboss/keycloak/export-dir
+      - ./kk_data/import:/opt/jboss/keycloak/import-dir
+      - ./kk_data/deployments:/opt/jboss/keycloak/standalone/deployments
+    ports:
+      - 8180:8080
+      - 5005:5005
+    depends_on:
+      - postgres
+```
+
+Run the command:
+
+```
+docker-compose up
+```
+
+Keycloak URL: http://localhost:8180/auth
+
+Admin credentials:
+```
+Username: admin
+Password: admin
+```
+
+You can read about configuring the Keycloak instance in the [Server Administration Guide](https://www.keycloak.org/docs/latest/server_admin/)
+
+### Creating a Realm
+
+Login to Keycloak admin console.
+
+Point to the top of the left pane.
+
+Click **Add Realm**.
+
+Give a name to the new realm, e.g. "sample".
+
+![create_realm.png](images/create_realm.png)
+
+### Creating a Client
+
+In order to connect a Jmix application to Keycloak, we need to create a new client **jmix-app** with the Client Protocol **openid-protocol**.
+
+![create_client_1.png](images/create_client_1.png)
+
+Set **Access Type** to `confidential` for the client.
+
+![create_client_2.png](images/create_client_2.png)
+
+After saving the new tab **Credentials** will appear. It displays **Client Secret**,
+which we need to set up a connection in the Jmix project.
+
+![client_secret.png](images/client_credentials.png)
+
+Client parameters should be used in the `application.properties` file. See the **Configuring Client** section.
+
+### Creating a Role
+
+Next we should create a new realm role. By default, the role name should match the Jmix role code. Let's create a **system-full-access** role.
+
+![create_role.png](images/create_role.png)
+
+### Creating a User
+
+Let's create a user with **johndoe** username.
+
+![create_user.png](images/create_user.png)
+
+After the user is saved, the **Credentials** tab will appear. You may set the initial user password there.
+
+![create_user_credentials.png](images/create_user_credentials.png)
+
+In the **Role Mappings** tab assign the **system-full-access** role.
+
+![assign_role.png](images/assign_role.png)
+
+If you want to fill user attributes (e.g. "position") you can do that in **Attributes** tab in the user editor.
+
+### Creating the Mapper
+
+In order to return roles information in the ID Token we need to define a mapper for the **jmix-app** client. Open the client editor and switch to the **Mappers** tab. Create a new mapper there. The collection of role names will be returned in the "roles" claim.
+
+![create_mapper.png](images/create_mapper.png)

@@ -24,7 +24,7 @@ import io.jmix.ui.xml.layout.ComponentLoader;
  * @deprecated Presentations are managed by {@link PresentationsFacet}
  */
 @Deprecated
-public class LoadPresentationsPostInitTask implements ComponentLoader.PostInitTask {
+public class LoadPresentationsPostInitTask implements ComponentLoader.InitTask {
 
     private HasPresentations component;
 

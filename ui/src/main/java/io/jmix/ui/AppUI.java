@@ -16,6 +16,7 @@
 
 package io.jmix.ui;
 
+import com.google.common.base.Strings;
 import com.vaadin.annotations.PreserveOnRefresh;
 import com.vaadin.annotations.Push;
 import com.vaadin.annotations.Theme;
@@ -28,11 +29,14 @@ import io.jmix.core.Messages;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.component.RootWindow;
+import io.jmix.ui.component.impl.WindowImpl;
 import io.jmix.ui.event.AppInitializedEvent;
 import io.jmix.ui.event.UIRefreshEvent;
 import io.jmix.ui.exception.UiExceptionHandler;
 import io.jmix.ui.icon.IconResolver;
 import io.jmix.ui.navigation.*;
+import io.jmix.ui.screen.Screen;
+import io.jmix.ui.screen.UiControllerUtils;
 import io.jmix.ui.settings.UserSettingsTools;
 import io.jmix.ui.sys.ControllerUtils;
 import io.jmix.ui.sys.LinkHandler;
@@ -46,6 +50,7 @@ import io.jmix.ui.widget.JmixFileDownloader;
 import io.jmix.ui.widget.JmixTimer;
 import io.jmix.ui.widget.client.ui.AppUIClientRpc;
 import io.jmix.ui.widget.client.ui.AppUIConstants;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -264,6 +269,7 @@ public class AppUI extends UI implements ErrorHandler, EnhancedUI, UiExceptionHa
                 this.app = App.getInstance();
             }
             setupUI();
+            restoreRouteState(requestedState);
         } catch (Exception e) {
             log.error("Unable to init ui", e);
 
@@ -272,8 +278,45 @@ public class AppUI extends UI implements ErrorHandler, EnhancedUI, UiExceptionHa
             return;
         }
 
-
         processExternalLink(request, requestedState);
+    }
+
+    /*
+    * During AppUI initialization process the initial URL is replaced
+    * with the created Root Window route. In case the requested state
+    * contains parameters for the root window, we need to restore it
+    * to keep in sync the browser URL and params that can be obtained
+    * from UrlParamsChangedEvent
+    */
+    protected void restoreRouteState(NavigationState requestedState) {
+        // Check that the requested state doesn't contain nested route
+        // that will be handled by navigation handlers and that there
+        // are parameters to restore in the browser URL.
+        Map<String, String> requestedParams = requestedState.getParams();
+        if (!Strings.isNullOrEmpty(requestedState.getNestedRoute())
+                || MapUtils.isEmpty(requestedParams)) {
+            return;
+        }
+
+        RootWindow topLevelWindow = getTopLevelWindow();
+        if (topLevelWindow instanceof WindowImpl) {
+            Screen frameOwner = topLevelWindow.getFrameOwner();
+            NavigationState resolvedState = ((WindowImpl) topLevelWindow).getResolvedState();
+            if (resolvedState == null) {
+                return;
+            }
+
+            // Check that the actual Root Window and the requested Root Window is the same
+            if (Objects.equals(requestedState.getRoot(), resolvedState.getRoot())) {
+                urlRouting.replaceState(frameOwner, requestedParams);
+
+                // Because of usage of 'urlRouting.replaceState' UrlParamsChangedEvent
+                // won't be fired for the Root Window by ParamsNavigationHandler, hence
+                // we need to do it here.
+                UiControllerUtils.fireEvent(frameOwner, UrlParamsChangedEvent.class,
+                        new UrlParamsChangedEvent(frameOwner, requestedParams));
+            }
+        }
     }
 
     /**

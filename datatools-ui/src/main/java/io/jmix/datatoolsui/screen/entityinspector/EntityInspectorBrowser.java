@@ -557,6 +557,8 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
                         planBuilder.addOneToOneProperty(metaProperty.getName(), ReferenceImportBehaviour.IGNORE_MISSING);
                     } else if (cardinality == Range.Cardinality.ONE_TO_MANY) {
                         planBuilder.addOneToOneProperty(metaProperty.getName(), ReferenceImportBehaviour.IGNORE_MISSING);
+                    } else if (cardinality == Range.Cardinality.NONE) {
+                        planBuilder.addOneToOneProperty(metaProperty.getName(), ReferenceImportBehaviour.IGNORE_MISSING);
                     }
                     break;
                 default:

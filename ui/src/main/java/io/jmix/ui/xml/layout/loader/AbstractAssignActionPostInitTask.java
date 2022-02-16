@@ -26,7 +26,7 @@ import io.jmix.ui.xml.layout.ComponentLoader;
 
 import javax.annotation.Nullable;
 
-public abstract class AbstractAssignActionPostInitTask implements ComponentLoader.PostInitTask {
+public abstract class AbstractAssignActionPostInitTask implements ComponentLoader.InitTask {
     protected Component component;
     protected String actionId;
     protected Frame frame;

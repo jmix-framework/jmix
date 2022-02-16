@@ -299,7 +299,7 @@ public interface Filter extends Component, Component.BelongToFrame, Component.Ha
      * Loads configurations for {@link Filter} and apply default.
      *
      * <em>NOTE:</em> call this method after the frame is fully initialized
-     * (for example, in {@link ComponentLoader.PostInitTask} in a loader).
+     * (for example, in {@link ComponentLoader.InitTask} in a loader).
      */
     void loadConfigurationsAndApplyDefault();
 

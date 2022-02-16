@@ -53,7 +53,7 @@ public interface ComponentLoader<T extends Component> {
 
         String getCurrentFrameId();
 
-        void addPostInitTask(PostInitTask task);
+        void addPostInitTask(InitTask task);
         void executePostInitTasks();
 
         void addInjectTask(InjectTask task);
@@ -73,19 +73,6 @@ public interface ComponentLoader<T extends Component> {
     }
 
     /**
-     * PostInitTasks are used to perform deferred initialization of visual components.
-     */
-    interface PostInitTask {
-        /**
-         * This method will be invoked after window initialization.
-         *
-         * @param context loader context
-         * @param window  top-most window
-         */
-        void execute(ComponentContext context, Frame window);
-    }
-
-    /**
      * For internal use only.
      */
     interface InjectTask {
@@ -99,7 +86,7 @@ public interface ComponentLoader<T extends Component> {
     }
 
     /**
-     * For internal use only.
+     * Init tasks are used to perform deferred initialization of visual components.
      */
     interface InitTask {
         /**

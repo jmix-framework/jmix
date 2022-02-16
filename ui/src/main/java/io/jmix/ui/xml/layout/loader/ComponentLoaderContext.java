@@ -24,7 +24,6 @@ import io.jmix.ui.sys.UiControllerProperty;
 import io.jmix.ui.xml.layout.ComponentLoader;
 import io.jmix.ui.xml.layout.ComponentLoader.InitTask;
 import io.jmix.ui.xml.layout.ComponentLoader.InjectTask;
-import io.jmix.ui.xml.layout.ComponentLoader.PostInitTask;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -43,7 +42,7 @@ public class ComponentLoaderContext implements ComponentLoader.ComponentContext 
 
     protected List<UiControllerProperty> properties = Collections.emptyList();
 
-    protected List<PostInitTask> postInitTasks = new ArrayList<>();
+    protected List<InitTask> postInitTasks = new ArrayList<>();
     protected List<InjectTask> injectTasks = new ArrayList<>();
     protected List<InitTask> initTasks = new ArrayList<>();
 
@@ -114,7 +113,7 @@ public class ComponentLoaderContext implements ComponentLoader.ComponentContext 
     }
 
     @Override
-    public void addPostInitTask(PostInitTask task) {
+    public void addPostInitTask(InitTask task) {
         postInitTasks.add(task);
     }
 
@@ -138,7 +137,7 @@ public class ComponentLoaderContext implements ComponentLoader.ComponentContext 
 
     @Override
     public void executePostInitTasks() {
-        for (PostInitTask postInitTask : postInitTasks) {
+        for (InitTask postInitTask : postInitTasks) {
             postInitTask.execute(this, frame);
         }
         postInitTasks.clear();
@@ -174,7 +173,7 @@ public class ComponentLoaderContext implements ComponentLoader.ComponentContext 
         return injectTasks;
     }
 
-    public List<PostInitTask> getPostInitTasks() {
+    public List<InitTask> getPostInitTasks() {
         return postInitTasks;
     }
 

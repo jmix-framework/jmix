@@ -2,7 +2,6 @@
 <menu-config xmlns="http://jmix.io/schema/ui/menu">
 
     <menu id="${project_id}" caption="msg://${project_rootPackage}/menu.addon" insertAfter="administration">
-        <item screen="${project_id}_Foo.browse" caption="msg://${project_rootPackage}.screen.foo/FooBrowse.caption"/>
     </menu>
 
 </menu-config>

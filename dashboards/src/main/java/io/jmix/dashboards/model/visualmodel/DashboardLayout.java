@@ -85,14 +85,18 @@ public abstract class DashboardLayout {
 
     public void setChildren(List<DashboardLayout> children) {
         this.children = children;
+        this.children.forEach(child -> child.setParent(this));
     }
 
     public void addChild(DashboardLayout child) {
         children.add(child);
+        child.setParent(this);
     }
 
     public void removeOwnChild(DashboardLayout child) {
-        children.remove(child);
+        if (children.remove(child)) {
+            child.setParent(null);
+        }
     }
 
     public void removeChild(DashboardLayout child) {

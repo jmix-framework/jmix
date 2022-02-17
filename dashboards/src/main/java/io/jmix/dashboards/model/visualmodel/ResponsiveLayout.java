@@ -51,6 +51,7 @@ public class ResponsiveLayout extends DashboardLayout implements ContainerLayout
 
     public void setAreas(Set<ResponsiveArea> areas) {
         this.areas = areas;
+        this.areas.forEach(area -> area.getComponent().setParent(this));
     }
 
     @PostConstruct
@@ -68,7 +69,9 @@ public class ResponsiveLayout extends DashboardLayout implements ContainerLayout
                 .map(ResponsiveArea::getOrder)
                 .max(Comparator.naturalOrder()).orElse(0) + 1;
         area.setOrder(order);
-        getAreas().add(area);
+        if (getAreas().add(area)) {
+            area.getComponent().setParent(this);
+        }
     }
 
     @Override
@@ -80,7 +83,9 @@ public class ResponsiveLayout extends DashboardLayout implements ContainerLayout
                 break;
             }
         }
-        areas.remove(target);
+        if (areas.remove(target)) {
+            child.setParent(null);
+        }
     }
 
     @Override

@@ -145,6 +145,11 @@ public class FetchPlanLoader {
                 throw new RuntimeException("cannot find range for meta property: " + metaProperty);
             }
 
+            //by default specify "_base" fetchPlan in case for entity property it is missing
+            if (refFetchPlanName == null && range.isClass()) {
+                refFetchPlanName = FetchPlan.BASE;
+            }
+
             final List<Element> propertyElements = propElem.elements("property");
             boolean inlineFetchPlan = !propertyElements.isEmpty();
 

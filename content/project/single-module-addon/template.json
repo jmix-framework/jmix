@@ -1,5 +1,16 @@
 {
+  "version": 1,
   "name": "Single Module Add-On",
   "order": 3,
-  "description": "<html>Jmix add-ons allow you to reuse data model, UI and business logic in different applications.<p>The created project contains a functional module and a starter with auto-configuration. It includes a sample entity, entity CRUD screens and integration tests.</html>"
+  "description": "<html>Jmix add-ons allow you to reuse data model, UI and business logic in different applications.<p>The created project contains a functional module and a starter with auto-configuration. It includes a sample entity, entity CRUD screens and integration tests.</html>",
+  "params": [
+    {
+      "name": "projectId",
+      "mandatory": true
+    },
+    {
+      "name": "locales",
+      "hidden": true
+    }
+  ]
 }

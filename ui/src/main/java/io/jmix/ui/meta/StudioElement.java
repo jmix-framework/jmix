@@ -101,4 +101,9 @@ public @interface StudioElement {
      * E.g. "io.jmix.ui.component.ListComponent"
      */
     String[] unsupportedTarget() default {};
+
+    /**
+     * @return names of unsupported handlers that should be hidden from Handlers and Generate Handler panels
+     */
+    String[] unsupportedHandlers() default {};
 }

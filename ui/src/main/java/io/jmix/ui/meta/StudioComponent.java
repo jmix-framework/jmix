@@ -122,4 +122,9 @@ public @interface StudioComponent {
      * @return URL of the documentation page
      */
     String documentationURL() default "";
+
+    /**
+     * @return names of unsupported handlers that should be hidden from Handlers and Generate Handler panels
+     */
+    String[] unsupportedHandlers() default {};
 }

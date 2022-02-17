@@ -19,6 +19,7 @@ package io.jmix.multitenancy.data;
 import io.jmix.core.annotation.TenantId;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.eclipselink.impl.mapping.AbstractJoinExpressionProvider;
+import io.jmix.multitenancy.MultitenancyProperties;
 import io.jmix.multitenancy.core.TenantEntityOperation;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.eclipse.persistence.descriptors.ClassDescriptor;
@@ -39,9 +40,12 @@ import java.util.Arrays;
 public class MultiTenantJoinExpressionProvider extends AbstractJoinExpressionProvider {
 
     private final TenantEntityOperation tenantEntityOperation;
+    private final MultitenancyProperties properties;
 
-    public MultiTenantJoinExpressionProvider(TenantEntityOperation tenantEntityOperation) {
+    public MultiTenantJoinExpressionProvider(TenantEntityOperation tenantEntityOperation,
+                                             MultitenancyProperties multitenancyProperties) {
         this.tenantEntityOperation = tenantEntityOperation;
+        this.properties = multitenancyProperties;
     }
 
     @Override
@@ -66,18 +70,20 @@ public class MultiTenantJoinExpressionProvider extends AbstractJoinExpressionPro
 
     @Nullable
     private Expression createToOneJoinExpression(OneToOneMapping oneToOneMapping) {
-        ClassDescriptor descriptor = oneToOneMapping.getDescriptor();
-        Class<?> referenceClass = oneToOneMapping.getReferenceClass();
-        if (isMultiTenant(referenceClass) && isMultiTenant(descriptor.getJavaClass())) {
-            MetaProperty tenantIdField = tenantEntityOperation.findTenantProperty(referenceClass);
-            Field parentTenantId = findTenantField(descriptor.getJavaClass());
-            if (tenantIdField != null && parentTenantId != null) {
-                String columnName = tenantIdField.getName();
-                ExpressionBuilder builder = new ExpressionBuilder();
-                Expression tenantColumnExpression = builder.get(columnName);
-                return tenantColumnExpression.equal(
-                        builder.getParameter(
-                                parentTenantId.getAnnotation(Column.class).name()));
+        if (properties.isJoinConstraintEnabled()) {
+            ClassDescriptor descriptor = oneToOneMapping.getDescriptor();
+            Class<?> referenceClass = oneToOneMapping.getReferenceClass();
+            if (isMultiTenant(referenceClass) && isMultiTenant(descriptor.getJavaClass())) {
+                MetaProperty tenantIdField = tenantEntityOperation.findTenantProperty(referenceClass);
+                Field parentTenantId = findTenantField(descriptor.getJavaClass());
+                if (tenantIdField != null && parentTenantId != null) {
+                    String columnName = tenantIdField.getName();
+                    ExpressionBuilder builder = new ExpressionBuilder();
+                    Expression tenantColumnExpression = builder.get(columnName);
+                    return tenantColumnExpression.equal(
+                            builder.getParameter(
+                                    parentTenantId.getAnnotation(Column.class).name()));
+                }
             }
         }
         return null;

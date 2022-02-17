@@ -25,12 +25,19 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 public class MultitenancyProperties {
 
     private final String tenantIdUrlParamName;
+    private final boolean joinConstraintEnabled;
 
-    public MultitenancyProperties(@DefaultValue("tenantId") String tenantIdUrlParamName) {
+    public MultitenancyProperties(@DefaultValue("tenantId") String tenantIdUrlParamName,
+                                  @DefaultValue("false") boolean joinConstraintEnabled) {
         this.tenantIdUrlParamName = tenantIdUrlParamName;
+        this.joinConstraintEnabled = joinConstraintEnabled;
     }
 
     public String getTenantIdUrlParamName() {
         return tenantIdUrlParamName;
+    }
+
+    public boolean isJoinConstraintEnabled() {
+        return joinConstraintEnabled;
     }
 }

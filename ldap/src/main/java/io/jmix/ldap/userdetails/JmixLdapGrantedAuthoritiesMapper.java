@@ -26,28 +26,24 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
 import org.springframework.util.Assert;
 
-import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import java.util.*;
 
 /**
  * GrantedAuthoritiesMapper that maps authorities to {@link RoleGrantedAuthority}s.
  * <p>
- * First, it tries to find a resource role with the same code. If it haven't been found,
- * it searches for a row-level role with the same code.
+ * First, it tries to map provided authorities to Jmix role codes if implementation of {@link LdapAuthorityToJmixRoleCodesMapper}
+ * is provided. After that, it searches resource and row-level roles with such codes, in case both resource and row-level roles
+ * with the same code exist both will be returned.
+ *
+ * @see LdapAuthorityToJmixRoleCodesMapper
  */
 public class JmixLdapGrantedAuthoritiesMapper implements GrantedAuthoritiesMapper {
 
     private ResourceRoleRepository resourceRoleRepository;
     private RowLevelRoleRepository rowLevelRoleRepository;
+    private LdapAuthorityToJmixRoleCodesMapper authorityToJmixRoleCodeMapper;
 
     private List<String> defaultRoles;
-    private Function<String, String> authorityToRoleCodeMapper;
 
     @Autowired
     public void setResourceRoleRepository(ResourceRoleRepository resourceRoleRepository) {
@@ -59,44 +55,9 @@ public class JmixLdapGrantedAuthoritiesMapper implements GrantedAuthoritiesMappe
         this.rowLevelRoleRepository = rowLevelRoleRepository;
     }
 
-    @Override
-    public Set<GrantedAuthority> mapAuthorities(Collection<? extends GrantedAuthority> authorities) {
-        HashSet<GrantedAuthority> mapped = new HashSet<>(authorities.size());
-        for (GrantedAuthority authority : authorities) {
-            if (authority instanceof RoleGrantedAuthority) {
-                mapped.add(authority);
-            } else {
-                GrantedAuthority mappedAuthority = mapAuthority(authority.getAuthority());
-                if (mappedAuthority != null) {
-                    mapped.add(mappedAuthority);
-                }
-            }
-        }
-        if (this.defaultRoles != null) {
-            List<GrantedAuthority> defaultAuthorities = this.defaultRoles.stream()
-                    .map(this::mapAuthority)
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList());
-            mapped.addAll(defaultAuthorities);
-        }
-        return mapped;
-    }
-
-    @Nullable
-    protected GrantedAuthority mapAuthority(String authority) {
-        if (authorityToRoleCodeMapper != null) {
-            authority = authorityToRoleCodeMapper.apply(authority);
-        }
-        ResourceRole resourceRole = resourceRoleRepository.findRoleByCode(authority);
-        if (resourceRole != null) {
-            return RoleGrantedAuthority.ofResourceRole(resourceRole);
-        } else {
-            RowLevelRole rowLevelRole = rowLevelRoleRepository.findRoleByCode(authority);
-            if (rowLevelRole != null) {
-                return RoleGrantedAuthority.ofRowLevelRole(rowLevelRole);
-            }
-        }
-        return null;
+    @Autowired(required = false)
+    public void setLdapAuthorityToJmixRoleCodeMapper(LdapAuthorityToJmixRoleCodesMapper authorityToJmixRoleCodeMapper) {
+        this.authorityToJmixRoleCodeMapper = authorityToJmixRoleCodeMapper;
     }
 
     public void setDefaultRoles(List<String> roles) {
@@ -104,13 +65,50 @@ public class JmixLdapGrantedAuthoritiesMapper implements GrantedAuthoritiesMappe
         this.defaultRoles = roles;
     }
 
-    /**
-     * Sets the mapping function which will be used to convert an authority name
-     * to role code which will be used to obtain a resource role or row-level role.
-     *
-     * @param authorityToRoleCodeMapper the mapping function
-     */
-    public void setAuthorityToRoleCodeMapper(Function<String, String> authorityToRoleCodeMapper) {
-        this.authorityToRoleCodeMapper = authorityToRoleCodeMapper;
+    @Override
+    public Set<GrantedAuthority> mapAuthorities(Collection<? extends GrantedAuthority> authorities) {
+        Set<GrantedAuthority> mapped = new HashSet<>(authorities.size());
+        for (GrantedAuthority authority : authorities) {
+            if (authority instanceof RoleGrantedAuthority) {
+                mapped.add(authority);
+            } else {
+                mapped.addAll(mapAuthority(authority.getAuthority()));
+            }
+        }
+
+        if (this.defaultRoles != null) {
+            mapped.addAll(mapRoleCodesToAuthority(defaultRoles));
+        }
+
+        return mapped;
     }
+
+    protected List<GrantedAuthority> mapAuthority(String authority) {
+        Collection<String> roleCodes = new HashSet<>();
+        if (authorityToJmixRoleCodeMapper != null) {
+            roleCodes.addAll(authorityToJmixRoleCodeMapper.mapAuthorityToJmixRoleCodes(authority));
+        } else {
+            roleCodes.add(authority);
+        }
+
+        return mapRoleCodesToAuthority(roleCodes);
+    }
+
+    protected List<GrantedAuthority> mapRoleCodesToAuthority(Collection<String> roleCodes) {
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        for (String roleCode : roleCodes) {
+            ResourceRole resourceRole = resourceRoleRepository.findRoleByCode(roleCode);
+            if (resourceRole != null) {
+                authorities.add(RoleGrantedAuthority.ofResourceRole(resourceRole));
+            }
+
+            RowLevelRole rowLevelRole = rowLevelRoleRepository.findRoleByCode(roleCode);
+            if (rowLevelRole != null) {
+                authorities.add(RoleGrantedAuthority.ofRowLevelRole(rowLevelRole));
+            }
+        }
+
+        return authorities;
+    }
+
 }

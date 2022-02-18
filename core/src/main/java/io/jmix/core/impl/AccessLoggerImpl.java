@@ -37,7 +37,7 @@ public class AccessLoggerImpl implements AccessLogger {
     private ThreadLocal<LastMessage> lastMessageThreadLocal = new ThreadLocal<>();
 
     @Override
-    public <T extends AccessContext> void register(AccessConstraint<T> constraint, T accessContext) {
+    public <T extends AccessContext> void log(AccessConstraint<T> constraint, T accessContext) {
         String explanation = accessContext.explainConstraints();
         if (explanation != null) {
             String prefix = constraint instanceof RowLevelConstraint ? "Applied row-level constraint" : "Denied access";

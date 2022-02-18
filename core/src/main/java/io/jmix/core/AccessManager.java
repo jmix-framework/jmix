@@ -33,7 +33,7 @@ public class AccessManager {
     protected AccessConstraintsRegistry registry;
 
     @Autowired
-    protected AccessLogger logger;
+    protected AccessLogger accessLogger;
 
     public class ConstraintsBuilder {
         protected final List<AccessConstraint<?>> constraints = new ArrayList<>();
@@ -74,7 +74,7 @@ public class AccessManager {
                 .map(constraint -> (AccessConstraint<T>) constraint)
                 .forEach(constraint -> {
                     constraint.applyTo(context);
-                    logger.register(constraint, context);
+                    accessLogger.log(constraint, context);
                 });
     }
 

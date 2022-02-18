@@ -70,7 +70,7 @@ public class MultiTenantJoinExpressionProvider extends AbstractJoinExpressionPro
 
     @Nullable
     private Expression createToOneJoinExpression(OneToOneMapping oneToOneMapping) {
-        if (properties.isJoinConstraintEnabled()) {
+        if (properties.isJoinSameTenantOnlyEnabled()) {
             ClassDescriptor descriptor = oneToOneMapping.getDescriptor();
             Class<?> referenceClass = oneToOneMapping.getReferenceClass();
             if (isMultiTenant(referenceClass) && isMultiTenant(descriptor.getJavaClass())) {

@@ -24,20 +24,29 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 @ConstructorBinding
 public class MultitenancyProperties {
 
-    private final String tenantIdUrlParamName;
-    private final boolean joinConstraintEnabled;
+    /**
+     * Parameter name in {@link io.jmix.ui.navigation.UrlRouting} to pass tenant Id.
+     */
+    final String tenantIdUrlParamName;
 
-    public MultitenancyProperties(@DefaultValue("tenantId") String tenantIdUrlParamName,
-                                  @DefaultValue("false") boolean joinConstraintEnabled) {
+    /**
+     * Do not load entities through -to-one references if referenced entity has different tenant.
+     */
+    final boolean joinSameTenantOnlyEnabled;
+
+    public MultitenancyProperties(
+            @DefaultValue("tenantId") String tenantIdUrlParamName,
+            @DefaultValue("false") boolean joinSameTenantOnlyEnabled
+    ) {
         this.tenantIdUrlParamName = tenantIdUrlParamName;
-        this.joinConstraintEnabled = joinConstraintEnabled;
+        this.joinSameTenantOnlyEnabled = joinSameTenantOnlyEnabled;
     }
 
     public String getTenantIdUrlParamName() {
         return tenantIdUrlParamName;
     }
 
-    public boolean isJoinConstraintEnabled() {
-        return joinConstraintEnabled;
+    public boolean isJoinSameTenantOnlyEnabled() {
+        return joinSameTenantOnlyEnabled;
     }
 }

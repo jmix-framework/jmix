@@ -16,6 +16,7 @@
 
 package io.jmix.dashboardsui.dashboard.tools;
 
+import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import io.jmix.dashboards.model.DashboardModel;
 import io.jmix.dashboards.model.Widget;
@@ -29,6 +30,7 @@ import io.jmix.dashboardsui.screen.dashboard.editor.css.CssLayoutCreationDialog;
 import io.jmix.dashboardsui.screen.dashboard.editor.grid.GridCreationDialog;
 import io.jmix.dashboardsui.screen.dashboard.editor.responsive.ResponsiveCreationDialog;
 import io.jmix.dashboardsui.screen.widget.WidgetEdit;
+import io.jmix.ui.Notifications;
 import io.jmix.ui.ScreenBuilders;
 import io.jmix.ui.UiEventPublisher;
 import io.jmix.ui.component.Frame;
@@ -37,6 +39,9 @@ import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.screen.OpenMode;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.StandardCloseAction;
+import io.jmix.ui.screen.UiControllerUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -49,6 +54,8 @@ import static io.jmix.dashboards.utils.DashboardLayoutUtils.*;
 @Component("dshbrd_DropLayoutTools")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class DropLayoutTools {
+    private static final Logger log = LoggerFactory.getLogger(DropLayoutTools.class);
+
     protected PersistentDashboardEdit dashboardEdit;
 
     protected InstanceContainer<DashboardModel> dashboardDc;
@@ -58,6 +65,8 @@ public class DropLayoutTools {
     private UiEventPublisher uiEventPublisher;
     @Autowired
     private ScreenBuilders screenBuilders;
+    @Autowired
+    private Messages messages;
 
     @Autowired
     private DashboardLayoutManager layoutManager;
@@ -139,7 +148,13 @@ public class DropLayoutTools {
     private void reorderWidgetsAndPushEvents(DashboardLayout layout, DashboardLayout targetLayout, WidgetDropLocation location) {
         DashboardLayout parentLayout = targetLayout instanceof WidgetLayout ?
                 findParentLayout(getDashboard().getVisualModel(), targetLayout) : targetLayout;
-        addChild(parentLayout, layout);
+
+        boolean added = addChild(parentLayout, layout);
+        if (!added && parentLayout instanceof GridLayout) {
+            showDropOnGridLayoutNotAllowedNotification();
+            return;
+        }
+
         layout.setParent(parentLayout);
         moveComponent(layout, targetLayout.getId(), location);
         uiEventPublisher.publishEvent(new DashboardRefreshEvent(getDashboard().getVisualModel()));
@@ -175,7 +190,12 @@ public class DropLayoutTools {
             switch (location) {
                 case MIDDLE:
                 case CENTER:
-                    addChild(target, layout);
+                    boolean added = addChild(target, layout);
+                    if (!added && target instanceof GridLayout) {
+                        showDropOnGridLayoutNotAllowedNotification();
+                        // attach to the previous parent
+                        addChild(parent, layout);
+                    }
                     break;
                 case BOTTOM:
                 case RIGHT:
@@ -241,12 +261,16 @@ public class DropLayoutTools {
         return true;
     }
 
-    private void addChild(DashboardLayout parent, DashboardLayout child) {
+    private boolean addChild(DashboardLayout parent, DashboardLayout child) {
         if (parent instanceof ResponsiveLayout) {
             ((ResponsiveLayout) parent).addArea(layoutManager.createResponsiveArea(child));
+        } else if (parent instanceof GridLayout) {
+            log.debug("Cannot add item to {}. Use addArea() method", GridLayout.class.getName());
+            return false;
         } else {
             parent.addChild(child);
         }
+        return true;
     }
 
     private void setChildren(DashboardLayout parent, List<DashboardLayout> newChildren) {
@@ -268,5 +292,12 @@ public class DropLayoutTools {
         } else {
             parent.setChildren(newChildren);
         }
+    }
+
+    private void showDropOnGridLayoutNotAllowedNotification() {
+        UiControllerUtils.getScreenContext(dashboardEdit).getNotifications()
+                .create(Notifications.NotificationType.WARNING)
+                .withCaption(messages.getMessage(getClass(), "gridLayout.dropNotAllowed.warningCaption"))
+                .show();
     }
 }

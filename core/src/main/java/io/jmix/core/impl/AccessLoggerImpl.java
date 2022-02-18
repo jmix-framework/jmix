@@ -38,6 +38,9 @@ public class AccessLoggerImpl implements AccessLogger {
 
     @Override
     public <T extends AccessContext> void log(AccessConstraint<T> constraint, T accessContext) {
+        if (!log.isDebugEnabled()) {
+            return;
+        }
         String explanation = accessContext.explainConstraints();
         if (explanation != null) {
             String prefix = constraint instanceof RowLevelConstraint ? "Applied row-level constraint" : "Denied access";

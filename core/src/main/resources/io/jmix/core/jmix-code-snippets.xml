@@ -42,13 +42,13 @@
             <text language="java">
                 io.jmix.core.FetchPlan fetchPlan = fetchPlans.builder(${entityClass}.class)
                 .addFetchPlan(io.jmix.core.FetchPlan.BASE)
-                .add("someProperty")
+                .add("someReferenceProperty", io.jmix.core.FetchPlan.BASE)
                 .build();
             </text>
             <text language="kotlin">
                 val fetchPlan = fetchPlans.builder(${entityClass}::class.java)
                 .addFetchPlan(io.jmix.core.FetchPlan.BASE)
-                .add("someProperty")
+                .add("someReferenceProperty", io.jmix.core.FetchPlan.BASE)
                 .build()
             </text>
 
@@ -57,7 +57,7 @@
             </description>
         </codeSnippet>
 
-        <codeSnippet name="Check entity state" contextTypes="service,controller" expressionResultType="boolean">
+        <codeSnippet name="Get entity state" contextTypes="service,controller" expressionResultType="boolean">
             <inject variable="entityStates" classQualifiedName="io.jmix.core.EntityStates"/>
 
             <variableInputParameter code="entity" text="Entity" jmixEntity="true"/>
@@ -216,7 +216,7 @@
             </description>
         </codeSnippet>
 
-        <codeSnippet name="Change session attribute" contextTypes="service">
+        <codeSnippet name="Set session attribute" contextTypes="service">
             <inject variable="sessionDataProvider" classQualifiedName="org.springframework.beans.factory.ObjectProvider&lt;io.jmix.core.session.SessionData&gt;"/>
 
             <stringInputParameter code="attrName" text="Attribute Name"/>
@@ -233,7 +233,7 @@
             </description>
         </codeSnippet>
 
-        <codeSnippet name="Change session attribute" contextTypes="controller">
+        <codeSnippet name="Set session attribute" contextTypes="controller">
             <inject variable="sessionData" classQualifiedName="io.jmix.core.session.SessionData"/>
 
             <stringInputParameter code="attrName" text="Attribute Name"/>
@@ -312,7 +312,7 @@
     </category>
 
     <category name="Localization">
-        <codeSnippet name="Get localization message" contextTypes="service" expressionResultType="String">
+        <codeSnippet name="Get localized message" contextTypes="service" expressionResultType="String">
             <inject variable="messages" classQualifiedName="io.jmix.core.Messages"/>
 
             <messageKeyInputParameter code="key" text="Message key" optional="true"/>
@@ -329,7 +329,7 @@
             </description>
         </codeSnippet>
 
-        <codeSnippet name="Get localization message" contextTypes="controller" expressionResultType="String">
+        <codeSnippet name="Get localized message" contextTypes="controller" expressionResultType="String">
             <inject variable="messageBundle" classQualifiedName="io.jmix.ui.screen.MessageBundle"/>
 
             <messageKeyInputParameter code="key" text="Message key" optional="true"/>
@@ -501,7 +501,7 @@
             <variableInputParameter code="requestBodyObject" text="Request Body Object" optional="true"/>
 
             <text language="java">
-                &lt;% if (requestBodyObject != '') print 'String requestBody = new com.fasterxml.jackson.databind.ObjectMapper().writeValueAsString(' + requestBodyObject + ');' %&gt;
+                String requestBody = new com.fasterxml.jackson.databind.ObjectMapper().writeValueAsString(&lt;% if (requestBodyObject != '') print requestBodyObject else print 'requestBodyObject' %&gt;);
                 java.net.http.HttpClient client = HttpClient.newHttpClient();
                 java.net.http.HttpRequest request = HttpRequest.newBuilder()
                 .uri(java.net.URI.create(${url}))
@@ -521,7 +521,7 @@
                 }
             </text>
             <text language="kotlin">
-                &lt;% if (requestBodyObject != '') print 'val requestBody = com.fasterxml.jackson.databind.ObjectMapper().writeValueAsString(' + requestBodyObject + ')' %&gt;
+                val requestBody = com.fasterxml.jackson.databind.ObjectMapper().writeValueAsString(&lt;% if (requestBodyObject != '') print requestBodyObject else print 'requestBodyObject' %&gt;)
                 val client = java.net.http.HttpClient.newHttpClient()
                 val request = java.net.http.HttpRequest.newBuilder()
                 .uri(java.net.URI.create(${url}))

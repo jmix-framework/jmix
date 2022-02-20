@@ -18,6 +18,7 @@ package io.jmix.core;
 
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.core.metamodel.model.MetaPropertyPath;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.ApplicationContext;
@@ -165,29 +166,68 @@ public class FetchPlanBuilder {
 
     /**
      * Adds property with FetchPlan specified by {@code fetchPlanName}.
+     * <p>
+     * For example:
+     * <pre>
+     *   FetchPlan orderFP = fetchPlans.builder(Order.class)
+     *       .addFetchPlan(FetchPlan.BASE)
+     *       .add("orderLines", FetchPlan.BASE)
+     *       .add("orderLines.product", FetchPlan.BASE)
+     *       .build();
+     * </pre>
      *
-     * @param property property name
+     * @param property name of immediate property or dot separated property path, e.g. "address.country.name"
      * @throws FetchPlanNotFoundException if specified by {@code fetchPlanName} FetchPlan not found for entity determined by {@code property}
      * @throws RuntimeException           if FetchPlan has been already built
      */
     public FetchPlanBuilder add(String property, String fetchPlanName) {
         checkState();
-        properties.add(property);
-        FetchPlan fetchPlan = fetchPlanRepository.getFetchPlan(metaClass.getProperty(property).getRange().asClass(), fetchPlanName);
-        fetchPlans.put(property, fetchPlan);
+
+        add(property);
+
+        FetchPlanBuilder targetBuilder = this;
+        MetaPropertyPath propertyPath = getMetaPropertyPath(property);
+        for (MetaProperty metaProperty : propertyPath.getMetaProperties()) {
+            if (metaProperty.getRange().isClass()) {
+                targetBuilder = getNestedPropertyBuilder(targetBuilder, metaProperty.getName());
+            }
+        }
+        FetchPlanBuilder propBuilder = targetBuilder;
+        propBuilder.addFetchPlan(fetchPlanName);
+
         return this;
     }
 
     /**
-     * Adds property with FetchPlan specified by {@code fetchPlanName}.
+     * Adds property with FetchPlan specified by {@code fetchPlanName} and a specific fetch mode.
+     * <p>
+     * For example:
+     * <pre>
+     *     FetchPlan orderFP = fetchPlans.builder(Order.class)
+     *         .addFetchPlan(FetchPlan.BASE)
+     *         .add("orderLines", FetchPlan.BASE, FetchMode.UNDEFINED)
+     *         .add("orderLines.product", FetchPlan.BASE, FetchMode.UNDEFINED)
+     *         .build();
+     * </pre>
      *
-     * @param property property name
+     * @param property name of immediate property or dot separated property path, e.g. "address.country.name"
      * @throws FetchPlanNotFoundException if specified by {@code fetchPlanName} FetchPlan not found for entity determined by {@code property}
      * @throws RuntimeException           if FetchPlan has been already built
      */
     public FetchPlanBuilder add(String property, String fetchPlanName, FetchMode fetchMode) {
         add(property, fetchPlanName);
-        fetchModes.put(property, fetchMode);
+
+        FetchPlanBuilder targetBuilder = this;
+        MetaPropertyPath propertyPath = getMetaPropertyPath(property);
+        if (propertyPath.getMetaProperties().length > 1) {
+            for (MetaProperty metaProperty : Arrays.copyOf(propertyPath.getMetaProperties(), propertyPath.getMetaProperties().length - 1)) {
+                if (metaProperty.getRange().isClass()) {
+                    targetBuilder = getNestedPropertyBuilder(targetBuilder, metaProperty.getName());
+                }
+            }
+        }
+        targetBuilder.fetchModes.put(propertyPath.getMetaProperty().getName(), fetchMode);
+
         return this;
     }
 
@@ -420,5 +460,19 @@ public class FetchPlanBuilder {
             throw new RuntimeException("FetchPlanBuilder cannot be modified after build() invocation");
     }
 
+    protected MetaPropertyPath getMetaPropertyPath(String property) {
+        MetaPropertyPath propertyPath = metaClass.getPropertyPath(property);
+        if (propertyPath == null) {
+            throw new IllegalArgumentException("Invalid property: " + property);
+        }
+        return propertyPath;
+    }
 
+    protected FetchPlanBuilder getNestedPropertyBuilder(FetchPlanBuilder builder, String name) {
+        FetchPlanBuilder propBuilder = builder.builders.get(name);
+        if (propBuilder == null) {
+            throw new IllegalStateException("Nested builder not found for property: " + name);
+        }
+        return propBuilder;
+    }
 }

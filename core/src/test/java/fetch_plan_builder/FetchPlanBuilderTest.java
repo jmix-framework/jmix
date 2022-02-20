@@ -17,6 +17,8 @@
 package fetch_plan_builder;
 
 import io.jmix.core.*;
+import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.core.metamodel.model.MetadataObject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +28,9 @@ import test_support.addon1.TestAddon1Configuration;
 import test_support.app.TestAppConfiguration;
 import test_support.app.entity.Owner;
 import test_support.app.entity.Pet;
+import test_support.app.entity.sales.Order;
 
+import java.util.Collection;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -241,6 +245,41 @@ public class FetchPlanBuilderTest {
         assertTrue(merged.getProperty("owner").getFetchPlan().getProperty("address").getFetchPlan().containsProperty("zip"));
 
         assertFalse(merged.getProperty("owner").getFetchPlan().containsProperty("name"));
+    }
+
+    @Test
+    public void testFetchPlanForPropertyPath() {
+        FetchPlan orderFP = fetchPlans.builder(Order.class)
+                .addFetchPlan(FetchPlan.BASE)
+                .add("orderLines", FetchPlan.BASE)
+                .add("orderLines.product", FetchPlan.BASE)
+                .build();
+
+        FetchPlan orderLinesFP = orderFP.getProperty("orderLines").getFetchPlan();
+        assertTrue(containsBaseProperties(orderLinesFP));
+
+        FetchPlan productFP = orderLinesFP.getProperty("product").getFetchPlan();
+        assertTrue(containsBaseProperties(productFP));
+    }
+
+    @Test
+    public void testFetchPlanWithFetchModeForPropertyPath() {
+        FetchPlan orderFP = fetchPlans.builder(Order.class)
+                .addFetchPlan(FetchPlan.BASE)
+                .add("orderLines", FetchPlan.BASE, FetchMode.UNDEFINED)
+                .add("orderLines.product", FetchPlan.BASE, FetchMode.UNDEFINED)
+                .build();
+
+        assertEquals(FetchMode.UNDEFINED, orderFP.getProperty("orderLines").getFetchMode());
+        assertEquals(FetchMode.UNDEFINED, orderFP.getProperty("orderLines").getFetchPlan().getProperty("product").getFetchMode());
+    }
+
+    private boolean containsBaseProperties(FetchPlan fetchPlan) {
+        Collection<MetaProperty> properties = metadata.getClass(fetchPlan.getEntityClass()).getProperties();
+        return properties.stream()
+                .filter(metaProperty -> !metaProperty.getRange().isClass())
+                .map(MetadataObject::getName)
+                .allMatch(fetchPlan::containsProperty);
     }
 
     private boolean containsSystemProperties(FetchPlan view) {

@@ -56,7 +56,6 @@ public class DefaultJmixOidcUser implements JmixOidcUser, HasOidcUserDelegate {
 
     @Override
     public boolean isEnabled() {
-        //todo where to take the enabled info from?
         return true;
     }
 

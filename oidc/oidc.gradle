@@ -26,7 +26,6 @@ dependencies {
     api 'org.springframework.security:spring-security-oauth2-client'
     api 'org.springframework.security:spring-security-oauth2-jose'
 
-    //todo optional dependency?
     api 'org.springframework.security:spring-security-oauth2-resource-server'
 
     compileOnly 'io.jmix.security:jmix-security-data'

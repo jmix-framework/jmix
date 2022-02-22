@@ -566,15 +566,8 @@ public class EntitySerializationImpl implements EntitySerialization {
                     } else if (propertyRange.isClass()) {
                         if (Entity.class.isAssignableFrom(propertyType)) {
 
-                            if (!propertyValue.isJsonObject()) {
-                                throw new EntitySerializationException("Attribute '" + propertyName + "' refers to an entity. " +
-                                        "Property value must be a JSON object literal");
-                            }
-
-                            if (metadataTools.isEmbedded(metaProperty)) {
-                                EntityValues.setValue(entity, propertyName, readEmbeddedEntity(propertyValue.getAsJsonObject(), metaProperty));
-                            } else {
-                                if (additionalMetaProperties.contains(metaProperty)) {
+                            if (additionalMetaProperties.contains(metaProperty)) {
+                                if (propertyValue.isJsonArray()) {
                                     Collection<Entity> entities = new ArrayList<>();
                                     for (JsonElement jsonElement : propertyValue.getAsJsonArray()) {
                                         entities.add((Entity) readEntity(jsonElement.getAsJsonObject(), metaProperty.getRange().asClass()));
@@ -583,7 +576,17 @@ public class EntitySerializationImpl implements EntitySerialization {
                                 } else {
                                     EntityValues.setValue(entity, propertyName, readEntity(propertyValue.getAsJsonObject(), propertyRange.asClass()));
                                 }
-                                EntityValues.setValue(entity, propertyName, readEntity(propertyValue.getAsJsonObject(), propertyRange.asClass()));
+                            } else {
+                                if (!propertyValue.isJsonObject()) {
+                                    throw new EntitySerializationException("Attribute '" + propertyName + "' refers to an entity. " +
+                                            "Property value must be a JSON object literal");
+                                }
+
+                                if (metadataTools.isEmbedded(metaProperty)) {
+                                    EntityValues.setValue(entity, propertyName, readEmbeddedEntity(propertyValue.getAsJsonObject(), metaProperty));
+                                } else {
+                                    EntityValues.setValue(entity, propertyName, readEntity(propertyValue.getAsJsonObject(), propertyRange.asClass()));
+                                }
                             }
                         } else if (Collection.class.isAssignableFrom(propertyType)) {
                             if (!propertyValue.isJsonArray()) {

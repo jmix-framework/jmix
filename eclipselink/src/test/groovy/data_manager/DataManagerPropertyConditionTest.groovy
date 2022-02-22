@@ -22,6 +22,7 @@ import io.jmix.core.querycondition.PropertyCondition
 import org.springframework.beans.factory.annotation.Autowired
 import test_support.DataSpec
 import test_support.entity.TestAppEntity
+import test_support.entity.TestAppEntityItem
 
 class DataManagerPropertyConditionTest extends DataSpec {
 
@@ -189,5 +190,50 @@ class DataManagerPropertyConditionTest extends DataSpec {
         then:
 
         list.contains(testEntity3)
+    }
+
+    def "load using PropertyCondition for collections"() {
+
+        TestAppEntity testAppEntity1 = dataManager.create(TestAppEntity)
+        testAppEntity1.name = 'test one'
+
+        TestAppEntity testAppEntity2 = dataManager.create(TestAppEntity)
+        testAppEntity2.name = 'test two'
+
+        TestAppEntityItem appEntityItem1 = dataManager.create(TestAppEntityItem)
+        appEntityItem1.name = 'one two'
+        appEntityItem1.appEntity = testAppEntity1
+
+        TestAppEntityItem appEntityItem2 = dataManager.create(TestAppEntityItem)
+        appEntityItem2.name = 'three'
+        appEntityItem2.appEntity = testAppEntity2
+
+        dataManager.save(testAppEntity1, testAppEntity2, appEntityItem1, appEntityItem2)
+
+        when:
+
+        def list = dataManager.load(TestAppEntity)
+                .condition(
+                        LogicalCondition.and()
+                                .add(PropertyCondition.contains("items.name", "one"))
+                                .add(PropertyCondition.contains("items.name", "two"))
+                )
+                .list()
+
+        then:
+
+        list == [testAppEntity1]
+
+        when:
+        list = dataManager.load(TestAppEntity)
+                .condition(
+                        LogicalCondition.and()
+                                .add(PropertyCondition.contains("items.appEntity.name", "two"))
+                )
+                .list()
+
+        then:
+
+        list == [testAppEntity2]
     }
 }

@@ -81,6 +81,7 @@ public class OidcAutoConfiguration {
      * Configures UI endpoint protection
      */
     @EnableWebSecurity
+    @ConditionalOnProperty(value = "jmix.oidc.use-default-ui-configuration", havingValue = "true", matchIfMissing = true)
     @Order(JmixOrder.HIGHEST_PRECEDENCE + 100)
     public static class OAuth2LoginSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
@@ -121,6 +122,7 @@ public class OidcAutoConfiguration {
      */
     @EnableWebSecurity
     @Order(JmixOrder.HIGHEST_PRECEDENCE + 90)
+    @ConditionalOnProperty(value = "jmix.oidc.use-default-api-configuration", havingValue = "true", matchIfMissing = true)
     public static class OAuth2ResourceServerConfiguration extends WebSecurityConfigurerAdapter {
 
         @Override

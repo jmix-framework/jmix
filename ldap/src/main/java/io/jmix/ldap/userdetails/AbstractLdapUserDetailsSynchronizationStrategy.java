@@ -34,7 +34,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -81,7 +80,6 @@ public abstract class AbstractLdapUserDetailsSynchronizationStrategy<T extends U
         SaveContext saveContext = new SaveContext();
         if (ldapProperties.getSynchronizeRoleAssignments()) {
             Set<GrantedAuthority> grantedAuthorities = authoritiesMapper.mapAuthorities(authorities);
-            grantedAuthorities.addAll(getAdditionalRoles(ctx, username));
 
             //clean previous role assignments
             List<RoleAssignmentEntity> existingRoleAssignments = dataManager.load(RoleAssignmentEntity.class)
@@ -108,7 +106,7 @@ public abstract class AbstractLdapUserDetailsSynchronizationStrategy<T extends U
                 RoleGrantedAuthority roleGrantedAuthority = (RoleGrantedAuthority) grantedAuthority;
                 String roleCode = roleGrantedAuthority.getAuthority();
                 String roleType;
-                if(roleCode.startsWith(ROW_LEVEL_ROLE_PREFIX)) {
+                if (roleCode.startsWith(ROW_LEVEL_ROLE_PREFIX)) {
                     roleType = RoleAssignmentRoleType.ROW_LEVEL;
                     roleCode = roleCode.substring(ROW_LEVEL_ROLE_PREFIX.length());
                 } else {
@@ -140,14 +138,4 @@ public abstract class AbstractLdapUserDetailsSynchronizationStrategy<T extends U
      */
     protected abstract void mapUserDetailsAttributes(T userDetails, DirContextOperations ctx);
 
-    /**
-     * This method should be overridden if required to obtain any additional roles for the
-     * given user (on top of those obtained from the users groups).
-     *
-     * @param user the context representing the user who's roles are required
-     * @return the extra roles which will be merged with those returned by the group search
-     */
-    protected Set<GrantedAuthority> getAdditionalRoles(DirContextOperations user, String username) {
-        return Collections.emptySet();
-    }
 }

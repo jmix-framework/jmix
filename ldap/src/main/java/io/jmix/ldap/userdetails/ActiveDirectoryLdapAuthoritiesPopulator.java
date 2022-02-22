@@ -18,10 +18,10 @@ package io.jmix.ldap.userdetails;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.ldap.core.DistinguishedName;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.ldap.userdetails.LdapAuthoritiesPopulator;
 
@@ -34,17 +34,29 @@ public class ActiveDirectoryLdapAuthoritiesPopulator implements LdapAuthoritiesP
 
     private static final Logger log = LoggerFactory.getLogger(ActiveDirectoryLdapAuthoritiesPopulator.class);
 
+    protected LdapUserAdditionalRoleProvider ldapUserAdditionalRoleProvider;
+
+    @Autowired(required = false)
+    public void setUserAdditionalRoleProvider(LdapUserAdditionalRoleProvider ldapUserAdditionalRoleProvider) {
+        this.ldapUserAdditionalRoleProvider = ldapUserAdditionalRoleProvider;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getGrantedAuthorities(DirContextOperations userData, String username) {
+        List<GrantedAuthority> authorities = new ArrayList<>();
+
+        if (ldapUserAdditionalRoleProvider != null) {
+            authorities.addAll(ldapUserAdditionalRoleProvider.getAdditionalRoles(userData, username));
+        }
+
         String[] groups = userData.getStringAttributes("memberOf");
         if (groups == null) {
             log.debug("No values for 'memberOf' attribute.");
-            return AuthorityUtils.NO_AUTHORITIES;
+            return authorities;
         }
         if (log.isDebugEnabled()) {
             log.debug("'memberOf' attribute values: " + Arrays.asList(groups));
         }
-        List<GrantedAuthority> authorities = new ArrayList<>(groups.length);
         for (String group : groups) {
             authorities.add(new SimpleGrantedAuthority(new DistinguishedName(group).removeLast().getValue()));
         }

@@ -213,6 +213,8 @@ public class MySynchronizingOidcUserMapper extends SynchronizingOidcUserMapper<U
 
 ## Protecting API
 
+**CAUTION: currently, after accessing API using JWT token, the principal object in the authentication will be of the wrong type (not UserDetails, as required by Jmix). It will cause errors if you try to get the current user using the CurrentAuthentication.getUser() method.**
+
 Access tokens obtained from OpenID Provider may be used for accessing protected endpoints provided by the REST API add-on.    
 
 After installing the REST API add-on using the marketplace, two starters are added to the build.gradle:

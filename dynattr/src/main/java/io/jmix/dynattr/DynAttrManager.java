@@ -33,4 +33,9 @@ public interface DynAttrManager {
      * Store dynamic attributes from the entity to store
      */
     void storeValues(Collection<Object> entities, Collection<AccessConstraint<?>> accessConstraints);
+
+    /**
+     * Adds extra state for each entity and related entities based on the {@code fetchPlan}
+     */
+    void addDynamicAttributesState(Collection<Object> entities, @Nullable FetchPlan fetchPlan);
 }

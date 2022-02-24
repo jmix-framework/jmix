@@ -87,6 +87,7 @@ public class DynAttrManagerImpl implements DynAttrManager {
                 });
     }
 
+    @Override
     public void loadValues(Collection<Object> entities, @Nullable FetchPlan fetchPlan, Collection<AccessConstraint<?>> accessConstraints) {
         Multimap<MetaClass, Object> entitiesToLoad = collectEntitiesToLoad(entities, fetchPlan);
         if (!entitiesToLoad.isEmpty()) {
@@ -96,6 +97,15 @@ public class DynAttrManagerImpl implements DynAttrManager {
                             doFetchValues(entityClass, entitiesToLoad.get(entityClass), accessConstraints);
                         }
                     });
+        }
+    }
+
+    @Override
+    public void addDynamicAttributesState(Collection<Object> entities, @Nullable FetchPlan fetchPlan) {
+        Multimap<MetaClass, Object> entitiesToLoad = collectEntitiesToLoad(entities, fetchPlan);
+        for (Object entity : entitiesToLoad.values()) {
+            DynamicAttributesState state = new DynamicAttributesState(getEntityEntry(entity));
+            addExtraState(entity, state);
         }
     }
 
@@ -130,8 +140,8 @@ public class DynAttrManagerImpl implements DynAttrManager {
 
                 List<String> existing = attributeValues.stream().map(CategoryAttributeValue::getCode).collect(Collectors.toList());
                 List<String> toPersist = Stream.concat(
-                        changes.getCreated().keySet().stream(),
-                        changes.getUpdated().keySet().stream().filter(a -> !existing.contains(a))) //Haulmont/jmix-data#43
+                                changes.getCreated().keySet().stream(),
+                                changes.getUpdated().keySet().stream().filter(a -> !existing.contains(a))) //Haulmont/jmix-data#43
                         .collect(Collectors.toList());
 
                 for (String attributeName : toPersist) {
@@ -311,15 +321,15 @@ public class DynAttrManagerImpl implements DynAttrManager {
         List<CategoryAttributeValue> result;
         if (metadataTools.hasUuid(metaClass)) {
             result = entityManager.createQuery(
-                    String.format("select v from dynat_CategoryAttributeValue v where v.entity.%s in :ids and v.parent is null",
-                            referenceToEntitySupport.getReferenceIdPropertyName(metaClass)), CategoryAttributeValue.class)
+                            String.format("select v from dynat_CategoryAttributeValue v where v.entity.%s in :ids and v.parent is null",
+                                    referenceToEntitySupport.getReferenceIdPropertyName(metaClass)), CategoryAttributeValue.class)
                     .setParameter("ids", entityIds)
                     .setHint(PersistenceHints.FETCH_PLAN, fetchPlan)
                     .getResultList();
         } else {
             result = entityManager.createQuery(String.format("select v from dynat_CategoryAttributeValue v where v.entity.%s in :ids " +
-                            "and v.categoryAttribute.categoryEntityType = :entityType and v.parent is null",
-                    referenceToEntitySupport.getReferenceIdPropertyName(metaClass)), CategoryAttributeValue.class)
+                                    "and v.categoryAttribute.categoryEntityType = :entityType and v.parent is null",
+                            referenceToEntitySupport.getReferenceIdPropertyName(metaClass)), CategoryAttributeValue.class)
                     .setParameter("ids", entityIds)
                     .setParameter("entityType", metaClass.getName())
                     .setHint(PersistenceHints.FETCH_PLAN, fetchPlan)
@@ -367,7 +377,7 @@ public class DynAttrManagerImpl implements DynAttrManager {
             if (!ids.isEmpty()) {
                 String pkName = referenceToEntitySupport.getPrimaryKeyForLoadingEntity(metaClass);
                 List<?> resultList = entityManager.createQuery(
-                        String.format("select e from %s e where e.%s in :ids", metaClass.getName(), pkName))
+                                String.format("select e from %s e where e.%s in :ids", metaClass.getName(), pkName))
                         .setParameter("ids", ids)
                         .setHint(PersistenceHints.FETCH_PLAN, fetchPlanRepository.getFetchPlan(metaClass, FetchPlan.INSTANCE_NAME))
                         .getResultList();

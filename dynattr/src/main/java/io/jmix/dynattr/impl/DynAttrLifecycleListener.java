@@ -31,7 +31,7 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 import java.util.Objects;
 
-import static io.jmix.core.entity.EntitySystemAccess.*;
+import static io.jmix.core.entity.EntitySystemAccess.getExtraState;
 
 @Component("dynat_DynAttrLifecycleListener")
 public class DynAttrLifecycleListener implements DataStoreEventListener, DataStoreCustomizer {
@@ -46,10 +46,7 @@ public class DynAttrLifecycleListener implements DataStoreEventListener, DataSto
         if (Boolean.TRUE.equals(hints.get(DynAttrQueryHints.LOAD_DYN_ATTR))) {
             dynAttrManager.loadValues(event.getResultEntities(), context.getFetchPlan(), context.getAccessConstraints());
         } else {
-            for (Object entity : event.getResultEntities()) {
-                DynamicAttributesState state = new DynamicAttributesState(getEntityEntry(entity));
-                addExtraState(entity, state);
-            }
+            dynAttrManager.addDynamicAttributesState(event.getResultEntities(), context.getFetchPlan());
         }
     }
 

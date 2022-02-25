@@ -16,8 +16,8 @@
  */
 package io.jmix.uiexport.exporter.excel;
 
-import io.jmix.core.Id;
 import io.jmix.core.Entity;
+import io.jmix.core.Id;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -134,7 +134,10 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
             throw new IllegalStateException("Table items should not be null");
         }
 
-        List<Table.Column<Object>> columns = table.getColumns();
+        @SuppressWarnings("unchecked")
+        List<Table.Column<Object>> columns = Collections.unmodifiableList(table.getNotCollapsedColumns()).stream()
+                .map(c -> (Table.Column<Object>) c)
+                .collect(Collectors.toList());
 
         createWorkbookWithSheet();
         createFonts();

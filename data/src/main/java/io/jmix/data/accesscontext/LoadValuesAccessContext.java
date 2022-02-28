@@ -23,10 +23,13 @@ import io.jmix.core.accesscontext.AccessContext;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class LoadValuesAccessContext implements AccessContext {
+
+    protected String queryString;
     protected final QueryParser queryParser;
     protected final Metadata metadata;
 
@@ -36,6 +39,7 @@ public class LoadValuesAccessContext implements AccessContext {
     public LoadValuesAccessContext(String queryString,
                                    QueryTransformerFactory transformerFactory,
                                    Metadata metadata) {
+        this.queryString = queryString;
         this.queryParser = transformerFactory.parser(queryString);
         this.metadata = metadata;
     }
@@ -94,5 +98,17 @@ public class LoadValuesAccessContext implements AccessContext {
             deniedSelectedIndexes = new ArrayList<>();
         }
         deniedSelectedIndexes.add(index);
+    }
+
+    @Nullable
+    @Override
+    public String explainConstraints() {
+        if (!permitted) {
+            return "query {" + queryString + "}";
+        }
+        if (!getDeniedSelectedIndexes().isEmpty()) {
+            return "properties " + getDeniedSelectedIndexes() + " in query {" + queryString + "}";
+        }
+        return null;
     }
 }

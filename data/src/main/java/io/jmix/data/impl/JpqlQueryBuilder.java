@@ -90,6 +90,9 @@ public class JpqlQueryBuilder<Q extends JmixQuery> {
     @Autowired
     protected BeanFactory beanFactory;
 
+    @Autowired
+    protected QueryParamValuesManager queryParamValuesManager;
+
     public JpqlQueryBuilder setId(@Nullable Object id) {
         this.id = id;
         return this;
@@ -220,6 +223,13 @@ public class JpqlQueryBuilder<Q extends JmixQuery> {
                     .filter(e -> e.getValue() != null)
                     .map(Map.Entry::getKey)
                     .collect(Collectors.toSet());
+
+            // keep parameters that can be assigned by a QueryParamValueProvider
+            for (String parameter : condition.getParameters()) {
+                if (queryParamValuesManager.supports(parameter)) {
+                    nonNullParamNames.add(parameter);
+                }
+            }
 
             Condition actualized = condition.actualize(nonNullParamNames);
 

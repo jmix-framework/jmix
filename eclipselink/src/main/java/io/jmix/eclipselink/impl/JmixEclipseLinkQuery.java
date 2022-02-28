@@ -30,6 +30,7 @@ import io.jmix.data.*;
 import io.jmix.data.impl.EntityFetcher;
 import io.jmix.data.impl.QueryConstantHandler;
 import io.jmix.data.impl.QueryMacroHandler;
+import io.jmix.data.impl.QueryParamValuesManager;
 import io.jmix.data.persistence.DbmsFeatures;
 import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.eclipselink.impl.entitycache.QueryCacheManager;
@@ -81,6 +82,7 @@ public class JmixEclipseLinkQuery<E> implements JmixQuery<E> {
     protected Collection<QueryMacroHandler> macroHandlers;
     protected Collection<QueryConstantHandler> constantHandlers;
     protected List<AdditionalCriteriaProvider> additionalCriteriaProviders;
+    protected QueryParamValuesManager queryParamValuesManager;
 
     protected JpaQuery query;
     protected boolean isNative;
@@ -120,7 +122,7 @@ public class JmixEclipseLinkQuery<E> implements JmixQuery<E> {
         macroHandlers = beanFactory.getBeanProvider(QueryMacroHandler.class).stream().collect(Collectors.toList());
         constantHandlers = beanFactory.getBeanProvider(QueryConstantHandler.class).stream().collect(Collectors.toList());
         additionalCriteriaProviders = beanFactory.getBeanProvider(AdditionalCriteriaProvider.class).stream().collect(Collectors.toList());
-
+        queryParamValuesManager = beanFactory.getBean(QueryParamValuesManager.class);
     }
 
     @Override
@@ -460,6 +462,8 @@ public class JmixEclipseLinkQuery<E> implements JmixQuery<E> {
                 transformedQueryString = transformQueryString();
                 log.trace("Transformed JPQL query: {}", transformedQueryString);
 
+                processParams(transformedQueryString);
+
                 Class effectiveClass = getEffectiveResultClass();
                 query = buildJPAQuery(transformedQueryString, effectiveClass);
                 if (fetchPlan != null) {
@@ -617,6 +621,28 @@ public class JmixEclipseLinkQuery<E> implements JmixQuery<E> {
         result = replaceIsNullAndIsNotNullStatements(result);
 
         return result;
+    }
+
+    private void processParams(String queryString) {
+        QueryParser parser = queryTransformerFactory.parser(queryString);
+
+        Set<String> paramNames = parser.getParamNames();
+        for (String paramName : paramNames) {
+            if (queryParamValuesManager.supports(paramName)) {
+                Optional<Param> paramOpt = params.stream().filter(p -> p.name.equals(paramName)).findAny();
+                if (paramOpt.isPresent()) {
+                    Param param = paramOpt.get();
+                    if (param.value == null) {
+                        param.value = queryParamValuesManager.getValue(paramName);
+                        break;
+                    }
+                } else {
+                    Object value = queryParamValuesManager.getValue(paramName);
+                    params.add(new Param(paramName, value));
+                    break;
+                }
+            }
+        }
     }
 
     private String expandMacros(String queryStr) {
@@ -883,7 +909,7 @@ public class JmixEclipseLinkQuery<E> implements JmixQuery<E> {
 
         private Class<?> actualParamType;
 
-        public Param(Object name, Object value) {
+        public Param(Object name, @Nullable Object value) {
             this.name = name;
             this.value = value;
         }

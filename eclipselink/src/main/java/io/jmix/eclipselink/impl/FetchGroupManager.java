@@ -318,12 +318,14 @@ public class FetchGroupManager {
             }
 
             for (FetchGroupField joinField : joinFields) {
-                String attr = alias + "." + joinField.path();
-                description.addHint(attr, QueryHints.LEFT_FETCH);
+                if (joinField.fetchMode == FetchMode.JOIN || !singleResultExpected) {
+                    String attr = alias + "." + joinField.path();
+                    description.addHint(attr, QueryHints.LEFT_FETCH);
+                }
             }
 
             for (FetchGroupField batchField : batchFields) {
-                if (batchField.fetchMode == FetchMode.BATCH || !singleResultExpected || batchFields.size() > 1) {
+                if (batchField.fetchMode == FetchMode.BATCH || !singleResultExpected) {
                     String attr = alias + "." + batchField.path();
                     description.addHint(attr, QueryHints.BATCH);
                 }

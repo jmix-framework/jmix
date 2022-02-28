@@ -37,7 +37,7 @@
         <property name="code"/>
         <property name="description"/>
         <property name="reportType"/>
-        <property name="group" fetchPlan="_instance_name"/>
+        <property name="group" fetchPlan="_base"/>
         <property name="inputParameters"
                   fetchPlan="_instance_name">
             <property name="alias"/>

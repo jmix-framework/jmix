@@ -18,6 +18,7 @@ package io.jmix.emailtemplates.impl;
 
 
 import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
 import io.jmix.email.EmailException;
 import io.jmix.email.EmailInfo;
 import io.jmix.email.Emailer;
@@ -31,7 +32,6 @@ import io.jmix.emailtemplates.exception.ReportParameterTypeChangedException;
 import io.jmix.emailtemplates.exception.TemplateNotFoundException;
 import io.jmix.reports.entity.Report;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -57,6 +57,8 @@ public class EmailTemplateBuilderImpl implements EmailTemplateBuilder {
     protected EmailTemplates emailTemplates;
     @Autowired
     protected Emailer emailer;
+    @Autowired
+    protected MetadataTools metadataTools;
 
     public void setEmailTemplate(EmailTemplate emailTemplate) {
         this.emailTemplate = cloneTemplate(emailTemplate);
@@ -247,14 +249,12 @@ public class EmailTemplateBuilderImpl implements EmailTemplateBuilder {
     }
 
     protected EmailTemplate cloneTemplate(EmailTemplate emailTemplate) {
-        EmailTemplate clonedTemplate = metadata.create(emailTemplate.getClass());
-        BeanUtils.copyProperties(emailTemplate, clonedTemplate);
+        EmailTemplate clonedTemplate = metadataTools.copy(emailTemplate);
         List<TemplateReport> attachedTemplateReports = new ArrayList<>();
         List<TemplateReport> templateAttachedTemplateReports = emailTemplate.getAttachedTemplateReports();
         if (templateAttachedTemplateReports != null) {
             for (TemplateReport templateReport : templateAttachedTemplateReports) {
-                TemplateReport newTemplateReport = metadata.create(templateReport.getClass());
-                BeanUtils.copyProperties(templateReport, newTemplateReport);
+                TemplateReport newTemplateReport = metadataTools.copy(templateReport);
                 attachedTemplateReports.add(newTemplateReport);
             }
         }

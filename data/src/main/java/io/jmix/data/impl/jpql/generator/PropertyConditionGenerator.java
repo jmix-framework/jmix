@@ -62,21 +62,37 @@ public class PropertyConditionGenerator implements ConditionGenerator {
         }
 
         String propertyName = propertyCondition.getProperty();
-        if (!propertyName.contains("."))
-            return "";
 
-        String basePropertyName = StringUtils.substringBefore(propertyName, ".");
-        String childProperty = StringUtils.substringAfter(propertyName, ".");
-        String baseEntityAlias = context.entityAlias;
-        MetaProperty metaProperty = metadata.getClass(context.getEntityName()).getProperty(basePropertyName);
+        StringBuilder joinBuilder = new StringBuilder();
+        StringBuilder joinPropertyBuilder = new StringBuilder(context.entityAlias);
+        MetaClass metaClass = metadata.getClass(context.getEntityName());
 
-        if (metaProperty.getRange().getCardinality().isMany()) {
-            String joinAlias = basePropertyName.substring(0, 3) + RandomStringUtils.randomAlphabetic(3);
-            context.setEntityAlias(joinAlias);
-            propertyCondition.setProperty(childProperty);
-            return "join " + baseEntityAlias + "." + basePropertyName + " " + joinAlias;
+        while (propertyName.contains(".")) {
+            String basePropertyName = StringUtils.substringBefore(propertyName, ".");
+            String childProperty = StringUtils.substringAfter(propertyName, ".");
+
+            MetaProperty metaProperty = metaClass.getProperty(basePropertyName);
+
+            if (metaProperty.getRange().getCardinality().isMany()) {
+                String joinAlias = basePropertyName.substring(0, 3) + RandomStringUtils.randomAlphabetic(3);
+                context.setJoinAlias(joinAlias);
+                context.setJoinProperty(childProperty);
+                context.setJoinMetaClass(metaProperty.getRange().asClass());
+                joinBuilder.append(" join " + joinPropertyBuilder + "." + basePropertyName + " " + joinAlias);
+                joinPropertyBuilder = new StringBuilder(joinAlias);
+            } else {
+                joinPropertyBuilder.append(".").append(basePropertyName);
+            }
+            if (metaProperty.getRange().isClass()) {
+                metaClass = metaProperty.getRange().asClass();
+            } else {
+                break;
+            }
+
+            propertyName = childProperty;
         }
-        return "";
+
+        return joinBuilder.toString();
     }
 
     @Override
@@ -86,10 +102,15 @@ public class PropertyConditionGenerator implements ConditionGenerator {
             return "";
         }
 
-        String entityAlias = context.getEntityAlias();
-        String property = getProperty(propertyCondition, context.getEntityName());
+        if (context.getJoinAlias() != null && context.getJoinProperty() != null) {
+            String property = getProperty(context.getJoinProperty(), context.getJoinMetaClass().getName());
+            return generateWhere(propertyCondition, context.getJoinAlias(), property);
+        } else {
+            String entityAlias = context.getEntityAlias();
+            String property = getProperty(propertyCondition.getProperty(), context.getEntityName());
+            return generateWhere(propertyCondition, entityAlias, property);
+        }
 
-        return generateWhere(propertyCondition, entityAlias, property);
     }
 
     @Nullable
@@ -135,8 +156,7 @@ public class PropertyConditionGenerator implements ConditionGenerator {
         }
     }
 
-    protected String getProperty(PropertyCondition propertyCondition, @Nullable String entityName) {
-        String property = propertyCondition.getProperty();
+    protected String getProperty(String property, @Nullable String entityName) {
         if (Strings.isNullOrEmpty(entityName)
                 || !isCrossDataStoreReference(property, entityName)) {
             return property;

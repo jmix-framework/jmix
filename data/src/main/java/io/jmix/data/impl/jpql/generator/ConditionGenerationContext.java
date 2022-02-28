@@ -16,6 +16,7 @@
 
 package io.jmix.data.impl.jpql.generator;
 
+import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.LogicalCondition;
 
@@ -30,6 +31,9 @@ public class ConditionGenerationContext {
     protected final Condition condition;
     protected String entityName;
     protected String entityAlias;
+    protected String joinAlias;
+    protected String joinProperty;
+    protected MetaClass joinMetaClass;
     protected List<String> valueProperties;
     protected List<String> selectedExpressions;
 
@@ -72,6 +76,33 @@ public class ConditionGenerationContext {
 
     public void setEntityAlias(String entityAlias) {
         this.entityAlias = entityAlias;
+    }
+
+    @Nullable
+    public String getJoinAlias() {
+        return joinAlias;
+    }
+
+    public void setJoinAlias(String joinAlias) {
+        this.joinAlias = joinAlias;
+    }
+
+    @Nullable
+    public String getJoinProperty() {
+        return joinProperty;
+    }
+
+    public void setJoinProperty(String joinProperty) {
+        this.joinProperty = joinProperty;
+    }
+
+    @Nullable
+    public MetaClass getJoinMetaClass() {
+        return joinMetaClass;
+    }
+
+    public void setJoinMetaClass(MetaClass joinMetaClass) {
+        this.joinMetaClass = joinMetaClass;
     }
 
     @Nullable

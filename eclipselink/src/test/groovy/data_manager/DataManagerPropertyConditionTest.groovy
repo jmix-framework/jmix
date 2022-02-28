@@ -19,7 +19,10 @@ package data_manager
 import io.jmix.core.DataManager
 import io.jmix.core.querycondition.LogicalCondition
 import io.jmix.core.querycondition.PropertyCondition
+import io.jmix.data.impl.jpql.generator.ConditionGenerationContext
+import io.jmix.data.impl.jpql.generator.PropertyConditionGenerator
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Qualifier
 import test_support.DataSpec
 import test_support.entity.TestAppEntity
 import test_support.entity.TestAppEntityItem
@@ -28,6 +31,10 @@ class DataManagerPropertyConditionTest extends DataSpec {
 
     @Autowired
     DataManager dataManager
+
+    @Autowired
+    @Qualifier("data_PropertyConditionGenerator")
+    PropertyConditionGenerator propertyConditionGenerator
 
     def "load using PropertyCondition starts with"() {
 
@@ -235,5 +242,88 @@ class DataManagerPropertyConditionTest extends DataSpec {
         then:
 
         list == [testAppEntity2]
+
+        when:
+        list = dataManager.load(TestAppEntity)
+                .condition(
+                        LogicalCondition.and()
+                                .add(PropertyCondition.contains("items.appEntity.items.name", "two"))
+                )
+                .list()
+
+        then:
+
+        list == [testAppEntity1]
+    }
+
+    def "PropertyCondition generator join to one test"() {
+        when:
+
+        def property = PropertyCondition.equal("appEntity.name","Test")
+        def context = new ConditionGenerationContext(property)
+        context.entityName = "test_TestAppEntityItem"
+        context.entityAlias = "e"
+
+        then:
+
+        ""==propertyConditionGenerator.generateJoin(context)
+        propertyConditionGenerator.generateWhere(context).contains("e.appEntity.name =")
+    }
+
+    def "PropertyCondition generator join to many test"() {
+        when:
+
+        def property = PropertyCondition.equal("items.name","Test")
+        def context = new ConditionGenerationContext(property)
+        context.entityName = "test_TestAppEntity"
+        context.entityAlias = "e"
+
+        then:
+
+        propertyConditionGenerator.generateJoin(context).contains("join e.items ")
+        propertyConditionGenerator.generateWhere(context).contains(context.joinAlias+".name =")
+    }
+
+    def "PropertyCondition generator join to one and many test"() {
+        when:
+
+        def property = PropertyCondition.equal("appEntity.items.name","Test")
+        def context = new ConditionGenerationContext(property)
+        context.entityName = "test_TestAppEntityItem"
+        context.entityAlias = "e"
+
+        then:
+
+        propertyConditionGenerator.generateJoin(context).contains("join e.appEntity.items ")
+        propertyConditionGenerator.generateWhere(context).contains(context.joinAlias+".name =")
+    }
+
+    def "PropertyCondition generator multiple join to many test"() {
+        when:
+
+        def property = PropertyCondition.equal("items.appEntity.items.name","Test")
+        def context = new ConditionGenerationContext(property)
+        context.entityName = "test_TestAppEntity"
+        context.entityAlias = "e"
+
+        then:
+
+        propertyConditionGenerator.generateJoin(context).count("join ")==2
+        propertyConditionGenerator.generateWhere(context).contains(context.joinAlias+".name =")
+    }
+
+    def "PropertyCondition generator multiple join to one and many test"() {
+        when:
+
+        def property = PropertyCondition.equal("appEntity.items.appEntity.items.name","Test")
+        def context = new ConditionGenerationContext(property)
+        context.entityName = "test_TestAppEntityItem"
+        context.entityAlias = "e"
+
+        then:
+
+        propertyConditionGenerator.generateJoin(context).count("join ")==2
+        propertyConditionGenerator.generateJoin(context).count("appEntity.items")==2
+        propertyConditionGenerator.generateWhere(context).contains(context.joinAlias+".name =")
     }
 }

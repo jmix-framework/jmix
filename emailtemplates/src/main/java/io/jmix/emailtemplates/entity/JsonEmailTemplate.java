@@ -19,6 +19,7 @@ package io.jmix.emailtemplates.entity;
 
 import io.jmix.core.entity.annotation.Listeners;
 import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 import io.jmix.reports.entity.Report;
 
 import javax.persistence.*;
@@ -37,9 +38,11 @@ public class JsonEmailTemplate extends EmailTemplate {
     @Column(name = "REPORT_JSON")
     protected String reportJson;
 
+    @JmixProperty
     @Transient
     private TemplateReport templateReport;
 
+    @JmixProperty
     @Transient
     private Report report;
 
@@ -81,5 +84,13 @@ public class JsonEmailTemplate extends EmailTemplate {
     @Override
     public TemplateReport getEmailBodyReport() {
         return templateReport;
+    }
+
+    public TemplateReport getTemplateReport() {
+        return templateReport;
+    }
+
+    public void setTemplateReport(TemplateReport templateReport) {
+        this.templateReport = templateReport;
     }
 }

@@ -249,12 +249,12 @@ public class EmailTemplateBuilderImpl implements EmailTemplateBuilder {
     }
 
     protected EmailTemplate cloneTemplate(EmailTemplate emailTemplate) {
-        EmailTemplate clonedTemplate = metadataTools.copy(emailTemplate);
+        EmailTemplate clonedTemplate = metadataTools.deepCopy(emailTemplate);
         List<TemplateReport> attachedTemplateReports = new ArrayList<>();
         List<TemplateReport> templateAttachedTemplateReports = emailTemplate.getAttachedTemplateReports();
         if (templateAttachedTemplateReports != null) {
             for (TemplateReport templateReport : templateAttachedTemplateReports) {
-                TemplateReport newTemplateReport = metadataTools.copy(templateReport);
+                TemplateReport newTemplateReport = metadataTools.deepCopy(templateReport);
                 attachedTemplateReports.add(newTemplateReport);
             }
         }

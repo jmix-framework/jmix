@@ -221,7 +221,5 @@ Example of using the builder:
 ```
 
 # 5. Predefined Roles <a name="roles"></a>
-- **email-templates-core-admin** - grants access to all Email templates entities.
-- **email-templates-admin** - grants access to all Email templates screens and entities.
-- **email-templates-can-send-templates-core** - grants read access to the Email templates entities required to send created email templates as emails.
-- **email-templates-can-send-templates** - allows user to send created email templates as emails.
+- **emailtemplates-admin** - grants access to all Email templates screens and entities.
+- **emailtemplates-send-ui** - allows user to send created email templates as emails.

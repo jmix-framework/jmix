@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright 2020 Haulmont.
+  ~ Copyright 2022 Haulmont.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -21,19 +21,20 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <property name="uuid.type" dbms="oracle" value="varchar2(32)"/>
-    <property name="uuid.type" dbms="!oracle" value="uuid"/>
+    <changeSet author="reports" id="1-another-db" context="!cuba" dbms="postgresql, mysql, hsqldb, mssql, mariadb">
+        <modifyDataType tableName="REPORT_GROUP" columnName="LOCALE_NAMES" newDataType="varchar(4000)"/>
+    </changeSet>
 
-    <property name="byte_array.type" dbms="mysql" value="BLOB"/>
-    <property name="byte_array.type" dbms="mariadb" value="BLOB"/>
-    <property name="byte_array.type" dbms="postgresql" value="bytea"/>
-    <property name="byte_array.type" dbms="mssql" value="varbinary(max)"/>
-    <property name="byte_array.type" dbms="oracle" value="BLOB"/>
-    <property name="byte_array.type" dbms="hsqldb" value="BLOB"/>
-
-    <include file="io/jmix/reports/liquibase/changelog/001-reports.xml"/>
-    <include file="io/jmix/reports/liquibase/changelog/002-reports.xml"/>
-    <include file="io/jmix/reports/liquibase/changelog/003-reports.xml"/>
-
+    <changeSet author="reports" id="1-oracle" context="!cuba" dbms="oracle">
+        <addColumn tableName="REPORT_GROUP">
+            <column name="LOCALE_NAMES_TMP" type="varchar(4000)"/>
+        </addColumn>
+        <update tableName="REPORT_GROUP">
+            <column name="LOCALE_NAMES_TMP" valueComputed="to_char(LOCALE_NAMES)"/>
+        </update>
+        <dropColumn tableName="REPORT_GROUP" columnName="LOCALE_NAMES"/>
+        <renameColumn tableName="REPORT_GROUP" oldColumnName="LOCALE_NAMES_TMP" newColumnName="LOCALE_NAMES"
+                      columnDataType="varchar(4000)"/>
+    </changeSet>
 
 </databaseChangeLog>

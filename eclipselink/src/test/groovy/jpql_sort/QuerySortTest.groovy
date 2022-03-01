@@ -135,7 +135,7 @@ class QuerySortTest extends DataSpec {
         ((TestJpqlSortExpressionProvider) sortExpressionProvider).resetToUpperPaths()
     }
 
-    def "sort by multiple properties in different directions is not supported"() {
+    def "sort by multiple properties in different directions"() {
 
         JpqlQueryBuilder queryBuilder
 
@@ -144,7 +144,7 @@ class QuerySortTest extends DataSpec {
         queryBuilder = beanFactory.getBean(JpqlQueryBuilder)
         queryBuilder.setQueryString('select u from sec$User u')
                 .setSort(Sort.by(Sort.Order.asc('login'), Sort.Order.desc('name')))
-                .setEntityName('sec$User').getResultQueryString()
+                .setEntityName('sec$User')
 
         then:
 

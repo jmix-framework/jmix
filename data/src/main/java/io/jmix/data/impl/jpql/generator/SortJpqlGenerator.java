@@ -61,7 +61,7 @@ public class SortJpqlGenerator {
 
         Sort.Direction defaultSort = Sort.Direction.ASC;
 
-        Map<String,Sort.Direction> sortExpressions = new LinkedHashMap<>();
+        Map<String, Sort.Direction> sortExpressions = new LinkedHashMap<>();
 
         if (entityName != null) {
             MetaClass metaClass = metadata.getClass(entityName);
@@ -84,17 +84,17 @@ public class SortJpqlGenerator {
         return transformQuery(queryString, sortExpressions, defaultSort);
     }
 
-    protected Map<String,Sort.Direction> getUniqueSortExpression(Map<String,Sort.Direction> sortExpressions, MetaClass metaClass, Sort.Direction direction) {
+    protected Map<String, Sort.Direction> getUniqueSortExpression(Map<String, Sort.Direction> sortExpressions, MetaClass metaClass, Sort.Direction direction) {
         String pkName = metadataTools.getPrimaryKeyName(metaClass);
         if (pkName != null) {
             MetaProperty idProperty = metaClass.getProperty(pkName);
             if (metadataTools.hasCompositePrimaryKey(metaClass)) {
-                Map<String,Sort.Direction> uniqueSortExpressions = new LinkedHashMap<>();
+                Map<String, Sort.Direction> uniqueSortExpressions = new LinkedHashMap<>();
                 MetaClass pkMetaClass = idProperty.getRange().asClass();
                 for (MetaProperty metaProperty : pkMetaClass.getProperties()) {
                     if (metadataTools.isJpa(metaProperty)) {
                         MetaPropertyPath idPropertyPath = metaClass.getPropertyPath(String.format("%s.%s", pkName, metaProperty.getName()));
-                        Map<String,Sort.Direction> currentSortExpressions = getPropertySortExpressions(Objects.requireNonNull(idPropertyPath), direction);
+                        Map<String, Sort.Direction> currentSortExpressions = getPropertySortExpressions(Objects.requireNonNull(idPropertyPath), direction);
                         if (currentSortExpressions.keySet().stream().noneMatch(sortExpressions::containsKey)) {
                             uniqueSortExpressions.putAll(currentSortExpressions);
                         }
@@ -103,7 +103,7 @@ public class SortJpqlGenerator {
                 return uniqueSortExpressions;
             } else {
                 MetaPropertyPath idPropertyPath = metaClass.getPropertyPath(pkName);
-                Map<String,Sort.Direction> uniqueSortExpressions = getPropertySortExpressions(Objects.requireNonNull(idPropertyPath), direction);
+                Map<String, Sort.Direction> uniqueSortExpressions = getPropertySortExpressions(Objects.requireNonNull(idPropertyPath), direction);
                 if (uniqueSortExpressions.keySet().stream().noneMatch(sortExpressions::containsKey)) {
                     return uniqueSortExpressions;
                 }
@@ -112,7 +112,7 @@ public class SortJpqlGenerator {
         return Collections.emptyMap();
     }
 
-    protected String transformQuery(String queryString, Map<String,Sort.Direction> sortExpressions, Sort.Direction direction) {
+    protected String transformQuery(String queryString, Map<String, Sort.Direction> sortExpressions, Sort.Direction direction) {
         if (!sortExpressions.isEmpty()) {
             QueryTransformer transformer = queryTransformerFactory.transformer(queryString);
             transformer.replaceOrderByExpressions(sortExpressions);
@@ -122,7 +122,7 @@ public class SortJpqlGenerator {
         }
     }
 
-    protected Map<String,Sort.Direction> getPropertySortExpressions(MetaPropertyPath metaPropertyPath, Sort.Direction sortDirection) {
+    protected Map<String, Sort.Direction> getPropertySortExpressions(MetaPropertyPath metaPropertyPath, Sort.Direction sortDirection) {
         MetaProperty metaProperty = metaPropertyPath.getMetaProperty();
 
         if (metadataTools.isJpa(metaPropertyPath)) {
@@ -131,7 +131,7 @@ public class SortJpqlGenerator {
                 String sortExpression = metadataTools.isLob(metaProperty) ?
                         getLobPropertySortExpression(metaPropertyPath, sortDirection) :
                         getDatatypePropertySortExpression(metaPropertyPath, sortDirection);
-                return sortExpression == null ? Collections.emptyMap() : Collections.singletonMap(sortExpression,sortDirection);
+                return sortExpression == null ? Collections.emptyMap() : Collections.singletonMap(sortExpression, sortDirection);
 
             } else if (!metaProperty.getRange().getCardinality().isMany()) {
                 return getEntityPropertySortExpression(metaPropertyPath, sortDirection);
@@ -152,12 +152,12 @@ public class SortJpqlGenerator {
         return supportsLobSorting(metaPropertyPath) ? jpqlSortExpressionProvider.getLobSortExpression(metaPropertyPath, sortDirection) : null;
     }
 
-    protected Map<String,Sort.Direction> getEntityPropertySortExpression(MetaPropertyPath metaPropertyPath, Sort.Direction sortDirection) {
+    protected Map<String, Sort.Direction> getEntityPropertySortExpression(MetaPropertyPath metaPropertyPath, Sort.Direction sortDirection) {
         Collection<MetaProperty> properties = metadataTools.getInstanceNameRelatedProperties(
                 metaPropertyPath.getMetaProperty().getRange().asClass());
 
         if (!properties.isEmpty()) {
-            Map<String,Sort.Direction> sortExpressions = new LinkedHashMap<>(properties.size());
+            Map<String, Sort.Direction> sortExpressions = new LinkedHashMap<>(properties.size());
             for (MetaProperty metaProperty : properties) {
                 if (metadataTools.isJpa(metaProperty)) {
                     MetaPropertyPath childPropertyPath = new MetaPropertyPath(metaPropertyPath, metaProperty);
@@ -170,12 +170,12 @@ public class SortJpqlGenerator {
         }
     }
 
-    protected Map<String,Sort.Direction> getNotPersistentPropertySortExpression(MetaPropertyPath metaPropertyPath, Sort.Direction sortDirection) {
+    protected Map<String, Sort.Direction> getNotPersistentPropertySortExpression(MetaPropertyPath metaPropertyPath, Sort.Direction sortDirection) {
         List<String> related = metadataTools.getDependsOnProperties(metaPropertyPath.getMetaProperty());
         MetaClass propertyMetaClass = metadataTools.getPropertyEnclosingMetaClass(metaPropertyPath);
 
         if (!related.isEmpty()) {
-            Map<String,Sort.Direction> sortExpressions = new LinkedHashMap<>(related.size());
+            Map<String, Sort.Direction> sortExpressions = new LinkedHashMap<>(related.size());
             for (String item : related) {
                 MetaProperty metaProperty = propertyMetaClass.getProperty(item);
                 if (metadataTools.isJpa(metaProperty)) {
@@ -192,11 +192,11 @@ public class SortJpqlGenerator {
         return Collections.emptyMap();
     }
 
-    protected Map<String,Sort.Direction> getValuePropertySortExpression(String property, List<String> valueProperties, List<String> selectedExpressions,
-                                                          Sort.Direction sortDirection) {
+    protected Map<String, Sort.Direction> getValuePropertySortExpression(String property, List<String> valueProperties, List<String> selectedExpressions,
+                                                                         Sort.Direction sortDirection) {
         int index = valueProperties.indexOf(property);
         if (index >= 0 && index < selectedExpressions.size()) {
-            return Collections.singletonMap(selectedExpressions.get(index),sortDirection);
+            return Collections.singletonMap(selectedExpressions.get(index), sortDirection);
         }
 
         if (property != null) {
@@ -209,7 +209,7 @@ public class SortJpqlGenerator {
             for (String selectedExpression : selectedExpressions) {
                 //Checking equality between the JPQL query entity alias and the root of property path (one-level depth).
                 if (properties[0].equals(selectedExpression)) {
-                    return Collections.singletonMap(property,sortDirection);
+                    return Collections.singletonMap(property, sortDirection);
                 }
             }
             log.debug("The root of the {} value property path does not match any of the selected expressions.",

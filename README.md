@@ -117,7 +117,7 @@ public class MyOidcUserMapper extends BaseOidcUserMapper<MyUser> {
 Note that in the example above, we delegate mapping claims from OIDC user to Jmix granted authorities to the instance of `ClaimsRolesMapper`. By default, the `DefaultClaimsRolesMapper` is used. `DefaultClaimsRolesMapper` gets the claim with the "roles" name from the ID Token. This claim must contain a collection of role names. Then for each role from the claim value resource role and row-level role are searched in Jmix. If found, corresponding granted authorities will be added to  the user. The roles claim name can be configured using in the `application.properties` file:
 
 ```properties
-jmix.oidc.default-claims-roles-mapper.resource-role-prefix=myRoles
+jmix.oidc.default-claims-roles-mapper.roles-claim-name=myRoles
 ```
 
 If necessary, you may create your own claims to roles mapper. The easiest way to do it is to extend the `BaseClaimsRolesMapper` and override its `getResourceRolesCodes` or/and `getRowLevelRolesCodes` methods. The example below demonstrates how to assign roles based on the "position" claim.

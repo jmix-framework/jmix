@@ -21,10 +21,11 @@ import io.jmix.oidc.OidcConfiguration;
 import io.jmix.oidc.OidcProperties;
 import io.jmix.oidc.claimsmapper.ClaimsRolesMapper;
 import io.jmix.oidc.claimsmapper.DefaultClaimsRolesMapper;
+import io.jmix.oidc.jwt.JmixJwtAuthenticationConverter;
 import io.jmix.oidc.userinfo.DefaultJmixOidcUserService;
 import io.jmix.oidc.userinfo.JmixOidcUserService;
-import io.jmix.oidc.usermapper.OidcUserMapper;
 import io.jmix.oidc.usermapper.DefaultOidcUserMapper;
+import io.jmix.oidc.usermapper.OidcUserMapper;
 import io.jmix.security.SecurityConfigurers;
 import io.jmix.security.role.ResourceRoleRepository;
 import io.jmix.security.role.RowLevelRoleRepository;
@@ -39,13 +40,8 @@ import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.client.oidc.web.logout.OidcClientInitiatedLogoutSuccessHandler;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
-
-import java.util.ArrayList;
-import java.util.Collection;
 
 @Configuration
 @Import({OidcConfiguration.class})
@@ -93,6 +89,7 @@ public class OidcAutoConfiguration {
 
         @Override
         protected void configure(HttpSecurity http) throws Exception {
+            //todo session management
             http.authorizeRequests()
                     .anyRequest().authenticated()
                     .and()
@@ -122,31 +119,25 @@ public class OidcAutoConfiguration {
      */
     @EnableWebSecurity
     @Order(JmixOrder.HIGHEST_PRECEDENCE + 90)
-    @ConditionalOnProperty(value = "jmix.oidc.use-default-api-configuration", havingValue = "true", matchIfMissing = true)
+    @ConditionalOnProperty(value = "jmix.oidc.use-default-jwt-configuration", havingValue = "true", matchIfMissing = true)
     public static class OAuth2ResourceServerConfiguration extends WebSecurityConfigurerAdapter {
+
+        @Autowired
+        protected OidcUserMapper oidcUserMapper;
 
         @Override
         protected void configure(HttpSecurity http) throws Exception {
             http.apply(SecurityConfigurers.apiSecurity())
                     .and()
                     .oauth2ResourceServer()
-                    .jwt();
+                    .jwt()
+                    .jwtAuthenticationConverter(jmixJwtAuthenticationConverter(oidcUserMapper));
         }
-    }
 
-    /**
-     * Configures extracting of roles information from JWT access token. This is required for REST API and custom MVC
-     * controllers protection.
-     */
-    @Bean
-    @ConditionalOnMissingBean(JwtAuthenticationConverter.class)
-    public JwtAuthenticationConverter jwtAuthenticationConverter(ClaimsRolesMapper claimsRolesMapper) {
-        JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
-        //todo extract converter to a separate class
-        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwt -> {
-            Collection<? extends GrantedAuthority> mappedAuthorities = claimsRolesMapper.toGrantedAuthorities(jwt.getClaims());
-            return new ArrayList<>(mappedAuthorities);
-        });
-        return jwtAuthenticationConverter;
+        @Bean
+        @ConditionalOnMissingBean(JmixJwtAuthenticationConverter.class)
+        public JmixJwtAuthenticationConverter jmixJwtAuthenticationConverter(OidcUserMapper oidcUserMapper) {
+            return new JmixJwtAuthenticationConverter(oidcUserMapper);
+        }
     }
 }

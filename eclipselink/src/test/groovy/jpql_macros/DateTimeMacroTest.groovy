@@ -19,6 +19,7 @@ package jpql_macros
 import io.jmix.core.DataManager
 import io.jmix.core.FetchPlan
 import org.springframework.beans.factory.annotation.Autowired
+import spock.lang.Ignore
 import test_support.DataSpec
 import test_support.entity.TestDateTimeEntity
 
@@ -61,7 +62,7 @@ class DateTimeMacroTest extends DataSpec {
     }
 
     //----------@between--------
-
+    @Ignore("Till Haulmont/jmix-data#124 will be fixed")
     def "@between for LocalDate"() {
         when:
         def e = dataManager.load(TestDateTimeEntity)
@@ -116,6 +117,7 @@ class DateTimeMacroTest extends DataSpec {
         e == null
     }
 
+    @Ignore("Till Haulmont/jmix-data#124 will be fixed")
     def "@between for OffsetTime"() {
 
         when:

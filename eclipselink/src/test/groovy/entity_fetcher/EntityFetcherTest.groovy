@@ -46,6 +46,7 @@ class EntityFetcherTest extends DataSpec {
     private Order order;
     private OrderLine orderLine;
     private Employee selfSupervised;
+    private Employee supervised;
     private Position position;
     private Unit unit;
 
@@ -75,10 +76,17 @@ class EntityFetcherTest extends DataSpec {
         selfSupervised.position = position
         selfSupervised.unit = unit
         dataManager.save(selfSupervised)
+
+        supervised = dataManager.create(Employee)
+        supervised.name = "Rincewind"
+        supervised.supervisor = selfSupervised
+        supervised.position = position
+        supervised.unit = unit
+        dataManager.save(supervised)
     }
 
     def cleanup() {
-        dataManager.remove(order, orderLine, selfSupervised, position, unit)
+        dataManager.remove(order, orderLine, supervised, selfSupervised, position, unit)
     }
 
     def "fetching entity with non-persistent reference"() {
@@ -121,7 +129,7 @@ class EntityFetcherTest extends DataSpec {
     def "different views on different layers: case 2 with self ref"() {
         when: "same entity with different fetchPlans appears on different layers through self-reference"
         Employee employee = dataManager.load(Employee.class)
-                .query("select e from test_Employee e")
+                .id(selfSupervised.id)
                 .fetchPlan(fetchPlans.builder(Employee)
                         .add("supervisor.position.description")
                         .add("position.title")
@@ -139,7 +147,7 @@ class EntityFetcherTest extends DataSpec {
     def "different views on different layers: case 3 through different entities"() {
         when: "same entity with different fetchPlans appears on different layers through other entity"
         Employee employee = dataManager.load(Employee.class)
-                .query("select e from test_Employee e")
+                .id(selfSupervised.id)
                 .fetchPlan(fetchPlans.builder(Employee)
                         .add("supervisor.position.description")
                         .add("unit.employees.position.title")
@@ -156,7 +164,7 @@ class EntityFetcherTest extends DataSpec {
     def "different views on different layers: case 4 complex property"() {
         when:
         Employee employee = dataManager.load(Employee.class)
-                .query("select e from test_Employee e")
+                .id(selfSupervised.id)
                 .fetchPlan(fetchPlans.builder(Employee)
                         .add("supervisor.position.defaultUnit.title")
                         .add("supervisor.position.defaultUnit.address")
@@ -167,5 +175,19 @@ class EntityFetcherTest extends DataSpec {
         then:
         employee.position.defaultUnit.title != null
         employee.position.defaultUnit.address != null
+    }
+
+    def "Test local properties complementing"() {
+        when: "Some local property appears in one entity in entity graph"
+        Employee employee = dataManager.load(Employee.class)
+                .id(supervised.id)
+                .fetchPlan(fetchPlans.builder(Employee)
+                        .add("name")
+                        .add("supervisor.position.defaultUnit.title")
+                        .add("position.title")
+                        .build())
+                .one()
+        then: "All entities of the same class have this local property loaded"
+        employee.supervisor.name != null
     }
 }

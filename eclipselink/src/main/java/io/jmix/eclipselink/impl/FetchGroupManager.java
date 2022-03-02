@@ -427,10 +427,19 @@ public class FetchGroupManager {
 
     private void checkFetchPlan(FetchPlan subject, Map<MetaClass, List<OccurrenceDescription>> occurrences, String path, Map<String, List<FetchPlan>> absentProperties) {
         MetaClass metaClass = metadata.getClass(subject.getEntityClass());
-        List<String> firstLayer = subject.getProperties().stream()
-                .map(FetchPlanProperty::getName)
-                .sorted()
-                .collect(Collectors.toList());
+
+        List<String> firstLayer = new LinkedList<>();
+        List<String> localProperties = new LinkedList<>();
+
+        for (FetchPlanProperty property : subject.getProperties()) {
+            firstLayer.add(property.getName());
+            if (!metaClass.getProperty(property.getName()).getRange().isClass()) {
+                localProperties.add(property.getName());
+            }
+        }
+
+        localProperties.sort(Comparator.naturalOrder());
+        firstLayer.sort(Comparator.naturalOrder());
 
         List<OccurrenceDescription> sameMetaclassOccurrences = occurrences.computeIfAbsent(metaClass, k -> new LinkedList<>());
 
@@ -444,8 +453,28 @@ public class FetchGroupManager {
                     && !path.startsWith(candidate.path)) {//not need for wider child property - it will be initialized after parent anyway
                 absentProperties.computeIfAbsent(path, k -> new LinkedList<>()).add(candidate.fetchPlan);
             }
+
+
+
+            /* Eclipselink bug:
+             * If entity occurs in graph twice and loaded by subquery earlier than by main query (because of
+             * depth-first object building), then it will not be fully fetched because of infinite loops protection
+             * and will stay with fetchPlan for nested level.
+             * Thus, we need to add all local properties to nested levels recursively.
+             * Reference properties can be left as is, because they will be fetched on demand by EntityFetcher
+             */
+            List<String> absentLocal = candidate.localProperties.stream()
+                    .filter(p -> !localProperties.contains(p))
+                    .collect(Collectors.toList());
+
+            if (!absentLocal.isEmpty()) {
+                FetchPlanBuilder builder = fetchPlans.builder(subject.getEntityClass());
+                absentLocal.forEach(builder::add);
+                absentProperties.computeIfAbsent(path, k -> new LinkedList<>()).add(builder.build());
+            }
         }
-        sameMetaclassOccurrences.add(new OccurrenceDescription(subject, path, firstLayer));
+
+        sameMetaclassOccurrences.add(new OccurrenceDescription(subject, path, firstLayer, localProperties));
 
         for (FetchPlanProperty property : subject.getProperties()) {
             if (property.getFetchPlan() != null) {
@@ -630,11 +659,13 @@ public class FetchGroupManager {
         private final FetchPlan fetchPlan;
         private final String path;
         private final List<String> firstLayer;
+        private final List<String> localProperties;
 
-        public OccurrenceDescription(FetchPlan fetchPlan, String path, List<String> firstLayer) {
+        public OccurrenceDescription(FetchPlan fetchPlan, String path, List<String> firstLayer, List<String> localProperties) {
             this.fetchPlan = fetchPlan;
             this.path = path;
             this.firstLayer = firstLayer;
+            this.localProperties = localProperties;
         }
 
     }

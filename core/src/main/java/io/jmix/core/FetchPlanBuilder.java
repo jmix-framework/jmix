@@ -383,7 +383,14 @@ public class FetchPlanBuilder {
             if (metaProperty.getRange().isClass()) {
                 if (!builders.containsKey(propName)) {
                     Class<?> refClass = metaProperty.getRange().asClass().getJavaClass();
-                    builders.put(propName, applicationContext.getBean(FetchPlanBuilder.class, refClass));
+
+                    FetchPlanBuilder newNestedBuilder = applicationContext.getBean(FetchPlanBuilder.class, refClass);
+                    if (fetchPlans.containsKey(propName)) {
+                        newNestedBuilder.merge(fetchPlans.get(propName));
+                    }
+
+                    builders.put(propName, newNestedBuilder);
+
                 }
             }
             FetchPlanBuilder nestedBuilder = builders.get(propName);

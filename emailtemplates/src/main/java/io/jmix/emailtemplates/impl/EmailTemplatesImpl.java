@@ -19,6 +19,7 @@ package io.jmix.emailtemplates.impl;
 import com.google.common.io.Files;
 import com.haulmont.yarg.reporting.ReportOutputDocument;
 import io.jmix.core.*;
+import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.email.EmailAttachment;
 import io.jmix.email.EmailInfo;
 import io.jmix.email.EmailInfoBuilder;
@@ -77,6 +78,9 @@ public class EmailTemplatesImpl implements EmailTemplates {
 
     @Autowired
     protected ApplicationContext applicationContext;
+
+    @Autowired
+    protected Metadata metadata;
 
     @Override
     public EmailInfo generateEmail(EmailTemplate emailTemplate, Collection<ReportWithParams> params)
@@ -192,11 +196,18 @@ public class EmailTemplatesImpl implements EmailTemplates {
         EmailTemplate emailTemplate = dataManager.load(EmailTemplate.class)
                 .query("select e from emltmp_EmailTemplate e where e.code = :code")
                 .parameter("code", emailTemplateCode)
-                .fetchPlan("emailTemplate-fetchPlan")
                 .optional()
                 .orElse(null);
 
-        if (emailTemplate == null) {
+        if (emailTemplate != null) {
+            MetaClass metaClass = metadata.getClass(emailTemplate.getClass());
+            emailTemplate = (EmailTemplate) dataManager.load(metaClass.getJavaClass())
+                    .query("select e from " + metaClass.getName() + " e where e.code = :code")
+                    .parameter("code", emailTemplateCode)
+                    .fetchPlan("emailTemplate-fetchPlan")
+                    .optional()
+                    .orElse(null);
+        } else {
             throw new TemplateNotFoundException(messages.formatMessage(EmailTemplates.class, "notFoundTemplate", emailTemplateCode));
         }
 

@@ -38,11 +38,9 @@ public class JsonEmailTemplate extends EmailTemplate {
     @Column(name = "REPORT_JSON")
     protected String reportJson;
 
-    @JmixProperty
     @Transient
     private TemplateReport templateReport;
 
-    @JmixProperty
     @Transient
     private Report report;
 
@@ -84,13 +82,5 @@ public class JsonEmailTemplate extends EmailTemplate {
     @Override
     public TemplateReport getEmailBodyReport() {
         return templateReport;
-    }
-
-    public TemplateReport getTemplateReport() {
-        return templateReport;
-    }
-
-    public void setTemplateReport(TemplateReport templateReport) {
-        this.templateReport = templateReport;
     }
 }

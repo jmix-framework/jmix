@@ -27,6 +27,7 @@ import io.jmix.emailtemplates.EmailTemplates;
 import io.jmix.emailtemplates.dto.ReportWithParams;
 import io.jmix.emailtemplates.entity.EmailTemplate;
 import io.jmix.emailtemplates.entity.EmailTemplateAttachment;
+import io.jmix.emailtemplates.entity.JsonEmailTemplate;
 import io.jmix.emailtemplates.entity.TemplateReport;
 import io.jmix.emailtemplates.exception.ReportParameterTypeChangedException;
 import io.jmix.emailtemplates.exception.TemplateNotFoundException;
@@ -250,6 +251,10 @@ public class EmailTemplateBuilderImpl implements EmailTemplateBuilder {
 
     protected EmailTemplate cloneTemplate(EmailTemplate emailTemplate) {
         EmailTemplate clonedTemplate = metadataTools.deepCopy(emailTemplate);
+        if (clonedTemplate instanceof JsonEmailTemplate) {
+            clonedTemplate.setEmailBodyReport(emailTemplate.getEmailBodyReport());
+            ((JsonEmailTemplate) clonedTemplate).setReport(emailTemplate.getReport());
+        }
         List<TemplateReport> attachedTemplateReports = new ArrayList<>();
         List<TemplateReport> templateAttachedTemplateReports = emailTemplate.getAttachedTemplateReports();
         if (templateAttachedTemplateReports != null) {

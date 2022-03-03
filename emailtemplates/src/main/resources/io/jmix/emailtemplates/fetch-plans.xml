@@ -48,6 +48,7 @@
         <property name="defaultTemplate">
             <property name="reportOutputType"/>
         </property>
+        <property name="templates" fetchPlan="_base"/>
         <property name="xml"/>
     </fetchPlan>
     <fetchPlan class="io.jmix.emailtemplates.entity.ReportEmailTemplate"

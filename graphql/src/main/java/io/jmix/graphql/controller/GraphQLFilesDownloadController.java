@@ -70,9 +70,13 @@ public class GraphQLFilesDownloadController {
     }
 
     private String encodeFileName(String fileRef) {
-        String ref = StringUtils.substringBefore(fileRef, "?");
-        String params = StringUtils.substringAfter(fileRef, "?");
-        return ref + "?" + URLEncodeUtils.encodeUtf8(params);
+        if (fileRef.contains("?")) {
+            String ref = StringUtils.substringBefore(fileRef, "?");
+            String params = StringUtils.substringAfter(fileRef, "?");
+            return ref + "?" + URLEncodeUtils.encodeUtf8(params);
+        } else {
+            return fileRef;
+        }
     }
 
 

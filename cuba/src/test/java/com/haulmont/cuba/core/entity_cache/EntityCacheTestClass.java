@@ -466,7 +466,7 @@ public class EntityCacheTestClass {
         User u = dataManager.load(LoadContext.create(User.class).setId(this.user.getId()).setFetchPlan("user.browse"));
         u.setName("new name");
         dataManager.commit(u);
-        assertEquals(0, appender.filterMessages(m -> m.contains("> SELECT")).count()); // no DB requests - the User has been updated in cache
+        assertEquals(0, appender.filterMessages(m -> m.contains("> SELECT") && !m.contains("DYNAT_CATEGORY")).count()); // no DB requests - the User has been updated in cache
         appender.clearMessages();
 
         u = loadUser();
@@ -950,7 +950,7 @@ public class EntityCacheTestClass {
         CompositePropertyTwo compositePropertyTwo = compositeTwo.getCompositePropertyTwo().get(0);
         Assertions.assertEquals("compositePropertyTwo", compositePropertyTwo.getName());
 
-        assertEquals(4, appender.filterMessages(selectsOnly).count()); // UserSubstitution, User, User
+        assertEquals(4, appender.filterMessages(s -> s.contains("> SELECT") && !s.contains("DYNAT_CATEGORY")).count()); // UserSubstitution, User, User
 
         appender.clearMessages();
 

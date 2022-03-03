@@ -306,7 +306,7 @@ public class QueryCacheTestClass {
         assertEquals(this.group, u.getGroup());
         assertEquals(1, queryCache.size());
 
-        assertEquals(2, appender.filterMessages(m -> m.contains("> SELECT")).count()); // User, Group
+        assertEquals(2, appender.filterMessages(m -> m.contains("> SELECT") && !m.contains("DYNAT_CATEGORY")).count()); // User, Group
         appender.clearMessages();
 
         u = dataManager_getResultListUserByLoginNamed();

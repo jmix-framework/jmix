@@ -20,7 +20,9 @@ import io.jmix.core.AccessManager;
 import io.jmix.core.FileTransferService;
 import io.jmix.core.FileRef;
 import io.jmix.core.Metadata;
+import io.jmix.core.common.util.URLEncodeUtils;
 import io.jmix.graphql.service.FilePermissionService;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,7 +58,7 @@ public class GraphQLFilesDownloadController {
         filePermissionService.checkFileDownloadPermission();
         try {
             FileRef fileReference;
-            fileReference = FileRef.fromString(fileRef);
+            fileReference = FileRef.fromString(encodeFileName(fileRef));
             fileTransferService.downloadAndWriteResponse(fileReference, fileReference.getStorageName(), attachment, response);
         } catch (IllegalArgumentException e) {
             throw new GraphQLControllerException("Invalid file reference",
@@ -65,6 +67,12 @@ public class GraphQLFilesDownloadController {
                     e);
         }
 
+    }
+
+    private String encodeFileName(String fileRef) {
+        String ref = StringUtils.substringBefore(fileRef, "?");
+        String params = StringUtils.substringAfter(fileRef, "?");
+        return ref + "?" + URLEncodeUtils.encodeUtf8(params);
     }
 
 

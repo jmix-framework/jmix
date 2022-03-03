@@ -9,6 +9,7 @@ import io.jmix.core.MetadataTools;
 import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.core.metamodel.model.MetadataObject;
 import io.jmix.core.metamodel.model.Range;
 import io.jmix.ui.Actions;
 import io.jmix.ui.UiComponents;
@@ -30,7 +31,9 @@ import org.springframework.stereotype.Component;
 
 import javax.persistence.Convert;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static io.jmix.appsettingsui.screen.appsettings.util.EntityUtils.isMany;
 
@@ -91,7 +94,9 @@ public class AppSettingsGridLayoutBuilder {
 
     public GridLayout build() {
         MetaClass metaClass = container.getEntityMetaClass();
-        List<MetaProperty> metaProperties = collectMetaProperties(metaClass, container.getItem());
+        List<MetaProperty> metaProperties = collectMetaProperties(metaClass, container.getItem()).stream()
+                .sorted(Comparator.comparing(MetadataObject::getName))
+                .collect(Collectors.toList());
 
         GridLayout gridLayout = uiComponents.create(GridLayout.class);
         gridLayout.setSpacing(true);

@@ -2,7 +2,7 @@
 
 This repository contains OpenID Connect project of the [Jmix](https://jmix.io) framework.
 
-**CAUTION: The project is in EXPERIMENTAL status and may be removed or modified in any way without notice. Use at your own risk!**
+**CAUTION: The project is in EXPERIMENTAL status and may be modified in any way without notice.**
 
 For more information, see:
 

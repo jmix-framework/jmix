@@ -16,6 +16,7 @@
 
 package io.jmix.data.persistence;
 
+import io.jmix.core.Sort;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 
 /**
@@ -34,10 +35,10 @@ public interface JpqlSortExpressionProvider {
      *     e.g. <code>{E}.property asc nulls first</code></li>
      * </ul>
      */
-    String getDatatypeSortExpression(MetaPropertyPath metaPropertyPath, boolean sortDirectionAsc);
+    String getDatatypeSortExpression(MetaPropertyPath metaPropertyPath, Sort.Direction sortDirection);
 
     /**
      * Returns JPQL order expression for specified lob property.
      */
-    String getLobSortExpression(MetaPropertyPath metaPropertyPath, boolean sortDirectionAsc);
+    String getLobSortExpression(MetaPropertyPath metaPropertyPath, Sort.Direction sortDirection);
 }

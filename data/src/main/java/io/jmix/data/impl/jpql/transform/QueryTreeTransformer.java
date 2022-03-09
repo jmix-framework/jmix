@@ -189,7 +189,7 @@ public class QueryTreeTransformer {
         }
     }
 
-    public void replaceOrderByItems(String mainEntityName, List<OrderByFieldNode> orderByItems, boolean directionDesc) {
+    public void replaceOrderByItems(String mainEntityName, List<OrderByFieldNode> orderByItems) {
         removeOrderBy();
 
         OrderByNode orderBy = createOrderBy();
@@ -224,14 +224,6 @@ public class QueryTreeTransformer {
                         }
                     }
                 }
-            }
-
-            boolean anyDirection = orderByItem.getChildren().stream()
-                    .map(item -> (Tree) item)
-                    .anyMatch(item -> item.getType() == JPA2Lexer.ASC || item.getType() == JPA2Lexer.DESC);
-
-            if (!anyDirection && directionDesc) {
-                orderByItem.addChild(createDesc());
             }
 
             orderBy.addChild(orderByItem);

@@ -17,6 +17,7 @@
 
 package io.jmix.data.impl.jpql.transform;
 
+import io.jmix.core.Sort;
 import io.jmix.data.QueryTransformer;
 import io.jmix.data.impl.jpql.*;
 import io.jmix.data.impl.jpql.tree.*;
@@ -28,10 +29,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.lang.String.format;
@@ -178,21 +176,22 @@ public class QueryTransformerAstBased implements QueryTransformer {
     }
 
     @Override
-    public void replaceOrderByExpressions(boolean directionDesc, String... sortExpressions) {
+    public void replaceOrderByExpressions(Map<String, Sort.Direction> sortExpressions) {
         boolean isEntitySelect = getAnalyzer().getMainSelectedPathNode() != null;
         EntityVariable entityReference = null;
         if (isEntitySelect) {
             entityReference = createMainSelectedPathNodeVariableNN();
         }
-        List<OrderByFieldNode> parsedNodes = new ArrayList<>(sortExpressions.length);
-        for (String expression : sortExpressions) {
+        List<OrderByFieldNode> parsedNodes = new ArrayList<>(sortExpressions.size());
+        for (Map.Entry<String,Sort.Direction> expressionEntry : sortExpressions.entrySet()) {
+            String expression = String.format("%s %s",expressionEntry.getKey(),Sort.Direction.ASC == expressionEntry.getValue() ? "asc" : "desc");
             if (isEntitySelect) {
                 expression = replaceEntityPlaceholder(expression, entityReference.getVariableName());
             }
             parsedNodes.add(parseOrderByItem(expression));
         }
         getTransformer().replaceOrderByItems(
-                entityReference != null ? entityReference.getEntityName() : null, parsedNodes, directionDesc);
+                entityReference != null ? entityReference.getEntityName() : null, parsedNodes);
     }
 
     @Override

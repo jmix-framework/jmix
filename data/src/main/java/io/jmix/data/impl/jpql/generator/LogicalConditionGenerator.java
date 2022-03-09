@@ -49,7 +49,7 @@ public class LogicalConditionGenerator implements ConditionGenerator {
 
         return logical.getConditions().stream()
                 .map(childCondition -> {
-                    ConditionGenerationContext childContext = createChildContext(context, childCondition);
+                    ConditionGenerationContext childContext = context.getChildContexts().get(childCondition);
                     ConditionGenerator generator = resolver.getConditionGenerator(childContext);
                     return generator.generateJoin(childContext);
                 })
@@ -70,7 +70,7 @@ public class LogicalConditionGenerator implements ConditionGenerator {
 
         String where = conditions.stream()
                 .map(childCondition -> {
-                    ConditionGenerationContext childContext = createChildContext(context, childCondition);
+                    ConditionGenerationContext childContext = context.getChildContexts().get(childCondition);
                     ConditionGenerator generator = resolver.getConditionGenerator(childContext);
                     return generator.generateWhere(childContext);
                 })
@@ -91,11 +91,5 @@ public class LogicalConditionGenerator implements ConditionGenerator {
     public Object generateParameterValue(@Nullable Condition condition, @Nullable Object parameterValue,
                                          @Nullable String entityName) {
         return null;
-    }
-
-    protected ConditionGenerationContext createChildContext(ConditionGenerationContext context, Condition condition) {
-        ConditionGenerationContext childContext = new ConditionGenerationContext(condition);
-        childContext.copy(context);
-        return childContext;
     }
 }

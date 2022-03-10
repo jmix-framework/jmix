@@ -19,6 +19,7 @@ package io.jmix.core.impl.repository.query;
 import io.jmix.core.Sort;
 import io.jmix.core.*;
 import io.jmix.core.impl.repository.query.utils.LoaderHelper;
+import org.omg.CORBA.portable.Streamable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.*;
@@ -26,10 +27,13 @@ import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.data.repository.core.RepositoryMetadata;
 import org.springframework.data.repository.query.parser.PartTree;
 
-import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.lang.reflect.Method;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 public class JmixListQuery extends JmixStructuredQuery {
     protected Sort staticSort;
@@ -42,7 +46,6 @@ public class JmixListQuery extends JmixStructuredQuery {
     }
 
     @Override
-    @Nonnull
     public Object execute(Object[] parameters) {
         FluentLoader.ByCondition<?> loader = dataManager.load(metadata.getDomainType())
                 .condition(conditions)
@@ -55,8 +58,7 @@ public class JmixListQuery extends JmixStructuredQuery {
         }
 
         considerSorting(loader, parameters);
-
-        return considerPagingAndProcess(loader, parameters);
+        return processAccordingToReturnType(loader, parameters);
     }
 
     protected void considerSorting(FluentLoader.ByCondition<?> loader, Object[] parameters) {
@@ -75,8 +77,8 @@ public class JmixListQuery extends JmixStructuredQuery {
         loader.sort(Sort.by(orders));
     }
 
-
-    protected Object considerPagingAndProcess(FluentLoader.ByCondition<?> loader, Object[] parameters) {
+    @Nullable
+    protected Object processAccordingToReturnType(FluentLoader.ByCondition<?> loader, Object[] parameters) {
         Class<?> returnType = method.getReturnType();
         if (Slice.class.isAssignableFrom(returnType)) {
             if (pageableIndex == -1) {
@@ -113,7 +115,22 @@ public class JmixListQuery extends JmixStructuredQuery {
             }
 
         }
-        return loader.list();
+
+        List<?> result = loader.list();
+
+        if (Iterator.class.isAssignableFrom(returnType)) {
+            return result.iterator();
+        }
+        if (Objects.equals(maxResults, 1) && !isMultipleReturnType(returnType)) {
+            return result.isEmpty() ? null : result.iterator().next();
+        }
+        return result;
+    }
+
+    protected boolean isMultipleReturnType(Class<?> returnType) {
+        return Iterable.class.isAssignableFrom(returnType)
+                || Stream.class.isAssignableFrom(returnType)
+                || Streamable.class.isAssignableFrom(returnType);
     }
 
     @Override

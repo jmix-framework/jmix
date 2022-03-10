@@ -17,6 +17,7 @@
 package io.jmix.securityoauth2.impl;
 
 import com.google.common.base.Strings;
+import io.jmix.core.security.AccessDeniedException;
 import io.jmix.core.security.ClientDetails;
 import io.jmix.securityoauth2.event.AfterInvocationEvent;
 import io.jmix.securityoauth2.event.BeforeInvocationEvent;
@@ -102,9 +103,12 @@ public class LastSecurityFilter extends OncePerRequestFilter {
             } else {
                 filterChain.doFilter(request, response);
             }
+        } catch (AccessDeniedException e) {
+            log.error("Access denied", e);
+            response.sendError(HttpServletResponse.SC_FORBIDDEN);
         } catch (Exception e) {
             log.error("Error during API call", e);
-            response.sendError(500);
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
 

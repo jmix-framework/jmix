@@ -46,6 +46,9 @@ import test_support.entity.repository.Employee
 import test_support.repository.CustomerRepository
 import test_support.repository.EmployeeRepository
 
+import java.util.stream.Collectors
+import java.util.stream.Stream
+
 class MiscDataRepositoriesTest extends DataSpec {
     @Autowired
     CustomerRepository customerRepository
@@ -292,5 +295,40 @@ class MiscDataRepositoriesTest extends DataSpec {
         cleanup:
         dataManager.remove(e1, e2, e3)
 
+    }
+
+    void "check query result type conversion"() {
+
+        setup:
+        Employee e1 = employeeRepository.create();
+        e1.name = "R."
+        e1.secondName = "B."
+        e1.lastName = "F."
+
+        Employee e2 = employeeRepository.create();
+        e2.name = "John"
+        e2.secondName = "R."
+        e2.lastName = "Smith"
+
+        dataManager.save(e1, e2)
+
+
+        when:
+        Optional<Employee> optionalEmployee = employeeRepository.findTopByOrderByNameDesc()
+
+        Set<Employee> employeeSet = employeeRepository.findFirstByOrderByNameDesc()
+
+        Stream<Employee> employeeStream = employeeRepository.findTop1ByOrderByNameDesc()
+
+        Iterator<Employee> employeeIterator = employeeRepository.findFirst1ByOrderByNameDesc()
+
+        then:
+        optionalEmployee.get().name == "R."
+        employeeSet.iterator().next().name == "R."
+        employeeStream.collect(Collectors.toList()).iterator().next().name == "R."
+        employeeIterator.next().name == "R."
+
+        cleanup:
+        dataManager.remove(e1, e2)
     }
 }

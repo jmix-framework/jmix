@@ -23,8 +23,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import test_support.entity.repository.Employee;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Stream;
 
 public interface EmployeeRepository extends JmixDataRepository<Employee, UUID> {
     List<Employee> findEmployeesByHomeAddressStreetOrWorkAddressStreetOrRegistrationAddressStreet(String homeStreet, String workStreet, String registrationStreet);
@@ -35,4 +35,15 @@ public interface EmployeeRepository extends JmixDataRepository<Employee, UUID> {
 
     @Query("select e from repository$Employee e where(e.name like ?1 or e.secondName like ?1 or e.lastName like ?2)")
     List<Employee> findEmployeesByNames(String nameOrSecondName, String thirdName);
+
+
+    //different return types
+
+    Optional<Employee> findTopByOrderByNameDesc();
+
+    Set<Employee> findFirstByOrderByNameDesc();
+
+    Stream<Employee> findTop1ByOrderByNameDesc();
+
+    Iterator<Employee> findFirst1ByOrderByNameDesc();
 }

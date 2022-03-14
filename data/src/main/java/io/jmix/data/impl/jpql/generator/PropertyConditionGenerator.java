@@ -57,7 +57,7 @@ public class PropertyConditionGenerator implements ConditionGenerator {
     @Override
     public String generateJoin(ConditionGenerationContext context) {
         PropertyCondition propertyCondition = (PropertyCondition) context.getCondition();
-        if (propertyCondition == null) {
+        if (propertyCondition == null||context.getEntityName()==null) {
             return "";
         }
 

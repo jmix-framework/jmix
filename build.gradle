@@ -269,6 +269,7 @@ dependencies {
         api "io.jmix.translations:jmix-translations-de:${snapshotOr(translationsVersion)}"
         api "io.jmix.translations:jmix-translations-zh-cn:${snapshotOr(translationsVersion)}"
         api "io.jmix.translations:jmix-translations-ro:${snapshotOr(translationsVersion)}"
+        api "io.jmix.translations:jmix-translations-el:${snapshotOr(translationsVersion)}"
 
         api "io.jmix.ui:jmix-ui:${snapshotOr(uiVersion)}"
         api "io.jmix.ui:jmix-ui-data:${snapshotOr(uiVersion)}"

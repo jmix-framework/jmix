@@ -23,7 +23,7 @@ import java.io.Serializable;
 import java.util.*;
 
 /**
- *
+ * Defines collections of entities to be saved or removed, as well as parameters of saving.
  */
 public class SaveContext implements Serializable {
 
@@ -41,7 +41,6 @@ public class SaveContext implements Serializable {
     protected Map<String, Serializable> hints;
 
     /**
-     * /**
      * Adds an entity to be committed to the database.
      *
      * @param entities entity instances
@@ -156,19 +155,31 @@ public class SaveContext implements Serializable {
         return this;
     }
 
+    /**
+     * Returns the list of access constraints.
+     */
     public List<AccessConstraint<?>> getAccessConstraints() {
         return this.accessConstraints == null ? Collections.emptyList() : this.accessConstraints;
     }
 
+    /**
+     * Sets the list of access constraints.
+     */
     public SaveContext setAccessConstraints(List<AccessConstraint<?>> accessConstraints) {
         this.accessConstraints = accessConstraints;
         return this;
     }
 
+    /**
+     * @return whether to join existing transaction or always start a new one
+     */
     public boolean isJoinTransaction() {
         return joinTransaction;
     }
 
+    /**
+     * Sets whether to join existing transaction or always start a new one.
+     */
     public SaveContext setJoinTransaction(boolean joinTransaction) {
         this.joinTransaction = joinTransaction;
         return this;

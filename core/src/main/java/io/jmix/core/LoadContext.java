@@ -244,10 +244,16 @@ public class LoadContext<E> implements DataLoadContext, Serializable {
         return this;
     }
 
+    /**
+     * @return whether to join existing transaction or always start a new one
+     */
     public boolean isJoinTransaction() {
         return joinTransaction;
     }
 
+    /**
+     * Sets whether to join existing transaction or always start a new one.
+     */
     public LoadContext<E> setJoinTransaction(boolean joinTransaction) {
         this.joinTransaction = joinTransaction;
         return this;

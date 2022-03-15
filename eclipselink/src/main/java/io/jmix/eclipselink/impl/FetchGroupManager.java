@@ -381,11 +381,15 @@ public class FetchGroupManager {
     }
 
     /**
-     * Looks for similar fetch plans on different layers with the same first-layer properties but different 2-nd and further
+     * 1. Looks for similar fetch plans on different layers with the same first-layer properties but different 2-nd and further
      * layer properties.
      * Entities loaded by such fetch plans may have unfetched attributes because treated as equals and cached instead of
      * loading with each {@link FetchGroup}.
      * Replaces fetch plans using union of all similar plans for each such entity.
+     * <p>
+     * 2. Also completes first-layer local properties for the same entity type plans on different layers.
+     * It will help to deal with eclipselink false positive infinite loop protection affecting local properties.
+     * Reference properties will be fetched later.
      * <p>
      * <p>
      * see also: {@link org.eclipse.persistence.internal.descriptors.ObjectBuilder}#isObjectValidForFetchGroup,
@@ -401,7 +405,7 @@ public class FetchGroupManager {
         Map<MetaClass, List<OccurrenceDescription>> occurrences = new HashMap<>();
         Map<String, List<FetchPlan>> absentProperties = new HashMap<>();
 
-        checkFetchPlan(original, occurrences, "", absentProperties);
+        collectAbsentProperties(original, occurrences, "", absentProperties);
 
         if (absentProperties.isEmpty())
             return original;
@@ -425,7 +429,13 @@ public class FetchGroupManager {
 
     }
 
-    private void checkFetchPlan(FetchPlan subject, Map<MetaClass, List<OccurrenceDescription>> occurrences, String path, Map<String, List<FetchPlan>> absentProperties) {
+    /**
+     * Looks for absent properties according to {@link FetchGroupManager#completeFetchPlan(io.jmix.core.FetchPlan)} description.
+     * Collects absent properties and fetchPlans to load them with.
+     *
+     * @param absentProperties map to store absent properties in
+     */
+    private void collectAbsentProperties(FetchPlan subject, Map<MetaClass, List<OccurrenceDescription>> occurrences, String path, Map<String, List<FetchPlan>> absentProperties) {
         MetaClass metaClass = metadata.getClass(subject.getEntityClass());
 
         List<String> firstLayer = new LinkedList<>();
@@ -454,8 +464,6 @@ public class FetchGroupManager {
                 absentProperties.computeIfAbsent(path, k -> new LinkedList<>()).add(candidate.fetchPlan);
             }
 
-
-
             /* Eclipselink bug:
              * If entity occurs in graph twice and loaded by subquery earlier than by main query (because of
              * depth-first object building), then it will not be fully fetched because of infinite loops protection
@@ -478,7 +486,7 @@ public class FetchGroupManager {
 
         for (FetchPlanProperty property : subject.getProperties()) {
             if (property.getFetchPlan() != null) {
-                checkFetchPlan(property.getFetchPlan(), occurrences,
+                collectAbsentProperties(property.getFetchPlan(), occurrences,
                         (path.length() > 0 ? path + "." : "") + property.getName(), absentProperties);
             }
         }

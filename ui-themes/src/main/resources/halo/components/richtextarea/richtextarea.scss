@@ -1,0 +1,122 @@
+/*
+ * Copyright (c) 2008-2016 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
+@mixin halo-richtextarea($primary-stylename: v-richtextarea) {
+  .#{$primary-stylename} {
+    @include box-defaults;
+  }
+
+  .#{$primary-stylename}:focus {
+    border-color: $v-focus-color;
+    box-shadow: none;
+    outline: 0;
+    transition: none;
+  }
+
+  .#{$primary-stylename}.v-readonly {
+    @include valo-textfield-style;
+    @include valo-textfield-readonly-style;
+
+    overflow: auto;
+
+    &:focus {
+      border-color: $v-focus-color;
+    }
+  }
+
+  .#{$primary-stylename} .gwt-HTML.v-scrollable {
+    font-size: $v-font-size;
+  }
+
+  .#{$primary-stylename}-error {
+    @include valo-textfield-error-style;
+  }
+
+  .#{$primary-stylename} {
+    div[icon-id="richTextArea.boldLabel"]:before {
+      content: "\f032";
+    }
+
+    div[icon-id="richTextArea.italicLabel"]:before {
+      content: "\f033";
+    }
+
+    div[icon-id="richTextArea.underlineLabel"]:before {
+      content: "\f0cd";
+    }
+
+    div[icon-id="richTextArea.subscriptLabel"]:before {
+      content: "\f12c";
+    }
+
+    div[icon-id="richTextArea.superscriptLabel"]:before {
+      content: "\f12b";
+    }
+
+    div[icon-id="richTextArea.justifyLeftLabel"]:before {
+     content: "\f036";
+    }
+
+    div[icon-id="richTextArea.justifyCenterLabel"]:before {
+      content: "\f037";
+    }
+
+    div[icon-id="richTextArea.justifyRightLabel"]:before {
+      content: "\f038";
+    }
+
+    div[icon-id="richTextArea.strikethroughLabel"]:before {
+      content: "\f0cc";
+    }
+
+    div[icon-id="richTextArea.indentLabel"]:before {
+      content: "\f03c";
+    }
+
+    div[icon-id="richTextArea.outdentLabel"]:before {
+      content: "\f03b";
+    }
+
+    div[icon-id="richTextArea.hrLabel"]:before {
+      content: "\2014";
+    }
+
+    div[icon-id="richTextArea.olLabel"]:before {
+      content: "\f0cb";
+    }
+
+    div[icon-id="richTextArea.ulLabel"]:before {
+      content: "\f0ca";
+    }
+
+    div[icon-id="richTextArea.insertImageLabel"]:before {
+      content: "\f03e";
+    }
+
+    div[icon-id="richTextArea.createLinkLabel"]:before {
+      content: "\f0c1";
+    }
+
+    div[icon-id="richTextArea.removeLinkLabel"]:before {
+      content: "\f127";
+    }
+
+    div[icon-id="richTextArea.removeFormatLabel"]:before {
+      content: "\f12d";
+    }
+  }
+}

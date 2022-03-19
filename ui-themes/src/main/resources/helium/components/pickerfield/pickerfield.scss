@@ -1,0 +1,305 @@
+/*!
+ * Copyright 2020 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@mixin he-pickerfield($primary-stylename: jmix-pickerfield) {
+  @include he-pickerfield-style($primary-stylename: $primary-stylename);
+
+  /* Global size */
+
+  &.small {
+    @include he-pickerfield-size-style($primary-stylename : $primary-stylename,
+                                       $unit-size         : $v-unit-size--small,
+                                       $font-size         : $v-font-size--small);
+  }
+
+  &.large {
+    @include he-pickerfield-size-style($primary-stylename : $primary-stylename,
+                                       $unit-size         : $v-unit-size--large,
+                                       $font-size         : $v-font-size--large);
+  }
+
+  /* Size within a container */
+
+  .small {
+    @include he-pickerfield-size-style($primary-stylename : $primary-stylename,
+                                       $unit-size         : $v-unit-size--small,
+                                       $font-size         : $v-font-size--small);
+  }
+
+  .medium {
+    @include he-pickerfield-size-style($primary-stylename : $primary-stylename,
+                                       $unit-size         : $v-unit-size,
+                                       $font-size         : $v-font-size);
+  }
+
+  .large {
+    @include he-pickerfield-size-style($primary-stylename : $primary-stylename,
+                                       $unit-size         : $v-unit-size--large,
+                                       $font-size         : $v-font-size--large);
+  }
+
+  /* Own size */
+
+  .#{$primary-stylename}.small {
+    .v-textfield.#{$primary-stylename}-text,
+    .jmix-suggestionfield.#{$primary-stylename}-suggestion {
+      @include he-input-size-style($unit-size: $v-unit-size--small, $font-size: $v-font-size--small);
+    }
+
+    .v-filterselect.#{$primary-stylename}-combobox {
+      @include he-combobox-size-style($unit-size: $v-unit-size--small, $font-size: $v-font-size--small);
+    }
+
+    .jmix-searchselect.#{$primary-stylename}-searchselect {
+      @include he-searchselect-size-style($unit-size: $v-unit-size--small, $font-size: $v-font-size--small);
+    }
+
+    @include he-pickerfield-size-style($primary-stylename : $primary-stylename,
+                                       $unit-size         : $v-unit-size--small,
+                                       $font-size         : $v-font-size--small);
+  }
+
+  .#{$primary-stylename}.medium {
+    .v-textfield.#{$primary-stylename}-text,
+    .jmix-suggestionfield.#{$primary-stylename}-suggestion {
+      @include he-input-size-style($unit-size: $v-unit-size, $font-size: $v-font-size);
+    }
+
+    .v-filterselect.#{$primary-stylename}-combobox {
+      @include he-combobox-size-style($unit-size: $v-unit-size, $font-size: $v-font-size);
+    }
+
+    .jmix-searchselect.#{$primary-stylename}-searchselect {
+      @include he-searchselect-size-style($unit-size: $v-unit-size, $font-size: $v-font-size);
+    }
+
+    @include he-pickerfield-size-style($primary-stylename : $primary-stylename,
+                                       $unit-size         : $v-unit-size,
+                                       $font-size         : $v-font-size);
+  }
+
+  .#{$primary-stylename}.large {
+    .v-textfield.#{$primary-stylename}-text,
+    .jmix-suggestionfield.#{$primary-stylename}-suggestion {
+      @include he-input-size-style($unit-size: $v-unit-size--large, $font-size: $v-font-size--large);
+    }
+
+    .v-filterselect.#{$primary-stylename}-combobox {
+      @include he-combobox-size-style($unit-size: $v-unit-size--large, $font-size: $v-font-size--large);
+    }
+
+    .jmix-searchselect.#{$primary-stylename}-searchselect {
+      @include he-searchselect-size-style($unit-size: $v-unit-size--large, $font-size: $v-font-size--large);
+    }
+
+    @include he-pickerfield-size-style($primary-stylename : $primary-stylename,
+                                       $unit-size         : $v-unit-size--large,
+                                       $font-size         : $v-font-size--large);
+  }
+}
+
+@mixin he-pickerfield-size-style($primary-stylename : jmix-pickerfield,
+                                 $unit-size         : $v-unit-size,
+                                 $font-size         : $v-font-size) {
+  .v-button.#{$primary-stylename}-button {
+    padding: 0;
+    font-size: $font-size;
+    width: $unit-size;
+    min-width: $unit-size;
+    height: $unit-size;
+    border-radius: 0;
+
+    &:after,
+    &:hover:after {
+      height: $unit-size;
+    }
+  }
+
+  .#{$primary-stylename}-layout > .v-button:last-child {
+    border-top-right-radius: $v-border-radius;
+    border-bottom-right-radius: $v-border-radius;
+  }
+
+  .#{$primary-stylename}-layout {
+    & .safari-input-wrap:first-child input,
+    & .safari-input-wrap:first-child .v-filterselect,
+    & input:first-child,
+    & .v-filterselect:first-child {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+
+      [class$="button"] {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+      }
+    }
+
+    & .safari-input-wrap:only-child input,
+    & .safari-input-wrap:only-child .v-filterselect,
+    & input:only-child,
+    & .v-filterselect:only-child {
+      border-top-right-radius: $v-border-radius;
+      border-bottom-right-radius: $v-border-radius;
+
+      [class$="button"] {
+        border-top-right-radius: $v-border-radius;
+        border-bottom-right-radius: $v-border-radius;
+      }
+    }
+
+    > .v-textfield.#{$primary-stylename}-text:last-child,
+    > .v-filterselect:last-child > input {
+      border-top-right-radius: $v-textfield-border-radius;
+      border-bottom-right-radius: $v-textfield-border-radius;
+    }
+  }
+
+  .#{$primary-stylename}-layout > .v-filterselect:not(.jmix-searchselect) > input,
+  .#{$primary-stylename}-layout > .safari-input-wrap > .v-filterselect:not(.jmix-searchselect) > input {
+    padding-right: $unit-size;
+
+    &.v-filterselect-input-readonly {
+      padding-right: $unit-size;
+    }
+  }
+}
+
+@mixin he-pickerfield-style($primary-stylename  : jmix-pickerfield,
+                            $unit-size          : $v-unit-size,
+                            $font-size          : $v-font-size) {
+  @include he-pickerfield-size-style($primary-stylename : $primary-stylename,
+                                     $unit-size         : $unit-size,
+                                     $font-size         : $font-size);
+
+  .v-textfield.#{$primary-stylename}-text {
+    @include he-input-style();
+  }
+
+  .v-button.#{$primary-stylename}-button {
+    @include he-pickerfield-button-style();
+  }
+
+  .#{$primary-stylename}.v-readonly {
+    .v-textfield.v-textfield-readonly {
+      @include he-input-readonly-style();
+    }
+
+    .v-button.#{$primary-stylename}-button {
+      @include he-pickerfield-button-style();
+    }
+  }
+
+  .#{$primary-stylename}-error {
+    .v-filterselect .v-filterselect-input,
+    .jmix-searchselect .jmix-searchselect-input,
+    .v-textfield.v-textfield-readonly,
+    .jmix-suggestionfield {
+      @include he-input-error-style();
+    }
+
+    .v-filterselect .v-filterselect-button {
+      color: var(--text-main-color);
+      border-color: var(--error-color);
+    }
+  }
+
+  .#{$primary-stylename}.v-disabled {
+    .v-button.#{$primary-stylename}-button {
+      @include he-pickerfield-button-disabled-style();
+    }
+  }
+
+  .#{$primary-stylename}.borderless {
+    .v-filterselect .v-filterselect-input,
+    .jmix-searchselect .jmix-searchselect-input,
+    .v-textfield.v-textfield-readonly,
+    .jmix-suggestionfield {
+      @include he-textfield-borderless-style();
+    }
+
+    .v-button.#{$primary-stylename}-button {
+      @include he-pickerfield-button-borderless-style();
+    }
+  }
+}
+
+@mixin he-pickerfield-button-style() {
+  border-color: var(--border-color);
+  color: var(--pickerfield-button-text-color);
+  background: var(--pickerfield-button-background-color);
+
+  &:hover:not(.v-disabled) {
+    border-color: var(--border-color);
+    background: var(--pickerfield-button-hover-background-color);
+    color: var(--pickerfield-button-hover-text-color);
+  }
+
+  &:active:not(.v-disabled) {
+    border-color: var(--border-color);
+    background: var(--pickerfield-button-active-background-color);
+    color: var(--pickerfield-button-active-text-color);
+  }
+
+  &:focus:not(.v-disabled) {
+    border-color: var(--border-color);
+  }
+}
+
+@mixin he-pickerfield-button-disabled-style() {
+  border-color: var(--border-dim-color);
+  color: var(--pickerfield-button-disabled-text-color);
+  background: var(--pickerfield-button-disabled-background-color);
+
+  &:hover {
+    border-color: var(--border-dim-color);
+    color: var(--pickerfield-button-disabled-text-color);
+  }
+
+  &:active {
+    border-color: var(--border-dim-color);
+    color: var(--pickerfield-button-disabled-text-color);
+    background: var(--pickerfield-button-disabled-background-color);
+  }
+
+  &:focus {
+    border-color: var(--border-dim-color);
+  }
+}
+
+@mixin he-pickerfield-button-borderless-style() {
+  border-color: transparent;
+  background: transparent;
+
+  &:not(.v-disabled) {
+    color: var(--pickerfield-button-text-color);
+  }
+
+  &:hover:not(.v-disabled) {
+    color: var(--pickerfield-button-hover-text-color);
+    border-color: transparent;
+    background: transparent;
+  }
+
+  &:active:not(.v-disabled) {
+    color: var(--pickerfield-button-active-text-color);
+    border-color: transparent;
+    background: var(--pickerfield-button-active-background-color);
+  }
+
+  &.v-disabled:active {
+    background: transparent;
+  }
+}

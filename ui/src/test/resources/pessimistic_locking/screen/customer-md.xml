@@ -1,0 +1,63 @@
+<window xmlns="http://jmix.io/schema/ui/window"
+        focusComponent="table">
+    <data>
+        <collection id="customersDc"
+                    class="test_support.entity.sales.Customer">
+            <fetchPlan extends="_local"/>
+            <loader id="customersDl">
+                <query>
+                    <![CDATA[select e from test_Customer e]]>
+                </query>
+            </loader>
+        </collection>
+        <instance id="customerDc"
+                  class="test_support.entity.sales.Customer">
+            <fetchPlan extends="_local"/>
+            <loader/>
+        </instance>
+    </data>
+    <actions>
+        <action id="save" icon="CHECK" caption="mainMsg://actions.Ok" shortcut="CTRL-ENTER"/>
+        <action id="cancel" icon="BAN" caption="mainMsg://actions.Cancel" description="Esc"/>
+    </actions>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <layout>
+        <split id="split" height="100%" orientation="horizontal" reversePosition="true" width="100%">
+            <vbox id="lookupBox" expand="table" height="100%" margin="false,true,false,false" spacing="true">
+                <table id="table"
+                       width="100%"
+                       dataContainer="customersDc">
+                    <actions>
+                        <action id="create" type="create"/>
+                        <action id="edit" type="edit"/>
+                        <action id="remove" type="remove"/>
+                    </actions>
+                    <columns>
+                        <column id="name"/>
+                        <column id="status"/>
+                    </columns>
+                </table>
+                <hbox id="lookupActions" spacing="true" visible="false">
+                    <button action="lookupSelectAction"/>
+                    <button action="lookupCancelAction"/>
+                </hbox>
+            </vbox>
+            <vbox id="editBox" height="100%" margin="false,false,false,true" expand="fieldGroupBox" spacing="true">
+                <scrollBox id="fieldGroupBox">
+                    <form id="form" dataContainer="customerDc">
+                        <column width="350px">
+                            <textField id="nameField" property="name"/>
+                            <comboBox id="statusField" property="status"/>
+                        </column>
+                    </form>
+                </scrollBox>
+                <hbox id="actionsPane" spacing="true" visible="false">
+                    <button id="saveBtn" action="save"/>
+                    <button id="cancelBtn" action="cancel"/>
+                </hbox>
+            </vbox>
+        </split>
+    </layout>
+</window>

@@ -1,0 +1,138 @@
+/*!
+ * Copyright 2020 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@mixin he-label($primary-stylename: v-label) {
+  @include he-label-style($primary-stylename: $primary-stylename);
+
+  /* Global size */
+
+  &.small {
+    @include he-label-size-style($primary-stylename : $primary-stylename,
+                                 $unit-size         : $v-unit-size--small,
+                                 $font-size         : $v-font-size--small,
+                                 $scaling-factor    : $v-scaling-factor--small);
+  }
+
+  &.large {
+    @include he-label-size-style($primary-stylename : $primary-stylename,
+                                 $unit-size         : $v-unit-size--large,
+                                 $font-size         : $v-font-size--large,
+                                 $scaling-factor    : $v-scaling-factor--large);
+  }
+
+  /* Size within a container */
+
+  .small {
+    @include he-label-size-style($primary-stylename : $primary-stylename,
+                                 $unit-size         : $v-unit-size--small,
+                                 $font-size         : $v-font-size--small,
+                                 $scaling-factor    : $v-scaling-factor--small);
+  }
+
+  .medium {
+    @include he-label-size-style($primary-stylename : $primary-stylename,
+                                 $unit-size         : $v-unit-size,
+                                 $font-size         : $v-font-size);
+  }
+
+  .large {
+    @include he-label-size-style($primary-stylename : $primary-stylename,
+                                 $unit-size         : $v-unit-size--large,
+                                 $font-size         : $v-font-size--large,
+                                 $scaling-factor    : $v-scaling-factor--large);
+  }
+
+  /* Own size */
+
+  // TODO: gg, possibly implement
+}
+
+@mixin he-label-style($primary-stylename: v-label) {
+  @include he-label-size-style($primary-stylename: $primary-stylename);
+
+  .#{$primary-stylename}-colored {
+    color: var(--primary-color);
+  }
+
+  .#{$primary-stylename}-spinner {
+    @include he-spinner();
+  }
+
+  .#{$primary-stylename}.#{$primary-stylename}-h1,
+  .#{$primary-stylename}.#{$primary-stylename}-h2,
+  .#{$primary-stylename}.#{$primary-stylename}-h3,
+  .#{$primary-stylename}.#{$primary-stylename}-h4 {
+    color: var(--text-main-color);
+  }
+
+  .#{$primary-stylename}-success,
+  .#{$primary-stylename}-failure {
+    background: var(--background-color);
+    color: var(--text-main-color);
+    border: he-border($color: --success-color, $strength: 2px);
+
+    &:before {
+      color: var(--success-color);
+    }
+  }
+
+  .#{$primary-stylename}-failure {
+    border-color: var(--error-color);
+
+    &:before {
+      color: var(--error-color);
+    }
+  }
+}
+
+@mixin he-label-size-style($primary-stylename : v-label,
+                           $unit-size         : $v-unit-size,
+                           $font-size         : $v-font-size,
+                           $scaling-factor    : 1) {
+  .#{$primary-stylename} {
+    font-size: $font-size;
+  }
+
+  .#{$primary-stylename}-spinner {
+    @include he-spinner($size: $unit-size - 10);
+  }
+
+  .#{$primary-stylename}-success,
+  .#{$primary-stylename}-failure {
+    padding: round($unit-size/5) round($unit-size/2) round($unit-size/5) round($unit-size);
+    font-size: round($font-size * 0.95);
+
+    &:before {
+      margin-left: round($unit-size/-2);
+    }
+  }
+
+  .#{$primary-stylename}.#{$primary-stylename}-h1 {
+    font-size: round($v-font-size--h1 * $scaling-factor);
+  }
+
+  .#{$primary-stylename}.#{$primary-stylename}-h2 {
+    font-size: round($v-font-size--h2 * $scaling-factor);
+  }
+
+  .#{$primary-stylename}.#{$primary-stylename}-h3 {
+    font-size: round($v-font-size--h3 * $scaling-factor);
+  }
+
+  .#{$primary-stylename}.#{$primary-stylename}-h4 {
+    font-size: round($v-font-size--small * $scaling-factor);
+  }
+}

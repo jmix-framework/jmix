@@ -1,0 +1,348 @@
+/*
+ * Copyright (c) 2008-2016 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
+package io.jmix.ui.app.core.dev;
+
+import io.jmix.ui.component.*;
+import io.jmix.ui.component.ExpandingLayout.ExpandDirection;
+import io.jmix.ui.screen.Screen;
+
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
+import static io.jmix.ui.app.core.dev.LayoutTip.error;
+import static io.jmix.ui.app.core.dev.LayoutTip.warn;
+
+public class LayoutAnalyzer {
+
+    protected List<Inspection> inspections = new ArrayList<>();
+    {
+        inspections.add(new ComponentUndefinedSize());
+        inspections.add(new ScrollBoxInnerComponentRelativeSize());
+        inspections.add(new ComponentRelativeSizeInsideUndefinedSizedContainer());
+        inspections.add(new AlignInsideUndefinedSizedContainer());
+        inspections.add(new ExpandOfSingleComponent());
+        inspections.add(new ExpandedComponentOverlapsAnother());
+    }
+
+    protected List<Inspection> rootInspections = new ArrayList<>();
+    {
+        rootInspections.add(new RelativeHeightComponentInsideUndefinedHeightDialog());
+        rootInspections.add(new RelativeWidthComponentInsideUndefinedWidthDialog());
+        rootInspections.add(new ExpandOfSingleComponent());
+        rootInspections.add(new ExpandedComponentOverlapsAnother());
+    }
+
+    public List<LayoutTip> analyze(Screen screen) {
+        final List<LayoutTip> errors = new ArrayList<>();
+
+        Window window = screen.getWindow();
+
+        for (Inspection inspection : rootInspections) {
+            errors.addAll(inspection.analyze(window, "window"));
+        }
+
+        ComponentsHelper.walkComponents(window, (component, name) -> {
+            for (Inspection inspection : inspections) {
+                errors.addAll(inspection.analyze(component, name));
+            }
+        });
+
+        return errors;
+    }
+
+    public interface Inspection {
+        List<LayoutTip> analyze(Component component, String path);
+    }
+
+    public static class ComponentUndefinedSize implements Inspection {
+
+        @Override
+        public List<LayoutTip> analyze(Component c, String path) {
+
+            if (c instanceof Table
+                    || c instanceof Tree
+                    || c instanceof ScrollBoxLayout) {
+                String componentClass = c.getClass().getSimpleName();
+
+                if (c.getWidth() < 0 && c.getHeight() < 0) {
+                    return Collections.singletonList(warn("Component '" + path + "'", componentClass + " should not have undefined size"));
+                } else if (c.getWidth() < 0) {
+                    return Collections.singletonList(warn("Component '" + path + "'", componentClass + " should not have undefined width"));
+                } else if (c.getHeight() < 0) {
+                    return Collections.singletonList(warn("Component '" + path + "'", componentClass + " should not have undefined height"));
+                }
+            }
+
+            return Collections.emptyList();
+        }
+    }
+
+    public static class ScrollBoxInnerComponentRelativeSize implements Inspection {
+
+        @Override
+        public List<LayoutTip> analyze(Component c, String path) {
+            if (c instanceof ScrollBoxLayout) {
+                List<LayoutTip> tips = null;
+
+                ScrollBoxLayout scrollBox = (ScrollBoxLayout) c;
+
+                if (scrollBox.getOrientation() == ScrollBoxLayout.Orientation.HORIZONTAL) {
+                    for (Component component : scrollBox.getOwnComponents()) {
+                        if (component.getWidth() > 0 && component.getWidthSizeUnit() == SizeUnit.PERCENTAGE) {
+                            if (tips == null) {
+                                tips = new ArrayList<>();
+                            }
+                            String id = component.getId() != null ? component.getId() : component.getClass().getSimpleName();
+                            tips.add(error("Scrollbox '" + path + "', nested component '" + id + "'",
+                                    "ScrollBox has HORIZONTAL orientation, nested component should not have relative width %s%%",
+                                    component.getWidth()));
+                        }
+                    }
+                } else {
+                    for (Component component : scrollBox.getOwnComponents()) {
+                        if (component.getHeight() > 0 && component.getHeightSizeUnit() == SizeUnit.PERCENTAGE) {
+                            if (tips == null) {
+                                tips = new ArrayList<>();
+                            }
+                            String id = component.getId() != null ? component.getId() : component.getClass().getSimpleName();
+                            tips.add(error("Scrollbox '" + path + "', nested component '" + id + "'",
+                                    "ScrollBox has VERTICAL orientation, nested component should not have relative height %s%%",
+                                    component.getHeight()));
+                        }
+                    }
+                }
+
+                return tips != null ? tips : Collections.emptyList();
+            }
+
+            return Collections.emptyList();
+        }
+    }
+
+    public static class ComponentRelativeSizeInsideUndefinedSizedContainer implements Inspection {
+
+        @Override
+        public List<LayoutTip> analyze(Component c, String path) {
+            if (c instanceof HasComponents
+                    // ResponsiveGridLayout doesn't support width manipulation
+                    && !(c instanceof ResponsiveGridLayout)) {
+                List<LayoutTip> tips = null;
+
+                HasComponents container = (HasComponents) c;
+                if (c.getWidth() < 0) {
+                    for (Component component : container.getOwnComponents()) {
+                        if (component.getWidthSizeUnit() == SizeUnit.PERCENTAGE && component.getWidth() > 0) {
+                            if (tips == null) {
+                                tips = new ArrayList<>();
+                            }
+                            String id = component.getId() != null ? component.getId() : component.getClass().getSimpleName();
+                            tips.add(error("Container '" + path + "', nested component '" + id + "'",
+                                    "Nested component has relative width %s%% inside container with undefined width",
+                                    component.getWidth()));
+                        }
+                    }
+                }
+
+                if (c.getHeight() < 0) {
+                    for (Component component : container.getOwnComponents()) {
+                        if (component.getHeightSizeUnit() == SizeUnit.PERCENTAGE && component.getHeight() > 0) {
+                            if (tips == null) {
+                                tips = new ArrayList<>();
+                            }
+                            String id = component.getId() != null ? component.getId() : component.getClass().getSimpleName();
+                            tips.add(error("Container '" + path + "', nested component '" + id + "'",
+                                    "Nested component has relative height %s%% inside container with undefined height",
+                                    component.getHeight()));
+                        }
+                    }
+                }
+
+                return tips != null ? tips : Collections.emptyList();
+            }
+            return Collections.emptyList();
+        }
+    }
+
+    public static class AlignInsideUndefinedSizedContainer implements Inspection {
+
+        @Override
+        public List<LayoutTip> analyze(Component c, String path) {
+            if (c instanceof HasComponents
+                    // ResponsiveGridLayout doesn't support width manipulation
+                    && !(c instanceof ResponsiveGridLayout)) {
+                if (c.getWidth() < 0 && c.getHeight() < 0) {
+                    List<LayoutTip> tips = null;
+
+                    HasComponents container = (HasComponents) c;
+                    for (Component component : container.getOwnComponents()) {
+                        if (tips == null) {
+                            tips = new ArrayList<>();
+                        }
+                        if (component.getAlignment() != null && component.getAlignment() != Component.Alignment.TOP_LEFT) {
+                            if (component instanceof Label) {
+                                // ignore align for labels
+                                continue;
+                            }
+
+                            String id = component.getId() != null ? component.getId() : component.getClass().getSimpleName();
+                            tips.add(warn("Container '" + path + "', nested component '" + id + "'",
+                                    "Nested component has align %s inside container with undefined size",
+                                    component.getAlignment()));
+                        }
+                    }
+
+                    return tips != null ? tips : Collections.emptyList();
+                }
+            }
+            return Collections.emptyList();
+        }
+    }
+
+    public static class RelativeHeightComponentInsideUndefinedHeightDialog implements Inspection {
+
+        @Override
+        public List<LayoutTip> analyze(Component c, String path) {
+            if (c instanceof Window && c.getHeight() < 0) {
+                List<LayoutTip> tips = null;
+
+                HasComponents container = (HasComponents) c;
+                for (Component component : container.getOwnComponents()) {
+                    if (tips == null) {
+                        tips = new ArrayList<>();
+                    }
+                    if (component.getHeightSizeUnit() == SizeUnit.PERCENTAGE && component.getHeight() > 0) {
+                        String id = component.getId() != null ? component.getId() : component.getClass().getSimpleName();
+                        tips.add(warn("Nested component '" + id + "'",
+                                "Nested component has relative height %s%% inside window with undefined height",
+                                component.getHeight()));
+                    }
+                }
+
+                return tips != null ? tips : Collections.emptyList();
+            }
+            return Collections.emptyList();
+        }
+    }
+
+    public static class RelativeWidthComponentInsideUndefinedWidthDialog implements Inspection {
+
+        @Override
+        public List<LayoutTip> analyze(Component c, String path) {
+            if (c instanceof Window && c.getWidth() < 0) {
+                List<LayoutTip> tips = null;
+
+                HasComponents container = (HasComponents) c;
+                for (Component component : container.getOwnComponents()) {
+                    // ResponsiveGridLayout doesn't support width manipulation
+                    if (component instanceof ResponsiveGridLayout) continue;
+
+                    if (tips == null) {
+                        tips = new ArrayList<>();
+                    }
+                    if (component.getWidthSizeUnit() == SizeUnit.PERCENTAGE && component.getWidth() > 0) {
+                        String id = component.getId() != null ? component.getId() : component.getClass().getSimpleName();
+                        tips.add(warn("Nested component '" + id + "'",
+                                "Nested component has relative width %s%% inside window with undefined width",
+                                component.getWidth()));
+                    }
+                }
+
+                return tips != null ? tips : Collections.emptyList();
+            }
+            return Collections.emptyList();
+        }
+    }
+
+    public static class ExpandOfSingleComponent implements Inspection {
+
+        @Override
+        public List<LayoutTip> analyze(Component c, String path) {
+            if (c instanceof ExpandingLayout) {
+                ExpandingLayout container = (ExpandingLayout) c;
+
+                Collection<Component> ownComponents = container.getOwnComponents();
+                if (ownComponents.size() == 1) {
+                    Component innerComponent = ownComponents.iterator().next();
+                    if (container.isExpanded(innerComponent)) {
+                        String id = innerComponent.getId() != null ?
+                                innerComponent.getId() : innerComponent.getClass().getSimpleName();
+                        return Collections.singletonList(warn("Nested component '" + id + "'",
+                                "Single component expanded inside container"));
+                    }
+                }
+
+                return Collections.emptyList();
+            }
+            return Collections.emptyList();
+        }
+    }
+
+    public static class ExpandedComponentOverlapsAnother implements Inspection {
+
+        @Override
+        public List<LayoutTip> analyze(Component component, String path) {
+            if (component instanceof ExpandingLayout) {
+                ExpandingLayout container = (ExpandingLayout) component;
+                List<LayoutTip> tips = null;
+                Collection<Component> components = container.getOwnComponents();
+                Component expanded = getExpandedComponent(container);
+                if (components.size() > 1 && expanded != null) {
+                    tips = new ArrayList<>();
+                    String expandedId = expanded.getId() != null ?
+                            expanded.getId() : expanded.getClass().getSimpleName();
+                    for (Component innerComponent : components) {
+                        if (innerComponent != expanded
+                                && innerComponent.isVisibleRecursive()
+                                && isSizeIgnored(container, innerComponent)) {
+                            String id = innerComponent.getId() != null ?
+                                    innerComponent.getId() : innerComponent.getClass().getSimpleName();
+                            tips.add(warn("Container '" + path + "', nested component '" + id + "'",
+                                    "Relative size of nested component was ignored because of '%s' expanded inside container", expandedId));
+                        }
+                    }
+
+                }
+                return tips != null ? tips : Collections.emptyList();
+            }
+            return Collections.emptyList();
+        }
+
+        @Nullable
+        private Component getExpandedComponent(ExpandingLayout container) {
+            Collection<Component> components = container.getOwnComponents();
+            for (Component innerComponent : components) {
+                if (container.isExpanded(innerComponent)) {
+                    return innerComponent;
+                }
+            }
+            return null;
+        }
+
+        private boolean isSizeIgnored(ExpandingLayout container, Component component) {
+            return container.getExpandDirection() == ExpandDirection.HORIZONTAL
+                    && component.getWidthSizeUnit() == SizeUnit.PERCENTAGE
+                    && component.getWidth() > 0
+                    || container.getExpandDirection() == ExpandDirection.VERTICAL
+                    && component.getHeightSizeUnit() == SizeUnit.PERCENTAGE
+                    && component.getHeight() > 0;
+        }
+    }
+}

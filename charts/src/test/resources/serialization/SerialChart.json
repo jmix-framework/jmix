@@ -1,0 +1,126 @@
+{
+  "categoryAxis": {
+    "dashLength": 1,
+    "minorGridEnabled": true,
+    "position": "top"
+  },
+  "categoryField": "date",
+  "chartCursor": {
+    "cursorPosition": "mouse",
+    "pan": true
+  },
+  "chartScrollbar": {
+    "graph": "g1",
+    "scrollbarHeight": 30
+  },
+  "graphs": [
+    {
+      "bullet": "round",
+      "bulletBorderAlpha": 1.0,
+      "bulletColor": "#FFFFFF",
+      "bulletSize": 5,
+      "hideBulletsCount": 50,
+      "id": "g1",
+      "lineThickness": 2,
+      "title": "Red line",
+      "valueField": "value"
+    }
+  ],
+  "valueAxes": [
+    {
+      "axisAlpha": 0.0,
+      "position": "left"
+    }
+  ],
+  "export": {
+    "enabled": true,
+    "fileName": "chart",
+    "exportFields": [
+      "value",
+      "date"
+    ]
+  },
+  "type": "serial",
+  "dataProvider": [
+    {
+      "$k": "1",
+      "value": 13,
+      "date": "2012-07-27"
+    },
+    {
+      "$k": "2",
+      "value": 11,
+      "date": "2012-07-28"
+    },
+    {
+      "$k": "3",
+      "value": 15,
+      "date": "2012-07-29"
+    },
+    {
+      "$k": "4",
+      "value": 16,
+      "date": "2012-07-30"
+    },
+    {
+      "$k": "5",
+      "value": 18,
+      "date": "2012-07-31"
+    },
+    {
+      "$k": "6",
+      "value": 13,
+      "date": "2012-08-01"
+    },
+    {
+      "$k": "7",
+      "value": 22,
+      "date": "2012-08-02"
+    },
+    {
+      "$k": "8",
+      "value": 23,
+      "date": "2012-08-03"
+    },
+    {
+      "$k": "9",
+      "value": 20,
+      "date": "2012-08-04"
+    },
+    {
+      "$k": "10",
+      "value": 17,
+      "date": "2012-08-05"
+    },
+    {
+      "$k": "11",
+      "value": 16,
+      "date": "2012-08-06"
+    },
+    {
+      "$k": "12",
+      "value": 18,
+      "date": "2012-08-07"
+    },
+    {
+      "$k": "13",
+      "value": 21,
+      "date": "2012-08-08"
+    },
+    {
+      "$k": "14",
+      "value": 26,
+      "date": "2012-08-09"
+    },
+    {
+      "$k": "15",
+      "value": 24,
+      "date": "2012-08-10"
+    },
+    {
+      "$k": "16",
+      "value": 29,
+      "date": "2012-08-11"
+    }
+  ]
+}

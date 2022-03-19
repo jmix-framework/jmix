@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://jmix.io/schema/ui/window"
+        caption="msg://selectValue.caption">
+    <dialogMode forceDialog="true"
+                width="theme://jmix.ui.selectValue.popup.dialog.width"
+                height="theme://jmix.ui.selectValue.popup.dialog.height"
+                resizable="true"/>
+    <layout spacing="true" expand="valuesLayout">
+        <hbox id="addItemLayout" spacing="true" width="100%"/>
+
+        <scrollBox id="valuesLayout" scrollBars="both"/>
+
+        <hbox id="editActions" spacing="true">
+            <button id="commitBtn" action="commit"/>
+            <button id="cancelBtn" action="cancel"/>
+        </hbox>
+    </layout>
+</window>

@@ -1,0 +1,50 @@
+/*
+ * Copyright (c) 2008-2016 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
+@mixin jmix-folders-pane {
+  .jmix-folders-pane {
+    background: $v-panel-background-color;
+  }
+
+  .v-tree8-row.jmix-clickable-folder .v-tree8-cell-content span {
+    cursor: pointer;
+  }
+
+  .v-tree8-row.jmix-clickable-folder .v-tree8-cell-content span:hover {
+    text-decoration: underline;
+  }
+
+  .jmix-folders-pane-caption {
+    line-height: $v-unit-size;
+    font-size: $v-font-size--h3;
+  }
+
+  .jmix-main-menu.v-menubar > .v-menubar-menuitem.v-menubar-menuitem-folders-pane-icon,
+  .jmix-main-menu.v-menubar > .v-menubar-menuitem.v-menubar-menuitem-folders-pane-icon-active {
+    &:before {
+      color: $v-font-color;
+      font-size: $v-font-size;
+      font-family: FontAwesome;
+      content: "\f0c9";
+    }
+  }
+
+  .jmix-main-menu.v-menubar > .v-menubar-menuitem.v-menubar-menuitem-folders-pane-icon-active,
+  .jmix-main-menu.v-menubar > .v-menubar-menuitem.v-menubar-menuitem-folders-pane-icon-active:hover {
+    @include valo-button-active-style();
+  }
+}

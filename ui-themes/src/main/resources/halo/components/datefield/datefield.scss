@@ -1,0 +1,119 @@
+/*
+ * Copyright (c) 2008-2016 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
+$jmix-default-datefield-width: 120px;
+
+@mixin halo-datefield($primary-stylename : jmix-datefield) {
+  .#{$primary-stylename}-layout {
+    white-space: nowrap;
+    outline: none;
+
+    .jmix-timefield {
+      margin-left: $v-layout-spacing-horizontal/2;
+    }
+  }
+
+  .#{$primary-stylename}-layout.v-has-width {
+    display: inline-flex;
+
+    .#{$primary-stylename} {
+      width: 100%;
+    }
+  }
+
+  .#{$primary-stylename}-layout {
+    &.borderless {
+      .v-datefield,
+      .jmix-timefield,
+      [class*="textfield"],
+      [class*="button"] {
+        @include valo-textfield-borderless-style;
+      }
+    }
+
+    &.tiny {
+      .v-datefield,
+      .jmix-timefield {
+        @include valo-datefield-style($unit-size: $v-unit-size--tiny, $bevel: null, $shadow: null, $border: null, $background-color: null, $states: normal);
+        font-size: $v-font-size--tiny;
+      }
+    }
+
+    &.small {
+      .v-datefield,
+      .jmix-timefield {
+        @include valo-datefield-style($unit-size: $v-unit-size--small, $bevel: null, $shadow: null, $border: null, $background-color: null, $states: normal);
+        font-size: $v-font-size--small;
+      }
+    }
+
+    &.tiny,
+    &.small {
+      .v-datefield [class*="textfield"] {
+        padding-left: ceil($v-unit-size/6) + ceil($v-textfield-border-radius/3);
+      }
+    }
+  }
+
+  .#{$primary-stylename} {
+    $border-width: first-number($v-textfield-border) or 0;
+    $padding-width: ceil($v-unit-size/6) + ceil($v-textfield-border-radius/3);
+
+    [class*="textfield"] {
+      padding-left: $padding-width;
+      padding-right: $v-unit-size * 1.2;
+      height: $v-unit-size;
+    }
+
+    [class*="button"] {
+      left: auto;
+      right: $border-width;
+      border-right: 0;
+      border-left: valo-border($color: $v-textfield-background-color, $border: $v-textfield-border, $strength: 0.5);
+    }
+  }
+
+  .#{$primary-stylename}-composition-error {
+    .jmix-timefield,
+    .v-datefield-textfield {
+      @include valo-textfield-error-style;
+    }
+
+    .v-datefield-button {
+      color: $v-error-indicator-color;
+      border-color: $v-error-indicator-color;
+    }
+  }
+
+  .#{$primary-stylename}.v-datefield-popup .v-datefield-calendarpanel-day.v-datefield-calendarpanel-day-focused {
+    border-color: $v-focus-color;
+  }
+
+  .#{$primary-stylename}.v-datefield-day,
+  .#{$primary-stylename}.v-datefield-month,
+  .#{$primary-stylename}.v-datefield-year {
+    width: $jmix-default-datefield-width;
+  }
+
+  .#{$primary-stylename}.v-datefield-popup {
+    @include valo-datefield-popup-style;
+  }
+
+  .v-datefield.v-readonly [class*="textfield"]:focus {
+    border-color: $v-focus-color;
+  }
+}

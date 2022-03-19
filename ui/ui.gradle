@@ -1,0 +1,69 @@
+/*
+ * Copyright 2019 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+apply plugin: 'groovy'
+apply plugin: 'io.jmix'
+
+group = 'io.jmix.ui'
+archivesBaseName = 'jmix-ui'
+
+dependencies {
+    api 'io.jmix.core:jmix-core'
+
+    api 'com.vaadin:vaadin-server'
+    api 'com.vaadin:vaadin-compatibility-server'
+    api 'com.vaadin:vaadin-push'
+    api 'com.vaadin:vaadin-spring'
+
+    api 'org.springframework:spring-websocket'
+    api 'org.springframework.boot:spring-boot-autoconfigure'
+
+    api 'com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20191001.1'
+
+    api 'org.webjars:ace-builds'
+    api 'org.webjars:bootstrap'
+    api 'org.webjars:diff-match-patch'
+    api 'org.webjars:jquery'
+    api 'org.webjars:jquery-ui'
+    api 'org.webjars.bower:jquery-file-upload'
+    api 'org.webjars.npm:object-fit-images'
+    api 'javax.inject:javax.inject'
+
+    implementation 'com.google.code.gson:gson'
+    implementation 'com.fasterxml.jackson.core:jackson-databind'
+    implementation 'com.fasterxml.jackson.core:jackson-annotations'
+
+    testImplementation 'org.springframework:spring-test'
+    testImplementation 'org.spockframework:spock-core'
+    testImplementation 'org.spockframework:spock-spring'
+    testImplementation project(':ui-test-assist')
+    testImplementation 'io.jmix.data:jmix-eclipselink'
+    testImplementation 'org.apache.commons:commons-dbcp2'
+    testImplementation 'org.springframework:spring-orm'
+    testImplementation 'cglib:cglib-nodep:3.3.0'
+    testImplementation 'org.objenesis:objenesis:3.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+    testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'
+    testRuntimeOnly 'org.hsqldb:hsqldb'
+    testRuntimeOnly 'org.slf4j:slf4j-simple'
+}
+
+jar {
+    with copySpec {
+        from sourceSets.main.allJava
+        include "io/jmix/ui/widget/client/**"
+    }
+}

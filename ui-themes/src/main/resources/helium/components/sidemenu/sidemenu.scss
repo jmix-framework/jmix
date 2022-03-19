@@ -1,0 +1,465 @@
+/*!
+ * Copyright 2020 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+$jmix-sidemenu-top-offset--small: floor(($v-unit-size--small - $v-unit-size--small * 0.8) / 2) !default;
+$jmix-sidemenu-top-height--small: $v-unit-size--small + 2 * $jmix-sidemenu-top-offset--small !default;
+
+$jmix-sidemenu-top-offset--large: floor(($v-unit-size--large - $v-unit-size--large * 0.8) / 2) !default;
+$jmix-sidemenu-top-height--large: $v-unit-size--large + 2 * $jmix-sidemenu-top-offset--large !default;
+
+@mixin he-sidemenu($primary-stylename: jmix-sidemenu) {
+  @include he-sidemenu-styles($primary-stylename: $primary-stylename);
+
+  &.small {
+    @include he-sidemenu-size-styles($primary-stylename   : $primary-stylename,
+                                     $unit-size           : $v-unit-size--small,
+                                     $font-size           : $v-font-size--small,
+                                     $scaling-factor      : $v-scaling-factor--small,
+                                     $sidemenu-top-offset : $jmix-sidemenu-top-offset--small,
+                                     $sidemenu-top-height : $jmix-sidemenu-top-height--small);
+  }
+
+  &.large {
+    @include he-sidemenu-size-styles($primary-stylename   : $primary-stylename,
+                                     $unit-size           : $v-unit-size--large,
+                                     $font-size           : $v-font-size--large,
+                                     $scaling-factor      : $v-scaling-factor--large,
+                                     $sidemenu-top-offset : $jmix-sidemenu-top-offset--large,
+                                     $sidemenu-top-height : $jmix-sidemenu-top-height--large);
+  }
+}
+
+@mixin he-sidemenu-styles($primary-stylename: jmix-sidemenu) {
+  @include he-sidemenu-size-styles($primary-stylename: $primary-stylename);
+
+  // TODO: gg, does it really exist?
+  .#{$primary-stylename}-user {
+    // TODO: gg, implement?
+  }
+
+  .#{$primary-stylename}-layout .jmix-main-tabsheet > .v-tabsheet-tabcontainer {
+    border: 0;
+  }
+
+  .#{$primary-stylename}-title {
+    color: var(--sidemenu-title-color);
+    background: var(--sidemenu-title-background-color);
+    text-shadow: none;
+  }
+
+  .#{$primary-stylename} {
+    color: var(--sidemenu-text-color);
+  }
+
+  .#{$primary-stylename}-item {
+    @include he-sidemenu-item-style();
+  }
+
+  .#{$primary-stylename}-item-header {
+    @include he-sidemenu-item-header-style();
+  }
+
+  .#{$primary-stylename}-item-focused {
+    @include he-sidemenu-item-focused-style();
+  }
+
+  .#{$primary-stylename}-item-selected {
+    @include he-sidemenu-item-selected-style();
+  }
+
+  .#{$primary-stylename}-responsive {
+    $small_min: $jmix-responsive-sidemenu-togglebutton-appeared-max-width-range + 1px;
+    $small_max: $jmix-responsive-sidemenu-small-style-max-width-range;
+
+    &[width-range~="#{$small_min}-#{$small_max}"] {
+      .#{$primary-stylename}-panel {
+        background-color: var(--sidemenu-background-color);
+
+        .#{$primary-stylename}-item-action {
+          border-top: he-border($color: --sidemenu-responsive-item-separator-color);
+        }
+
+        .#{$primary-stylename}-item-action.#{$primary-stylename}-item-selected {
+          color: var(--sidemenu-responsive-item-selected-text-color);
+          background: var(--sidemenu-responsive-item-selected-background-color);
+        }
+
+        .#{$primary-stylename}-item-header {
+          background: var(--sidemenu-responsive-item-header-background-color);
+        }
+      }
+    }
+
+    &[width-range~="0-#{$jmix-responsive-sidemenu-togglebutton-appeared-max-width-range}"] {
+      .#{$primary-stylename}-title {
+        background: var(--sidemenu-responsive-title-background-color);
+        color: var(--sidemenu-responsive-title-text-color);
+      }
+
+      .#{$primary-stylename}-mobile-buttons {
+        .v-button {
+          @include he-sidemenu-action-button-color-style(
+                  $color                    : --sidemenu-mobile-button-color,
+                  $hover-background-color   : --sidemenu-mobile-button-hover-background-color,
+                  $active-background-color  : --sidemenu-mobile-button-active-background-color
+          );
+        }
+
+        .jmix-useractions-button {
+          @include he-sidemenu-useractions-button-color-style(
+                  $color                    : --sidemenu-mobile-button-color,
+                  $hover-background-color   : --sidemenu-mobile-button-hover-background-color,
+                  $active-background-color  : --sidemenu-mobile-button-active-background-color
+          );
+        }
+      }
+
+      .#{$primary-stylename}-wrap {
+        @include he-box-shadow(--app-workarea-shadow);
+
+        background: var(--sidemenu-background-color);
+        color: var(--sidemenu-text-color);
+        border: none;
+      }
+    }
+  }
+
+  .#{$primary-stylename}-panel {
+    background: var(--sidemenu-background-color);
+
+    border-right: 0;
+
+    .jmix-userindicator {
+      color: var(--sidemenu-text-color);
+    }
+
+    .jmix-ftsfield-button,
+    .jmix-newwindow-button,
+    .jmix-logout-button {
+      @include he-sidemenu-action-button-color-style(
+              $color                    : --sidemenu-action-button-color,
+              $hover-background-color   : --sidemenu-action-button-hover-background-color,
+              $active-background-color  : --sidemenu-action-button-active-background-color
+      );
+    }
+
+    .jmix-useractions-button {
+      @include he-sidemenu-useractions-button-color-style(
+              $color                    : --sidemenu-action-button-color,
+              $hover-background-color   : --sidemenu-action-button-hover-background-color,
+              $active-background-color  : --sidemenu-action-button-active-background-color
+      );
+    }
+
+    .jmix-user-timezone-label {
+      color: var(--sidemenu-text-color);
+    }
+
+    .#{$primary-stylename} {
+      color: var(--sidemenu-text-color);
+    }
+
+    .#{$primary-stylename}-item {
+      @include he-sidemenu-item-style();
+    }
+
+    .#{$primary-stylename}-item-header {
+      @include he-sidemenu-item-header-style();
+    }
+
+    .#{$primary-stylename}-item-focused {
+      @include he-sidemenu-item-focused-style();
+    }
+
+    .#{$primary-stylename}-item-selected {
+      @include he-sidemenu-item-selected-style();
+    }
+  }
+}
+
+@mixin he-sidemenu-size-styles($primary-stylename   : jmix-sidemenu,
+                               $unit-size           : $v-unit-size,
+                               $font-size           : $v-font-size,
+                               $scaling-factor      : 1,
+                               $sidemenu-top-offset : $jmix-sidemenu-top-offset,
+                               $sidemenu-top-height : $jmix-sidemenu-top-height) {
+
+  .#{$primary-stylename} {
+    font-size: $font-size;
+    line-height: round($unit-size);
+  }
+
+  .#{$primary-stylename}-wrap {
+    font-size: 0;
+
+    & > * {
+      font-size: $font-size;
+    }
+  }
+
+  .#{$primary-stylename}-title {
+    $title-font-size: round($jmix-sidemenu-title-font-size * $scaling-factor);
+    font-size: $title-font-size;
+    padding: round($unit-size/3) round($unit-size/2);
+
+    * {
+      font-size: $title-font-size;
+    }
+  }
+
+  .#{$primary-stylename}-item {
+    @include he-sidemenu-item-size-style($unit-size, $font-size);
+  }
+
+  .#{$primary-stylename}-item-header {
+    @include he-sidemenu-item-header-size-style($unit-size);
+  }
+
+  .#{$primary-stylename}-item-wrap {
+    line-height: $unit-size;
+
+    .v-icon {
+      margin-right: round($unit-size / 2);
+    }
+  }
+
+  .#{$primary-stylename}-submenu {
+    .#{$primary-stylename}-item-header {
+      margin-left: round($unit-size / 2);
+    }
+
+    & > * {
+      margin-left: round($unit-size / 2);
+    }
+  }
+
+  .#{$primary-stylename}-responsive {
+    .#{$primary-stylename}-panel {
+      padding-bottom: $unit-size;
+    }
+
+    $small_min: $jmix-responsive-sidemenu-togglebutton-appeared-max-width-range + 1px;
+    $small_max: $jmix-responsive-sidemenu-small-style-max-width-range;
+
+    &[width-range~="#{$small_min}-#{$small_max}"] {
+      .#{$primary-stylename}-panel {
+        .jmix-main-buttons {
+          .v-icon {
+            font-size: round($font-size * 1.5);
+          }
+
+          img.v-icon {
+            height: round($font-size * 1.5);
+          }
+        }
+
+        & .#{$primary-stylename}-title,
+        & .#{$primary-stylename}-wrap > * {
+          min-width: $unit-size * 3;
+          max-width: $unit-size * 4;
+        }
+
+
+        .#{$primary-stylename}-item-action {
+          font-size: round($font-size * 1.6);
+          padding: round($unit-size/3);
+
+
+          .#{$primary-stylename}-item-caption {
+            font-size: round($font-size * 0.8);
+          }
+
+          .#{$primary-stylename}-item-badge {
+            padding-left: round($unit-size/9);
+            padding-right: round($unit-size/9);
+            top: round($unit-size/5);
+            right: round($unit-size/5);
+            border: he-border($color: --sidemenu-item-badge-background-color);
+          }
+        }
+
+        .#{$primary-stylename}-item-header {
+          margin: round($unit-size/4) 0 0;
+          padding: round($unit-size/5) round($unit-size/1.5) round($unit-size/5) round($unit-size/4);
+
+          .#{$primary-stylename}-item-caption {
+            font-size: round($font-size * 0.9);
+          }
+
+          .#{$primary-stylename}-item-badge {
+            right: round($unit-size/4);
+          }
+        }
+      }
+    }
+
+    &[width-range~="0-#{$jmix-responsive-sidemenu-togglebutton-appeared-max-width-range}"] {
+      padding-top: $sidemenu-top-height;
+
+      .#{$primary-stylename}-toggle {
+        top: $sidemenu-top-offset;
+        left: $sidemenu-top-offset;
+        min-width: 0;
+      }
+
+      .#{$primary-stylename}-mobile-buttons {
+        top: $sidemenu-top-offset;
+      }
+
+      .#{$primary-stylename}-title {
+        font-size: round($font-size);
+        line-height: round($unit-size);
+        height: $sidemenu-top-height !important;
+
+        .v-label {
+          line-height: $sidemenu-top-height;
+        }
+      }
+
+      .#{$primary-stylename}-wrap {
+        top: $sidemenu-top-height;
+        padding: round($unit-size / 2) 0;
+      }
+    }
+  }
+
+  .#{$primary-stylename}-panel {
+    font-size: $font-size;
+    line-height: $unit-size;
+
+    .v-button.jmix-ftsfield-button,
+    .v-button.jmix-logout-button,
+    .v-button.jmix-newwindow-button {
+      height: $unit-size;
+      padding: 0 ceil($unit-size/5);
+    }
+
+    .jmix-ftsfield {
+      padding-right: $v-layout-margin-right + $unit-size;
+    }
+
+    .#{$primary-stylename}-item {
+      @include he-sidemenu-item-size-style($unit-size, $font-size);
+    }
+  }
+
+  .jmix-useractions-button:not(.v-menubar-submenu) {
+    height: $unit-size;
+    line-height: $unit-size;
+  }
+}
+
+@mixin he-sidemenu-item-style() {
+  text-shadow: none;
+  font-weight: normal;
+
+  .v-ch & span.v-icon {
+    color: var(--sidemenu-text-color);
+  }
+
+  [class*="badge"] {
+    color: var(--sidemenu-item-badge-color);
+    background: var(--sidemenu-item-badge-background-color);
+  }
+
+  &:focus,
+  &:hover,
+  &.selected {
+    @include he-sidemenu-item-focused-style();
+  }
+}
+
+@mixin he-sidemenu-item-size-style($unit-size   : $v-unit-size,
+                                   $font-size   : $v-font-size) {
+  padding: 0 round($unit-size) 0 round($unit-size / 2);
+
+  [class*="caption"] {
+    padding-right: round($unit-size / 2);
+  }
+
+  [class*="badge"] {
+    right: round($unit-size/2);
+    top: ($unit-size - round($font-size * 0.9) - round($unit-size/9) * 2) / 2;
+  }
+
+  span.v-icon {
+    margin-right: round($unit-size / 2);
+  }
+}
+
+@mixin he-sidemenu-item-header-style() {
+  color: var(--sidemenu-text-color);
+  font-weight: $jmix-sidemenu-item-font-weight;
+}
+
+@mixin he-sidemenu-item-header-size-style($unit-size: $v-unit-size) {
+  margin: round($unit-size/5) 0;
+}
+
+@mixin he-sidemenu-item-selected-style() {
+  background: var(--sidemenu-item-selected-background-color);
+  color: var(--sidemenu-item-selected-color);
+
+  &:focus,
+  &:hover,
+  &.selected {
+    color: var(--sidemenu-item-selected-color);
+
+    .v-ch & span.v-icon {
+      color: var(--sidemenu-item-selected-color);
+    }
+  }
+}
+
+@mixin he-sidemenu-item-focused-style() {
+  color: var(--sidemenu-item-focused-color);
+
+  .v-ch & span.v-icon {
+    color: var(--sidemenu-item-focused-color);
+  }
+}
+
+@mixin he-sidemenu-action-button-color-style($color, $hover-background-color, $active-background-color) {
+  color: var($color);
+
+  &:hover:not(.v-disabled) {
+    color: var($color);
+    background: var($hover-background-color);
+  }
+
+  &:active:not(.v-disabled) {
+    color: var($color);
+    background: var($active-background-color);
+  }
+}
+
+@mixin he-sidemenu-useractions-button-color-style($color, $hover-background-color, $active-background-color) {
+  color: var($color);
+
+  &:not(.v-menubar-submenu):hover {
+    color: var($color);
+    background: var($hover-background-color);
+  }
+
+  .v-menubar-menuitem:before {
+    display: none;
+  }
+
+  .v-menubar-menuitem-selected {
+    color: var($color);
+    background: var($active-background-color);
+  }
+}

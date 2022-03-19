@@ -1,0 +1,165 @@
+/*!
+ * Copyright 2020 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+$v-background-color: #FFFFFF;
+$v-app-background-color: #FFFFFF;
+$v-panel-background-color: #FFFFFF;
+
+$v-line-height: 1.35;
+
+$v-font-size: 14px;
+$v-font-weight: 400;
+
+$v-unit-size: 34px;
+
+$v-caption-font-size: $v-font-size;
+$v-caption-font-size--small: $v-font-size--small;
+$v-caption-font-size--large: $v-font-size--large;
+
+$v-tabsheet-caption-font-size: $v-font-size;
+
+$v-selection-item-border-radius: 0;
+$v-selection-item-height: $v-unit-size;
+$v-selection-item-height--small: $v-unit-size--small;
+$v-selection-item-height--large: $v-unit-size--large;
+
+$v-selection-overlay-padding-horizontal: 0;
+$v-selection-overlay-padding-vertical: 0;
+
+$v-overlay-padding-horizontal: 0;
+$v-overlay-padding-vertical: 0;
+
+$v-default-field-width: $v-unit-size * 8;
+
+$v-border-radius: 6px;
+
+$v-font-size--h1: 34px;
+$v-font-size--h2: 22px;
+$v-font-size--h3: 17px;
+
+$v-layout-margin-top: 12px;
+$v-layout-margin-left: 12px;
+$v-layout-margin-right: 12px;
+$v-layout-margin-bottom: 12px;
+
+$v-layout-spacing-vertical: 12px;
+$v-layout-spacing-horizontal: 12px;
+
+$v-table-row-height: $v-unit-size;
+$v-table-row-height--small: $v-unit-size--small;
+$v-table-row-height--large: $v-unit-size--large;
+
+$v-table-header-font-size: $v-font-size;
+$v-table-header-font-size--small: $v-font-size--small;
+$v-table-header-font-size--large: $v-font-size--large;
+
+$v-table-cell-padding-horizontal: 16px;
+
+$jmix-table-highlight-hover-row: true;
+$jmix-table-header-font-weight: 600;
+
+$v-grid-border: $v-grid-border-size solid var(--grid-border-color);
+
+$v-grid-cell-padding-horizontal: $v-table-cell-padding-horizontal;
+
+$v-grid-row-height: $v-unit-size;
+
+$v-grid-header-row-height: round($v-grid-row-height * 1.5);
+$v-grid-header-font-size: $v-font-size;
+
+$v-grid-footer-row-height: $v-grid-row-height;
+
+$v-grid-details-border-top: $v-grid-border;
+$v-grid-details-border-top-stripe: $v-grid-border;
+$v-grid-details-border-bottom: $v-grid-border;
+$v-grid-details-border-bottom-stripe: $v-grid-border;
+
+$jmix-datagrid-header-font-weight: 600;
+$jmix-datagrid-highlight-hover-row: true;
+
+$v-focus-style: none;
+$v-error-focus-style: none;
+
+$v-bevel: none;
+$v-textfield-bevel: none;
+$v-textfield-shadow: none;
+$v-shadow: none;
+$v-gradient: none;
+$v-link-text-decoration: none;
+
+$v-disabled-opacity: 1;
+
+$v-window-shadow: 0px 0px 1px rgba(0, 0, 0, 0.1), 0px 2px 6px rgba(79, 92, 120, 0.15), 0px 16px 24px rgba(79, 92, 120, 0.25);
+$v-window-nonmodal-shadow: $v-window-shadow;
+
+$jmix-window-modal-header-font-weight: 600;
+$jmix-window-modal-header-font-size: 22px;
+$jmix-window-modal-header-height: ceil($v-unit-size * 1.88);
+$jmix-window-modal-header-buttons-line-height: $v-unit-size;
+$jmix-window-modal-header-line-height: $jmix-window-modal-header-height;
+
+$v-tooltip-border-radius: round($v-border-radius / 2);
+$v-tooltip-box-shadow: $v-window-shadow;
+
+$jmix-sidemenu-item-font-weight: 600;
+$jmix-sidemenu-separate-items: false;
+$jmix-sidemenu-timezone-font-weight: 600;
+$jmix-sidemenu-title-font-size: $v-font-size--h3;
+$jmix-sidemenu-title-font-weight: 600;
+$jmix-sidemenu-title-gradient: false;
+$jmix-sidemenu-userindicator-font-weight: 600;
+
+/**
+ * Whether to enable show/hide animations for dialog windows.
+ * @group window
+ */
+$v-window-animations-enabled: true !default;
+/**
+ * Whether to show or not separate * element for required fields.
+ * @group field
+ */
+$v-show-required-indicators: true;
+/**
+ * Enables custom colored scrollbars for webkit/blink browsers.
+ * @group scrollbar
+ */
+$jmix-scrollbars-style-enabled: false !default;
+/**
+ * Whether buttons should be placed in one row or can wrap onto multiple rows.
+ * @group buttonspanel
+ */
+$jmix-buttonspanel-flow: true !default;
+/**
+ *  Whether to show a border for the Tree component
+ */
+$jmix-show-tree-border: true !default;
+
+$jmix-filter-friendly-search-button: true;
+
+$jmix-highlight-primary-action: true;
+
+$jmix-maintabsheet-selected-tab-font-weight: bold;
+$jmix-maintabsheet-tabs-border-radius: 2px;
+$jmix-maintabsheet-tab-border-left-width: 0;
+$jmix-maintabsheet-tab-border-top-width: 0;
+$jmix-maintabsheet-tab-margin-left: 0;
+$jmix-maintabsheet-tabbar-side-padding: 0;
+$jmix-maintabsheet-tabs-border-radius: 0;
+$jmix-maintabsheet-top-padding: 0;
+
+$jmix-splitpanel-splitter-width: 4px;
+
+$jmix-timefield-ampm-width: 72px;

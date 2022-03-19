@@ -1,0 +1,166 @@
+/*!
+ * Copyright 2020 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@mixin he-common {
+  &.v-app,
+  &.v-app-loading {
+    color: var(--text-main-color);
+    background: var(--app-background-color);
+  }
+
+  .v-app-loading {
+    background: var(--app-background-color);
+  }
+
+  .v-loading-indicator {
+    background: var(--primary-color);
+  }
+
+  select {
+    @include he-nativeselect-select-style();
+    @include he-select-size-style();
+  }
+
+  .v-caption {
+    @include he-caption-size-style();
+  }
+  @include he-caption-inline-icon-style();
+
+  &.small {
+    &.v-app,
+    &.v-app-loading {
+      font-size: $v-font-size--small;
+    }
+
+    .v-caption {
+      @include he-caption-size-style($unit-size: $v-unit-size--small, $font-size: $v-caption-font-size--small);
+    }
+    @include he-caption-inline-icon-style($unit-size: $v-unit-size--small, $font-size: $v-caption-font-size--small);
+
+    select {
+      @include he-select-size-style($unit-size: $v-unit-size--small, $font-size: $v-font-size--small);
+    }
+  }
+
+  &.large {
+    &.v-app,
+    &.v-app-loading {
+      font-size: $v-font-size--large;
+    }
+
+    .v-caption {
+      @include he-caption-size-style($unit-size: $v-unit-size--large, $font-size: $v-caption-font-size--large);
+    }
+    @include he-caption-inline-icon-style($unit-size: $v-unit-size--large, $font-size: $v-caption-font-size--large);
+
+    select {
+      @include he-select-size-style($unit-size: $v-unit-size--large, $font-size: $v-font-size--large);
+    }
+  }
+
+  .small {
+    .v-caption {
+      @include he-caption-size-style($unit-size: $v-unit-size--small, $font-size: $v-caption-font-size--small);
+    }
+    @include he-caption-inline-icon-style($unit-size: $v-unit-size--small, $font-size: $v-caption-font-size--small);
+
+    select {
+      @include he-select-size-style($unit-size: $v-unit-size--small, $font-size: $v-font-size--small);
+    }
+  }
+
+  .medium {
+    .v-caption {
+      @include he-caption-size-style($unit-size: $v-unit-size, $font-size: $v-caption-font-size);
+    }
+    @include he-caption-inline-icon-style($unit-size: $v-unit-size, $font-size: $v-caption-font-size);
+
+    select {
+      @include he-select-size-style($unit-size: $v-unit-size, $font-size: $v-font-size);
+    }
+  }
+
+  .large {
+    .v-caption {
+      @include he-caption-size-style($unit-size: $v-unit-size--large, $font-size: $v-caption-font-size--large);
+    }
+    @include he-caption-inline-icon-style($unit-size: $v-unit-size--large, $font-size: $v-caption-font-size--large);
+
+    select {
+      @include he-select-size-style($unit-size: $v-unit-size--large, $font-size: $v-font-size--large);
+    }
+  }
+}
+
+@mixin he-caption-size-style($unit-size : $v-unit-size,
+                             $font-size : $v-caption-font-size) {
+  font-size: $font-size;
+  padding-bottom: 0;
+
+  .v-icon + .v-captiontext,
+  .v-icon + span {
+    margin-left: round($unit-size / 5);
+  }
+}
+
+@mixin he-select-size-style($unit-size  : $v-unit-size,
+                            $font-size  : null) {
+  font-size: $font-size;
+  padding: round($unit-size / 6);
+}
+
+@mixin he-caption-inline-icon-style($unit-size  : $v-unit-size,
+                                    $font-size  : $v-font-size) {
+  .v-slot-inline-icon {
+    .v-caption-inline-icon {
+      & > .v-icon {
+        // Move the icon if a field has a caption
+        &:not(:only-child) {
+          $caption-font-height: $font-size * $v-line-height;
+          margin-top: $caption-font-height;
+        }
+      }
+
+      & > span.v-icon {
+        padding-left: 0; // get rid of halo padding
+      }
+    }
+  }
+
+  .v-caption-inline-icon {
+    @include he-caption-size-style($unit-size: $unit-size, $font-size: $font-size);
+
+    .v-icon + .v-captiontext,
+    .v-icon + span {
+      margin-left: 0;
+    }
+
+    .v-captiontext {
+      // override vaadin styles
+      font-size: $font-size;
+      padding: 0;
+    }
+
+    // Font icons
+    span.v-icon {
+      width: $unit-size;
+      line-height: $unit-size;
+      font-size: $font-size;
+
+      margin-left: first-number(he-border());
+    }
+  }
+}

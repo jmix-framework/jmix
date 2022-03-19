@@ -1,0 +1,1072 @@
+/*!
+ * Copyright 2020 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@import "../halo/halo";
+
+@import "app/global";
+@import "app/folders-pane";
+@import "app/generic-filter";
+@import "app/login-window";
+@import "app/main-window";
+@import "app/app-menu";
+@import "components/accordion/accordion";
+@import "components/button/button";
+@import "components/calendar/calendar";
+@import "components/capslockindicator/capslockindicator";
+@import "components/checkbox/checkbox";
+@import "components/checkboxgroup/checkboxgroup";
+@import "components/colorpicker/colorpicker";
+@import "components/combobox/combobox";
+@import "components/contextmenu/contextmenu";
+@import "components/contextmenu/contextmenu-button";
+@import "components/currencyfield/currencyfield";
+@import "components/datagrid/datagrid";
+@import "components/datefield/datefield";
+@import "components/dateintervaleditor/dateintervaleditor";
+@import "components/datepicker/datepicker";
+@import "components/draganddrop/draganddrop";
+@import "components/fieldgrouplayout/fieldgrouplayout";
+@import "components/fileupload/fileupload";
+@import "components/groupbox/groupbox";
+@import "components/label/label";
+@import "components/link/link";
+@import "components/listeditor/listeditor";
+@import "components/maskedfield/maskedfield";
+@import "components/nativeselect/nativeselect";
+@import "components/notification/notification";
+@import "components/orderedlayout/orderedlayout";
+@import "components/pagination/pagination";
+@import "components/panel/panel";
+@import "components/pickerfield/pickerfield";
+@import "components/pivottable/pivottable";
+@import "components/popupbutton/popupbutton";
+@import "components/popupview/popupview";
+@import "components/progressbar/progressbar";
+@import "components/radiobuttongroup/radiobuttongroup";
+@import "components/richtextarea/richtextarea";
+@import "components/sidemenu/sidemenu";
+@import "components/simplepagination/simplepagination";
+@import "components/drawer/drawer";
+@import "components/slider/slider";
+@import "components/sourcecodeeditor/sourcecodeeditor";
+@import "components/suggestionfield/suggestionfield";
+@import "components/searchselect/searchselect";
+@import "components/splitpanel/splitpanel";
+@import "components/table/table";
+@import "components/tabsheet/tabsheet";
+@import "components/textfield/textfield";
+@import "components/textarea/textarea";
+@import "components/timefield/timefield";
+@import "components/resizabletextarea/resizabletextarea";
+@import "components/tokenlist/tokenlist";
+@import "components/taglabel/taglabel";
+@import "components/tagpicker/tagpicker";
+@import "components/tagfield/tagfield";
+@import "components/tagcontainer/tagcontainer";
+@import "components/treedatagrid/treedatagrid";
+@import "components/tree/tree";
+@import "components/twincolumn/twincolumn";
+@import "components/window/window";
+@import "components/filter/filter";
+@import "components/groupfilter/groupfilter";
+@import "shared/loading-indicator";
+@import "shared/reconnect-dialog";
+@import "shared/tooltip";
+@import "util/util";
+
+@mixin helium {
+  @include halo;
+
+  @include he-common;
+
+  @include he-panel;
+  @include he-accordion;
+  @include he-button;
+  @include he-calendar;
+  @include he-checkbox;
+  @include he-checkboxgroup;
+  @include he-colorpicker;
+  @include he-combobox;
+  @include he-contextmenu;
+  @include he-datagrid;
+  @include he-datefield;
+  @include he-datepicker;
+  @include he-draganddrop;
+  @include he-groupbox;
+  @include he-label;
+  @include he-link;
+  @include he-nativeselect;
+  @include he-notification;
+  @include he-orderedlayout;
+  @include he-pickerfield;
+  @include he-popupbutton;
+  @include he-popupview;
+  @include he-progressbar;
+  @include he-radiobuttongroup;
+  @include he-richtextarea;
+  @include he-slider;
+  @include he-splitpanel;
+  @include he-table;
+  @include he-tabsheet;
+  @include he-textfield;
+  @include he-textarea;
+  @include he-timefield;
+  @include he-treedatagrid;
+  @include he-tree;
+  @include he-twincolumn;
+  @include he-window;
+
+  @include he-tooltip;
+  @include he-reconnect-dialog;
+
+  @include he-vaadin-contextmenu-addon;
+
+  // Jmix own components
+  @include he-capslockindicator;
+  @include he-currencyfield;
+  @include he-tokenlist;
+  @include he-jmix-contextmenu;
+  @include he-contextmenu-button;
+  @include he-dateintervaleditor;
+  @include he-fieldgrouplayout;
+  @include he-fileupload;
+  @include he-listeditor;
+  @include he-maskedfield;
+  @include he-resizabletextarea;
+  @include he-sidemenu;
+  @include he-drawer;
+  @include he-sourcecodeeditor;
+  @include he-suggestionfield;
+  @include he-searchselect;
+  @include he-pagination;
+  @include he-simplepagination;
+  @include he-tagpicker;
+  @include he-tagfield;
+
+  @include he-tagcontainer;
+  @include he-taglabel;
+
+  @include he-login-window;
+  @include he-main-window;
+  @include he-menubar;
+  @include he-folders-pane;
+  @include he-generic-filter;
+  @include he-filter;
+  @include he-group-filter;
+
+  // Add-ons
+  @include he-pivottable;
+
+  /* Basic */
+
+  --primary-color: #6F5CC3;
+
+  --secondary-color: #637497;
+
+  --warning-color: #FFDA79;
+
+  --error-color: #FF647C;
+
+  --success-color: #36AB80;
+
+  --border-color: #637497;
+
+  --dim-color: #F2F2F2;
+
+  --text-main-color: #4F5C78;
+
+  --background-color: #FFFFFF;
+  --app-background-color: #FFFFFF;
+
+  /* Common */
+
+  --text-secondary-color: #0A2044;
+  --text-dim-color: #A0AAC0;
+  --text-contrast-color: #FFFFFF;
+
+  --primary-color_rgb: 111, 92, 195;
+  --primary-contrast-text-color: var(--text-contrast-color);
+  --primary-color-shade-1: #5440AC;
+  --primary-color-shade-2: #423287;
+  --primary-dim-color: #D2CCEC;
+
+  --secondary-color_rgb: 99, 116, 151;
+  --secondary-contrast-text-color: var(--text-contrast-color);
+  --secondary-color-shade-1: #4F5C78;
+  --secondary-color-shade-2: #3B4459;
+  --secondary-dim-color: #A0AAC0;
+
+  --warning-contrast-text-color: #4F5C78;
+
+  --error-contrast-text-color: var(--text-contrast-color);
+  --error-color-shade-1: #FF3151;
+  --error-color-shade-2: #FD0027;
+  --error-dim-color: #FFCAD2;
+
+  --success-contrast-text-color: var(--text-contrast-color);
+  --success-color-shade-1: #2A8463;
+  --success-color-shade-2: #1E5D46;
+  --success-dim-color: #9BDFC6;
+
+  --dim-color-shade-1: #CECECE;
+  --dim-color-shade-2: #A7A7A7;
+
+  --border-dim-color: #A0AAC0;
+  --border-dim-focused-color: var(--border-color);
+
+  --background-color_rgb: 256, 256, 256;
+
+  --box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.1), 0px 2px 6px rgba(79, 92, 120, 0.15), 0px 16px 24px rgba(79, 92, 120, 0.25);
+
+  /**************
+   * Components *
+   **************/
+
+  /* Button */
+
+  --button-border-width: 2px;
+
+  --button-default-color: #F2F2F2; // Gray - Hover
+  --button-default-text-color: var(--text-main-color);
+  --button-default-hover-color: #CECECE; // (--button-default-color) (d10%)
+  --button-default-active-color: #A7A7A7; // (--button-default-color) (d20%)
+  --button-default-disabled-color: transparent; // (--button-default-color) (l30%)
+  --button-default-disabled-text-color: var(--text-dim-color);
+  --button-default-focused-border-color: #E7E7E7; // (--button-default-disabled-color)
+
+  --button-primary-color: var(--primary-color);
+  --button-primary-text-color: var(--primary-contrast-text-color);
+  --button-primary-hover-color: var(--primary-color-shade-1);
+  --button-primary-active-color: var(--primary-color-shade-2);
+  --button-primary-disabled-color: var(--primary-dim-color);
+  --button-primary-disabled-text-color: var(--primary-contrast-text-color);
+  --button-primary-focused-border-color: var(--primary-dim-color);
+
+  --button-secondary-color: var(--secondary-color);
+  --button-secondary-text-color: var(--secondary-contrast-text-color);
+  --button-secondary-hover-color: var(--secondary-color-shade-1);
+  --button-secondary-active-color: var(--secondary-color-shade-2);
+  --button-secondary-disabled-color: var(--secondary-dim-color);
+  --button-secondary-disabled-text-color: var(--button-secondary-text-color);
+  --button-secondary-focused-border-color: var(--button-secondary-disabled-color);
+
+  --button-error-color: var(--error-color);
+  --button-error-text-color: var(--error-contrast-text-color);
+  --button-error-hover-color: var(--error-color-shade-1);
+  --button-error-active-color: var(--error-color-shade-2);
+  --button-error-disabled-color: var(--error-dim-color);
+  --button-error-disabled-text-color: var(--error-contrast-text-color);
+  --button-error-focused-border-color: var(--button-error-disabled-color);
+
+  --button-success-color: var(--success-color);
+  --button-success-text-color: var(--success-contrast-text-color);
+  --button-success-hover-color: var(--success-color-shade-1);
+  --button-success-active-color: var(--success-color-shade-2);
+  --button-success-disabled-color: var(--success-dim-color);
+  --button-success-disabled-text-color: var(--success-contrast-text-color);
+  --button-success-focused-border-color: var(--button-success-disabled-color);
+
+  --button-quiet-text-color: var(--text-main-color);
+  --button-quiet-disabled-text-color: var(--text-dim-color);
+
+  /* TextField */
+
+  --textfield-background-color: var(--background-color);
+  --textfield-text-color: var(--text-secondary-color);
+
+  --textfield-placeholder-color: var(--text-dim-color);
+
+  --textfield-read-only-background-color: var(--dim-color);
+  --textfield-read-only-text-color: var(--text-main-color);
+  --textfield-read-only-border-color: var(--border-dim-color);
+  --textfield-read-only-focused-border-color: var(--border-dim-focused-color);
+
+  --textfield-disabled-background-color: var(--textfield-read-only-background-color);
+  --textfield-disabled-text-color: var(--text-dim-color);
+  --textfield-disabled-border-color: var(--textfield-read-only-border-color);
+  --textfield-disabled-focused-border-color: var(--textfield-disabled-border-color);
+
+  /* DateField */
+
+  --datefield-popup-background-color: var(--background-color);
+  --datefield-popup-text-color: var(--text-secondary-color);
+  --datefield-popup-shadow: var(--box-shadow);
+
+  --datefield-button-color: var(--dim-color);
+  --datefield-button-text-color: var(--text-main-color);
+
+  --datefield-button-hover-color: var(--dim-color-shade-1);
+  --datefield-button-hover-text-color: var(--text-secondary-color);
+
+  --datefield-button-active-color: var(--dim-color-shade-2);
+  --datefield-button-active-text-color: var(--text-main-color);
+
+  --datefield-button-disabled-color: transparent;
+  --datefield-button-disabled-text-color: var(--text-dim-color);
+
+  --datefield-calendarpanel-day-background-color: var(--background-color);
+  --datefield-calendarpanel-day-hover-color: var(--primary-color);
+
+  --datefield-calendarpanel-day-offmonth-color: var(--text-dim-color);
+
+  --datefield-calendarpanel-day-today-color: var(--datefield-popup-text-color);
+  --datefield-calendarpanel-day-today-border-color: var(--border-color);
+
+  --datefield-calendarpanel-day-selected-background-color: var(--primary-color);
+  --datefield-calendarpanel-day-selected-color: var(--primary-contrast-text-color);
+
+  --datefield-calendarpanel-day-focused-border-color: var(--primary-color);
+  --datefield-calendarpanel-day-selected-focus-ring-color: var(--primary-dim-color);
+
+  --datefield-calendarpanel-day-outside-range-color: var(--datefield-calendarpanel-day-offmonth-color);
+
+  --datefield-calendarpanel-weekdays-color: var(--secondary-color);
+
+  --datefield-calendarpanel-button-color: var(--text-dim-color);
+  --datefield-calendarpanel-button-hover-color: var(--primary-color);
+
+  --datefield-calendarpanel-month-color: var(--secondary-color);
+
+  /* DatePicker */
+
+  --datepicker-background-color: var(--background-color);
+  --datepicker-border-color: var(--border-color);
+
+  /* ComboBox */
+
+  --combobox-button-text-color: var(--text-main-color);
+
+  --combobox-button-hover-text-color: var(--text-secondary-color);
+  --combobox-button-hover-background-color: transparent;
+
+  --combobox-button-active-text-color: var(--text-main-color);
+  --combobox-button-active-background-color: var(--dim-color);
+
+  --combobox-no-input-background-color: var(--background-color);
+
+  --combobox-popup-status-background-color: var(--dim-color);
+  --combobox-popup-status-text-color: var(--text-main-color);
+
+  --combobox-popup-page-background-color: var(--dim-color);
+  --combobox-popup-page-text-color: var(--text-main-color);
+
+  /* PickerField */
+
+  --pickerfield-button-text-color: var(--text-main-color);
+  --pickerfield-button-background-color: var(--textfield-background-color);
+
+  --pickerfield-button-hover-text-color: var(--text-secondary-color);
+  --pickerfield-button-hover-background-color: var(--textfield-background-color);
+
+  --pickerfield-button-active-text-color: var(--text-main-color);
+  --pickerfield-button-active-background-color: var(--dim-color);
+
+  --pickerfield-button-disabled-text-color: var(--text-dim-color);
+  --pickerfield-button-disabled-background-color: var(--textfield-disabled-background-color);
+
+  /* Notification */
+
+  --notification-humanized-background-color: var(--primary-color);
+  --notification-humanized-caption-color: var(--primary-contrast-text-color);
+  --notification-humanized-description-color: var(--primary-contrast-text-color);
+
+  --notification-warning-background-color: var(--warning-color);
+  --notification-warning-caption-color: var(--warning-contrast-text-color);
+  --notification-warning-description-color: var(--warning-contrast-text-color);
+
+  --notification-error-background-color: var(--error-color);
+  --notification-error-caption-color: var(--error-contrast-text-color);
+  --notification-error-description-color: var(--error-contrast-text-color);
+
+  --notification-system-background-color: var(--secondary-color);
+  --notification-system-caption-color: var(--secondary-contrast-text-color);
+  --notification-system-description-color: var(--secondary-contrast-text-color);
+
+  --notification-shadow: var(--box-shadow);
+  --notification-modalitycurtain-color: #4F5C78;
+
+  /* CheckBox */
+
+  --checkbox-border-width: 2px;
+
+  --checkbox-background-color: var(--background-color);
+  --checkbox-border-color: var(--border-color);
+
+  --checkbox-focused-background-color: var(--border-dim-color);
+  --checkbox-focused-border-color: var(--border-color);
+
+  --checkbox-checked-background-color: var(--checkbox-background-color);
+  --checkbox-checked-border-color: var(--primary-color);
+  --checkbox-checked-color: var(--primary-color);
+
+  --checkbox-checked-focused-background-color: var(--primary-dim-color);
+  --checkbox-checked-focused-border-color: var(--primary-color);
+  --checkbox-checked-focused-color: var(--primary-color);
+
+  --checkbox-read-only-background-color: var(--checkbox-background-color);
+  --checkbox-read-only-border-color: var(--border-dim-color);
+
+  --checkbox-read-only-focused-background-color: var(--checkbox-background-color);
+  --checkbox-read-only-focused-border-color: var(--border-color);
+
+  --checkbox-read-only-checked-background-color: var(--checkbox-background-color);
+  --checkbox-read-only-checked-border-color: var(--border-dim-color);
+  --checkbox-read-only-checked-color: var(--border-dim-color);
+
+  --checkbox-read-only-checked-focused-background-color: var(--checkbox-background-color);
+  --checkbox-read-only-checked-focused-border-color: var(--border-color);
+  --checkbox-read-only-checked-focused-color: var(--border-dim-color);
+
+  /* RadioButtonGroup */
+
+  --radio-checked-color: var(--primary-color);
+  --radio-read-only-checked-color: var(--checkbox-read-only-checked-color);
+
+  /* Tree */
+
+  --tree-border-color: var(--primary-dim-color);
+
+  --tree-selected-row-background-color: var(--primary-color);
+  --tree-selected-row-text-color: var(--primary-contrast-text-color);
+  --tree-selected-row-border-color: var(--primary-color-shade-1);
+  --tree-selected-row-focus-ring-color: var(--primary-dim-color);
+
+  --tree-focused-row-border-color: var(--primary-color);
+
+  /* SideMenu */
+
+  --sidemenu-background-color: #F5F4F6;
+  --sidemenu-text-color: var(--text-secondary-color);
+
+  --sidemenu-title-color: var(--sidemenu-text-color);
+  --sidemenu-title-background-color: #D8D8D8;
+
+  --sidemenu-item-focused-color: var(--primary-color);
+
+  --sidemenu-item-selected-color: var(--primary-contrast-text-color);
+  --sidemenu-item-selected-background-color: var(--primary-color);
+
+  --sidemenu-item-badge-color: var(--primary-color);
+  --sidemenu-item-badge-background-color: var(--primary-dim-color);
+
+  --sidemenu-action-button-color: var(--text-main-color);
+  --sidemenu-action-button-hover-background-color: var(--dim-color-shade-1);
+  --sidemenu-action-button-active-background-color: var(--dim-color-shade-2);
+
+  --sidemenu-responsive-title-background-color: var(--secondary-color);
+  --sidemenu-responsive-title-text-color: var(--secondary-contrast-text-color);
+
+  --sidemenu-responsive-item-separator-color: var(--primary-dim-color);
+  --sidemenu-responsive-item-header-background-color: #E6E3E8;
+
+  --sidemenu-responsive-item-selected-text-color: var(--sidemenu-item-selected-color);
+  --sidemenu-responsive-item-selected-background-color: var(--sidemenu-item-selected-background-color);
+
+  --sidemenu-mobile-button-color: var(--secondary-contrast-text-color);
+  --sidemenu-mobile-button-hover-background-color: var(--secondary-color-shade-1);
+  --sidemenu-mobile-button-active-background-color: var(--secondary-color-shade-2);
+
+  --sidemenu-collapsible-submenu-background-color: var(--sidemenu-background-color);
+
+  --sidemenu-collapsible-controls-panel-background-color: #D8D8D8;
+
+  --sidemenu-collapsible-action-button-color: var(--text-main-color);
+  --sidemenu-collapsible-action-button-hover-background-color: var(--dim-color-shade-1);
+  --sidemenu-collapsible-action-button-active-background-color: var(--dim-color-shade-2);
+
+  --sidemenu-collapsible-collapse-button-color: #4F5C78;
+  --sidemenu-collapsible-collapse-button-background-color: #A7A7A7;
+  --sidemenu-collapsible-collapse-button-hover-background-color: var(--sidemenu-collapsible-controls-panel-background-color);
+  --sidemenu-collapsible-collapse-button-active-background-color: #A7A7A7;
+
+  /* Drawer */
+
+  --drawer-background-color: var(--app-background-color);
+  --drawer-text-color: var(--text-main-color);
+
+  --drawer-sidemenu-submenu-background-color: var(--drawer-background-color);
+
+  /* AppMenu */
+
+  --menubar-background-color: #374D66;
+  --menubar-border-color: var(--menubar-background-color);
+  --menubar-text-color: #C8D6E5;
+
+  --menubar-menuitem-selected-background-color: var(--primary-color);
+  --menubar-menuitem-selected-text-color: var(--primary-contrast-text-color);
+
+  --menubar-menuitem-hover-background-color: var(--secondary-color-shade-1);
+
+  --menubar-separator-color: var(--border-dim-color);
+
+  --menubar-action-button-color: var(--menubar-text-color);
+  --menubar-action-button-hover-background-color: var(--menubar-menuitem-hover-background-color);
+  --menubar-action-button-hover-text-color: var(--menubar-menuitem-selected-text-color);
+  --menubar-action-button-active-background-color: var(--secondary-color-shade-2);
+  --menubar-action-button-active-text-color: var(--menubar-menuitem-selected-text-color);
+
+  /* Panel */
+
+  --panel-background-color: var(--background-color);
+  --panel-border-color: var(--primary-dim-color);
+  --panel-well-background-color: var(--dim-color);
+  --panel-caption-background-color: var(--panel-well-background-color);
+
+  /* Tooltip */
+
+  --tooltip-background-color_rgb: var(--secondary-color_rgb);
+  --tooltip-font-color: var(--text-contrast-color);
+
+  --tooltip-error-message-background-color: var(--error-contrast-text-color);
+  --tooltip-error-message-font-color: var(--error-color);
+
+  --tooltip-error-message-level-info-font-color: var(--text-main-color);
+  --tooltip-error-message-level-warning-font-color: var(--warning-color);
+  --tooltip-error-message-level-error-font-color: var(--error-color);
+  --tooltip-error-message-level-critical-font-color: var(--error-active-color);
+  --tooltip-error-message-level-system-font-color: var(--primary-color);
+
+  --tooltip-shadow: var(--box-shadow);
+
+  /* Main Window */
+
+  --app-workarea-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.15);
+
+  --maintabsheet-tabcontainer-background-color: var(--panel-background-color);
+
+  /* TokenList  */
+
+  --tokenlist-label-text-color: var(--primary-contrast-text-color);
+  --tokenlist-label-background-color: var(--primary-color);
+
+  /* TagLabel */
+
+  --taglabel-text-color: var(--primary-contrast-text-color);
+  --taglabel-background-color: var(--primary-color);
+
+  --taglabel-hover-text-color: var(--taglabel-text-color);
+  --taglabel-hover-background-color: var(--primary-color-shade-1);
+
+  --taglabel-disabled-background-color: var(--primary-dim-color);
+
+  /* TagPicker */
+
+  --tagpicker-tag-text-color: var(--taglabel-text-color);
+  --tagpicker-tag-background-color: var(--taglabel-background-color);
+
+  --tagpicker-tag-hover-text-color: var(--taglabel-hover-text-color);
+  --tagpicker-tag-hover-background-color: var(--taglabel-hover-background-color);
+
+  /* TagField */
+
+  --tagfield-tag-text-color: var(--taglabel-text-color);
+  --tagfield-tag-background-color: var(--taglabel-background-color);
+
+  --tagfield-tag-hover-text-color: var(--taglabel-hover-text-color);
+  --tagfield-tag-hover-background-color: var(--taglabel-hover-background-color);
+
+  --tagfield-clear-all-color: var(--text-main-color);
+  --tagfield-clear-all-hover-color: var(--text-secondary-color);
+
+  /* Table */
+
+  --table-background-color: var(--background-color);
+
+  --table-header-text-color: var(--text-secondary-color);
+
+  --table-outer-border-color: var(--border-color);
+  --table-inner-border-color: var(--border-dim-color);
+
+  --table-row-color: var(--table-background-color);
+  --table-row-stripe-color: var(--dim-color);
+
+  --table-selected-row-background-color: var(--primary-color);
+  --table-selected-row-text-color: var(--primary-contrast-text-color);
+  --table-selected-row-border-color: var(--primary-color-shade-1);
+
+  --table-hovered-row-background-color: var(--primary-dim-color);
+  --table-hovered-row-text-color: var(--text-main-color);
+
+  --table-focused-row-border-color: var(--primary-color);
+
+  --table-aggregation-background-color: he-rgba($color: --primary-color_rgb, $alpha: .5);
+  --table-aggregation-text-color: var(--text-secondary-color);
+
+  --table-prefs-editor-shadow: var(--box-shadow);
+
+  /* Grid */
+
+  --grid-background-color: var(--background-color);
+  --grid-border-color: var(--border-dim-color);
+
+  --grid-header-text-color: var(--text-secondary-color);
+
+  --grid-row-color: var(--grid-background-color);
+  --grid-row-stripe-color: var(--dim-color);
+
+  --grid-selected-row-background-color: var(--primary-color);
+  --grid-selected-row-text-color: var(--primary-contrast-text-color);
+  --grid-selected-row-border-color: var(--primary-color-shade-1);
+  --grid-selected-row-focus-ring-color: var(--primary-dim-color);
+
+  --grid-hovered-row-background-color: var(--primary-dim-color);
+  --grid-hovered-row-text-color: var(--text-main-color);
+
+  --grid-focused-cell-border-color: var(--primary-color);
+
+  --grid-aggregation-background-color: he-rgba($color: --primary-color_rgb, $alpha: .5);
+  --grid-aggregation-border-color: he-rgba($color: --primary-color_rgb, $alpha: .4);
+  --grid-aggregation-text-color: var(--text-secondary-color);
+
+  --grid-drop-marker-color: var(--primary-color);
+
+  --grid-sidebar-button-active-color: var(--dim-color);
+  --grid-sidebar-popup-background-color: var(--grid-background-color);
+
+  --grid-details-deco-color: var(--primary-color);
+
+  --grid-editor-border-color: var(--primary-color);
+  --grid-editor-footer-background-color: var(--grid-row-stripe-color);
+  --grid-editor-save-button-color: var(--primary-color);
+  --grid-editor-cancel-button-color: var(--primary-color);
+
+  --grid-row-drag-background-color: var(--primary-color);
+  --grid-row-drag-border-color: var(--primary-color);
+  --grid-selected-row-drag-border-color: var(--primary-color-shade-1);
+
+  /* TreeGrid */
+
+  --tree-grid-focused-row-border-color: var(--grid-selected-row-border-color);
+  --tree-grid-selected-row-focus-ring-color: var(--grid-selected-row-focus-ring-color);
+
+  /* Window */
+
+  --window-background-color: var(--background-color);
+  --window-header-background-color: var(--window-background-color);
+
+  --window-shadow: var(--box-shadow);
+  --window-modalitycurtain-color: #4F5C78;
+
+  /* TabSheet */
+
+  --tabsheet-tabcontainer-border-color: var(--primary-dim-color);
+
+  --tabsheet-tabitemcell-caption-hover-color: var(--primary-color);
+  --tabsheet-tabitemcell-caption-focus-color: var(--tabsheet-tabitemcell-caption-hover-color);
+
+  --tabsheet-tabitemcell-selected-color: var(--primary-color);
+  --tabsheet-tabitemcell-selected-deco-color: var(--primary-color);
+
+  --tabsheet-tabitemcell-caption-close-hover-color: var(--primary-color-shade-1);
+  --tabsheet-tabitemcell-caption-close-active-color: var(--primary-color-shade-2);
+
+  --tabsheet-drop-indicator-color: var(--primary-color);
+
+  --tabsheet-framed-tabs-border-radius: 2px;
+  --tabsheet-framed-content-border-radius: 0px;
+  --tabsheet-framed-tab-margin-left: 1px;
+
+  --tabsheet-framed-tabitemcell-caption-text-color: var(--text-main-color);
+  --tabsheet-framed-tabitemcell-caption-background-color: var(--dim-color);
+  --tabsheet-framed-tabitemcell-caption-hover-background-color: var(--dim-color-shade-1);
+  --tabsheet-framed-tabitemcell-caption-hover-text-color: var(--text-main-color);
+  --tabsheet-framed-tabitemcell-caption-disabled-text-color: var(--text-dim-color);
+
+  --tabsheet-framed-tabitemcell-selected-background-color: var(--tabsheet-tabcontainer-border-color);
+
+  --tabsheet-framed-content-background-color: var(--panel-background-color);
+  --tabsheet-framed-content-border-color: var(--tabsheet-tabcontainer-border-color);
+
+  --tabsheet-framed-tabcontainer-background-color: var(--tabsheet-framed-content-background-color);
+  --tabsheet-framed-tabcontainer-border-color: var(--tabsheet-framed-content-border-color);
+
+  --tabsheet-scroller-button-color: inherit;
+  --tabsheet-scroller-button-hover-color: var(--primary-color);
+  --tabsheet-scroller-button-active-color: var(--primary-color-shade-2);
+
+  /* SelectionOverlay (ContextMenu) */
+
+  --overlay-background-color: var(--background-color);
+  --selection-overlay-shadow: var(--box-shadow);
+
+  --selection-overlay-selected-item-background-color: var(--primary-color);
+  --selection-overlay-selected-item-text-color: var(--primary-contrast-text-color);
+  --selection-overlay-selected-item-active-background-color: var(--primary-color-shade-2);
+
+  --selection-overlay-disabled-item-background-color: transparent;
+  --selection-overlay-disabled-item-text-color: var(--text-dim-color);
+
+  /* DragAndDrop */
+
+  --drag-element-shadow: var(--box-shadow);
+
+  /* GroupBox */
+
+  --groupbox-border-color: var(--panel-border-color);
+
+  --groupbox-collapsed-background-color: var(--groupbox-border-color);
+  --groupbox-collapsed-border-color: var(--groupbox-collapsed-background-color);
+
+  --groupbox-caption-color: var(--text-main-color);
+  --groupbox-collapsed-caption-color: var(--text-main-color);
+
+  /* SourceCodeEditor */
+
+  --sourcecodeeditor-background-color: var(--background-color);
+  --sourcecodeeditor-text-color: var(--text-main-color);
+  --sourcecodeeditor-cursor-color: var(--text-main-color);
+
+  --sourcecodeeditor-gutter-text-color: var(--text-secondary-color);
+  --sourcecodeeditor-gutter-background-color: var(--dim-color-shade-1);
+  --sourcecodeeditor-gutter-active-line-background-color: var(--dim-color-shade-2);
+
+  --sourcecodeeditor-active-line-background-color: var(--dim-color);
+
+  --sourcecodeeditor-selection-background-color: var(--primary-dim-color);
+
+  /* SplitPanel */
+
+  --splitpanel-splitter-background-color: var(--primary-dim-color);
+  --splitpanel-splitter-border-color: var(--splitpanel-splitter-background-color);
+  --splitpanel-splitter-border-radius: 5px;
+
+  --splitpanel-splitter-large-background-color: transparent;
+  --splitpanel-splitter-large-border-color: var(--primary-dim-color);
+  --splitpanel-splitter-large-border-radius: 2px;
+  --splitpanel-splitter-large-handle-color: var(--splitpanel-splitter-large-border-color);
+
+  --splitpanel-dock-button-color: var(--text-main-color);
+
+  /* FoldersPane */
+
+  --folders-pane-background-color: var(--panel-background-color);
+
+  /* FileUpload */
+
+  --fileupload-dropzone-border-color: var(--primary-color);
+  --fileupload-dropzone-prompt-border-color: var(--border-color);
+  --fileupload-dropzone-prompt-background-color: var(--panel-background-color);
+
+  /* SuggestionField */
+
+  --suggestionfield-modified-background-color: var(--primary-dim-color);
+
+  /* SearchField */
+
+  --searchselect-edit-background-color: var(--primary-dim-color);
+
+  /* CapsLockIndicator */
+
+  --capslockindicator-icon-color-on: var(--warning-color);
+  --capslockindicator-icon-color-off: var(--text-dim-color);
+
+  /* Link */
+
+  --link-color: var(--primary-color);
+  --link-hover-color: var(--primary-color-shade-1);
+  --link-visited-color: var(--link-color);
+  --link-disabled-color: var(--primary-dim-color);
+
+  /* ProgressBar */
+
+  --progressbar-border-radius: $v-border-radius;
+  --progressbar-background-color: var(--dim-color);
+  --progressbar-indeterminate-indicator-width: 120px;
+
+  /* Slider */
+
+  --slider-handle-color: var(--dim-color);
+  --slider-handle-border-color: var(--dim-color-shade-1);
+
+  /* PopupView */
+
+  --popupview-popup-shadow: var(--box-shadow);
+
+  /* RichTextArea */
+
+  --richtextarea-toolbar-background-color: var(--dim-color);
+  --richtextarea-toolbar-text-color: var(--text-main-color);
+  --richtextarea-toolbar-text-hover-color: var(--text-secondary-color);
+  --richtextarea-toolbar-togglebutton-down-background-color: var(--dim-color-shade-1);
+
+  --richtextarea-textarea-background-color: #FFFFFF;
+
+  /* NativeSelect */
+
+  --select-background-color: var(--background-color);
+
+  /* ColorPicker */
+
+  --colorpicker-buttons-panel-background-color: var(--background-color);
+  --colorpicker-buttons-panel-border-color: var(--border-dim-color);
+
+  /* Calendar */
+
+  --calendar-header-day-color: var(--text-secondary-color);
+
+  --calendar-month-day-number-color: var(--text-secondary-color);
+  --calendar-month-day-number-border-color: var(--border-dim-color);
+  --calendar-month-day-number-hover-color: var(--primary-color);
+
+  --calendar-month-day-bottom-spacer-hover-color: var(--primary-color);
+
+  --calendar-month-day-today-background-color: var(--primary-dim-color);
+  --calendar-month-day-today-day-number-color: var(--primary-color);
+  --calendar-month-day-today-day-number-border-color: var(--primary-color);
+
+  --calendar-month-day-selected-background-color: var(--primary-dim-color);
+  --calendar-month-day-dragemphasis-background-color: var(--secondary-color);
+
+
+  --calendar-week-datecell-border-color: var(--border-dim-color);
+  --calendar-week-range-selection-color: var(--primary-dim-color);
+  --calendar-week-current-time-color: var(--primary-color);
+  --calendar-week-longevents-border-color: var(--primary-dim-color);
+
+
+  --calendar-event-color: var(--primary-contrast-text-color);
+  --calendar-event-background-color: var(--primary-color);
+
+  --calendar-month-event-marker-color: var(--calendar-event-background-color);
+  --calendar-month-event-time-color: var(--text-dim-color);
+
+  --calendar-week-event-content-border-color: var(--border-color);
+
+  /* Accordion */
+
+  --accordion-item-content-background-color: var(--panel-background-color);
+
+  --accordion-item-caption-text-color: var(--text-main-color);
+  --accordion-item-caption-background-color: var(--dim-color);
+  --accordion-item-caption-border-color: var(--border-dim-color);
+
+  --accordion-item-caption-hover-text-color: var(--accordion-item-caption-text-color);
+  --accordion-item-caption-hover-background-color: var(--dim-color-shade-1);
+
+  --accordion-item-caption-active-text-color: var(--accordion-item-caption-text-color);
+  --accordion-item-caption-active-background-color: var(--dim-color-shade-2);
+
+  --accordion-item-caption-disabled-text-color: var(--text-dim-color);
+
+  /* CurrencyField */
+
+  --currencyfield-currency-background-color: var(--dim-color);
+  --currencyfield-currency-text-color: var(--text-main-color);
+
+  --currencyfield-currency-read-only-background-color: var(--textfield-disabled-background-color);
+  --currencyfield-currency-read-only-text-color: var(--text-main-color);
+
+  --currencyfield-currency-disabled-background-color: var(--textfield-disabled-background-color);
+  --currencyfield-currency-disabled-text-color: var(--text-dim-color);
+
+  /* Pagination */
+
+  --pagination-page-color: var(--button-default-color);
+  --pagination-page-text-color: var(--button-default-text-color);
+  --pagination-page-hover-color: var(--button-default-hover-color);
+  --pagination-page-active-color: var(--button-default-active-color);
+  --pagination-page-disabled-color: var(--button-default-disabled-color);
+  --pagination-page-disabled-text-color: var(--button-default-disabled-text-color);
+  --pagination-page-focused-border-color: var(--pagination-page-color);
+
+  --pagination-selected-page-color: var(--button-primary-color);
+  --pagination-selected-page-text-color: var(--button-primary-text-color);
+  --pagination-selected-page-hover-color: var(--button-primary-hover-color);
+  --pagination-selected-page-active-color: var(--button-primary-active-color);
+  --pagination-selected-page-disabled-color: var(--button-primary-disabled-color);
+  --pagination-selected-page-disabled-text-color: var(--button-primary-disabled-text-color);
+  --pagination-selected-page-focused-border-color: var(--pagination-selected-page-color);
+
+  /* PivotTable */
+
+  --pivot-background-color: var(--background-color);
+  --pivot-header-background-color: var(--dim-color);
+  --pivot-border-color: var(--border-dim-color);
+
+  --pivot-filterbox-shadow: var(--box-shadow);
+
+  /************
+   * Variants *
+   ************/
+
+  &.dark {
+    @include helium-dark;
+  }
+}
+
+@mixin helium-dark {
+
+  /* Basic */
+
+  --app-background-color: #222F3E;
+  --background-color: #222F3E;
+  --background-color_rgb: 34, 47, 62;
+
+  --border-color: #6F8399;
+
+  --dim-color: #48596C;
+
+  --text-main-color: #F2F2F2;
+
+  /* Common */
+
+  --text-secondary-color: #98AABD;
+  --text-contrast-color: #F2F2F2;
+  --text-dim-color: #81858A;
+
+  --primary-color: #6F5CC3;
+  --primary-color_rgb: 111, 92, 195;
+  --primary-dim-color: #414173;
+  --primary-color-shade-1: #6053A8;
+  --primary-color-shade-2: #504A8E;
+
+  --secondary-color: #5B6168;
+  --secondary-color_rgb: 91, 97, 104;
+  --secondary-dim-color: #354455;
+  --secondary-color-shade-1: #81858A;
+  --secondary-color-shade-2: #A7A9AD;
+
+  --success-color: #276E69;
+  --success-dim-color: #265E5E;
+  --success-color-shade-1: #79ACA6;
+  --success-color-shade-2: #A1C4C0;
+
+  --error-color: #C63052;
+  --error-dim-color: #41263A;
+  --error-color-shade-1: #BB002A;
+  --error-color-shade-2: #D1617A;
+
+  --warning-color: #FC9D5E;
+  --warning-contrast-text-color: var(--text-contrast-color);
+
+  --dim-color-shade-1: #8298B0;
+  --dim-color-shade-2: #5C6E82;
+
+  --border-dim-color: #576574;
+  --border-dim-focused-color: #C8D6E5;
+
+  --box-shadow: 0 0 7px rgba(0, 0, 0, 0.15);
+
+  /* Button */
+
+  --button-default-color: #6F8399;
+  --button-default-hover-color: #8298B0;
+  --button-default-active-color: #5C6E82;
+  --button-default-disabled-color: #48596C;
+  --button-default-disabled-text-color: var(--text-secondary-color);
+  --button-default-focused-border-color: var(--border-dim-focused-color);
+
+  --button-primary-disabled-text-color: var(--text-secondary-color);
+  --button-primary-focused-border-color: #D2CCEC;
+
+  --button-secondary-disabled-text-color: var(--text-secondary-color);
+  --button-secondary-focused-border-color: var(--border-dim-focused-color);
+
+  --button-success-disabled-text-color: var(--text-secondary-color);
+  --button-success-focused-border-color: #9BDFC6;
+
+  --button-error-disabled-text-color: var(--text-secondary-color);
+  --button-error-focused-border-color: #FFCAD2;
+
+  /* TextField */
+
+  --textfield-text-color: var(--text-main-color);
+  --textfield-placeholder-color: var(--text-secondary-color);
+
+  --textfield-disabled-text-color: var(--text-secondary-color);
+
+  /* DateField */
+
+  --datefield-button-disabled-text-color: var(--text-secondary-color);
+
+  --datefield-calendarpanel-day-offmonth-color: var(--text-dim-color);
+  --datefield-calendarpanel-weekdays-color: var(--text-main-color);
+  --datefield-calendarpanel-button-color: var(--text-secondary-color);
+  --datefield-calendarpanel-month-color: var(--text-main-color);
+
+  /* CheckBox */
+
+  --checkbox-focused-background-color: #A0AAC0;
+
+  --checkbox-checked-focused-background-color: #D2CCEC;
+
+  --checkbox-read-only-background-color: var(--checkbox-read-only-border-color);
+
+  --checkbox-read-only-focused-background-color: var(--checkbox-read-only-background-color);
+  --checkbox-read-only-focused-border-color: #A0AAC0;
+
+  --checkbox-read-only-checked-background-color: var(--checkbox-read-only-background-color);
+  --checkbox-read-only-checked-border-color: var(--checkbox-read-only-border-color);
+  --checkbox-read-only-checked-color: #A0AAC0;
+
+  --checkbox-read-only-checked-focused-background-color: var(--checkbox-read-only-focused-background-color);
+  --checkbox-read-only-checked-focused-border-color: var(--checkbox-read-only-focused-border-color);
+  --checkbox-read-only-checked-focused-color: var(--checkbox-read-only-checked-color);
+
+  /* Table */
+
+  --table-row-stripe-color: #323F4E;
+  --table-hovered-row-background-color: #393D66;
+
+  --table-header-text-color: var(--text-main-color);
+
+  --table-aggregation-text-color: var(--text-main-color);
+
+  /* Grid */
+
+  --grid-header-text-color: var(--text-main-color);
+
+  --grid-row-stripe-color: #323F4E;
+  --grid-hovered-row-background-color: #393D66;
+
+  /* SideMenu */
+
+  --sidemenu-background-color: #29394B;
+  --sidemenu-text-color: var(--text-main-color);
+
+  --sidemenu-title-background-color: #576574;
+
+  --sidemenu-responsive-item-header-background-color: var(--sidemenu-background-color);
+
+  --sidemenu-collapsible-controls-panel-background-color: #576574;
+
+  --sidemenu-collapsible-collapse-button-color: var(--text-main-color);
+  --sidemenu-collapsible-collapse-button-background-color: #637497;
+  --sidemenu-collapsible-collapse-button-hover-background-color: var(--sidemenu-collapsible-action-button-hover-background-color);
+  --sidemenu-collapsible-collapse-button-active-background-color: var(--sidemenu-collapsible-action-button-active-background-color);
+
+  /* Slider */
+
+  --slider-handle-border-color: var(--slider-handle-color);
+
+  /* Calendar */
+
+  --calendar-header-day-color: var(--text-main-color);
+
+  /* SelectionOverlay (ContextMenu) */
+
+  --overlay-background-color: var(--dim-color);
+
+  /* GroupBox */
+
+  --groupbox-border-color: var(--border-color);
+
+  --groupbox-collapsed-background-color: var(--dim-color);
+
+  /* CurrencyField */
+
+  --currencyfield-currency-disabled-text-color: var(--text-secondary-color);
+}

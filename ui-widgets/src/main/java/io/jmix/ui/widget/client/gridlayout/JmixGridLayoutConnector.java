@@ -1,0 +1,88 @@
+/*
+ * Copyright 2020 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.jmix.ui.widget.client.gridlayout;
+
+import com.google.gwt.user.client.ui.Widget;
+import io.jmix.ui.widget.JmixGridLayout;
+import io.jmix.ui.widget.client.caption.JmixCaptionWidget;
+import com.vaadin.client.*;
+import com.vaadin.client.ui.HasRequiredIndicator;
+import com.vaadin.client.ui.ShortcutActionHandler;
+import com.vaadin.client.ui.VGridLayout;
+import com.vaadin.client.ui.gridlayout.GridLayoutConnector;
+import com.vaadin.client.ui.layout.VLayoutSlot;
+import com.vaadin.shared.AbstractComponentState;
+import com.vaadin.shared.ui.Connect;
+import io.jmix.ui.widget.client.caption.JmixGridLayoutCaptionWidget;
+
+@Connect(JmixGridLayout.class)
+public class JmixGridLayoutConnector extends GridLayoutConnector implements Paintable, HasRequiredIndicator {
+
+    @Override
+    public JmixGridLayoutWidget getWidget() {
+        return (JmixGridLayoutWidget) super.getWidget();
+    }
+
+    @Override
+    public boolean isRequiredIndicatorVisible() {
+        return getState().requiredIndicatorVisible;
+    }
+
+    protected void setDefaultCaptionParameters(JmixCaptionWidget widget) {
+    }
+
+    @Override
+    public void updateCaption(ComponentConnector childConnector) {
+        // CAUTION copied from GridLayoutConnector.updateCaption(ComponentConnector childConnector)
+        VGridLayout layout = getWidget();
+        VGridLayout.Cell cell = layout.widgetToCell.get(childConnector.getWidget());
+        AbstractComponentState state = childConnector.getState();
+        if (VCaption.isNeeded(childConnector)
+                || isContextHelpIconEnabled(state)) {
+            VLayoutSlot layoutSlot = cell.slot;
+            VCaption caption = layoutSlot.getCaption();
+            if (caption == null) {
+                // use our own caption widget
+                caption = new JmixGridLayoutCaptionWidget(childConnector, getConnection());
+
+                setDefaultCaptionParameters((JmixCaptionWidget)caption);
+
+                Widget widget = childConnector.getWidget();
+
+                layout.setCaption(widget, caption);
+            }
+            caption.updateCaption();
+        } else {
+            layout.setCaption(childConnector.getWidget(), null);
+            getLayoutManager().setNeedsLayout(this);
+        }
+    }
+
+    @Override
+    public void updateFromUIDL(UIDL uidl, ApplicationConnection client) {
+        final int cnt = uidl.getChildCount();
+        for (int i = 0; i < cnt; i++) {
+            UIDL childUidl = uidl.getChildUIDL(i);
+            if (childUidl.getTag().equals("actions")) {
+                if (getWidget().getShortcutHandler() == null) {
+                    getWidget().setShortcutHandler(new ShortcutActionHandler(uidl.getId(), client));
+                }
+                getWidget().getShortcutHandler().updateActionMap(childUidl);
+            }
+        }
+    }
+}

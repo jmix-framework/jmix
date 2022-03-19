@@ -1,0 +1,195 @@
+/*!
+ * Copyright 2020 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+$he-groupbox-caption-height: round($v-unit-size * 1.4);
+$he-groupbox-caption-height--small: round($v-unit-size--small * 1.4);
+$he-groupbox-caption-height--large: round($v-unit-size--large * 1.4);
+
+@mixin he-groupbox($primary-stylename: jmix-groupbox) {
+  @include he-groupbox-style(
+          $primary-stylename: $primary-stylename,
+          $groupbox-caption-height: $he-groupbox-caption-height,
+          $font-size: $v-font-size
+  );
+
+  /* Global size */
+
+  &.small {
+    @include he-groupbox-style(
+            $primary-stylename: $primary-stylename,
+            $groupbox-caption-height: $he-groupbox-caption-height--small,
+            $font-size: $v-font-size--small
+    );
+  }
+
+  &.large {
+    @include he-groupbox-style(
+            $primary-stylename: $primary-stylename,
+            $groupbox-caption-height: $he-groupbox-caption-height--large,
+            $font-size: $v-font-size--large
+    );
+  }
+
+  /* Size within a container */
+
+  .small {
+    @include he-groupbox-style(
+            $primary-stylename: $primary-stylename,
+            $groupbox-caption-height: $he-groupbox-caption-height--small,
+            $font-size: $v-font-size--small
+    );
+  }
+
+  .medium {
+    @include he-groupbox-style(
+            $primary-stylename: $primary-stylename,
+            $groupbox-caption-height: $he-groupbox-caption-height,
+            $font-size: $v-font-size
+    );
+  }
+
+  .large {
+    @include he-groupbox-style(
+            $primary-stylename: $primary-stylename,
+            $groupbox-caption-height: $he-groupbox-caption-height--large,
+            $font-size: $v-font-size--large
+    );
+  }
+}
+
+@mixin he-groupbox-style($primary-stylename       : jmix-groupbox,
+                         $groupbox-caption-height : $he-groupbox-caption-height,
+                         $font-size               : $v-font-size) {
+  $padding: $groupbox-caption-height / 3;
+  $expander-padding: $groupbox-caption-height / 3;
+  $expander-size: $groupbox-caption-height / 3;
+  $expander-font-size: $expander-size;
+
+  .#{$primary-stylename} {
+    @include he-panel-style($border-color: --groupbox-border-color);
+  }
+
+  .#{$primary-stylename}-caption {
+    padding: 0 $padding 0 $expander-padding;
+    line-height: $groupbox-caption-height;
+    font-size: $font-size;
+    color: var(--groupbox-caption-color);
+
+    .#{$primary-stylename}-expander {
+      font-size: $expander-font-size;
+      width: $expander-size;
+      margin-right: $expander-padding;
+    }
+  }
+
+  .#{$primary-stylename}-nocaption > .#{$primary-stylename}-content {
+    border: none;
+  }
+
+  .#{$primary-stylename}-nocaption > .#{$primary-stylename}-captionwrap {
+    height: $padding;
+  }
+
+  .#{$primary-stylename}-content {
+    border: 0;
+    padding: 0 $padding $padding 0;
+    padding-left: $expander-padding + $expander-size + $expander-padding;
+  }
+
+  .#{$primary-stylename}.collapsed {
+    background-color: var(--groupbox-collapsed-background-color);
+    border-color: var(--groupbox-collapsed-border-color);
+
+    .#{$primary-stylename}-caption {
+      color: var(--groupbox-collapsed-caption-color);
+    }
+  }
+
+  .#{$primary-stylename}-nocollapsable {
+    .#{$primary-stylename}-caption {
+      padding-left: $padding;
+
+      .#{$primary-stylename}-caption-text {
+        font-weight: bold;
+      }
+    }
+
+    .#{$primary-stylename}-content {
+      padding-left: $padding;
+    }
+  }
+
+  .#{$primary-stylename}-caption-start-deco,
+  .#{$primary-stylename}-caption-end-deco {
+    display: none;
+  }
+
+  .#{$primary-stylename}-captionwrap,
+  .#{$primary-stylename}-caption {
+    height: $groupbox-caption-height;
+  }
+
+  .#{$primary-stylename}-expander {
+    &:before {
+      content: "\f13a";
+    }
+  }
+
+  .#{$primary-stylename}-expander.expanded {
+    &:before {
+      content: "\f139";
+    }
+  }
+
+  /*****************************
+   *           light           *
+   *****************************/
+
+  /*$padding--light: $padding / 2;
+
+  .#{$primary-stylename}-light {
+    border: 0;
+
+    &.collapsed {
+      background-color: transparent;
+    }
+
+    .#{$primary-stylename}-caption {
+      padding: 0 $padding--light 0 0;
+    }
+
+    .#{$primary-stylename}-content {
+      padding: 0 0 0 $expander-padding + $expander-size;
+    }
+
+    //.#{$primary-stylename}-caption-start-deco,
+    .#{$primary-stylename}-caption-end-deco {
+      display: inline-block;
+      height: $groupbox-caption-height;
+      padding-top: $groupbox-caption-height / 2;
+
+      div {
+        border-top: 2px solid var(--text-secondary-color);
+      }
+    }
+  }
+
+  .#{$primary-stylename}-nocollapsable.#{$primary-stylename}-light {
+    .#{$primary-stylename}-content {
+      padding-left: 0;
+    }
+  }*/
+}

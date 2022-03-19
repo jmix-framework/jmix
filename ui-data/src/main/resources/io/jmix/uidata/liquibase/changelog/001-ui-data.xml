@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2020 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet author="ui-data" id="1">
+        <validCheckSum>8:eb9a995e63e9721e5c0d41ef59d75f53</validCheckSum>
+        <validCheckSum>8:7875b5f2c9af17245692c04425fe91e9</validCheckSum>
+
+        <createTable tableName="UI_SETTING">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="USERNAME" type="varchar(255)"/>
+            <column name="NAME" type="varchar(255)"/>
+            <column name="VALUE_" type="clob"/>
+        </createTable>
+
+    </changeSet>
+
+    <changeSet author="ui-data" id="2">
+        <createTable tableName="UI_FILTER_CONFIGURATION">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="COMPONENT_ID" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CODE" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="USERNAME" type="varchar(255)"/>
+            <column name="ROOT_CONDITION" type="clob"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="ui-data" id="3">
+        <validCheckSum>8:5bde97a30f2ad570342f7733ebd74776</validCheckSum>
+
+        <addColumn tableName="UI_FILTER_CONFIGURATION">
+            <column name="SYS_TENANT_ID" type="varchar(255)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet author="ui-data" id="4">
+        <addColumn tableName="UI_FILTER_CONFIGURATION">
+            <column name="NAME" type="varchar(255)"/>
+            <column name="DEFAULT_FOR_ALL" type="boolean"/>
+        </addColumn>
+        <renameColumn tableName="UI_FILTER_CONFIGURATION"
+                      oldColumnName="CODE"
+                      newColumnName="CONFIGURATION_ID"
+                      columnDataType="varchar(255)"/>
+    </changeSet>
+
+    <changeSet author="ui-data" id="5" context="!cuba">
+        <validCheckSum>8:089b68eda9d5394338bf91140cbed667</validCheckSum>
+
+        <createTable tableName="UI_TABLE_PRESENTATION">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="COMPONENT" type="varchar(255)"/>
+            <column name="NAME" type="varchar(255)"/>
+            <column name="SETTINGS" type="varchar(4000)"/>
+            <column name="USERNAME" type="varchar(255)"/>
+            <column name="IS_AUTO_SAVE" type="boolean"/>
+            <column name="UPDATE_TS" type="datetime"/>
+            <column name="UPDATED_BY" type="varchar(50)"/>
+            <column name="SYS_TENANT_ID" type="varchar(255)"/>
+            <column name="IS_DEFAULT" type="boolean"/>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

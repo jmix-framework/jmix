@@ -1,0 +1,70 @@
+<!--
+  ~ Copyright 2020 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<window xmlns="http://jmix.io/schema/ui/window">
+    <data>
+        <collection id="customersDc" class="test_support.entity.sales.Customer">
+            <loader id="customersLd" maxResults="2">
+                <query><![CDATA[select e from test_Customer e]]></query>
+            </loader>
+        </collection>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <layout>
+        <!--    Table with Simple pagination    -->
+        <table id="customerTableSimple"
+               dataContainer="customersDc">
+            <columns>
+                <column id="name"/>
+                <column id="email"/>
+                <column id="status"/>
+            </columns>
+            <simplePagination/>
+        </table>
+        <!--    Table with MetaClass Simple pagination    -->
+        <table id="customerTableMetaClassSimple"
+               metaClass="test_Customer">
+            <columns>
+                <column id="name"/>
+                <column id="email"/>
+                <column id="status"/>
+            </columns>
+            <simplePagination/>
+        </table>
+        <!--    DataGrid with Simple pagination    -->
+        <dataGrid id="customerDataGridSimple"
+                  dataContainer="customersDc">
+            <columns>
+                <column property="name"/>
+                <column property="email"/>
+                <column property="status"/>
+            </columns>
+            <simplePagination/>
+        </dataGrid>
+        <!--    DataGrid with MetaClass Simple pagination    -->
+        <dataGrid id="customerDataGridMetaClassSimple"
+                  metaClass="test_Customer">
+            <columns>
+                <column property="name"/>
+                <column property="email"/>
+                <column property="status"/>
+            </columns>
+            <simplePagination/>
+        </dataGrid>
+    </layout>
+</window>

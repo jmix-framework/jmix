@@ -1,0 +1,157 @@
+/*!
+ * Copyright 2020 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@mixin he-textfield($primary-stylename: v-textfield) {
+  .#{$primary-stylename} {
+    @include he-input-style();
+  }
+
+  .#{$primary-stylename}-readonly {
+    @include he-input-readonly-style();
+  }
+
+  .#{$primary-stylename}.v-disabled {
+    @include he-input-disabled-style();
+  }
+
+  .#{$primary-stylename}.jmix-disabled-or-readonly.jmix-empty-value {
+    color: transparent;
+  }
+
+  .#{$primary-stylename}-error,
+  .#{$primary-stylename}-error-error {
+    @include he-input-error-style();
+  }
+
+  .#{$primary-stylename}.borderless,
+  .#{$primary-stylename}-borderless {
+    @include he-textfield-borderless-style();
+  }
+
+  /* Global size */
+
+  &.small .#{$primary-stylename} {
+    @include he-input-size-style($unit-size: $v-unit-size--small, $font-size: $v-font-size--small);
+  }
+
+  &.large .#{$primary-stylename} {
+    @include he-input-size-style($unit-size: $v-unit-size--large, $font-size: $v-font-size--large);
+  }
+
+  /* Size within a container */
+
+  .small .#{$primary-stylename} {
+    @include he-input-size-style($unit-size: $v-unit-size--small, $font-size: $v-font-size--small);
+  }
+
+  .medium .#{$primary-stylename} {
+    @include he-input-size-style($unit-size: $v-unit-size, $font-size: $v-font-size);
+  }
+
+  .large .#{$primary-stylename} {
+    @include he-input-size-style($unit-size: $v-unit-size--large, $font-size: $v-font-size--large);
+  }
+
+  /* Own size */
+
+  .#{$primary-stylename}.small {
+    @include he-input-size-style($unit-size: $v-unit-size--small, $font-size: $v-font-size--small);
+  }
+
+  .#{$primary-stylename}.medium {
+    @include he-input-size-style($unit-size: $v-unit-size, $font-size: $v-font-size);
+  }
+
+  .#{$primary-stylename}.large {
+    @include he-input-size-style($unit-size: $v-unit-size--large, $font-size: $v-font-size--large);
+  }
+}
+
+@mixin he-input-size-style($unit-size : $v-unit-size,
+                           $padding   : null,
+                           $font-size : null) {
+  font-size: $font-size;
+  height: $unit-size;
+
+  @if type-of($padding) == number or type-of($padding) == list {
+    padding: $padding;
+  } @else {
+    padding: he-input-padding($unit-size);
+  }
+
+  &.inline-icon {
+    padding-left: $unit-size;
+  }
+}
+
+@function he-input-padding($unit-size: $v-unit-size) {
+  $padding-height: ceil($unit-size / 6);
+  $padding-width: ceil($unit-size / 3);
+  @return $padding-height $padding-width;
+}
+
+@mixin he-input-style() {
+  @include he-input-size-style();
+
+  border: he-border();
+  color: var(--textfield-text-color);
+  background: var(--textfield-background-color);
+
+  &::placeholder {
+    color: var(--textfield-placeholder-color);
+  }
+
+  &:focus {
+    @include he-focus-style();
+  }
+}
+
+@mixin he-input-readonly-style($background-color      : --textfield-read-only-background-color,
+                               $text-color            : --textfield-read-only-text-color,
+                               $border-color          : --textfield-read-only-border-color,
+                               $focused-border-color  : --textfield-read-only-focused-border-color) {
+  color: var($text-color);
+  border-color: var($border-color);
+  background: var($background-color);
+
+  &:focus {
+    @include he-focus-style($focused-border-color);
+  }
+}
+
+@mixin he-input-disabled-style() {
+  @include he-input-readonly-style($background-color      : --textfield-disabled-background-color,
+                                   $text-color            : --textfield-disabled-text-color,
+                                   $border-color          : --textfield-disabled-border-color,
+                                   $focused-border-color  : --textfield-disabled-focused-border-color);
+}
+
+@mixin he-input-error-style() {
+  border-color: var(--error-color) !important;
+  background: var(--textfield-background-color);
+  color: var(--textfield-text-color);
+
+  &:focus {
+    @include he-focus-style(--error-color);
+  }
+}
+
+@mixin he-textfield-borderless-style() {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  @include box-shadow(none);
+}

@@ -1,0 +1,180 @@
+/*!
+ * Copyright 2020 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@mixin he-notification($primary-stylename: v-Notification) {
+  .#{$primary-stylename} {
+    @include he-notification-style($primary-stylename: $primary-stylename);
+  }
+
+  .#{$primary-stylename}.system {
+    @include he-notification-system-style($primary-stylename: $primary-stylename);
+  }
+
+  .#{$primary-stylename}.humanized {
+    @include he-notification-humanized-style($primary-stylename: $primary-stylename);
+  }
+
+  .#{$primary-stylename}.tray {
+    @include he-notification-tray-style($primary-stylename: $primary-stylename);
+  }
+
+  .#{$primary-stylename}.warning {
+    @include he-notification-warning-style($primary-stylename: $primary-stylename);
+  }
+
+  .#{$primary-stylename}.error {
+    @include he-notification-error-style($primary-stylename: $primary-stylename);
+  }
+
+  .jmix-notification-modalitycurtain {
+    background: var(--notification-modalitycurtain-color);
+    opacity: .25;
+  }
+
+  &.small .#{$primary-stylename} {
+    @include he-notification-size-style(
+            $primary-stylename      : $primary-stylename,
+            $unit-size              : $v-unit-size--small,
+            $caption-font-size      : round($v-font-size--h3 * $v-scaling-factor--small),
+            $description-font-size  : $v-font-size--small);
+  }
+
+  &.large .#{$primary-stylename} {
+    @include he-notification-size-style(
+            $primary-stylename      : $primary-stylename,
+            $unit-size              : $v-unit-size--large,
+            $caption-font-size      : round($v-font-size--h3 * $v-scaling-factor--large),
+            $description-font-size  : $v-font-size--large);
+  }
+}
+
+@mixin he-notification-style($primary-stylename: v-Notification) {
+  @include he-notification-size-style($primary-stylename: $primary-stylename);
+  @include he-box-shadow(--notification-shadow);
+  text-align: inherit;
+
+  .#{$primary-stylename}-caption {
+    text-align: inherit;
+    font-weight: 600;
+    line-height: $v-line-height;
+
+    ~ .#{$primary-stylename}-description {
+      line-height: $v-line-height;
+    }
+  }
+}
+
+@mixin he-notification-size-style($primary-stylename      : v-Notification,
+                                  $unit-size              : $v-unit-size,
+                                  $caption-font-size      : $v-font-size--h3,
+                                  $description-font-size  : $v-font-size) {
+  padding: round($unit-size/2.4) round($unit-size/2);
+
+  .#{$primary-stylename}-caption {
+    font-size: $caption-font-size;
+
+    ~ .#{$primary-stylename}-description {
+      font-size: $description-font-size;
+      margin-top: round($unit-size/6);
+    }
+  }
+
+  &.tray .#{$primary-stylename}-caption {
+    font-size: $caption-font-size;
+  }
+
+  &.error {
+    padding-right: $unit-size;
+
+    &:after {
+      top: round($unit-size/6);
+      right: round($unit-size/6);
+      width: round($unit-size/1.5);
+      height: round($unit-size/1.5);
+      line-height: round($unit-size/1.5) - 1px;
+    }
+  }
+}
+
+@mixin he-notification-color-style($primary-stylename       : v-Notification,
+                                   $background-color        : --background-color,
+                                   $caption-text-color      : --text-secondary-color,
+                                   $description-text-color  : --text-main-color) {
+  background: var($background-color);
+
+  .#{$primary-stylename}-caption {
+    color: var($caption-text-color);
+  }
+
+  .#{$primary-stylename}-description {
+    color: var($description-text-color);
+  }
+}
+
+@mixin he-notification-system-style($primary-stylename: v-Notification) {
+  @include he-notification-color-style(
+          $primary-stylename      : $primary-stylename,
+          $background-color       : --notification-system-background-color,
+          $caption-text-color     : --notification-system-caption-color,
+          $description-text-color : --notification-system-description-color);
+  @include opacity(.9);
+  text-align: center;
+
+  .#{$primary-stylename}-caption {
+    text-align: center;
+  }
+}
+
+@mixin he-notification-humanized-style($primary-stylename: v-Notification) {
+  @include he-notification-color-style(
+          $primary-stylename      : $primary-stylename,
+          $background-color       : --notification-humanized-background-color,
+          $caption-text-color     : --notification-humanized-caption-color,
+          $description-text-color : --notification-humanized-description-color);
+}
+
+@mixin he-notification-tray-style($primary-stylename: v-Notification) {
+  @include he-notification-humanized-style($primary-stylename: $primary-stylename);
+}
+
+@mixin he-notification-warning-style($primary-stylename: v-Notification) {
+  @include he-notification-color-style(
+          $primary-stylename      : $primary-stylename,
+          $background-color       : --notification-warning-background-color,
+          $caption-text-color     : --notification-warning-caption-color,
+          $description-text-color : --notification-warning-description-color);
+  @include he-box-shadow(--notification-shadow);
+}
+
+@mixin he-notification-error-style($primary-stylename: v-Notification) {
+  @include he-notification-color-style(
+          $primary-stylename      : $primary-stylename,
+          $background-color       : --notification-error-background-color,
+          $caption-text-color     : --notification-error-caption-color,
+          $description-text-color : --notification-error-description-color);
+  @include he-box-shadow(--notification-shadow);
+
+  &:after {
+    border: none;
+    color: var(--notification-error-caption-color);
+  }
+
+  &:active:after {
+    background-color: transparent;
+    color: var(--notification-error-caption-color);
+    @include opacity(.75);
+  }
+}

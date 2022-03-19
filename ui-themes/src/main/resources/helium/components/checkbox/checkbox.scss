@@ -1,0 +1,172 @@
+/*!
+ * Copyright 2020 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+$he-checkbox-size-reduction : 10 !default;
+
+@mixin he-checkbox($primary-stylename: v-checkbox) {
+  .#{$primary-stylename} {
+    @include he-checkbox-style($checkbox-size: $v-unit-size - $he-checkbox-size-reduction);
+  }
+
+  /* Global size */
+
+  &.small .#{$primary-stylename} {
+    @include he-checkbox-size-style($checkbox-size: $v-unit-size--small - $he-checkbox-size-reduction, $font-size: $v-font-size--small);
+  }
+
+  &.large .#{$primary-stylename} {
+    @include he-checkbox-size-style($checkbox-size: $v-unit-size--large - $he-checkbox-size-reduction, $font-size: $v-font-size--large);
+  }
+
+  /* Size within a container */
+
+  .small .#{$primary-stylename} {
+    @include he-checkbox-size-style($checkbox-size: $v-unit-size--small - $he-checkbox-size-reduction, $font-size: $v-font-size--small);
+  }
+
+  .medium .#{$primary-stylename} {
+    @include he-checkbox-size-style($checkbox-size: $v-unit-size - $he-checkbox-size-reduction, $font-size: $v-font-size);
+  }
+
+  .large .#{$primary-stylename} {
+    @include he-checkbox-size-style($checkbox-size: $v-unit-size--large - $he-checkbox-size-reduction, $font-size: $v-font-size--large);
+  }
+
+  /* Own size */
+
+  .#{$primary-stylename}.small {
+    @include he-checkbox-size-style($checkbox-size: $v-unit-size--small - $he-checkbox-size-reduction, $font-size: $v-font-size--small);
+  }
+
+  .#{$primary-stylename}.medium {
+    @include he-checkbox-size-style($checkbox-size: $v-unit-size - $he-checkbox-size-reduction, $font-size: $v-font-size);
+  }
+
+  .#{$primary-stylename}.large {
+    @include he-checkbox-size-style($checkbox-size: $v-unit-size--large - $he-checkbox-size-reduction, $font-size: $v-font-size--large);
+  }
+}
+
+@mixin he-checkbox-size-style($checkbox-size: $v-unit-size, $font-size: null) {
+  line-height: $checkbox-size;
+  height: $checkbox-size + $jmix-checkbox-extra-height;
+  font-size: $font-size;
+
+  :root & {
+    padding-left: round($checkbox-size * 1.66);
+  }
+
+  :root & > input {
+    & ~ label:before,
+    & ~ label:after {
+      border-radius: ceil($v-border-radius / 2);
+      font-size: round($v-font-size * 0.8 * ($checkbox-size * 2 / $v-unit-size));
+      line-height: $checkbox-size;
+      height: round($checkbox-size);
+      width: round($checkbox-size);
+    }
+  }
+}
+
+@mixin he-checkbox-style($checkbox-size: $jmix-checkbox-size, $font-size: null) {
+  @include he-checkbox-size-style($checkbox-size: $checkbox-size, $font-size: $font-size);
+
+  color: var(--text-main-color);
+
+  :root & > input {
+    @include he-checkbox-color-style(
+            $background-color                 : --checkbox-background-color,
+            $border-color                     : --checkbox-border-color,
+            $focused-background-color         : --checkbox-focused-background-color,
+            $focused-border-color             : --checkbox-focused-border-color,
+            $checked-background-color         : --checkbox-checked-background-color,
+            $checked-border-color             : --checkbox-checked-border-color,
+            $checked-color                    : --checkbox-checked-color,
+            $checked-focused-background-color : --checkbox-checked-focused-background-color,
+            $checked-focused-border-color     : --checkbox-checked-focused-border-color,
+            $checked-focused-color            : --checkbox-checked-focused-color);
+
+    & ~ label:before {
+      border-width: var(--checkbox-border-width);
+    }
+
+    &:focus ~ label:before {
+      border-width: var(--checkbox-border-width);
+    }
+
+    &:active ~ label:after {
+      background: transparent;
+    }
+  }
+
+  &.v-readonly,
+  &.v-disabled {
+    :root & > input {
+      @include he-checkbox-color-style(
+              $background-color                 : --checkbox-read-only-background-color,
+              $border-color                     : --checkbox-read-only-border-color,
+              $focused-background-color         : --checkbox-read-only-focused-background-color,
+              $focused-border-color             : --checkbox-read-only-focused-border-color,
+              $checked-background-color         : --checkbox-read-only-checked-background-color,
+              $checked-border-color             : --checkbox-read-only-checked-border-color,
+              $checked-color                    : --checkbox-read-only-checked-color,
+              $checked-focused-background-color : --checkbox-read-only-checked-focused-background-color,
+              $checked-focused-border-color     : --checkbox-read-only-checked-focused-border-color,
+              $checked-focused-color            : --checkbox-read-only-checked-focused-color);
+    }
+  }
+
+  &.v-disabled {
+    color: var(--text-dim-color);
+  }
+}
+
+@mixin he-checkbox-color-style($background-color, $border-color,
+                               $focused-background-color, $focused-border-color,
+                               $checked-background-color, $checked-border-color, $checked-color,
+                               $checked-focused-background-color, $checked-focused-border-color, $checked-focused-color) {
+  & ~ label:before {
+    background: var($background-color);
+    border-color: var($border-color);
+  }
+
+  &:focus ~ label:before {
+    background: var($focused-background-color);
+    border-color: var($focused-border-color);
+  }
+
+  &:checked {
+    & ~ label:before {
+      background: var($checked-background-color);
+      border-color: var($checked-border-color);
+    }
+
+    & ~ label:after {
+      color: var($checked-color);
+    }
+  }
+
+  &:focus:checked {
+    & ~ label:before {
+      background: var($checked-focused-background-color);
+      border-color: var($checked-focused-border-color);
+    }
+
+    & ~ label:after {
+      color: var($checked-focused-color);
+    }
+  }
+}

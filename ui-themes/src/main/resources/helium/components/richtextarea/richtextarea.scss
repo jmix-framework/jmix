@@ -1,0 +1,134 @@
+/*!
+ * Copyright 2020 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@mixin he-richtextarea($primary-stylename: v-richtextarea) {
+  .#{$primary-stylename} {
+    @include he-input-style();
+    @include he-richtextarea-size-style();
+
+    height: auto;
+    overflow: hidden;
+
+    padding: 0;
+
+    .gwt-RichTextToolbar {
+      @include he-richtextarea-toolbar-style();
+    }
+
+    .gwt-RichTextArea {
+      background: var(--richtextarea-textarea-background-color);
+    }
+  }
+
+  .#{$primary-stylename}.v-readonly {
+    @include he-input-readonly-style();
+  }
+
+  .#{$primary-stylename}-error {
+    @include he-input-error-style();
+
+    .gwt-RichTextToolbar {
+      border-bottom: he-border($color: --error-color);
+    }
+  }
+
+  /* Global size */
+
+  &.small .#{$primary-stylename} {
+    @include he-richtextarea-size-style($unit-size: $v-unit-size--small, $font-size: $v-font-size--small);
+  }
+
+  &.large .#{$primary-stylename} {
+    @include he-richtextarea-size-style($unit-size: $v-unit-size--large, $font-size: $v-font-size--large);
+  }
+
+  /* Size within a container */
+
+  .small .#{$primary-stylename} {
+    @include he-richtextarea-size-style($unit-size: $v-unit-size--small, $font-size: $v-font-size--small);
+  }
+
+  .medium .#{$primary-stylename} {
+    @include he-richtextarea-size-style($unit-size: $v-unit-size, $font-size: $v-font-size);
+  }
+
+  .large .#{$primary-stylename} {
+    @include he-richtextarea-size-style($unit-size: $v-unit-size--large, $font-size: $v-font-size--large);
+  }
+
+  /* Own size */
+
+  .#{$primary-stylename}.small {
+    @include he-richtextarea-size-style($unit-size: $v-unit-size--small, $font-size: $v-font-size--small);
+  }
+
+  .#{$primary-stylename}.medium {
+    @include he-richtextarea-size-style($unit-size: $v-unit-size, $font-size: $v-font-size);
+  }
+
+  .#{$primary-stylename}.large {
+    @include he-richtextarea-size-style($unit-size: $v-unit-size--large, $font-size: $v-font-size--large);
+  }
+}
+
+@mixin he-richtextarea-size-style($unit-size : $v-unit-size,
+                                  $font-size : $v-font-size) {
+  font-size: $font-size;
+
+  .gwt-RichTextToolbar {
+
+    .gwt-ToggleButton,
+    .gwt-PushButton {
+      line-height: $unit-size;
+      width: $unit-size;
+    }
+
+    .gwt-RichTextToolbar-bottom {
+      font-size: round($font-size * 0.8);
+      padding: 0 round($unit-size / 4) round($unit-size / 4) 0;
+
+      select {
+        margin: round($unit-size / 4) 0 0 round($unit-size / 4);
+      }
+    }
+  }
+
+  .gwt-HTML.v-scrollable {
+    font-size: $font-size;
+  }
+
+  &.v-readonly {
+    padding: ceil($unit-size / 6) ceil($unit-size / 3);
+  }
+}
+
+@mixin he-richtextarea-toolbar-style() {
+  background: var(--richtextarea-toolbar-background-color);
+  border-bottom: he-border();
+  color: var(--richtextarea-toolbar-text-color);
+
+  .gwt-ToggleButton,
+  .gwt-PushButton {
+    &:hover {
+      color: var(--richtextarea-toolbar-text-hover-color);
+    }
+  }
+
+  .gwt-ToggleButton-down,
+  .gwt-ToggleButton-down-hovering {
+    background: var(--richtextarea-toolbar-togglebutton-down-background-color);
+  }
+}

@@ -1,0 +1,108 @@
+/*!
+ * Copyright 2020 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@mixin he-drawer($primary-stylename: jmix-drawer) {
+  .#{$primary-stylename} {
+    background: var(--drawer-background-color);
+    color: var(--drawer-text-color);
+
+    .jmix-drawer-header {
+      color: var(--sidemenu-title-color);
+      background: var(--sidemenu-title-background-color);
+    }
+
+    .jmix-drawer-content.jmix-sidemenu {
+      color: var(--sidemenu-text-color);
+
+      .jmix-sidemenu-item {
+        @include he-sidemenu-item-style();
+
+        &.jmix-sidemenu-item-selected {
+          @include he-sidemenu-item-selected-style();
+        }
+      }
+
+      .jmix-sidemenu-item-header {
+        @include he-sidemenu-item-header-style();
+      }
+
+      .jmix-sidemenu-item-focused {
+        @include he-sidemenu-item-focused-style();
+      }
+
+      .jmix-sidemenu-submenu.jmix-sidemenu-submenu-open {
+        background: var(--drawer-sidemenu-submenu-background-color);
+      }
+    }
+
+    .jmix-drawer-footer {
+      background-color: var(--sidemenu-collapsible-controls-panel-background-color);
+
+      .jmix-settings-button,
+      .jmix-logout-button,
+      .jmix-login-button {
+        @include he-sidemenu-action-button-color-style(
+                $color                    : --sidemenu-collapsible-action-button-color,
+                $hover-background-color   : --sidemenu-collapsible-action-button-hover-background-color,
+                $active-background-color  : --sidemenu-collapsible-action-button-active-background-color
+        );
+      }
+
+      .jmix-drawer-collapse-button {
+        @include he-button-color-style($main-color            : --button-default-color,
+                                       $text-color            : --button-default-text-color,
+                                       $hover-color           : --button-default-hover-color,
+                                       $active-color          : --button-default-active-color,
+                                       $disabled-color        : --button-default-disabled-color,
+                                       $disabled-text-color   : --button-default-disabled-text-color,
+                                       $focused-border-color  : --button-default-focused-border-color);
+      }
+    }
+
+    .jmix-drawer-button {
+      color: var(--sidemenu-collapsible-collapse-button-color);
+      background: var(--sidemenu-collapsible-collapse-button-background-color);
+
+      &:hover {
+        color: var(--sidemenu-collapsible-collapse-button-color);
+        background: var(--sidemenu-collapsible-collapse-button-hover-background-color);
+      }
+
+      &:active {
+        color: var(--sidemenu-collapsible-collapse-button-color);
+        background: var(--sidemenu-collapsible-collapse-button-active-background-color);
+      }
+    }
+  }
+
+  &.small {
+    @include he-drawer-size-style($primary-stylename: $primary-stylename, $font-size: $v-font-size--small);
+  }
+
+  &.large {
+    @include he-drawer-size-style($primary-stylename: $primary-stylename, $font-size: $v-font-size--large);
+  }
+}
+
+@mixin he-drawer-size-style($primary-stylename: jmix-drawer, $font-size: $v-font-size) {
+  .#{$primary-stylename}-footer .#{$primary-stylename}-collapse-button {
+    @include drawer-footer-button()
+  }
+
+  .#{$primary-stylename}-header {
+    font-size: $font-size;
+  }
+}

@@ -1,0 +1,420 @@
+{
+  "brightnessStep": 10,
+  "colorField": "color",
+  "durationField": "duration",
+  "endField": "end",
+  "graph": {
+    "balloonText": "[[task]]: [[open]] [[value]]",
+    "fillAlphas": 1.0
+  },
+  "period": "hh",
+  "segmentsField": "segments",
+  "startDate": "2015-01-01 00:00:00:0",
+  "startField": "start",
+  "valueAxis": {
+    "maximum": 31.0,
+    "minimum": 7.0,
+    "type": "date"
+  },
+  "balloonDateFormat": "JJ:NN",
+  "categoryField": "category",
+  "columnWidth": 0.5,
+  "rotate": true,
+  "chartCursor": {
+    "cursorAlpha": 0.1,
+    "fullWidth": true,
+    "valueBalloonsEnabled": false,
+    "valueLineBalloonEnabled": true,
+    "valueLineEnabled": true
+  },
+  "chartScrollbar": {
+
+  },
+  "marginRight": 70,
+  "export": {
+    "enabled": true,
+    "fileName": "chart",
+    "exportFields": [
+      "category",
+      "start",
+      "duration",
+      "color",
+      "end",
+      "task"
+    ]
+  },
+  "theme": "light",
+  "type": "gantt",
+  "dataProvider": [
+    {
+      "$k": "1",
+      "category": "John",
+      "segments": [
+        {
+          "$i": 0,
+          "start": 7,
+          "duration": 2,
+          "color": "#7B742C",
+          "task": "Task #1"
+        },
+        {
+          "$i": 1,
+          "duration": 2,
+          "color": "#7E585F",
+          "task": "Task #2"
+        },
+        {
+          "$i": 2,
+          "duration": 2,
+          "color": "#CF794A",
+          "task": "Task #3"
+        }
+      ]
+    },
+    {
+      "$k": "2",
+      "category": "Smith",
+      "segments": [
+        {
+          "$i": 0,
+          "start": 10,
+          "duration": 2,
+          "color": "#7E585F",
+          "task": "Task #2"
+        },
+        {
+          "$i": 1,
+          "duration": 1,
+          "color": "#CF794A",
+          "task": "Task #3"
+        },
+        {
+          "$i": 2,
+          "duration": 4,
+          "color": "#7B742C",
+          "task": "Task #1"
+        }
+      ]
+    },
+    {
+      "$k": "3",
+      "category": "Ben",
+      "segments": [
+        {
+          "$i": 0,
+          "start": 12,
+          "duration": 2,
+          "color": "#7E585F",
+          "task": "Task #2"
+        },
+        {
+          "$i": 1,
+          "start": 16,
+          "duration": 2,
+          "color": "#FFE4C4",
+          "task": "Task #4"
+        }
+      ]
+    },
+    {
+      "$k": "4",
+      "category": "Mike",
+      "segments": [
+        {
+          "$i": 0,
+          "start": 9,
+          "duration": 6,
+          "color": "#7B742C",
+          "task": "Task #1"
+        },
+        {
+          "$i": 1,
+          "duration": 4,
+          "color": "#7E585F",
+          "task": "Task #2"
+        }
+      ]
+    },
+    {
+      "$k": "5",
+      "category": "Lenny",
+      "segments": [
+        {
+          "$i": 0,
+          "start": 8,
+          "duration": 1,
+          "color": "#CF794A",
+          "task": "Task #3"
+        },
+        {
+          "$i": 1,
+          "duration": 4,
+          "color": "#7B742C",
+          "task": "Task #1"
+        }
+      ]
+    },
+    {
+      "$k": "6",
+      "category": "Scott",
+      "segments": [
+        {
+          "$i": 0,
+          "start": 15,
+          "duration": 3,
+          "color": "#7E585F",
+          "task": "Task #2"
+        }
+      ]
+    },
+    {
+      "$k": "7",
+      "category": "Julia",
+      "segments": [
+        {
+          "$i": 0,
+          "start": 9,
+          "duration": 2,
+          "color": "#7B742C",
+          "task": "Task #1"
+        },
+        {
+          "$i": 1,
+          "duration": 1,
+          "color": "#7E585F",
+          "task": "Task #2"
+        },
+        {
+          "$i": 2,
+          "duration": 8,
+          "color": "#CF794A",
+          "task": "Task #3"
+        }
+      ]
+    },
+    {
+      "$k": "8",
+      "category": "Bob",
+      "segments": [
+        {
+          "$i": 0,
+          "start": 9,
+          "duration": 8,
+          "color": "#7E585F",
+          "task": "Task #2"
+        },
+        {
+          "$i": 1,
+          "duration": 7,
+          "color": "#CF794A",
+          "task": "Task #3"
+        }
+      ]
+    },
+    {
+      "$k": "9",
+      "category": "Kendra",
+      "segments": [
+        {
+          "$i": 0,
+          "start": 11,
+          "duration": 8,
+          "color": "#7E585F",
+          "task": "Task #2"
+        },
+        {
+          "$i": 1,
+          "start": 16,
+          "duration": 2,
+          "color": "#FFE4C4",
+          "task": "Task #4"
+        }
+      ]
+    },
+    {
+      "$k": "9",
+      "category": "Tom",
+      "segments": [
+        {
+          "$i": 0,
+          "start": 9,
+          "duration": 4,
+          "color": "#7B742C",
+          "task": "Task #1"
+        },
+        {
+          "$i": 1,
+          "duration": 3,
+          "color": "#7E585F",
+          "task": "Task #2"
+        },
+        {
+          "$i": 2,
+          "duration": 5,
+          "color": "#CF794A",
+          "task": "Task #3"
+        }
+      ]
+    },
+    {
+      "$k": "10",
+      "category": "Kyle",
+      "segments": [
+        {
+          "$i": 0,
+          "start": 6,
+          "duration": 3,
+          "color": "#7E585F",
+          "task": "Task #2"
+        }
+      ]
+    },
+    {
+      "$k": "11",
+      "category": "Anita",
+      "segments": [
+        {
+          "$i": 0,
+          "start": 12,
+          "duration": 2,
+          "color": "#7E585F",
+          "task": "Task #2"
+        },
+        {
+          "$i": 1,
+          "start": 16,
+          "duration": 2,
+          "color": "#FFE4C4",
+          "task": "Task #4"
+        }
+      ]
+    },
+    {
+      "$k": "12",
+      "category": "Jack",
+      "segments": [
+        {
+          "$i": 0,
+          "start": 8,
+          "duration": 10,
+          "color": "#7B742C",
+          "task": "Task #1"
+        },
+        {
+          "$i": 1,
+          "duration": 2,
+          "color": "#7E585F",
+          "task": "Task #2"
+        }
+      ]
+    },
+    {
+      "$k": "13",
+      "category": "Kim",
+      "segments": [
+        {
+          "$i": 0,
+          "start": 12,
+          "duration": 2,
+          "color": "#7E585F",
+          "task": "Task #2"
+        },
+        {
+          "$i": 1,
+          "duration": 3,
+          "color": "#CF794A",
+          "task": "Task #3"
+        }
+      ]
+    },
+    {
+      "$k": "14",
+      "category": "Aaron",
+      "segments": [
+        {
+          "$i": 0,
+          "start": 18,
+          "duration": 2,
+          "color": "#7E585F",
+          "task": "Task #2"
+        },
+        {
+          "$i": 1,
+          "duration": 2,
+          "color": "#FFE4C4",
+          "task": "Task #4"
+        }
+      ]
+    },
+    {
+      "$k": "15",
+      "category": "Alan",
+      "segments": [
+        {
+          "$i": 0,
+          "start": 17,
+          "duration": 2,
+          "color": "#7B742C",
+          "task": "Task #1"
+        },
+        {
+          "$i": 1,
+          "duration": 2,
+          "color": "#7E585F",
+          "task": "Task #2"
+        },
+        {
+          "$i": 2,
+          "duration": 2,
+          "color": "#CF794A",
+          "task": "Task #3"
+        }
+      ]
+    },
+    {
+      "$k": "16",
+      "category": "Ruth",
+      "segments": [
+        {
+          "$i": 0,
+          "start": 13,
+          "duration": 2,
+          "color": "#7E585F",
+          "task": "Task #2"
+        },
+        {
+          "$i": 1,
+          "duration": 1,
+          "color": "#CF794A",
+          "task": "Task #3"
+        },
+        {
+          "$i": 2,
+          "duration": 4,
+          "color": "#7B742C",
+          "task": "Task #1"
+        }
+      ]
+    },
+    {
+      "$k": "17",
+      "category": "Simon",
+      "segments": [
+        {
+          "$i": 0,
+          "start": 10,
+          "duration": 3,
+          "color": "#7E585F",
+          "task": "Task #2"
+        },
+        {
+          "$i": 1,
+          "start": 17,
+          "duration": 4,
+          "color": "#FFE4C4",
+          "task": "Task #4"
+        }
+      ]
+    }
+  ]
+}

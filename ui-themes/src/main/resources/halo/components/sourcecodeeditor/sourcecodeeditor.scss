@@ -1,0 +1,101 @@
+/*
+ * Copyright (c) 2008-2016 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
+/**
+ * The background color of source code editor.
+ * @group sourcecodeeditor
+ */
+$jmix-sourcecodeeditor-background-color: if(is-dark-color($v-app-background-color), darken($v-app-background-color, 4%), lighten($v-app-background-color, 8%)) !default;
+
+/**
+ * The background color of source code editor gutter.
+ * @group sourcecodeeditor
+ */
+$jmix-sourcecodeeditor-gutter-background-color: if(is-dark-color($v-app-background-color), lighten($v-app-background-color, 8%), darken($v-app-background-color, 4%)) !default;
+
+/**
+ * The background color of active line of source code editor.
+ * @group sourcecodeeditor
+ */
+$jmix-sourcecodeeditor-gutter-active-line-background-color: if(is-dark-color($v-app-background-color), lighten($v-app-background-color, 4%), darken($v-app-background-color, 16%)) !default;
+
+@mixin halo-sourcecodeeditor($primary-stylename : AceEditorWidget) {
+  .#{$primary-stylename} {
+    $padding-width: ceil($v-unit-size/6);
+
+    @include valo-textfield-style($padding: $padding-width, $states:(normal, disabled));
+
+    .ace_cursor {
+      visibility: hidden;
+      border-left-width: 1px;
+      color: $v-font-color;
+    }
+
+    .ace_text-input,
+    .ace_editor {
+      font-size: $v-font-size;
+      color: $v-font-color;
+    }
+
+    .ace_gutter {
+      background: $jmix-sourcecodeeditor-gutter-background-color;
+
+      .ace_gutter-active-line {
+        background: $jmix-sourcecodeeditor-gutter-active-line-background-color;
+      }
+    }
+
+    .ace_selection {
+      background: rgb(51,153,255) !important;
+    }
+
+    .ace_content {
+      background-color: $jmix-sourcecodeeditor-background-color;
+    }
+  }
+
+  .#{$primary-stylename} .ace_focus {
+    .ace_cursor {
+      visibility: visible;
+    }
+  }
+
+  .#{$primary-stylename}-focus {
+    @include valo-textfield-focus-style;
+  }
+
+  .#{$primary-stylename},
+  .#{$primary-stylename}:focus {
+    outline: none;
+  }
+
+  .aceeditor-suggestpopup-list {
+    width: 400px !important;
+  }
+
+  .#{$primary-stylename}-error {
+    @include valo-textfield-error-style;
+  }
+
+  .#{$primary-stylename}-error.#{$primary-stylename}-focus {
+    @include valo-error-focus-style;
+  }
+
+  .#{$primary-stylename}.v-readonly .ace_content {
+    cursor: default !important;
+  }
+}

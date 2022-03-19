@@ -1,0 +1,253 @@
+/*
+ * Copyright 2019 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.jmix.ui.component.impl;
+
+import com.vaadin.shared.Registration;
+import io.jmix.core.common.event.Subscription;
+import io.jmix.core.common.util.Preconditions;
+import io.jmix.ui.component.ComponentsHelper;
+import io.jmix.ui.component.*;
+import com.vaadin.event.LayoutEvents;
+import com.vaadin.event.ShortcutListener;
+
+import javax.annotation.Nullable;
+import java.util.*;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
+
+public class AbstractOrderedLayout<T extends com.vaadin.ui.CssLayout> extends AbstractComponent<T>
+        implements OrderedContainer, Component.BelongToFrame, Component.HasCaption, Component.HasIcon,
+        LayoutClickNotifier, ShortcutNotifier {
+
+    protected List<Component> ownComponents = new ArrayList<>();
+    protected Registration layoutClickRegistration;
+    protected Map<ShortcutAction, ShortcutListener> shortcuts;
+
+    @Override
+    public void add(Component childComponent) {
+        add(childComponent, ownComponents.size());
+    }
+
+    @Override
+    public void add(Component childComponent, int index) {
+        if (childComponent.getParent() != null && childComponent.getParent() != this) {
+            throw new IllegalStateException("Component already has parent");
+        }
+
+        if (ownComponents.contains(childComponent)) {
+            int existingIndex = component.getComponentIndex(ComponentsHelper.getComposition(childComponent));
+            if (index > existingIndex) {
+                index--;
+            }
+
+            remove(childComponent);
+        }
+
+        com.vaadin.ui.Component vComponent = ComponentsHelper.getComposition(childComponent);
+        component.addComponent(vComponent, index);
+
+        if (frame != null) {
+            if (childComponent instanceof BelongToFrame
+                    && ((BelongToFrame) childComponent).getFrame() == null) {
+                ((BelongToFrame) childComponent).setFrame(frame);
+            } else {
+                ((FrameImplementation) frame).registerComponent(childComponent);
+            }
+        }
+
+        if (index == ownComponents.size()) {
+            ownComponents.add(childComponent);
+        } else {
+            ownComponents.add(index, childComponent);
+        }
+
+        childComponent.setParent(this);
+    }
+
+    @Override
+    public int indexOf(Component component) {
+        return ownComponents.indexOf(component);
+    }
+
+    @Nullable
+    @Override
+    public Component getComponent(int index) {
+        return ownComponents.get(index);
+    }
+
+    @Override
+    public void remove(Component childComponent) {
+        component.removeComponent(ComponentsHelper.getComposition(childComponent));
+        ownComponents.remove(childComponent);
+
+        childComponent.setParent(null);
+    }
+
+    @Override
+    public void removeAll() {
+        component.removeAllComponents();
+
+        Component[] components = ownComponents.toArray(new Component[ownComponents.size()]);
+        ownComponents.clear();
+
+        for (Component childComponent : components) {
+            childComponent.setParent(null);
+        }
+    }
+
+    @Override
+    public void setFrame(@Nullable Frame frame) {
+        super.setFrame(frame);
+
+        if (frame != null) {
+            for (Component childComponent : ownComponents) {
+                if (childComponent instanceof BelongToFrame
+                        && ((BelongToFrame) childComponent).getFrame() == null) {
+                    ((BelongToFrame) childComponent).setFrame(frame);
+                }
+            }
+        }
+    }
+
+    @Nullable
+    @Override
+    public Component getOwnComponent(String id) {
+        Preconditions.checkNotNullArgument(id);
+
+        return ownComponents.stream()
+                .filter(component -> Objects.equals(id, component.getId()))
+                .findFirst()
+                .orElse(null);
+    }
+
+    @Nullable
+    @Override
+    public Component getComponent(String id) {
+        return ComponentsHelper.getComponent(this, id);
+    }
+
+    @Override
+    public Collection<Component> getOwnComponents() {
+        return Collections.unmodifiableCollection(ownComponents);
+    }
+
+    @Override
+    public Stream<Component> getOwnComponentsStream() {
+        return ownComponents.stream();
+    }
+
+    @Override
+    public Collection<Component> getComponents() {
+        return ComponentsHelper.getComponents(this);
+    }
+
+    @Nullable
+    @Override
+    public String getDescription() {
+        return getComposition().getDescription();
+    }
+
+    @Override
+    public void setDescription(@Nullable String description) {
+        if (getComposition() instanceof com.vaadin.ui.AbstractComponent) {
+            ((com.vaadin.ui.AbstractComponent) getComposition()).setDescription(description);
+        }
+    }
+
+    @Override
+    public Subscription addLayoutClickListener(Consumer<LayoutClickEvent> listener) {
+        if (layoutClickRegistration == null) {
+            LayoutEvents.LayoutClickListener layoutClickListener = event -> {
+                Component childComponent = findChildComponent(this, event.getChildComponent());
+                Component clickedComponent = findChildComponent(this, event.getClickedComponent());
+                MouseEventDetails mouseEventDetails = WrapperUtils.toMouseEventDetails(event);
+
+                LayoutClickEvent layoutClickEvent =
+                        new LayoutClickEvent(this, childComponent, clickedComponent, mouseEventDetails);
+
+
+                publish(LayoutClickEvent.class, layoutClickEvent);
+            };
+            layoutClickRegistration = component.addLayoutClickListener(layoutClickListener);
+        }
+
+        getEventHub().subscribe(LayoutClickEvent.class, listener);
+
+        return () -> internalRemoveLayoutClickListener(listener);
+    }
+
+    @Nullable
+    protected Component findChildComponent(ComponentContainer layout, com.vaadin.ui.Component clickedComponent) {
+        for (Component component : layout.getComponents()) {
+            if (component.unwrapComposition(com.vaadin.ui.Component.class) == clickedComponent) {
+                return component;
+            }
+        }
+        return null;
+    }
+    
+    protected void internalRemoveLayoutClickListener(Consumer<LayoutClickEvent> listener) {
+        unsubscribe(LayoutClickEvent.class, listener);
+
+        if (!hasSubscriptions(LayoutClickEvent.class)) {
+            layoutClickRegistration.remove();
+            layoutClickRegistration = null;
+        }
+    }
+
+    @Override
+    public void addShortcutAction(ShortcutAction action) {
+        KeyCombination keyCombination = action.getShortcutCombination();
+        com.vaadin.event.ShortcutListener shortcut =
+                new ContainerShortcutActionWrapper(action, this, keyCombination);
+        component.addShortcutListener(shortcut);
+
+        if (shortcuts == null) {
+            shortcuts = new HashMap<>(4);
+        }
+        shortcuts.put(action, shortcut);
+    }
+
+    @Override
+    public void removeShortcutAction(ShortcutAction action) {
+        if (shortcuts != null) {
+            component.removeShortcutListener(shortcuts.remove(action));
+
+            if (shortcuts.isEmpty()) {
+                shortcuts = null;
+            }
+        }
+    }
+
+    @Override
+    public void attached() {
+        super.attached();
+
+        for (Component component : ownComponents) {
+            ((AttachNotifier) component).attached();
+        }
+    }
+
+    @Override
+    public void detached() {
+        super.detached();
+
+        for (Component component : ownComponents) {
+            ((AttachNotifier) component).detached();
+        }
+    }
+}

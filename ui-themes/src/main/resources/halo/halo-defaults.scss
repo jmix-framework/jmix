@@ -1,0 +1,81 @@
+/*!
+ * Copyright 2019 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+// Vaadin Valo theme defaults
+
+$v-line-height: 1.35;
+$v-font-size: 14px;
+$v-caption-font-size: $v-font-size;
+$v-tabsheet-caption-font-size: $v-font-size;
+$v-font-weight: 400;
+$v-unit-size: 30px;
+$v-default-field-width: $v-unit-size * 8;
+
+$v-font-size--h1: 22px;
+$v-font-size--h2: 18px;
+$v-font-size--h3: 16px;
+
+$v-layout-margin-top: 10px;
+$v-layout-margin-left: 10px;
+$v-layout-margin-right: 10px;
+$v-layout-margin-bottom: 10px;
+
+$v-layout-spacing-vertical: 10px;
+$v-layout-spacing-horizontal: 10px;
+
+$v-table-row-height: 30px;
+$v-table-header-font-size: 13px;
+$v-table-cell-padding-horizontal: 7px;
+
+$v-focus-style: inset 0px 0px 3px 1px rgba($v-focus-color, 0.5);
+$v-error-focus-style: inset 0px 0px 3px 1px rgba($v-error-indicator-color, 0.5);
+$v-error-indicator-use-bg: false;
+$v-error-indicator-use-color: false;
+
+$jmix-login-btn-background: #1b6198 none;
+$jmix-login-btn-font-weight: 700;
+$jmix-login-btn-height: $v-unit-size + $v-unit-size / 3;
+$jmix-login-btn-margin-top: 0;
+$jmix-login-btn-width: 100%;
+
+$jmix-login-caption-font-size: round($v-font-size * 1.45);
+$jmix-login-caption-font-weight: 700;
+$jmix-login-locale-border-width: 0;
+$jmix-login-locale-text-align: right;
+$jmix-login-logo-height: $v-unit-size + $v-unit-size / 3;
+$jmix-login-panel-padding:$v-unit-size + $v-unit-size / 3;
+$jmix-login-password-border-radius: 0 0 $v-border-radius $v-border-radius;
+$jmix-login-password-height: $v-unit-size + $v-unit-size / 3;
+$jmix-login-username-border-radius: $v-border-radius $v-border-radius 0 0;
+$jmix-login-username-height: $v-unit-size + $v-unit-size / 3;
+
+$jmix-sidemenu-title-background-color: #3b3b3d;
+
+/**
+ * Whether to enable show/hide animations for dialog windows.
+ * @group window
+ */
+$v-window-animations-enabled: false !default;
+/**
+ * Whether to show or not separate * element for required fields.
+ * @group field
+ */
+$v-show-required-indicators: false !default;
+/**
+ * Whether buttons should be placed in one row or can wrap onto multiple rows.
+ * @group buttonspanel
+ */
+$jmix-buttonspanel-flow: true !default;

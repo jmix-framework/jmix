@@ -1,0 +1,676 @@
+/*!
+ * Copyright 2020 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+$he-table-header-row-height-scale: 1.5 !default;
+
+@mixin he-table($primary-stylename: v-table) {
+  .#{$primary-stylename} {
+    @include he-table-style($primary-stylename: $primary-stylename);
+  }
+
+  .jmix-table-composition {
+    &.no-stripes {
+      .#{$primary-stylename} [class*="-row"].v-selected {
+        @include he-table-selected-row-style($primary-stylename: $primary-stylename);
+      }
+
+      @if $jmix-table-highlight-hover-row {
+        @include he-table-row-hover-style($primary-stylename: $primary-stylename);
+      }
+    }
+
+    @include he-table-composition-size-style();
+  }
+
+  @include he-contextmenu($primary-stylename: jmix-table-contextmenu, $item-stylename: jmix-table-contextmenu-item);
+
+  .jmix-table-view-textcut {
+    @include he-overlay-style();
+  }
+
+  .jmix-table-prefs-editor {
+    @include he-box-shadow(--table-prefs-editor-shadow);
+
+    color: var(--text-main-color);
+    background-color: var(--table-background-color);
+
+    .jmix-table-prefs-title {
+      border-bottom-color: var(--border-dim-color);
+    }
+
+    .jmix-table-prefs-list.v-menubar {
+      color: var(--text-main-color);
+
+      .v-menubar-menuitem:hover:before {
+        background: none;
+      }
+    }
+  }
+
+  @include he-table-empty-state-style();
+
+  /* Global size */
+
+  &.small {
+    .#{$primary-stylename} {
+      @include he-table-size-style(
+              $primary-stylename: $primary-stylename,
+              $row-height: $v-table-row-height--small,
+              $font-size: $v-font-size--small,
+              $header-font-size: $v-table-header-font-size--small);
+    }
+
+    .jmix-table-composition {
+      @include he-table-composition-size-style($v-unit-size--small);
+    }
+
+    @include he-table-empty-state-size-style($scaling-factor: $v-scaling-factor--small);
+  }
+
+  &.large {
+    .#{$primary-stylename} {
+      @include he-table-size-style(
+              $primary-stylename: $primary-stylename,
+              $row-height: $v-table-row-height--large,
+              $font-size: $v-font-size--large,
+              $header-font-size: $v-table-header-font-size--large);
+    }
+
+    .jmix-table-composition {
+      @include he-table-composition-size-style($v-unit-size--large);
+    }
+
+    @include he-table-empty-state-size-style($scaling-factor: $v-scaling-factor--large);
+  }
+
+  /* Size within a container */
+
+  .small {
+    .#{$primary-stylename} {
+      @include he-table-size-style(
+              $primary-stylename: $primary-stylename,
+              $row-height: $v-table-row-height--small,
+              $font-size: $v-font-size--small,
+              $header-font-size: $v-table-header-font-size--small);
+    }
+
+    .jmix-table-composition {
+      @include he-table-composition-size-style($v-unit-size--small);
+    }
+
+    @include he-table-empty-state-size-style($scaling-factor: $v-scaling-factor--small);
+  }
+
+  .medium {
+    .#{$primary-stylename} {
+      @include he-table-size-style(
+              $primary-stylename: $primary-stylename,
+              $row-height: $v-table-row-height,
+              $font-size: $v-font-size,
+              $header-font-size: $v-table-header-font-size);
+    }
+
+    .jmix-table-composition {
+      @include he-table-composition-size-style($v-unit-size);
+    }
+
+    @include he-table-empty-state-size-style();
+  }
+
+  .large {
+    .#{$primary-stylename} {
+      @include he-table-size-style(
+              $primary-stylename: $primary-stylename,
+              $row-height: $v-table-row-height--large,
+              $font-size: $v-font-size--large,
+              $header-font-size: $v-table-header-font-size--large);
+    }
+
+    .jmix-table-composition {
+      @include he-table-composition-size-style($v-unit-size--large);
+    }
+
+    @include he-table-empty-state-size-style($scaling-factor: $v-scaling-factor--large);
+  }
+
+  /* Own size */
+
+  // small
+
+  .#{$primary-stylename}.small {
+    @include he-table-size-style(
+            $primary-stylename: $primary-stylename,
+            $row-height: $v-table-row-height--small,
+            $font-size: $v-font-size--small,
+            $header-font-size: $v-table-header-font-size--small);
+  }
+
+  .jmix-table-composition.small {
+    @include he-table-composition-size-style($v-unit-size--small);
+
+    @include he-table-empty-state-size-style($scaling-factor: $v-scaling-factor--small);
+  }
+
+  // medium
+
+  .#{$primary-stylename}.medium {
+    @include he-table-size-style(
+            $primary-stylename: $primary-stylename,
+            $row-height: $v-table-row-height,
+            $font-size: $v-font-size,
+            $header-font-size: $v-table-header-font-size);
+  }
+
+  .jmix-table-composition.medium {
+    @include he-table-composition-size-style($v-unit-size);
+
+    @include he-table-empty-state-size-style();
+  }
+
+  // large
+
+  .#{$primary-stylename}.large {
+    @include he-table-size-style(
+            $primary-stylename: $primary-stylename,
+            $row-height: $v-table-row-height--large,
+            $font-size: $v-font-size--large,
+            $header-font-size: $v-table-header-font-size--large);
+  }
+
+  .jmix-table-composition.large {
+    @include he-table-composition-size-style($v-unit-size--large);
+
+    @include he-table-empty-state-size-style($scaling-factor: $v-scaling-factor--large);
+  }
+}
+
+@mixin he-table-style($primary-stylename: v-table) {
+  @include he-table-size-style($primary-stylename: $primary-stylename);
+
+  $table-outer-border: he-table-border(--table-outer-border-color);
+  $table-inner-border: he-table-border(--table-inner-border-color);
+
+  color: var(--text-main-color);
+  background: var(--table-background-color);
+
+  .#{$primary-stylename}-header table,
+  .#{$primary-stylename}-footer table,
+  .#{$primary-stylename}-table {
+    @include box-shadow(0 0 0 $v-table-border-width var(--table-inner-border-color))
+  }
+
+  .#{$primary-stylename}-body {
+    border: $table-inner-border;
+    border-left-color: var(--table-outer-border-color);
+    border-right-color: var(--table-outer-border-color);
+
+    @if $v-table-border-radius > 0 {
+      border-radius: 0 0 $v-table-border-radius $v-table-border-radius;
+    }
+    border-bottom-color: var(--table-outer-border-color);
+  }
+
+  &.has-footer .#{$primary-stylename}-body {
+    border-radius: 0;
+    border-bottom-color: var(--table-inner-border-color);
+  }
+
+  .#{$primary-stylename}-header-wrap,
+  .#{$primary-stylename}-footer-wrap,
+  .#{$primary-stylename}-header-drag {
+    border: $table-outer-border;
+    background: var(--table-background-color);
+    color: var(--table-header-text-color);
+  }
+
+  .#{$primary-stylename}-row {
+    background-color: var(--table-row-color);
+  }
+
+  .#{$primary-stylename}-row-odd {
+    background-color: var(--table-row-stripe-color);
+  }
+
+  .#{$primary-stylename}-header-wrap {
+    border-bottom: none;
+
+    @if $v-table-border-radius > 0 {
+      overflow: hidden;
+    }
+  }
+
+  .#{$primary-stylename}-footer-wrap {
+    border-top: none;
+  }
+
+  .#{$primary-stylename}-header-drag {
+    border-left: $table-inner-border;
+  }
+
+  .#{$primary-stylename}-caption-container {
+    border-left: none;
+  }
+
+  .#{$primary-stylename}-cell-content {
+    border-left: none;
+    padding-left: $v-table-border-width;
+  }
+
+  .#{$primary-stylename}-table {
+    background: var(--table-background-color);
+  }
+
+  .#{$primary-stylename}-table td {
+    border-top: none;
+  }
+
+  .jmix-table-cell-link .jmix-table-clickable-cell,
+  .jmix-table-cell-textcut .jmix-table-clickable-cell {
+    color: var(--link-color);
+  }
+
+  .jmix-table-cell-textcut .jmix-table-clickable-cell {
+    border-bottom: 1px dashed var(--link-color);
+  }
+
+  [class*="-row"].v-selected {
+    @include he-table-selected-row-style($primary-stylename: $primary-stylename);
+  }
+
+  .#{$primary-stylename}-focus {
+    outline-color: var(--table-focused-row-border-color);
+
+    &.v-selected {
+      outline-color: var(--table-selected-row-border-color);
+    }
+  }
+
+  @if $jmix-table-highlight-hover-row {
+    @include he-table-row-hover-style($primary-stylename: $primary-stylename);
+  }
+
+  .#{$primary-stylename}-arow {
+    background: var(--table-aggregation-background-color);
+    border-top: $table-inner-border;
+    border-left: $table-outer-border;
+    border-right: $table-outer-border;
+  }
+
+  // TODO: gg, remove in 7.2+
+  .#{$primary-stylename}-arow-wrap {
+    background: transparent;
+    border-top: none;
+    border-left: none;
+    border-right: $table-outer-border;
+  }
+
+  .#{$primary-stylename}-arow-row {
+    border-right: none;
+    color: var(--table-aggregation-text-color);
+
+    td:last-child {
+      border-right: $table-inner-border;
+    }
+  }
+
+  .#{$primary-stylename}-footer td {
+    border-left: none;
+    padding-left: $v-table-border-width;
+  }
+
+  .#{$primary-stylename}-footer-wrap {
+    background: var(--table-aggregation-background-color);
+  }
+
+  .#{$primary-stylename}-focus-slot-left,
+  .#{$primary-stylename}-focus-slot-right {
+    border-color: var(--primary-color);
+  }
+
+  .#{$primary-stylename}-cell-content.boolean-cell-true .#{$primary-stylename}-cell-wrapper,
+  .#{$primary-stylename}-cell-content.boolean-cell-false .#{$primary-stylename}-cell-wrapper {
+    &:before {
+      color: var(--text-main-color);
+    }
+  }
+
+  .v-selected {
+    .#{$primary-stylename}-cell-content.boolean-cell-true .#{$primary-stylename}-cell-wrapper,
+    .#{$primary-stylename}-cell-content.boolean-cell-false .#{$primary-stylename}-cell-wrapper {
+      &:before {
+        color: var(--table-selected-row-text-color);
+      }
+    }
+  }
+
+  .#{$primary-stylename}-row-drag-bottom td.#{$primary-stylename}-cell-content {
+    border-bottom: he-border($strength: 2px);
+  }
+
+  .#{$primary-stylename}-row-drag-top td.#{$primary-stylename}-cell-content {
+    border-top: he-border($strength: 2px);
+  }
+
+  .#{$primary-stylename}-column-selector {
+    @include he-table-control-button-style()
+  }
+
+  .jmix-table-prefs-icon {
+    @include he-table-control-button-style()
+  }
+
+  @include he-group-table-style($primary-stylename: $primary-stylename);
+}
+
+@mixin he-table-size-style($primary-stylename : v-table,
+                           $row-height        : $v-table-row-height,
+                           $font-size         : $v-font-size,
+                           $header-font-size  : $v-table-header-font-size) {
+  $table-header-row-height: round($row-height * $he-table-header-row-height-scale);
+
+  .#{$primary-stylename}-header-wrap,
+  .#{$primary-stylename}-footer-wrap,
+  .#{$primary-stylename}-header-drag {
+    font-size: $header-font-size;
+  }
+
+  .#{$primary-stylename}-header-wrap .#{$primary-stylename}-caption-container {
+    min-height: $table-header-row-height;
+  }
+
+  .#{$primary-stylename}-footer-container {
+    min-height: $row-height;
+    $vertical-padding: round(($row-height - $header-font-size)/2);
+    padding: $vertical-padding - $v-table-border-width $v-table-cell-padding-horizontal $vertical-padding;
+  }
+
+  .#{$primary-stylename}-header-drag,
+  .#{$primary-stylename}-header-wrap .#{$primary-stylename}-caption-container {
+    $vertical-padding: round(($table-header-row-height - $header-font-size)/2);
+    padding: $vertical-padding $v-table-cell-padding-horizontal $vertical-padding - $v-table-border-width;
+  }
+
+  .#{$primary-stylename}-resizer {
+    height: $table-header-row-height;
+  }
+
+  .#{$primary-stylename}-cell-content {
+    font-size: $font-size;
+    height: $row-height;
+  }
+
+  .#{$primary-stylename}-header-cell.#{$primary-stylename}-header-sortable,
+  .#{$primary-stylename}-header-cell-asc,
+  .#{$primary-stylename}-header-cell-desc {
+    .#{$primary-stylename}-sort-indicator {
+      height: $table-header-row-height;
+      line-height: $table-header-row-height;
+    }
+  }
+
+  .#{$primary-stylename}-row-drag-bottom td.#{$primary-stylename}-cell-content {
+    height: $row-height - 2px;
+  }
+
+  .#{$primary-stylename}-row-drag-top td.#{$primary-stylename}-cell-content {
+    height: $row-height - 2px + $v-table-border-width;
+  }
+
+  .#{$primary-stylename}-column-selector {
+    @include he-control-button-size-style($table-header-row-height)
+  }
+
+  .jmix-table-prefs-icon {
+    @include he-control-button-size-style($table-header-row-height)
+  }
+
+  &.collapsing-allowed .jmix-table-prefs-icon {
+    right: 2 * round($table-header-row-height/2);
+  }
+
+  .#{$primary-stylename}-cell-content.boolean-cell-true .#{$primary-stylename}-cell-wrapper,
+  .#{$primary-stylename}-cell-content.boolean-cell-false .#{$primary-stylename}-cell-wrapper {
+    &:before {
+      font-size: $font-size;
+    }
+  }
+
+  &.jmix-grouptable {
+    @include he-group-table-size-style($primary-stylename: $primary-stylename);
+  }
+
+  &.v-treetable {
+    @include he-treetable-size-style(
+            $primary-stylename: v-treetable,
+            $row-height: $row-height,
+            $font-size: $font-size,
+            $header-font-size: $header-font-size);
+  }
+}
+
+@mixin he-group-table-style($primary-stylename : v-table) {
+  .jmix-grouptable-group-cell-expander {
+    &:before {
+      color: var(--text-main-color);
+    }
+  }
+
+  .v-expanded .jmix-grouptable-group-cell-expander {
+    &:before {
+      color: var(--text-main-color);
+    }
+  }
+
+  $table-inner-border: he-table-border(--table-inner-border-color);
+
+  .jmix-grouptable-group-divider-header {
+    .#{$primary-stylename}-caption-container {
+      border-left: $table-inner-border;
+    }
+
+    &:first-child {
+      .#{$primary-stylename}-caption-container {
+        border-left: none;
+      }
+    }
+
+    + .#{$primary-stylename}-header-cell-asc,
+    + .#{$primary-stylename}-header-cell-desc,
+    + .#{$primary-stylename}-header-cell {
+      .#{$primary-stylename}-caption-container {
+        border-left: $table-inner-border;
+      }
+    }
+  }
+}
+
+@mixin he-group-table-size-style($primary-stylename : v-table) {
+  // TODO: gg, possibly move to halo as it can be a proper fix
+  //  when $v-table-cell-padding-horizontal has value other than 7px
+  .jmix-grouptable-group-divider .#{$primary-stylename}-cell-wrapper,
+  .#{$primary-stylename}-cell-content-jmix-grouptable-group-divider .#{$primary-stylename}-cell-wrapper,
+  .jmix-grouptable-group-divider-header .#{$primary-stylename}-caption-container,
+  .jmix-grouptable-group-divider-footer .#{$primary-stylename}-footer-container {
+    padding: 0;
+  }
+}
+
+@mixin he-treetable-size-style($primary-stylename : v-treetable,
+                               $row-height        : $v-table-row-height,
+                               $font-size         : $v-font-size,
+                               $header-font-size  : $v-table-header-font-size) {
+  $table-header-row-height: round($row-height * $he-table-header-row-height-scale);
+
+  [class*="caption-container"],
+  [class*="footer-container"],
+  [class*="cell-wrapper"] {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  [class*="caption-container"],
+  [class*="footer-container"] {
+    $vertical-padding: round(($table-header-row-height - $header-font-size)/2);
+    min-height: $table-header-row-height - $vertical-padding - ($vertical-padding - $v-table-border-width);
+  }
+
+  [class*="cell-wrapper"] {
+    min-height: $font-size;
+  }
+
+  [class*="caption-container"] {
+    padding-left: $v-table-cell-padding-horizontal;
+  }
+
+  [class*="caption-container-align-right"] {
+    padding-left: $v-table-cell-padding-horizontal + $v-table-resizer-width;
+  }
+
+  [class*="footer-container"] {
+    padding-right: $v-table-cell-padding-horizontal;
+  }
+
+  [class*="cell-content"] {
+    padding-left: $v-table-cell-padding-horizontal + $v-table-border-width;
+    padding-right: $v-table-cell-padding-horizontal;
+  }
+
+  .#{$primary-stylename}-treespacer {
+    width: round($row-height/2) !important;
+    margin-left: round($row-height/-2) - round($v-table-cell-padding-horizontal/2);
+  }
+}
+
+@mixin he-table-composition-size-style($unit-size: $v-unit-size) {
+  &.has-top-panel {
+    padding-top: $unit-size + ceil($v-layout-spacing-vertical);
+
+    .jmix-table-top {
+      min-height: $unit-size;
+      margin-top: -1 * ($unit-size + ceil($v-layout-spacing-vertical));
+    }
+  }
+}
+
+@mixin he-table-selected-row-style($primary-stylename: v-table) {
+  background: var(--table-selected-row-background-color);
+  color: var(--table-selected-row-text-color);
+  text-shadow: none;
+
+  + .v-selected {
+    background: var(--table-selected-row-background-color);
+
+    td {
+      border-top-color: var(--table-selected-row-border-color);
+    }
+  }
+
+  .#{$primary-stylename}-cell-content {
+    border-left-color: var(--table-selected-row-border-color);
+  }
+
+  .jmix-table-cell-link .jmix-table-clickable-cell,
+  .jmix-table-cell-textcut .jmix-table-clickable-cell,
+  .v-popupview,
+  .v-button-link,
+  .v-link,
+  .v-link > a:visited {
+    color: var(--table-selected-row-text-color);
+  }
+
+  .jmix-table-cell-textcut .jmix-table-clickable-cell {
+    border-bottom-color: var(--table-selected-row-text-color);
+  }
+}
+
+@mixin he-table-row-hover-style($primary-stylename: v-table) {
+  .#{$primary-stylename}-row:hover,
+  .#{$primary-stylename}-row-odd:hover {
+    background-color: var(--table-hovered-row-background-color);
+    color: var(--table-hovered-row-text-color);
+
+    .#{$primary-stylename}-cell-content.boolean-cell-true .#{$primary-stylename}-cell-wrapper,
+    .#{$primary-stylename}-cell-content.boolean-cell-false .#{$primary-stylename}-cell-wrapper {
+      &:before {
+        color: var(--table-hovered-row-text-color);
+      }
+    }
+  }
+
+  .#{$primary-stylename}-row.v-selected:hover,
+  .#{$primary-stylename}-row-odd.v-selected:hover {
+    background: var(--table-selected-row-background-color);
+    color: var(--table-selected-row-text-color);
+
+    .#{$primary-stylename}-cell-content.boolean-cell-true .#{$primary-stylename}-cell-wrapper,
+    .#{$primary-stylename}-cell-content.boolean-cell-false .#{$primary-stylename}-cell-wrapper {
+      &:before {
+        color: var(--table-selected-row-text-color);
+      }
+    }
+  }
+}
+
+@mixin he-table-control-button-style() {
+  @include he-button-default-style();
+  @include he-button-borderless-style($active-color: --primary-color-shade-2);
+
+  $row-height: round($v-table-row-height * $he-table-header-row-height-scale);
+  @include he-control-button-size-style($row-height);
+
+  padding: 0;
+  border: 0;
+}
+
+@mixin he-control-button-size-style($row-height) {
+  top: round($row-height/2) - round($row-height/4);
+  right: round($row-height/2) - round($row-height/4);
+  height: round($row-height/2);
+  line-height: round($row-height/2);
+  width: round($row-height/2);
+
+  font-size: round($row-height/3);
+}
+
+@mixin he-table-empty-state-style() {
+  @include he-table-empty-state-size-style();
+
+  .jmix-table-empty-state {
+    .jmix-table-empty-state-link-message.v-button-link {
+      @include he-button-link-style();
+      border-radius: $v-border-radius;
+    }
+  }
+
+  .jmix-table-empty-state-message {
+    color: var(--text-dim-color);
+  }
+}
+
+@mixin he-table-empty-state-size-style($font-size         : $v-font-size--h2,
+                                       $scaling-factor    : 1) {
+  .jmix-table-empty-state {
+    font-size: round($font-size * $scaling-factor);
+
+    .jmix-table-empty-state-link-message.v-button-link {
+      @include he-button-link-size-style();
+    }
+  }
+}
+
+@function he-table-border($color) {
+  @return he-border($color: $color, $strength: $v-table-border-width);
+}

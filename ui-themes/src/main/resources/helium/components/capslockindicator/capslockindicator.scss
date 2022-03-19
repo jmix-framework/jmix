@@ -1,0 +1,81 @@
+/*!
+ * Copyright 2020 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@mixin he-capslockindicator($primary-stylename: jmix-capslockindicator) {
+
+  .#{$primary-stylename}.capslock-on span::before {
+    color: var(--capslockindicator-icon-color-on);
+  }
+
+  .#{$primary-stylename}.capslock-off span::before {
+    color: var(--capslockindicator-icon-color-off);
+  }
+
+  .#{$primary-stylename} {
+    @include he-capslockindicator-size-style();
+  }
+
+  /* Global size */
+
+  &.small .#{$primary-stylename} {
+    @include he-capslockindicator-size-style($unit-size: $v-unit-size--small, $font-size: $v-font-size--small);
+  }
+
+  &.large .#{$primary-stylename} {
+    @include he-capslockindicator-size-style($unit-size: $v-unit-size--large, $font-size: $v-font-size--large);
+  }
+
+  /* Size within a container */
+
+  .small .#{$primary-stylename} {
+    @include he-capslockindicator-size-style($unit-size: $v-unit-size--small, $font-size: $v-font-size--small);
+  }
+
+  .medium .#{$primary-stylename} {
+    @include he-capslockindicator-size-style($unit-size: $v-unit-size, $font-size: $v-font-size);
+  }
+
+  .large .#{$primary-stylename} {
+    @include he-capslockindicator-size-style($unit-size: $v-unit-size--large, $font-size: $v-font-size--large);
+  }
+
+  /* Own size */
+
+  .#{$primary-stylename}.small {
+    @include he-capslockindicator-size-style($unit-size: $v-unit-size--small, $font-size: $v-font-size--small);
+  }
+
+  .#{$primary-stylename}.medium {
+    @include he-capslockindicator-size-style($unit-size: $v-unit-size, $font-size: $v-font-size);
+  }
+
+  .#{$primary-stylename}.large {
+    @include he-capslockindicator-size-style($unit-size: $v-unit-size--large, $font-size: $v-font-size--large);
+  }
+}
+
+@mixin he-capslockindicator-size-style($unit-size : $v-unit-size,
+                                       $font-size : $v-font-size) {
+  font-size: $font-size;
+  height: $unit-size;
+
+  &.message-on,
+  &.message-off {
+    span::before {
+      margin-right: round($unit-size / 6);
+    }
+  }
+}

@@ -1,0 +1,58 @@
+/*
+ * Copyright 2019 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.jmix.ui.component;
+
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioProperty;
+
+import javax.annotation.Nullable;
+
+public interface HasRange<V> {
+    /**
+     * Set start of range. If the value is set before this
+     * date, the component will not validate.
+     *
+     * @param rangeStart allowed start of range
+     */
+    @StudioProperty(type = PropertyType.DATE)
+    void setRangeStart(@Nullable V rangeStart);
+
+    /**
+     * Return start of range for a certain resolution.
+     *
+     * @return start of allowed range
+     */
+    @Nullable
+    V getRangeStart();
+
+    /**
+     * Set end of range. If the value is set after this
+     * date, the component will not validate.
+     *
+     * @param rangeEnd end of allowed range
+     */
+    @StudioProperty(type = PropertyType.DATE)
+    void setRangeEnd(@Nullable V rangeEnd);
+
+    /**
+     * Return end of range for a certain resolution.
+     *
+     * @return end of allowed range
+     */
+    @Nullable
+    V getRangeEnd();
+}

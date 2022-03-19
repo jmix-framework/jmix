@@ -1,0 +1,111 @@
+/*!
+ * Copyright 2020 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@mixin he-tree($primary-stylename: v-tree8) {
+  @include he-tree-style($primary-stylename: $primary-stylename);
+
+  .jmix-tree-composition {
+    @include he-tree-composition-size-style()
+  }
+
+  /* Global size */
+
+  &.small .jmix-tree-composition {
+    @include he-tree-composition-size-style($v-unit-size--small)
+  }
+
+  &.large .jmix-tree-composition {
+    @include he-tree-composition-size-style($v-unit-size--large)
+  }
+
+  /* Size within a container */
+
+  .small .jmix-tree-composition {
+    @include he-tree-composition-size-style($v-unit-size--small)
+  }
+
+  .medium .jmix-tree-composition {
+    @include he-tree-composition-size-style($v-unit-size)
+  }
+
+  .large .jmix-tree-composition {
+    @include he-tree-composition-size-style($v-unit-size--large)
+  }
+
+  /* Own size */
+
+  .jmix-tree-composition.small {
+    @include he-tree-composition-size-style($v-unit-size--small)
+  }
+
+  .jmix-tree-composition.medium {
+    @include he-tree-composition-size-style($v-unit-size)
+  }
+
+  .jmix-tree-composition.large {
+    @include he-tree-composition-size-style($v-unit-size--large)
+  }
+}
+
+@mixin he-tree-style($primary-stylename: v-tree8) {
+  .#{$primary-stylename} {
+    color: var(--text-main-color);
+  }
+
+  .#{$primary-stylename}-row-selected {
+    > .#{$primary-stylename}-cell {
+      text-shadow: none;
+      color: var(--tree-selected-row-text-color);
+      border-color: var(--tree-selected-row-border-color);
+    }
+
+    &:before {
+      background: var(--tree-selected-row-background-color);
+      border-radius: 0;
+    }
+  }
+
+  .#{$primary-stylename}-row-focused {
+    &:before {
+      border: he-border($color: --tree-focused-row-border-color);
+      border-radius: 0;
+    }
+  }
+
+  .#{$primary-stylename}:focus .#{$primary-stylename}-row-selected.#{$primary-stylename}-row-focused {
+    &:before {
+      @include box-shadow(inset 0 0 0 first-number(he-border()) var(--tree-selected-row-focus-ring-color))
+    }
+  }
+
+  .jmix-tree-composition .jmix-tree-wrapper {
+    @if $jmix-show-tree-border == true {
+      border: he-border($color: --tree-border-color);
+      border-radius: $v-border-radius;
+    }
+  }
+}
+
+@mixin he-tree-composition-size-style($unit-size: $v-unit-size) {
+  &.has-top-panel {
+    padding-top: $unit-size + ceil($v-layout-spacing-vertical);
+
+    .jmix-tree-top {
+      min-height: $unit-size;
+      margin-top: -1 * ($unit-size + ceil($v-layout-spacing-vertical));
+    }
+  }
+}

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright (c) 2008-2020 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<window xmlns="http://jmix.io/schema/ui/window"
+        caption="msg://themeSettings.caption">
+    <layout expand="previewBox" spacing="true">
+        <hbox id="settingsForm" spacing="true">
+            <label id="modeLabel"
+                   align="MIDDLE_LEFT"
+                   stylename="bold"
+                   value="msg://themeSettings.modeField.caption"/>
+            <radioButtonGroup id="modeField"
+                              align="MIDDLE_LEFT"
+                              orientation="horizontal"/>
+
+            <label id="separator"
+                   align="MIDDLE_CENTER"
+                   css="margin: 0 10px 0 10px"
+                   value="|"/>
+
+            <label id="sizeLabel"
+                   align="MIDDLE_LEFT"
+                   stylename="bold"
+                   value="msg://themeSettings.sizeField.caption"/>
+            <radioButtonGroup id="sizeField"
+                              align="MIDDLE_LEFT"
+                              orientation="horizontal"/>
+        </hbox>
+
+        <groupBox id="previewBox" caption="msg://themeSettings.previewBox.caption" width="100%">
+            <scrollBox id="innerPreviewBox" height="100%" width="100%" spacing="true">
+                <flowBox spacing="true">
+                    <vbox id="buttonsBox" margin="true" stylename="card" width="450px" height="250px">
+                        <vbox spacing="true" align="MIDDLE_CENTER" width="AUTO">
+                            <hbox spacing="true">
+                                <button caption="msg:///actions.Ok" icon="OK" stylename="primary" description="Primary"/>
+                                <button caption="msg:///actions.Cancel" icon="CANCEL" description="Default"/>
+                            </hbox>
+                            <hbox spacing="true">
+                                <button caption="msg:///actions.Save" icon="SAVE" stylename="friendly" description="Friendly"/>
+                                <button caption="msg:///actions.Remove" icon="REMOVE" stylename="danger" description="Danger"/>
+                                <button caption="msg:///actions.Edit" stylename="secondary" description="Secondary"/>
+                            </hbox>
+                        </vbox>
+                    </vbox>
+                    <vbox id="textFieldsBox" margin="true" stylename="card" width="350px" height="250px">
+                        <vbox spacing="true" align="MIDDLE_CENTER" width="AUTO">
+                            <textField caption="msg://themeSettings.textField.caption"
+                                       inputPrompt="msg://themeSettings.placeholder"/>
+                            <textField caption="msg://themeSettings.textFieldRequired.caption" required="true"/>
+                        </vbox>
+                    </vbox>
+                    <vbox id="checkBoxGroupBox" margin="true" stylename="card" width="250px" height="250px">
+                        <checkBoxGroup id="checkBoxGroup" align="MIDDLE_CENTER"/>
+                    </vbox>
+                    <vbox id="lookupFieldsBox" margin="true" stylename="card" width="350px" height="250px">
+                        <vbox spacing="true" align="MIDDLE_CENTER" width="AUTO">
+                            <comboBox id="comboBox"
+                                         caption="msg://themeSettings.comboBox.caption"
+                                         inputPrompt="msg://themeSettings.placeholder"/>
+                            <comboBox id="requiredComboBox"
+                                         caption="msg://themeSettings.comboBoxRequired.caption"
+                                         required="true"/>
+                        </vbox>
+                    </vbox>
+                    <vbox id="radioButtonGroupBox" margin="true" stylename="card" width="250px" height="250px">
+                        <radioButtonGroup id="radioButtonGroup" align="MIDDLE_CENTER"/>
+                    </vbox>
+                    <vbox id="tabSheetsBox" margin="true" stylename="card" width="300px" height="300px">
+                        <vbox spacing="true" align="MIDDLE_CENTER">
+                            <tabSheet id="tabSheet" height="100px" width="100%"/>
+                            <tabSheet id="tabSheetFramed" height="100px" width="100%" stylename="framed"/>
+                        </vbox>
+                    </vbox>
+                    <vbox id="labelsBox" margin="true" stylename="card" width="300px" height="350px">
+                        <vbox spacing="true" align="MIDDLE_CENTER">
+                            <label value="msg://themeSettings.header1" stylename="h1"/>
+                            <label value="msg://themeSettings.header2" stylename="h2"/>
+                            <label value="msg://themeSettings.header3" stylename="h3"/>
+                            <label value="msg://themeSettings.header4" stylename="h4"/>
+                            <label value="msg://themeSettings.loremIpsum" width="100%"/>
+                        </vbox>
+                    </vbox>
+                </flowBox>
+            </scrollBox>
+        </groupBox>
+
+        <button id="applyBtn" caption="msg://themeSettings.applyBtn.caption"/>
+    </layout>
+</window>

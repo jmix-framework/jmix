@@ -1,0 +1,171 @@
+/*!
+ * Copyright 2020 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+@mixin he-accordion($primary-stylename: v-accordion) {
+  @include he-accordion-style($primary-stylename: $primary-stylename);
+
+  /* Global size */
+
+  &.small {
+    @include he-accordion-size-style(
+            $primary-stylename  : $primary-stylename,
+            $unit-size          : $v-unit-size--small,
+            $font-size          : $v-font-size--small
+    );
+  }
+
+  &.large {
+    @include he-accordion-size-style(
+            $primary-stylename  : $primary-stylename,
+            $unit-size          : $v-unit-size--large,
+            $font-size          : $v-font-size--large
+    );
+  }
+
+  /* Size within a container */
+
+  .small {
+    @include he-accordion-size-style(
+            $primary-stylename  : $primary-stylename,
+            $unit-size          : $v-unit-size--small,
+            $font-size          : $v-font-size--small
+    );
+  }
+
+  .medium {
+    @include he-accordion-size-style(
+            $primary-stylename  : $primary-stylename,
+            $unit-size          : $v-unit-size,
+            $font-size          : $v-font-size
+    );
+  }
+
+  .large {
+    @include he-accordion-size-style(
+            $primary-stylename  : $primary-stylename,
+            $unit-size          : $v-unit-size--large,
+            $font-size          : $v-font-size--large
+    );
+  }
+
+  /* Own size */
+
+  .#{$primary-stylename}.small {
+    @include he-accordion-size-style(
+            $primary-stylename  : $primary-stylename,
+            $unit-size          : $v-unit-size--small,
+            $font-size          : $v-font-size--small
+    );
+  }
+
+  .#{$primary-stylename}.medium {
+    @include he-accordion-size-style(
+            $primary-stylename  : $primary-stylename,
+            $unit-size          : $v-unit-size,
+            $font-size          : $v-font-size
+    );
+  }
+
+  .#{$primary-stylename}.large {
+    @include he-accordion-size-style(
+            $primary-stylename  : $primary-stylename,
+            $unit-size          : $v-unit-size--large,
+            $font-size          : $v-font-size--large
+    );
+  }
+}
+
+@mixin he-accordion-style($primary-stylename : v-accordion) {
+  .#{$primary-stylename} {
+    @include he-panel-style();
+
+    @include he-accordion-size-style($primary-stylename: $primary-stylename);
+  }
+
+  .#{$primary-stylename}-item {
+    &[class*="item-open"] + [class*="item"] {
+      border-top: he-border($color: --panel-border-color);
+    }
+  }
+
+  .#{$primary-stylename}-item-caption {
+    > .v-caption {
+      color: var(--accordion-item-caption-text-color);
+      background: var(--accordion-item-caption-background-color);
+      border-bottom: he-border($color: --accordion-item-caption-border-color);
+      text-shadow: none;
+
+      &:hover:not(.v-disabled) {
+        color: var(--accordion-item-caption-hover-text-color);
+        background: var(--accordion-item-caption-hover-background-color);
+
+        &:before {
+          background: none;
+        }
+      }
+
+      &:active:not(.v-disabled) {
+        color: var(--accordion-item-caption-active-text-color);
+        background: var(--accordion-item-caption-active-background-color);
+
+        &:before {
+          background: none;
+        }
+      }
+
+      &.v-disabled {
+        color: var(--accordion-item-caption-disabled-text-color);
+
+        &:before {
+          background: none;
+        }
+      }
+    }
+  }
+
+  .#{$primary-stylename}-item-content {
+    background: var(--accordion-item-content-background-color);
+  }
+
+  .#{$primary-stylename}-borderless {
+    border: none;
+    border-radius: 0;
+    @include box-shadow(none);
+
+    > .#{$primary-stylename}-item,
+    > .#{$primary-stylename}-item > div > .v-caption,
+    > .#{$primary-stylename}-item > .#{$primary-stylename}-item-content {
+      border-radius: 0;
+    }
+
+    .#{$primary-stylename}-item-caption > .v-caption {
+      background: transparent;
+    }
+  }
+}
+
+@mixin he-accordion-size-style($primary-stylename : v-accordion,
+                               $unit-size         : $v-unit-size,
+                               $font-size         : $v-font-size) {
+  .#{$primary-stylename}-item-caption {
+    > .v-caption {
+      padding: 0 round($unit-size / 3);
+      line-height: $unit-size - first-number(he-border());
+      font-size: $font-size;
+    }
+  }
+}

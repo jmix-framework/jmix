@@ -1,0 +1,283 @@
+/*!
+ * Copyright 2020 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@mixin he-combobox($primary-stylename: v-filterselect) {
+  .#{$primary-stylename} {
+    @include he-combobox-style()
+  }
+
+  .#{$primary-stylename}-no-input {
+    [class*="input"] {
+      background: var(--combobox-no-input-background-color);
+    }
+  }
+
+  .#{$primary-stylename}-error,
+  .#{$primary-stylename}-error-error {
+    @include he-combobox-error-style();
+  }
+
+  .#{$primary-stylename}-suggestpopup {
+    @include he-combobox-popup-style();
+  }
+
+  .#{$primary-stylename}.borderless,
+  .#{$primary-stylename}-borderless {
+    [class*="input"] {
+      @include he-textfield-borderless-style();
+    }
+
+    [class$="button"] {
+      @include opacity(1);
+    }
+  }
+
+  /* Global size */
+
+  &.small {
+    .#{$primary-stylename} {
+      @include he-combobox-size-style($unit-size: $v-unit-size--small, $font-size: $v-font-size--small);
+    }
+
+    .#{$primary-stylename}-suggestpopup {
+      @include he-combobox-popup-size-style($item-height: $v-selection-item-height--small, $font-size: $v-font-size--small)
+    }
+  }
+
+  &.large {
+    .#{$primary-stylename} {
+      @include he-combobox-size-style($unit-size: $v-unit-size--large, $font-size: $v-font-size--large);
+    }
+
+    .#{$primary-stylename}-suggestpopup {
+      @include he-combobox-popup-size-style($item-height: $v-selection-item-height--large, $font-size: $v-font-size--large)
+    }
+  }
+
+  /* Size within a container */
+
+  .small .#{$primary-stylename} {
+    @include he-combobox-size-style($unit-size: $v-unit-size--small, $font-size: $v-font-size--small);
+  }
+
+  .medium .#{$primary-stylename} {
+    @include he-combobox-size-style($unit-size: $v-unit-size, $font-size: $v-font-size);
+  }
+
+  .large .#{$primary-stylename} {
+    @include he-combobox-size-style($unit-size: $v-unit-size--large, $font-size: $v-font-size--large);
+  }
+
+  /* Own size */
+
+  // small
+
+  .#{$primary-stylename}.small {
+    @include he-combobox-size-style($unit-size: $v-unit-size--small, $font-size: $v-font-size--small);
+  }
+
+  .#{$primary-stylename}-suggestpopup.#{$primary-stylename}-suggestpopup-small {
+    @include he-combobox-popup-size-style($item-height: $v-selection-item-height--small, $font-size: $v-font-size--small)
+  }
+
+  // medium
+
+  .#{$primary-stylename}.medium {
+    @include he-combobox-size-style($unit-size: $v-unit-size, $font-size: $v-font-size);
+  }
+
+  .#{$primary-stylename}-suggestpopup.#{$primary-stylename}-suggestpopup-medium {
+    @include he-combobox-popup-size-style($item-height: $v-selection-item-height, $font-size: $v-font-size)
+  }
+
+  // large
+
+  .#{$primary-stylename}.large {
+    @include he-combobox-size-style($unit-size: $v-unit-size--large, $font-size: $v-font-size--large);
+  }
+
+  .#{$primary-stylename}-suggestpopup.#{$primary-stylename}-suggestpopup-large {
+    @include he-combobox-popup-size-style($item-height: $v-selection-item-height--large, $font-size: $v-font-size--large)
+  }
+}
+
+@mixin he-combobox-input-size-style($unit-size  : $v-unit-size,
+                                    $padding    : null,
+                                    $font-size  : null) {
+  box-sizing: border-box;
+  @include he-input-size-style($unit-size: $unit-size, $padding: $padding, $font-size: $font-size);
+  @if ($padding == null) {
+    padding-right: round($unit-size * 1) + 1;
+  }
+  width: 100% !important; // Need to override calculated inline style which is sometimes added
+  height: 100%;
+  border-radius: inherit;
+}
+
+@mixin he-combobox-button-size-style($unit-size  : $v-unit-size,
+                                     $font-size  : null) {
+  width: $unit-size;
+  font-size: $font-size;
+
+  &:before {
+    width: $unit-size;
+  }
+}
+
+@mixin he-combobox-button-icon-style {
+  content: "\f0d7";
+}
+
+@mixin he-combobox-size-style($unit-size  : $v-unit-size,
+                              $padding    : null,
+                              $font-size  : null) {
+  height: $unit-size;
+
+  // TODO: gg, icon, etc
+
+  [class*="input"] {
+    @include he-combobox-input-size-style($unit-size: $unit-size, $padding: $padding, $font-size: $font-size);
+  }
+
+  [class$="button"] {
+    @include he-combobox-button-size-style($unit-size: $unit-size, $font-size: $font-size);
+  }
+}
+
+@mixin he-combobox-style($unit-size  : $v-unit-size,
+                         $padding    : null,
+                         $font-size  : null) {
+  @include he-combobox-size-style($unit-size: $unit-size, $padding: $padding, $font-size: $font-size);
+
+  [class*="input"] {
+    @include he-input-style();
+    @include he-combobox-input-size-style($unit-size: $unit-size, $padding: $padding, $font-size: $font-size);
+  }
+
+  [class$="button"] {
+    @include he-combobox-button-size-style($unit-size: $unit-size, $font-size: $font-size);
+
+    color: var(--combobox-button-text-color);
+    border-left: 0;
+
+    &:before {
+      @include he-combobox-button-icon-style();
+    }
+
+    &:hover {
+      background: var(--combobox-button-hover-background-color);
+
+      &:before {
+        color: var(--combobox-button-hover-text-color);
+      }
+    }
+
+    &:active {
+      background: var(--combobox-button-active-background-color);
+
+      &:before {
+        color: var(--combobox-button-active-text-color);
+      }
+    }
+
+    &:after {
+      display: none;
+    }
+  }
+
+  &.v-readonly {
+    [class*="input"] {
+      @include he-input-readonly-style();
+    }
+  }
+
+  &.v-disabled {
+    [class*="input"] {
+      @include he-input-disabled-style();
+    }
+
+    [class$="button"] {
+      color: var(--text-dim-color);
+    }
+  }
+}
+
+@mixin he-combobox-error-style() {
+  [class*="input"] {
+    @include he-input-error-style();
+  }
+
+  [class$="button"] {
+    color: var(--text-main-color);
+  }
+}
+
+@mixin he-combobox-popup-style() {
+  @include he-combobox-popup-size-style();
+
+  [class$="suggestmenu"] {
+    @include he-selection-overlay-style();
+    @include box-shadow(none);
+    border: he-border();
+  }
+
+  [class$="status"] {
+    background: var(--combobox-popup-status-background-color);
+    color: var(--combobox-popup-status-text-color);
+
+    > * {
+      color: var(--combobox-popup-status-text-color);
+    }
+  }
+
+  div[class*="page"] {
+    color: var(--combobox-popup-page-text-color);
+    right: first-number(he-border());
+
+    &:hover {
+      @include opacity(.5);
+      background: var(--combobox-popup-page-background-color);
+    }
+  }
+
+  div[class*="prev"] {
+    top: first-number(he-border());
+  }
+
+  div[class*="next"] {
+    bottom: first-number(he-border());
+  }
+}
+
+@mixin he-combobox-popup-size-style($item-height: $v-selection-item-height, $font-size: $v-font-size) {
+  [class$="suggestmenu"] {
+    @include he-selection-overlay-size-style($item-height: $item-height, $font-size: $font-size)
+  }
+
+  [class$="status"] {
+    height: ceil($item-height * 0.6);
+    bottom: -(ceil($item-height * 0.6));
+    font-size: ceil($font-size * 0.73);
+    line-height: ceil($item-height * 0.6);
+    padding: 0 ceil($item-height / 7);
+  }
+
+  div[class*="page"] {
+    width: ceil($item-height / 1.5);
+    height: ceil($item-height / 1.5);
+    line-height: ceil($item-height / 1.5);
+  }
+}

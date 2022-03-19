@@ -1,0 +1,74 @@
+/*!
+ * Copyright 2020 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@mixin he-simplepagination($primary-stylename: jmix-simplepagination) {
+
+  .#{$primary-stylename} {
+    .#{$primary-stylename}-count {
+      vertical-align: baseline;
+    }
+
+    .v-button.v-button-link.#{$primary-stylename}-count-number {
+      vertical-align: middle;
+    }
+  }
+
+  /* Global size */
+
+  &.small .#{$primary-stylename} {
+    @include he-pagination-itemsperpage-size($primary-stylename, $v-unit-size--small, $v-font-size--small);
+    @include halo-simplepagination-navigation-btn-size($primary-stylename, $v-unit-size--small, $v-font-size--small);
+  }
+
+  &.large .#{$primary-stylename} {
+    @include he-pagination-itemsperpage-size($primary-stylename, $v-unit-size--large, $v-font-size--large);
+    @include halo-simplepagination-navigation-btn-size($primary-stylename, $v-unit-size--large, $v-font-size--large);
+  }
+
+  /* Size within a container */
+
+  .small .#{$primary-stylename} {
+    @include he-pagination-itemsperpage-size($primary-stylename, $v-unit-size--small, $v-font-size--small);
+    @include halo-simplepagination-navigation-btn-size($primary-stylename, $v-unit-size--small, $v-font-size--small);
+  }
+
+  .medium .#{$primary-stylename} {
+    @include he-pagination-itemsperpage-size($primary-stylename);
+    @include halo-simplepagination-navigation-btn-size($primary-stylename);
+  }
+
+  .large .#{$primary-stylename} {
+    @include he-pagination-itemsperpage-size($primary-stylename, $v-unit-size--large, $v-font-size--large);
+    @include halo-simplepagination-navigation-btn-size($primary-stylename, $v-unit-size--large, $v-font-size--large);
+  }
+
+  /* Own size */
+
+  .#{$primary-stylename}.small {
+    @include he-pagination-itemsperpage-size($primary-stylename, $v-unit-size--small, $v-font-size--small);
+    @include halo-simplepagination-navigation-btn-size($primary-stylename, $v-unit-size--small, $v-font-size--small);
+  }
+
+  .#{$primary-stylename}.medium {
+    @include he-pagination-itemsperpage-size($primary-stylename);
+    @include halo-simplepagination-navigation-btn-size($primary-stylename);
+  }
+
+  .#{$primary-stylename}.large {
+    @include he-pagination-itemsperpage-size($primary-stylename, $v-unit-size--large, $v-font-size--large);
+    @include halo-simplepagination-navigation-btn-size($primary-stylename, $v-unit-size--large, $v-font-size--large);
+  }
+}

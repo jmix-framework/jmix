@@ -1,0 +1,117 @@
+/*!
+ * Copyright 2020 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@mixin he-taglabel($primary-stylename: jmix-taglabel) {
+
+  .#{$primary-stylename} {
+    @include he-taglabel-color-style;
+  }
+
+  /* Global size */
+
+  &.small .#{$primary-stylename} {
+    @include he-taglabel-size-style--small($primary-stylename);
+  }
+
+  &.large .#{$primary-stylename} {
+    @include he-taglabel-size-style--large($primary-stylename);
+  }
+
+  /* Size within a container */
+
+  .small .#{$primary-stylename} {
+    @include he-taglabel-size-style--small($primary-stylename);
+  }
+
+  .medium .#{$primary-stylename} {
+    @include he-taglabel-size-style--medium($primary-stylename);
+  }
+
+  .large .#{$primary-stylename} {
+    @include he-taglabel-size-style--large($primary-stylename);
+  }
+
+  /* Own size */
+
+  .#{$primary-stylename}.small {
+    @include he-taglabel-size-style--small($primary-stylename);
+  }
+
+  .#{$primary-stylename}.medium {
+    @include he-taglabel-size-style--medium($primary-stylename);
+  }
+
+  .#{$primary-stylename}.large {
+    @include he-taglabel-size-style--large($primary-stylename);
+  }
+
+}
+
+@mixin he-taglabel-size-style--small($primary-stylename : jmix-taglabel) {
+  @include he-taglabel-size-style($primary-stylename, $v-unit-size--small, $v-font-size--small);
+}
+
+@mixin he-taglabel-size-style--medium($primary-stylename : jmix-taglabel) {
+  @include he-taglabel-size-style($primary-stylename);
+}
+
+@mixin he-taglabel-size-style--large($primary-stylename : jmix-taglabel) {
+  @include he-taglabel-size-style($primary-stylename, $v-unit-size--large, $v-font-size--large);
+}
+
+@mixin he-taglabel-size-style($primary-stylename : jmix-taglabel,
+                              $unit-size         : $v-unit-size,
+                              $font-size         : $v-font-size,
+                              $tag-height        : null,
+                              $tag-font-size     : null) {
+
+  $height: halo-taglabel-height($unit-size);
+  @if ($tag-height) {
+    $height: $tag-height;
+  }
+
+  $font: halo-taglabel-font-size($font-size);
+  @if ($tag-font-size) {
+    $font: $tag-font-size;
+  }
+
+  font-size: $font;
+  height: $height;
+  line-height: $height;
+}
+
+@mixin he-taglabel-color-style($background-color         : var(--taglabel-background-color),
+                               $color                    : var(--taglabel-text-color),
+                               $hover-background-color   : var(--taglabel-hover-background-color),
+                               $hover-color              : var(--taglabel-hover-text-color),
+                               $disabled-background-color: var(--taglabel-disabled-background-color)) {
+  background-color: $background-color;
+  color: $color;
+
+  &:hover {
+    background-color: $hover-background-color;
+    color: $hover-color;
+  }
+
+  &.v-disabled {
+    background-color: $disabled-background-color;
+  }
+
+  &.v-disabled:hover {
+    background-color: $disabled-background-color;
+    color: $color;
+  }
+}

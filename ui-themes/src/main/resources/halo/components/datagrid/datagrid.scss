@@ -1,0 +1,515 @@
+/*!
+ * Copyright (c) 2008-2016 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
+ * Default color for aggregation row in DataGrid and Table
+ */
+$jmix-aggregation-background-color-default: rgba(255,255,255, 1);
+@if is-dark-color($v-app-background-color) {
+  $jmix-aggregation-background-color-default: scale-color($v-app-background-color, $lightness: 10%, $saturation: 80%);
+} @else {
+  $jmix-aggregation-background-color-default: scale-color($v-app-background-color, $lightness: -10%, $saturation: 80%);
+}
+/**
+ * The font weight of datagrid header
+ * @group dataGrid
+ */
+$jmix-datagrid-header-font-weight: $v-font-weight !default;
+/**
+ * Defines whether datagrid row should be colored when it is hovered.
+ * @group dataGrid
+ */
+$jmix-datagrid-highlight-hover-row: false !default;
+/**
+ * Defines background color of datagrid total aggregation row.
+ * @group dataGrid
+ */
+$jmix-datagrid-aggregation-background-color: $jmix-aggregation-background-color-default !default;
+
+@mixin halo-datagrid($primary-stylename: v-grid) {
+  $background-color: $v-table-background-color or valo-table-background-color();
+
+  .#{$primary-stylename} {
+    @include user-select(none);
+  }
+
+  .#{$primary-stylename}-header th {
+    font-weight: $jmix-datagrid-header-font-weight;
+  }
+
+  .text-selection-enabled .#{$primary-stylename}-body {
+    @include user-select(text);
+  }
+
+  .#{$primary-stylename}-row  > .#{$primary-stylename}-cell:last-child,
+  .#{$primary-stylename}-editor-cells > div:last-child {
+    border-right: $v-grid-border;
+    // Compensate border width so that the last column does not
+    // break to a new line when shrunk to its minimum size.
+    margin-right: -$v-grid-border-size;
+  }
+
+  .#{$primary-stylename}-row-selected  > .#{$primary-stylename}-cell {
+    $font-color: valo-font-color($v-selection-color, 0.9);
+    color: $font-color;
+
+    &:last-child {
+      $selected-border-color: adjust-color($v-grid-row-selected-background-color, $lightness: -8%, $saturation: -8%);
+      border-right: $v-grid-border-size solid $selected-border-color;
+    }
+  }
+
+  .jmix-data-grid-composition {
+    font-size: 0;
+
+    & > * {
+      font-size: $v-font-size;
+    }
+
+    &:focus {
+      outline: none;
+    }
+
+    &.borderless {
+      .#{$primary-stylename} {
+        .#{$primary-stylename}-scroller,
+        .#{$primary-stylename}-horizontal-scrollbar-deco,
+        .#{$primary-stylename}-header-deco,
+        .#{$primary-stylename}-footer-deco,
+        .#{$primary-stylename}-sidebar.v-contextmenu,
+        .#{$primary-stylename}-tablewrapper {
+          border: none;
+        }
+
+        .#{$primary-stylename}-row  > .#{$primary-stylename}-cell:last-child {
+          border-right: none;
+        }
+
+        .#{$primary-stylename}-editor .#{$primary-stylename}-editor-cells {
+          margin-left: -$v-grid-border-size;
+        }
+      }
+    }
+
+    &.no-vertical-lines {
+      /* force rerendering for Safari as it does not apply style */
+      .v-sa:not(.v-ch) & {
+        .#{$primary-stylename}-body .#{$primary-stylename}-row > td:not(:first-child) {
+          -webkit-transform: scale(1);
+          transform: scale(1);
+        }
+      }
+
+      .#{$primary-stylename}-body .#{$primary-stylename}-row > td:not(:first-child) {
+        border-left: none;
+        padding-left: $v-grid-border-size + $v-grid-cell-padding-horizontal;
+      }
+
+      .#{$primary-stylename}-header th,
+      .#{$primary-stylename}-footer td {
+        border-left-color: transparent;
+      }
+    }
+
+    &.no-horizontal-lines {
+       /* force rerendering for Safari as it does not apply style */
+      .v-sa:not(.v-ch) & {
+        .#{$primary-stylename}-body .#{$primary-stylename}-row > td {
+          -webkit-transform: scale(1);
+          transform: scale(1);
+         }
+      }
+
+      .#{$primary-stylename}-body .#{$primary-stylename}-row > td {
+       border-bottom: none;
+      }
+    }
+
+    &.no-stripes {
+      .#{$primary-stylename}-body .#{$primary-stylename}-row > td,
+        .#{$primary-stylename}-body .#{$primary-stylename}-row-stripe > td {
+          background: $background-color;
+      }
+
+     .#{$primary-stylename} .#{$primary-stylename}-body .#{$primary-stylename}-row-selected  > .#{$primary-stylename}-cell {
+       $font-color: valo-font-color($v-selection-color, 0.9);
+       color: $font-color;
+
+       @include valo-gradient($v-selection-color);
+     }
+    }
+  }
+
+  .jmix-data-grid-composition {
+    display:flex;
+    flex-direction: column;
+
+    .jmix-data-grid-top {
+      display: flex;
+      justify-content: space-between;
+      flex-shrink: 0;
+      overflow: hidden;
+      min-height: $v-unit-size;
+
+      .jmix-buttons-panel {
+        flex-basis: 100%;
+        flex-grow: 1;
+      }
+    }
+
+    // The caption of ButtonsPanel inside of DataGrid will be ignored
+    .v-caption-jmix-buttons-panel {
+      display: none;
+    }
+
+    .jmix-simplepagination {
+      margin-bottom: $v-layout-spacing-vertical;
+      padding-left: round($v-layout-spacing-horizontal/2);
+      text-align: right;
+      flex-grow: 1;
+      flex-shrink: 0;
+    }
+
+    .v-ie11 &,
+    .v-edge & {
+      .jmix-buttons-panel {
+        overflow-x: hidden
+      }
+    }
+  }
+
+  @if $jmix-buttonspanel-flow == false {
+    .jmix-data-grid-composition {
+      .v-csslayout.jmix-flowlayout {
+        white-space: nowrap;
+      }
+
+      .v-csslayout.jmix-flowlayout > * {
+        float: none;
+      }
+    }
+
+    .jmix-data-grid-composition.has-top-panel {
+      $top-panel-height: $v-unit-size + ceil($v-layout-spacing-vertical);
+
+      display: block;
+      padding-top: $top-panel-height;
+
+      .jmix-data-grid-top {
+        margin-top: -1 * $top-panel-height;
+      }
+    }
+  }
+
+  .#{$primary-stylename}-footer .#{$primary-stylename}-row.jmix-aggregation-row > td {
+    @include valo-gradient($jmix-datagrid-aggregation-background-color);
+  }
+
+  .#{$primary-stylename}-header .#{$primary-stylename}-row.jmix-aggregation-row > th {
+    @include valo-gradient($jmix-datagrid-aggregation-background-color);
+
+    font-weight: inherit;
+  }
+
+  .#{$primary-stylename}-cell .boolean-value {
+    &:before {
+      color: $v-font-color;
+      font-size: $v-font-size;
+      font-family: FontAwesome;
+    }
+  }
+
+  .#{$primary-stylename}-cell .boolean-value-true {
+    &:before {
+      content: "\f046";
+    }
+  }
+
+  .#{$primary-stylename}-cell .boolean-value-false {
+    &:before {
+      content: "\f096";
+    }
+  }
+
+  .#{$primary-stylename} {
+    .v-link,
+    .v-button-link {
+      -webkit-transition: none;
+      -moz-transition: none;
+      transition: none;
+    }
+  }
+
+  .#{$primary-stylename}-row-selected {
+    $font-color: valo-font-color($v-selection-color, 0.9);
+
+    .#{$primary-stylename}-cell {
+      .v-link,
+      .v-button-link,
+      .boolean-value:before {
+        color: $font-color;
+      }
+    }
+
+    .v-button-link:focus,
+    .v-button:focus:after {
+      border-color: $font-color;
+    }
+  }
+
+  .#{$primary-stylename}-cell.sort-asc,
+  .#{$primary-stylename}-cell.sort-desc {
+    &:after {
+      cursor: pointer;
+    }
+
+    &.jmix-sort-last:after {
+      // We need to shift the sorting indicator
+      // if the Grid's SideBar button is present.
+      // Unfortunately, this button has no width,
+      // so we can only infer it.
+      margin-right: $v-font-size * 1.5;
+    }
+  }
+
+  .#{$primary-stylename}-body .#{$primary-stylename}-row {
+    cursor: pointer;
+  }
+
+  @if $jmix-datagrid-highlight-hover-row {
+    .#{$primary-stylename}-body .#{$primary-stylename}-row:hover > td {
+      background-color: $jmix-hover-color;
+      color: valo-font-color($jmix-hover-color, 0.9);
+    }
+
+    .#{$primary-stylename}-body .#{$primary-stylename}-row-selected:hover > td {
+      @include valo-gradient($v-selection-color);
+      background-origin: border-box;
+      color: valo-font-color($v-selection-color, 0.9);
+    }
+  }
+
+  .#{$primary-stylename}-editor {
+    @include box-shadow(none);
+  }
+
+  .#{$primary-stylename}-editor-cells > div {
+    .jmix-maskedfield,
+    .jmix-maskedfield-focus,
+    .jmix-timefield,
+    .jmix-timefield-focus,
+    .jmix-fileupload .v-button,
+    .jmix-fileupload-clear.v-button,
+    .v-button.jmix-pickerfield-button,
+    .v-textfield.jmix-pickerfield-text:focus {
+      border: none;
+      border-radius: 0;
+      background: transparent;
+      @include box-shadow(none);
+    }
+
+    .jmix-currencyfield {
+      .jmix-currencyfield-layout {
+
+        &.currency-visible {
+          &.left,
+          &.right {
+            .jmix-currencyfield-currency {
+              border: valo-border();
+
+              border-top: 0;
+              border-bottom: 0;
+
+              border-radius: 0;
+            }
+          }
+        }
+      }
+    }
+
+    .jmix-maskedfield-focus,
+    .jmix-timefield-focus {
+      position: relative;
+    }
+
+    .v-button.jmix-pickerfield-button {
+      border-left: valo-border($color: $v-textfield-background-color, $border: $v-textfield-border, $strength: 0.5);
+    }
+
+    .v-filterselect-button:active:after,
+    .jmix-datefield [class*="button"]:active:after,
+    .jmix-pickerfield-layout>.v-button:last-child {
+      border-radius: 0;
+    }
+
+    .jmix-fileupload-container {
+      .v-spacing {
+        display: none;
+      }
+
+      .jmix-fileupload .v-button,
+      .jmix-fileupload-clear.v-button {
+        border-left: valo-border($color: $v-textfield-background-color, $border: $v-textfield-border, $strength: 0.5);
+
+        color: mix($v-textfield-background-color, valo-font-color($v-textfield-background-color));
+
+        &:hover {
+          color: valo-font-color($background-color);
+        }
+
+        &:after,
+        &:hover:after {
+          background: transparent;
+        }
+
+        &:focus:after {
+          border-color: transparent;
+          @include box-shadow(none);
+        }
+
+        &:active:after,
+        &:active:hover:after {
+          @if type-of($v-textfield-background-color) == color {
+            @include valo-button-active-style($v-textfield-background-color);
+          }
+          top: 0;
+          right: 0;
+          bottom: 0;
+          left: 0;
+        }
+      }
+
+      .jmix-fileupload .v-button-focus {
+        &:after {
+          border-color: transparent;
+          @include box-shadow(none);
+        }
+      }
+
+      .jmix-fileupload {
+        &:hover .v-button {
+          color: valo-font-color($background-color);
+        }
+
+        &:active,
+        &:active:hover {
+          .v-button:after {
+            @if type-of($v-textfield-background-color) == color {
+              @include valo-button-active-style($v-textfield-background-color);
+            }
+          }
+        }
+      }
+    }
+
+    .jmix-datefield-layout.v-has-width {
+      display: table;
+
+      .jmix-datefield,
+      .jmix-timefield {
+        display: table-cell;
+      }
+    }
+
+    .jmix-datefield [class*="button"] {
+      border: none;
+      border-right: valo-border($color: $v-textfield-background-color, $border: $v-textfield-border, $strength: 0.5);
+      left: 1px;
+      right: auto;
+    }
+
+    .jmix-datefield-layout .jmix-timefield {
+      border-left: valo-border($color: $v-textfield-background-color, $border: $v-textfield-border, $strength: 0.5);
+      margin-left: 0;
+    }
+
+    .jmix-datefield-composition-error {
+      .jmix-timefield {
+        // we need to set up border again because border-color is calculated inside `valo-border` function
+        // and set style as !important to prevent error color
+        border-left: valo-border($color: $v-textfield-background-color, $border: $v-textfield-border, $strength: 0.5) !important;
+        @include box-shadow(none);
+      }
+
+      .v-datefield-button {
+        color: mix($v-textfield-background-color, valo-font-color($v-textfield-background-color));
+
+        &:hover {
+          color: valo-font-color($background-color);
+        }
+      }
+    }
+
+    .v-filterselect-error .v-filterselect-button {
+      color: mix($v-textfield-background-color, valo-font-color($v-textfield-background-color));
+      // we need to set up border again because border-color is calculated inside `valo-border` function
+      border-left: valo-border($color: $v-textfield-background-color, $border: $v-textfield-border, $strength: 0.5)
+    }
+  }
+
+  .#{$primary-stylename}-sidebar.v-contextmenu .#{$primary-stylename}-sidebar-button:after {
+    content: "\f013";
+  }
+
+  .#{$primary-stylename}-sidebar.v-contextmenu.open .#{$primary-stylename}-sidebar-button:after {
+    content: "\f013";
+  }
+
+  .v-ie11 & .#{$primary-stylename}-sidebar.v-contextmenu.open .#{$primary-stylename}-sidebar-content {
+    overflow-x: hidden;
+    overflow-y: hidden;
+
+    .gwt-MenuBar-vertical {
+      overflow-x: hidden;
+      overflow-y: auto;
+      height: 100%;
+    }
+  }
+
+  .v-ie11 & .v-contextmenu .gwt-MenuItem {
+    padding-right: $v-selection-item-padding-horizontal * 2 + 8; // padding-right + width of scrollbar
+  }
+
+  .#{$primary-stylename}-cell > div.component-wrap {
+    display: flex;
+    box-sizing: border-box;
+    height: 100%;
+    width: 100%;
+
+    .v-checkbox,
+    .v-progressbar {
+      align-self: center;
+
+      &.v-has-height {
+        align-self: auto;
+      }
+    }
+  }
+
+  .#{$primary-stylename}-sidebar-content .gwt-MenuItemSeparator {
+    border-bottom: valo-border();
+    border-bottom-style: dotted;
+  }
+
+  .#{$primary-stylename}.multi-check .#{$primary-stylename}-row > .#{$primary-stylename}-cell:first-child,
+  .#{$primary-stylename}-editor-cells > .not-editable.#{$primary-stylename}-cell:first-child {
+    text-overflow: clip;
+
+    & input[type="checkbox"] {
+      margin: 0;
+    }
+  }
+}

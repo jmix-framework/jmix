@@ -1,0 +1,129 @@
+/*!
+ * Copyright 2020 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@mixin he-contextmenu($primary-stylename: v-contextmenu, $item-stylename: gwt-MenuItem) {
+  .#{$primary-stylename} {
+    @include he-selection-overlay-style($item-stylename: $item-stylename);
+  }
+
+  &.small .#{$primary-stylename} {
+    @include he-selection-overlay-size-style($item-height: $v-selection-item-height--small, $font-size: $v-font-size--small);
+  }
+
+  &.large .#{$primary-stylename} {
+    @include he-selection-overlay-size-style($item-height: $v-selection-item-height--large, $font-size: $v-font-size--large);
+  }
+}
+
+@mixin he-selection-overlay-style($item-stylename: gwt-MenuItem) {
+  @include he-selection-overlay-size-style();
+  @include he-overlay-style($background-color : --overlay-background-color,
+                            $shadow           : --selection-overlay-shadow,
+                            $border-radius    : $v-overlay-border-radius);
+
+  overflow: hidden;
+
+  table {
+    border-radius: $v-overlay-border-radius;
+    overflow: hidden;
+  }
+
+  .#{$item-stylename} {
+    @include he-selection-item-size-style();
+  }
+
+  .#{$item-stylename}:hover,
+  .#{$item-stylename}-selected {
+    &:not(.#{$item-stylename}-disabled) {
+      @include he-selection-item-selected-style();
+    }
+  }
+
+  .#{$item-stylename}-disabled {
+    @include he-selection-item-disabled-style();
+  }
+}
+
+@mixin he-selection-item-disabled-style() {
+  background: var(--selection-overlay-disabled-item-background-color);
+  color: var(--selection-overlay-disabled-item-text-color);
+}
+
+@mixin he-selection-item-selected-style() {
+  background: var(--selection-overlay-selected-item-background-color);
+  color: var(--selection-overlay-selected-item-text-color);
+  text-shadow: none;
+
+  &:active {
+    background: var(--selection-overlay-selected-item-active-background-color);
+  }
+}
+
+@mixin he-selection-item-size-style($item-height  : $v-selection-item-height,
+                                    $font-size    : $v-font-size,
+                                    $padding      : null) {
+  height: $item-height;
+  line-height: $item-height;
+
+  @if type-of($padding) == number or type-of($padding) == list {
+    padding: $padding;
+  } @else {
+    $padding-width: ceil($item-height/3);
+    padding: 0 $padding-width 0 $padding-width;
+  }
+
+  &:before {
+    display: none;
+  }
+}
+
+@mixin he-selection-overlay-size-style($item-height    : $v-selection-item-height,
+                                       $font-size      : $v-font-size,
+                                       $padding        : null,
+                                       $item-stylename : gwt-MenuItem) {
+  font-size: $font-size;
+
+  .#{$item-stylename} {
+    @include he-selection-item-size-style($item-height: $item-height, $font-size: $font-size, $padding: $padding);
+  }
+}
+
+@mixin he-jmix-contextmenu($primary-stylename: jmix-cm-container) {
+  .#{$primary-stylename} {
+    @include he-box-shadow(--selection-overlay-shadow);
+    background: var(--overlay-background-color);
+  }
+}
+
+@mixin he-vaadin-contextmenu-addon($primary-stylename: v-menubar) {
+  @include he-contextmenu($primary-stylename: #{$primary-stylename}-popup,
+                          $item-stylename: #{$primary-stylename}-menuitem);
+
+  .#{$primary-stylename}-popup {
+    .#{$primary-stylename}-submenu {
+      border-radius: $v-overlay-border-radius;
+      overflow: hidden;
+    }
+
+    .#{$primary-stylename}-menuitem-selected:active {
+      @include opacity(1);
+    }
+
+    .#{$primary-stylename}-separator {
+      border-bottom: he-border();
+    }
+  }
+}

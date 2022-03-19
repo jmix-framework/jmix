@@ -1,0 +1,245 @@
+/*
+ * Copyright 2020 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
+ * Minimal width of text field in the tag-field.
+ * @group tagfield
+ */
+$jmix-tagfield-field-min-width: $v-unit-size * 4 !default;
+
+
+/*
+ * TagLabel configuration in the TagField
+ */
+
+/**
+ * The default background color of tag-label in the tag-field.
+ * @group tagfield
+ */
+$jmix-tagfield-tag-background-color: $jmix-taglabel-background-color !default;
+
+/**
+ * The default font color of tag-label in the tag-field. It is calculated from $jmix-tagfield-tag-background-color.
+ * @group tagfield
+ */
+$jmix-tagfield-tag-color: valo-font-color($jmix-tagfield-tag-background-color, 0.9) !default;
+
+/**
+ * The background color while tag-label is hovered in the tag-field.
+ * @group tagfield
+ */
+$jmix-tagfield-tag-hover-background-color: $jmix-taglabel-hover-background-color !default;
+
+/**
+ * The font color while tag-label is hovered in the tag-field. By default it is equal to $jmix-tagfield-tag-color.
+ * @group tagfield
+ */
+$jmix-tagfield-tag-hover-color: $jmix-tagfield-tag-color !default;
+
+/**
+ * The left and right padding of tag-label in the tag-field.
+ * @group tagfield
+ */
+$jmix-tagfield-tag-padding-width: $jmix-taglabel-padding-width !default;
+
+/**
+ * The border radius of tag-label in the tag-field.
+ * @group tagfield
+ */
+$jmix-tagfield-tag-border-radius: $jmix-taglabel-border-radius !default;
+
+@mixin halo-tagfield($primary-stylename: jmix-tagfield) {
+
+  .#{$primary-stylename} {
+    @include halo-tagfield-size-style();
+
+    border: valo-border();
+    border-radius: $v-border-radius;
+    height: auto;
+    width: $v-default-field-width;
+  }
+
+  .#{$primary-stylename}-layout {
+    display: flex;
+    flex-wrap: wrap;
+    height: 100%;
+  }
+
+  .#{$primary-stylename}.empty {
+    padding: 0;
+
+    .v-textfield {
+      margin-bottom: 0;
+    }
+  }
+
+  .#{$primary-stylename}.clear-all:not(.empty) {
+    position: relative;
+
+    .v-textfield {
+      padding-right: 0;
+    }
+  }
+
+  .#{$primary-stylename}-focus {
+    @include valo-textfield-focus-style;
+  }
+
+  .#{$primary-stylename}-error {
+    @include valo-textfield-error-style;
+
+    &.#{$primary-stylename}-focus {
+      @include valo-error-focus-style;
+    }
+  }
+
+  .#{$primary-stylename}-clear-all {
+    color: mix($v-textfield-background-color, valo-font-color($v-textfield-background-color));
+    cursor: pointer;
+
+    &:before {
+      content:"\f00d";
+      font-family: FontAwesome;
+      position: absolute;
+      right: 0;
+      text-align: center;
+      top: 0;
+    }
+
+    &:hover {
+      color: valo-font-color($v-textfield-background-color);
+    }
+  }
+
+  .#{$primary-stylename} .v-textfield {
+    flex-grow: 1;
+    flex-basis: $jmix-tagfield-field-min-width;
+    min-width: $jmix-tagfield-field-min-width;
+
+    @include valo-textfield-borderless-style;
+  }
+
+  .v-caption-on-right > .#{$primary-stylename} {
+    display: inline-block;
+  }
+
+  .#{$primary-stylename} .jmix-taglabel {
+    @include halo-tag($jmix-tagfield-tag-background-color,
+                      $jmix-tagfield-tag-hover-background-color,
+                      $jmix-tagfield-tag-color,
+                      $jmix-tagfield-tag-hover-color,
+                      $v-font-size,
+                      halo-tagfield-elements-height(),
+                      $jmix-tagfield-tag-border-radius,
+                      $jmix-tagfield-tag-padding-width);
+
+    &.text-overflow {
+      display: flex;
+      width: 100%;
+
+      .jmix-taglabel-content {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .jmix-taglabel-close {
+        width: halo-tagfield-tag-close-btn-width();
+      }
+    }
+  }
+}
+
+@mixin halo-tagfield-size-style($primary-stylename      : jmix-tagfield,
+                                $unit-size              : $v-unit-size,
+                                $font-size              : $v-font-size) {
+
+  $tagfield-elements-height: halo-tagfield-elements-height($unit-size);
+  $tagfield-padding        : halo-tagfield-filled-padding();
+
+  $textfield-default-padding-width: ceil($unit-size/6);
+  @if ($v-textfield-border-radius) {
+    $textfield-default-padding-width: $textfield-default-padding-width + ceil($v-textfield-border-radius/3);
+  }
+  $textfield-default-padding-height: round($unit-size/9);
+  $textfield-default-padding: $textfield-default-padding-height $textfield-default-padding-width;
+
+  @include halo-tagfield-default-padding();
+
+  &.singleline {
+    height: $unit-size;
+  }
+
+  &.empty {
+    .v-textfield {
+      height: auto;
+      padding: $textfield-default-padding;
+    }
+  }
+
+  .v-textfield {
+    height: $tagfield-elements-height;
+    padding: 0 $textfield-default-padding-width 0 $jmix-tagfield-tag-padding-width;
+  }
+
+  &.clear-all:not(.empty) {
+    padding-right: $tagfield-elements-height + first-number(valo-border()) + $tagfield-padding;
+  }
+
+  .#{$primary-stylename}-clear-all:before {
+    font-size: $font-size;
+    line-height: $tagfield-elements-height;
+    height: $tagfield-elements-height;
+    margin-top: first-number(valo-border()) + $tagfield-padding;
+    margin-right: first-number(valo-border()) + $tagfield-padding;
+    width: $tagfield-elements-height;
+  }
+
+  .jmix-taglabel {
+    margin-right: $tagfield-padding;
+  }
+
+  .jmix-taglabel, .v-textfield {
+    margin-bottom: $tagfield-padding;
+  }
+}
+
+@mixin halo-tagfield-default-padding() {
+  $padding: halo-tagfield-filled-padding();
+  padding: $padding $padding 0 $padding;
+}
+
+/*
+ * Padding for TagField when it contains at least one TagLabel.
+ */
+@function halo-tagfield-filled-padding($unit-size: $v-unit-size) {
+  @return round($unit-size/9);
+}
+
+/*
+ * Height for TagLabel and textField. They must have height less than TagField height.
+ */
+@function halo-tagfield-elements-height($field-height: $v-unit-size) {
+ // field-height - 2 * TagField padding - 2x border
+ @return $field-height - (2 * halo-tagfield-filled-padding()) - (2 * first-number(valo-border()));
+}
+
+/*
+ * Width for close button in the TagLabel.
+ */
+@function halo-tagfield-tag-close-btn-width($font-size: $v-font-size) {
+  @return floor($font-size * 0.8);
+}

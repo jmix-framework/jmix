@@ -1,0 +1,249 @@
+/*!
+ * Copyright 2019 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/* Halo - Vaadin Valo SCSS theme for Platform */
+@import "../valo/valo";
+
+// Common
+@import "components/common/common";
+
+// Components
+@import "components/tree/tree";
+@import "components/colorpicker/colorpicker";
+@import "components/link/link";
+@import "components/panel/panel";
+@import "components/table/table";
+@import "components/label/label";
+@import "components/button/button";
+@import "components/select/select";
+@import "components/window/window";
+@import "components/menubar/menubar";
+@import "components/calendar/calendar";
+@import "components/checkbox/checkbox";
+@import "components/datagrid/datagrid";
+@import "components/treedatagrid/treedatagrid";
+@import "components/groupbox/groupbox";
+@import "components/tabsheet/tabsheet";
+@import "components/managedtabsheet/managedtabsheet";
+@import "components/textfield/textfield";
+@import "components/textarea/textarea";
+@import "components/tokenlist/tokenlist";
+@import "components/datefield/datefield";
+@import "components/timefield/timefield";
+@import "components/currencyfield/currencyfield";
+@import "components/datepicker/datepicker";
+@import "components/grouptable/grouptable";
+@import "components/fieldgroup/fieldgroup";
+@import "components/splitpanel/splitpanel";
+@import "components/pivottable/pivottable";
+@import "components/scrollbox/scrollbox";
+@import "components/twincolumn/twincolumn";
+@import "components/flowlayout/flowlayout";
+@import "components/csslayout/csslayout";
+@import "components/gridlayout/gridlayout";
+@import "components/fileupload/fileupload";
+@import "components/pickerfield/pickerfield";
+@import "components/listeditor/listeditor";
+@import "components/dateintervaleditor/dateintervaleditor";
+@import "components/contextmenu/contextmenu";
+@import "components/contextmenu/contextmenu-button";
+@import "components/maskedfield/maskedfield";
+@import "components/multiupload/multiupload";
+@import "components/optiongroup/optiongroup";
+@import "components/optionlist/optionlist";
+@import "components/popupbutton/popupbutton";
+@import "components/popupview/popupview";
+@import "components/progressbar/progressbar";
+@import "components/richtextarea/richtextarea";
+@import "components/notification/notification";
+@import "components/searchselect/searchselect";
+@import "components/orderedlayout/orderedlayout";
+@import "components/entitylinkfield/entitylinkfield";
+@import "components/fieldgrouplayout/fieldgrouplayout";
+@import "components/sourcecodeeditor/sourcecodeeditor";
+@import "components/resizabletextarea/resizabletextarea";
+@import "components/draganddrop/draganddrop";
+@import "components/sidemenu/sidemenu";
+@import "components/drawer/drawer";
+@import "components/fileuploadwrapper/fileuploadwrapper";
+@import "components/suggestionfield/suggestionfield";
+@import "components/image/image";
+@import "components/capslockindicator/capslockindicator";
+@import "components/accordion/accordion";
+@import "components/slider/slider";
+@import "components/responsivegridlayout/responsivegridlayout";
+@import "components/pagination/pagination";
+@import "components/simplepagination/simplepagination";
+@import "components/filter/filter";
+@import "components/propertyfilter/propertyfilter";
+@import "components/jpqlfilter/jpqlfilter";
+@import "components/groupfilter/groupfilter";
+@import "components/tagpicker/tagpicker";
+@import "components/taglabel/taglabel";
+@import "components/tagcontainer/tagcontainer";
+@import "components/tagfield/tagfield";
+
+// Application specific
+@import "app/log-control";
+@import "app/login-window";
+@import "app/logger-level";
+@import "app/role-editor";
+@import "app/report-wizard";
+@import "app/breadcrumbs";
+@import "app/bulk-editor";
+@import "app/generic-filter";
+@import "app/table-presentations";
+@import "app/table-paging";
+@import "app/table-showlink";
+@import "app/table-empty-state";
+@import "app/datagrid-empty-state";
+@import "app/app-menu";
+@import "app/app-window";
+@import "app/app-scrollbar";
+@import "app/folders-pane";
+@import "app/diff-viewer";
+@import "app/report-parameters";
+@import "app/report-templates";
+@import "app/report-source-code";
+@import "app/localized-frame";
+@import "app/entity-inspector-browse";
+@import "app/fts-search-window";
+@import "app/dialogs";
+
+// Add-ons
+@import "addons/aceeditor/ace-gwt";
+@import "addons/aceeditor/suggestionpopup";
+@import "addons/popupbutton/popupbutton";
+@import "addons/dragdroplayouts/dragdroplayouts";
+@import "addons/googlemap/googlemap";
+
+@mixin halo {
+  @include valo;
+
+  // Add-ons
+  @include addon-aceeditor;
+  @include addon-aceeditor-suggestpopup;
+  @include addon-popupbutton;
+  @include addon-dragdroplayouts;
+  @include addon-googlemap;
+
+  @include halo-common;
+
+  @include halo-tree;
+  @include halo-link;
+  @include halo-label;
+  @include halo-panel;
+  @include halo-table;
+  @include halo-button;
+  @include halo-window;
+  @include halo-menubar;
+  @include halo-calendar;
+  @include halo-checkbox;
+  @include halo-datagrid;
+  @include halo-treedatagrid;
+  @include halo-tabsheet;
+  @include managed-tabsheet;
+  @include halo-datefield;
+  @include halo-datepicker;
+  @include halo-splitpanel;
+  @include halo-pivottable;
+  @include halo-scrollbox;
+  @include halo-twincolumn;
+  @include halo-optiongroup;
+  @include halo-optionlist;
+  @include halo-popupbutton;
+  @include halo-popupview;
+  @include halo-filterselect;
+  @include halo-notification;
+  @include halo-richtextarea;
+  @include halo-orderedlayout;
+  @include halo-sourcecodeeditor;
+  @include halo-vaadin-contextmenu-addon;
+  @include halo-textarea;
+  @include halo-draganddrop;
+  @include halo-colorpicker;
+  @include halo-gridlayout;
+  @include halo-csslayout;
+  @include halo-accordion;
+  @include halo-jmix-image;
+  @include halo-jmix-currencyfield;
+  @include halo-slider;
+  @include halo-responsivegridlayout;
+  @include halo-pagination;
+  @include halo-simplepagination;
+  @include halo-filter;
+  @include halo-property-filter;
+  @include halo-jpql-filter;
+  @include halo-group-filter;
+  @include halo-tagpicker;
+  @include halo-taglabel;
+  @include halo-tagcontainer;
+  @include halo-tagfield;
+
+  @include halo-jmix-groupbox;
+  @include halo-jmix-tokenlist;
+  @include halo-jmix-textfield;
+  @include halo-jmix-grouptable;
+  @include halo-jmix-fileupload;
+  @include halo-jmix-flowlayout;
+  @include halo-jmix-fieldgroup;
+  @include halo-jmix-maskedfield;
+  @include halo-jmix-pickerfield;
+  @include halo-jmix-listeditor;
+  @include halo-jmix-dateintervaleditor;
+  @include halo-jmix-contextmenu;
+  @include halo-jmix-contextmenu-button;
+  @include halo-jmix-searchselect;
+  @include halo-jmix-sidemenu;
+  @include halo-drawer;
+  @include halo-jmix-multiupload;
+  @include halo-jmix-entitylinkfield;
+  @include halo-jmix-fieldgrouplayout;
+  @include halo-jmix-resizabletextarea;
+  @include halo-jmix-fileupload-wrapper;
+  @include halo-jmix-suggestionfield;
+  @include halo-jmix-capslockindicator;
+  @include halo-jmix-timefield;
+
+  @include jmix-log-control;
+  @include jmix-login-window;
+  @include jmix-logger-level;
+  @include jmix-role-editor;
+  @include jmix-report-wizard;
+  @include jmix-breadcrumbs;
+  @include jmix-bulk-editor;
+  @include jmix-generic-filter;
+  @include jmix-datagrid-empty-state;
+  @include jmix-table-presentations;
+  @include halo-jmix-table-paging;
+  @include jmix-table-empty-state;
+  @include jmix-table-showlink;
+  @include jmix-menubar;
+  @include jmix-application-window;
+  @if $jmix-scrollbars-style-enabled == true {
+    @include jmix-scrollbar;
+  }
+  @include jmix-folders-pane;
+  @include jmix-progressbar;
+  @include jmix-diff-viewer;
+  @include jmix-report-parameters;
+  @include jmix-report-templates;
+  @include jmix-report-source-code;
+  @include jmix-localized-frame;
+  @include jmix-entity-inspector-browse;
+  @include fts-search-window;
+  @include jmix-dialogs;
+}

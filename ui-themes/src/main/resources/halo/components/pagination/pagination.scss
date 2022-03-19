@@ -1,0 +1,91 @@
+/*
+ * Copyright 2020 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
+ * Sets border radius for first (left-top, left-bottom) and last (right-top, right-bottom) page buttons.
+ * @group pagination
+ */
+$jmix-pagination-page-border-radius: $v-border-radius !default;
+
+/**
+ * Defines margin between elements in pagination like Items Per Page Label and Last navigation button.
+ * @group pagination
+ */
+$jmix-pagination-layout-margin-width: $v-layout-spacing-horizontal !default;
+
+@mixin halo-pagination($primary-stylename: jmix-pagination) {
+
+  .#{$primary-stylename} {
+    padding-left: 1px;
+
+    & > * {
+      vertical-align: middle;
+    }
+
+    .v-button.#{$primary-stylename}-navigation-btn,
+    .v-button.#{$primary-stylename}-page {
+      border-radius: 0;
+      padding: 0 round($v-unit-size/4);
+      line-height: $v-font-size;
+      margin-left: -1px;
+
+      @include halo-pagination-page-min-width-style($v-unit-size, $v-font-size);
+    }
+  }
+
+  .#{$primary-stylename}-itemsperpage-layout {
+    margin-left: $jmix-pagination-layout-margin-width;
+
+    .#{$primary-stylename}-itemsperpage-label {
+      line-height: $v-unit-size;
+      margin-right: $jmix-pagination-layout-margin-width;
+    }
+  }
+
+  .v-button.#{$primary-stylename}-navigation-btn:focus:after,
+  .v-button.#{$primary-stylename}-page:focus:after {
+    border-color: first-color(valo-border());
+
+    @include box-shadow(none);
+  }
+
+  .#{$primary-stylename}-page.selected-page {
+    border-color: $v-selection-color;
+    color: valo-font-color($v-selection-color, 0.9);
+    z-index: 1;
+
+    @include valo-gradient($v-selection-color);
+    @include box-shadow(none);
+  }
+
+  .v-button.#{$primary-stylename}-page.selected-page:focus:after {
+    border-color: $v-focus-color;
+  }
+
+  .v-button.#{$primary-stylename}-navigation-btn.first {
+    border-top-left-radius: $jmix-pagination-page-border-radius;
+    border-bottom-left-radius: $jmix-pagination-page-border-radius;
+  }
+
+  .v-button.#{$primary-stylename}-navigation-btn.last {
+    border-top-right-radius: $jmix-pagination-page-border-radius;
+    border-bottom-right-radius: $jmix-pagination-page-border-radius;
+  }
+}
+
+@mixin halo-pagination-page-min-width-style($unit-size: $v-unit-size, $font-size: $v-font-size) {
+  min-width: floor($unit-size + $font-size/3);
+}

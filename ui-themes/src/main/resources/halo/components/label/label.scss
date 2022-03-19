@@ -1,0 +1,105 @@
+/*
+ * Copyright (c) 2008-2016 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
+@mixin halo-label($primary-stylename: v-label) {
+
+  .#{$primary-stylename} {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+
+  .#{$primary-stylename}-empty {
+    border: 0;
+  }
+
+  .#{$primary-stylename}-spinner {
+    @include valo-spinner;
+  }
+
+  .#{$primary-stylename}.#{$primary-stylename}-h1 {
+    font-size: $v-font-size--h1;
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .#{$primary-stylename}.#{$primary-stylename}-h2 {
+    margin: 0;
+    font-size: $v-font-size--h2;
+    line-height: 1.5;
+  }
+
+  .#{$primary-stylename}.#{$primary-stylename}-h3 {
+    margin: 0;
+    font-size: $v-font-size--h3;
+    line-height: 1.5;
+  }
+
+  .#{$primary-stylename}.#{$primary-stylename}-h4 {
+    margin: 0;
+  }
+
+  .v-csslayout {
+    > h1,
+    > h2,
+    > h3,
+    > h4,
+    > .#{$primary-stylename}-h1,
+    > .#{$primary-stylename}-h2,
+    > .#{$primary-stylename}-h3,
+    > .#{$primary-stylename}-h4 {
+      &:first-child {
+        margin: 0;
+      }
+    }
+  }
+
+  .v-verticallayout > .v-slot:first-child,
+  .v-verticallayout > div > .v-slot:first-child {
+    h1, .#{$primary-stylename}-h1,
+    h2, .#{$primary-stylename}-h2,
+    h3, .#{$primary-stylename}-h3,
+    h4, .#{$primary-stylename}-h4 {
+      margin: 0;
+    }
+  }
+
+  .#{$primary-stylename}.h2-red {
+    color: red;
+    border: 0;
+  }
+
+  .#{$primary-stylename}-semi-bold-label {
+    font-weight: 600;
+  }
+
+  .#{$primary-stylename} pre {
+    margin: 0;
+    font-family: $v-font-family;
+  }
+
+  .#{$primary-stylename}-icon {
+    .v-icon {
+      margin-right: round($v-unit-size/5);
+    }
+  }
+
+  .#{$primary-stylename}-icon.#{$primary-stylename}-empty {
+    .v-icon {
+      margin-right: 0;
+    }
+  }
+}

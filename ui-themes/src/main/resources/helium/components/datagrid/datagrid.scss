@@ -1,0 +1,388 @@
+/*!
+ * Copyright 2020 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@mixin he-datagrid($primary-stylename: v-grid) {
+  .#{$primary-stylename} {
+    @include he-grid-style($primary-stylename: $primary-stylename);
+  }
+
+  .#{$primary-stylename}-sidebar.v-contextmenu {
+    &.open {
+      background: var(--grid-sidebar-popup-background-color);
+
+      .#{$primary-stylename}-sidebar-content {
+        margin: 0;
+        padding: 0;
+      }
+    }
+
+    table {
+      border-radius: 0;
+    }
+  }
+
+  .jmix-data-grid-composition {
+    &.no-stripes {
+      .#{$primary-stylename} .#{$primary-stylename}-body {
+        .#{$primary-stylename}-row,
+        .#{$primary-stylename}-row-stripe {
+          > td {
+            background-color: var(--grid-row-color);
+          }
+        }
+
+        @include he-grid-selected-row-style($primary-stylename: $primary-stylename);
+
+        @if $jmix-datagrid-highlight-hover-row {
+          @include he-grid-row-hover-style($primary-stylename: $primary-stylename);
+        }
+      }
+    }
+
+    &.no-vertical-lines {
+      .#{$primary-stylename}-header .#{$primary-stylename}-row.c-aggregation-row > th,
+      .#{$primary-stylename}-footer .#{$primary-stylename}-row.c-aggregation-row > td {
+        border-left-color: transparent;
+      }
+    }
+
+    @include he-grid-composition-size-style();
+  }
+
+  @include he-grid-empty-state-style();
+
+  /* Global size */
+
+  &.small {
+    .jmix-data-grid-composition {
+      @include he-grid-composition-size-style($v-unit-size--small);
+    }
+    @include he-grid-empty-state-size-style($scaling-factor: $v-scaling-factor--small);
+  }
+
+  &.large {
+    .jmix-data-grid-composition {
+      @include he-grid-composition-size-style($v-unit-size--large);
+    }
+    @include he-grid-empty-state-size-style($scaling-factor: $v-scaling-factor--large);
+  }
+
+  /* Size within a container */
+
+  .small {
+    .jmix-data-grid-composition {
+      @include he-grid-composition-size-style($v-unit-size--small);
+    }
+    @include he-grid-empty-state-size-style($scaling-factor: $v-scaling-factor--small);
+  }
+
+  .medium {
+    .jmix-data-grid-composition {
+      @include he-grid-composition-size-style($v-unit-size);
+    }
+    @include he-grid-empty-state-size-style();
+  }
+
+  .large {
+    .jmix-data-grid-composition {
+      @include he-grid-composition-size-style($v-unit-size--large);
+    }
+    @include he-grid-empty-state-size-style($scaling-factor: $v-scaling-factor--large);
+  }
+
+  /* Own size */
+
+  .jmix-data-grid-composition.small {
+    @include he-grid-composition-size-style($v-unit-size--small);
+    @include he-grid-empty-state-size-style($scaling-factor: $v-scaling-factor--small);
+  }
+
+  .jmix-data-grid-composition.medium {
+    @include he-grid-composition-size-style($v-unit-size);
+    @include he-grid-empty-state-size-style();
+  }
+
+  .jmix-data-grid-composition.large {
+    @include he-grid-composition-size-style($v-unit-size--large);
+    @include he-grid-empty-state-size-style($scaling-factor: $v-scaling-factor--large);
+  }
+}
+
+@mixin he-grid-style($primary-stylename: v-grid) {
+  background-color: var(--grid-background-color);
+  color: var(--text-main-color);
+
+  // Rows
+
+  .#{$primary-stylename}-row > td {
+    background-color: var(--grid-row-color);
+  }
+
+  .#{$primary-stylename}-row-stripe > td {
+    background-color: var(--grid-row-stripe-color);
+  }
+
+  // Header / Footer
+
+  .#{$primary-stylename}-header,
+  .#{$primary-stylename}-footer {
+    color: var(--grid-header-text-color);
+    background: var(--grid-background-color);
+  }
+
+  .#{$primary-stylename}-header .#{$primary-stylename}-cell,
+  .#{$primary-stylename}-footer .#{$primary-stylename}-cell {
+    background: var(--grid-background-color);
+    text-shadow: none;
+  }
+
+  .#{$primary-stylename}-header-deco,
+  .#{$primary-stylename}-footer-deco {
+    background: var(--grid-background-color);
+  }
+
+  .#{$primary-stylename}-column-header-content {
+    line-height: $v-grid-header-row-height;
+  }
+
+  // Column drag and drop elements
+
+  .header-drag-table .#{$primary-stylename}-header {
+    background: transparent;
+
+    > .#{$primary-stylename}-drop-marker {
+      background-color: var(--grid-drop-marker-color);
+    }
+  }
+
+  // Sidebar
+
+  .#{$primary-stylename}-sidebar.v-contextmenu {
+    background: var(--grid-background-color);
+
+    &.open {
+      background: var(--grid-sidebar-button-active-color);
+    }
+
+    &.closed {
+      background: var(--grid-background-color);
+    }
+  }
+
+  // Selected
+
+  @include he-grid-selected-row-style($primary-stylename: $primary-stylename);
+
+  @if $jmix-datagrid-highlight-hover-row {
+    .#{$primary-stylename}-body {
+      @include he-grid-row-hover-style($primary-stylename: $primary-stylename);
+    }
+  }
+
+  // Focused cell style (common for all cells)
+
+  .#{$primary-stylename}-cell-focused:before {
+    border-color: var(--grid-focused-cell-border-color);
+  }
+
+  // Drag and drop
+
+  .#{$primary-stylename}-row-drag-top:before,
+  .#{$primary-stylename}-row-drag-bottom:after {
+    background: var(--grid-row-drag-background-color);
+  }
+
+  .#{$primary-stylename}-body-drag-top,
+  .#{$primary-stylename}-row-drag-center {
+    &:after {
+      border: he-border($color: --grid-row-drag-border-color, $strength: 2px);
+    }
+  }
+
+  .#{$primary-stylename}-row-selected {
+    &.#{$primary-stylename}-row-drag-center:after {
+      border-color: var(--grid-selected-row-drag-border-color);
+    }
+
+    &.#{$primary-stylename}-row-drag-top:before,
+    &.#{$primary-stylename}-row-drag-bottom:after {
+      border-color: var(--grid-selected-row-drag-border-color);
+    }
+  }
+
+  // Editor
+
+  .#{$primary-stylename}-editor {
+    border-color: var(--grid-editor-border-color);
+  }
+
+  .#{$primary-stylename}-editor-footer {
+    background: var(--grid-editor-footer-background-color);
+  }
+
+  .#{$primary-stylename}-editor-save {
+    color: var(--grid-editor-save-button-color);
+  }
+
+  .#{$primary-stylename}-editor-cancel {
+    color: var(--grid-editor-cancel-button-color);
+  }
+
+  .#{$primary-stylename}-editor-cells > div {
+    background: var(--grid-background-color);
+
+    .v-button.jmix-pickerfield-button {
+      border-left: he-border($color: --border-dim-color);
+    }
+
+    .v-filterselect-button:active {
+      border-radius: 0;
+    }
+
+    .jmix-datefield-layout {
+      .jmix-datefield {
+        [class*="textfield"] {
+          border: none;
+
+          &.v-datefield-textfield {
+            padding-right: ceil($v-unit-size / 3);
+            padding-left: $v-unit-size;
+          }
+        }
+
+        [class*="button"] {
+          @include he-datefield-button-borderless-style();
+        }
+      }
+
+      .jmix-timefield {
+        border-left: he-border($color: --border-dim-color);
+      }
+    }
+  }
+
+  // Aggregation
+
+  .#{$primary-stylename}-header .#{$primary-stylename}-row.jmix-aggregation-row > th,
+  .#{$primary-stylename}-footer .#{$primary-stylename}-row.jmix-aggregation-row > td {
+    background: var(--grid-aggregation-background-color);
+    color: var(--grid-aggregation-text-color);
+    border-left-color: var(--grid-aggregation-border-color);
+  }
+
+  // Decorative elements
+
+  .#{$primary-stylename}-horizontal-scrollbar-deco {
+    background: var(--grid-background-color);
+  }
+
+  .#{$primary-stylename}-cell .boolean-value {
+    &:before {
+      color: var(--text-main-color);
+      font-size: $v-font-size;
+    }
+  }
+
+  // Spacer (Details)
+
+  .#{$primary-stylename}-spacer-deco {
+    background-color: var(--grid-details-deco-color);
+  }
+
+  .#{$primary-stylename}-spacer > td {
+    background-color: var(--grid-row-color);
+  }
+
+  .#{$primary-stylename}-spacer.stripe > td {
+    background-color: var(--grid-row-stripe-color);
+  }
+}
+
+@mixin he-grid-selected-row-style($primary-stylename: v-grid) {
+  .#{$primary-stylename}-row-selected {
+    > .#{$primary-stylename}-cell {
+      background: var(--grid-selected-row-background-color);
+      color: var(--grid-selected-row-text-color);
+      border-color: var(--grid-selected-row-border-color);
+      text-shadow: none;
+
+      .v-link,
+      .v-link > a:visited,
+      .v-button-link,
+      .boolean-value:before {
+        color: var(--grid-selected-row-text-color);
+      }
+
+      .v-button-link:focus,
+      .v-button:focus:after {
+        border-color: var(--grid-selected-row-text-color);
+      }
+    }
+
+    > .#{$primary-stylename}-cell-focused:before {
+      border-color: var(--grid-selected-row-focus-ring-color);
+    }
+  }
+}
+
+@mixin he-grid-row-hover-style($primary-stylename: v-grid) {
+  .#{$primary-stylename}-row:hover > td {
+    background-color: var(--grid-hovered-row-background-color);
+    color: var(--grid-hovered-row-text-color);
+  }
+
+  .#{$primary-stylename}-row-selected:hover > td {
+    background: var(--grid-selected-row-background-color);
+    color: var(--grid-selected-row-text-color);
+  }
+}
+
+@mixin he-grid-composition-size-style($unit-size: $v-unit-size) {
+  &.has-top-panel {
+    padding-top: $unit-size + ceil($v-layout-spacing-vertical);
+
+    .jmix-data-grid-top {
+      min-height: $unit-size;
+      margin-top: -1 * ($unit-size + ceil($v-layout-spacing-vertical));
+    }
+  }
+}
+
+@mixin he-grid-empty-state-style() {
+  @include he-grid-empty-state-size-style();
+
+  .jmix-datagrid-empty-state {
+    .jmix-datagrid-empty-state-link-message.v-button-link {
+      @include he-button-link-style();
+      border-radius: $v-border-radius;
+    }
+
+    .jmix-datagrid-empty-state-message {
+      color: var(--text-dim-color);
+    }
+  }
+}
+
+@mixin he-grid-empty-state-size-style($font-size         : $v-font-size--h2,
+                                      $scaling-factor    : 1) {
+  .jmix-datagrid-empty-state {
+    font-size: round($font-size * $scaling-factor);
+
+    .jmix-datagrid-empty-state-link-message.v-button-link {
+      @include he-button-link-size-style();
+    }
+  }
+}

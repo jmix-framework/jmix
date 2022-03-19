@@ -1,0 +1,9 @@
+{
+  "id": "$PLANT_ID$",
+  "models": [
+    {
+      "id": "$MODEL_1_ID$",
+      "name": "$MODEL_1_NAME$"
+    }
+  ]
+}

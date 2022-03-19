@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2020 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <property name="uuid.type" dbms="oracle" value="varchar2(32)"/>
+    <property name="uuid.type" dbms="!oracle" value="uuid"/>
+
+    <changeSet author="sample-rest" id="1.0">
+
+        <createTable tableName="SAMPLE_REST_SEC_GROUP">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="VERSION" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="UPDATE_TS" type="datetime"/>
+            <column name="UPDATED_BY" type="varchar(50)"/>
+            <column name="DELETE_TS" type="datetime"/>
+            <column name="DELETED_BY" type="varchar(50)"/>
+            <column name="NAME" type="varchar(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="PARENT_ID" type="${uuid.type}">
+                <constraints foreignKeyName="SAMPLE_REST_SEC_GROUP_PARENT" references="SAMPLE_REST_SEC_GROUP(ID)"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="SAMPLE_REST_SEC_ROLE">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="VERSION" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="UPDATE_TS" type="datetime"/>
+            <column name="UPDATED_BY" type="varchar(50)"/>
+            <column name="DELETE_TS" type="datetime"/>
+            <column name="DELETED_BY" type="varchar(50)"/>
+            <column name="NAME" type="varchar(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="LOC_NAME" type="varchar(255)"/>
+            <column name="DESCRIPTION" type="varchar(1000)"/>
+            <column name="ROLE_TYPE" type="int"/>
+            <column name="IS_DEFAULT_ROLE" type="boolean"/>
+        </createTable>
+
+
+        <createTable tableName="SAMPLE_REST_SEC_USER">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="VERSION" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="UPDATE_TS" type="datetime"/>
+            <column name="UPDATED_BY" type="varchar(50)"/>
+            <column name="DELETE_TS" type="datetime"/>
+            <column name="DELETED_BY" type="varchar(50)"/>
+            <column name="LOGIN" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="LOGIN_LC" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PASSWORD" type="varchar(255)"/>
+            <column name="PASSWORD_ENCRYPTION" type="varchar(255)"/>
+            <column name="NAME" type="varchar(255)"/>
+            <column name="FIRST_NAME" type="varchar(255)"/>
+            <column name="LAST_NAME" type="varchar(255)"/>
+            <column name="MIDDLE_NAME" type="varchar(255)"/>
+            <column name="POSITION_" type="varchar(255)"/>
+            <column name="EMAIL" type="varchar(100)"/>
+            <column name="LANGUAGE_" type="varchar(20)"/>
+            <column name="TIME_ZONE" type="varchar(255)"/>
+            <column name="TIME_ZONE_AUTO" type="boolean"/>
+            <column name="ACTIVE" type="boolean"/>
+            <column name="CHANGE_PASSWORD_AT_LOGON" type="boolean"/>
+            <column name="GROUP_ID" type="${uuid.type}">
+                <constraints foreignKeyName="SAMPLE_REST_SEC_USER_GROUP" references="SAMPLE_REST_SEC_GROUP(ID)"/>
+            </column>
+            <column name="IP_MASK" type="varchar(200)"/>
+        </createTable>
+
+        <createTable tableName="SAMPLE_REST_SEC_USER_ROLE">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="VERSION" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="UPDATE_TS" type="datetime"/>
+            <column name="UPDATED_BY" type="varchar(50)"/>
+            <column name="DELETE_TS" type="datetime"/>
+            <column name="DELETED_BY" type="varchar(50)"/>
+            <column name="USER_ID" type="${uuid.type}">
+                <constraints foreignKeyName="SAMPLE_REST_SEC_USER_ROLE_USER" references="SAMPLE_REST_SEC_USER(ID)"
+                             nullable="false"/>
+            </column>
+            <column name="ROLE_ID" type="${uuid.type}">
+                <constraints foreignKeyName="SAMPLE_REST_SEC_USER_ROLE_ROLE" references="SAMPLE_REST_SEC_ROLE(ID)"
+                             nullable="false"/>
+            </column>
+        </createTable>
+
+    </changeSet>
+
+</databaseChangeLog>

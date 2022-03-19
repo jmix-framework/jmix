@@ -1,0 +1,9 @@
+{
+  "id": "$CAR_ID$",
+  "repairs": [
+    {
+      "id": "$REPAIR_ID$",
+      "description": "$REPAIR_1_DESCRIPTION$"
+    }
+  ]
+}

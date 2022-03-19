@@ -1,0 +1,8 @@
+{
+  "conditions": [
+    {
+      "property": "createdBy",
+      "operator": "isNull"
+    }
+  ]
+}

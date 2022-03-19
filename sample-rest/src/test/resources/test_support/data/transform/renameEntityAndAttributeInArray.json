@@ -1,0 +1,12 @@
+[
+  {
+    "_entityName": "app$OldEntity",
+    "firstName": "Bob",
+    "lastName": "Smith"
+  },
+  {
+    "_entityName": "app$OldEntity",
+    "firstName": "Jack",
+    "lastName": "Daniels"
+  }
+]

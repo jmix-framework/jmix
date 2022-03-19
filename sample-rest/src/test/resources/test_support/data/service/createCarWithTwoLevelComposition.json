@@ -1,0 +1,16 @@
+{
+  "repairs": [
+    {
+      "description": "Repair 1",
+      "carTokens": []
+    },
+    {
+      "description": "Repair 2",
+      "carTokens": [
+        {
+          "token": "Token 2"
+        }
+      ]
+    }
+  ]
+}

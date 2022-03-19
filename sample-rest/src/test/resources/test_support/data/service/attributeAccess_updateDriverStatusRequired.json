@@ -1,0 +1,5 @@
+{
+  "id": "$DRIVER_ID$",
+  "status": null,
+  "__securityToken": "$SECURITY_TOKEN$"
+}

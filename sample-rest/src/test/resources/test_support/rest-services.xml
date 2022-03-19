@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2008-2016 Haulmont. All rights reserved.
+  ~ Use is subject to license terms, see http://www.cuba-platform.com/commercial-software-license for details.
+  -->
+
+<services xmlns="http://jmix.io/schema/rest/services">
+    <service name="jmix_RestTestService">
+        <method name="sum">
+            <param name="number1"/>
+            <param name="number2"/>
+        </method>
+
+        <method name="methodWithCustomException"/>
+
+        <method name="methodWithException"/>
+        <method name="emptyMethod"/>
+
+        <method name="overloadedMethod">
+            <param name="intParam" type="int"/>
+        </method>
+
+        <method name="overloadedMethod">
+            <param name="stringParam" type="java.lang.String"/>
+        </method>
+
+        <method name="nonExistingMethod"/>
+
+        <method name="findCar">
+            <param name="carId"/>
+            <param name="viewName"/>
+        </method>
+
+        <method name="findAllCars">
+            <param name="viewName"/>
+        </method>
+
+        <method name="updateCarVin">
+            <param name="car"/>
+            <param name="vin"/>
+        </method>
+
+        <method name="concatCarVins">
+            <param name="cars"/>
+        </method>
+
+        <method name="updateCarVins">
+            <param name="cars"/>
+            <param name="vin"/>
+        </method>
+
+        <method name="testJavaTimeParam">
+            <param name="localDate" type="java.time.LocalDate"/>
+            <param name="localDateTime" type="java.time.LocalDateTime"/>
+            <param name="localTime" type="java.time.LocalTime"/>
+            <param name="offsetDateTime" type="java.time.OffsetDateTime"/>
+            <param name="offsetTime" type="java.time.OffsetTime"/>
+            <param name="time" type="java.sql.Time"/>
+        </method>
+
+        <method name="testDateParam">
+            <param name="param"/>
+        </method>
+
+        <method name="testBigDecimalParam">
+            <param name="param"/>
+        </method>
+
+        <method name="getPojo"/>
+
+        <method name="getPojoList"/>
+
+        <method name="methodWithPojoParameter">
+            <param name="pojo"/>
+        </method>
+
+        <method name="methodWithPojoCollectionParameter">
+            <param name="pojoCollection"/>
+        </method>
+
+        <method name="methodWithPojoCollectionParameter2">
+            <param name="pojoCollection"/>
+        </method>
+
+        <method name="validatedMethod">
+            <param name="code"/>
+        </method>
+
+        <method name="validatedMethodResult">
+            <param name="code"/>
+        </method>
+
+        <method name="notPersistedEntity"/>
+
+        <method name="testNullParam">
+            <param name="uuid"/>
+        </method>
+
+        <method name="methodWithPrimitiveListArguments">
+            <param name="stringList"/>
+            <param name="intArray"/>
+            <param name="intArgument"/>
+        </method>
+
+        <method name="getPojosWithNestedEntity"/>
+
+        <method name="getPojosWithNestedEntityWithView"/>
+
+        <method name="methodWithListOfMapParam">
+            <param name="param" type="java.util.List"/>
+        </method>
+
+        <method name="getNotPersistentStringIdEntity"/>
+
+        <method name="methodReturnsListOfMap"/>
+
+        <method name="methodWithOptionalArgs">
+            <param name="arg1"/>
+            <param name="arg2" required="false"/>
+            <param name="arg3" required="false"/>
+        </method>
+
+        <method name="overloadedMethodWithOptionalArgs">
+            <param name="arg1"/>
+            <param name="arg2" required="false"/>
+        </method>
+
+        <method name="overloadedMethodWithOptionalArgs">
+            <param name="arg1"/>
+        </method>
+    </service>
+
+    <service name="jmix_OtherRestTestService">
+        <method name="testMethod"/>
+    </service>
+
+    <service name="jmix_RestTestServiceWithoutInterfaces">
+        <method name="emptyMethod"/>
+    </service>
+</services>

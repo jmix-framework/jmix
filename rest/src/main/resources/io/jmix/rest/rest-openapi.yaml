@@ -1,0 +1,1790 @@
+openapi: 3.0.1
+info:
+  title: Jmix Generic REST API
+  description: |2
+
+    ## Overview
+
+    Jmix Generic REST API provides the following functionality:
+
+    * Entities CRUD operations
+    * Execution of predefined JPQL queries
+    * Execution of exposed service methods
+    * Getting metadata (entities, fetch plans, enumerations, datatypes)
+    * Getting localized messages
+    * Getting current user permissions (roles, access to entities and attributes, specific policies)
+    * Getting attributes of the current user
+    * Working with files
+
+    The REST API is available at the `/rest/` URL, e.g. `http://localhost:8080/rest/entities/Order`
+
+    ## Authentication
+
+    ### Authentication using the OAuth2 protocol
+
+    Jmix REST API uses an OAuth2 resource owner password credentials grant to protect the endpoints (https://datatracker.ietf.org/doc/html/rfc6749#section-4.3).
+
+    Before accessing a protected resource, a user must get an authentication token. The token can be obtained at the `/oauth/token` URL.
+
+    The `/oauth/token` endpoint is protected with the basic authentication. The request must contain the `Authorization` header for basic
+    authentication with REST API client credentials. Please note that client credentials are not the same as the user credentials.
+    Client means an application that uses the REST API. The default client credentials are defined by the following
+    application properties: `jmix.security.oauth2.clientId` and `jmix.security.oauth2.clientSecret`. User credentials must be passed in the request body.
+    The request format must be `application/x-www-form-urlencoded`.
+
+    See the `/oauth/token` endpoint documentation for more details.
+
+    The obtained token must be provided with all subsequent requests in the `Authorization` header of the `Bearer` type, e.g.:
+
+    ```
+    GET /rest/entities/Order
+         Host: example.com
+         Authorization: Bearer 2YotnFZFEjr1zCsicMWpAA
+    ```
+
+    Access token can also be provided in the request URL using the `access_token` parameter. This may be useful when you, for example, need to build
+    a link for downloading a file, like this: `http://localhost:8080/rest/files?fileRef=fs://2021/03/12/2266c97c-cf23-c202-481d-04d972e185b4.jpg?name=cat-via-direct-request.jpg?access_token=acefdad0-d728-4279-aae3-6b42620f7ef9`.
+
+    ### Anonymous access
+
+    If the request to a protected resource doesn't contain the `Authentication` header then the user will be authenticated with the anonymous session.
+    By default, anonymous access is forbidden. To enable it for a specific URL, add the URL pattern to the `jmix.rest.anonymous-url-patterns` application property.
+    Read more about the anonymous sessions in the Jmix documentation.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: "1.1"
+servers:
+  - url: /rest
+security:
+  - oauth2:
+      - rest-api
+tags:
+  - name: OAuth
+    description: Working with authentication tokens
+  - name: Entities
+    description: CRUD operations with entities
+  - name: Queries
+    description: Executing predefined JPQL queries
+  - name: Services
+    description: Invoking exposed service methods
+  - name: Files
+    description: Working with files
+  - name: Permissions
+    description: Current user permissions
+  - name: Metadata
+    description: Entities metadata
+  - name: Messages
+    description: Localized messages
+  - name: UserInfo
+    description: Current user information
+  - name: Documentation
+    description: OpenAPI documentation
+paths:
+  /oauth/token:
+    post:
+      tags:
+        - OAuth
+      summary: Get an authentication token
+      description: |
+        Gets an authentication token.
+
+        The endpoint is protected with the basic authentication. The request must contain an `Authorization`
+        header for basic authentication with REST API client credentials. Please note that client credentials 
+        are not the same as the user credentials. Client means an application that uses the REST API.
+        The default client credentials are defined by the following application properties: `jmix.rest.client.id` and `jmix.rest.client.secret`.
+        User credentials must be passed in the request body. The request format must be `application/x-www-form-urlencoded`.
+
+        To disable refresh tokens for the client, set `password,external` value to the
+        `jmix.security.oauth2.client-authorized-grant-types` application property.
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              properties:
+                grant_type:
+                  type: string
+                  description: OAuth grant type. Should be set to "password"
+                  default: password
+                username:
+                  type: string
+                  description: Jmix user login
+                  default: admin
+                password:
+                  type: string
+                  description: Jmix user password
+                  default: admin
+      responses:
+        200:
+          description: Successfully authenticated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/token'
+        400:
+          description: Authentication failed, e.g. because of invalid username
+            or password
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/oauthError'
+        401:
+          description: Basic authentcation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/oauthError'
+      security:
+        - tokenEndpointBasic: []
+  /oauth/revoke:
+    post:
+      tags:
+        - OAuth
+      summary: Revoke an authentication token
+      description: |
+        Revokes an authentication token. The endpoint is protected with the basic authentication. The request must
+        contain an `Authorization` header for basic authentication with REST API client credentials. See the `/oauth/token`
+        endpoint documentation for more details.
+        When the refresh token is revoked, the correspondig access token is also revoked.
+        When the access token is revoked, the correspondding refresh token is also revoked.
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              properties:
+                token:
+                  type: string
+                  description: The token to be revoked.
+                token_type_hint:
+                  type: string
+                  description: |
+                    A hint about the type of the token submitted for revocation. May be access_token or refresh_token.
+                    The parameter is optional.
+      responses:
+        200:
+          description: Success
+          content: {}
+      security:
+        - tokenEndpointBasic: []
+  /entities/{entityName}:
+    get:
+      tags:
+        - Entities
+      summary: Get a list of entities
+      description: |
+        Gets a list of entities
+      parameters:
+        - name: entityName
+          in: path
+          description: Entity name
+          required: true
+          schema:
+            type: string
+        - name: fetchPlan
+          in: query
+          description: Name of the fetch plan which is used for loading the entity
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: Number of extracted entities
+          schema:
+            type: string
+        - name: offset
+          in: query
+          description: Position of the first result to retrieve
+          schema:
+            type: string
+        - name: sort
+          in: query
+          description: |
+            Name of the field to be sorted by. If the name is preceeding by the '+' character, then
+            the sort order is ascending, if by the '-' character then descending. If there is no special
+            character before the property name, then ascending sort will be used.
+          schema:
+            type: string
+        - name: returnNulls
+          in: query
+          description: Specifies whether null fields will be written to the result JSON
+          schema:
+            type: boolean
+        - name: returnCount
+          in: query
+          description: Specifies whether the total count of entities should be returned
+            in the 'X-Total-Count' header
+          schema:
+            type: boolean
+        - name: dynamicAttributes
+          in: query
+          description: Specifies whether entity dynamic attributes should be returned
+          schema:
+            type: boolean
+      responses:
+        200:
+          description: Success. The list of entities is returned in the response body.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/entityFull'
+        403:
+          description: Forbidden. The user doesn't have permissions to read the entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+        404:
+          description: Not found. MetaClass for the entity with the given name not
+            found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+    post:
+      tags:
+        - Entities
+      summary: Create new entity
+      description: |
+        Creates new entity. The method expects a JSON with entity object in the request body. The entity object
+        may contain references to other entities. These references are processed according to the following rules:
+
+        * If the entity property is annotated with @Composition in the entity java class, then it will be saved with the
+        main entity
+        * Otherwise a referenced entity with the given id will be searched. If it is found then the saved entity will
+        have a reference to it. Otherwise, a response with code 400 will be returned.
+      parameters:
+        - name: entityName
+          in: path
+          description: Entity name
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: |
+          A JSON object with the entity
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/entity'
+        required: false
+      responses:
+        201:
+          description: Entity created. The created entity is returned in the response
+            body.
+          headers:
+            location:
+              description: A URL the created object can be accessed with
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/entityFull'
+        400:
+          description: Bad request. For example, the entity may have a reference to
+            the non-existing entity.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+        403:
+          description: Forbidden. The user doesn't have permissions to create the
+            entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+        404:
+          description: Not found. MetaClass for the entity with the given name not
+            found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+      x-codegen-request-body-name: entityJson
+  /entities/{entityName}/{entityId}:
+    get:
+      tags:
+        - Entities
+      summary: Get a single entity by id
+      description: |
+        Gets a single entity by identifier
+      parameters:
+        - name: entityName
+          in: path
+          description: Entity name
+          required: true
+          schema:
+            type: string
+        - name: entityId
+          in: path
+          description: Entity identifier
+          required: true
+          schema:
+            type: string
+        - name: fetchPlan
+          in: query
+          description: Name of the fetch plan which is used for loading the entity
+          schema:
+            type: string
+        - name: returnNulls
+          in: query
+          description: Specifies whether null fields will be written to the result JSON
+          schema:
+            type: boolean
+        - name: dynamicAttributes
+          in: query
+          description: Specifies whether entity dynamic attributes should be returned
+          schema:
+            type: boolean
+      responses:
+        200:
+          description: Success. The entity is returned in the response body.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/entityFull'
+        403:
+          description: Forbidden. The user doesn't have permissions to read the entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+        404:
+          description: |
+            MetaClass not found or entity with the five identifier not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+    put:
+      tags:
+        - Entities
+      summary: Update the entity
+      description: |
+        Updates the entity. Only fields that are passed in the JSON object (the request body) are updated.
+      parameters:
+        - name: entityName
+          in: path
+          description: Entity name
+          required: true
+          schema:
+            type: string
+        - name: entityId
+          in: path
+          description: Entity identifier
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: JSON object with the entity
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/entity'
+        required: false
+      responses:
+        200:
+          description: Success. The updated entity is returned in the response body.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/entityFull'
+        403:
+          description: Forbidden. The user doesn't have permissions to update the
+            entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+        404:
+          description: |
+            MetaClass not found or entity with the given identifier not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+      x-codegen-request-body-name: entityJson
+    delete:
+      tags:
+        - Entities
+      summary: Delete the entity
+      description: Deletes the entity
+      parameters:
+        - name: entityName
+          in: path
+          description: Entity name
+          required: true
+          schema:
+            type: string
+        - name: entityId
+          in: path
+          description: Entity identifier
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Success. Entity was deleted.
+          content: {}
+        403:
+          description: Forbidden. The user doesn't have permissions to delete the
+            entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+        404:
+          description: |
+            MetaClass not found or entity with the given identifier not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+  /entities/{entityName}/search:
+    get:
+      tags:
+        - Entities
+      summary: Find entities by filter conditions
+      description: |2
+
+        Finds entities by filter conditions. The filter is defined by JSON object that is passed as in URL parameter.
+
+        Filter JSON example:
+
+        ```json
+        {
+            "conditions": [
+                {
+                    "group": "OR",
+                    "conditions": [
+                        {
+                            "property": "stringField",
+                            "operator": "startsWith",
+                            "value": "ABC"
+                        },
+                        {
+                            "property": "relatedEntity.intField",
+                            "operator": ">",
+                            "value": 100
+                        }
+                    ]
+                },
+                {
+                    "property": "booleanField",
+                    "operator": "=",
+                    "value": true
+                }
+            ]
+        }
+        ```
+
+        Filter supports OR and AND grouping. All conditions in the root "conditions" field are automatically added to the AND group.
+
+        Conditions for properties that are references to other entities must have values with string representation of
+        entitiy primary key.
+
+        If the operator is "in" or "notIn" then the value should be a JSON array.
+
+        ```
+        {
+            "conditions": [
+                {
+                    "property": "linkedEntityField",
+                    "operator": "=",
+                    "value": "2de6a78f-7bef-89a7-eb5e-b725582f23af"
+                },
+                {
+                  "property": "intField",
+                  "operator": "in",
+                  "value": [100, 200, 300]
+                }
+            ]
+        }
+        ```
+
+        Supported operators:
+
+        * =
+        * &lt;&gt;
+        * &lt;
+        * &lt;=
+        * &gt;
+        * &gt;=
+        * startsWith
+        * endsWith
+        * contains
+        * notEmpty
+        * in
+        * notIn
+      parameters:
+        - name: entityName
+          in: path
+          description: Entity name
+          required: true
+          schema:
+            type: string
+        - name: filter
+          in: query
+          description: JSON with filter definition
+          schema:
+            type: string
+        - name: fetchPlan
+          in: query
+          description: Name of the fetch plan which is used for loading the entity
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: Number of extracted entities
+          schema:
+            type: string
+        - name: offset
+          in: query
+          description: Position of the first result to retrieve
+          schema:
+            type: string
+        - name: sort
+          in: query
+          description: |
+            Name of the field to be sorted by. If the name is preceeding by the '+' character, then
+            the sort order is ascending, if by the '-' character then descending. If there is no special
+            character before the property name, then ascending sort will be used.
+          schema:
+            type: string
+        - name: returnNulls
+          in: query
+          description: Specifies whether null fields will be written to the result JSON
+          schema:
+            type: boolean
+        - name: returnCount
+          in: query
+          description: Specifies whether the total count of entities should be returned
+            in the 'X-Total-Count' header
+          schema:
+            type: boolean
+        - name: dynamicAttributes
+          in: query
+          description: Specifies whether entity dynamic attributes should be returned
+          schema:
+            type: boolean
+      responses:
+        200:
+          description: Success. Entities that conforms filter conditions are returned
+            in the response body.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/entityFull'
+        400:
+          description: Bad request. For example, the condition value cannot be parsed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+        403:
+          description: Forbidden. The user doesn't have permissions to read the entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+        404:
+          description: Not found. MetaClass for the entity with the given name not
+            found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+    post:
+      tags:
+        - Entities
+      summary: Find entities by filter conditions
+      description: |2
+
+        Finds entities by filter conditions. Works like the corresponding GET method, but filter definition and all request parameters are
+        passed in the request body as JSON object. All possible parameters ("fetchPlan", "sort", "returnNulls", etc.) are the same as in the
+        GET version of the `/search` operation.
+
+        Request body example:
+
+        ```json
+        {
+            "filter": {
+              "conditions": [
+                  {
+                      "group": "OR",
+                      "conditions": [
+                          {
+                              "property": "stringField",
+                              "operator": "startsWith",
+                              "value": "ABC"
+                          },
+                          {
+                              "property": "relatedEntity.intField",
+                              "operator": ">",
+                              "value": 100
+                          }
+                      ]
+                  },
+                  {
+                      "property": "booleanField",
+                      "operator": "=",
+                      "value": true
+                  }
+              ]
+            },
+            "fetchPlan": "someFetchPlanName",
+            "returnCount": true
+        }
+        ```
+      parameters:
+        - name: entityName
+          in: path
+          description: Entity name
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Success. Entities that conforms filter conditions are returned
+            in the response body.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/entityFull'
+        400:
+          description: Bad request. For example, the condition value cannot be parsed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+        403:
+          description: Forbidden. The user doesn't have permissions to read the entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+        404:
+          description: Not found. MetaClass for the entity with the given name not
+            found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+  /queries/{entityName}:
+    get:
+      tags:
+        - Queries
+      summary: Get a list of queries
+      description: |
+        Gets a list of predefined queries for the entity
+      parameters:
+        - name: entityName
+          in: path
+          description: Entity name
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/predefinedQuery'
+        403:
+          description: Forbidden. The user doesn't have permissions to read the entity.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+        404:
+          description: |
+            MetaClass not found.
+          content: {}
+  /queries/{entityName}/{queryName}:
+    get:
+      tags:
+        - Queries
+      summary: Execute a query
+      description: |
+        Executes a predefined query. Query parameters values must be defined in the request parameters with the same name.
+      parameters:
+        - name: entityName
+          in: path
+          description: Entity name
+          required: true
+          schema:
+            type: string
+        - name: queryName
+          in: path
+          description: Query name
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: Number of extracted entities
+          schema:
+            type: string
+        - name: offset
+          in: query
+          description: Position of the first result to retrieve
+          schema:
+            type: string
+        - name: fetchPlan
+          in: query
+          description: |
+            Name of the fetch plan which is used for loading the entity. Specify this parameter if you want to extract entities with the fetch plan
+            other than it is defined in the REST queries configuration file.
+          schema:
+            type: string
+        - name: returnNulls
+          in: query
+          description: Specifies whether null fields will be written to the result JSON
+          schema:
+            type: boolean
+        - name: returnCount
+          in: query
+          description: Specifies whether the total count of entities should be returned
+            in the 'X-Total-Count' header
+          schema:
+            type: boolean
+        - name: dynamicAttributes
+          in: query
+          description: Specifies whether entity dynamic attributes should be returned
+          schema:
+            type: boolean
+      responses:
+        200:
+          description: Success. A list of entities is returned in the response body.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/entityFull'
+        403:
+          description: Forbidden. The user doesn't have permissions to read the entity.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+        404:
+          description: |
+            MetaClass not found or query with the given name not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+    post:
+      tags:
+        - Queries
+      summary: Execute a query
+      description: |
+        Executes a predefined query. Query parameters must be passed in the request body as JSON map.
+      parameters:
+        - name: entityName
+          in: path
+          description: Entity name
+          required: true
+          schema:
+            type: string
+        - name: queryName
+          in: path
+          description: Query name
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: Number of extracted entities
+          schema:
+            type: string
+        - name: offset
+          in: query
+          description: Position of the first result to retrieve
+          schema:
+            type: string
+        - name: fetchPlan
+          in: query
+          description: |
+            Name of the fetch plan which is used for loading the entity. Specify this parameter if you want to extract entities with the fetch plan
+            other than it is defined in the REST queries configuration file.
+          schema:
+            type: string
+        - name: returnNulls
+          in: query
+          description: Specifies whether null fields will be written to the result JSON
+          schema:
+            type: boolean
+        - name: returnCount
+          in: query
+          description: Specifies whether the total count of entities should be returned
+            in the 'X-Total-Count' header
+          schema:
+            type: boolean
+        - name: dynamicAttributes
+          in: query
+          description: Specifies whether entity dynamic attributes should be returned
+          schema:
+            type: boolean
+      responses:
+        200:
+          description: Success. A list of entitie is returned in the response body.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/entityFull'
+        403:
+          description: Forbidden. The user doesn't have permissions to read the entity.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+        404:
+          description: |
+            MetaClass not found or query with the given name not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+  /queries/{entityName}/{queryName}/count:
+    get:
+      tags:
+        - Queries
+      summary: Return a number of entities in query result
+      description: |
+        Returns a number of entities that matches the query. You can use the `all` keyword for the `queryNameParam`
+        to get the number of all available entities.
+      parameters:
+        - name: entityName
+          in: path
+          description: Entity name
+          required: true
+          schema:
+            type: string
+        - name: queryName
+          in: path
+          description: Query name
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                title: Count
+                type: integer
+        403:
+          description: Forbidden. The user doesn't have permissions to read the entity.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+        404:
+          description: |
+            MetaClass not found or query with the given name not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+    post:
+      tags:
+        - Queries
+      summary: Return a number of entities in query result
+      description: |
+        Returns a number of entities that matches the query. You can use the `all` keyword for the `queryNameParam`
+        to get the number of all available entities.
+      parameters:
+        - name: entityName
+          in: path
+          description: Entity name
+          required: true
+          schema:
+            type: string
+        - name: queryName
+          in: path
+          description: Query name
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                title: Count
+                type: integer
+        403:
+          description: Forbidden. The user doesn't have permissions to read the entity.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+        404:
+          description: |
+            MetaClass not found or query with the given name not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+  /services/{serviceName}:
+    get:
+      tags:
+        - Services
+      summary: Get a list of available service methods
+      description: |
+        Returns a list of available service methods
+      parameters:
+        - name: serviceName
+          in: path
+          description: Service name
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/serviceInfo'
+        403:
+          description: Forbidden. The user doesn't have permissions to invoke the
+            service method.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+  /services/{serviceName}/{methodName}:
+    get:
+      tags:
+        - Services
+      summary: Execute service method
+      description: |
+        Executes the service method. This request expects query parameters with the names defined in services configuration
+        on the middleware.
+      parameters:
+        - name: serviceName
+          in: path
+          description: Service name
+          required: true
+          schema:
+            type: string
+        - name: methodName
+          in: path
+          description: Method name
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: |
+            Returns the result of the method execution. It can be of simple datatype
+            as well as JSON that represents an entity or entities collection.
+          content:
+            application/json:
+              schema:
+                type: string
+        204:
+          description: |
+            No content. This status is returned when the service method was executed successfully but returns null or
+            is of void type.
+          content: {}
+        403:
+          description: Forbidden. The user doesn't have permissions to invoke the
+            service method.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+    post:
+      tags:
+        - Services
+      summary: Execute service method
+      description: |
+        Executes a method of the service
+      parameters:
+        - name: serviceName
+          in: path
+          description: Service name
+          required: true
+          schema:
+            type: string
+        - name: methodName
+          in: path
+          description: Method name
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: |
+          JSON object that contains fields with parameter values. Parameter names are defined in services configuration
+          on the middleware. An entity, entities collection or POJO can be passed as a parameter.
+          If the parameter is entities collection then each entity in the passed JSON array must include the '_entityName'
+          field with the meta class name as a value.
+        content:
+          application/json:
+            schema:
+              type: string
+        required: true
+      responses:
+        200:
+          description: |
+            Returns the result of the method execution. It can be of simple datatype
+            as well as JSON that represents an entity, entities collection or POJO.
+          content: {}
+        204:
+          description: |
+            No content. This status is returned when the service method was executed successfully but returns null or
+            is of void type.
+          content: {}
+        403:
+          description: Forbidden. The user doesn't have permissions to invoke the
+            service method.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+      x-codegen-request-body-name: paramsObject
+  /files:
+    post:
+      tags:
+        - Files
+      summary: Upload a file
+      description: |
+        Uploads a file. The method behavior may be different depending of the 'Content-Type' header value.
+
+        If the header value is 'multipart/form-data' then file contents must be put to the part called 'file'.
+
+        If the 'Content-Type' header has some other value then file contents must be passed in the request body.
+        The 'Content-Length' header will be used for FileDescriptor 'size' field value.
+
+        File upload may be disabled for the security role using the `jmix.restApi.fileUpload.enabled` specific permission.
+      parameters:
+        - name: name
+          in: query
+          description: |
+            The file name. If this parameter is missing then a FileDescriptor id will be used as a file name. In case of
+            `multipart\form-data` request a file name may be taken from the `filename` attribute of the `Content-Disposition`
+            header.
+          schema:
+            type: string
+      responses:
+        201:
+          description: |
+            File uploaded. FileDescriptor information is returned in the response body.
+          headers:
+            location:
+              description: A URL the uploaded file can be downloaded with
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/fileInfo'
+  /files/{id}:
+    get:
+      tags:
+        - Files
+      summary: Download the file
+      description: Downloads the file
+      parameters:
+        - name: id
+          in: path
+          description: |
+            FileDescriptor identifier
+          required: true
+          schema:
+            type: string
+        - name: attachment
+          in: query
+          description: |
+            If set to 'true' then the 'Content-Disposition' header of the response will be set to 'attachment'. 'inline' value
+            will be used otherwise.
+          schema:
+            type: boolean
+      responses:
+        200:
+          description: Successfully downloaded. The file contents is returned in the
+            response body.
+          content: {}
+        404:
+          description: File with the given ID not found
+          content: {}
+  /metadata/entities:
+    get:
+      tags:
+        - Metadata
+      summary: Get all entities metadata
+      description: Gets all entities metadata
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/entityMetadata'
+  /metadata/entities/{entityName}:
+    get:
+      tags:
+        - Metadata
+      summary: Get entity metadata
+      description: Gets entity metadata
+      parameters:
+        - name: entityName
+          in: path
+          description: Entity name
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/entityMetadata'
+        404:
+          description: |
+            MetaClass not found or query with the given name not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+  /metadata/entities/{entityName}/fetchPlans:
+    get:
+      tags:
+        - Metadata
+      summary: Get all fetch plans for the entity
+      description: Gets all fetch plans for the entity
+      parameters:
+        - name: entityName
+          in: path
+          description: Entity name
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/fetchPlanInfo'
+        404:
+          description: |
+            MetaClass not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+  /metadata/entities/{entityName}/fetchPlans/{fetchPlanName}:
+    get:
+      tags:
+        - Metadata
+      summary: Get the fetch plan
+      description: Gets the fetch plan
+      parameters:
+        - name: entityName
+          in: path
+          description: Entity name
+          required: true
+          schema:
+            type: string
+        - name: fetchPlanName
+          in: path
+          description: Fetch plan name
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/fetchPlanInfo'
+        404:
+          description: |
+            MetaClass not found or fetch plan with the given name not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+  /metadata/enums:
+    get:
+      tags:
+        - Metadata
+      summary: Get all enums metadata
+      description: Gets all enums metadata
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/enumMetadata'
+  /metadata/enums/{enumName}:
+    get:
+      tags:
+        - Metadata
+      summary: Get enum metadata
+      description: Gets enum metadata
+      parameters:
+        - name: enumName
+          in: path
+          description: Enum name
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/enumMetadata'
+        404:
+          description: |
+            Enum not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+  /metadata/datatypes:
+    get:
+      tags:
+        - Metadata
+      summary: Get datatypes information
+      description: Gets datatypes information
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/datatype'
+  /messages/entities:
+    get:
+      tags:
+        - Messages
+      summary: Get localized messages for all entities and their attributes
+      description: |
+        Method gets localized messages for all entities and their attributes. It returns a JSON object that represents
+        a map of localized messages. The key is entity or entity property name, the value is localized message.
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+  /messages/entities/{entityName}:
+    get:
+      tags:
+        - Messages
+      summary: Get localized messages for entity and its attributes
+      description: |
+        Method gets localized messages for entity and its attributes. It returns a JSON object that represents
+        a map of localized messages. The key is entity or entity property name, the value is localized message.
+      parameters:
+        - name: entityName
+          in: path
+          description: Entity name
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+        404:
+          description: |
+            MetaClass not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+  /messages/enums:
+    get:
+      tags:
+        - Messages
+      summary: Get localized messages for all enums and their valus
+      description: |
+        Method gets localized messages for all enums and their valus. It returns a JSON object that represents
+        a map of localized messages. The key is enum or its value, the value is localized message.
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+  /messages/enums/{enumName}:
+    get:
+      tags:
+        - Messages
+      summary: Get localized messages for enum and its values
+      description: |
+        Method gets localized messages for enum and its values. It returns a JSON object that represents
+        a map of localized messages. The key is enum or its value, the value is localized message.
+      parameters:
+        - name: enumName
+          in: path
+          description: Full enum class name (including package)
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+        404:
+          description: |
+            MetaClass not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+  /permissions:
+    get:
+      tags:
+        - Permissions
+      summary: Get an information about current user security permissions
+      description: |
+        Returns an object that contains lists of current user authorites (i.e. roles),
+        permissions on CRUD operations with entities, entity attributes, specific permissions
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+  /userInfo:
+    get:
+      tags:
+        - UserInfo
+      summary: Get the current user information
+      description: Gets the current user information
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/userInfo'
+  /docs/openapi.{format}:
+    get:
+      tags:
+        - Documentation
+      summary: Get the REST API swagger documentation
+      description: Gets the swagger documentation in the JSON or YAML formats
+      parameters:
+        - name: format
+          in: path
+          description: swagger format (json or yaml)
+          required: true
+          schema:
+            type: string
+            default: yaml
+      responses:
+        200:
+          description: Success
+          content: {}
+components:
+  schemas:
+    oauthError:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message
+        error_description:
+          type: string
+          description: Detailed error description
+    error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message
+        details:
+          type: string
+          description: Detailed error description
+    token:
+      type: object
+      properties:
+        access_token:
+          type: string
+          example: ead2bcb0-6fed-42ec-8a8f-c3196d038d8b
+        token_type:
+          type: string
+          example: password
+        refresh_token:
+          type: string
+          example: fd00550e-5bb0-41b6-89d6-57bbfb6732a1
+        expires_in:
+          type: string
+          example: "3600"
+        scope:
+          type: string
+          example: rest-api
+    entity:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 4d8ef1d4-90b6-c075-8bfd-79181ff889ef
+        otherEntityFields:
+          type: string
+          example: There must be a set of entity fields instead of this one here
+    entityFull:
+      required:
+        - _entityName
+        - id
+      type: object
+      properties:
+        id:
+          type: string
+          example: 4d8ef1d4-90b6-c075-8bfd-79181ff889ef
+        _entityName:
+          type: string
+          description: Entity name
+          example: sec$User
+        _instanceName:
+          type: string
+          description: Entity instance name. This value must be used for displaying
+            the entity in list.
+          example: Smith [smith]
+        otherEntityFields:
+          type: string
+          description: There must be a set of entity fields instead of this one here.
+          example: There must be a set of entity fields instead of this one here
+    predefinedQuery:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Query name
+          example: usersByLastName
+        jpql:
+          type: string
+          description: JPQL query
+          example: select u from sec$User u where u.lastName = :lastName
+        entityName:
+          type: string
+          description: Entity name
+          example: sec$User
+        fetchPlanName:
+          type: string
+          description: Fetch plan name
+          example: user.edit
+        params:
+          type: object
+          properties:
+            name:
+              type: string
+              description: Parameter name
+              example: lastName
+            type:
+              type: string
+              description: Parameter type. The fully qualified java class name or
+                primitive type name is returned here.
+              example: java.lang.String
+          description: Collection of query parameters
+    serviceInfo:
+      type: object
+      properties:
+        name:
+          type: string
+          example: app_MyService
+        methods:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                description: Method argument name.
+                example: doSomething
+              type:
+                type: string
+                description: Method argument type. A fully qualified java class name
+                  is returned here.
+                example: java.lang.String
+    permissionEntityItem:
+      type: object
+      properties:
+        target:
+          type: string
+          example: app$Order:create
+        value:
+          type: integer
+          example: 1
+    permissionAttributeItem:
+      type: object
+      properties:
+        target:
+          type: string
+          example: app$Order:number
+        value:
+          type: integer
+          example: 1
+    permission:
+      type: object
+      properties:
+        entities:
+          type: array
+          items:
+            $ref: '#/components/schemas/permissionAttributeItem'
+        entityAttributes:
+          type: array
+          items:
+            $ref: '#/components/schemas/permissionEntityItem'
+    entityMetadata:
+      type: object
+      properties:
+        entityName:
+          type: string
+          example: ref$Driver
+        ancestor:
+          type: string
+          example: sys$StandardEntity
+        properties:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                example: name
+              attributeType:
+                type: string
+                enum:
+                  - DATATYPE
+                  - ENUM
+                  - ASSOCIATION
+                  - COMPOSITION
+              type:
+                type: string
+                description: |
+                  For a simple datatype there will be a datatype name here (string, int, decimal, boolean, date, dateTime, etc.)
+                  You can find all simple datatype names in the source code of the Datatypes class in the systemDatatypeNames property.
+                  If the property is the link to the entity then an entity name will be placed to this field, e.g. ref$Colour
+                example: string
+              cardinality:
+                type: string
+                enum:
+                  - NONE
+                  - ONE_TO_ONE
+                  - MANY_TO_ONE
+                  - ONE_TO_MANY
+                  - MANY_TO_MANY
+              mandatory:
+                type: boolean
+              readOnly:
+                type: boolean
+              persistent:
+                type: boolean
+    enumMetadata:
+      type: object
+      properties:
+        name:
+          type: string
+          example: com.company.app.core.entity.DriverStatus
+        values:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                example: ACTIVE
+              id:
+                type: string
+                description: enum id - the value that is stored in the database
+                example: "10"
+              caption:
+                type: string
+                description: localized enum value
+                example: Active
+    datatype:
+      type: object
+      properties:
+        name:
+          type: string
+          example: decimal
+        otherFields:
+          type: string
+          description: All other fields that are defined in the `datatypes.xml` file,
+            e.g. format, decimalSeparator, etc.
+          example: all other fields that are defined in the `datatypes.xml` file,
+            e.g. format, decimalSeparator, etc.
+    userInfo:
+      type: object
+      properties:
+        username:
+          type: string
+        locale:
+          type: string
+          example: en_US
+        attributes:
+          type: object
+          example:
+            id: 232678a5-bb0b-4a7d-9132-18bbe79e013a
+            username: admin
+            firstName: Bob
+            lastName: Martin
+            email: bob.martin@test.com
+            active: true
+          description: All user local attributes in case of user implements the UserDetails, except attributes annotated as @Secret.
+    fileInfo:
+      type: object
+      properties:
+        id:
+          type: string
+          example: c994111a-cdfa-9695-95fc-bbbb63a504a7
+        name:
+          type: string
+          example: sample-file.docx
+        size:
+          type: number
+          example: 105396.0
+    fetchPlanInfo:
+      type: object
+      properties:
+        name:
+          type: string
+          example: user.edit
+        entity:
+          type: string
+          example: sec$User
+        properties:
+          type: array
+          description: |
+            The array of properties may be of mixed type. If some property is a reference to another entity then
+            a nested fetch plan object will be returned instead of the string with the property name.
+          example:
+            - firstName
+            - lastName
+            - login
+          items:
+            type: string
+  responses:
+    metaClassNotFoundResponse:
+      description: Not found. MetaClass for the entity with the given name not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/error'
+  parameters:
+    entityNameParam:
+      name: entityName
+      in: path
+      description: Entity name
+      required: true
+      schema:
+        type: string
+    entityIdParam:
+      name: entityId
+      in: path
+      description: Entity identifier
+      required: true
+      schema:
+        type: string
+    queryNameParam:
+      name: queryName
+      in: path
+      description: Query name
+      required: true
+      schema:
+        type: string
+    serviceNameParam:
+      name: serviceName
+      in: path
+      description: Service name
+      required: true
+      schema:
+        type: string
+    methodNameParam:
+      name: methodName
+      in: path
+      description: Method name
+      required: true
+      schema:
+        type: string
+    entityFetchPlanParam:
+      name: fetchPlan
+      in: query
+      description: Name of the fetch plan which is used for loading the entity
+      schema:
+        type: string
+    returnNullsParam:
+      name: returnNulls
+      in: query
+      description: Specifies whether null fields will be written to the result JSON
+      schema:
+        type: boolean
+    returnCountParam:
+      name: returnCount
+      in: query
+      description: Specifies whether the total count of entities should be returned
+        in the 'X-Total-Count' header
+      schema:
+        type: boolean
+    dynamicAttributesParam:
+      name: dynamicAttributes
+      in: query
+      description: Specifies whether entity dynamic attributes should be returned
+      schema:
+        type: boolean
+  requestBodies:
+    entityJsonParam:
+      description: JSON object with the entity
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/entity'
+      required: false
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        password:
+          tokenUrl: http://localhost:8080/rest/oauth/token
+          scopes:
+            rest-api: use REST API
+    tokenEndpointBasic:
+      type: http
+      scheme: basic

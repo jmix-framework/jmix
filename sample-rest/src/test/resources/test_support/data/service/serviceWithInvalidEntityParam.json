@@ -1,0 +1,7 @@
+{
+  "car": {
+    "id": "$CAR_ID$",
+    "updateTs": "Invalid date string"
+  },
+  "vin": "xxx"
+}

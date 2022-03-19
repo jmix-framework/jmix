@@ -1,0 +1,8 @@
+{
+  "id": "$CAR_ID$",
+  "insuranceCases": [
+    {
+      "id": "$INSURANCE_CASE_ID$"
+    }
+  ]
+}

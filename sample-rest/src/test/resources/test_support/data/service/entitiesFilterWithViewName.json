@@ -1,0 +1,12 @@
+{
+  "filter": {
+    "conditions": [
+      {
+        "property": "vin",
+        "operator": "startsWith",
+        "value": "VW"
+      }
+    ]
+  },
+  "viewName": "car-with-colour"
+}

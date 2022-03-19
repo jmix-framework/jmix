@@ -1,0 +1,24 @@
+[
+  {
+    "name": "name1",
+    "children": [
+      {
+        "name": "name2"
+      },
+      {
+        "name": null
+      }
+    ]
+  },
+  {
+    "name": null,
+    "children": [
+      {
+        "name": null
+      },
+      {
+        "name": "name3"
+      }
+    ]
+  }
+]

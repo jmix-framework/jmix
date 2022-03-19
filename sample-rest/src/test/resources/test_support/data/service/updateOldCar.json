@@ -1,0 +1,7 @@
+{
+  "id": "$CAR_ID$",
+  "oldVin": "Modified vin",
+  "model": {
+    "id": "$MODEL_ID$"
+  }
+}

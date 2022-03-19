@@ -1,0 +1,10 @@
+{
+  "id": "$DRIVER_ID$",
+  "address": {
+    "city": "City#1 NEW",
+    "country": "Country#1 NEW",
+    "state": null,
+    "__securityToken": "$ADDRESS_SECURITY_TOKEN$"
+  },
+  "__securityToken": "$SECURITY_TOKEN$"
+}

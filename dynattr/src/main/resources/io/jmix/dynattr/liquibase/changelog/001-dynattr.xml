@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2021 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet author="dynattr" id="1" context="!cuba">
+        <validCheckSum>8:9add9d771caf284954327243ab783671</validCheckSum>
+
+        <createTable tableName="DYNAT_CATEGORY">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="VERSION" type="int" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="UPDATE_TS" type="datetime"/>
+            <column name="UPDATED_BY" type="varchar(50)"/>
+            <column name="DELETE_TS" type="datetime"/>
+            <column name="DELETED_BY" type="varchar(50)"/>
+
+            <column name="DISCRIMINATOR" type="int"/>
+            <column name="NAME" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ENTITY_TYPE" type="varchar(1000)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="IS_DEFAULT" type="boolean"/>
+            <column name="SPECIAL" type="varchar(50)"/>
+            <column name="LOCALE_NAMES" type="varchar(1000)"/>
+        </createTable>
+
+        <createTable tableName="DYNAT_CATEGORY_ATTR">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="VERSION" type="int" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="UPDATE_TS" type="datetime"/>
+            <column name="UPDATED_BY" type="varchar(50)"/>
+            <column name="DELETE_TS" type="datetime"/>
+            <column name="DELETED_BY" type="varchar(50)"/>
+
+            <column name="CATEGORY_ENTITY_TYPE" type="varchar(1000)"/>
+            <column name="NAME" type="varchar(255)"/>
+            <column name="CODE" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DESCRIPTION" type="varchar(1000)"/>
+            <column name="CATEGORY_ID" type="${uuid.type}">
+                <constraints foreignKeyName="DYNAT_CATEGORY_ATTR_CAT_ID" references="DYNAT_CATEGORY(ID)"
+                             nullable="false"/>
+            </column>
+            <column name="ENTITY_CLASS" type="varchar(1000)"/>
+            <column name="DATA_TYPE" type="varchar(200)"/>
+            <column name="DEFAULT_STRING" type="clob"/>
+            <column name="DEFAULT_INT" type="int"/>
+            <column name="DEFAULT_DOUBLE" type="numeric(36,6)"/>
+            <column name="DEFAULT_DECIMAL" type="numeric(36,10)"/>
+            <column name="DEFAULT_DATE" type="datetime"/>
+            <column name="DEFAULT_DATE_WO_TIME" type="date"/>
+            <column name="DEFAULT_DATE_IS_CURRENT" type="boolean"/>
+            <column name="DEFAULT_BOOLEAN" type="boolean"/>
+            <column name="DEFAULT_ENTITY_VALUE" type="${uuid.type}"/>
+            <column name="DEFAULT_STR_ENTITY_VALUE" type="varchar(500)"/>
+            <column name="DEFAULT_INT_ENTITY_VALUE" type="int"/>
+            <column name="DEFAULT_LONG_ENTITY_VALUE" type="number"/>
+            <column name="ENUMERATION" type="varchar(500)"/>
+            <column name="ORDER_NO" type="int"/>
+            <column name="SCREEN" type="varchar(255)"/>
+            <column name="REQUIRED" type="boolean"/>
+            <column name="LOOKUP" type="boolean"/>
+            <column name="TARGET_SCREENS" type="clob"/>
+            <column name="WIDTH" type="varchar(20)"/>
+            <column name="ROWS_COUNT" type="int"/>
+            <column name="IS_COLLECTION" type="boolean"/>
+            <column name="JOIN_CLAUSE" type="clob"/>
+            <column name="WHERE_CLAUSE" type="clob"/>
+            <column name="FILTER_XML" type="clob"/>
+            <column name="LOCALE_NAMES" type="varchar(1000)"/>
+            <column name="LOCALE_DESCRIPTIONS" type="clob"/>
+            <column name="ENUMERATION_LOCALES" type="clob"/>
+            <column name="ATTRIBUTE_CONFIGURATION_JSON" type="clob"/>
+        </createTable>
+
+        <createTable tableName="DYNAT_ATTR_VALUE">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="VERSION" type="int" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="UPDATE_TS" type="datetime"/>
+            <column name="UPDATED_BY" type="varchar(50)"/>
+            <column name="DELETE_TS" type="datetime"/>
+            <column name="DELETED_BY" type="varchar(50)"/>
+
+            <column name="CATEGORY_ATTR_ID" type="${uuid.type}">
+                <constraints foreignKeyName="DYNAT_ATTR_VALUE_ATTR_ID" references="DYNAT_CATEGORY_ATTR(ID)"
+                             nullable="false"/>
+            </column>
+            <column name="CODE" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="ENTITY_ID" type="${uuid.type}"/>
+            <column name="STRING_ENTITY_ID" type="varchar(500)"/>
+            <column name="INT_ENTITY_ID" type="int"/>
+            <column name="LONG_ENTITY_ID" type="number"/>
+
+            <column name="STRING_VALUE" type="varchar(4000)"/>
+            <column name="INTEGER_VALUE" type="int"/>
+            <column name="DOUBLE_VALUE" type="numeric(36,6)"/>
+            <column name="DECIMAL_VALUE" type="numeric(36,10)"/>
+            <column name="DATE_VALUE" type="datetime"/>
+            <column name="DATE_WO_TIME_VALUE" type="date"/>
+            <column name="BOOLEAN_VALUE" type="boolean"/>
+            <column name="ENTITY_VALUE" type="${uuid.type}"/>
+            <column name="STRING_ENTITY_VALUE" type="varchar(500)"/>
+            <column name="INT_ENTITY_VALUE" type="int"/>
+            <column name="LONG_ENTITY_VALUE" type="number"/>
+
+            <column name="PARENT_ID" type="${uuid.type}">
+                <constraints foreignKeyName="DYNAT_ATTR_VALUE_VAL_PARENT_ID" references="DYNAT_ATTR_VALUE(ID)"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

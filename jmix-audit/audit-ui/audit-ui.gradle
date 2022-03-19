@@ -23,14 +23,14 @@ archivesBaseName = 'jmix-audit-ui'
 dependencies {
     api project(':audit')
 
-    api 'io.jmix.ui:jmix-ui'
+    api project(':ui')
 
-    compileOnly 'io.jmix.security:jmix-security-ui'
+    compileOnly project(':security-ui')
 
     testImplementation 'org.springframework:spring-test'
     testImplementation 'org.spockframework:spock-core'
     testImplementation 'org.spockframework:spock-spring'
-    testImplementation 'io.jmix.data:jmix-data'
+    testImplementation project(':data')
     testImplementation 'org.apache.commons:commons-dbcp2'
     testImplementation 'org.springframework:spring-orm'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'

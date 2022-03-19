@@ -280,11 +280,12 @@ class JmixBuildPlugin implements Plugin<Project> {
     }
 
     private void setupDependencyManagement(Project project) {
+        def bom = project.rootProject.findProject("bom") ?: "io.jmix.bom:jmix-bom:${project.bomVersion}"
         project.with {
             dependencies {
-                api platform("io.jmix.bom:jmix-bom:$bomVersion")
+                api platform(bom)
                 //to be able to add the annotationProcessor dependency without defining its version
-                annotationProcessor platform("io.jmix.bom:jmix-bom:$bomVersion")
+                annotationProcessor platform(bom)
             }
         }
     }

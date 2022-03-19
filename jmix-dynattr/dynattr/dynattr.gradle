@@ -21,14 +21,14 @@ group = 'io.jmix.dynattr'
 archivesBaseName = 'jmix-dynattr'
 
 dependencies {
-    api 'io.jmix.data:jmix-data'
+    api project(':data')
 
     implementation 'com.google.code.gson:gson'
 
     testImplementation 'org.springframework:spring-test'
     testImplementation 'org.spockframework:spock-core'
     testImplementation 'org.spockframework:spock-spring'
-    testImplementation 'io.jmix.data:jmix-eclipselink'
+    testImplementation project(':eclipselink')
     testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'
     testRuntimeOnly 'org.slf4j:slf4j-simple'
     testRuntimeOnly 'org.hsqldb:hsqldb'

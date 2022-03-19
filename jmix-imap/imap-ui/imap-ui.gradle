@@ -23,9 +23,9 @@ archivesBaseName = 'jmix-imap-ui'
 dependencies {
     api project(':imap')
 
-    api 'io.jmix.ui:jmix-ui'
+    api project(':ui')
 
-    compileOnly 'io.jmix.security:jmix-security-ui'
+    compileOnly project(':security-ui')
 
     testImplementation 'org.springframework:spring-test'
     testImplementation 'org.spockframework:spock-core'

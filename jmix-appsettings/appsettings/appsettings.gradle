@@ -21,14 +21,14 @@ apply plugin: 'groovy'
 apply plugin: 'io.jmix'
 
 dependencies {
-    api 'io.jmix.core:jmix-core'
-    api 'io.jmix.data:jmix-data'
+    api project(':core')
+    api project(':data')
 
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
     testImplementation 'org.springframework:spring-test'
-    testImplementation 'io.jmix.data:jmix-eclipselink'
+    testImplementation project(':eclipselink')
     testImplementation 'org.junit.jupiter:junit-jupiter-api'
     testImplementation 'org.liquibase:liquibase-core'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'

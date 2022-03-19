@@ -23,6 +23,6 @@ archivesBaseName = 'jmix-dashboards-chart'
 dependencies {
     api project(':dashboards-ui')
 
-    api 'io.jmix.ui:jmix-charts'
-    api 'io.jmix.reports:jmix-reports-ui'
+    api project(':charts')
+    api project(':reports-ui')
 }

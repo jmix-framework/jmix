@@ -20,8 +20,8 @@ archivesBaseName = 'jmix-oidc-starter'
 dependencies {
     api project(':oidc')
 
-    implementation 'io.jmix.core:jmix-core-starter'
-    implementation 'io.jmix.security:jmix-security-starter'
+    implementation project(':core-starter')
+    implementation project(':security-starter')
 
     implementation 'org.springframework.boot:spring-boot-autoconfigure'
 }

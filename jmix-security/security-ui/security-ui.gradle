@@ -23,14 +23,14 @@ archivesBaseName = 'jmix-security-ui'
 dependencies {
     api project(':security-data')
 
-    api 'io.jmix.ui:jmix-ui'
+    api project(':ui')
 
     testImplementation 'org.springframework:spring-test'
     testImplementation 'org.spockframework:spock-core'
     testImplementation 'org.spockframework:spock-spring'
     testImplementation 'org.apache.commons:commons-dbcp2'
     testImplementation 'org.liquibase:liquibase-core'
-    testImplementation 'io.jmix.data:jmix-eclipselink'
+    testImplementation project(':eclipselink')
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
     testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'
     testRuntimeOnly 'org.slf4j:slf4j-simple'

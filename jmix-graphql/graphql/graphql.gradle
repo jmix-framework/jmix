@@ -22,7 +22,7 @@ archivesBaseName = 'jmix-graphql'
 
 dependencies {
     api 'io.leangen.graphql:graphql-spqr-spring-boot-starter'
-    api 'io.jmix.core:jmix-core'
+    api project(':core')
 
     implementation 'org.springframework.boot:spring-boot-autoconfigure'
     implementation 'com.graphql-java:graphql-java'
@@ -33,7 +33,7 @@ dependencies {
         exclude group: 'javax.websocket', module: 'javax.websocket-api'
     }
 
-    compileOnly 'io.jmix.security:jmix-security'
+    compileOnly project(':security')
 
     /* test */
 
@@ -49,12 +49,12 @@ dependencies {
 //      todo configure logger correctly
                 exclude module: "spring-boot-starter-logging"
             }
-    testImplementation 'io.jmix.core:jmix-core-starter'
-    testImplementation 'io.jmix.data:jmix-data'
-    testImplementation 'io.jmix.data:jmix-eclipselink-starter'
-    testImplementation 'io.jmix.security:jmix-security-starter'
-    testImplementation 'io.jmix.security:jmix-security-data-starter'
-    testImplementation 'io.jmix.security:jmix-security-oauth2-starter'
+    testImplementation project(':core-starter')
+    testImplementation project(':data')
+    testImplementation project(':eclipselink-starter')
+    testImplementation project(':security-starter')
+    testImplementation project(':security-data-starter')
+    testImplementation project(':security-oauth2-starter')
 
     testImplementation 'com.google.code.gson:gson:2.8.6'
 

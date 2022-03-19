@@ -21,23 +21,23 @@ group = 'io.jmix.cuba'
 archivesBaseName = 'jmix-cuba'
 
 dependencies {
-    api 'io.jmix.core:jmix-core'
-    api 'io.jmix.data:jmix-data'
-    api 'io.jmix.data:jmix-eclipselink'
-    api 'io.jmix.ui:jmix-ui'
-    api 'io.jmix.ui:jmix-ui-data'
-    api 'io.jmix.ui:jmix-ui-export-starter'
-    api 'io.jmix.security:jmix-security'
-    api 'io.jmix.security:jmix-security-ui'
-    api 'io.jmix.dynattr:jmix-dynattr'
-    api 'io.jmix.dynattr:jmix-dynattr-ui'
-    api 'io.jmix.audit:jmix-audit-starter'
-    api 'io.jmix.audit:jmix-audit-ui-starter'
-    api 'io.jmix.email:jmix-email-starter'
-    api 'io.jmix.email:jmix-email-ui-starter'
-    api 'io.jmix.localfs:jmix-localfs'
-    api 'io.jmix.datatools:jmix-datatools'
-    api 'io.jmix.datatools:jmix-datatools-ui'
+    api project(':core')
+    api project(':data')
+    api project(':eclipselink')
+    api project(':ui')
+    api project(':ui-data')
+    api project(':ui-export-starter')
+    api project(':security')
+    api project(':security-ui')
+    api project(':dynattr')
+    api project(':dynattr-ui')
+    api project(':audit-starter')
+    api project(':audit-ui-starter')
+    api project(':email-starter')
+    api project(':email-ui-starter')
+    api project(':localfs')
+    api project(':datatools')
+    api project(':datatools-ui')
 
     api 'com.thoughtworks.xstream:xstream:1.4.13'
     api 'org.perf4j:perf4j:0.9.16'
@@ -47,9 +47,9 @@ dependencies {
 
     implementation 'org.springframework.security.oauth:spring-security-oauth2'
 
-    compileOnly 'io.jmix.rest:jmix-rest'
+    compileOnly project(':rest')
 
-    testImplementation 'io.jmix.ui:jmix-ui-test-assist'
+    testImplementation project(':ui-test-assist')
 
     testImplementation 'org.apache.commons:commons-dbcp2'
     testImplementation 'org.springframework:spring-orm'

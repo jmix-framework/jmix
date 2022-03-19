@@ -24,20 +24,20 @@ group = 'io.jmix.rest'
 dependencies {
     implementation project(':rest-starter')
 
-    implementation 'io.jmix.core:jmix-core-starter'
-    implementation 'io.jmix.data:jmix-eclipselink-starter'
-    implementation 'io.jmix.ui:jmix-ui-starter'
-    implementation 'io.jmix.ui:jmix-ui-data-starter'
-    implementation 'io.jmix.ui:jmix-ui-themes-compiled'
-    implementation 'io.jmix.ui:jmix-ui-widgets-compiled'
-    implementation 'io.jmix.security:jmix-security-starter'
-    implementation 'io.jmix.security:jmix-security-ui-starter'
-    implementation 'io.jmix.security:jmix-security-data-starter'
-    implementation 'io.jmix.security:jmix-security-oauth2-starter'
-    implementation 'io.jmix.localfs:jmix-localfs-starter'
-    implementation 'io.jmix.sessions:jmix-sessions-starter'
-    implementation 'io.jmix.dynattr:jmix-dynattr-starter'
-    implementation 'io.jmix.dynattr:jmix-dynattr-ui-starter'
+    implementation project(':core-starter')
+    implementation project(':eclipselink-starter')
+    implementation project(':ui-starter')
+    implementation project(':ui-data-starter')
+    implementation project(':ui-themes-compiled')
+    implementation project(':ui-widgets-compiled')
+    implementation project(':security-starter')
+    implementation project(':security-ui-starter')
+    implementation project(':security-data-starter')
+    implementation project(':security-oauth2-starter')
+    implementation project(':localfs-starter')
+    implementation project(':sessions-starter')
+    implementation project(':dynattr-starter')
+    implementation project(':dynattr-ui-starter')
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
 

@@ -21,13 +21,13 @@ group = 'io.jmix.emailtemplates'
 archivesBaseName = 'jmix-emailtemplates'
 
 dependencies {
-    api 'io.jmix.core:jmix-core'
-    api 'io.jmix.reports:jmix-reports'
-    api 'io.jmix.email:jmix-email'
+    api project(':core')
+    api project(':reports')
+    api project(':email')
 
     api 'org.jsoup:jsoup'
 
-    testImplementation 'io.jmix.data:jmix-eclipselink'
+    testImplementation project(':eclipselink')
     testImplementation 'org.junit.jupiter:junit-jupiter-engine'
     testImplementation 'org.junit.vintage:junit-vintage-engine'
     testImplementation 'org.springframework:spring-test'

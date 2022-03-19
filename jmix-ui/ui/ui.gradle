@@ -21,7 +21,7 @@ group = 'io.jmix.ui'
 archivesBaseName = 'jmix-ui'
 
 dependencies {
-    api 'io.jmix.core:jmix-core'
+    api project(':core')
 
     api 'com.vaadin:vaadin-server'
     api 'com.vaadin:vaadin-compatibility-server'
@@ -50,7 +50,7 @@ dependencies {
     testImplementation 'org.spockframework:spock-core'
     testImplementation 'org.spockframework:spock-spring'
     testImplementation project(':ui-test-assist')
-    testImplementation 'io.jmix.data:jmix-eclipselink'
+    testImplementation project(':eclipselink')
     testImplementation 'org.apache.commons:commons-dbcp2'
     testImplementation 'org.springframework:spring-orm'
     testImplementation 'cglib:cglib-nodep:3.3.0'

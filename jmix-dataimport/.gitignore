@@ -1,9 +1,0 @@
-jmix-*/
-
-.idea/*
-!.idea/copyright
-.vscode
-
-build/
-.gradle/
-.jmix

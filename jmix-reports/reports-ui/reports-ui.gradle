@@ -23,13 +23,13 @@ archivesBaseName = 'jmix-reports-ui'
 dependencies {
     api project(':reports')
 
-    api 'io.jmix.data:jmix-data'
-    api 'io.jmix.ui:jmix-ui'
-    api 'io.jmix.ui:jmix-ui-data'
-    api 'io.jmix.ui:jmix-ui-export'
-    api 'io.jmix.security:jmix-security'
-    api 'io.jmix.security:jmix-security-ui'
-    compileOnly 'io.jmix.dynattr:jmix-dynattr'
+    api project(':data')
+    api project(':ui')
+    api project(':ui-data')
+    api project(':ui-export')
+    api project(':security')
+    api project(':security-ui')
+    compileOnly project(':dynattr')
 
     api ('com.haulmont.yarg:yarg-api') {
         exclude group: 'org.codehaus.groovy', module: 'groovy-all'
@@ -44,7 +44,7 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-databind'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml'
 
-    testImplementation 'io.jmix.ui:jmix-ui-test-assist'
+    testImplementation project(':ui-test-assist')
 
     testImplementation 'org.apache.commons:commons-dbcp2'
     testImplementation 'org.springframework:spring-orm'

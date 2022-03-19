@@ -23,8 +23,8 @@ archivesBaseName = 'jmix-search-ui'
 dependencies {
     api project(':search')
 
-    api 'io.jmix.ui:jmix-ui'
+    api project(':ui')
 
-    compileOnly 'io.jmix.security:jmix-security'
-    compileOnly 'io.jmix.security:jmix-security-ui'
+    compileOnly project(':security')
+    compileOnly project(':security-ui')
 }

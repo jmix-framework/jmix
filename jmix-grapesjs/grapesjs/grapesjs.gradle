@@ -21,7 +21,7 @@ group = 'io.jmix.grapesjs'
 archivesBaseName = 'jmix-grapesjs'
 
 dependencies {
-    api 'io.jmix.ui:jmix-ui'
+    api project(':ui')
 
     api ('org.webjars.npm:grapesjs') {
         exclude group: 'org.webjars.npm', module: 'keymaster'

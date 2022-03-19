@@ -4,12 +4,12 @@ group = 'io.jmix.saml'
 archivesBaseName = 'jmix-saml'
 
 dependencies {
-    api 'io.jmix.core:jmix-core'
-    api 'io.jmix.security:jmix-security'
+    api project(':core')
+    api project(':security')
 
     api 'org.springframework.security:spring-security-saml2-service-provider'
 
-    compileOnly 'io.jmix.security:jmix-security-data'
+    compileOnly project(':security-data')
 
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'

@@ -21,7 +21,7 @@ group = 'io.jmix.security'
 archivesBaseName = 'jmix-security'
 
 dependencies {
-    api 'io.jmix.core:jmix-core'
+    api project(':core')
     implementation 'org.springframework:spring-tx'
 
     testImplementation 'org.springframework:spring-test'

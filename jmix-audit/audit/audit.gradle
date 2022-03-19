@@ -21,7 +21,7 @@ group = 'io.jmix.audit'
 archivesBaseName = 'jmix-audit'
 
 dependencies {
-    api 'io.jmix.data:jmix-data'
+    api project(':data')
     api 'com.thoughtworks.xstream:xstream'
 
     implementation 'org.springframework:spring-orm'
@@ -31,8 +31,8 @@ dependencies {
     testImplementation 'org.springframework:spring-test'
     testImplementation 'org.spockframework:spock-core'
     testImplementation 'org.spockframework:spock-spring'
-    testImplementation 'io.jmix.dynattr:jmix-dynattr'
-    testImplementation 'io.jmix.data:jmix-eclipselink'
+    testImplementation project(':dynattr')
+    testImplementation project(':eclipselink')
     testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'
     testRuntimeOnly 'org.slf4j:slf4j-simple'
     testRuntimeOnly 'org.hsqldb:hsqldb'

@@ -1,8 +1,0 @@
-rootProject.name = 'jmix-sessions'
-
-include 'sessions'
-include 'sessions-starter'
-
-rootProject.children.each { p1 ->
-	p1.buildFileName = "${p1.name}.gradle"
-}

@@ -21,8 +21,8 @@ group = 'io.jmix.imap'
 archivesBaseName = 'jmix-imap'
 
 dependencies {
-    api 'io.jmix.core:jmix-core'
-    api 'io.jmix.data:jmix-data'
+    api project(':core')
+    api project(':data')
 
     api 'com.sun.mail:jakarta.mail'
 
@@ -33,7 +33,7 @@ dependencies {
     testImplementation 'org.spockframework:spock-core'
     testImplementation 'org.spockframework:spock-spring'
     testImplementation 'com.icegreen:greenmail'
-    testImplementation 'io.jmix.data:jmix-eclipselink'
+    testImplementation project(':eclipselink')
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
     testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'
     testRuntimeOnly 'org.slf4j:slf4j-simple'

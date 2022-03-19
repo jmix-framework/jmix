@@ -1,0 +1,150 @@
+rootProject.name = 'jmix'
+
+includeBuild 'jmix-gradle-plugin'
+
+includeBuild 'jmix-build'
+
+includeBuild 'jmix-templates'
+
+includeBuild 'jmix-translations'
+
+includeProject('bom', 'jmix-bom')
+
+includeProject('appsettings', 'jmix-appsettings/appsettings')
+includeProject('appsettings-starter', 'jmix-appsettings/appsettings-starter')
+includeProject('appsettings-ui', 'jmix-appsettings/appsettings-ui')
+includeProject('appsettings-ui-starter', 'jmix-appsettings/appsettings-ui-starter')
+
+includeProject('audit', 'jmix-audit/audit')
+includeProject('audit-starter', 'jmix-audit/audit-starter')
+includeProject('audit-ui', 'jmix-audit/audit-ui')
+includeProject('audit-ui-starter', 'jmix-audit/audit-ui-starter')
+
+includeProject('awsfs', 'jmix-awsfs/awsfs')
+includeProject('awsfs-starter', 'jmix-awsfs/awsfs-starter')
+
+includeProject('core', 'jmix-core/core')
+includeProject('core-starter', 'jmix-core/core-starter')
+
+includeProject('cuba', 'jmix-cuba/cuba')
+includeProject('cuba-starter', 'jmix-cuba/cuba-starter')
+
+includeProject('data', 'jmix-data/data')
+includeProject('data-autoconfigure', 'jmix-data/data-autoconfigure')
+
+includeProject('eclipselink', 'jmix-data/eclipselink')
+includeProject('eclipselink-starter', 'jmix-data/eclipselink-starter')
+
+includeProject('dashboards', 'jmix-dashboards/dashboards')
+includeProject('dashboards-starter', 'jmix-dashboards/dashboards-starter')
+includeProject('dashboards-chart', 'jmix-dashboards/dashboards-chart')
+includeProject('dashboards-chart-starter', 'jmix-dashboards/dashboards-chart-starter')
+includeProject('dashboards-ui', 'jmix-dashboards/dashboards-ui')
+includeProject('dashboards-ui-starter', 'jmix-dashboards/dashboards-ui-starter')
+
+includeProject('dataimport', 'jmix-dataimport/dataimport')
+includeProject('dataimport-starter', 'jmix-dataimport/dataimport-starter')
+
+includeProject('datatools', 'jmix-datatools/datatools')
+includeProject('datatools-starter', 'jmix-datatools/datatools-starter')
+includeProject('datatools-ui', 'jmix-datatools/datatools-ui')
+includeProject('datatools-ui-starter', 'jmix-datatools/datatools-ui-starter')
+
+includeProject('dynattr', 'jmix-dynattr/dynattr')
+includeProject('dynattr-starter', 'jmix-dynattr/dynattr-starter')
+includeProject('dynattr-ui', 'jmix-dynattr/dynattr-ui')
+includeProject('dynattr-ui-starter', 'jmix-dynattr/dynattr-ui-starter')
+
+includeProject('email', 'jmix-email/email')
+includeProject('email-starter', 'jmix-email/email-starter')
+includeProject('email-ui', 'jmix-email/email-ui')
+includeProject('email-ui-starter', 'jmix-email/email-ui-starter')
+
+includeProject('emailtemplates', 'jmix-emailtemplates/emailtemplates')
+includeProject('emailtemplates-starter', 'jmix-emailtemplates/emailtemplates-starter')
+includeProject('emailtemplates-ui', 'jmix-emailtemplates/emailtemplates-ui')
+includeProject('emailtemplates-ui-starter', 'jmix-emailtemplates/emailtemplates-ui-starter')
+
+includeProject('grapesjs', 'jmix-grapesjs/grapesjs')
+includeProject('grapesjs-starter', 'jmix-grapesjs/grapesjs-starter')
+
+includeProject('graphql', 'jmix-graphql/graphql')
+includeProject('graphql-starter', 'jmix-graphql/graphql-starter')
+
+includeProject('imap', 'jmix-imap/imap')
+includeProject('imap-starter', 'jmix-imap/imap-starter')
+includeProject('imap-ui', 'jmix-imap/imap-ui')
+includeProject('imap-ui-starter', 'jmix-imap/imap-ui-starter')
+
+includeProject('ldap', 'jmix-ldap/ldap')
+includeProject('ldap-starter', 'jmix-ldap/ldap-starter')
+
+includeProject('localfs', 'jmix-localfs/localfs')
+includeProject('localfs-starter', 'jmix-localfs/localfs-starter')
+
+includeProject('multitenancy', 'jmix-multitenancy/multitenancy')
+includeProject('multitenancy-ui', 'jmix-multitenancy/multitenancy-ui')
+includeProject('multitenancy-starter', 'jmix-multitenancy/multitenancy-starter')
+includeProject('multitenancy-ui-starter', 'jmix-multitenancy/multitenancy-ui-starter')
+
+includeProject('oidc', 'jmix-oidc/oidc')
+includeProject('oidc-starter', 'jmix-oidc/oidc-starter')
+
+includeProject('quartz', 'jmix-quartz/quartz')
+includeProject('quartz-starter', 'jmix-quartz/quartz-starter')
+
+includeProject('rest', 'jmix-rest/rest')
+includeProject('rest-starter', 'jmix-rest/rest-starter')
+includeProject('sample-rest', 'jmix-rest/sample-rest')
+
+includeProject('reports', 'jmix-reports/reports')
+includeProject('reports-rest', 'jmix-reports/reports-rest')
+includeProject('reports-ui', 'jmix-reports/reports-ui')
+includeProject('reports-starter', 'jmix-reports/reports-starter')
+includeProject('reports-ui-starter', 'jmix-reports/reports-ui-starter')
+includeProject('reports-rest-starter', 'jmix-reports/reports-rest-starter')
+
+includeProject('search', 'jmix-search/search')
+includeProject('search-starter', 'jmix-search/search-starter')
+includeProject('search-aws-starter', 'jmix-search/search-aws-starter')
+includeProject('search-ui', 'jmix-search/search-ui')
+includeProject('search-ui-starter', 'jmix-search/search-ui-starter')
+
+includeProject('security', 'jmix-security/security')
+includeProject('security-starter', 'jmix-security/security-starter')
+includeProject('security-data', 'jmix-security/security-data')
+includeProject('security-data-starter', 'jmix-security/security-data-starter')
+includeProject('security-ui', 'jmix-security/security-ui')
+includeProject('security-ui-starter', 'jmix-security/security-ui-starter')
+includeProject('security-oauth2', 'jmix-security/security-oauth2')
+includeProject('security-oauth2-starter', 'jmix-security/security-oauth2-starter')
+
+includeProject('sessions', 'jmix-sessions/sessions')
+includeProject('sessions-starter', 'jmix-sessions/sessions-starter')
+
+includeProject('ui', 'jmix-ui/ui')
+includeProject('ui-starter', 'jmix-ui/ui-starter')
+includeProject('ui-data', 'jmix-ui/ui-data')
+includeProject('ui-data-starter', 'jmix-ui/ui-data-starter')
+includeProject('ui-export', 'jmix-ui/ui-export')
+includeProject('ui-export-starter', 'jmix-ui/ui-export-starter')
+includeProject('ui-test-assist', 'jmix-ui/ui-test-assist')
+includeProject('ui-themes', 'jmix-ui/ui-themes')
+includeProject('ui-themes-compiled', 'jmix-ui/ui-themes-compiled')
+includeProject('ui-widgets', 'jmix-ui/ui-widgets')
+includeProject('ui-widgets-compiled', 'jmix-ui/ui-widgets-compiled')
+includeProject('charts', 'jmix-ui/charts')
+includeProject('charts-starter', 'jmix-ui/charts-starter')
+includeProject('charts-widgets', 'jmix-ui/charts-widgets')
+includeProject('pivot-table', 'jmix-ui/pivot-table')
+includeProject('pivot-table-starter', 'jmix-ui/pivot-table-starter')
+includeProject('pivot-table-widgets', 'jmix-ui/pivot-table-widgets')
+
+void includeProject(String name, String path, boolean changeBuildFileName = true) {
+    include ":$name"
+    project(":$name").projectDir = new File(settingsDir, "$path")
+
+    if (changeBuildFileName) {
+        project(":$name").buildFileName = "${name}.gradle"
+    }
+}

@@ -21,9 +21,9 @@ group = 'io.jmix.ldap'
 archivesBaseName = 'jmix-ldap'
 
 dependencies {
-    api 'io.jmix.core:jmix-core'
-    api 'io.jmix.security:jmix-security'
-    api 'io.jmix.security:jmix-security-data'
+    api project(':core')
+    api project(':security')
+    api project(':security-data')
 
     api 'org.springframework.ldap:spring-ldap-core'
     api 'org.springframework.security:spring-security-ldap'

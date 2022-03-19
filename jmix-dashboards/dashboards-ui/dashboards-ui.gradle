@@ -23,9 +23,9 @@ archivesBaseName = 'jmix-dashboards-ui'
 dependencies {
     api project(':dashboards')
 
-    api 'io.jmix.ui:jmix-ui'
+    api project(':ui')
 
-    compileOnly 'io.jmix.security:jmix-security-ui'
+    compileOnly project(':security-ui')
 }
 
 jar.manifest {

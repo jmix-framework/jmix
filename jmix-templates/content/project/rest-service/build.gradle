@@ -20,7 +20,7 @@ ${additionalRepository}<%}}%>
 }
 
 dependencies {
-    implementation 'io.jmix.core:jmix-core-starter'
+    implementation project(':core-starter')
     implementation 'io.jmix.data:jmix-eclipselink-starter'
     implementation('io.jmix.rest:jmix-rest-starter')
     implementation 'io.jmix.security:jmix-security-starter'

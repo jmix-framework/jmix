@@ -23,5 +23,5 @@ archivesBaseName = 'jmix-appsettings-ui'
 dependencies {
     api project(':appsettings')
 
-    api 'io.jmix.ui:jmix-ui'
+    api project(':ui')
 }

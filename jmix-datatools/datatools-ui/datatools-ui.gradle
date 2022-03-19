@@ -23,13 +23,13 @@ archivesBaseName = 'jmix-datatools-ui'
 dependencies {
     api project(':datatools')
 
-    api 'io.jmix.core:jmix-core'
-    api 'io.jmix.data:jmix-data'
-    api 'io.jmix.ui:jmix-ui-export'
-    api 'io.jmix.ui:jmix-ui'
+    api project(':core')
+    api project(':data')
+    api project(':ui-export')
+    api project(':ui')
 
     api 'com.google.code.gson:gson'
-    compileOnly 'io.jmix.security:jmix-security-ui'
+    compileOnly project(':security-ui')
 
     testImplementation 'org.springframework:spring-test'
     testImplementation 'org.spockframework:spock-core'

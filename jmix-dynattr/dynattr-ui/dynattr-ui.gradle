@@ -23,11 +23,11 @@ archivesBaseName = 'jmix-dynattr-ui'
 dependencies {
     api project(':dynattr')
 
-    api 'io.jmix.ui:jmix-ui'
+    api project(':ui')
 
     implementation 'com.google.code.gson:gson'
 
-    compileOnly 'io.jmix.security:jmix-security-ui'
+    compileOnly project(':security-ui')
 
     testImplementation 'org.springframework:spring-test'
     testImplementation 'org.spockframework:spock-core'

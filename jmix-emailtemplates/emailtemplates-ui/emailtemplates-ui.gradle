@@ -23,11 +23,11 @@ archivesBaseName = 'jmix-emailtemplates-ui'
 dependencies {
     api project(':emailtemplates')
 
-    api 'io.jmix.ui:jmix-ui'
-    api 'io.jmix.grapesjs:jmix-grapesjs'
-    api 'io.jmix.reports:jmix-reports-ui'
+    api project(':ui')
+    api project(':grapesjs')
+    api project(':reports-ui')
 
-    compileOnly 'io.jmix.security:jmix-security-ui'
+    compileOnly project(':security-ui')
 
     testImplementation 'org.springframework:spring-test'
     testImplementation 'org.spockframework:spock-core'

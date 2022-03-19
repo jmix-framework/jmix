@@ -23,6 +23,6 @@ archivesBaseName = 'jmix-multitenancy-ui'
 dependencies {
     api project(':multitenancy')
 
-    api 'io.jmix.ui:jmix-ui'
+    api project(':ui')
 
 }

@@ -23,7 +23,7 @@ archivesBaseName = 'jmix-reports-rest'
 dependencies {
     api project(':reports')
 
-    compileOnly 'io.jmix.security:jmix-security-oauth2'
+    compileOnly project(':security-oauth2')
 
     api ('com.haulmont.yarg:yarg-api') {
         exclude group: 'org.codehaus.groovy', module: 'groovy-all'
@@ -38,7 +38,7 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-databind'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml'
 
-    testImplementation 'io.jmix.ui:jmix-ui-test-assist'
+    testImplementation project(':ui-test-assist')
 
     testImplementation 'org.apache.commons:commons-dbcp2'
     testImplementation 'org.springframework:spring-orm'

@@ -21,7 +21,7 @@ dependencies {
     api project(':emailtemplates')
 
     implementation 'io.jmix.reports:jmix-reports-starter'
-    implementation 'io.jmix.email:jmix-email-starter'
+    implementation project(':email-starter')
 
     implementation 'org.springframework.boot:spring-boot-autoconfigure'
 }

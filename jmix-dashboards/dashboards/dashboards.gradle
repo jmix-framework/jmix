@@ -21,8 +21,8 @@ group = 'io.jmix.dashboards'
 archivesBaseName = 'jmix-dashboards'
 
 dependencies {
-    api 'io.jmix.core:jmix-core'
-    api 'io.jmix.data:jmix-data'
+    api project(':core')
+    api project(':data')
 
     implementation 'com.google.code.gson:gson'
 

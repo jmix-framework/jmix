@@ -20,15 +20,15 @@ group = 'io.jmix.oidc'
 archivesBaseName = 'jmix-oidc'
 
 dependencies {
-    api 'io.jmix.core:jmix-core'
-    api 'io.jmix.security:jmix-security'
+    api project(':core')
+    api project(':security')
 
     api 'org.springframework.security:spring-security-oauth2-client'
     api 'org.springframework.security:spring-security-oauth2-jose'
 
     api 'org.springframework.security:spring-security-oauth2-resource-server'
 
-    compileOnly 'io.jmix.security:jmix-security-data'
+    compileOnly project(':security-data')
 
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'

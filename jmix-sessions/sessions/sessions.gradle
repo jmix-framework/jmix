@@ -21,7 +21,7 @@ group = 'io.jmix.sessions'
 archivesBaseName = 'jmix-sessions'
 
 dependencies {
-    api 'io.jmix.core:jmix-core'
+    api project(':core')
 
     api 'org.springframework.session:spring-session-core'
     compileOnly 'org.springframework.security.oauth:spring-security-oauth2'

@@ -1,8 +1,0 @@
-rootProject.name = 'jmix-oidc'
-
-include 'oidc'
-include 'oidc-starter'
-
-rootProject.children.each { p1 ->
-    p1.buildFileName = "${p1.name}.gradle"
-}

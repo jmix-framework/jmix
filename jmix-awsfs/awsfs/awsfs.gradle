@@ -21,7 +21,7 @@ group = 'io.jmix.awsfs'
 archivesBaseName = 'jmix-awsfs'
 
 dependencies {
-    api 'io.jmix.core:jmix-core'
+    api project(':core')
 
     implementation 'software.amazon.awssdk:s3'
 

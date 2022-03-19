@@ -1,0 +1,12 @@
+group = 'io.jmix.saml'
+archivesBaseName = 'jmix-saml-starter'
+
+dependencies {
+    api project(':saml')
+
+    api 'org.springframework.boot:spring-boot-autoconfigure'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'io.jmix.core:jmix-core-starter'
+    testImplementation 'io.jmix.security:jmix-security-starter'
+}

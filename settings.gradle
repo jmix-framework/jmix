@@ -1,0 +1,8 @@
+rootProject.name = 'jmix-saml'
+
+include 'saml'
+include 'saml-starter'
+
+rootProject.children.each { p1 ->
+    p1.buildFileName = "${p1.name}.gradle"
+}

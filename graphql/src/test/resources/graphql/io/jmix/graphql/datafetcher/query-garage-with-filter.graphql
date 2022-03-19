@@ -1,0 +1,7 @@
+query($filter:inp_scr_GarageFilterCondition){
+  scr_GarageList(
+    filter: [$filter]
+  ){
+    id
+  }
+}

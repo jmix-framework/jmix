@@ -1,0 +1,6 @@
+query($className: String $locale: String){
+    enumMessages(className: $className locale: $locale) {
+        key
+        value
+    }
+}

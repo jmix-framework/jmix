@@ -1,0 +1,5 @@
+mutation Upsert_scr_Garage($garage: inp_scr_Garage!) {
+    upsert_scr_Garage (garage: $garage) {
+        id
+    }
+}

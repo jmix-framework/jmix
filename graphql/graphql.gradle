@@ -1,0 +1,76 @@
+/*
+ * Copyright 2020 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+apply plugin: 'groovy'
+apply plugin: 'io.jmix'
+
+group = 'io.jmix.graphql'
+archivesBaseName = 'jmix-graphql'
+
+dependencies {
+    api 'io.leangen.graphql:graphql-spqr-spring-boot-starter'
+    api 'io.jmix.core:jmix-core'
+
+    implementation 'org.springframework.boot:spring-boot-autoconfigure'
+    implementation 'com.graphql-java:graphql-java'
+    implementation 'com.jayway.jsonpath:json-path'
+
+    // todo rewrite EnvironmentUtils.getRemoteIPAddress and then remove graphql-java-servlet dependency
+    implementation ('com.graphql-java-kickstart:graphql-java-servlet') {
+        exclude group: 'javax.websocket', module: 'javax.websocket-api'
+    }
+
+    compileOnly 'io.jmix.security:jmix-security'
+
+    /* test */
+
+    testImplementation 'org.spockframework:spock-core'
+    testImplementation 'org.spockframework:spock-spring'
+    testImplementation('org.springframework.boot:spring-boot-starter-test')
+            {
+//      todo configure logger correctly
+                exclude module: "spring-boot-starter-logging"
+            }
+    testImplementation('com.graphql-java-kickstart:graphql-spring-boot-starter-test:11.0.0')
+            {
+//      todo configure logger correctly
+                exclude module: "spring-boot-starter-logging"
+            }
+    testImplementation 'io.jmix.core:jmix-core-starter'
+    testImplementation 'io.jmix.data:jmix-data'
+    testImplementation 'io.jmix.data:jmix-eclipselink-starter'
+    testImplementation 'io.jmix.security:jmix-security-starter'
+    testImplementation 'io.jmix.security:jmix-security-data-starter'
+    testImplementation 'io.jmix.security:jmix-security-oauth2-starter'
+
+    testImplementation 'com.google.code.gson:gson:2.8.6'
+
+    testImplementation 'org.springframework:spring-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+
+    testImplementation 'org.apache.commons:commons-dbcp2'
+
+    testImplementation 'org.apache.httpcomponents.client5:httpclient5:5.0.3'
+    testImplementation 'org.apache.httpcomponents.core5:httpcore5-reactive:5.0.2'
+
+    testImplementation 'io.rest-assured:rest-assured'
+
+    testRuntimeOnly 'org.slf4j:slf4j-simple'
+    testRuntimeOnly 'org.hsqldb:hsqldb'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+    testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'
+
+}

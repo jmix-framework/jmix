@@ -1,0 +1,58 @@
+/*
+ * Copyright 2021 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.jmix.graphql.loader;
+
+import io.jmix.core.LoadContext;
+import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.querycondition.LogicalCondition;
+
+public class GraphQLEntityCountDataFetcherContext<E> {
+
+    private LoadContext<E> loadContext;
+    private LogicalCondition filter;
+    private MetaClass metaClass;
+
+    public GraphQLEntityCountDataFetcherContext(MetaClass metaClass, LoadContext<E> loadContext, LogicalCondition filter) {
+        this.loadContext = loadContext;
+        this.filter = filter;
+        this.metaClass = metaClass;
+    }
+
+    public LoadContext<E> getLoadContext() {
+        return loadContext;
+    }
+
+    public void setLoadContext(LoadContext<E> loadContext) {
+        this.loadContext = loadContext;
+    }
+
+    public LogicalCondition getFilter() {
+        return filter;
+    }
+
+    public void setFilter(LogicalCondition filter) {
+        this.filter = filter;
+    }
+
+    public MetaClass getMetaClass() {
+        return metaClass;
+    }
+
+    public void setMetaClass(MetaClass metaClass) {
+        this.metaClass = metaClass;
+    }
+}

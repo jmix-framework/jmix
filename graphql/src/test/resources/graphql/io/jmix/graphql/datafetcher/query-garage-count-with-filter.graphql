@@ -1,0 +1,5 @@
+query($filter:inp_scr_GarageFilterCondition){
+  scr_GarageCount(
+    filter: [$filter]
+  )
+}

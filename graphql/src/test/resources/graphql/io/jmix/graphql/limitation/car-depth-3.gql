@@ -1,0 +1,8 @@
+{
+  scr_CarById(id: "3da61043-aaad-7e30-c7f5-c1f1328d3980") {
+    _instanceName
+    garage {
+      name
+    }
+  }
+}

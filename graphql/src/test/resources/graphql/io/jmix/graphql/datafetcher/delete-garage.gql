@@ -1,0 +1,3 @@
+mutation Upsert_scr_Garage($id: String!) {
+    delete_scr_Garage (id: $id)
+}

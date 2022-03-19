@@ -1,0 +1,9 @@
+mutation {
+    upsert_scr_DatatypesTestEntity(datatypesTestEntity: {
+        compositionO2Mattr: [
+            {quantity: -8}
+        ]
+    }) {
+      _instanceName
+    }
+}

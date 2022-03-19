@@ -1,0 +1,20 @@
+mutation($parent: inp_scr_CompositionO2OTestEntity){
+    upsert_scr_DatatypesTestEntity(datatypesTestEntity:{
+        id: "f17652de-59f6-f2a5-9fd8-1ec69ffaa761"
+        compositionO2Oattr: {
+            id: "f17652de-59f6-f2a5-9fd8-1ec69ffaa733"
+            nestedComposition: {
+                id: "f17652de-59f6-f2a5-9fd8-1ec69ffaa722"
+                parentO2Ocomposition: $parent
+            }
+        }
+    }){
+        id
+        compositionO2Oattr {
+            id
+            nestedComposition{
+                id
+            }
+        }
+    }
+}

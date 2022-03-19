@@ -1,0 +1,20 @@
+plugins {
+    id 'java'
+    id 'maven-publish'
+}
+
+group = '${project_group}'
+version = '${project_version}'
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId = '${project_name}'
+            from components.java
+        }
+    }
+}
+
+jar.manifest {
+    attributes(['Vaadin-Stylesheets': 'VAADIN/addons/${project_name}/${project_name}.scss'])
+}

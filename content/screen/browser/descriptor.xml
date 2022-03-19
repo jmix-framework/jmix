@@ -1,0 +1,64 @@
+<%
+def pluralForm = api.pluralForm(entity.uncapitalizedClassName)
+tableId = "${pluralForm}Table"
+def tableDc = entity.uncapitalizedClassName.equals(pluralForm) ? pluralForm + "CollectionDc" : pluralForm + "Dc"
+def tableDl = entity.uncapitalizedClassName.equals(pluralForm) ? pluralForm + "CollectionDl" : pluralForm + "Dl"
+def isNotPersistEntity = entity.isDeepInheritor('com.haulmont.cuba.core.entity.AbstractNotPersistentEntity')
+
+def tableXml = api.processSnippet('screen/cuba_7_table.xml',
+        ['entity': entity,
+        'view': browseView,
+        'tableDc': tableDc,
+        'tableType': tableType,
+        'tableId': tableId,
+        'multiselect': multiselect,
+        'tableActions': tableActions,
+        'hierarchicalProperty': binding.hasVariable('tableType_hierarchicalProperty') ? binding.getVariable('tableType_hierarchicalProperty') : null])
+%><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://jmix.io/schema/ui/window"
+        xmlns:c="http://jmix.io/schema/ui/jpql-condition"
+        <%if(jmixDynattrUiStarter) {%>xmlns:dynattr="http://jmix.io/schema/dynattr/ui"<%}%>
+        caption="${messageKeys['browseCaption']}"
+        focusComponent="${tableId}">
+    <data readOnly="true">
+        <collection id="${tableDc}"
+                    class="${entity.fqn}"<%if (!isNotPersistEntity) {%> <%if (!is_inline_browseView) {%>
+        fetchPlan="${browseView.name}"<%}%>> <%if (is_inline_browseView) {%>
+            ${inline_browseView}
+            <%}%><loader id="${tableDl}">
+                <query>
+                    <![CDATA[select e from ${entity.name} e]]>
+                </query>
+            </loader>
+        </collection><%} else { print(">")}%>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+        <%if(jmixDynattrUiStarter) {%><dynattr:dynamicAttributes/><%}%>
+        <%if(jmixUiDataStarter) {%><screenSettings id="settingsFacet" auto="true"/><%}%>
+        <%if(presentation) {%><presentations auto="true"/><%}%>
+    </facets>
+    <actions>
+        <action id="lookupSelectAction"
+                caption="msg:///actions.Select"
+                icon="LOOKUP_OK"
+                primary="true"
+                shortcut="\${COMMIT_SHORTCUT}"/>
+        <action id="lookupCancelAction"
+                caption="msg:///actions.Cancel"
+                icon="LOOKUP_CANCEL"/>
+    </actions>
+    <dialogMode height="600"
+                width="800"/>
+    <layout expand="${tableId}" spacing="true"><%if (createFilter) {%>
+        <filter id="filter"
+                dataLoader="${tableDl}">
+            <properties include=".*"/>
+        </filter><%}%>
+        ${tableXml}
+        <hbox id="lookupActions" spacing="true" visible="false">
+            <button action="lookupSelectAction"/>
+            <button action="lookupCancelAction"/>
+        </hbox>
+    </layout>
+</window>

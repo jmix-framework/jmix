@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://jmix.io/schema/ui/window"
+        caption="msg://caption">
+    <actions>
+        <action id="submit"
+                caption="msg://submitAction"
+                shortcut="ENTER"/>
+    </actions>
+    <layout stylename="jmix-brandlogin-main-layout">
+        <cssLayout id="mainLayout"
+                   height="100%"
+                   stylename="jmix-brandlogin-main-layout"
+                   width="100%">
+            <vbox id="loginPanel"
+                  height="100%"
+                  stylename="jmix-brandlogin-login-panel">
+                <vbox id="loginBox"
+                      align="MIDDLE_CENTER"
+                      margin="true"
+                      width="AUTO">
+                    <image id="logoImage"
+                           align="MIDDLE_CENTER"
+                           height="AUTO"
+                           scaleMode="SCALE_DOWN"
+                           stylename="jmix-login-logo"
+                           width="AUTO"/>
+                    <label id="welcomeLabel"
+                           stylename="jmix-brandlogin-welcome-label h1"
+                           value="msg://welcomeLabel"
+                           width="350px"/>
+                    <capsLockIndicator id="capsLockIndicator"
+                                       align="MIDDLE_CENTER"/>
+                    <vbox id="loginForm"
+                          spacing="true">
+                        <textField id="usernameField"
+                                   align="MIDDLE_CENTER"
+                                   htmlName="usernameField"
+                                   height="40px"
+                                   icon="USER"
+                                   inputPrompt="msg://usernamePlaceholder"
+                                   stylename="jmix-brandlogin-textfield inline-icon"
+                                   width="350px"/>
+                        <passwordField id="passwordField"
+                                       align="MIDDLE_CENTER"
+                                       autocomplete="true"
+                                       capsLockIndicator="capsLockIndicator"
+                                       htmlName="passwordField"
+                                       icon="LOCK"
+                                       inputPrompt="msg://passwordPlaceholder"
+                                       height="40px"
+                                       width="350px"
+                                       stylename="jmix-brandlogin-textfield inline-icon"/>
+                        <hbox id="paramsBox"
+                              align="MIDDLE_CENTER"
+                              width="350px">
+                            <checkBox id="rememberMeCheckBox"
+                                      align="MIDDLE_LEFT"
+                                      stylename="jmix-brandlogin-remember-me"
+                                      caption="msg://rememberMe"/>
+                            <comboBox id="localesField"
+                                      align="MIDDLE_RIGHT"
+                                      nullOptionVisible="false"
+                                      stylename="jmix-brandlogin-locales borderless"
+                                      textInputAllowed="false"/>
+                        </hbox>
+                        <button id="loginButton"
+                                action="submit"
+                                align="MIDDLE_CENTER"
+                                width="200px"
+                                height="40px"
+                                stylename="jmix-login-button primary"/>
+                    </vbox>
+                </vbox>
+            </vbox>
+            <image id="backgroundImage"
+                   scaleMode="COVER"
+                   stylename="jmix-brandlogin-background">
+                <resource>
+                    <relativePath path="VAADIN/brand-login-screen/background.svg"/>
+                </resource>
+            </image>
+        </cssLayout>
+    </layout>
+</window>

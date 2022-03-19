@@ -1,0 +1,97 @@
+.jmix-brandlogin-main-layout {
+  display: flex;
+}
+
+.jmix-brandlogin-login-panel {
+  flex: 0 0 500px;
+}
+
+.jmix-brandlogin-login-panel .jmix-brandlogin-textfield {
+  margin-top: 10px;
+}
+
+.jmix-brandlogin-login-panel .jmix-login-button {
+  margin-top: 30px;
+}
+
+.jmix-brandlogin-background {
+  flex-basis: auto;
+  width: 100%;
+}
+
+.jmix-login-logo {
+  margin-bottom: 15px;
+}
+
+.v-ie .jmix-login-logo {
+  width: 64px;
+}
+
+.jmix-brandlogin-welcome-label.v-label-jmix-brandlogin-welcome-label.v-label {
+  font-size: 25px;
+  font-weight: 600;
+  text-align: center;
+  white-space: normal;
+}
+
+.v-slot-inline-icon.v-slot-jmix-brandlogin-textfield > .v-caption-on-top > .v-caption-inline-icon.v-caption-jmix-brandlogin-textfield > span.v-icon {
+  bottom: 0;
+  color: var(--text-dim-color, #9a9a9a);
+  font-size: 16px;
+  line-height: 40px;
+}
+
+.v-expand>.v-slot.v-slot-jmix-brandlogin-locales {
+  max-width: 500px;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 40px;
+}
+
+.jmix-brandlogin-locales.v-filterselect-jmix-brandlogin-locales.v-filterselect {
+  position: absolute;
+  right: 10px;
+  bottom: 0;
+  height: 40px;
+  width: 100px;
+  z-index: 1;
+}
+
+.helium.large .jmix-brandlogin-locales.v-filterselect-jmix-brandlogin-locales.v-filterselect {
+  width: 120px;
+}
+
+.jmix-brandlogin-locales.borderless > input.v-filterselect-input {
+  border: 0;
+}
+
+.jmix-brandlogin-locales.v-filterselect > input.v-filterselect-input {
+  text-align: right;
+}
+
+@media (max-width: 992px) {
+  .jmix-brandlogin-login-panel {
+    min-width: 100%;
+  }
+
+  .v-expand>.v-slot.v-slot-jmix-brandlogin-locales {
+    position: relative;
+    bottom: auto;
+    left: auto;
+  }
+
+  .jmix-brandlogin-locales.v-filterselect {
+    position: relative;
+    right: auto;
+    bottom: auto;
+  }
+
+  .jmix-brandlogin-remember-me {
+    margin-top: 1px;
+  }
+
+  .jmix-brandlogin-locales.v-filterselect-jmix-brandlogin-locales.v-filterselect {
+    right: 0;
+  }
+}

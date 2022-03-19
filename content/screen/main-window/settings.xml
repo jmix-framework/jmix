@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2021 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<template xmlns="http://schemas.haulmont.com/studio/template-settings.xsd"
+          icon="resource://template/template_main_window.svg"
+          order="1020"
+          name="Main window"
+          enabled="false">
+    <description>
+        <![CDATA[<html>A main window based on the standard <code>mainWindow</code> screen provided by the platform.</html>]]>
+    </description>
+
+    <property caption="Descriptor name"
+              code="descriptorName"
+              defaultValue="ext-mainwindow"
+              propertyType="DESCRIPTOR_NAME"
+              required="true"
+              sourceName="descriptor"/>
+
+    <property caption="Controller name"
+              code="controllerName"
+              propertyType="CLASS_NAME"
+              defaultValue="ExtAppMainWindow"
+              required="true"
+              sourceName="controller"/>
+
+    <property caption="Screen id"
+              code="screenId"
+              propertyType="SCREEN_ID"
+              defaultValue="mainWindow"
+              required="true"/>
+
+    <source fileExt="xml"
+            name="descriptor"/>
+    <source fileExt="java"
+            name="controller"/>
+    <source fileExt="kt"
+            name="controller"/>
+</template>

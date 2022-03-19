@@ -1,0 +1,102 @@
+<%
+dcId = "${entity.uncapitalizedClassName}Dc"
+def nestedDatasourceProperties = api.evaluateScript('screen/nestedDatasourceProperties.groovy', ['view': editView, 'embeddable': false])
+def nestedCollectionDatasourceProperties = api.evaluateScript('screen/nestedCollectionDatasourceProperties.groovy', ['view': editView])
+def createScrollBox = editView.allProperties.size() > 10 || (editorActionBottom && !modalDialog)
+def createModalVbox = modalDialog && editorActionBottom && !createScrollBox
+def collectionAttributesTable = []
+nestedCollectionDatasourceProperties.each { prop ->
+    def binding = [
+        'nestedCollectionDatasourceProperty': prop,
+        'view': editView,
+        'createGroupBox': true]
+    def tableXml = api.processSnippet('screen/cuba_7_collectionAttributeTable.xml', binding)
+    if (!binding['isError']) {
+        collectionAttributesTable << tableXml
+    }
+}
+def formXml = api.processSnippet('screen/form.xml',
+        ['view': editView,
+        'api': api,
+        'dcId': dcId,
+        'columnWidth': fieldColumnWidth,
+        'formId': 'form'])
+def optionsDatasourceXml = api.processSnippet('screen/optionsDsSource.xml',
+        ['view': editView,
+        'api': api])
+def expandId = "editActions"
+if (createModalVbox) {
+    expandId = "formBox"
+} else if (createScrollBox) {
+    expandId = "scrollBox"
+}
+%><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://jmix.io/schema/ui/window"
+        <%if(jmixDynattrUiStarter) {%>xmlns:dynattr="http://jmix.io/schema/dynattr/ui"<%}%>
+        caption="${messageKeys['editorCaption']}"
+        focusComponent="form">
+    <data>
+        <instance id="${dcId}"
+                    class="${entity.fqn}"<%if (!entity.isDeepInheritor('com.haulmont.cuba.core.entity.AbstractNotPersistentEntity')) {%> <%if (!is_inline_editView) {%>
+                    fetchPlan="${editView.name}"<%}%><%}%>> <%if (is_inline_editView) {%>
+            ${inline_editView}
+            <%}%><loader/>
+        <%
+        nestedDatasourceProperties.each {%>
+        <instance id="${it}Dc" property="${it}"/>
+        <%}
+
+        nestedCollectionDatasourceProperties.each {%>
+            <collection id="${it}Dc" property="${it}"/>
+        <%}
+        %></instance>
+        <%if (optionsDatasourceXml?.trim()) {%>
+            ${optionsDatasourceXml}
+        <%}%>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+        <%if(jmixDynattrUiStarter) {%><dynattr:dynamicAttributes/><%}%>
+        <%if(jmixUiDataStarter) {%><screenSettings id="settingsFacet" auto="true"/><%}%>
+    </facets>
+    <actions>
+        <action id="windowCommitAndClose"<%if(extendedWindowActions) {%>
+                caption="msg:///actions.SaveClose"<%} else {%>caption="msg:///actions.Ok"<%}%>
+                icon="EDITOR_OK"
+                primary="true"
+                shortcut="\${COMMIT_SHORTCUT}"/><%if(extendedWindowActions) {%>
+        <action id="windowCommit"
+                caption="msg:///actions.Save"
+                icon="SAVE"/><%}%>
+        <action id="windowClose"
+                caption="msg:///actions.Close"
+                icon="EDITOR_CANCEL"/>
+    </actions>
+    <%if (modalDialog) {%>
+    <dialogMode height="AUTO"
+                width="AUTO"
+                modal="true"
+                forceDialog="true"/>
+    <%} else {%>
+    <dialogMode height="600"
+                width="800"/><%}%>
+<layout spacing="true" expand="$expandId">
+    <%if (createModalVbox) {
+        print('<vbox id="formBox" spacing="true">')}
+    else if (createScrollBox) {
+        print('<scrollBox id="scrollBox" spacing="true">')}%>
+        ${formXml}
+        <%collectionAttributesTable.each{table ->%>
+            ${table}
+        <%}%>
+    <%if (createModalVbox) {
+        print('</vbox>')}
+    else if (createScrollBox) {
+        print('</scrollBox>')}%>
+        <hbox id="editActions" spacing="true">
+            <button id="commitAndCloseBtn" action="windowCommitAndClose"/><%if(extendedWindowActions) {%>
+            <button id="commitBtn" action="windowCommit"/><%}%>
+            <button id="closeBtn" action="windowClose"/>
+        </hbox>
+    </layout>
+</window>

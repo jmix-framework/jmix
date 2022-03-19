@@ -1,0 +1,71 @@
+<%
+dcId = "${entity.uncapitalizedClassName}Dc"
+
+def createScrollBox = entity.attributes.size() > 10 || (editorActionBottom && !modalDialog)
+def createModalVbox = modalDialog && editorActionBottom && !createScrollBox
+
+def formXml = api.processSnippet('screen/dto_form.xml',
+        ['entity': entity,
+        'api': api,
+        'dcId': dcId,
+        'columnWidth': fieldColumnWidth,
+        'formId': 'form'])
+
+def expandId = "editActions"
+if (createModalVbox) {
+    expandId = "formBox"
+} else if (createScrollBox) {
+    expandId = "scrollBox"
+}
+
+%><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://jmix.io/schema/ui/window"
+        caption="${messageKeys['editorCaption']}"
+        focusComponent="form">
+    <data>
+        <instance id="${dcId}"
+                  class="${entity.fqn}"/>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+        <%if(jmixDynattrUiStarter) {%><dynamicAttributes/><%}%>
+        <%if(jmixUiDataStarter) {%><screenSettings id="settingsFacet" auto="true"/><%}%>
+    </facets>
+    <actions>
+        <action id="windowCommitAndClose"<%if(extendedWindowActions) {%>
+                caption="msg:///actions.SaveClose"<%} else {%>caption="msg:///actions.Ok"<%}%>
+                icon="EDITOR_OK"
+                primary="true"
+                shortcut="\${COMMIT_SHORTCUT}"/><%if(extendedWindowActions) {%>
+        <action id="windowCommit"
+                caption="msg:///actions.Save"
+                icon="SAVE"/><%}%>
+        <action id="windowClose"
+                caption="msg:///actions.Close"
+                icon="EDITOR_CANCEL"/>
+    </actions>
+    <%if (modalDialog) {%>
+    <dialogMode height="AUTO"
+                width="AUTO"
+                modal="true"
+                forceDialog="true"/>
+    <%} else {%>
+    <dialogMode height="600"
+                width="800"/><%}%>
+    <layout spacing="true" expand="$expandId">
+        <%if (createModalVbox) {
+            print('<vbox id="formBox" spacing="true">')}
+        else if (createScrollBox) {
+            print('<scrollBox id="scrollBox" spacing="true">')}%>
+        ${formXml}
+        <%if (createModalVbox) {
+            print('</vbox>')}
+        else if (createScrollBox) {
+            print('</scrollBox>')}%>
+        <hbox id="editActions" spacing="true">
+            <button id="commitAndCloseBtn" action="windowCommitAndClose"/><%if(extendedWindowActions) {%>
+            <button id="commitBtn" action="windowCommit"/><%}%>
+            <button id="closeBtn" action="windowClose"/>
+        </hbox>
+    </layout>
+</window>

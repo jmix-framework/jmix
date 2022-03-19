@@ -1,0 +1,135 @@
+<%
+def pluralForm = api.pluralForm(entity.uncapitalizedClassName)
+tableId = "table"
+tableDc = entity.uncapitalizedClassName.equals(pluralForm) ? pluralForm + "CollectionDc" : pluralForm + "Dc"
+tableDl = entity.uncapitalizedClassName.equals(pluralForm) ? pluralForm + "CollectionDl" : pluralForm + "Dl"
+editDc = entity.uncapitalizedClassName + 'Dc'
+def nestedDatasourceProperties = api.evaluateScript('screen/nestedDatasourceProperties.groovy', ['view': editView, 'embeddable': false])
+def nestedCollectionDatasourceProperties = api.evaluateScript('screen/nestedCollectionDatasourceProperties.groovy', ['view': editView])
+
+class CollectionAttributeTable {
+	def ownerEntity
+	def propertyName
+	def xml
+}
+collectionAttributesTable = []
+nestedCollectionDatasourceProperties.each { prop ->
+    def binding = [
+        'nestedCollectionDatasourceProperty': prop,
+        'view': editView,
+        'createGroupBox': false]
+    def tableXml = api.processSnippet('screen/cuba_7_collectionAttributeTable.xml', binding)
+    if (!binding['isError']) {
+    	CollectionAttributeTable table = new CollectionAttributeTable()
+    	table.ownerEntity = binding.ownerEntity
+    	table.propertyName = prop
+    	table.xml = tableXml
+        collectionAttributesTable << table
+    }
+}
+
+def formXml = api.processSnippet('screen/form.xml',
+        ['view': editView,
+        'api': api,
+        'dcId': editDc,
+        'columnWidth': fieldColumnWidth,
+        'formId': 'form'])
+
+def optionsDatasourceXml = api.processSnippet('screen/optionsDsSource.xml',
+        ['view': editView,
+        'api': api])
+
+def tableXml = api.processSnippet('screen/cuba_7_table.xml',
+        ['entity': entity,
+        'view': browseView,
+        'tableDc': tableDc,
+        'tableType': tableType,
+        'tableId': tableId,
+        'multiselect': multiselect,
+        'tableActions': tableActions,
+        'hierarchicalProperty': binding.hasVariable('tableType_hierarchicalProperty') ? binding.getVariable('tableType_hierarchicalProperty') : null])
+%><window xmlns="http://jmix.io/schema/ui/window"
+          xmlns:c="http://jmix.io/schema/ui/jpql-condition"
+          <%if(jmixDynattrUiStarter) {%>xmlns:dynattr="http://jmix.io/schema/dynattr/ui"<%}%>
+          caption="${messageKeys['browseCaption']}"
+          focusComponent="${tableId}">
+    <data>
+        <collection id="${tableDc}"
+                    class="${entity.fqn}"<%if (!is_inline_browseView) {%>
+                    fetchPlan="${browseView.name}"<%}%>> <%if (is_inline_browseView) {%>
+            ${inline_browseView}
+            <%}%><loader id="${tableDl}">
+                <query>
+                    <![CDATA[select e from ${entity.name} e]]>
+                </query>
+            </loader>
+        </collection>
+        <instance id="${editDc}"
+                    class="${entity.fqn}"<%if (!is_inline_editView) {%>
+                    fetchPlan="${editView.name}"<%}%>> <%if (is_inline_editView) {%>
+            ${inline_editView}
+            <%}%><loader/>
+        <%
+        nestedDatasourceProperties.each {%>
+            <instance id="${it}Dc" property="${it}"/>
+        <%}
+
+        nestedCollectionDatasourceProperties.each {%>
+            <collection id="${it}Dc" property="${it}"/>
+        <%}%></instance>
+        <%if (optionsDatasourceXml?.trim()) {%>
+            ${optionsDatasourceXml}
+        <%}%>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+        <%if(jmixDynattrUiStarter) {%><dynattr:dynamicAttributes/><%}%>
+        <%if(jmixUiDataStarter) {%><screenSettings id="settingsFacet" auto="true"/><%}%>
+        <%if(presentation) {%><presentations auto="true"/><%}%>
+    </facets>
+    <actions>
+        <action id="save" icon="OK" caption="msg:///actions.Ok" shortcut="CTRL-ENTER"/>
+        <action id="cancel" icon="CANCEL" caption="msg:///actions.Cancel" description="Esc"/>
+    </actions>
+    <dialogMode height="600" width="800"/>
+    <layout>
+        <split id="split" height="100%" orientation="horizontal" reversePosition="true" width="100%">
+            <vbox id="lookupBox" expand="${tableId}" height="100%" margin="false,true,false,false" spacing="true">
+                <%if (createFilter) {%><filter id="filter" dataLoader="${tableDl}">
+                    <properties include=".*"/>
+                </filter><%}%>
+                ${tableXml}
+                <hbox id="lookupActions" spacing="true" visible="false">
+                    <button action="lookupSelectAction"/>
+                    <button action="lookupCancelAction"/>
+                </hbox>
+            </vbox>
+            <vbox id="editBox" height="100%" margin="false,false,false,true" expand=<%(collectionAttributesTable ? print('"tabSheetBox"') : print('"fieldGroupBox"'))%> spacing="true">
+            <%if (collectionAttributesTable) {%>
+                <vbox id="tabSheetBox">
+                    <tabSheet id="tabSheet" height="100%">
+                        <tab id="mainTab" caption="${messageKeys['mainTab']}" margin="true">
+                            <scrollBox id="fieldGroupBox"
+                                       height="100%">
+                                <%print "        ${formXml}"%>
+                            </scrollBox>
+                        </tab>
+                        <%collectionAttributesTable.each { t ->
+                            print("<tab id=\"${t.propertyName}Tab\" caption=\"msg://${t.ownerEntity.packageName}/${t.ownerEntity.className}.${t.propertyName}\" margin=\"true,false,false,false\">")
+                            print("\n        ${t.xml}")
+                            print('</tab>') }%>
+                    </tabSheet>
+                </vbox>    
+            <%} else {%>                
+                <scrollBox id="fieldGroupBox">
+                    <%print "        ${formXml}"%>
+                </scrollBox>
+             <%}%>                
+                <hbox id="actionsPane" spacing="true" visible="false">
+                    <button id="saveBtn" action="save"/>
+                    <button id="cancelBtn" action="cancel"/>
+                </hbox>
+            </vbox>
+        </split>
+    </layout>
+</window>

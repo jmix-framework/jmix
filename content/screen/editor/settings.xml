@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2021 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<template xmlns="http://schemas.haulmont.com/studio/template-settings.xsd"
+          icon="resource://template/template_editor.svg"
+          name="Entity editor"
+          order="20">
+    <tags>
+        <tag>ENTITY</tag>
+        <tag>JPA</tag>
+    </tags>
+    <description>
+        <![CDATA[<html>Standard editor screen with a form and window action buttons: <i>OK</i> and <i>Cancel</i>.
+<br>Select <b>Extended window actions</b> checkbox to create an editor that can be saved without closing the screen.
+It will have <i>Save and close</i>, <i>Save</i> and <i>Cancel</i> buttons.</html>]]>
+    </description>
+    <locMessages key="editorCaption" expressionKey="${studioUtils.decapitalize(editorControllerName)}.caption">
+        <message lang="default">
+            <![CDATA[${studioUtils.makeNaturalMessage(entity.className)} editor]]>
+        </message>
+    </locMessages>
+    <steps>
+        <step name="Entity editor" order="0"/>
+        <step name="Entity editor fetch plan" order="1"/>
+    </steps>
+    <property caption="Entity"
+              code="entity"
+              propertyType="ENTITY"
+              required="true"/>
+    <property caption="Entity view"
+              code="editView"
+              step="1"
+              propertyType="VIEW_COMPONENT"
+              relatedProperty="entity"
+              required="true"/>
+
+    <property caption="Descriptor name"
+              code="editorDescriptorName"
+              propertyType="DESCRIPTOR_NAME"
+              sourceName="descriptor"
+              required="true"
+              dynamic="true"
+              advanced="true"
+              valueTemplate="${api.evaluateScript('screen/descriptorFileName.groovy', ['entity': entity])}-edit">
+        <dependency code="entity"/>
+    </property>
+
+    <property caption="Controller name"
+              code="editorControllerName"
+              propertyType="CLASS_NAME"
+              sourceName="controller"
+              required="true"
+              dynamic="true"
+              advanced="true"
+              valueTemplate="${entity.className}Edit">
+        <dependency code="entity"/>
+    </property>
+
+    <property caption="Screen Id"
+              code="editorId"
+              propertyType="SCREEN_ID"
+              advanced="true"
+              dynamic="true"
+              valueTemplate="${entity.name!=null?entity.name:entity.className}.edit"
+              required="true">
+        <dependency code="entity"/>
+    </property>
+
+    <property caption="Column width"
+              code="fieldColumnWidth"
+              defaultValue="350px"
+              propertyType="PX_SIZE"
+              preferences="true"/>
+    <property caption="Modal dialog"
+              code="modalDialog"
+              propertyType="BOOLEAN"
+              preferences="true"/>
+    <property caption="Extended window actions"
+              code="extendedWindowActions"
+              propertyType="BOOLEAN"
+              preferences="true"/>
+    <property caption="Keep editor actions at the bottom"
+              code="editorActionBottom"
+              propertyType="BOOLEAN"
+              preferences="true"/>
+
+    <source fileExt="xml"
+            name="descriptor"/>
+    <source fileExt="java"
+            name="controller"/>
+    <source fileExt="groovy"
+            name="controller"/>
+    <source fileExt="kt"
+            name="controller"/>
+</template>

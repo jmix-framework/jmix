@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<template xmlns="http://schemas.haulmont.com/studio/template-settings.xsd"
+          icon="resource://template/template_browse.svg"
+          name="DTO Entity browser"
+          order="31">
+    <tags>
+        <tag>ENTITY</tag>
+        <tag>DTO</tag>
+    </tags>
+    <description>
+        <![CDATA[<html>DTO entity browser screen.</html>]]>
+    </description>
+    <locMessages key="browseCaption" expressionKey="${studioUtils.decapitalize(lookupControllerName)}.caption">
+        <message lang="default">
+            <![CDATA[${studioUtils.makeScreenNaturalCaption(entity.className.concat('.browse'), null)}]]>
+        </message>
+    </locMessages>
+    <locMessages key="browseMenu" expressionKey="${studioUtils.decapitalize(lookupControllerName)}.menu">
+        <message lang="default">
+            <![CDATA[${studioUtils.makeScreenNaturalCaption(entity.className.concat('.browse'), null)}]]>
+        </message>
+    </locMessages>
+    <steps>
+        <step name="Entity browser" order="0"/>
+    </steps>
+    <property caption="Entity"
+              code="entity"
+              propertyType="ENTITY"
+              required="true"/>
+    <property caption="Table type"
+              code="tableType"
+              propertyType="TABLE_TYPE"
+              relatedProperty="entity"
+              required="true"/>
+    <property caption="Parent menu item"
+              code="menuItem"
+              propertyType="MENU_ITEM"/>
+    <property caption="Multiselect"
+              code="multiselect"
+              propertyType="BOOLEAN"
+              preferences="true"/>
+    <property caption="Presentation"
+              code="presentation"
+              propertyType="BOOLEAN"
+              preferences="true"/>
+
+    <property caption="Descriptor name"
+              code="lookupDescriptorName"
+              propertyType="DESCRIPTOR_NAME"
+              advanced="true"
+              dynamic="true"
+              sourceName="descriptor"
+              required="true"
+              valueTemplate="${api.evaluateScript('screen/descriptorFileName.groovy', ['entity': entity])}-browse">
+        <dependency code="entity"/>
+    </property>
+
+    <property caption="Controller name"
+              code="lookupControllerName"
+              propertyType="CLASS_NAME"
+              advanced="true"
+              dynamic="true"
+              sourceName="controller"
+              required="true"
+              valueTemplate="${entity.className}Browse">
+        <dependency code="entity"/>
+    </property>
+
+    <property caption="Screen id"
+              code="lookupId"
+              propertyType="SCREEN_ID"
+              required="true"
+              dynamic="true"
+              advanced="true"
+              valueTemplate="${entity.name!=null?entity.name:entity.className}.browse">
+        <dependency code="entity"/>
+    </property>
+
+
+    <source fileExt="xml"
+            name="descriptor"/>
+    <source fileExt="java"
+            name="controller"/>
+    <source fileExt="groovy"
+            name="controller"/>
+    <source fileExt="kt"
+            name="controller"/>
+</template>

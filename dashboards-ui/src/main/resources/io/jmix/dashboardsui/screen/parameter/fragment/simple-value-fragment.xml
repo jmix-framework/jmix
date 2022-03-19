@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2021 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<fragment xmlns="http://jmix.io/schema/ui/fragment">
+    <layout spacing="true">
+        <hbox id="hBox"
+              spacing="true">
+            <label id="valueLabel"
+                   width="85px"
+                   value="msg://value"
+                   align="MIDDLE_LEFT"/>
+            <textField id="textField"
+                       width="300px"
+                       visible="false"/>
+            <textField id="intField"
+                       width="300px"
+                       datatype="int"
+                       visible="false"/>
+            <textField id="longField"
+                       width="300px"
+                       datatype="long"
+                       visible="false"/>
+            <textField id="decimalField"
+                       width="300px"
+                       datatype="decimal"
+                       visible="false"/>
+            <textField id="uuidField"
+                       width="300px"
+                       datatype="uuid"
+                       visible="false"/>
+            <checkBox id="checkBox"
+                      width="300px"
+                      visible="false"/>
+            <dateField id="dateField"
+                       width="300px"
+                       visible="false"/>
+            <timeField id="timeField"
+                       width="300px"
+                       visible="false"/>
+            <vbox/>
+        </hbox>
+    </layout>
+</fragment>

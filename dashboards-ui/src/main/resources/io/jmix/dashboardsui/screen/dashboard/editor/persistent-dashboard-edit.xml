@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2021 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<window xmlns="http://jmix.io/schema/ui/window"
+        caption="msg://dashboardEdit"
+        focusComponent="dashboardEditForm1">
+    <data>
+        <collection id="groupsDc"
+                    class="io.jmix.dashboards.entity.DashboardGroup"
+                    fetchPlan="_instance_name">
+            <loader id="groupsDl">
+                <query>
+                    <![CDATA[select e from dshbrd_DashboardGroup e]]>
+                </query>
+            </loader>
+        </collection>
+        <instance id="persistentDashboardDc"
+                  class="io.jmix.dashboards.entity.PersistentDashboard"
+                  fetchPlan="dashboard-group-fetchPlan">
+            <loader id="persistentDashboardDl"/>
+        </instance>
+        <instance id="dashboardDc"
+                  class="io.jmix.dashboards.model.DashboardModel"/>
+
+    </data>
+    <layout expand="dashboardLayoutBox"
+            height="100%"
+            spacing="true">
+        <groupBox id="mainDashboardInfo"
+                  caption="msg://dashBoardInfo"
+                  collapsable="true">
+            <hbox spacing="true">
+                <form id="dashboardEditForm1"
+                      dataContainer="dashboardDc">
+                    <column width="300px">
+                        <textField property="title"/>
+                        <textField property="code"/>
+                    </column>
+                </form>
+                <form id="dashboardEditForm2"
+                      dataContainer="dashboardDc">
+                    <column width="250px">
+                        <textField id="timerDelay" property="timerDelay"/>
+                        <comboBox id="assistantBeanName" property="assistantBeanName"/>
+                    </column>
+                </form>
+                <vbox spacing="true">
+                    <form id="dashboardEditForm3"
+                          dataContainer="persistentDashboardDc">
+                        <column width="250px">
+                            <entityComboBox optionsContainer="groupsDc" property="group"/>
+                        </column>
+                    </form>
+                    <checkBox id="isAvailableForAllUsersCheckBox"
+                              caption="msg://isAvailableForAllUsers"
+                              dataContainer="dashboardDc"
+                              property="isAvailableForAllUsers"/>
+                </vbox>
+            </hbox>
+        </groupBox>
+        <groupBox id="paramsBox"
+                  caption="msg://dashboardParameters"
+                  collapsable="true"
+                  collapsed="true"/>
+        <hbox id="dashboardLayoutBox"
+              expand="canvasBox"
+              spacing="true"
+              width="100%">
+            <vbox id="paletteBox"
+                  height="100%"
+                  spacing="true"
+                  width="300px"/>
+            <vbox id="canvasBox"
+                  stylename="dashboard-canvas"
+                  height="100%"
+                  spacing="true"/>
+        </hbox>
+        <hbox id="editActions" spacing="true">
+            <button id="okBtn"
+                    caption="msg:///ok"
+                    icon="EDITOR_OK" action="windowCommitAndClose"/>
+            <button id="cancelBtn"
+                    caption="msg:///cancel"
+                    icon="EDITOR_CANCEL" action="windowClose"/>
+            <button id="propagateBtn"
+                    caption="msg://propagate"
+                    icon="BULLHORN"
+                    stylename="dashboard-left-margin-button"/>
+            <button id="exportJsonBtn"
+                    caption="msg://exportJson"
+                    icon="DOWNLOAD"
+                    stylename="dashboard-left-margin-button"/>
+            <fileUpload id="importJsonField"
+                        uploadButtonCaption="msg://importJson"
+                        uploadButtonIcon="UPLOAD" permittedExtensions=".json"/>
+        </hbox>
+    </layout>
+</window>

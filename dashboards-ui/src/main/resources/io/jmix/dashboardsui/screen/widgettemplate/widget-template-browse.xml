@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2021 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<window xmlns="http://jmix.io/schema/ui/window"
+        caption="msg://browseCaption"
+        focusComponent="widgetTemplateTable">
+    <data>
+        <collection id="widgetTemplatesDc"
+                         class="io.jmix.dashboards.entity.WidgetTemplate"
+                         fetchPlan="widget-group-fetchPlan">
+            <loader id="widgetTemplatesDl">
+                <query>
+                    <![CDATA[select e from dshbrd_WidgetTemplate e where e.isAvailableForAllUsers = true or e.createdBy = :currentUser]]>
+                </query>
+            </loader>
+
+        </collection>
+    </data>
+    <layout expand="widgetTemplateTable"
+            spacing="true">
+        <filter id="filter"
+                dataLoader="widgetTemplatesDl">
+            <properties include=".*"/>
+        </filter>
+        <groupTable id="widgetTemplateTable"
+                    width="100%" dataContainer="widgetTemplatesDc">
+            <actions>
+                <action id="create" type="create">
+                    <properties>
+                        <property name="openMode" value="DIALOG"/>
+                    </properties>
+                </action>
+                <action id="edit" type="edit">
+                    <properties>
+                        <property name="openMode" value="DIALOG"/>
+                    </properties>
+                </action>
+                <action id="remove" type="remove"/>
+            </actions>
+            <columns>
+                <column id="name"/>
+                <column id="group"/>
+                <column id="isAvailableForAllUsers"/>
+            </columns>
+            <buttonsPanel id="buttonsPanel"
+                          alwaysVisible="true">
+                <button id="createBtn"
+                        action="widgetTemplateTable.create"/>
+                <button id="editBtn"
+                        action="widgetTemplateTable.edit"/>
+                <button id="removeBtn"
+                        action="widgetTemplateTable.remove"/>
+                <button id="widgetTemplateGroupsBrowse"
+                        caption="msg://widgetTemplateGroupsBrowse"/>
+            </buttonsPanel>
+        </groupTable>
+    </layout>
+</window>

@@ -1,0 +1,76 @@
+/*
+ * Copyright 2019 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+plugins {
+    id 'java-gradle-plugin'
+    id 'groovy'
+    id 'maven-publish'
+    id 'com.gradle.plugin-publish' version '0.11.0'
+}
+
+group = 'io.jmix.build'
+
+repositories {
+    mavenCentral()
+    gradlePluginPortal()
+}
+
+dependencies {
+    implementation localGroovy()
+    implementation 'gradle.plugin.com.github.spotbugs.snom:spotbugs-gradle-plugin:4.6.2'
+}
+
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allJava
+    archiveClassifier = 'sources'
+}
+
+gradlePlugin {
+    plugins {
+        jmixPlugin {
+            id = 'io.jmix.build'
+            implementationClass = 'io.jmix.build.JmixBuildPlugin'
+        }
+    }
+}
+
+pluginBundle {
+    website = 'http://jmix.io'
+    vcsUrl = 'https://github.com/jmix-framework/jmix'
+    description = 'Jmix internal build support'
+    tags = ['jmix', 'spring']
+
+    plugins {
+        jmixPlugin {
+            displayName = 'Jmix internal build support'
+        }
+    }
+}
+
+publishing {
+    if (rootProject.hasProperty('jmixUploadUrl')) {
+        repositories {
+            maven {
+                url = rootProject['jmixUploadUrl']
+                credentials {
+                    username rootProject['jmixUploadUser']
+                    password rootProject['jmixUploadPassword']
+                }
+                allowInsecureProtocol = true
+            }
+        }
+    }
+}

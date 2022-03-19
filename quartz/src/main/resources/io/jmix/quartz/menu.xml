@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<menu-config xmlns="http://jmix.io/schema/ui/menu">
+
+    <menu id="administration">
+        <item screen="quartz_JobModel.browse" caption="msg://io.jmix.quartz.screen.jobs/jobModelBrowse.menu"/>
+    </menu>
+
+</menu-config>

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://jmix.io/schema/ui/window"
+        caption="msg://jobModelEdit.caption"
+        focusComponent="form">
+    <data>
+        <instance id="jobModelDc" class="io.jmix.quartz.model.JobModel">
+            <collection id="triggerModelDc" property="triggers"/>
+            <collection id="jobDataParamsDc" property="jobDataParameters"/>
+        </instance>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <actions>
+        <action id="windowCommitAndClose" caption="msg:///actions.Ok"
+                icon="EDITOR_OK"
+                primary="true"
+                shortcut="${COMMIT_SHORTCUT}"/>
+        <action id="windowClose"
+                caption="msg:///actions.Close"
+                icon="EDITOR_CANCEL"/>
+    </actions>
+    <dialogMode height="600"
+                width="800"/>
+    <layout spacing="true" expand="jobDetailsTabSheet">
+
+        <form id="form" dataContainer="jobModelDc">
+            <column width="400px">
+                <textField id="jobNameField" property="jobName"/>
+                <comboBox id="jobClassField" property="jobClass"/>
+                <textArea id="jobDescriptionField" property="description"/>
+            </column>
+            <column width="400px">
+                <comboBox id="jobGroupField" property="jobGroup"/>
+                <comboBox id="jobSourceField" property="jobSource" editable="false"/>
+            </column>
+        </form>
+
+        <tabSheet id="jobDetailsTabSheet">
+            <tab id="triggersTabSheet" caption="msg://triggersTabCaption" spacing="true"
+                 margin="true;false;false;false;">
+                <groupTable id="triggerModelTable" dataContainer="triggerModelDc" height="100%" width="100%">
+                    <actions>
+                        <action id="create" type="create">
+                            <properties>
+                                <property name="openMode" value="DIALOG"/>
+                            </properties>
+                        </action>
+                        <action id="edit" type="edit"/>
+                        <action id="view" type="view"/>
+                        <action id="remove" type="remove"/>
+                    </actions>
+                    <columns>
+                        <column id="triggerName"/>
+                        <column id="triggerGroup" collapsed="true"/>
+                        <column id="scheduleType"/>
+                        <column id="scheduleDescription"/>
+                        <column id="startDate">
+                            <formatter>
+                                <date format="msg://dateTimeWithSeconds"/>
+                            </formatter>
+                        </column>
+                        <column id="lastFireDate">
+                            <formatter>
+                                <date format="msg://dateTimeWithSeconds"/>
+                            </formatter>
+                        </column>
+                        <column id="nextFireDate">
+                            <formatter>
+                                <date format="msg://dateTimeWithSeconds"/>
+                            </formatter>
+                        </column>
+                    </columns>
+                    <buttonsPanel>
+                        <button action="triggerModelTable.create"/>
+                        <button action="triggerModelTable.edit"/>
+                        <button action="triggerModelTable.view"/>
+                        <button action="triggerModelTable.remove"/>
+                    </buttonsPanel>
+                </groupTable>
+            </tab>
+            <tab id="jobDataParamsSheet" caption="msg://jobDataParamsTabCaption" spacing="true"
+                 margin="true;false;false;false;">
+                <table id="jobDataParamsTable" dataContainer="jobDataParamsDc" height="100%" width="100%"
+                       editable="true">
+                    <actions>
+                        <action id="addNewDataParam" caption="msg://addNewDataParamCaption" icon="ADD_ACTION"
+                                primary="true"/>
+                        <action id="remove" type="remove"/>
+                    </actions>
+                    <columns>
+                        <column id="key" editable="true" required="true"/>
+                        <column id="value" editable="true"/>
+                    </columns>
+                    <buttonsPanel>
+                        <button id="addDataParamButton" action="jobDataParamsTable.addNewDataParam"/>
+                        <button action="jobDataParamsTable.remove"/>
+                    </buttonsPanel>
+                </table>
+            </tab>
+        </tabSheet>
+
+        <hbox id="editActions" spacing="true">
+            <button id="commitAndCloseBtn" action="windowCommitAndClose"/>
+            <button id="closeBtn" action="windowClose"/>
+        </hbox>
+
+    </layout>
+</window>

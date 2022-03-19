@@ -1,0 +1,8 @@
+rootProject.name = 'jmix-localfs'
+
+include 'localfs'
+include 'localfs-starter'
+
+rootProject.children.each { p1 ->
+	p1.buildFileName = "${p1.name}.gradle"
+}

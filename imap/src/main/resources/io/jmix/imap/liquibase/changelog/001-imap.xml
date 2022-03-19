@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2020 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+    <changeSet author="imap" id="1" context="!cuba">
+        <validCheckSum>1:any</validCheckSum>
+
+        <!-- IMAP_SIMPLE_AUTHENTICATION -->
+        <createTable tableName="IMAP_SIMPLE_AUTHENTICATION">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="VERSION" type="int" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="UPDATE_TS" type="datetime"/>
+            <column name="UPDATED_BY" type="varchar(50)"/>
+            <column name="DELETE_TS" type="datetime"/>
+            <column name="DELETED_BY" type="varchar(50)"/>
+
+            <column name="USERNAME" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PASSWORD" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <!-- IMAP_SIMPLE_AUTHENTICATION -->
+
+        <!-- IMAP_PROXY -->
+        <createTable tableName="IMAP_PROXY">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="VERSION" type="int" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="UPDATE_TS" type="datetime"/>
+            <column name="UPDATED_BY" type="varchar(50)"/>
+            <column name="DELETE_TS" type="datetime"/>
+            <column name="DELETED_BY" type="varchar(50)"/>
+
+            <column name="HOST" type="varchar(255)"/>
+            <column name="PORT" type="int"/>
+            <column name="WEB_PROXY" type="boolean"/>
+        </createTable>
+        <!-- IMAP_PROXY -->
+
+        <!-- IMAP_MAIL_BOX -->
+        <createTable tableName="IMAP_MAIL_BOX">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="VERSION" type="int" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="UPDATE_TS" type="datetime"/>
+            <column name="UPDATED_BY" type="varchar(50)"/>
+            <column name="DELETE_TS" type="datetime"/>
+            <column name="DELETED_BY" type="varchar(50)"/>
+
+            <column name="NAME" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="HOST" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PORT" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="SECURE_MODE" type="varchar(50)"/>
+            <column name="ROOT_CERTIFICATE" type="clob"/>
+            <column name="AUTHENTICATION_METHOD" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="AUTHENTICATION_ID" type="${uuid.type}">
+                <constraints foreignKeyName="FK_IMAP_MAILBOX_AUTHEN"
+                             references="IMAP_SIMPLE_AUTHENTICATION(ID)"/>
+            </column>
+            <column name="PROXY_ID" type="${uuid.type}">
+                <constraints foreignKeyName="FK_IMAP_MAIL_BOX_PROXY"
+                             references="IMAP_PROXY(ID)"/>
+            </column>
+            <column name="JMIX_FLAG" type="varchar(255)"/>
+            <column name="TRASH_FOLDER_NAME" type="varchar(255)"/>
+            <column name="EVENTS_GENERATOR_CLASS" type="varchar(255)"/>
+            <column name="FLAGS_SUPPORTED" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createIndex tableName="IMAP_MAIL_BOX" indexName="IDX_IMAP_MAIL_BOX_AUTHEN">
+            <column name="AUTHENTICATION_ID"/>
+        </createIndex>
+        <createIndex tableName="IMAP_MAIL_BOX" indexName="IDX_IMAP_MAIL_BOX_PROXY">
+            <column name="PROXY_ID"/>
+        </createIndex>
+        <!-- IMAP_MAIL_BOX -->
+
+        <!-- IMAP_FOLDER -->
+        <createTable tableName="IMAP_FOLDER">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="VERSION" type="int" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="UPDATE_TS" type="datetime"/>
+            <column name="UPDATED_BY" type="varchar(50)"/>
+            <column name="DELETE_TS" type="datetime"/>
+            <column name="DELETED_BY" type="varchar(50)"/>
+
+            <column name="NAME" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="MAIL_BOX_ID" type="${uuid.type}">
+                <constraints nullable="false"
+                             foreignKeyName="FK_IMAP_FOLDER_MAIL_BOX"
+                             references="IMAP_MAIL_BOX(ID)"/>
+            </column>
+            <column name="ENABLED" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CAN_HOLD_MESSAGES" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DELETED" type="boolean"/>
+            <column name="PARENT_FOLDER_ID" type="${uuid.type}">
+                <constraints foreignKeyName="FK_IMAP_FOLDER_PARENT_FOLDER"
+                             references="IMAP_FOLDER(ID)"/>
+            </column>
+        </createTable>
+        <createIndex tableName="IMAP_FOLDER" indexName="IDX_IMAP_FOLDER_MAIL_BOX">
+            <column name="MAIL_BOX_ID"/>
+        </createIndex>
+        <createIndex tableName="IMAP_FOLDER" indexName="IDX_IMAP_FOLDER_PARENT_FOLDER">
+            <column name="PARENT_FOLDER_ID"/>
+        </createIndex>
+        <!-- IMAP_FOLDER -->
+
+        <!-- IMAP_MESSAGE -->
+        <createTable tableName="IMAP_MESSAGE">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="VERSION" type="int" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="UPDATE_TS" type="datetime"/>
+            <column name="UPDATED_BY" type="varchar(50)"/>
+            <column name="DELETE_TS" type="datetime"/>
+            <column name="DELETED_BY" type="varchar(50)"/>
+
+            <column name="FOLDER_ID" type="${uuid.type}">
+                <constraints foreignKeyName="FK_IMAP_MESSAGE_FOLDER"
+                             references="IMAP_FOLDER(ID)"/>
+            </column>
+            <column name="FLAGS" type="clob"/>
+            <column name="IS_ATL" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column name="MSG_UID" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="MSG_NUM" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="THREAD_ID" type="bigint"/>
+            <column name="REFERENCE_ID" type="clob"/>
+            <column name="MESSAGE_ID" type="clob"/>
+            <column name="CAPTION" type="clob">
+                <constraints nullable="false"/>
+            </column>
+            <column name="RECEIVED_DATE" type="datetime"/>
+        </createTable>
+
+        <createIndex tableName="IMAP_MESSAGE" indexName="IDX_IMAP_MESSAGE_FOLDER">
+            <column name="FOLDER_ID"/>
+        </createIndex>
+        <!-- IMAP_MESSAGE -->
+
+        <!-- IMAP_MESSAGE_ATTACHMENT -->
+        <createTable tableName="IMAP_MESSAGE_ATTACHMENT">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="VERSION" type="int" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="UPDATE_TS" type="datetime"/>
+            <column name="UPDATED_BY" type="varchar(50)"/>
+            <column name="DELETE_TS" type="datetime"/>
+            <column name="DELETED_BY" type="varchar(50)"/>
+
+            <column name="IMAP_MESSAGE_ID" type="${uuid.type}">
+                <constraints nullable="false"
+                             foreignKeyName="FK_IMAP_MESSATTACH_IMAPMESSA"
+                             references="IMAP_MESSAGE(ID)"/>
+            </column>
+
+            <column name="CREATED_TS" type="time">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ORDER_NUMBER" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="NAME" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FILE_SIZE" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createIndex tableName="IMAP_MESSAGE_ATTACHMENT" indexName="IDX_IMAP_MESSATTA_IMAPMESS">
+            <column name="IMAP_MESSAGE_ID"/>
+        </createIndex>
+        <!-- IMAP_MESSAGE_ATTACHMENT -->
+
+        <!-- IMAP_MESSAGE_SYNC -->
+        <createTable tableName="IMAP_MESSAGE_SYNC">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="VERSION" type="int" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="UPDATE_TS" type="datetime"/>
+            <column name="UPDATED_BY" type="varchar(50)"/>
+
+            <column name="MESSAGE_ID" type="${uuid.type}">
+                <constraints nullable="false"
+                             foreignKeyName="FK_IMAP_MESSAGE_SYNC_MESSAGE"
+                             references="IMAP_MESSAGE(ID)"/>
+            </column>
+            <column name="FLAGS" type="clob"/>
+            <column name="FOLDER_ID" type="${uuid.type}">
+                <constraints nullable="false"
+                             foreignKeyName="FK_IMAP_MESSAGE_SYNC_FOLDER"
+                             references="IMAP_FOLDER(ID)"/>
+            </column>
+            <column name="STATUS" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="OLD_FOLDER_ID" type="${uuid.type}">
+                <constraints foreignKeyName="FK_IMAP_MESSASYNC_OLD_FOLDER"
+                             references="IMAP_FOLDER(ID)"/>
+            </column>
+        </createTable>
+
+        <createIndex tableName="IMAP_MESSAGE_SYNC" indexName="IDX_IMAP_MESSYN_UK_MESSAGE_ID" unique="true">
+            <column name="MESSAGE_ID"/>
+        </createIndex>
+        <createIndex tableName="IMAP_MESSAGE_SYNC" indexName="IDX_IMAP_MESSAGE_SYNC_FOLDER">
+            <column name="FOLDER_ID"/>
+        </createIndex>
+        <createIndex tableName="IMAP_MESSAGE_SYNC" indexName="IDX_IMAP_MESSSYNC_OLD_FOLDER">
+            <column name="OLD_FOLDER_ID"/>
+        </createIndex>
+        <!-- IMAP_MESSAGE_SYNC -->
+
+        <!-- IMAP_FOLDER_EVENT -->
+        <createTable tableName="IMAP_FOLDER_EVENT">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="VERSION" type="int" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="UPDATE_TS" type="datetime"/>
+            <column name="UPDATED_BY" type="varchar(50)"/>
+            <column name="DELETE_TS" type="datetime"/>
+            <column name="DELETED_BY" type="varchar(50)"/>
+
+            <column name="FOLDER_ID" type="${uuid.type}">
+                <constraints nullable="false"
+                             foreignKeyName="FK_IMAP_FOLDER_EVENT_FOLDER"
+                             references="IMAP_FOLDER(ID)"/>
+            </column>
+            <column name="EVENT" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ENABLED" type="boolean"/>
+        </createTable>
+
+        <createIndex tableName="IMAP_FOLDER_EVENT" indexName="IDX_IMAP_FOLDER_EVENT_FOLDER">
+            <column name="FOLDER_ID"/>
+        </createIndex>
+        <!-- IMAP_FOLDER_EVENT -->
+
+        <!-- IMAP_EVENT_HANDLER -->
+        <createTable tableName="IMAP_EVENT_HANDLER">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="VERSION" type="int" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="UPDATE_TS" type="datetime"/>
+            <column name="UPDATED_BY" type="varchar(50)"/>
+            <column name="DELETE_TS" type="datetime"/>
+            <column name="DELETED_BY" type="varchar(50)"/>
+
+            <column name="EVENT_ID" type="${uuid.type}">
+                <constraints nullable="false"
+                             foreignKeyName="FK_IMAP_EVENT_HANDLER_EVENT"
+                             references="IMAP_FOLDER_EVENT(ID)"/>
+            </column>
+            <column name="HANDLING_ORDER" type="int"/>
+            <column name="BEAN_NAME" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="METHOD_NAME" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createIndex tableName="IMAP_EVENT_HANDLER" indexName="IDX_IMAP_EVENT_HANDLER_EVENT">
+            <column name="EVENT_ID"/>
+        </createIndex>
+        <!-- IMAP_EVENT_HANDLER -->
+    </changeSet>
+</databaseChangeLog>

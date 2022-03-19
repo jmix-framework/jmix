@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2020 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<window xmlns="http://jmix.io/schema/ui/window"
+        caption="msg://browseCaption"
+        focusComponent="imapMessagesTable">
+    <data>
+        <collection id="imapMessagesDc"
+                         class="io.jmix.imap.entity.ImapMessage"
+                         fetchPlan="imap-msg-full">
+            <loader id="imapMessageLoader">
+                <query>
+                    <![CDATA[select e from imap_Message e]]>
+                </query>
+            </loader>
+        </collection>
+    </data>
+    <dialogMode height="600"
+                width="800"/>
+
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+
+    <layout expand="imapMessagesTable"
+            spacing="true">
+        <filter id="filter"
+                dataLoader="imapMessageLoader">
+            <properties include=".*"/>
+        </filter>
+        <groupTable id="imapMessagesTable"
+                    width="100%"
+                    dataContainer="imapMessagesDc">
+            <actions>
+                <action id="edit" type="edit"/>
+            </actions>
+            <columns>
+                <column id="receivedDate"/>
+                <column id="folder.mailBox" />
+                <column id="folder"/>
+                <column id="caption"/>
+                <column id="flags"/>
+                <column id="messageId"/>
+            </columns>
+            <simplePagination/>
+            <buttonsPanel id="buttonsPanel"
+                          alwaysVisible="true">
+                <button id="editBtn"
+                        action="imapMessagesTable.edit"
+                        caption="msg://editBtnCaption"/>
+            </buttonsPanel>
+        </groupTable>
+    </layout>
+</window>

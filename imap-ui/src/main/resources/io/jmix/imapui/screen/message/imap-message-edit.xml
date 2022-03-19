@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2020 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<window xmlns="http://jmix.io/schema/ui/window"
+        caption="msg://editorCaption"
+        focusComponent="fields">
+    <data>
+        <instance id="imapMessageDc"
+                  class="io.jmix.imap.entity.ImapMessage"
+                  fetchPlan="imap-msg-full">
+            <loader/>
+        </instance>
+
+        <instance id="imapMessageDtoDc"
+                  class="io.jmix.imap.dto.ImapMessageDto"/>
+        <collection id="imapDemoAttachmentsDc"
+                    class="io.jmix.imap.entity.ImapMessageAttachment"
+                    fetchPlan="imap-msg-attachment-full">
+            <loader id="imapDemoAttachmentsLoader">
+                <query>
+                    <![CDATA[select a from imap_MessageAttachment a where a.imapMessage = :container_imapMessageDc order by a.orderNumber asc]]>
+                </query>
+            </loader>
+
+        </collection>
+    </data>
+    <dialogMode height="600"
+                width="800"/>
+
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+
+    <layout expand="contentBox"
+            spacing="true">
+        <progressBar id="progressBar"
+                     indeterminate="true"
+                     width="100%"/>
+        <vbox id="contentBox"
+              spacing="true">
+            <split height="100%"
+                   orientation="vertical"
+                   pos="55"
+                   width="100%">
+                <hbox id="fields"
+                      spacing="true"
+                      width="100%">
+                    <form dataContainer="imapMessageDtoDc"
+                          editable="false"
+                          width="100%">
+                        <column width="100%">
+                            <field property="date"/>
+                            <field property="from"/>
+                            <field property="folderName"/>
+                            <field property="mailBox"/>
+                            <field property="subject"/>
+                            <field property="flags"/>
+                        </column>
+                    </form>
+                    <form dataContainer="imapMessageDtoDc"
+                                editable="false"
+                                width="100%">
+                        <column width="100%">
+                            <textArea property="to" rowspan="2"/>
+                            <textArea property="cc" rowspan="2"/>
+                            <textArea property="bcc" rowspan="2"/>
+                        </column>
+                    </form>
+                </hbox>
+
+                <tabSheet id="tabSheet">
+                    <tab id="bodyTab"
+                         caption="msg://bodyTabCaption">
+                        <scrollBox id="bodyContentScroll"
+                                   scrollBars="both"
+                                   visible="false">
+                            <label id="bodyContent"
+                                   height="100%"/>
+                        </scrollBox>
+                        <browserFrame id="bodyContentHtml"
+                                      height="500px"
+                                      visible="false"
+                                      width="100%"/>
+                    </tab>
+                    <tab id="attachmentsTab"
+                         caption="msg://attachmentsTabCaption"
+                         margin="true,false,true,false"
+                         spacing="true">
+                        <table id="attachmentsTable"
+                               height="100%"
+                               width="100%"
+                               dataContainer="imapDemoAttachmentsDc">
+                            <actions>
+                                <action id="download"
+                                        caption="msg://downloadAttachmentActionCaption"/>
+                            </actions>
+                            <columns>
+                                <column id="name"/>
+                                <column id="fileSize"/>
+                            </columns>
+                            <simplePagination/>
+                            <buttonsPanel>
+                                <button id="downloadBtn"
+                                        action="attachmentsTable.download"
+                                        enable="false"/>
+                            </buttonsPanel>
+                        </table>
+                    </tab>
+                </tabSheet>
+            </split>
+        </vbox>
+        <hbox id="editActions" spacing="true">
+            <button action="windowCommitAndClose"/>
+            <button action="windowClose"/>
+        </hbox>
+    </layout>
+</window>

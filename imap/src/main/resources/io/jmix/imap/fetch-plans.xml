@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2020 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<fetchPlans xmlns="http://jmix.io/schema/core/fetch-plans">
+    <fetchPlan class="io.jmix.imap.entity.ImapFolder"
+          extends="_local"
+          name="imap-folder-connect">
+        <property name="mailBox"
+                  fetchPlan="imap-mailBox-connect"/>
+    </fetchPlan>
+    <fetchPlan class="io.jmix.imap.entity.ImapFolder"
+          extends="_local"
+          name="imap-folder-edit">
+        <property name="events"
+                  fetchPlan="imap-folder-event-edit"/>
+        <property name="mailBox"
+                  fetchPlan="_instance_name"/>
+        <property name="parent"
+                  fetchPlan="_instance_name"/>
+    </fetchPlan>
+    <fetchPlan class="io.jmix.imap.entity.ImapFolder"
+          extends="imap-folder-edit"
+          name="imap-folder-full">
+        <property name="mailBox"
+                  fetchPlan="imap-mailBox-connect"/>
+    </fetchPlan>
+    <fetchPlan class="io.jmix.imap.entity.ImapMailBox"
+          extends="_local"
+          name="imap-mailbox-edit">
+        <property name="authentication"
+                  fetchPlan="_local"/>
+        <property name="folders"
+                  fetchPlan="imap-folder-edit"/>
+        <property name="rootCertificate"/>
+        <property name="proxy"
+                  fetchPlan="_instance_name">
+            <property name="webProxy"/>
+        </property>
+    </fetchPlan>
+    <fetchPlan class="io.jmix.imap.entity.ImapMailBox"
+          extends="_local"
+          name="imap-mailBox-connect">
+        <property name="rootCertificate"/>
+        <property name="authentication"
+                  fetchPlan="_instance_name">
+            <property name="username"/>
+            <property name="password"/>
+        </property>
+        <property name="proxy"
+                  fetchPlan="_instance_name">
+            <property name="webProxy"/>
+        </property>
+    </fetchPlan>
+    <fetchPlan class="io.jmix.imap.entity.ImapMessage"
+          extends="_local"
+          name="imap-msg-full">
+        <property name="folder"
+                  fetchPlan="imap-folder-full"/>
+    </fetchPlan>
+    <fetchPlan class="io.jmix.imap.entity.ImapMessageAttachment"
+          extends="_local"
+          name="imap-msg-attachment-full">
+        <property name="imapMessage"
+                  fetchPlan="imap-msg-full"/>
+    </fetchPlan>
+    <fetchPlan class="io.jmix.imap.entity.ImapFolderEvent"
+          extends="_local"
+          name="imap-folder-event-edit">
+        <property name="folder"
+                  fetchPlan="_instance_name"/>
+        <property name="eventHandlers"
+                  fetchPlan="imap-event-handler-edit"/>
+    </fetchPlan>
+
+    <fetchPlan class="io.jmix.imap.entity.ImapEventHandler"
+               extends="_local"
+               name="imap-event-handler-edit">
+        <property name="event" fetchPlan="_instance_name"/>
+    </fetchPlan>
+
+    <fetchPlan class="io.jmix.imap.entity.ImapMessageSync"
+          extends="_local"
+          name="imap-msg-sync-with-message">
+        <property name="message"
+                  fetchPlan="imap-msg-full"/>
+        <property name="oldFolder" fetchPlan="imap-folder-full"/>
+    </fetchPlan>
+
+    <fetchPlan entity="imap_MailBox" name="imapMailBox-browse" extends="_local"/>
+
+
+</fetchPlans>

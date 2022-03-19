@@ -1,0 +1,3 @@
+# Jmix IMAP provider
+protocol=imap; type=store; class=io.jmix.imap.protocol.JmixIMAPStore; vendor=Jmix;
+protocol=imaps; type=store; class=io.jmix.imap.protocol.JmixIMAPSSLStore; vendor=Jmix;

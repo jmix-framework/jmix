@@ -1,0 +1,78 @@
+<!--
+  ~ Copyright (c) 2008-2019 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<window xmlns="http://schemas.haulmont.com/cuba/window.xsd"
+        caption="mainMsg://application.caption">
+
+    <layout>
+        <cssLayout id="horizontalWrap"
+                   stylename="jmix-sidemenu-layout"
+                   height="100%"
+                   width="100%">
+            <cssLayout id="sideMenuContainer"
+                       height="100%"
+                       stylename="jmix-sidemenu-container">
+                <cssLayout id="sideMenuPanel"
+                           stylename="jmix-sidemenu-panel">
+                    <cssLayout id="appTitleBox"
+                               stylename="jmix-sidemenu-title"
+                               width="100%">
+                        <image id="logoImage"
+                               stylename="jmix-app-icon"
+                               scaleMode="SCALE_DOWN"/>
+                        <label id="appTitleLabel"
+                               stylename="jmix-app-title"
+                               value="mainMsg://application.logoLabel"/>
+                    </cssLayout>
+                    <sideMenu id="sideMenu"
+                              width="100%"/>
+                    <!-- todo fts -->
+                    <!--<ftsField id="ftFsField"
+                              width="100%"/>-->
+                    <timeZoneIndicator id="timeZoneIndicator"
+                                       align="MIDDLE_CENTER"/>
+                    <cssLayout id="controlBox"
+                               stylename="jmix-sidemenu-controls"
+                               width="100%">
+                        <button id="collapseMenuButton"
+                                caption="mainMsg://menuCollapseGlyph"
+                                description="mainMsg://sideMenuCollapse"
+                                stylename="jmix-sidemenu-collapse-button"/>
+                        <userIndicator id="userIndicator"
+                                       align="MIDDLE_CENTER"/>
+                        <button id="settingsButton"
+                                icon="GEAR"
+                                description="mainMsg://settings"
+                                stylename="jmix-settings-button"/>
+                        <logoutButton id="logoutButton"
+                                      icon="SIGN_OUT"
+                                      description="mainMsg://logoutBtnDescription"/>
+                        <button id="loginButton"
+                                icon="SIGN_IN"
+                                description="mainMsg://loginBtnDescription"
+                                stylename="jmix-login-button"/>
+                    </cssLayout>
+                </cssLayout>
+            </cssLayout>
+            <workArea id="workArea"
+                      stylename="jmix-workarea"
+                      height="100%">
+                <initialLayout spacing="true" margin="true">
+                </initialLayout>
+            </workArea>
+        </cssLayout>
+    </layout>
+</window>

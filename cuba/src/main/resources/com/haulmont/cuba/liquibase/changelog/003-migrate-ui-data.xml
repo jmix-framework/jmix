@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2021 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd"
+        context="cuba and !migrated">
+
+    <!--  Filters  -->
+
+    <changeSet id="10" author="migrator" context="cuba and !migrated">
+        <validCheckSum>1:any</validCheckSum>
+        <addColumn tableName="SEC_FILTER">
+            <column name="USERNAME" type="varchar(255)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="20" author="migrator" context="cuba and !migrated">
+        <validCheckSum>1:any</validCheckSum>
+        <update tableName="SEC_FILTER">
+            <column name="USERNAME" valueComputed="(select u.USERNAME from SEC_USER u where u.ID = USER_ID)"/>
+        </update>
+    </changeSet>
+
+    <!--  TablePresentations  -->
+
+    <changeSet id="30" author="migrator" context="cuba and !migrated">
+        <validCheckSum>1:any</validCheckSum>
+        <renameTable oldTableName="SEC_PRESENTATION" newTableName="UI_TABLE_PRESENTATION"/>
+    </changeSet>
+
+    <changeSet id="40" author="migrator" context="cuba and !migrated">
+        <validCheckSum>1:any</validCheckSum>
+        <addColumn tableName="UI_TABLE_PRESENTATION">
+            <column name="USERNAME" type="varchar(255)"/>
+            <column name="IS_DEFAULT" type="boolean"/>
+        </addColumn>
+        <renameColumn tableName="UI_TABLE_PRESENTATION" oldColumnName="XML" newColumnName="SETTINGS" columnDataType="varchar(4000)"/>
+    </changeSet>
+
+    <changeSet id="50" author="migrator" context="cuba and !migrated">
+        <validCheckSum>1:any</validCheckSum>
+        <update tableName="UI_TABLE_PRESENTATION">
+            <column name="USERNAME" valueComputed="(select u.USERNAME from SEC_USER u where u.ID = USER_ID)"/>
+        </update>
+    </changeSet>
+
+</databaseChangeLog>

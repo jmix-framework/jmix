@@ -1,0 +1,66 @@
+/*
+ * Copyright 2020 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+apply plugin: 'groovy'
+apply plugin: 'io.jmix'
+
+group = 'io.jmix.cuba'
+archivesBaseName = 'jmix-cuba'
+
+dependencies {
+    api 'io.jmix.core:jmix-core'
+    api 'io.jmix.data:jmix-data'
+    api 'io.jmix.data:jmix-eclipselink'
+    api 'io.jmix.ui:jmix-ui'
+    api 'io.jmix.ui:jmix-ui-data'
+    api 'io.jmix.ui:jmix-ui-export-starter'
+    api 'io.jmix.security:jmix-security'
+    api 'io.jmix.security:jmix-security-ui'
+    api 'io.jmix.dynattr:jmix-dynattr'
+    api 'io.jmix.dynattr:jmix-dynattr-ui'
+    api 'io.jmix.audit:jmix-audit-starter'
+    api 'io.jmix.audit:jmix-audit-ui-starter'
+    api 'io.jmix.email:jmix-email-starter'
+    api 'io.jmix.email:jmix-email-ui-starter'
+    api 'io.jmix.localfs:jmix-localfs'
+    api 'io.jmix.datatools:jmix-datatools'
+    api 'io.jmix.datatools:jmix-datatools-ui'
+
+    api 'com.thoughtworks.xstream:xstream:1.4.13'
+    api 'org.perf4j:perf4j:0.9.16'
+    api 'org.freemarker:freemarker:2.3.30'
+
+    api 'javax.inject:javax.inject'
+
+    implementation 'org.springframework.security.oauth:spring-security-oauth2'
+
+    compileOnly 'io.jmix.rest:jmix-rest'
+
+    testImplementation 'io.jmix.ui:jmix-ui-test-assist'
+
+    testImplementation 'org.apache.commons:commons-dbcp2'
+    testImplementation 'org.springframework:spring-orm'
+    testImplementation 'ch.qos.logback:logback-classic'
+    testImplementation 'commons-codec:commons-codec:1.13'
+    testImplementation 'cglib:cglib-nodep:3.3.0'
+    testImplementation 'org.objenesis:objenesis:3.1'
+    testImplementation 'org.codehaus.groovy:groovy-sql'
+    testImplementation 'org.antlr:antlr-runtime'
+
+    testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'
+    testRuntimeOnly 'org.slf4j:slf4j-simple'
+    testRuntimeOnly 'org.hsqldb:hsqldb'
+}

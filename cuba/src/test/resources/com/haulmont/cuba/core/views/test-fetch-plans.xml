@@ -1,0 +1,171 @@
+<!--
+  ~ Copyright (c) 2008-2016 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  ~
+  -->
+
+<fetchPlans xmlns="http://jmix.io/schema/core/fetch-plans">
+
+    <fetchPlan class="com.haulmont.cuba.core.model.common.User" name="user.edit" extends="_local">
+        <property name="group">
+            <property name="name"/>
+        </property>
+        <property name="userRoles" fetchPlan="user.edit"/>
+        <property name="substitutions" fetchPlan="user.edit"/>
+    </fetchPlan>
+
+    <fetchPlan class="com.haulmont.cuba.core.model.common.User" name="user.locale" extends="_minimal">
+        <property name="language"/>
+    </fetchPlan>
+
+    <fetchPlan class="com.haulmont.cuba.core.model.common.User" name="user.browse" extends="_local" systemProperties="true">
+        <property name="group" fetchPlan="_minimal"/>
+    </fetchPlan>
+
+    <fetchPlan class="com.haulmont.cuba.core.model.common.UserRole" name="user.edit">
+        <property name="role">
+            <property name="name"/>
+            <property name="locName"/>
+            <property name="defaultRole"/>
+        </property>
+        <property name="roleName"/>
+    </fetchPlan>
+
+    <fetchPlan class="com.haulmont.cuba.core.model.common.UserSubstitution" name="user.edit">
+        <property name="substitutedUser">
+            <property name="login"/>
+            <property name="name"/>
+        </property>
+        <property name="startDate"/>
+        <property name="endDate"/>
+    </fetchPlan>
+
+    <fetchPlan entity="test$Order" name="with-customer" extends="_local">
+        <property name="customer" fetchPlan="_local"/>
+    </fetchPlan>
+
+    <fetchPlan entity="test$OrderLine" name="with-product" extends="_local">
+        <property name="product" fetchPlan="_local"/>
+    </fetchPlan>
+
+    <fetchPlan entity="test$Group" name="group.browse">
+        <property name="name"/>
+        <property name="parent"/>
+    </fetchPlan>
+
+    <fetchPlan entity="test$SeveralFetchGroups_TariffVersion"
+          extends="_local"
+          name="tariffVersion.withParent">
+        <property name="parent" fetchPlan="tariff-with-version"/>
+    </fetchPlan>
+
+    <fetchPlan entity="test$SeveralFetchGroups_Tariff"
+          extends="_minimal"
+          name="tariff-with-version">
+        <property name="parent"
+                  fetchPlan="_minimal"/>
+        <property name="activeVersion" fetchPlan="_minimal"/>
+    </fetchPlan>
+
+    <fetchPlan entity="test$Many2Many_FetchSame1"
+          extends="_local"
+          name="Many2Many_FetchSame1-emptyCollection">
+        <property name="many2"
+                  fetchPlan="_minimal">
+            <property name="many1"
+                      fetchPlan="_minimal">
+                <property name="many2"
+                          fetchPlan="_minimal"/>
+            </property>
+        </property>
+    </fetchPlan>
+
+    <fetchPlan entity="test$Many2Many_FetchSame1"
+          extends="_local"
+          name="Many2Many_FetchSame1-sameEntityTwice">
+        <property name="oneToMany2"
+                  fetchPlan="_minimal">
+            <property name="many3"
+                      fetchPlan="_minimal">
+                <property name="oneToMany2"
+                          fetchPlan="_minimal"/>
+            </property>
+        </property>
+    </fetchPlan>
+
+    <fetchPlan entity="test_SelfReferencedEntity" name="entityWithChildren" extends="_local">
+        <property name="children" fetchPlan="_local"/>
+    </fetchPlan>
+
+    <fetchPlan entity="test$CompositeOne"
+          extends="_local"
+          name="compositeOne-view">
+        <property name="compositePropertyOne"
+                  fetchPlan="compositePropertyOne-fetchPlan">
+        </property>
+    </fetchPlan>
+
+    <fetchPlan entity="test$CompositePropertyOne"
+          extends="_local"
+          name="compositePropertyOne-fetchPlan">
+        <property name="compositeOne" fetchPlan="_minimal"/>
+        <property name="compositeTwo" fetchPlan="compositeTwo-fetchPlan"/>
+    </fetchPlan>
+
+    <fetchPlan entity="test$CompositeTwo"
+          extends="_local"
+          name="compositeTwo-fetchPlan">
+        <property name="compositePropertyTwo"
+                  fetchPlan="compositePropertyTwo-fetchPlan"/>
+    </fetchPlan>
+
+    <fetchPlan entity="test$CompositePropertyTwo"
+          extends="_local"
+          name="compositePropertyTwo-fetchPlan">
+        <property name="compositeTwo" fetchPlan="_minimal"/>
+    </fetchPlan>
+
+    <fetchPlan entity="test$UserSubstitution" name="usersubst.edit">
+        <property name="user" fetchPlan="_minimal"/>
+        <property name="substitutedUser" fetchPlan="_minimal"/>
+        <property name="startDate"/>
+        <property name="endDate"/>
+    </fetchPlan>
+
+    <fetchPlan entity="test$Group"
+          name="group.browse">
+        <property name="name"/>
+        <property name="parent"/>
+        <property name="constraints" fetchPlan="_local"/>
+    </fetchPlan>
+
+    <fetchPlan entity="test_PetclinicOwner" name="owner-with-category-view">
+        <property name="category" fetchPlan="_local"/>
+    </fetchPlan>
+
+    <fetchPlan entity="test$Customer"
+          name="customer-with-systems"
+          extends="_local"
+          systemProperties="true">
+        <property name="address" fetchPlan="_local"/>
+    </fetchPlan>
+    <fetchPlan entity="test$Customer"
+               name="customer-without-systems"
+               extends="_minimal">
+        <property name="name"/>
+        <property name="email"/>
+        <property name="status"/>
+        <property name="address" fetchPlan="_local"/>
+    </fetchPlan>
+</fetchPlans>

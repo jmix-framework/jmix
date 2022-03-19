@@ -1,0 +1,78 @@
+<!--
+  ~ Copyright 2020 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<window xmlns="http://jmix.io/schema/ui/window"
+        caption="msg://UserSessions.browse"
+        focusComponent="sessionsTable">
+    <data readOnly="true">
+        <collection id="userSessionsDc"
+                    class="io.jmix.audit.entity.UserSession">
+            <loader id="userSessionsDl"/>
+        </collection>
+    </data>
+    <dialogMode height="600"
+                width="800"/>
+    <facets>
+        <presentations id="presentations" auto="true"/>
+    </facets>
+    <layout spacing="true" expand="sessionsTable">
+        <hbox id="filterHBox" spacing="true" width="100%">
+            <groupBox id="filterGroupBox" caption="msg://UserSessions.filter" orientation="horizontal" spacing="true"
+                      width="AUTO">
+                <gridLayout id="filterGrid" spacing="true">
+                    <columns count="3"/>
+                    <rows>
+                        <row>
+                            <label value="msg://UserSessions.nameField"/>
+                            <label value="msg://UserSessions.lastRequestDateFrom"/>
+                            <label value="msg://UserSessions.lastRequestDateTo"/>
+                        </row>
+                        <row>
+                            <textField id="userName" datatype="string"/>
+                            <dateField id="lastRequestDateFrom" datatype="date"/>
+                            <dateField id="lastRequestDateTo" datatype="date"/>
+                        </row>
+                    </rows>
+                </gridLayout>
+                <button id="clearButton" caption="clear" align="BOTTOM_RIGHT"/>
+            </groupBox>
+        </hbox>
+        <groupTable id="sessionsTable"
+                    width="100%"
+                    dataContainer="userSessionsDc"
+                    multiselect="true">
+            <actions>
+                <action id="refresh" type="refresh"/>
+                <action id="expire" caption="msg://expire" icon="BAN"/>
+            </actions>
+            <columns>
+                <column id="sessionId"/>
+                <column id="principalName"/>
+                <column id="lastRequest"/>
+            </columns>
+            <simplePagination/>
+            <buttonsPanel id="buttonsPanel"
+                          alwaysVisible="true">
+                <button id="refreshBtn" action="sessionsTable.refresh"/>
+                <button id="expireBtn" action="sessionsTable.expire"/>
+            </buttonsPanel>
+        </groupTable>
+        <hbox id="lookupActions" spacing="true" visible="false">
+            <button action="lookupSelectAction"/>
+            <button action="lookupCancelAction"/>
+        </hbox>
+    </layout>
+</window>

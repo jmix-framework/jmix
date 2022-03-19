@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2021 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<window xmlns="http://jmix.io/schema/ui/window">
+    <data>
+        <collection id="snapshotsCt" class="io.jmix.audit.snapshot.model.EntitySnapshotModel"
+                    fetchPlan="_local"/>
+        <instance id="entityDiffCt"
+                  class="io.jmix.audit.snapshot.model.EntityDifferenceModel"
+                  fetchPlan="_local"/>
+        <collection id="diffCt"
+                    class="io.jmix.audit.snapshot.model.EntityPropertyDifferenceModel"
+                    fetchPlan="_local"/>
+
+    </data>
+    <layout>
+        <split id="diffSplit" orientation="horizontal" pos="20" width="100%" height="100%">
+            <vbox expand="snapshotsTable" spacing="true" margin="true" width="100%" height="100%">
+                <label value="msg://snapshotDiffViewer.versions" stylename="h2"/>
+                <buttonsPanel>
+                    <button id="compareBtn" icon="icons/copy.png" caption="msg://snapshotDiffViewer.actions.Compare"/>
+                </buttonsPanel>
+                <table id="snapshotsTable" multiselect="true" width="100%" dataContainer="snapshotsCt">
+                    <columns>
+                        <column id="changeDate"/>
+                        <column id="authorUsername"/>
+                    </columns>
+                </table>
+            </vbox>
+            <split orientation="vertical" width="100%" height="100%">
+                <vbox id="diffVBox" expand="diffTable" spacing="true" margin="true" width="100%" height="100%">
+                    <label value="msg://snapshotDiffViewer.difference" stylename="h2"/>
+                    <label property="label" dataContainer="entityDiffCt"/>
+                    <treeTable id="diffTable" width="100%" dataContainer="diffCt" hierarchyProperty="parentProperty">
+                        <columns>
+                            <column id="name"/>
+                            <column id="beforeCaption"/>
+                            <column id="afterCaption"/>
+                        </columns>
+                    </treeTable>
+                </vbox>
+                <vbox id="valuesVBox" spacing="true" margin="true" expand="diffValuesField" width="100%" height="100%">
+                    <label id="valuesHeader" visible="false" value="msg://snapshotDiffViewer.changes" stylename="h2"/>
+                    <hbox id="itemStateField" visible="false" spacing="true">
+                        <label value="msg://snapshotDiffViewer.itemState"/>
+                        <label id="itemStateLabel"/>
+                    </hbox>
+                    <form id="diffValuesField" dataContainer="diffCt" visible="false" width="100%">
+                        <column>
+                            <field property="afterString" editable="false"/>
+                            <field property="beforeString" editable="false"/>
+                        </column>
+                    </form>
+                </vbox>
+            </split>
+        </split>
+    </layout>
+</window>

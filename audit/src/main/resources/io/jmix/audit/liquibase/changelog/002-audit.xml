@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet author="audit" id="1" context="!cuba">
+
+        <createTable tableName="AUDIT_ENTITY_SNAPSHOT">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="CREATED_DATE" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(255)"/>
+            <column name="SYS_TENANT_ID" type="varchar(255)"/>
+
+            <column name="STRING_ENTITY_ID" type="varchar(255)"/>
+            <column name="INT_ENTITY_ID" type="integer">
+                <constraints nullable="true"/>
+            </column>
+            <column name="LONG_ENTITY_ID" type="bigint">
+                <constraints nullable="true"/>
+            </column>
+            <column name="ENTITY_ID" type="${uuid.type}">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="ENTITY_META_CLASS" type="varchar(100)"/>
+            <column name="AUTHOR_USERNAME" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FETCH_PLAN_XML" type="clob"/>
+            <column name="SNAPSHOT_XML" type="clob"/>
+            <column name="SNAPSHOT_DATE" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet author="audit" id="1" context="!cuba">
+
+        <createTable tableName="AUDIT_LOGGED_ENTITY">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(255)"/>
+            <column name="NAME" type="varchar(100)">
+                <constraints unique="true"/>
+            </column>
+            <column name="AUTO" type="boolean"/>
+            <column name="MANUAL" type="boolean"/>
+        </createTable>
+
+        <createTable tableName="AUDIT_LOGGED_ATTR">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(255)"/>
+            <column name="ENTITY_ID" type="${uuid.type}">
+                <constraints nullable="false"
+                             foreignKeyName="FK_AUDIT_LOGGED_ATTR_ENTITY"
+                             references="AUDIT_LOGGED_ENTITY(ID)"/>
+            </column>
+            <column name="NAME" type="varchar(255)"/>
+        </createTable>
+
+        <addUniqueConstraint
+                columnNames="ENTITY_ID, NAME"
+                constraintName="AUDIT_LOGGED_ATTR_UNIQ_NAME"
+                tableName="AUDIT_LOGGED_ATTR"/>
+
+        <createTable tableName="AUDIT_ENTITY_LOG">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(255)"/>
+            <column name="USERNAME" type="varchar(255)"/>
+            <column name="EVENT_TS" type="datetime"/>
+            <column name="CHANGE_TYPE" type="varchar(1)"/>
+            <column name="ENTITY" type="varchar(100)"/>
+            <column name="ENTITY_INSTANCE_NAME" type="varchar(1000)"/>
+            <column name="ENTITY_ID" type="${uuid.type}"/>
+            <column name="STRING_ENTITY_ID" type="varchar(255)"/>
+            <column name="INT_ENTITY_ID" type="int"/>
+            <column name="LONG_ENTITY_ID" type="bigint"/>
+            <column name="CHANGES" type="clob"/>
+        </createTable>
+
+    </changeSet>
+
+    <changeSet author="audit" id="2" context="!cuba">
+        <addColumn tableName="AUDIT_ENTITY_LOG">
+            <column name="SYS_TENANT_ID" type="varchar(255)"/>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

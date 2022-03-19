@@ -1,0 +1,10 @@
+{
+	"properties": {
+		"name": {
+			"type": "text"
+		},
+		"_instance_name": {
+			"type": "text"
+		}
+	}
+}

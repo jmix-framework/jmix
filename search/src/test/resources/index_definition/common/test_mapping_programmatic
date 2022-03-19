@@ -1,0 +1,18 @@
+{
+	"properties": {
+		"firstTextValue": {
+			"type": "text",
+			"analyzer": "english"
+		},
+		"secondTextValue": {
+        	"type": "text",
+        	"analyzer": "english"
+        },
+		"name": {
+			"type": "text"
+		},
+		"_instance_name": {
+			"type": "text"
+		}
+	}
+}

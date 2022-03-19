@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd"
+        objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+    <changeSet id="1" author="test">
+        <createTable tableName="TEST_EMB_TRACK_REF_ENTITY_HD">
+            <column name="ID" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_TESTEMBTRACKREFENTITYHD"/>
+            </column>
+            <column name="VERSION" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="NAME" type="VARCHAR(255)"/>
+            <column name="TEXT_VALUE" type="VARCHAR(255)"/>
+            <column name="REF_TO_ROOT_ID" type="UUID"/>
+            <column name="EMBEDDED_TEXT_VALUE" type="VARCHAR(255)"/>
+            <column name="EMBEDDED_ENUM_VALUE" type="INT"/>
+            <column name="EMBEDDED_INT_VALUE" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="2" author="test">
+        <createTable tableName="TEST_EMB_TRACK_ROOT_ENTITY_HD">
+            <column name="ID" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_TESTEMBTRACKROOTENTITYHD"/>
+            </column>
+            <column name="VERSION" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="NAME" type="VARCHAR(255)"/>
+            <column name="TEXT_VALUE" type="VARCHAR(255)"/>
+            <column name="EMBEDDED_TEXT_VALUE" type="VARCHAR(255)"/>
+            <column name="EMBEDDED_ENUM_VALUE" type="INT"/>
+            <column name="EMBEDDED_INT_VALUE" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="3" author="test">
+        <addForeignKeyConstraint baseColumnNames="REF_TO_ROOT_ID" baseTableName="TEST_EMB_TRACK_REF_ENTITY_HD"
+                                 constraintName="FK_TESTEMBTRAREHD_ON_REFTOROOT" onDelete="SET NULL"
+                                 referencedColumnNames="ID" referencedTableName="TEST_EMB_TRACK_ROOT_ENTITY_HD"/>
+    </changeSet>
+</databaseChangeLog>

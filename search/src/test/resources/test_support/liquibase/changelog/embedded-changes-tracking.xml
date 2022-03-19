@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd"
+        objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+    <changeSet id="1" author="test">
+        <createTable tableName="TEST_EMB_TRACK_REF_ENTITY">
+            <column name="ID" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_TEST_EMB_TRACK_REF_ENTITY"/>
+            </column>
+            <column name="VERSION" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="DATETIME"/>
+            <column name="CREATED_BY" type="VARCHAR(50)"/>
+            <column name="UPDATE_TS" type="DATETIME"/>
+            <column name="UPDATED_BY" type="VARCHAR(50)"/>
+            <column name="DELETE_TS" type="DATETIME"/>
+            <column name="DELETED_BY" type="VARCHAR(50)"/>
+            <column name="NAME" type="VARCHAR(255)"/>
+            <column name="TEXT_VALUE" type="VARCHAR(255)"/>
+            <column name="REF_TO_ROOT_ID" type="UUID"/>
+            <column name="EMBEDDED_TEXT_VALUE" type="VARCHAR(255)"/>
+            <column name="EMBEDDED_ENUM_VALUE" type="INT"/>
+            <column name="EMBEDDED_INT_VALUE" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="2" author="test">
+        <createTable tableName="TEST_EMB_TRACK_ROOT_ENTITY">
+            <column name="ID" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_TEST_EMB_TRACK_ROOT_ENTITY"/>
+            </column>
+            <column name="VERSION" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="DATETIME"/>
+            <column name="CREATED_BY" type="VARCHAR(50)"/>
+            <column name="UPDATE_TS" type="DATETIME"/>
+            <column name="UPDATED_BY" type="VARCHAR(50)"/>
+            <column name="DELETE_TS" type="DATETIME"/>
+            <column name="DELETED_BY" type="VARCHAR(50)"/>
+            <column name="NAME" type="VARCHAR(255)"/>
+            <column name="TEXT_VALUE" type="VARCHAR(255)"/>
+            <column name="EMBEDDED_TEXT_VALUE" type="VARCHAR(255)"/>
+            <column name="EMBEDDED_ENUM_VALUE" type="INT"/>
+            <column name="EMBEDDED_INT_VALUE" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="3" author="test">
+        <addForeignKeyConstraint baseColumnNames="REF_TO_ROOT_ID" baseTableName="TEST_EMB_TRACK_REF_ENTITY"
+                                 constraintName="FK_TESTEMBTRACKRE_ON_REFTOROOT" referencedColumnNames="ID"
+                                 referencedTableName="TEST_EMB_TRACK_ROOT_ENTITY"/>
+    </changeSet>
+</databaseChangeLog>

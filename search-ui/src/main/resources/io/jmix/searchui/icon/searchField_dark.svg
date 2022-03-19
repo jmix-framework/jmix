@@ -1,0 +1,22 @@
+<!--
+  - Copyright 2021 Haulmont.
+  -
+  - Licensed under the Apache License, Version 2.0 (the "License");
+  - you may not use this file except in compliance with the License.
+  - You may obtain a copy of the License at
+  -
+  -     http://www.apache.org/licenses/LICENSE-2.0
+  -
+  - Unless required by applicable law or agreed to in writing, software
+  - distributed under the License is distributed on an "AS IS" BASIS,
+  - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  - See the License for the specific language governing permissions and
+  - limitations under the License.
+  -->
+
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path fill-rule="evenodd" clip-rule="evenodd"
+          d="M13 3H8V13H13C14.1046 13 15 12.1046 15 11V5C15 3.89543 14.1046 3 13 3ZM11 10Z M8 3 8 3.89109 8 4.9802V11.0297ZM11.0081 6.55C10.4513 6.55 10 7.00135 10 7.55811C10 8.11488 10.4513 8.56623 11.0081 8.56623C11.5649 8.56623 12.0162 8.11488 12.0162 7.55811C12.0162 7.00135 11.5649 6.55 11.0081 6.55ZM9 7.55811C9 6.44906 9.89906 5.55 11.0081 5.55C12.1172 5.55 13.0162 6.44906 13.0162 7.55811C13.0162 7.93127 12.9144 8.28066 12.7371 8.58003L14.0004 9.84326L13.2933 10.5504L12.03 9.28713C11.7307 9.46445 11.3813 9.56623 11.0081 9.56623C9.89906 9.56623 9 8.66716 9 7.55811Z"
+          fill="#AFB1B3"/>
+    <path d="M1.5 5C1.5 4.17157 2.17157 3.5 3 3.5H7.5V12.5H3C2.17157 12.5 1.5 11.8284 1.5 11V5Z" stroke="#AFB1B3"/>
+</svg>

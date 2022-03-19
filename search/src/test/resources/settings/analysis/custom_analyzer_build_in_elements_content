@@ -1,0 +1,18 @@
+{
+	"index": {
+		"analysis": {
+			"analyzer": {
+				"custom_analyzer_built_in_elements": {
+					"type": "custom",
+					"tokenizer": "whitespace",
+					"char_filter": [
+						"html_strip"
+					],
+					"filter": [
+						"stop"
+					]
+				}
+			}
+		}
+	}
+}

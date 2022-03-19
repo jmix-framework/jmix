@@ -1,0 +1,17 @@
+{
+	"properties": {
+		"embedded": {
+			"properties": {
+				"textValue": {
+					"type": "text"
+				}
+			}
+		},
+		"name": {
+			"type": "text"
+		},
+		"_instance_name": {
+			"type": "text"
+		}
+	}
+}

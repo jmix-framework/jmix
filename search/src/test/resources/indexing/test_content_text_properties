@@ -1,0 +1,56 @@
+{
+	"_instance_name": "rootEntity",
+	"oneToOneRef": {
+		"_instance_name": "oneToOneRef",
+		"oneToOneRef": {
+			"_instance_name": "oneToOneSubRef1",
+			"name": "oneToOneSubRef1"
+		},
+		"name": "oneToOneRef",
+		"oneToManyRef": {
+			"_instance_name": [
+				"oneToManySubRef12",
+				"oneToManySubRef11"
+			],
+			"name": [
+				"oneToManySubRef12",
+				"oneToManySubRef11"
+			]
+		}
+	},
+	"name": "rootEntity",
+	"oneToManyRef": {
+		"_instance_name": [
+			"oneToManyRef1",
+			"oneToManyRef2"
+		],
+		"oneToOneRef": {
+			"_instance_name": [
+				"oneToOneSubRef2",
+				"oneToOneSubRef3"
+			],
+			"name": [
+				"oneToOneSubRef2",
+				"oneToOneSubRef3"
+			]
+		},
+		"name": [
+			"oneToManyRef1",
+			"oneToManyRef2"
+		],
+		"oneToManyRef": {
+			"_instance_name": [
+				"oneToManySubRef22",
+				"oneToManySubRef21",
+				"oneToManySubRef32",
+				"oneToManySubRef31"
+			],
+			"name": [
+				"oneToManySubRef22",
+				"oneToManySubRef21",
+				"oneToManySubRef32",
+				"oneToManySubRef31"
+			]
+		}
+	}
+}

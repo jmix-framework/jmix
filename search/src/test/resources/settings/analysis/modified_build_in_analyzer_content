@@ -1,0 +1,13 @@
+{
+	"index": {
+		"analysis": {
+			"analyzer": {
+				"modified_built_in_analyzer": {
+					"type": "standard",
+					"max_token_length": 100,
+					"stopwords": "_english_"
+				}
+			}
+		}
+	}
+}

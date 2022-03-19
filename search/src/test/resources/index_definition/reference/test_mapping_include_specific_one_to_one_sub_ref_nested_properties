@@ -1,0 +1,27 @@
+{
+	"properties": {
+		"oneToOneAssociation": {
+			"properties": {
+				"name": {
+					"type": "text"
+				},
+				"oneToOneAssociation": {
+                	"properties": {
+                		"name": {
+                        	"type": "text"
+                        },
+                        "textValue": {
+                        	"type": "text"
+                        }
+                	}
+                }
+			}
+		},
+		"name": {
+			"type": "text"
+		},
+		"_instance_name": {
+			"type": "text"
+		}
+	}
+}

@@ -1,0 +1,59 @@
+{
+	"index": {
+		"analysis": {
+			"analyzer": {
+				"modified_built_in_analyzer": {
+					"type": "standard",
+					"max_token_length": 100,
+					"stopwords": "_english_"
+				},
+				"native_custom_analyzer_custom_elements": {
+					"type": "custom",
+					"tokenizer": "native_modified_tokenizer",
+					"char_filter": [
+						"modified_char_filter",
+						"native_modified_char_filter"
+					],
+					"filter": [
+						"modified_token_filter",
+						"native_modified_token_filter"
+					]
+				}
+			},
+			"tokenizer": {
+				"native_modified_tokenizer": {
+					"type": "whitespace",
+					"max_token_length": "100"
+				}
+			},
+			"char_filter": {
+				"modified_char_filter": {
+					"escaped_tags": [
+						"b",
+						"i"
+					],
+					"type": "html_strip"
+				},
+				"native_modified_char_filter": {
+					"escaped_tags": [
+						"b",
+						"i"
+					],
+					"type": "html_strip"
+				}
+			},
+			"filter": {
+				"modified_token_filter": {
+					"ignore_case": "true",
+					"type": "stop",
+					"stopwords": "_english_"
+				},
+				"native_modified_token_filter": {
+					"ignore_case": "true",
+					"type": "stop",
+					"stopwords": "_english_"
+				}
+			}
+		}
+	}
+}

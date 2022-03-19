@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd"
+        objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+    <changeSet id="1" author="js2">
+        <createTable tableName="TEST_TEXT_REF_ENTITY">
+            <column name="ID" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_TEST_TEXT_REF_ENTITY"/>
+            </column>
+            <column name="VERSION" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="DATETIME"/>
+            <column name="CREATED_BY" type="VARCHAR(50)"/>
+            <column name="UPDATE_TS" type="DATETIME"/>
+            <column name="UPDATED_BY" type="VARCHAR(50)"/>
+            <column name="DELETE_TS" type="DATETIME"/>
+            <column name="DELETED_BY" type="VARCHAR(50)"/>
+            <column name="NAME" type="VARCHAR(255)"/>
+            <column name="ONE_TO_ONE_REF_ID" type="UUID"/>
+            <column name="MANY_TO_ONE_REF_ID" type="UUID"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="2" author="js2">
+        <createTable tableName="TEST_TEXT_ROOT_ENTITY">
+            <column name="ID" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_TEST_TEXT_ROOT_ENTITY"/>
+            </column>
+            <column name="VERSION" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="DATETIME"/>
+            <column name="CREATED_BY" type="VARCHAR(50)"/>
+            <column name="UPDATE_TS" type="DATETIME"/>
+            <column name="UPDATED_BY" type="VARCHAR(50)"/>
+            <column name="DELETE_TS" type="DATETIME"/>
+            <column name="DELETED_BY" type="VARCHAR(50)"/>
+            <column name="NAME" type="VARCHAR(255)"/>
+            <column name="ONE_TO_ONE_REF_ID" type="UUID"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="3" author="js2">
+        <createTable tableName="TEST_TEXT_SUB_REF_ENTITY">
+            <column name="ID" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_TEST_TEXT_SUB_REF_ENTITY"/>
+            </column>
+            <column name="VERSION" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="DATETIME"/>
+            <column name="CREATED_BY" type="VARCHAR(50)"/>
+            <column name="UPDATE_TS" type="DATETIME"/>
+            <column name="UPDATED_BY" type="VARCHAR(50)"/>
+            <column name="DELETE_TS" type="DATETIME"/>
+            <column name="DELETED_BY" type="VARCHAR(50)"/>
+            <column name="NAME" type="VARCHAR(255)"/>
+            <column name="MANY_TO_ONE_REF_ID" type="UUID"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="4" author="js2">
+        <addForeignKeyConstraint baseColumnNames="ONE_TO_ONE_REF_ID" baseTableName="TEST_TEXT_REF_ENTITY"
+                                 constraintName="FK_TESTTEXTREFE_ON_ONETOONEREF" referencedColumnNames="ID"
+                                 referencedTableName="TEST_TEXT_SUB_REF_ENTITY"/>
+    </changeSet>
+    <changeSet id="5" author="js2">
+        <addForeignKeyConstraint baseColumnNames="MANY_TO_ONE_REF_ID" baseTableName="TEST_TEXT_REF_ENTITY"
+                                 constraintName="FK_TESTTEXTREF_ON_MANYTOONERE" referencedColumnNames="ID"
+                                 referencedTableName="TEST_TEXT_ROOT_ENTITY"/>
+    </changeSet>
+    <changeSet id="6" author="js2">
+        <addForeignKeyConstraint baseColumnNames="ONE_TO_ONE_REF_ID" baseTableName="TEST_TEXT_ROOT_ENTITY"
+                                 constraintName="FK_TESTTEXTROOT_ON_ONETOONEREF" referencedColumnNames="ID"
+                                 referencedTableName="TEST_TEXT_REF_ENTITY"/>
+    </changeSet>
+    <changeSet id="7" author="js2">
+        <addForeignKeyConstraint baseColumnNames="MANY_TO_ONE_REF_ID" baseTableName="TEST_TEXT_SUB_REF_ENTITY"
+                                 constraintName="FK_TESTTEXTSUB_ON_MANYTOONERE" referencedColumnNames="ID"
+                                 referencedTableName="TEST_TEXT_REF_ENTITY"/>
+    </changeSet>
+</databaseChangeLog>

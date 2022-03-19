@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2020 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<fetchPlans xmlns="http://jmix.io/schema/core/fetch-plans">
+    <fetchPlan class="io.jmix.emailtemplates.entity.EmailTemplate"
+          extends="_local"
+          name="emailTemplate-fetchPlan">
+        <property name="group"
+                  fetchPlan="_instance_name"/>
+        <property name="attachedTemplateReports"
+                  fetchPlan="templateParameters-fetchPlan"/>
+    </fetchPlan>
+
+    <fetchPlan class="io.jmix.emailtemplates.entity.EmailTemplateAttachment"
+               extends="_local"
+               name="emailTemplateAttachment-fetchPlan">
+        <property name="emailTemplate" fetchPlan="_instance_name"/>
+    </fetchPlan>
+    <fetchPlan class="io.jmix.reports.entity.Report"
+          name="emailTemplate-fetchPlan">
+        <property name="name"/>
+        <property name="localeNames"/>
+        <property name="code"/>
+        <property name="description"/>
+        <property name="reportType"/>
+        <property name="group" fetchPlan="_base"/>
+        <property name="inputParameters"
+                  fetchPlan="_instance_name">
+            <property name="alias"/>
+            <property name="entityMetaClass"/>
+            <property name="parameterClassName"/>
+            <property name="enumerationClass"/>
+        </property>
+        <property name="defaultTemplate">
+            <property name="reportOutputType"/>
+        </property>
+        <property name="templates" fetchPlan="_base"/>
+        <property name="xml"/>
+    </fetchPlan>
+    <fetchPlan class="io.jmix.emailtemplates.entity.ReportEmailTemplate"
+          extends="_local"
+          name="emailTemplate-fetchPlan">
+        <property name="createTs"/>
+        <property name="createdBy"/>
+        <property name="updateTs"/>
+        <property name="updatedBy"/>
+        <property name="deletedBy"/>
+        <property name="attachedFiles"
+                  fetchPlan="emailTemplateAttachment-fetchPlan"/>
+        <property name="attachedTemplateReports"
+                  fetchPlan="templateParameters-fetchPlan">
+        </property>
+        <property name="group"
+                  fetchPlan="_instance_name"/>
+        <property name="emailBodyReport"
+                  fetchPlan="templateParameters-fetchPlan"/>
+    </fetchPlan>
+    <fetchPlan class="io.jmix.emailtemplates.entity.JsonEmailTemplate"
+          extends="_local"
+          name="emailTemplate-fetchPlan">
+        <property name="createTs"/>
+        <property name="createdBy"/>
+        <property name="updateTs"/>
+        <property name="updatedBy"/>
+        <property name="deletedBy"/>
+        <property name="attachedFiles"
+                  fetchPlan="emailTemplateAttachment-fetchPlan"/>
+        <property name="attachedTemplateReports"
+                  fetchPlan="templateParameters-fetchPlan">
+        </property>
+        <property name="group"
+                  fetchPlan="_instance_name"/>
+    </fetchPlan>
+    <fetchPlan class="io.jmix.emailtemplates.entity.TemplateReport"
+          extends="_local"
+          name="templateParameters-fetchPlan">
+        <property name="createTs"/>
+        <property name="createdBy"/>
+        <property name="updateTs"/>
+        <property name="updatedBy"/>
+        <property name="deletedBy"/>
+       <property name="report"
+                  fetchPlan="emailTemplate-fetchPlan"/>
+        <property name="parameterValues" fetchPlan="_local"/>
+    </fetchPlan>
+    <fetchPlan class="io.jmix.emailtemplates.entity.TemplateBlock" name="templateBlock-fetchPlan" extends="_local">
+        <property name="category" fetchPlan="_instance_name"/>
+    </fetchPlan>
+</fetchPlans>

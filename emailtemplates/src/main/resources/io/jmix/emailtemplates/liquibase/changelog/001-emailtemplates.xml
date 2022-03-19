@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2020 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+    <changeSet id="1" author="emailtemplates">
+
+        <!-- EMLTMP_TEMPLATE_GROUP -->
+        <createTable tableName="EMLTMP_TEMPLATE_GROUP">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="VERSION" type="int" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="UPDATE_TS" type="datetime"/>
+            <column name="UPDATED_BY" type="varchar(50)"/>
+            <column name="DELETE_TS" type="datetime"/>
+            <column name="DELETED_BY" type="varchar(50)"/>
+
+            <column name="NAME" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <!-- EMLTMP_TEMPLATE_GROUP -->
+
+        <!-- EMLTMP_EMAIL_TEMPLATE -->
+        <createTable tableName="EMLTMP_EMAIL_TEMPLATE">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="VERSION" type="int" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="UPDATE_TS" type="datetime"/>
+            <column name="UPDATED_BY" type="varchar(50)"/>
+            <column name="DELETE_TS" type="datetime"/>
+            <column name="DELETED_BY" type="varchar(50)"/>
+            <column name="DTYPE" type="varchar(100)"/>
+
+            <column name="USE_REPORT_SUBJECT" type="boolean"/>
+            <column name="NAME" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="GROUP_ID" type="${uuid.type}">
+                <constraints foreignKeyName="FK_ET_EMAILTEMPLATE_GROUP" references="EMLTMP_TEMPLATE_GROUP(ID)"/>
+            </column>
+            <column name="TYPE_" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CODE" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FROM_" type="varchar(255)"/>
+            <column name="TO_" type="clob"/>
+            <column name="CC" type="clob"/>
+            <column name="BCC" type="clob"/>
+            <column name="SUBJECT" type="varchar(255)"/>
+
+            <!-- from emltmp_ReportEmailTemplate-->
+            <column name="EMAIL_BODY_REPORT_ID" type="${uuid.type}"/>
+
+            <!-- from emltmp_JsonEmailTemplate-->
+            <column name="HTML" type="clob"/>
+            <column name="REPORT_JSON" type="clob"/>
+        </createTable>
+
+        <createIndex tableName="EMLTMP_EMAIL_TEMPLATE" indexName="IDX_ET_EMAILTEMPLATE_UK_CODE" unique="true">
+            <column name="CODE"/>
+            <column name="DELETE_TS"/>
+        </createIndex>
+        <createIndex tableName="EMLTMP_EMAIL_TEMPLATE" indexName="IDX_ET_EMAILTEMPLATE_GROUP">
+            <column name="GROUP_ID"/>
+        </createIndex>
+        <!-- EMLTMP_EMAIL_TEMPLATE -->
+
+        <!-- EMLTMP_TEMPLATE_REPORT -->
+        <createTable tableName="EMLTMP_TEMPLATE_REPORT">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="VERSION" type="int" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="UPDATE_TS" type="datetime"/>
+            <column name="UPDATED_BY" type="varchar(50)"/>
+            <column name="DELETE_TS" type="datetime"/>
+            <column name="DELETED_BY" type="varchar(50)"/>
+
+            <column name="NAME" type="varchar(255)"/>
+            <column name="REPORT_ID" type="${uuid.type}">
+                <constraints nullable="false"
+                             foreignKeyName="FK_ET_TEMPLATEREPORT_REPORT"
+                             references="REPORT_REPORT(ID)"/>
+            </column>
+            <column name="EMAIL_TEMPLATE_ID" type="${uuid.type}">
+                <constraints foreignKeyName="FK_ET_TEMPLATEREPORT_TEMPLATE"
+                             references="EMLTMP_EMAIL_TEMPLATE(ID)"/>
+            </column>
+        </createTable>
+
+        <createIndex tableName="EMLTMP_TEMPLATE_REPORT" indexName="IDX_ET_TEMPLATEREPORT_REPORT">
+            <column name="REPORT_ID"/>
+        </createIndex>
+
+        <createIndex tableName="EMLTMP_TEMPLATE_REPORT" indexName="IDX_ET_TEMPLATEREPORT_TEMPLATE">
+            <column name="EMAIL_TEMPLATE_ID"/>
+        </createIndex>
+        <!-- EMLTMP_TEMPLATE_REPORT -->
+
+
+        <addForeignKeyConstraint baseTableName="EMLTMP_EMAIL_TEMPLATE" baseColumnNames="EMAIL_BODY_REPORT_ID"
+                                 constraintName="FK_ET_EMTEMPLATE_BODYREPORT" referencedTableName="EMLTMP_TEMPLATE_REPORT"
+                                 referencedColumnNames="ID"/>
+
+        <!-- EMLTMP_TEMPLATE_ATTACHMENT -->
+        <createTable tableName="EMLTMP_TEMPLATE_ATTACHMENT">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="VERSION" type="int" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="UPDATE_TS" type="datetime"/>
+            <column name="UPDATED_BY" type="varchar(50)"/>
+            <column name="DELETE_TS" type="datetime"/>
+            <column name="DELETED_BY" type="varchar(50)"/>
+
+            <column name="NAME" type="varchar(500)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CONTENT_FILE" type="clob">
+                <constraints nullable="false"/>
+            </column>
+            <column name="EMAIL_TEMPLATE_ID" type="${uuid.type}">
+                <constraints foreignKeyName="FK_ET_ATTACHMENT_EMTEMPLATE" references="EMLTMP_EMAIL_TEMPLATE(ID)"/>
+            </column>
+        </createTable>
+        <!-- EMLTMP_TEMPLATE_ATTACHMENT -->
+
+        <!-- EMLTMP_PARAMETER_VALUE -->
+        <createTable tableName="EMLTMP_PARAMETER_VALUE">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="VERSION" type="int" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="UPDATE_TS" type="datetime"/>
+            <column name="UPDATED_BY" type="varchar(50)"/>
+            <column name="DELETE_TS" type="datetime"/>
+            <column name="DELETED_BY" type="varchar(50)"/>
+
+            <column name="PARAMETER_TYPE" type="integer">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ALIAS" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DEFAULT_VALUE" type="varchar(255)"/>
+
+            <column name="TEMPLATE_REPORT_ID" type="${uuid.type}">
+                <constraints foreignKeyName="FK_ET_PARAMVALUE_TEMPREPORT"
+                             references="EMLTMP_TEMPLATE_REPORT(ID)"/>
+            </column>
+        </createTable>
+
+        <createIndex tableName="EMLTMP_PARAMETER_VALUE" indexName="IDX_ET_PARAMVALUE_TEMPREPORT">
+            <column name="TEMPLATE_REPORT_ID"/>
+        </createIndex>
+        <!-- EMLTMP_PARAMETER_VALUE -->
+
+        <!-- EMLTMP_BLOCK_GROUP -->
+        <createTable tableName="EMLTMP_BLOCK_GROUP">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="VERSION" type="int" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="UPDATE_TS" type="datetime"/>
+            <column name="UPDATED_BY" type="varchar(50)"/>
+            <column name="DELETE_TS" type="datetime"/>
+            <column name="DELETED_BY" type="varchar(50)"/>
+
+            <column name="NAME" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createIndex tableName="EMLTMP_BLOCK_GROUP" indexName="IDX_ET_BLOCKGROUP_UNIQ_NAME"
+                     unique="true">
+            <column name="NAME"/>
+            <column name="DELETE_TS"/>
+        </createIndex>
+        <!-- EMLTMP_BLOCK_GROUP -->
+
+        <!-- EMLTMP_TEMPLATE_BLOCK -->
+        <createTable tableName="EMLTMP_TEMPLATE_BLOCK">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="VERSION" type="int" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="UPDATE_TS" type="datetime"/>
+            <column name="UPDATED_BY" type="varchar(50)"/>
+            <column name="DELETE_TS" type="datetime"/>
+            <column name="DELETED_BY" type="varchar(50)"/>
+
+            <column name="NAME" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="LABEL" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CATEGORY_ID" type="${uuid.type}">
+                <constraints foreignKeyName="FK_ET_TEMPLATEBLOCK_CATEGORY"
+                             references="EMLTMP_BLOCK_GROUP(ID)"/>
+            </column>
+            <column name="CONTENT" type="clob"/>
+            <column name="ICON" type="varchar(50)"/>
+        </createTable>
+
+        <createIndex indexName="IDX_ET_TEMPLATEBLOCK_UK_NAME" tableName="EMLTMP_TEMPLATE_BLOCK"
+                     unique="true">
+            <column name="NAME"/>
+            <column name="DELETE_TS"/>
+        </createIndex>
+        <createIndex indexName="IDX_ET_TEMPLATEBLOCK_CATEGORY" tableName="EMLTMP_TEMPLATE_BLOCK" >
+            <column name="CATEGORY_ID"/>
+        </createIndex>
+        <!-- EMLTMP_TEMPLATE_BLOCK -->
+        
+        <insert tableName="EMLTMP_BLOCK_GROUP" dbms="postgresql, hsqldb, mssql">
+            <column name="ID" value="26c1c349-fa68-a66f-9d93-fda2b4e4e898"/>
+            <column name="VERSION" value="1"/>
+            <column name="CREATE_TS" valueDate="current_timestamp"/>
+            <column name="CREATED_BY" value="admin"/>
+            <column name="UPDATE_TS" valueDate="current_timestamp"/>
+            <column name="NAME" value="Basic"/>
+        </insert>
+
+        <insert tableName="EMLTMP_BLOCK_GROUP" dbms="oracle, mysql, mariadb">
+            <column name="ID" value="26c1c349fa68a66f9d93fda2b4e4e898"/>
+            <column name="VERSION" value="1"/>
+            <column name="CREATE_TS" valueDate="current_timestamp"/>
+            <column name="CREATED_BY" value="admin"/>
+            <column name="UPDATE_TS" valueDate="current_timestamp"/>
+            <column name="NAME" value="Basic"/>
+        </insert>
+
+        <insert tableName="EMLTMP_BLOCK_GROUP" dbms="postgresql, hsqldb, mssql">
+            <column name="ID" value="46c195fd-c046-cb27-432e-213260d9ce6d"/>
+            <column name="VERSION" value="1"/>
+            <column name="CREATE_TS" valueDate="current_timestamp"/>
+            <column name="CREATED_BY" value="admin"/>
+            <column name="UPDATE_TS" valueDate="current_timestamp"/>
+            <column name="NAME" value="Extra"/>
+        </insert>
+
+        <insert tableName="EMLTMP_BLOCK_GROUP" dbms="oracle, mysql, mariadb">
+            <column name="ID" value="46c195fdc046cb27432e213260d9ce6d"/>
+            <column name="VERSION" value="1"/>
+            <column name="CREATE_TS" valueDate="current_timestamp"/>
+            <column name="CREATED_BY" value="admin"/>
+            <column name="UPDATE_TS" valueDate="current_timestamp"/>
+            <column name="NAME" value="Extra"/>
+        </insert>
+
+        <insert tableName="EMLTMP_BLOCK_GROUP" dbms="postgresql, hsqldb, mssql">
+            <column name="ID" value="66359bdd-1e16-5ae4-7f8a-88b9e7b4a5ed"/>
+            <column name="VERSION" value="1"/>
+            <column name="CREATE_TS" valueDate="current_timestamp"/>
+            <column name="CREATED_BY" value="admin"/>
+            <column name="UPDATE_TS" valueDate="current_timestamp"/>
+            <column name="NAME" value="Forms"/>
+        </insert>
+
+        <insert tableName="EMLTMP_BLOCK_GROUP" dbms="oracle, mysql, mariadb">
+            <column name="ID" value="66359bdd1e165ae47f8a88b9e7b4a5ed"/>
+            <column name="VERSION" value="1"/>
+            <column name="CREATE_TS" valueDate="current_timestamp"/>
+            <column name="CREATED_BY" value="admin"/>
+            <column name="UPDATE_TS" valueDate="current_timestamp"/>
+            <column name="NAME" value="Forms"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>

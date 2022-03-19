@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2020 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+
+<fragment xmlns="http://jmix.io/schema/ui/fragment">
+    <data>
+        <instance id="emailTemplateDc"
+                  class="io.jmix.emailtemplates.entity.EmailTemplate" provided="true">
+            <collection id="attachedFilesDc" property="attachedFiles" provided="true"/>
+            <collection id="attachedReportsDc" property="attachedTemplateReports" provided="true"/>
+        </instance>
+    </data>
+
+    <layout spacing="true" expand="attachmentsSplit">
+        <split id="attachmentsSplit" width="100%">
+            <vbox spacing="true" expand="reportAttachmentBox" height="100%" margin="true">
+                <label value="msg://attachedReports" stylename="h2"/>
+                <hbox id="reportAttachmentBox" spacing="true" expand="reportsTable" width="100%">
+                    <table id="reportsTable"
+                           multiselect="true"
+                           height="100%" dataContainer="attachedReportsDc">
+                        <actions>
+                            <action id="add" type="add"/>
+                            <action id="remove" type="remove"/>
+                        </actions>
+                        <columns>
+                            <column id="report.name"/>
+                            <column id="report.code"/>
+                            <column id="report.defaultTemplate.reportOutputType"/>
+                            <column id="report.description"/>
+                        </columns>
+                        <simplePagination/>
+                        <buttonsPanel>
+                            <button action="reportsTable.add"/>
+                            <button action="reportsTable.remove"/>
+                        </buttonsPanel>
+                    </table>
+                    <vbox spacing="true" width="500px" height="100%" expand="parametersBox">
+                        <groupBox id="parametersBox" caption="msg://defaultParameters">
+                            <scrollBox height="100%" spacing="true">
+                                <form id="attachmentGroup"
+                                            dataContainer="attachedReportsDc"
+                                            width="100%"
+                                            visible="false">
+                                    <column width="100%">
+                                        <textField property="name" description="msg://attachmentNameDescription"/>
+                                    </column>
+                                </form>
+                                <vbox id="defaultValuesBox"/>
+                            </scrollBox>
+                        </groupBox>
+                    </vbox>
+                </hbox>
+            </vbox>
+            <vbox spacing="true" expand="filesTable" height="100%" margin="true">
+                <label value="msg://attachedFiles" stylename="h2"/>
+                <table id="filesTable" width="100%"
+                       multiselect="true" dataContainer="attachedFilesDc">
+                    <actions>
+                        <action id="create" type="create" caption="msg://upload">
+                            <properties>
+                                <property name="openMode" value="DIALOG"/>
+                            </properties>
+                        </action>
+                        <action id="edit" type="edit">
+                            <properties>
+                                <property name="openMode" value="DIALOG"/>
+                            </properties>
+                        </action>
+                        <action id="remove" type="remove"/>
+                    </actions>
+                    <columns>
+                        <column id="name"/>
+                        <column id="createTs"/>
+                    </columns>
+                    <simplePagination/>
+                    <buttonsPanel alwaysVisible="true">
+                        <button action="filesTable.create"/>
+                        <button action="filesTable.edit"/>
+                        <button action="filesTable.remove"/>
+                        <button action="filesTable.download" icon="DOWNLOAD" caption="msg://download"/>
+                    </buttonsPanel>
+                </table>
+            </vbox>
+        </split>
+    </layout>
+</fragment>

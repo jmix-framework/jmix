@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2020 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<window xmlns="http://jmix.io/schema/ui/window"
+        xmlns:et="http://jmix.io/schema/grapesjs/ui"
+        caption="msg://editorCaption"
+        focusComponent="form">
+    <data>
+        <instance id="templateBlockDc"
+                  class="io.jmix.emailtemplates.entity.TemplateBlock"
+                  fetchPlan="templateBlock-fetchPlan">
+            <loader/>
+        </instance>
+
+        <collection id="templateBlockGroupsDc"
+                    class="io.jmix.emailtemplates.entity.TemplateBlockGroup"
+                    fetchPlan="_local">
+            <loader id="templateBlockGroupsDl">
+                <query>
+                    <![CDATA[select e from emltmp_TemplateBlockGroup e order by e.name]]>
+                </query>
+            </loader>
+        </collection>
+    </data>
+    <dialogMode height="AUTO"
+                width="AUTO"
+                modal="true"/>
+
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+
+    <layout expand="contentTabs" spacing="true">
+        <form id="form" dataContainer="templateBlockDc">
+            <column width="400px">
+                <textField id="nameField" property="name"/>
+                <textField id="labelField" property="label"/>
+            </column>
+            <column width="400px">
+                <comboBox id="iconLookup" property="icon"/>
+                <entityComboBox id="categoryField" property="category" optionsContainer="templateBlockGroupsDc"/>
+            </column>
+        </form>
+
+        <tabSheet id="contentTabs" width="100%">
+            <tab id="grapesJs" caption="msg://visual">
+                <et:grapesJsNewsletterHtmlEditor id="visualTemplate"
+                                                 inlineCss="true"
+                                                 height="100%" width="100%">
+                    <et:plugin name="ckeditor"/>
+                    <et:plugin name="forms"/>
+                    <et:plugin name="flexBlocks"/>
+                    <et:plugin name="tuiImageEditor"/>
+                    <et:plugin name="customcode"/>
+                    <et:plugin name="postcss"/>
+                    <et:plugin name="touch"/>
+                    <et:plugin name="styleFilter"/>
+                </et:grapesJsNewsletterHtmlEditor>
+            </tab>
+            <tab id="html" expand="htmlTemplate" caption="msg://html">
+                <sourceCodeEditor id="htmlTemplate" width="100%" property="content" dataContainer="templateBlockDc"
+                                  mode="HTML"/>
+            </tab>
+        </tabSheet>
+        <hbox id="editActions" spacing="true">
+            <button action="windowCommitAndClose"/>
+            <button action="windowClose"/>
+        </hbox>
+    </layout>
+</window>

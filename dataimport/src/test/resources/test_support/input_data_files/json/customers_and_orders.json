@@ -1,0 +1,23 @@
+[
+  {
+    "name": "Parker Leighton",
+    "email": "leighton@mail.com",
+    "orders": []
+  },
+  {
+    "name": "Shelby Robinson",
+    "email": "robinson@mail.com",
+    "orders": [
+      {
+        "number": "#001",
+        "amount": 50.5,
+        "date": "12/02/2021 12:00"
+      }
+    ]
+  },
+  {
+    "name": "Hildred Ellis",
+    "email": null,
+    "orders": null
+  }
+]

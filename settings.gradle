@@ -1,0 +1,10 @@
+rootProject.name = 'jmix-dataimport'
+
+include 'dataimport'
+include 'dataimport-starter'
+
+rootProject.children.each { p1 ->
+	p1.buildFileName = "${p1.name}.gradle"
+}
+
+

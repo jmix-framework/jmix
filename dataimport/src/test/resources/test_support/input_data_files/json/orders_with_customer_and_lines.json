@@ -1,0 +1,61 @@
+[
+  {
+    "customerName": "Parker Leighton",
+    "customerEmail": "leighton@mail.com",
+    "number": "#001",
+    "amount": 50.5,
+    "date": "12/02/2021 12:00",
+    "paymentDetails" : {
+      "date": "12/02/2021 12:00",
+      "paymentType": "Cash",
+      "bonusCardNumber": "12345-67890",
+      "bonusAmount": 10
+    },
+    "lines": [
+      {
+        "productName": "Outback Power Nano-Carbon Battery 12V",
+        "quantity": 4
+      },
+      {
+        "productName": "Fullriver Sealed Battery 6V",
+        "quantity": 5
+      }
+    ]
+  },
+  {
+    "customerName": "Shelby Robinson",
+    "customerEmail": "robinson@mail.com",
+    "number": "#123",
+    "amount": 6.25,
+    "date": "12/02/2021 12:00",
+    "paymentDetails" : {
+      "date": "12/02/2021 12:00",
+      "paymentType": "Credit card",
+      "bonusCardNumber": null
+    },
+    "lines": [
+      {
+        "productName": "Outback Power Nano-Carbon Battery 12V",
+        "quantity": 1
+      }
+    ]
+  },
+  {
+    "customerName": "Hildred Ellis",
+    "customerEmail": null,
+    "number": "#011",
+    "amount": 20.4,
+    "date": "25/06/2021 17:00",
+    "paymentDetails" : {
+      "date": "25/06/2021 17:00",
+      "paymentType": "Credit Card",
+      "bonusCardNumber": null
+    },
+    "lines": [
+      {
+        "productName": "Fullriver Sealed Battery 6V",
+        "quantity": 4
+      }
+    ]
+  }
+]

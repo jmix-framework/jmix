@@ -1,0 +1,20 @@
+[
+  {
+    "name": "John Dow",
+    "email": "j.dow@mail.com",
+    "bonusCard": {
+      "number": "12345-67890",
+      "isActive": true,
+      "balance": 100
+    }
+  },
+  {
+    "name": "Tom Smith",
+    "email": "t.smith@mail.com",
+    "bonusCard": {
+      "number": "67890-12345",
+      "isActive": false,
+      "balance": 0
+    }
+  }
+]

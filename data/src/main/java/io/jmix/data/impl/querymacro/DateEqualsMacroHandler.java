@@ -1,0 +1,131 @@
+/*
+ * Copyright 2019 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package io.jmix.data.impl.querymacro;
+
+import com.google.common.base.Strings;
+import io.jmix.core.DateTimeTransformations;
+import io.jmix.core.TimeSource;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+@Component("data_DateEqualsQueryMacroHandler")
+@Scope("prototype")
+public class DateEqualsMacroHandler extends AbstractQueryMacroHandler {
+
+    protected static final Pattern MACRO_PATTERN = Pattern.compile("@dateEquals\\s*\\(([^)]+)\\)");
+    protected static final Pattern NOW_PARAM_PATTERN = Pattern.compile("(now)\\s*([\\d\\s+-]*)");
+
+    @Autowired
+    protected DateTimeTransformations transformations;
+    @Autowired
+    protected TimeSource timeSource;
+
+    protected Map<String, Object> namedParameters;
+
+    protected List<MacroArgsDateEquals> paramArgs = new ArrayList<>();
+
+    public DateEqualsMacroHandler() {
+        super(MACRO_PATTERN);
+    }
+
+    @Override
+    public void setQueryParams(Map<String, Object> namedParameters) {
+        this.namedParameters = namedParameters;
+    }
+
+    @Override
+    protected String doExpand(String macro) {
+        count++;
+        String[] args = macro.split(",");
+        if (args.length != 2 && args.length != 3)
+            throw new RuntimeException("Invalid macro: " + macro);
+
+        String field = args[0].trim();
+        String param1 = args[1].trim();
+        String param2;
+        TimeZone timeZone = getTimeZoneFromArgs(args, 2);
+
+        Matcher matcher = NOW_PARAM_PATTERN.matcher(param1);
+        if (matcher.find()) {
+            int offset = 0;
+            try {
+                String expr = matcher.group(2);
+                if (!Strings.isNullOrEmpty(expr)) {
+                    expr = expr.replaceAll("\\s+","");
+                    offset = Integer.parseInt(expr);
+                }
+            } catch (NumberFormatException e) {
+                throw new RuntimeException("Invalid macro argument: " + param1, e);
+            }
+            param1 = args[0].trim().replace(".", "_") + "_" + count + "_" + 1;
+            param2 = args[0].trim().replace(".", "_") + "_" + count + "_" + 2;
+            paramArgs.add(new MacroArgsDateEquals(param1, param2, timeZone, offset, true));
+        } else {
+            param1 = param1.substring(1);
+            param2 = field.replace(".", "_") + "_" + count;
+            paramArgs.add(new MacroArgsDateEquals(param1, param2, timeZone));
+        }
+
+        return String.format("(%s >= :%s and %s < :%s)", field, param1, field, param2);
+    }
+
+    @Override
+    public Map<String, Object> getParams() {
+        Map<String, Object> params = new HashMap<>();
+        for (MacroArgsDateEquals paramArg : paramArgs) {
+            Class javaType;
+            ZonedDateTime zonedDateTime;
+            String firstparamName = paramArg.getParamName();
+            String secondParamName = paramArg.getSecondParamName();
+            TimeZone timeZone = paramArg.getTimeZone();
+            if (timeZone == null)
+                timeZone = TimeZone.getDefault();
+            if (paramArg.isNow()) {
+                zonedDateTime = timeSource.now();
+                javaType = expandedParamTypes.get(firstparamName);
+                if (javaType == null)
+                    throw new RuntimeException(String.format("Type of parameter %s not resolved", firstparamName));
+            } else {
+                Object date = namedParameters.get(firstparamName);
+                if (date == null)
+                    throw new RuntimeException(String.format("Parameter %s not found for macro", firstparamName));
+                javaType = date.getClass();
+                zonedDateTime = transformations.transformToZDT(date);
+            }
+            if (transformations.isDateTypeSupportsTimeZones(javaType)) {
+                zonedDateTime = zonedDateTime.withZoneSameInstant(timeZone.toZoneId());
+            }
+            zonedDateTime = zonedDateTime.plusDays(paramArg.getOffset()).truncatedTo(ChronoUnit.DAYS);
+            ZonedDateTime firstZonedDateTime = zonedDateTime.truncatedTo(ChronoUnit.DAYS);
+            ZonedDateTime secondZonedDateTime = firstZonedDateTime.plusDays(1);
+            params.put(firstparamName, transformations.transformFromZDT(firstZonedDateTime, javaType));
+            params.put(secondParamName, transformations.transformFromZDT(secondZonedDateTime, javaType));
+        }
+        return params;
+    }
+
+    @Override
+    public String replaceQueryParams(String queryString, Map<String, Object> params) {
+        return queryString;
+    }
+}

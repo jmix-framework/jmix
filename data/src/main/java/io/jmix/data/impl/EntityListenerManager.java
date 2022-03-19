@@ -1,0 +1,372 @@
+/*
+ * Copyright 2019 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package io.jmix.data.impl;
+
+import io.jmix.core.entity.EntityValues;
+import io.jmix.core.entity.annotation.Listeners;
+import io.jmix.data.listener.*;
+import org.apache.commons.lang3.ClassUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+
+/**
+ * This bean allows to register and fire entity listeners.
+ * <p>Usually entity listeners are registered declaratively with {@code @Listeners} annotation on entity class.
+ * Methods {@link #addListener(Class, Class)} and {@link #addListener(Class, String)} allow to add listeners dynamically,
+ * e.g. to an entity from a base project.
+ */
+@Component("data_EntityListenerManager")
+public class EntityListenerManager {
+
+    @Autowired
+    protected BeanFactory beanFactory;
+
+    protected static class Key {
+        private final Class entityClass;
+        private final EntityListenerType type;
+
+        public Key(Class entityClass, EntityListenerType type) {
+            this.entityClass = entityClass;
+            this.type = type;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            Key key = (Key) o;
+
+            if (!entityClass.equals(key.entityClass)) return false;
+            if (type != key.type) return false;
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int result;
+            result = entityClass.hashCode();
+            result = 31 * result + type.hashCode();
+            return result;
+        }
+    }
+
+    protected static class ListenerExecution {
+        private final Object entity;
+        private final EntityListenerType type;
+
+        public ListenerExecution(Object entity, EntityListenerType type) {
+            this.entity = entity;
+            this.type = type;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            ListenerExecution that = (ListenerExecution) o;
+            return entity == that.entity && type == that.type;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(entity, type);
+        }
+
+        @Override
+        public String toString() {
+            return type + ": " + entity;
+        }
+    }
+
+    private static final Logger log = LoggerFactory.getLogger(EntityListenerManager.class);
+
+    protected Map<Key, List> cache = new ConcurrentHashMap<>();
+
+    protected Map<Class<?>, Set<String>> dynamicListeners = new ConcurrentHashMap<>();
+
+    protected ReadWriteLock lock = new ReentrantReadWriteLock();
+
+    protected volatile boolean enabled = true;
+
+    protected ThreadLocal<List<ListenerExecution>> threadLocalExecutions = new ThreadLocal<>();
+
+    /**
+     * Register an entity listener by its class. The listener instance will be instantiated as a plain object.
+     *
+     * @param entityClass   entity
+     * @param listenerClass listener class
+     */
+    public void addListener(Class<?> entityClass, Class<?> listenerClass) {
+        lock.writeLock().lock();
+        try {
+            Set<String> set = dynamicListeners.get(entityClass);
+            if (set == null) {
+                set = new HashSet<>();
+                dynamicListeners.put(entityClass, set);
+            }
+            set.add(listenerClass.getName());
+
+            cache.clear();
+        } finally {
+            lock.writeLock().unlock();
+        }
+    }
+
+    /**
+     * Unregister an entity listener.
+     *
+     * @param entityClass   entity
+     * @param listenerClass listener class
+     */
+    public void removeListener(Class<?> entityClass, Class<?> listenerClass) {
+        lock.writeLock().lock();
+        try {
+            Set<String> set = dynamicListeners.get(entityClass);
+            if (set != null) {
+                set.remove(listenerClass.getName());
+            }
+
+            cache.clear();
+        } finally {
+            lock.writeLock().unlock();
+        }
+    }
+
+    /**
+     * Register an entity listener which is a ManagedBean.
+     *
+     * @param entityClass      entity
+     * @param listenerBeanName listener bean name
+     */
+    public void addListener(Class<?> entityClass, String listenerBeanName) {
+        lock.writeLock().lock();
+        try {
+            Set<String> set = dynamicListeners.get(entityClass);
+            if (set == null) {
+                set = new HashSet<>();
+                dynamicListeners.put(entityClass, set);
+            }
+            set.add(listenerBeanName);
+
+            cache.clear();
+        } finally {
+            lock.writeLock().unlock();
+        }
+    }
+
+    /**
+     * Unregister an entity listener.
+     *
+     * @param entityClass      entity
+     * @param listenerBeanName listener bean name
+     */
+    public void removeListener(Class<?> entityClass, String listenerBeanName) {
+        lock.writeLock().lock();
+        try {
+            Set<String> set = dynamicListeners.get(entityClass);
+            if (set != null) {
+                set.remove(listenerBeanName);
+            }
+
+            cache.clear();
+        } finally {
+            lock.writeLock().unlock();
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public void fireListener(Object entity, EntityListenerType type, String storeName) {
+        if (!enabled)
+            return;
+
+        List listeners = getListener(entity.getClass(), type);
+        if (listeners.isEmpty())
+            return;
+
+        // check if a listener for this instance is already executed
+        List<ListenerExecution> executions = threadLocalExecutions.get();
+        if (executions == null) {
+            executions = new ArrayList<>();
+            threadLocalExecutions.set(executions);
+        }
+        ListenerExecution execution = new ListenerExecution(entity, type);
+        if (executions.contains(execution)) {
+            return;
+        } else {
+            executions.add(execution);
+        }
+
+        try {
+            for (Object listener : listeners) {
+                switch (type) {
+                    case BEFORE_DETACH:
+                        logExecution(type, entity);
+                        ((BeforeDetachEntityListener) listener).onBeforeDetach(entity);
+                        break;
+                    case BEFORE_ATTACH:
+                        logExecution(type, entity);
+                        ((BeforeAttachEntityListener) listener).onBeforeAttach(entity);
+                        break;
+                    case BEFORE_INSERT:
+                        logExecution(type, entity);
+                        ((BeforeInsertEntityListener) listener).onBeforeInsert(entity);
+                        break;
+                    case AFTER_INSERT:
+                        logExecution(type, entity);
+                        ((AfterInsertEntityListener) listener).onAfterInsert(entity);
+                        break;
+                    case BEFORE_UPDATE:
+                        logExecution(type, entity);
+                        ((BeforeUpdateEntityListener) listener).onBeforeUpdate(entity);
+                        break;
+                    case AFTER_UPDATE:
+                        logExecution(type, entity);
+                        ((AfterUpdateEntityListener) listener).onAfterUpdate(entity);
+                        break;
+                    case BEFORE_DELETE:
+                        logExecution(type, entity);
+                        ((BeforeDeleteEntityListener) listener).onBeforeDelete(entity);
+                        break;
+                    case AFTER_DELETE:
+                        logExecution(type, entity);
+                        ((AfterDeleteEntityListener) listener).onAfterDelete(entity);
+                        break;
+                    default:
+                        throw new UnsupportedOperationException("Unsupported EntityListenerType: " + type);
+                }
+            }
+        } finally {
+            executions.remove(execution);
+            if (executions.isEmpty())
+                threadLocalExecutions.remove();
+        }
+    }
+
+    public void enable(boolean enable) {
+        this.enabled = enable;
+    }
+
+    protected void logExecution(EntityListenerType type, Object entity) {
+        if (log.isDebugEnabled()) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("Executing ").append(type).append(" entity listener for ")
+                    .append(entity.getClass().getName()).append(" id=").append(EntityValues.getId(entity));
+            log.debug(sb.toString());
+        }
+    }
+
+    protected List<?> getListener(Class<?> entityClass, EntityListenerType type) {
+        Key key = new Key(entityClass, type);
+
+        lock.readLock().lock();
+        try {
+            if (!cache.containsKey(key)) {
+                List listeners = findListener(entityClass, type);
+                cache.put(key, listeners);
+                return listeners;
+            } else {
+                return cache.get(key);
+            }
+        } finally {
+            lock.readLock().unlock();
+        }
+    }
+
+    protected List<?> findListener(Class<?> entityClass, EntityListenerType type) {
+        log.trace("get listener {} for class {}", type, entityClass.getName());
+        List<String> names = getDeclaredListeners(entityClass);
+        if (names.isEmpty()) {
+            log.trace("no annotations, exiting");
+            return Collections.emptyList();
+        }
+
+        List<Object> result = new ArrayList<>();
+        for (String name : names) {
+            if (beanFactory.containsBean(name)) {
+                Object bean = beanFactory.getBean(name);
+                log.trace("listener bean found: {}", bean);
+                List<Class<?>> interfaces = ClassUtils.getAllInterfaces(bean.getClass());
+                for (Class intf : interfaces) {
+                    if (intf.equals(type.getListenerInterface())) {
+                        log.trace("listener implements {}", type.getListenerInterface());
+                        result.add(bean);
+                    }
+                }
+            } else {
+                try {
+                    Class aClass = Thread.currentThread().getContextClassLoader().loadClass(name);
+                    log.trace("listener class found: {}", aClass);
+                    List<Class<?>> interfaces = ClassUtils.getAllInterfaces(aClass);
+                    for (Class intf : interfaces) {
+                        if (intf.equals(type.getListenerInterface())) {
+                            log.trace("listener implements {}", type.getListenerInterface());
+                            result.add(aClass.newInstance());
+                        }
+                    }
+                } catch (ClassNotFoundException e) {
+                    throw new RuntimeException(String.format(
+                            "Unable to create entity listener %s for %s because there is no bean or class with such name",
+                            name, entityClass.getName()));
+
+                } catch (IllegalAccessException | InstantiationException e) {
+                    throw new RuntimeException("Unable to instantiate an Entity Listener", e);
+                }
+            }
+        }
+        return result;
+    }
+
+    protected List<String> getDeclaredListeners(Class<?> entityClass) {
+        List<String> listeners = new ArrayList<>();
+
+        List<Class<?>> superclasses = ClassUtils.getAllSuperclasses(entityClass);
+        Collections.reverse(superclasses);
+        for (Class<?> superclass : superclasses) {
+            @SuppressWarnings("SuspiciousMethodCalls")
+            Set<String> set = dynamicListeners.get(superclass);
+            if (set != null) {
+                listeners.addAll(set);
+            }
+
+            Listeners annotation = superclass.getAnnotation(Listeners.class);
+            if (annotation != null) {
+                listeners.addAll(Arrays.asList(annotation.value()));
+            }
+        }
+
+        Set<String> set = dynamicListeners.get(entityClass);
+        if (set != null) {
+            listeners.addAll(set);
+        }
+
+        Listeners annotation = entityClass.getAnnotation(Listeners.class);
+        if (annotation != null) {
+            listeners.addAll(Arrays.asList(annotation.value()));
+        }
+
+        return listeners;
+    }
+}

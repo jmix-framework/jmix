@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <property name="uuid.type" dbms="oracle" value="varchar2(32)"/>
+    <property name="uuid.type" dbms="!oracle" value="uuid"/>
+
+    <changeSet author="addon" id="1.0">
+
+        <createTable tableName="PET">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="NAME" type="varchar(255)"/>
+        </createTable>
+
+    </changeSet>
+
+</databaseChangeLog>

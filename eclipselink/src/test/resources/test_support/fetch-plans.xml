@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2019 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<fetchPlans xmlns="http://jmix.io/schema/core/fetch-plans">
+
+    <fetchPlan class="test_support.entity.entity_extension.ExtDoc"
+          extends="_local"
+          name="edit"
+          overwrite="true">
+    </fetchPlan>
+
+    <fetchPlan class="test_support.entity.entity_extension.Driver"
+          extends="_local"
+          name="driverEdit">
+        <property name="callsign"
+                  fetchPlan="_instance_name"/>
+        <property name="address"
+                  fetchPlan="_local"/>
+    </fetchPlan>
+
+    <fetchPlan class="test_support.entity.entity_extension.ExtDriver"
+          extends="driverEdit"
+          name="driverEdit">
+        <property name="info"/>
+    </fetchPlan>
+
+    <fetchPlan class="test_support.entity.entity_extension.ExtDriver"
+          extends="driverEdit"
+          name="testEdit">
+        <property name="info"/>
+    </fetchPlan>
+
+    <fetchPlan class="test_support.entity.entity_extension.SamplePlatformEntity" name="test1">
+        <property name="name"/>
+    </fetchPlan>
+
+    <fetchPlan class="test_support.entity.entity_extension.SampleProductEntity" extends="test1" name="test2">
+        <property name="description"/>
+    </fetchPlan>
+
+    <fetchPlan class="test_support.entity.entity_extension.SampleExtensionEntity" extends="test2" name="test3">
+        <property name="info"/>
+    </fetchPlan>
+
+    <fetchPlan class="test_support.entity.lazyloading.OneToManyEntity" name="OneToManyEntity">
+        <property name="name"/>
+    </fetchPlan>
+
+    <fetchPlan class="test_support.entity.lazyloading.ManyToOneEntity" name="ManyToOneEntity">
+        <property name="name"/>
+    </fetchPlan>
+
+    <fetchPlan class="test_support.entity.lazyloading.ManyToManySecondEntity" name="ManyToManySecondEntity">
+        <property name="name"/>
+    </fetchPlan>
+
+    <fetchPlan class="test_support.entity.lazyloading.OneToOneFieldEntity" name="OneToOneFieldEntity">
+        <property name="name"/>
+    </fetchPlan>
+
+    <fetchPlan class="test_support.entity.lazyloading.OneToOneNoFieldEntity" name="OneToOneNoFieldEntity">
+        <property name="name"/>
+    </fetchPlan>
+
+    <fetchPlan class="test_support.entity.repository.SalesOrder" name="SalesOrder.full" extends="_local">
+        <property name="customer" fetchPlan="_local">
+            <property name="address" fetchPlan="_local"/>
+        </property>
+
+    </fetchPlan>
+    <fetchPlan class="test_support.entity.repository.Customer" name="repository_Customer.full" extends="_local">
+        <property name="address" fetchPlan="_local"/>
+    </fetchPlan>
+</fetchPlans>

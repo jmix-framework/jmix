@@ -1,0 +1,79 @@
+<!--
+  ~ Copyright 2021 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<fragment xmlns="http://jmix.io/schema/ui/fragment">
+
+    <data>
+        <instance id="reportDc"
+                  class="io.jmix.reports.entity.Report"
+                  provided="true">
+            <collection id="reportScreensDc" property="reportScreens" provided="true"/>
+            <collection id="reportRolesDc" property="reportRoles" provided="true"/>
+        </instance>
+    </data>
+
+    <layout>
+        <split orientation="horizontal" width="100%" height="100%" pos="50">
+            <vbox margin="true" spacing="true" expand="rolesTable" width="100%" height="100%">
+                <label value="msg://securityFrame.roles" stylename="h2"/>
+                <groupBox id="addRoleGroupBox" width="100%" caption="msg://roles.addRole">
+                    <hbox expand="rolesField" spacing="true" width="100%">
+                        <comboBox id="rolesField"/>
+                        <button id="addRoleBtn" caption="msg://roles.add" action="rolesTable.add"/>
+                    </hbox>
+                </groupBox>
+                <table id="rolesTable" width="100%" multiselect="true" dataContainer="reportRolesDc"
+                       reorderingAllowed="false" columnControlVisible="false">
+                    <actions>
+                        <action id="add" type="add"/>
+                        <action id="exclude" type="exclude"/>
+                    </actions>
+                    <buttonsPanel>
+                        <button action="rolesTable.exclude" caption="msg://roles.removeRole"
+                                icon="font-icon:REMOVE"/>
+                    </buttonsPanel>
+                    <columns>
+                        <column id="roleName"/>
+                        <column id="roleCode"/>
+                    </columns>
+                </table>
+            </vbox>
+            <vbox margin="true" spacing="true" expand="screenTable" width="100%" height="100%">
+                <label value="msg://securityFrame.screens" stylename="h2"/>
+                <groupBox id="addScreenGroupBox" width="100%" caption="msg://screens.createScreen">
+                    <hbox expand="screenIdField" spacing="true" width="100%">
+                        <comboBox id="screenIdField"/>
+                        <button id="addReportScreenBtn" action="screenTable.add" caption="msg://screens.add"/>
+                    </hbox>
+                </groupBox>
+                <table id="screenTable" width="100%" multiselect="true" dataContainer="reportScreensDc"
+                       reorderingAllowed="false" columnControlVisible="false">
+                    <actions>
+                        <action id="add" type="add"/>
+                        <action id="remove" type="remove"/>
+                    </actions>
+                    <buttonsPanel>
+                        <button action="screenTable.remove" caption="msg://screens.removeScreen"
+                                icon="font-icon:REMOVE"/>
+                    </buttonsPanel>
+                    <columns>
+                        <column id="screenId"/>
+                    </columns>
+                </table>
+            </vbox>
+        </split>
+    </layout>
+</fragment>

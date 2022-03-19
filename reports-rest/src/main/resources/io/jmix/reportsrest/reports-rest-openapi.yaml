@@ -1,0 +1,323 @@
+openapi: 3.0.1
+info:
+  title: Jmix Reports REST API
+  description: |2
+
+    ## General Overview
+
+    Jmix Reports REST API provides the following functionality:
+
+    * Getting list of avaliable reports
+    * Getting report metadata (parameters, templates)
+    * Getting report group details
+    * Execution of report
+
+    The Reports REST API is available at the URL `/rest/reports`, e.g. `http://localhost:8080/rest/reports/report`
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+servers:
+  - url: /rest/reports
+security:
+  - oauth2:
+      - rest-api
+tags:
+  - name: Reports list
+  - name: Report
+  - name: Run report
+  - name: Group
+  - name: Documentation
+paths:
+  /report:
+    get:
+      tags:
+        - Reports list
+      summary: Get a list of reports
+      description: |
+        Gets a list of reports
+      responses:
+        200:
+          description: Success. The list of reports is returned in the response body.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/report'
+        403:
+          description: Forbidden. The user doesn't have permissions to read the report
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+  /report/{reportId}:
+    get:
+      tags:
+        - Report
+      summary: Get a single report by id
+      description: |
+        Gets a single report by identifier
+      parameters:
+        - name: reportId
+          in: path
+          description: Report identifier
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Success. The report is returned in the response body.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/reportFull'
+        403:
+          description: Forbidden. The user doesn't have permissions to read the report
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+  /group/{groupId}:
+    get:
+      tags:
+        - Group
+      summary: Get a single group by id
+      description: |
+        Gets a single group by identifier
+      parameters:
+        - name: groupId
+          in: path
+          description: Report Group identifier
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Success. The group is returned in the response body.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/group'
+        403:
+          description: Forbidden. The user doesn't have permissions to read the report
+            group
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+  /run/{reportId}:
+    post:
+      tags:
+        - Run report
+      summary: Run report
+      description: |
+        Runs report and returns report document. The method expects a JSON with selected parameters and report template
+        in the request body
+      parameters:
+        - name: reportId
+          in: path
+          description: Report identifier
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/runObject'
+        required: false
+      responses:
+        200:
+          description: Success. The file contents is returned in the response body.
+          content: {}
+        400:
+          description: Bad request. For example, the condition value cannot be parsed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+        403:
+          description: Forbidden. The user doesn't have permissions to read the report
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+      x-codegen-request-body-name: runObject
+  /docs/openapi.{format}:
+    get:
+      tags:
+        - Documentation
+      summary: Get the Reports REST API swagger documentation
+      description: Gets the swagger documentation in the JSON or YAML formats
+      parameters:
+        - name: format
+          in: path
+          description: swagger format (json or yaml)
+          required: true
+          schema:
+            type: string
+            default: yaml
+      responses:
+        200:
+          description: Success
+          content: {}
+components:
+  schemas:
+    error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message
+        details:
+          type: string
+          description: Detailed error description
+    report:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Report id
+        name:
+          type: string
+          description: Report name
+        code:
+          type: string
+          description: Report code
+        group:
+          type: string
+          description: Group id
+    reportFull:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Report id
+        name:
+          type: string
+          description: Report name
+        code:
+          type: string
+          description: Report code
+        group:
+          type: string
+          description: Group id
+        inputParameters:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              alias:
+                type: string
+              type:
+                type: string
+                enum:
+                  - DATE
+                  - TEXT
+                  - ENTITY
+                  - BOOLEAN
+                  - NUMERIC
+                  - ENTITY_LIST
+                  - ENUMERATION
+                  - DATETIME
+                  - TIME
+              required:
+                type: boolean
+              hidden:
+                type: boolean
+              entityMetaClass:
+                type: string
+                description: |
+                  For ENTITY, ENTITY_LIST type there will be a entity metaclass name here
+                example: sec_User
+              enumerationClass:
+                type: string
+                description: |
+                  For ENUMERATION type there will be a java class for enumeration here
+              defaultValue:
+                type: string
+                description: |
+                  Default value of parameter in string form
+        templates:
+          type: array
+          items:
+            type: object
+            properties:
+              code:
+                type: string
+              outputType:
+                type: string
+                enum:
+                  - XLS
+                  - DOC
+                  - PDF
+                  - HTML
+                  - DOCX
+                  - XLSX
+                  - CUSTOM
+                  - CSV
+              default:
+                  type: boolean
+    runObject:
+      type: object
+      properties:
+        template:
+          type: string
+          description: template code
+        attachment:
+          type: boolean
+        parameters:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                description: parameter alias
+              value:
+                type: string
+              values:
+                type: array
+                items:
+                  type: string
+    group:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Group id
+        title:
+          type: string
+          description: Group title
+        code:
+          type: string
+          description: Group code
+  parameters:
+    reportIdParam:
+      name: reportId
+      in: path
+      description: Report identifier
+      required: true
+      schema:
+        type: string
+    groupIdParam:
+      name: groupId
+      in: path
+      description: Report Group identifier
+      required: true
+      schema:
+        type: string
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        password:
+          tokenUrl: http://localhost:8080/oauth/token
+          scopes:
+            rest-api: use REST API
+    tokenEndpointBasic:
+      type: http
+      scheme: basic

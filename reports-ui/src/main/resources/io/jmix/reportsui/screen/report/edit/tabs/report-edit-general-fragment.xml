@@ -1,0 +1,126 @@
+<!--
+  ~ Copyright 2021 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<fragment xmlns="http://jmix.io/schema/ui/fragment">
+
+    <data>
+        <instance id="reportDc" class="io.jmix.reports.entity.Report"
+                  provided="true">
+            <loader id="reportDl" provided="true"/>
+            <collection id="parametersDc" property="inputParameters" provided="true"/>
+            <collection id="bandsDc" property="bands" provided="true">
+                <collection id="dataSetsDc" property="dataSets" provided="true"/>
+            </collection>
+            <collection id="templatesDc" property="templates" provided="true"/>
+        </instance>
+
+        <collection id="availableParentBandsDc"
+                    class="io.jmix.reports.entity.BandDefinition"
+                    provided="true"/>
+
+        <collection id="groupsDc"
+                    class="io.jmix.reports.entity.ReportGroup"
+                    provided="true"/>
+    </data>
+
+    <layout expand="bands" spacing="true" margin="true;true;false;true">
+        <scrollBox id="scrollBox" scrollBars="horizontal" margin="true" spacing="true" contentWidth="100%">
+            <hbox id="reportFields" spacing="true" width="100%" expand="spacer">
+                <form id="propertiesForm" dataContainer="reportDc">
+                    <column width="380px">
+                        <textField id="name" required="true" property="name"
+                                   requiredMessage="msg://report.nameMsg"/>
+                        <entityComboBox id="defaultTemplateField" property="defaultTemplate"
+                                        optionsContainer="templatesDc"
+                                        required="true">
+                            <actions>
+                                <action id="create" description="msg://description.createTemplate" icon="PLUS"/>
+                                <action id="download" description="msg://description.downloadTemplate" icon="DOWNLOAD"/>
+                                <action id="upload" description="msg://description.uploadTemplate" icon="UPLOAD"/>
+                                <action id="edit" description="msg://description.editTemplate" icon="EDIT"/>
+                            </actions>
+                        </entityComboBox>
+                    </column>
+                    <column width="250px">
+                        <entityComboBox id="group" required="true" property="group" optionsContainer="groupsDc"
+                                        requiredMessage="msg://report.reportTypeMsg"/>
+                        <textField id="code" property="code"/>
+                    </column>
+                </form>
+
+                <form id="descriptionFieldGroup" dataContainer="reportDc">
+                    <column width="265px">
+                        <textArea id="description" property="description" rows="3"/>
+                    </column>
+                </form>
+
+                <gridLayout id="settingsGrid" spacing="true">
+                    <columns count="2"/>
+                    <rows>
+                        <row>
+                            <label value="msg://report.restAccess"/>
+                            <checkBox dataContainer="reportDc" property="restAccess"/>
+                        </row>
+                        <row>
+                            <label value="msg://report.system"/>
+                            <checkBox dataContainer="reportDc" property="system"/>
+                        </row>
+                    </rows>
+                </gridLayout>
+                <fileUpload id="invisibleFileUpload" dropZone="reportFields" stylename="jmix-report-upload-invisible"/>
+                <label id="spacer"/>
+            </hbox>
+        </scrollBox>
+
+        <vbox id="bands" width="100%">
+            <split orientation="horizontal" id="hSplit" pos="30" width="100%" height="100%">
+                <vbox id="treeVBox" expand="treeBox" margin="false;true;false;false" width="100%" height="100%">
+                    <groupBox id="treeBox" expand="bandsTree" width="100%" spacing="true"
+                              caption="msg://report.bands">
+                        <tree id="bandsTree" width="100%" dataContainer="bandsDc"
+                              hierarchyProperty="parentBandDefinition">
+                            <actions>
+                                <action id="create" type="create"/>
+                                <action id="remove" type="remove"/>
+                                <action id="upAction"/>
+                                <action id="downAction"/>
+                            </actions>
+                            <buttonsPanel>
+                                <button id="createBandDefinition" action="bandsTree.create" caption=""
+                                        description="msg://description.createBand" icon="font-icon:PLUS"/>
+                                <button id="removeBandDefinition" action="bandsTree.remove" caption=""
+                                        description="msg://description.removeBand" icon="font-icon:REMOVE"/>
+                                <button id="up" action="bandsTree.upAction" description="msg://description.moveUp"
+                                        icon="font-icon:CARET_UP"/>
+                                <button id="down" action="bandsTree.downAction"
+                                        description="msg://description.moveDown" icon="font-icon:CARET_DOWN"/>
+                            </buttonsPanel>
+                        </tree>
+                    </groupBox>
+                </vbox>
+                <!-- Split -->
+                <vbox id="bandDetailsVBox" expand="bandDetailsBox" margin="false;false;false;true" width="100%"
+                      height="100%">
+                    <groupBox id="bandDetailsBox" width="100%" caption="msg://report.bandDetails">
+                        <fragment screen="report_BandDefinitionEditor.fragment" id="bandEditor"
+                                  width="100%"
+                                  height="100%"/>
+                    </groupBox>
+                </vbox>
+            </split>
+        </vbox>
+    </layout>
+</fragment>

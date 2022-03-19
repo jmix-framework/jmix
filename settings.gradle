@@ -1,0 +1,12 @@
+rootProject.name = 'jmix-reports'
+
+include 'reports'
+include 'reports-ui'
+include 'reports-rest'
+include 'reports-starter'
+include 'reports-rest-starter'
+include 'reports-ui-starter'
+
+rootProject.children.each { p1 ->
+	p1.buildFileName = "${p1.name}.gradle"
+}

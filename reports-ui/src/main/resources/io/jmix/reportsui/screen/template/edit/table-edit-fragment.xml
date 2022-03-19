@@ -1,0 +1,79 @@
+<!--
+  ~ Copyright 2021 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<window xmlns="http://jmix.io/schema/ui/window">
+
+    <data>
+        <instance id="templateTableDc"
+                  class="io.jmix.reports.entity.table.TemplateTableDescription">
+            <collection id="tableBandsDc" property="templateTableBands">
+                <collection id="tableColumnsDc" property="columns"/>
+            </collection>
+        </instance>
+    </data>
+
+    <layout spacing="true">
+        <groupBox id="groupBox" width="610px" caption="msg://template.tableParameters">
+            <gridLayout id="grid" width="100%" spacing="true">
+                <columns>
+                    <column id="column1"/>
+                    <column id="column2" flex="1"/>
+                </columns>
+                <rows>
+                    <row>
+                        <table id="bandsTable" dataContainer="tableBandsDc" width="240px" height="300px" multiselect="false"
+                               columnControlVisible="false" sortable="false" editable="true">
+                            <actions>
+                                <action id="create" type="create"/>
+                                <action id="remove" type="remove"/>
+                                <action id="upBand" type="itemTracking"/>
+                                <action id="downBand" type="itemTracking"/>
+                            </actions>
+                            <buttonsPanel>
+                                <button action="bandsTable.create" caption="" icon="PLUS"/>
+                                <button action="bandsTable.remove" caption="" icon="REMOVE"/>
+                                <button action="bandsTable.upBand" icon="CARET_UP"/>
+                                <button action="bandsTable.downBand" icon="CARET_DOWN"/>
+                            </buttonsPanel>
+                            <columns>
+                                <column id="bandName" editable="true" required="true"/>
+                            </columns>
+                        </table>
+                        <table id="columnsTable" dataContainer="tableColumnsDc" width="100%" height="300px" multiselect="false"
+                               columnControlVisible="false" sortable="false" editable="true">
+                            <actions>
+                                <action id="create" type="create"/>
+                                <action id="remove" type="remove"/>
+                                <action id="upColumn" type="itemTracking"/>
+                                <action id="downColumn" type="itemTracking"/>
+                            </actions>
+                            <buttonsPanel>
+                                <button action="columnsTable.create" caption="" icon="PLUS"/>
+                                <button action="columnsTable.remove" caption="" icon="REMOVE"/>
+                                <button action="columnsTable.upColumn" icon="CARET_UP"/>
+                                <button action="columnsTable.downColumn" icon="CARET_DOWN"/>
+                            </buttonsPanel>
+                            <columns>
+                                <column id="key" editable="true" required="true"/>
+                                <column id="caption" editable="true" required="true"/>
+                            </columns>
+                        </table>
+                    </row>
+                </rows>
+            </gridLayout>
+        </groupBox>
+    </layout>
+</window>

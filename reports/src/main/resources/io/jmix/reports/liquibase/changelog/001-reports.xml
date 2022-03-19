@@ -1,0 +1,349 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2020 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet author="reports" id="1" context="!cuba">
+        <validCheckSum>8:02c24e8ab208451a178bdd3722b8f4a9</validCheckSum>
+        <validCheckSum>8:f5da7222d918810deb69ba452ee5560e</validCheckSum>
+        <validCheckSum>8:ad41a1a258292fb61230c580d0aa3099</validCheckSum>
+        <validCheckSum>8:036402abfae5b9aeba6c51e965a62a74</validCheckSum>
+
+        <createTable tableName="REPORT_GROUP">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="VERSION" type="integer" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+            <column name="UPDATE_TS" type="datetime"/>
+            <column name="UPDATED_BY" type="varchar(50)"/>
+            <column name="DELETE_TS" type="datetime"/>
+            <column name="DELETED_BY" type="varchar(50)"/>
+            <column name="SYS_TENANT_ID" type="varchar(255)"/>
+            <column name="TITLE" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CODE" type="varchar(255)"/>
+            <column name="LOCALE_NAMES" type="clob"/>
+        </createTable>
+
+        <createTable tableName="REPORT_REPORT">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="VERSION" type="integer" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+            <column name="UPDATE_TS" type="datetime"/>
+            <column name="UPDATED_BY" type="varchar(50)"/>
+            <column name="DELETE_TS" type="datetime"/>
+            <column name="DELETED_BY" type="varchar(50)"/>
+
+            <column name="NAME" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CODE" type="varchar(255)"/>
+            <column name="DESCRIPTION" type="varchar(500)"/>
+            <column name="LOCALE_NAMES" type="clob"/>
+            <column name="GROUP_ID" type="${uuid.type}">
+                <constraints nullable="false"
+                             foreignKeyName="FK_REPORT_TO_REPORT_GROUP"
+                             references="REPORT_GROUP(ID)"/>
+            </column>
+            <column name="REPORT_TYPE" type="integer"/>
+            <column name="DEFAULT_TEMPLATE_ID" type="${uuid.type}"/>
+            <column name="XML" type="clob"/>
+            <column name="ROLES_IDX" type="varchar(1000)"/>
+            <column name="SCREENS_IDX" type="varchar(1000)"/>
+            <column name="INPUT_ENTITY_TYPES_IDX" type="varchar(1000)"/>
+            <column name="REST_ACCESS" type="boolean" defaultValue="false"/>
+            <column name="IS_SYSTEM" type="boolean" defaultValue="false"/>
+            <column name="SYS_TENANT_ID" type="varchar(255)"/>
+        </createTable>
+
+        <createTable tableName="REPORT_TEMPLATE">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="VERSION" type="integer" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+            <column name="UPDATE_TS" type="datetime"/>
+            <column name="UPDATED_BY" type="varchar(50)"/>
+            <column name="DELETE_TS" type="datetime"/>
+            <column name="DELETED_BY" type="varchar(50)"/>
+
+            <column name="REPORT_ID" type="${uuid.type}">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="CODE" type="varchar(50)"/>
+            <column name="OUTPUT_TYPE" type="integer" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="IS_CUSTOM" type="boolean" defaultValue="false"/>
+            <column name="IS_ALTERABLE_OUTPUT" type="boolean" defaultValue="false"/>
+            <column name="IS_GROOVY" type="boolean" defaultValue="false"/>
+            <column name="CUSTOM_DEFINED_BY" type="integer" defaultValue="100"/>
+            <column name="CUSTOM_CLASS" type="clob"/>
+            <column name="OUTPUT_NAME_PATTERN" type="varchar(255)"/>
+            <column name="NAME" type="varchar(500)"/>
+            <column name="CONTENT" type="${byte_array.type}"/>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="REPORT_REPORT"
+                                 baseColumnNames="DEFAULT_TEMPLATE_ID"
+                                 constraintName="FK_REPORT_TO_DEF_TEMPLATE"
+                                 referencedTableName="REPORT_TEMPLATE"
+                                 referencedColumnNames="ID"/>
+
+        <addForeignKeyConstraint baseTableName="REPORT_TEMPLATE"
+                                 baseColumnNames="REPORT_ID"
+                                 constraintName="FK_REPORT_TEMPLATE_TO_REPORT"
+                                 referencedTableName="REPORT_REPORT"
+                                 referencedColumnNames="ID" onDelete="CASCADE"/>
+
+        <createTable tableName="REPORT_EXECUTION">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+
+            <column name="REPORT_ID" type="${uuid.type}">
+                <constraints foreignKeyName="FK_REPORT_EXEC_TO_REPORT"
+                             references="REPORT_REPORT(ID)" />
+            </column>
+            <column name="REPORT_NAME" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REPORT_CODE" type="varchar(255)"/>
+            <column name="PRINCIPAL" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="START_TIME" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FINISH_TIME" type="datetime"/>
+            <column name="IS_SUCCESS" type="boolean" defaultValue="false"/>
+            <column name="CANCELLED" type="boolean" defaultValue="false"/>
+            <column name="PARAMS" type="clob"/>
+            <column name="ERROR_MESSAGE" type="clob"/>
+            <column name="SERVER_ID" type="varchar(50)"/>
+            <column name="OUTPUT_DOCUMENT" type="varchar(255)"/>
+        </createTable>
+
+        <createIndex tableName="REPORT_EXECUTION" indexName="IDX_REPORT_EXEC_REPORT_ID">
+            <column name="REPORT_ID"/>
+        </createIndex>
+
+        <createIndex tableName="REPORT_EXECUTION" indexName="IDX_REPORT_EXEC_START_TIME">
+            <column name="START_TIME"/>
+        </createIndex>
+
+        <insert tableName="REPORT_GROUP" dbms="postgresql, mssql, hsqldb">
+            <column name="ID" value="4e083530-0b9c-11e1-9b41-6bdaa41bff94"/>
+            <column name="CREATE_TS" valueDate="current_timestamp"/>
+            <column name="CREATED_BY" value="admin"/>
+            <column name="VERSION" value="0"/>
+            <column name="VERSION" value="0"/>
+            <column name="TITLE" value="General"/>
+            <column name="CODE" value="ReportGroup.default"/>
+            <column name="LOCALE_NAMES" value="en=General"/>
+        </insert>
+
+        <insert tableName="REPORT_GROUP" dbms="oracle, mysql, mariadb">
+            <column name="ID" value="4e0835300b9c11e19b416bdaa41bff94"/>
+            <column name="CREATE_TS" valueDate="current_timestamp"/>
+            <column name="CREATED_BY" value="admin"/>
+            <column name="VERSION" value="0"/>
+            <column name="VERSION" value="0"/>
+            <column name="TITLE" value="General"/>
+            <column name="CODE" value="ReportGroup.default"/>
+            <column name="LOCALE_NAMES" value="en=General"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="2" author="reports" context="!cuba">
+        <dropColumn tableName="REPORT_EXECUTION" columnName="SERVER_ID"/>
+    </changeSet>
+
+    <changeSet id="3" author="reports" context="!cuba">
+        <renameColumn tableName="REPORT_EXECUTION"
+                      oldColumnName="PRINCIPAL"
+                      newColumnName="USERNAME"
+                      columnDataType="varchar(255)"/>
+    </changeSet>
+
+    <changeSet id="4-mysql-mariadb" author="reports" context="!cuba" dbms="mysql, mariadb">
+        <addColumn tableName="REPORT_GROUP">
+            <column name="DELETE_TS_NN" type="datetime" defaultValueDate="1000-01-01 00:00:00.000">
+                <constraints nullable="false"/>
+            </column>
+            <column name="SYS_TENANT_ID_NN" type="varchar(255)"/>
+        </addColumn>
+        <createIndex tableName="REPORT_GROUP" indexName="IDX_REPORT_GROUP_UNIQ_TITLE" unique="true">
+            <column name="TITLE"/>
+            <column name="SYS_TENANT_ID_NN"/>
+            <column name="DELETE_TS_NN"/>
+        </createIndex>
+        <sql endDelimiter=";\ndelimiter $$">
+            <![CDATA[
+            create trigger REPORT_GROUP_SYS_TENANT_ID_NN_INSERT_TRIGGER before insert on REPORT_GROUP
+            for each row set NEW.SYS_TENANT_ID_NN = if (NEW.SYS_TENANT_ID is null, 'no_tenant', NEW.SYS_TENANT_ID);
+            ]]>
+        </sql>
+        <sql endDelimiter=";\ndelimiter $$">
+            <![CDATA[
+            create trigger REPORT_GROUP_SYS_TENANT_ID_NN_AND_DELETE_TS_NN_UPDATE_TRIGGER before update on REPORT_GROUP
+            for each row
+            begin
+                if not(NEW.SYS_TENANT_ID <=> OLD.SYS_TENANT_ID) then
+                    set NEW.SYS_TENANT_ID_NN = if (NEW.SYS_TENANT_ID is null, 'no_tenant', NEW.SYS_TENANT_ID);
+                end if;
+                if not(NEW.DELETE_TS <=> OLD.DELETE_TS) then
+                    set NEW.DELETE_TS_NN = if (NEW.DELETE_TS is null, '1000-01-01 00:00:00.000', NEW.DELETE_TS);
+                end if;
+            end;
+            ]]>
+        </sql>
+        <update tableName="REPORT_GROUP">
+            <column name="SYS_TENANT_ID_NN" value="no_tenant"/>
+            <where>ID='4e0835300b9c11e19b416bdaa41bff94'</where>
+        </update>
+        <rollback>
+            <sql>
+                DROP TRIGGER REPORT_GROUP_SYS_TENANT_ID_NN_INSERT_TRIGGER
+            </sql>
+            <sql>
+                DROP TRIGGER REPORT_GROUP_SYS_TENANT_ID_NN_AND_DELETE_TS_NN_UPDATE_TRIGGER
+            </sql>
+            <dropIndex tableName="REPORT_GROUP" indexName="IDX_REPORT_GROUP_UNIQ_TITLE"/>
+            <dropColumn tableName="REPORT_GROUP" columnName="SYS_TENANT_ID_NN"/>
+            <dropColumn tableName="REPORT_GROUP" columnName="DELETE_TS_NN"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="4-postgresql-part1" author="reports" context="!cuba" dbms="postgresql">
+        <createIndex tableName="REPORT_GROUP" indexName="IDX_REPORT_GROUP_UNIQ_TITLE" unique="true">
+            <column name="TITLE"/>
+        </createIndex>
+        <modifySql>
+            <append value="where DELETE_TS is null and SYS_TENANT_ID is null"/>
+        </modifySql>
+    </changeSet>
+
+    <changeSet id="4-postgresql-part2" author="reports" context="!cuba" dbms="postgresql">
+        <createIndex tableName="REPORT_GROUP" indexName="IDX_REPORT_GROUP_UNIQ_TITLE_SYS_TENANT_ID_NN" unique="true">
+            <column name="TITLE"/>
+            <column name="SYS_TENANT_ID"/>
+        </createIndex>
+        <modifySql>
+            <append value="where DELETE_TS is null and SYS_TENANT_ID is not null"/>
+        </modifySql>
+    </changeSet>
+
+    <changeSet id="4-another-db" author="reports" context="!cuba" dbms="mssql, hsqldb, oracle">
+        <createIndex tableName="REPORT_GROUP" indexName="IDX_REPORT_GROUP_UNIQ_TITLE" unique="true">
+            <column name="TITLE"/>
+            <column name="DELETE_TS"/>
+            <column name="SYS_TENANT_ID"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="5-mysql-mariadb" author="reports" context="!cuba" dbms="mysql, mariadb">
+        <addColumn tableName="REPORT_REPORT">
+            <column name="DELETE_TS_NN" type="datetime" defaultValueDate="1000-01-01 00:00:00.000">
+                <constraints nullable="false"/>
+            </column>
+            <column name="SYS_TENANT_ID_NN" type="varchar(255)"/>
+        </addColumn>
+        <createIndex tableName="REPORT_REPORT" indexName="IDX_REPORT_REPORT_UNIQ_NAME" unique="true">
+            <column name="NAME"/>
+            <column name="SYS_TENANT_ID_NN"/>
+            <column name="DELETE_TS_NN"/>
+        </createIndex>
+        <sql endDelimiter=";\ndelimiter $$">
+            <![CDATA[
+            create trigger REPORT_REPORT_SYS_TENANT_ID_NN_INSERT_TRIGGER before insert on REPORT_REPORT
+            for each row set NEW.SYS_TENANT_ID_NN = if (NEW.SYS_TENANT_ID is null, 'no_tenant', NEW.SYS_TENANT_ID);
+            ]]>
+        </sql>
+        <sql endDelimiter=";\ndelimiter $$">
+            <![CDATA[
+            create trigger REPORT_REPORT_SYS_TENANT_ID_NN_AND_DELETE_TS_NN_UPDATE_TRIGGER before update on REPORT_REPORT
+            for each row
+            begin
+                if not(NEW.SYS_TENANT_ID <=> OLD.SYS_TENANT_ID) then
+                  set NEW.SYS_TENANT_ID_NN = NEW.SYS_TENANT_ID;
+                end if;
+                if not(NEW.DELETE_TS <=> OLD.DELETE_TS) then
+                  set NEW.DELETE_TS_NN = if (NEW.DELETE_TS is null, '1000-01-01 00:00:00.000', NEW.DELETE_TS);
+                end if;
+            end;
+            ]]>
+        </sql>
+        <rollback>
+            <sql>
+                DROP TRIGGER REPORT_REPORT_SYS_TENANT_ID_NN_INSERT_TRIGGER
+            </sql>
+            <sql>
+                DROP TRIGGER REPORT_REPORT_SYS_TENANT_ID_NN_AND_DELETE_TS_NN_UPDATE_TRIGGER
+            </sql>
+            <dropIndex tableName="REPORT_REPORT" indexName="IDX_REPORT_REPORT_UNIQ_NAME"/>
+            <dropColumn tableName="REPORT_REPORT" columnName="SYS_TENANT_ID_NN"/>
+            <dropColumn tableName="REPORT_REPORT" columnName="DELETE_TS_NN"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="5-postgresql-part1" author="reports" context="!cuba" dbms="postgresql">
+        <createIndex tableName="REPORT_REPORT" indexName="IDX_REPORT_REPORT_UNIQ_NAME" unique="true">
+            <column name="NAME"/>
+        </createIndex>
+        <modifySql>
+            <append value="where DELETE_TS is null and SYS_TENANT_ID is null"/>
+        </modifySql>
+    </changeSet>
+
+    <changeSet id="5-postgresql-part2" author="reports" context="!cuba" dbms="postgresql">
+        <createIndex tableName="REPORT_REPORT" indexName="IDX_REPORT_REPORT_UNIQ_NAME_SYS_TENANT_ID_NN" unique="true">
+            <column name="NAME"/>
+            <column name="SYS_TENANT_ID"/>
+        </createIndex>
+        <modifySql>
+            <append value="where DELETE_TS is null and SYS_TENANT_ID is not null"/>
+        </modifySql>
+    </changeSet>
+
+    <changeSet id="5-another-db" author="reports" context="!cuba" dbms="mssql, hsqldb, oracle">
+        <createIndex tableName="REPORT_REPORT" indexName="IDX_REPORT_REPORT_UNIQ_NAME" unique="true">
+            <column name="NAME"/>
+            <column name="DELETE_TS"/>
+            <column name="SYS_TENANT_ID"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>

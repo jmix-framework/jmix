@@ -1,0 +1,47 @@
+{
+  "categoryAxis": {
+    "gridAlpha": 0.1,
+    "parseDates": true,
+    "gridColor": "#000",
+    "labelRotation": 0
+  },
+  "categoryField": "date",
+  "graphs": [
+    {
+      "columnWidth": 0.4,
+      "type": "column",
+      "valueField": "value",
+      "fillAlphas": 0.5,
+      "balloonText": "[[value]]",
+      "order": 1.0
+    }
+  ],
+  "valueAxes": [
+    {
+      "gridAlpha": 0.1,
+      "unit": " ",
+      "gridColor": "#000",
+      "dashLength": 0
+    }
+  ],
+  "type": "serial",
+  "export": {
+    "enabled": true
+  },
+  "chartScrollbar": {},
+  "valueScrollbar": {},
+  "dataProvider": [
+    {
+      "date": "2022-01-11 01:12:33:0",
+      "value": 1
+    },
+    {
+      "date": "2022-01-12 02:13:34:0",
+      "value": 2
+    },
+    {
+      "date": "2022-01-13 03:14:35:0",
+      "value": 3
+    }
+  ]
+}

@@ -1,0 +1,134 @@
+<!--
+  ~ Copyright 2021 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<window xmlns="http://jmix.io/schema/ui/window">
+
+    <data>
+        <instance id="pivotTableDc" class="io.jmix.reports.entity.pivottable.PivotTableDescription">
+            <collection id="propertyDc" property="properties"/>
+            <collection id="aggregationsDc" property="aggregations"/>
+        </instance>
+    </data>
+
+    <assign name="width" value="605px"/>
+    <assign name="caption-width" value="100px"/>
+    <assign name="tab-caption-width" value="160px"/>
+    <assign name="height" value="245px"/>
+
+    <layout spacing="true">
+        <vbox>
+            <form id="pivotTableGroup" dataContainer="pivotTableDc" width="${width}">
+                <column width="100%">
+                    <comboBox id="bandNameField" property="bandName" required="true"/>
+                    <checkBox property="editable"/>
+                </column>
+            </form>
+            <tabSheet id="pivotTableTabSheet" width="${width}" stylename="framed">
+                <tab id="renderer" caption="msg://pivotTable.rendererOptions" margin="true">
+                    <form id="rendererGroup" dataContainer="pivotTableDc" width="100%">
+                        <column width="100%">
+                            <comboBox id="defaultRendererField" property="defaultRenderer" required="true"/>
+                            <multiSelectList dataContainer="pivotTableDc"
+                                             property="renderers"
+                                             required="true"/>
+                        </column>
+                    </form>
+                </tab>
+                <tab id="aggregation" caption="msg://pivotTable.aggregationOptions" margin="true">
+                    <table id="aggregationsTable" dataContainer="aggregationsDc" width="100%" height="${height}">
+                        <actions>
+                            <action id="create" type="create"/>
+                            <action id="edit" type="edit"/>
+                            <action id="remove" type="remove"/>
+                        </actions>
+                        <buttonsPanel>
+                            <button action="aggregationsTable.create"/>
+                            <button action="aggregationsTable.edit"/>
+                            <button action="aggregationsTable.remove"/>
+                            <entityComboBox id="defaultAggregationField"
+                                            optionsContainer="aggregationsDc"
+                                            inputPrompt="msg://pivotTable.defaultAggregation"
+                                            dataContainer="pivotTableDc" property="defaultAggregation"
+                                            captionProperty="caption"
+                                            width="220px"/>
+                        </buttonsPanel>
+                        <columns>
+                            <column id="caption"/>
+                            <column id="mode"/>
+                            <column id="function" collapsed="true"/>
+                        </columns>
+                    </table>
+                </tab>
+                <tab id="properties" caption="msg://pivotTable.propertiesOptions" margin="true">
+                    <groupTable id="propertyTable" dataContainer="propertyDc" width="100%" height="${height}"
+                                reorderingAllowed="false"
+                                fixedGrouping="true">
+                        <actions>
+                            <action id="edit" type="edit"/>
+                            <action id="remove" type="remove"/>
+                        </actions>
+                        <buttonsPanel>
+                            <popupButton id="propertiesCreateButton" caption="msg:///actions.Create"/>
+                            <button action="propertyTable.edit"/>
+                            <button action="propertyTable.remove"/>
+                        </buttonsPanel>
+                        <columns>
+                            <group>
+                                <column id="type"/>
+                            </group>
+                            <column id="name"/>
+                            <column id="caption"/>
+                        </columns>
+                    </groupTable>
+                </tab>
+                <tab id="custom" caption="msg://pivotTable.customOptions" margin="true">
+                    <scrollBox height="${height}" width="100%" spacing="true">
+                        <groupBox caption="msg://pivotTable.customFunctions" collapsable="true" collapsed="false"
+                                  spacing="true">
+                            <form id="customFunctionsGroup" dataContainer="pivotTableDc" width="100%">
+                                <column width="100%">
+                                    <sourceCodeEditor mode="JavaScript" property="filterFunction"
+                                                      dataContainer="pivotTableDc"/>
+                                    <sourceCodeEditor mode="JavaScript" property="sortersFunction"
+                                                      dataContainer="pivotTableDc"/>
+                                </column>
+                            </form>
+                        </groupBox>
+                        <groupBox id="customC3GroupBox" caption="msg://pivotTable.customC3properties" spacing="true"
+                                  collapsable="true" collapsed="true" visible="false">
+                            <form id="customC3Group" dataContainer="pivotTableDc" width="100%">
+                                <column width="100%">
+                                    <textField property="c3Width"/>
+                                    <textField property="c3Height"/>
+                                </column>
+                            </form>
+                        </groupBox>
+                        <groupBox id="customHeatmapGroupBox" caption="msg://pivotTable.customHeatmapProperties"
+                                  spacing="true"
+                                  collapsable="true" collapsed="true" visible="false">
+                            <form id="customHeatmapGroup" dataContainer="pivotTableDc" width="100%">
+                                <column width="100%">
+                                    <sourceCodeEditor mode="JavaScript" property="colorScaleGeneratorFunction"
+                                                      height="200px" dataContainer="pivotTableDc"/>
+                                </column>
+                            </form>
+                        </groupBox>
+                    </scrollBox>
+                </tab>
+            </tabSheet>
+        </vbox>
+    </layout>
+</window>

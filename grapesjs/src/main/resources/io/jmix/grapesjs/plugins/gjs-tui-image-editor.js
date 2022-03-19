@@ -1,0 +1,7 @@
+{
+          config: {
+            includeUI: {
+              initMenu: 'filter',
+            },
+          }
+}

@@ -1,0 +1,439 @@
+/*
+ * Copyright 2020 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+plugins {
+    id 'java-platform'
+}
+
+repositories {
+    if (rootProject.hasProperty('jmixRepoUrl')) {
+        maven {
+            url rootProject['jmixRepoUrl']
+
+            if (rootProject.hasProperty('jmixRepoUser') && rootProject.hasProperty('jmixRepoPassword')) {
+                credentials {
+                    username rootProject['jmixRepoUser']
+                    password rootProject['jmixRepoPassword']
+                }
+            }
+        }
+        mavenCentral()
+    } else {
+        mavenLocal()
+        maven {
+            url "https://nexus.jmix.io/repository/public"
+        }
+        mavenCentral()
+    }
+}
+
+apply plugin: 'maven-publish'
+
+publishing {
+    if (rootProject.hasProperty('jmixUploadUrl')) {
+        repositories {
+            maven {
+                url = rootProject['jmixUploadUrl']
+                credentials {
+                    username rootProject['jmixUploadUser']
+                    password rootProject['jmixUploadPassword']
+                }
+                allowInsecureProtocol = true
+            }
+        }
+    }
+}
+
+group = 'io.jmix.bom'
+
+def vaadinVersion = '8.14.1-1-jmix'
+
+javaPlatform {
+    allowDependencies()
+}
+
+dependencies {
+    api platform("org.springframework.boot:spring-boot-dependencies:2.6.3")
+    api platform('software.amazon.awssdk:bom:2.16.69')
+
+    def baseVersion = '1.3.0'
+    def appSettingsVersion = baseVersion
+    def auditVersion = baseVersion
+    def awsfsVersion = baseVersion
+    def awssecurityVerion = baseVersion
+    def bpmVersion = baseVersion
+    def businessCalendarVersion = baseVersion
+    def cloudqueueVerion = baseVersion
+    def coreVersion = baseVersion
+    def cubaVersion = baseVersion
+    def dashboardsVersion = baseVersion
+    def dataVersion = baseVersion
+    def dataimportVersion = baseVersion
+    def datatoolsVersion = baseVersion
+    def dynattrVersion = baseVersion
+    def emailVersion = baseVersion
+    def emailtemplatesVersion = baseVersion
+    def grapesJsVersion = baseVersion
+    def graphqlVersion = baseVersion
+    def imapVersion = baseVersion
+    def ldapVersion = baseVersion
+    def localfsVersion = baseVersion
+    def multitenancyVersion = baseVersion
+    def mapsVersion = baseVersion
+    def notificationsVersion = baseVersion
+    def oidcVersion = baseVersion
+    def quartzVersion = baseVersion
+    def reportsVersion = baseVersion
+    def restVersion = baseVersion
+    def samlVersion = baseVersion
+    def searchVersion = baseVersion
+    def securityVersion = baseVersion
+    def sessionsVersion = baseVersion
+    def translationsVersion = baseVersion
+    def uiVersion = baseVersion
+    def webdavVersion = baseVersion
+
+    if (isTrialBuild()) {
+        bpmVersion = bpmVersion + '.trial'
+        businessCalendarVersion = businessCalendarVersion + '.trial'
+        mapsVersion = mapsVersion + '.trial'
+        notificationsVersion = notificationsVersion + '.trial'
+        webdavVersion = webdavVersion + '.trial'
+
+        version = version + '.trial'
+    }
+
+    constraints {
+        api "io.jmix.appsettings:jmix-appsettings:${snapshotOr(appSettingsVersion)}"
+        api "io.jmix.appsettings:jmix-appsettings-starter:${snapshotOr(appSettingsVersion)}"
+        api "io.jmix.appsettings:jmix-appsettings-ui:${snapshotOr(appSettingsVersion)}"
+        api "io.jmix.appsettings:jmix-appsettings-ui-starter:${snapshotOr(appSettingsVersion)}"
+
+        api "io.jmix.audit:jmix-audit:${snapshotOr(auditVersion)}"
+        api "io.jmix.audit:jmix-audit-ui:${snapshotOr(auditVersion)}"
+        api "io.jmix.audit:jmix-audit-starter:${snapshotOr(auditVersion)}"
+        api "io.jmix.audit:jmix-audit-ui-starter:${snapshotOr(auditVersion)}"
+
+        api "io.jmix.awsfs:jmix-awsfs:${snapshotOr(awsfsVersion)}"
+        api "io.jmix.awsfs:jmix-awsfs-starter:${snapshotOr(awsfsVersion)}"
+
+        api "io.jmix.awssecurity:jmix-awssecurity:${snapshotOr(awssecurityVerion)}"
+        api "io.jmix.awssecurity:jmix-awssecurity-starter:${snapshotOr(awssecurityVerion)}"
+
+        api "io.jmix.bpm:jmix-bpm:${snapshotOr(bpmVersion)}"
+        api "io.jmix.bpm:jmix-bpm-modeler:${snapshotOr(bpmVersion)}"
+        api "io.jmix.bpm:jmix-bpm-starter:${snapshotOr(bpmVersion)}"
+        api "io.jmix.bpm:jmix-bpm-ui:${snapshotOr(bpmVersion)}"
+        api "io.jmix.bpm:jmix-bpm-ui-starter:${snapshotOr(bpmVersion)}"
+        api "io.jmix.bpm:jmix-bpm-rest:${snapshotOr(bpmVersion)}"
+        api "io.jmix.bpm:jmix-bpm-rest-starter:${snapshotOr(bpmVersion)}"
+
+        api "io.jmix.businesscalendar:jmix-businesscalendar:${snapshotOr(businessCalendarVersion)}"
+        api "io.jmix.businesscalendar:jmix-businesscalendar-starter:${snapshotOr(businessCalendarVersion)}"
+        api "io.jmix.businesscalendar:jmix-businesscalendar-ui:${snapshotOr(businessCalendarVersion)}"
+        api "io.jmix.businesscalendar:jmix-businesscalendar-ui-starter:${snapshotOr(businessCalendarVersion)}"
+
+        api "io.jmix.cloudqueue:jmix-cloudqueue-api:${snapshotOr(cloudqueueVerion)}"
+        api "io.jmix.cloudqueue:jmix-cloudqueue-aws-starter:${snapshotOr(cloudqueueVerion)}"
+        api "io.jmix.cloudqueue:jmix-cloudqueue-ui:${snapshotOr(cloudqueueVerion)}"
+        api "io.jmix.cloudqueue:jmix-cloudqueue-ui-starter:${snapshotOr(cloudqueueVerion)}"
+        api "io.jmix.cloudqueue:jmix-cloudqueue-yandex-starter:${snapshotOr(cloudqueueVerion)}"
+
+        api "io.jmix.core:jmix-core:${snapshotOr(coreVersion)}"
+        api "io.jmix.core:jmix-core-starter:${snapshotOr(coreVersion)}"
+
+        api "io.jmix.cuba:jmix-cuba:${snapshotOr(cubaVersion)}"
+        api "io.jmix.cuba:jmix-cuba-starter:${snapshotOr(cubaVersion)}"
+
+        api "io.jmix.dashboards:jmix-dashboards:${snapshotOr(dashboardsVersion)}"
+        api "io.jmix.dashboards:jmix-dashboards-starter:${snapshotOr(dashboardsVersion)}"
+        api "io.jmix.dashboards:jmix-dashboards-chart:${snapshotOr(dashboardsVersion)}"
+        api "io.jmix.dashboards:jmix-dashboards-chart-starter:${snapshotOr(dashboardsVersion)}"
+        api "io.jmix.dashboards:jmix-dashboards-ui:${snapshotOr(dashboardsVersion)}"
+        api "io.jmix.dashboards:jmix-dashboards-ui-starter:${snapshotOr(dashboardsVersion)}"
+
+        api "io.jmix.data:jmix-data:${snapshotOr(dataVersion)}"
+        api "io.jmix.data:jmix-data-autoconfigure:${snapshotOr(dataVersion)}"
+        api "io.jmix.data:jmix-eclipselink:${snapshotOr(dataVersion)}"
+        api "io.jmix.data:jmix-eclipselink-starter:${snapshotOr(dataVersion)}"
+
+        api "io.jmix.dataimport:jmix-dataimport:${snapshotOr(dataimportVersion)}"
+        api "io.jmix.dataimport:jmix-dataimport-starter:${snapshotOr(dataimportVersion)}"
+
+        api "io.jmix.datatools:jmix-datatools:${snapshotOr(datatoolsVersion)}"
+        api "io.jmix.datatools:jmix-datatools-starter:${snapshotOr(datatoolsVersion)}"
+        api "io.jmix.datatools:jmix-datatools-ui:${snapshotOr(datatoolsVersion)}"
+        api "io.jmix.datatools:jmix-datatools-ui-starter:${snapshotOr(datatoolsVersion)}"
+
+        api "io.jmix.dynattr:jmix-dynattr:${snapshotOr(dynattrVersion)}"
+        api "io.jmix.dynattr:jmix-dynattr-ui:${snapshotOr(dynattrVersion)}"
+        api "io.jmix.dynattr:jmix-dynattr-starter:${snapshotOr(dynattrVersion)}"
+        api "io.jmix.dynattr:jmix-dynattr-ui-starter:${snapshotOr(dynattrVersion)}"
+
+        api "io.jmix.email:jmix-email:${snapshotOr(emailVersion)}"
+        api "io.jmix.email:jmix-email-ui:${snapshotOr(emailVersion)}"
+        api "io.jmix.email:jmix-email-starter:${snapshotOr(emailVersion)}"
+        api "io.jmix.email:jmix-email-ui-starter:${snapshotOr(emailVersion)}"
+
+        api "io.jmix.emailtemplates:jmix-emailtemplates:${snapshotOr(emailtemplatesVersion)}"
+        api "io.jmix.emailtemplates:jmix-emailtemplates-ui:${snapshotOr(emailtemplatesVersion)}"
+        api "io.jmix.emailtemplates:jmix-emailtemplates-starter:${snapshotOr(emailtemplatesVersion)}"
+        api "io.jmix.emailtemplates:jmix-emailtemplates-ui-starter:${snapshotOr(emailtemplatesVersion)}"
+
+        api "io.jmix.grapesjs:jmix-grapesjs:${snapshotOr(grapesJsVersion)}"
+        api "io.jmix.grapesjs:jmix-grapesjs-starter:${snapshotOr(grapesJsVersion)}"
+
+        api "io.jmix.graphql:jmix-graphql:${snapshotOr(graphqlVersion)}"
+        api "io.jmix.graphql:jmix-graphql-starter:${snapshotOr(graphqlVersion)}"
+
+        api "io.jmix.imap:jmix-imap:${snapshotOr(imapVersion)}"
+        api "io.jmix.imap:jmix-imap-ui:${snapshotOr(imapVersion)}"
+        api "io.jmix.imap:jmix-imap-starter:${snapshotOr(imapVersion)}"
+        api "io.jmix.imap:jmix-imap-ui-starter:${snapshotOr(imapVersion)}"
+
+        api "io.jmix.ldap:jmix-ldap:${snapshotOr(ldapVersion)}"
+        api "io.jmix.ldap:jmix-ldap-starter:${snapshotOr(ldapVersion)}"
+
+        api "io.jmix.localfs:jmix-localfs:${snapshotOr(localfsVersion)}"
+        api "io.jmix.localfs:jmix-localfs-starter:${snapshotOr(localfsVersion)}"
+
+        api "io.jmix.maps:jmix-maps:${snapshotOr(mapsVersion)}"
+        api "io.jmix.maps:jmix-maps-ui:${snapshotOr(mapsVersion)}"
+        api "io.jmix.maps:jmix-maps-ui-widgets:${snapshotOr(mapsVersion)}"
+        api "io.jmix.maps:jmix-maps-starter:${snapshotOr(mapsVersion)}"
+        api "io.jmix.maps:jmix-maps-ui-starter:${snapshotOr(mapsVersion)}"
+
+        api "io.jmix.multitenancy:jmix-multitenancy:${snapshotOr(multitenancyVersion)}"
+        api "io.jmix.multitenancy:jmix-multitenancy-ui:${snapshotOr(multitenancyVersion)}"
+        api "io.jmix.multitenancy:jmix-multitenancy-starter:${snapshotOr(multitenancyVersion)}"
+        api "io.jmix.multitenancy:jmix-multitenancy-ui-starter:${snapshotOr(multitenancyVersion)}"
+
+        api "io.jmix.notifications:jmix-notifications:${snapshotOr(notificationsVersion)}"
+        api "io.jmix.notifications:jmix-notifications-ui:${snapshotOr(notificationsVersion)}"
+        api "io.jmix.notifications:jmix-notifications-starter:${snapshotOr(notificationsVersion)}"
+        api "io.jmix.notifications:jmix-notifications-ui-starter:${snapshotOr(notificationsVersion)}"
+
+        api "io.jmix.oidc:jmix-oidc:${snapshotOr(oidcVersion)}"
+        api "io.jmix.oidc:jmix-oidc-starter:${snapshotOr(oidcVersion)}"
+
+        api "io.jmix.quartz:jmix-quartz:${snapshotOr(quartzVersion)}"
+        api "io.jmix.quartz:jmix-quartz-starter:${snapshotOr(quartzVersion)}"
+
+        api "io.jmix.reports:jmix-reports:${snapshotOr(reportsVersion)}"
+        api "io.jmix.reports:jmix-reports-ui:${snapshotOr(reportsVersion)}"
+        api "io.jmix.reports:jmix-reports-rest:${snapshotOr(reportsVersion)}"
+        api "io.jmix.reports:jmix-reports-starter:${snapshotOr(reportsVersion)}"
+        api "io.jmix.reports:jmix-reports-ui-starter:${snapshotOr(reportsVersion)}"
+        api "io.jmix.reports:jmix-reports-rest-starter:${snapshotOr(reportsVersion)}"
+
+        api "io.jmix.rest:jmix-rest:${snapshotOr(restVersion)}"
+        api "io.jmix.rest:jmix-rest-starter:${snapshotOr(restVersion)}"
+
+        api "io.jmix.saml:jmix-saml:${snapshotOr(samlVersion)}"
+        api "io.jmix.saml:jmix-saml-starter:${snapshotOr(samlVersion)}"
+
+        api "io.jmix.search:jmix-search:${snapshotOr(searchVersion)}"
+        api "io.jmix.search:jmix-search-starter:${snapshotOr(searchVersion)}"
+        api "io.jmix.search:jmix-search-aws-starter:${snapshotOr(searchVersion)}"
+        api "io.jmix.search:jmix-search-ui:${snapshotOr(searchVersion)}"
+        api "io.jmix.search:jmix-search-ui-starter:${snapshotOr(searchVersion)}"
+
+        api "io.jmix.security:jmix-security:${snapshotOr(securityVersion)}"
+        api "io.jmix.security:jmix-security-ui:${snapshotOr(securityVersion)}"
+        api "io.jmix.security:jmix-security-data:${snapshotOr(securityVersion)}"
+        api "io.jmix.security:jmix-security-oauth2:${snapshotOr(securityVersion)}"
+        api "io.jmix.security:jmix-security-starter:${snapshotOr(securityVersion)}"
+        api "io.jmix.security:jmix-security-ui-starter:${snapshotOr(securityVersion)}"
+        api "io.jmix.security:jmix-security-data-starter:${snapshotOr(securityVersion)}"
+        api "io.jmix.security:jmix-security-oauth2-starter:${snapshotOr(securityVersion)}"
+
+        api "io.jmix.sessions:jmix-sessions:${snapshotOr(sessionsVersion)}"
+        api "io.jmix.sessions:jmix-sessions-starter:${snapshotOr(sessionsVersion)}"
+
+        api "io.jmix.translations:jmix-translations-fr:${snapshotOr(translationsVersion)}"
+        api "io.jmix.translations:jmix-translations-ru:${snapshotOr(translationsVersion)}"
+        api "io.jmix.translations:jmix-translations-de:${snapshotOr(translationsVersion)}"
+        api "io.jmix.translations:jmix-translations-zh-cn:${snapshotOr(translationsVersion)}"
+        api "io.jmix.translations:jmix-translations-ro:${snapshotOr(translationsVersion)}"
+        api "io.jmix.translations:jmix-translations-el:${snapshotOr(translationsVersion)}"
+
+        api "io.jmix.ui:jmix-ui:${snapshotOr(uiVersion)}"
+        api "io.jmix.ui:jmix-ui-data:${snapshotOr(uiVersion)}"
+        api "io.jmix.ui:jmix-ui-export:${snapshotOr(uiVersion)}"
+        api "io.jmix.ui:jmix-ui-export-starter:${snapshotOr(uiVersion)}"
+        api "io.jmix.ui:jmix-ui-test-assist:${snapshotOr(uiVersion)}"
+        api "io.jmix.ui:jmix-ui-themes:${snapshotOr(uiVersion)}"
+        api "io.jmix.ui:jmix-ui-themes-compiled:${snapshotOr(uiVersion)}"
+        api "io.jmix.ui:jmix-ui-widgets:${snapshotOr(uiVersion)}"
+        api "io.jmix.ui:jmix-ui-widgets-compiled:${snapshotOr(uiVersion)}"
+        api "io.jmix.ui:jmix-ui-starter:${snapshotOr(uiVersion)}"
+        api "io.jmix.ui:jmix-ui-data-starter:${snapshotOr(uiVersion)}"
+        api "io.jmix.ui:jmix-charts:${snapshotOr(uiVersion)}"
+        api "io.jmix.ui:jmix-charts-starter:${snapshotOr(uiVersion)}"
+        api "io.jmix.ui:jmix-charts-widgets:${snapshotOr(uiVersion)}"
+        api "io.jmix.ui:jmix-pivot-table:${snapshotOr(uiVersion)}"
+        api "io.jmix.ui:jmix-pivot-table-starter:${snapshotOr(uiVersion)}"
+        api "io.jmix.ui:jmix-pivot-table-widgets:${snapshotOr(uiVersion)}"
+
+        api "io.jmix.webdav:jmix-webdav:${snapshotOr(webdavVersion)}"
+        api "io.jmix.webdav:jmix-webdav-ui:${snapshotOr(webdavVersion)}"
+        api "io.jmix.webdav:jmix-webdav-rest:${snapshotOr(webdavVersion)}"
+        api "io.jmix.webdav:jmix-webdav-starter:${snapshotOr(webdavVersion)}"
+        api "io.jmix.webdav:jmix-webdav-ui-starter:${snapshotOr(webdavVersion)}"
+        api "io.jmix.webdav:jmix-webdav-rest-starter:${snapshotOr(webdavVersion)}"
+
+        api 'com.google.guava:guava:31.0.1-jre'
+        api 'commons-io:commons-io:2.11.0'
+        api 'commons-fileupload:commons-fileupload:1.4'
+        api 'javax.annotation:javax.annotation-api:1.3.2'
+        api 'javax.inject:javax.inject:1'
+        api 'org.antlr:antlr-runtime:3.5.2'
+        api 'org.apache.commons:commons-collections4:4.4'
+        api 'org.apache.commons:commons-text:1.9'
+        api 'org.apache.commons:commons-compress:1.21'
+        api 'org.dom4j:dom4j:2.1.3'
+        api 'org.eclipse.persistence:jakarta.persistence:2.2.3'
+        api 'org.eclipse.persistence:org.eclipse.persistence.core:2.7.9-6-jmix'
+        api 'org.eclipse.persistence:org.eclipse.persistence.jpa:2.7.9-6-jmix'
+        api 'org.eclipse.persistence:org.eclipse.persistence.extension:2.7.9'
+        api 'org.glassfish:javax.el:3.0.1-b12'
+
+        api 'jakarta.xml.bind:jakarta.xml.bind-api:2.3.3'
+        api 'org.glassfish.jaxb:jaxb-runtime:2.3.5'
+
+        api "com.vaadin:vaadin-server:$vaadinVersion"
+        api "com.vaadin:vaadin-compatibility-server:$vaadinVersion"
+        api "com.vaadin:vaadin-push:$vaadinVersion"
+        api "com.vaadin:vaadin-client:$vaadinVersion"
+        api "com.vaadin:vaadin-client-compiler:$vaadinVersion"
+        api "com.vaadin:vaadin-compatibility-client:$vaadinVersion"
+        api "com.vaadin:vaadin-themes:$vaadinVersion"
+        api 'com.vaadin:vaadin-spring:3.1.1'
+
+        api 'org.webjars:ace-builds:1.1.9-1-cuba'
+        api 'org.webjars:bootstrap:4.5.3-0-jmix'
+        api 'org.webjars:diff-match-patch:0.1.cuba.1'
+        api 'org.webjars:jquery:3.6.0'
+        api 'org.webjars:jquery-ui:1.13.0'
+        api 'org.webjars.bower:jquery-file-upload:9.22.0.cuba.0'
+        api 'org.webjars.npm:object-fit-images:3.2.3'
+
+        api 'org.webjars.npm:grapesjs:0.16.2'
+        api 'org.webjars.bower:keymaster:1.6.3'
+        api 'org.webjars.npm:babel__runtime:7.9.2'
+        api 'org.webjars.npm:github-com-kenwheeler-cash:2.3.9'
+        api 'org.webjars.npm:grapesjs-plugin-ckeditor:0.0.9'
+        api 'org.webjars.npm:grapesjs-custom-code:0.1.1'
+        api 'org.webjars.npm:grapesjs-tabs:0.1.2'
+        api 'org.webjars.npm:grapesjs-touch:0.1.1'
+        api 'org.webjars.npm:grapesjs-parser-postcss:0.1.1'
+        api 'org.webjars.npm:grapesjs-preset-webpage:0.1.10'
+        api 'org.webjars.npm:github-com-artf-grapesjs-preset-newsletter:0.2.20'
+        api 'org.webjars.npm:grapesjs-blocks-basic:0.1.8'
+        api 'org.webjars.npm:grapesjs-blocks-flexbox:0.1.1'
+        api 'org.webjars.npm:grapesjs-tui-image-editor:0.1.2'
+        api 'org.webjars.npm:grapesjs-plugin-forms:1.0.5'
+        api 'org.webjars.npm:grapesjs-style-filter:0.1.1'
+        api 'org.webjars.npm:grapesjs-tooltip:0.1.5'
+
+        api 'org.webjars.bowergithub.mootools:slick:1.1.7'
+        api 'org.webjars:ckeditor:4.14.0'
+
+        api 'org.spockframework:spock-core:2.0-groovy-3.0'
+        api 'org.spockframework:spock-spring:2.0-groovy-3.0'
+
+        api 'io.swagger.core.v3:swagger-models:2.1.11'
+        api 'io.swagger.core.v3:swagger-core:2.1.11'
+
+        api 'org.springframework.cloud:spring-cloud-aws-messaging:2.2.6.RELEASE'
+
+        api 'org.springframework.security.oauth:spring-security-oauth2:2.5.1.RELEASE'
+
+        api 'javax.cache:cache-api:1.1.1'
+
+        api 'com.icegreen:greenmail:1.6.5'
+
+        def geoToolsVersion = '20.3'
+        api "org.geotools:gt-api:$geoToolsVersion"
+        api "org.geotools:gt-geojson:$geoToolsVersion"
+        api "org.geotools:gt-referencing:$geoToolsVersion"
+        api "org.geotools:gt-epsg-hsql:$geoToolsVersion"
+        api "org.geotools:gt-epsg-extension:$geoToolsVersion"
+        api "org.geotools:gt-shapefile:$geoToolsVersion"
+        api 'javax.media.jai:com.springsource.javax.media.jai.core:1.1.3'
+        api 'org.liquibase:liquibase-core:4.3.5'
+
+        api 'com.thoughtworks.xstream:xstream:1.4.18'
+
+        api 'com.amazonaws:aws-java-sdk-core:1.11.1034'
+
+        def yargVersion = '2.2.15'
+        api "com.haulmont.yarg:yarg-api:$yargVersion"
+        api "com.haulmont.yarg:yarg:$yargVersion"
+
+        api 'org.jsoup:jsoup:1.14.3'
+
+        api 'org.apache.poi:poi:4.1.2'
+        api 'org.apache.poi:poi-ooxml:4.1.2'
+        api 'org.apache.tika:tika-parsers:1.27'
+
+        api 'org.webjars.bower:pivottable:2.21.0.jmix.0'
+        api 'org.webjars:jquery-ui-touch-punch:0.2.3-2'
+        api 'org.webjars:amcharts:3.21.12.jmix.0'
+
+        def flowableVersion = '6.7.0'
+        api "org.flowable:flowable-spring-configurator:$flowableVersion"
+        api "org.flowable:flowable-spring-boot-starter-process:$flowableVersion"
+        api "org.flowable:flowable-spring-boot-starter-dmn:$flowableVersion"
+        api "org.flowable:flowable-dmn-spring-configurator:$flowableVersion"
+        api "org.flowable:flowable-spring-boot-starter-process-rest:$flowableVersion"
+        api "org.flowable:flowable-spring-boot-starter-dmn-rest:$flowableVersion"
+
+        api 'io.leangen.graphql:graphql-spqr-spring-boot-starter:0.0.6'
+        api 'com.graphql-java-kickstart:graphql-java-servlet:11.1.0'
+        api 'com.graphql-java:graphql-java:16.2'
+
+        api 'com.opencsv:opencsv:5.5.2'
+
+        api 'io.vavr:vavr:0.9.3'
+        api 'org.jetbrains:annotations:22.0.0'
+        api 'commons-codec:commons-codec:1.15'
+
+        runtime 'org.hsqldb:hsqldb:2.4.1'
+    }
+}
+
+publishing {
+    publications {
+        javaPlatformMaven(MavenPublication) {
+            artifactId = 'jmix-bom'
+            from components.javaPlatform
+        }
+    }
+}
+
+String snapshotOr(String releaseVer) {
+    if (rootProject.hasProperty('jmixRelease')) {
+        return releaseVer
+    } else {
+        return version
+    }
+}
+
+boolean isTrialBuild() {
+    return rootProject.hasProperty('buildTrial') && rootProject.hasProperty('jmixRelease')
+}

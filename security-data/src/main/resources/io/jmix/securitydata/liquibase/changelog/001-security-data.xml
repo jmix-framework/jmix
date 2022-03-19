@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2020 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet author="security-data" id="1">
+
+        <createTable tableName="SEC_RESOURCE_ROLE">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="VERSION" type="int" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="UPDATE_TS" type="datetime"/>
+            <column name="UPDATED_BY" type="varchar(50)"/>
+            <column name="DELETE_TS" type="datetime"/>
+            <column name="DELETED_BY" type="varchar(50)"/>
+
+            <column name="NAME" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CODE" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CHILD_ROLES" type="clob"/>
+            <column name="SYS_TENANT_ID" type="varchar(255)"/>
+        </createTable>
+
+        <createTable tableName="SEC_ROW_LEVEL_ROLE">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="VERSION" type="int" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="UPDATE_TS" type="datetime"/>
+            <column name="UPDATED_BY" type="varchar(50)"/>
+            <column name="DELETE_TS" type="datetime"/>
+            <column name="DELETED_BY" type="varchar(50)"/>
+
+            <column name="NAME" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CODE" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CHILD_ROLES" type="clob"/>
+            <column name="SYS_TENANT_ID" type="varchar(255)"/>
+        </createTable>
+
+        <createTable tableName="SEC_RESOURCE_POLICY">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="VERSION" type="int" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="UPDATE_TS" type="datetime"/>
+            <column name="UPDATED_BY" type="varchar(50)"/>
+            <column name="DELETE_TS" type="datetime"/>
+            <column name="DELETED_BY" type="varchar(50)"/>
+
+            <column name="TYPE_" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="POLICY_GROUP" type="varchar(255)"/>
+            <column name="RESOURCE_" type="varchar(1000)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ACTION_" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="EFFECT" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="ROLE_ID" type="${uuid.type}">
+                <constraints foreignKeyName="FK_RES_POLICY_ROLE"
+                             references="SEC_RESOURCE_ROLE(ID)" nullable="false"/>
+            </column>
+
+        </createTable>
+
+        <createTable tableName="SEC_ROW_LEVEL_POLICY">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="VERSION" type="int" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="UPDATE_TS" type="datetime"/>
+            <column name="UPDATED_BY" type="varchar(50)"/>
+            <column name="DELETE_TS" type="datetime"/>
+            <column name="DELETED_BY" type="varchar(50)"/>
+
+            <column name="TYPE_" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ACTION_" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ENTITY_NAME" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="WHERE_CLAUSE" type="CLOB"/>
+            <column name="JOIN_CLAUSE" type="CLOB"/>
+            <column name="SCRIPT_" type="CLOB"/>
+
+            <column name="ROLE_ID" type="${uuid.type}">
+                <constraints foreignKeyName="FK_ROW_LEVEL_POLICY_ROLE"
+                             references="SEC_ROW_LEVEL_ROLE(ID)" nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="SEC_ROLE_ASSIGNMENT">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="VERSION" type="int" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="UPDATE_TS" type="datetime"/>
+            <column name="UPDATED_BY" type="varchar(50)"/>
+            <column name="DELETE_TS" type="datetime"/>
+            <column name="DELETED_BY" type="varchar(50)"/>
+
+            <column name="USERNAME" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ROLE_CODE" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ROLE_TYPE" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+    </changeSet>
+
+    <changeSet id="2-postgresql" author="security-data" dbms="postgresql">
+        <createIndex tableName="SEC_RESOURCE_ROLE" indexName="IDX_RESOURCE_ROLE_UN_C">
+            <column name="CODE"/>
+        </createIndex>
+        <modifySql>
+            <append value="where DELETE_TS is null"/>
+        </modifySql>
+    </changeSet>
+
+    <changeSet id="2-mysql" author="security-data" dbms="mysql, mariadb">
+        <addColumn tableName="SEC_RESOURCE_ROLE">
+            <column name="DELETE_TS_NN" type="datetime" defaultValueDate="1000-01-01 00:00:00.000">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+        <createIndex tableName="SEC_RESOURCE_ROLE" indexName="IDX_RESOURCE_ROLE_UN_C">
+            <column name="CODE"/>
+            <column name="DELETE_TS_NN"/>
+        </createIndex>
+        <sql endDelimiter=";\ndelimiter $$">
+            <![CDATA[
+            create trigger SEC_RESOURCE_ROLE_DELETE_TS_NN_UPDATE_TRIGGER before update on SEC_RESOURCE_ROLE
+            for each row
+            begin
+	            if not(NEW.DELETE_TS <=> OLD.DELETE_TS) then
+		            set NEW.DELETE_TS_NN = if (NEW.DELETE_TS is null, '1000-01-01 00:00:00.000', NEW.DELETE_TS);
+	            end if;
+            end;
+            ]]>
+        </sql>
+        <rollback>
+            <sql>
+                DROP TRIGGER SEC_RESOURCE_ROLE_DELETE_TS_NN_UPDATE_TRIGGER
+            </sql>
+            <dropIndex tableName="SEC_RESOURCE_ROLE" indexName="IDX_RESOURCE_ROLE_UN_C"/>
+            <dropColumn tableName="SEC_RESOURCE_ROLE" columnName="DELETE_TS_NN"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="2-another-db" author="security-data" dbms="mssql, hsqldb">
+        <createIndex tableName="SEC_RESOURCE_ROLE" indexName="IDX_RESOURCE_ROLE_UN_C">
+            <column name="CODE"/>
+            <column name="DELETE_TS"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="3-postgresql" author="security-data" dbms="postgresql">
+        <createIndex tableName="SEC_ROW_LEVEL_ROLE" indexName="IDX_ROW_LEVEL_ROLE_UN_C">
+            <column name="CODE"/>
+        </createIndex>
+        <modifySql>
+            <append value="where DELETE_TS is null"/>
+        </modifySql>
+    </changeSet>
+
+    <changeSet id="3-mysql" author="security-data" dbms="mysql, mariadb">
+        <addColumn tableName="SEC_ROW_LEVEL_ROLE">
+            <column name="DELETE_TS_NN" type="datetime" defaultValueDate="1000-01-01 00:00:00.000">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+        <createIndex tableName="SEC_ROW_LEVEL_ROLE" indexName="IDX_ROW_LEVEL_ROLE_UN_C">
+            <column name="CODE"/>
+            <column name="DELETE_TS_NN"/>
+        </createIndex>
+        <sql endDelimiter=";\ndelimiter $$">
+            <![CDATA[
+            create trigger SEC_ROW_LEVEL_ROLE_DELETE_TS_NN_UPDATE_TRIGGER before update on SEC_ROW_LEVEL_ROLE
+            for each row
+            begin
+	            if not(NEW.DELETE_TS <=> OLD.DELETE_TS) then
+		            set NEW.DELETE_TS_NN = if (NEW.DELETE_TS is null, '1000-01-01 00:00:00.000', NEW.DELETE_TS);
+	            end if;
+            end;
+            ]]>
+        </sql>
+        <rollback>
+            <sql>
+                DROP TRIGGER SEC_ROW_LEVEL_ROLE_DELETE_TS_NN_UPDATE_TRIGGER
+            </sql>
+            <dropIndex tableName="SEC_ROW_LEVEL_ROLE" indexName="IDX_ROW_LEVEL_ROLE_UN_C"/>
+            <dropColumn tableName="SEC_ROW_LEVEL_ROLE" columnName="DELETE_TS_NN"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="3-another-db" author="security-data" dbms="mssql, hsqldb">
+        <createIndex tableName="SEC_ROW_LEVEL_ROLE" indexName="IDX_ROW_LEVEL_ROLE_UN_C">
+            <column name="CODE"/>
+            <column name="DELETE_TS"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="4" author="security-data">
+        <createTable tableName="persistent_logins">
+            <column name="series" type="varchar(64)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="username" type="varchar(64)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="token" type="varchar(64)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_used" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <property name="uuid.type" dbms="oracle" value="varchar2(32)"/>
+    <property name="uuid.type" dbms="!oracle" value="uuid"/>
+
+    <changeSet author="test" id="1.0">
+
+        <createTable tableName="TEST_FOO">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="VERSION" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="UPDATE_TS" type="datetime"/>
+            <column name="UPDATED_BY" type="varchar(50)"/>
+            <column name="DELETE_TS" type="datetime"/>
+            <column name="DELETED_BY" type="varchar(50)"/>
+            <column name="NAME" type="varchar(255)"/>
+        </createTable>
+
+        <createTable tableName="TEST_ORDER">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="VERSION" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="UPDATE_TS" type="datetime"/>
+            <column name="UPDATED_BY" type="varchar(50)"/>
+            <column name="DELETE_TS" type="datetime"/>
+            <column name="DELETED_BY" type="varchar(50)"/>
+            <column name="NUMBER" type="varchar(255)"/>
+        </createTable>
+
+        <!-- OneToMany -->
+
+        <createTable tableName="TEST_ONE_TO_MANY_ENTITY">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="VERSION" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="UPDATE_TS" type="datetime"/>
+            <column name="UPDATED_BY" type="varchar(50)"/>
+            <column name="DELETE_TS" type="datetime"/>
+            <column name="DELETED_BY" type="varchar(50)"/>
+            <column name="NAME" type="varchar(255)"/>
+        </createTable>
+
+        <createTable tableName="TEST_MANY_TO_ONE_ENTITY">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="VERSION" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="UPDATE_TS" type="datetime"/>
+            <column name="UPDATED_BY" type="varchar(50)"/>
+            <column name="DELETE_TS" type="datetime"/>
+            <column name="DELETED_BY" type="varchar(50)"/>
+            <column name="NAME" type="varchar(255)"/>
+            <column name="TEST_ONE_TO_MANY_ENTITY_ID" type="${uuid.type}">
+                <constraints foreignKeyName="TEST_ONE_TO_MANY_ENTITY" references="TEST_ONE_TO_MANY_ENTITY(ID)"/>
+            </column>
+        </createTable>
+
+        <!-- ManyToMany -->
+        <createTable tableName="TEST_MANY_TO_MANY_FIRST_ENTITY">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="VERSION" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="UPDATE_TS" type="datetime"/>
+            <column name="UPDATED_BY" type="varchar(50)"/>
+            <column name="DELETE_TS" type="datetime"/>
+            <column name="DELETED_BY" type="varchar(50)"/>
+            <column name="NAME" type="varchar(255)"/>
+        </createTable>
+
+        <createTable tableName="TEST_MANY_TO_MANY_SECOND_ENTITY">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="VERSION" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="UPDATE_TS" type="datetime"/>
+            <column name="UPDATED_BY" type="varchar(50)"/>
+            <column name="DELETE_TS" type="datetime"/>
+            <column name="DELETED_BY" type="varchar(50)"/>
+            <column name="NAME" type="varchar(255)"/>
+        </createTable>
+
+        <createTable tableName="TEST_MANY_TO_MANY_FIRST_ENTITY_MANY_TO_MANY_SECOND_ENTITY_LINK">
+            <column name="MANY_TO_MANY_FIRST_ENTITY_ID" type="${uuid.type}">
+                <constraints
+                        nullable="false" primaryKey="true"
+                        primaryKeyName="PK_TEST_MANY_TO_MANY_FIRST_ENTITY_MANY_TO_MANY_SECOND_ENTITY_LINK"
+                        foreignKeyName="MANY_TO_MANY_FIRST_ENTITY_ID" references="TEST_MANY_TO_MANY_FIRST_ENTITY(ID)"
+                />
+            </column>
+            <column name="MANY_TO_MANY_SECOND_ENTITY_ID" type="${uuid.type}">
+                <constraints
+                        nullable="false" primaryKey="true"
+                        primaryKeyName="PK_TEST_MANY_TO_MANY_FIRST_ENTITY_MANY_TO_MANY_SECOND_ENTITY_LINK"
+                        foreignKeyName="MANY_TO_MANY_SECOND_ENTITY_ID" references="TEST_MANY_TO_MANY_SECOND_ENTITY(ID)"
+                />
+            </column>
+        </createTable>
+
+    </changeSet>
+
+</databaseChangeLog>

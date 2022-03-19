@@ -1,0 +1,10 @@
+rootProject.name = 'jmix-email'
+
+include 'email'
+include 'email-ui'
+include 'email-starter'
+include 'email-ui-starter'
+
+rootProject.children.each { p1 ->
+	p1.buildFileName = "${p1.name}.gradle"
+}

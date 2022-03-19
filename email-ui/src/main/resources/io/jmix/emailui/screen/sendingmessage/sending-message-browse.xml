@@ -1,0 +1,114 @@
+<!--
+  ~ Copyright 2020 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<window xmlns="http://jmix.io/schema/ui/window"
+        caption="msg://browser.caption"
+        focusComponent="sendingMessageTable">
+    <data>
+        <collection
+                id="sendingMessageDc"
+                class="io.jmix.email.entity.SendingMessage"
+                fetchPlan="sendingMessage.browse">
+            <loader id="sendingMessagesDl">
+                <query>
+                    <![CDATA[select sm from email_SendingMessage sm order by sm.createTs desc]]>
+                </query>
+            </loader>
+        </collection>
+    </data>
+    <dialogMode height="theme://jmix.ui.dialogSize.height.xlarge"
+                width="theme://jmix.ui.dialogSize.width.xlarge"
+                resizable="true"/>
+
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+
+    <layout>
+        <split width="100%" height="100%" orientation="horizontal" pos="70">
+            <vbox id="leftBox" expand="sendingMessageTable" spacing="true" height="100%" margin="false,true,false,false">
+                <filter id="genericFilter" dataLoader="sendingMessagesDl">
+                    <properties include=".*" excludeProperties="contentTextFile"/>
+                </filter>
+                <table id="sendingMessageTable" width="100%" dataContainer="sendingMessageDc">
+                    <actions>
+                        <action id="downloadAttachment" caption="msg://downloadAttachments" trackSelection="true"/>
+                        <action id="resendEmail" caption="msg://resendEmail" trackSelection="true"/>
+                    </actions>
+                    <columns>
+                        <column id="address" sortable="false"/>
+                        <column id="cc"/>
+                        <column id="bcc"/>
+                        <column id="from"/>
+                        <column id="subject"/>
+                        <column id="status"/>
+                        <column id="bodyContentType"/>
+                        <column id="createTs">
+                            <formatter>
+                                <date format="msg://dateTimeWithSeconds"/>
+                            </formatter>
+                        </column>
+                        <column id="dateSent">
+                            <formatter>
+                                <date format="msg://dateTimeWithSeconds"/>
+                            </formatter>
+                        </column>
+                        <column id="updateTs">
+                            <formatter>
+                                <date format="msg://dateTimeWithSeconds"/>
+                            </formatter>
+                        </column>
+                        <column id="attachmentsName" sortable="false"/>
+                        <column id="attemptsLimit"/>
+                        <column id="deadline"/>
+                        <column id="attemptsMade"/>
+                        <column id="important"/>
+                    </columns>
+                    <simplePagination/>
+                    <buttonsPanel id="buttonsPanel">
+                        <button id="downloadAttachmentBtn" action="sendingMessageTable.downloadAttachment"/>
+                        <button id="resendEmailBtn" action="sendingMessageTable.resendEmail"/>
+                    </buttonsPanel>
+                </table>
+            </vbox>
+
+            <vbox id="rightBox" width="100%" height="100%" margin="false;false;false;true">
+                <scrollBox width="100%" height="100%">
+                    <form id="fg" dataContainer="sendingMessageDc" editable="false"
+                          width="100%">
+                        <column width="100%">
+                            <field id="address" property="address"/>
+                            <field id="cc" property="cc"/>
+                            <field id="bcc" property="bcc"/>
+                            <field id="from" property="from"/>
+                            <field id="subject" property="subject"/>
+                            <field id="bodyContentType" property="bodyContentType"/>
+                            <field id="status" property="status"/>
+                            <field id="attachmentsName" property="attachmentsName"/>
+                            <field id="createTs" property="createTs"/>
+                            <field id="dateSent" property="dateSent"/>
+                            <field id="updateTs" property="updateTs"/>
+                            <field id="deadline" property="deadline"/>
+                            <field id="attemptsLimit" property="attemptsLimit"/>
+                            <field id="attemptsMade" property="attemptsMade"/>
+                            <field id="important" property="important"/>
+                        </column>
+                    </form>
+                </scrollBox>
+            </vbox>
+        </split>
+    </layout>
+</window>

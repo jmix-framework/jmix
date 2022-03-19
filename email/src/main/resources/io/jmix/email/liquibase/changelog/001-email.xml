@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet author="email" id="1" context="!cuba">
+
+        <createTable tableName="EMAIL_SENDING_MESSAGE">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="VERSION" type="int" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="UPDATE_TS" type="datetime"/>
+            <column name="UPDATED_BY" type="varchar(50)"/>
+            <column name="DELETE_TS" type="datetime"/>
+            <column name="DELETED_BY" type="varchar(50)"/>
+
+            <column name="ADDRESS_TO" type="clob"/>
+            <column name="ADDRESS_FROM" type="varchar(100)"/>
+            <column name="ADDRESS_CC" type="clob"/>
+            <column name="ADDRESS_BCC" type="clob"/>
+            <column name="SUBJECT" type="varchar(500)"/>
+            <column name="CONTENT_TEXT" type="clob"/>
+            <column name="CONTENT_TEXT_FILE" type="clob"/>
+            <column name="STATUS" type="int"/>
+            <column name="DATE_SENT" type="datetime"/>
+            <column name="ATTACHMENTS_NAME" type="clob"/>
+            <column name="DEADLINE" type="datetime"/>
+            <column name="ATTEMPTS_COUNT" type="int"/>
+            <column name="ATTEMPTS_MADE" type="int"/>
+            <column name="EMAIL_HEADERS" type="varchar(500)"/>
+            <column name="BODY_CONTENT_TYPE" type="varchar(50)"/>
+        </createTable>
+
+        <createTable tableName="EMAIL_SENDING_ATTACHMENT">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="VERSION" type="int" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="UPDATE_TS" type="datetime"/>
+            <column name="UPDATED_BY" type="varchar(50)"/>
+            <column name="DELETE_TS" type="datetime"/>
+            <column name="DELETED_BY" type="varchar(50)"/>
+
+            <column name="MESSAGE_ID" type="${uuid.type}">
+                <constraints nullable="false"
+                             foreignKeyName="FK_EMAIL_ATTACHMENT_MESSAGE"
+                             references="EMAIL_SENDING_MESSAGE(ID)"/>
+            </column>
+
+            <column name="CONTENT" type="${byte_array.type}"/>
+            <column name="CONTENT_FILE" type="clob"/>
+            <column name="NAME" type="varchar(500)"/>
+            <column name="CONTENT_ID" type="varchar(50)"/>
+            <column name="DISPOSITION" type="varchar(50)"/>
+            <column name="TEXT_ENCODING" type="varchar(50)"/>
+        </createTable>
+
+        <createIndex tableName="EMAIL_SENDING_ATTACHMENT" indexName="EMAIL_ATTACHMENT_MESSAGE_IDX">
+            <column name="MESSAGE_ID"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="email" id="2" context="!cuba">
+        <addColumn tableName="EMAIL_SENDING_MESSAGE">
+            <column name="SYS_TENANT_ID" type="varchar(255)"/>
+        </addColumn>
+        <addColumn tableName="EMAIL_SENDING_ATTACHMENT">
+            <column name="SYS_TENANT_ID" type="varchar(255)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet author="email" id="3" context="!cuba">
+        <renameColumn tableName="EMAIL_SENDING_MESSAGE"
+                      columnDataType="int"
+                      oldColumnName="ATTEMPTS_COUNT"
+                      newColumnName="ATTEMPTS_LIMIT"/>
+    </changeSet>
+
+    <changeSet author="email" id="4" context="!cuba">
+        <addColumn tableName="EMAIL_SENDING_MESSAGE">
+            <column name="IMPORTANT" type="bool"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="5" author="email" context="!cuba">
+        <dropForeignKeyConstraint baseTableName="EMAIL_SENDING_ATTACHMENT"
+                                  constraintName="FK_EMAIL_ATTACHMENT_MESSAGE"/>
+
+        <addForeignKeyConstraint baseTableName="EMAIL_SENDING_ATTACHMENT"
+                                 baseColumnNames="MESSAGE_ID"
+                                 onDelete="CASCADE"
+                                 constraintName="FK_EMAIL_ATTACHMENT_MESSAGE"
+                                 referencedTableName="EMAIL_SENDING_MESSAGE"
+                                 referencedColumnNames="ID"/>
+    </changeSet>
+</databaseChangeLog>

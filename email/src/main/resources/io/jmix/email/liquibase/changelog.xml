@@ -1,0 +1,19 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <property name="uuid.type" dbms="oracle" value="varchar2(32)"/>
+    <property name="uuid.type" dbms="!oracle" value="uuid"/>
+
+    <property name="byte_array.type" dbms="mysql" value="BLOB"/>
+    <property name="byte_array.type" dbms="mariadb" value="BLOB"/>
+    <property name="byte_array.type" dbms="postgresql" value="bytea"/>
+    <property name="byte_array.type" dbms="mssql" value="varbinary(max)"/>
+    <property name="byte_array.type" dbms="oracle" value="BLOB"/>
+    <property name="byte_array.type" dbms="hsqldb" value="BLOB"/>
+
+    <include file="io/jmix/email/liquibase/changelog/001-email.xml"/>
+
+</databaseChangeLog>

@@ -1,0 +1,38 @@
+<!--
+  ~ Copyright 2020 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<fetchPlans xmlns="http://jmix.io/schema/core/fetch-plans">
+
+    <fetchPlan class="io.jmix.email.entity.SendingMessage" name="sendingMessage.loadFromQueue" extends="_local">
+        <property name="attachments" fetchPlan="sendingAttachment.loadFromQueue"/>
+    </fetchPlan>
+
+    <fetchPlan class="io.jmix.email.entity.SendingMessage" name="sendingMessage.loadContentText">
+        <property name="contentText"/>
+        <property name="contentTextFile"/>
+    </fetchPlan>
+
+    <fetchPlan class="io.jmix.email.entity.SendingAttachment" name="sendingAttachment.loadFromQueue"
+               extends="_local"/>
+
+    <fetchPlan entity="email_SendingMessage" name="sendingMessage.deleteFile" extends="_instance_name">
+        <property name="contentTextFile"/>
+        <property name="attachments" fetchPlan="_instance_name">
+            <property name="contentFile"/>
+        </property>
+    </fetchPlan>
+
+</fetchPlans>

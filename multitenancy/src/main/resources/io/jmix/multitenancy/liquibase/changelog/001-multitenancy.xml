@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2020 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet author="multitenancy" id="1" context="!cuba">
+
+        <createTable tableName="MTEN_TENANT">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="VERSION" type="integer" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="UPDATE_TS" type="datetime"/>
+            <column name="UPDATED_BY" type="varchar(50)"/>
+            <column name="DELETE_TS" type="datetime"/>
+            <column name="DELETED_BY" type="varchar(50)"/>
+            <column name="TENANT_ID" type="varchar(255)"/>
+
+            <column name="NAME" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+    </changeSet>
+
+    <changeSet author="multitenancy" id="2-postgresql" context="!cuba" dbms="postgresql">
+        <createIndex tableName="MTEN_TENANT" indexName="IDX_MTEN_TENANT_UNIQ_TENANT_ID" unique="true">
+            <column name="TENANT_ID"/>
+        </createIndex>
+        <modifySql>
+            <append value="where DELETE_TS is null"/>
+        </modifySql>
+    </changeSet>
+
+    <changeSet author="multitenancy" id="2-mysql" context="!cuba" dbms="mysql, mariadb">
+        <addColumn tableName="MTEN_TENANT">
+            <column name="DELETE_TS_NN" type="datetime" defaultValueDate="1000-01-01 00:00:00.000">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+        <createIndex tableName="MTEN_TENANT" indexName="IDX_MTEN_TENANT_UNIQ_TENANT_ID" unique="true">
+            <column name="TENANT_ID"/>
+            <column name="DELETE_TS_NN"/>
+        </createIndex>
+        <sql endDelimiter=";\ndelimiter $$">
+            <![CDATA[
+            create trigger MTEN_TENANT_DELETE_TS_NN_TRIGGER before update on MTEN_TENANT
+            for each row
+            begin
+	            if not(NEW.DELETE_TS <=> OLD.DELETE_TS) then
+		            set NEW.DELETE_TS_NN = if (NEW.DELETE_TS is null, '1000-01-01 00:00:00.000', NEW.DELETE_TS);
+	            end if;
+            end;
+            ]]>
+        </sql>
+        <rollback>
+            <sql>
+                DROP TRIGGER MTEN_TENANT_DELETE_TS_NN_TRIGGER
+            </sql>
+            <dropIndex tableName="MTEN_TENANT" indexName="IDX_MTEN_TENANT_UNIQ_TENANT_ID"/>
+            <dropColumn tableName="MTEN_TENANT" columnName="DELETE_TS_NN"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet author="multitenancy" id="2-another-db" context="!cuba" dbms="mssql, hsqldb">
+        <createIndex tableName="MTEN_TENANT" indexName="IDX_MTEN_TENANT_UNIQ_TENANT_ID" unique="true">
+            <column name="TENANT_ID"/>
+            <column name="DELETE_TS"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="multitenancy" id="4-postgresql" context="!cuba" dbms="postgresql">
+        <createIndex tableName="MTEN_TENANT" indexName="IDX_MTEN_TENANT_UNIQ_NAME" unique="true">
+            <column name="NAME"/>
+        </createIndex>
+        <modifySql>
+            <append value="where DELETE_TS is null"/>
+        </modifySql>
+    </changeSet>
+
+    <changeSet author="multitenancy" id="4-mysql" context="!cuba" dbms="mysql, mariadb">
+        <createIndex tableName="MTEN_TENANT" indexName="IDX_MTEN_TENANT_UNIQ_NAME" unique="true">
+            <column name="NAME"/>
+            <column name="DELETE_TS_NN"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="multitenancy" id="4-another-db" context="!cuba" dbms="mssql, hsqldb">
+        <createIndex tableName="MTEN_TENANT" indexName="IDX_MTEN_TENANT_UNIQ_NAME" unique="true">
+            <column name="NAME"/>
+            <column name="DELETE_TS"/>
+        </createIndex>
+    </changeSet>
+
+
+</databaseChangeLog>

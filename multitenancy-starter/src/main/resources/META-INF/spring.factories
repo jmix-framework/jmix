@@ -1,0 +1,3 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  io.jmix.autoconfigure.multitenancy.MultitenancyAutoConfiguration
+

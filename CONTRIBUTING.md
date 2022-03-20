@@ -8,7 +8,7 @@ Join us at https://forum.jmix.io or ask questions on StackOverflow with the `jmi
 
 ## Reporting Bugs
 
-The framework is located in [multiple repositories](https://github.com/Haulmont?q=jmix) on GitHub, so if you know what repository is relevant, create an issue in that repository. If not, just create it in [jmix-core](https://github.com/Haulmont/jmix-core), and we will transfer it later if needed. 
+We use Github [issues](https://github.com/jmix-framework/jmix/issues) for a backlog of bugs, improvements and feature requests related to the framework. The backlog contains issues for both open-source and premium modules. 
 
 If you found a bug in Jmix Studio, report it on the [forum](https://forum.jmix.io) with the `studio` tag. Studio [bugtracker](https://youtrack.jmix.io/issues/JST) is read-only for the public, so we'll create an issue based on your report, and you will be able to track its progress.
 
@@ -18,7 +18,7 @@ All our projects accept contributions as GitHub pull requests. The first time yo
 
 The process:
 
-1. Fork a repository
+1. Fork the repository
 1. Fix an issue or create an issue and fix it
 1. Create a pull request, check "Allow edits from maintainers"
 1. Sign a CLA
@@ -36,4 +36,4 @@ The process:
 
 ### Working with Documentation
 
-Fork the [jmix-docs](https://github.com/Haulmont/jmix-docs) repository and see building instructions in its README. 
+Fork the [jmix-docs](https://github.com/jmix-framework/jmix-docs) repository and see building instructions in its README. 

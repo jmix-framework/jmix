@@ -40,9 +40,32 @@ To get started, [download Jmix Studio](https://www.jmix.io/tools) - a plugin for
 Follow the [Quick Start](https://www.jmix.io/learn/quickstart/) guide to get up and running in 15 minutes. The guide will show some necessary things for creating any web application: how to design a data model, how to manipulate data, how to create business logic, and, finally, how to create a user interface.
 
 ## Building From Source
-This repository contains the core project of the framework. Other parts of the framework are located in [separate repositories](https://github.com/Haulmont?q=jmix). If you want to investigate the Jmix codebase and play with it locally, we recommend using the [jmix-all](https://github.com/Haulmont/jmix-all) aggregator project. If you want to contribute your changes to Jmix, see [CONTRIBUTING](CONTRIBUTING.md).
+
+- Checkout the repository:
+
+    ```bash
+    git clone https://github.com/jmix-framework/jmix.git
+    ```
+
+- Install JDK 8.
+
+- Build and publish the framework modules to the local Maven:
+
+    ```bash
+    cd jmix
+    ./gradlew publishToMavenLocal
+    ```
+
+- If you want to build Gradle plugins, Studio templates or framework translations, execute `./gradlew publishToMavenLocal` in the respective directories:
+
+  - `jmix-gradle-plugin` - a Gradle plugin for building Jmix applications.
+  - `jmix-build` - an internal Gradle plugin which encapsulates the framework build logic. It's not used when building applications.
+  - `jmix-templates` - templates used by Studio new project wizard.
+  - `jmix-translations` - framework [translations](https://docs.jmix.io/jmix/localization/framework-translations.html).
+
+If you want to contribute your changes to Jmix, see [CONTRIBUTING](CONTRIBUTING.md).
 
 ## License
 Jmix is an open-source project distributed under the [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0) license. The same licensing is applied to most of the framework’s add-ons.
 
-The framework is also complemented with commercial tools with separate [licensing and pricing](https://www.jmix.io/license-pricing/) for individuals and companies.
+The framework is also complemented with commercial tools with separate [licensing and pricing](https://www.jmix.io/subscription-plans-and-prices/) for individuals and companies.

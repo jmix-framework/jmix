@@ -29,11 +29,11 @@ public class TestJpqlSortExpressionProvider extends DefaultJpqlSortExpressionPro
     protected Set<MetaPropertyPath> toUpperPaths = new HashSet<>();
 
     @Override
-    public String getDatatypeSortExpression(MetaPropertyPath metaPropertyPath, Sort.Direction sortDirection) {
+    public String getDatatypeSortExpression(MetaPropertyPath metaPropertyPath, boolean sortDirectionAsc) {
         if (toUpperPaths.contains(metaPropertyPath)) {
-            return String.format("upper({E}.%s) %s nulls first", metaPropertyPath.toString(), Sort.Direction.ASC==sortDirection ? "asc" : "desc");
+            return String.format("upper({E}.%s) %s nulls first", metaPropertyPath.toString(), sortDirectionAsc ? "asc" : "desc");
         } else {
-            return super.getDatatypeSortExpression(metaPropertyPath, sortDirection);
+            return super.getDatatypeSortExpression(metaPropertyPath, sortDirectionAsc);
         }
     }
 

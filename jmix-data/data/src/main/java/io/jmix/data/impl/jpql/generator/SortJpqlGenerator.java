@@ -144,12 +144,12 @@ public class SortJpqlGenerator {
     }
 
     protected String getDatatypePropertySortExpression(MetaPropertyPath metaPropertyPath, Sort.Direction sortDirection) {
-        return jpqlSortExpressionProvider.getDatatypeSortExpression(metaPropertyPath, sortDirection);
+        return jpqlSortExpressionProvider.getDatatypeSortExpression(metaPropertyPath, sortDirection == Sort.Direction.ASC);
     }
 
     @Nullable
     protected String getLobPropertySortExpression(MetaPropertyPath metaPropertyPath, Sort.Direction sortDirection) {
-        return supportsLobSorting(metaPropertyPath) ? jpqlSortExpressionProvider.getLobSortExpression(metaPropertyPath, sortDirection) : null;
+        return supportsLobSorting(metaPropertyPath) ? jpqlSortExpressionProvider.getLobSortExpression(metaPropertyPath, sortDirection == Sort.Direction.ASC) : null;
     }
 
     protected Map<String, Sort.Direction> getEntityPropertySortExpression(MetaPropertyPath metaPropertyPath, Sort.Direction sortDirection) {

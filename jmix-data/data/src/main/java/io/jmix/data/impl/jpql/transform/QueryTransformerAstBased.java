@@ -176,6 +176,17 @@ public class QueryTransformerAstBased implements QueryTransformer {
     }
 
     @Override
+    public void replaceOrderByExpressions(boolean directionDesc, String... sortExpressions) {
+        replaceOrderByExpressions(Arrays.stream(sortExpressions)
+                .collect(Collectors.toMap(e -> e, e -> directionDesc ? Sort.Direction.DESC : Sort.Direction.ASC,
+                        (u, v) -> {
+                            throw new IllegalStateException(String.format("Duplicate key %s", u));
+                        },
+                        LinkedHashMap::new))
+        );
+    }
+
+    @Override
     public void replaceOrderByExpressions(Map<String, Sort.Direction> sortExpressions) {
         boolean isEntitySelect = getAnalyzer().getMainSelectedPathNode() != null;
         EntityVariable entityReference = null;

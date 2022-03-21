@@ -1029,7 +1029,7 @@ public class QueryTransformerAstBasedTest {
                 "select h from sec$GroupHierarchy h order by h.level desc");
         transformer.replaceOrderByExpressions(false, "{E}.group");
         String res = transformer.getResult();
-        assertEquals("select h from sec$GroupHierarchy h order by h.group", res);
+        assertEquals("select h from sec$GroupHierarchy h order by h.group asc", res);
 
         transformer = new QueryTransformerAstBased(model,
                 "select c from sec$GroupHierarchy h join h.parent.constraints c where h.group = ?1 " +
@@ -1038,7 +1038,7 @@ public class QueryTransformerAstBasedTest {
         res = transformer.getResult();
         assertEquals(
                 "select c from sec$GroupHierarchy h join h.parent.constraints c where h.group = ?1 " +
-                        "group by h.level having h.level > 0 order by c.group",
+                        "group by h.level having h.level > 0 order by c.group asc",
                 res);
         transformer.replaceOrderByExpressions(true, "{E}.group");
         res = transformer.getResult();
@@ -1055,7 +1055,7 @@ public class QueryTransformerAstBasedTest {
         res = transformer.getResult();
         assertEquals(
                 "select c from sec$GroupHierarchy h join h.parent.constraints c where h.group = ?1 " +
-                        "group by h.level having h.level > 0 order by c.group",
+                        "group by h.level having h.level > 0 order by c.group asc",
                 res);
 
         transformer = new QueryTransformerAstBased(model,
@@ -1093,7 +1093,7 @@ public class QueryTransformerAstBasedTest {
         transformer.replaceOrderByExpressions(false, "{E}.parent.other.createdBy");
         res = transformer.getResult();
         assertEquals(
-                "select h from sec$GroupHierarchy h left join h.parent h_parent left join h_parent.other h_parent_other order by h_parent_other.createdBy",
+                "select h from sec$GroupHierarchy h left join h.parent h_parent left join h_parent.other h_parent_other order by h_parent_other.createdBy asc",
                 res);
 
         transformer = new QueryTransformerAstBased(model,
@@ -1101,7 +1101,7 @@ public class QueryTransformerAstBasedTest {
         transformer.replaceOrderByExpressions(false, "{E}.parent.other.token.name");
         res = transformer.getResult();
         assertEquals(
-                "select h from sec$GroupHierarchy h left join h.parent h_parent left join h_parent.other h_parent_other order by h_parent_other.token.name",
+                "select h from sec$GroupHierarchy h left join h.parent h_parent left join h_parent.other h_parent_other order by h_parent_other.token.name asc",
                 res);
 
         transformer = new QueryTransformerAstBased(model,
@@ -1109,7 +1109,7 @@ public class QueryTransformerAstBasedTest {
         transformer.replaceOrderByExpressions(false, "function('convert_to', {E}.parent.other.token.name, 'GB18030')");
         res = transformer.getResult();
         assertEquals(
-                "select h from sec$GroupHierarchy h left join h.parent h_parent left join h_parent.other h_parent_other order by function( 'convert_to', h_parent_other.token.name, 'GB18030')",
+                "select h from sec$GroupHierarchy h left join h.parent h_parent left join h_parent.other h_parent_other order by function( 'convert_to', h_parent_other.token.name, 'GB18030') asc",
                 res);
 
         transformer = new QueryTransformerAstBased(model,
@@ -1117,7 +1117,7 @@ public class QueryTransformerAstBasedTest {
         transformer.replaceOrderByExpressions(false, "function('convert_to', {E}.level, 'GB18030')");
         res = transformer.getResult();
         assertEquals(
-                "select h from sec$GroupHierarchy h order by function( 'convert_to', h.level, 'GB18030')",
+                "select h from sec$GroupHierarchy h order by function( 'convert_to', h.level, 'GB18030') asc",
                 res);
 
         transformer = new QueryTransformerAstBased(model,
@@ -1133,7 +1133,7 @@ public class QueryTransformerAstBasedTest {
         transformer.replaceOrderByExpressions(false, "upper({E}.level)");
         res = transformer.getResult();
         assertEquals(
-                "select h from sec$GroupHierarchy h order by upper( h.level)",
+                "select h from sec$GroupHierarchy h order by upper( h.level) asc",
                 res);
 
         transformer = new QueryTransformerAstBased(model,
@@ -1159,7 +1159,7 @@ public class QueryTransformerAstBasedTest {
         transformer.replaceOrderByExpressions(false, "{E}.parent.group");
         String res = transformer.getResult();
         assertEquals(
-                "select h from sec$GroupHierarchy h left join h.parent h_parent order by h_parent.group",
+                "select h from sec$GroupHierarchy h left join h.parent h_parent order by h_parent.group asc",
                 res);
         transformer.reset();
 
@@ -1175,7 +1175,7 @@ public class QueryTransformerAstBasedTest {
         transformer.replaceOrderByExpressions(false, "{E}.parent.group", "{E}.parent.createdBy");
         res = transformer.getResult();
         assertEquals(
-                "select h from sec$GroupHierarchy h left join h.parent h_parent order by h_parent.group, h_parent.createdBy",
+                "select h from sec$GroupHierarchy h left join h.parent h_parent order by h_parent.group asc, h_parent.createdBy asc",
                 res);
 
         transformer = new QueryTransformerAstBased(model,
@@ -1183,7 +1183,7 @@ public class QueryTransformerAstBasedTest {
         transformer.replaceOrderByExpressions(false, "{E}.parent.group", "function('convert_to', {E}.parent.createdBy, 'GB18030')");
         res = transformer.getResult();
         assertEquals(
-                "select h from sec$GroupHierarchy h left join h.parent h_parent order by h_parent.group, function( 'convert_to', h_parent.createdBy, 'GB18030')",
+                "select h from sec$GroupHierarchy h left join h.parent h_parent order by h_parent.group asc, function( 'convert_to', h_parent.createdBy, 'GB18030') asc",
                 res);
     }
 

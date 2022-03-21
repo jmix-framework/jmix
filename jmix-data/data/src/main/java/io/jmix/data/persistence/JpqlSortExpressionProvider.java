@@ -16,12 +16,12 @@
 
 package io.jmix.data.persistence;
 
-import io.jmix.core.Sort;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 
 /**
- * Spring bean that generates sort expression for datatype and LOB properties.
- * It's possible to override bean and use custom sort logic, e.g. use functions.
+ * Interface to be implemented by a Spring bean to generate sort expression for datatype and LOB properties.
+ * <p>
+ * You can provide your own implementation bean and use custom sort logic, e.g. use functions.
  */
 public interface JpqlSortExpressionProvider {
 
@@ -35,10 +35,10 @@ public interface JpqlSortExpressionProvider {
      *     e.g. <code>{E}.property asc nulls first</code></li>
      * </ul>
      */
-    String getDatatypeSortExpression(MetaPropertyPath metaPropertyPath, Sort.Direction sortDirection);
+    String getDatatypeSortExpression(MetaPropertyPath metaPropertyPath, boolean sortDirectionAsc);
 
     /**
      * Returns JPQL order expression for specified lob property.
      */
-    String getLobSortExpression(MetaPropertyPath metaPropertyPath, Sort.Direction sortDirection);
+    String getLobSortExpression(MetaPropertyPath metaPropertyPath, boolean sortDirectionAsc);
 }

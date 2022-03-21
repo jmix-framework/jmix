@@ -1,13 +1,6 @@
 # Jmix OpenID Connect 
 
-This repository contains OpenID Connect project of the [Jmix](https://jmix.io) framework.
-
-**CAUTION: The project is in EXPERIMENTAL status and may be modified in any way without notice.**
-
-For more information, see:
-
-* Jmix Core project source [repository](https://github.com/Haulmont/jmix-core).
-* Jmix [documentation](https://docs.jmix.io).
+**CAUTION: This add-on is in EXPERIMENTAL status and may be modified in any way without notice.**
 
 ## Add-on Overview
 

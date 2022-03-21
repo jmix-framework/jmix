@@ -54,6 +54,7 @@ public class EnqueueingSessionProcessingScheduleAutoConfiguration {
         String cron = searchProperties.getEnqueueingSessionProcessingCron();
         log.info("Schedule Enqueueing Session processing using default configuration with CRON expression '{}'", cron);
         return TriggerBuilder.newTrigger()
+                .withIdentity("EnqueueingSessionProcessingTrigger")
                 .forJob(enqueueingSessionProcessingJob())
                 .startNow()
                 .withSchedule(CronScheduleBuilder.cronSchedule(cron))

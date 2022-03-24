@@ -43,7 +43,6 @@ import static io.jmix.graphql.NamingUtils.INPUT_TYPE_PREFIX;
 import static io.jmix.graphql.NamingUtils.SYS_ATTR_INSTANCE_NAME;
 import static io.jmix.graphql.schema.BaseTypesGenerator.*;
 import static io.jmix.graphql.schema.Types.FilterOperation.*;
-//import static io.jmix.graphql.schema.scalar.CustomScalars.GraphQLFile;
 import static io.jmix.graphql.schema.scalar.CustomScalars.GraphQLUUID;
 
 @Component("gql_FilterTypesGenerator")
@@ -111,9 +110,9 @@ public class FilterTypesGenerator {
                                 composeFilterConditionTypeName(metaProperty.getJavaType().getSimpleName()), null);
                     }
 
-                    // todo "-to-many" relations are not supported now
                     if (metaProperty.getRange().getCardinality().isMany()) {
-                        return null;
+                        String typeName = composeFilterConditionTypeName(baseTypesGenerator.getFieldTypeName(metaProperty));
+                        return listInpObjectField(metaProperty.getName(), typeName, null);
                     }
 
                     String typeName = composeFilterConditionTypeName(baseTypesGenerator.getFieldTypeName(metaProperty));

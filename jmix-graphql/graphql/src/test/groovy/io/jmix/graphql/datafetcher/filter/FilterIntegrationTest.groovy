@@ -866,4 +866,22 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
         then:
         getBody(response) == '{"data":{"scr_GarageCount":"2"}}'
     }
+
+    def "one to many for UUID"() {
+        when:
+        //where id <> "bfe41616-f03d-f287-1397-8619f5dde390"
+        def response = query(
+                "datafetcher/query-garage-with-filter.graphql",
+                asObjectNode('{"filter": {"AND": [' +
+                        '{"id": {"_neq": "bfe41616-f03d-f287-1397-8619f5dde390"}},' +
+                        '{"personnel": {"username": {"_eq": "randomuser"}}}' +
+                        ']}}')
+        )
+
+        then:
+        getBody(response) == '{"data":{"scr_GarageList":[' +
+                '{"id":"18a4b0b4-b7b5-da87-e5d8-c8f02e97eda5"},' +
+                '{"id":"1e3cb465-c0d8-1f31-4231-08c34e101fc3"}' +
+                ']}}'
+    }
 }

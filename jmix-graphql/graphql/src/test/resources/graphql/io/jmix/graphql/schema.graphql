@@ -1773,6 +1773,7 @@ input inp_scr_AssociationM2MTestEntityFilterCondition {
   OR: [inp_scr_AssociationM2MTestEntityFilterCondition]
   "is null"
   _isNull: Boolean
+  datatypesTestEntities: [inp_scr_DatatypesTestEntityFilterCondition]
   id: [inp_UUIDFilterCondition]
   name: [inp_StringFilterCondition]
 }
@@ -2152,8 +2153,13 @@ input inp_scr_DatatypesTestEntity3FilterCondition {
   OR: [inp_scr_DatatypesTestEntity3FilterCondition]
   "is null"
   _isNull: Boolean
+  datatypesTestEntityAttr: [inp_scr_DatatypesTestEntityFilterCondition]
   id: [inp_UUIDFilterCondition]
+  intIdentityIdTestEntityAttr: [inp_scr_IntIdentityIdTestEntityFilterCondition]
+  integerIdTestEntityAttr: [inp_scr_IntegerIdTestEntityFilterCondition]
   name: [inp_StringFilterCondition]
+  stringIdTestEntityAttr: [inp_scr_StringIdTestEntityFilterCondition]
+  weirdStringIdTestEntityAttr: [inp_scr_WeirdStringIdTestEntityFilterCondition]
 }
 
 input inp_scr_DatatypesTestEntity3OrderBy {
@@ -2167,11 +2173,14 @@ input inp_scr_DatatypesTestEntityFilterCondition {
   OR: [inp_scr_DatatypesTestEntityFilterCondition]
   "is null"
   _isNull: Boolean
+  associationM2Mattr: [inp_scr_AssociationM2MTestEntityFilterCondition]
   associationM2Oattr: [inp_scr_AssociationM2OTestEntityFilterCondition]
+  associationO2Mattr: [inp_scr_AssociationO2MTestEntityFilterCondition]
   associationO2Oattr: [inp_scr_AssociationO2OTestEntityFilterCondition]
   bigDecimalAttr: [inp_BigDecimalFilterCondition]
   booleanAttr: [inp_BooleanFilterCondition]
   charAttr: [inp_CharFilterCondition]
+  compositionO2Mattr: [inp_scr_CompositionO2MTestEntityFilterCondition]
   compositionO2Oattr: [inp_scr_CompositionO2OTestEntityFilterCondition]
   datatypesTestEntity3: [inp_scr_DatatypesTestEntity3FilterCondition]
   dateAttr: [inp_DateFilterCondition]
@@ -2181,6 +2190,7 @@ input inp_scr_DatatypesTestEntityFilterCondition {
   id: [inp_UUIDFilterCondition]
   intIdentityIdTestEntityAssociationO2OAttr: [inp_scr_IntIdentityIdTestEntityFilterCondition]
   integerAttr: [inp_IntFilterCondition]
+  integerIdTestEntityAssociationM2MAttr: [inp_scr_IntegerIdTestEntityFilterCondition]
   localDateAttr: [inp_LocalDateFilterCondition]
   localDateTimeAttr: [inp_LocalDateTimeFilterCondition]
   localTimeAttr: [inp_LocalTimeFilterCondition]
@@ -2299,8 +2309,11 @@ input inp_scr_GarageFilterCondition {
   _isNull: Boolean
   address: [inp_StringFilterCondition]
   capacity: [inp_IntFilterCondition]
+  cars: [inp_scr_CarFilterCondition]
+  currentCars: [inp_scr_CarFilterCondition]
   id: [inp_UUIDFilterCondition]
   name: [inp_StringFilterCondition]
+  personnel: [inp_scr_UserFilterCondition]
   vanEntry: [inp_BooleanFilterCondition]
   workingHoursFrom: [inp_LocalTimeFilterCondition]
   workingHoursTo: [inp_LocalTimeFilterCondition]
@@ -2385,6 +2398,7 @@ input inp_scr_IntegerIdTestEntityFilterCondition {
   _isNull: Boolean
   createTs: [inp_DateTimeFilterCondition]
   createdBy: [inp_StringFilterCondition]
+  datatypesTestEntities: [inp_scr_DatatypesTestEntityFilterCondition]
   datatypesTestEntity3: [inp_scr_DatatypesTestEntity3FilterCondition]
   deleteTs: [inp_DateTimeFilterCondition]
   deletedBy: [inp_StringFilterCondition]
@@ -2426,6 +2440,7 @@ input inp_scr_OrderFilterCondition {
   customer: [inp_scr_CustomerFilterCondition]
   date: [inp_LocalDateTimeFilterCondition]
   id: [inp_UUIDFilterCondition]
+  lines: [inp_scr_OrderLineFilterCondition]
 }
 
 input inp_scr_OrderLine {
@@ -2760,6 +2775,7 @@ input inp_sec_ResourceRoleEntityFilterCondition {
   description: [inp_StringFilterCondition]
   id: [inp_UUIDFilterCondition]
   name: [inp_StringFilterCondition]
+  resourcePolicies: [inp_sec_ResourcePolicyEntityFilterCondition]
   scopes: [inp_StringFilterCondition]
   sysTenantId: [inp_StringFilterCondition]
   updateTs: [inp_DateTimeFilterCondition]
@@ -2922,6 +2938,7 @@ input inp_sec_RowLevelRoleEntityFilterCondition {
   description: [inp_StringFilterCondition]
   id: [inp_UUIDFilterCondition]
   name: [inp_StringFilterCondition]
+  rowLevelPolicies: [inp_sec_RowLevelPolicyEntityFilterCondition]
   sysTenantId: [inp_StringFilterCondition]
   updateTs: [inp_DateTimeFilterCondition]
   updatedBy: [inp_StringFilterCondition]

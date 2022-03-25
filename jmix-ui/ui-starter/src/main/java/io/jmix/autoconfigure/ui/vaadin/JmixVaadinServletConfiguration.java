@@ -129,6 +129,9 @@ public class JmixVaadinServletConfiguration implements InitializingBean {
         for (String uiBeanName : uiBeanNames) {
             SpringUI annotation = applicationContext
                     .findAnnotationOnBean(uiBeanName, SpringUI.class);
+            if (annotation == null) {
+                throw new IllegalStateException("SpringUI annotation is not defined");
+            }
             String path = applicationContext.getEnvironment()
                     .resolvePlaceholders(annotation.path())
                     .replaceFirst("^/", "");

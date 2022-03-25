@@ -147,9 +147,14 @@ public class LocalFileStorage implements FileStorage {
         checkPrimaryStorageAccessible(roots, fileRef.getFileName());
 
         Path path = roots[0].resolve(relativePath);
-        if (!path.getParent().toFile().exists() && !path.getParent().toFile().mkdirs()) {
+        Path parentPath = path.getParent();
+        if (parentPath == null) {
             throw new FileStorageException(FileStorageException.Type.IO_EXCEPTION,
-                    "Cannot create directory: " + path.getParent().toAbsolutePath().toString());
+                    "Invalid storage root: " + path);
+        }
+        if (!parentPath.toFile().exists() && !parentPath.toFile().mkdirs()) {
+            throw new FileStorageException(FileStorageException.Type.IO_EXCEPTION,
+                    "Cannot create directory: " + parentPath.toAbsolutePath());
         }
 
         checkFileExists(path);

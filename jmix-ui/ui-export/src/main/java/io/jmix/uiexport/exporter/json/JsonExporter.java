@@ -33,6 +33,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -44,9 +45,6 @@ import java.util.stream.Collectors;
 @Component("ui_JsonExporter")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class JsonExporter extends AbstractTableExporter<JsonExporter> {
-
-    @Autowired
-    protected Messages messages;
 
     @Autowired
     protected Metadata metadata;
@@ -86,7 +84,7 @@ public class JsonExporter extends AbstractTableExporter<JsonExporter> {
             }
             jsonElements.add(jsonObject);
         }
-        downloader.download(new ByteArrayDataProvider(gson.toJson(jsonElements).getBytes(),
+        downloader.download(new ByteArrayDataProvider(gson.toJson(jsonElements).getBytes(StandardCharsets.UTF_8),
                         uiProperties.getSaveExportedByteArrayDataThresholdBytes(), coreProperties.getTempDir()),
                 getFileName(table) + ".json", DownloadFormat.JSON);
     }
@@ -111,7 +109,7 @@ public class JsonExporter extends AbstractTableExporter<JsonExporter> {
             }
             jsonElements.add(jsonObject);
         }
-        downloader.download(new ByteArrayDataProvider(gson.toJson(jsonElements).getBytes(),
+        downloader.download(new ByteArrayDataProvider(gson.toJson(jsonElements).getBytes(StandardCharsets.UTF_8),
                         uiProperties.getSaveExportedByteArrayDataThresholdBytes(), coreProperties.getTempDir()),
                 getFileName(dataGrid) + ".json", DownloadFormat.JSON);
     }

@@ -62,7 +62,6 @@ public abstract class ChartImpl<T extends Chart, M extends AbstractChart>
         extends AbstractComponent<JmixAmchartsScene> implements Chart<T>, InitializingBean {
 
     protected Messages messages;
-    protected MessageTools messageTools;
     protected CurrentAuthentication currentAuthentication;
     protected ChartLocaleHelper chartLocaleHelper;
     protected FormatStringsRegistry formatStringsRegistry;
@@ -84,11 +83,6 @@ public abstract class ChartImpl<T extends Chart, M extends AbstractChart>
 
     protected ChartSerializer createChartSerializer() {
         return applicationContext.getBean(JmixChartSerializer.class);
-    }
-
-    @Autowired
-    public void setMessageTools(MessageTools messageTools) {
-        this.messageTools = messageTools;
     }
 
     @Autowired

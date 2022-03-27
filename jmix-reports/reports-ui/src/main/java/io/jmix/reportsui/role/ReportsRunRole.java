@@ -19,6 +19,7 @@ package io.jmix.reportsui.role;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportGroup;
 import io.jmix.reports.entity.ReportTemplate;
+import io.jmix.reports.entity.ReportExecution;
 import io.jmix.security.model.EntityPolicyAction;
 import io.jmix.security.model.SecurityScope;
 import io.jmix.security.role.annotation.EntityAttributePolicy;
@@ -28,6 +29,7 @@ import io.jmix.securityui.role.annotation.MenuPolicy;
 import io.jmix.securityui.role.annotation.ScreenPolicy;
 
 import static io.jmix.security.model.EntityAttributePolicyAction.VIEW;
+import static io.jmix.security.model.EntityAttributePolicyAction.MODIFY;
 
 /**
  * Role that grants minimal permissions to run reports.
@@ -48,8 +50,10 @@ public interface ReportsRunRole {
     @EntityPolicy(entityClass = Report.class, actions = {EntityPolicyAction.READ})
     @EntityPolicy(entityClass = ReportGroup.class, actions = {EntityPolicyAction.READ})
     @EntityPolicy(entityClass = ReportTemplate.class, actions = {EntityPolicyAction.READ})
+    @EntityPolicy(entityClass = ReportExecution.class, actions = {EntityPolicyAction.READ, EntityPolicyAction.UPDATE})
     @EntityAttributePolicy(entityClass = Report.class, attributes = {"name", "localeNames", "description", "code", "updateTs", "group"}, action = VIEW)
     @EntityAttributePolicy(entityClass = ReportGroup.class, attributes = {"title", "localeNames"}, action = VIEW)
     @EntityAttributePolicy(entityClass = ReportTemplate.class, attributes = {"code", "name", "customDefinition", "custom", "alterable"}, action = VIEW)
+    @EntityAttributePolicy(entityClass = ReportExecution.class, attributes = {"*"}, action = MODIFY)
     void reportsRun();
 }

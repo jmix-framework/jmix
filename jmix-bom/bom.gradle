@@ -412,6 +412,11 @@ dependencies {
         api 'io.vavr:vavr:0.9.3'
         api 'org.jetbrains:annotations:22.0.0'
         api 'commons-codec:commons-codec:1.15'
+        
+        api 'gr.netmechanics.jmix:azurefs:1.2.0'
+        api 'gr.netmechanics.jmix:azurefs-starter:1.2.0'
+        api 'gr.netmechanics.jmix:duration-field:1.0.0'
+        api 'gr.netmechanics.jmix:duration-field-starter:1.0.0'
 
         runtime 'org.hsqldb:hsqldb:2.4.1'
     }

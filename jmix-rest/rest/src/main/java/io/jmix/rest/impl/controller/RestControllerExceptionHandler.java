@@ -16,6 +16,7 @@
 
 package io.jmix.rest.impl.controller;
 
+import io.jmix.core.DeletePolicyException;
 import io.jmix.core.FileTransferException;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
@@ -146,6 +147,14 @@ public class RestControllerExceptionHandler {
     public ResponseEntity<ErrorInfo> handleOptimisticLockException(OptimisticLockException e) {
         log.error("Optimistic lock", e);
         ErrorInfo errorInfo = new ErrorInfo("Optimistic lock", e.getMessage());
+        return new ResponseEntity<>(errorInfo, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(DeletePolicyException.class)
+    @ResponseBody
+    public ResponseEntity<ErrorInfo> handleDeletePolicyException(DeletePolicyException e) {
+        log.error("DeletePolicyException in service", e);
+        ErrorInfo errorInfo = new ErrorInfo("Delete error", e.getMessage());
         return new ResponseEntity<>(errorInfo, HttpStatus.BAD_REQUEST);
     }
 

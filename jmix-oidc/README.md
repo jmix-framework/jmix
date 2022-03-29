@@ -1,6 +1,6 @@
 # Jmix OpenID Connect 
 
-**CAUTION: This add-on is in EXPERIMENTAL status and may be modified in any way without notice.**
+**CAUTION: This add-on is now in the incubating state and its API and behavior may be modified in the future minor and patch releases.**
 
 ## Add-on Overview
 

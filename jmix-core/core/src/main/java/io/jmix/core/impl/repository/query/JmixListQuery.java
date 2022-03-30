@@ -19,7 +19,6 @@ package io.jmix.core.impl.repository.query;
 import io.jmix.core.Sort;
 import io.jmix.core.*;
 import io.jmix.core.impl.repository.query.utils.LoaderHelper;
-import org.omg.CORBA.portable.Streamable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.*;
@@ -128,9 +127,7 @@ public class JmixListQuery extends JmixStructuredQuery {
     }
 
     protected boolean isMultipleReturnType(Class<?> returnType) {
-        return Iterable.class.isAssignableFrom(returnType)
-                || Stream.class.isAssignableFrom(returnType)
-                || Streamable.class.isAssignableFrom(returnType);
+        return Iterable.class.isAssignableFrom(returnType) || Stream.class.isAssignableFrom(returnType);
     }
 
     @Override

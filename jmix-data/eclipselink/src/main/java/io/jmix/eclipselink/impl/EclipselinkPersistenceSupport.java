@@ -26,6 +26,7 @@ import io.jmix.core.event.EntityChangedEvent;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.EntityOp;
 import io.jmix.data.AttributeChangesProvider;
+import io.jmix.data.PersistenceHints;
 import io.jmix.data.StoreAwareLocator;
 import io.jmix.data.impl.*;
 import io.jmix.eclipselink.impl.entitycache.QueryCacheManager;
@@ -248,10 +249,16 @@ public class EclipselinkPersistenceSupport implements ApplicationContextAware {
 
     protected boolean isDeleted(Object entity, AttributeChangeListener changeListener) {
         if (EntityValues.isSoftDeletionSupported(entity)) {
-            ObjectChangeSet changeSet = changeListener.getObjectChangeSet();
-            return changeSet != null
-                    && changeSet.getAttributesToChanges().containsKey(metadataTools.findDeletedDateProperty(entity.getClass()))
-                    && EntityValues.isSoftDeleted(entity);
+            //SoftDeletion may be disabled, so check it
+            EntityManager jmixEm = storeAwareLocator.getEntityManager(metadata.getClass(entity.getClass()).getStore().getName());
+            if (PersistenceHints.isSoftDeletion(jmixEm)) {
+                ObjectChangeSet changeSet = changeListener.getObjectChangeSet();
+                return changeSet != null
+                        && changeSet.getAttributesToChanges().containsKey(metadataTools.findDeletedDateProperty(entity.getClass()))
+                        && EntityValues.isSoftDeleted(entity);
+            } else {
+                return getEntityEntry(entity).isRemoved();
+            }
 
         } else {
             return getEntityEntry(entity).isRemoved();

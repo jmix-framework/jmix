@@ -31,6 +31,7 @@ public class SaveContext implements Serializable {
 
     protected Collection<Object> entitiesToSave = new LinkedHashSet<>();
     protected Collection<Object> entitiesToRemove = new LinkedHashSet<>();
+    protected Collection<Object> cascadeAffectedEntities = new LinkedHashSet<>();
 
     protected Map<Object, FetchPlan> fetchPlans = new HashMap<>();
 
@@ -102,6 +103,14 @@ public class SaveContext implements Serializable {
      */
     public Collection<Object> getEntitiesToRemove() {
         return entitiesToRemove;
+    }
+
+    /**
+     * @return entities from {@code entitiesToSave} and {@code entitiesToRemove} collections that has been added
+     * because of cascade operations.
+     */
+    public Collection<Object> getCascadeAffectedEntities() {
+        return cascadeAffectedEntities;
     }
 
     /**

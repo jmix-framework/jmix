@@ -31,7 +31,10 @@ import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.datatype.TimeZoneAwareDatatype;
-import io.jmix.core.metamodel.model.*;
+import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.core.metamodel.model.Range;
 import io.jmix.core.security.CurrentAuthentication;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -69,6 +72,8 @@ public class MetadataTools {
     public static final String SYSTEM_ANN_NAME = "jmix.system";
     public static final String STORE_ANN_NAME = "jmix.storeName";
     public static final String LENGTH_ANN_NAME = "jmix.length";
+    public static final String CASCADE_TYPES_ANN_NAME = "jmix.cascadeTypes";
+    public static final String CASCADE_PROPERTIES_ANN_NAME = "jmix.cascadeProperties";
 
     /**
      * Not applicable for legacy cuba entities
@@ -274,7 +279,10 @@ public class MetadataTools {
      * Determine whether an object denoted by the given property is merged into persistence context together with the
      * owning object. This is true if the property is ManyToMany, or if it is OneToMany with certain CascadeType
      * defined.
+     *
+     * @deprecated use {@link MetadataTools#getCascadeTypes(MetaProperty)} instead
      */
+    @Deprecated
     public boolean isCascade(MetaProperty metaProperty) {
         Objects.requireNonNull(metaProperty, "metaProperty is null");
         OneToMany oneToMany = metaProperty.getAnnotatedElement().getAnnotation(OneToMany.class);
@@ -290,6 +298,38 @@ public class MetadataTools {
             return true;
         }
         return false;
+    }
+
+    public List<CascadeType> getCascadeTypes(MetaProperty metaProperty) {
+        Objects.requireNonNull(metaProperty, "metaProperty is null");
+
+        if (metaProperty.getAnnotations().containsKey(CASCADE_TYPES_ANN_NAME)) {
+            //noinspection unchecked
+            return (List<CascadeType>) metaProperty.getAnnotations().get(CASCADE_TYPES_ANN_NAME);
+        }
+        return Collections.emptyList();
+    }
+
+    /**
+     * @param metaClass
+     * @param type      - type of operation to find properties.
+     * @return properties with {@link CascadeType} containg {@link CascadeType.ALL} or specified type
+     */
+    public List<MetaProperty> getCascadeProperties(MetaClass metaClass, @Nullable CascadeType type) {
+        if (metaClass.getAnnotations().containsKey(CASCADE_PROPERTIES_ANN_NAME)) {
+            List<MetaProperty> result = new LinkedList<>();
+            //noinspection unchecked
+            for (String propertyName : ((List<String>) metaClass.getAnnotations().get(CASCADE_PROPERTIES_ANN_NAME))) {
+                MetaProperty property = metaClass.getProperty(propertyName);
+                //noinspection unchecked
+                List<CascadeType> types = (List<CascadeType>) property.getAnnotations().get(CASCADE_TYPES_ANN_NAME);
+                if (type == null || types.contains(CascadeType.ALL) || types.contains(type)) {
+                    result.add(property);
+                }
+            }
+            return result;
+        }
+        return Collections.emptyList();
     }
 
     /**

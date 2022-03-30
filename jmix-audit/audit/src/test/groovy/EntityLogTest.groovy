@@ -1,4 +1,5 @@
 import io.jmix.audit.entity.EntityLogItem
+import io.jmix.core.DataManager
 import io.jmix.core.Entity
 import io.jmix.core.entity.EntityValues
 import io.jmix.core.event.AttributeChanges
@@ -7,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import test_support.testmodel.IdentityEntity
 import test_support.testmodel.IntIdentityEntity
 import test_support.testmodel.StringKeyEntity
+import test_support.testmodel.cascade.CascOrder
+import test_support.testmodel.cascade.CascOrderReview
 
 /*
  * Copyright 2019 Haulmont.
@@ -25,6 +28,10 @@ import test_support.testmodel.StringKeyEntity
  */
 
 class EntityLogTest extends AbstractEntityLogTest {
+
+
+    @Autowired
+    DataManager dataManager;
 
     @Autowired
     protected AttributeChangesProvider attributeChangesProvider
@@ -45,6 +52,9 @@ class EntityLogTest extends AbstractEntityLogTest {
         saveEntityLogAutoConfFor('test$IntIdentityEntity', 'name')
 
         saveEntityLogAutoConfFor('test$IdentityEntity', 'name')
+
+        saveEntityLogAutoConfFor('cascop_Order', '*')
+        saveEntityLogAutoConfFor('cascop_OrderReview', '*')
 
         saveManualEntityLogAutoConfFor('test$StringKeyEntity', 'name', 'description')
     }
@@ -246,6 +256,32 @@ class EntityLogTest extends AbstractEntityLogTest {
 
         clearEntityByCode(stringKeyEntity, 'TEST_STRING_KEY')
 
+    }
+
+    def "Logging for cascade saved entities works"() {
+        when:
+        CascOrder order = metadata.create(CascOrder)
+        CascOrderReview review = metadata.create(CascOrderReview)
+        review.text = "Passed"
+
+        order.setReview(review)
+        dataManager.save(order)
+
+        CascOrderReview loaded = dataManager.load(CascOrderReview.class).id(review.getId()).one()
+
+        then:
+        loaded != null
+
+        def entityLogItem = getLatestEntityLogItem('cascop_Order', order)
+
+        entityLogItem != null
+        def entityLogItem2 = getLatestEntityLogItem('cascop_OrderReview', review)
+        entityLogItem2 != null
+        entityLogItem2.changes.contains("text=Passed")
+
+        cleanup:
+
+        runSqlUpdate("delete from CASCOP_ORDER")
     }
 
     protected saveEntity(Entity entity) {

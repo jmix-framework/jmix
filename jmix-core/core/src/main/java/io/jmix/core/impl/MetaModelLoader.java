@@ -525,6 +525,44 @@ public class MetaModelLoader {
             //noinspection unchecked
             ((List<String>) metaClass.getAnnotations().get(MetadataTools.SYSTEM_ANN_NAME)).add(metaProperty.getName());
         }
+
+        CascadeType[] types = getCascadeType(field);
+
+        if (types != null && types.length > 0) {
+            metaProperty.getAnnotations().put(MetadataTools.CASCADE_TYPES_ANN_NAME, Arrays.asList(types));
+
+            MetaClass metaClass = metaProperty.getDomain();
+            if (!metaClass.getAnnotations().containsKey(MetadataTools.CASCADE_PROPERTIES_ANN_NAME)) {
+                metaClass.getAnnotations().put(MetadataTools.CASCADE_PROPERTIES_ANN_NAME, new LinkedList<String>());
+            }
+            //noinspection unchecked
+            ((List<String>) metaClass.getAnnotations().get(MetadataTools.CASCADE_PROPERTIES_ANN_NAME)).add(metaProperty.getName());
+        }
+    }
+
+    @Nullable
+    private CascadeType[] getCascadeType(Field field) {
+        ManyToMany manyToMany = field.getAnnotation(ManyToMany.class);
+        if (manyToMany != null) {
+            return manyToMany.cascade();
+        }
+
+        ManyToOne manyToOne = field.getAnnotation(ManyToOne.class);
+        if (manyToOne != null) {
+            return manyToOne.cascade();
+        }
+
+
+        OneToOne oneToOne = field.getAnnotation(OneToOne.class);
+        if (oneToOne != null) {
+            return oneToOne.cascade();
+        }
+
+        OneToMany oneToMany = field.getAnnotation(OneToMany.class);
+        if (oneToMany != null) {
+            return oneToMany.cascade();
+        }
+        return null;
     }
 
     protected void assignStore(MetaProperty metaProperty) {

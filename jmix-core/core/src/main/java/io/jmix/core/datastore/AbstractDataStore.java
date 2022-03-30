@@ -206,8 +206,8 @@ public abstract class AbstractDataStore implements DataStore {
 
     @Override
     public Set<?> save(SaveContext context) {
-        log.debug("save: store={}, entities to save: {}, entities to remove: {}",
-                getName(), context.getEntitiesToSave(), context.getEntitiesToRemove());
+        log.debug("save: store={}, entities to save: {}, entities to remove: {}, entities from cascade operations: {}",
+                getName(), context.getEntitiesToSave(), context.getEntitiesToRemove(), context.getCascadeAffectedEntities());
 
         EventSharedState saveState = new EventSharedState();
 

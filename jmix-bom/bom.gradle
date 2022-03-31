@@ -418,6 +418,12 @@ dependencies {
         api 'gr.netmechanics.jmix:duration-field:1.0.0'
         api 'gr.netmechanics.jmix:duration-field-starter:1.0.0'
 
+        api 'io.github.pierresj:jmix-huaweifs:1.0.7'
+        api 'io.github.pierresj:jmix-huaweifs-starter:1.0.7'
+
+        api 'io.github.pierresj:jmix-qiniufs:1.0.2'
+        api 'io.github.pierresj:jmix-qiniufs-starter:1.0.2'
+
         runtime 'org.hsqldb:hsqldb:2.4.1'
     }
 }

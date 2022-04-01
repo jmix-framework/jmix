@@ -417,6 +417,15 @@ dependencies {
         api 'gr.netmechanics.jmix:azurefs-starter:1.2.0'
         api 'gr.netmechanics.jmix:duration-field:1.0.0'
         api 'gr.netmechanics.jmix:duration-field-starter:1.0.0'
+        
+        api 'cn.jmix:jmixcn-alifs:1.0.0'
+        api 'cn.jmix:jmixcn-alifs-starter:1.0.0'
+
+        api 'cn.jmix:jmixcn-tencentfs:1.0.0'
+        api 'cn.jmix:jmixcn-tencentfs-starter:1.0.0'
+
+        api 'cn.jmix:jmixcn-baidufs:1.0.0'
+        api 'cn.jmix:jmixcn-baidufs-starter:1.0.0'
 
         api 'io.github.pierresj:jmix-huaweifs:1.0.7'
         api 'io.github.pierresj:jmix-huaweifs-starter:1.0.7'

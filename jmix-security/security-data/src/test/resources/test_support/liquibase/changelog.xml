@@ -104,6 +104,15 @@
             </column>
         </createTable>
 
+        <createTable tableName="TEST_ORDER_INFO">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="ORDER_ID" type="${uuid.type}">
+                <constraints foreignKeyName="TEST_ORDER_INFO_ORDER" references="TEST_ORDER(ID)"/>
+            </column>
+        </createTable>
+
     </changeSet>
 
 </databaseChangeLog>

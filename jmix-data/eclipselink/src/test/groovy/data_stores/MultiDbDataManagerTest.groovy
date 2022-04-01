@@ -15,10 +15,7 @@ import org.springframework.transaction.support.TransactionTemplate
 import test_support.DataSpec
 import test_support.TestInMemoryDataStore
 import test_support.entity.cars.Colour
-import test_support.entity.multidb.Db1Customer
-import test_support.entity.multidb.Db1Order
-import test_support.entity.multidb.MainReport
-import test_support.entity.multidb.Mem1Customer
+import test_support.entity.multidb.*
 
 import javax.persistence.EntityManager
 import javax.persistence.PersistenceContext
@@ -189,4 +186,58 @@ class MultiDbDataManagerTest extends DataSpec {
 
         results.get(report).getDb1Order().getCustomer().name == "next"
     }
+
+    void testNestedCrossDatastoreEntitiesCascading() {
+        when: "persisting"
+        Db1Order order = metadata.create(Db1Order)
+        Db1Customer customer = metadata.create(Db1Customer)
+        order.setCustomer(customer)
+        customer.setName("prev")
+        dataManager.save(order, customer)
+
+        MainReport report = metadata.create(MainReport)
+        report = dataManager.save(report)
+        report.setDb1Order(order)
+
+        ReportHolder holder = metadata.create(ReportHolder)
+        dataManager.save(holder)
+
+        holder.setMainReport(report)
+
+        def results = dataManager.save(new SaveContext().saving(holder, fetchPlans.builder(ReportHolder)
+                .add("mainReport", { b0 ->
+                    b0.add("db1Order", { b1 ->
+                        b1.add("customer", { b2 ->
+                            b2.add("name")
+                        })
+                    })
+                })
+                .build()
+        ))
+
+        def reloadedReport = results.get(report)
+
+        then: "cross-datastore nested entities persist cascaded"
+        reloadedReport.getDb1Order().getCustomer().name == "prev"
+
+
+        when: "merging"
+        def reloadedHolder = results.get(holder)
+        reloadedHolder.getMainReport().getDb1Order().getCustomer().name = "next"
+
+        results = dataManager.save(new SaveContext().saving(reloadedHolder, fetchPlans.builder(ReportHolder)
+                .add("mainReport", { b0 ->
+                    b0.add("db1Order", { b1 ->
+                        b1.add("customer", { b2 ->
+                            b2.add("name")
+                        })
+                    })
+                })
+                .build()
+        ))
+
+        then: "cross-datastore nested entities merge cascaded"
+        results.get(reloadedHolder).getMainReport().getDb1Order().getCustomer().name == "next"
+    }
+
 }

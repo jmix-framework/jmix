@@ -30,7 +30,9 @@ import org.springframework.security.core.Authentication
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
 import test_support.SecurityDataSpecification
+import test_support.entity.OrderInfo
 import test_support.entity.TestOrder
+import test_support.role.TestDataManagerEntityOperationsCascadeRole
 import test_support.role.TestDataManagerEntityOperationsRole
 
 import javax.sql.DataSource
@@ -71,7 +73,7 @@ class DataManagerEntityOperationsTest extends SecurityDataSpecification {
         user1 = User.builder()
                 .username("user1")
                 .password("{noop}$PASSWORD")
-                .authorities(Collections.emptyList())
+                .authorities(RoleGrantedAuthority.ofResourceRole(roleRepository.getRoleByCode(TestDataManagerEntityOperationsCascadeRole.NAME)))
                 .build()
 
         userRepository.addUser(user1)
@@ -96,6 +98,7 @@ class DataManagerEntityOperationsTest extends SecurityDataSpecification {
         userRepository.removeUser(user1)
         userRepository.removeUser(user2)
 
+        new JdbcTemplate(dataSource).execute('delete from TEST_ORDER_INFO')
         new JdbcTemplate(dataSource).execute('delete from TEST_ORDER')
     }
 
@@ -181,6 +184,28 @@ class DataManagerEntityOperationsTest extends SecurityDataSpecification {
 
         thrown(AccessDeniedException)
 
+    }
+
+    def "access constraints checked for cascaded entities"() {
+        setup:
+        authenticate('user1')
+
+        when:
+        def testOrder = metadata.create(TestOrder)
+
+        def orderInfo = metadata.create(OrderInfo)
+        orderInfo.setOrder(testOrder)
+
+        SaveContext saveContext = new SaveContext()
+
+        saveContext.saving(orderInfo)
+                .setAccessConstraints(accessConstraintsRegistry.getConstraints())
+
+        dataManager.save(saveContext)
+
+        then:
+        def e = thrown(AccessDeniedException)
+        e.resource == "test_Order"
     }
 
     def "save is allowed"() {

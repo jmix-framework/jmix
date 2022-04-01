@@ -150,7 +150,6 @@ class CascadeEventsTest extends DataSpec {
         barChangedEvents.stream().anyMatch(info -> info.message == "EntityChangedEvent: beforeCommit, DELETED")
         barChangedEvents.stream().anyMatch(info -> info.message == "EntityChangedEvent: afterCommit, DELETED")
 
-
     }
 
     def "check OneToMany cascade operations events"() {
@@ -252,10 +251,5 @@ class CascadeEventsTest extends DataSpec {
     def cleanup() {
         TestCascadeFooEventListener.clear()
         TestCascadeBarEventListener.clear()
-
-        jdbc.update("delete from TEST_JPA_CASCADE_ITEM")
-
-        jdbc.update("delete from TEST_JPA_CASCADE_FOO")
-        jdbc.update("delete from TEST_JPA_CASCADE_BAR")
-    }
+   }
 }

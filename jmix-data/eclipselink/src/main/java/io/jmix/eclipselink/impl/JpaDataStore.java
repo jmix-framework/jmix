@@ -221,11 +221,13 @@ public class JpaDataStore extends AbstractDataStore implements DataSortingOption
 
     @Override
     public Set<?> save(SaveContext context) {
-        completeContextWithCascadeOperations(context);
-        return super.save(context);
+        JpaSaveContext jpaContext = new JpaSaveContext(context);
+        completeContextWithCascadeOperations(jpaContext);
+        log.debug("save: cascaded: {}", jpaContext.getCascadeAffectedEntities());
+        return super.save(jpaContext);
     }
 
-    private void completeContextWithCascadeOperations(SaveContext context) {
+    private void completeContextWithCascadeOperations(JpaSaveContext context) {
         Set<Object> cascadeSaved = new HashSet<>();
         for (Object entityToSave : context.getEntitiesToSave()) {
             processCascadeOperation(entityToSave, cascadeSaved, context.getEntitiesToSave(), entityStates.isNew(entityToSave) ? PERSIST : MERGE);
@@ -293,13 +295,14 @@ public class JpaDataStore extends AbstractDataStore implements DataSortingOption
 
     @Override
     protected Set<Object> deleteAll(SaveContext context) {
+        JpaSaveContext jpaContext = (JpaSaveContext) context;
         EntityManager em = storeAwareLocator.getEntityManager(storeName);
         Set<Object> result = new HashSet<>();
         boolean softDeletionBefore = PersistenceHints.isSoftDeletion(em);
         try {
-            em.setProperty(PersistenceHints.SOFT_DELETION, context.getHints().get(PersistenceHints.SOFT_DELETION));
-            for (Object entity : context.getEntitiesToRemove()) {
-                if (!context.getCascadeAffectedEntities().contains(entity)) {
+            em.setProperty(PersistenceHints.SOFT_DELETION, jpaContext.getHints().get(PersistenceHints.SOFT_DELETION));
+            for (Object entity : jpaContext.getEntitiesToRemove()) {
+                if (!jpaContext.getCascadeAffectedEntities().contains(entity)) {//todo cast above?
                     Object merged = em.merge(entity);
                     em.remove(merged);
                     result.add(merged);
@@ -307,7 +310,7 @@ public class JpaDataStore extends AbstractDataStore implements DataSortingOption
             }
             //for merged clones of removed entities that have been created by EntityManager cascade processing
             for (Object instance : persistenceSupport.getInstances(em)) {
-                if (context.getEntitiesToRemove().contains(instance) && context.getCascadeAffectedEntities().contains(instance)) {
+                if (jpaContext.getEntitiesToRemove().contains(instance) && jpaContext.getCascadeAffectedEntities().contains(instance)) {
                     if (!EntityValues.isSoftDeletionSupported(instance) || !PersistenceHints.isSoftDeletion(em)) {
                         getEntityEntry(instance).setRemoved(true);//set entity entry removed state
                     }
@@ -412,7 +415,7 @@ public class JpaDataStore extends AbstractDataStore implements DataSortingOption
             try {
                 em.setProperty(PersistenceHints.SOFT_DELETION, context.getHints().get(PersistenceHints.SOFT_DELETION));
                 persistenceSupport.processFlush(em, false);
-                eventsInfo = entityChangedEventManager.collect( persistenceSupport.getInstances(em));
+                eventsInfo = entityChangedEventManager.collect(persistenceSupport.getInstances(em));
                 ((EntityManager) em.getDelegate()).flush();
             } catch (PersistenceException e) {
                 Pattern pattern = getUniqueConstraintViolationPattern();

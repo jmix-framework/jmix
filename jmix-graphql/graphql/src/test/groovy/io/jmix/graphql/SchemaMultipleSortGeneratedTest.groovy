@@ -30,7 +30,7 @@ class SchemaMultipleSortGeneratedTest extends AbstractGraphQLTest {
     GraphQLSchema graphQLSchema
 
     //  update schema script
-    //  new File("src/test/resources/graphql/io/jmix/graphql/schema.graphql")
+    //  new File("src/test/resources/graphql/io/jmix/graphql/schema-multiple-sort.graphql")
     //  .write(new SchemaPrinter(defaultOptions().includeDirectives(false)).print(graphQLSchema))
 
     def "graphql schema generated with multiple sort"() {

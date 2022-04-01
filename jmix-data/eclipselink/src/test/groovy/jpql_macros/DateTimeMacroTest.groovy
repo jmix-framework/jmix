@@ -24,7 +24,7 @@ import test_support.DataSpec
 import test_support.entity.TestDateTimeEntity
 
 import java.time.*
-
+@Ignore("Till Haulmont/jmix-data#124 will be fixed")
 class DateTimeMacroTest extends DataSpec {
 
     @Autowired
@@ -62,7 +62,6 @@ class DateTimeMacroTest extends DataSpec {
     }
 
     //----------@between--------
-    @Ignore("Till Haulmont/jmix-data#124 will be fixed")
     def "@between for LocalDate"() {
         when:
         def e = dataManager.load(TestDateTimeEntity)
@@ -117,7 +116,6 @@ class DateTimeMacroTest extends DataSpec {
         e == null
     }
 
-    @Ignore("Till Haulmont/jmix-data#124 will be fixed")
     def "@between for OffsetTime"() {
 
         when:

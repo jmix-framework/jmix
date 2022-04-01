@@ -21,6 +21,7 @@ import test_support.entity.BaseEntity;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Set;
 
 @Entity(name = "test$JpaCascadeFoo")
 @JmixEntity
@@ -36,6 +37,28 @@ public class JpaCascadeFoo extends BaseEntity {
 
     @OneToMany(mappedBy = "foo", cascade = CascadeType.ALL)
     private List<JpaCascadeItem> items;
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "BAR_P_ID")
+    private JpaCascadeBar barP;
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+    @JoinColumn(name = "BAR_M_ID")
+    private JpaCascadeBar barM;
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.REFRESH})
+    @JoinColumn(name = "BAR_DR_ID")
+    private JpaCascadeBar barDR;
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @JoinTable(name = "BAR_FOO_LINK",
+            joinColumns = @JoinColumn(name = "FOO_ID"),
+            inverseJoinColumns = @JoinColumn(name = "BAR_ID"))
+    private Set<JpaCascadeBar> barR;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "BAR_NONCASCADE_ID")
+    private JpaCascadeBar nonCascadeBar;
 
     public String getName() {
         return name;
@@ -59,5 +82,45 @@ public class JpaCascadeFoo extends BaseEntity {
 
     public void setItems(List<JpaCascadeItem> items) {
         this.items = items;
+    }
+
+    public JpaCascadeBar getBarP() {
+        return barP;
+    }
+
+    public void setBarP(JpaCascadeBar barP) {
+        this.barP = barP;
+    }
+
+    public JpaCascadeBar getBarM() {
+        return barM;
+    }
+
+    public void setBarM(JpaCascadeBar barM) {
+        this.barM = barM;
+    }
+
+    public JpaCascadeBar getBarDR() {
+        return barDR;
+    }
+
+    public void setBarDR(JpaCascadeBar barDR) {
+        this.barDR = barDR;
+    }
+
+    public Set<JpaCascadeBar> getBarR() {
+        return barR;
+    }
+
+    public void setBarR(Set<JpaCascadeBar> barR) {
+        this.barR = barR;
+    }
+
+    public JpaCascadeBar getNonCascadeBar() {
+        return nonCascadeBar;
+    }
+
+    public void setNonCascadeBar(JpaCascadeBar nonCascadeBar) {
+        this.nonCascadeBar = nonCascadeBar;
     }
 }

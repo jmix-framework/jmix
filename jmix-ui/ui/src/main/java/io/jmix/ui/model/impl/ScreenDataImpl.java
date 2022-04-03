@@ -23,6 +23,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -32,9 +33,9 @@ public class ScreenDataImpl implements ScreenData {
 
     protected DataContext dataContext;
 
-    protected Map<String, InstanceContainer> containers = new HashMap<>();
+    protected Map<String, InstanceContainer> containers = new LinkedHashMap<>();
 
-    protected Map<String, DataLoader> loaders = new HashMap<>();
+    protected Map<String, DataLoader> loaders = new LinkedHashMap<>();
 
     @Override
     public DataContext getDataContext() {

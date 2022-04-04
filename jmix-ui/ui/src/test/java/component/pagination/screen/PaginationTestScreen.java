@@ -18,11 +18,13 @@ package component.pagination.screen;
 
 import com.vaadin.ui.ComboBox;
 import io.jmix.ui.component.Pagination;
+import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.UiController;
 import io.jmix.ui.screen.UiDescriptor;
 import io.jmix.ui.widget.JmixPagination;
 import org.springframework.beans.factory.annotation.Autowired;
+import test_support.entity.sales.Customer;
 
 @UiController
 @UiDescriptor("pagination-test-screen.xml")
@@ -48,6 +50,12 @@ public class PaginationTestScreen extends Screen {
 
     @Autowired
     public Pagination paginationItemsPerPageDefaultValueCBandCO;
+
+    @Autowired
+    public Pagination paginationRemoveLastItem;
+
+    @Autowired
+    public CollectionContainer<Customer> customersRemoveLastItemCODc;
 
     public ComboBox<Integer> getComboBoxFromDefaultValueCB() {
         return paginationItemsPerPageDefaultValueCB

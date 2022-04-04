@@ -49,6 +49,12 @@
                 <query><![CDATA[select e from test_Customer e]]></query>
             </loader>
         </collection>
+
+        <collection id="customersRemoveLastItemCODc" class="test_support.entity.sales.Customer">
+            <loader id="customersRemoveLastItemCOLd">
+                <query><![CDATA[select e from test_Customer e]]></query>
+            </loader>
+        </collection>
     </data>
     <facets>
         <dataLoadCoordinator auto="true"/>
@@ -85,6 +91,11 @@
                     itemsPerPageOptions="4, 5, 6, 7"
                     itemsPerPageDefaultValue="6">
             <loaderProvider loaderId="customersItemsPerPageDefaultValueCBandCOLd"/>
+        </pagination>
+
+        <pagination id="paginationRemoveLastItem"
+                    itemsPerPageDefaultValue="1">
+            <loaderProvider loaderId="customersRemoveLastItemCOLd"/>
         </pagination>
     </layout>
 </window>

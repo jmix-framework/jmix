@@ -20,7 +20,7 @@ archivesBaseName = 'jmix-emailtemplates-ui-starter'
 dependencies {
     api project(':emailtemplates-ui')
 
-    implementation 'io.jmix.reports:jmix-reports-ui-starter'
+    implementation project(':reports-ui-starter')
     implementation project(':email-ui-starter')
 
     implementation 'org.springframework.boot:spring-boot-autoconfigure'

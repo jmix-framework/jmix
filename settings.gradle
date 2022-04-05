@@ -104,8 +104,8 @@ includeProject('reports-starter', 'jmix-reports/reports-starter')
 includeProject('reports-ui-starter', 'jmix-reports/reports-ui-starter')
 includeProject('reports-rest-starter', 'jmix-reports/reports-rest-starter')
 
-includeProject('saml', 'jmix-saml/saml')
-includeProject('saml-starter', 'jmix-saml/saml-starter')
+//includeProject('saml', 'jmix-saml/saml')
+//includeProject('saml-starter', 'jmix-saml/saml-starter')
 
 includeProject('search', 'jmix-search/search')
 includeProject('search-starter', 'jmix-search/search-starter')

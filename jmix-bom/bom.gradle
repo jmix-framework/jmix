@@ -70,231 +70,187 @@ dependencies {
     api platform("org.springframework.boot:spring-boot-dependencies:2.6.6")
     api platform('software.amazon.awssdk:bom:2.16.69')
 
-    def baseVersion = '1.3.0'
-    def appSettingsVersion = baseVersion
-    def auditVersion = baseVersion
-    def awsfsVersion = baseVersion
-    def awssecurityVerion = baseVersion
-    def bpmVersion = baseVersion
-    def businessCalendarVersion = baseVersion
-    def cloudqueueVerion = baseVersion
-    def coreVersion = baseVersion
-    def cubaVersion = baseVersion
-    def dashboardsVersion = baseVersion
-    def dataVersion = baseVersion
-    def dataimportVersion = baseVersion
-    def datatoolsVersion = baseVersion
-    def dynattrVersion = baseVersion
-    def emailVersion = baseVersion
-    def emailtemplatesVersion = baseVersion
-    def grapesJsVersion = baseVersion
-    def graphqlVersion = baseVersion
-    def imapVersion = baseVersion
-    def ldapVersion = baseVersion
-    def localfsVersion = baseVersion
-    def multitenancyVersion = baseVersion
-    def mapsVersion = baseVersion
-    def notificationsVersion = baseVersion
-    def oidcVersion = baseVersion
-    def quartzVersion = baseVersion
-    def reportsVersion = baseVersion
-    def restVersion = baseVersion
-    def samlVersion = baseVersion
-    def searchVersion = baseVersion
-    def securityVersion = baseVersion
-    def sessionsVersion = baseVersion
-    def translationsVersion = baseVersion
-    def uiVersion = baseVersion
-    def webdavVersion = baseVersion
-
-    if (isTrialBuild()) {
-        bpmVersion = bpmVersion + '.trial'
-        businessCalendarVersion = businessCalendarVersion + '.trial'
-        mapsVersion = mapsVersion + '.trial'
-        notificationsVersion = notificationsVersion + '.trial'
-        webdavVersion = webdavVersion + '.trial'
-
-        version = version + '.trial'
+    def freeVersion = version
+    def premiumVersion = version
+    if (rootProject.hasProperty('buildTrial')) {
+        premiumVersion += '.trial'
+        version += '.trial'
     }
 
     constraints {
-        api "io.jmix.appsettings:jmix-appsettings:${snapshotOr(appSettingsVersion)}"
-        api "io.jmix.appsettings:jmix-appsettings-starter:${snapshotOr(appSettingsVersion)}"
-        api "io.jmix.appsettings:jmix-appsettings-ui:${snapshotOr(appSettingsVersion)}"
-        api "io.jmix.appsettings:jmix-appsettings-ui-starter:${snapshotOr(appSettingsVersion)}"
 
-        api "io.jmix.audit:jmix-audit:${snapshotOr(auditVersion)}"
-        api "io.jmix.audit:jmix-audit-ui:${snapshotOr(auditVersion)}"
-        api "io.jmix.audit:jmix-audit-starter:${snapshotOr(auditVersion)}"
-        api "io.jmix.audit:jmix-audit-ui-starter:${snapshotOr(auditVersion)}"
+        // community add-ons
 
-        api "io.jmix.awsfs:jmix-awsfs:${snapshotOr(awsfsVersion)}"
-        api "io.jmix.awsfs:jmix-awsfs-starter:${snapshotOr(awsfsVersion)}"
+        // end community add-ons
 
-        api "io.jmix.awssecurity:jmix-awssecurity:${snapshotOr(awssecurityVerion)}"
-        api "io.jmix.awssecurity:jmix-awssecurity-starter:${snapshotOr(awssecurityVerion)}"
+        api "io.jmix.appsettings:jmix-appsettings:$freeVersion"
+        api "io.jmix.appsettings:jmix-appsettings-starter:$freeVersion"
+        api "io.jmix.appsettings:jmix-appsettings-ui:$freeVersion"
+        api "io.jmix.appsettings:jmix-appsettings-ui-starter:$freeVersion"
 
-        api "io.jmix.bpm:jmix-bpm:${snapshotOr(bpmVersion)}"
-        api "io.jmix.bpm:jmix-bpm-modeler:${snapshotOr(bpmVersion)}"
-        api "io.jmix.bpm:jmix-bpm-starter:${snapshotOr(bpmVersion)}"
-        api "io.jmix.bpm:jmix-bpm-ui:${snapshotOr(bpmVersion)}"
-        api "io.jmix.bpm:jmix-bpm-ui-starter:${snapshotOr(bpmVersion)}"
-        api "io.jmix.bpm:jmix-bpm-rest:${snapshotOr(bpmVersion)}"
-        api "io.jmix.bpm:jmix-bpm-rest-starter:${snapshotOr(bpmVersion)}"
+        api "io.jmix.audit:jmix-audit:$freeVersion"
+        api "io.jmix.audit:jmix-audit-ui:$freeVersion"
+        api "io.jmix.audit:jmix-audit-starter:$freeVersion"
+        api "io.jmix.audit:jmix-audit-ui-starter:$freeVersion"
 
-        api "io.jmix.businesscalendar:jmix-businesscalendar:${snapshotOr(businessCalendarVersion)}"
-        api "io.jmix.businesscalendar:jmix-businesscalendar-starter:${snapshotOr(businessCalendarVersion)}"
-        api "io.jmix.businesscalendar:jmix-businesscalendar-ui:${snapshotOr(businessCalendarVersion)}"
-        api "io.jmix.businesscalendar:jmix-businesscalendar-ui-starter:${snapshotOr(businessCalendarVersion)}"
+        api "io.jmix.awsfs:jmix-awsfs:$freeVersion"
+        api "io.jmix.awsfs:jmix-awsfs-starter:$freeVersion"
 
-        api "io.jmix.cloudqueue:jmix-cloudqueue-api:${snapshotOr(cloudqueueVerion)}"
-        api "io.jmix.cloudqueue:jmix-cloudqueue-aws-starter:${snapshotOr(cloudqueueVerion)}"
-        api "io.jmix.cloudqueue:jmix-cloudqueue-ui:${snapshotOr(cloudqueueVerion)}"
-        api "io.jmix.cloudqueue:jmix-cloudqueue-ui-starter:${snapshotOr(cloudqueueVerion)}"
-        api "io.jmix.cloudqueue:jmix-cloudqueue-yandex-starter:${snapshotOr(cloudqueueVerion)}"
+        api "io.jmix.bpm:jmix-bpm:$premiumVersion"
+        api "io.jmix.bpm:jmix-bpm-modeler:$premiumVersion"
+        api "io.jmix.bpm:jmix-bpm-starter:$premiumVersion"
+        api "io.jmix.bpm:jmix-bpm-ui:$premiumVersion"
+        api "io.jmix.bpm:jmix-bpm-ui-starter:$premiumVersion"
+        api "io.jmix.bpm:jmix-bpm-rest:$premiumVersion"
+        api "io.jmix.bpm:jmix-bpm-rest-starter:$premiumVersion"
 
-        api "io.jmix.core:jmix-core:${snapshotOr(coreVersion)}"
-        api "io.jmix.core:jmix-core-starter:${snapshotOr(coreVersion)}"
+        api "io.jmix.businesscalendar:jmix-businesscalendar:$premiumVersion"
+        api "io.jmix.businesscalendar:jmix-businesscalendar-starter:$premiumVersion"
+        api "io.jmix.businesscalendar:jmix-businesscalendar-ui:$premiumVersion"
+        api "io.jmix.businesscalendar:jmix-businesscalendar-ui-starter:$premiumVersion"
 
-        api "io.jmix.cuba:jmix-cuba:${snapshotOr(cubaVersion)}"
-        api "io.jmix.cuba:jmix-cuba-starter:${snapshotOr(cubaVersion)}"
+        api "io.jmix.core:jmix-core:$freeVersion"
+        api "io.jmix.core:jmix-core-starter:$freeVersion"
 
-        api "io.jmix.dashboards:jmix-dashboards:${snapshotOr(dashboardsVersion)}"
-        api "io.jmix.dashboards:jmix-dashboards-starter:${snapshotOr(dashboardsVersion)}"
-        api "io.jmix.dashboards:jmix-dashboards-chart:${snapshotOr(dashboardsVersion)}"
-        api "io.jmix.dashboards:jmix-dashboards-chart-starter:${snapshotOr(dashboardsVersion)}"
-        api "io.jmix.dashboards:jmix-dashboards-ui:${snapshotOr(dashboardsVersion)}"
-        api "io.jmix.dashboards:jmix-dashboards-ui-starter:${snapshotOr(dashboardsVersion)}"
+        api "io.jmix.cuba:jmix-cuba:$freeVersion"
+        api "io.jmix.cuba:jmix-cuba-starter:$freeVersion"
 
-        api "io.jmix.data:jmix-data:${snapshotOr(dataVersion)}"
-        api "io.jmix.data:jmix-data-autoconfigure:${snapshotOr(dataVersion)}"
-        api "io.jmix.data:jmix-eclipselink:${snapshotOr(dataVersion)}"
-        api "io.jmix.data:jmix-eclipselink-starter:${snapshotOr(dataVersion)}"
+        api "io.jmix.dashboards:jmix-dashboards:$freeVersion"
+        api "io.jmix.dashboards:jmix-dashboards-starter:$freeVersion"
+        api "io.jmix.dashboards:jmix-dashboards-chart:$freeVersion"
+        api "io.jmix.dashboards:jmix-dashboards-chart-starter:$freeVersion"
+        api "io.jmix.dashboards:jmix-dashboards-ui:$freeVersion"
+        api "io.jmix.dashboards:jmix-dashboards-ui-starter:$freeVersion"
 
-        api "io.jmix.dataimport:jmix-dataimport:${snapshotOr(dataimportVersion)}"
-        api "io.jmix.dataimport:jmix-dataimport-starter:${snapshotOr(dataimportVersion)}"
+        api "io.jmix.data:jmix-data:$freeVersion"
+        api "io.jmix.data:jmix-data-autoconfigure:$freeVersion"
+        api "io.jmix.data:jmix-eclipselink:$freeVersion"
+        api "io.jmix.data:jmix-eclipselink-starter:$freeVersion"
 
-        api "io.jmix.datatools:jmix-datatools:${snapshotOr(datatoolsVersion)}"
-        api "io.jmix.datatools:jmix-datatools-starter:${snapshotOr(datatoolsVersion)}"
-        api "io.jmix.datatools:jmix-datatools-ui:${snapshotOr(datatoolsVersion)}"
-        api "io.jmix.datatools:jmix-datatools-ui-starter:${snapshotOr(datatoolsVersion)}"
+        api "io.jmix.dataimport:jmix-dataimport:$freeVersion"
+        api "io.jmix.dataimport:jmix-dataimport-starter:$freeVersion"
 
-        api "io.jmix.dynattr:jmix-dynattr:${snapshotOr(dynattrVersion)}"
-        api "io.jmix.dynattr:jmix-dynattr-ui:${snapshotOr(dynattrVersion)}"
-        api "io.jmix.dynattr:jmix-dynattr-starter:${snapshotOr(dynattrVersion)}"
-        api "io.jmix.dynattr:jmix-dynattr-ui-starter:${snapshotOr(dynattrVersion)}"
+        api "io.jmix.datatools:jmix-datatools:$freeVersion"
+        api "io.jmix.datatools:jmix-datatools-starter:$freeVersion"
+        api "io.jmix.datatools:jmix-datatools-ui:$freeVersion"
+        api "io.jmix.datatools:jmix-datatools-ui-starter:$freeVersion"
 
-        api "io.jmix.email:jmix-email:${snapshotOr(emailVersion)}"
-        api "io.jmix.email:jmix-email-ui:${snapshotOr(emailVersion)}"
-        api "io.jmix.email:jmix-email-starter:${snapshotOr(emailVersion)}"
-        api "io.jmix.email:jmix-email-ui-starter:${snapshotOr(emailVersion)}"
+        api "io.jmix.dynattr:jmix-dynattr:$freeVersion"
+        api "io.jmix.dynattr:jmix-dynattr-ui:$freeVersion"
+        api "io.jmix.dynattr:jmix-dynattr-starter:$freeVersion"
+        api "io.jmix.dynattr:jmix-dynattr-ui-starter:$freeVersion"
 
-        api "io.jmix.emailtemplates:jmix-emailtemplates:${snapshotOr(emailtemplatesVersion)}"
-        api "io.jmix.emailtemplates:jmix-emailtemplates-ui:${snapshotOr(emailtemplatesVersion)}"
-        api "io.jmix.emailtemplates:jmix-emailtemplates-starter:${snapshotOr(emailtemplatesVersion)}"
-        api "io.jmix.emailtemplates:jmix-emailtemplates-ui-starter:${snapshotOr(emailtemplatesVersion)}"
+        api "io.jmix.email:jmix-email:$freeVersion"
+        api "io.jmix.email:jmix-email-ui:$freeVersion"
+        api "io.jmix.email:jmix-email-starter:$freeVersion"
+        api "io.jmix.email:jmix-email-ui-starter:$freeVersion"
 
-        api "io.jmix.grapesjs:jmix-grapesjs:${snapshotOr(grapesJsVersion)}"
-        api "io.jmix.grapesjs:jmix-grapesjs-starter:${snapshotOr(grapesJsVersion)}"
+        api "io.jmix.emailtemplates:jmix-emailtemplates:$freeVersion"
+        api "io.jmix.emailtemplates:jmix-emailtemplates-ui:$freeVersion"
+        api "io.jmix.emailtemplates:jmix-emailtemplates-starter:$freeVersion"
+        api "io.jmix.emailtemplates:jmix-emailtemplates-ui-starter:$freeVersion"
 
-        api "io.jmix.graphql:jmix-graphql:${snapshotOr(graphqlVersion)}"
-        api "io.jmix.graphql:jmix-graphql-starter:${snapshotOr(graphqlVersion)}"
+        api "io.jmix.grapesjs:jmix-grapesjs:$freeVersion"
+        api "io.jmix.grapesjs:jmix-grapesjs-starter:$freeVersion"
 
-        api "io.jmix.imap:jmix-imap:${snapshotOr(imapVersion)}"
-        api "io.jmix.imap:jmix-imap-ui:${snapshotOr(imapVersion)}"
-        api "io.jmix.imap:jmix-imap-starter:${snapshotOr(imapVersion)}"
-        api "io.jmix.imap:jmix-imap-ui-starter:${snapshotOr(imapVersion)}"
+        api "io.jmix.graphql:jmix-graphql:$freeVersion"
+        api "io.jmix.graphql:jmix-graphql-starter:$freeVersion"
 
-        api "io.jmix.ldap:jmix-ldap:${snapshotOr(ldapVersion)}"
-        api "io.jmix.ldap:jmix-ldap-starter:${snapshotOr(ldapVersion)}"
+        api "io.jmix.imap:jmix-imap:$freeVersion"
+        api "io.jmix.imap:jmix-imap-ui:$freeVersion"
+        api "io.jmix.imap:jmix-imap-starter:$freeVersion"
+        api "io.jmix.imap:jmix-imap-ui-starter:$freeVersion"
 
-        api "io.jmix.localfs:jmix-localfs:${snapshotOr(localfsVersion)}"
-        api "io.jmix.localfs:jmix-localfs-starter:${snapshotOr(localfsVersion)}"
+        api "io.jmix.ldap:jmix-ldap:$freeVersion"
+        api "io.jmix.ldap:jmix-ldap-starter:$freeVersion"
 
-        api "io.jmix.maps:jmix-maps:${snapshotOr(mapsVersion)}"
-        api "io.jmix.maps:jmix-maps-ui:${snapshotOr(mapsVersion)}"
-        api "io.jmix.maps:jmix-maps-ui-widgets:${snapshotOr(mapsVersion)}"
-        api "io.jmix.maps:jmix-maps-starter:${snapshotOr(mapsVersion)}"
-        api "io.jmix.maps:jmix-maps-ui-starter:${snapshotOr(mapsVersion)}"
+        api "io.jmix.localfs:jmix-localfs:$freeVersion"
+        api "io.jmix.localfs:jmix-localfs-starter:$freeVersion"
 
-        api "io.jmix.multitenancy:jmix-multitenancy:${snapshotOr(multitenancyVersion)}"
-        api "io.jmix.multitenancy:jmix-multitenancy-ui:${snapshotOr(multitenancyVersion)}"
-        api "io.jmix.multitenancy:jmix-multitenancy-starter:${snapshotOr(multitenancyVersion)}"
-        api "io.jmix.multitenancy:jmix-multitenancy-ui-starter:${snapshotOr(multitenancyVersion)}"
+        api "io.jmix.maps:jmix-maps:$premiumVersion"
+        api "io.jmix.maps:jmix-maps-ui:$premiumVersion"
+        api "io.jmix.maps:jmix-maps-ui-widgets:$premiumVersion"
+        api "io.jmix.maps:jmix-maps-starter:$premiumVersion"
+        api "io.jmix.maps:jmix-maps-ui-starter:$premiumVersion"
 
-        api "io.jmix.notifications:jmix-notifications:${snapshotOr(notificationsVersion)}"
-        api "io.jmix.notifications:jmix-notifications-ui:${snapshotOr(notificationsVersion)}"
-        api "io.jmix.notifications:jmix-notifications-starter:${snapshotOr(notificationsVersion)}"
-        api "io.jmix.notifications:jmix-notifications-ui-starter:${snapshotOr(notificationsVersion)}"
+        api "io.jmix.multitenancy:jmix-multitenancy:$freeVersion"
+        api "io.jmix.multitenancy:jmix-multitenancy-ui:$freeVersion"
+        api "io.jmix.multitenancy:jmix-multitenancy-starter:$freeVersion"
+        api "io.jmix.multitenancy:jmix-multitenancy-ui-starter:$freeVersion"
 
-        api "io.jmix.oidc:jmix-oidc:${snapshotOr(oidcVersion)}"
-        api "io.jmix.oidc:jmix-oidc-starter:${snapshotOr(oidcVersion)}"
+        api "io.jmix.notifications:jmix-notifications:$premiumVersion"
+        api "io.jmix.notifications:jmix-notifications-ui:$premiumVersion"
+        api "io.jmix.notifications:jmix-notifications-starter:$premiumVersion"
+        api "io.jmix.notifications:jmix-notifications-ui-starter:$premiumVersion"
 
-        api "io.jmix.quartz:jmix-quartz:${snapshotOr(quartzVersion)}"
-        api "io.jmix.quartz:jmix-quartz-starter:${snapshotOr(quartzVersion)}"
+        api "io.jmix.oidc:jmix-oidc:$freeVersion"
+        api "io.jmix.oidc:jmix-oidc-starter:$freeVersion"
 
-        api "io.jmix.reports:jmix-reports:${snapshotOr(reportsVersion)}"
-        api "io.jmix.reports:jmix-reports-ui:${snapshotOr(reportsVersion)}"
-        api "io.jmix.reports:jmix-reports-rest:${snapshotOr(reportsVersion)}"
-        api "io.jmix.reports:jmix-reports-starter:${snapshotOr(reportsVersion)}"
-        api "io.jmix.reports:jmix-reports-ui-starter:${snapshotOr(reportsVersion)}"
-        api "io.jmix.reports:jmix-reports-rest-starter:${snapshotOr(reportsVersion)}"
+        api "io.jmix.quartz:jmix-quartz:$freeVersion"
+        api "io.jmix.quartz:jmix-quartz-starter:$freeVersion"
 
-        api "io.jmix.rest:jmix-rest:${snapshotOr(restVersion)}"
-        api "io.jmix.rest:jmix-rest-starter:${snapshotOr(restVersion)}"
+        api "io.jmix.reports:jmix-reports:$freeVersion"
+        api "io.jmix.reports:jmix-reports-ui:$freeVersion"
+        api "io.jmix.reports:jmix-reports-rest:$freeVersion"
+        api "io.jmix.reports:jmix-reports-starter:$freeVersion"
+        api "io.jmix.reports:jmix-reports-ui-starter:$freeVersion"
+        api "io.jmix.reports:jmix-reports-rest-starter:$freeVersion"
 
-        api "io.jmix.saml:jmix-saml:${snapshotOr(samlVersion)}"
-        api "io.jmix.saml:jmix-saml-starter:${snapshotOr(samlVersion)}"
+        api "io.jmix.rest:jmix-rest:$freeVersion"
+        api "io.jmix.rest:jmix-rest-starter:$freeVersion"
 
-        api "io.jmix.search:jmix-search:${snapshotOr(searchVersion)}"
-        api "io.jmix.search:jmix-search-starter:${snapshotOr(searchVersion)}"
-        api "io.jmix.search:jmix-search-aws-starter:${snapshotOr(searchVersion)}"
-        api "io.jmix.search:jmix-search-ui:${snapshotOr(searchVersion)}"
-        api "io.jmix.search:jmix-search-ui-starter:${snapshotOr(searchVersion)}"
+        api "io.jmix.saml:jmix-saml:$freeVersion"
+        api "io.jmix.saml:jmix-saml-starter:$freeVersion"
 
-        api "io.jmix.security:jmix-security:${snapshotOr(securityVersion)}"
-        api "io.jmix.security:jmix-security-ui:${snapshotOr(securityVersion)}"
-        api "io.jmix.security:jmix-security-data:${snapshotOr(securityVersion)}"
-        api "io.jmix.security:jmix-security-oauth2:${snapshotOr(securityVersion)}"
-        api "io.jmix.security:jmix-security-starter:${snapshotOr(securityVersion)}"
-        api "io.jmix.security:jmix-security-ui-starter:${snapshotOr(securityVersion)}"
-        api "io.jmix.security:jmix-security-data-starter:${snapshotOr(securityVersion)}"
-        api "io.jmix.security:jmix-security-oauth2-starter:${snapshotOr(securityVersion)}"
+        api "io.jmix.search:jmix-search:$freeVersion"
+        api "io.jmix.search:jmix-search-starter:$freeVersion"
+        api "io.jmix.search:jmix-search-aws-starter:$freeVersion"
+        api "io.jmix.search:jmix-search-ui:$freeVersion"
+        api "io.jmix.search:jmix-search-ui-starter:$freeVersion"
 
-        api "io.jmix.sessions:jmix-sessions:${snapshotOr(sessionsVersion)}"
-        api "io.jmix.sessions:jmix-sessions-starter:${snapshotOr(sessionsVersion)}"
+        api "io.jmix.security:jmix-security:$freeVersion"
+        api "io.jmix.security:jmix-security-ui:$freeVersion"
+        api "io.jmix.security:jmix-security-data:$freeVersion"
+        api "io.jmix.security:jmix-security-oauth2:$freeVersion"
+        api "io.jmix.security:jmix-security-starter:$freeVersion"
+        api "io.jmix.security:jmix-security-ui-starter:$freeVersion"
+        api "io.jmix.security:jmix-security-data-starter:$freeVersion"
+        api "io.jmix.security:jmix-security-oauth2-starter:$freeVersion"
 
-        api "io.jmix.translations:jmix-translations-fr:${snapshotOr(translationsVersion)}"
-        api "io.jmix.translations:jmix-translations-ru:${snapshotOr(translationsVersion)}"
-        api "io.jmix.translations:jmix-translations-de:${snapshotOr(translationsVersion)}"
-        api "io.jmix.translations:jmix-translations-zh-cn:${snapshotOr(translationsVersion)}"
-        api "io.jmix.translations:jmix-translations-ro:${snapshotOr(translationsVersion)}"
-        api "io.jmix.translations:jmix-translations-el:${snapshotOr(translationsVersion)}"
+        api "io.jmix.sessions:jmix-sessions:$freeVersion"
+        api "io.jmix.sessions:jmix-sessions-starter:$freeVersion"
 
-        api "io.jmix.ui:jmix-ui:${snapshotOr(uiVersion)}"
-        api "io.jmix.ui:jmix-ui-data:${snapshotOr(uiVersion)}"
-        api "io.jmix.ui:jmix-ui-export:${snapshotOr(uiVersion)}"
-        api "io.jmix.ui:jmix-ui-export-starter:${snapshotOr(uiVersion)}"
-        api "io.jmix.ui:jmix-ui-test-assist:${snapshotOr(uiVersion)}"
-        api "io.jmix.ui:jmix-ui-themes:${snapshotOr(uiVersion)}"
-        api "io.jmix.ui:jmix-ui-themes-compiled:${snapshotOr(uiVersion)}"
-        api "io.jmix.ui:jmix-ui-widgets:${snapshotOr(uiVersion)}"
-        api "io.jmix.ui:jmix-ui-widgets-compiled:${snapshotOr(uiVersion)}"
-        api "io.jmix.ui:jmix-ui-starter:${snapshotOr(uiVersion)}"
-        api "io.jmix.ui:jmix-ui-data-starter:${snapshotOr(uiVersion)}"
-        api "io.jmix.ui:jmix-charts:${snapshotOr(uiVersion)}"
-        api "io.jmix.ui:jmix-charts-starter:${snapshotOr(uiVersion)}"
-        api "io.jmix.ui:jmix-charts-widgets:${snapshotOr(uiVersion)}"
-        api "io.jmix.ui:jmix-pivot-table:${snapshotOr(uiVersion)}"
-        api "io.jmix.ui:jmix-pivot-table-starter:${snapshotOr(uiVersion)}"
-        api "io.jmix.ui:jmix-pivot-table-widgets:${snapshotOr(uiVersion)}"
+        api "io.jmix.translations:jmix-translations-fr:$freeVersion"
+        api "io.jmix.translations:jmix-translations-ru:$freeVersion"
+        api "io.jmix.translations:jmix-translations-de:$freeVersion"
+        api "io.jmix.translations:jmix-translations-zh-cn:$freeVersion"
+        api "io.jmix.translations:jmix-translations-ro:$freeVersion"
+        api "io.jmix.translations:jmix-translations-el:$freeVersion"
 
-        api "io.jmix.webdav:jmix-webdav:${snapshotOr(webdavVersion)}"
-        api "io.jmix.webdav:jmix-webdav-ui:${snapshotOr(webdavVersion)}"
-        api "io.jmix.webdav:jmix-webdav-rest:${snapshotOr(webdavVersion)}"
-        api "io.jmix.webdav:jmix-webdav-starter:${snapshotOr(webdavVersion)}"
-        api "io.jmix.webdav:jmix-webdav-ui-starter:${snapshotOr(webdavVersion)}"
-        api "io.jmix.webdav:jmix-webdav-rest-starter:${snapshotOr(webdavVersion)}"
+        api "io.jmix.ui:jmix-ui:$freeVersion"
+        api "io.jmix.ui:jmix-ui-data:$freeVersion"
+        api "io.jmix.ui:jmix-ui-export:$freeVersion"
+        api "io.jmix.ui:jmix-ui-export-starter:$freeVersion"
+        api "io.jmix.ui:jmix-ui-test-assist:$freeVersion"
+        api "io.jmix.ui:jmix-ui-themes:$freeVersion"
+        api "io.jmix.ui:jmix-ui-themes-compiled:$freeVersion"
+        api "io.jmix.ui:jmix-ui-widgets:$freeVersion"
+        api "io.jmix.ui:jmix-ui-widgets-compiled:$freeVersion"
+        api "io.jmix.ui:jmix-ui-starter:$freeVersion"
+        api "io.jmix.ui:jmix-ui-data-starter:$freeVersion"
+        api "io.jmix.ui:jmix-charts:$freeVersion"
+        api "io.jmix.ui:jmix-charts-starter:$freeVersion"
+        api "io.jmix.ui:jmix-charts-widgets:$freeVersion"
+        api "io.jmix.ui:jmix-pivot-table:$freeVersion"
+        api "io.jmix.ui:jmix-pivot-table-starter:$freeVersion"
+        api "io.jmix.ui:jmix-pivot-table-widgets:$freeVersion"
+
+        api "io.jmix.webdav:jmix-webdav:$premiumVersion"
+        api "io.jmix.webdav:jmix-webdav-ui:$premiumVersion"
+        api "io.jmix.webdav:jmix-webdav-rest:$premiumVersion"
+        api "io.jmix.webdav:jmix-webdav-starter:$premiumVersion"
+        api "io.jmix.webdav:jmix-webdav-ui-starter:$premiumVersion"
+        api "io.jmix.webdav:jmix-webdav-rest-starter:$premiumVersion"
 
         api 'com.google.guava:guava:31.0.1-jre'
         api 'commons-io:commons-io:2.11.0'
@@ -424,16 +380,4 @@ publishing {
             from components.javaPlatform
         }
     }
-}
-
-String snapshotOr(String releaseVer) {
-    if (rootProject.hasProperty('jmixRelease')) {
-        return releaseVer
-    } else {
-        return version
-    }
-}
-
-boolean isTrialBuild() {
-    return rootProject.hasProperty('buildTrial') && rootProject.hasProperty('jmixRelease')
 }

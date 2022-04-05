@@ -432,6 +432,10 @@ dependencies {
 
         api 'io.github.pierresj:jmix-qiniufs:1.0.2'
         api 'io.github.pierresj:jmix-qiniufs-starter:1.0.2'
+        
+        api 'de.diedavids.jmix.wizard:jmix-wizard:1.1.0'
+        api 'de.diedavids.jmix.wizard:jmix-wizard-starter:1.1.0'
+
 
         runtime 'org.hsqldb:hsqldb:2.4.1'
     }

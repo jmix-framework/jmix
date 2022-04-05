@@ -25,19 +25,23 @@
         <tag>FRAGMENT</tag>
     </tags>
     <description>
-        <![CDATA[<html>Fragment associated with an entity. It differs from blank fragment in that it has data container defined for selected entity with given view.</html>]]>
+        <![CDATA[<html>Fragment associated with an entity. It differs from blank fragment in that it has data container defined for selected entity with given fetch plan.</html>]]>
     </description>
-
+    <steps>
+        <step name="Entity fragment" order="0"/>
+        <step name="Entity fragment fetch plan" order="1"/>
+    </steps>
     <property caption="Entity"
               code="entity"
               propertyType="ENTITY"
               required="true"/>
-    <property caption="Entity view"
+
+    <property caption="Entity fetch plan"
               code="frameView"
-              propertyType="VIEW"
+              step="1"
+              propertyType="VIEW_COMPONENT"
               relatedProperty="entity"
               required="true"/>
-
 
     <property caption="Descriptor name"
               code="descriptorName"

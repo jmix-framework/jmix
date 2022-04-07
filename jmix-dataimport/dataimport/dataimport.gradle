@@ -21,8 +21,6 @@ group = 'io.jmix.dataimport'
 archivesBaseName = 'jmix-dataimport'
 
 dependencies {
-    api platform("io.jmix.bom:jmix-bom:$bomVersion")
-
     api project(':core')
     api project(':data')
 

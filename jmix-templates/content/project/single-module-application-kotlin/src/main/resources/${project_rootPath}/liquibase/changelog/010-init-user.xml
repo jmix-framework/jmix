@@ -5,6 +5,8 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
+    <!-- DO NOT REMOVE. This changelog is required for user management. -->
+
     <changeSet id="1" author="${project_name}">
 
         <createTable tableName="${userTable}">

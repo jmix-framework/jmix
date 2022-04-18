@@ -244,6 +244,27 @@ public class FilterImpl extends CompositeComponent<GroupBoxLayout> implements Fi
         }
     }
 
+    @Override
+    public void setFrame(@Nullable Frame frame) {
+        super.setFrame(frame);
+
+        if (frame != null) {
+            for (Configuration configuration : configurations) {
+                LogicalFilterComponent component = configuration.getRootLogicalFilterComponent();
+                if (component instanceof BelongToFrame
+                        && ((BelongToFrame) component).getFrame() == null) {
+                    ((BelongToFrame) component).setFrame(frame);
+                } else {
+                    attachToFrame(component);
+                }
+            }
+        }
+    }
+
+    protected void attachToFrame(Component childComponent) {
+        ((FrameImplementation) frame).registerComponent(childComponent);
+    }
+
     @Nullable
     @Override
     public Predicate<MetaPropertyPath> getPropertiesFilterPredicate() {
@@ -338,6 +359,7 @@ public class FilterImpl extends CompositeComponent<GroupBoxLayout> implements Fi
         if (configuration != getEmptyConfiguration()
                 && !(configuration instanceof DesignTimeConfiguration)) {
             configurations.remove(configuration);
+            configuration.getRootLogicalFilterComponent().setParent(null);
 
             if (configuration == getCurrentConfiguration()) {
                 setCurrentConfiguration(getEmptyConfiguration());
@@ -560,6 +582,9 @@ public class FilterImpl extends CompositeComponent<GroupBoxLayout> implements Fi
             rootGroupFilter.setDataLoader(dataLoader);
             rootGroupFilter.setAutoApply(autoApply);
         }
+
+        rootGroupFilter.setFrame(getFrame());
+        rootGroupFilter.setParent(this);
 
         return rootGroupFilter;
     }

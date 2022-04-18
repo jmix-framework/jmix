@@ -16,6 +16,7 @@
 
 package io.jmix.ui.widget;
 
+import com.vaadin.event.SerializableEventListener;
 import io.jmix.ui.widget.client.fileupload.JmixFileUploadClientRpc;
 import io.jmix.ui.widget.client.fileupload.JmixFileUploadServerRpc;
 import io.jmix.ui.widget.client.fileupload.JmixFileUploadState;
@@ -765,7 +766,7 @@ public class JmixFileUpload extends AbstractComponent
     /**
      * Receives the events when the upload starts.
      */
-    public interface StartedListener extends Serializable {
+    public interface StartedListener extends SerializableEventListener {
 
         /**
          * Upload has started.
@@ -778,7 +779,7 @@ public class JmixFileUpload extends AbstractComponent
     /**
      * Receives the events when the uploads are ready.
      */
-    public interface FinishedListener extends Serializable {
+    public interface FinishedListener extends SerializableEventListener {
 
         /**
          * Upload has finished.
@@ -788,7 +789,7 @@ public class JmixFileUpload extends AbstractComponent
         void uploadFinished(FinishedEvent event);
     }
 
-    public interface QueueFinishedListener extends Serializable {
+    public interface QueueFinishedListener extends SerializableEventListener {
 
         /**
          * Upload has finished.
@@ -801,7 +802,7 @@ public class JmixFileUpload extends AbstractComponent
     /**
      * Receives events when the uploads are finished, but unsuccessful.
      */
-    public interface FailedListener extends Serializable {
+    public interface FailedListener extends SerializableEventListener {
 
         /**
          * Upload has finished unsuccessfully.
@@ -814,7 +815,7 @@ public class JmixFileUpload extends AbstractComponent
     /**
      * Receives events when the uploads are successfully finished.
      */
-    public interface SucceededListener extends Serializable {
+    public interface SucceededListener extends SerializableEventListener {
 
         /**
          * Upload successful.
@@ -827,7 +828,7 @@ public class JmixFileUpload extends AbstractComponent
     /**
      * Receives events when the file size is greater than {@link #getFileSizeLimit()}.
      */
-    public interface FileSizeLimitExceededListener extends Serializable {
+    public interface FileSizeLimitExceededListener extends SerializableEventListener {
 
         void fileSizeLimitExceeded(FileSizeLimitExceededEvent e);
     }
@@ -835,7 +836,7 @@ public class JmixFileUpload extends AbstractComponent
     /**
      * Receives events when the file extension is not included in {@link #getPermittedExtensions()}.
      */
-    public interface FileExtensionNotAllowedListener extends Serializable {
+    public interface FileExtensionNotAllowedListener extends SerializableEventListener {
 
         void fileExtensionNotAllowed(FileExtensionNotAllowedEvent e);
     }

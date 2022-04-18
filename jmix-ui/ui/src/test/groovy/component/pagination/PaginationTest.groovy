@@ -32,6 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
 import test_support.UiTestConfiguration
 import test_support.entity.sales.Customer
+import test_support.entity.sales.Order
 
 import java.util.stream.Collectors
 
@@ -43,6 +44,7 @@ class PaginationTest extends ScreenSpecification {
     DataManager dataManager
 
     List<Customer> customers;
+    Order order;
 
     private int customerItems = 10;
 
@@ -59,6 +61,10 @@ class PaginationTest extends ScreenSpecification {
     void cleanup() {
         dataManager.remove(customers)
         customers.clear()
+
+        if (order != null) {
+            dataManager.remove(order)
+        }
     }
 
     def "pagination clicks on last, previous, first, next"() {
@@ -234,5 +240,24 @@ class PaginationTest extends ScreenSpecification {
         then: "Due to no item in the last page, Pagination component should select previous page."
 
         jmixPagination.getCurrentPageNumber() == customerItems - 1
+    }
+
+    def "create new item while data container is empty"() {
+        showTestMainScreen()
+
+        def screen = (PaginationTestScreen) getScreens().create(PaginationTestScreen)
+        screen.show()
+
+        def jmixPagination = screen.paginationEmptyContainer.unwrap(JmixPagination)
+
+        when: "Save new item and add it to the data container"
+
+        order = dataManager.create(Order)
+        dataManager.save(order)
+        screen.ordersEmptyContainerDc.mutableItems.add(order)
+
+        then: "Pagination should create 1 page"
+
+        jmixPagination.pages.size() == 1
     }
 }

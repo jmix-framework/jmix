@@ -25,6 +25,7 @@ import io.jmix.ui.screen.UiDescriptor;
 import io.jmix.ui.widget.JmixPagination;
 import org.springframework.beans.factory.annotation.Autowired;
 import test_support.entity.sales.Customer;
+import test_support.entity.sales.Order;
 
 @UiController
 @UiDescriptor("pagination-test-screen.xml")
@@ -55,7 +56,13 @@ public class PaginationTestScreen extends Screen {
     public Pagination paginationRemoveLastItem;
 
     @Autowired
+    public Pagination paginationEmptyContainer;
+
+    @Autowired
     public CollectionContainer<Customer> customersRemoveLastItemCODc;
+
+    @Autowired
+    public CollectionContainer<Order> ordersEmptyContainerDc;
 
     public ComboBox<Integer> getComboBoxFromDefaultValueCB() {
         return paginationItemsPerPageDefaultValueCB

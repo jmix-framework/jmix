@@ -18,6 +18,7 @@ package io.jmix.ui.widget;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.vaadin.event.SerializableEventListener;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.widget.client.addon.dragdroplayouts.ui.LayoutDragMode;
 import com.vaadin.event.Action;
@@ -354,7 +355,7 @@ public class JmixManagedTabSheet extends JmixTabSheetCssLayout
         }
     }
 
-    public interface SelectedTabChangeListener extends Serializable {
+    public interface SelectedTabChangeListener extends SerializableEventListener {
 
         void selectedTabChange(JmixManagedTabSheet.SelectedTabChangeEvent event);
     }

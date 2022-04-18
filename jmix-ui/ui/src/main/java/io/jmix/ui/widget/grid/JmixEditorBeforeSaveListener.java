@@ -16,6 +16,7 @@
 
 package io.jmix.ui.widget.grid;
 
+import com.vaadin.event.SerializableEventListener;
 import com.vaadin.ui.Grid;
 
 /**
@@ -23,7 +24,7 @@ import com.vaadin.ui.Grid;
  *
  * @param <T> the bean type
  */
-public interface JmixEditorBeforeSaveListener<T> {
+public interface JmixEditorBeforeSaveListener<T> extends SerializableEventListener {
 
     void onEditorBeforeSave(JmixEditorBeforeSaveEvent<T> event);
 }

@@ -55,6 +55,12 @@
                 <query><![CDATA[select e from test_Customer e]]></query>
             </loader>
         </collection>
+
+        <collection id="ordersEmptyContainerDc" class="test_support.entity.sales.Order">
+            <loader id="ordersEmptyContainerLd">
+                <query><![CDATA[select e from test_Order e]]></query>
+            </loader>
+        </collection>
     </data>
     <facets>
         <dataLoadCoordinator auto="true"/>
@@ -96,6 +102,10 @@
         <pagination id="paginationRemoveLastItem"
                     itemsPerPageDefaultValue="1">
             <loaderProvider loaderId="customersRemoveLastItemCOLd"/>
+        </pagination>
+
+        <pagination id="paginationEmptyContainer">
+            <loaderProvider loaderId="ordersEmptyContainerLd"/>
         </pagination>
     </layout>
 </window>

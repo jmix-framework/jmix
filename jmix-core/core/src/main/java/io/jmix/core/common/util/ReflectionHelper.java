@@ -19,9 +19,7 @@ import org.apache.commons.lang3.reflect.ConstructorUtils;
 import org.dom4j.Element;
 
 import javax.annotation.Nullable;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -37,8 +35,9 @@ public final class ReflectionHelper {
 
     /**
      * Load class by name.
-     * @param name  class FQN or primitive type name
-     * @return      class instance
+     *
+     * @param name class FQN or primitive type name
+     * @return class instance
      * @throws ClassNotFoundException if not found
      */
     public static Class<?> loadClass(String name) throws ClassNotFoundException {
@@ -71,8 +70,9 @@ public final class ReflectionHelper {
 
     /**
      * Load class by name, wrapping a {@link ClassNotFoundException} into unchecked exception.
-     * @param name  class FQN
-     * @return      class instance
+     *
+     * @param name class FQN
+     * @return class instance
      */
     @SuppressWarnings("unchecked")
     public static <T> Class<T> getClass(String name) {
@@ -85,10 +85,11 @@ public final class ReflectionHelper {
 
     /**
      * Instantiates an object by appropriate constructor.
-     * @param cls       class
-     * @param params    constructor arguments
-     * @return          created object instance
-     * @throws NoSuchMethodException    if the class has no constructor matching the given arguments
+     *
+     * @param cls    class
+     * @param params constructor arguments
+     * @return created object instance
+     * @throws NoSuchMethodException if the class has no constructor matching the given arguments
      */
     public static <T> T newInstance(Class<T> cls, Object... params) throws NoSuchMethodException {
         Class[] paramTypes = getParamTypes(params);
@@ -106,10 +107,11 @@ public final class ReflectionHelper {
 
     /**
      * Searches for a method by its name and arguments.
-     * @param c         class
-     * @param name      method name
-     * @param params    method arguments
-     * @return          method reference or null if a suitable method not found
+     *
+     * @param c      class
+     * @param name   method name
+     * @param params method arguments
+     * @return method reference or null if a suitable method not found
      */
     @Nullable
     public static Method findMethod(Class<?> c, String name, Object... params) {
@@ -137,15 +139,15 @@ public final class ReflectionHelper {
 
     /**
      * Invokes a method by reflection.
-     * @param obj       object instance
-     * @param name      method name
-     * @param params    method arguments
-     * @return          method result
+     *
+     * @param obj    object instance
+     * @param name   method name
+     * @param params method arguments
+     * @return method result
      * @throws NoSuchMethodException if a suitable method not found
      */
     @SuppressWarnings("unchecked")
-    public static <T> T invokeMethod(Object obj, String name, Object...params) throws NoSuchMethodException
-    {
+    public static <T> T invokeMethod(Object obj, String name, Object... params) throws NoSuchMethodException {
         Class[] paramTypes = getParamTypes(params);
 
         final Class<?> aClass = obj.getClass();
@@ -165,8 +167,9 @@ public final class ReflectionHelper {
 
     /**
      * Constructs an array of argument types from an array of actual values. Values can not contain nulls.
-     * @param params    arguments
-     * @return          the array of argument types
+     *
+     * @param params arguments
+     * @return the array of argument types
      */
     public static Class[] getParamTypes(Object... params) {
         List<Class> paramClasses = new ArrayList<>();
@@ -188,5 +191,38 @@ public final class ReflectionHelper {
             }
         }
         return paramClasses.toArray(new Class<?>[0]);
+    }
+
+    /**
+     * Useful to get real entity property value and avoid unfetched attribute exception.
+     *
+     * @return field value
+     */
+    public static Object getFieldValue(Object entity, String property) {
+        Class javaClass = entity.getClass();
+        Field field = null;
+        try {
+            field = javaClass.getDeclaredField(property);
+        } catch (NoSuchFieldException e) {
+            Class superclass = javaClass.getSuperclass();
+            while (superclass != null) {
+                try {
+                    field = superclass.getDeclaredField(property);
+                    break;
+                } catch (NoSuchFieldException e1) {
+                    superclass = superclass.getSuperclass();
+                }
+            }
+            if (field == null)
+                throw new RuntimeException("Field not found: " + property);
+        }
+        if (!Modifier.isPublic(field.getModifiers())) {
+            field.setAccessible(true);
+        }
+        try {
+            return field.get(entity);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException("Cannot get field:" + property);
+        }
     }
 }

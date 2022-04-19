@@ -17,11 +17,9 @@
 package io.jmix.core;
 
 import com.google.common.collect.Sets;
-import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.common.util.StackTrace;
 import io.jmix.core.entity.EntityPreconditions;
 import io.jmix.core.entity.EntityValues;
-import io.jmix.core.entity.NoValueCollection;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import org.slf4j.Logger;
@@ -331,13 +329,8 @@ public class EntityStates {
         MetaClass metaClass = metadata.getClass(builder.getEntityClass());
 
         for (MetaProperty property : metaClass.getProperties()) {
-            if (!isLoaded(entity, property.getName())) {
-                //NoValue placeholder should be considered as loaded like null values of just saved entities
-                Object rawValue = ReflectionHelper.getFieldValue(entity, property.getName());
-                if (!(rawValue instanceof NoValueCollection)) {
-                    continue;
-                }
-            }
+            if (!isLoaded(entity, property.getName()))
+                continue;
             if (property.getRange().isClass()) {
                 FetchPlanBuilder propertyBuilder = fetchPlans.builder(property.getRange().asClass().getJavaClass());
                 // The input object graph can be large, so we use FetchMode.UNDEFINED to avoid huge SQLs with

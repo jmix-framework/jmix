@@ -17,6 +17,8 @@
 package io.jmix.eclipselink.impl;
 
 import io.jmix.core.Entity;
+import io.jmix.core.common.util.ReflectionHelper;
+import io.jmix.core.entity.NoValueCollection;
 import io.jmix.core.impl.CorePersistentAttributesLoadChecker;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -67,6 +69,10 @@ public class DataPersistentAttributesLoadChecker extends CorePersistentAttribute
             return checkIsLoadedWithGetter(entity, property);
         }
 
+        Object rawValue = ReflectionHelper.getFieldValue(entity, property);
+        if (rawValue instanceof NoValueCollection) {
+            return true;//NoValue placeholder should be considered as loaded like null values of just saved entities
+        }
         EntityManagerFactory emf = storeAwareLocator.getEntityManagerFactory(metaClass.getStore().getName());
         return emf.getPersistenceUnitUtil().isLoaded(entity, property);
     }

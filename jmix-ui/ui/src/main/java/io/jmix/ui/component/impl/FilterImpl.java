@@ -37,6 +37,7 @@ import io.jmix.ui.component.filter.FilterSupport;
 import io.jmix.ui.component.filter.configuration.DesignTimeConfiguration;
 import io.jmix.ui.component.filter.configuration.RunTimeConfiguration;
 import io.jmix.ui.icon.JmixIcon;
+import io.jmix.ui.model.BaseCollectionLoader;
 import io.jmix.ui.model.DataLoader;
 import io.jmix.ui.UiComponentProperties;
 import io.jmix.ui.theme.ThemeClassNames;
@@ -207,6 +208,7 @@ public class FilterImpl extends CompositeComponent<GroupBoxLayout> implements Fi
     @Override
     public void apply() {
         if (dataLoader != null && isAutoApply()) {
+            setupLoaderFirstResult();
             dataLoader.load();
         }
     }
@@ -748,6 +750,12 @@ public class FilterImpl extends CompositeComponent<GroupBoxLayout> implements Fi
                     getDataLoader().removeParameter(singleFilterComponent.getParameterName());
                 }
             }
+        }
+    }
+
+    protected void setupLoaderFirstResult() {
+        if (dataLoader instanceof BaseCollectionLoader) {
+            ((BaseCollectionLoader) dataLoader).setFirstResult(0);
         }
     }
 }

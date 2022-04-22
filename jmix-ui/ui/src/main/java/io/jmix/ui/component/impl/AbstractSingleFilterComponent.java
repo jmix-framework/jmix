@@ -25,6 +25,7 @@ import io.jmix.ui.UiComponentProperties;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.component.*;
 import io.jmix.ui.icon.Icons;
+import io.jmix.ui.model.BaseCollectionLoader;
 import io.jmix.ui.model.DataLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -323,6 +324,7 @@ public abstract class AbstractSingleFilterComponent<V> extends CompositeComponen
     @Override
     public void apply() {
         if (dataLoader != null && autoApply) {
+            setupLoaderFirstResult();
             dataLoader.load();
         }
     }
@@ -500,6 +502,12 @@ public abstract class AbstractSingleFilterComponent<V> extends CompositeComponen
     public void validate() throws ValidationException {
         if (valueComponent instanceof Validatable) {
             ((Validatable) valueComponent).validate();
+        }
+    }
+
+    protected void setupLoaderFirstResult() {
+        if (dataLoader instanceof BaseCollectionLoader) {
+            ((BaseCollectionLoader) dataLoader).setFirstResult(0);
         }
     }
 }

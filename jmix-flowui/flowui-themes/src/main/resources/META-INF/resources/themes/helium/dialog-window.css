@@ -1,0 +1,24 @@
+.jmix-dialog-window-overlay {
+  /*height: 100%;*/
+}
+
+.jmix-dialog-window-overlay .jmix-dialog-window-header {
+  /*border-bottom: 1px solid var(--lumo-contrast-10pct);*/
+  padding: var(--lumo-space-m) var(--lumo-space-m);
+  display: flex;
+}
+
+.jmix-dialog-window-overlay .jmix-dialog-window-title {
+  flex-grow: 1;
+  margin: 0;
+  font-size: var(--lumo-font-size-xl);
+  font-weight: 600;
+  line-height: var(--lumo-line-height-xs);
+}
+
+/*
+.jmix-dialog-window-overlay .jmix-dialog-window-footer {
+  background-color: var(--lumo-contrast-5pct);
+  padding: var(--lumo-space-s) var(--lumo-space-m);
+  text-align: right;
+}*/

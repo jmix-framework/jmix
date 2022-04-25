@@ -1,0 +1,39 @@
+.jmix-exception-dialog-window-overlay .jmix-exception-dialog-window-header {
+    padding: var(--lumo-space-m) var(--lumo-space-m);
+    display: flex;
+}
+
+.jmix-exception-dialog-window-overlay .jmix-exception-dialog-window-title {
+    flex-grow: 1;
+    margin: 0;
+    font-size: var(--lumo-font-size-xl);
+    font-weight: 600;
+    line-height: var(--lumo-line-height-xs);
+}
+
+.jmix-exception-dialog-window-overlay textarea {
+    background-color: var(--lumo-contrast-20pct);
+    border: 0;
+    border-radius: var(--lumo-border-radius-m);
+    box-sizing: border-box;
+    font-family: var(--lumo-font-family);
+    font-size: var(--lumo-font-size-m);
+    line-height: var(--lumo-line-height-s);
+    outline: none;
+    padding: calc(var(--lumo-size-s) - 1em * var(--lumo-line-height-s));
+    resize: none;
+}
+
+.jmix-exception-dialog-window-overlay textarea:focus {
+    box-shadow: 0 0 0 2px var(--lumo-primary-color-50pct);
+}
+
+.jmix-exception-dialog-window-overlay .jmix-exception-dialog-window-message-textarea {
+    width: 100%;
+    height: 100px;
+}
+
+.jmix-exception-dialog-window-overlay .jmix-exception-dialog-window-stacktrace-textarea {
+    width: 100%;
+    flex-grow: 1;
+}

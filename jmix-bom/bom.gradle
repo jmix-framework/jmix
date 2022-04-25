@@ -61,6 +61,7 @@ publishing {
 group = 'io.jmix.bom'
 
 def vaadinVersion = '8.14.1-1-jmix'
+def vaadinFlowVersion = '23.0.5'
 
 javaPlatform {
     allowDependencies()
@@ -149,6 +150,11 @@ dependencies {
         api "io.jmix.emailtemplates:jmix-emailtemplates-ui:$freeVersion"
         api "io.jmix.emailtemplates:jmix-emailtemplates-starter:$freeVersion"
         api "io.jmix.emailtemplates:jmix-emailtemplates-ui-starter:$freeVersion"
+
+        api "io.jmix.flowui:jmix-flowui:$freeVersion"
+        api "io.jmix.flowui:jmix-flowui-starter:$freeVersion"
+        api "io.jmix.flowui:jmix-flowui-kit:$freeVersion"
+        api "io.jmix.flowui:jmix-flowui-themes:$freeVersion"
 
         api "io.jmix.grapesjs:jmix-grapesjs:$freeVersion"
         api "io.jmix.grapesjs:jmix-grapesjs-starter:$freeVersion"
@@ -279,6 +285,10 @@ dependencies {
         api "com.vaadin:vaadin-compatibility-client:$vaadinVersion"
         api "com.vaadin:vaadin-themes:$vaadinVersion"
         api 'com.vaadin:vaadin-spring:3.1.1'
+
+        api "com.vaadin:vaadin-spring-boot-starter:$vaadinFlowVersion"
+        api "com.vaadin:vaadin-core:$vaadinFlowVersion"
+        api "com.vaadin:vaadin-bom:$vaadinFlowVersion"
 
         api 'org.webjars:ace-builds:1.1.9-1-cuba'
         api 'org.webjars:bootstrap:4.5.3-0-jmix'

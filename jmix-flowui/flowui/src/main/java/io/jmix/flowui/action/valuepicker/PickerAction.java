@@ -14,7 +14,6 @@ import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-@SuppressWarnings("unchecked")
 public abstract class PickerAction<A extends PickerAction<A, C, V>, C extends PickerComponent<V>, V>
         extends SecuredBaseAction
         implements TargetAction<C>, ExecutableAction {
@@ -62,11 +61,13 @@ public abstract class PickerAction<A extends PickerAction<A, C, V>, C extends Pi
         }
     }
 
+    @SuppressWarnings("unchecked")
     public A withTarget(@Nullable C target) {
         setTarget(target);
         return ((A) this);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public A withText(@Nullable String text) {
         return ((A) super.withText(text));
@@ -78,46 +79,55 @@ public abstract class PickerAction<A extends PickerAction<A, C, V>, C extends Pi
         return ((A) super.withEnabled(enabled));
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public A withVisible(boolean visible) {
         return ((A) super.withVisible(visible));
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public A withIcon(@Nullable String icon) {
         return ((A) super.withIcon(icon));
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public A withIcon(@Nullable VaadinIcon icon) {
         return ((A) super.withIcon(icon));
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public A withTitle(@Nullable String title) {
         return ((A) super.withTitle(title));
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public A withVariant(ActionVariant actionVariant) {
         return ((A) super.withVariant(actionVariant));
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public A withShortcutCombination(@Nullable KeyCombination shortcutCombination) {
         return ((A) super.withShortcutCombination(shortcutCombination));
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public A withHandler(@Nullable Consumer<ActionPerformedEvent> handler) {
         return ((A) super.withHandler(handler));
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public A withEnabledByUiPermissions(boolean enabledByUiPermissions) {
         return ((A) super.withEnabledByUiPermissions(enabledByUiPermissions));
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public A withVisibleByUiPermissions(boolean visibleByUiPermissions) {
         return ((A) super.withVisibleByUiPermissions(visibleByUiPermissions));

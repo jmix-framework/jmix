@@ -81,6 +81,7 @@ public class LookupSelectAction<E> extends OperationResultScreenAction<LookupSel
         super.execute();
     }
 
+    @SuppressWarnings("unchecked")
     protected void attachSelectionListener() {
         if (selectionListenerRegistration != null) {
             selectionListenerRegistration.remove();

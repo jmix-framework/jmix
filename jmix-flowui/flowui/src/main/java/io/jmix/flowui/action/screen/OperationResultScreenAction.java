@@ -32,6 +32,7 @@ public abstract class OperationResultScreenAction<A extends OperationResultScree
         this.nextStepSupplier = nextStepSupplier;
     }
 
+    @SuppressWarnings("unchecked")
     public A withNextStepSupplier(@Nullable Supplier<OperationResult> nextStepSupplier) {
         setNextStepSupplier(nextStepSupplier);
         return ((A) this);
@@ -42,6 +43,7 @@ public abstract class OperationResultScreenAction<A extends OperationResultScree
         this.successHandler = successHandler;
     }
 
+    @SuppressWarnings("unchecked")
     public A withSuccessHandler(@Nullable Runnable successHandler) {
         setSuccessHandler(successHandler);
         return ((A) this);
@@ -52,6 +54,7 @@ public abstract class OperationResultScreenAction<A extends OperationResultScree
         this.failHandler = failHandler;
     }
 
+    @SuppressWarnings("unchecked")
     public A withFailHandler(@Nullable Runnable failHandler) {
         setFailHandler(failHandler);
         return ((A) this);

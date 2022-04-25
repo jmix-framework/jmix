@@ -93,6 +93,7 @@ public abstract class SecuredListDataComponentAction<A extends SecuredListDataCo
         return constraintEntityOp;
     }
 
+    @SuppressWarnings("unchecked")
     public A withConstraintEntityOp(@Nullable EntityOp entityOp) {
         setConstraintEntityOp(entityOp);
         return ((A) this);

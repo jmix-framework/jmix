@@ -320,6 +320,7 @@ public class EditAction<E> extends SecuredListDataComponentAction<EditAction<E>,
         navigator.navigate();
     }
 
+    @SuppressWarnings("unchecked")
     protected void openDialog(E editedEntity) {
         EditorWindowBuilder<E, Screen> editorBuilder = dialogWindowBuilders.editor(target);
 

@@ -297,6 +297,7 @@ public class CreateAction<E> extends ListDataComponentAction<CreateAction<E>, E>
         navigator.navigate();
     }
 
+    @SuppressWarnings("unchecked")
     protected void openDialog() {
         EditorWindowBuilder<E, Screen> editorBuilder = dialogWindowBuilders.editor(target);
 

@@ -29,13 +29,13 @@ dependencies {
 
     api 'org.springframework.boot:spring-boot-autoconfigure'
 
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+    testImplementation 'org.spockframework:spock-core'
+    testImplementation 'org.spockframework:spock-spring'
+    testImplementation project(':eclipselink')
+    testImplementation 'org.apache.commons:commons-dbcp2'
 
-//    testImplementation 'org.springframework:spring-test'
-//    testImplementation 'org.spockframework:spock-core'
-//    testImplementation 'org.spockframework:spock-spring'
-//    testImplementation 'io.jmix.data:jmix-eclipselink'
-//    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
-//    testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'
-//    testRuntimeOnly 'org.hsqldb:hsqldb'
-//    testRuntimeOnly 'org.slf4j:slf4j-simple'
+    testRuntimeOnly 'org.hsqldb:hsqldb'
 }

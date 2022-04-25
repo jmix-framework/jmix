@@ -22,8 +22,9 @@ group = 'io.jmix.flowui'
 archivesBaseName = 'jmix-flowui'
 
 dependencies {
-    api 'io.jmix.core:jmix-core'
-    api 'io.jmix.flowui:jmix-flowui-kit'
+    api project(':core')
+    api project(':flowui-kit')
+
     api 'com.vaadin:vaadin-spring-boot-starter'
 
     api 'org.springframework.boot:spring-boot-autoconfigure'

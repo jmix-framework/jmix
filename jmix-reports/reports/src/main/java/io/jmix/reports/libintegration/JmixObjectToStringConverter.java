@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
 import java.text.ParseException;
+import java.util.Optional;
 import java.util.UUID;
 
 public class JmixObjectToStringConverter extends AbstractObjectToStringConverter {
@@ -66,10 +67,11 @@ public class JmixObjectToStringConverter extends AbstractObjectToStringConverter
             return paramValueStr;
         } else if (Entity.class.isAssignableFrom(parameterClass)) {
             UUID id = UUID.fromString(paramValueStr);
-            return dataManager.load(parameterClass)
+            Optional entityOpt = dataManager.load(parameterClass)
                     .id(id)
                     .fetchPlan(FetchPlan.BASE)
-                    .one();
+                    .optional();
+            return entityOpt.isPresent() ? entityOpt.get() : null;
         } else {
             Datatype datatype = datatypeRegistry.find(parameterClass);
             if (datatype != null) {

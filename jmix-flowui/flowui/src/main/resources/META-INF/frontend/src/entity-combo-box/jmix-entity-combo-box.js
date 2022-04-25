@@ -75,6 +75,37 @@ export class JmixEntityComboBox extends ComboBox {
             ></vaadin-combo-box-dropdown>
         `;
     }
+
+    /**
+     * Used by `ClearButtonMixin` as a reference to the clear button element.
+     * @protected
+     * @return {!HTMLElement}
+     */
+    get clearElement() {
+        // return 'null' to disable clean button
+        return null;
+    }
+
+    /** @protected */
+    ready() {
+        super.ready();
+
+        this._actionsBox = this.shadowRoot.querySelector('[part="action-part"]');
+    }
+
+    /**
+     * @param {Event} event
+     * @protected
+     * @override
+     */
+    _onHostClick(event) {
+        const path = event.composedPath();
+
+        // Do not open dropdown when clicking on the picker actions
+        if (!path.includes(this._actionsBox)) {
+            super._onHostClick(event);
+        }
+    }
 }
 
 customElements.define(JmixEntityComboBox.is, JmixEntityComboBox);

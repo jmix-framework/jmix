@@ -71,8 +71,14 @@ export class JmixValuePickerButton extends ActiveMixin(TabindexMixin(FocusMixin(
 
     static get properties() {
         return {
-            actionId: {
-                type: String
+            /**
+             * Indicates whether the element can be focused and where it participates in sequential keyboard navigation.
+             *
+             * @override
+             * @protected
+             */
+            tabindex: {
+                value: 0
             }
         };
     }

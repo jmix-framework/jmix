@@ -77,7 +77,7 @@ export class JmixValuePicker extends InputFieldMixin(ThemableMixin(ElementMixin(
 
     /** @protected */
     get clearElement() {
-        return this.$.clearButton;
+        return null;
     }
 
     /** @protected */
@@ -92,7 +92,7 @@ export class JmixValuePicker extends InputFieldMixin(ThemableMixin(ElementMixin(
                 this.ariaTarget = input;
             })
         );
-        this.addController(new LabelledInputController(this.inputElement, this._labelNode));
+        this.addController(new LabelledInputController(this.inputElement, this._labelController));
     }
 
 

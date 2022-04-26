@@ -17,6 +17,7 @@ package io.jmix.flowui.xml.layout.loader;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasComponents;
+import com.vaadin.flow.component.orderedlayout.BoxSizing;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.ThemableLayout;
 import io.jmix.flowui.component.UiComponentUtils;
@@ -27,7 +28,7 @@ import org.dom4j.Element;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class ContainerLoader<T extends Component> extends AbstractComponentLoader<T> {
+public abstract class AbstractContainerLoader<T extends Component> extends AbstractComponentLoader<T> {
 
     protected List<ComponentLoader<?>> pendingLoadComponents = new ArrayList<>();
 
@@ -43,12 +44,32 @@ public abstract class ContainerLoader<T extends Component> extends AbstractCompo
         loadBoolean(element, "spacing", layout::setSpacing);
     }
 
+    protected void loadMargin(ThemableLayout layout, Element element) {
+        loadBoolean(element, "margin", layout::setMargin);
+    }
+
+    protected void loadPadding(ThemableLayout layout, Element element) {
+        loadBoolean(element, "padding", layout::setPadding);
+    }
+
+    protected void loadBoxSizing(ThemableLayout layout, Element element) {
+        loadEnum(element, BoxSizing.class, "boxSizing", layout::setBoxSizing);
+    }
+
+    protected void loadThemableAttributes(ThemableLayout layout, Element element) {
+        loadSpacing(layout, element);
+        loadMargin(layout, element);
+        loadPadding(layout, element);
+        loadBoxSizing(layout, element);
+    }
+
     protected void createSubComponents(HasComponents container, Element containerElement) {
         LayoutLoader loader = getLayoutLoader();
 
         for (Element subElement : containerElement.elements()) {
             if (!isChildElementIgnored(subElement)) {
-                ComponentLoader<?> componentLoader = loader.createComponent(subElement);
+                ComponentLoader<?> componentLoader = loader.createComponentLoader(subElement);
+                componentLoader.initComponent();
                 pendingLoadComponents.add(componentLoader);
 
                 container.add(componentLoader.getResultComponent());
@@ -76,6 +97,19 @@ public abstract class ContainerLoader<T extends Component> extends AbstractCompo
                             String.format("There is no component with id '%s' to expand", componentId), context));
             layout.expand(componentToExpand);
         });
+    }
+
+    protected void loadAlignItems(FlexComponent component, Element element) {
+        loadEnum(element, FlexComponent.Alignment.class, "alignItems", component::setAlignItems);
+    }
+
+    protected void loadJustifyContent(FlexComponent component, Element element) {
+        loadEnum(element, FlexComponent.JustifyContentMode.class, "justifyContent", component::setJustifyContentMode);
+    }
+
+    protected void loadFlexibleAttributes(FlexComponent component, Element element) {
+        loadAlignItems(component, element);
+        loadJustifyContent(component, element);
     }
 
     /*protected void setComponentsRatio(ComponentContainer resultComponent, Element element) {

@@ -21,7 +21,7 @@ import io.jmix.flowui.screen.Screen;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.ComponentLoader.Context;
 import io.jmix.flowui.xml.layout.LoaderResolver;
-import io.jmix.flowui.xml.layout.LoaderSupport;
+import io.jmix.flowui.xml.layout.support.LoaderSupport;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -74,6 +74,7 @@ public class LayoutLoader {
         this.loaderSupport = loaderSupport;
     }
 
+    @SuppressWarnings("rawtypes")
     protected ComponentLoader<?> getLoader(Element element) {
         Class<? extends ComponentLoader> loaderClass = loaderResolver.getLoader(element);
         if (loaderClass == null) {
@@ -83,6 +84,7 @@ public class LayoutLoader {
         return initLoader(element, loaderClass);
     }
 
+    @SuppressWarnings("rawtypes")
     public ComponentLoader<?> getLoader(Element element, Class<? extends ComponentLoader> loaderClass) {
         return initLoader(element, loaderClass);
     }
@@ -93,12 +95,14 @@ public class LayoutLoader {
         return (FragmentLoader) initLoader(rootWindowElement, loaderClass);
     }*/
 
+    @SuppressWarnings("rawtypes")
     protected ScreenLoader getScreenLoader(Element rootScreenElement) {
         Class<? extends ComponentLoader> loaderClass = loaderResolver.getScreenLoader(rootScreenElement);
 
         return (ScreenLoader) initLoader(rootScreenElement, loaderClass);
     }
 
+    @SuppressWarnings("rawtypes")
     protected ComponentLoader<?> initLoader(Element element, Class<? extends ComponentLoader> loaderClass) {
         ComponentLoader<?> loader;
 
@@ -127,12 +131,8 @@ public class LayoutLoader {
         return loader;
     }
 
-    // TODO: gg, rename
-    public ComponentLoader<?> createComponent(Element element) {
-        ComponentLoader<?> loader = getLoader(element);
-
-        loader.createComponent();
-        return loader;
+    public ComponentLoader<?> createComponentLoader(Element element) {
+        return getLoader(element);
     }
 
     /*public ComponentLoader<Fragment> createFragmentContent(Fragment fragment, Element rootWindowElement) {

@@ -17,16 +17,24 @@
 package io.jmix.flowui.xml.layout;
 
 
-import io.jmix.flowui.xml.layout.loader.ButtonLoader;
-import io.jmix.flowui.xml.layout.loader.HorizontalLayoutLoader;
-import io.jmix.flowui.xml.layout.loader.TextFieldLoader;
+import com.vaadin.flow.component.Component;
+import io.jmix.flowui.xml.layout.loader.component.*;
+import io.jmix.flowui.xml.layout.loader.container.AccordionLoader;
+import io.jmix.flowui.xml.layout.loader.container.ScrollerLoader;
+import io.jmix.flowui.xml.layout.loader.container.TabsLoader;
+import io.jmix.flowui.xml.layout.loader.html.component.HrLoader;
+import io.jmix.flowui.xml.layout.loader.html.component.IFrameLoader;
+import io.jmix.flowui.xml.layout.loader.html.component.InputLoader;
+import io.jmix.flowui.xml.layout.loader.html.component.ParamLoader;
+import io.jmix.flowui.xml.layout.loader.html.container.*;
+import io.jmix.flowui.xml.layout.loader.layout.*;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class BaseLoaderConfig {
 
-    protected Map<String, Class<? extends ComponentLoader>> loaders = new ConcurrentHashMap<>();
+    protected Map<String, Class<? extends ComponentLoader<? extends Component>>> loaders = new ConcurrentHashMap<>();
 
     public BaseLoaderConfig() {
         initStandardLoaders();
@@ -34,10 +42,75 @@ public abstract class BaseLoaderConfig {
 
     protected void initStandardLoaders() {
         // TODO: gg, store component names somewhere
+        /*Abstract layouts*/
         loaders.put("hbox", HorizontalLayoutLoader.class);
+        loaders.put("vbox", VerticalLayoutLoader.class);
 
+        /*Content panel*/
+        loaders.put("accordion", AccordionLoader.class);
+        loaders.put("accordionPanel", AccordionLoader.AccordionPanelLoader.class);
+        loaders.put("scroller", ScrollerLoader.class);
+        loaders.put("tabs", TabsLoader.class);
+        loaders.put("tab", TabsLoader.TabLoader.class);
+        loaders.put("grid", JmixGridLoader.class);
+        loaders.put("column", JmixGridLoader.GridColumnLoader.class);
+        loaders.put("details", DetailsLoader.class);
+        loaders.put("split", SplitLayoutLoader.class);
+        loaders.put("form", FormLayoutLoader.class);
+        loaders.put("formItem", FormLayoutLoader.FormItemLoader.class);
+
+        /*Components*/
         loaders.put("button", ButtonLoader.class);
-
         loaders.put("textField", TextFieldLoader.class);
+        loaders.put("emailField", EmailFieldLoader.class);
+        loaders.put("numberField", NumberFieldLoader.class);
+        loaders.put("passwordField", PasswordFieldLoader.class);
+        loaders.put("bigDecimalField", BigDecimalFieldLoader.class);
+        loaders.put("checkBox", CheckBoxLoader.class);
+        loaders.put("comboBox", ComboBoxLoader.class);
+        loaders.put("timePicker", TimePickerLoader.class);
+        loaders.put("dateTimePicker", DateTimePickerLoader.class);
+        loaders.put("datePicker", DatePickerLoader.class);
+        loaders.put("avatar", AvatarLoader.class);
+        loaders.put("select", SelectLoader.class);
+
+        /*HTML components*/
+
+        loaders.put("param", ParamLoader.class);
+        loaders.put("hr", HrLoader.class);
+        loaders.put("input", InputLoader.class);
+        loaders.put("image", ImageLoader.class);
+        loaders.put("iframe", IFrameLoader.class);
+        /*Containers*/
+
+        loaders.put("h1", H1Loader.class);
+        loaders.put("h2", H2Loader.class);
+        loaders.put("h3", H3Loader.class);
+        loaders.put("h4", H4Loader.class);
+        loaders.put("h5", H5Loader.class);
+        loaders.put("h6", H6Loader.class);
+
+        loaders.put("listItem", ListItemLoader.class);
+        loaders.put("unorderedList", UnorderedListLoader.class);
+        loaders.put("orderedList", OrderedListLoader.class);
+
+        loaders.put("descriptionList", DescriptionListLoader.class);
+        loaders.put("term", DescriptionListLoader.TermLoader.class);
+        loaders.put("description", DescriptionListLoader.DescriptionLoader.class);
+
+        loaders.put("div", DivLoader.class);
+        loaders.put("span", SpanLoader.class);
+        loaders.put("section", SectionLoader.class);
+        loaders.put("nav", NavLoader.class);
+        loaders.put("main", MainLoader.class);
+        loaders.put("footer", FooterLoader.class);
+        loaders.put("aside", AsideLoader.class);
+        loaders.put("emphasis", EmphasisLoader.class);
+        loaders.put("article", ArticleLoader.class);
+        loaders.put("header", HeaderLoader.class);
+        loaders.put("pre", PreLoader.class);
+        loaders.put("p", ParagraphLoader.class);
+        loaders.put("htmlObject", HtmlObjectLoader.class);
+        loaders.put("anchor", AnchorLoader.class);
     }
 }

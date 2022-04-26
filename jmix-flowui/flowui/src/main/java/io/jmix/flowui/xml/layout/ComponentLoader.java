@@ -5,6 +5,7 @@ import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.model.ScreenData;
 import io.jmix.flowui.screen.Screen;
 import io.jmix.flowui.screen.ScreenActions;
+import io.jmix.flowui.xml.layout.support.LoaderSupport;
 import org.dom4j.Element;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
@@ -64,6 +65,7 @@ public interface ComponentLoader<T extends Component> {
     void setContext(Context context);
 
     UiComponents getFactory();
+
     void setFactory(UiComponents factory);
 
     LoaderResolver getLoaderResolver();
@@ -83,11 +85,9 @@ public interface ComponentLoader<T extends Component> {
     void setEnvironment(Environment environment);
 
     /**
-     * Creates result component by XML-element and loads its Id. Also creates all nested components.
-     *
-     * @see #getResultComponent()
+     * Creates result component by XML-element
      */
-    void createComponent();
+    void initComponent();
 
     /**
      * Loads component properties by XML definition.
@@ -99,7 +99,7 @@ public interface ComponentLoader<T extends Component> {
     /**
      * Returns previously created instance of component.
      *
-     * @see #createComponent()
+     * @see #initComponent()
      */
     T getResultComponent();
 }

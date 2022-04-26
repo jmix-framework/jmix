@@ -16,8 +16,7 @@
 package io.jmix.flowui.xml.layout.loader;
 
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import io.jmix.core.DevelopmentException;
-import io.jmix.flowui.component.HasActions;
+import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.model.ScreenData;
@@ -26,26 +25,44 @@ import io.jmix.flowui.screen.Screen;
 import io.jmix.flowui.screen.ScreenActions;
 import io.jmix.flowui.screen.UiControllerUtils;
 import io.jmix.flowui.xml.layout.ComponentRootLoader;
+import io.jmix.flowui.xml.layout.support.ActionLoaderSupport;
 import org.dom4j.Element;
 
-public class ScreenLoader extends ContainerLoader<Screen> implements ComponentRootLoader<Screen> {
+public class ScreenLoader extends AbstractContainerLoader<Screen> implements ComponentRootLoader<Screen> {
+
+
+    protected ActionLoaderSupport actionLoaderSupport;
+
+    public ActionLoaderSupport getActionLoaderSupport() {
+        if (actionLoaderSupport == null) {
+            actionLoaderSupport = applicationContext.getBean(ActionLoaderSupport.class, context);
+        }
+        return actionLoaderSupport;
+    }
+
+//    @Autowired
+//    ScreenLoader(ComponentLoaderSupport componentLoaderSupport, ActionLoaderSupport actionLoaderSupport) {
+//        this.componentLoaderSupport = componentLoaderSupport;
+//        this.actionLoaderSupport = actionLoaderSupport;
+//    }
 
     public void setResultComponent(Screen screen) {
         this.resultComponent = screen;
     }
 
     @Override
-    public void createComponent() {
+    protected Screen createComponent() {
         throw new UnsupportedOperationException("Screen cannot be created from XML element");
     }
 
     @Override
-    public void createContent(Element layoutElement) {
-        if (layoutElement == null) {
-            throw new DevelopmentException("Missing required 'layout' element");
-        }
+    public void initComponent() {
+        throw new UnsupportedOperationException("Screen cannot be initialized from XML element");
+    }
 
-        // TODO: gg, rework
+    @Override
+    public void createContent(Element layoutElement) {
+        Preconditions.checkNotNullArgument(layoutElement);
         createSubComponents(resultComponent.getContent(), layoutElement);
     }
 
@@ -68,16 +85,17 @@ public class ScreenLoader extends ContainerLoader<Screen> implements ComponentRo
 
         // TODO: gg, add corresponding interfaces to screen itself?
         VerticalLayout screenRootComponents = resultComponent.getContent();
-        loadSpacing(screenRootComponents, layoutElement);
+        loadThemableAttributes(screenRootComponents, layoutElement);
 //        loadMargin(resultComponent, layoutElement);
-        loadWidth(screenRootComponents, layoutElement);
-        loadHeight(screenRootComponents, layoutElement);
+        componentLoader().loadSizeAttributes(screenRootComponents, layoutElement);
+        loadFlexibleAttributes(screenRootComponents, layoutElement);
+//        getComponentLoaderSupport().loadWidth(screenRootComponents, layoutElement);
+//        getComponentLoaderSupport().loadHeight(screenRootComponents, layoutElement);
 //        loadStyleName(resultComponent, layoutElement);
 //        loadResponsive(resultComponent, layoutElement);
 //        loadCss(resultComponent, element);
 //        loadVisible(resultComponent, layoutElement);
 
-//        loadMinMaxSizes(resultComponent, layoutElement);
 
         loadSubComponentsAndExpand(screenRootComponents, layoutElement);
 //        setComponentsRatio(resultComponent, layoutElement);
@@ -86,28 +104,6 @@ public class ScreenLoader extends ContainerLoader<Screen> implements ComponentRo
 
 //        loadFacets(resultComponent, element);
     }
-
-    /*protected void loadMinMaxSizes(Window resultComponent, Element layoutElement) {
-        String minHeight = layoutElement.attributeValue("minHeight");
-        if (isNotEmpty(minHeight)) {
-            resultComponent.setMinHeight(minHeight);
-        }
-
-        String minWidth = layoutElement.attributeValue("minWidth");
-        if (isNotEmpty(minWidth)) {
-            resultComponent.setMinWidth(minWidth);
-        }
-
-        String maxHeight = layoutElement.attributeValue("maxHeight");
-        if (isNotEmpty(maxHeight)) {
-            resultComponent.setMaxHeight(maxHeight);
-        }
-
-        String maxWidth = layoutElement.attributeValue("maxWidth");
-        if (isNotEmpty(maxWidth)) {
-            resultComponent.setMaxWidth(maxWidth);
-        }
-    }*/
 
     protected void loadScreenData(Screen screen, Element element) {
         Element dataElement = element.element("data");
@@ -128,16 +124,15 @@ public class ScreenLoader extends ContainerLoader<Screen> implements ComponentRo
 
         ScreenActions screenActions = UiControllerUtils.getScreenActions(screen);
         for (Element actionEl : actionsEl.elements("action")) {
-            screenActions.addAction(loadDeclarativeAction(screenActions, actionEl));
+            screenActions.addAction(loadDeclarativeAction(actionEl));
         }
 
         ((ComponentLoaderContext) context).setScreenActions(screenActions);
     }
 
-    @Override
-    protected Action loadDeclarativeAction(HasActions hasActions, Element element) {
-        return loadDeclarativeActionByType(element)
-                .orElse(super.loadDeclarativeAction(hasActions, element));
+    protected Action loadDeclarativeAction(Element element) {
+        return getActionLoaderSupport().loadDeclarativeActionByType(element)
+                .orElse(getActionLoaderSupport().loadDeclarativeAction(element));
     }
 
     /*protected void loadFocusedComponent(Window window, Element element) {

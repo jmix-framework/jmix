@@ -184,6 +184,7 @@ public class EntityInspectorEditor extends StandardEditor {
                     embeddedContainer.setItem(propertyValue);
                     Form embeddedForm = InspectorFormBuilder.from(getApplicationContext(), embeddedContainer)
                             .withCaption(getPropertyCaption(metaClass, metaProperty))
+                            .withOwnerComponent(contentPane)
                             .build();
                     contentPane.add(embeddedForm);
                     break;

@@ -262,6 +262,7 @@ public class DataContextImpl implements DataContextInternal {
     protected void mergeState(Object srcEntity, Object dstEntity, Map<Object, Object> mergedMap,
                               boolean isRoot, MergeOptions options) {
         boolean srcNew = entityStates.isNew(srcEntity);
+        boolean dstNew = entityStates.isNew(dstEntity);
 
         mergeSystemState(srcEntity, dstEntity, isRoot, options);
 
@@ -269,8 +270,9 @@ public class DataContextImpl implements DataContextInternal {
 
         for (MetaProperty property : metaClass.getProperties()) {
             String propertyName = property.getName();
-            if (!property.getRange().isClass()                                             // local
-                    && (srcNew || entityStates.isLoaded(srcEntity, propertyName))) {          // loaded src
+            if (!property.getRange().isClass()                                   // local
+                    && (srcNew || entityStates.isLoaded(srcEntity, propertyName))// loaded src
+                    && (dstNew || entityStates.isLoaded(dstEntity, propertyName))) {// loaded dst - have to check to avoid unfetched for local properties
 
                 Object value = EntityValues.getValue(srcEntity, propertyName);
 
@@ -286,7 +288,7 @@ public class DataContextImpl implements DataContextInternal {
         for (MetaProperty property : metaClass.getProperties()) {
             String propertyName = property.getName();
             if (property.getRange().isClass()                                               // refs and collections
-                    && (srcNew || entityStates.isLoaded(srcEntity, propertyName))) {           // loaded src
+                    && (srcNew || entityStates.isLoaded(srcEntity, propertyName))) {        // loaded src
                 Object value = EntityValues.getValue(srcEntity, propertyName);
 
                 // ignore null values in non-root source entities
@@ -295,7 +297,9 @@ public class DataContextImpl implements DataContextInternal {
                 }
 
                 if (value == null || !entityStates.isLoaded(dstEntity, propertyName)) {
-                    setPropertyValue(dstEntity, property, value);
+                    if (!metadataTools.isEmbedded(property)) {//dstEntity property value will be lazy loaded and replaced by srcEntity property value
+                        setPropertyValue(dstEntity, property, value);
+                    }
                     continue;
                 }
 

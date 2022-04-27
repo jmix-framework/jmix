@@ -808,6 +808,11 @@ class DataContextMergeTest extends DataContextSpec {
 
         Customer customer1 = dataManager.save(new Customer(name: 'c1', address: new Address()))
         Order order1 = dataManager.save(new Order(number: '111', customer: customer1))
+        // order1
+        //   number: 111
+        //   customer1
+        //     name = 'c1'
+        //     address = ..
 
         def order1l = dataManager.load(Id.of(order1)).fetchPlan { it.add('number') }.one()
 
@@ -827,6 +832,39 @@ class DataContextMergeTest extends DataContextSpec {
 
         cleanup:
         dataManager.remove(order2t, customer1)
+    }
+
+    def "merge into entity with not loaded local property"() {
+        DataContext context = factory.createDataContext()
+
+        Customer customer1 = dataManager.save(new Customer(
+                name: 'c1',
+                email: 'example@example.com',
+                address: new Address(city: "A", zip: "B")))
+        Order order1 = dataManager.save(new Order(number: '111', customer: customer1))
+        //order1
+        //   number = '111'
+        //   customer1
+        //     name = 'c1'
+        //     email = 'example@example.com'
+        //     address = ..
+
+        def customer1l = dataManager.load(Id.of(customer1)).fetchPlan { it.add('name') }.one()
+        def order1l = dataManager.load(Id.of(order1)).fetchPlan {
+            it.add('customer.name').add('customer.address')
+        }.one()
+
+        when:
+        def customer2 = context.merge(customer1l)
+        def order2 = context.merge(order1)
+        def contextCustomer = context.find(customer1)
+
+        then:
+        noExceptionThrown()
+        //entityStates.isLoaded(contextCustomer,"address")//todo
+
+        cleanup:
+        dataManager.remove(order2, customer2)
     }
 
 //    def "fetch group"() {

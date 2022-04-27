@@ -361,7 +361,7 @@ dependencies {
         api 'org.webjars:jquery-ui-touch-punch:0.2.3-2'
         api 'org.webjars:amcharts:3.21.12.jmix.0'
 
-        def flowableVersion = '6.7.0'
+        def flowableVersion = '6.7.2'
         api "org.flowable:flowable-spring-configurator:$flowableVersion"
         api "org.flowable:flowable-spring-boot-starter-process:$flowableVersion"
         api "org.flowable:flowable-spring-boot-starter-dmn:$flowableVersion"

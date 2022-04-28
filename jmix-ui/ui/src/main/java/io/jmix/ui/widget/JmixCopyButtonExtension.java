@@ -16,6 +16,7 @@
 
 package io.jmix.ui.widget;
 
+import com.vaadin.event.SerializableEventListener;
 import io.jmix.ui.widget.client.button.JmixCopyButtonExtensionServerRpc;
 import io.jmix.ui.widget.client.button.JmixCopyButtonExtensionState;
 import com.vaadin.server.AbstractExtension;
@@ -25,7 +26,6 @@ import com.vaadin.shared.Registration;
 import com.vaadin.ui.Button;
 import com.vaadin.util.ReflectTools;
 
-import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.EventObject;
 import java.util.Objects;
@@ -95,7 +95,7 @@ public class JmixCopyButtonExtension extends AbstractExtension {
         }
     }
 
-    public interface CopyListener extends Serializable {
+    public interface CopyListener extends SerializableEventListener {
         void copied(CopyEvent event);
     }
 

@@ -215,6 +215,11 @@ public class PaginationImpl extends AbstractPagination<JmixPagination> implement
 
             if (CollectionUtils.isNotEmpty(component.getPages())) {
                 component.setCurrentPageNumberByFirstResult(firstResult);
+            } else if (component.getLastPageNumber() > 1
+                    && component.getCurrentPageNumber() == component.getLastPageNumber()) {
+                // If no data in the container and page number is last, it means
+                // user removes all items in the last page. Need to select previous page.
+                component.forceSelectPage(component.getCurrentPageNumber() - 1);
             }
         }
 

@@ -1,0 +1,37 @@
+.jmix-text-layout .title,
+.jmix-text-layout .message {
+    white-space: pre;
+}
+
+.jmix-text-layout .title {
+    font-size: var(--lumo-font-size-l);
+    font-weight: 600;
+    margin: 0;
+    text-align: center;
+}
+
+.jmix-text-layout .message {
+    margin-bottom: 0;
+}
+
+.jmix-closeable-layout {
+    display: flex;
+    align-items: flex-start;
+}
+
+.jmix-closeable-layout .close-button {
+    margin-left: var(--lumo-space-s);
+}
+
+vaadin-notification-card[theme~='warning'][class~='jmix-notification-card'] .jmix-text-layout .title {
+    color: var(--jmix-lumo-warning-color);
+}
+vaadin-notification-card[theme~='contrast'][class~='jmix-notification-card'] .jmix-text-layout .title {
+    color: var(--lumo-base-color);
+}
+vaadin-notification-card[theme~='error'][class~='jmix-notification-card'] .jmix-text-layout .title {
+    color: var(--lumo-error-contrast-color);
+}
+vaadin-notification-card[theme~='success'][class~='jmix-notification-card'] .jmix-text-layout .title {
+    color: var(--lumo-success-contrast-color);
+}

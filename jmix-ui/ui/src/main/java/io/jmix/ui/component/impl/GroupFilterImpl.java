@@ -235,6 +235,37 @@ public class GroupFilterImpl extends CompositeComponent<GroupBoxLayout> implemen
         if (!isConditionModificationDelegated()) {
             updateDataLoaderCondition();
         }
+
+        if (frame != null) {
+            if (filterComponent instanceof BelongToFrame
+                    && ((BelongToFrame) filterComponent).getFrame() == null) {
+                ((BelongToFrame) filterComponent).setFrame(frame);
+            } else {
+                attachToFrame(filterComponent);
+            }
+        }
+
+        filterComponent.setParent(this);
+    }
+
+    @Override
+    public void setFrame(@Nullable Frame frame) {
+        super.setFrame(frame);
+
+        if (frame != null) {
+            for (FilterComponent component : ownFilterComponentsOrder) {
+                if (component instanceof BelongToFrame
+                        && ((BelongToFrame) component).getFrame() == null) {
+                    ((BelongToFrame) component).setFrame(frame);
+                } else {
+                    attachToFrame(component);
+                }
+            }
+        }
+    }
+
+    protected void attachToFrame(Component childComponent) {
+        ((FrameImplementation) frame).registerComponent(childComponent);
     }
 
     @Override
@@ -257,6 +288,8 @@ public class GroupFilterImpl extends CompositeComponent<GroupBoxLayout> implemen
                     .map(ownComponent -> (LogicalFilterComponent) ownComponent)
                     .forEach(childLogicalFilterComponent -> childLogicalFilterComponent.remove(filterComponent));
         }
+
+        filterComponent.setParent(null);
     }
 
     @Override

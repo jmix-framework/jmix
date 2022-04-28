@@ -139,9 +139,9 @@ public class JmixFileDownloader extends AbstractExtension {
                 stream.setContentType("application/octet-stream;charset=UTF-8");
             } else {
                 if (StringUtils.isNotEmpty(stream.getContentType())) {
-                    stream.setContentType(stream.getContentType() + ";charset=UTF-8\"");
+                    stream.setContentType(stream.getContentType() + ";charset=UTF-8");
                 } else {
-                    stream.setContentType(";charset=UTF-8\"");
+                    stream.setContentType(";charset=UTF-8");
                 }
             }
         } finally {

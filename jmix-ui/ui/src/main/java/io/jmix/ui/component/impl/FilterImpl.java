@@ -37,6 +37,7 @@ import io.jmix.ui.component.filter.FilterSupport;
 import io.jmix.ui.component.filter.configuration.DesignTimeConfiguration;
 import io.jmix.ui.component.filter.configuration.RunTimeConfiguration;
 import io.jmix.ui.icon.JmixIcon;
+import io.jmix.ui.model.BaseCollectionLoader;
 import io.jmix.ui.model.DataLoader;
 import io.jmix.ui.UiComponentProperties;
 import io.jmix.ui.theme.ThemeClassNames;
@@ -207,6 +208,7 @@ public class FilterImpl extends CompositeComponent<GroupBoxLayout> implements Fi
     @Override
     public void apply() {
         if (dataLoader != null && isAutoApply()) {
+            setupLoaderFirstResult();
             dataLoader.load();
         }
     }
@@ -242,6 +244,27 @@ public class FilterImpl extends CompositeComponent<GroupBoxLayout> implements Fi
                 ((SupportsColumnsCount) rootLogicalFilterComponent).setColumnsCount(columnsCount);
             }
         }
+    }
+
+    @Override
+    public void setFrame(@Nullable Frame frame) {
+        super.setFrame(frame);
+
+        if (frame != null) {
+            for (Configuration configuration : configurations) {
+                LogicalFilterComponent component = configuration.getRootLogicalFilterComponent();
+                if (component instanceof BelongToFrame
+                        && ((BelongToFrame) component).getFrame() == null) {
+                    ((BelongToFrame) component).setFrame(frame);
+                } else {
+                    attachToFrame(component);
+                }
+            }
+        }
+    }
+
+    protected void attachToFrame(Component childComponent) {
+        ((FrameImplementation) frame).registerComponent(childComponent);
     }
 
     @Nullable
@@ -338,6 +361,7 @@ public class FilterImpl extends CompositeComponent<GroupBoxLayout> implements Fi
         if (configuration != getEmptyConfiguration()
                 && !(configuration instanceof DesignTimeConfiguration)) {
             configurations.remove(configuration);
+            configuration.getRootLogicalFilterComponent().setParent(null);
 
             if (configuration == getCurrentConfiguration()) {
                 setCurrentConfiguration(getEmptyConfiguration());
@@ -561,6 +585,9 @@ public class FilterImpl extends CompositeComponent<GroupBoxLayout> implements Fi
             rootGroupFilter.setAutoApply(autoApply);
         }
 
+        rootGroupFilter.setFrame(getFrame());
+        rootGroupFilter.setParent(this);
+
         return rootGroupFilter;
     }
 
@@ -723,6 +750,12 @@ public class FilterImpl extends CompositeComponent<GroupBoxLayout> implements Fi
                     getDataLoader().removeParameter(singleFilterComponent.getParameterName());
                 }
             }
+        }
+    }
+
+    protected void setupLoaderFirstResult() {
+        if (dataLoader instanceof BaseCollectionLoader) {
+            ((BaseCollectionLoader) dataLoader).setFirstResult(0);
         }
     }
 }

@@ -20,9 +20,10 @@ nestedCollectionDatasourceProperties.each { prop ->
 <fragment xmlns="http://jmix.io/schema/ui/fragment">
     <data>
         <instance id="${dcId}"
-                  class="${entity.fqn}"<%if (!entity.isDeepInheritor('io.jmix.data.entity.AbstractNotPersistentEntity')) {%>
-        fetchPlan="${frameView.name}"<%}%>>
-        <loader/>
+                  class="${entity.fqn}"<%if (!entity.isDeepInheritor('io.jmix.data.entity.AbstractNotPersistentEntity')) {%> <%if (!is_inline_frameView) {%>
+        fetchPlan="${frameView.name}"<%}%><%}%>> <%if (is_inline_frameView) {%>
+        ${inline_frameView}
+        <%}%><loader/>
         <%
         nestedDatasourceProperties.each {%>
         <instance id="${it}Dc" property="${it}"/>

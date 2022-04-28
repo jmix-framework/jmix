@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2008-2022 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<xs:schema targetNamespace="http://jmix.io/schema/flowui/screen"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns="http://jmix.io/schema/flowui/screen"
+           xmlns:data="http://jmix.io/schema/flowui/data"
+           xmlns:layout="http://jmix.io/schema/flowui/layout"
+           elementFormDefault="qualified">
+
+    <xs:include schemaLocation="http://jmix.io/schema/flowui/data"/>
+    <xs:include schemaLocation="http://jmix.io/schema/flowui/layout"/>
+
+    <!-- Screen -->
+    <xs:element name="screen">
+        <xs:complexType>
+            <xs:all>
+                <xs:element name="data" type="data:screenData" minOccurs="0"/>
+
+                <xs:element name="actions" minOccurs="0">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:choice maxOccurs="unbounded">
+                                <xs:element name="action" type="layout:baseAction"/>
+                            </xs:choice>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+
+                <xs:element name="dialogMode" minOccurs="0" type="layout:dialogMode"/>
+
+<!--                <xs:element name="facets" minOccurs="0" type="layout:facets"/>-->
+
+                <xs:element name="layout">
+                    <xs:complexType>
+                        <xs:complexContent>
+                            <xs:extension base="layout:rootLayout">
+                                <xs:attribute name="minHeight" type="layout:componentSize"/>
+                                <xs:attribute name="minWidth" type="layout:componentSize"/>
+
+                                <xs:attribute name="maxHeight" type="layout:componentSize"/>
+                                <xs:attribute name="maxWidth" type="layout:componentSize"/>
+                            </xs:extension>
+                        </xs:complexContent>
+                    </xs:complexType>
+                </xs:element>
+            </xs:all>
+
+<!--            <xs:attribute name="messagesGroup" type="xs:string"/>-->
+
+<!--            <xs:attribute name="icon" type="xs:string"/>-->
+<!--            <xs:attribute name="title" type="layout:resourceString"/>-->
+<!--            <xs:attribute name="description" type="layout:resourceString"/>-->
+<!--            <xs:attribute name="focusComponent" type="xs:string"/>-->
+<!--            <xs:attribute name="focusMode" type="focusModeType"/>-->
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

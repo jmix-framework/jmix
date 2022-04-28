@@ -1,0 +1,2313 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2008-2022 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<xs:schema targetNamespace="http://jmix.io/schema/flowui/layout"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns="http://jmix.io/schema/flowui/layout"
+           elementFormDefault="qualified">
+
+    <!-- Enums -->
+    <xs:simpleType name="scrollDirection">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="HORIZONTAL"/>
+            <xs:enumeration value="VERTICAL"/>
+            <xs:enumeration value="BOTH"/>
+            <xs:enumeration value="NONE"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="constraintEntityOp">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="NONE"/>
+            <xs:enumeration value="CREATE"/>
+            <xs:enumeration value="READ"/>
+            <xs:enumeration value="UPDATE"/>
+            <xs:enumeration value="DELETE"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="inputTypes">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="button"/>
+            <xs:enumeration value="checkbox"/>
+            <xs:enumeration value="color"/>
+            <xs:enumeration value="date"/>
+            <xs:enumeration value="datetime-local"/>
+            <xs:enumeration value="file"/>
+            <xs:enumeration value="hidden"/>
+            <xs:enumeration value="image"/>
+            <xs:enumeration value="month"/>
+            <xs:enumeration value="number"/>
+            <xs:enumeration value="password"/>
+            <xs:enumeration value="radio"/>
+            <xs:enumeration value="range"/>
+            <xs:enumeration value="reset"/>
+            <xs:enumeration value="search"/>
+            <xs:enumeration value="submit"/>
+            <xs:enumeration value="tel"/>
+            <xs:enumeration value="text"/>
+            <xs:enumeration value="time"/>
+            <xs:enumeration value="url"/>
+            <xs:enumeration value="week"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="importanceTypes">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="AUTO"/>
+            <xs:enumeration value="HIGH"/>
+            <xs:enumeration value="LOW"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+
+    <xs:simpleType name="vaadinIcons">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="ABACUS"/>
+            <xs:enumeration value="ABSOLUTE_POSITION"/>
+            <xs:enumeration value="ACADEMY_CAP"/>
+            <xs:enumeration value="ACCESSIBILITY"/>
+            <xs:enumeration value="ACCORDION_MENU"/>
+            <xs:enumeration value="ADD_DOCK"/>
+            <xs:enumeration value="ADJUST"/>
+            <xs:enumeration value="ADOBE_FLASH"/>
+            <xs:enumeration value="AIRPLANE"/>
+            <xs:enumeration value="ALARM"/>
+            <xs:enumeration value="ALARM"/>
+            <xs:enumeration value="ALIGN_CENTER"/>
+            <xs:enumeration value="ALIGN_JUSTIFY"/>
+            <xs:enumeration value="ALIGN_LEFT"/>
+            <xs:enumeration value="ALIGN_RIGHT"/>
+            <xs:enumeration value="ALT_A"/>
+            <xs:enumeration value="ALT"/>
+            <xs:enumeration value="AMBULANCE"/>
+            <xs:enumeration value="ANCHOR"/>
+            <xs:enumeration value="ANGLE_DOUBLE_DOWN"/>
+            <xs:enumeration value="ANGLE_DOUBLE_LEFT"/>
+            <xs:enumeration value="ANGLE_DOUBLE_RIGHT"/>
+            <xs:enumeration value="ANGLE_DOUBLE_UP"/>
+            <xs:enumeration value="ANGLE_DOWN"/>
+            <xs:enumeration value="ANGLE_LEFT"/>
+            <xs:enumeration value="ANGLE_RIGHT"/>
+            <xs:enumeration value="ANGLE_UP"/>
+            <xs:enumeration value="ARCHIVE"/>
+            <xs:enumeration value="ARCHIVES"/>
+            <xs:enumeration value="AREA_SELECT"/>
+            <xs:enumeration value="ARROW_BACKWARD"/>
+            <xs:enumeration value="ARROW_CIRCLE_DOWN_O"/>
+            <xs:enumeration value="ARROW_CIRCLE_DOWN"/>
+            <xs:enumeration value="ARROW_CIRCLE_LEFT_O"/>
+            <xs:enumeration value="ARROW_CIRCLE_LEFT"/>
+            <xs:enumeration value="ARROW_CIRCLE_RIGHT_O"/>
+            <xs:enumeration value="ARROW_CIRCLE_RIGHT"/>
+            <xs:enumeration value="ARROW_CIRCLE_UP_O"/>
+            <xs:enumeration value="ARROW_CIRCLE_UP"/>
+            <xs:enumeration value="ARROW_DOWN"/>
+            <xs:enumeration value="ARROW_FORWARD"/>
+            <xs:enumeration value="ARROW_LEFT"/>
+            <xs:enumeration value="ARROW_LONG_DOWN"/>
+            <xs:enumeration value="ARROW_LONG_LEFT"/>
+            <xs:enumeration value="ARROW_RIGHT"/>
+            <xs:enumeration value="ARROW_UP"/>
+            <xs:enumeration value="ARROWS_CROSS"/>
+            <xs:enumeration value="ARROWS_LONG_H"/>
+            <xs:enumeration value="ARROWS_LONG_RIGHT"/>
+            <xs:enumeration value="ARROWS_LONG_UP"/>
+            <xs:enumeration value="ARROWS_LONG_V"/>
+            <xs:enumeration value="ARROWS"/>
+            <xs:enumeration value="ASTERISK"/>
+            <xs:enumeration value="AT"/>
+            <xs:enumeration value="AUTOMATION"/>
+            <xs:enumeration value="BACKSPACE_A"/>
+            <xs:enumeration value="BACKSPACE"/>
+            <xs:enumeration value="BACKWARDS"/>
+            <xs:enumeration value="BAN"/>
+            <xs:enumeration value="BAR_CHART_H"/>
+            <xs:enumeration value="BAR_CHART_V"/>
+            <xs:enumeration value="BAR_CHART"/>
+            <xs:enumeration value="BARCODE"/>
+            <xs:enumeration value="BED"/>
+            <xs:enumeration value="BELL_O"/>
+            <xs:enumeration value="BELL_SLASH_O"/>
+            <xs:enumeration value="BELL_SLASH"/>
+            <xs:enumeration value="BELL"/>
+            <xs:enumeration value="BOAT"/>
+            <xs:enumeration value="BOLD"/>
+            <xs:enumeration value="BOLT"/>
+            <xs:enumeration value="BOMB"/>
+            <xs:enumeration value="BOOK_DOLLAR"/>
+            <xs:enumeration value="BOOK_PERCENT"/>
+            <xs:enumeration value="BOOK"/>
+            <xs:enumeration value="BOOKMARK_O"/>
+            <xs:enumeration value="BOOKMARK"/>
+            <xs:enumeration value="BRIEFCASE"/>
+            <xs:enumeration value="BROWSER"/>
+            <xs:enumeration value="BUG_O"/>
+            <xs:enumeration value="BUG"/>
+            <xs:enumeration value="BUILDING_O"/>
+            <xs:enumeration value="BUILDING"/>
+            <xs:enumeration value="BULLETS"/>
+            <xs:enumeration value="BULLSEYE"/>
+            <xs:enumeration value="BUS"/>
+            <xs:enumeration value="BUTTON"/>
+            <xs:enumeration value="CALC_BOOK"/>
+            <xs:enumeration value="CALC"/>
+            <xs:enumeration value="CALENDAR_BRIEFCASE"/>
+            <xs:enumeration value="CALENDAR_CLOCK"/>
+            <xs:enumeration value="CALENDAR_ENVELOPE"/>
+            <xs:enumeration value="CALENDAR_O"/>
+            <xs:enumeration value="CALENDAR_USER"/>
+            <xs:enumeration value="CALENDAR"/>
+            <xs:enumeration value="CAMERA"/>
+            <xs:enumeration value="CAR"/>
+            <xs:enumeration value="CARET_DOWN"/>
+            <xs:enumeration value="CARET_LEFT"/>
+            <xs:enumeration value="CARET_RIGHT"/>
+            <xs:enumeration value="CARET_SQUARE_DOWN_O"/>
+            <xs:enumeration value="CARET_SQUARE_LEFT_O"/>
+            <xs:enumeration value="CARET_SQUARE_RIGHT_O"/>
+            <xs:enumeration value="CARET_SQUARE_UP_O"/>
+            <xs:enumeration value="CARET_UP"/>
+            <xs:enumeration value="CART_O"/>
+            <xs:enumeration value="CART"/>
+            <xs:enumeration value="CASH"/>
+            <xs:enumeration value="CHART_3D"/>
+            <xs:enumeration value="CHART_GRID"/>
+            <xs:enumeration value="CHART_LINE"/>
+            <xs:enumeration value="CHART_TIMELINE"/>
+            <xs:enumeration value="CHART"/>
+            <xs:enumeration value="CHAT"/>
+            <xs:enumeration value="CHECK_CIRCLE_O"/>
+            <xs:enumeration value="CHECK_CIRCLE"/>
+            <xs:enumeration value="CHECK_SQUARE_O"/>
+            <xs:enumeration value="CHECK_SQUARE"/>
+            <xs:enumeration value="CHECK"/>
+            <xs:enumeration value="CHEVRON_CIRCLE_DOWN_O"/>
+            <xs:enumeration value="CHEVRON_CIRCLE_DOWN"/>
+            <xs:enumeration value="CHEVRON_CIRCLE_LEFT_O"/>
+            <xs:enumeration value="CHEVRON_CIRCLE_LEFT"/>
+            <xs:enumeration value="CHEVRON_CIRCLE_RIGHT_O"/>
+            <xs:enumeration value="CHEVRON_CIRCLE_RIGHT"/>
+            <xs:enumeration value="CHEVRON_CIRCLE_UP_O"/>
+            <xs:enumeration value="CHEVRON_CIRCLE_UP"/>
+            <xs:enumeration value="CHEVRON_DOWN_SMALL"/>
+            <xs:enumeration value="CHEVRON_DOWN"/>
+            <xs:enumeration value="CHEVRON_LEFT_SMALL"/>
+            <xs:enumeration value="CHEVRON_LEFT"/>
+            <xs:enumeration value="CHEVRON_RIGHT_SMALL"/>
+            <xs:enumeration value="CHEVRON_RIGHT"/>
+            <xs:enumeration value="CHEVRON_UP_SMALL"/>
+            <xs:enumeration value="CHEVRON_UP"/>
+            <xs:enumeration value="CHILD"/>
+            <xs:enumeration value="CIRCLE_THIN"/>
+            <xs:enumeration value="CIRCLE"/>
+            <xs:enumeration value="CLIPBOARD_CHECK"/>
+            <xs:enumeration value="CLIPBOARD_CROSS"/>
+            <xs:enumeration value="CLIPBOARD_HEART"/>
+            <xs:enumeration value="CLIPBOARD_PULSE"/>
+            <xs:enumeration value="CLIPBOARD_TEXT"/>
+            <xs:enumeration value="CLIPBOARD_USER"/>
+            <xs:enumeration value="CLIPBOARD"/>
+            <xs:enumeration value="CLOCK"/>
+            <xs:enumeration value="CLOSE_BIG"/>
+            <xs:enumeration value="CLOSE_CIRCLE_O"/>
+            <xs:enumeration value="CLOSE_CIRCLE"/>
+            <xs:enumeration value="CLOSE_SMALL"/>
+            <xs:enumeration value="CLOSE"/>
+            <xs:enumeration value="CLOUD_DOWNLOAD_O"/>
+            <xs:enumeration value="CLOUD_DOWNLOAD"/>
+            <xs:enumeration value="CLOUD_O"/>
+            <xs:enumeration value="CLOUD_UPLOAD_O"/>
+            <xs:enumeration value="CLOUD_UPLOAD"/>
+            <xs:enumeration value="CLOUD"/>
+            <xs:enumeration value="CLUSTER"/>
+            <xs:enumeration value="CODE"/>
+            <xs:enumeration value="COFFEE"/>
+            <xs:enumeration value="COG_O"/>
+            <xs:enumeration value="COG"/>
+            <xs:enumeration value="COGS"/>
+            <xs:enumeration value="COIN_PILES"/>
+            <xs:enumeration value="COINS"/>
+            <xs:enumeration value="COMBOBOX"/>
+            <xs:enumeration value="COMMENT_ELLIPSIS_O"/>
+            <xs:enumeration value="COMMENT_ELLIPSIS"/>
+            <xs:enumeration value="COMMENT_O"/>
+            <xs:enumeration value="COMMENT"/>
+            <xs:enumeration value="COMMENTS_O"/>
+            <xs:enumeration value="COMMENTS"/>
+            <xs:enumeration value="COMPILE"/>
+            <xs:enumeration value="COMPRESS_SQUARE"/>
+            <xs:enumeration value="COMPRESS"/>
+            <xs:enumeration value="CONNECT_O"/>
+            <xs:enumeration value="CONNECT"/>
+            <xs:enumeration value="CONTROLLER"/>
+            <xs:enumeration value="COPY_O"/>
+            <xs:enumeration value="COPY"/>
+            <xs:enumeration value="COPYRIGHT"/>
+            <xs:enumeration value="CORNER_LOWER_LEFT"/>
+            <xs:enumeration value="CORNER_LOWER_RIGHT"/>
+            <xs:enumeration value="CORNER_UPPER_LEFT"/>
+            <xs:enumeration value="CORNER_UPPER_RIGHT"/>
+            <xs:enumeration value="CREDIT_CARD"/>
+            <xs:enumeration value="CROP"/>
+            <xs:enumeration value="CROSS_CUTLERY"/>
+            <xs:enumeration value="CROSSHAIRS"/>
+            <xs:enumeration value="CSS"/>
+            <xs:enumeration value="CTRL_A"/>
+            <xs:enumeration value="CTRL"/>
+            <xs:enumeration value="CUBE"/>
+            <xs:enumeration value="CUBES"/>
+            <xs:enumeration value="CURLY_BRACKETS"/>
+            <xs:enumeration value="CURSOR_O"/>
+            <xs:enumeration value="CURSOR"/>
+            <xs:enumeration value="CUTLERY"/>
+            <xs:enumeration value="DASHBOARD"/>
+            <xs:enumeration value="DATABASE"/>
+            <xs:enumeration value="DATE_INPUT"/>
+            <xs:enumeration value="DEINDENT"/>
+            <xs:enumeration value="DEL_A"/>
+            <xs:enumeration value="DEL"/>
+            <xs:enumeration value="DENTAL_CHAIR"/>
+            <xs:enumeration value="DESKTOP"/>
+            <xs:enumeration value="DIAMOND_O"/>
+            <xs:enumeration value="DIAMOND"/>
+            <xs:enumeration value="DIPLOMA_SCROLL"/>
+            <xs:enumeration value="DIPLOMA"/>
+            <xs:enumeration value="DISC"/>
+            <xs:enumeration value="DOCTOR_BRIEFCASE"/>
+            <xs:enumeration value="DOCTOR"/>
+            <xs:enumeration value="DOLLAR"/>
+            <xs:enumeration value="DOT_CIRCLE"/>
+            <xs:enumeration value="DOWNLOAD_ALT"/>
+            <xs:enumeration value="DOWNLOAD"/>
+            <xs:enumeration value="DROP"/>
+            <xs:enumeration value="EDIT"/>
+            <xs:enumeration value="EJECT"/>
+            <xs:enumeration value="ELASTIC"/>
+            <xs:enumeration value="ELLIPSIS_CIRCLE_O"/>
+            <xs:enumeration value="ELLIPSIS_CIRCLE"/>
+            <xs:enumeration value="ELLIPSIS_DOTS_H"/>
+            <xs:enumeration value="ELLIPSIS_DOTS_V"/>
+            <xs:enumeration value="ELLIPSIS_H"/>
+            <xs:enumeration value="ELLIPSIS_V"/>
+            <xs:enumeration value="ENTER_ARROW"/>
+            <xs:enumeration value="ENTER"/>
+            <xs:enumeration value="ENVELOPE_O"/>
+            <xs:enumeration value="ENVELOPE_OPEN_O"/>
+            <xs:enumeration value="ENVELOPE_OPEN"/>
+            <xs:enumeration value="ENVELOPE"/>
+            <xs:enumeration value="ENVELOPES_O"/>
+            <xs:enumeration value="ENVELOPES"/>
+            <xs:enumeration value="ERASER"/>
+            <xs:enumeration value="ESC_A"/>
+            <xs:enumeration value="ESC"/>
+            <xs:enumeration value="EURO"/>
+            <xs:enumeration value="EXCHANGE"/>
+            <xs:enumeration value="EXCLAMATION_CIRCLE_O"/>
+            <xs:enumeration value="EXCLAMATION_CIRCLE"/>
+            <xs:enumeration value="EXCLAMATION"/>
+            <xs:enumeration value="EXIT_O"/>
+            <xs:enumeration value="EXIT"/>
+            <xs:enumeration value="EXPAND_FULL"/>
+            <xs:enumeration value="EXPAND_SQUARE"/>
+            <xs:enumeration value="EXPAND"/>
+            <xs:enumeration value="EXTERNAL_BROWSER"/>
+            <xs:enumeration value="EXTERNAL_LINK"/>
+            <xs:enumeration value="EYE_SLASH"/>
+            <xs:enumeration value="EYE"/>
+            <xs:enumeration value="EYEDROPPER"/>
+            <xs:enumeration value="FACEBOOK_SQUARE"/>
+            <xs:enumeration value="FACEBOOK"/>
+            <xs:enumeration value="FACTORY"/>
+            <xs:enumeration value="FAMILY"/>
+            <xs:enumeration value="FAST_BACKWARD"/>
+            <xs:enumeration value="FAST_FORWARD"/>
+            <xs:enumeration value="FEMALE"/>
+            <xs:enumeration value="FILE_ADD"/>
+            <xs:enumeration value="FILE_CODE"/>
+            <xs:enumeration value="FILE_FONT"/>
+            <xs:enumeration value="FILE_MOVIE"/>
+            <xs:enumeration value="FILE_O"/>
+            <xs:enumeration value="FILE_PICTURE"/>
+            <xs:enumeration value="FILE_PRESENTATION"/>
+            <xs:enumeration value="FILE_PROCESS"/>
+            <xs:enumeration value="FILE_REFRESH"/>
+            <xs:enumeration value="FILE_REMOVE"/>
+            <xs:enumeration value="FILE_SEARCH"/>
+            <xs:enumeration value="FILE_SOUND"/>
+            <xs:enumeration value="FILE_START"/>
+            <xs:enumeration value="FILE_TABLE"/>
+            <xs:enumeration value="FILE_TEXT_O"/>
+            <xs:enumeration value="FILE_TEXT"/>
+            <xs:enumeration value="FILE_TREE_SMALL"/>
+            <xs:enumeration value="FILE_TREE_SUB"/>
+            <xs:enumeration value="FILE_TREE"/>
+            <xs:enumeration value="FILE_ZIP"/>
+            <xs:enumeration value="FILE"/>
+            <xs:enumeration value="FILL"/>
+            <xs:enumeration value="FILM"/>
+            <xs:enumeration value="FILTER"/>
+            <xs:enumeration value="FIRE"/>
+            <xs:enumeration value="FLAG_CHECKERED"/>
+            <xs:enumeration value="FLAG_O"/>
+            <xs:enumeration value="FLAG"/>
+            <xs:enumeration value="FLASH"/>
+            <xs:enumeration value="FLASK"/>
+            <xs:enumeration value="FLIGHT_LANDING"/>
+            <xs:enumeration value="FLIGHT_TAKEOFF"/>
+            <xs:enumeration value="FLIP_H"/>
+            <xs:enumeration value="FLIP_V"/>
+            <xs:enumeration value="FOLDER_ADD"/>
+            <xs:enumeration value="FOLDER_O"/>
+            <xs:enumeration value="FOLDER_OPEN_O"/>
+            <xs:enumeration value="FOLDER_OPEN"/>
+            <xs:enumeration value="FOLDER_REMOVE"/>
+            <xs:enumeration value="FOLDER_SEARCH"/>
+            <xs:enumeration value="FOLDER"/>
+            <xs:enumeration value="FONT"/>
+            <xs:enumeration value="FORM"/>
+            <xs:enumeration value="FORWARD"/>
+            <xs:enumeration value="FROWN_O"/>
+            <xs:enumeration value="FUNCTION"/>
+            <xs:enumeration value="FUNNEL"/>
+            <xs:enumeration value="GAMEPAD"/>
+            <xs:enumeration value="GAVEL"/>
+            <xs:enumeration value="GIFT"/>
+            <xs:enumeration value="GLASS"/>
+            <xs:enumeration value="GLASSES"/>
+            <xs:enumeration value="GLOBE_WIRE"/>
+            <xs:enumeration value="GLOBE"/>
+            <xs:enumeration value="GOLF"/>
+            <xs:enumeration value="GOOGLE_PLUS_SQUARE"/>
+            <xs:enumeration value="GOOGLE_PLUS"/>
+            <xs:enumeration value="GRAB"/>
+            <xs:enumeration value="GRID_BEVEL"/>
+            <xs:enumeration value="GRID_BIG_O"/>
+            <xs:enumeration value="GRID_BIG"/>
+            <xs:enumeration value="GRID_H"/>
+            <xs:enumeration value="GRID_SMALL_O"/>
+            <xs:enumeration value="GRID_SMALL"/>
+            <xs:enumeration value="GRID_V"/>
+            <xs:enumeration value="GRID"/>
+            <xs:enumeration value="GROUP"/>
+            <xs:enumeration value="HAMMER"/>
+            <xs:enumeration value="HAND"/>
+            <xs:enumeration value="HANDLE_CORNER"/>
+            <xs:enumeration value="HANDS_UP"/>
+            <xs:enumeration value="HANDSHAKE"/>
+            <xs:enumeration value="HARDDRIVE_O"/>
+            <xs:enumeration value="HARDDRIVE"/>
+            <xs:enumeration value="HASH"/>
+            <xs:enumeration value="HEADER"/>
+            <xs:enumeration value="HEADPHONES"/>
+            <xs:enumeration value="HEADSET"/>
+            <xs:enumeration value="HEALTH_CARD"/>
+            <xs:enumeration value="HEART_O"/>
+            <xs:enumeration value="HEART"/>
+            <xs:enumeration value="HOME_O"/>
+            <xs:enumeration value="HOME"/>
+            <xs:enumeration value="HOSPITAL"/>
+            <xs:enumeration value="HOURGLASS_EMPTY"/>
+            <xs:enumeration value="HOURGLASS_END"/>
+            <xs:enumeration value="HOURGLASS_START"/>
+            <xs:enumeration value="HOURGLASS"/>
+            <xs:enumeration value="INBOX"/>
+            <xs:enumeration value="INDENT"/>
+            <xs:enumeration value="INFO_CIRCLE_O"/>
+            <xs:enumeration value="INFO_CIRCLE"/>
+            <xs:enumeration value="INFO"/>
+            <xs:enumeration value="INPUT"/>
+            <xs:enumeration value="INSERT"/>
+            <xs:enumeration value="INSTITUTION"/>
+            <xs:enumeration value="INVOICE"/>
+            <xs:enumeration value="ITALIC"/>
+            <xs:enumeration value="KEY_O"/>
+            <xs:enumeration value="KEY"/>
+            <xs:enumeration value="KEYBOARD_O"/>
+            <xs:enumeration value="KEYBOARD"/>
+            <xs:enumeration value="LAPTOP"/>
+            <xs:enumeration value="LAYOUT"/>
+            <xs:enumeration value="LEVEL_DOWN_BOLD"/>
+            <xs:enumeration value="LEVEL_DOWN"/>
+            <xs:enumeration value="LEVEL_LEFT_BOLD"/>
+            <xs:enumeration value="LEVEL_LEFT"/>
+            <xs:enumeration value="LEVEL_RIGHT_BOLD"/>
+            <xs:enumeration value="LEVEL_RIGHT"/>
+            <xs:enumeration value="LEVEL_UP_BOLD"/>
+            <xs:enumeration value="LEVEL_LEVEL_UPUP_BOLD"/>
+            <xs:enumeration value="LIFEBUOY"/>
+            <xs:enumeration value="LIGHTBULB"/>
+            <xs:enumeration value="LINE_BAR_CHART"/>
+            <xs:enumeration value="LINE_CHART"/>
+            <xs:enumeration value="LINE_H"/>
+            <xs:enumeration value="LINE_V"/>
+            <xs:enumeration value="LINES_LIST"/>
+            <xs:enumeration value="LINES"/>
+            <xs:enumeration value="LINK"/>
+            <xs:enumeration value="LIST_OL"/>
+            <xs:enumeration value="LIST_SELECT"/>
+            <xs:enumeration value="LIST_UL"/>
+            <xs:enumeration value="LIST"/>
+            <xs:enumeration value="LOCATION_ARROW_CIRCLE_O"/>
+            <xs:enumeration value="LOCATION_ARROW_CIRCLE"/>
+            <xs:enumeration value="LOCATION_ARROW"/>
+            <xs:enumeration value="LOCK"/>
+            <xs:enumeration value="MAGIC"/>
+            <xs:enumeration value="MAGNET"/>
+            <xs:enumeration value="MAILBOX"/>
+            <xs:enumeration value="MALE"/>
+            <xs:enumeration value="MAP_MARKER"/>
+            <xs:enumeration value="MARGIN_BOTTOM"/>
+            <xs:enumeration value="MARGIN_LEFT"/>
+            <xs:enumeration value="MARGIN_RIGHT"/>
+            <xs:enumeration value="MARGIN_TOP"/>
+            <xs:enumeration value="MARGIN"/>
+            <xs:enumeration value="MEDAL"/>
+            <xs:enumeration value="MEGAPHONE"/>
+            <xs:enumeration value="MEH_O"/>
+            <xs:enumeration value="MENU"/>
+            <xs:enumeration value="MICROPHONE"/>
+            <xs:enumeration value="MINUS_CIRCLE_O"/>
+            <xs:enumeration value="MINUS_CIRCLE"/>
+            <xs:enumeration value="MINUS_SQUARE_O"/>
+            <xs:enumeration value="MINUS"/>
+            <xs:enumeration value="MOBILE_BROWSER"/>
+            <xs:enumeration value="MOBILE_RETRO"/>
+            <xs:enumeration value="MOBILE"/>
+            <xs:enumeration value="MODAL_LIST"/>
+            <xs:enumeration value="MODAL"/>
+            <xs:enumeration value="MONEY_DEPOSIT"/>
+            <xs:enumeration value="MONEY_EXCHANGE"/>
+            <xs:enumeration value="MONEY_WITHDRAW"/>
+            <xs:enumeration value="MONEY"/>
+            <xs:enumeration value="MOON_O"/>
+            <xs:enumeration value="MOON"/>
+            <xs:enumeration value="MORNING"/>
+            <xs:enumeration value="MOVIE"/>
+            <xs:enumeration value="MUSIC"/>
+            <xs:enumeration value="MUTE"/>
+            <xs:enumeration value="NATIVE_BUTTON"/>
+            <xs:enumeration value="NEWSPAPER"/>
+            <xs:enumeration value="NOTEBOOK"/>
+            <xs:enumeration value="NURSE"/>
+            <xs:enumeration value="OFFICE"/>
+            <xs:enumeration value="OPEN_BOOK"/>
+            <xs:enumeration value="OPTION_A"/>
+            <xs:enumeration value="OPTION"/>
+            <xs:enumeration value="OPTIONS"/>
+            <xs:enumeration value="ORIENTATION"/>
+            <xs:enumeration value="OUT"/>
+            <xs:enumeration value="OUTBOX"/>
+            <xs:enumeration value="PACKAGE"/>
+            <xs:enumeration value="PADDING_BOTTOM"/>
+            <xs:enumeration value="PADDING_LEFT"/>
+            <xs:enumeration value="PADDING_RIGHT"/>
+            <xs:enumeration value="PADDING_TOP"/>
+            <xs:enumeration value="PADDING"/>
+            <xs:enumeration value="PAINT_ROLL"/>
+            <xs:enumeration value="PAINTBRUSH"/>
+            <xs:enumeration value="PALETTE"/>
+            <xs:enumeration value="PANEL"/>
+            <xs:enumeration value="PAPERCLIP"/>
+            <xs:enumeration value="PAPERPLANE_O"/>
+            <xs:enumeration value="PAPERPLANE"/>
+            <xs:enumeration value="PARAGRAPH"/>
+            <xs:enumeration value="PASSWORD"/>
+            <xs:enumeration value="PASTE"/>
+            <xs:enumeration value="PAUSE"/>
+            <xs:enumeration value="PENCIL"/>
+            <xs:enumeration value="PHONE_LANDLINE"/>
+            <xs:enumeration value="PHONE"/>
+            <xs:enumeration value="PICTURE"/>
+            <xs:enumeration value="PIE_BAR_CHART"/>
+            <xs:enumeration value="PIE_CHART"/>
+            <xs:enumeration value="PIGGY_BANK_COIN"/>
+            <xs:enumeration value="PIGGY_BANK"/>
+            <xs:enumeration value="PILL"/>
+            <xs:enumeration value="PILLS"/>
+            <xs:enumeration value="PIN_POST"/>
+            <xs:enumeration value="PIN"/>
+            <xs:enumeration value="PLAY_CIRCLE_O"/>
+            <xs:enumeration value="PLAY_CIRCLE"/>
+            <xs:enumeration value="PLAY"/>
+            <xs:enumeration value="PLUG"/>
+            <xs:enumeration value="PLUS_CIRCLE_O"/>
+            <xs:enumeration value="PLUS_CIRCLE"/>
+            <xs:enumeration value="PLUS_MINUS"/>
+            <xs:enumeration value="PLUS_SQUARE_O"/>
+            <xs:enumeration value="PLUS"/>
+            <xs:enumeration value="POINTER"/>
+            <xs:enumeration value="POWER_OFF"/>
+            <xs:enumeration value="PRESENTATION"/>
+            <xs:enumeration value="PRINT"/>
+            <xs:enumeration value="PROGRESSBAR"/>
+            <xs:enumeration value="PUZZLE_PIECE"/>
+            <xs:enumeration value="PYRAMID_CHART"/>
+            <xs:enumeration value="QRCODE"/>
+            <xs:enumeration value="QUESTION_CIRCLE_O"/>
+            <xs:enumeration value="QUESTION_CIRCLE"/>
+            <xs:enumeration value="QUESTION"/>
+            <xs:enumeration value="QUOTE_LEFT"/>
+            <xs:enumeration value="QUOTE_RIGHT"/>
+            <xs:enumeration value="RANDOM"/>
+            <xs:enumeration value="RASTER_LOWER_LEFT"/>
+            <xs:enumeration value="RASTER"/>
+            <xs:enumeration value="RECORDS"/>
+            <xs:enumeration value="RECYCLE"/>
+            <xs:enumeration value="REFRESH"/>
+            <xs:enumeration value="REPLY_ALL"/>
+            <xs:enumeration value="REPLY"/>
+            <xs:enumeration value="RESIZE_H"/>
+            <xs:enumeration value="RESIZE_V"/>
+            <xs:enumeration value="RETWEET"/>
+            <xs:enumeration value="RHOMBUS"/>
+            <xs:enumeration value="ROAD_BRANCH"/>
+            <xs:enumeration value="ROAD_BRANCHES"/>
+            <xs:enumeration value="ROAD_SPLIT"/>
+            <xs:enumeration value="ROAD"/>
+            <xs:enumeration value="ROCKET"/>
+            <xs:enumeration value="ROTATE_LEFT"/>
+            <xs:enumeration value="ROTATE_RIGHT"/>
+            <xs:enumeration value="RSS_SQUARE"/>
+            <xs:enumeration value="RSS"/>
+            <xs:enumeration value="SAFE_LOCK"/>
+            <xs:enumeration value="SAFE"/>
+            <xs:enumeration value="SCALE_UNBALANCE"/>
+            <xs:enumeration value="SCALE"/>
+            <xs:enumeration value="SCATTER_CHART"/>
+            <xs:enumeration value="SCISSORS"/>
+            <xs:enumeration value="SCREWDRIVER"/>
+            <xs:enumeration value="SEARCH_MINUS"/>
+            <xs:enumeration value="SEARCH_PLUS"/>
+            <xs:enumeration value="SEARCH"/>
+            <xs:enumeration value="SELECT"/>
+            <xs:enumeration value="SERVER"/>
+            <xs:enumeration value="SHARE_SQUARE"/>
+            <xs:enumeration value="SHARE"/>
+            <xs:enumeration value="SHIELD"/>
+            <xs:enumeration value="SHIFT_ARROW"/>
+            <xs:enumeration value="SHIFT"/>
+            <xs:enumeration value="SHOP"/>
+            <xs:enumeration value="SIGN_IN_ALT"/>
+            <xs:enumeration value="SIGN_IN"/>
+            <xs:enumeration value="SIGN_OUT_ALT"/>
+            <xs:enumeration value="SIGN_OUT"/>
+            <xs:enumeration value="SIGNAL"/>
+            <xs:enumeration value="SITEMAP"/>
+            <xs:enumeration value="SLIDER"/>
+            <xs:enumeration value="SLIDERS"/>
+            <xs:enumeration value="SMILEY_O"/>
+            <xs:enumeration value="SORT"/>
+            <xs:enumeration value="SOUND_DISABLE"/>
+            <xs:enumeration value="SPARK_LINE"/>
+            <xs:enumeration value="SPECIALIST"/>
+            <xs:enumeration value="SPINNER_ARC"/>
+            <xs:enumeration value="SPINNER_THIRD"/>
+            <xs:enumeration value="SPINNER"/>
+            <xs:enumeration value="SPLINE_AREA_CHART"/>
+            <xs:enumeration value="SPLINE_CHART"/>
+            <xs:enumeration value="SPLIT_H"/>
+            <xs:enumeration value="SPLIT_V"/>
+            <xs:enumeration value="SPLIT"/>
+            <xs:enumeration value="SPOON"/>
+            <xs:enumeration value="SQUARE_SHADOW"/>
+            <xs:enumeration value="STAR_HALF_LEFT_O"/>
+            <xs:enumeration value="STAR_HALF_LEFT"/>
+            <xs:enumeration value="STAR_HALF_RIGHT_O"/>
+            <xs:enumeration value="STAR_HALF_RIGHT"/>
+            <xs:enumeration value="STAR_O"/>
+            <xs:enumeration value="STAR"/>
+            <xs:enumeration value="START_COG"/>
+            <xs:enumeration value="STEP_BACKWARD"/>
+            <xs:enumeration value="STEP_FORWARD"/>
+            <xs:enumeration value="STETHOSCOPE"/>
+            <xs:enumeration value="STOCK"/>
+            <xs:enumeration value="STOP_COG"/>
+            <xs:enumeration value="STOP"/>
+            <xs:enumeration value="STOPWATCH"/>
+            <xs:enumeration value="STORAGE"/>
+            <xs:enumeration value="STRIKETHROUGH"/>
+            <xs:enumeration value="SUBSCRIPT"/>
+            <xs:enumeration value="SUITCASE"/>
+            <xs:enumeration value="SUN_DOWN"/>
+            <xs:enumeration value="SUN_O"/>
+            <xs:enumeration value="SUN_RISE"/>
+            <xs:enumeration value="SUPERSCRIPT"/>
+            <xs:enumeration value="SWORD"/>
+            <xs:enumeration value="TAB_A"/>
+            <xs:enumeration value="TAB"/>
+            <xs:enumeration value="TABLE"/>
+            <xs:enumeration value="TABLET"/>
+            <xs:enumeration value="TABS"/>
+            <xs:enumeration value="TAG"/>
+            <xs:enumeration value="TAGS"/>
+            <xs:enumeration value="TASKS"/>
+            <xs:enumeration value="TAXI"/>
+            <xs:enumeration value="TEETH"/>
+            <xs:enumeration value="TERMINAL"/>
+            <xs:enumeration value="TEXT_HEIGHT"/>
+            <xs:enumeration value="TEXT_INPUT"/>
+            <xs:enumeration value="TEXT_LABEL"/>
+            <xs:enumeration value="TEXT_WIDTH"/>
+            <xs:enumeration value="THIN_SQUARE"/>
+            <xs:enumeration value="THUMBS_DOWN_O"/>
+            <xs:enumeration value="THUMBS_DOWN"/>
+            <xs:enumeration value="THUMBS_UP_O"/>
+            <xs:enumeration value="THUMBS_UP"/>
+            <xs:enumeration value="TICKET"/>
+            <xs:enumeration value="TIME_BACKWARD"/>
+            <xs:enumeration value="TIME_FORWARD"/>
+            <xs:enumeration value="TIMER"/>
+            <xs:enumeration value="TOOLBOX"/>
+            <xs:enumeration value="TOOLS"/>
+            <xs:enumeration value="TOOTH"/>
+            <xs:enumeration value="TOUCH"/>
+            <xs:enumeration value="TRAIN"/>
+            <xs:enumeration value="TRASH"/>
+            <xs:enumeration value="TREE_TABLE"/>
+            <xs:enumeration value="TRENDING_DOWN"/>
+            <xs:enumeration value="TRENDING_UP"/>
+            <xs:enumeration value="TROPHY"/>
+            <xs:enumeration value="TRUCK"/>
+            <xs:enumeration value="TWIN_COL_SELECT"/>
+            <xs:enumeration value="TWITTER_SQUARE"/>
+            <xs:enumeration value="TWITTER"/>
+            <xs:enumeration value="UMBRELLA"/>
+            <xs:enumeration value="UNDERLINE"/>
+            <xs:enumeration value="UNLINK"/>
+            <xs:enumeration value="UNLOCK"/>
+            <xs:enumeration value="UPLOAD_ALT"/>
+            <xs:enumeration value="UPLOAD"/>
+            <xs:enumeration value="USER_CARD"/>
+            <xs:enumeration value="USER_CHECK"/>
+            <xs:enumeration value="USER_CLOCK"/>
+            <xs:enumeration value="USER_HEART"/>
+            <xs:enumeration value="USER_STAR"/>
+            <xs:enumeration value="USER"/>
+            <xs:enumeration value="USERS"/>
+            <xs:enumeration value="VAADIN_H"/>
+            <xs:enumeration value="VAADIN_V"/>
+            <xs:enumeration value="VIEWPORT"/>
+            <xs:enumeration value="VIMEO_SQUARE"/>
+            <xs:enumeration value="VIMEO"/>
+            <xs:enumeration value="VOLUME_DOWN"/>
+            <xs:enumeration value="VOLUME_OFF"/>
+            <xs:enumeration value="VOLUME_UP"/>
+            <xs:enumeration value="VOLUME"/>
+            <xs:enumeration value="WALLET"/>
+            <xs:enumeration value="WARNING"/>
+            <xs:enumeration value="WORKPLACE"/>
+            <xs:enumeration value="WRENCH"/>
+            <xs:enumeration value="YOUTUBE_SQUARE"/>
+            <xs:enumeration value="YOUTUBE"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="sandboxTypes">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="RESTRICT_ALL"/>
+            <xs:enumeration value="ALLOW_FORMS"/>
+            <xs:enumeration value="ALLOW_MODALS"/>
+            <xs:enumeration value="ALLOW_ORIENTATION_LOCK"/>
+            <xs:enumeration value="ALLOW_POINTER_LOCK"/>
+            <xs:enumeration value="ALLOW_POPUPS"/>
+            <xs:enumeration value="ALLOW_POPUPS_TO_ESCAPE_SANDBOX"/>
+            <xs:enumeration value="ALLOW_PRESENTATION"/>
+            <xs:enumeration value="ALLOW_SAME_ORIGIN"/>
+            <xs:enumeration value="ALLOW_SCRIPTS"/>
+            <xs:enumeration value="ALLOW_STORAGE_ACCESS_BY_USER_ACTIVATION"/>
+            <xs:enumeration value="ALLOW_TOP_NAVIGATION"/>
+            <xs:enumeration value="ALLOW_TOP_NAVIGATION_BY_USER_ACTIVATION"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="gridDropModeVariants">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="BETWEEN"/>
+            <xs:enumeration value="ON_TOP"/>
+            <xs:enumeration value="ON_TOP_OR_BETWEEN"/>
+            <xs:enumeration value="ON_GRID"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="gridSelectionModeVariants">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="SINGLE"/>
+            <xs:enumeration value="MULTI"/>
+            <xs:enumeration value="NONE"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="gridNestedNullBehaviorVariants">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="THROW"/>
+            <xs:enumeration value="ALLOW_NULLS"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="gridColumnTextAlignVariants">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="START"/>
+            <xs:enumeration value="CENTER"/>
+            <xs:enumeration value="END"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="fieldDataTypeVariants">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="date"/>
+                    <xs:enumeration value="dateTime"/>
+                    <xs:enumeration value="localDateTime"/>
+                    <xs:enumeration value="string"/>
+                    <xs:enumeration value="offsetTime"/>
+                    <xs:enumeration value="double"/>
+                    <xs:enumeration value="byteArray"/>
+                    <xs:enumeration value="uuid"/>
+                    <xs:enumeration value="uri"/>
+                    <xs:enumeration value="long"/>
+                    <xs:enumeration value="int"/>
+                    <xs:enumeration value="localTime"/>
+                    <xs:enumeration value="boolean"/>
+                    <xs:enumeration value="char"/>
+                    <xs:enumeration value="offsetDateTime"/>
+                    <xs:enumeration value="time"/>
+                    <xs:enumeration value="localDate"/>
+                    <xs:enumeration value="decimal"/>
+                    <xs:enumeration value="fileRef"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+
+    <xs:simpleType name="dateDataTypeVariants">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="date"/>
+                    <xs:enumeration value="dateTime"/>
+                    <xs:enumeration value="localDateTime"/>
+                    <xs:enumeration value="offsetDateTime"/>
+                    <xs:enumeration value="localDate"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+
+    <xs:simpleType name="timeDataTypeVariants">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="offsetTime"/>
+                    <xs:enumeration value="localTime"/>
+                    <xs:enumeration value="time"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+
+    <xs:simpleType name="dateTimeDataTypeVariants">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="date"/>
+                    <xs:enumeration value="dateTime"/>
+                    <xs:enumeration value="localDateTime"/>
+                    <xs:enumeration value="offsetTime"/>
+                    <xs:enumeration value="localTime"/>
+                    <xs:enumeration value="offsetDateTime"/>
+                    <xs:enumeration value="time"/>
+                    <xs:enumeration value="localDate"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+
+    <xs:simpleType name="autocompleteVariants">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="OFF"/>
+            <xs:enumeration value="ON"/>
+            <xs:enumeration value="NAME"/>
+            <xs:enumeration value="HONORIFIC_PREFIX"/>
+            <xs:enumeration value="GIVEN_NAME"/>
+            <xs:enumeration value="ADDITIONAL_NAME"/>
+            <xs:enumeration value="FAMILY_NAME"/>
+            <xs:enumeration value="HONORIFIC_SUFFIX"/>
+            <xs:enumeration value="NICKNAME"/>
+            <xs:enumeration value="EMAIL"/>
+            <xs:enumeration value="USERNAME"/>
+            <xs:enumeration value="NEW_PASSWORD"/>
+            <xs:enumeration value="CURRENT_PASSWORD"/>
+            <xs:enumeration value="ORGANIZATION_TITLE"/>
+            <xs:enumeration value="ORGANIZATION"/>
+            <xs:enumeration value="STREET_ADDRESS"/>
+            <xs:enumeration value="ADDRESS_LINE1"/>
+            <xs:enumeration value="ADDRESS_LINE2"/>
+            <xs:enumeration value="ADDRESS_LINE3"/>
+            <xs:enumeration value="ADDRESS_LEVEL1"/>
+            <xs:enumeration value="ADDRESS_LEVEL2"/>
+            <xs:enumeration value="ADDRESS_LEVEL3"/>
+            <xs:enumeration value="ADDRESS_LEVEL4"/>
+            <xs:enumeration value="COUNTRY"/>
+            <xs:enumeration value="COUNTRY_NAME"/>
+            <xs:enumeration value="POSTAL_CODE"/>
+            <xs:enumeration value="CC_NAME"/>
+            <xs:enumeration value="CC_GIVEN_NAME"/>
+            <xs:enumeration value="CC_ADDITIONAL_NAME"/>
+            <xs:enumeration value="CC_FAMILY_NAME"/>
+            <xs:enumeration value="CC_NUMBER"/>
+            <xs:enumeration value="CC_EXP"/>
+            <xs:enumeration value="CC_EXP_MONTH"/>
+            <xs:enumeration value="CC_EXP_YEAR"/>
+            <xs:enumeration value="CC_CSC"/>
+            <xs:enumeration value="CC_TYPE"/>
+            <xs:enumeration value="TRANSACTION_CURRENCY"/>
+            <xs:enumeration value="TRANSACTION_AMOUNT"/>
+            <xs:enumeration value="LANGUAGE"/>
+            <xs:enumeration value="BDAY"/>
+            <xs:enumeration value="BDAY_DAY"/>
+            <xs:enumeration value="BDAY_MONTH"/>
+            <xs:enumeration value="BDAY_YEAR"/>
+            <xs:enumeration value="SEX"/>
+            <xs:enumeration value="TEL"/>
+            <xs:enumeration value="TEL_COUNTRY_CODE"/>
+            <xs:enumeration value="TEL_NATIONAL"/>
+            <xs:enumeration value="TEL_AREA_CODE"/>
+            <xs:enumeration value="TEL_LOCAL"/>
+            <xs:enumeration value="TEL_LOCAL_PREFIX"/>
+            <xs:enumeration value="TEL_LOCAL_SUFFIX"/>
+            <xs:enumeration value="TEL_EXTENSION"/>
+            <xs:enumeration value="URL"/>
+            <xs:enumeration value="PHOTO"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="autocapitalizeVariants">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="NONE"/>
+            <xs:enumeration value="SENTENCES"/>
+            <xs:enumeration value="WORDS"/>
+            <xs:enumeration value="CHARACTERS"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="whiteSpaces">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="NORMAL"/>
+            <xs:enumeration value="NOWRAP"/>
+            <xs:enumeration value="PRE"/>
+            <xs:enumeration value="PRE_WRAP"/>
+            <xs:enumeration value="PRE_LINE"/>
+            <xs:enumeration value="BREAK_SPACES"/>
+            <xs:enumeration value="INHERIT"/>
+            <xs:enumeration value="INITIAL"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="numberingTypeVariants">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="NUMBER"/>
+            <xs:enumeration value="UPPERCASE_LETTER"/>
+            <xs:enumeration value="LOWERCASE_LETTER"/>
+            <xs:enumeration value="UPPERCASE_ROMAN"/>
+            <xs:enumeration value="LOWERCASE_ROMAN"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="textFieldThemeName">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="small"/>
+                    <xs:enumeration value="align-center"/>
+                    <xs:enumeration value="align-right"/>
+                    <xs:enumeration value="helper-above-field"/>
+                    <xs:enumeration value="always-float-label"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+
+    <xs:simpleType name="detailsThemeName">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="filled"/>
+                    <xs:enumeration value="reverse"/>
+                    <xs:enumeration value="small"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+
+    <xs:simpleType name="datePickerThemeName">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="small"/>
+                    <xs:enumeration value="align-left"/>
+                    <xs:enumeration value="align-center"/>
+                    <xs:enumeration value="align-right"/>
+                    <xs:enumeration value="helper-above-field"/>
+                    <xs:enumeration value="always-float-label"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+
+    <xs:simpleType name="comboBoxThemeName">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="small"/>
+                    <xs:enumeration value="align-left"/>
+                    <xs:enumeration value="align-center"/>
+                    <xs:enumeration value="align-right"/>
+                    <xs:enumeration value="helper-above-field"/>
+                    <xs:enumeration value="always-float-label"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+
+    <xs:simpleType name="gridThemeName">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="no-border"/>
+                    <xs:enumeration value="no-row-borders"/>
+                    <xs:enumeration value="column-borders"/>
+                    <xs:enumeration value="row-stripes"/>
+                    <xs:enumeration value="compact"/>
+                    <xs:enumeration value="wrap-cell-content"/>
+                    <xs:enumeration value="column-dividers"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+
+    <xs:simpleType name="avatarThemeName">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="xlarge"/>
+                    <xs:enumeration value="large"/>
+                    <xs:enumeration value="small"/>
+                    <xs:enumeration value="xsmall"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+
+    <xs:simpleType name="splitThemeName">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="small"/>
+                    <xs:enumeration value="minimal"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+
+    <xs:simpleType name="tabThemeName">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="icon-on-top"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+
+    <xs:simpleType name="tabsThemeName">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="icon-on-top"/>
+                    <xs:enumeration value="centered"/>
+                    <xs:enumeration value="small"/>
+                    <xs:enumeration value="minimal"/>
+                    <xs:enumeration value="hide-scroll-buttons"/>
+                    <xs:enumeration value="equal-width-tabs"/>
+                    <xs:enumeration value="fixed"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+
+    <xs:simpleType name="buttonThemeName">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="small"/>
+                    <xs:enumeration value="large"/>
+                    <xs:enumeration value="tertiary"/>
+                    <xs:enumeration value="tertiary-inline"/>
+                    <xs:enumeration value="primary"/>
+                    <xs:enumeration value="success"/>
+                    <xs:enumeration value="error"/>
+                    <xs:enumeration value="contrast"/>
+                    <xs:enumeration value="icon"/>
+                    <xs:enumeration value="contained"/>
+                    <xs:enumeration value="outlined"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+
+    <xs:simpleType name="anchorTarget">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="DEFAULT"/>
+            <xs:enumeration value="SELF"/>
+            <xs:enumeration value="BLANK"/>
+            <xs:enumeration value="PARENT"/>
+            <xs:enumeration value="TOP"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="valueChangeModeVariants">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="EAGER"/>
+            <xs:enumeration value="LAZY"/>
+            <xs:enumeration value="TIMEOUT"/>
+            <xs:enumeration value="ON_BLUR"/>
+            <xs:enumeration value="ON_CHANGE"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="alignItemsVariants">
+        <xs:restriction>
+            <xs:enumeration value="START"/>
+            <xs:enumeration value="END"/>
+            <xs:enumeration value="CENTER"/>
+            <xs:enumeration value="STRETCH"/>
+            <xs:enumeration value="BASELINE"/>
+            <xs:enumeration value="AUTO"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="justifyContentMode">
+        <xs:restriction>
+            <xs:enumeration value="START"/>
+            <xs:enumeration value="END"/>
+            <xs:enumeration value="CENTER"/>
+            <xs:enumeration value="BETWEEN"/>
+            <xs:enumeration value="AROUND"/>
+            <xs:enumeration value="EVENLY"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="formLabelsPosition">
+        <xs:restriction>
+            <xs:enumeration value="ASIDE"/>
+            <xs:enumeration value="TOP"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="boxSizingVariants">
+        <xs:restriction>
+            <xs:enumeration value="CONTENT_BOX"/>
+            <xs:enumeration value="BORDER_BOX"/>
+            <xs:enumeration value="UNDEFINED"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="componentSize">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="100%"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+
+    <xs:simpleType name="resourceString">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="msg://"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+
+    <xs:simpleType name="badgeVariants">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="normal"/>
+                    <xs:enumeration value="success"/>
+                    <xs:enumeration value="error"/>
+                    <xs:enumeration value="contrast"/>
+                    <xs:enumeration value="primary"/>
+                    <xs:enumeration value="small"/>
+                    <xs:enumeration value="pill"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+
+    <xs:simpleType name="orientationVariants">
+        <xs:restriction>
+            <xs:enumeration value="HORIZONTAL"/>
+            <xs:enumeration value="VERTICAL"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="shortcut">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="${GRID_CREATE_SHORTCUT}"/>
+                    <xs:enumeration value="${GRID_EDIT_SHORTCUT}"/>
+                    <xs:enumeration value="${GRID_REMOVE_SHORTCUT}"/>
+                    <!--                    <xs:enumeration value="${TABLE_EDIT_SHORTCUT}"/>-->
+                    <!--                    <xs:enumeration value="${TABLE_INSERT_SHORTCUT}"/>-->
+                    <!--                    <xs:enumeration value="${TABLE_ADD_SHORTCUT}"/>-->
+                    <!--                    <xs:enumeration value="${TABLE_REMOVE_SHORTCUT}"/>-->
+                    <!--                    <xs:enumeration value="${COMMIT_SHORTCUT}"/>-->
+                    <!--                    <xs:enumeration value="${CLOSE_SHORTCUT}"/>-->
+                    <!--                    <xs:enumeration value="${NEXT_TAB_SHORTCUT}"/>-->
+                    <!--                    <xs:enumeration value="${PREVIOUS_TAB_SHORTCUT}"/>-->
+                    <!--                    <xs:enumeration value="${PICKER_LOOKUP_SHORTCUT}"/>-->
+                    <!--                    <xs:enumeration value="${PICKER_OPEN_SHORTCUT}"/>-->
+                    <!--                    <xs:enumeration value="${PICKER_CLEAR_SHORTCUT}"/>-->
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+
+    <xs:simpleType name="actionVariant">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="DEFAULT"/>
+                    <xs:enumeration value="PRIMARY"/>
+                    <xs:enumeration value="DANGER"/>
+                    <xs:enumeration value="SUCCESS"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+
+    <!-- Interfaces -->
+    <xs:attributeGroup name="hasId">
+        <xs:attribute name="id" type="xs:string"/>
+    </xs:attributeGroup>
+
+    <xs:attributeGroup name="hasText">
+        <xs:attribute name="text" type="resourceString"/>
+        <xs:attribute name="whiteSpace" type="whiteSpaces"/>
+    </xs:attributeGroup>
+
+    <xs:attributeGroup name="hasTitle">
+        <xs:attribute name="title" type="resourceString"/>
+    </xs:attributeGroup>
+
+    <xs:attributeGroup name="hasDataContainer">
+        <xs:attribute name="dataContainer" type="xs:string"/>
+        <!--        <xs:attribute name="property" type="xs:string"/>-->
+    </xs:attributeGroup>
+
+    <xs:attributeGroup name="requiresId">
+        <xs:attribute name="id" type="xs:string" use="required"/>
+    </xs:attributeGroup>
+
+    <xs:attributeGroup name="hasEnable">
+        <xs:attribute name="enable" type="xs:boolean"/>
+    </xs:attributeGroup>
+
+    <xs:attributeGroup name="hasHelperText">
+        <xs:attribute name="helperText" type="xs:string"/>
+    </xs:attributeGroup>
+
+    <xs:attributeGroup name="hasPlaceHolder">
+        <xs:attribute name="placeHolder" type="xs:string"/>
+    </xs:attributeGroup>
+
+    <xs:attributeGroup name="hasRequiredMessage">
+        <xs:attribute name="requiredMessage" type="resourceString"/>
+    </xs:attributeGroup>
+
+    <xs:attributeGroup name="hasIcon">
+        <xs:attribute name="icon" type="vaadinIcons">
+            <xs:annotation>
+                <xs:documentation>
+                    <![CDATA[
+                        Allows to set an icon for the component.
+
+                        Available prefixes:
+                        1. "theme:" - an icon will be served from the current theme directory
+                        2. "file:" - an icon will be served from the file system
+                        3. "classpath:" - an icon will be served from classpath
+                    ]]>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:attributeGroup>
+
+    <xs:attributeGroup name="hasAriaLabel">
+        <xs:attribute name="ariaLabel" type="xs:string"/>
+    </xs:attributeGroup>
+
+    <xs:attributeGroup name="hasSize">
+        <xs:attribute name="width" type="componentSize"/>
+        <xs:attribute name="maxWidth" type="componentSize"/>
+        <xs:attribute name="minWidth" type="componentSize"/>
+
+        <xs:attribute name="height" type="componentSize"/>
+        <xs:attribute name="maxHeight" type="componentSize"/>
+        <xs:attribute name="minHeight" type="componentSize"/>
+    </xs:attributeGroup>
+
+    <xs:attributeGroup name="hasThemable">
+        <xs:attribute name="spacing" type="xs:boolean"/>
+        <xs:attribute name="margin" type="xs:boolean"/>
+        <xs:attribute name="padding" type="xs:boolean"/>
+        <xs:attribute name="boxSizing" type="boxSizingVariants"/>
+    </xs:attributeGroup>
+
+    <xs:attributeGroup name="hasFlexible">
+        <xs:attributeGroup ref="hasSize"/>
+        <xs:attributeGroup ref="hasClassName"/>
+        <xs:attribute name="alignItems" type="alignItemsVariants"/>
+        <xs:attribute name="justifyContent" type="justifyContentMode"/>
+    </xs:attributeGroup>
+
+    <xs:attributeGroup name="hasClassName">
+        <xs:attribute name="className" type="xs:string"/>
+    </xs:attributeGroup>
+
+    <xs:attributeGroup name="hasSecurityConstraint">
+        <xs:attribute name="constraintEntityOp" type="constraintEntityOp"/>
+    </xs:attributeGroup>
+
+    <xs:attributeGroup name="hasValueChangeMode">
+        <xs:attribute name="valueChangeMode" type="valueChangeModeVariants"/>
+        <xs:attribute name="valueChangeTimeout" type="xs:integer"/>
+    </xs:attributeGroup>
+
+    <xs:attributeGroup name="hasValueAndElement">
+        <xs:attribute name="readOnly" type="xs:boolean"/>
+        <xs:attribute name="requiredIndicatorVisible" type="xs:boolean"/>
+    </xs:attributeGroup>
+
+    <!-- Utils -->
+    <xs:complexType name="baseComponent">
+        <xs:attributeGroup ref="hasId"/>
+        <xs:attribute name="visible" type="xs:boolean"/>
+    </xs:complexType>
+
+    <xs:complexType name="baseAction">
+        <xs:sequence>
+            <xs:element name="properties" type="actionProperties" minOccurs="0"/>
+        </xs:sequence>
+
+        <xs:attributeGroup ref="requiresId"/>
+        <xs:attributeGroup ref="hasEnable"/>
+        <xs:attributeGroup ref="hasIcon"/>
+        <xs:attribute name="actionVariant" type="actionVariant"/>
+        <xs:attribute name="text" type="resourceString"/>
+        <xs:attribute name="visible" type="xs:boolean"/>
+
+        <xs:attribute name="type" type="xs:string"/>
+
+        <xs:attribute name="shortcut" type="shortcut"/>
+    </xs:complexType>
+
+    <xs:complexType name="securityConstraintAction">
+        <xs:complexContent>
+            <xs:extension base="baseAction">
+                <xs:attributeGroup ref="hasSecurityConstraint"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="baseHtmlComponent">
+        <xs:complexContent>
+            <xs:extension base="baseComponent">
+                <xs:attributeGroup ref="hasTitle"/>
+                <xs:attributeGroup ref="hasSize"/>
+                <xs:attributeGroup ref="hasClassName"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:attributeGroup name="columnsLoadType">
+        <xs:attribute name="includeAll" type="xs:boolean"/>
+        <xs:attribute name="exclude" type="xs:string"/>
+    </xs:attributeGroup>
+
+    <xs:complexType name="actionsList">
+        <xs:sequence>
+            <xs:choice maxOccurs="unbounded">
+                <xs:element name="action" type="baseAction"/>
+            </xs:choice>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="unorderedListHtmlContainer">
+        <xs:complexContent>
+            <xs:extension base="baseHtmlComponent">
+                <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                    <xs:group ref="htmlLists"/>
+                </xs:sequence>
+                <xs:attributeGroup ref="hasEnable"/>
+                <xs:attributeGroup ref="hasText"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="orderedListHtmlContainer">
+        <xs:complexContent>
+            <xs:extension base="unorderedListHtmlContainer">
+                <xs:attribute name="numberingType" type="numberingTypeVariants"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="baseHtmlContainer">
+        <xs:complexContent>
+            <xs:extension base="baseComponent">
+                <xs:group ref="standardComponent"/>
+                <xs:attributeGroup ref="hasText"/>
+                <xs:attributeGroup ref="hasTitle"/>
+                <xs:attributeGroup ref="hasSize"/>
+                <xs:attributeGroup ref="hasClassName"/>
+                <xs:attributeGroup ref="hasEnable"/>
+                <xs:attribute name="themeName" type="badgeVariants"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="baseHtmlDescription">
+        <xs:complexContent>
+            <xs:extension base="baseComponent">
+                <xs:attributeGroup ref="hasText"/>
+                <xs:attributeGroup ref="hasTitle"/>
+                <xs:attributeGroup ref="hasSize"/>
+                <xs:attributeGroup ref="hasClassName"/>
+                <xs:attributeGroup ref="hasEnable"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="descriptionListHtmlContainer">
+        <xs:complexContent>
+            <xs:extension base="baseHtmlDescription">
+                <xs:sequence minOccurs="0">
+                    <xs:element name="term" type="baseHtmlDescription"/>
+                    <xs:element name="description" type="baseHtmlDescription"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="baseDataFieldComponent">
+        <xs:complexContent>
+            <xs:extension base="baseFieldComponent">
+                <xs:attributeGroup ref="hasDataContainer"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="baseFieldComponent">
+        <xs:complexContent>
+            <xs:extension base="baseComponent">
+                <xs:attributeGroup ref="hasEnable"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="baseTextFieldComponent">
+        <xs:complexContent>
+            <xs:extension base="baseDataFieldComponent">
+                <xs:attribute name="themeName" type="textFieldThemeName"/>
+
+                <xs:attributeGroup ref="hasValueAndElement"/>
+                <xs:attributeGroup ref="hasClassName"/>
+                <xs:attributeGroup ref="hasValueChangeMode"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:group name="htmlHeaders">
+        <xs:sequence>
+            <xs:choice maxOccurs="unbounded">
+                <xs:element name="h1" type="baseHtmlContainer"/>
+                <xs:element name="h2" type="baseHtmlContainer"/>
+                <xs:element name="h3" type="baseHtmlContainer"/>
+                <xs:element name="h4" type="baseHtmlContainer"/>
+                <xs:element name="h5" type="baseHtmlContainer"/>
+                <xs:element name="h6" type="baseHtmlContainer"/>
+            </xs:choice>
+        </xs:sequence>
+    </xs:group>
+
+    <xs:group name="htmlLists">
+        <xs:sequence>
+            <xs:choice maxOccurs="unbounded">
+                <xs:element name="listItem" type="baseHtmlContainer"/>
+                <xs:element name="unorderedList" type="unorderedListHtmlContainer"/>
+                <xs:element name="orderedList" type="orderedListHtmlContainer"/>
+            </xs:choice>
+        </xs:sequence>
+    </xs:group>
+
+    <xs:complexType name="htmlContainerWithAria">
+        <xs:complexContent>
+            <xs:extension base="baseHtmlContainer">
+                <xs:attributeGroup ref="hasAriaLabel"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="dialogMode">
+        <xs:attributeGroup ref="hasSize"/>
+        <xs:attribute name="modal" type="xs:boolean"/>
+        <xs:attribute name="draggable" type="xs:boolean"/>
+        <xs:attribute name="resizable" type="xs:boolean"/>
+        <xs:attribute name="closeOnOutsideClick" type="xs:boolean"/>
+        <xs:attribute name="closeOnEscape" type="xs:boolean"/>
+        <!--        <xs:attribute name="forceDialog" type="xs:boolean"/>-->
+    </xs:complexType>
+
+    <xs:complexType name="actionProperties">
+        <xs:sequence>
+            <xs:element name="property" type="actionProperty" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="actionProperty">
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:attribute name="value" type="xs:string"/>
+    </xs:complexType>
+
+    <!-- Components -->
+
+    <!-- Button-->
+    <xs:complexType name="buttonComponent">
+        <xs:complexContent>
+            <xs:extension base="baseComponent">
+                <xs:attribute name="title" type="xs:string"/>
+                <xs:attribute name="disableOnClick" type="xs:boolean"/>
+                <xs:attribute name="iconAfterText" type="xs:boolean"/>
+                <xs:attribute name="autofocus" type="xs:boolean"/>
+                <xs:attribute name="themeName" type="buttonThemeName"/>
+
+                <xs:attributeGroup ref="hasSize"/>
+                <xs:attributeGroup ref="hasEnable"/>
+                <xs:attributeGroup ref="hasIcon"/>
+                <xs:attributeGroup ref="hasClassName"/>
+                <xs:attributeGroup ref="hasText"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- GridColumn-->
+    <xs:complexType name="dataGridColumnComponent">
+        <xs:complexContent>
+            <xs:extension base="baseComponent">
+                <!--        <xs:sequence>-->
+                <!--            <xs:element name="aggregation" minOccurs="0">-->
+                <!--                <xs:complexType>-->
+                <!--                    <xs:all>-->
+                <!--                        <xs:element name="formatter" minOccurs="0" type="formatterType"/>-->
+                <!--                    </xs:all>-->
+
+                <!--                    <xs:attribute name="type" type="aggregation"/>-->
+                <!--                    <xs:attribute name="strategyClass" type="xs:string"/>-->
+                <!--                    <xs:attribute name="valueDescription" type="resourceString"/>-->
+                <!--                </xs:complexType>-->
+                <!--            </xs:element>-->
+                <!--            <xs:group ref="renderers" minOccurs="0"/>-->
+                <!--        </xs:sequence>-->
+
+                <xs:attribute name="property" type="xs:string"/>
+                <xs:attribute name="width" type="xs:string"/>
+                <xs:attribute name="header" type="xs:string"/>
+                <xs:attribute name="footer" type="xs:string"/>
+                <xs:attribute name="frozen" type="xs:boolean"/>
+                <xs:attribute name="sortable" type="xs:boolean"/>
+                <xs:attribute name="flexGrow" type="xs:integer"/>
+                <xs:attribute name="resizable" type="xs:boolean"/>
+                <xs:attribute name="autoWidth" type="xs:boolean"/>
+                <xs:attribute name="textAlign" type="gridColumnTextAlignVariants"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+
+    <!-- GridGrid -->
+    <xs:complexType name="gridComponent">
+        <xs:complexContent>
+            <xs:extension base="baseComponent">
+                <xs:all>
+                    <xs:element name="actions" minOccurs="0" type="actionsList"/>
+                    <xs:element name="columns">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="column" maxOccurs="unbounded" type="dataGridColumnComponent"/>
+                            </xs:sequence>
+                            <xs:attributeGroup ref="columnsLoadType"/>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:all>
+
+                <xs:attribute name="pageSize" type="xs:integer"/>
+                <xs:attribute name="metaClass" type="xs:string"/>
+                <xs:attribute name="multiSort" type="xs:boolean"/>
+                <xs:attribute name="rowDraggable" type="xs:boolean"/>
+                <xs:attribute name="themeName" type="gridThemeName"/>
+                <xs:attribute name="allRowsVisible" type="xs:boolean"/>
+                <xs:attribute name="dropMode" type="gridDropModeVariants"/>
+                <xs:attribute name="detailsVisibleOnClick" type="xs:boolean"/>
+                <xs:attribute name="columnReorderingAllowed" type="xs:boolean"/>
+                <xs:attribute name="verticalScrollingEnabled" type="xs:boolean"/>
+                <xs:attribute name="verticalScrollingEnabled" type="xs:boolean"/>
+                <xs:attribute name="selectionMode" type="gridSelectionModeVariants"/>
+                <xs:attribute name="nestedNullBehavior" type="gridNestedNullBehaviorVariants"/>
+
+                <xs:attributeGroup ref="hasSize"/>
+                <xs:attributeGroup ref="hasEnable"/>
+                <xs:attributeGroup ref="hasClassName"/>
+                <xs:attributeGroup ref="hasDataContainer"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- TextField-->
+    <xs:complexType name="textFieldComponent">
+        <xs:complexContent>
+            <xs:extension base="baseTextFieldComponent">
+                <xs:attribute name="label" type="xs:string"/>
+                <xs:attribute name="title" type="xs:string"/>
+                <xs:attribute name="pattern" type="xs:string"/>
+                <xs:attribute name="invalid" type="xs:boolean"/>
+                <xs:attribute name="maxLength" type="xs:integer"/>
+                <xs:attribute name="autofocus" type="xs:boolean"/>
+                <xs:attribute name="minLength" type="xs:integer"/>
+                <xs:attribute name="autoSelect" type="xs:boolean"/>
+                <xs:attribute name="autoCorrect" type="xs:boolean"/>
+                <xs:attribute name="dataType" type="fieldDataTypeVariants"/>
+                <xs:attribute name="autoComplete" type="autocompleteVariants"/>
+                <xs:attribute name="autoCapitalize" type="autocapitalizeVariants"/>
+
+                <xs:attributeGroup ref="hasSize"/>
+                <xs:attributeGroup ref="hasHelperText"/>
+                <xs:attributeGroup ref="hasPlaceHolder"/>
+                <xs:attributeGroup ref="hasDataContainer"/>
+                <xs:attributeGroup ref="hasRequiredMessage"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- EmailField-->
+    <xs:complexType name="emailFieldComponent">
+        <xs:complexContent>
+            <xs:extension base="baseTextFieldComponent">
+                <xs:attribute name="label" type="xs:string"/>
+                <xs:attribute name="title" type="xs:string"/>
+                <xs:attribute name="value" type="xs:string"/>
+                <xs:attribute name="pattern" type="xs:string"/>
+                <xs:attribute name="invalid" type="xs:boolean"/>
+                <xs:attribute name="autofocus" type="xs:boolean"/>
+                <xs:attribute name="autoSelect" type="xs:boolean"/>
+                <xs:attribute name="autoCorrect" type="xs:boolean"/>
+                <xs:attribute name="errorMessage" type="resourceString"/>
+                <xs:attribute name="clearButtonVisible" type="xs:boolean"/>
+                <xs:attribute name="preventInvalidInput" type="xs:boolean"/>
+                <xs:attribute name="autoComplete" type="autocompleteVariants"/>
+                <xs:attribute name="autoCapitalize" type="autocapitalizeVariants"/>
+
+                <xs:attributeGroup ref="hasPlaceHolder"/>
+                <xs:attributeGroup ref="hasEnable"/>
+                <xs:attributeGroup ref="hasHelperText"/>
+                <xs:attributeGroup ref="hasSize"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- PasswordField-->
+    <xs:complexType name="passwordFieldComponent">
+        <xs:complexContent>
+            <xs:extension base="baseTextFieldComponent">
+                <xs:attribute name="label" type="xs:string"/>
+                <xs:attribute name="title" type="xs:string"/>
+                <xs:attribute name="value" type="xs:string"/>
+                <xs:attribute name="pattern" type="xs:string"/>
+                <xs:attribute name="invalid" type="xs:boolean"/>
+                <xs:attribute name="required" type="xs:boolean"/>
+                <xs:attribute name="autofocus" type="xs:boolean"/>
+                <xs:attribute name="autoSelect" type="xs:boolean"/>
+                <xs:attribute name="autoCorrect" type="xs:boolean"/>
+                <xs:attribute name="errorMessage" type="resourceString"/>
+                <xs:attribute name="clearButtonVisible" type="xs:boolean"/>
+                <xs:attribute name="preventInvalidInput" type="xs:boolean"/>
+                <xs:attribute name="clearButtonVisible" type="xs:boolean"/>
+                <xs:attribute name="autoComplete" type="autocompleteVariants"/>
+                <xs:attribute name="autoCapitalize" type="autocapitalizeVariants"/>
+
+                <xs:attributeGroup ref="hasPlaceHolder"/>
+                <xs:attributeGroup ref="hasEnable"/>
+                <xs:attributeGroup ref="hasHelperText"/>
+                <xs:attributeGroup ref="hasSize"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- NumberField-->
+    <xs:complexType name="numberFieldComponent">
+        <xs:complexContent>
+            <xs:extension base="baseTextFieldComponent">
+                <xs:attribute name="max" type="xs:double"/>
+                <xs:attribute name="min" type="xs:double"/>
+                <xs:attribute name="step" type="xs:double"/>
+                <xs:attribute name="label" type="xs:string"/>
+                <xs:attribute name="title" type="xs:string"/>
+                <xs:attribute name="value" type="xs:string"/>
+                <xs:attribute name="invalid" type="xs:boolean"/>
+                <xs:attribute name="autofocus" type="xs:boolean"/>
+                <xs:attribute name="autoSelect" type="xs:boolean"/>
+                <xs:attribute name="hasControls" type="xs:boolean"/>
+                <xs:attribute name="autoCorrect" type="xs:boolean"/>
+                <xs:attribute name="errorMessage" type="resourceString"/>
+                <xs:attribute name="clearButtonVisible" type="xs:boolean"/>
+                <xs:attribute name="autoComplete" type="autocompleteVariants"/>
+                <xs:attribute name="autoCapitalize" type="autocapitalizeVariants"/>
+
+                <xs:attributeGroup ref="hasPlaceHolder"/>
+                <xs:attributeGroup ref="hasEnable"/>
+                <xs:attributeGroup ref="hasHelperText"/>
+                <xs:attributeGroup ref="hasSize"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- BigDecimal-->
+    <xs:complexType name="bigDecimalFieldComponent">
+        <xs:complexContent>
+            <xs:extension base="baseTextFieldComponent">
+                <xs:attribute name="title" type="xs:string"/>
+                <xs:attribute name="label" type="xs:string"/>
+                <xs:attribute name="invalid" type="xs:boolean"/>
+                <xs:attribute name="autofocus" type="xs:boolean"/>
+                <xs:attribute name="autoSelect" type="xs:boolean"/>
+                <xs:attribute name="autoCorrect" type="xs:boolean"/>
+                <xs:attribute name="errorMessage" type="resourceString"/>
+                <xs:attribute name="clearButtonVisible" type="xs:boolean"/>
+                <xs:attribute name="autoComplete" type="autocompleteVariants"/>
+                <xs:attribute name="requiredIndicatorVisible" type="xs:boolean"/>
+                <xs:attribute name="autoCapitalize" type="autocapitalizeVariants"/>
+
+                <xs:attributeGroup ref="hasSize"/>
+                <xs:attributeGroup ref="hasHelperText"/>
+                <xs:attributeGroup ref="hasPlaceHolder"/>
+                <xs:attributeGroup ref="hasRequiredMessage"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- CheckBox-->
+    <xs:complexType name="checkBoxComponent">
+        <xs:complexContent>
+            <xs:extension base="baseComponent">
+                <xs:attribute name="label" type="xs:string"/>
+                <xs:attribute name="autofocus" type="xs:boolean"/>
+                <xs:attribute name="indeterminate" type="xs:boolean"/>
+
+                <xs:attributeGroup ref="hasSize"/>
+                <xs:attributeGroup ref="hasClassName"/>
+                <xs:attributeGroup ref="hasEnable"/>
+                <xs:attributeGroup ref="hasAriaLabel"/>
+                <xs:attributeGroup ref="hasDataContainer"/>
+                <xs:attributeGroup ref="hasValueAndElement"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- ComboBox-->
+    <xs:complexType name="comboBoxComponent">
+        <xs:complexContent>
+            <xs:extension base="baseDataFieldComponent">
+                <xs:attribute name="label" type="xs:string"/>
+                <xs:attribute name="pattern" type="xs:string"/>
+                <xs:attribute name="invalid" type="xs:boolean"/>
+                <xs:attribute name="autoOpen" type="xs:boolean"/>
+                <xs:attribute name="pageSize" type="xs:integer"/>
+                <xs:attribute name="autofocus" type="xs:boolean"/>
+                <xs:attribute name="allowCustomValue" type="xs:boolean"/>
+                <xs:attribute name="errorMessage" type="resourceString"/>
+                <xs:attribute name="themeName" type="comboBoxThemeName"/>
+                <xs:attribute name="clearButtonVisible" type="xs:boolean"/>
+                <xs:attribute name="preventInvalidInput" type="xs:boolean"/>
+
+                <xs:attributeGroup ref="hasSize"/>
+                <xs:attributeGroup ref="hasClassName"/>
+                <xs:attributeGroup ref="hasEnable"/>
+                <xs:attributeGroup ref="hasHelperText"/>
+                <xs:attributeGroup ref="hasPlaceHolder"/>
+                <xs:attributeGroup ref="hasRequiredMessage"/>
+                <xs:attributeGroup ref="hasValueAndElement"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- TimePicker-->
+    <xs:complexType name="timePickerComponent">
+        <xs:complexContent>
+            <xs:extension base="baseDataFieldComponent">
+                <!--                <xs:attribute name="max" type="timePickerMaxVariants"/>-->
+                <!--                <xs:attribute name="min" type="timePickerMinVariants"/>-->
+                <!--                <xs:attribute name="locale" type="timePickerLocaleVariants"/>-->
+                <!--                <xs:attribute name="zone" type="timePickerZoneVariants"/>-->
+                <xs:attribute name="label" type="xs:string"/>
+                <xs:attribute name="invalid" type="xs:boolean"/>
+                <xs:attribute name="autoOpen" type="xs:boolean"/>
+                <xs:attribute name="errorMessage" type="resourceString"/>
+                <xs:attribute name="clearButtonVisible" type="xs:boolean"/>
+                <xs:attribute name="dataType" type="timeDataTypeVariants"/>
+
+                <xs:attributeGroup ref="hasSize"/>
+                <xs:attributeGroup ref="hasClassName"/>
+                <xs:attributeGroup ref="hasEnable"/>
+                <xs:attributeGroup ref="hasHelperText"/>
+                <xs:attributeGroup ref="hasPlaceHolder"/>
+                <xs:attributeGroup ref="hasRequiredMessage"/>
+                <xs:attributeGroup ref="hasValueAndElement"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- DatePicker-->
+    <xs:complexType name="datePickerComponent">
+        <xs:complexContent>
+            <xs:extension base="baseDataFieldComponent">
+                <xs:attribute name="name" type="xs:string"/>
+                <xs:attribute name="label" type="xs:string"/>
+                <xs:attribute name="opened" type="xs:boolean"/>
+                <xs:attribute name="invalid" type="xs:boolean"/>
+                <xs:attribute name="autoOpen" type="xs:boolean"/>
+                <xs:attribute name="placeHolder" type="xs:string"/>
+                <xs:attribute name="errorMessage" type="resourceString"/>
+                <xs:attribute name="dataType" type="dateDataTypeVariants"/>
+                <xs:attribute name="clearButtonVisible" type="xs:boolean"/>
+                <xs:attribute name="weekNumbersVisible" type="xs:boolean"/>
+                <xs:attribute name="themeName" type="datePickerThemeName"/>
+
+                <xs:attributeGroup ref="hasSize"/>
+                <xs:attributeGroup ref="hasClassName"/>
+                <xs:attributeGroup ref="hasEnable"/>
+                <xs:attributeGroup ref="hasHelperText"/>
+                <xs:attributeGroup ref="hasRequiredMessage"/>
+                <xs:attributeGroup ref="hasValueAndElement"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- DateTimePicker-->
+    <xs:complexType name="dateTimePickerComponent">
+        <xs:complexContent>
+            <xs:extension base="baseDataFieldComponent">
+                <!--                <xs:attribute name="max" type="timePickerMaxVariants"/>-->
+                <!--                <xs:attribute name="min" type="timePickerMinVariants"/>-->
+                <!--                <xs:attribute name="locale" type="timePickerLocaleVariants"/>-->
+                <!--                <xs:attribute name="zone" type="timePickerZoneVariants"/>-->
+
+                <xs:attribute name="label" type="xs:string"/>
+                <xs:attribute name="invalid" type="xs:boolean"/>
+                <xs:attribute name="autoOpen" type="xs:boolean"/>
+                <xs:attribute name="themeName" type="xs:string"/>
+                <xs:attribute name="timePlaceHolder" type="xs:string"/>
+                <xs:attribute name="datePlaceHolder" type="xs:string"/>
+                <xs:attribute name="errorMessage" type="resourceString"/>
+                <xs:attribute name="weekNumbersVisible" type="xs:boolean"/>
+                <xs:attribute name="dataType" type="dateTimeDataTypeVariants"/>
+
+                <xs:attributeGroup ref="hasSize"/>
+                <xs:attributeGroup ref="hasClassName"/>
+                <xs:attributeGroup ref="hasEnable"/>
+                <xs:attributeGroup ref="hasHelperText"/>
+                <xs:attributeGroup ref="hasRequiredMessage"/>
+                <xs:attributeGroup ref="hasValueAndElement"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- Accordion -->
+    <xs:complexType name="accordionContainer">
+        <xs:complexContent>
+            <xs:extension base="baseComponent">
+
+                <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                    <xs:element name="accordionPanel">
+                        <xs:complexType>
+                            <xs:complexContent>
+                                <xs:extension base="detailsComponent"/>
+                            </xs:complexContent>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:sequence>
+
+                <xs:attributeGroup ref="hasClassName"/>
+                <xs:attributeGroup ref="hasSize"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- Avatar-->
+    <xs:complexType name="avatarComponent">
+        <xs:complexContent>
+            <xs:extension base="baseComponent">
+                <xs:attributeGroup ref="hasClassName"/>
+                <xs:attributeGroup ref="hasSize"/>
+                <xs:attribute name="name" type="xs:string"/>
+                <xs:attribute name="image" type="xs:string"/>
+                <xs:attribute name="colorIndex" type="xs:integer"/>
+                <xs:attribute name="abbreviation" type="xs:string"/>
+                <xs:attribute name="themeName" type="avatarThemeName"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- Scroller -->
+    <xs:complexType name="scrollerContainer">
+        <xs:complexContent>
+            <xs:extension base="baseComponent">
+                <xs:sequence>
+                    <xs:group ref="standardComponent"/>
+                </xs:sequence>
+
+                <xs:attribute name="scrollBarsDirection" type="scrollDirection"/>
+
+                <xs:attributeGroup ref="hasSize"/>
+                <xs:attributeGroup ref="hasClassName"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- Split-->
+    <xs:complexType name="splitContainer">
+        <xs:complexContent>
+            <xs:extension base="baseComponent">
+                <xs:sequence minOccurs="2" maxOccurs="2">
+                    <xs:group ref="layoutOrComponent"/>
+                </xs:sequence>
+
+                <xs:attribute name="themeName" type="splitThemeName"/>
+                <xs:attribute name="splitterPosition" type="xs:double"/>
+                <xs:attribute name="orientation" type="orientationVariants"/>
+
+                <xs:attributeGroup ref="hasSize"/>
+                <xs:attributeGroup ref="hasClassName"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- Tabs-->
+    <xs:complexType name="tabsContainer">
+        <xs:complexContent>
+            <xs:extension base="baseComponent">
+
+                <!-- Tab-->
+                <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                    <xs:element name="tab">
+                        <xs:complexType>
+                            <xs:complexContent>
+                                <xs:extension base="baseComponent">
+                                    <xs:group ref="layoutOrComponent"/>
+                                    <xs:attributeGroup ref="hasEnable"/>
+                                    <xs:attributeGroup ref="hasClassName"/>
+                                    <xs:attribute name="label" type="xs:string"/>
+                                    <xs:attribute name="themeName" type="tabThemeName"/>
+                                    <xs:attribute name="flexGrow" type="xs:double"/>
+                                </xs:extension>
+                            </xs:complexContent>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:sequence>
+
+                <xs:attributeGroup ref="hasClassName"/>
+                <xs:attributeGroup ref="hasSize"/>
+                <xs:attribute name="themeName" type="tabsThemeName"/>
+                <xs:attribute name="orientation" type="orientationVariants"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- Select-->
+    <xs:complexType name="selectComponent">
+        <xs:complexContent>
+            <xs:extension base="baseComponent">
+                <xs:attributeGroup ref="hasHelperText"/>
+                <xs:attributeGroup ref="hasValueAndElement"/>
+                <xs:attributeGroup ref="hasSize"/>
+                <xs:attributeGroup ref="hasPlaceHolder"/>
+                <xs:attribute name="label" type="xs:string"/>
+                <xs:attribute name="autofocus" type="xs:boolean"/>
+                <xs:attribute name="emptySelectionAllowed" type="xs:boolean"/>
+                <xs:attribute name="emptySelectionCaption" type="xs:string"/>
+                <xs:attribute name="errorMessage" type="resourceString"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- Details-->
+    <xs:complexType name="detailsComponent">
+        <xs:complexContent>
+            <xs:extension base="baseComponent">
+                <xs:group ref="layoutOrComponent"/>
+                <xs:attributeGroup ref="hasSize"/>
+                <xs:attributeGroup ref="hasClassName"/>
+                <xs:attributeGroup ref="hasEnable"/>
+                <xs:attribute name="summaryText" type="xs:string"/>
+                <xs:attribute name="themeName" type="detailsThemeName"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- Form-->
+    <xs:complexType name="formLayout">
+        <xs:complexContent>
+            <xs:extension base="baseComponent">
+
+                <xs:sequence>
+                    <!-- FormItem-->
+                    <xs:element name="formItem">
+                        <xs:complexType>
+                            <xs:complexContent>
+                                <xs:extension base="baseComponent">
+                                    <xs:group ref="standardComponent"/>
+                                    <xs:attribute name="colspan" type="xs:integer"/>
+                                    <xs:attributeGroup ref="hasEnable"/>
+                                </xs:extension>
+                            </xs:complexContent>
+                        </xs:complexType>
+                    </xs:element>
+
+                    <!-- ResponsiveStep-->
+                    <xs:element name="responsiveStep">
+                        <xs:complexType>
+                            <xs:attribute name="minWidth" type="xs:string" use="required"/>
+                            <xs:attribute name="columns" type="xs:integer" use="required"/>
+                            <xs:attribute name="labelsPosition" type="formLabelsPosition"/>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:sequence>
+
+                <xs:attributeGroup ref="hasEnable"/>
+                <xs:attributeGroup ref="hasSize"/>
+                <xs:attributeGroup ref="hasClassName"/>
+                <xs:attributeGroup ref="hasDataContainer"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!--    HTML-->
+    <!-- Anchor-->
+    <xs:complexType name="anchor">
+        <xs:complexContent>
+            <xs:extension base="htmlContainerWithAria">
+                <xs:attribute name="href" type="xs:string"/>
+                <xs:attribute name="target" type="anchorTarget"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- Param-->
+    <xs:complexType name="paramHtmlComponent">
+        <xs:complexContent>
+            <xs:extension base="baseHtmlComponent">
+                <xs:attribute name="name" type="xs:string"/>
+                <xs:attribute name="value" type="xs:string"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- Image-->
+    <xs:complexType name="imageHtmlComponent">
+        <xs:complexContent>
+            <xs:extension base="baseHtmlContainer">
+                <xs:attributeGroup ref="hasAriaLabel"/>
+                <xs:attribute name="resource" type="xs:string"/>
+                <xs:attribute name="alternateText" type="xs:string"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- Input-->
+    <xs:complexType name="inputHtmlComponent">
+        <xs:complexContent>
+            <xs:extension base="baseFieldComponent">
+                <xs:attributeGroup ref="hasPlaceHolder"/>
+                <xs:attributeGroup ref="hasValueChangeMode"/>
+                <xs:attributeGroup ref="hasSize"/>
+                <xs:attributeGroup ref="hasClassName"/>
+                <xs:attributeGroup ref="hasAriaLabel"/>
+                <xs:attribute name="type" type="inputTypes"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- IFrame-->
+    <xs:complexType name="iframeHtmlComponent">
+        <xs:complexContent>
+            <xs:extension base="baseHtmlComponent">
+                <xs:attribute name="importance" type="importanceTypes"/>
+                <xs:attribute name="sandbox" type="sandboxTypes"/>
+                <xs:attribute name="resource" type="xs:string"/>
+                <xs:attribute name="resourceDoc" type="xs:string"/>
+                <xs:attribute name="name" type="xs:string"/>
+                <xs:attribute name="allow" type="xs:string"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- HtmlObject-->
+    <xs:complexType name="htmlObjectComponent">
+        <xs:complexContent>
+            <xs:extension base="baseHtmlContainer">
+                <xs:attribute name="data" type="xs:string"/>
+                <xs:attribute name="type" type="xs:string"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:group name="standardComponent">
+        <xs:sequence>
+            <xs:choice maxOccurs="unbounded">
+                <!--HTML Components-->
+                <xs:group ref="htmlHeaders"/>
+                <xs:group ref="htmlLists"/>
+                <xs:element name="div" type="baseHtmlContainer"/>
+                <xs:element name="span" type="baseHtmlContainer"/>
+                <xs:element name="section" type="baseHtmlContainer"/>
+                <xs:element name="pre" type="baseHtmlContainer"/>
+                <xs:element name="p" type="baseHtmlContainer"/>
+                <xs:element name="nav" type="htmlContainerWithAria"/>
+                <xs:element name="param" type="paramHtmlComponent"/>
+                <xs:element name="main" type="htmlContainerWithAria"/>
+                <xs:element name="hr" type="baseHtmlComponent"/>
+                <xs:element name="header" type="baseHtmlContainer"/>
+                <xs:element name="footer" type="baseHtmlContainer"/>
+                <xs:element name="aside" type="baseHtmlContainer"/>
+                <xs:element name="emphasis" type="baseHtmlContainer"/>
+                <xs:element name="anchor" type="anchor"/>
+                <xs:element name="article" type="baseHtmlContainer"/>
+                <xs:element name="input" type="inputHtmlComponent"/>
+                <xs:element name="image" type="imageHtmlComponent"/>
+                <xs:element name="iframe" type="iframeHtmlComponent"/>
+                <xs:element name="htmlObject" type="htmlObjectComponent"/>
+                <xs:element name="descriptionList" type="baseHtmlDescription"/>
+                <xs:element name="term" type="baseHtmlDescription"/>
+                <xs:element name="descriptionList" type="descriptionListHtmlContainer"/>
+
+                <!-- Layout -->
+                <xs:element name="vbox" type="basicLayout"/>
+                <xs:element name="hbox" type="basicLayout"/>
+                <xs:element name="form" type="formLayout"/>
+                <!--                <xs:element name="flowBox" type="flowBoxLayout"/>-->
+                <!--                <xs:element name="cssLayout" type="cssLayout"/>-->
+
+                <!--                <xs:element name="htmlBox" type="htmlBoxLayout"/>-->
+                <xs:element name="scroller" type="scrollerContainer"/>
+                <!--                <xs:element name="gridLayout" type="gridLayout"/>-->
+                <!--                <xs:element name="groupBox" type="groupBoxLayout"/>-->
+
+                <xs:element name="split" type="splitContainer"/>
+                <xs:element name="tabs" type="tabsContainer"/>
+                <xs:element name="accordion" type="accordionContainer"/>
+
+                <!--                <xs:element name="responsiveGridLayout" type="responsiveGridLayout"/>-->
+
+                <!--                <xs:element name="fragment" type="fragmentContainer"/>-->
+
+                <!-- Component -->
+                <xs:element name="button" type="buttonComponent"/>
+                <xs:element name="avatar" type="avatarComponent"/>
+                <xs:element name="select" type="selectComponent"/>
+                <xs:element name="details" type="detailsComponent"/>
+                <!--                <xs:element name="linkButton" type="buttonComponent"/>-->
+                <!--                <xs:element name="popupButton" type="popupButtonComponent"/>-->
+                <!--                <xs:element name="popupView" type="popupViewComponent"/>-->
+
+                <!--                <xs:element name="link" type="linkComponent"/>-->
+                <xs:element name="checkBox" type="checkBoxComponent"/>
+                <xs:element name="datePicker" type="datePickerComponent"/>
+                <!--                <xs:element name="slider" type="sliderComponent"/>-->
+
+                <!--                <xs:element name="textArea" type="textAreaComponent"/>-->
+                <!--                <xs:element name="resizableTextArea" type="resizableTextAreaComponent"/>-->
+                <xs:element name="textField" type="textFieldComponent"/>
+                <xs:element name="emailField" type="emailFieldComponent"/>
+                <xs:element name="bigDecimalField" type="bigDecimalFieldComponent"/>
+                <xs:element name="numberField" type="numberFieldComponent"/>
+                <!--                <xs:element name="currencyField" type="currencyFieldComponent"/>-->
+                <xs:element name="passwordField" type="passwordFieldComponent"/>
+                <!--                <xs:element name="richTextArea" type="richTextAreaComponent"/>-->
+                <!--                <xs:element name="sourceCodeEditor" type="sourceCodeEditorComponent"/>-->
+                <!--                <xs:element name="maskedField" type="maskedFieldComponent"/>-->
+
+                <!--                <xs:element name="dateField" type="dateFieldComponent"/>-->
+                <xs:element name="timePicker" type="timePickerComponent"/>
+                <xs:element name="dateTimePicker" type="dateTimePickerComponent"/>
+
+                <xs:element name="comboBox" type="comboBoxComponent"/>
+                <!--                <xs:element name="suggestionField" type="suggestionFieldComponent"/>-->
+                <!--                <xs:element name="entitySuggestionField" type="entitySuggestionFieldComponent"/>-->
+                <!--                <xs:element name="valuePicker" type="valuePickerComponent"/>-->
+                <!--                <xs:element name="valuesPicker" type="valuesPickerComponent"/>-->
+                <!--                <xs:element name="entityPicker" type="entityPickerComponent"/>-->
+                <!--                <xs:element name="entityComboBox" type="entityComboBoxComponent"/>-->
+
+                <!--                <xs:element name="colorPicker" type="colorPickerComponent"/>-->
+                <!--                <xs:element name="radioButtonGroup" type="radioButtonGroupComponent"/>-->
+                <!--                <xs:element name="checkBoxGroup" type="checkBoxGroupComponent"/>-->
+                <!--                <xs:element name="multiSelectList" type="optionsBaseFieldComponent"/>-->
+                <!--                <xs:element name="singleSelectList" type="singleSelectListComponent"/>-->
+                <!--                <xs:element name="progressBar" type="progressBarComponent"/>-->
+
+                <!--                <xs:element name="fileUpload" type="fileUploadComponent"/>-->
+                <!--                <xs:element name="fileStorageUpload" type="fileStorageUploadComponent"/>-->
+                <!--                <xs:element name="fileMultiUpload" type="multiuploadComponent"/>-->
+                <!--                <xs:element name="embedded" type="embeddedComponent"/>-->
+                <!--                <xs:element name="image" type="imageComponent"/>-->
+                <!--                <xs:element name="browserFrame" type="browserFrameComponent"/>-->
+
+                <!--                <xs:element name="tree" type="treeComponent"/>-->
+                <!--                <xs:element name="table" type="tableComponent"/>-->
+                <!--                <xs:element name="treeTable" type="treeTableComponent"/>-->
+                <!--                <xs:element name="groupTable" type="groupTableComponent"/>-->
+                <xs:element name="grid" type="gridComponent"/>
+                <!--                <xs:element name="treeDataGrid" type="treeDataGridComponent"/>-->
+                <!--                <xs:element name="buttonsPanel" type="buttonsPanelComponent"/>-->
+                <!--                <xs:element name="pagination" type="paginationComponent"/>-->
+                <!--                <xs:element name="simplePagination" type="simplePaginationComponent"/>-->
+                <!--                <xs:element name="calendar" type="calendarComponent"/>-->
+
+                <!--                <xs:element name="tagPicker" type="tagPickerComponent"/>-->
+                <!--                <xs:element name="tagField" type="tagFieldComponent"/>-->
+                <!--                <xs:element name="twinColumn" type="twinColumnComponent"/>-->
+                <!--                <xs:element name="relatedEntities" type="relatedComponent"/>-->
+
+                <!--                <xs:element name="form" type="formComponent"/>-->
+
+                <!--                <xs:element name="filter" type="filterComponent"/>-->
+                <!--                <xs:element name="propertyFilter" type="propertyFilterComponent"/>-->
+
+                <!--                <xs:element name="capsLockIndicator" type="capsLockIndicatorComponent"/>-->
+
+                <!--                <xs:element name="jsComponent" type="javaScriptComponent"/>-->
+
+                <!--                &lt;!&ndash; Main window &ndash;&gt;-->
+
+                <!--                <xs:element name="userActionsButton" type="userActionsButton"/>-->
+                <!--                <xs:element name="logoutButton" type="logoutButtonComponent"/>-->
+                <!--                <xs:element name="newWindowButton" type="newWindowButtonComponent"/>-->
+                <!--                <xs:element name="ftsField" type="ftsFieldComponent"/>-->
+                <!--                <xs:element name="userIndicator" type="userIndicatorComponent"/>-->
+                <!--                <xs:element name="timeZoneIndicator" type="timeZoneIndicatorComponent"/>-->
+                <!--                <xs:element name="workArea" type="workAreaComponent"/>-->
+                <!--                <xs:element name="drawer" type="drawerComponent"/>-->
+                <!--                <xs:element name="sideMenu" type="sideMenuComponent"/>-->
+                <!--                <xs:element name="menu" type="menuComponent"/>-->
+            </xs:choice>
+        </xs:sequence>
+    </xs:group>
+
+    <!-- Inner element choice -->
+    <xs:group name="layoutOrComponent">
+        <xs:sequence>
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:group ref="standardComponent"/>
+                <xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:choice>
+        </xs:sequence>
+    </xs:group>
+
+    <xs:complexType name="rootLayout">
+        <xs:complexContent>
+            <xs:extension base="basicLayout">
+                <!-- TODO: kremnevda, will be filled 13.04.2022 -->
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="basicLayout">
+        <xs:group ref="layoutOrComponent"/>
+        <xs:attributeGroup ref="hasThemable"/>
+        <xs:attributeGroup ref="hasFlexible"/>
+        <xs:attribute name="expand" type="xs:string"/>
+    </xs:complexType>
+</xs:schema>

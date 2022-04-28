@@ -65,6 +65,11 @@ includeProject('emailtemplates-starter', 'jmix-emailtemplates/emailtemplates-sta
 includeProject('emailtemplates-ui', 'jmix-emailtemplates/emailtemplates-ui')
 includeProject('emailtemplates-ui-starter', 'jmix-emailtemplates/emailtemplates-ui-starter')
 
+includeProject('flowui', 'jmix-flowui/flowui')
+includeProject('flowui-starter', 'jmix-flowui/flowui-starter')
+includeProject('flowui-kit', 'jmix-flowui/flowui-kit')
+includeProject('flowui-themes', 'jmix-flowui/flowui-themes')
+
 includeProject('grapesjs', 'jmix-grapesjs/grapesjs')
 includeProject('grapesjs-starter', 'jmix-grapesjs/grapesjs-starter')
 
@@ -104,8 +109,8 @@ includeProject('reports-starter', 'jmix-reports/reports-starter')
 includeProject('reports-ui-starter', 'jmix-reports/reports-ui-starter')
 includeProject('reports-rest-starter', 'jmix-reports/reports-rest-starter')
 
-includeProject('saml', 'jmix-saml/saml')
-includeProject('saml-starter', 'jmix-saml/saml-starter')
+//includeProject('saml', 'jmix-saml/saml')
+//includeProject('saml-starter', 'jmix-saml/saml-starter')
 
 includeProject('search', 'jmix-search/search')
 includeProject('search-starter', 'jmix-search/search-starter')

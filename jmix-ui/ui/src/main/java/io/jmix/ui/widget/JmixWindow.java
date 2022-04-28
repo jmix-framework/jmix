@@ -16,6 +16,7 @@
 
 package io.jmix.ui.widget;
 
+import com.vaadin.event.SerializableEventListener;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.screen.OpenMode;
 import io.jmix.ui.widget.client.tabsheet.ClientAction;
@@ -120,7 +121,7 @@ public class JmixWindow extends Window {
         }
     }
 
-    public interface PreCloseListener {
+    public interface PreCloseListener extends SerializableEventListener {
         void beforeWindowClose(PreCloseEvent event);
     }
 

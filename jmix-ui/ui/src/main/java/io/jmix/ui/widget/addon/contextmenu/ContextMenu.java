@@ -16,6 +16,7 @@
 
 package io.jmix.ui.widget.addon.contextmenu;
 
+import com.vaadin.event.SerializableEventListener;
 import io.jmix.ui.widget.client.addon.contextmenu.ContextMenuClientRpc;
 import io.jmix.ui.widget.client.addon.contextmenu.ContextMenuItemState;
 import io.jmix.ui.widget.client.addon.contextmenu.ContextMenuServerRpc;
@@ -234,7 +235,7 @@ public class ContextMenu extends AbstractExtension {
         return getState(false).htmlContentAllowed;
     }
 
-    public interface ContextMenuOpenListener extends java.util.EventListener, java.io.Serializable {
+    public interface ContextMenuOpenListener extends SerializableEventListener {
 
         public static final Method MENU_OPENED = ReflectTools.findMethod(
                 ContextMenuOpenListener.class, "onContextMenuOpen",

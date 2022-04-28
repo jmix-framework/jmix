@@ -13,6 +13,7 @@
  */
 package io.jmix.ui.widget.addon.popupbutton;
 
+import com.vaadin.event.SerializableEventListener;
 import io.jmix.ui.widget.client.addon.popupbutton.PopupButtonServerRpc;
 import io.jmix.ui.widget.client.addon.popupbutton.PopupButtonState;
 import com.vaadin.shared.Registration;
@@ -20,7 +21,6 @@ import com.vaadin.ui.*;
 import com.vaadin.util.ReflectTools;
 
 import javax.annotation.Nullable;
-import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.Iterator;
@@ -263,7 +263,7 @@ public class PopupButton extends Button implements SingleComponentContainer {
      *
      */
     @FunctionalInterface
-    public interface PopupVisibilityListener extends Serializable {
+    public interface PopupVisibilityListener extends SerializableEventListener {
 
         Method popupVisibilityMethod = ReflectTools.findMethod(
                 PopupVisibilityListener.class, "popupVisibilityChange",

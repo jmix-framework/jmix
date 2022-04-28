@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<screen xmlns="http://jmix.io/schema/ui/window"
+        caption="msg://sandbox.caption">
+    <data readOnly="true">
+        <collection id="customersDc"
+                    class="test_support.entity.sales.Customer">
+            <fetchPlan extends="_base"/>
+            <loader id="projectsDl">
+                <query>
+                    <![CDATA[select e from test_Customer e]]>
+                </query>
+            </loader>
+        </collection>
+    </data>
+    <layout>
+    </layout>
+</screen>

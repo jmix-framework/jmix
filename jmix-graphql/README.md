@@ -1,27 +1,21 @@
 # Jmix GraphQL
 
-This repository contains GraphQL integration project of the [Jmix](https://jmix.io) framework.
+The GraphQL add-on provides GraphQL API for Jmix applications.
 
-**CAUTION: The project is in EXPERIMENTAL status and may be removed or modified in any way without notice. Use at your own risk!**
-
-For more information see:
-
-* Jmix Core project source [repository](https://github.com/Haulmont/jmix-core).
-* Jmix [documentation](https://docs.jmix.io).
-
+**CAUTION: This add-on is now in the incubating state and its API and behavior may be modified in the future minor and patch releases.**
 
 ## Usage
 
-Add to your project's `build.gradle` dependencies:
+Add the following dependency to your project's `build.gradle`:
 
 ```groovy
 implementation 'io.jmix.graphql:jmix-graphql-starter'
 ```
 
-## Api
+## API
 
 ### Schema for Persistent Jmix Entities
-For each persistent jmix entity automatically generated
+For each persistent Jmix entity the add-on automatically generates:
 * input and output GraphQL type
 * list, count and byId query
 * mutations that allow to create, update and delete entity
@@ -867,7 +861,7 @@ of user which username set in `devUsername`. Authorization header should be set 
 ```
 { "Authorization": "bearer" }
 ```
-You can set authorization header for GraphIQL using application property:
+You can set authorization header for GraphiQL using application property:
 ```
 graphiql.headers.Authorization=Bearer
 ```

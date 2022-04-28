@@ -1,0 +1,11 @@
+@import url('./dialog-window.css');
+@import url('./exception-dialog-window.css');
+@import url('./jmix-notification.css');
+
+html {
+     --jmix-lumo-warning-background-color: hsla(43, 100%, 74%, 1);
+     --jmix-lumo-warning-background-color-50pct: hsla(43, 100%, 74%, 0.5);
+     --jmix-lumo-warning-background-color-10pct: hsla(43, 100%, 74%, 0.1);
+     --jmix-lumo-warning-primary-text-color: hsl(48, 98%, 59%);
+     --jmix-lumo-warning-color: #3f3f3f;
+}

@@ -388,7 +388,7 @@
         <addPrimaryKey columnNames="SCHED_NAME, TRIGGER_NAME, TRIGGER_GROUP" tableName="${table_prefix}CRON_TRIGGERS"/>
     </changeSet>
 
-    <changeSet id="11" author="jmix-quartz">
+    <changeSet id="11" author="jmix-quartz" dbms="!oracle">
         <preConditions onFail="MARK_RAN">
             <not>
                 <tableExists tableName="${table_prefix}SIMPLE_TRIGGERS"/>
@@ -443,6 +443,66 @@
 
         <addForeignKeyConstraint baseTableName="${table_prefix}BLOB_TRIGGERS"
                                  constraintName="${table_prefix}BLOB_TRIGGERS_SCHED_NAME_FKEY"
+                                 baseColumnNames="SCHED_NAME, TRIGGER_NAME, TRIGGER_GROUP"
+                                 referencedTableName="${table_prefix}TRIGGERS"
+                                 referencedColumnNames="SCHED_NAME, TRIGGER_NAME, TRIGGER_GROUP"/>
+    </changeSet>
+
+    <changeSet id="11-oracle" author="jmix-quartz" dbms="oracle">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="${table_prefix}SIMPLE_TRIGGERS"/>
+            </not>
+        </preConditions>
+        <createTable tableName="${table_prefix}SIMPLE_TRIGGERS">
+            <column name="SCHED_NAME" type="VARCHAR(120)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="TRIGGER_NAME" type="VARCHAR(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="TRIGGER_GROUP" type="VARCHAR(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REPEAT_COUNT" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REPEAT_INTERVAL" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="TIMES_TRIGGERED" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addPrimaryKey columnNames="SCHED_NAME, TRIGGER_NAME, TRIGGER_GROUP"
+                       tableName="${table_prefix}SIMPLE_TRIGGERS"/>
+
+        <addForeignKeyConstraint baseTableName="${table_prefix}TRIGGERS"
+                                 constraintName="${table_prefix}TR_SCH_NAME_FK"
+                                 baseColumnNames="SCHED_NAME, JOB_NAME, JOB_GROUP"
+                                 referencedTableName="${table_prefix}JOB_DETAILS"
+                                 referencedColumnNames="SCHED_NAME, JOB_NAME, JOB_GROUP"/>
+
+        <addForeignKeyConstraint baseTableName="${table_prefix}SIMPLE_TRIGGERS"
+                                 constraintName="${table_prefix}SMPL_TR_SCH_NAME_FK"
+                                 baseColumnNames="SCHED_NAME, TRIGGER_NAME, TRIGGER_GROUP"
+                                 referencedTableName="${table_prefix}TRIGGERS"
+                                 referencedColumnNames="SCHED_NAME, TRIGGER_NAME, TRIGGER_GROUP"/>
+
+        <addForeignKeyConstraint baseTableName="${table_prefix}CRON_TRIGGERS"
+                                 constraintName="${table_prefix}CRON_TR_SCH_NAME_FK"
+                                 baseColumnNames="SCHED_NAME, TRIGGER_NAME, TRIGGER_GROUP"
+                                 referencedTableName="${table_prefix}TRIGGERS"
+                                 referencedColumnNames="SCHED_NAME, TRIGGER_NAME, TRIGGER_GROUP"/>
+
+        <addForeignKeyConstraint baseTableName="${table_prefix}SIMPROP_TRIGGERS"
+                                 constraintName="${table_prefix}SMPRP_TR_SCH_NAME_FK"
+                                 baseColumnNames="SCHED_NAME, TRIGGER_NAME, TRIGGER_GROUP"
+                                 referencedTableName="${table_prefix}TRIGGERS"
+                                 referencedColumnNames="SCHED_NAME, TRIGGER_NAME, TRIGGER_GROUP"/>
+
+        <addForeignKeyConstraint baseTableName="${table_prefix}BLOB_TRIGGERS"
+                                 constraintName="${table_prefix}BLB_TR_SCH_NAME_FK"
                                  baseColumnNames="SCHED_NAME, TRIGGER_NAME, TRIGGER_GROUP"
                                  referencedTableName="${table_prefix}TRIGGERS"
                                  referencedColumnNames="SCHED_NAME, TRIGGER_NAME, TRIGGER_GROUP"/>

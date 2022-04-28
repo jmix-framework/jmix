@@ -85,7 +85,7 @@ public class FileStorageLocatorImpl implements FileStorageLocator {
                 throw new IllegalStateException("No FileStorage beans registered");
             } else {
                 throw new IllegalStateException("There are more than one FileStorage beans registered, " +
-                        "set 'jmix.core.defaultFileStorage' property");
+                        "set 'jmix.core.default-file-storage' property");
             }
         }
     }

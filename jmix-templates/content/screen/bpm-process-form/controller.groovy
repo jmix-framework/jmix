@@ -17,6 +17,7 @@
 package ${packageName}
 
 
+import io.jmix.bpmui.processform.ProcessFormContext
 <%if (controllerName != "ProcessForm") {
 %>import io.jmix.bpmui.processform.annotation.ProcessForm<%
     annotation = "ProcessForm"
@@ -26,6 +27,7 @@ package ${packageName}
 import io.jmix.ui.screen.Screen
 import io.jmix.ui.screen.UiController
 import io.jmix.ui.screen.UiDescriptor
+import org.springframework.beans.factory.annotation.Autowired
 
 <%if (classComment) {%>
 ${classComment}
@@ -33,4 +35,6 @@ ${classComment}
 @UiController("${id}")
 @UiDescriptor("${descriptorName}.xml")
 class ${controllerName} extends Screen {
+    @Autowired
+    private ProcessFormContext processFormContext
 }

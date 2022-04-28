@@ -16,8 +16,9 @@
 
 package ${packageName}
 
+import io.jmix.bpmui.processform.ProcessFormContext
 <%if (controllerName != "ProcessForm") {
-%>import io.jmix.bpmui.processform.annotation.ProcessForm<%
+    %>import io.jmix.bpmui.processform.annotation.ProcessForm<%
     annotation = "ProcessForm"
 } else {
     annotation = "io.jmix.bpmui.processform.annotation.ProcessForm"}
@@ -25,11 +26,14 @@ package ${packageName}
 import io.jmix.ui.screen.Screen
 import io.jmix.ui.screen.UiController
 import io.jmix.ui.screen.UiDescriptor
+import org.springframework.beans.factory.annotation.Autowired
 
 <%if (classComment) {%>
-${classComment}
-<%}%>@$annotation
+    ${classComment}
+    <%}%>@$annotation
 @UiController("${api.escapeKotlinDollar(id)}")
 @UiDescriptor("${descriptorName}.xml")
 class ${controllerName} : Screen() {
+    @Autowired
+    private lateinit var processFormContext: ProcessFormContext
 }

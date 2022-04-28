@@ -63,4 +63,7 @@
 
     <source fileExt="java"
             name="controller"/>
+
+    <source fileExt="kt"
+            name="controller"/>
 </template>

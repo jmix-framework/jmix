@@ -74,6 +74,7 @@ public class MetadataTools {
     public static final String LENGTH_ANN_NAME = "jmix.length";
     public static final String CASCADE_TYPES_ANN_NAME = "jmix.cascadeTypes";
     public static final String CASCADE_PROPERTIES_ANN_NAME = "jmix.cascadeProperties";
+    public static final String EMBEDDED_PROPERTIES_ANN_NAME = "jmix.embeddedProperties";
 
     /**
      * Not applicable for legacy cuba entities
@@ -329,6 +330,16 @@ public class MetadataTools {
             }
             return result;
         }
+        return Collections.emptyList();
+    }
+
+    /**
+     * @return Names of embedded properties or empty list if no such properties contained in {@code metaClass}
+     */
+    public List<String> getEmbeddedProperties(MetaClass metaClass) {
+        if (metaClass.getAnnotations().containsKey(EMBEDDED_PROPERTIES_ANN_NAME))
+            //noinspection unchecked
+            return (List<String>) metaClass.getAnnotations().get(EMBEDDED_PROPERTIES_ANN_NAME);
         return Collections.emptyList();
     }
 

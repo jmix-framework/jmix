@@ -26,6 +26,7 @@ import io.jmix.data.impl.EntityListenerManager
 import org.springframework.beans.factory.annotation.Autowired
 import test_support.DataSpec
 import test_support.entity.cascade_operations.JpaCascadeBar
+import test_support.entity.cascade_operations.JpaCascadeEmbeddable
 import test_support.entity.cascade_operations.JpaCascadeFoo
 import test_support.entity.cascade_operations.JpaCascadeItem
 import test_support.listeners.cascade_operations.TestCascadeBarEventListener
@@ -247,9 +248,42 @@ class CascadeEventsTest extends DataSpec {
         itemChangedEvents.stream().filter(info -> info.message == "EntityChangedEvent: afterCommit, DELETED").count() == 2
     }
 
+    def "check cascade events for embedded entities"() {
+        when: "cascade persist occurs"
+        def foo = dataManager.create(JpaCascadeFoo)
+        foo.name = "testFoo"
+
+        def bar = dataManager.create(JpaCascadeBar)
+        bar.name = "testBar"
+
+        foo.setEmbeddable(dataManager.create(JpaCascadeEmbeddable))
+        foo.getEmbeddable().setBarInside(bar)
+
+        dataManager.save(foo)
+
+
+        def barChangedEvents = TestCascadeBarEventListener.allEvents
+        def fooChangedEvents = TestCascadeFooEventListener.allEvents
+
+        then: "All events present for cascade-persisted entity"
+        barChangedEvents.size() == fooChangedEvents.size()
+
+        barChangedEvents.stream().anyMatch(info -> info.message == "AfterInsertEntityListener")
+        barChangedEvents.stream().anyMatch(info -> info.message == "BeforeInsertEntityListener")
+        barChangedEvents.stream().anyMatch(info -> info.message == "BeforeDetachEntityListener")
+
+        barChangedEvents.stream().anyMatch(info -> info.message == "EntitySavingEvent: isNew=true")
+        barChangedEvents.stream().anyMatch(info -> info.message == "EntityChangedEvent: beforeCommit, CREATED")
+        barChangedEvents.stream().anyMatch(info -> info.message == "EntityChangedEvent: afterCommit, CREATED")
+
+        barChangedEvents.stream().anyMatch(info -> info.message == "EntityLoadingEvent")
+        cleanup:
+        dataManager.remove(bar, foo)
+    }
+
 
     def cleanup() {
         TestCascadeFooEventListener.clear()
         TestCascadeBarEventListener.clear()
-   }
+    }
 }

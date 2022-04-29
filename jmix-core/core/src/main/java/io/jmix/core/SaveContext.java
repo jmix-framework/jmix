@@ -34,7 +34,6 @@ public class SaveContext implements Serializable {
 
     protected Map<Object, FetchPlan> fetchPlans = new HashMap<>();
 
-    protected boolean softDeletion = true;
     protected boolean discardSaved;
     protected boolean joinTransaction = true;
     protected List<AccessConstraint<?>> accessConstraints;

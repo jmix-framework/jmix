@@ -267,6 +267,15 @@ public class JpaDataStore extends AbstractDataStore implements DataSortingOption
                 }
             }
         }
+
+        for (String propertyName : metadataTools.getEmbeddedProperties(metadata.getClass(entity))) {
+            if (entityStates.isLoaded(entity, propertyName)) {
+                Object embeddedPropertyValue = EntityValues.getValue(entity, propertyName);
+                if (embeddedPropertyValue != null) {
+                    processCascadeOperation(embeddedPropertyValue, result, contextEntities, type);
+                }
+            }
+        }
     }
 
     @Override

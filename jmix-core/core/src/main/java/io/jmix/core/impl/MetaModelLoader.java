@@ -526,18 +526,24 @@ public class MetaModelLoader {
             ((List<String>) metaClass.getAnnotations().get(MetadataTools.SYSTEM_ANN_NAME)).add(metaProperty.getName());
         }
 
-        CascadeType[] types = getCascadeType(field);
+        if (isEmbedded(field)) {
+            registerPropertyAs(metaProperty, MetadataTools.EMBEDDED_PROPERTIES_ANN_NAME);
+        }
 
+        CascadeType[] types = getCascadeType(field);
         if (types != null && types.length > 0) {
             metaProperty.getAnnotations().put(MetadataTools.CASCADE_TYPES_ANN_NAME, Arrays.asList(types));
-
-            MetaClass metaClass = metaProperty.getDomain();
-            if (!metaClass.getAnnotations().containsKey(MetadataTools.CASCADE_PROPERTIES_ANN_NAME)) {
-                metaClass.getAnnotations().put(MetadataTools.CASCADE_PROPERTIES_ANN_NAME, new LinkedList<String>());
-            }
-            //noinspection unchecked
-            ((List<String>) metaClass.getAnnotations().get(MetadataTools.CASCADE_PROPERTIES_ANN_NAME)).add(metaProperty.getName());
+            registerPropertyAs(metaProperty, MetadataTools.CASCADE_PROPERTIES_ANN_NAME);
         }
+    }
+
+    private void registerPropertyAs(MetaProperty metaProperty, String tag) {
+        MetaClass metaClass = metaProperty.getDomain();
+        if (!metaClass.getAnnotations().containsKey(tag)) {
+            metaClass.getAnnotations().put(tag, new LinkedList<String>());
+        }
+        //noinspection unchecked
+        ((List<String>) metaClass.getAnnotations().get(tag)).add(metaProperty.getName());
     }
 
     @Nullable

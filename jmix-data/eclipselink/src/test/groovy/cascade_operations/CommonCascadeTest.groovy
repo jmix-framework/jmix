@@ -27,7 +27,7 @@ class CommonCascadeTest extends DataSpec {
     private FetchPlans fetchPlans
 
 
-    def "Check metadata"() {
+    def "Check metadata for reference properties"() {
 
         when:
         MetaClass metaClass = metadata.getClass(JpaCascadeFoo)
@@ -91,6 +91,22 @@ class CommonCascadeTest extends DataSpec {
         metadataTools.getCascadeTypes(barDRProperty).size() == 2
         metadataTools.getCascadeTypes(barDRProperty).containsAll([CascadeType.DETACH, CascadeType.REFRESH])
         metadataTools.getCascadeTypes(barNonCascadeProperty).isEmpty()
+    }
+
+    def "Check metadata for embedded properties"() {
+        when:
+        MetaClass metaClass = metadata.getClass(JpaCascadeFoo)
+        List<String> embeddedProperties = metadataTools.getEmbeddedProperties(metaClass)
+
+        then: "List of embedded properties is correct"
+        embeddedProperties == ["embeddable"]
+
+        when:
+        MetaClass embeddedPropertyClass = metaClass.getProperty(embeddedProperties[0]).getRange().asClass()
+
+        then: "Cascade properties inside embedded entity registered correctly"
+        metadataTools.getCascadeProperties(embeddedPropertyClass, CascadeType.ALL).size() == 1
+        metadataTools.getCascadeProperties(embeddedPropertyClass, CascadeType.ALL)[0].name == "barInside"
     }
 
     def "Cascade type considered correctly"() {

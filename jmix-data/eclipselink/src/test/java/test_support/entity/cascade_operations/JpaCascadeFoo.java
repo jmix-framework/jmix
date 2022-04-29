@@ -60,6 +60,9 @@ public class JpaCascadeFoo extends BaseEntity {
     @JoinColumn(name = "BAR_NONCASCADE_ID")
     private JpaCascadeBar nonCascadeBar;
 
+    @Embedded
+    private JpaCascadeEmbeddable embeddable;
+
     public String getName() {
         return name;
     }
@@ -122,5 +125,13 @@ public class JpaCascadeFoo extends BaseEntity {
 
     public void setNonCascadeBar(JpaCascadeBar nonCascadeBar) {
         this.nonCascadeBar = nonCascadeBar;
+    }
+
+    public JpaCascadeEmbeddable getEmbeddable() {
+        return embeddable;
+    }
+
+    public void setEmbeddable(JpaCascadeEmbeddable embeddable) {
+        this.embeddable = embeddable;
     }
 }

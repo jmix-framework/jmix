@@ -1,4 +1,6 @@
-package io.jmix.core;
+package io.jmix.eclipselink.impl;
+
+import io.jmix.core.SaveContext;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -13,15 +15,14 @@ public class JpaSaveContext extends SaveContext {
 
 
     public JpaSaveContext(SaveContext context) {
-        this.entitiesToSave = context.entitiesToSave;
-        this.entitiesToRemove = context.entitiesToRemove;
+        this.entitiesToSave = context.getEntitiesToSave();
+        this.entitiesToRemove = context.getEntitiesToRemove();
 
-        this.fetchPlans = context.fetchPlans;
-        this.softDeletion = context.softDeletion;
-        this.discardSaved = context.discardSaved;
-        this.joinTransaction = context.joinTransaction;
-        this.accessConstraints = context.accessConstraints;
-        this.hints = context.hints;
+        this.fetchPlans = context.getFetchPlans();
+        this.discardSaved = context.isDiscardSaved();
+        this.joinTransaction = context.isJoinTransaction();
+        this.accessConstraints = context.getAccessConstraints();
+        this.hints = context.getHints();
     }
 
     /**

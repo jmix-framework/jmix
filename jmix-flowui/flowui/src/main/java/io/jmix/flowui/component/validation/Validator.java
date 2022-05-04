@@ -16,8 +16,6 @@
 
 package io.jmix.flowui.component.validation;
 
-import io.jmix.flowui.SameAsUi;
-
 import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
@@ -26,7 +24,6 @@ import java.util.function.Consumer;
  *
  * @param <T> value type
  */
-@SameAsUi
 public interface Validator<T> extends Consumer<T> {
 
     /**

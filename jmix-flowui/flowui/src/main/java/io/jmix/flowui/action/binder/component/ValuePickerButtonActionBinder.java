@@ -10,9 +10,9 @@ import io.jmix.flowui.action.binder.ActionBinder;
 import io.jmix.flowui.action.binder.ActionBinderUtils;
 import io.jmix.flowui.action.binder.ActionsHolderBinding;
 import io.jmix.flowui.action.binder.ActionsHolderBindingImpl;
-import io.jmix.flowui.component.valuepicker.ValuePickerButton;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.KeyCombination;
+import io.jmix.flowui.kit.component.valuepicker.ValuePickerButton;
 import org.springframework.core.annotation.Order;
 
 import javax.annotation.Nullable;

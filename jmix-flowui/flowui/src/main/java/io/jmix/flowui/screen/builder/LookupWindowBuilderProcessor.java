@@ -10,7 +10,7 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.FlowUiScreenProperties;
 import io.jmix.flowui.Screens;
 import io.jmix.flowui.data.value.ContainerValueSource;
-import io.jmix.flowui.component.SupportsUserAction;
+import io.jmix.flowui.kit.component.SupportsUserAction;
 import io.jmix.flowui.component.valuepicker.EntityPicker;
 import io.jmix.flowui.data.*;
 import io.jmix.flowui.model.CollectionContainer;

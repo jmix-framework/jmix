@@ -29,6 +29,10 @@ public interface HasTitle extends HasElement {
     }
 
     default void setTitle(@Nullable String title) {
-        getElement().setProperty("title", Strings.nullToEmpty(title));
+        String titleValue = Strings.nullToEmpty(title);
+
+        getElement().setProperty("title", titleValue);
+        // TODO: gg, leave here?
+        getElement().setAttribute("aria-label", titleValue);
     }
 }

@@ -14,8 +14,11 @@ import io.jmix.flowui.data.SupportsValueSource;
 import io.jmix.flowui.data.ValueSource;
 import io.jmix.flowui.component.*;
 import io.jmix.flowui.component.delegate.DateTimePickerDelegate;
+import io.jmix.flowui.component.SupportsTypedValue;
+import io.jmix.flowui.component.SupportsValidation;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.exception.ValidationException;
+import io.jmix.flowui.component.HasRequired;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
@@ -29,7 +32,7 @@ import java.time.ZonedDateTime;
 public class TypedDateTimePicker<V extends Comparable<V>> extends DateTimePicker
         implements SupportsValueSource<V>,
         SupportsTypedValue<TypedDateTimePicker<V>,
-                ComponentValueChangeEvent<DateTimePicker, LocalDateTime>, V, LocalDateTime>, HasZoneId,
+                        ComponentValueChangeEvent<DateTimePicker, LocalDateTime>, V, LocalDateTime>, HasZoneId,
         SupportsDatatype<V>, SupportsValidation<V>, HasRequired, InitializingBean, ApplicationContextAware {
 
     protected ApplicationContext applicationContext;

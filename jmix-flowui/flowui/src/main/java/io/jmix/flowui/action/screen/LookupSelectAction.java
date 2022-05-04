@@ -7,7 +7,7 @@ import com.vaadin.flow.shared.Registration;
 import io.jmix.core.Messages;
 import io.jmix.flowui.FlowUiScreenProperties;
 import io.jmix.flowui.action.ActionType;
-import io.jmix.flowui.component.SelectionChangeNotifier;
+import io.jmix.flowui.kit.component.SelectionChangeNotifier;
 import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.component.FlowUiComponentUtils;
 import io.jmix.flowui.kit.component.KeyCombination;

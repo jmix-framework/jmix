@@ -145,19 +145,6 @@ public final class UiComponentUtils {
         return parent.map(UiComponentUtils::findScreen).orElse(null);
     }
 
-    public static void addComponentsToSlot(Element element, String slot, Component... components) {
-        for (Component component : components) {
-            component.getElement().setAttribute("slot", slot);
-            element.appendChild(component.getElement());
-        }
-    }
-
-    public static void clearSlot(Element element, String slot) {
-        element.getChildren()
-                .filter(child -> slot.equals(child.getAttribute("slot")))
-                .forEach(element::removeChild);
-    }
-
     /**
      * Focuses component (or its nearest focusable parent).
      *

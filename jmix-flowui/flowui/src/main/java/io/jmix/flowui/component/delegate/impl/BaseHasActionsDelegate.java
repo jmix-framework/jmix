@@ -5,7 +5,7 @@ import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.action.binder.ActionBinder;
 import io.jmix.flowui.action.binder.ActionBinding;
-import io.jmix.flowui.component.HasActions;
+import io.jmix.flowui.kit.component.HasActions;
 import io.jmix.flowui.component.delegate.HasActionsDelegate;
 import io.jmix.flowui.kit.action.Action;
 import org.springframework.beans.factory.config.BeanDefinition;

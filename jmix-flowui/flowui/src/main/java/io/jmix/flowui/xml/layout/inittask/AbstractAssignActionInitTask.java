@@ -1,7 +1,7 @@
 package io.jmix.flowui.xml.layout.inittask;
 
 import com.vaadin.flow.component.Component;
-import io.jmix.flowui.component.HasActions;
+import io.jmix.flowui.kit.component.HasActions;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.screen.Screen;

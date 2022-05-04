@@ -28,7 +28,7 @@ import io.jmix.flowui.data.ContainerDataUnit;
 import io.jmix.flowui.data.EmptyDataUnit;
 import io.jmix.flowui.data.EntityDataUnit;
 import io.jmix.flowui.data.grid.GridDataItems;
-import io.jmix.flowui.component.HasActions;
+import io.jmix.flowui.kit.component.HasActions;
 import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.component.delegate.impl.BaseHasActionsDelegate;
 import io.jmix.flowui.component.grid.JmixGridContextMenu;

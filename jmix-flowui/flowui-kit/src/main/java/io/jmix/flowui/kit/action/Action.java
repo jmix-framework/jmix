@@ -53,6 +53,7 @@ public interface Action {
 
     void setIcon(@Nullable String icon);
 
+    // TODO: gg, why?
     @Nullable
     String getTitle();
 

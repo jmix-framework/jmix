@@ -17,14 +17,11 @@
 package io.jmix.flowui.kit.component.button;
 
 import com.google.common.base.Strings;
-import com.vaadin.flow.component.HasText;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionVariant;
-import io.jmix.flowui.kit.component.HasShortcutCombination;
-import io.jmix.flowui.kit.component.HasTitle;
 import io.jmix.flowui.kit.component.KeyCombination;
 import org.apache.commons.lang3.StringUtils;
 
@@ -34,7 +31,9 @@ import java.util.Objects;
 public class JmixButtonActionSupport {
 
     protected final JmixButton button;
+
     protected Action action;
+
     protected Registration registration;
     protected Registration actionPropertyChangeRegistration;
 
@@ -43,23 +42,26 @@ public class JmixButtonActionSupport {
     }
 
     public void setAction(@Nullable Action action, boolean overrideComponentProperties) {
-        if (!Objects.equals(this.action, action)) {
-            removeRegistrations();
+        if (Objects.equals(this.action, action)) {
+            return;
+        }
 
-            this.action = action;
+        removeRegistrations();
 
-            if (action != null) {
-                updateText(overrideComponentProperties);
-                updateEnabled(overrideComponentProperties);
-                updateVisible(overrideComponentProperties);
-                updateActionVariant(overrideComponentProperties);
-                updateIcon(overrideComponentProperties);
-                updateTitle(overrideComponentProperties);
-                updateShortcut(overrideComponentProperties);
+        this.action = action;
 
-                registration = button.addClickListener(event -> action.actionPerform(event.getSource()));
-                actionPropertyChangeRegistration = addPropertyChangeListener();
-            }
+        if (action != null) {
+            updateText(overrideComponentProperties);
+            updateEnabled(overrideComponentProperties);
+            updateVisible(overrideComponentProperties);
+            updateActionVariant(overrideComponentProperties);
+            updateIcon(overrideComponentProperties);
+            updateTitle(overrideComponentProperties);
+            updateShortcut(overrideComponentProperties);
+
+            registration = button.addClickListener(event ->
+                    action.actionPerform(event.getSource()));
+            actionPropertyChangeRegistration = addPropertyChangeListener();
         }
     }
 
@@ -113,7 +115,7 @@ public class JmixButtonActionSupport {
     protected void updateText(boolean overrideComponentProperties) {
         String text = action.getText();
         if (StringUtils.isEmpty(button.getText()) || overrideComponentProperties) {
-            ((HasText) button).setText(text);
+            button.setText(text);
         }
     }
 
@@ -150,7 +152,7 @@ public class JmixButtonActionSupport {
         String title = action.getTitle();
         if (StringUtils.isEmpty(button.getTitle()) || overrideComponentProperties) {
             if (StringUtils.isNotEmpty(title)) {
-                ((HasTitle) button).setTitle(title);
+                button.setTitle(title);
             } else {
                 String text = action.getText();
                 String shortcutCombination = action.getShortcutCombination() != null
@@ -159,11 +161,11 @@ public class JmixButtonActionSupport {
 
                 if (!Strings.isNullOrEmpty(text)
                         && !Strings.isNullOrEmpty(shortcutCombination)) {
-                    ((HasTitle) button).setTitle(String.format("%s (%s)", text, shortcutCombination));
+                    button.setTitle(String.format("%s (%s)", text, shortcutCombination));
                 } else if (!Strings.isNullOrEmpty(text)) {
-                    ((HasTitle) button).setTitle(text);
+                    button.setTitle(text);
                 } else if (!Strings.isNullOrEmpty(shortcutCombination)) {
-                    ((HasTitle) button).setTitle(shortcutCombination);
+                    button.setTitle(shortcutCombination);
                 }
             }
         }
@@ -171,8 +173,8 @@ public class JmixButtonActionSupport {
 
     protected void updateShortcut(boolean overrideComponentProperties) {
         KeyCombination shortcutCombination = action.getShortcutCombination();
-        if (((HasShortcutCombination) button).getShortcutCombination() == null || overrideComponentProperties) {
-            ((HasShortcutCombination) button).setShortcutCombination(shortcutCombination);
+        if (button.getShortcutCombination() == null || overrideComponentProperties) {
+            button.setShortcutCombination(shortcutCombination);
         }
     }
 

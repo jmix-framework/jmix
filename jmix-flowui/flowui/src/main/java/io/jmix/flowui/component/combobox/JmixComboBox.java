@@ -7,13 +7,13 @@ import io.jmix.flowui.data.SupportsListOptions;
 import io.jmix.flowui.data.SupportsValueSource;
 import io.jmix.flowui.data.ValueSource;
 import io.jmix.flowui.component.HasRequired;
-import io.jmix.flowui.component.HasTitle;
 import io.jmix.flowui.component.SupportsValidation;
 import io.jmix.flowui.component.delegate.AbstractFieldDelegate;
 import io.jmix.flowui.component.delegate.FieldDelegate;
 import io.jmix.flowui.component.delegate.ListOptionsDelegate;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.exception.ValidationException;
+import io.jmix.flowui.kit.component.HasTitle;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -26,8 +26,6 @@ public class JmixComboBox<V> extends ComboBox<V>
         ApplicationContextAware, InitializingBean {
 
     protected ApplicationContext applicationContext;
-
-    protected String requiredMessage;
 
     protected AbstractFieldDelegate<? extends JmixComboBox<V>, V, V> fieldDelegate;
     protected ListOptionsDelegate<JmixComboBox<V>, V> optionsDelegate;
@@ -84,12 +82,12 @@ public class JmixComboBox<V> extends ComboBox<V>
     @Nullable
     @Override
     public String getRequiredMessage() {
-        return requiredMessage;
+        return fieldDelegate.getRequiredMessage();
     }
 
     @Override
     public void setRequiredMessage(@Nullable String requiredMessage) {
-        this.requiredMessage = requiredMessage;
+        fieldDelegate.setRequiredMessage(requiredMessage);
     }
 
     @Override

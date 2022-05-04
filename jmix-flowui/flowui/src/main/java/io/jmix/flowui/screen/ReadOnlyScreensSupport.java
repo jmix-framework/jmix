@@ -24,7 +24,7 @@ import io.jmix.flowui.SimilarToUi;
 import io.jmix.flowui.action.AdjustWhenScreenReadOnly;
 import io.jmix.flowui.data.SupportsValueSource;
 import io.jmix.flowui.data.ValueSource;
-import io.jmix.flowui.component.HasActions;
+import io.jmix.flowui.kit.component.HasActions;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.kit.action.Action;
 import org.springframework.beans.factory.annotation.Autowired;

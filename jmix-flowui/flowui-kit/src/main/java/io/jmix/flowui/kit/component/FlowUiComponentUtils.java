@@ -16,10 +16,15 @@
 
 package io.jmix.flowui.kit.component;
 
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.dom.Element;
+import io.jmix.flowui.kit.action.Action;
 
 import javax.annotation.Nullable;
+import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 public final class FlowUiComponentUtils {
 
@@ -33,5 +38,31 @@ public final class FlowUiComponentUtils {
         }
 
         return icon.name().toLowerCase(Locale.ENGLISH).replace('_', '-');
+    }
+
+    public static void addComponentsToSlot(Element element, String slot, Component... components) {
+        for (Component component : components) {
+            component.getElement().setAttribute("slot", slot);
+            element.appendChild(component.getElement());
+        }
+    }
+
+    public static void clearSlot(Element element, String slot) {
+        element.getChildren()
+                .filter(child -> slot.equals(child.getAttribute("slot")))
+                .forEach(element::removeChild);
+    }
+
+    public static int findActionIndexById(List<Action> actions, String actionId) {
+        int index = -1;
+        for (int i = 0; i < actions.size(); i++) {
+            Action a = actions.get(i);
+            if (Objects.equals(a.getId(), actionId)) {
+                index = i;
+                break;
+            }
+        }
+
+        return index;
     }
 }

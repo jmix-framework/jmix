@@ -14,7 +14,7 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import io.jmix.core.common.util.Preconditions;
-import io.jmix.flowui.component.notification.JmixNotification;
+import io.jmix.flowui.kit.component.notification.JmixNotification;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

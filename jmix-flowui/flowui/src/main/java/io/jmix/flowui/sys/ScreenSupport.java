@@ -82,6 +82,7 @@ public class ScreenSupport {
 
         componentLoaderContext.setFullFrameId(screenInfo.getId());
         componentLoaderContext.setCurrentFrameId(screenInfo.getId());
+        // TODO: gg, consider messageGroup attribute
         componentLoaderContext.setMessageGroup(getPackage(screenInfo.getControllerClass()));
         componentLoaderContext.setScreen(screen);
 

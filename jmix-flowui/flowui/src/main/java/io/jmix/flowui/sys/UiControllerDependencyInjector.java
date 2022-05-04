@@ -5,7 +5,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.HasComponents;
 import io.jmix.core.DevelopmentException;
-import io.jmix.flowui.component.HasActions;
+import io.jmix.flowui.kit.component.HasActions;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.layout.ScreenLayout;
 import io.jmix.flowui.kit.action.Action;

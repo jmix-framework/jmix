@@ -16,7 +16,6 @@
 
 package io.jmix.flowui.kit.component.button;
 
-import com.google.common.base.Strings;
 import com.vaadin.flow.component.KeyModifier;
 import com.vaadin.flow.component.ShortcutRegistration;
 import com.vaadin.flow.component.button.Button;
@@ -54,8 +53,6 @@ public class JmixButton extends Button implements HasTitle, HasAction, HasShortc
 
     protected void setTitleInternal(@Nullable String title) {
         HasTitle.super.setTitle(title);
-
-        getElement().setAttribute("aria-label", Strings.nullToEmpty(title));
     }
 
     @Override

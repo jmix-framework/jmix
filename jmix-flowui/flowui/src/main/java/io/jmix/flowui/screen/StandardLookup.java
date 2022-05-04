@@ -4,7 +4,7 @@ import com.google.common.base.Strings;
 import com.vaadin.flow.component.Component;
 import io.jmix.flowui.component.LookupComponent;
 import io.jmix.flowui.component.LookupComponent.MultiSelectLookupComponent;
-import io.jmix.flowui.component.SelectionChangeNotifier;
+import io.jmix.flowui.kit.component.SelectionChangeNotifier;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.util.OperationResult;
 

@@ -12,7 +12,7 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.FlowUiScreenProperties;
 import io.jmix.flowui.Screens;
-import io.jmix.flowui.component.SupportsUserAction;
+import io.jmix.flowui.kit.component.SupportsUserAction;
 import io.jmix.flowui.data.*;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.DataContext;

@@ -3,7 +3,7 @@ package io.jmix.flowui.component.delegate;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.shared.Registration;
-import io.jmix.flowui.component.HasActions;
+import io.jmix.flowui.kit.component.HasActions;
 import io.jmix.flowui.kit.action.Action;
 
 import javax.annotation.Nullable;

@@ -8,7 +8,7 @@ import io.jmix.flowui.action.ExecutableAction;
 import io.jmix.flowui.action.SecuredBaseAction;
 import io.jmix.flowui.action.TargetAction;
 import io.jmix.flowui.component.ListDataComponent;
-import io.jmix.flowui.component.SelectionChangeNotifier;
+import io.jmix.flowui.kit.component.SelectionChangeNotifier;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.component.KeyCombination;

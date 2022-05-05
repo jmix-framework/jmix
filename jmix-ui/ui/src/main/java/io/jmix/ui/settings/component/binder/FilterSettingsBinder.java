@@ -47,6 +47,7 @@ public class FilterSettingsBinder implements ComponentSettingsBinder<Filter, Fil
             Filter.Configuration defaultConfiguration = component.getConfiguration(settings.getDefaultConfigurationId());
             if (defaultConfiguration != null) {
                 component.setCurrentConfiguration(defaultConfiguration);
+                component.apply();
             }
         }
     }

@@ -453,8 +453,39 @@
     </category>
 
 
-    <category name="Web Services">
-        <codeSnippet name="Call GET web service" contextTypes="service" minJavaVersion="11">
+    <category name="Web">
+        <codeSnippet name="Open web page" contextTypes="service">
+            <inject variable="webBrowserToolsProvider" classQualifiedName="org.springframework.beans.factory.ObjectProvider&lt;io.jmix.ui.WebBrowserTools&gt;"/>
+
+            <text language="java">
+                webBrowserToolsProvider.getObject().showWebPage("https://jmix.io", io.jmix.core.common.util.ParamsMap.of("target", "_blank"));
+            </text>
+            <text language="kotlin">
+                webBrowserToolsProvider.getObject().showWebPage("https://jmix.io", mapOf("target" to "_blank"))
+            </text>
+
+            <description>
+                Open a web page in a browser tab
+            </description>
+        </codeSnippet>
+
+
+        <codeSnippet name="Open web page" contextTypes="controller">
+            <inject variable="webBrowserTools" classQualifiedName="io.jmix.ui.WebBrowserTools"/>
+
+            <text language="java">
+                webBrowserTools.showWebPage("https://jmix.io", io.jmix.core.common.util.ParamsMap.of("target", "_blank"));
+            </text>
+            <text language="kotlin">
+                webBrowserTools.showWebPage("https://jmix.io", mapOf("target" to "_blank"))
+            </text>
+
+            <description>
+                Open a web page in a browser tab
+            </description>
+        </codeSnippet>
+
+        <codeSnippet name="Call GET web service" contextTypes="service,controller" minJavaVersion="11">
             <urlInputParameter code="url" text="URL"/>
             <classInputParameter code="returnType" text="Return type" optional="true"/>
 
@@ -496,7 +527,7 @@
             </text>
         </codeSnippet>
 
-        <codeSnippet name="Call POST web service" contextTypes="service" minJavaVersion="11">
+        <codeSnippet name="Call POST web service" contextTypes="service,controller" minJavaVersion="11">
             <urlInputParameter code="url" text="URL"/>
             <variableInputParameter code="requestBodyObject" text="Request Body Object" optional="true"/>
 

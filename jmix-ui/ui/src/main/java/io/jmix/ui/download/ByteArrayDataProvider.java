@@ -80,7 +80,11 @@ public class ByteArrayDataProvider implements DownloadDataProvider {
                 @Override
                 public void close() throws IOException {
                     super.close();
-                    file.delete();
+                    try {
+                        FileUtils.delete(file);
+                    } catch (IOException e) {
+                        log.warn("Unable to delete temp file " + file.getAbsolutePath());
+                    }
                 }
             };
         } catch (FileNotFoundException e) {

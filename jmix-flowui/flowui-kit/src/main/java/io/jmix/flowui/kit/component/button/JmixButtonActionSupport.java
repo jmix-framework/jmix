@@ -81,6 +81,7 @@ public class JmixButtonActionSupport {
             case SUCCESS:
                 component.addThemeVariants(ButtonVariant.LUMO_SUCCESS);
                 break;
+            default:
         }
     }
 
@@ -95,6 +96,7 @@ public class JmixButtonActionSupport {
             case SUCCESS:
                 component.removeThemeVariants(ButtonVariant.LUMO_SUCCESS);
                 break;
+            default:
         }
     }
 

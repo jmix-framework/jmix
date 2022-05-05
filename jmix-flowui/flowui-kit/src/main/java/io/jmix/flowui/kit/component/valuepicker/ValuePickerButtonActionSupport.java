@@ -81,6 +81,7 @@ public class ValuePickerButtonActionSupport {
                     button.setShortcutCombination(action.getShortcutCombination());
                     button.setTitle(generateTitle(action));
                     break;
+                default:
             }
         });
     }

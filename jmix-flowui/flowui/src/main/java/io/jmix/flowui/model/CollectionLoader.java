@@ -20,6 +20,7 @@ import io.jmix.core.FetchPlan;
 import io.jmix.core.LoadContext;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.flowui.SameAsUi;
+import io.jmix.flowui.screen.Subscribe;
 
 import java.util.EventObject;
 import java.util.List;

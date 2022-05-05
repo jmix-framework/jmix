@@ -20,6 +20,7 @@ import io.jmix.core.ValueLoadContext;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.flowui.SameAsUi;
+import io.jmix.flowui.screen.Subscribe;
 
 import javax.annotation.Nullable;
 import java.util.EventObject;

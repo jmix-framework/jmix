@@ -314,7 +314,7 @@ public class MetadataTools {
     /**
      * @param metaClass
      * @param type      - type of operation to find properties.
-     * @return properties with {@link CascadeType} containg {@link CascadeType.ALL} or specified type
+     * @return properties with {@link CascadeType} containg {@link CascadeType#ALL} or specified type
      */
     public List<MetaProperty> getCascadeProperties(MetaClass metaClass, @Nullable CascadeType type) {
         if (metaClass.getAnnotations().containsKey(CASCADE_PROPERTIES_ANN_NAME)) {

@@ -20,6 +20,7 @@ import io.jmix.core.EntitySet;
 import io.jmix.core.SaveContext;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.flowui.SameAsUi;
+import io.jmix.flowui.screen.Subscribe;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nullable;

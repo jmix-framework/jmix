@@ -22,8 +22,7 @@ import io.jmix.flowui.SimilarToUi;
  * A possible outcome of screens extending {@link StandardEditor} and {@link StandardLookup}.
  * <p>
  * Constants of this enum can be used instead of {@link CloseAction} instances in {@link Screen#close(StandardOutcome)}
- * method to initiate closing and in {@link Screen.AfterCloseEvent#closedWith(StandardOutcome)},
- * {@link AfterScreenCloseEvent#closedWith(StandardOutcome)}.
+ * method to initiate closing and in {@link Screen.AfterCloseEvent#closedWith(StandardOutcome)}.
  * method to determine how the screen was closed.
  *
  * @see #CLOSE

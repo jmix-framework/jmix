@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,6 @@
  */
 
 @Experimental
-@NonNullApi
-package io.jmix.dataimport.extractor.data;
+package io.jmix.dataimport.result;
 
 import io.jmix.core.annotation.Experimental;
-import org.springframework.lang.NonNullApi;

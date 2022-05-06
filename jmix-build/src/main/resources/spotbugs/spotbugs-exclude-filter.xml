@@ -43,10 +43,14 @@
         <Bug pattern="SE_BAD_FIELD"/> <!-- We do not check serializable fields in UI components -->
     </Match>
 
-    <!-- False positive -->
+    <!-- False positives -->
     <Match>
         <Class name="io.jmix.core.impl.ResourcesImpl"/>
         <Method name="getResourceAsString"/>
+    </Match>
+    <Match>
+        <Class name="io.jmix.ui.sys.vaadin.JmixUIProvider"/>
+        <Method name="getWidgetsetInfo"/>
     </Match>
 
     <!-- Ignored CUBA compatibility module -->

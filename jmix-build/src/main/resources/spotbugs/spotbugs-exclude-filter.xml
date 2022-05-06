@@ -42,15 +42,28 @@
     <Match>
         <Bug pattern="SE_BAD_FIELD"/> <!-- We do not check serializable fields in UI components -->
     </Match>
+    <Match>
+        <Bug pattern="MC_OVERRIDABLE_METHOD_CALL_IN_CLONE"/>
+    </Match>
 
-    <!-- False positives -->
+    <!-- False positives (since Java 11) -->
     <Match>
         <Class name="io.jmix.core.impl.ResourcesImpl"/>
         <Method name="getResourceAsString"/>
+        <Bug pattern="NP_LOAD_OF_KNOWN_NULL_VALUE"/>
     </Match>
     <Match>
         <Class name="io.jmix.ui.sys.vaadin.JmixUIProvider"/>
         <Method name="getWidgetsetInfo"/>
+        <Bug pattern="NP_LOAD_OF_KNOWN_NULL_VALUE"/>
+    </Match>
+    <Match>
+        <Class name="io.jmix.bpmui.screen.dmndecisiontable.DmnDecisionTableBrowse"/>
+        <Bug pattern="NP_LOAD_OF_KNOWN_NULL_VALUE"/>
+    </Match>
+    <Match>
+        <Class name="io.jmix.bpmui.screen.processdefinition.ProcessDefinitionBrowse"/>
+        <Bug pattern="NP_LOAD_OF_KNOWN_NULL_VALUE"/>
     </Match>
 
     <!-- Ignored CUBA compatibility module -->
@@ -102,6 +115,11 @@
             <Class name="io.jmix.ui.model.impl.ObservableList"/>
             <Class name="io.jmix.ui.model.impl.ObservableSet"/>
         </Or>
+    </Match>
+
+    <Match>
+        <Bug pattern="MS_EXPOSE_REP"/>
+        <Class name="io.jmix.reports.ReportPrintHelper"/>
     </Match>
 
     <!--  Nullability  -->

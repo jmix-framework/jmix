@@ -330,7 +330,7 @@ Value for the "email" property is taken from the "Customer Email" column.
 Let's suppose that the Customer entity has two separate attributes for the "firstName" and for the "lastName". The values of these attributes should be taken from a single "Customer Name" column of the CSV file. We'll use custom property mapping for that:
 
 ```java
- ImportConfiguration importConfiguration = ImportConfiguration.builder(Customer.class, InputDataFormat.XLSX)
+ ImportConfiguration importConfiguration = ImportConfiguration.builder(Customer.class, InputDataFormat.CSV)
                 .addSimplePropertyMapping("email", "Customer Email")
                 .addCustomPropertyMapping("firstName", customMappingContext -> {
                     String fullName = (String) customMappingContext.getRawValues().get("Customer Name");

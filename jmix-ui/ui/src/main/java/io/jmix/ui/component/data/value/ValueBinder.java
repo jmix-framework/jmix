@@ -366,13 +366,15 @@ public class ValueBinder {
                     targetItem = EntityValues.getValueEx(rootItem, basePropertyItem);
                 }
 
-                String propertyName = metaPropertyPath.getMetaProperty().getName();
-                Object value = EntityValues.getValue(targetItem, propertyName);
+                if (targetItem != null) {
+                    String propertyName = metaPropertyPath.getMetaProperty().getName();
+                    Object value = EntityValues.getValue(targetItem, propertyName);
 
-                Collection<String> erasedAttributes = EntitySystemAccess.getSecurityState(targetItem).getErasedAttributes();
+                    Collection<String> erasedAttributes = EntitySystemAccess.getSecurityState(targetItem).getErasedAttributes();
 
-                if (value == null && erasedAttributes.contains(propertyName)) {
-                    field.setRequired(false);
+                    if (value == null && erasedAttributes.contains(propertyName)) {
+                        field.setRequired(false);
+                    }
                 }
             }
         }

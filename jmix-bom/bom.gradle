@@ -90,8 +90,8 @@ dependencies {
         api 'cn.jmix:jmixcn-baidufs:1.0.0'
         api 'cn.jmix:jmixcn-baidufs-starter:1.0.0'
         
-        api 'cn.jmix:jmixcn-imagecropper:0.0.1'
-        api 'cn.jmix:jmixcn-imagecropper-starter:0.0.1'
+        api 'cn.jmix:jmixcn-imagecropper:0.0.2'
+        api 'cn.jmix:jmixcn-imagecropper-starter:0.0.2'
 
         api 'de.diedavids.jmix.wizard:jmix-wizard:1.1.0'
         api 'de.diedavids.jmix.wizard:jmix-wizard-starter:1.1.0'

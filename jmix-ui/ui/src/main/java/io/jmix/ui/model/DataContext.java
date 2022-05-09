@@ -31,7 +31,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
- * Interface for tracking changes in entities loaded to the client tier.
+ * Interface for tracking changes in entities loaded to UI.
  * <p>
  * Within {@code DataContext}, an entity with the given identifier is represented by a single object instance, no matter
  * where and how many times it is used in object graphs.
@@ -183,8 +183,8 @@ public interface DataContext {
     Set<Object> getRemoved();
 
     /**
-     * Commits changed and removed instances to the middleware. After successful commit, the context contains
-     * updated instances returned from the middleware.
+     * Commits changed and removed instances using DataManager or a custom commit delegate. After successful commit, the context contains
+     * updated instances returned from the backend code.
      *
      * @see #setParent(DataContext)
      * @return set of committed and merged back to the context instances. Does not contain removed instances.
@@ -193,14 +193,14 @@ public interface DataContext {
 
     /**
      * Returns a parent context, if any. If the parent context is set, {@link #commit()} method merges the changed instances
-     * to it instead of sending to the middleware.
+     * to it instead of sending them to DataManager or a custom commit delegate.
      */
     @Nullable
     DataContext getParent();
 
     /**
      * Sets the parent context. If the parent context is set, {@link #commit()} method merges the changed instances
-     * to it instead of sending to the middleware.
+     * to it instead of sending them to DataManager or a custom commit delegate.
      */
     void setParent(DataContext parentContext);
 
@@ -338,7 +338,7 @@ public interface DataContext {
     /**
      * Event sent after committing changes.
      * <p>
-     * In this event listener, you can get the collection of committed entities returned from the middle tier, for example:
+     * In this event listener, you can get the collection of committed entities returned from DataManager or a custom service. These entities are already merged into the DataContext. For example:
      * <pre>
      *     &#64;Subscribe(target = Target.DATA_CONTEXT)
      *     protected void onPostCommit(DataContext.PostCommitEvent event) {

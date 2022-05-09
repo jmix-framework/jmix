@@ -24,7 +24,7 @@ import java.util.Map;
 
 /**
  * The root interface in the <i>data loaders</i> hierarchy. Data loaders are designed to load entity instances and
- * collections from the middle tier to data containers.
+ * collections from DataManager or custom services to data containers.
  *
  * @see InstanceContainer
  * @see CollectionContainer

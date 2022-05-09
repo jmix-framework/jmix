@@ -20,7 +20,9 @@ import io.jmix.ui.meta.StudioElement;
 import io.jmix.ui.meta.StudioProperty;
 
 /**
- * A theme resource, e.g. <code>VAADIN/themes/yourtheme/some/path/image.png</code>.
+ * A resource located in the current UI theme.
+ *
+ * @see #setPath(String)
  */
 @StudioElement(
         caption = "Theme Resource",
@@ -30,8 +32,9 @@ import io.jmix.ui.meta.StudioProperty;
 public interface ThemeResource extends Resource {
 
     /**
-     * @param path path to the theme resource, e.g. "some/path/image.png"
-     * @return current ThemeResource instance
+     * @param path relative path to the theme resource, e.g. "images/image.png" for the resource
+     *             located at {@code src/main/themes/mytheme/images/image.png} if the current theme is "mytheme"
+     * @return this ThemeResource instance
      */
     @StudioProperty(required = true)
     ThemeResource setPath(String path);

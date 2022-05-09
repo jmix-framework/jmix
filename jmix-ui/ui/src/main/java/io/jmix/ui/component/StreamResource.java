@@ -20,7 +20,9 @@ import java.io.InputStream;
 import java.util.function.Supplier;
 
 /**
- * A resource provided to the client directly by the application.
+ * A resource provided as an {@code InputStream}.
+ *
+ * @see #setStreamSupplier(Supplier)
  */
 public interface StreamResource extends Resource, ResourceView.HasMimeType, ResourceView.HasStreamSettings {
 

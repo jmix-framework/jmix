@@ -23,7 +23,9 @@ import io.jmix.ui.meta.StudioProperty;
 import java.net.URL;
 
 /**
- * A resource that can be loaded from the given <code>URL</code>.
+ * A resource that can be loaded from an arbitrary URL.
+ *
+ * @see #setUrl(URL)
  */
 @StudioElement(
         caption = "URL Resource",

@@ -19,10 +19,16 @@ package io.jmix.ui.component;
 import io.jmix.core.FileRef;
 
 /**
- * A resource that can be obtained from the <code>FileStorage</code> using the given file reference.
+ * A resource stored in the FileStorage.
+ *
+ * @see #setFileReference(FileRef)
  */
 public interface FileStorageResource extends Resource, ResourceView.HasMimeType, ResourceView.HasStreamSettings {
 
+    /**
+     * @param fileReference reference to the file in file storage
+     * @return this FileStorageResource instance
+     */
     FileStorageResource setFileReference(FileRef fileReference);
 
     FileRef getFileReference();

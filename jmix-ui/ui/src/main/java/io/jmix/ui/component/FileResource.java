@@ -23,7 +23,9 @@ import io.jmix.ui.meta.StudioProperty;
 import java.io.File;
 
 /**
- * A resource that is stored in the file system as the given <code>File</code>.
+ * A resource that is stored in the server file system.
+ *
+ * @see #setFile(File)
  */
 @StudioElement(
         caption = "File Resource",
@@ -32,6 +34,10 @@ import java.io.File;
 )
 public interface FileResource extends Resource, ResourceView.HasStreamSettings {
 
+    /**
+     * @param file file in the server file system
+     * @return this FileResource instance
+     */
     @StudioProperty(name = "path", type = PropertyType.STRING, required = true)
     FileResource setFile(File file);
 

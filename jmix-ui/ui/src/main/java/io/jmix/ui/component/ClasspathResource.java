@@ -20,12 +20,9 @@ import io.jmix.ui.meta.StudioElement;
 import io.jmix.ui.meta.StudioProperty;
 
 /**
- * A resource that is located in classpath with the given <code>path</code>.
- * <p>
- * For obtaining resources the {@link io.jmix.core.Resources} infrastructure interface is using.
- * <p>
- * For example if your resource is located in the web module and has the following path: "com/company/app/web/images/image.png",
- * ClassPathResource's path should be: "/com/company/app/web/images/image.png".
+ * A resource that is located in classpath.
+ *
+ * @see #setPath(String)
  */
 @StudioElement(
         caption = "Classpath Resource",
@@ -34,6 +31,11 @@ import io.jmix.ui.meta.StudioProperty;
 )
 public interface ClasspathResource extends Resource, ResourceView.HasMimeType, ResourceView.HasStreamSettings {
 
+    /**
+     * @param path relative path to the resource, e.g. "/com/company/app/images/image.png" for a resource
+     *             located at {@code src/main/resources/com/company/app/images/image.png}
+     * @return this ClasspathResource instance
+     */
     @StudioProperty(name = "path", required = true)
     ClasspathResource setPath(String path);
 

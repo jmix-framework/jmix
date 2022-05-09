@@ -80,29 +80,29 @@ public interface Image<T> extends ResourceView, HasValueSource<T> {
 
     /**
      * Defines image scale mode.
+     * Corresponds to the {@code object-fit} CSS property.
      */
     enum ScaleMode {
         /**
-         * The image will be stretched according to the size of the component.
+         * The image is stretched according to the size of the component.
          */
         FILL,
         /**
-         * The image will be compressed or stretched to the minimum measurement of the component while preserving the
-         * proportions.
+         * The image is compressed or stretched to fit the component dimensions while preserving the proportions.
          */
         CONTAIN,
         /**
-         * The image will be compressed or stretched with proportions to fill component's sizes. If the image
-         * proportions do not match the component's proportions then the image will be clipped to fit.
+         * The image is compressed or stretched to fill the entire component while preserving the proportions.
+         * If the image proportions do not match the component's proportions then the image will be clipped to fit.
          */
         COVER,
         /**
-         * The content changes size by comparing the difference between NONE and CONTAIN, in order to find the smallest
-         * concrete size of the object.
+         * The image is sized as if {@link #NONE} or {@link #CONTAIN} were specified, whichever would result
+         * in a smaller concrete object size.
          */
         SCALE_DOWN,
         /**
-         * The image will have a real size.
+         * The image is not resized.
          */
         NONE
     }

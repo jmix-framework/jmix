@@ -168,9 +168,9 @@ public class MenuItemCommands {
         LoadContext ctx = new LoadContext(metaClass)
                 .setId(id);
 
-        String entityView = propertyElement.attributeValue("entityView");
-        if (StringUtils.isNotEmpty(entityView)) {
-            ctx.setFetchPlan(fetchPlanRepository.getFetchPlan(metaClass, entityView));
+        String fetchPlan = loadEntityFetchPlan(propertyElement);
+        if (StringUtils.isNotEmpty(fetchPlan)) {
+            ctx.setFetchPlan(fetchPlanRepository.getFetchPlan(metaClass, fetchPlan));
         }
 
         //noinspection unchecked
@@ -181,6 +181,13 @@ public class MenuItemCommands {
         }
 
         return new UiControllerProperty(propertyName, entity, UiControllerProperty.Type.REFERENCE);
+    }
+
+    protected String loadEntityFetchPlan(Element propertyElement) {
+        String entityFetchPlan = propertyElement.attributeValue("entityFetchPlan");
+        return StringUtils.isNotEmpty(entityFetchPlan)
+                ? entityFetchPlan
+                : propertyElement.attributeValue("entityView"); // for backward compatibility
     }
 
     @Nullable

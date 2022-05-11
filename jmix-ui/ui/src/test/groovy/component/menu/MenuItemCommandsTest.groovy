@@ -188,7 +188,7 @@ class MenuItemCommandsTest extends ScreenSpecification {
         <property name="testIntProperty" value="42"/>
         <property name="testStringProperty" value="Hello World!"/>
         <property name="entityToEdit" entityClass="test_support.entity.sales.Order" 
-                entityId="60885987-1b61-4247-94c7-dff348347f93" entityView="_local"/> 
+                entityId="60885987-1b61-4247-94c7-dff348347f93" entityFetchPlan="_local"/> 
     </properties>
 </item>
 ''').rootElement

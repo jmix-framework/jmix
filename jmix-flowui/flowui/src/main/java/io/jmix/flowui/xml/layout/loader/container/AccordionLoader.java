@@ -20,7 +20,6 @@ import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.accordion.AccordionPanel;
 import com.vaadin.flow.component.details.Details;
 import io.jmix.flowui.xml.layout.ComponentLoader;
-import io.jmix.flowui.xml.layout.loader.AbstractContainerLoader;
 import io.jmix.flowui.xml.layout.loader.LayoutLoader;
 import io.jmix.flowui.xml.layout.loader.component.DetailsLoader;
 import org.dom4j.Element;

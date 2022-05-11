@@ -40,26 +40,24 @@ public class ComboBoxLoader extends AbstractComponentLoader<JmixComboBox<?>> {
     public void loadComponent() {
         getDataLoaderSupport().loadData(resultComponent, element);
 
-        loadString(element, "label", resultComponent::setLabel);
         loadBoolean(element, "opened", resultComponent::setOpened);
         loadString(element, "pattern", resultComponent::setPattern);
-        loadBoolean(element, "invalid", resultComponent::setInvalid);
         loadInteger(element, "pageSize", resultComponent::setPageSize);
         loadBoolean(element, "autoOpen", resultComponent::setAutoOpen);
         loadBoolean(element, "autofocus", resultComponent::setAutofocus);
-        loadString(element, "placeHolder", resultComponent::setPlaceholder);
+        loadString(element, "placeholder", resultComponent::setPlaceholder);
         loadBoolean(element, "allowCustomValue", resultComponent::setAllowCustomValue);
         loadBoolean(element, "clearButtonVisible", resultComponent::setClearButtonVisible);
         loadBoolean(element, "preventInvalidInput", resultComponent::setPreventInvalidInput);
-        loadResourceString("errorMessage", context.getMessageGroup(), resultComponent::setErrorMessage);
-        loadBoolean(element, "requiredIndicatorVisible", resultComponent::setRequiredIndicatorVisible);
 
+        componentLoader().loadLabel(resultComponent, element);
         componentLoader().loadEnabled(resultComponent, element);
         componentLoader().loadClassName(resultComponent, element);
         componentLoader().loadThemeName(resultComponent, element);
         componentLoader().loadHelperText(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
-        componentLoader().loadRequiredMessage(resultComponent, context);
+        componentLoader().loadRequired(resultComponent, element, context);
         componentLoader().loadValueAndElementAttributes(resultComponent, element);
+        componentLoader().loadValidationAttributes(resultComponent, element, context);
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2022 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package io.jmix.flowui.xml.layout.loader.container;
 
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
-import io.jmix.flowui.xml.layout.loader.AbstractContainerLoader;
 
 public class TabsLoader extends AbstractContainerLoader<Tabs> {
 
@@ -45,10 +44,6 @@ public class TabsLoader extends AbstractContainerLoader<Tabs> {
         loadSubComponents();
     }
 
-    protected void setContent(Tab selectedTab) {
-        //setContext(selectedTab);
-    }
-
     public static class TabLoader extends AbstractContainerLoader<Tab> {
 
         @Override
@@ -59,7 +54,6 @@ public class TabsLoader extends AbstractContainerLoader<Tabs> {
         @Override
         public void initComponent() {
             super.initComponent();
-            loadString(element, "label", resultComponent::setLabel);
 
             createSubComponents(resultComponent, element);
         }
@@ -67,9 +61,9 @@ public class TabsLoader extends AbstractContainerLoader<Tabs> {
         @Override
         public void loadComponent() {
             //TODO: kremnevda, will be extended by JmixTabSheet 13.04.2022
-            loadString(element, "label", resultComponent::setLabel);
             loadDouble(element, "flexGrow", resultComponent::setFlexGrow);
 
+            componentLoader().loadLabel(resultComponent, element);
             componentLoader().loadEnabled(resultComponent, element);
             componentLoader().loadThemeName(resultComponent, element);
             componentLoader().loadClassName(resultComponent, element);

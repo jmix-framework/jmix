@@ -16,8 +16,6 @@
 
 package io.jmix.flowui.xml.layout.loader.component;
 
-import com.vaadin.flow.component.textfield.Autocapitalize;
-import com.vaadin.flow.component.textfield.Autocomplete;
 import com.vaadin.flow.component.textfield.PasswordField;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 
@@ -31,29 +29,28 @@ public class PasswordFieldLoader extends AbstractComponentLoader<PasswordField> 
 
     @Override
     public void loadComponent() {
-        loadString(element, "label", resultComponent::setLabel);
-        loadString(element, "title", resultComponent::setTitle);
         loadString(element, "value", resultComponent::setValue);
         loadString(element, "pattern", resultComponent::setPattern);
-        loadBoolean(element, "invalid", resultComponent::setInvalid);
         loadBoolean(element, "required", resultComponent::setRequired);
         loadBoolean(element, "autofocus", resultComponent::setAutofocus);
-        loadBoolean(element, "autoSelect", resultComponent::setAutoselect);
+        loadBoolean(element, "autoselect", resultComponent::setAutoselect);
         loadString(element, "placeholder", resultComponent::setPlaceholder);
-        loadBoolean(element, "autoCorrect", resultComponent::setAutocorrect);
         loadBoolean(element, "clearButtonVisible", resultComponent::setClearButtonVisible);
         loadBoolean(element, "preventInvalidInput", resultComponent::setPreventInvalidInput);
-        loadEnum(element, Autocomplete.class, "autoComplete", resultComponent::setAutocomplete);
-        loadResourceString("errorMessage", context.getMessageGroup(), resultComponent::setErrorMessage);
-        loadEnum(element, Autocapitalize.class, "autoCapitalize", resultComponent::setAutocapitalize);
         loadBoolean(element, "revealButtonVisible", resultComponent::setRevealButtonVisible);
+        loadResourceString(element.attributeValue("title"), context.getMessageGroup(), resultComponent::setTitle);
 
+        componentLoader().loadLabel(resultComponent, element);
         componentLoader().loadEnabled(resultComponent, element);
         componentLoader().loadThemeName(resultComponent, element);
         componentLoader().loadClassName(resultComponent, element);
         componentLoader().loadHelperText(resultComponent, element);
+        componentLoader().loadAutocomplete(resultComponent, element);
+        componentLoader().loadAutocapitalize(resultComponent, element);
+        componentLoader().loadAutocorrect(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
         componentLoader().loadValueChangeMode(resultComponent, element);
         componentLoader().loadValueAndElementAttributes(resultComponent, element);
+        componentLoader().loadValidationAttributes(resultComponent, element, context);
     }
 }

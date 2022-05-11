@@ -29,7 +29,7 @@ public class AvatarLoader extends AbstractComponentLoader<Avatar> {
     @Override
     public void loadComponent() {
         loadString(element, "name", resultComponent::setName);
-        loadString(element, "image", resultComponent::setName);
+        loadString(element, "image", resultComponent::setImage);
         loadInteger(element, "colorIndex", resultComponent::setColorIndex);
         loadString(element, "abbreviation", resultComponent::setAbbreviation);
 

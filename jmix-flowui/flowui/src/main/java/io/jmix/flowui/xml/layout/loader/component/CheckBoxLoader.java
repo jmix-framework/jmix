@@ -41,11 +41,12 @@ public class CheckBoxLoader extends AbstractComponentLoader<Checkbox> {
     public void loadComponent() {
         getDataLoaderSupport().loadData(resultComponent, element);
 
-        loadString(element, "label", resultComponent::setLabel);
+        loadBoolean(element, "value", resultComponent::setValue);
         loadBoolean(element, "autofocus", resultComponent::setAutofocus);
         loadBoolean(element, "indeterminate", resultComponent::setIndeterminate);
         loadString(element, "ariaLabel", resultComponent::setAriaLabel);
 
+        componentLoader().loadLabel(resultComponent, element);
         componentLoader().loadEnabled(resultComponent, element);
         componentLoader().loadClassName(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);

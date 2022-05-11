@@ -17,9 +17,10 @@
 package io.jmix.flowui.xml.layout.loader.component;
 
 import io.jmix.flowui.component.timepicker.TypedTimePicker;
+import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import io.jmix.flowui.xml.layout.support.DataLoaderSupport;
 
-public class TimePickerLoader extends AbstractTypedFieldLoader<TypedTimePicker<?>> {
+public class TimePickerLoader extends AbstractComponentLoader<TypedTimePicker<?>> {
 
     protected DataLoaderSupport dataLoaderSupport;
 
@@ -37,23 +38,20 @@ public class TimePickerLoader extends AbstractTypedFieldLoader<TypedTimePicker<?
 
     @Override
     public void loadComponent() {
-        super.loadComponent();
-
         getDataLoaderSupport().loadData(resultComponent, element);
+        componentLoader().loadDatatype(resultComponent, element);
 
-        loadString(element, "label", resultComponent::setLabel);
-        loadBoolean(element, "invalid", resultComponent::setInvalid);
         loadBoolean(element, "autoOpen", resultComponent::setAutoOpen);
-        loadString(element, "placeHolder", resultComponent::setPlaceholder);
+        loadString(element, "placeholder", resultComponent::setPlaceholder);
         loadBoolean(element, "clearButtonVisible", resultComponent::setClearButtonVisible);
-        loadResourceString("errorMessage", context.getMessageGroup(), resultComponent::setErrorMessage);
-        loadBoolean(element, "requiredIndicatorVisible", resultComponent::setRequiredIndicatorVisible);
 
+        componentLoader().loadLabel(resultComponent, element);
         componentLoader().loadEnabled(resultComponent, element);
         componentLoader().loadClassName(resultComponent, element);
         componentLoader().loadHelperText(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
-        componentLoader().loadRequiredMessage(resultComponent, context);
+        componentLoader().loadRequired(resultComponent, element, context);
         componentLoader().loadValueAndElementAttributes(resultComponent, element);
+        componentLoader().loadValidationAttributes(resultComponent, element, context);
     }
 }

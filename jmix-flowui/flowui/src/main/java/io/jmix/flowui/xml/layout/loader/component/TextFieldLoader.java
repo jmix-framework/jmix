@@ -17,10 +17,11 @@
 package io.jmix.flowui.xml.layout.loader.component;
 
 import io.jmix.flowui.component.textfield.TypedTextField;
+import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import io.jmix.flowui.xml.layout.support.DataLoaderSupport;
 
 //TODO: gg, create base AbstractTextFieldLoader
-public class TextFieldLoader extends AbstractTypedFieldLoader<TypedTextField<?>> {
+public class TextFieldLoader extends AbstractComponentLoader<TypedTextField<?>> {
 
     protected DataLoaderSupport dataLoaderSupport;
 
@@ -38,30 +39,32 @@ public class TextFieldLoader extends AbstractTypedFieldLoader<TypedTextField<?>>
 
     @Override
     public void loadComponent() {
-        super.loadComponent();
-
         getDataLoaderSupport().loadData(resultComponent, element);
 
-        loadString(element, "label", resultComponent::setLabel);
-        loadString(element, "title", resultComponent::setTitle);
+        componentLoader().loadDatatype(resultComponent, element);
+        loadString(element, "value", resultComponent::setValue);
+
         loadString(element, "pattern", resultComponent::setPattern);
-        loadBoolean(element, "invalid", resultComponent::setInvalid);
         loadBoolean(element, "autofocus", resultComponent::setAutofocus);
         loadInteger(element, "maxLength", resultComponent::setMaxLength);
         loadInteger(element, "minLength", resultComponent::setMinLength);
-        loadBoolean(element, "autoSelect", resultComponent::setAutoselect);
-        loadString(element, "placeHolder", resultComponent::setPlaceholder);
+        loadBoolean(element, "autoselect", resultComponent::setAutoselect);
+        loadString(element, "placeholder", resultComponent::setPlaceholder);
+        loadBoolean(element, "clearButtonVisible", resultComponent::setClearButtonVisible);
+        loadResourceString(element.attributeValue("title"), context.getMessageGroup(), resultComponent::setTitle);
 
+        componentLoader().loadLabel(resultComponent, element);
         componentLoader().loadEnabled(resultComponent, element);
         componentLoader().loadThemeName(resultComponent, element);
         componentLoader().loadClassName(resultComponent, element);
         componentLoader().loadHelperText(resultComponent, element);
-        componentLoader().loadAutoCorrect(resultComponent, element);
-        componentLoader().loadAutoComplete(resultComponent, element);
-        componentLoader().loadAutoCapitalize(resultComponent, element);
+        componentLoader().loadAutocorrect(resultComponent, element);
+        componentLoader().loadAutocomplete(resultComponent, element);
+        componentLoader().loadAutocapitalize(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
         componentLoader().loadValueChangeMode(resultComponent, element);
-        componentLoader().loadRequiredMessage(resultComponent, context);
+        componentLoader().loadRequired(resultComponent, element, context);
         componentLoader().loadValueAndElementAttributes(resultComponent, element);
+        componentLoader().loadValidationAttributes(resultComponent, element, context);
     }
 }

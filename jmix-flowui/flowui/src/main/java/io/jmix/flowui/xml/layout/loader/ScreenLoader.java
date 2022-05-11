@@ -25,6 +25,7 @@ import io.jmix.flowui.screen.Screen;
 import io.jmix.flowui.screen.ScreenActions;
 import io.jmix.flowui.screen.UiControllerUtils;
 import io.jmix.flowui.xml.layout.ComponentRootLoader;
+import io.jmix.flowui.xml.layout.loader.container.AbstractContainerLoader;
 import io.jmix.flowui.xml.layout.support.ActionLoaderSupport;
 import org.dom4j.Element;
 
@@ -39,12 +40,6 @@ public class ScreenLoader extends AbstractContainerLoader<Screen> implements Com
         }
         return actionLoaderSupport;
     }
-
-//    @Autowired
-//    ScreenLoader(ComponentLoaderSupport componentLoaderSupport, ActionLoaderSupport actionLoaderSupport) {
-//        this.componentLoaderSupport = componentLoaderSupport;
-//        this.actionLoaderSupport = actionLoaderSupport;
-//    }
 
     public void setResultComponent(Screen screen) {
         this.resultComponent = screen;
@@ -85,24 +80,12 @@ public class ScreenLoader extends AbstractContainerLoader<Screen> implements Com
 
         // TODO: gg, add corresponding interfaces to screen itself?
         VerticalLayout screenRootComponents = resultComponent.getContent();
-        loadThemableAttributes(screenRootComponents, layoutElement);
-//        loadMargin(resultComponent, layoutElement);
-        componentLoader().loadSizeAttributes(screenRootComponents, layoutElement);
-        loadFlexibleAttributes(screenRootComponents, layoutElement);
-//        getComponentLoaderSupport().loadWidth(screenRootComponents, layoutElement);
-//        getComponentLoaderSupport().loadHeight(screenRootComponents, layoutElement);
-//        loadStyleName(resultComponent, layoutElement);
-//        loadResponsive(resultComponent, layoutElement);
-//        loadCss(resultComponent, element);
-//        loadVisible(resultComponent, layoutElement);
 
+        componentLoader().loadThemableAttributes(screenRootComponents, layoutElement);
+        componentLoader().loadFlexibleAttributes(screenRootComponents, layoutElement);
+        componentLoader().loadEnabled(screenRootComponents, layoutElement);
 
         loadSubComponentsAndExpand(screenRootComponents, layoutElement);
-//        setComponentsRatio(resultComponent, layoutElement);
-
-//        loadFocusedComponent(resultComponent, element);
-
-//        loadFacets(resultComponent, element);
     }
 
     protected void loadScreenData(Screen screen, Element element) {

@@ -18,8 +18,8 @@ package io.jmix.flowui.xml.layout.loader.component;
 
 import com.vaadin.flow.component.details.Details;
 import io.jmix.flowui.xml.layout.ComponentLoader;
-import io.jmix.flowui.xml.layout.loader.AbstractContainerLoader;
 import io.jmix.flowui.xml.layout.loader.LayoutLoader;
+import io.jmix.flowui.xml.layout.loader.container.AbstractContainerLoader;
 import org.dom4j.Element;
 
 public class DetailsLoader extends AbstractContainerLoader<Details> {

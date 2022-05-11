@@ -17,16 +17,11 @@
 package io.jmix.flowui.xml.layout.loader;
 
 import com.vaadin.flow.component.Component;
-import io.jmix.core.ClassManager;
-import io.jmix.core.MessageTools;
-import io.jmix.core.Messages;
-import io.jmix.flowui.Actions;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.LoaderResolver;
 import io.jmix.flowui.xml.layout.support.ComponentLoaderSupport;
 import io.jmix.flowui.xml.layout.support.LoaderSupport;
-import io.micrometer.core.instrument.MeterRegistry;
 import org.dom4j.Element;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
@@ -150,29 +145,9 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
         this.loaderSupport = loaderSupport;
     }
 
-    protected Messages getMessages() {
-        return applicationContext.getBean(Messages.class);
-    }
-
-    protected Actions getActions() {
-        return applicationContext.getBean(Actions.class);
-    }
-
-    protected MessageTools getMessageTools() {
-        return applicationContext.getBean(MessageTools.class);
-    }
-
-    protected ClassManager getClassManager() {
-        return applicationContext.getBean(ClassManager.class);
-    }
-
     /*protected UiProperties getProperties() {
         return applicationContext.getBean(UiProperties.class);
     }*/
-
-    protected MeterRegistry getMeterRegistry() {
-        return applicationContext.getBean(MeterRegistry.class);
-    }
 
     protected LayoutLoader getLayoutLoader() {
         return applicationContext.getBean(LayoutLoader.class, context);

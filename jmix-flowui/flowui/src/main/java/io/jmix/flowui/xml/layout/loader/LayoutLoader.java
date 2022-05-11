@@ -99,6 +99,10 @@ public class LayoutLoader {
     protected ScreenLoader getScreenLoader(Element rootScreenElement) {
         Class<? extends ComponentLoader> loaderClass = loaderResolver.getScreenLoader(rootScreenElement);
 
+        if (loaderClass == null) {
+            throw new IllegalStateException(String.format("Loader for %s not found", rootScreenElement.getName()));
+        }
+
         return (ScreenLoader) initLoader(rootScreenElement, loaderClass);
     }
 

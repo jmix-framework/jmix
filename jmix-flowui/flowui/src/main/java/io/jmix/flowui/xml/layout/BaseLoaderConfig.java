@@ -16,18 +16,10 @@
 
 package io.jmix.flowui.xml.layout;
 
-
 import com.vaadin.flow.component.Component;
 import io.jmix.flowui.xml.layout.loader.component.*;
-import io.jmix.flowui.xml.layout.loader.container.AccordionLoader;
-import io.jmix.flowui.xml.layout.loader.container.ScrollerLoader;
-import io.jmix.flowui.xml.layout.loader.container.TabsLoader;
-import io.jmix.flowui.xml.layout.loader.html.component.HrLoader;
-import io.jmix.flowui.xml.layout.loader.html.component.IFrameLoader;
-import io.jmix.flowui.xml.layout.loader.html.component.InputLoader;
-import io.jmix.flowui.xml.layout.loader.html.component.ParamLoader;
-import io.jmix.flowui.xml.layout.loader.html.container.*;
-import io.jmix.flowui.xml.layout.loader.layout.*;
+import io.jmix.flowui.xml.layout.loader.container.*;
+import io.jmix.flowui.xml.layout.loader.html.*;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -66,6 +58,9 @@ public abstract class BaseLoaderConfig {
         loaders.put("numberField", NumberFieldLoader.class);
         loaders.put("passwordField", PasswordFieldLoader.class);
         loaders.put("bigDecimalField", BigDecimalFieldLoader.class);
+        loaders.put("progressBar", ProgressBarLoader.class);
+        loaders.put("radioButtonGroup", RadioButtonGroupLoader.class);
+        loaders.put("textArea", TextAreaLoader.class);
         loaders.put("checkBox", CheckBoxLoader.class);
         loaders.put("comboBox", ComboBoxLoader.class);
         loaders.put("timePicker", TimePickerLoader.class);
@@ -75,14 +70,13 @@ public abstract class BaseLoaderConfig {
         loaders.put("select", SelectLoader.class);
 
         /*HTML components*/
-
         loaders.put("param", ParamLoader.class);
         loaders.put("hr", HrLoader.class);
         loaders.put("input", InputLoader.class);
         loaders.put("image", ImageLoader.class);
         loaders.put("iframe", IFrameLoader.class);
-        /*Containers*/
 
+        /*Containers*/
         loaders.put("h1", H1Loader.class);
         loaders.put("h2", H2Loader.class);
         loaders.put("h3", H3Loader.class);

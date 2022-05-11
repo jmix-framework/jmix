@@ -73,8 +73,8 @@ public class ScreenSupport {
         UiControllerUtils.setScreenData(screen, applicationContext.getBean(ScreenData.class));
 
         ActionBinders actionBinders = applicationContext.getBean(ActionBinders.class);
-        UiControllerUtils.setScreenActions(screen,
-                applicationContext.getBean(ScreenActions.class, actionBinders.binder(screen)));
+        ScreenActions actions = applicationContext.getBean(ScreenActions.class, actionBinders.binder(screen));
+        UiControllerUtils.setScreenActions(screen, actions);
 
         ScreenInfo screenInfo = getScreenInfo(screen);
 
@@ -85,9 +85,11 @@ public class ScreenSupport {
         // TODO: gg, consider messageGroup attribute
         componentLoaderContext.setMessageGroup(getPackage(screenInfo.getControllerClass()));
         componentLoaderContext.setScreen(screen);
+        componentLoaderContext.setScreenActions(actions);
 
         Element element = loadScreenXml(screenInfo);
         if (element != null) {
+            loadMessageGroup(element, componentLoaderContext);
             loadWindowFromXml(element, screen, componentLoaderContext);
         }
 
@@ -245,6 +247,14 @@ public class ScreenSupport {
     protected Element loadScreenXml(ScreenInfo screenInfo) {
         Optional<String> templatePath = screenInfo.getTemplatePath();
         return templatePath.map(s -> screenXmlLoader.load(s)).orElse(null);
+    }
+
+
+    protected void loadMessageGroup(Element element, ComponentLoaderContext componentLoaderContext) {
+        String messageGroup = element.attributeValue("messagesGroup");
+        if (messageGroup != null) {
+            componentLoaderContext.setMessageGroup(messageGroup);
+        }
     }
 
     protected ComponentLoaderContext createComponentLoaderContext() {

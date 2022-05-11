@@ -18,8 +18,18 @@ package io.jmix.flowui.xml.layout.loader.component;
 
 import com.vaadin.flow.component.select.Select;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
+import io.jmix.flowui.xml.layout.support.DataLoaderSupport;
 
 public class SelectLoader extends AbstractComponentLoader<Select<?>> {
+
+    protected DataLoaderSupport dataLoaderSupport;
+
+    public DataLoaderSupport getDataLoaderSupport() {
+        if (dataLoaderSupport == null) {
+            dataLoaderSupport = applicationContext.getBean(DataLoaderSupport.class, context);
+        }
+        return dataLoaderSupport;
+    }
 
     @Override
     protected Select<?> createComponent() {
@@ -28,15 +38,19 @@ public class SelectLoader extends AbstractComponentLoader<Select<?>> {
 
     @Override
     public void loadComponent() {
-        loadString(element, "label", resultComponent::setLabel);
+        getDataLoaderSupport().loadData(resultComponent, element);
+
         loadBoolean(element, "autofocus", resultComponent::setAutofocus);
-        loadString(element, "placeHolder", resultComponent::setPlaceholder);
-        loadString(element, "errorMessage", resultComponent::setErrorMessage);
+        loadString(element, "placeholder", resultComponent::setPlaceholder);
         loadString(element, "emptySelectionCaption", resultComponent::setEmptySelectionCaption);
         loadBoolean(element, "emptySelectionAllowed", resultComponent::setEmptySelectionAllowed);
 
+        componentLoader().loadLabel(resultComponent, element);
+        componentLoader().loadEnabled(resultComponent, element);
+        componentLoader().loadClassName(resultComponent, element);
         componentLoader().loadHelperText(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
         componentLoader().loadValueAndElementAttributes(resultComponent, element);
+        componentLoader().loadValidationAttributes(resultComponent, element, context);
     }
 }

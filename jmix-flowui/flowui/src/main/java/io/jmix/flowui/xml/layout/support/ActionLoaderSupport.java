@@ -29,6 +29,8 @@ import io.jmix.flowui.xml.layout.loader.ActionCustomPropertyLoader;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -36,9 +38,10 @@ import java.util.Optional;
 
 @Component("flowui_ActionLoaderSupport")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class ActionLoaderSupport {
+public class ActionLoaderSupport implements ApplicationContextAware {
 
     protected Context context;
+    protected ApplicationContext applicationContext;
     protected LoaderSupport loaderSupport;
     protected ActionCustomPropertyLoader propertyLoader;
     protected Actions actions;
@@ -63,9 +66,16 @@ public class ActionLoaderSupport {
         this.actions = actions;
     }
 
-    @Autowired
-    public void setComponentLoaderSupport(ComponentLoaderSupport componentLoaderSupport) {
-        this.componentLoaderSupport = componentLoaderSupport;
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
+
+    public ComponentLoaderSupport componentLoader() {
+        if (componentLoaderSupport == null) {
+            componentLoaderSupport = applicationContext.getBean(ComponentLoaderSupport.class, context);
+        }
+        return componentLoaderSupport;
     }
 
     public Action loadDeclarativeAction(Element element) {
@@ -83,7 +93,7 @@ public class ActionLoaderSupport {
         //todo gd refactor icon loading mechanism
         loaderSupport.loadString(element, "icon", targetAction::setIcon);
 
-        componentLoaderSupport.loadShortcut(element).ifPresent(shortcut ->
+        componentLoader().loadShortcut(element).ifPresent(shortcut ->
                 targetAction.setShortcutCombination(KeyCombination.create(shortcut)));
 
         Element propertiesEl = element.element("properties");
@@ -122,18 +132,17 @@ public class ActionLoaderSupport {
     protected Action loadDeclarativeActionDefault(Element element) {
         String id = loadActionId(element);
 
-        //String trackSelection = element.attributeValue("trackSelection");
-        //boolean shouldTrackSelection = Boolean.parseBoolean(trackSelection);
+        boolean shouldTrackSelection = loaderSupport.loadBoolean(element, "trackSelection")
+                .orElse(false);
 
         Action targetAction;
 
-        //if (shouldTrackSelection) {
-        //    Actions actions = getActions();
-        //    targetAction = actions.create(ItemTrackingAction.ID, id);
-        //loadActionConstraint(targetAction, element);
-        //} else {
+//        if (shouldTrackSelection) {
+//            targetAction = actions.create(ItemTrackingAction.ID, id);
+//            loadActionConstraint(targetAction, element);
+//        } else {
         targetAction = new BaseAction(id);
-        // }
+//        }
 
         initAction(element, targetAction);
 

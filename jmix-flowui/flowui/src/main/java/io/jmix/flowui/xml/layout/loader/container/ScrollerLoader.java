@@ -18,7 +18,6 @@ package io.jmix.flowui.xml.layout.loader.container;
 
 import com.vaadin.flow.component.orderedlayout.Scroller;
 import io.jmix.flowui.xml.layout.ComponentLoader;
-import io.jmix.flowui.xml.layout.loader.AbstractContainerLoader;
 import io.jmix.flowui.xml.layout.loader.LayoutLoader;
 import org.dom4j.Element;
 

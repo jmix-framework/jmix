@@ -21,6 +21,7 @@ import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.datatoolsui.DatatoolsUiProperties;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.action.list.EditAction;
 import io.jmix.ui.component.ButtonsPanel;
@@ -28,6 +29,7 @@ import io.jmix.ui.component.SimplePagination;
 import io.jmix.ui.component.Table;
 import io.jmix.ui.component.data.table.ContainerTableItems;
 import io.jmix.ui.model.CollectionContainer;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.ApplicationContext;
@@ -53,6 +55,8 @@ public class InspectorTableBuilder {
     protected MessageTools messageTools;
     @Autowired
     protected UiComponents uiComponents;
+    @Autowired
+    protected DatatoolsUiProperties datatoolsUiProperties;
 
     private final MetaClass metaClass;
     private final CollectionContainer collectionContainer;
@@ -61,6 +65,8 @@ public class InspectorTableBuilder {
     private Boolean withSystem = false;
     private Boolean withMultiselect = true;
     private Consumer<Table> buttonsPanelInitializer;
+
+    protected Consumer<SimplePagination> paginationInitializer;
 
     public static InspectorTableBuilder from(ApplicationContext applicationContext, CollectionContainer collectionContainer) {
         return applicationContext.getBean(InspectorTableBuilder.class, collectionContainer);
@@ -83,6 +89,11 @@ public class InspectorTableBuilder {
 
     public InspectorTableBuilder withButtons(Consumer<Table> buttonsPanelInitializer) {
         this.buttonsPanelInitializer = buttonsPanelInitializer;
+        return this;
+    }
+
+    public InspectorTableBuilder withSimplePagination(Consumer<SimplePagination> paginationInitializer) {
+        this.paginationInitializer = paginationInitializer;
         return this;
     }
 
@@ -129,6 +140,7 @@ public class InspectorTableBuilder {
 
         SimplePagination simplePagination = uiComponents.create(SimplePagination.NAME);
         table.setPagination(simplePagination);
+        initSimplePagination(simplePagination);
 
         table.setItems(new ContainerTableItems(collectionContainer));
 
@@ -159,5 +171,21 @@ public class InspectorTableBuilder {
 
     protected String getPropertyCaption(MetaClass metaClass, MetaProperty metaProperty) {
         return messageTools.getPropertyCaption(metaClass, metaProperty.getName());
+    }
+
+    protected void initSimplePagination(SimplePagination simplePagination) {
+        if (paginationInitializer != null) {
+            paginationInitializer.accept(simplePagination);
+        } else {
+            simplePagination.setItemsPerPageVisible(
+                    datatoolsUiProperties.getEntityInspectorBrowse().isItemsPerPageVisible());
+            simplePagination.setItemsPerPageUnlimitedOptionVisible(
+                    datatoolsUiProperties.getEntityInspectorBrowse().isItemsPerPageUnlimitedOptionVisible());
+            List<Integer> itemsPerPageOptions =
+                    datatoolsUiProperties.getEntityInspectorBrowse().getItemsPerPageOptions();
+            if (CollectionUtils.isNotEmpty(itemsPerPageOptions)) {
+                simplePagination.setItemsPerPageOptions(itemsPerPageOptions);
+            }
+        }
     }
 }

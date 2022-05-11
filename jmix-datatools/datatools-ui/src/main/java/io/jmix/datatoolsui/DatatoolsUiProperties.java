@@ -20,6 +20,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
+import javax.annotation.Nullable;
+import java.util.List;
+
 @ConfigurationProperties(prefix = "jmix.datatools")
 @ConstructorBinding
 public class DatatoolsUiProperties {
@@ -30,8 +33,15 @@ public class DatatoolsUiProperties {
      */
     boolean entityInfoScriptsEnabled;
 
-    public DatatoolsUiProperties(@DefaultValue("true") boolean entityInfoScriptsEnabled) {
+    /**
+     * Properties of entity inspector browse screen.
+     */
+    EntityInspectorBrowse entityInspectorBrowse;
+
+    public DatatoolsUiProperties(@DefaultValue("true") boolean entityInfoScriptsEnabled,
+                                 @DefaultValue EntityInspectorBrowse entityInspectorBrowse) {
         this.entityInfoScriptsEnabled = entityInfoScriptsEnabled;
+        this.entityInspectorBrowse = entityInspectorBrowse;
     }
 
     /**
@@ -39,5 +49,59 @@ public class DatatoolsUiProperties {
      */
     public boolean isEntityInfoScriptsEnabled() {
         return entityInfoScriptsEnabled;
+    }
+
+    /**
+     * @see #entityInspectorBrowse
+     */
+    public EntityInspectorBrowse getEntityInspectorBrowse() {
+        return entityInspectorBrowse;
+    }
+
+    public static class EntityInspectorBrowse {
+
+        /**
+         * Options for items per page ComboBox in the pagination.
+         */
+        List<Integer> itemsPerPageOptions;
+
+        /**
+         * Defines whether items per page ComboBox in the pagination should be visible.
+         */
+        boolean itemsPerPageVisible;
+
+        /**
+         * Defines whether unlimited option in the pagination's items per page ComboBox should be visible.
+         */
+        boolean itemsPerPageUnlimitedOptionVisible;
+
+        public EntityInspectorBrowse(@Nullable List<Integer> itemsPerPageOptions,
+                                     @DefaultValue("true") boolean itemsPerPageVisible,
+                                     @DefaultValue("true") boolean itemsPerPageUnlimitedOptionVisible) {
+            this.itemsPerPageOptions = itemsPerPageOptions;
+            this.itemsPerPageVisible = itemsPerPageVisible;
+            this.itemsPerPageUnlimitedOptionVisible = itemsPerPageUnlimitedOptionVisible;
+        }
+
+        /**
+         * @see #itemsPerPageOptions
+         */
+        public List<Integer> getItemsPerPageOptions() {
+            return itemsPerPageOptions;
+        }
+
+        /**
+         * @see #itemsPerPageVisible
+         */
+        public boolean isItemsPerPageVisible() {
+            return itemsPerPageVisible;
+        }
+
+        /**
+         * @see #itemsPerPageUnlimitedOptionVisible
+         */
+        public boolean isItemsPerPageUnlimitedOptionVisible() {
+            return itemsPerPageUnlimitedOptionVisible;
+        }
     }
 }

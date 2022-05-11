@@ -98,7 +98,7 @@
     <xs:attributeGroup name="screenPropertyEntity">
         <xs:attribute name="entityClass" type="xs:string"/>
         <xs:attribute name="entityId" type="xs:string"/>
-        <xs:attribute name="entityView" type="xs:string"/>
+        <xs:attribute name="entityFetchPlan" type="xs:string"/>
     </xs:attributeGroup>
 
     <xs:complexType name="separatorType">

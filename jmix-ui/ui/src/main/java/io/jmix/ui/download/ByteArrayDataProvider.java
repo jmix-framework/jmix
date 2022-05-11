@@ -24,12 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.UUID;
 import java.util.function.Supplier;
 
@@ -45,11 +40,11 @@ public class ByteArrayDataProvider implements DownloadDataProvider {
     /**
      * Constructor.
      *
-     * @param data byte array
+     * @param data                                    byte array
      * @param saveExportedByteArrayDataThresholdBytes threshold in bytes on which downloaded byte array will be saved to
-     *        a temporary file to prevent HTTP session memory leaks. Use {@link UiProperties#getSaveExportedByteArrayDataThresholdBytes()}.
-     * @param tempDir where to store the temporary file if {@code saveExportedByteArrayDataThresholdBytes} is exceeded.
-     *                Use {@link CoreProperties#getTempDir()}.
+     *                                                a temporary file to prevent HTTP session memory leaks. Use {@link UiProperties#getSaveExportedByteArrayDataThresholdBytes()}.
+     * @param tempDir                                 where to store the temporary file if {@code saveExportedByteArrayDataThresholdBytes} is exceeded.
+     *                                                Use {@link CoreProperties#getTempDir()}.
      */
     public ByteArrayDataProvider(byte[] data, int saveExportedByteArrayDataThresholdBytes, String tempDir) {
         if (data.length >= saveExportedByteArrayDataThresholdBytes) {
@@ -81,7 +76,17 @@ public class ByteArrayDataProvider implements DownloadDataProvider {
     @Nullable
     protected InputStream readFromTempStorage(File file) {
         try {
-            return new FileInputStream(file);
+            return new FileInputStream(file) {
+                @Override
+                public void close() throws IOException {
+                    super.close();
+                    try {
+                        FileUtils.delete(file);
+                    } catch (IOException e) {
+                        log.warn("Unable to delete temp file " + file.getAbsolutePath());
+                    }
+                }
+            };
         } catch (FileNotFoundException e) {
             log.warn("Unable to read temp file " + file.getAbsolutePath());
             return null;

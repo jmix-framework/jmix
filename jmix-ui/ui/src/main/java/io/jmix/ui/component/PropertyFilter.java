@@ -47,7 +47,8 @@ import java.util.function.Consumer;
         category = "Components",
         xmlElement = "propertyFilter",
         documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/filter-components.html#property-filter",
-        canvasBehaviour = CanvasBehaviour.PROPERTY_FILTER
+        canvasBehaviour = CanvasBehaviour.PROPERTY_FILTER,
+        icon = "io/jmix/ui/icon/component/filter.svg"
 )
 @StudioElement(
         caption = "PropertyFilter",

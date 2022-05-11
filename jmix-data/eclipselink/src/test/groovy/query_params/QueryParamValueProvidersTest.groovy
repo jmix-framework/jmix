@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import test_support.DataSpec
 import test_support.TestQueryParamValueProvider
 import test_support.entity.sales.Customer
+import test_support.entity.sales.Status
 
 class QueryParamValueProvidersTest extends DataSpec {
 
@@ -37,6 +38,7 @@ class QueryParamValueProvidersTest extends DataSpec {
     void setup() {
         customer = dataManager.create(Customer)
         customer.setName('test1')
+        customer.setStatus(Status.OK)
         dataManager.save(customer)
     }
 
@@ -89,4 +91,20 @@ class QueryParamValueProvidersTest extends DataSpec {
         testQueryParamValueProvider.clear('customerName')
     }
 
+    def "multiple parameters in query"() {
+        testQueryParamValueProvider.setValue('customerName', 'test1')
+        testQueryParamValueProvider.setValue('customerStatus', Status.OK.id)
+
+        when:
+        def customer1 = dataManager.load(Customer)
+                .query('e.name = :test_customerName and e.status = :test_customerStatus')
+                .one()
+
+        then:
+        customer1 == customer
+
+        cleanup:
+        testQueryParamValueProvider.clear('customerName')
+        testQueryParamValueProvider.clear('customerStatus')
+    }
 }

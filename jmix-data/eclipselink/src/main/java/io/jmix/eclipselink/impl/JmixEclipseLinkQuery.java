@@ -634,12 +634,10 @@ public class JmixEclipseLinkQuery<E> implements JmixQuery<E> {
                     Param param = paramOpt.get();
                     if (param.value == null) {
                         param.value = queryParamValuesManager.getValue(paramName);
-                        break;
                     }
                 } else {
                     Object value = queryParamValuesManager.getValue(paramName);
                     params.add(new Param(paramName, value));
-                    break;
                 }
             }
         }

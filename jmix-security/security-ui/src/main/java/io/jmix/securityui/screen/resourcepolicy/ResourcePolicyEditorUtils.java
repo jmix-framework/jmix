@@ -185,7 +185,9 @@ public class ResourcePolicyEditorUtils {
     }
 
     private void walkMenuItem(MenuItem menuItem, Map<String, String> collectedMenus) {
-        collectedMenus.put(getMenuCaption(menuItem), menuItem.getId());
+        if (!menuItem.isSeparator()) {
+            collectedMenus.put(getMenuCaption(menuItem), menuItem.getId());
+        }
         if (menuItem.getChildren() != null) {
             menuItem.getChildren().forEach(childMenuItem -> walkMenuItem(childMenuItem, collectedMenus));
         }

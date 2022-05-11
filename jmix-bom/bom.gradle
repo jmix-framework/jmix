@@ -68,7 +68,7 @@ javaPlatform {
 }
 
 dependencies {
-    api platform("org.springframework.boot:spring-boot-dependencies:2.6.6")
+    api platform("org.springframework.boot:spring-boot-dependencies:2.6.7")
     api platform('software.amazon.awssdk:bom:2.16.69')
 
     def freeVersion = version
@@ -315,6 +315,7 @@ dependencies {
         api 'org.webjars.npm:grapesjs-plugin-forms:1.0.5'
         api 'org.webjars.npm:grapesjs-style-filter:0.1.1'
         api 'org.webjars.npm:grapesjs-tooltip:0.1.5'
+        api 'org.webjars.npm:mime-db:1.51.0'
 
         api 'org.webjars.bowergithub.mootools:slick:1.1.7'
         api 'org.webjars:ckeditor:4.14.0'

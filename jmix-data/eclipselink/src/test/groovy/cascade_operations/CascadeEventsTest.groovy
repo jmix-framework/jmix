@@ -128,7 +128,7 @@ class CascadeEventsTest extends DataSpec {
                 .id(foo.id)
                 .fetchPlan(fetchPlans.builder(JpaCascadeFoo.class)
                         .add("name")
-                        .add("bar", FetchPlan.LOCAL)
+                        //.add("bar", FetchPlan.LOCAL)//do not load bar to check that entities will be removed correctly even if not fetched
                         .build())
                 .one()
 
@@ -142,8 +142,9 @@ class CascadeEventsTest extends DataSpec {
 
         then: "All events present for cascade-deleted entity"
 
-
-        barChangedEvents.size() == 4
+        barChangedEvents.size() == 6
+        //entity should be loaded to be deleted with all events, entity log records e.t.c.
+        barChangedEvents.stream().anyMatch(info -> info.message == "EntityLoadingEvent")
 
         barChangedEvents.stream().anyMatch(info -> info.message == "BeforeDeleteEntityListener")
         barChangedEvents.stream().anyMatch(info -> info.message == "AfterDeleteEntityListener")

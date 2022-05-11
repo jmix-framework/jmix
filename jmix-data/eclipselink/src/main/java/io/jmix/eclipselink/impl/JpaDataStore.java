@@ -247,7 +247,7 @@ public class JpaDataStore extends AbstractDataStore implements DataSortingOption
     private void processCascadeOperation(Object entity, Set<Object> result, Collection<Object> contextEntities, CascadeType type) {
         List<MetaProperty> properties = metadataTools.getCascadeProperties(metadata.getClass(entity), type);
         for (MetaProperty property : properties) {
-            if (entityStates.isLoaded(entity, property.getName())) {
+            if (type == REMOVE || entityStates.isLoaded(entity, property.getName())) {
                 Collection<?> referencedEntities;
                 if (property.getRange().getCardinality().isMany()) {
                     referencedEntities = EntityValues.getValue(entity, property.getName());
@@ -311,7 +311,7 @@ public class JpaDataStore extends AbstractDataStore implements DataSortingOption
         try {
             em.setProperty(PersistenceHints.SOFT_DELETION, jpaContext.getHints().get(PersistenceHints.SOFT_DELETION));
             for (Object entity : jpaContext.getEntitiesToRemove()) {
-                if (!jpaContext.getCascadeAffectedEntities().contains(entity)) {//todo cast above?
+                if (!jpaContext.getCascadeAffectedEntities().contains(entity)) {
                     Object merged = em.merge(entity);
                     em.remove(merged);
                     result.add(merged);

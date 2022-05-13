@@ -44,10 +44,6 @@ public class CascOrder {
     @Column(name = "NOTES")
     private String notes;
 
-    @JoinColumn(name = "CUSTOMER_ID")
-    @ManyToOne(fetch = FetchType.LAZY)
-    private CascCustomer customer;
-
     @OnDelete(DeletePolicy.CASCADE)
     @JoinColumn(name = "REVIEW_ID")
     @Composition
@@ -99,14 +95,6 @@ public class CascOrder {
 
     public void setReview(CascOrderReview review) {
         this.review = review;
-    }
-
-    public CascCustomer getCustomer() {
-        return customer;
-    }
-
-    public void setCustomer(CascCustomer customer) {
-        this.customer = customer;
     }
 
     public Date getDeletedDate() {

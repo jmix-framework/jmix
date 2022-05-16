@@ -663,7 +663,16 @@ public class EntitySerializationImpl implements EntitySerialization {
         }
 
         protected Collection readSimpleCollection(JsonArray jsonArray, MetaProperty metaProperty) {
-            Collection collection = new ArrayList();
+            Collection collection;
+            Class<?> propertyType = metaProperty.getJavaType();
+            if (List.class.isAssignableFrom(propertyType)) {
+                collection = new ArrayList<>();
+            } else if (Set.class.isAssignableFrom(propertyType)) {
+                collection = new LinkedHashSet<>();
+            } else {
+                throw new EntitySerializationException(String.format("Could not instantiate collection with class [%s].", propertyType));
+            }
+
             jsonArray.forEach(jsonElement -> {
                 Object item = readSimpleProperty(jsonElement, metaProperty.getRange().asDatatype());
                 collection.add(item);

@@ -17,8 +17,6 @@
 package test_support.testmodel.cascade;
 
 import io.jmix.core.DeletePolicy;
-import io.jmix.core.annotation.DeletedBy;
-import io.jmix.core.annotation.DeletedDate;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.OnDelete;
 import io.jmix.core.metamodel.annotation.Composition;
@@ -72,15 +70,6 @@ public class CascOrder {
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastModifiedDate;
 
-    @DeletedBy
-    @Column(name = "DELETED_BY")
-    private String deletedBy;
-
-    @DeletedDate
-    @Column(name = "DELETED_DATE")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date deletedDate;
-
     public String getNotes() {
         return notes;
     }
@@ -95,22 +84,6 @@ public class CascOrder {
 
     public void setReview(CascOrderReview review) {
         this.review = review;
-    }
-
-    public Date getDeletedDate() {
-        return deletedDate;
-    }
-
-    public void setDeletedDate(Date deletedDate) {
-        this.deletedDate = deletedDate;
-    }
-
-    public String getDeletedBy() {
-        return deletedBy;
-    }
-
-    public void setDeletedBy(String deletedBy) {
-        this.deletedBy = deletedBy;
     }
 
     public Date getLastModifiedDate() {

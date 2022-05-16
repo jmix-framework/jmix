@@ -31,7 +31,7 @@ public interface ComponentLoader<T extends Component> {
         String getCurrentFrameId();
 
         // TODO: gg, do we really need it?
-        Screen getScreen();
+        Screen<?> getScreen();
 
         // TODO: gg, implement
         void addInitTask(InitTask task);
@@ -57,7 +57,7 @@ public interface ComponentLoader<T extends Component> {
          * @param context loader context
          * @param screen  screen
          */
-        void execute(ComponentContext context, Screen screen);
+        void execute(ComponentContext context, Screen<?> screen);
     }
 
     Context getContext();

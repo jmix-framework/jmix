@@ -15,7 +15,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class EditorWindowClassBuilder<E, S extends Screen & EditorScreen<E>> extends EditorWindowBuilder<E, S>
+public class EditorWindowClassBuilder<E, S extends Screen<?> & EditorScreen<E>> extends EditorWindowBuilder<E, S>
         implements DialogWindowClassBuilder<S> {
 
     protected Class<S> screenClass;
@@ -26,7 +26,7 @@ public class EditorWindowClassBuilder<E, S extends Screen & EditorScreen<E>> ext
         this.screenClass = screenClass;
     }
 
-    public EditorWindowClassBuilder(Screen origin,
+    public EditorWindowClassBuilder(Screen<?> origin,
                                     Class<E> entityClass,
                                     Class<S> screenClass,
                                     Function<? extends EditorWindowClassBuilder<E, S>, DialogWindow<S>> handler) {

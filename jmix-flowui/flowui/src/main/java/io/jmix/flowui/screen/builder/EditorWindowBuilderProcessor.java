@@ -12,8 +12,8 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.FlowUiScreenProperties;
 import io.jmix.flowui.Screens;
-import io.jmix.flowui.kit.component.SupportsUserAction;
 import io.jmix.flowui.data.*;
+import io.jmix.flowui.kit.component.SupportsUserAction;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.DataContext;
 import io.jmix.flowui.model.InstanceContainer;
@@ -56,7 +56,7 @@ public class EditorWindowBuilderProcessor extends AbstractWindowBuilderProcessor
     }
 
     @SuppressWarnings("unchecked")
-    public <E, S extends Screen> DialogWindow<S> buildScreen(EditorWindowBuilder<E, S> builder) {
+    public <E, S extends Screen<?>> DialogWindow<S> buildScreen(EditorWindowBuilder<E, S> builder) {
 
         CollectionContainer<E> container = findContainer(builder);
 
@@ -76,10 +76,10 @@ public class EditorWindowBuilderProcessor extends AbstractWindowBuilderProcessor
         return dialog;
     }
 
-    protected <E, S extends Screen> void setupListDataComponent(EditorWindowBuilder<E, S> builder,
-                                                                EditorScreen<E> editorScreen, DialogWindow<S> dialog,
-                                                                @Nullable CollectionContainer<E> container,
-                                                                @Nullable DataContext parentDataContext) {
+    protected <E, S extends Screen<?>> void setupListDataComponent(EditorWindowBuilder<E, S> builder,
+                                                                   EditorScreen<E> editorScreen, DialogWindow<S> dialog,
+                                                                   @Nullable CollectionContainer<E> container,
+                                                                   @Nullable DataContext parentDataContext) {
         if (container == null) {
             return;
         }
@@ -120,9 +120,9 @@ public class EditorWindowBuilderProcessor extends AbstractWindowBuilderProcessor
     }
 
     @SuppressWarnings("unchecked")
-    protected <E, S extends Screen> void setupField(EditorWindowBuilder<E, S> builder,
-                                                    S screen, DialogWindow<S> dialog,
-                                                    @Nullable DataContext parentDataContext) {
+    protected <E, S extends Screen<?>> void setupField(EditorWindowBuilder<E, S> builder,
+                                                       S screen, DialogWindow<S> dialog,
+                                                       @Nullable DataContext parentDataContext) {
         builder.getField().ifPresent(field -> {
             setupScreenDatContext(field, builder.getOrigin(), screen, parentDataContext);
             dialog.addAfterCloseListener(createAfterCloseListener(field, builder, (EditorScreen<E>) screen));
@@ -130,9 +130,9 @@ public class EditorWindowBuilderProcessor extends AbstractWindowBuilderProcessor
     }
 
     @SuppressWarnings("unchecked")
-    protected <E, S extends Screen> Consumer<AfterCloseEvent<S>> createAfterCloseListener(HasValue<?, E> field,
-                                                                                          EditorWindowBuilder<E, S> builder,
-                                                                                          EditorScreen<E> editorScreen) {
+    protected <E, S extends Screen<?>> Consumer<AfterCloseEvent<S>> createAfterCloseListener(HasValue<?, E> field,
+                                                                                             EditorWindowBuilder<E, S> builder,
+                                                                                             EditorScreen<E> editorScreen) {
         return closeEvent -> {
             if (closeEvent.closedWith(StandardOutcome.COMMIT)) {
                 E entityFromEditor = editorScreen.getEditedEntity();
@@ -163,9 +163,9 @@ public class EditorWindowBuilderProcessor extends AbstractWindowBuilderProcessor
         };
     }
 
-    protected <E, S extends Screen> void setupScreenDatContext(HasValue<?, E> field,
-                                                               Screen origin, S screen,
-                                                               @Nullable DataContext parentDataContext) {
+    protected <E, S extends Screen<?>> void setupScreenDatContext(HasValue<?, E> field,
+                                                                  Screen<?> origin, S screen,
+                                                                  @Nullable DataContext parentDataContext) {
         if (parentDataContext == null && field instanceof SupportsValueSource) {
             ValueSource<?> valueSource = ((SupportsValueSource<?>) field).getValueSource();
             if (valueSource instanceof EntityValueSource) {
@@ -182,15 +182,15 @@ public class EditorWindowBuilderProcessor extends AbstractWindowBuilderProcessor
 
     @SuppressWarnings("unchecked")
     @Override
-    protected <S extends Screen> Class<S> inferScreenClass(DialogWindowBuilder<S> builder) {
+    protected <S extends Screen<?>> Class<S> inferScreenClass(DialogWindowBuilder<S> builder) {
         EditorWindowBuilder<?, S> editorBuilder = ((EditorWindowBuilder<?, S>) builder);
         return (Class<S>) screenRegistry.getEditorScreen(editorBuilder.getEntityClass()).getControllerClass();
     }
 
     @Nullable
-    protected <E, S extends Screen> DataContext setupParentDataContext(EditorWindowBuilder<E, S> builder,
-                                                                       S screen,
-                                                                       @Nullable CollectionContainer<E> container) {
+    protected <E, S extends Screen<?>> DataContext setupParentDataContext(EditorWindowBuilder<E, S> builder,
+                                                                          S screen,
+                                                                          @Nullable CollectionContainer<E> container) {
         DataContext dataContext = builder.getParentDataContext().orElseGet(() -> {
             if (container instanceof Nested) {
                 InstanceContainer<?> masterContainer = ((Nested) container).getMaster();
@@ -217,7 +217,7 @@ public class EditorWindowBuilderProcessor extends AbstractWindowBuilderProcessor
         return dataContext;
     }
 
-    protected void checkDataContext(Screen screen, @Nullable DataContext dataContext) {
+    protected void checkDataContext(Screen<?> screen, @Nullable DataContext dataContext) {
         if (dataContext == null) {
             throw new DevelopmentException(
                     String.format("No DataContext in screen '%s'. Composition editing is impossible.", screen.getId()));
@@ -348,7 +348,7 @@ public class EditorWindowBuilderProcessor extends AbstractWindowBuilderProcessor
         return editedEntity;
     }
 
-    protected <E> E merge(E entity, Screen origin, @Nullable DataContext parentDataContext) {
+    protected <E> E merge(E entity, Screen<?> origin, @Nullable DataContext parentDataContext) {
         if (parentDataContext == null) {
             DataContext thisDataContext = getScreenData(origin).getDataContextOrNull();
             if (thisDataContext != null) {

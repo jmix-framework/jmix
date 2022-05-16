@@ -7,9 +7,9 @@ import io.jmix.flowui.screen.Screen;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-public interface DialogWindowBuilder<S extends Screen> {
+public interface DialogWindowBuilder<S extends Screen<?>> {
 
-    Screen getOrigin();
+    Screen<?> getOrigin();
 
     Optional<String> getScreenId();
 

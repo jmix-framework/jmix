@@ -109,5 +109,5 @@ public interface ScreenOpeningAction extends Action {
      * @param afterCloseHandler handler to set
      * @param <S>               screen type
      */
-    <S extends Screen> void setAfterCloseHandler(@Nullable Consumer<DialogWindow.AfterCloseEvent<S>> afterCloseHandler);
+    <S extends Screen<?>> void setAfterCloseHandler(@Nullable Consumer<DialogWindow.AfterCloseEvent<S>> afterCloseHandler);
 }

@@ -56,11 +56,11 @@ public class ActionScreenInitializer {
     }
 
     @Nullable
-    public <S extends Screen> Consumer<AfterCloseEvent<S>> getAfterCloseHandler() {
+    public <S extends Screen<?>> Consumer<AfterCloseEvent<S>> getAfterCloseHandler() {
         return (Consumer) afterCloseHandler;
     }
 
-    public <S extends Screen> void setAfterCloseHandler(@Nullable Consumer<AfterCloseEvent<S>> afterCloseHandler) {
+    public <S extends Screen<?>> void setAfterCloseHandler(@Nullable Consumer<AfterCloseEvent<S>> afterCloseHandler) {
         this.afterCloseHandler = (Consumer) afterCloseHandler;
     }
 
@@ -84,7 +84,7 @@ public class ActionScreenInitializer {
         return navigator;
     }
 
-    public <E, S extends Screen> EditorWindowBuilder<E, S> initWindowBuilder(EditorWindowBuilder<E, S> windowBuilder) {
+    public <E, S extends Screen<?>> EditorWindowBuilder<E, S> initWindowBuilder(EditorWindowBuilder<E, S> windowBuilder) {
         if (screenClass != null) {
             windowBuilder = windowBuilder.withScreenClass((Class) screenClass);
         }
@@ -100,7 +100,7 @@ public class ActionScreenInitializer {
         return windowBuilder;
     }
 
-    public <E, S extends Screen> LookupWindowBuilder<E, S> initWindowBuilder(LookupWindowBuilder<E, S> windowBuilder) {
+    public <E, S extends Screen<?>> LookupWindowBuilder<E, S> initWindowBuilder(LookupWindowBuilder<E, S> windowBuilder) {
         if (screenClass != null) {
             windowBuilder = windowBuilder.withScreenClass((Class) screenClass);
         }

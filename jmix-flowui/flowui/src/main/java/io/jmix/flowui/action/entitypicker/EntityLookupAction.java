@@ -15,6 +15,7 @@ import io.jmix.flowui.component.EntityPickerComponent;
 import io.jmix.flowui.kit.component.FlowUiComponentUtils;
 import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.screen.*;
+import io.jmix.flowui.screen.DialogWindow.AfterCloseEvent;
 import io.jmix.flowui.screen.builder.LookupWindowBuilder;
 import io.jmix.flowui.sys.ActionScreenInitializer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -135,7 +136,7 @@ public class EntityLookupAction<E> extends PickerAction<EntityLookupAction<E>, E
     }
 
     @Override
-    public <S extends Screen> void setAfterCloseHandler(@Nullable Consumer<DialogWindow.AfterCloseEvent<S>> afterCloseHandler) {
+    public <S extends Screen<?>> void setAfterCloseHandler(@Nullable Consumer<AfterCloseEvent<S>> afterCloseHandler) {
         screenInitializer.setAfterCloseHandler(afterCloseHandler);
     }
 
@@ -149,7 +150,7 @@ public class EntityLookupAction<E> extends PickerAction<EntityLookupAction<E>, E
                     "for the " + target.getClass().getSimpleName(), "action ID", getId());
         }
 
-        LookupWindowBuilder<E, Screen> builder = dialogBuilders.lookup(target);
+        LookupWindowBuilder<E, Screen<?>> builder = dialogBuilders.lookup(target);
 
         builder = screenInitializer.initWindowBuilder(builder);
 

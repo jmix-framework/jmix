@@ -30,17 +30,17 @@ public class DialogWindowBuilders {
         this.lookupBuilderProcessor = lookupBuilderProcessor;
     }
 
-    public <E, S extends Screen> EditorWindowBuilder<E, S> editor(Screen origin, Class<E> entityClass) {
+    public <E, S extends Screen<?>> EditorWindowBuilder<E, S> editor(Screen<?> origin, Class<E> entityClass) {
         checkNotNullArgument(origin);
         checkNotNullArgument(entityClass);
 
         return new EditorWindowBuilder<>(origin, entityClass, editorBuilderProcessor::buildScreen);
     }
 
-    public <E, S extends Screen> EditorWindowBuilder<E, S> editor(ListDataComponent<E> listDataComponent) {
+    public <E, S extends Screen<?>> EditorWindowBuilder<E, S> editor(ListDataComponent<E> listDataComponent) {
         checkNotNullArgument(listDataComponent);
 
-        Screen origin = getScreen((Component) listDataComponent);
+        Screen<?> origin = getScreen((Component) listDataComponent);
         Class<E> beanType = getBeanType(listDataComponent);
 
         EditorWindowBuilder<E, S> builder =
@@ -57,12 +57,12 @@ public class DialogWindowBuilders {
     }
 
     @SuppressWarnings("unchecked")
-    public <E, S extends Screen> EditorWindowBuilder<E, S> editor(EntityPickerComponent<E> picker) {
+    public <E, S extends Screen<?>> EditorWindowBuilder<E, S> editor(EntityPickerComponent<E> picker) {
         checkNotNullArgument(picker);
         checkState(picker instanceof HasValue,
                 "A component must implement " + HasValue.class.getSimpleName());
 
-        Screen origin = getScreen((Component) picker);
+        Screen<?> origin = getScreen((Component) picker);
         Class<E> beanType = getBeanType(picker);
 
         EditorWindowBuilder<E, S> builder =
@@ -78,17 +78,17 @@ public class DialogWindowBuilders {
         return builder;
     }
 
-    public <E, S extends Screen> LookupWindowBuilder<E, S> lookup(Screen origin, Class<E> entityClass) {
+    public <E, S extends Screen<?>> LookupWindowBuilder<E, S> lookup(Screen<?> origin, Class<E> entityClass) {
         checkNotNullArgument(origin);
         checkNotNullArgument(entityClass);
 
         return new LookupWindowBuilder<>(origin, entityClass, lookupBuilderProcessor::buildScreen);
     }
 
-    public <E, S extends Screen> LookupWindowBuilder<E, S> lookup(ListDataComponent<E> listDataComponent) {
+    public <E, S extends Screen<?>> LookupWindowBuilder<E, S> lookup(ListDataComponent<E> listDataComponent) {
         checkNotNullArgument(listDataComponent);
 
-        Screen origin = getScreen((Component) listDataComponent);
+        Screen<?> origin = getScreen((Component) listDataComponent);
         Class<E> beanType = getBeanType(listDataComponent);
 
         LookupWindowBuilder<E, S> builder =
@@ -100,12 +100,12 @@ public class DialogWindowBuilders {
     }
 
     @SuppressWarnings("unchecked")
-    public <E, S extends Screen> LookupWindowBuilder<E, S> lookup(EntityPickerComponent<E> picker) {
+    public <E, S extends Screen<?>> LookupWindowBuilder<E, S> lookup(EntityPickerComponent<E> picker) {
         checkNotNullArgument(picker);
         checkState(picker instanceof HasValue,
                 "A component must implement " + HasValue.class.getSimpleName());
 
-        Screen origin = getScreen((Component) picker);
+        Screen<?> origin = getScreen((Component) picker);
         Class<E> beanType = getBeanType(picker);
 
         LookupWindowBuilder<E, S> builder =
@@ -117,16 +117,16 @@ public class DialogWindowBuilders {
         return builder;
     }
 
-    public <S extends Screen> WindowBuilder<S> screen(Screen origin, Class<S> screenClass) {
+    public <S extends Screen<?>> WindowBuilder<S> screen(Screen<?> origin, Class<S> screenClass) {
         return new WindowBuilder<>(origin, screenClass, windowBuilderProcessor::buildScreen);
     }
 
-    public WindowBuilder<Screen> screen(Screen origin, String screenId) {
+    public WindowBuilder<Screen<?>> screen(Screen<?> origin, String screenId) {
         return new WindowBuilder<>(origin, screenId, windowBuilderProcessor::buildScreen);
     }
 
-    protected Screen getScreen(Component component) {
-        Screen screen = UiComponentUtils.findScreen(component);
+    protected Screen<?> getScreen(Component component) {
+        Screen<?> screen = UiComponentUtils.findScreen(component);
         if (screen == null) {
             throw new IllegalStateException(String.format("A component '%s' is not attached to a screen",
                     component.getClass().getSimpleName()));

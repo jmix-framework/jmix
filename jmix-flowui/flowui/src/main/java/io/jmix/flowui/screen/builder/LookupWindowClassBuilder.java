@@ -16,7 +16,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-public class LookupWindowClassBuilder<E, S extends Screen & LookupScreen<E>> extends LookupWindowBuilder<E, S>
+public class LookupWindowClassBuilder<E, S extends Screen<?> & LookupScreen<E>> extends LookupWindowBuilder<E, S>
         implements DialogWindowClassBuilder<S> {
 
     protected Class<S> screenClass;
@@ -27,7 +27,7 @@ public class LookupWindowClassBuilder<E, S extends Screen & LookupScreen<E>> ext
         this.screenClass = screenClass;
     }
 
-    public LookupWindowClassBuilder(Screen origin,
+    public LookupWindowClassBuilder(Screen<?> origin,
                                     Class<E> entityClass,
                                     Class<S> screenClass,
                                     Function<? extends LookupWindowClassBuilder<E, S>, DialogWindow<S>> handler) {

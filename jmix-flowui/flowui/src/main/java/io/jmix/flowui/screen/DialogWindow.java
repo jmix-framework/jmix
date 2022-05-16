@@ -34,7 +34,7 @@ import java.util.EventObject;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-public class DialogWindow<S extends Screen> implements HasSize, HasTheme,
+public class DialogWindow<S extends Screen<?>> implements HasSize, HasTheme,
         ApplicationContextAware, InitializingBean {
 
     protected static final String BASE_STYLE_NAME = "jmix-dialog-window";
@@ -265,7 +265,7 @@ public class DialogWindow<S extends Screen> implements HasSize, HasTheme,
     }
 
     //    @TriggerOnce
-    public static class AfterOpenEvent<S extends Screen> extends EventObject {
+    public static class AfterOpenEvent<S extends Screen<?>> extends EventObject {
 
         public AfterOpenEvent(DialogWindow<S> source) {
             super(source);
@@ -283,7 +283,7 @@ public class DialogWindow<S extends Screen> implements HasSize, HasTheme,
     }
 
     //    @TriggerOnce
-    public static class AfterCloseEvent<S extends Screen> extends EventObject {
+    public static class AfterCloseEvent<S extends Screen<?>> extends EventObject {
 
         protected final CloseAction closeAction;
 

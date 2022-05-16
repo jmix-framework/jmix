@@ -132,7 +132,7 @@ public class EditAction<E> extends SecuredListDataComponentAction<EditAction<E>,
     }
 
     @Override
-    public <S extends Screen> void setAfterCloseHandler(@Nullable Consumer<AfterCloseEvent<S>> afterCloseHandler) {
+    public <S extends Screen<?>> void setAfterCloseHandler(@Nullable Consumer<AfterCloseEvent<S>> afterCloseHandler) {
         screenInitializer.setAfterCloseHandler(afterCloseHandler);
     }
 
@@ -309,7 +309,7 @@ public class EditAction<E> extends SecuredListDataComponentAction<EditAction<E>,
                 .editEntity(editedEntity);
 
         if (target instanceof Component) {
-            Screen parent = UiComponentUtils.findScreen((Component) target);
+            Screen<?> parent = UiComponentUtils.findScreen((Component) target);
             if (parent != null) {
                 navigator = navigator.withBackNavigationTarget(parent.getClass());
             }
@@ -322,7 +322,7 @@ public class EditAction<E> extends SecuredListDataComponentAction<EditAction<E>,
 
     @SuppressWarnings("unchecked")
     protected void openDialog(E editedEntity) {
-        EditorWindowBuilder<E, Screen> editorBuilder = dialogWindowBuilders.editor(target);
+        EditorWindowBuilder<E, Screen<?>> editorBuilder = dialogWindowBuilders.editor(target);
 
         editorBuilder = screenInitializer.initWindowBuilder(editorBuilder);
 
@@ -332,7 +332,7 @@ public class EditAction<E> extends SecuredListDataComponentAction<EditAction<E>,
             editorBuilder.withTransformation(transformation);
         }
 
-        DialogWindow<Screen> dialogWindow = editorBuilder.build();
+        DialogWindow<Screen<?>> dialogWindow = editorBuilder.build();
         if (afterCommitHandler != null) {
             dialogWindow.addAfterCloseListener(event -> {
                 if (event.closedWith(StandardOutcome.COMMIT)
@@ -389,7 +389,7 @@ public class EditAction<E> extends SecuredListDataComponentAction<EditAction<E>,
     /**
      * @see #setAfterCloseHandler(Consumer)
      */
-    public <S extends Screen> EditAction<E> withAfterCloseHandler(Consumer<AfterCloseEvent<S>> afterCloseHandler) {
+    public <S extends Screen<?>> EditAction<E> withAfterCloseHandler(Consumer<AfterCloseEvent<S>> afterCloseHandler) {
         setAfterCloseHandler(afterCloseHandler);
         return this;
     }

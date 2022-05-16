@@ -1,6 +1,7 @@
 package io.jmix.flowui.xml.layout.inittask;
 
 import com.vaadin.flow.component.Component;
+import io.jmix.flowui.component.EnhancedHasComponents;
 import io.jmix.flowui.kit.component.HasActions;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.kit.action.Action;
@@ -17,22 +18,26 @@ public abstract class AbstractAssignActionInitTask<C extends Component> implemen
 
     protected C component;
     protected String actionId;
-    protected Screen screen;
+    protected Screen<?> screen;
 
-    public AbstractAssignActionInitTask(C component, String actionId, Screen screen) {
+    public AbstractAssignActionInitTask(C component, String actionId, Screen<?> screen) {
         this.component = component;
         this.actionId = actionId;
         this.screen = screen;
     }
 
     @Override
-    public void execute(ComponentContext context, Screen screen) {
+    public void execute(ComponentContext context, Screen<?> screen) {
+        if (!(screen.getContent() instanceof EnhancedHasComponents)) {
+            throw new GuiDevelopmentException("Screen cannot contain components", context.getFullFrameId());
+        }
+
         String[] elements = ValuePathHelper.parse(actionId);
         if (elements.length > 1) {
             String id = elements[elements.length - 1];
 
             String prefix = ValuePathHelper.pathPrefix(elements);
-            Component holder = screen.getContent().findComponent(prefix).orElse(null);
+            Component holder = ((EnhancedHasComponents) screen.getContent()).findComponent(prefix).orElse(null);
             if (holder == null) {
                 throw new GuiDevelopmentException(
                         String.format("Can't find component: %s for action: %s", prefix, actionId),

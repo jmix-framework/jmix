@@ -154,7 +154,7 @@ public class EntityOpenAction<E> extends PickerAction<EntityOpenAction<E>, Entit
     }
 
     @Override
-    public <S extends Screen> void setAfterCloseHandler(@Nullable Consumer<DialogWindow.AfterCloseEvent<S>> afterCloseHandler) {
+    public <S extends Screen<?>> void setAfterCloseHandler(@Nullable Consumer<DialogWindow.AfterCloseEvent<S>> afterCloseHandler) {
         screenInitializer.setAfterCloseHandler(afterCloseHandler);
     }
 
@@ -178,7 +178,7 @@ public class EntityOpenAction<E> extends PickerAction<EntityOpenAction<E>, Entit
                     "for the " + target.getClass().getSimpleName(), "action ID", getId());
         }
 
-        EditorWindowBuilder<E, Screen> builder = dialogBuilders.editor(target);
+        EditorWindowBuilder<E, Screen<?>> builder = dialogBuilders.editor(target);
 
         builder = screenInitializer.initWindowBuilder(builder);
 

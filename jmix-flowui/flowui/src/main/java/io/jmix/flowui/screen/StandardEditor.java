@@ -27,7 +27,7 @@ import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
 
-public class StandardEditor<T> extends Screen implements EditorScreen<T>, ReadOnlyAwareScreen {
+public class StandardEditor<T> extends StandardScreen implements EditorScreen<T>, ReadOnlyAwareScreen {
 
     // TODO: gg, move?
     public static final String NEW_ENTITY_ID = "new";
@@ -628,11 +628,11 @@ public class StandardEditor<T> extends Screen implements EditorScreen<T>, ReadOn
      * @see #addInitEntityListener(ComponentEventListener)
      */
 //    @TriggerOnce
-    public static class InitEntityEvent<E> extends ComponentEvent<Screen> {
+    public static class InitEntityEvent<E> extends ComponentEvent<Screen<?>> {
 
         protected final E entity;
 
-        public InitEntityEvent(Screen source, E entity) {
+        public InitEntityEvent(Screen<?> source, E entity) {
             super(source, false);
 
             this.entity = entity;
@@ -689,14 +689,14 @@ public class StandardEditor<T> extends Screen implements EditorScreen<T>, ReadOn
      *
      * @see #addBeforeCommitChangesListener(ComponentEventListener)
      */
-    public static class BeforeCommitChangesEvent extends ComponentEvent<Screen> {
+    public static class BeforeCommitChangesEvent extends ComponentEvent<Screen<?>> {
 
         protected final Runnable resumeAction;
 
         protected boolean commitPrevented = false;
         protected OperationResult commitResult;
 
-        public BeforeCommitChangesEvent(Screen source, @Nullable Runnable resumeAction) {
+        public BeforeCommitChangesEvent(Screen<?> source, @Nullable Runnable resumeAction) {
             super(source, false);
             this.resumeAction = resumeAction;
         }
@@ -800,16 +800,16 @@ public class StandardEditor<T> extends Screen implements EditorScreen<T>, ReadOn
      *     }
      * </pre>
      */
-    public static class ValidationEvent extends ComponentEvent<Screen> {
+    public static class ValidationEvent extends ComponentEvent<Screen<?>> {
 
         protected ValidationErrors errors = new ValidationErrors();
 
-        public ValidationEvent(Screen source) {
+        public ValidationEvent(Screen<?> source) {
             super(source, false);
         }
 
         @Override
-        public Screen getSource() {
+        public Screen<?> getSource() {
             return super.getSource();
         }
 

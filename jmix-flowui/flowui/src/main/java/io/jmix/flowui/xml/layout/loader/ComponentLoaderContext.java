@@ -37,7 +37,7 @@ public class ComponentLoaderContext implements ComponentContext {
     protected ScreenActions screenActions;
 
     protected String messageGroup;
-    protected Screen screen;
+    protected Screen<?> screen;
     protected String fullFrameId;
     protected String currentFrameId;
 
@@ -80,11 +80,11 @@ public class ComponentLoaderContext implements ComponentContext {
     }
 
     @Override
-    public Screen getScreen() {
+    public Screen<?> getScreen() {
         return screen;
     }
 
-    public void setScreen(Screen screen) {
+    public void setScreen(Screen<?> screen) {
         this.screen = screen;
     }
 

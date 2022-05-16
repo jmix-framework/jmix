@@ -17,7 +17,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-public class LookupWindowBuilder<E, S extends Screen> extends AbstractWindowBuilder<S> {
+public class LookupWindowBuilder<E, S extends Screen<?>> extends AbstractWindowBuilder<S> {
 
     protected final Class<E> entityClass;
 
@@ -54,7 +54,7 @@ public class LookupWindowBuilder<E, S extends Screen> extends AbstractWindowBuil
         this.afterCloseListener = builder.afterCloseListener;
     }
 
-    public LookupWindowBuilder(Screen origin,
+    public LookupWindowBuilder(Screen<?> origin,
                                Class<E> entityClass,
                                Function<? extends LookupWindowBuilder<E, S>, DialogWindow<S>> handler) {
         super(origin, handler);
@@ -68,7 +68,7 @@ public class LookupWindowBuilder<E, S extends Screen> extends AbstractWindowBuil
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public <T extends Screen & LookupScreen<E>> LookupWindowClassBuilder<E, T> withScreenClass(@Nullable Class<T> screenClass) {
+    public <T extends Screen<?> & LookupScreen<E>> LookupWindowClassBuilder<E, T> withScreenClass(@Nullable Class<T> screenClass) {
         return new LookupWindowClassBuilder(this, screenClass);
     }
 
@@ -119,7 +119,7 @@ public class LookupWindowBuilder<E, S extends Screen> extends AbstractWindowBuil
         return this;
     }
 
-    public Screen getOrigin() {
+    public Screen<?> getOrigin() {
         return origin;
     }
 

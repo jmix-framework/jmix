@@ -23,7 +23,7 @@ public class WindowBuilderProcessor extends AbstractWindowBuilderProcessor {
         super(applicationContext, screens, screenRegistry);
     }
 
-    public <S extends Screen> DialogWindow<S> buildScreen(WindowBuilder<S> builder) {
+    public <S extends Screen<?>> DialogWindow<S> buildScreen(WindowBuilder<S> builder) {
         S screen = createScreen(builder);
 
         DialogWindow<S> dialog = createDialog(screen);
@@ -33,7 +33,7 @@ public class WindowBuilderProcessor extends AbstractWindowBuilderProcessor {
     }
 
     @Override
-    protected <S extends Screen> Class<S> inferScreenClass(DialogWindowBuilder<S> builder) {
+    protected <S extends Screen<?>> Class<S> inferScreenClass(DialogWindowBuilder<S> builder) {
         throw new IllegalStateException("Can't open a screen. " +
                 "Either screen id or screen class must be defined");
     }

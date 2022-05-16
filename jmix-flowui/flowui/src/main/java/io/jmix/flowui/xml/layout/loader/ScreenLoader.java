@@ -15,7 +15,11 @@
  */
 package io.jmix.flowui.xml.layout.loader;
 
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.HasComponents;
+import com.vaadin.flow.component.HasEnabled;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
+import com.vaadin.flow.component.orderedlayout.ThemableLayout;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.kit.action.Action;
@@ -29,7 +33,7 @@ import io.jmix.flowui.xml.layout.loader.container.AbstractContainerLoader;
 import io.jmix.flowui.xml.layout.support.ActionLoaderSupport;
 import org.dom4j.Element;
 
-public class ScreenLoader extends AbstractContainerLoader<Screen> implements ComponentRootLoader<Screen> {
+public class ScreenLoader extends AbstractContainerLoader<Screen<?>> implements ComponentRootLoader<Screen<?>> {
 
 
     protected ActionLoaderSupport actionLoaderSupport;
@@ -41,12 +45,12 @@ public class ScreenLoader extends AbstractContainerLoader<Screen> implements Com
         return actionLoaderSupport;
     }
 
-    public void setResultComponent(Screen screen) {
+    public void setResultComponent(Screen<?> screen) {
         this.resultComponent = screen;
     }
 
     @Override
-    protected Screen createComponent() {
+    protected Screen<?> createComponent() {
         throw new UnsupportedOperationException("Screen cannot be created from XML element");
     }
 
@@ -58,7 +62,12 @@ public class ScreenLoader extends AbstractContainerLoader<Screen> implements Com
     @Override
     public void createContent(Element layoutElement) {
         Preconditions.checkNotNullArgument(layoutElement);
-        createSubComponents(resultComponent.getContent(), layoutElement);
+
+        if (resultComponent.getContent() instanceof HasComponents) {
+            createSubComponents(((HasComponents) resultComponent.getContent()), layoutElement);
+        } else {
+            // TODO: gg, throw an exception?
+        }
     }
 
     @Override
@@ -78,17 +87,26 @@ public class ScreenLoader extends AbstractContainerLoader<Screen> implements Com
             throw new GuiDevelopmentException("Required 'layout' element is not found", context);
         }
 
-        // TODO: gg, add corresponding interfaces to screen itself?
-        VerticalLayout screenRootComponents = resultComponent.getContent();
+        Component screenRootComponent = resultComponent.getContent();
 
-        componentLoader().loadThemableAttributes(screenRootComponents, layoutElement);
-        componentLoader().loadFlexibleAttributes(screenRootComponents, layoutElement);
-        componentLoader().loadEnabled(screenRootComponents, layoutElement);
+        if (screenRootComponent instanceof ThemableLayout) {
+            componentLoader().loadThemableAttributes(((ThemableLayout) screenRootComponent), layoutElement);
+        }
 
-        loadSubComponentsAndExpand(screenRootComponents, layoutElement);
+        if (screenRootComponent instanceof FlexComponent) {
+            componentLoader().loadFlexibleAttributes(((FlexComponent) screenRootComponent), layoutElement);
+        }
+
+        if (screenRootComponent instanceof HasEnabled) {
+            componentLoader().loadEnabled(((HasEnabled) screenRootComponent), layoutElement);
+        }
+
+        if (screenRootComponent instanceof FlexComponent) {
+            loadSubComponentsAndExpand(((FlexComponent) screenRootComponent), layoutElement);
+        }
     }
 
-    protected void loadScreenData(Screen screen, Element element) {
+    protected void loadScreenData(Screen<?> screen, Element element) {
         Element dataElement = element.element("data");
         if (dataElement != null) {
             ScreenDataXmlLoader screenDataXmlLoader = applicationContext.getBean(ScreenDataXmlLoader.class);
@@ -99,7 +117,7 @@ public class ScreenLoader extends AbstractContainerLoader<Screen> implements Com
         }
     }
 
-    protected void loadScreenActions(Screen screen, Element element) {
+    protected void loadScreenActions(Screen<?> screen, Element element) {
         Element actionsEl = element.element("actions");
         if (actionsEl == null) {
             return;

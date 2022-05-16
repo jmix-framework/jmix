@@ -14,7 +14,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-public class StandardLookup<T> extends Screen implements LookupScreen<T>, MultiSelectLookupScreen {
+public class StandardLookup<T> extends StandardScreen implements LookupScreen<T>, MultiSelectLookupScreen {
 
     protected static final String LOOKUP_ACTIONS_LAYOUT_DEFAULT_ID = "lookupActions";
     protected static final String SELECT_ACTION_DEFAULT_ID = "selectAction";

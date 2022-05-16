@@ -79,8 +79,8 @@ public class CreateAction<E> extends ListDataComponentAction<CreateAction<E>, E>
     }
 
     /**
-     * Returns the editor screen id if it was set by {@link #setScreenId(String)} or in the screen XML.
-     * Otherwise returns null.
+     * Returns the editor screen id if it was set by {@link #setScreenId(String)} or in the screen XML,
+     * otherwise returns null.
      */
     @Nullable
     @Override
@@ -137,7 +137,7 @@ public class CreateAction<E> extends ListDataComponentAction<CreateAction<E>, E>
     }
 
     @Override
-    public <S extends Screen> void setAfterCloseHandler(@Nullable Consumer<AfterCloseEvent<S>> afterCloseHandler) {
+    public <S extends Screen<?>> void setAfterCloseHandler(@Nullable Consumer<AfterCloseEvent<S>> afterCloseHandler) {
         screenInitializer.setAfterCloseHandler(afterCloseHandler);
     }
 
@@ -286,7 +286,7 @@ public class CreateAction<E> extends ListDataComponentAction<CreateAction<E>, E>
         navigator = navigator.newEntity();
 
         if (target instanceof Component) {
-            Screen parent = UiComponentUtils.findScreen((Component) target);
+            Screen<?> parent = UiComponentUtils.findScreen((Component) target);
             if (parent != null) {
                 navigator = navigator.withBackNavigationTarget(parent.getClass());
             }
@@ -299,7 +299,7 @@ public class CreateAction<E> extends ListDataComponentAction<CreateAction<E>, E>
 
     @SuppressWarnings("unchecked")
     protected void openDialog() {
-        EditorWindowBuilder<E, Screen> editorBuilder = dialogWindowBuilders.editor(target);
+        EditorWindowBuilder<E, Screen<?>> editorBuilder = dialogWindowBuilders.editor(target);
 
         editorBuilder = screenInitializer.initWindowBuilder(editorBuilder);
 
@@ -375,7 +375,7 @@ public class CreateAction<E> extends ListDataComponentAction<CreateAction<E>, E>
     /**
      * @see #setAfterCloseHandler(Consumer)
      */
-    public <S extends Screen> CreateAction<E> withAfterCloseHandler(
+    public <S extends Screen<?>> CreateAction<E> withAfterCloseHandler(
             @Nullable Consumer<AfterCloseEvent<S>> afterCloseHandler) {
         setAfterCloseHandler(afterCloseHandler);
         return this;

@@ -10,11 +10,11 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class WindowBuilder<S extends Screen> extends AbstractWindowBuilder<S> {
+public class WindowBuilder<S extends Screen<?>> extends AbstractWindowBuilder<S> {
 
     protected Class<S> screenClass;
 
-    public WindowBuilder(Screen origin,
+    public WindowBuilder(Screen<?> origin,
                          Class<S> screenClass,
                          Function<? extends WindowBuilder<S>, DialogWindow<S>> handler) {
         super(origin, handler);
@@ -22,7 +22,7 @@ public class WindowBuilder<S extends Screen> extends AbstractWindowBuilder<S> {
         this.screenClass = screenClass;
     }
 
-    public WindowBuilder(Screen origin,
+    public WindowBuilder(Screen<?> origin,
                          String screenId,
                          Function<? extends WindowBuilder<S>, DialogWindow<S>> handler) {
         super(origin, handler);

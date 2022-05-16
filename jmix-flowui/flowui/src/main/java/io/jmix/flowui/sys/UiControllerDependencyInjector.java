@@ -5,10 +5,10 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.HasComponents;
 import io.jmix.core.DevelopmentException;
-import io.jmix.flowui.kit.component.HasActions;
+import io.jmix.flowui.component.EnhancedHasComponents;
 import io.jmix.flowui.component.UiComponentUtils;
-import io.jmix.flowui.component.layout.ScreenLayout;
 import io.jmix.flowui.kit.action.Action;
+import io.jmix.flowui.kit.component.HasActions;
 import io.jmix.flowui.model.DataLoader;
 import io.jmix.flowui.model.InstallSubject;
 import io.jmix.flowui.model.InstanceContainer;
@@ -52,7 +52,7 @@ public class UiControllerDependencyInjector {
         this.reflectionInspector = reflectionInspector;
     }
 
-    public void inject(Screen controller) {
+    public void inject(Screen<?> controller) {
         ScreenIntrospectionData screenIntrospectionData =
                 reflectionInspector.getScreenIntrospectionData(controller.getClass());
 
@@ -64,7 +64,7 @@ public class UiControllerDependencyInjector {
 //        initUiEventListeners(frameOwner, screenIntrospectionData);
     }
 
-    protected void injectElements(Screen controller, ScreenIntrospectionData screenIntrospectionData) {
+    protected void injectElements(Screen<?> controller, ScreenIntrospectionData screenIntrospectionData) {
         List<InjectElement> injectElements = screenIntrospectionData.getInjectElements();
 
         for (InjectElement entry : injectElements) {
@@ -72,7 +72,7 @@ public class UiControllerDependencyInjector {
         }
     }
 
-    protected void doInjection(InjectElement injectElement, Screen controller) {
+    protected void doInjection(InjectElement injectElement, Screen<?> controller) {
         String name = getInjectionName(injectElement);
         Class<?> type = getInjectionType(injectElement);
 
@@ -87,7 +87,7 @@ public class UiControllerDependencyInjector {
 
     protected String getInjectionName(InjectElement injectElement) {
         AnnotatedElement element = injectElement.getElement();
-        Class annotationClass = injectElement.getAnnotationClass();
+        Class<?> annotationClass = injectElement.getAnnotationClass();
 
         String name = null;
         if (annotationClass == ComponentId.class) {
@@ -127,13 +127,20 @@ public class UiControllerDependencyInjector {
     }
 
     @Nullable
-    protected Object getInjectedInstance(Class<?> type, String name, InjectElement injectElement, Screen controller) {
+    protected Object getInjectedInstance(Class<?> type, String name, InjectElement injectElement, Screen<?> controller) {
+        // TODO: gg, exception?
+        if (!(controller.getContent() instanceof EnhancedHasComponents)) {
+            return null;
+        }
+
         AnnotatedElement element = injectElement.getElement();
-        Class annotationClass = injectElement.getAnnotationClass();
+        Class<?> annotationClass = injectElement.getAnnotationClass();
+
+        EnhancedHasComponents content = ((EnhancedHasComponents) controller.getContent());
 
         if (Component.class.isAssignableFrom(type)) {
             /// if legacy frame - inject controller
-            Optional<Component> component = controller.getContent().findComponent(name);
+            Optional<Component> component = content.findComponent(name);
             // Injecting a UI component
             // TODO: gg, rework after all types will be handled
             return component.orElse(null);
@@ -154,7 +161,7 @@ public class UiControllerDependencyInjector {
             }
 
             String prefix = ValuePathHelper.pathPrefix(elements);
-            Optional<HasActions> hasActions = controller.getContent()
+            Optional<HasActions> hasActions = content
                     .findComponent(prefix)
                     .filter(c -> c instanceof HasActions)
                     .map(c -> ((HasActions) c));
@@ -191,7 +198,7 @@ public class UiControllerDependencyInjector {
         }
     }
 
-    protected void initInstallMethods(Screen controller, ScreenIntrospectionData screenIntrospectionData) {
+    protected void initInstallMethods(Screen<?> controller, ScreenIntrospectionData screenIntrospectionData) {
         List<AnnotatedMethod<Install>> installMethods = screenIntrospectionData.getInstallMethods();
 
         for (AnnotatedMethod<Install> annotatedMethod : installMethods) {
@@ -240,8 +247,8 @@ public class UiControllerDependencyInjector {
         }
     }
 
-    protected MethodHandle getInstallTargetSetterMethod(Install annotation, Screen controller, Class<?> instanceClass,
-                                                        Method provideMethod) {
+    protected MethodHandle getInstallTargetSetterMethod(Install annotation, Screen<?> controller,
+                                                        Class<?> instanceClass, Method provideMethod) {
         String subjectProperty;
         if (Strings.isNullOrEmpty(annotation.subject()) && annotation.type() == Object.class) {
             InstallSubject installSubjectAnnotation = findMergedAnnotation(instanceClass, InstallSubject.class);
@@ -279,7 +286,7 @@ public class UiControllerDependencyInjector {
     }
 
     @Nullable
-    protected Object getInstallTargetInstance(Screen controller, Install annotation) {
+    protected Object getInstallTargetInstance(Screen<?> controller, Install annotation) {
         Object targetInstance;
         String target = UiDescriptorUtils.getInferredProvideId(annotation);
         if (Strings.isNullOrEmpty(target)) {
@@ -319,7 +326,7 @@ public class UiControllerDependencyInjector {
         return targetInstance;
     }
 
-    protected Object createInstallHandler(Screen controller, Method method, Class<?> targetObjectType) {
+    protected Object createInstallHandler(Screen<?> controller, Method method, Class<?> targetObjectType) {
         if (targetObjectType == Function.class) {
             return new InstalledFunction(controller, method);
         } else if (targetObjectType == Consumer.class) {
@@ -338,7 +345,7 @@ public class UiControllerDependencyInjector {
         }
     }
 
-    protected void initSubscribeListeners(Screen controller, ScreenIntrospectionData screenIntrospectionData) {
+    protected void initSubscribeListeners(Screen<?> controller, ScreenIntrospectionData screenIntrospectionData) {
         Class<? extends Screen> clazz = controller.getClass();
 
         List<AnnotatedMethod<Subscribe>> eventListenerMethods = screenIntrospectionData.getSubscribeMethods();
@@ -426,7 +433,7 @@ public class UiControllerDependencyInjector {
         }
     }
 
-    protected ComponentEventListener getComponentEventListener(Screen controller,
+    protected ComponentEventListener getComponentEventListener(Screen<?> controller,
                                                                Class<? extends Screen> clazz,
                                                                AnnotatedMethod<Subscribe> annotatedMethod,
                                                                Class<?> eventType) {
@@ -460,11 +467,11 @@ public class UiControllerDependencyInjector {
         return listener;
     }
 
-    protected Consumer getConsumerListener(Screen controller,
-                                           Class<? extends Screen> clazz,
-                                           AnnotatedMethod<Subscribe> annotatedMethod,
-                                           Class<?> eventType) {
-        Consumer listener;
+    protected Consumer<?> getConsumerListener(Screen<?> controller,
+                                              Class<? extends Screen> clazz,
+                                              AnnotatedMethod<Subscribe> annotatedMethod,
+                                              Class<?> eventType) {
+        Consumer<?> listener;
         // If screen controller class was hot-deployed, then it will be loaded
         // by different class loader. This will make impossible to create lambda
         // using LambdaMetaFactory for producing the listener method in Java 17+
@@ -473,7 +480,7 @@ public class UiControllerDependencyInjector {
             MethodHandle consumerMethodFactory =
                     reflectionInspector.getConsumerMethodFactory(clazz, annotatedMethod, eventType);
             try {
-                listener = (Consumer) consumerMethodFactory.invoke(controller);
+                listener = (Consumer<?>) consumerMethodFactory.invoke(controller);
             } catch (Error e) {
                 throw e;
             } catch (Throwable e) {
@@ -494,9 +501,14 @@ public class UiControllerDependencyInjector {
     }
 
     @Nullable
-    protected Object findMethodTarget(Screen controller, String target) {
+    protected Object findMethodTarget(Screen<?> controller, String target) {
+        // TODO: gg, exception?
+        if (!(controller.getContent() instanceof EnhancedHasComponents)) {
+            return null;
+        }
+
         String[] elements = ValuePathHelper.parse(target);
-        ScreenLayout screenLayout = controller.getContent();
+        EnhancedHasComponents screenLayout = ((EnhancedHasComponents) controller.getContent());
         if (elements.length == 1) {
             ScreenActions screenActions = UiControllerUtils.getScreenActions(controller);
             Action action = screenActions.getAction(target);

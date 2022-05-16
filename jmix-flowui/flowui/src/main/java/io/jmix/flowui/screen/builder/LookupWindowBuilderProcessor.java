@@ -9,10 +9,10 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.FlowUiScreenProperties;
 import io.jmix.flowui.Screens;
-import io.jmix.flowui.data.value.ContainerValueSource;
-import io.jmix.flowui.kit.component.SupportsUserAction;
 import io.jmix.flowui.component.valuepicker.EntityPicker;
 import io.jmix.flowui.data.*;
+import io.jmix.flowui.data.value.ContainerValueSource;
+import io.jmix.flowui.kit.component.SupportsUserAction;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.DataContext;
 import io.jmix.flowui.model.InstanceContainer;
@@ -57,7 +57,7 @@ public class LookupWindowBuilderProcessor extends AbstractWindowBuilderProcessor
         this.screenProperties = screenProperties;
     }
 
-    public <E, S extends Screen> DialogWindow<S> buildScreen(LookupWindowBuilder<E, S> builder) {
+    public <E, S extends Screen<?>> DialogWindow<S> buildScreen(LookupWindowBuilder<E, S> builder) {
 
         S screen = createScreen(builder);
 
@@ -117,7 +117,7 @@ public class LookupWindowBuilderProcessor extends AbstractWindowBuilderProcessor
 
     @SuppressWarnings("unchecked")
     @Override
-    protected <S extends Screen> Class<S> inferScreenClass(DialogWindowBuilder<S> builder) {
+    protected <S extends Screen<?>> Class<S> inferScreenClass(DialogWindowBuilder<S> builder) {
         LookupWindowBuilder<?, S> lookupBuilder = ((LookupWindowBuilder<?, S>) builder);
         return (Class<S>) screenRegistry.getLookupScreen(lookupBuilder.getEntityClass()).getControllerClass();
     }
@@ -182,9 +182,9 @@ public class LookupWindowBuilderProcessor extends AbstractWindowBuilderProcessor
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    protected <E, S extends Screen> void handleSelectionWithField(LookupWindowBuilder<E, S> builder,
-                                                                  HasValue field,
-                                                                  Collection<E> itemsFromLookup) {
+    protected <E, S extends Screen<?>> void handleSelectionWithField(LookupWindowBuilder<E, S> builder,
+                                                                     HasValue field,
+                                                                     Collection<E> itemsFromLookup) {
         if (itemsFromLookup.isEmpty()) {
             return;
         }

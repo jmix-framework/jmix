@@ -151,7 +151,7 @@ public class LayoutLoader {
         return fragmentLoader;
     }*/
 
-    public ComponentLoader<Screen> createScreenContent(Screen screen, Element rootScreenElement) {
+    public ComponentLoader<Screen<?>> createScreenContent(Screen<?> screen, Element rootScreenElement) {
         ScreenLoader screenLoader = getScreenLoader(rootScreenElement);
         screenLoader.setResultComponent(screen);
 

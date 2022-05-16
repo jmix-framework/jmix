@@ -11,9 +11,9 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class AbstractWindowBuilder<S extends Screen> implements DialogWindowBuilder<S> {
+public class AbstractWindowBuilder<S extends Screen<?>> implements DialogWindowBuilder<S> {
 
-    protected final Screen origin;
+    protected final Screen<?> origin;
     protected final Function<AbstractWindowBuilder<S>, DialogWindow<S>> handler;
 
     protected String screenId;
@@ -21,7 +21,7 @@ public class AbstractWindowBuilder<S extends Screen> implements DialogWindowBuil
     protected Consumer<AfterOpenEvent<S>> afterOpenListener;
     protected Consumer<AfterCloseEvent<S>> afterCloseListener;
 
-    protected AbstractWindowBuilder(Screen origin,
+    protected AbstractWindowBuilder(Screen<?> origin,
                                     Function<? extends AbstractWindowBuilder<S>, DialogWindow<S>> handler) {
         this.origin = origin;
         //noinspection unchecked
@@ -39,7 +39,7 @@ public class AbstractWindowBuilder<S extends Screen> implements DialogWindowBuil
     }
 
     @Override
-    public Screen getOrigin() {
+    public Screen<?> getOrigin() {
         return origin;
     }
 

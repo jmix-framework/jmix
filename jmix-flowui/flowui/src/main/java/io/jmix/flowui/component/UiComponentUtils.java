@@ -136,9 +136,9 @@ public final class UiComponentUtils {
     }
 
     @Nullable
-    public static Screen findScreen(Component component) {
+    public static Screen<?> findScreen(Component component) {
         if (component instanceof Screen) {
-            return (Screen) component;
+            return (Screen<?>) component;
         }
 
         Optional<Component> parent = component.getParent();
@@ -196,7 +196,7 @@ public final class UiComponentUtils {
     public static boolean isComponentAttachedToDialog(Component component) {
         Preconditions.checkNotNullArgument(component);
 
-        Screen parent = UiComponentUtils.findScreen(component);
+        Screen<?> parent = UiComponentUtils.findScreen(component);
         if (parent == null) {
             return false;
         }

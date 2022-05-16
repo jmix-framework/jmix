@@ -22,20 +22,20 @@ public abstract class AbstractWindowBuilderProcessor {
         this.screenRegistry = screenRegistry;
     }
 
-    protected <S extends Screen> DialogWindow<S> createDialog(S screen) {
+    protected <S extends Screen<?>> DialogWindow<S> createDialog(S screen) {
         DialogWindow<S> dialogWindow = new DialogWindow<>(screen);
         BeanUtil.autowireContext(applicationContext, dialogWindow);
 
         return dialogWindow;
     }
 
-    protected <S extends Screen> S createScreen(DialogWindowBuilder<S> builder) {
+    protected <S extends Screen<?>> S createScreen(DialogWindowBuilder<S> builder) {
         Class<S> screenClass = getScreenClass(builder);
         return screens.create(screenClass);
     }
 
     @SuppressWarnings("unchecked")
-    protected <S extends Screen> Class<S> getScreenClass(DialogWindowBuilder<S> builder) {
+    protected <S extends Screen<?>> Class<S> getScreenClass(DialogWindowBuilder<S> builder) {
         if (builder.getScreenId().isPresent()) {
             String screenId = builder.getScreenId().get();
             return (Class<S>) screenRegistry.getScreenInfo(screenId).getControllerClass();
@@ -47,9 +47,9 @@ public abstract class AbstractWindowBuilderProcessor {
         }
     }
 
-    protected abstract <S extends Screen> Class<S> inferScreenClass(DialogWindowBuilder<S> builder);
+    protected abstract <S extends Screen<?>> Class<S> inferScreenClass(DialogWindowBuilder<S> builder);
 
-    protected <S extends Screen> void initDialog(DialogWindowBuilder<S> builder, DialogWindow<S> dialog) {
+    protected <S extends Screen<?>> void initDialog(DialogWindowBuilder<S> builder, DialogWindow<S> dialog) {
         builder.getAfterOpenListener().ifPresent(dialog::addAfterOpenListener);
         builder.getAfterCloseListener().ifPresent(dialog::addAfterCloseListener);
     }

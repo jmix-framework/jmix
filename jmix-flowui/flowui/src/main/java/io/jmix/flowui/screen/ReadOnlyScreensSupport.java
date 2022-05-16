@@ -17,6 +17,7 @@
 package io.jmix.flowui.screen;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.HasValueAndElement;
 import io.jmix.core.AccessManager;
 import io.jmix.core.common.util.Preconditions;
@@ -60,15 +61,20 @@ public class ReadOnlyScreensSupport {
      * @param screen   a screen to set the read-only mode
      * @param readOnly whether a screen in the read-only mode
      */
-    public void setScreenReadOnly(Screen screen, boolean readOnly) {
+    public void setScreenReadOnly(Screen<?> screen, boolean readOnly) {
         Preconditions.checkNotNullArgument(screen);
 
         updateComponentsReadOnlyState(screen, readOnly);
         refreshOwnActionStates(screen);
     }
 
-    protected void updateComponentsReadOnlyState(Screen screen, boolean readOnly) {
-        for (Component component : UiComponentUtils.getComponents(screen.getContent())) {
+    protected void updateComponentsReadOnlyState(Screen<?> screen, boolean readOnly) {
+        Component content = screen.getContent();
+        if (!(content instanceof HasComponents)) {
+            return;
+        }
+
+        for (Component component : UiComponentUtils.getComponents(((HasComponents) content))) {
             if (component instanceof HasValueAndElement
                     && isChangeReadOnly(component)) {
                 boolean editable = isEditableConsideringDataBinding(component, !readOnly);

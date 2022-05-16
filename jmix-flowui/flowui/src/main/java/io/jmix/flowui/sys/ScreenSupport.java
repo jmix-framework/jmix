@@ -67,7 +67,7 @@ public class ScreenSupport {
         this.navigationSupport = navigationSupport;
     }
 
-    public void initScreen(Screen screen) {
+    public void initScreen(Screen<?> screen) {
         log.debug("Init screen: " + screen);
 
         UiControllerUtils.setScreenData(screen, applicationContext.getBean(ScreenData.class));
@@ -130,7 +130,7 @@ public class ScreenSupport {
         session.setAttribute(BackNavigationTargets.class, targets);
     }
 
-    public void unregisterBackNavigation(Screen screen) {
+    public void unregisterBackNavigation(Screen<?> screen) {
         UI ui = screen.getUI().orElse(UI.getCurrent());
         unregisterBackNavigation(ui, screen.getClass());
     }
@@ -157,12 +157,12 @@ public class ScreenSupport {
         }
     }
 
-    public void close(Screen screen) {
+    public void close(Screen<?> screen) {
         UI ui = screen.getUI().orElse(UI.getCurrent());
         close(ui, screen);
     }
 
-    public void close(UI ui, Screen screen) {
+    public void close(UI ui, Screen<?> screen) {
         log.debug("Close screen: " + screen);
 
         // Check if a back navigation target for the given screen class is registered
@@ -182,12 +182,12 @@ public class ScreenSupport {
                 .allMatch(pair -> pair.getFirst().equals(screenClass));
     }
 
-    protected void navigateToBackTarget(UI ui, Screen screen) {
+    protected void navigateToBackTarget(UI ui, Screen<?> screen) {
         retrieveExtendedClientDetails(ui, details ->
                 navigateToBackTarget(ui.getSession(), details.getWindowName(), screen));
     }
 
-    protected void navigateToBackTarget(VaadinSession session, String windowName, Screen screen) {
+    protected void navigateToBackTarget(VaadinSession session, String windowName, Screen<?> screen) {
         BackNavigationTargets targets = session.getAttribute(BackNavigationTargets.class);
         if (targets != null && targets.containsKey(windowName)
                 && targets.get(windowName).getFirst().equals(screen.getClass())) {
@@ -199,7 +199,7 @@ public class ScreenSupport {
         }
     }
 
-    protected void navigateToParentLayout(Screen screen) {
+    protected void navigateToParentLayout(Screen<?> screen) {
         RouteConfiguration routeConfiguration = RouteConfiguration.forSessionScope();
         List<RouteData> routes = routeConfiguration.getAvailableRoutes();
 
@@ -225,7 +225,7 @@ public class ScreenSupport {
         ui.getPage().retrieveExtendedClientDetails(details::accept);
     }
 
-    protected ScreenInfo getScreenInfo(Screen screen) {
+    protected ScreenInfo getScreenInfo(Screen<?> screen) {
         Class<? extends Screen> screenClass = screen.getClass();
 
         UiController uiController = screenClass.getAnnotation(UiController.class);
@@ -239,7 +239,7 @@ public class ScreenSupport {
         return screenRegistry.getScreenInfo(screenId);
     }
 
-    protected void fireScreenInitEvent(Screen screen) {
+    protected void fireScreenInitEvent(Screen<?> screen) {
         UiControllerUtils.fireEvent(screen, new InitEvent(screen));
     }
 
@@ -261,9 +261,9 @@ public class ScreenSupport {
         return new ComponentLoaderContext();
     }
 
-    protected void loadWindowFromXml(Element element, Screen screen, ComponentLoaderContext context) {
+    protected void loadWindowFromXml(Element element, Screen<?> screen, ComponentLoaderContext context) {
         LayoutLoader layoutLoader = applicationContext.getBean(LayoutLoader.class, context);
-        ComponentLoader<Screen> screenLoader = layoutLoader.createScreenContent(screen, element);
+        ComponentLoader<Screen<?>> screenLoader = layoutLoader.createScreenContent(screen, element);
 
         screenLoader.loadComponent();
     }

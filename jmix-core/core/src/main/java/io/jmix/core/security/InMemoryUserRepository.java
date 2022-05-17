@@ -33,6 +33,10 @@ public class InMemoryUserRepository implements UserRepository {
     protected List<UserDetails> users = new ArrayList<>();
 
     public InMemoryUserRepository() {
+        initServiceUsers();
+    }
+
+    protected void initServiceUsers() {
         systemUser = createSystemUser();
         anonymousUser = createAnonymousUser();
     }

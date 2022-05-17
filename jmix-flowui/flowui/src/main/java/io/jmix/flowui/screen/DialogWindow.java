@@ -24,6 +24,7 @@ import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.screen.Screen.AfterShowEvent;
 import io.jmix.flowui.screen.Screen.BeforeShowEvent;
+import io.jmix.flowui.sys.ScreenSupport;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
@@ -73,7 +74,8 @@ public class DialogWindow<S extends Screen<?>> implements HasSize, HasTheme,
     }
 
     protected void initDialog(Dialog dialog) {
-        String screenTitle = UiControllerUtils.getTitle(screen);
+        String screenTitle = applicationContext.getBean(ScreenSupport.class)
+                .getLocalizedPageTitle(screen);
 
         dialog.setCloseOnEsc(false);
         dialog.setCloseOnOutsideClick(false);

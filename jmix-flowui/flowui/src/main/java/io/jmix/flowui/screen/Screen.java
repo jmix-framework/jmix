@@ -45,6 +45,8 @@ public class Screen<T extends Component> extends Composite<T>
 
     @Override
     public void afterNavigation(AfterNavigationEvent event) {
+        updatePageTitle();
+
         fireEvent(new AfterShowEvent(this));
     }
 
@@ -116,6 +118,12 @@ public class Screen<T extends Component> extends Composite<T>
 
     protected void setScreenActions(ScreenActions screenActions) {
         this.screenActions = screenActions;
+    }
+
+    protected void updatePageTitle() {
+        String pageTitle = applicationContext.getBean(ScreenSupport.class)
+                .getLocalizedPageTitle(this);
+        getUI().ifPresent(ui -> ui.getPage().setTitle(pageTitle));
     }
 
     @Override

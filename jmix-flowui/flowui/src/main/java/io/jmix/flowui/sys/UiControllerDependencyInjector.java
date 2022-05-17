@@ -23,6 +23,7 @@ import io.jmix.flowui.sys.event.UiEventsManager;
 import org.apache.commons.lang3.JavaVersion;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
+import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -170,6 +171,8 @@ public class UiControllerDependencyInjector {
             if (hasActions.isPresent()) {
                 return hasActions.get().getAction(elements[elements.length - 1]);
             }
+        } else if (MessageBundle.class == type) {
+            return createMessageBundle(controller);
         }
 
         // TODO: gg, handle other types
@@ -177,7 +180,30 @@ public class UiControllerDependencyInjector {
         return null;
     }
 
-    protected void assignValue(AnnotatedElement element, Object value, Screen controller) {
+    protected MessageBundle createMessageBundle(Screen<?> controller) {
+        MessageBundle messageBundle = applicationContext.getBean(MessageBundle.class);
+        messageBundle.setMessageGroup(UiControllerUtils.getPackage(controller.getClass()));
+
+        if (!controller.getId().isPresent()) {
+            return messageBundle;
+        }
+
+        ScreenInfo screenInfo = applicationContext.getBean(ScreenRegistry.class)
+                .getScreenInfo(controller.getId().get());
+
+        ScreenXmlLoader screenXmlLoader = applicationContext.getBean(ScreenXmlLoader.class);
+        Optional<String> templatePath = screenInfo.getTemplatePath();
+        Element element = templatePath.map(screenXmlLoader::load).orElse(null);
+        if (element != null) {
+            String messagesGroup = element.attributeValue("messagesGroup");
+            if (!Strings.isNullOrEmpty(messagesGroup)) {
+                messageBundle.setMessageGroup(messagesGroup);
+            }
+        }
+        return messageBundle;
+    }
+
+    protected void assignValue(AnnotatedElement element, Object value, Screen<?> controller) {
         if (element instanceof Field) {
             Field field = (Field) element;
 

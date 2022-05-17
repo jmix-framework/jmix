@@ -18,7 +18,7 @@ public final class UiControllerUtils {
     }
 
     // TODO: gg, Screen?
-    public static String getTitle(@Nullable Component component) {
+    public static String getPageTitle(@Nullable Component component) {
         if (component == null) {
             return "";
         }

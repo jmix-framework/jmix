@@ -49,9 +49,9 @@
             </xs:all>
 
             <xs:attribute name="messagesGroup" type="xs:string"/>
+            <xs:attribute name="title" type="layout:resourceString"/>
 
-<!--            <xs:attribute name="icon" type="xs:string"/>-->
-<!--            <xs:attribute name="title" type="layout:resourceString"/>-->
+            <!--            <xs:attribute name="icon" type="xs:string"/>-->
 <!--            <xs:attribute name="description" type="layout:resourceString"/>-->
             <xs:attribute name="focusComponent" type="xs:string"/>
             <xs:attribute name="focusMode" type="focusModeType"/>

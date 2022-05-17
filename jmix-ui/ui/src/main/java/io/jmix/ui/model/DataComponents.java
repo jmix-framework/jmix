@@ -155,7 +155,7 @@ public class DataComponents {
             });
 
             masterContainer.addItemPropertyChangeListener(e -> {
-                if (e.getProperty().equals(property)) {
+                if (e.getProperty().equals(property) && e.getItem() == masterContainer.getItem()) {
                     container.setDisconnectedItems((Collection<E>) e.getValue());
                 }
             });

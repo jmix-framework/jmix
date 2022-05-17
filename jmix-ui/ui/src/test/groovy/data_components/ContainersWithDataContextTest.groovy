@@ -26,6 +26,7 @@ import org.springframework.test.context.ContextConfiguration
 import test_support.UiTestConfiguration
 import test_support.entity.sales.Order
 import test_support.entity.sales.OrderLine
+import test_support.entity.sales.OrderLineParam
 
 @ContextConfiguration(classes = [CoreConfiguration, UiConfiguration, DataConfiguration,
         EclipselinkConfiguration, UiTestConfiguration])
@@ -60,5 +61,97 @@ class ContainersWithDataContextTest extends ScreenSpecification {
         then:
 
         !context.contains(line2)
+    }
+
+    def "nested collection property containers"() {
+        def orderContext = dataComponents.createDataContext()
+        def lineContext
+        def paramContext
+
+        def orderDc = dataComponents.createInstanceContainer(Order)
+        def linesDc = dataComponents.createCollectionContainer(OrderLine, orderDc, 'orderLines')
+        def paramsDc = dataComponents.createCollectionContainer(OrderLineParam, linesDc, 'params')
+
+        def order1 = orderContext.create(Order)
+        order1.number = 1
+        order1.orderLines = []
+
+        orderDc.setItem(order1)
+
+        when:
+
+        // first OrderLine and OrderLineParam
+
+        def line1 = metadata.create(OrderLine)
+        line1.order = orderDc.getItem()
+
+        lineContext = dataComponents.createDataContext()
+        lineContext.setParent(orderContext)
+
+        line1 = lineContext.merge(line1)
+        line1.quantity = 1
+        lineContext.commit()
+        line1 = orderContext.find(line1)
+
+        linesDc.mutableItems.add(line1)
+        linesDc.setItem(line1)
+
+        def param1 = metadata.create(OrderLineParam)
+        param1.orderLine = linesDc.getItem()
+
+        paramContext = dataComponents.createDataContext()
+        paramContext.setParent(orderContext)
+
+        param1 = paramContext.merge(param1)
+        param1.name = "p1"
+        paramContext.commit()
+        param1 = orderContext.find(param1)
+
+        paramsDc.mutableItems.add(param1)
+
+        then:
+
+        order1.orderLines.size() == 1
+        order1.orderLines[0].params.size() == 1
+        order1.orderLines[0].params[0] == param1
+        paramsDc.items.size() == 1
+
+        when:
+
+        // second OrderLine and OrderLineParam
+
+        def line2 = metadata.create(OrderLine)
+        line2.order = orderDc.getItem()
+
+        lineContext = dataComponents.createDataContext()
+        lineContext.setParent(orderContext)
+
+        line2 = lineContext.merge(line2)
+        line2.quantity = 2
+        lineContext.commit()
+        line2 = orderContext.find(line2)
+
+        linesDc.mutableItems.add(line2)
+        linesDc.setItem(line2)
+
+        def param2 = metadata.create(OrderLineParam)
+        param2.orderLine = linesDc.getItem()
+
+        paramContext = dataComponents.createDataContext()
+        paramContext.setParent(orderContext)
+
+        param2 = paramContext.merge(param2)
+        param2.name = "p2"
+        paramContext.commit()
+        param2 = orderContext.find(param2)
+
+        paramsDc.mutableItems.add(param2)
+
+        then:
+
+        order1.orderLines.size() == 2
+        order1.orderLines[1].params.size() == 1
+        order1.orderLines[1].params[0] == param2
+        paramsDc.items.size() == 1
     }
 }

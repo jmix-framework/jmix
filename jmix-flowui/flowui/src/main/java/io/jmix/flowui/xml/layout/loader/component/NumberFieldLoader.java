@@ -38,7 +38,7 @@ public class NumberFieldLoader extends AbstractComponentLoader<NumberField> {
         loadString(element, "placeholder", resultComponent::setPlaceholder);
         loadBoolean(element, "hasControls", resultComponent::setHasControls);
         loadBoolean(element, "clearButtonVisible", resultComponent::setClearButtonVisible);
-        loadResourceString(element.attributeValue("title"), context.getMessageGroup(), resultComponent::setTitle);
+        loadResourceString(element, "title", context.getMessageGroup(), resultComponent::setTitle);
 
         componentLoader().loadLabel(resultComponent, element);
         componentLoader().loadEnabled(resultComponent, element);

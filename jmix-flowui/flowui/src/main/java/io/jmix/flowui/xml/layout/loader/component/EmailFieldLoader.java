@@ -48,7 +48,7 @@ public class EmailFieldLoader extends AbstractComponentLoader<EmailField> {
         loadString(element, "placeholder", resultComponent::setPlaceholder);
         loadBoolean(element, "clearButtonVisible", resultComponent::setClearButtonVisible);
         loadBoolean(element, "preventInvalidInput", resultComponent::setPreventInvalidInput);
-        loadResourceString(element.attributeValue("title"), context.getMessageGroup(), resultComponent::setTitle);
+        loadResourceString(element, "title", context.getMessageGroup(), resultComponent::setTitle);
 
         componentLoader().loadLabel(resultComponent, element);
         componentLoader().loadEnabled(resultComponent, element);

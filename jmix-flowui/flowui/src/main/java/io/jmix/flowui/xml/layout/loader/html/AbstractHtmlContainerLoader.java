@@ -30,11 +30,11 @@ public abstract class AbstractHtmlContainerLoader<T extends HtmlContainer> exten
     @Override
     public void loadComponent() {
         if (resultComponent.getChildren().findAny().isEmpty()) {
-            loadResourceString(element.attributeValue("text"), context.getMessageGroup(), resultComponent::setText);
+            loadResourceString(element, "text", context.getMessageGroup(), resultComponent::setText);
         } else {
             loadSubComponents();
         }
-        loadResourceString(element.attributeValue("title"), context.getMessageGroup(), resultComponent::setTitle);
+        loadResourceString(element, "title", context.getMessageGroup(), resultComponent::setTitle);
         componentLoader().loadEnabled(resultComponent, element);
         componentLoader().loadClassName(resultComponent, element);
         componentLoader().loadWhiteSpace(resultComponent, element);

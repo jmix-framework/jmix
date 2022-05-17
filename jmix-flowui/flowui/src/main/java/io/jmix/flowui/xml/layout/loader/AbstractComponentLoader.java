@@ -169,8 +169,8 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
         return loaderSupport.loadBoolean(element, attributeName);
     }
 
-    protected String loadResourceString(String message, String messageGroup) {
-        return loaderSupport.loadResourceString(message, messageGroup);
+    protected Optional<String> loadResourceString(Element element, String attributeName, String messageGroup) {
+        return loaderSupport.loadResourceString(element, attributeName, messageGroup);
     }
 
     protected Optional<String> loadString(Element element, String attributeName) {
@@ -193,8 +193,9 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
         loaderSupport.loadBoolean(element, attributeName, setter);
     }
 
-    protected void loadResourceString(String message, String messageGroup, Consumer<String> setter) {
-        loaderSupport.loadResourceString(message, messageGroup, setter);
+    protected void loadResourceString(Element element, String attributeName, String messageGroup,
+                                      Consumer<String> setter) {
+        loaderSupport.loadResourceString(element, attributeName, messageGroup, setter);
     }
 
     protected void loadString(Element element, String attributeName, Consumer<String> setter) {

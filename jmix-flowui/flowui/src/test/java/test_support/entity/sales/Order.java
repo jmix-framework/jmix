@@ -26,7 +26,9 @@ import test_support.entity.sec.User;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Entity(name = "test_Order")
@@ -40,9 +42,15 @@ public class Order extends TestBaseEntity {
     private String number;
 
     @Column(name = "DATE_")
-    private Date date;
+    private LocalDate date;
 
-    @Column(name = "AMOUNT")
+    @Column(name = "DATE_TIME")
+    private LocalDateTime dateTime;
+
+    @Column(name = "TIME_")
+    private LocalTime time;
+
+    @Column(name = "AMOUNT", precision = 19, scale = 2)
     private BigDecimal amount;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -66,12 +74,28 @@ public class Order extends TestBaseEntity {
         this.number = number;
     }
 
-    public Date getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDate date) {
         this.date = date;
+    }
+
+    public LocalDateTime getDateTime() {
+        return dateTime;
+    }
+
+    public void setDateTime(LocalDateTime dateTime) {
+        this.dateTime = dateTime;
+    }
+
+    public LocalTime getTime() {
+        return time;
+    }
+
+    public void setTime(LocalTime time) {
+        this.time = time;
     }
 
     public BigDecimal getAmount() {

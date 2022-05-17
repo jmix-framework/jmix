@@ -1,6 +1,7 @@
 package test_support.spec
 
 import com.google.common.base.Strings
+import com.vaadin.flow.component.HasElement
 import com.vaadin.flow.component.UI
 import com.vaadin.flow.router.Route
 import com.vaadin.flow.router.RouteConfiguration
@@ -11,6 +12,7 @@ import com.vaadin.flow.spring.SpringServlet
 import com.vaadin.flow.spring.VaadinServletContextInitializer
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory
 import io.jmix.core.security.SystemAuthenticator
+import io.jmix.flowui.ScreenNavigators
 import io.jmix.flowui.screen.Screen
 import io.jmix.flowui.screen.ScreenRegistry
 import io.jmix.flowui.sys.UiControllersConfiguration
@@ -22,11 +24,7 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes
 import spock.lang.Specification
-import test_support.FlowuiTestConfiguration
-import test_support.TestServletContext
-import test_support.TestSpringServlet
-import test_support.TestVaadinRequest
-import test_support.TestVaadinSession
+import test_support.*
 
 import javax.servlet.ServletException
 
@@ -38,6 +36,9 @@ class FlowuiTestSpecification extends Specification {
 
     @Autowired
     ApplicationContext applicationContext
+
+    @Autowired
+    ScreenNavigators screenNavigators
 
     // saving session and UI to avoid it be GC'ed
     protected VaadinSession vaadinSession
@@ -157,5 +158,18 @@ class FlowuiTestSpecification extends Specification {
 
             routeConfiguration.setRoute(route.value(), controllerClass)
         })
+    }
+
+    protected <T extends Screen> T openScreen(Class<T> screen) {
+        def activeRouterTargetsChain = getRouterChain(screen)
+
+        activeRouterTargetsChain.get(0) as T
+    }
+
+    protected List<HasElement> getRouterChain(Class<Screen> screenClass) {
+        screenNavigators.screen(screenClass)
+                .navigate()
+
+        UI.getCurrent().getInternals().getActiveRouterTargetsChain()
     }
 }

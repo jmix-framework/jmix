@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<screen xmlns="http://jmix.io/schema/flowui/screen">
+    <data readOnly="true">
+        <instance id="orderDc"
+                  class="test_support.entity.sales.Order">
+            <fetchPlan extends="_base"/>
+            <loader id="orderDl">
+                <query>
+                    <![CDATA[select e from test_Order e]]>
+                </query>
+            </loader>
+        </instance>
+    </data>
+    <layout>
+        <vbox id="vboxId"
+              alignItems="STRETCH"
+              boxSizing="BORDER_BOX"
+              className="cssClassName1, cssClassName2"
+              enabled="true"
+              expand="expanded"
+              height="50px"
+              justifyContent="AROUND"
+              margin="true"
+              maxHeight="55px"
+              maxWidth="120px"
+              minHeight="40px"
+              minWidth="80px"
+              padding="true"
+              spacing="true"
+              width="100px">
+            <textField id="expanded"/>
+            <button text="vboxChild"/>
+        </vbox>
+
+        <hbox id="hboxId"
+              alignItems="STRETCH"
+              boxSizing="BORDER_BOX"
+              className="cssClassName1, cssClassName2"
+              enabled="true"
+              expand="expanded"
+              height="50px"
+              justifyContent="AROUND"
+              margin="true"
+              maxHeight="55px"
+              maxWidth="120px"
+              minHeight="40px"
+              minWidth="80px"
+              padding="true"
+              spacing="true"
+              width="100px">
+            <textField id="expanded"/>
+            <button text="hboxChild"/>
+        </hbox>
+
+        <accordion id="accordionId"
+                   className="cssClassName1, cssClassName2"
+                   height="50px"
+                   maxHeight="55px"
+                   maxWidth="120px"
+                   minHeight="40px"
+                   minWidth="80px"
+                   visible="true"
+                   width="100px">
+            <accordionPanel id="accordionPanelId"
+                            className="cssClassName1, cssClassName2"
+                            enabled="true"
+                            height="50px"
+                            maxHeight="55px"
+                            maxWidth="120px"
+                            minHeight="40px"
+                            minWidth="80px"
+                            summaryText="summaryTextString"
+                            themeName="small, reverse"
+                            visible="true"
+                            width="100px">
+            </accordionPanel>
+            <accordionPanel id="anotherAccordionPanelId"
+                            className="cssClassName1, cssClassName2"
+                            enabled="true"
+                            height="50px"
+                            maxHeight="55px"
+                            maxWidth="120px"
+                            minHeight="40px"
+                            minWidth="80px"
+                            summaryText="summaryTextString"
+                            themeName="small, reverse"
+                            visible="true"
+                            width="100px">
+            </accordionPanel>
+        </accordion>
+
+        <form id="formLayoutId"
+              className="cssClassName1, cssClassName2"
+              dataContainer="orderDc"
+              enabled="true"
+              height="50px"
+              maxHeight="55px"
+              maxWidth="120px"
+              minHeight="40px"
+              minWidth="80px"
+              visible="true"
+              width="100px">
+            <formItem id="item1"
+                      colspan="3"
+                      enabled="true"
+                      visible="true">
+                <textField id="forNumber" property="number"/>
+            </formItem>
+            <formItem id="item2"
+                      colspan="2"
+                      enabled="true"
+                      visible="true">
+                <bigDecimalField id="forAmount" property="amount"/>
+            </formItem>
+            <responsiveStep
+                    columns="5"
+                    labelsPosition="TOP"
+                    minWidth="100px"/>
+        </form>
+
+        <scroller id="scrollerId"
+                  className="cssClassName1, cssClassName2"
+                  height="50px"
+                  maxHeight="55px"
+                  maxWidth="120px"
+                  minHeight="40px"
+                  minWidth="80px"
+                  scrollBarsDirection="BOTH"
+                  visible="true"
+                  width="100px">
+            <checkBox id="scrollerChild"/>
+        </scroller>
+
+        <split id="splitLayoutId"
+               className="cssClassName1, cssClassName2"
+               height="50px"
+               maxHeight="55px"
+               maxWidth="120px"
+               minHeight="40px"
+               minWidth="80px"
+               orientation="HORIZONTAL"
+               splitterPosition="5.6"
+               themeName="small, minimal"
+               visible="true"
+               width="100px">
+            <scroller id="splitPrimaryChild"/>
+            <vbox id="splitSecondaryChild"/>
+        </split>
+
+        <tabs id="tabsId"
+              className="cssClassName1, cssClassName2"
+              height="50px"
+              maxHeight="55px"
+              maxWidth="120px"
+              minHeight="40px"
+              minWidth="80px"
+              orientation="HORIZONTAL"
+              themeName="small, minimal"
+              visible="true"
+              width="100px">
+            <tab id="tab1"
+                 className="cssClassName1, cssClassName2"
+                 enabled="true"
+                 flexGrow="45.54"
+                 label="labelString"
+                 themeName="icon-on-top"
+                 visible="true">
+            </tab>
+            <tab id="tab2"
+                 className="cssClassName1, cssClassName2"
+                 enabled="true"
+                 flexGrow="45.44"
+                 themeName="icon-on-top"
+                 visible="true">
+                <textField id="tab2Child"/>
+            </tab>
+        </tabs>
+    </layout>
+</screen>

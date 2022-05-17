@@ -96,7 +96,7 @@ public class DataLoaderSupport {
     protected String getParentDataContainer(Element element) {
         Element parent = element.getParent();
         while (parent != null) {
-            if (loaderResolver.getLoader(parent) != null) {
+            if (loaderResolver.getLoader(parent) != null && parent.attributeValue("dataContainer") != null) {
                 return parent.attributeValue("dataContainer");
             }
             parent = parent.getParent();

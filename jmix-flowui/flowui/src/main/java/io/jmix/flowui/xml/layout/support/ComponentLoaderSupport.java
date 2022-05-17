@@ -83,7 +83,8 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
         this.datatypeRegistry = datatypeRegistry;
     }
 
-    protected String loadResourceString(String message) {
+    @Nullable
+    protected String loadResourceString(@Nullable String message) {
         return loaderSupport.loadResourceString(message, context.getMessageGroup());
     }
 
@@ -139,7 +140,7 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
     }
 
     public void loadText(HasText component, Element element) {
-        loaderSupport.loadResourceString(element.attributeValue("text"), context.getMessageGroup(), component::setText);
+        loaderSupport.loadResourceString(element, "text", context.getMessageGroup(), component::setText);
     }
 
     public void loadLabel(HasLabel component, Element element) {
@@ -147,8 +148,8 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
     }
 
     public void loadRequired(HasRequired resultComponent, Element element, Context context) {
-        loaderSupport.loadResourceString(
-                element.attributeValue("requiredMessage"),
+        loaderSupport.loadResourceString(element,
+                "requiredMessage",
                 context.getMessageGroup(),
                 resultComponent::setRequiredMessage
         );
@@ -185,7 +186,7 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
 
     public void loadValidationAttributes(HasValidation component, Element element, Context context) {
         loaderSupport.loadBoolean(element, "invalid", component::setInvalid);
-        loaderSupport.loadResourceString(element.attributeValue("errorMessage"), context.getMessageGroup(), component::setErrorMessage);
+        loaderSupport.loadResourceString(element, "errorMessage", context.getMessageGroup(), component::setErrorMessage);
     }
 
     public void loadHelperText(HasHelper component, Element element) {

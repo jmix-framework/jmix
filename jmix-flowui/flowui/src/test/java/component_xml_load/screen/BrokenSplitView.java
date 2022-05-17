@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.xml.layout.loader.html;
+package component_xml_load.screen;
 
-import com.vaadin.flow.component.HtmlComponent;
-import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
+import com.vaadin.flow.router.Route;
+import io.jmix.flowui.screen.Screen;
+import io.jmix.flowui.screen.StandardScreen;
+import io.jmix.flowui.screen.UiController;
+import io.jmix.flowui.screen.UiDescriptor;
 
-public abstract class AbstractHtmlComponentLoader<T extends HtmlComponent> extends AbstractComponentLoader<T> {
+@Route(value = "broken-split-view")
+@UiController("BrokenSplitView")
+@UiDescriptor("broken-split-view.xml")
+public class BrokenSplitView extends StandardScreen {
 
-    @Override
-    public void loadComponent() {
-        loadResourceString(element, "title", context.getMessageGroup(), resultComponent::setTitle);
-        componentLoader().loadClassName(resultComponent, element);
-        componentLoader().loadSizeAttributes(resultComponent, element);
-    }
 }

@@ -1657,7 +1657,7 @@
     <!-- GridColumn-->
     <xs:complexType name="dataGridColumnComponent">
         <xs:complexContent>
-            <xs:extension base="baseComponent">
+
                 <!--        <xs:sequence>-->
                 <!--            <xs:element name="aggregation" minOccurs="0">-->
                 <!--                <xs:complexType>-->
@@ -1673,6 +1673,8 @@
                 <!--            <xs:group ref="renderers" minOccurs="0"/>-->
                 <!--        </xs:sequence>-->
 
+                <xs:attribute name="key" type="xs:string"/>
+                <xs:attribute name="visible" type="xs:boolean"/>
                 <xs:attribute name="width" type="xs:string"/>
                 <xs:attribute name="header" type="xs:string"/>
                 <xs:attribute name="footer" type="xs:string"/>
@@ -1683,7 +1685,6 @@
                 <xs:attribute name="resizable" type="xs:boolean"/>
                 <xs:attribute name="autoWidth" type="xs:boolean"/>
                 <xs:attribute name="textAlign" type="gridColumnTextAlignEnum"/>
-            </xs:extension>
         </xs:complexContent>
     </xs:complexType>
 

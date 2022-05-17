@@ -201,27 +201,24 @@ public class JmixGridLoader extends AbstractComponentLoader<JmixGrid<?>> {
     //TODO: kremnevda, refactor 21.04.2022
     @SuppressWarnings("rawtypes")
     protected Column loadColumn(JmixGrid component, Element element, MetaClass metaClass) {
-        String id = element.attributeValue("id");
         String property = element.attributeValue("property");
-
-        if (id == null) {
-            if (property != null) {
-                id = property;
-            } else {
-                throw new GuiDevelopmentException("A column must have whether id or property specified",
-                        context, "DataGrid ID", component.getId());
-            }
+        if (property == null) {
+            throw new GuiDevelopmentException("A column must have specified property",
+                    context, "DataGrid ID", component.getId());
         }
 
-        Column column = null;
-        if (property != null) {
-            MetaPropertyPath metaPropertyPath = getMetaDataTools().resolveMetaPropertyPathOrNull(metaClass, property);
-            column = component.addColumn(new StringPresentationValueProvider<>(metaPropertyPath, getMetaDataTools()));
-        } else {
-//            column = component.addColumn(id, null);
+        MetaPropertyPath metaPropertyPath = getMetaDataTools().resolveMetaPropertyPathOrNull(metaClass, property);
+        if (metaPropertyPath == null) {
+            throw new GuiDevelopmentException("Cannot resolve the property path: " + property,
+                    context, "DataGrid ID", component.getId());
         }
 
-        loadString(element, "key", column::setKey);
+        String key = element.attributeValue("key");
+        if (key == null) {
+            key = metaPropertyPath.getMetaProperty().getName();
+        }
+        Column column = component.addColumn(key, metaPropertyPath);
+
         loadString(element, "width", column::setWidth);
         loadString(element, "header", column::setHeader);
         loadString(element, "footer", column::setFooter);
@@ -230,6 +227,7 @@ public class JmixGridLoader extends AbstractComponentLoader<JmixGrid<?>> {
         loadInteger(element, "flexGrow", column::setFlexGrow);
         loadBoolean(element, "resizable", column::setResizable);
         loadBoolean(element, "autoWidth", column::setAutoWidth);
+        loadBoolean(element, "visible", column::setVisible);
         loadEnum(element, ColumnTextAlign.class, "textAlign", column::setTextAlign);
 
 //        String expandRatio = element.attributeValue("expandRatio");

@@ -244,6 +244,10 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
         return getHasActionsDelegate().getAction(id).orElse(null);
     }
 
+    public Grid.Column<E> addColumn(String key, MetaPropertyPath metaPropertyPath) {
+        return addColumnInternal(key, metaPropertyPath);
+    }
+
     protected void unbind() {
         if (dataBinding != null) {
             if (dataBinding instanceof JmixBinding) {
@@ -304,9 +308,14 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
     }
 
     protected Grid.Column<E> addColumnInternal(MetaPropertyPath metaPropertyPath) {
+        return addColumnInternal(metaPropertyPath.getMetaProperty().getName(), metaPropertyPath);
+    }
+
+    protected Grid.Column<E> addColumnInternal(String key, MetaPropertyPath metaPropertyPath) {
         ValueProvider<E, ?> valueProvider = getValueProvider(metaPropertyPath);
 
         Grid.Column<E> column = component.addColumn(valueProvider);
+        column.setKey(key);
 
         initColumn(column, metaPropertyPath);
 
@@ -319,7 +328,6 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
 
     protected void initColumn(Grid.Column<E> column, MetaPropertyPath metaPropertyPath) {
         MetaProperty metaProperty = metaPropertyPath.getMetaProperty();
-        column.setKey(metaProperty.getName());
         column.setSortable(true);
 
         MetaClass propertyMetaClass = metadataTools.getPropertyEnclosingMetaClass(metaPropertyPath);

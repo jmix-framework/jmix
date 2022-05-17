@@ -6,6 +6,9 @@ import com.vaadin.flow.component.treegrid.TreeGrid;
 import com.vaadin.flow.data.provider.hierarchy.HierarchicalDataProvider;
 import com.vaadin.flow.data.selection.SelectionListener;
 import com.vaadin.flow.shared.Registration;
+import io.jmix.core.common.util.Preconditions;
+import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.data.DataUnit;
 import io.jmix.flowui.data.grid.GridDataItems;
 import io.jmix.flowui.data.grid.TreeGridDataItems;
@@ -140,5 +143,33 @@ public class JmixTreeGrid<E> extends TreeGrid<E> implements ListDataComponent<E>
         gridDelegate.onSelectionModelChange(selectionModel);
 
         return selectionModel;
+    }
+
+    /**
+     * Adds column by the meta property path.
+     *
+     * @param metaPropertyPath meta property path to add column
+     * @return added column
+     */
+    public Column<E> addColumn(MetaPropertyPath metaPropertyPath) {
+        Preconditions.checkNotNullArgument(metaPropertyPath);
+
+        MetaProperty metaProperty = metaPropertyPath.getMetaProperty();
+        return addColumn(metaProperty.getName(), metaPropertyPath);
+    }
+
+    /**
+     * Adds column by the meta property path and specified key. The key is used to identify the column, see
+     * {@link #getColumnByKey(String)}.
+     *
+     * @param key column key
+     * @param metaPropertyPath meta property path to add column
+     * @return added column
+     */
+    public Column<E> addColumn(String key, MetaPropertyPath metaPropertyPath) {
+        Preconditions.checkNotNullArgument(metaPropertyPath);
+        Preconditions.checkNotNullArgument(key);
+
+        return gridDelegate.addColumn(key, metaPropertyPath);
     }
 }

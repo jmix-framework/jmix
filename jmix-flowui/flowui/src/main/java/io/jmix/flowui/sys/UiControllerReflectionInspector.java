@@ -17,6 +17,7 @@ import io.jmix.flowui.screen.Screen;
 import io.jmix.flowui.screen.Subscribe;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.reflect.TypeUtils;
+import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ReflectionUtils;
@@ -205,10 +206,10 @@ public class UiControllerReflectionInspector {
         List<InjectElement> injectElements = getAnnotatedInjectElementsNotCached(concreteClass);
         List<AnnotatedMethod<Subscribe>> subscribeMethods = getAnnotatedSubscribeMethodsNotCached(methods);
         List<AnnotatedMethod<Install>> installMethods = getAnnotatedInstallMethodsNotCached(methods);
-//        List<Method> eventListenerMethods = getAnnotatedListenerMethodsNotCached(concreteClass, methods);
+        List<Method> eventListenerMethods = getAnnotatedListenerMethodsNotCached(concreteClass, methods);
 //        List<Method> propertySetters = getPropertySettersNotCached(methods);
 
-        return new ScreenIntrospectionData(injectElements, /*eventListenerMethods,*/ subscribeMethods, installMethods/*, propertySetters*/);
+        return new ScreenIntrospectionData(injectElements, eventListenerMethods, subscribeMethods, installMethods/*, propertySetters*/);
     }
 
     protected TargetIntrospectionData getTargetIntrospectionDataNotCached(Class<?> concreteClass) {
@@ -298,6 +299,17 @@ public class UiControllerReflectionInspector {
         }
 
         return null;
+    }
+
+    protected List<Method> getAnnotatedListenerMethodsNotCached(Class<?> clazz, Method[] uniqueDeclaredMethods) {
+        return Arrays.stream(uniqueDeclaredMethods)
+                .filter(m -> findMergedAnnotation(m, EventListener.class) != null)
+                .peek(m -> {
+                    if (!m.isAccessible()) {
+                        m.setAccessible(true);
+                    }
+                })
+                .collect(ImmutableList.toImmutableList());
     }
 
     protected List<AnnotatedMethod<Install>> getAnnotatedInstallMethodsNotCached(Method[] uniqueDeclaredMethods) {
@@ -617,7 +629,7 @@ public class UiControllerReflectionInspector {
     public static class ScreenIntrospectionData {
         private final List<InjectElement> injectElements;
 
-//        private final List<Method> eventListenerMethods;
+        private final List<Method> eventListenerMethods;
 
         private final List<AnnotatedMethod<Subscribe>> subscribeMethods;
         private final List<AnnotatedMethod<Install>> installMethods;
@@ -625,12 +637,12 @@ public class UiControllerReflectionInspector {
 //        private final List<Method> propertySetters;
 
         public ScreenIntrospectionData(List<InjectElement> injectElements,
-                /*List<Method> eventListenerMethods,*/
+                                       List<Method> eventListenerMethods,
                                        List<AnnotatedMethod<Subscribe>> subscribeMethods,
                                        List<AnnotatedMethod<Install>> installMethods
                 /*List<Method> propertySetters*/) {
             this.injectElements = injectElements;
-//            this.eventListenerMethods = eventListenerMethods;
+            this.eventListenerMethods = eventListenerMethods;
             this.subscribeMethods = subscribeMethods;
             this.installMethods = installMethods;
 //            this.propertySetters = propertySetters;
@@ -646,6 +658,10 @@ public class UiControllerReflectionInspector {
 
         public List<AnnotatedMethod<Install>> getInstallMethods() {
             return installMethods;
+        }
+
+        public List<Method> getEventListenerMethods() {
+            return eventListenerMethods;
         }
     }
 

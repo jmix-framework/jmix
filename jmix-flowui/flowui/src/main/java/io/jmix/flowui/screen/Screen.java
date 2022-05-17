@@ -8,6 +8,7 @@ import com.vaadin.flow.router.*;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.model.ScreenData;
 import io.jmix.flowui.sys.ScreenSupport;
+import io.jmix.flowui.sys.event.UiEventsManager;
 import io.jmix.flowui.util.OperationResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -56,12 +57,17 @@ public class Screen<T extends Component> extends Composite<T>
     public void beforeLeave(BeforeLeaveEvent event) {
         if (!event.isPostponed()) {
             unregisterBackNavigation();
+            removeApplicationListeners();
         }
     }
 
     protected void unregisterBackNavigation() {
         ScreenSupport screenSupport = getScreenSupport();
         screenSupport.unregisterBackNavigation(this);
+    }
+
+    protected void removeApplicationListeners() {
+        getApplicationContext().getBean(UiEventsManager.class).removeApplicationListeners(this);
     }
 
     public OperationResult closeWithDefaultAction() {

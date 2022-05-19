@@ -206,6 +206,14 @@ public class MySynchronizingOidcUserMapper extends SynchronizingOidcUserMapper<U
 
 ## Protecting API
 
+Jmix application may work as a resource server. To specify which authorization server to use, define the following application property:
+
+```properties
+spring.security.oauth2.resourceserver.jwt.issuer-uri=http://localhost:8180/auth/realms/<realm>
+```
+
+The value of the property is the URL contained in the `iss` claim for JWT tokens that the authorization server will issue. See Spring Security [documentation](https://docs.spring.io/spring-security/reference/servlet/oauth2/resource-server/jwt.html#_specifying_the_authorization_server) for details.
+
 Access tokens obtained from OpenID Provider may be used for accessing protected endpoints provided by the REST API add-on.    
 
 After installing the REST API add-on using the marketplace, two starters are added to the build.gradle:

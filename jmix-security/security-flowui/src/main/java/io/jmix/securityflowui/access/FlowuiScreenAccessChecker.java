@@ -143,12 +143,10 @@ public class FlowuiScreenAccessChecker implements BeforeEnterListener {
     }
 
     protected boolean isHasSecurityPermission(Class<?> targetView) {
-        boolean hasAccess;
         String screenId = UiDescriptorUtils.getInferredScreenId(targetView);
         FlowuiShowScreenContext context = new FlowuiShowScreenContext(screenId);
         accessManager.applyRegisteredConstraints(context);
-        hasAccess = context.isPermitted();
-        return hasAccess;
+        return context.isPermitted();
     }
 
     protected boolean isSupportedScreen(Class<?> targetView) {

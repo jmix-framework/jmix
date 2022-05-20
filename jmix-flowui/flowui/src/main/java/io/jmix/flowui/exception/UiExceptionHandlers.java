@@ -15,17 +15,20 @@ import java.util.Collections;
 import java.util.List;
 
 @Component("flowui_ExceptionHandlers")
-public class ExceptionHandlers implements ErrorHandler, ApplicationContextAware {
+public class UiExceptionHandlers implements ErrorHandler, ApplicationContextAware {
 
-    private static final Logger log = LoggerFactory.getLogger(ExceptionHandlers.class);
+    private static final Logger log = LoggerFactory.getLogger(UiExceptionHandlers.class);
 
     protected ApplicationContext applicationContext;
 
-    protected List<ExceptionHandler> handlers;
+    protected List<UiExceptionHandler> handlers;
+    protected DefaultUiExceptionHandler defaultUiExceptionHandler;
 
     @Autowired
-    public ExceptionHandlers(List<ExceptionHandler> handlers) {
+    public UiExceptionHandlers(List<UiExceptionHandler> handlers,
+                               DefaultUiExceptionHandler defaultUiExceptionHandler) {
         this.handlers = CollectionUtils.isNotEmpty(handlers) ? handlers : Collections.emptyList();
+        this.defaultUiExceptionHandler = defaultUiExceptionHandler;
     }
 
     @Override
@@ -35,12 +38,15 @@ public class ExceptionHandlers implements ErrorHandler, ApplicationContextAware 
 
     @Override
     public void error(ErrorEvent event) {
-        for (ExceptionHandler handler : handlers) {
-            if (handler.handle(event)) {
+        for (UiExceptionHandler handler : handlers) {
+            if (handler.handle(event.getThrowable())) {
                 return;
             }
         }
 
-        log.error("There is no {} can handle the exception", ExceptionHandler.class.getName(), event.getThrowable());
+        if (!defaultUiExceptionHandler.handle(event.getThrowable())) {
+            log.error("There is no {} can handle the exception", UiExceptionHandler.class.getName(),
+                    event.getThrowable());
+        }
     }
 }

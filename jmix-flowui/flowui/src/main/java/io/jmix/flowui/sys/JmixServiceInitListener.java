@@ -3,7 +3,7 @@ package io.jmix.flowui.sys;
 import com.vaadin.flow.server.ServiceInitEvent;
 import com.vaadin.flow.server.SessionInitEvent;
 import com.vaadin.flow.server.VaadinServiceInitListener;
-import io.jmix.flowui.exception.ExceptionHandlers;
+import io.jmix.flowui.exception.UiExceptionHandlers;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -14,11 +14,11 @@ import org.springframework.stereotype.Component;
 public class JmixServiceInitListener implements VaadinServiceInitListener, ApplicationContextAware {
 
     protected ApplicationContext applicationContext;
-    protected ExceptionHandlers exceptionHandlers;
+    protected UiExceptionHandlers uiExceptionHandlers;
 
     @Autowired
-    public JmixServiceInitListener(ExceptionHandlers exceptionHandlers) {
-        this.exceptionHandlers = exceptionHandlers;
+    public JmixServiceInitListener(UiExceptionHandlers uiExceptionHandlers) {
+        this.uiExceptionHandlers = uiExceptionHandlers;
     }
 
     @Override
@@ -32,6 +32,6 @@ public class JmixServiceInitListener implements VaadinServiceInitListener, Appli
     }
 
     protected void onSessionInitEvent(SessionInitEvent event) {
-        event.getSession().setErrorHandler(exceptionHandlers);
+        event.getSession().setErrorHandler(uiExceptionHandlers);
     }
 }

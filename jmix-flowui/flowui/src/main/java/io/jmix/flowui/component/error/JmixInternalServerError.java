@@ -2,7 +2,7 @@ package io.jmix.flowui.component.error;
 
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.server.ErrorEvent;
-import io.jmix.flowui.exception.ExceptionHandlers;
+import io.jmix.flowui.exception.UiExceptionHandlers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,17 +14,17 @@ public class JmixInternalServerError extends InternalServerError {
 
     private static final Logger log = LoggerFactory.getLogger(JmixInternalServerError.class);
 
-    protected ExceptionHandlers exceptionHandlers;
+    protected UiExceptionHandlers uiExceptionHandlers;
 
-    public JmixInternalServerError(ExceptionHandlers exceptionHandlers) {
-        this.exceptionHandlers = exceptionHandlers;
+    public JmixInternalServerError(UiExceptionHandlers uiExceptionHandlers) {
+        this.uiExceptionHandlers = uiExceptionHandlers;
     }
 
     @Override
     public int setErrorParameter(BeforeEnterEvent event, ErrorParameter<Exception> parameter) {
         forwardToPreviousScreen(event);
 
-        exceptionHandlers.error(new ErrorEvent(parameter.getException()));
+        uiExceptionHandlers.error(new ErrorEvent(parameter.getException()));
 
         return HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
     }

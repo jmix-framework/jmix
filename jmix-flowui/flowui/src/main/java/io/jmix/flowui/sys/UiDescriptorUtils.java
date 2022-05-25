@@ -2,10 +2,7 @@ package io.jmix.flowui.sys;
 
 import com.google.common.base.Strings;
 import io.jmix.core.DevelopmentException;
-import io.jmix.flowui.screen.Install;
-import io.jmix.flowui.screen.Subscribe;
-import io.jmix.flowui.screen.UiController;
-import io.jmix.flowui.screen.UiDescriptor;
+import io.jmix.flowui.screen.*;
 
 import javax.annotation.Nullable;
 
@@ -43,6 +40,18 @@ public final class UiDescriptorUtils {
         }
 
         return target;
+    }
+
+    public static String getInferredScreenId(Class<?/* extends Screen*/> annotatedScreenClass) {
+        checkNotNullArgument(annotatedScreenClass);
+
+        UiController uiController = annotatedScreenClass.getAnnotation(UiController.class);
+        if (uiController == null) {
+            throw new IllegalArgumentException("No @" + UiController.class.getSimpleName() +
+                    " annotation for class " + annotatedScreenClass);
+        }
+
+        return UiDescriptorUtils.getInferredScreenId(uiController, annotatedScreenClass);
     }
 
     public static String getInferredScreenId(UiController uiController,

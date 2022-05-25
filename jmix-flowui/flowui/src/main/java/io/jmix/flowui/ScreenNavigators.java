@@ -29,7 +29,7 @@ public class ScreenNavigators {
         return new EditorNavigator<>(entityClass, editorNavigationProcessor::processNavigation);
     }
 
-    public <E> EditorNavigator<E> editor(Class<E> entityClass, Screen parent) {
+    public <E> EditorNavigator<E> editor(Class<E> entityClass, Screen<?> parent) {
         checkNotNullArgument(entityClass);
         return editor(entityClass)
                 .withBackNavigationTarget(parent.getClass());
@@ -51,7 +51,7 @@ public class ScreenNavigators {
         return navigation;
     }
 
-    public <E> EditorNavigator<E> editor(ListDataComponent<E> listDataComponent, Screen parent) {
+    public <E> EditorNavigator<E> editor(ListDataComponent<E> listDataComponent, Screen<?> parent) {
         return editor(listDataComponent)
                 .withBackNavigationTarget(parent.getClass());
     }

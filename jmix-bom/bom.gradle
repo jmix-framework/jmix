@@ -215,10 +215,12 @@ dependencies {
         api "io.jmix.search:jmix-search-ui-starter:$freeVersion"
 
         api "io.jmix.security:jmix-security:$freeVersion"
+        api "io.jmix.security:jmix-security-flowui:$freeVersion"
         api "io.jmix.security:jmix-security-ui:$freeVersion"
         api "io.jmix.security:jmix-security-data:$freeVersion"
         api "io.jmix.security:jmix-security-oauth2:$freeVersion"
         api "io.jmix.security:jmix-security-starter:$freeVersion"
+        api "io.jmix.security:jmix-security-flowui-starter:$freeVersion"
         api "io.jmix.security:jmix-security-ui-starter:$freeVersion"
         api "io.jmix.security:jmix-security-data-starter:$freeVersion"
         api "io.jmix.security:jmix-security-oauth2-starter:$freeVersion"

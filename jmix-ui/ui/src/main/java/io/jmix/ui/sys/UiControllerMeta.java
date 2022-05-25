@@ -148,7 +148,7 @@ public class UiControllerMeta {
     protected Map<String, Object> traverseForRoute(Class screenClass) {
         //noinspection unchecked
         Class<? extends FrameOwner> superClass = screenClass.getSuperclass();
-        if (Screen.class.getName().equals(superClass.getName())) {
+        if (superClass == null || Screen.class.getName().equals(superClass.getName())) {
             return null;
         }
 

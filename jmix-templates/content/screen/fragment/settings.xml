@@ -17,7 +17,7 @@
 
 <template xmlns="http://schemas.haulmont.com/studio/template-settings.xsd"
           icon="resource://template/template_blank.svg"
-          name="Screen Fragment"
+          name="Screen fragment"
           order="100">
     <description>
         <![CDATA[<html>Blank screen fragment. It differs from blank screen in that its controller extends ScreenFragment.</html>]]>

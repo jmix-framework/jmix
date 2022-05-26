@@ -31,6 +31,9 @@ import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.flowui.component.HasRequired;
 import io.jmix.flowui.component.SupportsDatatype;
 import io.jmix.flowui.exception.GuiDevelopmentException;
+import io.jmix.flowui.kit.component.HasAutofocus;
+import io.jmix.flowui.kit.component.HasPlaceholder;
+import io.jmix.flowui.kit.component.HasTitle;
 import io.jmix.flowui.xml.layout.ComponentLoader.Context;
 import io.jmix.flowui.xml.layout.loader.PropertyShortcutLoader;
 import org.apache.commons.lang3.StringUtils;
@@ -143,6 +146,10 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
         loaderSupport.loadResourceString(element, "text", context.getMessageGroup(), component::setText);
     }
 
+    public void loadTitle(HasTitle component, Element element, Context context) {
+        loaderSupport.loadResourceString(element, "title", context.getMessageGroup(), component::setTitle);
+    }
+
     public void loadLabel(HasLabel component, Element element) {
         loaderSupport.loadString(element, "label", component::setLabel);
     }
@@ -191,6 +198,14 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
 
     public void loadHelperText(HasHelper component, Element element) {
         loaderSupport.loadString(element, "helperText", component::setHelperText);
+    }
+
+    public void loadPlaceholder(HasPlaceholder component, Element element) {
+        loaderSupport.loadString(element, "placeholder", component::setPlaceholder);
+    }
+
+    public void loadAutofocus(HasAutofocus component, Element element) {
+        loaderSupport.loadBoolean(element, "autofocus", component::setAutofocus);
     }
 
     public void loadAutocomplete(HasAutocomplete component, Element element) {

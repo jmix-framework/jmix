@@ -16,45 +16,32 @@
 
 package io.jmix.flowui.xml.layout.loader.component;
 
-import com.vaadin.flow.component.textfield.EmailField;
+import io.jmix.flowui.kit.component.valuepicker.ValuePickerBase;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
+import io.jmix.flowui.xml.layout.support.ActionLoaderSupport;
 import io.jmix.flowui.xml.layout.support.DataLoaderSupport;
 
-//TODO: kremnevda, replace EmailField to JmixEmailField 25.04.2022
-public class EmailFieldLoader extends AbstractComponentLoader<EmailField> {
+public abstract class AbstractValuePickerLoader<T extends ValuePickerBase<?, ?>> extends AbstractComponentLoader<T> {
 
     protected DataLoaderSupport dataLoaderSupport;
-
-    @Override
-    protected EmailField createComponent() {
-        return factory.create(EmailField.class);
-    }
+    protected ActionLoaderSupport actionLoaderSupport;
 
     @Override
     public void loadComponent() {
         getDataLoaderSupport().loadData(resultComponent, element);
 
-        loadString(element, "value", resultComponent::setValue);
-        loadString(element, "pattern", resultComponent::setPattern);
-        loadBoolean(element, "autofocus", resultComponent::setAutofocus);
-        loadBoolean(element, "autoselect", resultComponent::setAutoselect);
-        loadString(element, "placeholder", resultComponent::setPlaceholder);
-        loadBoolean(element, "clearButtonVisible", resultComponent::setClearButtonVisible);
-        loadBoolean(element, "preventInvalidInput", resultComponent::setPreventInvalidInput);
-        loadResourceString(element, "title", context.getMessageGroup(), resultComponent::setTitle);
-
+        componentLoader().loadPlaceholder(resultComponent, element);
+        componentLoader().loadAutofocus(resultComponent, element);
+        componentLoader().loadTitle(resultComponent, element, context);
         componentLoader().loadLabel(resultComponent, element);
         componentLoader().loadEnabled(resultComponent, element);
-        componentLoader().loadThemeName(resultComponent, element);
         componentLoader().loadClassName(resultComponent, element);
+        componentLoader().loadThemeName(resultComponent, element);
         componentLoader().loadHelperText(resultComponent, element);
-        componentLoader().loadAutocomplete(resultComponent, element);
-        componentLoader().loadAutocapitalize(resultComponent, element);
-        componentLoader().loadAutocorrect(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
-        componentLoader().loadValueChangeMode(resultComponent, element);
         componentLoader().loadValueAndElementAttributes(resultComponent, element);
-        componentLoader().loadValidationAttributes(resultComponent, element, context);
+
+        getActionLoaderSupport().loadActions(resultComponent, element);
     }
 
     protected DataLoaderSupport getDataLoaderSupport() {
@@ -62,5 +49,12 @@ public class EmailFieldLoader extends AbstractComponentLoader<EmailField> {
             dataLoaderSupport = applicationContext.getBean(DataLoaderSupport.class, context);
         }
         return dataLoaderSupport;
+    }
+
+    protected ActionLoaderSupport getActionLoaderSupport() {
+        if (actionLoaderSupport == null) {
+            actionLoaderSupport = applicationContext.getBean(ActionLoaderSupport.class, context);
+        }
+        return actionLoaderSupport;
     }
 }

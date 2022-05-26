@@ -16,51 +16,29 @@
 
 package io.jmix.flowui.xml.layout.loader.component;
 
-import com.vaadin.flow.component.textfield.EmailField;
+import com.vaadin.flow.component.combobox.ComboBox;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
-import io.jmix.flowui.xml.layout.support.DataLoaderSupport;
 
-//TODO: kremnevda, replace EmailField to JmixEmailField 25.04.2022
-public class EmailFieldLoader extends AbstractComponentLoader<EmailField> {
-
-    protected DataLoaderSupport dataLoaderSupport;
-
-    @Override
-    protected EmailField createComponent() {
-        return factory.create(EmailField.class);
-    }
+public abstract class AbstractComboBoxLoader<T extends ComboBox<?>> extends AbstractComponentLoader<T> {
 
     @Override
     public void loadComponent() {
-        getDataLoaderSupport().loadData(resultComponent, element);
-
-        loadString(element, "value", resultComponent::setValue);
+        loadBoolean(element, "opened", resultComponent::setOpened);
         loadString(element, "pattern", resultComponent::setPattern);
+        loadInteger(element, "pageSize", resultComponent::setPageSize);
+        loadBoolean(element, "autoOpen", resultComponent::setAutoOpen);
         loadBoolean(element, "autofocus", resultComponent::setAutofocus);
-        loadBoolean(element, "autoselect", resultComponent::setAutoselect);
         loadString(element, "placeholder", resultComponent::setPlaceholder);
+        loadBoolean(element, "allowCustomValue", resultComponent::setAllowCustomValue);
         loadBoolean(element, "clearButtonVisible", resultComponent::setClearButtonVisible);
         loadBoolean(element, "preventInvalidInput", resultComponent::setPreventInvalidInput);
-        loadResourceString(element, "title", context.getMessageGroup(), resultComponent::setTitle);
 
         componentLoader().loadLabel(resultComponent, element);
         componentLoader().loadEnabled(resultComponent, element);
-        componentLoader().loadThemeName(resultComponent, element);
         componentLoader().loadClassName(resultComponent, element);
+        componentLoader().loadThemeName(resultComponent, element);
         componentLoader().loadHelperText(resultComponent, element);
-        componentLoader().loadAutocomplete(resultComponent, element);
-        componentLoader().loadAutocapitalize(resultComponent, element);
-        componentLoader().loadAutocorrect(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
-        componentLoader().loadValueChangeMode(resultComponent, element);
-        componentLoader().loadValueAndElementAttributes(resultComponent, element);
         componentLoader().loadValidationAttributes(resultComponent, element, context);
-    }
-
-    protected DataLoaderSupport getDataLoaderSupport() {
-        if (dataLoaderSupport == null) {
-            dataLoaderSupport = applicationContext.getBean(DataLoaderSupport.class, context);
-        }
-        return dataLoaderSupport;
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2022 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +16,20 @@
 
 package io.jmix.flowui.xml.layout.loader.component;
 
-import io.jmix.flowui.component.combobox.JmixComboBox;
+import io.jmix.core.Metadata;
+import io.jmix.flowui.component.combobox.EntityComboBox;
+import io.jmix.flowui.exception.GuiDevelopmentException;
+import io.jmix.flowui.xml.layout.support.ActionLoaderSupport;
 import io.jmix.flowui.xml.layout.support.DataLoaderSupport;
 
-public class ComboBoxLoader extends AbstractComboBoxLoader<JmixComboBox<?>> {
+public class EntityComboBoxLoader extends AbstractComboBoxLoader<EntityComboBox<?>> {
 
+    protected ActionLoaderSupport actionLoaderSupport;
     protected DataLoaderSupport dataLoaderSupport;
 
     @Override
-    protected JmixComboBox<?> createComponent() {
-        return factory.create(JmixComboBox.class);
+    protected EntityComboBox<?> createComponent() {
+        return factory.create(EntityComboBox.class);
     }
 
     @Override
@@ -39,6 +43,24 @@ public class ComboBoxLoader extends AbstractComboBoxLoader<JmixComboBox<?>> {
         componentLoader().loadValueAndElementAttributes(resultComponent, element);
         componentLoader().loadTitle(resultComponent, element, context);
         componentLoader().loadRequired(resultComponent, element, context);
+
+        getActionLoaderSupport().loadActions(resultComponent, element);
+
+        if (resultComponent.getValueSource() == null) {
+            loadMetaClass();
+
+            if (resultComponent.getMetaClass() == null) {
+                throw new GuiDevelopmentException(
+                        String.format("%s doesn't have data binding", resultComponent.getClass().getSimpleName()),
+                        context, "Component ID", resultComponent.getId().orElse("null"));
+            }
+        }
+    }
+
+    protected void loadMetaClass() {
+        loadString(element, "metaClass")
+                .ifPresent(metaClass ->
+                        resultComponent.setMetaClass(applicationContext.getBean(Metadata.class).getClass(metaClass)));
     }
 
     protected DataLoaderSupport getDataLoaderSupport() {
@@ -46,5 +68,12 @@ public class ComboBoxLoader extends AbstractComboBoxLoader<JmixComboBox<?>> {
             dataLoaderSupport = applicationContext.getBean(DataLoaderSupport.class, context);
         }
         return dataLoaderSupport;
+    }
+
+    protected ActionLoaderSupport getActionLoaderSupport() {
+        if (actionLoaderSupport == null) {
+            actionLoaderSupport = applicationContext.getBean(ActionLoaderSupport.class, context);
+        }
+        return actionLoaderSupport;
     }
 }

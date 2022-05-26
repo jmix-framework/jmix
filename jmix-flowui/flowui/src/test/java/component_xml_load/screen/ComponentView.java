@@ -27,14 +27,19 @@ import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.router.Route;
+import io.jmix.flowui.component.combobox.EntityComboBox;
 import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.component.datepicker.TypedDatePicker;
 import io.jmix.flowui.component.datetimepicker.TypedDateTimePicker;
 import io.jmix.flowui.component.textfield.JmixBigDecimalField;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.component.timepicker.TypedTimePicker;
+import io.jmix.flowui.component.valuepicker.EntityPicker;
+import io.jmix.flowui.component.valuepicker.JmixValuePicker;
+import io.jmix.flowui.component.valuepicker.JmixValuesPicker;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.button.JmixButton;
+import io.jmix.flowui.kit.component.combobox.ComboBoxPicker;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.screen.ComponentId;
 import io.jmix.flowui.screen.StandardScreen;
@@ -48,6 +53,7 @@ import test_support.entity.sales.Order;
 public class ComponentView extends StandardScreen {
 
     public void loadData() {
+        comboBoxPickerId.setItems("comboBoxPickerItem1", "comboBoxPickerItem2");
         comboBoxId.setItems("number", "notNumber");
         radioButtonGroupId.setItems("radioButton1", "radioButton2", "radioButton3");
         selectId.setItems("select1", "select2", "select3");
@@ -132,4 +138,25 @@ public class ComponentView extends StandardScreen {
 
     @ComponentId
     public TypedTextField<String> textFieldWithValueId;
+
+    @ComponentId
+    public JmixValuePicker<?> valuePickerId;
+
+    @ComponentId
+    public JmixValuesPicker<?> valuesPickerId;
+
+    @ComponentId
+    public EntityPicker<?> entityPickerId;
+
+    @ComponentId
+    public EntityPicker<?> metaClassEntityPickerId;
+
+    @ComponentId
+    public ComboBoxPicker<String> comboBoxPickerId;
+
+    @ComponentId
+    public EntityComboBox<?> entityComboBoxId;
+
+    @ComponentId
+    public EntityComboBox<?> metaClassComboBoxId;
 }

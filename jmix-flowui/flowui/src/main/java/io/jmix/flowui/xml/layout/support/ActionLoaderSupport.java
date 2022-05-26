@@ -23,6 +23,7 @@ import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.action.BaseAction;
+import io.jmix.flowui.kit.component.HasActions;
 import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.xml.layout.ComponentLoader.Context;
 import io.jmix.flowui.xml.layout.loader.ActionCustomPropertyLoader;
@@ -114,6 +115,18 @@ public class ActionLoaderSupport implements ApplicationContextAware {
                     "constraintEntityOp",
                     hasSecurityConstraint::setConstraintEntityOp
             );
+        }
+    }
+
+    public void loadActions(HasActions component, Element element) {
+        Element actions = element.element("actions");
+        if (actions == null) {
+            return;
+        }
+
+        for (Element action : actions.elements("action")) {
+            component.addAction(loadDeclarativeActionByType(action)
+                    .orElse(loadDeclarativeAction(action)));
         }
     }
 

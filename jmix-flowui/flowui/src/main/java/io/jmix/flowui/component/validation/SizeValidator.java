@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package io.jmix.flowui.component.validation;
 
-import io.jmix.core.Messages;
 import io.jmix.core.common.util.ParamsMap;
 import io.jmix.flowui.SameAsUi;
 import io.jmix.flowui.exception.ValidationException;
@@ -25,8 +24,8 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
-import java.util.Map;
 
 /**
  * Size validator is applicable for Collections and String values. It checks that value is in a specific range.
@@ -50,16 +49,12 @@ import java.util.Map;
  * @param <T> Collection or String
  */
 @SameAsUi
-@Component("ui_SizeValidator")
+@Component("flowui_SizeValidator")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class SizeValidator<T> extends AbstractValidator<T> implements InitializingBean {
 
-    protected Messages messages;
-
     protected int min;
     protected int max = Integer.MAX_VALUE;
-
-    protected String defaultMessage;
 
     public SizeValidator() {
     }
@@ -76,12 +71,6 @@ public class SizeValidator<T> extends AbstractValidator<T> implements Initializi
      */
     public SizeValidator(String message) {
         this.message = message;
-    }
-
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        super.afterPropertiesSet();
-        messages = applicationContext.getBean(Messages.class);
     }
 
     /**
@@ -149,16 +138,16 @@ public class SizeValidator<T> extends AbstractValidator<T> implements Initializi
     }
 
     @Override
-    public void accept(T value) throws ValidationException {
+    public void accept(@Nullable T value) throws ValidationException {
         // consider null value is in range
         if (value == null) {
             return;
         }
 
         String message = getMessage();
-        Class clazz = value.getClass();
+        Class<?> clazz = value.getClass();
         if (Collection.class.isAssignableFrom(clazz)) {
-            int size = ((Collection) value).size();
+            int size = ((Collection<?>) value).size();
             if (min > size || size > max) {
                 this.defaultMessage = messages.getMessage("validation.constraints.collectionSizeRange");
 
@@ -190,9 +179,5 @@ public class SizeValidator<T> extends AbstractValidator<T> implements Initializi
         if (min > max) {
             throw new IllegalStateException("Min value cannot be greater than max");
         }
-    }
-
-    protected void fireValidationException(String errorMessage, Map<String, Object> map) {
-        throw new ValidationException(getTemplateErrorMessage(errorMessage, map));
     }
 }

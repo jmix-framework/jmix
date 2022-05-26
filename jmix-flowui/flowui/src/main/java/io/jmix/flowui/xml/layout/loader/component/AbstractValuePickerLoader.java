@@ -30,6 +30,7 @@ public abstract class AbstractValuePickerLoader<T extends ValuePickerBase<?, ?>>
     public void loadComponent() {
         getDataLoaderSupport().loadData(resultComponent, element);
 
+        componentLoader().loadFormatter(resultComponent, element);
         componentLoader().loadPlaceholder(resultComponent, element);
         componentLoader().loadAutofocus(resultComponent, element);
         componentLoader().loadTitle(resultComponent, element, context);

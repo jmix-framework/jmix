@@ -14,22 +14,11 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.kit.component.formatter;
+package io.jmix.flowui.component.formatter;
 
-import javax.annotation.Nullable;
-import java.util.function.Function;
+import io.jmix.core.annotation.Internal;
+import io.jmix.flowui.kit.component.formatter.Formatter;
 
-/**
- * Marker interface to indicate that the implementing class can be used as a formatter.
- */
-public interface Formatter<V> extends Function<V, String> {
-
-    /**
-     * Formats a value to a string.
-     *
-     * @param value a value
-     * @return formatted string
-     */
-    @Override
-    String apply(@Nullable V value);
+@Internal
+public interface CustomFormatter extends Formatter<Object> {
 }

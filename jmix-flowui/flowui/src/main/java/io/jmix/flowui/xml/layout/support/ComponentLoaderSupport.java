@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2022 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,10 +30,16 @@ import io.jmix.core.impl.DatatypeRegistryImpl;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.flowui.component.HasRequired;
 import io.jmix.flowui.component.SupportsDatatype;
+import io.jmix.flowui.component.SupportsValidation;
+import io.jmix.flowui.component.formatter.FormatterLoadFactory;
+import io.jmix.flowui.component.validation.Validator;
+import io.jmix.flowui.component.validation.ValidatorLoadFactory;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.kit.component.HasAutofocus;
 import io.jmix.flowui.kit.component.HasPlaceholder;
 import io.jmix.flowui.kit.component.HasTitle;
+import io.jmix.flowui.kit.component.SupportsFormatter;
+import io.jmix.flowui.kit.component.formatter.Formatter;
 import io.jmix.flowui.xml.layout.ComponentLoader.Context;
 import io.jmix.flowui.xml.layout.loader.PropertyShortcutLoader;
 import org.apache.commons.lang3.StringUtils;
@@ -49,6 +55,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -193,7 +200,18 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
 
     public void loadValidationAttributes(HasValidation component, Element element, Context context) {
         loaderSupport.loadBoolean(element, "invalid", component::setInvalid);
-        loaderSupport.loadResourceString(element, "errorMessage", context.getMessageGroup(), component::setErrorMessage);
+        loaderSupport.loadResourceString(element, "errorMessage", context.getMessageGroup(),
+                component::setErrorMessage);
+
+        if (component instanceof SupportsValidation<?>) {
+            loadValidation((SupportsValidation<?>) component, element);
+        }
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public void loadFormatter(SupportsFormatter component, Element element) {
+        loadFormatter(element)
+                .ifPresent(component::setFormatter);
     }
 
     public void loadHelperText(HasHelper component, Element element) {
@@ -378,6 +396,44 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
 
             if (!Strings.isNullOrEmpty(trimmed)) {
                 setter.accept(trimmed);
+            }
+        }
+    }
+
+    protected Optional<Formatter<?>> loadFormatter(Element element) {
+        Element formatterElement = element.element("formatter");
+        if (formatterElement == null) {
+            return Optional.empty();
+        }
+
+        int size = formatterElement.elements().size();
+        if (size != 1) {
+            throw new GuiDevelopmentException("Only one formatter needs to be defined. " +
+                    "The current number of formatters is " + size, context);
+        }
+
+        Element childElement = formatterElement.elements().get(0);
+        FormatterLoadFactory loadFactory = applicationContext.getBean(FormatterLoadFactory.class, context);
+        if (loadFactory.isFormatter(childElement)) {
+            return Optional.ofNullable(loadFactory.createFormatter(childElement));
+        }
+
+        return Optional.empty();
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    protected void loadValidation(SupportsValidation<?> component, Element element) {
+        Element validatorsHolder = element.element("validators");
+        if (validatorsHolder != null) {
+            List<Element> validators = validatorsHolder.elements();
+
+            ValidatorLoadFactory loadFactory = applicationContext.getBean(ValidatorLoadFactory.class);
+
+            for (Element validatorElem : validators) {
+                Validator validator = loadFactory.createValidator(validatorElem, context.getMessageGroup());
+                if (validator != null) {
+                    component.addValidator(validator);
+                }
             }
         }
     }

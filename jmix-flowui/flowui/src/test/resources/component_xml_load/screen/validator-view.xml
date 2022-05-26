@@ -1,0 +1,130 @@
+<!--
+  ~ Copyright (c) 2022 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<screen xmlns="http://jmix.io/schema/flowui/screen">
+    <layout>
+        <bigDecimalField id="decimalField">
+            <validators>
+                <decimalMax value="100.01" inclusive="true" message="errorMessageStringForMax"/>
+                <decimalMin value="99.99" inclusive="false" message="errorMessageStringForMin"/>
+            </validators>
+        </bigDecimalField>
+
+        <bigDecimalField id="digitsField">
+            <validators>
+                <digits integer="2" fraction="2" message="errorMessageString"/>
+            </validators>
+        </bigDecimalField>
+
+        <textField id="doubleField" datatype="double">
+            <validators>
+                <doubleMax value="100.02" inclusive="false" message="errorMessageStringForMax"/>
+                <doubleMin value="99.99" inclusive="false" message="errorMessageStringForMin"/>
+            </validators>
+        </textField>
+
+        <textField id="emailField">
+            <validators>
+                <email message="errorMessageStringForEmail"/>
+            </validators>
+        </textField>
+
+        <datePicker id="futureOrPresentField">
+            <validators>
+                <futureOrPresent checkSeconds="false" message="errorMessageString"/>
+            </validators>
+        </datePicker>
+
+        <datePicker id="futureField">
+            <validators>
+                <future checkSeconds="false" message="errorMessageString"/>
+            </validators>
+        </datePicker>
+
+        <textField id="integerField" datatype="int">
+            <validators>
+                <max value="101" message="errorMessageStringForMax"/>
+                <min value="99" message="errorMessageStringForMin"/>
+            </validators>
+        </textField>
+
+        <textField id="negativeOrZeroField" datatype="int">
+            <validators>
+                <negativeOrZero message="errorMessageString"/>
+            </validators>
+        </textField>
+
+        <textField id="negativeField" datatype="int">
+            <validators>
+                <negative message="errorMessageString"/>
+            </validators>
+        </textField>
+
+        <textField id="notBlankField">
+            <validators>
+                <notBlank message="errorMessageString"/>
+            </validators>
+        </textField>
+
+        <textField id="notEmptyField">
+            <validators>
+                <notEmpty message="errorMessageString"/>
+            </validators>
+        </textField>
+
+        <datePicker id="notNullField">
+            <validators>
+                <notNull message="errorMessageString"/>
+            </validators>
+        </datePicker>
+
+        <datePicker id="pastOrPresentField">
+            <validators>
+                <pastOrPresent checkSeconds="false" message="errorMessageString"/>/
+            </validators>
+        </datePicker>
+
+        <datePicker id="pastField">
+            <validators>
+                <past checkSeconds="false" message="errorMessageString"/>
+            </validators>
+        </datePicker>
+
+        <textField id="positiveOrZeroField" datatype="int">
+            <validators>
+                <positiveOrZero message="errorMessageString"/>
+            </validators>
+        </textField>
+
+        <textField id="positiveField" datatype="int">
+            <validators>
+                <positive message="errorMessageString"/>
+            </validators>
+        </textField>
+
+        <textField id="regexpField">
+            <validators>
+                <regexp regexp="^\w*$" message="errorMessageString"/>
+            </validators>
+        </textField>
+
+        <textField id="sizeField">
+            <validators>
+                <size min="2" max="4" message="errorMessageString"/>
+            </validators>
+        </textField>
+    </layout>
+</screen>

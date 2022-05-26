@@ -1111,6 +1111,166 @@
         </xs:union>
     </xs:simpleType>
 
+    <xs:complexType name="baseValidatorType">
+        <xs:all>
+            <xs:element name="notNull" minOccurs="0" type="messageValidatorType"/>
+            <xs:element name="custom" minOccurs="0" type="customValidatorType"/>
+        </xs:all>
+    </xs:complexType>
+
+    <xs:complexType name="messageValidatorType">
+        <xs:attribute name="message" type="resourceString"/>
+    </xs:complexType>
+
+    <xs:complexType name="customValidatorType">
+        <xs:complexContent>
+            <xs:extension base="messageValidatorType">
+                <xs:attribute name="bean" type="xs:string" use="required"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="collectionValidatorType">
+        <xs:complexContent>
+            <xs:extension base="baseValidatorType">
+                <xs:all>
+                    <xs:element name="size" minOccurs="0" type="sizeValidatorType"/>
+                    <xs:element name="notEmpty" minOccurs="0" type="messageValidatorType"/>
+                </xs:all>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="dateValidatorsType">
+        <xs:complexContent>
+            <xs:extension base="baseValidatorType">
+                <xs:all>
+                    <xs:element name="future" minOccurs="0" type="dateValidatorType"/>
+                    <xs:element name="futureOrPresent" minOccurs="0" type="dateValidatorType"/>
+                    <xs:element name="past" minOccurs="0" type="dateValidatorType"/>
+                    <xs:element name="pastOrPresent" minOccurs="0" type="dateValidatorType"/>
+                </xs:all>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="dateValidatorType">
+        <xs:complexContent>
+            <xs:extension base="messageValidatorType">
+                <xs:attribute name="checkSeconds" type="xs:boolean"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="stringValidatorType">
+        <xs:complexContent>
+            <xs:extension base="collectionValidatorType">
+                <xs:sequence>
+                    <xs:element name="notBlank" minOccurs="0" type="messageValidatorType"/>
+                    <xs:element name="regexp" minOccurs="0" type="regexpValidatorType"/>
+                    <xs:element name="email" minOccurs="0" type="messageValidatorType"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="digitsValidatorType">
+        <xs:complexContent>
+            <xs:extension base="messageValidatorType">
+                <xs:attribute name="integer" type="xs:int" use="required"/>
+                <xs:attribute name="fraction" type="xs:int" use="required"/>
+            </xs:extension>
+        </xs:complexContent>
+
+    </xs:complexType>
+
+    <xs:complexType name="decimalMaxMinValidatorType">
+        <xs:complexContent>
+            <xs:extension base="messageValidatorType">
+                <xs:attribute name="value" type="xs:string" use="required"/>
+                <xs:attribute name="inclusive" type="xs:boolean"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="maxMinValidatorType">
+        <xs:complexContent>
+            <xs:extension base="messageValidatorType">
+                <xs:attribute name="value" type="xs:string" use="required"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="sizeValidatorType">
+        <xs:complexContent>
+            <xs:extension base="messageValidatorType">
+                <xs:attribute name="min" type="xs:integer"/>
+                <xs:attribute name="max" type="xs:integer"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="regexpValidatorType">
+        <xs:complexContent>
+            <xs:extension base="messageValidatorType">
+                <xs:attribute name="regexp" type="xs:string" use="required"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="constraintValidatorType">
+        <xs:complexContent>
+            <xs:extension base="stringValidatorType">
+                <xs:sequence>
+                    <xs:element name="digits" minOccurs="0" type="digitsValidatorType"/>
+                    <xs:element name="decimalMin" minOccurs="0" type="decimalMaxMinValidatorType"/>
+                    <xs:element name="decimalMax" minOccurs="0" type="decimalMaxMinValidatorType"/>
+                    <xs:element name="doubleMin" minOccurs="0" type="decimalMaxMinValidatorType"/>
+                    <xs:element name="doubleMax" minOccurs="0" type="decimalMaxMinValidatorType"/>
+                    <xs:element name="negativeOrZero" minOccurs="0" type="messageValidatorType"/>
+                    <xs:element name="negative" minOccurs="0" type="messageValidatorType"/>
+                    <xs:element name="positiveOrZero" minOccurs="0" type="messageValidatorType"/>
+                    <xs:element name="positive" minOccurs="0" type="messageValidatorType"/>
+                    <xs:element name="max" minOccurs="0" type="maxMinValidatorType"/>
+                    <xs:element name="min" minOccurs="0" type="maxMinValidatorType"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="formatterType">
+        <xs:choice minOccurs="0">
+            <xs:element name="collection" minOccurs="0"/>
+            <xs:element name="custom" minOccurs="0" type="customFormatterType"/>
+            <xs:element name="date" minOccurs="0" type="dateFormatterType"/>
+            <xs:element name="number" minOccurs="0" type="formattableFormatterType"/>
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="customFormatterType">
+        <xs:attribute name="bean" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="formattableFormatterType">
+        <xs:attribute name="format" type="xs:string"/>
+    </xs:complexType>
+
+    <xs:complexType name="dateFormatterType">
+        <xs:complexContent>
+            <xs:extension base="formattableFormatterType">
+                <xs:attribute name="type" type="formatterDateType"/>
+                <xs:attribute name="useUserTimezone" type="xs:boolean"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:simpleType name="formatterDateType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="DATE"/>
+            <xs:enumeration value="DATETIME"/>
+        </xs:restriction>
+    </xs:simpleType>
+
     <!-- ThemeNames-->
     <xs:simpleType name="progressBarThemeName">
         <xs:union>
@@ -1540,6 +1700,10 @@
     <xs:complexType name="baseFieldComponent">
         <xs:complexContent>
             <xs:extension base="baseComponent">
+                <xs:sequence>
+                    <xs:element name="validators" minOccurs="0" type="constraintValidatorType"/>
+                </xs:sequence>
+
                 <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasLabel"/>
                 <xs:attributeGroup ref="hasEnabled"/>
@@ -1898,6 +2062,9 @@
     <xs:complexType name="timePickerComponent">
         <xs:complexContent>
             <xs:extension base="baseFieldComponent">
+                <xs:sequence>
+                    <xs:element name="validators" minOccurs="0" type="dateValidatorsType"/>
+                </xs:sequence>
                 <!--                <xs:attribute name="max" type="timePickerMaxVariants"/>-->
                 <!--                <xs:attribute name="min" type="timePickerMinVariants"/>-->
                 <!--                <xs:attribute name="locale" type="timePickerLocaleVariants"/>-->
@@ -1916,6 +2083,9 @@
     <xs:complexType name="datePickerComponent">
         <xs:complexContent>
             <xs:extension base="baseFieldComponent">
+                <xs:sequence>
+                    <xs:element name="validators" minOccurs="0" type="dateValidatorsType"/>
+                </xs:sequence>
                 <xs:attribute name="name" type="xs:string"/>
                 <xs:attribute name="opened" type="xs:boolean"/>
                 <xs:attribute name="autoOpen" type="xs:boolean"/>
@@ -2029,6 +2199,7 @@
             <xs:extension base="baseFieldComponent">
                 <xs:sequence>
                     <xs:element name="actions" minOccurs="0" type="actionsList"/>
+                    <xs:element name="formatter" minOccurs="0" type="formatterType"/>
                 </xs:sequence>
                 <xs:attribute name="invalid" type="xs:boolean"/>
                 <xs:attribute name="themeName" type="xs:string"/>

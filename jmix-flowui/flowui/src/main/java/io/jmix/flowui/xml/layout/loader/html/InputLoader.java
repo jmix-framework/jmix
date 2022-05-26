@@ -29,7 +29,7 @@ public class InputLoader extends AbstractComponentLoader<Input> {
     @Override
     public void loadComponent() {
         loadString(element, "type", resultComponent::setType);
-        loadString(element, "placeholder", resultComponent::setPlaceholder);
+        loadResourceString(element, "placeholder", context.getMessageGroup(), resultComponent::setPlaceholder);
 
         componentLoader().loadEnabled(resultComponent, element);
         componentLoader().loadAriaLabel(resultComponent, element);

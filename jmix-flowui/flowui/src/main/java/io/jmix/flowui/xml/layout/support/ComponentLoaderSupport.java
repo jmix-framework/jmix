@@ -158,7 +158,7 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
     }
 
     public void loadLabel(HasLabel component, Element element) {
-        loaderSupport.loadString(element, "label", component::setLabel);
+        loaderSupport.loadResourceString(element, "label", context.getMessageGroup(), component::setLabel);
     }
 
     public void loadRequired(HasRequired resultComponent, Element element, Context context) {
@@ -215,11 +215,11 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
     }
 
     public void loadHelperText(HasHelper component, Element element) {
-        loaderSupport.loadString(element, "helperText", component::setHelperText);
+        loaderSupport.loadResourceString(element, "helperText", context.getMessageGroup(), component::setHelperText);
     }
 
     public void loadPlaceholder(HasPlaceholder component, Element element) {
-        loaderSupport.loadString(element, "placeholder", component::setPlaceholder);
+        loaderSupport.loadResourceString(element, "placeholder", context.getMessageGroup(), component::setPlaceholder);
     }
 
     public void loadAutofocus(HasAutofocus component, Element element) {
@@ -243,7 +243,7 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
     }
 
     public void loadAriaLabel(HasAriaLabel component, Element element) {
-        loaderSupport.loadString(element, "ariaLabel", component::setAriaLabel);
+        loaderSupport.loadResourceString(element, "ariaLabel", context.getMessageGroup(), component::setAriaLabel);
     }
 
     public void loadWhiteSpace(HasText component, Element element) {

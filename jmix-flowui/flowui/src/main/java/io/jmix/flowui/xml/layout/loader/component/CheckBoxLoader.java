@@ -25,13 +25,6 @@ public class CheckBoxLoader extends AbstractComponentLoader<Checkbox> {
 
     protected DataLoaderSupport dataLoaderSupport;
 
-    public DataLoaderSupport getDataLoaderSupport() {
-        if (dataLoaderSupport == null) {
-            dataLoaderSupport = applicationContext.getBean(DataLoaderSupport.class, context);
-        }
-        return dataLoaderSupport;
-    }
-
     @Override
     protected Checkbox createComponent() {
         return factory.create(Checkbox.class);
@@ -44,12 +37,19 @@ public class CheckBoxLoader extends AbstractComponentLoader<Checkbox> {
         loadBoolean(element, "value", resultComponent::setValue);
         loadBoolean(element, "autofocus", resultComponent::setAutofocus);
         loadBoolean(element, "indeterminate", resultComponent::setIndeterminate);
-        loadString(element, "ariaLabel", resultComponent::setAriaLabel);
+        loadResourceString(element, "ariaLabel", context.getMessageGroup(), resultComponent::setAriaLabel);
 
         componentLoader().loadLabel(resultComponent, element);
         componentLoader().loadEnabled(resultComponent, element);
         componentLoader().loadClassName(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
         componentLoader().loadValueAndElementAttributes(resultComponent, element);
+    }
+
+    protected DataLoaderSupport getDataLoaderSupport() {
+        if (dataLoaderSupport == null) {
+            dataLoaderSupport = applicationContext.getBean(DataLoaderSupport.class, context);
+        }
+        return dataLoaderSupport;
     }
 }

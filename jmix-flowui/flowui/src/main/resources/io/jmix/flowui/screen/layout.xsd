@@ -1538,7 +1538,7 @@
     </xs:attributeGroup>
 
     <xs:attributeGroup name="hasHelperText">
-        <xs:attribute name="helperText" type="xs:string"/>
+        <xs:attribute name="helperText" type="resourceString"/>
     </xs:attributeGroup>
 
     <xs:attributeGroup name="hasAutocomplete">
@@ -1554,7 +1554,7 @@
     </xs:attributeGroup>
 
     <xs:attributeGroup name="hasPlaceholder">
-        <xs:attribute name="placeholder" type="xs:string"/>
+        <xs:attribute name="placeholder" type="resourceString"/>
     </xs:attributeGroup>
 
     <xs:attributeGroup name="hasRequired">
@@ -1580,11 +1580,11 @@
     </xs:attributeGroup>
 
     <xs:attributeGroup name="hasAriaLabel">
-        <xs:attribute name="ariaLabel" type="xs:string"/>
+        <xs:attribute name="ariaLabel" type="resourceString"/>
     </xs:attributeGroup>
 
     <xs:attributeGroup name="hasLabel">
-        <xs:attribute name="label" type="xs:string"/>
+        <xs:attribute name="label" type="resourceString"/>
     </xs:attributeGroup>
 
     <xs:attributeGroup name="hasSize">
@@ -2111,8 +2111,8 @@
 
                 <xs:attribute name="autoOpen" type="xs:boolean"/>
                 <xs:attribute name="themeName" type="xs:string"/>
-                <xs:attribute name="timePlaceholder" type="xs:string"/>
-                <xs:attribute name="datePlaceholder" type="xs:string"/>
+                <xs:attribute name="timePlaceholder" type="resourceString"/>
+                <xs:attribute name="datePlaceholder" type="resourceString"/>
                 <xs:attribute name="weekNumbersVisible" type="xs:boolean"/>
                 <xs:attribute name="datatype" type="dateTimeDatatypeEnum"/>
 
@@ -2240,7 +2240,7 @@
                 <xs:attribute name="name" type="xs:string"/>
                 <xs:attribute name="image" type="xs:string"/>
                 <xs:attribute name="colorIndex" type="xs:integer"/>
-                <xs:attribute name="abbreviation" type="xs:string"/>
+                <xs:attribute name="abbreviation" type="resourceString"/>
                 <xs:attribute name="themeName" type="avatarThemeName"/>
 
                 <xs:attributeGroup ref="hasSize"/>
@@ -2322,7 +2322,7 @@
         <xs:complexContent>
             <xs:extension base="baseComponent">
                 <xs:attribute name="autofocus" type="xs:boolean"/>
-                <xs:attribute name="emptySelectionCaption" type="xs:string"/>
+                <xs:attribute name="emptySelectionCaption" type="resourceString"/>
                 <xs:attribute name="emptySelectionAllowed" type="xs:boolean"/>
 
                 <xs:attributeGroup ref="hasSize"/>
@@ -2344,7 +2344,7 @@
             <xs:extension base="baseComponent">
                 <xs:group ref="singleLayoutOrComponent"/>
 
-                <xs:attribute name="summaryText" type="xs:string"/>
+                <xs:attribute name="summaryText" type="resourceString"/>
                 <xs:attribute name="themeName" type="detailsThemeName"/>
 
                 <xs:attributeGroup ref="hasSize"/>
@@ -2417,7 +2417,7 @@
         <xs:complexContent>
             <xs:extension base="baseHtmlContainer">
                 <xs:attribute name="resource" type="xs:string"/>
-                <xs:attribute name="alternateText" type="xs:string"/>
+                <xs:attribute name="alternateText" type="resourceString"/>
 
                 <xs:attributeGroup ref="hasAriaLabel"/>
             </xs:extension>

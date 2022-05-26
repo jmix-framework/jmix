@@ -28,7 +28,7 @@ public abstract class AbstractComboBoxLoader<T extends ComboBox<?>> extends Abst
         loadInteger(element, "pageSize", resultComponent::setPageSize);
         loadBoolean(element, "autoOpen", resultComponent::setAutoOpen);
         loadBoolean(element, "autofocus", resultComponent::setAutofocus);
-        loadString(element, "placeholder", resultComponent::setPlaceholder);
+        loadResourceString(element, "placeholder", context.getMessageGroup(), resultComponent::setPlaceholder);
         loadBoolean(element, "allowCustomValue", resultComponent::setAllowCustomValue);
         loadBoolean(element, "clearButtonVisible", resultComponent::setClearButtonVisible);
         loadBoolean(element, "preventInvalidInput", resultComponent::setPreventInvalidInput);

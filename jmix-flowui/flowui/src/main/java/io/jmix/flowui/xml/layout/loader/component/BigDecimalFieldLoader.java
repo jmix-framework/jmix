@@ -39,7 +39,7 @@ public class BigDecimalFieldLoader extends AbstractComponentLoader<JmixBigDecima
                 .ifPresent(aDouble -> resultComponent.setValue(BigDecimal.valueOf(aDouble)));
         loadBoolean(element, "autofocus", resultComponent::setAutofocus);
         loadBoolean(element, "autoselect", resultComponent::setAutoselect);
-        loadString(element, "placeholder", resultComponent::setPlaceholder);
+        loadResourceString(element, "placeholder", context.getMessageGroup(), resultComponent::setPlaceholder);
         loadBoolean(element, "clearButtonVisible", resultComponent::setClearButtonVisible);
         loadResourceString(element, "title", context.getMessageGroup(), resultComponent::setTitle);
 

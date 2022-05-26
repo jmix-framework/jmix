@@ -72,13 +72,6 @@ public class ActionLoaderSupport implements ApplicationContextAware {
         this.applicationContext = applicationContext;
     }
 
-    public ComponentLoaderSupport componentLoader() {
-        if (componentLoaderSupport == null) {
-            componentLoaderSupport = applicationContext.getBean(ComponentLoaderSupport.class, context);
-        }
-        return componentLoaderSupport;
-    }
-
     public Action loadDeclarativeAction(Element element) {
         return loadDeclarativeActionDefault(element);
     }
@@ -176,5 +169,12 @@ public class ActionLoaderSupport implements ApplicationContextAware {
                         "Component ID", component.attributeValue("id"));
             }
         });
+    }
+
+    protected ComponentLoaderSupport componentLoader() {
+        if (componentLoaderSupport == null) {
+            componentLoaderSupport = applicationContext.getBean(ComponentLoaderSupport.class, context);
+        }
+        return componentLoaderSupport;
     }
 }

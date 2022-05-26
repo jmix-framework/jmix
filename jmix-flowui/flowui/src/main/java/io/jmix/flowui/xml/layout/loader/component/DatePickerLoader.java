@@ -24,13 +24,6 @@ public class DatePickerLoader extends AbstractComponentLoader<TypedDatePicker<?>
 
     protected DataLoaderSupport dataLoaderSupport;
 
-    public DataLoaderSupport getDataLoaderSupport() {
-        if (dataLoaderSupport == null) {
-            dataLoaderSupport = applicationContext.getBean(DataLoaderSupport.class, context);
-        }
-        return dataLoaderSupport;
-    }
-
     @Override
     protected TypedDatePicker<?> createComponent() {
         return factory.create(TypedDatePicker.class);
@@ -41,10 +34,10 @@ public class DatePickerLoader extends AbstractComponentLoader<TypedDatePicker<?>
         getDataLoaderSupport().loadData(resultComponent, element);
         componentLoader().loadDatatype(resultComponent, element);
 
-        loadString(element, "name", resultComponent::setName);
+        loadResourceString(element, "name", context.getMessageGroup(), resultComponent::setName);
         loadBoolean(element, "opened", resultComponent::setOpened);
         loadBoolean(element, "autoOpen", resultComponent::setAutoOpen);
-        loadString(element, "placeholder", resultComponent::setPlaceholder);
+        loadResourceString(element, "placeholder", context.getMessageGroup(), resultComponent::setPlaceholder);
         loadBoolean(element, "weekNumbersVisible", resultComponent::setWeekNumbersVisible);
         loadBoolean(element, "clearButtonVisible", resultComponent::setClearButtonVisible);
 
@@ -57,5 +50,12 @@ public class DatePickerLoader extends AbstractComponentLoader<TypedDatePicker<?>
         componentLoader().loadRequired(resultComponent, element, context);
         componentLoader().loadValueAndElementAttributes(resultComponent, element);
         componentLoader().loadValidationAttributes(resultComponent, element, context);
+    }
+
+    protected DataLoaderSupport getDataLoaderSupport() {
+        if (dataLoaderSupport == null) {
+            dataLoaderSupport = applicationContext.getBean(DataLoaderSupport.class, context);
+        }
+        return dataLoaderSupport;
     }
 }

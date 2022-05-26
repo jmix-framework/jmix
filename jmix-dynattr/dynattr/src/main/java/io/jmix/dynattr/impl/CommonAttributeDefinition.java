@@ -19,24 +19,24 @@ package io.jmix.dynattr.impl;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
-import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.dynattr.AttributeDefinition;
 import io.jmix.dynattr.AttributeType;
 import io.jmix.dynattr.OptionsLoaderType;
 import io.jmix.dynattr.model.CategoryAttribute;
 
 import javax.annotation.Nullable;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-public class CommonAttributeDefinition implements AttributeDefinition {
+public class CommonAttributeDefinition implements AttributeDefinition, Serializable {
     private static final long serialVersionUID = -338980834303933684L;
 
     protected final CategoryAttribute attribute;
     protected final AttributeDefinition.Configuration configuration;
-    protected final MetaProperty metaProperty;
+    protected final DynAttrMetaProperty metaProperty;
 
     protected static class CommonAttributeConfiguration implements AttributeDefinition.Configuration {
         private static final long serialVersionUID = 3088284638117897678L;
@@ -174,7 +174,7 @@ public class CommonAttributeDefinition implements AttributeDefinition {
         }
     }
 
-    public CommonAttributeDefinition(CategoryAttribute attribute, MetaProperty metaProperty) {
+    public CommonAttributeDefinition(CategoryAttribute attribute, DynAttrMetaProperty metaProperty) {
         this.attribute = attribute;
         this.configuration = new CommonAttributeConfiguration(attribute);
         this.metaProperty = metaProperty;
@@ -186,7 +186,7 @@ public class CommonAttributeDefinition implements AttributeDefinition {
     }
 
     @Override
-    public MetaProperty getMetaProperty() {
+    public DynAttrMetaProperty getMetaProperty() {
         return metaProperty;
     }
 

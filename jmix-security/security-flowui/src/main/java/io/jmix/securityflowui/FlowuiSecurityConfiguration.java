@@ -16,6 +16,8 @@ import io.jmix.flowui.FlowuiProperties;
 import io.jmix.flowui.screen.Screen;
 import io.jmix.flowui.screen.ScreenRegistry;
 import io.jmix.security.StandardSecurityConfiguration;
+import io.jmix.security.configurer.AnonymousConfigurer;
+import io.jmix.security.configurer.SessionManagementConfigurer;
 import io.jmix.securityflowui.access.FlowuiScreenAccessChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,6 +59,7 @@ public class FlowuiSecurityConfiguration extends StandardSecurityConfiguration {
 
     private static final Logger log = LoggerFactory.getLogger(FlowuiSecurityConfiguration.class);
 
+    public static final String LOGOUT_URL = "/logout";
     public static final String LOGOUT_SUCCESS_URL = "/";
 
     protected VaadinDefaultRequestCache vaadinDefaultRequestCache;
@@ -134,6 +137,9 @@ public class FlowuiSecurityConfiguration extends StandardSecurityConfiguration {
         // endpoints are not counted as valid targets to redirect user to on
         // login
         http.requestCache().requestCache(vaadinDefaultRequestCache);
+
+        http.apply(new AnonymousConfigurer());
+        http.apply(new SessionManagementConfigurer());
 
         ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry urlRegistry =
                 http.authorizeRequests();
@@ -255,11 +261,26 @@ public class FlowuiSecurityConfiguration extends StandardSecurityConfiguration {
         formLogin.successHandler(createSuccessHandler(http));
 
         http.csrf().ignoringAntMatchers(loginPath);
-        http.logout().logoutSuccessUrl(logoutUrl);
+        http.logout()
+                .logoutUrl(LOGOUT_URL)
+                .logoutRequestMatcher(createLogoutRequestMatcher(LOGOUT_URL))
+                .logoutSuccessUrl(logoutUrl);
         http.exceptionHandling().defaultAuthenticationEntryPointFor(
                 new LoginUrlAuthenticationEntryPoint(loginPath), AnyRequestMatcher.INSTANCE);
 
         screenAccessChecker.setLoginScreen(screenClass);
+    }
+
+    protected RequestMatcher createLogoutRequestMatcher(String logoutUrl) {
+        RequestMatcher post = createLogoutRequestMatcher(logoutUrl, "POST");
+        RequestMatcher get = createLogoutRequestMatcher(logoutUrl, "GET");
+        RequestMatcher put = createLogoutRequestMatcher(logoutUrl, "PUT");
+        RequestMatcher delete = createLogoutRequestMatcher(logoutUrl, "DELETE");
+        return new OrRequestMatcher(get, post, put, delete);
+    }
+
+    protected RequestMatcher createLogoutRequestMatcher(String logoutUrl, String httpMethod) {
+        return new AntPathRequestMatcher(logoutUrl, httpMethod);
     }
 
     protected VaadinSavedRequestAwareAuthenticationSuccessHandler createSuccessHandler(HttpSecurity http) {

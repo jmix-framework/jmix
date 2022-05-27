@@ -145,7 +145,7 @@ public class ScreenRegistry {
                     projectScreens.put(screenId, controllerClassName);
                 }
 
-                Class<? extends Screen> controllerClass = loadDefinedScreenClass(controllerClassName);
+                Class<? extends Screen<?>> controllerClass = loadDefinedScreenClass(controllerClassName);
                 String templatePath = resolveTemplatePath(controllerClass);
                 ScreenInfo screenInfo = new ScreenInfo(screenId, controllerClassName, controllerClass, templatePath);
 
@@ -230,14 +230,14 @@ public class ScreenRegistry {
         reset();
     }*/
     @SuppressWarnings("unchecked")
-    protected Class<? extends Screen> loadDefinedScreenClass(String className) {
+    protected Class<? extends Screen<?>> loadDefinedScreenClass(String className) {
         checkNotEmptyString(className, "class name is empty");
-        return (Class<? extends Screen>) classManager.loadClass(className);
+        return (Class<? extends Screen<?>>) classManager.loadClass(className);
     }
 
     // TODO: gg, move to utils?
     @Nullable
-    protected String resolveTemplatePath(Class<? extends Screen> controllerClass) {
+    protected String resolveTemplatePath(Class<? extends Screen<?>> controllerClass) {
         UiDescriptor annotation = controllerClass.getAnnotation(UiDescriptor.class);
         if (annotation == null) {
             return null;

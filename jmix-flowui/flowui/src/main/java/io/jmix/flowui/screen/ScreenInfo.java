@@ -7,12 +7,12 @@ public class ScreenInfo {
 
     protected String id;
     protected String controllerClassName;
-    protected Class<? extends Screen> controllerClass;
+    protected Class<? extends Screen<?>> controllerClass;
     protected String templatePath;
 
     public ScreenInfo(String id,
                       String controllerClassName,
-                      Class<? extends Screen> controllerClass,
+                      Class<? extends Screen<?>> controllerClass,
                       @Nullable String templatePath) {
         this.id = id;
         this.controllerClassName = controllerClassName;
@@ -28,7 +28,7 @@ public class ScreenInfo {
         return controllerClassName;
     }
 
-    public Class<? extends Screen> getControllerClass() {
+    public Class<? extends Screen<?>> getControllerClass() {
         return controllerClass;
     }
 

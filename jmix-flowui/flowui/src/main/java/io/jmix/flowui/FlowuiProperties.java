@@ -34,17 +34,38 @@ public class FlowuiProperties {
      */
     String mainScreenId;
 
+    /**
+     * Defines whether menu should be built with menu items from add-ons. {@code true} means using menu items from
+     * add-ons, {@code false} - using only menu configuration from the application. The default value is {@code true}.
+     */
+    boolean compositeMenu;
+
     public FlowuiProperties(@DefaultValue("login") String loginScreenId,
-                            @DefaultValue("main") String mainScreenId) {
+                            @DefaultValue("main") String mainScreenId,
+                            @DefaultValue("true") boolean compositeMenu) {
         this.loginScreenId = loginScreenId;
         this.mainScreenId = mainScreenId;
+        this.compositeMenu = compositeMenu;
     }
 
+    /**
+     * @see #loginScreenId
+     */
     public String getLoginScreenId() {
         return loginScreenId;
     }
 
+    /**
+     * @see #mainScreenId
+     */
     public String getMainScreenId() {
         return mainScreenId;
+    }
+
+    /**
+     * @see #compositeMenu
+     */
+    public boolean isCompositeMenu() {
+        return compositeMenu;
     }
 }

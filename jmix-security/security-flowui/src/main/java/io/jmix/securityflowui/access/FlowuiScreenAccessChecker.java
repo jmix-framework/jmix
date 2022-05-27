@@ -21,14 +21,9 @@ import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterListener;
 import com.vaadin.flow.router.NotFoundException;
 import com.vaadin.flow.server.VaadinServletRequest;
-import com.vaadin.flow.server.auth.AccessAnnotationChecker;
 import com.vaadin.flow.server.auth.ViewAccessChecker;
-import io.jmix.core.AccessManager;
 import io.jmix.core.security.SecurityContextHelper;
-import io.jmix.flowui.accesscontext.FlowuiShowScreenContext;
-import io.jmix.flowui.screen.Screen;
-import io.jmix.flowui.screen.UiController;
-import io.jmix.flowui.sys.UiDescriptorUtils;
+import io.jmix.flowui.sys.FlowuiAccessChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -40,21 +35,19 @@ public class FlowuiScreenAccessChecker implements BeforeEnterListener {
 
     private static final Logger log = LoggerFactory.getLogger(FlowuiScreenAccessChecker.class);
 
-    protected final AccessManager accessManager;
-    protected final AccessAnnotationChecker accessAnnotationChecker;
+    protected final FlowuiAccessChecker flowuiAccessChecker;
 
     protected boolean enabled;
 
     protected Class<? extends Component> loginScreen;
 
-    public FlowuiScreenAccessChecker(AccessManager accessManager) {
-        this(true, accessManager);
+    public FlowuiScreenAccessChecker(FlowuiAccessChecker flowuiAccessChecker) {
+        this(true, flowuiAccessChecker);
     }
 
-    public FlowuiScreenAccessChecker(boolean enabled, AccessManager accessManager) {
+    public FlowuiScreenAccessChecker(boolean enabled, FlowuiAccessChecker flowuiAccessChecker) {
         this.enabled = enabled;
-        this.accessManager = accessManager;
-        this.accessAnnotationChecker = new AccessAnnotationChecker();
+        this.flowuiAccessChecker = flowuiAccessChecker;
     }
 
     /**
@@ -102,20 +95,14 @@ public class FlowuiScreenAccessChecker implements BeforeEnterListener {
             return;
         }
 
-        HttpServletRequest httpServletRequest = vaadinServletRequest.getHttpServletRequest();
-        boolean hasAccess = isHasAccess(targetView, httpServletRequest);
-
-        if (!hasAccess && isSupportedScreen(targetView)) {
-            hasAccess = isHasSecurityPermission(targetView);
-        }
-
-        if (hasAccess) {
+        if (isHasAccess(targetView)) {
             log.debug("Allowed access to view {}", targetView.getName());
             return;
         }
 
         log.debug("Denied access to view {}", targetView.getName());
         if (isAnonymousAuthentication()) {
+            HttpServletRequest httpServletRequest = vaadinServletRequest.getHttpServletRequest();
             httpServletRequest.getSession()
                     // Use constant from Vaadin class to avoid
                     // VaadinSavedRequestAwareAuthenticationSuccessHandler extension
@@ -138,20 +125,8 @@ public class FlowuiScreenAccessChecker implements BeforeEnterListener {
         }
     }
 
-    protected boolean isHasAccess(Class<?> targetView, HttpServletRequest httpServletRequest) {
-        return accessAnnotationChecker.hasAccess(targetView, httpServletRequest);
-    }
-
-    protected boolean isHasSecurityPermission(Class<?> targetView) {
-        String screenId = UiDescriptorUtils.getInferredScreenId(targetView);
-        FlowuiShowScreenContext context = new FlowuiShowScreenContext(screenId);
-        accessManager.applyRegisteredConstraints(context);
-        return context.isPermitted();
-    }
-
-    protected boolean isSupportedScreen(Class<?> targetView) {
-        return Screen.class.isAssignableFrom(targetView)
-                && targetView.getAnnotation(UiController.class) != null;
+    protected boolean isHasAccess(Class<?> targetView) {
+        return flowuiAccessChecker.isViewPermitted(targetView);
     }
 
     protected boolean isProductionMode(BeforeEnterEvent beforeEnterEvent) {

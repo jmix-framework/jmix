@@ -1828,6 +1828,18 @@
 
     <!-- Components -->
 
+    <!-- ListMenu -->
+    <xs:complexType name="listMenuComponent">
+        <xs:complexContent>
+            <xs:extension base="baseComponent">
+                <xs:attribute name="loadMenuConfig" type="xs:boolean"/>
+
+                <xs:attributeGroup ref="hasSize"/>
+                <xs:attributeGroup ref="hasClassName"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
     <!-- Button-->
     <xs:complexType name="buttonComponent">
         <xs:complexContent>
@@ -2514,6 +2526,7 @@
                 <!--                <xs:element name="fragment" type="fragmentContainer"/>-->
 
                 <!-- Component -->
+                <xs:element name="listMenu" type="listMenuComponent"/>
                 <xs:element name="button" type="buttonComponent"/>
                 <xs:element name="avatar" type="avatarComponent"/>
                 <xs:element name="select" type="selectComponent"/>

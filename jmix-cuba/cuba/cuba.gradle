@@ -21,23 +21,23 @@ group = 'io.jmix.cuba'
 archivesBaseName = 'jmix-cuba'
 
 dependencies {
-    api project(':core')
+    api project(':core-starter')
     api project(':data')
-    api project(':eclipselink')
-    api project(':ui')
-    api project(':ui-data')
+    api project(':eclipselink-starter')
+    api project(':ui-starter')
+    api project(':ui-data-starter')
     api project(':ui-export-starter')
-    api project(':security')
-    api project(':security-ui')
-    api project(':dynattr')
-    api project(':dynattr-ui')
+    api project(':security-starter')
+    api project(':security-ui-starter')
+    api project(':dynattr-starter')
+    api project(':dynattr-ui-starter')
     api project(':audit-starter')
     api project(':audit-ui-starter')
     api project(':email-starter')
     api project(':email-ui-starter')
-    api project(':localfs')
-    api project(':datatools')
-    api project(':datatools-ui')
+    api project(':localfs-starter')
+    api project(':datatools-starter')
+    api project(':datatools-ui-starter')
 
     api 'com.thoughtworks.xstream:xstream:1.4.13'
     api 'org.perf4j:perf4j:0.9.16'

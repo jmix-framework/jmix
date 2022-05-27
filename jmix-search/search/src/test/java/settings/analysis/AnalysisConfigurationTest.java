@@ -21,7 +21,7 @@ import index_definition.AnnotatedIndexDefinitionProcessorTest;
 import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.mapping.processor.impl.AnnotatedIndexDefinitionProcessor;
 import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.common.xcontent.XContentType;
+import org.elasticsearch.xcontent.XContentType;
 import org.hamcrest.Matcher;
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.extension.ExtendWith;

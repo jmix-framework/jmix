@@ -21,8 +21,6 @@ import io.jmix.flowui.component.menu.JmixListMenu;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import org.dom4j.Element;
 
-import java.util.Optional;
-
 public class ListMenuLoader extends AbstractComponentLoader<JmixListMenu> {
 
     @Override
@@ -30,9 +28,7 @@ public class ListMenuLoader extends AbstractComponentLoader<JmixListMenu> {
         componentLoader().loadSizeAttributes(resultComponent, element);
         componentLoader().loadClassName(resultComponent, element);
 
-        if (isLoadLoadMenuConfig(element)) {
-            resultComponent.loadMenuConfig();
-        }
+        loadMenuConfig(element);
     }
 
     @Override
@@ -40,9 +36,10 @@ public class ListMenuLoader extends AbstractComponentLoader<JmixListMenu> {
         return factory.create(JmixListMenu.class);
     }
 
-    protected boolean isLoadLoadMenuConfig(Element element) {
+    protected void loadMenuConfig(Element element) {
         String loadMenuConfig = Strings.emptyToNull(element.attributeValue("loadMenuConfig"));
-        return Strings.isNullOrEmpty(loadMenuConfig)
-                || Boolean.parseBoolean(loadMenuConfig);
+        if (Strings.isNullOrEmpty(loadMenuConfig) || Boolean.parseBoolean(loadMenuConfig)) {
+            resultComponent.loadMenuConfig();
+        }
     }
 }

@@ -31,8 +31,8 @@ import java.util.Objects;
 public class DynAttrMetaProperty extends MetadataObjectImpl implements MetaProperty, Serializable {
     private static final long serialVersionUID = 839160118855669248L;
 
-    protected String name;//for serialization
-    private final String ownerMetaClassName;//to obtain metaclass after deserialization
+    protected String name; // for serialization
+    private final String ownerMetaClassName; // to obtain metaclass after deserialization
 
     private transient MetaClass ownerMetaClass;
     private transient Range range;

@@ -106,7 +106,7 @@ public class CacheOperations {
      * Used as safe alternative for {@link org.springframework.cache.Cache#get(java.lang.Object, java.util.concurrent.Callable)}
      * <br>
      * <p></p>
-     * <b>WARNING: do not use Cache#get(java.lang.Object, java.util.concurrent.Callable) with hazelcast. </b>
+     * <b>WARNING: do not use Cache#get(java.lang.Object, java.util.concurrent.Callable) with Hazelcast. </b>
      * It causes NotSerializableException because {@link org.springframework.cache.jcache.JCacheCache#ValueLoaderEntryProcessor}
      * is not serializable.
      *

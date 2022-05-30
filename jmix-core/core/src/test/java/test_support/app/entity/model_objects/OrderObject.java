@@ -28,6 +28,8 @@ public class OrderObject {
 
     private String number;
 
+    private String orderState;
+
     private CustomerObject customer;
 
     private List<OrderLineObject> lines;
@@ -62,5 +64,13 @@ public class OrderObject {
 
     public void setLines(List<OrderLineObject> lines) {
         this.lines = lines;
+    }
+
+    public OrderState getOrderState() {
+        return orderState == null ? null : OrderState.fromId(orderState);
+    }
+
+    public void setOrderState(OrderState orderState) {
+        this.orderState = orderState == null ? null : orderState.getId();
     }
 }

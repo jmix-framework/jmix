@@ -42,6 +42,8 @@ public class SaveContext implements Serializable {
 
     /**
      * Adds an entity to be committed to the database.
+     * <p>
+     * This method accepts entity instances and collections.
      *
      * @param entities entity instances
      * @return this instance for chaining
@@ -73,6 +75,8 @@ public class SaveContext implements Serializable {
 
     /**
      * Adds an entity to be removed from the database.
+     * <p>
+     * This method accepts entity instances and collections.
      *
      * @param entities entity instances
      * @return this instance for chaining

@@ -179,4 +179,32 @@ class DataManagerCommitTest extends DataSpec {
         then:
         committedOrder.customer == customer
     }
+
+    def "save collections"() {
+        def customer1 = dataManager.create(Customer)
+        def customer2 = dataManager.create(Customer)
+        def order = dataManager.create(Order)
+
+        when:
+        def saved = dataManager.save(new SaveContext().saving([customer1, customer2], order))
+
+        then:
+        saved.contains(customer1)
+        saved.contains(customer2)
+        saved.contains(order)
+
+        when: 'passing multiple elements'
+        def saved1= dataManager.save([customer1, customer2], order)
+
+        then: 'collections are accepted because the save() method returns EntitySet'
+        saved1.contains(customer1)
+        saved1.contains(customer2)
+        saved1.contains(order)
+
+        when: 'passing a single collection'
+        def savedList = dataManager.save([customer1, customer2])
+
+        then: 'another overloaded save() method is chosen which accepts and returns a single instance'
+        thrown(Exception)
+    }
 }

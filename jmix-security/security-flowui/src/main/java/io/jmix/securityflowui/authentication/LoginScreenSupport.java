@@ -34,6 +34,7 @@ import io.jmix.core.security.SecurityContextHelper;
 import io.jmix.flowui.FlowuiProperties;
 import io.jmix.flowui.ScreenNavigators;
 import io.jmix.flowui.sys.AppCookies;
+import io.jmix.flowui.sys.ExtendedClientDetailsProvider;
 import io.jmix.security.model.SecurityScope;
 import io.jmix.securityflowui.accesscontext.FlowuiLoginToUiContext;
 import org.apache.commons.lang3.StringUtils;
@@ -90,7 +91,7 @@ public class LoginScreenSupport {
     protected ScreenNavigators screenNavigators;
     protected AccessManager accessManager;
     protected Messages messages;
-    //    protected DeviceInfoProvider deviceInfoProvider;
+    protected ExtendedClientDetailsProvider clientDetailsProvider;
     protected RememberMeServices rememberMeServices;
     protected ApplicationEventPublisher applicationEventPublisher;
     protected VaadinDefaultRequestCache requestCache;
@@ -134,11 +135,6 @@ public class LoginScreenSupport {
         this.rememberMeServices = rememberMeServices;
     }
 
-    @Autowired(required = false)
-    public void setAuthenticationStrategy(SessionAuthenticationStrategy authenticationStrategy) {
-        this.authenticationStrategy = authenticationStrategy;
-    }
-
     @Autowired
     public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
         this.applicationEventPublisher = applicationEventPublisher;
@@ -147,6 +143,16 @@ public class LoginScreenSupport {
     @Autowired
     public void setRequestCache(VaadinDefaultRequestCache requestCache) {
         this.requestCache = requestCache;
+    }
+
+    @Autowired
+    public void setClientDetailsProvider(ExtendedClientDetailsProvider clientDetailsProvider) {
+        this.clientDetailsProvider = clientDetailsProvider;
+    }
+
+    @Autowired(required = false)
+    public void setAuthenticationStrategy(SessionAuthenticationStrategy authenticationStrategy) {
+        this.authenticationStrategy = authenticationStrategy;
     }
 
     /**
@@ -284,14 +290,8 @@ public class LoginScreenSupport {
 
     @Nullable
     protected TimeZone getDeviceTimeZone() {
-        ExtendedClientDetails clientDetails = getCachedExtendedClientDetails();
+        ExtendedClientDetails clientDetails = clientDetailsProvider.getExtendedClientDetails();
         return clientDetails != null ? detectTimeZone(clientDetails) : null;
-    }
-
-    // TODO: gg, bean
-    @Nullable
-    private ExtendedClientDetails getCachedExtendedClientDetails() {
-        return UI.getCurrent().getInternals().getExtendedClientDetails();
     }
 
     protected TimeZone detectTimeZone(ExtendedClientDetails details) {

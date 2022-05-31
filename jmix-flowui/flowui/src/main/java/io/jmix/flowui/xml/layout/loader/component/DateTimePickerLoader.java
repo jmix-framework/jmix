@@ -24,13 +24,6 @@ public class DateTimePickerLoader extends AbstractComponentLoader<TypedDateTimeP
 
     protected DataLoaderSupport dataLoaderSupport;
 
-    public DataLoaderSupport getDataLoaderSupport() {
-        if (dataLoaderSupport == null) {
-            dataLoaderSupport = applicationContext.getBean(DataLoaderSupport.class, context);
-        }
-        return dataLoaderSupport;
-    }
-
     @Override
     protected TypedDateTimePicker<?> createComponent() {
         return factory.create(TypedDateTimePicker.class);
@@ -42,8 +35,8 @@ public class DateTimePickerLoader extends AbstractComponentLoader<TypedDateTimeP
         componentLoader().loadDatatype(resultComponent, element);
 
         loadBoolean(element, "autoOpen", resultComponent::setAutoOpen);
-        loadString(element, "timePlaceholder", resultComponent::setTimePlaceholder);
-        loadString(element, "datePlaceholder", resultComponent::setDatePlaceholder);
+        loadResourceString(element, "timePlaceholder", context.getMessageGroup(), resultComponent::setTimePlaceholder);
+        loadResourceString(element, "datePlaceholder", context.getMessageGroup(), resultComponent::setDatePlaceholder);
         loadBoolean(element, "weekNumbersVisible", resultComponent::setWeekNumbersVisible);
 
         componentLoader().loadLabel(resultComponent, element);
@@ -55,5 +48,12 @@ public class DateTimePickerLoader extends AbstractComponentLoader<TypedDateTimeP
         componentLoader().loadRequired(resultComponent, element, context);
         componentLoader().loadValueAndElementAttributes(resultComponent, element);
         componentLoader().loadValidationAttributes(resultComponent, element, context);
+    }
+
+    protected DataLoaderSupport getDataLoaderSupport() {
+        if (dataLoaderSupport == null) {
+            dataLoaderSupport = applicationContext.getBean(DataLoaderSupport.class, context);
+        }
+        return dataLoaderSupport;
     }
 }

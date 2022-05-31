@@ -26,13 +26,6 @@ public class BigDecimalFieldLoader extends AbstractComponentLoader<JmixBigDecima
 
     protected DataLoaderSupport dataLoaderSupport;
 
-    public DataLoaderSupport getDataLoaderSupport() {
-        if (dataLoaderSupport == null) {
-            dataLoaderSupport = applicationContext.getBean(DataLoaderSupport.class, context);
-        }
-        return dataLoaderSupport;
-    }
-
     @Override
     protected JmixBigDecimalField createComponent() {
         return factory.create(JmixBigDecimalField.class);
@@ -46,7 +39,7 @@ public class BigDecimalFieldLoader extends AbstractComponentLoader<JmixBigDecima
                 .ifPresent(aDouble -> resultComponent.setValue(BigDecimal.valueOf(aDouble)));
         loadBoolean(element, "autofocus", resultComponent::setAutofocus);
         loadBoolean(element, "autoselect", resultComponent::setAutoselect);
-        loadString(element, "placeholder", resultComponent::setPlaceholder);
+        loadResourceString(element, "placeholder", context.getMessageGroup(), resultComponent::setPlaceholder);
         loadBoolean(element, "clearButtonVisible", resultComponent::setClearButtonVisible);
         loadResourceString(element, "title", context.getMessageGroup(), resultComponent::setTitle);
 
@@ -63,5 +56,12 @@ public class BigDecimalFieldLoader extends AbstractComponentLoader<JmixBigDecima
         componentLoader().loadRequired(resultComponent, element, context);
         componentLoader().loadValueAndElementAttributes(resultComponent, element);
         componentLoader().loadValidationAttributes(resultComponent, element, context);
+    }
+
+    protected DataLoaderSupport getDataLoaderSupport() {
+        if (dataLoaderSupport == null) {
+            dataLoaderSupport = applicationContext.getBean(DataLoaderSupport.class, context);
+        }
+        return dataLoaderSupport;
     }
 }

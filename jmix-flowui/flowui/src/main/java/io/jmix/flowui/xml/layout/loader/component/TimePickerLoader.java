@@ -24,13 +24,6 @@ public class TimePickerLoader extends AbstractComponentLoader<TypedTimePicker<?>
 
     protected DataLoaderSupport dataLoaderSupport;
 
-    public DataLoaderSupport getDataLoaderSupport() {
-        if (dataLoaderSupport == null) {
-            dataLoaderSupport = applicationContext.getBean(DataLoaderSupport.class, context);
-        }
-        return dataLoaderSupport;
-    }
-
     @Override
     protected TypedTimePicker<?> createComponent() {
         return factory.create(TypedTimePicker.class);
@@ -42,7 +35,7 @@ public class TimePickerLoader extends AbstractComponentLoader<TypedTimePicker<?>
         componentLoader().loadDatatype(resultComponent, element);
 
         loadBoolean(element, "autoOpen", resultComponent::setAutoOpen);
-        loadString(element, "placeholder", resultComponent::setPlaceholder);
+        loadResourceString(element, "placeholder", context.getMessageGroup(), resultComponent::setPlaceholder);
         loadBoolean(element, "clearButtonVisible", resultComponent::setClearButtonVisible);
 
         componentLoader().loadLabel(resultComponent, element);
@@ -53,5 +46,12 @@ public class TimePickerLoader extends AbstractComponentLoader<TypedTimePicker<?>
         componentLoader().loadRequired(resultComponent, element, context);
         componentLoader().loadValueAndElementAttributes(resultComponent, element);
         componentLoader().loadValidationAttributes(resultComponent, element, context);
+    }
+
+    protected DataLoaderSupport getDataLoaderSupport() {
+        if (dataLoaderSupport == null) {
+            dataLoaderSupport = applicationContext.getBean(DataLoaderSupport.class, context);
+        }
+        return dataLoaderSupport;
     }
 }

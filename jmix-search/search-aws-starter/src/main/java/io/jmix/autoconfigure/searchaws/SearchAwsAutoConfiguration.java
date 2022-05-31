@@ -27,6 +27,7 @@ import org.apache.http.HttpRequestInterceptor;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.RestHighLevelClientBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,7 +71,9 @@ public class SearchAwsAutoConfiguration {
             return builder;
         });
 
-        return new RestHighLevelClient(restClientBuilder);
+        return new RestHighLevelClientBuilder(restClientBuilder.build())
+                .setApiCompatibilityMode(searchProperties.isRestHighLevelClientApiCompatibilityModeEnabled())
+                .build();
     }
 
     protected HttpRequestInterceptor createHttpRequestInterceptor() {

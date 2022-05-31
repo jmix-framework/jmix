@@ -25,13 +25,6 @@ public class TextAreaLoader extends AbstractComponentLoader<TextArea> {
 
     protected DataLoaderSupport dataLoaderSupport;
 
-    public DataLoaderSupport getDataLoaderSupport() {
-        if (dataLoaderSupport == null) {
-            dataLoaderSupport = applicationContext.getBean(DataLoaderSupport.class, context);
-        }
-        return dataLoaderSupport;
-    }
-
     @Override
     protected TextArea createComponent() {
         return factory.create(TextArea.class);
@@ -46,7 +39,7 @@ public class TextAreaLoader extends AbstractComponentLoader<TextArea> {
         loadBoolean(element, "required", resultComponent::setRequired);
         loadBoolean(element, "autofocus", resultComponent::setAutofocus);
         loadBoolean(element, "autoselect", resultComponent::setAutoselect);
-        loadString(element, "placeholder", resultComponent::setPlaceholder);
+        loadResourceString(element, "placeholder", context.getMessageGroup(), resultComponent::setPlaceholder);
         loadBoolean(element, "clearButtonVisible", resultComponent::setClearButtonVisible);
 
         componentLoader().loadLabel(resultComponent, element);
@@ -61,5 +54,12 @@ public class TextAreaLoader extends AbstractComponentLoader<TextArea> {
         componentLoader().loadValueChangeMode(resultComponent, element);
         componentLoader().loadValueAndElementAttributes(resultComponent, element);
         componentLoader().loadValidationAttributes(resultComponent, element, context);
+    }
+
+    protected DataLoaderSupport getDataLoaderSupport() {
+        if (dataLoaderSupport == null) {
+            dataLoaderSupport = applicationContext.getBean(DataLoaderSupport.class, context);
+        }
+        return dataLoaderSupport;
     }
 }

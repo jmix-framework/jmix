@@ -34,7 +34,7 @@ public class PasswordFieldLoader extends AbstractComponentLoader<PasswordField> 
         loadBoolean(element, "required", resultComponent::setRequired);
         loadBoolean(element, "autofocus", resultComponent::setAutofocus);
         loadBoolean(element, "autoselect", resultComponent::setAutoselect);
-        loadString(element, "placeholder", resultComponent::setPlaceholder);
+        loadResourceString(element, "placeholder", context.getMessageGroup(), resultComponent::setPlaceholder);
         loadBoolean(element, "clearButtonVisible", resultComponent::setClearButtonVisible);
         loadBoolean(element, "preventInvalidInput", resultComponent::setPreventInvalidInput);
         loadBoolean(element, "revealButtonVisible", resultComponent::setRevealButtonVisible);

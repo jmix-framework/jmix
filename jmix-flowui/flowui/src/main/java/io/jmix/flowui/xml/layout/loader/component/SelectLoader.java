@@ -24,13 +24,6 @@ public class SelectLoader extends AbstractComponentLoader<Select<?>> {
 
     protected DataLoaderSupport dataLoaderSupport;
 
-    public DataLoaderSupport getDataLoaderSupport() {
-        if (dataLoaderSupport == null) {
-            dataLoaderSupport = applicationContext.getBean(DataLoaderSupport.class, context);
-        }
-        return dataLoaderSupport;
-    }
-
     @Override
     protected Select<?> createComponent() {
         return factory.create(Select.class);
@@ -41,8 +34,9 @@ public class SelectLoader extends AbstractComponentLoader<Select<?>> {
         getDataLoaderSupport().loadData(resultComponent, element);
 
         loadBoolean(element, "autofocus", resultComponent::setAutofocus);
-        loadString(element, "placeholder", resultComponent::setPlaceholder);
-        loadString(element, "emptySelectionCaption", resultComponent::setEmptySelectionCaption);
+        loadResourceString(element, "placeholder", context.getMessageGroup(), resultComponent::setPlaceholder);
+        loadResourceString(element, "emptySelectionCaption", context.getMessageGroup(),
+                resultComponent::setEmptySelectionCaption);
         loadBoolean(element, "emptySelectionAllowed", resultComponent::setEmptySelectionAllowed);
 
         componentLoader().loadLabel(resultComponent, element);
@@ -52,5 +46,12 @@ public class SelectLoader extends AbstractComponentLoader<Select<?>> {
         componentLoader().loadSizeAttributes(resultComponent, element);
         componentLoader().loadValueAndElementAttributes(resultComponent, element);
         componentLoader().loadValidationAttributes(resultComponent, element, context);
+    }
+
+    protected DataLoaderSupport getDataLoaderSupport() {
+        if (dataLoaderSupport == null) {
+            dataLoaderSupport = applicationContext.getBean(DataLoaderSupport.class, context);
+        }
+        return dataLoaderSupport;
     }
 }

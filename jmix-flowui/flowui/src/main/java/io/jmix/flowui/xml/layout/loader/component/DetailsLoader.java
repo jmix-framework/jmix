@@ -38,7 +38,7 @@ public class DetailsLoader extends AbstractContainerLoader<Details> {
 
     @Override
     public void loadComponent() {
-        loadString(element, "summaryText", resultComponent::setSummaryText);
+        loadResourceString(element, "summaryText", context.getMessageGroup(), resultComponent::setSummaryText);
 
         componentLoader().loadEnabled(resultComponent, element);
         componentLoader().loadClassName(resultComponent, element);
@@ -48,7 +48,7 @@ public class DetailsLoader extends AbstractContainerLoader<Details> {
         loadSubComponents();
     }
 
-    private void createContent(Details resultComponent, Element element) {
+    protected void createContent(Details resultComponent, Element element) {
         LayoutLoader loader = getLayoutLoader();
 
         for (Element subElement : element.elements()) {

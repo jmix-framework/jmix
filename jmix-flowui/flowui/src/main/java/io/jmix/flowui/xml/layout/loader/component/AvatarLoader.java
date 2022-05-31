@@ -28,10 +28,10 @@ public class AvatarLoader extends AbstractComponentLoader<Avatar> {
 
     @Override
     public void loadComponent() {
-        loadString(element, "name", resultComponent::setName);
+        loadResourceString(element, "name", context.getMessageGroup(), resultComponent::setName);
         loadString(element, "image", resultComponent::setImage);
         loadInteger(element, "colorIndex", resultComponent::setColorIndex);
-        loadString(element, "abbreviation", resultComponent::setAbbreviation);
+        loadResourceString(element, "abbreviation", context.getMessageGroup(), resultComponent::setAbbreviation);
 
         componentLoader().loadThemeName(resultComponent, element);
         componentLoader().loadClassName(resultComponent, element);

@@ -99,18 +99,18 @@ class EmailFieldXmlLoadTest extends FlowuiTestSpecification {
     }
 
     def "Load emailField component with datasource from XML"() {
-        given: "An entity with some property"
-        def order = dataManager.load(Order).all().one()
-
-        when: "Open the ComponentView and load data"
-        def componentView = openScreen(ComponentView.class)
-        componentView.loadData()
-
-        then: "EmailField will be loaded with the value of the property"
-        verifyAll(componentView.emailFieldWithValueId) {
-            id.get() == "emailFieldWithValueId"
-            //TODO: kremnevda, will be added with JmixEmailField 06.05.2022
-            //value == order.customer.email
-        }
+        //TODO: kremnevda, will be added with JmixEmailField 06.05.2022
+//        given: "An entity with some property"
+//        def order = dataManager.load(Order).all().one()
+//
+//        when: "Open the ComponentView and load data"
+//        def componentView = openScreen(ComponentView.class)
+//        componentView.loadData()
+//
+//        then: "EmailField will be loaded with the value of the property"
+//        verifyAll(componentView.emailFieldWithValueId) {
+//            id.get() == "emailFieldWithValueId"
+//            //value == order.customer.email
+//        }
     }
 }

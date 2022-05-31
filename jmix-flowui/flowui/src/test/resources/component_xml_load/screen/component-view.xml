@@ -469,5 +469,170 @@
                    visible="true"
                    width="100px"/>
         <textField id="textFieldWithValueId" datatype="string" dataContainer="orderDc" property="number"/>
+
+        <valuePicker id="valuePickerId"
+                     allowCustomValue="true"
+                     autofocus="true"
+                     className="cssClassName1, cssClassName2"
+                     enabled="true"
+                     errorMessage="errorMessageString"
+                     height="50px"
+                     helperText="helperTextString"
+                     invalid="false"
+                     label="labelString"
+                     maxHeight="55px"
+                     maxWidth="120px"
+                     minHeight="40px"
+                     minWidth="80px"
+                     placeholder="placeholderString"
+                     readOnly="true"
+                     required="true"
+                     requiredIndicatorVisible="true"
+                     requiredMessage="requiredMessageString"
+                     themeName="theme1, theme2"
+                     title="titleString"
+                     visible="true"
+                     width="100px"
+
+                     dataContainer="orderDc"
+                     property="number">
+            <actions>
+                <action id="action1" icon="GAMEPAD"/>
+                <action id="action2" icon="DIPLOMA"/>
+            </actions>
+        </valuePicker>
+
+        <valuesPicker id="valuesPickerId"
+                      allowCustomValue="true"
+                      autofocus="true"
+                      className="cssClassName1, cssClassName2"
+                      enabled="true"
+                      errorMessage="errorMessageString"
+                      height="50px"
+                      helperText="helperTextString"
+                      invalid="false"
+                      label="labelString"
+                      maxHeight="55px"
+                      maxWidth="120px"
+                      minHeight="40px"
+                      minWidth="80px"
+                      placeholder="placeholderString"
+                      readOnly="true"
+                      required="true"
+                      requiredIndicatorVisible="true"
+                      requiredMessage="requiredMessageString"
+                      themeName="theme1, theme2"
+                      title="titleString"
+                      visible="true"
+                      width="100px"
+
+                      dataContainer="orderDc"
+                      property="orderLines">
+            <actions>
+                <action id="action1" icon="GAMEPAD"/>
+                <action id="action2" icon="DIPLOMA"/>
+            </actions>
+        </valuesPicker>
+
+        <entityPicker id="entityPickerId"
+                      allowCustomValue="true"
+                      autofocus="true"
+                      className="cssClassName1, cssClassName2"
+                      enabled="true"
+                      errorMessage="errorMessageString"
+                      height="50px"
+                      helperText="helperTextString"
+                      invalid="false"
+                      label="labelString"
+                      maxHeight="55px"
+                      maxWidth="120px"
+                      minHeight="40px"
+                      minWidth="80px"
+                      placeholder="placeholderString"
+                      readOnly="true"
+                      required="true"
+                      requiredIndicatorVisible="true"
+                      requiredMessage="requiredMessageString"
+                      themeName="theme1, theme2"
+                      title="titleString"
+                      visible="true"
+                      width="100px"
+
+                      dataContainer="orderDc" property="customer">
+            <actions>
+                <action id="action1" icon="GAMEPAD" type="entity_lookup"/>
+                <action id="action2" icon="DIPLOMA" type="entity_clear"/>
+            </actions>
+        </entityPicker>
+
+        <entityPicker id="metaClassEntityPickerId" metaClass="test_Order"/>
+
+        <comboBoxPicker id="comboBoxPickerId"
+                        allowCustomValue="true"
+                        autofocus="true"
+                        autoOpen="true"
+                        className="cssClassName1, cssClassName2"
+                        clearButtonVisible="true"
+                        enabled="true"
+                        errorMessage="errorMessageString"
+                        height="50px"
+                        helperText="helperTextString"
+                        invalid="false"
+                        label="labelString"
+                        maxHeight="55px"
+                        maxWidth="120px"
+                        minHeight="40px"
+                        minWidth="80px"
+                        opened="true"
+                        pageSize="20"
+                        pattern="patternString"
+                        placeholder="placeholderString"
+                        preventInvalidInput="true"
+                        readOnly="true"
+                        required="true"
+                        requiredIndicatorVisible="true"
+                        themeName="small, align-right"
+                        title="titleString"
+                        visible="true"
+                        width="100px">
+            <actions>
+                <action id="action1" icon="GAMEPAD"/>
+                <action id="action2" icon="DIPLOMA"/>
+            </actions>
+        </comboBoxPicker>
+
+        <entityComboBox id="entityComboBoxId"
+                        allowCustomValue="true"
+                        autofocus="true"
+                        autoOpen="true"
+                        className="cssClassName1, cssClassName2"
+                        clearButtonVisible="true"
+                        enabled="true"
+                        errorMessage="errorMessageString"
+                        height="50px"
+                        helperText="helperTextString"
+                        invalid="false"
+                        label="labelString"
+                        maxHeight="55px"
+                        maxWidth="120px"
+                        minHeight="40px"
+                        minWidth="80px"
+                        opened="true"
+                        pageSize="20"
+                        pattern="patternString"
+                        placeholder="placeholderString"
+                        preventInvalidInput="true"
+                        readOnly="true"
+                        required="true"
+                        requiredIndicatorVisible="true"
+                        requiredMessage="requiredMessageString"
+                        themeName="small, align-right"
+                        title="titleString"
+                        visible="true"
+                        width="100px"
+
+                        dataContainer="orderDc" property="customer"/>
+
+        <entityComboBox id="metaClassComboBoxId" metaClass="test_Order"/>
     </layout>
 </screen>

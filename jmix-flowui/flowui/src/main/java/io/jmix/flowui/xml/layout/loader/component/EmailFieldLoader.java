@@ -25,13 +25,6 @@ public class EmailFieldLoader extends AbstractComponentLoader<EmailField> {
 
     protected DataLoaderSupport dataLoaderSupport;
 
-    public DataLoaderSupport getDataLoaderSupport() {
-        if (dataLoaderSupport == null) {
-            dataLoaderSupport = applicationContext.getBean(DataLoaderSupport.class, context);
-        }
-        return dataLoaderSupport;
-    }
-
     @Override
     protected EmailField createComponent() {
         return factory.create(EmailField.class);
@@ -45,7 +38,7 @@ public class EmailFieldLoader extends AbstractComponentLoader<EmailField> {
         loadString(element, "pattern", resultComponent::setPattern);
         loadBoolean(element, "autofocus", resultComponent::setAutofocus);
         loadBoolean(element, "autoselect", resultComponent::setAutoselect);
-        loadString(element, "placeholder", resultComponent::setPlaceholder);
+        loadResourceString(element, "placeholder", context.getMessageGroup(), resultComponent::setPlaceholder);
         loadBoolean(element, "clearButtonVisible", resultComponent::setClearButtonVisible);
         loadBoolean(element, "preventInvalidInput", resultComponent::setPreventInvalidInput);
         loadResourceString(element, "title", context.getMessageGroup(), resultComponent::setTitle);
@@ -62,5 +55,12 @@ public class EmailFieldLoader extends AbstractComponentLoader<EmailField> {
         componentLoader().loadValueChangeMode(resultComponent, element);
         componentLoader().loadValueAndElementAttributes(resultComponent, element);
         componentLoader().loadValidationAttributes(resultComponent, element, context);
+    }
+
+    protected DataLoaderSupport getDataLoaderSupport() {
+        if (dataLoaderSupport == null) {
+            dataLoaderSupport = applicationContext.getBean(DataLoaderSupport.class, context);
+        }
+        return dataLoaderSupport;
     }
 }

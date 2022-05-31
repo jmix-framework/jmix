@@ -68,6 +68,12 @@ public abstract class BaseLoaderConfig {
         loaders.put("datePicker", DatePickerLoader.class);
         loaders.put("avatar", AvatarLoader.class);
         loaders.put("select", SelectLoader.class);
+        loaders.put("valuePicker", ValuePickerLoader.class);
+        loaders.put("valuesPicker", ValuesPickerLoader.class);
+        loaders.put("entityPicker", EntityPickerLoader.class);
+        loaders.put("comboBoxPicker", ComboBoxPickerLoader.class);
+        loaders.put("entityComboBox", EntityComboBoxLoader.class);
+        loaders.put("listMenu", ListMenuLoader.class);
 
         /*HTML components*/
         loaders.put("param", ParamLoader.class);

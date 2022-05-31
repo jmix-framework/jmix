@@ -35,8 +35,8 @@ public class ButtonLoader extends AbstractComponentLoader<JmixButton> {
         loadBoolean(element, "autofocus", resultComponent::setAutofocus);
         loadBoolean(element, "iconAfterText", resultComponent::setIconAfterText);
         loadBoolean(element, "disableOnClick", resultComponent::setDisableOnClick);
-        loadResourceString(element, "title", context.getMessageGroup(), resultComponent::setTitle);
 
+        componentLoader().loadTitle(resultComponent, element, context);
         componentLoader().loadText(resultComponent, element);
         componentLoader().loadWhiteSpace(resultComponent, element);
         componentLoader().loadEnabled(resultComponent, element);

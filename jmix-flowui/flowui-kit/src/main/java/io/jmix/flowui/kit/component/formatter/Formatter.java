@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.kit.component.formatter;
 
+import javax.annotation.Nullable;
 import java.util.function.Function;
 
 /**
@@ -30,5 +31,5 @@ public interface Formatter<V> extends Function<V, String> {
      * @return formatted string
      */
     @Override
-    String apply(V value);
+    String apply(@Nullable V value);
 }

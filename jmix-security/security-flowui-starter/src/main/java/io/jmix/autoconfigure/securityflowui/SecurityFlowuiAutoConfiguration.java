@@ -16,9 +16,9 @@
 
 package io.jmix.autoconfigure.securityflowui;
 
-import io.jmix.core.AccessManager;
 import io.jmix.core.CoreConfiguration;
 import io.jmix.data.DataConfiguration;
+import io.jmix.flowui.sys.FlowuiAccessChecker;
 import io.jmix.security.SecurityConfiguration;
 import io.jmix.securityflowui.FlowuiSecurityConfiguration;
 import io.jmix.securityflowui.SecurityFlowuiConfiguration;
@@ -34,8 +34,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 public class SecurityFlowuiAutoConfiguration {
 
     @Bean("flowui_ScreenAccessChecker")
-    public FlowuiScreenAccessChecker screenAccessChecker(AccessManager accessManager) {
-        return new FlowuiScreenAccessChecker(false, accessManager);
+    public FlowuiScreenAccessChecker screenAccessChecker(FlowuiAccessChecker flowuiAccessChecker) {
+        return new FlowuiScreenAccessChecker(false, flowuiAccessChecker);
     }
 
     @EnableWebSecurity

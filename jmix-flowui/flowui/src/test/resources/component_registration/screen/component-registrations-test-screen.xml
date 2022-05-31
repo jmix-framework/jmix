@@ -1,0 +1,5 @@
+<screen xmlns="http://jmix.io/schema/flowui/screen">
+    <layout>
+        <button id="button"/>
+    </layout>
+</screen>

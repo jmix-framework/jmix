@@ -19,9 +19,12 @@ package io.jmix.securityflowui.authentication;
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.page.ExtendedClientDetails;
+import com.vaadin.flow.router.Location;
 import com.vaadin.flow.server.VaadinServletRequest;
 import com.vaadin.flow.server.VaadinServletResponse;
+import com.vaadin.flow.server.auth.ViewAccessChecker;
 import com.vaadin.flow.spring.annotation.SpringComponent;
+import com.vaadin.flow.spring.security.VaadinDefaultRequestCache;
 import io.jmix.core.AccessManager;
 import io.jmix.core.CoreProperties;
 import io.jmix.core.Messages;
@@ -31,6 +34,7 @@ import io.jmix.core.security.SecurityContextHelper;
 import io.jmix.flowui.FlowuiProperties;
 import io.jmix.flowui.ScreenNavigators;
 import io.jmix.flowui.sys.AppCookies;
+import io.jmix.flowui.sys.ExtendedClientDetailsProvider;
 import io.jmix.security.model.SecurityScope;
 import io.jmix.securityflowui.accesscontext.FlowuiLoginToUiContext;
 import org.apache.commons.lang3.StringUtils;
@@ -45,8 +49,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
+import org.springframework.security.web.savedrequest.SavedRequest;
 
 import javax.annotation.Nullable;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -84,9 +91,10 @@ public class LoginScreenSupport {
     protected ScreenNavigators screenNavigators;
     protected AccessManager accessManager;
     protected Messages messages;
-//    protected DeviceInfoProvider deviceInfoProvider;
+    protected ExtendedClientDetailsProvider clientDetailsProvider;
     protected RememberMeServices rememberMeServices;
     protected ApplicationEventPublisher applicationEventPublisher;
+    protected VaadinDefaultRequestCache requestCache;
 
     protected AppCookies cookies;
 
@@ -127,14 +135,24 @@ public class LoginScreenSupport {
         this.rememberMeServices = rememberMeServices;
     }
 
-    @Autowired(required = false)
-    public void setAuthenticationStrategy(SessionAuthenticationStrategy authenticationStrategy) {
-        this.authenticationStrategy = authenticationStrategy;
-    }
-
     @Autowired
     public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
         this.applicationEventPublisher = applicationEventPublisher;
+    }
+
+    @Autowired
+    public void setRequestCache(VaadinDefaultRequestCache requestCache) {
+        this.requestCache = requestCache;
+    }
+
+    @Autowired
+    public void setClientDetailsProvider(ExtendedClientDetailsProvider clientDetailsProvider) {
+        this.clientDetailsProvider = clientDetailsProvider;
+    }
+
+    @Autowired(required = false)
+    public void setAuthenticationStrategy(SessionAuthenticationStrategy authenticationStrategy) {
+        this.authenticationStrategy = authenticationStrategy;
     }
 
     /**
@@ -184,7 +202,7 @@ public class LoginScreenSupport {
         applicationEventPublisher.publishEvent(
                 new InteractiveAuthenticationSuccessEvent(authentication, this.getClass()));
 
-        showMainScreen();
+        showInitialScreen(request, response);
     }
 
     protected void saveCookies(AuthDetails authDetails) {
@@ -214,10 +232,36 @@ public class LoginScreenSupport {
         }
     }
 
-    protected void showMainScreen() {
-        String mainScreenId = flowuiProperties.getMainScreenId();
-        screenNavigators.screen(mainScreenId)
-                .navigate();
+    protected void showInitialScreen(VaadinServletRequest request, VaadinServletResponse response) {
+        Location location = getRedirectLocation(request, response);
+        if (location != null) {
+            UI.getCurrent().navigate(location.getPath(), location.getQueryParameters());
+        } else {
+            String mainScreenId = flowuiProperties.getMainScreenId();
+            screenNavigators.screen(mainScreenId)
+                    .navigate();
+        }
+    }
+
+    @Nullable
+    protected Location getRedirectLocation(VaadinServletRequest request, VaadinServletResponse response) {
+        HttpServletRequest httpServletRequest = request.getHttpServletRequest();
+        HttpSession session = httpServletRequest.getSession(false);
+        if (session == null) {
+            return null;
+        }
+
+        String redirectTarget = (String) session.getAttribute(ViewAccessChecker.SESSION_STORED_REDIRECT);
+        if (redirectTarget != null) {
+            return new Location(redirectTarget);
+        }
+
+        SavedRequest savedRequest = requestCache.getRequest(httpServletRequest, response);
+        if (savedRequest != null) {
+            return new Location(savedRequest.getRedirectUrl());
+        }
+
+        return null;
     }
 
     protected Authentication createAuthenticationToken(String username, String password,
@@ -246,14 +290,8 @@ public class LoginScreenSupport {
 
     @Nullable
     protected TimeZone getDeviceTimeZone() {
-        ExtendedClientDetails clientDetails = getCachedExtendedClientDetails();
+        ExtendedClientDetails clientDetails = clientDetailsProvider.getExtendedClientDetails();
         return clientDetails != null ? detectTimeZone(clientDetails) : null;
-    }
-
-    // TODO: gg, bean
-    @Nullable
-    private ExtendedClientDetails getCachedExtendedClientDetails() {
-        return UI.getCurrent().getInternals().getExtendedClientDetails();
     }
 
     protected TimeZone detectTimeZone(ExtendedClientDetails details) {

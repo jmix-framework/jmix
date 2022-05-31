@@ -25,13 +25,6 @@ public class TextFieldLoader extends AbstractComponentLoader<TypedTextField<?>> 
 
     protected DataLoaderSupport dataLoaderSupport;
 
-    public DataLoaderSupport getDataLoaderSupport() {
-        if (dataLoaderSupport == null) {
-            dataLoaderSupport = applicationContext.getBean(DataLoaderSupport.class, context);
-        }
-        return dataLoaderSupport;
-    }
-
     @Override
     protected TypedTextField<?> createComponent() {
         return factory.create(TypedTextField.class);
@@ -49,7 +42,7 @@ public class TextFieldLoader extends AbstractComponentLoader<TypedTextField<?>> 
         loadInteger(element, "maxLength", resultComponent::setMaxLength);
         loadInteger(element, "minLength", resultComponent::setMinLength);
         loadBoolean(element, "autoselect", resultComponent::setAutoselect);
-        loadString(element, "placeholder", resultComponent::setPlaceholder);
+        loadResourceString(element, "placeholder", context.getMessageGroup(), resultComponent::setPlaceholder);
         loadBoolean(element, "clearButtonVisible", resultComponent::setClearButtonVisible);
         loadResourceString(element, "title", context.getMessageGroup(), resultComponent::setTitle);
 
@@ -66,5 +59,12 @@ public class TextFieldLoader extends AbstractComponentLoader<TypedTextField<?>> 
         componentLoader().loadRequired(resultComponent, element, context);
         componentLoader().loadValueAndElementAttributes(resultComponent, element);
         componentLoader().loadValidationAttributes(resultComponent, element, context);
+    }
+
+    protected DataLoaderSupport getDataLoaderSupport() {
+        if (dataLoaderSupport == null) {
+            dataLoaderSupport = applicationContext.getBean(DataLoaderSupport.class, context);
+        }
+        return dataLoaderSupport;
     }
 }

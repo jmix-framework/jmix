@@ -17,19 +17,11 @@
 package io.jmix.flowui.xml.layout.loader.component;
 
 import io.jmix.flowui.component.combobox.JmixComboBox;
-import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import io.jmix.flowui.xml.layout.support.DataLoaderSupport;
 
-public class ComboBoxLoader extends AbstractComponentLoader<JmixComboBox<?>> {
+public class ComboBoxLoader extends AbstractComboBoxLoader<JmixComboBox<?>> {
 
     protected DataLoaderSupport dataLoaderSupport;
-
-    public DataLoaderSupport getDataLoaderSupport() {
-        if (dataLoaderSupport == null) {
-            dataLoaderSupport = applicationContext.getBean(DataLoaderSupport.class, context);
-        }
-        return dataLoaderSupport;
-    }
 
     @Override
     protected JmixComboBox<?> createComponent() {
@@ -38,26 +30,21 @@ public class ComboBoxLoader extends AbstractComponentLoader<JmixComboBox<?>> {
 
     @Override
     public void loadComponent() {
+        super.loadComponent();
+
         getDataLoaderSupport().loadData(resultComponent, element);
 
-        loadBoolean(element, "opened", resultComponent::setOpened);
-        loadString(element, "pattern", resultComponent::setPattern);
-        loadInteger(element, "pageSize", resultComponent::setPageSize);
-        loadBoolean(element, "autoOpen", resultComponent::setAutoOpen);
-        loadBoolean(element, "autofocus", resultComponent::setAutofocus);
-        loadString(element, "placeholder", resultComponent::setPlaceholder);
-        loadBoolean(element, "allowCustomValue", resultComponent::setAllowCustomValue);
-        loadBoolean(element, "clearButtonVisible", resultComponent::setClearButtonVisible);
-        loadBoolean(element, "preventInvalidInput", resultComponent::setPreventInvalidInput);
-
-        componentLoader().loadLabel(resultComponent, element);
-        componentLoader().loadEnabled(resultComponent, element);
-        componentLoader().loadClassName(resultComponent, element);
-        componentLoader().loadThemeName(resultComponent, element);
-        componentLoader().loadHelperText(resultComponent, element);
-        componentLoader().loadSizeAttributes(resultComponent, element);
-        componentLoader().loadRequired(resultComponent, element, context);
+        //These properties are loaded after the data provider is loaded,
+        // because setting the data provider resets the value of the readOnly attribute to default.
         componentLoader().loadValueAndElementAttributes(resultComponent, element);
-        componentLoader().loadValidationAttributes(resultComponent, element, context);
+        componentLoader().loadTitle(resultComponent, element, context);
+        componentLoader().loadRequired(resultComponent, element, context);
+    }
+
+    protected DataLoaderSupport getDataLoaderSupport() {
+        if (dataLoaderSupport == null) {
+            dataLoaderSupport = applicationContext.getBean(DataLoaderSupport.class, context);
+        }
+        return dataLoaderSupport;
     }
 }

@@ -866,6 +866,36 @@
         </xs:union>
     </xs:simpleType>
 
+    <!-- TODO: kremnevda, refactor 17.05.2022 -->
+    <xs:simpleType name="actionTypeEnum">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="entity_clear"/>
+                    <xs:enumeration value="entity_lookup"/>
+                    <xs:enumeration value="entity_open"/>
+                    <xs:enumeration value="entity_openComposition"/>
+                    <xs:enumeration value="create"/>
+                    <xs:enumeration value="edit"/>
+                    <xs:enumeration value="update"/>
+                    <xs:enumeration value="remove"/>
+                    <xs:enumeration value="editor_close"/>
+                    <xs:enumeration value="editor_commit"/>
+                    <xs:enumeration value="editor_commitClose"/>
+                    <xs:enumeration value="editor_discard"/>
+                    <xs:enumeration value="editor_enableEditing"/>
+                    <xs:enumeration value="lookup_discard"/>
+                    <xs:enumeration value="lookup_select"/>
+                    <xs:enumeration value="screen_close"/>
+                    <xs:enumeration value="value_clear"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+
     <xs:simpleType name="autocompleteEnum">
         <xs:restriction base="xs:string">
             <xs:enumeration value="OFF"/>
@@ -1079,6 +1109,166 @@
                 </xs:restriction>
             </xs:simpleType>
         </xs:union>
+    </xs:simpleType>
+
+    <xs:complexType name="baseValidatorType">
+        <xs:all>
+            <xs:element name="notNull" minOccurs="0" type="messageValidatorType"/>
+            <xs:element name="custom" minOccurs="0" type="customValidatorType"/>
+        </xs:all>
+    </xs:complexType>
+
+    <xs:complexType name="messageValidatorType">
+        <xs:attribute name="message" type="resourceString"/>
+    </xs:complexType>
+
+    <xs:complexType name="customValidatorType">
+        <xs:complexContent>
+            <xs:extension base="messageValidatorType">
+                <xs:attribute name="bean" type="xs:string" use="required"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="collectionValidatorType">
+        <xs:complexContent>
+            <xs:extension base="baseValidatorType">
+                <xs:all>
+                    <xs:element name="size" minOccurs="0" type="sizeValidatorType"/>
+                    <xs:element name="notEmpty" minOccurs="0" type="messageValidatorType"/>
+                </xs:all>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="dateValidatorsType">
+        <xs:complexContent>
+            <xs:extension base="baseValidatorType">
+                <xs:all>
+                    <xs:element name="future" minOccurs="0" type="dateValidatorType"/>
+                    <xs:element name="futureOrPresent" minOccurs="0" type="dateValidatorType"/>
+                    <xs:element name="past" minOccurs="0" type="dateValidatorType"/>
+                    <xs:element name="pastOrPresent" minOccurs="0" type="dateValidatorType"/>
+                </xs:all>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="dateValidatorType">
+        <xs:complexContent>
+            <xs:extension base="messageValidatorType">
+                <xs:attribute name="checkSeconds" type="xs:boolean"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="stringValidatorType">
+        <xs:complexContent>
+            <xs:extension base="collectionValidatorType">
+                <xs:sequence>
+                    <xs:element name="notBlank" minOccurs="0" type="messageValidatorType"/>
+                    <xs:element name="regexp" minOccurs="0" type="regexpValidatorType"/>
+                    <xs:element name="email" minOccurs="0" type="messageValidatorType"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="digitsValidatorType">
+        <xs:complexContent>
+            <xs:extension base="messageValidatorType">
+                <xs:attribute name="integer" type="xs:int" use="required"/>
+                <xs:attribute name="fraction" type="xs:int" use="required"/>
+            </xs:extension>
+        </xs:complexContent>
+
+    </xs:complexType>
+
+    <xs:complexType name="decimalMaxMinValidatorType">
+        <xs:complexContent>
+            <xs:extension base="messageValidatorType">
+                <xs:attribute name="value" type="xs:string" use="required"/>
+                <xs:attribute name="inclusive" type="xs:boolean"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="maxMinValidatorType">
+        <xs:complexContent>
+            <xs:extension base="messageValidatorType">
+                <xs:attribute name="value" type="xs:string" use="required"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="sizeValidatorType">
+        <xs:complexContent>
+            <xs:extension base="messageValidatorType">
+                <xs:attribute name="min" type="xs:integer"/>
+                <xs:attribute name="max" type="xs:integer"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="regexpValidatorType">
+        <xs:complexContent>
+            <xs:extension base="messageValidatorType">
+                <xs:attribute name="regexp" type="xs:string" use="required"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="constraintValidatorType">
+        <xs:complexContent>
+            <xs:extension base="stringValidatorType">
+                <xs:sequence>
+                    <xs:element name="digits" minOccurs="0" type="digitsValidatorType"/>
+                    <xs:element name="decimalMin" minOccurs="0" type="decimalMaxMinValidatorType"/>
+                    <xs:element name="decimalMax" minOccurs="0" type="decimalMaxMinValidatorType"/>
+                    <xs:element name="doubleMin" minOccurs="0" type="decimalMaxMinValidatorType"/>
+                    <xs:element name="doubleMax" minOccurs="0" type="decimalMaxMinValidatorType"/>
+                    <xs:element name="negativeOrZero" minOccurs="0" type="messageValidatorType"/>
+                    <xs:element name="negative" minOccurs="0" type="messageValidatorType"/>
+                    <xs:element name="positiveOrZero" minOccurs="0" type="messageValidatorType"/>
+                    <xs:element name="positive" minOccurs="0" type="messageValidatorType"/>
+                    <xs:element name="max" minOccurs="0" type="maxMinValidatorType"/>
+                    <xs:element name="min" minOccurs="0" type="maxMinValidatorType"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="formatterType">
+        <xs:choice minOccurs="0">
+            <xs:element name="collection" minOccurs="0"/>
+            <xs:element name="custom" minOccurs="0" type="customFormatterType"/>
+            <xs:element name="date" minOccurs="0" type="dateFormatterType"/>
+            <xs:element name="number" minOccurs="0" type="formattableFormatterType"/>
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="customFormatterType">
+        <xs:attribute name="bean" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="formattableFormatterType">
+        <xs:attribute name="format" type="xs:string"/>
+    </xs:complexType>
+
+    <xs:complexType name="dateFormatterType">
+        <xs:complexContent>
+            <xs:extension base="formattableFormatterType">
+                <xs:attribute name="type" type="formatterDateType"/>
+                <xs:attribute name="useUserTimezone" type="xs:boolean"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:simpleType name="formatterDateType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="DATE"/>
+            <xs:enumeration value="DATETIME"/>
+        </xs:restriction>
     </xs:simpleType>
 
     <!-- ThemeNames-->
@@ -1348,7 +1538,7 @@
     </xs:attributeGroup>
 
     <xs:attributeGroup name="hasHelperText">
-        <xs:attribute name="helperText" type="xs:string"/>
+        <xs:attribute name="helperText" type="resourceString"/>
     </xs:attributeGroup>
 
     <xs:attributeGroup name="hasAutocomplete">
@@ -1364,7 +1554,7 @@
     </xs:attributeGroup>
 
     <xs:attributeGroup name="hasPlaceholder">
-        <xs:attribute name="placeholder" type="xs:string"/>
+        <xs:attribute name="placeholder" type="resourceString"/>
     </xs:attributeGroup>
 
     <xs:attributeGroup name="hasRequired">
@@ -1390,11 +1580,11 @@
     </xs:attributeGroup>
 
     <xs:attributeGroup name="hasAriaLabel">
-        <xs:attribute name="ariaLabel" type="xs:string"/>
+        <xs:attribute name="ariaLabel" type="resourceString"/>
     </xs:attributeGroup>
 
     <xs:attributeGroup name="hasLabel">
-        <xs:attribute name="label" type="xs:string"/>
+        <xs:attribute name="label" type="resourceString"/>
     </xs:attributeGroup>
 
     <xs:attributeGroup name="hasSize">
@@ -1457,7 +1647,7 @@
             <xs:element name="properties" type="actionProperties" minOccurs="0"/>
         </xs:sequence>
 
-        <xs:attribute name="type" type="xs:string"/>
+        <xs:attribute name="type" type="actionTypeEnum"/>
         <xs:attribute name="shortcut" type="shortcut"/>
         <xs:attribute name="visible" type="xs:boolean"/>
         <xs:attribute name="text" type="resourceString"/>
@@ -1510,6 +1700,10 @@
     <xs:complexType name="baseFieldComponent">
         <xs:complexContent>
             <xs:extension base="baseComponent">
+                <xs:sequence>
+                    <xs:element name="validators" minOccurs="0" type="constraintValidatorType"/>
+                </xs:sequence>
+
                 <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasLabel"/>
                 <xs:attributeGroup ref="hasEnabled"/>
@@ -1634,6 +1828,18 @@
 
     <!-- Components -->
 
+    <!-- ListMenu -->
+    <xs:complexType name="listMenuComponent">
+        <xs:complexContent>
+            <xs:extension base="baseComponent">
+                <xs:attribute name="loadMenuConfig" type="xs:boolean"/>
+
+                <xs:attributeGroup ref="hasSize"/>
+                <xs:attributeGroup ref="hasClassName"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
     <!-- Button-->
     <xs:complexType name="buttonComponent">
         <xs:complexContent>
@@ -1656,7 +1862,6 @@
 
     <!-- GridColumn-->
     <xs:complexType name="dataGridColumnComponent">
-        <xs:complexContent>
 
                 <!--        <xs:sequence>-->
                 <!--            <xs:element name="aggregation" minOccurs="0">-->
@@ -1685,7 +1890,6 @@
                 <xs:attribute name="resizable" type="xs:boolean"/>
                 <xs:attribute name="autoWidth" type="xs:boolean"/>
                 <xs:attribute name="textAlign" type="gridColumnTextAlignEnum"/>
-        </xs:complexContent>
     </xs:complexType>
 
 
@@ -1822,10 +2026,57 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <!-- ComboBoxPicker-->
+    <xs:complexType name="comboBoxPickerComponent">
+        <xs:complexContent>
+            <xs:extension base="baseComponent">
+                <xs:sequence>
+                    <xs:element name="actions" minOccurs="0" type="actionsList"/>
+                </xs:sequence>
+
+                <xs:attribute name="opened" type="xs:boolean"/>
+                <xs:attribute name="pattern" type="xs:string"/>
+                <xs:attribute name="autoOpen" type="xs:boolean"/>
+                <xs:attribute name="pageSize" type="xs:integer"/>
+                <xs:attribute name="autofocus" type="xs:boolean"/>
+                <xs:attribute name="required" type="xs:boolean"/>
+                <xs:attribute name="allowCustomValue" type="xs:boolean"/>
+                <xs:attribute name="themeName" type="comboBoxThemeName"/>
+                <xs:attribute name="clearButtonVisible" type="xs:boolean"/>
+                <xs:attribute name="preventInvalidInput" type="xs:boolean"/>
+
+                <xs:attributeGroup ref="hasSize"/>
+                <xs:attributeGroup ref="hasTitle"/>
+                <xs:attributeGroup ref="hasLabel"/>
+                <xs:attributeGroup ref="hasEnabled"/>
+                <xs:attributeGroup ref="hasClassName"/>
+                <xs:attributeGroup ref="hasValidation"/>
+                <xs:attributeGroup ref="hasHelperText"/>
+                <xs:attributeGroup ref="hasPlaceholder"/>
+                <xs:attributeGroup ref="hasValueAndElement"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- EntityComboBox-->
+    <xs:complexType name="entityComboBoxComponent">
+        <xs:complexContent>
+            <xs:extension base="comboBoxPickerComponent">
+                <xs:attribute name="metaClass" type="xs:string"/>
+
+                <xs:attributeGroup ref="hasRequired"/>
+                <xs:attributeGroup ref="hasDataContainer"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
     <!-- TimePicker-->
     <xs:complexType name="timePickerComponent">
         <xs:complexContent>
             <xs:extension base="baseFieldComponent">
+                <xs:sequence>
+                    <xs:element name="validators" minOccurs="0" type="dateValidatorsType"/>
+                </xs:sequence>
                 <!--                <xs:attribute name="max" type="timePickerMaxVariants"/>-->
                 <!--                <xs:attribute name="min" type="timePickerMinVariants"/>-->
                 <!--                <xs:attribute name="locale" type="timePickerLocaleVariants"/>-->
@@ -1844,6 +2095,9 @@
     <xs:complexType name="datePickerComponent">
         <xs:complexContent>
             <xs:extension base="baseFieldComponent">
+                <xs:sequence>
+                    <xs:element name="validators" minOccurs="0" type="dateValidatorsType"/>
+                </xs:sequence>
                 <xs:attribute name="name" type="xs:string"/>
                 <xs:attribute name="opened" type="xs:boolean"/>
                 <xs:attribute name="autoOpen" type="xs:boolean"/>
@@ -1869,8 +2123,8 @@
 
                 <xs:attribute name="autoOpen" type="xs:boolean"/>
                 <xs:attribute name="themeName" type="xs:string"/>
-                <xs:attribute name="timePlaceholder" type="xs:string"/>
-                <xs:attribute name="datePlaceholder" type="xs:string"/>
+                <xs:attribute name="timePlaceholder" type="resourceString"/>
+                <xs:attribute name="datePlaceholder" type="resourceString"/>
                 <xs:attribute name="weekNumbersVisible" type="xs:boolean"/>
                 <xs:attribute name="datatype" type="dateTimeDatatypeEnum"/>
 
@@ -1943,6 +2197,34 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <xs:complexType name="entityPickerComponent">
+        <xs:complexContent>
+            <xs:extension base="valuePickerComponent">
+                <xs:attribute name="metaClass" type="xs:string"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- ValuePicker-->
+    <xs:complexType name="valuePickerComponent">
+        <xs:complexContent>
+            <xs:extension base="baseFieldComponent">
+                <xs:sequence>
+                    <xs:element name="actions" minOccurs="0" type="actionsList"/>
+                    <xs:element name="formatter" minOccurs="0" type="formatterType"/>
+                </xs:sequence>
+                <xs:attribute name="invalid" type="xs:boolean"/>
+                <xs:attribute name="themeName" type="xs:string"/>
+                <xs:attribute name="autofocus" type="xs:boolean"/>
+                <xs:attribute name="allowCustomValue" type="xs:boolean"/>
+
+                <xs:attributeGroup ref="hasTitle"/>
+                <xs:attributeGroup ref="hasRequired"/>
+                <xs:attributeGroup ref="hasPlaceholder"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
     <!-- Accordion -->
     <xs:complexType name="accordionContainer">
         <xs:complexContent>
@@ -1970,7 +2252,7 @@
                 <xs:attribute name="name" type="xs:string"/>
                 <xs:attribute name="image" type="xs:string"/>
                 <xs:attribute name="colorIndex" type="xs:integer"/>
-                <xs:attribute name="abbreviation" type="xs:string"/>
+                <xs:attribute name="abbreviation" type="resourceString"/>
                 <xs:attribute name="themeName" type="avatarThemeName"/>
 
                 <xs:attributeGroup ref="hasSize"/>
@@ -2052,7 +2334,7 @@
         <xs:complexContent>
             <xs:extension base="baseComponent">
                 <xs:attribute name="autofocus" type="xs:boolean"/>
-                <xs:attribute name="emptySelectionCaption" type="xs:string"/>
+                <xs:attribute name="emptySelectionCaption" type="resourceString"/>
                 <xs:attribute name="emptySelectionAllowed" type="xs:boolean"/>
 
                 <xs:attributeGroup ref="hasSize"/>
@@ -2074,7 +2356,7 @@
             <xs:extension base="baseComponent">
                 <xs:group ref="singleLayoutOrComponent"/>
 
-                <xs:attribute name="summaryText" type="xs:string"/>
+                <xs:attribute name="summaryText" type="resourceString"/>
                 <xs:attribute name="themeName" type="detailsThemeName"/>
 
                 <xs:attributeGroup ref="hasSize"/>
@@ -2147,7 +2429,7 @@
         <xs:complexContent>
             <xs:extension base="baseHtmlContainer">
                 <xs:attribute name="resource" type="xs:string"/>
-                <xs:attribute name="alternateText" type="xs:string"/>
+                <xs:attribute name="alternateText" type="resourceString"/>
 
                 <xs:attributeGroup ref="hasAriaLabel"/>
             </xs:extension>
@@ -2244,6 +2526,7 @@
                 <!--                <xs:element name="fragment" type="fragmentContainer"/>-->
 
                 <!-- Component -->
+                <xs:element name="listMenu" type="listMenuComponent"/>
                 <xs:element name="button" type="buttonComponent"/>
                 <xs:element name="avatar" type="avatarComponent"/>
                 <xs:element name="select" type="selectComponent"/>
@@ -2276,10 +2559,11 @@
                 <xs:element name="comboBox" type="comboBoxComponent"/>
                 <!--                <xs:element name="suggestionField" type="suggestionFieldComponent"/>-->
                 <!--                <xs:element name="entitySuggestionField" type="entitySuggestionFieldComponent"/>-->
-                <!--                <xs:element name="valuePicker" type="valuePickerComponent"/>-->
-                <!--                <xs:element name="valuesPicker" type="valuesPickerComponent"/>-->
-                <!--                <xs:element name="entityPicker" type="entityPickerComponent"/>-->
-                <!--                <xs:element name="entityComboBox" type="entityComboBoxComponent"/>-->
+                <xs:element name="valuePicker" type="valuePickerComponent"/>
+                <xs:element name="valuesPicker" type="valuePickerComponent"/>
+                <xs:element name="entityPicker" type="entityPickerComponent"/>
+                <xs:element name="comboBoxPicker" type="comboBoxPickerComponent"/>
+                <xs:element name="entityComboBox" type="entityComboBoxComponent"/>
 
                 <!--                <xs:element name="colorPicker" type="colorPickerComponent"/>-->
                 <xs:element name="radioButtonGroup" type="radioButtonGroupComponent"/>

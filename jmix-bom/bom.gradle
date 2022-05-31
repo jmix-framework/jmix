@@ -382,6 +382,8 @@ dependencies {
         api 'org.jetbrains:annotations:22.0.0'
         api 'commons-codec:commons-codec:1.15'
 
+        api 'org.elasticsearch.client:elasticsearch-rest-high-level-client:7.17.3'
+
         runtime 'org.hsqldb:hsqldb:2.4.1'
     }
 }

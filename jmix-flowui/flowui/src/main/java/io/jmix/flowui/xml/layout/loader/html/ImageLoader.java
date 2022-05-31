@@ -30,7 +30,7 @@ public class ImageLoader extends AbstractHtmlContainerLoader<Image> {
         super.loadComponent();
 
         loadString(element, "resource", resultComponent::setSrc);
-        loadString(element, "alternateText", resultComponent::setAlt);
+        loadResourceString(element, "alternateText", context.getMessageGroup(), resultComponent::setAlt);
 
         componentLoader().loadAriaLabel(resultComponent, element);
     }

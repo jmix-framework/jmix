@@ -214,7 +214,7 @@ class EntityLogDynAttrTest extends AbstractEntityLogTest {
 
         then: 'deletion logged'
         removeRecord.type == EntityLogItem.Type.DELETE
-        loggedValueMatches(removeRecord, "+firstAttribute", "changed second time")
+        loggedValueMatches(removeRecord, "+firstAttribute", "")
 
         when: 'entity restored'
         FirstEntity deletedEntity = dataManager.load(Id.of(firstEntity))

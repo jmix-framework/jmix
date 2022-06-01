@@ -39,6 +39,7 @@ import java.util.List;
         description = "Controls triggering of data loaders and provides support for automatic linking data loaders to " +
                 "data containers and visual components",
         defaultProperty = "id",
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/facets/data-load-coordinator.html",
         icon = "io/jmix/ui/icon/facet/dataLoadCoordinator.svg"
 )
 public interface DataLoadCoordinator extends Facet {

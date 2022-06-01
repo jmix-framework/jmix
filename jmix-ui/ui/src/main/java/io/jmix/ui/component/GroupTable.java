@@ -40,7 +40,7 @@ import java.util.Map;
         xmlElement = "groupTable",
         icon = "io/jmix/ui/icon/component/groupTable.svg",
         canvasBehaviour = CanvasBehaviour.TABLE,
-        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/group-table.html"
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/vcl/components/group-table.html"
 )
 public interface GroupTable<E> extends Table<E> {
 

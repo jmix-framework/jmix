@@ -49,7 +49,7 @@ import java.util.function.Predicate;
         xmlElement = "filter",
         icon = "io/jmix/ui/icon/component/filter.svg",
         canvasBehaviour = CanvasBehaviour.FILTER,
-        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/filter.html"
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/vcl/components/filter.html"
 )
 @StudioProperties(
         properties = {
@@ -207,7 +207,7 @@ public interface Filter extends Component, Component.BelongToFrame, Component.Ha
     @StudioElementsGroup(
             xmlElement = "configurations",
             caption = "Configurations",
-            documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/filter.html#configuration",
+            documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/vcl/components/filter.html#configuration",
             icon = "io/jmix/ui/icon/element/configurations.svg"
     )
     void addConfiguration(Configuration configuration);
@@ -270,7 +270,7 @@ public interface Filter extends Component, Component.BelongToFrame, Component.Ha
     @StudioElementsGroup(
             xmlElement = "conditions",
             caption = "Conditions",
-            documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/filter.html#add-condition",
+            documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/vcl/components/filter.html#add-condition",
             icon = "io/jmix/ui/icon/element/conditions.svg"
     )
     void addCondition(FilterComponent filterComponent);

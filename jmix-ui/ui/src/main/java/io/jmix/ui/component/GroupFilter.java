@@ -29,7 +29,7 @@ import io.jmix.ui.UiComponentProperties;
         caption = "GroupFilter",
         xmlElement = "groupFilter",
         defaultProperty = "operation",
-        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/filter-components.html#group-filter",
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/vcl/components/filter-components.html#group-filter",
         unsupportedProperties = {"dataLoader", "autoApply", "captionPosition", "columnsCount", "contextHelpText",
                 "contextHelpTextHtmlEnabled", "width"},
         icon = "io/jmix/ui/icon/component/groupFilter.svg"

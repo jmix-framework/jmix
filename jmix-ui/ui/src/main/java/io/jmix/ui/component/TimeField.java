@@ -40,7 +40,7 @@ import java.time.OffsetTime;
         xmlElement = "timeField",
         icon = "io/jmix/ui/icon/component/timeField.svg",
         canvasBehaviour = CanvasBehaviour.TIME_FIELD,
-        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/time-field.html"
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/vcl/components/time-field.html"
 )
 @StudioProperties(
         properties = {

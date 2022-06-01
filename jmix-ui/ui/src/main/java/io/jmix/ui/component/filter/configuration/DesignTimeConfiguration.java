@@ -34,7 +34,7 @@ import java.util.Map;
 @StudioElement(
         xmlElement = "configuration",
         caption = "Design-time Configuration",
-        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/filter.html#design-time-configuration",
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/vcl/components/filter.html#design-time-configuration",
         icon = "io/jmix/ui/icon/element/configuration.svg"
 )
 @StudioProperties(

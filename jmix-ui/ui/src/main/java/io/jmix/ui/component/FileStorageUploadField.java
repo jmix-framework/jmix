@@ -29,6 +29,7 @@ import java.util.UUID;
 @StudioComponent(xmlElement = "fileStorageUpload",
         category = "Components",
         icon = "io/jmix/ui/icon/component/fileUpload.svg",
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/vcl/components/file-storage-upload-field.html",
         canvasBehaviour = CanvasBehaviour.BUTTON,
         canvasText = "Upload",
         canvasTextProperty = "uploadButtonCaption")

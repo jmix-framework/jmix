@@ -42,7 +42,7 @@ import java.time.OffsetDateTime;
         xmlElement = "datePicker",
         icon = "io/jmix/ui/icon/component/datePicker.svg",
         canvasBehaviour = CanvasBehaviour.DATE_PICKER,
-        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/date-picker.html"
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/vcl/components/date-picker.html"
 )
 @StudioProperties(
         properties = {

@@ -33,7 +33,7 @@ import javax.annotation.Nullable;
         icon = "io/jmix/ui/icon/component/colorPicker.svg",
         canvasBehaviour = CanvasBehaviour.COLOR_PICKER,
         unsupportedProperties = {"buffered"},
-        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/color-picker.html"
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/vcl/components/color-picker.html"
 )
 @StudioProperties(
         properties = {

@@ -38,7 +38,7 @@ import java.math.BigDecimal;
         xmlElement = "currencyField",
         icon = "io/jmix/ui/icon/component/currencyField.svg",
         canvasBehaviour = CanvasBehaviour.INPUT_FIELD,
-        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/currency-field.html"
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/vcl/components/currency-field.html"
 )
 @StudioProperties(
         properties = {

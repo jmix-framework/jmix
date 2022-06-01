@@ -47,7 +47,7 @@ import java.util.function.Function;
         xmlElement = "tree",
         icon = "io/jmix/ui/icon/component/tree.svg",
         canvasBehaviour = CanvasBehaviour.TREE,
-        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/tree.html"
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/vcl/components/tree.html"
 )
 @StudioProperties(
         properties = {

@@ -38,7 +38,8 @@ import java.util.function.Predicate;
         description = "Prepares and shows lookup screens",
         category = "Facets",
         defaultProperty = "screenId",
-        icon = "io/jmix/ui/icon/facet/screen.svg"
+        icon = "io/jmix/ui/icon/facet/screen.svg",
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/facets/lookup-screen-facet.html"
 )
 @StudioProperties(
         properties = {

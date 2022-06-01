@@ -35,7 +35,8 @@ import java.util.function.Consumer;
         description = "Copies the text content of the input to the clipboard on button click",
         category = "Facets",
         defaultProperty = "input",
-        icon = "io/jmix/ui/icon/facet/clipboardTrigger.svg"
+        icon = "io/jmix/ui/icon/facet/clipboardTrigger.svg",
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/facets/clipboard-trigger.html"
 )
 public interface ClipboardTrigger extends Facet {
 

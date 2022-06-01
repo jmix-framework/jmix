@@ -35,7 +35,7 @@ import io.jmix.ui.meta.StudioProperty;
         xmlElement = "singleSelectList",
         icon = "io/jmix/ui/icon/component/singleSelectList.svg",
         canvasBehaviour = CanvasBehaviour.SELECT_LIST,
-        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/single-select-list.html"
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/vcl/components/single-select-list.html"
 )
 @StudioProperties(
         properties = {

@@ -30,7 +30,7 @@ import io.jmix.ui.meta.StudioProperty;
         icon = "io/jmix/ui/icon/component/checkBox.svg",
         unsupportedProperties = {"required", "requiredMessage"},
         canvasBehaviour = CanvasBehaviour.CHECK_BOX,
-        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/check-box.html"
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/vcl/components/check-box.html"
 )
 @StudioProperties(
         properties = {

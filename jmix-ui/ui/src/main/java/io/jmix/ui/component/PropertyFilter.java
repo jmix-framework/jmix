@@ -46,7 +46,7 @@ import java.util.function.Consumer;
         caption = "PropertyFilter",
         category = "Components",
         xmlElement = "propertyFilter",
-        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/filter-components.html#property-filter",
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/vcl/components/filter-components.html#property-filter",
         canvasBehaviour = CanvasBehaviour.PROPERTY_FILTER,
         icon = "io/jmix/ui/icon/component/filter.svg"
 )
@@ -54,7 +54,7 @@ import java.util.function.Consumer;
         caption = "PropertyFilter",
         xmlElement = "propertyFilter",
         defaultProperty = "property",
-        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/filter-components.html#property-filter",
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/vcl/components/filter-components.html#property-filter",
         unsupportedProperties = {"dataLoader", "captionWidth", "autoApply", "captionPosition"}
 )
 @StudioProperties(

@@ -38,7 +38,7 @@ import java.util.function.Consumer;
         canvasBehaviour = CanvasBehaviour.BUTTON,
         canvasText = "New Minimized Value",
         canvasTextProperty = "minimizedValue",
-        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/popup-view.html"
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/vcl/components/popup-view.html"
 )
 public interface PopupView extends Component.HasCaption, Component.BelongToFrame,
         Component.HasIcon, HasContextHelp, HasHtmlCaption, HasHtmlDescription, HasHtmlSanitizer {

@@ -42,7 +42,7 @@ import java.util.TimeZone;
         xmlElement = "dateField",
         icon = "io/jmix/ui/icon/component/dateField.svg",
         canvasBehaviour = CanvasBehaviour.DATE_FIELD,
-        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/date-field.html"
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/vcl/components/date-field.html"
 )
 @StudioProperties(
         properties = {

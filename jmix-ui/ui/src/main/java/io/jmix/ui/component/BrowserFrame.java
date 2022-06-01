@@ -35,7 +35,7 @@ import java.util.EnumSet;
         icon = "io/jmix/ui/icon/component/browserFrame.svg",
         canvasIconSize = CanvasIconSize.LARGE,
         canvasIcon = "io/jmix/ui/icon/component/browserFrame_canvas.png",
-        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/browser-frame.html"
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/vcl/components/browser-frame.html"
 )
 @StudioProperties(
         properties = {

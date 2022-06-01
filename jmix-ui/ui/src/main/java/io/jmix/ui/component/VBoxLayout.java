@@ -34,7 +34,7 @@ import io.jmix.ui.meta.StudioProperty;
         icon = "io/jmix/ui/icon/container/vbox.svg",
         canvasBehaviour = CanvasBehaviour.CONTAINER,
         containerType = ContainerType.VERTICAL,
-        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/containers/box-layout.html#vbox"
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/vcl/containers/box-layout.html#vbox"
 )
 @StudioProperties(
         properties = {

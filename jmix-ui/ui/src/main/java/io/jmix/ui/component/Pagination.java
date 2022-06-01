@@ -34,7 +34,7 @@ import java.util.function.Consumer;
         xmlElement = "pagination",
         icon = "io/jmix/ui/icon/component/pagination.svg",
         canvasBehaviour = CanvasBehaviour.BOX,
-        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/pagination.html",
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/vcl/components/pagination.html",
         unsupportedProperties = {"responsive", "enable"}
 )
 public interface Pagination extends PaginationComponent {

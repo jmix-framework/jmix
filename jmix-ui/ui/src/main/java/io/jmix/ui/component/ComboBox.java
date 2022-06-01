@@ -40,7 +40,7 @@ import java.util.function.Predicate;
         xmlElement = "comboBox",
         icon = "io/jmix/ui/icon/component/comboBox.svg",
         canvasBehaviour = CanvasBehaviour.COMBO_BOX,
-        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/combo-box.html"
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/vcl/components/combo-box.html"
 )
 @StudioProperties(
         properties = {

@@ -34,7 +34,7 @@ import javax.annotation.Nullable;
         canvasBehaviour = CanvasBehaviour.LINK,
         canvasText = "New Link",
         canvasTextProperty = "caption",
-        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/link.html"
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/vcl/components/link.html"
 )
 public interface Link extends Component, Component.HasCaption, Component.BelongToFrame, Component.HasIcon,
         HasHtmlCaption, HasHtmlDescription, HasHtmlSanitizer {

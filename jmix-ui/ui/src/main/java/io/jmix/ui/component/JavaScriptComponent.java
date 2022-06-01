@@ -38,7 +38,7 @@ import java.util.function.Consumer;
         xmlElement = "jsComponent",
         icon = "io/jmix/ui/icon/container/jsComponent.svg",
         canvasBehaviour = CanvasBehaviour.BOX,
-        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/js-component.html"
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/custom-components/js-component.html"
 )
 public interface JavaScriptComponent extends Component,
         Component.HasCaption, Component.HasDescription, Component.HasIcon, Component.BelongToFrame,

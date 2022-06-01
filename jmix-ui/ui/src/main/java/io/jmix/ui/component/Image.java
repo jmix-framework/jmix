@@ -38,7 +38,7 @@ import java.util.function.Consumer;
         xmlElement = "image",
         icon = "io/jmix/ui/icon/component/image.svg",
         canvasIconSize = CanvasIconSize.LARGE,
-        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/image.html"
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/vcl/components/image.html"
 )
 @StudioProperties(
         properties = {

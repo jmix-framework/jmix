@@ -33,7 +33,7 @@ import javax.annotation.Nullable;
         icon = "io/jmix/ui/icon/component/relatedEntities.svg",
         canvasTextProperty = "caption",
         canvasBehaviour = CanvasBehaviour.POPUP_BUTTON,
-        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/related-entities.html"
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/vcl/components/related-entities.html"
 )
 public interface RelatedEntities<E> extends Component,
         Component.HasCaption, Component.BelongToFrame, Component.HasIcon,

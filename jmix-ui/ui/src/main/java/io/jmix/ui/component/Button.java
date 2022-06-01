@@ -33,7 +33,7 @@ import java.util.function.Consumer;
         icon = "io/jmix/ui/icon/component/button.svg",
         canvasTextProperty = "caption",
         canvasBehaviour = CanvasBehaviour.BUTTON,
-        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/button.html"
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/vcl/components/button.html"
 )
 @StudioProperties(
         properties = {

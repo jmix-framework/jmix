@@ -46,7 +46,7 @@ import java.util.stream.Stream;
         xmlElement = "treeDataGrid",
         icon = "io/jmix/ui/icon/component/treeDataGrid.svg",
         canvasBehaviour = CanvasBehaviour.TABLE,
-        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/tree-data-grid.html"
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/vcl/components/tree-data-grid.html"
 )
 @StudioProperties(
         properties = {

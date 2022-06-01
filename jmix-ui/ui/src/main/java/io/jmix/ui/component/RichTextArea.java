@@ -33,7 +33,7 @@ import io.jmix.ui.meta.StudioProperty;
         xmlElement = "richTextArea",
         icon = "io/jmix/ui/icon/component/richTextArea.svg",
         canvasBehaviour = CanvasBehaviour.RICH_TEXT_AREA,
-        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/rich-text-area.html"
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/vcl/components/rich-text-area.html"
 )
 @StudioProperties(
         properties = {

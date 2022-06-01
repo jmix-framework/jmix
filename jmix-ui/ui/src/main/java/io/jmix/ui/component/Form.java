@@ -36,7 +36,7 @@ import java.util.Collection;
         icon = "io/jmix/ui/icon/component/form.svg",
         canvasBehaviour = CanvasBehaviour.CONTAINER,
         containerType = ContainerType.GRID,
-        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/containers/form.html"
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/vcl/components/form.html"
 )
 @StudioProperties(
         properties = {

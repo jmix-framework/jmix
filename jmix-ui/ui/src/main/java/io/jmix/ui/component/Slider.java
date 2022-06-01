@@ -30,7 +30,7 @@ import io.jmix.ui.meta.StudioProperty;
         xmlElement = "slider",
         canvasBehaviour = CanvasBehaviour.SLIDER,
         icon = "io/jmix/ui/icon/component/slider.svg",
-        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/slider.html"
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/vcl/components/slider.html"
 )
 @StudioProperties(
         properties = {

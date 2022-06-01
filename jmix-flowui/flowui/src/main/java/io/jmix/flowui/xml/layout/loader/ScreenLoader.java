@@ -22,16 +22,21 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.ThemableLayout;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.exception.GuiDevelopmentException;
+import io.jmix.flowui.facet.Facet;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.model.ScreenData;
 import io.jmix.flowui.model.impl.ScreenDataXmlLoader;
 import io.jmix.flowui.screen.Screen;
 import io.jmix.flowui.screen.ScreenActions;
+import io.jmix.flowui.screen.ScreenFacets;
 import io.jmix.flowui.screen.UiControllerUtils;
+import io.jmix.flowui.xml.facet.FacetLoader;
 import io.jmix.flowui.xml.layout.ComponentRootLoader;
 import io.jmix.flowui.xml.layout.loader.container.AbstractContainerLoader;
 import io.jmix.flowui.xml.layout.support.ActionLoaderSupport;
 import org.dom4j.Element;
+
+import java.util.List;
 
 public class ScreenLoader extends AbstractContainerLoader<Screen<?>> implements ComponentRootLoader<Screen<?>> {
 
@@ -72,6 +77,12 @@ public class ScreenLoader extends AbstractContainerLoader<Screen<?>> implements 
 
     @Override
     public void loadComponent() {
+        Element layoutElement = element.element("layout");
+        if (layoutElement == null) {
+            throw new GuiDevelopmentException("Required 'layout' element is not found", context);
+        }
+
+
         loadScreenData(resultComponent, element);
 
 //        loadDialogOptions(resultComponent, element);
@@ -81,28 +92,34 @@ public class ScreenLoader extends AbstractContainerLoader<Screen<?>> implements 
 //        loadDescription(resultComponent, element);
 //        loadIcon(resultComponent, element);
         loadScreenActions(resultComponent, element);
-
-        Element layoutElement = element.element("layout");
-        if (layoutElement == null) {
-            throw new GuiDevelopmentException("Required 'layout' element is not found", context);
-        }
+        loadFacets(resultComponent, element);
 
         Component screenRootComponent = resultComponent.getContent();
 
+        loadThemableAttributes(screenRootComponent, layoutElement);
+        loadFlexibleAttributes(screenRootComponent, layoutElement);
+        loadEnabled(screenRootComponent, layoutElement);
+
+        if (screenRootComponent instanceof HasComponents) {
+            loadSubComponentsAndExpand(((HasComponents) screenRootComponent), layoutElement);
+        }
+    }
+
+    private void loadThemableAttributes(Component screenRootComponent, Element layoutElement) {
         if (screenRootComponent instanceof ThemableLayout) {
             componentLoader().loadThemableAttributes(((ThemableLayout) screenRootComponent), layoutElement);
         }
+    }
 
+    private void loadFlexibleAttributes(Component screenRootComponent, Element layoutElement) {
         if (screenRootComponent instanceof FlexComponent) {
             componentLoader().loadFlexibleAttributes(((FlexComponent) screenRootComponent), layoutElement);
         }
+    }
 
+    private void loadEnabled(Component screenRootComponent, Element layoutElement) {
         if (screenRootComponent instanceof HasEnabled) {
             componentLoader().loadEnabled(((HasEnabled) screenRootComponent), layoutElement);
-        }
-
-        if (screenRootComponent instanceof FlexComponent) {
-            loadSubComponentsAndExpand(((FlexComponent) screenRootComponent), layoutElement);
         }
     }
 
@@ -144,19 +161,20 @@ public class ScreenLoader extends AbstractContainerLoader<Screen<?>> implements 
         }
     }*/
 
-    /*protected void loadFacets(Window resultComponent, Element windowElement) {
-        Element facetsElement = windowElement.element("facets");
+    protected void loadFacets(Screen<?> screen, Element element) {
+        Element facetsElement = element.element("facets");
         if (facetsElement != null) {
             List<Element> facetElements = facetsElement.elements();
 
+            ScreenFacets screenFacets = UiControllerUtils.getScreenFacets(screen);
+            FacetLoader loader = applicationContext.getBean(FacetLoader.class);
             for (Element facetElement : facetElements) {
-                FacetLoader loader = applicationContext.getBean(FacetLoader.class);
                 Facet facet = loader.load(facetElement, getComponentContext());
 
-                resultComponent.addFacet(facet);
+                screenFacets.addFacet(facet);
             }
         }
-    }*/
+    }
 
     /*@Override
     protected Action loadDeclarativeAction(ActionsHolder actionsHolder, Element element) {

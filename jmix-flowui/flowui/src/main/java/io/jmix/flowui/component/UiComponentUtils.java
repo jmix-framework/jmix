@@ -2,7 +2,6 @@ package io.jmix.flowui.component;
 
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.dialog.Dialog;
-import com.vaadin.flow.dom.Element;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.screen.Screen;
 import io.jmix.flowui.sys.ValuePathHelper;
@@ -59,6 +58,26 @@ public final class UiComponentUtils {
                 return Optional.empty();
             }
         }
+    }
+
+    public static Optional<Component> findComponent(Screen<?> screen, String id) {
+        Component content = screen.getContent();
+        if (!(content instanceof HasComponents)) {
+            throw new IllegalStateException("Screen content doesn't contain components");
+        }
+
+        return findComponent(((HasComponents) content), id);
+    }
+
+    public static Component findComponentOrElseThrow(Screen<?> screen, String id) {
+        Component content = screen.getContent();
+        if (!(content instanceof HasComponents)) {
+            throw new IllegalStateException("Screen content doesn't contain components");
+        }
+
+        return findComponent(((HasComponents) content), id)
+                .orElseThrow(() -> new IllegalStateException(
+                        String.format("Component with id '%s' not found", id)));
     }
 
     private static Optional<Component> getComponentByIteration(HasComponents container, String id) {

@@ -55,7 +55,7 @@ public interface ScreenData {
      * Returns a container by its id.
      * @throws IllegalArgumentException if there is no such container in the screen
      */
-    <T extends InstanceContainer> T getContainer(String id);
+    <T extends InstanceContainer<?>> T getContainer(String id);
 
     /**
      * Returns a loader by its id.
@@ -76,7 +76,7 @@ public interface ScreenData {
     /**
      * Registers the given container in the screen.
      */
-    void registerContainer(String id, InstanceContainer container);
+    void registerContainer(String id, InstanceContainer<?> container);
 
     /**
      * Registers the given loader in the screen.

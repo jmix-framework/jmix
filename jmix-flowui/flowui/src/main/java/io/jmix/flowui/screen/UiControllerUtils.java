@@ -54,27 +54,35 @@ public final class UiControllerUtils {
         return "";
     }
 
-    public static ScreenData getScreenData(Screen screen) {
+    public static ScreenData getScreenData(Screen<?> screen) {
         return screen.getScreenData();
     }
 
-    public static void setScreenData(Screen screen, ScreenData screenData) {
+    public static void setScreenData(Screen<?> screen, ScreenData screenData) {
         screen.setScreenData(screenData);
     }
 
-    public static ScreenActions getScreenActions(Screen screen) {
+    public static ScreenActions getScreenActions(Screen<?> screen) {
         return screen.getScreenActions();
     }
 
-    public static void setScreenActions(Screen screen, ScreenActions screenActions) {
+    public static void setScreenActions(Screen<?> screen, ScreenActions screenActions) {
         screen.setScreenActions(screenActions);
     }
 
-    public static void fireEvent(Screen screen, ComponentEvent<?> event) {
+    public static ScreenFacets getScreenFacets(Screen<?> screen) {
+        return screen.getScreenFacets();
+    }
+
+    public static void setScreenFacets(Screen<?> screen, ScreenFacets screenActions) {
+        screen.setScreenFacets(screenActions);
+    }
+
+    public static void fireEvent(Screen<?> screen, ComponentEvent<?> event) {
         ComponentUtil.fireEvent(screen, event);
     }
 
-    public static boolean isCommitActionPerformed(StandardEditor editor) {
+    public static boolean isCommitActionPerformed(StandardEditor<?> editor) {
         return editor.isCommitActionPerformed();
     }
 }

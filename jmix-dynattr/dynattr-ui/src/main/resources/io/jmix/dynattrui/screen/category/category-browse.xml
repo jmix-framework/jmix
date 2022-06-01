@@ -56,13 +56,13 @@
                             width="100%"
                             dataContainer="categoriesDc">
                     <actions>
-                        <action id="create" type="create"/>
+                        <action id="create" type="create" caption="msg://categoriesTable.create"/>
                         <action id="edit" type="edit"/>
                         <action id="remove" type="remove"/>
                         <action id="applyChanges" caption="msg://categoriesTable.applyChanges" icon="OK"/>
                     </actions>
                     <columns>
-                        <column id="name"/>
+                        <column id="name" caption="msg://categoriesTable.name"/>
                         <column id="entityType"/>
                         <column id="isDefault"/>
                     </columns>
@@ -77,6 +77,7 @@
                 </groupTable>
             </vbox>
             <vbox id="attributesBox" height="100%" expand="attributesTable" margin="false,false,false,true">
+                <label value="msg://categoryAttributes.caption" align="MIDDLE_LEFT" stylename="h3"/>
                 <groupTable id="attributesTable"
                             width="100%"
                             dataContainer="attributesDc">

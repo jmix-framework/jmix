@@ -45,7 +45,8 @@ import java.util.function.Supplier;
         description = "Prepares and shows screens",
         defaultProperty = "screenId",
         category = "Facets",
-        icon = "io/jmix/ui/icon/facet/screen.svg"
+        icon = "io/jmix/ui/icon/facet/screen.svg",
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/facets/screen-facet.html"
 )
 @StudioProperties(
         properties = {

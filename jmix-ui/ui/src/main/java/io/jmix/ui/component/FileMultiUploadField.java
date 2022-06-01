@@ -29,6 +29,7 @@ import java.util.function.Consumer;
 @StudioComponent(xmlElement = "fileMultiUpload",
         category = "Components",
         icon = "io/jmix/ui/icon/component/fileMultiUpload.svg",
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/vcl/components/file-multi-upload-field.html",
         canvasBehaviour = CanvasBehaviour.BUTTON,
         canvasText = "Upload",
         canvasTextProperty = "caption")

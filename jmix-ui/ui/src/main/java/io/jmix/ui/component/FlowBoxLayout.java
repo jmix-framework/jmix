@@ -30,7 +30,7 @@ import io.jmix.ui.meta.StudioComponent;
         icon = "io/jmix/ui/icon/container/flowBox.svg",
         canvasBehaviour = CanvasBehaviour.CONTAINER,
         containerType = ContainerType.FLOW,
-        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/containers/box-layout.html#flowbox"
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/vcl/containers/box-layout.html#flowbox"
 )
 public interface FlowBoxLayout extends OrderedContainer, Component.BelongToFrame, HasMargin,
         HasSpacing, Component.HasCaption, Component.HasIcon, HasContextHelp, HasHtmlSanitizer,

@@ -48,7 +48,7 @@ import java.util.UUID;
         xmlElement = "maskedField",
         icon = "io/jmix/ui/icon/component/maskedField.svg",
         canvasBehaviour = CanvasBehaviour.INPUT_FIELD,
-        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/masked-field.html"
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/vcl/components/masked-field.html"
 )
 @StudioProperties(
         properties = {

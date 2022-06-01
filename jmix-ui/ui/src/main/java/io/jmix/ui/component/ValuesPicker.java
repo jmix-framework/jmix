@@ -28,7 +28,7 @@ import java.util.Collection;
         xmlElement = "valuesPicker",
         icon = "io/jmix/ui/icon/component/valuesPicker.svg",
         canvasBehaviour = CanvasBehaviour.VALUE_PICKER,
-        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/values-picker.html"
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/vcl/components/values-picker.html"
 )
 public interface ValuesPicker<V> extends ValuePicker<Collection<V>> {
 

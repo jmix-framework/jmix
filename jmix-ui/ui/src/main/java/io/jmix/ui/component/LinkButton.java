@@ -29,7 +29,7 @@ import io.jmix.ui.meta.StudioComponent;
         canvasText = "New Link Button",
         canvasTextProperty = "caption",
         canvasBehaviour = CanvasBehaviour.BUTTON,
-        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/link-button.html"
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/vcl/components/link-button.html"
 )
 public interface LinkButton extends Button {
     String NAME = "linkButton";

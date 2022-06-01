@@ -30,7 +30,7 @@ import io.jmix.ui.meta.StudioComponent;
         icon = "io/jmix/ui/icon/container/hbox.svg",
         canvasBehaviour = CanvasBehaviour.CONTAINER,
         containerType = ContainerType.HORIZONTAL,
-        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/containers/box-layout.html#hbox"
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/vcl/containers/box-layout.html#hbox"
 )
 public interface HBoxLayout extends BoxLayout {
     String NAME = "hbox";

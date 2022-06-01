@@ -39,7 +39,7 @@ import io.jmix.ui.screen.ScreenFragment;
         canvasBehaviour = CanvasBehaviour.BOX,
         canvasIconSize = CanvasIconSize.LARGE,
         unsupportedProperties = {"spacing", "margin"},
-        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/screens.html"
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/screens.html"
 )
 @StudioProperties(
         properties = {

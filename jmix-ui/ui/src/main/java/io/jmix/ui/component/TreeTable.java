@@ -36,7 +36,7 @@ import org.springframework.core.ParameterizedTypeReference;
         xmlElement = "treeTable",
         icon = "io/jmix/ui/icon/component/treeTable.svg",
         canvasBehaviour = CanvasBehaviour.TABLE,
-        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/tree-table.html"
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/vcl/components/tree-table.html"
 )
 @StudioProperties(
         properties = {

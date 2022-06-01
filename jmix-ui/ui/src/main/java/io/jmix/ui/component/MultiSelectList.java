@@ -37,7 +37,7 @@ import java.util.Collection;
         xmlElement = "multiSelectList",
         icon = "io/jmix/ui/icon/component/multiSelectList.svg",
         canvasBehaviour = CanvasBehaviour.SELECT_LIST,
-        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/multi-select-list.html"
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/vcl/components/multi-select-list.html"
 )
 @StudioProperties(
         properties = {

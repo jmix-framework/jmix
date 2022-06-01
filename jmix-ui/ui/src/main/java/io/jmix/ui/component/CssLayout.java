@@ -31,7 +31,7 @@ import io.jmix.ui.meta.StudioComponent;
         icon = "io/jmix/ui/icon/container/cssLayout.svg",
         canvasBehaviour = CanvasBehaviour.CONTAINER,
         containerType = ContainerType.VERTICAL,
-        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/containers/css-layout.html"
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/vcl/containers/css-layout.html"
 )
 public interface CssLayout extends OrderedContainer, Component.BelongToFrame, Component.HasCaption,
         Component.HasIcon, HasContextHelp, LayoutClickNotifier, ShortcutNotifier, HasHtmlCaption, HasHtmlDescription,

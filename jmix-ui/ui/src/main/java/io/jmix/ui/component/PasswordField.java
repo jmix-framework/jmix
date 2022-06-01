@@ -35,7 +35,7 @@ import javax.annotation.Nullable;
         xmlElement = "passwordField",
         icon = "io/jmix/ui/icon/component/passwordField.svg",
         canvasBehaviour = CanvasBehaviour.INPUT_FIELD,
-        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/password-field.html"
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/vcl/components/password-field.html"
 )
 @StudioProperties(
         properties = {

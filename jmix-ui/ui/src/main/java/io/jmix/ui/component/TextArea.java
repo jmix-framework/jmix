@@ -42,7 +42,7 @@ import java.time.OffsetTime;
         xmlElement = "textArea",
         icon = "io/jmix/ui/icon/component/textArea.svg",
         canvasBehaviour = CanvasBehaviour.TEXT_AREA,
-        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/text-area.html"
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/vcl/components/text-area.html"
 )
 @StudioProperties(
         properties = {

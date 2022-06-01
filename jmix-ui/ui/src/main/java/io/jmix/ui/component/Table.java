@@ -52,7 +52,7 @@ import java.util.function.Function;
         xmlElement = "table",
         icon = "io/jmix/ui/icon/component/table.svg",
         canvasBehaviour = CanvasBehaviour.TABLE,
-        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/table.html"
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/vcl/components/table.html"
 )
 @StudioProperties(
         properties = {

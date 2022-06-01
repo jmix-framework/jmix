@@ -33,7 +33,7 @@ import io.jmix.ui.meta.StudioProperty;
         icon = "io/jmix/ui/icon/container/buttonsPanel.svg",
         canvasBehaviour = CanvasBehaviour.CONTAINER,
         containerType = ContainerType.FLOW,
-        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/containers/buttons-panel.html"
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/vcl/containers/buttons-panel.html"
 )
 @StudioProperties(
         properties = {

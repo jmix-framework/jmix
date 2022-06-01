@@ -36,7 +36,7 @@ import org.springframework.core.ParameterizedTypeReference;
         canvasBehaviour = CanvasBehaviour.COMBO_BOX,
         unsupportedProperties = {"fieldEditable", "optionsEnum", "textInputAllowed"},
         unsupportedHandlers = {"addFieldValueChangeListener", "setFormatter", "setFieldIconProvider"},
-        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/entity-combo-box.html"
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/vcl/components/entity-combo-box.html"
 )
 @StudioProperties(
         properties = {

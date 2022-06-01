@@ -30,6 +30,7 @@ import javax.annotation.Nullable;
         xmlElement = "capsLockIndicator",
         category = "Components",
         icon = "io/jmix/ui/icon/component/capsLockIndicator.svg",
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/vcl/components/caps-lock-indicator.html",
         unsupportedProperties = {"enable", "responsive"}
 )
 public interface CapsLockIndicator extends Component {

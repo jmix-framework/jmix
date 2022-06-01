@@ -38,7 +38,7 @@ import javax.annotation.Nullable;
         xmlElement = "sourceCodeEditor",
         icon = "io/jmix/ui/icon/component/sourceCodeEditor.svg",
         canvasBehaviour = CanvasBehaviour.SOURCE_CODE_EDITOR,
-        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/source-code-editor.html"
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/vcl/components/source-code-editor.html"
 )
 @StudioProperties(
         properties = {

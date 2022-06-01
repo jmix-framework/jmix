@@ -81,6 +81,40 @@
             </description>
         </codeSnippet>
 
+        <codeSnippet name="Load scalar or aggregate values" contextTypes="service,controller">
+            <inject variable="dataManager" classQualifiedName="io.jmix.core.DataManager"/>
+
+            <text language="java">
+                List&lt;io.jmix.core.entity.KeyValueEntity&gt; values = dataManager.loadValues("select e.firstName, e.lastName from User e")
+                .properties("firstName", "lastName")
+                .list();
+            </text>
+            <text language="kotlin">
+                val values = dataManager.loadValues("select e.firstName, e.lastName from User e")
+                .properties("firstName", "lastName")
+                .list()
+            </text>
+
+            <description>
+                &lt;a href="https://docs.jmix.io/jmix/data-access/data-manager.html#load-scalars"&gt;Jmix Documentation&lt;/a&gt;
+            </description>
+        </codeSnippet>
+
+        <codeSnippet name="Load single scalar or aggregate value" contextTypes="service,controller">
+            <inject variable="dataManager" classQualifiedName="io.jmix.core.DataManager"/>
+
+            <text language="java">
+                Long userCount = dataManager.loadValue("select count(e) from User e", Long.class).one();
+            </text>
+            <text language="kotlin">
+                val userCount = dataManager.loadValue("select count(e) from User e", Long::class.java).one()
+            </text>
+
+            <description>
+                &lt;a href="https://docs.jmix.io/jmix/data-access/data-manager.html#load-scalars"&gt;Jmix Documentation&lt;/a&gt;
+            </description>
+        </codeSnippet>
+
     </category>
 
 </jmixCodeSnippets>

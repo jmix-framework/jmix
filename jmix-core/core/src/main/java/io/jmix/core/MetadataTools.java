@@ -48,6 +48,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.PostConstruct;
 import javax.persistence.Id;
 import javax.persistence.*;
 import java.lang.annotation.Annotation;
@@ -986,7 +987,19 @@ public class MetadataTools {
 
     /**
      * Create a new instance and make it a shallow copy of the instance given.
-     * <p> This method copies attributes according to the metadata.
+     * <p> This method copies attributes according to the metadata.</p>
+     * <br>
+     * <p><b>WARNING:<b/></p>
+     * <ol>
+     *     <li>
+     *         New instance will not be initialized. Entity id generation, embedded objects creation,
+     *         {@link PostConstruct} actions, e.t.c will not be performed for cloned object
+     *         (see {@link EntityInitializer}).
+     *     </li>
+     *     <li>
+     *         Unfetched or lazy-fetched attributes will not be cloned.
+     *     </li>
+     * </ol>
      *
      * @param source source instance
      * @return new instance of the same Java class as source

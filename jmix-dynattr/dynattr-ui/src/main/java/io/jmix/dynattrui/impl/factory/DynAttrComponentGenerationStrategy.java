@@ -213,7 +213,7 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
     protected Component createEnumerationField(ComponentGenerationContext context, AttributeDefinition attribute) {
         ComboBox comboBox = uiComponents.create(ComboBox.class);
 
-        comboBox.setOptions(new MapOptions(getLocalizedEnumerationMap(attribute)));
+        comboBox.setOptionsMap(getLocalizedEnumerationMap(attribute));
 
         setValueSource(comboBox, context);
         setValidators(comboBox, attribute);

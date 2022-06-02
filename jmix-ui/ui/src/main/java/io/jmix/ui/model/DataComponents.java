@@ -149,14 +149,14 @@ public class DataComponents {
 
         if (attributeContext.canView()
                 && entityContext.isViewPermitted()) {
-            Object item = masterContainer.getItemOrNull();
 
             masterContainer.addItemChangeListener(e -> {
+                Object item = masterContainer.getItemOrNull();
                 container.setItems(item != null ? EntityValues.getValue(item, property) : null);
             });
 
             masterContainer.addItemPropertyChangeListener(e -> {
-                if (item != null && e.getProperty().equals(property) && e.getItem() == item) {
+                if (e.getProperty().equals(property) && e.getItem() == masterContainer.getItemOrNull()) {
                     container.setDisconnectedItems((Collection<E>) e.getValue());
                 }
             });

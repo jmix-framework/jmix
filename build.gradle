@@ -1,6 +1,9 @@
 buildscript {
     repositories {
         if (rootProject.hasProperty('jmixRepoUrl')) {
+            if (rootProject.hasProperty('jmixUseLocalMavenRepository')) {
+                mavenLocal()
+            }
             maven {
                 url rootProject['jmixRepoUrl']
 

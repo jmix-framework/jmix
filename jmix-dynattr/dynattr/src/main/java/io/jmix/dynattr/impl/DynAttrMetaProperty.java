@@ -60,7 +60,6 @@ public class DynAttrMetaProperty extends MetadataObjectImpl implements MetaPrope
         return name;
     }
 
-    @Override
     public void setName(String name) {
         this.name = name;
     }

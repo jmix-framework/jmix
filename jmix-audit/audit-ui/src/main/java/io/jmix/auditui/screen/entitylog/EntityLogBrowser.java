@@ -22,6 +22,7 @@ import io.jmix.audit.entity.EntityLogItem;
 import io.jmix.audit.entity.LoggedAttribute;
 import io.jmix.audit.entity.LoggedEntity;
 import io.jmix.core.*;
+import io.jmix.core.annotation.TenantId;
 import io.jmix.core.metamodel.datatype.impl.EnumClass;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -30,7 +31,10 @@ import io.jmix.core.security.AccessDeniedException;
 import io.jmix.core.security.UserRepository;
 import io.jmix.security.constraint.PolicyStore;
 import io.jmix.security.constraint.SecureOperations;
-import io.jmix.ui.*;
+import io.jmix.ui.Dialogs;
+import io.jmix.ui.Notifications;
+import io.jmix.ui.ScreenBuilders;
+import io.jmix.ui.UiComponents;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.DialogAction;
 import io.jmix.ui.component.*;
@@ -578,7 +582,9 @@ public class EntityLogBrowser extends StandardLookup<EntityLogItem> {
     }
 
     protected boolean allowLogProperty(MetaProperty metaProperty /*, CategoryAttribute categoryAttribute*/) {
-        if (metadataTools.isSystem(metaProperty)) {
+        if (metadataTools.isSystem(metaProperty)
+                //log system property tenantId
+                && !metadataTools.isAnnotationPresent(metaProperty.getDomain().getJavaClass(), metaProperty.getName(), TenantId.class)) {
             return false;
         }
         Range range = metaProperty.getRange();

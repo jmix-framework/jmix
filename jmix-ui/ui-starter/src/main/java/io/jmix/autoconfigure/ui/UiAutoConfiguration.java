@@ -25,12 +25,12 @@ import io.jmix.ui.sys.UiControllersConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Import;
 
 import java.util.Collections;
 
-@Configuration
+@AutoConfiguration
 @Import({CoreConfiguration.class, UiConfiguration.class})
 public class UiAutoConfiguration {
 

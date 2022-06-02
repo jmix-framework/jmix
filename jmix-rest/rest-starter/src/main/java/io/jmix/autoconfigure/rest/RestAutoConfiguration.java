@@ -22,10 +22,10 @@ import io.jmix.rest.security.impl.RestBeforeInvocationEventListener;
 import io.jmix.securityoauth2.SecurityOAuth2Configuration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Import;
 
-@Configuration
+@AutoConfiguration
 @Import({CoreConfiguration.class, RestConfiguration.class})
 public class RestAutoConfiguration {
     @Bean

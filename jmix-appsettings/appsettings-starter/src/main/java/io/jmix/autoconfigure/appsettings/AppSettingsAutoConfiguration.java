@@ -17,10 +17,10 @@
 package io.jmix.autoconfigure.appsettings;
 
 import io.jmix.appsettings.AppSettingsConfiguration;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Import;
 
-@Configuration
+@AutoConfiguration
 @Import({AppSettingsConfiguration.class})
 public class AppSettingsAutoConfiguration {
 }

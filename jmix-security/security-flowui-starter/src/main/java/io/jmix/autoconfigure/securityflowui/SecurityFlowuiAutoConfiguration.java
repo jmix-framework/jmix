@@ -25,11 +25,11 @@ import io.jmix.securityflowui.SecurityFlowuiConfiguration;
 import io.jmix.securityflowui.access.FlowuiScreenAccessChecker;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
-@Configuration
+@AutoConfiguration
 @Import({CoreConfiguration.class, DataConfiguration.class, SecurityConfiguration.class, SecurityFlowuiConfiguration.class})
 public class SecurityFlowuiAutoConfiguration {
 

@@ -20,10 +20,10 @@ import io.jmix.core.CoreConfiguration;
 import io.jmix.search.SearchConfiguration;
 import io.jmix.searchui.SearchUiConfiguration;
 import io.jmix.ui.UiConfiguration;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Import;
 
-@Configuration
+@AutoConfiguration
 @Import({CoreConfiguration.class, UiConfiguration.class, SearchConfiguration.class, SearchUiConfiguration.class})
 public class SearchUiAutoConfiguration {
 }

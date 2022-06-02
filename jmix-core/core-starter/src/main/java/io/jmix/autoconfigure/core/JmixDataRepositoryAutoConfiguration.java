@@ -21,6 +21,7 @@ import io.jmix.core.impl.repository.support.JmixRepositoryConfigurationExtension
 import io.jmix.core.impl.repository.support.JmixRepositoryFactoryBean;
 import io.jmix.core.repository.EnableJmixDataRepositories;
 import io.jmix.core.repository.JmixDataRepository;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -28,7 +29,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 /**
@@ -47,7 +47,7 @@ import org.springframework.context.annotation.Import;
  * using the {@link EnableJmixDataRepositories @EnableJmixDataRepositories} annotation.
  */
 
-@Configuration(proxyBeanMethods = false)
+@AutoConfiguration
 @ConditionalOnBean(DataManager.class)
 @ConditionalOnClass(JmixDataRepository.class)
 @ConditionalOnMissingBean({JmixRepositoryFactoryBean.class, JmixRepositoryConfigurationExtension.class})

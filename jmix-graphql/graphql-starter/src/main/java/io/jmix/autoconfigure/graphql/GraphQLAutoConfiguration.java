@@ -18,10 +18,10 @@ package io.jmix.autoconfigure.graphql;
 
 import io.jmix.core.CoreConfiguration;
 import io.jmix.graphql.GraphQLConfiguration;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Import;
 
-@Configuration
+@AutoConfiguration
 @Import({CoreConfiguration.class, GraphQLConfiguration.class})
 public class GraphQLAutoConfiguration {
 }

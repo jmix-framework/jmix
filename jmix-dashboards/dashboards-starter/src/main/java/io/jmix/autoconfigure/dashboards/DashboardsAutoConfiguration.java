@@ -19,10 +19,10 @@ package io.jmix.autoconfigure.dashboards;
 import io.jmix.core.CoreConfiguration;
 import io.jmix.dashboards.DashboardsConfiguration;
 import io.jmix.data.DataConfiguration;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Import;
 
-@Configuration
+@AutoConfiguration
 @Import({CoreConfiguration.class, DataConfiguration.class, DashboardsConfiguration.class})
 public class DashboardsAutoConfiguration {
 }

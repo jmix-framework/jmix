@@ -80,9 +80,9 @@ public class DynAttrMetadataImpl implements DynAttrMetadata {
         return Collections.unmodifiableCollection(value.getAttributes());
     }
 
-    private CacheItem getItemFromCacheOrLoad(String metaclassName) {
+    private CacheItem getItemFromCacheOrLoad(String metaClassName) {
         CacheItem value = Objects.requireNonNull(
-                cacheOperations.get(cache, metaclassName, () -> loadCacheItem(metaclassName)));
+                cacheOperations.get(cache, metaClassName, () -> loadCacheItem(metaClassName)));
         completeDeserializedItem(value);
         return value;
     }

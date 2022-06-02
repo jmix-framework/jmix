@@ -215,19 +215,21 @@ public class EntityRestoreImpl implements EntityRestore {
 
     private String getOnDeleteInverseCascadePropertyQueryString(MetaClass metaClassToRestore, MetaProperty property) {
         String queryString;
+        String deletedDateProperty = metadataTools.findDeletedDateProperty(metaClassToRestore.getJavaClass());
         if (property.getRange().getCardinality().isMany()) {
             queryString = "select e from " + metaClassToRestore.getName() + " e join e." + property.getName() + " p"
-                    + " where p.id = :id and e.deletedDate >= :start and e.deletedDate <= :end";
+                    + " where p.id = :id and e." + deletedDateProperty + " >= :start and e." + deletedDateProperty + " <= :end";
         } else {
             queryString = "select e from " + metaClassToRestore.getName() + " e where e." + property.getName()
-                    + ".id = :id and e.deletedDate >= :start and e.deletedDate <= :end";
+                    + ".id = :id and e." + deletedDateProperty + " >= :start and e." + deletedDateProperty + " <= :end";
         }
         return queryString;
     }
 
     private String getOnDeleteCascadePropertyQueryString(MetaClass metaClassToRestore, MetaProperty inverseProperty) {
+        String deletedDateProperty = metadataTools.findDeletedDateProperty(metaClassToRestore.getJavaClass());
         return "select e from " + metaClassToRestore.getName() + " e where e." + inverseProperty.getName() + ".id = :id " +
-                "and e.deletedDate >= :start and e.deletedDate <= :end";
+                "and e." + deletedDateProperty + " >= :start and e." + deletedDateProperty + " <= :end";
     }
 
     protected void fillProperties(MetaClass metaClass, List<MetaProperty> properties, String annotationName) {

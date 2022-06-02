@@ -45,8 +45,8 @@
                 </filter>
                 <table id="sendingMessageTable" width="100%" dataContainer="sendingMessageDc">
                     <actions>
-                        <action id="downloadAttachment" caption="msg://downloadAttachments" trackSelection="true"/>
-                        <action id="resendEmail" caption="msg://resendEmail" trackSelection="true"/>
+                        <action id="downloadAttachment" caption="msg://downloadAttachments" trackSelection="true" icon="DOWNLOAD"/>
+                        <action id="resendEmail" caption="msg://resendEmail" trackSelection="true" icon="REPEAT"/>
                     </actions>
                     <columns>
                         <column id="address" sortable="false"/>

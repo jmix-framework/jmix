@@ -21,10 +21,10 @@ import io.jmix.datatools.DatatoolsConfiguration;
 import io.jmix.datatoolsui.DatatoolsUiConfiguration;
 import io.jmix.ui.UiConfiguration;
 import io.jmix.uiexport.UiExportConfiguration;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Import;
 
-@Configuration
+@AutoConfiguration
 @Import({CoreConfiguration.class, UiConfiguration.class, UiExportConfiguration.class, DatatoolsConfiguration.class,
         DatatoolsUiConfiguration.class})
 public class DatatoolsUiAutoConfiguration {

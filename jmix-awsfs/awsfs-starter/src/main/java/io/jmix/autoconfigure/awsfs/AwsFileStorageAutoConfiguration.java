@@ -18,10 +18,10 @@ package io.jmix.autoconfigure.awsfs;
 
 import io.jmix.awsfs.AwsFileStorageConfiguration;
 import io.jmix.core.CoreConfiguration;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Import;
 
-@Configuration
+@AutoConfiguration
 @Import({CoreConfiguration.class, AwsFileStorageConfiguration.class})
 public class AwsFileStorageAutoConfiguration {
 }

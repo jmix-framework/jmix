@@ -30,13 +30,13 @@ import io.jmix.ui.UiConfiguration;
 import org.springframework.boot.autoconfigure.cache.JCacheManagerCustomizer;
 import org.springframework.context.annotation.Bean;
 import io.jmix.uidata.UiDataConfiguration;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Import;
 
 import javax.cache.Cache;
 import javax.cache.configuration.MutableConfiguration;
 
-@Configuration
+@AutoConfiguration
 @Import({
         CoreConfiguration.class,
         DataConfiguration.class,

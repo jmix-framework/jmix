@@ -19,7 +19,7 @@ package io.jmix.autoconfigure.saml;
 import io.jmix.saml.SamlConfiguration;
 import io.jmix.saml.converter.SamlResponseAuthenticationConverter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -27,7 +27,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.saml2.provider.service.authentication.OpenSamlAuthenticationProvider;
 
-@Configuration
+@AutoConfiguration
 @Import({SamlConfiguration.class})
 @ConditionalOnProperty(name = "jmix.saml.use-default-configuration", matchIfMissing = true)
 public class SamlAutoConfiguration {

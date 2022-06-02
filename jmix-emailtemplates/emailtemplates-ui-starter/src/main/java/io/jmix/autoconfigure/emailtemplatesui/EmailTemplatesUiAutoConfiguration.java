@@ -19,10 +19,10 @@ package io.jmix.autoconfigure.emailtemplatesui;
 import io.jmix.emailtemplates.EmailTemplatesConfiguration;
 import io.jmix.emailtemplatesui.EmailTemplatesUiConfiguration;
 import io.jmix.grapesjs.GrapesJsConfiguration;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Import;
 
-@Configuration
+@AutoConfiguration
 @Import({EmailTemplatesConfiguration.class, EmailTemplatesUiConfiguration.class, GrapesJsConfiguration.class})
 public class EmailTemplatesUiAutoConfiguration {
 }

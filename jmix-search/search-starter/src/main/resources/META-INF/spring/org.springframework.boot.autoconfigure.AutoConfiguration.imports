@@ -1,0 +1,3 @@
+io.jmix.autoconfigure.search.SearchAutoConfiguration
+io.jmix.autoconfigure.search.IndexingQueueProcessingScheduleAutoConfiguration
+io.jmix.autoconfigure.search.EnqueueingSessionProcessingScheduleAutoConfiguration

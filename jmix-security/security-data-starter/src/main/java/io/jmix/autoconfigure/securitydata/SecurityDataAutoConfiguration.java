@@ -20,10 +20,10 @@ import io.jmix.core.CoreConfiguration;
 import io.jmix.data.DataConfiguration;
 import io.jmix.security.SecurityConfiguration;
 import io.jmix.securitydata.SecurityDataConfiguration;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Import;
 
-@Configuration
+@AutoConfiguration
 @Import({CoreConfiguration.class, DataConfiguration.class, SecurityConfiguration.class,
         SecurityDataConfiguration.class})
 public class SecurityDataAutoConfiguration {

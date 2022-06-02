@@ -18,10 +18,10 @@ package io.jmix.autoconfigure.localfs;
 
 import io.jmix.core.CoreConfiguration;
 import io.jmix.localfs.LocalFileStorageConfiguration;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Import;
 
-@Configuration
+@AutoConfiguration
 @Import({CoreConfiguration.class, LocalFileStorageConfiguration.class})
 public class LocalFileStorageAutoConfiguration {
 }

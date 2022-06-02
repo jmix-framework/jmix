@@ -25,6 +25,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.session.SessionAutoConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.Order;
@@ -37,7 +38,7 @@ import org.springframework.session.web.http.HttpSessionIdResolver;
 
 import java.util.HashMap;
 
-@Configuration(proxyBeanMethods = false)
+@AutoConfiguration
 @Import({CoreConfiguration.class, SessionsAutoConfiguration.OAuth2SessionsConfiguration.class,
         SessionsAutoConfiguration.DefaultSessionsConfiguration.class, SessionsConfiguration.class})
 @AutoConfigureAfter(SessionAutoConfiguration.class)

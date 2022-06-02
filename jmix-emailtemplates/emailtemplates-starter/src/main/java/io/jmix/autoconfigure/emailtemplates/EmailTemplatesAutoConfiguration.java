@@ -19,10 +19,10 @@ package io.jmix.autoconfigure.emailtemplates;
 import io.jmix.core.CoreConfiguration;
 import io.jmix.data.DataConfiguration;
 import io.jmix.emailtemplates.EmailTemplatesConfiguration;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Import;
 
-@Configuration
+@AutoConfiguration
 @Import({CoreConfiguration.class, DataConfiguration.class, EmailTemplatesConfiguration.class})
 public class EmailTemplatesAutoConfiguration {
 }

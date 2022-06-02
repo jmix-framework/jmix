@@ -68,7 +68,7 @@ javaPlatform {
 }
 
 dependencies {
-    api platform("org.springframework.boot:spring-boot-dependencies:2.6.7")
+    api platform("org.springframework.boot:spring-boot-dependencies:2.7.0")
     api platform('software.amazon.awssdk:bom:2.16.69')
 
     def freeVersion = version
@@ -374,7 +374,13 @@ dependencies {
 
         api 'io.leangen.graphql:graphql-spqr-spring-boot-starter:0.0.6'
         api 'com.graphql-java-kickstart:graphql-java-servlet:11.1.0'
-        api 'com.graphql-java:graphql-java:16.2'
+
+        //todo remove strict version after jmix-graphql is reworked
+        api ('com.graphql-java:graphql-java') {
+            version {
+                strictly '16.2'
+            }
+        }
 
         api 'com.opencsv:opencsv:5.5.2'
 

@@ -35,11 +35,11 @@ import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 
 import javax.net.ssl.SSLContext;
 
-@Configuration
+@AutoConfiguration
 @AutoConfigureBefore(SearchAutoConfiguration.class)
 @ConfigurationPropertiesScan
 public class SearchAwsAutoConfiguration {

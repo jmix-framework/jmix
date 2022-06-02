@@ -18,10 +18,10 @@ package io.jmix.autoconfigure.pivottable;
 
 import io.jmix.core.CoreConfiguration;
 import io.jmix.pivottable.PivotTableConfiguration;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Import;
 
-@Configuration
+@AutoConfiguration
 @Import({CoreConfiguration.class, PivotTableConfiguration.class})
 public class PivotTableAutoConfiguration {
 }

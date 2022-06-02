@@ -1,0 +1,3 @@
+io.jmix.autoconfigure.searchui.SearchUiAutoConfiguration
+io.jmix.autoconfigure.ui.UiAutoConfiguration
+io.jmix.autoconfigure.ui.vaadin.VaadinAutoConfiguration

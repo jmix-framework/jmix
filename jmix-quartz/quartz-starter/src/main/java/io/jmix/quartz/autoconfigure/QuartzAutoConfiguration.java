@@ -17,10 +17,10 @@
 package io.jmix.quartz.autoconfigure;
 
 import io.jmix.quartz.QuartzConfiguration;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Import;
 
-@Configuration
+@AutoConfiguration
 @Import({QuartzConfiguration.class})
 public class QuartzAutoConfiguration {
 }

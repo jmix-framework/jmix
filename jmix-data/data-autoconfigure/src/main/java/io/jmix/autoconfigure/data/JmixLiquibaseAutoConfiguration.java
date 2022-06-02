@@ -26,11 +26,11 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.liquibase.LiquibaseProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 
 import javax.sql.DataSource;
 
-@Configuration
+@AutoConfiguration
 @ConditionalOnClass({SpringLiquibase.class})
 @AutoConfigureAfter({DataSourceAutoConfiguration.class})
 public class JmixLiquibaseAutoConfiguration {

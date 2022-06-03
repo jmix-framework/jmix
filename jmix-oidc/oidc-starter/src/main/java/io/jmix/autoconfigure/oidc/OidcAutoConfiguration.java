@@ -129,19 +129,22 @@ public class OidcAutoConfiguration {
         @Autowired
         protected OidcUserMapper oidcUserMapper;
 
+        @Autowired
+        protected OidcProperties oidcProperties;
+
         @Override
         protected void configure(HttpSecurity http) throws Exception {
             http.apply(SecurityConfigurers.apiSecurity())
                     .and()
                     .oauth2ResourceServer()
                     .jwt()
-                    .jwtAuthenticationConverter(jmixJwtAuthenticationConverter(oidcUserMapper));
+                    .jwtAuthenticationConverter(jmixJwtAuthenticationConverter(oidcUserMapper, oidcProperties));
         }
 
         @Bean
         @ConditionalOnMissingBean(JmixJwtAuthenticationConverter.class)
-        public JmixJwtAuthenticationConverter jmixJwtAuthenticationConverter(OidcUserMapper oidcUserMapper) {
-            return new JmixJwtAuthenticationConverter(oidcUserMapper);
+        public JmixJwtAuthenticationConverter jmixJwtAuthenticationConverter(OidcUserMapper oidcUserMapper, OidcProperties oidcProperties) {
+            return new JmixJwtAuthenticationConverter(oidcUserMapper, oidcProperties);
         }
     }
 }

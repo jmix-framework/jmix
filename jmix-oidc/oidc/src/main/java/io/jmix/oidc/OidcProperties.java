@@ -18,12 +18,19 @@ public class OidcProperties {
      */
     DefaultClaimsRolesMapperConfig defaultClaimsRolesMapper;
 
+    /**
+     * JWT authentication converter configuration
+     */
+    JwtAuthenticationConverterConfig jwtAuthenticationConverter;
+
     public OidcProperties(
             @DefaultValue("true") boolean useDefaultConfiguration,
-            @DefaultValue DefaultClaimsRolesMapperConfig defaultClaimsRolesMapper
+            @DefaultValue DefaultClaimsRolesMapperConfig defaultClaimsRolesMapper,
+            @DefaultValue JwtAuthenticationConverterConfig jwtAuthenticationConverter
     ) {
         this.useDefaultConfiguration = useDefaultConfiguration;
         this.defaultClaimsRolesMapper = defaultClaimsRolesMapper;
+        this.jwtAuthenticationConverter = jwtAuthenticationConverter;
     }
 
     public boolean isUseDefaultConfiguration() {
@@ -32,6 +39,10 @@ public class OidcProperties {
 
     public DefaultClaimsRolesMapperConfig getDefaultClaimsRolesMapper() {
         return defaultClaimsRolesMapper;
+    }
+
+    public JwtAuthenticationConverterConfig getJwtAuthenticationConverter() {
+        return jwtAuthenticationConverter;
     }
 
     public static class DefaultClaimsRolesMapperConfig {
@@ -70,6 +81,23 @@ public class OidcProperties {
 
         public String getRolesClaimName() {
             return rolesClaimName;
+        }
+    }
+
+    public static class JwtAuthenticationConverterConfig {
+
+        /**
+         * JWT claim name that is used as a username of Jmix user
+         */
+        private String usernameClaim;
+
+        public JwtAuthenticationConverterConfig(
+                @DefaultValue("sub") String usernameClaim) {
+            this.usernameClaim = usernameClaim;
+        }
+
+        public String getUsernameClaim() {
+            return usernameClaim;
         }
     }
 }

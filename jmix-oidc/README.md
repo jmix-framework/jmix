@@ -31,11 +31,16 @@ spring.security.oauth2.client.registration.keycloak.client-id=<client-id>
 spring.security.oauth2.client.registration.keycloak.client-secret=<client-secret>
 spring.security.oauth2.client.registration.keycloak.scope=openid, profile, email
 spring.security.oauth2.client.provider.keycloak.issuer-uri=http://localhost:8180/auth/realms/<realm>
-spring.security.oauth2.client.provider.keycloak.user-name-attribute=preferred_username
 spring.security.oauth2.resourceserver.jwt.issuer-uri=http://localhost:8180/auth/realms/<realm>
 ```
 
 "keycloak" in the property key is the provider id. It may have any value, e.g. `spring.security.oauth2.client.registration.okta.client-id`. Client ID and client secret values must be taken from the OpenID provider. The *issuer-uri* property contains a path to the OpenID Provider [Configuration Endpoint](https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfig).
+
+By default, the "sub" claim will be used as a Jmix user username. If you want to change it use the following application property:
+
+```properties
+spring.security.oauth2.client.provider.keycloak.user-name-attribute=preferred_username
+```
 
 ## Using Default Add-on Configuration
 
@@ -213,6 +218,14 @@ spring.security.oauth2.resourceserver.jwt.issuer-uri=http://localhost:8180/auth/
 ```
 
 The value of the property is the URL contained in the `iss` claim for JWT tokens that the authorization server will issue. See Spring Security [documentation](https://docs.spring.io/spring-security/reference/servlet/oauth2/resource-server/jwt.html#_specifying_the_authorization_server) for details.
+
+By default, the "sub" claim value is used as a username of Jmix user that is set to security context. If you want to change this, use the following application property:
+
+```properties
+jmix.oidc.jwt-authentication-converter.username-claim=preferred_username
+```
+
+In most cases the property value should be aligned with the value of the `spring.security.oauth2.client.provider.keycloak.user-name-attribute` property.
 
 Access tokens obtained from OpenID Provider may be used for accessing protected endpoints provided by the REST API add-on.    
 

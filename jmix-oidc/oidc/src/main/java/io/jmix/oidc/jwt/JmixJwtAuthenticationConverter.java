@@ -1,5 +1,6 @@
 package io.jmix.oidc.jwt;
 
+import io.jmix.oidc.OidcProperties;
 import io.jmix.oidc.user.JmixOidcUser;
 import io.jmix.oidc.usermapper.OidcUserMapper;
 import org.springframework.core.convert.converter.Converter;
@@ -21,12 +22,14 @@ import java.util.Collections;
  */
 public class JmixJwtAuthenticationConverter implements Converter<Jwt, AbstractAuthenticationToken> {
 
-    protected String usernameClaimName = JwtClaimNames.SUB;
+    protected String usernameClaimName;
 
     protected OidcUserMapper oidcUserMapper;
+    protected OidcProperties oidcProperties;
 
-    public JmixJwtAuthenticationConverter(OidcUserMapper oidcUserMapper) {
+    public JmixJwtAuthenticationConverter(OidcUserMapper oidcUserMapper, OidcProperties oidcProperties) {
         this.oidcUserMapper = oidcUserMapper;
+        this.oidcProperties = oidcProperties;
     }
 
     @Override
@@ -34,7 +37,12 @@ public class JmixJwtAuthenticationConverter implements Converter<Jwt, AbstractAu
         OidcIdToken oidcIdToken = OidcIdToken.withTokenValue(jwt.getTokenValue())
                 .claims(claims -> claims.putAll(jwt.getClaims()))
                 .build();
-        DefaultOidcUser oidcUser = new DefaultOidcUser(Collections.emptyList(), oidcIdToken, usernameClaimName);
+
+        String usernameClaimToUse = usernameClaimName != null ?
+                usernameClaimName :
+                oidcProperties.getJwtAuthenticationConverter().getUsernameClaim();
+
+        DefaultOidcUser oidcUser = new DefaultOidcUser(Collections.emptyList(), oidcIdToken, usernameClaimToUse);
         JmixOidcUser jmixOidcUser = oidcUserMapper.toJmixUser(oidcUser);
         JmixJwtAuthenticationToken token = new JmixJwtAuthenticationToken(jwt,
                 jmixOidcUser,

@@ -28,9 +28,7 @@
             </column>
         </form>
         <groupBox id="entityGroupBoxId" spacing="true" caption="" visible="false">
-            <scrollBox margin="true" id="fieldsScrollBox" height="100%" width="100%" spacing="true">
-                <vbox id="propertiesGridLayout" spacing="true"/>
-            </scrollBox>
+            <scrollBox margin="true" id="fieldsScrollBox" height="100%" width="100%" spacing="true"/>
         </groupBox>
         <hbox id="actionsBox" spacing="true" visible="false">
             <button id="saveButtonId" caption="msg://saveApplicationSettings" primary="true"/>

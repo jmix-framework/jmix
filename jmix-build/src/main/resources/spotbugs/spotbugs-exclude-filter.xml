@@ -69,6 +69,11 @@
         </Or>
     </Match>
 
+    <Match>
+        <Bug pattern="MF_CLASS_MASKS_FIELD"/>
+        <Class name="io.jmix.dynattr.impl.DynAttrMetaProperty"/>
+    </Match>
+
     <!--  Nullability  -->
 
     <Match>

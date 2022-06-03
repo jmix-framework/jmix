@@ -67,7 +67,7 @@ public class AppSettingsEntityScreen extends Screen {
     @Autowired
     protected GroupBoxLayout entityGroupBoxId;
     @Autowired
-    protected VBoxLayout propertiesGridLayout;
+    protected ScrollBoxLayout fieldsScrollBox;
     @Autowired
     protected HBoxLayout actionsBox;
 
@@ -135,13 +135,13 @@ public class AppSettingsEntityScreen extends Screen {
 
     @SuppressWarnings("rawtypes")
     protected void showEntityPropertiesGridLayout() {
-        propertiesGridLayout.removeAll();
+        fieldsScrollBox.removeAll();
         if (currentMetaClass != null) {
             InstanceContainer container = initInstanceContainerWithDbEntity();
             GridLayout gridLayout = AppSettingsGridLayoutBuilder.of(getApplicationContext(), container)
-                    .withOwnerComponent(propertiesGridLayout)
+                    .withOwnerComponent(fieldsScrollBox)
                     .build();
-            propertiesGridLayout.add(gridLayout);
+            fieldsScrollBox.add(gridLayout);
 
             actionsBox.setVisible(true);
         }

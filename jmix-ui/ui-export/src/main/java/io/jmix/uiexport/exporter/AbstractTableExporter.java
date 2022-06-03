@@ -129,6 +129,7 @@ public abstract class AbstractTableExporter<T extends AbstractTableExporter> imp
         return fileName;
     }
 
+    @Nullable
     protected Object getColumnValue(Table table, Table.Column column, Object instance) {
         Function<ColumnValueContext, Object> columnValueProvider = MapUtils.isNotEmpty(columnValueProviders)
                 ? columnValueProviders.get(column.getStringId())
@@ -162,6 +163,7 @@ public abstract class AbstractTableExporter<T extends AbstractTableExporter> imp
         return cellValue;
     }
 
+    @Nullable
     protected Object getColumnValue(DataGrid dataGrid, DataGrid.Column column, Object instance) {
         Function<ColumnValueContext, Object> columnValueProvider = MapUtils.isNotEmpty(columnValueProviders)
                 ? columnValueProviders.get(column.getId())
@@ -170,12 +172,11 @@ public abstract class AbstractTableExporter<T extends AbstractTableExporter> imp
             return columnValueProvider.apply(new ColumnValueContext(dataGrid, column, instance));
         }
 
-        Object cellValue = null;
+        Object cellValue;
 
-        MetaPropertyPath propertyPath = null;
         Function<DataGrid.ColumnGeneratorEvent<Object>, ?> generator;
         if (column.getPropertyPath() != null) {
-            propertyPath = column.getPropertyPath();
+            MetaPropertyPath propertyPath = column.getPropertyPath();
 
             cellValue = EntityValues.getValueEx(instance, propertyPath.getPath());
 
@@ -211,7 +212,7 @@ public abstract class AbstractTableExporter<T extends AbstractTableExporter> imp
                     cellValue = false;
                 }
             } else {
-                return null;
+                return "";
             }
         }
 
@@ -240,6 +241,26 @@ public abstract class AbstractTableExporter<T extends AbstractTableExporter> imp
             } else {
                 return datatypeRegistry.get(Date.class).format(date);
             }
+        } else {
+            return formatValue(cellValue);
+        }
+    }
+
+    protected String formatValue(@Nullable Object cellValue) {
+        if (cellValue == null) {
+            return "";
+        }
+
+        if (cellValue instanceof Number) {
+            Number n = (Number) cellValue;
+            Datatype datatype = datatypeRegistry.get(n.getClass());
+            return datatype.format(n);
+        } else if (cellValue instanceof java.sql.Time) {
+            return datatypeRegistry.get(java.sql.Time.class).format(cellValue);
+        } else if (cellValue instanceof java.sql.Date) {
+            return datatypeRegistry.get(java.sql.Date.class).format(cellValue);
+        } else if (cellValue instanceof Date) {
+            return datatypeRegistry.get(Date.class).format(cellValue);
         } else if (cellValue instanceof Boolean) {
             return String.valueOf(cellValue);
         } else if (cellValue instanceof Enum) {
@@ -247,7 +268,7 @@ public abstract class AbstractTableExporter<T extends AbstractTableExporter> imp
         } else if (cellValue instanceof Entity) {
             return metadataTools.getInstanceName(cellValue);
         } else {
-            return cellValue == null ? "" : cellValue.toString();
+            return cellValue.toString();
         }
     }
 }

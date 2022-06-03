@@ -82,6 +82,11 @@ public class JsonExporter extends AbstractTableExporter<JsonExporter> {
                         jsonObject.add(propertyPath.getMetaProperty().getName(),
                                 JsonNull.INSTANCE);
                     }
+                } else {
+                    Object columnValue = getColumnValue(table, column, entity);
+                    if (columnValue != null) {
+                        jsonObject.add(column.getStringId(), new JsonPrimitive(formatValue(columnValue)));
+                    }
                 }
             }
             jsonElements.add(jsonObject);

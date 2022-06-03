@@ -989,7 +989,7 @@ public class MetadataTools {
      * Create a new instance and make it a shallow copy of the instance given.
      * <p> This method copies attributes according to the metadata.</p>
      * <br>
-     * <p><b>WARNING:<b/></p>
+     * <p><b>WARNING:</b></p>
      * <ol>
      *     <li>
      *         New instance will not be initialized. Entity id generation, embedded objects creation,

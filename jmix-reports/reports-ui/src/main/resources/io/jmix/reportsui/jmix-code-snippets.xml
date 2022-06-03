@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2022 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<jmixCodeSnippets xmlns="http://jmix.io/schema/core/code-snippets">
+
+    <category name="Reports">
+
+        <codeSnippet name="Run and show report" contextTypes="service,controller">
+            <inject variable="uiReportRunner" classQualifiedName="io.jmix.reportsui.runner.UiReportRunner"/>
+
+            <text language="java">
+                uiReportRunner.byReportCode("user-list")
+                        .withParametersDialogShowMode(io.jmix.reportsui.runner.ParametersDialogShowMode.IF_REQUIRED)
+                        .runAndShow();
+            </text>
+            <text language="kotlin">
+                uiReportRunner.byReportCode("user-list")
+                    .withParametersDialogShowMode(io.jmix.reportsui.runner.ParametersDialogShowMode.IF_REQUIRED)
+                    .runAndShow()
+            </text>
+
+            <description>
+                &lt;a href="https://docs.jmix.io/jmix/reports/run-report.html#ui-report-runner"&gt;Jmix Documentation&lt;/a&gt;
+            </description>
+        </codeSnippet>
+
+    </category>
+
+</jmixCodeSnippets>

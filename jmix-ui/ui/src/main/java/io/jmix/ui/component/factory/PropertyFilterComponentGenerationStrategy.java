@@ -28,15 +28,13 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.Actions;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.action.entitypicker.EntityClearAction;
-import io.jmix.ui.action.entitypicker.EntityLookupAction;
-import io.jmix.ui.app.propertyfilter.dateinterval.action.DateIntervalAction;
 import io.jmix.ui.action.valuepicker.ValueClearAction;
+import io.jmix.ui.app.propertyfilter.dateinterval.action.DateIntervalAction;
 import io.jmix.ui.app.propertyfilter.dateinterval.model.BaseDateInterval;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.data.DataAwareComponentsTools;
 import io.jmix.ui.component.impl.EntityFieldCreationSupport;
 import io.jmix.ui.icon.Icons;
-import io.jmix.ui.screen.OpenMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
@@ -146,17 +144,7 @@ public class PropertyFilterComponentGenerationStrategy extends AbstractComponent
 
     @Override
     protected Component createEntityField(ComponentGenerationContext context, MetaPropertyPath mpp) {
-        EntityPicker<?> field = uiComponents.create(EntityPicker.class);
-
-        MetaClass metaClass = mpp.getMetaProperty().getRange().asClass();
-        field.setMetaClass(metaClass);
-
-        EntityLookupAction<?> lookupAction = (EntityLookupAction<?>) actions.create(EntityLookupAction.ID);
-        lookupAction.setOpenMode(OpenMode.DIALOG);
-        field.addAction(lookupAction);
-        field.addAction(actions.create(EntityClearAction.ID));
-
-        return field;
+        return (EntityPicker<?>) entityFieldCreationSupport.createEntityField(mpp, context.getOptions());
     }
 
     @Override

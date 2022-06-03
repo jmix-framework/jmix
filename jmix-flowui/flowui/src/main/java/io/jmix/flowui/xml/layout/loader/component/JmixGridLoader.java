@@ -31,9 +31,8 @@ import io.jmix.core.impl.FetchPlanRepositoryImpl;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.MetadataObject;
-import io.jmix.flowui.component.grid.JmixGrid;
+import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.grid.JmixGridDataProvider;
-import io.jmix.flowui.data.provider.StringPresentationValueProvider;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.model.*;
 import io.jmix.flowui.model.impl.DataLoadersHelper;
@@ -52,7 +51,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 //FIXME: kremnevda,  23.04.2022
-public class JmixGridLoader extends AbstractComponentLoader<JmixGrid<?>> {
+public class JmixGridLoader extends AbstractComponentLoader<DataGrid<?>> {
 
     protected List<ComponentLoader<?>> pendingLoadComponents = new ArrayList<>();
 
@@ -83,8 +82,8 @@ public class JmixGridLoader extends AbstractComponentLoader<JmixGrid<?>> {
     }
 
     @Override
-    protected JmixGrid<?> createComponent() {
-        return factory.create(JmixGrid.class);
+    protected DataGrid<?> createComponent() {
+        return factory.create(DataGrid.class);
     }
 
     @Override
@@ -140,7 +139,7 @@ public class JmixGridLoader extends AbstractComponentLoader<JmixGrid<?>> {
     }
 
     @SuppressWarnings("rawtypes")
-    protected List<Column> loadColumns(JmixGrid resultComponent, Element columnsElement, MetaClass metaClass, FetchPlan fetchPlan) {
+    protected List<Column> loadColumns(DataGrid resultComponent, Element columnsElement, MetaClass metaClass, FetchPlan fetchPlan) {
         Boolean includeAll = loadBoolean(columnsElement, "includeAll").orElse(false);
 
         if (includeAll) {
@@ -157,7 +156,7 @@ public class JmixGridLoader extends AbstractComponentLoader<JmixGrid<?>> {
         return columns;
     }
 
-    protected List<Column> loadColumnsByInclude(JmixGrid component, Element columnsElement, MetaClass metaClass, FetchPlan fetchPlan) {
+    protected List<Column> loadColumnsByInclude(DataGrid component, Element columnsElement, MetaClass metaClass, FetchPlan fetchPlan) {
         Collection<String> appliedProperties = getAppliedProperties(columnsElement, fetchPlan, metaClass);
 
         List<Column> columns = new ArrayList<>(appliedProperties.size());
@@ -200,7 +199,7 @@ public class JmixGridLoader extends AbstractComponentLoader<JmixGrid<?>> {
 
     //TODO: kremnevda, refactor 21.04.2022
     @SuppressWarnings("rawtypes")
-    protected Column loadColumn(JmixGrid component, Element element, MetaClass metaClass) {
+    protected Column loadColumn(DataGrid component, Element element, MetaClass metaClass) {
         String property = element.attributeValue("property");
         if (property == null) {
             throw new GuiDevelopmentException("A column must have specified property",

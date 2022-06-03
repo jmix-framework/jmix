@@ -2,22 +2,19 @@ package io.jmix.flowui.component.grid;
 
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridSelectionModel;
-import com.vaadin.flow.component.treegrid.TreeGrid;
 import com.vaadin.flow.data.provider.hierarchy.HierarchicalDataProvider;
 import com.vaadin.flow.data.selection.SelectionListener;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.flowui.data.DataUnit;
-import io.jmix.flowui.data.grid.GridDataItems;
-import io.jmix.flowui.data.grid.TreeGridDataItems;
-import io.jmix.flowui.kit.component.HasActions;
 import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.component.LookupComponent.MultiSelectLookupComponent;
-import io.jmix.flowui.kit.component.SelectionChangeNotifier;
 import io.jmix.flowui.component.delegate.TreeGridDelegate;
-import io.jmix.flowui.kit.action.Action;
+import io.jmix.flowui.data.DataUnit;
+import io.jmix.flowui.data.grid.TreeGridDataItems;
+import io.jmix.flowui.kit.component.grid.GridActionsSupport;
+import io.jmix.flowui.kit.component.grid.JmixTreeGrid;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -26,8 +23,7 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Set;
 
-public class JmixTreeGrid<E> extends TreeGrid<E> implements ListDataComponent<E>,
-        SelectionChangeNotifier<Grid<E>, E>, MultiSelectLookupComponent<E>, HasActions,
+public class TreeDataGrid<E> extends JmixTreeGrid<E> implements ListDataComponent<E>, MultiSelectLookupComponent<E>,
         ApplicationContextAware, InitializingBean {
 
     protected ApplicationContext applicationContext;
@@ -53,11 +49,12 @@ public class JmixTreeGrid<E> extends TreeGrid<E> implements ListDataComponent<E>
         return applicationContext.getBean(TreeGridDelegate.class, this);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void setDataProvider(HierarchicalDataProvider<E, ?> dataProvider) {
         // TODO: gg, refactor
         if (dataProvider instanceof TreeGridDataItems) {
-            gridDelegate.setItems((GridDataItems<E>) dataProvider);
+            gridDelegate.setItems((TreeGridDataItems<E>) dataProvider);
         }
 
         super.setDataProvider(dataProvider);
@@ -116,27 +113,6 @@ public class JmixTreeGrid<E> extends TreeGrid<E> implements ListDataComponent<E>
     }
 
     @Override
-    public void addAction(Action action, int index) {
-        gridDelegate.addAction(action, index);
-    }
-
-    @Override
-    public void removeAction(Action action) {
-        gridDelegate.removeAction(action);
-    }
-
-    @Override
-    public Collection<Action> getActions() {
-        return gridDelegate.getActions();
-    }
-
-    @Nullable
-    @Override
-    public Action getAction(String id) {
-        return gridDelegate.getAction(id);
-    }
-
-    @Override
     public GridSelectionModel<E> setSelectionMode(SelectionMode selectionMode) {
         GridSelectionModel<E> selectionModel = super.setSelectionMode(selectionMode);
 
@@ -162,7 +138,7 @@ public class JmixTreeGrid<E> extends TreeGrid<E> implements ListDataComponent<E>
      * Adds column by the meta property path and specified key. The key is used to identify the column, see
      * {@link #getColumnByKey(String)}.
      *
-     * @param key column key
+     * @param key              column key
      * @param metaPropertyPath meta property path to add column
      * @return added column
      */
@@ -171,5 +147,11 @@ public class JmixTreeGrid<E> extends TreeGrid<E> implements ListDataComponent<E>
         Preconditions.checkNotNullArgument(key);
 
         return gridDelegate.addColumn(key, metaPropertyPath);
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    @Override
+    protected GridActionsSupport<JmixTreeGrid<E>, E> createActionsSupport() {
+        return new DataGridActionsSupport(this);
     }
 }

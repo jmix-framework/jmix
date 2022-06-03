@@ -5,7 +5,6 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridNoneSelectionModel;
 import com.vaadin.flow.component.grid.GridSelectionModel;
 import com.vaadin.flow.component.grid.GridSortOrder;
-import com.vaadin.flow.component.grid.contextmenu.GridMenuItem;
 import com.vaadin.flow.data.event.SortEvent;
 import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.data.provider.SortDirection;
@@ -21,22 +20,16 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.UiComponents;
-import io.jmix.flowui.action.binder.ActionBinders;
-import io.jmix.flowui.action.list.ListDataComponentAction;
-import io.jmix.flowui.data.binding.JmixBinding;
+import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.data.ContainerDataUnit;
 import io.jmix.flowui.data.EmptyDataUnit;
 import io.jmix.flowui.data.EntityDataUnit;
+import io.jmix.flowui.data.binding.JmixBinding;
 import io.jmix.flowui.data.grid.GridDataItems;
-import io.jmix.flowui.kit.component.HasActions;
-import io.jmix.flowui.component.ListDataComponent;
-import io.jmix.flowui.component.delegate.impl.BaseHasActionsDelegate;
-import io.jmix.flowui.component.grid.JmixGridContextMenu;
 import io.jmix.flowui.data.provider.StringPresentationValueProvider;
-import io.jmix.flowui.kit.action.Action;
+import io.jmix.flowui.kit.component.HasActions;
 import io.jmix.flowui.model.CollectionContainer;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
@@ -54,9 +47,6 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
     protected MetadataTools metadataTools;
     protected MessageTools messageTools;
     protected UiComponents uiComponents;
-
-    protected JmixGridContextMenu<E> contextMenu;
-    protected BaseHasActionsDelegate<C> hasActionsDelegate;
 
     protected GridDataItems<E> dataBinding;
 
@@ -77,7 +67,6 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
     public void afterPropertiesSet() throws Exception {
         autowireDependencies();
         initComponent();
-        initContextMenu();
     }
 
     protected void autowireDependencies() {
@@ -88,13 +77,6 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
 
     protected void initComponent() {
         component.addSortListener(this::onSort);
-    }
-
-    @SuppressWarnings("unchecked")
-    protected void initContextMenu() {
-        contextMenu = uiComponents.create(JmixGridContextMenu.class);
-        contextMenu.setTarget(component);
-        contextMenu.setVisible(false);
     }
 
     protected void onSort(SortEvent<Grid<E>, GridSortOrder<E>> event) {
@@ -208,40 +190,6 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
                 detachSelectionListener();
             }
         };
-    }
-
-    public void addAction(Action action, int index) {
-        if (StringUtils.isNotEmpty(action.getText())) {
-            getHasActionsDelegate()
-                    .addBinding(action, index, GridMenuItem.class,
-                            GridMenuItem<E>::addMenuItemClickListener,
-                            (actionIndex) -> createGridMenuItem(action.getText(), actionIndex),
-                            this::removeMenuItem);
-
-            if (!contextMenu.isVisible()) {
-                contextMenu.setVisible(true);
-            }
-        } else {
-            getHasActionsDelegate().addAction(action, index);
-        }
-
-        attachAction(action);
-    }
-
-    @SuppressWarnings("rawtypes")
-    public void removeAction(Action action) {
-        List<GridMenuItem> items = getHasActionsDelegate().getComponentsByAction(GridMenuItem.class, action);
-        getHasActionsDelegate().removeAction(action);
-        items.forEach(this::removeMenuItem);
-    }
-
-    public Collection<Action> getActions() {
-        return getHasActionsDelegate().getActions();
-    }
-
-    @Nullable
-    public Action getAction(String id) {
-        return getHasActionsDelegate().getAction(id).orElse(null);
     }
 
     public Grid.Column<E> addColumn(String key, MetaPropertyPath metaPropertyPath) {
@@ -363,42 +311,6 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
         if (selectionListenerRegistration != null) {
             selectionListenerRegistration.remove();
             selectionListenerRegistration = null;
-        }
-    }
-
-    protected void removeMenuItem(GridMenuItem<E> menuItem) {
-        contextMenu.remove(menuItem);
-        if (getActions().isEmpty()) {
-            contextMenu.setVisible(false);
-        }
-    }
-
-    protected BaseHasActionsDelegate<C> getHasActionsDelegate() {
-        if (hasActionsDelegate == null) {
-            hasActionsDelegate = createHasActionsDelegate();
-        }
-        return hasActionsDelegate;
-    }
-
-    @SuppressWarnings("unchecked")
-    protected BaseHasActionsDelegate<C> createHasActionsDelegate() {
-        ActionBinders actionBinders = applicationContext.getBean(ActionBinders.class);
-        return applicationContext.getBean(BaseHasActionsDelegate.class, actionBinders.binder(component));
-    }
-
-    protected GridMenuItem<E> createGridMenuItem(String text, int index) {
-        List<GridMenuItem<E>> items = contextMenu.getItems();
-        if (items.size() == index) {
-            return contextMenu.addItem(text);
-        }
-
-        return contextMenu.addItemAtIndex(index, text);
-    }
-
-    @SuppressWarnings("unchecked")
-    protected void attachAction(Action action) {
-        if (action instanceof ListDataComponentAction) {
-            ((ListDataComponentAction<?, E>) action).setTarget(component);
         }
     }
 

@@ -9,14 +9,13 @@ import com.vaadin.flow.shared.Registration;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.flowui.data.DataUnit;
-import io.jmix.flowui.data.grid.GridDataItems;
-import io.jmix.flowui.kit.component.HasActions;
 import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.component.LookupComponent.MultiSelectLookupComponent;
-import io.jmix.flowui.kit.component.SelectionChangeNotifier;
 import io.jmix.flowui.component.delegate.GridDelegate;
-import io.jmix.flowui.kit.action.Action;
+import io.jmix.flowui.data.DataUnit;
+import io.jmix.flowui.data.grid.GridDataItems;
+import io.jmix.flowui.kit.component.grid.GridActionsSupport;
+import io.jmix.flowui.kit.component.grid.JmixGrid;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -25,8 +24,8 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Set;
 
-public class JmixGrid<E> extends Grid<E> implements ListDataComponent<E>, SelectionChangeNotifier<Grid<E>, E>,
-        MultiSelectLookupComponent<E>, HasActions, ApplicationContextAware, InitializingBean {
+public class DataGrid<E> extends JmixGrid<E> implements ListDataComponent<E>, MultiSelectLookupComponent<E>,
+        ApplicationContextAware, InitializingBean {
 
     protected ApplicationContext applicationContext;
 
@@ -104,27 +103,6 @@ public class JmixGrid<E> extends Grid<E> implements ListDataComponent<E>, Select
     }
 
     @Override
-    public void addAction(Action action, int index) {
-        gridDelegate.addAction(action, index);
-    }
-
-    @Override
-    public void removeAction(Action action) {
-        gridDelegate.removeAction(action);
-    }
-
-    @Override
-    public Collection<Action> getActions() {
-        return gridDelegate.getActions();
-    }
-
-    @Nullable
-    @Override
-    public Action getAction(String id) {
-        return gridDelegate.getAction(id);
-    }
-
-    @Override
     public Registration addSelectionListener(SelectionListener<Grid<E>, E> listener) {
         return gridDelegate.addSelectionListener(listener);
     }
@@ -160,7 +138,7 @@ public class JmixGrid<E> extends Grid<E> implements ListDataComponent<E>, Select
      * Adds column by the meta property path and specified key. The key is used to identify the column, see
      * {@link #getColumnByKey(String)}.
      *
-     * @param key column key
+     * @param key              column key
      * @param metaPropertyPath meta property path to add column
      * @return added column
      */
@@ -169,5 +147,11 @@ public class JmixGrid<E> extends Grid<E> implements ListDataComponent<E>, Select
         Preconditions.checkNotNullArgument(key);
 
         return gridDelegate.addColumn(key, metaPropertyPath);
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    @Override
+    protected GridActionsSupport<JmixGrid<E>, E> createActionsSupport() {
+        return new DataGridActionsSupport(this);
     }
 }

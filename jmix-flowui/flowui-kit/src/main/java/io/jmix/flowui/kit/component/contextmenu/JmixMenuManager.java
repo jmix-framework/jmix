@@ -1,4 +1,4 @@
-package io.jmix.flowui.component.contextmenu;
+package io.jmix.flowui.kit.component.contextmenu;
 
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Component;

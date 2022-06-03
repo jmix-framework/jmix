@@ -89,6 +89,8 @@ public class ValuePickerActionSupport {
         ValuePickerButton button = new ValuePickerButton();
         button.setAction(action);
         getActionsLayout().addComponentAtIndex(index, button);
+
+        actionBinding.put(action, button);
     }
 
     protected void removeButton(Action action) {

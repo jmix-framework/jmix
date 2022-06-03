@@ -28,6 +28,8 @@ import io.jmix.securityui.model.BaseRoleModel;
 import io.jmix.securityui.model.ResourceRoleModel;
 import io.jmix.securityui.model.RoleModelConverter;
 import io.jmix.securityui.screen.role.RemoveRoleConsumer;
+import io.jmix.securityui.screen.rolefilter.RoleFilter;
+import io.jmix.securityui.screen.rolefilter.RoleFilterFragment;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.RemoveOperation;
 import io.jmix.ui.ScreenBuilders;
@@ -77,9 +79,19 @@ public class ResourceRoleModelBrowse extends StandardLookup<ResourceRoleModel> {
     @Autowired
     protected RemoveOperation removeOperation;
 
+    @Autowired
+    private RoleFilterFragment filterFragment;
+
+    private RoleFilter roleFilter = new RoleFilter();
+
     @Subscribe
     public void onBeforeShow(BeforeShowEvent event) {
         loadRoles();
+
+        filterFragment.setChangeListener(roleFilter -> {
+            this.roleFilter = roleFilter;
+            loadRoles();
+        });
     }
 
     @Subscribe("roleModelsTable.refresh")
@@ -137,6 +149,7 @@ public class ResourceRoleModelBrowse extends StandardLookup<ResourceRoleModel> {
     protected void loadRoles() {
         Collection<ResourceRole> roles = roleRepository.getAllRoles();
         List<ResourceRoleModel> roleModels = roles.stream()
+                .filter(role -> roleFilter.matches(role))
                 .map(roleModelConverter::createResourceRoleModel)
                 .sorted(Comparator.comparing(ResourceRoleModel::getName))
                 .collect(Collectors.toList());

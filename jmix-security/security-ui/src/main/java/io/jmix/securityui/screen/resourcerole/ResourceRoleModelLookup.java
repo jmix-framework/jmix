@@ -19,6 +19,8 @@ package io.jmix.securityui.screen.resourcerole;
 import io.jmix.security.role.ResourceRoleRepository;
 import io.jmix.securityui.model.ResourceRoleModel;
 import io.jmix.securityui.model.RoleModelConverter;
+import io.jmix.securityui.screen.rolefilter.RoleFilter;
+import io.jmix.securityui.screen.rolefilter.RoleFilterFragment;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.screen.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,12 +43,23 @@ public class ResourceRoleModelLookup extends StandardLookup<ResourceRoleModel> {
     @Autowired
     private RoleModelConverter roleModelConverter;
 
+    @Autowired
+    private RoleFilterFragment filterFragment;
+
     @Subscribe
     public void onBeforeShow(BeforeShowEvent event) {
+        loadRoles(new RoleFilter());
+
+        filterFragment.setSourceFieldVisible(false);
+        filterFragment.setChangeListener(this::loadRoles);
+    }
+
+    private void loadRoles(RoleFilter roleFilter) {
         List<ResourceRoleModel> roleModels = roleRepository.getAllRoles().stream()
+                .filter(roleFilter::matches)
                 .map(roleModelConverter::createResourceRoleModel)
                 .sorted(Comparator.comparing(ResourceRoleModel::getName))
                 .collect(Collectors.toList());
-        roleModelsDc.getMutableItems().addAll(roleModels);
+        roleModelsDc.setItems(roleModels);
     }
 }

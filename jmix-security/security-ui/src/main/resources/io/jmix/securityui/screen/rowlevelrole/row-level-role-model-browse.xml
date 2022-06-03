@@ -29,6 +29,7 @@
         <presentations id="presentations" auto="true"/>
     </facets>
     <layout spacing="true" expand="roleModelsTable">
+        <fragment id="filterFragment" screen="sec_RoleFilterFragment"/>
         <groupTable id="roleModelsTable"
                     width="100%"
                     dataContainer="roleModelsDc">

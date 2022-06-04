@@ -16,6 +16,7 @@
 
 package io.jmix.rest.impl.controller;
 
+import io.jmix.core.DeletePolicyException;
 import io.jmix.core.FileTransferException;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
@@ -53,7 +54,7 @@ public class RestControllerExceptionHandler {
     protected static final Collection<Class> SERIALIZABLE_INVALID_VALUE_TYPES =
             Collections.unmodifiableList(
                     Arrays.asList(
-                            String.class, Date.class, LocalDate.class,  LocalDateTime.class, OffsetDateTime.class,
+                            String.class, Date.class, LocalDate.class, LocalDateTime.class, OffsetDateTime.class,
                             LocalTime.class, OffsetTime.class, Number.class, Enum.class, UUID.class
                     ));
 
@@ -147,6 +148,13 @@ public class RestControllerExceptionHandler {
         log.error("Optimistic lock", e);
         ErrorInfo errorInfo = new ErrorInfo("Optimistic lock", e.getMessage());
         return new ResponseEntity<>(errorInfo, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(DeletePolicyException.class)
+    @ResponseBody
+    public ResponseEntity<ErrorInfo> handleDeletePolicyException(DeletePolicyException e) {
+        log.error("DeletePolicyException", e);
+        return new ResponseEntity<>(new ErrorInfo("Delete policy violation", e.getMessage()), HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(Exception.class)

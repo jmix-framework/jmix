@@ -22,6 +22,8 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.10.xsd">
 
     <changeSet author="search" id="1">
+        <validCheckSum>8:9775275ddd21e1c7c71eb830ed15c6cf</validCheckSum>
+        <validCheckSum>8:2ed28a382a18c6ead38a20ab1d596ff2</validCheckSum>
         <createTable tableName="SEARCH_INDEXING_QUEUE">
             <column name="ID" type="${uuid.type}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="PK_SEARCH_INDEXING_QUEUE"/>
@@ -32,7 +34,7 @@
             <column name="ENTITY_ID" type="VARCHAR(1000)">
                 <constraints nullable="false"/>
             </column>
-            <column name="ENTITY_NAME" type="VARCHAR(1000)"/>
+            <column name="ENTITY_NAME" type="VARCHAR(255)"/>
             <column name="CREATED_BY" type="VARCHAR(255)"/>
             <column name="CREATED_DATE" type="DATETIME"/>
         </createTable>

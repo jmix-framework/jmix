@@ -49,7 +49,7 @@ public class IndexingQueueItem {
     @Column(name = "ENTITY_ID", nullable = false, length = 1000)
     private String entityId;
 
-    @Column(name = "ENTITY_NAME", length = 1000)
+    @Column(name = "ENTITY_NAME")
     private String entityName;
 
     @CreatedBy

@@ -102,7 +102,7 @@ public class DatabaseRowLevelRoleProvider extends BaseDatabaseRoleProvider<RowLe
         return role;
     }
 
-    protected RowLevelBiPredicate<Object, ApplicationContext> createPredicateFromScript(String script) {
+    public RowLevelBiPredicate<Object, ApplicationContext> createPredicateFromScript(String script) {
         return (entity, applicationContext) -> {
             String modifiedScript = script.replace("{E}", "__entity__");
             Map<String, Object> arguments = new HashMap<>();

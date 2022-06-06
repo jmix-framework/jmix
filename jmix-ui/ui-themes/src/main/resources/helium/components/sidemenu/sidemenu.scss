@@ -413,6 +413,10 @@ $jmix-sidemenu-top-height--large: $v-unit-size--large + 2 * $jmix-sidemenu-top-o
   background: var(--sidemenu-item-selected-background-color);
   color: var(--sidemenu-item-selected-color);
 
+  .v-ch & span.v-icon {
+    color: var(--sidemenu-item-selected-color);
+  }
+
   &:focus,
   &:hover,
   &.selected {

@@ -19,6 +19,7 @@ package io.jmix.autoconfigure.data;
 import io.jmix.core.Stores;
 import io.jmix.data.impl.liquibase.LiquibaseChangeLogProcessor;
 import liquibase.integration.spring.SpringLiquibase;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -46,7 +47,9 @@ public class JmixLiquibaseAutoConfiguration {
     @Bean(name = "jmix_Liquibase")
     @ConditionalOnClass({SpringLiquibase.class})
     @ConditionalOnMissingBean(name = "jmix_Liquibase")
-    public SpringLiquibase liquibase(DataSource dataSource, LiquibaseChangeLogProcessor processor) {
-        return JmixLiquibaseCreator.create(dataSource, liquibaseProperties(), processor, Stores.MAIN);
+    public SpringLiquibase liquibase(DataSource dataSource,
+                                     LiquibaseChangeLogProcessor processor,
+                                     @Qualifier("jmix_LiquibaseProperties") LiquibaseProperties properties) {
+        return JmixLiquibaseCreator.create(dataSource, properties, processor, Stores.MAIN);
     }
 }

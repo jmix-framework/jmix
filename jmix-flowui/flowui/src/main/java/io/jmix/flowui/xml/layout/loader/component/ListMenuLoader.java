@@ -16,7 +16,6 @@
 
 package io.jmix.flowui.xml.layout.loader.component;
 
-import com.google.common.base.Strings;
 import io.jmix.flowui.component.menu.JmixListMenu;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import org.dom4j.Element;
@@ -37,8 +36,11 @@ public class ListMenuLoader extends AbstractComponentLoader<JmixListMenu> {
     }
 
     protected void loadMenuConfig(Element element) {
-        String loadMenuConfig = Strings.emptyToNull(element.attributeValue("loadMenuConfig"));
-        if (Strings.isNullOrEmpty(loadMenuConfig) || Boolean.parseBoolean(loadMenuConfig)) {
+        Boolean loadMenuConfig = getLoaderSupport()
+                .loadBoolean(element, "loadMenuConfig")
+                .orElse(true);
+
+        if (loadMenuConfig) {
             resultComponent.loadMenuConfig();
         }
     }

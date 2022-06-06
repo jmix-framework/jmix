@@ -37,4 +37,9 @@
                       columnDataType="varchar(4000)"/>
     </changeSet>
 
+    <!--  The byte_array.type variable value has been changed, need to update the column type-->
+    <changeSet author="reports" id="2" context="!cuba" dbms="mysql, mariadb">
+        <modifyDataType tableName="REPORT_TEMPLATE" columnName="CONTENT" newDataType="${byte_array.type}"/>
+    </changeSet>
+
 </databaseChangeLog>

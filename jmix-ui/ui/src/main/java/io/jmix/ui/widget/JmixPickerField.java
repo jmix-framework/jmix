@@ -215,6 +215,15 @@ public class JmixPickerField<T> extends com.vaadin.ui.CustomField<T> implements 
         ((JmixTextField) getField()).setReadOnlyFocusable(!isReadOnly() && fieldReadOnly);
     }
 
+    @Nullable
+    public String getPlaceholder() {
+        return ((JmixTextField) getField()).getPlaceholder();
+    }
+
+    public void setPlaceholder(@Nullable String placeholder) {
+        ((JmixTextField) getField()).setPlaceholder(placeholder);
+    }
+
     @Override
     public void attach() {
         suppressTextChangeListener = true;

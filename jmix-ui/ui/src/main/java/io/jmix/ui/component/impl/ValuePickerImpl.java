@@ -472,6 +472,17 @@ public class ValuePickerImpl<V>
         }
     }
 
+    @Nullable
+    @Override
+    public String getInputPrompt() {
+        return component.getPlaceholder();
+    }
+
+    @Override
+    public void setInputPrompt(@Nullable String inputPrompt) {
+        component.setPlaceholder(inputPrompt);
+    }
+
     public class WebValuePickerActionHandler implements com.vaadin.event.Action.Handler {
 
         protected int[] modifiers;

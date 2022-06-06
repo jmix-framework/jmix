@@ -54,7 +54,7 @@ import java.util.function.Function;
         }
 )
 public interface ValuePicker<V> extends Field<V>, HasFormatter<V>,
-        ActionsHolder, Buffered, Component.Focusable, SupportsUserAction<V> {
+        ActionsHolder, Buffered, Component.Focusable, SupportsUserAction<V>, HasInputPrompt {
 
     String NAME = "valuePicker";
 

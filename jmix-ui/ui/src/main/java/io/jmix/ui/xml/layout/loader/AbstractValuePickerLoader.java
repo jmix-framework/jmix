@@ -41,6 +41,7 @@ public abstract class AbstractValuePickerLoader<T extends ValuePicker> extends A
 
         loadBuffered(resultComponent, element);
         loadBoolean(element, "fieldEditable", resultComponent::setFieldEditable);
+        loadInputPrompt(resultComponent, element);
 
         loadFormatter(resultComponent, element);
     }

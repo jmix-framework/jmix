@@ -148,6 +148,17 @@ public class JmixSuggestionPickerField<T> extends JmixPickerField<T> {
         getFieldInternal().setInputPrompt(inputPrompt);
     }
 
+    @Nullable
+    @Override
+    public String getPlaceholder() {
+        return getInputPrompt();
+    }
+
+    @Override
+    public void setPlaceholder(@Nullable String placeholder) {
+        setInputPrompt(placeholder);
+    }
+
     // copied from com.vaadin.ui.AbstractComponent#setStyleName
     public void setPopupStyleName(@Nullable String styleName) {
         getFieldInternal().setPopupStyleName(styleName);

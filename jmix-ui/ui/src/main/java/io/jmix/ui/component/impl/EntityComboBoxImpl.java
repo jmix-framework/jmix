@@ -359,18 +359,12 @@ public class EntityComboBoxImpl<V> extends EntityPickerImpl<V>
         getComponent().setPopupWidth(width);
     }
 
-    @Nullable
-    @Override
-    public String getInputPrompt() {
-        return getComponent().getPlaceholder();
-    }
-
     @Override
     public void setInputPrompt(@Nullable String inputPrompt) {
         if (StringUtils.isNotBlank(inputPrompt)) {
             setNullSelectionCaption(generateItemCaption(null));
         }
-        getComponent().setPlaceholder(inputPrompt);
+        super.setInputPrompt(inputPrompt);
     }
 
     @Nullable

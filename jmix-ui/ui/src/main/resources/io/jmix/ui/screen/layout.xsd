@@ -2242,6 +2242,7 @@
 
                 <xs:attribute name="fieldEditable" type="xs:boolean"/>
                 <xs:attribute name="stylename" type="valuePickerStylename"/>
+                <xs:attribute name="inputPrompt" type="resourceString"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -2285,6 +2286,7 @@
                 <xs:attribute name="metaClass" type="xs:string"/>
                 <xs:attribute name="fieldEditable" type="xs:boolean"/>
                 <xs:attribute name="stylename" type="entityPickerStylename"/>
+                <xs:attribute name="inputPrompt" type="resourceString"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

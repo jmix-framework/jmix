@@ -16,6 +16,7 @@
 package io.jmix.ui.component.formatter;
 
 
+import io.jmix.core.DateTimeTransformations;
 import io.jmix.core.LocaleResolver;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.datatype.FormatStrings;
@@ -31,8 +32,10 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 /**
@@ -48,7 +51,7 @@ import java.util.Date;
 )
 @Component("ui_DateFormatter")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class DateFormatter implements Formatter<Date> {
+public class DateFormatter<V> implements Formatter<V> {
 
     @Autowired
     protected CurrentAuthentication currentAuthentication;
@@ -56,6 +59,8 @@ public class DateFormatter implements Formatter<Date> {
     protected Messages messages;
     @Autowired
     protected FormatStringsRegistry formatStringsRegistry;
+    @Autowired
+    protected DateTimeTransformations dateTimeTransformations;
 
     protected String format;
     protected String type;
@@ -96,7 +101,7 @@ public class DateFormatter implements Formatter<Date> {
 
     @Nullable
     @Override
-    public String apply(@Nullable Date value) {
+    public String apply(@Nullable V value) {
         if (value == null) {
             return null;
         }
@@ -123,16 +128,30 @@ public class DateFormatter implements Formatter<Date> {
         if (StringUtils.isBlank(format)) {
             return value.toString();
         } else {
-            if (format.startsWith("msg://")) {
-                format = messages.getMessage(format.substring(6));
-            }
-            DateFormat df = new SimpleDateFormat(format);
-
-            if (useUserTimezone && currentAuthentication.isSet()) {
-                df.setTimeZone(currentAuthentication.getTimeZone());
-            }
-
-            return df.format(value);
+            return applyFormatInternal(value);
         }
+    }
+
+    protected String applyFormatInternal(V value) {
+        if (format.startsWith("msg://")) {
+            format = messages.getMessage(format.substring(6));
+        }
+
+        ZonedDateTime zonedDateTime = dateTimeTransformations.transformToZDT(value);
+        DateTimeFormatter df = DateTimeFormatter.ofPattern(format);
+
+        if (currentAuthentication.isSet()) {
+            df = df.withLocale(currentAuthentication.getLocale());
+
+            if (useUserTimezone
+                    && dateTimeTransformations.isDateTypeSupportsTimeZones(value.getClass())) {
+                ZoneId zoneId = currentAuthentication.getTimeZone().toZoneId();
+
+                zonedDateTime = zonedDateTime.withZoneSameInstant(zoneId);
+                df = df.withZone(zoneId);
+            }
+        }
+
+        return df.format(zonedDateTime);
     }
 }

@@ -346,7 +346,7 @@ dependencies {
 
         api 'org.springframework.cloud:spring-cloud-aws-messaging:2.2.6.RELEASE'
 
-        api 'org.springframework.security.oauth:spring-security-oauth2:2.5.1.RELEASE'
+        api 'org.springframework.security.oauth:spring-security-oauth2:2.5.2.RELEASE'
 
         api 'javax.cache:cache-api:1.1.1'
 

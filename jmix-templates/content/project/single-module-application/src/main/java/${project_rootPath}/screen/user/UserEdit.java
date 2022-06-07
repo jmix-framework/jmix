@@ -2,10 +2,12 @@ package ${project_rootPackage}.screen.user;
 
 import ${project_rootPackage}.entity.User;
 import io.jmix.core.EntityStates;
+import io.jmix.core.security.event.SingleUserPasswordChangeEvent;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.component.ComboBox;
 import io.jmix.ui.component.PasswordField;
 import io.jmix.ui.component.TextField;
+import io.jmix.ui.model.DataContext;
 import io.jmix.ui.navigation.Route;
 import io.jmix.ui.screen.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,11 +47,14 @@ public class UserEdit extends StandardEditor<User> {
     @Autowired
     private ComboBox<String> timeZoneField;
 
+    private boolean isNewEntity;
+
     @Subscribe
     public void onInitEntity(InitEntityEvent<User> event) {
         usernameField.setEditable(true);
         passwordField.setVisible(true);
         confirmPasswordField.setVisible(true);
+        isNewEntity = true;
     }
 
     @Subscribe
@@ -69,6 +74,13 @@ public class UserEdit extends StandardEditor<User> {
                 event.preventCommit();
             }
             getEditedEntity().setPassword(passwordEncoder.encode(passwordField.getValue()));
+        }
+    }
+
+    @Subscribe(target = Target.DATA_CONTEXT)
+    public void onPostCommit(DataContext.PostCommitEvent event) {
+        if (isNewEntity) {
+            getApplicationContext().publishEvent(new SingleUserPasswordChangeEvent(getEditedEntity().getUsername(), passwordField.getValue()));
         }
     }
 

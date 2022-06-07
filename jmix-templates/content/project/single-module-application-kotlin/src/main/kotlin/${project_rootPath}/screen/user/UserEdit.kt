@@ -2,6 +2,7 @@ package ${project_rootPackage}.screen.user
 
 import ${project_rootPackage}.entity.User
 import io.jmix.core.EntityStates
+import io.jmix.core.security.event.SingleUserPasswordChangeEvent
 import io.jmix.ui.Notifications
 import io.jmix.ui.component.ComboBox
 import io.jmix.ui.component.PasswordField
@@ -42,11 +43,14 @@ open class UserEdit : StandardEditor<User>() {
     @Autowired
     private lateinit var timeZoneField: ComboBox<String>
 
+    private var isNewEntity: Boolean = false
+
     @Subscribe
     fun onInitEntity(event: InitEntityEvent<User>?) {
         usernameField.isEditable = true
         passwordField.isVisible = true
         confirmPasswordField.isVisible = true
+        isNewEntity = true
     }
 
     @Subscribe
@@ -66,6 +70,13 @@ open class UserEdit : StandardEditor<User>() {
                 event.preventCommit()
             }
             editedEntity.password = passwordEncoder.encode(passwordField.value)
+        }
+    }
+
+    @Subscribe
+    private fun onAfterCommitChanges(event: AfterCommitChangesEvent) {
+        if (isNewEntity) {
+            applicationContext.publishEvent(SingleUserPasswordChangeEvent(editedEntity.username, passwordField.value))
         }
     }
 

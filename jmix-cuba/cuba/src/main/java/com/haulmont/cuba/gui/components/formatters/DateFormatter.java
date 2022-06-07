@@ -28,7 +28,7 @@ import java.util.Date;
  * @deprecated Use {@link io.jmix.ui.component.formatter.DateFormatter} instead
  */
 @Deprecated
-public class DateFormatter extends io.jmix.ui.component.formatter.DateFormatter {
+public class DateFormatter<V> extends io.jmix.ui.component.formatter.DateFormatter<V> {
 
     public DateFormatter(Element element) {
         super();
@@ -39,7 +39,7 @@ public class DateFormatter extends io.jmix.ui.component.formatter.DateFormatter 
     }
 
     @Override
-    public String apply(Date value) {
+    public String apply(V value) {
         messages = AppBeans.get(Messages.class);
         currentAuthentication = AppBeans.get(CurrentAuthentication.class);
         formatStringsRegistry = AppBeans.get(FormatStringsRegistry.class);

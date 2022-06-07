@@ -38,8 +38,10 @@ import org.dom4j.Element;
 
 import java.util.List;
 
-public class ScreenLoader extends AbstractContainerLoader<Screen<?>> implements ComponentRootLoader<Screen<?>> {
+public class ScreenLoader extends AbstractScreenLoader<Screen<?>> implements ComponentRootLoader<Screen<?>> {
 
+    public static final String SCREEN_ROOT = "screen";
+    public static final String CONTENT_NAME = "layout";
 
     protected ActionLoaderSupport actionLoaderSupport;
 
@@ -50,26 +52,15 @@ public class ScreenLoader extends AbstractContainerLoader<Screen<?>> implements 
         return actionLoaderSupport;
     }
 
-    public void setResultComponent(Screen<?> screen) {
-        this.resultComponent = screen;
-    }
-
     @Override
-    protected Screen<?> createComponent() {
-        throw new UnsupportedOperationException("Screen cannot be created from XML element");
-    }
-
-    @Override
-    public void initComponent() {
-        throw new UnsupportedOperationException("Screen cannot be initialized from XML element");
-    }
-
-    @Override
-    public void createContent(Element layoutElement) {
-        Preconditions.checkNotNullArgument(layoutElement);
+    public void createContent() {
+        Element content = element.element(CONTENT_NAME);
+        if (content == null) {
+            throw new GuiDevelopmentException("Required '" + CONTENT_NAME + "' element is not found", context);
+        }
 
         if (resultComponent.getContent() instanceof HasComponents) {
-            createSubComponents(((HasComponents) resultComponent.getContent()), layoutElement);
+            createSubComponents(((HasComponents) resultComponent.getContent()), content);
         } else {
             // TODO: gg, throw an exception?
         }
@@ -82,8 +73,8 @@ public class ScreenLoader extends AbstractContainerLoader<Screen<?>> implements 
             throw new GuiDevelopmentException("Required 'layout' element is not found", context);
         }
 
-
-        loadScreenData(resultComponent, element);
+        getScreenLoader().loadScreenData(element);
+        getScreenLoader().loadScreenActions(element);
 
 //        loadDialogOptions(resultComponent, element);
 
@@ -91,8 +82,7 @@ public class ScreenLoader extends AbstractContainerLoader<Screen<?>> implements 
 //        loadCaption(resultComponent, element);
 //        loadDescription(resultComponent, element);
 //        loadIcon(resultComponent, element);
-        loadScreenActions(resultComponent, element);
-        loadFacets(resultComponent, element);
+        getScreenLoader().loadFacets(element);
 
         Component screenRootComponent = resultComponent.getContent();
 
@@ -123,36 +113,6 @@ public class ScreenLoader extends AbstractContainerLoader<Screen<?>> implements 
         }
     }
 
-    protected void loadScreenData(Screen<?> screen, Element element) {
-        Element dataElement = element.element("data");
-        if (dataElement != null) {
-            ScreenDataXmlLoader screenDataXmlLoader = applicationContext.getBean(ScreenDataXmlLoader.class);
-            ScreenData screenData = UiControllerUtils.getScreenData(screen);
-            screenDataXmlLoader.load(screenData, dataElement, null);
-
-            ((ComponentLoaderContext) context).setScreenData(screenData);
-        }
-    }
-
-    protected void loadScreenActions(Screen<?> screen, Element element) {
-        Element actionsEl = element.element("actions");
-        if (actionsEl == null) {
-            return;
-        }
-
-        ScreenActions screenActions = UiControllerUtils.getScreenActions(screen);
-        for (Element actionEl : actionsEl.elements("action")) {
-            screenActions.addAction(loadDeclarativeAction(actionEl));
-        }
-
-        ((ComponentLoaderContext) context).setScreenActions(screenActions);
-    }
-
-    protected Action loadDeclarativeAction(Element element) {
-        return getActionLoaderSupport().loadDeclarativeActionByType(element)
-                .orElse(getActionLoaderSupport().loadDeclarativeAction(element));
-    }
-
     /*protected void loadFocusedComponent(Window window, Element element) {
         String focusMode = element.attributeValue("focusMode");
         String componentId = element.attributeValue("focusComponent");
@@ -160,21 +120,6 @@ public class ScreenLoader extends AbstractContainerLoader<Screen<?>> implements 
             window.setFocusComponent(componentId);
         }
     }*/
-
-    protected void loadFacets(Screen<?> screen, Element element) {
-        Element facetsElement = element.element("facets");
-        if (facetsElement != null) {
-            List<Element> facetElements = facetsElement.elements();
-
-            ScreenFacets screenFacets = UiControllerUtils.getScreenFacets(screen);
-            FacetLoader loader = applicationContext.getBean(FacetLoader.class);
-            for (Element facetElement : facetElements) {
-                Facet facet = loader.load(facetElement, getComponentContext());
-
-                screenFacets.addFacet(facet);
-            }
-        }
-    }
 
     /*@Override
     protected Action loadDeclarativeAction(ActionsHolder actionsHolder, Element element) {

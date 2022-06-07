@@ -1860,6 +1860,33 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <!-- DrawerToggle -->
+    <xs:complexType name="drawerToggleComponent">
+        <xs:complexContent>
+            <xs:extension base="baseComponent">
+                <xs:attribute name="autofocus" type="xs:boolean"/>
+                <xs:attribute name="themeName" type="buttonThemeName"/>
+
+                <xs:attributeGroup ref="hasSize"/>
+                <xs:attributeGroup ref="hasIcon"/>
+                <xs:attributeGroup ref="hasAriaLabel"/>
+                <xs:attributeGroup ref="hasClassName"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- UserIndicator -->
+    <xs:complexType name="userIndicatorComponent">
+        <xs:complexContent>
+            <xs:extension base="baseComponent">
+                <xs:attributeGroup ref="hasTitle"/>
+                <xs:attributeGroup ref="hasSize"/>
+                <xs:attributeGroup ref="hasEnabled"/>
+                <xs:attributeGroup ref="hasClassName"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
     <!-- GridColumn-->
     <xs:complexType name="dataGridColumnComponent">
 
@@ -2526,6 +2553,8 @@
                 <!--                <xs:element name="fragment" type="fragmentContainer"/>-->
 
                 <!-- Component -->
+                <xs:element name="drawerToggle" type="drawerToggleComponent"/>
+                <xs:element name="userIndicator" type="userIndicatorComponent"/>
                 <xs:element name="listMenu" type="listMenuComponent"/>
                 <xs:element name="button" type="buttonComponent"/>
                 <xs:element name="avatar" type="avatarComponent"/>

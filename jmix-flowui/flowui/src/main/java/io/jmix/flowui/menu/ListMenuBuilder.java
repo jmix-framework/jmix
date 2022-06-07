@@ -20,7 +20,7 @@ import com.google.common.base.Strings;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.MessageTools;
 import io.jmix.flowui.UiComponents;
-import io.jmix.flowui.component.menu.JmixListMenu;
+import io.jmix.flowui.component.main.JmixListMenu;
 import io.jmix.flowui.screen.Screen;
 import io.jmix.flowui.screen.ScreenInfo;
 import io.jmix.flowui.screen.ScreenRegistry;

@@ -95,15 +95,15 @@ public class LayoutLoader {
         return (FragmentLoader) initLoader(rootWindowElement, loaderClass);
     }*/
 
-    @SuppressWarnings("rawtypes")
-    protected ScreenLoader getScreenLoader(Element rootScreenElement) {
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    protected AbstractScreenLoader<Screen<?>> getScreenLoader(Element rootScreenElement) {
         Class<? extends ComponentLoader> loaderClass = loaderResolver.getScreenLoader(rootScreenElement);
 
         if (loaderClass == null) {
             throw new IllegalStateException(String.format("Loader for %s not found", rootScreenElement.getName()));
         }
 
-        return (ScreenLoader) initLoader(rootScreenElement, loaderClass);
+        return (AbstractScreenLoader<Screen<?>>) initLoader(rootScreenElement, loaderClass);
     }
 
     @SuppressWarnings("rawtypes")
@@ -152,14 +152,9 @@ public class LayoutLoader {
     }*/
 
     public ComponentLoader<Screen<?>> createScreenContent(Screen<?> screen, Element rootScreenElement) {
-        ScreenLoader screenLoader = getScreenLoader(rootScreenElement);
+        AbstractScreenLoader<Screen<?>> screenLoader = getScreenLoader(rootScreenElement);
         screenLoader.setResultComponent(screen);
-
-        Element layout = rootScreenElement.element("layout");
-        // TODO: gg, throw exception if no root element?
-        if (layout != null) {
-            screenLoader.createContent(layout);
-        }
+        screenLoader.createContent();
         return screenLoader;
     }
 }

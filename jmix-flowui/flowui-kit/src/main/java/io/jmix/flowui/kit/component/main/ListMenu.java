@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.kit.component.menu;
+package io.jmix.flowui.kit.component.main;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;

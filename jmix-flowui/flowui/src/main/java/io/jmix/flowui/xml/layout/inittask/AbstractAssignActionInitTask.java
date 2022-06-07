@@ -1,7 +1,9 @@
 package io.jmix.flowui.xml.layout.inittask;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.applayout.AppLayout;
 import io.jmix.flowui.component.EnhancedHasComponents;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.kit.component.HasActions;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.kit.action.Action;
@@ -28,7 +30,8 @@ public abstract class AbstractAssignActionInitTask<C extends Component> implemen
 
     @Override
     public void execute(ComponentContext context, Screen<?> screen) {
-        if (!(screen.getContent() instanceof EnhancedHasComponents)) {
+        if (!(screen.getContent() instanceof EnhancedHasComponents)
+                && !(screen.getContent() instanceof AppLayout)) {
             throw new GuiDevelopmentException("Screen cannot contain components", context.getFullFrameId());
         }
 
@@ -37,7 +40,7 @@ public abstract class AbstractAssignActionInitTask<C extends Component> implemen
             String id = elements[elements.length - 1];
 
             String prefix = ValuePathHelper.pathPrefix(elements);
-            Component holder = ((EnhancedHasComponents) screen.getContent()).findComponent(prefix).orElse(null);
+            Component holder = getComponent(screen, prefix).orElse(null);
             if (holder == null) {
                 throw new GuiDevelopmentException(
                         String.format("Can't find component: %s for action: %s", prefix, actionId),
@@ -94,5 +97,15 @@ public abstract class AbstractAssignActionInitTask<C extends Component> implemen
 
     protected String getExceptionMessage(String id) {
         return String.format("Can't find action with %s id", id);
+    }
+
+    protected Optional<Component> getComponent(Screen<?> screen, String id) {
+        if (screen.getContent() instanceof EnhancedHasComponents) {
+            return ((EnhancedHasComponents) screen.getContent()).findComponent(id);
+        } else if (screen.getContent() instanceof AppLayout) {
+            return UiComponentUtils.findComponent((AppLayout) screen.getContent(), id);
+        } else {
+            return Optional.empty();
+        }
     }
 }

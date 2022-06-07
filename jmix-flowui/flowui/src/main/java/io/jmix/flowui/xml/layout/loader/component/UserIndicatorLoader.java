@@ -16,32 +16,23 @@
 
 package io.jmix.flowui.xml.layout.loader.component;
 
-import io.jmix.flowui.component.main.JmixListMenu;
+import io.jmix.flowui.component.main.JmixUserIndicator;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
-import org.dom4j.Element;
 
-public class ListMenuLoader extends AbstractComponentLoader<JmixListMenu> {
+public class UserIndicatorLoader extends AbstractComponentLoader<JmixUserIndicator> {
+
+    @Override
+    protected JmixUserIndicator createComponent() {
+        return factory.create(JmixUserIndicator.class);
+    }
 
     @Override
     public void loadComponent() {
+        componentLoader().loadTitle(resultComponent, element, getComponentContext());
         componentLoader().loadSizeAttributes(resultComponent, element);
         componentLoader().loadClassName(resultComponent, element);
+        componentLoader().loadEnabled(resultComponent, element);
 
-        loadMenuConfig(element);
-    }
-
-    @Override
-    protected JmixListMenu createComponent() {
-        return factory.create(JmixListMenu.class);
-    }
-
-    protected void loadMenuConfig(Element element) {
-        Boolean loadMenuConfig = getLoaderSupport()
-                .loadBoolean(element, "loadMenuConfig")
-                .orElse(true);
-
-        if (loadMenuConfig) {
-            resultComponent.loadMenuConfig();
-        }
+        resultComponent.refreshUser();
     }
 }

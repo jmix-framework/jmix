@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.component.menu;
+package io.jmix.flowui.component.main;
 
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.router.HighlightConditions;
 import com.vaadin.flow.router.RouterLink;
 import io.jmix.flowui.UiComponents;
-import io.jmix.flowui.kit.component.menu.ListMenu;
+import io.jmix.flowui.kit.component.main.ListMenu;
 import io.jmix.flowui.menu.ListMenuBuilder;
 import io.jmix.flowui.menu.MenuConfig;
 import io.jmix.flowui.screen.Screen;

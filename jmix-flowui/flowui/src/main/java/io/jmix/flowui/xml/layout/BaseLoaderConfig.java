@@ -74,6 +74,8 @@ public abstract class BaseLoaderConfig {
         loaders.put("comboBoxPicker", ComboBoxPickerLoader.class);
         loaders.put("entityComboBox", EntityComboBoxLoader.class);
         loaders.put("listMenu", ListMenuLoader.class);
+        loaders.put("drawerToggle", DrawerToggleLoader.class);
+        loaders.put("userIndicator", UserIndicatorLoader.class);
 
         /*HTML components*/
         loaders.put("param", ParamLoader.class);

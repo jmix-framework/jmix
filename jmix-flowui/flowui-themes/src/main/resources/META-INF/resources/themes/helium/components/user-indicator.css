@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +14,13 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.xml.layout;
-
-import com.vaadin.flow.component.Component;
-import io.jmix.core.annotation.Internal;
-import org.dom4j.Element;
-
-/**
- * INTERNAL
- */
-@Internal
-public interface ComponentRootLoader<T extends Component> extends ComponentLoader<T> {
-
-    void createContent();
+.jmix-user-indicator {
+    overflow: hidden;
+    text-align: center;
+    text-overflow: ellipsis;
 }
+
+.jmix-user-indicator .jmix-user-indicator-label {
+    white-space: nowrap;
+}
+

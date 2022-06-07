@@ -1,7 +1,9 @@
 @import url('app/dialog-window.css');
 @import url('app/exception-dialog-window.css');
 @import url('app/jmix-notification.css');
+
 @import url('components/list-menu.css');
+@import url('components/user-indicator.css');
 
 html {
      --jmix-lumo-warning-background-color: hsla(43, 100%, 74%, 1);

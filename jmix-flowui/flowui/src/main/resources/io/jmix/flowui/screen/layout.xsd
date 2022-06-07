@@ -2424,6 +2424,64 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <!-- Login -->
+
+    <xs:complexType name="baseLoginComponent">
+        <xs:complexContent>
+            <xs:extension base="baseComponent">
+                <xs:sequence>
+                    <xs:element name="form" type="loginFormType" minOccurs="0"/>
+                    <xs:element name="errorMessage" type="loginErrorMessageType" minOccurs="0"/>
+                    <xs:element name="additionalInformation" type="loginAdditionalInformationType" minOccurs="0"/>
+                </xs:sequence>
+
+                <xs:attribute name="forgotPasswordButtonVisible" type="xs:boolean"/>
+
+                <xs:attributeGroup ref="hasEnabled"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="loginFormComponent">
+        <xs:complexContent>
+            <xs:extension base="baseLoginComponent">
+
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="loginOverlayComponent">
+        <xs:complexContent>
+            <xs:extension base="baseLoginComponent">
+                <xs:sequence>
+                    <xs:element name="header" type="loginHeaderType" minOccurs="0"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="loginFormType">
+        <xs:attribute name="title" type="resourceString"/>
+        <xs:attribute name="username" type="resourceString"/>
+        <xs:attribute name="password" type="resourceString"/>
+        <xs:attribute name="submit" type="resourceString"/>
+        <xs:attribute name="forgotPassword" type="resourceString"/>
+    </xs:complexType>
+
+    <xs:complexType name="loginErrorMessageType">
+        <xs:attribute name="title" type="resourceString"/>
+        <xs:attribute name="message" type="resourceString"/>
+    </xs:complexType>
+
+    <xs:complexType name="loginAdditionalInformationType">
+        <xs:attribute name="message" type="resourceString"/>
+    </xs:complexType>
+
+    <xs:complexType name="loginHeaderType">
+        <xs:attribute name="title" type="resourceString"/>
+        <xs:attribute name="description" type="resourceString"/>
+    </xs:complexType>
+
     <!--    HTML-->
     <!-- Anchor-->
     <xs:complexType name="anchor">
@@ -2497,197 +2555,6 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:group name="standardComponent">
-        <xs:sequence>
-            <xs:choice maxOccurs="unbounded">
-                <!--HTML Components-->
-                <xs:group ref="htmlHeaders"/>
-                <xs:group ref="htmlLists"/>
-                <xs:element name="div" type="baseHtmlContainer"/>
-                <xs:element name="span" type="baseHtmlContainer"/>
-                <xs:element name="section" type="baseHtmlContainer"/>
-                <xs:element name="pre" type="baseHtmlContainer"/>
-                <xs:element name="p" type="baseHtmlContainer"/>
-                <xs:element name="nav" type="htmlContainerWithAria"/>
-                <xs:element name="param" type="paramHtmlComponent"/>
-                <xs:element name="main" type="htmlContainerWithAria"/>
-                <xs:element name="hr" type="baseHtmlComponent"/>
-                <xs:element name="header" type="baseHtmlContainer"/>
-                <xs:element name="footer" type="baseHtmlContainer"/>
-                <xs:element name="aside" type="baseHtmlContainer"/>
-                <xs:element name="emphasis" type="baseHtmlContainer"/>
-                <xs:element name="anchor" type="anchor"/>
-                <xs:element name="article" type="baseHtmlContainer"/>
-                <xs:element name="input" type="inputHtmlComponent"/>
-                <xs:element name="image" type="imageHtmlComponent"/>
-                <xs:element name="iframe" type="iframeHtmlComponent"/>
-                <xs:element name="htmlObject" type="htmlObjectComponent"/>
-                <xs:element name="descriptionList" type="baseHtmlDescription"/>
-                <xs:element name="term" type="baseHtmlDescription"/>
-                <xs:element name="description" type="baseHtmlDescription"/>
-
-                <!-- Layout -->
-                <xs:element name="vbox" type="componentLayout"/>
-                <xs:element name="hbox" type="componentLayout"/>
-                <xs:element name="form" type="formLayout"/>
-                <!--                <xs:element name="flowBox" type="flowBoxLayout"/>-->
-                <!--                <xs:element name="cssLayout" type="cssLayout"/>-->
-
-                <!--                <xs:element name="htmlBox" type="htmlBoxLayout"/>-->
-                <xs:element name="scroller" type="scrollerContainer"/>
-                <!--                <xs:element name="gridLayout" type="gridLayout"/>-->
-                <!--                <xs:element name="groupBox" type="groupBoxLayout"/>-->
-
-                <xs:element name="split" type="splitContainer"/>
-                <xs:element name="tabs" type="tabsContainer"/>
-                <xs:element name="accordion" type="accordionContainer"/>
-
-                <!--                <xs:element name="responsiveGridLayout" type="responsiveGridLayout"/>-->
-
-                <!--                <xs:element name="fragment" type="fragmentContainer"/>-->
-
-                <!-- Component -->
-                <xs:element name="drawerToggle" type="drawerToggleComponent"/>
-                <xs:element name="userIndicator" type="userIndicatorComponent"/>
-                <xs:element name="listMenu" type="listMenuComponent"/>
-                <xs:element name="button" type="buttonComponent"/>
-                <xs:element name="avatar" type="avatarComponent"/>
-                <xs:element name="select" type="selectComponent"/>
-                <xs:element name="details" type="detailsComponent"/>
-                <!--                <xs:element name="linkButton" type="buttonComponent"/>-->
-                <!--                <xs:element name="popupButton" type="popupButtonComponent"/>-->
-                <!--                <xs:element name="popupView" type="popupViewComponent"/>-->
-
-                <!--                <xs:element name="link" type="linkComponent"/>-->
-                <xs:element name="checkBox" type="checkBoxComponent"/>
-                <xs:element name="datePicker" type="datePickerComponent"/>
-                <!--                <xs:element name="slider" type="sliderComponent"/>-->
-
-                <xs:element name="textArea" type="textAreaComponent"/>
-                <!--                <xs:element name="resizableTextArea" type="resizableTextAreaComponent"/>-->
-                <xs:element name="textField" type="textFieldComponent"/>
-                <xs:element name="emailField" type="emailFieldComponent"/>
-                <xs:element name="bigDecimalField" type="bigDecimalFieldComponent"/>
-                <xs:element name="numberField" type="numberFieldComponent"/>
-                <!--                <xs:element name="currencyField" type="currencyFieldComponent"/>-->
-                <xs:element name="passwordField" type="passwordFieldComponent"/>
-                <!--                <xs:element name="richTextArea" type="richTextAreaComponent"/>-->
-                <!--                <xs:element name="sourceCodeEditor" type="sourceCodeEditorComponent"/>-->
-                <!--                <xs:element name="maskedField" type="maskedFieldComponent"/>-->
-
-                <!--                <xs:element name="dateField" type="dateFieldComponent"/>-->
-                <xs:element name="timePicker" type="timePickerComponent"/>
-                <xs:element name="dateTimePicker" type="dateTimePickerComponent"/>
-
-                <xs:element name="comboBox" type="comboBoxComponent"/>
-                <!--                <xs:element name="suggestionField" type="suggestionFieldComponent"/>-->
-                <!--                <xs:element name="entitySuggestionField" type="entitySuggestionFieldComponent"/>-->
-                <xs:element name="valuePicker" type="valuePickerComponent"/>
-                <xs:element name="valuesPicker" type="valuePickerComponent"/>
-                <xs:element name="entityPicker" type="entityPickerComponent"/>
-                <xs:element name="comboBoxPicker" type="comboBoxPickerComponent"/>
-                <xs:element name="entityComboBox" type="entityComboBoxComponent"/>
-
-                <!--                <xs:element name="colorPicker" type="colorPickerComponent"/>-->
-                <xs:element name="radioButtonGroup" type="radioButtonGroupComponent"/>
-                <!--                <xs:element name="checkBoxGroup" type="checkBoxGroupComponent"/>-->
-                <!--                <xs:element name="multiSelectList" type="optionsBaseFieldComponent"/>-->
-                <!--                <xs:element name="singleSelectList" type="singleSelectListComponent"/>-->
-                <xs:element name="progressBar" type="progressBarComponent"/>
-
-                <!--                <xs:element name="fileUpload" type="fileUploadComponent"/>-->
-                <!--                <xs:element name="fileStorageUpload" type="fileStorageUploadComponent"/>-->
-                <!--                <xs:element name="fileMultiUpload" type="multiuploadComponent"/>-->
-                <!--                <xs:element name="embedded" type="embeddedComponent"/>-->
-                <!--                <xs:element name="image" type="imageComponent"/>-->
-                <!--                <xs:element name="browserFrame" type="browserFrameComponent"/>-->
-
-                <!--                <xs:element name="tree" type="treeComponent"/>-->
-                <!--                <xs:element name="table" type="tableComponent"/>-->
-                <!--                <xs:element name="treeTable" type="treeTableComponent"/>-->
-                <!--                <xs:element name="groupTable" type="groupTableComponent"/>-->
-                <xs:element name="dataGrid" type="dataGridComponent"/>
-                <xs:element name="treeDataGrid" type="treeDataGridComponent"/>
-                <!--                <xs:element name="treeDataGrid" type="treeDataGridComponent"/>-->
-                <!--                <xs:element name="buttonsPanel" type="buttonsPanelComponent"/>-->
-                <!--                <xs:element name="pagination" type="paginationComponent"/>-->
-                <!--                <xs:element name="simplePagination" type="simplePaginationComponent"/>-->
-                <!--                <xs:element name="calendar" type="calendarComponent"/>-->
-
-                <!--                <xs:element name="tagPicker" type="tagPickerComponent"/>-->
-                <!--                <xs:element name="tagField" type="tagFieldComponent"/>-->
-                <!--                <xs:element name="twinColumn" type="twinColumnComponent"/>-->
-                <!--                <xs:element name="relatedEntities" type="relatedComponent"/>-->
-
-                <!--                <xs:element name="form" type="formComponent"/>-->
-
-                <!--                <xs:element name="filter" type="filterComponent"/>-->
-                <!--                <xs:element name="propertyFilter" type="propertyFilterComponent"/>-->
-
-                <!--                <xs:element name="capsLockIndicator" type="capsLockIndicatorComponent"/>-->
-
-                <!--                <xs:element name="jsComponent" type="javaScriptComponent"/>-->
-
-                <!--                &lt;!&ndash; Main window &ndash;&gt;-->
-
-                <!--                <xs:element name="userActionsButton" type="userActionsButton"/>-->
-                <!--                <xs:element name="logoutButton" type="logoutButtonComponent"/>-->
-                <!--                <xs:element name="newWindowButton" type="newWindowButtonComponent"/>-->
-                <!--                <xs:element name="ftsField" type="ftsFieldComponent"/>-->
-                <!--                <xs:element name="userIndicator" type="userIndicatorComponent"/>-->
-                <!--                <xs:element name="timeZoneIndicator" type="timeZoneIndicatorComponent"/>-->
-                <!--                <xs:element name="workArea" type="workAreaComponent"/>-->
-                <!--                <xs:element name="drawer" type="drawerComponent"/>-->
-                <!--                <xs:element name="sideMenu" type="sideMenuComponent"/>-->
-                <!--                <xs:element name="menu" type="menuComponent"/>-->
-            </xs:choice>
-        </xs:sequence>
-    </xs:group>
-
-    <!-- Inner element choice -->
-    <xs:group name="layoutOrComponent">
-        <xs:sequence>
-            <xs:choice minOccurs="0" maxOccurs="unbounded">
-                <xs:group ref="standardComponent"/>
-                <xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
-            </xs:choice>
-        </xs:sequence>
-    </xs:group>
-
-    <xs:group name="singleLayoutOrComponent">
-        <xs:sequence>
-            <xs:choice minOccurs="0">
-                <xs:group ref="standardComponent"/>
-                <xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
-            </xs:choice>
-        </xs:sequence>
-    </xs:group>
-
-    <xs:complexType name="rootLayout">
-        <xs:complexContent>
-            <xs:extension base="baseLayout">
-                <!-- TODO: kremnevda, will be filled 13.04.2022 -->
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
-    <xs:complexType name="componentLayout">
-        <xs:complexContent>
-            <xs:extension base="baseLayout">
-                <xs:attributeGroup ref="hasId"/>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
-    <xs:complexType name="baseLayout">
-        <xs:group ref="layoutOrComponent"/>
-
-        <xs:attribute name="expand" type="xs:string"/>
-
-        <xs:attributeGroup ref="hasThemable"/>
-        <xs:attributeGroup ref="hasFlexible"/>
-    </xs:complexType>
-
 
     <!-- Facets -->
 
@@ -2755,4 +2622,123 @@
             </xs:choice>
         </xs:sequence>
     </xs:complexType>
+
+    <!--  -->
+
+    <xs:group name="standardComponent">
+        <xs:sequence>
+            <xs:choice maxOccurs="unbounded">
+                <!--HTML Components-->
+                <xs:group ref="htmlHeaders"/>
+                <xs:group ref="htmlLists"/>
+                <xs:element name="div" type="baseHtmlContainer"/>
+                <xs:element name="span" type="baseHtmlContainer"/>
+                <xs:element name="section" type="baseHtmlContainer"/>
+                <xs:element name="pre" type="baseHtmlContainer"/>
+                <xs:element name="p" type="baseHtmlContainer"/>
+                <xs:element name="nav" type="htmlContainerWithAria"/>
+                <xs:element name="param" type="paramHtmlComponent"/>
+                <xs:element name="main" type="htmlContainerWithAria"/>
+                <xs:element name="hr" type="baseHtmlComponent"/>
+                <xs:element name="header" type="baseHtmlContainer"/>
+                <xs:element name="footer" type="baseHtmlContainer"/>
+                <xs:element name="aside" type="baseHtmlContainer"/>
+                <xs:element name="emphasis" type="baseHtmlContainer"/>
+                <xs:element name="anchor" type="anchor"/>
+                <xs:element name="article" type="baseHtmlContainer"/>
+                <xs:element name="input" type="inputHtmlComponent"/>
+                <xs:element name="image" type="imageHtmlComponent"/>
+                <xs:element name="iframe" type="iframeHtmlComponent"/>
+                <xs:element name="htmlObject" type="htmlObjectComponent"/>
+                <xs:element name="descriptionList" type="baseHtmlDescription"/>
+                <xs:element name="term" type="baseHtmlDescription"/>
+                <xs:element name="description" type="baseHtmlDescription"/>
+
+                <!-- Layout -->
+                <xs:element name="vbox" type="componentLayout"/>
+                <xs:element name="hbox" type="componentLayout"/>
+                <xs:element name="form" type="formLayout"/>
+                <xs:element name="scroller" type="scrollerContainer"/>
+                <xs:element name="split" type="splitContainer"/>
+                <xs:element name="tabs" type="tabsContainer"/>
+                <xs:element name="accordion" type="accordionContainer"/>
+
+                <!-- Component -->
+                <xs:element name="drawerToggle" type="drawerToggleComponent"/>
+                <xs:element name="userIndicator" type="userIndicatorComponent"/>
+                <xs:element name="listMenu" type="listMenuComponent"/>
+                <xs:element name="button" type="buttonComponent"/>
+                <xs:element name="avatar" type="avatarComponent"/>
+                <xs:element name="select" type="selectComponent"/>
+                <xs:element name="details" type="detailsComponent"/>
+                <xs:element name="checkBox" type="checkBoxComponent"/>
+                <xs:element name="datePicker" type="datePickerComponent"/>
+                <xs:element name="textArea" type="textAreaComponent"/>
+                <xs:element name="textField" type="textFieldComponent"/>
+                <xs:element name="emailField" type="emailFieldComponent"/>
+                <xs:element name="bigDecimalField" type="bigDecimalFieldComponent"/>
+                <xs:element name="numberField" type="numberFieldComponent"/>
+                <xs:element name="passwordField" type="passwordFieldComponent"/>
+                <xs:element name="timePicker" type="timePickerComponent"/>
+                <xs:element name="dateTimePicker" type="dateTimePickerComponent"/>
+                <xs:element name="comboBox" type="comboBoxComponent"/>
+                <xs:element name="valuePicker" type="valuePickerComponent"/>
+                <xs:element name="valuesPicker" type="valuePickerComponent"/>
+                <xs:element name="entityPicker" type="entityPickerComponent"/>
+                <xs:element name="comboBoxPicker" type="comboBoxPickerComponent"/>
+                <xs:element name="entityComboBox" type="entityComboBoxComponent"/>
+                <xs:element name="radioButtonGroup" type="radioButtonGroupComponent"/>
+                <xs:element name="progressBar" type="progressBarComponent"/>
+                <xs:element name="dataGrid" type="dataGridComponent"/>
+                <xs:element name="treeDataGrid" type="treeDataGridComponent"/>
+                <xs:element name="loginForm" type="loginFormComponent"/>
+                <xs:element name="loginOverlay" type="loginOverlayComponent"/>
+            </xs:choice>
+        </xs:sequence>
+    </xs:group>
+
+    <!-- Inner element choice -->
+    <xs:group name="layoutOrComponent">
+        <xs:sequence>
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:group ref="standardComponent"/>
+                <xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:choice>
+        </xs:sequence>
+    </xs:group>
+
+    <xs:group name="singleLayoutOrComponent">
+        <xs:sequence>
+            <xs:choice minOccurs="0">
+                <xs:group ref="standardComponent"/>
+                <xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:choice>
+        </xs:sequence>
+    </xs:group>
+
+    <xs:complexType name="rootLayout">
+        <xs:complexContent>
+            <xs:extension base="baseLayout">
+                <!-- TODO: kremnevda, will be filled 13.04.2022 -->
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="componentLayout">
+        <xs:complexContent>
+            <xs:extension base="baseLayout">
+                <xs:attributeGroup ref="hasId"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="baseLayout">
+        <xs:group ref="layoutOrComponent"/>
+
+        <xs:attribute name="expand" type="xs:string"/>
+
+        <xs:attributeGroup ref="hasThemable"/>
+        <xs:attributeGroup ref="hasFlexible"/>
+    </xs:complexType>
+
 </xs:schema>

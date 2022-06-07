@@ -107,4 +107,17 @@ class QueryParamValueProvidersTest extends DataSpec {
         testQueryParamValueProvider.clear('customerName')
         testQueryParamValueProvider.clear('customerStatus')
     }
+
+    def "'in' condition"() {
+        testQueryParamValueProvider.setValue('customerNames', Arrays.asList('test1'))
+
+        when:
+        def customer1 = dataManager.load(Customer).query('e.name in :test_customerNames').one()
+
+        then:
+        customer1 == customer
+
+        cleanup:
+        testQueryParamValueProvider.clear('customerName')
+    }
 }

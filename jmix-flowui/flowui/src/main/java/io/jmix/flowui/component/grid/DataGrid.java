@@ -25,7 +25,7 @@ import java.util.Collection;
 import java.util.Set;
 
 public class DataGrid<E> extends JmixGrid<E> implements ListDataComponent<E>, MultiSelectLookupComponent<E>,
-        ApplicationContextAware, InitializingBean {
+        EnhancedDataGrid<E>, ApplicationContextAware, InitializingBean {
 
     protected ApplicationContext applicationContext;
 
@@ -127,6 +127,7 @@ public class DataGrid<E> extends JmixGrid<E> implements ListDataComponent<E>, Mu
      * @param metaPropertyPath meta property path to add column
      * @return added column
      */
+    @Override
     public Column<E> addColumn(MetaPropertyPath metaPropertyPath) {
         Preconditions.checkNotNullArgument(metaPropertyPath);
 
@@ -142,6 +143,7 @@ public class DataGrid<E> extends JmixGrid<E> implements ListDataComponent<E>, Mu
      * @param metaPropertyPath meta property path to add column
      * @return added column
      */
+    @Override
     public Column<E> addColumn(String key, MetaPropertyPath metaPropertyPath) {
         Preconditions.checkNotNullArgument(metaPropertyPath);
         Preconditions.checkNotNullArgument(key);

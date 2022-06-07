@@ -15,6 +15,15 @@ import io.jmix.flowui.data.DataUnit;
 import io.jmix.flowui.data.grid.TreeGridDataItems;
 import io.jmix.flowui.kit.component.grid.GridActionsSupport;
 import io.jmix.flowui.kit.component.grid.JmixTreeGrid;
+import io.jmix.flowui.component.ListDataComponent;
+import io.jmix.flowui.component.LookupComponent.MultiSelectLookupComponent;
+import io.jmix.flowui.component.delegate.TreeGridDelegate;
+import io.jmix.flowui.data.DataUnit;
+import io.jmix.flowui.data.grid.GridDataItems;
+import io.jmix.flowui.data.grid.TreeGridDataItems;
+import io.jmix.flowui.kit.action.Action;
+import io.jmix.flowui.kit.component.HasActions;
+import io.jmix.flowui.kit.component.SelectionChangeNotifier;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -24,7 +33,7 @@ import java.util.Collection;
 import java.util.Set;
 
 public class TreeDataGrid<E> extends JmixTreeGrid<E> implements ListDataComponent<E>, MultiSelectLookupComponent<E>,
-        ApplicationContextAware, InitializingBean {
+        EnhancedDataGrid<E>, ApplicationContextAware, InitializingBean {
 
     protected ApplicationContext applicationContext;
 
@@ -127,6 +136,7 @@ public class TreeDataGrid<E> extends JmixTreeGrid<E> implements ListDataComponen
      * @param metaPropertyPath meta property path to add column
      * @return added column
      */
+    @Override
     public Column<E> addColumn(MetaPropertyPath metaPropertyPath) {
         Preconditions.checkNotNullArgument(metaPropertyPath);
 
@@ -142,6 +152,7 @@ public class TreeDataGrid<E> extends JmixTreeGrid<E> implements ListDataComponen
      * @param metaPropertyPath meta property path to add column
      * @return added column
      */
+    @Override
     public Column<E> addColumn(String key, MetaPropertyPath metaPropertyPath) {
         Preconditions.checkNotNullArgument(metaPropertyPath);
         Preconditions.checkNotNullArgument(key);

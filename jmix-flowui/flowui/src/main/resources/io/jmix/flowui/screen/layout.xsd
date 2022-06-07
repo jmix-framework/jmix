@@ -1889,39 +1889,23 @@
 
     <!-- GridColumn-->
     <xs:complexType name="dataGridColumnComponent">
-
-                <!--        <xs:sequence>-->
-                <!--            <xs:element name="aggregation" minOccurs="0">-->
-                <!--                <xs:complexType>-->
-                <!--                    <xs:all>-->
-                <!--                        <xs:element name="formatter" minOccurs="0" type="formatterType"/>-->
-                <!--                    </xs:all>-->
-
-                <!--                    <xs:attribute name="type" type="aggregation"/>-->
-                <!--                    <xs:attribute name="strategyClass" type="xs:string"/>-->
-                <!--                    <xs:attribute name="valueDescription" type="resourceString"/>-->
-                <!--                </xs:complexType>-->
-                <!--            </xs:element>-->
-                <!--            <xs:group ref="renderers" minOccurs="0"/>-->
-                <!--        </xs:sequence>-->
-
-                <xs:attribute name="key" type="xs:string"/>
-                <xs:attribute name="visible" type="xs:boolean"/>
-                <xs:attribute name="width" type="xs:string"/>
-                <xs:attribute name="header" type="xs:string"/>
-                <xs:attribute name="footer" type="xs:string"/>
-                <xs:attribute name="frozen" type="xs:boolean"/>
-                <xs:attribute name="property" type="xs:string"/>
-                <xs:attribute name="sortable" type="xs:boolean"/>
-                <xs:attribute name="flexGrow" type="xs:integer"/>
-                <xs:attribute name="resizable" type="xs:boolean"/>
-                <xs:attribute name="autoWidth" type="xs:boolean"/>
-                <xs:attribute name="textAlign" type="gridColumnTextAlignEnum"/>
+        <xs:attribute name="key" type="xs:string"/>
+        <xs:attribute name="visible" type="xs:boolean"/>
+        <xs:attribute name="width" type="xs:string"/>
+        <xs:attribute name="header" type="xs:string"/>
+        <xs:attribute name="footer" type="xs:string"/>
+        <xs:attribute name="frozen" type="xs:boolean"/>
+        <xs:attribute name="property" type="xs:string"/>
+        <xs:attribute name="sortable" type="xs:boolean"/>
+        <xs:attribute name="flexGrow" type="xs:integer"/>
+        <xs:attribute name="resizable" type="xs:boolean"/>
+        <xs:attribute name="autoWidth" type="xs:boolean"/>
+        <xs:attribute name="textAlign" type="gridColumnTextAlignEnum"/>
     </xs:complexType>
 
 
-    <!-- GridGrid -->
-    <xs:complexType name="gridComponent">
+    <!-- DataGrid -->
+    <xs:complexType name="dataGridComponent">
         <xs:complexContent>
             <xs:extension base="baseComponent">
                 <xs:all>
@@ -1940,7 +1924,7 @@
                 <xs:attribute name="metaClass" type="xs:string"/>
                 <xs:attribute name="multiSort" type="xs:boolean"/>
                 <xs:attribute name="dropMode" type="gridDropMode"/>
-                <xs:attribute name="rowDraggable" type="xs:boolean"/>
+                <xs:attribute name="rowsDraggable" type="xs:boolean"/>
                 <xs:attribute name="themeName" type="gridThemeName"/>
                 <xs:attribute name="dataContainer" type="xs:string"/>
                 <xs:attribute name="allRowsVisible" type="xs:boolean"/>
@@ -1954,6 +1938,16 @@
                 <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasEnabled"/>
                 <xs:attributeGroup ref="hasClassName"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- TreeGrid-->
+    <xs:complexType name="treeDataGridComponent">
+        <xs:complexContent>
+            <xs:extension base="dataGridComponent">
+                <xs:attribute name="hierarchyProperty" type="xs:string" use="required"/>
+                <xs:attribute name="showOrphans" type="xs:boolean"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -2612,7 +2606,8 @@
                 <!--                <xs:element name="table" type="tableComponent"/>-->
                 <!--                <xs:element name="treeTable" type="treeTableComponent"/>-->
                 <!--                <xs:element name="groupTable" type="groupTableComponent"/>-->
-                <xs:element name="grid" type="gridComponent"/>
+                <xs:element name="dataGrid" type="dataGridComponent"/>
+                <xs:element name="treeDataGrid" type="treeDataGridComponent"/>
                 <!--                <xs:element name="treeDataGrid" type="treeDataGridComponent"/>-->
                 <!--                <xs:element name="buttonsPanel" type="buttonsPanelComponent"/>-->
                 <!--                <xs:element name="pagination" type="paginationComponent"/>-->

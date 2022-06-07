@@ -44,8 +44,8 @@ public abstract class BaseLoaderConfig {
         loaders.put("scroller", ScrollerLoader.class);
         loaders.put("tabs", TabsLoader.class);
         loaders.put("tab", TabsLoader.TabLoader.class);
-        loaders.put("grid", JmixGridLoader.class);
-        loaders.put("column", JmixGridLoader.GridColumnLoader.class);
+        loaders.put("dataGrid", DataGridLoader.class);
+        loaders.put("treeDataGrid", TreeDataGridLoader.class);
         loaders.put("details", DetailsLoader.class);
         loaders.put("split", SplitLayoutLoader.class);
         loaders.put("form", FormLayoutLoader.class);

@@ -23,6 +23,7 @@ import org.quartz.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -49,12 +50,12 @@ public class EmailCleaningScheduleAutoConfiguration {
     }
 
     @Bean("email_EmailCleaningTrigger")
-    Trigger emailCleaningTrigger() {
+    Trigger emailCleaningTrigger(@Qualifier("email_EmailCleaningJob") JobDetail emailCleaningJob) {
         String cron = emailerProperties.getEmailCleaningCron();
         log.info("Schedule Email Cleaning using default configuration with CRON expression '{}'", cron);
         return TriggerBuilder.newTrigger()
                 .withIdentity("emailCleaningCronTrigger")
-                .forJob(emailCleaningJob())
+                .forJob(emailCleaningJob)
                 .startNow()
                 .withSchedule(CronScheduleBuilder.cronSchedule(cron))
                 .build();

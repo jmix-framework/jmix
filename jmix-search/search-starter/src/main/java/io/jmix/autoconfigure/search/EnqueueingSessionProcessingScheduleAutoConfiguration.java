@@ -23,6 +23,7 @@ import org.quartz.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -50,12 +51,12 @@ public class EnqueueingSessionProcessingScheduleAutoConfiguration {
     }
 
     @Bean("search_EnqueueingSessionProcessingTrigger")
-    Trigger enqueueingSessionProcessingTrigger() {
+    Trigger enqueueingSessionProcessingTrigger(@Qualifier("search_EnqueueingSessionProcessingJob") JobDetail enqueueingSessionProcessingJob) {
         String cron = searchProperties.getEnqueueingSessionProcessingCron();
         log.info("Schedule Enqueueing Session processing using default configuration with CRON expression '{}'", cron);
         return TriggerBuilder.newTrigger()
                 .withIdentity("EnqueueingSessionProcessingTrigger")
-                .forJob(enqueueingSessionProcessingJob())
+                .forJob(enqueueingSessionProcessingJob)
                 .startNow()
                 .withSchedule(CronScheduleBuilder.cronSchedule(cron))
                 .build();

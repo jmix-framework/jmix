@@ -2728,6 +2728,7 @@
         <xs:complexContent>
             <xs:extension base="baseLayout">
                 <xs:attributeGroup ref="hasId"/>
+                <xs:attribute name="visible" type="xs:boolean"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

@@ -2,7 +2,7 @@
 def pluralForm = api.pluralForm(entity.uncapitalizedClassName)
 tableId = "${pluralForm}Table"
 def tableDc = entity.uncapitalizedClassName.equals(pluralForm) ? pluralForm + "CollectionDc" : pluralForm + "Dc"
-def tableDl = entity.uncapitalizedClassName.equals(pluralForm) ? pluralForm + "CollectionDl" : pluralForm + "Dl"
+tableDl = entity.uncapitalizedClassName.equals(pluralForm) ? pluralForm + "CollectionDl" : pluralForm + "Dl"
 
 def tableXml = api.processSnippet('screen/dto_table.xml',
         ['entity': entity,
@@ -18,7 +18,9 @@ def tableXml = api.processSnippet('screen/dto_table.xml',
         focusComponent="${tableId}">
     <data readOnly="true">
         <collection id="${tableDc}"
-                    class="${entity.fqn}"/>
+                    class="${entity.fqn}">
+            <loader id="${tableDl}"/>
+        </collection>
     </data>
     <facets>
         <dataLoadCoordinator auto="true"/>

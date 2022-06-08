@@ -993,7 +993,7 @@ public class MetadataTools {
      * <ol>
      *     <li>
      *         New instance will not be initialized. Entity id generation, embedded objects creation,
-     *         {@link PostConstruct} actions, e.t.c will not be performed for cloned object
+     *         {@link PostConstruct} actions, etc. will not be performed for cloned object
      *         (see {@link EntityInitializer}).
      *     </li>
      *     <li>

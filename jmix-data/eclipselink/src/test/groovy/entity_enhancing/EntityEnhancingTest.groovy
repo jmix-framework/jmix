@@ -17,8 +17,10 @@
 package entity_enhancing
 
 import io.jmix.core.entity.EntityPropertyChangeListener
+import io.jmix.core.entity.EntityValues
 import test_support.DataSpec
 import test_support.entity.TestNotStoredEntity
+import test_support.entity.is_get_conflict.GetterConflictEntity
 import test_support.entity.petclinic.Pet
 
 class EntityEnhancingTest extends DataSpec {
@@ -48,4 +50,30 @@ class EntityEnhancingTest extends DataSpec {
         then:
         1 * listener.propertyChanged(_)
     }
+
+    def "is-/get- getter should be selected correctly for boolean property"() {
+        def entity = new GetterConflictEntity()
+
+        when:
+        EntityValues.getValue(entity, "custom")
+        EntityValues.getValue(entity, "debit")
+        EntityValues.getValue(entity, "overpayment")
+        EntityValues.getValue(entity, "counter")
+        EntityValues.getValue(entity, "positive")
+
+        then:
+        entity.getCustomInvoked
+        entity.getDebitInvoked
+        entity.isOverpaymentInvoked
+        entity.isCounterInvoked
+        entity.getPositiveInvoked
+
+        !entity.isCustomInvoked
+        !entity.isDebitInvoked
+        !entity.getOverpaymentInvoked
+        !entity.getCounterInvoked
+        !entity.isPositiveInvoked
+    }
+
+
 }

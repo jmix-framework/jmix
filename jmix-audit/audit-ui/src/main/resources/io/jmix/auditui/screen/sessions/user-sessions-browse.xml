@@ -33,21 +33,23 @@
             <groupBox id="filterGroupBox" caption="msg://UserSessions.filter" orientation="horizontal" spacing="true"
                       width="AUTO">
                 <gridLayout id="filterGrid" spacing="true">
-                    <columns count="3"/>
+                    <columns count="4"/>
                     <rows>
                         <row>
                             <label value="msg://UserSessions.nameField"/>
                             <label value="msg://UserSessions.lastRequestDateFrom"/>
                             <label value="msg://UserSessions.lastRequestDateTo"/>
+                            <label value=""/>
                         </row>
                         <row>
                             <textField id="userName" datatype="string"/>
                             <dateField id="lastRequestDateFrom" datatype="date"/>
                             <dateField id="lastRequestDateTo" datatype="date"/>
+                            <button id="clearButton" caption="msg://UserSessions.clear"/>
                         </row>
                     </rows>
                 </gridLayout>
-                <button id="clearButton" caption="clear" align="BOTTOM_RIGHT"/>
+
             </groupBox>
         </hbox>
         <groupTable id="sessionsTable"

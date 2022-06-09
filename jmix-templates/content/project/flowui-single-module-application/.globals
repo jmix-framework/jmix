@@ -1,0 +1,8 @@
+<%
+globals["normalizedPrefix_underscore"] = (project_idPrefix == null || project_idPrefix.isEmpty()) ? "" : project_idPrefix + "_"
+if(globals["normalizedPrefix_underscore"].isEmpty()) {
+    globals["userTable"] = "USER_"
+} else {
+    globals["userTable"] = globals["normalizedPrefix_underscore"].toUpperCase() + "USER"
+}
+%>

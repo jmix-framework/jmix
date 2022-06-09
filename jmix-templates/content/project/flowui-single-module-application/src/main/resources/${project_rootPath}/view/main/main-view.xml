@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2022 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<mainScreen xmlns="http://jmix.io/schema/flowui/main-screen"
+            title="msg://MainView.title">
+    <actions>
+        <action id="logout" type="logout"/>
+    </actions>
+    <appLayout>
+        <navigationBar>
+            <header id="header" className="jmix-main-screen-header">
+                <drawerToggle id="drawerToggle"
+                              className="jmix-main-screen-drawer-toggle"
+                              themeName="contrast"
+                              ariaLabel="msg://drawerToggle.ariaLabel"/>
+                <h1 id="screenTitle" className="jmix-main-screen-screen-title"/>
+            </header>
+        </navigationBar>
+        <drawerLayout>
+            <section id="section" className="jmix-main-screen-section">
+                <h2 id="applicationTitle"
+                    text="msg://applicationTitle.text"
+                    className="jmix-main-screen-application-title"/>
+                <nav id="navigation"
+                     className="jmix-main-screen-navigation"
+                     ariaLabel="msg://navigation.ariaLabel">
+                    <listMenu id="menu"/>
+                </nav>
+                <footer id="footer" className="jmix-main-screen-footer">
+                    <userIndicator id="userIndicator"/>
+                    <button id="logoutButton"
+                            action="logout"
+                            className="jmix-logout-button"/>
+                </footer>
+            </section>
+        </drawerLayout>
+    </appLayout>
+</mainScreen>

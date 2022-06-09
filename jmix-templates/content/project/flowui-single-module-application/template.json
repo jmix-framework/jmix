@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "name": "Flow UI Single Module Application (Java)",
+  "order": 0,
+  "description": "<html>Jmix web application in Java that uses Vaadin Flow framework for UI.<p>Contains Flow UI and Security subsystems.<br>Uses embedded HSQL database.</html>",
+  "params": [
+    {
+      "name": "projectId",
+      "mandatory": false
+    }
+  ]
+}

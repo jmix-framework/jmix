@@ -18,6 +18,7 @@ package component_xml_load
 
 import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.HasText
+import com.vaadin.flow.component.icon.Icon
 import com.vaadin.flow.component.icon.VaadinIcon
 import com.vaadin.flow.component.progressbar.ProgressBarVariant
 import component_xml_load.screen.ComponentView
@@ -62,10 +63,9 @@ class ComponentXmlLoadTest extends FlowuiTestSpecification {
         then: "Button attributes will be loaded"
         verifyAll(componentView.buttonId) {
             id.get() == "buttonId"
-            action == componentView.buttonAction
             autofocus
             classNames.containsAll(["cssClassName1", "cssClassName2"])
-            componentView.buttonId.icon.element.getAttribute("icon") ==
+            icon.element.getAttribute("icon") ==
                     VaadinIcon.YOUTUBE.create().element.getAttribute("icon")
             disableOnClick
             enabled
@@ -81,6 +81,24 @@ class ComponentXmlLoadTest extends FlowuiTestSpecification {
             visible
             whiteSpace == HasText.WhiteSpace.PRE
             width == "100px"
+        }
+    }
+
+    def "Load button component with Action from XML"() {
+        when: "Open the ComponentView"
+        def componentView = openScreen(ComponentView.class)
+
+        then: "Button attributes will be loaded"
+        verifyAll(componentView.buttonWithActionId) {
+            id.get() == "buttonWithActionId"
+            action == componentView.buttonAction
+            icon.element.getAttribute("icon")
+                    == new Icon(componentView.buttonAction.icon).element.getAttribute("icon")
+            enabled == componentView.buttonAction.enabled
+            visible == componentView.buttonAction.visible
+            text == componentView.buttonAction.text
+            title == componentView.buttonAction.description
+            themeNames.containsAll(["primary"])
         }
     }
 

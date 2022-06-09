@@ -19,6 +19,6 @@ public class AssignActionInitTask<C extends Component & HasAction> extends Abstr
 
     @Override
     protected void addAction(ComponentContext context, Action action) {
-        component.setAction(action, false);
+        component.setAction(action, true);
     }
 }

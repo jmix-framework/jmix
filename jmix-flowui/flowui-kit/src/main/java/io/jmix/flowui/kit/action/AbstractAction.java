@@ -34,7 +34,7 @@ public abstract class AbstractAction implements Action {
     protected boolean enabled = true;
     protected boolean visible = true;
     protected String icon;
-    protected String title;
+    protected String description;
     protected ActionVariant variant = ActionVariant.DEFAULT;
     protected KeyCombination shortcutCombination;
 
@@ -110,16 +110,16 @@ public abstract class AbstractAction implements Action {
 
     @Nullable
     @Override
-    public String getTitle() {
-        return title;
+    public String getDescription() {
+        return description;
     }
 
     @Override
-    public void setTitle(@Nullable String title) {
-        String oldValue = this.title;
-        if (!Objects.equals(oldValue, title)) {
-            this.title = title;
-            firePropertyChange(Action.PROP_TITLE, oldValue, title);
+    public void setDescription(@Nullable String description) {
+        String oldValue = this.description;
+        if (!Objects.equals(oldValue, description)) {
+            this.description = description;
+            firePropertyChange(Action.PROP_DESCRIPTION, oldValue, description);
         }
     }
 

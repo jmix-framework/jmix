@@ -54,7 +54,7 @@ public class LogoutAction extends BaseAction implements ExecutableAction, Applic
 
     @Autowired
     public void setMessages(Messages messages) {
-        this.title = messages.getMessage("actions.logout.description");
+        this.description = messages.getMessage("actions.logout.description");
     }
 
     @Override

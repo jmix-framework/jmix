@@ -1652,6 +1652,7 @@
         <xs:attribute name="shortcut" type="shortcut"/>
         <xs:attribute name="visible" type="xs:boolean"/>
         <xs:attribute name="text" type="resourceString"/>
+        <xs:attribute name="description" type="resourceString"/>
         <xs:attribute name="trackSelection" type="xs:boolean"/>
         <xs:attribute name="actionVariant" type="actionVariant"/>
 

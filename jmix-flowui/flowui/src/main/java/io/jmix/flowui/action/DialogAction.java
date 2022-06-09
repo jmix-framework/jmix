@@ -85,7 +85,7 @@ public class DialogAction extends SecuredBaseAction {
 
     @Override
     public DialogAction withTitle(@Nullable String title) {
-        setTitle(title);
+        setDescription(title);
         return this;
     }
 

@@ -29,7 +29,7 @@ public interface Action {
     String PROP_ENABLED = "enabled";
     String PROP_VISIBLE = "visible";
     String PROP_ICON = "icon";
-    String PROP_TITLE = "title";
+    String PROP_DESCRIPTION = "description";
     String PROP_VARIANT = "variant";
     String PROP_SHORTCUT = "shortcut";
 
@@ -53,11 +53,10 @@ public interface Action {
 
     void setIcon(@Nullable String icon);
 
-    // TODO: gg, why?
     @Nullable
-    String getTitle();
+    String getDescription();
 
-    void setTitle(@Nullable String title);
+    void setDescription(@Nullable String description);
 
     ActionVariant getVariant();
 

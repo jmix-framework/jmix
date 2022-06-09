@@ -98,7 +98,7 @@ public class BaseAction extends AbstractAction {
     }
 
     public BaseAction withTitle(@Nullable String title) {
-        setTitle(title);
+        setDescription(title);
         return this;
     }
 

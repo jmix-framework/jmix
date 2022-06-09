@@ -79,7 +79,10 @@ public class ActionLoaderSupport implements ApplicationContextAware {
     }
 
     protected void initAction(Element element, Action targetAction) {
-        loaderSupport.loadString(element, "text", targetAction::setText);
+        loaderSupport.loadResourceString(element, "text",
+                context.getMessageGroup(), targetAction::setText);
+        loaderSupport.loadResourceString(element, "description",
+                context.getMessageGroup(), targetAction::setDescription);
         loaderSupport.loadBoolean(element, "enable", targetAction::setEnabled);
         loaderSupport.loadBoolean(element, "visible", targetAction::setVisible);
 

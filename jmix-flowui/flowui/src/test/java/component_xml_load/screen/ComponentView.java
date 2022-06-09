@@ -80,6 +80,9 @@ public class ComponentView extends StandardScreen {
     public JmixButton buttonId;
 
     @ComponentId
+    public JmixButton buttonWithActionId;
+
+    @ComponentId
     public Checkbox checkBoxId;
 
     @ComponentId

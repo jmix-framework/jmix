@@ -21,9 +21,12 @@ import com.vaadin.flow.component.HasLabel;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.formlayout.FormLayout.ResponsiveStep;
 import com.vaadin.flow.component.formlayout.FormLayout.ResponsiveStep.LabelsPosition;
+import io.jmix.core.MessageTools;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.flowui.data.EntityValueSource;
+import io.jmix.flowui.data.SupportsValueSource;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
@@ -38,6 +41,8 @@ import java.util.Optional;
 public class FormLayoutLoader extends AbstractComponentLoader<FormLayout> {
 
     protected MetadataTools metaDataTools;
+    protected MessageTools messageTools;
+
     protected LabelsPosition labelsPosition = LabelsPosition.TOP;
 
     @Override
@@ -61,28 +66,40 @@ public class FormLayoutLoader extends AbstractComponentLoader<FormLayout> {
         LayoutLoader loader = getLayoutLoader();
 
         for (Element subElement : element.elements()) {
-            if (!isChildElementIgnored(subElement)) {
-                ComponentLoader<?> componentLoader = loader.createComponentLoader(subElement);
-                componentLoader.initComponent();
-                componentLoader.loadComponent();
-                Component child = componentLoader.getResultComponent();
+            if (isChildElementIgnored(subElement)) {
+                continue;
+            }
 
-                String label = loadResourceString(subElement, "label", context.getMessageGroup())
-                        .orElse(loadPropertyLabel(subElement));
-                Optional<Integer> colspan = loadInteger(subElement, "colspan");
+            ComponentLoader<?> componentLoader = loader.createComponentLoader(subElement);
+            componentLoader.initComponent();
+            componentLoader.loadComponent();
+            Component child = componentLoader.getResultComponent();
 
-                if (labelsPosition == LabelsPosition.ASIDE) {
-                    FormLayout.FormItem formItem = resultComponent.addFormItem(child, label);
-                    setLabel(child, null);
-                    formItem.setVisible(child.isVisible());
-                    colspan.ifPresent(it -> resultComponent.setColspan(formItem, it));
-                } else {
-                    setLabel(child, label);
-                    resultComponent.add(child);
-                    colspan.ifPresent(it -> resultComponent.setColspan(child, it));
-                }
+            Optional<Integer> colspan = loadInteger(subElement, "colspan");
+
+            String label = getLabel(child);
+            if (label == null) {
+                label = generatePropertyLabel(child);
+                setLabel(child, label);
+            }
+
+            if (labelsPosition == LabelsPosition.ASIDE) {
+                FormLayout.FormItem formItem = resultComponent.addFormItem(child, label);
+                setLabel(child, null);
+                formItem.setVisible(child.isVisible());
+                colspan.ifPresent(it -> resultComponent.setColspan(formItem, it));
+            } else {
+                resultComponent.add(child);
+                colspan.ifPresent(it -> resultComponent.setColspan(child, it));
             }
         }
+    }
+
+    @Nullable
+    protected String getLabel(Component component) {
+        return component instanceof HasLabel ?
+                ((HasLabel) component).getLabel()
+                : null;
     }
 
     protected void setLabel(Component component, @Nullable String label) {
@@ -122,19 +139,18 @@ public class FormLayoutLoader extends AbstractComponentLoader<FormLayout> {
     }
 
     @Nullable
-    protected String loadPropertyLabel(Element element) {
-        String property = loadString(element, "property").orElse(null);
-        String dataContainer = loadString(this.element, "dataContainer").orElse(null);
-
-        if (property == null || dataContainer == null) {
+    protected String generatePropertyLabel(Component component) {
+        if (!(component instanceof SupportsValueSource)
+                || !(((SupportsValueSource<?>) component).getValueSource() instanceof EntityValueSource)) {
             return null;
         }
 
-        MetaClass entityMetaClass = getComponentContext().getScreenData().getContainer(dataContainer).getEntityMetaClass();
+        MetaPropertyPath mpp =
+                ((EntityValueSource<?, ?>) ((SupportsValueSource<?>) component).getValueSource()).getMetaPropertyPath();
+        MetaClass propertyMetaClass = getMetadataTools().getPropertyEnclosingMetaClass(mpp);
+        String propertyName = mpp.getMetaProperty().getName();
 
-        MetaPropertyPath metaPropertyPath = getMetaDataTools().resolveMetaPropertyPathOrNull(entityMetaClass, property);
-        assert metaPropertyPath != null;
-        return metaPropertyPath.getMetaProperty().getName();
+        return getMessageTools().getPropertyCaption(propertyMetaClass, propertyName);
     }
 
     protected void loadLabelPosition(FormLayout resultComponent, Element element) {
@@ -150,10 +166,18 @@ public class FormLayoutLoader extends AbstractComponentLoader<FormLayout> {
         return "responsiveSteps".equalsIgnoreCase(subElement.getName());
     }
 
-    protected MetadataTools getMetaDataTools() {
+    protected MetadataTools getMetadataTools() {
         if (metaDataTools == null) {
-            metaDataTools = applicationContext.getBean(MetadataTools.class, context);
+            metaDataTools = applicationContext.getBean(MetadataTools.class);
         }
         return metaDataTools;
+    }
+
+    protected MessageTools getMessageTools() {
+        if (messageTools == null) {
+            messageTools = applicationContext.getBean(MessageTools.class);
+        }
+
+        return messageTools;
     }
 }

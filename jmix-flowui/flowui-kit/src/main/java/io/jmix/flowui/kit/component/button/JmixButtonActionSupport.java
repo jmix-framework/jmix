@@ -51,13 +51,13 @@ public class JmixButtonActionSupport {
         this.action = action;
 
         if (action != null) {
+            updateEnabled();
+            updateVisible();
             updateText(overrideComponentProperties);
-            updateEnabled(overrideComponentProperties);
-            updateVisible(overrideComponentProperties);
-            updateActionVariant(overrideComponentProperties);
-            updateIcon(overrideComponentProperties);
             updateTitle(overrideComponentProperties);
+            updateIcon(overrideComponentProperties);
             updateShortcut(overrideComponentProperties);
+            updateActionVariant(overrideComponentProperties);
 
             registration = button.addClickListener(event ->
                     action.actionPerform(event.getSource()));
@@ -121,16 +121,12 @@ public class JmixButtonActionSupport {
         }
     }
 
-    protected void updateEnabled(boolean overrideComponentProperties) {
-        if (overrideComponentProperties) {
-            button.setEnabled(action.isEnabled());
-        }
+    protected void updateEnabled() {
+        button.setEnabled(action.isEnabled());
     }
 
-    protected void updateVisible(boolean overrideComponentProperties) {
-        if (overrideComponentProperties) {
-            button.setVisible(action.isVisible());
-        }
+    protected void updateVisible() {
+        button.setVisible(action.isVisible());
     }
 
     protected void updateActionVariant(boolean overrideComponentProperties) {
@@ -151,10 +147,10 @@ public class JmixButtonActionSupport {
     }
 
     protected void updateTitle(boolean overrideComponentProperties) {
-        String title = action.getTitle();
+        String description = action.getDescription();
         if (StringUtils.isEmpty(button.getTitle()) || overrideComponentProperties) {
-            if (StringUtils.isNotEmpty(title)) {
-                button.setTitle(title);
+            if (StringUtils.isNotEmpty(description)) {
+                button.setTitle(description);
             } else {
                 String text = action.getText();
                 String shortcutCombination = action.getShortcutCombination() != null
@@ -196,7 +192,7 @@ public class JmixButtonActionSupport {
                 } else {
                     button.setIcon(new Icon(icon));
                 }
-            } else if (Action.PROP_TITLE.equals(propertyName)) {
+            } else if (Action.PROP_DESCRIPTION.equals(propertyName)) {
                 button.setTitle((String) event.getNewValue());
             } else if (Action.PROP_VARIANT.equals(propertyName)) {
                 removeActionVariant(button, (ActionVariant) event.getOldValue());

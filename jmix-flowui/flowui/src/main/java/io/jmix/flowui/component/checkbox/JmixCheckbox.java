@@ -16,7 +16,6 @@
 
 package io.jmix.flowui.component.checkbox;
 
-import com.google.common.primitives.Booleans;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import io.jmix.flowui.component.delegate.FieldDelegate;
 import io.jmix.flowui.data.SupportsValueSource;

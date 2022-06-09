@@ -16,18 +16,17 @@
 
 package io.jmix.flowui.xml.layout.loader.component;
 
-import com.vaadin.flow.component.checkbox.Checkbox;
+import io.jmix.flowui.component.checkbox.JmixCheckbox;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import io.jmix.flowui.xml.layout.support.DataLoaderSupport;
 
-//TODO: kremnevda, replace CheckBox to JmixCheckBox and add databinding 25.04.2022
-public class CheckBoxLoader extends AbstractComponentLoader<Checkbox> {
+public class CheckboxLoader extends AbstractComponentLoader<JmixCheckbox> {
 
     protected DataLoaderSupport dataLoaderSupport;
 
     @Override
-    protected Checkbox createComponent() {
-        return factory.create(Checkbox.class);
+    protected JmixCheckbox createComponent() {
+        return factory.create(JmixCheckbox.class);
     }
 
     @Override

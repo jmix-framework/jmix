@@ -35,15 +35,18 @@ import io.jmix.ui.Actions;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.WindowConfig;
 import io.jmix.ui.action.entitypicker.EntityLookupAction;
-import io.jmix.ui.app.propertyfilter.dateinterval.action.DateIntervalAction;
 import io.jmix.ui.action.valuepicker.ValueClearAction;
+import io.jmix.ui.app.propertyfilter.dateinterval.action.DateIntervalAction;
 import io.jmix.ui.app.propertyfilter.dateinterval.model.BaseDateInterval;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.data.DataAwareComponentsTools;
+import io.jmix.ui.component.data.options.ListOptions;
 import io.jmix.ui.component.factory.PropertyFilterComponentGenerationContext;
 import io.jmix.ui.screen.OpenMode;
 import io.jmix.ui.sys.ScreensHelper;
 import org.springframework.context.ApplicationContext;
+
+import java.util.List;
 
 import static io.jmix.dynattr.AttributeType.ENTITY;
 import static io.jmix.ui.component.factory.PropertyFilterComponentGenerationStrategy.UNARY_FIELD_STYLENAME;
@@ -143,6 +146,20 @@ public class DynAttrPropertyFilterComponentGenerationStrategy extends DynAttrCom
         MetaClass metaClass = metadata.getClass(javaType);
 
         entityPicker.setMetaClass(metaClass);
+
+        if (attribute.getConfiguration().isLookup()) {
+            try {
+                List<?> options = optionsLoader.loadOptions(null, attribute);
+                //noinspection rawtypes,unchecked
+                ((EntityComboBox) entityPicker).setOptions(new ListOptions(options));
+            } catch (RuntimeException e) {
+                throw new IllegalArgumentException(String.format("Cannot load options for dynamic attribute '%s'. " +
+                        "It may be caused by absence of 'entity' parameter. Entity can not be defined in filter condition.\n" +
+                        "Please, consider nullability of 'entity' options script parameter, " +
+                        "do not use lookup field for this attribute or do not use this attribute in filter." +
+                        "\n\nCause: %s", attribute.getName(), e.getMessage()));
+            }
+        }
 
         return entityPicker;
     }

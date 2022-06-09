@@ -459,10 +459,9 @@ public class JmixEclipseLinkQuery<E> implements JmixQuery<E> {
                 }
             } else {
                 log.trace("Creating JPQL query: {}", queryString);
+                processParams(queryString);
                 transformedQueryString = transformQueryString();
                 log.trace("Transformed JPQL query: {}", transformedQueryString);
-
-                processParams(transformedQueryString);
 
                 Class effectiveClass = getEffectiveResultClass();
                 query = buildJPAQuery(transformedQueryString, effectiveClass);

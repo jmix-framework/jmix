@@ -36,7 +36,7 @@ import javax.annotation.Nullable;
         icon = "io/jmix/ui/icon/container/htmlBox.svg",
         canvasBehaviour = CanvasBehaviour.CONTAINER,
         containerType = ContainerType.VERTICAL,
-        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/containers/html-box-layout.html"
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/vcl/containers/html-box-layout.html"
 )
 @StudioProperties(
         properties = {

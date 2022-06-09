@@ -22,6 +22,41 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd"
         context="cuba and !migrated">
 
+    <changeSet id="5" author="migrator">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="CUBASDBMT_TENANT"/>
+        </preConditions>
+
+        <dropAllForeignKeyConstraints baseTableName="CUBASDBMT_TENANT"/>
+    </changeSet>
+
+    <changeSet id="6-other" author="migrator" dbms="postgresql,hsqldb,oracle">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="CUBASDBMT_TENANT"/>
+        </preConditions>
+
+        <dropNotNullConstraint tableName="CUBASDBMT_TENANT" columnName="ACCESS_GROUP_ID"/>
+        <dropNotNullConstraint tableName="CUBASDBMT_TENANT" columnName="ADMIN_ID"/>
+    </changeSet>
+
+    <changeSet id="6-mysql" author="migrator" dbms="mysql,mariadb">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="CUBASDBMT_TENANT"/>
+        </preConditions>
+
+        <dropNotNullConstraint tableName="CUBASDBMT_TENANT" columnName="ACCESS_GROUP_ID" columnDataType="varchar(32)"/>
+        <dropNotNullConstraint tableName="CUBASDBMT_TENANT" columnName="ADMIN_ID" columnDataType="varchar(32)"/>
+    </changeSet>
+
+    <changeSet id="6-mssql" author="migrator" dbms="mssql">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="CUBASDBMT_TENANT"/>
+        </preConditions>
+
+        <dropNotNullConstraint tableName="CUBASDBMT_TENANT" columnName="ACCESS_GROUP_ID" columnDataType="${uuid.type}"/>
+        <dropNotNullConstraint tableName="CUBASDBMT_TENANT" columnName="ADMIN_ID" columnDataType="${uuid.type}"/>
+    </changeSet>
+
     <changeSet id="10" author="migrator">
         <preConditions onFail="MARK_RAN">
             <tableExists tableName="CUBASDBMT_TENANT"/>

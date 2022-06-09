@@ -34,7 +34,8 @@ import java.util.function.Consumer;
         description = "Fires events at fixed intervals",
         defaultProperty = "id",
         category = "Facets",
-        icon = "io/jmix/ui/icon/facet/timer.svg"
+        icon = "io/jmix/ui/icon/facet/timer.svg",
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/facets/timer.html"
 )
 @StudioProperties(
         properties = {

@@ -35,7 +35,7 @@ import io.jmix.ui.meta.StudioProperty;
         xmlElement = "drawer",
         canvasBehaviour = CanvasBehaviour.CONTAINER,
         containerType = ContainerType.VERTICAL,
-        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/containers/drawer.html",
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/vcl/containers/drawer.html",
         unsupportedProperties = {"align", "enable", "expand", "responsive", "width", "height", "visible"},
         icon = "io/jmix/ui/icon/mainwindow/drawer.svg"
 )

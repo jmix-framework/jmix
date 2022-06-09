@@ -18,10 +18,10 @@ package io.jmix.autoconfigure.charts;
 
 import io.jmix.core.CoreConfiguration;
 import io.jmix.charts.ChartsConfiguration;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Import;
 
-@Configuration
+@AutoConfiguration
 @Import({CoreConfiguration.class, ChartsConfiguration.class})
 public class ChartsAutoConfiguration {
 }

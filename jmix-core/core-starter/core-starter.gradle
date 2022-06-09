@@ -21,4 +21,6 @@ dependencies {
     api project(':core')
 
     implementation 'org.springframework.boot:spring-boot-autoconfigure'
+
+    compileOnly 'org.springframework.boot:spring-boot-starter-quartz'
 }

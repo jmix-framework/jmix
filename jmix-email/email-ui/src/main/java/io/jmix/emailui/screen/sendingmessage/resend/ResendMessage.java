@@ -25,6 +25,7 @@ import io.jmix.email.entity.SendingAttachment;
 import io.jmix.email.entity.SendingMessage;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.component.Button;
+import io.jmix.ui.component.CheckBox;
 import io.jmix.ui.component.TextField;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.Subscribe;
@@ -62,6 +63,8 @@ public class ResendMessage extends Screen {
     protected TextField<String> ccTextField;
     @Autowired
     protected TextField<String> bccTextField;
+    @Autowired
+    private CheckBox importanceField;
 
     @Subscribe
     protected void onBeforeShow(BeforeShowEvent event) {
@@ -89,6 +92,7 @@ public class ResendMessage extends Screen {
                     .setBcc(bccTextField.getValue())
                     .setCc(ccTextField.getValue())
                     .setHeaders(parseHeadersString(message.getHeaders()))
+                    .setImportant(importanceField.getValue() != null && importanceField.getValue())
                     .build();
             try {
                 emailer.sendEmail(emailInfo);

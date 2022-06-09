@@ -26,5 +26,5 @@ import org.dom4j.Element;
 @Internal
 public interface ComponentRootLoader<T extends Component> extends ComponentLoader<T> {
 
-    void createContent(Element layoutElement);
+    void createContent();
 }

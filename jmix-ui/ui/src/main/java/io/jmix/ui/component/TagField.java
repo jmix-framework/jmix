@@ -47,7 +47,7 @@ import java.util.function.Function;
         category = "Components",
         xmlElement = "tagField",
         canvasBehaviour = CanvasBehaviour.INPUT_FIELD,
-        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/tag-field.html",
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/vcl/components/tag-field.html",
         icon = "io/jmix/ui/icon/component/tagField.svg"
 )
 @StudioProperties(

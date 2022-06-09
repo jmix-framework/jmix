@@ -58,7 +58,7 @@ import static io.jmix.ui.component.MouseEventDetails.MouseButton;
         xmlElement = "dataGrid",
         icon = "io/jmix/ui/icon/component/dataGrid.svg",
         canvasBehaviour = CanvasBehaviour.TABLE,
-        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/data-grid.html"
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/vcl/components/data-grid.html"
 )
 @StudioProperties(
         properties = {

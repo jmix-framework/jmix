@@ -19,9 +19,7 @@ import io.jmix.core.*;
 import io.jmix.data.PersistenceHints;
 
 import javax.annotation.Nullable;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -128,7 +126,11 @@ public class CommitContext extends SaveContext {
      * @param commitInstances collection of changed entities that will be committed to the database
      */
     public void setCommitInstances(Collection commitInstances) {
-        this.entitiesToSave = commitInstances;
+        if (commitInstances instanceof Set) {
+            this.entitiesToSave = (Set<Object>) commitInstances;
+        } else {
+            this.entitiesToSave = new LinkedHashSet<>(commitInstances);
+        }
     }
 
     /**
@@ -143,7 +145,11 @@ public class CommitContext extends SaveContext {
      * @param removeInstances collection of entities to be removed from the database
      */
     public void setRemoveInstances(Collection removeInstances) {
-        this.entitiesToRemove = removeInstances;
+        if (removeInstances instanceof Set) {
+            this.entitiesToRemove = (Set<Object>) removeInstances;
+        } else {
+            this.entitiesToRemove = new LinkedHashSet<>(removeInstances);
+        }
     }
 
     /**

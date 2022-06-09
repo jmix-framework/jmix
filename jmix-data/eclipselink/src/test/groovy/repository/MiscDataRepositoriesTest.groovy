@@ -35,6 +35,7 @@ package repository
 import io.jmix.core.DataManager
 import io.jmix.core.Metadata
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.dao.IncorrectResultSizeDataAccessException
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
@@ -306,20 +307,17 @@ class MiscDataRepositoriesTest extends DataSpec {
         e1.lastName = "F."
 
         Employee e2 = employeeRepository.create();
-        e2.name = "John"
-        e2.secondName = "R."
-        e2.lastName = "Smith"
+        e2.name = "NORDOM"
+        e2.secondName = "NOT"
+        e2.lastName = "MODRON"
 
         dataManager.save(e1, e2)
 
 
         when:
         Optional<Employee> optionalEmployee = employeeRepository.findTopByOrderByNameDesc()
-
         Set<Employee> employeeSet = employeeRepository.findFirstByOrderByNameDesc()
-
         Stream<Employee> employeeStream = employeeRepository.findTop1ByOrderByNameDesc()
-
         Iterator<Employee> employeeIterator = employeeRepository.findFirst1ByOrderByNameDesc()
 
         then:
@@ -327,6 +325,30 @@ class MiscDataRepositoriesTest extends DataSpec {
         employeeSet.iterator().next().name == "R."
         employeeStream.collect(Collectors.toList()).iterator().next().name == "R."
         employeeIterator.next().name == "R."
+
+        when:
+        employeeRepository.findByNameContains("R")
+        then:
+        thrown(IncorrectResultSizeDataAccessException.class)
+
+        when:
+        employeeRepository.getByNameContains("R")
+        then:
+        thrown(IncorrectResultSizeDataAccessException.class)
+
+        when:
+        Optional<Employee> optional = employeeRepository.findByNameContains("NORDOM")
+        Employee employee = employeeRepository.getByNameContains("NORDOM")
+        then:
+        optional.get().lastName == "MODRON"
+        employee.lastName == "MODRON"
+
+        when:
+        optional = employeeRepository.findByNameContains("IncorrectName")
+        employee = employeeRepository.getByNameContains("IncorrectName")
+        then:
+        !optional.isPresent()
+        employee == null
 
         cleanup:
         dataManager.remove(e1, e2)

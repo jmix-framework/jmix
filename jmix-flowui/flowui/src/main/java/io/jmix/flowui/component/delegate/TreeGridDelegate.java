@@ -8,7 +8,7 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.data.grid.GridDataItems;
 import io.jmix.flowui.data.grid.TreeGridDataItems;
-import io.jmix.flowui.component.grid.JmixTreeGrid;
+import io.jmix.flowui.component.grid.TreeDataGrid;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -17,9 +17,9 @@ import java.util.Collection;
 
 @Component("flowui_TreeGridDelegate")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class TreeGridDelegate<E> extends AbstractGridDelegate<JmixTreeGrid<E>, E> {
+public class TreeGridDelegate<E> extends AbstractGridDelegate<TreeDataGrid<E>, E> {
 
-    public TreeGridDelegate(JmixTreeGrid<E> component) {
+    public TreeGridDelegate(TreeDataGrid<E> component) {
         super(component);
     }
 

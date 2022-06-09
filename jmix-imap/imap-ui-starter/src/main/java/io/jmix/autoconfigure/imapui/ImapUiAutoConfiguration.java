@@ -18,10 +18,10 @@ package io.jmix.autoconfigure.imapui;
 
 import io.jmix.imap.ImapConfiguration;
 import io.jmix.imapui.ImapUiConfiguration;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Import;
 
-@Configuration
+@AutoConfiguration
 @Import({ImapConfiguration.class, ImapUiConfiguration.class})
 public class ImapUiAutoConfiguration {
 }

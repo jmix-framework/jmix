@@ -38,7 +38,7 @@ import java.util.Collection;
         xmlElement = "checkBoxGroup",
         icon = "io/jmix/ui/icon/component/checkBoxGroup.svg",
         canvasBehaviour = CanvasBehaviour.OPTIONS_GROUP,
-        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/check-box-group.html"
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/vcl/components/check-box-group.html"
 )
 @StudioProperties(
         properties = {

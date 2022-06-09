@@ -16,6 +16,7 @@
 package com.haulmont.cuba.core.app;
 
 import com.haulmont.cuba.core.entity.Config;
+import io.jmix.core.CacheOperations;
 import io.jmix.core.Metadata;
 import io.jmix.core.common.util.Preconditions;
 import org.slf4j.Logger;
@@ -59,6 +60,9 @@ public class ConfigStorage implements ConfigStorageAPI {
     @Autowired
     protected CacheManager cacheManager;
 
+    @Autowired
+    protected CacheOperations cacheOperations;
+
     protected TransactionTemplate transaction;
 
     protected Cache cache;
@@ -93,7 +97,7 @@ public class ConfigStorage implements ConfigStorageAPI {
 
     @Override
     public String getDbProperty(String name) {
-        ValueHolder valueHolder = cache.get(name, () -> loadDbProperty(name));
+        ValueHolder valueHolder = cacheOperations.get(cache, name, () -> loadDbProperty(name));
         return valueHolder == null ? null : valueHolder.getValue();
     }
 

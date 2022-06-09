@@ -135,7 +135,7 @@ public class JmixSideMenu extends AbstractComponent implements Component.Focusab
             this.structureChanged = false;
         }
 
-        if (this.selectedChanged) {
+        if ((initial && selectedItem != null) || this.selectedChanged) {
             String key = selectedItem == null ? null : menuItemIdMapper.key(selectedItem);
             getRpcProxy(JmixSideMenuClientRpc.class).selectItem(key);
 

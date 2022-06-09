@@ -38,7 +38,7 @@ import java.util.Collection;
         xmlElement = "twinColumn",
         icon = "io/jmix/ui/icon/component/twinColumn.svg",
         canvasBehaviour = CanvasBehaviour.TWIN_COLUMN,
-        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/twin-column.html"
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/vcl/components/twin-column.html"
 )
 @StudioProperties(
         properties = {

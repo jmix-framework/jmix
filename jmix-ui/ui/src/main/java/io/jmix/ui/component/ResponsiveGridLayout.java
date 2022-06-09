@@ -44,7 +44,7 @@ import java.util.Objects;
         canvasBehaviour = CanvasBehaviour.CONTAINER,
         containerType = ContainerType.RESPONSIVE_GRID,
         unsupportedProperties = {"responsive", "width"},
-        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/containers/responsive-grid-layout.html"
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/vcl/containers/responsive-grid-layout.html"
 )
 @StudioProperties(
         properties = {
@@ -208,7 +208,7 @@ public interface ResponsiveGridLayout extends Component, Component.BelongToFrame
             xmlElement = "row",
             caption = "Row",
             icon = "io/jmix/ui/icon/element/row.svg",
-            documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/containers/responsive-grid-layout.html#row-element"
+            documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/vcl/containers/responsive-grid-layout.html#row-element"
     )
     @StudioProperties(
             properties = {
@@ -720,7 +720,7 @@ public interface ResponsiveGridLayout extends Component, Component.BelongToFrame
             xmlElement = "col",
             caption = "Column",
             icon = "io/jmix/ui/icon/element/col.svg",
-            documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/containers/responsive-grid-layout.html#col-element"
+            documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/vcl/containers/responsive-grid-layout.html#col-element"
     )
     @StudioProperties(
             properties = {

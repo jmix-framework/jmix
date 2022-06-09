@@ -43,7 +43,6 @@ import io.jmix.ui.component.Component;
 import io.jmix.ui.component.ComponentGenerationContext;
 import io.jmix.ui.component.EntityPicker;
 import io.jmix.ui.component.Field;
-import io.jmix.ui.component.data.options.MapOptions;
 import io.jmix.ui.component.data.value.ContainerValueSource;
 import io.jmix.ui.component.validation.Validator;
 import io.jmix.ui.icon.Icons;
@@ -180,7 +179,7 @@ public class CubaDynAttrComponentGenerationStrategy extends DynAttrComponentGene
     protected Component createEnumerationField(ComponentGenerationContext context, AttributeDefinition attribute) {
         LookupField lookupField = cubaUiComponents.create(LookupField.class);
 
-        lookupField.setOptions(new MapOptions(getLocalizedEnumerationMap(attribute)));
+        lookupField.setOptionsMap(getLocalizedEnumerationMap(attribute));
 
         setValueSource(lookupField, context);
         setValidators(lookupField, attribute);

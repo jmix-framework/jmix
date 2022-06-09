@@ -21,6 +21,7 @@
         <textField id="emailTextField" caption="msg://emailTextFieldCaption" width="100%"/>
         <textField id="ccTextField" caption="msg://ccTextFieldCaption" width="100%"/>
         <textField id="bccTextField" caption="msg://bccTextFieldCaption" width="100%"/>
+        <checkBox id="importanceField" caption="msg://importanceCaption" width="100%"/>
         <button id="resendEmailBtn" caption="msg://resendBtnCaption"/>
     </layout>
 </window>

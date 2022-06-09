@@ -50,7 +50,7 @@ import java.util.function.Consumer;
         xmlElement = "calendar",
         icon = "io/jmix/ui/icon/component/calendar.svg",
         canvasBehaviour = CanvasBehaviour.CALENDAR,
-        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/calendar.html"
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/vcl/components/calendar.html"
 )
 @StudioProperties(
         properties = {

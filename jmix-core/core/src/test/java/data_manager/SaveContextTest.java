@@ -100,4 +100,19 @@ public class SaveContextTest {
         assertTrue(ctx.isJoinTransaction());
         assertEquals("v1", ctx.getHints().get("h1"));
     }
+
+    @Test
+    void testCollectionsAreModifiable() {
+        Pet pet1 = new Pet();
+        Pet pet2 = new Pet();
+        SaveContext ctx = new SaveContext();
+
+        // when:
+        ctx.getEntitiesToSave().add(pet1);
+        ctx.getEntitiesToRemove().add(pet2);
+
+        // then:
+        assertTrue(ctx.getEntitiesToSave().contains(pet1));
+        assertTrue(ctx.getEntitiesToRemove().contains(pet2));
+    }
 }

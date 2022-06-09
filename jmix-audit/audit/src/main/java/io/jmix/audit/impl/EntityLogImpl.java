@@ -523,7 +523,7 @@ public class EntityLogImpl implements EntityLog, JpaLifecycleListener {
         EntityLogItem.Type type;
         if (isSoftDeleteEntityRestored(entity, dirty)) {
             type = EntityLogItem.Type.RESTORE;
-            entityLogAttrs = createLogAttributes(entity, attributes, changes);
+            entityLogAttrs = createLogAttributes(entity, attributes, type, changes);
         } else {
             type = EntityLogItem.Type.MODIFY;
             Set<String> dirtyAttributes = new HashSet<>();
@@ -547,7 +547,7 @@ public class EntityLogImpl implements EntityLog, JpaLifecycleListener {
                     }
                 }
             }
-            entityLogAttrs = createLogAttributes(entity, dirtyAttributes, changes);
+            entityLogAttrs = createLogAttributes(entity, dirtyAttributes, type, changes);
         }
         if (!entityLogAttrs.isEmpty() || type == EntityLogItem.Type.RESTORE) {
             item = metadata.create(EntityLogItem.class);
@@ -563,7 +563,7 @@ public class EntityLogImpl implements EntityLog, JpaLifecycleListener {
         return item;
     }
 
-    protected Set<EntityLogAttr> createLogAttributes(Object entity, Set<String> attributes,
+    protected Set<EntityLogAttr> createLogAttributes(Object entity, Set<String> attributes, EntityLogItem.Type type,
                                                      @Nullable AttributeChanges changes) {
         Set<EntityLogAttr> result = new HashSet<>();
         for (String name : attributes) {
@@ -575,18 +575,23 @@ public class EntityLogImpl implements EntityLog, JpaLifecycleListener {
             MetaProperty metaProperty = propertyPath == null ? null : propertyPath.getMetaProperty();
 
             String value = stringify(EntityValues.getValueEx(entity, name), metaProperty);
-            attr.setValue(value);
-
             Object valueId = getValueId(EntityValues.getValueEx(entity, name));
-            if (valueId != null)
-                attr.setValueId(valueId.toString());
+            if (EntityLogItem.Type.DELETE == type) {
+                attr.setOldValue(value);
+                if (valueId != null)
+                    attr.setOldValueId(valueId.toString());
+            } else {
+                attr.setValue(value);
+                if (valueId != null)
+                    attr.setValueId(valueId.toString());
 
-            if (changes != null) {
-                Object oldValue = changes.getOldValue(name);
-                attr.setOldValue(stringify(oldValue, metaProperty));
-                Object oldValueId = getValueId(oldValue);
-                if (oldValueId != null) {
-                    attr.setOldValueId(oldValueId.toString());
+                if (changes != null) {
+                    Object oldValue = changes.getOldValue(name);
+                    attr.setOldValue(stringify(oldValue, metaProperty));
+                    Object oldValueId = getValueId(oldValue);
+                    if (oldValueId != null) {
+                        attr.setOldValueId(oldValueId.toString());
+                    }
                 }
             }
 
@@ -674,7 +679,7 @@ public class EntityLogImpl implements EntityLog, JpaLifecycleListener {
         } else {
             item.getEntityRef().setObjectEntityId(referenceToEntitySupport.getReferenceId(entity));
         }
-        item.setAttributes(createLogAttributes(entity, attributes, null));
+        item.setAttributes(createLogAttributes(entity, attributes, type, null));
         return item;
     }
 

@@ -21,6 +21,7 @@ import io.jmix.core.*;
 import io.jmix.core.impl.repository.query.utils.LoaderHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.data.domain.*;
 import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.data.repository.core.RepositoryMetadata;
@@ -28,10 +29,7 @@ import org.springframework.data.repository.query.parser.PartTree;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Method;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Stream;
 
 public class JmixListQuery extends JmixStructuredQuery {
@@ -117,10 +115,18 @@ public class JmixListQuery extends JmixStructuredQuery {
 
         List<?> result = loader.list();
 
+        if (returnType.isAssignableFrom(metadata.getDomainType())
+                || Optional.class.isAssignableFrom(returnType)) {
+            if (result.size() > 1) {
+                throw new IncorrectResultSizeDataAccessException(1, result.size());
+            }
+            return result.size() == 1 ? result.iterator().next() : null;
+        }
+
         if (Iterator.class.isAssignableFrom(returnType)) {
             return result.iterator();
         }
-        if (Objects.equals(maxResults, 1) && !isMultipleReturnType(returnType)) {
+        if (Objects.equals(maxResults, 1) && !isMultipleReturnType(returnType)) {//just in case of unconsidered return type
             return result.isEmpty() ? null : result.iterator().next();
         }
         return result;

@@ -41,7 +41,7 @@ import java.util.function.Function;
         xmlElement = "valuePicker",
         icon = "io/jmix/ui/icon/component/valuePicker.svg",
         canvasBehaviour = CanvasBehaviour.VALUE_PICKER,
-        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/value-picker.html"
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/vcl/components/value-picker.html"
 )
 @StudioProperties(
         properties = {
@@ -54,7 +54,7 @@ import java.util.function.Function;
         }
 )
 public interface ValuePicker<V> extends Field<V>, HasFormatter<V>,
-        ActionsHolder, Buffered, Component.Focusable, SupportsUserAction<V> {
+        ActionsHolder, Buffered, Component.Focusable, SupportsUserAction<V>, HasInputPrompt {
 
     String NAME = "valuePicker";
 

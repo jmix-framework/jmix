@@ -23,13 +23,14 @@ import org.quartz.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Import;
 
-@Configuration
+@AutoConfiguration
 @Import(EmailConfiguration.class)
 @ConditionalOnClass(Job.class)
 @ConditionalOnProperty(name = "jmix.email.use-default-quartz-configuration", matchIfMissing = true)
@@ -50,12 +51,12 @@ public class EmailSendingScheduleAutoConfiguration {
     }
 
     @Bean("email_EmailSendingTrigger")
-    Trigger emailSendingTrigger() {
+    Trigger emailSendingTrigger(@Qualifier("email_EmailSendingJob") JobDetail emailSendingJob) {
         String cron = emailerProperties.getEmailSendingCron();
         log.info("Schedule Email Sending using default configuration with CRON expression '{}'", cron);
         return TriggerBuilder.newTrigger()
                 .withIdentity("emailSendingCronTrigger")
-                .forJob(emailSendingJob())
+                .forJob(emailSendingJob)
                 .startNow()
                 .withSchedule(CronScheduleBuilder.cronSchedule(cron))
                 .build();

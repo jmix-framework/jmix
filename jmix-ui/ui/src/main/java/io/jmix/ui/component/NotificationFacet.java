@@ -37,7 +37,8 @@ import java.util.function.Supplier;
         description = "Prepares and shows notifications",
         defaultProperty = "caption",
         category = "Facets",
-        icon = "io/jmix/ui/icon/facet/notification.svg"
+        icon = "io/jmix/ui/icon/facet/notification.svg",
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/facets/notification-facet.html"
 )
 @StudioProperties(
         properties = {

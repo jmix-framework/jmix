@@ -153,5 +153,13 @@ class ContainersWithDataContextTest extends ScreenSpecification {
         order1.orderLines[1].params.size() == 1
         order1.orderLines[1].params[0] == param2
         paramsDc.items.size() == 1
+
+        when:
+
+        linesDc.setItem(null)
+        order1.orderLines[1].params = []
+
+        then:
+        noExceptionThrown()
     }
 }

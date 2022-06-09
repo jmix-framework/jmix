@@ -33,25 +33,21 @@ public abstract class BaseLoaderConfig {
     }
 
     protected void initStandardLoaders() {
-        // TODO: gg, store component names somewhere
-        /*Abstract layouts*/
+        /* Abstract layouts */
         loaders.put("hbox", HorizontalLayoutLoader.class);
         loaders.put("vbox", VerticalLayoutLoader.class);
 
-        /*Content panel*/
+        /* Content panel */
         loaders.put("accordion", AccordionLoader.class);
         loaders.put("accordionPanel", AccordionLoader.AccordionPanelLoader.class);
         loaders.put("scroller", ScrollerLoader.class);
         loaders.put("tabs", TabsLoader.class);
         loaders.put("tab", TabsLoader.TabLoader.class);
-        loaders.put("grid", JmixGridLoader.class);
-        loaders.put("column", JmixGridLoader.GridColumnLoader.class);
         loaders.put("details", DetailsLoader.class);
         loaders.put("split", SplitLayoutLoader.class);
-        loaders.put("form", FormLayoutLoader.class);
-        loaders.put("formItem", FormLayoutLoader.FormItemLoader.class);
+        loaders.put("formLayout", FormLayoutLoader.class);
 
-        /*Components*/
+        /* Components */
         loaders.put("button", ButtonLoader.class);
         loaders.put("textField", TextFieldLoader.class);
         loaders.put("emailField", EmailFieldLoader.class);
@@ -74,15 +70,21 @@ public abstract class BaseLoaderConfig {
         loaders.put("comboBoxPicker", ComboBoxPickerLoader.class);
         loaders.put("entityComboBox", EntityComboBoxLoader.class);
         loaders.put("listMenu", ListMenuLoader.class);
+        loaders.put("drawerToggle", DrawerToggleLoader.class);
+        loaders.put("userIndicator", UserIndicatorLoader.class);
+        loaders.put("dataGrid", DataGridLoader.class);
+        loaders.put("treeDataGrid", TreeDataGridLoader.class);
+        loaders.put("loginForm", LoginFormLoader.class);
+        loaders.put("loginOverlay", LoginOverlayLoader.class);
 
-        /*HTML components*/
+        /* HTML components */
         loaders.put("param", ParamLoader.class);
         loaders.put("hr", HrLoader.class);
         loaders.put("input", InputLoader.class);
         loaders.put("image", ImageLoader.class);
         loaders.put("iframe", IFrameLoader.class);
 
-        /*Containers*/
+        /* Containers */
         loaders.put("h1", H1Loader.class);
         loaders.put("h2", H2Loader.class);
         loaders.put("h3", H3Loader.class);

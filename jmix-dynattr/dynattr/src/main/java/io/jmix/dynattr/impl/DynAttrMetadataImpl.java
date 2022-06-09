@@ -22,6 +22,9 @@ import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.core.metamodel.model.Range;
+import io.jmix.core.metamodel.model.impl.ClassRange;
+import io.jmix.core.metamodel.model.impl.DatatypeRange;
 import io.jmix.data.PersistenceHints;
 import io.jmix.data.StoreAwareLocator;
 import io.jmix.dynattr.*;
@@ -73,22 +76,48 @@ public class DynAttrMetadataImpl implements DynAttrMetadata {
     @Override
     public Collection<AttributeDefinition> getAttributes(MetaClass metaClass) {
         String key = extendedEntities.getOriginalOrThisMetaClass(metaClass).getName();
-        CacheItem value = cache.get(key, () -> loadCacheItem(key));
-        return value == null ? Collections.emptyList() : Collections.unmodifiableCollection(value.getAttributes());
+        CacheItem value = getItemFromCacheOrLoad(key);
+        return Collections.unmodifiableCollection(value.getAttributes());
+    }
+
+    private CacheItem getItemFromCacheOrLoad(String metaClassName) {
+        CacheItem value = Objects.requireNonNull(
+                cacheOperations.get(cache, metaClassName, () -> loadCacheItem(metaClassName)));
+        completeDeserializedItem(value);
+        return value;
+    }
+
+    private void completeDeserializedItem(CacheItem item) {
+        for (AttributeDefinition attributeDefinition : item.getAttributes()) {
+            if (attributeDefinition instanceof CommonAttributeDefinition) {
+                DynAttrMetaProperty property = ((CommonAttributeDefinition) attributeDefinition).getMetaProperty();
+                if (property.getOwnerMetaClass() == null) {//CacheItem has been deserialized from cache
+                    //have to fill transient fields
+                    property.setOwnerMetaClass(metadata.getClass(property.getOwnerMetaClassName()));
+
+                    if (property.getType() == MetaProperty.Type.ASSOCIATION) {
+                        property.setRange(new ClassRange(
+                                extendedEntities.getOriginalOrThisMetaClass(metadata.getClass(property.getJavaType()))));
+                    } else {
+                        property.setRange(new DatatypeRange(datatypeRegistry.get(property.getJavaType())));
+                    }
+                }
+            }
+        }
     }
 
     @Override
     public Optional<AttributeDefinition> getAttributeByCode(MetaClass metaClass, String code) {
         String key = extendedEntities.getOriginalOrThisMetaClass(metaClass).getName();
-        CacheItem value = cache.get(key, () -> loadCacheItem(key));
-        return value == null ? Optional.empty() : value.getAttributeByCode(code);
+        CacheItem value = getItemFromCacheOrLoad(key);
+        return value.getAttributeByCode(code);
     }
 
     @Override
     public Collection<CategoryDefinition> getCategories(MetaClass metaClass) {
         String key = extendedEntities.getOriginalOrThisMetaClass(metaClass).getName();
-        CacheItem value = cache.get(key, () -> loadCacheItem(key));
-        return value == null ? Collections.emptyList() : value.getCategories();
+        CacheItem value = getItemFromCacheOrLoad(key);
+        return value.getCategories();
     }
 
     @Override
@@ -147,20 +176,27 @@ public class DynAttrMetadataImpl implements DynAttrMetadata {
         return new CommonCategoryDefinition(category, attributes);
     }
 
-    protected MetaProperty buildMetaProperty(CategoryAttribute categoryAttribute, MetaClass metaClass) {
+    protected DynAttrMetaProperty buildMetaProperty(CategoryAttribute categoryAttribute, MetaClass metaClass) {
         String name = DynAttrUtils.getPropertyFromAttributeCode(categoryAttribute.getCode());
 
         Class<?> javaClass;
         Datatype<?> datatype = null;
         MetaClass propertyMetaClass = null;
+        Range range;
+        MetaProperty.Type type;
         if (categoryAttribute.getDataType() == AttributeType.ENTITY) {
             javaClass = ReflectionHelper.getClass(categoryAttribute.getEntityClass());
             propertyMetaClass = extendedEntities.getOriginalOrThisMetaClass(metadata.getClass(javaClass));
+            range = new ClassRange(propertyMetaClass);
+            type = MetaProperty.Type.ASSOCIATION;
         } else {
             javaClass = DynAttrUtils.getDatatypeClass(categoryAttribute.getDataType());
             datatype = datatypeRegistry.get(javaClass);
+            range = new DatatypeRange(datatype);
+            type = MetaProperty.Type.DATATYPE;
         }
-        return new DynAttrMetaProperty(name, metaClass, javaClass, propertyMetaClass, datatype);
+
+        return new DynAttrMetaProperty(name, metaClass, javaClass, range, type);
     }
 
     protected static class CacheItem implements Serializable {

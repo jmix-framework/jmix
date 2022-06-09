@@ -43,7 +43,7 @@
 
                 <xs:element name="dialogMode" minOccurs="0" type="layout:dialogMode"/>
 
-<!--                <xs:element name="facets" minOccurs="0" type="layout:facets"/>-->
+                <xs:element name="facets" minOccurs="0" type="layout:facets"/>
 
                 <xs:element name="layout" type="layout:rootLayout"/>
             </xs:all>

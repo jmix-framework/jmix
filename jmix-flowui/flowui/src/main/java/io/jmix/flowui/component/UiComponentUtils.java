@@ -1,17 +1,14 @@
 package io.jmix.flowui.component;
 
 import com.vaadin.flow.component.*;
+import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.dialog.Dialog;
-import com.vaadin.flow.dom.Element;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.screen.Screen;
 import io.jmix.flowui.sys.ValuePathHelper;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public final class UiComponentUtils {
@@ -49,6 +46,60 @@ public final class UiComponentUtils {
             Optional<Component> innerComponentOpt = findOwnComponent(container, elements[0]);
             if (innerComponentOpt.isEmpty()) {
                 return getComponentByIteration(container, id);
+            } else {
+                Component innerComponent = innerComponentOpt.get();
+                if (innerComponent instanceof HasComponents) {
+                    String subPath = ValuePathHelper.pathSuffix(elements);
+                    return findComponent(((HasComponents) innerComponent), subPath);
+                }
+
+                return Optional.empty();
+            }
+        }
+    }
+
+    public static Optional<Component> findComponent(Screen<?> screen, String id) {
+        Component content = screen.getContent();
+        if (!(content instanceof HasComponents)) {
+            throw new IllegalStateException("Screen content doesn't contain components");
+        }
+
+        return findComponent(((HasComponents) content), id);
+    }
+
+    public static Component findComponentOrElseThrow(Screen<?> screen, String id) {
+        Component content = screen.getContent();
+        if (!(content instanceof HasComponents)) {
+            throw new IllegalStateException("Screen content doesn't contain components");
+        }
+
+        return findComponent(((HasComponents) content), id)
+                .orElseThrow(() -> new IllegalStateException(
+                        String.format("Component with id '%s' not found", id)));
+    }
+
+    // todo rework using Component class
+    public static Optional<Component> findComponent(AppLayout appLayout, String id) {
+        List<Component> components = appLayout.getChildren().collect(Collectors.toList());
+
+        String[] elements = ValuePathHelper.parse(id);
+        if (elements.length == 1) {
+            Optional<Component> component = components.stream()
+                    .filter(c -> sameId(c, id))
+                    .findFirst();
+
+            if (component.isPresent()) {
+                return component;
+            } else {
+                return Optional.ofNullable(getComponentByIteration(components, id));
+            }
+        } else {
+            Optional<Component> innerComponentOpt = components.stream()
+                    .filter(c -> sameId(c, elements[0]))
+                    .findFirst();
+
+            if (innerComponentOpt.isEmpty()) {
+                return Optional.ofNullable(getComponentByIteration(components, id));
             } else {
                 Component innerComponent = innerComponentOpt.get();
                 if (innerComponent instanceof HasComponents) {

@@ -7,7 +7,6 @@ import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.datetimepicker.DateTimePicker;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.grid.contextmenu.GridContextMenu;
 import com.vaadin.flow.component.textfield.*;
 import com.vaadin.flow.component.timepicker.TimePicker;
 import com.vaadin.flow.component.treegrid.TreeGrid;
@@ -18,9 +17,8 @@ import io.jmix.flowui.component.SupportsDatatype;
 import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.component.datepicker.TypedDatePicker;
 import io.jmix.flowui.component.datetimepicker.TypedDateTimePicker;
-import io.jmix.flowui.component.grid.JmixGrid;
-import io.jmix.flowui.component.grid.JmixGridContextMenu;
-import io.jmix.flowui.component.grid.JmixTreeGrid;
+import io.jmix.flowui.component.grid.DataGrid;
+import io.jmix.flowui.component.grid.TreeDataGrid;
 import io.jmix.flowui.component.textfield.JmixBigDecimalField;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.component.timepicker.TypedTimePicker;
@@ -48,9 +46,8 @@ public class UiComponentsImpl implements UiComponents {
     protected Set<ComponentInfo> components = ConcurrentHashMap.newKeySet();
 
     {
-        register(JmixGrid.class, Grid.class);
-        register(JmixTreeGrid.class, TreeGrid.class);
-        register(JmixGridContextMenu.class, GridContextMenu.class);
+        register(DataGrid.class, Grid.class);
+        register(TreeDataGrid.class, TreeGrid.class);
         register(JmixButton.class, Button.class);
         register(JmixComboBox.class, ComboBox.class);
         register(TypedTextField.class, TextField.class);

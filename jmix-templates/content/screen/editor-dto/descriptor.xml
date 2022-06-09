@@ -1,5 +1,6 @@
 <%
 dcId = "${entity.uncapitalizedClassName}Dc"
+dlId = "${entity.uncapitalizedClassName}Dl"
 
 def createScrollBox = entity.attributes.size() > 10 || (editorActionBottom && !modalDialog)
 def createModalVbox = modalDialog && editorActionBottom && !createScrollBox
@@ -24,7 +25,9 @@ if (createModalVbox) {
         focusComponent="form">
     <data>
         <instance id="${dcId}"
-                  class="${entity.fqn}"/>
+                  class="${entity.fqn}">
+            <loader id="${dlId}"/>
+        </instance>
     </data>
     <facets>
         <dataLoadCoordinator auto="true"/>

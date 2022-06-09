@@ -147,10 +147,12 @@ public class JmixComboBoxPickerField<T> extends JmixPickerField<T> {
     }
 
     @Nullable
+    @Override
     public String getPlaceholder() {
         return getFieldInternal().getPlaceholder();
     }
 
+    @Override
     public void setPlaceholder(@Nullable String placeholder) {
         getFieldInternal().setPlaceholder(placeholder);
     }

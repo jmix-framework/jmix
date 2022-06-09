@@ -24,11 +24,26 @@ public class JmixValuePickerActionSupport extends ValuePickerActionSupport {
         attachAction(action);
     }
 
+    @Override
+    protected void removeActionInternal(Action action) {
+        super.removeActionInternal(action);
+
+        detachAction(action);
+    }
+
     @SuppressWarnings("unchecked")
     protected void attachAction(Action action) {
         if (action instanceof PickerAction) {
             ((PickerAction<?, PickerComponent<?>, ?>) action)
                     .setTarget(((PickerComponent<?>) component));
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    protected void detachAction(Action action) {
+        if (action instanceof PickerAction) {
+            ((PickerAction<?, PickerComponent<?>, ?>) action)
+                    .setTarget(null);
         }
     }
 }

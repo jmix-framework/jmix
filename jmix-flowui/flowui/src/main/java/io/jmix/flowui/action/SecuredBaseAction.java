@@ -91,7 +91,7 @@ public class SecuredBaseAction extends BaseAction implements SecuredAction {
 
     @Override
     public SecuredBaseAction withTitle(@Nullable String title) {
-        setTitle(title);
+        setDescription(title);
         return this;
     }
 

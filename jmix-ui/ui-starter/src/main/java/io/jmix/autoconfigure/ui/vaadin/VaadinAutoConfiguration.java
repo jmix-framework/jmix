@@ -27,6 +27,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.server.standard.ServerEndpointExporter;
 
@@ -36,7 +37,7 @@ import org.springframework.web.socket.server.standard.ServerEndpointExporter;
  * @author Henri Sara (hesara@vaadin.com)
  * @see com.vaadin.spring.annotation.EnableVaadin
  */
-@Configuration
+@AutoConfiguration
 @ConditionalOnClass(SpringUI.class)
 public class VaadinAutoConfiguration {
 

@@ -18,10 +18,10 @@ package io.jmix.autoconfigure.emailui;
 
 import io.jmix.email.EmailConfiguration;
 import io.jmix.emailui.EmailUiConfiguration;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Import;
 
-@Configuration
+@AutoConfiguration
 @Import({EmailConfiguration.class, EmailUiConfiguration.class})
 public class EmailUiAutoConfiguration {
 }

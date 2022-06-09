@@ -43,7 +43,7 @@ import java.time.OffsetTime;
         xmlElement = "textField",
         icon = "io/jmix/ui/icon/component/textField.svg",
         canvasBehaviour = CanvasBehaviour.INPUT_FIELD,
-        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/text-field.html"
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/vcl/components/text-field.html"
 )
 @StudioProperties(
         properties = {

@@ -16,9 +16,10 @@
 
 package formatter
 
-
+import formatter.screen.DateFormatterTestScreen
 import formatter.screen.FormatterTestScreen
 import io.jmix.core.CoreConfiguration
+import io.jmix.core.DataManager
 import io.jmix.core.metamodel.datatype.DatatypeRegistry
 import io.jmix.core.metamodel.datatype.FormatStringsRegistry
 import io.jmix.core.security.CurrentAuthentication
@@ -29,12 +30,18 @@ import io.jmix.ui.component.Label
 import io.jmix.ui.component.formatter.DateFormatter
 import io.jmix.ui.component.formatter.NumberFormatter
 import io.jmix.ui.testassist.spec.ScreenSpecification
+import org.junit.jupiter.api.AfterEach
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.ContextConfiguration
 import test_support.UiTestConfiguration
+import test_support.entity.TestDateEntity
 
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.OffsetDateTime
 
 @ContextConfiguration(classes = [CoreConfiguration, UiConfiguration, DataConfiguration,
         EclipselinkConfiguration, UiTestConfiguration])
@@ -49,9 +56,29 @@ class FormatterTest extends ScreenSpecification {
     @Autowired
     DatatypeRegistry datatypeRegistry
 
+    @Autowired
+    JdbcTemplate jdbcTemplate
+
+    @Autowired
+    DataManager dataManager
+
     @Override
     void setup() {
         exportScreensPackages(['formatter'])
+
+        def dateEntity = dataManager.create(TestDateEntity)
+        dateEntity.setDate(new Date())
+        dateEntity.setDateTime(new Date())
+        dateEntity.setLocalDate(LocalDate.now())
+        dateEntity.setLocalDateTime(LocalDateTime.now())
+        dateEntity.setOffsetDateTime(OffsetDateTime.now())
+
+        dataManager.save(dateEntity)
+    }
+
+    @AfterEach
+    void cleanup() {
+        jdbcTemplate.update("delete from TEST_DATE_ENTITY");
     }
 
     def "Formatter is applied for field"(String id, Class<io.jmix.ui.component.formatter.Formatter> formatterClass) {
@@ -111,6 +138,20 @@ class FormatterTest extends ScreenSpecification {
 
         noExceptionThrown()
         dateTimeFormatterField.getRawValue() == dateTimeFormat.format(dateTimeFormatterField.getValue())
+    }
+
+    def "DateFormatter is applied for different date types"() {
+        showTestMainScreen()
+
+        when: "Screen is loaded"
+
+        def screen = screens.create(DateFormatterTestScreen)
+        screen.show()
+
+        then: "DateFormatter is applied for different date types"
+
+        noExceptionThrown()
+        !screen.datesDc.getItems().isEmpty()
     }
 
     def "NumberFormatter is applied for field using the XML attribute 'class'"() {

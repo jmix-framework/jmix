@@ -30,7 +30,7 @@ import io.jmix.ui.meta.StudioProperty;
         xmlElement = "simplePagination",
         icon = "io/jmix/ui/icon/component/simplePagination.svg",
         canvasBehaviour = CanvasBehaviour.LABEL,
-        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/simple-pagination.html",
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/vcl/components/simple-pagination.html",
         unsupportedProperties = {"responsive", "enable"}
 )
 public interface SimplePagination extends PaginationComponent {

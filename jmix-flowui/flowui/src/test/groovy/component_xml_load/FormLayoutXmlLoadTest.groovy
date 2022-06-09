@@ -80,7 +80,6 @@ class FormLayoutXmlLoadTest extends FlowuiTestSpecification {
                 .findAll { it instanceof FormLayout.FormItem }
 
         verifyAll(formItems[0] as FormLayout.FormItem) {
-            id.get() == "item1"
             enabled
             visible
             (children.findAny().get() as TypedTextField<?>).value == order.number
@@ -88,7 +87,6 @@ class FormLayoutXmlLoadTest extends FlowuiTestSpecification {
         }
 
         verifyAll(formItems[1] as FormLayout.FormItem) {
-            id.get() == "item2"
             enabled
             visible
             (children.findAny().get() as BigDecimalField).value == order.amount

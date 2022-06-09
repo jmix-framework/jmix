@@ -38,10 +38,14 @@ public class ValuePickerButton extends Component
 
     protected ValuePickerButtonActionSupport getActionSupport() {
         if (actionSupport == null) {
-            actionSupport = new ValuePickerButtonActionSupport(this);
+            actionSupport = createActionSupport();
         }
 
         return actionSupport;
+    }
+
+    protected ValuePickerButtonActionSupport createActionSupport() {
+        return new ValuePickerButtonActionSupport(this);
     }
 
     public Component getIcon() {

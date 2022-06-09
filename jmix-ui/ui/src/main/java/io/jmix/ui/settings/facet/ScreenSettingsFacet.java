@@ -49,7 +49,8 @@ import java.util.function.Consumer;
         category = "Facets",
         description = "Provides ability to save and apply component settings",
         defaultProperty = "auto",
-        icon = "io/jmix/ui/icon/facet/screenSettings.svg"
+        icon = "io/jmix/ui/icon/facet/screenSettings.svg",
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/facets/screen-settings-facet.html"
 )
 public interface ScreenSettingsFacet extends Facet {
 

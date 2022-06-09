@@ -16,10 +16,7 @@
 
 package io.jmix.dynattr.impl;
 
-import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.model.*;
-import io.jmix.core.metamodel.model.impl.ClassRange;
-import io.jmix.core.metamodel.model.impl.DatatypeRange;
 import io.jmix.core.metamodel.model.impl.MetadataObjectImpl;
 
 import javax.annotation.Nullable;
@@ -28,11 +25,18 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.util.Objects;
 
-public class DynAttrMetaProperty extends MetadataObjectImpl implements MetaProperty {
+/**
+ * Note that transient attributes should be specified after deserialization and before usage
+ */
+public class DynAttrMetaProperty extends MetadataObjectImpl implements MetaProperty, Serializable {
     private static final long serialVersionUID = 839160118855669248L;
 
-    private final MetaClass ownerMetaClass;
-    private final Range range;
+    protected String name; // for serialization
+    private final String ownerMetaClassName; // to obtain metaclass after deserialization
+
+    private transient MetaClass ownerMetaClass;
+    private transient Range range;
+
     private final Class<?> javaClass;
 
     protected final AnnotatedElement annotatedElement = new FakeAnnotatedElement();
@@ -41,21 +45,23 @@ public class DynAttrMetaProperty extends MetadataObjectImpl implements MetaPrope
     public DynAttrMetaProperty(String name,
                                MetaClass ownerMetaClass,
                                Class<?> javaClass,
-                               @Nullable MetaClass propertyMetaClass,
-                               @Nullable Datatype<?> datatype) {
-
+                               Range range,
+                               Type type) {
+        this.ownerMetaClassName = ownerMetaClass.getName();
         this.ownerMetaClass = ownerMetaClass;
         this.javaClass = javaClass;
         this.name = name;
+        this.type = type;
+        this.range = range;
+    }
 
-        if (propertyMetaClass != null) {
-            this.range = new ClassRange(propertyMetaClass);
-            this.type = Type.ASSOCIATION;
-        } else {
-            assert datatype != null;
-            this.range = new DatatypeRange(datatype);
-            this.type = Type.DATATYPE;
-        }
+    @Override
+    public String getName() {//should be overridden to use current field
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Nullable
@@ -114,6 +120,25 @@ public class DynAttrMetaProperty extends MetadataObjectImpl implements MetaPrope
         return ownerMetaClass.getStore();
     }
 
+    //package-local methods for transient attributes filling
+    String getOwnerMetaClassName() {
+        return ownerMetaClassName;
+    }
+
+    @Nullable
+    MetaClass getOwnerMetaClass() {
+        return ownerMetaClass;
+    }
+
+    void setOwnerMetaClass(MetaClass ownerMetaClass) {
+        this.ownerMetaClass = ownerMetaClass;
+    }
+
+    void setRange(Range range) {
+        this.range = range;
+    }
+
+
     private static class FakeAnnotatedElement implements AnnotatedElement, Serializable {
 
         @Override
@@ -145,11 +170,11 @@ public class DynAttrMetaProperty extends MetadataObjectImpl implements MetaPrope
 
         DynAttrMetaProperty that = (DynAttrMetaProperty) o;
 
-        return Objects.equals(ownerMetaClass, that.ownerMetaClass) && Objects.equals(name, that.name);
+        return Objects.equals(ownerMetaClassName, that.ownerMetaClassName) && Objects.equals(name, that.name);
     }
 
     @Override
     public int hashCode() {
-        return 31 * ownerMetaClass.hashCode() + name.hashCode();
+        return 31 * ownerMetaClassName.hashCode() + name.hashCode();
     }
 }

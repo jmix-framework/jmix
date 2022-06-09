@@ -34,6 +34,7 @@ import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import io.jmix.core.metamodel.datatype.impl.AdaptiveNumberDatatype;
+import io.jmix.core.metamodel.datatype.impl.EnumClass;
 import io.jmix.core.metamodel.datatype.impl.EnumerationImpl;
 import io.jmix.core.metamodel.model.Store;
 import io.jmix.core.metamodel.model.*;
@@ -338,8 +339,23 @@ public class MetaModelLoader {
     private boolean isFieldWithGetter(Field field, Class<?> javaClass) {
         for (Method method : javaClass.getDeclaredMethods()) {
             if (method.getName().equals("get" + StringUtils.capitalize(field.getName()))
-                    && method.getReturnType().equals(field.getType())) {
+                    && (method.getReturnType().equals(field.getType()) || isEnumGetter(method, field))) {
                 return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isEnumGetter(Method method, Field field) {
+        if (!EnumClass.class.isAssignableFrom(method.getReturnType()))
+            return false;
+
+        for (Type genericInterface : method.getReturnType().getGenericInterfaces()) {
+            if (genericInterface instanceof ParameterizedType) {
+                ParameterizedType pt = (ParameterizedType) genericInterface;
+                if (EnumClass.class.equals(pt.getRawType()) && pt.getActualTypeArguments().length == 1) {
+                    return field.getType().isAssignableFrom(toClass(pt.getActualTypeArguments()[0]));
+                }
             }
         }
         return false;

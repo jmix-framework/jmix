@@ -35,7 +35,7 @@ import java.util.function.Consumer;
         icon = "io/jmix/ui/icon/component/popupButton.svg",
         canvasTextProperty = "caption",
         canvasBehaviour = CanvasBehaviour.POPUP_BUTTON,
-        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/popup-button.html"
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/vcl/components/popup-button.html"
 )
 public interface PopupButton extends ActionsHolder, Component.HasCaption, Component.BelongToFrame,
         Component.HasIcon, Component.Focusable, HasHtmlCaption, HasHtmlDescription, HasHtmlSanitizer {

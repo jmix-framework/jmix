@@ -34,7 +34,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -43,7 +43,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.oauth2.client.oidc.web.logout.OidcClientInitiatedLogoutSuccessHandler;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 
-@Configuration
+@AutoConfiguration
 @Import({OidcConfiguration.class})
 @ConditionalOnProperty(name = "jmix.oidc.use-default-configuration", matchIfMissing = true)
 public class OidcAutoConfiguration {
@@ -90,20 +90,24 @@ public class OidcAutoConfiguration {
         @Override
         protected void configure(HttpSecurity http) throws Exception {
             //todo session management
-            http.authorizeRequests()
-                    .anyRequest().authenticated()
-                    .and()
-                    .oauth2Login()
-                    .userInfoEndpoint()
-                    .oidcUserService(jmixOidcUserService)
-                    .and()
-                    //todo build UserDetails that contains locale
-//                    .authenticationDetailsSource()
-                    .and()
-                    .logout()
-                    .logoutSuccessHandler(oidcLogoutSuccessHandler());
-
-            http.csrf().disable();
+            http.authorizeRequests(authorizeRequests -> {
+                        authorizeRequests
+                                //if we don't allow /vaadinServlet/PUSH URL the Session Expired toolbox won't
+                                //be shown in the web browser
+                                .antMatchers("/vaadinServlet/PUSH/**").permitAll()
+                                .anyRequest().authenticated();
+                    })
+                    .oauth2Login(oauth2Login -> {
+                        oauth2Login.userInfoEndpoint(userInfoEndpoint -> {
+                            userInfoEndpoint.oidcUserService(jmixOidcUserService);
+                        });
+                    })
+                    .logout(logout -> {
+                        logout.logoutSuccessHandler(oidcLogoutSuccessHandler());
+                    })
+                    .csrf(csrf -> {
+                        csrf.disable();
+                    });
         }
 
         protected OidcClientInitiatedLogoutSuccessHandler oidcLogoutSuccessHandler() {
@@ -125,19 +129,22 @@ public class OidcAutoConfiguration {
         @Autowired
         protected OidcUserMapper oidcUserMapper;
 
+        @Autowired
+        protected OidcProperties oidcProperties;
+
         @Override
         protected void configure(HttpSecurity http) throws Exception {
             http.apply(SecurityConfigurers.apiSecurity())
                     .and()
                     .oauth2ResourceServer()
                     .jwt()
-                    .jwtAuthenticationConverter(jmixJwtAuthenticationConverter(oidcUserMapper));
+                    .jwtAuthenticationConverter(jmixJwtAuthenticationConverter(oidcUserMapper, oidcProperties));
         }
 
         @Bean
         @ConditionalOnMissingBean(JmixJwtAuthenticationConverter.class)
-        public JmixJwtAuthenticationConverter jmixJwtAuthenticationConverter(OidcUserMapper oidcUserMapper) {
-            return new JmixJwtAuthenticationConverter(oidcUserMapper);
+        public JmixJwtAuthenticationConverter jmixJwtAuthenticationConverter(OidcUserMapper oidcUserMapper, OidcProperties oidcProperties) {
+            return new JmixJwtAuthenticationConverter(oidcUserMapper, oidcProperties);
         }
     }
 }

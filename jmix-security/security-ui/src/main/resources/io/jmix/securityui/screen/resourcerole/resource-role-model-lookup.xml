@@ -27,8 +27,10 @@
                 width="800"/>
     <facets>
         <presentations id="presentations" auto="true"/>
+        <screenSettings id="screenSettings" auto="true"/>
     </facets>
     <layout spacing="true" expand="roleModelsTable">
+        <fragment id="filterFragment" screen="sec_RoleFilterFragment"/>
         <table id="roleModelsTable"
                     width="100%"
                     dataContainer="roleModelsDc"

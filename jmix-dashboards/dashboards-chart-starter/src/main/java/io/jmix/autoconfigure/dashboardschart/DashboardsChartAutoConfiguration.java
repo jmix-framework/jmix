@@ -17,10 +17,10 @@
 package io.jmix.autoconfigure.dashboardschart;
 
 import io.jmix.dashboardschart.DashboardsChartConfiguration;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Import;
 
-@Configuration
+@AutoConfiguration
 @Import({DashboardsChartConfiguration.class})
 public class DashboardsChartAutoConfiguration {
 }

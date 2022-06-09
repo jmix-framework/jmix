@@ -32,7 +32,8 @@ import javax.annotation.Nullable;
         description = "Prepares and shows option dialogs",
         defaultProperty = "message",
         category = "Facets",
-        icon = "io/jmix/ui/icon/facet/dialog.svg"
+        icon = "io/jmix/ui/icon/facet/dialog.svg",
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/facets/option-dialog-facet.html"
 )
 @StudioProperties(
         properties = {

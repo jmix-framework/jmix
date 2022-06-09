@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.xml.layout.support;
 
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.security.EntityOp;
 import io.jmix.flowui.Actions;
 import io.jmix.flowui.action.SecurityConstraintAction;
@@ -37,6 +38,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
+@Internal
 @Component("flowui_ActionLoaderSupport")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ActionLoaderSupport implements ApplicationContextAware {
@@ -48,7 +50,7 @@ public class ActionLoaderSupport implements ApplicationContextAware {
     protected Actions actions;
     protected ComponentLoaderSupport componentLoaderSupport;
 
-    ActionLoaderSupport(Context context) {
+    public ActionLoaderSupport(Context context) {
         this.context = context;
     }
 
@@ -77,7 +79,10 @@ public class ActionLoaderSupport implements ApplicationContextAware {
     }
 
     protected void initAction(Element element, Action targetAction) {
-        loaderSupport.loadString(element, "text", targetAction::setText);
+        loaderSupport.loadResourceString(element, "text",
+                context.getMessageGroup(), targetAction::setText);
+        loaderSupport.loadResourceString(element, "description",
+                context.getMessageGroup(), targetAction::setDescription);
         loaderSupport.loadBoolean(element, "enable", targetAction::setEnabled);
         loaderSupport.loadBoolean(element, "visible", targetAction::setVisible);
 

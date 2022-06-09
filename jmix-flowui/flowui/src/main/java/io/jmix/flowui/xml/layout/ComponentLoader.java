@@ -30,22 +30,12 @@ public interface ComponentLoader<T extends Component> {
 
         String getCurrentFrameId();
 
-        // TODO: gg, do we really need it?
         Screen<?> getScreen();
 
-        // TODO: gg, implement
         void addInitTask(InitTask task);
 
         void executeInitTasks();
-
-        /*void addInjectTask(InjectTask task);
-        void executeInjectTasks();*/
     }
-
-    // TODO: gg, do we need it right now?
-    /*interface CompositeComponentContext extends Context {
-
-    }*/
 
     /**
      * InitTasks are used to perform deferred initialization of visual components.

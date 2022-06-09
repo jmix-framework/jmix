@@ -35,7 +35,7 @@ public class ScreenDataImpl implements ScreenData {
 
     protected DataContext dataContext;
 
-    protected Map<String, InstanceContainer> containers = new LinkedHashMap<>();
+    protected Map<String, InstanceContainer<?>> containers = new LinkedHashMap<>();
 
     protected Map<String, DataLoader> loaders = new LinkedHashMap<>();
 
@@ -59,7 +59,7 @@ public class ScreenDataImpl implements ScreenData {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T extends InstanceContainer> T getContainer(String id) {
+    public <T extends InstanceContainer<?>> T getContainer(String id) {
         T container = (T) containers.get(id);
         if (container == null) {
             throw new IllegalArgumentException(String.format("Container '%s' not found", id));
@@ -95,7 +95,7 @@ public class ScreenDataImpl implements ScreenData {
     }
 
     @Override
-    public void registerContainer(String id, InstanceContainer container) {
+    public void registerContainer(String id, InstanceContainer<?> container) {
         containers.put(id, container);
     }
 

@@ -17,10 +17,10 @@
 package io.jmix.autoconfigure.multitenancyui;
 
 import io.jmix.multitenancyui.MultitenancyUiConfiguration;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Import;
 
-@Configuration
+@AutoConfiguration
 @Import({MultitenancyUiConfiguration.class})
 public class MultitenancyUiAutoConfiguration {
 }

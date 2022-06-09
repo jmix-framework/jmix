@@ -42,7 +42,7 @@ import java.util.function.Consumer;
         icon = "io/jmix/ui/icon/container/tabSheet.svg",
         canvasBehaviour = CanvasBehaviour.CONTAINER,
         containerType = ContainerType.TAB_SHEET,
-        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/containers/tab-sheet.html"
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/vcl/containers/tab-sheet.html"
 )
 @StudioProperties(
         properties = {

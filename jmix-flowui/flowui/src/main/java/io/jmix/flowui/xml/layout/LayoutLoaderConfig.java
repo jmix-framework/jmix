@@ -16,6 +16,7 @@
 package io.jmix.flowui.xml.layout;
 
 import io.jmix.core.JmixOrder;
+import io.jmix.flowui.xml.layout.loader.MainScreenLoader;
 import io.jmix.flowui.xml.layout.loader.ScreenLoader;
 import org.dom4j.Element;
 import org.springframework.core.annotation.Order;
@@ -23,12 +24,16 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 
+import static io.jmix.flowui.xml.layout.loader.MainScreenLoader.MAIN_SCREEN_ROOT;
+import static io.jmix.flowui.xml.layout.loader.ScreenLoader.SCREEN_ROOT;
+
 @SuppressWarnings("rawtypes")
 @Order(JmixOrder.LOWEST_PRECEDENCE - 10)
 @Component("flowui_LayoutLoaderConfig")
 public class LayoutLoaderConfig extends BaseLoaderConfig implements LoaderConfig {
 
     protected Class<? extends ScreenLoader> screenLoader = ScreenLoader.class;
+    protected Class<? extends MainScreenLoader> mainScreenLoader = MainScreenLoader.class;
 //    protected Class<? extends FragmentLoader> fragmentLoader = FragmentLoader.class;
 
     @Override
@@ -41,14 +46,18 @@ public class LayoutLoaderConfig extends BaseLoaderConfig implements LoaderConfig
         return getLoader(element.getName());
     }
 
-    public Class<? extends ComponentLoader> getScreenLoader() {
-        return screenLoader;
-    }
-
     @Nullable
     @Override
     public Class<? extends ComponentLoader> getScreenLoader(Element root) {
-        return screenLoader;
+        String name = root.getName();
+        switch (name) {
+            case SCREEN_ROOT:
+                return screenLoader;
+            case MAIN_SCREEN_ROOT:
+                return mainScreenLoader;
+            default:
+                return null;
+        }
     }
 
 //    @Override

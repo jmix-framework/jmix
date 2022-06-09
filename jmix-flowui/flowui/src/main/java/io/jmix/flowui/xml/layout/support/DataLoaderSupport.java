@@ -83,7 +83,7 @@ public class DataLoaderSupport {
                                 "attribute is not defined", containerId, element.attributeValue("id")), context);
             }
 
-            Screen screen = getComponentContext().getScreen();
+            Screen<?> screen = getComponentContext().getScreen();
             ScreenData screenData = UiControllerUtils.getScreenData(screen);
 
             return Optional.of(screenData.getContainer(containerId));

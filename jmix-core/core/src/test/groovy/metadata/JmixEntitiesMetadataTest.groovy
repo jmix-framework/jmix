@@ -22,6 +22,7 @@ import io.jmix.core.MetadataTools
 import io.jmix.core.entity.EntityPropertyChangeListener
 import io.jmix.core.entity.EntityValues
 import io.jmix.core.metamodel.datatype.DatatypeRegistry
+import io.jmix.core.metamodel.model.MetaProperty
 import io.jmix.core.metamodel.model.Range
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
@@ -169,5 +170,10 @@ class JmixEntitiesMetadataTest extends Specification {
         then:
         customer.getId() != null
         EntityValues.getId(customer) == customer.getId()
+    }
+
+    def "DTO Enum property loaded to metadata"() {
+        expect: "Property 'orderState' loaded to metadata and has correct type"
+        metadata.getClass(OrderObject).getProperty("orderState").type == MetaProperty.Type.ENUM
     }
 }

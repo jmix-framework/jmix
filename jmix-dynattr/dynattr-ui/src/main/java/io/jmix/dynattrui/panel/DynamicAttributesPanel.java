@@ -17,6 +17,7 @@
 package io.jmix.dynattrui.panel;
 
 import com.google.common.base.Strings;
+import io.jmix.core.DevelopmentException;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.dynattr.AttributeDefinition;
@@ -213,6 +214,12 @@ public class DynamicAttributesPanel extends CompositeComponent<VBoxLayout> imple
     }
 
     protected void initCategoryField(InstanceContainer<?> instanceContainer) {
+        if (!Categorized.class.isAssignableFrom(instanceContainer.getEntityMetaClass().getJavaClass())
+                || instanceContainer.getEntityMetaClass().getPropertyPath("category") == null) {
+            throw new DevelopmentException("Entity must implement 'io.jmix.dynattr.model.Categorized' and contain " +
+                    "'category' attribute in order to use DynamicAttributesPanel.");
+        }
+
         categoryField.setOptionsList(getCategoriesOptionsList());
         categoryField.setValueSource(new ContainerValueSource<>(instanceContainer, "category"));
     }

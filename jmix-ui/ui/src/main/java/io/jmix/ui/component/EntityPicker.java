@@ -39,7 +39,7 @@ import javax.annotation.Nullable;
         xmlElement = "entityPicker",
         icon = "io/jmix/ui/icon/component/entityPicker.svg",
         canvasBehaviour = CanvasBehaviour.VALUE_PICKER,
-        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/entity-picker.html"
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/vcl/components/entity-picker.html"
 )
 @StudioProperties(
         properties = {

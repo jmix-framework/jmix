@@ -36,6 +36,7 @@ import java.util.Set;
         category = "Facets",
         description = "Provides the ability to apply and save presentations for components",
         defaultProperty = "auto",
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/facets/presentations-facet.html",
         icon = "io/jmix/ui/icon/facet/presentations.svg"
 )
 public interface PresentationsFacet extends Facet {

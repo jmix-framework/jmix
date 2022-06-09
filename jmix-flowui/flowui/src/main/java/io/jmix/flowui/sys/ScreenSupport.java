@@ -76,6 +76,8 @@ public class ScreenSupport {
         ScreenActions actions = applicationContext.getBean(ScreenActions.class, actionBinders.binder(screen));
         UiControllerUtils.setScreenActions(screen, actions);
 
+        UiControllerUtils.setScreenFacets(screen, applicationContext.getBean(ScreenFacets.class, screen));
+
         String screenId = getInferredScreenId(screen);
         screen.setId(screenId);
 

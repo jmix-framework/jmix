@@ -23,10 +23,10 @@ import io.jmix.reportsrest.ReportsRestConfiguration;
 import io.jmix.reportsrest.security.event.ReportBeforeInvocationEventListener;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Import;
 
-@Configuration
+@AutoConfiguration
 @Import({CoreConfiguration.class, DataConfiguration.class, ReportsConfiguration.class, ReportsRestConfiguration.class})
 public class ReportsRestAutoConfiguration {
 

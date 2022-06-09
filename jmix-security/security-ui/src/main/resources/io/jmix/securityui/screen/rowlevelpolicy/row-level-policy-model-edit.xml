@@ -27,18 +27,29 @@
                 height="AUTO"/>
     <layout spacing="true">
         <form id="form" dataContainer="rowLevelPolicyModelDc">
-            <column width="350px">
-                <comboBox id="typeField" property="type"/>
-                <comboBox id="actionField" property="action"/>
-                <comboBox id="entityNameField" property="entityName"/>
-                <textArea id="whereClauseField" property="whereClause" rows="5" required="true"/>
-                <textArea id="joinClauseField" property="joinClause" rows="5"/>
-                <textArea id="scriptField" property="script" rows="10" required="true"/>
+            <column width="600px">
+                <comboBox id="entityNameField" property="entityName" width="350px"/>
+                <comboBox id="typeField" property="type" width="350px"/>
+                <comboBox id="actionField" property="action" width="350px"/>
+
+                <sourceCodeEditor id="joinClauseField" property="joinClause" height="100px"
+                                  showGutter="false" highlightActiveLine="false"
+                                  contextHelpText="msg://joinFieldHelp" contextHelpTextHtmlEnabled="true"/>
+
+                <sourceCodeEditor id="whereClauseField" property="whereClause" required="true"
+                                  showGutter="false" highlightActiveLine="false"
+                                  contextHelpText="msg://whereFieldHelp" contextHelpTextHtmlEnabled="true"/>
+
+                <sourceCodeEditor id="scriptField" property="script" required="true" mode="Groovy"
+                                  showGutter="false" highlightActiveLine="false"
+                                  contextHelpText="msg://scriptFieldHelp" contextHelpTextHtmlEnabled="true"/>
             </column>
         </form>
-        <hbox id="editActions" spacing="true">
+        <hbox id="editActions" spacing="true" align="MIDDLE_CENTER">
             <button action="windowCommitAndClose"/>
             <button action="windowClose"/>
+            <button id="testBtn" caption="msg://test"/>
+            <linkButton id="docsBtn" caption="msg://docs" align="MIDDLE_LEFT"/>
         </hbox>
     </layout>
 </window>

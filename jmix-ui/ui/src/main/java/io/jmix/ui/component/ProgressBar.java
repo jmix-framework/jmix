@@ -33,7 +33,7 @@ import io.jmix.ui.meta.StudioProperty;
         xmlElement = "progressBar",
         icon = "io/jmix/ui/icon/component/progressBar.svg",
         canvasIconSize = CanvasIconSize.LARGE,
-        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/progress-bar.html"
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/vcl/components/progress-bar.html"
 )
 public interface ProgressBar extends Component, Component.BelongToFrame,
         HasValue<Double>, HasValueSource<Double>,

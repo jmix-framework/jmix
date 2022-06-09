@@ -1,0 +1,2 @@
+io.jmix.autoconfigure.imap.ImapAutoConfiguration
+io.jmix.autoconfigure.imap.ImapSyncScheduleAutoConfiguration

@@ -30,7 +30,6 @@ public class ButtonLoader extends AbstractComponentLoader<JmixButton> {
 
     @Override
     public void loadComponent() {
-
         loadIcon();
         loadBoolean(element, "autofocus", resultComponent::setAutofocus);
         loadBoolean(element, "iconAfterText", resultComponent::setIconAfterText);

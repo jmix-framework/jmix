@@ -36,7 +36,7 @@ import org.springframework.core.ParameterizedTypeReference;
         xmlElement = "suggestionField",
         icon = "io/jmix/ui/icon/component/suggestionField.svg",
         canvasBehaviour = CanvasBehaviour.INPUT_FIELD,
-        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/suggestion-field.html"
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/vcl/components/suggestion-field.html"
 )
 @StudioProperties(
         properties = {

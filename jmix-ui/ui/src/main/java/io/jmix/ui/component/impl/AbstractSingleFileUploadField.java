@@ -25,11 +25,11 @@ import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.Notifications;
+import io.jmix.ui.UiComponentProperties;
 import io.jmix.ui.component.ComponentContainer;
 import io.jmix.ui.component.SingleFileUploadField;
 import io.jmix.ui.download.Downloader;
 import io.jmix.ui.icon.IconResolver;
-import io.jmix.ui.UiComponentProperties;
 import io.jmix.ui.widget.JmixFileUpload;
 import io.jmix.ui.widget.JmixFileUploadField;
 import org.apache.commons.lang3.StringUtils;
@@ -45,7 +45,6 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import static io.jmix.ui.component.ComponentsHelper.getScreenContext;
 import static io.jmix.ui.upload.FileUploadTypesHelper.convertToMIME;
 
 public abstract class AbstractSingleFileUploadField<R> extends AbstractField<JmixFileUploadField, String, R>
@@ -55,6 +54,7 @@ public abstract class AbstractSingleFileUploadField<R> extends AbstractField<Jmi
 
     protected Downloader downloader;
     protected Messages messages;
+    protected Notifications notifications;
     protected Supplier<InputStream> contentProvider;
     protected UiComponentProperties componentProperties;
 
@@ -83,6 +83,11 @@ public abstract class AbstractSingleFileUploadField<R> extends AbstractField<Jmi
     @Autowired
     public void setMessages(Messages messages) {
         this.messages = messages;
+    }
+
+    @Autowired
+    public void setNotifications(Notifications notifications) {
+        this.notifications = notifications;
     }
 
     @Autowired
@@ -147,8 +152,6 @@ public abstract class AbstractSingleFileUploadField<R> extends AbstractField<Jmi
     }
 
     protected void onFileSizeLimitExceeded(JmixFileUpload.FileSizeLimitExceededEvent e) {
-        Notifications notifications = getScreenContext(this).getNotifications();
-
         notifications.create(Notifications.NotificationType.WARNING)
                 .withCaption(messages.formatMessage("", "upload.fileTooBig.message", e.getFileName(),
                         getFileSizeLimitString()))
@@ -156,8 +159,6 @@ public abstract class AbstractSingleFileUploadField<R> extends AbstractField<Jmi
     }
 
     protected void onFileExtensionNotAllowed(JmixFileUpload.FileExtensionNotAllowedEvent e) {
-        Notifications notifications = getScreenContext(this).getNotifications();
-
         notifications.create(Notifications.NotificationType.WARNING)
                 .withCaption(messages.formatMessage("", "upload.fileIncorrectExtension.message", e.getFileName()))
                 .show();

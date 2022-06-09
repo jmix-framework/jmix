@@ -29,8 +29,8 @@ public class SaveContext implements Serializable {
 
     private static final long serialVersionUID = 7239959802146936706L;
 
-    protected Collection<Object> entitiesToSave = new LinkedHashSet<>();
-    protected Collection<Object> entitiesToRemove = new LinkedHashSet<>();
+    protected Set<Object> entitiesToSave = new LinkedHashSet<>();
+    protected Set<Object> entitiesToRemove = new LinkedHashSet<>();
 
     protected Map<Object, FetchPlan> fetchPlans = new HashMap<>();
 
@@ -92,19 +92,19 @@ public class SaveContext implements Serializable {
     }
 
     /**
-     * @return direct reference to collection of changed entities that will be committed to the database.
+     * @return collection of changed entities that will be saved to the database.
      * The collection is modifiable.
      */
-    public Collection<Object> getEntitiesToSave() {
-        return entitiesToSave;
+    public EntitySet getEntitiesToSave() {
+        return EntitySet.of(entitiesToSave);
     }
 
     /**
-     * @return direct reference to collection of entities that will be removed from the database.
+     * @return collection of entities that will be removed from the database.
      * The collection is modifiable.
      */
-    public Collection<Object> getEntitiesToRemove() {
-        return entitiesToRemove;
+    public EntitySet getEntitiesToRemove() {
+        return EntitySet.of(entitiesToRemove);
     }
 
     /**

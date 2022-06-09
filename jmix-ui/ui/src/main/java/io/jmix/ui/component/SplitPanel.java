@@ -31,7 +31,7 @@ import java.util.function.Consumer;
         icon = "io/jmix/ui/icon/container/verticalSplitPanel.svg",
         canvasBehaviour = CanvasBehaviour.CONTAINER,
         containerType = ContainerType.SPLIT,
-        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/containers/split-panel.html"
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/vcl/containers/split-panel.html"
 )
 @StudioProperties(
         properties = {

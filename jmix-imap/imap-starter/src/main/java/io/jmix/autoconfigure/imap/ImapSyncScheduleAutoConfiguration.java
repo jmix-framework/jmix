@@ -23,13 +23,14 @@ import org.quartz.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Import;
 
-@Configuration
+@AutoConfiguration
 @Import(ImapConfiguration.class)
 @ConditionalOnClass(Job.class)
 @ConditionalOnProperty(name = "jmix.imap.use-default-quartz-configuration", matchIfMissing = true)
@@ -50,12 +51,12 @@ public class ImapSyncScheduleAutoConfiguration {
     }
 
     @Bean("imap_EmailSendingTrigger")
-    Trigger emailSendingTrigger() {
+    Trigger emailSendingTrigger(@Qualifier("imap_ImapSyncJob") JobDetail imapSyncJob) {
         String cron = imapProperties.getImapSyncCron();
         log.info("Schedule Imap Sync using default configuration with CRON expression '{}'", cron);
         return TriggerBuilder.newTrigger()
                 .withIdentity("imapSyncCronTrigger")
-                .forJob(imapSyncJob())
+                .forJob(imapSyncJob)
                 .startNow()
                 .withSchedule(CronScheduleBuilder.cronSchedule(cron))
                 .build();

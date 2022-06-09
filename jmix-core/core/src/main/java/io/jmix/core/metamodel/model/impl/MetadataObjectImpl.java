@@ -36,8 +36,4 @@ public abstract class MetadataObjectImpl implements MetadataObject {
     public Map<String, Object> getAnnotations() {
         return annotations;
     }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 }

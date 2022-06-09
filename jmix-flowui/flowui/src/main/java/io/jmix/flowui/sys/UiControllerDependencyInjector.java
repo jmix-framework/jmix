@@ -7,6 +7,7 @@ import com.vaadin.flow.component.HasComponents;
 import io.jmix.core.DevelopmentException;
 import io.jmix.flowui.component.EnhancedHasComponents;
 import io.jmix.flowui.component.UiComponentUtils;
+import io.jmix.flowui.facet.Facet;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.HasActions;
 import io.jmix.flowui.model.DataLoader;
@@ -40,6 +41,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import static io.jmix.flowui.sys.ValuePathHelper.pathPrefix;
 import static java.lang.reflect.Proxy.newProxyInstance;
 import static org.springframework.core.annotation.AnnotatedElementUtils.findMergedAnnotation;
 
@@ -163,7 +165,7 @@ public class UiControllerDependencyInjector {
                 return screenActions.getAction(name);
             }
 
-            String prefix = ValuePathHelper.pathPrefix(elements);
+            String prefix = pathPrefix(elements);
             Optional<HasActions> hasActions = content
                     .findComponent(prefix)
                     .filter(c -> c instanceof HasActions)
@@ -171,11 +173,20 @@ public class UiControllerDependencyInjector {
             if (hasActions.isPresent()) {
                 return hasActions.get().getAction(elements[elements.length - 1]);
             }
+        } else if (Facet.class.isAssignableFrom(type)) {
+            String[] elements = ValuePathHelper.parse(name);
+            if (elements.length != 1) {
+                throw new IllegalStateException(
+                        String.format("Can't inject %s. Incorrect path: '%s'", Facet.class.getSimpleName(), name));
+            }
+
+            return UiControllerUtils.getScreenFacets(controller).getFacet(name);
         } else if (MessageBundle.class == type) {
             return createMessageBundle(controller);
         }
 
         // TODO: gg, handle other types
+        // TODO: gg, DataContext?
 
         return null;
     }
@@ -550,6 +561,8 @@ public class UiControllerDependencyInjector {
             return null;
         }
 
+        ScreenFacets screenFacets = UiControllerUtils.getScreenFacets(controller);
+
         String[] elements = ValuePathHelper.parse(target);
         EnhancedHasComponents screenLayout = ((EnhancedHasComponents) controller.getContent());
         if (elements.length == 1) {
@@ -564,11 +577,11 @@ public class UiControllerDependencyInjector {
                 return component.get();
             }
 
-//            return controller.getFacet(target);
+            return screenFacets.getFacet(target);
         } else if (elements.length > 1) {
             String id = elements[elements.length - 1];
 
-            Optional<Component> componentOpt = screenLayout.findComponent(ValuePathHelper.pathPrefix(elements));
+            Optional<Component> componentOpt = screenLayout.findComponent(pathPrefix(elements));
 
             if (componentOpt.isPresent()) {
                 Component component = componentOpt.get();
@@ -586,16 +599,10 @@ public class UiControllerDependencyInjector {
                         return childComponent.get();
                     }
                 }
-
-                /*if (component instanceof Fragment) {
-                    Facet facet = ((Fragment) component).getFacet(id);
-                    if (facet != null) {
-                        return facet;
-                    }
-                }*/
             }
 
-            /*Facet facet = controller.getFacet(pathPrefix(elements));
+            // TODO: gg, do we need HasSubParts?
+            /*Facet facet = screenFacets.getFacet(pathPrefix(elements));
             if (facet instanceof HasSubParts) {
                 return ((HasSubParts) facet).getSubPart(id);
             }*/

@@ -46,4 +46,8 @@ public interface EmployeeRepository extends JmixDataRepository<Employee, UUID> {
     Stream<Employee> findTop1ByOrderByNameDesc();
 
     Iterator<Employee> findFirst1ByOrderByNameDesc();
+
+    Employee getByNameContains(String namePart);
+
+    Optional<Employee> findByNameContains(String namePart);
 }

@@ -24,11 +24,12 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
 import org.springframework.boot.autoconfigure.hazelcast.HazelcastAutoConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.Order;
 
-@Configuration(proxyBeanMethods = false)
+@AutoConfiguration
 @ConditionalOnMissingBean(EclipseLinkChannelSupplier.class)
 @AutoConfigureAfter(HazelcastAutoConfiguration.class)
 @Import({JmixEclipseLinkChannelAutoConfiguration.HazelcastChannelConfiguration.class,

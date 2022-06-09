@@ -25,20 +25,22 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
- * Implementation of {@code Set<Entity>} with convenient methods for getting entities by a prototype instance
+ * Implementation of {@code Set&lt;Entity&gt;} with convenient methods for getting entities by a prototype instance
  * or by a class and id.
  *
  * @see #get(Object)
  * @see #get(Class, Object)
  * @see #optional(Object)
  * @see #optional(Class, Object)
+ * @see #getAll(Class)
  */
 public class EntitySet extends ForwardingSet<Object> implements Serializable {
     private static final long serialVersionUID = 4239884277120360439L;
 
-    private Set entities;
+    private Set<?> entities;
 
     public EntitySet() {
         this.entities = new HashSet<>();
@@ -48,8 +50,8 @@ public class EntitySet extends ForwardingSet<Object> implements Serializable {
         this.entities = entities;
     }
 
-    public EntitySet(Collection entities) {
-        this.entities = new HashSet(entities);
+    public EntitySet(Collection<?> entities) {
+        this.entities = new HashSet<>(entities);
     }
 
     /**
@@ -115,9 +117,23 @@ public class EntitySet extends ForwardingSet<Object> implements Serializable {
         return (T) get(prototype.getClass(), EntityValues.getId(prototype));
     }
 
+    /**
+     * Returns a collection of entities of the specified class.
+     *
+     * @param entityClass class of entities
+     */
     @SuppressWarnings("unchecked")
+    public <T> Collection<T> getAll(Class<T> entityClass) {
+        Preconditions.checkNotNullArgument(entityClass, "entityClass is null");
+        return entities.stream()
+                .filter(e -> entityClass.isAssignableFrom(e.getClass()))
+                .map(e -> (T) e)
+                .collect(Collectors.toList());
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     protected Set delegate() {
-        return (Set<?>) entities;
+        return entities;
     }
 }

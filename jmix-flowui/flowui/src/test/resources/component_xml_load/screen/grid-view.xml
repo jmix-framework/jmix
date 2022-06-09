@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2022 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<screen xmlns="http://jmix.io/schema/flowui/screen">
+    <data>
+        <collection id="ordersDc"
+                    class="test_support.entity.sales.Order">
+            <fetchPlan extends="_base"/>
+            <loader id="ordersDl">
+                <query>
+                    <![CDATA[select e from test_Order e]]>
+                </query>
+            </loader>
+        </collection>
+    </data>
+    <layout>
+        <dataGrid id="dataGrid"
+              allRowsVisible="true"
+              className="cssClassName1, cssClassName2"
+              columnReorderingAllowed="true"
+              detailsVisibleOnClick="true"
+              dropMode="BETWEEN"
+              enabled="true"
+              height="50px"
+              maxHeight="55px"
+              maxWidth="120px"
+              minHeight="40px"
+              minWidth="80px"
+              multiSort="true"
+              nestedNullBehavior="THROW"
+              pageSize="20"
+              rowsDraggable="true"
+              selectionMode="MULTI"
+              themeName="column-borders, compact"
+              verticalScrollingEnabled="true"
+              visible="true"
+              width="100px"
+
+              dataContainer="ordersDc">
+            <columns includeAll="true" exclude="number, amount, date">
+            </columns>
+        </dataGrid>
+
+        <dataGrid id="anotherDataGrid" dataContainer="ordersDc">
+            <columns>
+                <column key="number"
+                        autoWidth="true"
+                        flexGrow="5"
+                        footer="footer"
+                        frozen="false"
+                        header="header"
+                        resizable="true"
+                        sortable="true"
+                        textAlign="END"
+                        visible="true"
+                        width="100px"
+
+                        property="number"/>
+                <column property="amount"/>
+                <column property="date"/>
+            </columns>
+            <actions>
+                <action id="gridAction"/>
+            </actions>
+        </dataGrid>
+
+        <dataGrid id="metaClassDataGrid" metaClass="test_Order">
+            <columns>
+                <column property="number"/>
+                <column property="amount"/>
+            </columns>
+        </dataGrid>
+
+        <treeDataGrid id="treeDataGrid"
+                  allRowsVisible="true"
+                  className="cssClassName1, cssClassName2"
+                  columnReorderingAllowed="true"
+                  detailsVisibleOnClick="true"
+                  dropMode="BETWEEN"
+                  enabled="true"
+                  height="50px"
+                  maxHeight="55px"
+                  maxWidth="120px"
+                  minHeight="40px"
+                  minWidth="80px"
+                  multiSort="true"
+                  nestedNullBehavior="THROW"
+                  pageSize="20"
+                  rowsDraggable="true"
+                  selectionMode="MULTI"
+                  themeName="column-borders, compact"
+                  verticalScrollingEnabled="true"
+                  visible="true"
+                  width="100px"
+
+                  dataContainer="ordersDc" hierarchyProperty="number">
+            <columns includeAll="true" exclude="number, amount, date">
+            </columns>
+        </treeDataGrid>
+
+        <treeDataGrid id="anotherTreeDataGrid" dataContainer="ordersDc" hierarchyProperty="number">
+            <columns>
+                <column key="number"
+                        autoWidth="true"
+                        flexGrow="5"
+                        footer="footer"
+                        frozen="false"
+                        header="header"
+                        resizable="true"
+                        sortable="true"
+                        textAlign="END"
+                        visible="true"
+                        width="100px"
+
+                        property="number"/>
+                <column property="amount"/>
+                <column property="date"/>
+            </columns>
+            <actions>
+                <action id="gridAction"/>
+            </actions>
+        </treeDataGrid>
+
+        <treeDataGrid id="metaClassTreeDataGrid" metaClass="test_Order" hierarchyProperty="number">
+            <columns>
+                <column property="number"/>
+                <column property="amount"/>
+            </columns>
+        </treeDataGrid>
+    </layout>
+</screen>

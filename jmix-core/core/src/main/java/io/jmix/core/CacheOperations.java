@@ -20,7 +20,9 @@ import org.springframework.cache.Cache;
 import org.springframework.cache.concurrent.ConcurrentMapCache;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import java.util.*;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.BiConsumer;
 
@@ -93,10 +95,42 @@ public class CacheOperations {
         forEach(cache, (key, value) -> {
             if (value != null) {
                 //noinspection unchecked
-                result.add((V)value);
+                result.add((V) value);
             }
         });
 
         return result;
+    }
+
+    /**
+     * Used as safe alternative for {@link org.springframework.cache.Cache#get(java.lang.Object, java.util.concurrent.Callable)}
+     * <br>
+     * <p></p>
+     * <b>WARNING: do not use Cache#get(java.lang.Object, java.util.concurrent.Callable) with Hazelcast. </b>
+     * It causes NotSerializableException because {@code org.springframework.cache.jcache.JCacheCache#ValueLoaderEntryProcessor}
+     * is not serializable.
+     *
+     * @param cache       to get value from
+     * @param key         to get value by
+     * @param valueLoader to load value in case of absence in cache
+     * @param <K>         key type
+     * @param <V>         value type
+     * @return cached value
+     */
+    @Nullable
+    public <K, V> V get(Cache cache, K key, Callable<V> valueLoader) {
+        Cache.ValueWrapper wrapper = cache.get(key);
+        V value;
+        if (wrapper == null) {
+            try {
+                value = valueLoader.call();
+            } catch (Exception e) {
+                throw new Cache.ValueRetrievalException(key, valueLoader, e);
+            }
+            cache.put(key, value);
+        } else {
+            value = (V) wrapper.get();
+        }
+        return value;
     }
 }

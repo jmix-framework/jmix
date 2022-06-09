@@ -1,0 +1,3 @@
+io.jmix.autoconfigure.core.CoreAutoConfiguration
+io.jmix.autoconfigure.core.JmixDataRepositoryAutoConfiguration
+io.jmix.autoconfigure.core.PessimisticLockScheduleAutoConfiguration

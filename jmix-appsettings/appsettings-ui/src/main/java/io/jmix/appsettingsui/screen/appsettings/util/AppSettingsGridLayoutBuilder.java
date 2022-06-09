@@ -100,6 +100,7 @@ public class AppSettingsGridLayoutBuilder {
 
         GridLayout gridLayout = uiComponents.create(GridLayout.class);
         gridLayout.setSpacing(true);
+        gridLayout.setMargin(false, true, false, false);
         gridLayout.setColumns(3);
         gridLayout.setRows(metaProperties.size() + 1);
 

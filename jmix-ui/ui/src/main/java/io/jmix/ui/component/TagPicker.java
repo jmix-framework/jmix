@@ -44,7 +44,7 @@ import java.util.function.Function;
         xmlElement = "tagPicker",
         icon = "io/jmix/ui/icon/component/tagPicker.svg",
         canvasBehaviour = CanvasBehaviour.COMBO_BOX,
-        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/tag-picker.html",
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/vcl/components/tag-picker.html",
         unsupportedProperties = {"fieldEditable", "optionsEnum"}
 )
 @StudioProperties(

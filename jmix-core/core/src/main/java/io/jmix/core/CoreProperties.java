@@ -95,6 +95,11 @@ public class CoreProperties {
      */
     Duration triggerFilesProcessInterval;
 
+    /**
+     * Pessimistic lock configuration.
+     */
+    PessimisticLock pessimisticLock;
+
     public CoreProperties(
             String webHostName,
             String webPort,
@@ -113,7 +118,8 @@ public class CoreProperties {
             @DefaultValue("KEY") String entitySerializationTokenEncryptionKey,
             @DefaultValue("false") boolean legacyFetchPlanSerializationAttributeName,
             @DefaultValue("true") boolean triggerFilesEnabled,
-            @DefaultValue("5000") Duration triggerFilesProcessInterval) {
+            @DefaultValue("5000") Duration triggerFilesProcessInterval,
+            @DefaultValue PessimisticLock pessimisticLock) {
         this.webHostName = webHostName;
         this.webPort = webPort;
         this.confDir = confDir;
@@ -141,6 +147,7 @@ public class CoreProperties {
         this.legacyFetchPlanSerializationAttributeName = legacyFetchPlanSerializationAttributeName;
         this.triggerFilesEnabled = triggerFilesEnabled;
         this.triggerFilesProcessInterval = triggerFilesProcessInterval;
+        this.pessimisticLock = pessimisticLock;
     }
 
     public String getWebHostName() {
@@ -235,5 +242,42 @@ public class CoreProperties {
      */
     public Duration getTriggerFilesProcessInterval() {
         return triggerFilesProcessInterval;
+    }
+
+    public PessimisticLock getPessimisticLock() {
+        return pessimisticLock;
+    }
+
+    public static class PessimisticLock {
+
+        /**
+         * CRON expression that is used by default pessimistic lock expiration scheduling configuration.
+         */
+        String expirationCron;
+
+        /**
+         * Whether the default pessimistic lock expiration scheduling configuration is used.
+         */
+        boolean useDefaultQuartzConfiguration;
+
+        public PessimisticLock(@DefaultValue("0 * * * * ?") String expirationCron,
+                               @DefaultValue("true") boolean useDefaultQuartzConfiguration) {
+            this.expirationCron = expirationCron;
+            this.useDefaultQuartzConfiguration = useDefaultQuartzConfiguration;
+        }
+
+        /**
+         * @see #expirationCron
+         */
+        public String getExpirationCron() {
+            return expirationCron;
+        }
+
+        /**
+         * @see #useDefaultQuartzConfiguration
+         */
+        public boolean isUseDefaultQuartzConfiguration() {
+            return useDefaultQuartzConfiguration;
+        }
     }
 }

@@ -151,7 +151,7 @@ public class InspectorFormBuilder {
                             && (isByteArray(metaProperty) || isUuid(metaProperty))) {
                         continue;
                     }
-                    if (metadataTools.isAnnotationPresent(item, metaProperty.getName(), Convert.class)) {
+                    if (metadataTools.isJpa(metaProperty) && metadataTools.isAnnotationPresent(item, metaProperty.getName(), Convert.class)) {
                         continue;
                     }
 

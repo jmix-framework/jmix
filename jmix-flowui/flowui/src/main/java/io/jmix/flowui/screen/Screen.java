@@ -23,6 +23,7 @@ public class Screen<T extends Component> extends Composite<T>
 
     private ScreenData screenData;
     private ScreenActions screenActions;
+    private ScreenFacets screenFacets;
 
     private Consumer<Screen<T>> closeDelegate;
 
@@ -118,6 +119,14 @@ public class Screen<T extends Component> extends Composite<T>
 
     protected void setScreenActions(ScreenActions screenActions) {
         this.screenActions = screenActions;
+    }
+
+    protected ScreenFacets getScreenFacets() {
+        return screenFacets;
+    }
+
+    protected void setScreenFacets(ScreenFacets screenFacets) {
+        this.screenFacets = screenFacets;
     }
 
     protected void updatePageTitle() {

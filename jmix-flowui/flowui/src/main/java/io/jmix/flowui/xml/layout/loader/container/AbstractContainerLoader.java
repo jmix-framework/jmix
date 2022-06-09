@@ -65,15 +65,17 @@ public abstract class AbstractContainerLoader<T extends Component> extends Abstr
         return false;
     }
 
-    protected void loadSubComponentsAndExpand(FlexComponent layout, Element element) {
+    protected void loadSubComponentsAndExpand(HasComponents layout, Element element) {
         loadSubComponents();
 
-        loadString(element, "expand").ifPresent(componentId -> {
-            Component componentToExpand = UiComponentUtils.findComponent(layout, componentId)
-                    .orElseThrow(() -> new GuiDevelopmentException(
-                            String.format("There is no component with id '%s' to expand", componentId), context));
-            layout.expand(componentToExpand);
-        });
+        if (layout instanceof FlexComponent) {
+            loadString(element, "expand").ifPresent(componentId -> {
+                Component componentToExpand = UiComponentUtils.findComponent(layout, componentId)
+                        .orElseThrow(() -> new GuiDevelopmentException(
+                                String.format("There is no component with id '%s' to expand", componentId), context));
+                ((FlexComponent) layout).expand(componentToExpand);
+            });
+        }
     }
 
     /*protected void setComponentsRatio(ComponentContainer resultComponent, Element element) {

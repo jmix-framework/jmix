@@ -37,7 +37,7 @@ import java.util.function.Consumer;
         xmlElement = "resizableTextArea",
         icon = "io/jmix/ui/icon/component/resizableTextArea.svg",
         canvasBehaviour = CanvasBehaviour.TEXT_AREA,
-        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/backoffice-ui/vcl/components/resizable-text-area.html"
+        documentationURL = "https://docs.jmix.io/jmix/%VERSION%/ui/vcl/components/resizable-text-area.html"
 )
 public interface ResizableTextArea<V> extends TextArea<V> {
     String NAME = "resizableTextArea";

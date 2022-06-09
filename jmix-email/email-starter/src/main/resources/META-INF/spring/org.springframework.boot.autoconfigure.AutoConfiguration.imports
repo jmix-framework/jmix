@@ -1,0 +1,3 @@
+io.jmix.autoconfigure.email.EmailAutoConfiguration
+io.jmix.autoconfigure.email.EmailSendingScheduleAutoConfiguration
+io.jmix.autoconfigure.email.EmailCleaningScheduleAutoConfiguration

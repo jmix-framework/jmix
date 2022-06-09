@@ -252,10 +252,6 @@ public class TemplateEditor extends StandardEditor<ReportTemplate> {
         return reportOutputType == ReportOutputType.CHART;
     }
 
-    protected boolean hasPdfTemplateOutput(ReportOutputType reportOutputType) {
-        return reportOutputType == ReportOutputType.PDF;
-    }
-
     protected boolean hasHtmlCsvTemplateOutput(@Nullable ReportOutputType reportOutputType) {
         return reportOutputType == ReportOutputType.CSV || reportOutputType == ReportOutputType.HTML;
     }
@@ -291,7 +287,6 @@ public class TemplateEditor extends StandardEditor<ReportTemplate> {
         outputNamePatternLabel.setVisible(templateOutputVisibility);
 
         setupTemplateTypeVisibility(templateOutputVisibility);
-        visibleTemplateEditor(reportOutputType);
         setupVisibilityDescriptionEdit(enabled, reportOutputType);
     }
 
@@ -420,7 +415,7 @@ public class TemplateEditor extends StandardEditor<ReportTemplate> {
             templateFileEditor.setVisible(false);
             return;
         }
-        templateFileEditor.setVisible(hasHtmlCsvTemplateOutput(outputType) || hasPdfTemplateOutput(outputType));
+        templateFileEditor.setVisible(hasHtmlCsvTemplateOutput(outputType));
     }
 
     @Subscribe

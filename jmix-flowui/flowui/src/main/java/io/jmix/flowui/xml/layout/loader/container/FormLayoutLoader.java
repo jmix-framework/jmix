@@ -71,21 +71,23 @@ public class FormLayoutLoader extends AbstractComponentLoader<FormLayout> {
                         .orElse(loadPropertyLabel(subElement));
                 Optional<Integer> colspan = loadInteger(subElement, "colspan");
 
-                //TODO: kremnevda, two labels 08.06.2022
                 if (labelsPosition == LabelsPosition.ASIDE) {
                     FormLayout.FormItem formItem = resultComponent.addFormItem(child, label);
+                    setLabel(child, null);
                     formItem.setVisible(child.isVisible());
                     colspan.ifPresent(it -> resultComponent.setColspan(formItem, it));
                 } else {
-                    //TODO: kremnevda, check no hasLabeled components 08.06.2022
-                    // see UIComponentUtils -> setLabel(Component, label) [hasLabel or reflection]
-                    if (child instanceof HasLabel) {
-                        ((HasLabel) child).setLabel(label);
-                    }
+                    setLabel(child, label);
                     resultComponent.add(child);
                     colspan.ifPresent(it -> resultComponent.setColspan(child, it));
                 }
             }
+        }
+    }
+
+    protected void setLabel(Component component, @Nullable String label) {
+        if (component instanceof HasLabel) {
+            ((HasLabel) component).setLabel(label);
         }
     }
 

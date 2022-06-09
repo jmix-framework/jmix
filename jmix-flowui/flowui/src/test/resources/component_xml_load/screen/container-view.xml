@@ -89,34 +89,34 @@
             </accordionPanel>
         </accordion>
 
-        <form id="formLayoutId"
-              className="cssClassName1, cssClassName2"
-              dataContainer="orderDc"
-              enabled="true"
-              height="50px"
-              maxHeight="55px"
-              maxWidth="120px"
-              minHeight="40px"
-              minWidth="80px"
-              visible="true"
-              width="100px">
-            <formItem id="item1"
-                      colspan="3"
-                      enabled="true"
-                      visible="true">
-                <textField id="forNumber" property="number"/>
-            </formItem>
-            <formItem id="item2"
-                      colspan="2"
-                      enabled="true"
-                      visible="true">
-                <bigDecimalField id="forAmount" property="amount"/>
-            </formItem>
-            <responsiveStep
-                    columns="5"
-                    labelsPosition="TOP"
-                    minWidth="100px"/>
-        </form>
+        <formLayout id="formLayoutId"
+                    className="cssClassName1, cssClassName2"
+                    dataContainer="orderDc"
+                    enabled="true"
+                    height="50px"
+                    maxHeight="55px"
+                    maxWidth="120px"
+                    minHeight="40px"
+                    minWidth="80px"
+                    visible="true"
+                    width="100px"
+                    labelsPosition="ASIDE">
+                <textField id="forNumber" property="number"
+                           colspan="3"
+                           enabled="true"
+                           visible="true"/>
+                <bigDecimalField id="forAmount" property="amount"
+                                 colspan="2"
+                                 enabled="true"
+                                 label="amountLabel"
+                                 visible="true"/>
+            <responsiveSteps>
+                <responsiveStep
+                        columns="5"
+                        labelsPosition="TOP"
+                        minWidth="100px"/>
+            </responsiveSteps>
+        </formLayout>
 
         <scroller id="scrollerId"
                   className="cssClassName1, cssClassName2"

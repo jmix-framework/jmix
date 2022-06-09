@@ -1640,6 +1640,7 @@
     <xs:complexType name="baseComponent">
         <xs:attributeGroup ref="hasId"/>
         <xs:attribute name="visible" type="xs:boolean"/>
+        <xs:attribute name="colspan" type="xs:integer"/>
     </xs:complexType>
 
     <xs:complexType name="baseAction">
@@ -2388,34 +2389,29 @@
     </xs:complexType>
 
     <!-- Form-->
-    <xs:complexType name="formLayout">
+    <xs:complexType name="formLayoutComponent">
         <xs:complexContent>
             <xs:extension base="baseComponent">
-                <xs:sequence>
-                    <!-- FormItem-->
-                    <xs:element name="formItem">
-                        <xs:complexType>
-                            <xs:complexContent>
-                                <xs:extension base="baseComponent">
-                                    <xs:group ref="standardComponent"/>
-                                    <xs:attribute name="colspan" type="xs:integer"/>
-                                    <xs:attributeGroup ref="hasEnabled"/>
-                                </xs:extension>
-                            </xs:complexContent>
-                        </xs:complexType>
-                    </xs:element>
 
-                    <!-- ResponsiveStep-->
-                    <xs:element name="responsiveStep">
+                <xs:sequence>
+                    <xs:element name="responsiveSteps" maxOccurs="1">
                         <xs:complexType>
-                            <xs:attribute name="minWidth" type="xs:string" use="required"/>
-                            <xs:attribute name="columns" type="xs:integer" use="required"/>
-                            <xs:attribute name="labelsPosition" type="formLabelsPosition"/>
+                            <xs:sequence maxOccurs="unbounded">
+                                <xs:element name="responsiveStep">
+                                    <xs:complexType>
+                                        <xs:attribute name="minWidth" type="xs:string" use="required"/>
+                                        <xs:attribute name="columns" type="xs:integer" use="required"/>
+                                        <xs:attribute name="labelsPosition" type="formLabelsPosition"/>
+                                    </xs:complexType>
+                                </xs:element>
+                            </xs:sequence>
                         </xs:complexType>
                     </xs:element>
+                    <xs:group ref="standardComponent"/>
                 </xs:sequence>
 
                 <xs:attribute name="dataContainer" type="xs:string"/>
+                <xs:attribute name="labelsPosition" type="formLabelsPosition"/>
 
                 <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasEnabled"/>
@@ -2423,6 +2419,7 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
+
 
     <!-- Login -->
 
@@ -2657,7 +2654,7 @@
                 <!-- Layout -->
                 <xs:element name="vbox" type="componentLayout"/>
                 <xs:element name="hbox" type="componentLayout"/>
-                <xs:element name="form" type="formLayout"/>
+                <xs:element name="formLayout" type="formLayoutComponent"/>
                 <xs:element name="scroller" type="scrollerContainer"/>
                 <xs:element name="split" type="splitContainer"/>
                 <xs:element name="tabs" type="tabsContainer"/>

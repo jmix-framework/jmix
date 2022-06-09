@@ -16,17 +16,29 @@
 
 package io.jmix.flowui.xml.layout.loader.container;
 
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.HasLabel;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.formlayout.FormLayout.ResponsiveStep;
 import com.vaadin.flow.component.formlayout.FormLayout.ResponsiveStep.LabelsPosition;
+import io.jmix.core.MetadataTools;
+import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.flowui.exception.GuiDevelopmentException;
+import io.jmix.flowui.xml.layout.ComponentLoader;
+import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
+import io.jmix.flowui.xml.layout.loader.LayoutLoader;
 import org.dom4j.Element;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-public class FormLayoutLoader extends AbstractContainerLoader<FormLayout> {
+public class FormLayoutLoader extends AbstractComponentLoader<FormLayout> {
 
-    protected List<ResponsiveStep> pendingLoadResponsiveSteps = new ArrayList<>();
+    protected MetadataTools metaDataTools;
+    protected LabelsPosition labelsPosition = LabelsPosition.TOP;
 
     @Override
     protected FormLayout createComponent() {
@@ -34,74 +46,112 @@ public class FormLayoutLoader extends AbstractContainerLoader<FormLayout> {
     }
 
     @Override
-    public void initComponent() {
-        super.initComponent();
-
-        createResponsiveSteps();
-
-        createSubComponents(resultComponent, element);
-    }
-
-    @Override
     public void loadComponent() {
         componentLoader().loadEnabled(resultComponent, element);
         componentLoader().loadClassName(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
+        loadLabelPosition(resultComponent, element);
 
-        loadResponsiveSteps();
         loadSubComponents();
     }
 
-    protected void createResponsiveSteps() {
-        for (Element subElement : element.elements("responsiveStep")) {
-            String minWidth = loadString(subElement, "minWidth")
-                    .orElse(null);
-            Integer columns = loadInteger(subElement, "columns")
-                    .orElse(1);
-            LabelsPosition labelsPosition = loadEnum(subElement, LabelsPosition.class, "labelsPosition")
-                    .orElse(null);
+    protected void loadSubComponents() {
+        loadResponsiveSteps(resultComponent, element);
 
-            pendingLoadResponsiveSteps.add(new ResponsiveStep(minWidth, columns, labelsPosition));
+        LayoutLoader loader = getLayoutLoader();
+
+        for (Element subElement : element.elements()) {
+            if (!isChildElementIgnored(subElement)) {
+                ComponentLoader<?> componentLoader = loader.createComponentLoader(subElement);
+                componentLoader.initComponent();
+                componentLoader.loadComponent();
+                Component child = componentLoader.getResultComponent();
+
+                String label = loadResourceString(subElement, "label", context.getMessageGroup())
+                        .orElse(loadPropertyLabel(subElement));
+                Optional<Integer> colspan = loadInteger(subElement, "colspan");
+
+                //TODO: kremnevda, two labels 08.06.2022
+                if (labelsPosition == LabelsPosition.ASIDE) {
+                    FormLayout.FormItem formItem = resultComponent.addFormItem(child, label);
+                    formItem.setVisible(child.isVisible());
+                    colspan.ifPresent(it -> resultComponent.setColspan(formItem, it));
+                } else {
+                    //TODO: kremnevda, check no hasLabeled components 08.06.2022
+                    // see UIComponentUtils -> setLabel(Component, label) [hasLabel or reflection]
+                    if (child instanceof HasLabel) {
+                        ((HasLabel) child).setLabel(label);
+                    }
+                    resultComponent.add(child);
+                    colspan.ifPresent(it -> resultComponent.setColspan(child, it));
+                }
+            }
         }
     }
 
-    protected void loadResponsiveSteps() {
-        resultComponent.setResponsiveSteps(pendingLoadResponsiveSteps);
+    protected void loadResponsiveSteps(FormLayout resultComponent, Element element) {
+        Element responsiveSteps = element.element("responsiveSteps");
+        if (responsiveSteps == null) {
+            return;
+        }
+        List<Element> responsiveStepList = responsiveSteps.elements("responsiveStep");
 
-        pendingLoadResponsiveSteps.clear();
+        if (responsiveStepList.isEmpty()) {
+            throw new GuiDevelopmentException(responsiveSteps.getName() + "can't be empty", context);
+        }
+
+        List<ResponsiveStep> pendingSetResponsiveSteps = new ArrayList<>();
+        for (Element subElement : responsiveStepList) {
+            pendingSetResponsiveSteps.add(loadResponsiveStep(subElement));
+        }
+
+        resultComponent.setResponsiveSteps(pendingSetResponsiveSteps);
     }
 
-    @Override
+    protected ResponsiveStep loadResponsiveStep(Element element) {
+        String minWidth = loadString(element, "minWidth")
+                .orElse(null);
+        Integer columns = loadInteger(element, "columns")
+                .orElse(1);
+        LabelsPosition labelsPosition = loadEnum(element, LabelsPosition.class, "labelsPosition")
+                .orElse(null);
+
+        return new ResponsiveStep(minWidth, columns, labelsPosition);
+    }
+
+    @Nullable
+    protected String loadPropertyLabel(Element element) {
+        String property = loadString(element, "property").orElse(null);
+        String dataContainer = loadString(this.element, "dataContainer").orElse(null);
+
+        if (property == null || dataContainer == null) {
+            return null;
+        }
+
+        MetaClass entityMetaClass = getComponentContext().getScreenData().getContainer(dataContainer).getEntityMetaClass();
+
+        MetaPropertyPath metaPropertyPath = getMetaDataTools().resolveMetaPropertyPathOrNull(entityMetaClass, property);
+        assert metaPropertyPath != null;
+        return metaPropertyPath.getMetaProperty().getName();
+    }
+
+    protected void loadLabelPosition(FormLayout resultComponent, Element element) {
+        loadEnum(element, LabelsPosition.class, "labelsPosition")
+                .ifPresent(this::setLabelsPosition);
+    }
+
+    protected void setLabelsPosition(LabelsPosition labelsPosition) {
+        this.labelsPosition = labelsPosition;
+    }
+
     protected boolean isChildElementIgnored(Element subElement) {
-        return "responsiveStep".equalsIgnoreCase(subElement.getName());
+        return "responsiveSteps".equalsIgnoreCase(subElement.getName());
     }
 
-    public static class FormItemLoader extends AbstractContainerLoader<FormLayout.FormItem> {
-
-        @Override
-        protected FormLayout.FormItem createComponent() {
-            return factory.create(FormLayout.FormItem.class);
+    protected MetadataTools getMetaDataTools() {
+        if (metaDataTools == null) {
+            metaDataTools = applicationContext.getBean(MetadataTools.class, context);
         }
-
-        @Override
-        public void initComponent() {
-            super.initComponent();
-
-            createSubComponents(resultComponent, element);
-        }
-
-        @Override
-        public void loadComponent() {
-            loadVisible(resultComponent, element);
-            loadColspan();
-            loadSubComponents();
-        }
-
-        protected void loadColspan() {
-            Integer colspan = loadInteger(element, "colspan").orElse(1);
-            FormLayout form = (FormLayout) resultComponent.getParent().orElse(null);
-            assert form != null;
-            form.setColspan(resultComponent, colspan);
-        }
+        return metaDataTools;
     }
 }

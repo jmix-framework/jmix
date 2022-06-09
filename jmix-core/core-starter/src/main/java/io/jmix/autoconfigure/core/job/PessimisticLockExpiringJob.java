@@ -14,13 +14,23 @@
  * limitations under the License.
  */
 
-group = 'io.jmix.core'
-archivesBaseName = 'jmix-core-starter'
+package io.jmix.autoconfigure.core.job;
 
-dependencies {
-    api project(':core')
+import io.jmix.core.pessimisticlocking.LockManager;
+import org.quartz.Job;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
 
-    implementation 'org.springframework.boot:spring-boot-autoconfigure'
+public class PessimisticLockExpiringJob implements Job {
 
-    compileOnly 'org.springframework.boot:spring-boot-starter-quartz'
+    private LockManager lockManager;
+
+    public PessimisticLockExpiringJob(LockManager lockManager) {
+        this.lockManager = lockManager;
+    }
+
+    @Override
+    public void execute(JobExecutionContext context) throws JobExecutionException {
+        lockManager.expireLocks();
+    }
 }

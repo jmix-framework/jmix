@@ -214,8 +214,9 @@ public class DynamicAttributesPanel extends CompositeComponent<VBoxLayout> imple
     }
 
     protected void initCategoryField(InstanceContainer<?> instanceContainer) {
-        if (instanceContainer.getEntityMetaClass().getPropertyPath("category") == null) {
-            throw new DevelopmentException("Entity have to implement 'io.jmix.dynattr.model.Categorized' and contain " +
+        if (!Categorized.class.isAssignableFrom(instanceContainer.getEntityMetaClass().getJavaClass())
+                || instanceContainer.getEntityMetaClass().getPropertyPath("category") == null) {
+            throw new DevelopmentException("Entity must implement 'io.jmix.dynattr.model.Categorized' and contain " +
                     "'category' attribute in order to use DynamicAttributesPanel.");
         }
 

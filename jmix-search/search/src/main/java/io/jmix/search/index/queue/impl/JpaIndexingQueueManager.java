@@ -220,11 +220,12 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
                 log.trace("Active enqueueing session not found");
                 return 0;
             }
+
+            if (!locker.tryLockEntityForEnqueueIndexAll(session.getEntityName())) {
+                log.info("Unable to process enqueueing session for entity '{}': currently in progress", session.getEntityName());
+                return 0;
+            }
             try {
-                if (!locker.tryLockEntityForEnqueueIndexAll(session.getEntityName())) {
-                    log.info("Unable to process enqueueing session for entity '{}': currently in progress", session.getEntityName());
-                    return 0;
-                }
                 return processEnqueueingSession(session, batchSize);
             } finally {
                 locker.unlockEntityForEnqueueIndexAll(session.getEntityName());
@@ -256,12 +257,12 @@ public class JpaIndexingQueueManager implements IndexingQueueManager {
                 log.info("Unable to process enqueueing session for entity '{}': currently in progress", session.getEntityName());
                 return 0;
             }
-
-            return processEnqueueingSession(session, batchSize);
-        } finally {
-            if (session != null) {
+            try {
+                return processEnqueueingSession(session, batchSize);
+            } finally {
                 locker.unlockEntityForEnqueueIndexAll(session.getEntityName());
             }
+        } finally {
             authenticator.end();
         }
     }

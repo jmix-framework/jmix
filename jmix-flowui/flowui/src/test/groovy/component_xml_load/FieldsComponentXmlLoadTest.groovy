@@ -106,8 +106,7 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
         then: "CheckBox will be will be loaded with the value of the property"
         verifyAll(componentView.checkBoxWithDataId) {
             getId().get() == "checkBoxWithDataId"
-            //TODO: kremnevda, will be added with JmixCheckBox 06.05.2022
-            //value == order.user.active
+            value == order.user.active
         }
     }
 

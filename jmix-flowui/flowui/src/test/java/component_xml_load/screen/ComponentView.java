@@ -17,7 +17,6 @@
 package component_xml_load.screen;
 
 import com.vaadin.flow.component.avatar.Avatar;
-import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.progressbar.ProgressBar;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
@@ -27,6 +26,7 @@ import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.router.Route;
+import io.jmix.flowui.component.checkbox.JmixCheckbox;
 import io.jmix.flowui.component.combobox.EntityComboBox;
 import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.component.datepicker.TypedDatePicker;
@@ -83,10 +83,10 @@ public class ComponentView extends StandardScreen {
     public JmixButton buttonWithActionId;
 
     @ComponentId
-    public Checkbox checkBoxId;
+    public JmixCheckbox checkBoxId;
 
     @ComponentId
-    public Checkbox checkBoxWithDataId;
+    public JmixCheckbox checkBoxWithDataId;
 
     @ComponentId
     public JmixComboBox<String> comboBoxId;

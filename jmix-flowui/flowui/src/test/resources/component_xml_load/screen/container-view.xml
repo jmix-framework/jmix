@@ -128,7 +128,7 @@
                   scrollBarsDirection="BOTH"
                   visible="true"
                   width="100px">
-            <checkBox id="scrollerChild"/>
+            <checkbox id="scrollerChild"/>
         </scroller>
 
         <split id="splitLayoutId"

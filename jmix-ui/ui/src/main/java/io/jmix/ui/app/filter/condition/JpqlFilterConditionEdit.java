@@ -17,21 +17,10 @@
 package io.jmix.ui.app.filter.condition;
 
 import com.google.common.base.Strings;
-import io.jmix.core.ClassManager;
-import io.jmix.core.Entity;
-import io.jmix.core.MessageTools;
-import io.jmix.core.Messages;
-import io.jmix.core.Metadata;
-import io.jmix.core.MetadataTools;
+import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.UiComponents;
-import io.jmix.ui.component.CheckBox;
-import io.jmix.ui.component.ComboBox;
-import io.jmix.ui.component.Filter;
-import io.jmix.ui.component.HBoxLayout;
-import io.jmix.ui.component.HasValue;
-import io.jmix.ui.component.SourceCodeEditor;
-import io.jmix.ui.component.TextField;
+import io.jmix.ui.component.*;
 import io.jmix.ui.component.autocomplete.JpqlUiSuggestionProvider;
 import io.jmix.ui.component.autocomplete.Suggestion;
 import io.jmix.ui.component.jpqlfilter.JpqlFilterSupport;
@@ -43,27 +32,17 @@ import io.jmix.ui.screen.EditedEntityContainer;
 import io.jmix.ui.screen.Subscribe;
 import io.jmix.ui.screen.UiController;
 import io.jmix.ui.screen.UiDescriptor;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.UUID;
+import java.util.*;
 
 @UiController("ui_JpqlFilterCondition.edit")
 @UiDescriptor("jpql-filter-condition-edit.xml")
 @EditedEntityContainer("filterConditionDc")
 public class JpqlFilterConditionEdit extends FilterConditionEdit<JpqlFilterCondition> {
-
-    protected static final String JOIN = "join ";
-    protected static final String WHERE = " where ";
-    protected static final String PLACEHOLDER = "{E}";
 
     @Autowired
     protected JpqlUiSuggestionProvider jpqlSuggestionFactory;
@@ -202,8 +181,8 @@ public class JpqlFilterConditionEdit extends FilterConditionEdit<JpqlFilterCondi
 
     protected void initSuggesters() {
         if (filterMetaClass != null) {
-            joinField.setSuggester((source, text, cursorPosition) -> requestHint(joinField, cursorPosition));
-            whereField.setSuggester((source, text, cursorPosition) -> requestHint(whereField, cursorPosition));
+            joinField.setSuggester((source, text, cursorPosition) -> requestHint(true));
+            whereField.setSuggester((source, text, cursorPosition) -> requestHint(false));
         }
     }
 
@@ -247,40 +226,14 @@ public class JpqlFilterConditionEdit extends FilterConditionEdit<JpqlFilterCondi
         defaultValueField.setWidthFull();
     }
 
-    protected List<Suggestion> requestHint(SourceCodeEditor sender, int senderCursorPosition) {
-        String joinStr = joinField.getValue();
-        String whereStr = whereField.getValue();
-
-        // CAUTION: the magic entity name! The length is three character to match "{E}" length in query
-        String entityAlias = "a39";
-
-        int queryPosition = -1;
-        String queryStart = "select " + entityAlias + " from " + filterMetaClass.getName() + " "
-                + entityAlias + " ";
-
-        StringBuilder queryBuilder = new StringBuilder(queryStart);
-        if (StringUtils.isNotEmpty(joinStr)) {
-            if (sender == joinField) {
-                queryPosition = queryBuilder.length() + senderCursorPosition - 1;
-            }
-            if (!StringUtils.containsIgnoreCase(joinStr, JOIN.trim())
-                    && !StringUtils.contains(joinStr, ",")) {
-                queryBuilder.append(JOIN).append(joinStr);
-                queryPosition += JOIN.length();
-            } else {
-                queryBuilder.append(joinStr);
-            }
-        }
-        if (StringUtils.isNotEmpty(whereStr)) {
-            if (sender == whereField) {
-                queryPosition = queryBuilder.length() + WHERE.length() + senderCursorPosition - 1;
-            }
-            queryBuilder.append(WHERE).append(whereStr);
-        }
-        String query = queryBuilder.toString();
-        query = query.replace(PLACEHOLDER, entityAlias);
-
-        return jpqlSuggestionFactory.getSuggestions(query, queryPosition, sender.getAutoCompleteSupport());
+    protected List<Suggestion> requestHint(boolean inJoinClause) {
+        return jpqlSuggestionFactory.getSuggestions(
+                inJoinClause ? joinField.getAutoCompleteSupport() : whereField.getAutoCompleteSupport(),
+                joinField.getValue(),
+                whereField.getValue(),
+                filterMetaClass.getName(),
+                inJoinClause
+        );
     }
 
     @Subscribe("parameterClassField")

@@ -38,10 +38,7 @@ import io.jmix.ui.action.Action;
 import io.jmix.ui.action.DialogAction;
 import io.jmix.ui.action.ItemTrackingAction;
 import io.jmix.ui.action.ListAction;
-import io.jmix.ui.action.list.CreateAction;
-import io.jmix.ui.action.list.EditAction;
-import io.jmix.ui.action.list.RefreshAction;
-import io.jmix.ui.action.list.RemoveAction;
+import io.jmix.ui.action.list.*;
 import io.jmix.ui.component.LookupComponent;
 import io.jmix.ui.component.*;
 import io.jmix.ui.download.ByteArrayDataProvider;
@@ -62,6 +59,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.annotation.Nullable;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.function.Consumer;
 
 import static com.google.common.base.Strings.nullToEmpty;
 import static io.jmix.ui.download.DownloadFormat.JSON;
@@ -329,6 +327,12 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
         editButton.setAction(editAction);
         editButton.setIcon(icons.get(JmixIcon.EDIT_ACTION));
 
+        Button bulkEditButton = uiComponents.create(Button.class);
+        BulkEditAction bulkEditAction = createBulkEditAction(table);
+        table.addAction(bulkEditAction);
+        bulkEditButton.setAction(bulkEditAction);
+        bulkEditButton.setIcon(icons.get(JmixIcon.BULK_EDIT_ACTION));
+
         Button removeButton = uiComponents.create(Button.class);
         RemoveAction removeAction = createRemoveAction(table);
         if (metadataTools.isSoftDeletable(selectedMeta.getJavaClass()) &&
@@ -418,6 +422,7 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
 
         buttonsPanel.add(createButton);
         buttonsPanel.add(editButton);
+        buttonsPanel.add(bulkEditButton);
         buttonsPanel.add(removeButton);
         buttonsPanel.add(refreshButton);
         buttonsPanel.add(excelButton);
@@ -469,7 +474,22 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
         editAction.setTarget(table);
         editAction.setScreenClass(EntityInspectorEditor.class);
         editAction.setShortcut(componentProperties.getTableInsertShortcut());
+
+        table.addSelectionListener((Consumer<Table.SelectionEvent>) selectionEvent
+                -> editAction.setEnabled(selectionEvent.getSelected().size() == 1));
+
         return editAction;
+    }
+
+    private BulkEditAction createBulkEditAction(Table table) {
+        BulkEditAction bulkEditAction = actions.create(BulkEditAction.class);
+        bulkEditAction.setOpenMode(OpenMode.THIS_TAB);
+        bulkEditAction.setTarget(table);
+
+        table.addSelectionListener((Consumer<Table.SelectionEvent>) selectionEvent
+                -> bulkEditAction.setEnabled(selectionEvent.getSelected().size() > 1));
+
+        return bulkEditAction;
     }
 
     private Action createRestoreAction(Table table) {

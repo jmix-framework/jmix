@@ -14,6 +14,7 @@ import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.Range;
+import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.flowui.data.ConversionException;
 import io.jmix.flowui.data.EntityValueSource;
 import io.jmix.flowui.data.SupportsValueSource;
@@ -262,6 +263,8 @@ public class TypedTextField<V> extends TextField
 
     @Nullable
     protected V convertToModel(String presentationValue) throws ConversionException {
+        presentationValue = Strings.emptyToNull(presentationValue);
+
         if (fieldDelegate.getValueSource() instanceof EntityValueSource) {
             MetaPropertyPath propertyPath = ((EntityValueSource<?, V>) fieldDelegate.getValueSource()).getMetaPropertyPath();
             MetaProperty metaProperty = propertyPath.getMetaProperty();
@@ -269,17 +272,18 @@ public class TypedTextField<V> extends TextField
             if (metaProperty.getRange().isDatatype()) {
                 Datatype<V> datatype = metaProperty.getRange().asDatatype();
                 try {
-                    // todo rp empty to null for String type?
-                    return datatype.parse(presentationValue, UI.getCurrent().getLocale());
+                    return datatype.parse(presentationValue,
+                            applicationContext.getBean(CurrentAuthentication.class).getLocale());
                 } catch (ParseException e) {
                     throw new ConversionException(e.getLocalizedMessage());
                 }
             }
         }
-        if (fieldDelegate.getDatatype() != null) {
+        Datatype<V> fieldDatatype = fieldDelegate.getDatatype();
+        if (fieldDatatype != null) {
             try {
-                // todo rp empty to null for String type?
-                return fieldDelegate.getDatatype().parse(presentationValue, UI.getCurrent().getLocale());
+                return fieldDatatype.parse(presentationValue,
+                        applicationContext.getBean(CurrentAuthentication.class).getLocale());
             } catch (ParseException e) {
                 throw new ConversionException(e.getLocalizedMessage());
             }

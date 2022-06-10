@@ -134,7 +134,7 @@ public class GetterConflictEntity extends BaseEntity {
     //Method-based attribute and just field with getter and setter
     //Not Boolean property
     //property getter:"is"
-    //get - just getter for wrapped listener. There is no attribute "counter" in this entity
+    //"get" - just getter for transient field. There is no BigDecimal attribute "counter" in this entity
     @Transient
     public BigDecimal counter;
 

@@ -109,10 +109,10 @@ public class MethodsCache {
      * <ol>
      *     <li>{@code isProperty()} is a method-based attribute </li>
      *     or
-     *     <li>{@code isProperty()} represents getter for {@link Boolean} field while {@code getProperty()} does not:
+     *     <li>{@code isProperty()} represents getter for {@link Boolean} field while {@code getProperty()} does not, i.e.:
      *         <ul>
      *             <li>{@code clazz} contains {@link Boolean} property with corresponding name (see {@code propertyName})</li>
-     *             <li>{@code isProperty()} returns {@link Boolean}</li>
+     *             <li>{@code isProperty()} returns {@link Boolean} (not {@code boolean})</li>
      *             <li>{@code getProperty()} does not return {@link Boolean}</li>
      *             <li>{@code getProperty()} is not a method-based attribute</li>
      *          </ul>

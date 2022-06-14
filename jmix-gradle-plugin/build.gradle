@@ -49,10 +49,16 @@ dependencies {
 
 tasks.jar {
     manifest {
-        // The only safe assumption about default version is major.minor.0 (1.0.1 -> 1.0.0, 1.1.1 -> 1.1.0)
-        def bomVersion = findProperty('bomVersion') ?:
-                version.endsWith('SNAPSHOT') ? version : version.substring(0, version.lastIndexOf('.')) + '.0'
-        attributes("Jmix-Default-BOM-Version": bomVersion)
+        String bomVersion
+        if (version.contains('-M')) {
+            // If publishing a milestone version, set BOM to snapshot of the same minor version,
+            // e.g. plugin 1.3.0-M1 -> BOM 1.3.999-SNAPSHOT
+            bomVersion = version.substring(0, version.lastIndexOf('.')) + '.999-SNAPSHOT'
+        } else {
+            // Otherwise it's a snapshot or release version and BOM should be the same
+            bomVersion = version
+        }
+        attributes("Jmix-BOM-Version": bomVersion)
     }
 }
 

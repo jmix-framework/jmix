@@ -207,10 +207,10 @@ class JmixPlugin implements Plugin<Project> {
         while (resources.hasMoreElements()) {
             try {
                 Manifest manifest = new Manifest(resources.nextElement().openStream())
-                String bomVersion = manifest.mainAttributes.getValue('Jmix-Default-BOM-Version')
+                String bomVersion = manifest.mainAttributes.getValue('Jmix-BOM-Version')
                 if (bomVersion) {
                     if (result && result != bomVersion) {
-                        throw new IllegalStateException("More than one manifest in plugin's classpath define Jmix-Default-BOM-Version, and they are different." +
+                        throw new IllegalStateException("More than one manifest in plugin's classpath define Jmix-BOM-Version, and they are different." +
                                 " Set jmix.bomVersion property in the project.")
                     }
                     result = bomVersion

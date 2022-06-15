@@ -45,6 +45,13 @@
     <Match>
         <Bug pattern="MC_OVERRIDABLE_METHOD_CALL_IN_CLONE"/>
     </Match>
+    <Match>
+        <Or>
+            <Bug pattern="THROWS_METHOD_THROWS_RUNTIMEEXCEPTION"/>
+            <Bug pattern="THROWS_METHOD_THROWS_CLAUSE_BASIC_EXCEPTION"/>
+            <Bug pattern="THROWS_METHOD_THROWS_CLAUSE_THROWABLE"/>
+        </Or>
+    </Match>
 
     <!-- False positives (since Java 11) -->
     <Match>
@@ -64,6 +71,11 @@
     <Match>
         <Class name="io.jmix.bpmui.screen.processdefinition.ProcessDefinitionBrowse"/>
         <Bug pattern="NP_LOAD_OF_KNOWN_NULL_VALUE"/>
+    </Match>
+    <Match>
+        <Class name="io.jmix.securityui.screen.rowlevelpolicy.RowLevelPolicyModelEdit"/>
+        <Method name="onTestBtnClick"/>
+        <Bug pattern="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE"/>
     </Match>
 
     <!-- Ignored CUBA compatibility module -->
@@ -125,6 +137,11 @@
     <Match>
         <Bug pattern="MF_CLASS_MASKS_FIELD"/>
         <Class name="io.jmix.dynattr.impl.DynAttrMetaProperty"/>
+    </Match>
+
+    <Match>
+        <Bug pattern="SSD_DO_NOT_USE_INSTANCE_LOCK_ON_SHARED_STATIC_DATA"/>
+        <Class name="io.jmix.reportsui.screen.report.wizard.template.generators.HtmlGenerator"/>
     </Match>
 
     <!--  Nullability  -->

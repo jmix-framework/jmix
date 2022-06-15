@@ -263,6 +263,7 @@
     "lit": "2.2.3"
   },
   "devDependencies": {
+    "@webpack-cli/serve": "1.6.1",
     "async": "3.2.2",
     "chokidar": "^3.5.0",
     "compression-webpack-plugin": "4.0.1",

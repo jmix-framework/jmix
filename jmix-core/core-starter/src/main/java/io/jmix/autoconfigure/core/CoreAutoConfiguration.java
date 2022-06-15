@@ -31,6 +31,7 @@ import org.springframework.boot.autoconfigure.jmx.JmxAutoConfiguration;
 import org.springframework.boot.autoconfigure.jmx.JmxProperties;
 import org.springframework.boot.autoconfigure.jmx.ParentAwareNamingStrategy;
 import org.springframework.boot.autoconfigure.validation.ValidationAutoConfiguration;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
@@ -44,6 +45,7 @@ import javax.cache.configuration.MutableConfiguration;
 
 @AutoConfiguration
 @Import({CoreConfiguration.class})
+@EnableConfigurationProperties(JmxProperties.class)
 @AutoConfigureBefore({ValidationAutoConfiguration.class, JmxAutoConfiguration.class})
 public class CoreAutoConfiguration {
 

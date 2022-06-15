@@ -16,8 +16,6 @@
     <facets>
         <dataLoadCoordinator auto="true"/>
     </facets>
-    <dialogMode height="600"
-                width="800"/>
     <layout expand="editActions">
         <formLayout id="form" dataContainer="userDc">
             <textField id="usernameField" property="username" readOnly="true"/>

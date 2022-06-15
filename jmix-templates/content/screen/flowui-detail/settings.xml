@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2021 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<template xmlns="http://schemas.haulmont.com/studio/template-settings.xsd"
+          icon="resource://template/template_editor.svg"
+          name="Flow UI Entity detail"
+          order="20">
+    <tags>
+        <tag>ENTITY</tag>
+        <tag>JPA</tag>
+    </tags>
+    <description>
+        <![CDATA[<html>Standard detail screen with a form and window action buttons: <i>OK</i> and <i>Cancel</i>.
+<br>Select <b>Extended window actions</b> checkbox to create a detail that can be saved without closing the screen.
+It will have <i>Save and close</i>, <i>Save</i> and <i>Cancel</i> buttons.</html>]]>
+    </description>
+    <locMessages key="detailTitle" expressionKey="${studioUtils.decapitalize(detailControllerName)}.title">
+        <message lang="default">
+            <![CDATA[${studioUtils.makeNaturalMessage(entity.className)} detail]]>
+        </message>
+    </locMessages>
+    <steps>
+        <step name="Entity detail" order="0"/>
+        <step name="Entity detail fetch plan" order="1"/>
+    </steps>
+    <property caption="Entity"
+              code="entity"
+              propertyType="ENTITY"
+              required="true"/>
+    <property caption="Entity fetch plan"
+              code="detailFetchPlan"
+              step="1"
+              propertyType="VIEW_COMPONENT"
+              relatedProperty="entity"
+              required="true"/>
+
+    <property caption="Descriptor name"
+              code="detailDescriptorName"
+              propertyType="DESCRIPTOR_NAME"
+              sourceName="descriptor"
+              required="true"
+              dynamic="true"
+              advanced="true"
+              valueTemplate="${api.evaluateScript('screen/descriptorFileName.groovy', ['entity': entity])}-detail">
+        <dependency code="entity"/>
+    </property>
+
+    <property caption="Controller name"
+              code="detailControllerName"
+              propertyType="CLASS_NAME"
+              sourceName="controller"
+              required="true"
+              dynamic="true"
+              advanced="true"
+              valueTemplate="${entity.className}Detail">
+        <dependency code="entity"/>
+    </property>
+
+    <property caption="Screen Id"
+              code="detailId"
+              propertyType="SCREEN_ID"
+              advanced="true"
+              dynamic="true"
+              valueTemplate="${entity.name!=null?entity.name:entity.className}.edit"
+              required="true">
+        <dependency code="entity"/>
+    </property>
+
+    <property caption="Screen route"
+              code="route"
+              propertyType="STRING"
+              advanced="true"
+              dynamic="true"
+              required="true"
+              valueTemplate="${api.pluralForm(entity.uncapitalizedClassName)}">
+        <dependency code="entity"/>
+    </property>
+
+    <source fileExt="xml"
+            name="descriptor"/>
+    <source fileExt="java"
+            name="controller"/>
+</template>

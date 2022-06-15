@@ -202,8 +202,8 @@ public class LookupWindowBuilderProcessor extends AbstractWindowBuilderProcessor
             }
         }
 
-        if (field instanceof SupportsListOptions) {
-            updateFieldOptions((SupportsListOptions<E>) field, toCollection(newValue, isCollectionValue));
+        if (field instanceof SupportsOptions) {
+            updateFieldOptions((SupportsOptions<E>) field, toCollection(newValue, isCollectionValue));
         }
 
         if (isCollectionValue) {
@@ -340,8 +340,8 @@ public class LookupWindowBuilderProcessor extends AbstractWindowBuilderProcessor
      * @param items selected entities from lookup screen to update options in field
      * @param <E>   entity type
      */
-    public <E> void updateFieldOptions(SupportsListOptions<E> field, Collection<E> items) {
-        Options<E> options = field.getListOptions();
+    public <E> void updateFieldOptions(SupportsOptions<E> field, Collection<E> items) {
+        Options<E> options = field.getOptions();
 
         if (options instanceof EntityOptions) {
             EntityOptions<E> entityOptions = (EntityOptions<E>) options;

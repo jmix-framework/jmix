@@ -18,9 +18,8 @@ package io.jmix.flowui.xml.layout.support;
 
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.Component;
-import io.jmix.flowui.data.SupportsListOptions;
+import io.jmix.flowui.data.SupportsOptionsContainer;
 import io.jmix.flowui.data.SupportsValueSource;
-import io.jmix.flowui.data.options.ContainerOptions;
 import io.jmix.flowui.data.value.ContainerValueSource;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.model.CollectionContainer;
@@ -96,13 +95,12 @@ public class DataLoaderSupport {
         return Optional.empty();
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    public void loadOptionsContainer(SupportsListOptions<?> component, Element element) {
-        loadOptionsContainer(element).ifPresent(optionsContainer ->
-                component.setListOptions(new ContainerOptions(optionsContainer)));
+    public <E> void loadOptionsContainer(SupportsOptionsContainer<E> component, Element element) {
+        Optional<CollectionContainer<E>> container = loadOptionsContainer(element);
+        container.ifPresent(component::setOptionsContainer);
     }
 
-    protected Optional<CollectionContainer<?>> loadOptionsContainer(Element element) {
+    protected <E> Optional<CollectionContainer<E>> loadOptionsContainer(Element element) {
         String containerId = element.attributeValue("optionsContainer");
         if (containerId != null) {
 
@@ -114,7 +112,8 @@ public class DataLoaderSupport {
                         CollectionContainer.class.getSimpleName(), containerId),
                         context);
             }
-            return Optional.of((CollectionContainer<?>) container);
+            //noinspection unchecked
+            return Optional.of((CollectionContainer<E>) container);
         }
 
         return Optional.empty();

@@ -3,7 +3,7 @@ package io.jmix.flowui.component.combobox;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.data.Options;
-import io.jmix.flowui.data.SupportsListOptions;
+import io.jmix.flowui.data.SupportsOptions;
 import io.jmix.flowui.data.SupportsValueSource;
 import io.jmix.flowui.data.ValueSource;
 import io.jmix.flowui.component.HasRequired;
@@ -21,7 +21,7 @@ import org.springframework.context.ApplicationContextAware;
 import javax.annotation.Nullable;
 
 public class JmixComboBox<V> extends ComboBox<V>
-        implements SupportsValueSource<V>, SupportsValidation<V>, SupportsListOptions<V>,
+        implements SupportsValueSource<V>, SupportsValidation<V>, SupportsOptions<V>,
         HasRequired, HasTitle,
         ApplicationContextAware, InitializingBean {
 
@@ -59,12 +59,12 @@ public class JmixComboBox<V> extends ComboBox<V>
 
     @Nullable
     @Override
-    public Options<V> getListOptions() {
+    public Options<V> getOptions() {
         return optionsDelegate.getListOptions();
     }
 
     @Override
-    public void setListOptions(@Nullable Options<V> options) {
+    public void setOptions(@Nullable Options<V> options) {
         optionsDelegate.setListOptions(options);
     }
 

@@ -17,25 +17,25 @@
 
 <template xmlns="http://schemas.haulmont.com/studio/template-settings.xsd"
           icon="resource://template/template_editor.svg"
-          name="Flow UI Entity detail"
+          name="Entity detail view (FlowUI)"
           order="20">
     <tags>
         <tag>ENTITY</tag>
         <tag>JPA</tag>
     </tags>
     <description>
-        <![CDATA[<html>Standard detail screen with a form and window action buttons: <i>OK</i> and <i>Cancel</i>.
+        <![CDATA[<html>Entity detail view with a form and window action buttons: <i>OK</i> and <i>Cancel</i>.
 <br>Select <b>Extended window actions</b> checkbox to create a detail that can be saved without closing the screen.
 It will have <i>Save and close</i>, <i>Save</i> and <i>Cancel</i> buttons.</html>]]>
     </description>
     <locMessages key="detailTitle" expressionKey="${studioUtils.decapitalize(detailControllerName)}.title">
         <message lang="default">
-            <![CDATA[${studioUtils.makeNaturalMessage(entity.className)} detail]]>
+            <![CDATA[${studioUtils.makeNaturalMessage(entity.className)}]]>
         </message>
     </locMessages>
     <steps>
-        <step name="Entity detail" order="0"/>
-        <step name="Entity detail fetch plan" order="1"/>
+        <step name="Entity detail view" order="0"/>
+        <step name="Entity detail view fetch plan" order="1"/>
     </steps>
     <property caption="Entity"
               code="entity"
@@ -55,7 +55,7 @@ It will have <i>Save and close</i>, <i>Save</i> and <i>Cancel</i> buttons.</html
               required="true"
               dynamic="true"
               advanced="true"
-              valueTemplate="${api.evaluateScript('screen/descriptorFileName.groovy', ['entity': entity])}-detail">
+              valueTemplate="${api.evaluateScript('screen/descriptorFileName.groovy', ['entity': entity])}-detail-view">
         <dependency code="entity"/>
     </property>
 
@@ -66,7 +66,7 @@ It will have <i>Save and close</i>, <i>Save</i> and <i>Cancel</i> buttons.</html
               required="true"
               dynamic="true"
               advanced="true"
-              valueTemplate="${entity.className}Detail">
+              valueTemplate="${entity.className}DetailView">
         <dependency code="entity"/>
     </property>
 

@@ -56,7 +56,7 @@ def expandId = "detailActions"
         <%collectionAttributesTable.each{table ->%>
             ${table}
         <%}%>
-        <hbox id="editActions">
+        <hbox id="detailActions">
             <button id="commitAndCloseBtn" action="commitAction"/>
             <button id="closeBtn" action="closeAction"/>
         </hbox>

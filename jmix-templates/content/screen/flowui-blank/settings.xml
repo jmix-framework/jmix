@@ -18,7 +18,7 @@
 <template xmlns="http://schemas.haulmont.com/studio/template-settings.xsd"
           icon="resource://template/template_blank.svg"
           order="0"
-          name="Flow UI Blank screen">
+          name="Blank view (FlowUI)">
     <description>
         <![CDATA[<html>Blank screen not associated with an entity.</html>]]>
     </description>
@@ -30,7 +30,7 @@
 
     <property caption="Descriptor name"
               code="descriptorName"
-              defaultValue="blank-screen"
+              defaultValue="blank-view"
               propertyType="DESCRIPTOR_NAME"
               required="true"
               sourceName="descriptor"/>
@@ -57,7 +57,7 @@
 
     <property caption="Screen route"
               code="route"
-              defaultValue="blank-screen"
+              defaultValue="blank-view"
               propertyType="STRING"
               advanced="true"
               dynamic="true"

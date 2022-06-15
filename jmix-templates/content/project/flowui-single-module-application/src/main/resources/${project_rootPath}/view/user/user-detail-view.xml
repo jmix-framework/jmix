@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <screen xmlns="http://jmix.io/schema/flowui/screen"
-        title="msg://UserDetail.title"
+        title="msg://UserDetailView.title"
         focusComponent="form">
     <data>
         <instance id="userDc"

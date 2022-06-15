@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <screen xmlns="http://jmix.io/schema/flowui/screen"
-        title="msg://UserView.title"
+        title="msg://UserListView.title"
         focusComponent="usersTable">
     <data readOnly="true">
         <collection id="usersDc"

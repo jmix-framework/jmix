@@ -17,28 +17,23 @@
 
 <template xmlns="http://schemas.haulmont.com/studio/template-settings.xsd"
           icon="resource://template/template_browse.svg"
-          name="Flow UI Entity view"
+          name="Entity list view (FlowUI)"
           order="10">
     <tags>
         <tag>ENTITY</tag>
         <tag>JPA</tag>
     </tags>
     <description>
-        <![CDATA[<html>Standard view screen with a table consuming all available space.</html>]]>
+        <![CDATA[<html>Entity list view with a table consuming all available space.</html>]]>
     </description>
     <locMessages key="viewTitle" expressionKey="${studioUtils.decapitalize(viewControllerName)}.title">
         <message lang="default">
             <![CDATA[${studioUtils.makeScreenNaturalCaption(entity.className.concat('.browse'), null)}]]>
         </message>
     </locMessages>
-    <locMessages key="viewMenu" expressionKey="${studioUtils.decapitalize(viewControllerName)}.menu">
-        <message lang="default">
-            <![CDATA[${studioUtils.makeScreenNaturalCaption(entity.className.concat('.browse'), null)}]]>
-        </message>
-    </locMessages>
     <steps>
-        <step name="Entity view" order="0"/>
-        <step name="Entity view fetch plan" order="1"/>
+        <step name="Entity list view" order="0"/>
+        <step name="Entity list view fetch plan" order="1"/>
     </steps>
     <property caption="Entity"
               code="entity"
@@ -78,7 +73,7 @@
               dynamic="true"
               sourceName="descriptor"
               required="true"
-              valueTemplate="${api.evaluateScript('screen/descriptorFileName.groovy', ['entity': entity])}-view">
+              valueTemplate="${api.evaluateScript('screen/descriptorFileName.groovy', ['entity': entity])}-list-view">
         <dependency code="entity"/>
     </property>
 
@@ -89,7 +84,7 @@
               dynamic="true"
               sourceName="controller"
               required="true"
-              valueTemplate="${entity.className}View">
+              valueTemplate="${entity.className}ListView">
         <dependency code="entity"/>
     </property>
 

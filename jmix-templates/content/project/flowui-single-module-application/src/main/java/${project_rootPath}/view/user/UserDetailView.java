@@ -18,11 +18,11 @@ import java.util.Objects;
 import java.util.TimeZone;
 
 @Route(value = ":id", layout = MainView.class)
-@RoutePrefix(UserView.ROUTE)
+@RoutePrefix(UserListView.ROUTE)
 @UiController("User.edit")
-@UiDescriptor("user-detail.xml")
+@UiDescriptor("user-detail-view.xml")
 @EditedEntityContainer("userDc")
-public class UserDetail extends StandardEditor<User> {
+public class UserDetailView extends StandardEditor<User> {
 
     @ComponentId
     private TypedTextField<String> usernameField;

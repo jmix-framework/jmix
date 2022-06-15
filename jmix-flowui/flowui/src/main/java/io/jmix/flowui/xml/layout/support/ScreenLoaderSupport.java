@@ -116,7 +116,8 @@ public class ScreenLoaderSupport implements ApplicationContextAware {
 
     protected Action loadDeclarativeAction(Element element) {
         return getActionLoaderSupport().loadDeclarativeActionByType(element)
-                .orElse(getActionLoaderSupport().loadDeclarativeAction(element));
+                .orElseGet(() ->
+                        getActionLoaderSupport().loadDeclarativeAction(element));
     }
 
     protected ComponentLoader.ComponentContext getComponentContext() {

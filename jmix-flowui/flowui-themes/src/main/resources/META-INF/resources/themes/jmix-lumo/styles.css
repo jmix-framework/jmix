@@ -1,10 +1,10 @@
 @import url('app/dialog-window.css');
 @import url('app/exception-dialog-window.css');
-@import url('components/jmix-notification.css');
 @import url('app/main-screen.css');
 @import url('app/login-screen.css');
 
 @import url('components/jmix-list-menu.css');
+@import url('components/jmix-notification.css');
 @import url('components/jmix-user-indicator.css');
 
 html {

@@ -98,7 +98,7 @@ public class ActionLoaderSupport implements ApplicationContextAware {
         Element propertiesEl = element.element("properties");
         if (propertiesEl != null) {
             for (Element propertyEl : propertiesEl.elements("property")) {
-                loaderSupport.loadString(propertiesEl, "name",
+                loaderSupport.loadString(propertyEl, "name",
                         name -> propertyLoader.load(targetAction, name, propertyEl.attributeValue("value")));
             }
         }
@@ -123,8 +123,10 @@ public class ActionLoaderSupport implements ApplicationContextAware {
         }
 
         for (Element action : actions.elements("action")) {
-            component.addAction(loadDeclarativeActionByType(action)
-                    .orElse(loadDeclarativeAction(action)));
+            Action actionToSet = loadDeclarativeActionByType(action)
+                    .orElseGet(() ->
+                            loadDeclarativeAction(action));
+            component.addAction(actionToSet);
         }
     }
 

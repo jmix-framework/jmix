@@ -153,10 +153,10 @@ public class DynAttrPropertyFilterComponentGenerationStrategy extends DynAttrCom
                 //noinspection rawtypes,unchecked
                 ((EntityComboBox) entityPicker).setOptions(new ListOptions(options));
             } catch (RuntimeException e) {
-                throw new IllegalArgumentException(String.format("Cannot load options for dynamic attribute '%s'. " +
-                        "It may be caused by absence of 'entity' parameter. Entity can not be defined in filter condition.\n" +
-                        "Please, consider nullability of 'entity' options script parameter, " +
-                        "do not use lookup field for this attribute or do not use this attribute in filter." +
+                throw new IllegalArgumentException(String.format("Cannot load options for dynamic attribute '%s' in filter condition. " +
+                        "It may be caused by NULL value of 'entity' options script parameter.\n" +
+                        "Please, consider nullability, do not use lookup field for this attribute " +
+                        "or do not use this attribute in filter." +
                         "\n\nCause: %s", attribute.getName(), e.getMessage()));
             }
         }

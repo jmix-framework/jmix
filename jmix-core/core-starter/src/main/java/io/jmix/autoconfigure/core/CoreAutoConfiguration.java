@@ -17,6 +17,7 @@
 package io.jmix.autoconfigure.core;
 
 import io.jmix.core.CoreConfiguration;
+import io.jmix.core.JmixAnnotationJmxAttributeSource;
 import io.jmix.core.JmixModules;
 import io.jmix.core.Resources;
 import io.jmix.core.impl.JmixMessageSource;
@@ -25,19 +26,25 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.cache.JCacheManagerCustomizer;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.SearchStrategy;
+import org.springframework.boot.autoconfigure.jmx.JmxAutoConfiguration;
+import org.springframework.boot.autoconfigure.jmx.JmxProperties;
+import org.springframework.boot.autoconfigure.jmx.ParentAwareNamingStrategy;
 import org.springframework.boot.autoconfigure.validation.ValidationAutoConfiguration;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.jmx.export.naming.ObjectNamingStrategy;
 import org.springframework.scripting.ScriptEvaluator;
 import org.springframework.scripting.groovy.GroovyScriptEvaluator;
+import org.springframework.util.StringUtils;
 
 import javax.cache.Cache;
 import javax.cache.configuration.MutableConfiguration;
 
 @AutoConfiguration
 @Import({CoreConfiguration.class})
-@AutoConfigureBefore(ValidationAutoConfiguration.class)
+@AutoConfigureBefore({ValidationAutoConfiguration.class, JmxAutoConfiguration.class})
 public class CoreAutoConfiguration {
 
     @Bean
@@ -62,5 +69,18 @@ public class CoreAutoConfiguration {
                 cacheManager.createCache(LockManager.LOCKS_CACHE_NAME, configuration);
             }
         };
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(value = ObjectNamingStrategy.class, search = SearchStrategy.CURRENT)
+    public ParentAwareNamingStrategy objectNamingStrategy(JmxProperties properties) {
+        String defaultDomain = properties.getDefaultDomain();
+        ParentAwareNamingStrategy namingStrategy = new ParentAwareNamingStrategy(new JmixAnnotationJmxAttributeSource(defaultDomain));
+        if (StringUtils.hasLength(defaultDomain)) {
+            namingStrategy.setDefaultDomain(defaultDomain);
+        }
+        namingStrategy.setEnsureUniqueRuntimeObjectNames(properties.isUniqueNames());
+
+        return namingStrategy;
     }
 }

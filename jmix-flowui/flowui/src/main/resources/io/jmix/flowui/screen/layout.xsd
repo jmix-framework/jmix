@@ -2086,6 +2086,7 @@
         <xs:complexContent>
             <xs:extension base="comboBoxPickerComponent">
                 <xs:attribute name="metaClass" type="xs:string"/>
+                <xs:attribute name="optionsContainer" type="xs:string"/>
 
                 <xs:attributeGroup ref="hasRequired"/>
                 <xs:attributeGroup ref="hasDataContainer"/>

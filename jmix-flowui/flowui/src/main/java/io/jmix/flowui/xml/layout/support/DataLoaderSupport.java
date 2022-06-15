@@ -17,9 +17,13 @@
 package io.jmix.flowui.xml.layout.support;
 
 import com.google.common.base.Strings;
+import com.vaadin.flow.component.Component;
+import io.jmix.flowui.data.SupportsListOptions;
 import io.jmix.flowui.data.SupportsValueSource;
+import io.jmix.flowui.data.options.ContainerOptions;
 import io.jmix.flowui.data.value.ContainerValueSource;
 import io.jmix.flowui.exception.GuiDevelopmentException;
+import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.model.ScreenData;
 import io.jmix.flowui.screen.Screen;
@@ -31,14 +35,13 @@ import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkState;
 
-@Component("flowui_DataLoaderSupport")
+@org.springframework.stereotype.Component("flowui_DataLoaderSupport")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class DataLoaderSupport {
 
@@ -54,11 +57,12 @@ public class DataLoaderSupport {
         this.loaderResolver = loaderResolver;
     }
 
-    public void loadData(com.vaadin.flow.component.Component component, Element element) {
+    // TODO: gg, accept SupportsValueSource
+    public void loadData(Component component, Element element) {
         loadContainer(component, element);
     }
 
-    public void loadContainer(com.vaadin.flow.component.Component component, Element element) {
+    public void loadContainer(Component component, Element element) {
         if (component instanceof SupportsValueSource<?>) {
             String property = element.attributeValue("property");
             loadContainer(element, property).ifPresent(container ->
@@ -87,6 +91,30 @@ public class DataLoaderSupport {
             ScreenData screenData = UiControllerUtils.getScreenData(screen);
 
             return Optional.of(screenData.getContainer(containerId));
+        }
+
+        return Optional.empty();
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public void loadOptionsContainer(SupportsListOptions<?> component, Element element) {
+        loadOptionsContainer(element).ifPresent(optionsContainer ->
+                component.setListOptions(new ContainerOptions(optionsContainer)));
+    }
+
+    protected Optional<CollectionContainer<?>> loadOptionsContainer(Element element) {
+        String containerId = element.attributeValue("optionsContainer");
+        if (containerId != null) {
+
+            Screen<?> screen = getComponentContext().getScreen();
+            ScreenData screenData = UiControllerUtils.getScreenData(screen);
+            InstanceContainer<?> container = screenData.getContainer(containerId);
+            if (!(container instanceof CollectionContainer)) {
+                throw new GuiDevelopmentException(String.format("Not a %s: %s",
+                        CollectionContainer.class.getSimpleName(), containerId),
+                        context);
+            }
+            return Optional.of((CollectionContainer<?>) container);
         }
 
         return Optional.empty();

@@ -44,6 +44,8 @@ import io.jmix.ui.component.data.options.ListOptions;
 import io.jmix.ui.component.factory.PropertyFilterComponentGenerationContext;
 import io.jmix.ui.screen.OpenMode;
 import io.jmix.ui.sys.ScreensHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
 import java.util.List;
@@ -53,6 +55,8 @@ import static io.jmix.ui.component.factory.PropertyFilterComponentGenerationStra
 
 @org.springframework.stereotype.Component("dynat_DynAttrPropertyFilterComponentGenerationStrategy")
 public class DynAttrPropertyFilterComponentGenerationStrategy extends DynAttrComponentGenerationStrategy {
+
+    private static final Logger log = LoggerFactory.getLogger(DynAttrPropertyFilterComponentGenerationStrategy.class);
 
     protected DataAwareComponentsTools dataAwareComponentsTools;
 
@@ -147,21 +151,24 @@ public class DynAttrPropertyFilterComponentGenerationStrategy extends DynAttrCom
 
         entityPicker.setMetaClass(metaClass);
 
-        if (attribute.getConfiguration().isLookup()) {
+        loadOptionsIfNeed(entityPicker, attribute);
+
+        return entityPicker;
+    }
+
+    protected void loadOptionsIfNeed(Component component, AttributeDefinition attribute) {
+        if (attribute.getConfiguration().isLookup() && component instanceof ComboBox) {
             try {
                 List<?> options = optionsLoader.loadOptions(null, attribute);
                 //noinspection rawtypes,unchecked
-                ((EntityComboBox) entityPicker).setOptions(new ListOptions(options));
+                ((ComboBox) component).setOptions(new ListOptions(options));
             } catch (RuntimeException e) {
-                throw new IllegalArgumentException(String.format("Cannot load options for dynamic attribute '%s' in filter condition. " +
+                log.error(String.format("Cannot load options for dynamic attribute '%s' in filter condition. " +
                         "It may be caused by NULL value of 'entity' options script parameter.\n" +
                         "Please, consider nullability, do not use lookup field for this attribute " +
-                        "or do not use this attribute in filter." +
-                        "\n\nCause: %s", attribute.getName(), e.getMessage()));
+                        "or do not use this attribute in filter.", attribute.getName()), e);
             }
         }
-
-        return entityPicker;
     }
 
     protected Field createIntervalField(ComponentGenerationContext context) {
@@ -187,6 +194,7 @@ public class DynAttrPropertyFilterComponentGenerationStrategy extends DynAttrCom
             ((HasDatatype<?>) field).setDatatype(range.asDatatype());
         }
 
+        loadOptionsIfNeed(field, attribute);
         return field;
     }
 

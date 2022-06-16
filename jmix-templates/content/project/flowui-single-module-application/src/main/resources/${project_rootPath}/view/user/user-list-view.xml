@@ -21,7 +21,7 @@
         <dataLoadCoordinator auto="true"/>
     </facets>
     <layout expand="usersTable">
-        <hbox id="buttonsPanel" className="buttons-panel" width="100%">
+        <hbox id="buttonsPanel" className="buttons-panel">
             <button id="createBtn" action="usersTable.create"/>
             <button id="editBtn" action="usersTable.edit"/>
             <button id="removeBtn" action="usersTable.remove"/>

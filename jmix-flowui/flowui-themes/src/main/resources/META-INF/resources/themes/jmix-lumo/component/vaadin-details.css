@@ -14,6 +14,28 @@
  * limitations under the License.
  */
 
-.jmix-login-main-layout {
-  background-color: var(--lumo-shade-5pct);
+/* <list menubar styles> */
+
+:host([class*='jmix-menubar-item']) [part='summary-content'] {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
+
+:host([class*='jmix-menubar-item']) [part='toggle'] {
+  display: none;
+}
+
+:host([class*='jmix-menubar-item']) [part='summary'] {
+  padding: 0;
+}
+
+:host([class*='jmix-menubar-item'][opened]) [part='summary'] {
+  padding-bottom: var(--lumo-space-s);
+}
+
+:host([class*='jmix-menubar-item']) [part='content'] {
+  padding: 0;
+}
+
+/* <list menubar styles/> */

@@ -14,13 +14,21 @@
  * limitations under the License.
  */
 
-.jmix-user-indicator {
-    overflow: hidden;
-    text-align: center;
-    text-overflow: ellipsis;
+:host([theme~='warning']) [part='overlay'] {
+  background-color: var(--jmix-lumo-warning-background-color);
+  color: var(--jmix-lumo-warning-color);
+  box-shadow: var(--lumo-box-shadow-l);
 }
 
-.jmix-user-indicator .jmix-user-indicator-label {
-    white-space: nowrap;
+:host([theme~='warning']) {
+  --_lumo-button-background-color: var(--lumo-shade-20pct);
+  --_lumo-button-color: var(--jmix-lumo-warning-color);
+  --_lumo-button-primary-background-color: var(--jmix-lumo-warning-color);
+  --_lumo-button-primary-color: var(--jmix-lumo-warning-primary-text-color);
 }
 
+:host([theme~='contrast']) [part='overlay'] {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}

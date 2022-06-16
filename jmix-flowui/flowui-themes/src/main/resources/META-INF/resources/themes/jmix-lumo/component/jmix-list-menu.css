@@ -1,4 +1,4 @@
-/*!
+/*
  * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,62 +15,62 @@
  */
 
 .jmix-list-menu {
-    color: var(--lumo-secondary-text-color);
-    margin: 0 var(--lumo-space-s);
-    overflow: auto;
-    padding: 0;
+  color: var(--lumo-secondary-text-color);
+  margin: 0 var(--lumo-space-s);
+  overflow: auto;
+  padding: 0;
 }
 
 .jmix-list-menu .jmix-menubar-item .menubar-list {
-    margin-left: var(--lumo-space-m);
+  margin-left: var(--lumo-space-m);
 }
 
 .jmix-list-menu .jmix-menubar-item {
-    padding: var(--lumo-space-s);
-    padding-right: 0;
-    margin: 0;
+  padding: var(--lumo-space-s);
+  padding-right: 0;
+  margin: 0;
 }
 
 .jmix-list-menu .jmix-menubar-item .jmix-menubar-summary-icon-container {
-    display: flex;
-    gap: var(--lumo-space-s);
-    padding: var(--lumo-space-xs) 0;
+  display: flex;
+  gap: var(--lumo-space-s);
+  padding: var(--lumo-space-xs) 0;
 }
 
 .jmix-list-menu .jmix-menu-item-link .link-icon,
 .jmix-list-menu .jmix-menubar-item .jmix-menubar-summary-icon-container .menubar-icon {
-    width: var(--lumo-icon-size-s);
-    height: var(--lumo-icon-size-s);
-    flex-shrink: 0;
+  width: var(--lumo-icon-size-s);
+  height: var(--lumo-icon-size-s);
+  flex-shrink: 0;
 }
 
 .jmix-list-menu .jmix-menubar-item .menubar-summary {
-    white-space: nowrap;
-    font-weight: bold;
-    text-overflow: ellipsis;
-    overflow: hidden;
+  white-space: nowrap;
+  font-weight: bold;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 .jmix-list-menu .jmix-menu-item-link {
-    gap: var(--lumo-space-s);
-    padding: var(--lumo-space-s);
-    text-decoration: none;
-    color: inherit;
-    cursor: pointer;
+  gap: var(--lumo-space-s);
+  padding: var(--lumo-space-s);
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
 }
 
 .jmix-list-menu .jmix-menu-item-link .link-text {
-    line-height: var(--lumo-line-height-s);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+  line-height: var(--lumo-line-height-s);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 [slot='drawer'] .jmix-list-menu a[highlight][class*='jmix-menu-item-link'] {
-    color: var(--lumo-primary-text-color);
+  color: var(--lumo-primary-text-color);
 }
 
 [slot='drawer'] .jmix-list-menu a[highlight][class*='jmix-menu-item-link'] {
-    background-color: var(--lumo-primary-color-10pct);
-    border-radius: var(--lumo-border-radius);
+  background-color: var(--lumo-primary-color-10pct);
+  border-radius: var(--lumo-border-radius);
 }

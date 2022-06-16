@@ -20,10 +20,8 @@
     <facets>
         <dataLoadCoordinator auto="true"/>
     </facets>
-    <dialogMode height="600"
-                width="800"/>
     <layout expand="usersTable">
-        <hbox id="buttonsPanel" width="100%">
+        <hbox id="buttonsPanel" className="buttons-panel" width="100%">
             <button id="createBtn" action="usersTable.create"/>
             <button id="editBtn" action="usersTable.edit"/>
             <button id="removeBtn" action="usersTable.remove"/>

@@ -38,8 +38,6 @@ def tableXml = api.processSnippet('screen/jmix_flow_table.xml',
         <action id="selectAction" type="lookup_select"/>
         <action id="discardAction" type="lookup_discard"/>
     </actions>
-    <dialogMode height="600"
-                width="800"/>
     <layout expand="${tableId}">
         ${tableXml}
         <hbox id="lookupActions" visible="false">

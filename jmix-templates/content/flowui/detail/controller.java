@@ -1,13 +1,10 @@
 package ${packageName};
 
+import ${entity.fqn};
+import ${module_basePackage}.view.main.MainView;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RoutePrefix;
-import io.jmix.flowui.screen.EditedEntityContainer;
-import io.jmix.flowui.screen.StandardEditor;
-import io.jmix.flowui.screen.UiController;
-import io.jmix.flowui.screen.UiDescriptor;
-import ${module_basePackage}.view.main.MainView;
-import ${entity.fqn};
+import io.jmix.flowui.screen.*;
 
 <%if (classComment) {%>
 ${classComment}

@@ -1,12 +1,9 @@
 package ${packageName};
 
-import com.vaadin.flow.router.Route;
-import io.jmix.flowui.screen.LookupComponent;
-import io.jmix.flowui.screen.StandardLookup;
-import io.jmix.flowui.screen.UiController;
-import io.jmix.flowui.screen.UiDescriptor;
-import ${module_basePackage}.view.main.MainView;
 import ${entity.fqn};
+import ${module_basePackage}.view.main.MainView;
+import com.vaadin.flow.router.Route;
+import io.jmix.flowui.screen.*;
 
 <%if (classComment) {%>
 ${classComment}
@@ -14,5 +11,6 @@ ${classComment}
 @UiController("${viewId}")
 @UiDescriptor("${viewDescriptorName}.xml")
 @LookupComponent("${tableId}")
+@DialogMode(width = "800px", height = "600px")
 public class ${viewControllerName} extends StandardLookup<${entity.className}> {
 }

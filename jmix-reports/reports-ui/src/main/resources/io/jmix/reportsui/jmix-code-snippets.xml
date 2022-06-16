@@ -33,7 +33,10 @@
             </text>
 
             <description>
-                &lt;a href="https://docs.jmix.io/jmix/reports/run-report.html#ui-report-runner"&gt;Jmix Documentation&lt;/a&gt;
+                <![CDATA[
+                Run a report by code and show the result in UI using <code>UiReportRunner</code>.<br>
+                <a href="https://docs.jmix.io/jmix/reports/run-report.html#ui-report-runner">Jmix Documentation</a>
+                ]]>
             </description>
         </codeSnippet>
 

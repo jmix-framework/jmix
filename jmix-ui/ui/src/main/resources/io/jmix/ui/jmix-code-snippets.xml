@@ -34,7 +34,9 @@
             </text>
 
             <description>
-                Publish ui event
+                <![CDATA[
+                Send a custom application event that can be handled by any UI screen opened by the current user.<br>
+                ]]>
             </description>
         </codeSnippet>
 

@@ -73,6 +73,14 @@
                         <button id="editBtn" action="categoriesTable.edit"/>
                         <button id="removeBtn" action="categoriesTable.remove"/>
                         <button id="applyChangesBtn" action="categoriesTable.applyChanges"/>
+                        <popupButton id="exportBtn" caption="msg://export" icon="DOWNLOAD">
+                            <actions>
+                                <action id="exportJSON" caption="msg://exportJSON"/>
+                                <action id="exportZIP" caption="msg://exportZIP"/>
+                            </actions>
+                        </popupButton>
+                        <fileUpload id="importField" uploadButtonIcon="UPLOAD" uploadButtonCaption="msg://import"
+                                    permittedExtensions=".json,.zip"/>
                     </buttonsPanel>
                 </groupTable>
             </vbox>

@@ -30,7 +30,10 @@
             </text>
 
             <description>
-                &lt;a href="https://docs.jmix.io/jmix/data-model/entities.html#instantiation"&gt;Jmix Documentation&lt;/a&gt;
+                <![CDATA[
+                Create an entity instance in memory using <code>DataManager</code>.<br>
+                <a href="https://docs.jmix.io/jmix/data-model/entities.html#instantiation">Jmix Documentation</a>
+                ]]>
             </description>
         </codeSnippet>
 
@@ -53,7 +56,10 @@
             </text>
 
             <description>
-                &lt;a href="https://docs.jmix.io/jmix/data-access/fetching.html#fetch-plan"&gt;Jmix Documentation&lt;/a&gt;
+                <![CDATA[
+                Create a fetch plan programmatically using builder.<br>
+                <a href="https://docs.jmix.io/jmix/data-access/fetching.html#fetch-plan">Jmix Documentation</a>
+                ]]>
             </description>
         </codeSnippet>
 
@@ -75,7 +81,7 @@
             </text>
 
             <description>
-                Check if entity is in one of the lifecycle states
+                Check if an entity instance is New, Detached or Managed.
             </description>
         </codeSnippet>
 
@@ -92,7 +98,10 @@
             </text>
 
             <description>
-                &lt;a href="https://docs.jmix.io/jmix/data-access/data-manager.html#save"&gt;Jmix Documentation&lt;/a&gt;
+                <![CDATA[
+                Save an entity instance to the database using <code>DataManager</code>.<br>
+                <a href="https://docs.jmix.io/jmix/data-access/data-manager.html#save">Jmix Documentation</a>
+                ]]>
             </description>
         </codeSnippet>
 
@@ -108,7 +117,10 @@
             </text>
 
             <description>
-                &lt;a href="https://docs.jmix.io/jmix/data-access/data-manager.html#save"&gt;Jmix Documentation&lt;/a&gt;
+                <![CDATA[
+                Save a collection of entities to the database using <code>DataManager</code>.<br>
+                <a href="https://docs.jmix.io/jmix/data-access/data-manager.html#save">Jmix Documentation</a>
+                ]]>
             </description>
         </codeSnippet>
 
@@ -125,7 +137,10 @@
             </text>
 
             <description>
-                &lt;a href="https://docs.jmix.io/jmix/data-access/data-manager.html#load-by-id"&gt;Jmix Documentation&lt;/a&gt;
+                <![CDATA[
+                Load an entity instance from the database by identifier using <code>DataManager</code>. If no entity found, an exception is thrown.<br>
+                <a href="https://docs.jmix.io/jmix/data-access/data-manager.html#load-by-id">Jmix Documentation</a>
+                ]]>
             </description>
         </codeSnippet>
 
@@ -142,7 +157,10 @@
             </text>
 
             <description>
-                &lt;a href="https://docs.jmix.io/jmix/data-access/data-manager.html#load-by-id"&gt;Jmix Documentation&lt;/a&gt;
+                <![CDATA[
+                Load an entity instance from the database by identifier using <code>DataManager</code>. The returned entity is wrapped in <code>Optional</code>.<br>
+                <a href="https://docs.jmix.io/jmix/data-access/data-manager.html#load-by-id">Jmix Documentation</a>
+                ]]>
             </description>
         </codeSnippet>
 
@@ -161,7 +179,10 @@
             </text>
 
             <description>
-                &lt;a href="https://docs.jmix.io/jmix/security/authentication.html#current"&gt;Jmix Documentation&lt;/a&gt;
+                <![CDATA[
+                Get the currently authenticated user.<br>
+                <a href="https://docs.jmix.io/jmix/security/authentication.html#current">Jmix Documentation</a>
+                ]]>
             </description>
         </codeSnippet>
 
@@ -177,7 +198,10 @@
             </text>
 
             <description>
-                Get effective user
+                <![CDATA[
+                Get the currently authenticated or substituted user.<br>
+                <a href="https://docs.jmix.io/jmix/security/users.html#user-substitution">Jmix Documentation</a>
+                ]]>
             </description>
         </codeSnippet>
 
@@ -194,7 +218,10 @@
             </text>
 
             <description>
-                Get session attribute
+                <![CDATA[
+                Get value of a current session attribute.<br>
+                <a href="https://docs.jmix.io/jmix/security/authentication.html#session-attributes">Jmix Documentation</a>
+                ]]>
             </description>
         </codeSnippet>
 
@@ -212,7 +239,10 @@
             </text>
 
             <description>
-                Get session attribute
+                <![CDATA[
+                Get value of a current session attribute.<br>
+                <a href="https://docs.jmix.io/jmix/security/authentication.html#session-attributes">Jmix Documentation</a>
+                ]]>
             </description>
         </codeSnippet>
 
@@ -229,7 +259,10 @@
             </text>
 
             <description>
-                Get session attribute
+                <![CDATA[
+                Set value of a current session attribute.<br>
+                <a href="https://docs.jmix.io/jmix/security/authentication.html#session-attributes">Jmix Documentation</a>
+                ]]>
             </description>
         </codeSnippet>
 
@@ -246,7 +279,10 @@
             </text>
 
             <description>
-                Get session attribute
+                <![CDATA[
+                Set value of a current session attribute.<br>
+                <a href="https://docs.jmix.io/jmix/security/authentication.html#session-attributes">Jmix Documentation</a>
+                ]]>
             </description>
         </codeSnippet>
 
@@ -261,7 +297,10 @@
             </text>
 
             <description>
-                &lt;a href="https://docs.jmix.io/jmix/security/authentication.html#current"&gt;Jmix Documentation&lt;/a&gt;
+                <![CDATA[
+                Get locale of the currently authenticated user.<br>
+                <a href="https://docs.jmix.io/jmix/security/authentication.html#current">Jmix Documentation</a>
+                ]]>
             </description>
         </codeSnippet>
     </category>
@@ -279,7 +318,9 @@
             </text>
 
             <description>
-                Get current date and time
+                <![CDATA[
+                Get the current date and time using <code>TimeSource</code> bean.<br>
+                ]]>
             </description>
         </codeSnippet>
 
@@ -306,7 +347,9 @@
             </text>
 
             <description>
-                Get relative date and time
+                <![CDATA[
+                Get date and time relative to now using <code>TimeSource</code> bean.<br>
+                ]]>
             </description>
         </codeSnippet>
     </category>
@@ -325,7 +368,10 @@
             </text>
 
             <description>
-                &lt;a href="https://docs.jmix.io/jmix/localization/message-bundles.html#using-messages"&gt;Jmix Documentation&lt;/a&gt;
+                <![CDATA[
+                Get a localized message from the message bundle by key.<br>
+                <a href="https://docs.jmix.io/jmix/localization/message-bundles.html#using-messages-in-java">Jmix Documentation</a>
+                ]]>
             </description>
         </codeSnippet>
 
@@ -342,13 +388,16 @@
             </text>
 
             <description>
-                &lt;a href="https://docs.jmix.io/jmix/localization/message-bundles.html#using-messages"&gt;Jmix Documentation&lt;/a&gt;
+                <![CDATA[
+                Get a localized message from the message bundle by key.<br>
+                <a href="https://docs.jmix.io/jmix/localization/message-bundles.html#using-messages-in-ui">Jmix Documentation</a>
+                ]]>
             </description>
         </codeSnippet>
     </category>
 
     <category name="Files">
-        <codeSnippet name="Upload to file storage" contextTypes="service,controller">
+        <codeSnippet name="Save to file storage" contextTypes="service,controller">
             <inject variable="fileStorageLocator" classQualifiedName="io.jmix.core.FileStorageLocator"/>
 
             <text language="java">
@@ -363,11 +412,14 @@
             </text>
 
             <description>
-                &lt;a href="https://docs.jmix.io/jmix/files/file-storage.html"&gt;Jmix Documentation&lt;/a&gt;
+                <![CDATA[
+                Save a file to the file storage.<br>
+                <a href="https://docs.jmix.io/jmix/files/file-storage.html#file-storage-example">Jmix Documentation</a>
+                ]]>
             </description>
         </codeSnippet>
 
-        <codeSnippet name="Download from file storage" contextTypes="service,controller">
+        <codeSnippet name="Load from file storage" contextTypes="service,controller">
             <inject variable="fileStorageLocator" classQualifiedName="io.jmix.core.FileStorageLocator"/>
 
             <text language="java">
@@ -386,7 +438,10 @@
             </text>
 
             <description>
-                &lt;a href="https://docs.jmix.io/jmix/files/file-storage.html"&gt;Jmix Documentation&lt;/a&gt;
+                <![CDATA[
+                Load a file from the file storage.<br>
+                <a href="https://docs.jmix.io/jmix/files/file-storage.html#file-storage-example">Jmix Documentation</a>
+                ]]>
             </description>
         </codeSnippet>
     </category>
@@ -410,7 +465,10 @@
             </text>
 
             <description>
-                &lt;a href="https://www.baeldung.com/spring-events#publisher"&gt;About Spring Application Publisher&lt;/a&gt;
+                <![CDATA[
+                Send a custom application event.<br>
+                <a href="https://www.baeldung.com/spring-events">Article</a>
+                ]]>
             </description>
         </codeSnippet>
 
@@ -446,7 +504,10 @@
             </text>
 
             <description>
-                &lt;a href="http://www.slf4j.org/manual.html"&gt;SLF4J Manual&lt;/a&gt;
+                <![CDATA[
+                Output a message to the log using SLF4J.<br>
+                <a href="http://www.slf4j.org/manual.html">SLF4J Manual</a>
+                ]]>
             </description>
         </codeSnippet>
 
@@ -525,6 +586,10 @@
                 // process error
                 }
             </text>
+
+            <description>
+                Call a web service using HTTP GET and map the result to an object.
+            </description>
         </codeSnippet>
 
         <codeSnippet name="Call POST web service" contextTypes="service,controller" minJavaVersion="11">
@@ -571,6 +636,10 @@
                 // process error
                 }
             </text>
+
+            <description>
+                Call a web service using HTTP POST and map the result to an object.
+            </description>
         </codeSnippet>
 
     </category>

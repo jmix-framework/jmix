@@ -11,11 +11,14 @@ import io.jmix.flowui.component.delegate.ListOptionsDelegate;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.component.valuepicker.JmixValuePickerActionSupport;
 import io.jmix.flowui.data.Options;
-import io.jmix.flowui.data.SupportsListOptions;
+import io.jmix.flowui.data.SupportsOptions;
+import io.jmix.flowui.data.SupportsOptionsContainer;
 import io.jmix.flowui.data.ValueSource;
+import io.jmix.flowui.data.options.ContainerOptions;
 import io.jmix.flowui.exception.ValidationException;
 import io.jmix.flowui.kit.component.combobox.ComboBoxPicker;
 import io.jmix.flowui.kit.component.valuepicker.ValuePickerActionSupport;
+import io.jmix.flowui.model.CollectionContainer;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -26,7 +29,7 @@ import java.util.Set;
 
 public class EntityComboBox<V> extends ComboBoxPicker<V>
         implements EntityPickerComponent<V>, LookupComponent<V>,
-        SupportsValidation<V>, SupportsListOptions<V>, HasRequired,
+        SupportsValidation<V>, SupportsOptions<V>, SupportsOptionsContainer<V>, HasRequired,
         ApplicationContextAware, InitializingBean {
 
     protected ApplicationContext applicationContext;
@@ -115,13 +118,18 @@ public class EntityComboBox<V> extends ComboBoxPicker<V>
 
     @Nullable
     @Override
-    public Options<V> getListOptions() {
+    public Options<V> getOptions() {
         return optionsDelegate.getListOptions();
     }
 
     @Override
-    public void setListOptions(@Nullable Options<V> options) {
+    public void setOptions(@Nullable Options<V> options) {
         optionsDelegate.setListOptions(options);
+    }
+
+    @Override
+    public void setOptionsContainer(CollectionContainer<V> container) {
+        setOptions(new ContainerOptions<>(container));
     }
 
     @Nullable

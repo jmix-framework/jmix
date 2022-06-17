@@ -105,7 +105,7 @@
         <button id="buttonWithActionId"
                 action="buttonAction"/>
 
-        <checkBox id="checkBoxId"
+        <checkbox id="checkBoxId"
                   ariaLabel="ariaLabelString"
                   autofocus="true"
                   className="cssClassName1, cssClassName2"
@@ -122,7 +122,7 @@
                   value="true"
                   visible="true"
                   width="100px"/>
-        <checkBox id="checkBoxWithDataId" dataContainer="orderDc" property="user.active"/>
+        <checkbox id="checkBoxWithDataId" dataContainer="orderDc" property="user.active"/>
 
         <comboBox id="comboBoxId"
                   allowCustomValue="true"

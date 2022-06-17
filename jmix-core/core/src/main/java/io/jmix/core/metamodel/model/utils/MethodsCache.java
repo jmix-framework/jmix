@@ -16,9 +16,11 @@
 package io.jmix.core.metamodel.model.utils;
 
 import com.google.common.collect.ImmutableMap;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.ReflectionUtils;
 
+import javax.annotation.Nullable;
 import java.lang.invoke.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -54,27 +56,24 @@ public class MethodsCache {
 
     private MethodsCache(Class clazz) {
         final Method[] methods = clazz.getMethods();
+        Map<String, Method> getterMethods = new HashMap<>();
         for (Method method : methods) {
+            if (Modifier.isStatic(method.getModifiers()))
+                continue;
+
             String name = method.getName();
-            if (name.startsWith("get") && method.getParameterTypes().length == 0
-                    && !Modifier.isStatic(method.getModifiers())) {
-                Function getter = createGetter(clazz, method);
+            if (name.startsWith("get") && method.getParameterTypes().length == 0) {
                 name = StringUtils.uncapitalize(name.substring(3));
-                getters.put(name, getter);
-            } else if (name.startsWith("is") && method.getParameterTypes().length == 0
-                    && !Modifier.isStatic(method.getModifiers())) {
-                Function getter = createGetter(clazz, method);
+                getterMethods.put(name, chooseGetter(clazz, name, method, getterMethods.get(name)));
+            } else if (name.startsWith("is") && method.getParameterTypes().length == 0) {
+                // for Kotlin entity with a property which name starts with "is*" the getter name will be the same as property name,
+                // e.g "isApproved".
                 Field isField = ReflectionUtils.findField(clazz, name);
-                if (isField != null) {
-                    // for Kotlin entity with a property which name starts with "is*" the getter name will be the same as property name,
-                    // e.g "isApproved"
-                    getters.put(name, getter);
-                } else {
+                if (isField == null) {//property name is not the same as getter name
                     name = StringUtils.uncapitalize(name.substring(2));
-                    getters.put(name, getter);
                 }
-            } else if (name.startsWith("set") && method.getParameterTypes().length == 1
-                    && !Modifier.isStatic(method.getModifiers())) {
+                getterMethods.put(name, chooseGetter(clazz, name, method, getterMethods.get(name)));
+            } else if (name.startsWith("set") && method.getParameterTypes().length == 1) {
                 BiConsumer setter = createSetter(clazz, method);
                 Field isField = ReflectionUtils.findField(clazz, "is" + name.substring(3));
                 if (isField != null) {
@@ -96,7 +95,59 @@ public class MethodsCache {
                 }
             }
         }
+
+        for (Map.Entry<String, Method> entry : getterMethods.entrySet()) {
+            getters.put(entry.getKey(), createGetter(clazz, entry.getValue()));
+        }
+
         className = clazz.toString();
+    }
+
+    /**
+     * <p>Resolves conflicts between "is&lt;propertyName&gt;()" and "get&lt;propertyName&gt()" getters.</p>
+     * <b>"isProperty()"</b> will be returned in two cases:
+     * <ol>
+     *     <li>{@code isProperty()} is a method-based attribute </li>
+     *     or
+     *     <li>{@code isProperty()} represents getter for {@link Boolean} field while {@code getProperty()} does not, i.e.:
+     *         <ul>
+     *             <li>{@code clazz} contains {@link Boolean} property with corresponding name (see {@code propertyName})</li>
+     *             <li>{@code isProperty()} returns {@link Boolean} (not {@code boolean})</li>
+     *             <li>{@code getProperty()} does not return {@link Boolean}</li>
+     *             <li>{@code getProperty()} is not a method-based attribute</li>
+     *          </ul>
+     *     </li>
+     * </ol>
+     * <p><b>"getProperty()"</b> will be returned otherwise</p>
+     *
+     * @param clazz        entity class with property
+     * @param propertyName name of property
+     * @param found        new getter for property with name {@code propertyName}
+     * @param existed      already processed getter for the same property
+     * @return method chosen as described above or {@code found} method if {@code existed} is null
+     */
+    private Method chooseGetter(Class clazz, String propertyName, Method found, @Nullable Method existed) {
+        if (existed == null)
+            return found;
+        //check if one of getters is a method-based attribute
+        if (found.getAnnotation(JmixProperty.class) != null)
+            return found;
+        if (existed.getAnnotation(JmixProperty.class) != null)
+            return existed;
+
+        Method isMethod = found.getName().startsWith("is") ? found : existed;
+        Method getMethod = found.getName().startsWith("is") ? existed : found;
+
+        Field propertyField = ReflectionUtils.findField(clazz, propertyName);//it may be entity attribute
+
+        if (propertyField != null
+                && Boolean.class.isAssignableFrom(propertyField.getType())
+                && isMethod.getReturnType().equals(Boolean.class)
+                && !getMethod.getReturnType().equals(Boolean.class)) {
+            return isMethod;
+        }
+
+        return getMethod;
     }
 
     private Function createGetter(Class clazz, Method method) {

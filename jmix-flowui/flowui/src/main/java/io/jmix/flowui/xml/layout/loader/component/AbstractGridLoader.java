@@ -34,6 +34,7 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.MetadataObject;
 import io.jmix.flowui.component.grid.EnhancedDataGrid;
 import io.jmix.flowui.exception.GuiDevelopmentException;
+import io.jmix.flowui.kit.component.HasActions;
 import io.jmix.flowui.model.*;
 import io.jmix.flowui.model.impl.DataLoadersHelper;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
@@ -49,7 +50,8 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public abstract class AbstractGridLoader<T extends Grid<?> & EnhancedDataGrid<?>> extends AbstractComponentLoader<T> {
+public abstract class AbstractGridLoader<T extends Grid<?> & EnhancedDataGrid<?> & HasActions>
+        extends AbstractComponentLoader<T> {
 
     protected ActionLoaderSupport actionLoaderSupport;
     protected MetadataTools metaDataTools;
@@ -73,6 +75,9 @@ public abstract class AbstractGridLoader<T extends Grid<?> & EnhancedDataGrid<?>
         componentLoader().loadThemeName(resultComponent, element);
         componentLoader().loadClassName(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
+
+        loadData();
+        getActionLoaderSupport().loadActions(resultComponent, element);
     }
 
     protected void loadData() {

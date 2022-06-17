@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "name": "Full-Stack Application with Experimental FlowUI",
+  "order": 7,
+  "description": "<html>Jmix web application in Java that uses Vaadin Flow framework for UI.<p>Contains Flow UI and Security subsystems.<br>Uses embedded HSQL database.<p><b>CAUTION:</b> The FlowUI module is currently in preview state. Projects created with this template can be incompatible with the future versions of the Jmix FlowUI module!</html>",
+  "params": [
+    {
+      "name": "projectId",
+      "mandatory": false
+    }
+  ]
+}

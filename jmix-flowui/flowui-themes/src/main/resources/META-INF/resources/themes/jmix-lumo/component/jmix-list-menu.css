@@ -1,0 +1,76 @@
+/*
+ * Copyright 2022 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+.jmix-list-menu {
+  color: var(--lumo-secondary-text-color);
+  margin: 0 var(--lumo-space-s);
+  overflow: auto;
+  padding: 0;
+}
+
+.jmix-list-menu .jmix-menubar-item .menubar-list {
+  margin-left: var(--lumo-space-m);
+}
+
+.jmix-list-menu .jmix-menubar-item {
+  padding: var(--lumo-space-s);
+  padding-right: 0;
+  margin: 0;
+}
+
+.jmix-list-menu .jmix-menubar-item .jmix-menubar-summary-icon-container {
+  display: flex;
+  gap: var(--lumo-space-s);
+  padding: var(--lumo-space-xs) 0;
+}
+
+.jmix-list-menu .jmix-menu-item-link .link-icon,
+.jmix-list-menu .jmix-menubar-item .jmix-menubar-summary-icon-container .menubar-icon {
+  width: var(--lumo-icon-size-s);
+  height: var(--lumo-icon-size-s);
+  flex-shrink: 0;
+}
+
+.jmix-list-menu .jmix-menubar-item .menubar-summary {
+  white-space: nowrap;
+  font-weight: bold;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.jmix-list-menu .jmix-menu-item-link {
+  gap: var(--lumo-space-s);
+  padding: var(--lumo-space-s);
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.jmix-list-menu .jmix-menu-item-link .link-text {
+  line-height: var(--lumo-line-height-s);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+[slot='drawer'] .jmix-list-menu a[highlight][class*='jmix-menu-item-link'] {
+  color: var(--lumo-primary-text-color);
+}
+
+[slot='drawer'] .jmix-list-menu a[highlight][class*='jmix-menu-item-link'] {
+  background-color: var(--lumo-primary-color-10pct);
+  border-radius: var(--lumo-border-radius);
+}

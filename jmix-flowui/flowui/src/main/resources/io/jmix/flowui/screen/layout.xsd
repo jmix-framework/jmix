@@ -2011,8 +2011,8 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <!-- CheckBox-->
-    <xs:complexType name="checkBoxComponent">
+    <!-- Checkbox-->
+    <xs:complexType name="checkboxComponent">
         <xs:complexContent>
             <xs:extension base="baseComponent">
                 <xs:attribute name="value" type="xs:boolean"/>
@@ -2086,6 +2086,7 @@
         <xs:complexContent>
             <xs:extension base="comboBoxPickerComponent">
                 <xs:attribute name="metaClass" type="xs:string"/>
+                <xs:attribute name="optionsContainer" type="xs:string"/>
 
                 <xs:attributeGroup ref="hasRequired"/>
                 <xs:attributeGroup ref="hasDataContainer"/>
@@ -2669,7 +2670,7 @@
                 <xs:element name="avatar" type="avatarComponent"/>
                 <xs:element name="select" type="selectComponent"/>
                 <xs:element name="details" type="detailsComponent"/>
-                <xs:element name="checkBox" type="checkBoxComponent"/>
+                <xs:element name="checkbox" type="checkboxComponent"/>
                 <xs:element name="datePicker" type="datePickerComponent"/>
                 <xs:element name="textArea" type="textAreaComponent"/>
                 <xs:element name="textField" type="textFieldComponent"/>

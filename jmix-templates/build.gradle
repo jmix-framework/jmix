@@ -24,7 +24,7 @@ group = 'io.jmix.templates.studio'
 task copyContent(type: Copy) {
     from('content') {
         exclude '**/gradle/wrapper/**'
-        filter(org.apache.tools.ant.filters.ReplaceTokens, tokens: [bomVersion: bomVersion])
+        filter(org.apache.tools.ant.filters.ReplaceTokens, tokens: [bomVersion: version])
     }
     from('content') {
         include '**/gradle/wrapper/**'

@@ -16,6 +16,7 @@
 
 package io.jmix.gradle
 
+import io.jmix.gradle.flowui.KitCompile
 import io.jmix.gradle.ui.ThemeCompile
 import io.jmix.gradle.ui.WidgetsCompile
 import org.gradle.api.Action
@@ -33,9 +34,11 @@ class JmixPlugin implements Plugin<Project> {
     public static final String WIDGETS_CONFIGURATION_NAME = 'widgets'
     public static final String PROVIDED_RUNTIME_CONFIGURATION_NAME = 'providedRuntime'
     public static final String PRODUCTION_RUNTIME_CLASSPATH_CONFIGURATION_NAME = 'productionRuntimeClasspath'
+    public static final String KIT_CONFIGURATION_NAME = 'kit'
 
     public static final String COMPILE_THEMES_TASK_NAME = 'compileThemes'
     public static final String COMPILE_WIDGETS_TASK_NAME = 'compileWidgets'
+    public static final String COMPILE_KIT_TASK_NAME = 'compileKit'
 
     @Override
     void apply(Project project) {
@@ -48,6 +51,7 @@ class JmixPlugin implements Plugin<Project> {
                 project.dependencies.add('implementation', platform)
                 project.dependencies.add(THEMES_CONFIGURATION_NAME, platform)
                 project.dependencies.add(WIDGETS_CONFIGURATION_NAME, platform)
+                project.dependencies.add(KIT_CONFIGURATION_NAME, platform)
 
                 if (project.plugins.hasPlugin('war')) {
                     project.dependencies.add(PROVIDED_RUNTIME_CONFIGURATION_NAME, platform)
@@ -116,6 +120,7 @@ class JmixPlugin implements Plugin<Project> {
 
         setupThemeCompile(project)
         setupWidgetsCompile(project)
+        setupKitConfiguration(project)
 
         project.task([type: ZipProject], 'zipProject')
     }
@@ -201,16 +206,33 @@ class JmixPlugin implements Plugin<Project> {
         }
     }
 
+    protected void setupKitConfiguration(Project project) {
+        project.ext.KitCompile = KitCompile.class
+        def kitConfiguration = project.configurations.create(KIT_CONFIGURATION_NAME)
+
+        def compileKit = project.tasks.create(COMPILE_KIT_TASK_NAME, KitCompile.class)
+
+        compileKit.enabled = false
+        project.afterEvaluate {
+            if (kitConfiguration.size() > 1) {
+                project.sourceSets.main.output.dir(compileKit.outputDirectory, builtBy: compileKit)
+                compileKit.enabled = true
+            } else {
+                project.logger.debug("Unable to find 'kit' configuration to compile files for screen designer")
+            }
+        }
+    }
+
     String getBomVersion() {
         String result = null
         Enumeration<URL> resources = getClass().getClassLoader().getResources("META-INF/MANIFEST.MF")
         while (resources.hasMoreElements()) {
             try {
                 Manifest manifest = new Manifest(resources.nextElement().openStream())
-                String bomVersion = manifest.mainAttributes.getValue('Jmix-Default-BOM-Version')
+                String bomVersion = manifest.mainAttributes.getValue('Jmix-BOM-Version')
                 if (bomVersion) {
                     if (result && result != bomVersion) {
-                        throw new IllegalStateException("More than one manifest in plugin's classpath define Jmix-Default-BOM-Version, and they are different." +
+                        throw new IllegalStateException("More than one manifest in plugin's classpath define Jmix-BOM-Version, and they are different." +
                                 " Set jmix.bomVersion property in the project.")
                     }
                     result = bomVersion

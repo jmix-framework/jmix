@@ -1,0 +1,64 @@
+<%
+dcId = "${entity.uncapitalizedClassName}Dc"
+def nestedDatasourceProperties = api.evaluateScript('screen/nestedDatasourceProperties.groovy', ['view': detailFetchPlan, 'embeddable': false])
+def nestedCollectionDatasourceProperties = api.evaluateScript('screen/nestedCollectionDatasourceProperties.groovy', ['view': detailFetchPlan])
+def collectionAttributesTable = []
+nestedCollectionDatasourceProperties.each { prop ->
+    def binding = [
+        'nestedDcProperty': prop,
+        'fetchPlan': detailFetchPlan]
+    def tableXml = api.processSnippet('screen/jmix_flow_collectionAttributeTable.xml', binding)
+    if (!binding['isError']) {
+        collectionAttributesTable << tableXml
+    }
+}
+def formXml = api.processSnippet('screen/jmix_flow_form.xml',
+        ['fetchPlan': detailFetchPlan,
+        'api': api,
+        'dcId': dcId,
+        'formId': 'form'])
+def optionsDatasourceXml = api.processSnippet('screen/optionsDsSource.xml',
+        ['view': detailFetchPlan,
+        'api': api])
+def expandId = "detailActions"
+%><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<screen xmlns="http://jmix.io/schema/flowui/screen"
+        title="${messageKeys['detailTitle']}"
+        focusComponent="form">
+    <data>
+        <instance id="${dcId}"
+                    class="${entity.fqn}"<%if (!entity.isDeepInheritor('com.haulmont.cuba.core.entity.AbstractNotPersistentEntity')) {%> <%if (!is_inline_detailFetchPlan) {%>
+                    fetchPlan="${detailFetchPlan.name}"<%}%><%}%>> <%if (is_inline_detailFetchPlan) {%>
+            ${inline_detailFetchPlan}
+            <%}%><loader/>
+        <%
+        nestedDatasourceProperties.each {%>
+        <instance id="${it}Dc" property="${it}"/>
+        <%}
+
+        nestedCollectionDatasourceProperties.each {%>
+            <collection id="${it}Dc" property="${it}"/>
+        <%}
+        %></instance>
+        <%if (optionsDatasourceXml?.trim()) {%>
+            ${optionsDatasourceXml}
+        <%}%>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <actions>
+        <action id="commitAction" type="editor_commitClose"/>
+        <action id="closeAction" type="editor_close"/>
+    </actions>
+    <layout expand="$expandId">
+        ${formXml}
+        <%collectionAttributesTable.each{table ->%>
+            ${table}
+        <%}%>
+        <hbox id="detailActions">
+            <button id="commitAndCloseBtn" action="commitAction"/>
+            <button id="closeBtn" action="closeAction"/>
+        </hbox>
+    </layout>
+</screen>

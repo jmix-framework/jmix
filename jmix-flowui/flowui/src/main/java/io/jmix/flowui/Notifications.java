@@ -14,7 +14,6 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import io.jmix.core.common.util.Preconditions;
-import io.jmix.flowui.kit.component.notification.JmixNotification;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,7 +94,7 @@ public class Notifications {
 
         protected static final String WARNING_THEME_NAME = "warning";
 
-        protected JmixNotification notification;
+        protected Notification notification;
 
         protected String text;
         protected String title;
@@ -302,8 +301,8 @@ public class Notifications {
             return closeable != null ? closeable : internalCloseable;
         }
 
-        protected JmixNotification createNotification() {
-            return new JmixNotification();
+        protected Notification createNotification() {
+            return new Notification();
         }
 
         protected String convertTypeToThemeName(Type type) {

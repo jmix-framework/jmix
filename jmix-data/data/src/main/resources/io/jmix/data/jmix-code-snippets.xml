@@ -35,7 +35,10 @@
             </text>
 
             <description>
-                &lt;a href="https://docs.jmix.io/jmix/data-access/data-manager.html#load-by-query"&gt;Jmix Documentation&lt;/a&gt;
+                <![CDATA[
+                Load an entity instance from the database by query using <code>DataManager</code>. If no entity found, an exception is thrown.<br>
+                <a href="https://docs.jmix.io/jmix/data-access/data-manager.html#load-by-query">Jmix Documentation</a>
+                ]]>
             </description>
         </codeSnippet>
 
@@ -56,7 +59,10 @@
             </text>
 
             <description>
-                &lt;a href="https://docs.jmix.io/jmix/data-access/data-manager.html#load-by-query"&gt;Jmix Documentation&lt;/a&gt;
+                <![CDATA[
+                Load an entity instance from the database by query using <code>DataManager</code>. The returned entity is wrapped in <code>Optional</code>.<br>
+                <a href="https://docs.jmix.io/jmix/data-access/data-manager.html#load-by-query">Jmix Documentation</a>
+                ]]>
             </description>
         </codeSnippet>
 
@@ -77,7 +83,10 @@
             </text>
 
             <description>
-                &lt;a href="https://docs.jmix.io/jmix/data-access/data-manager.html#load-by-query"&gt;Jmix Documentation&lt;/a&gt;
+                <![CDATA[
+                Load a list of entities from the database by query using <code>DataManager</code>.<br>
+                <a href="https://docs.jmix.io/jmix/data-access/data-manager.html#load-by-id">Jmix Documentation</a>
+                ]]>
             </description>
         </codeSnippet>
 
@@ -96,7 +105,10 @@
             </text>
 
             <description>
-                &lt;a href="https://docs.jmix.io/jmix/data-access/data-manager.html#load-scalars"&gt;Jmix Documentation&lt;/a&gt;
+                <![CDATA[
+                Load a list of scalar or aggregate values in the form of key-value entities using <code>DataManager</code>.<br>
+                <a href="https://docs.jmix.io/jmix/data-access/data-manager.html#load-scalars">Jmix Documentation</a>
+                ]]>
             </description>
         </codeSnippet>
 
@@ -111,7 +123,10 @@
             </text>
 
             <description>
-                &lt;a href="https://docs.jmix.io/jmix/data-access/data-manager.html#load-scalars"&gt;Jmix Documentation&lt;/a&gt;
+                <![CDATA[
+                Load a single scalar or aggregate value using <code>DataManager</code>.<br>
+                <a href="https://docs.jmix.io/jmix/data-access/data-manager.html#load-scalars">Jmix Documentation</a>
+                ]]>
             </description>
         </codeSnippet>
 

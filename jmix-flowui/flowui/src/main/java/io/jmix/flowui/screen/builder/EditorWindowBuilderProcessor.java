@@ -139,9 +139,9 @@ public class EditorWindowBuilderProcessor extends AbstractWindowBuilderProcessor
                 E reloadedEntity = transformForField(entityFromEditor, field);
                 E editedEntity = transform(reloadedEntity, builder);
 
-                if (field instanceof SupportsListOptions) {
-                    SupportsListOptions<E> supportsListOptions = ((SupportsListOptions<E>) field);
-                    Options<E> options = supportsListOptions.getListOptions();
+                if (field instanceof SupportsOptions) {
+                    SupportsOptions<E> supportsOptions = ((SupportsOptions<E>) field);
+                    Options<E> options = supportsOptions.getOptions();
                     if (options instanceof EntityOptions) {
                         EntityOptions<E> entityOptions = (EntityOptions<E>) options;
                         if (entityOptions.containsItem(editedEntity)) {

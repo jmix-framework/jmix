@@ -57,7 +57,7 @@ public abstract class BaseLoaderConfig {
         loaders.put("progressBar", ProgressBarLoader.class);
         loaders.put("radioButtonGroup", RadioButtonGroupLoader.class);
         loaders.put("textArea", TextAreaLoader.class);
-        loaders.put("checkBox", CheckBoxLoader.class);
+        loaders.put("checkbox", CheckboxLoader.class);
         loaders.put("comboBox", ComboBoxLoader.class);
         loaders.put("timePicker", TimePickerLoader.class);
         loaders.put("dateTimePicker", DateTimePickerLoader.class);

@@ -48,6 +48,102 @@ import io.jmix.flowui.kit.meta.StudioFlowPropertyType;
 public interface StudioFlowPaletteComponents {
 
     @StudioFlowComponent(
+            name = "Avatar",
+            classFqn = "com.vaadin.flow.component.avatar.Avatar",
+            category = "Components",
+            xmlElement = "avatar",
+            properties = {
+                    @StudioFlowProperty(xmlAttribute = "abbreviation", type = StudioFlowPropertyType.LOCALIZED_STRING),
+                    @StudioFlowProperty(xmlAttribute = "className", type = StudioFlowPropertyType.VALUES_LIST),
+                    @StudioFlowProperty(xmlAttribute = "colorIndex", type = StudioFlowPropertyType.INTEGER),
+                    @StudioFlowProperty(xmlAttribute = "height", type = StudioFlowPropertyType.SIZE),
+                    @StudioFlowProperty(xmlAttribute = "id", type = StudioFlowPropertyType.COMPONENT_ID),
+                    @StudioFlowProperty(xmlAttribute = "image", type = StudioFlowPropertyType.STRING),
+                    @StudioFlowProperty(xmlAttribute = "maxHeight", type = StudioFlowPropertyType.SIZE),
+                    @StudioFlowProperty(xmlAttribute = "maxWidth", type = StudioFlowPropertyType.SIZE),
+                    @StudioFlowProperty(xmlAttribute = "minHeight", type = StudioFlowPropertyType.SIZE),
+                    @StudioFlowProperty(xmlAttribute = "minWidth", type = StudioFlowPropertyType.SIZE),
+                    @StudioFlowProperty(xmlAttribute = "name", type = StudioFlowPropertyType.LOCALIZED_STRING),
+                    @StudioFlowProperty(xmlAttribute = "themeName", type = StudioFlowPropertyType.VALUES_LIST,
+                            options = {"xlarge", "large", "small", "xsmall"}),
+                    @StudioFlowProperty(xmlAttribute = "visible", type = StudioFlowPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioFlowProperty(xmlAttribute = "width", type = StudioFlowPropertyType.SIZE)
+            }
+    )
+    Avatar avatar();
+
+    @StudioFlowComponent(
+            name = "BigDecimalField",
+            classFqn = "io.jmix.flowui.component.textfield.JmixBigDecimalField",
+            category = "Components",
+            xmlElement = "bigDecimalField",
+            properties = {
+                    @StudioFlowProperty(xmlAttribute = "autocapitalize", type = StudioFlowPropertyType.ENUMERATION,
+                            classFqn = "com.vaadin.flow.component.textfield.Autocapitalize", defaultValue = "NONE",
+                            options = {"NONE", "SENTENCES", "WORDS", "CHARACTERS"}),
+                    @StudioFlowProperty(xmlAttribute = "autocomplete", type = StudioFlowPropertyType.ENUMERATION,
+                            classFqn = "com.vaadin.flow.component.textfield.Autocomplete", defaultValue = "OFF",
+                            options = {"OFF", "ON", "NAME", "HONORIFIC_PREFIX", "GIVEN_NAME", "ADDITIONAL_NAME",
+                                    "FAMILY_NAME", "HONORIFIC_SUFFIX", "NICKNAME", "EMAIL", "USERNAME", "NEW_PASSWORD",
+                                    "CURRENT_PASSWORD", "ORGANIZATION_TITLE", "ORGANIZATION", "STREET_ADDRESS",
+                                    "ADDRESS_LINE1", "ADDRESS_LINE2", "ADDRESS_LINE3", "ADDRESS_LEVEL1",
+                                    "ADDRESS_LEVEL2", "ADDRESS_LEVEL3", "ADDRESS_LEVEL4", "COUNTRY", "COUNTRY_NAME",
+                                    "POSTAL_CODE", "CC_NAME", "CC_GIVEN_NAME", "CC_ADDITIONAL_NAME", "CC_FAMILY_NAME",
+                                    "CC_NUMBER", "CC_EXP", "CC_EXP_MONTH", "CC_EXP_YEAR", "CC_CSC", "CC_TYPE",
+                                    "TRANSACTION_CURRENCY", "TRANSACTION_AMOUNT", "LANGUAGE", "BDAY", "BDAY_DAY",
+                                    "BDAY_MONTH", "BDAY_YEAR", "SEX", "TEL", "TEL_COUNTRY_CODE", "TEL_NATIONAL",
+                                    "TEL_AREA_CODE", "TEL_LOCAL", "TEL_LOCAL_PREFIX", "TEL_LOCAL_SUFFIX",
+                                    "TEL_EXTENSION", "URL", "PHOTO",}),
+                    @StudioFlowProperty(xmlAttribute = "autocorrect", type = StudioFlowPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioFlowProperty(xmlAttribute = "autofocus", type = StudioFlowPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioFlowProperty(xmlAttribute = "autoselect", type = StudioFlowPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioFlowProperty(xmlAttribute = "className", type = StudioFlowPropertyType.VALUES_LIST),
+                    @StudioFlowProperty(xmlAttribute = "clearButtonVisible", type = StudioFlowPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioFlowProperty(xmlAttribute = "dataContainer", type = StudioFlowPropertyType.STRING),
+                    @StudioFlowProperty(xmlAttribute = "enabled", type = StudioFlowPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioFlowProperty(xmlAttribute = "errorMessage", type = StudioFlowPropertyType.LOCALIZED_STRING),
+                    @StudioFlowProperty(xmlAttribute = "height", type = StudioFlowPropertyType.SIZE),
+                    @StudioFlowProperty(xmlAttribute = "helperText", type = StudioFlowPropertyType.LOCALIZED_STRING),
+                    @StudioFlowProperty(xmlAttribute = "id", type = StudioFlowPropertyType.COMPONENT_ID),
+                    @StudioFlowProperty(xmlAttribute = "invalid", type = StudioFlowPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioFlowProperty(xmlAttribute = "label", type = StudioFlowPropertyType.LOCALIZED_STRING),
+                    @StudioFlowProperty(xmlAttribute = "maxHeight", type = StudioFlowPropertyType.SIZE),
+                    @StudioFlowProperty(xmlAttribute = "maxWidth", type = StudioFlowPropertyType.SIZE),
+                    @StudioFlowProperty(xmlAttribute = "minHeight", type = StudioFlowPropertyType.SIZE),
+                    @StudioFlowProperty(xmlAttribute = "minWidth", type = StudioFlowPropertyType.SIZE),
+                    @StudioFlowProperty(xmlAttribute = "placeholder", type = StudioFlowPropertyType.LOCALIZED_STRING),
+                    @StudioFlowProperty(xmlAttribute = "property", type = StudioFlowPropertyType.STRING),
+                    @StudioFlowProperty(xmlAttribute = "readOnly", type = StudioFlowPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioFlowProperty(xmlAttribute = "required", type = StudioFlowPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioFlowProperty(xmlAttribute = "requiredIndicatorVisible",
+                            type = StudioFlowPropertyType.BOOLEAN, defaultValue = "false"),
+                    @StudioFlowProperty(xmlAttribute = "requiredMessage", type = StudioFlowPropertyType.LOCALIZED_STRING),
+                    @StudioFlowProperty(xmlAttribute = "themeName", type = StudioFlowPropertyType.VALUES_LIST,
+                            options = {"small", "align-center", "align-right", "helper-above-field",
+                                    "always-float-label"}),
+                    @StudioFlowProperty(xmlAttribute = "title", type = StudioFlowPropertyType.LOCALIZED_STRING),
+                    @StudioFlowProperty(xmlAttribute = "value", type = StudioFlowPropertyType.STRING),
+                    @StudioFlowProperty(xmlAttribute = "valueChangeMode", type = StudioFlowPropertyType.ENUMERATION,
+                            classFqn = "com.vaadin.flow.data.value.ValueChangeMode", options = {"EAGER", "LAZY",
+                            "TIMEOUT", "ON_BLUR", "ON_CHANGE"}),
+                    @StudioFlowProperty(xmlAttribute = "valueChangeTimeout", type = StudioFlowPropertyType.INTEGER),
+                    @StudioFlowProperty(xmlAttribute = "visible", type = StudioFlowPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioFlowProperty(xmlAttribute = "width", type = StudioFlowPropertyType.SIZE)
+            }
+    )
+    BigDecimalField bigDecimalField();
+
+    @StudioFlowComponent(
             name = "Button",
             classFqn = "io.jmix.flowui.kit.component.button.JmixButton",
             category = "Components",
@@ -87,102 +183,6 @@ public interface StudioFlowPaletteComponents {
     JmixButton button();
 
     @StudioFlowComponent(
-            name = "Avatar",
-            classFqn = "com.vaadin.flow.component.avatar.Avatar",
-            category = "Components",
-            xmlElement = "avatar",
-            properties = {
-                    @StudioFlowProperty(xmlAttribute = "abbreviation", type = StudioFlowPropertyType.LOCALIZED_STRING),
-                    @StudioFlowProperty(xmlAttribute = "className", type = StudioFlowPropertyType.VALUES_LIST),
-                    @StudioFlowProperty(xmlAttribute = "colorIndex", type = StudioFlowPropertyType.INTEGER),
-                    @StudioFlowProperty(xmlAttribute = "height", type = StudioFlowPropertyType.SIZE),
-                    @StudioFlowProperty(xmlAttribute = "id", type = StudioFlowPropertyType.COMPONENT_ID),
-                    @StudioFlowProperty(xmlAttribute = "image", type = StudioFlowPropertyType.STRING),
-                    @StudioFlowProperty(xmlAttribute = "maxHeight", type = StudioFlowPropertyType.SIZE),
-                    @StudioFlowProperty(xmlAttribute = "maxWidth", type = StudioFlowPropertyType.SIZE),
-                    @StudioFlowProperty(xmlAttribute = "minHeight", type = StudioFlowPropertyType.SIZE),
-                    @StudioFlowProperty(xmlAttribute = "minWidth", type = StudioFlowPropertyType.SIZE),
-                    @StudioFlowProperty(xmlAttribute = "name", type = StudioFlowPropertyType.LOCALIZED_STRING),
-                    @StudioFlowProperty(xmlAttribute = "themeName", type = StudioFlowPropertyType.VALUES_LIST,
-                            options = {"xlarge", "large", "small", "xsmall"}),
-                    @StudioFlowProperty(xmlAttribute = "visible", type = StudioFlowPropertyType.BOOLEAN,
-                            setMethod = "setVisible", defaultValue = "true"),
-                    @StudioFlowProperty(xmlAttribute = "width", type = StudioFlowPropertyType.SIZE)
-            }
-    )
-    Avatar avatar();
-
-    @StudioFlowComponent(
-            name = "BigDecimalField",
-            classFqn = "io.jmix.flowui.component.textfield.JmixBigDecimalField",
-            category = "Components",
-            xmlElement = "bigDecimalField",
-            properties = {
-                    @StudioFlowProperty(xmlAttribute = "autocapitalize", type = StudioFlowPropertyType.ENUMERATION,
-                            classFqn = "com.vaadin.flow.component.textfield.Autocapitalize", defaultValue = "NONE",
-                            options = {"NONE", "SENTENCES", "WORDS", "CHARACTERS"}),
-                    @StudioFlowProperty(xmlAttribute = "autocomplete", type = StudioFlowPropertyType.ENUMERATION,
-                            classFqn = "com.vaadin.flow.component.textfield.Autocomplete", defaultValue = "OFF",
-                            options = {"OFF", "ON", "NAME", "HONORIFIC_PREFIX", "GIVEN_NAME", "ADDITIONAL_NAME",
-                                    "FAMILY_NAME", "HONORIFIC_SUFFIX", "NICKNAME", "EMAIL", "USERNAME", "NEW_PASSWORD",
-                                    "CURRENT_PASSWORD", "ORGANIZATION_TITLE", "ORGANIZATION", "STREET_ADDRESS",
-                                    "ADDRESS_LINE1", "ADDRESS_LINE2", "ADDRESS_LINE3", "ADDRESS_LEVEL1",
-                                    "ADDRESS_LEVEL2", "ADDRESS_LEVEL3", "ADDRESS_LEVEL4", "COUNTRY", "COUNTRY_NAME",
-                                    "POSTAL_CODE", "CC_NAME", "CC_GIVEN_NAME", "CC_ADDITIONAL_NAME", "CC_FAMILY_NAME",
-                                    "CC_NUMBER", "CC_EXP", "CC_EXP_MONTH", "CC_EXP_YEAR", "CC_CSC", "CC_TYPE",
-                                    "TRANSACTION_CURRENCY", "TRANSACTION_AMOUNT", "LANGUAGE", "BDAY", "BDAY_DAY",
-                                    "BDAY_MONTH", "BDAY_YEAR", "SEX", "TEL", "TEL_COUNTRY_CODE", "TEL_NATIONAL",
-                                    "TEL_AREA_CODE", "TEL_LOCAL", "TEL_LOCAL_PREFIX", "TEL_LOCAL_SUFFIX",
-                                    "TEL_EXTENSION", "URL", "PHOTO",}),
-                    @StudioFlowProperty(xmlAttribute = "autocorrect", type = StudioFlowPropertyType.BOOLEAN,
-                            defaultValue = "false"),
-                    @StudioFlowProperty(xmlAttribute = "autofocus", type = StudioFlowPropertyType.BOOLEAN,
-                            defaultValue = "false"),
-                    @StudioFlowProperty(xmlAttribute = "autoselect", type = StudioFlowPropertyType.BOOLEAN,
-                            defaultValue = "false"),
-                    @StudioFlowProperty(xmlAttribute = "className", type = StudioFlowPropertyType.VALUES_LIST),
-                    @StudioFlowProperty(xmlAttribute = "clearButtonVisible", type = StudioFlowPropertyType.BOOLEAN,
-                            defaultValue = "false"),
-                    @StudioFlowProperty(xmlAttribute = "dataContainer", type = StudioFlowPropertyType.STRING),
-                    @StudioFlowProperty(xmlAttribute = "enabled", type = StudioFlowPropertyType.BOOLEAN,
-                            setMethod = "setEnabled", defaultValue = "true"),
-                    @StudioFlowProperty(xmlAttribute = "errorMessage", type = StudioFlowPropertyType.LOCALIZED_STRING),
-                    @StudioFlowProperty(xmlAttribute = "height", type = StudioFlowPropertyType.SIZE),
-                    @StudioFlowProperty(xmlAttribute = "helperText", type = StudioFlowPropertyType.LOCALIZED_STRING),
-                    @StudioFlowProperty(xmlAttribute = "id", type = StudioFlowPropertyType.COMPONENT_ID),
-                    @StudioFlowProperty(xmlAttribute = "invalid", type = StudioFlowPropertyType.BOOLEAN,
-                            defaultValue = "false"),
-                    @StudioFlowProperty(xmlAttribute = "label", type = StudioFlowPropertyType.LOCALIZED_STRING),
-                    @StudioFlowProperty(xmlAttribute = "maxHeight", type = StudioFlowPropertyType.SIZE),
-                    @StudioFlowProperty(xmlAttribute = "maxWidth", type = StudioFlowPropertyType.SIZE),
-                    @StudioFlowProperty(xmlAttribute = "minHeight", type = StudioFlowPropertyType.SIZE),
-                    @StudioFlowProperty(xmlAttribute = "minWidth", type = StudioFlowPropertyType.SIZE),
-                    @StudioFlowProperty(xmlAttribute = "placeholder", type = StudioFlowPropertyType.LOCALIZED_STRING),
-                    @StudioFlowProperty(xmlAttribute = "property", type = StudioFlowPropertyType.STRING),
-                    @StudioFlowProperty(xmlAttribute = "readOnly", type = StudioFlowPropertyType.BOOLEAN,
-                            defaultValue = "false"),
-                    @StudioFlowProperty(xmlAttribute = "required", type = StudioFlowPropertyType.BOOLEAN,
-                            defaultValue = "false"),
-                    @StudioFlowProperty(xmlAttribute = "requiredIndicatorVisible",
-                            type = StudioFlowPropertyType.BOOLEAN, defaultValue = "false"),
-                    @StudioFlowProperty(xmlAttribute = "requiredMessage", type = StudioFlowPropertyType.LOCALIZED_STRING),
-                    @StudioFlowProperty(xmlAttribute = "themeName", type = StudioFlowPropertyType.VALUES_LIST,
-                            options = {"small", "align-center", "align-right", "helper-above-field",
-                                    "always-float-label"}),
-                    @StudioFlowProperty(xmlAttribute = "title", type = StudioFlowPropertyType.LOCALIZED_STRING),
-                    @StudioFlowProperty(xmlAttribute = "value", type = StudioFlowPropertyType.STRING),
-                    @StudioFlowProperty(xmlAttribute = "valueChangeMode", type = StudioFlowPropertyType.ENUMERATION,
-                            classFqn = "com.vaadin.flow.data.value.ValueChangeMode", options = {"EAGER", "LAZY",
-                            "TIMEOUT", "ON_BLUR", "ON_CHANGE"}),
-                    @StudioFlowProperty(xmlAttribute = "valueChangeTimeout", type = StudioFlowPropertyType.INTEGER),
-                    @StudioFlowProperty(xmlAttribute = "visible", type = StudioFlowPropertyType.BOOLEAN,
-                            setMethod = "setVisible", defaultValue = "true"),
-                    @StudioFlowProperty(xmlAttribute = "width", type = StudioFlowPropertyType.SIZE)
-            }
-    )
-    BigDecimalField bigDecimalField();
-
-    @StudioFlowComponent(
             name = "CheckBox",
             classFqn = "com.vaadin.flow.component.checkbox.Checkbox",
             category = "Components",
@@ -195,7 +195,7 @@ public interface StudioFlowPaletteComponents {
                     @StudioFlowProperty(xmlAttribute = "className", type = StudioFlowPropertyType.VALUES_LIST),
                     @StudioFlowProperty(xmlAttribute = "dataContainer", type = StudioFlowPropertyType.STRING),
                     @StudioFlowProperty(xmlAttribute = "enabled", type = StudioFlowPropertyType.BOOLEAN,
-                            setMethod = "setEnabled", defaultValue = "true"),
+                            defaultValue = "true"),
                     @StudioFlowProperty(xmlAttribute = "height", type = StudioFlowPropertyType.SIZE),
                     @StudioFlowProperty(xmlAttribute = "id", type = StudioFlowPropertyType.COMPONENT_ID),
                     @StudioFlowProperty(xmlAttribute = "indeterminate", type = StudioFlowPropertyType.BOOLEAN,
@@ -212,7 +212,7 @@ public interface StudioFlowPaletteComponents {
                             type = StudioFlowPropertyType.BOOLEAN, defaultValue = "false"),
                     @StudioFlowProperty(xmlAttribute = "value", type = StudioFlowPropertyType.BOOLEAN),
                     @StudioFlowProperty(xmlAttribute = "visible", type = StudioFlowPropertyType.BOOLEAN,
-                            setMethod = "setVisible", defaultValue = "true"),
+                            defaultValue = "true"),
                     @StudioFlowProperty(xmlAttribute = "width", type = StudioFlowPropertyType.SIZE)
             }
     )
@@ -236,7 +236,7 @@ public interface StudioFlowPaletteComponents {
                             defaultValue = "false"),
                     @StudioFlowProperty(xmlAttribute = "dataContainer", type = StudioFlowPropertyType.STRING),
                     @StudioFlowProperty(xmlAttribute = "enabled", type = StudioFlowPropertyType.BOOLEAN,
-                            setMethod = "setEnabled", defaultValue = "true"),
+                            defaultValue = "true"),
                     @StudioFlowProperty(xmlAttribute = "errorMessage", type = StudioFlowPropertyType.LOCALIZED_STRING),
                     @StudioFlowProperty(xmlAttribute = "height", type = StudioFlowPropertyType.SIZE),
                     @StudioFlowProperty(xmlAttribute = "helperText", type = StudioFlowPropertyType.LOCALIZED_STRING),
@@ -265,11 +265,11 @@ public interface StudioFlowPaletteComponents {
                             options = {"small", "align-left", "align-center", "align-right", "helper-above-field",
                                     "always-float-label"}),
                     @StudioFlowProperty(xmlAttribute = "visible", type = StudioFlowPropertyType.BOOLEAN,
-                            setMethod = "setVisible", defaultValue = "true"),
+                            defaultValue = "true"),
                     @StudioFlowProperty(xmlAttribute = "width", type = StudioFlowPropertyType.SIZE)
             }
     )
-    ComboBox<?> comboBox();
+    ComboBox comboBox();
 
     @StudioFlowComponent(
             name = "ComboBoxPicker",
@@ -287,7 +287,7 @@ public interface StudioFlowPaletteComponents {
                     @StudioFlowProperty(xmlAttribute = "clearButtonVisible", type = StudioFlowPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioFlowProperty(xmlAttribute = "enabled", type = StudioFlowPropertyType.BOOLEAN,
-                            setMethod = "setEnabled", defaultValue = "true"),
+                            defaultValue = "true"),
                     @StudioFlowProperty(xmlAttribute = "errorMessage", type = StudioFlowPropertyType.LOCALIZED_STRING),
                     @StudioFlowProperty(xmlAttribute = "height", type = StudioFlowPropertyType.SIZE),
                     @StudioFlowProperty(xmlAttribute = "helperText", type = StudioFlowPropertyType.LOCALIZED_STRING),
@@ -314,11 +314,11 @@ public interface StudioFlowPaletteComponents {
                             options = {"small", "align-left", "align-center", "align-right", "helper-above-field",
                                     "always-float-label"}),
                     @StudioFlowProperty(xmlAttribute = "visible", type = StudioFlowPropertyType.BOOLEAN,
-                            setMethod = "setVisible", defaultValue = "true"),
+                            defaultValue = "true"),
                     @StudioFlowProperty(xmlAttribute = "width", type = StudioFlowPropertyType.SIZE)
             }
     )
-    ComboBoxPicker<?> comboBoxPicker();
+    ComboBoxPicker comboBoxPicker();
 
     @StudioFlowComponent(
             name = "DatePicker",
@@ -337,7 +337,7 @@ public interface StudioFlowPaletteComponents {
                             classFqn = "io.jmix.core.metamodel.datatype.Datatype", options = {"date", "dateTime",
                             "localDateTime", "offsetDateTime", "localDate"}),
                     @StudioFlowProperty(xmlAttribute = "enabled", type = StudioFlowPropertyType.BOOLEAN,
-                            setMethod = "setEnabled", defaultValue = "true"),
+                            defaultValue = "true"),
                     @StudioFlowProperty(xmlAttribute = "errorMessage", type = StudioFlowPropertyType.LOCALIZED_STRING),
                     @StudioFlowProperty(xmlAttribute = "height", type = StudioFlowPropertyType.SIZE),
                     @StudioFlowProperty(xmlAttribute = "id", type = StudioFlowPropertyType.COMPONENT_ID),
@@ -364,7 +364,7 @@ public interface StudioFlowPaletteComponents {
                             options = {"small", "align-left", "align-center", "align-right", "helper-above-field",
                                     "always-float-label"}),
                     @StudioFlowProperty(xmlAttribute = "visible", type = StudioFlowPropertyType.BOOLEAN,
-                            setMethod = "setVisible", defaultValue = "true"),
+                            defaultValue = "true"),
                     @StudioFlowProperty(xmlAttribute = "width", type = StudioFlowPropertyType.SIZE)
             }
     )
@@ -385,7 +385,7 @@ public interface StudioFlowPaletteComponents {
                             "localDateTime", "offsetTime", "localTime", "offsetDateTime", "time", "localDate"}),
                     @StudioFlowProperty(xmlAttribute = "datePlaceholder", type = StudioFlowPropertyType.LOCALIZED_STRING),
                     @StudioFlowProperty(xmlAttribute = "enabled", type = StudioFlowPropertyType.BOOLEAN,
-                            setMethod = "setEnabled", defaultValue = "true"),
+                            defaultValue = "true"),
                     @StudioFlowProperty(xmlAttribute = "errorMessage", type = StudioFlowPropertyType.LOCALIZED_STRING),
                     @StudioFlowProperty(xmlAttribute = "height", type = StudioFlowPropertyType.SIZE),
                     @StudioFlowProperty(xmlAttribute = "helperText", type = StudioFlowPropertyType.LOCALIZED_STRING),
@@ -408,38 +408,13 @@ public interface StudioFlowPaletteComponents {
                     @StudioFlowProperty(xmlAttribute = "themeName", type = StudioFlowPropertyType.VALUES_LIST),
                     @StudioFlowProperty(xmlAttribute = "timePlaceholder", type = StudioFlowPropertyType.LOCALIZED_STRING),
                     @StudioFlowProperty(xmlAttribute = "visible", type = StudioFlowPropertyType.BOOLEAN,
-                            setMethod = "setVisible", defaultValue = "true"),
+                            defaultValue = "true"),
                     @StudioFlowProperty(xmlAttribute = "weekNumbersVisible", type = StudioFlowPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioFlowProperty(xmlAttribute = "width", type = StudioFlowPropertyType.SIZE)
             }
     )
     DateTimePicker dateTimePicker();
-
-    @StudioFlowComponent(
-            name = "Details",
-            classFqn = "com.vaadin.flow.component.details.Details",
-            category = "Components",
-            xmlElement = "details",
-            properties = {
-                    @StudioFlowProperty(xmlAttribute = "className", type = StudioFlowPropertyType.VALUES_LIST),
-                    @StudioFlowProperty(xmlAttribute = "enabled", type = StudioFlowPropertyType.BOOLEAN,
-                            setMethod = "setEnabled", defaultValue = "true"),
-                    @StudioFlowProperty(xmlAttribute = "height", type = StudioFlowPropertyType.SIZE),
-                    @StudioFlowProperty(xmlAttribute = "id", type = StudioFlowPropertyType.COMPONENT_ID),
-                    @StudioFlowProperty(xmlAttribute = "maxHeight", type = StudioFlowPropertyType.SIZE),
-                    @StudioFlowProperty(xmlAttribute = "maxWidth", type = StudioFlowPropertyType.SIZE),
-                    @StudioFlowProperty(xmlAttribute = "minHeight", type = StudioFlowPropertyType.SIZE),
-                    @StudioFlowProperty(xmlAttribute = "minWidth", type = StudioFlowPropertyType.SIZE),
-                    @StudioFlowProperty(xmlAttribute = "summaryText", type = StudioFlowPropertyType.LOCALIZED_STRING),
-                    @StudioFlowProperty(xmlAttribute = "themeName", type = StudioFlowPropertyType.VALUES_LIST,
-                            options = {"filled", "reverse", "small"}),
-                    @StudioFlowProperty(xmlAttribute = "visible", type = StudioFlowPropertyType.BOOLEAN,
-                            setMethod = "setVisible", defaultValue = "true"),
-                    @StudioFlowProperty(xmlAttribute = "width", type = StudioFlowPropertyType.SIZE)
-            }
-    )
-    Details details();
 
     @StudioFlowComponent(
             name = "EmailField",
@@ -474,7 +449,7 @@ public interface StudioFlowPaletteComponents {
                             defaultValue = "false"),
                     @StudioFlowProperty(xmlAttribute = "dataContainer", type = StudioFlowPropertyType.STRING),
                     @StudioFlowProperty(xmlAttribute = "enabled", type = StudioFlowPropertyType.BOOLEAN,
-                            setMethod = "setEnabled", defaultValue = "true"),
+                            defaultValue = "true"),
                     @StudioFlowProperty(xmlAttribute = "errorMessage", type = StudioFlowPropertyType.LOCALIZED_STRING),
                     @StudioFlowProperty(xmlAttribute = "height", type = StudioFlowPropertyType.SIZE),
                     @StudioFlowProperty(xmlAttribute = "helperText", type = StudioFlowPropertyType.LOCALIZED_STRING),
@@ -506,7 +481,7 @@ public interface StudioFlowPaletteComponents {
                             "TIMEOUT", "ON_BLUR", "ON_CHANGE"}),
                     @StudioFlowProperty(xmlAttribute = "valueChangeTimeout", type = StudioFlowPropertyType.INTEGER),
                     @StudioFlowProperty(xmlAttribute = "visible", type = StudioFlowPropertyType.BOOLEAN,
-                            setMethod = "setVisible", defaultValue = "true"),
+                            defaultValue = "true"),
                     @StudioFlowProperty(xmlAttribute = "width", type = StudioFlowPropertyType.SIZE)
             }
     )
@@ -530,7 +505,7 @@ public interface StudioFlowPaletteComponents {
                             defaultValue = "false"),
                     @StudioFlowProperty(xmlAttribute = "dataContainer", type = StudioFlowPropertyType.STRING),
                     @StudioFlowProperty(xmlAttribute = "enabled", type = StudioFlowPropertyType.BOOLEAN,
-                            setMethod = "setEnabled", defaultValue = "true"),
+                            defaultValue = "true"),
                     @StudioFlowProperty(xmlAttribute = "errorMessage", type = StudioFlowPropertyType.LOCALIZED_STRING),
                     @StudioFlowProperty(xmlAttribute = "height", type = StudioFlowPropertyType.SIZE),
                     @StudioFlowProperty(xmlAttribute = "helperText", type = StudioFlowPropertyType.LOCALIZED_STRING),
@@ -548,8 +523,8 @@ public interface StudioFlowPaletteComponents {
                     @StudioFlowProperty(xmlAttribute = "pageSize", type = StudioFlowPropertyType.INTEGER),
                     @StudioFlowProperty(xmlAttribute = "pattern", type = StudioFlowPropertyType.STRING),
                     @StudioFlowProperty(xmlAttribute = "placeholder", type = StudioFlowPropertyType.LOCALIZED_STRING),
-                    @StudioFlowProperty(xmlAttribute = "preventInvalidInput", type = StudioFlowPropertyType.BOOLEAN
-                            , defaultValue = "false"),
+                    @StudioFlowProperty(xmlAttribute = "preventInvalidInput", type = StudioFlowPropertyType.BOOLEAN,
+                            defaultValue = "false"),
                     @StudioFlowProperty(xmlAttribute = "property", type = StudioFlowPropertyType.STRING),
                     @StudioFlowProperty(xmlAttribute = "readOnly", type = StudioFlowPropertyType.BOOLEAN,
                             defaultValue = "false"),
@@ -563,11 +538,11 @@ public interface StudioFlowPaletteComponents {
                                     "always-float-label"}),
                     @StudioFlowProperty(xmlAttribute = "title", type = StudioFlowPropertyType.LOCALIZED_STRING),
                     @StudioFlowProperty(xmlAttribute = "visible", type = StudioFlowPropertyType.BOOLEAN,
-                            setMethod = "setVisible", defaultValue = "true"),
+                            defaultValue = "true"),
                     @StudioFlowProperty(xmlAttribute = "width", type = StudioFlowPropertyType.SIZE)
             }
     )
-    ComboBoxPicker<?> entityComboBox();
+    ComboBoxPicker entityComboBox();
 
     @StudioFlowComponent(
             name = "EntityPicker",
@@ -583,7 +558,7 @@ public interface StudioFlowPaletteComponents {
                     @StudioFlowProperty(xmlAttribute = "className", type = StudioFlowPropertyType.VALUES_LIST),
                     @StudioFlowProperty(xmlAttribute = "dataContainer", type = StudioFlowPropertyType.STRING),
                     @StudioFlowProperty(xmlAttribute = "enabled", type = StudioFlowPropertyType.BOOLEAN,
-                            setMethod = "setEnabled", defaultValue = "true"),
+                            defaultValue = "true"),
                     @StudioFlowProperty(xmlAttribute = "errorMessage", type = StudioFlowPropertyType.LOCALIZED_STRING),
                     @StudioFlowProperty(xmlAttribute = "height", type = StudioFlowPropertyType.SIZE),
                     @StudioFlowProperty(xmlAttribute = "helperText", type = StudioFlowPropertyType.LOCALIZED_STRING),
@@ -608,11 +583,11 @@ public interface StudioFlowPaletteComponents {
                     @StudioFlowProperty(xmlAttribute = "themeName", type = StudioFlowPropertyType.VALUES_LIST),
                     @StudioFlowProperty(xmlAttribute = "title", type = StudioFlowPropertyType.LOCALIZED_STRING),
                     @StudioFlowProperty(xmlAttribute = "visible", type = StudioFlowPropertyType.BOOLEAN,
-                            setMethod = "setVisible", defaultValue = "true"),
+                            defaultValue = "true"),
                     @StudioFlowProperty(xmlAttribute = "width", type = StudioFlowPropertyType.SIZE)
             }
     )
-    ValuePickerBase<?, ?> entityPicker();
+    ValuePickerBase entityPicker();
 
     @StudioFlowComponent(
             name = "Grid",
@@ -633,7 +608,7 @@ public interface StudioFlowPaletteComponents {
                             classFqn = "com.vaadin.flow.component.grid.dnd.GridDropMode", options = {"BETWEEN", "ON_TOP",
                             "ON_TOP_OR_BETWEEN", "ON_GRID"}),
                     @StudioFlowProperty(xmlAttribute = "enabled", type = StudioFlowPropertyType.BOOLEAN,
-                            setMethod = "setEnabled", defaultValue = "true"),
+                            defaultValue = "true"),
                     @StudioFlowProperty(xmlAttribute = "height", type = StudioFlowPropertyType.SIZE),
                     @StudioFlowProperty(xmlAttribute = "id", type = StudioFlowPropertyType.COMPONENT_ID),
                     @StudioFlowProperty(xmlAttribute = "maxHeight", type = StudioFlowPropertyType.SIZE),
@@ -658,34 +633,11 @@ public interface StudioFlowPaletteComponents {
                     @StudioFlowProperty(xmlAttribute = "verticalScrollingEnabled", type = StudioFlowPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioFlowProperty(xmlAttribute = "visible", type = StudioFlowPropertyType.BOOLEAN,
-                            setMethod = "setVisible", defaultValue = "true"),
+                            defaultValue = "true"),
                     @StudioFlowProperty(xmlAttribute = "width", type = StudioFlowPropertyType.SIZE)
             }
     )
-    Grid<?> grid();
-
-    @StudioFlowComponent(
-            name = "ListMenu",
-            classFqn = "io.jmix.flowui.component.main.JmixListMenu",
-            category = "Components",
-            xmlElement = "listMenu",
-            properties = {
-                    @StudioFlowProperty(xmlAttribute = "className", type = StudioFlowPropertyType.VALUES_LIST),
-                    @StudioFlowProperty(xmlAttribute = "height", type = StudioFlowPropertyType.SIZE),
-                    @StudioFlowProperty(xmlAttribute = "id", type = StudioFlowPropertyType.COMPONENT_ID),
-                    @StudioFlowProperty(xmlAttribute = "loadMenuConfig", type = StudioFlowPropertyType.BOOLEAN,
-                            defaultValue = "false"),
-                    @StudioFlowProperty(xmlAttribute = "maxHeight", type = StudioFlowPropertyType.SIZE),
-                    @StudioFlowProperty(xmlAttribute = "maxWidth", type = StudioFlowPropertyType.SIZE),
-                    @StudioFlowProperty(xmlAttribute = "metaClass", type = StudioFlowPropertyType.STRING),
-                    @StudioFlowProperty(xmlAttribute = "minHeight", type = StudioFlowPropertyType.SIZE),
-                    @StudioFlowProperty(xmlAttribute = "minWidth", type = StudioFlowPropertyType.SIZE),
-                    @StudioFlowProperty(xmlAttribute = "visible", type = StudioFlowPropertyType.BOOLEAN,
-                            setMethod = "setVisible", defaultValue = "true"),
-                    @StudioFlowProperty(xmlAttribute = "width", type = StudioFlowPropertyType.SIZE)
-            }
-    )
-    ListMenu listMenu();
+    Grid grid();
 
     @StudioFlowComponent(
             name = "NumberField",
@@ -720,7 +672,7 @@ public interface StudioFlowPaletteComponents {
                             defaultValue = "false"),
                     @StudioFlowProperty(xmlAttribute = "dataContainer", type = StudioFlowPropertyType.STRING),
                     @StudioFlowProperty(xmlAttribute = "enabled", type = StudioFlowPropertyType.BOOLEAN,
-                            setMethod = "setEnabled", defaultValue = "true"),
+                            defaultValue = "true"),
                     @StudioFlowProperty(xmlAttribute = "errorMessage", type = StudioFlowPropertyType.LOCALIZED_STRING),
                     @StudioFlowProperty(xmlAttribute = "hasControls", type = StudioFlowPropertyType.BOOLEAN,
                             defaultValue = "false"),
@@ -753,7 +705,7 @@ public interface StudioFlowPaletteComponents {
                             "TIMEOUT", "ON_BLUR", "ON_CHANGE"}),
                     @StudioFlowProperty(xmlAttribute = "valueChangeTimeout", type = StudioFlowPropertyType.INTEGER),
                     @StudioFlowProperty(xmlAttribute = "visible", type = StudioFlowPropertyType.BOOLEAN,
-                            setMethod = "setVisible", defaultValue = "true"),
+                            defaultValue = "true"),
                     @StudioFlowProperty(xmlAttribute = "width", type = StudioFlowPropertyType.SIZE)
             }
     )
@@ -793,7 +745,7 @@ public interface StudioFlowPaletteComponents {
                             defaultValue = "false"),
                     @StudioFlowProperty(xmlAttribute = "dataContainer", type = StudioFlowPropertyType.STRING),
                     @StudioFlowProperty(xmlAttribute = "enabled", type = StudioFlowPropertyType.BOOLEAN,
-                            setMethod = "setEnabled", defaultValue = "true"),
+                            defaultValue = "true"),
                     @StudioFlowProperty(xmlAttribute = "errorMessage", type = StudioFlowPropertyType.LOCALIZED_STRING),
                     @StudioFlowProperty(xmlAttribute = "height", type = StudioFlowPropertyType.SIZE),
                     @StudioFlowProperty(xmlAttribute = "helperText", type = StudioFlowPropertyType.LOCALIZED_STRING),
@@ -826,7 +778,7 @@ public interface StudioFlowPaletteComponents {
                             "TIMEOUT", "ON_BLUR", "ON_CHANGE"}),
                     @StudioFlowProperty(xmlAttribute = "valueChangeTimeout", type = StudioFlowPropertyType.INTEGER),
                     @StudioFlowProperty(xmlAttribute = "visible", type = StudioFlowPropertyType.BOOLEAN,
-                            setMethod = "setVisible", defaultValue = "true"),
+                            defaultValue = "true"),
                     @StudioFlowProperty(xmlAttribute = "width", type = StudioFlowPropertyType.SIZE)
             }
     )
@@ -854,7 +806,7 @@ public interface StudioFlowPaletteComponents {
                             options = {"LUMO_CONTRAST", "LUMO_ERROR", "LUMO_SUCCESS"}),
                     @StudioFlowProperty(xmlAttribute = "value", type = StudioFlowPropertyType.STRING),
                     @StudioFlowProperty(xmlAttribute = "visible", type = StudioFlowPropertyType.BOOLEAN,
-                            setMethod = "setVisible", defaultValue = "true"),
+                            defaultValue = "true"),
                     @StudioFlowProperty(xmlAttribute = "width", type = StudioFlowPropertyType.SIZE)
             }
     )
@@ -892,17 +844,17 @@ public interface StudioFlowPaletteComponents {
                     @StudioFlowProperty(xmlAttribute = "themeName", type = StudioFlowPropertyType.VALUES_LIST,
                             options = {"LUMO_VERTICAL", "LUMO_HELPER_ABOVE_FIELD", "MATERIAL_VERTICAL"}),
                     @StudioFlowProperty(xmlAttribute = "visible", type = StudioFlowPropertyType.BOOLEAN,
-                            setMethod = "setVisible", defaultValue = "true"),
+                            defaultValue = "true"),
                     @StudioFlowProperty(xmlAttribute = "width", type = StudioFlowPropertyType.SIZE)
             }
     )
-    RadioButtonGroup<?> radioButtonGroup();
+    RadioButtonGroup radioButtonGroup();
 
     @StudioFlowComponent(
             name = "Select",
             classFqn = "com.vaadin.flow.component.select.Select",
             category = "Components",
-            xmlElement = "Select",
+            xmlElement = "select",
             properties = {
                     @StudioFlowProperty(xmlAttribute = "autofocus", type = StudioFlowPropertyType.BOOLEAN,
                             defaultValue = "false"),
@@ -911,7 +863,7 @@ public interface StudioFlowPaletteComponents {
                     @StudioFlowProperty(xmlAttribute = "emptySelectionAllowed", type = StudioFlowPropertyType.BOOLEAN),
                     @StudioFlowProperty(xmlAttribute = "emptySelectionCaption", type = StudioFlowPropertyType.LOCALIZED_STRING),
                     @StudioFlowProperty(xmlAttribute = "enabled", type = StudioFlowPropertyType.BOOLEAN,
-                            setMethod = "setEnabled", defaultValue = "true"),
+                            defaultValue = "true"),
                     @StudioFlowProperty(xmlAttribute = "errorMessage", type = StudioFlowPropertyType.LOCALIZED_STRING),
                     @StudioFlowProperty(xmlAttribute = "height", type = StudioFlowPropertyType.SIZE),
                     @StudioFlowProperty(xmlAttribute = "helperText", type = StudioFlowPropertyType.LOCALIZED_STRING),
@@ -944,11 +896,11 @@ public interface StudioFlowPaletteComponents {
                             "TIMEOUT", "ON_BLUR", "ON_CHANGE"}),
                     @StudioFlowProperty(xmlAttribute = "valueChangeTimeout", type = StudioFlowPropertyType.INTEGER),
                     @StudioFlowProperty(xmlAttribute = "visible", type = StudioFlowPropertyType.BOOLEAN,
-                            setMethod = "setVisible", defaultValue = "true"),
+                            defaultValue = "true"),
                     @StudioFlowProperty(xmlAttribute = "width", type = StudioFlowPropertyType.SIZE)
             }
     )
-    Select<?> select();
+    Select select();
 
     @StudioFlowComponent(
             name = "TextArea",
@@ -984,7 +936,7 @@ public interface StudioFlowPaletteComponents {
                             defaultValue = "false"),
                     @StudioFlowProperty(xmlAttribute = "dataContainer", type = StudioFlowPropertyType.STRING),
                     @StudioFlowProperty(xmlAttribute = "enabled", type = StudioFlowPropertyType.BOOLEAN,
-                            setMethod = "setEnabled", defaultValue = "true"),
+                            defaultValue = "true"),
                     @StudioFlowProperty(xmlAttribute = "errorMessage", type = StudioFlowPropertyType.LOCALIZED_STRING),
                     @StudioFlowProperty(xmlAttribute = "height", type = StudioFlowPropertyType.SIZE),
                     @StudioFlowProperty(xmlAttribute = "helperText", type = StudioFlowPropertyType.LOCALIZED_STRING),
@@ -1014,7 +966,7 @@ public interface StudioFlowPaletteComponents {
                             "TIMEOUT", "ON_BLUR", "ON_CHANGE"}),
                     @StudioFlowProperty(xmlAttribute = "valueChangeTimeout", type = StudioFlowPropertyType.INTEGER),
                     @StudioFlowProperty(xmlAttribute = "visible", type = StudioFlowPropertyType.BOOLEAN,
-                            setMethod = "setVisible", defaultValue = "true"),
+                            defaultValue = "true"),
                     @StudioFlowProperty(xmlAttribute = "width", type = StudioFlowPropertyType.SIZE)
             }
     )
@@ -1055,7 +1007,7 @@ public interface StudioFlowPaletteComponents {
                     @StudioFlowProperty(xmlAttribute = "dataContainer", type = StudioFlowPropertyType.STRING),
                     @StudioFlowProperty(xmlAttribute = "datatype", type = StudioFlowPropertyType.STRING),
                     @StudioFlowProperty(xmlAttribute = "enabled", type = StudioFlowPropertyType.BOOLEAN,
-                            setMethod = "setEnabled", defaultValue = "true"),
+                            defaultValue = "true"),
                     @StudioFlowProperty(xmlAttribute = "errorMessage", type = StudioFlowPropertyType.LOCALIZED_STRING),
                     @StudioFlowProperty(xmlAttribute = "height", type = StudioFlowPropertyType.SIZE),
                     @StudioFlowProperty(xmlAttribute = "helperText", type = StudioFlowPropertyType.LOCALIZED_STRING),
@@ -1087,7 +1039,7 @@ public interface StudioFlowPaletteComponents {
                             "TIMEOUT", "ON_BLUR", "ON_CHANGE"}),
                     @StudioFlowProperty(xmlAttribute = "valueChangeTimeout", type = StudioFlowPropertyType.INTEGER),
                     @StudioFlowProperty(xmlAttribute = "visible", type = StudioFlowPropertyType.BOOLEAN,
-                            setMethod = "setVisible", defaultValue = "true"),
+                            defaultValue = "true"),
                     @StudioFlowProperty(xmlAttribute = "width", type = StudioFlowPropertyType.SIZE)
             }
     )
@@ -1107,7 +1059,7 @@ public interface StudioFlowPaletteComponents {
                     @StudioFlowProperty(xmlAttribute = "dataContainer", type = StudioFlowPropertyType.STRING),
                     @StudioFlowProperty(xmlAttribute = "datatype", type = StudioFlowPropertyType.STRING),
                     @StudioFlowProperty(xmlAttribute = "enabled", type = StudioFlowPropertyType.BOOLEAN,
-                            setMethod = "setEnabled", defaultValue = "true"),
+                            defaultValue = "true"),
                     @StudioFlowProperty(xmlAttribute = "errorMessage", type = StudioFlowPropertyType.LOCALIZED_STRING),
                     @StudioFlowProperty(xmlAttribute = "height", type = StudioFlowPropertyType.SIZE),
                     @StudioFlowProperty(xmlAttribute = "helperText", type = StudioFlowPropertyType.LOCALIZED_STRING),
@@ -1129,7 +1081,7 @@ public interface StudioFlowPaletteComponents {
                             type = StudioFlowPropertyType.BOOLEAN, defaultValue = "false"),
                     @StudioFlowProperty(xmlAttribute = "requiredMessage", type = StudioFlowPropertyType.LOCALIZED_STRING),
                     @StudioFlowProperty(xmlAttribute = "visible", type = StudioFlowPropertyType.BOOLEAN,
-                            setMethod = "setVisible", defaultValue = "true"),
+                            defaultValue = "true"),
                     @StudioFlowProperty(xmlAttribute = "width", type = StudioFlowPropertyType.SIZE)
             }
     )
@@ -1149,7 +1101,7 @@ public interface StudioFlowPaletteComponents {
                     @StudioFlowProperty(xmlAttribute = "className", type = StudioFlowPropertyType.VALUES_LIST),
                     @StudioFlowProperty(xmlAttribute = "dataContainer", type = StudioFlowPropertyType.STRING),
                     @StudioFlowProperty(xmlAttribute = "enabled", type = StudioFlowPropertyType.BOOLEAN,
-                            setMethod = "setEnabled", defaultValue = "true"),
+                            defaultValue = "true"),
                     @StudioFlowProperty(xmlAttribute = "errorMessage", type = StudioFlowPropertyType.LOCALIZED_STRING),
                     @StudioFlowProperty(xmlAttribute = "height", type = StudioFlowPropertyType.SIZE),
                     @StudioFlowProperty(xmlAttribute = "helperText", type = StudioFlowPropertyType.LOCALIZED_STRING),
@@ -1173,11 +1125,11 @@ public interface StudioFlowPaletteComponents {
                     @StudioFlowProperty(xmlAttribute = "themeName", type = StudioFlowPropertyType.VALUES_LIST),
                     @StudioFlowProperty(xmlAttribute = "title", type = StudioFlowPropertyType.LOCALIZED_STRING),
                     @StudioFlowProperty(xmlAttribute = "visible", type = StudioFlowPropertyType.BOOLEAN,
-                            setMethod = "setVisible", defaultValue = "true"),
+                            defaultValue = "true"),
                     @StudioFlowProperty(xmlAttribute = "width", type = StudioFlowPropertyType.SIZE)
             }
     )
-    ValuePicker<?> valuePicker();
+    ValuePicker valuePicker();
 
     @StudioFlowComponent(
             name = "ValuesPicker",
@@ -1193,7 +1145,7 @@ public interface StudioFlowPaletteComponents {
                     @StudioFlowProperty(xmlAttribute = "className", type = StudioFlowPropertyType.VALUES_LIST),
                     @StudioFlowProperty(xmlAttribute = "dataContainer", type = StudioFlowPropertyType.STRING),
                     @StudioFlowProperty(xmlAttribute = "enabled", type = StudioFlowPropertyType.BOOLEAN,
-                            setMethod = "setEnabled", defaultValue = "true"),
+                            defaultValue = "true"),
                     @StudioFlowProperty(xmlAttribute = "errorMessage", type = StudioFlowPropertyType.LOCALIZED_STRING),
                     @StudioFlowProperty(xmlAttribute = "height", type = StudioFlowPropertyType.SIZE),
                     @StudioFlowProperty(xmlAttribute = "helperText", type = StudioFlowPropertyType.LOCALIZED_STRING),
@@ -1217,9 +1169,9 @@ public interface StudioFlowPaletteComponents {
                     @StudioFlowProperty(xmlAttribute = "themeName", type = StudioFlowPropertyType.VALUES_LIST),
                     @StudioFlowProperty(xmlAttribute = "title", type = StudioFlowPropertyType.LOCALIZED_STRING),
                     @StudioFlowProperty(xmlAttribute = "visible", type = StudioFlowPropertyType.BOOLEAN,
-                            setMethod = "setVisible", defaultValue = "true"),
+                            defaultValue = "true"),
                     @StudioFlowProperty(xmlAttribute = "width", type = StudioFlowPropertyType.SIZE)
             }
     )
-    ValuesPicker<?> valuesPicker();
+    ValuesPicker valuesPicker();
 }

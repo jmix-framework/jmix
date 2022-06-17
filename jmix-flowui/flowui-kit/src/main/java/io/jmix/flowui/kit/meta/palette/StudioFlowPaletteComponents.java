@@ -548,7 +548,7 @@ public interface StudioFlowPaletteComponents {
             name = "EntityPicker",
             classFqn = "io.jmix.flowui.component.valuepicker.EntityPicker",
             category = "Components",
-            xmlElement = "EntityPicker",
+            xmlElement = "entityPicker",
             icon = "io/jmix/flowui/kit/meta/palette/component/entityPicker.svg",
             properties = {
                     @StudioFlowProperty(xmlAttribute = "allowCustomValue", type = StudioFlowPropertyType.BOOLEAN,

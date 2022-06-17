@@ -16,19 +16,23 @@
 
 package io.jmix.flowui.xml.layout.loader.component;
 
-import com.vaadin.flow.component.textfield.NumberField;
+import io.jmix.flowui.component.textfield.JmixNumberField;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
+import io.jmix.flowui.xml.layout.support.DataLoaderSupport;
 
-//TODO: kremnevda, replace NumberField to JmixNumberField 26.04.2022
-public class NumberFieldLoader extends AbstractComponentLoader<NumberField> {
+public class NumberFieldLoader extends AbstractComponentLoader<JmixNumberField> {
+
+    protected DataLoaderSupport dataLoaderSupport;
 
     @Override
-    protected NumberField createComponent() {
-        return factory.create(NumberField.class);
+    protected JmixNumberField createComponent() {
+        return factory.create(JmixNumberField.class);
     }
 
     @Override
     public void loadComponent() {
+        getDataLoaderSupport().loadData(resultComponent, element);
+
         loadDouble(element, "max", resultComponent::setMax);
         loadDouble(element, "min", resultComponent::setMin);
         loadDouble(element, "step", resultComponent::setStep);
@@ -42,6 +46,7 @@ public class NumberFieldLoader extends AbstractComponentLoader<NumberField> {
 
         componentLoader().loadLabel(resultComponent, element);
         componentLoader().loadEnabled(resultComponent, element);
+        componentLoader().loadRequired(resultComponent, element, context);
         componentLoader().loadThemeName(resultComponent, element);
         componentLoader().loadClassName(resultComponent, element);
         componentLoader().loadHelperText(resultComponent, element);
@@ -52,5 +57,12 @@ public class NumberFieldLoader extends AbstractComponentLoader<NumberField> {
         componentLoader().loadValueChangeMode(resultComponent, element);
         componentLoader().loadValueAndElementAttributes(resultComponent, element);
         componentLoader().loadValidationAttributes(resultComponent, element, context);
+    }
+
+    protected DataLoaderSupport getDataLoaderSupport() {
+        if (dataLoaderSupport == null) {
+            dataLoaderSupport = applicationContext.getBean(DataLoaderSupport.class, context);
+        }
+        return dataLoaderSupport;
     }
 }

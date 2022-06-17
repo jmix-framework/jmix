@@ -16,22 +16,25 @@
 
 package io.jmix.flowui.xml.layout.loader.component;
 
-import com.vaadin.flow.component.textfield.PasswordField;
+import io.jmix.flowui.component.textfield.JmixPasswordField;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
+import io.jmix.flowui.xml.layout.support.DataLoaderSupport;
 
-//TODO: kremnevda, replace PasswordField to JmixPasswordField 25.04.2022
-public class PasswordFieldLoader extends AbstractComponentLoader<PasswordField> {
+public class PasswordFieldLoader extends AbstractComponentLoader<JmixPasswordField> {
+
+    protected DataLoaderSupport dataLoaderSupport;
 
     @Override
-    protected PasswordField createComponent() {
-        return factory.create(PasswordField.class);
+    protected JmixPasswordField createComponent() {
+        return factory.create(JmixPasswordField.class);
     }
 
     @Override
     public void loadComponent() {
+        getDataLoaderSupport().loadData(resultComponent, element);
+
         loadString(element, "value", resultComponent::setValue);
         loadString(element, "pattern", resultComponent::setPattern);
-        loadBoolean(element, "required", resultComponent::setRequired);
         loadBoolean(element, "autofocus", resultComponent::setAutofocus);
         loadBoolean(element, "autoselect", resultComponent::setAutoselect);
         loadResourceString(element, "placeholder", context.getMessageGroup(), resultComponent::setPlaceholder);
@@ -42,6 +45,7 @@ public class PasswordFieldLoader extends AbstractComponentLoader<PasswordField> 
 
         componentLoader().loadLabel(resultComponent, element);
         componentLoader().loadEnabled(resultComponent, element);
+        componentLoader().loadRequired(resultComponent, element, context);
         componentLoader().loadThemeName(resultComponent, element);
         componentLoader().loadClassName(resultComponent, element);
         componentLoader().loadHelperText(resultComponent, element);
@@ -52,5 +56,12 @@ public class PasswordFieldLoader extends AbstractComponentLoader<PasswordField> 
         componentLoader().loadValueChangeMode(resultComponent, element);
         componentLoader().loadValueAndElementAttributes(resultComponent, element);
         componentLoader().loadValidationAttributes(resultComponent, element, context);
+    }
+
+    protected DataLoaderSupport getDataLoaderSupport() {
+        if (dataLoaderSupport == null) {
+            dataLoaderSupport = applicationContext.getBean(DataLoaderSupport.class, context);
+        }
+        return dataLoaderSupport;
     }
 }

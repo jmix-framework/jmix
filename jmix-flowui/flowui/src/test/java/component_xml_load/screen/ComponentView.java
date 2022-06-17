@@ -20,18 +20,18 @@ import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.progressbar.ProgressBar;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
-import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.EmailField;
-import com.vaadin.flow.component.textfield.NumberField;
-import com.vaadin.flow.component.textfield.PasswordField;
-import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.router.Route;
 import io.jmix.flowui.component.checkbox.JmixCheckbox;
 import io.jmix.flowui.component.combobox.EntityComboBox;
 import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.component.datepicker.TypedDatePicker;
 import io.jmix.flowui.component.datetimepicker.TypedDateTimePicker;
+import io.jmix.flowui.component.select.JmixSelect;
+import io.jmix.flowui.component.textarea.JmixTextArea;
 import io.jmix.flowui.component.textfield.JmixBigDecimalField;
+import io.jmix.flowui.component.textfield.JmixNumberField;
+import io.jmix.flowui.component.textfield.JmixPasswordField;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.component.timepicker.TypedTimePicker;
 import io.jmix.flowui.component.valuepicker.EntityPicker;
@@ -110,16 +110,16 @@ public class ComponentView extends StandardScreen {
     public EmailField emailFieldWithValueId;
 
     @ComponentId
-    public NumberField numberFieldId;
+    public JmixNumberField numberFieldId;
 
     @ComponentId
-    public NumberField numberFieldWithValueId;
+    public JmixNumberField numberFieldWithValueId;
 
     @ComponentId
-    public PasswordField passwordFieldId;
+    public JmixPasswordField passwordFieldId;
 
     @ComponentId
-    public PasswordField passwordFieldWithValueId;
+    public JmixPasswordField passwordFieldWithValueId;
 
     @ComponentId
     public ProgressBar progressBarId;
@@ -128,13 +128,13 @@ public class ComponentView extends StandardScreen {
     public RadioButtonGroup<String> radioButtonGroupId;
 
     @ComponentId
-    public Select<String> selectId;
+    public JmixSelect<String> selectId;
 
     @ComponentId
-    public TextArea textAreaId;
+    public JmixTextArea textAreaId;
 
     @ComponentId
-    public TextArea textAreaWithValueId;
+    public JmixTextArea textAreaWithValueId;
 
     @ComponentId
     public TypedTextField<Integer> textFieldId;

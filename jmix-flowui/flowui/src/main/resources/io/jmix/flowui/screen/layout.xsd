@@ -1984,8 +1984,9 @@
         <xs:complexContent>
             <xs:extension base="baseTextFieldComponent">
                 <xs:attribute name="pattern" type="xs:string"/>
-                <xs:attribute name="required" type="xs:boolean"/>
                 <xs:attribute name="preventInvalidInput" type="xs:boolean"/>
+
+                <xs:attributeGroup ref="hasRequired"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -1998,6 +1999,8 @@
                 <xs:attribute name="min" type="xs:double"/>
                 <xs:attribute name="step" type="xs:double"/>
                 <xs:attribute name="hasControls" type="xs:boolean"/>
+
+                <xs:attributeGroup ref="hasRequired"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -2006,6 +2009,20 @@
     <xs:complexType name="bigDecimalFieldComponent">
         <xs:complexContent>
             <xs:extension base="baseTextFieldComponent">
+                <xs:attributeGroup ref="hasRequired"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- IntegerField-->
+    <xs:complexType name="integerFieldComponent">
+        <xs:complexContent>
+            <xs:extension base="baseTextFieldComponent">
+                <xs:attribute name="max" type="xs:double"/>
+                <xs:attribute name="min" type="xs:double"/>
+                <xs:attribute name="step" type="xs:double"/>
+                <xs:attribute name="hasControls" type="xs:boolean"/>
+
                 <xs:attributeGroup ref="hasRequired"/>
             </xs:extension>
         </xs:complexContent>
@@ -2199,7 +2216,6 @@
                 <xs:attribute name="autofocus" type="xs:boolean"/>
                 <xs:attribute name="value" type="xs:string"/>
                 <xs:attribute name="pattern" type="xs:string"/>
-                <xs:attribute name="required" type="xs:boolean"/>
                 <xs:attribute name="autoselect" type="xs:boolean"/>
                 <xs:attribute name="clearButtonVisible" type="xs:boolean"/>
                 <xs:attribute name="themeName" type="textAreaThemeName"/>
@@ -2207,6 +2223,7 @@
                 <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasLabel"/>
                 <xs:attributeGroup ref="hasEnabled"/>
+                <xs:attributeGroup ref="hasRequired"/>
                 <xs:attributeGroup ref="hasClassName"/>
                 <xs:attributeGroup ref="hasValidation"/>
                 <xs:attributeGroup ref="hasAutocorrect"/>
@@ -2360,9 +2377,11 @@
                 <xs:attribute name="autofocus" type="xs:boolean"/>
                 <xs:attribute name="emptySelectionCaption" type="resourceString"/>
                 <xs:attribute name="emptySelectionAllowed" type="xs:boolean"/>
+                <xs:attribute name="optionsContainer" type="xs:string"/>
 
                 <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasLabel"/>
+                <xs:attributeGroup ref="hasRequired"/>
                 <xs:attributeGroup ref="hasClassName"/>
                 <xs:attributeGroup ref="hasEnabled"/>
                 <xs:attributeGroup ref="hasHelperText"/>
@@ -2676,6 +2695,7 @@
                 <xs:element name="textField" type="textFieldComponent"/>
                 <xs:element name="emailField" type="emailFieldComponent"/>
                 <xs:element name="bigDecimalField" type="bigDecimalFieldComponent"/>
+                <xs:element name="integerField" type="integerFieldComponent"/>
                 <xs:element name="numberField" type="numberFieldComponent"/>
                 <xs:element name="passwordField" type="passwordFieldComponent"/>
                 <xs:element name="timePicker" type="timePickerComponent"/>

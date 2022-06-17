@@ -56,6 +56,7 @@ class PasswordFieldXmlLoadTest extends FlowuiTestSpecification {
     @Override
     void cleanup() {
         jdbcTemplate.execute("delete from TEST_ORDER")
+        jdbcTemplate.execute("delete from SEC_USER")
     }
 
     def "Load passwordField component from XML"() {
@@ -88,6 +89,7 @@ class PasswordFieldXmlLoadTest extends FlowuiTestSpecification {
             readOnly
             required
             requiredIndicatorVisible
+            requiredMessage == "requiredMessageString"
             themeNames.containsAll(["small", "align-right"])
             title == "titleString"
             value == "password"
@@ -109,8 +111,7 @@ class PasswordFieldXmlLoadTest extends FlowuiTestSpecification {
         then: "PasswordField will be loaded with the value of the property"
         verifyAll(componentView.passwordFieldWithValueId) {
             id.get() == "passwordFieldWithValueId"
-            //TODO: kremnevda, will be added with JmixPasswordField 11.05.2022
-            //value == "password"
+            value == order.user.password
         }
     }
 }

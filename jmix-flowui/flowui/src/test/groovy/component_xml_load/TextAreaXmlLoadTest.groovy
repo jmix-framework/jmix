@@ -82,6 +82,7 @@ class TextAreaXmlLoadTest extends FlowuiTestSpecification {
             readOnly
             required
             requiredIndicatorVisible
+            requiredMessage == "requiredMessageString"
             themeNames.containsAll([TextAreaVariant.LUMO_SMALL.name(), TextAreaVariant.MATERIAL_ALWAYS_FLOAT_LABEL.name()])
             value == "textAreaValue"
             valueChangeMode == ValueChangeMode.TIMEOUT
@@ -102,8 +103,7 @@ class TextAreaXmlLoadTest extends FlowuiTestSpecification {
         then: "TextArea will be loaded with the value of the property"
         verifyAll(componentView.textAreaWithValueId) {
             id.get() == "textAreaWithValueId"
-            //TODO: kremnevda, will be added with JmixTextArea 11.05.2022
-            //value == order.amount
+            value == order.number
         }
     }
 }

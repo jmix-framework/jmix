@@ -18,16 +18,16 @@ public abstract class AbstractListOptionsDelegate<C extends Component & HasListD
     }
 
     @Nullable
-    public Options<V> getListOptions() {
+    public Options<V> getOptions() {
         return optionsBinding != null ? optionsBinding.getSource() : null;
     }
 
-    public void setListOptions(@Nullable Options<V> options) {
-        setListOptions(options, null);
+    public void setOptions(@Nullable Options<V> options) {
+        setOptions(options, null);
     }
 
-    public void setListOptions(@Nullable Options<V> options,
-                               @Nullable ListOptionsTarget<V> optionsTarget) {
+    public void setOptions(@Nullable Options<V> options,
+                           @Nullable ListOptionsTarget<V> optionsTarget) {
         if (optionsBinding != null) {
             optionsBinding.unbind();
             optionsBinding = null;

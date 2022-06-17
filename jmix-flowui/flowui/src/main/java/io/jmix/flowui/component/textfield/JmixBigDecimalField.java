@@ -58,11 +58,6 @@ public class JmixBigDecimalField extends BigDecimalField implements SupportsValu
         super.setRequired(required);
     }
 
-    @Override
-    public boolean isRequired() {
-        return super.isRequiredBoolean();
-    }
-
     @Nullable
     @Override
     public String getRequiredMessage() {

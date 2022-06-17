@@ -119,12 +119,12 @@ public class EntityComboBox<V> extends ComboBoxPicker<V>
     @Nullable
     @Override
     public Options<V> getOptions() {
-        return optionsDelegate.getListOptions();
+        return optionsDelegate.getOptions();
     }
 
     @Override
     public void setOptions(@Nullable Options<V> options) {
-        optionsDelegate.setListOptions(options);
+        optionsDelegate.setOptions(options);
     }
 
     @Override

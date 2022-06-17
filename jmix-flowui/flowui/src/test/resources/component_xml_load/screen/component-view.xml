@@ -19,7 +19,9 @@
     <data readOnly="true">
         <instance id="orderDc"
                   class="test_support.entity.sales.Order">
-            <fetchPlan extends="_base"/>
+            <fetchPlan extends="_base">
+                <property name="user" fetchPlan="_base"/>
+            </fetchPlan>
             <loader id="orderDl">
                 <query>
                     <![CDATA[select e from test_Order e]]>
@@ -305,7 +307,9 @@
                      minWidth="80px"
                      placeholder="placeholderString"
                      readOnly="true"
+                     required="true"
                      requiredIndicatorVisible="true"
+                     requiredMessage="requiredMessageString"
                      step="5"
                      themeName="small, align-right"
                      title="titleString"
@@ -314,7 +318,7 @@
                      valueChangeTimeout="50"
                      visible="true"
                      width="100px"/>
-        <numberField id="numberFieldWithValueId" dataContainer="orderDc" property="amount"/>
+        <numberField id="numberFieldWithValueId" dataContainer="orderDc" property="total"/>
 
         <passwordField id="passwordFieldId"
                        autocapitalize="SENTENCES"
@@ -340,6 +344,7 @@
                        readOnly="true"
                        required="true"
                        requiredIndicatorVisible="true"
+                       requiredMessage="requiredMessageString"
                        themeName="small, align-right"
                        title="titleString"
                        value="password"
@@ -402,7 +407,9 @@
                 label="labelString"
                 placeholder="placeholderString"
                 readOnly="true"
+                required="true"
                 requiredIndicatorVisible="true"
+                requiredMessage="requiredMessageString"
                 emptySelectionCaption="emptySelectionString"
                 emptySelectionAllowed="true"
                 dataContainer="orderDc"
@@ -431,6 +438,7 @@
                   readOnly="true"
                   required="true"
                   requiredIndicatorVisible="true"
+                  requiredMessage="requiredMessageString"
                   themeName="LUMO_SMALL, MATERIAL_ALWAYS_FLOAT_LABEL"
                   value="textAreaValue"
                   valueChangeMode="TIMEOUT"

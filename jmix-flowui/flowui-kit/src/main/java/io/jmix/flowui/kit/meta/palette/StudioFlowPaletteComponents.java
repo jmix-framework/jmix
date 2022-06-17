@@ -587,7 +587,7 @@ public interface StudioFlowPaletteComponents {
                     @StudioFlowProperty(xmlAttribute = "width", type = StudioFlowPropertyType.SIZE)
             }
     )
-    ValuePickerBase entityPicker();
+    ValuePicker entityPicker();
 
     @StudioFlowComponent(
             name = "Grid",

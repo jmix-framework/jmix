@@ -163,10 +163,10 @@ public class DynAttrPropertyFilterComponentGenerationStrategy extends DynAttrCom
                 //noinspection rawtypes,unchecked
                 ((ComboBox) component).setOptions(new ListOptions(options));
             } catch (RuntimeException e) {
-                log.error(String.format("Cannot load options for dynamic attribute '%s' in filter condition. " +
+                log.error("Cannot load options for dynamic attribute '{}' in filter condition. " +
                         "It may be caused by NULL value of 'entity' options script parameter." +
                         "Please, consider nullability, do not use lookup field for this attribute " +
-                        "or do not use this attribute in filter.", attribute.getName()), e);
+                        "or do not use this attribute in filter.", attribute.getName(), e);
             }
         }
     }

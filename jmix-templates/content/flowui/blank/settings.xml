@@ -68,7 +68,7 @@
 
     <property caption="Parent menu item"
               code="menuItem"
-              propertyType="MENU_ITEM"/>
+              propertyType="FLOW_MENU_ITEM"/>
 
     <source fileExt="xml"
             name="descriptor"/>

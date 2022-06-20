@@ -139,6 +139,8 @@
                     <xs:enumeration value="REST_SERVICE_METHOD"/>
                     <xs:enumeration value="VIEW_COMPONENT"/>
                     <xs:enumeration value="OVERRIDE_PROPERTY"/>
+                    <xs:enumeration value="FLOW_TABLE_TYPE"/>
+                    <xs:enumeration value="FLOW_MENU_ITEM"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:union>

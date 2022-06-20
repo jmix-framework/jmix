@@ -70,7 +70,7 @@ It will have <i>Save and close</i>, <i>Save</i> and <i>Cancel</i> buttons.</html
         <dependency code="entity"/>
     </property>
 
-    <property caption="Screen Id"
+    <property caption="View Id"
               code="detailId"
               propertyType="SCREEN_ID"
               advanced="true"
@@ -80,8 +80,8 @@ It will have <i>Save and close</i>, <i>Save</i> and <i>Cancel</i> buttons.</html
         <dependency code="entity"/>
     </property>
 
-    <property caption="Screen route"
-              code="route"
+    <property caption="View route prefix"
+              code="routePrefix"
               propertyType="STRING"
               advanced="true"
               dynamic="true"

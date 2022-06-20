@@ -21,7 +21,6 @@ import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.datetimepicker.DateTimePicker;
-import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.progressbar.ProgressBar;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
@@ -35,9 +34,7 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.timepicker.TimePicker;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.component.combobox.ComboBoxPicker;
-import io.jmix.flowui.kit.component.main.ListMenu;
 import io.jmix.flowui.kit.component.valuepicker.ValuePicker;
-import io.jmix.flowui.kit.component.valuepicker.ValuePickerBase;
 import io.jmix.flowui.kit.component.valuepicker.ValuesPicker;
 import io.jmix.flowui.kit.meta.StudioFlowComponent;
 import io.jmix.flowui.kit.meta.StudioFlowComponents;
@@ -183,11 +180,11 @@ public interface StudioFlowPaletteComponents {
     JmixButton button();
 
     @StudioFlowComponent(
-            name = "CheckBox",
+            name = "Checkbox",
             classFqn = "com.vaadin.flow.component.checkbox.Checkbox",
             category = "Components",
-            xmlElement = "checkBox",
-            icon = "io/jmix/flowui/kit/meta/palette/component/checkBox.svg",
+            xmlElement = "checkbox",
+            icon = "io/jmix/flowui/kit/meta/palette/component/checkbox.svg",
             properties = {
                     @StudioFlowProperty(xmlAttribute = "ariaLabel", type = StudioFlowPropertyType.LOCALIZED_STRING),
                     @StudioFlowProperty(xmlAttribute = "autofocus", type = StudioFlowPropertyType.BOOLEAN,

@@ -35,6 +35,9 @@ class JmixBuildPlugin implements Plugin<Project> {
             String jmixRepoUrl = rootProject.findProperty('jmixRepoUrl')
             if (jmixRepoUrl) {
                 repositories {
+                    if (rootProject.hasProperty('jmixUseLocalMavenRepository')) {
+                        mavenLocal()
+                    }
                     maven {
                         url jmixRepoUrl
                         String jmixRepoUser = rootProject.findProperty('jmixRepoUser')

@@ -16,6 +16,7 @@
 
 package io.jmix.rest;
 
+import io.jmix.core.CorsProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;
 import org.springframework.boot.context.properties.bind.DefaultValue;
@@ -30,7 +31,9 @@ public class RestProperties {
 
     /**
      * Allowed origins for cross-domain requests.
+     * @deprecated use {@link CorsProperties#getAllowedOrigins()}
      */
+    @Deprecated
     private final String[] allowedOrigins;
 
     /**
@@ -82,7 +85,10 @@ public class RestProperties {
 
     /**
      * @see #allowedOrigins
+     *
+     * @deprecated use {@link CorsProperties#getAllowedOrigins()}
      */
+    @Deprecated
     public String[] getAllowedOrigins() {
         return allowedOrigins;
     }

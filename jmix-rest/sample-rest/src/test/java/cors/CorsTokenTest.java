@@ -45,7 +45,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(classes = SampleRestApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @TestPropertySource(properties = {
-        "jmix.rest.allowedOrigins = http://www.allowed1.com"
+        "jmix.cors.allowed-origins = http://www.allowed1.com"
 })
 public class CorsTokenTest {
 

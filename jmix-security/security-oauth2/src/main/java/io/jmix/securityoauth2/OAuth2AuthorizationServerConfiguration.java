@@ -16,15 +16,18 @@
 
 package io.jmix.securityoauth2;
 
+import io.jmix.core.CorsProperties;
 import io.jmix.core.session.SessionData;
 import io.jmix.securityoauth2.impl.RequestLocaleProvider;
 import io.jmix.securityoauth2.impl.SessionTokenEnhancer;
 import io.jmix.securityoauth2.impl.UserPasswordTokenGranter;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.CompositeTokenGranter;
@@ -36,8 +39,12 @@ import org.springframework.security.oauth2.provider.token.AuthorizationServerTok
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 import org.springframework.security.oauth2.provider.token.TokenStore;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -100,5 +107,32 @@ public class OAuth2AuthorizationServerConfiguration {
         defaultTokenServices.setTokenEnhancer(tokenEnhancer());
         defaultTokenServices.setClientDetailsService(clientDetailsService);
         return defaultTokenServices;
+    }
+
+    /**
+     * A CORS filter for /oauth/** endpoints. It is required because we cannot add CORS filter for that endpoint using
+     * standard Spring Security approach. CORS settings for other endpoints are configured by the CorsConfiguration
+     * provided by the core module auto-configuration.
+     */
+    @Bean("sec_OAuth2CorsFilterRegistrationBean")
+    public FilterRegistrationBean<CorsFilter> oauthCorsFilter(CorsProperties corsProperties) {
+        List<String> allowedOrigins = corsProperties.getAllowedOrigins();
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOrigins(allowedOrigins);
+        config.setAllowedHeaders(corsProperties.getAllowedHeaders());
+        config.setAllowedMethods(corsProperties.getAllowedMethods());
+        if (!allowedOrigins.contains(CorsConfiguration.ALL)) {
+            config.setAllowCredentials(true);
+        }
+        source.registerCorsConfiguration("/oauth/**", config);
+
+        FilterRegistrationBean<CorsFilter> bean = new FilterRegistrationBean<>(new CorsFilter(source));
+        bean.setUrlPatterns(Arrays.asList("/oauth/*"));
+
+        //The filter must be loaded before OAuth2 security filters
+        bean.setOrder(Ordered.HIGHEST_PRECEDENCE + 100);
+        return bean;
     }
 }

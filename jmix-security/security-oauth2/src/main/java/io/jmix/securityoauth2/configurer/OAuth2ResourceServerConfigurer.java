@@ -18,8 +18,8 @@ package io.jmix.securityoauth2.configurer;
 
 import io.jmix.core.security.UserRepository;
 import io.jmix.securityoauth2.SecurityOAuth2Properties;
-import io.jmix.securityoauth2.impl.LastSecurityFilter;
 import io.jmix.securityoauth2.impl.DevTokenService;
+import io.jmix.securityoauth2.impl.LastSecurityFilter;
 import io.jmix.securityoauth2.impl.RequestLocaleProvider;
 import io.jmix.securityoauth2.impl.TokenMasker;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,7 +79,10 @@ public class OAuth2ResourceServerConfigurer extends ResourceServerConfigurerAdap
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
-        http.apply(apiSecurity())
+        http
+                .cors()
+                .and()
+                .apply(apiSecurity())
                 .sessionManagement()
                 .and()
                 .addFilterAfter(getLastSecurityFilter(), FilterSecurityInterceptor.class);

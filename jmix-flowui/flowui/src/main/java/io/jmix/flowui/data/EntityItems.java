@@ -16,13 +16,9 @@
 
 package io.jmix.flowui.data;
 
-import io.jmix.core.common.event.Subscription;
-
 import javax.annotation.Nullable;
-import java.util.EventObject;
-import java.util.function.Consumer;
 
-public interface EntityOptions<E> extends Options<E>, EntityDataUnit {
+public interface EntityItems<E> extends EntityDataUnit {
     /**
      * Set current item in the source.
      *
@@ -44,31 +40,4 @@ public interface EntityOptions<E> extends Options<E>, EntityDataUnit {
      * Refreshes the source moving it to the {@link BindingState#ACTIVE} state
      */
     void refresh();
-
-    Subscription addValueChangeListener(Consumer<ValueChangeEvent<E>> listener);
-
-    class ValueChangeEvent<T> extends EventObject {
-        private final T prevValue;
-        private final T value;
-
-        public ValueChangeEvent(Options<T> source, T prevValue, T value) {
-            super(source);
-            this.prevValue = prevValue;
-            this.value = value;
-        }
-
-        @SuppressWarnings("unchecked")
-        @Override
-        public Options<T> getSource() {
-            return (Options<T>) super.getSource();
-        }
-
-        public T getPrevValue() {
-            return prevValue;
-        }
-
-        public T getValue() {
-            return value;
-        }
-    }
 }

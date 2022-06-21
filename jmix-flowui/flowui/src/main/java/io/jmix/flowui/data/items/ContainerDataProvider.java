@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.data.options;
+package io.jmix.flowui.data.items;
 
-import io.jmix.core.common.event.EventHub;
-import io.jmix.core.common.event.Subscription;
+import com.vaadin.flow.data.provider.AbstractDataProvider;
+import com.vaadin.flow.data.provider.Query;
+import com.vaadin.flow.shared.Registration;
 import io.jmix.core.common.util.Preconditions;
-import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.data.BindingState;
 import io.jmix.flowui.data.ContainerDataUnit;
-import io.jmix.flowui.data.EntityOptions;
-import io.jmix.flowui.data.Options;
+import io.jmix.flowui.data.EntityItems;
+import io.jmix.flowui.kit.event.EventBus;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.DataLoader;
 import io.jmix.flowui.model.HasLoader;
@@ -33,21 +33,18 @@ import javax.annotation.Nullable;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-/**
- * Options based on a data container.
- *
- * @param <E> entity type
- */
-public class ContainerOptions<E> implements Options<E>, EntityOptions<E>, ContainerDataUnit<E> {
+public class ContainerDataProvider<E, F> extends AbstractDataProvider<E, F>
+        implements ContainerDataUnit<E>, EntityItems<E> {
 
     protected CollectionContainer<E> container;
     protected DataLoader loader;
 
-    protected EventHub events = new EventHub();
-
     protected E deferredSelectedItem;
 
-    public ContainerOptions(CollectionContainer<E> container) {
+    //    private EventHub eventHub = new EventHub();
+    private EventBus eventBus;
+
+    public ContainerDataProvider(CollectionContainer<E> container) {
         Preconditions.checkNotNullArgument(container);
 
         this.container = container;
@@ -61,18 +58,18 @@ public class ContainerOptions<E> implements Options<E>, EntityOptions<E>, Contai
 
     protected void containerCollectionChanged(@SuppressWarnings("unused") CollectionContainer.CollectionChangeEvent<E> e) {
         if (deferredSelectedItem != null) {
-            // UI components (e.g. LookupField) can have value that does not exist in container
+            // UI components (e.g. ComboBox) can have value that does not exist in container
             if (container.containsItem(deferredSelectedItem)) {
                 container.setItem(deferredSelectedItem);
             }
             deferredSelectedItem = null;
         }
-        events.publish(OptionsChangeEvent.class, new OptionsChangeEvent<>(this));
+
+        refreshAll();
     }
 
-    @SuppressWarnings("unchecked")
-    protected void containerItemPropertyChanged(@SuppressWarnings("unused") CollectionContainer.ItemPropertyChangeEvent<E> e) {
-        events.publish(OptionsChangeEvent.class, new OptionsChangeEvent(this));
+    protected void containerItemPropertyChanged(CollectionContainer.ItemPropertyChangeEvent<E> e) {
+        refreshItem(e.getItem());
     }
 
     @Override
@@ -81,24 +78,30 @@ public class ContainerOptions<E> implements Options<E>, EntityOptions<E>, Contai
     }
 
     @Override
+    public CollectionContainer<E> getContainer() {
+        return container;
+    }
+
+    @Override
     public void setSelectedItem(@Nullable E item) {
         if (item == null) {
             container.setItem(null);
-        } else {
-            if (container.getItems().size() > 0) {
-                // UI components (e.g. LookupField) can have value that does not exist in container
-                if (container.containsItem(item)) {
-                    container.setItem(item);
-                }
+
+        } else if (!container.getItems().isEmpty()) {
+            // UI components (e.g. ComboBox) can have value that does not exist in container
+            if (container.containsItem(item)) {
+                container.setItem(item);
             } else {
                 this.deferredSelectedItem = item;
             }
+        } else {
+            this.deferredSelectedItem = item;
         }
     }
 
     @Override
     public boolean containsItem(@Nullable E item) {
-        return item != null && container.containsItem(EntityValues.getId(item));
+        return item != null && container.containsItem(item);
     }
 
     @Override
@@ -114,7 +117,23 @@ public class ContainerOptions<E> implements Options<E>, EntityOptions<E>, Contai
     }
 
     @Override
-    public Stream<E> getOptions() {
+    public boolean isInMemory() {
+        return true;
+    }
+
+    @Override
+    public int size(Query<E, F> query) {
+        return container.getItems().size();
+    }
+
+    @Override
+    public Stream<E> fetch(Query<E, F> query) {
+        return getItems()
+                .skip(query.getOffset())
+                .limit(query.getLimit());
+    }
+
+    protected Stream<E> getItems() {
         return container.getItems().stream();
     }
 
@@ -124,24 +143,15 @@ public class ContainerOptions<E> implements Options<E>, EntityOptions<E>, Contai
     }
 
     @Override
-    public Subscription addStateChangeListener(Consumer<StateChangeEvent> listener) {
-        return events.subscribe(StateChangeEvent.class, listener);
+    public Registration addStateChangeListener(Consumer<StateChangeEvent> listener) {
+        return getEventBus().addListener(StateChangeEvent.class, listener);
     }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public Subscription addValueChangeListener(Consumer<ValueChangeEvent<E>> listener) {
-        return events.subscribe(ValueChangeEvent.class, (Consumer) listener);
-    }
+    protected EventBus getEventBus() {
+        if (eventBus == null) {
+            eventBus = new EventBus();
+        }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public Subscription addOptionsChangeListener(Consumer<OptionsChangeEvent<E>> listener) {
-        return events.subscribe(OptionsChangeEvent.class, (Consumer) listener);
-    }
-
-    @Override
-    public CollectionContainer<E> getContainer() {
-        return container;
+        return eventBus;
     }
 }

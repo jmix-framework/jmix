@@ -17,15 +17,15 @@
 package io.jmix.flowui.data.value;
 
 import com.google.common.base.Joiner;
+import com.vaadin.flow.shared.Registration;
 import io.jmix.core.MetadataTools;
-import io.jmix.core.common.event.EventHub;
-import io.jmix.core.common.event.Subscription;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.data.BindingState;
 import io.jmix.flowui.data.EntityValueSource;
+import io.jmix.flowui.kit.event.EventBus;
 import io.jmix.flowui.model.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.context.ApplicationContext;
@@ -46,7 +46,7 @@ public class ContainerValueSource<E, V> implements EntityValueSource<E, V>, Appl
 
     protected BindingState state = BindingState.INACTIVE;
 
-    protected EventHub events = new EventHub();
+    protected EventBus events = new EventBus();
 
     protected boolean dataModelSecurityEnabled = true;
 
@@ -109,16 +109,14 @@ public class ContainerValueSource<E, V> implements EntityValueSource<E, V>, Appl
 
                     V prevValue = prevEntity != null ? EntityValues.getValueEx(prevEntity, pathToTarget) : null;
                     V value = entity != null ? EntityValues.getValueEx(entity, pathToTarget) : null;
-                    events.publish(ValueChangeEvent.class,
-                            new ValueChangeEvent<>(this, prevValue, value));
+                    events.fireEvent(new ValueChangeEvent<>(this, prevValue, value));
                 }
             });
 
             if (i == this.metaPropertyPath.length() - 1) {
                 propertyCont.addItemPropertyChangeListener(event -> {
                     if (Objects.equals(event.getProperty(), this.metaPropertyPath.getMetaProperty().getName())) {
-                        events.publish(ValueChangeEvent.class,
-                                new ValueChangeEvent<>(this, (V) event.getPrevValue(), (V) event.getValue()));
+                        events.fireEvent(new ValueChangeEvent<>(this, (V) event.getPrevValue(), (V) event.getValue()));
                     }
                 });
             }
@@ -196,26 +194,26 @@ public class ContainerValueSource<E, V> implements EntityValueSource<E, V>, Appl
 
     @SuppressWarnings("unchecked")
     @Override
-    public Subscription addInstanceChangeListener(Consumer<InstanceChangeEvent<E>> listener) {
-        return events.subscribe(InstanceChangeEvent.class, (Consumer) listener);
+    public Registration addInstanceChangeListener(Consumer<InstanceChangeEvent<E>> listener) {
+        return events.addListener(InstanceChangeEvent.class, (Consumer) listener);
     }
 
     @Override
-    public Subscription addStateChangeListener(Consumer<StateChangeEvent> listener) {
-        return events.subscribe(StateChangeEvent.class, listener);
+    public Registration addStateChangeListener(Consumer<StateChangeEvent> listener) {
+        return events.addListener(StateChangeEvent.class, listener);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public Subscription addValueChangeListener(Consumer<ValueChangeEvent<V>> listener) {
-        return events.subscribe(ValueChangeEvent.class, (Consumer) listener);
+    public Registration addValueChangeListener(Consumer<ValueChangeEvent<V>> listener) {
+        return events.addListener(ValueChangeEvent.class, (Consumer) listener);
     }
 
     protected void setState(BindingState state) {
         if (this.state != state) {
             this.state = state;
 
-            events.publish(StateChangeEvent.class, new StateChangeEvent(this, BindingState.ACTIVE));
+            events.fireEvent(new StateChangeEvent(this, BindingState.ACTIVE));
         }
     }
 
@@ -227,13 +225,13 @@ public class ContainerValueSource<E, V> implements EntityValueSource<E, V>, Appl
             setState(BindingState.INACTIVE);
         }
 
-        events.publish(InstanceChangeEvent.class, new InstanceChangeEvent(this, e.getPrevItem(), e.getItem()));
+        events.fireEvent(new InstanceChangeEvent(this, e.getPrevItem(), e.getItem()));
     }
 
     @SuppressWarnings("unchecked")
     protected void containerItemPropertyChanged(InstanceContainer.ItemPropertyChangeEvent e) {
         if (Objects.equals(e.getProperty(), metaPropertyPath.toPathString())) {
-            events.publish(ValueChangeEvent.class, new ValueChangeEvent<>(this, (V) e.getPrevValue(), (V) e.getValue()));
+            events.fireEvent(new ValueChangeEvent<>(this, (V) e.getPrevValue(), (V) e.getValue()));
         }
     }
 

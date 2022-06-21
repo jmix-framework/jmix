@@ -1,6 +1,6 @@
 package io.jmix.flowui.data;
 
-import io.jmix.core.common.event.Subscription;
+import com.vaadin.flow.shared.Registration;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 
 import javax.annotation.Nullable;
@@ -25,7 +25,7 @@ public interface EntityValueSource<E, V> extends ValueSource<V>, EntityDataUnit 
      */
     boolean isDataModelSecurityEnabled();
 
-    Subscription addInstanceChangeListener(Consumer<InstanceChangeEvent<E>> listener);
+    Registration addInstanceChangeListener(Consumer<InstanceChangeEvent<E>> listener);
 
     /**
      * An event fired when related entity instance is changed.

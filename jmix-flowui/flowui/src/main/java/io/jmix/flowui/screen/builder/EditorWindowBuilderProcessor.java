@@ -2,6 +2,7 @@ package io.jmix.flowui.screen.builder;
 
 import com.vaadin.flow.component.Focusable;
 import com.vaadin.flow.component.HasValue;
+import com.vaadin.flow.data.provider.DataProvider;
 import io.jmix.core.DevelopmentException;
 import io.jmix.core.ExtendedEntities;
 import io.jmix.core.Metadata;
@@ -139,13 +140,13 @@ public class EditorWindowBuilderProcessor extends AbstractWindowBuilderProcessor
                 E reloadedEntity = transformForField(entityFromEditor, field);
                 E editedEntity = transform(reloadedEntity, builder);
 
-                if (field instanceof SupportsOptions) {
-                    SupportsOptions<E> supportsOptions = ((SupportsOptions<E>) field);
-                    Options<E> options = supportsOptions.getOptions();
-                    if (options instanceof EntityOptions) {
-                        EntityOptions<E> entityOptions = (EntityOptions<E>) options;
-                        if (entityOptions.containsItem(editedEntity)) {
-                            entityOptions.updateItem(editedEntity);
+                if (field instanceof SupportsDataProvider) {
+                    SupportsDataProvider<E> supportsDataProvider = ((SupportsDataProvider<E>) field);
+                    DataProvider<E, ?> dataProvider = supportsDataProvider.getDataProvider();
+                    if (dataProvider instanceof EntityItems) {
+                        EntityItems<E> entityItems = (EntityItems<E>) dataProvider;
+                        if (entityItems.containsItem(editedEntity)) {
+                            entityItems.updateItem(editedEntity);
                         }
                     }
                 }

@@ -39,8 +39,8 @@ public abstract class AbstractValueBinding<V> implements ValueBinding<V> {
     protected HasValue<?, V> component;
 
     protected Registration componentValueChangeRegistration;
-    protected Subscription valueSourceValueChangeSubscription;
-    protected Subscription valueSourceStateChangeSubscription;
+    protected Registration valueSourceValueChangeSubscription;
+    protected Registration valueSourceStateChangeSubscription;
 
     public AbstractValueBinding(ValueSource<V> valueSource, HasValue<?, V> component) {
         Preconditions.checkNotNullArgument(valueSource);

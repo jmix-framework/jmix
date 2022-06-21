@@ -1,6 +1,6 @@
 package io.jmix.flowui.data;
 
-import io.jmix.core.common.event.Subscription;
+import com.vaadin.flow.shared.Registration;
 
 import javax.annotation.Nullable;
 import java.util.EventObject;
@@ -24,7 +24,7 @@ public interface ValueSource<V> extends DataUnit, HasType<V> {
      * @param listener the listener to be added
      * @return a registration object for removing an event listener added to a source
      */
-    Subscription addValueChangeListener(Consumer<ValueChangeEvent<V>> listener);
+    Registration addValueChangeListener(Consumer<ValueChangeEvent<V>> listener);
 
     /**
      * An event that is fired when value of source is changed.

@@ -3,7 +3,6 @@ package io.jmix.flowui.component.grid;
 import com.vaadin.flow.data.provider.AbstractDataProvider;
 import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.shared.Registration;
-import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
@@ -13,6 +12,7 @@ import io.jmix.flowui.data.binding.JmixBinding;
 import io.jmix.flowui.data.BindingState;
 import io.jmix.flowui.data.ContainerDataUnit;
 import io.jmix.flowui.data.grid.EntityGridDataItems;
+import io.jmix.flowui.kit.event.EventBus;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.InstanceContainer;
 
@@ -35,7 +35,7 @@ public abstract class AbstractContainerGridDataProvider<T> extends AbstractDataP
     protected List<Consumer<ValueChangeEvent<T>>> valueChangeListeners = new ArrayList<>();
     protected List<Consumer<ItemSetChangeEvent<T>>> itemSetChangeListeners = new ArrayList<>();
 
-    protected EventHub eventHub = new EventHub();
+    protected EventBus eventBus = new EventBus();
 
     protected BindingState state = BindingState.INACTIVE;
 
@@ -53,7 +53,7 @@ public abstract class AbstractContainerGridDataProvider<T> extends AbstractDataP
         }
     }
 
-    private void onContainerCollectionChanged(CollectionContainer.CollectionChangeEvent<T> collectionChangeEvent) {
+    protected void onContainerCollectionChanged(CollectionContainer.CollectionChangeEvent<T> collectionChangeEvent) {
         refreshAll();
 
         if (!itemSetChangeListeners.isEmpty()) {
@@ -62,7 +62,7 @@ public abstract class AbstractContainerGridDataProvider<T> extends AbstractDataP
         }
     }
 
-    private void containerItemPropertyChanged(InstanceContainer.ItemPropertyChangeEvent<T> event) {
+    protected void containerItemPropertyChanged(InstanceContainer.ItemPropertyChangeEvent<T> event) {
         refreshItem(event.getItem());
 
         if (!valueChangeListeners.isEmpty()) {
@@ -143,13 +143,13 @@ public abstract class AbstractContainerGridDataProvider<T> extends AbstractDataP
         if (this.state != state) {
             this.state = state;
 
-            eventHub.publish(StateChangeEvent.class, new StateChangeEvent(this, BindingState.ACTIVE));
+            eventBus.fireEvent(new StateChangeEvent(this, state));
         }
     }
 
     @Override
-    public Subscription addStateChangeListener(Consumer<StateChangeEvent> listener) {
-        return eventHub.subscribe(StateChangeEvent.class, listener);
+    public Registration addStateChangeListener(Consumer<StateChangeEvent> listener) {
+        return eventBus.addListener(StateChangeEvent.class, listener);
     }
 
     @Override

@@ -31,7 +31,7 @@ public class SelectLoader extends AbstractComponentLoader<JmixSelect<?>> {
 
     @Override
     public void loadComponent() {
-        getDataLoaderSupport().loadOptionsContainer(resultComponent, element);
+        getDataLoaderSupport().loadItemsContainer(resultComponent, element);
         getDataLoaderSupport().loadData(resultComponent, element);
 
         loadBoolean(element, "autofocus", resultComponent::setAutofocus);

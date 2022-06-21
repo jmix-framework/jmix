@@ -2103,7 +2103,7 @@
         <xs:complexContent>
             <xs:extension base="comboBoxPickerComponent">
                 <xs:attribute name="metaClass" type="xs:string"/>
-                <xs:attribute name="optionsContainer" type="xs:string"/>
+                <xs:attribute name="itemsContainer" type="xs:string"/>
 
                 <xs:attributeGroup ref="hasRequired"/>
                 <xs:attributeGroup ref="hasDataContainer"/>
@@ -2377,7 +2377,7 @@
                 <xs:attribute name="autofocus" type="xs:boolean"/>
                 <xs:attribute name="emptySelectionCaption" type="resourceString"/>
                 <xs:attribute name="emptySelectionAllowed" type="xs:boolean"/>
-                <xs:attribute name="optionsContainer" type="xs:string"/>
+                <xs:attribute name="itemsContainer" type="xs:string"/>
 
                 <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasLabel"/>

@@ -2,6 +2,7 @@ package io.jmix.flowui.screen.builder;
 
 import com.vaadin.flow.component.Focusable;
 import com.vaadin.flow.component.HasValue;
+import com.vaadin.flow.data.provider.DataProvider;
 import io.jmix.core.*;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.entity.EntityValues;
@@ -202,8 +203,8 @@ public class LookupWindowBuilderProcessor extends AbstractWindowBuilderProcessor
             }
         }
 
-        if (field instanceof SupportsOptions) {
-            updateFieldOptions((SupportsOptions<E>) field, toCollection(newValue, isCollectionValue));
+        if (field instanceof SupportsDataProvider) {
+            updateFieldOptions((SupportsDataProvider<E>) field, toCollection(newValue, isCollectionValue));
         }
 
         if (isCollectionValue) {
@@ -340,14 +341,14 @@ public class LookupWindowBuilderProcessor extends AbstractWindowBuilderProcessor
      * @param items selected entities from lookup screen to update options in field
      * @param <E>   entity type
      */
-    public <E> void updateFieldOptions(SupportsOptions<E> field, Collection<E> items) {
-        Options<E> options = field.getOptions();
+    public <E> void updateFieldOptions(SupportsDataProvider<E> field, Collection<E> items) {
+        DataProvider<E, ?> dataProvider = field.getDataProvider();
 
-        if (options instanceof EntityOptions) {
-            EntityOptions<E> entityOptions = (EntityOptions<E>) options;
+        if (dataProvider instanceof EntityItems) {
+            EntityItems<E> entityItems = (EntityItems<E>) dataProvider;
             for (E newItem : items) {
-                if (entityOptions.containsItem(newItem)) {
-                    entityOptions.updateItem(newItem);
+                if (entityItems.containsItem(newItem)) {
+                    entityItems.updateItem(newItem);
                 }
             }
         }

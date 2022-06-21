@@ -16,15 +16,16 @@
 
 package io.jmix.flowui.data;
 
-import io.jmix.flowui.data.options.ContainerOptions;
+import io.jmix.flowui.data.items.ContainerDataProvider;
 import io.jmix.flowui.model.CollectionContainer;
 
-public interface SupportsOptionsContainer<E> {
+public interface SupportsItemsContainer<E> {
+
     /**
-     * Sets options from the passed {@link CollectionContainer}.
+     * Sets items from the passed {@link CollectionContainer}.
      *
-     * @param container a {@link CollectionContainer} to be used as options source
-     * @see ContainerOptions
+     * @param container a {@link CollectionContainer} to be used as items source
+     * @see ContainerDataProvider
      */
-    void setOptionsContainer(CollectionContainer<E> container);
+    void setItems(CollectionContainer<E> container);
 }

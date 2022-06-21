@@ -17,11 +17,15 @@
 package io.jmix.flowui.component.select;
 
 import com.vaadin.flow.component.select.Select;
+import com.vaadin.flow.data.provider.DataProvider;
 import io.jmix.flowui.component.HasRequired;
+import io.jmix.flowui.component.delegate.DataViewDelegate;
 import io.jmix.flowui.component.delegate.FieldDelegate;
-import io.jmix.flowui.component.delegate.ListOptionsDelegate;
-import io.jmix.flowui.data.*;
-import io.jmix.flowui.data.options.ContainerOptions;
+import io.jmix.flowui.data.SupportsDataProvider;
+import io.jmix.flowui.data.SupportsItemsContainer;
+import io.jmix.flowui.data.SupportsValueSource;
+import io.jmix.flowui.data.ValueSource;
+import io.jmix.flowui.data.items.ContainerDataProvider;
 import io.jmix.flowui.model.CollectionContainer;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
@@ -30,13 +34,13 @@ import org.springframework.context.ApplicationContextAware;
 
 import javax.annotation.Nullable;
 
-public class JmixSelect<V> extends Select<V> implements SupportsValueSource<V>, HasRequired, SupportsOptions<V>,
-        SupportsOptionsContainer<V>, ApplicationContextAware, InitializingBean {
+public class JmixSelect<V> extends Select<V> implements SupportsValueSource<V>, HasRequired, SupportsDataProvider<V>,
+        SupportsItemsContainer<V>, ApplicationContextAware, InitializingBean {
 
     protected ApplicationContext applicationContext;
 
     protected FieldDelegate<JmixSelect<V>, V, V> fieldDelegate;
-    protected ListOptionsDelegate<JmixSelect<V>, V> optionsDelegate;
+    protected DataViewDelegate<JmixSelect<V>, V> dataViewDelegate;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -50,17 +54,9 @@ public class JmixSelect<V> extends Select<V> implements SupportsValueSource<V>, 
 
     protected void initComponent() {
         fieldDelegate = createFieldDelegate();
-        optionsDelegate = createOptionsDelegate();
+        dataViewDelegate = createDataViewDelegate();
 
         setItemLabelGenerator(fieldDelegate::applyDefaultValueFormat);
-    }
-
-    protected FieldDelegate<JmixSelect<V>, V, V> createFieldDelegate() {
-        return applicationContext.getBean(FieldDelegate.class, this);
-    }
-
-    protected ListOptionsDelegate<JmixSelect<V>, V> createOptionsDelegate() {
-        return applicationContext.getBean(ListOptionsDelegate.class, this);
     }
 
     @Nullable
@@ -100,24 +96,34 @@ public class JmixSelect<V> extends Select<V> implements SupportsValueSource<V>, 
         fieldDelegate.setValueSource(valueSource);
     }
 
-    @Nullable
     @Override
-    public Options<V> getOptions() {
-        return optionsDelegate.getOptions();
+    public void setDataProvider(DataProvider<V, ?> dataProvider) {
+        // Method is called from a constructor so bean can be null
+        if (dataViewDelegate != null) {
+            dataViewDelegate.bind(dataProvider);
+        }
+        super.setDataProvider(dataProvider);
     }
 
     @Override
-    public void setOptionsContainer(CollectionContainer<V> container) {
-        optionsDelegate.setOptions(new ContainerOptions<>(container));
+    public void setItems(CollectionContainer<V> container) {
+        setItems(new ContainerDataProvider<>(container));
     }
 
-    @Override
-    public void setOptions(@Nullable Options<V> options) {
-        optionsDelegate.setOptions(options);
-    }
+    // TODO: gg, enum items
 
     @Override
     public void setRequired(boolean required) {
         HasRequired.super.setRequired(required);
+    }
+
+    @SuppressWarnings("unchecked")
+    protected FieldDelegate<JmixSelect<V>, V, V> createFieldDelegate() {
+        return applicationContext.getBean(FieldDelegate.class, this);
+    }
+
+    @SuppressWarnings("unchecked")
+    protected DataViewDelegate<JmixSelect<V>, V> createDataViewDelegate() {
+        return applicationContext.getBean(DataViewDelegate.class, this);
     }
 }

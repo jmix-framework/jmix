@@ -252,38 +252,6 @@
             <details id="detailsChild"/>
         </details>
 
-        <emailField id="emailFieldId"
-                    autocapitalize="SENTENCES"
-                    autocomplete="ADDITIONAL_NAME"
-                    autocorrect="true"
-                    autofocus="true"
-                    autoselect="true"
-                    className="cssClassName1, cssClassName2"
-                    clearButtonVisible="true"
-                    enabled="true"
-                    errorMessage="errorMessageString"
-                    height="50px"
-                    helperText="helperTextString"
-                    invalid="false"
-                    label="labelString"
-                    maxHeight="55px"
-                    maxWidth="120px"
-                    minHeight="40px"
-                    minWidth="80px"
-                    pattern="patternString"
-                    placeholder="placeholderString"
-                    preventInvalidInput="true"
-                    readOnly="true"
-                    requiredIndicatorVisible="true"
-                    themeName="small, align-right"
-                    title="titleString"
-                    value="example@email.com"
-                    valueChangeMode="ON_CHANGE"
-                    valueChangeTimeout="50"
-                    visible="true"
-                    width="100px"/>
-        <emailField id="emailFieldWithValueId" dataContainer="orderDc" property="customer.email"/>
-
         <numberField id="numberFieldId"
                      autocapitalize="SENTENCES"
                      autocomplete="ADDITIONAL_NAME"

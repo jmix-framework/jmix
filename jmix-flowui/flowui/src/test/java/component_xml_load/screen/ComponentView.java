@@ -29,10 +29,7 @@ import io.jmix.flowui.component.datepicker.TypedDatePicker;
 import io.jmix.flowui.component.datetimepicker.TypedDateTimePicker;
 import io.jmix.flowui.component.select.JmixSelect;
 import io.jmix.flowui.component.textarea.JmixTextArea;
-import io.jmix.flowui.component.textfield.JmixBigDecimalField;
-import io.jmix.flowui.component.textfield.JmixNumberField;
-import io.jmix.flowui.component.textfield.JmixPasswordField;
-import io.jmix.flowui.component.textfield.TypedTextField;
+import io.jmix.flowui.component.textfield.*;
 import io.jmix.flowui.component.timepicker.TypedTimePicker;
 import io.jmix.flowui.component.valuepicker.EntityPicker;
 import io.jmix.flowui.component.valuepicker.JmixValuePicker;
@@ -102,12 +99,6 @@ public class ComponentView extends StandardScreen {
 
     @ComponentId
     public Details detailsId;
-
-    @ComponentId
-    public EmailField emailFieldId;
-
-    @ComponentId
-    public EmailField emailFieldWithValueId;
 
     @ComponentId
     public JmixNumberField numberFieldId;

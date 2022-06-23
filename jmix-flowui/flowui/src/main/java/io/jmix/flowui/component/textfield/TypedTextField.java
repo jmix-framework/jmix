@@ -22,7 +22,7 @@ import io.jmix.flowui.component.HasRequired;
 import io.jmix.flowui.component.SupportsDatatype;
 import io.jmix.flowui.component.SupportsTypedValue;
 import io.jmix.flowui.component.SupportsValidation;
-import io.jmix.flowui.component.delegate.TextFieldDelegate;
+import io.jmix.flowui.component.delegate.TextInputFieldDelegate;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.exception.ValidationException;
 import org.springframework.beans.factory.InitializingBean;
@@ -41,7 +41,7 @@ public class TypedTextField<V> extends TextField
 
     protected ApplicationContext applicationContext;
 
-    protected TextFieldDelegate<V> fieldDelegate;
+    protected TextInputFieldDelegate<TypedTextField<V>, V> fieldDelegate;
 
     protected V internalValue;
 
@@ -71,8 +71,8 @@ public class TypedTextField<V> extends TextField
     }
 
     @SuppressWarnings("unchecked")
-    protected TextFieldDelegate<V> createFieldDelegate() {
-        return applicationContext.getBean(TextFieldDelegate.class, this);
+    protected TextInputFieldDelegate<TypedTextField<V>, V> createFieldDelegate() {
+        return applicationContext.getBean(TextInputFieldDelegate.class, this);
     }
 
     @Nullable

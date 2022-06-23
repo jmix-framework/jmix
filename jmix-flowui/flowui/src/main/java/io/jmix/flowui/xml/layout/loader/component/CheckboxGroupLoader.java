@@ -16,17 +16,17 @@
 
 package io.jmix.flowui.xml.layout.loader.component;
 
-import io.jmix.flowui.component.radiobuttongroup.JmixRadioButtonGroup;
+import io.jmix.flowui.component.checkboxgroup.JmixCheckboxGroup;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import io.jmix.flowui.xml.layout.support.DataLoaderSupport;
 
-public class RadioButtonGroupLoader extends AbstractComponentLoader<JmixRadioButtonGroup<?>> {
+public class CheckboxGroupLoader extends AbstractComponentLoader<JmixCheckboxGroup<?>> {
 
     protected DataLoaderSupport dataLoaderSupport;
 
     @Override
-    protected JmixRadioButtonGroup<?> createComponent() {
-        return factory.create(JmixRadioButtonGroup.class);
+    protected JmixCheckboxGroup<?> createComponent() {
+        return factory.create(JmixCheckboxGroup.class);
     }
 
     @Override

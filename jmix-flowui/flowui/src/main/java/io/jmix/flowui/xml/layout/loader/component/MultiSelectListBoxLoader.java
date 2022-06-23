@@ -16,17 +16,17 @@
 
 package io.jmix.flowui.xml.layout.loader.component;
 
-import io.jmix.flowui.component.radiobuttongroup.JmixRadioButtonGroup;
+import io.jmix.flowui.component.listbox.JmixMultiSelectListBox;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import io.jmix.flowui.xml.layout.support.DataLoaderSupport;
 
-public class RadioButtonGroupLoader extends AbstractComponentLoader<JmixRadioButtonGroup<?>> {
+public class MultiSelectListBoxLoader extends AbstractComponentLoader<JmixMultiSelectListBox<?>> {
 
     protected DataLoaderSupport dataLoaderSupport;
 
     @Override
-    protected JmixRadioButtonGroup<?> createComponent() {
-        return factory.create(JmixRadioButtonGroup.class);
+    protected JmixMultiSelectListBox<?> createComponent() {
+        return factory.create(JmixMultiSelectListBox.class);
     }
 
     @Override
@@ -34,15 +34,11 @@ public class RadioButtonGroupLoader extends AbstractComponentLoader<JmixRadioBut
         getDataLoaderSupport().loadItemsContainer(resultComponent, element);
         getDataLoaderSupport().loadData(resultComponent, element);
 
-        componentLoader().loadLabel(resultComponent, element);
+        getLoaderSupport().loadBoolean(element, "readOnly", resultComponent::setReadOnly);
+
         componentLoader().loadEnabled(resultComponent, element);
         componentLoader().loadClassName(resultComponent, element);
-        componentLoader().loadThemeName(resultComponent, element);
-        componentLoader().loadHelperText(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
-        componentLoader().loadValueAndElementAttributes(resultComponent, element);
-        componentLoader().loadRequired(resultComponent, element, context);
-        componentLoader().loadValidationAttributes(resultComponent, element, context);
     }
 
     protected DataLoaderSupport getDataLoaderSupport() {

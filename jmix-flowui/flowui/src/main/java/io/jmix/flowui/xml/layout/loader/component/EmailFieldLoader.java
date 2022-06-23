@@ -16,18 +16,17 @@
 
 package io.jmix.flowui.xml.layout.loader.component;
 
-import com.vaadin.flow.component.textfield.EmailField;
+import io.jmix.flowui.component.textfield.JmixEmailField;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import io.jmix.flowui.xml.layout.support.DataLoaderSupport;
 
-//TODO: kremnevda, replace EmailField to JmixEmailField 25.04.2022
-public class EmailFieldLoader extends AbstractComponentLoader<EmailField> {
+public class EmailFieldLoader extends AbstractComponentLoader<JmixEmailField> {
 
     protected DataLoaderSupport dataLoaderSupport;
 
     @Override
-    protected EmailField createComponent() {
-        return factory.create(EmailField.class);
+    protected JmixEmailField createComponent() {
+        return factory.create(JmixEmailField.class);
     }
 
     @Override
@@ -36,6 +35,8 @@ public class EmailFieldLoader extends AbstractComponentLoader<EmailField> {
 
         loadString(element, "value", resultComponent::setValue);
         loadString(element, "pattern", resultComponent::setPattern);
+        loadInteger(element, "maxLength", resultComponent::setMaxLength);
+        loadInteger(element, "minLength", resultComponent::setMinLength);
         loadBoolean(element, "autofocus", resultComponent::setAutofocus);
         loadBoolean(element, "autoselect", resultComponent::setAutoselect);
         loadResourceString(element, "placeholder", context.getMessageGroup(), resultComponent::setPlaceholder);
@@ -49,6 +50,7 @@ public class EmailFieldLoader extends AbstractComponentLoader<EmailField> {
         componentLoader().loadClassName(resultComponent, element);
         componentLoader().loadHelperText(resultComponent, element);
         componentLoader().loadAutocomplete(resultComponent, element);
+        componentLoader().loadRequired(resultComponent, element, context);
         componentLoader().loadAutocapitalize(resultComponent, element);
         componentLoader().loadAutocorrect(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);

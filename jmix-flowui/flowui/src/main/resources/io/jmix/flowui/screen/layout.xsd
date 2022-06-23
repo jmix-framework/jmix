@@ -1302,6 +1302,21 @@
         </xs:union>
     </xs:simpleType>
 
+    <xs:simpleType name="checkboxGroupThemeName">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="LUMO_HELPER_ABOVE_FIELD"/>
+                    <xs:enumeration value="LUMO_VERTICAL"/>
+                    <xs:enumeration value="MATERIAL_VERTICAL"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+
     <xs:simpleType name="textAreaThemeName">
         <xs:union>
             <xs:simpleType>
@@ -1974,7 +1989,13 @@
         <xs:complexContent>
             <xs:extension base="baseTextFieldComponent">
                 <xs:attribute name="pattern" type="xs:string"/>
+                <xs:attribute name="maxLength" type="xs:integer"/>
+                <xs:attribute name="minLength" type="xs:integer"/>
+
                 <xs:attribute name="preventInvalidInput" type="xs:boolean"/>
+
+                <xs:attributeGroup ref="hasDataContainer"/>
+                <xs:attributeGroup ref="hasRequired"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -2194,16 +2215,66 @@
     <xs:complexType name="radioButtonGroupComponent">
         <xs:complexContent>
             <xs:extension base="baseComponent">
-                <xs:attribute name="required" type="xs:boolean"/>
                 <xs:attribute name="themeName" type="radioButtonGroupThemeName"/>
+                <xs:attribute name="itemsContainer" type="xs:string"/>
 
                 <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasLabel"/>
                 <xs:attributeGroup ref="hasEnabled"/>
+                <xs:attributeGroup ref="hasRequired"/>
                 <xs:attributeGroup ref="hasClassName"/>
                 <xs:attributeGroup ref="hasValidation"/>
                 <xs:attributeGroup ref="hasHelperText"/>
                 <xs:attributeGroup ref="hasValueAndElement"/>
+                <xs:attributeGroup ref="hasDataContainer"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- CheckboxGroup-->
+    <xs:complexType name="checkboxGroupComponent">
+        <xs:complexContent>
+            <xs:extension base="baseComponent">
+                <xs:attribute name="itemsContainer" type="xs:string"/>
+
+                <xs:attributeGroup ref="hasSize"/>
+                <xs:attributeGroup ref="hasLabel"/>
+                <xs:attributeGroup ref="hasEnabled"/>
+                <xs:attributeGroup ref="hasRequired"/>
+                <xs:attributeGroup ref="hasClassName"/>
+                <xs:attributeGroup ref="hasValidation"/>
+                <xs:attributeGroup ref="hasHelperText"/>
+                <xs:attributeGroup ref="hasValueAndElement"/>
+                <xs:attributeGroup ref="hasDataContainer"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- ListBox-->
+    <xs:complexType name="listBoxComponent">
+        <xs:complexContent>
+            <xs:extension base="baseComponent">
+                <xs:attribute name="itemsContainer" type="xs:string"/>
+                <xs:attribute name="readOnly" type="xs:boolean"/>
+
+                <xs:attributeGroup ref="hasSize"/>
+                <xs:attributeGroup ref="hasEnabled"/>
+                <xs:attributeGroup ref="hasClassName"/>
+                <xs:attributeGroup ref="hasDataContainer"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- MultiSelectListBox-->
+    <xs:complexType name="multiSelectListBoxComponent">
+        <xs:complexContent>
+            <xs:extension base="baseComponent">
+                <xs:attribute name="itemsContainer" type="xs:string"/>
+                <xs:attribute name="readOnly" type="xs:boolean"/>
+
+                <xs:attributeGroup ref="hasSize"/>
+                <xs:attributeGroup ref="hasEnabled"/>
+                <xs:attributeGroup ref="hasClassName"/>
                 <xs:attributeGroup ref="hasDataContainer"/>
             </xs:extension>
         </xs:complexContent>
@@ -2707,6 +2778,9 @@
                 <xs:element name="comboBoxPicker" type="comboBoxPickerComponent"/>
                 <xs:element name="entityComboBox" type="entityComboBoxComponent"/>
                 <xs:element name="radioButtonGroup" type="radioButtonGroupComponent"/>
+                <xs:element name="checkboxGroup" type="checkboxGroupComponent"/>
+                <xs:element name="listBox" type="listBoxComponent"/>
+                <xs:element name="multiSelectListBox" type="multiSelectListBoxComponent"/>
                 <xs:element name="progressBar" type="progressBarComponent"/>
                 <xs:element name="dataGrid" type="dataGridComponent"/>
                 <xs:element name="treeDataGrid" type="treeDataGridComponent"/>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2022 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<screen xmlns="http://jmix.io/schema/flowui/screen">
+    <data readOnly="true">
+        <instance id="customerDc"
+                  class="test_support.entity.sales.Customer">
+            <fetchPlan extends="_base"/>
+            <loader id="orderDl">
+                <query>
+                    <![CDATA[select e from test_Customer e]]>
+                </query>
+            </loader>
+        </instance>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <layout>
+        <emailField id="emailFieldId"
+                    autocapitalize="SENTENCES"
+                    autocomplete="ADDITIONAL_NAME"
+                    autocorrect="true"
+                    autofocus="true"
+                    autoselect="true"
+                    className="cssClassName1, cssClassName2"
+                    clearButtonVisible="true"
+                    enabled="true"
+                    errorMessage="errorMessageString"
+                    height="50px"
+                    helperText="helperTextString"
+                    invalid="false"
+                    label="labelString"
+                    maxHeight="55px"
+                    maxLength="10"
+                    maxWidth="120px"
+                    minHeight="40px"
+                    minLength="1"
+                    minWidth="80px"
+                    pattern="patternString"
+                    placeholder="placeholderString"
+                    preventInvalidInput="true"
+                    readOnly="true"
+                    required="true"
+                    requiredMessage="requiredMessage"
+                    requiredIndicatorVisible="true"
+                    themeName="small, align-right"
+                    title="titleString"
+                    value="example@email.com"
+                    valueChangeMode="ON_CHANGE"
+                    valueChangeTimeout="50"
+                    visible="true"
+                    width="100px"/>
+        <emailField id="emailFieldWithValueId" dataContainer="customerDc" property="email"/>
+    </layout>
+</screen>

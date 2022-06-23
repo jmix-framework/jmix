@@ -20,6 +20,7 @@ import com.vaadin.flow.component.textfield.Autocapitalize
 import com.vaadin.flow.component.textfield.Autocomplete
 import com.vaadin.flow.data.value.ValueChangeMode
 import component_xml_load.screen.ComponentView
+import component_xml_load.screen.EmailFieldView
 import io.jmix.core.DataManager
 import io.jmix.core.SaveContext
 import org.springframework.beans.factory.annotation.Autowired
@@ -42,29 +43,23 @@ class EmailFieldXmlLoadTest extends FlowuiTestSpecification {
     void setup() {
         registerScreenBasePackages("component_xml_load.screen")
 
-        def saveContext = new SaveContext()
-        def order = dataManager.create(Order)
         def customer = dataManager.create(Customer)
+        customer.email = "example@email.com"
 
-        order.customer = customer
-        order.customer.email = "example@email.com"
-
-        saveContext.saving(customer, order)
-        dataManager.save(saveContext)
+        dataManager.save(customer)
     }
 
     @Override
     void cleanup() {
-        jdbcTemplate.execute("delete from TEST_ORDER")
         jdbcTemplate.execute("delete from TEST_CUSTOMER")
     }
 
     def "Load emailField component from XML"() {
         when: "Open the ComponentView"
-        def componentView = openScreen(ComponentView.class)
+        def emailFieldView = openScreen(EmailFieldView)
 
         then: "EmailField attributes will be loaded"
-        verifyAll(componentView.emailFieldId) {
+        verifyAll(emailFieldView.emailFieldId) {
             id.get() == "emailFieldId"
             !invalid
             autocapitalize == Autocapitalize.SENTENCES
@@ -80,13 +75,17 @@ class EmailFieldXmlLoadTest extends FlowuiTestSpecification {
             helperText == "helperTextString"
             label == "labelString"
             maxHeight == "55px"
+            maxLength == 10
             maxWidth == "120px"
             minHeight == "40px"
+            minLength == 1
             minWidth == "80px"
             pattern == "patternString"
             placeholder == "placeholderString"
             preventInvalidInput
             readOnly
+            required
+            requiredMessage == "requiredMessage"
             requiredIndicatorVisible
             themeNames.containsAll(["small", "align-right"])
             title == "titleString"
@@ -99,18 +98,16 @@ class EmailFieldXmlLoadTest extends FlowuiTestSpecification {
     }
 
     def "Load emailField component with datasource from XML"() {
-        //TODO: kremnevda, will be added with JmixEmailField 06.05.2022
-//        given: "An entity with some property"
-//        def order = dataManager.load(Order).all().one()
-//
-//        when: "Open the ComponentView and load data"
-//        def componentView = openScreen(ComponentView.class)
-//        componentView.loadData()
-//
-//        then: "EmailField will be loaded with the value of the property"
-//        verifyAll(componentView.emailFieldWithValueId) {
-//            id.get() == "emailFieldWithValueId"
-//            //value == order.customer.email
-//        }
+        given: "An entity with some property"
+        def customer = dataManager.load(Customer).all().one()
+
+        when: "Open the ComponentView and load data"
+        def componentView = openScreen(EmailFieldView)
+
+        then: "EmailField will be loaded with the value of the property"
+        verifyAll(componentView.emailFieldWithValueId) {
+            id.get() == "emailFieldWithValueId"
+            value == customer.email
+        }
     }
 }

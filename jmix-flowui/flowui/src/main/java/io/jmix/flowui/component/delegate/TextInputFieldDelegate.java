@@ -1,12 +1,12 @@
 package io.jmix.flowui.component.delegate;
 
+import com.vaadin.flow.component.AbstractField;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.data.binding.impl.AbstractValueBinding;
 import io.jmix.flowui.data.binding.impl.FieldValueBinding;
 import io.jmix.flowui.data.EntityValueSource;
 import io.jmix.flowui.data.ValueSource;
-import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.component.validation.RegexpValidator;
 import io.jmix.flowui.component.validation.SizeValidator;
 import io.jmix.flowui.component.validation.Validator;
@@ -18,9 +18,9 @@ import org.springframework.stereotype.Component;
 
 @Component("flowui_TextFieldDelegate")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class TextFieldDelegate<V> extends AbstractFieldDelegate<TypedTextField<V>, V, String> {
+public class TextInputFieldDelegate<C extends AbstractField<?, String>, V> extends AbstractFieldDelegate<C, V, String> {
 
-    private static final Logger log = LoggerFactory.getLogger(TextFieldDelegate.class);
+    private static final Logger log = LoggerFactory.getLogger(TextInputFieldDelegate.class);
 
     protected SizeValidator<? super V> sizeValidator;
     protected RegexpValidator regexpValidator;
@@ -29,7 +29,7 @@ public class TextFieldDelegate<V> extends AbstractFieldDelegate<TypedTextField<V
     protected int maxLength = -1;
     protected int minLength = -1;
 
-    public TextFieldDelegate(TypedTextField<V> component) {
+    public TextInputFieldDelegate(C component) {
         super(component);
     }
 

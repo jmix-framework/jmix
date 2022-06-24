@@ -19,6 +19,7 @@ package io.jmix.flowui.facet.dataloadcoordinator;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasValue;
 import io.jmix.core.DevelopmentException;
+import io.jmix.flowui.component.SupportsTypedValue;
 import io.jmix.flowui.facet.DataLoadCoordinator;
 import io.jmix.flowui.facet.DataLoadCoordinator.LikeClause;
 import io.jmix.flowui.model.DataLoader;
@@ -46,12 +47,15 @@ public class OnComponentValueChangedLoadTrigger implements DataLoadCoordinator.T
         this.loader = loader;
         this.component = (HasValue<?, ?>) component;
         this.param = param;
-        //noinspection unchecked
+
         this.component.addValueChangeListener(event -> load());
     }
 
+    @SuppressWarnings("rawtypes")
     protected void load() {
-        Object value = component.getValue();
+        Object value = component instanceof SupportsTypedValue
+                ? ((SupportsTypedValue) component).getTypedValue()
+                : component.getValue();
         if (value != null && likeClause != LikeClause.NONE) {
             if (!(value instanceof String)) {
                 log.warn("Like clause with non-string parameter. The value is passed as is without wrapping in %.");

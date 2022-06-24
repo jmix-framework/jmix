@@ -30,7 +30,7 @@ public class OnContainerItemChangedLoadTrigger implements DataLoadCoordinator.Tr
         this.loader = loader;
         this.container = container;
         this.param = param;
-        //noinspection unchecked
+
         container.addItemChangeListener(event -> load());
     }
 

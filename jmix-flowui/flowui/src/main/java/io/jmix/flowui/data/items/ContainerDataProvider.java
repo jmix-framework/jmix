@@ -25,6 +25,7 @@ import io.jmix.flowui.data.BindingState;
 import io.jmix.flowui.data.ContainerDataUnit;
 import io.jmix.flowui.data.EntityItems;
 import io.jmix.flowui.kit.event.EventBus;
+import io.jmix.flowui.model.CollectionChangeType;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.DataLoader;
 import io.jmix.flowui.model.HasLoader;
@@ -65,7 +66,11 @@ public class ContainerDataProvider<E, F> extends AbstractDataProvider<E, F>
             deferredSelectedItem = null;
         }
 
-        refreshAll();
+        if (e.getChangeType() == CollectionChangeType.SET_ITEM) {
+            e.getChanges().forEach(this::refreshItem);
+        } else {
+            refreshAll();
+        }
     }
 
     protected void containerItemPropertyChanged(CollectionContainer.ItemPropertyChangeEvent<E> e) {

@@ -16,30 +16,14 @@
 
 package io.jmix.flowui.kit.meta;
 
+import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target(ElementType.METHOD)
-@Inherited
-public @interface StudioFlowComponent {
-
-    String name() default "";
-
-    /**
-     * Fully-qualified name of component class
-     */
-    String classFqn() default "";
-
-    String category() default "";
-
-    String icon() default "";
-
-    String xmlElement() default "";
-
-    String xmlns() default "";
-
-    String xmlnsAlias() default "";
-
-    StudioFlowProperty[] properties() default {};
+@Documented
+@Retention(RetentionPolicy.CLASS)
+@Target(ElementType.TYPE)
+public @interface StudioUiKit {
 }

@@ -16,42 +16,30 @@
 
 package io.jmix.flowui.kit.meta;
 
-import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
 import java.lang.annotation.Target;
 
-@Documented
-@Target(ElementType.TYPE_PARAMETER)
-public @interface StudioFlowProperty {
-
-    String xmlAttribute();
-
-    StudioFlowPropertyType type();
-
-    /**
-     * Fully-qualified name of property class
-     */
-    String classFqn() default "";
+@Target(ElementType.METHOD)
+@Inherited
+public @interface StudioComponent {
 
     String name() default "";
 
-    boolean required() default false;
+    /**
+     * Fully-qualified name of component class
+     */
+    String classFqn() default "";
 
-    String defaultValue() default "";
+    String category() default "";
 
-    String initialValue() default "";
+    String icon() default "";
 
-    String[] options() default {};
+    String xmlElement() default "";
 
-    String setMethod() default "";
+    String xmlns() default "";
 
-    String setParameterFqn() default "";
+    String xmlnsAlias() default "";
 
-    String addMethod() default "";
-
-    String addParameterFqn() default "";
-
-    String removeMethod() default "";
-
-    String removeParameterFqn() default "";
+    StudioProperty[] properties() default {};
 }

@@ -17,9 +17,9 @@
 package io.jmix.flowui.kit.meta;
 
 /**
- * Type of {@link StudioFlowProperty}.
+ * Type of {@link StudioProperty}.
  */
-public enum StudioFlowPropertyType {
+public enum StudioPropertyType {
     /**
      * Big decimal type.
      */
@@ -73,7 +73,7 @@ public enum StudioFlowPropertyType {
 
     /**
      * Arbitrary value represented by string with a list of possible options.
-     * Similar to {@link StudioFlowPropertyType#ENUMERATION}, but allows text input.
+     * Similar to {@link StudioPropertyType#ENUMERATION}, but allows text input.
      */
     OPTIONS,
 

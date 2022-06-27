@@ -179,6 +179,7 @@ class JmixBuildPlugin implements Plugin<Project> {
                             options.encoding = 'UTF-8'
                             options.memberLevel = JavadocMemberLevel.PROTECTED
                             options.addStringOption("sourcepath", "")
+                            include('io/jmix/**')
 
                             dependsOn javaSubprojects.javadoc
                             source javaSubprojects.javadoc.source

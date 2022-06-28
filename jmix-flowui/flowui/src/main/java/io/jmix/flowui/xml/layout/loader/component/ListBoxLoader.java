@@ -25,14 +25,13 @@ public class ListBoxLoader extends AbstractComponentLoader<JmixListBox<?>> {
     protected DataLoaderSupport dataLoaderSupport;
 
     @Override
-    protected JmixListBox createComponent() {
+    protected JmixListBox<?> createComponent() {
         return factory.create(JmixListBox.class);
     }
 
     @Override
     public void loadComponent() {
         getDataLoaderSupport().loadItemsContainer(resultComponent, element);
-        getDataLoaderSupport().loadData(resultComponent, element);
 
         getLoaderSupport().loadBoolean(element, "readOnly", resultComponent::setReadOnly);
 

@@ -57,8 +57,15 @@ public class JmixRadioButtonGroup<V> extends RadioButtonGroup<V> implements Supp
         fieldDelegate = createFieldDelegate();
         dataViewDelegate = createDataViewDelegate();
 
+        fieldDelegate.addValueBindingChangeListener(event ->
+                dataViewDelegate.valueBindingChanged(event));
+
         setItemLabelGenerator(fieldDelegate::applyDefaultValueFormat);
 
+        attachValueChangeListener();
+    }
+
+    protected void attachValueChangeListener() {
         addValueChangeListener(e -> validate());
     }
 

@@ -272,4 +272,21 @@ public final class UiComponentUtils {
                 ? ((HasValue<?, V>) component).getEmptyValue()
                 : null;
     }
+
+    @SuppressWarnings("unchecked")
+    @Nullable
+    public static <V> V getValue(HasValue<?, V> component) {
+        return component instanceof SupportsTypedValue
+                ? ((SupportsTypedValue<?, ?, V, ?>) component).getTypedValue()
+                : component.getValue();
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <V> void setValue(HasValue<?, V> component, @Nullable V value) {
+        if (component instanceof SupportsTypedValue) {
+            ((SupportsTypedValue<?, ?, V, ?>) component).setTypedValue(value);
+        } else {
+            component.setValue(value);
+        }
+    }
 }

@@ -76,7 +76,10 @@ public class JmixCheckboxGroup<V> extends CheckboxGroup<V> implements
         fieldDelegate = createFieldDelegate();
         dataViewDelegate = createDataViewDelegate();
 
-        setItemLabelGenerator(fieldDelegate::applyDefaultCollectionItemFormat);
+        fieldDelegate.addValueBindingChangeListener(event ->
+                dataViewDelegate.valueBindingChanged(event));
+
+        setItemLabelGenerator(fieldDelegate::applyDefaultValueFormat);
 
         attachValueChangeListener();
     }

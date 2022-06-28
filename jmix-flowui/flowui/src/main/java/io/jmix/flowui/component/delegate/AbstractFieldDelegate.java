@@ -76,7 +76,7 @@ public abstract class AbstractFieldDelegate<C extends AbstractField<?, V>, T, V>
         this.toModelConverter = toModelConverter;
     }
 
-    public String applyDefaultValueFormat(@Nullable V value) {
+    public String applyDefaultValueFormat(@Nullable Object value) {
         if (valueBinding != null
                 && valueBinding.getValueSource() instanceof EntityValueSource) {
             EntityValueSource<?, V> entityValueSource = (EntityValueSource<?, V>) valueBinding.getValueSource();

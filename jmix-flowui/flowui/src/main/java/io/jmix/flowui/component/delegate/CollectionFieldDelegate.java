@@ -49,16 +49,6 @@ public class CollectionFieldDelegate<C extends AbstractField<?, Set<P>>, P, V>
         return applicationContext.getBean(FieldValueBinding.class, valueSource, component);
     }
 
-    public String applyDefaultCollectionItemFormat(@Nullable P item) {
-        if (valueBinding != null
-                && valueBinding.getValueSource() instanceof EntityValueSource) {
-            EntityValueSource<?, V> entityValueSource = (EntityValueSource<?, V>) valueBinding.getValueSource();
-            return metadataTools.format(item, entityValueSource.getMetaPropertyPath().getMetaProperty());
-        }
-
-        return metadataTools.format(item);
-    }
-
     @Nullable
     public Collection<V> convertToModel(Set<V> presentationValue, @Nullable Stream<V> options) throws ConversionException {
         Stream<V> items = options == null ? Stream.empty()

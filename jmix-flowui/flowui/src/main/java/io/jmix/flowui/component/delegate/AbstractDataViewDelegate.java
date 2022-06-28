@@ -19,14 +19,18 @@ package io.jmix.flowui.component.delegate;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.provider.HasDataView;
+import io.jmix.flowui.component.delegate.ValueBindingDelegate.ValueBindingChangeEvent;
 import io.jmix.flowui.data.SupportsDataProvider;
 import io.jmix.flowui.data.binding.DataViewBinding;
+import io.jmix.flowui.data.binding.SuspendableBinding;
+import io.jmix.flowui.data.binding.SuspendableBindingAware;
 import io.jmix.flowui.data.binding.impl.DataViewBindingImpl;
 
 import javax.annotation.Nullable;
 
 public abstract class AbstractDataViewDelegate<C extends Component & HasDataView<V, ?, ?> & SupportsDataProvider<V>, V>
-        extends AbstractComponentDelegate<C> {
+        extends AbstractComponentDelegate<C>
+        implements ValueBindingChangeObserver<Object> {
 
     protected DataViewBinding<C, V> binding;
 
@@ -43,6 +47,14 @@ public abstract class AbstractDataViewDelegate<C extends Component & HasDataView
         if (dataProvider != null) {
             this.binding = new DataViewBindingImpl<>(component, dataProvider);
             this.binding.bind();
+        }
+    }
+
+    @Override
+    public void valueBindingChanged(ValueBindingChangeEvent<?> event) {
+        if (binding instanceof SuspendableBindingAware
+                && event.getValueBinding() instanceof SuspendableBinding) {
+            ((SuspendableBindingAware) binding).setSuspendableBinding(((SuspendableBinding) event.getValueBinding()));
         }
     }
 }

@@ -16,7 +16,12 @@
 
 package io.jmix.flowui.data;
 
+import com.vaadin.flow.shared.Registration;
+
 import javax.annotation.Nullable;
+import java.util.EventObject;
+import java.util.List;
+import java.util.function.Consumer;
 
 public interface EntityItems<E> extends EntityDataUnit {
     /**
@@ -40,4 +45,38 @@ public interface EntityItems<E> extends EntityDataUnit {
      * Refreshes the source moving it to the {@link BindingState#ACTIVE} state
      */
     void refresh();
+
+    /**
+     * Adds an items change listener. The listener is called when
+     * the item collection is changed.
+     *
+     * @param listener a listener to register, not null
+     * @return a registration for the listener
+     */
+    Registration addItemsChangeListener(Consumer<ItemsChangeEvent<E>> listener);
+
+    /**
+     * Event that is fired then item collection is changed.
+     *
+     * @param <T> item type
+     */
+    class ItemsChangeEvent<T> extends EventObject {
+
+        protected final List<T> items;
+
+        public ItemsChangeEvent(EntityItems<T> source, List<T> items) {
+            super(source);
+            this.items = items;
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public EntityItems<T> getSource() {
+            return (EntityItems<T>) super.getSource();
+        }
+
+        public List<T> getItems() {
+            return items;
+        }
+    }
 }

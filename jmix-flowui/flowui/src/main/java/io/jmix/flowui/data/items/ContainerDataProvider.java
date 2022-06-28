@@ -42,7 +42,6 @@ public class ContainerDataProvider<E, F> extends AbstractDataProvider<E, F>
 
     protected E deferredSelectedItem;
 
-    //    private EventHub eventHub = new EventHub();
     private EventBus eventBus;
 
     public ContainerDataProvider(CollectionContainer<E> container) {
@@ -69,7 +68,7 @@ public class ContainerDataProvider<E, F> extends AbstractDataProvider<E, F>
         if (e.getChangeType() == CollectionChangeType.SET_ITEM) {
             e.getChanges().forEach(this::refreshItem);
         } else {
-            refreshAll();
+            getEventBus().fireEvent(new ItemsChangeEvent<>(this, container.getItems()));
         }
     }
 
@@ -119,6 +118,12 @@ public class ContainerDataProvider<E, F> extends AbstractDataProvider<E, F>
         if (loader != null) {
             loader.load();
         }
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    @Override
+    public Registration addItemsChangeListener(Consumer<ItemsChangeEvent<E>> listener) {
+        return getEventBus().addListener(ItemsChangeEvent.class, ((Consumer) listener));
     }
 
     @Override

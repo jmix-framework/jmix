@@ -32,7 +32,6 @@ public class MultiSelectListBoxLoader extends AbstractComponentLoader<JmixMultiS
     @Override
     public void loadComponent() {
         getDataLoaderSupport().loadItemsContainer(resultComponent, element);
-        getDataLoaderSupport().loadData(resultComponent, element);
 
         getLoaderSupport().loadBoolean(element, "readOnly", resultComponent::setReadOnly);
 

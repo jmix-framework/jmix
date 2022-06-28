@@ -7,19 +7,29 @@ import com.vaadin.flow.data.provider.HasDataView;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.Entity;
 import io.jmix.flowui.component.SupportsTypedValue;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.data.EntityItems;
 import io.jmix.flowui.data.binding.DataViewBinding;
+import io.jmix.flowui.data.binding.SuspendableBinding;
+import io.jmix.flowui.data.binding.SuspendableBindingAware;
 
 import javax.annotation.Nullable;
 
+import java.util.Collection;
+import java.util.List;
+
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
-public class DataViewBindingImpl<C extends Component & HasDataView<V, ?, ?>, V> implements DataViewBinding<C, V> {
+public class DataViewBindingImpl<C extends Component & HasDataView<V, ?, ?>, V>
+        implements DataViewBinding<C, V>, SuspendableBindingAware {
 
     protected DataProvider<V, ?> dataProvider;
     protected C component;
 
+    protected SuspendableBinding suspendableBinding;
+
     protected Registration componentValueChangeRegistration;
+    protected Registration itemsChangeRegistration;
 
     public DataViewBindingImpl(C component,
                                DataProvider<V, ?> dataProvider) {
@@ -40,10 +50,12 @@ public class DataViewBindingImpl<C extends Component & HasDataView<V, ?, ?>, V> 
         return dataProvider;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void bind() {
         if (dataProvider instanceof EntityItems && component instanceof HasValue) {
             this.componentValueChangeRegistration = addComponentValueChangeListener();
+            this.itemsChangeRegistration = ((EntityItems<V>) dataProvider).addItemsChangeListener(this::onItemsChanged);
         }
     }
 
@@ -75,5 +87,51 @@ public class DataViewBindingImpl<C extends Component & HasDataView<V, ?, ?>, V> 
             EntityItems<V> entityItemsSource = (EntityItems<V>) this.dataProvider;
             entityItemsSource.setSelectedItem(value);
         }
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    protected void onItemsChanged(EntityItems.ItemsChangeEvent<V> itemsChangeEvent) {
+        // Almost all HasDataView components clears their value, every time
+        // DataChangeEvent is fired (dataProvider.refreshAll()). We need to
+        // return the previous value if it is possible and prevent
+        // DataContext from changing the modified state.
+        if (component instanceof HasValue) {
+            Object value = UiComponentUtils.getValue(((HasValue) component));
+
+            if (suspendableBinding != null) {
+                suspendableBinding.suspend();
+            }
+
+            dataProvider.refreshAll();
+
+            if (value != null && contains(itemsChangeEvent.getItems(), value)) {
+                UiComponentUtils.setValue(((HasValue) component), value);
+            }
+
+            if (suspendableBinding != null) {
+                suspendableBinding.resume();
+            }
+        } else {
+            dataProvider.refreshAll();
+        }
+    }
+
+    @SuppressWarnings("SuspiciousMethodCalls")
+    protected boolean contains(List<V> items, Object value) {
+        if (value instanceof Collection) {
+            for (Object item : ((Collection<?>) value)) {
+                if (!items.contains(item)) {
+                    return false;
+                }
+            }
+            return true;
+        } else {
+            return items.contains(value);
+        }
+    }
+
+    @Override
+    public void setSuspendableBinding(@Nullable SuspendableBinding suspendableBinding) {
+        this.suspendableBinding = suspendableBinding;
     }
 }

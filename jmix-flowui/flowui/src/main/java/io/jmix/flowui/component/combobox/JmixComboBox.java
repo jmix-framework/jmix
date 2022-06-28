@@ -45,6 +45,9 @@ public class JmixComboBox<V> extends ComboBox<V>
         fieldDelegate = createFieldDelegate();
         dataViewDelegate = createDataViewDelegate();
 
+        fieldDelegate.addValueBindingChangeListener(event ->
+                dataViewDelegate.valueBindingChanged(event));
+
         setItemLabelGenerator(fieldDelegate::applyDefaultValueFormat);
     }
 

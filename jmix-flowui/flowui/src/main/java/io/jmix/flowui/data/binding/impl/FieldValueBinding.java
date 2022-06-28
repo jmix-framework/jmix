@@ -7,6 +7,8 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
+
 @Component("flowui_FieldValueBinding")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class FieldValueBinding<V> extends AbstractValueBinding<V> {
@@ -15,6 +17,7 @@ public class FieldValueBinding<V> extends AbstractValueBinding<V> {
         super(valueSource, component);
     }
 
+    @Nullable
     @Override
     protected V getComponentValue() {
         return component instanceof SupportsTypedValue
@@ -23,7 +26,7 @@ public class FieldValueBinding<V> extends AbstractValueBinding<V> {
     }
 
     @Override
-    protected void setComponentValue(V value) {
+    protected void setComponentValue(@Nullable V value) {
         if (component instanceof SupportsTypedValue) {
             ((SupportsTypedValue<?, ?, V, ?>) component).setTypedValue(value);
         } else {

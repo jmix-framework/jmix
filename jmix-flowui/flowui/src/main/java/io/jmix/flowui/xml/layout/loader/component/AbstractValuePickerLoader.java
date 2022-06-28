@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.xml.layout.loader.component;
 
+import io.jmix.flowui.data.SupportsValueSource;
 import io.jmix.flowui.kit.component.valuepicker.ValuePickerBase;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import io.jmix.flowui.xml.layout.support.ActionLoaderSupport;
@@ -28,7 +29,9 @@ public abstract class AbstractValuePickerLoader<T extends ValuePickerBase<?, ?>>
 
     @Override
     public void loadComponent() {
-        getDataLoaderSupport().loadData(resultComponent, element);
+        if (resultComponent instanceof SupportsValueSource) {
+            getDataLoaderSupport().loadData(((SupportsValueSource<?>) resultComponent), element);
+        }
 
         componentLoader().loadFormatter(resultComponent, element);
         componentLoader().loadPlaceholder(resultComponent, element);

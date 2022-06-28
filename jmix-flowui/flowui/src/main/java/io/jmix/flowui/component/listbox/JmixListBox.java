@@ -17,9 +17,11 @@
 package io.jmix.flowui.component.listbox;
 
 import com.vaadin.flow.component.listbox.ListBox;
+import com.vaadin.flow.data.provider.DataProvider;
+import io.jmix.core.MetadataTools;
 import io.jmix.flowui.component.delegate.DataViewDelegate;
-import io.jmix.flowui.component.delegate.FieldDelegate;
-import io.jmix.flowui.data.*;
+import io.jmix.flowui.data.SupportsDataProvider;
+import io.jmix.flowui.data.SupportsItemsContainer;
 import io.jmix.flowui.data.items.ContainerDataProvider;
 import io.jmix.flowui.model.CollectionContainer;
 import org.springframework.beans.BeansException;
@@ -27,14 +29,12 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import javax.annotation.Nullable;
-
-public class JmixListBox<V> extends ListBox<V> implements SupportsValueSource<V>, SupportsDataProvider<V>,
+public class JmixListBox<V> extends ListBox<V> implements SupportsDataProvider<V>,
         SupportsItemsContainer<V>, ApplicationContextAware, InitializingBean {
 
     protected ApplicationContext applicationContext;
+    protected MetadataTools metadataTools;
 
-    protected FieldDelegate<JmixListBox<V>, V, V> fieldDelegate;
     protected DataViewDelegate<JmixListBox<V>, V> dataViewDelegate;
 
     @Override
@@ -44,14 +44,22 @@ public class JmixListBox<V> extends ListBox<V> implements SupportsValueSource<V>
 
     @Override
     public void afterPropertiesSet() throws Exception {
+        autowireDependencies();
         initComponent();
     }
 
+    protected void autowireDependencies() {
+        metadataTools = applicationContext.getBean(MetadataTools.class);
+    }
+
     protected void initComponent() {
-        fieldDelegate = createFieldDelegate();
         dataViewDelegate = createOptionsDelegate();
 
-        setItemLabelGenerator(fieldDelegate::applyDefaultValueFormat);
+        setItemLabelGenerator(this::applyDefaultValueFormat);
+    }
+
+    protected String applyDefaultValueFormat(V value) {
+        return metadataTools.format(value);
     }
 
     @Override
@@ -59,21 +67,16 @@ public class JmixListBox<V> extends ListBox<V> implements SupportsValueSource<V>
         setItems(new ContainerDataProvider<>(container));
     }
 
-    @Nullable
     @Override
-    public ValueSource<V> getValueSource() {
-        return fieldDelegate.getValueSource();
+    public void setDataProvider(DataProvider<V, ?> dataProvider) {
+        // Method is called from a constructor so bean can be null
+        if (dataViewDelegate != null) {
+            dataViewDelegate.bind(dataProvider);
+        }
+        super.setDataProvider(dataProvider);
     }
 
-    @Override
-    public void setValueSource(@Nullable ValueSource<V> valueSource) {
-        fieldDelegate.setValueSource(valueSource);
-    }
-
-    protected FieldDelegate<JmixListBox<V>, V, V> createFieldDelegate() {
-        return applicationContext.getBean(FieldDelegate.class, this);
-    }
-
+    @SuppressWarnings("unchecked")
     protected DataViewDelegate<JmixListBox<V>, V> createOptionsDelegate() {
         return applicationContext.getBean(DataViewDelegate.class, this);
     }

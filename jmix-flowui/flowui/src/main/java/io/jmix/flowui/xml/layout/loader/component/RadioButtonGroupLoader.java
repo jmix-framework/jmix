@@ -31,7 +31,7 @@ public class RadioButtonGroupLoader extends AbstractComponentLoader<JmixRadioBut
 
     @Override
     public void loadComponent() {
-        getDataLoaderSupport().loadItemsContainer(resultComponent, element);
+        getDataLoaderSupport().loadItems(resultComponent, element);
         getDataLoaderSupport().loadData(resultComponent, element);
 
         componentLoader().loadLabel(resultComponent, element);

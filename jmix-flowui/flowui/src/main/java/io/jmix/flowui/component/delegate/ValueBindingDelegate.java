@@ -17,6 +17,7 @@
 package io.jmix.flowui.component.delegate;
 
 import com.vaadin.flow.shared.Registration;
+import io.jmix.flowui.data.ValueSource;
 import io.jmix.flowui.data.binding.ValueBinding;
 
 import javax.annotation.Nullable;
@@ -42,6 +43,13 @@ public interface ValueBindingDelegate<T> {
         @Override
         public ValueBindingDelegate<T> getSource() {
             return (ValueBindingDelegate<T>) super.getSource();
+        }
+
+        @Nullable
+        public ValueSource<T> getValueSource() {
+            return valueBinding != null
+                    ? valueBinding.getValueSource()
+                    : null;
         }
 
         @Nullable

@@ -31,7 +31,7 @@ public class CheckboxGroupLoader extends AbstractComponentLoader<JmixCheckboxGro
 
     @Override
     public void loadComponent() {
-        getDataLoaderSupport().loadItemsContainer(resultComponent, element);
+        getDataLoaderSupport().loadItems(resultComponent, element);
         getDataLoaderSupport().loadData(resultComponent, element);
 
         componentLoader().loadLabel(resultComponent, element);

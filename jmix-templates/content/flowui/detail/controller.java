@@ -9,7 +9,7 @@ import io.jmix.flowui.screen.*;
 <%if (classComment) {%>
 ${classComment}
 <%}%>@Route(value = ":id", layout = MainView.class)
-@RoutePrefix("${route}")
+@RoutePrefix("${routePrefix}")
 @UiController("${detailId}")
 @UiDescriptor("${detailDescriptorName}.xml")
 @EditedEntityContainer("${dcId}")

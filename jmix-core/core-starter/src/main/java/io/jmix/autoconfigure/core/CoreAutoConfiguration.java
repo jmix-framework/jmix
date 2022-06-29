@@ -16,10 +16,7 @@
 
 package io.jmix.autoconfigure.core;
 
-import io.jmix.core.CoreConfiguration;
-import io.jmix.core.JmixAnnotationJmxAttributeSource;
-import io.jmix.core.JmixModules;
-import io.jmix.core.Resources;
+import io.jmix.core.*;
 import io.jmix.core.impl.JmixMessageSource;
 import io.jmix.core.pessimisticlocking.LockManager;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -38,10 +35,15 @@ import org.springframework.context.annotation.Import;
 import org.springframework.jmx.export.naming.ObjectNamingStrategy;
 import org.springframework.scripting.ScriptEvaluator;
 import org.springframework.scripting.groovy.GroovyScriptEvaluator;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.util.StringUtils;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import javax.cache.Cache;
 import javax.cache.configuration.MutableConfiguration;
+import java.util.Arrays;
 
 @AutoConfiguration
 @Import({CoreConfiguration.class})
@@ -84,5 +86,29 @@ public class CoreAutoConfiguration {
         namingStrategy.setEnsureUniqueRuntimeObjectNames(properties.isUniqueNames());
 
         return namingStrategy;
+    }
+
+    /**
+     * A standard implementation of {@link CorsConfigurationSource} that takes most of its settings from
+     * {@link CorsProperties}.
+     * <p>
+     * A bean with corsConfigurationSource is used by CorsFilter in Spring Security filter chain. Define a bean with the
+     * "corsConfigurationSource" name in the application if you want to override the standard implementation.
+     *
+     * @see HttpSecurity#cors()
+     */
+    @Bean
+    @ConditionalOnMissingBean(name = "corsConfigurationSource")
+    public CorsConfigurationSource corsConfigurationSource(CorsProperties corsProperties) {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(corsProperties.getAllowedOrigins());
+        configuration.setAllowedMethods(corsProperties.getAllowedMethods());
+        configuration.setAllowedHeaders(corsProperties.getAllowedHeaders());
+        configuration.setAllowCredentials(corsProperties.getAllowCredentials());
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        for (String urlPattern : corsProperties.getUrlPatterns()) {
+            source.registerCorsConfiguration(urlPattern, configuration);
+        }
+        return source;
     }
 }

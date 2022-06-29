@@ -15,11 +15,12 @@
  */
 package io.jmix.ui.menu;
 
-import io.jmix.core.JmixModules;
-import io.jmix.core.MessageTools;
-import io.jmix.core.Messages;
-import io.jmix.core.Resources;
+import com.google.common.base.Strings;
+import io.jmix.core.*;
+import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.common.xmlparsing.Dom4jTools;
+import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.component.KeyCombination;
 import io.jmix.ui.icon.Icons;
@@ -37,10 +38,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -58,36 +56,88 @@ public class MenuConfig {
 
     protected List<MenuItem> rootItems = new ArrayList<>();
 
-    @Autowired
     protected Resources resources;
-
-    @Autowired
     protected Messages messages;
-
-    @Autowired
     protected MessageTools messageTools;
-
-    @Autowired
     protected ThemeConstantsManager themeConstantsManager;
-
-    @Autowired
     protected Dom4jTools dom4JTools;
-
-    @Autowired
     protected Environment environment;
-
-    @Autowired
     protected UiProperties uiProperties;
-
-    @Autowired
     protected JmixModules modules;
-
-    @Autowired
     protected Icons icons;
+    protected Metadata metadata;
+    protected MetadataTools metadataTools;
+    protected FetchPlanRepository fetchPlanRepository;
+    protected DataManager dataManager;
 
     protected volatile boolean initialized;
 
     protected ReadWriteLock lock = new ReentrantReadWriteLock();
+
+    @Autowired
+    public void setMetadata(Metadata metadata) {
+        this.metadata = metadata;
+    }
+
+    @Autowired
+    public void setMetadataTools(MetadataTools metadataTools) {
+        this.metadataTools = metadataTools;
+    }
+
+    @Autowired
+    public void setFetchPlanRepository(FetchPlanRepository fetchPlanRepository) {
+        this.fetchPlanRepository = fetchPlanRepository;
+    }
+
+    @Autowired
+    public void setDataManager(DataManager dataManager) {
+        this.dataManager = dataManager;
+    }
+
+    @Autowired
+    public void setResources(Resources resources) {
+        this.resources = resources;
+    }
+
+    @Autowired
+    public void setMessages(Messages messages) {
+        this.messages = messages;
+    }
+
+    @Autowired
+    public void setMessageTools(MessageTools messageTools) {
+        this.messageTools = messageTools;
+    }
+
+    @Autowired
+    public void setThemeConstantsManager(ThemeConstantsManager themeConstantsManager) {
+        this.themeConstantsManager = themeConstantsManager;
+    }
+
+    @Autowired
+    public void setDom4JTools(Dom4jTools dom4JTools) {
+        this.dom4JTools = dom4JTools;
+    }
+
+    @Autowired
+    public void setEnvironment(Environment environment) {
+        this.environment = environment;
+    }
+
+    @Autowired
+    public void setUiProperties(UiProperties uiProperties) {
+        this.uiProperties = uiProperties;
+    }
+
+    @Autowired
+    public void setModules(JmixModules modules) {
+        this.modules = modules;
+    }
+
+    @Autowired
+    public void setIcons(Icons icons) {
+        this.icons = icons;
+    }
 
     public String getItemCaption(String id) {
         return messages.getMessage("menu-config." + id);
@@ -290,7 +340,20 @@ public class MenuConfig {
         loadCaption(element, menuItem);
         loadDescription(element, menuItem);
 
+        menuItem.setProperties(loadMenuItemProperties(element));
+
         return menuItem;
+    }
+
+    protected void checkValueOrEntityProvided(Element property) {
+        String value = property.attributeValue("value");
+        String entityClass = property.attributeValue("entityClass");
+
+        if (Strings.isNullOrEmpty(value) && Strings.isNullOrEmpty(entityClass)) {
+            String name = property.attributeValue("name");
+            throw new IllegalStateException(
+                    String.format("Screen property '%s' has neither value nor entity load info", name));
+        }
     }
 
     protected void checkDuplicateAction(@Nullable String menuItemId, String... actionDefinition) {
@@ -369,6 +432,118 @@ public class MenuConfig {
                     .get(value.substring(ThemeConstants.PREFIX.length()));
         }
         return value;
+    }
+
+    protected List<MenuItem.MenuItemProperty> loadMenuItemProperties(Element menuItem) {
+        Element properties = menuItem.element("properties");
+        if (properties == null) {
+            return Collections.emptyList();
+        }
+
+        List<Element> propertyList = properties.elements("property");
+        List<MenuItem.MenuItemProperty> itemProperties = new ArrayList<>(propertyList.size());
+
+        for (Element property : propertyList) {
+            String propertyName = property.attributeValue("name");
+            if (Strings.isNullOrEmpty(propertyName)) {
+                throw new IllegalStateException("Property cannot have empty name");
+            }
+
+            checkValueOrEntityProvided(property);
+
+            MenuItem.MenuItemProperty itemProperty = new MenuItem.MenuItemProperty(propertyName);
+
+            Object value = loadMenuItemPropertyValue(property);
+
+            if (value != null) {
+                itemProperty.setValue(value);
+            } else {
+                itemProperty.setEntityClass(loadItemPropertyEntityClass(property));
+                itemProperty.setEntityId(loadItemPropertyEntityId(property, itemProperty.getEntityClass()));
+                itemProperty.setFetchPlanName(loadEntityFetchPlan(property));
+            }
+
+            itemProperties.add(itemProperty);
+        }
+
+        return itemProperties;
+    }
+
+    @Nullable
+    protected Object loadMenuItemPropertyValue(Element property) {
+        String value = property.attributeValue("value");
+        return !Strings.isNullOrEmpty(value) ? getMenuItemPropertyTypedValue(value) : null;
+    }
+
+    protected Object getMenuItemPropertyTypedValue(String value) {
+        if (Boolean.TRUE.toString().equalsIgnoreCase(value)
+                || Boolean.FALSE.toString().equalsIgnoreCase(value)) {
+            return Boolean.valueOf(value);
+        }
+        return value;
+    }
+
+    protected MetaClass loadItemPropertyEntityClass(Element property) {
+        String entityClass = property.attributeValue("entityClass");
+        if (StringUtils.isEmpty(entityClass)) {
+            String name = property.attributeValue("name");
+            throw new IllegalStateException(String.format("Screen property '%s' does not have entity class", name));
+        }
+
+        return metadata.getClass(ReflectionHelper.getClass(entityClass));
+    }
+
+    protected Object loadItemPropertyEntityId(Element property, MetaClass metaClass) {
+        String entityId = property.attributeValue("entityId");
+        if (StringUtils.isEmpty(entityId)) {
+            String name = property.attributeValue("name");
+            throw new IllegalStateException(String.format("Screen entity property '%s' doesn't have entity id", name));
+        }
+
+        Object id = parseEntityId(metaClass, entityId);
+        if (id == null) {
+            throw new RuntimeException(String.format("Unable to parse id value `%s` for entity '%s'",
+                    entityId, metaClass.getJavaClass()));
+        }
+        return id;
+    }
+
+    protected String loadEntityFetchPlan(Element propertyElement) {
+        String entityFetchPlan = propertyElement.attributeValue("entityFetchPlan");
+        return StringUtils.isNotEmpty(entityFetchPlan)
+                ? entityFetchPlan
+                : propertyElement.attributeValue("entityView"); // for backward compatibility
+    }
+
+    @Nullable
+    protected Object parseEntityId(MetaClass entityMetaClass, String entityId) {
+        MetaProperty pkProperty = metadataTools.getPrimaryKeyProperty(entityMetaClass);
+
+        if (pkProperty == null) {
+            return null;
+        }
+
+        Class<?> pkType = pkProperty.getJavaType();
+
+        if (String.class.equals(pkType)) {
+            return entityId;
+        } else if (UUID.class.equals(pkType)) {
+            return UUID.fromString(entityId);
+        }
+
+        Object id = null;
+
+        try {
+            if (Long.class.equals(pkType)) {
+                id = Long.valueOf(entityId);
+            } else if (Integer.class.equals(pkType)) {
+                id = Integer.valueOf(entityId);
+            }
+        } catch (Exception e) {
+            log.debug("Failed to parse entity id: '{}'", entityId, e);
+        }
+
+        return id;
     }
 
     protected void addItem(List<MenuItem> items, @Nullable MenuItem menuItem, @Nullable MenuItem beforeItem, boolean before) {

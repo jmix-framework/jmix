@@ -17,8 +17,7 @@
 package io.jmix.flowui.xml.layout.support;
 
 import com.google.common.base.Strings;
-import com.vaadin.flow.component.Component;
-import io.jmix.flowui.data.SupportsOptionsContainer;
+import io.jmix.flowui.data.SupportsItemsContainer;
 import io.jmix.flowui.data.SupportsValueSource;
 import io.jmix.flowui.data.value.ContainerValueSource;
 import io.jmix.flowui.exception.GuiDevelopmentException;
@@ -56,17 +55,14 @@ public class DataLoaderSupport {
         this.loaderResolver = loaderResolver;
     }
 
-    // TODO: gg, accept SupportsValueSource
-    public void loadData(Component component, Element element) {
+    public void loadData(SupportsValueSource<?> component, Element element) {
         loadContainer(component, element);
     }
 
-    public void loadContainer(Component component, Element element) {
-        if (component instanceof SupportsValueSource<?>) {
-            String property = element.attributeValue("property");
-            loadContainer(element, property).ifPresent(container ->
-                    ((SupportsValueSource<?>) component).setValueSource(new ContainerValueSource<>(container, property)));
-        }
+    public void loadContainer(SupportsValueSource<?> component, Element element) {
+        String property = element.attributeValue("property");
+        loadContainer(element, property).ifPresent(container ->
+                component.setValueSource(new ContainerValueSource<>(container, property)));
     }
 
     public Optional<InstanceContainer<?>> loadContainer(Element element, @Nullable String property) {
@@ -95,13 +91,13 @@ public class DataLoaderSupport {
         return Optional.empty();
     }
 
-    public <E> void loadOptionsContainer(SupportsOptionsContainer<E> component, Element element) {
-        Optional<CollectionContainer<E>> container = loadOptionsContainer(element);
-        container.ifPresent(component::setOptionsContainer);
+    public <E> void loadItemsContainer(SupportsItemsContainer<E> component, Element element) {
+        Optional<CollectionContainer<E>> container = loadItemsContainer(element);
+        container.ifPresent(component::setItems);
     }
 
-    protected <E> Optional<CollectionContainer<E>> loadOptionsContainer(Element element) {
-        String containerId = element.attributeValue("optionsContainer");
+    protected <E> Optional<CollectionContainer<E>> loadItemsContainer(Element element) {
+        String containerId = element.attributeValue("itemsContainer");
         if (containerId != null) {
 
             Screen<?> screen = getComponentContext().getScreen();

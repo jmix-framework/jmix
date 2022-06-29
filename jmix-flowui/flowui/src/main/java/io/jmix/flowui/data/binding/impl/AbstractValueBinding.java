@@ -5,12 +5,12 @@ import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.MessageTools;
 import io.jmix.core.MetadataTools;
-import io.jmix.core.common.event.Subscription;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.flowui.data.binding.SuspendableBinding;
 import io.jmix.flowui.data.binding.ValueBinding;
 import io.jmix.flowui.data.BindingState;
 import io.jmix.flowui.data.DataUnit.StateChangeEvent;
@@ -24,11 +24,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
+import javax.annotation.Nullable;
 import javax.validation.Validator;
 import javax.validation.constraints.NotNull;
 import javax.validation.metadata.BeanDescriptor;
 
-public abstract class AbstractValueBinding<V> implements ValueBinding<V> {
+public abstract class AbstractValueBinding<V> implements ValueBinding<V>, SuspendableBinding {
 
     protected ApplicationContext applicationContext;
     protected MessageTools messageTools;
@@ -39,8 +40,10 @@ public abstract class AbstractValueBinding<V> implements ValueBinding<V> {
     protected HasValue<?, V> component;
 
     protected Registration componentValueChangeRegistration;
-    protected Subscription valueSourceValueChangeSubscription;
-    protected Subscription valueSourceStateChangeSubscription;
+    protected Registration valueSourceValueChangeSubscription;
+    protected Registration valueSourceStateChangeSubscription;
+
+    protected boolean suspended = false;
 
     public AbstractValueBinding(ValueSource<V> valueSource, HasValue<?, V> component) {
         Preconditions.checkNotNullArgument(valueSource);
@@ -94,13 +97,14 @@ public abstract class AbstractValueBinding<V> implements ValueBinding<V> {
         component.setReadOnly(valueSource.isReadOnly());
 
         if (valueSource instanceof EntityValueSource) {
-            EntityValueSource entityValueSource = (EntityValueSource) valueSource;
+            EntityValueSource<?, ?> entityValueSource = (EntityValueSource<?, ?>) valueSource;
             MetaPropertyPath metaPropertyPath = entityValueSource.getMetaPropertyPath();
 
             initRequired(component, metaPropertyPath);
 
             if (component instanceof SupportsValidation) {
-                initBeanValidator((SupportsValidation) component, metaPropertyPath);
+                //noinspection unchecked
+                initBeanValidator((SupportsValidation<V>) component, metaPropertyPath);
             }
         }
     }
@@ -149,7 +153,26 @@ public abstract class AbstractValueBinding<V> implements ValueBinding<V> {
         }
     }
 
-    protected void setValueToSource(V value) {
+    @Override
+    public void suspend() {
+        suspended = true;
+    }
+
+    @Override
+    public void resume() {
+        suspended = false;
+    }
+
+    @Override
+    public boolean suspended() {
+        return suspended;
+    }
+
+    protected void setValueToSource(@Nullable V value) {
+        if (suspended()) {
+            return;
+        }
+
         if (valueSource.getState() == BindingState.ACTIVE
                 && !valueSource.isReadOnly()) {
             valueSource.setValue(value);
@@ -182,25 +205,28 @@ public abstract class AbstractValueBinding<V> implements ValueBinding<V> {
         }
     }
 
-    protected void initBeanValidator(SupportsValidation component, MetaPropertyPath mpp) {
+    protected void initBeanValidator(SupportsValidation<V> component, MetaPropertyPath mpp) {
         MetaProperty metaProperty = mpp.getMetaProperty();
 
         MetaClass propertyEnclosingMetaClass = metadataTools.getPropertyEnclosingMetaClass(mpp);
-        Class enclosingJavaClass = propertyEnclosingMetaClass.getJavaClass();
+        Class<?> enclosingJavaClass = propertyEnclosingMetaClass.getJavaClass();
 
         if (enclosingJavaClass != KeyValueEntity.class) {
             BeanDescriptor beanDescriptor = validator.getConstraintsForClass(enclosingJavaClass);
 
             if (beanDescriptor.isBeanConstrained()) {
+                //noinspection unchecked
                 component.addValidator(applicationContext.getBean(BeanPropertyValidator.class, enclosingJavaClass, metaProperty.getName()));
             }
         }
     }
 
+    @Nullable
     protected abstract V getComponentValue();
 
-    protected abstract void setComponentValue(V value);
+    protected abstract void setComponentValue(@Nullable V value);
 
+    @SuppressWarnings("unchecked")
     protected Registration addComponentValueChangeListener(Runnable listener) {
         if (component instanceof SupportsTypedValue) {
             return ((SupportsTypedValue<?, ?, V, ?>) component).addTypedValueChangeListener(event -> listener.run());

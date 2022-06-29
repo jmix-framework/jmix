@@ -16,7 +16,7 @@
 
 package io.jmix.flowui.data;
 
-import io.jmix.core.common.event.Subscription;
+import com.vaadin.flow.shared.Registration;
 
 import java.util.EventObject;
 import java.util.function.Consumer;
@@ -33,7 +33,7 @@ public interface DataUnit {
      * @param listener the listener to be added
      * @return a registration object for removing an event listener added to a source
      */
-    Subscription addStateChangeListener(Consumer<StateChangeEvent> listener);
+    Registration addStateChangeListener(Consumer<StateChangeEvent> listener);
 
     /**
      * An event that is fired when DataUnit state is changed.

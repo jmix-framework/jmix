@@ -4,7 +4,6 @@ import com.google.common.base.Strings;
 import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.ComponentUtil;
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.Messages;
@@ -23,7 +22,7 @@ import io.jmix.flowui.component.HasRequired;
 import io.jmix.flowui.component.SupportsDatatype;
 import io.jmix.flowui.component.SupportsTypedValue;
 import io.jmix.flowui.component.SupportsValidation;
-import io.jmix.flowui.component.delegate.TextFieldDelegate;
+import io.jmix.flowui.component.delegate.TextInputFieldDelegate;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.exception.ValidationException;
 import org.springframework.beans.factory.InitializingBean;
@@ -42,13 +41,13 @@ public class TypedTextField<V> extends TextField
 
     protected ApplicationContext applicationContext;
 
-    protected TextFieldDelegate<V> fieldDelegate;
+    protected TextInputFieldDelegate<TypedTextField<V>, V> fieldDelegate;
 
     protected V internalValue;
 
     /**
      * Component manually handles Vaadin value change event: when programmatically sets value
-     * (see {@link #setValueInternal(String)}) and client-side sets value
+     * (see {@link #setValueInternal(Object, String)}) and client-side sets value
      * (see {@link #onValueChange(ComponentValueChangeEvent)}). Therefore, any Vaadin value change listener has a
      * wrapper and disabled for handling event.
      */
@@ -72,8 +71,8 @@ public class TypedTextField<V> extends TextField
     }
 
     @SuppressWarnings("unchecked")
-    protected TextFieldDelegate<V> createFieldDelegate() {
-        return applicationContext.getBean(TextFieldDelegate.class, this);
+    protected TextInputFieldDelegate<TypedTextField<V>, V> createFieldDelegate() {
+        return applicationContext.getBean(TextInputFieldDelegate.class, this);
     }
 
     @Nullable
@@ -136,19 +135,21 @@ public class TypedTextField<V> extends TextField
 
     @Override
     public void setTypedValue(@Nullable V value) {
-        setValueInternal(convertToPresentation(value));
+        setValueInternal(value, convertToPresentation(value));
     }
 
     @Override
     public void setValue(String value) {
-        setValueInternal(value);
+        setValueInternal(null, value);
     }
 
-    protected void setValueInternal(String value) {
+    protected void setValueInternal(@Nullable V modelValue, String presentationValue) {
         try {
-            V modelValue = convertToModel(value);
+            if (modelValue == null) {
+                modelValue = convertToModel(presentationValue);
+            }
 
-            super.setValue(value);
+            super.setValue(presentationValue);
 
             V oldValue = internalValue;
             this.internalValue = modelValue;
@@ -300,7 +301,8 @@ public class TypedTextField<V> extends TextField
 
             if (range.isDatatype()) {
                 Datatype<V> propertyDataType = range.asDatatype();
-                return Strings.nullToEmpty(propertyDataType.format(modelValue, UI.getCurrent().getLocale()));
+                return Strings.nullToEmpty(propertyDataType.format(modelValue,
+                        applicationContext.getBean(CurrentAuthentication.class).getLocale()));
             } else {
                 setReadOnly(true);
                 if (modelValue == null) {
@@ -326,7 +328,8 @@ public class TypedTextField<V> extends TextField
             }
         }
         if (fieldDelegate.getDatatype() != null) {
-            return Strings.nullToEmpty(fieldDelegate.getDatatype().format(modelValue, UI.getCurrent().getLocale()));
+            return Strings.nullToEmpty(fieldDelegate.getDatatype().format(modelValue,
+                    applicationContext.getBean(CurrentAuthentication.class).getLocale()));
         }
         return Strings.nullToEmpty((String) modelValue);
     }

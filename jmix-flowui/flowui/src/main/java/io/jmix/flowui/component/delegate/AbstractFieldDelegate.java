@@ -30,7 +30,11 @@ import java.util.function.Function;
 import static io.jmix.flowui.component.UiComponentUtils.isComponentEnabled;
 import static io.jmix.flowui.component.UiComponentUtils.isComponentVisible;
 
-
+/**
+ * @param <C> component type
+ * @param <T> value source value type
+ * @param <V> component value type
+ */
 public abstract class AbstractFieldDelegate<C extends AbstractField<?, V>, T, V>
         extends AbstractValueComponentDelegate<C, T, V>
         implements ApplicationContextAware {
@@ -72,7 +76,7 @@ public abstract class AbstractFieldDelegate<C extends AbstractField<?, V>, T, V>
         this.toModelConverter = toModelConverter;
     }
 
-    public String applyDefaultValueFormat(@Nullable V value) {
+    public String applyDefaultValueFormat(@Nullable Object value) {
         if (valueBinding != null
                 && valueBinding.getValueSource() instanceof EntityValueSource) {
             EntityValueSource<?, V> entityValueSource = (EntityValueSource<?, V>) valueBinding.getValueSource();
@@ -217,7 +221,7 @@ public abstract class AbstractFieldDelegate<C extends AbstractField<?, V>, T, V>
 
     protected void setComponentRequiredErrorState() {
         // Error message is placed under the component
-        // so there is no need to get a label form the field
+        // so there is no need to get a label from the field
         String errorMessage = getRequiredMessage();
         if (Strings.isNullOrEmpty(errorMessage)) {
             errorMessage = getMessage("validationFail.defaultRequiredMessage");

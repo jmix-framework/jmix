@@ -22,12 +22,15 @@ import io.jmix.ui.event.screen.ScreenOpenedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
+
 @Component(TestWebBean.NAME)
 public class TestWebBean {
 
     public static final String NAME = "test_WebBean";
 
     public static final ThreadLocal<Boolean> testMethodInvoked = new ThreadLocal<>();
+    public static final ThreadLocal<Boolean> paramsExist = new ThreadLocal<>();
 
     public static final ThreadLocal<Boolean> screenOpenedEventHandled = new ThreadLocal<>();
     public static final ThreadLocal<Boolean> screenClosedEventHandled = new ThreadLocal<>();
@@ -35,6 +38,10 @@ public class TestWebBean {
 
     public void testMethod() {
         testMethodInvoked.set(true);
+    }
+
+    public void testMethodWithParams(Map<String, Object> params) {
+        paramsExist.set(!params.isEmpty());
     }
 
     @EventListener

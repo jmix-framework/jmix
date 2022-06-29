@@ -23,11 +23,11 @@ import test_support.entity.sales.Order;
 @UiController("test_MenuPropertiesInjectionTestScreen")
 public class MenuPropertiesInjectionTestScreen extends Screen {
 
-    protected int testIntProperty;
+    public int testIntProperty;
 
-    protected String testStringProperty;
+    public String testStringProperty;
 
-    protected Order entityToEdit;
+    public Order entityToEdit;
 
     public void setTestIntProperty(int testIntProperty) {
         this.testIntProperty = testIntProperty;

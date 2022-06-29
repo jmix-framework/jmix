@@ -41,7 +41,7 @@ class NumberFieldXmlLoadTest extends FlowuiTestSpecification {
         registerScreenBasePackages("component_xml_load.screen")
 
         def order = dataManager.create(Order)
-        order.amount = 96
+        order.total = 96
 
         dataManager.save(order)
     }
@@ -80,7 +80,9 @@ class NumberFieldXmlLoadTest extends FlowuiTestSpecification {
             minWidth == "80px"
             placeholder == "placeholderString"
             readOnly
+            required
             requiredIndicatorVisible
+            requiredMessage == "requiredMessageString"
             step == 5
             themeNames.containsAll(["small", "align-right"])
             title == "titleString"
@@ -103,8 +105,7 @@ class NumberFieldXmlLoadTest extends FlowuiTestSpecification {
         then: "NumberField will be loaded with the value of the property"
         verifyAll(componentView.numberFieldWithValueId) {
             id.get() == "numberFieldWithValueId"
-            //TODO: kremnevda, will be added with data binding 11.05.2022
-            //value == order.amount
+            value == order.total
         }
     }
 }

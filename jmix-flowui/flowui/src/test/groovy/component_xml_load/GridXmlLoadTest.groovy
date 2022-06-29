@@ -85,7 +85,7 @@ class GridXmlLoadTest extends FlowuiTestSpecification {
             verticalScrollingEnabled
             visible
             width == "100px"
-            columns.size() == 10
+            columns.size() == 11
         }
 
         when: "anotherDataGrid is loaded"
@@ -146,7 +146,7 @@ class GridXmlLoadTest extends FlowuiTestSpecification {
             verticalScrollingEnabled
             visible
             width == "100px"
-            columns.size() == 10
+            columns.size() == 11
         }
 
         when: "anotherTreeDataGrid is loaded"

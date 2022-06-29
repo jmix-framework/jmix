@@ -15,11 +15,13 @@
  */
 package io.jmix.ui.menu;
 
+import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.component.KeyCombination;
 import org.dom4j.Element;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -45,6 +47,8 @@ public class MenuItem {
 
     private KeyCombination shortcut;
     private boolean isMenu = false;
+
+    protected List<MenuItemProperty> properties;
 
     public MenuItem(@Nullable MenuItem parent, String id) {
         this.parent = parent;
@@ -198,5 +202,67 @@ public class MenuItem {
 
     public void setBeanMethod(String beanMethod) {
         this.beanMethod = beanMethod;
+    }
+
+    public List<MenuItemProperty> getProperties() {
+        if (properties == null) {
+            return Collections.emptyList();
+        }
+        return properties;
+    }
+
+    public void setProperties(List<MenuItemProperty> properties) {
+        this.properties = properties;
+    }
+
+    protected static class MenuItemProperty {
+
+        protected String name;
+        protected Object value;
+
+        protected MetaClass entityClass;
+        protected Object entityId;
+        protected String fetchPlanName;
+
+        public MenuItemProperty(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        @Nullable
+        public Object getValue() {
+            return value;
+        }
+
+        public void setValue(@Nullable Object value) {
+            this.value = value;
+        }
+
+        public MetaClass getEntityClass() {
+            return entityClass;
+        }
+
+        public void setEntityClass(MetaClass entityClass) {
+            this.entityClass = entityClass;
+        }
+
+        public Object getEntityId() {
+            return entityId;
+        }
+
+        public void setEntityId(Object entityId) {
+            this.entityId = entityId;
+        }
+
+        public String getFetchPlanName() {
+            return fetchPlanName;
+        }
+
+        public void setFetchPlanName(String fetchPlanName) {
+            this.fetchPlanName = fetchPlanName;
+        }
     }
 }

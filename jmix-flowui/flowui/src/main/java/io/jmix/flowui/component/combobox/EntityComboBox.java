@@ -1,20 +1,21 @@
 package io.jmix.flowui.component.combobox;
 
+import com.vaadin.flow.data.provider.DataProvider;
+import com.vaadin.flow.function.SerializableFunction;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.component.EntityPickerComponent;
 import io.jmix.flowui.component.HasRequired;
 import io.jmix.flowui.component.LookupComponent;
 import io.jmix.flowui.component.SupportsValidation;
+import io.jmix.flowui.component.delegate.DataViewDelegate;
 import io.jmix.flowui.component.delegate.EntityFieldDelegate;
-import io.jmix.flowui.component.delegate.ListOptionsDelegate;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.component.valuepicker.JmixValuePickerActionSupport;
-import io.jmix.flowui.data.Options;
-import io.jmix.flowui.data.SupportsOptions;
-import io.jmix.flowui.data.SupportsOptionsContainer;
+import io.jmix.flowui.data.SupportsDataProvider;
+import io.jmix.flowui.data.SupportsItemsContainer;
 import io.jmix.flowui.data.ValueSource;
-import io.jmix.flowui.data.options.ContainerOptions;
+import io.jmix.flowui.data.items.ContainerDataProvider;
 import io.jmix.flowui.exception.ValidationException;
 import io.jmix.flowui.kit.component.combobox.ComboBoxPicker;
 import io.jmix.flowui.kit.component.valuepicker.ValuePickerActionSupport;
@@ -29,13 +30,13 @@ import java.util.Set;
 
 public class EntityComboBox<V> extends ComboBoxPicker<V>
         implements EntityPickerComponent<V>, LookupComponent<V>,
-        SupportsValidation<V>, SupportsOptions<V>, SupportsOptionsContainer<V>, HasRequired,
+        SupportsValidation<V>, SupportsDataProvider<V>, SupportsItemsContainer<V>, HasRequired,
         ApplicationContextAware, InitializingBean {
 
     protected ApplicationContext applicationContext;
 
     protected EntityFieldDelegate<EntityComboBox<V>, V, V> fieldDelegate;
-    protected ListOptionsDelegate<EntityComboBox<V>, V> optionsDelegate;
+    protected DataViewDelegate<EntityComboBox<V>, V> dataViewDelegate;
 
     protected MetaClass metaClass;
 
@@ -51,7 +52,10 @@ public class EntityComboBox<V> extends ComboBoxPicker<V>
 
     private void initComponent() {
         fieldDelegate = createFieldDelegate();
-        optionsDelegate = createOptionsDelegate();
+        dataViewDelegate = createDataViewDelegate();
+
+        fieldDelegate.addValueBindingChangeListener(event ->
+                dataViewDelegate.valueBindingChanged(event));
 
         setItemLabelGenerator(fieldDelegate::applyDefaultValueFormat);
     }
@@ -116,20 +120,18 @@ public class EntityComboBox<V> extends ComboBoxPicker<V>
         fieldDelegate.setValueSource(valueSource);
     }
 
-    @Nullable
     @Override
-    public Options<V> getOptions() {
-        return optionsDelegate.getListOptions();
+    public <C> void setDataProvider(DataProvider<V, C> dataProvider, SerializableFunction<String, C> filterConverter) {
+        // Method is called from a constructor so bean can be null
+        if (dataViewDelegate != null) {
+            dataViewDelegate.bind(dataProvider);
+        }
+        super.setDataProvider(dataProvider, filterConverter);
     }
 
     @Override
-    public void setOptions(@Nullable Options<V> options) {
-        optionsDelegate.setListOptions(options);
-    }
-
-    @Override
-    public void setOptionsContainer(CollectionContainer<V> container) {
-        setOptions(new ContainerOptions<>(container));
+    public void setItems(CollectionContainer<V> container) {
+        setItems(new ContainerDataProvider<>(container));
     }
 
     @Nullable
@@ -154,8 +156,8 @@ public class EntityComboBox<V> extends ComboBoxPicker<V>
     }
 
     @SuppressWarnings("unchecked")
-    protected ListOptionsDelegate<EntityComboBox<V>, V> createOptionsDelegate() {
-        return applicationContext.getBean(ListOptionsDelegate.class, this);
+    protected DataViewDelegate<EntityComboBox<V>, V> createDataViewDelegate() {
+        return applicationContext.getBean(DataViewDelegate.class, this);
     }
 
     @Override

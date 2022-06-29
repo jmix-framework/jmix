@@ -16,25 +16,23 @@
 
 package io.jmix.flowui.xml.layout.loader.component;
 
-import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
+import io.jmix.flowui.component.radiobuttongroup.JmixRadioButtonGroup;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import io.jmix.flowui.xml.layout.support.DataLoaderSupport;
 
-//TODO: kremnevda, replace RadioButtonGroup to JmixRadioButtonGroup 26.04.2022
-public class RadioButtonGroupLoader extends AbstractComponentLoader<RadioButtonGroup<?>> {
+public class RadioButtonGroupLoader extends AbstractComponentLoader<JmixRadioButtonGroup<?>> {
 
     protected DataLoaderSupport dataLoaderSupport;
 
     @Override
-    protected RadioButtonGroup<?> createComponent() {
-        return factory.create(RadioButtonGroup.class);
+    protected JmixRadioButtonGroup<?> createComponent() {
+        return factory.create(JmixRadioButtonGroup.class);
     }
 
     @Override
     public void loadComponent() {
+        getDataLoaderSupport().loadItemsContainer(resultComponent, element);
         getDataLoaderSupport().loadData(resultComponent, element);
-
-        loadBoolean(element, "required", resultComponent::setRequired);
 
         componentLoader().loadLabel(resultComponent, element);
         componentLoader().loadEnabled(resultComponent, element);
@@ -43,6 +41,7 @@ public class RadioButtonGroupLoader extends AbstractComponentLoader<RadioButtonG
         componentLoader().loadHelperText(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
         componentLoader().loadValueAndElementAttributes(resultComponent, element);
+        componentLoader().loadRequired(resultComponent, element, context);
         componentLoader().loadValidationAttributes(resultComponent, element, context);
     }
 

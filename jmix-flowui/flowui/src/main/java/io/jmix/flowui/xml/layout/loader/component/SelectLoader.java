@@ -16,21 +16,22 @@
 
 package io.jmix.flowui.xml.layout.loader.component;
 
-import com.vaadin.flow.component.select.Select;
+import io.jmix.flowui.component.select.JmixSelect;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import io.jmix.flowui.xml.layout.support.DataLoaderSupport;
 
-public class SelectLoader extends AbstractComponentLoader<Select<?>> {
+public class SelectLoader extends AbstractComponentLoader<JmixSelect<?>> {
 
     protected DataLoaderSupport dataLoaderSupport;
 
     @Override
-    protected Select<?> createComponent() {
-        return factory.create(Select.class);
+    protected JmixSelect<?> createComponent() {
+        return factory.create(JmixSelect.class);
     }
 
     @Override
     public void loadComponent() {
+        getDataLoaderSupport().loadItemsContainer(resultComponent, element);
         getDataLoaderSupport().loadData(resultComponent, element);
 
         loadBoolean(element, "autofocus", resultComponent::setAutofocus);
@@ -41,6 +42,7 @@ public class SelectLoader extends AbstractComponentLoader<Select<?>> {
 
         componentLoader().loadLabel(resultComponent, element);
         componentLoader().loadEnabled(resultComponent, element);
+        componentLoader().loadRequired(resultComponent, element, context);
         componentLoader().loadClassName(resultComponent, element);
         componentLoader().loadHelperText(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);

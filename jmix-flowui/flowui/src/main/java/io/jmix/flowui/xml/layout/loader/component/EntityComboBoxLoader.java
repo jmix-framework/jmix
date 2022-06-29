@@ -36,8 +36,8 @@ public class EntityComboBoxLoader extends AbstractComboBoxLoader<EntityComboBox<
     public void loadComponent() {
         super.loadComponent();
 
+        getDataLoaderSupport().loadItemsContainer(resultComponent, element);
         getDataLoaderSupport().loadData(resultComponent, element);
-        getDataLoaderSupport().loadOptionsContainer(resultComponent, element);
 
         //These properties are loaded after the data provider is loaded,
         // because setting the data provider resets the value of the readOnly attribute to default.

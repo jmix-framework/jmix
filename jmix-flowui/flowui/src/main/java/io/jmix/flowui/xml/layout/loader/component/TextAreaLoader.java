@@ -16,18 +16,17 @@
 
 package io.jmix.flowui.xml.layout.loader.component;
 
-import com.vaadin.flow.component.textfield.TextArea;
+import io.jmix.flowui.component.textarea.JmixTextArea;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import io.jmix.flowui.xml.layout.support.DataLoaderSupport;
 
-//TODO: kremnevda, replace TextAreaLoader to JmixTextAreaLoader 26.04.2022
-public class TextAreaLoader extends AbstractComponentLoader<TextArea> {
+public class TextAreaLoader extends AbstractComponentLoader<JmixTextArea> {
 
     protected DataLoaderSupport dataLoaderSupport;
 
     @Override
-    protected TextArea createComponent() {
-        return factory.create(TextArea.class);
+    protected JmixTextArea createComponent() {
+        return factory.create(JmixTextArea.class);
     }
 
     @Override
@@ -36,7 +35,6 @@ public class TextAreaLoader extends AbstractComponentLoader<TextArea> {
 
         loadString(element, "value", resultComponent::setValue);
         loadString(element, "pattern", resultComponent::setPattern);
-        loadBoolean(element, "required", resultComponent::setRequired);
         loadBoolean(element, "autofocus", resultComponent::setAutofocus);
         loadBoolean(element, "autoselect", resultComponent::setAutoselect);
         loadResourceString(element, "placeholder", context.getMessageGroup(), resultComponent::setPlaceholder);
@@ -44,6 +42,7 @@ public class TextAreaLoader extends AbstractComponentLoader<TextArea> {
 
         componentLoader().loadLabel(resultComponent, element);
         componentLoader().loadEnabled(resultComponent, element);
+        componentLoader().loadRequired(resultComponent, element, context);
         componentLoader().loadClassName(resultComponent, element);
         componentLoader().loadThemeName(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);

@@ -53,6 +53,9 @@ public class Order extends TestBaseEntity {
     @Column(name = "AMOUNT", precision = 19, scale = 2)
     private BigDecimal amount;
 
+    @Column(name = "TOTAL")
+    private Double total;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CUSTOMER_ID")
     private Customer customer;
@@ -65,6 +68,14 @@ public class Order extends TestBaseEntity {
     @OnDelete(DeletePolicy.CASCADE)
     @OneToMany(mappedBy = "order")
     protected List<OrderLine> orderLines;
+
+    public Double getTotal() {
+        return total;
+    }
+
+    public void setTotal(Double total) {
+        this.total = total;
+    }
 
     public String getNumber() {
         return number;

@@ -35,6 +35,9 @@ class JmixBuildPlugin implements Plugin<Project> {
             String jmixRepoUrl = rootProject.findProperty('jmixRepoUrl')
             if (jmixRepoUrl) {
                 repositories {
+                    if (rootProject.hasProperty('jmixUseLocalMavenRepository')) {
+                        mavenLocal()
+                    }
                     maven {
                         url jmixRepoUrl
                         String jmixRepoUser = rootProject.findProperty('jmixRepoUser')
@@ -179,6 +182,7 @@ class JmixBuildPlugin implements Plugin<Project> {
                             options.encoding = 'UTF-8'
                             options.memberLevel = JavadocMemberLevel.PROTECTED
                             options.addStringOption("sourcepath", "")
+                            include('io/jmix/**')
 
                             dependsOn javaSubprojects.javadoc
                             source javaSubprojects.javadoc.source

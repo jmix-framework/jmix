@@ -40,7 +40,7 @@
               propertyType="ENTITY"
               required="true"/>
     <property caption="Entity fetch plan"
-              code="fetchPlan"
+              code="listFetchPlan"
               step="1"
               propertyType="VIEW_COMPONENT"
               relatedProperty="entity"
@@ -55,6 +55,9 @@
               propertyType="HIERARCHICAL_PROPERTY"
               relatedProperty="tableType"
               required="false"/>
+    <property caption="Parent menu item"
+              code="menuItem"
+              propertyType="FLOW_MENU_ITEM"/>
     <property caption="Table actions"
               code="tableActions"
               defaultValue="create,edit,remove"
@@ -88,7 +91,7 @@
         <dependency code="entity"/>
     </property>
 
-    <property caption="Screen id"
+    <property caption="View id"
               code="viewId"
               propertyType="SCREEN_ID"
               required="true"
@@ -98,7 +101,7 @@
         <dependency code="entity"/>
     </property>
 
-    <property caption="Screen route"
+    <property caption="View route"
               code="route"
               propertyType="STRING"
               advanced="true"

@@ -2080,6 +2080,7 @@
                 <xs:attribute name="themeName" type="comboBoxThemeName"/>
                 <xs:attribute name="clearButtonVisible" type="xs:boolean"/>
                 <xs:attribute name="preventInvalidInput" type="xs:boolean"/>
+                <xs:attribute name="itemsEnum" type="xs:string"/>
 
                 <xs:attributeGroup ref="hasRequired"/>
                 <xs:attributeGroup ref="hasPlaceholder"/>
@@ -2217,6 +2218,7 @@
             <xs:extension base="baseComponent">
                 <xs:attribute name="themeName" type="radioButtonGroupThemeName"/>
                 <xs:attribute name="itemsContainer" type="xs:string"/>
+                <xs:attribute name="itemsEnum" type="xs:string"/>
 
                 <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasLabel"/>
@@ -2236,6 +2238,7 @@
         <xs:complexContent>
             <xs:extension base="baseComponent">
                 <xs:attribute name="itemsContainer" type="xs:string"/>
+                <xs:attribute name="itemsEnum" type="xs:string"/>
 
                 <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasLabel"/>
@@ -2255,6 +2258,7 @@
         <xs:complexContent>
             <xs:extension base="baseComponent">
                 <xs:attribute name="itemsContainer" type="xs:string"/>
+                <xs:attribute name="itemsEnum" type="xs:string"/>
                 <xs:attribute name="readOnly" type="xs:boolean"/>
 
                 <xs:attributeGroup ref="hasSize"/>
@@ -2269,6 +2273,7 @@
         <xs:complexContent>
             <xs:extension base="baseComponent">
                 <xs:attribute name="itemsContainer" type="xs:string"/>
+                <xs:attribute name="itemsEnum" type="xs:string"/>
                 <xs:attribute name="readOnly" type="xs:boolean"/>
 
                 <xs:attributeGroup ref="hasSize"/>
@@ -2447,6 +2452,7 @@
                 <xs:attribute name="emptySelectionCaption" type="resourceString"/>
                 <xs:attribute name="emptySelectionAllowed" type="xs:boolean"/>
                 <xs:attribute name="itemsContainer" type="xs:string"/>
+                <xs:attribute name="itemsEnum" type="xs:string"/>
 
                 <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasLabel"/>

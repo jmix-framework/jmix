@@ -32,6 +32,7 @@ public class ComboBoxLoader extends AbstractComboBoxLoader<JmixComboBox<?>> {
     public void loadComponent() {
         super.loadComponent();
 
+        getDataLoaderSupport().loadItems(resultComponent, element);
         getDataLoaderSupport().loadData(resultComponent, element);
 
         //These properties are loaded after the data provider is loaded,

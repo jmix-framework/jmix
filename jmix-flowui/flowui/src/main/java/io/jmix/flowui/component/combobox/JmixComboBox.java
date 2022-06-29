@@ -11,6 +11,7 @@ import io.jmix.flowui.component.delegate.DataViewDelegate;
 import io.jmix.flowui.component.delegate.FieldDelegate;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.data.SupportsDataProvider;
+import io.jmix.flowui.data.SupportsItemsEnum;
 import io.jmix.flowui.data.SupportsValueSource;
 import io.jmix.flowui.data.ValueSource;
 import io.jmix.flowui.exception.ValidationException;
@@ -23,7 +24,7 @@ import javax.annotation.Nullable;
 
 public class JmixComboBox<V> extends ComboBox<V>
         implements SupportsValueSource<V>, SupportsValidation<V>, SupportsDataProvider<V>,
-        HasRequired, HasTitle,
+        SupportsItemsEnum<V>, HasRequired, HasTitle,
         ApplicationContextAware, InitializingBean {
 
     protected ApplicationContext applicationContext;
@@ -70,7 +71,10 @@ public class JmixComboBox<V> extends ComboBox<V>
         super.setDataProvider(dataProvider, filterConverter);
     }
 
-    // TODO: gg, enum items
+    @Override
+    public void setItems(Class<V> itemsEnum) {
+        dataViewDelegate.setItems(itemsEnum);
+    }
 
     @Nullable
     @Override

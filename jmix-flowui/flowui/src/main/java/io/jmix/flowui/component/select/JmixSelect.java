@@ -20,15 +20,11 @@ import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.component.HasRequired;
-import io.jmix.flowui.component.delegate.DataViewDelegate;
 import io.jmix.flowui.component.SupportsValidation;
+import io.jmix.flowui.component.delegate.DataViewDelegate;
 import io.jmix.flowui.component.delegate.FieldDelegate;
 import io.jmix.flowui.component.validation.Validator;
-import io.jmix.flowui.data.SupportsDataProvider;
-import io.jmix.flowui.data.SupportsItemsContainer;
-import io.jmix.flowui.data.SupportsValueSource;
-import io.jmix.flowui.data.ValueSource;
-import io.jmix.flowui.data.items.ContainerDataProvider;
+import io.jmix.flowui.data.*;
 import io.jmix.flowui.exception.ValidationException;
 import io.jmix.flowui.model.CollectionContainer;
 import org.springframework.beans.BeansException;
@@ -39,7 +35,7 @@ import org.springframework.context.ApplicationContextAware;
 import javax.annotation.Nullable;
 
 public class JmixSelect<V> extends Select<V> implements SupportsValueSource<V>, HasRequired, SupportsDataProvider<V>,
-        SupportsItemsContainer<V>, SupportsValidation<V>, ApplicationContextAware, InitializingBean {
+        SupportsItemsContainer<V>, SupportsItemsEnum<V>, SupportsValidation<V>, ApplicationContextAware, InitializingBean {
 
     protected ApplicationContext applicationContext;
 
@@ -120,10 +116,13 @@ public class JmixSelect<V> extends Select<V> implements SupportsValueSource<V>, 
 
     @Override
     public void setItems(CollectionContainer<V> container) {
-        setItems(new ContainerDataProvider<>(container));
+        dataViewDelegate.setItems(container);
     }
 
-    // TODO: gg, enum items
+    @Override
+    public void setItems(Class<V> itemsEnum) {
+        dataViewDelegate.setItems(itemsEnum);
+    }
 
     @Override
     public void setRequired(boolean required) {

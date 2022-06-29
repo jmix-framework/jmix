@@ -36,7 +36,7 @@ public class EntityComboBoxLoader extends AbstractComboBoxLoader<EntityComboBox<
     public void loadComponent() {
         super.loadComponent();
 
-        getDataLoaderSupport().loadItemsContainer(resultComponent, element);
+        getDataLoaderSupport().loadItems(resultComponent, element);
         getDataLoaderSupport().loadData(resultComponent, element);
 
         //These properties are loaded after the data provider is loaded,

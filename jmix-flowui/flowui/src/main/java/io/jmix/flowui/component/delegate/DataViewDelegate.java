@@ -18,13 +18,15 @@ package io.jmix.flowui.component.delegate;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.data.provider.HasDataView;
+import com.vaadin.flow.data.provider.HasListDataView;
 import io.jmix.flowui.data.SupportsDataProvider;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 
 @org.springframework.stereotype.Component("flowui_DataViewDelegate")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class DataViewDelegate<C extends Component & HasDataView<V, ?, ?> & SupportsDataProvider<V>, V>
+public class DataViewDelegate<C extends Component
+        & HasDataView<V, ?, ?> & HasListDataView<V, ?> & SupportsDataProvider<V>, V>
         extends AbstractDataViewDelegate<C, V> {
 
     public DataViewDelegate(C component) {

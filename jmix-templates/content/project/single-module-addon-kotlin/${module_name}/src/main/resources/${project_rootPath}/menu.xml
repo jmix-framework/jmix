@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<menu-config xmlns="http://jmix.io/schema/ui/menu">
+
+    <menu id="${project_id}" caption="msg://${project_rootPackage}/menu.addon" insertAfter="administration">
+    </menu>
+
+</menu-config>

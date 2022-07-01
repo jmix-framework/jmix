@@ -297,7 +297,6 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
             default:
         }
 
-        entitiesDl.load();
         return entitiesDc;
     }
 

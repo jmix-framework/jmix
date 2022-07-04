@@ -92,13 +92,19 @@ public class UserSessionSourceImpl implements UserSessionSource {
             if (userAuthentication != authentication) {
                 updateUserSessionFromAuthentication(userAuthentication, session);
             }
-        } else if (authentication == null) {
+        } else if (authentication != null) {
+            Object principal = authentication.getPrincipal();
+            if (principal instanceof UserDetails) {
+                session.setUser((UserDetails) principal);
+                session.setLocale(Locale.getDefault());
+            } else {
+                throw new RuntimeException("Authentication type is not supported: " + authentication.getClass().getCanonicalName());
+            }
+        } else {
             //todo MG should null authentication be possible?
             //todo MG what user to return?
             session.setUser(userRepository.getSystemUser());
             session.setLocale(Locale.getDefault());
-        } else {
-            throw new RuntimeException("Authentication type is not supported: " + authentication.getClass().getCanonicalName());
         }
     }
 

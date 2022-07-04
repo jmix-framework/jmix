@@ -14,7 +14,9 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.Scroller;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.dom.ClassList;
 import com.vaadin.flow.dom.Element;
+import com.vaadin.flow.dom.Style;
 import com.vaadin.flow.dom.ThemeList;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.Messages;
@@ -35,7 +37,7 @@ import java.util.EventObject;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-public class DialogWindow<S extends View<?>> implements HasSize, HasTheme,
+public class DialogWindow<S extends View<?>> implements HasSize, HasTheme, HasStyle,
         ApplicationContextAware, InitializingBean {
 
     protected static final String BASE_STYLE_NAME = "jmix-dialog-window";
@@ -507,6 +509,56 @@ public class DialogWindow<S extends View<?>> implements HasSize, HasTheme,
     @Override
     public void removeThemeNames(String... themeNames) {
         dialog.removeThemeNames(themeNames);
+    }
+
+    @Override
+    public void addClassName(String className) {
+        dialog.addClassName(className);
+    }
+
+    @Override
+    public boolean removeClassName(String className) {
+        return dialog.removeClassName(className);
+    }
+
+    @Override
+    public void setClassName(String className) {
+        dialog.setClassName(className);
+    }
+
+    @Override
+    public String getClassName() {
+        return dialog.getClassName();
+    }
+
+    @Override
+    public ClassList getClassNames() {
+        return dialog.getClassNames();
+    }
+
+    @Override
+    public void setClassName(String className, boolean set) {
+        dialog.setClassName(className, set);
+    }
+
+    @Override
+    public boolean hasClassName(String className) {
+        return dialog.hasClassName(className);
+    }
+
+    @Override
+    public Style getStyle() {
+        return dialog.getStyle();
+    }
+
+    @Override
+    public void addClassNames(String... classNames) {
+        dialog.addClassNames(classNames);
+    }
+
+    @Override
+    public void removeClassNames(String... classNames) {
+        dialog.removeClassNames(classNames);
     }
 
     protected Messages messages() {

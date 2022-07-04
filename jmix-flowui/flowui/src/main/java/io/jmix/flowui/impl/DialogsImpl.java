@@ -164,9 +164,22 @@ public class DialogsImpl implements Dialogs {
             return this;
         }
 
+        @Nullable
         @Override
         public String getThemeName() {
             return dialog.getThemeName();
+        }
+
+        @Override
+        public OptionDialogBuilder withClassName(@Nullable String className) {
+            dialog.setClassName(className);
+            return this;
+        }
+
+        @Nullable
+        @Override
+        public String getClassName() {
+            return dialog.getClassName();
         }
 
         @Override
@@ -414,9 +427,22 @@ public class DialogsImpl implements Dialogs {
             return this;
         }
 
+        @Nullable
         @Override
         public String getThemeName() {
             return dialog.getThemeName();
+        }
+
+        @Override
+        public MessageDialogBuilder withClassName(@Nullable String className) {
+            dialog.setClassName(className);
+            return this;
+        }
+
+        @Nullable
+        @Override
+        public String getClassName() {
+            return dialog.getClassName();
         }
 
         @Override

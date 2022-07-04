@@ -207,6 +207,7 @@
                     required="true"
                     requiredIndicatorVisible="true"
                     requiredMessage="requiredMessageString"
+                    themeName="small, align-center"
                     visible="true"
                     width="100px"/>
 

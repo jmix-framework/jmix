@@ -106,6 +106,7 @@ public class Notifications {
         protected Type type = Type.DEFAULT;
         protected Boolean closeable = null;
         protected NotificationVariant themeVariant;
+        protected String className;
 
         public NotificationBuilder(String text) {
             this.text = text;
@@ -151,6 +152,13 @@ public class Notifications {
             return this;
         }
 
+        public NotificationBuilder withClassName(String className) {
+            Preconditions.checkNotNullArgument(className);
+
+            this.className = className;
+            return this;
+        }
+
         public Notification.Position getPosition() {
             return position;
         }
@@ -183,6 +191,16 @@ public class Notifications {
         }
 
         @Nullable
+        public NotificationVariant getThemeVariant() {
+            return themeVariant;
+        }
+
+        @Nullable
+        public String getClassName() {
+            return className;
+        }
+
+        @Nullable
         public Component getComponent() {
             return component;
         }
@@ -194,6 +212,10 @@ public class Notifications {
 
             if (themeVariant != null) {
                 notification.addThemeVariants(themeVariant);
+            }
+
+            if (className != null) {
+                notification.addClassName(className);
             }
 
             if (position != null) {

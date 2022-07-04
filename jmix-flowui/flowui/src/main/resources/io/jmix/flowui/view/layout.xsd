@@ -1383,7 +1383,43 @@
         </xs:union>
     </xs:simpleType>
 
+    <xs:simpleType name="timePickerThemeName">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="small"/>
+                    <xs:enumeration value="align-left"/>
+                    <xs:enumeration value="align-center"/>
+                    <xs:enumeration value="align-right"/>
+                    <xs:enumeration value="helper-above-field"/>
+                    <xs:enumeration value="always-float-label"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+
     <xs:simpleType name="datePickerThemeName">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="small"/>
+                    <xs:enumeration value="align-left"/>
+                    <xs:enumeration value="align-center"/>
+                    <xs:enumeration value="align-right"/>
+                    <xs:enumeration value="helper-above-field"/>
+                    <xs:enumeration value="always-float-label"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+
+    <xs:simpleType name="dateTimePickerThemeName">
         <xs:union>
             <xs:simpleType>
                 <xs:restriction base="xs:string"/>
@@ -2145,6 +2181,7 @@
                 <xs:attribute name="autoOpen" type="xs:boolean"/>
                 <xs:attribute name="datatype" type="timeDatatypeEnum"/>
                 <xs:attribute name="clearButtonVisible" type="xs:boolean"/>
+                <xs:attribute name="themeName" type="timePickerThemeName"/>
 
                 <xs:attributeGroup ref="hasRequired"/>
                 <xs:attributeGroup ref="hasPlaceholder"/>
@@ -2183,7 +2220,7 @@
                 <!--                <xs:attribute name="zone" type="timePickerZoneVariants"/>-->
 
                 <xs:attribute name="autoOpen" type="xs:boolean"/>
-                <xs:attribute name="themeName" type="xs:string"/>
+                <xs:attribute name="themeName" type="dateTimePickerThemeName"/>
                 <xs:attribute name="timePlaceholder" type="resourceString"/>
                 <xs:attribute name="datePlaceholder" type="resourceString"/>
                 <xs:attribute name="weekNumbersVisible" type="xs:boolean"/>

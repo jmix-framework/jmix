@@ -15,8 +15,8 @@ import io.jmix.flowui.component.EntityPickerComponent;
 import io.jmix.flowui.kit.component.FlowUiComponentUtils;
 import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.model.DataContext;
-import io.jmix.flowui.screen.Screen;
-import io.jmix.flowui.screen.UiControllerUtils;
+import io.jmix.flowui.view.View;
+import io.jmix.flowui.view.UiControllerUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
@@ -75,9 +75,9 @@ public class EntityClearAction<E> extends PickerAction<EntityClearAction<E>, Ent
             EntityValueSource<?, ?> entityValueSource = (EntityValueSource<?, ?>) valueSource;
             entityValueSource.getMetaPropertyPath();
             if (entityValueSource.getMetaPropertyPath().getMetaProperty().getType() == MetaProperty.Type.COMPOSITION) {
-                Screen screen = UiComponentUtils.findScreen(((Component) target));
-                if (screen != null) {
-                    DataContext dataContext = UiControllerUtils.getScreenData(screen).getDataContext();
+                View view = UiComponentUtils.findView(((Component) target));
+                if (view != null) {
+                    DataContext dataContext = UiControllerUtils.getViewData(view).getDataContext();
                     dataContext.remove(hasValue.getValue());
                 }
             }

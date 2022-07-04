@@ -15,7 +15,7 @@ def tableXml = api.processSnippet('screen/jmix_flow_table.xml',
         'tableActions': tableActions,
         'hierarchicalProperty': binding.hasVariable('tableType_hierarchicalProperty') ? binding.getVariable('tableType_hierarchicalProperty') : null])
 %><?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<screen xmlns="http://jmix.io/schema/flowui/screen"
+<view xmlns="http://jmix.io/schema/flowui/view"
         xmlns:c="http://jmix.io/schema/flowui/jpql-condition"
         title="${messageKeys['viewTitle']}"
         focusComponent="${tableId}">
@@ -45,4 +45,4 @@ def tableXml = api.processSnippet('screen/jmix_flow_table.xml',
             <button id="discardBtn" action="discardAction"/>
         </hbox>
     </layout>
-</screen>
+</view>

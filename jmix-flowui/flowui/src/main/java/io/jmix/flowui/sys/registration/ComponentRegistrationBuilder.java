@@ -77,7 +77,7 @@ public class ComponentRegistrationBuilder {
     /**
      * Sets component loader class.
      *
-     * @param tag             component name in the screen descriptor
+     * @param tag             component name in the view descriptor
      * @param componentLoader component loader class
      * @return builder instance
      */

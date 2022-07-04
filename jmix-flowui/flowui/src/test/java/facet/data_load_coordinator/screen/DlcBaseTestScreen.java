@@ -22,10 +22,10 @@ import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.component.valuepicker.EntityPicker;
 import io.jmix.flowui.facet.DataLoadCoordinator;
 import io.jmix.flowui.model.CollectionContainer;
-import io.jmix.flowui.screen.ComponentId;
-import io.jmix.flowui.screen.Install;
-import io.jmix.flowui.screen.StandardScreen;
-import io.jmix.flowui.screen.Target;
+import io.jmix.flowui.view.ComponentId;
+import io.jmix.flowui.view.Install;
+import io.jmix.flowui.view.StandardView;
+import io.jmix.flowui.view.Target;
 import org.springframework.beans.factory.annotation.Autowired;
 import test_support.entity.petclinic.Owner;
 import test_support.entity.petclinic.OwnerCategory;
@@ -35,7 +35,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class DlcBaseTestScreen extends StandardScreen {
+public class DlcBaseTestScreen extends StandardView {
 
     @Autowired
     private Metadata metadata;

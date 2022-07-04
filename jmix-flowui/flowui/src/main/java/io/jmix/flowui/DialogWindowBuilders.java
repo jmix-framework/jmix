@@ -9,8 +9,8 @@ import io.jmix.flowui.data.HasType;
 import io.jmix.flowui.component.EntityPickerComponent;
 import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.component.UiComponentUtils;
-import io.jmix.flowui.screen.Screen;
-import io.jmix.flowui.screen.builder.*;
+import io.jmix.flowui.view.View;
+import io.jmix.flowui.view.builder.*;
 
 import static com.google.common.base.Preconditions.checkState;
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
@@ -19,32 +19,32 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 public class DialogWindowBuilders {
 
     protected WindowBuilderProcessor windowBuilderProcessor;
-    protected EditorWindowBuilderProcessor editorBuilderProcessor;
+    protected DetailWindowBuilderProcessor detailBuilderProcessor;
     protected LookupWindowBuilderProcessor lookupBuilderProcessor;
 
     public DialogWindowBuilders(WindowBuilderProcessor windowBuilderProcessor,
-                                EditorWindowBuilderProcessor editorBuilderProcessor,
+                                DetailWindowBuilderProcessor detailBuilderProcessor,
                                 LookupWindowBuilderProcessor lookupBuilderProcessor) {
         this.windowBuilderProcessor = windowBuilderProcessor;
-        this.editorBuilderProcessor = editorBuilderProcessor;
+        this.detailBuilderProcessor = detailBuilderProcessor;
         this.lookupBuilderProcessor = lookupBuilderProcessor;
     }
 
-    public <E, S extends Screen<?>> EditorWindowBuilder<E, S> editor(Screen<?> origin, Class<E> entityClass) {
+    public <E, S extends View<?>> DetailWindowBuilder<E, S> detail(View<?> origin, Class<E> entityClass) {
         checkNotNullArgument(origin);
         checkNotNullArgument(entityClass);
 
-        return new EditorWindowBuilder<>(origin, entityClass, editorBuilderProcessor::buildScreen);
+        return new DetailWindowBuilder<>(origin, entityClass, detailBuilderProcessor::build);
     }
 
-    public <E, S extends Screen<?>> EditorWindowBuilder<E, S> editor(ListDataComponent<E> listDataComponent) {
+    public <E, S extends View<?>> DetailWindowBuilder<E, S> detail(ListDataComponent<E> listDataComponent) {
         checkNotNullArgument(listDataComponent);
 
-        Screen<?> origin = getScreen((Component) listDataComponent);
+        View<?> origin = getView((Component) listDataComponent);
         Class<E> beanType = getBeanType(listDataComponent);
 
-        EditorWindowBuilder<E, S> builder =
-                new EditorWindowBuilder<>(origin, beanType, editorBuilderProcessor::buildScreen);
+        DetailWindowBuilder<E, S> builder =
+                new DetailWindowBuilder<>(origin, beanType, detailBuilderProcessor::build);
 
         builder.withListDataComponent(listDataComponent);
 
@@ -57,16 +57,16 @@ public class DialogWindowBuilders {
     }
 
     @SuppressWarnings("unchecked")
-    public <E, S extends Screen<?>> EditorWindowBuilder<E, S> editor(EntityPickerComponent<E> picker) {
+    public <E, S extends View<?>> DetailWindowBuilder<E, S> detail(EntityPickerComponent<E> picker) {
         checkNotNullArgument(picker);
         checkState(picker instanceof HasValue,
                 "A component must implement " + HasValue.class.getSimpleName());
 
-        Screen<?> origin = getScreen((Component) picker);
+        View<?> origin = getView((Component) picker);
         Class<E> beanType = getBeanType(picker);
 
-        EditorWindowBuilder<E, S> builder =
-                new EditorWindowBuilder<>(origin, beanType, editorBuilderProcessor::buildScreen);
+        DetailWindowBuilder<E, S> builder =
+                new DetailWindowBuilder<>(origin, beanType, detailBuilderProcessor::build);
 
         builder.withField(((HasValue<?, E>) picker));
 
@@ -78,21 +78,21 @@ public class DialogWindowBuilders {
         return builder;
     }
 
-    public <E, S extends Screen<?>> LookupWindowBuilder<E, S> lookup(Screen<?> origin, Class<E> entityClass) {
+    public <E, S extends View<?>> LookupWindowBuilder<E, S> lookup(View<?> origin, Class<E> entityClass) {
         checkNotNullArgument(origin);
         checkNotNullArgument(entityClass);
 
-        return new LookupWindowBuilder<>(origin, entityClass, lookupBuilderProcessor::buildScreen);
+        return new LookupWindowBuilder<>(origin, entityClass, lookupBuilderProcessor::build);
     }
 
-    public <E, S extends Screen<?>> LookupWindowBuilder<E, S> lookup(ListDataComponent<E> listDataComponent) {
+    public <E, S extends View<?>> LookupWindowBuilder<E, S> lookup(ListDataComponent<E> listDataComponent) {
         checkNotNullArgument(listDataComponent);
 
-        Screen<?> origin = getScreen((Component) listDataComponent);
+        View<?> origin = getView((Component) listDataComponent);
         Class<E> beanType = getBeanType(listDataComponent);
 
         LookupWindowBuilder<E, S> builder =
-                new LookupWindowBuilder<>(origin, beanType, lookupBuilderProcessor::buildScreen);
+                new LookupWindowBuilder<>(origin, beanType, lookupBuilderProcessor::build);
 
         builder.withListDataComponent(listDataComponent);
 
@@ -100,16 +100,16 @@ public class DialogWindowBuilders {
     }
 
     @SuppressWarnings("unchecked")
-    public <E, S extends Screen<?>> LookupWindowBuilder<E, S> lookup(EntityPickerComponent<E> picker) {
+    public <E, S extends View<?>> LookupWindowBuilder<E, S> lookup(EntityPickerComponent<E> picker) {
         checkNotNullArgument(picker);
         checkState(picker instanceof HasValue,
                 "A component must implement " + HasValue.class.getSimpleName());
 
-        Screen<?> origin = getScreen((Component) picker);
+        View<?> origin = getView((Component) picker);
         Class<E> beanType = getBeanType(picker);
 
         LookupWindowBuilder<E, S> builder =
-                new LookupWindowBuilder<>(origin, beanType, lookupBuilderProcessor::buildScreen);
+                new LookupWindowBuilder<>(origin, beanType, lookupBuilderProcessor::build);
 
 
         builder.withField(((HasValue<?, E>) picker));
@@ -117,22 +117,22 @@ public class DialogWindowBuilders {
         return builder;
     }
 
-    public <S extends Screen<?>> WindowBuilder<S> screen(Screen<?> origin, Class<S> screenClass) {
-        return new WindowBuilder<>(origin, screenClass, windowBuilderProcessor::buildScreen);
+    public <S extends View<?>> WindowBuilder<S> view(View<?> origin, Class<S> viewClass) {
+        return new WindowBuilder<>(origin, viewClass, windowBuilderProcessor::build);
     }
 
-    public WindowBuilder<Screen<?>> screen(Screen<?> origin, String screenId) {
-        return new WindowBuilder<>(origin, screenId, windowBuilderProcessor::buildScreen);
+    public WindowBuilder<View<?>> view(View<?> origin, String viewId) {
+        return new WindowBuilder<>(origin, viewId, windowBuilderProcessor::build);
     }
 
-    protected Screen<?> getScreen(Component component) {
-        Screen<?> screen = UiComponentUtils.findScreen(component);
-        if (screen == null) {
-            throw new IllegalStateException(String.format("A component '%s' is not attached to a screen",
+    protected View<?> getView(Component component) {
+        View<?> view = UiComponentUtils.findView(component);
+        if (view == null) {
+            throw new IllegalStateException(String.format("A component '%s' is not attached to a view",
                     component.getClass().getSimpleName()));
         }
 
-        return screen;
+        return view;
     }
 
     protected <E> Class<E> getBeanType(ListDataComponent<E> listDataComponent) {

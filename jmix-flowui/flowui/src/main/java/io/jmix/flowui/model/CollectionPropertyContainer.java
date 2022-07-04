@@ -16,8 +16,6 @@
 
 package io.jmix.flowui.model;
 
-import io.jmix.flowui.SameAsUi;
-
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
@@ -25,7 +23,6 @@ import java.util.List;
 /**
  * Container that holds a collection of entity instances which is a collection property of another entity.
  */
-@SameAsUi
 public interface CollectionPropertyContainer<E> extends CollectionContainer<E>, Nested {
 
     /**

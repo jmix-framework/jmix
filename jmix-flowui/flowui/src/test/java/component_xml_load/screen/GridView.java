@@ -19,15 +19,15 @@ package component_xml_load.screen;
 import com.vaadin.flow.router.Route;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.grid.TreeDataGrid;
-import io.jmix.flowui.screen.ComponentId;
-import io.jmix.flowui.screen.StandardScreen;
-import io.jmix.flowui.screen.UiController;
-import io.jmix.flowui.screen.UiDescriptor;
+import io.jmix.flowui.view.ComponentId;
+import io.jmix.flowui.view.StandardView;
+import io.jmix.flowui.view.UiController;
+import io.jmix.flowui.view.UiDescriptor;
 
 @Route(value = "grid-view")
 @UiController("GridView")
 @UiDescriptor("grid-view.xml")
-public class GridView extends StandardScreen {
+public class GridView extends StandardView {
 
     @ComponentId
     public DataGrid<?> dataGrid;
@@ -48,6 +48,6 @@ public class GridView extends StandardScreen {
     public TreeDataGrid<?> metaClassTreeDataGrid;
 
     public void loadData() {
-        getScreenData().loadAll();
+        getViewData().loadAll();
     }
 }

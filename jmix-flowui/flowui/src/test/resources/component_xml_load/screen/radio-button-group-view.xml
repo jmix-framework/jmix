@@ -15,7 +15,7 @@
   ~ limitations under the License.
   -->
 
-<screen xmlns="http://jmix.io/schema/flowui/screen">
+<view xmlns="http://jmix.io/schema/flowui/view">
     <data readOnly="true">
         <collection id="ordersDc"
                     class="test_support.entity.sales.Order">
@@ -42,12 +42,12 @@
                           maxWidth="200px"
                           minHeight="100px"
                           minWidth="100px"
-                          optionsContainer="ordersDc"
+                          itemsContainer="ordersDc"
                           readOnly="true"
                           required="true"
                           requiredIndicatorVisible="true"
                           requiredMessage="requiredMessage"
-                          themeName="LUMO_HELPER_ABOVE_FIELD, LUMO_VERTICAL"
+                          themeName="helper-above-field, vertical"
                           width="100%"/>
     </layout>
-</screen>
+</view>

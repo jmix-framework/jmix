@@ -54,7 +54,7 @@ public class ButtonLoader extends AbstractComponentLoader<JmixButton> {
     protected void loadAction(JmixButton component, Element element) {
         loadString(element, "action")
                 .ifPresent(actionId -> getComponentContext().addInitTask(
-                        new AssignActionInitTask<>(component, actionId, getComponentContext().getScreen())
+                        new AssignActionInitTask<>(component, actionId, getComponentContext().getView())
                 ));
     }
 }

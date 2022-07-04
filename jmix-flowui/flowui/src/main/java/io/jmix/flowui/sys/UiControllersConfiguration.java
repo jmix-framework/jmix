@@ -17,7 +17,7 @@
 package io.jmix.flowui.sys;
 
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
-import io.jmix.flowui.screen.UiController;
+import io.jmix.flowui.view.UiController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

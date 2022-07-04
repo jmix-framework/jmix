@@ -25,7 +25,6 @@ import io.jmix.core.impl.StandardSerialization;
 import io.jmix.core.metamodel.datatype.impl.EnumClass;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.flowui.SameAsUi;
 import io.jmix.flowui.model.DataContext;
 import io.jmix.flowui.model.MergeOptions;
 import org.apache.commons.lang3.StringUtils;
@@ -47,8 +46,6 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 /**
  * Standard implementation of {@link DataContext} which commits data to {@link DataManager}.
  */
-@SameAsUi
-@SuppressWarnings("rawtypes")
 public class DataContextImpl implements DataContextInternal {
 
     private static final Logger log = LoggerFactory.getLogger(DataContextImpl.class);

@@ -21,16 +21,12 @@ import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.flowui.RequiresChanges;
-import io.jmix.flowui.SameAsUi;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Objects;
 
-@SameAsUi
-@RequiresChanges
 public abstract class AbstractComparator<T> implements Comparator<T> {
 
     protected boolean asc;

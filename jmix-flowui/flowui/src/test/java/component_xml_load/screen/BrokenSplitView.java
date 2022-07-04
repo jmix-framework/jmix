@@ -17,14 +17,13 @@
 package component_xml_load.screen;
 
 import com.vaadin.flow.router.Route;
-import io.jmix.flowui.screen.Screen;
-import io.jmix.flowui.screen.StandardScreen;
-import io.jmix.flowui.screen.UiController;
-import io.jmix.flowui.screen.UiDescriptor;
+import io.jmix.flowui.view.StandardView;
+import io.jmix.flowui.view.UiController;
+import io.jmix.flowui.view.UiDescriptor;
 
 @Route(value = "broken-split-view")
 @UiController("BrokenSplitView")
 @UiDescriptor("broken-split-view.xml")
-public class BrokenSplitView extends StandardScreen {
+public class BrokenSplitView extends StandardView {
 
 }

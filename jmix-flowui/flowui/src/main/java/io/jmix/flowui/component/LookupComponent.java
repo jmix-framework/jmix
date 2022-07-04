@@ -19,7 +19,7 @@ package io.jmix.flowui.component;
 import java.util.Set;
 
 /**
- * A component which can be set as lookup component for a screen.
+ * A component which can be set as lookup component for a view.
  */
 public interface LookupComponent<T> {
 

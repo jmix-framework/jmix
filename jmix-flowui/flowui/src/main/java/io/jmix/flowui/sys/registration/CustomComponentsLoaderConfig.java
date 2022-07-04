@@ -44,8 +44,8 @@ public class CustomComponentsLoaderConfig implements LoaderConfig {
 
     @Nullable
     @Override
-    public Class<? extends ComponentLoader> getScreenLoader(Element root) {
-        // return null as we do not override screen loader
+    public Class<? extends ComponentLoader> getViewLoader(Element root) {
+        // return null as we do not override view loader
         return null;
     }
 

@@ -1,6 +1,6 @@
 package io.jmix.flowui.sys;
 
-import io.jmix.flowui.screen.Screen;
+import io.jmix.flowui.view.View;
 import io.jmix.flowui.sys.ControllerDependencyInjector.InjectionContext;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
@@ -20,7 +20,7 @@ public class UiControllerDependencyManager {
         this.dependencyInjectors = dependencyInjectors;
     }
 
-    public void inject(Screen controller) {
+    public void inject(View controller) {
         controllerDependencyInjector.inject(controller);
 
         if (CollectionUtils.isNotEmpty(dependencyInjectors)) {

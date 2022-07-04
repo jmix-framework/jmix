@@ -20,7 +20,6 @@ import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.progressbar.ProgressBar;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
-import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.router.Route;
 import io.jmix.flowui.component.checkbox.JmixCheckbox;
 import io.jmix.flowui.component.combobox.EntityComboBox;
@@ -38,16 +37,16 @@ import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.component.combobox.ComboBoxPicker;
 import io.jmix.flowui.model.InstanceContainer;
-import io.jmix.flowui.screen.ComponentId;
-import io.jmix.flowui.screen.StandardScreen;
-import io.jmix.flowui.screen.UiController;
-import io.jmix.flowui.screen.UiDescriptor;
+import io.jmix.flowui.view.ComponentId;
+import io.jmix.flowui.view.StandardView;
+import io.jmix.flowui.view.UiController;
+import io.jmix.flowui.view.UiDescriptor;
 import test_support.entity.sales.Order;
 
 @Route(value = "component-view")
 @UiController("ComponentView")
 @UiDescriptor("component-view.xml")
-public class ComponentView extends StandardScreen {
+public class ComponentView extends StandardView {
 
     public void loadData() {
         comboBoxPickerId.setItems("comboBoxPickerItem1", "comboBoxPickerItem2");
@@ -55,7 +54,7 @@ public class ComponentView extends StandardScreen {
         radioButtonGroupId.setItems("radioButton1", "radioButton2", "radioButton3");
         selectId.setItems("select1", "select2", "select3");
 
-        getScreenData().loadAll();
+        getViewData().loadAll();
     }
 
     @ComponentId

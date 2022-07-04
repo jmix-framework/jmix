@@ -2,9 +2,9 @@ package io.jmix.flowui.xml.layout;
 
 import com.vaadin.flow.component.Component;
 import io.jmix.flowui.UiComponents;
-import io.jmix.flowui.model.ScreenData;
-import io.jmix.flowui.screen.Screen;
-import io.jmix.flowui.screen.ScreenActions;
+import io.jmix.flowui.model.ViewData;
+import io.jmix.flowui.view.View;
+import io.jmix.flowui.view.ViewActions;
 import io.jmix.flowui.xml.layout.support.LoaderSupport;
 import org.dom4j.Element;
 import org.springframework.context.ApplicationContext;
@@ -20,9 +20,9 @@ public interface ComponentLoader<T extends Component> {
 
     interface ComponentContext extends Context {
 
-        ScreenData getScreenData();
+        ViewData getViewData();
 
-        ScreenActions getScreenActions();
+        ViewActions getViewActions();
 
         Optional<ComponentContext> getParent();
 
@@ -30,7 +30,7 @@ public interface ComponentLoader<T extends Component> {
 
         String getCurrentFrameId();
 
-        Screen<?> getScreen();
+        View<?> getView();
 
         void addInitTask(InitTask task);
 
@@ -42,12 +42,12 @@ public interface ComponentLoader<T extends Component> {
      */
     interface InitTask {
         /**
-         * This method will be invoked after screen initialization.
+         * This method will be invoked after view initialization.
          *
          * @param context loader context
-         * @param screen  screen
+         * @param view    view
          */
-        void execute(ComponentContext context, Screen<?> screen);
+        void execute(ComponentContext context, View<?> view);
     }
 
     Context getContext();

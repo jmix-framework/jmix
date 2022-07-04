@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<screen xmlns="http://jmix.io/schema/flowui/screen"
+<view xmlns="http://jmix.io/schema/flowui/view"
         title="msg://UserListView.title"
         focusComponent="usersTable">
     <data readOnly="true">
@@ -48,4 +48,4 @@
             <button id="discardBtn" action="discardAction"/>
         </hbox>
     </layout>
-</screen>
+</view>

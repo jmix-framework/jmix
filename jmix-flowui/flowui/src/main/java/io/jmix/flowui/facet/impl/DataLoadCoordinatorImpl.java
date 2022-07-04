@@ -18,7 +18,6 @@ package io.jmix.flowui.facet.impl;
 
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.HasComponents;
 import io.jmix.core.DevelopmentException;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.JpqlCondition;
@@ -27,14 +26,14 @@ import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.facet.DataLoadCoordinator;
 import io.jmix.flowui.facet.dataloadcoordinator.OnComponentValueChangedLoadTrigger;
 import io.jmix.flowui.facet.dataloadcoordinator.OnContainerItemChangedLoadTrigger;
-import io.jmix.flowui.facet.dataloadcoordinator.OnScreenEventLoadTrigger;
+import io.jmix.flowui.facet.dataloadcoordinator.OnViewEventLoadTrigger;
 import io.jmix.flowui.model.DataLoader;
 import io.jmix.flowui.model.InstanceContainer;
-import io.jmix.flowui.model.ScreenData;
+import io.jmix.flowui.model.ViewData;
 import io.jmix.flowui.model.impl.DataLoadersHelper;
-import io.jmix.flowui.screen.Screen;
-import io.jmix.flowui.screen.Screen.BeforeShowEvent;
-import io.jmix.flowui.screen.UiControllerUtils;
+import io.jmix.flowui.view.View;
+import io.jmix.flowui.view.View.BeforeShowEvent;
+import io.jmix.flowui.view.UiControllerUtils;
 import io.jmix.flowui.sys.UiControllerReflectionInspector;
 
 import javax.annotation.Nullable;
@@ -76,8 +75,8 @@ public class DataLoadCoordinatorImpl extends AbstractFacet implements DataLoadCo
     }
 
     @Override
-    public void addOnScreenEventLoadTrigger(DataLoader loader, Class<?> eventClass) {
-        triggers.add(new OnScreenEventLoadTrigger(getOwnerNN(), reflectionInspector, loader, eventClass));
+    public void addOnViewEventLoadTrigger(DataLoader loader, Class<?> eventClass) {
+        triggers.add(new OnViewEventLoadTrigger(getOwnerNN(), reflectionInspector, loader, eventClass));
     }
 
     @Override
@@ -108,15 +107,15 @@ public class DataLoadCoordinatorImpl extends AbstractFacet implements DataLoadCo
 
     @Override
     public void configureAutomatically() {
-        Screen<?> owner = getOwnerNN();
-        ScreenData screenData = UiControllerUtils.getScreenData(owner);
+        View<?> owner = getOwnerNN();
+        ViewData viewData = UiControllerUtils.getViewData(owner);
 
-        getUnconfiguredLoaders(screenData).forEach(loader -> configureAutomatically(loader, owner));
+        getUnconfiguredLoaders(viewData).forEach(loader -> configureAutomatically(loader, owner));
     }
 
-    protected Stream<DataLoader> getUnconfiguredLoaders(ScreenData screenData) {
-        return screenData.getLoaderIds().stream()
-                .map(screenData::<DataLoader>getLoader)
+    protected Stream<DataLoader> getUnconfiguredLoaders(ViewData viewData) {
+        return viewData.getLoaderIds().stream()
+                .map(viewData::<DataLoader>getLoader)
                 .distinct()
                 .filter(this::loaderIsNotConfiguredYet);
     }
@@ -127,7 +126,7 @@ public class DataLoadCoordinatorImpl extends AbstractFacet implements DataLoadCo
                 .noneMatch(configuredLoader -> configuredLoader == loader);
     }
 
-    protected void configureAutomatically(DataLoader loader, Screen<?> screen) {
+    protected void configureAutomatically(DataLoader loader, View<?> view) {
         List<String> queryParameters = DataLoadersHelper.getQueryParameters(loader);
         List<String> allParameters = new ArrayList<>(queryParameters);
         allParameters.addAll(getConditionParameters(loader));
@@ -135,14 +134,14 @@ public class DataLoadCoordinatorImpl extends AbstractFacet implements DataLoadCo
         // add triggers on container/component events
         for (String parameter : allParameters) {
             if (parameter.startsWith(containerPrefix)) {
-                InstanceContainer<?> container = UiControllerUtils.getScreenData(screen)
+                InstanceContainer<?> container = UiControllerUtils.getViewData(view)
                         .getContainer(parameter.substring(containerPrefix.length()));
 
                 addOnContainerItemChangedLoadTrigger(loader, container, parameter);
 
             } else if (parameter.startsWith(componentPrefix)) {
                 String componentId = parameter.substring(componentPrefix.length());
-                Component component = UiComponentUtils.findComponentOrElseThrow(screen, componentId);
+                Component component = UiComponentUtils.findComponentOrElseThrow(view, componentId);
                 LikeClause likeClause = findLikeClause(loader, parameter);
 
                 addOnComponentValueChangedLoadTrigger(loader, component, parameter, likeClause);
@@ -151,7 +150,7 @@ public class DataLoadCoordinatorImpl extends AbstractFacet implements DataLoadCo
 
         // if the loader has no parameters in query, add trigger on BeforeShowEvent
         if (queryParameters.isEmpty()) {
-            addOnScreenEventLoadTrigger(loader, BeforeShowEvent.class);
+            addOnViewEventLoadTrigger(loader, BeforeShowEvent.class);
         }
     }
 
@@ -226,12 +225,12 @@ public class DataLoadCoordinatorImpl extends AbstractFacet implements DataLoadCo
         return false;
     }
 
-    protected Screen<?> getOwnerNN() {
-        Screen<?> screen = getOwner();
-        if (screen == null) {
-            throw new IllegalStateException("Owner screen is null");
+    protected View<?> getOwnerNN() {
+        View<?> view = getOwner();
+        if (view == null) {
+            throw new IllegalStateException("Owner view is null");
         }
 
-        return screen;
+        return view;
     }
 }

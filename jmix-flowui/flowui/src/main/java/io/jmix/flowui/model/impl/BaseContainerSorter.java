@@ -20,8 +20,6 @@ import io.jmix.core.Sort;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.flowui.RequiresChanges;
-import io.jmix.flowui.SameAsUi;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.Sorter;
 import org.springframework.beans.factory.BeanFactory;
@@ -33,20 +31,18 @@ import java.util.List;
 /**
  * Base implementation of sorting collection containers.
  */
-@SameAsUi
-@RequiresChanges
 public abstract class BaseContainerSorter implements Sorter {
 
     protected BeanFactory beanFactory;
 
-    private final CollectionContainer container;
+    private final CollectionContainer<?> container;
 
-    public BaseContainerSorter(CollectionContainer container, BeanFactory beanFactory) {
+    public BaseContainerSorter(CollectionContainer<?> container, BeanFactory beanFactory) {
         this.container = container;
         this.beanFactory = beanFactory;
     }
 
-    public CollectionContainer getContainer() {
+    public CollectionContainer<?> getContainer() {
         return container;
     }
 
@@ -60,12 +56,12 @@ public abstract class BaseContainerSorter implements Sorter {
         if (sort.getOrders().isEmpty() || container.getItems().isEmpty()) {
             return;
         }
-        List list = new ArrayList(container.getItems());
+        List list = new ArrayList<>(container.getItems());
         list.sort(createComparator(sort, container.getEntityMetaClass()));
         setItemsToContainer(list);
     }
 
-    protected abstract void setItemsToContainer(List list);
+    protected abstract void setItemsToContainer(List<?> list);
 
     protected Comparator<?> createComparator(Sort sort, MetaClass metaClass) {
         if (sort.getOrders().size() > 1) {

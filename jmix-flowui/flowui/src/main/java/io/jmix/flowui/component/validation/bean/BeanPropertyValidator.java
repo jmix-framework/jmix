@@ -20,7 +20,6 @@ import com.vaadin.flow.component.HasValue;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
-import io.jmix.flowui.SameAsUi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -33,7 +32,6 @@ import javax.validation.Validator;
  * Automatically added on data binding if property enclosing class has validation constraints.
  */
 
-@SameAsUi
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 @Component("flowui_BeanPropertyValidator")
 public class BeanPropertyValidator extends AbstractBeanValidator {

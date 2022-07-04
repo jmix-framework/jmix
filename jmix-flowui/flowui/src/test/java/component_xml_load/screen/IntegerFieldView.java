@@ -18,15 +18,15 @@ package component_xml_load.screen;
 
 import com.vaadin.flow.router.Route;
 import io.jmix.flowui.component.textfield.JmixIntegerField;
-import io.jmix.flowui.screen.ComponentId;
-import io.jmix.flowui.screen.StandardScreen;
-import io.jmix.flowui.screen.UiController;
-import io.jmix.flowui.screen.UiDescriptor;
+import io.jmix.flowui.view.ComponentId;
+import io.jmix.flowui.view.StandardView;
+import io.jmix.flowui.view.UiController;
+import io.jmix.flowui.view.UiDescriptor;
 
 @Route("interger-field-view")
 @UiDescriptor("integer-field-view.xml")
 @UiController("IntegerFieldView")
-public class IntegerFieldView extends StandardScreen {
+public class IntegerFieldView extends StandardView {
 
     @ComponentId
     public JmixIntegerField integerFieldWithValueId;

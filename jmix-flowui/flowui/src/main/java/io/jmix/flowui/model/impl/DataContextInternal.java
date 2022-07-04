@@ -16,7 +16,6 @@
 
 package io.jmix.flowui.model.impl;
 
-import io.jmix.flowui.SameAsUi;
 import io.jmix.flowui.model.DataContext;
 
 import java.util.Set;
@@ -25,7 +24,6 @@ import java.util.Set;
  * Non-public interface of {@link DataContext} implementations that can form hierarchies
  * using {@link DataContext#setParent(DataContext)}.
  */
-@SameAsUi
 public interface DataContextInternal extends DataContext {
 
     /**

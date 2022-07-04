@@ -18,7 +18,7 @@ package io.jmix.securityflowui.constraint;
 
 public interface FlowuiSecureOperations {
 
-    boolean isScreenPermitted(String windowId, FlowuiPolicyStore policyStore);
+    boolean isViewPermitted(String viewId, FlowuiPolicyStore policyStore);
 
     boolean isMenuItemPermitted(String menuId, FlowuiPolicyStore policyStore);
 }

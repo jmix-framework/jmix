@@ -4,7 +4,7 @@ import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.dialog.Dialog;
 import io.jmix.core.common.util.Preconditions;
-import io.jmix.flowui.screen.Screen;
+import io.jmix.flowui.view.View;
 import io.jmix.flowui.sys.ValuePathHelper;
 
 import javax.annotation.Nullable;
@@ -58,19 +58,19 @@ public final class UiComponentUtils {
         }
     }
 
-    public static Optional<Component> findComponent(Screen<?> screen, String id) {
-        Component content = screen.getContent();
+    public static Optional<Component> findComponent(View<?> view, String id) {
+        Component content = view.getContent();
         if (!(content instanceof HasComponents)) {
-            throw new IllegalStateException("Screen content doesn't contain components");
+            throw new IllegalStateException(View.class.getSimpleName() + " content doesn't contain components");
         }
 
         return findComponent(((HasComponents) content), id);
     }
 
-    public static Component findComponentOrElseThrow(Screen<?> screen, String id) {
-        Component content = screen.getContent();
+    public static Component findComponentOrElseThrow(View<?> view, String id) {
+        Component content = view.getContent();
         if (!(content instanceof HasComponents)) {
-            throw new IllegalStateException("Screen content doesn't contain components");
+            throw new IllegalStateException(View.class.getSimpleName() + " content doesn't contain components");
         }
 
         return findComponent(((HasComponents) content), id)
@@ -187,13 +187,13 @@ public final class UiComponentUtils {
     }
 
     @Nullable
-    public static Screen<?> findScreen(Component component) {
-        if (component instanceof Screen) {
-            return (Screen<?>) component;
+    public static View<?> findView(Component component) {
+        if (component instanceof View) {
+            return (View<?>) component;
         }
 
         Optional<Component> parent = component.getParent();
-        return parent.map(UiComponentUtils::findScreen).orElse(null);
+        return parent.map(UiComponentUtils::findView).orElse(null);
     }
 
     /**
@@ -247,7 +247,7 @@ public final class UiComponentUtils {
     public static boolean isComponentAttachedToDialog(Component component) {
         Preconditions.checkNotNullArgument(component);
 
-        Screen<?> parent = UiComponentUtils.findScreen(component);
+        View<?> parent = UiComponentUtils.findView(component);
         if (parent == null) {
             return false;
         }

@@ -128,7 +128,7 @@ public class MenuConfig {
     }
 
     /**
-     * Make the config to reload screens on next request.
+     * Make the config to reload view on next request.
      */
     public void reset() {
         initialized = false;
@@ -230,8 +230,8 @@ public class MenuConfig {
 
         String idFromActions;
 
-        String screen = element.attributeValue("screen");
-        idFromActions = StringUtils.isNotEmpty(screen) ? screen : null;
+        String view = element.attributeValue("view");
+        idFromActions = StringUtils.isNotEmpty(view) ? view : null;
         // todo rp menu
         /*String runnableClass = element.attributeValue("class");
         checkDuplicateAction(idFromActions, runnableClass);
@@ -259,12 +259,12 @@ public class MenuConfig {
         }
 
         if (StringUtils.isNotEmpty(id) && StringUtils.isEmpty(idFromActions)) {
-            screen = id;
+            view = id;
         }
 
         MenuItem menuItem = new MenuItem(currentParentItem, id);
 
-        menuItem.setScreen(screen);
+        menuItem.setView(view);
         // todo rp menu
 //        menuItem.setRunnableClass(runnableClass);
 //        menuItem.setBean(bean);

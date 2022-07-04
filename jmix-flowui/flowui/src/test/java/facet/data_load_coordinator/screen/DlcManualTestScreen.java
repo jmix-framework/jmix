@@ -17,8 +17,8 @@
 package facet.data_load_coordinator.screen;
 
 import com.vaadin.flow.router.Route;
-import io.jmix.flowui.screen.UiController;
-import io.jmix.flowui.screen.UiDescriptor;
+import io.jmix.flowui.view.UiController;
+import io.jmix.flowui.view.UiDescriptor;
 
 @Route(value = "facet/dlc/dlc-manual")
 @UiController

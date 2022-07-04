@@ -16,6 +16,7 @@
 
 package component_xml_load
 
+import com.vaadin.flow.component.checkbox.CheckboxGroupVariant
 import component_xml_load.screen.CheckboxGroupView
 import io.jmix.core.DataManager
 import io.jmix.core.SaveContext
@@ -73,7 +74,8 @@ class CheckboxGroupXmlLoadTest extends FlowuiTestSpecification {
             required
             requiredIndicatorVisible
             requiredMessage == "requiredMessage"
-            themeNames.containsAll(["LUMO_HELPER_ABOVE_FIELD", "LUMO_VERTICAL"])
+            themeNames.containsAll([CheckboxGroupVariant.LUMO_HELPER_ABOVE_FIELD.getVariantName(),
+                                    CheckboxGroupVariant.LUMO_VERTICAL.getVariantName()])
             visible
             width == "100%"
         }

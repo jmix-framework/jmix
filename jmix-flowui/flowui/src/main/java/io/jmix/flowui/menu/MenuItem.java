@@ -30,20 +30,14 @@ public class MenuItem {
     private List<MenuItem> children = new ArrayList<>();
 
     private String id;
-    private String screen;
-//    todo rp menu
-//    private String runnableClass;
-//    private String bean;
-//    private String beanMethod;
+    private String view;
     private String className;
     private String icon;
     private String title;
     private String description;
     private Element descriptor;
-//    private boolean separator = false;
     private boolean opened = false;
 
-//    private KeyCombination shortcut;
     private boolean isMenu = false;
 
     public MenuItem(@Nullable MenuItem parent, String id) {
@@ -168,12 +162,12 @@ public class MenuItem {
         this.opened = expanded;
     }
 
-    public String getScreen() {
-        return screen;
+    public String getView() {
+        return view;
     }
 
-    public void setScreen(String screen) {
-        this.screen = screen;
+    public void setView(String view) {
+        this.view = view;
     }
 
 //    public String getRunnableClass() {

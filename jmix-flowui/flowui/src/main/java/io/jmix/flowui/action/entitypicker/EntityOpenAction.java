@@ -12,14 +12,14 @@ import io.jmix.flowui.DialogWindowBuilders;
 import io.jmix.flowui.FlowUiComponentProperties;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.action.ActionType;
-import io.jmix.flowui.action.ScreenOpeningAction;
+import io.jmix.flowui.action.ViewOpeningAction;
 import io.jmix.flowui.action.valuepicker.PickerAction;
 import io.jmix.flowui.component.EntityPickerComponent;
 import io.jmix.flowui.kit.component.FlowUiComponentUtils;
 import io.jmix.flowui.kit.component.KeyCombination;
-import io.jmix.flowui.screen.*;
-import io.jmix.flowui.screen.builder.EditorWindowBuilder;
-import io.jmix.flowui.sys.ActionScreenInitializer;
+import io.jmix.flowui.view.*;
+import io.jmix.flowui.view.builder.DetailWindowBuilder;
+import io.jmix.flowui.sys.ActionViewInitializer;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
@@ -30,7 +30,7 @@ import static com.google.common.base.Preconditions.checkState;
 
 @ActionType(EntityOpenAction.ID)
 public class EntityOpenAction<E> extends PickerAction<EntityOpenAction<E>, EntityPickerComponent<E>, E>
-        implements ScreenOpeningAction {
+        implements ViewOpeningAction {
 
     public static final String ID = "entity_open";
 
@@ -38,7 +38,7 @@ public class EntityOpenAction<E> extends PickerAction<EntityOpenAction<E>, Entit
     protected Notifications notifications;
     protected DialogWindowBuilders dialogBuilders;
 
-    protected ActionScreenInitializer screenInitializer = new ActionScreenInitializer();
+    protected ActionViewInitializer viewInitializer = new ActionViewInitializer();
 
     protected Consumer<E> afterCommitHandler;
     protected Function<E, E> transformation;
@@ -98,64 +98,64 @@ public class EntityOpenAction<E> extends PickerAction<EntityOpenAction<E>, Entit
     @Nullable
     @Override
     public OpenMode getOpenMode() {
-        // Lookup screen opens in a dialog window only
+        // Lookup view opens in a dialog window only
         return OpenMode.DIALOG;
     }
 
     @Override
     public void setOpenMode(@Nullable OpenMode openMode) {
-        throw new UnsupportedOperationException("Lookup screen opens in a dialog window only");
+        throw new UnsupportedOperationException("Lookup view opens in a dialog window only");
     }
 
     @Nullable
     @Override
-    public String getScreenId() {
-        return screenInitializer.getScreenId();
+    public String getViewId() {
+        return viewInitializer.getViewId();
     }
 
     @Override
-    public void setScreenId(@Nullable String screenId) {
-        screenInitializer.setScreenId(screenId);
+    public void setViewId(@Nullable String viewId) {
+        viewInitializer.setViewId(viewId);
     }
 
     @Nullable
     @Override
-    public Class<? extends Screen> getScreenClass() {
-        return screenInitializer.getScreenClass();
+    public Class<? extends View> getViewClass() {
+        return viewInitializer.getViewClass();
     }
 
     @Override
-    public void setScreenClass(@Nullable Class<? extends Screen> screenClass) {
-        screenInitializer.setScreenClass(screenClass);
+    public void setViewClass(@Nullable Class<? extends View> viewClass) {
+        viewInitializer.setViewClass(viewClass);
     }
 
     @Nullable
     @Override
     public RouteParameters getRouteParameters() {
-        // Lookup screen opens in a dialog window only
+        // Lookup view opens in a dialog window only
         return null;
     }
 
     @Override
     public void setRouteParameters(@Nullable RouteParameters routeParameters) {
-        throw new UnsupportedOperationException("Lookup screen opens in a dialog window only");
+        throw new UnsupportedOperationException("Lookup view opens in a dialog window only");
     }
 
     @Nullable
     @Override
     public QueryParameters getQueryParameters() {
-        // Lookup screen opens in a dialog window only
+        // Lookup view opens in a dialog window only
         return null;
     }
 
     @Override
     public void setQueryParameters(@Nullable QueryParameters queryParameters) {
-        throw new UnsupportedOperationException("Lookup screen opens in a dialog window only");
+        throw new UnsupportedOperationException("Lookup view opens in a dialog window only");
     }
 
     @Override
-    public <S extends Screen<?>> void setAfterCloseHandler(@Nullable Consumer<DialogWindow.AfterCloseEvent<S>> afterCloseHandler) {
-        screenInitializer.setAfterCloseHandler(afterCloseHandler);
+    public <S extends View<?>> void setAfterCloseHandler(@Nullable Consumer<DialogWindow.AfterCloseEvent<S>> afterCloseHandler) {
+        viewInitializer.setAfterCloseHandler(afterCloseHandler);
     }
 
     @SuppressWarnings("unchecked")
@@ -178,9 +178,9 @@ public class EntityOpenAction<E> extends PickerAction<EntityOpenAction<E>, Entit
                     "for the " + target.getClass().getSimpleName(), "action ID", getId());
         }
 
-        EditorWindowBuilder<E, Screen<?>> builder = dialogBuilders.editor(target);
+        DetailWindowBuilder<E, View<?>> builder = dialogBuilders.detail(target);
 
-        builder = screenInitializer.initWindowBuilder(builder);
+        builder = viewInitializer.initWindowBuilder(builder);
 
         if (transformation != null) {
             builder.withTransformation(transformation);
@@ -190,8 +190,8 @@ public class EntityOpenAction<E> extends PickerAction<EntityOpenAction<E>, Entit
         if (afterCommitHandler != null) {
             dialogWindow.addAfterCloseListener(event -> {
                 if (event.closedWith(StandardOutcome.COMMIT)
-                        && event.getScreen() instanceof EditorScreen) {
-                    E committedEntity = ((EditorScreen<E>) event.getScreen()).getEditedEntity();
+                        && event.getView() instanceof DetailView) {
+                    E committedEntity = ((DetailView<E>) event.getView()).getEditedEntity();
                     afterCommitHandler.accept(committedEntity);
                 }
             });

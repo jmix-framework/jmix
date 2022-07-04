@@ -140,7 +140,7 @@ class ComponentXmlLoadTest extends FlowuiTestSpecification {
             min == 5
             minHeight == "40px"
             minWidth == "80px"
-            themeNames.containsAll([ProgressBarVariant.LUMO_ERROR.name()])
+            themeNames.containsAll([ProgressBarVariant.LUMO_ERROR.getVariantName()])
             value == 67
             visible
             width == "100px"

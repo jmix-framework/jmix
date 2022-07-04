@@ -18,15 +18,15 @@ package component_xml_load.screen;
 
 import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.router.Route;
-import io.jmix.flowui.screen.ComponentId;
-import io.jmix.flowui.screen.StandardScreen;
-import io.jmix.flowui.screen.UiController;
-import io.jmix.flowui.screen.UiDescriptor;
+import io.jmix.flowui.view.ComponentId;
+import io.jmix.flowui.view.StandardView;
+import io.jmix.flowui.view.UiController;
+import io.jmix.flowui.view.UiDescriptor;
 
 @Route(value = "html-view")
 @UiController("HtmlView")
 @UiDescriptor("html-view.xml")
-public class HtmlView extends StandardScreen {
+public class HtmlView extends StandardView {
 
     //Containers
     @ComponentId

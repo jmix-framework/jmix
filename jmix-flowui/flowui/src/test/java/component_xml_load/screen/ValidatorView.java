@@ -20,17 +20,17 @@ import com.vaadin.flow.component.textfield.BigDecimalField;
 import com.vaadin.flow.router.Route;
 import io.jmix.flowui.component.datepicker.TypedDatePicker;
 import io.jmix.flowui.component.textfield.TypedTextField;
-import io.jmix.flowui.screen.ComponentId;
-import io.jmix.flowui.screen.StandardScreen;
-import io.jmix.flowui.screen.UiController;
-import io.jmix.flowui.screen.UiDescriptor;
+import io.jmix.flowui.view.ComponentId;
+import io.jmix.flowui.view.StandardView;
+import io.jmix.flowui.view.UiController;
+import io.jmix.flowui.view.UiDescriptor;
 
 import java.util.Date;
 
 @Route(value = "validator-view")
 @UiController("ValidatorView")
 @UiDescriptor("validator-view.xml")
-public class ValidatorView extends StandardScreen {
+public class ValidatorView extends StandardView {
 
     @ComponentId
     public BigDecimalField decimalField;

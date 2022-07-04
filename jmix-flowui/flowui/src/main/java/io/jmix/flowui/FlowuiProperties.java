@@ -25,14 +25,14 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 public class FlowuiProperties {
 
     /**
-     * Screen that will be used as Login screen.
+     * View that will be used as Login view.
      */
-    String loginScreenId;
+    String loginViewId;
 
     /**
-     * Screen that will be used as Main screen.
+     * View that will be used as Main view.
      */
-    String mainScreenId;
+    String mainViewId;
 
     /**
      * Defines whether menu should be built with menu items from add-ons. {@code true} means using menu items from
@@ -40,26 +40,26 @@ public class FlowuiProperties {
      */
     boolean compositeMenu;
 
-    public FlowuiProperties(@DefaultValue("login") String loginScreenId,
-                            @DefaultValue("main") String mainScreenId,
+    public FlowuiProperties(@DefaultValue("login") String loginViewId,
+                            @DefaultValue("main") String mainViewId,
                             @DefaultValue("true") boolean compositeMenu) {
-        this.loginScreenId = loginScreenId;
-        this.mainScreenId = mainScreenId;
+        this.loginViewId = loginViewId;
+        this.mainViewId = mainViewId;
         this.compositeMenu = compositeMenu;
     }
 
     /**
-     * @see #loginScreenId
+     * @see #loginViewId
      */
-    public String getLoginScreenId() {
-        return loginScreenId;
+    public String getLoginViewId() {
+        return loginViewId;
     }
 
     /**
-     * @see #mainScreenId
+     * @see #mainViewId
      */
-    public String getMainScreenId() {
-        return mainScreenId;
+    public String getMainViewId() {
+        return mainViewId;
     }
 
     /**

@@ -21,7 +21,7 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.page.AppShellConfigurator;
 import com.vaadin.flow.component.page.Push;
 import com.vaadin.flow.server.VaadinSession;
-import io.jmix.flowui.screen.Screen;
+import io.jmix.flowui.view.View;
 import io.jmix.flowui.sys.event.UiEventsManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -33,8 +33,8 @@ import java.util.Collection;
 import java.util.Collections;
 
 /**
- * The class fires application events that should be handled in the components (e.g. Screen). To enable handling
- * application events in the {@link Screen}, annotate method with {@link EventListener}. For instance:
+ * The class fires application events that should be handled in the components (e.g. View). To enable handling
+ * application events in the {@link View}, annotate method with {@link EventListener}. For instance:
  * <pre>
  *     &#064;EventListener
  *     public void customUiEventHandler(CustomUiEvent event) {

@@ -9,15 +9,15 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.DialogWindowBuilders;
 import io.jmix.flowui.FlowUiComponentProperties;
 import io.jmix.flowui.action.ActionType;
-import io.jmix.flowui.action.ScreenOpeningAction;
+import io.jmix.flowui.action.ViewOpeningAction;
 import io.jmix.flowui.action.valuepicker.PickerAction;
 import io.jmix.flowui.component.EntityPickerComponent;
 import io.jmix.flowui.kit.component.FlowUiComponentUtils;
 import io.jmix.flowui.kit.component.KeyCombination;
-import io.jmix.flowui.screen.*;
-import io.jmix.flowui.screen.DialogWindow.AfterCloseEvent;
-import io.jmix.flowui.screen.builder.LookupWindowBuilder;
-import io.jmix.flowui.sys.ActionScreenInitializer;
+import io.jmix.flowui.view.*;
+import io.jmix.flowui.view.DialogWindow.AfterCloseEvent;
+import io.jmix.flowui.view.builder.LookupWindowBuilder;
+import io.jmix.flowui.sys.ActionViewInitializer;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
@@ -28,15 +28,15 @@ import java.util.function.Predicate;
 
 @ActionType(EntityLookupAction.ID)
 public class EntityLookupAction<E> extends PickerAction<EntityLookupAction<E>, EntityPickerComponent<E>, E>
-        implements ScreenOpeningAction {
+        implements ViewOpeningAction {
 
     public static final String ID = "entity_lookup";
 
     protected DialogWindowBuilders dialogBuilders;
 
-    protected ActionScreenInitializer screenInitializer = new ActionScreenInitializer();
+    protected ActionViewInitializer viewInitializer = new ActionViewInitializer();
 
-    protected Predicate<LookupScreen.ValidationContext<E>> selectValidator;
+    protected Predicate<LookupView.ValidationContext<E>> selectValidator;
     protected Function<Collection<E>, Collection<E>> transformation;
 
     public EntityLookupAction() {
@@ -69,7 +69,7 @@ public class EntityLookupAction<E> extends PickerAction<EntityLookupAction<E>, E
         this.shortcutCombination = KeyCombination.create(flowUiComponentProperties.getPickerLookupShortcut());
     }
 
-    public void setSelectValidator(Predicate<LookupScreen.ValidationContext<E>> selectValidator) {
+    public void setSelectValidator(Predicate<LookupView.ValidationContext<E>> selectValidator) {
         this.selectValidator = selectValidator;
     }
 
@@ -80,64 +80,64 @@ public class EntityLookupAction<E> extends PickerAction<EntityLookupAction<E>, E
     @Nullable
     @Override
     public OpenMode getOpenMode() {
-        // Lookup screen opens in a dialog window only
+        // Lookup view opens in a dialog window only
         return OpenMode.DIALOG;
     }
 
     @Override
     public void setOpenMode(@Nullable OpenMode openMode) {
-        throw new UnsupportedOperationException("Lookup screen opens in a dialog window only");
+        throw new UnsupportedOperationException("Lookup view opens in a dialog window only");
     }
 
     @Nullable
     @Override
-    public String getScreenId() {
-        return screenInitializer.getScreenId();
+    public String getViewId() {
+        return viewInitializer.getViewId();
     }
 
     @Override
-    public void setScreenId(@Nullable String screenId) {
-        screenInitializer.setScreenId(screenId);
+    public void setViewId(@Nullable String viewId) {
+        viewInitializer.setViewId(viewId);
     }
 
     @Nullable
     @Override
-    public Class<? extends Screen> getScreenClass() {
-        return screenInitializer.getScreenClass();
+    public Class<? extends View> getViewClass() {
+        return viewInitializer.getViewClass();
     }
 
     @Override
-    public void setScreenClass(@Nullable Class<? extends Screen> screenClass) {
-        screenInitializer.setScreenClass(screenClass);
+    public void setViewClass(@Nullable Class<? extends View> viewClass) {
+        viewInitializer.setViewClass(viewClass);
     }
 
     @Nullable
     @Override
     public RouteParameters getRouteParameters() {
-        // Lookup screen opens in a dialog window only
+        // Lookup view opens in a dialog window only
         return null;
     }
 
     @Override
     public void setRouteParameters(@Nullable RouteParameters routeParameters) {
-        throw new UnsupportedOperationException("Lookup screen opens in a dialog window only");
+        throw new UnsupportedOperationException("Lookup view opens in a dialog window only");
     }
 
     @Nullable
     @Override
     public QueryParameters getQueryParameters() {
-        // Lookup screen opens in a dialog window only
+        // Lookup view opens in a dialog window only
         return null;
     }
 
     @Override
     public void setQueryParameters(@Nullable QueryParameters queryParameters) {
-        throw new UnsupportedOperationException("Lookup screen opens in a dialog window only");
+        throw new UnsupportedOperationException("Lookup view opens in a dialog window only");
     }
 
     @Override
-    public <S extends Screen<?>> void setAfterCloseHandler(@Nullable Consumer<AfterCloseEvent<S>> afterCloseHandler) {
-        screenInitializer.setAfterCloseHandler(afterCloseHandler);
+    public <S extends View<?>> void setAfterCloseHandler(@Nullable Consumer<AfterCloseEvent<S>> afterCloseHandler) {
+        viewInitializer.setAfterCloseHandler(afterCloseHandler);
     }
 
     // TODO: gg, editable?
@@ -150,9 +150,9 @@ public class EntityLookupAction<E> extends PickerAction<EntityLookupAction<E>, E
                     "for the " + target.getClass().getSimpleName(), "action ID", getId());
         }
 
-        LookupWindowBuilder<E, Screen<?>> builder = dialogBuilders.lookup(target);
+        LookupWindowBuilder<E, View<?>> builder = dialogBuilders.lookup(target);
 
-        builder = screenInitializer.initWindowBuilder(builder);
+        builder = viewInitializer.initWindowBuilder(builder);
 
         if (selectValidator != null) {
             builder = builder.withSelectValidator(selectValidator);
@@ -165,7 +165,7 @@ public class EntityLookupAction<E> extends PickerAction<EntityLookupAction<E>, E
         builder.open();
     }
 
-    public EntityLookupAction<E> withSelectValidator(Predicate<LookupScreen.ValidationContext<E>> selectValidator) {
+    public EntityLookupAction<E> withSelectValidator(Predicate<LookupView.ValidationContext<E>> selectValidator) {
         setSelectValidator(selectValidator);
         return this;
     }

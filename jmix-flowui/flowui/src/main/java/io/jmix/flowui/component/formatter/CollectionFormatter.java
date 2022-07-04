@@ -28,7 +28,7 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 
 /**
- * Collection formatter to be used in screen descriptors and controllers.
+ * Collection formatter to be used in view descriptors and controllers.
  * <p>
  * This formatter formats collection into a string where the elements of the collection are separated by commas.
  */

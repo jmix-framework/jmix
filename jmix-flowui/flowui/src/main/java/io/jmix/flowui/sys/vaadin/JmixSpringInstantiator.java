@@ -2,8 +2,8 @@ package io.jmix.flowui.sys.vaadin;
 
 import com.vaadin.flow.server.VaadinService;
 import com.vaadin.flow.spring.SpringInstantiator;
-import io.jmix.flowui.screen.Screen;
-import io.jmix.flowui.sys.ScreenSupport;
+import io.jmix.flowui.view.View;
+import io.jmix.flowui.sys.ViewSupport;
 import org.springframework.context.ApplicationContext;
 
 public class JmixSpringInstantiator extends SpringInstantiator {
@@ -30,12 +30,12 @@ public class JmixSpringInstantiator extends SpringInstantiator {
     }
 
     protected <T> void init(Class<T> type, T instance) {
-        if (Screen.class.isAssignableFrom(type)) {
-            getScreenSupport().initScreen(((Screen) instance));
+        if (View.class.isAssignableFrom(type)) {
+            getViewSupport().initView(((View) instance));
         }
     }
 
-    private ScreenSupport getScreenSupport() {
-        return applicationContext.getBean(ScreenSupport.class);
+    private ViewSupport getViewSupport() {
+        return applicationContext.getBean(ViewSupport.class);
     }
 }

@@ -2,7 +2,7 @@ package io.jmix.flowui.sys;
 
 import com.google.common.base.Strings;
 import io.jmix.core.DevelopmentException;
-import io.jmix.flowui.screen.*;
+import io.jmix.flowui.view.*;
 
 import javax.annotation.Nullable;
 
@@ -14,17 +14,17 @@ public final class UiDescriptorUtils {
     }
 
     public static String getInferredTemplate(UiDescriptor uiDescriptor,
-                                             Class<?/* extends Screen*/> annotatedScreenClass) {
+                                             Class<?> annotatedViewClass) {
         checkNotNullArgument(uiDescriptor);
-        checkNotNullArgument(annotatedScreenClass);
+        checkNotNullArgument(annotatedViewClass);
 
         String template = uiDescriptor.value();
         if (Strings.isNullOrEmpty(template)) {
             template = uiDescriptor.path();
 
             if (Strings.isNullOrEmpty(template)) {
-                throw new DevelopmentException("Screen class annotated with @" +
-                        UiDescriptor.class.getSimpleName() + " without template: " + annotatedScreenClass);
+                throw new DevelopmentException("View class annotated with @" +
+                        UiDescriptor.class.getSimpleName() + " without template: " + annotatedViewClass);
             }
         }
 
@@ -42,29 +42,29 @@ public final class UiDescriptorUtils {
         return target;
     }
 
-    public static String getInferredScreenId(Class<?/* extends Screen*/> annotatedScreenClass) {
-        checkNotNullArgument(annotatedScreenClass);
+    public static String getInferredViewId(Class<?> annotatedViewClass) {
+        checkNotNullArgument(annotatedViewClass);
 
-        UiController uiController = annotatedScreenClass.getAnnotation(UiController.class);
+        UiController uiController = annotatedViewClass.getAnnotation(UiController.class);
         if (uiController == null) {
             throw new IllegalArgumentException("No @" + UiController.class.getSimpleName() +
-                    " annotation for class " + annotatedScreenClass);
+                    " annotation for class " + annotatedViewClass);
         }
 
-        return UiDescriptorUtils.getInferredScreenId(uiController, annotatedScreenClass);
+        return UiDescriptorUtils.getInferredViewId(uiController, annotatedViewClass);
     }
 
-    public static String getInferredScreenId(UiController uiController,
-                                             Class<?/* extends Screen*/> annotatedScreenClass) {
+    public static String getInferredViewId(UiController uiController,
+                                           Class<?> annotatedViewClass) {
         checkNotNullArgument(uiController);
-        checkNotNullArgument(annotatedScreenClass);
+        checkNotNullArgument(annotatedViewClass);
 
-        return getInferredScreenId(uiController.id(), uiController.value(), annotatedScreenClass.getName());
+        return getInferredViewId(uiController.id(), uiController.value(), annotatedViewClass.getName());
     }
 
-    public static String getInferredScreenId(@Nullable String idAttribute,
-                                             @Nullable String valueAttribute,
-                                             String className) {
+    public static String getInferredViewId(@Nullable String idAttribute,
+                                           @Nullable String valueAttribute,
+                                           String className) {
         String id = valueAttribute;
         if (Strings.isNullOrEmpty(id)) {
             id = idAttribute;

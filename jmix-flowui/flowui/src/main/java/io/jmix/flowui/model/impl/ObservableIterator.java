@@ -17,11 +17,9 @@
 package io.jmix.flowui.model.impl;
 
 import com.google.common.collect.ForwardingIterator;
-import io.jmix.flowui.SameAsUi;
 
 import java.util.Iterator;
 
-@SameAsUi
 class ObservableIterator<T> extends ForwardingIterator<T> {
 
     private final Iterator<T> delegate;

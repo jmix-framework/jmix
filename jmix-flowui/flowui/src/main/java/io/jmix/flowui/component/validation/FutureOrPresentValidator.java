@@ -17,7 +17,6 @@
 package io.jmix.flowui.component.validation;
 
 import io.jmix.core.TimeSource;
-import io.jmix.flowui.SameAsUi;
 import io.jmix.flowui.component.validation.time.TimeValidator;
 import io.jmix.flowui.exception.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +26,6 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 
-@SameAsUi
 @Component("flowui_FutureOrPresentValidator")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class FutureOrPresentValidator<T> extends AbstractValidator<T> {

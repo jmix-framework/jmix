@@ -97,7 +97,7 @@
               required="true"
               dynamic="true"
               advanced="true"
-              valueTemplate="${entity.name!=null?entity.name:entity.className}.browse">
+              valueTemplate="${entity.name!=null?entity.name:entity.className}.list">
         <dependency code="entity"/>
     </property>
 
@@ -111,7 +111,11 @@
         <dependency code="entity"/>
     </property>
 
+    <property caption="Parent menu item"
+              code="menuItem"
+              propertyType="FLOW_MENU_ITEM"/>
 
+    <!--sources-->
     <source fileExt="xml"
             name="descriptor"/>
     <source fileExt="java"

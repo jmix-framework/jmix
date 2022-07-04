@@ -18,16 +18,16 @@ package component_xml_load.screen;
 
 import com.vaadin.flow.router.Route;
 import io.jmix.flowui.component.radiobuttongroup.JmixRadioButtonGroup;
-import io.jmix.flowui.screen.ComponentId;
-import io.jmix.flowui.screen.StandardScreen;
-import io.jmix.flowui.screen.UiController;
-import io.jmix.flowui.screen.UiDescriptor;
+import io.jmix.flowui.view.ComponentId;
+import io.jmix.flowui.view.StandardView;
+import io.jmix.flowui.view.UiController;
+import io.jmix.flowui.view.UiDescriptor;
 import test_support.entity.sales.Order;
 
 @Route("radio-button-group")
 @UiDescriptor("radio-button-group-view.xml")
 @UiController("RadioButtonGroupView")
-public class RadioButtonGroupView extends StandardScreen {
+public class RadioButtonGroupView extends StandardView {
 
     @ComponentId
     public JmixRadioButtonGroup<Order> radioButtonGroup;

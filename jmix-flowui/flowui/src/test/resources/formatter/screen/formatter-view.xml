@@ -14,7 +14,7 @@
   ~ limitations under the License.
   -->
 
-<screen xmlns="http://jmix.io/schema/flowui/screen">
+<view xmlns="http://jmix.io/schema/flowui/view">
     <layout>
         <valuePicker id="dateFormatterField">
             <formatter>
@@ -33,4 +33,4 @@
         </valuePicker>
         <valuePicker id="defaultNumberFormatterField"/>
     </layout>
-</screen>
+</view>

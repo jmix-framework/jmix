@@ -27,8 +27,6 @@ import io.jmix.core.entity.EntityPropertyChangeListener;
 import io.jmix.core.entity.EntitySystemAccess;
 import io.jmix.core.entity.HasInstanceMetaClass;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.flowui.RequiresChanges;
-import io.jmix.flowui.SameAsUi;
 import io.jmix.flowui.model.DataLoader;
 import io.jmix.flowui.model.HasLoader;
 import io.jmix.flowui.model.InstanceContainer;
@@ -42,13 +40,10 @@ import java.util.function.Consumer;
 /**
  *
  */
-@SameAsUi
-@RequiresChanges
 public class InstanceContainerImpl<E> implements InstanceContainer<E>, HasLoader, ItemPropertyChangeNotifier {
 
     private static final Logger log = LoggerFactory.getLogger(InstanceContainerImpl.class);
 
-    @Autowired
     protected Metadata metadata;
 
     protected E item;
@@ -63,6 +58,11 @@ public class InstanceContainerImpl<E> implements InstanceContainer<E>, HasLoader
 
     public InstanceContainerImpl(MetaClass entityMetaClass) {
         this.entityMetaClass = entityMetaClass;
+    }
+
+    @Autowired
+    public void setMetadata(Metadata metadata) {
+        this.metadata = metadata;
     }
 
     @Nullable
@@ -118,28 +118,24 @@ public class InstanceContainerImpl<E> implements InstanceContainer<E>, HasLoader
         this.fetchPlan = fetchPlan;
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     public Subscription addItemPropertyChangeListener(Consumer<ItemPropertyChangeEvent<E>> listener) {
         return events.subscribe(ItemPropertyChangeEvent.class, (Consumer) listener);
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     public Subscription addItemChangeListener(Consumer<ItemChangeEvent<E>> listener) {
         return events.subscribe(ItemChangeEvent.class, (Consumer) listener);
     }
 
     protected void attachListener(Object entity) {
-        if (entity != null) {
-            EntitySystemAccess.addPropertyChangeListener(entity, listener);
-        }
+        EntitySystemAccess.addPropertyChangeListener(entity, listener);
     }
 
     protected void detachListener(Object entity) {
-        if (entity != null) {
-            EntitySystemAccess.removePropertyChangeListener(entity, listener);
-        }
+        EntitySystemAccess.removePropertyChangeListener(entity, listener);
     }
 
     @Override

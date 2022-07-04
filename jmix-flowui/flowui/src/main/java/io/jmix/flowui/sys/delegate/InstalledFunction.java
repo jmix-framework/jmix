@@ -1,21 +1,19 @@
 package io.jmix.flowui.sys.delegate;
 
 
-import io.jmix.flowui.SameAsUi;
-import io.jmix.flowui.screen.Install;
-import io.jmix.flowui.screen.Screen;
+import io.jmix.flowui.view.Install;
+import io.jmix.flowui.view.View;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.function.Function;
 
-@SameAsUi
 public class InstalledFunction implements Function<Object, Object> {
 
-    private final Screen controller;
+    private final View<?> controller;
     private final Method method;
 
-    public InstalledFunction(Screen controller, Method method) {
+    public InstalledFunction(View<?> controller, Method method) {
         this.controller = controller;
         this.method = method;
     }

@@ -21,7 +21,6 @@ import io.jmix.core.Metadata;
 import io.jmix.core.SaveContext;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.common.event.sys.VoidSubscription;
-import io.jmix.flowui.SameAsUi;
 import io.jmix.flowui.model.DataContext;
 import io.jmix.flowui.model.MergeOptions;
 import org.springframework.context.ApplicationContext;
@@ -34,9 +33,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
- * Dummy implementation of {@link DataContext} used for read-only screens like entity browsers.
+ * Dummy implementation of {@link DataContext} used for read-only views like entity list views.
  */
-@SameAsUi
 public class NoopDataContext implements DataContext {
 
     protected ApplicationContext applicationContext;

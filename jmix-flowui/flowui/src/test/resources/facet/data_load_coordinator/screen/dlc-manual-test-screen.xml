@@ -14,7 +14,7 @@
   ~ limitations under the License.
   -->
 
-<screen xmlns="http://jmix.io/schema/flowui/screen"
+<view xmlns="http://jmix.io/schema/flowui/view"
         xmlns:c="http://jmix.io/schema/flowui/jpql-condition"
         title="Owners">
     <data readOnly="true">
@@ -45,12 +45,10 @@
             </loader>
         </collection>
     </data>
-    <dialogMode height="600"
-                width="800"/>
     <facets>
         <dataLoadCoordinator id="dlc" auto="true">
             <refresh loader="ownersDl">
-                <onScreenEvent type="Init"/>
+                <onViewEvent type="Init"/>
                 <onComponentValueChanged component="categoryFilterField" param="category"/>
                 <onComponentValueChanged component="nameFilterField" param="name" likeClause="CASE_INSENSITIVE"/>
             </refresh>
@@ -63,4 +61,4 @@
         <entityPicker id="categoryFilterField" metaClass="pc_OwnerCategory"/>
         <textField id="nameFilterField"/>
     </layout>
-</screen>
+</view>

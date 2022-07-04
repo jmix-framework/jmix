@@ -22,7 +22,7 @@ import io.jmix.core.Messages;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.kit.component.button.JmixButton;
-import io.jmix.flowui.screen.ScreenRegistry;
+import io.jmix.flowui.view.ViewRegistry;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -48,7 +48,7 @@ public class ExceptionDialog implements InitializingBean {
     protected static final String EXPANDED_HEIGHT = "600px";
 
     protected Messages messages;
-    protected ScreenRegistry screenRegistry;
+    protected ViewRegistry viewRegistry;
     protected UiComponents uiComponents;
     protected Notifications notifications;
 
@@ -71,8 +71,8 @@ public class ExceptionDialog implements InitializingBean {
     }
 
     @Autowired
-    public void setScreenRegistry(ScreenRegistry screenRegistry) {
-        this.screenRegistry = screenRegistry;
+    public void setViewRegistry(ViewRegistry viewRegistry) {
+        this.viewRegistry = viewRegistry;
     }
 
     @Autowired
@@ -136,14 +136,14 @@ public class ExceptionDialog implements InitializingBean {
         Header header = new Header();
         header.addClassNames(HEADER_STYLE_NAME, "draggable");
 
-        String screenTitle = messages.getMessage("exceptionDialog.title");
+        String viewTitle = messages.getMessage("exceptionDialog.title");
 
         H2 title = new H2();
-        title.setText(screenTitle);
+        title.setText(viewTitle);
         title.setClassName(TITLE_STYLE_NAME);
         header.add(title);
 
-        dialog.getElement().setAttribute("aria-label", screenTitle);
+        dialog.getElement().setAttribute("aria-label", viewTitle);
 
         Button closeButton = createHeaderCloseButton();
         header.add(closeButton);
@@ -319,7 +319,7 @@ public class ExceptionDialog implements InitializingBean {
                         params.put("Frame ID", frameId);
                         try {
                             params.put("XML descriptor",
-                                    screenRegistry.getScreenInfo(frameId).
+                                    viewRegistry.getViewInfo(frameId).
                                             getTemplatePath().orElse(null));
                         } catch (Exception e) {
                             params.put("XML descriptor", "not found for " + frameId);

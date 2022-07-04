@@ -24,7 +24,6 @@ import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 
-@SuppressWarnings("rawtypes")
 @Component("flowui_LoaderResolver")
 public class LoaderResolver {
 
@@ -45,21 +44,10 @@ public class LoaderResolver {
         return null;
     }
 
-    /*@Nullable
-    public Class<? extends ComponentLoader> getFragmentLoader(Element root) {
-        for (LoaderConfig config : loaderConfigs) {
-            Class<? extends ComponentLoader> loader = config.getFragmentLoader(root);
-            if (loader != null) {
-                return loader;
-            }
-        }
-        return null;
-    }*/
-
     @Nullable
-    public Class<? extends ComponentLoader> getScreenLoader(Element root) {
+    public Class<? extends ComponentLoader> getViewLoader(Element root) {
         for (LoaderConfig config : loaderConfigs) {
-            Class<? extends ComponentLoader> loader = config.getScreenLoader(root);
+            Class<? extends ComponentLoader> loader = config.getViewLoader(root);
             if (loader != null) {
                 return loader;
             }

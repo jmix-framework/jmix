@@ -18,7 +18,6 @@ package io.jmix.flowui.model.impl;
 
 import com.google.common.collect.ForwardingList;
 import io.jmix.core.Entity;
-import io.jmix.flowui.SameAsUi;
 import io.jmix.flowui.model.CollectionChangeType;
 
 import javax.annotation.Nullable;
@@ -28,7 +27,6 @@ import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-@SameAsUi
 public class ObservableList<T> extends ForwardingList<T> implements Serializable {
 
     private static final long serialVersionUID = -1887633822578545041L;

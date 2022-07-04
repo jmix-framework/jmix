@@ -17,7 +17,6 @@
 package io.jmix.flowui.component.validation;
 
 import io.jmix.core.Messages;
-import io.jmix.flowui.SameAsUi;
 import io.jmix.flowui.exception.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -26,7 +25,6 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 
-@SameAsUi
 @Component("flowui_NotNullValidator")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class NotNullValidator<T> extends AbstractValidator<T> {

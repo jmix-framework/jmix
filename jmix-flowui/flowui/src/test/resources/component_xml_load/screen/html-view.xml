@@ -15,7 +15,7 @@
   ~ limitations under the License.
   -->
 
-<screen xmlns="http://jmix.io/schema/flowui/screen">
+<view xmlns="http://jmix.io/schema/flowui/view">
     <layout>
         <!--        Containers-->
         <article id="articleId"
@@ -518,4 +518,4 @@
                visible="true"
                width="100px"/>
     </layout>
-</screen>
+</view>

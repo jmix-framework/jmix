@@ -18,7 +18,6 @@ package io.jmix.flowui.component.validation;
 
 import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.metamodel.datatype.Datatype;
-import io.jmix.flowui.SameAsUi;
 import io.jmix.flowui.component.validation.number.NumberConstraint;
 import io.jmix.flowui.exception.ValidationException;
 import org.springframework.beans.factory.InitializingBean;
@@ -33,7 +32,6 @@ import java.util.Locale;
 
 import static io.jmix.flowui.component.validation.ValidatorHelper.getNumberConstraint;
 
-@SameAsUi
 @Component("flowui_DigitsValidator")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class DigitsValidator<T> extends AbstractValidator<T> implements InitializingBean {

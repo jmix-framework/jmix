@@ -4,7 +4,7 @@ import ${entity.fqn};
 import ${module_basePackage}.view.main.MainView;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RoutePrefix;
-import io.jmix.flowui.screen.*;
+import io.jmix.flowui.view.*;
 
 <%if (classComment) {%>
 ${classComment}
@@ -13,5 +13,5 @@ ${classComment}
 @UiController("${detailId}")
 @UiDescriptor("${detailDescriptorName}.xml")
 @EditedEntityContainer("${dcId}")
-public class ${detailControllerName} extends StandardEditor<${entity.className}> {
+public class ${detailControllerName} extends StandardDetailView<${entity.className}> {
 }

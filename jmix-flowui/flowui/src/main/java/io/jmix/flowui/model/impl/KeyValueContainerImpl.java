@@ -21,15 +21,11 @@ import io.jmix.core.impl.keyvalue.KeyValueMetaClass;
 import io.jmix.core.impl.keyvalue.KeyValueMetaPropertyBuilder;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.flowui.RequiresChanges;
-import io.jmix.flowui.SameAsUi;
 import io.jmix.flowui.model.KeyValueContainer;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
 
-@SameAsUi
-@RequiresChanges
 public class KeyValueContainerImpl extends InstanceContainerImpl<KeyValueEntity> implements KeyValueContainer {
 
     private String idName;
@@ -68,13 +64,13 @@ public class KeyValueContainerImpl extends InstanceContainerImpl<KeyValueEntity>
     }
 
     @Override
-    public KeyValueContainer addProperty(String name, Class aClass) {
+    public KeyValueContainer addProperty(String name, Class<?> aClass) {
         getEntityMetaClass().addProperty(keyValueMetaPropertyBuilder.build(getEntityMetaClass(), name, aClass));
         return this;
     }
 
     @Override
-    public KeyValueContainer addProperty(String name, Datatype datatype) {
+    public KeyValueContainer addProperty(String name, Datatype<?> datatype) {
         getEntityMetaClass().addProperty(keyValueMetaPropertyBuilder.build(getEntityMetaClass(), name, datatype));
         return this;
     }

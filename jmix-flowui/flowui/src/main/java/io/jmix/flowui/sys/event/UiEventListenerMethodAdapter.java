@@ -18,7 +18,6 @@ package io.jmix.flowui.sys.event;
 
 import com.google.common.base.Strings;
 import io.jmix.core.annotation.Internal;
-import io.jmix.flowui.SimilarToUi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEvent;
@@ -47,7 +46,6 @@ import java.util.List;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
-@SimilarToUi
 @Internal
 public class UiEventListenerMethodAdapter implements GenericApplicationListener {
 

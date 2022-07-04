@@ -38,11 +38,11 @@ import java.util.Collections;
 public class FlowuiConfiguration {
 
     @Bean("flowui_UiControllers")
-    public UiControllersConfiguration screens(ApplicationContext applicationContext,
-                                              AnnotationScanMetadataReaderFactory metadataReaderFactory) {
+    public UiControllersConfiguration viewss(ApplicationContext applicationContext,
+                                            AnnotationScanMetadataReaderFactory metadataReaderFactory) {
         UiControllersConfiguration uiControllers
                 = new UiControllersConfiguration(applicationContext, metadataReaderFactory);
-        // TODO: gg, no screens yet
+        // TODO: gg, no views yet
         uiControllers.setBasePackages(Collections.singletonList("io.jmix.flowui.app"));
         return uiControllers;
     }

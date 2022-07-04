@@ -17,8 +17,6 @@
 package io.jmix.flowui.model;
 
 import io.jmix.core.querycondition.Condition;
-import io.jmix.flowui.RequiresChanges;
-import io.jmix.flowui.SameAsUi;
 
 import javax.annotation.Nullable;
 import java.io.Serializable;
@@ -31,8 +29,6 @@ import java.util.Map;
  * @see InstanceContainer
  * @see CollectionContainer
  */
-@RequiresChanges
-@SameAsUi
 public interface DataLoader {
 
     /**
@@ -43,7 +39,7 @@ public interface DataLoader {
     /**
      * Returns connected container.
      */
-    InstanceContainer getContainer();
+    InstanceContainer<?> getContainer();
 
     /**
      * Returns data context. If the data context is set, all loaded instance will be merged into it.

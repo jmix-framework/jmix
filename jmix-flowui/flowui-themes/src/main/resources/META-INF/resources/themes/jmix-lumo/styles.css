@@ -16,9 +16,9 @@
 
 @import url('app/dialog-window.css');
 @import url('app/exception-dialog-window.css');
-@import url('app/main-screen.css');
+@import url('app/main-view.css');
 @import url('app/misc.css');
-@import url('app/login-screen.css');
+@import url('app/login-view.css');
 
 @import url('component/jmix-list-menu.css');
 @import url('component/jmix-notification.css');

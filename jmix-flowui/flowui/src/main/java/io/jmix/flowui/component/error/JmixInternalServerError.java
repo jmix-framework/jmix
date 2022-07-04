@@ -22,30 +22,30 @@ public class JmixInternalServerError extends InternalServerError {
 
     @Override
     public int setErrorParameter(BeforeEnterEvent event, ErrorParameter<Exception> parameter) {
-        forwardToPreviousScreen(event);
+        forwardToPreviousView(event);
 
         uiExceptionHandlers.error(new ErrorEvent(parameter.getException()));
 
         return HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
     }
 
-    protected void forwardToPreviousScreen(BeforeEnterEvent event) {
+    protected void forwardToPreviousView(BeforeEnterEvent event) {
         Location location = event.getLocation();
         if (location.getSegments().size() > 1) {
             event.forwardTo(location.getFirstSegment());
         } else {
             RouteConfiguration.forSessionScope().getRoute(location.getPath())
                     .ifPresentOrElse(
-                            screenClass -> navigateToParentLayout(screenClass, event),
+                            viewClass -> navigateToParentLayout(viewClass, event),
                             () -> log.info("Cannot navigate to the parent layout"));
         }
     }
 
-    protected void navigateToParentLayout(Class<?> screenClass, BeforeEnterEvent event) {
+    protected void navigateToParentLayout(Class<?> viewClass, BeforeEnterEvent event) {
         RouteConfiguration routeConfiguration = RouteConfiguration.forSessionScope();
         List<RouteData> routes = routeConfiguration.getAvailableRoutes();
 
-        RouteData parentRouteData = findRouteData(screenClass, routes)
+        RouteData parentRouteData = findRouteData(viewClass, routes)
                 .flatMap(routeData -> findRouteData(routeData.getParentLayout(), routes))
                 .orElse(null);
 
@@ -55,7 +55,7 @@ public class JmixInternalServerError extends InternalServerError {
             return;
         }
 
-        log.info("Cannot navigate to the parent layout {}", screenClass.getName());
+        log.info("Cannot navigate to the parent layout {}", viewClass.getName());
     }
 
     protected Optional<RouteData> findRouteData(Class<?> target, List<RouteData> routes) {

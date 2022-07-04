@@ -9,7 +9,7 @@ import com.vaadin.flow.router.RoutePrefix;
 import io.jmix.core.EntityStates;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.component.textfield.TypedTextField;
-import io.jmix.flowui.screen.*;
+import io.jmix.flowui.view.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -19,10 +19,10 @@ import java.util.TimeZone;
 
 @Route(value = ":id", layout = MainView.class)
 @RoutePrefix(UserListView.ROUTE)
-@UiController("User.edit")
+@UiController("User.detail")
 @UiDescriptor("user-detail-view.xml")
 @EditedEntityContainer("userDc")
-public class UserDetailView extends StandardEditor<User> {
+public class UserDetailView extends StandardDetailView<User> {
 
     @ComponentId
     private TypedTextField<String> usernameField;

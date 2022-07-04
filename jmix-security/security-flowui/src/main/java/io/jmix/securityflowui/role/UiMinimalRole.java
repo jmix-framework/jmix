@@ -24,17 +24,17 @@ import io.jmix.security.role.annotation.EntityAttributePolicy;
 import io.jmix.security.role.annotation.EntityPolicy;
 import io.jmix.security.role.annotation.ResourceRole;
 import io.jmix.security.role.annotation.SpecificPolicy;
-import io.jmix.securityflowui.role.annotation.ScreenPolicy;
+import io.jmix.securityflowui.role.annotation.ViewPolicy;
 
 @ResourceRole(name = "Flow UI: minimal access", code = UiMinimalRole.CODE, scope = SecurityScope.UI)
 public interface UiMinimalRole {
 
     String CODE = "flowui-minimal";
 
-    @ScreenPolicy(screenIds = "main")
+    @ViewPolicy(viewIds = "main")
     void main();
 
-    @ScreenPolicy(screenIds = "login")
+    @ViewPolicy(viewIds = "login")
     @SpecificPolicy(resources = "flowui.loginToUi")
     void login();
 

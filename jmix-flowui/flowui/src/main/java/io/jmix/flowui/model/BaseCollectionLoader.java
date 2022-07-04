@@ -17,8 +17,6 @@
 package io.jmix.flowui.model;
 
 import io.jmix.core.Sort;
-import io.jmix.flowui.RequiresChanges;
-import io.jmix.flowui.SameAsUi;
 
 import javax.annotation.Nullable;
 
@@ -28,14 +26,12 @@ import javax.annotation.Nullable;
  * @see CollectionLoader
  * @see KeyValueCollectionLoader
  */
-@SameAsUi
-@RequiresChanges
 public interface BaseCollectionLoader extends DataLoader {
 
     /**
      * Returns the container which accepts loaded entities.
      */
-    CollectionContainer getContainer();
+    CollectionContainer<?> getContainer();
 
     /**
      * The position of the first instance to load, numbered from 0.

@@ -29,7 +29,7 @@ import javax.annotation.Nullable;
 import java.text.DecimalFormat;
 
 /**
- * Number formatter to be used in screen descriptors and controllers.
+ * Number formatter to be used in view descriptors and controllers.
  * <p>
  * This formatter formats the {@link Number} value into a string depending on the format string.
  */

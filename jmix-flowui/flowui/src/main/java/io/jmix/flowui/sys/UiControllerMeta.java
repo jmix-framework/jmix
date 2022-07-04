@@ -16,8 +16,8 @@
 
 package io.jmix.flowui.sys;
 
-import io.jmix.flowui.screen.Screen;
-import io.jmix.flowui.screen.UiController;
+import io.jmix.flowui.view.View;
+import io.jmix.flowui.view.UiController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
@@ -32,7 +32,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Class provides information about screen controller.
+ * Class provides information about view controller.
  */
 public class UiControllerMeta {
 
@@ -40,16 +40,16 @@ public class UiControllerMeta {
 
     protected MetadataReaderFactory metadataReaderFactory;
     protected MetadataReader metadataReader;
-    protected Class<? extends Screen> screenClass;
+    protected Class<? extends View> viewClass;
 
     public UiControllerMeta(MetadataReaderFactory metadataReaderFactory, MetadataReader metadataReader) {
         this.metadataReaderFactory = metadataReaderFactory;
         this.metadataReader = metadataReader;
     }
 
-    public UiControllerMeta(MetadataReaderFactory metadataReaderFactory, Class<? extends Screen> screenClass) {
+    public UiControllerMeta(MetadataReaderFactory metadataReaderFactory, Class<? extends View> viewClass) {
         this.metadataReaderFactory = metadataReaderFactory;
-        this.screenClass = screenClass;
+        this.viewClass = viewClass;
     }
 
     /**
@@ -63,7 +63,7 @@ public class UiControllerMeta {
      * @return fully qualified controller class name
      */
     public String getControllerClass() {
-        return getScreenClassName();
+        return getViewClassName();
     }
 
     /**
@@ -82,7 +82,7 @@ public class UiControllerMeta {
     public Map<String, Object> getAnnotationAttributes(String annotationName) {
         return metadataReader != null
                 ? metadataReader.getAnnotationMetadata().getAnnotationAttributes(annotationName)
-                : getControllerAnnotationAttributes(annotationName, screenClass);
+                : getControllerAnnotationAttributes(annotationName, viewClass);
     }
 
     protected String getControllerId() {
@@ -95,19 +95,19 @@ public class UiControllerMeta {
             value = (String) uiController.get(UiController.VALUE_ATTRIBUTE);
         }
 
-        return UiDescriptorUtils.getInferredScreenId(id, value, getScreenClassName());
+        return UiDescriptorUtils.getInferredViewId(id, value, getViewClassName());
     }
 
-    protected String getScreenClassName() {
+    protected String getViewClassName() {
         return metadataReader != null
                 ? metadataReader.getClassMetadata().getClassName()
-                : screenClass.getName();
+                : viewClass.getName();
     }
 
     @Nullable
     protected Map<String, Object> getControllerAnnotationAttributes(String annotationName,
-                                                                    Class<? extends Screen> screenClass) {
-        for (Annotation annotation : screenClass.getAnnotations()) {
+                                                                    Class<? extends View> viewClass) {
+        for (Annotation annotation : viewClass.getAnnotations()) {
             Class<? extends Annotation> annotationClass = annotation.getClass();
             if (!annotationClass.getName().equals(annotationName)) {
                 continue;
@@ -119,7 +119,7 @@ public class UiControllerMeta {
                     annotationAttributes.put(method.getName(), method.invoke(annotation));
                 } catch (IllegalAccessException | InvocationTargetException e) {
                     log.warn("Failed to get '{}#{}' property value for class '{}'",
-                            annotationClass.getName(), method.getName(), screenClass.getName(), e);
+                            annotationClass.getName(), method.getName(), viewClass.getName(), e);
                 }
             }
             return annotationAttributes;

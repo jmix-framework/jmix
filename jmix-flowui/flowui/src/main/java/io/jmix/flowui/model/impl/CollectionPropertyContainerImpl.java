@@ -20,30 +20,26 @@ import io.jmix.core.entity.EntityPropertyChangeEvent;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.flowui.RequiresChanges;
-import io.jmix.flowui.SameAsUi;
 import io.jmix.flowui.model.CollectionPropertyContainer;
 import io.jmix.flowui.model.InstanceContainer;
 
 import javax.annotation.Nullable;
 import java.util.*;
 
-@SameAsUi
-@RequiresChanges
 public class CollectionPropertyContainerImpl<E>
         extends CollectionContainerImpl<E> implements CollectionPropertyContainer<E> {
 
-    protected InstanceContainer master;
+    protected InstanceContainer<?> master;
     protected String property;
 
-    public CollectionPropertyContainerImpl(MetaClass metaClass, InstanceContainer master, String property) {
+    public CollectionPropertyContainerImpl(MetaClass metaClass, InstanceContainer<?> master, String property) {
         super(metaClass);
         this.master = master;
         this.property = property;
     }
 
     @Override
-    public InstanceContainer getMaster() {
+    public InstanceContainer<?> getMaster() {
         return master;
     }
 
@@ -78,7 +74,7 @@ public class CollectionPropertyContainerImpl<E>
         Object masterItem = master.getItemOrNull();
         if (masterItem != null) {
             MetaProperty masterProperty = getMasterProperty();
-            Collection masterCollection = EntityValues.getValue(masterItem, masterProperty.getName());
+            Collection<?> masterCollection = EntityValues.getValue(masterItem, masterProperty.getName());
             if (masterCollection != entities) {
                 updateMasterCollection(masterProperty, masterCollection, entities);
             }
@@ -87,7 +83,7 @@ public class CollectionPropertyContainerImpl<E>
 
     protected void updateMaster() {
         MetaProperty masterProperty = getMasterProperty();
-        Collection masterCollection = EntityValues.getValue(master.getItem(), masterProperty.getName());
+        Collection<?> masterCollection = EntityValues.getValue(master.getItem(), masterProperty.getName());
         updateMasterCollection(masterProperty, masterCollection, this.collection);
     }
 

@@ -15,7 +15,7 @@
   ~ limitations under the License.
   -->
 
-<screen xmlns="http://jmix.io/schema/flowui/screen">
+<view xmlns="http://jmix.io/schema/flowui/view">
     <data readOnly="true">
         <instance id="orderDc"
                   class="test_support.entity.sales.Order">
@@ -332,7 +332,7 @@
                      min="5"
                      minHeight="40px"
                      minWidth="80px"
-                     themeName="LUMO_ERROR"
+                     themeName="error"
                      value="67"
                      visible="true"
                      width="100px"/>
@@ -407,7 +407,7 @@
                   required="true"
                   requiredIndicatorVisible="true"
                   requiredMessage="requiredMessageString"
-                  themeName="LUMO_SMALL, MATERIAL_ALWAYS_FLOAT_LABEL"
+                  themeName="small, always-float-label"
                   value="textAreaValue"
                   valueChangeMode="TIMEOUT"
                   valueChangeTimeout="50"
@@ -616,4 +616,4 @@
 
         <entityComboBox id="metaClassComboBoxId" metaClass="test_Order"/>
     </layout>
-</screen>
+</view>

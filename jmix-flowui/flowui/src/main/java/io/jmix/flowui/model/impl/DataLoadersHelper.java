@@ -17,7 +17,6 @@
 package io.jmix.flowui.model.impl;
 
 import com.google.common.base.Strings;
-import io.jmix.flowui.SameAsUi;
 import io.jmix.flowui.model.DataLoader;
 import io.jmix.flowui.model.HasLoader;
 import io.jmix.flowui.model.InstanceContainer;
@@ -32,7 +31,6 @@ import java.util.regex.Pattern;
 /**
  * Utility class working with data loaders.
  */
-@SameAsUi
 public class DataLoadersHelper {
 
     public static final Pattern PARAM_PATTERN = Pattern.compile(":([\\w$]+)");

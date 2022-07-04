@@ -26,22 +26,22 @@ import com.vaadin.flow.component.splitlayout.SplitLayout;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.Route;
 import io.jmix.flowui.model.InstanceContainer;
-import io.jmix.flowui.screen.ComponentId;
-import io.jmix.flowui.screen.StandardScreen;
-import io.jmix.flowui.screen.UiController;
-import io.jmix.flowui.screen.UiDescriptor;
+import io.jmix.flowui.view.ComponentId;
+import io.jmix.flowui.view.StandardView;
+import io.jmix.flowui.view.UiController;
+import io.jmix.flowui.view.UiDescriptor;
 import test_support.entity.sales.Order;
 
 @Route(value = "container-view")
 @UiController("ContainerView")
 @UiDescriptor("container-view.xml")
-public class ContainerView extends StandardScreen {
+public class ContainerView extends StandardView {
 
     @ComponentId
     public InstanceContainer<Order> orderDc;
 
     public void loadData() {
-        getScreenData().loadAll();
+        getViewData().loadAll();
     }
 
     @ComponentId

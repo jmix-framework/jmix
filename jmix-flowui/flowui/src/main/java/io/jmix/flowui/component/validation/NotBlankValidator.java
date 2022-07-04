@@ -16,7 +16,6 @@
 
 package io.jmix.flowui.component.validation;
 
-import io.jmix.flowui.SameAsUi;
 import io.jmix.flowui.exception.ValidationException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
@@ -26,7 +25,6 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 
-@SameAsUi
 @Component("flowui_NotBlankValidator")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class NotBlankValidator extends AbstractValidator<String> implements InitializingBean {

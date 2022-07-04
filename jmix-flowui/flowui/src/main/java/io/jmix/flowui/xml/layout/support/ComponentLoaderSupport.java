@@ -177,19 +177,19 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
 
     public void loadThemeName(HasTheme component, Element element) {
         loaderSupport.loadString(element, "themeName")
-                .ifPresent(themeString -> addNames(themeString, component::addThemeName));
+                .ifPresent(themeString -> split(themeString, component::addThemeName));
     }
 
     public void loadClassName(HasStyle component, Element element) {
         loaderSupport.loadString(element, "className")
-                .ifPresent(classNameString -> addNames(classNameString, component::addClassName));
+                .ifPresent(classNameString -> split(classNameString, component::addClassName));
     }
 
     public void loadBadge(HasText component, Element element) {
         loaderSupport.loadString(element, "themeName")
                 .ifPresent(badgeString -> {
                     component.getElement().getThemeList().add("badge");
-                    addNames(badgeString, component.getElement().getThemeList()::add);
+                    split(badgeString, component.getElement().getThemeList()::add);
                 });
     }
 
@@ -390,7 +390,7 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
         return null;
     }
 
-    protected void addNames(String names, Consumer<String> setter) {
+    protected void split(String names, Consumer<String> setter) {
         for (String split : names.split(",")) {
             String trimmed = split.trim();
 

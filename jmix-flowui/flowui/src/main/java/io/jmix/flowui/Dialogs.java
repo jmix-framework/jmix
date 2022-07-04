@@ -16,6 +16,7 @@ public interface Dialogs {
             HasText<OptionDialogBuilder>,
             HasContent<OptionDialogBuilder>,
             HasTheme<OptionDialogBuilder>,
+            HasStyle<OptionDialogBuilder>,
             Draggable<OptionDialogBuilder>,
             Resizable<OptionDialogBuilder> {
 
@@ -43,6 +44,7 @@ public interface Dialogs {
             HasContent<MessageDialogBuilder>,
             HasModal<MessageDialogBuilder>,
             HasTheme<MessageDialogBuilder>,
+            HasStyle<MessageDialogBuilder>,
             Closeable<MessageDialogBuilder>,
             Draggable<MessageDialogBuilder>,
             Resizable<MessageDialogBuilder> {
@@ -62,7 +64,7 @@ public interface Dialogs {
     }
 
     /**
-     * Marker interface for Dialog Builders that have a header.
+     * Represents Dialog Builders that have a header.
      *
      * @param <T> return type of fluent API methods
      */
@@ -83,7 +85,7 @@ public interface Dialogs {
     }
 
     /**
-     * Marker interface for Dialog Builders that have size setting.
+     * Represents Dialog Builders that have size setting.
      *
      * @param <T> return type of fluent API methods
      */
@@ -116,7 +118,7 @@ public interface Dialogs {
     }
 
     /**
-     * Marker interface for Dialog Builders that have a text inside {@link Paragraph} component as a content.
+     * Represents Dialog Builders that have a text inside {@link Paragraph} component as a content.
      * <p>
      * Note, overrides the content set value that was set using the {@link HasContent#withContent(Component)} method.
      *
@@ -139,7 +141,7 @@ public interface Dialogs {
     }
 
     /**
-     * Marker interface for Dialog Builders that have a text inside {@link Paragraph} component.
+     * Represents Dialog Builders that have a text inside {@link Paragraph} component.
      * <p>
      * Note, overrides the content set value that was set using the {@link HasText#withText(String)} method.
      *
@@ -162,7 +164,7 @@ public interface Dialogs {
     }
 
     /**
-     * Marker interface for Dialog Builders that have theme setting.
+     * Represents Dialog Builders that have theme setting.
      *
      * @param <T> return type of fluent API methods
      */
@@ -181,11 +183,38 @@ public interface Dialogs {
          * @return a space-separated string of theme names, empty string if there are no theme names
          * or <code>null</code> if attribute (theme) is not set at all
          */
+        @Nullable
         String getThemeName();
     }
 
     /**
-     * Marker interface for Dialog Builders with close setting.
+     * Represents Dialog Builders that have style setting.
+     *
+     * @param <T> return type of fluent API methods
+     */
+    interface HasStyle<T> {
+
+        /**
+         * Sets the CSS class names of this component. This method overwrites any
+         * previous set class names.
+         *
+         * @param className a space-separated string of class names to set, or
+         *                  <code>null</code> to remove all class names
+         */
+        T withClassName(@Nullable String className);
+
+        /**
+         * Gets the CSS class names for this component.
+         *
+         * @return a space-separated string of class names, or <code>null</code> if
+         * there are no class names
+         */
+        @Nullable
+        String getClassName();
+    }
+
+    /**
+     * Represents Dialog Builders with close setting.
      *
      * @param <T> return type of fluent API methods
      */
@@ -223,7 +252,7 @@ public interface Dialogs {
     }
 
     /**
-     * Marker interface for Dialog Builders that have modal setting.
+     * Represents Dialog Builders that have modal setting.
      *
      * @param <T> return type of fluent API methods
      */
@@ -243,7 +272,7 @@ public interface Dialogs {
     }
 
     /**
-     * Marker interface for Dialog Builders that can be dragged.
+     * Represents Dialog Builders that can be dragged.
      *
      * @param <T> return type of fluent API methods
      */
@@ -263,7 +292,7 @@ public interface Dialogs {
     }
 
     /**
-     * Marker interface for Dialog Builders that can be resized.
+     * Represents Dialog Builders that can be resized.
      *
      * @param <T> return type of fluent API methods
      */

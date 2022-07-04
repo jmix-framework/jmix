@@ -57,6 +57,8 @@
         </xs:all>
         <xs:attribute name="drawerOpened" type="xs:boolean"/>
         <xs:attribute name="primarySection" type="primarySection"/>
+
+        <xs:attributeGroup ref="layout:hasClassName"/>
     </xs:complexType>
 
     <xs:simpleType name="primarySection">

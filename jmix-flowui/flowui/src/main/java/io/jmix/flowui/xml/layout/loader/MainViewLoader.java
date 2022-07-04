@@ -34,22 +34,19 @@ public class MainViewLoader extends AbstractViewLoader<StandardMainView> {
 
     @Override
     public void createContent() {
-        Element appLayout = element.element("appLayout");
-        if (appLayout == null) {
-            throw new GuiDevelopmentException("Required '" + CONTENT_NAME + "' element is not found", context);
-        }
+        Element appLayoutElement = getAppLayoutElement();
 
-        List<Component> navigationBarComponents = createSubComponents(appLayout, "navigationBar");
+        List<Component> navigationBarComponents = createSubComponents(appLayoutElement, "navigationBar");
         if (!navigationBarComponents.isEmpty()) {
             boolean touchOptimized = getLoaderSupport()
-                    .loadBoolean(appLayout.element("navigationBar"), "touchOptimized")
+                    .loadBoolean(appLayoutElement.element("navigationBar"), "touchOptimized")
                     .orElse(true);
 
             resultComponent.getContent()
                     .addToNavbar(touchOptimized, navigationBarComponents.toArray(new Component[0]));
         }
 
-        List<Component> drawerLayoutComponents = createSubComponents(appLayout, "drawerLayout");
+        List<Component> drawerLayoutComponents = createSubComponents(appLayoutElement, "drawerLayout");
         if (!drawerLayoutComponents.isEmpty()) {
             resultComponent.getContent().addToDrawer(drawerLayoutComponents.toArray(new Component[0]));
         }
@@ -61,15 +58,31 @@ public class MainViewLoader extends AbstractViewLoader<StandardMainView> {
         getViewLoader().loadActions(element);
         getViewLoader().loadFacets(element);
 
-        getLoaderSupport().loadBoolean(element, "drawerOpened",
-                drawerOpened -> resultComponent.getContent().setDrawerOpened(drawerOpened));
+        loadAppLayout();
 
-        getLoaderSupport().loadEnum(element, AppLayout.Section.class, "primarySection")
-                .ifPresentOrElse(
-                        section -> resultComponent.getContent().setPrimarySection(section),
-                        () -> resultComponent.getContent().setPrimarySection(AppLayout.Section.DRAWER));
 
         loadSubComponents();
+    }
+
+    protected Element getAppLayoutElement() {
+        Element appLayout = element.element(CONTENT_NAME);
+        if (appLayout == null) {
+            throw new GuiDevelopmentException("Required '" + CONTENT_NAME + "' element is not found", context);
+        }
+        return appLayout;
+    }
+
+    protected void loadAppLayout() {
+        AppLayout appLayout = resultComponent.getContent();
+        Element appLayoutElement = getAppLayoutElement();
+
+        componentLoader().loadClassName(appLayout, appLayoutElement);
+
+        getLoaderSupport().loadBoolean(appLayoutElement, "drawerOpened", appLayout::setDrawerOpened);
+        getLoaderSupport().loadEnum(appLayoutElement, AppLayout.Section.class, "primarySection")
+                .ifPresentOrElse(
+                        appLayout::setPrimarySection,
+                        () -> appLayout.setPrimarySection(AppLayout.Section.DRAWER));
     }
 
     protected List<Component> createSubComponents(Element appLayout, String contentName) {

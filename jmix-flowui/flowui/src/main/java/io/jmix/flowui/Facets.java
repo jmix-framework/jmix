@@ -22,7 +22,7 @@ import org.springframework.context.ApplicationContext;
 /**
  * Factory to create UI facets.
  * <br>
- * An instance of the factory can be injected into screen controllers or obtained through {@link ApplicationContext}.
+ * An instance of the factory can be injected into view controllers or obtained through {@link ApplicationContext}.
  */
 public interface Facets {
 

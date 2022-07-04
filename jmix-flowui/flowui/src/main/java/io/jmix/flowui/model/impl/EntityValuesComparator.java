@@ -20,7 +20,6 @@ import io.jmix.core.Entity;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.flowui.SameAsUi;
 import org.springframework.beans.factory.BeanFactory;
 
 import javax.annotation.Nullable;
@@ -32,7 +31,6 @@ import javax.annotation.Nullable;
  * by some property that is specified by {@code io.jmix.core.metamodel.model.MetaPropertyPath}:
  * <pre>{@code Comparator.comparing(e -> e.getValueEx(propertyPath), EntityValuesComparator.of(asc))}</pre>
  */
-@SameAsUi
 public class EntityValuesComparator<T> extends AbstractComparator<T> {
     public EntityValuesComparator(boolean asc, MetaClass metaClass, BeanFactory beanFactory) {
         super(asc);

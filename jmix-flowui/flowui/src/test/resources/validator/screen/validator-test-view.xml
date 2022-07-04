@@ -14,7 +14,7 @@
   ~ limitations under the License.
   -->
 
-<screen xmlns="http://jmix.io/schema/flowui/screen">
+<view xmlns="http://jmix.io/schema/flowui/view">
     <layout>
         <textField id="stringField" datatype="string"/>
         <textField id="numberField"/>
@@ -22,4 +22,4 @@
         <datePicker id="datePicker"/>
         <timePicker id="timePicker"/>
     </layout>
-</screen>
+</view>

@@ -25,7 +25,7 @@
     </tags>
     <description>
         <![CDATA[<html>Entity detail view with a form and window action buttons: <i>OK</i> and <i>Cancel</i>.
-<br>Select <b>Extended window actions</b> checkbox to create a detail that can be saved without closing the screen.
+<br>Select <b>Extended window actions</b> checkbox to create a detail that can be saved without closing the view.
 It will have <i>Save and close</i>, <i>Save</i> and <i>Cancel</i> buttons.</html>]]>
     </description>
     <locMessages key="detailTitle" expressionKey="${studioUtils.decapitalize(detailControllerName)}.title">
@@ -75,7 +75,7 @@ It will have <i>Save and close</i>, <i>Save</i> and <i>Cancel</i> buttons.</html
               propertyType="SCREEN_ID"
               advanced="true"
               dynamic="true"
-              valueTemplate="${entity.name!=null?entity.name:entity.className}.edit"
+              valueTemplate="${entity.name!=null?entity.name:entity.className}.detail"
               required="true">
         <dependency code="entity"/>
     </property>

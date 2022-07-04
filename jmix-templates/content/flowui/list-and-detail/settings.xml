@@ -113,7 +113,7 @@
               required="true"
               dynamic="true"
               advanced="true"
-              valueTemplate="${entity.name!=null?entity.name:entity.className}.browse">
+              valueTemplate="${entity.name!=null?entity.name:entity.className}.list">
         <dependency code="entity"/>
     </property>
     <property caption="List view route"
@@ -155,7 +155,7 @@
               group="detail"
               advanced="true"
               dynamic="true"
-              valueTemplate="${entity.name!=null?entity.name:entity.className}.edit"
+              valueTemplate="${entity.name!=null?entity.name:entity.className}.detail"
               required="true">
         <dependency code="entity"/>
     </property>
@@ -169,6 +169,10 @@
               valueTemplate="${api.pluralForm(entity.uncapitalizedClassName)}">
         <dependency code="entity"/>
     </property>
+
+    <property caption="Parent menu item"
+              code="menuItem"
+              propertyType="FLOW_MENU_ITEM"/>
 
     <!--sources-->
     <source fileExt="xml"

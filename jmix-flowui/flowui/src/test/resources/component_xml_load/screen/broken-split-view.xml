@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<screen xmlns="http://jmix.io/schema/flowui/screen">
+<view xmlns="http://jmix.io/schema/flowui/view">
     <layout>
         <split id="brokenSplit">
             <vbox id="singletonSplitChild"/>
         </split>
     </layout>
-</screen>
+</view>

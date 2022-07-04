@@ -24,8 +24,6 @@ import io.jmix.core.common.event.Subscription;
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.querycondition.Condition;
-import io.jmix.flowui.RequiresChanges;
-import io.jmix.flowui.SameAsUi;
 import io.jmix.flowui.model.DataContext;
 import io.jmix.flowui.model.HasLoader;
 import io.jmix.flowui.model.KeyValueContainer;
@@ -41,8 +39,6 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-@SameAsUi
-@RequiresChanges
 public class KeyValueInstanceLoaderImpl implements KeyValueInstanceLoader {
 
     @Autowired

@@ -17,7 +17,6 @@
 package io.jmix.flowui.component.validation;
 
 import io.jmix.core.common.util.ParamsMap;
-import io.jmix.flowui.SameAsUi;
 import io.jmix.flowui.component.validation.number.NumberConstraint;
 import io.jmix.flowui.exception.ValidationException;
 import org.springframework.beans.factory.InitializingBean;
@@ -29,7 +28,6 @@ import javax.annotation.Nullable;
 
 import static io.jmix.flowui.component.validation.ValidatorHelper.getNumberConstraint;
 
-@SameAsUi
 @Component("flowui_MinValidator")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class MinValidator<T extends Number> extends AbstractValidator<T> implements InitializingBean {

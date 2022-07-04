@@ -1,13 +1,11 @@
 package io.jmix.flowui.component.validation;
 
 import com.vaadin.flow.component.Component;
-import io.jmix.flowui.SimilarToUi;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-@SimilarToUi
 public class ValidationErrors {
 
     protected List<Item> items = new ArrayList<>();

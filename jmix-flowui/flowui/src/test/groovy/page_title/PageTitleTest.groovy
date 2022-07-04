@@ -18,8 +18,8 @@ package page_title
 
 import com.vaadin.flow.component.UI
 import io.jmix.core.Messages
-import io.jmix.flowui.ScreenNavigators
-import io.jmix.flowui.sys.ScreenSupport
+import io.jmix.flowui.ViewNavigators
+import io.jmix.flowui.sys.ViewSupport
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import page_title.screen.AnnotatedPageTitleScreen
@@ -30,10 +30,10 @@ import test_support.spec.FlowuiTestSpecification
 class PageTitleTest extends FlowuiTestSpecification {
 
     @Autowired
-    ScreenNavigators screenNavigators
+    ViewNavigators screenNavigators
 
     @Autowired
-    ScreenSupport screenSupport
+    ViewSupport screenSupport
 
     @Autowired
     Messages messages
@@ -44,7 +44,7 @@ class PageTitleTest extends FlowuiTestSpecification {
 
     def "load page title from screen descriptor"() {
         when: "Open screen with defined title in the descriptor"
-        screenNavigators.screen(DeclarativePageTitleScreen)
+        screenNavigators.view(DeclarativePageTitleScreen)
                 .navigate()
 
         then: "Screen should use loaded page title"
@@ -58,7 +58,7 @@ class PageTitleTest extends FlowuiTestSpecification {
     def "annotated page title should override declarative definition"() {
         when: "Open screen that has @PageTitle and 'title' attribute in the descriptor"
 
-        screenNavigators.screen(AnnotatedPageTitleScreen)
+        screenNavigators.view(AnnotatedPageTitleScreen)
                 .navigate()
 
         then: "Screen should use loaded page title from @PageTitle"

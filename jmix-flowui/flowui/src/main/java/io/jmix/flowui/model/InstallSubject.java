@@ -16,8 +16,6 @@
 
 package io.jmix.flowui.model;
 
-import io.jmix.flowui.SameAsUi;
-
 import java.lang.annotation.*;
 
 /**
@@ -27,7 +25,6 @@ import java.lang.annotation.*;
 @Target(ElementType.TYPE)
 @Inherited
 @Documented
-@SameAsUi
 public @interface InstallSubject {
 
     String value();

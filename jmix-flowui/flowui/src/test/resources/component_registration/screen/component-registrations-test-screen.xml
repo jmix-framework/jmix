@@ -1,5 +1,5 @@
-<screen xmlns="http://jmix.io/schema/flowui/screen">
+<view xmlns="http://jmix.io/schema/flowui/view">
     <layout>
         <button id="button"/>
     </layout>
-</screen>
+</view>

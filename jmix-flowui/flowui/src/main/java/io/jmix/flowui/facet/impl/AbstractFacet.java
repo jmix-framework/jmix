@@ -17,14 +17,14 @@
 package io.jmix.flowui.facet.impl;
 
 import io.jmix.flowui.facet.Facet;
-import io.jmix.flowui.screen.Screen;
+import io.jmix.flowui.view.View;
 
 import javax.annotation.Nullable;
 
 public abstract class AbstractFacet implements Facet {
 
     protected String id;
-    protected Screen<?> owner;
+    protected View<?> owner;
 
     @Nullable
     @Override
@@ -39,12 +39,12 @@ public abstract class AbstractFacet implements Facet {
 
     @Nullable
     @Override
-    public Screen<?> getOwner() {
+    public View<?> getOwner() {
         return owner;
     }
 
     @Override
-    public void setOwner(Screen<?> owner) {
+    public void setOwner(View<?> owner) {
         this.owner = owner;
     }
 }

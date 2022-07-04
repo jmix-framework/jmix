@@ -163,7 +163,7 @@ public class ContainerValueSource<E, V> implements EntityValueSource<E, V>, Appl
             // Do not set collection value if it's not changed. As
             // EntityValues#propertyValueEquals() returns true only if
             // the new value is the same instance as old one, there may be
-            // false unsaved changes in the editor screen.
+            // false unsaved changes in the detail view.
             if (isCollectionPropertyType() && isEqualCollectionValue(value)) {
                 return;
             }

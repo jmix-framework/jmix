@@ -22,7 +22,7 @@ import io.jmix.flowui.sys.FlowuiAccessChecker;
 import io.jmix.security.SecurityConfiguration;
 import io.jmix.securityflowui.FlowuiSecurityConfiguration;
 import io.jmix.securityflowui.SecurityFlowuiConfiguration;
-import io.jmix.securityflowui.access.FlowuiScreenAccessChecker;
+import io.jmix.securityflowui.access.FlowuiViewAccessChecker;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -34,8 +34,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 public class SecurityFlowuiAutoConfiguration {
 
     @Bean("flowui_ScreenAccessChecker")
-    public FlowuiScreenAccessChecker screenAccessChecker(FlowuiAccessChecker flowuiAccessChecker) {
-        return new FlowuiScreenAccessChecker(false, flowuiAccessChecker);
+    public FlowuiViewAccessChecker viewAccessChecker(FlowuiAccessChecker flowuiAccessChecker) {
+        return new FlowuiViewAccessChecker(false, flowuiAccessChecker);
     }
 
     @EnableWebSecurity

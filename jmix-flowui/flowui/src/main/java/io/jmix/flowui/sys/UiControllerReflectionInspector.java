@@ -11,10 +11,10 @@ import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.common.event.Subscription;
-import io.jmix.flowui.screen.ComponentId;
-import io.jmix.flowui.screen.Install;
-import io.jmix.flowui.screen.Screen;
-import io.jmix.flowui.screen.Subscribe;
+import io.jmix.flowui.view.ComponentId;
+import io.jmix.flowui.view.Install;
+import io.jmix.flowui.view.View;
+import io.jmix.flowui.view.Subscribe;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.reflect.TypeUtils;
 import org.springframework.context.event.EventListener;
@@ -37,10 +37,10 @@ import static org.springframework.core.annotation.AnnotatedElementUtils.findMerg
 @Component("flowui_UiControllerReflectionInspector")
 public class UiControllerReflectionInspector {
 
-    protected final LoadingCache<Class<?>, ScreenIntrospectionData> screenIntrospectionCache =
+    protected final LoadingCache<Class<?>, ViewIntrospectionData> viewIntrospectionCache =
             CacheBuilder.newBuilder()
                     .weakKeys()
-                    .build(CacheLoader.from(this::getScreenIntrospectionDataNotCached));
+                    .build(CacheLoader.from(this::getViewIntrospectionDataNotCached));
 
     protected final LoadingCache<Class<?>, TargetIntrospectionData> targetIntrospectionCache =
             CacheBuilder.newBuilder()
@@ -99,13 +99,13 @@ public class UiControllerReflectionInspector {
     }
 
     /**
-     * Introspects screen class and finds annotated fields and methods for dependency injection.
+     * Introspects view class and finds annotated fields and methods for dependency injection.
      *
-     * @param clazz screen class
-     * @return screen data
+     * @param clazz view class
+     * @return view data
      */
-    public ScreenIntrospectionData getScreenIntrospectionData(Class<?> clazz) {
-        return screenIntrospectionCache.getUnchecked(clazz);
+    public ViewIntrospectionData getViewIntrospectionData(Class<?> clazz) {
+        return viewIntrospectionCache.getUnchecked(clazz);
     }
 
     @Nullable
@@ -194,13 +194,13 @@ public class UiControllerReflectionInspector {
      * Clear underlying reflection caches.
      */
     public void clearCache() {
-        screenIntrospectionCache.invalidateAll();
+        viewIntrospectionCache.invalidateAll();
         targetIntrospectionCache.invalidateAll();
 
         lambdaMethodsCache.invalidateAll();
     }
 
-    protected ScreenIntrospectionData getScreenIntrospectionDataNotCached(Class<?> concreteClass) {
+    protected ViewIntrospectionData getViewIntrospectionDataNotCached(Class<?> concreteClass) {
         Method[] methods = ReflectionUtils.getUniqueDeclaredMethods(concreteClass);
 
         List<InjectElement> injectElements = getAnnotatedInjectElementsNotCached(concreteClass);
@@ -209,7 +209,7 @@ public class UiControllerReflectionInspector {
         List<Method> eventListenerMethods = getAnnotatedListenerMethodsNotCached(concreteClass, methods);
 //        List<Method> propertySetters = getPropertySettersNotCached(methods);
 
-        return new ScreenIntrospectionData(injectElements, eventListenerMethods, subscribeMethods, installMethods/*, propertySetters*/);
+        return new ViewIntrospectionData(injectElements, eventListenerMethods, subscribeMethods, installMethods/*, propertySetters*/);
     }
 
     protected TargetIntrospectionData getTargetIntrospectionDataNotCached(Class<?> concreteClass) {
@@ -418,8 +418,7 @@ public class UiControllerReflectionInspector {
 
     protected Class<?> getDeclaringClass(Method method) {
         Class<?> declaringClass = method.getDeclaringClass();
-        if (declaringClass.getSuperclass() == Screen.class
-            /*|| declaringClass.getSuperclass() == ScreenFragment.class*/) {
+        if (declaringClass.getSuperclass() == View.class) {
             // speed up search of declaring class for simple cases
             return declaringClass;
         }
@@ -626,7 +625,7 @@ public class UiControllerReflectionInspector {
         }
     }
 
-    public static class ScreenIntrospectionData {
+    public static class ViewIntrospectionData {
         private final List<InjectElement> injectElements;
 
         private final List<Method> eventListenerMethods;
@@ -636,10 +635,10 @@ public class UiControllerReflectionInspector {
 
 //        private final List<Method> propertySetters;
 
-        public ScreenIntrospectionData(List<InjectElement> injectElements,
-                                       List<Method> eventListenerMethods,
-                                       List<AnnotatedMethod<Subscribe>> subscribeMethods,
-                                       List<AnnotatedMethod<Install>> installMethods
+        public ViewIntrospectionData(List<InjectElement> injectElements,
+                                     List<Method> eventListenerMethods,
+                                     List<AnnotatedMethod<Subscribe>> subscribeMethods,
+                                     List<AnnotatedMethod<Install>> installMethods
                 /*List<Method> propertySetters*/) {
             this.injectElements = injectElements;
             this.eventListenerMethods = eventListenerMethods;

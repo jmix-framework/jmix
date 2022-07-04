@@ -17,7 +17,6 @@
 package io.jmix.flowui.model.impl;
 
 import com.google.common.collect.ForwardingListIterator;
-import io.jmix.flowui.SameAsUi;
 import io.jmix.flowui.model.CollectionChangeType;
 
 import javax.annotation.Nullable;
@@ -27,10 +26,6 @@ import java.util.ListIterator;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-/**
- *
- */
-@SameAsUi
 class ObservableListIterator<T> extends ForwardingListIterator<T> {
 
     private final ListIterator<T> delegate;
@@ -38,8 +33,8 @@ class ObservableListIterator<T> extends ForwardingListIterator<T> {
     private final Consumer<T> onAddItem;
 
     protected ObservableListIterator(ListIterator<T> delegate,
-                                     BiConsumer<CollectionChangeType, Collection<? extends T>> onCollectionChanged,
-                                     Consumer<T> onAddItem) {
+                                     @Nullable BiConsumer<CollectionChangeType, Collection<? extends T>> onCollectionChanged,
+                                     @Nullable Consumer<T> onAddItem) {
         this.delegate = delegate;
         this.onCollectionChanged = onCollectionChanged;
         this.onAddItem = onAddItem;

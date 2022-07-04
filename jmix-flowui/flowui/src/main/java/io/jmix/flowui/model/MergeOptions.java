@@ -16,12 +16,9 @@
 
 package io.jmix.flowui.model;
 
-import io.jmix.flowui.SameAsUi;
-
 /**
  * Defines options of the {@link DataContext#merge(Object, MergeOptions)} operation.
  */
-@SameAsUi
 public class MergeOptions {
 
     private boolean fresh;

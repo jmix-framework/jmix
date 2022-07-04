@@ -19,8 +19,7 @@ package io.jmix.flowui.model;
 import io.jmix.core.EntitySet;
 import io.jmix.core.SaveContext;
 import io.jmix.core.common.event.Subscription;
-import io.jmix.flowui.SameAsUi;
-import io.jmix.flowui.screen.Subscribe;
+import io.jmix.flowui.view.Subscribe;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nullable;
@@ -37,12 +36,12 @@ import java.util.function.Function;
  * where and how many times it is used in object graphs.
  */
 @SuppressWarnings("rawtypes")
-@SameAsUi
 @InstallSubject("commitDelegate")
 public interface DataContext {
 
     /**
      * Returns an entity instance by its class and id.
+     *
      * @return entity instance or null if there is no such entity in the context
      */
     @Nullable
@@ -50,6 +49,7 @@ public interface DataContext {
 
     /**
      * Returns the instance of entity with the same id if it exists in this context.
+     *
      * @return entity instance or null if there is no such entity in the context
      */
     @Nullable
@@ -76,7 +76,7 @@ public interface DataContext {
      * The only case when you get the same instance is if the input was previously returned from the same context as a
      * result of {@link #find(Class, Object)} or {@code merge()}.
      *
-     * @param entity instance to merge
+     * @param entity  instance to merge
      * @param options merge options
      * @return the instance which is tracked by the context
      */
@@ -145,6 +145,7 @@ public interface DataContext {
      * <pre>
      * Foo foo = dataContext.merge(metadata.create(Foo.class));
      * </pre>
+     *
      * @param entityClass entity class
      * @return a new instance which is tracked by the context
      */
@@ -187,8 +188,8 @@ public interface DataContext {
      * Commits changed and removed instances to the middleware. After successful commit, the context contains
      * updated instances returned from the middleware.
      *
-     * @see #setParent(DataContext)
      * @return set of committed and merged back to the context instances. Does not contain removed instances.
+     * @see #setParent(DataContext)
      */
     EntitySet commit();
 
@@ -258,7 +259,7 @@ public interface DataContext {
      *         event.getModifiedInstances().add(customer);
      *     }
      * </pre>
-     *
+     * <p>
      * You can also prevent commit using the {@link #preventCommit()} method of the event, for example:
      * <pre>
      *     &#64;Subscribe(target = Target.DATA_CONTEXT)

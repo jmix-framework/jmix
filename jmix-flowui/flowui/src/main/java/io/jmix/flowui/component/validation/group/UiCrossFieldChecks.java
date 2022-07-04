@@ -16,17 +16,11 @@
 
 package io.jmix.flowui.component.validation.group;
 
-// todo rp moved from jmix-core
-//  is there a need to keep UI validation group in core module?
-
-import io.jmix.flowui.SameAsUi;
-
 /**
  * Bean validation constraint group used by UI for cross-field validation. <br>
- * You can assign this group for constraints that must be checked only when instance is validated in UI editor. <br>
+ * You can assign this group for constraints that must be checked only when instance is validated in UI detail view. <br>
  * Cross field validation passes this group to {@link javax.validation.Validator#validate(Object, Class[])}
  * without {@link javax.validation.groups.Default} group.
  */
-@SameAsUi
 public interface UiCrossFieldChecks {
 }

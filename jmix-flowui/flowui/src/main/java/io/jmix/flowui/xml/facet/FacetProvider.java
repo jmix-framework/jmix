@@ -21,7 +21,7 @@ import io.jmix.flowui.xml.layout.ComponentLoader.ComponentContext;
 import org.dom4j.Element;
 
 /**
- * Interface for Spring Beans providing non-visual components for screens.
+ * Interface for Spring Beans providing non-visual components for views.
  *
  * @param <T> type of facet
  * @see Facet

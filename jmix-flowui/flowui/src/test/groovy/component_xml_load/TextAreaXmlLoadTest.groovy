@@ -83,7 +83,8 @@ class TextAreaXmlLoadTest extends FlowuiTestSpecification {
             required
             requiredIndicatorVisible
             requiredMessage == "requiredMessageString"
-            themeNames.containsAll([TextAreaVariant.LUMO_SMALL.name(), TextAreaVariant.MATERIAL_ALWAYS_FLOAT_LABEL.name()])
+            themeNames.containsAll([TextAreaVariant.LUMO_SMALL.getVariantName(),
+                                    TextAreaVariant.MATERIAL_ALWAYS_FLOAT_LABEL.getVariantName()])
             value == "textAreaValue"
             valueChangeMode == ValueChangeMode.TIMEOUT
             valueChangeTimeout == 50

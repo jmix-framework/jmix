@@ -21,7 +21,6 @@ import io.jmix.core.Messages;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.security.CurrentAuthentication;
-import io.jmix.flowui.SameAsUi;
 import io.jmix.flowui.exception.ValidationException;
 import io.jmix.flowui.sys.substitutor.StringSubstitutor;
 import org.springframework.beans.BeansException;
@@ -37,7 +36,6 @@ import java.util.Map;
  *
  * @param <T> value type
  */
-@SameAsUi
 public abstract class AbstractValidator<T> implements Validator<T>, ApplicationContextAware, InitializingBean {
 
     protected Messages messages;

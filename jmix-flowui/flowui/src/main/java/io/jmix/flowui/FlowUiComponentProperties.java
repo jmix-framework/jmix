@@ -32,7 +32,7 @@ public class FlowUiComponentProperties {
             @DefaultValue("MIDDLE") String defaultNotificationPosition,
             @DefaultValue("3000") int defaultNotificationDuration,
             /*@DefaultValue("CONTROL-ALT") String pickerShortcutModifiers,*/
-            // TODO: gg, Think another shortcuts. These clash with browser
+            // TODO: gg, Think another shortcuts. These clash with web browser
             @DefaultValue("CONTROL-ALT-L") String pickerLookupShortcut,
             @DefaultValue("CONTROL-ALT-O") String pickerOpenShortcut,
             @DefaultValue("CONTROL-ALT-C") String pickerClearShortcut) {

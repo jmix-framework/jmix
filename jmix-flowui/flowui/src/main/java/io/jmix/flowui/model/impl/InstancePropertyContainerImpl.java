@@ -17,27 +17,23 @@
 package io.jmix.flowui.model.impl;
 
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.flowui.RequiresChanges;
-import io.jmix.flowui.SameAsUi;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.model.InstancePropertyContainer;
 
-@SameAsUi
-@RequiresChanges
 public class InstancePropertyContainerImpl<E>
         extends InstanceContainerImpl<E> implements InstancePropertyContainer<E> {
 
-    protected InstanceContainer master;
+    protected InstanceContainer<?> master;
     protected String property;
 
-    public InstancePropertyContainerImpl(MetaClass metaClass, InstanceContainer master, String property) {
+    public InstancePropertyContainerImpl(MetaClass metaClass, InstanceContainer<?> master, String property) {
         super(metaClass);
         this.master = master;
         this.property = property;
     }
 
     @Override
-    public InstanceContainer getMaster() {
+    public InstanceContainer<?> getMaster() {
         return master;
     }
 

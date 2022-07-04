@@ -15,7 +15,7 @@
   ~ limitations under the License.
   -->
 
-<screen xmlns="http://jmix.io/schema/flowui/screen">
+<view xmlns="http://jmix.io/schema/flowui/view">
     <data>
         <collection id="ordersDc"
                     class="test_support.entity.sales.Order">
@@ -142,4 +142,4 @@
             </columns>
         </treeDataGrid>
     </layout>
-</screen>
+</view>

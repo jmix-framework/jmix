@@ -16,10 +16,10 @@
 
 package io.jmix.flowui.sys;
 
-import io.jmix.flowui.screen.Screen;
+import io.jmix.flowui.view.View;
 
 /**
- * Implementations of the interface are used for wiring of fields/setters to the screen controllers. It defines
+ * Implementations of the interface are used for wiring of fields/setters to the view controllers. It defines
  * additional dependency injectors to the base {@link UiControllerDependencyInjector}.
  *
  * @see UiControllerDependencyManager
@@ -27,25 +27,25 @@ import io.jmix.flowui.screen.Screen;
 public interface ControllerDependencyInjector {
 
     /**
-     * The method is invoked when the screen instance is created.
+     * The method is invoked when the view instance is created.
      *
      * @param injectionContext injection context
      */
     void inject(InjectionContext injectionContext);
 
     /**
-     * Class describes injection context that contains screen controller and options.
+     * Class describes injection context that contains view controller and options.
      */
     class InjectionContext {
 
-        protected final Screen screen;
+        protected final View<?> view;
 
-        public InjectionContext(Screen screen) {
-            this.screen = screen;
+        public InjectionContext(View<?> view) {
+            this.view = view;
         }
 
-        public Screen getScreen() {
-            return screen;
+        public View<?> getView() {
+            return view;
         }
     }
 }

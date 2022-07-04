@@ -1,15 +1,14 @@
 package io.jmix.flowui.action;
 
 import io.jmix.flowui.Actions;
-import io.jmix.flowui.SameAsUi;
 import io.jmix.flowui.kit.action.Action;
 
 import java.lang.annotation.*;
 
 /**
- * Indicates that {@link Action} can be created with {@link Actions} factory and can be used in screen XML descriptor.
+ * Indicates that {@link Action} can be created with {@link Actions}
+ * factory and can be used in view XML descriptor.
  */
-@SameAsUi
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

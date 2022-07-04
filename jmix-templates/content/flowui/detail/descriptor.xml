@@ -22,7 +22,7 @@ def optionsDatasourceXml = api.processSnippet('screen/optionsDsSource.xml',
         'api': api])
 def expandId = "detailActions"
 %><?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<screen xmlns="http://jmix.io/schema/flowui/screen"
+<view xmlns="http://jmix.io/schema/flowui/view"
         title="${messageKeys['detailTitle']}"
         focusComponent="form">
     <data>
@@ -48,8 +48,8 @@ def expandId = "detailActions"
         <dataLoadCoordinator auto="true"/>
     </facets>
     <actions>
-        <action id="commitAction" type="editor_commitClose"/>
-        <action id="closeAction" type="editor_close"/>
+        <action id="commitAction" type="detail_commitClose"/>
+        <action id="closeAction" type="detail_close"/>
     </actions>
     <layout expand="$expandId">
         ${formXml}
@@ -61,4 +61,4 @@ def expandId = "detailActions"
             <button id="closeBtn" action="closeAction"/>
         </hbox>
     </layout>
-</screen>
+</view>

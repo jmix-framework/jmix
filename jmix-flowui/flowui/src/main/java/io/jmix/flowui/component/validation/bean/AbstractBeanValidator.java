@@ -21,7 +21,6 @@ import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.validation.group.UiComponentChecks;
-import io.jmix.flowui.SameAsUi;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.exception.CompositeValidationException;
 
@@ -31,7 +30,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-@SameAsUi
 public class AbstractBeanValidator implements Validator {
 
     protected Class beanClass;
@@ -74,7 +72,7 @@ public class AbstractBeanValidator implements Validator {
     }
 
     /**
-     * Set main validation error message. Useful only for custom validation in screen controller.
+     * Set main validation error message. Useful only for custom validation in view controller.
      *
      * @param validationErrorMessage validation error message
      */

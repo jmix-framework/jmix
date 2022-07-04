@@ -5,7 +5,7 @@ import io.jmix.core.Messages;
 import io.jmix.core.security.EntityOp;
 import io.jmix.flowui.FlowUiComponentProperties;
 import io.jmix.flowui.action.ActionType;
-import io.jmix.flowui.action.AdjustWhenScreenReadOnly;
+import io.jmix.flowui.action.AdjustWhenViewReadOnly;
 import io.jmix.flowui.data.ContainerDataUnit;
 import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.component.FlowUiComponentUtils;
@@ -20,7 +20,7 @@ import java.util.function.Consumer;
 
 @ActionType(RemoveAction.ID)
 public class RemoveAction<E> extends SecuredListDataComponentAction<RemoveAction<E>, E>
-        implements AdjustWhenScreenReadOnly {
+        implements AdjustWhenViewReadOnly {
 
     public static final String ID = "remove";
 
@@ -80,7 +80,7 @@ public class RemoveAction<E> extends SecuredListDataComponentAction<RemoveAction
     }
 
     /**
-     * Returns confirmation dialog text if it was set by {@link #setConfirmationText(String)} or in the screen XML.
+     * Returns confirmation dialog text if it was set by {@link #setConfirmationText(String)} or in the view XML.
      * Otherwise, returns null.
      */
     @Nullable
@@ -96,7 +96,7 @@ public class RemoveAction<E> extends SecuredListDataComponentAction<RemoveAction
     }
 
     /**
-     * Returns confirmation dialog header if it was set by {@link #setConfirmationHeader(String)} or in the screen XML.
+     * Returns confirmation dialog header if it was set by {@link #setConfirmationHeader(String)} or in the view XML.
      * Otherwise, returns null.
      */
     @Nullable

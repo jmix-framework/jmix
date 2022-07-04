@@ -17,11 +17,9 @@
 package io.jmix.flowui.model;
 
 import io.jmix.core.entity.KeyValueEntity;
-import io.jmix.flowui.SameAsUi;
 
 /**
  * Container for a collection of {@code KeyValueEntity} instances.
  */
-@SameAsUi
 public interface KeyValueCollectionContainer extends KeyValueContainer, CollectionContainer<KeyValueEntity> {
 }

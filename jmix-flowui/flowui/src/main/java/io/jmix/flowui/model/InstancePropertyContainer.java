@@ -16,11 +16,8 @@
 
 package io.jmix.flowui.model;
 
-import io.jmix.flowui.SameAsUi;
-
 /**
  * Container that holds a single instance which is loaded as a property of another entity.
  */
-@SameAsUi
 public interface InstancePropertyContainer<E> extends InstanceContainer<E>, Nested {
 }

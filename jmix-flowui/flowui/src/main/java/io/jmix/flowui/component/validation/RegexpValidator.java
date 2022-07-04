@@ -18,7 +18,6 @@ package io.jmix.flowui.component.validation;
 
 import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.common.util.Preconditions;
-import io.jmix.flowui.SameAsUi;
 import io.jmix.flowui.exception.ValidationException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -48,7 +47,6 @@ import java.util.regex.Pattern;
  *
  * @see Pattern
  */
-@SameAsUi
 @Component("flowui_RegexpValidator")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class RegexpValidator extends AbstractValidator<String> implements InitializingBean {

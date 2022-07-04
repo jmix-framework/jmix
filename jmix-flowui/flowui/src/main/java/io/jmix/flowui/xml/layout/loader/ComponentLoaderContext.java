@@ -17,9 +17,9 @@
 package io.jmix.flowui.xml.layout.loader;
 
 
-import io.jmix.flowui.model.ScreenData;
-import io.jmix.flowui.screen.Screen;
-import io.jmix.flowui.screen.ScreenActions;
+import io.jmix.flowui.model.ViewData;
+import io.jmix.flowui.view.View;
+import io.jmix.flowui.view.ViewActions;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.ComponentLoader.ComponentContext;
 
@@ -31,61 +31,45 @@ import java.util.Optional;
 public class ComponentLoaderContext implements ComponentContext {
 
     protected ComponentContext parent;
-//    protected ScreenOptions options;
 
-    protected ScreenData screenData;
-    protected ScreenActions screenActions;
+    protected ViewData viewData;
+    protected ViewActions viewActions;
 
     protected String messageGroup;
-    protected Screen<?> screen;
+    protected View<?> view;
     protected String fullFrameId;
     protected String currentFrameId;
 
-//    protected List<UiControllerProperty> properties = Collections.emptyList();
-
     protected List<ComponentLoader.InitTask> initTasks = new ArrayList<>();
-//    protected List<InjectTask> injectTasks = new ArrayList<>();
-//    protected List<InitTask> initTasks = new ArrayList<>();
 
-    public ComponentLoaderContext(/*ScreenOptions options*/) {
-//        this.options = options;
-
-//        this.parameters = Collections.emptyMap();
-//        if (options instanceof MapScreenOptions) {
-//            parameters = ((MapScreenOptions) options).getParams();
-//        }
-    }
-
-    /*@Override
-    public ScreenOptions getOptions() {
-        return options;
-    }*/
-
-    @Override
-    public ScreenData getScreenData() {
-        return screenData;
-    }
-
-    public void setScreenData(ScreenData screenData) {
-        this.screenData = screenData;
+    public ComponentLoaderContext() {
     }
 
     @Override
-    public ScreenActions getScreenActions() {
-        return screenActions;
+    public ViewData getViewData() {
+        return viewData;
     }
 
-    public void setScreenActions(ScreenActions screenActions) {
-        this.screenActions = screenActions;
+    public void setViewData(ViewData viewData) {
+        this.viewData = viewData;
     }
 
     @Override
-    public Screen<?> getScreen() {
-        return screen;
+    public ViewActions getViewActions() {
+        return viewActions;
     }
 
-    public void setScreen(Screen<?> screen) {
-        this.screen = screen;
+    public void setViewActions(ViewActions viewActions) {
+        this.viewActions = viewActions;
+    }
+
+    @Override
+    public View<?> getView() {
+        return view;
+    }
+
+    public void setView(View<?> view) {
+        this.view = view;
     }
 
     @Override
@@ -129,57 +113,15 @@ public class ComponentLoaderContext implements ComponentContext {
         this.parent = parent;
     }
 
-    /*public List<UiControllerProperty> getProperties() {
-        return properties;
+    public List<ComponentLoader.InitTask> getInitTasks() {
+        return initTasks;
     }
-
-    public void setProperties(List<UiControllerProperty> properties) {
-        this.properties = properties;
-    }*/
 
     @Override
     public void executeInitTasks() {
         for (ComponentLoader.InitTask initTask : initTasks) {
-            initTask.execute(this, screen);
+            initTask.execute(this, view);
         }
         initTasks.clear();
     }
-
-    /*@Override
-    public void addInjectTask(InjectTask task) {
-        injectTasks.add(task);
-    }
-
-    @Override
-    public void executeInjectTasks() {
-        for (InjectTask injectTask : injectTasks) {
-            injectTask.execute(ComponentLoaderContext.this, frame);
-        }
-        injectTasks.clear();
-    }
-
-    @Override
-    public void addInitTask(InitTask task) {
-        initTasks.add(task);
-    }
-
-    @Override
-    public void executeInitTasks() {
-        for (InitTask initTask : initTasks) {
-            initTask.execute(this, frame);
-        }
-        initTasks.clear();
-    }
-
-    public List<InjectTask> getInjectTasks() {
-        return injectTasks;
-    }
-*/
-    public List<ComponentLoader.InitTask> getInitTasks() {
-        return initTasks;
-    }
-/*
-    public List<InitTask> getInitTasks() {
-        return initTasks;
-    }*/
 }

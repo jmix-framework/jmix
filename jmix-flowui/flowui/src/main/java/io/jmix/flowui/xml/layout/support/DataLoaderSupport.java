@@ -26,9 +26,9 @@ import io.jmix.flowui.data.value.ContainerValueSource;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.InstanceContainer;
-import io.jmix.flowui.model.ScreenData;
-import io.jmix.flowui.screen.Screen;
-import io.jmix.flowui.screen.UiControllerUtils;
+import io.jmix.flowui.model.ViewData;
+import io.jmix.flowui.view.View;
+import io.jmix.flowui.view.UiControllerUtils;
 import io.jmix.flowui.xml.layout.ComponentLoader.ComponentContext;
 import io.jmix.flowui.xml.layout.ComponentLoader.Context;
 import io.jmix.flowui.xml.layout.LoaderResolver;
@@ -91,10 +91,10 @@ public class DataLoaderSupport {
                                 "attribute is not defined", containerId, element.attributeValue("id")), context);
             }
 
-            Screen<?> screen = getComponentContext().getScreen();
-            ScreenData screenData = UiControllerUtils.getScreenData(screen);
+            View<?> view = getComponentContext().getView();
+            ViewData viewData = UiControllerUtils.getViewData(view);
 
-            return Optional.of(screenData.getContainer(containerId));
+            return Optional.of(viewData.getContainer(containerId));
         }
 
         return Optional.empty();
@@ -119,9 +119,9 @@ public class DataLoaderSupport {
         String containerId = element.attributeValue("itemsContainer");
         if (containerId != null) {
 
-            Screen<?> screen = getComponentContext().getScreen();
-            ScreenData screenData = UiControllerUtils.getScreenData(screen);
-            InstanceContainer<?> container = screenData.getContainer(containerId);
+            View<?> view = getComponentContext().getView();
+            ViewData viewData = UiControllerUtils.getViewData(view);
+            InstanceContainer<?> container = viewData.getContainer(containerId);
             if (!(container instanceof CollectionContainer)) {
                 throw new GuiDevelopmentException(String.format("Not a %s: %s",
                         CollectionContainer.class.getSimpleName(), containerId),

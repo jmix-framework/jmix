@@ -20,9 +20,9 @@
           order="0"
           name="Blank view (FlowUI)">
     <description>
-        <![CDATA[<html>Blank screen not associated with an entity.</html>]]>
+        <![CDATA[<html>Blank view not associated with an entity.</html>]]>
     </description>
-    <locMessages key="title" expressionKey="${studioUtils.decapitalize(controllerName)}.caption">
+    <locMessages key="title" expressionKey="${studioUtils.decapitalize(controllerName)}.title">
         <message lang="default">
             <![CDATA[${studioUtils.makeScreenNaturalCaption(id, project)}]]>
         </message>
@@ -45,7 +45,7 @@
         <dependency code="descriptorName"/>
     </property>
 
-    <property caption="Screen id"
+    <property caption="View id"
               code="id"
               propertyType="SCREEN_ID"
               advanced="true"
@@ -55,7 +55,7 @@
         <dependency code="descriptorName"/>
     </property>
 
-    <property caption="Screen route"
+    <property caption="View route"
               code="route"
               defaultValue="blank-view"
               propertyType="STRING"
@@ -70,6 +70,7 @@
               code="menuItem"
               propertyType="FLOW_MENU_ITEM"/>
 
+    <!--sources-->
     <source fileExt="xml"
             name="descriptor"/>
 

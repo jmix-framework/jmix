@@ -8,20 +8,20 @@ import io.jmix.core.Messages;
 import io.jmix.core.security.EntityOp;
 import io.jmix.flowui.DialogWindowBuilders;
 import io.jmix.flowui.FlowUiComponentProperties;
-import io.jmix.flowui.ScreenNavigators;
+import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.action.ActionType;
-import io.jmix.flowui.action.AdjustWhenScreenReadOnly;
+import io.jmix.flowui.action.AdjustWhenViewReadOnly;
 import io.jmix.flowui.action.ExecutableAction;
-import io.jmix.flowui.action.ScreenOpeningAction;
+import io.jmix.flowui.action.ViewOpeningAction;
 import io.jmix.flowui.data.EntityDataUnit;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.kit.component.FlowUiComponentUtils;
 import io.jmix.flowui.kit.component.KeyCombination;
-import io.jmix.flowui.screen.*;
-import io.jmix.flowui.screen.DialogWindow.AfterCloseEvent;
-import io.jmix.flowui.screen.builder.EditorWindowBuilder;
-import io.jmix.flowui.screen.navigation.EditorNavigator;
-import io.jmix.flowui.sys.ActionScreenInitializer;
+import io.jmix.flowui.view.*;
+import io.jmix.flowui.view.DialogWindow.AfterCloseEvent;
+import io.jmix.flowui.view.builder.DetailWindowBuilder;
+import io.jmix.flowui.view.navigation.DetailViewNavigator;
+import io.jmix.flowui.sys.ActionViewInitializer;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
@@ -30,14 +30,14 @@ import java.util.function.Function;
 
 @ActionType(EditAction.ID)
 public class EditAction<E> extends SecuredListDataComponentAction<EditAction<E>, E>
-        implements AdjustWhenScreenReadOnly, ScreenOpeningAction, ExecutableAction {
+        implements AdjustWhenViewReadOnly, ViewOpeningAction, ExecutableAction {
 
     public static final String ID = "edit";
 
-    protected ScreenNavigators screenNavigators;
+    protected ViewNavigators viewNavigators;
     protected DialogWindowBuilders dialogWindowBuilders;
 
-    protected ActionScreenInitializer screenInitializer = new ActionScreenInitializer();
+    protected ActionViewInitializer viewInitializer = new ActionViewInitializer();
     protected Consumer<E> afterCommitHandler;
     protected Function<E, E> transformation;
 
@@ -74,72 +74,72 @@ public class EditAction<E> extends SecuredListDataComponentAction<EditAction<E>,
     }
 
     /**
-     * Returns the editor screen id if it was set by {@link #setScreenId(String)} or in the screen XML.
+     * Returns the detail view id if it was set by {@link #setViewId(String)} or in the view XML.
      * Otherwise, returns null.
      */
     @Nullable
     @Override
-    public String getScreenId() {
-        return screenInitializer.getScreenId();
+    public String getViewId() {
+        return viewInitializer.getViewId();
     }
 
     /**
-     * Sets the editor screen id.
+     * Sets the detail view id.
      */
     @Override
-    public void setScreenId(@Nullable String screenId) {
-        screenInitializer.setScreenId(screenId);
+    public void setViewId(@Nullable String viewId) {
+        viewInitializer.setViewId(viewId);
     }
 
     /**
-     * Returns the editor screen class if it was set by {@link #setScreenClass(Class)} or in the screen XML.
+     * Returns the detail view class if it was set by {@link #setViewClass(Class)} or in the view XML.
      * Otherwise returns null.
      */
     @Nullable
     @Override
-    public Class<? extends Screen> getScreenClass() {
-        return screenInitializer.getScreenClass();
+    public Class<? extends View> getViewClass() {
+        return viewInitializer.getViewClass();
     }
 
     /**
-     * Sets the editor screen id.
+     * Sets the detail view id.
      */
     @Override
-    public void setScreenClass(@Nullable Class<? extends Screen> screenClass) {
-        screenInitializer.setScreenClass(screenClass);
+    public void setViewClass(@Nullable Class<? extends View> viewClass) {
+        viewInitializer.setViewClass(viewClass);
     }
 
     @Nullable
     @Override
     public RouteParameters getRouteParameters() {
-        return screenInitializer.getRouteParameters();
+        return viewInitializer.getRouteParameters();
     }
 
     @Override
     public void setRouteParameters(@Nullable RouteParameters routeParameters) {
-        screenInitializer.setRouteParameters(routeParameters);
+        viewInitializer.setRouteParameters(routeParameters);
     }
 
     @Nullable
     @Override
     public QueryParameters getQueryParameters() {
-        return screenInitializer.getQueryParameters();
+        return viewInitializer.getQueryParameters();
     }
 
     @Override
     public void setQueryParameters(@Nullable QueryParameters queryParameters) {
-        screenInitializer.setQueryParameters(queryParameters);
+        viewInitializer.setQueryParameters(queryParameters);
     }
 
     @Override
-    public <S extends Screen<?>> void setAfterCloseHandler(@Nullable Consumer<AfterCloseEvent<S>> afterCloseHandler) {
-        screenInitializer.setAfterCloseHandler(afterCloseHandler);
+    public <S extends View<?>> void setAfterCloseHandler(@Nullable Consumer<AfterCloseEvent<S>> afterCloseHandler) {
+        viewInitializer.setAfterCloseHandler(afterCloseHandler);
     }
 
     /**
-     * Sets the handler to be invoked when the editor screen commits the entity.
+     * Sets the handler to be invoked when the detail view commits the entity.
      * <p>
-     * Note that handler is invoked if the editor is opened in {@link OpenMode#DIALOG} mode.
+     * Note that handler is invoked if the detail is opened in {@link OpenMode#DIALOG} mode.
      * <p>
      * The preferred way to set the handler is using a controller method annotated with {@link Install}, e.g.:
      * <pre>
@@ -154,10 +154,10 @@ public class EditAction<E> extends SecuredListDataComponentAction<EditAction<E>,
     }
 
     /**
-     * Sets the function to transform the committed in the editor screen entity before setting it to the target data
+     * Sets the function to transform the committed in the detail view entity before setting it to the target data
      * container.
      * <p>
-     * Note that transformation function is invoked if the editor is opened in {@link OpenMode#DIALOG} mode.
+     * Note that transformation function is invoked if the detail is opened in {@link OpenMode#DIALOG} mode.
      * <p>
      * The preferred way to set the function is using a controller method annotated with {@link Install}, e.g.:
      * <pre>
@@ -185,8 +185,8 @@ public class EditAction<E> extends SecuredListDataComponentAction<EditAction<E>,
     }
 
     @Autowired
-    public void setScreenNavigators(ScreenNavigators screenNavigators) {
-        this.screenNavigators = screenNavigators;
+    public void setViewNavigators(ViewNavigators viewNavigators) {
+        this.viewNavigators = viewNavigators;
     }
 
     @Autowired
@@ -258,7 +258,7 @@ public class EditAction<E> extends SecuredListDataComponentAction<EditAction<E>,
     }
 
     @Override
-    public boolean isDisabledWhenScreenReadOnly() {
+    public boolean isDisabledWhenViewReadOnly() {
         // TODO: add security
 /*        if (!(target.getItems() instanceof EntityDataUnit)) {
             return true;
@@ -266,8 +266,8 @@ public class EditAction<E> extends SecuredListDataComponentAction<EditAction<E>,
 
         MetaClass metaClass = ((EntityDataUnit) target.getItems()).getEntityMetaClass();
         if (metaClass != null) {
-            // Even though the screen is read-only, this edit action may remain active
-            // because the related entity cannot be edited and the corresponding edit screen
+            // Even though the view is read-only, this edit action may remain active
+            // because the related entity cannot be edited and the corresponding edit view
             // will be opened in read-only mode either.
             UiEntityContext entityContext = new UiEntityContext(metaClass);
             accessManager.applyRegisteredConstraints(entityContext);
@@ -300,44 +300,44 @@ public class EditAction<E> extends SecuredListDataComponentAction<EditAction<E>,
                 || UiComponentUtils.isComponentAttachedToDialog((Component) target)) {
             openDialog(editedEntity);
         } else {
-            navigateToScreen(editedEntity);
+            navigate(editedEntity);
         }
     }
 
-    protected void navigateToScreen(E editedEntity) {
-        EditorNavigator<E> navigator = screenNavigators.editor((target))
+    protected void navigate(E editedEntity) {
+        DetailViewNavigator<E> navigator = viewNavigators.detailView((target))
                 .editEntity(editedEntity);
 
         if (target instanceof Component) {
-            Screen<?> parent = UiComponentUtils.findScreen((Component) target);
+            View<?> parent = UiComponentUtils.findView((Component) target);
             if (parent != null) {
                 navigator = navigator.withBackNavigationTarget(parent.getClass());
             }
         }
 
-        screenInitializer.initNavigator(navigator);
+        viewInitializer.initNavigator(navigator);
 
         navigator.navigate();
     }
 
     @SuppressWarnings("unchecked")
     protected void openDialog(E editedEntity) {
-        EditorWindowBuilder<E, Screen<?>> editorBuilder = dialogWindowBuilders.editor(target);
+        DetailWindowBuilder<E, View<?>> detailBuilder = dialogWindowBuilders.detail(target);
 
-        editorBuilder = screenInitializer.initWindowBuilder(editorBuilder);
+        detailBuilder = viewInitializer.initWindowBuilder(detailBuilder);
 
-        editorBuilder.editEntity(editedEntity);
+        detailBuilder.editEntity(editedEntity);
 
         if (transformation != null) {
-            editorBuilder.withTransformation(transformation);
+            detailBuilder.withTransformation(transformation);
         }
 
-        DialogWindow<Screen<?>> dialogWindow = editorBuilder.build();
+        DialogWindow<View<?>> dialogWindow = detailBuilder.build();
         if (afterCommitHandler != null) {
             dialogWindow.addAfterCloseListener(event -> {
                 if (event.closedWith(StandardOutcome.COMMIT)
-                        && event.getScreen() instanceof EditorScreen) {
-                    E committedEntity = ((EditorScreen<E>) event.getScreen()).getEditedEntity();
+                        && event.getView() instanceof DetailView) {
+                    E committedEntity = ((DetailView<E>) event.getView()).getEditedEntity();
                     afterCommitHandler.accept(committedEntity);
                 }
             });
@@ -347,18 +347,18 @@ public class EditAction<E> extends SecuredListDataComponentAction<EditAction<E>,
     }
 
     /**
-     * @see #setScreenId(String)
+     * @see #setViewId(String)
      */
-    public EditAction<E> withScreenId(@Nullable String screenId) {
-        setScreenId(screenId);
+    public EditAction<E> withViewId(@Nullable String viewId) {
+        setViewId(viewId);
         return this;
     }
 
     /**
-     * @see #setScreenClass(Class)
+     * @see #setViewClass(Class)
      */
-    public EditAction<E> withScreenClass(@Nullable Class<? extends Screen> screenClass) {
-        setScreenClass(screenClass);
+    public EditAction<E> withViewClass(@Nullable Class<? extends View> viewClass) {
+        setViewClass(viewClass);
         return this;
     }
 
@@ -389,7 +389,7 @@ public class EditAction<E> extends SecuredListDataComponentAction<EditAction<E>,
     /**
      * @see #setAfterCloseHandler(Consumer)
      */
-    public <S extends Screen<?>> EditAction<E> withAfterCloseHandler(Consumer<AfterCloseEvent<S>> afterCloseHandler) {
+    public <S extends View<?>> EditAction<E> withAfterCloseHandler(Consumer<AfterCloseEvent<S>> afterCloseHandler) {
         setAfterCloseHandler(afterCloseHandler);
         return this;
     }

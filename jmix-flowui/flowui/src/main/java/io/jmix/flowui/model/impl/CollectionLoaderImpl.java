@@ -20,8 +20,6 @@ import io.jmix.core.*;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.querycondition.Condition;
-import io.jmix.flowui.RequiresChanges;
-import io.jmix.flowui.SameAsUi;
 import io.jmix.flowui.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -34,8 +32,6 @@ import java.util.function.Function;
 /**
  *
  */
-@SameAsUi
-@RequiresChanges
 public class CollectionLoaderImpl<E> implements CollectionLoader<E> {
 
     @Autowired

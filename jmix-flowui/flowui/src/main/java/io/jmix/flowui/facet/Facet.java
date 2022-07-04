@@ -16,12 +16,12 @@
 
 package io.jmix.flowui.facet;
 
-import io.jmix.flowui.screen.Screen;
+import io.jmix.flowui.view.View;
 
 import javax.annotation.Nullable;
 
 /**
- * Non-visual component of a {@link Screen}.
+ * Non-visual component of a {@link View}.
  */
 public interface Facet {
 
@@ -31,10 +31,10 @@ public interface Facet {
     void setId(@Nullable String id);
 
     /**
-     * @return a screen containing this facet
+     * @return a view containing this facet
      */
     @Nullable
-    Screen<?> getOwner();
+    View<?> getOwner();
 
-    void setOwner(@Nullable Screen<?> owner);
+    void setOwner(@Nullable View<?> owner);
 }

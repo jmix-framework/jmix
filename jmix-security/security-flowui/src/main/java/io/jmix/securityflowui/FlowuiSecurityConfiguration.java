@@ -13,12 +13,12 @@ import com.vaadin.flow.spring.security.VaadinDefaultRequestCache;
 import com.vaadin.flow.spring.security.VaadinSavedRequestAwareAuthenticationSuccessHandler;
 import io.jmix.core.JmixOrder;
 import io.jmix.flowui.FlowuiProperties;
-import io.jmix.flowui.screen.Screen;
-import io.jmix.flowui.screen.ScreenRegistry;
+import io.jmix.flowui.view.View;
+import io.jmix.flowui.view.ViewRegistry;
 import io.jmix.security.StandardSecurityConfiguration;
 import io.jmix.security.configurer.AnonymousConfigurer;
 import io.jmix.security.configurer.SessionManagementConfigurer;
-import io.jmix.securityflowui.access.FlowuiScreenAccessChecker;
+import io.jmix.securityflowui.access.FlowuiViewAccessChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +43,7 @@ import org.springframework.security.web.util.matcher.AnyRequestMatcher;
 import org.springframework.security.web.util.matcher.OrRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
+import javax.annotation.Nullable;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -66,9 +67,9 @@ public class FlowuiSecurityConfiguration extends StandardSecurityConfiguration {
     protected VaadinConfigurationProperties configurationProperties;
     protected RequestUtil requestUtil;
 
-    protected FlowuiScreenAccessChecker screenAccessChecker;
+    protected FlowuiViewAccessChecker viewAccessChecker;
     protected FlowuiProperties flowuiProperties;
-    protected ScreenRegistry screenRegistry;
+    protected ViewRegistry viewRegistry;
 
     @Autowired
     public void setVaadinDefaultRequestCache(VaadinDefaultRequestCache vaadinDefaultRequestCache) {
@@ -86,8 +87,8 @@ public class FlowuiSecurityConfiguration extends StandardSecurityConfiguration {
     }
 
     @Autowired
-    public void setScreenAccessChecker(FlowuiScreenAccessChecker screenAccessChecker) {
-        this.screenAccessChecker = screenAccessChecker;
+    public void setViewAccessChecker(FlowuiViewAccessChecker viewAccessChecker) {
+        this.viewAccessChecker = viewAccessChecker;
     }
 
     @Autowired
@@ -96,8 +97,8 @@ public class FlowuiSecurityConfiguration extends StandardSecurityConfiguration {
     }
 
     @Autowired
-    public void setScreenRegistry(ScreenRegistry screenRegistry) {
-        this.screenRegistry = screenRegistry;
+    public void setViewRegistry(ViewRegistry viewRegistry) {
+        this.viewRegistry = viewRegistry;
     }
 
     /**
@@ -160,19 +161,19 @@ public class FlowuiSecurityConfiguration extends StandardSecurityConfiguration {
         urlRegistry.anyRequest().authenticated();
 
         // Enable view access control
-        screenAccessChecker.enable();
+        viewAccessChecker.enable();
 
-        initLoginScreen(http);
+        initLoginView(http);
     }
 
-    protected void initLoginScreen(HttpSecurity http) throws Exception {
-        String loginScreenId = flowuiProperties.getLoginScreenId();
-        if (Strings.isNullOrEmpty(loginScreenId)) {
-            log.debug("Login screen Id is not defined");
+    protected void initLoginView(HttpSecurity http) throws Exception {
+        String loginViewId = flowuiProperties.getLoginViewId();
+        if (Strings.isNullOrEmpty(loginViewId)) {
+            log.debug("Login view Id is not defined");
             return;
         }
 
-        setLoginScreen(http, loginScreenId);
+        setLoginView(http, loginViewId);
     }
 
     /**
@@ -223,33 +224,33 @@ public class FlowuiSecurityConfiguration extends StandardSecurityConfiguration {
                 .map(AntPathRequestMatcher::new).collect(Collectors.toList()));
     }
 
-    protected void setLoginScreen(HttpSecurity http, String screenId) throws Exception {
-        setLoginScreen(http, screenId, LOGOUT_SUCCESS_URL);
+    protected void setLoginView(HttpSecurity http, String viewId) throws Exception {
+        setLoginView(http, viewId, LOGOUT_SUCCESS_URL);
     }
 
-    protected void setLoginScreen(HttpSecurity http, String screenId, String logoutUrl) throws Exception {
-        Class<? extends Screen> controllerClass =
-                screenRegistry.getScreenInfo(screenId).getControllerClass();
+    protected void setLoginView(HttpSecurity http, String viewId, String logoutUrl) throws Exception {
+        Class<? extends View<?>> controllerClass =
+                viewRegistry.getViewInfo(viewId).getControllerClass();
 
-        setLoginScreen(http, controllerClass, logoutUrl);
+        setLoginView(http, controllerClass, logoutUrl);
     }
 
-    protected void setLoginScreen(HttpSecurity http,
-                                  Class<? extends Component> screenClass) throws Exception {
-        setLoginScreen(http, screenClass, LOGOUT_SUCCESS_URL);
+    protected void setLoginView(HttpSecurity http,
+                                Class<? extends Component> viewClass) throws Exception {
+        setLoginView(http, viewClass, LOGOUT_SUCCESS_URL);
     }
 
-    protected void setLoginScreen(HttpSecurity http,
-                                  Class<? extends Component> screenClass, String logoutUrl) throws Exception {
-        Optional<Route> route = AnnotationReader.getAnnotationFor(screenClass, Route.class);
+    protected void setLoginView(HttpSecurity http,
+                                Class<? extends Component> viewClass, String logoutUrl) throws Exception {
+        Optional<Route> route = AnnotationReader.getAnnotationFor(viewClass, Route.class);
 
         if (route.isEmpty()) {
             throw new IllegalArgumentException(
                     "Unable find a @Route annotation on the login view "
-                            + screenClass.getName());
+                            + viewClass.getName());
         }
 
-        String loginPath = RouteUtil.getRoutePath(screenClass, route.get());
+        String loginPath = RouteUtil.getRoutePath(viewClass, route.get());
         if (!loginPath.startsWith("/")) {
             loginPath = "/" + loginPath;
         }
@@ -268,7 +269,7 @@ public class FlowuiSecurityConfiguration extends StandardSecurityConfiguration {
         http.exceptionHandling().defaultAuthenticationEntryPointFor(
                 new LoginUrlAuthenticationEntryPoint(loginPath), AnyRequestMatcher.INSTANCE);
 
-        screenAccessChecker.setLoginScreen(screenClass);
+        viewAccessChecker.setLoginView(viewClass);
     }
 
     protected RequestMatcher createLogoutRequestMatcher(String logoutUrl) {
@@ -349,7 +350,7 @@ public class FlowuiSecurityConfiguration extends StandardSecurityConfiguration {
      * @return the path with prepended url mapping.
      * @see VaadinConfigurationProperties#getUrlMapping()
      */
-    public static String applyUrlMapping(String urlMapping, String path) {
+    public static String applyUrlMapping(@Nullable String urlMapping, @Nullable String path) {
         if (urlMapping == null) {
             urlMapping = "";
         } else {

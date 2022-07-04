@@ -20,10 +20,10 @@ import com.vaadin.flow.router.Route;
 import io.jmix.flowui.component.datepicker.TypedDatePicker;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.component.timepicker.TypedTimePicker;
-import io.jmix.flowui.screen.ComponentId;
-import io.jmix.flowui.screen.StandardScreen;
-import io.jmix.flowui.screen.UiController;
-import io.jmix.flowui.screen.UiDescriptor;
+import io.jmix.flowui.view.ComponentId;
+import io.jmix.flowui.view.StandardView;
+import io.jmix.flowui.view.UiController;
+import io.jmix.flowui.view.UiDescriptor;
 
 import java.time.LocalTime;
 import java.util.Date;
@@ -31,7 +31,7 @@ import java.util.Date;
 @Route(value = "validator-test-view")
 @UiController("ValidatorTestView")
 @UiDescriptor("validator-test-view.xml")
-public class ValidatorTestView extends StandardScreen {
+public class ValidatorTestView extends StandardView {
 
     @ComponentId
     public TypedTextField<?> numberField;

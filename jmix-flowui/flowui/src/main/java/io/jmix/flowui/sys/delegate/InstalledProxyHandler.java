@@ -1,20 +1,18 @@
 package io.jmix.flowui.sys.delegate;
 
-import io.jmix.flowui.SameAsUi;
-import io.jmix.flowui.screen.Screen;
+import io.jmix.flowui.view.View;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-@SameAsUi
 public class InstalledProxyHandler implements InvocationHandler {
 
-    private final Screen screen;
+    private final View<?> view;
     private final Method method;
 
-    public InstalledProxyHandler(Screen screen, Method method) {
-        this.screen = screen;
+    public InstalledProxyHandler(View<?> view, Method method) {
+        this.view = view;
         this.method = method;
     }
 
@@ -32,7 +30,7 @@ public class InstalledProxyHandler implements InvocationHandler {
 
         if (invokedMethod.getParameterCount() == method.getParameterCount()) {
             try {
-                return this.method.invoke(screen, args);
+                return this.method.invoke(view, args);
             } catch (InvocationTargetException e) {
                 if (e.getTargetException() instanceof RuntimeException) {
                     throw e.getTargetException();
@@ -50,7 +48,7 @@ public class InstalledProxyHandler implements InvocationHandler {
     @Override
     public String toString() {
         return "InstalledProxyHandler{" +
-                "frameOwner=" + screen.getClass() +
+                "frameOwner=" + view.getClass() +
                 ", method=" + method +
                 '}';
     }

@@ -9,9 +9,9 @@ import com.vaadin.flow.server.*;
 import com.vaadin.flow.server.startup.ApplicationRouteRegistry;
 import io.jmix.flowui.component.error.JmixInternalServerError;
 import io.jmix.flowui.exception.UiExceptionHandlers;
-import io.jmix.flowui.screen.Screen;
-import io.jmix.flowui.screen.ScreenInfo;
-import io.jmix.flowui.screen.ScreenRegistry;
+import io.jmix.flowui.view.View;
+import io.jmix.flowui.view.ViewInfo;
+import io.jmix.flowui.view.ViewRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -28,12 +28,12 @@ public class JmixServiceInitListener implements VaadinServiceInitListener, Appli
 
     protected ApplicationContext applicationContext;
     protected UiExceptionHandlers uiExceptionHandlers;
-    protected ScreenRegistry screenRegistry;
+    protected ViewRegistry viewRegistry;
 
     public JmixServiceInitListener(UiExceptionHandlers uiExceptionHandlers,
-                                   ScreenRegistry screenRegistry) {
+                                   ViewRegistry viewRegistry) {
         this.uiExceptionHandlers = uiExceptionHandlers;
-        this.screenRegistry = screenRegistry;
+        this.viewRegistry = viewRegistry;
     }
 
     @Override
@@ -51,7 +51,7 @@ public class JmixServiceInitListener implements VaadinServiceInitListener, Appli
         // should be defined only in one configuration as Spring cannot register bean with
         // the same name, see VaadinScanPackagesRegistrar#registerBeanDefinitions().
         // Register routes after route application scope is available.
-        registerScreenRoutes();
+        registerViewRoutes();
 
         registerInternalServiceError();
     }
@@ -66,11 +66,11 @@ public class JmixServiceInitListener implements VaadinServiceInitListener, Appli
         event.getSession().setErrorHandler(uiExceptionHandlers);
     }
 
-    protected void registerScreenRoutes() {
+    protected void registerViewRoutes() {
         RouteConfiguration routeConfiguration = RouteConfiguration.forApplicationScope();
 
-        for (ScreenInfo screenInfo : screenRegistry.getScreens()) {
-            Class<? extends Screen<?>> controllerClass = screenInfo.getControllerClass();
+        for (ViewInfo viewInfo : viewRegistry.getViewInfos()) {
+            Class<? extends View<?>> controllerClass = viewInfo.getControllerClass();
             Route route = controllerClass.getAnnotation(Route.class);
             if (route == null) {
                 continue;

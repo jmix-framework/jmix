@@ -3,7 +3,7 @@ package io.jmix.flowui.xml.layout.inittask;
 import com.vaadin.flow.component.Component;
 import io.jmix.flowui.kit.component.HasActions;
 import io.jmix.flowui.kit.action.Action;
-import io.jmix.flowui.screen.Screen;
+import io.jmix.flowui.view.View;
 import io.jmix.flowui.xml.layout.ComponentLoader.ComponentContext;
 
 import java.util.ArrayList;
@@ -12,8 +12,8 @@ import java.util.Objects;
 
 public class AssignActionsInitTask<C extends Component & HasActions> extends AbstractAssignActionInitTask<C> {
 
-    public AssignActionsInitTask(C component, String actionId, Screen screen) {
-        super(component, actionId, screen);
+    public AssignActionsInitTask(C component, String actionId, View view) {
+        super(component, actionId, view);
     }
 
     @Override

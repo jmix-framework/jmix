@@ -17,15 +17,11 @@
 package io.jmix.flowui.model.impl;
 
 import io.jmix.core.common.event.Subscription;
-import io.jmix.flowui.RequiresChanges;
-import io.jmix.flowui.SameAsUi;
 import io.jmix.flowui.model.CollectionContainer;
 
 import java.lang.ref.WeakReference;
 import java.util.function.Consumer;
 
-@SameAsUi
-@RequiresChanges
 public class WeakCollectionChangeListener<E>
         implements Consumer<CollectionContainer.CollectionChangeEvent<E>> {
 

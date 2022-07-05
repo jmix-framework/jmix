@@ -36,6 +36,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import test_support.DataTestConfiguration;
 import test_support.TestContextInititalizer;
 import test_support.entity.sales.Customer;
+import test_support.entity.sales.Order;
 import test_support.listeners.TestCustomerListener;
 
 import javax.persistence.EntityManager;
@@ -93,6 +94,7 @@ public class EntityManagerTest {
         };
         customerEvents.clear();
         try {
+            jdbc.update("delete from SALES_ORDER");
             jdbc.update("delete from SALES_CUSTOMER");
         } catch (DataAccessException e) {
             // ignore
@@ -169,6 +171,63 @@ public class EntityManagerTest {
         // then:
         assertTrue(entityStates.isLoaded(customer1, "name"));
         assertEquals(customer, customer1);
+        assertFalse(entityStates.isLoaded(customer1, "status"));
+    }
+
+    @Test
+    public void testLoadGraph() {
+        Customer customer = metadata.create(Customer.class);
+        customer.setName("c1");
+
+        Order order = metadata.create(Order.class);
+        order.setCustomer(customer);
+
+        tx.executeWithoutResult(status -> {
+            entityManager.persist(customer);
+            entityManager.persist(order);
+        });
+
+        // when:
+        FetchPlan fetchPlan = fetchPlans.builder(Order.class).add("customer").build();
+
+        Order order1 = tx.execute(status ->
+                entityManager.find(Order.class, order.getId(), PersistenceHints.builder().withFetchPlan(fetchPlan).build()));
+
+        // then:
+        assertTrue(entityStates.isLoaded(order1, "number"));
+        assertTrue(entityStates.isLoaded(order1, "customer"));
+        Customer customer1 = order1.getCustomer();
+        assertEquals(customer, customer1);
+        assertTrue(entityStates.isLoaded(customer1, "name"));
+        assertTrue(entityStates.isLoaded(customer1, "status"));
+    }
+
+    @Test
+    public void testLoadGraph_Partially() {
+        Customer customer = metadata.create(Customer.class);
+        customer.setName("c1");
+
+        Order order = metadata.create(Order.class);
+        order.setCustomer(customer);
+
+        tx.executeWithoutResult(status -> {
+            entityManager.persist(customer);
+            entityManager.persist(order);
+        });
+
+        // when:
+        FetchPlan fetchPlan = fetchPlans.builder(Order.class).addAll("number", "customer.name").partial().build();
+
+        Order order1 = tx.execute(status ->
+                entityManager.find(Order.class, order.getId(), PersistenceHints.builder().withFetchPlan(fetchPlan).build()));
+
+        // then:
+        assertTrue(entityStates.isLoaded(order1, "number"));
+        assertFalse(entityStates.isLoaded(order1, "date"));
+        assertTrue(entityStates.isLoaded(order1, "customer"));
+        Customer customer1 = order1.getCustomer();
+        assertEquals(customer, customer1);
+        assertTrue(entityStates.isLoaded(customer1, "name"));
         assertFalse(entityStates.isLoaded(customer1, "status"));
     }
 

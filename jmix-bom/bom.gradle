@@ -85,6 +85,11 @@ dependencies {
         api 'cn.jmix:jmixcn-imagecropper:0.1.0'
         api 'cn.jmix:jmixcn-imagecropper-starter:0.1.0'
         
+        api 'gr.netmechanics.jmix:azurefs:1.3.1'
+        api 'gr.netmechanics.jmix:azurefs-starter:1.3.1'
+        api 'gr.netmechanics.jmix:duration-field:1.3.1'
+        api 'gr.netmechanics.jmix:duration-field-starter:1.3.1'
+        
         // end community add-ons
 
         api "io.jmix.appsettings:jmix-appsettings:$freeVersion"

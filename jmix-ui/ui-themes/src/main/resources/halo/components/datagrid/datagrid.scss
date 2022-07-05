@@ -312,7 +312,8 @@ $jmix-datagrid-aggregation-background-color: $jmix-aggregation-background-color-
     .jmix-timefield,
     .jmix-timefield-focus,
     .jmix-fileupload .v-button,
-    .jmix-fileupload-clear.v-button,
+    .v-button.jmix-fileupload-clear,
+    .v-button.jmix-fileupload-filename,
     .v-button.jmix-pickerfield-button,
     .v-textfield.jmix-pickerfield-text:focus {
       border: none;
@@ -360,8 +361,19 @@ $jmix-datagrid-aggregation-background-color: $jmix-aggregation-background-color-
         display: none;
       }
 
+      .v-button.jmix-fileupload-filename {
+        margin: 0;
+      }
+
+      .jmix-fileupload-filename.link {
+        padding-left: $v-grid-cell-padding-horizontal;
+        padding-right: $v-grid-cell-padding-horizontal / 2;
+      }
+
       .jmix-fileupload .v-button,
       .jmix-fileupload-clear.v-button {
+        margin: 0;
+
         border-left: valo-border($color: $v-textfield-background-color, $border: $v-textfield-border, $strength: 0.5);
 
         color: mix($v-textfield-background-color, valo-font-color($v-textfield-background-color));

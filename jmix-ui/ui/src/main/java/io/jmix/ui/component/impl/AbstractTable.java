@@ -29,15 +29,7 @@ import com.vaadin.v7.data.util.converter.Converter;
 import com.vaadin.v7.data.util.converter.ConverterUtil;
 import com.vaadin.v7.ui.AbstractSelect;
 import com.vaadin.v7.ui.Table.ColumnHeaderMode;
-import io.jmix.core.AccessManager;
-import io.jmix.core.Entity;
-import io.jmix.core.EntityStates;
-import io.jmix.core.FetchPlan;
-import io.jmix.core.FetchPlanRepository;
-import io.jmix.core.MessageTools;
-import io.jmix.core.Messages;
-import io.jmix.core.Metadata;
-import io.jmix.core.MetadataTools;
+import io.jmix.core.*;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.common.util.Preconditions;
@@ -1236,7 +1228,11 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
             Formatter formatter = column.getFormatter();
 
             if (formatter != null) {
-                return (String) formatter.apply(generatedValue);
+                return formatter.apply(generatedValue);
+            }
+
+            if (generatedValue instanceof FileRef) {
+                return formatFileRef(((FileRef) generatedValue));
             }
 
             return metadataTools.format(generatedValue);
@@ -1258,7 +1254,7 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
 
             if (column != null) {
                 if (column.getFormatter() != null) {
-                    return (String) column.getFormatter().apply(cellValue);
+                    return column.getFormatter().apply(cellValue);
                 } else if (column.getXmlDescriptor() != null) {
                     // vaadin8 move to Column
                     String captionProperty = column.getXmlDescriptor().attributeValue("captionProperty");
@@ -1270,11 +1266,19 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
                 }
             }
 
+            if (cellValue instanceof FileRef) {
+                return formatFileRef(((FileRef) cellValue));
+            }
+
             return metadataTools.format(cellValue, propertyPath.getMetaProperty());
         }
 
         if (cellValue == null) {
             return "";
+        }
+
+        if (cellValue instanceof FileRef) {
+            return formatFileRef(((FileRef) cellValue));
         }
 
         if (!(cellValue instanceof Component)) {
@@ -1290,6 +1294,10 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
         }
 
         return cellValue.toString();
+    }
+
+    protected String formatFileRef(FileRef file) {
+        return file.getFileName();
     }
 
     protected TableFieldFactoryImpl createFieldFactory() {
@@ -2054,7 +2062,7 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
 
                 if (aggregation == null) {
                     owner.getComponent().removeContainerPropertyAggregation(id);
-                } else if (owner.getItems() instanceof AggregationContainer) {
+                } else {
                     owner.checkAggregation(aggregation);
                     if (aggregation.getType() != null) {
                         owner.getComponent().addContainerPropertyAggregation(id,

@@ -244,6 +244,19 @@
   .#{$primary-stylename}-editor-cells > div {
     background: var(--grid-background-color);
 
+    .jmix-fileupload .v-button,
+    .v-button.jmix-fileupload-clear {
+      @include he-pickerfield-button-style();
+
+      &.v-disabled {
+        @include he-pickerfield-button-disabled-style();
+      }
+
+      @include he-pickerfield-button-size-style();
+    }
+
+    .jmix-fileupload .v-button,
+    .v-button.jmix-fileupload-clear,
     .v-button.jmix-pickerfield-button {
       border-left: he-border($color: --border-dim-color);
     }

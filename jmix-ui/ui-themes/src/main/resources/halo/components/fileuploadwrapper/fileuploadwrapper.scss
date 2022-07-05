@@ -17,13 +17,14 @@
 
 @mixin halo-jmix-fileupload-wrapper($primary-stylename: jmix-fileupload-wrapper) {
   .jmix-fileupload-container {
-    min-height: $v-unit-size;
+    height: $v-unit-size;
     display: inline-flex;
   }
 
   .jmix-fileupload-filename.v-has-width > * {
     overflow: hidden;
     text-overflow: ellipsis;
+    line-height: 1.35;
   }
 
   .jmix-fileupload-filename.jmix-fileupload-empty {
@@ -70,6 +71,10 @@
   .jmix-fileupload-container {
     .jmix-fileupload-filename {
       margin-right: $v-layout-margin-right;
+
+      .v-button-caption {
+        white-space: nowrap;
+      }
     }
 
     .jmix-fileupload-clear {

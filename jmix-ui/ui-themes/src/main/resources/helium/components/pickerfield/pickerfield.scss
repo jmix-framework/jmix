@@ -115,17 +115,8 @@
                                  $unit-size         : $v-unit-size,
                                  $font-size         : $v-font-size) {
   .v-button.#{$primary-stylename}-button {
-    padding: 0;
-    font-size: $font-size;
-    width: $unit-size;
-    min-width: $unit-size;
-    height: $unit-size;
-    border-radius: 0;
-
-    &:after,
-    &:hover:after {
-      height: $unit-size;
-    }
+    @include he-pickerfield-button-size-style($unit-size: $unit-size,
+                                              $font-size: $font-size);
   }
 
   .#{$primary-stylename}-layout > .v-button:last-child {
@@ -255,6 +246,21 @@
 
   &:focus:not(.v-disabled) {
     border-color: var(--border-color);
+  }
+}
+
+@mixin he-pickerfield-button-size-style($unit-size : $v-unit-size,
+                                        $font-size : $v-font-size) {
+  padding: 0;
+  font-size: $font-size;
+  width: $unit-size;
+  min-width: $unit-size;
+  height: $unit-size;
+  border-radius: 0;
+
+  &:after,
+  &:hover:after {
+    height: $unit-size;
   }
 }
 

@@ -81,7 +81,10 @@ dependencies {
     constraints {
 
         // community add-ons
-
+        
+        api 'cn.jmix:jmixcn-imagecropper:0.1.0'
+        api 'cn.jmix:jmixcn-imagecropper-starter:0.1.0'
+        
         // end community add-ons
 
         api "io.jmix.appsettings:jmix-appsettings:$freeVersion"

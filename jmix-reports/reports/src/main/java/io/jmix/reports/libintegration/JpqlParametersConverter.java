@@ -17,17 +17,9 @@
 package io.jmix.reports.libintegration;
 
 import com.haulmont.yarg.loaders.ReportParametersConverter;
-import io.jmix.core.Entity;
-import io.jmix.core.Id;
 import io.jmix.core.metamodel.datatype.impl.EnumClass;
 import io.jmix.data.persistence.DbmsSpecifics;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 public class JpqlParametersConverter implements ReportParametersConverter {
 
@@ -38,39 +30,7 @@ public class JpqlParametersConverter implements ReportParametersConverter {
     public <T> T convert(Object input) {
         if (input instanceof EnumClass) {
             return (T) ((EnumClass) input).getId();
-        } else if (input instanceof Collection) {
-            Collection collection = (Collection) input;
-            if (CollectionUtils.isNotEmpty(collection)) {
-                Object firstObject = collection.iterator().next();
-                if (firstObject instanceof Entity) {
-                    List<Object> entityIds = new ArrayList<>();
-                    for (Object object : collection) {
-                        Object id = Id.of((Entity) object).getValue();
-                        entityIds.add(id);
-                    }
-
-                    return (T) entityIds;
-                }
-            }
-        } else if (input instanceof Object[]) {
-            Object[] objects = (Object[]) input;
-            if (ArrayUtils.isNotEmpty(objects)) {
-                Object firstObject = objects[0];
-                if (firstObject instanceof Entity) {
-                    List<Object> entityIds = new ArrayList<>();
-                    for (Object object : objects) {
-                        Object id = Id.of((Entity) object).getValue();
-                        entityIds.add(id);
-                    }
-
-                    return (T) entityIds;
-                }
-            }
-        } else if (input instanceof Entity) {
-            Object id = Id.of((Entity) input).getValue();
-            return (T) id;
         }
-
         return (T) input;
     }
 

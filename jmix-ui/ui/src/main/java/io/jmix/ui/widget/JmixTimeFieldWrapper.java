@@ -65,6 +65,8 @@ public class JmixTimeFieldWrapper extends CustomField<LocalTime> {
 
     @Override
     public void setReadOnly(boolean readOnly) {
+        super.setReadOnly(readOnly);
+
         timeField.setReadOnly(readOnly);
         amPmField.setReadOnly(readOnly);
     }

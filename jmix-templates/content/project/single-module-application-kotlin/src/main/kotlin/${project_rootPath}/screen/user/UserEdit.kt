@@ -76,7 +76,7 @@ open class UserEdit : StandardEditor<User>() {
     @Subscribe
     private fun onAfterCommitChanges(event: AfterCommitChangesEvent) {
         if (isNewEntity) {
-            applicationContext.publishEvent(SingleUserPasswordChangeEvent(editedEntity.username, passwordField.value))
+            applicationContext.publishEvent(SingleUserPasswordChangeEvent(editedEntity.username!!, passwordField.value))
         }
     }
 

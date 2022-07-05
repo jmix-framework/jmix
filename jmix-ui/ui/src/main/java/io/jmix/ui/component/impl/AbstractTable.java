@@ -2062,7 +2062,7 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
 
                 if (aggregation == null) {
                     owner.getComponent().removeContainerPropertyAggregation(id);
-                } else if (owner.getItems() instanceof AggregationContainer) {
+                } else {
                     owner.checkAggregation(aggregation);
                     if (aggregation.getType() != null) {
                         owner.getComponent().addContainerPropertyAggregation(id,

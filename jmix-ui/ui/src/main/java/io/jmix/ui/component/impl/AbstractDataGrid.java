@@ -2940,7 +2940,9 @@ public abstract class AbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E>, 
     }
 
     protected void updateAggregationRow() {
-        boolean isAggregatable = isAggregatable() && getItems() != null;
+        boolean isAggregatable = isAggregatable()
+                && getItems() != null
+                && !component.getAggregationPropertyIds().isEmpty();
         if (isAggregatable) {
             Map<String, String> results = __aggregate();
             fillAggregationRow(results);

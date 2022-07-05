@@ -115,17 +115,9 @@ public class ReportsConfiguration {
     }
 
     @Bean("report_JpqlDataLoader")
-    public JpqlDataLoader jpqlDataLoader(JpqlParametersConverter converter) {
-        JpqlDataLoader jpqlDataLoader = new JpqlDataLoader();
-        jpqlDataLoader.setParametersConverter(converter);
-        return jpqlDataLoader;
+    public JpqlDataLoader jpqlDataLoader() {
+        return new JpqlDataLoader();
     }
-
-    @Bean("report_JpqlParametersConverter")
-    public JpqlParametersConverter jpqlParametersConverter() {
-        return new JpqlParametersConverter();
-    }
-
     @Bean("report_JsonDataLoader")
     public JmixJsonDataLoader jsonDataLoader(Scripting scripting) {
         return new JmixJsonDataLoader(scripting);

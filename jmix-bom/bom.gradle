@@ -81,7 +81,12 @@ dependencies {
     constraints {
 
         // community add-ons
-
+        
+        api 'gr.netmechanics.jmix:azurefs:1.3.1'
+        api 'gr.netmechanics.jmix:azurefs-starter:1.3.1'
+        api 'gr.netmechanics.jmix:duration-field:1.3.1'
+        api 'gr.netmechanics.jmix:duration-field-starter:1.3.1'
+        
         // end community add-ons
 
         api "io.jmix.appsettings:jmix-appsettings:$freeVersion"
@@ -390,11 +395,6 @@ dependencies {
         api 'commons-codec:commons-codec:1.15'
 
         api 'org.elasticsearch.client:elasticsearch-rest-high-level-client:7.17.3'
-
-        api 'gr.netmechanics.jmix:azurefs:1.3.1'
-        api 'gr.netmechanics.jmix:azurefs-starter:1.3.1'
-        api 'gr.netmechanics.jmix:duration-field:1.3.1'
-        api 'gr.netmechanics.jmix:duration-field-starter:1.3.1'
 
         runtime 'org.hsqldb:hsqldb:2.4.1'
     }

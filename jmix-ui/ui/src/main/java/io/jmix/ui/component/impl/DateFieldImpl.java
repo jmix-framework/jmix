@@ -583,6 +583,7 @@ public class DateFieldImpl<V extends Comparable<V>>
     }
 
     protected void setEditableToComponent(boolean editable) {
+        component.setRequiredIndicatorVisible(editable);
         timeField.setReadOnly(!editable);
         dateField.setReadOnly(!editable);
     }

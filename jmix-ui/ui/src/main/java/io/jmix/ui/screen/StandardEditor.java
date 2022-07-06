@@ -431,7 +431,8 @@ public abstract class StandardEditor<T> extends Screen
                 DataLoader loader = ((HasLoader) container).getLoader();
                 if (loader instanceof InstanceLoader) {
                     @SuppressWarnings("rawtypes") InstanceLoader instanceLoader = (InstanceLoader) loader;
-                    if (instanceLoader.getEntityId() == null) {
+                    if (instanceLoader.getEntityId() == null
+                            && EntityValues.getId(getEditedEntity()) != null) { // id can still be null for identity entity and composition
                         committedEntities.optional(getEditedEntity())
                                 .ifPresent(entity -> instanceLoader.setEntityId(EntityValues.getId(entity)));
                     }

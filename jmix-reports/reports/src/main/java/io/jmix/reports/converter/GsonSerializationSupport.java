@@ -50,6 +50,7 @@ public class GsonSerializationSupport {
     protected ExclusionPolicy exclusionPolicy;
 
     protected Metadata metadata;
+    protected MetadataTools metadataTools;
     protected ExtendedEntities extendedEntities;
     protected EntityStates entityStates;
     protected DatatypeRegistry datatypeRegistry;
@@ -60,6 +61,7 @@ public class GsonSerializationSupport {
 
     public GsonSerializationSupport(BeanFactory beanFactory) {
         this.metadata = beanFactory.getBean(Metadata.class);
+        this.metadataTools = beanFactory.getBean(MetadataTools.class);
         this.extendedEntities = beanFactory.getBean(ExtendedEntities.class);
         this.entityStates = beanFactory.getBean(EntityStates.class);
         this.datatypeRegistry = beanFactory.getBean(DatatypeRegistry.class);
@@ -120,12 +122,15 @@ public class GsonSerializationSupport {
         Entity entity = (Entity) metadata.create(metaClass);
         in.nextName();
         String id = in.nextString();
-        MetaProperty idProperty = metaClass.getProperty("id");
+        MetaProperty idProperty = metadataTools.getPrimaryKeyProperty(metaClass);
+        if (idProperty == null) {
+            idProperty = metaClass.getProperty("id");
+        }
         try {
-            EntityValues.setValue(entity, "id", datatypeRegistry.find(idProperty.getJavaType()).parse(id));
+            EntityValues.setValue(entity, idProperty.getName(), datatypeRegistry.find(idProperty.getJavaType()).parse(id));
         } catch (ParseException e) {
             throw new RuntimeException(
-                    format("An error occurred while parsing id. Class [%s]. Value [%s].", idProperty.getJavaType(), id), e);
+                    format("An error occurred while parsing id property. Class [%s]. Value [%s].", idProperty.getJavaType(), id), e);
         }
 
         Entity processedObject = processedObjects.get(Id.of(entity).getValue());
@@ -217,7 +222,11 @@ public class GsonSerializationSupport {
     protected void writeEntity(JsonWriter out, Entity entity) throws IOException {
         out.beginObject();
         MetaClass metaClass = metadata.getClass(entity);
-        Datatype idType = datatypeRegistry.find(metaClass.getProperty("id").getJavaType());
+        MetaProperty primaryKeyProperty = metadataTools.getPrimaryKeyProperty(metaClass);
+        if (primaryKeyProperty == null) {
+            primaryKeyProperty = metaClass.getProperty("id");
+        }
+        Datatype idType = datatypeRegistry.find(primaryKeyProperty.getJavaType());
         Object id = Id.of(entity).getValue();
         if (processedObjects.containsKey(id)) {
             out.name("metaClass");
@@ -239,8 +248,12 @@ public class GsonSerializationSupport {
     @SuppressWarnings("unchecked")
     protected void writeFields(JsonWriter out, Entity entity) throws IOException {
         MetaClass metaClass = metadata.getClass(entity);
+        String idName = metadataTools.getPrimaryKeyName(metaClass);
+        if (idName == null) {
+            idName = "id";
+        }
         for (MetaProperty property : metaClass.getProperties()) {
-            if (!"id".equalsIgnoreCase(property.getName())
+            if (!idName.equalsIgnoreCase(property.getName())
                     && !property.isReadOnly()
                     && !exclude(entity.getClass(), property.getName())
                     && entityStates.isLoaded(entity, property.getName())) {

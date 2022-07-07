@@ -56,7 +56,6 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Valid;
 import javax.validation.Validator;
 import javax.validation.groups.Default;
-import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -664,7 +663,9 @@ public class EntitiesControllerManager {
         EntityImportPlan entityImportPlan;
         for (JsonElement element : entitiesJsonArray) {
             String entityJson = element.toString();
-            String idString = element.getAsJsonObject().get("id").getAsString();
+            String idString = element.getAsJsonObject()
+                    .get(Objects.requireNonNull(metadataTools.getPrimaryKeyName(metaClass)))
+                    .getAsString();
             Object id = getIdFromString(idString, metaClass);
             LoadContext<Object> loadContext = new LoadContext<>(metaClass).setId(id);
             Object existingEntity = dataManager.load(loadContext);
@@ -781,8 +782,9 @@ public class EntitiesControllerManager {
 
     private Object getIdFromString(String entityId, MetaClass metaClass) {
         try {
-            Method getIdMethod = metaClass.getJavaClass().getMethod("getId");
-            Class<?> idClass = getIdMethod.getReturnType();
+            MetaProperty primaryKeyProperty = Objects.requireNonNull(metadataTools.getPrimaryKeyProperty(metaClass));
+
+            Class<?> idClass = primaryKeyProperty.getJavaType();
             if (UUID.class.isAssignableFrom(idClass)) {
                 return UUID.fromString(entityId);
             } else if (Integer.class.isAssignableFrom(idClass)) {

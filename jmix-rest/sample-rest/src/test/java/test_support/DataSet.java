@@ -58,9 +58,11 @@ public class DataSet {
     private Set<String> currencyIds = new HashSet<>();
     private Set<Long> compositeKeyEntityIds = new HashSet<>();
     private Set<Integer> compositeKeyEntityTenantIds = new HashSet<>();
+    private Set<Integer> nonStandardIdNameEntityIds = new HashSet<>();
 
     private static AtomicLong compositeKeyEntityIdGen = new AtomicLong();
     private static AtomicInteger compositeKeyEntityTenantIdGen = new AtomicInteger();
+    private static AtomicInteger nonStandardIdNameEntityIdGen = new AtomicInteger();
 
     public void addCarId(UUID uuid) {
         if (uuid != null)
@@ -202,6 +204,7 @@ public class DataSet {
         deleteInstances(conn, "REST_VALIDATED_ENTITY", validatedEntityIds);
         deleteInstances(conn, "REST_SECRET_ENTITY", secretEntityIds);
         deleteStringInstances(conn, "REF_CURRENCY", "CODE", currencyIds);
+        deleteNonStandardIdEntities(conn);
     }
 
     private void deleteSellers(Connection conn) throws SQLException {
@@ -469,6 +472,15 @@ public class DataSet {
         }
     }
 
+    private void deleteNonStandardIdEntities(Connection conn) throws SQLException {
+        Statement stmt = conn.createStatement();
+        try {
+            stmt.executeUpdate("delete from REST_NSIN_ENTITY");
+        } finally {
+            stmt.close();
+        }
+    }
+
     private void deleteStringInstances(Connection conn, String tableName, String idColumn, Set<String> ids) throws SQLException {
         PreparedStatement stmt;
         stmt = conn.prepareStatement("delete from " + tableName + " where " + idColumn + " = ?");
@@ -643,6 +655,12 @@ public class DataSet {
     public Integer createCompositeKeyEntityTenantId() {
         Integer result = compositeKeyEntityTenantIdGen.incrementAndGet();
         compositeKeyEntityTenantIds.add(result);
+        return result;
+    }
+
+    public Integer createNonStandardIdNameEntityId() {
+        Integer result = nonStandardIdNameEntityIdGen.incrementAndGet();
+        nonStandardIdNameEntityIds.add(result);
         return result;
     }
 

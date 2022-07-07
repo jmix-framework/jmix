@@ -24,6 +24,7 @@ import com.haulmont.yarg.reporting.ReportOutputDocument;
 import com.haulmont.yarg.util.converter.ObjectToStringConverter;
 import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.usersubstitution.CurrentUserSubstitution;
 import io.jmix.reports.ParameterClassResolver;
 import io.jmix.reports.ReportSecurityManager;
@@ -40,7 +41,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -54,6 +54,8 @@ public class ReportRestControllerManager {
     protected ObjectToStringConverter objectToStringConverter;
     @Autowired
     protected Metadata metadata;
+    @Autowired
+    protected MetadataTools metadataTools;
     @Autowired
     protected EntityStates entityStates;
     @Autowired
@@ -337,8 +339,9 @@ public class ReportRestControllerManager {
 
     protected Object getIdFromString(String entityId, MetaClass metaClass) {
         try {
-            Method getIdMethod = metaClass.getJavaClass().getMethod("getId");
-            Class<?> idClass = getIdMethod.getReturnType();
+            MetaProperty primaryKeyProperty = Objects.requireNonNull(metadataTools.getPrimaryKeyProperty(metaClass));
+            Class<?> idClass = primaryKeyProperty.getJavaType();
+
             if (UUID.class.isAssignableFrom(idClass)) {
                 return UUID.fromString(entityId);
             } else if (Integer.class.isAssignableFrom(idClass)) {

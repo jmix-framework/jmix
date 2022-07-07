@@ -294,7 +294,7 @@ public class EntityValues {
                 && ((EntityEntrySoftDelete) getUncheckedEntityEntry(entity)).isDeleted();
     }
 
-    public static Object getDeletedDate(Object entity){
+    public static Object getDeletedDate(Object entity) {
         if (isSoftDeletionSupported(entity)) {
             return ((EntityEntrySoftDelete) getUncheckedEntityEntry(entity)).getDeletedDate();
         }
@@ -307,7 +307,7 @@ public class EntityValues {
         }
     }
 
-    public static Object getDeletedBy(Object entity){
+    public static Object getDeletedBy(Object entity) {
         if (isSoftDeletionSupported(entity)) {
             return ((EntityEntrySoftDelete) getUncheckedEntityEntry(entity)).getDeletedBy();
         }
@@ -324,9 +324,10 @@ public class EntityValues {
         return getEntityEntry(entity) instanceof EntityEntryAuditable;
     }
 
-    public static Object getCreatedDate(Object entity){
-        if(isAuditSupported(entity)){
-            return ((EntityEntryAuditable) getUncheckedEntityEntry(entity)).getCreatedDate();
+    public static Object getCreatedDate(Object entity) {
+        if (isAuditSupported(entity)) {
+            EntityEntryAuditable auditable = getUncheckedEntityEntry(entity);
+            return auditable.getCreatedDateClass() == null ? null : auditable.getCreatedDate();
         }
         return null;
     }
@@ -337,9 +338,10 @@ public class EntityValues {
         }
     }
 
-    public static Object getCreatedBy(Object entity){
-        if(isAuditSupported(entity)){
-            return ((EntityEntryAuditable) getUncheckedEntityEntry(entity)).getCreatedBy();
+    public static Object getCreatedBy(Object entity) {
+        if (isAuditSupported(entity)) {
+            EntityEntryAuditable auditable = getUncheckedEntityEntry(entity);
+            return auditable.getCreatedByClass() == null ? null : auditable.getCreatedBy();
         }
         return null;
     }
@@ -350,9 +352,10 @@ public class EntityValues {
         }
     }
 
-    public static Object getLastModifiedDate(Object entity){
-        if(isAuditSupported(entity)){
-            return ((EntityEntryAuditable) getUncheckedEntityEntry(entity)).getLastModifiedDate();
+    public static Object getLastModifiedDate(Object entity) {
+        if (isAuditSupported(entity)) {
+            EntityEntryAuditable auditable = getUncheckedEntityEntry(entity);
+            return auditable.getLastModifiedDateClass() == null ? null : auditable.getLastModifiedDate();
         }
         return null;
     }
@@ -363,9 +366,10 @@ public class EntityValues {
         }
     }
 
-    public static Object getLastModifiedBy(Object entity){
-        if(isAuditSupported(entity)){
-            return ((EntityEntryAuditable) getUncheckedEntityEntry(entity)).getLastModifiedBy();
+    public static Object getLastModifiedBy(Object entity) {
+        if (isAuditSupported(entity)) {
+            EntityEntryAuditable auditable = getUncheckedEntityEntry(entity);
+            return auditable.getLastModifiedByClass() == null ? null : auditable.getLastModifiedBy();
         }
         return null;
     }

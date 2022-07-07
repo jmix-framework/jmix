@@ -118,7 +118,7 @@
                         </row>
                         <row>
                             <label id="fetchPlanNameLabel" value="msg://dataSet.fetchPlanName"/>
-                            <comboBox id="fetchPlanNameField" dataContainer="dataSetsDc" property="fetchPlanName"
+                            <comboBox id="fetchPlanNameField" dataContainer="dataSetsDc" nullOptionVisible="false" property="fetchPlanName"
                                       width="${width}"/>
                         </row>
                         <row>

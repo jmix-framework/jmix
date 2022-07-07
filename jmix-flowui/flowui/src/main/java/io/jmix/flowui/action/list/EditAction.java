@@ -5,10 +5,13 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.RouteParameters;
 import io.jmix.core.Messages;
+import io.jmix.core.accesscontext.InMemoryCrudEntityContext;
+import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.EntityOp;
 import io.jmix.flowui.DialogWindowBuilders;
 import io.jmix.flowui.FlowUiComponentProperties;
 import io.jmix.flowui.ViewNavigators;
+import io.jmix.flowui.accesscontext.FlowuiEntityContext;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.AdjustWhenViewReadOnly;
 import io.jmix.flowui.action.ExecutableAction;
@@ -202,17 +205,18 @@ public class EditAction<E> extends SecuredListDataComponentAction<EditAction<E>,
 
     @Override
     protected boolean isPermitted() {
-        if (target == null /*|| target.getSingleSelected() == null || !(target.getItems() instanceof EntityDataUnit)*/) {
+        if (target == null
+                || target.getSingleSelectedItem() == null
+                || !(target.getItems() instanceof EntityDataUnit)) {
             return false;
         }
 
-        // TODO: add security
-/*        MetaClass metaClass = ((EntityDataUnit) target.getItems()).getEntityMetaClass();
+        MetaClass metaClass = ((EntityDataUnit) target.getItems()).getEntityMetaClass();
         if (metaClass == null) {
             return true;
         }
 
-        UiEntityContext entityContext = new UiEntityContext(metaClass);
+        FlowuiEntityContext entityContext = new FlowuiEntityContext(metaClass);
         accessManager.applyRegisteredConstraints(entityContext);
         InMemoryCrudEntityContext inMemoryCrudEntityContext = new InMemoryCrudEntityContext(metaClass, applicationContext);
         accessManager.applyRegisteredConstraints(inMemoryCrudEntityContext);
@@ -223,7 +227,7 @@ public class EditAction<E> extends SecuredListDataComponentAction<EditAction<E>,
 
         if (inMemoryCrudEntityContext.updatePredicate() != null) {
             return true;
-        }*/
+        }
 
         return super.isPermitted();
     }
@@ -232,20 +236,19 @@ public class EditAction<E> extends SecuredListDataComponentAction<EditAction<E>,
     public void refreshState() {
         super.refreshState();
 
-        if (target == null /*|| !(target.getItems() instanceof EntityDataUnit)*/) {
+        if (target == null || !(target.getItems() instanceof EntityDataUnit)) {
             return;
         }
         if (!textInitialized) {
-            // TODO: add security
-/*            MetaClass metaClass = ((EntityDataUnit) target.getItems()).getEntityMetaClass();
-
-            UiEntityContext entityContext = new UiEntityContext(metaClass);
-            accessManager.applyRegisteredConstraints(entityContext);
-            InMemoryCrudEntityContext inMemoryContext = new InMemoryCrudEntityContext(metaClass, applicationContext);
-            accessManager.applyRegisteredConstraints(inMemoryContext);
+            MetaClass metaClass = ((EntityDataUnit) target.getItems()).getEntityMetaClass();
 
             if (metaClass != null) {
-                Object entity = target.getSingleSelected();
+                FlowuiEntityContext entityContext = new FlowuiEntityContext(metaClass);
+                accessManager.applyRegisteredConstraints(entityContext);
+                InMemoryCrudEntityContext inMemoryContext = new InMemoryCrudEntityContext(metaClass, applicationContext);
+                accessManager.applyRegisteredConstraints(inMemoryContext);
+
+                Object entity = target.getSingleSelectedItem();
                 if (entityContext.isEditPermitted()
                         && (inMemoryContext.updatePredicate() == null
                         || entity != null && inMemoryContext.isUpdatePermitted(entity))) {
@@ -253,27 +256,26 @@ public class EditAction<E> extends SecuredListDataComponentAction<EditAction<E>,
                 } else {
                     super.setText(messages.getMessage("actions.View"));
                 }
-            }*/
+            }
         }
     }
 
     @Override
     public boolean isDisabledWhenViewReadOnly() {
-        // TODO: add security
-/*        if (!(target.getItems() instanceof EntityDataUnit)) {
+        if (!(target.getItems() instanceof EntityDataUnit)) {
             return true;
         }
 
         MetaClass metaClass = ((EntityDataUnit) target.getItems()).getEntityMetaClass();
         if (metaClass != null) {
-            // Even though the view is read-only, this edit action may remain active
-            // because the related entity cannot be edited and the corresponding edit view
+            // Even though the screen is read-only, this edit action may remain active
+            // because the related entity cannot be edited and the corresponding edit screen
             // will be opened in read-only mode either.
-            UiEntityContext entityContext = new UiEntityContext(metaClass);
+            FlowuiEntityContext entityContext = new FlowuiEntityContext(metaClass);
             accessManager.applyRegisteredConstraints(entityContext);
 
             return entityContext.isEditPermitted();
-        }*/
+        }
 
         return true;
     }

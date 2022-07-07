@@ -2,14 +2,19 @@ package io.jmix.flowui.action.list;
 
 import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.Messages;
+import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.security.EntityOp;
 import io.jmix.flowui.FlowUiComponentProperties;
+import io.jmix.flowui.accesscontext.FlowuiEntityAttributeContext;
+import io.jmix.flowui.accesscontext.FlowuiEntityContext;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.AdjustWhenViewReadOnly;
 import io.jmix.flowui.data.ContainerDataUnit;
 import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.component.FlowUiComponentUtils;
 import io.jmix.flowui.kit.component.KeyCombination;
+import io.jmix.flowui.model.Nested;
 import io.jmix.flowui.util.RemoveOperation;
 import io.jmix.flowui.util.RemoveOperation.ActionCancelledEvent;
 import io.jmix.flowui.util.RemoveOperation.AfterActionPerformedEvent;
@@ -135,8 +140,7 @@ public class RemoveAction<E> extends SecuredListDataComponentAction<RemoveAction
     }
 
     protected boolean checkRemovePermission() {
-        // TODO: add security
-/*        if (target == null || !(target.getItems() instanceof ContainerDataUnit)) {
+        if (target == null || !(target.getItems() instanceof ContainerDataUnit)) {
             return false;
         }
 
@@ -147,7 +151,7 @@ public class RemoveAction<E> extends SecuredListDataComponentAction<RemoveAction
             return false;
         }
 
-        UiEntityContext entityContext = new UiEntityContext(metaClass);
+        FlowuiEntityContext entityContext = new FlowuiEntityContext(metaClass);
         accessManager.applyRegisteredConstraints(entityContext);
 
         if (!entityContext.isDeletePermitted()) {
@@ -160,14 +164,14 @@ public class RemoveAction<E> extends SecuredListDataComponentAction<RemoveAction
             MetaClass masterMetaClass = nestedContainer.getMaster().getEntityMetaClass();
             MetaProperty metaProperty = masterMetaClass.getProperty(nestedContainer.getProperty());
 
-            UiEntityAttributeContext entityAttributeContext =
-                    new UiEntityAttributeContext(masterMetaClass, metaProperty.getName());
+            FlowuiEntityAttributeContext entityAttributeContext =
+                    new FlowuiEntityAttributeContext(masterMetaClass, metaProperty.getName());
             accessManager.applyRegisteredConstraints(entityAttributeContext);
 
             if (!entityAttributeContext.canModify()) {
                 return false;
             }
-        }*/
+        }
 
         return true;
     }

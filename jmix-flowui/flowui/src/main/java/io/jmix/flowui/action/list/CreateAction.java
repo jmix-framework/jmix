@@ -6,9 +6,11 @@ import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.RouteParameters;
 import io.jmix.core.AccessManager;
 import io.jmix.core.Messages;
+import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.DialogWindowBuilders;
 import io.jmix.flowui.FlowUiComponentProperties;
 import io.jmix.flowui.ViewNavigators;
+import io.jmix.flowui.accesscontext.FlowuiEntityContext;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.AdjustWhenViewReadOnly;
 import io.jmix.flowui.action.ExecutableAction;
@@ -240,22 +242,21 @@ public class CreateAction<E> extends ListDataComponentAction<CreateAction<E>, E>
 
     @Override
     protected boolean isPermitted() {
-        if (target == null /*|| !(target.getItems() instanceof EntityDataUnit)*/) {
+        if (target == null || !(target.getItems() instanceof EntityDataUnit)) {
             return false;
         }
 
-        // TODO: add security
-/*        MetaClass metaClass = ((EntityDataUnit) target.getItems()).getEntityMetaClass();
+        MetaClass metaClass = ((EntityDataUnit) target.getItems()).getEntityMetaClass();
         if (metaClass == null) {
             return true;
         }
 
-        UiEntityContext entityContext = new UiEntityContext(metaClass);
+        FlowuiEntityContext entityContext = new FlowuiEntityContext(metaClass);
         accessManager.applyRegisteredConstraints(entityContext);
 
         if (!entityContext.isCreatePermitted()) {
             return false;
-        }*/
+        }
 
         return super.isPermitted();
     }

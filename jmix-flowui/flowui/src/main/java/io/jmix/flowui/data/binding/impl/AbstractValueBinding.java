@@ -1,8 +1,10 @@
 package io.jmix.flowui.data.binding.impl;
 
 import com.google.common.base.Strings;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.shared.Registration;
+import io.jmix.core.AccessManager;
 import io.jmix.core.MessageTools;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.common.util.Preconditions;
@@ -10,6 +12,7 @@ import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.flowui.accesscontext.FlowuiEntityAttributeContext;
 import io.jmix.flowui.data.binding.SuspendableBinding;
 import io.jmix.flowui.data.binding.ValueBinding;
 import io.jmix.flowui.data.BindingState;
@@ -20,6 +23,9 @@ import io.jmix.flowui.component.HasRequired;
 import io.jmix.flowui.component.SupportsTypedValue;
 import io.jmix.flowui.component.SupportsValidation;
 import io.jmix.flowui.component.validation.bean.BeanPropertyValidator;
+import io.jmix.flowui.data.value.ContainerValueSource;
+import io.jmix.flowui.model.InstanceContainer;
+import io.jmix.flowui.model.Nested;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -35,6 +41,7 @@ public abstract class AbstractValueBinding<V> implements ValueBinding<V>, Suspen
     protected MessageTools messageTools;
     protected MetadataTools metadataTools;
     protected Validator validator;
+    protected AccessManager accessManager;
 
     protected ValueSource<V> valueSource;
     protected HasValue<?, V> component;
@@ -73,6 +80,11 @@ public abstract class AbstractValueBinding<V> implements ValueBinding<V>, Suspen
         this.validator = validator;
     }
 
+    @Autowired
+    public void setAccessManager(AccessManager accessManager) {
+        this.accessManager = accessManager;
+    }
+
     @Override
     public ValueSource<V> getValueSource() {
         return valueSource;
@@ -97,14 +109,58 @@ public abstract class AbstractValueBinding<V> implements ValueBinding<V>, Suspen
         component.setReadOnly(valueSource.isReadOnly());
 
         if (valueSource instanceof EntityValueSource) {
-            EntityValueSource<?, ?> entityValueSource = (EntityValueSource<?, ?>) valueSource;
+            EntityValueSource<?, V> entityValueSource = (EntityValueSource<?, V>) valueSource;
             MetaPropertyPath metaPropertyPath = entityValueSource.getMetaPropertyPath();
 
             initRequired(component, metaPropertyPath);
 
             if (component instanceof SupportsValidation) {
-                //noinspection unchecked
                 initBeanValidator((SupportsValidation<V>) component, metaPropertyPath);
+            }
+
+            if (((EntityValueSource<?, V>) valueSource).isDataModelSecurityEnabled()) {
+                FlowuiEntityAttributeContext attributeContext = new FlowuiEntityAttributeContext(metaPropertyPath);
+                accessManager.applyRegisteredConstraints(attributeContext);
+
+                MetaClass metaClass = entityValueSource.getEntityMetaClass();
+                boolean permittedIfEmbedded = true;
+                if (entityValueSource instanceof ContainerValueSource) {
+                    InstanceContainer<?> container = ((ContainerValueSource<?, ?>) entityValueSource).getContainer();
+                    if (container instanceof Nested && metaClass != null && metadataTools.isJpaEmbeddable(metaClass)) {
+                        String embeddedProperty = ((Nested) container).getProperty();
+                        MetaClass masterMetaClass = ((Nested) container).getMaster().getEntityMetaClass();
+
+                        FlowuiEntityAttributeContext embeddedAttributeContext =
+                                new FlowuiEntityAttributeContext(masterMetaClass, embeddedProperty);
+                        accessManager.applyRegisteredConstraints(embeddedAttributeContext);
+
+                        permittedIfEmbedded = embeddedAttributeContext.canModify();
+                    }
+                    if (permittedIfEmbedded && metaPropertyPath.length() > 1) {
+                        for (MetaProperty property : metaPropertyPath.getMetaProperties()) {
+                            if (!metadataTools.isEmbedded(property)) {
+                                continue;
+                            }
+
+                            FlowuiEntityAttributeContext childAttributeContext =
+                                    new FlowuiEntityAttributeContext(property.getDomain(), property.getName());
+                            accessManager.applyRegisteredConstraints(childAttributeContext);
+
+                            if (!childAttributeContext.canModify()) {
+                                permittedIfEmbedded = false;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                if (!attributeContext.canModify() || !permittedIfEmbedded) {
+                    component.setReadOnly(true);
+                }
+
+                if (!attributeContext.canView()) {
+                    ((Component) component).setVisible(false);
+                }
             }
         }
     }

@@ -158,16 +158,18 @@ public class EntitiesController {
     }
 
     @DeleteMapping(path = "/{entityName}/{entityId}")
-    public void deleteEntity(@PathVariable String entityName,
-                             @PathVariable String entityId,
-                             @RequestParam(required = false) String modelVersion) {
+    public ResponseEntity<?> deleteEntity(@PathVariable String entityName,
+                                          @PathVariable String entityId,
+                                          @RequestParam(required = false) String modelVersion) {
         entitiesControllerManager.deleteEntity(entityName, entityId, modelVersion);
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{entityName}")
-    public void deleteEntities(@RequestBody String entitiesIdJson,
-                               @PathVariable String entityName,
-                               @RequestParam(required = false) String modelVersion) {
+    public ResponseEntity<?> deleteEntities(@RequestBody String entitiesIdJson,
+                                            @PathVariable String entityName,
+                                            @RequestParam(required = false) String modelVersion) {
         entitiesControllerManager.deleteEntities(entityName, entitiesIdJson, modelVersion);
+        return ResponseEntity.noContent().build();
     }
 }

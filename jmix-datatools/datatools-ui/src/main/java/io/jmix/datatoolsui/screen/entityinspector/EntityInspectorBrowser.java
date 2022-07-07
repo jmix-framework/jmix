@@ -59,7 +59,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.annotation.Nullable;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.function.Consumer;
 
 import static com.google.common.base.Strings.nullToEmpty;
 import static io.jmix.ui.download.DownloadFormat.JSON;
@@ -473,9 +472,7 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
         editAction.setTarget(table);
         editAction.setScreenClass(EntityInspectorEditor.class);
         editAction.setShortcut(componentProperties.getTableInsertShortcut());
-
-        table.addSelectionListener((Consumer<Table.SelectionEvent>) selectionEvent
-                -> editAction.setEnabled(selectionEvent.getSelected().size() == 1));
+        editAction.addEnabledRule(() -> table.getSelected().size() == 1);
 
         return editAction;
     }
@@ -484,9 +481,7 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
         BulkEditAction bulkEditAction = actions.create(BulkEditAction.class);
         bulkEditAction.setOpenMode(OpenMode.THIS_TAB);
         bulkEditAction.setTarget(table);
-
-        table.addSelectionListener((Consumer<Table.SelectionEvent>) selectionEvent
-                -> bulkEditAction.setEnabled(selectionEvent.getSelected().size() > 1));
+        bulkEditAction.addEnabledRule(() -> table.getSelected().size() > 1);
 
         return bulkEditAction;
     }

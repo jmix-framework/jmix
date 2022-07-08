@@ -18,38 +18,21 @@ package io.jmix.ui;
 
 import io.jmix.ui.executor.WatchDog;
 import io.jmix.ui.executor.impl.WebTasksWatchDog;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.TaskScheduler;
-import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
-import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
-import java.util.concurrent.Executors;
-
-@Configuration
+@Configuration(proxyBeanMethods = false)
 public class UiScheduleConfiguration {
-
-    @Autowired
-    protected UiProperties uiProperties;
 
     @Bean("ui_ThreadPoolTaskScheduler")
     public TaskScheduler threadPoolTaskScheduler() {
-        CustomizableThreadFactory threadFactory =
-                new CustomizableThreadFactory("ui_backgroundScheduler");
-        threadFactory.setDaemon(true);
-
-        ConcurrentTaskScheduler taskScheduler = new ConcurrentTaskScheduler(
-                Executors.newSingleThreadScheduledExecutor(threadFactory));
-
-        configureTasks(taskScheduler);
-
-        return taskScheduler;
-    }
-
-    protected void configureTasks(TaskScheduler scheduler) {
-        scheduler.scheduleWithFixedDelay(() -> watchDog().cleanupTasks(),
-                uiProperties.getBackgroundTaskTimeoutCheckInterval());
+        ThreadPoolTaskScheduler threadPoolTaskScheduler = new ThreadPoolTaskScheduler();
+        threadPoolTaskScheduler.setThreadNamePrefix("ui_backgroundScheduler");
+        threadPoolTaskScheduler.setPoolSize(1);
+        threadPoolTaskScheduler.setDaemon(true);
+        return threadPoolTaskScheduler;
     }
 
     @Bean("ui_BackgroundWorker_WatchDog")

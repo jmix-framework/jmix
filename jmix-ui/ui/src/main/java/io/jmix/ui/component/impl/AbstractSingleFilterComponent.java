@@ -323,9 +323,9 @@ public abstract class AbstractSingleFilterComponent<V> extends CompositeComponen
 
     @Override
     public void apply() {
-        if (dataLoader != null && autoApply) {
+        if (dataLoader != null) {
             setupLoaderFirstResult();
-            dataLoader.load();
+            if (autoApply) dataLoader.load();
         }
     }
 

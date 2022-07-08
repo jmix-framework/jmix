@@ -26,6 +26,7 @@ import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.Actions;
 import io.jmix.ui.ScreenBuilders;
+import io.jmix.ui.UiComponentProperties;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.accesscontext.UiFilterModifyConfigurationContext;
 import io.jmix.ui.action.Action;
@@ -39,7 +40,6 @@ import io.jmix.ui.component.filter.configuration.RunTimeConfiguration;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.model.BaseCollectionLoader;
 import io.jmix.ui.model.DataLoader;
-import io.jmix.ui.UiComponentProperties;
 import io.jmix.ui.theme.ThemeClassNames;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -207,9 +207,9 @@ public class FilterImpl extends CompositeComponent<GroupBoxLayout> implements Fi
 
     @Override
     public void apply() {
-        if (dataLoader != null && isAutoApply()) {
+        if (dataLoader != null) {
             setupLoaderFirstResult();
-            dataLoader.load();
+            if (isAutoApply()) dataLoader.load();
         }
     }
 

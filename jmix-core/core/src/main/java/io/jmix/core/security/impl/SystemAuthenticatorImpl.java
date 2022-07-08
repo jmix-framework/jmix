@@ -31,7 +31,6 @@ import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
@@ -99,7 +98,7 @@ public class SystemAuthenticatorImpl extends SystemAuthenticatorSupport implemen
     public void end() {
         log.trace("Set previous Authentication");
         Authentication previous = pollAuthentication();
-        SecurityContextHolder.getContext().setAuthentication(previous);
+        SecurityContextHelper.setAuthentication(previous);
         LogMdc.setup(previous);
     }
 

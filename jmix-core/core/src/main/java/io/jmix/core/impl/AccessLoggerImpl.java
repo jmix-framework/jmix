@@ -61,6 +61,11 @@ public class AccessLoggerImpl implements AccessLogger {
         }
     }
 
+    @Override
+    public void reset() {
+        lastMessageThreadLocal.remove();
+    }
+
     private boolean someTimePassed() {
         return (System.currentTimeMillis() - lastMessageThreadLocal.get().timestamp) > 10;
     }

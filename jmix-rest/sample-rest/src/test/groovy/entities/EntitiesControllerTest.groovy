@@ -162,7 +162,7 @@ class EntitiesControllerTest extends RestSpec {
         def response = request.with().delete(baseUrl + "/entities/sec\$User")
 
         then:
-        response.statusCode == 200
+        response.statusCode == 204
         sql.rows("select * from SAMPLE_REST_SEC_USER where LOGIN like 'toDeleteByObject_'")
                 .every { it.delete_ts != null }
     }
@@ -176,7 +176,7 @@ class EntitiesControllerTest extends RestSpec {
         def response = request.with().delete(baseUrl + "/entities/sec\$User")
 
         then:
-        response.statusCode == 200
+        response.statusCode == 204
         sql.rows("select * from SAMPLE_REST_SEC_USER where LOGIN like 'toDeleteById_'")
                 .every { it.delete_ts != null }
     }

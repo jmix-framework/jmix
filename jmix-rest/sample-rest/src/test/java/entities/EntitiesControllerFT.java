@@ -1952,7 +1952,7 @@ class EntitiesControllerFT extends AbstractRestControllerFT {
     void deleteCar() throws Exception {
         String url = baseUrl + "/entities/ref_Car/" + carUuidString;
         try (CloseableHttpResponse response = sendDelete(url, oauthToken, null)) {
-            assertEquals(HttpStatus.SC_OK, statusCode(response));
+            assertEquals(HttpStatus.SC_NO_CONTENT, statusCode(response));
         }
 
         try (PreparedStatement stmt = conn.prepareStatement("select DELETE_TS from REF_CAR where ID = ?")) {
@@ -2306,7 +2306,7 @@ class EntitiesControllerFT extends AbstractRestControllerFT {
         params.put("modelVersion", "1.0");
 
         try (CloseableHttpResponse response = sendDelete(url, oauthToken, params)) {
-            assertEquals(HttpStatus.SC_OK, statusCode(response));
+            assertEquals(HttpStatus.SC_NO_CONTENT, statusCode(response));
         }
 
         try (PreparedStatement stmt = conn.prepareStatement("select DELETE_TS from REF_CAR where ID = ?")) {

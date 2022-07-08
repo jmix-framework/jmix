@@ -119,7 +119,7 @@ class EntitiesControllerFT extends AbstractRestControllerFT {
     public void deleteEntityWithNonStandardIdName() throws Exception {
         String url = baseUrl + "/entities/rest_NonStandardIdNameEntity/" + nonStandardIdEntityId;
         try (CloseableHttpResponse response = sendDelete(url, oauthToken, null)) {
-            assertEquals(HttpStatus.SC_NO_CONTENT, statusCode(response));
+            assertEquals(HttpStatus.SC_OK, statusCode(response));
         }
 
         try (PreparedStatement stmt = conn.prepareStatement("select * from REST_NSIN_ENTITY where CODE = ?")) {

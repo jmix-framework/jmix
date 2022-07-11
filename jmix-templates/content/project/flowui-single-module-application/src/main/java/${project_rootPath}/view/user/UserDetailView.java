@@ -19,7 +19,7 @@ import java.util.TimeZone;
 
 @Route(value = ":id", layout = MainView.class)
 @RoutePrefix(UserListView.ROUTE)
-@UiController("User.detail")
+@UiController("${normalizedPrefix_underscore}User.detail")
 @UiDescriptor("user-detail-view.xml")
 @EditedEntityContainer("userDc")
 public class UserDetailView extends StandardDetailView<User> {

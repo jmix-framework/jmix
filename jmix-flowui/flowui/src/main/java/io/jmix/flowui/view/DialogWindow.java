@@ -7,13 +7,9 @@ import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.dialog.DialogVariant;
 import com.vaadin.flow.component.dialog.GeneratedVaadinDialog.OpenedChangeEvent;
-import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.html.Header;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.Scroller;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.dom.ClassList;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.dom.Style;
@@ -24,9 +20,9 @@ import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.kit.component.button.JmixButton;
+import io.jmix.flowui.sys.ViewSupport;
 import io.jmix.flowui.view.View.AfterShowEvent;
 import io.jmix.flowui.view.View.BeforeShowEvent;
-import io.jmix.flowui.sys.ViewSupport;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
@@ -79,6 +75,9 @@ public class DialogWindow<S extends View<?>> implements HasSize, HasTheme, HasSt
         String title = applicationContext.getBean(ViewSupport.class)
                 .getLocalizedPageTitle(view);
 
+        dialog.setHeaderTitle(title);
+        dialog.getHeader().add(createHeaderCloseButton());
+
         dialog.setCloseOnEsc(false);
         dialog.setCloseOnOutsideClick(false);
         dialog.setDraggable(true);
@@ -90,13 +89,8 @@ public class DialogWindow<S extends View<?>> implements HasSize, HasTheme, HasSt
 
         applyDialogModeSettings(view);
 
-        Header header = createHeader(title);
         Component wrapper = createViewWrapper(view);
-
-        VerticalLayout dialogOverlay = createDialogOverlay();
-        dialogOverlay.add(header, wrapper);
-
-        dialog.add(dialogOverlay);
+        dialog.add(wrapper);
     }
 
     protected void applyDialogModeSettings(S view) {
@@ -124,20 +118,6 @@ public class DialogWindow<S extends View<?>> implements HasSize, HasTheme, HasSt
         }
     }
 
-    protected Header createHeader(String viewTitle) {
-        Header header = new Header();
-        header.addClassNames(BASE_STYLE_NAME + "-header", "draggable");
-
-        H2 title = new H2(viewTitle);
-        title.setClassName(BASE_STYLE_NAME + "-title");
-        header.add(title);
-
-        Button closeButton = createHeaderCloseButton();
-        header.add(closeButton);
-
-        return header;
-    }
-
     protected Button createHeaderCloseButton() {
         JmixButton closeButton = uiComponents().create(JmixButton.class);
         closeButton.setIcon(new Icon(VaadinIcon.CLOSE_SMALL));
@@ -163,17 +143,6 @@ public class DialogWindow<S extends View<?>> implements HasSize, HasTheme, HasSt
         return scroller;
     }
 
-    protected VerticalLayout createDialogOverlay() {
-        VerticalLayout dialogContent = new VerticalLayout();
-        dialogContent.setPadding(false);
-        dialogContent.setSpacing(false);
-        dialogContent.setHeightFull();
-        dialogContent.getStyle().remove("width");
-        dialogContent.setAlignItems(FlexComponent.Alignment.STRETCH);
-        dialogContent.setClassName(BASE_STYLE_NAME + "-overlay");
-        return dialogContent;
-    }
-
     protected EventHub getEventHub() {
         if (eventHub == null) {
             eventHub = new EventHub();
@@ -186,10 +155,6 @@ public class DialogWindow<S extends View<?>> implements HasSize, HasTheme, HasSt
         if (eventHub != null) {
             eventHub.publish(eventType, event);
         }
-    }
-
-    protected boolean hasSubscriptions(Class<?> eventClass) {
-        return eventHub != null && eventHub.hasSubscriptions(eventClass);
     }
 
     public S getView() {

@@ -16,7 +16,6 @@
 
 package io.jmix.flowui.kit.meta.element;
 
-import io.jmix.flowui.kit.component.formatter.Formatter;
 import io.jmix.flowui.kit.meta.StudioElement;
 import io.jmix.flowui.kit.meta.StudioProperty;
 import io.jmix.flowui.kit.meta.StudioPropertyType;
@@ -31,7 +30,7 @@ public interface StudioElements {
             xmlElement = "collection",
             icon = "io/jmix/flowui/kit/meta/icon/element/formatter.svg"
     )
-    Formatter collectionFormatter();
+    void collectionFormatter();
 
     @StudioElement(
             name = "CustomFormatter",
@@ -42,7 +41,7 @@ public interface StudioElements {
                     @StudioProperty(xmlAttribute = "bean", type = StudioPropertyType.STRING, required = true)
             }
     )
-    Formatter customFormatter();
+    void customFormatter();
 
     @StudioElement(
             name = "DateFormatter",
@@ -57,7 +56,7 @@ public interface StudioElements {
                             defaultValue = "false"),
             }
     )
-    Formatter dateFormatter();
+    void dateFormatter();
 
     @StudioElement(
             name = "NumberFormatter",
@@ -68,5 +67,43 @@ public interface StudioElements {
                     @StudioProperty(xmlAttribute = "format", type = StudioPropertyType.STRING)
             }
     )
-    Formatter numberFormatter();
+    void numberFormatter();
+
+    @StudioElement(
+            name = "OnViewEventLoadTrigger",
+            classFqn = "io.jmix.flowui.facet.dataloadcoordinator.OnViewEventLoadTrigger",
+            xmlElement = "onViewEvent",
+            icon = "io/jmix/flowui/kit/meta/icon/element/onViewEventLoadTrigger.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "type", type = StudioPropertyType.ENUMERATION,
+                            options = {"Init", "BeforeShow", "AfterShow"}, required = true)
+            }
+    )
+    void onViewEventLoadTrigger();
+
+    @StudioElement(
+            name = "OnComponentValueChangedLoadTrigger",
+            classFqn = "io.jmix.flowui.facet.dataloadcoordinator.OnComponentValueChangedLoadTrigger",
+            xmlElement = "onComponentValueChanged",
+            icon = "io/jmix/flowui/kit/meta/icon/element/onComponentValueChangedLoadTrigger.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "param", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "likeClause", type = StudioPropertyType.ENUMERATION,
+                            options = {"NONE", "CASE_SENSITIVE", "CASE_INSENSITIVE"}, defaultValue = "NONE"),
+                    @StudioProperty(xmlAttribute = "component", type = StudioPropertyType.STRING, required = true)
+            }
+    )
+    void onComponentValueChangedLoadTrigger();
+
+    @StudioElement(
+            name = "OnContainerItemChangedLoadTrigger",
+            classFqn = "io.jmix.flowui.facet.dataloadcoordinator.OnContainerItemChangedLoadTrigger",
+            xmlElement = "onContainerItemChanged",
+            icon = "io/jmix/flowui/kit/meta/icon/element/onContainerItemChangedLoadTrigger.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "param", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "container", type = StudioPropertyType.STRING, required = true)
+            }
+    )
+    void onContainerItemChangedLoadTrigger();
 }

@@ -16,8 +16,9 @@
 
 package io.jmix.flowui.kit.meta.elementsgroup;
 
-import io.jmix.flowui.kit.component.SupportsFormatter;
 import io.jmix.flowui.kit.meta.StudioElementsGroup;
+import io.jmix.flowui.kit.meta.StudioProperty;
+import io.jmix.flowui.kit.meta.StudioPropertyType;
 import io.jmix.flowui.kit.meta.StudioUiKit;
 
 @StudioUiKit
@@ -30,5 +31,18 @@ public interface StudioElementsGroups {
             icon = "io/jmix/flowui/kit/meta/icon/elementsgroup/formatters.svg",
             target = {"io.jmix.flowui.kit.component.SupportsFormatter"}
     )
-    SupportsFormatter<?> formatter();
+    void formatter();
+
+    @StudioElementsGroup(
+            name = "Refresh",
+            elementClassFqn = "io.jmix.flowui.facet.DataLoadCoordinator.Trigger",
+            xmlElement = "refresh",
+            icon = "io/jmix/flowui/kit/meta/icon/elementsgroup/refresh.svg",
+            target = {"io.jmix.flowui.facet.DataLoadCoordinator"},
+            unlimitedCount = true,
+            properties = {
+                    @StudioProperty(xmlAttribute = "loader", type = StudioPropertyType.STRING, required = true)
+            }
+    )
+    void refresh();
 }

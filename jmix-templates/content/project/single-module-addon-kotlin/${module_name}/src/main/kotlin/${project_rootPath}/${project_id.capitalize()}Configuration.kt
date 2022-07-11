@@ -17,10 +17,10 @@ import org.springframework.context.annotation.PropertySource
 @ConfigurationPropertiesScan
 @JmixModule(dependsOn = [EclipselinkConfiguration::class, UiConfiguration::class])
 @PropertySource(name = "${project_rootPackage}", value = ["classpath:/${project_rootPath}/module.properties"])
-class ${project_id.capitalize()}Configuration {
+open class ${project_id.capitalize()}Configuration {
 
     @Bean("${project_id}_${project_id.capitalize()}UiControllers")
-    fun screens(applicationContext: ApplicationContext,
+    open fun screens(applicationContext: ApplicationContext,
                 metadataReaderFactory: AnnotationScanMetadataReaderFactory
     ): UiControllersConfiguration {
         return UiControllersConfiguration(applicationContext, metadataReaderFactory).apply {

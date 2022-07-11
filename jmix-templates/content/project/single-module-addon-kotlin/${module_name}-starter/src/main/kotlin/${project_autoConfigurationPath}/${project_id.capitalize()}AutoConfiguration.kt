@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Import
 
 @AutoConfiguration
 @Import(${project_id.capitalize()}Configuration::class)
-class ${project_id.capitalize()}AutoConfiguration {
+open class ${project_id.capitalize()}AutoConfiguration {
 
 }
 

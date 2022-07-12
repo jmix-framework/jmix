@@ -160,11 +160,16 @@ $he-groupbox-caption-height--large: round($v-unit-size--large * 1.4);
   .#{$primary-stylename}-light {
     border: 0;
 
+    .#{$primary-stylename}-caption {
+      padding-left: 0;
+    }
+
     &.collapsed {
       background-color: transparent;
 
       .#{$primary-stylename}-content {
         border-top: he-border($color: --groupbox-border-color);
+        border-radius: 0;
       }
     }
 

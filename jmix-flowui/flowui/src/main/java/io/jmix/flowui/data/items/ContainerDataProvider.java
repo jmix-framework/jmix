@@ -18,6 +18,7 @@ package io.jmix.flowui.data.items;
 
 import com.vaadin.flow.data.provider.AbstractDataProvider;
 import com.vaadin.flow.data.provider.Query;
+import com.vaadin.flow.function.SerializablePredicate;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -34,7 +35,7 @@ import javax.annotation.Nullable;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-public class ContainerDataProvider<E, F> extends AbstractDataProvider<E, F>
+public class ContainerDataProvider<E> extends AbstractDataProvider<E, SerializablePredicate<E>>
         implements ContainerDataUnit<E>, EntityItems<E> {
 
     protected CollectionContainer<E> container;
@@ -132,15 +133,22 @@ public class ContainerDataProvider<E, F> extends AbstractDataProvider<E, F>
     }
 
     @Override
-    public int size(Query<E, F> query) {
-        return container.getItems().size();
+    public int size(Query<E, SerializablePredicate<E>> query) {
+        return (int) getFilteredItems(query).count();
     }
 
     @Override
-    public Stream<E> fetch(Query<E, F> query) {
-        return getItems()
+    public Stream<E> fetch(Query<E, SerializablePredicate<E>> query) {
+        return getFilteredItems(query)
                 .skip(query.getOffset())
                 .limit(query.getLimit());
+    }
+
+    protected Stream<E> getFilteredItems(Query<E, SerializablePredicate<E>> query) {
+        Stream<E> items = getItems();
+        return query.getFilter()
+                .map(items::filter)
+                .orElse(items);
     }
 
     protected Stream<E> getItems() {

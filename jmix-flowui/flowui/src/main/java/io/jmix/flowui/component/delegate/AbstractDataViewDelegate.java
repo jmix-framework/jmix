@@ -87,8 +87,9 @@ public abstract class AbstractDataViewDelegate<C extends Component
         }
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public void setItems(CollectionContainer<V> container) {
-        component.setItems(new ContainerDataProvider<>(container));
+        component.setItems(new ContainerDataProvider(container));
     }
 
 

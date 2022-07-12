@@ -1,6 +1,8 @@
 package io.jmix.flowui.component.combobox;
 
+import com.vaadin.flow.component.ItemLabelGenerator;
 import com.vaadin.flow.data.provider.DataProvider;
+import com.vaadin.flow.function.SerializableBiPredicate;
 import com.vaadin.flow.function.SerializableFunction;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -13,6 +15,7 @@ import io.jmix.flowui.component.delegate.EntityFieldDelegate;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.component.valuepicker.JmixValuePickerActionSupport;
 import io.jmix.flowui.data.SupportsDataProvider;
+import io.jmix.flowui.data.SupportsFilterableItemsContainer;
 import io.jmix.flowui.data.SupportsItemsContainer;
 import io.jmix.flowui.data.ValueSource;
 import io.jmix.flowui.data.items.ContainerDataProvider;
@@ -30,7 +33,8 @@ import java.util.Set;
 
 public class EntityComboBox<V> extends ComboBoxPicker<V>
         implements EntityPickerComponent<V>, LookupComponent<V>,
-        SupportsValidation<V>, SupportsDataProvider<V>, SupportsItemsContainer<V>, HasRequired,
+        SupportsValidation<V>, SupportsDataProvider<V>, SupportsItemsContainer<V>,
+        SupportsFilterableItemsContainer<V>, HasRequired,
         ApplicationContextAware, InitializingBean {
 
     protected ApplicationContext applicationContext;
@@ -131,7 +135,34 @@ public class EntityComboBox<V> extends ComboBoxPicker<V>
 
     @Override
     public void setItems(CollectionContainer<V> container) {
-        setItems(new ContainerDataProvider<>(container));
+        ItemFilter<V> itemFilter = (item, filterText) ->
+                generateLabel(item).toLowerCase(getLocale())
+                        .contains(filterText.toLowerCase(getLocale()));
+
+        setItems(container, itemFilter);
+    }
+
+    @Override
+    public void setItems(CollectionContainer<V> container,
+                         SerializableBiPredicate<V, String> itemFilter) {
+        ContainerDataProvider<V> dataProvider = new ContainerDataProvider<>(container);
+        setDataProvider(dataProvider, filterText ->
+                item -> itemFilter.test(item, filterText));
+    }
+
+    protected String generateLabel(@Nullable V item) {
+        // WARNING: copied from base class.
+        if (item == null) {
+            return "";
+        }
+        String label = getItemLabelGenerator().apply(item);
+        if (label == null) {
+            throw new IllegalStateException(String.format(
+                    "Got 'null' as a label value for the item '%s'. "
+                            + "'%s' instance may not return 'null' values",
+                    item, ItemLabelGenerator.class.getSimpleName()));
+        }
+        return label;
     }
 
     @Nullable

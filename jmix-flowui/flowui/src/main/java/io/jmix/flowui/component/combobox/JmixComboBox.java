@@ -63,7 +63,8 @@ public class JmixComboBox<V> extends ComboBox<V>
     }
 
     @Override
-    public <C> void setDataProvider(DataProvider<V, C> dataProvider, SerializableFunction<String, C> filterConverter) {
+    public <C> void setDataProvider(DataProvider<V, C> dataProvider,
+                                    SerializableFunction<String, C> filterConverter) {
         // Method is called from a constructor so bean can be null
         if (dataViewDelegate != null) {
             dataViewDelegate.bind(dataProvider);

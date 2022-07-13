@@ -21,6 +21,7 @@ import io.jmix.security.SecurityConfiguration;
 import io.jmix.security.StandardSecurityConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
@@ -30,6 +31,7 @@ public class SecurityAutoConfiguration {
 
     @EnableWebSecurity
     @ConditionalOnMissingBean(StandardSecurityConfiguration.class)
+    @ConditionalOnProperty(name = "jmix.security.use-standard-security-configuration", havingValue = "true", matchIfMissing = true)
     public static class DefaultStandardSecurityConfiguration extends StandardSecurityConfiguration {
 
     }

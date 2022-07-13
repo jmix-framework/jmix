@@ -29,19 +29,18 @@ import io.jmix.oidc.usermapper.OidcUserMapper;
 import io.jmix.security.SecurityConfigurers;
 import io.jmix.security.role.ResourceRoleRepository;
 import io.jmix.security.role.RowLevelRoleRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.oauth2.client.oidc.web.logout.OidcClientInitiatedLogoutSuccessHandler;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.web.SecurityFilterChain;
 
 @AutoConfiguration
 @Import({OidcConfiguration.class})
@@ -78,20 +77,16 @@ public class OidcAutoConfiguration {
      */
     @EnableWebSecurity
     @ConditionalOnProperty(value = "jmix.oidc.use-default-ui-configuration", havingValue = "true", matchIfMissing = true)
-    @Order(JmixOrder.HIGHEST_PRECEDENCE + 100)
-    public static class OAuth2LoginSecurityConfiguration extends WebSecurityConfigurerAdapter {
+    public static class OAuth2LoginSecurityConfiguration {
 
-        @Autowired
-        private JmixOidcUserService jmixOidcUserService;
-
-        @Autowired
-        private ClientRegistrationRepository clientRegistrationRepository;
-
-        @Override
-        protected void configure(HttpSecurity http) throws Exception {
+        @Bean("oidc_OAuthLoginSecurityFilterChain")
+        @Order(JmixOrder.HIGHEST_PRECEDENCE + 200)
+        public SecurityFilterChain securityFilterChain(HttpSecurity http,
+                                                       JmixOidcUserService jmixOidcUserService,
+                                                       ClientRegistrationRepository clientRegistrationRepository) throws Exception {
             //todo session management
-            http.authorizeRequests(authorizeRequests -> {
-                        authorizeRequests
+            http.authorizeHttpRequests(authorize -> {
+                        authorize
                                 //if we don't allow /vaadinServlet/PUSH URL the Session Expired toolbox won't
                                 //be shown in the web browser
                                 .antMatchers("/vaadinServlet/PUSH/**").permitAll()
@@ -103,14 +98,16 @@ public class OidcAutoConfiguration {
                         });
                     })
                     .logout(logout -> {
-                        logout.logoutSuccessHandler(oidcLogoutSuccessHandler());
+                        logout.logoutSuccessHandler(oidcLogoutSuccessHandler(clientRegistrationRepository));
                     })
                     .csrf(csrf -> {
                         csrf.disable();
                     });
+
+            return http.build();
         }
 
-        protected OidcClientInitiatedLogoutSuccessHandler oidcLogoutSuccessHandler() {
+        protected OidcClientInitiatedLogoutSuccessHandler oidcLogoutSuccessHandler(ClientRegistrationRepository clientRegistrationRepository) {
             OidcClientInitiatedLogoutSuccessHandler successHandler = new OidcClientInitiatedLogoutSuccessHandler(clientRegistrationRepository);
             successHandler.setPostLogoutRedirectUri("{baseUrl}");
             return successHandler;
@@ -122,23 +119,20 @@ public class OidcAutoConfiguration {
      * in the request header.
      */
     @EnableWebSecurity
-    @Order(JmixOrder.HIGHEST_PRECEDENCE + 90)
     @ConditionalOnProperty(value = "jmix.oidc.use-default-jwt-configuration", havingValue = "true", matchIfMissing = true)
-    public static class OAuth2ResourceServerConfiguration extends WebSecurityConfigurerAdapter {
+    public static class OAuth2ResourceServerConfiguration {
 
-        @Autowired
-        protected OidcUserMapper oidcUserMapper;
-
-        @Autowired
-        protected OidcProperties oidcProperties;
-
-        @Override
-        protected void configure(HttpSecurity http) throws Exception {
+        @Bean("oidc_JwtSecurityFilterChain")
+        @Order(JmixOrder.HIGHEST_PRECEDENCE + 150)
+        public SecurityFilterChain securityFilterChain(HttpSecurity http,
+                                                       OidcUserMapper oidcUserMapper,
+                                                       OidcProperties oidcProperties) throws Exception {
             http.apply(SecurityConfigurers.apiSecurity())
                     .and()
                     .oauth2ResourceServer()
                     .jwt()
                     .jwtAuthenticationConverter(jmixJwtAuthenticationConverter(oidcUserMapper, oidcProperties));
+            return http.build();
         }
 
         @Bean

@@ -15,21 +15,27 @@ import io.jmix.core.JmixOrder;
 import io.jmix.flowui.FlowuiProperties;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewRegistry;
-import io.jmix.security.StandardSecurityConfiguration;
 import io.jmix.security.configurer.AnonymousConfigurer;
 import io.jmix.security.configurer.SessionManagementConfigurer;
+import io.jmix.security.impl.StandardAuthenticationProvidersProducer;
 import io.jmix.securityflowui.access.FlowuiViewAccessChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;
 import org.springframework.security.config.annotation.web.configurers.FormLoginConfigurer;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.access.AccessDeniedHandlerImpl;
 import org.springframework.security.web.access.DelegatingAccessDeniedHandler;
@@ -49,14 +55,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
-@Order(JmixOrder.HIGHEST_PRECEDENCE + 100)
-public class FlowuiSecurityConfiguration extends StandardSecurityConfiguration {
+public class FlowuiSecurityConfiguration {
 
     private static final Logger log = LoggerFactory.getLogger(FlowuiSecurityConfiguration.class);
 
@@ -108,13 +114,14 @@ public class FlowuiSecurityConfiguration extends StandardSecurityConfiguration {
      * <p>
      * {@inheritDoc}
      */
-    @Override
-    public void configure(WebSecurity web) throws Exception {
-        web.ignoring().requestMatchers(getDefaultWebSecurityIgnoreMatcher(getUrlMapping()));
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return (web) -> web.ignoring().requestMatchers(getDefaultWebSecurityIgnoreMatcher(getUrlMapping()));
     }
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
+    @Bean("sec_FlowUiSecurityFilterChain")
+    @Order(JmixOrder.HIGHEST_PRECEDENCE + 300)
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         // Use a security context holder that can find the context from Vaadin
         // specific classes
         SecurityContextHolder.setStrategyName(
@@ -164,6 +171,14 @@ public class FlowuiSecurityConfiguration extends StandardSecurityConfiguration {
         viewAccessChecker.enable();
 
         initLoginView(http);
+
+        return http.build();
+    }
+
+    @Bean("sec_AuthenticationManager")
+    public AuthenticationManager providerManager(StandardAuthenticationProvidersProducer providersProducer) {
+        List<AuthenticationProvider> providers = providersProducer.getStandardProviders();
+        return new ProviderManager(providers);
     }
 
     protected void initLoginView(HttpSecurity http) throws Exception {

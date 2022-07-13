@@ -16,13 +16,16 @@
 
 package io.jmix.securityoauth2.configurer;
 
+import io.jmix.core.JmixOrder;
 import io.jmix.securityoauth2.SecurityOAuth2Properties;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
@@ -32,9 +35,12 @@ import org.springframework.security.oauth2.provider.TokenGranter;
 import org.springframework.security.oauth2.provider.client.ClientDetailsUserDetailsService;
 import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenEnhancer;
+import org.springframework.security.web.SecurityFilterChain;
 
-public class OAuth2AuthorizationServerConfigurer extends WebSecurityConfigurerAdapter
-        implements AuthorizationServerConfigurer {
+import java.util.ArrayList;
+import java.util.List;
+
+public class OAuth2AuthorizationServerConfigurer implements AuthorizationServerConfigurer {
 
     @Autowired
     private SecurityOAuth2Properties properties;
@@ -78,8 +84,9 @@ public class OAuth2AuthorizationServerConfigurer extends WebSecurityConfigurerAd
                 .tokenGranter(tokenGranter);
     }
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
+    @Bean("sec_OAuthAuthorizationServerSecurityFilterChain")
+    @Order(JmixOrder.HIGHEST_PRECEDENCE + 100)
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.requestMatchers()
                 .antMatchers("/oauth/revoke")
                 .and()
@@ -90,6 +97,7 @@ public class OAuth2AuthorizationServerConfigurer extends WebSecurityConfigurerAd
                 .antMatchers("/oauth/revoke").authenticated()
                 .and()
                 .authenticationProvider(getAuthenticationProvider());
+        return http.build();
     }
 
     private AuthenticationProvider getAuthenticationProvider() {

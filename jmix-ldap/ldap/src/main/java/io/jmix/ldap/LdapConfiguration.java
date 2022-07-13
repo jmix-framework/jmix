@@ -28,6 +28,7 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.ldap.core.support.LdapContextSource;
 import org.springframework.security.ldap.DefaultSpringSecurityContextSource;
 import org.springframework.security.ldap.userdetails.LdapAuthoritiesPopulator;
@@ -38,6 +39,7 @@ import org.springframework.security.ldap.userdetails.UserDetailsContextMapper;
 @ComponentScan
 @ConfigurationPropertiesScan
 @JmixModule(dependsOn = CoreConfiguration.class)
+@PropertySource(name = "io.jmix.ldap", value = "classpath:/io/jmix/ldap/module.properties")
 public class LdapConfiguration {
     @Autowired
     protected LdapProperties ldapProperties;

@@ -4,7 +4,6 @@ import com.vaadin.flow.component.HasElement;
 
 import javax.annotation.Nullable;
 
-// TODO: gg, Supports?
 public interface HasRequired extends HasElement {
 
     String PROPERTY_REQUIRED = "required";

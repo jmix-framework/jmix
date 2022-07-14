@@ -64,14 +64,8 @@ public class GuiDevelopmentException extends DevelopmentException {
         return context;
     }
 
-    // TODO: gg, implement
-    /*@Override
+    @Override
     public String toString() {
-        return super.toString() +
-                (getFrameId() != null
-                        ? ", frameId=" + getFrameId()
-                        : context instanceof CompositeComponentContext
-                        ? "componentClass=" + ((CompositeComponentContext) context).getComponentClass()
-                        : "");
-    }*/
+        return super.toString() + (frameId != null ? ", frameId=" + frameId : "");
+    }
 }

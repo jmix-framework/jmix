@@ -93,7 +93,7 @@ public class ReadOnlyViewsSupport {
             if (valueSource != null) {
                 shouldBeEditable = !valueSource.isReadOnly();
 
-                // todo security
+                // TODO: gg, security
                 /*if (valueSource instanceof EntityValueSource
                         && ((EntityValueSource) valueSource).isDataModelSecurityEnabled()) {
                     MetaPropertyPath metaPropertyPath = ((EntityValueSource) valueSource).getMetaPropertyPath();
@@ -122,7 +122,7 @@ public class ReadOnlyViewsSupport {
                 && ((SupportsValueSource<?>) component).getValueSource() != null;
     }
 
-    protected void refreshOwnActionStates(View view) {
+    protected void refreshOwnActionStates(View<?> view) {
         view.getViewActions().getActions().forEach(Action::refreshState);
     }
 

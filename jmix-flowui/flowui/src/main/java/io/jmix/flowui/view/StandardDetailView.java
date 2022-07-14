@@ -11,7 +11,7 @@ import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.flowui.FlowUiViewProperties;
+import io.jmix.flowui.FlowuiViewProperties;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.component.validation.group.UiCrossFieldChecks;
@@ -293,7 +293,7 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
             UnknownOperationResult result = new UnknownOperationResult();
 
             boolean useSaveConfirmation = getApplicationContext()
-                    .getBean(FlowUiViewProperties.class).isUseSaveConfirmation();
+                    .getBean(FlowuiViewProperties.class).isUseSaveConfirmation();
             if (useSaveConfirmation) {
                 getViewValidation().showSaveConfirmationDialog(this)
                         .onCommit(() -> result.resume(closeWithCommit()))
@@ -514,7 +514,7 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
 
         if (!getEntityStates().isNew(editedEntity) && entityId != null) {
 
-            // todo security
+            // TODO: gg, security
             /*AccessManager accessManager = getApplicationContext().getBean(AccessManager.class);
             MetaClass metaClass = getEditedEntityContainer().getEntityMetaClass();
 

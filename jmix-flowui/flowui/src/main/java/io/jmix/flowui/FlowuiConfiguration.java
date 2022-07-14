@@ -42,7 +42,6 @@ public class FlowuiConfiguration {
                                             AnnotationScanMetadataReaderFactory metadataReaderFactory) {
         UiControllersConfiguration uiControllers
                 = new UiControllersConfiguration(applicationContext, metadataReaderFactory);
-        // TODO: gg, no views yet
         uiControllers.setBasePackages(Collections.singletonList("io.jmix.flowui.app"));
         return uiControllers;
     }

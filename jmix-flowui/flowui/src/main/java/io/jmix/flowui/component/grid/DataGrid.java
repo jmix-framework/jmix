@@ -52,7 +52,6 @@ public class DataGrid<E> extends JmixGrid<E> implements ListDataComponent<E>, Mu
 
     @Override
     public GridDataView<E> setItems(DataProvider<E, Void> dataProvider) {
-        // TODO: gg, refactor
         if (dataProvider instanceof GridDataItems) {
             gridDelegate.setItems((GridDataItems<E>) dataProvider);
         }

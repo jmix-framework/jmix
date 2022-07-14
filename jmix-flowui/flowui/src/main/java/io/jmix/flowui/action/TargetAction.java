@@ -4,7 +4,6 @@ import io.jmix.flowui.kit.action.Action;
 
 import javax.annotation.Nullable;
 
-// TODO: gg, rename
 public interface TargetAction<C> extends Action {
 
     @Nullable

@@ -40,10 +40,9 @@ public class ObservableSet<T> extends ForwardingSet<T> implements Serializable {
     }
 
     private Object writeReplace() throws ObjectStreamException {
-        // TODO: gg, add type
-        Set result = delegate;
+        Set<T> result = delegate;
         while (result instanceof ObservableSet) {
-            result = ((ObservableSet) result).delegate;
+            result = ((ObservableSet<T>) result).delegate;
         }
         return result;
     }

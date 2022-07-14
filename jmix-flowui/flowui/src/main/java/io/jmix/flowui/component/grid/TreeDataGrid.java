@@ -52,7 +52,6 @@ public class TreeDataGrid<E> extends JmixTreeGrid<E> implements ListDataComponen
     @SuppressWarnings("unchecked")
     @Override
     public void setDataProvider(HierarchicalDataProvider<E, ?> dataProvider) {
-        // TODO: gg, refactor
         if (dataProvider instanceof TreeGridDataItems) {
             gridDelegate.setItems((TreeGridDataItems<E>) dataProvider);
         }

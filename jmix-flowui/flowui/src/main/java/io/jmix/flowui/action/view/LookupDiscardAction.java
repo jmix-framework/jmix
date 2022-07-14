@@ -2,9 +2,9 @@ package io.jmix.flowui.action.view;
 
 import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.Messages;
-import io.jmix.flowui.FlowUiViewProperties;
+import io.jmix.flowui.FlowuiViewProperties;
 import io.jmix.flowui.action.ActionType;
-import io.jmix.flowui.kit.component.FlowUiComponentUtils;
+import io.jmix.flowui.kit.component.FlowuiComponentUtils;
 import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.view.StandardListView;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +26,7 @@ public class LookupDiscardAction<E> extends OperationResultViewAction<LookupDisc
     protected void initAction() {
         super.initAction();
 
-        this.icon = FlowUiComponentUtils.iconToSting(VaadinIcon.BAN);
+        this.icon = FlowuiComponentUtils.iconToSting(VaadinIcon.BAN);
     }
 
     @Autowired
@@ -35,7 +35,7 @@ public class LookupDiscardAction<E> extends OperationResultViewAction<LookupDisc
     }
 
     @Autowired
-    protected void setFlowUiViewProperties(FlowUiViewProperties flowUiViewProperties) {
+    protected void setFlowUiViewProperties(FlowuiViewProperties flowUiViewProperties) {
         this.shortcutCombination = KeyCombination.create(flowUiViewProperties.getCloseShortcut());
     }
 

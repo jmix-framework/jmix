@@ -145,7 +145,7 @@ public class ViewRegistry {
                 }
 
                 Class<? extends View<?>> controllerClass = loadDefinedViewClass(controllerClassName);
-                String templatePath = resolveTemplatePath(controllerClass);
+                String templatePath = UiDescriptorUtils.resolveTemplatePath(controllerClass);
                 ViewInfo viewInfo = new ViewInfo(viewId, controllerClassName, controllerClass, templatePath);
 
                 registerView(viewId, viewInfo);
@@ -211,26 +211,6 @@ public class ViewRegistry {
     protected Class<? extends View<?>> loadDefinedViewClass(String className) {
         checkNotEmptyString(className, "class name is empty");
         return (Class<? extends View<?>>) classManager.loadClass(className);
-    }
-
-    // TODO: gg, move to utils?
-    @Nullable
-    protected String resolveTemplatePath(Class<? extends View<?>> controllerClass) {
-        UiDescriptor annotation = controllerClass.getAnnotation(UiDescriptor.class);
-        if (annotation == null) {
-            return null;
-        } else {
-            String templatePath = UiDescriptorUtils.getInferredTemplate(annotation, controllerClass);
-            if (!templatePath.startsWith("/")) {
-                String packageName = UiControllerUtils.getPackage(controllerClass);
-                if (StringUtils.isNotEmpty(packageName)) {
-                    String relativePath = packageName.replace('.', '/');
-                    templatePath = "/" + relativePath + "/" + templatePath;
-                }
-            }
-
-            return templatePath;
-        }
     }
 
     /**

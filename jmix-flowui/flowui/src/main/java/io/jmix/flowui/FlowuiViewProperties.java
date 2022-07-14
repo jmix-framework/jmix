@@ -23,7 +23,7 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 
 @ConfigurationProperties(prefix = "jmix.flowui.view")
 @ConstructorBinding
-public class FlowUiViewProperties {
+public class FlowuiViewProperties {
 
     String closeShortcut;
     String commitShortcut;
@@ -53,7 +53,7 @@ public class FlowUiViewProperties {
      */
     boolean reloadUnfetchedAttributesFromLookupViews;
 
-    public FlowUiViewProperties(
+    public FlowuiViewProperties(
             @DefaultValue("ESCAPE") String closeShortcut,
             @DefaultValue("CONTROL-ENTER") String commitShortcut,
             @DefaultValue("true") boolean createActionAddsFirst,

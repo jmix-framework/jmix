@@ -47,11 +47,13 @@ public class ViewLoader extends AbstractViewLoader<View<?>> implements Component
             throw new GuiDevelopmentException("Required '" + CONTENT_NAME + "' element is not found", context);
         }
 
-        if (resultComponent.getContent() instanceof HasComponents) {
-            createSubComponents(((HasComponents) resultComponent.getContent()), content);
-        } else {
-            // TODO: gg, throw an exception?
+        if (!(resultComponent.getContent() instanceof HasComponents)) {
+            throw new GuiDevelopmentException(String.format("%s root layout must be able " +
+                            "to contain child components",
+                    View.class.getSimpleName()), context);
         }
+
+        createSubComponents(((HasComponents) resultComponent.getContent()), content);
     }
 
     @Override

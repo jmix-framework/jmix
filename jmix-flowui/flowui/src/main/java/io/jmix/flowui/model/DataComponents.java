@@ -23,7 +23,6 @@ import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.model.impl.*;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.stereotype.Component;
 
@@ -32,24 +31,26 @@ import java.util.Collection;
 /**
  * Factory bean for data API components.
  */
-@Component("ui_DataComponents")
+@Component("flowui_DataComponents")
 public class DataComponents {
 
-    // TODO: gg, constructor injection
-    @Autowired
     protected AutowireCapableBeanFactory beanFactory;
-
-    @Autowired
     protected Metadata metadata;
-
-    @Autowired
     protected SorterFactory sorterFactory;
-
-    @Autowired
     protected AccessManager accessManager;
-
-    @Autowired
     protected Stores stores;
+
+    public DataComponents(AutowireCapableBeanFactory beanFactory,
+                          Metadata metadata,
+                          SorterFactory sorterFactory,
+                          AccessManager accessManager,
+                          Stores stores) {
+        this.beanFactory = beanFactory;
+        this.metadata = metadata;
+        this.sorterFactory = sorterFactory;
+        this.accessManager = accessManager;
+        this.stores = stores;
+    }
 
     protected void autowire(Object instance) {
         beanFactory.autowireBean(instance);
@@ -94,7 +95,7 @@ public class DataComponents {
                 metadata.getClass(entityClass), masterContainer, property);
         autowire(container);
 
-        // TODO: gg, implement
+        // TODO: gg, security
 //        UiEntityContext entityContext = new UiEntityContext(masterContainer.getEntityMetaClass());
 //        accessManager.applyRegisteredConstraints(entityContext);
 
@@ -140,7 +141,7 @@ public class DataComponents {
         autowire(container);
         container.setSorter(sorterFactory.createCollectionPropertyContainerSorter(container));
 
-        // TODO: gg, implement
+        // TODO: gg, security
 //        UiEntityContext entityContext = new UiEntityContext(masterContainer.getEntityMetaClass());
 //        accessManager.applyRegisteredConstraints(entityContext);
 

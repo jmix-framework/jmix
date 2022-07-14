@@ -11,7 +11,7 @@ import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.flowui.FlowUiViewProperties;
+import io.jmix.flowui.FlowuiViewProperties;
 import io.jmix.flowui.Views;
 import io.jmix.flowui.data.*;
 import io.jmix.flowui.kit.component.SupportsUserAction;
@@ -39,14 +39,14 @@ public class DetailWindowBuilderProcessor extends AbstractWindowBuilderProcessor
     protected Metadata metadata;
     protected ExtendedEntities extendedEntities;
     protected List<EditedEntityTransformer> editedEntityTransformers;
-    protected FlowUiViewProperties viewProperties;
+    protected FlowuiViewProperties viewProperties;
 
     public DetailWindowBuilderProcessor(ApplicationContext applicationContext,
                                         Views views,
                                         ViewRegistry viewRegistry,
                                         Metadata metadata,
                                         ExtendedEntities extendedEntities,
-                                        FlowUiViewProperties viewProperties,
+                                        FlowuiViewProperties viewProperties,
                                         @Nullable List<EditedEntityTransformer> editedEntityTransformers) {
         super(applicationContext, views, viewRegistry);
 

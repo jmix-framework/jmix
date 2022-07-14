@@ -8,7 +8,7 @@ import io.jmix.flowui.kit.action.Action;
 
 import java.util.*;
 
-import static io.jmix.flowui.kit.component.FlowUiComponentUtils.*;
+import static io.jmix.flowui.kit.component.FlowuiComponentUtils.*;
 
 public class ValuePickerActionSupport {
 

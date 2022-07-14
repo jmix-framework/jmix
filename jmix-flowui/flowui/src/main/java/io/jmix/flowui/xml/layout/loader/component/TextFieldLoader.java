@@ -20,7 +20,6 @@ import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import io.jmix.flowui.xml.layout.support.DataLoaderSupport;
 
-//TODO: gg, create base AbstractTextFieldLoader
 public class TextFieldLoader extends AbstractComponentLoader<TypedTextField<?>> {
 
     protected DataLoaderSupport dataLoaderSupport;

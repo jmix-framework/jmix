@@ -24,10 +24,10 @@ import javax.annotation.Nullable;
 public class Notifications {
     private static final Logger log = LoggerFactory.getLogger(Notifications.class);
 
-    protected FlowUiComponentProperties uiComponentProperties;
+    protected FlowuiComponentProperties uiComponentProperties;
 
     @Autowired
-    public Notifications(FlowUiComponentProperties uiComponentProperties) {
+    public Notifications(FlowuiComponentProperties uiComponentProperties) {
         this.uiComponentProperties = uiComponentProperties;
     }
 
@@ -240,7 +240,7 @@ public class Notifications {
             build().open();
         }
 
-        protected NotificationBuilder applyDefaults(FlowUiComponentProperties properties) {
+        protected NotificationBuilder applyDefaults(FlowuiComponentProperties properties) {
             this.duration = properties.getDefaultNotificationDuration();
             this.position = properties.getDefaultNotificationPosition();
             return this;

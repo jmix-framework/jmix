@@ -7,7 +7,7 @@ import com.vaadin.flow.component.notification.Notification;
 import io.jmix.core.Messages;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.Dialogs;
-import io.jmix.flowui.FlowUiViewProperties;
+import io.jmix.flowui.FlowuiViewProperties;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.action.DialogAction;
 import io.jmix.flowui.component.SupportsValidation;
@@ -33,13 +33,13 @@ public class ViewValidation {
     protected Validator validator;
     protected Dialogs dialogs;
     protected Notifications notifications;
-    protected FlowUiViewProperties viewProperties;
+    protected FlowuiViewProperties viewProperties;
 
     @Autowired
     public ViewValidation(Messages messages,
                           Validator validator,
                           Dialogs dialogs,
-                          FlowUiViewProperties viewProperties,
+                          FlowuiViewProperties viewProperties,
                           Notifications notifications) {
         this.messages = messages;
         this.validator = validator;
@@ -164,7 +164,7 @@ public class ViewValidation {
         }
     }
 
-    public UnsavedChangesDialogResult showUnsavedChangesDialog(View origin) {
+    public UnsavedChangesDialogResult showUnsavedChangesDialog(View<?> origin) {
         UnsavedChangesDialogResult result = new UnsavedChangesDialogResult();
 
         dialogs.createOptionDialog()
@@ -185,7 +185,7 @@ public class ViewValidation {
         return result;
     }
 
-    public SaveChangesDialogResult showSaveConfirmationDialog(View origin) {
+    public SaveChangesDialogResult showSaveConfirmationDialog(View<?> origin) {
         SaveChangesDialogResult result = new SaveChangesDialogResult();
 
         dialogs.createOptionDialog()

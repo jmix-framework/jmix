@@ -100,12 +100,6 @@ public abstract class AbstractAssignActionInitTask<C extends Component> implemen
     }
 
     protected Optional<Component> getComponent(View<?> view, String id) {
-        if (view.getContent() instanceof EnhancedHasComponents) {
-            return ((EnhancedHasComponents) view.getContent()).findComponent(id);
-        } else if (view.getContent() instanceof AppLayout) {
-            return UiComponentUtils.findComponent((AppLayout) view.getContent(), id);
-        } else {
-            return Optional.empty();
-        }
+        return UiComponentUtils.findComponent(view, id);
     }
 }

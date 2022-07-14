@@ -291,8 +291,7 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
             required
             requiredIndicatorVisible
             themeNames.containsAll([RadioGroupVariant.LUMO_VERTICAL.name()])
-            //TODO: kremnevda, will be added with JmixRadioButtonGroup 11.05.2022
-            //value == order.number
+            value == order.number
             visible
             width == "100px"
         }
@@ -326,8 +325,7 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
             placeholder == "placeholderString"
             readOnly
             requiredIndicatorVisible
-            //TODO: kremnevda, will be added with JmixSelect 11.05.2022
-            //value == order.number
+            value == order.number
             visible
             width == "100px"
         }

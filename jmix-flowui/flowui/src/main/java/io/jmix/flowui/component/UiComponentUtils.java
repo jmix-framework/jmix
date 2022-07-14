@@ -16,21 +16,31 @@ public final class UiComponentUtils {
     private UiComponentUtils() {
     }
 
-    public static Optional<Component> findOwnComponent(HasComponents container, String id) {
-        if (container instanceof EnhancedHasComponents) {
-            return ((EnhancedHasComponents) container).findOwnComponent(id);
-        } else if (container instanceof HasOrderedComponents) {
-            return ((HasOrderedComponents) container).getChildren()
-                    .filter(component -> sameId(component, id))
-                    .findFirst();
-        } else if (container instanceof Component) {
-            return ((Component) container).getChildren()
-                    .filter(component -> sameId(component, id))
-                    .findFirst();
-        } else {
-            throw new IllegalArgumentException(container.getClass().getSimpleName() +
-                    " have no API to obtain component list");
+    public static Optional<Component> findComponent(View<?> view, String id) {
+        Component content = view.getContent();
+        if (content instanceof HasComponents) {
+            return findComponent(((HasComponents) content), id);
+        } else if (content instanceof AppLayout) {
+            return findComponent(((AppLayout) content), id);
         }
+
+        throw new IllegalStateException(View.class.getSimpleName() + " content doesn't contain components");
+    }
+
+    public static Component findComponentOrElseThrow(View<?> view, String id) {
+        Component content = view.getContent();
+        Optional<Component> component;
+        if (content instanceof HasComponents) {
+            component = findComponent(((HasComponents) content), id);
+        } else if (content instanceof AppLayout) {
+            component = findComponent(((AppLayout) content), id);
+        } else {
+            throw new IllegalStateException(View.class.getSimpleName() + " content doesn't contain components");
+        }
+
+        return component
+                .orElseThrow(() -> new IllegalStateException(
+                        String.format("Component with id '%s' not found", id)));
     }
 
     public static Optional<Component> findComponent(HasComponents container, String id) {
@@ -58,27 +68,6 @@ public final class UiComponentUtils {
         }
     }
 
-    public static Optional<Component> findComponent(View<?> view, String id) {
-        Component content = view.getContent();
-        if (!(content instanceof HasComponents)) {
-            throw new IllegalStateException(View.class.getSimpleName() + " content doesn't contain components");
-        }
-
-        return findComponent(((HasComponents) content), id);
-    }
-
-    public static Component findComponentOrElseThrow(View<?> view, String id) {
-        Component content = view.getContent();
-        if (!(content instanceof HasComponents)) {
-            throw new IllegalStateException(View.class.getSimpleName() + " content doesn't contain components");
-        }
-
-        return findComponent(((HasComponents) content), id)
-                .orElseThrow(() -> new IllegalStateException(
-                        String.format("Component with id '%s' not found", id)));
-    }
-
-    // todo rework using Component class
     public static Optional<Component> findComponent(AppLayout appLayout, String id) {
         List<Component> components = appLayout.getChildren().collect(Collectors.toList());
 
@@ -157,6 +146,23 @@ public final class UiComponentUtils {
         }
 
         return Collections.unmodifiableCollection(components);
+    }
+
+    public static Optional<Component> findOwnComponent(HasComponents container, String id) {
+        if (container instanceof EnhancedHasComponents) {
+            return ((EnhancedHasComponents) container).findOwnComponent(id);
+        } else if (container instanceof HasOrderedComponents) {
+            return ((HasOrderedComponents) container).getChildren()
+                    .filter(component -> sameId(component, id))
+                    .findFirst();
+        } else if (container instanceof Component) {
+            return ((Component) container).getChildren()
+                    .filter(component -> sameId(component, id))
+                    .findFirst();
+        } else {
+            throw new IllegalArgumentException(container.getClass().getSimpleName() +
+                    " have no API to obtain component list");
+        }
     }
 
     private static void fillChildComponents(HasComponents container, Collection<Component> components) {

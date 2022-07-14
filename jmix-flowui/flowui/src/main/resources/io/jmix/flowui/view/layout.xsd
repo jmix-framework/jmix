@@ -866,7 +866,6 @@
         </xs:union>
     </xs:simpleType>
 
-    <!-- TODO: kremnevda, refactor 17.05.2022 -->
     <xs:simpleType name="actionTypeEnum">
         <xs:union>
             <xs:simpleType>
@@ -2853,7 +2852,6 @@
     <xs:complexType name="rootLayout">
         <xs:complexContent>
             <xs:extension base="baseLayout">
-                <!-- TODO: kremnevda, will be filled 13.04.2022 -->
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

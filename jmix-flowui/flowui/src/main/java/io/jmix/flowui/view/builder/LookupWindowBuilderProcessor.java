@@ -8,7 +8,7 @@ import io.jmix.core.annotation.Internal;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.flowui.FlowUiViewProperties;
+import io.jmix.flowui.FlowuiViewProperties;
 import io.jmix.flowui.Views;
 import io.jmix.flowui.component.valuepicker.EntityPicker;
 import io.jmix.flowui.data.*;
@@ -35,7 +35,7 @@ public class LookupWindowBuilderProcessor extends AbstractWindowBuilderProcessor
     protected FetchPlans fetchPlans;
     protected EntityStates entityStates;
     protected ExtendedEntities extendedEntities;
-    protected FlowUiViewProperties viewProperties;
+    protected FlowuiViewProperties viewProperties;
 
     public LookupWindowBuilderProcessor(ApplicationContext applicationContext,
                                         Views views,
@@ -46,7 +46,7 @@ public class LookupWindowBuilderProcessor extends AbstractWindowBuilderProcessor
                                         FetchPlans fetchPlans,
                                         EntityStates entityStates,
                                         ExtendedEntities extendedEntities,
-                                        FlowUiViewProperties viewProperties) {
+                                        FlowuiViewProperties viewProperties) {
         super(applicationContext, views, viewRegistry);
 
         this.metadata = metadata;

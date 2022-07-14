@@ -46,8 +46,7 @@ public class ValuePickerButtonActionBinder implements ComponentActionsHolderBind
         component.setEnabled(action.isEnabled());
         component.setVisible(action.isVisible());
 
-        // TODO: gg, why?
-        if (action.getIcon() != null /*&& component.getIcon() == null*/) {
+        if (action.getIcon() != null) {
             component.setIcon(new Icon(action.getIcon()));
         }
 
@@ -88,7 +87,6 @@ public class ValuePickerButtonActionBinder implements ComponentActionsHolderBind
         return action;
     }
 
-    // TODO: gg, re-implement (move to a component?)
     @Nullable
     protected String generateTitle(Action action) {
         String text = action.getText();

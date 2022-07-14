@@ -60,7 +60,6 @@ public class TabsLoader extends AbstractContainerLoader<Tabs> {
 
         @Override
         public void loadComponent() {
-            //TODO: kremnevda, will be extended by JmixTabSheet 13.04.2022
             loadDouble(element, "flexGrow", resultComponent::setFlexGrow);
 
             componentLoader().loadLabel(resultComponent, element);

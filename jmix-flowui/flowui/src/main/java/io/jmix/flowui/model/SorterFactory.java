@@ -27,7 +27,7 @@ import javax.annotation.Nullable;
 /**
  * Factory bean for sorters.
  */
-@Component("ui_SorterFactory")
+@Component("flowui_SorterFactory")
 public class SorterFactory {
 
     protected BeanFactory beanFactory;

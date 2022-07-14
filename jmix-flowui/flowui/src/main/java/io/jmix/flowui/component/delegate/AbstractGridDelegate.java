@@ -221,7 +221,7 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
     }
 
     protected void onDataProviderSelectedItemChange(GridDataItems.SelectedItemChangeEvent<E> event) {
-        // todo rp should we react on container select item change?
+        // do nothing
     }
 
     protected void setupAutowiredColumns(GridDataItems<E> gridDataItems) {

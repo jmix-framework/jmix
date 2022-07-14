@@ -7,9 +7,10 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 
 @ConfigurationProperties(prefix = "jmix.flowui.component")
 @ConstructorBinding
-public class FlowUiComponentProperties {
+public class FlowuiComponentProperties {
 
     String gridCreateShortcut;
+    // TODO: gg, implement
     //String gridAddShortcut;
     String gridRemoveShortcut;
     String gridEditShortcut;
@@ -23,7 +24,7 @@ public class FlowUiComponentProperties {
     String pickerOpenShortcut;
     String pickerClearShortcut;
 
-    public FlowUiComponentProperties(
+    public FlowuiComponentProperties(
             @DefaultValue("CONTROL-BACKSLASH") String gridCreateShortcut,
             /*String gridAddShortcut,*/
             @DefaultValue("CONTROL-DELETE") String gridRemoveShortcut,

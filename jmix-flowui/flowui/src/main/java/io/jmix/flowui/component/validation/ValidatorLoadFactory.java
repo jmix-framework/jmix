@@ -33,7 +33,7 @@ import java.util.function.BiFunction;
 /**
  * Specific bean for loading validators.
  */
-@Component("ui_ValidatorFactory")
+@Component("flowui_ValidatorFactory")
 public class ValidatorLoadFactory {
 
     protected ApplicationContext applicationContext;

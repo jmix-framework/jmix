@@ -3,10 +3,10 @@ package io.jmix.flowui.action.valuepicker;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.Messages;
-import io.jmix.flowui.FlowUiComponentProperties;
+import io.jmix.flowui.FlowuiComponentProperties;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.component.PickerComponent;
-import io.jmix.flowui.kit.component.FlowUiComponentUtils;
+import io.jmix.flowui.kit.component.FlowuiComponentUtils;
 import io.jmix.flowui.kit.component.KeyCombination;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -30,7 +30,7 @@ public class ValueClearAction<V> extends PickerAction<ValueClearAction<V>, Picke
     protected void initAction() {
         super.initAction();
 
-        this.icon = FlowUiComponentUtils.iconToSting(VaadinIcon.CLOSE);
+        this.icon = FlowuiComponentUtils.iconToSting(VaadinIcon.CLOSE);
     }
 
     @Autowired
@@ -39,11 +39,9 @@ public class ValueClearAction<V> extends PickerAction<ValueClearAction<V>, Picke
     }
 
     @Autowired
-    protected void setFlowUiComponentProperties(FlowUiComponentProperties flowUiComponentProperties) {
+    protected void setFlowUiComponentProperties(FlowuiComponentProperties flowUiComponentProperties) {
         this.shortcutCombination = KeyCombination.create(flowUiComponentProperties.getPickerClearShortcut());
     }
-
-    // TODO: gg, editable?
 
     @Override
     public void execute() {

@@ -36,7 +36,6 @@ public class UnknownOperationResult implements OperationResult {
 
     @Override
     public OperationResult compose(Supplier<OperationResult> nextStep) {
-        // TODO: gg, refactor. Can status be another type?
         if (status == Status.SUCCESS) {
             return nextStep.get();
         }

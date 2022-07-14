@@ -5,14 +5,14 @@ import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.security.EntityOp;
-import io.jmix.flowui.FlowUiComponentProperties;
+import io.jmix.flowui.FlowuiComponentProperties;
 import io.jmix.flowui.accesscontext.FlowuiEntityAttributeContext;
 import io.jmix.flowui.accesscontext.FlowuiEntityContext;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.AdjustWhenViewReadOnly;
 import io.jmix.flowui.data.ContainerDataUnit;
 import io.jmix.flowui.kit.action.ActionVariant;
-import io.jmix.flowui.kit.component.FlowUiComponentUtils;
+import io.jmix.flowui.kit.component.FlowuiComponentUtils;
 import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.model.Nested;
 import io.jmix.flowui.util.RemoveOperation;
@@ -52,7 +52,7 @@ public class RemoveAction<E> extends SecuredListDataComponentAction<RemoveAction
         setConstraintEntityOp(EntityOp.DELETE);
 
         variant = ActionVariant.DANGER;
-        icon = FlowUiComponentUtils.iconToSting(VaadinIcon.CLOSE);
+        icon = FlowuiComponentUtils.iconToSting(VaadinIcon.CLOSE);
     }
 
     @Autowired
@@ -66,7 +66,7 @@ public class RemoveAction<E> extends SecuredListDataComponentAction<RemoveAction
     }
 
     @Autowired
-    protected void setFlowUiComponentProperties(FlowUiComponentProperties flowUiComponentProperties) {
+    protected void setFlowUiComponentProperties(FlowuiComponentProperties flowUiComponentProperties) {
         this.shortcutCombination = KeyCombination.create(flowUiComponentProperties.getGridRemoveShortcut());
     }
 

@@ -5,14 +5,14 @@ import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.flowui.FlowUiComponentProperties;
+import io.jmix.flowui.FlowuiComponentProperties;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.valuepicker.PickerAction;
 import io.jmix.flowui.data.EntityValueSource;
 import io.jmix.flowui.data.ValueSource;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.EntityPickerComponent;
-import io.jmix.flowui.kit.component.FlowUiComponentUtils;
+import io.jmix.flowui.kit.component.FlowuiComponentUtils;
 import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.model.DataContext;
 import io.jmix.flowui.view.View;
@@ -41,7 +41,7 @@ public class EntityClearAction<E> extends PickerAction<EntityClearAction<E>, Ent
     protected void initAction() {
         super.initAction();
 
-        this.icon = FlowUiComponentUtils.iconToSting(VaadinIcon.CLOSE);
+        this.icon = FlowuiComponentUtils.iconToSting(VaadinIcon.CLOSE);
     }
 
     @Autowired
@@ -50,7 +50,7 @@ public class EntityClearAction<E> extends PickerAction<EntityClearAction<E>, Ent
     }
 
     @Autowired
-    protected void setFlowUiComponentProperties(FlowUiComponentProperties flowUiComponentProperties) {
+    protected void setFlowUiComponentProperties(FlowuiComponentProperties flowUiComponentProperties) {
         this.shortcutCombination = KeyCombination.create(flowUiComponentProperties.getPickerClearShortcut());
     }
 
@@ -61,8 +61,6 @@ public class EntityClearAction<E> extends PickerAction<EntityClearAction<E>, Ent
 
         super.setTarget(target);
     }
-
-    // TODO: gg, editable?
 
     @SuppressWarnings("unchecked")
     @Override

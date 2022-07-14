@@ -133,6 +133,7 @@ public class ExceptionDialog implements InitializingBean {
     }
 
     protected Header createHeader() {
+        // TODO: gg, re-implement with standard header
         Header header = new Header();
         header.addClassNames(HEADER_STYLE_NAME, "draggable");
 

@@ -32,7 +32,6 @@ public interface HasTitle extends HasElement {
         String titleValue = Strings.nullToEmpty(title);
 
         getElement().setProperty("title", titleValue);
-        // TODO: gg, leave here?
         getElement().setAttribute("aria-label", titleValue);
     }
 }

@@ -12,11 +12,8 @@ import io.jmix.flowui.kit.component.valuepicker.ValuePickerActionSupport;
 import javax.annotation.Nullable;
 import java.util.Collection;
 
-// TODO: gg, rename
 @Tag("jmix-combo-box-picker")
 @JsModule("./src/combo-box-picker/jmix-combo-box-picker.js")
-@JsModule("./flow-component-renderer.js")
-@JsModule("./src/combo-box-picker/comboBoxConnector.js")
 public class ComboBoxPicker<V> extends ComboBox<V>
         implements SupportsUserAction<V>, HasActions, HasTitle {
 

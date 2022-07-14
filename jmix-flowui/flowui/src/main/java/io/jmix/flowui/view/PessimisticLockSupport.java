@@ -16,12 +16,8 @@
 
 package io.jmix.flowui.view;
 
-import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
-import com.vaadin.flow.component.orderedlayout.FlexComponent;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import io.jmix.core.ExtendedEntities;
 import io.jmix.core.Messages;
 import io.jmix.core.common.util.Preconditions;
@@ -29,6 +25,7 @@ import io.jmix.core.metamodel.datatype.DatatypeFormatter;
 import io.jmix.core.pessimisticlocking.LockInfo;
 import io.jmix.core.pessimisticlocking.LockManager;
 import io.jmix.core.pessimisticlocking.LockNotSupported;
+import io.jmix.flowui.Notifications;
 import io.jmix.flowui.model.InstanceContainer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -39,26 +36,44 @@ import org.springframework.stereotype.Component;
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class PessimisticLockSupport {
 
-    protected View view;
+    protected View<?> view;
 
     protected InstanceContainer<?> container;
 
-    // TODO: gg, method injection
-    @Autowired
     protected LockManager lockManager;
-
-    @Autowired
     protected ExtendedEntities extendedEntities;
-
-    @Autowired
     protected Messages messages;
-
-    @Autowired
     protected DatatypeFormatter datatypeFormatter;
+    protected Notifications notifications;
 
-    public PessimisticLockSupport(View view, InstanceContainer<?> container) {
+    public PessimisticLockSupport(View<?> view, InstanceContainer<?> container) {
         this.view = view;
         this.container = container;
+    }
+
+    @Autowired
+    public void setLockManager(LockManager lockManager) {
+        this.lockManager = lockManager;
+    }
+
+    @Autowired
+    public void setExtendedEntities(ExtendedEntities extendedEntities) {
+        this.extendedEntities = extendedEntities;
+    }
+
+    @Autowired
+    public void setMessages(Messages messages) {
+        this.messages = messages;
+    }
+
+    @Autowired
+    public void setDatatypeFormatter(DatatypeFormatter datatypeFormatter) {
+        this.datatypeFormatter = datatypeFormatter;
+    }
+
+    @Autowired
+    public void setNotifications(Notifications notifications) {
+        this.notifications = notifications;
     }
 
     public PessimisticLockStatus lock(Object entityId) {
@@ -69,16 +84,15 @@ public class PessimisticLockSupport {
             return PessimisticLockStatus.LOCKED;
         } else if (!(lockInfo instanceof LockNotSupported)) {
             String title = messages.getMessage("entityLocked.title");
-            String description = messages.formatMessage("", "entityLocked.message",
+            String message = messages.formatMessage("", "entityLocked.message",
                     lockInfo.getUsername(),
                     datatypeFormatter.formatDateTime(lockInfo.getSince()));
 
-            // TODO: gg, use Notifications bean
-            Notification notification = new Notification(createNotificationLayout(title, description));
-            notification.setPosition(Notification.Position.MIDDLE);
-            notification.addThemeVariants(NotificationVariant.LUMO_PRIMARY);
-            notification.setDuration(3000);
-            notification.open();
+            notifications.create(title, message)
+                    .withPosition(Notification.Position.MIDDLE)
+                    .withThemeVariant(NotificationVariant.LUMO_PRIMARY)
+                    .withDuration(3000)
+                    .show();
 
             return PessimisticLockStatus.FAILED;
         } else {
@@ -96,17 +110,5 @@ public class PessimisticLockSupport {
         return extendedEntities
                 .getOriginalOrThisMetaClass(container.getEntityMetaClass())
                 .getName();
-    }
-
-    // todo notification rework or restyle
-    protected com.vaadin.flow.component.Component createNotificationLayout(String title, String message) {
-        Label titleLabel = new Label(title);
-
-        VerticalLayout layout = new VerticalLayout(titleLabel, new Span(message));
-        layout.setSpacing(false);
-        layout.setPadding(false);
-        layout.setAlignSelf(FlexComponent.Alignment.CENTER, titleLabel);
-
-        return layout;
     }
 }

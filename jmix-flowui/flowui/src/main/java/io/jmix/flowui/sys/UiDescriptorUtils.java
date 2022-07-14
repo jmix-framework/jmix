@@ -3,6 +3,7 @@ package io.jmix.flowui.sys;
 import com.google.common.base.Strings;
 import io.jmix.core.DevelopmentException;
 import io.jmix.flowui.view.*;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
 
@@ -11,6 +12,25 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 public final class UiDescriptorUtils {
 
     private UiDescriptorUtils() {
+    }
+
+    @Nullable
+    public static String resolveTemplatePath(Class<? extends View<?>> controllerClass) {
+        UiDescriptor annotation = controllerClass.getAnnotation(UiDescriptor.class);
+        if (annotation == null) {
+            return null;
+        } else {
+            String templatePath = UiDescriptorUtils.getInferredTemplate(annotation, controllerClass);
+            if (!templatePath.startsWith("/")) {
+                String packageName = UiControllerUtils.getPackage(controllerClass);
+                if (StringUtils.isNotEmpty(packageName)) {
+                    String relativePath = packageName.replace('.', '/');
+                    templatePath = "/" + relativePath + "/" + templatePath;
+                }
+            }
+
+            return templatePath;
+        }
     }
 
     public static String getInferredTemplate(UiDescriptor uiDescriptor,

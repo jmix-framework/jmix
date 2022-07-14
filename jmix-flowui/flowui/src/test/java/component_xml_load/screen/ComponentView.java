@@ -19,16 +19,19 @@ package component_xml_load.screen;
 import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.progressbar.ProgressBar;
-import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.router.Route;
 import io.jmix.flowui.component.checkbox.JmixCheckbox;
 import io.jmix.flowui.component.combobox.EntityComboBox;
 import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.component.datepicker.TypedDatePicker;
 import io.jmix.flowui.component.datetimepicker.TypedDateTimePicker;
+import io.jmix.flowui.component.radiobuttongroup.JmixRadioButtonGroup;
 import io.jmix.flowui.component.select.JmixSelect;
 import io.jmix.flowui.component.textarea.JmixTextArea;
-import io.jmix.flowui.component.textfield.*;
+import io.jmix.flowui.component.textfield.JmixBigDecimalField;
+import io.jmix.flowui.component.textfield.JmixNumberField;
+import io.jmix.flowui.component.textfield.JmixPasswordField;
+import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.component.timepicker.TypedTimePicker;
 import io.jmix.flowui.component.valuepicker.EntityPicker;
 import io.jmix.flowui.component.valuepicker.JmixValuePicker;
@@ -115,7 +118,7 @@ public class ComponentView extends StandardView {
     public ProgressBar progressBarId;
 
     @ComponentId
-    public RadioButtonGroup<String> radioButtonGroupId;
+    public JmixRadioButtonGroup<String> radioButtonGroupId;
 
     @ComponentId
     public JmixSelect<String> selectId;

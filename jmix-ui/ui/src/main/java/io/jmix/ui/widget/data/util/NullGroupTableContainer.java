@@ -26,7 +26,7 @@ import java.util.Map;
 
 @SuppressWarnings("deprecation")
 public class NullGroupTableContainer extends ContainerOrderedWrapper
-        implements GroupTableContainer, AggregationContainer {
+        implements GroupTableContainer, AggregationContainer, NullContainer {
 
     public static final String ERROR_MESSAGE = "Wrapped container is not GroupTableContainer";
 

@@ -24,6 +24,7 @@ import com.vaadin.ui.*;
 import com.vaadin.ui.AbstractComponent;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
+import com.vaadin.v7.data.Container;
 import com.vaadin.v7.data.Property;
 import com.vaadin.v7.data.util.converter.Converter;
 import com.vaadin.v7.data.util.converter.ConverterUtil;
@@ -98,6 +99,7 @@ import io.jmix.ui.widget.JmixEnhancedTable.AggregationInputValueChangeContext;
 import io.jmix.ui.widget.ShortcutListenerDelegate;
 import io.jmix.ui.widget.compatibility.JmixValueChangeEvent;
 import io.jmix.ui.widget.data.AggregationContainer;
+import io.jmix.ui.widget.data.util.NullContainer;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
@@ -2063,10 +2065,14 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
                 if (aggregation == null) {
                     owner.getComponent().removeContainerPropertyAggregation(id);
                 } else {
-                    owner.checkAggregation(aggregation);
-                    if (aggregation.getType() != null) {
-                        owner.getComponent().addContainerPropertyAggregation(id,
-                                WrapperUtils.convertAggregationType(aggregation.getType()));
+                    Container container = owner.getComponent().getContainerDataSource();
+                    if (container instanceof AggregationContainer
+                            && !(container instanceof NullContainer)) {
+                        owner.checkAggregation(aggregation);
+                        if (aggregation.getType() != null) {
+                            owner.getComponent().addContainerPropertyAggregation(id,
+                                    WrapperUtils.convertAggregationType(aggregation.getType()));
+                        }
                     }
                 }
 

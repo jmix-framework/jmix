@@ -880,8 +880,11 @@ public abstract class StandardEditor<T> extends Screen
      * <pre>
      *     &#64;Subscribe
      *     protected void onScreenValidation(ValidationEvent event) {
-     *         ValidationErrors errors = performCustomValidation();
-     *         event.addErrors(errors);
+     *          if (!checkNameFormat()) {
+     *             ValidationErrors errors = new ValidationErrors();
+     *             errors.add(nameField, "Invalid name format");
+     *             event.addErrors(errors);
+     *         }
      *     }
      * </pre>
      */

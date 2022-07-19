@@ -4,11 +4,11 @@ package io.jmix.flowui;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasValue;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.flowui.data.DataUnit;
-import io.jmix.flowui.data.HasType;
 import io.jmix.flowui.component.EntityPickerComponent;
 import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.component.UiComponentUtils;
+import io.jmix.flowui.data.DataUnit;
+import io.jmix.flowui.data.HasType;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.builder.*;
 

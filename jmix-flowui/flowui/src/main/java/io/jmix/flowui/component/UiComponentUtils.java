@@ -29,7 +29,7 @@ public final class UiComponentUtils {
         }
 
         Component component = optionalComponent.get();
-        if (component instanceof Focusable) {
+        if (canBeFocused(component)) {
             return Optional.of(((Focusable<?>) component));
         } else if (component instanceof HasComponents) {
             return findFocusComponent(((HasComponents) component));

@@ -2,6 +2,7 @@ package io.jmix.flowui.view;
 
 import com.google.common.collect.Iterables;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.Focusable;
 import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.notification.Notification;
 import io.jmix.core.Messages;
@@ -175,7 +176,9 @@ public class ViewValidation {
                                 .withHandler(__ -> result.discard()),
                         new DialogAction(DialogAction.Type.NO)
                                 .withHandler(__ -> {
-                                    // TODO: gg, focus child component;
+                                    UiComponentUtils.findFocusComponent(origin)
+                                            .ifPresent(Focusable::focus);
+
                                     result.cancel();
                                 })
                                 .withVariant(ActionVariant.PRIMARY)
@@ -202,7 +205,8 @@ public class ViewValidation {
                         new DialogAction(DialogAction.Type.CANCEL)
                                 .withIcon((String) null)
                                 .withHandler(__ -> {
-                                    // TODO: gg, focus child component;
+                                    UiComponentUtils.findFocusComponent(origin)
+                                            .ifPresent(Focusable::focus);
 
                                     result.cancel();
                                 })

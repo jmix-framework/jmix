@@ -1,12 +1,16 @@
 package io.jmix.flowui;
 
+import com.vaadin.flow.component.HasValue;
+import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.flowui.component.EntityPickerComponent;
+import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.data.DataUnit;
 import io.jmix.flowui.data.HasType;
-import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.navigation.*;
 import org.springframework.stereotype.Component;
 
+import static com.google.common.base.Preconditions.checkState;
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 @Component("flowui_ViewNavigators")
@@ -40,15 +44,15 @@ public class ViewNavigators {
 
         Class<E> beanType = getBeanType(listDataComponent);
 
-        DetailViewNavigator<E> navigation =
+        DetailViewNavigator<E> navigator =
                 new DetailViewNavigator<>(beanType, detailViewNavigationProcessor::processNavigation);
 
         E selected = listDataComponent.getSingleSelectedItem();
         if (selected != null) {
-            navigation.editEntity(selected);
+            navigator.editEntity(selected);
         }
 
-        return navigation;
+        return navigator;
     }
 
     public <E> DetailViewNavigator<E> detailView(ListDataComponent<E> listDataComponent, View<?> parent) {
@@ -56,7 +60,29 @@ public class ViewNavigators {
                 .withBackNavigationTarget(parent.getClass());
     }
 
-    // TODO: gg, public <E> NavigationBuilder<E> detailView(EntityPicker<E> entityPicker) {}
+    public <E> DetailViewNavigator<E> detailView(EntityPickerComponent<E> picker) {
+        checkNotNullArgument(picker);
+        checkState(picker instanceof HasValue,
+                "A component must implement " + HasValue.class.getSimpleName());
+
+        Class<E> beanType = getBeanType(picker);
+
+        DetailViewNavigator<E> navigator =
+                new DetailViewNavigator<>(beanType, detailViewNavigationProcessor::processNavigation);
+
+        //noinspection unchecked
+        E value = ((HasValue<?, E>) picker).getValue();
+        if (value != null) {
+            navigator.editEntity(value);
+        }
+
+        return navigator;
+    }
+
+    public <E> DetailViewNavigator<E> detailView(EntityPickerComponent<E> picker, View<?> parent) {
+        return detailView(picker)
+                .withBackNavigationTarget(parent.getClass());
+    }
 
     public <E> ListViewNavigator<E> listView(Class<E> entityClass) {
         checkNotNullArgument(entityClass);
@@ -74,7 +100,7 @@ public class ViewNavigators {
                 .withViewId(viewId);
     }
 
-    protected  <E> Class<E> getBeanType(ListDataComponent<E> listDataComponent) {
+    protected <E> Class<E> getBeanType(ListDataComponent<E> listDataComponent) {
         DataUnit items = listDataComponent.getItems();
         if (items instanceof HasType) {
             //noinspection unchecked
@@ -83,5 +109,15 @@ public class ViewNavigators {
             throw new IllegalStateException(String.format("Component '%s' is not bound to data " +
                     "or unable to determine type of items", listDataComponent));
         }
+    }
+
+    protected <E> Class<E> getBeanType(EntityPickerComponent<E> picker) {
+        MetaClass metaClass = picker.getMetaClass();
+        if (metaClass == null) {
+            throw new IllegalStateException(String.format("Component '%s' is not bound to data " +
+                    "or unable to determine type of items", picker));
+        }
+
+        return metaClass.getJavaClass();
     }
 }

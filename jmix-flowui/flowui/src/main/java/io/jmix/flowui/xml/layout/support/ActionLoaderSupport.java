@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.xml.layout.support;
 
+import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.security.EntityOp;
 import io.jmix.flowui.Actions;
@@ -24,6 +25,7 @@ import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.action.BaseAction;
+import io.jmix.flowui.kit.component.FlowuiComponentUtils;
 import io.jmix.flowui.kit.component.HasActions;
 import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.xml.layout.ComponentLoader.Context;
@@ -89,8 +91,9 @@ public class ActionLoaderSupport implements ApplicationContextAware {
         loaderSupport.loadEnum(element, ActionVariant.class, "actionVariant",
                 ((Action) targetAction)::setVariant);
 
-        //todo gd refactor icon loading mechanism
-        loaderSupport.loadString(element, "icon", targetAction::setIcon);
+        loaderSupport.loadEnum(element, VaadinIcon.class, "icon")
+                .ifPresent(vaadinIcon ->
+                        targetAction.setIcon(FlowuiComponentUtils.iconToSting(vaadinIcon)));
 
         componentLoader().loadShortcut(element).ifPresent(shortcut ->
                 targetAction.setShortcutCombination(KeyCombination.create(shortcut)));

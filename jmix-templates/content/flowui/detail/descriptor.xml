@@ -23,8 +23,8 @@ def optionsDatasourceXml = api.processSnippet('screen/optionsDsSource.xml',
 def expandId = "detailActions"
 %><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <view xmlns="http://jmix.io/schema/flowui/view"
-        title="${messageKeys['detailTitle']}"
-        focusComponent="form">
+      title="${messageKeys['detailTitle']}"
+      focusComponent="form">
     <data>
         <instance id="${dcId}"
                     class="${entity.fqn}"<%if (!entity.isDeepInheritor('com.haulmont.cuba.core.entity.AbstractNotPersistentEntity')) {%> <%if (!is_inline_detailFetchPlan) {%>

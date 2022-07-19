@@ -21,24 +21,15 @@ import com.vaadin.flow.component.HasEnabled;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.ThemableLayout;
 import io.jmix.flowui.exception.GuiDevelopmentException;
+import io.jmix.flowui.view.FocusMode;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.xml.layout.ComponentRootLoader;
-import io.jmix.flowui.xml.layout.support.ActionLoaderSupport;
 import org.dom4j.Element;
 
 public class ViewLoader extends AbstractViewLoader<View<?>> implements ComponentRootLoader<View<?>> {
 
     public static final String VIEW_ROOT = "view";
     public static final String CONTENT_NAME = "layout";
-
-    protected ActionLoaderSupport actionLoaderSupport;
-
-    public ActionLoaderSupport getActionLoaderSupport() {
-        if (actionLoaderSupport == null) {
-            actionLoaderSupport = applicationContext.getBean(ActionLoaderSupport.class, context);
-        }
-        return actionLoaderSupport;
-    }
 
     @Override
     public void createContent() {
@@ -67,14 +58,7 @@ public class ViewLoader extends AbstractViewLoader<View<?>> implements Component
         getViewLoader().loadActions(element);
         getViewLoader().loadFacets(element);
 
-        // TODO: gg, implement?
-//        loadDialogOptions(resultComponent, element);
-
-//        assignXmlDescriptor(resultComponent, element);
-//        loadCaption(resultComponent, element);
-//        loadDescription(resultComponent, element);
-//        loadIcon(resultComponent, element);
-
+        loadFocusedComponent(resultComponent, element);
 
         Component rootComponent = resultComponent.getContent();
 
@@ -105,21 +89,8 @@ public class ViewLoader extends AbstractViewLoader<View<?>> implements Component
         }
     }
 
-    /*protected void loadFocusedComponent(Window window, Element element) {
-        String focusMode = element.attributeValue("focusMode");
-        String componentId = element.attributeValue("focusComponent");
-        if (!"NO_FOCUS".equals(focusMode)) {
-            window.setFocusComponent(componentId);
-        }
-    }*/
-
-    /*@Override
-    protected Action loadDeclarativeAction(ActionsHolder actionsHolder, Element element) {
-        Action action = loadDeclarativeActionByType(actionsHolder, element);
-        if (action != null) {
-            return action;
-        }
-
-        return super.loadDeclarativeAction(actionsHolder, element);
-    }*/
+    protected void loadFocusedComponent(View<?> view, Element element) {
+        getLoaderSupport().loadString(element, "focusComponent", view::setFocusComponentId);
+        getLoaderSupport().loadEnum(element, FocusMode.class, "focusMode", view::setFocusMode);
+    }
 }

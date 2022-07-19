@@ -6,13 +6,10 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.dialog.DialogVariant;
-import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.html.Header;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
-import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.dom.Element;
@@ -35,17 +32,14 @@ import java.util.Map;
 public class ExceptionDialog implements InitializingBean {
 
     protected static final String BASE_STYLE_NAME = "jmix-exception-dialog-window";
-    protected static final String DIALOG_OVERLAY_STYLE_NAME = BASE_STYLE_NAME + "-overlay";
-    protected static final String HEADER_STYLE_NAME = BASE_STYLE_NAME + "-header";
+    protected static final String DIALOG_CONTENT_STYLE_NAME = BASE_STYLE_NAME + "-content";
     protected static final String HEADER_CLOSE_BUTTON_STYLE_NAME = BASE_STYLE_NAME + "-close-button";
-    protected static final String TITLE_STYLE_NAME = BASE_STYLE_NAME + "-title";
     protected static final String STACKTRACE_TEXTAREA_STYLE_NAME = BASE_STYLE_NAME + "-stacktrace-textarea";
     protected static final String MESSAGE_TEXTAREA_STYLE_NAME = BASE_STYLE_NAME + "-message-textarea";
 
-    protected static final String MIN_WIDTH = "400px";
-    protected static final String WIDTH = "640px";
-    protected static final String EXPANDED_WIDTH = "750px";
-    protected static final String EXPANDED_HEIGHT = "600px";
+    protected static final String WIDTH = "40em";
+    protected static final String EXPANDED_WIDTH = "45em";
+    protected static final String EXPANDED_HEIGHT = "37.5em";
 
     protected Messages messages;
     protected ViewRegistry viewRegistry;
@@ -88,7 +82,6 @@ public class ExceptionDialog implements InitializingBean {
     @Override
     public void afterPropertiesSet() throws Exception {
         initDialog();
-        initLayout();
     }
 
     /**
@@ -98,58 +91,37 @@ public class ExceptionDialog implements InitializingBean {
         dialog.open();
     }
 
-    protected void initDialog() {
-        dialog = createDialog();
-        dialog.setCloseOnEsc(false);
-        dialog.setCloseOnOutsideClick(false);
-        dialog.setDraggable(true);
-
-        dialog.setMinWidth(MIN_WIDTH);
-        dialog.setWidth(WIDTH);
-
-        dialog.addThemeVariants(DialogVariant.LUMO_NO_PADDING);
-    }
-
     protected Dialog createDialog() {
         return new Dialog();
     }
 
-    protected void initLayout() {
-        VerticalLayout dialogOverlay = createDialogOverlay();
-        dialogOverlay.add(createHeader());
-        dialogOverlay.add(createContent());
+    protected void initDialog() {
+        dialog = createDialog();
 
-        dialog.add(dialogOverlay);
+        dialog.setCloseOnEsc(false);
+        dialog.setCloseOnOutsideClick(false);
+        dialog.setDraggable(true);
+
+        dialog.setWidth(WIDTH);
+
+        dialog.addThemeVariants(DialogVariant.LUMO_NO_PADDING);
+
+        initLayout(dialog);
     }
 
-    protected VerticalLayout createDialogOverlay() {
-        VerticalLayout dialogContent = new VerticalLayout();
-        dialogContent.setPadding(false);
-        dialogContent.setSpacing(false);
-        dialogContent.setHeightFull();
-        dialogContent.setAlignItems(FlexComponent.Alignment.STRETCH);
-        dialogContent.setClassName(DIALOG_OVERLAY_STYLE_NAME);
-        return dialogContent;
+    protected void initLayout(Dialog dialog) {
+        initHeader(dialog);
+
+        Component content = createContent();
+        dialog.add(content);
     }
 
-    protected Header createHeader() {
-        // TODO: gg, re-implement with standard header
-        Header header = new Header();
-        header.addClassNames(HEADER_STYLE_NAME, "draggable");
-
+    protected void initHeader(Dialog dialog) {
         String viewTitle = messages.getMessage("exceptionDialog.title");
-
-        H2 title = new H2();
-        title.setText(viewTitle);
-        title.setClassName(TITLE_STYLE_NAME);
-        header.add(title);
+        dialog.setHeaderTitle(viewTitle);
+        dialog.getHeader().add(createHeaderCloseButton());
 
         dialog.getElement().setAttribute("aria-label", viewTitle);
-
-        Button closeButton = createHeaderCloseButton();
-        header.add(closeButton);
-
-        return header;
     }
 
     protected Button createHeaderCloseButton() {
@@ -172,8 +144,10 @@ public class ExceptionDialog implements InitializingBean {
 
     protected Component createContent() {
         VerticalLayout layout = new VerticalLayout();
+
         layout.setWidthFull();
         layout.setHeightFull();
+        layout.setClassName(DIALOG_CONTENT_STYLE_NAME);
 
         Element messageTextArea = createMessageTextArea(getMessage(throwable));
 
@@ -211,9 +185,11 @@ public class ExceptionDialog implements InitializingBean {
 
     protected JmixButton createCloseButton() {
         JmixButton closeBtn = uiComponents.create(JmixButton.class);
+
         closeBtn.setText(messages.getMessage("exceptionDialog.closeButton.text"));
         closeBtn.setTitle(messages.getMessage("exceptionDialog.closeButton.description"));
         closeBtn.addClickListener(this::onCloseButtonClick);
+
         return closeBtn;
     }
 
@@ -223,9 +199,11 @@ public class ExceptionDialog implements InitializingBean {
 
     protected JmixButton createDetailsButton() {
         JmixButton detailsBtn = uiComponents.create(JmixButton.class);
+
         detailsBtn.setText(messages.getMessage("exceptionDialog.detailsButton.closed.text"));
         detailsBtn.setTitle(messages.getMessage("exceptionDialog.detailsButton.closed.description"));
         detailsBtn.addClickListener(this::onDetailsButtonClick);
+
         return detailsBtn;
     }
 
@@ -262,10 +240,12 @@ public class ExceptionDialog implements InitializingBean {
 
     protected JmixButton createCopyButton() {
         JmixButton copyBtn = uiComponents.create(JmixButton.class);
+
         copyBtn.setIcon(new Icon(VaadinIcon.COPY_O));
         copyBtn.setVisible(false);
         copyBtn.setTitle(messages.getMessage("exceptionDialog.copyButton.description"));
         copyBtn.addClickListener(this::onCopyButtonClick);
+
         return copyBtn;
     }
 
@@ -280,11 +260,13 @@ public class ExceptionDialog implements InitializingBean {
 
     protected Element createStackTraceTextArea(String stackTrace) {
         Element textarea = ElementFactory.createTextarea();
+
         textarea.getClassList().add(STACKTRACE_TEXTAREA_STYLE_NAME);
         textarea.setAttribute("readonly", "");
         textarea.setProperty("value", stackTrace);
         textarea.setProperty("wrap", "off");
         textarea.setVisible(false);
+
         return textarea;
     }
 
@@ -306,15 +288,6 @@ public class ExceptionDialog implements InitializingBean {
                 if (rootCause instanceof GuiDevelopmentException) {
                     GuiDevelopmentException guiDevException = (GuiDevelopmentException) rootCause;
                     ComponentLoader.Context context = guiDevException.getContext();
-                    // todo implement in ComponentLoader
-                    /*if (context instanceof ComponentLoader.CompositeComponentContext) {
-                        Class<?> componentClass = ((ComponentLoader.CompositeComponentContext) context).getComponentClass();
-                        params.put("Component Class", componentClass);
-                        CompositeDescriptor template = componentClass.getAnnotation(CompositeDescriptor.class);
-                        if (template != null) {
-                            params.put("XML descriptor", template.value());
-                        }
-                    } else*/
                     if (guiDevException.getFrameId() != null) {
                         String frameId = guiDevException.getFrameId();
                         params.put("Frame ID", frameId);

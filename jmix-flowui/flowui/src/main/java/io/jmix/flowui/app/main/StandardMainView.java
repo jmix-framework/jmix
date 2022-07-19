@@ -37,7 +37,7 @@ public class StandardMainView extends View<AppLayout> implements RouterLayout {
         updateTitle();
     }
 
-    private void updateTitle() {
+    protected void updateTitle() {
         getTitleComponent()
                 .filter(c -> c instanceof HasText)
                 .ifPresent(c -> ((HasText) c).setText(getTitleFromOpenedView()));

@@ -23,6 +23,8 @@ import java.util.EnumSet;
 @org.springframework.stereotype.Component("flowui_Dialogs")
 public class DialogsImpl implements Dialogs {
 
+    protected static final String WIDTH = "25em";
+
     protected Messages messages;
     protected FlowuiViewProperties flowUiViewProperties;
 
@@ -78,10 +80,19 @@ public class DialogsImpl implements Dialogs {
         protected Action[] actions;
 
         public OptionDialogBuilderImpl() {
-            dialog = new Dialog();
+            dialog = createDialog();
+            initDialog(dialog);
+        }
+
+        protected Dialog createDialog() {
+            return new Dialog();
+        }
+
+        protected void initDialog(Dialog dialog) {
             dialog.setDraggable(true);
             dialog.setCloseOnOutsideClick(false);
             dialog.setCloseOnEsc(false);
+            dialog.setWidth(WIDTH);
         }
 
         @Override
@@ -329,9 +340,18 @@ public class DialogsImpl implements Dialogs {
         protected Component content;
 
         public MessageDialogBuilderImpl() {
-            dialog = new Dialog();
+            dialog = createDialog();
+            initDialog(dialog);
+        }
+
+        protected Dialog createDialog() {
+            return new Dialog();
+        }
+
+        protected void initDialog(Dialog dialog) {
             dialog.setDraggable(true);
             dialog.setCloseOnOutsideClick(false);
+            dialog.setWidth(WIDTH);
 
             HorizontalLayout buttonsContainer = new HorizontalLayout();
             buttonsContainer.setJustifyContentMode(FlexComponent.JustifyContentMode.END);

@@ -21,6 +21,8 @@ import io.jmix.core.Metadata;
 import io.jmix.core.Stores;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.flowui.accesscontext.FlowuiEntityAttributeContext;
+import io.jmix.flowui.accesscontext.FlowuiEntityContext;
 import io.jmix.flowui.model.impl.*;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
@@ -95,26 +97,26 @@ public class DataComponents {
                 metadata.getClass(entityClass), masterContainer, property);
         autowire(container);
 
-        // TODO: gg, security
-//        UiEntityContext entityContext = new UiEntityContext(masterContainer.getEntityMetaClass());
-//        accessManager.applyRegisteredConstraints(entityContext);
+        FlowuiEntityContext entityContext = new FlowuiEntityContext(masterContainer.getEntityMetaClass());
+        accessManager.applyRegisteredConstraints(entityContext);
 
-//        UiEntityAttributeContext attributeContext = new UiEntityAttributeContext(masterContainer.getEntityMetaClass(), property);
-//        accessManager.applyRegisteredConstraints(attributeContext);
+        FlowuiEntityAttributeContext attributeContext =
+                new FlowuiEntityAttributeContext(masterContainer.getEntityMetaClass(), property);
+        accessManager.applyRegisteredConstraints(attributeContext);
 
-//        if (entityContext.isViewPermitted()
-//                && attributeContext.canView()) {
-        masterContainer.addItemChangeListener(e -> {
-            Object item = masterContainer.getItemOrNull();
-            container.setItem(item != null ? EntityValues.getValue(item, property) : null);
-        });
+        if (entityContext.isViewPermitted()
+                && attributeContext.canView()) {
+            masterContainer.addItemChangeListener(e -> {
+                Object item = masterContainer.getItemOrNull();
+                container.setItem(item != null ? EntityValues.getValue(item, property) : null);
+            });
 
-        masterContainer.addItemPropertyChangeListener(e -> {
-            if (e.getProperty().equals(property)) {
-                container.setItem((E) e.getValue());
-            }
-        });
-//        }
+            masterContainer.addItemPropertyChangeListener(e -> {
+                if (e.getProperty().equals(property)) {
+                    container.setItem((E) e.getValue());
+                }
+            });
+        }
 
         return container;
     }
@@ -141,26 +143,26 @@ public class DataComponents {
         autowire(container);
         container.setSorter(sorterFactory.createCollectionPropertyContainerSorter(container));
 
-        // TODO: gg, security
-//        UiEntityContext entityContext = new UiEntityContext(masterContainer.getEntityMetaClass());
-//        accessManager.applyRegisteredConstraints(entityContext);
+        FlowuiEntityContext entityContext = new FlowuiEntityContext(masterContainer.getEntityMetaClass());
+        accessManager.applyRegisteredConstraints(entityContext);
 
-//        UiEntityAttributeContext attributeContext = new UiEntityAttributeContext(masterContainer.getEntityMetaClass(), property);
-//        accessManager.applyRegisteredConstraints(attributeContext);
+        FlowuiEntityAttributeContext attributeContext =
+                new FlowuiEntityAttributeContext(masterContainer.getEntityMetaClass(), property);
+        accessManager.applyRegisteredConstraints(attributeContext);
 
-//        if (attributeContext.canView()
-//                && entityContext.isViewPermitted()) {
-        masterContainer.addItemChangeListener(e -> {
-            Object item = masterContainer.getItemOrNull();
-            container.setItems(item != null ? EntityValues.getValue(item, property) : null);
-        });
+        if (attributeContext.canView()
+                && entityContext.isViewPermitted()) {
+            masterContainer.addItemChangeListener(e -> {
+                Object item = masterContainer.getItemOrNull();
+                container.setItems(item != null ? EntityValues.getValue(item, property) : null);
+            });
 
-        masterContainer.addItemPropertyChangeListener(e -> {
-            if (e.getProperty().equals(property) && e.getItem() == masterContainer.getItem()) {
-                container.setDisconnectedItems((Collection<E>) e.getValue());
-            }
-        });
-//        }
+            masterContainer.addItemPropertyChangeListener(e -> {
+                if (e.getProperty().equals(property) && e.getItem() == masterContainer.getItem()) {
+                    container.setDisconnectedItems((Collection<E>) e.getValue());
+                }
+            });
+        }
 
         return container;
     }

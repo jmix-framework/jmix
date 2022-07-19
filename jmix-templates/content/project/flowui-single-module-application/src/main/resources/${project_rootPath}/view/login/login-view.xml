@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <view xmlns="http://jmix.io/schema/flowui/view"
-        title="msg://LoginView.title">
+      focusComponent="login"
+      title="msg://LoginView.title">
     <layout justifyContent="CENTER" alignItems="CENTER" className="jmix-login-main-layout">
         <loginForm id="login"
                    forgotPasswordButtonVisible="false">

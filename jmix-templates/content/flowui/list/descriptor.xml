@@ -16,9 +16,9 @@ def tableXml = api.processSnippet('screen/jmix_flow_table.xml',
         'hierarchicalProperty': binding.hasVariable('tableType_hierarchicalProperty') ? binding.getVariable('tableType_hierarchicalProperty') : null])
 %><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <view xmlns="http://jmix.io/schema/flowui/view"
-        xmlns:c="http://jmix.io/schema/flowui/jpql-condition"
-        title="${messageKeys['viewTitle']}"
-        focusComponent="${tableId}">
+      xmlns:c="http://jmix.io/schema/flowui/jpql-condition"
+      title="${messageKeys['viewTitle']}"
+      focusComponent="${tableId}">
     <data readOnly="true">
         <collection id="${tableDc}"
                     class="${entity.fqn}"<%if (!is_inline_listFetchPlan) {%>

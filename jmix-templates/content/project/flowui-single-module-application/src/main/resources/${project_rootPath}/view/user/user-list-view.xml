@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <view xmlns="http://jmix.io/schema/flowui/view"
-        title="msg://UserListView.title"
-        focusComponent="usersTable">
+      title="msg://UserListView.title"
+      focusComponent="usersTable">
     <data readOnly="true">
         <collection id="usersDc"
                     class="${project_rootPackage}.entity.User">
@@ -27,8 +27,8 @@
             <button id="removeBtn" action="usersTable.remove"/>
         </hbox>
         <dataGrid id="usersTable"
-                    width="100%"
-                    dataContainer="usersDc">
+                  width="100%"
+                  dataContainer="usersDc">
             <actions>
                 <action id="create" type="create"/>
                 <action id="edit" type="edit"/>

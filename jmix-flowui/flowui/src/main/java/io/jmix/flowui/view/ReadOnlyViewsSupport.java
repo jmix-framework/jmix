@@ -21,7 +21,10 @@ import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.HasValueAndElement;
 import io.jmix.core.AccessManager;
 import io.jmix.core.common.util.Preconditions;
+import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.flowui.accesscontext.FlowuiEntityAttributeContext;
 import io.jmix.flowui.action.AdjustWhenViewReadOnly;
+import io.jmix.flowui.data.EntityValueSource;
 import io.jmix.flowui.data.SupportsValueSource;
 import io.jmix.flowui.data.ValueSource;
 import io.jmix.flowui.kit.component.HasActions;
@@ -93,19 +96,18 @@ public class ReadOnlyViewsSupport {
             if (valueSource != null) {
                 shouldBeEditable = !valueSource.isReadOnly();
 
-                // TODO: gg, security
-                /*if (valueSource instanceof EntityValueSource
-                        && ((EntityValueSource) valueSource).isDataModelSecurityEnabled()) {
-                    MetaPropertyPath metaPropertyPath = ((EntityValueSource) valueSource).getMetaPropertyPath();
+                if (valueSource instanceof EntityValueSource
+                        && ((EntityValueSource<?, ?>) valueSource).isDataModelSecurityEnabled()) {
+                    MetaPropertyPath metaPropertyPath = ((EntityValueSource<?, ?>) valueSource).getMetaPropertyPath();
 
-                    UiEntityAttributeContext attributeContext = new UiEntityAttributeContext(metaPropertyPath);
+                    FlowuiEntityAttributeContext attributeContext = new FlowuiEntityAttributeContext(metaPropertyPath);
                     accessManager.applyRegisteredConstraints(attributeContext);
 
                     if (!attributeContext.canModify()
                             || !attributeContext.canView()) {
                         shouldBeEditable = false;
                     }
-                }*/
+                }
             }
         }
 

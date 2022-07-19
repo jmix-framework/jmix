@@ -9,7 +9,7 @@ import io.jmix.flowui.view.*;
 @UiController("${normalizedPrefix_underscore}User.list")
 @UiDescriptor("user-list-view.xml")
 @LookupComponent("usersTable")
-@DialogMode(width = "800px", height = "600px")
+@DialogMode(width = "50em", height = "37.5em")
 public class UserListView extends StandardListView<User> {
 
     public static final String ROUTE = "users";

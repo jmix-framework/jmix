@@ -7,12 +7,14 @@ import com.vaadin.flow.component.notification.Notification.Position;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.*;
+import io.jmix.core.accesscontext.InMemoryCrudEntityContext;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.flowui.FlowuiViewProperties;
 import io.jmix.flowui.Notifications;
+import io.jmix.flowui.accesscontext.FlowuiEntityContext;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.component.validation.group.UiCrossFieldChecks;
 import io.jmix.flowui.model.*;
@@ -513,18 +515,17 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
         Object entityId = EntityValues.getId(editedEntity);
 
         if (!getEntityStates().isNew(editedEntity) && entityId != null) {
-
-            // TODO: gg, security
-            /*AccessManager accessManager = getApplicationContext().getBean(AccessManager.class);
+            AccessManager accessManager = getApplicationContext().getBean(AccessManager.class);
             MetaClass metaClass = getEditedEntityContainer().getEntityMetaClass();
 
-            UiEntityContext entityContext = new UiEntityContext(metaClass);
+            FlowuiEntityContext entityContext = new FlowuiEntityContext(metaClass);
             accessManager.applyRegisteredConstraints(entityContext);
             InMemoryCrudEntityContext inMemoryContext = new InMemoryCrudEntityContext(metaClass, getApplicationContext());
-            accessManager.applyRegisteredConstraints(inMemoryContext);*/
+            accessManager.applyRegisteredConstraints(inMemoryContext);
 
-            boolean isPermittedBySecurity = true; /* entityContext.isEditPermitted() && (inMemoryContext.updatePredicate() == null || inMemoryContext.isUpdatePermitted(getEditedEntity())) */
-            //noinspection ConstantConditions
+            boolean isPermittedBySecurity = entityContext.isEditPermitted()
+                    && (inMemoryContext.updatePredicate() == null
+                    || inMemoryContext.isUpdatePermitted(getEditedEntity()));
             if (isPermittedBySecurity) {
                 entityLockStatus = getLockingSupport().lock(entityId);
                 if (entityLockStatus == PessimisticLockStatus.FAILED) {

@@ -87,7 +87,6 @@ public class ViewSupport {
 
         componentLoaderContext.setFullFrameId(viewInfo.getId());
         componentLoaderContext.setCurrentFrameId(viewInfo.getId());
-        // TODO: gg, consider messageGroup attribute
         componentLoaderContext.setMessageGroup(getPackage(viewInfo.getControllerClass()));
         componentLoaderContext.setView(view);
         componentLoaderContext.setViewActions(actions);

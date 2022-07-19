@@ -1,11 +1,14 @@
 package io.jmix.flowui.component;
 
 import com.vaadin.flow.component.*;
+import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.dialog.Dialog;
 import io.jmix.core.common.util.Preconditions;
-import io.jmix.flowui.view.View;
 import io.jmix.flowui.sys.ValuePathHelper;
+import io.jmix.flowui.view.View;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -13,7 +16,83 @@ import java.util.stream.Collectors;
 
 public final class UiComponentUtils {
 
+    private static final Logger log = LoggerFactory.getLogger(UiComponentUtils.class);
+
     private UiComponentUtils() {
+    }
+
+    public static Optional<Focusable<?>> findFocusComponent(View<?> view, String componentId) {
+        Optional<Component> optionalComponent = findComponent(view, componentId);
+        if (optionalComponent.isEmpty()) {
+            log.error("Can't find focus component: {}", componentId);
+            return Optional.empty();
+        }
+
+        Component component = optionalComponent.get();
+        if (component instanceof Focusable) {
+            return Optional.of(((Focusable<?>) component));
+        } else if (component instanceof HasComponents) {
+            return findFocusComponent(((HasComponents) component));
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    public static Optional<Focusable<?>> findFocusComponent(View<?> view) {
+        Component content = view.getContent();
+        if (content instanceof HasComponents) {
+            return findFocusComponent(((HasComponents) content));
+        } else if (content instanceof AppLayout) {
+            return findFocusComponent(((AppLayout) content));
+        }
+
+        throw new IllegalStateException(View.class.getSimpleName() + " content doesn't contain components");
+    }
+
+    public static Optional<Focusable<?>> findFocusComponent(HasComponents container) {
+        Collection<Component> ownComponents = getOwnComponents(container);
+        return findFocusComponent(ownComponents);
+    }
+
+    public static Optional<Focusable<?>> findFocusComponent(AppLayout appLayout) {
+        Collection<Component> ownComponents = appLayout.getChildren().collect(Collectors.toList());
+        return findFocusComponent(ownComponents);
+    }
+
+    public static Optional<Focusable<?>> findFocusComponent(Collection<Component> components) {
+        for (Component child : components) {
+            if (child instanceof Accordion
+                    /*|| child instanceof TabSheet*/) {
+                // we don't know about selected tab after request
+                // may be focused component lays on not selected tab
+                // it may break component tree
+                continue;
+            }
+
+            if (canBeFocused(child)) {
+                return Optional.of(((Focusable<?>) child));
+            }
+
+            if (child instanceof HasComponents) {
+                return findFocusComponent(((HasComponents) child));
+            }
+        }
+
+        return Optional.empty();
+    }
+
+    private static boolean canBeFocused(Component component) {
+        if (!(component instanceof Focusable)
+                || !((Focusable<?>) component).isEnabled()) {
+            return false;
+        }
+
+        if (component instanceof HasValue
+                && ((HasValue<?, ?>) component).isReadOnly()) {
+            return false;
+        }
+
+        return component.isVisible();
     }
 
     public static Optional<Component> findComponent(View<?> view, String id) {

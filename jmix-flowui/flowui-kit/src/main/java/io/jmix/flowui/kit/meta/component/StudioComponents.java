@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.kit.meta.component;
 
+import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -412,6 +413,30 @@ public interface StudioComponents {
             }
     )
     DateTimePicker dateTimePicker();
+
+    @StudioComponent(
+            name = "DrawerToggle",
+            classFqn = "com.vaadin.flow.component.applayout.DrawerToggle",
+            category = "Components",
+            xmlElement = "drawerToggle",
+            properties = {
+                    @StudioProperty(xmlAttribute = "ariaLabel", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "autoFocus", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "className", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "maxHeight", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "maxWidth", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "minHeight", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "minWidth", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "themeName", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE)
+            }
+    )
+    DrawerToggle drawerToggle();
 
     @StudioComponent(
             name = "EmailField",

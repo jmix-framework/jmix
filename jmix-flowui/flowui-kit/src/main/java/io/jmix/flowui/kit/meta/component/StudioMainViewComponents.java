@@ -17,6 +17,8 @@ public interface StudioMainViewComponents {
             category = "Main View",
             xmlElement = "listMenu",
             icon = "io/jmix/flowui/kit/meta/icon/mainview/listMenu.svg",
+            availablePlaceRegExp = "(^(mainView/appLayout)?((/drawerLayout)|(/navigationBar))$)" +
+                    "|(^((mainView/appLayout)?((/drawerLayout)|(/navigationBar)))?(/hasComponents)*$)",
             properties = {
                     @StudioProperty(xmlAttribute = "className", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.SIZE),
@@ -41,6 +43,7 @@ public interface StudioMainViewComponents {
             category = "Main View",
             xmlElement = "appLayout",
             icon = "io/jmix/flowui/kit/meta/icon/mainview/appLayout.svg",
+            availablePlaceRegExp = "^mainView$",
             properties = {
                     @StudioProperty(xmlAttribute = "drawerOpened", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
@@ -56,6 +59,8 @@ public interface StudioMainViewComponents {
             category = "Main View",
             xmlElement = "userIndicator",
             icon = "io/jmix/flowui/kit/meta/icon/mainview/userIndicator.svg",
+            availablePlaceRegExp = "(^(mainView/appLayout)?((/drawerLayout)|(/navigationBar))$)" +
+                    "|(^((mainView/appLayout)?((/drawerLayout)|(/navigationBar)))?(/hasComponents)*$)",
             properties = {
                     @StudioProperty(xmlAttribute = "className", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,

@@ -38,5 +38,11 @@ public @interface StudioFacet {
 
     String xmlnsAlias() default "";
 
+    /**
+     * Describes the available place in the hierarchy.
+     * By default, facet component can be located inside facets.
+     */
+    String availablePlaceRegExp() default "^((mainView)|(view))?(/facets)$";
+
     StudioProperty[] properties() default {};
 }

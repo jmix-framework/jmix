@@ -17,10 +17,10 @@
 package io.jmix.flowui.xml.layout.support;
 
 import com.vaadin.flow.component.icon.VaadinIcon;
-import io.jmix.core.annotation.Internal;
 import io.jmix.core.security.EntityOp;
 import io.jmix.flowui.Actions;
 import io.jmix.flowui.action.SecurityConstraintAction;
+import io.jmix.flowui.action.list.ItemTrackingAction;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionVariant;
@@ -40,7 +40,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
-@Internal
 @Component("flowui_ActionLoaderSupport")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ActionLoaderSupport implements ApplicationContextAware {
@@ -153,13 +152,12 @@ public class ActionLoaderSupport implements ApplicationContextAware {
 
         Action targetAction;
 
-        // TODO: gg, implement
-//        if (shouldTrackSelection) {
-//            targetAction = actions.create(ItemTrackingAction.ID, id);
-//            loadActionConstraint(targetAction, element);
-//        } else {
-        targetAction = new BaseAction(id);
-//        }
+        if (shouldTrackSelection) {
+            targetAction = actions.create(ItemTrackingAction.ID, id);
+            loadActionConstraint(targetAction, element);
+        } else {
+            targetAction = new BaseAction(id);
+        }
 
         initAction(element, targetAction);
 

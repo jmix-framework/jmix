@@ -55,9 +55,6 @@
               propertyType="HIERARCHICAL_PROPERTY"
               relatedProperty="tableType"
               required="false"/>
-    <property caption="Parent menu item"
-              code="menuItem"
-              propertyType="FLOW_MENU_ITEM"/>
     <property caption="Table actions"
               code="tableActions"
               defaultValue="create,edit,remove"

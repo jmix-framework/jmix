@@ -1,6 +1,7 @@
 package io.jmix.flowui.action.view;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.flowui.action.ExecutableAction;
 import io.jmix.flowui.action.SecuredBaseAction;
@@ -70,7 +71,7 @@ public abstract class ViewAction<A extends ViewAction<A, S>, S extends View> ext
 
     @SuppressWarnings("unchecked")
     @Override
-    public A withIcon(@Nullable String icon) {
+    public A withIcon(@Nullable Icon icon) {
         return ((A) super.withIcon(icon));
     }
 

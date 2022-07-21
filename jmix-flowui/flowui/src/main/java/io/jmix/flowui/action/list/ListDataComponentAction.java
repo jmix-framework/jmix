@@ -1,6 +1,7 @@
 package io.jmix.flowui.action.list;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.data.selection.SelectionEvent;
 import com.vaadin.flow.shared.Registration;
@@ -76,7 +77,7 @@ public abstract class ListDataComponentAction<A extends ListDataComponentAction<
 
     @SuppressWarnings("unchecked")
     @Override
-    public A withIcon(@Nullable String icon) {
+    public A withIcon(@Nullable Icon icon) {
         return ((A) super.withIcon(icon));
     }
 

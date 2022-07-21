@@ -18,7 +18,7 @@ package io.jmix.flowui.xml.layout.support;
 
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.*;
-import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.orderedlayout.BoxSizing;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.ThemableLayout;
@@ -35,10 +35,7 @@ import io.jmix.flowui.component.formatter.FormatterLoadFactory;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.component.validation.ValidatorLoadFactory;
 import io.jmix.flowui.exception.GuiDevelopmentException;
-import io.jmix.flowui.kit.component.HasAutofocus;
-import io.jmix.flowui.kit.component.HasPlaceholder;
-import io.jmix.flowui.kit.component.HasTitle;
-import io.jmix.flowui.kit.component.SupportsFormatter;
+import io.jmix.flowui.kit.component.*;
 import io.jmix.flowui.kit.component.formatter.Formatter;
 import io.jmix.flowui.xml.layout.ComponentLoader.Context;
 import io.jmix.flowui.xml.layout.loader.PropertyShortcutLoader;
@@ -289,8 +286,14 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
         loadMinHeight(component, element);
     }
 
-    public Optional<VaadinIcon> loadIcon(com.vaadin.flow.component.Component component, Element element) {
-        return loaderSupport.loadEnum(element, VaadinIcon.class, "icon");
+    public Optional<Icon> loadIcon(Element element) {
+        return loaderSupport.loadString(element, "icon")
+                .map(FlowuiComponentUtils::parseIcon);
+    }
+
+    public void loadIcon(Element element, Consumer<Icon> setter) {
+        loadIcon(element)
+                .ifPresent(setter);
     }
 
     public Optional<String> loadShortcut(Element element) {
@@ -391,11 +394,10 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
     }
 
     protected void split(String names, Consumer<String> setter) {
-        for (String split : names.split(",")) {
-            String trimmed = split.trim();
-
-            if (!Strings.isNullOrEmpty(trimmed)) {
-                setter.accept(trimmed);
+        String[] values = names.split("[\\s,]+");
+        for (String value : values) {
+            if (!Strings.isNullOrEmpty(value)) {
+                setter.accept(value);
             }
         }
     }

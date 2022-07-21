@@ -17,6 +17,7 @@
 package io.jmix.flowui.kit.action;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.component.FlowuiComponentUtils;
@@ -87,13 +88,13 @@ public class BaseAction extends AbstractAction {
         return this;
     }
 
-    public BaseAction withIcon(@Nullable String icon) {
+    public BaseAction withIcon(@Nullable Icon icon) {
         setIcon(icon);
         return this;
     }
 
     public BaseAction withIcon(@Nullable VaadinIcon icon) {
-        setIcon(FlowuiComponentUtils.iconToSting(icon));
+        setIcon(FlowuiComponentUtils.convertToIcon(icon));
         return this;
     }
 

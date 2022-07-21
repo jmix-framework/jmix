@@ -66,7 +66,7 @@ public class CreateAction<E> extends ListDataComponentAction<CreateAction<E>, E>
         super.initAction();
 
         this.variant = ActionVariant.PRIMARY;
-        this.icon = FlowuiComponentUtils.iconToSting(VaadinIcon.PLUS);
+        this.icon = FlowuiComponentUtils.convertToIcon(VaadinIcon.PLUS);
     }
 
     @Nullable

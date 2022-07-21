@@ -49,7 +49,7 @@ public class LogoutAction extends BaseAction implements ExecutableAction, Applic
     }
 
     protected void initAction() {
-        this.icon = FlowuiComponentUtils.iconToSting(VaadinIcon.SIGN_OUT);
+        this.icon = FlowuiComponentUtils.convertToIcon(VaadinIcon.SIGN_OUT);
     }
 
     @Autowired

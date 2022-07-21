@@ -41,7 +41,7 @@ public class EntityClearAction<E> extends PickerAction<EntityClearAction<E>, Ent
     protected void initAction() {
         super.initAction();
 
-        this.icon = FlowuiComponentUtils.iconToSting(VaadinIcon.CLOSE);
+        this.icon = FlowuiComponentUtils.convertToIcon(VaadinIcon.CLOSE);
     }
 
     @Autowired

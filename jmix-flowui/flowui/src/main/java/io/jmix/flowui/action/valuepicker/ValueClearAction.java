@@ -30,7 +30,7 @@ public class ValueClearAction<V> extends PickerAction<ValueClearAction<V>, Picke
     protected void initAction() {
         super.initAction();
 
-        this.icon = FlowuiComponentUtils.iconToSting(VaadinIcon.CLOSE);
+        this.icon = FlowuiComponentUtils.convertToIcon(VaadinIcon.CLOSE);
     }
 
     @Autowired

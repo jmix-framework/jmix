@@ -52,7 +52,7 @@ public class RemoveAction<E> extends SecuredListDataComponentAction<RemoveAction
         setConstraintEntityOp(EntityOp.DELETE);
 
         variant = ActionVariant.DANGER;
-        icon = FlowuiComponentUtils.iconToSting(VaadinIcon.CLOSE);
+        icon = FlowuiComponentUtils.convertToIcon(VaadinIcon.CLOSE);
     }
 
     @Autowired

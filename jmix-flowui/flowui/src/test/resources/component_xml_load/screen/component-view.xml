@@ -39,7 +39,7 @@
     <layout>
         <avatar id="avatarId"
                 abbreviation="abbreviationString"
-                className="cssClassName1, cssClassName2"
+                className=",cssClassName1  ,,,   cssClassName2  "
                 colorIndex="50"
                 height="50px"
                 image="imageString"
@@ -98,7 +98,7 @@
                 minHeight="40px"
                 minWidth="80px"
                 text="textString"
-                themeName="large, primary"
+                themeName="large,,,  ,, primary"
                 title="buttonTitle"
                 visible="true"
                 whiteSpace="PRE"

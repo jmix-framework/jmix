@@ -25,7 +25,7 @@ public class DetailCommitAction<E> extends OperationResultViewAction<DetailCommi
     protected void initAction() {
         super.initAction();
 
-        this.icon = FlowuiComponentUtils.iconToSting(VaadinIcon.ARCHIVE);
+        this.icon = FlowuiComponentUtils.convertToIcon(VaadinIcon.ARCHIVE);
     }
 
     @Autowired

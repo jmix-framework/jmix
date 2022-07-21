@@ -26,7 +26,7 @@ public class LookupDiscardAction<E> extends OperationResultViewAction<LookupDisc
     protected void initAction() {
         super.initAction();
 
-        this.icon = FlowuiComponentUtils.iconToSting(VaadinIcon.BAN);
+        this.icon = FlowuiComponentUtils.convertToIcon(VaadinIcon.BAN);
     }
 
     @Autowired

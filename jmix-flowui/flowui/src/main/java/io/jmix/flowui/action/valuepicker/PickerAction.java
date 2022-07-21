@@ -1,6 +1,7 @@
 package io.jmix.flowui.action.valuepicker;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.flowui.action.ExecutableAction;
 import io.jmix.flowui.action.SecuredBaseAction;
@@ -87,7 +88,7 @@ public abstract class PickerAction<A extends PickerAction<A, C, V>, C extends Pi
 
     @SuppressWarnings("unchecked")
     @Override
-    public A withIcon(@Nullable String icon) {
+    public A withIcon(@Nullable Icon icon) {
         return ((A) super.withIcon(icon));
     }
 

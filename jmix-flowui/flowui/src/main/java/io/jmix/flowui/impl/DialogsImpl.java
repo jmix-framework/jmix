@@ -6,7 +6,6 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Paragraph;
-import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import io.jmix.core.Messages;
@@ -58,11 +57,7 @@ public class DialogsImpl implements Dialogs {
             button.setText(action.getText());
         }
 
-        if (action.getIcon() == null) {
-            button.setIcon(null);
-        } else {
-            button.setIcon(new Icon(action.getIcon()));
-        }
+        button.setIcon(action.getIcon());
 
         button.addClickListener(event -> {
             action.actionPerform(dialog);

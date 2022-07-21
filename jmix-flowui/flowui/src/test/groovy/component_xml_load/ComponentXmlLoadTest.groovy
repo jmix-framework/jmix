@@ -18,7 +18,6 @@ package component_xml_load
 
 import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.HasText
-import com.vaadin.flow.component.icon.Icon
 import com.vaadin.flow.component.icon.VaadinIcon
 import com.vaadin.flow.component.progressbar.ProgressBarVariant
 import component_xml_load.screen.ComponentView
@@ -93,7 +92,7 @@ class ComponentXmlLoadTest extends FlowuiTestSpecification {
             id.get() == "buttonWithActionId"
             action == componentView.buttonAction
             icon.element.getAttribute("icon")
-                    == new Icon(componentView.buttonAction.icon).element.getAttribute("icon")
+                    == componentView.buttonAction.icon.element.getAttribute("icon")
             enabled == componentView.buttonAction.enabled
             visible == componentView.buttonAction.visible
             text == componentView.buttonAction.text

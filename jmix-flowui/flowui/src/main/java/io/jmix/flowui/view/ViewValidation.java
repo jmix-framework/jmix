@@ -4,6 +4,7 @@ import com.google.common.collect.Iterables;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Focusable;
 import com.vaadin.flow.component.HasComponents;
+import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.notification.Notification;
 import io.jmix.core.Messages;
 import io.jmix.core.common.util.Preconditions;
@@ -203,7 +204,7 @@ public class ViewValidation {
                                 .withText(messages.getMessage("dialogs.closeUnsaved.discard"))
                                 .withHandler(__ -> result.discard()),
                         new DialogAction(DialogAction.Type.CANCEL)
-                                .withIcon((String) null)
+                                .withIcon((Icon) null)
                                 .withHandler(__ -> {
                                     UiComponentUtils.findFocusComponent(origin)
                                             .ifPresent(Focusable::focus);

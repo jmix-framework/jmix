@@ -17,6 +17,7 @@
 package io.jmix.flowui.kit.action;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.component.KeyCombination;
 
@@ -49,9 +50,9 @@ public interface Action {
     void setVisible(boolean visible);
 
     @Nullable
-    String getIcon();
+    Icon getIcon();
 
-    void setIcon(@Nullable String icon);
+    void setIcon(@Nullable Icon icon);
 
     @Nullable
     String getDescription();

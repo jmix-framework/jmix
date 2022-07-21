@@ -1,5 +1,6 @@
 package io.jmix.flowui.action;
 
+import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.action.ActionVariant;
@@ -78,14 +79,14 @@ public class SecuredBaseAction extends BaseAction implements SecuredAction {
     }
 
     @Override
-    public SecuredBaseAction withIcon(@Nullable String icon) {
+    public SecuredBaseAction withIcon(@Nullable Icon icon) {
         setIcon(icon);
         return this;
     }
 
     @Override
     public SecuredBaseAction withIcon(@Nullable VaadinIcon icon) {
-        setIcon(FlowuiComponentUtils.iconToSting(icon));
+        setIcon(FlowuiComponentUtils.convertToIcon(icon));
         return this;
     }
 

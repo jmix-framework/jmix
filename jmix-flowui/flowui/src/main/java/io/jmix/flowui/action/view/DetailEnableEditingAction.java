@@ -26,7 +26,7 @@ public class DetailEnableEditingAction<E>
     protected void initAction() {
         super.initAction();
 
-        this.icon = FlowuiComponentUtils.iconToSting(VaadinIcon.PENCIL);
+        this.icon = FlowuiComponentUtils.convertToIcon(VaadinIcon.PENCIL);
     }
 
     @Autowired

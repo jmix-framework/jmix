@@ -62,7 +62,7 @@ public class EditAction<E> extends SecuredListDataComponentAction<EditAction<E>,
         super.initAction();
 
         setConstraintEntityOp(EntityOp.UPDATE);
-        this.icon = FlowuiComponentUtils.iconToSting(VaadinIcon.PENCIL);
+        this.icon = FlowuiComponentUtils.convertToIcon(VaadinIcon.PENCIL);
     }
 
     @Nullable

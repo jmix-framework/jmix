@@ -55,7 +55,7 @@ public class EntityOpenAction<E> extends PickerAction<EntityOpenAction<E>, Entit
     protected void initAction() {
         super.initAction();
 
-        this.icon = FlowuiComponentUtils.iconToSting(VaadinIcon.SEARCH);
+        this.icon = FlowuiComponentUtils.convertToIcon(VaadinIcon.SEARCH);
     }
 
     @Autowired

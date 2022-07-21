@@ -17,13 +17,13 @@
 package io.jmix.flowui.kit.component;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.dom.Element;
 import io.jmix.flowui.kit.action.Action;
 
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 
 public final class FlowuiComponentUtils {
@@ -31,13 +31,23 @@ public final class FlowuiComponentUtils {
     private FlowuiComponentUtils() {
     }
 
-    @Nullable
-    public static String iconToSting(@Nullable VaadinIcon icon) {
-        if (icon == null) {
-            return null;
-        }
+    public static Icon parseIcon(String iconString) {
+        if (iconString.contains(":")) {
+            String[] parts = iconString.split(":");
+            if (parts.length != 2) {
+                throw new IllegalStateException("Unexpected number of icon parts, must be two");
+            }
 
-        return icon.name().toLowerCase(Locale.ENGLISH).replace('_', '-');
+            return new Icon(parts[0], parts[1]);
+        } else {
+            VaadinIcon vaadinIcon = VaadinIcon.valueOf(iconString);
+            return convertToIcon(vaadinIcon);
+        }
+    }
+
+    @Nullable
+    public static Icon convertToIcon(@Nullable VaadinIcon icon) {
+        return icon != null ? icon.create() : null;
     }
 
     public static void addComponentsToSlot(Element element, String slot, Component... components) {

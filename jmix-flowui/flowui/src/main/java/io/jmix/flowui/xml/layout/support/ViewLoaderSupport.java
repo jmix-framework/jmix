@@ -16,15 +16,14 @@
 
 package io.jmix.flowui.xml.layout.support;
 
-import io.jmix.core.annotation.Internal;
 import io.jmix.flowui.facet.Facet;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.model.ViewData;
 import io.jmix.flowui.model.impl.ViewDataXmlLoader;
+import io.jmix.flowui.view.UiControllerUtils;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewActions;
 import io.jmix.flowui.view.ViewFacets;
-import io.jmix.flowui.view.UiControllerUtils;
 import io.jmix.flowui.xml.facet.FacetLoader;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.loader.ComponentLoaderContext;
@@ -41,7 +40,6 @@ import java.util.List;
 
 import static com.google.common.base.Preconditions.checkState;
 
-@Internal
 @Component("flowui_ViewLoaderSupport")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ViewLoaderSupport implements ApplicationContextAware {

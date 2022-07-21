@@ -16,7 +16,6 @@
 
 package io.jmix.flowui.xml.layout.support;
 
-import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.security.EntityOp;
 import io.jmix.flowui.Actions;
 import io.jmix.flowui.action.SecurityConstraintAction;
@@ -25,7 +24,6 @@ import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.action.BaseAction;
-import io.jmix.flowui.kit.component.FlowuiComponentUtils;
 import io.jmix.flowui.kit.component.HasActions;
 import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.xml.layout.ComponentLoader.Context;
@@ -39,6 +37,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
+
+import static io.jmix.flowui.kit.component.FlowuiComponentUtils.parseIcon;
 
 @Component("flowui_ActionLoaderSupport")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
@@ -90,9 +90,9 @@ public class ActionLoaderSupport implements ApplicationContextAware {
         loaderSupport.loadEnum(element, ActionVariant.class, "actionVariant",
                 ((Action) targetAction)::setVariant);
 
-        loaderSupport.loadEnum(element, VaadinIcon.class, "icon")
-                .ifPresent(vaadinIcon ->
-                        targetAction.setIcon(FlowuiComponentUtils.iconToSting(vaadinIcon)));
+        loaderSupport.loadString(element, "icon")
+                .ifPresent(iconString ->
+                        targetAction.setIcon(parseIcon(iconString)));
 
         componentLoader().loadShortcut(element).ifPresent(shortcut ->
                 targetAction.setShortcutCombination(KeyCombination.create(shortcut)));

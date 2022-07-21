@@ -39,7 +39,7 @@ public class LookupSelectAction<E> extends OperationResultViewAction<LookupSelec
     protected void initAction() {
         super.initAction();
 
-        this.icon = FlowuiComponentUtils.iconToSting(VaadinIcon.CHECK);
+        this.icon = FlowuiComponentUtils.convertToIcon(VaadinIcon.CHECK);
         this.variant = ActionVariant.PRIMARY;
     }
 

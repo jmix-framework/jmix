@@ -3,7 +3,6 @@ package io.jmix.flowui.action.binder.component;
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEventListener;
-import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.JmixOrder;
 import io.jmix.flowui.action.binder.ActionBinder;
@@ -47,7 +46,7 @@ public class ValuePickerButtonActionBinder implements ComponentActionsHolderBind
         component.setVisible(action.isVisible());
 
         if (action.getIcon() != null) {
-            component.setIcon(new Icon(action.getIcon()));
+            component.setIcon(action.getIcon());
         }
 
         KeyCombination shortcutCombination = action.getShortcutCombination();
@@ -75,7 +74,7 @@ public class ValuePickerButtonActionBinder implements ComponentActionsHolderBind
                     component.setVisible(action.isVisible());
                     break;
                 case Action.PROP_ICON:
-                    component.setIcon(new Icon(action.getIcon()));
+                    component.setIcon(action.getIcon());
                     break;
                 case Action.PROP_SHORTCUT:
                     ActionBinderUtils.refreshShortcutProperty(component, (KeyCombination) event.getNewValue(), (KeyCombination) event.getOldValue(), registrations);

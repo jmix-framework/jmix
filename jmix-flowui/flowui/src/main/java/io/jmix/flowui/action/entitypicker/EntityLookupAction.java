@@ -51,7 +51,7 @@ public class EntityLookupAction<E> extends PickerAction<EntityLookupAction<E>, E
     protected void initAction() {
         super.initAction();
 
-        this.icon = FlowuiComponentUtils.iconToSting(VaadinIcon.ELLIPSIS_DOTS_H);
+        this.icon = FlowuiComponentUtils.convertToIcon(VaadinIcon.ELLIPSIS_DOTS_H);
     }
 
     @Autowired

@@ -30,7 +30,7 @@ public class ViewCloseAction extends OperationResultViewAction<ViewCloseAction, 
     protected void initAction() {
         super.initAction();
 
-        this.icon = FlowuiComponentUtils.iconToSting(VaadinIcon.BAN);
+        this.icon = FlowuiComponentUtils.convertToIcon(VaadinIcon.BAN);
     }
 
     @Autowired

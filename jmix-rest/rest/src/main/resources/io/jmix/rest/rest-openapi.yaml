@@ -1085,6 +1085,12 @@ paths:
             header.
           schema:
             type: string
+        - name: storageName
+          in: query
+          description: |
+            The file storage name. If this parameter is missing then the default file storage of the application is used.
+          schema:
+            type: string
       responses:
         201:
           description: |

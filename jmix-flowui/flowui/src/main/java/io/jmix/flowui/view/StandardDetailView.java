@@ -5,6 +5,8 @@ import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.notification.Notification.Position;
 import com.vaadin.flow.router.BeforeEnterEvent;
+import com.vaadin.flow.router.BeforeLeaveEvent;
+import com.vaadin.flow.router.BeforeLeaveEvent.ContinueNavigationAction;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.*;
 import io.jmix.core.accesscontext.InMemoryCrudEntityContext;
@@ -18,9 +20,11 @@ import io.jmix.flowui.accesscontext.FlowuiEntityContext;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.component.validation.group.UiCrossFieldChecks;
 import io.jmix.flowui.model.*;
-import io.jmix.flowui.view.navigation.UrlIdSerializer;
 import io.jmix.flowui.util.OperationResult;
 import io.jmix.flowui.util.UnknownOperationResult;
+import io.jmix.flowui.view.navigation.UrlIdSerializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -30,6 +34,8 @@ import java.util.Optional;
 import static java.util.Objects.requireNonNull;
 
 public class StandardDetailView<T> extends StandardView implements DetailView<T>, ReadOnlyAwareView {
+
+    private static final Logger log = LoggerFactory.getLogger(StandardDetailView.class);
 
     public static final String NEW_ENTITY_ID = "new";
 
@@ -214,12 +220,14 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
 
     @Override
     public OperationResult closeWithCommit() {
+        log.debug("{} - closeWithCommit", getClass().getSimpleName());
         return commitChanges()
                 .compose(() -> close(StandardOutcome.COMMIT));
     }
 
     @Override
     public OperationResult closeWithDiscard() {
+        log.debug("{} - closeWithDiscard", getClass().getSimpleName());
         return close(StandardOutcome.DISCARD);
     }
 
@@ -289,26 +297,69 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
     private void preventUnsavedChanges(BeforeCloseEvent event) {
         CloseAction action = event.getCloseAction();
 
+        log.debug("{} - preventUnsavedChanges - enter", getClass().getSimpleName());
+
         if (action instanceof ChangeTrackerCloseAction
                 && ((ChangeTrackerCloseAction) action).isCheckForUnsavedChanges()
                 && hasUnsavedChanges()) {
+            log.debug("{} - preventUnsavedChanges - has unsaved changes", getClass().getSimpleName());
             UnknownOperationResult result = new UnknownOperationResult();
 
             boolean useSaveConfirmation = getApplicationContext()
                     .getBean(FlowuiViewProperties.class).isUseSaveConfirmation();
-            if (useSaveConfirmation) {
-                getViewValidation().showSaveConfirmationDialog(this)
-                        .onCommit(() -> result.resume(closeWithCommit()))
-                        .onDiscard(() -> result.resume(closeWithDiscard()))
-                        .onCancel(result::fail);
+
+            if (action instanceof NavigateCloseAction) {
+                log.debug("{} - preventUnsavedChanges - NavigateCloseAction", getClass().getSimpleName());
+                BeforeLeaveEvent beforeLeaveEvent = ((NavigateCloseAction) action).getBeforeLeaveEvent();
+                ContinueNavigationAction navigationAction = beforeLeaveEvent.postpone();
+
+                if (useSaveConfirmation) {
+                    getViewValidation().showSaveConfirmationDialog(this)
+                            .onCommit(() -> result.resume(navigateWithCommit(navigationAction)))
+                            .onDiscard(() -> result.resume(navigateWithDiscard(navigationAction)))
+                            .onCancel(result::fail);
+                } else {
+                    getViewValidation().showUnsavedChangesDialog(this)
+                            .onDiscard(() -> result.resume(navigateWithDiscard(navigationAction)))
+                            .onCancel(result::fail);
+                }
             } else {
-                getViewValidation().showUnsavedChangesDialog(this)
-                        .onDiscard(() -> result.resume(closeWithDiscard()))
-                        .onCancel(result::fail);
+                log.debug("{} - preventUnsavedChanges - StandardCloseAction", getClass().getSimpleName());
+                if (useSaveConfirmation) {
+                    getViewValidation().showSaveConfirmationDialog(this)
+                            .onCommit(() -> result.resume(closeWithCommit()))
+                            .onDiscard(() -> result.resume(closeWithDiscard()))
+                            .onCancel(result::fail);
+                } else {
+                    getViewValidation().showUnsavedChangesDialog(this)
+                            .onDiscard(() -> result.resume(closeWithDiscard()))
+                            .onCancel(result::fail);
+                }
             }
 
             event.preventWindowClose(result);
         }
+    }
+
+    private OperationResult navigateWithDiscard(ContinueNavigationAction navigationAction) {
+        log.debug("{} - navigateWithDiscard", getClass().getSimpleName());
+        return navigate(navigationAction, StandardOutcome.DISCARD.getCloseAction());
+    }
+
+    private OperationResult navigateWithCommit(ContinueNavigationAction navigationAction) {
+        log.debug("{} - navigateWithCommit", getClass().getSimpleName());
+        return commitChanges()
+                .compose(() -> navigate(navigationAction, StandardOutcome.COMMIT.getCloseAction()));
+    }
+
+    private OperationResult navigate(ContinueNavigationAction navigationAction,
+                                     CloseAction closeAction) {
+        navigationAction.proceed();
+
+        AfterCloseEvent afterCloseEvent = new AfterCloseEvent(this, closeAction);
+        fireEvent(afterCloseEvent);
+
+        return OperationResult.success();
     }
 
     @Override
@@ -382,8 +433,6 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
     @Override
     public void setEntityToEdit(T entity) {
         this.entityToEdit = entity;
-        // TODO: gg, why we don't setup 'entity to edit' here?
-//        setupEntityToEdit();
     }
 
     private void setupEntityToEdit() {

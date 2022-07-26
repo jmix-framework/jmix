@@ -7,8 +7,6 @@ import io.jmix.flowui.model.ViewData;
 import io.jmix.flowui.sys.ViewSupport;
 import io.jmix.flowui.sys.event.UiEventsManager;
 import io.jmix.flowui.util.OperationResult;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
@@ -20,8 +18,6 @@ import static io.jmix.flowui.component.UiComponentUtils.findFocusComponent;
 
 public class View<T extends Component> extends Composite<T>
         implements BeforeEnterObserver, AfterNavigationObserver, BeforeLeaveObserver {
-
-    private static final Logger log = LoggerFactory.getLogger(View.class);
 
     private ApplicationContext applicationContext;
 
@@ -78,19 +74,14 @@ public class View<T extends Component> extends Composite<T>
 
     @Override
     public void beforeLeave(BeforeLeaveEvent event) {
-        log.debug("{} - beforeLeave", getClass().getSimpleName());
         if (!event.isPostponed()) {
-            log.debug("{} - beforeLeave - !Postponed", getClass().getSimpleName());
-
             if (!closeActionPerformed) {
-                log.debug("{} - beforeLeave - !closeActionPerformed", getClass().getSimpleName());
-
                 CloseAction closeAction = new NavigateCloseAction(event);
                 BeforeCloseEvent beforeCloseEvent = new BeforeCloseEvent(this, closeAction);
                 fireEvent(beforeCloseEvent);
 
                 if (beforeCloseEvent.isClosePrevented()) {
-                    log.debug("{} - beforeLeave - ClosePrevented", getClass().getSimpleName());
+                    closeActionPerformed = false;
                     return;
                 }
 
@@ -99,13 +90,11 @@ public class View<T extends Component> extends Composite<T>
             }
         }
 
-        log.debug("{} - beforeLeave - closeActionPerformed = false", getClass().getSimpleName());
         closeActionPerformed = false;
     }
 
     @Override
     protected void onDetach(DetachEvent detachEvent) {
-        log.debug("{} - onDetach", getClass().getSimpleName());
         super.onDetach(detachEvent);
 
         removeApplicationListeners();
@@ -141,18 +130,14 @@ public class View<T extends Component> extends Composite<T>
     }
 
     public OperationResult close(CloseAction closeAction) {
-        log.debug("{} - close - {}", getClass().getSimpleName(), closeAction);
-
         BeforeCloseEvent beforeCloseEvent = new BeforeCloseEvent(this, closeAction);
         fireEvent(beforeCloseEvent);
         if (beforeCloseEvent.isClosePrevented()) {
-            log.debug("{} - close - ClosePrevented", getClass().getSimpleName());
             return beforeCloseEvent.getCloseResult()
                     .orElse(OperationResult.fail());
         }
 
 
-        log.debug("{} - close - closeActionPerformed = true", getClass().getSimpleName());
         closeActionPerformed = true;
 
         closeDelegate.accept(this);

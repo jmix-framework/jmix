@@ -23,8 +23,6 @@ import io.jmix.flowui.model.*;
 import io.jmix.flowui.util.OperationResult;
 import io.jmix.flowui.util.UnknownOperationResult;
 import io.jmix.flowui.view.navigation.UrlIdSerializer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -34,8 +32,6 @@ import java.util.Optional;
 import static java.util.Objects.requireNonNull;
 
 public class StandardDetailView<T> extends StandardView implements DetailView<T>, ReadOnlyAwareView {
-
-    private static final Logger log = LoggerFactory.getLogger(StandardDetailView.class);
 
     public static final String NEW_ENTITY_ID = "new";
 
@@ -220,14 +216,12 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
 
     @Override
     public OperationResult closeWithCommit() {
-        log.debug("{} - closeWithCommit", getClass().getSimpleName());
         return commitChanges()
                 .compose(() -> close(StandardOutcome.COMMIT));
     }
 
     @Override
     public OperationResult closeWithDiscard() {
-        log.debug("{} - closeWithDiscard", getClass().getSimpleName());
         return close(StandardOutcome.DISCARD);
     }
 
@@ -297,19 +291,15 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
     private void preventUnsavedChanges(BeforeCloseEvent event) {
         CloseAction action = event.getCloseAction();
 
-        log.debug("{} - preventUnsavedChanges - enter", getClass().getSimpleName());
-
         if (action instanceof ChangeTrackerCloseAction
                 && ((ChangeTrackerCloseAction) action).isCheckForUnsavedChanges()
                 && hasUnsavedChanges()) {
-            log.debug("{} - preventUnsavedChanges - has unsaved changes", getClass().getSimpleName());
             UnknownOperationResult result = new UnknownOperationResult();
 
             boolean useSaveConfirmation = getApplicationContext()
                     .getBean(FlowuiViewProperties.class).isUseSaveConfirmation();
 
             if (action instanceof NavigateCloseAction) {
-                log.debug("{} - preventUnsavedChanges - NavigateCloseAction", getClass().getSimpleName());
                 BeforeLeaveEvent beforeLeaveEvent = ((NavigateCloseAction) action).getBeforeLeaveEvent();
                 ContinueNavigationAction navigationAction = beforeLeaveEvent.postpone();
 
@@ -324,7 +314,6 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
                             .onCancel(result::fail);
                 }
             } else {
-                log.debug("{} - preventUnsavedChanges - StandardCloseAction", getClass().getSimpleName());
                 if (useSaveConfirmation) {
                     getViewValidation().showSaveConfirmationDialog(this)
                             .onCommit(() -> result.resume(closeWithCommit()))
@@ -342,12 +331,10 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
     }
 
     private OperationResult navigateWithDiscard(ContinueNavigationAction navigationAction) {
-        log.debug("{} - navigateWithDiscard", getClass().getSimpleName());
         return navigate(navigationAction, StandardOutcome.DISCARD.getCloseAction());
     }
 
     private OperationResult navigateWithCommit(ContinueNavigationAction navigationAction) {
-        log.debug("{} - navigateWithCommit", getClass().getSimpleName());
         return commitChanges()
                 .compose(() -> navigate(navigationAction, StandardOutcome.COMMIT.getCloseAction()));
     }

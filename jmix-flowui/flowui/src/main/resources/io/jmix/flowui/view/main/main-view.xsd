@@ -34,7 +34,7 @@
                     <xs:complexType>
                         <xs:sequence>
                             <xs:choice maxOccurs="unbounded">
-                                <xs:element name="action" type="layout:baseAction"/>
+                                <xs:element name="action" type="layout:viewAction"/>
                             </xs:choice>
                         </xs:sequence>
                     </xs:complexType>

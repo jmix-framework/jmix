@@ -1708,12 +1708,31 @@
         <xs:attribute name="visible" type="xs:boolean"/>
         <xs:attribute name="text" type="resourceString"/>
         <xs:attribute name="description" type="resourceString"/>
-        <xs:attribute name="trackSelection" type="xs:boolean"/>
         <xs:attribute name="actionVariant" type="actionVariant"/>
 
         <xs:attributeGroup ref="hasIcon"/>
         <xs:attributeGroup ref="requiresId"/>
         <xs:attributeGroup ref="hasEnabled"/>
+    </xs:complexType>
+
+    <xs:complexType name="viewAction">
+        <xs:complexContent>
+            <xs:extension base="baseAction"/>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="gridAction">
+        <xs:complexContent>
+            <xs:extension base="baseAction">
+                <xs:attribute name="trackSelection" type="xs:boolean"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="pickerAction">
+        <xs:complexContent>
+            <xs:extension base="baseAction"/>
+        </xs:complexContent>
     </xs:complexType>
 
     <xs:complexType name="baseHtmlComponent">
@@ -1798,14 +1817,6 @@
                 <xs:attributeGroup ref="hasSecurityConstraint"/>
             </xs:extension>
         </xs:complexContent>
-    </xs:complexType>
-
-    <xs:complexType name="actionsList">
-        <xs:sequence>
-            <xs:choice maxOccurs="unbounded">
-                <xs:element name="action" type="baseAction"/>
-            </xs:choice>
-        </xs:sequence>
     </xs:complexType>
 
     <xs:complexType name="unorderedListHtmlContainer">
@@ -1966,7 +1977,15 @@
         <xs:complexContent>
             <xs:extension base="baseComponent">
                 <xs:all>
-                    <xs:element name="actions" minOccurs="0" type="actionsList"/>
+                    <xs:element name="actions" minOccurs="0">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:choice maxOccurs="unbounded">
+                                    <xs:element name="action" type="gridAction"/>
+                                </xs:choice>
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
                     <xs:element name="columns">
                         <xs:complexType>
                             <xs:sequence>
@@ -2133,7 +2152,15 @@
         <xs:complexContent>
             <xs:extension base="baseComponent">
                 <xs:sequence>
-                    <xs:element name="actions" minOccurs="0" type="actionsList"/>
+                    <xs:element name="actions" minOccurs="0">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:choice maxOccurs="unbounded">
+                                    <xs:element name="action" type="pickerAction"/>
+                                </xs:choice>
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
                 </xs:sequence>
 
                 <xs:attribute name="opened" type="xs:boolean"/>
@@ -2368,7 +2395,15 @@
         <xs:complexContent>
             <xs:extension base="baseFieldComponent">
                 <xs:sequence>
-                    <xs:element name="actions" minOccurs="0" type="actionsList"/>
+                    <xs:element name="actions" minOccurs="0">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:choice maxOccurs="unbounded">
+                                    <xs:element name="action" type="pickerAction"/>
+                                </xs:choice>
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
                     <xs:element name="formatter" minOccurs="0" type="formatterType"/>
                 </xs:sequence>
                 <xs:attribute name="invalid" type="xs:boolean"/>

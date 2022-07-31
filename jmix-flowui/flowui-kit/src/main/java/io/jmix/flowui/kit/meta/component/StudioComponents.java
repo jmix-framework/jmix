@@ -38,9 +38,9 @@ import io.jmix.flowui.kit.component.combobox.ComboBoxPicker;
 import io.jmix.flowui.kit.component.valuepicker.ValuePicker;
 import io.jmix.flowui.kit.component.valuepicker.ValuesPicker;
 import io.jmix.flowui.kit.meta.StudioComponent;
-import io.jmix.flowui.kit.meta.StudioUiKit;
 import io.jmix.flowui.kit.meta.StudioProperty;
 import io.jmix.flowui.kit.meta.StudioPropertyType;
+import io.jmix.flowui.kit.meta.StudioUiKit;
 
 @StudioUiKit
 public interface StudioComponents {
@@ -148,6 +148,8 @@ public interface StudioComponents {
             xmlElement = "button",
             icon = "io/jmix/flowui/kit/meta/icon/component/button.svg",
             properties = {
+                    @StudioProperty(xmlAttribute = "action", type = StudioPropertyType.ACTION_REF,
+                            classFqn = "io.jmix.flowui.kit.action.Action"),
                     @StudioProperty(xmlAttribute = "autofocus", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "className", type = StudioPropertyType.VALUES_LIST),

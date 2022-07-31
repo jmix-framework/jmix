@@ -21,6 +21,11 @@ package io.jmix.flowui.kit.meta;
  */
 public enum StudioPropertyType {
     /**
+     * Identifier of an action defined in view.
+     */
+    ACTION_REF,
+
+    /**
      * Big decimal type.
      */
     BIG_DECIMAL,
@@ -34,6 +39,11 @@ public enum StudioPropertyType {
      * Identifier of a component. Must be a valid Java identifier.
      */
     COMPONENT_ID,
+
+    /**
+     * Identifier of a component defined in view.
+     */
+    COMPONENT_REF,
 
     /**
      * Double type.
@@ -81,6 +91,11 @@ public enum StudioPropertyType {
      * Size value, e.g. width or height
      */
     SIZE,
+
+    /**
+     * Keyboard shortcut.
+     */
+    SHORTCUT,
 
     /**
      * String type.

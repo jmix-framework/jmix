@@ -60,7 +60,7 @@
               defaultValue="create,edit,remove"
               propertyType="MULTI_OPTION"
               preferences="true"
-              optionsString="create,edit,remove"/>
+              optionsString="${actionSearch.getWizardTableActions()}"/>
     <property caption="Multiselect"
               code="multiselect"
               propertyType="BOOLEAN"

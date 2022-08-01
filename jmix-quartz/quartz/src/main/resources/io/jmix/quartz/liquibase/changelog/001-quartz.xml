@@ -97,6 +97,7 @@
     </changeSet>
 
     <changeSet id="3" author="jmix-quartz">
+        <validCheckSum>8:13ec400b608f12c089d37b396ba47725</validCheckSum>
         <preConditions onFail="MARK_RAN">
             <not>
                 <tableExists tableName="${table_prefix}CALENDARS"/>
@@ -157,6 +158,7 @@
     </changeSet>
 
     <changeSet id="6" author="jmix-quartz">
+        <validCheckSum>8:8538bb45c0fac36c810dc26f1a00ce21</validCheckSum>
         <preConditions onFail="MARK_RAN">
             <not>
                 <tableExists tableName="${table_prefix}JOB_DETAILS"/>
@@ -204,6 +206,7 @@
     </changeSet>
 
     <changeSet id="7" author="jmix-quartz">
+        <validCheckSum>8:d38bcdc3bc2b60a9c097eeb8c36fb064</validCheckSum>
         <preConditions onFail="MARK_RAN">
             <not>
                 <tableExists tableName="${table_prefix}TRIGGERS"/>
@@ -312,6 +315,7 @@
     </changeSet>
 
     <changeSet id="8" author="jmix-quartz">
+        <validCheckSum>8:5632c6cdff61e6b15cadbdde809a15e4</validCheckSum>
         <preConditions onFail="MARK_RAN">
             <not>
                 <tableExists tableName="${table_prefix}BLOB_TRIGGERS"/>

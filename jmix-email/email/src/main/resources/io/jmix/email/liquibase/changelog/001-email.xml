@@ -6,7 +6,7 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
     <changeSet author="email" id="1" context="!cuba">
-
+        <validCheckSum>8:f5d8b1556a4edce419b77d8c0cb5a365</validCheckSum>
         <createTable tableName="EMAIL_SENDING_MESSAGE">
             <column name="ID" type="${uuid.type}">
                 <constraints primaryKey="true" nullable="false"/>

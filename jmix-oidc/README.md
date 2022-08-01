@@ -236,7 +236,11 @@ implementation("io.jmix.security:jmix-security-oauth2-starter")
 implementation("io.jmix.rest:jmix-rest-starter")
 ```
 
-If you are using an external OpenID Provider for issuing tokens, you don't longer need the `jmix-security-oauth2-starter`, and this dependency may be removed from the build.gradle.
+If you are using an external OpenID Provider for issuing tokens, you don't longer need the `jmix-security-oauth2-starter`, and this dependency must be removed from the build.gradle.
+
+```groovy
+implementation("io.jmix.security:jmix-security-oauth2-starter")
+```
 
 For local keycloak instance access tokens may be obtained by in the following way:
 

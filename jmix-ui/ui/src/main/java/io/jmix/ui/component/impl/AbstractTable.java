@@ -1329,6 +1329,11 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
     @SuppressWarnings("unchecked")
     @Nullable
     protected String getGeneratedCellStyle(Object itemId, @Nullable Object propertyId) {
+        if (itemId == null) {
+            // it is null for the aggregation row
+            return null;
+        }
+
         if (styleProviders == null) {
             return null;
         }

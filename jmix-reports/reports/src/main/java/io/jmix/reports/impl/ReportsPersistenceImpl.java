@@ -204,6 +204,7 @@ public class ReportsPersistenceImpl implements ReportsPersistence {
         }
         report.setDefaultTemplate(defaultTemplate);
         report.setTemplates(savedTemplates);
+        em.flush();
         return report;
     }
 

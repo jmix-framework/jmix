@@ -52,6 +52,14 @@ public class GetterConflictEntity extends BaseEntity {
     public boolean getPositiveInvoked = false;
     @Transient
     public boolean isPositiveInvoked = false;
+    @Transient
+    public boolean getCommissionInvoked = false;
+    @Transient
+    public boolean getIsCommissionInvoked = false;
+    @Transient
+    public boolean setIsCommissionInvoked = false;
+    @Transient
+    public boolean setCommissionInvoked = false;
 
 
     //Boolean property
@@ -177,4 +185,31 @@ public class GetterConflictEntity extends BaseEntity {
         getPositiveInvoked = true;
         return Boolean.TRUE.equals(positive) ? value : 0;
     }
+
+    @Column(name = "COMMISSION")
+    private String commission;
+
+    @Column(name = "IS_COMMISSION")
+    private String isCommission;
+
+    public String getCommission() {
+        getCommissionInvoked = true;
+        return commission;
+    }
+
+    public void setCommission(String commission) {
+        setCommissionInvoked = true;
+        this.commission = commission;
+    }
+
+    public String getIsCommission() {
+        getIsCommissionInvoked = true;
+        return isCommission;
+    }
+
+    public void setIsCommission(String isCommission) {
+        setIsCommissionInvoked = true;
+        this.isCommission = isCommission;
+    }
+
 }

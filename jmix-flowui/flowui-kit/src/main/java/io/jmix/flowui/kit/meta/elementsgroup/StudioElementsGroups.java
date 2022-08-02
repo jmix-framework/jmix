@@ -45,4 +45,14 @@ public interface StudioElementsGroups {
             }
     )
     void refresh();
+
+    @StudioElementsGroup(
+            name = "Properties",
+            elementClassFqn = "io.jmix.core.impl.keyvalue.KeyValueMetaProperty",
+            xmlElement = "properties",
+            icon = "io/jmix/flowui/kit/meta/icon/elementsgroup/properties.svg",
+            target = {"io.jmix.flowui.model.KeyValueContainer",
+                    "io.jmix.flowui.model.KeyValueCollectionLoader"}
+    )
+    void properties();
 }

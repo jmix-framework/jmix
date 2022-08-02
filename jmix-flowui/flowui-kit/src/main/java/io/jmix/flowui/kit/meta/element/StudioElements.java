@@ -27,6 +27,132 @@ import io.jmix.flowui.kit.meta.StudioUiKit;
 public interface StudioElements {
 
     @StudioElement(
+            name = "Instance",
+            classFqn = "io.jmix.flowui.model.InstancePropertyContainer",
+            xmlElement = "instance",
+            icon = "io/jmix/flowui/kit/meta/icon/datacomponent/instance.svg",
+            target = "io.jmix.flowui.model.InstanceContainer",
+            unsupportedTarget = {"io.jmix.flowui.model.KeyValueContainer",
+                    "io.jmix.flowui.model.KeyValueCollectionContainer"},
+            properties = {
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true),
+                    @StudioProperty(xmlAttribute = "property", type = StudioPropertyType.STRING, required = true),
+            }
+    )
+    void nestedInstance();
+
+    @StudioElement(
+            name = "Collection",
+            classFqn = "io.jmix.flowui.model.CollectionPropertyContainer",
+            xmlElement = "collection",
+            icon = "io/jmix/flowui/kit/meta/icon/datacomponent/collection.svg",
+            target = {"io.jmix.flowui.model.InstanceContainer"},
+            unsupportedTarget = {"io.jmix.flowui.model.KeyValueContainer",
+                    "io.jmix.flowui.model.KeyValueCollectionContainer"},
+            properties = {
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true),
+                    @StudioProperty(xmlAttribute = "property", type = StudioPropertyType.STRING, required = true),
+            }
+    )
+    void nestedCollection();
+
+    @StudioElement(
+            name = "Loader",
+            classFqn = "io.jmix.flowui.model.InstanceLoader",
+            xmlElement = "loader",
+            target = "io.jmix.flowui.model.InstanceContainer",
+            unsupportedTarget = {"io.jmix.flowui.model.KeyValueContainer",
+                    "io.jmix.flowui.model.KeyValueCollectionContainer",
+                    "io.jmix.flowui.model.CollectionContainer"},
+            properties = {
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "dynamicAttributes", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "firstResult", type = StudioPropertyType.INTEGER,
+                            defaultValue = "0"),
+                    @StudioProperty(xmlAttribute = "maxResults", type = StudioPropertyType.INTEGER,
+                            defaultValue = "0"),
+                    @StudioProperty(xmlAttribute = "cacheable", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "provided", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "query", type = StudioPropertyType.JPA_QUERY)
+            }
+    )
+    void instanceLoader();
+
+    @StudioElement(
+            name = "Loader",
+            classFqn = "io.jmix.flowui.model.CollectionLoader",
+            xmlElement = "loader",
+            target = "io.jmix.flowui.model.CollectionContainer",
+            unsupportedTarget = {"io.jmix.flowui.model.KeyValueContainer",
+                    "io.jmix.flowui.model.KeyValueCollectionContainer"},
+            properties = {
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "dynamicAttributes", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "firstResult", type = StudioPropertyType.INTEGER,
+                            defaultValue = "0"),
+                    @StudioProperty(xmlAttribute = "maxResults", type = StudioPropertyType.INTEGER,
+                            defaultValue = "0"),
+                    @StudioProperty(xmlAttribute = "cacheable", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "provided", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "query", type = StudioPropertyType.JPA_QUERY)
+            }
+    )
+    void collectionLoader();
+
+    @StudioElement(
+            name = "Loader",
+            classFqn = "io.jmix.flowui.model.KeyValueInstanceLoader",
+            xmlElement = "loader",
+            target = "io.jmix.flowui.model.KeyValueContainer",
+            unsupportedTarget = {"io.jmix.flowui.model.CollectionContainer",
+                    "io.jmix.flowui.model.KeyValueCollectionContainer"},
+            properties = {
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "provided", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "store", type = StudioPropertyType.STORE)
+            }
+    )
+    void keyValueInstanceLoader();
+
+    @StudioElement(
+            name = "Loader",
+            classFqn = "io.jmix.flowui.model.KeyValueCollectionLoader",
+            xmlElement = "loader",
+            target = "io.jmix.flowui.model.KeyValueCollectionContainer",
+            properties = {
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "firstResult", type = StudioPropertyType.INTEGER,
+                            defaultValue = "0"),
+                    @StudioProperty(xmlAttribute = "maxResults", type = StudioPropertyType.INTEGER,
+                            defaultValue = "0"),
+                    @StudioProperty(xmlAttribute = "provided", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "store", type = StudioPropertyType.STORE)
+            }
+    )
+    void keyValueCollectionLoader();
+
+    @StudioElement(
+            name = "Property",
+            classFqn = "io.jmix.core.impl.keyvalue.KeyValueMetaProperty",
+            xmlElement = "property",
+            icon = "io/jmix/flowui/kit/meta/icon/element/property.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.STRING, required = true),
+                    @StudioProperty(xmlAttribute = "datatype", type = StudioPropertyType.DATATYPE_ID),
+                    @StudioProperty(xmlAttribute = "class", type = StudioPropertyType.ENTITY_CLASS)
+            }
+    )
+    void property();
+
+    @StudioElement(
             name = "CollectionFormatter",
             classFqn = "io.jmix.flowui.component.formatter.CollectionFormatter",
             xmlElement = "collection",

@@ -46,14 +46,44 @@ public enum StudioPropertyType {
     COMPONENT_REF,
 
     /**
+     * ID of a collection data container.
+     */
+    COLLECTION_DATA_CONTAINER_REF,
+
+    /**
+     * ID of a data loader.
+     */
+    DATA_LOADER_REF,
+
+    /**
+     * ID of a data container
+     */
+    DATA_CONTAINER_REF,
+
+    /**
+     * ID of a datatype.
+     */
+    DATATYPE_ID,
+
+    /**
      * Double type.
      */
     DOUBLE,
 
     /**
+     * FQN of Entity class.
+     */
+    ENTITY_CLASS,
+
+    /**
      * Value from a strict list of property options.
      */
     ENUMERATION,
+
+    /**
+     * Fetch plan name.
+     */
+    FETCH_PLAN,
 
     /**
      * Float type.
@@ -77,6 +107,11 @@ public enum StudioPropertyType {
     LOCALIZED_STRING,
 
     /**
+     * JPA QL string.
+     */
+    JPA_QUERY,
+
+    /**
      * Long type.
      */
     LONG,
@@ -96,6 +131,11 @@ public enum StudioPropertyType {
      * Keyboard shortcut.
      */
     SHORTCUT,
+
+    /**
+     * Data store name.
+     */
+    STORE,
 
     /**
      * String type.

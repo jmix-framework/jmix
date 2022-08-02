@@ -16,6 +16,8 @@
 
 package io.jmix.flowui.kit.meta.element;
 
+import com.vaadin.flow.component.accordion.AccordionPanel;
+import com.vaadin.flow.component.tabs.Tab;
 import io.jmix.flowui.kit.meta.StudioElement;
 import io.jmix.flowui.kit.meta.StudioProperty;
 import io.jmix.flowui.kit.meta.StudioPropertyType;
@@ -106,4 +108,52 @@ public interface StudioElements {
             }
     )
     void onContainerItemChangedLoadTrigger();
+
+
+    @StudioElement(
+            name = "Tab",
+            classFqn = "com.vaadin.flow.component.tabs.Tab",
+            target = {"com.vaadin.flow.component.tabs.Tabs"},
+            xmlElement = "tab",
+            visible = true,
+            properties = {
+                    @StudioProperty(xmlAttribute = "className", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN),
+                    @StudioProperty(xmlAttribute = "flewGrow", type = StudioPropertyType.DOUBLE),
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "label", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "themeName", type = StudioPropertyType.VALUES_LIST,
+                            options = {"icon-on-top"}),
+                    @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+            }
+    )
+    Tab tab();
+
+    @StudioElement(
+            name = "AccordionPanel",
+            classFqn = "com.vaadin.flow.component.accordion.AccordionPanel",
+            target = {"com.vaadin.flow.component.accordion.Accordion"},
+            xmlElement = "accordionPanel",
+            visible = true,
+            properties = {
+                    @StudioProperty(xmlAttribute = "className", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN),
+                    @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "maxHeight", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "maxWidth", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "minHeight", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "minWidth", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "summaryText", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "themeName", type = StudioPropertyType.VALUES_LIST,
+                            options = {"filled", "reverse", "small"}),
+                    @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE, defaultValue = "100%")
+            }
+    )
+    AccordionPanel accordionPanel();
 }

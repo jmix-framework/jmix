@@ -55,6 +55,7 @@ public class LdapActiveDirectorySecurityConfiguration extends StandardSecurityCo
         authenticationProvider.setConvertSubErrorCodesToExceptions(true);
         authenticationProvider.setUserDetailsContextMapper(ldapUserDetailsContextMapper);
         authenticationProvider.setAuthoritiesMapper(grantedAuthoritiesMapper);
+        authenticationProvider.setSearchFilter(ldapProperties.getUserSearchFilter());
         return authenticationProvider;
     }
 

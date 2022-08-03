@@ -74,6 +74,7 @@ public class LdapActiveDirectorySecurityConfiguration {
         authenticationProvider.setConvertSubErrorCodesToExceptions(true);
         authenticationProvider.setUserDetailsContextMapper(ldapUserDetailsContextMapper);
         authenticationProvider.setAuthoritiesMapper(grantedAuthoritiesMapper);
+        authenticationProvider.setSearchFilter(ldapProperties.getUserSearchFilter());
         return authenticationProvider;
     }
 

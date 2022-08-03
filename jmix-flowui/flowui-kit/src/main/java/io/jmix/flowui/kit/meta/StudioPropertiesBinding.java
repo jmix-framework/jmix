@@ -14,20 +14,26 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.kit.meta.elementsgroup;
+package io.jmix.flowui.kit.meta;
 
-import io.jmix.flowui.kit.meta.StudioElementsGroup;
-import io.jmix.flowui.kit.meta.StudioUiKit;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Target;
 
-@StudioUiKit
-public interface StudioElementsGroups {
+@Inherited
+@Target(ElementType.TYPE)
+public @interface StudioPropertiesBinding {
 
-    @StudioElementsGroup(
-            name = "Formatter",
-            elementClassFqn = "io.jmix.flowui.kit.component.formatter.Formatter",
-            xmlElement = "formatter",
-            icon = "io/jmix/flowui/kit/meta/icon/elementsgroup/formatters.svg",
-            target = {"io.jmix.flowui.kit.component.SupportsFormatter"}
-    )
-    void formatter();
+    /**
+     * Source property name.
+     * Use {@link StudioPropertyType#COLLECTION_DATA_CONTAINER_REF},
+     * {@link StudioPropertyType#DATA_CONTAINER_REF},
+     * {@link StudioPropertyType#DATA_LOADER_REF}
+     */
+    String source();
+
+    /**
+     * Item property name.
+     */
+    String item();
 }

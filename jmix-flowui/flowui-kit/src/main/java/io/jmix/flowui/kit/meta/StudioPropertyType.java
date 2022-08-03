@@ -123,6 +123,11 @@ public enum StudioPropertyType {
     OPTIONS,
 
     /**
+     * Name of a data model property.
+     */
+    PROPERTY_REF,
+
+    /**
      * Size value, e.g. width or height
      */
     SIZE,

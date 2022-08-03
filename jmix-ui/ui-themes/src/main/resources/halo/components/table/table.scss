@@ -299,6 +299,12 @@ $jmix-table-drag-indicator-color: $v-focus-color;
     }
   }
 
+  .v-treetable {
+    .#{$primary-stylename}-cell-wrapper > .v-icon {
+      margin-right: round($v-unit-size/5);
+    }
+  }
+
   @if $jmix-buttonspanel-flow == false {
     .jmix-table-composition {
       .v-csslayout.jmix-flowlayout {

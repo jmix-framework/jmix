@@ -19,6 +19,7 @@ package io.jmix.flowui.kit.meta.component;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.checkbox.Checkbox;
+import com.vaadin.flow.component.checkbox.CheckboxGroup;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.datetimepicker.DateTimePicker;
@@ -37,6 +38,7 @@ import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.component.combobox.ComboBoxPicker;
 import io.jmix.flowui.kit.component.valuepicker.ValuePicker;
 import io.jmix.flowui.kit.component.valuepicker.ValuesPicker;
+import io.jmix.flowui.kit.meta.StudioPropertiesBinding;
 import io.jmix.flowui.kit.meta.StudioComponent;
 import io.jmix.flowui.kit.meta.StudioProperty;
 import io.jmix.flowui.kit.meta.StudioPropertyType;
@@ -102,7 +104,7 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "className", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "clearButtonVisible", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
-                    @StudioProperty(xmlAttribute = "dataContainer", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "dataContainer", type = StudioPropertyType.DATA_CONTAINER_REF),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "errorMessage", type = StudioPropertyType.LOCALIZED_STRING),
@@ -117,7 +119,7 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "minHeight", type = StudioPropertyType.SIZE),
                     @StudioProperty(xmlAttribute = "minWidth", type = StudioPropertyType.SIZE),
                     @StudioProperty(xmlAttribute = "placeholder", type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = "property", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "property", type = StudioPropertyType.PROPERTY_REF),
                     @StudioProperty(xmlAttribute = "readOnly", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "required", type = StudioPropertyType.BOOLEAN,
@@ -137,6 +139,12 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE)
+            },
+            propertiesBindings = {
+                    @StudioPropertiesBinding(
+                            source = "dataContainer",
+                            item = "property"
+                    )
             }
     )
     BigDecimalField bigDecimalField();
@@ -183,6 +191,54 @@ public interface StudioComponents {
     JmixButton button();
 
     @StudioComponent(
+            name = "CheckboxGroup",
+            classFqn = "com.vaadin.flow.component.checkbox.CheckboxGroup",
+            category = "Components",
+            xmlElement = "checkboxGroup",
+            icon = "io/jmix/flowui/kit/meta/icon/component/checkBoxGroup.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "className", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "dataContainer", type = StudioPropertyType.DATA_CONTAINER_REF),
+                    @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "errorMessage", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "helperText", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "invalid", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "itemsContainer",
+                            type = StudioPropertyType.COLLECTION_DATA_CONTAINER_REF),
+                    @StudioProperty(xmlAttribute = "itemsEnum", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "label", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "maxHeight", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "maxWidth", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "minHeight", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "minWidth", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "property", type = StudioPropertyType.PROPERTY_REF),
+                    @StudioProperty(xmlAttribute = "readOnly", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "required", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "requiredIndicatorVisible",
+                            type = StudioPropertyType.BOOLEAN, defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "requiredMessage", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "themeName", type = StudioPropertyType.VALUES_LIST,
+                            options = {"helper-above-field", "vertical"}),
+                    @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE)
+            },
+            propertiesBindings = {
+                    @StudioPropertiesBinding(
+                            source = "dataContainer",
+                            item = "property"
+                    )
+            }
+    )
+    CheckboxGroup checkboxGroup();
+
+    @StudioComponent(
             name = "Checkbox",
             classFqn = "com.vaadin.flow.component.checkbox.Checkbox",
             category = "Components",
@@ -193,7 +249,7 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "autofocus", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "className", type = StudioPropertyType.VALUES_LIST),
-                    @StudioProperty(xmlAttribute = "dataContainer", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "dataContainer", type = StudioPropertyType.DATA_CONTAINER_REF),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.SIZE),
@@ -205,7 +261,7 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "maxWidth", type = StudioPropertyType.SIZE),
                     @StudioProperty(xmlAttribute = "minHeight", type = StudioPropertyType.SIZE),
                     @StudioProperty(xmlAttribute = "minWidth", type = StudioPropertyType.SIZE),
-                    @StudioProperty(xmlAttribute = "property", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "property", type = StudioPropertyType.PROPERTY_REF),
                     @StudioProperty(xmlAttribute = "readOnly", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "requiredIndicatorVisible",
@@ -214,6 +270,12 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE)
+            },
+            propertiesBindings = {
+                    @StudioPropertiesBinding(
+                            source = "dataContainer",
+                            item = "property"
+                    )
             }
     )
     Checkbox checkbox();
@@ -234,7 +296,7 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "className", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "clearButtonVisible", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
-                    @StudioProperty(xmlAttribute = "dataContainer", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "dataContainer", type = StudioPropertyType.DATA_CONTAINER_REF),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "errorMessage", type = StudioPropertyType.LOCALIZED_STRING),
@@ -253,7 +315,7 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "placeholder", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "preventInvalidInput", type = StudioPropertyType.BOOLEAN
                             , defaultValue = "false"),
-                    @StudioProperty(xmlAttribute = "property", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "property", type = StudioPropertyType.PROPERTY_REF),
                     @StudioProperty(xmlAttribute = "readOnly", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "required", type = StudioPropertyType.BOOLEAN,
@@ -267,6 +329,12 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE)
+            },
+            propertiesBindings = {
+                    @StudioPropertiesBinding(
+                            source = "dataContainer",
+                            item = "property"
+                    )
             }
     )
     ComboBox comboBox();
@@ -332,7 +400,7 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "className", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "clearButtonVisible", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
-                    @StudioProperty(xmlAttribute = "dataContainer", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "dataContainer", type = StudioPropertyType.DATA_CONTAINER_REF),
                     @StudioProperty(xmlAttribute = "datatype", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.core.metamodel.datatype.Datatype", options = {"date", "dateTime",
                             "localDateTime", "offsetDateTime", "localDate"}),
@@ -352,7 +420,7 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "opened", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "placeholder", type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = "property", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "property", type = StudioPropertyType.PROPERTY_REF),
                     @StudioProperty(xmlAttribute = "readOnly", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "required", type = StudioPropertyType.BOOLEAN,
@@ -366,6 +434,12 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE)
+            },
+            propertiesBindings = {
+                    @StudioPropertiesBinding(
+                            source = "dataContainer",
+                            item = "property"
+                    )
             }
     )
     DatePicker datePicker();
@@ -379,7 +453,7 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "autoOpen", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "className", type = StudioPropertyType.VALUES_LIST),
-                    @StudioProperty(xmlAttribute = "dataContainer", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "dataContainer", type = StudioPropertyType.DATA_CONTAINER_REF),
                     @StudioProperty(xmlAttribute = "datatype", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.core.metamodel.datatype.Datatype", options = {"date", "dateTime",
                             "localDateTime", "offsetTime", "localTime", "offsetDateTime", "time", "localDate"}),
@@ -397,7 +471,7 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "maxWidth", type = StudioPropertyType.SIZE),
                     @StudioProperty(xmlAttribute = "minHeight", type = StudioPropertyType.SIZE),
                     @StudioProperty(xmlAttribute = "minWidth", type = StudioPropertyType.SIZE),
-                    @StudioProperty(xmlAttribute = "property", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "property", type = StudioPropertyType.PROPERTY_REF),
                     @StudioProperty(xmlAttribute = "readOnly", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "required", type = StudioPropertyType.BOOLEAN,
@@ -471,7 +545,7 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "className", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "clearButtonVisible", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
-                    @StudioProperty(xmlAttribute = "dataContainer", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "dataContainer", type = StudioPropertyType.DATA_CONTAINER_REF),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "errorMessage", type = StudioPropertyType.LOCALIZED_STRING),
@@ -489,7 +563,7 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "placeholder", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "preventInvalidInput", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
-                    @StudioProperty(xmlAttribute = "property", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "property", type = StudioPropertyType.PROPERTY_REF),
                     @StudioProperty(xmlAttribute = "readOnly", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "requiredIndicatorVisible",
@@ -507,6 +581,12 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE)
+            },
+            propertiesBindings = {
+                    @StudioPropertiesBinding(
+                            source = "dataContainer",
+                            item = "property"
+                    )
             }
     )
     EmailField emailField();
@@ -527,13 +607,16 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "className", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "clearButtonVisible", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
-                    @StudioProperty(xmlAttribute = "dataContainer", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "dataContainer",
+                            type = StudioPropertyType.DATA_CONTAINER_REF),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "errorMessage", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.SIZE),
                     @StudioProperty(xmlAttribute = "helperText", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "itemsContainer",
+                            type = StudioPropertyType.COLLECTION_DATA_CONTAINER_REF),
                     @StudioProperty(xmlAttribute = "invalid", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "label", type = StudioPropertyType.LOCALIZED_STRING),
@@ -549,7 +632,7 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "placeholder", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "preventInvalidInput", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
-                    @StudioProperty(xmlAttribute = "property", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "property", type = StudioPropertyType.PROPERTY_REF),
                     @StudioProperty(xmlAttribute = "readOnly", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "required", type = StudioPropertyType.BOOLEAN,
@@ -564,6 +647,12 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE)
+            },
+            propertiesBindings = {
+                    @StudioPropertiesBinding(
+                            source = "dataContainer",
+                            item = "property"
+                    )
             }
     )
     ComboBoxPicker entityComboBox();
@@ -580,7 +669,7 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "autofocus", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "className", type = StudioPropertyType.VALUES_LIST),
-                    @StudioProperty(xmlAttribute = "dataContainer", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "dataContainer", type = StudioPropertyType.DATA_CONTAINER_REF),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "errorMessage", type = StudioPropertyType.LOCALIZED_STRING),
@@ -596,7 +685,7 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "minHeight", type = StudioPropertyType.SIZE),
                     @StudioProperty(xmlAttribute = "minWidth", type = StudioPropertyType.SIZE),
                     @StudioProperty(xmlAttribute = "placeholder", type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = "property", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "property", type = StudioPropertyType.PROPERTY_REF),
                     @StudioProperty(xmlAttribute = "readOnly", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "required", type = StudioPropertyType.BOOLEAN,
@@ -609,6 +698,12 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE)
+            },
+            propertiesBindings = {
+                    @StudioPropertiesBinding(
+                            source = "dataContainer",
+                            item = "property"
+                    )
             }
     )
     ValuePicker entityPicker();
@@ -625,7 +720,7 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "className", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "columnReorderingAllowed", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
-                    @StudioProperty(xmlAttribute = "dataContainer", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "dataContainer", type = StudioPropertyType.DATA_CONTAINER_REF),
                     @StudioProperty(xmlAttribute = "detailsVisibleOnClick", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "dropMode", type = StudioPropertyType.ENUMERATION,
@@ -694,7 +789,7 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "className", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "clearButtonVisible", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
-                    @StudioProperty(xmlAttribute = "dataContainer", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "dataContainer", type = StudioPropertyType.DATA_CONTAINER_REF),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "errorMessage", type = StudioPropertyType.LOCALIZED_STRING),
@@ -713,7 +808,7 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "minHeight", type = StudioPropertyType.SIZE),
                     @StudioProperty(xmlAttribute = "minWidth", type = StudioPropertyType.SIZE),
                     @StudioProperty(xmlAttribute = "placeholder", type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = "property", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "property", type = StudioPropertyType.PROPERTY_REF),
                     @StudioProperty(xmlAttribute = "readOnly", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "requiredIndicatorVisible",
@@ -731,6 +826,12 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE)
+            },
+            propertiesBindings = {
+                    @StudioPropertiesBinding(
+                            source = "dataContainer",
+                            item = "property"
+                    )
             }
     )
     NumberField numberField();
@@ -767,7 +868,7 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "className", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "clearButtonVisible", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
-                    @StudioProperty(xmlAttribute = "dataContainer", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "dataContainer", type = StudioPropertyType.DATA_CONTAINER_REF),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "errorMessage", type = StudioPropertyType.LOCALIZED_STRING),
@@ -785,7 +886,7 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "placeholder", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "preventInvalidInput", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
-                    @StudioProperty(xmlAttribute = "property", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "property", type = StudioPropertyType.PROPERTY_REF),
                     @StudioProperty(xmlAttribute = "readOnly", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "required", type = StudioPropertyType.BOOLEAN,
@@ -804,6 +905,12 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE)
+            },
+            propertiesBindings = {
+                    @StudioPropertiesBinding(
+                            source = "dataContainer",
+                            item = "property"
+                    )
             }
     )
     PasswordField passwordField();
@@ -844,13 +951,15 @@ public interface StudioComponents {
             icon = "io/jmix/flowui/kit/meta/icon/component/radioButtonGroup.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "className", type = StudioPropertyType.VALUES_LIST),
-                    @StudioProperty(xmlAttribute = "dataContainer", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "dataContainer", type = StudioPropertyType.DATA_CONTAINER_REF),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "errorMessage", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.SIZE),
                     @StudioProperty(xmlAttribute = "helperText", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "itemsContainer",
+                            type = StudioPropertyType.COLLECTION_DATA_CONTAINER_REF),
                     @StudioProperty(xmlAttribute = "invalid", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "label", type = StudioPropertyType.LOCALIZED_STRING),
@@ -858,7 +967,7 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "maxWidth", type = StudioPropertyType.SIZE),
                     @StudioProperty(xmlAttribute = "minHeight", type = StudioPropertyType.SIZE),
                     @StudioProperty(xmlAttribute = "minWidth", type = StudioPropertyType.SIZE),
-                    @StudioProperty(xmlAttribute = "property", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "property", type = StudioPropertyType.PROPERTY_REF),
                     @StudioProperty(xmlAttribute = "readOnly", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "required", type = StudioPropertyType.BOOLEAN,
@@ -870,6 +979,12 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE)
+            },
+            propertiesBindings = {
+                    @StudioPropertiesBinding(
+                            source = "dataContainer",
+                            item = "property"
+                    )
             }
     )
     RadioButtonGroup radioButtonGroup();
@@ -883,7 +998,7 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "autofocus", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "className", type = StudioPropertyType.VALUES_LIST),
-                    @StudioProperty(xmlAttribute = "dataContainer", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "dataContainer", type = StudioPropertyType.DATA_CONTAINER_REF),
                     @StudioProperty(xmlAttribute = "emptySelectionAllowed", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "emptySelectionCaption", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
@@ -892,6 +1007,8 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.SIZE),
                     @StudioProperty(xmlAttribute = "helperText", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "itemsContainer",
+                            type = StudioPropertyType.COLLECTION_DATA_CONTAINER_REF),
                     @StudioProperty(xmlAttribute = "invalid", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "label", type = StudioPropertyType.LOCALIZED_STRING),
@@ -903,7 +1020,7 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "placeholder", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "preventInvalidInput", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
-                    @StudioProperty(xmlAttribute = "property", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "property", type = StudioPropertyType.PROPERTY_REF),
                     @StudioProperty(xmlAttribute = "readOnly", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "required", type = StudioPropertyType.BOOLEAN,
@@ -922,6 +1039,12 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE)
+            },
+            propertiesBindings = {
+                    @StudioPropertiesBinding(
+                            source = "dataContainer",
+                            item = "property"
+                    )
             }
     )
     Select select();
@@ -958,7 +1081,7 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "className", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "clearButtonVisible", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
-                    @StudioProperty(xmlAttribute = "dataContainer", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "dataContainer", type = StudioPropertyType.DATA_CONTAINER_REF),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "errorMessage", type = StudioPropertyType.LOCALIZED_STRING),
@@ -974,7 +1097,7 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "minWidth", type = StudioPropertyType.SIZE),
                     @StudioProperty(xmlAttribute = "pattern", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "placeholder", type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = "property", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "property", type = StudioPropertyType.PROPERTY_REF),
                     @StudioProperty(xmlAttribute = "readOnly", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "required", type = StudioPropertyType.BOOLEAN,
@@ -992,6 +1115,12 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE)
+            },
+            propertiesBindings = {
+                    @StudioPropertiesBinding(
+                            source = "dataContainer",
+                            item = "property"
+                    )
             }
     )
     TextArea textArea();
@@ -1028,7 +1157,7 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "className", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "clearButtonVisible", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
-                    @StudioProperty(xmlAttribute = "dataContainer", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "dataContainer", type = StudioPropertyType.DATA_CONTAINER_REF),
                     @StudioProperty(xmlAttribute = "datatype", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
@@ -1045,7 +1174,7 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "minWidth", type = StudioPropertyType.SIZE),
                     @StudioProperty(xmlAttribute = "pattern", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "placeholder", type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = "property", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "property", type = StudioPropertyType.PROPERTY_REF),
                     @StudioProperty(xmlAttribute = "readOnly", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "required", type = StudioPropertyType.BOOLEAN,
@@ -1065,6 +1194,12 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE)
+            },
+            propertiesBindings = {
+                    @StudioPropertiesBinding(
+                            source = "dataContainer",
+                            item = "property"
+                    )
             }
     )
     TextField textField();
@@ -1080,7 +1215,7 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "className", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "clearButtonVisible", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
-                    @StudioProperty(xmlAttribute = "dataContainer", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "dataContainer", type = StudioPropertyType.DATA_CONTAINER_REF),
                     @StudioProperty(xmlAttribute = "datatype", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
@@ -1096,7 +1231,7 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "minHeight", type = StudioPropertyType.SIZE),
                     @StudioProperty(xmlAttribute = "minWidth", type = StudioPropertyType.SIZE),
                     @StudioProperty(xmlAttribute = "placeholder", type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = "property", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "property", type = StudioPropertyType.PROPERTY_REF),
                     @StudioProperty(xmlAttribute = "readOnly", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "required", type = StudioPropertyType.BOOLEAN,
@@ -1107,6 +1242,12 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE)
+            },
+            propertiesBindings = {
+                    @StudioPropertiesBinding(
+                            source = "dataContainer",
+                            item = "property"
+                    )
             }
     )
     TimePicker timePicker();
@@ -1123,7 +1264,7 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "autofocus", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "className", type = StudioPropertyType.VALUES_LIST),
-                    @StudioProperty(xmlAttribute = "dataContainer", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "dataContainer", type = StudioPropertyType.DATA_CONTAINER_REF),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "errorMessage", type = StudioPropertyType.LOCALIZED_STRING),
@@ -1138,7 +1279,7 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "minHeight", type = StudioPropertyType.SIZE),
                     @StudioProperty(xmlAttribute = "minWidth", type = StudioPropertyType.SIZE),
                     @StudioProperty(xmlAttribute = "placeholder", type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = "property", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "property", type = StudioPropertyType.PROPERTY_REF),
                     @StudioProperty(xmlAttribute = "readOnly", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "required", type = StudioPropertyType.BOOLEAN,
@@ -1151,6 +1292,12 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE)
+            },
+            propertiesBindings = {
+                    @StudioPropertiesBinding(
+                            source = "dataContainer",
+                            item = "property"
+                    )
             }
     )
     ValuePicker valuePicker();
@@ -1167,7 +1314,7 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "autofocus", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "className", type = StudioPropertyType.VALUES_LIST),
-                    @StudioProperty(xmlAttribute = "dataContainer", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "dataContainer", type = StudioPropertyType.DATA_CONTAINER_REF),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "errorMessage", type = StudioPropertyType.LOCALIZED_STRING),
@@ -1182,7 +1329,7 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "minHeight", type = StudioPropertyType.SIZE),
                     @StudioProperty(xmlAttribute = "minWidth", type = StudioPropertyType.SIZE),
                     @StudioProperty(xmlAttribute = "placeholder", type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = "property", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "property", type = StudioPropertyType.PROPERTY_REF),
                     @StudioProperty(xmlAttribute = "readOnly", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "required", type = StudioPropertyType.BOOLEAN,
@@ -1195,6 +1342,12 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE)
+            },
+            propertiesBindings = {
+                    @StudioPropertiesBinding(
+                            source = "dataContainer",
+                            item = "property"
+                    )
             }
     )
     ValuesPicker valuesPicker();

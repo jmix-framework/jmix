@@ -51,4 +51,6 @@ public @interface StudioComponent {
             "|((^(mainView/appLayout)?((/drawerLayout)|(/navigationBar))|(^view/layout))?(/hasComponents)*$)";
 
     StudioProperty[] properties() default {};
+
+    StudioPropertiesBinding[] propertiesBindings() default {};
 }

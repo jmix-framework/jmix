@@ -71,9 +71,24 @@ public enum StudioPropertyType {
     DOUBLE,
 
     /**
+     * Names of Entities meta class.
+     */
+    ENTITY_NAME,
+
+    /**
+     * Names of Entities meta class.
+     */
+    ENTITY_NAMES,
+
+    /**
      * FQN of Entity class.
      */
     ENTITY_CLASS,
+
+    /**
+     * FQN of Enum class.
+     */
+    ENUM_CLASS,
 
     /**
      * Value from a strict list of property options.

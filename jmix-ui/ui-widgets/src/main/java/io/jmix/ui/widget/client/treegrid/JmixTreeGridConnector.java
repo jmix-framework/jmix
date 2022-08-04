@@ -16,6 +16,11 @@
 
 package io.jmix.ui.widget.client.treegrid;
 
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.EventTarget;
+import com.vaadin.client.BrowserInfo;
+import com.vaadin.client.WidgetUtil;
+import com.vaadin.shared.MouseEventDetails;
 import io.jmix.ui.widget.JmixTreeGrid;
 import io.jmix.ui.widget.client.grid.JmixGridServerRpc;
 import io.jmix.ui.widget.client.grid.JmixGridClientRpc;
@@ -95,6 +100,30 @@ public class JmixTreeGridConnector extends TreeGridConnector {
                 }
             }
         }
+    }
+
+    @Override
+    protected void sendContextClickEvent(MouseEventDetails details, EventTarget eventTarget) {
+        if (BrowserInfo.get().isTouchDevice()
+                && isSelectionColumn(eventTarget)) {
+            WidgetUtil.clearTextSelection();
+            return;
+        }
+
+        super.sendContextClickEvent(details, eventTarget);
+    }
+
+    protected boolean isSelectionColumn(EventTarget eventTarget) {
+        if (Element.is(eventTarget)) {
+            Element element = Element.as(eventTarget);
+            if (element.getClassName().contains("-cell")) {
+                Element childElement = element.getFirstChildElement();
+                return childElement != null
+                        && childElement.getClassName().contains("-selection-checkbox");
+            }
+        }
+
+        return false;
     }
 
     @Override

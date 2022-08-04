@@ -17,6 +17,7 @@
 package io.jmix.flowui.kit.meta.element;
 
 import com.vaadin.flow.component.accordion.AccordionPanel;
+import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.tabs.Tab;
 import io.jmix.flowui.kit.meta.StudioElement;
 import io.jmix.flowui.kit.meta.StudioProperty;
@@ -117,4 +118,34 @@ public interface StudioElements {
             }
     )
     AccordionPanel accordionPanel();
+
+    @StudioElement(
+            name = "Column",
+            classFqn = "com.vaadin.flow.component.grid.Grid.Column",
+            xmlElement = "column",
+            icon = "io/jmix/flowui/kit/meta/icon/element/column.svg",
+            visible = true,
+            properties = {
+                    @StudioProperty(xmlAttribute = "autoWidth", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "flexGrow", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "footer", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "frozen", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "header", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "key", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "property", type = StudioPropertyType.PROPERTY_REF, required = true),
+                    @StudioProperty(xmlAttribute = "resizable", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "sortable", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "textAlign", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "com.vaadin.flow.component.grid.ColumnTextAlign", defaultValue = "START",
+                            options = {"CENTER", "END", "START"}),
+                    @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE, defaultValue = "100px")
+            }
+    )
+    Grid.Column column();
 }

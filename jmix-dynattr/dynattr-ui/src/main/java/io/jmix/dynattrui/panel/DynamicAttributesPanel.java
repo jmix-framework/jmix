@@ -93,6 +93,7 @@ public class DynamicAttributesPanel extends CompositeComponent<VBoxLayout> imple
 
         categoryFieldBox = getInnerComponent("categoryFieldBox");
         categoryField.setWidth(fieldWidth);
+        getComposition().setMargin(false);
     }
 
     protected void initPropertiesForm() {
@@ -324,6 +325,16 @@ public class DynamicAttributesPanel extends CompositeComponent<VBoxLayout> imple
     @StudioProperty(type = PropertyType.SIZE)
     public void setFieldWidth(String fieldWidth) {
         this.fieldWidth = fieldWidth;
+    }
+
+    /**
+     * Adds spaces around the component. If {@code null} value is passed, margin will be false.
+     *
+     * @param margin spacing
+     */
+    @StudioProperty(type = PropertyType.BOOLEAN)
+    public void setMargin(Boolean margin) {
+        getComposition().setMargin(Boolean.TRUE.equals(margin));
     }
 
     /**

@@ -38,6 +38,7 @@
         <xs:attribute name="rows" type="xs:integer"/>
         <xs:attribute name="fieldWidth" type="xs:string"/>
         <xs:attribute name="fieldCaptionWidth" type="xs:string"/>
+        <xs:attribute name="margin" type="xs:boolean"/>
     </xs:complexType>
 
     <xs:element name="dynamicAttributes" type="dynamicAttributesType"/>

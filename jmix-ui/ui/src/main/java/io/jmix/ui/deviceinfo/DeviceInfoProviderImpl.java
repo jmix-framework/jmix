@@ -82,6 +82,7 @@ public class DeviceInfoProviderImpl implements DeviceInfoProvider {
             di.setOperatingSystem(DeviceInfo.OperatingSystem.LINUX);
         }
 
+        di.setTouchDevice(webBrowser.isTouchDevice());
         di.setIPad(webBrowser.isIPad());
         di.setIPhone(webBrowser.isIPhone());
         di.setWindowsPhone(webBrowser.isWindowsPhone());

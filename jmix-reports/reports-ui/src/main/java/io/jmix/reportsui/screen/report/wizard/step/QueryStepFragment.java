@@ -109,7 +109,7 @@ public class QueryStepFragment extends StepFragment implements Suggester {
         if (!queryParametersDc.getItems().isEmpty()) {
             dialogs.createOptionDialog()
                     .withCaption(messages.getMessage("dialogs.Confirmation"))
-                    .withMessage(messages.getMessage(getClass(), "clearQueryParameterConfirm"))
+                    .withMessage(messageBundle.getMessage("clearQueryParameterConfirm"))
                     .withActions(
                             new DialogAction(DialogAction.Type.OK).withHandler(e -> generateQueryParameters()),
                             new DialogAction(DialogAction.Type.CANCEL))
@@ -181,8 +181,8 @@ public class QueryStepFragment extends StepFragment implements Suggester {
     @Install(to = "reportQueryCodeEditor", subject = "contextHelpIconClickHandler")
     private void reportQueryCodeEditorContextHelpIconClickHandler(HasContextHelp.ContextHelpIconClickEvent contextHelpIconClickEvent) {
         dialogs.createMessageDialog()
-                .withCaption(messages.getMessage(getClass(), "reportQueryHelpCaption"))
-                .withMessage(messages.getMessage(getClass(), "reportQueryHelp"))
+                .withCaption(messageBundle.getMessage("reportQueryHelpCaption"))
+                .withMessage(messageBundle.getMessage("reportQueryHelp"))
                 .withModal(false)
                 .withWidth("560px")
                 .withContentMode(ContentMode.HTML)
@@ -192,12 +192,12 @@ public class QueryStepFragment extends StepFragment implements Suggester {
 
     @Override
     public String getCaption() {
-        return messages.getMessage(getClass(), "reportQueryCaption");
+        return messageBundle.getMessage("reportQueryCaption");
     }
 
     @Override
     public String getDescription() {
-        return messages.getMessage(getClass(), "enterQuery");
+        return messageBundle.getMessage("enterQuery");
     }
 
     @Override

@@ -89,6 +89,9 @@ public class PivotTableEditFragment extends DescriptionEditFragment {
     protected Messages messages;
 
     @Autowired
+    protected MessageBundle messageBundle;
+
+    @Autowired
     protected Actions actions;
 
     @Autowired
@@ -186,33 +189,33 @@ public class PivotTableEditFragment extends DescriptionEditFragment {
     protected ValidationErrors validatePivotTableDescription(PivotTableDescription description) {
         ValidationErrors validationErrors = new ValidationErrors();
         if (description.getBandName() == null) {
-            validationErrors.add(messages.getMessage(getClass(), "pivotTableEdit.bandRequired"));
+            validationErrors.add(messageBundle.getMessage("pivotTableEdit.bandRequired"));
         }
         if (description.getDefaultRenderer() == null) {
-            validationErrors.add(messages.getMessage(getClass(), "pivotTableEdit.rendererRequired"));
+            validationErrors.add(messageBundle.getMessage("pivotTableEdit.rendererRequired"));
         }
         if (description.getAggregations().isEmpty()) {
-            validationErrors.add(messages.getMessage(getClass(), "pivotTableEdit.aggregationsRequired"));
+            validationErrors.add(messageBundle.getMessage("pivotTableEdit.aggregationsRequired"));
         }
         if (description.getProperties().isEmpty()) {
-            validationErrors.add(messages.getMessage(getClass(), "pivotTableEdit.propertiesRequired"));
+            validationErrors.add(messageBundle.getMessage("pivotTableEdit.propertiesRequired"));
         }
         if (description.getAggregationProperties().isEmpty()) {
-            validationErrors.add(messages.getMessage(getClass(), "pivotTableEdit.aggregationPropertiesRequired"));
+            validationErrors.add(messageBundle.getMessage("pivotTableEdit.aggregationPropertiesRequired"));
         }
         if (description.getColumnsProperties().isEmpty() && description.getRowsProperties().isEmpty()) {
-            validationErrors.add(messages.getMessage(getClass(), "pivotTableEdit.columnsOrRowsRequired"));
+            validationErrors.add(messageBundle.getMessage("pivotTableEdit.columnsOrRowsRequired"));
         }
         if (!Collections.disjoint(description.getRowsProperties(), description.getColumnsProperties())
                 || !Collections.disjoint(description.getRowsProperties(), description.getAggregationProperties())
                 || !Collections.disjoint(description.getColumnsProperties(), description.getAggregationProperties())) {
-            validationErrors.add(messages.getMessage(getClass(), "pivotTableEdit.propertyIntersection"));
+            validationErrors.add(messageBundle.getMessage("pivotTableEdit.propertyIntersection"));
         } else if (description.getProperties() != null) {
             Set<String> propertyNames = description.getProperties().stream()
                     .map(PivotTableProperty::getName)
                     .collect(Collectors.toSet());
             if (propertyNames.size() != description.getProperties().size()) {
-                validationErrors.add(messages.getMessage(getClass(), "pivotTableEdit.propertyIntersection"));
+                validationErrors.add(messageBundle.getMessage("pivotTableEdit.propertyIntersection"));
             }
         }
         return validationErrors;

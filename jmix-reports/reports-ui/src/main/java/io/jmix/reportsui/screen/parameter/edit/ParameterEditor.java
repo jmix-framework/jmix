@@ -146,6 +146,9 @@ public class ParameterEditor extends StandardEditor<ReportInputParameter> {
     protected Dialogs dialogs;
 
     @Autowired
+    protected MessageBundle messageBundle;
+
+    @Autowired
     protected Messages messages;
 
     @Autowired
@@ -176,8 +179,8 @@ public class ParameterEditor extends StandardEditor<ReportInputParameter> {
     @Install(to = "localeField", subject = "contextHelpIconClickHandler")
     protected void localeTextFieldContextHelpIconClickHandler(HasContextHelp.ContextHelpIconClickEvent contextHelpIconClickEvent) {
         dialogs.createMessageDialog()
-                .withCaption(messages.getMessage(getClass(), "localeText"))
-                .withMessage(messages.getMessage(getClass(), "parameter.localeTextHelp"))
+                .withCaption(messageBundle.getMessage("localeText"))
+                .withMessage(messageBundle.getMessage("parameter.localeTextHelp"))
                 .withContentMode(ContentMode.HTML)
                 .withModal(false)
                 .withWidth("700px")
@@ -187,8 +190,8 @@ public class ParameterEditor extends StandardEditor<ReportInputParameter> {
     @Install(to = "transformationScript", subject = "contextHelpIconClickHandler")
     protected void transformationScriptContextHelpIconClickHandler(HasContextHelp.ContextHelpIconClickEvent contextHelpIconClickEvent) {
         dialogs.createMessageDialog()
-                .withCaption(messages.getMessage(getClass(), "transformationScript"))
-                .withMessage(messages.getMessage(getClass(), "parameter.transformationScriptHelp"))
+                .withCaption(messageBundle.getMessage("transformationScript"))
+                .withMessage(messageBundle.getMessage("parameter.transformationScriptHelp"))
                 .withContentMode(ContentMode.HTML)
                 .withModal(false)
                 .withWidth("700px")
@@ -198,8 +201,8 @@ public class ParameterEditor extends StandardEditor<ReportInputParameter> {
     @Install(to = "validationScript", subject = "contextHelpIconClickHandler")
     protected void validationScriptContextHelpIconClickHandler(HasContextHelp.ContextHelpIconClickEvent contextHelpIconClickEvent) {
         dialogs.createMessageDialog()
-                .withCaption(messages.getMessage(getClass(), "validationScript"))
-                .withMessage(messages.getMessage(getClass(), "validationScriptHelp"))
+                .withCaption(messageBundle.getMessage("validationScript"))
+                .withMessage(messageBundle.getMessage("validationScriptHelp"))
                 .withContentMode(ContentMode.HTML)
                 .withModal(false)
                 .withWidth("700px")

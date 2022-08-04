@@ -18,7 +18,9 @@ package io.jmix.reportsui.screen.report.edit;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.haulmont.yarg.structure.BandOrientation;
-import io.jmix.core.*;
+import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
+import io.jmix.core.SaveContext;
 import io.jmix.core.common.util.ParamsMap;
 import io.jmix.reports.ReportPrintHelper;
 import io.jmix.reports.ReportsPersistence;
@@ -35,7 +37,10 @@ import io.jmix.ui.component.Button;
 import io.jmix.ui.component.GroupBoxLayout;
 import io.jmix.ui.component.Tree;
 import io.jmix.ui.component.ValidationErrors;
-import io.jmix.ui.model.*;
+import io.jmix.ui.model.CollectionContainer;
+import io.jmix.ui.model.CollectionLoader;
+import io.jmix.ui.model.DataContext;
+import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.screen.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -43,7 +48,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.inject.Named;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 @UiController("report_Report.edit")
 @UiDescriptor("report-edit.xml")
@@ -110,9 +118,6 @@ public class ReportEditor extends StandardEditor<Report> {
     protected PolicyStore policyStore;
 
     @Autowired
-    protected Messages messages;
-
-    @Autowired
     protected UiProperties uiProperties;
 
     @Autowired
@@ -141,6 +146,9 @@ public class ReportEditor extends StandardEditor<Report> {
 
     @Autowired
     protected DataContext dataContext;
+
+    @Autowired
+    protected MessageBundle messageBundle;
 
     @Subscribe
     protected void initNewItem(InitEntityEvent<Report> event) {
@@ -185,13 +193,13 @@ public class ReportEditor extends StandardEditor<Report> {
 
     @Override
     protected String getSaveNotificationCaption() {
-        return messages.formatMessage(getClass(), "notification.completeSuccessfully", getEditedEntity().getName());
+        return messageBundle.formatMessage("notification.completeSuccessfully", getEditedEntity().getName());
     }
 
 
     protected void setScreenCaption() {
         if (!StringUtils.isEmpty(getEditedEntity().getName())) {
-            getWindow().setCaption(messages.formatMessage(getClass(), "reportEditor.format", getEditedEntity().getName()));
+            getWindow().setCaption(messageBundle.formatMessage("reportEditor.format", getEditedEntity().getName()));
         }
     }
 
@@ -253,7 +261,7 @@ public class ReportEditor extends StandardEditor<Report> {
 
     protected void validateBands(ValidationErrors validationErrors) {
         if (getEditedEntity().getRootBand() == null) {
-            validationErrors.add(messages.getMessage(getClass(), "error.rootBandNull"));
+            validationErrors.add(messageBundle.getMessage("error.rootBandNull"));
         }
         if (CollectionUtils.isNotEmpty(getEditedEntity().getRootBandDefinition().getChildrenBandDefinitions())) {
             Multimap<String, BandDefinition> names = ArrayListMultimap.create();
@@ -281,7 +289,7 @@ public class ReportEditor extends StandardEditor<Report> {
             if (!ReportPrintHelper.getInputOutputTypesMapping().containsKey(inputType) ||
                     !ReportPrintHelper.getInputOutputTypesMapping().get(inputType).contains(template.getReportOutputType())) {
                 notifications.create(Notifications.NotificationType.TRAY)
-                        .withCaption(messages.getMessage(getClass(), "inputOutputTypesError"))
+                        .withCaption(messageBundle.getMessage("inputOutputTypesError"))
                         .show();
                 return false;
             }
@@ -303,7 +311,7 @@ public class ReportEditor extends StandardEditor<Report> {
         for (String name : names.keySet()) {
             Collection<BandDefinition> bandDefinitionsWithsSameNames = names.get(name);
             if (bandDefinitionsWithsSameNames != null && bandDefinitionsWithsSameNames.size() > 1) {
-                errors.add(messages.formatMessage(getClass(), "error.bandNamesDuplicated", name));
+                errors.add(messageBundle.formatMessage("error.bandNamesDuplicated", name));
             }
         }
     }
@@ -312,32 +320,32 @@ public class ReportEditor extends StandardEditor<Report> {
         names.put(band.getName(), band);
 
         if (StringUtils.isBlank(band.getName())) {
-            errors.add(messages.getMessage(getClass(), "error.bandNameNull"));
+            errors.add(messageBundle.getMessage("error.bandNameNull"));
         }
 
         if (band.getBandOrientation() == BandOrientation.UNDEFINED) {
-            errors.add(messages.formatMessage(getClass(), "error.bandOrientationNull", band.getName()));
+            errors.add(messageBundle.formatMessage("error.bandOrientationNull", band.getName()));
         }
 
         if (CollectionUtils.isNotEmpty(band.getDataSets())) {
             for (DataSet dataSet : band.getDataSets()) {
                 if (StringUtils.isBlank(dataSet.getName())) {
-                    errors.add(messages.getMessage(getClass(), "error.dataSetNameNull"));
+                    errors.add(messageBundle.getMessage("error.dataSetNameNull"));
                 }
 
                 if (dataSet.getType() == null) {
-                    errors.add(messages.formatMessage(getClass(), "error.dataSetTypeNull", dataSet.getName()));
+                    errors.add(messageBundle.formatMessage("error.dataSetTypeNull", dataSet.getName()));
                 }
 
                 if (dataSet.getType() == DataSetType.GROOVY
                         || dataSet.getType() == DataSetType.SQL
                         || dataSet.getType() == DataSetType.JPQL) {
                     if (StringUtils.isBlank(dataSet.getScript())) {
-                        errors.add(messages.formatMessage(getClass(), "error.dataSetScriptNull", dataSet.getName()));
+                        errors.add(messageBundle.formatMessage("error.dataSetScriptNull", dataSet.getName()));
                     }
                 } else if (dataSet.getType() == DataSetType.JSON) {
                     if (StringUtils.isBlank(dataSet.getJsonSourceText()) && dataSet.getJsonSourceType() != JsonSourceType.PARAMETER) {
-                        errors.add(messages.formatMessage(getClass(), "error.jsonDataSetScriptNull", dataSet.getName()));
+                        errors.add(messageBundle.formatMessage("error.jsonDataSetScriptNull", dataSet.getName()));
                     }
                 }
             }
@@ -361,9 +369,9 @@ public class ReportEditor extends StandardEditor<Report> {
 
     protected void setValidationScriptGroupBoxCaption(Boolean onOffFlag) {
         if (BooleanUtils.isTrue(onOffFlag)) {
-            validationScriptGroupBox.setCaption(messages.getMessage(getClass(), "report.validationScriptOn"));
+            validationScriptGroupBox.setCaption(messageBundle.getMessage("report.validationScriptOn"));
         } else {
-            validationScriptGroupBox.setCaption(messages.getMessage(getClass(), "report.validationScriptOff"));
+            validationScriptGroupBox.setCaption(messageBundle.getMessage("report.validationScriptOff"));
         }
     }
 }

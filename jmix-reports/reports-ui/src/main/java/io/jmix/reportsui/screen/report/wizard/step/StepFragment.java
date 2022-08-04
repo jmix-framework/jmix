@@ -23,6 +23,7 @@ import io.jmix.ui.component.Component;
 import io.jmix.ui.component.Field;
 import io.jmix.ui.component.Validatable;
 import io.jmix.ui.component.ValidationException;
+import io.jmix.ui.screen.MessageBundle;
 import io.jmix.ui.screen.ScreenFragment;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,9 @@ public abstract class StepFragment extends ScreenFragment {
 
     @Autowired
     protected Messages messages;
+
+    @Autowired
+    protected MessageBundle messageBundle;
 
     @Autowired
     protected MessageTools messageTools;

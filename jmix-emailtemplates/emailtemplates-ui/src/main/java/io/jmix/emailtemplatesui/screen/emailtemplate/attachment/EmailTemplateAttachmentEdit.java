@@ -55,7 +55,7 @@ public class EmailTemplateAttachmentEdit extends StandardEditor<EmailTemplateAtt
     protected Notifications notifications;
 
     @Autowired
-    protected Messages messages;
+    protected MessageBundle messageBundle;
 
     @Autowired
     protected Button commitAndCloseBtn;
@@ -95,7 +95,7 @@ public class EmailTemplateAttachmentEdit extends StandardEditor<EmailTemplateAtt
             return fileStorage.saveStream(getEditedEntity().getName(), new ByteArrayInputStream(uploadField.getValue()));
         } catch (FileStorageException e) {
             notifications.create(Notifications.NotificationType.ERROR)
-                    .withDescription(messages.getMessage(getClass(), "unableToSaveAttachment"))
+                    .withDescription(messageBundle.getMessage("unableToSaveAttachment"))
                     .show();
             log.error("Unable to save attachment file to file storage", e);
         }

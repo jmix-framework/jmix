@@ -18,7 +18,6 @@ package io.jmix.ui.app.jmxconsole.screen.inspect;
 
 
 import io.jmix.core.LoadContext;
-import io.jmix.core.Messages;
 import io.jmix.ui.Fragments;
 import io.jmix.ui.ScreenBuilders;
 import io.jmix.ui.UiComponents;
@@ -70,7 +69,7 @@ public class MBeanInspectScreen extends StandardEditor<ManagedBeanInfo> {
     protected ScreenBuilders screenBuilders;
 
     @Autowired
-    protected Messages messages;
+    protected MessageBundle messageBundle;
 
     @Autowired
     protected Fragments fragments;
@@ -94,7 +93,7 @@ public class MBeanInspectScreen extends StandardEditor<ManagedBeanInfo> {
         initOperationsLayout();
 
         if (getEditedEntity().getObjectName() != null) {
-            getWindow().setCaption(messages.formatMessage(getClass(), "caption.format", getEditedEntity().getObjectName()));
+            getWindow().setCaption(messageBundle.formatMessage("caption.format", getEditedEntity().getObjectName()));
         }
     }
 
@@ -159,7 +158,7 @@ public class MBeanInspectScreen extends StandardEditor<ManagedBeanInfo> {
         ManagedBeanInfo mbean = getEditedEntity();
         if (CollectionUtils.isEmpty(mbean.getOperations())) {
             Label<String> lbl = uiComponents.create(Label.TYPE_DEFAULT);
-            lbl.setValue(messages.getMessage(getClass(), "mbean.operations.none"));
+            lbl.setValue(messageBundle.getMessage("mbean.operations.none"));
             operations.add(lbl);
         } else {
             mbean.getOperations().forEach(managedBeanOperation -> {

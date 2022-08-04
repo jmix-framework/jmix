@@ -90,6 +90,9 @@ public class ReportWizardCreator extends Screen implements WizardScreen {
     protected Messages messages;
 
     @Autowired
+    protected MessageBundle messageBundle;
+
+    @Autowired
     protected Notifications notifications;
 
     @Autowired
@@ -153,7 +156,7 @@ public class ReportWizardCreator extends Screen implements WizardScreen {
 
         if (metaClass == null) {
             notifications.create(Notifications.NotificationType.TRAY)
-                    .withCaption(messages.getMessage(getClass(), "fillEntityMsg"))
+                    .withCaption(messageBundle.getMessage("fillEntityMsg"))
                     .show();
             return;
         }
@@ -216,7 +219,7 @@ public class ReportWizardCreator extends Screen implements WizardScreen {
         if (reportDataDc.getItem().getReportRegions().isEmpty()) {
             dialogs.createOptionDialog()
                     .withCaption(messages.getMessage("dialogs.Confirmation"))
-                    .withMessage(messages.getMessage(getClass(), "confirmSaveWithoutRegions"))
+                    .withMessage(messageBundle.getMessage("confirmSaveWithoutRegions"))
                     .withActions(
                             new DialogAction(DialogAction.Type.OK).withHandler(handle ->
                                     convertToReportAndForceCloseWizard()

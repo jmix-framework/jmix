@@ -76,6 +76,10 @@ public class ChartEditFragment extends DescriptionEditFragment {
     protected BeanFactory beanFactory;
     @Autowired
     protected Messages messages;
+
+    @Autowired
+    protected MessageBundle messageBundle;
+
     @Autowired
     protected Notifications notifications;
     @Autowired
@@ -191,7 +195,7 @@ public class ChartEditFragment extends DescriptionEditFragment {
 
     protected void jsonEditorContextHelpIconClickHandler(HasContextHelp.ContextHelpIconClickEvent event) {
         dialogs.createMessageDialog()
-                .withCaption(messages.getMessage(getClass(), "chartEdit.jsonConfig"))
+                .withCaption(messageBundle.getMessage("chartEdit.jsonConfig"))
                 .withMessage(event.getSource().getContextHelpText())
                 .withContentMode(ContentMode.HTML)
                 .show();
@@ -234,7 +238,7 @@ public class ChartEditFragment extends DescriptionEditFragment {
             if (series == null || series.size() == 0) {
                 notifications.create(Notifications.NotificationType.TRAY)
                         .withCaption(messages.getMessage("validationFail.caption"))
-                        .withDescription(messages.getMessage(getClass(), "chartEdit.seriesEmptyMsg"))
+                        .withDescription(messageBundle.getMessage("chartEdit.seriesEmptyMsg"))
                         .show();
                 return false;
             }
@@ -242,14 +246,14 @@ public class ChartEditFragment extends DescriptionEditFragment {
                 if (it.getType() == null) {
                     notifications.create(Notifications.NotificationType.TRAY)
                             .withCaption(messages.getMessage("validationFail.caption"))
-                            .withDescription(messages.getMessage(getClass(), "chartEdit.seriesTypeNullMsg"))
+                            .withDescription(messageBundle.getMessage("chartEdit.seriesTypeNullMsg"))
                             .show();
                     return false;
                 }
                 if (it.getValueField() == null) {
                     notifications.create(Notifications.NotificationType.TRAY)
                             .withCaption(messages.getMessage("validationFail.caption"))
-                            .withDescription(messages.getMessage(getClass(), "chartEdit.seriesValueFieldNullMsg"))
+                            .withDescription(messageBundle.getMessage("chartEdit.seriesValueFieldNullMsg"))
                             .show();
                     return false;
                 }
@@ -337,7 +341,7 @@ public class ChartEditFragment extends DescriptionEditFragment {
 
         ChartSeriesMoveAction(boolean up) {
             super(up ? "up" : "down");
-            setCaption(messages.getMessage(getClass(), up ? "chartSeries.up" : "chartSeries.down"));
+            setCaption(messageBundle.getMessage(up ? "chartSeries.up" : "chartSeries.down"));
             this.target = seriesTable;
             this.up = up;
         }

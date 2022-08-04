@@ -80,6 +80,9 @@ public class MBeanOperationResultScreen extends Screen {
     protected Messages messages;
 
     @Autowired
+    protected MessageBundle messageBundle;
+
+    @Autowired
     protected CoreProperties coreProperties;
 
     @Autowired
@@ -145,7 +148,7 @@ public class MBeanOperationResultScreen extends Screen {
                                     timeSource.currentTimestamp())));
         } else {
             notifications.create()
-                    .withCaption(messages.getMessage(getClass(), "operationResult.resultIsEmpty"))
+                    .withCaption(messageBundle.getMessage("operationResult.resultIsEmpty"))
                     .withType(Notifications.NotificationType.HUMANIZED)
                     .show();
         }
@@ -202,9 +205,9 @@ public class MBeanOperationResultScreen extends Screen {
             result = res;
             if (result != null) {
                 label = createLabel(AttributeHelper.convertToString(result));
-                resultMessage = messages.getMessage(getClass(), "operationResult.result");
+                resultMessage = messageBundle.getMessage("operationResult.result");
             } else {
-                resultMessage = messages.getMessage(getClass(), "operationResult.void");
+                resultMessage = messageBundle.getMessage("operationResult.void");
             }
             showResult();
         }
@@ -213,7 +216,7 @@ public class MBeanOperationResultScreen extends Screen {
         public boolean handleException(Exception ex) {
             exception = ex;
             label = createLabel(getExceptionMessage(ex));
-            resultMessage = messages.getMessage(getClass(), "operationResult.exception");
+            resultMessage = messageBundle.getMessage("operationResult.exception");
             showResult();
             return true;
         }

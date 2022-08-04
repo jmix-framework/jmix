@@ -19,7 +19,6 @@ package io.jmix.emailui.screen.sendingmessage.resend;
 
 import io.jmix.core.FileStorage;
 import io.jmix.core.FileStorageLocator;
-import io.jmix.core.Messages;
 import io.jmix.email.*;
 import io.jmix.email.entity.SendingAttachment;
 import io.jmix.email.entity.SendingMessage;
@@ -27,10 +26,7 @@ import io.jmix.ui.Notifications;
 import io.jmix.ui.component.Button;
 import io.jmix.ui.component.CheckBox;
 import io.jmix.ui.component.TextField;
-import io.jmix.ui.screen.Screen;
-import io.jmix.ui.screen.Subscribe;
-import io.jmix.ui.screen.UiController;
-import io.jmix.ui.screen.UiDescriptor;
+import io.jmix.ui.screen.*;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -56,8 +52,6 @@ public class ResendMessage extends Screen {
     @Autowired
     protected Notifications notifications;
     @Autowired
-    protected Messages messages;
-    @Autowired
     protected TextField<String> emailTextField;
     @Autowired
     protected TextField<String> ccTextField;
@@ -65,6 +59,9 @@ public class ResendMessage extends Screen {
     protected TextField<String> bccTextField;
     @Autowired
     private CheckBox importanceField;
+
+    @Autowired
+    protected MessageBundle messageBundle;
 
     @Subscribe
     protected void onBeforeShow(BeforeShowEvent event) {
@@ -100,8 +97,8 @@ public class ResendMessage extends Screen {
                 throw new RuntimeException("Something went wrong during email resending", e);
             }
             notifications.create(Notifications.NotificationType.HUMANIZED)
-                    .withCaption(messages.getMessage(getClass(), "notificationCaption"))
-                    .withDescription(messages.getMessage(getClass(), "notificationDescription"))
+                    .withCaption(messageBundle.getMessage("notificationCaption"))
+                    .withDescription(messageBundle.getMessage("notificationDescription"))
                     .show();
             this.closeWithDefaultAction();
         }

@@ -46,7 +46,7 @@ public class UiProperties {
     boolean allowAnonymousAccess;
 
     /**
-     * Timeout (in seconds) for MBean operation invoked in JMX consoleю
+     * Timeout (in seconds) for MBean operation invoked in JMX console
      */
     int jmxConsoleMBeanOperationTimeoutSec;
 

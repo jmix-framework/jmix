@@ -44,6 +44,7 @@ public class DynamicAttributesPanelLoader extends AbstractComponentLoader<Dynami
         loadRowsCount(resultComponent, element);
         loadFieldWidth(resultComponent, element);
         loadFieldCaptionWidth(resultComponent, element);
+        loadMargin(resultComponent, element);
     }
 
     protected void loadDataContainer(DynamicAttributesPanel resultComponent, Element element) {
@@ -78,6 +79,13 @@ public class DynamicAttributesPanelLoader extends AbstractComponentLoader<Dynami
         String fieldWidth = element.attributeValue("fieldCaptionWidth");
         if (!Strings.isNullOrEmpty(fieldWidth)) {
             resultComponent.setFieldCaptionWidth(fieldWidth);
+        }
+    }
+
+    protected void loadMargin(DynamicAttributesPanel resultComponent, Element element) {
+        String margin = element.attributeValue("margin");
+        if (!Strings.isNullOrEmpty(margin)) {
+            resultComponent.setMargin(Boolean.valueOf(margin));
         }
     }
 

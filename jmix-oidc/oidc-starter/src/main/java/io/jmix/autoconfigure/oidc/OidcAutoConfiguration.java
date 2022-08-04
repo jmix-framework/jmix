@@ -78,7 +78,7 @@ public class OidcAutoConfiguration {
      */
     @EnableWebSecurity
     @ConditionalOnProperty(value = "jmix.oidc.use-default-ui-configuration", havingValue = "true", matchIfMissing = true)
-    @Order(JmixOrder.HIGHEST_PRECEDENCE + 100)
+    @Order(JmixOrder.HIGHEST_PRECEDENCE + 95)
     public static class OAuth2LoginSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
         @Autowired

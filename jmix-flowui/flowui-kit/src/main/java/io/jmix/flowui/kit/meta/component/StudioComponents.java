@@ -23,7 +23,6 @@ import com.vaadin.flow.component.checkbox.CheckboxGroup;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.datetimepicker.DateTimePicker;
-import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.progressbar.ProgressBar;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.select.Select;
@@ -36,10 +35,12 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.timepicker.TimePicker;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.component.combobox.ComboBoxPicker;
+import io.jmix.flowui.kit.component.grid.JmixGrid;
+import io.jmix.flowui.kit.component.grid.JmixTreeGrid;
 import io.jmix.flowui.kit.component.valuepicker.ValuePicker;
 import io.jmix.flowui.kit.component.valuepicker.ValuesPicker;
-import io.jmix.flowui.kit.meta.StudioPropertiesBinding;
 import io.jmix.flowui.kit.meta.StudioComponent;
+import io.jmix.flowui.kit.meta.StudioPropertiesBinding;
 import io.jmix.flowui.kit.meta.StudioProperty;
 import io.jmix.flowui.kit.meta.StudioPropertyType;
 import io.jmix.flowui.kit.meta.StudioUiKit;
@@ -709,18 +710,19 @@ public interface StudioComponents {
     ValuePicker entityPicker();
 
     @StudioComponent(
-            name = "Grid",
-            classFqn = "io.jmix.flowui.component.grid.JmixGrid",
+            name = "DataGrid",
+            classFqn = "io.jmix.flowui.component.grid.DataGrid",
             category = "Components",
-            xmlElement = "grid",
-            icon = "io/jmix/flowui/kit/meta/icon/component/grid.svg",
+            xmlElement = "dataGrid",
+            icon = "io/jmix/flowui/kit/meta/icon/component/dataGrid.svg",
             properties = {
                     @StudioProperty(xmlAttribute = "allRowsVisible", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "className", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "columnReorderingAllowed", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
-                    @StudioProperty(xmlAttribute = "dataContainer", type = StudioPropertyType.DATA_CONTAINER_REF),
+                    @StudioProperty(xmlAttribute = "dataContainer", type = StudioPropertyType.COLLECTION_DATA_CONTAINER_REF,
+                            required = true),
                     @StudioProperty(xmlAttribute = "detailsVisibleOnClick", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "dropMode", type = StudioPropertyType.ENUMERATION,
@@ -740,7 +742,7 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "nestedNullBehavior", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.grid.Grid.NestedNullBehavior", defaultValue = "THROW",
                             options = {"THROW", "ALLOW_NULLS"}),
-                    @StudioProperty(xmlAttribute = "pageSize", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "pageSize", type = StudioPropertyType.INTEGER, defaultValue = "50"),
                     @StudioProperty(xmlAttribute = "rowDraggable", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "selectionMode", type = StudioPropertyType.ENUMERATION,
@@ -753,10 +755,80 @@ public interface StudioComponents {
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE)
+                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE, initialValue = "100%")
+            },
+            propertiesBindings = {
+                    @StudioPropertiesBinding(
+                            source = "dataContainer",
+                            item = "property"
+                    )
             }
     )
-    Grid grid();
+    JmixGrid dataGrid();
+
+    @StudioComponent(
+            name = "TreeDataGrid",
+            classFqn = "io.jmix.flowui.component.grid.TreeDataGrid",
+            category = "Components",
+            xmlElement = "treeDataGrid",
+            icon = "io/jmix/flowui/kit/meta/icon/component/treeDataGrid.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "allRowsVisible", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "className", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "columnReorderingAllowed", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "dataContainer", type = StudioPropertyType.COLLECTION_DATA_CONTAINER_REF,
+                            required = true),
+                    @StudioProperty(xmlAttribute = "detailsVisibleOnClick", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "dropMode", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "com.vaadin.flow.component.grid.dnd.GridDropMode", options = {"BETWEEN", "ON_TOP",
+                            "ON_TOP_OR_BETWEEN", "ON_GRID"}),
+                    @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "hierarchyProperty", type = StudioPropertyType.PROPERTY_REF, required = true),
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "maxHeight", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "maxWidth", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "metaClass", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "minHeight", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "minWidth", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "multiSort", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "nestedNullBehavior", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "com.vaadin.flow.component.grid.Grid.NestedNullBehavior", defaultValue = "THROW",
+                            options = {"THROW", "ALLOW_NULLS"}),
+                    @StudioProperty(xmlAttribute = "pageSize", type = StudioPropertyType.INTEGER, defaultValue = "50"),
+                    @StudioProperty(xmlAttribute = "rowDraggable", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "selectionMode", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "com.vaadin.flow.component.grid.Grid.SelectionMode", defaultValue = "MULTI",
+                            options = {"SINGLE", "MULTI"}),
+                    @StudioProperty(xmlAttribute = "showOrphans", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "themeName", type = StudioPropertyType.VALUES_LIST,
+                            options = {"no-border", "no-row-borders", "column-borders", "row-stripes",
+                                    "compact", "wrap-cell-content", "column-dividers"}),
+                    @StudioProperty(xmlAttribute = "verticalScrollingEnabled", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE, initialValue = "100%")
+            },
+            propertiesBindings = {
+                    @StudioPropertiesBinding(
+                            source = "dataContainer",
+                            item = "hierarchyProperty"
+                    ),
+                    @StudioPropertiesBinding(
+                            source = "dataContainer",
+                            item = "property"
+                    )
+            }
+    )
+    JmixTreeGrid treeDataGrid();
 
     @StudioComponent(
             name = "NumberField",
@@ -953,7 +1025,7 @@ public interface StudioComponents {
                     @StudioProperty(xmlAttribute = "className", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "dataContainer", type = StudioPropertyType.DATA_CONTAINER_REF),
                     @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false"),
+                            defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "errorMessage", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.SIZE),
                     @StudioProperty(xmlAttribute = "helperText", type = StudioPropertyType.LOCALIZED_STRING),

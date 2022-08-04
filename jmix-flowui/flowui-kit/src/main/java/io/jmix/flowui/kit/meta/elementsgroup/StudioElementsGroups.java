@@ -17,6 +17,8 @@
 package io.jmix.flowui.kit.meta.elementsgroup;
 
 import io.jmix.flowui.kit.meta.StudioElementsGroup;
+import io.jmix.flowui.kit.meta.StudioProperty;
+import io.jmix.flowui.kit.meta.StudioPropertyType;
 import io.jmix.flowui.kit.meta.StudioUiKit;
 
 @StudioUiKit
@@ -30,4 +32,17 @@ public interface StudioElementsGroups {
             target = {"io.jmix.flowui.kit.component.SupportsFormatter"}
     )
     void formatter();
+
+    @StudioElementsGroup(
+            name = "Columns",
+            elementClassFqn = "com.vaadin.flow.component.grid.Grid.Column",
+            xmlElement = "columns",
+            icon = "io/jmix/flowui/kit/meta/icon/elementsgroup/columns.svg",
+            target = {"com.vaadin.flow.component.grid.Grid"},
+            properties = {
+                    @StudioProperty(xmlAttribute = "exclude", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "includeAll", type = StudioPropertyType.BOOLEAN, defaultValue = "false")
+            }
+    )
+    void columns();
 }

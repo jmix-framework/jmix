@@ -236,7 +236,7 @@ public interface StudioViewActions {
                     @StudioProperty(xmlAttribute = "icon", type = StudioPropertyType.ICON, defaultValue = "PENCIL",
                             setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true,
-                            initialValue = "detailDiscard"),
+                            initialValue = "detailEnableEditing"),
                     @StudioProperty(xmlAttribute = "shortcut", type = StudioPropertyType.SHORTCUT,
                             setMethod = "setShortcutCombination"),
                     @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.LOCALIZED_STRING,

@@ -2,6 +2,7 @@ package io.jmix.flowui.kit.meta.component;
 
 import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.details.Details;
+import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.Scroller;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -228,4 +229,32 @@ public interface StudioContainers {
             }
     )
     Accordion accordion();
+
+    @StudioComponent(
+            name = "FormLayout",
+            classFqn = "com.vaadin.flow.component.formlayout.FormLayout",
+            category = "Containers",
+            xmlElement = "formLayout",
+            icon = "io/jmix/flowui/kit/meta/icon/container/formLayout.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "className", type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "dataContainer", type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
+                        @StudioProperty(xmlAttribute = "labelsPosition", type = StudioPropertyType.ENUMERATION,
+                        classFqn = "com.vaadin.flow.component.formlayout.FormLayout$ResponsiveStep$LabelsPosition",
+                                options = {"ASIDE", "TOP"}),
+                    @StudioProperty(xmlAttribute = "maxHeight", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "maxWidth", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "minHeight", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "minWidth", type = StudioPropertyType.SIZE),
+                    @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE, defaultValue = "100%")
+            }
+    )
+    FormLayout formLayout();
 }

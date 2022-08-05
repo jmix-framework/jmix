@@ -19,6 +19,7 @@ package io.jmix.flowui.kit.meta.element;
 import com.vaadin.flow.component.accordion.AccordionPanel;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.tabs.Tab;
+import com.vaadin.flow.component.formlayout.FormLayout;
 import io.jmix.flowui.kit.meta.StudioElement;
 import io.jmix.flowui.kit.meta.StudioProperty;
 import io.jmix.flowui.kit.meta.StudioPropertyType;
@@ -148,4 +149,18 @@ public interface StudioElements {
             }
     )
     Grid.Column column();
+
+    @StudioElement(
+            name = "ResponsiveStep",
+            classFqn = "com.vaadin.flow.component.formlayout.FormLayout.ResponsiveStep",
+            xmlElement = "responsiveStep",
+            properties = {
+                    @StudioProperty(xmlAttribute = "minWidth", type = StudioPropertyType.INTEGER, required = true),
+                    @StudioProperty(xmlAttribute = "columns", type = StudioPropertyType.INTEGER, required = true),
+                    @StudioProperty(xmlAttribute = "labelsPosition", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "com.vaadin.flow.component.formlayout.FormLayout$ResponsiveStep$LabelsPosition",
+                            options = {"ASIDE", "TOP"})
+            }
+    )
+    FormLayout.ResponsiveStep responsiveStep();
 }

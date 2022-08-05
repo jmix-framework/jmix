@@ -45,4 +45,12 @@ public interface StudioElementsGroups {
             }
     )
     void columns();
+
+    @StudioElementsGroup(
+            name = "ResponsiveSteps",
+            elementClassFqn = "com.vaadin.flow.component.formlayout.FormLayout.ResponsiveStep",
+            xmlElement = "responsiveSteps",
+            target = {"com.vaadin.flow.component.formlayout.FormLayout"}
+    )
+    void responsiveSteps();
 }

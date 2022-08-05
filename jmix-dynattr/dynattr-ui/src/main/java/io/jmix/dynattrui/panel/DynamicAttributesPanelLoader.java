@@ -82,13 +82,6 @@ public class DynamicAttributesPanelLoader extends AbstractComponentLoader<Dynami
         }
     }
 
-    protected void loadMargin(DynamicAttributesPanel resultComponent, Element element) {
-        String margin = element.attributeValue("margin");
-        if (!Strings.isNullOrEmpty(margin)) {
-            resultComponent.setMargin(Boolean.valueOf(margin));
-        }
-    }
-
     protected Integer getIntegerAttribute(String attributeName, Element element) {
         String columnsCountStr = element.attributeValue(attributeName);
         if (!Strings.isNullOrEmpty(columnsCountStr)) {

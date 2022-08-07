@@ -120,16 +120,13 @@ public class ExceptionHandlers {
     }
 
     /**
-     * Create all Web handlers defined by <code>ExceptionHandlersConfiguration</code> beans in spring.xml and
-     * GUI handlers defined as Spring-beans.
+     * Register all exception handlers.
      */
     public void createByConfiguration() {
         removeAll();
 
-        // Web handlers
         Map<String, ExceptionHandlersConfiguration> map = applicationContext.getBeansOfType(ExceptionHandlersConfiguration.class);
 
-        // Project-level handlers must run before platform-level
         List<ExceptionHandlersConfiguration> configurations = new ArrayList<>(map.values());
         Collections.reverse(configurations);
 
@@ -149,7 +146,6 @@ public class ExceptionHandlers {
             }
         }
 
-        // GUI handlers
         Map<String, UiExceptionHandler> handlerMap = applicationContext.getBeansOfType(UiExceptionHandler.class);
 
         List<UiExceptionHandler> handlers = new ArrayList<>(handlerMap.values());

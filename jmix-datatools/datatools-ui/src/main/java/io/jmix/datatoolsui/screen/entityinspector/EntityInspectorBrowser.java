@@ -68,6 +68,7 @@ import static io.jmix.ui.download.DownloadFormat.ZIP;
 @Route("jmixEntityInspector")
 @UiController("entityInspector.browse")
 @UiDescriptor("entity-inspector-browser.xml")
+@MultipleOpen
 public class EntityInspectorBrowser extends StandardLookup<Object> {
 
     public static final int MAX_TEXT_LENGTH = 50;

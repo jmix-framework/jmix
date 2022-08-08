@@ -20,10 +20,10 @@ import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.server.Resource;
 import com.vaadin.server.Sizeable;
 import com.vaadin.server.VaadinSession;
-import com.vaadin.ui.*;
 import com.vaadin.ui.AbstractComponent;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
+import com.vaadin.ui.*;
 import com.vaadin.v7.data.Container;
 import com.vaadin.v7.data.Property;
 import com.vaadin.v7.data.util.converter.Converter;
@@ -47,17 +47,14 @@ import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.Actions;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.Notifications;
+import io.jmix.ui.UiComponentProperties;
 import io.jmix.ui.accesscontext.UiEntityAttributeContext;
 import io.jmix.ui.accesscontext.UiEntityContext;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.LookupComponent.LookupSelectionChangeNotifier;
-import io.jmix.ui.component.data.BindingState;
-import io.jmix.ui.component.data.DataUnit;
-import io.jmix.ui.component.data.HasValueSource;
-import io.jmix.ui.component.data.TableItems;
-import io.jmix.ui.component.data.ValueConversionException;
+import io.jmix.ui.component.data.*;
 import io.jmix.ui.component.data.aggregation.Aggregation;
 import io.jmix.ui.component.data.aggregation.Aggregations;
 import io.jmix.ui.component.data.aggregation.impl.AggregatableDelegate;
@@ -77,7 +74,6 @@ import io.jmix.ui.model.DataComponents;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.presentation.TablePresentations;
 import io.jmix.ui.presentation.model.TablePresentation;
-import io.jmix.ui.UiComponentProperties;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.InstallTargetHandler;
 import io.jmix.ui.screen.ScreenContext;
@@ -747,7 +743,7 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
         List<MetaPropertyPath> editableColumns = new ArrayList<>(propertyIds.size());
         for (MetaPropertyPath propertyId : propertyIds) {
             UiEntityAttributeContext attributeContext =
-                    new UiEntityAttributeContext(metaClass, propertyId.toString());
+                    new UiEntityAttributeContext(propertyId);
             accessManager.applyRegisteredConstraints(attributeContext);
 
             if (!attributeContext.canModify()) {
@@ -1584,7 +1580,7 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
                     MetaPropertyPath propertyPath = c.getMetaPropertyPath();
                     if (propertyPath != null) {
                         UiEntityAttributeContext attributeContext =
-                                new UiEntityAttributeContext(entityMetaClass, propertyPath.toString());
+                                new UiEntityAttributeContext(propertyPath);
                         accessManager.applyRegisteredConstraints(attributeContext);
 
                         return attributeContext.canView();
@@ -1618,7 +1614,7 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
                     MetaPropertyPath propertyPath = ((MetaPropertyPath) columnId);
 
                     UiEntityAttributeContext attributeContext =
-                            new UiEntityAttributeContext(metaClass, propertyPath.toString());
+                            new UiEntityAttributeContext(propertyPath);
                     accessManager.applyRegisteredConstraints(attributeContext);
 
                     if (attributeContext.canModify() && attributeContext.canView()) {
@@ -1633,8 +1629,10 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
                 }
 
                 if (column.isCollapsed() && component.isColumnCollapsingAllowed()) {
-                    UiEntityAttributeContext attributeContext =
+                    UiEntityAttributeContext attributeContext = columnId instanceof MetaPropertyPath ?
+                            new UiEntityAttributeContext((MetaPropertyPath) columnId) :
                             new UiEntityAttributeContext(metaClass, columnId.toString());
+
                     accessManager.applyRegisteredConstraints(attributeContext);
 
                     if (!(columnId instanceof MetaPropertyPath) || attributeContext.canView()) {
@@ -2347,7 +2345,7 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
                 MetaPropertyPath propertyPath = (MetaPropertyPath) column.getId();
 
                 UiEntityAttributeContext attributeContext =
-                        new UiEntityAttributeContext(metaClass, propertyPath.toString());
+                        new UiEntityAttributeContext(propertyPath);
                 accessManager.applyRegisteredConstraints(attributeContext);
 
                 if (attributeContext.canView()) {

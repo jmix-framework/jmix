@@ -1936,7 +1936,7 @@ public abstract class AbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E>, 
                     MetaPropertyPath propertyPath = column.getPropertyPath();
                     if (propertyPath != null) {
                         UiEntityAttributeContext attributeContext =
-                                new UiEntityAttributeContext(metaClass, propertyPath.toString());
+                                new UiEntityAttributeContext(propertyPath);
                         accessManager.applyRegisteredConstraints(attributeContext);
                         return attributeContext.canView();
                     }

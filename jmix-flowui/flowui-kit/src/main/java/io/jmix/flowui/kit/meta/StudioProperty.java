@@ -54,4 +54,18 @@ public @interface StudioProperty {
     String removeMethod() default "";
 
     String removeParameterFqn() default "";
+
+    /**
+     * Specifies name of the type parameter for the component that is provided by the property.<br>
+     * The actual class for the type parameter can be resolved for the following property types:
+     * {@link StudioPropertyType#ENTITY_CLASS},
+     * {@link StudioPropertyType#ENUM_CLASS},
+     * {@link StudioPropertyType#COMPONENT_REF},
+     * {@link StudioPropertyType#PROPERTY_REF},
+     * {@link StudioPropertyType#DATA_CONTAINER_REF},
+     * {@link StudioPropertyType#COLLECTION_DATA_CONTAINER_REF}
+     *
+     * @return name of the type parameter
+     */
+    String typeParameter() default "";
 }

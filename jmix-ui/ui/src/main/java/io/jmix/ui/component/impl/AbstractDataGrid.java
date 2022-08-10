@@ -1930,7 +1930,6 @@ public abstract class AbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E>, 
     }
 
     protected List<Column<E>> getInitialVisibleColumns() {
-        MetaClass metaClass = getEntityDataGridItems().getEntityMetaClass();
         return columnsOrder.stream()
                 .filter(column -> {
                     MetaPropertyPath propertyPath = column.getPropertyPath();

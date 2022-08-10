@@ -736,10 +736,8 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
         }
     }
 
-    protected void enableEditableColumns(EntityTableItems<E> entityTableSource,
+    protected void enableEditableColumns(@SuppressWarnings("unused") EntityTableItems<E> entityTableSource, //backward compatibility //todo remove in minor release
                                          Collection<MetaPropertyPath> propertyIds) {
-        MetaClass metaClass = entityTableSource.getEntityMetaClass();
-
         List<MetaPropertyPath> editableColumns = new ArrayList<>(propertyIds.size());
         for (MetaPropertyPath propertyId : propertyIds) {
             UiEntityAttributeContext attributeContext =
@@ -1573,8 +1571,8 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
         }
     }
 
-    protected List<Object> getPropertyColumns(EntityTableItems<E> entityTableSource, List<Column<E>> columnsOrder) {
-        MetaClass entityMetaClass = entityTableSource.getEntityMetaClass();
+    protected List<Object> getPropertyColumns(@SuppressWarnings("unused") EntityTableItems<E> entityTableSource, //backward compatibility //todo remove in minor release
+                                              List<Column<E>> columnsOrder) {
         return columnsOrder.stream()
                 .filter(c -> {
                     MetaPropertyPath propertyPath = c.getMetaPropertyPath();
@@ -2336,10 +2334,9 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
         }
     }
 
-    protected List<Object> getInitialVisibleColumnIds(EntityTableItems<E> entityTableSource) {
+    protected List<Object> getInitialVisibleColumnIds(@SuppressWarnings("unused") EntityTableItems<E> entityTableSource) {//backward compatibility //todo remove in minor release
         List<Object> result = new ArrayList<>();
 
-        MetaClass metaClass = entityTableSource.getEntityMetaClass();
         for (Column column : columnsOrder) {
             if (column.getId() instanceof MetaPropertyPath) {
                 MetaPropertyPath propertyPath = (MetaPropertyPath) column.getId();

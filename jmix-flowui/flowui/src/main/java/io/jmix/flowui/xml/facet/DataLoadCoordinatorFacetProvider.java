@@ -82,7 +82,7 @@ public class DataLoadCoordinatorFacetProvider implements FacetProvider<DataLoadC
         loaderSupport.loadBoolean(element, "auto")
                 .ifPresent(auto -> {
                     if (auto) {
-                        context.addInitTask(new AutoConfigurationInitTask(facet));
+                        context.addPreInitTask(new AutoConfigurationInitTask(facet));
                     }
                 });
     }
@@ -133,7 +133,7 @@ public class DataLoadCoordinatorFacetProvider implements FacetProvider<DataLoadC
                         "value: " + type, context);
         }
 
-        context.addInitTask(new OnViewEventLoadTriggerInitTask(facet, loaderId, eventClass));
+        context.addPreInitTask(new OnViewEventLoadTriggerInitTask(facet, loaderId, eventClass));
     }
 
     protected void loadOnContainerItemChanged(DataLoadCoordinator facet, ComponentContext context,
@@ -141,7 +141,7 @@ public class DataLoadCoordinatorFacetProvider implements FacetProvider<DataLoadC
         String container = loadEventRequiredAttribute(element, "container", context);
 
         String param = loadParam(element);
-        context.addInitTask(new OnContainerItemChangedLoadTriggerInitTask(facet, loaderId, container, param));
+        context.addPreInitTask(new OnContainerItemChangedLoadTriggerInitTask(facet, loaderId, container, param));
     }
 
     protected void loadOnComponentValueChanged(DataLoadCoordinator facet, ComponentContext context,
@@ -151,7 +151,7 @@ public class DataLoadCoordinatorFacetProvider implements FacetProvider<DataLoadC
         String param = loadParam(element);
         LikeClause likeClause = loadLikeClause(element);
 
-        context.addInitTask(new OnComponentValueChangedLoadTriggerInitTask(
+        context.addPreInitTask(new OnComponentValueChangedLoadTriggerInitTask(
                 facet, loaderId, component, param, likeClause));
     }
 

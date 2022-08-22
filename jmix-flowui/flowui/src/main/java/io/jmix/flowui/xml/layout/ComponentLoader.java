@@ -32,8 +32,10 @@ public interface ComponentLoader<T extends Component> {
 
         View<?> getView();
 
-        void addInitTask(InitTask task);
+        void addPreInitTask(InitTask task);
+        void executePreInitTasks();
 
+        void addInitTask(InitTask task);
         void executeInitTasks();
     }
 

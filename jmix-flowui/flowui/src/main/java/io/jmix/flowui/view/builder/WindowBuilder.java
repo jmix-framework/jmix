@@ -10,7 +10,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class WindowBuilder<S extends View<?>> extends AbstractWindowBuilder<S> {
+public class WindowBuilder<S extends View<?>> extends AbstractWindowBuilder<S> implements DialogWindowClassBuilder<S> {
 
     protected Class<S> viewClass;
 
@@ -42,10 +42,7 @@ public class WindowBuilder<S extends View<?>> extends AbstractWindowBuilder<S> {
         return this;
     }
 
-    public Optional<String> getViewId() {
-        return Optional.ofNullable(viewId);
-    }
-
+    @Override
     public Optional<Class<S>> getViewClass() {
         return Optional.ofNullable(viewClass);
     }

@@ -18,12 +18,12 @@ package io.jmix.flowui.xml.layout.support;
 
 import io.jmix.core.security.EntityOp;
 import io.jmix.flowui.Actions;
+import io.jmix.flowui.action.SecuredBaseAction;
 import io.jmix.flowui.action.SecurityConstraintAction;
 import io.jmix.flowui.action.list.ItemTrackingAction;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionVariant;
-import io.jmix.flowui.kit.action.BaseAction;
 import io.jmix.flowui.kit.component.HasActions;
 import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.xml.layout.ComponentLoader.Context;
@@ -79,33 +79,6 @@ public class ActionLoaderSupport implements ApplicationContextAware {
         return loadDeclarativeActionDefault(element);
     }
 
-    protected void initAction(Element element, Action targetAction) {
-        loaderSupport.loadResourceString(element, "text",
-                context.getMessageGroup(), targetAction::setText);
-        loaderSupport.loadResourceString(element, "description",
-                context.getMessageGroup(), targetAction::setDescription);
-        loaderSupport.loadBoolean(element, "enable", targetAction::setEnabled);
-        loaderSupport.loadBoolean(element, "visible", targetAction::setVisible);
-
-        loaderSupport.loadEnum(element, ActionVariant.class, "actionVariant",
-                ((Action) targetAction)::setVariant);
-
-        loaderSupport.loadString(element, "icon")
-                .ifPresent(iconString ->
-                        targetAction.setIcon(parseIcon(iconString)));
-
-        componentLoader().loadShortcut(element).ifPresent(shortcut ->
-                targetAction.setShortcutCombination(KeyCombination.create(shortcut)));
-
-        Element propertiesEl = element.element("properties");
-        if (propertiesEl != null) {
-            for (Element propertyEl : propertiesEl.elements("property")) {
-                loaderSupport.loadString(propertyEl, "name",
-                        name -> propertyLoader.load(targetAction, name, propertyEl.attributeValue("value")));
-            }
-        }
-    }
-
     protected void loadActionConstraint(Action action, Element element) {
         if (action instanceof SecurityConstraintAction) {
             SecurityConstraintAction hasSecurityConstraint = (SecurityConstraintAction) action;
@@ -156,7 +129,7 @@ public class ActionLoaderSupport implements ApplicationContextAware {
             targetAction = actions.create(ItemTrackingAction.ID, id);
             loadActionConstraint(targetAction, element);
         } else {
-            targetAction = new BaseAction(id);
+            targetAction = new SecuredBaseAction(id);
         }
 
         initAction(element, targetAction);
@@ -178,6 +151,33 @@ public class ActionLoaderSupport implements ApplicationContextAware {
                         "Component ID", component.attributeValue("id"));
             }
         });
+    }
+
+    protected void initAction(Element element, Action targetAction) {
+        loaderSupport.loadResourceString(element, "text",
+                context.getMessageGroup(), targetAction::setText);
+        loaderSupport.loadResourceString(element, "description",
+                context.getMessageGroup(), targetAction::setDescription);
+        loaderSupport.loadBoolean(element, "enable", targetAction::setEnabled);
+        loaderSupport.loadBoolean(element, "visible", targetAction::setVisible);
+
+        loaderSupport.loadEnum(element, ActionVariant.class, "actionVariant",
+                ((Action) targetAction)::setVariant);
+
+        loaderSupport.loadString(element, "icon")
+                .ifPresent(iconString ->
+                        targetAction.setIcon(parseIcon(iconString)));
+
+        componentLoader().loadShortcut(element).ifPresent(shortcut ->
+                targetAction.setShortcutCombination(KeyCombination.create(shortcut)));
+
+        Element propertiesEl = element.element("properties");
+        if (propertiesEl != null) {
+            for (Element propertyEl : propertiesEl.elements("property")) {
+                loaderSupport.loadString(propertyEl, "name",
+                        name -> propertyLoader.load(targetAction, name, propertyEl.attributeValue("value")));
+            }
+        }
     }
 
     protected ComponentLoaderSupport componentLoader() {

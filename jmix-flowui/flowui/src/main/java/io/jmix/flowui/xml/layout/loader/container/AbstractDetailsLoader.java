@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2022 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,16 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.xml.layout.loader.component;
+package io.jmix.flowui.xml.layout.loader.container;
 
 import com.vaadin.flow.component.details.Details;
+import io.jmix.flowui.component.details.JmixDetails;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.loader.LayoutLoader;
 import io.jmix.flowui.xml.layout.loader.container.AbstractContainerLoader;
 import org.dom4j.Element;
 
-public class DetailsLoader extends AbstractContainerLoader<Details> {
-
-    @Override
-    protected Details createComponent() {
-        return factory.create(Details.class);
-    }
+public abstract class AbstractDetailsLoader<C extends Details> extends AbstractContainerLoader<C> {
 
     @Override
     public void initComponent() {
@@ -44,6 +40,8 @@ public class DetailsLoader extends AbstractContainerLoader<Details> {
         componentLoader().loadClassName(resultComponent, element);
         componentLoader().loadThemeName(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
+
+        getLoaderSupport().loadBoolean(element, "opened", resultComponent::setOpened);
 
         loadSubComponents();
     }

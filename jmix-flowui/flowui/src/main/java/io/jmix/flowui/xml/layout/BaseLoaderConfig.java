@@ -39,7 +39,7 @@ public abstract class BaseLoaderConfig {
 
         /* Content panel */
         loaders.put("accordion", AccordionLoader.class);
-        loaders.put("accordionPanel", AccordionLoader.AccordionPanelLoader.class);
+        loaders.put("accordionPanel", AccordionPanelLoader.class);
         loaders.put("scroller", ScrollerLoader.class);
         loaders.put("tabs", TabsLoader.class);
         loaders.put("tab", TabsLoader.TabLoader.class);

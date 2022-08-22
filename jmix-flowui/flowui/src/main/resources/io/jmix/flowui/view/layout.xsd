@@ -1088,12 +1088,8 @@
                     <xs:enumeration value="${GRID_CREATE_SHORTCUT}"/>
                     <xs:enumeration value="${GRID_EDIT_SHORTCUT}"/>
                     <xs:enumeration value="${GRID_REMOVE_SHORTCUT}"/>
-                    <!--                    <xs:enumeration value="${TABLE_EDIT_SHORTCUT}"/>-->
-                    <!--                    <xs:enumeration value="${TABLE_INSERT_SHORTCUT}"/>-->
-                    <!--                    <xs:enumeration value="${TABLE_ADD_SHORTCUT}"/>-->
-                    <!--                    <xs:enumeration value="${TABLE_REMOVE_SHORTCUT}"/>-->
-                    <!--                    <xs:enumeration value="${COMMIT_SHORTCUT}"/>-->
-                    <!--                    <xs:enumeration value="${CLOSE_SHORTCUT}"/>-->
+                    <xs:enumeration value="${COMMIT_SHORTCUT}"/>
+                    <xs:enumeration value="${CLOSE_SHORTCUT}"/>
                     <!--                    <xs:enumeration value="${NEXT_TAB_SHORTCUT}"/>-->
                     <!--                    <xs:enumeration value="${PREVIOUS_TAB_SHORTCUT}"/>-->
                     <!--                    <xs:enumeration value="${PICKER_LOOKUP_SHORTCUT}"/>-->
@@ -2550,10 +2546,11 @@
     <xs:complexType name="detailsComponent">
         <xs:complexContent>
             <xs:extension base="baseComponent">
-                <xs:group ref="singleLayoutOrComponent"/>
+                <xs:group ref="layoutOrComponent"/>
 
                 <xs:attribute name="summaryText" type="resourceString"/>
                 <xs:attribute name="themeName" type="detailsThemeName"/>
+                <xs:attribute name="opened" type="xs:boolean"/>
 
                 <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasEnabled"/>

@@ -38,7 +38,7 @@ import java.util.Collections;
 public class FlowuiConfiguration {
 
     @Bean("flowui_UiControllers")
-    public UiControllersConfiguration viewss(ApplicationContext applicationContext,
+    public UiControllersConfiguration views(ApplicationContext applicationContext,
                                             AnnotationScanMetadataReaderFactory metadataReaderFactory) {
         UiControllersConfiguration uiControllers
                 = new UiControllersConfiguration(applicationContext, metadataReaderFactory);

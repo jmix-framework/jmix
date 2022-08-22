@@ -34,6 +34,7 @@ import static java.util.Objects.requireNonNull;
 public class StandardDetailView<T> extends StandardView implements DetailView<T>, ReadOnlyAwareView {
 
     public static final String NEW_ENTITY_ID = "new";
+    public static final String DEFAULT_ROUTE_PARAM = "id";
 
     private T entityToEdit;
     private String serializedEntityIdToEdit;
@@ -85,7 +86,8 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
     private void onPostCommitEvent(DataContext.PostCommitEvent postCommitEvent) {
         setModifiedAfterOpen(false);
 
-        if (showSaveNotification) {
+        if (!postCommitEvent.getCommittedInstances().isEmpty()
+                && showSaveNotification) {
             showSaveNotification();
         }
     }
@@ -116,9 +118,15 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
         super.beforeEnter(event);
     }
 
-    private void findEntityId(BeforeEnterEvent event) {
-        serializedEntityIdToEdit = event.getRouteParameters().get("id")
-                .orElseThrow(() -> new IllegalStateException("Entity id not found"));
+    protected void findEntityId(BeforeEnterEvent event) {
+        String routeParamName = getRouteParamName();
+        serializedEntityIdToEdit = event.getRouteParameters().get(routeParamName)
+                .orElseThrow(() ->
+                        new IllegalStateException(String.format("Entity '%s' not found", routeParamName)));
+    }
+
+    protected String getRouteParamName() {
+        return DEFAULT_ROUTE_PARAM;
     }
 
     private OperationResult commitChanges() {
@@ -422,7 +430,7 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
         this.entityToEdit = entity;
     }
 
-    private void setupEntityToEdit() {
+    protected void setupEntityToEdit() {
         if (serializedEntityIdToEdit != null) {
             setupEntityToEdit(serializedEntityIdToEdit);
         } else if (entityToEdit != null) {
@@ -432,7 +440,7 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
         }
     }
 
-    private void setupEntityToEdit(String serializedEntityId) {
+    protected void setupEntityToEdit(String serializedEntityId) {
         //noinspection unchecked
         Class<T> entityClass = (Class<T>) DetailViewTypeExtractor.extractEntityClass(getClass())
                 .orElseThrow(() ->
@@ -446,7 +454,7 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
         }
     }
 
-    private void initNewEntity(Class<T> entityClass) {
+    protected void initNewEntity(Class<T> entityClass) {
         DataContext dataContext = getViewData().getDataContext();
 
         T newEntity = dataContext.create(entityClass);
@@ -457,7 +465,7 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
         container.setItem(newEntity);
     }
 
-    private void initExistingEntity(String serializedEntityId) {
+    protected void initExistingEntity(String serializedEntityId) {
         MetaClass entityMetaClass = getEditedEntityContainer().getEntityMetaClass();
         MetaProperty primaryKeyProperty = getMetadataTools().getPrimaryKeyProperty(entityMetaClass);
         if (primaryKeyProperty == null) {
@@ -470,7 +478,7 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
         getEditedEntityLoader().setEntityId(entityId);
     }
 
-    private void setupEntityToEdit(T entityToEdit) {
+    protected void setupEntityToEdit(T entityToEdit) {
         DataContext dataContext = getViewData().getDataContext();
 
         if (getEntityStates().isNew(entityToEdit) || doNotReloadEditedEntity()) {

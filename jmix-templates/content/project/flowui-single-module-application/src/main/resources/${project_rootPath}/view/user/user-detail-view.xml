@@ -16,7 +16,7 @@
     <facets>
         <dataLoadCoordinator auto="true"/>
     </facets>
-    <layout expand="editActions">
+    <layout>
         <formLayout id="form" dataContainer="userDc">
             <textField id="usernameField" property="username" readOnly="true"/>
             <passwordField id="passwordField"
@@ -33,7 +33,7 @@
             <comboBox id="timeZoneField" property="timeZoneId"/>
             <checkbox id="activeField" property="active"/>
         </formLayout>
-        <hbox id="editActions">
+        <hbox id="detailActions">
             <button id="commitAndCloseBtn" action="commitAction"/>
             <button id="closeBtn" action="closeAction"/>
         </hbox>

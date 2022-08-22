@@ -63,32 +63,36 @@ public interface ViewOpeningAction extends Action {
      * @return route parameters or {@code null} if not set
      */
     @Nullable
-    RouteParameters getRouteParameters();
+    RouteParametersProvider getRouteParametersProvider();
 
     /**
-     * Sets route parameters that should be used in the route template.
+     * Sets route parameters provider that returns route parameters
+     * that should be used in the route template.
      * <p>
-     * Note that route parameters are set if the detail is opened in {@link OpenMode#NAVIGATION}.
+     * Note that route parameters provider is set if the detail is
+     * opened in {@link OpenMode#NAVIGATION}.
      *
-     * @param routeParameters route parameters to set
+     * @param routeParameters route parameters provider to set
      * @see Route
      */
-    void setRouteParameters(@Nullable RouteParameters routeParameters);
+    void setRouteParametersProvider(@Nullable RouteParametersProvider routeParameters);
 
     /**
-     * @return query parameters or {@code null} if not set
+     * @return query parameters provider or {@code null} if not set
      */
     @Nullable
-    QueryParameters getQueryParameters();
+    QueryParametersProvider getQueryParametersProvider();
 
     /**
-     * Sets query parameters that should be used in the URL.
+     * Sets query parameters provider that returns query parameters
+     * that should be used in the URL.
      * <p>
-     * Note that query parameters are set if the detail is opened in {@link OpenMode#NAVIGATION}.
+     * Note that query parameters provider is set if the detail is
+     * opened in {@link OpenMode#NAVIGATION}.
      *
-     * @param queryParameters query parameters to set
+     * @param queryParameters query parameters provider to set
      */
-    void setQueryParameters(@Nullable QueryParameters queryParameters);
+    void setQueryParametersProvider(@Nullable QueryParametersProvider queryParameters);
 
     /**
      * Sets the handler to be invoked when the detail view closes.
@@ -110,4 +114,24 @@ public interface ViewOpeningAction extends Action {
      * @param <S>               view type
      */
     <S extends View<?>> void setAfterCloseHandler(@Nullable Consumer<DialogWindow.AfterCloseEvent<S>> afterCloseHandler);
+
+    @FunctionalInterface
+    interface RouteParametersProvider {
+
+        /**
+         * @return {@link RouteParameters} instance or {@code null}
+         */
+        @Nullable
+        RouteParameters getRouteParameters();
+    }
+
+    @FunctionalInterface
+    interface QueryParametersProvider {
+
+        /**
+         * @return {@link QueryParameters} instance or {@code null}
+         */
+        @Nullable
+        QueryParameters getQueryParameters();
+    }
 }

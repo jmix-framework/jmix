@@ -18,13 +18,39 @@ package io.jmix.securityflowui;
 
 
 import io.jmix.core.annotation.JmixModule;
+import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
 import io.jmix.flowui.FlowuiConfiguration;
+import io.jmix.flowui.sys.ActionsConfiguration;
+import io.jmix.flowui.sys.UiControllersConfiguration;
 import io.jmix.security.SecurityConfiguration;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.PropertySource;
+
+import java.util.Collections;
 
 @Configuration
 @JmixModule(dependsOn = {SecurityConfiguration.class, FlowuiConfiguration.class})
+@PropertySource(name = "io.jmix.securityflowui", value = "classpath:/io/jmix/securityflowui/module.properties")
 @Import(StandardSecurityFlowuiConfiguration.class)
 public class SecurityFlowuiConfiguration {
+
+    @Bean("flowui_SecurityUiControllers")
+    public UiControllersConfiguration views(ApplicationContext applicationContext,
+                                             AnnotationScanMetadataReaderFactory metadataReaderFactory) {
+        UiControllersConfiguration uiControllers
+                = new UiControllersConfiguration(applicationContext, metadataReaderFactory);
+        uiControllers.setBasePackages(Collections.singletonList("io.jmix.securityflowui.view"));
+        return uiControllers;
+    }
+
+    @Bean("flowui_SecurityActions")
+    public ActionsConfiguration actions(ApplicationContext applicationContext,
+                                        AnnotationScanMetadataReaderFactory metadataReaderFactory) {
+        ActionsConfiguration actionsConfiguration = new ActionsConfiguration(applicationContext, metadataReaderFactory);
+        actionsConfiguration.setBasePackages(Collections.singletonList("io.jmix.securityflowui"));
+        return actionsConfiguration;
+    }
 }

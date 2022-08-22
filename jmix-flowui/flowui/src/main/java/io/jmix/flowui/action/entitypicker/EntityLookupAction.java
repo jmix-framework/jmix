@@ -1,8 +1,6 @@
 package io.jmix.flowui.action.entitypicker;
 
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.router.QueryParameters;
-import com.vaadin.flow.router.RouteParameters;
 import io.jmix.core.DevelopmentException;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -14,10 +12,12 @@ import io.jmix.flowui.action.valuepicker.PickerAction;
 import io.jmix.flowui.component.EntityPickerComponent;
 import io.jmix.flowui.kit.component.FlowuiComponentUtils;
 import io.jmix.flowui.kit.component.KeyCombination;
-import io.jmix.flowui.view.*;
-import io.jmix.flowui.view.DialogWindow.AfterCloseEvent;
-import io.jmix.flowui.view.builder.LookupWindowBuilder;
 import io.jmix.flowui.sys.ActionViewInitializer;
+import io.jmix.flowui.view.DialogWindow.AfterCloseEvent;
+import io.jmix.flowui.view.LookupView;
+import io.jmix.flowui.view.OpenMode;
+import io.jmix.flowui.view.View;
+import io.jmix.flowui.view.builder.LookupWindowBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
@@ -113,25 +113,25 @@ public class EntityLookupAction<E> extends PickerAction<EntityLookupAction<E>, E
 
     @Nullable
     @Override
-    public RouteParameters getRouteParameters() {
+    public RouteParametersProvider getRouteParametersProvider() {
         // Lookup view opens in a dialog window only
         return null;
     }
 
     @Override
-    public void setRouteParameters(@Nullable RouteParameters routeParameters) {
+    public void setRouteParametersProvider(@Nullable RouteParametersProvider provider) {
         throw new UnsupportedOperationException("Lookup view opens in a dialog window only");
     }
 
     @Nullable
     @Override
-    public QueryParameters getQueryParameters() {
+    public QueryParametersProvider getQueryParametersProvider() {
         // Lookup view opens in a dialog window only
         return null;
     }
 
     @Override
-    public void setQueryParameters(@Nullable QueryParameters queryParameters) {
+    public void setQueryParametersProvider(@Nullable QueryParametersProvider provider) {
         throw new UnsupportedOperationException("Lookup view opens in a dialog window only");
     }
 
@@ -161,6 +161,22 @@ public class EntityLookupAction<E> extends PickerAction<EntityLookupAction<E>, E
         }
 
         builder.open();
+    }
+
+    /**
+     * @see #setViewId(String)
+     */
+    public EntityLookupAction<E> withViewId(@Nullable String viewId) {
+        setViewId(viewId);
+        return this;
+    }
+
+    /**
+     * @see #setViewClass(Class)
+     */
+    public EntityLookupAction<E> withViewClass(@Nullable Class<? extends View> viewClass) {
+        setViewClass(viewClass);
+        return this;
     }
 
     public EntityLookupAction<E> withSelectValidator(Predicate<LookupView.ValidationContext<E>> selectValidator) {

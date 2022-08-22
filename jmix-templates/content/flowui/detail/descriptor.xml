@@ -20,7 +20,6 @@ def formXml = api.processSnippet('screen/jmix_flow_form.xml',
 def optionsDatasourceXml = api.processSnippet('screen/optionsDsSource.xml',
         ['view': detailFetchPlan,
         'api': api])
-def expandId = "detailActions"
 %><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <view xmlns="http://jmix.io/schema/flowui/view"
       title="${messageKeys['detailTitle']}"
@@ -51,7 +50,7 @@ def expandId = "detailActions"
         <action id="commitAction" type="detail_commitClose"/>
         <action id="closeAction" type="detail_close"/>
     </actions>
-    <layout expand="$expandId">
+    <layout>
         ${formXml}
         <%collectionAttributesTable.each{table ->%>
             ${table}

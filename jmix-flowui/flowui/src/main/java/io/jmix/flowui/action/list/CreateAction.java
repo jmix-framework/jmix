@@ -2,8 +2,6 @@ package io.jmix.flowui.action.list;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.router.QueryParameters;
-import com.vaadin.flow.router.RouteParameters;
 import io.jmix.core.AccessManager;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -15,16 +13,16 @@ import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.AdjustWhenViewReadOnly;
 import io.jmix.flowui.action.ExecutableAction;
 import io.jmix.flowui.action.ViewOpeningAction;
-import io.jmix.flowui.data.EntityDataUnit;
 import io.jmix.flowui.component.UiComponentUtils;
+import io.jmix.flowui.data.EntityDataUnit;
 import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.component.FlowuiComponentUtils;
 import io.jmix.flowui.kit.component.KeyCombination;
+import io.jmix.flowui.sys.ActionViewInitializer;
 import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.DialogWindow.AfterCloseEvent;
 import io.jmix.flowui.view.builder.DetailWindowBuilder;
 import io.jmix.flowui.view.navigation.DetailViewNavigator;
-import io.jmix.flowui.sys.ActionViewInitializer;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
@@ -118,24 +116,24 @@ public class CreateAction<E> extends ListDataComponentAction<CreateAction<E>, E>
 
     @Nullable
     @Override
-    public RouteParameters getRouteParameters() {
-        return viewInitializer.getRouteParameters();
+    public RouteParametersProvider getRouteParametersProvider() {
+        return viewInitializer.getRouteParametersProvider();
     }
 
     @Override
-    public void setRouteParameters(@Nullable RouteParameters routeParameters) {
-        viewInitializer.setRouteParameters(routeParameters);
+    public void setRouteParametersProvider(@Nullable RouteParametersProvider provider) {
+        viewInitializer.setRouteParametersProvider(provider);
     }
 
     @Nullable
     @Override
-    public QueryParameters getQueryParameters() {
-        return viewInitializer.getQueryParameters();
+    public QueryParametersProvider getQueryParametersProvider() {
+        return viewInitializer.getQueryParametersProvider();
     }
 
     @Override
-    public void setQueryParameters(@Nullable QueryParameters queryParameters) {
-        viewInitializer.setQueryParameters(queryParameters);
+    public void setQueryParametersProvider(@Nullable QueryParametersProvider provider) {
+        viewInitializer.setQueryParametersProvider(provider);
     }
 
     @Override
@@ -282,9 +280,8 @@ public class CreateAction<E> extends ListDataComponentAction<CreateAction<E>, E>
     }
 
     protected void navigate() {
-        DetailViewNavigator<E> navigator = viewNavigators.detailView((target));
-
-        navigator = navigator.newEntity();
+        DetailViewNavigator<E> navigator = viewNavigators.detailView((target))
+                .newEntity();
 
         if (target instanceof Component) {
             View<?> parent = UiComponentUtils.findView((Component) target);
@@ -293,33 +290,33 @@ public class CreateAction<E> extends ListDataComponentAction<CreateAction<E>, E>
             }
         }
 
-        viewInitializer.initNavigator(navigator);
+        navigator = viewInitializer.initNavigator(navigator);
 
         navigator.navigate();
     }
 
     @SuppressWarnings("unchecked")
     protected void openDialog() {
-        DetailWindowBuilder<E, View<?>> detailBuilder = dialogWindowBuilders.detail(target);
+        DetailWindowBuilder<E, View<?>> builder = dialogWindowBuilders.detail(target);
 
-        detailBuilder = viewInitializer.initWindowBuilder(detailBuilder);
+        builder = viewInitializer.initWindowBuilder(builder);
 
         if (newEntitySupplier != null) {
             E entity = newEntitySupplier.get();
-            detailBuilder.newEntity(entity);
+            builder = builder.newEntity(entity);
         } else {
-            detailBuilder.newEntity();
+            builder = builder.newEntity();
         }
 
         if (initializer != null) {
-            detailBuilder = detailBuilder.withInitializer(initializer);
+            builder = builder.withInitializer(initializer);
         }
 
         if (transformation != null) {
-            detailBuilder.withTransformation(transformation);
+            builder = builder.withTransformation(transformation);
         }
 
-        DialogWindow<?> dialogWindow = detailBuilder.build();
+        DialogWindow<?> dialogWindow = builder.build();
         if (afterCommitHandler != null) {
             dialogWindow.addAfterCloseListener(event -> {
                 if (event.closedWith(StandardOutcome.COMMIT)
@@ -350,18 +347,18 @@ public class CreateAction<E> extends ListDataComponentAction<CreateAction<E>, E>
     }
 
     /**
-     * @see #setRouteParameters(RouteParameters)
+     * @see #setRouteParametersProvider(RouteParametersProvider)
      */
-    public CreateAction<E> withRouteParameters(@Nullable RouteParameters routeParameters) {
-        setRouteParameters(routeParameters);
+    public CreateAction<E> withRouteParameters(@Nullable RouteParametersProvider provider) {
+        setRouteParametersProvider(provider);
         return this;
     }
 
     /**
-     * @see #setQueryParameters(QueryParameters)
+     * @see #setQueryParametersProvider(QueryParametersProvider)
      */
-    public CreateAction<E> withQueryParameters(@Nullable QueryParameters queryParameters) {
-        setQueryParameters(queryParameters);
+    public CreateAction<E> withQueryParameters(@Nullable QueryParametersProvider provider) {
+        setQueryParametersProvider(provider);
         return this;
     }
 

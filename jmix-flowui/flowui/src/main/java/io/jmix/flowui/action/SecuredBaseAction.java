@@ -9,12 +9,18 @@ import io.jmix.flowui.kit.component.FlowuiComponentUtils;
 import io.jmix.flowui.kit.component.KeyCombination;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
+
+import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 public class SecuredBaseAction extends BaseAction implements SecuredAction {
 
     protected boolean enabledByUiPermissions = true;
     protected boolean visibleByUiPermissions = true;
+
+    protected List<EnabledRule> enabledRules;
 
     public SecuredBaseAction(String id) {
         super(id);
@@ -25,7 +31,7 @@ public class SecuredBaseAction extends BaseAction implements SecuredAction {
         setVisibleInternal(visibleExplicitly && isVisibleByUiPermissions());
 
         setEnabledInternal(enabledExplicitly && isEnabledByUiPermissions() && isVisibleByUiPermissions()
-                && isPermitted() && isApplicable());
+                && isPermitted() && isApplicable() && isEnabledByRule());
     }
 
     @Override
@@ -58,6 +64,57 @@ public class SecuredBaseAction extends BaseAction implements SecuredAction {
 
     protected boolean isPermitted() {
         return true;
+    }
+
+    protected boolean isEnabledByRule() {
+        if (enabledRules == null) {
+            return true;
+        }
+
+        for (EnabledRule rule : enabledRules) {
+            if (!rule.isActionEnabled()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Add new enabled rule for the action.
+     *
+     * @param enabledRule boolean rule for the action enabled state
+     */
+    public void addEnabledRule(EnabledRule enabledRule) {
+        checkNotNullArgument(enabledRule);
+
+        if (enabledRules == null) {
+            enabledRules = new ArrayList<>(2);
+        }
+        if (!enabledRules.contains(enabledRule)) {
+            enabledRules.add(enabledRule);
+        }
+    }
+
+    /**
+     * Remove enabled rule.
+     *
+     * @param enabledRule boolean rule for the action enabled state
+     */
+    public void removeEnabledRule(EnabledRule enabledRule) {
+        if (enabledRules != null) {
+            enabledRules.remove(enabledRule);
+        }
+    }
+
+    /**
+     * Callback interface which is invoked by the action to determine its enabled state.
+     *
+     * @see #addEnabledRule(EnabledRule)
+     */
+    @FunctionalInterface
+    public interface EnabledRule {
+        boolean isActionEnabled();
     }
 
     @Override

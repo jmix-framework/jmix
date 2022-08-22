@@ -2,8 +2,6 @@ package io.jmix.flowui.action.entitypicker;
 
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.router.QueryParameters;
-import com.vaadin.flow.router.RouteParameters;
 import io.jmix.core.DevelopmentException;
 import io.jmix.core.Messages;
 import io.jmix.core.entity.EntityValues;
@@ -17,9 +15,9 @@ import io.jmix.flowui.action.valuepicker.PickerAction;
 import io.jmix.flowui.component.EntityPickerComponent;
 import io.jmix.flowui.kit.component.FlowuiComponentUtils;
 import io.jmix.flowui.kit.component.KeyCombination;
+import io.jmix.flowui.sys.ActionViewInitializer;
 import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.builder.DetailWindowBuilder;
-import io.jmix.flowui.sys.ActionViewInitializer;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
@@ -131,25 +129,25 @@ public class EntityOpenAction<E> extends PickerAction<EntityOpenAction<E>, Entit
 
     @Nullable
     @Override
-    public RouteParameters getRouteParameters() {
+    public RouteParametersProvider getRouteParametersProvider() {
         // Lookup view opens in a dialog window only
         return null;
     }
 
     @Override
-    public void setRouteParameters(@Nullable RouteParameters routeParameters) {
+    public void setRouteParametersProvider(@Nullable RouteParametersProvider provider) {
         throw new UnsupportedOperationException("Lookup view opens in a dialog window only");
     }
 
     @Nullable
     @Override
-    public QueryParameters getQueryParameters() {
+    public QueryParametersProvider getQueryParametersProvider() {
         // Lookup view opens in a dialog window only
         return null;
     }
 
     @Override
-    public void setQueryParameters(@Nullable QueryParameters queryParameters) {
+    public void setQueryParametersProvider(@Nullable QueryParametersProvider provider) {
         throw new UnsupportedOperationException("Lookup view opens in a dialog window only");
     }
 
@@ -183,7 +181,7 @@ public class EntityOpenAction<E> extends PickerAction<EntityOpenAction<E>, Entit
         builder = viewInitializer.initWindowBuilder(builder);
 
         if (transformation != null) {
-            builder.withTransformation(transformation);
+            builder = builder.withTransformation(transformation);
         }
 
         DialogWindow<?> dialogWindow = builder.build();
@@ -198,6 +196,22 @@ public class EntityOpenAction<E> extends PickerAction<EntityOpenAction<E>, Entit
         }
 
         dialogWindow.open();
+    }
+
+    /**
+     * @see #setViewId(String)
+     */
+    public EntityOpenAction<E> withViewId(@Nullable String viewId) {
+        setViewId(viewId);
+        return this;
+    }
+
+    /**
+     * @see #setViewClass(Class)
+     */
+    public EntityOpenAction<E> withViewClass(@Nullable Class<? extends View> viewClass) {
+        setViewClass(viewClass);
+        return this;
     }
 
     public EntityOpenAction<E> withAfterCommitHandler(Consumer<E> afterCommitHandler) {

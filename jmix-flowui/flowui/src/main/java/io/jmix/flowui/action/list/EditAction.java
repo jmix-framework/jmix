@@ -2,8 +2,6 @@ package io.jmix.flowui.action.list;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.router.QueryParameters;
-import com.vaadin.flow.router.RouteParameters;
 import io.jmix.core.Messages;
 import io.jmix.core.accesscontext.InMemoryCrudEntityContext;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -114,24 +112,24 @@ public class EditAction<E> extends SecuredListDataComponentAction<EditAction<E>,
 
     @Nullable
     @Override
-    public RouteParameters getRouteParameters() {
-        return viewInitializer.getRouteParameters();
+    public RouteParametersProvider getRouteParametersProvider() {
+        return viewInitializer.getRouteParametersProvider();
     }
 
     @Override
-    public void setRouteParameters(@Nullable RouteParameters routeParameters) {
-        viewInitializer.setRouteParameters(routeParameters);
+    public void setRouteParametersProvider(@Nullable RouteParametersProvider routeParameters) {
+        viewInitializer.setRouteParametersProvider(routeParameters);
     }
 
     @Nullable
     @Override
-    public QueryParameters getQueryParameters() {
-        return viewInitializer.getQueryParameters();
+    public QueryParametersProvider getQueryParametersProvider() {
+        return viewInitializer.getQueryParametersProvider();
     }
 
     @Override
-    public void setQueryParameters(@Nullable QueryParameters queryParameters) {
-        viewInitializer.setQueryParameters(queryParameters);
+    public void setQueryParametersProvider(@Nullable QueryParametersProvider queryParameters) {
+        viewInitializer.setQueryParametersProvider(queryParameters);
     }
 
     @Override
@@ -317,24 +315,24 @@ public class EditAction<E> extends SecuredListDataComponentAction<EditAction<E>,
             }
         }
 
-        viewInitializer.initNavigator(navigator);
+        navigator = viewInitializer.initNavigator(navigator);
 
         navigator.navigate();
     }
 
     @SuppressWarnings("unchecked")
     protected void openDialog(E editedEntity) {
-        DetailWindowBuilder<E, View<?>> detailBuilder = dialogWindowBuilders.detail(target);
+        DetailWindowBuilder<E, View<?>> builder = dialogWindowBuilders.detail(target);
 
-        detailBuilder = viewInitializer.initWindowBuilder(detailBuilder);
+        builder = viewInitializer.initWindowBuilder(builder);
 
-        detailBuilder.editEntity(editedEntity);
+        builder = builder.editEntity(editedEntity);
 
         if (transformation != null) {
-            detailBuilder.withTransformation(transformation);
+            builder = builder.withTransformation(transformation);
         }
 
-        DialogWindow<View<?>> dialogWindow = detailBuilder.build();
+        DialogWindow<View<?>> dialogWindow = builder.build();
         if (afterCommitHandler != null) {
             dialogWindow.addAfterCloseListener(event -> {
                 if (event.closedWith(StandardOutcome.COMMIT)
@@ -365,18 +363,18 @@ public class EditAction<E> extends SecuredListDataComponentAction<EditAction<E>,
     }
 
     /**
-     * @see #setRouteParameters(RouteParameters)
+     * @see #setRouteParametersProvider(RouteParametersProvider)
      */
-    public EditAction<E> withRouteParameters(@Nullable RouteParameters routeParameters) {
-        setRouteParameters(routeParameters);
+    public EditAction<E> withRouteParametersProvider(@Nullable RouteParametersProvider provider) {
+        setRouteParametersProvider(provider);
         return this;
     }
 
     /**
-     * @see #setQueryParameters(QueryParameters)
+     * @see #setQueryParametersProvider(QueryParametersProvider)
      */
-    public EditAction<E> withQueryParameters(@Nullable QueryParameters queryParameters) {
-        setQueryParameters(queryParameters);
+    public EditAction<E> withQueryParametersProvider(@Nullable QueryParametersProvider provider) {
+        setQueryParametersProvider(provider);
         return this;
     }
 

@@ -76,7 +76,7 @@ public final class UrlIdSerializer {
      * @return deserialized id
      * @throws IllegalArgumentException if null id and/or type are passed or the given id type is not supported
      */
-    public static Object deserializeId(Class<?> idClass, String serializedId) {
+    public static <T> T deserializeId(Class<T> idClass, String serializedId) {
         checkNotNullArgument(idClass, "Unable to deserialize id without its type");
         checkNotNullArgument(serializedId, "Unable to deserialize null id");
 
@@ -105,6 +105,7 @@ public final class UrlIdSerializer {
                             serializedId, idClass));
         }
 
-        return deserialized;
+        //noinspection unchecked
+        return ((T) deserialized);
     }
 }

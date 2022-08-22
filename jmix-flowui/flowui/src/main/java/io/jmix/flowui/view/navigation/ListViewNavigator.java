@@ -34,19 +34,19 @@ public class ListViewNavigator<E> extends ViewNavigator {
     }
 
     @Override
-    public ListViewNavigator<E> withRouteParameters(RouteParameters routeParameters) {
+    public ListViewNavigator<E> withRouteParameters(@Nullable RouteParameters routeParameters) {
         super.withRouteParameters(routeParameters);
         return this;
     }
 
     @Override
-    public ListViewNavigator<E> withQueryParameters(QueryParameters queryParameters) {
+    public ListViewNavigator<E> withQueryParameters(@Nullable QueryParameters queryParameters) {
         super.withQueryParameters(queryParameters);
         return this;
     }
 
     @Override
-    public ListViewNavigator<E> withBackNavigationTarget(Class<? extends View> backNavigationTarget) {
+    public ListViewNavigator<E> withBackNavigationTarget(@Nullable Class<? extends View> backNavigationTarget) {
         super.withBackNavigationTarget(backNavigationTarget);
         return this;
     }

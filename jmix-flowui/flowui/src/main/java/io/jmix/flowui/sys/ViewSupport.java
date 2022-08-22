@@ -102,9 +102,11 @@ public class ViewSupport {
                 applicationContext.getBean(UiControllerDependencyManager.class);
         dependencyManager.inject(view);
 
-        componentLoaderContext.executeInitTasks();
-
         fireViewInitEvent(view);
+
+        // InitTasks must be executed after View.InitEvent
+        // in case something was replaced, e.g. actions
+        componentLoaderContext.executeInitTasks();
     }
 
     public void registerBackNavigation(Class<? extends View> viewClass,

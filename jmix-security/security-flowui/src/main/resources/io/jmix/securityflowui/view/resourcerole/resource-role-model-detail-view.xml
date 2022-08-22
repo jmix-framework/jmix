@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2022 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://resourceRoleModelDetailView.title"
+      focusComponent="form">
+    <data>
+        <instance id="roleModelDc"
+                  class="io.jmix.securityflowui.model.ResourceRoleModel">
+            <collection id="resourcePoliciesDc" property="resourcePolicies"/>
+        </instance>
+        <collection id="childRolesDc" class="io.jmix.securityflowui.model.ResourceRoleModel">
+            <loader id="childRolesDl"/>
+        </collection>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <actions>
+        <action id="commitAction" type="detail_commitClose"/>
+        <action id="closeAction" type="detail_close"/>
+    </actions>
+    <layout>
+        <formLayout id="form" dataContainer="roleModelDc">
+            <textField id="nameField" property="name"/>
+            <textField id="sourceField" property="source" readOnly="true"/>
+            <textField id="codeField" property="code" readOnly="true"/>
+            <checkboxGroup id="scopesField" property="scopes" required="true"/>
+            <textArea id="descriptionField" property="description" height="9.5em"/>
+        </formLayout>
+
+        <tabs id="tabs" width="100%">
+            <tab id="resourcePoliciesTab"
+                 label="msg://io.jmix.securityflowui.model/ResourceRoleModel.resourcePolicies"/>
+            <tab id="childRolesTab"
+                 label="msg://io.jmix.securityflowui.model/ResourceRoleModel.childRoles"/>
+        </tabs>
+
+        <vbox id="resourcePoliciesWrapper" width="100%" padding="false">
+            <hbox id="resourcePoliciesButtonsPanel" className="buttons-panel">
+                <button action="resourcePoliciesTable.edit"/>
+                <!--            <button action="resourcePoliciesTable.view"/>-->
+                <button action="resourcePoliciesTable.remove"/>
+            </hbox>
+            <dataGrid id="resourcePoliciesTable"
+                      dataContainer="resourcePoliciesDc"
+                      minHeight="20em"
+                      width="100%">
+                <actions>
+                    <action id="createMenuPolicy" text="msg://actions.menuPolicy.text"/>
+                    <action id="createViewPolicy" text="msg://actions.viewPolicy.text"/>
+                    <action id="createEntityPolicy" text="msg://actions.entityPolicy.text"/>
+                    <action id="createEntityAttributePolicy" text="msg://actions.entityAttributePolicy.text"/>
+                    <action id="createGraphQLPolicy" text="msg://actions.graphQLPolicy.text"/>
+                    <action id="createSpecificPolicy" text="msg://actions.specificPolicy.text"/>
+
+                    <action id="edit" type="edit"/>
+                    <!--                <action id="view" type="view"/>-->
+                    <action id="remove" type="remove"/>
+                </actions>
+                <columns>
+                    <column property="policyGroup"/>
+                    <column property="type"/>
+                    <column property="resource"/>
+                </columns>
+            </dataGrid>
+        </vbox>
+
+        <vbox id="childRolesWrapper" width="100%" padding="false" visible="false">
+            <hbox id="childRolesButtonsPanel" className="buttons-panel">
+                <button action="childRolesTable.add"/>
+                <button action="childRolesTable.remove"/>
+            </hbox>
+            <dataGrid id="childRolesTable"
+                      dataContainer="childRolesDc"
+                      minHeight="20em"
+                      width="100%">
+                <actions>
+                    <action id="add" type="add"/>
+                    <action id="remove" type="remove">
+                        <properties>
+                            <property name="confirmation" value="false"/>
+                        </properties>
+                    </action>
+                </actions>
+                <columns>
+                    <column property="name"/>
+                    <column property="code"/>
+                    <column property="source"/>
+                </columns>
+            </dataGrid>
+        </vbox>
+
+        <hbox id="detailActions">
+            <button id="commitAndCloseBtn" action="commitAction"/>
+            <button id="closeBtn" action="closeAction"/>
+        </hbox>
+    </layout>
+</view>

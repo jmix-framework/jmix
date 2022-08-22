@@ -38,17 +38,17 @@ public class ViewNavigator {
         return this;
     }
 
-    public ViewNavigator withRouteParameters(RouteParameters routeParameters) {
+    public ViewNavigator withRouteParameters(@Nullable RouteParameters routeParameters) {
         this.routeParameters = routeParameters;
         return this;
     }
 
-    public ViewNavigator withQueryParameters(QueryParameters queryParameters) {
+    public ViewNavigator withQueryParameters(@Nullable QueryParameters queryParameters) {
         this.queryParameters = queryParameters;
         return this;
     }
 
-    public ViewNavigator withBackNavigationTarget(Class<? extends View> backNavigationTarget) {
+    public ViewNavigator withBackNavigationTarget(@Nullable Class<? extends View> backNavigationTarget) {
         this.backNavigationTarget = backNavigationTarget;
         return this;
     }

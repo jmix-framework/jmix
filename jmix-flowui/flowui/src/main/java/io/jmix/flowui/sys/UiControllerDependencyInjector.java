@@ -195,7 +195,7 @@ public class UiControllerDependencyInjector {
         MessageBundle messageBundle = applicationContext.getBean(MessageBundle.class);
         messageBundle.setMessageGroup(UiControllerUtils.getPackage(controller.getClass()));
 
-        if (!controller.getId().isPresent()) {
+        if (controller.getId().isEmpty()) {
             return messageBundle;
         }
 
@@ -211,6 +211,7 @@ public class UiControllerDependencyInjector {
                 messageBundle.setMessageGroup(messagesGroup);
             }
         }
+
         return messageBundle;
     }
 

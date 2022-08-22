@@ -52,19 +52,19 @@ public class DetailViewNavigator<E> extends ViewNavigator {
     }
 
     @Override
-    public DetailViewNavigator<E> withRouteParameters(RouteParameters routeParameters) {
+    public DetailViewNavigator<E> withRouteParameters(@Nullable RouteParameters routeParameters) {
         super.withRouteParameters(routeParameters);
         return this;
     }
 
     @Override
-    public DetailViewNavigator<E> withQueryParameters(QueryParameters queryParameters) {
+    public DetailViewNavigator<E> withQueryParameters(@Nullable QueryParameters queryParameters) {
         super.withQueryParameters(queryParameters);
         return this;
     }
 
     @Override
-    public DetailViewNavigator<E> withBackNavigationTarget(Class<? extends View> backNavigationTarget) {
+    public DetailViewNavigator<E> withBackNavigationTarget(@Nullable Class<? extends View> backNavigationTarget) {
         super.withBackNavigationTarget(backNavigationTarget);
         return this;
     }

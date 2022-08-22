@@ -17,6 +17,7 @@ import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.Subscribe;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.reflect.TypeUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -274,25 +275,13 @@ public class UiControllerReflectionInspector {
 
     @Nullable
     protected Class injectionAnnotation(AnnotatedElement element) {
-        /*if (element.isAnnotationPresent(Named.class)) {
-            return Named.class;
-        }
-
-        if (element.isAnnotationPresent(Resource.class)) {
+        /*if (element.isAnnotationPresent(Resource.class)) {
             return Resource.class;
-        }
-
-        if (element.isAnnotationPresent(Inject.class)) {
-            return Inject.class;
-        }
+        }*/
 
         if (element.isAnnotationPresent(Autowired.class)) {
             return Autowired.class;
         }
-
-        if (element.isAnnotationPresent(WindowParam.class)) {
-            return WindowParam.class;
-        }*/
 
         if (element.isAnnotationPresent(ComponentId.class)) {
             return ComponentId.class;

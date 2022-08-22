@@ -1,8 +1,8 @@
 <%
 dcId = "${entity.uncapitalizedClassName}Dc"
-def nestedDatasourceProperties = api.evaluateScript('screen/nestedDatasourceProperties.groovy', ['view': frameView, 'embeddable': false])
-def nestedCollectionDatasourceProperties = api.evaluateScript('screen/nestedCollectionDatasourceProperties.groovy', ['view': frameView])
-def optionsDatasourceAttrs = api.evaluateScript('screen/optionsDatasources.groovy', ['view': frameView])
+def nestedDatasourceProperties = api.evaluateScript('nestedDatasourceProperties.groovy', ['view': frameView, 'embeddable': false])
+def nestedCollectionDatasourceProperties = api.evaluateScript('nestedCollectionDatasourceProperties.groovy', ['view': frameView])
+def optionsDatasourceAttrs = api.evaluateScript('optionsDatasources.groovy', ['view': frameView])
 def createScrollBox = frameView.allProperties.size() > 10
 def collectionAttributesTable = []
 nestedCollectionDatasourceProperties.each { prop ->
@@ -10,7 +10,7 @@ nestedCollectionDatasourceProperties.each { prop ->
         'nestedCollectionDatasourceProperty': prop,
         'view': frameView,
         'createGroupBox': true]
-    def tableXml = api.processSnippet('screen/cuba_7_collectionAttributeTable.xml', binding)
+    def tableXml = api.processSnippet('cuba_7_collectionAttributeTable.xml', binding)
     if (!binding['isError']) {
         collectionAttributesTable << tableXml
     }

@@ -110,7 +110,7 @@
               dynamic="true"
               sourceName="descriptor"
               required="true"
-              valueTemplate="${api.evaluateScript('screen/descriptorFileName.groovy', ['entity': entity])}-browse">
+              valueTemplate="${api.evaluateScript('descriptorFileName.groovy', ['entity': entity])}-browse">
         <dependency code="entity"/>
     </property>
 

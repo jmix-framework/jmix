@@ -4,8 +4,8 @@ tableId = "table"
 tableDc = entity.uncapitalizedClassName.equals(pluralForm) ? pluralForm + "CollectionDc" : pluralForm + "Dc"
 tableDl = entity.uncapitalizedClassName.equals(pluralForm) ? pluralForm + "CollectionDl" : pluralForm + "Dl"
 editDc = entity.uncapitalizedClassName + 'Dc'
-def nestedDatasourceProperties = api.evaluateScript('screen/nestedDatasourceProperties.groovy', ['view': editView, 'embeddable': false])
-def nestedCollectionDatasourceProperties = api.evaluateScript('screen/nestedCollectionDatasourceProperties.groovy', ['view': editView])
+def nestedDatasourceProperties = api.evaluateScript('nestedDatasourceProperties.groovy', ['view': editView, 'embeddable': false])
+def nestedCollectionDatasourceProperties = api.evaluateScript('nestedCollectionDatasourceProperties.groovy', ['view': editView])
 
 class CollectionAttributeTable {
 	def ownerEntity
@@ -18,7 +18,7 @@ nestedCollectionDatasourceProperties.each { prop ->
         'nestedCollectionDatasourceProperty': prop,
         'view': editView,
         'createGroupBox': false]
-    def tableXml = api.processSnippet('screen/cuba_7_collectionAttributeTable.xml', binding)
+    def tableXml = api.processSnippet('cuba_7_collectionAttributeTable.xml', binding)
     if (!binding['isError']) {
     	CollectionAttributeTable table = new CollectionAttributeTable()
     	table.ownerEntity = binding.ownerEntity
@@ -28,18 +28,18 @@ nestedCollectionDatasourceProperties.each { prop ->
     }
 }
 
-def formXml = api.processSnippet('screen/form.xml',
+def formXml = api.processSnippet('form.xml',
         ['view': editView,
         'api': api,
         'dcId': editDc,
         'columnWidth': fieldColumnWidth,
         'formId': 'form'])
 
-def optionsDatasourceXml = api.processSnippet('screen/optionsDsSource.xml',
+def optionsDatasourceXml = api.processSnippet('optionsDsSource.xml',
         ['view': editView,
         'api': api])
 
-def tableXml = api.processSnippet('screen/cuba_7_table.xml',
+def tableXml = api.processSnippet('cuba_7_table.xml',
         ['entity': entity,
         'view': browseView,
         'tableDc': tableDc,

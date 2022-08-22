@@ -5,7 +5,7 @@ def tableDc = entity.uncapitalizedClassName.equals(pluralForm) ? pluralForm + "C
 def tableDl = entity.uncapitalizedClassName.equals(pluralForm) ? pluralForm + "CollectionDl" : pluralForm + "Dl"
 def isNotPersistEntity = entity.isDeepInheritor('com.haulmont.cuba.core.entity.AbstractNotPersistentEntity')
 
-def tableXml = api.processSnippet('screen/jmix_flow_table.xml',
+def tableXml = api.processSnippet('jmix_flow_table.xml',
         ['entity': entity,
         'fetchPlan': listFetchPlan,
         'tableDc': tableDc,

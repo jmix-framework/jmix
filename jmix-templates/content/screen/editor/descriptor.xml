@@ -1,7 +1,7 @@
 <%
 dcId = "${entity.uncapitalizedClassName}Dc"
-def nestedDatasourceProperties = api.evaluateScript('screen/nestedDatasourceProperties.groovy', ['view': editView, 'embeddable': false])
-def nestedCollectionDatasourceProperties = api.evaluateScript('screen/nestedCollectionDatasourceProperties.groovy', ['view': editView])
+def nestedDatasourceProperties = api.evaluateScript('nestedDatasourceProperties.groovy', ['view': editView, 'embeddable': false])
+def nestedCollectionDatasourceProperties = api.evaluateScript('nestedCollectionDatasourceProperties.groovy', ['view': editView])
 def createScrollBox = editView.allProperties.size() > 10 || (editorActionBottom && !modalDialog)
 def createModalVbox = modalDialog && editorActionBottom && !createScrollBox
 def collectionAttributesTable = []
@@ -10,18 +10,18 @@ nestedCollectionDatasourceProperties.each { prop ->
         'nestedCollectionDatasourceProperty': prop,
         'view': editView,
         'createGroupBox': true]
-    def tableXml = api.processSnippet('screen/cuba_7_collectionAttributeTable.xml', binding)
+    def tableXml = api.processSnippet('cuba_7_collectionAttributeTable.xml', binding)
     if (!binding['isError']) {
         collectionAttributesTable << tableXml
     }
 }
-def formXml = api.processSnippet('screen/form.xml',
+def formXml = api.processSnippet('form.xml',
         ['view': editView,
         'api': api,
         'dcId': dcId,
         'columnWidth': fieldColumnWidth,
         'formId': 'form'])
-def optionsDatasourceXml = api.processSnippet('screen/optionsDsSource.xml',
+def optionsDatasourceXml = api.processSnippet('optionsDsSource.xml',
         ['view': editView,
         'api': api])
 def expandId = "editActions"

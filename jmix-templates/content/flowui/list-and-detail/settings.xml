@@ -92,7 +92,7 @@
               dynamic="true"
               sourceName="descriptor"
               required="true"
-              valueTemplate="${api.evaluateScript('screen/descriptorFileName.groovy', ['entity': entity])}-list-view">
+              valueTemplate="${api.evaluateScript('descriptorFileName.groovy', ['entity': entity])}-list-view">
         <dependency code="entity"/>
     </property>
     <property caption="List view controller name"
@@ -135,7 +135,7 @@
               required="true"
               dynamic="true"
               advanced="true"
-              valueTemplate="${api.evaluateScript('screen/descriptorFileName.groovy', ['entity': entity])}-detail-view">
+              valueTemplate="${api.evaluateScript('descriptorFileName.groovy', ['entity': entity])}-detail-view">
         <dependency code="entity"/>
     </property>
     <property caption="Detail view controller name"

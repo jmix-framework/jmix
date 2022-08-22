@@ -1,4 +1,4 @@
-<%if (overrideActionType == "COPY") {%>${api.evaluateScript('screen/process_copy.groovy',
+<%if (overrideActionType == "COPY") {%>${api.evaluateScript('process_copy.groovy',
         ['content': overrideScreen.originalDescriptorText,
         'messages': messageKeys])}<%} else {
     def rootTagName = 'window'

@@ -102,6 +102,8 @@ public class ViewSupport {
                 applicationContext.getBean(UiControllerDependencyManager.class);
         dependencyManager.inject(view);
 
+        componentLoaderContext.executePreInitTasks();
+
         fireViewInitEvent(view);
 
         // InitTasks must be executed after View.InitEvent

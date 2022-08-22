@@ -22,9 +22,11 @@ import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewActions;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.ComponentLoader.ComponentContext;
+import org.apache.commons.collections4.CollectionUtils;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,7 +42,8 @@ public class ComponentLoaderContext implements ComponentContext {
     protected String fullFrameId;
     protected String currentFrameId;
 
-    protected List<ComponentLoader.InitTask> initTasks = new ArrayList<>();
+    protected List<ComponentLoader.InitTask> preInitTasks;
+    protected List<ComponentLoader.InitTask> initTasks;
 
     public ComponentLoaderContext() {
     }
@@ -100,7 +103,20 @@ public class ComponentLoaderContext implements ComponentContext {
     }
 
     @Override
+    public void addPreInitTask(ComponentLoader.InitTask task) {
+        if (preInitTasks == null) {
+            preInitTasks = new ArrayList<>();
+        }
+
+        preInitTasks.add(task);
+    }
+
+    @Override
     public void addInitTask(ComponentLoader.InitTask task) {
+        if (initTasks == null) {
+            initTasks = new ArrayList<>();
+        }
+
         initTasks.add(task);
     }
 
@@ -113,15 +129,31 @@ public class ComponentLoaderContext implements ComponentContext {
         this.parent = parent;
     }
 
+    public List<ComponentLoader.InitTask> getPreInitTasks() {
+        return preInitTasks != null ? preInitTasks : Collections.emptyList();
+    }
+
     public List<ComponentLoader.InitTask> getInitTasks() {
-        return initTasks;
+        return initTasks != null ? initTasks : Collections.emptyList();
+    }
+
+    @Override
+    public void executePreInitTasks() {
+        if (CollectionUtils.isNotEmpty(preInitTasks)) {
+            for (ComponentLoader.InitTask initTask : preInitTasks) {
+                initTask.execute(this, view);
+            }
+            preInitTasks.clear();
+        }
     }
 
     @Override
     public void executeInitTasks() {
-        for (ComponentLoader.InitTask initTask : initTasks) {
-            initTask.execute(this, view);
+        if (CollectionUtils.isNotEmpty(initTasks)) {
+            for (ComponentLoader.InitTask initTask : initTasks) {
+                initTask.execute(this, view);
+            }
+            initTasks.clear();
         }
-        initTasks.clear();
     }
 }

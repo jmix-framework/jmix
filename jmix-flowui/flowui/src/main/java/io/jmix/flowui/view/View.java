@@ -10,11 +10,8 @@ import io.jmix.flowui.util.OperationResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
-import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.function.Consumer;
-
-import static io.jmix.flowui.component.UiComponentUtils.findFocusComponent;
 
 public class View<T extends Component> extends Composite<T>
         implements BeforeEnterObserver, AfterNavigationObserver, BeforeLeaveObserver {
@@ -26,9 +23,6 @@ public class View<T extends Component> extends Composite<T>
     private ViewFacets viewFacets;
 
     private Consumer<View<T>> closeDelegate;
-
-    private String focusComponentId;
-    private FocusMode focusMode;
 
     private boolean closeActionPerformed = false;
 
@@ -62,8 +56,6 @@ public class View<T extends Component> extends Composite<T>
     @Override
     public void afterNavigation(AfterNavigationEvent event) {
         updatePageTitle();
-        focusChildComponent();
-
         fireEvent(new AfterShowEvent(this));
     }
 
@@ -105,12 +97,6 @@ public class View<T extends Component> extends Composite<T>
         String pageTitle = applicationContext.getBean(ViewSupport.class)
                 .getLocalizedPageTitle(this);
         getUI().ifPresent(ui -> ui.getPage().setTitle(pageTitle));
-    }
-
-    private void focusChildComponent() {
-        if (focusMode != FocusMode.NO_FOCUS) {
-            getFocusComponent().ifPresent(Focusable::focus);
-        }
     }
 
     private void unregisterBackNavigation() {
@@ -180,32 +166,6 @@ public class View<T extends Component> extends Composite<T>
 
     protected void setViewFacets(ViewFacets viewFacets) {
         this.viewFacets = viewFacets;
-    }
-
-    protected Optional<Focusable<?>> getFocusComponent() {
-        String componentId = getFocusComponentId();
-        if (componentId != null) {
-            return findFocusComponent(this, componentId);
-        } else {
-            return findFocusComponent(this);
-        }
-    }
-
-    @Nullable
-    public String getFocusComponentId() {
-        return focusComponentId;
-    }
-
-    public void setFocusComponentId(@Nullable String focusComponentId) {
-        this.focusComponentId = focusComponentId;
-    }
-
-    public FocusMode getFocusMode() {
-        return focusMode;
-    }
-
-    public void setFocusMode(FocusMode focusMode) {
-        this.focusMode = focusMode;
     }
 
     /**

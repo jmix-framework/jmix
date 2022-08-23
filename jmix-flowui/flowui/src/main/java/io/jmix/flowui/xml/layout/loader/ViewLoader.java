@@ -21,9 +21,9 @@ import com.vaadin.flow.component.HasEnabled;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.ThemableLayout;
 import io.jmix.flowui.exception.GuiDevelopmentException;
-import io.jmix.flowui.view.FocusMode;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.xml.layout.ComponentRootLoader;
+import io.jmix.flowui.xml.layout.inittask.FocusComponentInitTask;
 import org.dom4j.Element;
 
 public class ViewLoader extends AbstractViewLoader<View<?>> implements ComponentRootLoader<View<?>> {
@@ -90,7 +90,7 @@ public class ViewLoader extends AbstractViewLoader<View<?>> implements Component
     }
 
     protected void loadFocusedComponent(View<?> view, Element element) {
-        getLoaderSupport().loadString(element, "focusComponent", view::setFocusComponentId);
-        getLoaderSupport().loadEnum(element, FocusMode.class, "focusMode", view::setFocusMode);
+        String focusComponentId = element.attributeValue("focusComponent");
+        getComponentContext().addInitTask(new FocusComponentInitTask(focusComponentId, view));
     }
 }

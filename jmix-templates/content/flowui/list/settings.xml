@@ -99,7 +99,7 @@
     </property>
 
     <property caption="View route"
-              code="route"
+              code="listRoute"
               propertyType="STRING"
               advanced="true"
               dynamic="true"

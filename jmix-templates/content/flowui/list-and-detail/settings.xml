@@ -117,7 +117,7 @@
         <dependency code="entity"/>
     </property>
     <property caption="List view route"
-              code="route"
+              code="listRoute"
               propertyType="STRING"
               group="list"
               advanced="true"
@@ -159,8 +159,8 @@
               required="true">
         <dependency code="entity"/>
     </property>
-    <property caption="Detail view route prefix"
-              code="routePrefix"
+    <property caption="Detail view route"
+              code="detailRoute"
               propertyType="STRING"
               group="detail"
               advanced="true"
@@ -169,6 +169,13 @@
               valueTemplate="${api.pluralForm(entity.uncapitalizedClassName)}">
         <dependency code="entity"/>
     </property>
+
+    <property caption="Detail view route parameter"
+              code="detailRouteParam"
+              propertyType="STRING"
+              advanced="true"
+              required="true"
+              valueTemplate="id"/>
 
     <property caption="Parent menu item"
               code="menuItem"

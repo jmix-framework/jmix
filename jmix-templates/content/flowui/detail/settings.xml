@@ -80,8 +80,8 @@ It will have <i>Save and close</i>, <i>Save</i> and <i>Cancel</i> buttons.</html
         <dependency code="entity"/>
     </property>
 
-    <property caption="View route prefix"
-              code="routePrefix"
+    <property caption="View route"
+              code="detailRoute"
               propertyType="STRING"
               advanced="true"
               dynamic="true"
@@ -89,6 +89,13 @@ It will have <i>Save and close</i>, <i>Save</i> and <i>Cancel</i> buttons.</html
               valueTemplate="${api.pluralForm(entity.uncapitalizedClassName)}">
         <dependency code="entity"/>
     </property>
+
+    <property caption="View route parameter"
+              code="detailRouteParam"
+              propertyType="STRING"
+              advanced="true"
+              required="true"
+              valueTemplate="id"/>
 
     <source fileExt="xml"
             name="descriptor"/>

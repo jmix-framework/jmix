@@ -20,7 +20,6 @@ import io.jmix.core.security.EntityOp;
 import io.jmix.flowui.Actions;
 import io.jmix.flowui.action.SecuredBaseAction;
 import io.jmix.flowui.action.SecurityConstraintAction;
-import io.jmix.flowui.action.list.ItemTrackingAction;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionVariant;
@@ -120,17 +119,7 @@ public class ActionLoaderSupport implements ApplicationContextAware {
     protected Action loadDeclarativeActionDefault(Element element) {
         String id = loadActionId(element);
 
-        boolean shouldTrackSelection = loaderSupport.loadBoolean(element, "trackSelection")
-                .orElse(false);
-
-        Action targetAction;
-
-        if (shouldTrackSelection) {
-            targetAction = actions.create(ItemTrackingAction.ID, id);
-            loadActionConstraint(targetAction, element);
-        } else {
-            targetAction = new SecuredBaseAction(id);
-        }
+        Action targetAction = new SecuredBaseAction(id);
 
         initAction(element, targetAction);
 

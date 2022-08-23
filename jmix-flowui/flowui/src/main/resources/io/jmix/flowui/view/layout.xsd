@@ -1719,9 +1719,7 @@
 
     <xs:complexType name="gridAction">
         <xs:complexContent>
-            <xs:extension base="baseAction">
-                <xs:attribute name="trackSelection" type="xs:boolean"/>
-            </xs:extension>
+            <xs:extension base="baseAction"/>
         </xs:complexContent>
     </xs:complexType>
 

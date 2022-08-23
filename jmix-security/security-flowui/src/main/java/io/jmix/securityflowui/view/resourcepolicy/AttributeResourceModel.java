@@ -24,7 +24,7 @@ import javax.persistence.Id;
 import java.util.UUID;
 
 /**
- * Class is used to display the attributes list in the {@link EntityAttributeResourcePolicyModelCreate} screen.
+ * Class is used to display the attributes list in the {@link EntityAttributeResourcePolicyModelCreateView} screen.
  */
 @JmixEntity(name = "sec_AttributeResourceModel")
 public class AttributeResourceModel {

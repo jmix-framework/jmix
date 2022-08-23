@@ -95,7 +95,6 @@ public class DefaultResourcePolicyGroupResolver {
      *     </li>
      * </ul>
      * <p>
-     * <p>
      * For menu:
      *
      * <ul>

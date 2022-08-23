@@ -333,6 +333,7 @@ public class FlowuiSecurityConfiguration extends StandardSecurityConfiguration {
      * A {@code null} path is treated as empty string; the same applies for
      * url mapping.
      *
+     * @param path a path
      * @return the path with prepended url mapping.
      * @see VaadinConfigurationProperties#getUrlMapping()
      */
@@ -347,6 +348,8 @@ public class FlowuiSecurityConfiguration extends StandardSecurityConfiguration {
      * A {@code null} path is treated as empty string; the same applies for
      * url mapping.
      *
+     * @param path a path
+     * @param urlMapping url mapping
      * @return the path with prepended url mapping.
      * @see VaadinConfigurationProperties#getUrlMapping()
      */

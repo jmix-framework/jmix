@@ -231,7 +231,7 @@ public class RowLevelPolicyModelDetailView extends StandardDetailView<RowLevelPo
             showTestPassedNotification();
         } catch (ScriptCompilationException e) {
             Throwable rootCause = e.getRootCause() != null ? e.getRootCause() : e;
-            String message = rootCause.getMessage();
+            String message = Strings.nullToEmpty(rootCause.getMessage());
             showTestFailedNotification(new Span(message));
         } catch (Exception e) {
             log.info("Groovy script error: {}", e.getMessage());

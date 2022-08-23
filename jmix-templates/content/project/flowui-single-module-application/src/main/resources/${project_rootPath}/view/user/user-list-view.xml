@@ -29,6 +29,7 @@
         </hbox>
         <dataGrid id="usersTable"
                   width="100%"
+                  minHeight="20em"
                   dataContainer="usersDc">
             <actions>
                 <action id="create" type="create"/>

@@ -7,7 +7,7 @@ import io.jmix.flowui.view.*;
 
 <%if (classComment) {%>
 ${classComment}
-<%}%>@Route(value = "${route}", layout = MainView.class)
+<%}%>@Route(value = "${listRoute}", layout = MainView.class)
 @UiController("${viewId}")
 @UiDescriptor("${viewDescriptorName}.xml")
 @LookupComponent("${tableId}")

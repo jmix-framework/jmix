@@ -5,7 +5,6 @@ import ${project_rootPackage}.view.main.MainView;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.router.RoutePrefix;
 import io.jmix.core.EntityStates;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.component.textfield.TypedTextField;
@@ -17,8 +16,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.TimeZone;
 
-@Route(value = ":id", layout = MainView.class)
-@RoutePrefix(UserListView.ROUTE)
+@Route(value = "users/:id", layout = MainView.class)
 @UiController("${normalizedPrefix_underscore}User.detail")
 @UiDescriptor("user-detail-view.xml")
 @EditedEntityContainer("userDc")

@@ -5,12 +5,10 @@ import ${project_rootPackage}.view.main.MainView;
 import com.vaadin.flow.router.Route;
 import io.jmix.flowui.view.*;
 
-@Route(value = UserListView.ROUTE, layout = MainView.class)
+@Route(value = "users", layout = MainView.class)
 @UiController("${normalizedPrefix_underscore}User.list")
 @UiDescriptor("user-list-view.xml")
 @LookupComponent("usersTable")
 @DialogMode(width = "50em", height = "37.5em")
 public class UserListView extends StandardListView<User> {
-
-    public static final String ROUTE = "users";
 }

@@ -53,6 +53,7 @@ fetchPlan.orderedRootProperties.each { property ->
 </hbox>
 <${tableType.xmlName} id="${tableId}"
         width="100%"
+        minHeight="20em"
         dataContainer="${tableDc}"<%
         (tableType.isHierarchical()) ? print("\nhierarchyProperty=\"${hierarchicalProperty}\"") : print("")
         if (multiselect) {%>\n selectionMode="MULTI"<%}%>>

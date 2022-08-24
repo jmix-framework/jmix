@@ -31,6 +31,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.flowui.menu.MenuConfig;
 import io.jmix.flowui.menu.MenuItem;
+import io.jmix.flowui.sys.ViewSupport;
 import io.jmix.flowui.view.ViewInfo;
 import io.jmix.flowui.view.ViewRegistry;
 import org.springframework.stereotype.Component;
@@ -43,6 +44,7 @@ import java.util.stream.Collectors;
 public class ResourcePolicyViewUtils {
 
     private ViewRegistry viewRegistry;
+    private ViewSupport viewSupport;
     private MenuConfig menuConfig;
     private Metadata metadata;
     private MetadataTools metadataTools;
@@ -50,12 +52,14 @@ public class ResourcePolicyViewUtils {
     private MessageTools messageTools;
 
     public ResourcePolicyViewUtils(ViewRegistry viewRegistry,
+                                   ViewSupport viewSupport,
                                    MenuConfig menuConfig,
                                    Metadata metadata,
                                    MetadataTools metadataTools,
                                    Messages messages,
                                    MessageTools messageTools) {
         this.viewRegistry = viewRegistry;
+        this.viewSupport = viewSupport;
         this.menuConfig = menuConfig;
         this.metadata = metadata;
         this.metadataTools = metadataTools;
@@ -157,22 +161,16 @@ public class ResourcePolicyViewUtils {
     }
 
     protected String getViewTitle(ViewInfo viewInfo, boolean detailed) {
-        // TODO: 12.08.2022 implement
-        return viewInfo.getId();
-        /*try {
-            String screenCaption = screensHelper.getScreenCaption(viewInfo);
-            if (Strings.isNullOrEmpty(screenCaption)) {
-                return viewInfo.getId();
-            } else {
-                if (!Objects.equals(screenCaption, viewInfo.getId()) && detailed) {
-                    return String.format("%s (%s)", screenCaption, viewInfo.getId());
-                } else {
-                    return screenCaption;
-                }
-            }
-        } catch (FileNotFoundException e) {
+        String viewTitle = viewSupport.getLocalizedTitle(viewInfo);
+        if (Strings.isNullOrEmpty(viewTitle)) {
             return viewInfo.getId();
-        }*/
+        } else {
+            if (!Objects.equals(viewTitle, viewInfo.getId()) && detailed) {
+                return String.format("%s (%s)", viewTitle, viewInfo.getId());
+            } else {
+                return viewTitle;
+            }
+        }
     }
 
     public String getMenuTitle(MenuItem menuItem) {

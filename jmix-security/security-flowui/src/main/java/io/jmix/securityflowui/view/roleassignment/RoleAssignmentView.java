@@ -2,7 +2,6 @@ package io.jmix.securityflowui.view.roleassignment;
 
 import com.vaadin.flow.function.ValueProvider;
 import com.vaadin.flow.router.BeforeEnterEvent;
-import com.vaadin.flow.router.HasDynamicTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteParameters;
 import io.jmix.core.EntityStates;
@@ -36,7 +35,7 @@ import java.util.stream.Collectors;
 @Route(value = "roleassignment/:username", layout = DefaultMainViewParent.class)
 @UiController("roleAssignmentView")
 @UiDescriptor("role-assignment-view.xml")
-public class RoleAssignmentView extends StandardView implements HasDynamicTitle {
+public class RoleAssignmentView extends StandardView {
 
     @ComponentId
     private DataGrid<RoleAssignmentEntity> resourceRoleAssignmentsTable;

@@ -16,57 +16,76 @@
 
 package page_title
 
-import com.vaadin.flow.component.UI
 import io.jmix.core.Messages
-import io.jmix.flowui.ViewNavigators
 import io.jmix.flowui.sys.ViewSupport
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import page_title.screen.AnnotatedPageTitleScreen
-import page_title.screen.DeclarativePageTitleScreen
+import page_title.view.AnnotatedPageTitleHardcodedView
+import page_title.view.AnnotatedPageTitleView
+import page_title.view.BothPageTitleView
+import page_title.view.DeclarativePageTitleHardcodedView
+import page_title.view.DeclarativePageTitleView
 import test_support.spec.FlowuiTestSpecification
 
 @SpringBootTest
 class PageTitleTest extends FlowuiTestSpecification {
 
     @Autowired
-    ViewNavigators screenNavigators
-
-    @Autowired
-    ViewSupport screenSupport
+    ViewSupport viewSupport
 
     @Autowired
     Messages messages
 
     void setup() {
-        registerScreenBasePackages("page_title.screen")
+        registerScreenBasePackages("page_title.view")
     }
 
-    def "load page title from screen descriptor"() {
-        when: "Open screen with defined title in the descriptor"
-        screenNavigators.view(DeclarativePageTitleScreen)
-                .navigate()
+    def "load page title from view descriptor"() {
+        when: "Open view with title defined as message key in the descriptor"
 
-        then: "Screen should use loaded page title"
-        def screen = (DeclarativePageTitleScreen) UI.getCurrent()
-                .getInternals().getActiveRouterTargetsChain().get(0)
+        def view = openScreen(DeclarativePageTitleView)
 
-        screenSupport.getLocalizedPageTitle(screen) ==
-                messages.getMessage("page_title.screen/declarativePageTitleScreen.title")
+        then: "View should use loaded page title"
+
+        viewSupport.getLocalizedTitle(view) ==
+                messages.getMessage("page_title.view/declarativePageTitleView.title")
+
+        when: "Open view with hardcoded title defined in the descriptor"
+
+        view = openScreen(DeclarativePageTitleHardcodedView)
+
+        then: "View should use loaded page title"
+
+        viewSupport.getLocalizedTitle(view) == "Declarative Page Title Hardcoded"
+    }
+
+    def "load page title from annotation"() {
+        when: "Open view that has @PageTitle with message key"
+
+        def view = openScreen(AnnotatedPageTitleView)
+
+        then: "View should use loaded page title from @PageTitle"
+
+        viewSupport.getLocalizedTitle(view) ==
+                messages.getMessage("page_title.view/annotatedPageTitleView.title")
+
+        when: "Open view that has @PageTitle with hardcoded value"
+
+        view = openScreen(AnnotatedPageTitleHardcodedView)
+
+        then: "View should use loaded page title from @PageTitle"
+
+        viewSupport.getLocalizedTitle(view) == "Annotated Page Title Hardcoded"
     }
 
     def "annotated page title should override declarative definition"() {
-        when: "Open screen that has @PageTitle and 'title' attribute in the descriptor"
+        when: "Open view that has @PageTitle and 'title' attribute in the descriptor"
 
-        screenNavigators.view(AnnotatedPageTitleScreen)
-                .navigate()
+        def view = openScreen(BothPageTitleView)
 
-        then: "Screen should use loaded page title from @PageTitle"
+        then: "View should use page title from @PageTitle"
 
-        def screen = (AnnotatedPageTitleScreen) UI.getCurrent()
-                .getInternals().getActiveRouterTargetsChain().get(0)
-
-        screenSupport.getLocalizedPageTitle(screen) ==
-                messages.getMessage("page_title.screen/annotatedPageTitleScreen.annotatedTitle")
+        viewSupport.getLocalizedTitle(view) ==
+                messages.getMessage("page_title.view/bothPageTitleView.title")
     }
 }

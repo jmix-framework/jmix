@@ -14,8 +14,7 @@
   ~ limitations under the License.
   -->
 
-<view xmlns="http://jmix.io/schema/flowui/view"
-        title="msg://annotatedPageTitleScreen.declarativeTitle">
+<view xmlns="http://jmix.io/schema/flowui/view">
     <layout>
     </layout>
 </view>

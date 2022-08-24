@@ -7,6 +7,7 @@ import com.vaadin.flow.internal.Pair;
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.server.VaadinSession;
 import io.jmix.core.MessageTools;
+import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.flowui.action.binder.ActionBinders;
 import io.jmix.flowui.model.ViewData;
 import io.jmix.flowui.view.*;
@@ -18,14 +19,12 @@ import io.jmix.flowui.xml.layout.loader.LayoutLoader;
 import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 import static io.jmix.flowui.view.UiControllerUtils.getPackage;
@@ -38,33 +37,25 @@ public class ViewSupport {
 
     protected ApplicationContext applicationContext;
     protected ViewXmlLoader viewXmlLoader;
-    protected UiControllerDependencyManager dependencyManager;
     protected ViewRegistry viewRegistry;
     protected ViewNavigationSupport navigationSupport;
+    protected CurrentAuthentication currentAuthentication;
+    protected UiControllerDependencyManager dependencyManager;
 
-    @Autowired
-    public void setApplicationContext(ApplicationContext applicationContext) {
+    protected Map<String, String> titleCache = new ConcurrentHashMap<>();
+
+    public ViewSupport(ApplicationContext applicationContext,
+                       ViewXmlLoader viewXmlLoader,
+                       ViewRegistry viewRegistry,
+                       ViewNavigationSupport navigationSupport,
+                       CurrentAuthentication currentAuthentication,
+                       UiControllerDependencyManager dependencyManager) {
         this.applicationContext = applicationContext;
-    }
-
-    @Autowired
-    public void setViewXmlLoader(ViewXmlLoader viewXmlLoader) {
         this.viewXmlLoader = viewXmlLoader;
-    }
-
-    @Autowired
-    public void setDependencyManager(UiControllerDependencyManager dependencyManager) {
-        this.dependencyManager = dependencyManager;
-    }
-
-    @Autowired
-    public void setViewRegistry(ViewRegistry viewRegistry) {
         this.viewRegistry = viewRegistry;
-    }
-
-    @Autowired
-    public void setNavigationSupport(ViewNavigationSupport navigationSupport) {
         this.navigationSupport = navigationSupport;
+        this.currentAuthentication = currentAuthentication;
+        this.dependencyManager = dependencyManager;
     }
 
     public void initView(View<?> view) {
@@ -167,58 +158,132 @@ public class ViewSupport {
     }
 
     /**
-     * Gets localized page title from the view.
+     * Gets localized title for the view.
      *
-     * @param view view to get localized page title
-     * @return localized page title or message key if not found or empty string if message key is not defined
+     * @param view view to get localized title for
+     * @return localized page title or empty string. If possible, returns cached value.
      * @see PageTitle
      * @see HasDynamicTitle
      */
-    public String getLocalizedPageTitle(View<?> view) {
-        String title = UiControllerUtils.getPageTitle(view);
+    public String getLocalizedTitle(View<?> view) {
+        return getLocalizedTitle(view, currentAuthentication.getLocale(), true);
+    }
 
+    /**
+     * Gets localized title for the view.
+     *
+     * @param view   view to get localized title for
+     * @param cached whether to use the cached value
+     * @return localized page title or empty string.
+     * @see PageTitle
+     * @see HasDynamicTitle
+     */
+    public String getLocalizedTitle(View<?> view, boolean cached) {
+        return getLocalizedTitle(view, currentAuthentication.getLocale(), cached);
+    }
+
+    /**
+     * Gets localized title for the view.
+     *
+     * @param view   view to get localized title for
+     * @param locale the locale to get the title for
+     * @return localized page title or empty string. If possible, returns cached value.
+     * @see PageTitle
+     * @see HasDynamicTitle
+     */
+    public String getLocalizedTitle(View<?> view, Locale locale) {
+        return getLocalizedTitle(view, locale, true);
+    }
+
+    /**
+     * Gets localized title for the view.
+     *
+     * @param view   view to get localized title for
+     * @param locale the locale to get the title for
+     * @param cached whether to use the cached value
+     * @return localized page title or empty string.
+     * @see PageTitle
+     * @see HasDynamicTitle
+     */
+    public String getLocalizedTitle(View<?> view, Locale locale, boolean cached) {
+        ViewInfo viewInfo = view.getId().map(viewId ->
+                        viewRegistry.getViewInfo(viewId))
+                .orElseThrow(() -> new IllegalStateException(
+                        String.format("%s '%s' has no id",
+                                View.class.getSimpleName(), view.getClass())));
+
+        return getLocalizedTitle(viewInfo, locale, cached);
+    }
+
+    /**
+     * Gets localized title for the view info.
+     *
+     * @param viewInfo view info to get localized title for
+     * @return localized page title or empty string. If possible, returns cached value.
+     * @see PageTitle
+     * @see HasDynamicTitle
+     */
+    public String getLocalizedTitle(ViewInfo viewInfo) {
+        return getLocalizedTitle(viewInfo, currentAuthentication.getLocale(), true);
+    }
+
+    /**
+     * Gets localized title for the view info.
+     *
+     * @param viewInfo view info to get localized title for
+     * @param cached   whether to use the cached value
+     * @return localized page title or empty string.
+     * @see PageTitle
+     * @see HasDynamicTitle
+     */
+    public String getLocalizedTitle(ViewInfo viewInfo, boolean cached) {
+        return getLocalizedTitle(viewInfo, currentAuthentication.getLocale(), cached);
+    }
+
+    /**
+     * Gets localized title for the view info.
+     *
+     * @param viewInfo view info to get localized title for
+     * @param locale   the locale to get the title for
+     * @return localized page title or empty string. If possible, returns cached value.
+     * @see PageTitle
+     * @see HasDynamicTitle
+     */
+    public String getLocalizedTitle(ViewInfo viewInfo, Locale locale) {
+        return getLocalizedTitle(viewInfo, locale, true);
+    }
+
+    /**
+     * Gets localized title for the view info.
+     *
+     * @param viewInfo view info to get the localized title for
+     * @param locale   the locale to get the title for
+     * @param cached   whether to use the cached value
+     * @return localized page title or empty string.
+     * @see PageTitle
+     * @see HasDynamicTitle
+     */
+    public String getLocalizedTitle(ViewInfo viewInfo, Locale locale, boolean cached) {
+        String key = getTitleCacheKey(viewInfo.getId(), locale);
+
+        if (cached) {
+            String title = titleCache.get(key);
+            if (title != null) {
+                return title;
+            }
+        }
+
+        String title = getViewTitleValue(viewInfo);
+
+        String localizedTitle = "";
         if (!Strings.isNullOrEmpty(title)) {
             MessageTools messageTools = applicationContext.getBean(MessageTools.class);
-            String messagesGroup = UiControllerUtils.getPackage(view.getClass());
-
-            String viewId = view.getId().orElse("");
-            if (!Strings.isNullOrEmpty(viewId)) {
-                ViewInfo viewInfo = viewRegistry.getViewInfo(viewId);
-                Element element = loadViewXml(viewInfo);
-                if (element != null) {
-                    messagesGroup = loadMessageGroup(element).orElse(messagesGroup);
-                }
-            }
-
-            if (!title.contains(MessageTools.MARK)) {
-                return messageTools.loadString(messagesGroup, MessageTools.MARK + title);
-            }
-
-            return messageTools.loadString(messagesGroup, title);
+            String messagesGroup = getViewMessageGroup(viewInfo);
+            localizedTitle = messageTools.loadString(messagesGroup, title);
         }
 
-        String viewId = view.getId().orElse("");
-        if (Strings.isNullOrEmpty(viewId)) {
-            return "";
-        }
-
-        ViewInfo viewInfo = viewRegistry.getViewInfo(viewId);
-        Element element = loadViewXml(viewInfo);
-        if (element != null) {
-            MessageTools messageTools = applicationContext.getBean(MessageTools.class);
-
-            title = element.attributeValue("title");
-            if (Strings.isNullOrEmpty(title)) {
-                return "";
-            }
-
-            String messagesGroup = loadMessageGroup(element)
-                    .orElse(UiControllerUtils.getPackage(view.getClass()));
-
-            return messageTools.loadString(messagesGroup, title);
-        }
-
-        return "";
+        cacheTitle(key, localizedTitle);
+        return localizedTitle;
     }
 
     public void close(View<?> view) {
@@ -325,6 +390,45 @@ public class ViewSupport {
         ComponentLoader<View<?>> viewLoader = layoutLoader.createViewContent(view, element);
 
         viewLoader.loadComponent();
+    }
+
+    @Nullable
+    protected String getViewTitleValue(ViewInfo viewInfo) {
+        String title = UiControllerUtils.findAnnotation(viewInfo.getControllerClass(), PageTitle.class)
+                .map(PageTitle::value)
+                .orElse(null);
+
+        // the PageTitle annotation must take precedence
+        if (title == null) {
+            Element element = loadViewXml(viewInfo);
+            if (element != null) {
+                return element.attributeValue("title");
+            }
+        }
+
+        return title;
+    }
+
+    protected String getViewMessageGroup(ViewInfo viewInfo) {
+        String messagesGroup = UiControllerUtils.getPackage(viewInfo.getControllerClass());
+
+        // XML value takes precedence because it's defined explicitly
+        Element element = loadViewXml(viewInfo);
+        if (element != null) {
+            messagesGroup = loadMessageGroup(element).orElse(messagesGroup);
+        }
+
+        return messagesGroup;
+    }
+
+    protected String getTitleCacheKey(String id, Locale locale) {
+        return id + locale;
+    }
+
+    protected void cacheTitle(String key, String value) {
+        if (!titleCache.containsKey(key)) {
+            titleCache.put(key, value);
+        }
     }
 
     // maps window.name to (view class, back navigation target)

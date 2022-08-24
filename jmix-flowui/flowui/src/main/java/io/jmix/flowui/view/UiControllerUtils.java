@@ -22,6 +22,10 @@ public final class UiControllerUtils {
             return "";
         }
 
+        if (component instanceof View) {
+            return ((View<?>) component).getPageTitle();
+        }
+
         if (component instanceof HasDynamicTitle) {
             return Strings.nullToEmpty(((HasDynamicTitle) component).getPageTitle());
         } else {
@@ -32,7 +36,12 @@ public final class UiControllerUtils {
     }
 
     public static <A extends Annotation> Optional<A> findAnnotation(Component component, Class<A> annotationClass) {
-        return Optional.ofNullable(component.getClass().getAnnotation(annotationClass));
+        return findAnnotation(component.getClass(), annotationClass);
+    }
+
+    public static <A extends Annotation> Optional<A> findAnnotation(Class<? extends Component> componentClass,
+                                                                    Class<A> annotationClass) {
+        return Optional.ofNullable(componentClass.getAnnotation(annotationClass));
     }
 
     public static String getPackage(Class<?> controllerClass) {

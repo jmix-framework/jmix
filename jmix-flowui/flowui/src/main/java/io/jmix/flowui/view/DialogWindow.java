@@ -20,7 +20,6 @@ import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.kit.component.button.JmixButton;
-import io.jmix.flowui.sys.ViewSupport;
 import io.jmix.flowui.view.View.AfterShowEvent;
 import io.jmix.flowui.view.View.BeforeShowEvent;
 import org.springframework.beans.BeansException;
@@ -72,8 +71,7 @@ public class DialogWindow<S extends View<?>> implements HasSize, HasTheme, HasSt
     }
 
     protected void initDialog(Dialog dialog) {
-        String title = applicationContext.getBean(ViewSupport.class)
-                .getLocalizedPageTitle(view);
+        String title = view.getPageTitle();
 
         dialog.setHeaderTitle(title);
         dialog.getHeader().add(createHeaderCloseButton());

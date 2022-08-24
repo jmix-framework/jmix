@@ -14,7 +14,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 public class View<T extends Component> extends Composite<T>
-        implements BeforeEnterObserver, AfterNavigationObserver, BeforeLeaveObserver {
+        implements BeforeEnterObserver, AfterNavigationObserver, BeforeLeaveObserver, HasDynamicTitle {
 
     private ApplicationContext applicationContext;
 
@@ -55,7 +55,6 @@ public class View<T extends Component> extends Composite<T>
 
     @Override
     public void afterNavigation(AfterNavigationEvent event) {
-        updatePageTitle();
         fireEvent(new AfterShowEvent(this));
     }
 
@@ -91,12 +90,6 @@ public class View<T extends Component> extends Composite<T>
 
         removeApplicationListeners();
         unregisterBackNavigation();
-    }
-
-    private void updatePageTitle() {
-        String pageTitle = applicationContext.getBean(ViewSupport.class)
-                .getLocalizedPageTitle(this);
-        getUI().ifPresent(ui -> ui.getPage().setTitle(pageTitle));
     }
 
     private void unregisterBackNavigation() {
@@ -166,6 +159,12 @@ public class View<T extends Component> extends Composite<T>
 
     protected void setViewFacets(ViewFacets viewFacets) {
         this.viewFacets = viewFacets;
+    }
+
+    @Override
+    public String getPageTitle() {
+        // return not cached value in case of hot deploy
+        return getViewSupport().getLocalizedTitle(this, false);
     }
 
     /**

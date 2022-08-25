@@ -1,19 +1,34 @@
+/*
+ * Copyright 2022 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.jmix.flowui.action.list;
 
 import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.core.security.EntityOp;
 import io.jmix.flowui.FlowuiComponentProperties;
 import io.jmix.flowui.accesscontext.FlowuiEntityAttributeContext;
-import io.jmix.flowui.accesscontext.FlowuiEntityContext;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.AdjustWhenViewReadOnly;
 import io.jmix.flowui.data.ContainerDataUnit;
 import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.component.FlowuiComponentUtils;
 import io.jmix.flowui.kit.component.KeyCombination;
+import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.Nested;
 import io.jmix.flowui.util.RemoveOperation;
 import io.jmix.flowui.util.RemoveOperation.ActionCancelledEvent;
@@ -23,11 +38,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
-@ActionType(RemoveAction.ID)
-public class RemoveAction<E> extends SecuredListDataComponentAction<RemoveAction<E>, E>
+@ActionType(ExcludeAction.ID)
+public class ExcludeAction<E> extends SecuredListDataComponentAction<ExcludeAction<E>, E>
         implements AdjustWhenViewReadOnly {
 
-    public static final String ID = "remove";
+    public static final String ID = "exclude";
 
     protected RemoveOperation removeOperation;
 
@@ -37,11 +52,11 @@ public class RemoveAction<E> extends SecuredListDataComponentAction<RemoveAction
     protected Consumer<AfterActionPerformedEvent<E>> afterActionPerformedHandler;
     protected Consumer<ActionCancelledEvent<E>> actionCancelledHandler;
 
-    public RemoveAction() {
+    public ExcludeAction() {
         this(ID);
     }
 
-    public RemoveAction(String id) {
+    public ExcludeAction(String id) {
         super(id);
     }
 
@@ -49,15 +64,13 @@ public class RemoveAction<E> extends SecuredListDataComponentAction<RemoveAction
     protected void initAction() {
         super.initAction();
 
-        setConstraintEntityOp(EntityOp.DELETE);
-
         variant = ActionVariant.DANGER;
         icon = FlowuiComponentUtils.convertToIcon(VaadinIcon.CLOSE);
     }
 
     @Autowired
     protected void setMessages(Messages messages) {
-        this.text = messages.getMessage("actions.Remove");
+        this.text = messages.getMessage("actions.Exclude");
     }
 
     @Autowired
@@ -132,10 +145,10 @@ public class RemoveAction<E> extends SecuredListDataComponentAction<RemoveAction
 
     @Override
     protected boolean isPermitted() {
-        return checkRemovePermission() && super.isPermitted();
+        return checkExcludePermission() && super.isPermitted();
     }
 
-    protected boolean checkRemovePermission() {
+    protected boolean checkExcludePermission() {
         if (target == null || !(target.getItems() instanceof ContainerDataUnit)) {
             return false;
         }
@@ -144,13 +157,6 @@ public class RemoveAction<E> extends SecuredListDataComponentAction<RemoveAction
 
         MetaClass metaClass = containerDataUnit.getEntityMetaClass();
         if (metaClass == null) {
-            return false;
-        }
-
-        FlowuiEntityContext entityContext = new FlowuiEntityContext(metaClass);
-        accessManager.applyRegisteredConstraints(entityContext);
-
-        if (!entityContext.isDeletePermitted()) {
             return false;
         }
 
@@ -172,13 +178,16 @@ public class RemoveAction<E> extends SecuredListDataComponentAction<RemoveAction
         return true;
     }
 
-    /**
-     * Executes the action.
-     */
     @Override
     public void execute() {
         checkTarget();
         checkTargetItems(ContainerDataUnit.class);
+
+        CollectionContainer container = ((ContainerDataUnit) target.getItems()).getContainer();
+        if (container == null) {
+            throw new IllegalStateException(String.format("%s target is not bound to %s",
+                    getClass().getSimpleName(), CollectionContainer.class.getSimpleName()));
+        }
 
         RemoveOperation.RemoveBuilder<E> builder = removeOperation.builder(target)
                 .withConfirmation(confirmation);
@@ -199,31 +208,31 @@ public class RemoveAction<E> extends SecuredListDataComponentAction<RemoveAction
             builder = builder.onCancel(actionCancelledHandler);
         }
 
-        builder.remove();
+        builder.exclude();
     }
 
-    public RemoveAction<E> withConfirmation(boolean confirmation) {
+    public ExcludeAction<E> withConfirmation(boolean confirmation) {
         setConfirmation(confirmation);
         return this;
     }
 
-    public RemoveAction<E> withConfirmationText(@Nullable String confirmationText) {
+    public ExcludeAction<E> withConfirmationText(@Nullable String confirmationText) {
         setConfirmationText(confirmationText);
         return this;
     }
 
-    public RemoveAction<E> withConfirmationHeader(@Nullable String confirmationHeader) {
+    public ExcludeAction<E> withConfirmationHeader(@Nullable String confirmationHeader) {
         setConfirmationHeader(confirmationHeader);
         return this;
     }
 
-    public RemoveAction<E> withAfterActionPerformedHandler(
+    public ExcludeAction<E> withAfterActionPerformedHandler(
             @Nullable Consumer<AfterActionPerformedEvent<E>> afterActionPerformedHandler) {
         setAfterActionPerformedHandler(afterActionPerformedHandler);
         return this;
     }
 
-    public RemoveAction<E> withAfterActionCancelledHandler(
+    public ExcludeAction<E> withAfterActionCancelledHandler(
             @Nullable Consumer<ActionCancelledEvent<E>> actionCancelledHandler) {
         setActionCancelledHandler(actionCancelledHandler);
         return this;

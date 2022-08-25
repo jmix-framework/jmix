@@ -11,10 +11,10 @@ public class FlowuiComponentProperties {
 
     String gridCreateShortcut;
     // TODO: gg, implement
-    //String gridAddShortcut;
+    String gridAddShortcut;
     String gridRemoveShortcut;
     String gridEditShortcut;
-    //String gridViewShortcut;
+    String gridReadShortcut;
 
     String defaultNotificationPosition;
     int defaultNotificationDuration;
@@ -26,10 +26,10 @@ public class FlowuiComponentProperties {
 
     public FlowuiComponentProperties(
             @DefaultValue("CONTROL-BACKSLASH") String gridCreateShortcut,
-            /*String gridAddShortcut,*/
+            @DefaultValue("CONTROL-ALT-BACKSLASH") String gridAddShortcut,
             @DefaultValue("CONTROL-DELETE") String gridRemoveShortcut,
             @DefaultValue("ENTER") String gridEditShortcut,
-            /*String gridViewShortcut,*/
+            @DefaultValue("ENTER") String gridReadShortcut,
             @DefaultValue("MIDDLE") String defaultNotificationPosition,
             @DefaultValue("3000") int defaultNotificationDuration,
             /*@DefaultValue("CONTROL-ALT") String pickerShortcutModifiers,*/
@@ -38,10 +38,10 @@ public class FlowuiComponentProperties {
             @DefaultValue("CONTROL-ALT-O") String pickerOpenShortcut,
             @DefaultValue("CONTROL-ALT-C") String pickerClearShortcut) {
         this.gridCreateShortcut = gridCreateShortcut;
-        /*this.gridAddShortcut = gridAddShortcut;*/
+        this.gridAddShortcut = gridAddShortcut;
         this.gridRemoveShortcut = gridRemoveShortcut;
         this.gridEditShortcut = gridEditShortcut;
-        /*this.gridViewShortcut = gridViewShortcut;*/
+        this.gridReadShortcut = gridReadShortcut;
         this.defaultNotificationPosition = defaultNotificationPosition;
         this.defaultNotificationDuration = defaultNotificationDuration;
 
@@ -55,9 +55,9 @@ public class FlowuiComponentProperties {
         return gridCreateShortcut;
     }
 
-/*    public String getGridAddShortcut() {
+    public String getGridAddShortcut() {
         return gridAddShortcut;
-    }*/
+    }
 
     public String getGridRemoveShortcut() {
         return gridRemoveShortcut;
@@ -67,9 +67,9 @@ public class FlowuiComponentProperties {
         return gridEditShortcut;
     }
 
-/*    public String getGridViewShortcut() {
-        return gridViewShortcut;
-    }*/
+    public String getGridReadShortcut() {
+        return gridReadShortcut;
+    }
 
     public Notification.Position getDefaultNotificationPosition() {
         return Notification.Position.valueOf(defaultNotificationPosition);

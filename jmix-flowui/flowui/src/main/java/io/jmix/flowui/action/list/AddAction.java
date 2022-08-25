@@ -26,7 +26,6 @@ import io.jmix.flowui.FlowuiComponentProperties;
 import io.jmix.flowui.accesscontext.FlowuiEntityAttributeContext;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.AdjustWhenViewReadOnly;
-import io.jmix.flowui.action.ExecutableAction;
 import io.jmix.flowui.action.ViewOpeningAction;
 import io.jmix.flowui.data.ContainerDataUnit;
 import io.jmix.flowui.kit.component.FlowuiComponentUtils;
@@ -49,7 +48,7 @@ import java.util.function.Predicate;
 
 @ActionType(AddAction.ID)
 public class AddAction<E> extends ListDataComponentAction<AddAction<E>, E>
-        implements AdjustWhenViewReadOnly, ViewOpeningAction, ExecutableAction {
+        implements AdjustWhenViewReadOnly, ViewOpeningAction {
 
     public static final String ID = "add";
 
@@ -82,7 +81,7 @@ public class AddAction<E> extends ListDataComponentAction<AddAction<E>, E>
 
     @Autowired
     protected void setFlowUiComponentProperties(FlowuiComponentProperties flowUiComponentProperties) {
-        this.shortcutCombination = KeyCombination.create(flowUiComponentProperties.getGridCreateShortcut());
+        this.shortcutCombination = KeyCombination.create(flowUiComponentProperties.getGridAddShortcut());
     }
 
     @Autowired

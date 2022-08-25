@@ -9,10 +9,10 @@ import io.jmix.flowui.action.ExecutableAction;
 import io.jmix.flowui.action.SecuredBaseAction;
 import io.jmix.flowui.action.TargetAction;
 import io.jmix.flowui.component.ListDataComponent;
-import io.jmix.flowui.kit.component.SelectionChangeNotifier;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.component.KeyCombination;
+import io.jmix.flowui.kit.component.SelectionChangeNotifier;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
@@ -153,6 +153,13 @@ public abstract class ListDataComponentAction<A extends ListDataComponentAction<
     protected void checkTarget() {
         if (target == null) {
             throw new IllegalStateException(String.format("%s target is not set", getClass().getSimpleName()));
+        }
+    }
+
+    protected void checkTargetItems(Class<?> itemsType) {
+        if (!itemsType.isInstance(target.getItems())) {
+            throw new IllegalStateException(String.format("%s target items is null or does not implement %s",
+                    getClass().getSimpleName(), itemsType.getSimpleName()));
         }
     }
 }

@@ -73,11 +73,7 @@ public class ShowRoleAssignmentsAction<E extends UserDetails>
     @Override
     public void execute() {
         checkTarget();
-
-        if (!(target.getItems() instanceof EntityDataUnit)) {
-            throw new IllegalStateException(String.format("%s target items is null or does not implement %s",
-                    getClass().getSimpleName(), EntityDataUnit.class.getSimpleName()));
-        }
+        checkTargetItems(EntityDataUnit.class);
 
         E selectedItem = target.getSingleSelectedItem();
         if (selectedItem == null) {

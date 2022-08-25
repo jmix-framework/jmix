@@ -886,8 +886,11 @@
                     <xs:enumeration value="entity_openComposition"/>
                     <xs:enumeration value="create"/>
                     <xs:enumeration value="edit"/>
-                    <xs:enumeration value="update"/>
                     <xs:enumeration value="remove"/>
+                    <xs:enumeration value="add"/>
+                    <xs:enumeration value="exclude"/>
+                    <xs:enumeration value="read"/>
+                    <xs:enumeration value="refresh"/>
                     <xs:enumeration value="detail_close"/>
                     <xs:enumeration value="detail_commit"/>
                     <xs:enumeration value="detail_commitClose"/>
@@ -897,6 +900,7 @@
                     <xs:enumeration value="lookup_select"/>
                     <xs:enumeration value="view_close"/>
                     <xs:enumeration value="value_clear"/>
+                    <xs:enumeration value="itemTracking"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:union>

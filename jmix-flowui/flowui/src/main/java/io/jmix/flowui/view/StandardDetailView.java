@@ -23,10 +23,12 @@ import io.jmix.flowui.model.*;
 import io.jmix.flowui.util.OperationResult;
 import io.jmix.flowui.util.UnknownOperationResult;
 import io.jmix.flowui.view.navigation.UrlIdSerializer;
+import org.apache.commons.collections4.CollectionUtils;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
@@ -35,6 +37,8 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
 
     public static final String NEW_ENTITY_ID = "new";
     public static final String DEFAULT_ROUTE_PARAM = "id";
+    public static final String MODE_PARAM = "mode";
+    public static final String MODE_READONLY = "readonly";
 
     private T entityToEdit;
     private String serializedEntityIdToEdit;
@@ -115,7 +119,20 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
         findEntityId(event);
+        checkReadOnlyState(event);
+
         super.beforeEnter(event);
+    }
+
+    private void checkReadOnlyState(BeforeEnterEvent event) {
+        List<String> state = event.getLocation()
+                .getQueryParameters()
+                .getParameters()
+                .get(MODE_PARAM);
+        if (CollectionUtils.isNotEmpty(state)
+                && state.contains(MODE_READONLY)) {
+            setReadOnly(true);
+        }
     }
 
     protected void findEntityId(BeforeEnterEvent event) {

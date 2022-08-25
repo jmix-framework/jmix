@@ -31,7 +31,7 @@ import java.util.function.Function;
 
 @ActionType(EditAction.ID)
 public class EditAction<E> extends SecuredListDataComponentAction<EditAction<E>, E>
-        implements AdjustWhenViewReadOnly, ViewOpeningAction, ExecutableAction {
+        implements AdjustWhenViewReadOnly, ViewOpeningAction {
 
     public static final String ID = "edit";
 
@@ -252,7 +252,7 @@ public class EditAction<E> extends SecuredListDataComponentAction<EditAction<E>,
                         || entity != null && inMemoryContext.isUpdatePermitted(entity))) {
                     super.setText(messages.getMessage("actions.Edit"));
                 } else {
-                    super.setText(messages.getMessage("actions.View"));
+                    super.setText(messages.getMessage("actions.Read"));
                 }
             }
         }
@@ -284,11 +284,7 @@ public class EditAction<E> extends SecuredListDataComponentAction<EditAction<E>,
     @Override
     public void execute() {
         checkTarget();
-
-        if (!(target.getItems() instanceof EntityDataUnit)) {
-            throw new IllegalStateException(String.format("%s target dataSource is null or does not implement %s",
-                    getClass().getSimpleName(), EntityDataUnit.class.getSimpleName()));
-        }
+        checkTargetItems(EntityDataUnit.class);
 
         E editedEntity = target.getSingleSelectedItem();
         if (editedEntity == null) {

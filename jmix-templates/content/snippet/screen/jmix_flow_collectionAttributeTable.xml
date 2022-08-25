@@ -43,7 +43,7 @@ def isOwnerAttr = (oneToOneAnn != null && !oneToOneAnn.params['mappedBy']?.trim(
     <button action="${nestedDcProperty}Table.remove"/>
 </hbox>
 <% }%>
-<dataGrid id="${nestedDcProperty}Table" dataContainer="${nestedDcProperty}Dc" width="100%">
+<dataGrid id="${nestedDcProperty}Table" dataContainer="${nestedDcProperty}Dc" width="100%" minHeight="20em">
     <% if (!isManyToMany || isOwnerAttr) {%>
     <actions>
         <action id="create" type="create">
